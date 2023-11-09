@@ -51,7 +51,7 @@ export class ObjectMetadata implements ObjectMetadataInterface {
 
   @Field()
   @Column({ nullable: false, type: 'uuid' })
-  dataSourceMetadataId: string;
+  dataSourceId: string;
 
   @Field()
   @Column({ nullable: false })

@@ -77,11 +77,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadata> {
     });
   }
 
-  public async getObjectMetadataFromDataSourceMetadataId(
-    dataSourceMetadataId: string,
-  ) {
+  public async getObjectMetadataFromDataSourceId(dataSourceId: string) {
     return this.objectMetadataRepository.find({
-      where: { dataSourceMetadataId },
+      where: { dataSourceId },
       relations: ['fields'],
     });
   }
@@ -109,17 +107,17 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadata> {
    *
    * Create all standard objects and fields metadata for a given workspace
    *
-   * @param dataSourceMetadataId
+   * @param dataSourceId
    * @param workspaceId
    */
   public async createStandardObjectsAndFieldsMetadata(
-    dataSourceMetadataId: string,
+    dataSourceId: string,
     workspaceId: string,
   ) {
     await this.objectMetadataRepository.save(
       Object.values(standardObjectsMetadata).map((objectMetadata) => ({
         ...objectMetadata,
-        dataSourceMetadataId,
+        dataSourceId,
         workspaceId,
         isCustom: false,
         isActive: true,

@@ -18,7 +18,7 @@ export const seedObjectMetadata = async (
       'targetTableName',
       'description',
       'icon',
-      'dataSourceMetadataId',
+      'dataSourceId',
       'workspaceId',
     ])
     .orIgnore()
@@ -33,7 +33,7 @@ export const seedObjectMetadata = async (
         targetTableName: 'company',
         description: 'A company',
         icon: 'IconBuildingSkyscraper',
-        dataSourceMetadataId: 'b37b2163-7f63-47a9-b1b3-6c7290ca9fb1',
+        dataSourceId: 'b37b2163-7f63-47a9-b1b3-6c7290ca9fb1',
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
       },
       // Views
@@ -46,7 +46,7 @@ export const seedObjectMetadata = async (
         targetTableName: 'view',
         description: '(System) Views',
         icon: 'IconLayoutCollage',
-        dataSourceMetadataId: 'b37b2163-7f63-47a9-b1b3-6c7290ca9fb1',
+        dataSourceId: 'b37b2163-7f63-47a9-b1b3-6c7290ca9fb1',
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
       },
       // ViewFields
@@ -59,7 +59,7 @@ export const seedObjectMetadata = async (
         targetTableName: 'viewField',
         description: '(System) View Fields',
         icon: 'IconColumns3',
-        dataSourceMetadataId: 'b37b2163-7f63-47a9-b1b3-6c7290ca9fb1',
+        dataSourceId: 'b37b2163-7f63-47a9-b1b3-6c7290ca9fb1',
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
       },
       // ViewFilters
@@ -72,7 +72,7 @@ export const seedObjectMetadata = async (
         targetTableName: 'viewFilter',
         description: '(System) View Filters',
         icon: 'IconFilterBolt',
-        dataSourceMetadataId: 'b37b2163-7f63-47a9-b1b3-6c7290ca9fb1',
+        dataSourceId: 'b37b2163-7f63-47a9-b1b3-6c7290ca9fb1',
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
       },
       // ViewSorts
@@ -85,7 +85,7 @@ export const seedObjectMetadata = async (
         targetTableName: 'viewSort',
         description: '(System) View Sorts',
         icon: 'IconArrowsSort',
-        dataSourceMetadataId: 'b37b2163-7f63-47a9-b1b3-6c7290ca9fb1',
+        dataSourceId: 'b37b2163-7f63-47a9-b1b3-6c7290ca9fb1',
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
       },
     ])
