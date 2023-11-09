@@ -298,13 +298,9 @@ export class DataCleanInactiveCommand extends CommandRunner {
     let count = 1;
     for (const workspaceId in result) {
       process.stdout.write(`- deleting ${workspaceId} ...`);
-      try {
-        await this.workspaceService.deleteWorkspace({
-          workspaceId,
-        });
-      } catch (e) {
-        console.error(e);
-      }
+      await this.workspaceService.deleteWorkspace({
+        workspaceId,
+      });
       console.log(
         ` done! ....... ${Math.floor((100 * count) / workspaceCount)}%`,
       );
