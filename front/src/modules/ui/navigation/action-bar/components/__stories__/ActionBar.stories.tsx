@@ -4,8 +4,7 @@ import { useSetRecoilState } from 'recoil';
 
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { CompanyTableMockMode } from '@/companies/table/components/CompanyTableMockMode';
-import { TableRecoilScopeContext } from '@/ui/object/record-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { actionBarOpenState } from '../../states/actionBarIsOpenState';
@@ -24,12 +23,16 @@ const meta: Meta<typeof ActionBar> = {
   component: FilledActionBar,
   decorators: [
     (Story) => (
-      <RecoilScope CustomRecoilScopeContext={TableRecoilScopeContext}>
+      <RecordTableScope
+        recordTableScopeId="companies"
+        onColumnsChange={() => {}}
+        onEntityCountChange={() => {}}
+      >
         <MemoryRouter>
           <CompanyTableMockMode />
           <Story />
         </MemoryRouter>
-      </RecoilScope>
+      </RecordTableScope>
     ),
     ComponentDecorator,
   ],

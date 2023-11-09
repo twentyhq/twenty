@@ -8,10 +8,10 @@ export const useFindOneObject = <
   ObjectType extends { id: string } & Record<string, any>,
 >({
   objectNameSingular,
-  objectId,
+  objectMetadataId,
   onCompleted,
 }: Pick<ObjectMetadataItemIdentifier, 'objectNameSingular'> & {
-  objectId: string | undefined;
+  objectMetadataId: string | undefined;
   onCompleted?: (data: ObjectType) => void;
 }) => {
   const { foundObjectMetadataItem, objectNotFoundInMetadata, findOneQuery } =
@@ -21,11 +21,11 @@ export const useFindOneObject = <
 
   const { data, loading, error } = useQuery<
     { [nameSingular: string]: ObjectType },
-    { objectId: string }
+    { objectMetadataId: string }
   >(findOneQuery, {
-    skip: !foundObjectMetadataItem || !objectId,
+    skip: !foundObjectMetadataItem || !objectMetadataId,
     variables: {
-      objectId: objectId ?? '',
+      objectMetadataId: objectMetadataId ?? '',
     },
     onCompleted: (data) => {
       if (onCompleted && objectNameSingular) {

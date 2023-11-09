@@ -50,7 +50,7 @@ export const ObjectSortDropdownButton = ({
   const handleAddSort = (selectedSortDefinition: SortDefinition) => {
     toggleDropdown();
     onSortSelect?.({
-      fieldId: selectedSortDefinition.fieldId,
+      fieldMetadataId: selectedSortDefinition.fieldMetadataId,
       direction: selectedSortDirection,
       definition: selectedSortDefinition,
     });

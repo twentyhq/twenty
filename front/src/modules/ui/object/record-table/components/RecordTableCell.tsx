@@ -12,8 +12,8 @@ import { ColumnContext } from '../contexts/ColumnContext';
 import { ColumnIndexContext } from '../contexts/ColumnIndexContext';
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
 import { RowIdContext } from '../contexts/RowIdContext';
-import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
-import { TableCell } from '../table-cell/components/TableCell';
+import { TableCell } from '../record-table-cell/components/RecordTableCell';
+import { useCurrentRowSelected } from '../record-table-row/hooks/useCurrentRowSelected';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 export const RecordTableCell = ({ cellIndex }: { cellIndex: number }) => {

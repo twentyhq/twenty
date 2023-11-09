@@ -2,7 +2,7 @@ import { Command, CommandRunner } from 'nest-commander';
 
 import { PrismaService } from 'src/database/prisma.service';
 import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
-import { TenantInitialisationService } from 'src/metadata/tenant-initialisation/tenant-initialisation.service';
+import { TenantManagerService } from 'src/tenant-manager/tenant-manager.service';
 
 @Command({
   name: 'database:migrate-old-schema',
@@ -12,7 +12,7 @@ export class MigrateOldSchemaCommand extends CommandRunner {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly dataSourceMetadataService: DataSourceMetadataService,
-    private readonly tenantInitialisationService: TenantInitialisationService,
+    private readonly tenantManagerService: TenantManagerService,
   ) {
     super();
   }
@@ -29,7 +29,7 @@ export class MigrateOldSchemaCommand extends CommandRunner {
 
   async copyData(table, data, workspaceId, columns) {
     const filteredByWorkspace = this.filterDataByWorkspace(data, workspaceId);
-    await this.tenantInitialisationService.injectWorkspaceData(
+    await this.tenantManagerService.injectWorkspaceData(
       table,
       workspaceId,
       filteredByWorkspace,
@@ -37,10 +37,22 @@ export class MigrateOldSchemaCommand extends CommandRunner {
     );
   }
 
+  formatViews(views) {
+    return views.map((view) => {
+      return {
+        id: view.id,
+        name: view.name,
+        objectMetadataId: view.objectId,
+        type: view.type,
+        workspaceId: view.workspaceId,
+      };
+    });
+  }
+
   formatViewFields(viewFields) {
     return viewFields.map((viewField) => {
       return {
-        fieldId: viewField.key,
+        fieldMetadataId: viewField.key,
         viewId: viewField.viewId,
         position: viewField.index,
         isVisible: viewField.isVisible,
@@ -53,7 +65,7 @@ export class MigrateOldSchemaCommand extends CommandRunner {
   formatViewFilters(viewFilters) {
     return viewFilters.map((viewFilter) => {
       return {
-        fieldId: viewFilter.key,
+        fieldMetadataId: viewFilter.key,
         viewId: viewFilter.viewId,
         operand: viewFilter.operand,
         value: viewFilter.value,
@@ -66,7 +78,7 @@ export class MigrateOldSchemaCommand extends CommandRunner {
   formatViewSorts(viewSorts) {
     return viewSorts.map((viewSort) => {
       return {
-        fieldId: viewSort.key,
+        fieldMetadataId: viewSort.key,
         viewId: viewSort.viewId,
         direction: viewSort.description,
         workspaceId: viewSort.workspaceId,
@@ -77,8 +89,9 @@ export class MigrateOldSchemaCommand extends CommandRunner {
   async run() {
     try {
       const workspaces = await this.prismaService.client.workspace.findMany();
-      const views: Array<any> = await this.prismaService.client
-        .$queryRaw`SELECT * FROM public."views"`;
+      const views: Array<any> = this.formatViews(
+        await this.prismaService.client.$queryRaw`SELECT * FROM public."views"`,
+      );
       const viewFields: Array<any> = this.formatViewFields(
         await this.prismaService.client
           .$queryRaw`SELECT * FROM public."viewFields"`,
@@ -95,25 +108,25 @@ export class MigrateOldSchemaCommand extends CommandRunner {
         await this.copyData('view', views, workspace.id, [
           'id',
           'name',
-          'objectId',
+          'objectMetadataId',
           'type',
         ]);
         await this.copyData('viewField', viewFields, workspace.id, [
-          'fieldId',
+          'fieldMetadataId',
           'viewId',
           'position',
           'isVisible',
           'size',
         ]);
         await this.copyData('viewFilter', viewFilters, workspace.id, [
-          'fieldId',
+          'fieldMetadataId',
           'viewId',
           'operand',
           'value',
           'displayValue',
         ]);
         await this.copyData('viewSort', viewSorts, workspace.id, [
-          'fieldId',
+          'fieldMetadataId',
           'viewId',
           'direction',
         ]);

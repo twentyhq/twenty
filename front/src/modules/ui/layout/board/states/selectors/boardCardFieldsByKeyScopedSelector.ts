@@ -12,5 +12,5 @@ export const boardCardFieldsByKeyScopedSelector = selectorFamily({
     ({ get }) =>
       get(boardCardFieldsScopedState(scopeId)).reduce<
         Record<string, BoardFieldDefinition<FieldMetadata>>
-      >((result, field) => ({ ...result, [field.fieldId]: field }), {}),
+      >((result, field) => ({ ...result, [field.fieldMetadataId]: field }), {}),
 });

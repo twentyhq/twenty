@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useSetRecoilState } from 'recoil';
 
 import { peopleAvailableFieldDefinitions } from '@/people/constants/peopleAvailableFieldDefinitions';
 import { getPeopleOptimisticEffectDefinition } from '@/people/graphql/optimistic-effect-definitions/getPeopleOptimisticEffectDefinition';
@@ -9,15 +8,13 @@ import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { RecordTableEffect } from '@/ui/object/record-table/components/RecordTableEffect';
 import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
-import { TableContext } from '@/ui/object/record-table/contexts/TableContext';
-import { useUpsertRecordTableItem } from '@/ui/object/record-table/hooks/useUpsertRecordTableItem';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
-import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableColumnsScopedState';
-import { tableFiltersScopedState } from '@/ui/object/record-table/states/tableFiltersScopedState';
-import { tableSortsScopedState } from '@/ui/object/record-table/states/tableSortsScopedState';
+import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
+import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
@@ -36,18 +33,17 @@ import PersonTableEffect from './PersonTableEffect';
 export const PersonTable = () => {
   const viewScopeId = 'person-table-view';
   const tableScopeId = 'people';
-  const setTableColumns = useSetRecoilState(
-    tableColumnsScopedState(tableScopeId),
-  );
 
-  const setTableFilters = useSetRecoilState(
-    tableFiltersScopedState(tableScopeId),
-  );
-
-  const setTableSorts = useSetRecoilState(tableSortsScopedState(tableScopeId));
+  const {
+    setTableFilters,
+    setTableSorts,
+    setTableColumns,
+    upsertRecordTableItem,
+  } = useRecordTable({
+    recordTableScopeId: tableScopeId,
+  });
 
   const [updateEntityMutation] = useUpdateOnePersonMutation();
-  const upsertRecordTableItem = useUpsertRecordTableItem();
 
   const { persistViewFields } = useViewFields(viewScopeId);
 
@@ -72,6 +68,8 @@ export const PersonTable = () => {
 
   const { openPersonSpreadsheetImport: onImport } =
     useSpreadsheetPersonImport();
+
+  const { setEntityCountInCurrentView } = useView({ viewScopeId });
 
   const StyledContainer = styled.div`
     display: flex;
@@ -98,9 +96,11 @@ export const PersonTable = () => {
       }}
     >
       <StyledContainer>
-        <TableContext.Provider
-          value={{
-            onColumnsChange: handleColumnChange,
+        <RecordTableScope
+          recordTableScopeId={tableScopeId}
+          onColumnsChange={handleColumnChange}
+          onEntityCountChange={(entityCount) => {
+            setEntityCountInCurrentView(entityCount);
           }}
         >
           <ViewBar
@@ -126,7 +126,7 @@ export const PersonTable = () => {
               variables: UpdateOnePersonMutationVariables;
             }) => updatePerson(variables)}
           />
-        </TableContext.Provider>
+        </RecordTableScope>
       </StyledContainer>
     </ViewScope>
   );

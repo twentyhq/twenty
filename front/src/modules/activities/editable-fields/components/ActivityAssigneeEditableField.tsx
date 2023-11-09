@@ -23,7 +23,7 @@ export const ActivityAssigneeEditableField = ({
       entityId: activity.id,
       recoilScopeId: 'assignee',
       fieldDefinition: {
-        fieldId: 'assignee',
+        fieldMetadataId: 'assignee',
         label: 'Assignee',
         Icon: IconUserCircle,
         type: 'RELATION',

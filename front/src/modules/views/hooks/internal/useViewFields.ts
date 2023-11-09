@@ -40,7 +40,7 @@ export const useViewFields = (viewScopeId: string) => {
                 mutation: createOneMutation,
                 variables: {
                   input: {
-                    fieldId: viewField.fieldId,
+                    fieldMetadataId: viewField.fieldMetadataId,
                     viewId: viewIdToPersist,
                     isVisible: viewField.isVisible,
                     size: viewField.size,
@@ -76,18 +76,18 @@ export const useViewFields = (viewScopeId: string) => {
         };
 
         const viewFieldsToCreate = viewFieldsToPersist.filter(
-          (viewField) => !savedViewFieldsByKey[viewField.fieldId],
+          (viewField) => !savedViewFieldsByKey[viewField.fieldMetadataId],
         );
 
         const viewFieldsToUpdate = viewFieldsToPersist.filter(
           (viewFieldToPersit) =>
-            savedViewFieldsByKey[viewFieldToPersit.fieldId] &&
-            (savedViewFieldsByKey[viewFieldToPersit.fieldId].size !==
+            savedViewFieldsByKey[viewFieldToPersit.fieldMetadataId] &&
+            (savedViewFieldsByKey[viewFieldToPersit.fieldMetadataId].size !==
               viewFieldToPersit.size ||
-              savedViewFieldsByKey[viewFieldToPersit.fieldId].position !==
-                viewFieldToPersit.position ||
-              savedViewFieldsByKey[viewFieldToPersit.fieldId].isVisible !==
-                viewFieldToPersit.isVisible),
+              savedViewFieldsByKey[viewFieldToPersit.fieldMetadataId]
+                .position !== viewFieldToPersit.position ||
+              savedViewFieldsByKey[viewFieldToPersit.fieldMetadataId]
+                .isVisible !== viewFieldToPersit.isVisible),
         );
 
         await _createViewFields(viewFieldsToCreate);

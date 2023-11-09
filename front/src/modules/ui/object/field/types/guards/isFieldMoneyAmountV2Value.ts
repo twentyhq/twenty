@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { FieldMoneyValue } from '../FieldMetadata';
+import { FieldMoneyAmountV2Value } from '../FieldMetadata';
 
 const moneyAmountV2Schema = z.object({
   currency: z.string(),
@@ -9,5 +9,5 @@ const moneyAmountV2Schema = z.object({
 
 export const isFieldMoneyAmountV2Value = (
   fieldValue: unknown,
-): fieldValue is FieldMoneyValue =>
+): fieldValue is FieldMoneyAmountV2Value =>
   moneyAmountV2Schema.safeParse(fieldValue).success;

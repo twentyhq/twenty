@@ -27,7 +27,7 @@ import { getLogoUrlFromDomainName } from '~/utils';
 export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
     {
-      fieldId: 'displayName',
+      fieldMetadataId: 'displayName',
       label: 'People',
       Icon: IconUser,
       size: 210,
@@ -45,7 +45,7 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       basePathToShowPage: '/person/',
     } satisfies ColumnDefinition<FieldDoubleTextChipMetadata>,
     {
-      fieldId: 'email',
+      fieldMetadataId: 'email',
       label: 'Email',
       Icon: IconMail,
       size: 150,
@@ -58,7 +58,7 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       infoTooltipContent: 'Contact’s Email.',
     } satisfies ColumnDefinition<FieldEmailMetadata>,
     {
-      fieldId: 'company',
+      fieldMetadataId: 'company',
       label: 'Company',
       Icon: IconBuildingSkyscraper,
       size: 150,
@@ -78,7 +78,7 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       },
     } satisfies ColumnDefinition<FieldRelationMetadata>,
     {
-      fieldId: 'phone',
+      fieldMetadataId: 'phone',
       label: 'Phone',
       Icon: IconPhone,
       size: 150,
@@ -91,7 +91,7 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       infoTooltipContent: 'Contact’s phone number.',
     } satisfies ColumnDefinition<FieldPhoneMetadata>,
     {
-      fieldId: 'createdAt',
+      fieldMetadataId: 'createdAt',
       label: 'Creation',
       Icon: IconCalendarEvent,
       size: 150,
@@ -103,7 +103,7 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       infoTooltipContent: 'Date when the contact was added.',
     } satisfies ColumnDefinition<FieldDateMetadata>,
     {
-      fieldId: 'city',
+      fieldMetadataId: 'city',
       label: 'City',
       Icon: IconMap,
       size: 150,
@@ -116,7 +116,7 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       infoTooltipContent: 'Contact’s city.',
     } satisfies ColumnDefinition<FieldTextMetadata>,
     {
-      fieldId: 'jobTitle',
+      fieldMetadataId: 'jobTitle',
       label: 'Job title',
       Icon: IconBriefcase,
       size: 150,
@@ -129,7 +129,7 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       infoTooltipContent: 'Contact’s job title.',
     } satisfies ColumnDefinition<FieldTextMetadata>,
     {
-      fieldId: 'linkedin',
+      fieldMetadataId: 'linkedin',
       label: 'LinkedIn',
       Icon: IconBrandLinkedin,
       size: 150,
@@ -142,7 +142,7 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       infoTooltipContent: 'Contact’s Linkedin account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
     {
-      fieldId: 'x',
+      fieldMetadataId: 'x',
       label: 'Twitter',
       Icon: IconBrandX,
       size: 150,

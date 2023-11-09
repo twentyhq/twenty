@@ -1,3 +1,4 @@
+import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
@@ -23,6 +24,45 @@ export default meta;
 type Story = StoryObj<typeof SettingsObjectFieldPreview>;
 
 export const Text: Story = {};
+
+export const Boolean: Story = {
+  args: {
+    fieldIconKey: 'IconHeadphones',
+    fieldLabel: 'Priority Support',
+    fieldType: 'BOOLEAN',
+  },
+};
+
+export const Currency: Story = {
+  args: {
+    fieldIconKey: 'IconCurrencyDollar',
+    fieldLabel: 'Amount',
+    fieldType: 'MONEY',
+  },
+};
+
+export const Date: Story = {
+  args: {
+    fieldIconKey: 'IconCalendarEvent',
+    fieldLabel: 'Registration Date',
+    fieldType: 'DATE',
+  },
+};
+
+export const Link: Story = {
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
+  args: {
+    fieldIconKey: 'IconWorldWww',
+    fieldLabel: 'Website',
+    fieldType: 'URL',
+  },
+};
 
 export const Number: Story = {
   args: {

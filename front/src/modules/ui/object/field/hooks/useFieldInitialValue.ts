@@ -9,7 +9,7 @@ export const useFieldInitialValue = () => {
 
   const fieldInitialValue = useRecoilValue(
     entityFieldInitialValueFamilyState({
-      fieldId: fieldDefinition.fieldId,
+      fieldMetadataId: fieldDefinition.fieldMetadataId,
       entityId,
     }),
   );

@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
-import { useResetTableRowSelection } from '@/ui/object/record-table/hooks/useResetTableRowSelection';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { isFetchingRecordTableDataState } from '@/ui/object/record-table/states/isFetchingRecordTableDataState';
 import { numberOfTableRowsState } from '@/ui/object/record-table/states/numberOfTableRowsState';
 import { tableRowIdsState } from '@/ui/object/record-table/states/tableRowIdsState';
@@ -18,7 +18,7 @@ import { peopleNameCellFamilyState } from '../states/peopleNamesFamilyState';
 import { peoplePhoneFamilyState } from '../states/peoplePhoneFamilyState';
 
 export const useSetPeopleRecordTable = () => {
-  const resetTableRowSelection = useResetTableRowSelection();
+  const { resetTableRowSelection } = useRecordTable();
 
   const currentLocation = useLocation().pathname;
 

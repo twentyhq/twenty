@@ -6,7 +6,7 @@ import { BuildSchemaOptions } from 'src/tenant/schema-builder/interfaces/build-s
 import { ObjectMetadataInterface } from 'src/tenant/schema-builder/interfaces/object-metadata.interface';
 
 import { pascalCase } from 'src/utils/pascal-case';
-import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataEntity } from 'src/database/typeorm/metadata/entities/field-metadata.entity';
 
 import {
   InputTypeDefinition,
@@ -43,7 +43,7 @@ export class OrderByTypeDefinitionFactory {
   ): GraphQLInputFieldConfigMap {
     const fields: GraphQLInputFieldConfigMap = {};
 
-    objectMetadata.fields.forEach((fieldMetadata: FieldMetadata) => {
+    objectMetadata.fields.forEach((fieldMetadata: FieldMetadataEntity) => {
       const type = this.orderByTypeFactory.create(fieldMetadata, options, {
         nullable: fieldMetadata.isNullable,
       });

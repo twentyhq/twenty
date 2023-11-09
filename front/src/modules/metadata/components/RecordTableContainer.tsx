@@ -1,22 +1,21 @@
 import styled from '@emotion/styled';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
-import { TableContext } from '@/ui/object/record-table/contexts/TableContext';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
-import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableColumnsScopedState';
-import { tableFiltersScopedState } from '@/ui/object/record-table/states/tableFiltersScopedState';
-import { tableSortsScopedState } from '@/ui/object/record-table/states/tableSortsScopedState';
+import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
+import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 
-import { useObjectMetadataItemInContext } from '../hooks/useObjectMetadataItemInContext';
+import { useFindOneObjectMetadataItem } from '../hooks/useFindOneObjectMetadataItem';
 import { useUpdateOneObject } from '../hooks/useUpdateOneObject';
 
 import { RecordTableEffect } from './RecordTableEffect';
@@ -28,28 +27,29 @@ const StyledContainer = styled.div`
   overflow: auto;
 `;
 
-export const RecordTableContainer = () => {
-  const { columnDefinitions, foundObjectMetadataItem, objectNamePlural } =
-    useObjectMetadataItemInContext();
+export const RecordTableContainer = ({
+  objectNamePlural,
+}: {
+  objectNamePlural: string;
+}) => {
+  const { columnDefinitions } = useFindOneObjectMetadataItem({
+    objectNamePlural,
+  });
 
   const { updateOneObject } = useUpdateOneObject({
     objectNamePlural,
   });
 
-  const tableScopeId = foundObjectMetadataItem?.namePlural ?? '';
+  const tableScopeId = objectNamePlural ?? '';
   const viewScopeId = objectNamePlural ?? '';
 
   const { persistViewFields } = useViewFields(viewScopeId);
 
-  const setTableColumns = useSetRecoilState(
-    tableColumnsScopedState(tableScopeId),
-  );
+  const { setTableFilters, setTableSorts, setTableColumns } = useRecordTable({
+    recordTableScopeId: tableScopeId,
+  });
 
-  const setTableFilters = useSetRecoilState(
-    tableFiltersScopedState(tableScopeId),
-  );
-
-  const setTableSorts = useSetRecoilState(tableSortsScopedState(tableScopeId));
+  const { setEntityCountInCurrentView } = useView({ viewScopeId });
 
   const updateEntity = ({
     variables,
@@ -83,11 +83,13 @@ export const RecordTableContainer = () => {
       }}
     >
       <StyledContainer>
-        <TableContext.Provider
-          value={{
-            onColumnsChange: useRecoilCallback(() => (columns) => {
-              persistViewFields(mapColumnDefinitionsToViewFields(columns));
-            }),
+        <RecordTableScope
+          recordTableScopeId={tableScopeId}
+          onColumnsChange={useRecoilCallback(() => (columns) => {
+            persistViewFields(mapColumnDefinitionsToViewFields(columns));
+          })}
+          onEntityCountChange={(entityCount) => {
+            setEntityCountInCurrentView(entityCount);
           }}
         >
           <ViewBar
@@ -96,7 +98,7 @@ export const RecordTableContainer = () => {
           />
           <RecordTableEffect />
           <RecordTable updateEntityMutation={updateEntity} />
-        </TableContext.Provider>
+        </RecordTableScope>
       </StyledContainer>
     </ViewScope>
   );

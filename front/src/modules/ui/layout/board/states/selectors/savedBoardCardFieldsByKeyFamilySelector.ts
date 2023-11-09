@@ -12,5 +12,5 @@ export const savedBoardCardFieldsByKeyFamilySelector = selectorFamily({
     ({ get }) =>
       get(savedBoardCardFieldsFamilyState(viewId)).reduce<
         Record<string, BoardFieldDefinition<FieldMetadata>>
-      >((result, field) => ({ ...result, [field.fieldId]: field }), {}),
+      >((result, field) => ({ ...result, [field.fieldMetadataId]: field }), {}),
 });

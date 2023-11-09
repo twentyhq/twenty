@@ -4,11 +4,14 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
+import { parseFieldType } from '@/metadata/utils/parseFieldType';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { FieldDisplay } from '@/ui/object/field/components/FieldDisplay';
 import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
+import { BooleanFieldInput } from '@/ui/object/field/meta-types/input/components/BooleanFieldInput';
 import { entityFieldsFamilySelector } from '@/ui/object/field/states/selectors/entityFieldsFamilySelector';
+import { FieldMetadataType } from '~/generated/graphql';
 import { assertNotNull } from '~/utils/assert';
 
 import { dataTypes } from '../constants/dataTypes';
@@ -136,16 +139,20 @@ export const SettingsObjectFieldPreview = ({
           value={{
             entityId: objects[0]?.id ?? objectNamePlural,
             fieldDefinition: {
-              type: fieldType,
+              type: parseFieldType(fieldType as FieldMetadataType),
               Icon: FieldIcon,
-              fieldId: '',
+              fieldMetadataId: '',
               label: fieldLabel,
               metadata: { fieldName: fieldName || 'new-field' },
             },
             hotkeyScope: 'field-preview',
           }}
         >
-          <FieldDisplay />
+          {fieldType === 'BOOLEAN' ? (
+            <BooleanFieldInput readonly />
+          ) : (
+            <FieldDisplay />
+          )}
         </FieldContext.Provider>
       </StyledFieldPreview>
     </StyledContainer>

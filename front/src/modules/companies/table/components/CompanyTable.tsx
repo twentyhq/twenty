@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { companiesAvailableFieldDefinitions } from '@/companies/constants/companiesAvailableFieldDefinitions';
 import { getCompaniesOptimisticEffectDefinition } from '@/companies/graphql/optimistic-effect-definitions/getCompaniesOptimisticEffectDefinition';
@@ -8,14 +8,12 @@ import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCom
 import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { RecordTableEffect } from '@/ui/object/record-table/components/RecordTableEffect';
 import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
-import { TableContext } from '@/ui/object/record-table/contexts/TableContext';
-import { useUpsertRecordTableItem } from '@/ui/object/record-table/hooks/useUpsertRecordTableItem';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
-import { tableColumnsScopedState } from '@/ui/object/record-table/states/tableColumnsScopedState';
-import { tableFiltersScopedState } from '@/ui/object/record-table/states/tableFiltersScopedState';
-import { tableSortsScopedState } from '@/ui/object/record-table/states/tableSortsScopedState';
+import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
+import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
@@ -42,21 +40,21 @@ const StyledContainer = styled.div`
 export const CompanyTable = () => {
   const viewScopeId = 'company-table-view';
   const tableScopeId = 'companies';
-  const setTableColumns = useSetRecoilState(
-    tableColumnsScopedState(tableScopeId),
-  );
 
-  const setTableFilters = useSetRecoilState(
-    tableFiltersScopedState(tableScopeId),
-  );
-
-  const setTableSorts = useSetRecoilState(tableSortsScopedState(tableScopeId));
+  const {
+    setTableFilters,
+    setTableSorts,
+    setTableColumns,
+    upsertRecordTableItem,
+  } = useRecordTable({
+    recordTableScopeId: tableScopeId,
+  });
 
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
-  const upsertRecordTableItem = useUpsertRecordTableItem();
 
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
   const { persistViewFields } = useViewFields(viewScopeId);
+  const { setEntityCountInCurrentView } = useView({ viewScopeId });
 
   const { setContextMenuEntries, setActionBarEntries } =
     useCompanyTableContextMenuEntries();
@@ -112,12 +110,14 @@ export const CompanyTable = () => {
       }}
     >
       <StyledContainer>
-        <TableContext.Provider
-          value={{
-            onColumnsChange: useRecoilCallback(() => (columns) => {
-              persistViewFields(mapColumnDefinitionsToViewFields(columns));
-            }),
-          }}
+        <RecordTableScope
+          recordTableScopeId={tableScopeId}
+          onColumnsChange={useRecoilCallback(() => (columns) => {
+            persistViewFields(mapColumnDefinitionsToViewFields(columns));
+          })}
+          onEntityCountChange={useRecoilCallback(() => (entityCount) => {
+            setEntityCountInCurrentView(entityCount);
+          })}
         >
           <ViewBar
             optionsDropdownButton={<TableOptionsDropdown onImport={onImport} />}
@@ -142,7 +142,7 @@ export const CompanyTable = () => {
               variables: UpdateOneCompanyMutationVariables;
             }) => updateCompany(variables)}
           />
-        </TableContext.Provider>
+        </RecordTableScope>
       </StyledContainer>
     </ViewScope>
   );

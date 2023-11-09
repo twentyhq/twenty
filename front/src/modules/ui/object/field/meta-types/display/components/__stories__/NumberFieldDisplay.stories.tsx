@@ -25,7 +25,7 @@ const meta: Meta = {
         value={{
           entityId: '',
           fieldDefinition: {
-            fieldId: 'number',
+            fieldMetadataId: 'number',
             label: 'Number',
             type: 'NUMBER',
             metadata: {

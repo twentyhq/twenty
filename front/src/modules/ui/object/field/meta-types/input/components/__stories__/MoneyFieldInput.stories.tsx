@@ -43,7 +43,7 @@ const MoneyFieldInputWithContext = ({
     <div>
       <FieldContextProvider
         fieldDefinition={{
-          fieldId: 'moneyAmount',
+          fieldMetadataId: 'moneyAmount',
           label: 'MoneyAmout',
           type: 'MONEY_AMOUNT',
           metadata: {
