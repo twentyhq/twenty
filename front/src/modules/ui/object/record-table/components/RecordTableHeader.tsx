@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { IconPlus } from '@/ui/display/icon';
-import { IconButton } from '@/ui/input/button/components/IconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
@@ -25,15 +24,26 @@ import { SelectAllCheckbox } from './SelectAllCheckbox';
 const COLUMN_MIN_WIDTH = 104;
 
 const StyledColumnHeaderCell = styled.th<{
-  columnWidth: number;
+  columnWidth?: number;
   isResizing?: boolean;
 }>`
-  ${({ columnWidth }) => `
-    min-width: ${columnWidth}px;
-    width: ${columnWidth}px;
-  `}
+  ${({ columnWidth }) => {
+    if (columnWidth) {
+      return `
+      min-width: ${columnWidth}px;
+      width: ${columnWidth}px;
+      `;
+    }
+  }}
   position: relative;
   user-select: none;
+  ${({ theme }) => {
+    return `
+    &:hover {
+      background: ${theme.background.transparent.light};
+    };
+    `;
+  }};
   ${({ isResizing, theme }) => {
     if (isResizing) {
       return `&:after {
@@ -66,6 +76,24 @@ const StyledTableHead = styled.thead`
 `;
 
 const StyledColumnHeadContainer = styled.div`
+  position: relative;
+  z-index: 1;
+`;
+
+const StyledIconContainer = styled.div`
+  ${({ theme }) => {
+    return `
+    height: ${theme.spacing(8)};
+  &:hover {
+    background: ${theme.background.transparent.light};
+  };
+  min-width: ${theme.spacing(8)};
+  padding-left: ${theme.spacing(3)};
+  `;
+  }};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   position: relative;
   z-index: 1;
 `;
@@ -202,23 +230,24 @@ export const RecordTableHeader = () => {
         ))}
         <th>
           {hiddenTableColumns.length > 0 && (
-            <StyledColumnHeadContainer>
+            <StyledIconContainer>
               <DropdownScope
                 dropdownScopeId={HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID}
               >
                 <Dropdown
                   clickableComponent={
-                    <IconButton
-                      size="medium"
-                      variant="tertiary"
-                      Icon={IconPlus}
-                      position="middle"
-                      style={{
-                        width: '100%',
-                        justifyContent: 'left',
-                        paddingLeft: theme.spacing(2),
-                      }}
-                    />
+                    <IconPlus size={theme.icon.size.md} />
+                    // <IconButton
+                    //   size="medium"
+                    //   variant="tertiary"
+                    //   Icon={}
+                    //   position="middle"
+                    //   // style={{
+                    //   //   width: '100%',
+                    //   //   justifyContent: 'left',
+                    //   //   paddingLeft: theme.spacing(2),
+                    //   // }}
+                    // />
                   }
                   dropdownComponents={<RecordTableHeaderPlusButtonContent />}
                   dropdownPlacement="bottom-start"
@@ -227,7 +256,7 @@ export const RecordTableHeader = () => {
                   }}
                 />
               </DropdownScope>
-            </StyledColumnHeadContainer>
+            </StyledIconContainer>
           )}
         </th>
       </tr>
