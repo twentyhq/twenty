@@ -2,13 +2,14 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Command } from 'cmdk';
 
-import { CommandItemText } from '@/command-menu/components/CommandItemText';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
 import {
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
 } from '../internals/components/StyledMenuItemBase';
+
+import { MenuItemCommandHotKeys } from './MenuItemCommandHotKeys';
 
 const StyledMenuItemLabelText = styled(StyledMenuItemLabel)`
   color: ${({ theme }) => theme.font.color.primary};
@@ -51,17 +52,6 @@ const StyledMenuItemCommandContainer = styled(Command.Item)`
   }
   &[data-selected='true'] {
     background: ${({ theme }) => theme.background.tertiary};
-    /* Could be nice to add a caret like this for better accessibility in the future
-    But it needs to be consistend with other picker dropdown (e.g. company)
-    &:after {
-      background: ${({ theme }) => theme.background.quaternary};
-      content: '';
-      height: 100%;
-      left: 0;
-      position: absolute;
-      width: 3px;
-      z-index: ${({ theme }) => theme.lastLayerZIndex};
-    } */
   }
   &[data-disabled='true'] {
     color: ${({ theme }) => theme.font.color.light};
@@ -76,7 +66,8 @@ const StyledMenuItemCommandContainer = styled(Command.Item)`
 export type MenuItemCommandProps = {
   LeftIcon?: IconComponent;
   text: string;
-  command: string[];
+  firstHotKey?: string;
+  secondHotKey?: string;
   className?: string;
   onClick?: () => void;
 };
@@ -84,7 +75,8 @@ export type MenuItemCommandProps = {
 export const MenuItemCommand = ({
   LeftIcon,
   text,
-  command,
+  firstHotKey,
+  secondHotKey,
   className,
   onClick,
 }: MenuItemCommandProps) => {
@@ -102,7 +94,10 @@ export const MenuItemCommand = ({
           {text}
         </StyledMenuItemLabelText>
       </StyledMenuItemLeftContent>
-      <CommandItemText firstKey={command[0]} secondKey={command[1]} />
+      <MenuItemCommandHotKeys
+        firstHotKey={firstHotKey}
+        secondHotKey={secondHotKey}
+      />
     </StyledMenuItemCommandContainer>
   );
 };

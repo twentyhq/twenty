@@ -10,6 +10,7 @@ export const boxShadowLight = {
     grayScale.gray100,
     0.12,
   )}, 0px 2px 4px 0px ${rgba(grayScale.gray100, 0.04)}`,
+  underline: `0px 1px 0px 0px ${rgba(grayScale.gray100, 0.32)}`,
 };
 
 export const boxShadowDark = {
@@ -22,4 +23,5 @@ export const boxShadowDark = {
     grayScale.gray100,
     0.16,
   )}, 0px 2px 4px 0px ${rgba(grayScale.gray100, 0.08)}`,
+  underline: `0px 1px 0px 0px ${rgba(grayScale.gray100, 0.32)}`,
 };

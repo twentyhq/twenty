@@ -5,7 +5,6 @@ const StyledCommandTextContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
-  height: 100vh;
   justify-content: center;
 `;
 
@@ -18,38 +17,46 @@ const StyledCommandText = styled.div`
   white-space: nowrap;
 `;
 
-const StyledCommandKeys = styled.div`
+const StyledCommandKey = styled.div`
   align-items: center;
   background-color: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.strong};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: 0px 0px 1px ${({ theme }) => theme.boxShadow.strong};
+  box-shadow: ${({ theme }) => theme.boxShadow.underline};
   display: flex;
   flex-direction: column;
+
   height: ${({ theme }) => theme.spacing(5)};
+  height: 18px;
   justify-content: center;
   text-align: center;
   width: ${({ theme }) => theme.spacing(4)};
 `;
 
-export type CommandItemTextProps = {
-  firstKey?: string;
-  joinKey?: string;
-  secondKey?: string;
+export type MenuItemCommandHotKeysProps = {
+  firstHotKey?: string;
+  joinLabel?: string;
+  secondHotKey?: string;
 };
 
-export const CommandItemText = ({
-  firstKey,
-  secondKey,
-  joinKey = 'then',
-}: CommandItemTextProps) => {
+export const MenuItemCommandHotKeys = ({
+  firstHotKey,
+  secondHotKey,
+  joinLabel = 'then',
+}: MenuItemCommandHotKeysProps) => {
   return (
     <StyledCommandText>
-      <StyledCommandTextContainer>
-        <StyledCommandKeys>{firstKey}</StyledCommandKeys>
-        {joinKey}
-        <StyledCommandKeys>{secondKey}</StyledCommandKeys>
-      </StyledCommandTextContainer>
+      {firstHotKey && (
+        <StyledCommandTextContainer>
+          <StyledCommandKey>{firstHotKey}</StyledCommandKey>
+          {secondHotKey && (
+            <>
+              {joinLabel}
+              <StyledCommandKey>{secondHotKey}</StyledCommandKey>
+            </>
+          )}
+        </StyledCommandTextContainer>
+      )}
     </StyledCommandText>
   );
 };
