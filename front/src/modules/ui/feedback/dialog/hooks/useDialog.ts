@@ -1,10 +1,11 @@
-import { useSetRecoilState } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
-import { DialogOptions, dialogSetQueueState } from '../states/dialogState';
+import { DialogOptions } from '../types/DialogOptions';
+
+import { useDialogManager } from './useDialogManager';
 
 export const useDialog = () => {
-  const setDialogQueue = useSetRecoilState(dialogSetQueueState);
+  const { setDialogQueue } = useDialogManager();
 
   const enqueueDialog = (options?: Omit<DialogOptions, 'id'>) => {
     setDialogQueue({

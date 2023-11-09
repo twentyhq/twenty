@@ -1,30 +1,18 @@
 import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
 
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
-import { dialogInternalState } from '../states/dialogState';
+import { useDialogManagerInternal } from '../hooks/internal/useDialogManagerInternal';
+import { useDialogManager } from '../hooks/useDialogManager';
 import { DialogHotkeyScope } from '../types/DialogHotkeyScope';
 
 import { Dialog } from './Dialog';
 
 export const DialogManager = ({ children }: React.PropsWithChildren) => {
-  const [dialogInternal, setDialogInternal] =
-    useRecoilState(dialogInternalState);
+  const { dialogInternal } = useDialogManagerInternal();
+  const { closeDialog } = useDialogManager();
 
-  const {
-    setHotkeyScopeAndMemorizePreviousScope,
-    goBackToPreviousHotkeyScope,
-  } = usePreviousHotkeyScope();
-
-  // Handle dialog close event
-  const handleDialogClose = (id: string) => {
-    setDialogInternal((prevState) => ({
-      ...prevState,
-      queue: prevState.queue.filter((snackBar) => snackBar.id !== id),
-    }));
-    goBackToPreviousHotkeyScope();
-  };
+  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
 
   useEffect(() => {
     if (dialogInternal.queue.length === 0) {
@@ -41,7 +29,7 @@ export const DialogManager = ({ children }: React.PropsWithChildren) => {
         <Dialog
           key={id}
           {...{ title, message, buttons, id, children }}
-          onClose={() => handleDialogClose(id)}
+          onClose={() => closeDialog(id)}
         />
       ))}
     </>

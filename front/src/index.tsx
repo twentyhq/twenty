@@ -8,6 +8,7 @@ import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { DialogManager } from '@/ui/feedback/dialog/components/DialogManager';
+import { DialogManagerScope } from '@/ui/feedback/dialog/scopes/DialogManagerScope';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar/components/SnackBarProvider';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { ThemeType } from '@/ui/theme/constants/theme';
@@ -38,11 +39,13 @@ root.render(
                 <PageChangeEffect />
                 <AppThemeProvider>
                   <SnackBarProvider>
-                    <DialogManager>
-                      <StrictMode>
-                        <App />
-                      </StrictMode>
-                    </DialogManager>
+                    <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                      <DialogManager>
+                        <StrictMode>
+                          <App />
+                        </StrictMode>
+                      </DialogManager>
+                    </DialogManagerScope>
                   </SnackBarProvider>
                 </AppThemeProvider>
               </ApolloMetadataClientProvider>
