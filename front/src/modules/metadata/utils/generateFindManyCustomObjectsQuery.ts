@@ -12,7 +12,9 @@ export const generateFindManyCustomObjectsQuery = ({
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   return gql`
-    query FindMany${objectMetadataItem.namePlural}($filter: ${capitalize(
+    query FindMany${capitalize(
+      objectMetadataItem.namePlural,
+    )}($filter: ${capitalize(
     objectMetadataItem.nameSingular,
   )}FilterInput, $orderBy: ${capitalize(
     objectMetadataItem.nameSingular,

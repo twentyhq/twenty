@@ -35,59 +35,6 @@ export const useUpdateOneObject = ({
               ...input,
             },
           },
-          // update: (cache, result, options) => {
-          //   console.log({
-          //     cache,
-          //     result,
-          //     options,
-          //     objectNamePlural,
-          //     objectNameSingular,
-          //   });
-
-          //   if (!objectNamePlural || !objectNameSingular) return;
-
-          //   const graphQLFieldForUpdateOneObjectMutation =
-          //     getUpdateOneObjectMutationGraphQLField({
-          //       objectNameSingular,
-          //     });
-
-          //   console.log({ graphQLFieldForUpdateOneObjectMutation });
-
-          //   const updatedObject =
-          //     result.data?.[graphQLFieldForUpdateOneObjectMutation];
-
-          //   cache.modify({
-          //     fields: {
-          //       [objectNamePlural]: (
-          //         existingObjectPaginatedResult: PaginatedObjectTypeResults<{
-          //           id: string;
-          //         }>,
-          //       ) => {
-          //         console.log({
-          //           existingObjectPaginatedResult,
-          //         });
-          //         return produce(existingObjectPaginatedResult, (draft) => {
-          //           const existingItemIndex = draft.edges.findIndex(
-          //             (edge) => edge.node.id === idToUpdate,
-          //           );
-
-          //           console.log({
-          //             existingItemIndex,
-          //             idToUpdate,
-          //           });
-
-          //           if (existingItemIndex > -1) {
-          //             draft.edges[existingItemIndex].node = {
-          //               ...updatedObject,
-          //             };
-          //           }
-
-          //           return draft;
-          //         });
-          //       },
-          //     },
-          //   });
-          // },
         });
       }
     : undefined;

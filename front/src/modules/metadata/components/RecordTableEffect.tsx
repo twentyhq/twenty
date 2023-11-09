@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
-import { useSetRecordTableData } from '@/ui/object/record-table/hooks/useSetRecordTableData';
 import { availableTableColumnsScopedState } from '@/ui/object/record-table/states/availableTableColumnsScopedState';
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
@@ -15,10 +14,7 @@ export const RecordTableEffect = () => {
     filterDefinitions,
     sortDefinitions,
     foundObjectMetadataItem,
-    objectNamePlural,
   } = useObjectMetadataItemInContext();
-
-  console.log('1');
 
   const {
     setAvailableSortDefinitions,
@@ -28,33 +24,7 @@ export const RecordTableEffect = () => {
     setViewObjectId,
   } = useView();
 
-  const setRecordTableData = useSetRecordTableData();
-
-  const { loading, objects } = useTableObjects();
-
-  // const [fetchMoreObjectsFamily, setFetchMoreObjectsFamily] = useRecoilState(
-  //   fetchMoreObjectsFamilyState(objectNamePlural ?? ''),
-  // );
-
-  // useEffect(() => {
-  //   if (!fetchMoreObjectsFamily) {
-  //     console.log({ objectNamePlural, fetchMoreObjects });
-  //     setFetchMoreObjectsFamily({ fetchMore: fetchMoreObjects });
-  //   }
-  // }, [
-  //   fetchMoreObjects,
-  //   setFetchMoreObjectsFamily,
-  //   objectNamePlural,
-  //   fetchMoreObjectsFamily,
-  // ]);
-
-  useEffect(() => {
-    if (!loading) {
-      const entities = objects ?? [];
-
-      setRecordTableData(entities);
-    }
-  }, [objects, setRecordTableData, loading]);
+  useTableObjects();
 
   const tableScopeId = foundObjectMetadataItem?.namePlural ?? '';
 
