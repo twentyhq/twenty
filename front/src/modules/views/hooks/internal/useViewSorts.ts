@@ -21,7 +21,9 @@ export const useViewSorts = (viewScopeId: string) => {
   });
   const apolloClient = useApolloClient();
 
-  const { currentViewSortsState } = useViewScopedStates();
+  const { currentViewSortsState } = useViewScopedStates({
+    customViewScopeId: viewScopeId,
+  });
 
   const persistViewSorts = useRecoilCallback(
     ({ snapshot, set }) =>

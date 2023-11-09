@@ -12,10 +12,8 @@ import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';
 import { RecordTableActionBar } from '@/ui/object/record-table/action-bar/components/RecordTableActionBar';
 import { RecordTableContextMenu } from '@/ui/object/record-table/context-menu/components/RecordTableContextMenu';
-import { useUpsertRecordTableItem } from '@/ui/object/record-table/hooks/useUpsertRecordTableItem';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { useUpsertTableRowId } from '@/ui/object/record-table/hooks/useUpsertTableRowId';
-import { TableRecoilScopeContext } from '@/ui/object/record-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useInsertOnePersonMutation } from '~/generated/graphql';
 
 const StyledTableContainer = styled.div`
@@ -25,7 +23,9 @@ const StyledTableContainer = styled.div`
 
 export const People = () => {
   const [insertOnePerson] = useInsertOnePersonMutation();
-  const upsertRecordTableItem = useUpsertRecordTableItem();
+  const { upsertRecordTableItem } = useRecordTable({
+    recordTableScopeId: 'people',
+  });
   const upsertTableRowIds = useUpsertTableRowId();
   const { triggerOptimisticEffects } = useOptimisticEffect();
 
@@ -57,16 +57,11 @@ export const People = () => {
           <PageAddButton onClick={handleAddButtonClick} />
         </PageHeader>
         <PageBody>
-          <RecoilScope
-            scopeId="people"
-            CustomRecoilScopeContext={TableRecoilScopeContext}
-          >
-            <StyledTableContainer>
-              <PersonTable />
-            </StyledTableContainer>
-            <RecordTableActionBar />
-            <RecordTableContextMenu />
-          </RecoilScope>
+          <StyledTableContainer>
+            <PersonTable />
+          </StyledTableContainer>
+          <RecordTableActionBar />
+          <RecordTableContextMenu />
         </PageBody>
       </PageContainer>
     </SpreadsheetImportProvider>

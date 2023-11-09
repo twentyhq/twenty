@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
 import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
+import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { useUpdateOneCompanyMutation } from '~/generated/graphql';
@@ -21,14 +22,20 @@ export const CompanyTableMockMode = () => {
   return (
     <StyledContainer>
       <ViewScope viewScopeId="company-table-mock-mode">
-        <CompanyTableEffect />
-        <CompanyTableMockDataEffect />
-        <ViewBar
-          optionsDropdownButton={<TableOptionsDropdown />}
-          optionsDropdownScopeId={TableOptionsDropdownId}
-        />
+        <RecordTableScope
+          recordTableScopeId="company-table-mock-mode-table"
+          onColumnsChange={() => {}}
+          onEntityCountChange={() => {}}
+        >
+          <CompanyTableEffect />
+          <CompanyTableMockDataEffect />
+          <ViewBar
+            optionsDropdownButton={<TableOptionsDropdown />}
+            optionsDropdownScopeId={TableOptionsDropdownId}
+          />
 
-        <RecordTable updateEntityMutation={useUpdateOneCompanyMutation} />
+          <RecordTable updateEntityMutation={useUpdateOneCompanyMutation} />
+        </RecordTableScope>
       </ViewScope>
     </StyledContainer>
   );

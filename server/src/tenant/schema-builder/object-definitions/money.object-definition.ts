@@ -16,6 +16,7 @@ export const moneyObjectDefinition = {
       name: 'amount',
       label: 'Amount',
       targetColumnMap: { value: 'amount' },
+      isNullable: true,
     },
     {
       id: 'currency',

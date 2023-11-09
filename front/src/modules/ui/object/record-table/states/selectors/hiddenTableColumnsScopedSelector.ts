@@ -8,10 +8,10 @@ export const hiddenTableColumnsScopedSelector = selectorFamily({
   get:
     (scopeId: string) =>
     ({ get }) => {
-      const columns = get(tableColumnsScopedState(scopeId));
+      const columns = get(tableColumnsScopedState({ scopeId }));
       const columnKeys = columns.map(({ fieldMetadataId }) => fieldMetadataId);
       const otherAvailableColumns = get(
-        availableTableColumnsScopedState(scopeId),
+        availableTableColumnsScopedState({ scopeId }),
       ).filter(({ fieldMetadataId }) => !columnKeys.includes(fieldMetadataId));
 
       return [

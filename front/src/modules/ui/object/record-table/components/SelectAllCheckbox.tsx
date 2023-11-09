@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { Checkbox } from '@/ui/input/components/Checkbox';
 
-import { useSelectAllRows } from '../hooks/useSelectAllRows';
+import { useRecordTable } from '../hooks/useRecordTable';
+import { allRowsSelectedStatusSelector } from '../states/selectors/allRowsSelectedStatusSelector';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -14,7 +16,8 @@ const StyledContainer = styled.div`
 `;
 
 export const SelectAllCheckbox = () => {
-  const { selectAllRows, allRowsSelectedStatus } = useSelectAllRows();
+  const allRowsSelectedStatus = useRecoilValue(allRowsSelectedStatusSelector);
+  const { selectAllRows } = useRecordTable();
 
   const checked = allRowsSelectedStatus === 'all';
   const indeterminate = allRowsSelectedStatus === 'some';

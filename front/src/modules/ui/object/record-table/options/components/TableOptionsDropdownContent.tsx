@@ -11,15 +11,12 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useView } from '@/views/hooks/useView';
 
+import { useRecordTableScopedStates } from '../../hooks/internal/useRecordTableScopedStates';
 import { useTableColumns } from '../../hooks/useTableColumns';
-import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
-import { hiddenTableColumnsScopedSelector } from '../../states/selectors/hiddenTableColumnsScopedSelector';
-import { visibleTableColumnsScopedSelector } from '../../states/selectors/visibleTableColumnsScopedSelector';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 
 type TableOptionsMenu = 'fields';
@@ -43,14 +40,11 @@ export const TableOptionsDropdownContent = ({
 
   const viewEditInputRef = useRef<HTMLInputElement>(null);
 
-  const visibleTableColumns = useRecoilScopedValue(
-    visibleTableColumnsScopedSelector,
-    TableRecoilScopeContext,
-  );
-  const hiddenTableColumns = useRecoilScopedValue(
-    hiddenTableColumnsScopedSelector,
-    TableRecoilScopeContext,
-  );
+  const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
+    useRecordTableScopedStates();
+
+  const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector);
+  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
 
   const { handleColumnVisibilityChange, handleColumnReorder } =
     useTableColumns();
