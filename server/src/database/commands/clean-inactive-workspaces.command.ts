@@ -19,7 +19,6 @@ interface DataCleanInactiveOptions {
   dryRun?: boolean;
   confirmation?: boolean;
   workspaceId?: string;
-  boundaries?: Array<number>;
 }
 
 interface ActivityReport {
@@ -76,28 +75,6 @@ export class DataCleanInactiveCommand extends CommandRunner {
   })
   parseSameAsSeedDays(val: string): number {
     return Number(val);
-  }
-
-  @Option({
-    flags: '-b, --boundaries [boundaries]',
-    description:
-      'Set boundaries for batch cleaning, separated by a comma -> eg: 25,50',
-  })
-  parseBoundaries(val: string): Array<number> {
-    const boundaries = val.split(',');
-    if (boundaries.length !== 2) {
-      console.error(
-        'You must provide 2 integer boundaries separated by a comma, eg: 25,50',
-      );
-      throw new Error();
-    }
-    if (Number(boundaries[0]) > Number(boundaries[1])) {
-      console.error(
-        'First boundary should be lower that second boundary, eg: 25,50',
-      );
-      throw new Error();
-    }
-    return [Number(boundaries[0]), Number(boundaries[1])];
   }
 
   @Option({
@@ -262,14 +239,10 @@ export class DataCleanInactiveCommand extends CommandRunner {
     const where = options.workspaceId
       ? { id: { equals: options.workspaceId } }
       : {};
-    const workspaces = await this.prismaService.client.workspace.findMany({
+    return await this.prismaService.client.workspace.findMany({
       where,
       orderBy: [{ createdAt: 'asc' }],
     });
-    if (options.boundaries) {
-      return workspaces.slice(options.boundaries[0], options.boundaries[1] + 1);
-    }
-    return workspaces;
   }
 
   async findInactiveWorkspaces(workspaces, result) {
