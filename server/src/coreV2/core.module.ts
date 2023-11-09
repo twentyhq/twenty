@@ -8,7 +8,8 @@ import GraphQLJSON from 'graphql-type-json';
 // eslint-disable-next-line no-restricted-imports
 import config from '../../ormconfig';
 
-import { UserModule } from './userv2/user.module';
+import { UserModule } from './user/user.module';
+import { WorkspaceModule } from './workspace/workspace.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { UserModule } from './userv2/user.module';
       path: '/graphqlv2',
     }),
     UserModule,
+    WorkspaceModule,
   ],
   exports: [UserModule],
 })

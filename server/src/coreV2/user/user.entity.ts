@@ -1,9 +1,13 @@
+import { ID } from '@nestjs/graphql';
+
+import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @IDField(() => ID)
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   firstName: string;
