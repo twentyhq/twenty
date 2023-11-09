@@ -1,14 +1,14 @@
 import { useRecoilCallback } from 'recoil';
 
 import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
-import { useResetTableRowSelection } from '@/ui/object/record-table/hooks/useResetTableRowSelection';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { isFetchingRecordTableDataState } from '@/ui/object/record-table/states/isFetchingRecordTableDataState';
 import { numberOfTableRowsState } from '@/ui/object/record-table/states/numberOfTableRowsState';
 import { tableRowIdsState } from '@/ui/object/record-table/states/tableRowIdsState';
 import { useView } from '@/views/hooks/useView';
 
 export const useSetObjectRecordTableData = () => {
-  const resetTableRowSelection = useResetTableRowSelection();
+  const { resetTableRowSelection } = useRecordTable();
   const { setEntityCountInCurrentView } = useView();
 
   return useRecoilCallback(

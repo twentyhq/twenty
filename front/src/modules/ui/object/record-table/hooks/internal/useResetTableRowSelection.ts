@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
-import { isRowSelectedFamilyState } from '../states/isRowSelectedFamilyState';
-import { tableRowIdsState } from '../states/tableRowIdsState';
+import { isRowSelectedFamilyState } from '../../states/isRowSelectedFamilyState';
+import { tableRowIdsState } from '../../states/tableRowIdsState';
 
 export const useResetTableRowSelection = () =>
   useRecoilCallback(

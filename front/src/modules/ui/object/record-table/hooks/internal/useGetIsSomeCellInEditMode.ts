@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
-import { currentTableCellInEditModePositionState } from '../states/currentTableCellInEditModePositionState';
-import { isTableCellInEditModeFamilyState } from '../states/isTableCellInEditModeFamilyState';
+import { currentTableCellInEditModePositionState } from '../../states/currentTableCellInEditModePositionState';
+import { isTableCellInEditModeFamilyState } from '../../states/isTableCellInEditModeFamilyState';
 
 export const useGetIsSomeCellInEditMode = () => {
   return useRecoilCallback(

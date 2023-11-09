@@ -3,7 +3,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useOptimisticEvict } from '@/apollo/optimistic-effect/hooks/useOptimisticEvict';
 import { GET_PIPELINES } from '@/pipeline/graphql/queries/getPipelines';
-import { useResetTableRowSelection } from '@/ui/object/record-table/hooks/useResetTableRowSelection';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { selectedRowIdsSelector } from '@/ui/object/record-table/states/selectors/selectedRowIdsSelector';
 import { tableRowIdsState } from '@/ui/object/record-table/states/tableRowIdsState';
 import { useDeleteManyCompaniesMutation } from '~/generated/graphql';
@@ -11,7 +11,7 @@ import { useDeleteManyCompaniesMutation } from '~/generated/graphql';
 export const useDeleteSelectedComapnies = () => {
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
-  const resetRowSelection = useResetTableRowSelection();
+  const { resetTableRowSelection } = useRecordTable();
 
   const [deleteCompanies] = useDeleteManyCompaniesMutation({
     refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
@@ -23,7 +23,7 @@ export const useDeleteSelectedComapnies = () => {
   const deleteSelectedCompanies = async () => {
     const rowIdsToDelete = selectedRowIds;
 
-    resetRowSelection();
+    resetTableRowSelection();
 
     await deleteCompanies({
       variables: {

@@ -1,8 +1,8 @@
 import { useRecoilCallback } from 'recoil';
 
-import { currentTableCellInEditModePositionState } from '../states/currentTableCellInEditModePositionState';
-import { isTableCellInEditModeFamilyState } from '../states/isTableCellInEditModeFamilyState';
-import { TableCellPosition } from '../types/TableCellPosition';
+import { currentTableCellInEditModePositionState } from '../../states/currentTableCellInEditModePositionState';
+import { isTableCellInEditModeFamilyState } from '../../states/isTableCellInEditModeFamilyState';
+import { TableCellPosition } from '../../types/TableCellPosition';
 
 export const useMoveEditModeToTableCellPosition = () =>
   useRecoilCallback(({ set, snapshot }) => {

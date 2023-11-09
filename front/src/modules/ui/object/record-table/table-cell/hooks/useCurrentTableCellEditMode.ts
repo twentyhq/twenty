@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { useMoveEditModeToTableCellPosition } from '../../hooks/useMoveEditModeToCellPosition';
+import { useMoveEditModeToTableCellPosition } from '../../hooks/internal/useMoveEditModeToCellPosition';
 import { isTableCellInEditModeFamilyState } from '../../states/isTableCellInEditModeFamilyState';
 
 import { useCurrentTableCellPosition } from './useCurrentCellPosition';

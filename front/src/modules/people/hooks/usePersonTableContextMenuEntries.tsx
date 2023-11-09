@@ -11,7 +11,7 @@ import {
 } from '@/ui/display/icon';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
-import { useResetTableRowSelection } from '@/ui/object/record-table/hooks/useResetTableRowSelection';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { selectedRowIdsSelector } from '@/ui/object/record-table/states/selectors/selectedRowIdsSelector';
 import { tableRowIdsState } from '@/ui/object/record-table/states/tableRowIdsState';
 import {
@@ -30,7 +30,7 @@ export const usePersonTableContextMenuEntries = () => {
   const createActivityForPeople = useCreateActivityForPeople();
 
   const setTableRowIds = useSetRecoilState(tableRowIdsState);
-  const resetRowSelection = useResetTableRowSelection();
+  const { resetTableRowSelection } = useRecordTable();
 
   const { data } = useGetFavoritesQuery();
   const favorites = data?.findFavorites;
@@ -48,7 +48,7 @@ export const usePersonTableContextMenuEntries = () => {
       !!selectedPersonId &&
       !!favorites?.find((favorite) => favorite.person?.id === selectedPersonId);
 
-    resetRowSelection();
+    resetTableRowSelection();
     if (isFavorite) deletePersonFavorite(selectedPersonId);
     else insertPersonFavorite(selectedPersonId);
   });

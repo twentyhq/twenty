@@ -10,10 +10,12 @@ import { FieldMetadata } from '../../field/types/FieldMetadata';
 import { onEntityCountChangeScopedState } from '../states/onEntityCountChange';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
+import { useGetIsSomeCellInEditMode } from './internal/useGetIsSomeCellInEditMode';
 import { useLeaveTableFocus } from './internal/useLeaveTableFocus';
 import { useRecordTableScopedStates } from './internal/useRecordTableScopedStates';
+import { useResetTableRowSelection } from './internal/useResetTableRowSelection';
 import { useSetRecordTableData } from './internal/useSetRecordTableData';
-import { useGetIsSomeCellInEditMode } from './useGetIsSomeCellInEditMode';
+import { useSetRowSelectedState } from './useSetRowSelectedState';
 
 type useRecordTableProps = {
   recordTableScopeId?: string;
@@ -84,6 +86,10 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const getIsSomeCellInEditMode = useGetIsSomeCellInEditMode();
 
+  const setRowSelectedState = useSetRowSelectedState();
+
+  const resetTableRowSelection = useResetTableRowSelection();
+
   return {
     scopeId,
     onColumnsChange,
@@ -94,5 +100,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setTableColumns,
     leaveTableFocus,
     getIsSomeCellInEditMode,
+    setRowSelectedState,
+    resetTableRowSelection,
   };
 };

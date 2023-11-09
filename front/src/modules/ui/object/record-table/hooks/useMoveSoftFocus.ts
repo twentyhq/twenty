@@ -4,8 +4,8 @@ import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
 import { numberOfTableColumnsScopedSelector } from '../states/selectors/numberOfTableColumnsScopedSelector';
 import { softFocusPositionState } from '../states/softFocusPositionState';
 
+import { useSetSoftFocusPosition } from './internal/useSetSoftFocusPosition';
 import { useRecordTable } from './useRecordTable';
-import { useSetSoftFocusPosition } from './useSetSoftFocusPosition';
 
 // TODO: stories
 

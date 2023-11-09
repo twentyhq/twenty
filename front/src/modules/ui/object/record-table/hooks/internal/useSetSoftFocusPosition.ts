@@ -1,9 +1,9 @@
 import { useRecoilCallback } from 'recoil';
 
-import { isSoftFocusActiveState } from '../states/isSoftFocusActiveState';
-import { isSoftFocusOnTableCellFamilyState } from '../states/isSoftFocusOnTableCellFamilyState';
-import { softFocusPositionState } from '../states/softFocusPositionState';
-import { TableCellPosition } from '../types/TableCellPosition';
+import { isSoftFocusActiveState } from '../../states/isSoftFocusActiveState';
+import { isSoftFocusOnTableCellFamilyState } from '../../states/isSoftFocusOnTableCellFamilyState';
+import { softFocusPositionState } from '../../states/softFocusPositionState';
+import { TableCellPosition } from '../../types/TableCellPosition';
 
 export const useSetSoftFocusPosition = () =>
   useRecoilCallback(({ set, snapshot }) => {

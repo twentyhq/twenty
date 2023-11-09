@@ -5,7 +5,8 @@ import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFa
 import { isFetchingRecordTableDataState } from '../../states/isFetchingRecordTableDataState';
 import { numberOfTableRowsState } from '../../states/numberOfTableRowsState';
 import { tableRowIdsState } from '../../states/tableRowIdsState';
-import { useResetTableRowSelection } from '../useResetTableRowSelection';
+
+import { useResetTableRowSelection } from './useResetTableRowSelection';
 
 type useSetRecordTableDataProps = {
   onEntityCountChange: (entityCount: number) => void;
