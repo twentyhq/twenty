@@ -48,7 +48,7 @@ const RelationFieldInputWithContext = ({
         fieldDefinition={{
           fieldId: 'relation',
           label: 'Relation',
-          type: 'relation',
+          type: 'RELATION',
           metadata: {
             fieldName: 'Relation',
             relationType: Entity.Person,

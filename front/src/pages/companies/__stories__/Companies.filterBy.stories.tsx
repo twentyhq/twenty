@@ -1,7 +1,6 @@
 import { expect } from '@storybook/jest';
 import { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
-import assert from 'assert';
 
 import { AppPath } from '@/types/AppPath';
 import {
@@ -9,6 +8,7 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockedCompaniesData } from '~/testing/mock-data/companies';
 import { sleep } from '~/testing/sleep';
 
 import { Companies } from '../Companies';
@@ -28,81 +28,92 @@ const meta: Meta<PageDecoratorArgs> = {
 export default meta;
 
 export const FilterByName: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    const filterButton = await canvas.findByText('Filter');
-    await userEvent.click(filterButton);
-
-    const nameFilterButton = await canvas.findByTestId('select-filter-0');
-
-    assert(nameFilterButton);
-
-    await userEvent.click(nameFilterButton);
-
-    const nameInput = canvas.getByPlaceholderText('Name');
-    await userEvent.type(nameInput, 'Air', {
-      delay: 200,
+    await step('Wait for rows to appear', async () => {
+      await canvas.findByText(
+        mockedCompaniesData[0].name,
+        {},
+        { timeout: 3000 },
+      );
     });
 
-    await sleep(200);
-
-    expect(await canvas.findByText('Airbnb')).toBeInTheDocument();
-    expect(await canvas.findByText('Aircall')).toBeInTheDocument();
-    expect(await canvas.queryAllByText('Qonto')).toStrictEqual([]);
-
-    const nameFilter = canvas.getAllByText('Name').find((item) => {
-      return item.parentElement?.textContent?.includes('Name:  Air');
+    await step('Click on filter button', async () => {
+      const filterButton = canvas.getByText('Filter');
+      await userEvent.click(filterButton);
     });
-    expect(nameFilter).toBeInTheDocument();
-  },
-};
 
-export const FilterByAccountOwner: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    await step('Select name filter', async () => {
+      const nameFilterButton = canvas.getByTestId('select-filter-0');
+      await userEvent.click(nameFilterButton);
 
-    const filterButton = await canvas.findByText('Filter');
-    await userEvent.click(filterButton);
+      const nameInput = canvas.getByPlaceholderText('Name');
+      await userEvent.type(nameInput, 'Air', { delay: 200 });
 
-    const accountOwnerFilterButton = await canvas.findByTestId(
-      'select-filter-5',
-    );
-
-    assert(accountOwnerFilterButton);
-
-    await userEvent.click(accountOwnerFilterButton);
-
-    const accountOwnerNameInput = await canvas.findByPlaceholderText(
-      'Account owner',
-    );
-    await userEvent.type(accountOwnerNameInput, 'Char', {
-      delay: 200,
+      const nameFilter = canvas.getAllByText(
+        (_, element) => !!element?.textContent?.includes('Name:  Air'),
+      );
+      expect(nameFilter).not.toHaveLength(0);
     });
 
     await sleep(1000);
 
-    const charlesChip = (await canvas.findAllByTestId('menu-item')).find(
-      (item) => {
-        return item.textContent?.includes('Charles Test');
-      },
-    );
+    await step('Check filtered rows', async () => {
+      expect(canvas.getByText('Airbnb')).toBeVisible();
+      expect(canvas.getByText('Aircall')).toBeVisible();
+      expect(canvas.queryByText('Qonto')).toBeNull();
+    });
+  },
+};
 
-    assert(charlesChip);
+export const FilterByAccountOwner: Story = {
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
 
-    await userEvent.click(charlesChip);
+    await step('Wait for rows to appear', async () => {
+      await canvas.findByText(
+        mockedCompaniesData[0].name,
+        {},
+        { timeout: 3000 },
+      );
+    });
 
-    // TODO: fix msw where clauses
-    // expect(await canvas.findByText('Airbnb')).toBeInTheDocument();
-    // await expect(canvas.queryAllByText('Qonto')).toStrictEqual([]);
+    await step('Click on filter button', async () => {
+      const filterButton = canvas.getByText('Filter');
+      await userEvent.click(filterButton);
+    });
 
-    const accountOwnerFilter = canvas
-      .getAllByText('Account owner')
-      .find((item) => {
-        return item.parentElement?.textContent?.includes(
-          'Account owner:  Charles Test',
-        );
-      });
-    expect(accountOwnerFilter).toBeInTheDocument();
+    await step('Select account owner filter', async () => {
+      const accountOwnerFilterButton = canvas.getByTestId('select-filter-5');
+      await userEvent.click(accountOwnerFilterButton);
+
+      const accountOwnerNameInput =
+        canvas.getByPlaceholderText('Account owner');
+      await userEvent.type(accountOwnerNameInput, 'Char', { delay: 200 });
+
+      const charlesChip = await canvas.findByRole(
+        'listitem',
+        {
+          name: (_, element) =>
+            !!element?.textContent?.includes('Charles Test'),
+        },
+        { timeout: 1000 },
+      );
+      await userEvent.click(charlesChip);
+
+      const accountOwnerFilter = canvas.getAllByText(
+        (_, element) =>
+          !!element?.textContent?.includes('Account owner:  Charles Test'),
+      );
+      expect(accountOwnerFilter).not.toHaveLength(0);
+    });
+
+    await sleep(1000);
+
+    await step('Check filtered rows', async () => {
+      expect(canvas.getByText('Airbnb')).toBeVisible();
+      expect(canvas.queryByText('Qonto')).toBeNull();
+    });
   },
 };

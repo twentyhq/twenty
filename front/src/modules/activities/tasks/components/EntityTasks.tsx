@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
+import { ObjectFilterDropdownScope } from '@/ui/object/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 const StyledContainer = styled.div`
@@ -21,7 +22,9 @@ export const EntityTasks = ({
   return (
     <StyledContainer>
       <RecoilScope CustomRecoilScopeContext={TasksRecoilScopeContext}>
-        <TaskGroups entity={entity} showAddButton />
+        <ObjectFilterDropdownScope filterScopeId="entity-tasks-filter-scope">
+          <TaskGroups entity={entity} showAddButton />
+        </ObjectFilterDropdownScope>
       </RecoilScope>
     </StyledContainer>
   );

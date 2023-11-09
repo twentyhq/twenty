@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
+import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/display/icon';
@@ -12,8 +13,8 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
+import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useView } from '@/views/hooks/useView';
-import { useViewGetStates } from '@/views/hooks/useViewGetStates';
 
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { TableRecoilScopeContext } from '../../states/recoil-scope-contexts/TableRecoilScopeContext';
@@ -29,7 +30,10 @@ export const TableOptionsDropdownContent = ({
   onImport?: () => void;
 }) => {
   const { setViewEditMode, handleViewNameSubmit } = useView();
-  const { viewEditMode, currentView } = useViewGetStates();
+  const { viewEditModeState, currentViewSelector } = useViewScopedStates();
+
+  const viewEditMode = useRecoilValue(viewEditModeState);
+  const currentView = useRecoilValue(currentViewSelector);
 
   const { closeDropdown } = useDropdown();
 

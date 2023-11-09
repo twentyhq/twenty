@@ -24,7 +24,7 @@ export const turnFilterIntoWhereClause = (
       };
     default:
       switch (filter.definition.type) {
-        case 'text':
+        case 'TEXT':
           switch (filter.operand) {
             case ViewFilterOperand.Contains:
               return {
@@ -47,7 +47,7 @@ export const turnFilterIntoWhereClause = (
                 `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
               );
           }
-        case 'number':
+        case 'NUMBER':
           switch (filter.operand) {
             case ViewFilterOperand.GreaterThan:
               return {
@@ -66,7 +66,7 @@ export const turnFilterIntoWhereClause = (
                 `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
               );
           }
-        case 'date':
+        case 'DATE':
           switch (filter.operand) {
             case ViewFilterOperand.GreaterThan:
               return {
@@ -85,7 +85,7 @@ export const turnFilterIntoWhereClause = (
                 `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
               );
           }
-        case 'entity':
+        case 'ENTITY':
           switch (filter.operand) {
             case ViewFilterOperand.Is:
               return {

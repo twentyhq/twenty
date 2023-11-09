@@ -103,4 +103,8 @@ export class TenantMigrationService {
       isCustom: true,
     });
   }
+
+  public async delete(workspaceId: string) {
+    await this.tenantMigrationRepository.delete({ workspaceId });
+  }
 }

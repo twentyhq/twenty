@@ -18,6 +18,7 @@ export const savedViewFieldByKeyScopedFamilySelector = selectorFamily({
       if (viewId === undefined) {
         return undefined;
       }
+
       return get(
         savedViewFieldsScopedFamilyState({
           scopeId: viewScopeId,

@@ -2,6 +2,7 @@ import { ApolloClient, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
 import { FieldType } from '@/ui/object/field/types/FieldType';
+import { FieldMetadataType } from '~/generated/graphql';
 import {
   CreateOneMetadataFieldMutation,
   CreateOneMetadataFieldMutationVariables,
@@ -12,10 +13,12 @@ import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
 
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
-type CreateOneMetadataFieldArgs =
-  CreateOneMetadataFieldMutationVariables['input']['field'] & {
-    type: FieldType;
-  };
+type CreateOneMetadataFieldArgs = Omit<
+  CreateOneMetadataFieldMutationVariables['input']['field'],
+  'type'
+> & {
+  type: FieldType;
+};
 
 export const useCreateOneMetadataField = () => {
   const apolloMetadataClient = useApolloMetadataClient();
@@ -33,6 +36,7 @@ export const useCreateOneMetadataField = () => {
         input: {
           field: {
             ...input,
+            type: input.type as FieldMetadataType, // Todo improve typing once we have aligned backend and frontend
           },
         },
       },

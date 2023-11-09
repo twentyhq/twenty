@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
 import { useBoardActionBarEntries } from '@/ui/layout/board/hooks/useBoardActionBarEntries';
@@ -11,10 +11,10 @@ import { boardCardFieldsScopedState } from '@/ui/layout/board/states/boardCardFi
 import { isBoardLoadedState } from '@/ui/layout/board/states/isBoardLoadedState';
 import { turnFilterIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFilterIntoWhereClause';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useView } from '@/views/hooks/useView';
-import { useViewGetStates } from '@/views/hooks/useViewGetStates';
 import { ViewType } from '@/views/types/ViewType';
-import { viewFieldsToBoardFieldDefinitions } from '@/views/utils/viewFieldsToBoardFieldDefinitions';
+import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewFieldsToBoardFieldDefinitions';
 import {
   Pipeline,
   PipelineProgressableType,
@@ -37,7 +37,11 @@ export const HooksCompanyBoardEffect = () => {
     setViewType,
   } = useView();
 
-  const { currentViewFilters, currentViewFields } = useViewGetStates();
+  const { currentViewFiltersState, currentViewFieldsState } =
+    useViewScopedStates();
+
+  const currentViewFields = useRecoilValue(currentViewFieldsState);
+  const currentViewFilters = useRecoilValue(currentViewFiltersState);
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
 
@@ -159,7 +163,7 @@ export const HooksCompanyBoardEffect = () => {
   useEffect(() => {
     if (currentViewFields) {
       setBoardCardFields(
-        viewFieldsToBoardFieldDefinitions(
+        mapViewFieldsToBoardFieldDefinitions(
           currentViewFields,
           pipelineAvailableFieldDefinitions,
         ),

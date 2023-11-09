@@ -21,7 +21,7 @@ export const MoneyFieldInput = ({
   onTab,
   onShiftTab,
 }: MoneyFieldInputProps) => {
-  const { fieldDefinition, fieldValue, hotkeyScope, persistMoneyField } =
+  const { fieldDefinition, hotkeyScope, persistMoneyField, initialValue } =
     useMoneyField();
 
   const handleEnter = (newText: string) => {
@@ -52,7 +52,7 @@ export const MoneyFieldInput = ({
       <TextInput
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
-        value={fieldValue?.toLocaleString() ?? ''}
+        value={initialValue?.toLocaleString() ?? ''}
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}

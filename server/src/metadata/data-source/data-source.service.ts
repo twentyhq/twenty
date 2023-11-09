@@ -88,9 +88,6 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
 
     await workspaceDataSource.initialize();
 
-    // Set search path to workspace schema for raw queries
-    await workspaceDataSource?.query(`SET search_path TO ${schema};`);
-
     this.dataSources.set(workspaceId, workspaceDataSource);
 
     return workspaceDataSource;
@@ -122,6 +119,21 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
    */
   public getSchemaName(workspaceId: string): string {
     return `workspace_${uuidToBase36(workspaceId)}`;
+  }
+
+  public async deleteWorkspaceSchema(workspaceId: string) {
+    const schemaName = this.getSchemaName(workspaceId);
+    const queryRunner = this.mainDataSource.createQueryRunner();
+    const schemaAlreadyExists = await queryRunner.hasSchema(schemaName);
+
+    if (!schemaAlreadyExists) {
+      await queryRunner.release();
+      return;
+    }
+
+    await queryRunner.dropSchema(schemaName, true, true);
+
+    await queryRunner.release();
   }
 
   async onModuleInit() {

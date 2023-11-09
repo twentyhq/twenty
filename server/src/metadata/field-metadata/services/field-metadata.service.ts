@@ -53,6 +53,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
       throw new BadRequestException("Active fields can't be deleted");
     }
 
+    // TODO: delete associated relation-metadata and field-metadata from the relation
+
     return super.deleteOne(id, opts);
   }
 
@@ -81,7 +83,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
 
     const createdFieldMetadata = await super.createOne({
       ...record,
-      targetColumnMap: generateTargetColumnMap(record.type),
+      targetColumnMap: generateTargetColumnMap(
+        record.type,
+        record.isCustom,
+        record.name,
+      ),
     });
 
     await this.tenantMigrationService.createCustomMigration(
@@ -100,5 +106,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
     );
 
     return createdFieldMetadata;
+  }
+
+  public async deleteFieldsMetadata(workspaceId: string) {
+    await this.fieldMetadataRepository.delete({ workspaceId });
   }
 }

@@ -45,7 +45,7 @@ const URLFieldInputWithContext = ({
         fieldDefinition={{
           fieldId: 'url',
           label: 'URL',
-          type: 'url',
+          type: 'URL',
           metadata: {
             fieldName: 'URL',
             placeHolder: 'Enter URL',

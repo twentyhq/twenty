@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useRecoilValue } from 'recoil';
 
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { TopBar } from '@/ui/layout/top-bar/TopBar';
@@ -8,8 +9,8 @@ import { FiltersHotkeyScope } from '@/ui/object/object-filter-dropdown/types/Fil
 import { ObjectSortDropdownButton } from '@/ui/object/object-sort-dropdown/components/ObjectSortDropdownButton';
 import { ObjectSortDropdownScope } from '@/ui/object/object-sort-dropdown/scopes/ObjectSortDropdownScope';
 
+import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 import { useView } from '../hooks/useView';
-import { useViewGetStates } from '../hooks/useViewGetStates';
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
@@ -32,8 +33,16 @@ export const ViewBar = ({
     dropdownScopeId: optionsDropdownScopeId,
   });
   const { upsertViewSort, upsertViewFilter } = useView();
-  const { availableFilterDefinitions, availableSortDefinitions } =
-    useViewGetStates();
+
+  const { availableFilterDefinitionsState, availableSortDefinitionsState } =
+    useViewScopedStates();
+
+  const availableFilterDefinitions = useRecoilValue(
+    availableFilterDefinitionsState,
+  );
+  const availableSortDefinitions = useRecoilValue(
+    availableSortDefinitionsState,
+  );
 
   return (
     <ObjectFilterDropdownScope

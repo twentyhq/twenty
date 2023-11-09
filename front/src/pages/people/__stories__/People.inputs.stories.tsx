@@ -1,21 +1,14 @@
-import { getOperationName } from '@apollo/client/utilities';
-import { isString } from '@sniptt/guards';
 import { expect } from '@storybook/jest';
 import { Meta } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
-import { graphql } from 'msw';
+import assert from 'assert';
 
-import { UPDATE_ONE_PERSON } from '@/people/graphql/mutations/updateOnePerson';
-import { SEARCH_COMPANY_QUERY } from '@/search/graphql/queries/searchCompanyQuery';
 import { AppPath } from '@/types/AppPath';
-import { Company } from '~/generated/graphql';
 import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { fetchOneFromData } from '~/testing/mock-data';
-import { mockedCompaniesData } from '~/testing/mock-data/companies';
 import { mockedPeopleData } from '~/testing/mock-data/people';
 import { sleep } from '~/testing/sleep';
 
@@ -41,29 +34,23 @@ export const InteractWithManyRows: Story = {
 
     const firstRowEmailCell = await canvas.findByText(
       mockedPeopleData[0].email,
+      {},
+      { timeout: 3000 },
     );
+    assert(firstRowEmailCell.parentElement);
 
-    const secondRowEmailCell = await canvas.findByText(
-      mockedPeopleData[1].email,
-    );
+    const secondRowEmailCell = canvas.getByText(mockedPeopleData[1].email);
+    assert(secondRowEmailCell.parentElement);
 
     expect(
       canvas.queryByTestId('editable-cell-edit-mode-container'),
     ).toBeNull();
-
-    if (!firstRowEmailCell.parentElement) {
-      throw new Error('No parent node');
-    }
 
     await userEvent.click(firstRowEmailCell.parentElement);
 
     expect(
-      canvas.queryByTestId('editable-cell-edit-mode-container'),
-    ).toBeInTheDocument();
-
-    if (!secondRowEmailCell.parentElement) {
-      throw new Error('No parent node');
-    }
+      canvas.getByTestId('editable-cell-edit-mode-container'),
+    ).toBeVisible();
 
     await userEvent.click(secondRowEmailCell.parentElement);
 
@@ -75,220 +62,138 @@ export const InteractWithManyRows: Story = {
 
     await userEvent.click(secondRowEmailCell.parentElement);
 
-    await sleep(25);
-
     expect(
-      canvas.queryByTestId('editable-cell-edit-mode-container'),
-    ).toBeInTheDocument();
+      canvas.getByTestId('editable-cell-edit-mode-container'),
+    ).toBeVisible();
   },
 };
 
 export const CheckCheckboxes: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText(mockedPeopleData[0].email);
+    await step('Wait for rows to appear', async () => {
+      await canvas.findByText(
+        mockedPeopleData[0].displayName,
+        {},
+        { timeout: 3000 },
+      );
+    });
 
-    const inputCheckboxContainers = await canvas.findAllByTestId(
-      'input-checkbox',
-    );
+    const [, firstRowCheckbox, secondRowCheckbox] =
+      canvas.getAllByRole<HTMLInputElement>('checkbox');
 
-    const inputCheckboxes = await canvas.findAllByTestId('input-checkbox');
+    await step('Select first row', async () => {
+      assert(firstRowCheckbox.parentElement);
 
-    const secondCheckboxContainer = inputCheckboxContainers[1];
-    const secondCheckbox = inputCheckboxes[1] as HTMLInputElement;
+      await userEvent.click(firstRowCheckbox.parentElement);
+      await sleep(25);
 
-    expect(secondCheckboxContainer).toBeDefined();
+      expect(firstRowCheckbox).toBeChecked();
+    });
 
-    await userEvent.click(secondCheckboxContainer);
+    await step('Select second row', async () => {
+      await userEvent.click(secondRowCheckbox);
+      await sleep(25);
 
-    expect(secondCheckbox.checked).toBe(true);
+      expect(secondRowCheckbox).toBeChecked();
+    });
 
-    await userEvent.click(secondCheckbox);
+    await step('Unselect second row', async () => {
+      assert(secondRowCheckbox.parentElement);
 
-    expect(secondCheckbox.checked).toBe(false);
+      await userEvent.click(secondRowCheckbox.parentElement);
+      await sleep(25);
+
+      expect(secondRowCheckbox).not.toBeChecked();
+    });
   },
 };
-
-const editRelationMocks = (
-  initiallySelectedCompanyName: string,
-  searchCompanyNames: Array<string>,
-  updateSelectedCompany: Pick<Company, 'name' | 'domainName'>,
-) => [
-  ...graphqlMocks.filter((graphqlMock) => {
-    if (
-      isString(graphqlMock.info.operationName) &&
-      [
-        getOperationName(UPDATE_ONE_PERSON),
-        getOperationName(SEARCH_COMPANY_QUERY),
-      ].includes(graphqlMock.info.operationName)
-    ) {
-      return false;
-    }
-    return true;
-  }),
-  ...[
-    graphql.mutation(
-      getOperationName(UPDATE_ONE_PERSON) ?? '',
-      (req, res, ctx) => {
-        return res(
-          ctx.data({
-            updateOnePerson: {
-              ...fetchOneFromData(mockedPeopleData, req.variables.where.id),
-              ...{
-                company: {
-                  id: req.variables.where.id,
-                  name: updateSelectedCompany.name,
-                  domainName: updateSelectedCompany.domainName,
-                  __typename: 'Company',
-                },
-              },
-            },
-          }),
-        );
-      },
-    ),
-    graphql.query(
-      getOperationName(SEARCH_COMPANY_QUERY) ?? '',
-      (req, res, ctx) => {
-        if (!req.variables.where?.AND) {
-          // Selected company case
-          const searchResults = mockedCompaniesData.filter((company) =>
-            [initiallySelectedCompanyName].includes(company.name),
-          );
-          return res(
-            ctx.data({
-              searchResults: searchResults,
-            }),
-          );
-        }
-
-        if (
-          req.variables.where?.AND?.some(
-            (where: { id?: { in: Array<string> } }) => where.id?.in,
-          )
-        ) {
-          // Selected company case
-          const searchResults = mockedCompaniesData.filter((company) =>
-            [initiallySelectedCompanyName].includes(company.name),
-          );
-          return res(
-            ctx.data({
-              searchResults: searchResults,
-            }),
-          );
-        } else {
-          // Search case
-
-          const searchResults = mockedCompaniesData.filter((company) =>
-            searchCompanyNames.includes(company.name),
-          );
-          return res(
-            ctx.data({
-              searchResults: searchResults,
-            }),
-          );
-        }
-      },
-    ),
-  ],
-];
 
 export const EditRelation: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    await step('Click on second row company cell', async () => {
-      const secondRowCompanyCell = await canvas.findByText(
+    await step('Click on third row company cell', async () => {
+      const thirdRowCompanyCell = await canvas.findByText(
         mockedPeopleData[2].company.name,
+        {},
+        { timeout: 3000 },
       );
 
-      await userEvent.click(
-        secondRowCompanyCell.parentNode?.parentNode?.parentNode
-          ?.parentElement as HTMLElement,
-      );
+      await userEvent.click(thirdRowCompanyCell);
     });
 
     await step('Type "Air" in relation picker', async () => {
-      const relationInput = await canvas.findByPlaceholderText('Search');
+      const relationSearchInput = canvas.getByPlaceholderText('Search');
 
-      await userEvent.type(relationInput, 'Air', {
-        delay: 200,
-      });
+      await userEvent.type(relationSearchInput, 'Air', { delay: 200 });
     });
 
     await step('Select "Airbnb"', async () => {
-      const airbnbChip = await canvas.findByText('Airbnb', {
-        selector: 'div',
+      const airbnbChip = await canvas.findByRole('listitem', {
+        name: (_, element) => !!element?.textContent?.includes('Airbnb'),
       });
 
       await userEvent.click(airbnbChip);
     });
 
-    await step('Check if Airbnb is in second row company cell', async () => {
-      await canvas.findByText('Airbnb');
+    await step('Check if Airbnb is in the table', async () => {
+      expect(
+        await canvas.findByText('Airbnb', {}, { timeout: 3000 }),
+      ).toBeVisible();
     });
-  },
-  parameters: {
-    msw: editRelationMocks('Qonto', ['Airbnb', 'Aircall'], {
-      name: 'Airbnb',
-      domainName: 'airbnb.com',
-    }),
   },
 };
 
 export const SelectRelationWithKeys: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
 
-    let firstRowCompanyCell = await canvas.findByText(
-      mockedPeopleData[0].company.name,
-    );
-    await sleep(25);
+    await step('Click on first row company cell', async () => {
+      const firstRowCompanyCell = await canvas.findByText(
+        mockedPeopleData[0].company.name,
+        {},
+        { timeout: 3000 },
+      );
 
-    await userEvent.click(
-      firstRowCompanyCell.parentNode?.parentNode?.parentNode
-        ?.parentElement as HTMLElement,
-    );
-    firstRowCompanyCell = await canvas.findByText(
-      mockedPeopleData[0].company.name,
-    );
-    await sleep(25);
-    await userEvent.click(firstRowCompanyCell);
-
-    const relationInput = await canvas.findByPlaceholderText('Search');
-
-    await userEvent.type(relationInput, 'Air', {
-      delay: 200,
+      await userEvent.click(firstRowCompanyCell);
     });
 
-    await userEvent.type(relationInput, '{arrowdown}');
+    const relationSearchInput = canvas.getByPlaceholderText('Search');
 
-    await sleep(50);
+    await step('Type "Air" in relation picker', async () => {
+      await userEvent.type(relationSearchInput, 'Air', { delay: 200 });
+    });
 
-    await userEvent.type(relationInput, '{arrowup}');
+    await step('Select "Aircall"', async () => {
+      await userEvent.keyboard('{arrowdown}');
 
-    await sleep(50);
+      await sleep(50);
 
-    await userEvent.type(relationInput, '{arrowdown}');
+      await userEvent.keyboard('{arrowup}');
 
-    await sleep(50);
+      await sleep(50);
 
-    await userEvent.type(relationInput, '{arrowdown}');
+      await userEvent.keyboard('{arrowdown}');
 
-    await sleep(50);
+      await sleep(50);
 
-    await userEvent.type(relationInput, '{enter}');
+      await userEvent.keyboard('{arrowdown}');
 
-    await sleep(200);
+      await sleep(50);
 
-    const allAirbns = await canvas.findAllByText('Aircall');
-    expect(allAirbns.length).toBe(1);
-  },
-  parameters: {
-    msw: editRelationMocks('Qonto', ['Airbnb', 'Aircall'], {
-      name: 'Aircall',
-      domainName: 'aircall.io',
-    }),
+      await userEvent.keyboard('{arrowdown}');
+
+      await sleep(50);
+
+      await userEvent.keyboard('{enter}');
+    });
+
+    await step('Check if Aircall is in the table', async () => {
+      expect(
+        await canvas.findByText('Aircall', {}, { timeout: 3000 }),
+      ).toBeVisible();
+    });
   },
 };

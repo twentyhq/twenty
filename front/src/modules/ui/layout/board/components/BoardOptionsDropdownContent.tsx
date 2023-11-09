@@ -1,5 +1,5 @@
 import { useContext, useRef, useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { v4 } from 'uuid';
 
@@ -24,8 +24,8 @@ import { ThemeColor } from '@/ui/theme/constants/colors';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
+import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useView } from '@/views/hooks/useView';
-import { useViewGetStates } from '@/views/hooks/useViewGetStates';
 
 import { useBoardCardFields } from '../hooks/useBoardCardFields';
 import { boardColumnsState } from '../states/boardColumnsState';
@@ -52,8 +52,11 @@ export const BoardOptionsDropdownContent = ({
   onStageAdd,
 }: BoardOptionsDropdownContentProps) => {
   const { setViewEditMode, handleViewNameSubmit } = useView();
-  const { viewEditMode, currentView } = useViewGetStates();
+  const { viewEditModeState, currentViewSelector } = useViewScopedStates();
   const { BoardRecoilScopeContext } = useContext(BoardContext);
+
+  const viewEditMode = useRecoilValue(viewEditModeState);
+  const currentView = useRecoilValue(currentViewSelector);
 
   const stageInputRef = useRef<HTMLInputElement>(null);
   const viewEditInputRef = useRef<HTMLInputElement>(null);

@@ -21,7 +21,7 @@ export const TextFieldInput = ({
   onTab,
   onShiftTab,
 }: TextFieldInputProps) => {
-  const { fieldDefinition, fieldValue, hotkeyScope } = useTextField();
+  const { fieldDefinition, initialValue, hotkeyScope } = useTextField();
 
   const persistField = usePersistField();
 
@@ -53,7 +53,7 @@ export const TextFieldInput = ({
       <TextInput
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
-        value={fieldValue ?? ''}
+        value={initialValue}
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}

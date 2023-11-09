@@ -1,7 +1,8 @@
 import { ReactElement, useContext, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { IconArrowUpRight } from '@/ui/display/icon';
+import { useGetButtonIcon } from '@/ui/object/field/hooks/useGetButtonIcon';
 import { useIsFieldEmpty } from '@/ui/object/field/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/ui/object/field/hooks/useIsFieldInputOnly';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -39,7 +40,6 @@ export type TableCellContainerProps = {
   editHotkeyScope?: HotkeyScope;
   transparent?: boolean;
   maxContentWidth?: number;
-  buttonIcon?: IconComponent;
   onSubmit?: () => void;
   onCancel?: () => void;
 };
@@ -54,7 +54,6 @@ export const TableCellContainer = ({
   editModeContent,
   nonEditModeContent,
   editHotkeyScope,
-  buttonIcon,
 }: TableCellContainerProps) => {
   const { isCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
 
@@ -94,6 +93,12 @@ export const TableCellContainer = ({
   const isFirstColumnCell = useContext(ColumnIndexContext) === 0;
 
   const isEmpty = useIsFieldEmpty();
+
+  const isFirstColumn = useContext(ColumnIndexContext) === 0;
+
+  const customButtonIcon = useGetButtonIcon();
+
+  const buttonIcon = isFirstColumn ? IconArrowUpRight : customButtonIcon;
 
   const showButton =
     !!buttonIcon &&

@@ -21,7 +21,7 @@ export const ChipFieldInput = ({
   onTab,
   onShiftTab,
 }: ChipFieldInputProps) => {
-  const { fieldDefinition, contentFieldValue, hotkeyScope } = useChipField();
+  const { fieldDefinition, initialContentValue, hotkeyScope } = useChipField();
 
   const persistField = usePersistField();
 
@@ -53,7 +53,7 @@ export const ChipFieldInput = ({
       <TextInput
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
-        value={contentFieldValue ?? ''}
+        value={initialContentValue}
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}

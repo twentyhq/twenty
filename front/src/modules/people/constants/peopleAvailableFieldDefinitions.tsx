@@ -32,7 +32,7 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       Icon: IconUser,
       size: 210,
       position: 0,
-      type: 'double-text-chip',
+      type: 'DOUBLE_TEXT_CHIP',
       metadata: {
         firstValueFieldName: 'firstName',
         secondValueFieldName: 'lastName',
@@ -49,7 +49,7 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       label: 'Email',
       Icon: IconMail,
       size: 150,
-      type: 'email',
+      type: 'EMAIL',
       position: 1,
       metadata: {
         fieldName: 'email',
@@ -63,7 +63,7 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       Icon: IconBuildingSkyscraper,
       size: 150,
       position: 2,
-      type: 'relation',
+      type: 'RELATION',
       metadata: {
         fieldName: 'company',
         relationType: Entity.Company,
@@ -83,7 +83,7 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       Icon: IconPhone,
       size: 150,
       position: 3,
-      type: 'phone',
+      type: 'PHONE',
       metadata: {
         fieldName: 'phone',
         placeHolder: 'Phon​e', // Hack: Fake character to prevent password-manager from filling the field
@@ -96,7 +96,7 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       Icon: IconCalendarEvent,
       size: 150,
       position: 4,
-      type: 'date',
+      type: 'DATE',
       metadata: {
         fieldName: 'createdAt',
       },
@@ -108,7 +108,7 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       Icon: IconMap,
       size: 150,
       position: 5,
-      type: 'text',
+      type: 'TEXT',
       metadata: {
         fieldName: 'city',
         placeHolder: 'Cit​y', // Hack: Fake character to prevent password-manager from filling the field
@@ -121,7 +121,7 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       Icon: IconBriefcase,
       size: 150,
       position: 6,
-      type: 'text',
+      type: 'TEXT',
       metadata: {
         fieldName: 'jobTitle',
         placeHolder: 'Job title',
@@ -134,7 +134,7 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       Icon: IconBrandLinkedin,
       size: 150,
       position: 7,
-      type: 'url',
+      type: 'URL',
       metadata: {
         fieldName: 'linkedinUrl',
         placeHolder: 'LinkedIn',
@@ -147,7 +147,7 @@ export const peopleAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] 
       Icon: IconBrandX,
       size: 150,
       position: 8,
-      type: 'url',
+      type: 'URL',
       metadata: {
         fieldName: 'xUrl',
         placeHolder: 'X',

@@ -21,35 +21,35 @@ import { FieldType } from '../FieldType';
 
 type AssertFieldMetadataFunction = <
   E extends FieldType,
-  T extends E extends 'text'
+  T extends E extends 'TEXT'
     ? FieldTextMetadata
-    : E extends 'relation'
+    : E extends 'RELATION'
     ? FieldRelationMetadata
-    : E extends 'chip'
+    : E extends 'CHIP'
     ? FieldChipMetadata
-    : E extends 'double-text-chip'
+    : E extends 'DOUBLE_TEXT_CHIP'
     ? FieldDoubleTextChipMetadata
-    : E extends 'double-text'
+    : E extends 'DOUBLE_TEXT'
     ? FieldDoubleTextMetadata
-    : E extends 'number'
+    : E extends 'NUMBER'
     ? FieldNumberMetadata
-    : E extends 'email'
+    : E extends 'EMAIL'
     ? FieldEmailMetadata
-    : E extends 'boolean'
+    : E extends 'BOOLEAN'
     ? FieldBooleanMetadata
-    : E extends 'date'
+    : E extends 'DATE'
     ? FieldDateMetadata
-    : E extends 'phone'
+    : E extends 'PHONE'
     ? FieldPhoneMetadata
-    : E extends 'url'
+    : E extends 'URL'
     ? FieldURLMetadata
-    : E extends 'urlV2'
+    : E extends 'URL_V2'
     ? FieldURLV2Metadata
-    : E extends 'probability'
+    : E extends 'PROBABILITY'
     ? FieldProbabilityMetadata
-    : E extends 'moneyAmount'
+    : E extends 'MONEY_AMOUNT'
     ? FieldMoneyMetadata
-    : E extends 'moneyAmountV2'
+    : E extends 'MONEY_AMOUNT_V2'
     ? FieldMoneyAmountV2Metadata
     : never,
 >(

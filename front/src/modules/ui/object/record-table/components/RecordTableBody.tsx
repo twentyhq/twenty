@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { useVirtual } from '@tanstack/react-virtual';
 import { useRecoilValue } from 'recoil';
 
-import { isNavbarSwitchingSizeState } from '@/ui/layout/states/isNavbarSwitchingSizeState';
 import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScrollWrapperScopedRef';
 
 import { RowIdContext } from '../contexts/RowIdContext';
@@ -27,7 +26,6 @@ export const RecordTableBody = () => {
 
   const tableRowIds = useRecoilValue(tableRowIdsState);
 
-  const isNavbarSwitchingSize = useRecoilValue(isNavbarSwitchingSizeState);
   const isFetchingRecordTableData = useRecoilValue(
     isFetchingRecordTableDataState,
   );
@@ -45,7 +43,7 @@ export const RecordTableBody = () => {
       ? rowVirtualizer.totalSize - items[items.length - 1].end
       : 0;
 
-  if (isFetchingRecordTableData || isNavbarSwitchingSize) {
+  if (isFetchingRecordTableData) {
     return null;
   }
 

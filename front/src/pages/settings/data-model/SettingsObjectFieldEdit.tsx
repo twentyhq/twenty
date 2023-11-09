@@ -125,7 +125,14 @@ export const SettingsObjectFieldEdit = () => {
         />
         <SettingsObjectFieldTypeSelectSection
           disabled
-          type={activeMetadataField.type as MetadataFieldDataType}
+          fieldIconKey={formValues.icon}
+          fieldLabel={formValues.label || 'Employees'}
+          fieldName={activeMetadataField.name}
+          fieldType={activeMetadataField.type as MetadataFieldDataType}
+          isObjectCustom={activeObjectMetadataItem.isCustom}
+          objectIconKey={activeObjectMetadataItem.icon}
+          objectLabelPlural={activeObjectMetadataItem.labelPlural}
+          objectNamePlural={activeObjectMetadataItem.namePlural}
         />
         <Section>
           <H2Title title="Danger zone" description="Disable this field" />

@@ -41,4 +41,8 @@ export class DataSourceMetadataService {
       order: { createdAt: 'DESC' },
     });
   }
+
+  async delete(workspaceId: string) {
+    await this.dataSourceMetadataRepository.delete({ workspaceId });
+  }
 }

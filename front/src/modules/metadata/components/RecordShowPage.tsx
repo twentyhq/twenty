@@ -17,7 +17,7 @@ import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSu
 import { ShowPageRecoilScopeContext } from '@/ui/layout/states/ShowPageRecoilScopeContext';
 import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
 import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
-import { InlineCell } from '@/ui/object/record-inline-cell/components/InlineCell';
+import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/ui/object/record-inline-cell/property-box/components/PropertyBox';
 import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
@@ -115,34 +115,35 @@ export const RecordShowPage = () => {
                 avatarType="squared"
               />
               <PropertyBox extraPadding={true}>
-                {foundObjectMetadataItem?.fields
-                  .toSorted((a, b) =>
-                    DateTime.fromISO(a.createdAt)
-                      .diff(DateTime.fromISO(b.createdAt))
-                      .toMillis(),
-                  )
-                  .map((metadataField, index) => {
-                    return (
-                      <FieldContext.Provider
-                        key={object.id + metadataField.id}
-                        value={{
-                          entityId: object.id,
-                          recoilScopeId: object.id + metadataField.id,
-                          fieldDefinition:
-                            formatMetadataFieldAsColumnDefinition({
-                              field: metadataField,
-                              position: index,
-                              objectMetadataItem: foundObjectMetadataItem,
-                              icons,
-                            }),
-                          useUpdateEntityMutation: useUpdateOneObjectMutation,
-                          hotkeyScope: InlineCellHotkeyScope.InlineCell,
-                        }}
-                      >
-                        <InlineCell />
-                      </FieldContext.Provider>
-                    );
-                  })}
+                {foundObjectMetadataItem &&
+                  [...foundObjectMetadataItem.fields]
+                    .sort((a, b) =>
+                      DateTime.fromISO(a.createdAt)
+                        .diff(DateTime.fromISO(b.createdAt))
+                        .toMillis(),
+                    )
+                    .map((metadataField, index) => {
+                      return (
+                        <FieldContext.Provider
+                          key={object.id + metadataField.id}
+                          value={{
+                            entityId: object.id,
+                            recoilScopeId: object.id + metadataField.id,
+                            fieldDefinition:
+                              formatMetadataFieldAsColumnDefinition({
+                                field: metadataField,
+                                position: index,
+                                objectMetadataItem: foundObjectMetadataItem,
+                                icons,
+                              }),
+                            useUpdateEntityMutation: useUpdateOneObjectMutation,
+                            hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                          }}
+                        >
+                          <RecordInlineCell />
+                        </FieldContext.Provider>
+                      );
+                    })}
               </PropertyBox>
             </ShowPageLeftContainer>
             <ShowPageRightContainer

@@ -9,6 +9,7 @@ import { boardCardFieldsScopedState } from '@/ui/layout/board/states/boardCardFi
 import { BoardColumnRecoilScopeContext } from '@/ui/layout/board/states/recoil-scope-contexts/BoardColumnRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { ViewScope } from '@/views/scopes/ViewScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -33,23 +34,27 @@ const meta: Meta<typeof CompanyBoardCard> = {
       }, [setBoardCardFields]);
 
       return (
-        <RecoilScope CustomRecoilScopeContext={BoardColumnRecoilScopeContext}>
-          <BoardContext.Provider
-            value={{
-              BoardRecoilScopeContext:
-                context.parameters.customRecoilScopeContext,
-            }}
-          >
-            <MemoryRouter>
-              <HooksCompanyBoardEffect />
-              <BoardCardIdContext.Provider
-                value={mockedPipelineProgressData[1].id}
+        <MemoryRouter>
+          <ViewScope viewScopeId="company-board-view">
+            <RecoilScope
+              CustomRecoilScopeContext={BoardColumnRecoilScopeContext}
+            >
+              <BoardContext.Provider
+                value={{
+                  BoardRecoilScopeContext:
+                    context.parameters.customRecoilScopeContext,
+                }}
               >
-                <Story />
-              </BoardCardIdContext.Provider>
-            </MemoryRouter>
-          </BoardContext.Provider>
-        </RecoilScope>
+                <HooksCompanyBoardEffect />
+                <BoardCardIdContext.Provider
+                  value={mockedPipelineProgressData[1].id}
+                >
+                  <Story />
+                </BoardCardIdContext.Provider>
+              </BoardContext.Provider>
+            </RecoilScope>
+          </ViewScope>
+        </MemoryRouter>
       );
     },
     ComponentWithRecoilScopeDecorator,

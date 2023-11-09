@@ -26,7 +26,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     fieldId: 'email',
     label: 'Email',
     Icon: IconMail,
-    type: 'text',
+    type: 'TEXT',
     metadata: {
       fieldName: 'email',
       placeHolder: 'Email',
@@ -36,7 +36,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     fieldId: 'company',
     label: 'Company',
     Icon: IconBuildingSkyscraper,
-    type: 'relation',
+    type: 'RELATION',
     metadata: {
       fieldName: 'company',
       relationType: Entity.Company,
@@ -53,7 +53,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     fieldId: 'phone',
     label: 'Phone',
     Icon: IconPhone,
-    type: 'phone',
+    type: 'PHONE',
     metadata: {
       fieldName: 'phone',
       placeHolder: 'Phone',
@@ -63,7 +63,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     fieldId: 'jobTitle',
     label: 'Job Title',
     Icon: IconBriefcase,
-    type: 'text',
+    type: 'TEXT',
     metadata: {
       fieldName: 'jobTitle',
       placeHolder: 'Job Title',
@@ -73,7 +73,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     fieldId: 'city',
     label: 'City',
     Icon: IconMap,
-    type: 'text',
+    type: 'TEXT',
     metadata: {
       fieldName: 'city',
       placeHolder: 'City',
@@ -83,7 +83,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     fieldId: 'linkedinUrl',
     label: 'Linkedin URL',
     Icon: IconBrandLinkedin,
-    type: 'url',
+    type: 'URL',
     metadata: {
       fieldName: 'linkedinUrl',
       placeHolder: 'Linkedin URL',
@@ -93,7 +93,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     fieldId: 'xUrl',
     label: 'X URL',
     Icon: IconBrandX,
-    type: 'url',
+    type: 'URL',
     metadata: {
       fieldName: 'xUrl',
       placeHolder: 'X URL',
@@ -103,7 +103,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     fieldId: 'createdAt',
     label: 'Created at',
     Icon: IconCalendar,
-    type: 'date',
+    type: 'DATE',
     metadata: {
       fieldName: 'createdAt',
     },

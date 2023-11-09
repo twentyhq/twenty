@@ -1,0 +1,18 @@
+---
+title: Checkmark
+sidebar_position: 1
+---
+
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/Checkmark/components/Checkmark', '@/ui/Button/components/Button']}
+  componentCode={`import { Checkmark } from "@/ui/Checkmark/components/Checkmark";
+import { Button } from "@/ui/Button/components/Button";
+export const MyComponent = () => {
+ return <><Checkmark /><Button title="New task"
+          variant={'secondary'}
+          onClick={() => console.log('click')}/></>
+}
+`} 
+/>

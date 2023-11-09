@@ -6,12 +6,12 @@ export const getOperandsForFilterType = (
   filterType: FilterType | null | undefined,
 ): ViewFilterOperand[] => {
   switch (filterType) {
-    case 'text':
+    case 'TEXT':
       return [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain];
-    case 'number':
-    case 'date':
+    case 'NUMBER':
+    case 'DATE':
       return [ViewFilterOperand.GreaterThan, ViewFilterOperand.LessThan];
-    case 'entity':
+    case 'ENTITY':
       return [ViewFilterOperand.Is, ViewFilterOperand.IsNot];
     default:
       return [];

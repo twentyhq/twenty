@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import {
   Column,
@@ -6,6 +6,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
@@ -15,15 +16,36 @@ import {
   BeforeCreateOne,
   IDField,
   QueryOptions,
+  Relation,
 } from '@ptc-org/nestjs-query-graphql';
 
+import { FieldMetadataInterface } from 'src/tenant/schema-builder/interfaces/field-metadata.interface';
+
 import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
+import { RelationMetadata } from 'src/metadata/relation-metadata/relation-metadata.entity';
 
 import { BeforeCreateOneField } from './hooks/before-create-one-field.hook';
+import { FieldMetadataTargetColumnMap } from './interfaces/field-metadata-target-column-map.interface';
 
-export type FieldMetadataTargetColumnMap = {
-  [key: string]: string;
-};
+export enum FieldMetadataType {
+  UUID = 'uuid',
+  TEXT = 'TEXT',
+  PHONE = 'PHONE',
+  EMAIL = 'EMAIL',
+  DATE = 'DATE',
+  BOOLEAN = 'BOOLEAN',
+  NUMBER = 'NUMBER',
+  ENUM = 'ENUM',
+  URL = 'URL',
+  MONEY = 'MONEY',
+  RELATION = 'RELATION',
+}
+
+registerEnumType(FieldMetadataType, {
+  name: 'FieldMetadataType',
+  description: 'Type of the field',
+});
+
 @Entity('field_metadata')
 @ObjectType('field')
 @BeforeCreateOne(BeforeCreateOneField)
@@ -43,7 +65,9 @@ export type FieldMetadataTargetColumnMap = {
   'objectId',
   'workspaceId',
 ])
-export class FieldMetadata {
+@Relation('toRelationMetadata', () => RelationMetadata, { nullable: true })
+@Relation('fromRelationMetadata', () => RelationMetadata, { nullable: true })
+export class FieldMetadata implements FieldMetadataInterface {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -51,9 +75,9 @@ export class FieldMetadata {
   @Column({ nullable: false, name: 'object_id' })
   objectId: string;
 
-  @Field()
+  @Field(() => FieldMetadataType)
   @Column({ nullable: false })
-  type: string;
+  type: FieldMetadataType;
 
   @Field()
   @Column({ nullable: false })
@@ -100,6 +124,12 @@ export class FieldMetadata {
   })
   @JoinColumn({ name: 'object_id' })
   object: ObjectMetadata;
+
+  @OneToOne(() => RelationMetadata, (relation) => relation.fromFieldMetadata)
+  fromRelationMetadata: RelationMetadata;
+
+  @OneToOne(() => RelationMetadata, (relation) => relation.toFieldMetadata)
+  toRelationMetadata: RelationMetadata;
 
   @Field()
   @CreateDateColumn({ name: 'created_at' })

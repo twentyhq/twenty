@@ -4,30 +4,42 @@ import { useRecoilCallback } from 'recoil';
 
 import { useFindOneObjectMetadataItem } from '@/metadata/hooks/useFindOneObjectMetadataItem';
 import { Sort } from '@/ui/object/object-sort-dropdown/types/Sort';
-import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
-import { currentViewSortsScopedFamilyState } from '@/views/states/currentViewSortsScopedFamilyState';
-import { onViewSortsChangeScopedState } from '@/views/states/onViewSortsChangeScopedState';
 import { savedViewSortsScopedFamilyState } from '@/views/states/savedViewSortsScopedFamilyState';
-import { savedViewSortsByKeyScopedFamilySelector } from '@/views/states/selectors/savedViewSortsByKeyScopedFamilySelector';
 import { ViewSort } from '@/views/types/ViewSort';
+import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
 
-import { useViewSetStates } from '../useViewSetStates';
+import { useViewScopedStates } from './useViewScopedStates';
 
 export const useViewSorts = (viewScopeId: string) => {
-  const { updateOneMutation, createOneMutation, findManyQuery } =
-    useFindOneObjectMetadataItem({
-      objectNameSingular: 'viewSortV2',
-    });
+  const {
+    updateOneMutation,
+    createOneMutation,
+    deleteOneMutation,
+    findManyQuery,
+  } = useFindOneObjectMetadataItem({
+    objectNameSingular: 'viewSortV2',
+  });
   const apolloClient = useApolloClient();
-  const { setCurrentViewSorts } = useViewSetStates(viewScopeId);
+
+  const { currentViewSortsState } = useViewScopedStates();
 
   const persistViewSorts = useRecoilCallback(
     ({ snapshot, set }) =>
       async (viewId?: string) => {
-        const currentViewId = snapshot
-          .getLoadable(currentViewIdScopedState({ scopeId: viewScopeId }))
-          .getValue();
+        const { currentViewId, currentViewSorts, savedViewSortsByKey } =
+          getViewScopedStateValuesFromSnapshot({
+            snapshot,
+            viewScopeId,
+          });
+
         if (!currentViewId) {
+          return;
+        }
+
+        if (!currentViewSorts) {
+          return;
+        }
+        if (!savedViewSortsByKey) {
           return;
         }
 
@@ -72,33 +84,17 @@ export const useViewSorts = (viewScopeId: string) => {
         const deleteViewSorts = (viewSortIdsToDelete: string[]) => {
           if (!viewSortIdsToDelete.length) return;
 
-          // Todo
+          return Promise.all(
+            viewSortIdsToDelete.map((viewSortId) =>
+              apolloClient.mutate({
+                mutation: deleteOneMutation,
+                variables: {
+                  idToDelete: viewSortId,
+                },
+              }),
+            ),
+          );
         };
-
-        const currentViewSorts = snapshot
-          .getLoadable(
-            currentViewSortsScopedFamilyState({
-              scopeId: viewScopeId,
-              familyKey: currentViewId,
-            }),
-          )
-          .getValue();
-
-        const savedViewSortsByKey = snapshot
-          .getLoadable(
-            savedViewSortsByKeyScopedFamilySelector({
-              scopeId: viewScopeId,
-              viewId: viewId ?? currentViewId,
-            }),
-          )
-          .getValue();
-
-        if (!currentViewSorts) {
-          return;
-        }
-        if (!savedViewSortsByKey) {
-          return;
-        }
 
         const sortsToCreate = currentViewSorts.filter(
           (sort) => !savedViewSortsByKey[sort.fieldId],
@@ -117,7 +113,10 @@ export const useViewSorts = (viewScopeId: string) => {
         const sortKeysToDelete = Object.keys(savedViewSortsByKey).filter(
           (previousSortKey) => !sortKeys.includes(previousSortKey),
         );
-        await deleteViewSorts(sortKeysToDelete);
+        const sortIdsToDelete = sortKeysToDelete.map(
+          (sortKeyToDelete) => savedViewSortsByKey[sortKeyToDelete].id ?? '',
+        );
+        await deleteViewSorts(sortIdsToDelete);
         set(
           savedViewSortsScopedFamilyState({
             scopeId: viewScopeId,
@@ -129,6 +128,7 @@ export const useViewSorts = (viewScopeId: string) => {
     [
       apolloClient,
       createOneMutation,
+      deleteOneMutation,
       findManyQuery,
       updateOneMutation,
       viewScopeId,
@@ -136,37 +136,26 @@ export const useViewSorts = (viewScopeId: string) => {
   );
 
   const upsertViewSort = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       (sortToUpsert: Sort) => {
-        const currentViewId = snapshot
-          .getLoadable(currentViewIdScopedState({ scopeId: viewScopeId }))
-          .getValue();
+        const { currentViewId, onViewSortsChange, savedViewSortsByKey } =
+          getViewScopedStateValuesFromSnapshot({
+            snapshot,
+            viewScopeId,
+          });
 
         if (!currentViewId) {
           return;
         }
 
-        const savedViewSortsByKey = snapshot
-          .getLoadable(
-            savedViewSortsByKeyScopedFamilySelector({
-              scopeId: viewScopeId,
-              viewId: currentViewId,
-            }),
-          )
-          .getValue();
-
         if (!savedViewSortsByKey) {
           return;
         }
 
-        const onViewSortsChange = snapshot
-          .getLoadable(onViewSortsChangeScopedState({ scopeId: viewScopeId }))
-          .getValue();
-
         const existingSavedSortId =
           savedViewSortsByKey[sortToUpsert.fieldId]?.id;
 
-        setCurrentViewSorts?.((sorts) => {
+        set(currentViewSortsState, (sorts) => {
           const newViewSorts = produce(sorts, (sortsDraft) => {
             const existingSortIndex = sortsDraft.findIndex(
               (sort) => sort.fieldId === sortToUpsert.fieldId,
@@ -186,38 +175,29 @@ export const useViewSorts = (viewScopeId: string) => {
           return newViewSorts;
         });
       },
+    [currentViewSortsState, viewScopeId],
   );
 
   const removeViewSort = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       (fieldId: string) => {
-        const currentViewId = snapshot
-          .getLoadable(currentViewIdScopedState({ scopeId: viewScopeId }))
-          .getValue();
+        const { currentViewId, onViewSortsChange, currentViewSorts } =
+          getViewScopedStateValuesFromSnapshot({
+            snapshot,
+            viewScopeId,
+          });
 
         if (!currentViewId) {
           return;
         }
 
-        const onViewSortsChange = snapshot
-          .getLoadable(onViewSortsChangeScopedState({ scopeId: viewScopeId }))
-          .getValue();
-
-        const currentViewSorts = snapshot
-          .getLoadable(
-            currentViewSortsScopedFamilyState({
-              scopeId: viewScopeId,
-              familyKey: currentViewId,
-            }),
-          )
-          .getValue();
-
         const newViewSorts = currentViewSorts.filter((filter) => {
           return filter.fieldId !== fieldId;
         });
-        setCurrentViewSorts?.(newViewSorts);
+        set(currentViewSortsState, newViewSorts);
         onViewSortsChange?.(newViewSorts);
       },
+    [currentViewSortsState, viewScopeId],
   );
 
   return { persistViewSorts, upsertViewSort, removeViewSort };

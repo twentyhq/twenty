@@ -103,7 +103,7 @@ export const filterAndSortData = <DataT>(
     filteredData = filterData<DataT>(data, where);
   }
 
-  if (orderBy && Array.isArray(orderBy) && orderBy.length > 0 && orderBy[0]) {
+  if (Array.isArray(orderBy) && orderBy.length > 0 && orderBy[0]) {
     const firstOrderBy = orderBy[0];
 
     const key = Object.keys(firstOrderBy)[0];

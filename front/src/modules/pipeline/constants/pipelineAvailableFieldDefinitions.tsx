@@ -22,7 +22,7 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
       label: 'Close Date',
       Icon: IconCalendarEvent,
       position: 0,
-      type: 'date',
+      type: 'DATE',
       metadata: {
         fieldName: 'closeDate',
       },
@@ -36,7 +36,7 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
       label: 'Amount',
       Icon: IconCurrencyDollar,
       position: 1,
-      type: 'number',
+      type: 'NUMBER',
       metadata: {
         fieldName: 'amount',
         placeHolder: '0',
@@ -50,7 +50,7 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
       label: 'Probability',
       Icon: IconProgressCheck,
       position: 2,
-      type: 'probability',
+      type: 'PROBABILITY',
       metadata: {
         fieldName: 'probability',
       },
@@ -64,7 +64,7 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
       label: 'Point of Contact',
       Icon: IconUser,
       position: 3,
-      type: 'relation',
+      type: 'RELATION',
       metadata: {
         fieldName: 'pointOfContact',
         relationType: Entity.Person,

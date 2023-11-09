@@ -9,10 +9,10 @@ sidebar_custom_props:
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-In this document, you'll learn how to install the project using yarn. We recommend this method since it's the easiest way to get started but you can also run the project with [Docker](/contributor/local-setup/docker-setup).  
+In this document, you'll learn how to install the project using yarn. You should use this method since it's the easiest way to get started but you can also run the project with [Docker](/contributor/local-setup/docker-setup).  
 
 :::info
-`npm` currently does not support local packages satisfactorily. We strongly recommend using `yarn` instead.
+`npm` does not support local packages well, opt for `yarn` instead.
 :::
 
 ## Prerequisites
@@ -36,10 +36,10 @@ Open PowerShell as Administrator and run:
 ```powershell
 wsl --install
 ```
-You should be prompted to restart your computer. If not, restart it manually.
+You should now see a prompt to restart your computer. If not, restart it manually.
 
-Upon restart, a powershell window will open and install Ubuntu. This may take a few minutes.
-You will be prompted to create a username and password for your Ubuntu installation.
+Upon restart, a powershell window will open and install Ubuntu. This may take up some time.
+You'll see a prompt to create a username and password for your Ubuntu installation.
 
 2. Install and configure git
 
@@ -59,7 +59,7 @@ Close and reopen your terminal to start using nvm.
 
 :::caution Note
 
-We don't recommend using Docker on WSL as it adds an extra layer of complexity.
+Avoid using Docker on WSL as it adds an extra layer of complexity.
 
 :::
 
@@ -74,7 +74,7 @@ In your terminal, run the following command.
 
 :::info Note
 
-We recommend using SSH for this step. If you already haven't set up SSH keys, please do so first. You can learn more about it [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh). 
+It's better to use SSH for this step. If you already haven't set up SSH keys, please do so first. You can learn more about it [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh). 
 
 :::
 
@@ -97,7 +97,7 @@ git clone https://github.com/twentyhq/twenty.git
 
 ## Step 2: Set up PostgreSQL Database
 You need to have a PostgreSQL instance available to be able to use Twenty.
-This database needs to be provisioned with a `twenty` user (password: `twenty`), a `default` database and a `test` database.
+You need to provision this database with a `twenty` user (password: `twenty`), a `default` database and a `test` database.
 
 <Tabs>
 <TabItem value="linux" label="Linux" default>
@@ -109,7 +109,7 @@ cd twenty
 ./infra/dev/scripts/setup-postgres-linux.sh
 ```
 
-<b>Option 2:</b> Alternatively if you have docker installed:
+<b>Option 2:</b> If you have docker installed:
 <br /><br />
 
 ```bash
@@ -129,7 +129,7 @@ cd twenty
 ./infra/dev/scripts/setup-postgres-macos.sh
 ```
 
-<b>Option 2:</b> Alternatively if you have docker installed:
+<b>Option 2:</b> If you have docker installed:
 <br /><br />
 
 ```bash
@@ -142,7 +142,7 @@ You can access this using `twenty` postgres user (password: `twenty`)
   </TabItem>
   <TabItem value="wsl" label="Windows (WSL)">
 
-We recommend that you provision your database locally:
+It's better to provision your database locally:
 ```bash
 cd twenty
 bash ./infra/dev/scripts/setup-postgres-linux.sh
@@ -153,9 +153,9 @@ You can access this using `twenty` postgres user (password: `twenty`)
 </Tabs>
 
 
-## Step 3: Setup env variables
+## Step 3: Setup environment variables
 
-Twenty requires a few environment variables to be set. Locally, we recommend setting them through a `.env` file.
+Twenty requires you to set some environment variables. Locally, you should set them through a `.env` file.
 
 To do so, make copies of the `.env.example` files in `/front` and `/server`:
 ```bash
@@ -167,7 +167,7 @@ cp ./server/.env.example ./server/.env
 
 :::info
 
-We recommend that you use `nvm` to install the correct `node` version. We have added a `server/.nvmrc` to ensure all contributors use the same version.
+Use `nvm` to install the correct `node` version. The `server/.nvmrc` ensures all contributors use the same version.
 
 :::
 
@@ -187,7 +187,7 @@ Twenty's server will be up and running at [http://localhost:3000/graphql](http:/
 
 :::info
 
-For the frontend setup, too, we recommend using `nvm` to install the right node version. 
+For the frontend setup, too, it's better to use `nvm` to install the right node version. 
 
 :::
 
@@ -201,5 +201,5 @@ yarn
 yarn start
 ```
 
-Twenty's frontend will be running at [http://localhost:3001](http://localhost:3001). Simply login using our seeded demo account: `tim@apple.dev` to start using Twenty.
+Twenty's frontend will be running at [http://localhost:3001](http://localhost:3001). Just login using the seeded demo account: `tim@apple.dev` to start using Twenty.
 

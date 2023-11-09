@@ -16,12 +16,11 @@ import { tableFiltersScopedState } from '@/ui/object/record-table/states/tableFi
 import { tableSortsScopedState } from '@/ui/object/record-table/states/tableSortsScopedState';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
-import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
-import { columnDefinitionsToViewFields } from '@/views/utils/columnDefinitionToViewField';
-import { viewFieldsToColumnDefinitions } from '@/views/utils/viewFieldsToColumnDefinitions';
-import { viewFiltersToFilters } from '@/views/utils/viewFiltersToFilters';
-import { viewSortsToSorts } from '@/views/utils/viewSortsToSorts';
+import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
+import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
+import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
+import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import {
   UpdateOneCompanyMutationVariables,
   useGetCompaniesQuery,
@@ -58,9 +57,6 @@ export const CompanyTable = () => {
 
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
   const { persistViewFields } = useViewFields(viewScopeId);
-  const { setCurrentViewFields } = useView({
-    viewScopeId,
-  });
 
   const { setContextMenuEntries, setActionBarEntries } =
     useCompanyTableContextMenuEntries();
@@ -102,25 +98,24 @@ export const CompanyTable = () => {
       viewScopeId={viewScopeId}
       onViewFieldsChange={(viewFields) => {
         setTableColumns(
-          viewFieldsToColumnDefinitions(
+          mapViewFieldsToColumnDefinitions(
             viewFields,
             companiesAvailableFieldDefinitions,
           ),
         );
       }}
       onViewFiltersChange={(viewFilters) => {
-        setTableFilters(viewFiltersToFilters(viewFilters));
+        setTableFilters(mapViewFiltersToFilters(viewFilters));
       }}
       onViewSortsChange={(viewSorts) => {
-        setTableSorts(viewSortsToSorts(viewSorts));
+        setTableSorts(mapViewSortsToSorts(viewSorts));
       }}
     >
       <StyledContainer>
         <TableContext.Provider
           value={{
             onColumnsChange: useRecoilCallback(() => (columns) => {
-              setCurrentViewFields?.(columnDefinitionsToViewFields(columns));
-              persistViewFields(columnDefinitionsToViewFields(columns));
+              persistViewFields(mapColumnDefinitionsToViewFields(columns));
             }),
           }}
         >

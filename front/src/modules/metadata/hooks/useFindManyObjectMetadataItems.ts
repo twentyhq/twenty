@@ -14,7 +14,9 @@ import { formatPagedObjectMetadataItemsToObjectMetadataItems } from '../utils/fo
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 // TODO: test fetchMore
-export const useFindManyObjectMetadataItems = () => {
+export const useFindManyObjectMetadataItems = ({
+  skip,
+}: { skip?: boolean } = {}) => {
   const apolloMetadataClient = useApolloMetadataClient();
 
   const { enqueueSnackBar } = useSnackBar();
@@ -28,7 +30,7 @@ export const useFindManyObjectMetadataItems = () => {
     FIND_MANY_METADATA_OBJECTS,
     {
       client: apolloMetadataClient ?? undefined,
-      skip: !apolloMetadataClient,
+      skip: skip || !apolloMetadataClient,
       onError: (error) => {
         logError('useFindManyObjectMetadataItems error : ' + error);
         enqueueSnackBar(
