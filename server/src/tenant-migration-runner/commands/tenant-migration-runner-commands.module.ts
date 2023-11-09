@@ -9,4 +9,4 @@ import { RunTenantMigrationsCommand } from './run-tenant-migrations.command';
   imports: [TenantMigrationModule, TenantMigrationRunnerModule],
   providers: [RunTenantMigrationsCommand],
 })
-export class MetadataCommandModule {}
+export class TenantMigrationRunnerCommandsModule {}

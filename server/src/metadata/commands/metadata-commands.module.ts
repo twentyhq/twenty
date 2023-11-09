@@ -23,4 +23,4 @@ import { DataSeedTenantCommand } from './data-seed-tenant.command';
   ],
   providers: [SyncTenantMetadataCommand, DataSeedTenantCommand],
 })
-export class MetadataCommandModule {}
+export class MetadataCommandsModule {}
