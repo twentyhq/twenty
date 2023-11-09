@@ -208,7 +208,7 @@ const StyledButton = styled.button<
                 variant === 'secondary'
                   ? focus
                     ? theme.color.red
-                    : theme.color.red20
+                    : theme.border.color.danger
                   : focus
                   ? theme.color.red
                   : 'transparent'

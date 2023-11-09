@@ -83,7 +83,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
 
     const createdFieldMetadata = await super.createOne({
       ...record,
-      targetColumnMap: generateTargetColumnMap(record.type),
+      targetColumnMap: generateTargetColumnMap(
+        record.type,
+        record.isCustom,
+        record.name,
+      ),
     });
 
     await this.tenantMigrationService.createCustomMigration(
@@ -102,5 +106,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadata> {
     );
 
     return createdFieldMetadata;
+  }
+
+  public async deleteFieldsMetadata(workspaceId: string) {
+    await this.fieldMetadataRepository.delete({ workspaceId });
   }
 }

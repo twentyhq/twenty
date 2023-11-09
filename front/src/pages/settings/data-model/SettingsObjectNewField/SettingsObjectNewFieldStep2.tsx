@@ -118,7 +118,13 @@ export const SettingsObjectNewFieldStep2 = () => {
           }
         />
         <SettingsObjectFieldTypeSelectSection
-          type={formValues.type}
+          fieldIconKey={formValues.icon}
+          fieldLabel={formValues.label || 'Employees'}
+          fieldType={formValues.type}
+          isObjectCustom={activeObjectMetadataItem.isCustom}
+          objectIconKey={activeObjectMetadataItem.icon}
+          objectLabelPlural={activeObjectMetadataItem.labelPlural}
+          objectNamePlural={activeObjectMetadataItem.namePlural}
           onChange={(type) =>
             setFormValues((previousValues) => ({ ...previousValues, type }))
           }

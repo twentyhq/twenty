@@ -6,7 +6,7 @@ import { IconCheck, IconX } from '@/ui/display/icon';
 
 const StyledEditableBooleanFieldContainer = styled.div`
   align-items: center;
-  cursor: pointer;
+  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
   display: flex;
 
   height: 100%;
@@ -20,12 +20,14 @@ const StyledEditableBooleanFieldValue = styled.div`
 type BooleanInputProps = {
   value: boolean;
   onToggle?: (newValue: boolean) => void;
+  readonly?: boolean;
   testId?: string;
 };
 
 export const BooleanInput = ({
   value,
   onToggle,
+  readonly,
   testId,
 }: BooleanInputProps) => {
   const [internalValue, setInternalValue] = useState(value);
@@ -43,7 +45,7 @@ export const BooleanInput = ({
 
   return (
     <StyledEditableBooleanFieldContainer
-      onClick={handleClick}
+      onClick={readonly ? undefined : handleClick}
       data-testid={testId}
     >
       {internalValue ? (
