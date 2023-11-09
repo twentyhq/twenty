@@ -37,8 +37,8 @@ export class MigrateOldSchemaCommand extends CommandRunner {
     );
   }
 
-  formatViewFields(ViewFields) {
-    return ViewFields.map((viewField) => {
+  formatViewFields(viewFields) {
+    return viewFields.map((viewField) => {
       return {
         fieldId: viewField.key,
         viewId: viewField.viewId,
@@ -46,6 +46,19 @@ export class MigrateOldSchemaCommand extends CommandRunner {
         isVisible: viewField.isVisible,
         size: viewField.size,
         workspaceId: viewField.workspaceId,
+      };
+    });
+  }
+
+  formatViewFilters(viewFilters) {
+    return viewFilters.map((viewFilter) => {
+      return {
+        fieldId: viewFilter.key,
+        viewId: viewFilter.viewId,
+        operand: viewFilter.operand,
+        value: viewFilter.value,
+        displayValue: viewFilter.displayValue,
+        workspaceId: viewFilter.workspaceId,
       };
     });
   }
@@ -59,11 +72,13 @@ export class MigrateOldSchemaCommand extends CommandRunner {
         await this.prismaService.client
           .$queryRaw`SELECT * FROM public."viewFields"`,
       );
-      /*const viewFilters: Array<any> = await this.prismaService.client
-        .$queryRaw`SELECT * FROM public."viewFilters"`;
-      const viewSorts: Array<any> = await this.prismaService.client
+      const viewFilters: Array<any> = this.formatViewFilters(
+        await this.prismaService.client
+          .$queryRaw`SELECT * FROM public."viewFilters"`,
+      );
+      /*const viewSorts: Array<any> = await this.prismaService.client
         .$queryRaw`SELECT * FROM public."viewSorts"`;*/
-      for (const workspace of workspaces.splice(0, 20)) {
+      for (const workspace of workspaces) {
         await this.copyData('view', views, workspace.id, [
           'id',
           'name',
@@ -77,14 +92,14 @@ export class MigrateOldSchemaCommand extends CommandRunner {
           'isVisible',
           'size',
         ]);
-        /*await this.copyData(viewFilters, workspace.id, [
-          'id',
+        await this.copyData('viewFilter', viewFilters, workspace.id, [
           'fieldId',
-          'position',
-          'isVisible',
-          'size',
+          'viewId',
+          'operand',
+          'value',
+          'displayValue',
         ]);
-        const workspaceViewSorts = this.filterDataByWorkspace(
+        /*const workspaceViewSorts = this.filterDataByWorkspace(
           viewSorts,
           workspace.id,
         );*/
