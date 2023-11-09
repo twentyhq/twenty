@@ -27,24 +27,31 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
 
   /**
    * Creates a new schema for a given workspaceId
-   * @param workspaceId
-   * @returns Promise<void>
+   * @params workspaceId,failSilently
+   * @returns boolean
    */
-  public async createWorkspaceSchema(workspaceId: string): Promise<string> {
+  public async createWorkspaceSchema(
+    workspaceId: string,
+    failSilently = false,
+  ): Promise<boolean> {
     const schemaName = this.getSchemaName(workspaceId);
 
     const queryRunner = this.mainDataSource.createQueryRunner();
     const schemaAlreadyExists = await queryRunner.hasSchema(schemaName);
 
     if (schemaAlreadyExists) {
-      throw new Error(`Schema ${schemaName} already exists`);
+      await queryRunner.release();
+      if (!failSilently) {
+        throw new Error(`Schema ${schemaName} already exists`);
+      } else {
+        return false;
+      }
     }
 
     await queryRunner.createSchema(schemaName, true);
 
     await queryRunner.release();
-
-    return schemaName;
+    return true;
   }
 
   /**

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { EntityManager } from 'typeorm';
+
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 import { MigrationRunnerService } from 'src/metadata/migration-runner/migration-runner.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
@@ -23,13 +25,22 @@ export class TenantInitialisationService {
 
   /**
    * Init a workspace by creating a new data source and running all migrations
-   * @param workspaceId
+   * @params workspaceId, prefillSeedData
    * @returns Promise<void>
    */
-  public async init(workspaceId: string): Promise<void> {
-    const schemaName = await this.dataSourceService.createWorkspaceSchema(
+  public async init(
+    workspaceId: string,
+    prefillSeedData = true,
+    failSilently = false,
+  ): Promise<void> {
+    const schemaCreated = await this.dataSourceService.createWorkspaceSchema(
       workspaceId,
+      failSilently,
     );
+    if (!schemaCreated) {
+      return;
+    }
+    const schemaName = this.dataSourceService.getSchemaName(workspaceId);
 
     const dataSourceMetadata =
       await this.dataSourceMetadataService.createDataSourceMetadata(
@@ -51,10 +62,12 @@ export class TenantInitialisationService {
       workspaceId,
     );
 
-    await this.prefillWorkspaceWithStandardObjects(
-      dataSourceMetadata,
-      workspaceId,
-    );
+    if (prefillSeedData) {
+      await this.prefillWorkspaceWithStandardObjects(
+        dataSourceMetadata,
+        workspaceId,
+      );
+    }
   }
 
   /**
@@ -76,6 +89,31 @@ export class TenantInitialisationService {
     }
 
     standardObjectsPrefillData(workspaceDataSource, dataSourceMetadata.schema);
+  }
+
+  public async injectWorkspaceData(workspaceId: string, values) {
+    await this.init(workspaceId, false, true);
+    const workspaceDataSource =
+      await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
+    if (!workspaceDataSource) {
+      throw new Error('Could not connect to workspace data source');
+    }
+    await workspaceDataSource.transaction(
+      async (entityManager: EntityManager) => {
+        await entityManager
+          .createQueryBuilder()
+          .insert()
+          .into(`${this.dataSourceService.getSchemaName(workspaceId)}.view`, [
+            'id',
+            'name',
+            'objectId',
+            'type',
+          ])
+          .orIgnore()
+          .values(values)
+          .execute();
+      },
+    );
   }
 
   public async delete(workspaceId: string): Promise<void> {
