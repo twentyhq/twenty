@@ -7,7 +7,7 @@ import { numberOfTableRowsState } from '@/ui/object/record-table/states/numberOf
 import { tableRowIdsState } from '@/ui/object/record-table/states/tableRowIdsState';
 import { useView } from '@/views/hooks/useView';
 
-export const useSetObjectRecordTableData = () => {
+export const useSetRecordTableData = () => {
   const { resetTableRowSelection } = useRecordTable();
   const { setEntityCountInCurrentView } = useView();
 
