@@ -120,10 +120,10 @@ export const RecordTable = ({ updateEntityMutation }: RecordTableProps) => {
   });
 
   return (
-    <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
-      <StyledTableWithHeader>
-        <StyledTableContainer>
-          <ScrollWrapper>
+    <ScrollWrapper>
+      <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
+        <StyledTableWithHeader>
+          <StyledTableContainer>
             <div ref={tableBodyRef}>
               <StyledTable className="entity-table-cell">
                 <RecordTableHeader />
@@ -135,9 +135,9 @@ export const RecordTable = ({ updateEntityMutation }: RecordTableProps) => {
                 onDragSelectionChange={setRowSelectedState}
               />
             </div>
-          </ScrollWrapper>
-        </StyledTableContainer>
-      </StyledTableWithHeader>
-    </EntityUpdateMutationContext.Provider>
+          </StyledTableContainer>
+        </StyledTableWithHeader>
+      </EntityUpdateMutationContext.Provider>
+    </ScrollWrapper>
   );
 };

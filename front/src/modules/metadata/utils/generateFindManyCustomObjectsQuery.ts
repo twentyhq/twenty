@@ -21,7 +21,7 @@ export const generateFindManyCustomObjectsQuery = ({
   )}OrderByInput, $lastCursor: String) {
       ${
         objectMetadataItem.namePlural
-      }(filter: $filter, orderBy: $orderBy, first: 5, after: $lastCursor){
+      }(filter: $filter, orderBy: $orderBy, first: 30, after: $lastCursor){
         edges {
           node {
             id

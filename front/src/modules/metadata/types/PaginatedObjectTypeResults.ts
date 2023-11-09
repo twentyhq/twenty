@@ -4,6 +4,7 @@ export type PaginatedObjectTypeEdge<ObjectType extends { id: string }> = {
 };
 
 export type PaginatedObjectTypeResults<ObjectType extends { id: string }> = {
+  __typename?: string;
   edges: PaginatedObjectTypeEdge<ObjectType>[];
   pageInfo: {
     hasNextPage: boolean;
