@@ -161,9 +161,7 @@ export class WorkspaceService {
       this.delete({ where: { id: workspaceId } }),
     ]);
 
-    try {
-      await this.tenantInitialisationService.delete(workspaceId);
-    } catch (e) {}
+    await this.tenantInitialisationService.delete(workspaceId);
 
     return workspace;
   }

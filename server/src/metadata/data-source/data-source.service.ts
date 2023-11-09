@@ -128,7 +128,7 @@ export class DataSourceService implements OnModuleInit, OnModuleDestroy {
 
     if (!schemaAlreadyExists) {
       await queryRunner.release();
-      throw new Error(`Schema ${schemaName} does not exist`);
+      console.log(`Schema ${schemaName} does not exist`);
     }
 
     await queryRunner.dropSchema(schemaName, true, true);
