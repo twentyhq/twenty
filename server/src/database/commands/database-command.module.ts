@@ -11,6 +11,7 @@ import { DataSourceMetadataModule } from 'src/metadata/data-source-metadata/data
 import { TenantMigrationModule } from 'src/metadata/tenant-migration/tenant-migration.module';
 import { TenantMigrationRunnerModule } from 'src/tenant-migration-runner/tenant-migration-runner.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { WorkspaceModule } from 'src/core/workspace/workspace.module';
 
 import { DataSeedTenantCommand } from './data-seed-tenant.command';
 
@@ -25,6 +26,7 @@ import { DataSeedTenantCommand } from './data-seed-tenant.command';
     TypeORMModule,
     TenantMigrationModule,
     TenantMigrationRunnerModule,
+    WorkspaceModule,
   ],
   providers: [
     DataSeedTenantCommand,
