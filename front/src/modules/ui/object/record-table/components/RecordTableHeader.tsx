@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { IconPlus } from '@/ui/display/icon';
-import { IconButton } from '@/ui/input/button/components/IconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
@@ -28,11 +28,18 @@ const StyledColumnHeaderCell = styled.th<{
   isResizing?: boolean;
 }>`
   ${({ columnWidth }) => `
-    min-width: ${columnWidth}px;
-    width: ${columnWidth}px;
-  `}
+      min-width: ${columnWidth}px;
+      width: ${columnWidth}px;
+      `}
   position: relative;
   user-select: none;
+  ${({ theme }) => {
+    return `
+    &:hover {
+      background: ${theme.background.transparent.light};
+    };
+    `;
+  }};
   ${({ isResizing, theme }) => {
     if (isResizing) {
       return `&:after {
@@ -67,6 +74,30 @@ const StyledTableHead = styled.thead`
 const StyledColumnHeadContainer = styled.div`
   position: relative;
   z-index: 1;
+`;
+
+const StyledPlusIconHeaderCell = styled.th`
+  ${({ theme }) => {
+    return `
+  &:hover {
+    background: ${theme.background.transparent.light};
+  };
+  padding-left: ${theme.spacing(3)};
+  `;
+  }};
+  border-bottom: none !important;
+  border-left: none !important;
+  min-width: 32px;
+  position: relative;
+  z-index: 1;
+`;
+
+const StyledPlusIconContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
 `;
 
 const HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID =
@@ -156,6 +187,8 @@ export const RecordTableHeader = () => {
     (column) => column.position === 0,
   );
 
+  const theme = useTheme();
+
   return (
     <StyledTableHead data-select-disable>
       <tr>
@@ -197,31 +230,26 @@ export const RecordTableHeader = () => {
             />
           </StyledColumnHeaderCell>
         ))}
-        <th>
-          {hiddenTableColumns.length > 0 && (
-            <StyledColumnHeadContainer>
-              <DropdownScope
-                dropdownScopeId={HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID}
-              >
-                <Dropdown
-                  clickableComponent={
-                    <IconButton
-                      size="medium"
-                      variant="tertiary"
-                      Icon={IconPlus}
-                      position="middle"
-                    />
-                  }
-                  dropdownComponents={<RecordTableHeaderPlusButtonContent />}
-                  dropdownPlacement="bottom-start"
-                  dropdownHotkeyScope={{
-                    scope: HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID,
-                  }}
-                />
-              </DropdownScope>
-            </StyledColumnHeadContainer>
-          )}
-        </th>
+        {hiddenTableColumns.length > 0 && (
+          <StyledPlusIconHeaderCell>
+            <DropdownScope
+              dropdownScopeId={HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID}
+            >
+              <Dropdown
+                clickableComponent={
+                  <StyledPlusIconContainer>
+                    <IconPlus size={theme.icon.size.md} />
+                  </StyledPlusIconContainer>
+                }
+                dropdownComponents={<RecordTableHeaderPlusButtonContent />}
+                dropdownPlacement="bottom-start"
+                dropdownHotkeyScope={{
+                  scope: HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID,
+                }}
+              />
+            </DropdownScope>
+          </StyledPlusIconHeaderCell>
+        )}
       </tr>
     </StyledTableHead>
   );
