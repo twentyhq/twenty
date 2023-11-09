@@ -20,12 +20,9 @@ export const getRecordOptimisticEffectDefinition = ({
       currentData: unknown;
       newData: unknown;
     }) => {
-      console.log({ currentData, newData });
-
       const newRecordPaginatedCacheField = produce<
         PaginatedObjectTypeResults<any>
       >(currentData as PaginatedObjectTypeResults<any>, (draft) => {
-        console.log({ draft });
         draft.edges.unshift({ node: newData, cursor: '' });
       });
 

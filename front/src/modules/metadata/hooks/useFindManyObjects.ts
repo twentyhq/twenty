@@ -54,15 +54,13 @@ export const useFindManyObjects = <
       orderBy: orderBy ?? {},
     },
     onCompleted: (data) => {
-      console.log('on Completed', { data });
       if (objectNamePlural) {
         onCompleted?.(data[objectNamePlural]);
-        console.log({ objectNamePlural, data });
+
         if (objectNamePlural && data?.[objectNamePlural]?.pageInfo.endCursor) {
           setLastCursor(data?.[objectNamePlural]?.pageInfo.endCursor);
         }
       }
-      console.log('after on Completed', { data });
     },
     onError: (error) => {
       logError(`useFindManyObjects for "${objectNamePlural}" error : ` + error);
@@ -76,22 +74,14 @@ export const useFindManyObjects = <
   });
 
   const fetchMoreObjects = useCallback(async () => {
-    console.log({ objectNamePlural, lastCursor });
-
-    console.log('-1');
-
     if (objectNamePlural) {
-      console.log('asd -1');
-
-      const { errors } = await fetchMore({
+      await fetchMore({
         variables: {
           filter: filter ?? {},
           orderBy: orderBy ?? {},
           lastCursor: isNonEmptyString(lastCursor) ? lastCursor : undefined,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
-          console.log('0');
-
           const uniqueByCursor = (a: PaginatedObjectTypeEdge<ObjectType>[]) => {
             const seenCursors = new Set();
 
@@ -104,14 +94,10 @@ export const useFindManyObjects = <
             });
           };
 
-          console.log('1');
-
           const newEdges = uniqueByCursor([
             ...prev?.[objectNamePlural].edges,
             ...fetchMoreResult?.[objectNamePlural]?.edges,
           ]);
-
-          console.log({ newEdges });
 
           return Object.assign({}, prev, {
             [objectNamePlural]: {
@@ -121,29 +107,8 @@ export const useFindManyObjects = <
           } as PaginatedObjectType<ObjectType>);
         },
       });
-
-      console.error({ errors });
-
-      // if (objectNamePlural && onCompleted) {
-      //   onCompleted(data.data?.[objectNamePlural]);
-
-      //   if (
-      //     objectNamePlural &&
-      //     data.data?.[objectNamePlural]?.pageInfo.endCursor
-      //   ) {
-      //     setLastCursor(data.data?.[objectNamePlural]?.pageInfo.endCursor);
-      //   }
-      // }
     }
-  }, [
-    objectNamePlural,
-    lastCursor,
-    fetchMore,
-    filter,
-    orderBy,
-    // onCompleted,
-    // setLastCursor,
-  ]);
+  }, [objectNamePlural, lastCursor, fetchMore, filter, orderBy]);
 
   const objects = useMemo(
     () =>
@@ -162,6 +127,5 @@ export const useFindManyObjects = <
     error,
     objectNotFoundInMetadata,
     fetchMoreObjects,
-    // fetchMoreObjects,
   };
 };

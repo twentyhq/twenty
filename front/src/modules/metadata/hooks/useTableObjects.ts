@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { turnFiltersIntoWhereClauseV2 } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClauseV2';
 import { turnSortsIntoOrderByV2 } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderByV2';
@@ -41,18 +39,6 @@ export const useTableObjects = () => {
     foundObjectMetadataItem?.fields ?? [],
   );
 
-  useEffect(() => {
-    if (foundObjectMetadataItem) {
-      console.log('registerOptimisticEffect');
-      registerOptimisticEffect({
-        variables: { orderBy, filter },
-        definition: getRecordOptimisticEffectDefinition({
-          objectMetadataItem: foundObjectMetadataItem,
-        }),
-      });
-    }
-  }, [foundObjectMetadataItem, registerOptimisticEffect, orderBy, filter]);
-
   const { objects, loading, fetchMoreObjects } = useFindManyObjects({
     objectNamePlural,
     filter,
@@ -60,9 +46,16 @@ export const useTableObjects = () => {
     onCompleted: (data) => {
       const entities = data.edges.map((edge) => edge.node) ?? [];
 
-      console.log('setRecordTableData');
-
       setRecordTableData(entities);
+
+      if (foundObjectMetadataItem) {
+        registerOptimisticEffect({
+          variables: { orderBy, filter },
+          definition: getRecordOptimisticEffectDefinition({
+            objectMetadataItem: foundObjectMetadataItem,
+          }),
+        });
+      }
     },
   });
 
