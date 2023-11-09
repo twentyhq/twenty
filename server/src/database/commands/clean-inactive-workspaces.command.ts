@@ -117,7 +117,6 @@ export class DataCleanInactiveCommand extends CommandRunner {
         !name.includes('user') &&
         !name.includes('refreshToken') &&
         !name.includes('workspace') &&
-        !name.includes('webHook') &&
         !name.includes('favorite'),
     );
   }
