@@ -1,0 +1,22 @@
+---
+title: Chip
+sidebar_position: 2
+---
+
+
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/display/chip/components/Chip']}
+  componentCode={`import { Chip } from "@/ui/display/chip/components/Chip";
+export const MyComponent = () => {
+  return (
+    <>
+      <Chip />
+    </>
+  );
+};
+
+`} 
+/>

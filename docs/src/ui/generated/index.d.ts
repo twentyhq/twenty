@@ -1,6 +1,8 @@
 export { ThemeProvider } from '@emotion/react';
 import * as react_jsx_runtime from 'react/jsx-runtime';
-import React, { FunctionComponent } from 'react';
+import * as React$1 from 'react';
+import React__default, { FunctionComponent } from 'react';
+import { motion } from 'framer-motion';
 
 declare const lightTheme: {
     accent: {
@@ -279,8 +281,44 @@ declare const lightTheme: {
 type ThemeType = typeof lightTheme;
 declare const darkTheme: ThemeType;
 
-type CheckmarkProps = React.ComponentPropsWithoutRef<'div'>;
+type CheckmarkProps = React__default.ComponentPropsWithoutRef<'div'>;
 declare const Checkmark: (_props: CheckmarkProps) => react_jsx_runtime.JSX.Element;
+
+type AnimatedCheckmarkProps = React.ComponentProps<typeof motion.path> & {
+    isAnimating?: boolean;
+    color?: string;
+    duration?: number;
+    size?: number;
+};
+declare const AnimatedCheckmark: ({ isAnimating, color, duration, size, }: AnimatedCheckmarkProps) => react_jsx_runtime.JSX.Element;
+
+declare enum ChipSize {
+    Large = "large",
+    Small = "small"
+}
+declare enum ChipAccent {
+    TextPrimary = "text-primary",
+    TextSecondary = "text-secondary"
+}
+declare enum ChipVariant {
+    Highlighted = "highlighted",
+    Regular = "regular",
+    Transparent = "transparent",
+    Rounded = "rounded"
+}
+type ChipProps = {
+    size?: ChipSize;
+    disabled?: boolean;
+    clickable?: boolean;
+    label: string;
+    maxWidth?: string;
+    variant?: ChipVariant;
+    accent?: ChipAccent;
+    leftComponent?: React$1.ReactNode;
+    rightComponent?: React$1.ReactNode;
+    className?: string;
+};
+declare const Chip: ({ size, label, disabled, clickable, variant, leftComponent, rightComponent, accent, maxWidth, className, }: ChipProps) => react_jsx_runtime.JSX.Element;
 
 type IconComponent = FunctionComponent<{
     color?: string;
@@ -304,7 +342,7 @@ type ButtonProps = {
     soon?: boolean;
     disabled?: boolean;
     focus?: boolean;
-    onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    onClick?: (event: React__default.MouseEvent<HTMLButtonElement>) => void;
 };
 declare const Button: ({ className, Icon, title, fullWidth, variant, size, accent, position, soon, disabled, focus, onClick, }: ButtonProps) => react_jsx_runtime.JSX.Element;
 
@@ -313,4 +351,4 @@ declare module '@emotion/react' {
     }
 }
 
-export { Button, ButtonAccent, ButtonPosition, ButtonProps, ButtonSize, ButtonVariant, Checkmark, CheckmarkProps, darkTheme, lightTheme };
+export { AnimatedCheckmark, AnimatedCheckmarkProps, Button, ButtonAccent, ButtonPosition, ButtonProps, ButtonSize, ButtonVariant, Checkmark, CheckmarkProps, Chip, ChipAccent, ChipSize, ChipVariant, darkTheme, lightTheme };

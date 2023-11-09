@@ -1,9 +1,9 @@
 {
-  "label": "Display",
-  "position": 0,
+  "label": "Feedback",
+  "position": 1,
   "collapsible": true,
   "collapsed": true,
   "customProps": {
-    "icon": "TbAppWindow"
+    "icon": "TbForms"
   }
 }

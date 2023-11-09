@@ -1,0 +1,19 @@
+---
+title: Button
+sidebar_position: 1
+---
+
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+
+<SandpackEditor
+  availableComponentPaths={[ '@/ui/Button/components/Button']}
+  componentCode={`import { Button } from "@/ui/Button/components/Button";
+export const MyComponent = () => {
+ return <> <Button title="New task"
+          variant={'secondary'}
+          onClick={() => console.log('click')}/></>
+}
+`} 
+/>
+
+button group

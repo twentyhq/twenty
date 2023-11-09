@@ -1,6 +1,6 @@
 {
-  "label": "Display",
-  "position": 0,
+  "label": "Object",
+  "position": 4,
   "collapsible": true,
   "collapsed": true,
   "customProps": {

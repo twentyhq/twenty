@@ -1,6 +1,6 @@
 {
-  "label": "Display",
-  "position": 0,
+  "label": "Navigation",
+  "position": 3,
   "collapsible": true,
   "collapsed": true,
   "customProps": {

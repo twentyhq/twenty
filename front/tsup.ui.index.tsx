@@ -10,4 +10,6 @@ declare module '@emotion/react' {
 }
 
 export * from './src/modules/ui/display/checkmark/components/Checkmark';
+export * from './src/modules/ui/display/checkmark/components/AnimatedCheckmark'
+export * from './src/modules/ui/display/chip/components/Chip'
 export * from './src/modules/ui/input/button/components/Button';
