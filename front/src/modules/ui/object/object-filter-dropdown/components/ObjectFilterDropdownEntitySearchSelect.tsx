@@ -42,7 +42,7 @@ export const ObjectFilterDropdownEntitySearchSelect = ({
 
     selectFilter?.({
       displayValue: selectedEntity.name,
-      fieldId: filterDefinitionUsedInDropdown.fieldId,
+      fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
       operand: selectedOperandInDropdown,
       value: selectedEntity.id,
       displayAvatarUrl: selectedEntity.avatarUrl,
@@ -72,7 +72,7 @@ export const ObjectFilterDropdownEntitySearchSelect = ({
 
     selectFilter?.({
       displayValue: filterDefinitionUsedInDropdown.selectAllLabel,
-      fieldId: filterDefinitionUsedInDropdown.fieldId,
+      fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
       operand: ViewFilterOperand.IsNotNull,
       value: '',
       definition: filterDefinitionUsedInDropdown,

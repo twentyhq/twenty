@@ -9,10 +9,10 @@ const viewFiltersMetadata = {
   fields: [
     {
       type: 'TEXT',
-      name: 'fieldId',
+      name: 'fieldMetadataId',
       label: 'Field Id',
       targetColumnMap: {
-        value: 'fieldId',
+        value: 'fieldMetadataId',
       },
       description: 'View Filter target field',
       icon: null,

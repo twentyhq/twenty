@@ -32,7 +32,7 @@ const meta: Meta = {
         value={{
           entityId: '',
           fieldDefinition: {
-            fieldId: 'double-text',
+            fieldMetadataId: 'double-text',
             label: 'Double-Text',
             type: 'DOUBLE_TEXT',
             metadata: {

@@ -34,7 +34,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
     <DropdownMenuItemsContainer>
       {hiddenTableColumns.map((column) => (
         <MenuItem
-          key={column.fieldId}
+          key={column.fieldMetadataId}
           iconButtons={[
             {
               Icon: IconPlus,

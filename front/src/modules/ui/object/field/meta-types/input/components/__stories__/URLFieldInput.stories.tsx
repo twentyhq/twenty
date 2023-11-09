@@ -43,7 +43,7 @@ const URLFieldInputWithContext = ({
     <div>
       <FieldContextProvider
         fieldDefinition={{
-          fieldId: 'url',
+          fieldMetadataId: 'url',
           label: 'URL',
           type: 'URL',
           metadata: {

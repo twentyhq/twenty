@@ -21,7 +21,7 @@ export const ActivityEditorDateField = ({
           entityId: activityId,
           recoilScopeId: 'activityDueAt',
           fieldDefinition: {
-            fieldId: 'activityDueAt',
+            fieldMetadataId: 'activityDueAt',
             label: 'Due date',
             Icon: IconCalendar,
             type: 'DATE',

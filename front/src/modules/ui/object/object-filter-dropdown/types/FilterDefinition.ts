@@ -3,7 +3,7 @@ import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { FilterType } from './FilterType';
 
 export type FilterDefinition = {
-  fieldId: string;
+  fieldMetadataId: string;
   label: string;
   Icon: IconComponent;
   type: FilterType;

@@ -18,7 +18,7 @@ export const addViewTable: TenantMigrationTableAction[] = [
         action: TenantMigrationColumnActionType.CREATE,
       },
       {
-        columnName: 'objectId',
+        columnName: 'objectMetadataId',
         columnType: 'varchar',
         action: TenantMigrationColumnActionType.CREATE,
       },

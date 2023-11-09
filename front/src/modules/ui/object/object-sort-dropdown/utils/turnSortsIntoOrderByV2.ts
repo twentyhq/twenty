@@ -9,11 +9,11 @@ export const turnSortsIntoOrderByV2 = (
   const sortsObject: Record<string, 'AscNullsFirst' | 'DescNullsLast'> = {};
   sorts.forEach((sort) => {
     const correspondingField = fields.find(
-      (field) => field.id === sort.fieldId,
+      (field) => field.id === sort.fieldMetadataId,
     );
     if (!correspondingField) {
       throw new Error(
-        `Could not find field ${sort.fieldId} in metadata object`,
+        `Could not find field ${sort.fieldMetadataId} in metadata object`,
       );
     }
     const direction =

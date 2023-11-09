@@ -9,10 +9,10 @@ const viewSortsMetadata = {
   fields: [
     {
       type: 'TEXT',
-      name: 'fieldId',
+      name: 'fieldMetadataId',
       label: 'Field Id',
       targetColumnMap: {
-        value: 'fieldId',
+        value: 'fieldMetadataId',
       },
       description: 'View Sort target field',
       icon: null,
