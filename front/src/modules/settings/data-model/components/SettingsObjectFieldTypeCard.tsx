@@ -1,7 +1,8 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
-type SettingsObjectFieldPreviewCardProps = {
+type SettingsObjectFieldTypeCardProps = {
+  className?: string;
   preview: ReactNode;
   form?: ReactNode;
 };
@@ -36,12 +37,13 @@ const StyledFormContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(4)};
 `;
 
-export const SettingsObjectFieldPreviewCard = ({
+export const SettingsObjectFieldTypeCard = ({
+  className,
   preview,
   form,
-}: SettingsObjectFieldPreviewCardProps) => {
+}: SettingsObjectFieldTypeCardProps) => {
   return (
-    <div>
+    <div className={className}>
       <StyledPreviewContainer>
         <StyledTitle>Preview</StyledTitle>
         {preview}

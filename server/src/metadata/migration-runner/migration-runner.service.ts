@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { QueryRunner, Table, TableColumn } from 'typeorm';
+import { QueryRunner, Table, TableColumn, TableForeignKey } from 'typeorm';
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import {
   TenantMigrationTableAction,
   TenantMigrationColumnAction,
+  TenantMigrationColumnCreate,
+  TenantMigrationColumnRelation,
+  TenantMigrationColumnActionType,
 } from 'src/metadata/tenant-migration/tenant-migration.entity';
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 
@@ -143,7 +146,7 @@ export class MigrationRunnerService {
 
     for (const columnMigration of columnMigrations) {
       switch (columnMigration.action) {
-        case 'create':
+        case TenantMigrationColumnActionType.CREATE:
           await this.createColumn(
             queryRunner,
             schemaName,
@@ -151,10 +154,16 @@ export class MigrationRunnerService {
             columnMigration,
           );
           break;
-        default:
-          throw new Error(
-            `Migration column action ${columnMigration.action} not supported`,
+        case TenantMigrationColumnActionType.RELATION:
+          await this.createForeignKey(
+            queryRunner,
+            schemaName,
+            tableName,
+            columnMigration,
           );
+          break;
+        default:
+          throw new Error(`Migration column action not supported`);
       }
     }
   }
@@ -171,21 +180,39 @@ export class MigrationRunnerService {
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
-    migrationColumn: TenantMigrationColumnAction,
+    migrationColumn: TenantMigrationColumnCreate,
   ) {
     const hasColumn = await queryRunner.hasColumn(
       `${schemaName}.${tableName}`,
-      migrationColumn.name,
+      migrationColumn.columnName,
     );
     if (hasColumn) {
       return;
     }
+
     await queryRunner.addColumn(
       `${schemaName}.${tableName}`,
       new TableColumn({
-        name: migrationColumn.name,
-        type: migrationColumn.type,
+        name: migrationColumn.columnName,
+        type: migrationColumn.columnType,
         isNullable: true,
+      }),
+    );
+  }
+
+  private async createForeignKey(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    migrationColumn: TenantMigrationColumnRelation,
+  ) {
+    await queryRunner.createForeignKey(
+      `${schemaName}.${tableName}`,
+      new TableForeignKey({
+        columnNames: [migrationColumn.columnName],
+        referencedColumnNames: [migrationColumn.referencedTableColumnName],
+        referencedTableName: migrationColumn.referencedTableName,
+        onDelete: 'CASCADE',
       }),
     );
   }

@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { Equal, In, Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { DeleteOneOptions } from '@ptc-org/nestjs-query-core';
 
@@ -90,6 +90,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadata> {
   ) {
     return this.objectMetadataRepository.findOne({
       where: { id: objectMetadataId, workspaceId },
+    });
+  }
+
+  public async findManyWithinWorkspace(
+    objectMetadataIds: string[],
+    workspaceId: string,
+  ) {
+    return this.objectMetadataRepository.findBy({
+      id: In(objectMetadataIds),
+      workspaceId: Equal(workspaceId),
     });
   }
 

@@ -1,12 +1,9 @@
 import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
-import { v4 } from 'uuid';
 
-import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
-import { CatalogStory } from '~/testing/types';
 
-import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
+import { FieldContext } from '../../../../contexts/FieldContext';
 import { useNumberField } from '../../../hooks/useNumberField';
 import { NumberFieldDisplay } from '../NumberFieldDisplay';
 
@@ -17,46 +14,42 @@ const NumberFieldValueSetterEffect = ({ value }: { value: number }) => {
     setFieldValue(value);
   }, [setFieldValue, value]);
 
-  return <></>;
-};
-
-type NumberFieldDisplayWithContextProps = {
-  value: number;
-  entityId?: string;
-};
-
-const NumberFieldDisplayWithContext = ({
-  value,
-  entityId,
-}: NumberFieldDisplayWithContextProps) => {
-  return (
-    <FieldContextProvider
-      fieldDefinition={{
-        fieldId: 'number',
-        label: 'Number',
-        type: 'NUMBER',
-        metadata: {
-          fieldName: 'Number',
-          placeHolder: 'Number',
-          isPositive: true,
-        },
-      }}
-      entityId={entityId}
-    >
-      <NumberFieldValueSetterEffect value={value} />
-      <NumberFieldDisplay />
-    </FieldContextProvider>
-  );
+  return null;
 };
 
 const meta: Meta = {
   title: 'UI/Data/Field/Display/NumberFieldDisplay',
-  component: NumberFieldDisplayWithContext,
+  decorators: [
+    (Story, { args }) => (
+      <FieldContext.Provider
+        value={{
+          entityId: '',
+          fieldDefinition: {
+            fieldId: 'number',
+            label: 'Number',
+            type: 'NUMBER',
+            metadata: {
+              fieldName: 'Number',
+              placeHolder: 'Number',
+              isPositive: true,
+            },
+          },
+          hotkeyScope: 'hotkey-scope',
+          useUpdateEntityMutation: () => [() => undefined, undefined],
+        }}
+      >
+        <NumberFieldValueSetterEffect value={args.value} />
+        <Story />
+      </FieldContext.Provider>
+    ),
+    ComponentDecorator,
+  ],
+  component: NumberFieldDisplay,
 };
 
 export default meta;
 
-type Story = StoryObj<typeof NumberFieldDisplayWithContext>;
+type Story = StoryObj<typeof NumberFieldDisplay>;
 
 export const Default: Story = {
   args: {
@@ -68,41 +61,19 @@ export const Elipsis: Story = {
   args: {
     value: 1e100,
   },
-  argTypes: {
-    value: { control: false },
-  },
   parameters: {
-    container: {
-      width: 100,
-    },
+    container: { width: 100 },
   },
-  decorators: [ComponentDecorator],
 };
 
-export const Catalog: CatalogStory<
-  Story,
-  typeof NumberFieldDisplayWithContext
-> = {
-  argTypes: {
-    value: { control: false },
+export const Negative: Story = {
+  args: {
+    value: -1000,
   },
-  parameters: {
-    catalog: {
-      dimensions: [
-        {
-          name: 'value',
-          values: [
-            100, 1000, -1000, 1e10, 1.357802, -1.283, 0,
-          ] satisfies number[],
-          props: (value: number) => ({ value, entityId: v4() }),
-        },
-      ],
-      options: {
-        elementContainer: {
-          width: 100,
-        },
-      },
-    },
+};
+
+export const Float: Story = {
+  args: {
+    value: 1.357802,
   },
-  decorators: [CatalogDecorator],
 };
