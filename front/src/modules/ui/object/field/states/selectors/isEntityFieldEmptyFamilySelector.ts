@@ -1,5 +1,7 @@
 import { selectorFamily } from 'recoil';
 
+import { assertNotNull } from '~/utils/assert';
+
 import { FieldDefinition } from '../../types/FieldDefinition';
 import { FieldMetadata } from '../../types/FieldMetadata';
 import { isFieldBoolean } from '../../types/guards/isFieldBoolean';
@@ -8,6 +10,8 @@ import { isFieldDate } from '../../types/guards/isFieldDate';
 import { isFieldDoubleTextChip } from '../../types/guards/isFieldDoubleTextChip';
 import { isFieldEmail } from '../../types/guards/isFieldEmail';
 import { isFieldMoney } from '../../types/guards/isFieldMoney';
+import { isFieldMoneyAmountV2 } from '../../types/guards/isFieldMoneyAmountV2';
+import { isFieldMoneyAmountV2Value } from '../../types/guards/isFieldMoneyAmountV2Value';
 import { isFieldNumber } from '../../types/guards/isFieldNumber';
 import { isFieldPhone } from '../../types/guards/isFieldPhone';
 import { isFieldProbability } from '../../types/guards/isFieldProbability';
@@ -16,6 +20,8 @@ import { isFieldRelationValue } from '../../types/guards/isFieldRelationValue';
 import { isFieldText } from '../../types/guards/isFieldText';
 import { isFieldURL } from '../../types/guards/isFieldURL';
 import { entityFieldsFamilyState } from '../entityFieldsFamilyState';
+
+const isValueEmpty = (value: unknown) => !assertNotNull(value) || value === '';
 
 export const isEntityFieldEmptyFamilySelector = selectorFamily({
   key: 'isEntityFieldEmptyFamilySelector',
@@ -44,32 +50,30 @@ export const isEntityFieldEmptyFamilySelector = selectorFamily({
         const fieldName = fieldDefinition.metadata.fieldName;
         const fieldValue = get(entityFieldsFamilyState(entityId))?.[
           fieldName
-        ] as string | null;
+        ] as string | number | boolean | null;
 
-        return (
-          fieldValue === null || fieldValue === undefined || fieldValue === ''
-        );
-      } else if (isFieldRelation(fieldDefinition)) {
+        return isValueEmpty(fieldValue);
+      }
+
+      if (isFieldRelation(fieldDefinition)) {
         const fieldName = fieldDefinition.metadata.fieldName;
 
         const fieldValue = get(entityFieldsFamilyState(entityId))?.[fieldName];
 
-        if (isFieldRelationValue(fieldValue)) {
-          return fieldValue === null || fieldValue === undefined;
-        }
-      } else if (isFieldChip(fieldDefinition)) {
+        return isFieldRelationValue(fieldValue) && isValueEmpty(fieldValue);
+      }
+
+      if (isFieldChip(fieldDefinition)) {
         const contentFieldName = fieldDefinition.metadata.contentFieldName;
 
         const contentFieldValue = get(entityFieldsFamilyState(entityId))?.[
           contentFieldName
         ] as string | null;
 
-        return (
-          contentFieldValue === null ||
-          contentFieldValue === undefined ||
-          contentFieldValue === ''
-        );
-      } else if (isFieldDoubleTextChip(fieldDefinition)) {
+        return isValueEmpty(contentFieldValue);
+      }
+
+      if (isFieldDoubleTextChip(fieldDefinition)) {
         const firstValueFieldName =
           fieldDefinition.metadata.firstValueFieldName;
 
@@ -85,20 +89,24 @@ export const isEntityFieldEmptyFamilySelector = selectorFamily({
         )?.[secondValueFieldName] as string | null;
 
         return (
-          (contentFieldFirstValue === null ||
-            contentFieldFirstValue === undefined ||
-            contentFieldFirstValue === '') &&
-          (contentFieldSecondValue === null ||
-            contentFieldSecondValue === undefined ||
-            contentFieldSecondValue === '')
-        );
-      } else {
-        throw new Error(
-          `Entity field type not supported in isEntityFieldEmptyFamilySelector : ${fieldDefinition.type}}`,
+          isValueEmpty(contentFieldFirstValue) &&
+          isValueEmpty(contentFieldSecondValue)
         );
       }
 
-      return false;
+      if (isFieldMoneyAmountV2(fieldDefinition)) {
+        const fieldName = fieldDefinition.metadata.fieldName;
+        const fieldValue = get(entityFieldsFamilyState(entityId))?.[fieldName];
+
+        return (
+          !isFieldMoneyAmountV2Value(fieldValue) ||
+          isValueEmpty(fieldValue?.amount)
+        );
+      }
+
+      throw new Error(
+        `Entity field type not supported in isEntityFieldEmptyFamilySelector : ${fieldDefinition.type}}`,
+      );
     };
   },
 });

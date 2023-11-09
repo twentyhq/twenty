@@ -24,19 +24,27 @@ type Story = StoryObj<typeof SettingsObjectFieldPreview>;
 
 export const Text: Story = {};
 
-export const Number: Story = {
-  args: {
-    fieldIconKey: 'IconUsers',
-    fieldLabel: 'Employees',
-    fieldType: 'NUMBER',
-  },
-};
-
 export const Boolean: Story = {
   args: {
     fieldIconKey: 'IconHeadphones',
     fieldLabel: 'Priority Support',
     fieldType: 'BOOLEAN',
+  },
+};
+
+export const Currency: Story = {
+  args: {
+    fieldIconKey: 'IconCurrencyDollar',
+    fieldLabel: 'Amount',
+    fieldType: 'MONEY',
+  },
+};
+
+export const Number: Story = {
+  args: {
+    fieldIconKey: 'IconUsers',
+    fieldLabel: 'Employees',
+    fieldType: 'NUMBER',
   },
 };
 

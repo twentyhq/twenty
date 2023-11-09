@@ -29,6 +29,7 @@ export {
   IconChevronsRight,
   IconChevronUp,
   IconCircleDot,
+  IconCoins,
   IconColorSwatch,
   IconMessageCircle as IconComment,
   IconCopy,
