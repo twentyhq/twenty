@@ -50,6 +50,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   override async createOne(
     record: CreateObjectInput,
   ): Promise<ObjectMetadataEntity> {
+    console.log('toto');
+
     const createdObjectMetadata = await super.createOne({
       ...record,
       targetTableName: `_${record.nameSingular}`,

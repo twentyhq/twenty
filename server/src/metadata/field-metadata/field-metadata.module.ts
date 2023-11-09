@@ -35,6 +35,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
           DTOClass: FieldMetadataDTO,
           CreateDTOClass: CreateFieldInput,
           UpdateDTOClass: UpdateFieldInput,
+          ServiceClass: FieldMetadataService,
           enableTotalCount: true,
           pagingStrategy: PagingStrategies.CURSOR,
           read: {

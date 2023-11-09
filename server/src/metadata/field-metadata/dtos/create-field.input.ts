@@ -9,6 +9,8 @@ import {
   IsUUID,
 } from 'class-validator';
 
+import { FieldMetadataTargetColumnMap } from 'src/tenant/schema-builder/interfaces/field-metadata-target-column-map.interface';
+
 import { FieldMetadataType } from 'src/database/typeorm/metadata/entities/field-metadata.entity';
 import { BeforeCreateOneField } from 'src/metadata/field-metadata/hooks/before-create-one-field.hook';
 
@@ -43,6 +45,9 @@ export class CreateFieldInput {
   @IsOptional()
   @Field({ nullable: true })
   icon?: string;
+
+  @HideField()
+  targetColumnMap: FieldMetadataTargetColumnMap;
 
   @HideField()
   workspaceId: string;

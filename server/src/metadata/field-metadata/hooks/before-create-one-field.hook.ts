@@ -20,6 +20,7 @@ export class BeforeCreateOneField<T extends CreateFieldInput>
     if (!workspaceId) {
       throw new UnauthorizedException();
     }
+    console.log(workspaceId);
 
     instance.input.workspaceId = workspaceId;
     return instance;
