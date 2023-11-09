@@ -20,7 +20,7 @@ export const ObjectFilterDropdownNumberSearchInput = () => {
         placeholder={filterDefinitionUsedInDropdown.label}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           selectFilter?.({
-            fieldId: filterDefinitionUsedInDropdown.fieldId,
+            fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
             value: event.target.value,
             operand: selectedOperandInDropdown,
             displayValue: event.target.value,

@@ -7,7 +7,7 @@ export const mapViewFiltersToFilters = (
 ): Filter[] => {
   return viewFilters.map((viewFilter) => {
     return {
-      fieldId: viewFilter.fieldId,
+      fieldMetadataId: viewFilter.fieldMetadataId,
       value: viewFilter.value,
       displayValue: viewFilter.displayValue,
       operand: viewFilter.operand,

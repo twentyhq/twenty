@@ -11,12 +11,12 @@ export const mapViewFieldsToColumnDefinitions = (
   return viewFields
     .map((viewField) => {
       const correspondingFieldMetadata = fieldsMetadata.find(
-        ({ fieldId }) => viewField.fieldId === fieldId,
+        ({ fieldMetadataId }) => viewField.fieldMetadataId === fieldMetadataId,
       );
 
       return correspondingFieldMetadata
         ? {
-            fieldId: viewField.fieldId,
+            fieldMetadataId: viewField.fieldMetadataId,
             label: correspondingFieldMetadata.label,
             metadata: correspondingFieldMetadata.metadata,
             entityChipDisplayMapper:

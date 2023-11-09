@@ -1,3 +1,4 @@
+import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
@@ -9,18 +10,73 @@ const meta: Meta<typeof SettingsObjectFieldPreview> = {
   component: SettingsObjectFieldPreview,
   decorators: [ComponentDecorator],
   args: {
-    objectIconKey: 'IconUser',
-    objectLabelPlural: 'People',
     fieldIconKey: 'IconNotes',
     fieldLabel: 'Description',
-    fieldValue:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum magna enim, dapibus non enim in, lacinia faucibus nunc. Sed interdum ante sed felis facilisis, eget ultricies neque molestie. Mauris auctor, justo eu volutpat cursus, libero erat tempus nulla, non sodales lorem lacus a est.',
+    fieldType: 'TEXT',
+    isObjectCustom: false,
+    objectIconKey: 'IconBuildingSkyscraper',
+    objectLabelPlural: 'Companies',
+    objectNamePlural: 'companies',
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof SettingsObjectFieldPreview>;
 
-export const StandardObject: Story = { args: { isObjectCustom: false } };
+export const Text: Story = {};
 
-export const CustomObject: Story = { args: { isObjectCustom: true } };
+export const Boolean: Story = {
+  args: {
+    fieldIconKey: 'IconHeadphones',
+    fieldLabel: 'Priority Support',
+    fieldType: 'BOOLEAN',
+  },
+};
+
+export const Currency: Story = {
+  args: {
+    fieldIconKey: 'IconCurrencyDollar',
+    fieldLabel: 'Amount',
+    fieldType: 'MONEY',
+  },
+};
+
+export const Date: Story = {
+  args: {
+    fieldIconKey: 'IconCalendarEvent',
+    fieldLabel: 'Registration Date',
+    fieldType: 'DATE',
+  },
+};
+
+export const Link: Story = {
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
+  args: {
+    fieldIconKey: 'IconWorldWww',
+    fieldLabel: 'Website',
+    fieldType: 'URL',
+  },
+};
+
+export const Number: Story = {
+  args: {
+    fieldIconKey: 'IconUsers',
+    fieldLabel: 'Employees',
+    fieldType: 'NUMBER',
+  },
+};
+
+export const CustomObject: Story = {
+  args: {
+    isObjectCustom: true,
+    objectIconKey: 'IconApps',
+    objectLabelPlural: 'Workspaces',
+    objectNamePlural: 'workspaces',
+  },
+};

@@ -45,6 +45,7 @@ exceptions:
   - PDF
   - PHP
   - POST
+  - PII
   - RAM
   - REPL
   - RSA
@@ -58,6 +59,7 @@ exceptions:
   - TBD
   - TCP
   - TODO
+  - TSX
   - URI
   - URL
   - USB

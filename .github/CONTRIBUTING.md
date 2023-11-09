@@ -1,10 +1,12 @@
 # Contributing to Twenty
 
 
-Thank you for considering contributing to Twenty! We welcome all types of contributions from the community to help us build and improve our open-source CRM platform. This guide outlines the process for contributing to our project. Please make sure to go through the [documentation](https://docs.twenty.com) before making your contribution. 
+Thank you for considering contributing to Twenty! All community contributions are welcome. 
+
+This guide outlines the process for contributing to this project. Please make sure to go through the [documentation](https://docs.twenty.com) before making your contribution. 
 
 
-> And if you like the project, but just don't have time to contribute, that's fine. There are other easy ways to support the project and show your appreciation, which we would also be very happy about:
+> And if you like the project, but just don't have time to contribute, that's fine. There are other easy ways to support the project and show your appreciation:
 > - Star the project
 > - Tweet about it
 
@@ -16,9 +18,9 @@ Thank you for considering contributing to Twenty! We welcome all types of contri
 
 Good first issues are a great way to start contributing to the project and get familiar with the codebase. Here's how to find them:
 
-1. Visit the "[Issues](https://github.com/twentyhq/twenty/issues)" tab on our [repository](https://github.com/twentyhq/twenty).
+1. Visit the "[Issues](https://github.com/twentyhq/twenty/issues)" tab on the main [repository](https://github.com/twentyhq/twenty).
 2. Use the "Labels" filter and select "[Good First Issue](https://github.com/twentyhq/twenty/labels/good%20first%20issue)" to see a list of beginner-friendly tasks.
-3. Choose an issue that interests you, fork the project, and start working on it. Once you solve and test the issue, open a PR and we'll review it. 
+3. Choose an issue that interests you, fork the project, and start working on it. Once you solve and test the issue, open a PR for review. 
 
 <br>
 
@@ -38,7 +40,7 @@ cd twenty
 ```
 
 
-3. **Make Changes:** Make your desired changes and ensure that your code adheres to our coding standards.
+3. **Make Changes:** Make your desired changes and ensure that your code adheres to Twenty's coding standards.
 
 
 4. **Test Locally:** Test your changes locally to ensure they work as expected.
@@ -58,28 +60,28 @@ git push origin branch-name
 ```
 
 
-7. **Create a Pull Request:** Go to the original Twenty repository and create a pull request. Please provide a detailed description of your changes. To accept your pull request, we need you to sign a CLA. 
+7. **Create a Pull Request:** Go to the original Twenty repository and create a pull request. Please provide a detailed description of your changes. To have your pull request accepted, you must sign a CLA.
 
 
-8. **Code Review:** Your pull request will undergo a code review. Be prepared to make any necessary adjustments based on feedback.
+8. **Code Review:** Your pull request will undergo a code review. Note that you might need to make any necessary adjustments based on feedback.
 
 
-9. **Merge:** Once your pull request is approved, it will be merged into the main repository.
+9. **Merge:** Once approved, maintainers will merge your pull request into the main repository.
 
 
 <br>
 
 ## Code of Conduct
 
-Please note that by contributing to this project, you are expected to follow our [Code of Conduct](./CODE_OF_CONDUCT.md). We strive to maintain a welcoming, friendly, and inclusive community for all contributors.  
+Please note that by contributing to this project, you're expected to follow Twenty's [Code of Conduct](./CODE_OF_CONDUCT.md). All maintainers strive to maintain a welcoming, friendly, and inclusive community for all contributors.  
 
 <br>
 
 ## Reporting Issues
 
-If you encounter any issues or have suggestions for improvements, please feel free to (create an issue on our GitHub repository)[https://github.com/twentyhq/twenty/issues/new]. When reporting issues, please provide as much detail as possible to help us understand and address the problem effectively.
+If you encounter any issues or have suggestions for improvements, please feel free to (create an issue on Twenty's GitHub repository)[https://github.com/twentyhq/twenty/issues/new]. When reporting issues, please provide as much detail as possible to help in understanding and addressing the problem effectively.
 
 ---
 
-Thank you for considering contributing to Twenty. Your contributions help us make our CRM platform even better!
+Thank you for considering contributing to Twenty. Your contributions help make Twenty's CRM platform even better!
 

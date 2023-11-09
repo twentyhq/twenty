@@ -21,7 +21,6 @@ import {
   NumberScalarMode,
 } from 'src/tenant/schema-builder/interfaces/build-schema-optionts.interface';
 
-import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import {
   UUIDFilterType,
   StringFilterType,
@@ -31,6 +30,7 @@ import {
   IntFilterType,
 } from 'src/tenant/schema-builder/graphql-types/input';
 import { OrderByDirectionType } from 'src/tenant/schema-builder/graphql-types/enum';
+import { FieldMetadataType } from 'src/database/typeorm/metadata/entities/field-metadata.entity';
 
 export interface TypeOptions<T = any> {
   nullable?: boolean;

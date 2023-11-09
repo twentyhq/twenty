@@ -1,23 +1,13 @@
-import { v4 } from 'uuid';
+import { FieldMetadataTargetColumnMap } from 'src/tenant/schema-builder/interfaces/field-metadata-target-column-map.interface';
 
-import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interfaces/field-metadata-target-column-map.interface';
-
-import { uuidToBase36 } from 'src/metadata/data-source/data-source.util';
 import {
-  FieldMetadata,
+  FieldMetadataEntity,
   FieldMetadataType,
-} from 'src/metadata/field-metadata/field-metadata.entity';
-import { TenantMigrationColumnAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
-
-/**
- * Generate a column name from a field name removing unsupported characters.
- *
- * @param name string
- * @returns string
- */
-export function generateColumnName(name: string): string {
-  return name.toLowerCase().replace(/ /g, '_');
-}
+} from 'src/database/typeorm/metadata/entities/field-metadata.entity';
+import {
+  TenantMigrationColumnAction,
+  TenantMigrationColumnActionType,
+} from 'src/database/typeorm/metadata/entities/tenant-migration.entity';
 
 /**
  * Generate a target column map for a given type, this is used to map the field to the correct column(s) in the database.
@@ -28,7 +18,11 @@ export function generateColumnName(name: string): string {
  */
 export function generateTargetColumnMap(
   type: FieldMetadataType,
+  isCustomField: boolean,
+  fieldName: string,
 ): FieldMetadataTargetColumnMap {
+  const columnName = isCustomField ? `_${fieldName}` : fieldName;
+
   switch (type) {
     case FieldMetadataType.TEXT:
     case FieldMetadataType.PHONE:
@@ -37,17 +31,17 @@ export function generateTargetColumnMap(
     case FieldMetadataType.BOOLEAN:
     case FieldMetadataType.DATE:
       return {
-        value: `column_${uuidToBase36(v4())}`,
+        value: columnName,
       };
     case FieldMetadataType.URL:
       return {
-        text: `column_${uuidToBase36(v4())}`,
-        link: `column_${uuidToBase36(v4())}`,
+        text: `${columnName}_text`,
+        link: `${columnName}_link`,
       };
     case FieldMetadataType.MONEY:
       return {
-        amount: `column_${uuidToBase36(v4())}`,
-        currency: `column_${uuidToBase36(v4())}`,
+        amount: `${columnName}_amount`,
+        currency: `${columnName}_currency`,
       };
     default:
       throw new Error(`Unknown type ${type}`);
@@ -55,74 +49,74 @@ export function generateTargetColumnMap(
 }
 
 export function convertFieldMetadataToColumnActions(
-  fieldMetadata: FieldMetadata,
+  fieldMetadata: FieldMetadataEntity,
 ): TenantMigrationColumnAction[] {
   switch (fieldMetadata.type) {
     case FieldMetadataType.TEXT:
       return [
         {
-          name: fieldMetadata.targetColumnMap.value,
-          action: 'create',
-          type: 'text',
+          action: TenantMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.value,
+          columnType: 'text',
         },
       ];
     case FieldMetadataType.PHONE:
     case FieldMetadataType.EMAIL:
       return [
         {
-          name: fieldMetadata.targetColumnMap.value,
-          action: 'create',
-          type: 'varchar',
+          action: TenantMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.value,
+          columnType: 'varchar',
         },
       ];
     case FieldMetadataType.NUMBER:
       return [
         {
-          name: fieldMetadata.targetColumnMap.value,
-          action: 'create',
-          type: 'integer',
+          action: TenantMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.value,
+          columnType: 'integer',
         },
       ];
     case FieldMetadataType.BOOLEAN:
       return [
         {
-          name: fieldMetadata.targetColumnMap.value,
-          action: 'create',
-          type: 'boolean',
+          action: TenantMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.value,
+          columnType: 'boolean',
         },
       ];
     case FieldMetadataType.DATE:
       return [
         {
-          name: fieldMetadata.targetColumnMap.value,
-          action: 'create',
-          type: 'timestamp',
+          action: TenantMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.value,
+          columnType: 'timestamp',
         },
       ];
     case FieldMetadataType.URL:
       return [
         {
-          name: fieldMetadata.targetColumnMap.text,
-          action: 'create',
-          type: 'varchar',
+          action: TenantMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.text,
+          columnType: 'varchar',
         },
         {
-          name: fieldMetadata.targetColumnMap.link,
-          action: 'create',
-          type: 'varchar',
+          action: TenantMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.link,
+          columnType: 'varchar',
         },
       ];
     case FieldMetadataType.MONEY:
       return [
         {
-          name: fieldMetadata.targetColumnMap.amount,
-          action: 'create',
-          type: 'integer',
+          action: TenantMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.amount,
+          columnType: 'integer',
         },
         {
-          name: fieldMetadata.targetColumnMap.currency,
-          action: 'create',
-          type: 'varchar',
+          action: TenantMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.currency,
+          columnType: 'varchar',
         },
       ];
     default:

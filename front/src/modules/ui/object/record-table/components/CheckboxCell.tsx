@@ -5,7 +5,7 @@ import { useSetRecoilState } from 'recoil';
 import { Checkbox } from '@/ui/input/components/Checkbox';
 import { actionBarOpenState } from '@/ui/navigation/action-bar/states/actionBarIsOpenState';
 
-import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
+import { useCurrentRowSelected } from '../record-table-row/hooks/useCurrentRowSelected';
 
 const StyledContainer = styled.div`
   align-items: center;

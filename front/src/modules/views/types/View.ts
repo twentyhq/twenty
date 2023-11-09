@@ -1,1 +1,1 @@
-export type View = { id: string; name: string; objectId: string };
+export type View = { id: string; name: string; objectMetadataId: string };

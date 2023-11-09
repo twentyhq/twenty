@@ -9,6 +9,7 @@ import { usePersistField } from '../../hooks/usePersistField';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldURL } from '../../types/guards/isFieldURL';
+import { isFieldURLValue } from '../../types/guards/isFieldURLValue';
 
 export const useURLField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
@@ -23,12 +24,13 @@ export const useURLField = () => {
       fieldName: fieldName,
     }),
   );
+  const fieldUrlValue = isFieldURLValue(fieldValue) ? fieldValue : '';
 
   const fieldInitialValue = useFieldInitialValue();
 
   const initialValue = fieldInitialValue?.isEmpty
     ? ''
-    : fieldInitialValue?.value ?? fieldValue;
+    : fieldInitialValue?.value ?? fieldUrlValue;
 
   const persistField = usePersistField();
 
@@ -42,7 +44,7 @@ export const useURLField = () => {
 
   return {
     fieldDefinition,
-    fieldValue,
+    fieldValue: fieldUrlValue,
     initialValue,
     setFieldValue,
     hotkeyScope,

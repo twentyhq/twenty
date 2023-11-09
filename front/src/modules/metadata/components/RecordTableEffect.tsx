@@ -1,29 +1,27 @@
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { turnFiltersIntoWhereClauseV2 } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClauseV2';
 import { turnSortsIntoOrderByV2 } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderByV2';
-import { useSetRecordTableData } from '@/ui/object/record-table/hooks/useSetRecordTableData';
-import { availableTableColumnsScopedState } from '@/ui/object/record-table/states/availableTableColumnsScopedState';
-import { TableRecoilScopeContext } from '@/ui/object/record-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { tableFiltersScopedState } from '@/ui/object/record-table/states/tableFiltersScopedState';
-import { tableSortsScopedState } from '@/ui/object/record-table/states/tableSortsScopedState';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useRecordTableScopedStates } from '@/ui/object/record-table/hooks/internal/useRecordTableScopedStates';
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
 
+import { useRecordTable } from '../../ui/object/record-table/hooks/useRecordTable';
 import { useFindManyObjects } from '../hooks/useFindManyObjects';
-import { useObjectMetadataItemInContext } from '../hooks/useObjectMetadataItemInContext';
+import { useFindOneObjectMetadataItem } from '../hooks/useFindOneObjectMetadataItem';
 
 export const RecordTableEffect = () => {
+  const { scopeId } = useRecordTable();
+
   const {
+    foundObjectMetadataItem,
     columnDefinitions,
     filterDefinitions,
     sortDefinitions,
-    foundObjectMetadataItem,
-    objectNamePlural,
-  } = useObjectMetadataItemInContext();
-
+  } = useFindOneObjectMetadataItem({
+    objectNamePlural: scopeId,
+  });
   const {
     setAvailableSortDefinitions,
     setAvailableFilterDefinitions,
@@ -32,20 +30,15 @@ export const RecordTableEffect = () => {
     setViewObjectId,
   } = useView();
 
-  const setRecordTableData = useSetRecordTableData();
+  const { setRecordTableData, setAvailableTableColumns } = useRecordTable();
 
-  const tableFilters = useRecoilScopedValue(
-    tableFiltersScopedState,
-    TableRecoilScopeContext,
-  );
+  const { tableFiltersState, tableSortsState } = useRecordTableScopedStates();
 
-  const tableSorts = useRecoilScopedValue(
-    tableSortsScopedState,
-    TableRecoilScopeContext,
-  );
+  const tableFilters = useRecoilValue(tableFiltersState);
+  const tableSorts = useRecoilValue(tableSortsState);
 
   const { objects, loading } = useFindManyObjects({
-    objectNamePlural: objectNamePlural,
+    objectNamePlural: scopeId,
     filter: turnFiltersIntoWhereClauseV2(
       tableFilters,
       foundObjectMetadataItem?.fields ?? [],
@@ -63,12 +56,6 @@ export const RecordTableEffect = () => {
       setRecordTableData(entities);
     }
   }, [objects, setRecordTableData, loading]);
-
-  const tableScopeId = foundObjectMetadataItem?.namePlural ?? '';
-
-  const setAvailableTableColumns = useSetRecoilState(
-    availableTableColumnsScopedState(tableScopeId),
-  );
 
   useEffect(() => {
     if (!foundObjectMetadataItem) {

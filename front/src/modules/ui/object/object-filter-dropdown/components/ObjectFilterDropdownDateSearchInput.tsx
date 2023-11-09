@@ -14,7 +14,7 @@ export const ObjectFilterDropdownDateSearchInput = () => {
     if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) return;
 
     selectFilter?.({
-      fieldId: filterDefinitionUsedInDropdown.fieldId,
+      fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
       value: date.toISOString(),
       operand: selectedOperandInDropdown,
       displayValue: date.toLocaleDateString(),

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
-import { customTableDefaultColumns } from 'src/metadata/migration-runner/custom-table-default-column.util';
+import { customTableDefaultColumns } from 'src/tenant-migration-runner/utils/custom-table-default-column.util';
+import { FieldMetadataEntity } from 'src/database/typeorm/metadata/entities/field-metadata.entity';
 
 import { TypeDefinitionsStorage } from './storages/type-definitions.storage';
 import {
@@ -29,7 +29,7 @@ const defaultFields = customTableDefaultColumns.map((column) => {
     type: getFieldMetadataType(column.type),
     name: column.name,
     isNullable: true,
-  } as FieldMetadata;
+  } as FieldMetadataEntity;
 });
 
 @Injectable()
