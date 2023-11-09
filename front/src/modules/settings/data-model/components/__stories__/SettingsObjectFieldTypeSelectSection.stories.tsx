@@ -9,7 +9,7 @@ const meta: Meta<typeof SettingsObjectFieldTypeSelectSection> = {
   title: 'Modules/Settings/DataModel/SettingsObjectFieldTypeSelectSection',
   component: SettingsObjectFieldTypeSelectSection,
   decorators: [ComponentDecorator],
-  args: { type: 'NUMBER' },
+  args: { fieldType: 'NUMBER' },
 };
 
 export default meta;

@@ -9,7 +9,7 @@ import { isInlineCellInEditModeScopedState } from '../states/isInlineCellInEditM
 import { InlineCellHotkeyScope } from '../types/InlineCellHotkeyScope';
 
 export const useInlineCell = () => {
-  const { recoilScopeId } = useContext(FieldContext);
+  const { recoilScopeId = '' } = useContext(FieldContext);
 
   const [isInlineCellInEditMode, setIsInlineCellInEditMode] = useRecoilState(
     isInlineCellInEditModeScopedState(recoilScopeId),

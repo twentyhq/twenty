@@ -4,7 +4,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
+import { FieldContext } from '../../../../contexts/FieldContext';
 import { useURLField } from '../../../hooks/useURLField';
 import { URLFieldDisplay } from '../URLFieldDisplay';
 
@@ -15,65 +15,50 @@ const URLFieldValueSetterEffect = ({ value }: { value: string }) => {
     setFieldValue(value);
   }, [setFieldValue, value]);
 
-  return <></>;
-};
-
-type URLFieldDisplayWithContextProps = {
-  value: string;
-  entityId?: string;
-};
-
-const URLFieldDisplayWithContext = ({
-  value,
-  entityId,
-}: URLFieldDisplayWithContextProps) => {
-  return (
-    <FieldContextProvider
-      fieldDefinition={{
-        fieldId: 'URL',
-        label: 'URL',
-        type: 'URL',
-        metadata: {
-          fieldName: 'URL',
-          placeHolder: 'URL',
-        },
-      }}
-      entityId={entityId}
-    >
-      <MemoryRouter>
-        <URLFieldValueSetterEffect value={value} />
-        <URLFieldDisplay />
-      </MemoryRouter>
-    </FieldContextProvider>
-  );
+  return null;
 };
 
 const meta: Meta = {
   title: 'UI/Data/Field/Display/URLFieldDisplay',
-  component: URLFieldDisplayWithContext,
+  decorators: [
+    (Story, { args }) => (
+      <FieldContext.Provider
+        value={{
+          entityId: '',
+          fieldDefinition: {
+            fieldId: 'URL',
+            label: 'URL',
+            type: 'URL',
+            metadata: {
+              fieldName: 'URL',
+              placeHolder: 'URL',
+            },
+          },
+          hotkeyScope: 'hotkey-scope',
+        }}
+      >
+        <MemoryRouter>
+          <URLFieldValueSetterEffect value={args.value} />
+          <Story />
+        </MemoryRouter>
+      </FieldContext.Provider>
+    ),
+    ComponentDecorator,
+  ],
+  component: URLFieldDisplay,
+  args: {
+    value: 'https://github.com/twentyhq',
+  },
 };
 
 export default meta;
 
-type Story = StoryObj<typeof URLFieldDisplayWithContext>;
+type Story = StoryObj<typeof URLFieldDisplay>;
 
-export const Default: Story = {
-  args: {
-    value: 'https://github.com/GitStartHQ',
-  },
-};
+export const Default: Story = {};
 
 export const Elipsis: Story = {
-  args: {
-    value: 'https://www.instagram.com/gitstart/',
-  },
-  argTypes: {
-    value: { control: true },
-  },
   parameters: {
-    container: {
-      width: 200,
-    },
+    container: { width: 200 },
   },
-  decorators: [ComponentDecorator],
 };
