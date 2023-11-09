@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
@@ -156,6 +157,8 @@ export const RecordTableHeader = () => {
     (column) => column.position === 0,
   );
 
+  const theme = useTheme();
+
   return (
     <StyledTableHead data-select-disable>
       <tr>
@@ -210,6 +213,11 @@ export const RecordTableHeader = () => {
                       variant="tertiary"
                       Icon={IconPlus}
                       position="middle"
+                      style={{
+                        width: '100%',
+                        justifyContent: 'left',
+                        paddingLeft: theme.spacing(2),
+                      }}
                     />
                   }
                   dropdownComponents={<RecordTableHeaderPlusButtonContent />}
