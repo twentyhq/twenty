@@ -1,11 +1,12 @@
 ---
 title: Checkmark
 sidebar_position: 1
+sidebar_custom_props:
+  icon: TbCheck
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-// import animatedCheckmarkCode from "!!raw-loader!animatedCheckmarkCode.js"
 import { SandpackEditor} from '@site/src/ui/SandpackEditor'
 
 Represents a successful or completed action. 
@@ -19,7 +20,9 @@ Represents a successful or completed action.
 export const MyComponent = () => {
  return (
   <> 
-  <Checkmark />
+  <div style={{display: 'flex', alignItems: 'center'}}>
+   <Checkmark />  <p style={{marginLeft: '8px'}}>Task Completed </p>
+ </div>
  </>
  )
 }
@@ -34,31 +37,11 @@ Extends `React.ComponentPropsWithoutRef<'div'>` and accepts all the props of a r
 
 </TabItem >
 
-<TabItem value="example" label="Example">
-
-<SandpackEditor
-  availableComponentPaths={['@/ui/display/checkmark/components/Checkmark']}
-  componentCode={`import { Checkmark } from "@/ui/display/checkmark/components/Checkmark";
-export const MyComponent = () => {
- return (
-  <> 
-  <div style={{display: 'flex', alignItems: 'center'}}>
-   <Checkmark />  <p style={{marginLeft: '8px'}}>Task completed </p>
- </div>
- </>
- )
-}
-`} 
-/>
-
-
-</TabItem>
-
 </Tabs>
 
 ## Animated Checkmark 
 
-Visually represents a checkmark icon with the added feature of animation. 
+Represents a checkmark icon with the added feature of animation. 
 
 <Tabs>
 
@@ -71,7 +54,10 @@ Visually represents a checkmark icon with the added feature of animation.
 export const MyComponent = () => { 
   return (
     <> 
-    <AnimatedCheckmark isAnimating={true}/>
+    <div style={{display: 'flex', alignItems: 'center'}}>
+    <AnimatedCheckmark isAnimating={true} color="green" duration={0.5} size={30} />
+    <p style={{marginLeft: '8px'}}> Task Completed</p>
+    </div>
     </>
     )
 }

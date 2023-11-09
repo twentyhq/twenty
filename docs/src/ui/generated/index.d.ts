@@ -3,6 +3,7 @@ import * as react_jsx_runtime from 'react/jsx-runtime';
 import * as React$1 from 'react';
 import React__default, { FunctionComponent } from 'react';
 import { motion } from 'framer-motion';
+import { PlacesType, PositionStrategy } from 'react-tooltip';
 
 declare const lightTheme: {
     accent: {
@@ -326,6 +327,73 @@ type IconComponent = FunctionComponent<{
     stroke?: number;
 }>;
 
+type AvatarType = 'squared' | 'rounded';
+
+type EntityChipProps = {
+    linkToEntity?: string;
+    entityId: string;
+    name: string;
+    pictureUrl?: string;
+    avatarType?: AvatarType;
+    variant?: EntityChipVariant;
+    LeftIcon?: IconComponent;
+};
+declare enum EntityChipVariant {
+    Regular = "regular",
+    Transparent = "transparent"
+}
+declare const EntityChip: ({ linkToEntity, entityId, name, pictureUrl, avatarType, variant, LeftIcon, }: EntityChipProps) => react_jsx_runtime.JSX.Element;
+
+declare const SoonPill: () => react_jsx_runtime.JSX.Element;
+
+declare const mainColors: {
+    yellow: string;
+    green: string;
+    turquoise: string;
+    sky: string;
+    blue: string;
+    purple: string;
+    pink: string;
+    red: string;
+    orange: string;
+    gray: string;
+};
+type ThemeColor = keyof typeof mainColors;
+
+declare const tagColors: string[];
+type TagColor = (typeof tagColors)[number];
+declare const castToTagColor: (color: string) => TagColor;
+type TagProps = {
+    className?: string;
+    color: ThemeColor;
+    text: string;
+    onClick?: () => void;
+};
+declare const Tag: ({ className, color, text, onClick }: TagProps) => react_jsx_runtime.JSX.Element;
+
+declare enum TooltipPosition {
+    Top = "top",
+    Left = "left",
+    Right = "right",
+    Bottom = "bottom"
+}
+type AppTooltipProps = {
+    className?: string;
+    anchorSelect?: string;
+    content?: string;
+    delayHide?: number;
+    offset?: number;
+    noArrow?: boolean;
+    isOpen?: boolean;
+    place?: PlacesType;
+    positionStrategy?: PositionStrategy;
+};
+declare const AppTooltip: ({ anchorSelect, className, content, delayHide, isOpen, noArrow, offset, place, positionStrategy, }: AppTooltipProps) => react_jsx_runtime.JSX.Element;
+
+declare const OverflowingTextWithTooltip: ({ text, }: {
+    text: string | null | undefined;
+}) => react_jsx_runtime.JSX.Element;
+
 type ButtonSize = 'medium' | 'small';
 type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
 type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
@@ -351,4 +419,4 @@ declare module '@emotion/react' {
     }
 }
 
-export { AnimatedCheckmark, AnimatedCheckmarkProps, Button, ButtonAccent, ButtonPosition, ButtonProps, ButtonSize, ButtonVariant, Checkmark, CheckmarkProps, Chip, ChipAccent, ChipSize, ChipVariant, darkTheme, lightTheme };
+export { AnimatedCheckmark, AnimatedCheckmarkProps, AppTooltip, AppTooltipProps, Button, ButtonAccent, ButtonPosition, ButtonProps, ButtonSize, ButtonVariant, Checkmark, CheckmarkProps, Chip, ChipAccent, ChipSize, ChipVariant, EntityChip, EntityChipVariant, OverflowingTextWithTooltip, SoonPill, Tag, TagColor, TagProps, TooltipPosition, castToTagColor, darkTheme, lightTheme };

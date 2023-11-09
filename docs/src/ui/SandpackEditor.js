@@ -72,7 +72,9 @@ return (<ThemeProvider theme={lightTheme}>
           'hex-rgb': "latest",
           'framer-motion': 'latest',
           'uuid': 'latest',
-          'react-tooltip': 'latest'
+          'react-tooltip': 'latest',
+          'react-router-dom': 'latest',
+          '@sniptt/guards': 'latest'
         },
       }}
     >

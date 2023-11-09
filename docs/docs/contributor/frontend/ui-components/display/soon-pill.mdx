@@ -1,4 +1,27 @@
 ---
 title: Soon Pill
-sidebar_position: 5
+sidebar_position: 4
+sidebar_custom_props:
+  icon: TbPill
 ---
+
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+
+A small badge or "pill" to indicate something is coming soon. 
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/display/pill/components/SoonPill']}
+  componentCode={`import { SoonPill } from "@/ui/display/pill/components/SoonPill";
+export const MyComponent = () => {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center'}}>
+        <div style={{ flex: '0 0 auto', marginRight: '8px'}}>
+            <SoonPill />
+        </div>
+      <p>Notifications</p>
+    </div>
+  );
+};
+
+`} 
+/>
