@@ -15,7 +15,8 @@ import { useLeaveTableFocus } from './internal/useLeaveTableFocus';
 import { useRecordTableScopedStates } from './internal/useRecordTableScopedStates';
 import { useResetTableRowSelection } from './internal/useResetTableRowSelection';
 import { useSetRecordTableData } from './internal/useSetRecordTableData';
-import { useSetRowSelectedState } from './useSetRowSelectedState';
+import { useSetRowSelectedState } from './internal/useSetRowSelectedState';
+import { useUpsertRecordTableItem } from './internal/useUpsertRecordTableItem';
 
 type useRecordTableProps = {
   recordTableScopeId?: string;
@@ -90,6 +91,8 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const resetTableRowSelection = useResetTableRowSelection();
 
+  const upsertRecordTableItem = useUpsertRecordTableItem();
+
   return {
     scopeId,
     onColumnsChange,
@@ -102,5 +105,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     getIsSomeCellInEditMode,
     setRowSelectedState,
     resetTableRowSelection,
+    upsertRecordTableItem,
   };
 };

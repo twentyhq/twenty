@@ -30,7 +30,9 @@ export const usePersonTableContextMenuEntries = () => {
   const createActivityForPeople = useCreateActivityForPeople();
 
   const setTableRowIds = useSetRecoilState(tableRowIdsState);
-  const { resetTableRowSelection } = useRecordTable();
+  const { resetTableRowSelection } = useRecordTable({
+    recordTableScopeId: 'people',
+  });
 
   const { data } = useGetFavoritesQuery();
   const favorites = data?.findFavorites;
@@ -62,7 +64,7 @@ export const usePersonTableContextMenuEntries = () => {
       .getLoadable(selectedRowIdsSelector)
       .getValue();
 
-    resetRowSelection();
+    resetTableRowSelection();
 
     await deleteManyPerson({
       variables: {

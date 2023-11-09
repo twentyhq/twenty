@@ -30,7 +30,9 @@ export const useCompanyTableContextMenuEntries = () => {
   const createActivityForCompany = useCreateActivityForCompany();
 
   const setTableRowIds = useSetRecoilState(tableRowIdsState);
-  const { resetTableRowSelection } = useRecordTable();
+  const { resetTableRowSelection } = useRecordTable({
+    recordTableScopeId: 'companies',
+  });
 
   const { data } = useGetFavoritesQuery();
   const favorites = data?.findFavorites;

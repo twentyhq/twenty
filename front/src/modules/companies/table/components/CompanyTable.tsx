@@ -9,7 +9,6 @@ import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { RecordTableEffect } from '@/ui/object/record-table/components/RecordTableEffect';
 import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
-import { useUpsertRecordTableItem } from '@/ui/object/record-table/hooks/useUpsertRecordTableItem';
 import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
 import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
 import { ViewBar } from '@/views/components/ViewBar';
@@ -42,12 +41,16 @@ export const CompanyTable = () => {
   const viewScopeId = 'company-table-view';
   const tableScopeId = 'companies';
 
-  const { setTableFilters, setTableSorts, setTableColumns } = useRecordTable({
+  const {
+    setTableFilters,
+    setTableSorts,
+    setTableColumns,
+    upsertRecordTableItem,
+  } = useRecordTable({
     recordTableScopeId: tableScopeId,
   });
 
   const [updateEntityMutation] = useUpdateOneCompanyMutation();
-  const upsertRecordTableItem = useUpsertRecordTableItem();
 
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
   const { persistViewFields } = useViewFields(viewScopeId);
