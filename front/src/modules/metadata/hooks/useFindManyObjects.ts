@@ -45,7 +45,7 @@ export const useFindManyObjects = <
     hasNextPageFamilyState(objectNamePlural),
   );
 
-  const [isFetchingMoreObjects, setIsFetchingMoreObjects] = useRecoilState(
+  const [, setIsFetchingMoreObjects] = useRecoilState(
     isFetchingMoreObjectsFamilyState(objectNamePlural),
   );
 
