@@ -6,8 +6,11 @@ import { entityFieldsFamilySelector } from '../states/selectors/entityFieldsFami
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 
 export const useToggleEditOnlyInput = () => {
-  const { entityId, fieldDefinition, useUpdateEntityMutation } =
-    useContext(FieldContext);
+  const {
+    entityId,
+    fieldDefinition,
+    useUpdateEntityMutation = () => [],
+  } = useContext(FieldContext);
 
   const [updateEntity] = useUpdateEntityMutation();
 
@@ -27,7 +30,7 @@ export const useToggleEditOnlyInput = () => {
             valueToPersist,
           );
 
-          updateEntity({
+          updateEntity?.({
             variables: {
               where: { id: entityId },
               data: {

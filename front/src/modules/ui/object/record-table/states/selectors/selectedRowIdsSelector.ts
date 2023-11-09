@@ -1,6 +1,6 @@
 import { selector } from 'recoil';
 
-import { isRowSelectedFamilyState } from '../isRowSelectedFamilyState';
+import { isRowSelectedFamilyState } from '../../record-table-row/states/isRowSelectedFamilyState';
 import { tableRowIdsState } from '../tableRowIdsState';
 
 export const selectedRowIdsSelector = selector<string[]>({

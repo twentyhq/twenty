@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { Equal, In, Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { DeleteOneOptions } from '@ptc-org/nestjs-query-core';
 
@@ -93,6 +93,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadata> {
     });
   }
 
+  public async findManyWithinWorkspace(
+    objectMetadataIds: string[],
+    workspaceId: string,
+  ) {
+    return this.objectMetadataRepository.findBy({
+      id: In(objectMetadataIds),
+      workspaceId: Equal(workspaceId),
+    });
+  }
+
   /**
    *
    * Create all standard objects and fields metadata for a given workspace
@@ -121,7 +131,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadata> {
     );
   }
 
-  public async deleteObjectsAndFieldsMetadata(workspaceId: string) {
+  public async deleteObjectsMetadata(workspaceId: string) {
     await this.objectMetadataRepository.delete({ workspaceId });
   }
 }

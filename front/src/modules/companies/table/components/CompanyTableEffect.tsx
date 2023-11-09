@@ -1,9 +1,7 @@
 import { useEffect } from 'react';
 
 import { companiesAvailableFieldDefinitions } from '@/companies/constants/companiesAvailableFieldDefinitions';
-import { availableTableColumnsScopedState } from '@/ui/object/record-table/states/availableTableColumnsScopedState';
-import { TableRecoilScopeContext } from '@/ui/object/record-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
 import { companyTableFilterDefinitions } from '~/pages/companies/constants/companyTableFilterDefinitions';
@@ -18,10 +16,7 @@ const CompanyTableEffect = () => {
     setViewObjectId,
   } = useView();
 
-  const [, setAvailableTableColumns] = useRecoilScopedState(
-    availableTableColumnsScopedState,
-    TableRecoilScopeContext,
-  );
+  const { setAvailableTableColumns } = useRecordTable();
 
   useEffect(() => {
     setAvailableSortDefinitions?.(companyTableSortDefinitions);

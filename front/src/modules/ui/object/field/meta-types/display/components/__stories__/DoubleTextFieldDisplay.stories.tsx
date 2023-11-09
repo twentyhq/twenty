@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
+import { FieldContext } from '../../../../contexts/FieldContext';
 import { useDoubleTextField } from '../../../hooks/useDoubleTextField';
 import { DoubleTextFieldDisplay } from '../DoubleTextFieldDisplay'; // Import your component
 
@@ -21,66 +21,51 @@ const DoubleTextFieldDisplayValueSetterEffect = ({
     setSecondValue(secondValue);
   }, [setFirstValue, setSecondValue, firstValue, secondValue]);
 
-  return <></>;
-};
-
-type DoubleTextFieldDisplayWithContextProps = {
-  firstValue: string;
-  secondValue: string;
-  entityId?: string;
-};
-
-const DoubleTextFieldDisplayWithContext = ({
-  firstValue,
-  secondValue,
-  entityId,
-}: DoubleTextFieldDisplayWithContextProps) => {
-  return (
-    <FieldContextProvider
-      fieldDefinition={{
-        fieldId: 'double-text',
-        label: 'Double-Text',
-        type: 'DOUBLE_TEXT',
-        metadata: {
-          firstValueFieldName: 'First-text',
-          firstValuePlaceholder: 'First-text',
-          secondValueFieldName: 'Second-text',
-          secondValuePlaceholder: 'Second-text',
-        },
-      }}
-      entityId={entityId}
-    >
-      <DoubleTextFieldDisplayValueSetterEffect
-        firstValue={firstValue}
-        secondValue={secondValue}
-      />
-      <DoubleTextFieldDisplay />
-    </FieldContextProvider>
-  );
+  return null;
 };
 
 const meta: Meta = {
   title: 'UI/Data/Field/Display/DoubleTextFieldDisplay',
-  component: DoubleTextFieldDisplayWithContext,
+  decorators: [
+    (Story, { args }) => (
+      <FieldContext.Provider
+        value={{
+          entityId: '',
+          fieldDefinition: {
+            fieldId: 'double-text',
+            label: 'Double-Text',
+            type: 'DOUBLE_TEXT',
+            metadata: {
+              firstValueFieldName: 'First-text',
+              firstValuePlaceholder: 'First-text',
+              secondValueFieldName: 'Second-text',
+              secondValuePlaceholder: 'Second-text',
+            },
+          },
+          hotkeyScope: 'hotkey-scope',
+        }}
+      >
+        <DoubleTextFieldDisplayValueSetterEffect
+          firstValue={args.firstValue}
+          secondValue={args.secondValue}
+        />
+        <Story />
+      </FieldContext.Provider>
+    ),
+    ComponentDecorator,
+  ],
+  component: DoubleTextFieldDisplay,
+  args: {
+    firstValue: 'Lorem',
+    secondValue: 'ipsum',
+  },
 };
 
 export default meta;
 
-type Story = StoryObj<typeof DoubleTextFieldDisplayWithContext>;
+type Story = StoryObj<typeof DoubleTextFieldDisplay>;
 
-export const Default: Story = {
-  args: {
-    firstValue: 'Lorem',
-    secondValue: 'ipsum',
-  },
-};
-
-export const CustomValues: Story = {
-  args: {
-    firstValue: 'Lorem',
-    secondValue: 'ipsum',
-  },
-};
+export const Default: Story = {};
 
 export const Elipsis: Story = {
   args: {
@@ -88,14 +73,7 @@ export const Elipsis: Story = {
       'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
     secondValue: 'ipsum dolor sit amet, consectetur adipiscing elit.',
   },
-  argTypes: {
-    firstValue: { control: true },
-    secondValue: { control: true },
-  },
   parameters: {
-    container: {
-      width: 100,
-    },
+    container: { width: 100 },
   },
-  decorators: [ComponentDecorator],
 };

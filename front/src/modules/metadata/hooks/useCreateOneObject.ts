@@ -1,11 +1,25 @@
 import { useMutation } from '@apollo/client';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
+import { Currency, FieldMetadataType } from '~/generated-metadata/graphql';
 import { capitalize } from '~/utils/string/capitalize';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
 import { useFindOneObjectMetadataItem } from './useFindOneObjectMetadataItem';
+
+const defaultFieldValues: Record<FieldMetadataType, unknown> = {
+  [FieldMetadataType.Money]: { amount: null, currency: Currency.Usd },
+  [FieldMetadataType.Boolean]: false,
+  [FieldMetadataType.Date]: null,
+  [FieldMetadataType.Email]: '',
+  [FieldMetadataType.Enum]: null,
+  [FieldMetadataType.Number]: null,
+  [FieldMetadataType.Phone]: '',
+  [FieldMetadataType.Text]: '',
+  [FieldMetadataType.Url]: { link: '', text: '' },
+  [FieldMetadataType.Uuid]: '',
+};
 
 export const useCreateOneObject = ({
   objectNamePlural,
@@ -28,6 +42,13 @@ export const useCreateOneObject = ({
         const createdObject = await mutate({
           variables: {
             input: {
+              ...foundObjectMetadataItem.fields.reduce(
+                (result, field) => ({
+                  ...result,
+                  [field.name]: defaultFieldValues[field.type],
+                }),
+                {},
+              ),
               ...input,
             },
           },

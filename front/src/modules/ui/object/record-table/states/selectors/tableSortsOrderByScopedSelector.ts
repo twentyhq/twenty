@@ -10,7 +10,9 @@ export const tableSortsOrderByScopedSelector = selectorFamily({
   get:
     (scopeId: string) =>
     ({ get }) => {
-      const orderBy = reduceSortsToOrderBy(get(tableSortsScopedState(scopeId)));
+      const orderBy = reduceSortsToOrderBy(
+        get(tableSortsScopedState({ scopeId })),
+      );
       return orderBy.length ? orderBy : [{ createdAt: SortOrder.Desc }];
     },
 });

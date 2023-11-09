@@ -7,11 +7,13 @@ import { FieldInputEvent } from './DateFieldInput';
 
 export type BooleanFieldInputProps = {
   onSubmit?: FieldInputEvent;
+  readonly?: boolean;
   testId?: string;
 };
 
 export const BooleanFieldInput = ({
   onSubmit,
+  readonly,
   testId,
 }: BooleanFieldInputProps) => {
   const { fieldValue } = useBooleanField();
@@ -26,6 +28,7 @@ export const BooleanFieldInput = ({
     <BooleanInput
       value={fieldValue ?? ''}
       onToggle={handleToggle}
+      readonly={readonly}
       testId={testId}
     />
   );

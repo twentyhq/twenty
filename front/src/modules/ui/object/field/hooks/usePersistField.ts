@@ -35,8 +35,11 @@ import { isFieldURLV2Value } from '../types/guards/isFieldURLV2Value';
 import { isFieldURLValue } from '../types/guards/isFieldURLValue';
 
 export const usePersistField = () => {
-  const { entityId, fieldDefinition, useUpdateEntityMutation } =
-    useContext(FieldContext);
+  const {
+    entityId,
+    fieldDefinition,
+    useUpdateEntityMutation = () => [],
+  } = useContext(FieldContext);
 
   const [updateEntity] = useUpdateEntityMutation();
 
@@ -102,7 +105,7 @@ export const usePersistField = () => {
             valueToPersist,
           );
 
-          updateEntity({
+          updateEntity?.({
             variables: {
               where: { id: entityId },
               data: {
@@ -120,7 +123,7 @@ export const usePersistField = () => {
             valueToPersist,
           );
 
-          updateEntity({
+          updateEntity?.({
             variables: {
               where: { id: entityId },
               data: {
@@ -145,7 +148,7 @@ export const usePersistField = () => {
             valueToPersist.secondValue,
           );
 
-          updateEntity({
+          updateEntity?.({
             variables: {
               where: { id: entityId },
               data: {
@@ -176,7 +179,7 @@ export const usePersistField = () => {
             valueToPersist,
           );
 
-          updateEntity({
+          updateEntity?.({
             variables: {
               where: { id: entityId },
               data: {

@@ -4,7 +4,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
+import { FieldContext } from '../../../../contexts/FieldContext';
 import { useEmailField } from '../../../hooks/useEmailField';
 import { EmailFieldDisplay } from '../EmailFieldDisplay';
 
@@ -15,65 +15,50 @@ const EmailFieldValueSetterEffect = ({ value }: { value: string }) => {
     setFieldValue(value);
   }, [setFieldValue, value]);
 
-  return <></>;
-};
-
-type EmailFieldDisplayWithContextProps = {
-  value: string;
-  entityId?: string;
-};
-
-const EmailFieldDisplayWithContext = ({
-  value,
-  entityId,
-}: EmailFieldDisplayWithContextProps) => {
-  return (
-    <FieldContextProvider
-      fieldDefinition={{
-        fieldId: 'email',
-        label: 'Email',
-        type: 'EMAIL',
-        metadata: {
-          fieldName: 'Email',
-          placeHolder: 'Email',
-        },
-      }}
-      entityId={entityId}
-    >
-      <MemoryRouter>
-        <EmailFieldValueSetterEffect value={value} />
-        <EmailFieldDisplay />
-      </MemoryRouter>
-    </FieldContextProvider>
-  );
+  return null;
 };
 
 const meta: Meta = {
   title: 'UI/Data/Field/Display/EmailFieldDisplay',
-  component: EmailFieldDisplayWithContext,
+  decorators: [
+    (Story, { args }) => (
+      <FieldContext.Provider
+        value={{
+          entityId: '',
+          fieldDefinition: {
+            fieldId: 'email',
+            label: 'Email',
+            type: 'EMAIL',
+            metadata: {
+              fieldName: 'Email',
+              placeHolder: 'Email',
+            },
+          },
+          hotkeyScope: 'hotkey-scope',
+        }}
+      >
+        <MemoryRouter>
+          <EmailFieldValueSetterEffect value={args.value} />
+          <Story />
+        </MemoryRouter>
+      </FieldContext.Provider>
+    ),
+    ComponentDecorator,
+  ],
+  component: EmailFieldDisplay,
+  args: {
+    value: 'Test@Test.test',
+  },
 };
 
 export default meta;
 
-type Story = StoryObj<typeof EmailFieldDisplayWithContext>;
+type Story = StoryObj<typeof EmailFieldDisplay>;
 
-export const Default: Story = {
-  args: {
-    value: 'Test@Test.test',
-  },
-};
+export const Default: Story = {};
 
 export const Elipsis: Story = {
-  args: {
-    value: 'Test@Test.test',
-  },
-  argTypes: {
-    value: { control: false },
-  },
   parameters: {
-    container: {
-      width: 50,
-    },
+    container: { width: 50 },
   },
-  decorators: [ComponentDecorator],
 };

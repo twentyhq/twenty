@@ -3,11 +3,11 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
+import { FieldContext } from '../../../../contexts/FieldContext';
 import { useDateField } from '../../../hooks/useDateField';
 import { DateFieldDisplay } from '../DateFieldDisplay';
 
-const formattedDate = new Date();
+const formattedDate = new Date('2023-04-01');
 
 const DateFieldValueSetterEffect = ({ value }: { value: string }) => {
   const { setFieldValue } = useDateField();
@@ -16,62 +16,48 @@ const DateFieldValueSetterEffect = ({ value }: { value: string }) => {
     setFieldValue(value);
   }, [setFieldValue, value]);
 
-  return <></>;
-};
-
-type DateFieldDisplayWithContextProps = {
-  value: string;
-  entityId?: string;
-};
-
-const DateFieldDisplayWithContext = ({
-  value,
-  entityId,
-}: DateFieldDisplayWithContextProps) => {
-  return (
-    <FieldContextProvider
-      fieldDefinition={{
-        fieldId: 'date',
-        label: 'Date',
-        type: 'DATE',
-        metadata: {
-          fieldName: 'Date',
-        },
-      }}
-      entityId={entityId}
-    >
-      <DateFieldValueSetterEffect value={value} />
-      <DateFieldDisplay />
-    </FieldContextProvider>
-  );
+  return null;
 };
 
 const meta: Meta = {
   title: 'UI/Data/Field/Display/DateFieldDisplay',
-  component: DateFieldDisplayWithContext,
+  decorators: [
+    (Story, { args }) => (
+      <FieldContext.Provider
+        value={{
+          entityId: '',
+          fieldDefinition: {
+            fieldId: 'date',
+            label: 'Date',
+            type: 'DATE',
+            metadata: {
+              fieldName: 'Date',
+            },
+          },
+          hotkeyScope: 'hotkey-scope',
+        }}
+      >
+        <DateFieldValueSetterEffect value={args.value} />
+        <Story />
+      </FieldContext.Provider>
+    ),
+    ComponentDecorator,
+  ],
+  component: DateFieldDisplay,
+  argTypes: { value: { control: 'date' } },
+  args: {
+    value: formattedDate,
+  },
 };
 
 export default meta;
 
-type Story = StoryObj<typeof DateFieldDisplayWithContext>;
+type Story = StoryObj<typeof DateFieldDisplay>;
 
-export const Default: Story = {
-  args: {
-    value: formattedDate.toISOString(),
-  },
-};
+export const Default: Story = {};
 
 export const Elipsis: Story = {
-  args: {
-    value: formattedDate.toISOString(),
-  },
-  argTypes: {
-    value: { control: false },
-  },
   parameters: {
-    container: {
-      width: 50,
-    },
+    container: { width: 50 },
   },
-  decorators: [ComponentDecorator],
 };

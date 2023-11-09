@@ -1,21 +1,23 @@
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 
-import { availableTableColumnsScopedState } from '@/ui/object/record-table/states/availableTableColumnsScopedState';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
 
-import { useObjectMetadataItemInContext } from '../hooks/useObjectMetadataItemInContext';
+import { useFindOneObjectMetadataItem } from '../hooks/useFindOneObjectMetadataItem';
 import { useTableObjects } from '../hooks/useTableObjects';
 
 export const RecordTableEffect = () => {
+  const { scopeId } = useRecordTable();
+
   const {
+    foundObjectMetadataItem,
     columnDefinitions,
     filterDefinitions,
     sortDefinitions,
-    foundObjectMetadataItem,
-  } = useObjectMetadataItemInContext();
-
+  } = useFindOneObjectMetadataItem({
+    objectNamePlural: scopeId,
+  });
   const {
     setAvailableSortDefinitions,
     setAvailableFilterDefinitions,
@@ -25,12 +27,6 @@ export const RecordTableEffect = () => {
   } = useView();
 
   useTableObjects();
-
-  const tableScopeId = foundObjectMetadataItem?.namePlural ?? '';
-
-  const setAvailableTableColumns = useSetRecoilState(
-    availableTableColumnsScopedState(tableScopeId),
-  );
 
   useEffect(() => {
     if (!foundObjectMetadataItem) {
@@ -42,10 +38,7 @@ export const RecordTableEffect = () => {
     setAvailableSortDefinitions?.(sortDefinitions);
     setAvailableFilterDefinitions?.(filterDefinitions);
     setAvailableFieldDefinitions?.(columnDefinitions);
-
-    setAvailableTableColumns(columnDefinitions);
   }, [
-    setAvailableTableColumns,
     setViewObjectId,
     setViewType,
     columnDefinitions,
