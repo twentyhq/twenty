@@ -1,12 +1,10 @@
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
-import { isRowSelectedFamilyState } from '../states/isRowSelectedFamilyState';
-import { allRowsSelectedStatusSelector } from '../states/selectors/allRowsSelectedStatusSelector';
-import { tableRowIdsState } from '../states/tableRowIdsState';
+import { isRowSelectedFamilyState } from '../../states/isRowSelectedFamilyState';
+import { allRowsSelectedStatusSelector } from '../../states/selectors/allRowsSelectedStatusSelector';
+import { tableRowIdsState } from '../../states/tableRowIdsState';
 
 export const useSelectAllRows = () => {
-  const allRowsSelectedStatus = useRecoilValue(allRowsSelectedStatusSelector);
-
   const selectAllRows = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
@@ -35,7 +33,6 @@ export const useSelectAllRows = () => {
   );
 
   return {
-    allRowsSelectedStatus,
     selectAllRows,
   };
 };

@@ -3,7 +3,7 @@ import { FieldInput } from '@/ui/object/field/components/FieldInput';
 import { FieldInputEvent } from '@/ui/object/field/types/FieldInputEvent';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
-import { useMoveSoftFocus } from '../../hooks/useMoveSoftFocus';
+import { useRecordTable } from '../../hooks/useRecordTable';
 import { useTableCell } from '../hooks/useTableCell';
 
 import { TableCellContainer } from './TableCellContainer';
@@ -15,7 +15,7 @@ export const TableCell = ({
 }) => {
   const { closeTableCell } = useTableCell();
 
-  const { moveLeft, moveRight, moveDown } = useMoveSoftFocus();
+  const { moveLeft, moveRight, moveDown } = useRecordTable();
 
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();

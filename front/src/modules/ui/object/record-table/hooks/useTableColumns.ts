@@ -2,9 +2,9 @@ import { useCallback } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
-import { useMoveViewColumns } from '@/ui/object/record-table/hooks/useMoveViewColumns';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
+import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 import { useView } from '@/views/hooks/useView';
 
 import { availableTableColumnsScopedState } from '../states/availableTableColumnsScopedState';
