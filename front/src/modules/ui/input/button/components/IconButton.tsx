@@ -20,7 +20,6 @@ export type IconButtonProps = {
   focus?: boolean;
   dataTestId?: string;
   ariaLabel?: string;
-  style?: React.CSSProperties;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
@@ -270,7 +269,6 @@ const StyledButton = styled.button<
 
 export const IconButton = ({
   className,
-  style,
   Icon,
   variant = 'primary',
   size = 'medium',
@@ -295,7 +293,6 @@ export const IconButton = ({
       className={className}
       onClick={onClick}
       aria-label={ariaLabel}
-      style={style}
     >
       {Icon && <Icon size={theme.icon.size.md} />}
     </StyledButton>

@@ -24,17 +24,13 @@ import { SelectAllCheckbox } from './SelectAllCheckbox';
 const COLUMN_MIN_WIDTH = 104;
 
 const StyledColumnHeaderCell = styled.th<{
-  columnWidth?: number;
+  columnWidth: number;
   isResizing?: boolean;
 }>`
-  ${({ columnWidth }) => {
-    if (columnWidth) {
-      return `
+  ${({ columnWidth }) => `
       min-width: ${columnWidth}px;
       width: ${columnWidth}px;
-      `;
-    }
-  }}
+      `}
   position: relative;
   user-select: none;
   ${({ theme }) => {
@@ -80,22 +76,28 @@ const StyledColumnHeadContainer = styled.div`
   z-index: 1;
 `;
 
-const StyledIconContainer = styled.div`
+const StyledPlusIconHeaderCell = styled.th`
   ${({ theme }) => {
     return `
-    height: ${theme.spacing(8)};
   &:hover {
     background: ${theme.background.transparent.light};
   };
-  min-width: ${theme.spacing(8)};
   padding-left: ${theme.spacing(3)};
   `;
   }};
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  border-bottom: none !important;
+  border-left: none !important;
+  min-width: 32px;
   position: relative;
   z-index: 1;
+`;
+
+const StyledPlusIconContainer = styled.div`
+  align-items: center;
+  display: flex;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
 `;
 
 const HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID =
@@ -228,37 +230,26 @@ export const RecordTableHeader = () => {
             />
           </StyledColumnHeaderCell>
         ))}
-        <th>
-          {hiddenTableColumns.length > 0 && (
-            <StyledIconContainer>
-              <DropdownScope
-                dropdownScopeId={HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID}
-              >
-                <Dropdown
-                  clickableComponent={
+        {hiddenTableColumns.length > 0 && (
+          <StyledPlusIconHeaderCell>
+            <DropdownScope
+              dropdownScopeId={HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID}
+            >
+              <Dropdown
+                clickableComponent={
+                  <StyledPlusIconContainer>
                     <IconPlus size={theme.icon.size.md} />
-                    // <IconButton
-                    //   size="medium"
-                    //   variant="tertiary"
-                    //   Icon={}
-                    //   position="middle"
-                    //   // style={{
-                    //   //   width: '100%',
-                    //   //   justifyContent: 'left',
-                    //   //   paddingLeft: theme.spacing(2),
-                    //   // }}
-                    // />
-                  }
-                  dropdownComponents={<RecordTableHeaderPlusButtonContent />}
-                  dropdownPlacement="bottom-start"
-                  dropdownHotkeyScope={{
-                    scope: HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID,
-                  }}
-                />
-              </DropdownScope>
-            </StyledIconContainer>
-          )}
-        </th>
+                  </StyledPlusIconContainer>
+                }
+                dropdownComponents={<RecordTableHeaderPlusButtonContent />}
+                dropdownPlacement="bottom-start"
+                dropdownHotkeyScope={{
+                  scope: HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID,
+                }}
+              />
+            </DropdownScope>
+          </StyledPlusIconHeaderCell>
+        )}
       </tr>
     </StyledTableHead>
   );
