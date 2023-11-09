@@ -10,7 +10,6 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 import { TenantMigrationRunnerService } from 'src/tenant-migration-runner/tenant-migration-runner.service';
-import { standardObjectsMetadata } from 'src/metadata/standard-objects-metadata/standard-object-metadata';
 import { ObjectMetadataEntity } from 'src/database/typeorm/metadata/entities/object-metadata.entity';
 import { TenantMigrationTableAction } from 'src/database/typeorm/metadata/entities/tenant-migration.entity';
 
@@ -106,34 +105,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       id: In(objectMetadataIds),
       workspaceId: Equal(workspaceId),
     });
-  }
-
-  /**
-   *
-   * Create all standard objects and fields metadata for a given workspace
-   *
-   * @param dataSourceId
-   * @param workspaceId
-   */
-  public async createStandardObjectsAndFieldsMetadata(
-    dataSourceId: string,
-    workspaceId: string,
-  ) {
-    await this.objectMetadataRepository.save(
-      Object.values(standardObjectsMetadata).map((objectMetadata) => ({
-        ...objectMetadata,
-        dataSourceId,
-        workspaceId,
-        isCustom: false,
-        isActive: true,
-        fields: objectMetadata.fields.map((field) => ({
-          ...field,
-          workspaceId,
-          isCustom: false,
-          isActive: true,
-        })),
-      })),
-    );
   }
 
   public async deleteObjectsMetadata(workspaceId: string) {

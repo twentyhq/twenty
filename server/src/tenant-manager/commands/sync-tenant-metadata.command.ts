@@ -1,7 +1,7 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 
-import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
+import { TenantManagerService } from 'src/tenant-manager/tenant-manager.service';
 
 // TODO: implement dry-run
 interface RunTenantMigrationsOptions {
@@ -14,7 +14,7 @@ interface RunTenantMigrationsOptions {
 })
 export class SyncTenantMetadataCommand extends CommandRunner {
   constructor(
-    private readonly objectMetadataService: ObjectMetadataService,
+    private readonly tenantManagerService: TenantManagerService,
     private readonly dataSourceMetadataService: DataSourceMetadataService,
   ) {
     super();
@@ -31,11 +31,7 @@ export class SyncTenantMetadataCommand extends CommandRunner {
       );
 
     // TODO: This solution could be improved, using a diff for example, we should not have to delete all metadata and recreate them.
-    await this.objectMetadataService.deleteMany({
-      workspaceId: { eq: options.workspaceId },
-    });
-
-    await this.objectMetadataService.createStandardObjectsAndFieldsMetadata(
+    await this.tenantManagerService.resetStandardObjectsAndFieldsMetadata(
       dataSourceMetadata.id,
       options.workspaceId,
     );

@@ -8,6 +8,7 @@ import { TenantMigrationRunnerService } from 'src/tenant-migration-runner/tenant
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 import { standardObjectsPrefillData } from 'src/tenant-manager/standard-objects-prefill-data/standard-objects-prefill-data';
 import { TenantDataSourceService } from 'src/tenant-datasource/tenant-datasource.service';
+import { standardObjectsMetadata } from 'src/tenant-manager/standard-objects-metadata/standard-object-metadata';
 
 @Injectable()
 export class TenantManagerService {
@@ -41,13 +42,62 @@ export class TenantManagerService {
       workspaceId,
     );
 
-    await this.objectMetadataService.createStandardObjectsAndFieldsMetadata(
+    await this.createStandardObjectsAndFieldsMetadata(
       dataSourceMetadata.id,
       workspaceId,
     );
 
     await this.prefillWorkspaceWithStandardObjects(
       dataSourceMetadata,
+      workspaceId,
+    );
+  }
+
+  /**
+   *
+   * Create all standard objects and fields metadata for a given workspace
+   *
+   * @param dataSourceId
+   * @param workspaceId
+   */
+  public async createStandardObjectsAndFieldsMetadata(
+    dataSourceId: string,
+    workspaceId: string,
+  ) {
+    await this.objectMetadataService.createMany(
+      Object.values(standardObjectsMetadata).map((objectMetadata) => ({
+        ...objectMetadata,
+        dataSourceId,
+        workspaceId,
+        isCustom: false,
+        isActive: true,
+        fields: objectMetadata.fields.map((field) => ({
+          ...field,
+          workspaceId,
+          isCustom: false,
+          isActive: true,
+        })),
+      })),
+    );
+  }
+
+  /**
+   *
+   * Reset all standard objects and fields metadata for a given workspace
+   *
+   * @param dataSourceId
+   * @param workspaceId
+   */
+  public async resetStandardObjectsAndFieldsMetadata(
+    dataSourceId: string,
+    workspaceId: string,
+  ) {
+    await this.objectMetadataService.deleteMany({
+      workspaceId: { eq: workspaceId },
+    });
+
+    await this.createStandardObjectsAndFieldsMetadata(
+      dataSourceId,
       workspaceId,
     );
   }
