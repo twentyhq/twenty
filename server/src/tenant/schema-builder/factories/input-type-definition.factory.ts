@@ -55,7 +55,7 @@ export class InputTypeDefinitionFactory {
     for (const fieldMetadata of objectMetadata.fields) {
       // Composite field types are generated during extensin of object type definition
       if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-        continue;
+        //continue;
       }
 
       const type = this.inputTypeFactory.create(fieldMetadata, kind, options, {

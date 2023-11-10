@@ -41,7 +41,7 @@ export const useViewFields = (viewScopeId: string) => {
                 variables: {
                   input: {
                     fieldMetadataId: viewField.fieldMetadataId,
-                    viewId: viewIdToPersist,
+                    view: viewIdToPersist,
                     isVisible: viewField.isVisible,
                     size: viewField.size,
                     position: viewField.position,

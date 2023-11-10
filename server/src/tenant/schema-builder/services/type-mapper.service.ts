@@ -61,6 +61,7 @@ export class TypeMapperService {
       [FieldMetadataType.DATE, dateScalar],
       [FieldMetadataType.BOOLEAN, GraphQLBoolean],
       [FieldMetadataType.NUMBER, numberScalar],
+      [FieldMetadataType.RELATION, GraphQLID],
     ]);
 
     return typeScalarMapping.get(fieldMetadataType);
