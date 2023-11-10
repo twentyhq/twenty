@@ -29,6 +29,7 @@ import {
   DateFilterType,
   FloatFilterType,
   IntFilterType,
+  BooleanFilterType,
 } from 'src/tenant/schema-builder/graphql-types/input';
 import { OrderByDirectionType } from 'src/tenant/schema-builder/graphql-types/enum';
 
@@ -85,7 +86,7 @@ export class TypeMapperService {
       [FieldMetadataType.PHONE, StringFilterType],
       [FieldMetadataType.EMAIL, StringFilterType],
       [FieldMetadataType.DATE, dateFilter],
-      [FieldMetadataType.BOOLEAN, GraphQLBoolean],
+      [FieldMetadataType.BOOLEAN, BooleanFilterType],
       [FieldMetadataType.NUMBER, numberScalar],
     ]);
 
