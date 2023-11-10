@@ -8,7 +8,7 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 @Injectable()
 export class TenantDataSourceService {
   constructor(
-    private readonly dataSourceMetadataService: DataSourceService,
+    private readonly dataSourceService: DataSourceService,
     private readonly typeormService: TypeORMService,
   ) {}
 
@@ -23,7 +23,7 @@ export class TenantDataSourceService {
     workspaceId: string,
   ): Promise<DataSource> {
     const dataSourceMetadata =
-      await this.dataSourceMetadataService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
       );
 

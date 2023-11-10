@@ -12,7 +12,7 @@ import { CreateObjectInput } from 'src/metadata/object-metadata/dtos/create-obje
 export class BeforeCreateOneObject<T extends CreateObjectInput>
   implements BeforeCreateOneHook<T, any>
 {
-  constructor(readonly dataSourceMetadataService: DataSourceService) {}
+  constructor(readonly dataSourceService: DataSourceService) {}
 
   async run(
     instance: CreateOneInputType<T>,
@@ -25,7 +25,7 @@ export class BeforeCreateOneObject<T extends CreateObjectInput>
     }
 
     const lastDataSourceMetadata =
-      await this.dataSourceMetadataService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
       );
 

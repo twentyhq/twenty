@@ -15,7 +15,7 @@ import { ResolverFactory } from './resolver-builder/resolver.factory';
 @Injectable()
 export class TenantService {
   constructor(
-    private readonly dataSourceMetadataService: DataSourceService,
+    private readonly dataSourceService: DataSourceService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly graphQLSchemaFactory: GraphQLSchemaFactory,
     private readonly resolverFactory: ResolverFactory,
@@ -27,7 +27,7 @@ export class TenantService {
     }
 
     const dataSourcesMetadata =
-      await this.dataSourceMetadataService.getDataSourcesMetadataFromWorkspaceId(
+      await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
         workspaceId,
       );
 

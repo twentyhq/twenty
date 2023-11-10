@@ -25,7 +25,7 @@ export class DataSeedTenantCommand extends CommandRunner {
   constructor(
     @InjectDataSource('metadata')
     private readonly metadataDataSource: DataSource,
-    private readonly dataSourceMetadataService: DataSourceService,
+    private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly tenantMigrationService: TenantMigrationService,
     private readonly migrationRunnerService: TenantMigrationRunnerService,
@@ -35,7 +35,7 @@ export class DataSeedTenantCommand extends CommandRunner {
 
   async run(): Promise<void> {
     const dataSourceMetadata =
-      await this.dataSourceMetadataService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         this.workspaceId,
       );
 

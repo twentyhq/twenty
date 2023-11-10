@@ -19,7 +19,7 @@ export class TenantManagerService {
     private readonly migrationRunnerService: TenantMigrationRunnerService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,
-    private readonly dataSourceMetadataService: DataSourceService,
+    private readonly dataSourceService: DataSourceService,
   ) {}
 
   /**
@@ -32,7 +32,7 @@ export class TenantManagerService {
       await this.tenantDataSourceService.createWorkspaceDBSchema(workspaceId);
 
     const dataSourceMetadata =
-      await this.dataSourceMetadataService.createDataSourceMetadata(
+      await this.dataSourceService.createDataSourceMetadata(
         workspaceId,
         schemaName,
       );
@@ -137,7 +137,7 @@ export class TenantManagerService {
     await this.fieldMetadataService.deleteFieldsMetadata(workspaceId);
     await this.objectMetadataService.deleteObjectsMetadata(workspaceId);
     await this.tenantMigrationService.delete(workspaceId);
-    await this.dataSourceMetadataService.delete(workspaceId);
+    await this.dataSourceService.delete(workspaceId);
     // Delete schema
     await this.tenantDataSourceService.deleteWorkspaceDBSchema(workspaceId);
   }

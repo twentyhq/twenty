@@ -15,7 +15,7 @@ interface RunTenantMigrationsOptions {
 export class SyncTenantMetadataCommand extends CommandRunner {
   constructor(
     private readonly tenantManagerService: TenantManagerService,
-    private readonly dataSourceMetadataService: DataSourceService,
+    private readonly dataSourceService: DataSourceService,
   ) {
     super();
   }
@@ -26,7 +26,7 @@ export class SyncTenantMetadataCommand extends CommandRunner {
   ): Promise<void> {
     // TODO: run in a dedicated job + run queries in a transaction.
     const dataSourceMetadata =
-      await this.dataSourceMetadataService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         options.workspaceId,
       );
 
