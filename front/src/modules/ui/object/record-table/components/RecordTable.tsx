@@ -7,6 +7,7 @@ import {
   useListenClickOutside,
   useListenClickOutsideByClassName,
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useRecordTable } from '../hooks/useRecordTable';
@@ -115,22 +116,24 @@ export const RecordTable = ({ updateEntityMutation }: RecordTableProps) => {
   });
 
   return (
-    <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
-      <StyledTableWithHeader>
-        <StyledTableContainer>
-          <div ref={tableBodyRef}>
-            <StyledTable className="entity-table-cell">
-              <RecordTableHeader />
-              <RecordTableBody />
-            </StyledTable>
-            <DragSelect
-              dragSelectable={tableBodyRef}
-              onDragSelectionStart={resetTableRowSelection}
-              onDragSelectionChange={setRowSelectedState}
-            />
-          </div>
-        </StyledTableContainer>
-      </StyledTableWithHeader>
-    </EntityUpdateMutationContext.Provider>
+    <ScrollWrapper>
+      <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
+        <StyledTableWithHeader>
+          <StyledTableContainer>
+            <div ref={tableBodyRef}>
+              <StyledTable className="entity-table-cell">
+                <RecordTableHeader />
+                <RecordTableBody />
+              </StyledTable>
+              <DragSelect
+                dragSelectable={tableBodyRef}
+                onDragSelectionStart={resetTableRowSelection}
+                onDragSelectionChange={setRowSelectedState}
+              />
+            </div>
+          </StyledTableContainer>
+        </StyledTableWithHeader>
+      </EntityUpdateMutationContext.Provider>
+    </ScrollWrapper>
   );
 };
