@@ -1,6 +1,6 @@
 import { ApolloCache, DocumentNode, OperationVariables } from '@apollo/client';
 
-import { ObjectMetadataItem } from '@/metadata/types/ObjectMetadataItem';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 type OptimisticEffectWriter<T> = ({
   cache,

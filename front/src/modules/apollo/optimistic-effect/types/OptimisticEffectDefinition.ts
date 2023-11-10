@@ -1,6 +1,6 @@
 import { DocumentNode } from 'graphql';
 
-import { ObjectMetadataItem } from '@/metadata/types/ObjectMetadataItem';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 import { OptimisticEffectResolver } from './OptimisticEffectResolver';
 

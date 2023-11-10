@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { useFindOneObjectMetadataItem } from '@/metadata/hooks/useFindOneObjectMetadataItem';
-import { useTableObjects } from '@/metadata/hooks/useTableObjects';
-import { isFetchingMoreObjectsFamilyState } from '@/metadata/states/isFetchingMoreObjectsFamilyState';
+import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectRecordTable } from '@/object-record/hooks/useObjectRecordTable';
+import { isFetchingMoreObjectsFamilyState } from '@/object-record/states/isFetchingMoreObjectsFamilyState';
 import { isDefined } from '~/utils/isDefined';
 
 import { RowIdContext } from '../contexts/RowIdContext';
@@ -34,7 +34,7 @@ export const RecordTableBody = () => {
     isFetchingRecordTableDataState,
   );
 
-  const { fetchMoreObjects } = useTableObjects();
+  const { fetchMoreObjects } = useObjectRecordTable();
 
   useEffect(() => {
     if (lastTableRowIsVisible && isDefined(fetchMoreObjects)) {

@@ -7,7 +7,7 @@ import { CREATE_EVENT } from '@/analytics/graphql/queries/createEvent';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
 import { INSERT_ONE_COMPANY } from '@/companies/graphql/mutations/insertOneCompany';
 import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
-import { FIND_MANY_METADATA_OBJECTS } from '@/metadata/graphql/queries';
+import { FIND_MANY_METADATA_OBJECTS } from '@/object-metadata/graphql/queries';
 import { INSERT_ONE_PERSON } from '@/people/graphql/mutations/insertOnePerson';
 import { UPDATE_ONE_PERSON } from '@/people/graphql/mutations/updateOnePerson';
 import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';

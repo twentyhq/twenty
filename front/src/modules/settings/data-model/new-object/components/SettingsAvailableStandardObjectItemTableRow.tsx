@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { ObjectMetadataItem } from '@/metadata/types/ObjectMetadataItem';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { Checkbox } from '@/ui/input/components/Checkbox';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';

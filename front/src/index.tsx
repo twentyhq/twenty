@@ -7,6 +7,7 @@ import { RecoilRoot } from 'recoil';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
+import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar/components/SnackBarProvider';
@@ -17,7 +18,6 @@ import { UserProvider } from '@/users/components/UserProvider';
 import '@emotion/react';
 
 import { PageChangeEffect } from './effect-components/PageChangeEffect';
-import { ApolloMetadataClientProvider } from './modules/metadata/components/ApolloMetadataClientProvider';
 import { App } from './App';
 
 import './index.css';
