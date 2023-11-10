@@ -1,12 +1,12 @@
 import { GraphQLResolveInfo } from 'graphql';
 
-import { FieldMetadataTargetColumnMap } from 'src/tenant/schema-builder/interfaces/field-metadata-target-column-map.interface';
+import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interfaces/field-metadata-target-column-map.interface';
 
+import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import {
   PGGraphQLQueryBuilder,
   PGGraphQLQueryBuilderOptions,
 } from 'src/tenant/resolver-builder/pg-graphql/pg-graphql-query-builder';
-import { FieldMetadataEntity } from 'src/database/typeorm/metadata/entities/field-metadata.entity';
 
 const testUUID = '123e4567-e89b-12d3-a456-426614174001';
 
@@ -53,7 +53,7 @@ describe('PGGraphQLQueryBuilder', () => {
           subField2: 'column_subField2',
         } as FieldMetadataTargetColumnMap,
       },
-    ] as FieldMetadataEntity[];
+    ] as FieldMetadata[];
 
     mockOptions = {
       targetTableName: 'TestTable',

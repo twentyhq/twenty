@@ -41,7 +41,7 @@ const ProbabilityFieldInputWithContext = ({
   return (
     <FieldContextProvider
       fieldDefinition={{
-        fieldMetadataId: 'probability',
+        fieldId: 'probability',
         label: 'Probability',
         type: 'PROBABILITY',
         metadata: {

@@ -3,13 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { DataSourceEntity } from 'src/database/typeorm/metadata/entities/data-source.entity';
+import { DataSourceMetadata } from './data-source-metadata.entity';
 
 @Injectable()
 export class DataSourceMetadataService {
   constructor(
-    @InjectRepository(DataSourceEntity, 'metadata')
-    private readonly dataSourceMetadataRepository: Repository<DataSourceEntity>,
+    @InjectRepository(DataSourceMetadata, 'metadata')
+    private readonly dataSourceMetadataRepository: Repository<DataSourceMetadata>,
   ) {}
 
   async createDataSourceMetadata(workspaceId: string, workspaceSchema: string) {

@@ -17,11 +17,11 @@ export const turnFiltersIntoWhereClauseV2 = (
 
   filters.forEach((filter) => {
     const correspondingField = fields.find(
-      (field) => field.id === filter.fieldMetadataId,
+      (field) => field.id === filter.fieldId,
     );
     if (!correspondingField) {
       throw new Error(
-        `Could not find field ${filter.fieldMetadataId} in metadata object`,
+        `Could not find field ${filter.fieldId} in metadata object`,
       );
     }
 

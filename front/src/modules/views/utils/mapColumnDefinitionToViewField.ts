@@ -8,7 +8,7 @@ export const mapColumnDefinitionsToViewFields = (
 ): ViewField[] => {
   return columnDefinitions.map((columnDefinition) => ({
     id: columnDefinition.viewFieldId || '',
-    fieldMetadataId: columnDefinition.fieldMetadataId,
+    fieldId: columnDefinition.fieldId,
     position: columnDefinition.position,
     size: columnDefinition.size,
     isVisible: columnDefinition.isVisible ?? true,

@@ -1,12 +1,8 @@
-import { Field, HideField, InputType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 
-import { BeforeCreateOne } from '@ptc-org/nestjs-query-graphql';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-import { BeforeCreateOneObject } from 'src/metadata/object-metadata/hooks/before-create-one-object.hook';
-
 @InputType()
-@BeforeCreateOne(BeforeCreateOneObject)
 export class CreateObjectInput {
   @IsString()
   @IsNotEmpty()
@@ -37,10 +33,4 @@ export class CreateObjectInput {
   @IsOptional()
   @Field({ nullable: true })
   icon?: string;
-
-  @HideField()
-  dataSourceId: string;
-
-  @HideField()
-  workspaceId: string;
 }

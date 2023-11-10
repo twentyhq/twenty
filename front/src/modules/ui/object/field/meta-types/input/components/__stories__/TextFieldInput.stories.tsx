@@ -43,7 +43,7 @@ const TextFieldInputWithContext = ({
     <div>
       <FieldContextProvider
         fieldDefinition={{
-          fieldMetadataId: 'text',
+          fieldId: 'text',
           label: 'Text',
           type: 'TEXT',
           metadata: {

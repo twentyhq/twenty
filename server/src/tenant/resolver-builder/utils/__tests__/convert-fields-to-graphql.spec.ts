@@ -1,7 +1,7 @@
-import { FieldMetadataTargetColumnMap } from 'src/tenant/schema-builder/interfaces/field-metadata-target-column-map.interface';
+import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interfaces/field-metadata-target-column-map.interface';
 
+import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import { convertFieldsToGraphQL } from 'src/tenant/resolver-builder/utils/convert-fields-to-graphql.util';
-import { FieldMetadataEntity } from 'src/database/typeorm/metadata/entities/field-metadata.entity';
 
 const normalizeWhitespace = (str) => str.replace(/\s+/g, ' ').trim();
 
@@ -23,7 +23,7 @@ describe('convertFieldsToGraphQL', () => {
           text: 'column_RANDOMSTRING3',
         } as FieldMetadataTargetColumnMap,
       },
-    ] as FieldMetadataEntity[];
+    ] as FieldMetadata[];
   });
 
   test('should handle simple fields correctly', () => {
@@ -75,7 +75,7 @@ describe('convertFieldsToGraphQL', () => {
     const emptyField = {
       name: 'emptyField',
       targetColumnMap: {},
-    } as FieldMetadataEntity;
+    } as FieldMetadata;
 
     fields.push(emptyField);
 

@@ -55,7 +55,7 @@ const DoubleTextFieldInputWithContext = ({
     <div>
       <FieldContextProvider
         fieldDefinition={{
-          fieldMetadataId: 'double-text',
+          fieldId: 'double-text',
           label: 'Double-Text',
           type: 'DOUBLE_TEXT',
           metadata: {

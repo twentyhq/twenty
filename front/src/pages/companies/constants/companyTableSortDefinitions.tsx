@@ -9,27 +9,27 @@ import { SortDefinition } from '@/ui/object/object-sort-dropdown/types/SortDefin
 
 export const companyTableSortDefinitions: SortDefinition[] = [
   {
-    fieldMetadataId: 'name',
+    fieldId: 'name',
     label: 'Name',
     Icon: IconBuildingSkyscraper,
   },
   {
-    fieldMetadataId: 'employees',
+    fieldId: 'employees',
     label: 'Employees',
     Icon: IconUsers,
   },
   {
-    fieldMetadataId: 'domainName',
+    fieldId: 'domainName',
     label: 'Url',
     Icon: IconLink,
   },
   {
-    fieldMetadataId: 'address',
+    fieldId: 'address',
     label: 'Address',
     Icon: IconMap,
   },
   {
-    fieldMetadataId: 'createdAt',
+    fieldId: 'createdAt',
     label: 'Creation',
     Icon: IconCalendarEvent,
   },

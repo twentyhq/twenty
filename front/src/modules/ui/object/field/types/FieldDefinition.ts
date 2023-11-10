@@ -5,7 +5,7 @@ import { FieldMetadata } from './FieldMetadata';
 import { FieldType } from './FieldType';
 
 export type FieldDefinition<T extends FieldMetadata> = {
-  fieldMetadataId: string;
+  fieldId: string;
   label: string;
   Icon?: IconComponent;
   type: FieldType;

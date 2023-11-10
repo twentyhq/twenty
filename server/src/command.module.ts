@@ -4,15 +4,9 @@ import { DatabaseCommandModule } from 'src/database/commands/database-command.mo
 
 import { AppModule } from './app.module';
 
-import { TenantMigrationRunnerCommandsModule } from './tenant-migration-runner/commands/tenant-migration-runner-commands.module';
-import { TenantManagerCommandsModule } from './tenant-manager/commands/tenant-manager-commands.module';
+import { MetadataCommandModule } from './metadata/commands/metadata-command.module';
 
 @Module({
-  imports: [
-    AppModule,
-    TenantMigrationRunnerCommandsModule,
-    TenantManagerCommandsModule,
-    DatabaseCommandModule,
-  ],
+  imports: [AppModule, MetadataCommandModule, DatabaseCommandModule],
 })
 export class CommandModule {}

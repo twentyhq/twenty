@@ -5,8 +5,8 @@ import { GraphQLFieldConfigMap, GraphQLObjectType } from 'graphql';
 import { BuildSchemaOptions } from 'src/tenant/schema-builder/interfaces/build-schema-optionts.interface';
 import { ObjectMetadataInterface } from 'src/tenant/schema-builder/interfaces/object-metadata.interface';
 
+import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
-import { FieldMetadataEntity } from 'src/database/typeorm/metadata/entities/field-metadata.entity';
 
 import { OutputTypeFactory } from './output-type.factory';
 
@@ -49,7 +49,7 @@ export class ObjectTypeDefinitionFactory {
   ): GraphQLFieldConfigMap<any, any> {
     const fields: GraphQLFieldConfigMap<any, any> = {};
 
-    objectMetadata.fields.forEach((fieldMetadata: FieldMetadataEntity) => {
+    objectMetadata.fields.forEach((fieldMetadata: FieldMetadata) => {
       const type = this.outputTypeFactory.create(fieldMetadata, kind, options, {
         nullable: fieldMetadata.isNullable,
       });

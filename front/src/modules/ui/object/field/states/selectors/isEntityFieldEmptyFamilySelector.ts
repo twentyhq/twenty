@@ -33,7 +33,7 @@ export const isEntityFieldEmptyFamilySelector = selectorFamily({
   }: {
     fieldDefinition: Pick<
       FieldDefinition<FieldMetadata>,
-      'type' | 'metadata' | 'fieldMetadataId' | 'label'
+      'type' | 'metadata' | 'fieldId' | 'label'
     >;
     entityId: string;
   }) => {

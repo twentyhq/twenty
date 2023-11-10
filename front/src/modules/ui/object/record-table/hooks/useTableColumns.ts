@@ -47,14 +47,13 @@ export const useTableColumns = () => {
       viewField: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
     ) => {
       const isNewColumn = !tableColumns.some(
-        (tableColumns) =>
-          tableColumns.fieldMetadataId === viewField.fieldMetadataId,
+        (tableColumns) => tableColumns.fieldId === viewField.fieldId,
       );
 
       if (isNewColumn) {
         const newColumn = availableTableColumns.find(
           (availableTableColumn) =>
-            availableTableColumn.fieldMetadataId === viewField.fieldMetadataId,
+            availableTableColumn.fieldId === viewField.fieldId,
         );
         if (!newColumn) return;
 
@@ -66,7 +65,7 @@ export const useTableColumns = () => {
         await handleColumnsChange(nextColumns);
       } else {
         const nextColumns = tableColumns.map((previousColumn) =>
-          previousColumn.fieldMetadataId === viewField.fieldMetadataId
+          previousColumn.fieldId === viewField.fieldId
             ? { ...previousColumn, isVisible: !viewField.isVisible }
             : previousColumn,
         );
@@ -83,8 +82,7 @@ export const useTableColumns = () => {
       column: ColumnDefinition<FieldMetadata>,
     ) => {
       const currentColumnArrayIndex = visibleTableColumns.findIndex(
-        (visibleColumn) =>
-          visibleColumn.fieldMetadataId === column.fieldMetadataId,
+        (visibleColumn) => visibleColumn.fieldId === column.fieldId,
       );
 
       const columns = handleColumnMove(

@@ -57,7 +57,7 @@ const DoubleTextChipFieldInputWithContext = ({
     <div>
       <FieldContextProvider
         fieldDefinition={{
-          fieldMetadataId: 'double-text-chip',
+          fieldId: 'double-text-chip',
           label: 'Double-Text-Chip',
           type: 'DOUBLE_TEXT_CHIP',
           metadata: {

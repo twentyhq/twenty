@@ -9,10 +9,10 @@ export const hiddenTableColumnsScopedSelector = selectorFamily({
     (scopeId: string) =>
     ({ get }) => {
       const columns = get(tableColumnsScopedState({ scopeId }));
-      const columnKeys = columns.map(({ fieldMetadataId }) => fieldMetadataId);
+      const columnKeys = columns.map(({ fieldId }) => fieldId);
       const otherAvailableColumns = get(
         availableTableColumnsScopedState({ scopeId }),
-      ).filter(({ fieldMetadataId }) => !columnKeys.includes(fieldMetadataId));
+      ).filter(({ fieldId }) => !columnKeys.includes(fieldId));
 
       return [
         ...columns.filter((column) => !column.isVisible),

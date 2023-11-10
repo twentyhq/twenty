@@ -19,7 +19,7 @@ export const formatMetadataFieldAsColumnDefinition = ({
   icons: Record<string, IconComponent>;
 }): ColumnDefinition<FieldMetadata> => ({
   position,
-  fieldMetadataId: field.id,
+  fieldId: field.id,
   label: field.label,
   size: 100,
   type: parseFieldType(field.type),

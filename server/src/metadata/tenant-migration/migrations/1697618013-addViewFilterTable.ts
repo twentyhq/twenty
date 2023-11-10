@@ -1,7 +1,7 @@
 import {
-  TenantMigrationTableAction,
   TenantMigrationColumnActionType,
-} from 'src/database/typeorm/metadata/entities/tenant-migration.entity';
+  TenantMigrationTableAction,
+} from 'src/metadata/tenant-migration/tenant-migration.entity';
 
 export const addViewFilterTable: TenantMigrationTableAction[] = [
   {
@@ -13,7 +13,7 @@ export const addViewFilterTable: TenantMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        columnName: 'fieldMetadataId',
+        columnName: 'fieldId',
         columnType: 'varchar',
         action: TenantMigrationColumnActionType.CREATE,
       },

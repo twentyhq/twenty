@@ -14,13 +14,13 @@ export const useMetadataField = () => {
 
   const createMetadataField = (
     input: Pick<Field, 'label' | 'icon' | 'description'> & {
-      objectMetadataId: string;
+      objectId: string;
       type: MetadataFieldDataType;
     },
   ) =>
     createOneMetadataField({
       ...formatMetadataFieldInput(input),
-      objectMetadataId: input.objectMetadataId,
+      objectId: input.objectId,
       type: input.type,
     });
 
@@ -28,19 +28,19 @@ export const useMetadataField = () => {
     input: Pick<Field, 'id' | 'label' | 'icon' | 'description'>,
   ) =>
     updateOneMetadataField({
-      fieldMetadataIdToUpdate: input.id,
+      fieldIdToUpdate: input.id,
       updatePayload: formatMetadataFieldInput(input),
     });
 
   const activateMetadataField = (metadataField: Field) =>
     updateOneMetadataField({
-      fieldMetadataIdToUpdate: metadataField.id,
+      fieldIdToUpdate: metadataField.id,
       updatePayload: { isActive: true },
     });
 
   const disableMetadataField = (metadataField: Field) =>
     updateOneMetadataField({
-      fieldMetadataIdToUpdate: metadataField.id,
+      fieldIdToUpdate: metadataField.id,
       updatePayload: { isActive: false },
     });
 

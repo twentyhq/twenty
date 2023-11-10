@@ -23,7 +23,7 @@ import { getLogoUrlFromDomainName } from '~/utils';
 
 export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
   {
-    fieldMetadataId: 'email',
+    fieldId: 'email',
     label: 'Email',
     Icon: IconMail,
     type: 'TEXT',
@@ -33,7 +33,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
-    fieldMetadataId: 'company',
+    fieldId: 'company',
     label: 'Company',
     Icon: IconBuildingSkyscraper,
     type: 'RELATION',
@@ -50,7 +50,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldRelationMetadata>,
   {
-    fieldMetadataId: 'phone',
+    fieldId: 'phone',
     label: 'Phone',
     Icon: IconPhone,
     type: 'PHONE',
@@ -60,7 +60,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldPhoneMetadata>,
   {
-    fieldMetadataId: 'jobTitle',
+    fieldId: 'jobTitle',
     label: 'Job Title',
     Icon: IconBriefcase,
     type: 'TEXT',
@@ -70,7 +70,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
-    fieldMetadataId: 'city',
+    fieldId: 'city',
     label: 'City',
     Icon: IconMap,
     type: 'TEXT',
@@ -80,7 +80,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldTextMetadata>,
   {
-    fieldMetadataId: 'linkedinUrl',
+    fieldId: 'linkedinUrl',
     label: 'Linkedin URL',
     Icon: IconBrandLinkedin,
     type: 'URL',
@@ -90,7 +90,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
-    fieldMetadataId: 'xUrl',
+    fieldId: 'xUrl',
     label: 'X URL',
     Icon: IconBrandX,
     type: 'URL',
@@ -100,7 +100,7 @@ export const personShowFieldDefinition: FieldDefinition<FieldMetadata>[] = [
     },
   } satisfies FieldDefinition<FieldURLMetadata>,
   {
-    fieldMetadataId: 'createdAt',
+    fieldId: 'createdAt',
     label: 'Created at',
     Icon: IconCalendar,
     type: 'DATE',

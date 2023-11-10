@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'src/database/typeorm/metadata/entities/field-metadata.entity';
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 import {
   generateTargetColumnMap,

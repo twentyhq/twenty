@@ -77,7 +77,7 @@ export const SettingsNewObject = () => {
       });
 
       await createOneView?.({
-        objectMetadataId: createdObject.data?.createOneObject.id,
+        objectId: createdObject.data?.createOneObject.id,
         type: ViewType.Table,
         name: `All ${customFormValues.labelPlural}`,
       });

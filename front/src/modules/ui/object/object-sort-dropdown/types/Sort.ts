@@ -2,7 +2,7 @@ import { SortDefinition } from './SortDefinition';
 import { SortDirection } from './SortDirection';
 
 export type Sort = {
-  fieldMetadataId: string;
+  fieldId: string;
   direction: SortDirection;
   definition: SortDefinition;
 };

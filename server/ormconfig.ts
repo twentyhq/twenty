@@ -7,7 +7,7 @@ export default {
   type: 'postgres',
   entities: [__dirname + '/src/coreV2/**/*.entity{.ts,.js}'],
   synchronize: false,
-  migrationsRun: false,
+  migrationsRun: true,
   migrationsTableName: '_typeorm_migrations',
   migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
   cli: {

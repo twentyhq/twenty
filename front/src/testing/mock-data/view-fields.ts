@@ -4,7 +4,7 @@ export const mockedViewFieldsData = [
   // Companies
   {
     id: '79035310-e955-4986-a4a4-73f9d9949c6a',
-    fieldMetadataId: 'name',
+    fieldId: 'name',
     viewId: mockedViewsData[0].id,
     position: 0,
     isVisible: true,
@@ -12,7 +12,7 @@ export const mockedViewFieldsData = [
   },
   {
     id: '2a96bbc8-d86d-439a-8e50-4b07ebd27750',
-    fieldMetadataId: 'domainName',
+    fieldId: 'domainName',
     viewId: mockedViewsData[0].id,
     position: 1,
     isVisible: true,
@@ -20,7 +20,7 @@ export const mockedViewFieldsData = [
   },
   {
     id: '0c1b4c7b-6a3d-4fb0-bf2b-5d7c8fb844ed',
-    fieldMetadataId: 'accountOwner',
+    fieldId: 'accountOwner',
     viewId: mockedViewsData[0].id,
     position: 2,
     isVisible: true,
@@ -28,7 +28,7 @@ export const mockedViewFieldsData = [
   },
   {
     id: 'cc7f9560-32b5-4b82-8fd9-b05fe77c8cf7',
-    fieldMetadataId: 'createdAt',
+    fieldId: 'createdAt',
     viewId: mockedViewsData[0].id,
     position: 3,
     isVisible: true,
@@ -36,7 +36,7 @@ export const mockedViewFieldsData = [
   },
   {
     id: '3de4d078-3396-4480-be2d-6f3b1a228b0d',
-    fieldMetadataId: 'employees',
+    fieldId: 'employees',
     viewId: mockedViewsData[0].id,
     position: 4,
     isVisible: true,
@@ -44,7 +44,7 @@ export const mockedViewFieldsData = [
   },
   {
     id: '4650c8fb-0f1e-4342-88dc-adedae1445f9',
-    fieldMetadataId: 'linkedin',
+    fieldId: 'linkedin',
     viewId: mockedViewsData[0].id,
     position: 5,
     isVisible: true,
@@ -52,7 +52,7 @@ export const mockedViewFieldsData = [
   },
   {
     id: '727430bf-6ff8-4c85-9828-cbe72ac0fc27',
-    fieldMetadataId: 'address',
+    fieldId: 'address',
     viewId: mockedViewsData[0].id,
     position: 6,
     isVisible: true,
@@ -62,7 +62,7 @@ export const mockedViewFieldsData = [
   // People
   {
     id: '28894146-4fde-4a16-a9ca-1a31b5b788b4',
-    fieldMetadataId: 'displayName',
+    fieldId: 'displayName',
     viewId: mockedViewsData[1].id,
     position: 0,
     isVisible: true,
@@ -70,7 +70,7 @@ export const mockedViewFieldsData = [
   },
   {
     id: 'e1e24864-8601-4cd8-8a63-09c1285f2e39',
-    fieldMetadataId: 'email',
+    fieldId: 'email',
     viewId: mockedViewsData[1].id,
     position: 1,
     isVisible: true,
@@ -78,7 +78,7 @@ export const mockedViewFieldsData = [
   },
   {
     id: '5a1df716-7211-445a-9f16-9783a00998a7',
-    fieldMetadataId: 'company',
+    fieldId: 'company',
     viewId: mockedViewsData[1].id,
     position: 2,
     isVisible: true,
@@ -86,7 +86,7 @@ export const mockedViewFieldsData = [
   },
   {
     id: 'a6e1197a-7e84-4d92-ace2-367c0bc46c49',
-    fieldMetadataId: 'phone',
+    fieldId: 'phone',
     viewId: mockedViewsData[1].id,
     position: 3,
     isVisible: true,
@@ -94,7 +94,7 @@ export const mockedViewFieldsData = [
   },
   {
     id: 'c9343097-d14b-4559-a5fa-626c1527d39f',
-    fieldMetadataId: 'createdAt',
+    fieldId: 'createdAt',
     viewId: mockedViewsData[1].id,
     position: 4,
     isVisible: true,
@@ -102,7 +102,7 @@ export const mockedViewFieldsData = [
   },
   {
     id: 'a873e5f0-fed6-47e9-a712-6854eab3ec77',
-    fieldMetadataId: 'city',
+    fieldId: 'city',
     viewId: mockedViewsData[1].id,
     position: 5,
     isVisible: true,
@@ -110,7 +110,7 @@ export const mockedViewFieldsData = [
   },
   {
     id: '66f134b8-5329-422f-b88e-83e6bb707eb5',
-    fieldMetadataId: 'jobTitle',
+    fieldId: 'jobTitle',
     viewId: mockedViewsData[1].id,
     position: 6,
     isVisible: true,
@@ -118,7 +118,7 @@ export const mockedViewFieldsData = [
   },
   {
     id: '648faa24-cabb-482a-8578-ba3f09906017',
-    fieldMetadataId: 'linkedin',
+    fieldId: 'linkedin',
     viewId: mockedViewsData[1].id,
     position: 7,
     isVisible: true,
@@ -126,7 +126,7 @@ export const mockedViewFieldsData = [
   },
   {
     id: '3a9e7f0d-a4ce-4ad5-aac7-3a24eb1a412d',
-    fieldMetadataId: 'x',
+    fieldId: 'x',
     viewId: mockedViewsData[1].id,
     position: 8,
     isVisible: true,
@@ -136,7 +136,7 @@ export const mockedViewFieldsData = [
   // Opportunities
   {
     id: '35a42e2d-83dd-4b57-ada6-f90616da706d',
-    fieldMetadataId: 'amount',
+    fieldId: 'amount',
     viewId: mockedViewsData[2].id,
     position: 0,
     isVisible: true,
@@ -144,7 +144,7 @@ export const mockedViewFieldsData = [
   },
   {
     id: 'e5a731bb-82b9-4abe-ad22-1ddea94722f9',
-    fieldMetadataId: 'probability',
+    fieldId: 'probability',
     viewId: mockedViewsData[2].id,
     position: 1,
     isVisible: true,
@@ -152,7 +152,7 @@ export const mockedViewFieldsData = [
   },
   {
     id: '3159acd8-463f-458d-bf9a-af8ac6f57dc0',
-    fieldMetadataId: 'closeDate',
+    fieldId: 'closeDate',
     viewId: mockedViewsData[2].id,
     position: 2,
     isVisible: true,
@@ -160,7 +160,7 @@ export const mockedViewFieldsData = [
   },
   {
     id: 'afc0819d-b694-4e3c-a2e6-25261aa3ed2c',
-    fieldMetadataId: 'company',
+    fieldId: 'company',
     viewId: mockedViewsData[2].id,
     position: 3,
     isVisible: true,
@@ -168,7 +168,7 @@ export const mockedViewFieldsData = [
   },
   {
     id: 'ec0507bb-aedc-4695-ba96-d81bdeb9db83',
-    fieldMetadataId: 'createdAt',
+    fieldId: 'createdAt',
     viewId: mockedViewsData[2].id,
     position: 4,
     isVisible: true,
@@ -176,7 +176,7 @@ export const mockedViewFieldsData = [
   },
   {
     id: '3f1585f6-44f6-45c5-b840-bc05af5d0008',
-    fieldMetadataId: 'pointOfContact',
+    fieldId: 'pointOfContact',
     viewId: mockedViewsData[2].id,
     position: 5,
     isVisible: true,

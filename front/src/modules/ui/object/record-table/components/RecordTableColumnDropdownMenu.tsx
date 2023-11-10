@@ -46,7 +46,7 @@ export const RecordTableColumnDropdownMenu = ({
     handleColumnVisibilityChange(column);
   };
 
-  return column.fieldMetadataId === primaryColumnKey ? (
+  return column.fieldId === primaryColumnKey ? (
     <></>
   ) : (
     <DropdownMenuItemsContainer>
