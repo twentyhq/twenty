@@ -20,6 +20,7 @@ export const seedObjectMetadata = async (
       'icon',
       'dataSourceId',
       'workspaceId',
+      'isActive',
     ])
     .orIgnore()
     .values([
