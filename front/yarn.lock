@@ -4942,7 +4942,7 @@
     "@svgr/babel-plugin-transform-react-native-svg" "^5.4.0"
     "@svgr/babel-plugin-transform-svg-component" "^5.5.0"
 
-"@svgr/core@8.1.0":
+"@svgr/core@8.1.0", "@svgr/core@^8.0.0":
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/@svgr/core/-/core-8.1.0.tgz#41146f9b40b1a10beaf5cc4f361a16a3c1885e88"
   integrity sha512-8QqtOQT5ACVlmsvKOJNEaWmRPmcojMOzCz4Hs2BGG/toAp/K38LcsMRyLp349glq5AzJbCEeimEoxaX6v/fLrA==
@@ -4977,7 +4977,7 @@
   dependencies:
     "@babel/types" "^7.12.6"
 
-"@svgr/plugin-jsx@8.1.0":
+"@svgr/plugin-jsx@8.1.0", "@svgr/plugin-jsx@^8.0.1", "@svgr/plugin-jsx@^8.1.0":
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/@svgr/plugin-jsx/-/plugin-jsx-8.1.0.tgz#96969f04a24b58b174ee4cd974c60475acbd6928"
   integrity sha512-0xiIyBsLlr8quN+WyuxooNW9RJ0Dpr8uOnH/xrCVO8GLUcwHISwj1AG0k+LFzteTkAA0GbX0kj9q6Dk70PTiPA==
@@ -9815,6 +9815,14 @@ esbuild-plugin-alias@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/esbuild-plugin-alias/-/esbuild-plugin-alias-0.2.1.tgz#45a86cb941e20e7c2bc68a2bea53562172494fcb"
   integrity sha512-jyfL/pwPqaFXyKnj8lP8iLk6Z0m099uXR45aSN8Av1XD4vhvQutxxPzgA2bTcAwQpa1zCXDcWOlhFgyP3GKqhQ==
+
+esbuild-plugin-svgr@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/esbuild-plugin-svgr/-/esbuild-plugin-svgr-2.1.0.tgz#2257d8bbffd15c7830a0afce7e9163e0a8283bd6"
+  integrity sha512-BKJOlQvXjLipPDPYfX+N6i2tPxSuVOhlg+hEF/nkQwMwFV6IymvuCRO0wLvf9tGyL3mc3yIZ4n9pfxcCx/7v2Q==
+  dependencies:
+    "@svgr/core" "^8.0.0"
+    "@svgr/plugin-jsx" "^8.0.1"
 
 esbuild-register@^3.4.0:
   version "3.4.2"
