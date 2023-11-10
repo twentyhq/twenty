@@ -64,11 +64,14 @@ export class CompositeFieldAliasFactory {
       );
     }
 
-    const targetTableName = relationMetadata.toObjectMetadata.targetTableName;
     const relationDirection = deduceRelationDirection(
       fieldMetadata.objectMetadataId,
       relationMetadata,
     );
+    const targetTableName =
+      relationDirection == RelationDirection.TO
+        ? relationMetadata.fromObjectMetadata.targetTableName
+        : relationMetadata.toObjectMetadata.targetTableName;
 
     // If it's a relation destination is of kind MANY, we need to add the collection suffix and extract the args
     if (
@@ -78,9 +81,8 @@ export class CompositeFieldAliasFactory {
       const args = getFieldArgumentsByKey(info, fieldKey);
       const argsString = this.argsStringFactory.create(
         args,
-        relationMetadata.toObjectMetadata.fields,
+        relationMetadata.toObjectMetadata.fields ?? [],
       );
-
       return `
       ${fieldKey}: ${targetTableName}Collection${
         argsString ? `(${argsString})` : ''
@@ -88,7 +90,7 @@ export class CompositeFieldAliasFactory {
         ${this.fieldsStringFactory.createFieldsStringRecursive(
           info,
           fieldValue,
-          relationMetadata.toObjectMetadata.fields,
+          relationMetadata.toObjectMetadata.fields ?? [],
         )}
       }
     `;
@@ -100,7 +102,7 @@ export class CompositeFieldAliasFactory {
         ${this.fieldsStringFactory.createFieldsStringRecursive(
           info,
           fieldValue,
-          relationMetadata.toObjectMetadata.fields,
+          relationMetadata.toObjectMetadata.fields ?? [],
         )}
       }
     `;
