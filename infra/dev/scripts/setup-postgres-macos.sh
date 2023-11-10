@@ -98,7 +98,7 @@ cargo pgrx install --release --pg-config /opt/homebrew/opt/postgresql@$PG_MAIN_V
 # Start postgresql service
 echo_header $GREEN "Step [3/4]: Starting PostgreSQL service..."
 
-[[ ":$PATH:" != *":/opt/homebrew/opt/postgresql@15/bin:"* ]] && PATH="/opt/homebrew/opt/postgresql@15/bin:${PATH}"
+[[ ":$PATH:" != *":/opt/homebrew/opt/postgresql@$PG_MAIN_VERSION/bin:"* ]] && PATH="/opt/homebrew/opt/postgresql@$PG_MAIN_VERSION/bin:${PATH}"
 
 if brew services start postgresql@$PG_MAIN_VERSION; then
     echo "PostgreSQL service started successfully."
