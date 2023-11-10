@@ -28,7 +28,7 @@ import { User } from '~/generated/graphql';
 export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
     {
-      fieldId: 'name',
+      fieldMetadataId: 'name',
       label: 'Name',
       Icon: IconBuildingSkyscraper,
       size: 180,
@@ -45,7 +45,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       basePathToShowPage: '/companies/',
     } satisfies ColumnDefinition<FieldChipMetadata>,
     {
-      fieldId: 'domainName',
+      fieldMetadataId: 'domainName',
       label: 'URL',
       Icon: IconLink,
       size: 100,
@@ -60,7 +60,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
         'The company website URL. We use this url to fetch the company icon.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
     {
-      fieldId: 'accountOwner',
+      fieldMetadataId: 'accountOwner',
       label: 'Account Owner',
       Icon: IconUserCircle,
       size: 150,
@@ -82,7 +82,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       },
     } satisfies ColumnDefinition<FieldRelationMetadata>,
     {
-      fieldId: 'createdAt',
+      fieldMetadataId: 'createdAt',
       label: 'Creation',
       Icon: IconCalendarEvent,
       size: 150,
@@ -95,7 +95,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       infoTooltipContent: "Date when the company's record was created.",
     } satisfies ColumnDefinition<FieldDateMetadata>,
     {
-      fieldId: 'employees',
+      fieldMetadataId: 'employees',
       label: 'Employees',
       Icon: IconUsers,
       size: 150,
@@ -110,7 +110,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       infoTooltipContent: 'Number of employees in the company.',
     } satisfies ColumnDefinition<FieldNumberMetadata>,
     {
-      fieldId: 'linkedin',
+      fieldMetadataId: 'linkedin',
       label: 'LinkedIn',
       Icon: IconBrandLinkedin,
       size: 170,
@@ -124,7 +124,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       infoTooltipContent: 'The company Linkedin account.',
     } satisfies ColumnDefinition<FieldURLMetadata>,
     {
-      fieldId: 'address',
+      fieldMetadataId: 'address',
       label: 'Address',
       Icon: IconMap,
       size: 170,
@@ -138,7 +138,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
       infoTooltipContent: 'The company address.',
     } satisfies ColumnDefinition<FieldTextMetadata>,
     {
-      fieldId: 'idealCustomerProfile',
+      fieldMetadataId: 'idealCustomerProfile',
       label: 'ICP',
       Icon: IconTarget,
       size: 150,
@@ -152,7 +152,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
         'Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you.',
     } satisfies ColumnDefinition<FieldBooleanMetadata>,
     {
-      fieldId: 'annualRecurringRevenue',
+      fieldMetadataId: 'annualRecurringRevenue',
       label: 'ARR',
       Icon: IconMoneybag,
       size: 150,
@@ -166,7 +166,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
         'Annual Recurring Revenue: The actual or estimated annual revenue of the company.',
     } satisfies ColumnDefinition<FieldMoneyMetadata>,
     {
-      fieldId: 'xUrl',
+      fieldMetadataId: 'xUrl',
       label: 'Twitter',
       Icon: IconBrandX,
       size: 150,
@@ -184,7 +184,7 @@ export const companiesAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>
 export const suppliersAvailableColumnDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
     {
-      fieldId: 'name',
+      fieldMetadataId: 'name',
       label: 'Name',
       Icon: IconBuildingSkyscraper,
       size: 180,
@@ -199,7 +199,7 @@ export const suppliersAvailableColumnDefinitions: ColumnDefinition<FieldMetadata
       basePathToShowPage: '/companies/',
     } satisfies ColumnDefinition<FieldTextMetadata>,
     {
-      fieldId: 'city',
+      fieldMetadataId: 'city',
       label: 'City',
       Icon: IconBuildingSkyscraper,
       size: 180,

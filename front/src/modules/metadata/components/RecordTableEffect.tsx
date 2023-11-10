@@ -25,7 +25,7 @@ export const RecordTableEffect = () => {
     setAvailableFilterDefinitions,
     setAvailableFieldDefinitions,
     setViewType,
-    setViewObjectId,
+    setViewObjectMetadataId,
   } = useView();
 
   useTableObjects();
@@ -34,7 +34,7 @@ export const RecordTableEffect = () => {
     if (!foundObjectMetadataItem) {
       return;
     }
-    setViewObjectId?.(foundObjectMetadataItem.id);
+    setViewObjectMetadataId?.(foundObjectMetadataItem.id);
     setViewType?.(ViewType.Table);
 
     setAvailableSortDefinitions?.(sortDefinitions);
@@ -43,7 +43,7 @@ export const RecordTableEffect = () => {
 
     setAvailableTableColumns(columnDefinitions);
   }, [
-    setViewObjectId,
+    setViewObjectMetadataId,
     setViewType,
     columnDefinitions,
     setAvailableSortDefinitions,

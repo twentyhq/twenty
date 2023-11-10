@@ -37,7 +37,7 @@ export const useView = (props?: UseViewProps) => {
     availableFilterDefinitionsState,
     availableSortDefinitionsState,
     entityCountInCurrentViewState,
-    viewObjectIdState,
+    viewObjectMetadataIdState,
     viewTypeState,
   } = useViewScopedStates({
     customViewScopeId: scopeId,
@@ -72,7 +72,7 @@ export const useView = (props?: UseViewProps) => {
   );
 
   const setViewEditMode = useSetRecoilState(viewEditModeState);
-  const setViewObjectId = useSetRecoilState(viewObjectIdState);
+  const setViewObjectMetadataId = useSetRecoilState(viewObjectMetadataIdState);
   const setViewType = useSetRecoilState(viewTypeState);
 
   const [_, setSearchParams] = useSearchParams();
@@ -267,7 +267,7 @@ export const useView = (props?: UseViewProps) => {
     handleViewNameSubmit,
 
     setViewEditMode,
-    setViewObjectId,
+    setViewObjectMetadataId,
     setViewType,
     setEntityCountInCurrentView,
     setAvailableFieldDefinitions,

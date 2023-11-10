@@ -13,25 +13,25 @@ import { Person } from '~/generated/graphql';
 export const personTableFilterDefinitions: FilterDefinitionByEntity<Person>[] =
   [
     {
-      fieldId: 'firstName',
+      fieldMetadataId: 'firstName',
       label: 'First name',
       Icon: IconUser,
       type: 'TEXT',
     },
     {
-      fieldId: 'lastName',
+      fieldMetadataId: 'lastName',
       label: 'Last name',
       Icon: IconUser,
       type: 'TEXT',
     },
     {
-      fieldId: 'email',
+      fieldMetadataId: 'email',
       label: 'Email',
       Icon: IconMail,
       type: 'TEXT',
     },
     {
-      fieldId: 'companyId',
+      fieldMetadataId: 'companyId',
       label: 'Company',
       Icon: IconBuildingSkyscraper,
       type: 'ENTITY',
@@ -39,19 +39,19 @@ export const personTableFilterDefinitions: FilterDefinitionByEntity<Person>[] =
       entitySelectComponent: <FilterDropdownCompanySearchSelect />,
     },
     {
-      fieldId: 'phone',
+      fieldMetadataId: 'phone',
       label: 'Phone',
       Icon: IconPhone,
       type: 'TEXT',
     },
     {
-      fieldId: 'createdAt',
+      fieldMetadataId: 'createdAt',
       label: 'Created at',
       Icon: IconCalendarEvent,
       type: 'DATE',
     },
     {
-      fieldId: 'city',
+      fieldMetadataId: 'city',
       label: 'City',
       Icon: IconMap,
       type: 'TEXT',

@@ -26,7 +26,7 @@ export const ObjectFilterDropdownOperandSelect = () => {
 
     if (filterDefinitionUsedInDropdown && selectedFilter) {
       selectFilter?.({
-        fieldId: selectedFilter.fieldId,
+        fieldMetadataId: selectedFilter.fieldMetadataId,
         displayValue: selectedFilter.displayValue,
         operand: newOperand,
         value: selectedFilter.value,

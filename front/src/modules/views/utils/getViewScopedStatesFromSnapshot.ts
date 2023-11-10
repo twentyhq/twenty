@@ -47,7 +47,7 @@ export const getViewScopedStatesFromSnapshot = ({
     savedViewSortsByKeySelector: savedViewSortsByKeySelector,
     savedViewSortsState,
     viewEditModeState,
-    viewObjectIdState,
+    viewObjectMetadataIdState,
     viewTypeState,
     viewsState,
   } = getViewScopedStates({
@@ -78,7 +78,7 @@ export const getViewScopedStatesFromSnapshot = ({
     savedViewSortsByKeyReadOnlyState: savedViewSortsByKeySelector,
     savedViewSortsState,
     viewEditModeState,
-    viewObjectIdState,
+    viewObjectMetadataIdState,
     viewTypeState,
     viewsState,
   };
