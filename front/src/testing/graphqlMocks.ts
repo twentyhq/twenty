@@ -345,7 +345,7 @@ export const graphqlMocks = [
     );
   }),
   graphql.query('FindManyViewFieldsV2', (req, res, ctx) => {
-    const viewId = req.variables.filter.viewId.eq;
+    const viewId = req.variables.filter.view.eq;
 
     return res(
       ctx.data({

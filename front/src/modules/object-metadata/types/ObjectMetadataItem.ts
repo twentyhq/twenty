@@ -1,8 +1,10 @@
-import { Field, Object as GeneratedObject } from '~/generated-metadata/graphql';
+import { Object as GeneratedObject } from '~/generated-metadata/graphql';
+
+import { FieldMetadataItem } from './FieldMetadataItem';
 
 export type ObjectMetadataItem = Omit<
   GeneratedObject,
   'fields' | 'dataSourceId'
 > & {
-  fields: Field[];
+  fields: FieldMetadataItem[];
 };

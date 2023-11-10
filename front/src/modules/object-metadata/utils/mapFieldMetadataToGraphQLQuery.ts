@@ -1,7 +1,8 @@
 import { FieldType } from '@/ui/object/field/types/FieldType';
-import { Field } from '~/generated/graphql';
 
-export const mapFieldMetadataToGraphQLQuery = (field: Field) => {
+import { FieldMetadataItem } from '../types/FieldMetadataItem';
+
+export const mapFieldMetadataToGraphQLQuery = (field: FieldMetadataItem) => {
   // TODO: parse
   const fieldType = field.type as FieldType;
 
@@ -24,6 +25,26 @@ export const mapFieldMetadataToGraphQLQuery = (field: Field) => {
 
   if (fieldIsSimpleValue) {
     return field.name;
+  } else if (
+    fieldType === 'RELATION' &&
+    field.toRelationMetadata?.relationType === 'ONE_TO_MANY'
+  ) {
+    return `${field.name}
+    {
+      id
+    }`;
+  } else if (
+    fieldType === 'RELATION' &&
+    field.fromRelationMetadata?.relationType === 'ONE_TO_MANY'
+  ) {
+    return `${field.name}
+      {
+        edges {
+          node {
+           id
+          }
+        }
+      }`;
   } else if (fieldIsURL) {
     return `
       ${field.name}
