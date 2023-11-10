@@ -18,7 +18,7 @@ export const TasksEffect = () => {
   useEffect(() => {
     if (currentUser) {
       setSelectedFilter({
-        fieldMetadataId: 'assigneeId',
+        fieldId: 'assigneeId',
         value: currentUser.id,
         operand: ViewFilterOperand.Is,
         displayValue: currentUser.displayName,

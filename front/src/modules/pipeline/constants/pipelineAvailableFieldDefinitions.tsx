@@ -18,7 +18,7 @@ import { Person } from '~/generated/graphql';
 export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
     {
-      fieldMetadataId: 'closeDate',
+      fieldId: 'closeDate',
       label: 'Close Date',
       Icon: IconCalendarEvent,
       position: 0,
@@ -32,7 +32,7 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
         'Specified date by which an opportunity must be completed.',
     } satisfies ColumnDefinition<FieldDateMetadata>,
     {
-      fieldMetadataId: 'amount',
+      fieldId: 'amount',
       label: 'Amount',
       Icon: IconCurrencyDollar,
       position: 1,
@@ -46,7 +46,7 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
       infoTooltipContent: 'Potential monetary value of a business opportunity.',
     } satisfies ColumnDefinition<FieldNumberMetadata>,
     {
-      fieldMetadataId: 'probability',
+      fieldId: 'probability',
       label: 'Probability',
       Icon: IconProgressCheck,
       position: 2,
@@ -60,7 +60,7 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
         "Level of certainty in the lead's potential to convert into a success.",
     } satisfies ColumnDefinition<FieldProbabilityMetadata>,
     {
-      fieldMetadataId: 'pointOfContact',
+      fieldId: 'pointOfContact',
       label: 'Point of Contact',
       Icon: IconUser,
       position: 3,

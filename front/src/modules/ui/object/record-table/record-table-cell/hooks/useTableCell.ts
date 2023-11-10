@@ -42,7 +42,7 @@ export const useTableCell = () => {
   const [, setFieldInitialValue] = useRecoilState(
     entityFieldInitialValueFamilyState({
       entityId,
-      fieldMetadataId: fieldDefinition.fieldMetadataId,
+      fieldId: fieldDefinition.fieldId,
     }),
   );
 

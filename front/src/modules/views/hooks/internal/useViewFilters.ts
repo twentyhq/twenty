@@ -53,7 +53,7 @@ export const useViewFilters = (viewScopeId: string) => {
                 mutation: createOneMutation,
                 variables: {
                   input: {
-                    fieldMetadataId: viewFilter.fieldMetadataId,
+                    fieldId: viewFilter.fieldId,
                     viewId: viewId ?? currentViewId,
                     value: viewFilter.value,
                     displayValue: viewFilter.displayValue,
@@ -102,23 +102,19 @@ export const useViewFilters = (viewScopeId: string) => {
         };
 
         const filtersToCreate = currentViewFilters.filter(
-          (filter) => !savedViewFiltersByKey[filter.fieldMetadataId],
+          (filter) => !savedViewFiltersByKey[filter.fieldId],
         );
         await createViewFilters(filtersToCreate);
 
         const filtersToUpdate = currentViewFilters.filter(
           (filter) =>
-            savedViewFiltersByKey[filter.fieldMetadataId] &&
-            (savedViewFiltersByKey[filter.fieldMetadataId].operand !==
-              filter.operand ||
-              savedViewFiltersByKey[filter.fieldMetadataId].value !==
-                filter.value),
+            savedViewFiltersByKey[filter.fieldId] &&
+            (savedViewFiltersByKey[filter.fieldId].operand !== filter.operand ||
+              savedViewFiltersByKey[filter.fieldId].value !== filter.value),
         );
         await updateViewFilters(filtersToUpdate);
 
-        const filterKeys = currentViewFilters.map(
-          (filter) => filter.fieldMetadataId,
-        );
+        const filterKeys = currentViewFilters.map((filter) => filter.fieldId);
         const filterKeysToDelete = Object.keys(savedViewFiltersByKey).filter(
           (previousFilterKey) => !filterKeys.includes(previousFilterKey),
         );
@@ -163,13 +159,12 @@ export const useViewFilters = (viewScopeId: string) => {
         }
 
         const existingSavedFilterId =
-          savedViewFiltersByKey[filterToUpsert.fieldMetadataId]?.id;
+          savedViewFiltersByKey[filterToUpsert.fieldId]?.id;
 
         set(currentViewFiltersState, (filters) => {
           const newViewFilters = produce(filters, (filtersDraft) => {
             const existingFilterIndex = filtersDraft.findIndex(
-              (filter) =>
-                filter.fieldMetadataId === filterToUpsert.fieldMetadataId,
+              (filter) => filter.fieldId === filterToUpsert.fieldId,
             );
 
             if (existingFilterIndex === -1) {
@@ -194,7 +189,7 @@ export const useViewFilters = (viewScopeId: string) => {
 
   const removeViewFilter = useRecoilCallback(
     ({ snapshot, set }) =>
-      (fieldMetadataId: string) => {
+      (fieldId: string) => {
         const { currentViewId, currentViewFilters, onViewFiltersChange } =
           getViewScopedStateValuesFromSnapshot({
             snapshot,
@@ -206,7 +201,7 @@ export const useViewFilters = (viewScopeId: string) => {
         }
 
         const newViewFilters = currentViewFilters.filter((filter) => {
-          return filter.fieldMetadataId !== fieldMetadataId;
+          return filter.fieldId !== fieldId;
         });
         set(currentViewFiltersState, newViewFilters);
         onViewFiltersChange?.(newViewFilters);

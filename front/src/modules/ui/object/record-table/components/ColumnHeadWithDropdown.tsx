@@ -21,7 +21,7 @@ export const ColumnHeadWithDropdown = ({
   primaryColumnKey,
 }: ColumnHeadWithDropdownProps) => {
   return (
-    <DropdownScope dropdownScopeId={column.fieldMetadataId + '-header'}>
+    <DropdownScope dropdownScopeId={column.fieldId + '-header'}>
       <Dropdown
         clickableComponent={<ColumnHead column={column} />}
         dropdownComponents={
@@ -34,7 +34,7 @@ export const ColumnHeadWithDropdown = ({
         }
         dropdownOffset={{ x: -1 }}
         dropdownPlacement="bottom-start"
-        dropdownHotkeyScope={{ scope: column.fieldMetadataId + '-header' }}
+        dropdownHotkeyScope={{ scope: column.fieldId + '-header' }}
       />
     </DropdownScope>
   );

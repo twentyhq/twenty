@@ -44,7 +44,7 @@ const ChipFieldInputWithContext = ({
     <div>
       <FieldContextProvider
         fieldDefinition={{
-          fieldMetadataId: 'chip',
+          fieldId: 'chip',
           label: 'Chip',
           type: 'CHIP',
           metadata: {

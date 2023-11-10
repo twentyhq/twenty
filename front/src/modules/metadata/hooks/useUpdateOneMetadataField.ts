@@ -22,10 +22,10 @@ export const useUpdateOneMetadataField = () => {
   });
 
   const updateOneMetadataField = async ({
-    fieldMetadataIdToUpdate,
+    fieldIdToUpdate,
     updatePayload,
   }: {
-    fieldMetadataIdToUpdate: UpdateOneMetadataFieldMutationVariables['idToUpdate'];
+    fieldIdToUpdate: UpdateOneMetadataFieldMutationVariables['idToUpdate'];
     updatePayload: Pick<
       UpdateOneMetadataFieldMutationVariables['updatePayload'],
       'description' | 'icon' | 'isActive' | 'label' | 'name'
@@ -33,7 +33,7 @@ export const useUpdateOneMetadataField = () => {
   }) => {
     return await mutate({
       variables: {
-        idToUpdate: fieldMetadataIdToUpdate,
+        idToUpdate: fieldIdToUpdate,
         updatePayload: {
           ...updatePayload,
           label: updatePayload.label ?? undefined,

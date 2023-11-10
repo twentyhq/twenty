@@ -54,7 +54,7 @@ export const useViewSorts = (viewScopeId: string) => {
                 mutation: createOneMutation,
                 variables: {
                   input: {
-                    fieldMetadataId: viewSort.fieldMetadataId,
+                    fieldId: viewSort.fieldId,
                     viewId: viewId ?? currentViewId,
                     direction: viewSort.direction,
                   },
@@ -99,20 +99,19 @@ export const useViewSorts = (viewScopeId: string) => {
         };
 
         const sortsToCreate = currentViewSorts.filter(
-          (sort) => !savedViewSortsByKey[sort.fieldMetadataId],
+          (sort) => !savedViewSortsByKey[sort.fieldId],
         );
 
         await createViewSorts(sortsToCreate);
 
         const sortsToUpdate = currentViewSorts.filter(
           (sort) =>
-            savedViewSortsByKey[sort.fieldMetadataId] &&
-            savedViewSortsByKey[sort.fieldMetadataId].direction !==
-              sort.direction,
+            savedViewSortsByKey[sort.fieldId] &&
+            savedViewSortsByKey[sort.fieldId].direction !== sort.direction,
         );
         await updateViewSorts(sortsToUpdate);
 
-        const sortKeys = currentViewSorts.map((sort) => sort.fieldMetadataId);
+        const sortKeys = currentViewSorts.map((sort) => sort.fieldId);
         const sortKeysToDelete = Object.keys(savedViewSortsByKey).filter(
           (previousSortKey) => !sortKeys.includes(previousSortKey),
         );
@@ -156,12 +155,12 @@ export const useViewSorts = (viewScopeId: string) => {
         }
 
         const existingSavedSortId =
-          savedViewSortsByKey[sortToUpsert.fieldMetadataId]?.id;
+          savedViewSortsByKey[sortToUpsert.fieldId]?.id;
 
         set(currentViewSortsState, (sorts) => {
           const newViewSorts = produce(sorts, (sortsDraft) => {
             const existingSortIndex = sortsDraft.findIndex(
-              (sort) => sort.fieldMetadataId === sortToUpsert.fieldMetadataId,
+              (sort) => sort.fieldId === sortToUpsert.fieldId,
             );
 
             if (existingSortIndex === -1) {
@@ -183,7 +182,7 @@ export const useViewSorts = (viewScopeId: string) => {
 
   const removeViewSort = useRecoilCallback(
     ({ snapshot, set }) =>
-      (fieldMetadataId: string) => {
+      (fieldId: string) => {
         const { currentViewId, onViewSortsChange, currentViewSorts } =
           getViewScopedStateValuesFromSnapshot({
             snapshot,
@@ -195,7 +194,7 @@ export const useViewSorts = (viewScopeId: string) => {
         }
 
         const newViewSorts = currentViewSorts.filter((filter) => {
-          return filter.fieldMetadataId !== fieldMetadataId;
+          return filter.fieldId !== fieldId;
         });
         set(currentViewSortsState, newViewSorts);
         onViewSortsChange?.(newViewSorts);

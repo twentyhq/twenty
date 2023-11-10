@@ -43,7 +43,7 @@ const EmailFieldInputWithContext = ({
     <div>
       <FieldContextProvider
         fieldDefinition={{
-          fieldMetadataId: 'email',
+          fieldId: 'email',
           label: 'Email',
           type: 'EMAIL',
           metadata: {

@@ -43,7 +43,7 @@ const PhoneFieldInputWithContext = ({
     <div>
       <FieldContextProvider
         fieldDefinition={{
-          fieldMetadataId: 'phone',
+          fieldId: 'phone',
           label: 'Phone',
           type: 'PHONE',
           metadata: {

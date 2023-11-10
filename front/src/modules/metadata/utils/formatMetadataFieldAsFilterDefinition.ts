@@ -9,7 +9,7 @@ export const formatMetadataFieldAsFilterDefinition = ({
   field: ObjectMetadataItem['fields'][0];
   icons: Record<string, any>;
 }): FilterDefinition => ({
-  fieldMetadataId: field.id,
+  fieldId: field.id,
   label: field.label,
   Icon: icons[field.icon ?? 'Icon123'],
   type: 'TEXT',

@@ -1,8 +1,8 @@
 import { ResolverBuilderMethodNames } from 'src/tenant/resolver-builder/interfaces/resolvers-builder.interface';
 import { ArgMetadata } from 'src/tenant/schema-builder/interfaces/param-metadata.interface';
 
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { InputTypeDefinitionKind } from 'src/tenant/schema-builder/factories/input-type-definition.factory';
-import { FieldMetadataType } from 'src/database/typeorm/metadata/entities/field-metadata.entity';
 
 export const getResolverArgs = (
   type: ResolverBuilderMethodNames,

@@ -29,9 +29,9 @@ import { useUpdateOneObject } from '../hooks/useUpdateOneObject';
 import { formatMetadataFieldAsColumnDefinition } from '../utils/formatMetadataFieldAsColumnDefinition';
 
 export const RecordShowPage = () => {
-  const { objectNameSingular, objectMetadataId } = useParams<{
+  const { objectNameSingular, objectId } = useParams<{
     objectNameSingular: string;
-    objectMetadataId: string;
+    objectId: string;
   }>();
 
   const { icons } = useLazyLoadIcons();
@@ -41,11 +41,11 @@ export const RecordShowPage = () => {
   });
 
   const [, setEntityFields] = useRecoilState(
-    entityFieldsFamilyState(objectMetadataId ?? ''),
+    entityFieldsFamilyState(objectId ?? ''),
   );
 
   const { object } = useFindOneObject({
-    objectMetadataId: objectMetadataId,
+    objectId: objectId,
     objectNameSingular,
     onCompleted: (data) => {
       setEntityFields(data);

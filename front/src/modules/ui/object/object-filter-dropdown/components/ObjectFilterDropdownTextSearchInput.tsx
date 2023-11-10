@@ -26,7 +26,7 @@ export const ObjectFilterDropdownTextSearchInput = () => {
           setObjectFilterDropdownSearchInput(event.target.value);
 
           selectFilter?.({
-            fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
+            fieldId: filterDefinitionUsedInDropdown.fieldId,
             value: event.target.value,
             operand: selectedOperandInDropdown,
             displayValue: event.target.value,

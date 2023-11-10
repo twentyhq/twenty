@@ -9,7 +9,7 @@ export const formatMetadataFieldAsSortDefinition = ({
   field: ObjectMetadataItem['fields'][0];
   icons: Record<string, any>;
 }): SortDefinition => ({
-  fieldMetadataId: field.id,
+  fieldId: field.id,
   label: field.label,
   Icon: icons[field.icon ?? 'Icon123'],
 });

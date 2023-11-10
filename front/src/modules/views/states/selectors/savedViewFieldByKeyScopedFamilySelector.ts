@@ -25,7 +25,7 @@ export const savedViewFieldByKeyScopedFamilySelector = selectorFamily({
           familyKey: viewId,
         }),
       ).reduce<Record<string, ViewField>>(
-        (result, column) => ({ ...result, [column.fieldMetadataId]: column }),
+        (result, column) => ({ ...result, [column.fieldId]: column }),
         {},
       );
     },

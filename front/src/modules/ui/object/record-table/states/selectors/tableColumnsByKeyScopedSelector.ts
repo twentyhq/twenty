@@ -12,8 +12,5 @@ export const tableColumnsByKeyScopedSelector = selectorFamily({
     ({ get }) =>
       get(tableColumnsScopedState({ scopeId })).reduce<
         Record<string, ColumnDefinition<FieldMetadata>>
-      >(
-        (result, column) => ({ ...result, [column.fieldMetadataId]: column }),
-        {},
-      ),
+      >((result, column) => ({ ...result, [column.fieldId]: column }), {}),
 });

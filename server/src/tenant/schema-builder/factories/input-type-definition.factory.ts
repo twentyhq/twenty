@@ -6,7 +6,7 @@ import { BuildSchemaOptions } from 'src/tenant/schema-builder/interfaces/build-s
 import { ObjectMetadataInterface } from 'src/tenant/schema-builder/interfaces/object-metadata.interface';
 
 import { pascalCase } from 'src/utils/pascal-case';
-import { FieldMetadataEntity } from 'src/database/typeorm/metadata/entities/field-metadata.entity';
+import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 
 import { InputTypeFactory } from './input-type.factory';
 
@@ -52,7 +52,7 @@ export class InputTypeDefinitionFactory {
   ): GraphQLInputFieldConfigMap {
     const fields: GraphQLInputFieldConfigMap = {};
 
-    objectMetadata.fields.forEach((fieldMetadata: FieldMetadataEntity) => {
+    objectMetadata.fields.forEach((fieldMetadata: FieldMetadata) => {
       const type = this.inputTypeFactory.create(fieldMetadata, kind, options, {
         nullable: fieldMetadata.isNullable,
       });

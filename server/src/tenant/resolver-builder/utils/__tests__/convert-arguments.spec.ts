@@ -1,9 +1,9 @@
-import { FieldMetadataTargetColumnMap } from 'src/tenant/schema-builder/interfaces/field-metadata-target-column-map.interface';
+import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interfaces/field-metadata-target-column-map.interface';
 
 import {
-  FieldMetadataEntity,
+  FieldMetadata,
   FieldMetadataType,
-} from 'src/database/typeorm/metadata/entities/field-metadata.entity';
+} from 'src/metadata/field-metadata/field-metadata.entity';
 import { convertArguments } from 'src/tenant/resolver-builder/utils/convert-arguments.util';
 
 describe('convertArguments', () => {
@@ -33,7 +33,7 @@ describe('convertArguments', () => {
         } as FieldMetadataTargetColumnMap,
         type: FieldMetadataType.URL,
       },
-    ] as FieldMetadataEntity[];
+    ] as FieldMetadata[];
   });
 
   test('should handle non-array arguments', () => {

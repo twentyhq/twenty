@@ -5,7 +5,7 @@ import { ViewSort } from '../types/ViewSort';
 export const mapViewSortsToSorts = (viewSorts: ViewSort[]): Sort[] => {
   return viewSorts.map((viewSort) => {
     return {
-      fieldMetadataId: viewSort.fieldMetadataId,
+      fieldId: viewSort.fieldId,
       direction: viewSort.direction,
       definition: viewSort.definition,
     };

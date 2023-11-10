@@ -18,7 +18,7 @@ export const turnFilterIntoWhereClause = (
   switch (filter.operand) {
     case ViewFilterOperand.IsNotNull:
       return {
-        [filter.fieldMetadataId]: {
+        [filter.fieldId]: {
           not: null,
         },
       };
@@ -28,14 +28,14 @@ export const turnFilterIntoWhereClause = (
           switch (filter.operand) {
             case ViewFilterOperand.Contains:
               return {
-                [filter.fieldMetadataId]: {
+                [filter.fieldId]: {
                   contains: filter.value,
                   mode: QueryMode.Insensitive,
                 },
               };
             case ViewFilterOperand.DoesNotContain:
               return {
-                [filter.fieldMetadataId]: {
+                [filter.fieldId]: {
                   not: {
                     contains: filter.value,
                     mode: QueryMode.Insensitive,
@@ -51,13 +51,13 @@ export const turnFilterIntoWhereClause = (
           switch (filter.operand) {
             case ViewFilterOperand.GreaterThan:
               return {
-                [filter.fieldMetadataId]: {
+                [filter.fieldId]: {
                   gte: parseFloat(filter.value),
                 },
               };
             case ViewFilterOperand.LessThan:
               return {
-                [filter.fieldMetadataId]: {
+                [filter.fieldId]: {
                   lte: parseFloat(filter.value),
                 },
               };
@@ -70,13 +70,13 @@ export const turnFilterIntoWhereClause = (
           switch (filter.operand) {
             case ViewFilterOperand.GreaterThan:
               return {
-                [filter.fieldMetadataId]: {
+                [filter.fieldId]: {
                   gte: filter.value,
                 },
               };
             case ViewFilterOperand.LessThan:
               return {
-                [filter.fieldMetadataId]: {
+                [filter.fieldId]: {
                   lte: filter.value,
                 },
               };
@@ -89,13 +89,13 @@ export const turnFilterIntoWhereClause = (
           switch (filter.operand) {
             case ViewFilterOperand.Is:
               return {
-                [filter.fieldMetadataId]: {
+                [filter.fieldId]: {
                   equals: filter.value,
                 },
               };
             case ViewFilterOperand.IsNot:
               return {
-                [filter.fieldMetadataId]: {
+                [filter.fieldId]: {
                   not: { equals: filter.value },
                 },
               };

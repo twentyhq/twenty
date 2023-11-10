@@ -3,7 +3,7 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { FilterDefinition } from './FilterDefinition';
 
 export type Filter = {
-  fieldMetadataId: string;
+  fieldId: string;
   value: string;
   displayValue: string;
   displayAvatarUrl?: string;

@@ -141,7 +141,7 @@ export const SettingsObjectFieldPreview = ({
             fieldDefinition: {
               type: parseFieldType(fieldType as FieldMetadataType),
               Icon: FieldIcon,
-              fieldMetadataId: '',
+              fieldId: '',
               label: fieldLabel,
               metadata: { fieldName: fieldName || 'new-field' },
             },

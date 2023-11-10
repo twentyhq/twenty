@@ -3,17 +3,17 @@ import { SortDefinition } from '@/ui/object/object-sort-dropdown/types/SortDefin
 
 export const opportunityBoardSortDefinitions: SortDefinition[] = [
   {
-    fieldMetadataId: 'createdAt',
+    fieldId: 'createdAt',
     label: 'Creation',
     Icon: IconCalendarEvent,
   },
   {
-    fieldMetadataId: 'amount',
+    fieldId: 'amount',
     label: 'Amount',
     Icon: IconCurrencyDollar,
   },
   {
-    fieldMetadataId: 'closeDate',
+    fieldId: 'closeDate',
     label: 'Expected close date',
     Icon: IconCalendarEvent,
   },

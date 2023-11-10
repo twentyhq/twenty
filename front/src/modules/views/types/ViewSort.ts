@@ -3,7 +3,7 @@ import { SortDirection } from '@/ui/object/object-sort-dropdown/types/SortDirect
 
 export type ViewSort = {
   id?: string;
-  fieldMetadataId: string;
+  fieldId: string;
   direction: SortDirection;
   definition: SortDefinition;
 };

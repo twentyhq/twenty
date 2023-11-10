@@ -42,7 +42,7 @@ export const RecordTableRow = forwardRef<
         .sort((columnA, columnB) => columnA.position - columnB.position)
         .map((column, columnIndex) => {
           return (
-            <ColumnContext.Provider value={column} key={column.fieldMetadataId}>
+            <ColumnContext.Provider value={column} key={column.fieldId}>
               <RecordTableCell cellIndex={columnIndex} />
             </ColumnContext.Provider>
           );

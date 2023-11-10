@@ -173,7 +173,7 @@ export type CreateFieldInput = {
   icon?: InputMaybe<Scalars['String']['input']>;
   label: Scalars['String']['input'];
   name: Scalars['String']['input'];
-  objectMetadataId: Scalars['String']['input'];
+  objectId: Scalars['String']['input'];
   type: FieldMetadataType;
 };
 
@@ -194,21 +194,6 @@ export type CreateOneFieldInput = {
 export type CreateOneObjectInput = {
   /** The record to create */
   object: CreateObjectInput;
-};
-
-export type CreateOneRelationInput = {
-  /** The record to create */
-  relation: CreateRelationInput;
-};
-
-export type CreateRelationInput = {
-  description?: InputMaybe<Scalars['String']['input']>;
-  fromObjectMetadataId: Scalars['String']['input'];
-  icon?: InputMaybe<Scalars['String']['input']>;
-  label: Scalars['String']['input'];
-  name: Scalars['String']['input'];
-  relationType: Scalars['String']['input'];
-  toObjectMetadataId: Scalars['String']['input'];
 };
 
 export enum Currency {
@@ -452,7 +437,6 @@ export enum FieldMetadataType {
   Money = 'MONEY',
   Number = 'NUMBER',
   Phone = 'PHONE',
-  Relation = 'RELATION',
   Text = 'TEXT',
   Url = 'URL',
   Uuid = 'UUID'
@@ -462,7 +446,6 @@ export type Mutation = {
   __typename?: 'Mutation';
   createOneField: Field;
   createOneObject: Object;
-  createOneRelation: Relation;
   deleteOneField: FieldDeleteResponse;
   deleteOneObject: ObjectDeleteResponse;
   updateOneField: Field;
@@ -477,11 +460,6 @@ export type MutationCreateOneFieldArgs = {
 
 export type MutationCreateOneObjectArgs = {
   input: CreateOneObjectInput;
-};
-
-
-export type MutationCreateOneRelationArgs = {
-  input: CreateOneRelationInput;
 };
 
 
@@ -633,7 +611,6 @@ export type Query = {
   fields: FieldConnection;
   object: Object;
   objects: ObjectConnection;
-  relation: Relation;
 };
 
 
@@ -654,11 +631,6 @@ export type QueryObjectArgs = {
 
 export type QueryObjectsArgs = {
   paging?: CursorPaging;
-};
-
-
-export type QueryRelationArgs = {
-  id: Scalars['ID']['input'];
 };
 
 export type Support = {
@@ -797,7 +769,6 @@ export type Field = {
   __typename?: 'field';
   createdAt: Scalars['DateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
-  fromRelationMetadata?: Maybe<Relation>;
   icon?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   isActive: Scalars['Boolean']['output'];
@@ -807,7 +778,6 @@ export type Field = {
   name: Scalars['String']['output'];
   /** @deprecated Use label name instead */
   placeholder?: Maybe<Scalars['String']['output']>;
-  toRelationMetadata?: Maybe<Relation>;
   type: FieldMetadataType;
   updatedAt: Scalars['DateTime']['output'];
 };
@@ -848,28 +818,6 @@ export type ObjectEdge = {
   cursor: Scalars['ConnectionCursor']['output'];
   /** The node containing the object */
   node: Object;
-};
-
-export type Relation = {
-  __typename?: 'relation';
-  createdAt: Scalars['DateTime']['output'];
-  fromFieldMetadataId: Scalars['String']['output'];
-  fromObjectMetadata: Object;
-  fromObjectMetadataId: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  relationType: Scalars['String']['output'];
-  toFieldMetadataId: Scalars['String']['output'];
-  toObjectMetadata: Object;
-  toObjectMetadataId: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type RelationEdge = {
-  __typename?: 'relationEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor']['output'];
-  /** The node containing the relation */
-  node: Relation;
 };
 
 export type CreateOneObjectMetadataItemMutationVariables = Exact<{

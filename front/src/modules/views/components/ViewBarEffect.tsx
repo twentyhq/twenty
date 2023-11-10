@@ -35,14 +35,14 @@ export const ViewBarEffect = () => {
 
   useFindManyObjects({
     objectNamePlural: 'viewsV2',
-    filter: { type: { eq: viewType }, objectMetadataId: { eq: viewObjectId } },
+    filter: { type: { eq: viewType }, objectId: { eq: viewObjectId } },
     onCompleted: useRecoilCallback(
       ({ snapshot, set }) =>
         async (data: PaginatedObjectTypeResults<View>) => {
           const nextViews = data.edges.map((view) => ({
             id: view.node.id,
             name: view.node.name,
-            objectMetadataId: view.node.objectMetadataId,
+            objectId: view.node.objectId,
           }));
 
           const { viewsState } = getViewScopedStatesFromSnapshot({
@@ -132,8 +132,7 @@ export const ViewBarEffect = () => {
           const queriedViewFilters = data.edges
             .map(({ node }) => {
               const availableFilterDefinition = availableFilterDefinitions.find(
-                (filterDefinition) =>
-                  filterDefinition.fieldMetadataId === node.fieldMetadataId,
+                (filterDefinition) => filterDefinition.fieldId === node.fieldId,
               );
 
               if (!availableFilterDefinition) return null;
@@ -186,14 +185,14 @@ export const ViewBarEffect = () => {
           const queriedViewSorts = data.edges
             .map(({ node }) => {
               const availableSortDefinition = availableSortDefinitions.find(
-                (sort) => sort.fieldMetadataId === node.fieldMetadataId,
+                (sort) => sort.fieldId === node.fieldId,
               );
 
               if (!availableSortDefinition) return null;
 
               return {
                 id: node.id,
-                fieldMetadataId: node.fieldMetadataId,
+                fieldId: node.fieldId,
                 direction: node.direction,
                 definition: availableSortDefinition,
               };

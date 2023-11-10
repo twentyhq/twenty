@@ -17,7 +17,7 @@ export const useCurrentUserTaskCount = () => {
         completedAt: { equals: null },
         ...(currentUser
           ? turnFilterIntoWhereClause({
-              fieldMetadataId: 'assigneeId',
+              fieldId: 'assigneeId',
               value: currentUser.id,
               operand: ViewFilterOperand.Is,
               displayValue: currentUser.displayName,

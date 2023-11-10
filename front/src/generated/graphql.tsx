@@ -1322,7 +1322,6 @@ export enum FieldMetadataType {
   Money = 'MONEY',
   Number = 'NUMBER',
   Phone = 'PHONE',
-  Relation = 'RELATION',
   Text = 'TEXT',
   Url = 'URL',
   Uuid = 'UUID'
@@ -1392,7 +1391,6 @@ export type Mutation = {
   createOneApiKey: ApiKeyToken;
   createOneComment: Comment;
   createOneCompany: Company;
-  createOneField: Field;
   createOneObject: Object;
   createOnePerson: Person;
   createOnePipelineProgress: PipelineProgress;
@@ -1404,7 +1402,6 @@ export type Mutation = {
   deleteManyCompany: AffectedRows;
   deleteManyPerson: AffectedRows;
   deleteManyPipelineProgress: AffectedRows;
-  deleteOneField: FieldDeleteResponse;
   deleteOneObject: ObjectDeleteResponse;
   deleteOnePipelineStage: PipelineStage;
   deleteOneWebHook: WebHook;
@@ -1417,7 +1414,6 @@ export type Mutation = {
   updateOneActivity: Activity;
   updateOneCompany?: Maybe<Company>;
   updateOneFavorites: Favorite;
-  updateOneField: Field;
   updateOneObject: Object;
   updateOnePerson?: Maybe<Person>;
   updateOnePipelineProgress?: Maybe<PipelineProgress>;
@@ -2408,8 +2404,6 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
-  field: Field;
-  fields: FieldConnection;
   findFavorites: Array<Favorite>;
   findManyActivities: Array<Activity>;
   findManyApiKey: Array<ApiKey>;
@@ -2597,15 +2591,6 @@ export type Support = {
   __typename?: 'Support';
   supportDriver: Scalars['String'];
   supportFrontChatId?: Maybe<Scalars['String']>;
-};
-
-export type TUser = {
-  __typename?: 'TUser';
-  email: Scalars['String'];
-  emailVerified: Scalars['Boolean'];
-  firstName?: Maybe<Scalars['String']>;
-  id: Scalars['ID'];
-  lastName?: Maybe<Scalars['String']>;
 };
 
 export type Telemetry = {
@@ -3108,7 +3093,6 @@ export type Field = {
   __typename?: 'field';
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
-  fromRelationMetadata?: Maybe<Relation>;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   isActive: Scalars['Boolean'];
@@ -3118,7 +3102,6 @@ export type Field = {
   name: Scalars['String'];
   /** @deprecated Use label name instead */
   placeholder?: Maybe<Scalars['String']>;
-  toRelationMetadata?: Maybe<Relation>;
   type: FieldMetadataType;
   updatedAt: Scalars['DateTime'];
 };
@@ -3159,28 +3142,6 @@ export type ObjectEdge = {
   cursor: Scalars['ConnectionCursor'];
   /** The node containing the object */
   node: Object;
-};
-
-export type Relation = {
-  __typename?: 'relation';
-  createdAt: Scalars['DateTime'];
-  fromFieldMetadataId: Scalars['String'];
-  fromObjectMetadata: Object;
-  fromObjectMetadataId: Scalars['String'];
-  id: Scalars['ID'];
-  relationType: Scalars['String'];
-  toFieldMetadataId: Scalars['String'];
-  toObjectMetadata: Object;
-  toObjectMetadataId: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type RelationEdge = {
-  __typename?: 'relationEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor'];
-  /** The node containing the relation */
-  node: Relation;
 };
 
 export type ActivityWithTargetsFragment = { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, companyId?: string | null, personId?: string | null }> | null };

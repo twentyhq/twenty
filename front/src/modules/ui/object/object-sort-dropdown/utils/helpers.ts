@@ -10,7 +10,7 @@ export const reduceSortsToOrderBy = (sorts: Sort[]): any[] =>
       if (sort.definition.getOrderByTemplate) {
         return sort.definition.getOrderByTemplate(direction);
       } else {
-        return [{ [sort.definition.fieldMetadataId]: direction }];
+        return [{ [sort.definition.fieldId]: direction }];
       }
     })
     .flat();

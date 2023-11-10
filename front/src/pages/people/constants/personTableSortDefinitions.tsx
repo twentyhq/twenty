@@ -11,7 +11,7 @@ import { SortDirection } from '@/ui/object/object-sort-dropdown/types/SortDirect
 
 export const personTableSortDefinitions: SortDefinition[] = [
   {
-    fieldMetadataId: 'fullname',
+    fieldId: 'fullname',
     label: 'People',
     Icon: IconUser,
 
@@ -21,7 +21,7 @@ export const personTableSortDefinitions: SortDefinition[] = [
     ],
   },
   {
-    fieldMetadataId: 'company_name',
+    fieldId: 'company_name',
     label: 'Company',
     Icon: IconBuildingSkyscraper,
     getOrderByTemplate: (direction: SortDirection) => [
@@ -29,22 +29,22 @@ export const personTableSortDefinitions: SortDefinition[] = [
     ],
   },
   {
-    fieldMetadataId: 'email',
+    fieldId: 'email',
     label: 'Email',
     Icon: IconMail,
   },
   {
-    fieldMetadataId: 'phone',
+    fieldId: 'phone',
     label: 'Phone',
     Icon: IconPhone,
   },
   {
-    fieldMetadataId: 'createdAt',
+    fieldId: 'createdAt',
     label: 'Created at',
     Icon: IconCalendarEvent,
   },
   {
-    fieldMetadataId: 'city',
+    fieldId: 'city',
     label: 'City',
     Icon: IconMap,
   },

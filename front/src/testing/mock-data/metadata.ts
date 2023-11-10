@@ -20,7 +20,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 id: '5db475e7-8208-402d-97a1-62c9ce344dd4',
                 type: 'TEXT',
-                name: 'objectMetadataId',
+                name: 'objectId',
                 label: 'Object Id',
                 description: 'View target object',
                 icon: null,
@@ -127,7 +127,7 @@ export const mockedObjectMetadataItems = {
               node: {
                 id: '4d77c2dd-2b04-4989-b11e-cb0e386d1b4d',
                 type: 'TEXT',
-                name: 'fieldMetadataId',
+                name: 'fieldId',
                 label: 'Field Id',
                 description: 'View Field target field',
                 icon: null,

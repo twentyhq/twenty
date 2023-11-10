@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 
-const tableName = 'fieldMetadata';
+const tableName = 'field_metadata';
 
 export const seedFieldMetadata = async (
   workspaceDataSource: DataSource,
@@ -10,7 +10,7 @@ export const seedFieldMetadata = async (
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, [
-      'objectMetadataId',
+      'objectId',
       'isCustom',
       'workspaceId',
       'isActive',
@@ -26,7 +26,7 @@ export const seedFieldMetadata = async (
     .values([
       // Companies
       {
-        objectMetadataId: '1a8487a0-480c-434e-b4c7-e22408b97047',
+        objectId: '1a8487a0-480c-434e-b4c7-e22408b97047',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
@@ -41,7 +41,7 @@ export const seedFieldMetadata = async (
         isNullable: false,
       },
       {
-        objectMetadataId: '1a8487a0-480c-434e-b4c7-e22408b97047',
+        objectId: '1a8487a0-480c-434e-b4c7-e22408b97047',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
@@ -56,7 +56,7 @@ export const seedFieldMetadata = async (
         isNullable: true,
       },
       {
-        objectMetadataId: '1a8487a0-480c-434e-b4c7-e22408b97047',
+        objectId: '1a8487a0-480c-434e-b4c7-e22408b97047',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
@@ -71,7 +71,7 @@ export const seedFieldMetadata = async (
         isNullable: true,
       },
       {
-        objectMetadataId: '1a8487a0-480c-434e-b4c7-e22408b97047',
+        objectId: '1a8487a0-480c-434e-b4c7-e22408b97047',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
@@ -87,7 +87,7 @@ export const seedFieldMetadata = async (
       },
       // Views
       {
-        objectMetadataId: '9ab6b3dc-767f-473f-8fd0-6cdbefbf8dbe',
+        objectId: '9ab6b3dc-767f-473f-8fd0-6cdbefbf8dbe',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
@@ -102,22 +102,22 @@ export const seedFieldMetadata = async (
         isNullable: false,
       },
       {
-        objectMetadataId: '9ab6b3dc-767f-473f-8fd0-6cdbefbf8dbe',
+        objectId: '9ab6b3dc-767f-473f-8fd0-6cdbefbf8dbe',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
         type: 'TEXT',
-        name: 'objectMetadataId',
+        name: 'objectId',
         label: 'Object Id',
         targetColumnMap: {
-          value: 'objectMetadataId',
+          value: 'objectId',
         },
         description: 'View target object',
         icon: null,
         isNullable: false,
       },
       {
-        objectMetadataId: '9ab6b3dc-767f-473f-8fd0-6cdbefbf8dbe',
+        objectId: '9ab6b3dc-767f-473f-8fd0-6cdbefbf8dbe',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
@@ -133,22 +133,22 @@ export const seedFieldMetadata = async (
       },
       // View Fields
       {
-        objectMetadataId: '61d9000b-485c-4c48-a22e-0d9a164f9647',
+        objectId: '61d9000b-485c-4c48-a22e-0d9a164f9647',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
         type: 'TEXT',
-        name: 'fieldMetadataId',
+        name: 'fieldId',
         label: 'Field Id',
         targetColumnMap: {
-          value: 'fieldMetadataId',
+          value: 'fieldId',
         },
         description: 'View Field target field',
         icon: null,
         isNullable: false,
       },
       {
-        objectMetadataId: '61d9000b-485c-4c48-a22e-0d9a164f9647',
+        objectId: '61d9000b-485c-4c48-a22e-0d9a164f9647',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
@@ -163,7 +163,7 @@ export const seedFieldMetadata = async (
         isNullable: false,
       },
       {
-        objectMetadataId: '61d9000b-485c-4c48-a22e-0d9a164f9647',
+        objectId: '61d9000b-485c-4c48-a22e-0d9a164f9647',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
@@ -178,7 +178,7 @@ export const seedFieldMetadata = async (
         isNullable: false,
       },
       {
-        objectMetadataId: '61d9000b-485c-4c48-a22e-0d9a164f9647',
+        objectId: '61d9000b-485c-4c48-a22e-0d9a164f9647',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
@@ -193,7 +193,7 @@ export const seedFieldMetadata = async (
         isNullable: false,
       },
       {
-        objectMetadataId: '61d9000b-485c-4c48-a22e-0d9a164f9647',
+        objectId: '61d9000b-485c-4c48-a22e-0d9a164f9647',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
@@ -209,22 +209,22 @@ export const seedFieldMetadata = async (
       },
       // View Filters
       {
-        objectMetadataId: '5d9b1ab9-4461-4e2d-bf9e-9b47e68846d3',
+        objectId: '5d9b1ab9-4461-4e2d-bf9e-9b47e68846d3',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
         type: 'TEXT',
-        name: 'fieldMetadataId',
+        name: 'fieldId',
         label: 'Field Id',
         targetColumnMap: {
-          value: 'fieldMetadataId',
+          value: 'fieldId',
         },
         description: 'View Filter target field',
         icon: null,
         isNullable: false,
       },
       {
-        objectMetadataId: '5d9b1ab9-4461-4e2d-bf9e-9b47e68846d3',
+        objectId: '5d9b1ab9-4461-4e2d-bf9e-9b47e68846d3',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
@@ -239,7 +239,7 @@ export const seedFieldMetadata = async (
         isNullable: false,
       },
       {
-        objectMetadataId: '5d9b1ab9-4461-4e2d-bf9e-9b47e68846d3',
+        objectId: '5d9b1ab9-4461-4e2d-bf9e-9b47e68846d3',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
@@ -254,7 +254,7 @@ export const seedFieldMetadata = async (
         isNullable: false,
       },
       {
-        objectMetadataId: '5d9b1ab9-4461-4e2d-bf9e-9b47e68846d3',
+        objectId: '5d9b1ab9-4461-4e2d-bf9e-9b47e68846d3',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
@@ -269,7 +269,7 @@ export const seedFieldMetadata = async (
         isNullable: false,
       },
       {
-        objectMetadataId: '5d9b1ab9-4461-4e2d-bf9e-9b47e68846d3',
+        objectId: '5d9b1ab9-4461-4e2d-bf9e-9b47e68846d3',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
@@ -285,22 +285,22 @@ export const seedFieldMetadata = async (
       },
       // View Sorts
       {
-        objectMetadataId: '6f8dcd4b-cf28-41dd-b98b-d6e1f5b3a251',
+        objectId: '6f8dcd4b-cf28-41dd-b98b-d6e1f5b3a251',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
         type: 'TEXT',
-        name: 'fieldMetadataId',
+        name: 'fieldId',
         label: 'Field Id',
         targetColumnMap: {
-          value: 'fieldMetadataId',
+          value: 'fieldId',
         },
         description: 'View Sort target field',
         icon: null,
         isNullable: false,
       },
       {
-        objectMetadataId: '6f8dcd4b-cf28-41dd-b98b-d6e1f5b3a251',
+        objectId: '6f8dcd4b-cf28-41dd-b98b-d6e1f5b3a251',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
@@ -315,7 +315,7 @@ export const seedFieldMetadata = async (
         isNullable: false,
       },
       {
-        objectMetadataId: '6f8dcd4b-cf28-41dd-b98b-d6e1f5b3a251',
+        objectId: '6f8dcd4b-cf28-41dd-b98b-d6e1f5b3a251',
         isCustom: false,
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
         isActive: true,
