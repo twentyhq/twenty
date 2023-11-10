@@ -23,7 +23,6 @@ import { DeleteOneQueryFactory } from './factories/delete-one-query.factory';
 @Injectable()
 export class QueryBuilderFactory {
   private readonly logger = new Logger(QueryBuilderFactory.name);
-  private queryBuilderOptions: QueryBuilderOptions;
 
   constructor(
     private readonly findManyQueryFactory: FindManyQueryFactory,
@@ -33,79 +32,38 @@ export class QueryBuilderFactory {
     private readonly deleteOneQueryFactory: DeleteOneQueryFactory,
   ) {}
 
-  create(options: QueryBuilderOptions): this {
-    this.queryBuilderOptions = options;
-    return this;
-  }
-
   findMany<
     Filter extends RecordFilter = RecordFilter,
     OrderBy extends RecordOrderBy = RecordOrderBy,
-  >(args: FindManyResolverArgs<Filter, OrderBy>): string {
-    if (!this.queryBuilderOptions) {
-      throw new Error(
-        'Query builder need to be created first, please call create method',
-      );
-    }
-
-    return this.findManyQueryFactory.create<Filter, OrderBy>(
-      args,
-      this.queryBuilderOptions,
-    );
+  >(
+    args: FindManyResolverArgs<Filter, OrderBy>,
+    options: QueryBuilderOptions,
+  ): string {
+    return this.findManyQueryFactory.create<Filter, OrderBy>(args, options);
   }
 
   findOne<Filter extends RecordFilter = RecordFilter>(
     args: FindOneResolverArgs<Filter>,
+    options: QueryBuilderOptions,
   ): string {
-    if (!this.queryBuilderOptions) {
-      throw new Error(
-        'Query builder need to be created first, please call create method',
-      );
-    }
-
-    return this.findOneQueryFactory.create<Filter>(
-      args,
-      this.queryBuilderOptions,
-    );
+    return this.findOneQueryFactory.create<Filter>(args, options);
   }
 
   createMany<Record extends IRecord = IRecord>(
     args: CreateManyResolverArgs<Record>,
+    options: QueryBuilderOptions,
   ): string {
-    if (!this.queryBuilderOptions) {
-      throw new Error(
-        'Query builder need to be created first, please call create method',
-      );
-    }
-
-    return this.createManyQueryFactory.create<Record>(
-      args,
-      this.queryBuilderOptions,
-    );
+    return this.createManyQueryFactory.create<Record>(args, options);
   }
 
   updateOne<Record extends IRecord = IRecord>(
     initialArgs: UpdateOneResolverArgs<Record>,
+    options: QueryBuilderOptions,
   ): string {
-    if (!this.queryBuilderOptions) {
-      throw new Error(
-        'Query builder need to be created first, please call create method',
-      );
-    }
-
-    return this.updateOneQueryFactory.create<Record>(
-      initialArgs,
-      this.queryBuilderOptions,
-    );
+    return this.updateOneQueryFactory.create<Record>(initialArgs, options);
   }
 
-  deleteOne(args: DeleteOneResolverArgs): string {
-    if (!this.queryBuilderOptions) {
-      throw new Error(
-        'Query builder need to be created first, please call create method',
-      );
-    }
-
-    return this.deleteOneQueryFactory.create(args, this.queryBuilderOptions);
+  deleteOne(args: DeleteOneResolverArgs, options: QueryBuilderOptions): string {
+    return this.deleteOneQueryFactory.create(args, options);
   }
 }

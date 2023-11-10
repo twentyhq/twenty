@@ -19,14 +19,12 @@ export class FindOneResolverFactory implements ResolverBuilderFactoryInterface {
     const internalContext = context;
 
     return (_source, args, context, info) => {
-      const runner = this.queryRunnerService.init({
+      return this.queryRunnerService.findOne(args, {
         targetTableName: internalContext.targetTableName,
         workspaceId: internalContext.workspaceId,
         info,
         fieldMetadataCollection: internalContext.fieldMetadataCollection,
       });
-
-      return runner.findOne(args);
     };
   }
 }
