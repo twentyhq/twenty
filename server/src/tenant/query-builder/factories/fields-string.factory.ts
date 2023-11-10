@@ -48,7 +48,7 @@ export class FieldsStringFactory {
 
       if (fieldMetadataMap.has(fieldKey)) {
         // We're sure that the field exists in the map after this if condition
-        // ES6 should tackle that more peroperly
+        // ES6 should tackle that more properly
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const fieldMetadata = fieldMetadataMap.get(fieldKey)!;
 
