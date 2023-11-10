@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
@@ -12,7 +11,6 @@ export const useUpdateOneObject = ({
   const {
     foundObjectMetadataItem,
     objectNotFoundInMetadata,
-    findManyQuery,
     updateOneMutation,
   } = useFindOneObjectMetadataItem({
     objectNamePlural,
@@ -20,9 +18,7 @@ export const useUpdateOneObject = ({
   });
 
   // TODO: type this with a minimal type at least with Record<string, any>
-  const [mutate] = useMutation(updateOneMutation, {
-    refetchQueries: [getOperationName(findManyQuery) ?? ''],
-  });
+  const [mutate] = useMutation(updateOneMutation);
 
   const updateOneObject = foundObjectMetadataItem
     ? ({

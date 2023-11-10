@@ -45,6 +45,7 @@
     "react-helmet-async": "^1.3.0",
     "react-hook-form": "^7.45.1",
     "react-hotkeys-hook": "^4.4.0",
+    "react-intersection-observer": "^9.5.2",
     "react-loading-skeleton": "^3.3.1",
     "react-phone-number-input": "^3.3.4",
     "react-responsive": "^9.0.2",

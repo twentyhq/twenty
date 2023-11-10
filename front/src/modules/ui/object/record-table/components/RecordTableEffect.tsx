@@ -26,8 +26,7 @@ export const RecordTableEffect = ({
 }: {
   useGetRequest: typeof useGetCompaniesQuery | typeof useGetPeopleQuery;
   getRequestResultKey: string;
-  getRequestOptimisticEffectDefinition: OptimisticEffectDefinition<any>;
-
+  getRequestOptimisticEffectDefinition: OptimisticEffectDefinition;
   filterDefinitionArray: FilterDefinition[];
   sortDefinitionArray: SortDefinition[];
   setActionBarEntries?: () => void;

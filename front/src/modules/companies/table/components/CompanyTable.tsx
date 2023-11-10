@@ -5,8 +5,8 @@ import { companiesAvailableFieldDefinitions } from '@/companies/constants/compan
 import { getCompaniesOptimisticEffectDefinition } from '@/companies/graphql/optimistic-effect-definitions/getCompaniesOptimisticEffectDefinition';
 import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
 import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
-import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { RecordTableEffect } from '@/ui/object/record-table/components/RecordTableEffect';
+import { RecordTableV1 } from '@/ui/object/record-table/components/RecordTableV1';
 import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
@@ -135,7 +135,7 @@ export const CompanyTable = () => {
             setContextMenuEntries={setContextMenuEntries}
             setActionBarEntries={setActionBarEntries}
           />
-          <RecordTable
+          <RecordTableV1
             updateEntityMutation={({
               variables,
             }: {

@@ -1,7 +1,8 @@
 import { useMutation } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 
+import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { Currency, FieldMetadataType } from '~/generated-metadata/graphql';
+import { capitalize } from '~/utils/string/capitalize';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 
@@ -23,10 +24,11 @@ const defaultFieldValues: Record<FieldMetadataType, unknown> = {
 export const useCreateOneObject = ({
   objectNamePlural,
 }: Pick<ObjectMetadataItemIdentifier, 'objectNamePlural'>) => {
+  const { triggerOptimisticEffects } = useOptimisticEffect();
+
   const {
     foundObjectMetadataItem,
     objectNotFoundInMetadata,
-    findManyQuery,
     createOneMutation,
   } = useFindOneObjectMetadataItem({
     objectNamePlural,
@@ -36,8 +38,8 @@ export const useCreateOneObject = ({
   const [mutate] = useMutation(createOneMutation);
 
   const createOneObject = foundObjectMetadataItem
-    ? (input: Record<string, unknown> = {}) => {
-        return mutate({
+    ? async (input: Record<string, any>) => {
+        const createdObject = await mutate({
           variables: {
             input: {
               ...foundObjectMetadataItem.fields.reduce(
@@ -50,8 +52,14 @@ export const useCreateOneObject = ({
               ...input,
             },
           },
-          refetchQueries: [getOperationName(findManyQuery) ?? ''],
         });
+
+        triggerOptimisticEffects(
+          `${capitalize(foundObjectMetadataItem.nameSingular)}Edge`,
+          createdObject.data[
+            `create${capitalize(foundObjectMetadataItem.nameSingular)}`
+          ],
+        );
       }
     : undefined;
 

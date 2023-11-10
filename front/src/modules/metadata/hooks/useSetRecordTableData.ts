@@ -13,7 +13,7 @@ export const useSetRecordTableData = () => {
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
-      <T extends { id: string }>(newEntityArray: T[]) => {
+      <T extends { id: string } & Record<string, any>>(newEntityArray: T[]) => {
         for (const entity of newEntityArray) {
           const currentEntity = snapshot
             .getLoadable(entityFieldsFamilyState(entity.id))

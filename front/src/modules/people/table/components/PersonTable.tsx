@@ -5,8 +5,8 @@ import { getPeopleOptimisticEffectDefinition } from '@/people/graphql/optimistic
 import { usePersonTableContextMenuEntries } from '@/people/hooks/usePersonTableContextMenuEntries';
 import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
-import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { RecordTableEffect } from '@/ui/object/record-table/components/RecordTableEffect';
+import { RecordTableV1 } from '@/ui/object/record-table/components/RecordTableV1';
 import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
@@ -119,7 +119,7 @@ export const PersonTable = () => {
             setContextMenuEntries={setContextMenuEntries}
             setActionBarEntries={setActionBarEntries}
           />
-          <RecordTable
+          <RecordTableV1
             updateEntityMutation={({
               variables,
             }: {

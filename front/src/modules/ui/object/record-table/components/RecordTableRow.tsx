@@ -9,7 +9,7 @@ import { useCurrentRowSelected } from '../record-table-row/hooks/useCurrentRowSe
 import { CheckboxCell } from './CheckboxCell';
 import { RecordTableCell } from './RecordTableCell';
 
-const StyledRow = styled.tr<{ selected: boolean }>`
+export const StyledRow = styled.tr<{ selected: boolean }>`
   background: ${(props) =>
     props.selected ? props.theme.accent.quaternary : 'none'};
 `;
