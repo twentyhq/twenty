@@ -11,7 +11,7 @@ export interface FieldMetadataInterface<
   name: string;
   label: string;
   targetColumnMap: FieldMetadataTargetColumnMap<T>;
-  objectId: string;
+  objectMetadataId: string;
   description?: string;
   isNullable?: boolean;
   fromRelationMetadata?: RelationMetadata;
