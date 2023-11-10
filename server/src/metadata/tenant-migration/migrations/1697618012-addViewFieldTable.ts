@@ -18,11 +18,6 @@ export const addViewFieldTable: TenantMigrationTableAction[] = [
         action: TenantMigrationColumnActionType.CREATE,
       },
       {
-        columnName: 'viewId',
-        columnType: 'varchar',
-        action: TenantMigrationColumnActionType.CREATE,
-      },
-      {
         columnName: 'position',
         columnType: 'integer',
         action: TenantMigrationColumnActionType.CREATE,
@@ -36,6 +31,17 @@ export const addViewFieldTable: TenantMigrationTableAction[] = [
         columnName: 'size',
         columnType: 'integer',
         action: TenantMigrationColumnActionType.CREATE,
+      },
+      {
+        columnName: 'viewId',
+        columnType: 'uuid',
+        action: TenantMigrationColumnActionType.CREATE,
+      },
+      {
+        columnName: 'viewId',
+        referencedTableName: 'view',
+        referencedTableColumnName: 'id',
+        action: TenantMigrationColumnActionType.RELATION,
       },
     ],
   },
