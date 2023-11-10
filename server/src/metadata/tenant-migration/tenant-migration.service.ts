@@ -3,17 +3,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { IsNull, Repository } from 'typeorm';
 
+import { standardMigrations } from './standard-migrations';
 import {
-  TenantMigration,
+  TenantMigrationEntity,
   TenantMigrationTableAction,
 } from './tenant-migration.entity';
-import { standardMigrations } from './standard-migrations';
 
 @Injectable()
 export class TenantMigrationService {
   constructor(
-    @InjectRepository(TenantMigration, 'metadata')
-    private readonly tenantMigrationRepository: Repository<TenantMigration>,
+    @InjectRepository(TenantMigrationEntity, 'metadata')
+    private readonly tenantMigrationRepository: Repository<TenantMigrationEntity>,
   ) {}
 
   /**
@@ -60,7 +60,7 @@ export class TenantMigrationService {
    */
   public async getPendingMigrations(
     workspaceId: string,
-  ): Promise<TenantMigration[]> {
+  ): Promise<TenantMigrationEntity[]> {
     return await this.tenantMigrationRepository.find({
       order: { createdAt: 'ASC' },
       where: {
@@ -79,7 +79,7 @@ export class TenantMigrationService {
    */
   public async setAppliedAtForMigration(
     workspaceId: string,
-    migration: TenantMigration,
+    migration: TenantMigrationEntity,
   ) {
     await this.tenantMigrationRepository.save({
       id: migration.id,

@@ -1,7 +1,7 @@
-import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interfaces/field-metadata-target-column-map.interface';
+import { FieldMetadataTargetColumnMap } from 'src/tenant/schema-builder/interfaces/field-metadata-target-column-map.interface';
 
 import {
-  FieldMetadata,
+  FieldMetadataEntity,
   FieldMetadataType,
 } from 'src/metadata/field-metadata/field-metadata.entity';
 import {
@@ -49,7 +49,7 @@ export function generateTargetColumnMap(
 }
 
 export function convertFieldMetadataToColumnActions(
-  fieldMetadata: FieldMetadata,
+  fieldMetadata: FieldMetadataEntity,
 ): TenantMigrationColumnAction[] {
   switch (fieldMetadata.type) {
     case FieldMetadataType.TEXT:

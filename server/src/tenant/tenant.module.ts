@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { MetadataModule } from 'src/metadata/metadata.module';
-import { DataSourceMetadataModule } from 'src/metadata/data-source-metadata/data-source-metadata.module';
+import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
 
 import { TenantService } from './tenant.service';
@@ -12,7 +12,7 @@ import { ResolverBuilderModule } from './resolver-builder/resolver-builder.modul
 @Module({
   imports: [
     MetadataModule,
-    DataSourceMetadataModule,
+    DataSourceModule,
     ObjectMetadataModule,
     SchemaBuilderModule,
     ResolverBuilderModule,

@@ -173,7 +173,7 @@ export type CreateFieldInput = {
   icon?: InputMaybe<Scalars['String']['input']>;
   label: Scalars['String']['input'];
   name: Scalars['String']['input'];
-  objectId: Scalars['String']['input'];
+  objectMetadataId: Scalars['String']['input'];
   type: FieldMetadataType;
 };
 

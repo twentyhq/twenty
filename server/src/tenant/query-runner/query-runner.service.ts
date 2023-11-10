@@ -16,8 +16,8 @@ import {
 } from 'src/tenant/query-builder/interfaces/resolvers-builder.interface';
 
 import { QueryBuilderFactory } from 'src/tenant/query-builder/query-builder.factory';
-import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { parseResult } from 'src/tenant/query-runner/utils/parse-result.util';
+import { TenantDataSourceService } from 'src/tenant-datasource/tenant-datasource.service';
 
 import { QueryRunnerOptions } from './interfaces/query-runner-optionts.interface';
 import {
@@ -31,7 +31,7 @@ export class QueryRunnerService {
 
   constructor(
     private readonly queryBuilderFactory: QueryBuilderFactory,
-    private readonly dataSourceService: DataSourceService,
+    private readonly tenantDataSourceService: TenantDataSourceService,
   ) {}
 
   async findMany<
@@ -130,10 +130,14 @@ export class QueryRunnerService {
     workspaceId: string,
   ): Promise<PGGraphQLResult | undefined> {
     const workspaceDataSource =
-      await this.dataSourceService.connectToWorkspaceDataSource(workspaceId);
+      await this.tenantDataSourceService.connectToWorkspaceDataSource(
+        workspaceId,
+      );
 
     await workspaceDataSource?.query(`
-      SET search_path TO ${this.dataSourceService.getSchemaName(workspaceId)};
+      SET search_path TO ${this.tenantDataSourceService.getSchemaName(
+        workspaceId,
+      )};
     `);
 
     return workspaceDataSource?.query<PGGraphQLResult>(`

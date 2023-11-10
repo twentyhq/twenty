@@ -7,7 +7,7 @@ import {
 } from 'src/tenant/utils/deduce-relation-direction.util';
 
 describe('deduceRelationDirection', () => {
-  it('should return FROM when the current object ID matches fromObjectMetadataId', () => {
+  it('should return FROM when the current object Metadata ID matches fromObjectMetadataId', () => {
     const currentObjectId = 'from_object_id';
     const relationMetadata = {
       id: 'relation_id',
@@ -26,7 +26,7 @@ describe('deduceRelationDirection', () => {
     expect(result).toBe(RelationDirection.FROM);
   });
 
-  it('should return TO when the current object ID matches toObjectMetadataId', () => {
+  it('should return TO when the current object Metadata ID matches toObjectMetadataId', () => {
     // Arrange
     const currentObjectId = 'to_object_id';
     const relationMetadata = {
@@ -46,7 +46,7 @@ describe('deduceRelationDirection', () => {
     expect(result).toBe(RelationDirection.TO);
   });
 
-  it('should throw an error when the current object ID does not match any object metadata ID', () => {
+  it('should throw an error when the current object Metadata ID does not match any object metadata ID', () => {
     const currentObjectId = 'unrelated_object_id';
     const relationMetadata = {
       id: 'relation_id',

@@ -1,31 +1,20 @@
-import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql';
-
 import {
-  Column,
-  CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
-  PrimaryGeneratedColumn,
   Unique,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  OneToOne,
+  CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import {
-  Authorize,
-  BeforeCreateOne,
-  IDField,
-  QueryOptions,
-  Relation,
-} from '@ptc-org/nestjs-query-graphql';
 
 import { FieldMetadataInterface } from 'src/tenant/schema-builder/interfaces/field-metadata.interface';
+import { FieldMetadataTargetColumnMap } from 'src/tenant/schema-builder/interfaces/field-metadata-target-column-map.interface';
 
-import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
-import { RelationMetadata } from 'src/metadata/relation-metadata/relation-metadata.entity';
-
-import { BeforeCreateOneField } from './hooks/before-create-one-field.hook';
-import { FieldMetadataTargetColumnMap } from './interfaces/field-metadata-target-column-map.interface';
+import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
+import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
 
 export enum FieldMetadataType {
   UUID = 'uuid',
@@ -41,101 +30,73 @@ export enum FieldMetadataType {
   RELATION = 'RELATION',
 }
 
-registerEnumType(FieldMetadataType, {
-  name: 'FieldMetadataType',
-  description: 'Type of the field',
-});
-
-@Entity('field_metadata')
-@ObjectType('field')
-@BeforeCreateOne(BeforeCreateOneField)
-@Authorize({
-  authorize: (context: any) => ({
-    workspaceId: { eq: context?.req?.user?.workspace?.id },
-  }),
-})
-@QueryOptions({
-  defaultResultSize: 10,
-  disableFilter: true,
-  disableSort: true,
-  maxResultsSize: 1000,
-})
-@Unique('IndexOnNameObjectIdAndWorkspaceIdUnique', [
+@Entity('fieldMetadata')
+@Unique('IndexOnNameObjectMetadataIdAndWorkspaceIdUnique', [
   'name',
-  'objectId',
+  'objectMetadataId',
   'workspaceId',
 ])
-@Relation('toRelationMetadata', () => RelationMetadata, { nullable: true })
-@Relation('fromRelationMetadata', () => RelationMetadata, { nullable: true })
-export class FieldMetadata implements FieldMetadataInterface {
-  @IDField(() => ID)
+export class FieldMetadataEntity implements FieldMetadataInterface {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false, name: 'object_id' })
-  objectId: string;
+  @Column({ nullable: false, type: 'uuid' })
+  objectMetadataId: string;
 
-  @Field(() => FieldMetadataType)
+  @ManyToOne(() => ObjectMetadataEntity, (object) => object.fields, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'objectMetadataId' })
+  object: ObjectMetadataEntity;
+
   @Column({ nullable: false })
   type: FieldMetadataType;
 
-  @Field()
   @Column({ nullable: false })
   name: string;
 
-  @Field()
   @Column({ nullable: false })
   label: string;
 
-  @Column({ nullable: false, name: 'target_column_map', type: 'jsonb' })
+  @Column({ nullable: false, type: 'jsonb' })
   targetColumnMap: FieldMetadataTargetColumnMap;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true, name: 'description', type: 'text' })
+  @Column({ nullable: true, type: 'text' })
   description: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true, name: 'icon' })
+  @Column({ nullable: true })
   icon: string;
-
-  @Field({ nullable: true, deprecationReason: 'Use label name instead' })
-  placeholder: string;
 
   @Column('text', { nullable: true, array: true })
   enums: string[];
 
-  @Field()
-  @Column({ default: false, name: 'is_custom' })
+  @Column({ default: false })
   isCustom: boolean;
 
-  @Field()
-  @Column({ default: false, name: 'is_active' })
+  @Column({ default: false })
   isActive: boolean;
 
-  @Field()
-  @Column({ nullable: true, default: true, name: 'is_nullable' })
+  @Column({ nullable: true, default: true })
   isNullable: boolean;
 
-  @Column({ nullable: false, name: 'workspace_id' })
+  @Column({ nullable: false })
   workspaceId: string;
 
-  @ManyToOne(() => ObjectMetadata, (object) => object.fields, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'object_id' })
-  object: ObjectMetadata;
+  @OneToOne(
+    () => RelationMetadataEntity,
+    (relation: RelationMetadataEntity) => relation.fromFieldMetadata,
+  )
+  fromRelationMetadata: RelationMetadataEntity;
 
-  @OneToOne(() => RelationMetadata, (relation) => relation.fromFieldMetadata)
-  fromRelationMetadata: RelationMetadata;
+  @OneToOne(
+    () => RelationMetadataEntity,
+    (relation: RelationMetadataEntity) => relation.toFieldMetadata,
+  )
+  toRelationMetadata: RelationMetadataEntity;
 
-  @OneToOne(() => RelationMetadata, (relation) => relation.toFieldMetadata)
-  toRelationMetadata: RelationMetadata;
-
-  @Field()
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @Field()
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }

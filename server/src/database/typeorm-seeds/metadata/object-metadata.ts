@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 
-const tableName = 'object_metadata';
+const tableName = 'objectMetadata';
 
 export const seedObjectMetadata = async (
   workspaceDataSource: DataSource,
@@ -35,6 +35,7 @@ export const seedObjectMetadata = async (
         icon: 'IconBuildingSkyscraper',
         dataSourceId: 'b37b2163-7f63-47a9-b1b3-6c7290ca9fb1',
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+        isActive: true,
       },
       // Views
       {
@@ -48,6 +49,7 @@ export const seedObjectMetadata = async (
         icon: 'IconLayoutCollage',
         dataSourceId: 'b37b2163-7f63-47a9-b1b3-6c7290ca9fb1',
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+        isActive: true,
       },
       // ViewFields
       {
@@ -61,6 +63,7 @@ export const seedObjectMetadata = async (
         icon: 'IconColumns3',
         dataSourceId: 'b37b2163-7f63-47a9-b1b3-6c7290ca9fb1',
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+        isActive: true,
       },
       // ViewFilters
       {
@@ -74,6 +77,7 @@ export const seedObjectMetadata = async (
         icon: 'IconFilterBolt',
         dataSourceId: 'b37b2163-7f63-47a9-b1b3-6c7290ca9fb1',
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+        isActive: true,
       },
       // ViewSorts
       {
@@ -87,6 +91,7 @@ export const seedObjectMetadata = async (
         icon: 'IconArrowsSort',
         dataSourceId: 'b37b2163-7f63-47a9-b1b3-6c7290ca9fb1',
         workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+        isActive: true,
       },
     ])
     .execute();

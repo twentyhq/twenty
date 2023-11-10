@@ -20,7 +20,7 @@ export const useFieldMetadataItem = () => {
   ) =>
     createOneFieldMetadataItem({
       ...formatFieldMetadataItemInput(input),
-      objectId: input.objectMetadataId,
+      objectMetadataId: input.objectMetadataId,
       type: input.type,
     });
 
