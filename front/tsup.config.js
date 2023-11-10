@@ -1,4 +1,5 @@
 import { defineConfig } from "tsup";
+import svgr from 'esbuild-plugin-svgr'
  
 export default defineConfig([
   {
@@ -9,5 +10,18 @@ export default defineConfig([
     dts: true,
     clean: true,
     outDir: "../docs/src/ui/generated",
+    esbuildPlugins: [svgr({ template })],
   },
 ]);
+
+function template(variables, { tpl }) {
+  return tpl`
+    ${variables.imports};
+    ${variables.interfaces};
+    const ${variables.componentName} = (${variables.props}) => (
+      ${variables.jsx}
+    ); 
+    ${variables.exports};
+    export const ReactComponent = ${variables.componentName};
+  `;
+};
