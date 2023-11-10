@@ -1,4 +1,5 @@
 import { useRecoilCallback } from 'recoil';
+import { v4 } from 'uuid';
 
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
@@ -50,5 +51,12 @@ export const useDialogManager = (props?: useDialogManagerProps) => {
     [scopeId],
   );
 
-  return { closeDialog, setDialogQueue };
+  const enqueueDialog = (options?: Omit<DialogOptions, 'id'>) => {
+    setDialogQueue({
+      id: v4(),
+      ...options,
+    });
+  };
+
+  return { closeDialog, enqueueDialog };
 };
