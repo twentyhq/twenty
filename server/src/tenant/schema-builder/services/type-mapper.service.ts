@@ -88,6 +88,7 @@ export class TypeMapperService {
       [FieldMetadataType.DATE, dateFilter],
       [FieldMetadataType.BOOLEAN, BooleanFilterType],
       [FieldMetadataType.NUMBER, numberScalar],
+      [FieldMetadataType.RELATION, UUIDFilterType],
     ]);
 
     return typeFilterMapping.get(fieldMetadataType);

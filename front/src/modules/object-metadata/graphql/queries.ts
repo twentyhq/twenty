@@ -32,6 +32,14 @@ export const FIND_MANY_METADATA_OBJECTS = gql`
                 isNullable
                 createdAt
                 updatedAt
+                fromRelationMetadata {
+                  id
+                  relationType
+                }
+                toRelationMetadata {
+                  id
+                  relationType
+                }
               }
             }
             pageInfo {

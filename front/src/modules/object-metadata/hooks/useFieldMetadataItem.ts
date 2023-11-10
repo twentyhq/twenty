@@ -1,6 +1,7 @@
 import { MetadataFieldDataType } from '@/settings/data-model/types/ObjectFieldDataType';
 import { Field } from '~/generated/graphql';
 
+import { FieldMetadataItem } from '../types/FieldMetadataItem';
 import { formatFieldMetadataItemInput } from '../utils/formatFieldMetadataItemInput';
 
 import { useCreateOneFieldMetadataItem } from './useCreateOneFieldMetadataItem';
@@ -32,19 +33,19 @@ export const useFieldMetadataItem = () => {
       updatePayload: formatFieldMetadataItemInput(input),
     });
 
-  const activateMetadataField = (metadataField: Field) =>
+  const activateMetadataField = (metadataField: FieldMetadataItem) =>
     updateOneFieldMetadataItem({
       fieldMetadataIdToUpdate: metadataField.id,
       updatePayload: { isActive: true },
     });
 
-  const disableMetadataField = (metadataField: Field) =>
+  const disableMetadataField = (metadataField: FieldMetadataItem) =>
     updateOneFieldMetadataItem({
       fieldMetadataIdToUpdate: metadataField.id,
       updatePayload: { isActive: false },
     });
 
-  const eraseMetadataField = (metadataField: Field) =>
+  const eraseMetadataField = (metadataField: FieldMetadataItem) =>
     deleteOneFieldMetadataItem(metadataField.id);
 
   return {
