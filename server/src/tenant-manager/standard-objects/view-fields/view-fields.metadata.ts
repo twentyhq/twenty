@@ -10,7 +10,7 @@ const viewFieldsMetadata = {
     {
       type: 'TEXT',
       name: 'fieldMetadataId',
-      label: 'Field Id',
+      label: 'Field Metadata Id',
       targetColumnMap: {
         value: 'fieldMetadataId',
       },

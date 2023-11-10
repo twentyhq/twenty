@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
-import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
-import { PaginatedObjectTypeResults } from '@/metadata/types/PaginatedObjectTypeResults';
+import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { assertNotNull } from '~/utils/assert';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -33,7 +33,7 @@ export const ViewBarEffect = () => {
   const viewType = useRecoilValue(viewTypeState);
   const viewObjectMetadataId = useRecoilValue(viewObjectMetadataIdState);
 
-  useFindManyObjects({
+  useFindManyObjectRecords({
     objectNamePlural: 'viewsV2',
     filter: {
       type: { eq: viewType },
@@ -64,7 +64,7 @@ export const ViewBarEffect = () => {
     ),
   });
 
-  useFindManyObjects({
+  useFindManyObjectRecords({
     skip: !currentViewId,
     objectNamePlural: 'viewFieldsV2',
     filter: { viewId: { eq: currentViewId } },
@@ -105,7 +105,7 @@ export const ViewBarEffect = () => {
     ),
   });
 
-  useFindManyObjects({
+  useFindManyObjectRecords({
     skip: !currentViewId,
     objectNamePlural: 'viewFiltersV2',
     filter: { viewId: { eq: currentViewId } },
@@ -159,7 +159,7 @@ export const ViewBarEffect = () => {
     ),
   });
 
-  useFindManyObjects({
+  useFindManyObjectRecords({
     skip: !currentViewId,
     objectNamePlural: 'viewSortsV2',
     filter: { viewId: { eq: currentViewId } },

@@ -2,7 +2,7 @@ import { ApolloProvider } from '@apollo/client';
 import { Decorator } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
-import { ApolloMetadataClientProvider } from '@/metadata/components/ApolloMetadataClientProvider';
+import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
 
 import { InitializeHotkeyStorybookHookEffect } from '../InitializeHotkeyStorybookHook';
 import { mockedClient } from '../mockedClient';

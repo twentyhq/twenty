@@ -8,8 +8,8 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 
 import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
-import { ObjectMetadataItem } from '@/metadata/types/ObjectMetadataItem';
-import { generateFindManyCustomObjectsQuery } from '@/metadata/utils/generateFindManyCustomObjectsQuery';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { generateFindManyCustomObjectsQuery } from '@/object-record/utils/generateFindManyCustomObjectsQuery';
 import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
 import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
 import {

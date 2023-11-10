@@ -3,8 +3,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
-import { parseFieldType } from '@/metadata/utils/parseFieldType';
+import { parseFieldType } from '@/object-metadata/utils/parseFieldType';
+import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { FieldDisplay } from '@/ui/object/field/components/FieldDisplay';
@@ -87,7 +87,7 @@ export const SettingsObjectFieldPreview = ({
   const { Icon: ObjectIcon } = useLazyLoadIcon(objectIconKey ?? '');
   const { Icon: FieldIcon } = useLazyLoadIcon(fieldIconKey ?? '');
 
-  const { objects } = useFindManyObjects({
+  const { objects } = useFindManyObjectRecords({
     objectNamePlural,
     skip: !fieldName,
   });

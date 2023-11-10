@@ -2,8 +2,8 @@ import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
-import { ObjectMetadataItem } from '@/metadata/types/ObjectMetadataItem';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -36,7 +36,7 @@ export const SettingsObjectItemTableRow = ({
 }: SettingsObjectItemTableRowProps) => {
   const theme = useTheme();
 
-  const { objects } = useFindManyObjects({
+  const { objects } = useFindManyObjectRecords({
     objectNamePlural: objectItem.namePlural,
   });
 

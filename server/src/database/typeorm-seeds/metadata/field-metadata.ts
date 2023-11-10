@@ -291,7 +291,7 @@ export const seedFieldMetadata = async (
         isActive: true,
         type: 'TEXT',
         name: 'fieldMetadataId',
-        label: 'Field Id',
+        label: 'Field Metadata Id',
         targetColumnMap: {
           value: 'fieldMetadataId',
         },
