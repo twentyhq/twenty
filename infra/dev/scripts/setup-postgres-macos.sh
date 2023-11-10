@@ -91,9 +91,9 @@ cd "pg_graphql-$PG_GRAPHQL_VERSION"
 cargo pgrx install --release --pg-config /opt/homebrew/opt/postgresql@$PG_MAIN_VERSION/bin/pg_config
 
 # # Clean up the temporary directory
-# echo "Cleaning up..."
-# cd "$current_directory"
-# rm -rf "$temp_dir"
+echo "Cleaning up..."
+cd "$current_directory"
+rm -rf "$temp_dir"
 
 # Start postgresql service
 echo_header $GREEN "Step [3/4]: Starting PostgreSQL service..."
