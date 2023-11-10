@@ -6,7 +6,7 @@ import { BuildSchemaOptions } from 'src/tenant/schema-builder/interfaces/build-s
 import { ObjectMetadataInterface } from 'src/tenant/schema-builder/interfaces/object-metadata.interface';
 
 import { pascalCase } from 'src/utils/pascal-case';
-import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
+import { isCompositeFieldMetadataType } from 'src/tenant/utils/is-composite-field-metadata-type.util';
 
 import {
   InputTypeDefinition,
@@ -43,7 +43,12 @@ export class OrderByTypeDefinitionFactory {
   ): GraphQLInputFieldConfigMap {
     const fields: GraphQLInputFieldConfigMap = {};
 
-    objectMetadata.fields.forEach((fieldMetadata: FieldMetadata) => {
+    for (const fieldMetadata of objectMetadata.fields) {
+      // Composite field types are generated during extensin of object type definition
+      if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+        continue;
+      }
+
       const type = this.orderByTypeFactory.create(fieldMetadata, options, {
         nullable: fieldMetadata.isNullable,
       });
@@ -54,7 +59,7 @@ export class OrderByTypeDefinitionFactory {
         // TODO: Add default value
         defaultValue: undefined,
       };
-    });
+    }
 
     return fields;
   }

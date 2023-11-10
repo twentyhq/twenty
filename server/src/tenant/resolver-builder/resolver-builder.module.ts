@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 
-import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
+import { QueryRunnerModule } from 'src/tenant/query-runner/query-runner.module';
 
 import { ResolverFactory } from './resolver.factory';
 
 import { resolverBuilderFactories } from './factories/factories';
 
 @Module({
-  imports: [DataSourceModule],
+  imports: [QueryRunnerModule],
   providers: [...resolverBuilderFactories, ResolverFactory],
   exports: [ResolverFactory],
 })

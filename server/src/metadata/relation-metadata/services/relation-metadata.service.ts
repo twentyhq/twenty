@@ -10,7 +10,7 @@ import { Repository } from 'typeorm';
 
 import {
   RelationMetadata,
-  RelationType,
+  RelationMetadataType,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/services/object-metadata.service';
 import { FieldMetadataService } from 'src/metadata/field-metadata/services/field-metadata.service';
@@ -36,7 +36,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
   override async createOne(
     record: CreateRelationInput,
   ): Promise<RelationMetadata> {
-    if (record.relationType === RelationType.MANY_TO_MANY) {
+    if (record.relationType === RelationMetadataType.MANY_TO_MANY) {
       throw new BadRequestException(
         'Many to many relations are not supported yet',
       );

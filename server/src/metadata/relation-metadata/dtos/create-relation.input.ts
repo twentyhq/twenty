@@ -9,16 +9,16 @@ import {
   IsUUID,
 } from 'class-validator';
 
-import { RelationType } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { BeforeCreateOneRelation } from 'src/metadata/relation-metadata/hooks/before-create-one-relation.hook';
 
 @InputType()
 @BeforeCreateOne(BeforeCreateOneRelation)
 export class CreateRelationInput {
-  @IsEnum(RelationType)
+  @IsEnum(RelationMetadataType)
   @IsNotEmpty()
   @Field()
-  relationType: RelationType;
+  relationType: RelationMetadataType;
 
   @IsUUID()
   @IsNotEmpty()

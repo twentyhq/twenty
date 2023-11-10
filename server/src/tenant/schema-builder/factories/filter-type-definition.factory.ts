@@ -6,8 +6,8 @@ import { BuildSchemaOptions } from 'src/tenant/schema-builder/interfaces/build-s
 import { ObjectMetadataInterface } from 'src/tenant/schema-builder/interfaces/object-metadata.interface';
 
 import { pascalCase } from 'src/utils/pascal-case';
-import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import { TypeMapperService } from 'src/tenant/schema-builder/services/type-mapper.service';
+import { isCompositeFieldMetadataType } from 'src/tenant/utils/is-composite-field-metadata-type.util';
 
 import { FilterTypeFactory } from './filter-type.factory';
 import {
@@ -67,7 +67,12 @@ export class FilterTypeDefinitionFactory {
   ): GraphQLInputFieldConfigMap {
     const fields: GraphQLInputFieldConfigMap = {};
 
-    objectMetadata.fields.forEach((fieldMetadata: FieldMetadata) => {
+    for (const fieldMetadata of objectMetadata.fields) {
+      // Composite field types are generated during extensin of object type definition
+      if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+        continue;
+      }
+
       const type = this.filterTypeFactory.create(fieldMetadata, options, {
         nullable: fieldMetadata.isNullable,
       });
@@ -78,7 +83,7 @@ export class FilterTypeDefinitionFactory {
         // TODO: Add default value
         defaultValue: undefined,
       };
-    });
+    }
 
     return fields;
   }

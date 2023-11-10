@@ -7,9 +7,7 @@ import {
 import { SchemaBuilderContext } from 'src/tenant/schema-builder/interfaces/schema-builder-context.interface';
 import { ResolverBuilderFactoryInterface } from 'src/tenant/resolver-builder/interfaces/resolver-builder-factory.interface';
 
-import { DataSourceService } from 'src/metadata/data-source/data-source.service';
-import { PGGraphQLQueryRunner } from 'src/tenant/resolver-builder/pg-graphql/pg-graphql-query-runner';
-import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
+import { QueryRunnerService } from 'src/tenant/query-runner/query-runner.service';
 
 @Injectable()
 export class DeleteOneResolverFactory
@@ -17,21 +15,18 @@ export class DeleteOneResolverFactory
 {
   public static methodName = 'deleteOne' as const;
 
-  constructor(private readonly dataSourceService: DataSourceService) {}
+  constructor(private readonly queryRunnerService: QueryRunnerService) {}
 
   create(context: SchemaBuilderContext): Resolver<DeleteOneResolverArgs> {
     const internalContext = context;
 
     return (_source, args, context, info) => {
-      const runner = new PGGraphQLQueryRunner(this.dataSourceService, {
+      return this.queryRunnerService.deleteOne(args, {
         targetTableName: internalContext.targetTableName,
         workspaceId: internalContext.workspaceId,
         info,
-        fieldMetadataCollection:
-          internalContext.fieldMetadataCollection as FieldMetadata[],
+        fieldMetadataCollection: internalContext.fieldMetadataCollection,
       });
-
-      return runner.deleteOne(args);
     };
   }
 }

@@ -6,7 +6,7 @@ import { BuildSchemaOptions } from 'src/tenant/schema-builder/interfaces/build-s
 import { ObjectMetadataInterface } from 'src/tenant/schema-builder/interfaces/object-metadata.interface';
 
 import { pascalCase } from 'src/utils/pascal-case';
-import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
+import { isCompositeFieldMetadataType } from 'src/tenant/utils/is-composite-field-metadata-type.util';
 
 import { InputTypeFactory } from './input-type.factory';
 
@@ -52,7 +52,12 @@ export class InputTypeDefinitionFactory {
   ): GraphQLInputFieldConfigMap {
     const fields: GraphQLInputFieldConfigMap = {};
 
-    objectMetadata.fields.forEach((fieldMetadata: FieldMetadata) => {
+    for (const fieldMetadata of objectMetadata.fields) {
+      // Composite field types are generated during extensin of object type definition
+      if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+        continue;
+      }
+
       const type = this.inputTypeFactory.create(fieldMetadata, kind, options, {
         nullable: fieldMetadata.isNullable,
       });
@@ -63,7 +68,7 @@ export class InputTypeDefinitionFactory {
         // TODO: Add default value
         defaultValue: undefined,
       };
-    });
+    }
 
     return fields;
   }

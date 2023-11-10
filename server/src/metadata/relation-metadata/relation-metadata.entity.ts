@@ -17,10 +17,12 @@ import {
   Relation,
 } from '@ptc-org/nestjs-query-graphql';
 
+import { RelationMetadataInterface } from 'src/tenant/schema-builder/interfaces/relation-metadata.interface';
+
 import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import { ObjectMetadata } from 'src/metadata/object-metadata/object-metadata.entity';
 
-export enum RelationType {
+export enum RelationMetadataType {
   ONE_TO_ONE = 'ONE_TO_ONE',
   ONE_TO_MANY = 'ONE_TO_MANY',
   MANY_TO_MANY = 'MANY_TO_MANY',
@@ -41,14 +43,14 @@ export enum RelationType {
 })
 @Relation('fromObjectMetadata', () => ObjectMetadata)
 @Relation('toObjectMetadata', () => ObjectMetadata)
-export class RelationMetadata {
+export class RelationMetadata implements RelationMetadataInterface {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Field()
   @Column({ nullable: false })
-  relationType: RelationType;
+  relationType: RelationMetadataType;
 
   @Field()
   @Column({ nullable: false, type: 'uuid' })

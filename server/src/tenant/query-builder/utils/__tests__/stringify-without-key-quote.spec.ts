@@ -1,4 +1,4 @@
-import { stringifyWithoutKeyQuote } from 'src/tenant/resolver-builder/utils/stringify-without-key-quote.util';
+import { stringifyWithoutKeyQuote } from 'src/tenant/query-builder/utils/stringify-without-key-quote.util';
 
 describe('stringifyWithoutKeyQuote', () => {
   test('should stringify object correctly without quotes around keys', () => {

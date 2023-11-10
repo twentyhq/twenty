@@ -22,6 +22,8 @@ import { FilterTypeDefinitionFactory } from './factories/filter-type-definition.
 import { ConnectionTypeDefinitionFactory } from './factories/connection-type-definition.factory';
 import { EdgeTypeDefinitionFactory } from './factories/edge-type-definition.factory';
 import { OrderByTypeDefinitionFactory } from './factories/order-by-type-definition.factory';
+import { ExtendObjectTypeDefinitionFactory } from './factories/extend-object-type-definition.factory';
+import { objectContainsCompositeField } from './utils/object-contains-composite-field';
 
 // Create a default field for each custom table default column
 const defaultFields = customTableDefaultColumns.map((column) => {
@@ -44,6 +46,7 @@ export class TypeDefinitionsGenerator {
     private readonly orderByTypeDefinitionFactory: OrderByTypeDefinitionFactory,
     private readonly edgeTypeDefinitionFactory: EdgeTypeDefinitionFactory,
     private readonly connectionTypeDefinitionFactory: ConnectionTypeDefinitionFactory,
+    private readonly extendObjectTypeDefinitionFactory: ExtendObjectTypeDefinitionFactory,
   ) {}
 
   generate(
@@ -87,6 +90,10 @@ export class TypeDefinitionsGenerator {
     this.generateObjectTypeDefs(dynamicObjectMetadataCollection, options);
     this.generatePaginationTypeDefs(dynamicObjectMetadataCollection, options);
     this.generateInputTypeDefs(dynamicObjectMetadataCollection, options);
+    this.generateExtendedObjectTypeDefs(
+      dynamicObjectMetadataCollection,
+      options,
+    );
   }
 
   private generateObjectTypeDefs(
@@ -192,6 +199,21 @@ export class TypeDefinitionsGenerator {
       .flat();
 
     this.typeDefinitionsStorage.addInputTypes(inputTypeDefs);
+  }
+
+  private generateExtendedObjectTypeDefs(
+    objectMetadataCollection: ObjectMetadataInterface[],
+    options: BuildSchemaOptions,
+  ) {
+    // Generate extended object type defs only for objects that contain composite fields
+    const objectMetadataCollectionWithCompositeFields =
+      objectMetadataCollection.filter(objectContainsCompositeField);
+    const objectTypeDefs = objectMetadataCollectionWithCompositeFields.map(
+      (objectMetadata) =>
+        this.extendObjectTypeDefinitionFactory.create(objectMetadata, options),
+    );
+
+    this.typeDefinitionsStorage.addObjectTypes(objectTypeDefs);
   }
 
   private mergeFieldsWithDefaults(

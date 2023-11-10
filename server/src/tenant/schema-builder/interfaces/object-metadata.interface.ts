@@ -1,4 +1,5 @@
 import { FieldMetadataInterface } from './field-metadata.interface';
+import { RelationMetadataInterface } from './relation-metadata.interface';
 
 export interface ObjectMetadataInterface {
   id: string;
@@ -8,5 +9,7 @@ export interface ObjectMetadataInterface {
   labelPlural: string;
   description?: string;
   targetTableName: string;
+  fromRelations: RelationMetadataInterface[];
+  toRelations: RelationMetadataInterface[];
   fields: FieldMetadataInterface[];
 }
