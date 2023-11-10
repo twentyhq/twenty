@@ -5,7 +5,7 @@ import { GraphQLSchema, printSchema } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { gql } from 'graphql-tag';
 
-import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
+import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 
 import { GraphQLSchemaFactory } from './schema-builder/graphql-schema.factory';
@@ -15,7 +15,7 @@ import { ResolverFactory } from './resolver-builder/resolver.factory';
 @Injectable()
 export class TenantService {
   constructor(
-    private readonly dataSourceMetadataService: DataSourceMetadataService,
+    private readonly dataSourceMetadataService: DataSourceService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly graphQLSchemaFactory: GraphQLSchemaFactory,
     private readonly resolverFactory: ResolverFactory,

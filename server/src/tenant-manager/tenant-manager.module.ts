@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { DataSourceMetadataModule } from 'src/metadata/data-source-metadata/data-source-metadata.module';
+import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { FieldMetadataModule } from 'src/metadata/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
 import { TenantMigrationModule } from 'src/metadata/tenant-migration/tenant-migration.module';
@@ -16,7 +16,7 @@ import { TenantManagerService } from './tenant-manager.service';
     TenantMigrationRunnerModule,
     ObjectMetadataModule,
     FieldMetadataModule,
-    DataSourceMetadataModule,
+    DataSourceModule,
   ],
   exports: [TenantManagerService],
   providers: [TenantManagerService],

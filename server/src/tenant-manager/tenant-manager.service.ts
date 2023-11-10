@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
+import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { FieldMetadataService } from 'src/metadata/field-metadata/field-metadata.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { TenantMigrationRunnerService } from 'src/tenant-migration-runner/tenant-migration-runner.service';
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 import { standardObjectsPrefillData } from 'src/tenant-manager/standard-objects-prefill-data/standard-objects-prefill-data';
 import { TenantDataSourceService } from 'src/tenant-datasource/tenant-datasource.service';
-import { DataSourceEntity } from 'src/metadata/data-source-metadata/data-source-metadata.entity';
+import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 
 import { standardObjectsMetadata } from './standard-objects/standard-object-metadata';
 
@@ -19,7 +19,7 @@ export class TenantManagerService {
     private readonly migrationRunnerService: TenantMigrationRunnerService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,
-    private readonly dataSourceMetadataService: DataSourceMetadataService,
+    private readonly dataSourceMetadataService: DataSourceService,
   ) {}
 
   /**

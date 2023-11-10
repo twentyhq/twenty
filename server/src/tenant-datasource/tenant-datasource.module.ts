@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { DataSourceMetadataModule } from 'src/metadata/data-source-metadata/data-source-metadata.module';
+import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 
 import { TenantDataSourceService } from './tenant-datasource.service';
 
 @Module({
-  imports: [DataSourceMetadataModule, TypeORMModule],
+  imports: [DataSourceModule, TypeORMModule],
   exports: [TenantDataSourceService],
   providers: [TenantDataSourceService],
 })

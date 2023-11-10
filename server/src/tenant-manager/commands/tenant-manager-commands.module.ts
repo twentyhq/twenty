@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 
 import { TenantManagerModule } from 'src/tenant-manager/tenant-manager.module';
-import { DataSourceMetadataModule } from 'src/metadata/data-source-metadata/data-source-metadata.module';
+import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 
 import { SyncTenantMetadataCommand } from './sync-tenant-metadata.command';
 
 @Module({
-  imports: [TenantManagerModule, DataSourceMetadataModule],
+  imports: [TenantManagerModule, DataSourceModule],
   providers: [SyncTenantMetadataCommand],
 })
 export class TenantManagerCommandsModule {}

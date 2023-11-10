@@ -7,7 +7,7 @@ import GraphQLJSON from 'graphql-type-json';
 import { TenantMigrationRunnerModule } from 'src/tenant-migration-runner/tenant-migration-runner.module';
 import { TenantMigrationModule } from 'src/metadata/tenant-migration/tenant-migration.module';
 
-import { DataSourceMetadataModule } from './data-source-metadata/data-source-metadata.module';
+import { DataSourceModule } from './data-source/data-source.module';
 import { FieldMetadataModule } from './field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from './object-metadata/object-metadata.module';
 import { RelationMetadataModule } from './relation-metadata/relation-metadata.module';
@@ -22,7 +22,7 @@ import { RelationMetadataModule } from './relation-metadata/relation-metadata.mo
       plugins: [],
       path: '/metadata',
     }),
-    DataSourceMetadataModule,
+    DataSourceModule,
     FieldMetadataModule,
     ObjectMetadataModule,
     TenantMigrationRunnerModule,

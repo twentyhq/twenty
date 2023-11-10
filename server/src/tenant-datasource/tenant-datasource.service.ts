@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { DataSource } from 'typeorm';
 
-import { DataSourceMetadataService } from 'src/metadata/data-source-metadata/data-source-metadata.service';
+import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 
 @Injectable()
 export class TenantDataSourceService {
   constructor(
-    private readonly dataSourceMetadataService: DataSourceMetadataService,
+    private readonly dataSourceMetadataService: DataSourceService,
     private readonly typeormService: TypeORMService,
   ) {}
 

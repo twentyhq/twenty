@@ -3,7 +3,7 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { DataSourceEntity } from 'src/metadata/data-source-metadata/data-source-metadata.entity';
+import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {

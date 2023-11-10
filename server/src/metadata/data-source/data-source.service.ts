@@ -3,10 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { DataSourceEntity } from './data-source-metadata.entity';
+import { DataSourceEntity } from './data-source.entity';
 
 @Injectable()
-export class DataSourceMetadataService {
+export class DataSourceService {
   constructor(
     @InjectRepository(DataSourceEntity, 'metadata')
     private readonly dataSourceMetadataRepository: Repository<DataSourceEntity>,
