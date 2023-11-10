@@ -317,7 +317,7 @@ export const graphqlMocks = [
       return res(ctx.data({ objects: mockedObjectMetadataItems }));
     },
   ),
-  graphql.query('FindManyviewsV2', (req, res, ctx) => {
+  graphql.query('FindManyViewsV2', (req, res, ctx) => {
     const objectMetadataId = req.variables.filter.objectMetadataId.eq;
     const viewType = req.variables.filter.type.eq;
 
@@ -334,11 +334,17 @@ export const graphqlMocks = [
               node: view,
               cursor: null,
             })),
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: null,
+            endCursor: null,
+          },
         },
       }),
     );
   }),
-  graphql.query('FindManyviewFieldsV2', (req, res, ctx) => {
+  graphql.query('FindManyViewFieldsV2', (req, res, ctx) => {
     const viewId = req.variables.filter.viewId.eq;
 
     return res(
@@ -350,6 +356,12 @@ export const graphqlMocks = [
               node: viewField,
               cursor: null,
             })),
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: null,
+            endCursor: null,
+          },
         },
       }),
     );
