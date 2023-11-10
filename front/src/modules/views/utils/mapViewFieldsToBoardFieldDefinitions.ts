@@ -11,12 +11,12 @@ export const mapViewFieldsToBoardFieldDefinitions = (
   return viewFields
     .map((viewField) => {
       const correspondingFieldMetadata = fieldsMetadata.find(
-        ({ fieldId }) => viewField.fieldId === fieldId,
+        ({ fieldMetadataId }) => viewField.fieldMetadataId === fieldMetadataId,
       );
 
       return correspondingFieldMetadata
         ? {
-            fieldId: viewField.fieldId,
+            fieldMetadataId: viewField.fieldMetadataId,
             label: correspondingFieldMetadata.label,
             metadata: correspondingFieldMetadata.metadata,
             entityChipDisplayMapper:
@@ -27,7 +27,7 @@ export const mapViewFieldsToBoardFieldDefinitions = (
             type: correspondingFieldMetadata.type,
             position: viewField.position,
             isVisible: viewField.isVisible,
-            viewFieldId: viewField.id,
+            viewFieldMetadataId: viewField.id,
           }
         : null;
     })

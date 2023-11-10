@@ -13,7 +13,7 @@ const PeopleTableEffect = () => {
     setAvailableFilterDefinitions,
     setAvailableFieldDefinitions,
     setViewType,
-    setViewObjectId,
+    setViewObjectMetadataId,
   } = useView();
 
   const { setAvailableTableColumns, setTableColumns } = useRecordTable();
@@ -22,7 +22,7 @@ const PeopleTableEffect = () => {
     setAvailableSortDefinitions?.(personTableSortDefinitions);
     setAvailableFilterDefinitions?.(personTableFilterDefinitions);
     setAvailableFieldDefinitions?.(peopleAvailableFieldDefinitions);
-    setViewObjectId?.('person');
+    setViewObjectMetadataId?.('person');
     setViewType?.(ViewType.Table);
 
     setAvailableTableColumns(peopleAvailableFieldDefinitions);
@@ -32,7 +32,7 @@ const PeopleTableEffect = () => {
     setAvailableSortDefinitions,
     setAvailableTableColumns,
     setTableColumns,
-    setViewObjectId,
+    setViewObjectMetadataId,
     setViewType,
   ]);
 

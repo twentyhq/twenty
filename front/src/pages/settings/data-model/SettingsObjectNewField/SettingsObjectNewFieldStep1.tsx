@@ -72,10 +72,12 @@ export const SettingsObjectNewFieldStep1 = () => {
 
   if (!activeObjectMetadataItem) return null;
 
-  const handleToggleField = (fieldId: string) =>
+  const handleToggleField = (fieldMetadataId: string) =>
     setMetadataFields((previousFields) =>
       previousFields.map((field) =>
-        field.id === fieldId ? { ...field, isActive: !field.isActive } : field,
+        field.id === fieldMetadataId
+          ? { ...field, isActive: !field.isActive }
+          : field,
       ),
     );
 

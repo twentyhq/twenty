@@ -13,26 +13,26 @@ import { FilterDropdownPeopleSearchSelect } from '../../../modules/people/compon
 export const opportunityBoardFilterDefinitions: FilterDefinitionByEntity<PipelineProgress>[] =
   [
     {
-      fieldId: 'amount',
+      fieldMetadataId: 'amount',
       label: 'Amount',
       Icon: IconCurrencyDollar,
       type: 'NUMBER',
     },
     {
-      fieldId: 'closeDate',
+      fieldMetadataId: 'closeDate',
       label: 'Close date',
       Icon: IconCalendarEvent,
       type: 'DATE',
     },
     {
-      fieldId: 'companyId',
+      fieldMetadataId: 'companyId',
       label: 'Company',
       Icon: IconBuildingSkyscraper,
       type: 'ENTITY',
       entitySelectComponent: <FilterDropdownCompanySearchSelect />,
     },
     {
-      fieldId: 'pointOfContactId',
+      fieldMetadataId: 'pointOfContactId',
       label: 'Point of contact',
       Icon: IconUser,
       type: 'ENTITY',

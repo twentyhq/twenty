@@ -20,10 +20,10 @@ const viewsMetadata = {
     },
     {
       type: 'TEXT',
-      name: 'objectId',
+      name: 'objectMetadataId',
       label: 'Object Id',
       targetColumnMap: {
-        value: 'objectId',
+        value: 'objectMetadataId',
       },
       description: 'View target object',
       icon: null,

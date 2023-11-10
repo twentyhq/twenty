@@ -10,10 +10,10 @@ export const generateFindOneCustomObjectQuery = ({
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   return gql`
-    query FindOne${objectMetadataItem.nameSingular}($objectId: UUID!) {
+    query FindOne${objectMetadataItem.nameSingular}($objectMetadataId: UUID!) {
       ${objectMetadataItem.nameSingular}(filter: {
         id: {
-          eq: $objectId
+          eq: $objectMetadataId
         }
       }){
         id

@@ -24,7 +24,7 @@ import { savedViewFieldByKeyScopedFamilySelector } from '../../states/selectors/
 import { savedViewFiltersByKeyScopedFamilySelector } from '../../states/selectors/savedViewFiltersByKeyScopedFamilySelector';
 import { savedViewSortsByKeyScopedFamilySelector } from '../../states/selectors/savedViewSortsByKeyScopedFamilySelector';
 import { viewEditModeScopedState } from '../../states/viewEditModeScopedState';
-import { viewObjectIdScopeState } from '../../states/viewObjectIdScopeState';
+import { viewObjectMetadataIdScopeState } from '../../states/viewObjectMetadataIdScopeState';
 import { viewsScopedState } from '../../states/viewsScopedState';
 import { viewTypeScopedState } from '../../states/viewTypeScopedState';
 
@@ -42,7 +42,10 @@ export const getViewScopedStates = ({
 
   const viewsState = getScopedState(viewsScopedState, viewScopeId);
 
-  const viewObjectIdState = getScopedState(viewObjectIdScopeState, viewScopeId);
+  const viewObjectMetadataIdState = getScopedState(
+    viewObjectMetadataIdScopeState,
+    viewScopeId,
+  );
 
   const viewTypeState = getScopedState(viewTypeScopedState, viewScopeId);
 
@@ -170,7 +173,7 @@ export const getViewScopedStates = ({
 
     viewsState,
     viewEditModeState,
-    viewObjectIdState,
+    viewObjectMetadataIdState,
     viewTypeState,
     entityCountInCurrentViewState,
 

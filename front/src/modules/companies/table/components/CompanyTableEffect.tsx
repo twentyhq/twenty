@@ -13,7 +13,7 @@ const CompanyTableEffect = () => {
     setAvailableFilterDefinitions,
     setAvailableFieldDefinitions,
     setViewType,
-    setViewObjectId,
+    setViewObjectMetadataId,
   } = useView();
 
   const { setAvailableTableColumns } = useRecordTable();
@@ -22,7 +22,7 @@ const CompanyTableEffect = () => {
     setAvailableSortDefinitions?.(companyTableSortDefinitions);
     setAvailableFilterDefinitions?.(companyTableFilterDefinitions);
     setAvailableFieldDefinitions?.(companiesAvailableFieldDefinitions);
-    setViewObjectId?.('company');
+    setViewObjectMetadataId?.('company');
     setViewType?.(ViewType.Table);
 
     setAvailableTableColumns(companiesAvailableFieldDefinitions);
@@ -31,7 +31,7 @@ const CompanyTableEffect = () => {
     setAvailableFilterDefinitions,
     setAvailableSortDefinitions,
     setAvailableTableColumns,
-    setViewObjectId,
+    setViewObjectMetadataId,
     setViewType,
   ]);
 

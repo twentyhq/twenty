@@ -46,7 +46,7 @@ export const useViewScopedStates = (args?: { customViewScopeId?: string }) => {
     savedViewSortsByKeySelector,
     savedViewSortsState,
     viewEditModeState,
-    viewObjectIdState,
+    viewObjectMetadataIdState,
     viewTypeState,
     viewsState,
   } = getViewScopedStates({
@@ -77,7 +77,7 @@ export const useViewScopedStates = (args?: { customViewScopeId?: string }) => {
     savedViewSortsByKeySelector,
     savedViewSortsState,
     viewEditModeState,
-    viewObjectIdState,
+    viewObjectMetadataIdState,
     viewTypeState,
     viewsState,
   };

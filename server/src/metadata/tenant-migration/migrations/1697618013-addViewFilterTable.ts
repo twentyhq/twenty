@@ -13,7 +13,7 @@ export const addViewFilterTable: TenantMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        columnName: 'fieldId',
+        columnName: 'fieldMetadataId',
         columnType: 'varchar',
         action: TenantMigrationColumnActionType.CREATE,
       },

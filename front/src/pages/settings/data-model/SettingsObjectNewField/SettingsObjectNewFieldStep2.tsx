@@ -52,7 +52,7 @@ export const SettingsObjectNewFieldStep2 = () => {
     objectNamePlural: 'viewsV2',
     filter: {
       type: { eq: ViewType.Table },
-      objectId: { eq: activeObjectMetadataItem?.id },
+      objectMetadataId: { eq: activeObjectMetadataItem?.id },
     },
     onCompleted: async (data: PaginatedObjectTypeResults<View>) => {
       const views = data.edges;
@@ -72,12 +72,12 @@ export const SettingsObjectNewFieldStep2 = () => {
   const handleSave = async () => {
     const createdField = await createMetadataField({
       ...formValues,
-      objectId: activeObjectMetadataItem.id,
+      objectMetadataId: activeObjectMetadataItem.id,
     });
     objectViews.forEach(async (view) => {
       await createOneViewField?.({
         viewId: view.id,
-        fieldId: createdField.data?.createOneField.id,
+        fieldMetadataId: createdField.data?.createOneField.id,
         position: activeObjectMetadataItem.fields.length,
         isVisible: true,
         size: 100,

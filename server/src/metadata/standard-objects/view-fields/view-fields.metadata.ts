@@ -9,10 +9,10 @@ const viewFieldsMetadata = {
   fields: [
     {
       type: 'TEXT',
-      name: 'fieldId',
+      name: 'fieldMetadataId',
       label: 'Field Id',
       targetColumnMap: {
-        value: 'fieldId',
+        value: 'fieldMetadataId',
       },
       description: 'View Field target field',
       icon: null,

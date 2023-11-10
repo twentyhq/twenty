@@ -36,9 +36,10 @@ export const SettingsNewObject = () => {
     objectNamePlural: 'viewsV2',
   });
 
-  const [selectedStandardObjectIds, setSelectedStandardObjectIds] = useState<
-    Record<string, boolean>
-  >({});
+  const [
+    selectedStandardObjectMetadataIds,
+    setSelectedStandardObjectMetadataIds,
+  ] = useState<Record<string, boolean>>({});
 
   const [customFormValues, setCustomFormValues] = useState<{
     description?: string;
@@ -49,7 +50,7 @@ export const SettingsNewObject = () => {
 
   const canSave =
     (selectedObjectType === 'Standard' &&
-      Object.values(selectedStandardObjectIds).some(
+      Object.values(selectedStandardObjectMetadataIds).some(
         (isSelected) => isSelected,
       )) ||
     (selectedObjectType === 'Custom' &&
@@ -59,9 +60,11 @@ export const SettingsNewObject = () => {
   const handleSave = async () => {
     if (selectedObjectType === 'Standard') {
       await Promise.all(
-        Object.entries(selectedStandardObjectIds).map(
-          ([standardObjectId, isSelected]) =>
-            isSelected ? activateObject({ id: standardObjectId }) : undefined,
+        Object.entries(selectedStandardObjectMetadataIds).map(
+          ([standardObjectMetadataId, isSelected]) =>
+            isSelected
+              ? activateObject({ id: standardObjectMetadataId })
+              : undefined,
         ),
       );
 
@@ -77,7 +80,7 @@ export const SettingsNewObject = () => {
       });
 
       await createOneView?.({
-        objectId: createdObject.data?.createOneObject.id,
+        objectMetadataId: createdObject.data?.createOneObject.id,
         type: ViewType.Table,
         name: `All ${customFormValues.labelPlural}`,
       });
@@ -124,12 +127,12 @@ export const SettingsNewObject = () => {
           <SettingsAvailableStandardObjectsSection
             objectItems={disabledObjects.filter(({ isCustom }) => !isCustom)}
             onChange={(selectedIds) =>
-              setSelectedStandardObjectIds((previousSelectedIds) => ({
+              setSelectedStandardObjectMetadataIds((previousSelectedIds) => ({
                 ...previousSelectedIds,
                 ...selectedIds,
               }))
             }
-            selectedIds={selectedStandardObjectIds}
+            selectedIds={selectedStandardObjectMetadataIds}
           />
         )}
         {selectedObjectType === 'Custom' && (

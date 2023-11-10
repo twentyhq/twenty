@@ -26,7 +26,7 @@ const meta: Meta = {
         value={{
           entityId: '',
           fieldDefinition: {
-            fieldId: 'email',
+            fieldMetadataId: 'email',
             label: 'Email',
             type: 'EMAIL',
             metadata: {

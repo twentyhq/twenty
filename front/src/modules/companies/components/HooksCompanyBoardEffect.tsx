@@ -33,7 +33,7 @@ export const HooksCompanyBoardEffect = () => {
     setAvailableSortDefinitions,
     setAvailableFieldDefinitions,
     setEntityCountInCurrentView,
-    setViewObjectId,
+    setViewObjectMetadataId,
     setViewType,
   } = useView();
 
@@ -83,9 +83,9 @@ export const HooksCompanyBoardEffect = () => {
   ]);
 
   useEffect(() => {
-    setViewObjectId?.('company');
+    setViewObjectMetadataId?.('company');
     setViewType?.(ViewType.Kanban);
-  }, [setViewObjectId, setViewType]);
+  }, [setViewObjectMetadataId, setViewType]);
 
   const pipelineStageIds = pipeline?.pipelineStages
     ?.map((pipelineStage) => pipelineStage.id)

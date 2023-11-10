@@ -15,6 +15,7 @@ const defaultFieldValues: Record<FieldMetadataType, unknown> = {
   [FieldMetadataType.Email]: '',
   [FieldMetadataType.Enum]: null,
   [FieldMetadataType.Number]: null,
+  [FieldMetadataType.Relation]: null,
   [FieldMetadataType.Phone]: '',
   [FieldMetadataType.Text]: '',
   [FieldMetadataType.Url]: { link: '', text: '' },
