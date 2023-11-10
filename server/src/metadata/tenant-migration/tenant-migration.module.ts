@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TenantMigrationService } from './tenant-migration.service';
-import { TenantMigration } from './tenant-migration.entity';
+import { TenantMigrationEntity } from './tenant-migration.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([TenantMigration], 'metadata')],
+  imports: [TypeOrmModule.forFeature([TenantMigrationEntity], 'metadata')],
   exports: [TenantMigrationService],
   providers: [TenantMigrationService],
 })

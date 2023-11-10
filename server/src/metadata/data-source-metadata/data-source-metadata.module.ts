@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { DataSourceMetadataService } from './data-source-metadata.service';
-import { DataSourceMetadata } from './data-source-metadata.entity';
+import { DataSourceEntity } from './data-source-metadata.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([DataSourceMetadata], 'metadata')],
+  imports: [TypeOrmModule.forFeature([DataSourceEntity], 'metadata')],
   providers: [DataSourceMetadataService],
   exports: [DataSourceMetadataService],
 })

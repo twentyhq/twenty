@@ -5,10 +5,10 @@ import {
   CreateOneInputType,
 } from '@ptc-org/nestjs-query-graphql';
 
-import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
+import { CreateFieldInput } from 'src/metadata/field-metadata/dtos/create-field.input';
 
 @Injectable()
-export class BeforeCreateOneField<T extends FieldMetadata>
+export class BeforeCreateOneField<T extends CreateFieldInput>
   implements BeforeCreateOneHook<T, any>
 {
   async run(
@@ -16,14 +16,11 @@ export class BeforeCreateOneField<T extends FieldMetadata>
     context: any,
   ): Promise<CreateOneInputType<T>> {
     const workspaceId = context?.req?.user?.workspace?.id;
-
     if (!workspaceId) {
       throw new UnauthorizedException();
     }
 
     instance.input.workspaceId = workspaceId;
-    instance.input.isActive = true;
-    instance.input.isCustom = true;
     return instance;
   }
 }

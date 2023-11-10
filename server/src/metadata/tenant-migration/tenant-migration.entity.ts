@@ -33,7 +33,7 @@ export type TenantMigrationTableAction = {
   columns?: TenantMigrationColumnAction[];
 };
 @Entity('tenantMigration')
-export class TenantMigration {
+export class TenantMigrationEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

@@ -10,7 +10,7 @@ import {
 type DataSourceType = DataSourceOptions['type'];
 
 @Entity('dataSource')
-export class DataSourceMetadata {
+export class DataSourceEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

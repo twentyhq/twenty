@@ -66,7 +66,7 @@ export class CompositeFieldAliasFactory {
 
     const targetTableName = relationMetadata.toObjectMetadata.targetTableName;
     const relationDirection = deduceRelationDirection(
-      fieldMetadata.objectId,
+      fieldMetadata.objectMetadataId,
       relationMetadata,
     );
 
