@@ -27,7 +27,7 @@ export const mapViewFieldsToBoardFieldDefinitions = (
             type: correspondingFieldMetadata.type,
             position: viewField.position,
             isVisible: viewField.isVisible,
-            viewFieldMetadataId: viewField.id,
+            viewFieldId: viewField.id,
           }
         : null;
     })

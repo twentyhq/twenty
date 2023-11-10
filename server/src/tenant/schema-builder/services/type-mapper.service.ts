@@ -61,6 +61,7 @@ export class TypeMapperService {
       [FieldMetadataType.DATE, dateScalar],
       [FieldMetadataType.BOOLEAN, GraphQLBoolean],
       [FieldMetadataType.NUMBER, numberScalar],
+      [FieldMetadataType.RELATION, GraphQLID],
     ]);
 
     return typeScalarMapping.get(fieldMetadataType);
@@ -88,6 +89,7 @@ export class TypeMapperService {
       [FieldMetadataType.DATE, dateFilter],
       [FieldMetadataType.BOOLEAN, BooleanFilterType],
       [FieldMetadataType.NUMBER, numberScalar],
+      [FieldMetadataType.RELATION, UUIDFilterType],
     ]);
 
     return typeFilterMapping.get(fieldMetadataType);
