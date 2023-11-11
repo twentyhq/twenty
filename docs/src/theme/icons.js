@@ -43,4 +43,6 @@ export {
   TbAppWindow,
   TbTooltip,
   TbTag,
+  TbLayoutList,
+  TbLoader2,
 } from "react-icons/tb";

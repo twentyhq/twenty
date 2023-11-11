@@ -12,4 +12,12 @@ declare module '@emotion/react' {
 export * from './src/modules/ui/display/checkmark/components/Checkmark';
 export * from './src/modules/ui/display/checkmark/components/AnimatedCheckmark'
 export * from './src/modules/ui/display/chip/components/Chip'
+export * from './src/modules/ui/display/chip/components/EntityChip'
+// export * from './src/modules/ui/display/icon/components/IconAddressBook'
+export * from './src/modules/ui/display/pill/components/SoonPill'
+export * from './src/modules/ui/display/tag/components/Tag'
+export * from './src/modules/ui/display/tooltip/AppTooltip'
+export * from './src/modules/ui/display/tooltip/OverflowingTextWithTooltip'
+export * from './src/modules/ui/feedback/progress-bar/components/ProgressBar'
+export * from './src/modules/ui/feedback/progress-bar/components/CircularProgressBar'
 export * from './src/modules/ui/input/button/components/Button';

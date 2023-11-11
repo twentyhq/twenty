@@ -7,6 +7,8 @@ sidebar_custom_props:
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import checkmarkCode from '!!raw-loader!@site/src/ui/display/checkmarkCode.js'
+import animatedCheckmarkCode from '!!raw-loader!@site/src/ui/display/animatedCheckmarkCode.js'
 import { SandpackEditor} from '@site/src/ui/SandpackEditor'
 
 Represents a successful or completed action. 
@@ -16,17 +18,7 @@ Represents a successful or completed action.
 
 <SandpackEditor
   availableComponentPaths={['@/ui/display/checkmark/components/Checkmark']}
-  componentCode={`import { Checkmark } from "@/ui/display/checkmark/components/Checkmark";
-export const MyComponent = () => {
- return (
-  <> 
-  <div style={{display: 'flex', alignItems: 'center'}}>
-   <Checkmark />  <p style={{marginLeft: '8px'}}>Task Completed </p>
- </div>
- </>
- )
-}
-`} 
+  componentCode={checkmarkCode} 
 />
 
 </TabItem>
@@ -49,19 +41,7 @@ Represents a checkmark icon with the added feature of animation.
 
 <SandpackEditor
   availableComponentPaths={['@/ui/display/checkmark/components/AnimatedCheckmark']}
-  componentCode={`import { AnimatedCheckmark } from "@/ui/display/checkmark/components/AnimatedCheckmark";
-
-export const MyComponent = () => { 
-  return (
-    <> 
-    <div style={{display: 'flex', alignItems: 'center'}}>
-    <AnimatedCheckmark isAnimating={true} color="green" duration={0.5} size={30} />
-    <p style={{marginLeft: '8px'}}> Task Completed</p>
-    </div>
-    </>
-    )
-}
-`}
+  componentCode={animatedCheckmarkCode}
 />
 
 </TabItem>

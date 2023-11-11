@@ -74,7 +74,8 @@ return (<ThemeProvider theme={lightTheme}>
           'uuid': 'latest',
           'react-tooltip': 'latest',
           'react-router-dom': 'latest',
-          '@sniptt/guards': 'latest'
+          '@sniptt/guards': 'latest',
+          'react-router': 'latest'
         },
       }}
     >

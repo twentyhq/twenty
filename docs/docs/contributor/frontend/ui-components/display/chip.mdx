@@ -1,10 +1,14 @@
 ---
 title: Chip
 sidebar_position: 2
+sidebar_custom_props:
+  icon: TbLayoutList
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import chipCode from '!!raw-loader!@site/src/ui/display/chipCode.js'
+import entityChipCode from '!!raw-loader!@site/src/ui/display/entityChipCode.js'
 import { SandpackEditor} from '@site/src/ui/SandpackEditor'
 
 A visual element that you can use as a clickable or non-clickable container with a label, optional left and right components, and various styling options to display labels and tags.
@@ -15,26 +19,7 @@ A visual element that you can use as a clickable or non-clickable container with
 
 <SandpackEditor
   availableComponentPaths={['@/ui/display/chip/components/Chip']}
-  componentCode={`import { Chip } from "@/ui/display/chip/components/Chip";
-export const MyComponent = () => {
-  return (
-    <>
-      <Chip 
-      size="large"
-      label="Clickable Chip"
-      clickable={true}
-      variant="highlighted"
-      accent="text-primary"
-      leftComponent
-      rightComponent
-      maxWidth="200px"
-      className
-      />    
-    </>
-  );
-};
-
-`} 
+  componentCode={chipCode} 
 />
 </TabItem>
 
@@ -194,24 +179,7 @@ A Chip-like element to display information about an entity.
 
 <SandpackEditor
   availableComponentPaths={['@/ui/display/chip/components/EntityChip']}
-  componentCode={`import { EntityChip } from "@/ui/display/chip/components/EntityChip";
-export const MyComponent = () => {
-  return (
-    <>
-      <EntityChip 
-      linkToEntity
-      entityId
-      name='Entity name'
-      pictureUrl
-      avatarType= 'rounded'
-      variant='regular'
-      LeftIcon 
-      />    
-    </>
-  );
-};
-
-`} 
+  componentCode={entityChipCode} 
 />
   </TabItem >
 

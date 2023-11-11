@@ -2,7 +2,7 @@ export { ThemeProvider } from '@emotion/react';
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import * as React$1 from 'react';
 import React__default, { FunctionComponent } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimationControls } from 'framer-motion';
 import { PlacesType, PositionStrategy } from 'react-tooltip';
 
 declare const lightTheme: {
@@ -394,6 +394,27 @@ declare const OverflowingTextWithTooltip: ({ text, }: {
     text: string | null | undefined;
 }) => react_jsx_runtime.JSX.Element;
 
+type ProgressBarProps = {
+    duration?: number;
+    delay?: number;
+    easing?: string;
+    barHeight?: number;
+    barColor?: string;
+    autoStart?: boolean;
+};
+type ProgressBarControls = AnimationControls & {
+    start: () => Promise<any>;
+    pause: () => Promise<any>;
+};
+declare const ProgressBar: React$1.ForwardRefExoticComponent<ProgressBarProps & React$1.RefAttributes<ProgressBarControls>>;
+
+interface CircularProgressBarProps {
+    size?: number;
+    barWidth?: number;
+    barColor?: string;
+}
+declare const CircularProgressBar: ({ size, barWidth, barColor, }: CircularProgressBarProps) => react_jsx_runtime.JSX.Element;
+
 type ButtonSize = 'medium' | 'small';
 type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
 type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
@@ -419,4 +440,4 @@ declare module '@emotion/react' {
     }
 }
 
-export { AnimatedCheckmark, AnimatedCheckmarkProps, AppTooltip, AppTooltipProps, Button, ButtonAccent, ButtonPosition, ButtonProps, ButtonSize, ButtonVariant, Checkmark, CheckmarkProps, Chip, ChipAccent, ChipSize, ChipVariant, EntityChip, EntityChipVariant, OverflowingTextWithTooltip, SoonPill, Tag, TagColor, TagProps, TooltipPosition, castToTagColor, darkTheme, lightTheme };
+export { AnimatedCheckmark, AnimatedCheckmarkProps, AppTooltip, AppTooltipProps, Button, ButtonAccent, ButtonPosition, ButtonProps, ButtonSize, ButtonVariant, Checkmark, CheckmarkProps, Chip, ChipAccent, ChipSize, ChipVariant, CircularProgressBar, EntityChip, EntityChipVariant, OverflowingTextWithTooltip, ProgressBar, ProgressBarControls, ProgressBarProps, SoonPill, Tag, TagColor, TagProps, TooltipPosition, castToTagColor, darkTheme, lightTheme };
