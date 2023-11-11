@@ -13,9 +13,9 @@ import { seedObjectMetadata } from 'src/database/typeorm-seeds/metadata/object-m
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { seedCompanyFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata/company';
 import { seedViewFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata/view';
-import { seedViewFieldFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata/viewField';
-import { seedViewFilterFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata/viewFilter';
-import { seedViewSortFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata/viewSort';
+import { seedViewFieldFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata/view-field';
+import { seedViewFilterFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata/view-filter';
+import { seedViewSortFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata/view-sort';
 import { seedViewRelationMetadata } from 'src/database/typeorm-seeds/metadata/relation-metadata/view';
 
 // TODO: implement dry-run
