@@ -106,7 +106,7 @@ You need to provision this database with a `twenty` user (password: `twenty`), a
 
 ```bash
 cd twenty
-./infra/dev/scripts/setup-postgres-linux.sh
+make provision-postgres-linux
 ```
 
 <b>Option 2:</b> If you have docker installed:
@@ -114,7 +114,7 @@ cd twenty
 
 ```bash
 cd twenty
-make provision-postgres
+make provision-postgres-docker
 ```
 This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
 You can access this using `twenty` postgres user (password: `twenty`)
@@ -126,7 +126,7 @@ You can access this using `twenty` postgres user (password: `twenty`)
 
 ```bash
 cd twenty
-./infra/dev/scripts/setup-postgres-macos.sh
+make provision-postgres-macos
 ```
 
 <b>Option 2:</b> If you have docker installed:
@@ -134,7 +134,7 @@ cd twenty
 
 ```bash
 cd twenty
-make provision-postgres
+make provision-postgres-docker
 ```
 This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
 You can access this using `twenty` postgres user (password: `twenty`)
