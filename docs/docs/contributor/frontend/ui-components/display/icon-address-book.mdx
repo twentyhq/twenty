@@ -1,0 +1,58 @@
+---
+title: Icon Address Book
+sidebar_position: 3
+sidebar_custom_props:
+  icon: TbAddressBook
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import iconAddressBookCode from '!!raw-loader!@site/src/ui/display/iconAddressBookCode.js'
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+
+Displays an address book icon. 
+
+<Tabs>
+
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/display/icon/components/IconAddressBook']}
+  componentCode={iconAddressBookCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>size</td>
+      <td>number</td>
+      <td>The height and width of the icon in pixels</td>
+      <td>24</td>
+    </tr>
+
+    <tr>
+      <td>stroke</td>
+      <td>number</td>
+      <td>The stroke width of the icon in pixels</td>
+      <td>2</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>

@@ -69,7 +69,13 @@ return (<ThemeProvider theme={lightTheme}>
           "@emotion/react": "^11.10.6",
           '@emotion/styled': "latest",
           '@tabler/icons-react': "latest",
-          'hex-rgb': "latest"
+          'hex-rgb': "latest",
+          'framer-motion': 'latest',
+          'uuid': 'latest',
+          'react-tooltip': 'latest',
+          'react-router-dom': 'latest',
+          '@sniptt/guards': 'latest',
+          'react-router': 'latest'
         },
       }}
     >

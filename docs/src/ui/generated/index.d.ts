@@ -1,6 +1,10 @@
 export { ThemeProvider } from '@emotion/react';
 import * as react_jsx_runtime from 'react/jsx-runtime';
-import React, { FunctionComponent } from 'react';
+import * as React$1 from 'react';
+import React__default, { FunctionComponent } from 'react';
+import { motion, AnimationControls } from 'framer-motion';
+import { TablerIconsProps } from '@tabler/icons-react';
+import { PlacesType, PositionStrategy } from 'react-tooltip';
 
 declare const lightTheme: {
     accent: {
@@ -56,6 +60,7 @@ declare const lightTheme: {
         extraLight: string;
         light: string;
         strong: string;
+        underline: string;
     };
     font: {
         size: {
@@ -279,14 +284,141 @@ declare const lightTheme: {
 type ThemeType = typeof lightTheme;
 declare const darkTheme: ThemeType;
 
-type CheckmarkProps = React.ComponentPropsWithoutRef<'div'>;
+type CheckmarkProps = React__default.ComponentPropsWithoutRef<'div'>;
 declare const Checkmark: (_props: CheckmarkProps) => react_jsx_runtime.JSX.Element;
+
+type AnimatedCheckmarkProps = React.ComponentProps<typeof motion.path> & {
+    isAnimating?: boolean;
+    color?: string;
+    duration?: number;
+    size?: number;
+};
+declare const AnimatedCheckmark: ({ isAnimating, color, duration, size, }: AnimatedCheckmarkProps) => react_jsx_runtime.JSX.Element;
+
+declare enum ChipSize {
+    Large = "large",
+    Small = "small"
+}
+declare enum ChipAccent {
+    TextPrimary = "text-primary",
+    TextSecondary = "text-secondary"
+}
+declare enum ChipVariant {
+    Highlighted = "highlighted",
+    Regular = "regular",
+    Transparent = "transparent",
+    Rounded = "rounded"
+}
+type ChipProps = {
+    size?: ChipSize;
+    disabled?: boolean;
+    clickable?: boolean;
+    label: string;
+    maxWidth?: string;
+    variant?: ChipVariant;
+    accent?: ChipAccent;
+    leftComponent?: React$1.ReactNode;
+    rightComponent?: React$1.ReactNode;
+    className?: string;
+};
+declare const Chip: ({ size, label, disabled, clickable, variant, leftComponent, rightComponent, accent, maxWidth, className, }: ChipProps) => react_jsx_runtime.JSX.Element;
 
 type IconComponent = FunctionComponent<{
     color?: string;
     size?: number;
     stroke?: number;
 }>;
+
+type AvatarType = 'squared' | 'rounded';
+
+type EntityChipProps = {
+    linkToEntity?: string;
+    entityId: string;
+    name: string;
+    pictureUrl?: string;
+    avatarType?: AvatarType;
+    variant?: EntityChipVariant;
+    LeftIcon?: IconComponent;
+};
+declare enum EntityChipVariant {
+    Regular = "regular",
+    Transparent = "transparent"
+}
+declare const EntityChip: ({ linkToEntity, entityId, name, pictureUrl, avatarType, variant, LeftIcon, }: EntityChipProps) => react_jsx_runtime.JSX.Element;
+
+type IconAddressBookProps = TablerIconsProps;
+declare const IconAddressBook: (props: IconAddressBookProps) => JSX.Element;
+
+declare const SoonPill: () => react_jsx_runtime.JSX.Element;
+
+declare const mainColors: {
+    yellow: string;
+    green: string;
+    turquoise: string;
+    sky: string;
+    blue: string;
+    purple: string;
+    pink: string;
+    red: string;
+    orange: string;
+    gray: string;
+};
+type ThemeColor = keyof typeof mainColors;
+
+declare const tagColors: string[];
+type TagColor = (typeof tagColors)[number];
+declare const castToTagColor: (color: string) => TagColor;
+type TagProps = {
+    className?: string;
+    color: ThemeColor;
+    text: string;
+    onClick?: () => void;
+};
+declare const Tag: ({ className, color, text, onClick }: TagProps) => react_jsx_runtime.JSX.Element;
+
+declare enum TooltipPosition {
+    Top = "top",
+    Left = "left",
+    Right = "right",
+    Bottom = "bottom"
+}
+type AppTooltipProps = {
+    className?: string;
+    anchorSelect?: string;
+    content?: string;
+    delayHide?: number;
+    offset?: number;
+    noArrow?: boolean;
+    isOpen?: boolean;
+    place?: PlacesType;
+    positionStrategy?: PositionStrategy;
+};
+declare const AppTooltip: ({ anchorSelect, className, content, delayHide, isOpen, noArrow, offset, place, positionStrategy, }: AppTooltipProps) => react_jsx_runtime.JSX.Element;
+
+declare const OverflowingTextWithTooltip: ({ text, }: {
+    text: string | null | undefined;
+}) => react_jsx_runtime.JSX.Element;
+
+type ProgressBarProps = {
+    duration?: number;
+    delay?: number;
+    easing?: string;
+    barHeight?: number;
+    barColor?: string;
+    autoStart?: boolean;
+};
+type ProgressBarControls = AnimationControls & {
+    start: () => Promise<any>;
+    pause: () => Promise<any>;
+};
+declare const ProgressBar: React$1.ForwardRefExoticComponent<ProgressBarProps & React$1.RefAttributes<ProgressBarControls>>;
+
+interface CircularProgressBarProps {
+    size?: number;
+    barWidth?: number;
+    barColor?: string;
+}
+declare const CircularProgressBar: ({ size, barWidth, barColor, }: CircularProgressBarProps) => react_jsx_runtime.JSX.Element;
 
 type ButtonSize = 'medium' | 'small';
 type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
@@ -304,7 +436,7 @@ type ButtonProps = {
     soon?: boolean;
     disabled?: boolean;
     focus?: boolean;
-    onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    onClick?: (event: React__default.MouseEvent<HTMLButtonElement>) => void;
 };
 declare const Button: ({ className, Icon, title, fullWidth, variant, size, accent, position, soon, disabled, focus, onClick, }: ButtonProps) => react_jsx_runtime.JSX.Element;
 
@@ -313,4 +445,4 @@ declare module '@emotion/react' {
     }
 }
 
-export { Button, ButtonAccent, ButtonPosition, ButtonProps, ButtonSize, ButtonVariant, Checkmark, CheckmarkProps, darkTheme, lightTheme };
+export { AnimatedCheckmark, AnimatedCheckmarkProps, AppTooltip, AppTooltipProps, Button, ButtonAccent, ButtonPosition, ButtonProps, ButtonSize, ButtonVariant, Checkmark, CheckmarkProps, Chip, ChipAccent, ChipSize, ChipVariant, CircularProgressBar, EntityChip, EntityChipVariant, IconAddressBook, OverflowingTextWithTooltip, ProgressBar, ProgressBarControls, ProgressBarProps, SoonPill, Tag, TagColor, TagProps, TooltipPosition, castToTagColor, darkTheme, lightTheme };
