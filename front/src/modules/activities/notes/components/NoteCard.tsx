@@ -11,7 +11,7 @@ import {
 } from '@/ui/object/field/contexts/FieldContext';
 import { Activity, ActivityTarget, Comment } from '~/generated/graphql';
 
-const StyledCard = styled.div`
+const StyledCard = styled.div<{ isSingleNote: boolean }>`
   align-items: flex-start;
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -20,6 +20,7 @@ const StyledCard = styled.div`
   flex-direction: column;
   height: 300px;
   justify-content: space-between;
+  max-width: ${({ isSingleNote }) => (isSingleNote ? '300px' : 'unset')};
 `;
 
 const StyledCardDetailsContainer = styled.div`
@@ -73,6 +74,7 @@ const StyledCommentIcon = styled.div`
 
 export const NoteCard = ({
   note,
+  isSingleNote,
 }: {
   note: Pick<
     Activity,
@@ -81,6 +83,7 @@ export const NoteCard = ({
     activityTargets?: Array<Pick<ActivityTarget, 'id'>> | null;
     comments?: Array<Pick<Comment, 'id'>> | null;
   };
+  isSingleNote: boolean;
 }) => {
   const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
@@ -95,7 +98,7 @@ export const NoteCard = ({
 
   return (
     <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
-      <StyledCard>
+      <StyledCard isSingleNote={isSingleNote}>
         <StyledCardDetailsContainer
           onClick={() => openActivityRightDrawer(note.id)}
         >
