@@ -1,17 +1,17 @@
 import { DataSource } from 'typeorm';
 
-import { SeedObjectMetadata } from 'src/database/typeorm-seeds/metadata/object-metadata';
+import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
-export enum SeedActivityTargetFieldMetadata {
-  ActivityMetadataId = '20202020-cb21-42c9-bba8-347f7cb02b84',
-  PersonMetadataId = '20202020-e56c-43e6-8fce-5619d8c2293a',
-  CompanyMetadataId = '20202020-9408-4cc0-9fe1-51467edb530b',
+export enum SeedActivityTargetFieldMetadataIds {
+  Activity = '20202020-cb21-42c9-bba8-347f7cb02b84',
+  Person = '20202020-e56c-43e6-8fce-5619d8c2293a',
+  Company = '20202020-9408-4cc0-9fe1-51467edb530b',
 }
 
-export const seedOpportunityFieldMetadata = async (
+export const seedActivityTargetFieldMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
 ) => {
@@ -19,6 +19,7 @@ export const seedOpportunityFieldMetadata = async (
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${fieldMetadataTableName}`, [
+      'id',
       'objectMetadataId',
       'isCustom',
       'workspaceId',
@@ -35,8 +36,8 @@ export const seedOpportunityFieldMetadata = async (
     .values([
       // Relationships
       {
-        id: SeedActivityTargetFieldMetadata.ActivityMetadataId,
-        objectMetadataId: SeedObjectMetadata.ActivityTargetMetadataId,
+        id: SeedActivityTargetFieldMetadataIds.Activity,
+        objectMetadataId: SeedObjectMetadataIds.ActivityTarget,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -51,8 +52,8 @@ export const seedOpportunityFieldMetadata = async (
         isNullable: false,
       },
       {
-        id: SeedActivityTargetFieldMetadata.PersonMetadataId,
-        objectMetadataId: SeedObjectMetadata.ActivityTargetMetadataId,
+        id: SeedActivityTargetFieldMetadataIds.Person,
+        objectMetadataId: SeedObjectMetadataIds.ActivityTarget,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -67,8 +68,8 @@ export const seedOpportunityFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedActivityTargetFieldMetadata.CompanyMetadataId,
-        objectMetadataId: SeedObjectMetadata.ActivityTargetMetadataId,
+        id: SeedActivityTargetFieldMetadataIds.Company,
+        objectMetadataId: SeedObjectMetadataIds.ActivityTarget,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,

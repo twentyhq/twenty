@@ -1,18 +1,18 @@
 import { DataSource } from 'typeorm';
 
-import { SeedObjectMetadata } from 'src/database/typeorm-seeds/metadata/object-metadata';
+import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
-export enum SeedCommentFieldMetadata {
-  BodyMetadataId = '20202020-354b-4f10-9425-fa3eb8fddc51',
+export enum SeedCommentFieldMetadataIds {
+  Body = '20202020-354b-4f10-9425-fa3eb8fddc51',
 
-  AuthorMetadataId = '20202020-2c70-40c2-bba6-893780b25d41',
-  ActivityMetadataId = '20202020-a9ac-4294-9462-db0f690da906',
+  Author = '20202020-2c70-40c2-bba6-893780b25d41',
+  Activity = '20202020-a9ac-4294-9462-db0f690da906',
 }
 
-export const seedOpportunityFieldMetadata = async (
+export const seedCommentFieldMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
 ) => {
@@ -20,6 +20,7 @@ export const seedOpportunityFieldMetadata = async (
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${fieldMetadataTableName}`, [
+      'id',
       'objectMetadataId',
       'isCustom',
       'workspaceId',
@@ -36,8 +37,8 @@ export const seedOpportunityFieldMetadata = async (
     .values([
       // Scalar fields
       {
-        id: SeedCommentFieldMetadata.BodyMetadataId,
-        objectMetadataId: SeedObjectMetadata.CommentMetadataId,
+        id: SeedCommentFieldMetadataIds.Body,
+        objectMetadataId: SeedObjectMetadataIds.Comment,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -53,8 +54,8 @@ export const seedOpportunityFieldMetadata = async (
       },
       // Relationships
       {
-        id: SeedCommentFieldMetadata.AuthorMetadataId,
-        objectMetadataId: SeedObjectMetadata.CommentMetadataId,
+        id: SeedCommentFieldMetadataIds.Author,
+        objectMetadataId: SeedObjectMetadataIds.Comment,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -69,8 +70,8 @@ export const seedOpportunityFieldMetadata = async (
         isNullable: false,
       },
       {
-        id: SeedCommentFieldMetadata.ActivityMetadataId,
-        objectMetadataId: SeedObjectMetadata.CommentMetadataId,
+        id: SeedCommentFieldMetadataIds.Activity,
+        objectMetadataId: SeedObjectMetadataIds.Comment,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,

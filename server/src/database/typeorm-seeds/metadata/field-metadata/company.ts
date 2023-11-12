@@ -1,27 +1,27 @@
 import { DataSource } from 'typeorm';
 
-import { SeedObjectMetadata } from 'src/database/typeorm-seeds/metadata/object-metadata';
+import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
-export enum SeedCompanyFieldMetadata {
-  NameMetadataId = '20202020-6d30-4111-9f40-b4301906fd3c',
+export enum SeedCompanyFieldMetadataIds {
+  Name = '20202020-6d30-4111-9f40-b4301906fd3c',
 
-  DomainNameMetadataId = '20202020-5e4e-4007-a630-8a2617914889',
-  AddressMetadataId = '20202020-ad10-4117-a039-3f04b7a5f939',
-  EmployeesMetadataId = '20202020-7fbd-41ad-b64d-25a15ff62f04',
-  LinkedinUrlMetadataId = '20202020-a61d-4b78-b998-3fd88b4f73a1',
-  XUrlMetadataId = '20202020-46e3-479a-b8f4-77137c74daa6',
-  AnnualRecurringRevenueMetadataId = '20202020-4a5a-466f-92d9-c3870d9502a9',
-  IdealCustomerProfileMetadataId = '20202020-9e9f-4235-98b2-c76f3e2d281e',
+  DomainName = '20202020-5e4e-4007-a630-8a2617914889',
+  Address = '20202020-ad10-4117-a039-3f04b7a5f939',
+  Employees = '20202020-7fbd-41ad-b64d-25a15ff62f04',
+  LinkedinUrl = '20202020-a61d-4b78-b998-3fd88b4f73a1',
+  XUrl = '20202020-46e3-479a-b8f4-77137c74daa6',
+  AnnualRecurringRevenue = '20202020-4a5a-466f-92d9-c3870d9502a9',
+  IdealCustomerProfile = '20202020-9e9f-4235-98b2-c76f3e2d281e',
 
-  PeopleMetadataId = '20202020-68b4-4c8e-af19-738eba2a42a5',
-  AccountOwnerMetadataId = '20202020-0739-495d-8e70-c0807f6b2268',
-  ActivityTargetsMetadataId = '20202020-4a2e-4b41-8562-279963e8947e',
-  OpportunitiesMetadataId = '20202020-e3fc-46ff-b552-3e757843f06e',
-  FavoritesMetadataId = '20202020-e7c8-4771-8cc4-ce0e8c36a3c0',
-  AttachmentsMetadataId = '20202020-61af-4ffd-b79b-baed6db8ad11',
+  People = '20202020-68b4-4c8e-af19-738eba2a42a5',
+  AccountOwner = '20202020-0739-495d-8e70-c0807f6b2268',
+  ActivityTargets = '20202020-4a2e-4b41-8562-279963e8947e',
+  Opportunities = '20202020-e3fc-46ff-b552-3e757843f06e',
+  Favorites = '20202020-e7c8-4771-8cc4-ce0e8c36a3c0',
+  Attachments = '20202020-61af-4ffd-b79b-baed6db8ad11',
 }
 
 export const seedCompanyFieldMetadata = async (
@@ -32,6 +32,7 @@ export const seedCompanyFieldMetadata = async (
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${fieldMetadataTableName}`, [
+      'id',
       'objectMetadataId',
       'isCustom',
       'workspaceId',
@@ -48,8 +49,8 @@ export const seedCompanyFieldMetadata = async (
     .values([
       // Main Identifier
       {
-        id: SeedCompanyFieldMetadata.NameMetadataId,
-        objectMetadataId: SeedObjectMetadata.CompanyMetadataId,
+        id: SeedCompanyFieldMetadataIds.Name,
+        objectMetadataId: SeedObjectMetadataIds.Company,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -66,8 +67,8 @@ export const seedCompanyFieldMetadata = async (
 
       // Scalar Fields
       {
-        id: SeedCompanyFieldMetadata.DomainNameMetadataId,
-        objectMetadataId: SeedObjectMetadata.CompanyMetadataId,
+        id: SeedCompanyFieldMetadataIds.DomainName,
+        objectMetadataId: SeedObjectMetadataIds.Company,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -83,8 +84,8 @@ export const seedCompanyFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedCompanyFieldMetadata.AddressMetadataId,
-        objectMetadataId: SeedObjectMetadata.CompanyMetadataId,
+        id: SeedCompanyFieldMetadataIds.Address,
+        objectMetadataId: SeedObjectMetadataIds.Company,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -99,8 +100,8 @@ export const seedCompanyFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedCompanyFieldMetadata.EmployeesMetadataId,
-        objectMetadataId: SeedObjectMetadata.CompanyMetadataId,
+        id: SeedCompanyFieldMetadataIds.Employees,
+        objectMetadataId: SeedObjectMetadataIds.Company,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -115,12 +116,12 @@ export const seedCompanyFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedCompanyFieldMetadata.LinkedinUrlMetadataId,
-        objectMetadataId: SeedObjectMetadata.CompanyMetadataId,
+        id: SeedCompanyFieldMetadataIds.LinkedinUrl,
+        objectMetadataId: SeedObjectMetadataIds.Company,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'URL',
+        type: 'TEXT',
         name: 'linkedinUrl',
         label: 'Linkedin',
         targetColumnMap: {
@@ -131,12 +132,12 @@ export const seedCompanyFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedCompanyFieldMetadata.XUrlMetadataId,
-        objectMetadataId: SeedObjectMetadata.CompanyMetadataId,
+        id: SeedCompanyFieldMetadataIds.XUrl,
+        objectMetadataId: SeedObjectMetadataIds.Company,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'URL',
+        type: 'TEXT',
         name: 'xUrl',
         label: 'X',
         targetColumnMap: {
@@ -147,12 +148,12 @@ export const seedCompanyFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedCompanyFieldMetadata.AnnualRecurringRevenueMetadataId,
-        objectMetadataId: SeedObjectMetadata.CompanyMetadataId,
+        id: SeedCompanyFieldMetadataIds.AnnualRecurringRevenue,
+        objectMetadataId: SeedObjectMetadataIds.Company,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'MONEY',
+        type: 'NUMBER',
         name: 'annualRecurringRevenue',
         label: 'ARR',
         targetColumnMap: {
@@ -164,8 +165,8 @@ export const seedCompanyFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedCompanyFieldMetadata.IdealCustomerProfileMetadataId,
-        objectMetadataId: SeedObjectMetadata.CompanyMetadataId,
+        id: SeedCompanyFieldMetadataIds.IdealCustomerProfile,
+        objectMetadataId: SeedObjectMetadataIds.Company,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -183,8 +184,8 @@ export const seedCompanyFieldMetadata = async (
 
       // Relationships
       {
-        id: SeedCompanyFieldMetadata.PeopleMetadataId,
-        objectMetadataId: SeedObjectMetadata.CompanyMetadataId,
+        id: SeedCompanyFieldMetadataIds.People,
+        objectMetadataId: SeedObjectMetadataIds.Company,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -197,8 +198,8 @@ export const seedCompanyFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedCompanyFieldMetadata.AccountOwnerMetadataId,
-        objectMetadataId: SeedObjectMetadata.CompanyMetadataId,
+        id: SeedCompanyFieldMetadataIds.AccountOwner,
+        objectMetadataId: SeedObjectMetadataIds.Company,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -214,8 +215,8 @@ export const seedCompanyFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedCompanyFieldMetadata.ActivityTargetsMetadataId,
-        objectMetadataId: SeedObjectMetadata.CompanyMetadataId,
+        id: SeedCompanyFieldMetadataIds.ActivityTargets,
+        objectMetadataId: SeedObjectMetadataIds.Company,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -228,8 +229,8 @@ export const seedCompanyFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedCompanyFieldMetadata.OpportunitiesMetadataId,
-        objectMetadataId: SeedObjectMetadata.CompanyMetadataId,
+        id: SeedCompanyFieldMetadataIds.Opportunities,
+        objectMetadataId: SeedObjectMetadataIds.Company,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -242,8 +243,8 @@ export const seedCompanyFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedCompanyFieldMetadata.FavoritesMetadataId,
-        objectMetadataId: SeedObjectMetadata.CompanyMetadataId,
+        id: SeedCompanyFieldMetadataIds.Favorites,
+        objectMetadataId: SeedObjectMetadataIds.Company,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -256,8 +257,8 @@ export const seedCompanyFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedCompanyFieldMetadata.AttachmentsMetadataId,
-        objectMetadataId: SeedObjectMetadata.CompanyMetadataId,
+        id: SeedCompanyFieldMetadataIds.Attachments,
+        objectMetadataId: SeedObjectMetadataIds.Company,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,

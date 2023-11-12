@@ -1,19 +1,19 @@
 import { DataSource } from 'typeorm';
 
-import { SeedObjectMetadata } from 'src/database/typeorm-seeds/metadata/object-metadata';
+import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
-export enum SeedFavoriteFieldMetadata {
-  PositionMetadataId = '20202020-dd6d-4f67-94aa-22cc83eb0a2e',
+export enum SeedFavoriteFieldMetadataIds {
+  Position = '20202020-dd6d-4f67-94aa-22cc83eb0a2e',
 
-  WorkspaceMemberMetadataId = '20202020-1138-4e93-bbff-917a68161abf',
-  PersonMetadataId = '20202020-0876-4735-8974-ff4d51aafa07',
-  CompanyMetadataId = '20202020-09e1-4384-ae3e-39e7956396fe',
+  WorkspaceMember = '20202020-1138-4e93-bbff-917a68161abf',
+  Person = '20202020-0876-4735-8974-ff4d51aafa07',
+  Company = '20202020-09e1-4384-ae3e-39e7956396fe',
 }
 
-export const seedOpportunityFieldMetadata = async (
+export const seedFavoriteFieldMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
 ) => {
@@ -21,6 +21,7 @@ export const seedOpportunityFieldMetadata = async (
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${fieldMetadataTableName}`, [
+      'id',
       'objectMetadataId',
       'isCustom',
       'workspaceId',
@@ -38,8 +39,8 @@ export const seedOpportunityFieldMetadata = async (
       // Scalar fields
 
       {
-        id: SeedFavoriteFieldMetadata.PositionMetadataId,
-        objectMetadataId: SeedObjectMetadata.FavoriteMetadataId,
+        id: SeedFavoriteFieldMetadataIds.Position,
+        objectMetadataId: SeedObjectMetadataIds.Favorite,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -56,8 +57,8 @@ export const seedOpportunityFieldMetadata = async (
 
       // Relationships
       {
-        id: SeedFavoriteFieldMetadata.WorkspaceMemberMetadataId,
-        objectMetadataId: SeedObjectMetadata.FavoriteMetadataId,
+        id: SeedFavoriteFieldMetadataIds.WorkspaceMember,
+        objectMetadataId: SeedObjectMetadataIds.Favorite,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -72,8 +73,8 @@ export const seedOpportunityFieldMetadata = async (
         isNullable: false,
       },
       {
-        id: SeedFavoriteFieldMetadata.PersonMetadataId,
-        objectMetadataId: SeedObjectMetadata.FavoriteMetadataId,
+        id: SeedFavoriteFieldMetadataIds.Person,
+        objectMetadataId: SeedObjectMetadataIds.Favorite,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -88,8 +89,8 @@ export const seedOpportunityFieldMetadata = async (
         isNullable: false,
       },
       {
-        id: SeedFavoriteFieldMetadata.CompanyMetadataId,
-        objectMetadataId: SeedObjectMetadata.FavoriteMetadataId,
+        id: SeedFavoriteFieldMetadataIds.Company,
+        objectMetadataId: SeedObjectMetadataIds.Favorite,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,

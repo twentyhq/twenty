@@ -1,17 +1,17 @@
 import { DataSource } from 'typeorm';
 
-import { SeedObjectMetadata } from 'src/database/typeorm-seeds/metadata/object-metadata';
+import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
-export enum SeedWorkspaceMemberSettingsFieldMetadata {
-  ColorSchemeMetadataId = '20202020-d7b7-4f2e-bb52-90d3fd78007a',
-  LocaleMetadataId = '20202020-10f6-4df9-8d6f-a760b65bd800',
-  WorkspaceMemberMetadataId = '20202020-83f2-4c5f-96b0-0c51ecc160e3',
+export enum SeedWorkspaceMemberSettingsFieldMetadataIds {
+  ColorScheme = '20202020-d7b7-4f2e-bb52-90d3fd78007a',
+  Locale = '20202020-10f6-4df9-8d6f-a760b65bd800',
+  WorkspaceMember = '20202020-83f2-4c5f-96b0-0c51ecc160e3',
 }
 
-export const seedOpportunityFieldMetadata = async (
+export const seedWorkspaceMemberSettingsFieldMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
 ) => {
@@ -19,6 +19,7 @@ export const seedOpportunityFieldMetadata = async (
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${fieldMetadataTableName}`, [
+      'id',
       'objectMetadataId',
       'isCustom',
       'workspaceId',
@@ -35,8 +36,8 @@ export const seedOpportunityFieldMetadata = async (
     .values([
       // Scalar fields
       {
-        id: SeedWorkspaceMemberSettingsFieldMetadata.ColorSchemeMetadataId,
-        objectMetadataId: SeedObjectMetadata.WorkspaceMemberSettingsMetadataId,
+        id: SeedWorkspaceMemberSettingsFieldMetadataIds.ColorScheme,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMemberSettings,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -51,8 +52,8 @@ export const seedOpportunityFieldMetadata = async (
         isNullable: false,
       },
       {
-        id: SeedWorkspaceMemberSettingsFieldMetadata.LocaleMetadataId,
-        objectMetadataId: SeedObjectMetadata.WorkspaceMemberSettingsMetadataId,
+        id: SeedWorkspaceMemberSettingsFieldMetadataIds.Locale,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMemberSettings,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -69,8 +70,8 @@ export const seedOpportunityFieldMetadata = async (
 
       // Relationships
       {
-        id: SeedWorkspaceMemberSettingsFieldMetadata.WorkspaceMemberMetadataId,
-        objectMetadataId: SeedObjectMetadata.WorkspaceMemberSettingsMetadataId,
+        id: SeedWorkspaceMemberSettingsFieldMetadataIds.WorkspaceMember,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMemberSettings,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,

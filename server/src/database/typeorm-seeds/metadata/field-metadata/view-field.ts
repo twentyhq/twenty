@@ -1,6 +1,17 @@
 import { DataSource } from 'typeorm';
 
-const tableName = 'fieldMetadata';
+import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
+import { SeedWorkspaceId } from 'src/database/seeds/metadata';
+
+const fieldMetadataTableName = 'fieldMetadata';
+
+export enum SeedViewFieldFieldMetadataIds {
+  FieldMetadataId = '20202020-1a5e-4ac1-9530-c7fff8481b79',
+  IsVisible = '20202020-3aa9-42db-a74d-0fd6b7cb7c4a',
+  Size = '20202020-b9a1-4c2e-a5af-3a6b4fef4af6',
+  Position = '20202020-a4bb-440a-add2-81dbd9a74517',
+  View = '20202020-8788-4508-b771-719807b60e61',
+}
 
 export const seedViewFieldFieldMetadata = async (
   workspaceDataSource: DataSource,
@@ -9,7 +20,7 @@ export const seedViewFieldFieldMetadata = async (
   await workspaceDataSource
     .createQueryBuilder()
     .insert()
-    .into(`${schemaName}.${tableName}`, [
+    .into(`${schemaName}.${fieldMetadataTableName}`, [
       'id',
       'objectMetadataId',
       'isCustom',
@@ -26,9 +37,10 @@ export const seedViewFieldFieldMetadata = async (
     .orIgnore()
     .values([
       {
-        objectMetadataId: '61d9000b-485c-4c48-a22e-0d9a164f9647',
+        id: SeedViewFieldFieldMetadataIds.FieldMetadataId,
+        objectMetadataId: SeedObjectMetadataIds.ViewField,
         isCustom: false,
-        workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: 'TEXT',
         name: 'fieldMetadataId',
@@ -37,27 +49,28 @@ export const seedViewFieldFieldMetadata = async (
           value: 'fieldMetadataId',
         },
         description: 'View Field target field',
-        icon: null,
+        icon: 'IconTag',
         isNullable: false,
       },
       {
-        id: 'a9a56210-a154-4965-9ace-c35f6dc43ee5',
-        objectMetadataId: '61d9000b-485c-4c48-a22e-0d9a164f9647',
+        id: SeedViewFieldFieldMetadataIds.View,
+        objectMetadataId: SeedObjectMetadataIds.ViewField,
         isCustom: false,
-        workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: 'RELATION',
         name: 'view',
         label: 'View Id',
         targetColumnMap: { value: 'viewId' },
         description: 'View Field related view',
-        icon: null,
+        icon: 'IconLayoutCollage',
         isNullable: false,
       },
       {
-        objectMetadataId: '61d9000b-485c-4c48-a22e-0d9a164f9647',
+        id: SeedViewFieldFieldMetadataIds.IsVisible,
+        objectMetadataId: SeedObjectMetadataIds.ViewField,
         isCustom: false,
-        workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: 'BOOLEAN',
         name: 'isVisible',
@@ -66,13 +79,14 @@ export const seedViewFieldFieldMetadata = async (
           value: 'isVisible',
         },
         description: 'View Field visibility',
-        icon: null,
+        icon: 'IconEye',
         isNullable: false,
       },
       {
-        objectMetadataId: '61d9000b-485c-4c48-a22e-0d9a164f9647',
+        id: SeedViewFieldFieldMetadataIds.Size,
+        objectMetadataId: SeedObjectMetadataIds.ViewField,
         isCustom: false,
-        workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: 'NUMBER',
         name: 'size',
@@ -81,13 +95,14 @@ export const seedViewFieldFieldMetadata = async (
           value: 'size',
         },
         description: 'View Field size',
-        icon: null,
+        icon: 'IconEye',
         isNullable: false,
       },
       {
-        objectMetadataId: '61d9000b-485c-4c48-a22e-0d9a164f9647',
+        id: SeedViewFieldFieldMetadataIds.Position,
+        objectMetadataId: SeedObjectMetadataIds.ViewField,
         isCustom: false,
-        workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: 'NUMBER',
         name: 'position',
@@ -96,7 +111,7 @@ export const seedViewFieldFieldMetadata = async (
           value: 'position',
         },
         description: 'View Field position',
-        icon: null,
+        icon: 'IconList',
         isNullable: false,
       },
     ])

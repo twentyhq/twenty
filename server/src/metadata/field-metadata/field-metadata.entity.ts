@@ -17,13 +17,14 @@ import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metada
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
 
 export enum FieldMetadataType {
-  UUID = 'uuid',
+  UUID = 'UUID',
   TEXT = 'TEXT',
   PHONE = 'PHONE',
   EMAIL = 'EMAIL',
   DATE = 'DATE',
   BOOLEAN = 'BOOLEAN',
   NUMBER = 'NUMBER',
+  PROBABILITY = 'PROBABILITY',
   ENUM = 'ENUM',
   URL = 'URL',
   MONEY = 'MONEY',

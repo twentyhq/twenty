@@ -42,4 +42,5 @@
   "cSpell.words": [
     "twentyhq"
   ],
+  "typescript.preferences.importModuleSpecifier": "non-relative"
 }

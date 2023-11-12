@@ -1,28 +1,28 @@
 import { DataSource } from 'typeorm';
 
-import { SeedObjectMetadata } from 'src/database/typeorm-seeds/metadata/object-metadata';
+import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
-export enum SeedPersonFieldMetadata {
-  FirstNameMetadataId = '20202020-9b56-4888-bfe3-f6f59aa999e3',
-  LastNameMetadataId = '20202020-b784-458a-869d-6c53fa85483d',
+export enum SeedPersonFieldMetadataIds {
+  FirstName = '20202020-9b56-4888-bfe3-f6f59aa999e3',
+  LastName = '20202020-b784-458a-869d-6c53fa85483d',
 
-  EmailMetadataId = '20202020-8a96-4e4b-86fd-ea126530e0c1',
-  LinkedinUrlMetadataId = '20202020-dcf6-445a-b543-37e55de43c25',
-  XUrlMetadataId = '20202020-a3a7-4f63-9303-10226f6055be',
-  JobTitleMetadataId = '20202020-3b86-413e-ab56-0ebd1a583ff3',
-  PhoneMetadataId = '20202020-486f-45f9-bbdf-aac18b1831c0',
-  CityMetadataId = '20202020-78f8-4b4c-90ff-86adf77590f5',
-  AvatarUrlMetadataId = '20202020-bb05-45cb-aa2a-71b58d49dd23',
+  Email = '20202020-8a96-4e4b-86fd-ea126530e0c1',
+  LinkedinUrl = '20202020-dcf6-445a-b543-37e55de43c25',
+  XUrl = '20202020-a3a7-4f63-9303-10226f6055be',
+  JobTitle = '20202020-3b86-413e-ab56-0ebd1a583ff3',
+  Phone = '20202020-486f-45f9-bbdf-aac18b1831c0',
+  City = '20202020-78f8-4b4c-90ff-86adf77590f5',
+  AvatarUrl = '20202020-bb05-45cb-aa2a-71b58d49dd23',
 
-  CompanyMetadataId = '20202020-64e1-4080-b6ad-db03c3809885',
-  ContactOpportunitiesMetadataId = '20202020-2c2e-418e-ba2d-d28434ff02a6',
-  OpportunitiesMetadataId = '20202020-6bc4-4905-a9d3-4f8d616a19e1',
-  ActivityTargetsMetadataId = '20202020-f285-4115-a46c-116522986b29',
-  FavoritesMetadataId = '20202020-6268-4165-8774-9aaf45db2b25',
-  AttachmentsMetadataId = '20202020-5883-4bb3-a308-65271901a1d4',
+  Company = '20202020-64e1-4080-b6ad-db03c3809885',
+  ContactForOpportunities = '20202020-2c2e-418e-ba2d-d28434ff02a6',
+  Opportunities = '20202020-6bc4-4905-a9d3-4f8d616a19e1',
+  ActivityTargets = '20202020-f285-4115-a46c-116522986b29',
+  Favorites = '20202020-6268-4165-8774-9aaf45db2b25',
+  Attachments = '20202020-5883-4bb3-a308-65271901a1d4',
 }
 
 export const seedPersonFieldMetadata = async (
@@ -33,6 +33,7 @@ export const seedPersonFieldMetadata = async (
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${fieldMetadataTableName}`, [
+      'id',
       'objectMetadataId',
       'isCustom',
       'workspaceId',
@@ -49,8 +50,8 @@ export const seedPersonFieldMetadata = async (
     .values([
       // Main Identifier
       {
-        id: SeedPersonFieldMetadata.FirstNameMetadataId,
-        objectMetadataId: SeedObjectMetadata.PersonMetadataId,
+        id: SeedPersonFieldMetadataIds.FirstName,
+        objectMetadataId: SeedObjectMetadataIds.Person,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -65,8 +66,8 @@ export const seedPersonFieldMetadata = async (
         isNullable: false,
       },
       {
-        id: SeedPersonFieldMetadata.LastNameMetadataId,
-        objectMetadataId: SeedObjectMetadata.PersonMetadataId,
+        id: SeedPersonFieldMetadataIds.LastName,
+        objectMetadataId: SeedObjectMetadataIds.Person,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -83,8 +84,8 @@ export const seedPersonFieldMetadata = async (
 
       // Scalar Fields
       {
-        id: SeedPersonFieldMetadata.EmailMetadataId,
-        objectMetadataId: SeedObjectMetadata.PersonMetadataId,
+        id: SeedPersonFieldMetadataIds.Email,
+        objectMetadataId: SeedObjectMetadataIds.Person,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -99,8 +100,8 @@ export const seedPersonFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedPersonFieldMetadata.LinkedinUrlMetadataId,
-        objectMetadataId: SeedObjectMetadata.PersonMetadataId,
+        id: SeedPersonFieldMetadataIds.LinkedinUrl,
+        objectMetadataId: SeedObjectMetadataIds.Person,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -115,8 +116,8 @@ export const seedPersonFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedPersonFieldMetadata.XUrlMetadataId,
-        objectMetadataId: SeedObjectMetadata.PersonMetadataId,
+        id: SeedPersonFieldMetadataIds.XUrl,
+        objectMetadataId: SeedObjectMetadataIds.Person,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -131,8 +132,8 @@ export const seedPersonFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedPersonFieldMetadata.JobTitleMetadataId,
-        objectMetadataId: SeedObjectMetadata.PersonMetadataId,
+        id: SeedPersonFieldMetadataIds.JobTitle,
+        objectMetadataId: SeedObjectMetadataIds.Person,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -147,8 +148,8 @@ export const seedPersonFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedPersonFieldMetadata.PhoneMetadataId,
-        objectMetadataId: SeedObjectMetadata.PersonMetadataId,
+        id: SeedPersonFieldMetadataIds.Phone,
+        objectMetadataId: SeedObjectMetadataIds.Person,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -163,8 +164,8 @@ export const seedPersonFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedPersonFieldMetadata.CityMetadataId,
-        objectMetadataId: SeedObjectMetadata.PersonMetadataId,
+        id: SeedPersonFieldMetadataIds.City,
+        objectMetadataId: SeedObjectMetadataIds.Person,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -179,8 +180,8 @@ export const seedPersonFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedPersonFieldMetadata.AvatarUrlMetadataId,
-        objectMetadataId: SeedObjectMetadata.PersonMetadataId,
+        id: SeedPersonFieldMetadataIds.AvatarUrl,
+        objectMetadataId: SeedObjectMetadataIds.Person,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -197,8 +198,8 @@ export const seedPersonFieldMetadata = async (
 
       // Relationships
       {
-        id: SeedPersonFieldMetadata.CompanyMetadataId,
-        objectMetadataId: SeedObjectMetadata.PersonMetadataId,
+        id: SeedPersonFieldMetadataIds.Company,
+        objectMetadataId: SeedObjectMetadataIds.Person,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -213,8 +214,8 @@ export const seedPersonFieldMetadata = async (
         isNullable: false,
       },
       {
-        id: SeedPersonFieldMetadata.ContactOpportunitiesMetadataId,
-        objectMetadataId: SeedObjectMetadata.PersonMetadataId,
+        id: SeedPersonFieldMetadataIds.ContactForOpportunities,
+        objectMetadataId: SeedObjectMetadataIds.Person,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -227,8 +228,8 @@ export const seedPersonFieldMetadata = async (
         isNullable: false,
       },
       {
-        id: SeedPersonFieldMetadata.ActivityTargetsMetadataId,
-        objectMetadataId: SeedObjectMetadata.PersonMetadataId,
+        id: SeedPersonFieldMetadataIds.ActivityTargets,
+        objectMetadataId: SeedObjectMetadataIds.Person,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -241,8 +242,8 @@ export const seedPersonFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedPersonFieldMetadata.OpportunitiesMetadataId,
-        objectMetadataId: SeedObjectMetadata.PersonMetadataId,
+        id: SeedPersonFieldMetadataIds.Opportunities,
+        objectMetadataId: SeedObjectMetadataIds.Person,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -255,8 +256,8 @@ export const seedPersonFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedPersonFieldMetadata.FavoritesMetadataId,
-        objectMetadataId: SeedObjectMetadata.PersonMetadataId,
+        id: SeedPersonFieldMetadataIds.Favorites,
+        objectMetadataId: SeedObjectMetadataIds.Person,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -269,8 +270,8 @@ export const seedPersonFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedPersonFieldMetadata.AttachmentsMetadataId,
-        objectMetadataId: SeedObjectMetadata.PersonMetadataId,
+        id: SeedPersonFieldMetadataIds.Attachments,
+        objectMetadataId: SeedObjectMetadataIds.Person,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,

@@ -1,17 +1,17 @@
 import { DataSource } from 'typeorm';
 
-import { SeedObjectMetadata } from 'src/database/typeorm-seeds/metadata/object-metadata';
+import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
-export enum SeedApiKeyFieldMetadata {
-  NameMetadataId = '20202020-1dfa-4ef3-8d19-51e82c28677a',
-  ExpiresAtMetadataId = '20202020-a092-41e2-940e-e17cd0403aa7',
-  RevokedAtMetadataId = '20202020-da41-436e-8498-b1a99c23b275',
+export enum SeedApiKeyFieldMetadataIds {
+  Name = '20202020-1dfa-4ef3-8d19-51e82c28677a',
+  ExpiresAt = '20202020-a092-41e2-940e-e17cd0403aa7',
+  RevokedAt = '20202020-da41-436e-8498-b1a99c23b275',
 }
 
-export const seedOpportunityFieldMetadata = async (
+export const seedApiKeyFieldMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
 ) => {
@@ -19,6 +19,7 @@ export const seedOpportunityFieldMetadata = async (
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${fieldMetadataTableName}`, [
+      'id',
       'objectMetadataId',
       'isCustom',
       'workspaceId',
@@ -35,8 +36,8 @@ export const seedOpportunityFieldMetadata = async (
     .values([
       // Scalar fields
       {
-        id: SeedApiKeyFieldMetadata.NameMetadataId,
-        objectMetadataId: SeedObjectMetadata.ApiKeyMetadataId,
+        id: SeedApiKeyFieldMetadataIds.Name,
+        objectMetadataId: SeedObjectMetadataIds.ApiKey,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -51,8 +52,8 @@ export const seedOpportunityFieldMetadata = async (
         isNullable: false,
       },
       {
-        id: SeedApiKeyFieldMetadata.ExpiresAtMetadataId,
-        objectMetadataId: SeedObjectMetadata.ApiKeyMetadataId,
+        id: SeedApiKeyFieldMetadataIds.ExpiresAt,
+        objectMetadataId: SeedObjectMetadataIds.ApiKey,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -67,8 +68,8 @@ export const seedOpportunityFieldMetadata = async (
         isNullable: false,
       },
       {
-        id: SeedApiKeyFieldMetadata.RevokedAtMetadataId,
-        objectMetadataId: SeedObjectMetadata.ApiKeyMetadataId,
+        id: SeedApiKeyFieldMetadataIds.RevokedAt,
+        objectMetadataId: SeedObjectMetadataIds.ApiKey,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,

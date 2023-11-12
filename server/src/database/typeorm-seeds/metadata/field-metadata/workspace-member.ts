@@ -1,23 +1,23 @@
 import { DataSource } from 'typeorm';
 
-import { SeedObjectMetadata } from 'src/database/typeorm-seeds/metadata/object-metadata';
+import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
-export enum SeedWorkspaceMemberFieldMetadata {
-  AllowImpersonationMetadataId = '20202020-bb19-44a1-8156-8866f87a5f42',
-  UserIdMetadataId = '20202020-f2c1-4ca1-9ca5-7b9d5cc87eb0',
-  AuthoredActivitiesMetadataId = '20202020-37a0-4db4-9c9f-fd3e3f4e47fc',
-  AssignedActivitiesMetadataId = '20202020-ac05-44b9-9526-764dd5ce14e2',
-  AuthoredAttachmentsMetadataId = '20202020-7e0c-4dc4-be49-37de4396349e',
-  FavoritesMetadataId = '20202020-5ecb-405b-8712-171bb8916b96',
-  SettingsMetadataId = '20202020-50ed-46ed-8198-65e237b83eb9',
-  AccountOwnerForCompaniesMetadataId = '20202020-41bb-4c17-8979-40fa915df9e1',
-  AuthoredCommentsMetadataId = '20202020-7238-4e2a-9ccf-d2c8f604933a',
+export enum SeedWorkspaceMemberFieldMetadataIds {
+  AllowImpersonation = '20202020-bb19-44a1-8156-8866f87a5f42',
+  UserId = '20202020-f2c1-4ca1-9ca5-7b9d5cc87eb0',
+  AuthoredActivities = '20202020-37a0-4db4-9c9f-fd3e3f4e47fc',
+  AssignedActivities = '20202020-ac05-44b9-9526-764dd5ce14e2',
+  AuthoredAttachments = '20202020-7e0c-4dc4-be49-37de4396349e',
+  Favorites = '20202020-5ecb-405b-8712-171bb8916b96',
+  Settings = '20202020-50ed-46ed-8198-65e237b83eb9',
+  AccountOwnerForCompanies = '20202020-41bb-4c17-8979-40fa915df9e1',
+  AuthoredComments = '20202020-7238-4e2a-9ccf-d2c8f604933a',
 }
 
-export const seedOpportunityFieldMetadata = async (
+export const seedWorkspaceMemberFieldMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
 ) => {
@@ -25,6 +25,7 @@ export const seedOpportunityFieldMetadata = async (
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${fieldMetadataTableName}`, [
+      'id',
       'objectMetadataId',
       'isCustom',
       'workspaceId',
@@ -41,8 +42,8 @@ export const seedOpportunityFieldMetadata = async (
     .values([
       // Scalar fields
       {
-        id: SeedWorkspaceMemberFieldMetadata.UserIdMetadataId,
-        objectMetadataId: SeedObjectMetadata.WorkspaceMemberMetadataId,
+        id: SeedWorkspaceMemberFieldMetadataIds.UserId,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -57,8 +58,8 @@ export const seedOpportunityFieldMetadata = async (
         isNullable: false,
       },
       {
-        id: SeedWorkspaceMemberFieldMetadata.AllowImpersonationMetadataId,
-        objectMetadataId: SeedObjectMetadata.WorkspaceMemberMetadataId,
+        id: SeedWorkspaceMemberFieldMetadataIds.AllowImpersonation,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -75,8 +76,8 @@ export const seedOpportunityFieldMetadata = async (
 
       // Relationships
       {
-        id: SeedWorkspaceMemberFieldMetadata.AuthoredActivitiesMetadataId,
-        objectMetadataId: SeedObjectMetadata.WorkspaceMemberMetadataId,
+        id: SeedWorkspaceMemberFieldMetadataIds.AuthoredActivities,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -89,8 +90,8 @@ export const seedOpportunityFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedWorkspaceMemberFieldMetadata.AssignedActivitiesMetadataId,
-        objectMetadataId: SeedObjectMetadata.WorkspaceMemberMetadataId,
+        id: SeedWorkspaceMemberFieldMetadataIds.AssignedActivities,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -103,8 +104,8 @@ export const seedOpportunityFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedWorkspaceMemberFieldMetadata.FavoritesMetadataId,
-        objectMetadataId: SeedObjectMetadata.WorkspaceMemberMetadataId,
+        id: SeedWorkspaceMemberFieldMetadataIds.Favorites,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -117,8 +118,8 @@ export const seedOpportunityFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedWorkspaceMemberFieldMetadata.AccountOwnerForCompaniesMetadataId,
-        objectMetadataId: SeedObjectMetadata.WorkspaceMemberMetadataId,
+        id: SeedWorkspaceMemberFieldMetadataIds.AccountOwnerForCompanies,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -131,8 +132,22 @@ export const seedOpportunityFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedWorkspaceMemberFieldMetadata.AuthoredCommentsMetadataId,
-        objectMetadataId: SeedObjectMetadata.WorkspaceMemberMetadataId,
+        id: SeedWorkspaceMemberFieldMetadataIds.AuthoredAttachments,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: 'RELATION',
+        name: 'authoredAttachments',
+        label: 'Authored attachments',
+        targetColumnMap: {},
+        description: 'Attachments created by the workspace member',
+        icon: 'IconFileImport',
+        isNullable: true,
+      },
+      {
+        id: SeedWorkspaceMemberFieldMetadataIds.AuthoredComments,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -145,8 +160,8 @@ export const seedOpportunityFieldMetadata = async (
         isNullable: true,
       },
       {
-        id: SeedWorkspaceMemberFieldMetadata.SettingsMetadataId,
-        objectMetadataId: SeedObjectMetadata.WorkspaceMemberMetadataId,
+        id: SeedWorkspaceMemberFieldMetadataIds.Settings,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,

@@ -449,6 +449,7 @@ export enum FieldMetadataType {
   Date = 'DATE',
   Email = 'EMAIL',
   Enum = 'ENUM',
+  Probability = 'PROBABILITY',
   Money = 'MONEY',
   Number = 'NUMBER',
   Phone = 'PHONE',

@@ -4,24 +4,24 @@ import { SeedDataSourceId, SeedWorkspaceId } from 'src/database/seeds/metadata';
 
 const tableName = 'objectMetadata';
 
-export enum SeedObjectMetadata {
-  CompanyMetadataId = '20202020-480c-434e-b4c7-e22408b97047',
-  PersonMetadataId = '20202020-c64b-44bc-bd2c-502c99f49dca',
-  OpportunityMetadataId = '20202020-cae9-4ff4-9579-f7d9fe44c937',
-  PipelineStepMetadataId = '20202020-1029-4661-9e91-83bad932bdcd',
-  WorkspaceMemberMetadataId = '20202020-b550-40bb-a96b-9ab54b664753',
-  WorkspaceMemberSettingsMetadataId = '20202020-166d-445c-970f-da1ea43f1dc7',
-  WebhookMetadataId = '20202020-ddee-40de-9c9b-5f82a3503360',
-  ApiKeyMetadataId = '20202020-d8d0-4c2d-a370-5499b2181d02',
-  ActivityMetadataId = '20202020-8ee3-4f67-84ab-1b7a6eb5a448',
-  ActivityTargetMetadataId = '20202020-439a-4a41-83a3-3cda03d01d38',
-  CommentMetadataId = '20202020-4de3-4e65-ac60-b40b8e08d7d6',
-  AttachmentMetadataId = '20202020-5f98-4317-915d-3779bb821be2',
-  FavoriteMetadataId = '20202020-90e4-4701-a350-8ab75e23e3b8',
-  ViewMetadataId = '20202020-767f-473f-8fd0-6cdbefbf8dbe',
-  ViewFieldMetadataId = '20202020-485c-4c48-a22e-0d9a164f9647',
-  ViewFilterMetadataId = '20202020-4461-4e2d-bf9e-9b47e68846d3',
-  ViewSortMetadataId = '20202020-cf28-41dd-b98b-d6e1f5b3a251',
+export enum SeedObjectMetadataIds {
+  Company = '20202020-480c-434e-b4c7-e22408b97047',
+  Person = '20202020-c64b-44bc-bd2c-502c99f49dca',
+  Opportunity = '20202020-cae9-4ff4-9579-f7d9fe44c937',
+  PipelineStep = '20202020-1029-4661-9e91-83bad932bdcd',
+  WorkspaceMember = '20202020-b550-40bb-a96b-9ab54b664753',
+  WorkspaceMemberSettings = '20202020-166d-445c-970f-da1ea43f1dc7',
+  Webhook = '20202020-ddee-40de-9c9b-5f82a3503360',
+  ApiKey = '20202020-d8d0-4c2d-a370-5499b2181d02',
+  Activity = '20202020-8ee3-4f67-84ab-1b7a6eb5a448',
+  ActivityTarget = '20202020-439a-4a41-83a3-3cda03d01d38',
+  Comment = '20202020-4de3-4e65-ac60-b40b8e08d7d6',
+  Attachment = '20202020-5f98-4317-915d-3779bb821be2',
+  Favorite = '20202020-90e4-4701-a350-8ab75e23e3b8',
+  View = '20202020-767f-473f-8fd0-6cdbefbf8dbe',
+  ViewField = '20202020-485c-4c48-a22e-0d9a164f9647',
+  ViewFilter = '20202020-4461-4e2d-bf9e-9b47e68846d3',
+  ViewSort = '20202020-cf28-41dd-b98b-d6e1f5b3a251',
 }
 
 export const seedObjectMetadata = async (
@@ -47,7 +47,7 @@ export const seedObjectMetadata = async (
     .orIgnore()
     .values([
       {
-        id: SeedObjectMetadata.CompanyMetadataId,
+        id: SeedObjectMetadataIds.Company,
         nameSingular: 'companyV2',
         namePlural: 'companiesV2',
         labelSingular: 'Company',
@@ -60,7 +60,7 @@ export const seedObjectMetadata = async (
         isActive: true,
       },
       {
-        id: SeedObjectMetadata.PersonMetadataId,
+        id: SeedObjectMetadataIds.Person,
         nameSingular: 'personV2',
         namePlural: 'peopleV2',
         labelSingular: 'Person',
@@ -73,7 +73,7 @@ export const seedObjectMetadata = async (
         isActive: true,
       },
       {
-        id: SeedObjectMetadata.OpportunityMetadataId,
+        id: SeedObjectMetadataIds.Opportunity,
         nameSingular: 'opportunityV2',
         namePlural: 'opportunitiesV2',
         labelSingular: 'Opportunity',
@@ -86,7 +86,7 @@ export const seedObjectMetadata = async (
         isActive: true,
       },
       {
-        id: SeedObjectMetadata.PipelineStepMetadataId,
+        id: SeedObjectMetadataIds.PipelineStep,
         nameSingular: 'pipelineStepV2',
         namePlural: 'pipelineStepsV2',
         labelSingular: 'Pipeline Step',
@@ -99,7 +99,7 @@ export const seedObjectMetadata = async (
         isActive: true,
       },
       {
-        id: SeedObjectMetadata.WorkspaceMemberMetadataId,
+        id: SeedObjectMetadataIds.WorkspaceMember,
         nameSingular: 'workspaceMemberV2',
         namePlural: 'workspaceMembersV2',
         labelSingular: 'Workspace Member',
@@ -112,7 +112,7 @@ export const seedObjectMetadata = async (
         isActive: true,
       },
       {
-        id: SeedObjectMetadata.WorkspaceMemberSettingsMetadataId,
+        id: SeedObjectMetadataIds.WorkspaceMemberSettings,
         nameSingular: 'workspaceMemberSettingV2',
         namePlural: 'workspaceMemberSettingsV2',
         labelSingular: 'WorkspaceMemberSetting',
@@ -125,7 +125,7 @@ export const seedObjectMetadata = async (
         isActive: true,
       },
       {
-        id: SeedObjectMetadata.WebhookMetadataId,
+        id: SeedObjectMetadataIds.Webhook,
         nameSingular: 'webhookV2',
         namePlural: 'webhooksV2',
         labelSingular: 'Webhook',
@@ -138,7 +138,7 @@ export const seedObjectMetadata = async (
         isActive: true,
       },
       {
-        id: SeedObjectMetadata.ApiKeyMetadataId,
+        id: SeedObjectMetadataIds.ApiKey,
         nameSingular: 'apiKeyV2',
         namePlural: 'apiKeysV2',
         labelSingular: 'Api Key',
@@ -151,7 +151,7 @@ export const seedObjectMetadata = async (
         isActive: true,
       },
       {
-        id: SeedObjectMetadata.ActivityMetadataId,
+        id: SeedObjectMetadataIds.Activity,
         nameSingular: 'activityV2',
         namePlural: 'activitiesV2',
         labelSingular: 'Activity',
@@ -164,7 +164,7 @@ export const seedObjectMetadata = async (
         isActive: true,
       },
       {
-        id: SeedObjectMetadata.ActivityTargetMetadataId,
+        id: SeedObjectMetadataIds.ActivityTarget,
         nameSingular: 'activityTargetV2',
         namePlural: 'activityTargetsV2',
         labelSingular: 'Activity Target',
@@ -177,20 +177,20 @@ export const seedObjectMetadata = async (
         isActive: true,
       },
       {
-        id: SeedObjectMetadata.CommentMetadataId,
+        id: SeedObjectMetadataIds.Comment,
         nameSingular: 'commentV2',
         namePlural: 'commentsV2',
         labelSingular: 'Comment',
         labelPlural: 'Comments',
         targetTableName: 'comment',
         description: 'A comment',
-        icon: 'IconComment',
+        icon: 'IconMessageCircle',
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
       },
       {
-        id: SeedObjectMetadata.AttachmentMetadataId,
+        id: SeedObjectMetadataIds.Attachment,
         nameSingular: 'attachmentV2',
         namePlural: 'attachmentsV2',
         labelSingular: 'Attachment',
@@ -203,7 +203,7 @@ export const seedObjectMetadata = async (
         isActive: true,
       },
       {
-        id: SeedObjectMetadata.FavoriteMetadataId,
+        id: SeedObjectMetadataIds.Favorite,
         nameSingular: 'favoriteV2',
         namePlural: 'favoritesV2',
         labelSingular: 'Favorite',
@@ -216,7 +216,7 @@ export const seedObjectMetadata = async (
         isActive: true,
       },
       {
-        id: SeedObjectMetadata.ViewMetadataId,
+        id: SeedObjectMetadataIds.View,
         nameSingular: 'viewV2',
         namePlural: 'viewsV2',
         labelSingular: 'View',
@@ -229,7 +229,7 @@ export const seedObjectMetadata = async (
         isActive: true,
       },
       {
-        id: SeedObjectMetadata.ViewFieldMetadataId,
+        id: SeedObjectMetadataIds.ViewField,
         nameSingular: 'viewFieldV2',
         namePlural: 'viewFieldsV2',
         labelSingular: 'View Field',
@@ -242,7 +242,7 @@ export const seedObjectMetadata = async (
         isActive: true,
       },
       {
-        id: SeedObjectMetadata.ViewFilterMetadataId,
+        id: SeedObjectMetadataIds.ViewFilter,
         nameSingular: 'viewFilterV2',
         namePlural: 'viewFiltersV2',
         labelSingular: 'View Filter',
@@ -255,7 +255,7 @@ export const seedObjectMetadata = async (
         isActive: true,
       },
       {
-        id: SeedObjectMetadata.ViewSortMetadataId,
+        id: SeedObjectMetadataIds.ViewSort,
         nameSingular: 'viewSortV2',
         namePlural: 'viewSortsV2',
         labelSingular: 'View Sort',

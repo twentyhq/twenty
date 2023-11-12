@@ -1,16 +1,16 @@
 import { DataSource } from 'typeorm';
 
-import { SeedObjectMetadata } from 'src/database/typeorm-seeds/metadata/object-metadata';
+import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
-export enum SeedWebhookFieldMetadata {
-  TargetUrlMetadataId = '20202020-c16e-4ba8-bb24-bbd88e9cdabc',
-  OperationMetadataId = '20202020-5995-493a-92a8-31376e5c052a',
+export enum SeedWebhookFieldMetadataIds {
+  TargetUrl = '20202020-c16e-4ba8-bb24-bbd88e9cdabc',
+  Operation = '20202020-5995-493a-92a8-31376e5c052a',
 }
 
-export const seedOpportunityFieldMetadata = async (
+export const seedWebhookFieldMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
 ) => {
@@ -18,6 +18,7 @@ export const seedOpportunityFieldMetadata = async (
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${fieldMetadataTableName}`, [
+      'id',
       'objectMetadataId',
       'isCustom',
       'workspaceId',
@@ -34,8 +35,8 @@ export const seedOpportunityFieldMetadata = async (
     .values([
       // Scalar fields
       {
-        id: SeedWebhookFieldMetadata.TargetUrlMetadataId,
-        objectMetadataId: SeedObjectMetadata.WebhookMetadataId,
+        id: SeedWebhookFieldMetadataIds.TargetUrl,
+        objectMetadataId: SeedObjectMetadataIds.Webhook,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -50,8 +51,8 @@ export const seedOpportunityFieldMetadata = async (
         isNullable: false,
       },
       {
-        id: SeedWebhookFieldMetadata.OperationMetadataId,
-        objectMetadataId: SeedObjectMetadata.WebhookMetadataId,
+        id: SeedWebhookFieldMetadataIds.Operation,
+        objectMetadataId: SeedObjectMetadataIds.Webhook,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,

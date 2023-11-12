@@ -1,22 +1,22 @@
 import { DataSource } from 'typeorm';
 
-import { SeedObjectMetadata } from 'src/database/typeorm-seeds/metadata/object-metadata';
+import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
-export enum SeedAttachmentFieldMetadata {
-  NameMetadataId = '20202020-5683-4c80-8590-255321ece692',
-  FullPathMetadataId = '20202020-bb72-4644-b255-afb4ebb83b66',
-  TypeMetadataId = '20202020-8dfa-492f-92d1-56d5fb18cbb7',
+export enum SeedAttachmentFieldMetadataIds {
+  Name = '20202020-5683-4c80-8590-255321ece692',
+  FullPath = '20202020-bb72-4644-b255-afb4ebb83b66',
+  Type = '20202020-8dfa-492f-92d1-56d5fb18cbb7',
 
-  AuthorMetadataId = '20202020-7831-43c2-827f-bc78289b7398',
-  ActivityMetadataId = '20202020-f5a9-46ec-b39a-eda906f00804',
-  PersonMetadataId = '20202020-f67c-4cc5-893c-c6b615527473',
-  CompanyMetadataId = '20202020-5463-4d03-9124-1775b9b7f955',
+  Author = '20202020-7831-43c2-827f-bc78289b7398',
+  Activity = '20202020-f5a9-46ec-b39a-eda906f00804',
+  Person = '20202020-f67c-4cc5-893c-c6b615527473',
+  Company = '20202020-5463-4d03-9124-1775b9b7f955',
 }
 
-export const seedOpportunityFieldMetadata = async (
+export const seedAttachmentFieldMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
 ) => {
@@ -24,6 +24,7 @@ export const seedOpportunityFieldMetadata = async (
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${fieldMetadataTableName}`, [
+      'id',
       'objectMetadataId',
       'isCustom',
       'workspaceId',
@@ -40,8 +41,8 @@ export const seedOpportunityFieldMetadata = async (
     .values([
       // Primary Identifier
       {
-        id: SeedAttachmentFieldMetadata.NameMetadataId,
-        objectMetadataId: SeedObjectMetadata.AttachmentMetadataId,
+        id: SeedAttachmentFieldMetadataIds.Name,
+        objectMetadataId: SeedObjectMetadataIds.Attachment,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -57,8 +58,8 @@ export const seedOpportunityFieldMetadata = async (
       },
       // Scalar fields
       {
-        id: SeedAttachmentFieldMetadata.FullPathMetadataId,
-        objectMetadataId: SeedObjectMetadata.AttachmentMetadataId,
+        id: SeedAttachmentFieldMetadataIds.FullPath,
+        objectMetadataId: SeedObjectMetadataIds.Attachment,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -73,8 +74,8 @@ export const seedOpportunityFieldMetadata = async (
         isNullable: false,
       },
       {
-        id: SeedAttachmentFieldMetadata.TypeMetadataId,
-        objectMetadataId: SeedObjectMetadata.AttachmentMetadataId,
+        id: SeedAttachmentFieldMetadataIds.Type,
+        objectMetadataId: SeedObjectMetadataIds.Attachment,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -91,8 +92,8 @@ export const seedOpportunityFieldMetadata = async (
 
       // Relationships
       {
-        id: SeedAttachmentFieldMetadata.AuthorMetadataId,
-        objectMetadataId: SeedObjectMetadata.AttachmentMetadataId,
+        id: SeedAttachmentFieldMetadataIds.Author,
+        objectMetadataId: SeedObjectMetadataIds.Attachment,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -107,8 +108,8 @@ export const seedOpportunityFieldMetadata = async (
         isNullable: false,
       },
       {
-        id: SeedAttachmentFieldMetadata.ActivityMetadataId,
-        objectMetadataId: SeedObjectMetadata.AttachmentMetadataId,
+        id: SeedAttachmentFieldMetadataIds.Activity,
+        objectMetadataId: SeedObjectMetadataIds.Attachment,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -123,8 +124,8 @@ export const seedOpportunityFieldMetadata = async (
         isNullable: false,
       },
       {
-        id: SeedAttachmentFieldMetadata.PersonMetadataId,
-        objectMetadataId: SeedObjectMetadata.AttachmentMetadataId,
+        id: SeedAttachmentFieldMetadataIds.Person,
+        objectMetadataId: SeedObjectMetadataIds.Attachment,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -139,8 +140,8 @@ export const seedOpportunityFieldMetadata = async (
         isNullable: false,
       },
       {
-        id: SeedAttachmentFieldMetadata.CompanyMetadataId,
-        objectMetadataId: SeedObjectMetadata.AttachmentMetadataId,
+        id: SeedAttachmentFieldMetadataIds.Company,
+        objectMetadataId: SeedObjectMetadataIds.Attachment,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,

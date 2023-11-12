@@ -18,14 +18,20 @@ export const addViewSortTable: TenantMigrationTableAction[] = [
         action: TenantMigrationColumnActionType.CREATE,
       },
       {
-        columnName: 'viewId',
+        columnName: 'direction',
         columnType: 'varchar',
         action: TenantMigrationColumnActionType.CREATE,
       },
       {
-        columnName: 'direction',
-        columnType: 'varchar',
+        columnName: 'viewId',
+        columnType: 'uuid',
         action: TenantMigrationColumnActionType.CREATE,
+      },
+      {
+        columnName: 'viewId',
+        referencedTableName: 'view',
+        referencedTableColumnName: 'id',
+        action: TenantMigrationColumnActionType.RELATION,
       },
     ],
   },
