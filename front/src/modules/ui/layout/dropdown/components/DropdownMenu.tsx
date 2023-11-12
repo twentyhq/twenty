@@ -18,8 +18,7 @@ const StyledDropdownMenu = styled.div<{
 
   overflow: hidden;
 
-  width: ${({ width }) =>
-    width ? `${typeof width === 'number' ? `${width}px` : width}` : '160px'};
+  width: auto;
 `;
 
 export const DropdownMenu = StyledDropdownMenu;
