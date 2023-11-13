@@ -14,9 +14,10 @@ export const MyComponent = () => {
             overflow: "hidden",
             boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
             width: "300px",
+            padding: '10px'
           }}
         >
-          <p style={{ padding: "8px" }}>Updated successfully</p>
+          <p>Updated successfully</p>
           <ProgressBar
             duration={6000}
             delay={0}

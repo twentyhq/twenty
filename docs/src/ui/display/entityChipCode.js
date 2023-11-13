@@ -4,7 +4,6 @@ import { IconComponent } from "@/ui/display/icon/types/IconComponent";
 
 export const MyComponent = () => {
   return (
-    <>
       <Router>
         <EntityChip
           linkToEntity="/entity-link"
@@ -16,6 +15,5 @@ export const MyComponent = () => {
           LeftIcon={IconComponent}
         />
       </Router>
-    </>
   );
 };
