@@ -1,7 +1,6 @@
 import { Chip } from "@/ui/display/chip/components/Chip";
 export const MyComponent = () => {
   return (
-    <>
       <Chip
         size="large"
         label="Clickable Chip"
@@ -13,6 +12,5 @@ export const MyComponent = () => {
         maxWidth="200px"
         className
       />
-    </>
   );
 };

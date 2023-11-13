@@ -1,7 +1,6 @@
 import { Tag } from "@/ui/display/tag/components/Tag";
 export const MyComponent = () => {
   return (
-    <>
       <div style={{ display: "flex", alignItems: "center" }}>
         <div
           style={{
@@ -20,6 +19,5 @@ export const MyComponent = () => {
           />
         </div>
       </div>
-    </>
   );
 };

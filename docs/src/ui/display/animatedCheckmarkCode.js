@@ -2,7 +2,6 @@ import { AnimatedCheckmark } from "@/ui/display/checkmark/components/AnimatedChe
 
 export const MyComponent = () => {
   return (
-    <>
       <div style={{ display: "flex", alignItems: "center" }}>
         <AnimatedCheckmark
           isAnimating={true}
@@ -10,8 +9,7 @@ export const MyComponent = () => {
           duration={0.5}
           size={30}
         />
-        <p style={{ marginLeft: "8px" }}> Task Completed</p>
+        <p>Task Completed</p>
       </div>
-    </>
   );
 };
