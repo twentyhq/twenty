@@ -19,7 +19,6 @@ import { addViewSortTable } from './migrations/1697618014-addViewSortTable';
 
 // TODO: read the folder and return all migrations
 export const standardMigrations = {
-  '1697618009-addCompanyTable': addCompanyTable,
   '1697618011-addViewTable': addViewTable,
   '1697618012-addViewFieldTable': addViewFieldTable,
   '1697618013-addViewFilterTable': addViewFilterTable,
@@ -37,4 +36,5 @@ export const standardMigrations = {
   '1697618024-addWebhookTable': addWebhookTable,
   '1697618025-addWorkspaceMemberSettingTable': addWorkspaceMemberSettingTable,
   '1697618026-addWorkspaceMemberTable': addWorkspaceMemberTable,
+  '1697618009-addCompanyTable': addCompanyTable,
 };

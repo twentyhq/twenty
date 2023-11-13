@@ -64,7 +64,7 @@ export const addCompanyTable: TenantMigrationTableAction[] = [
       },
       {
         columnName: 'accountOwnerId',
-        referencedTableName: 'company',
+        referencedTableName: 'workspaceMember',
         referencedTableColumnName: 'id',
         action: TenantMigrationColumnActionType.RELATION,
       },
