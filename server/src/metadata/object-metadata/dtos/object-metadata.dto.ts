@@ -53,6 +53,9 @@ export class ObjectMetadataDTO {
   @Field()
   isActive: boolean;
 
+  @Field()
+  isSystem: boolean;
+
   @HideField()
   workspaceId: string;
 

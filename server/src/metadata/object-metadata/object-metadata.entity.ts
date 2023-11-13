@@ -53,6 +53,9 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @Column({ default: false })
   isActive: boolean;
 
+  @Column({ default: false })
+  isSystem: boolean;
+
   @Column({ nullable: false })
   workspaceId: string;
 
