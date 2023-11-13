@@ -55,7 +55,7 @@ export const seedViews = async (
       {
         id: SeedViewIds.Person,
         name: 'All People',
-        objectMetadataId: SeedObjectMetadataIds.Company,
+        objectMetadataId: SeedObjectMetadataIds.Person,
         type: 'table',
       },
       {

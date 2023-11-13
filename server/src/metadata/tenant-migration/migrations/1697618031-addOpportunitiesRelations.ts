@@ -3,19 +3,16 @@ import {
   TenantMigrationTableAction,
 } from 'src/metadata/tenant-migration/tenant-migration.entity';
 
-export const addAttachmentTable: TenantMigrationTableAction[] = [
+export const addOpportunitiesRelations: TenantMigrationTableAction[] = [
   {
-    name: 'attachment',
-    action: 'create',
-  },
-  {
-    name: 'attachment',
+    name: 'opportunity',
     action: 'alter',
     columns: [
       {
         columnName: 'companyId',
-        columnType: 'uuid',
-        action: TenantMigrationColumnActionType.CREATE,
+        referencedTableName: 'company',
+        referencedTableColumnName: 'id',
+        action: TenantMigrationColumnActionType.RELATION,
       },
     ],
   },

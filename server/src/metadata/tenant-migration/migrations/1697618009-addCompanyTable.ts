@@ -62,12 +62,6 @@ export const addCompanyTable: TenantMigrationTableAction[] = [
         columnType: 'uuid',
         action: TenantMigrationColumnActionType.CREATE,
       },
-      {
-        columnName: 'accountOwnerId',
-        referencedTableName: 'workspaceMember',
-        referencedTableColumnName: 'id',
-        action: TenantMigrationColumnActionType.RELATION,
-      },
     ],
   },
 ];

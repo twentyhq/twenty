@@ -1,4 +1,7 @@
-import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
+import {
+  TenantMigrationColumnActionType,
+  TenantMigrationTableAction,
+} from 'src/metadata/tenant-migration/tenant-migration.entity';
 
 export const addPersonTable: TenantMigrationTableAction[] = [
   {
@@ -8,6 +11,12 @@ export const addPersonTable: TenantMigrationTableAction[] = [
   {
     name: 'person',
     action: 'alter',
-    columns: [],
+    columns: [
+      {
+        columnName: 'companyId',
+        columnType: 'uuid',
+        action: TenantMigrationColumnActionType.CREATE,
+      },
+    ],
   },
 ];
