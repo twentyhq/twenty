@@ -1,5 +1,6 @@
 import { BrowserRouter as Router } from "react-router-dom";
 import { EntityChip } from "@/ui/display/chip/components/EntityChip";
+import { IconComponent } from "@/ui/display/icon/types/IconComponent";
 
 export const MyComponent = () => {
   return (
@@ -9,10 +10,10 @@ export const MyComponent = () => {
           linkToEntity="/entity-link"
           entityId="entityTest"
           name="Entity name"
-          pictureUrl
+          pictureUrl=""
           avatarType="rounded"
           variant="regular"
-          LeftIcon
+          LeftIcon={IconComponent}
         />
       </Router>
     </>

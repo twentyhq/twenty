@@ -1,7 +1,6 @@
 import { ProgressBar } from "@/ui/feedback/progress-bar/components/ProgressBar";
 export const MyComponent = () => {
   return (
-    <>
       <div
         style={{
           display: "flex",
@@ -28,6 +27,5 @@ export const MyComponent = () => {
           />
         </div>
       </div>
-    </>
   );
 };
