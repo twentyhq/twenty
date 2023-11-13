@@ -64,11 +64,12 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     }
 
     const createdFields = await this.fieldMetadataService.createMany([
+      // FROM
       {
-        name: record.name,
-        label: record.label,
+        name: record.fromName,
+        label: record.fromLabel,
         description: record.description,
-        icon: record.icon,
+        icon: record.fromIcon,
         isCustom: true,
         targetColumnMap: {},
         isActive: true,
@@ -76,14 +77,12 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         objectMetadataId: record.fromObjectMetadataId,
         workspaceId: record.workspaceId,
       },
-      // NOTE: Since we have to create the field-metadata for the user, we need to use the toObjectMetadata info.
-      // This is not ideal because we might see some conflicts with existing names.
-      // NOTE2: Once MANY_TO_MANY is supported, we need to use namePlural/labelPlural instead.
+      // TO
       {
-        name: objectMetadataMap[record.fromObjectMetadataId].nameSingular,
-        label: objectMetadataMap[record.fromObjectMetadataId].labelSingular,
+        name: record.toName,
+        label: record.toLabel,
         description: undefined,
-        icon: objectMetadataMap[record.fromObjectMetadataId].icon,
+        icon: record.toIcon,
         isCustom: true,
         targetColumnMap: {},
         isActive: true,
