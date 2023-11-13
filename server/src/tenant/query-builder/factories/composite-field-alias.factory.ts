@@ -98,7 +98,7 @@ export class CompositeFieldAliasFactory {
 
     // Otherwise it means it's a relation destination is of kind ONE
     return `
-      ${fieldKey}: ${referencedObjectMetadata.targetTableName} {
+      ${fieldKey} {
         ${this.fieldsStringFactory.createFieldsStringRecursive(
           info,
           fieldValue,

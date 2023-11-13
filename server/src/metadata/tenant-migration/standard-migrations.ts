@@ -10,6 +10,12 @@ import { addPipelineStepTable } from 'src/metadata/tenant-migration/migrations/1
 import { addWebhookTable } from 'src/metadata/tenant-migration/migrations/1697618024-addWebhookTable';
 import { addWorkspaceMemberSettingTable } from 'src/metadata/tenant-migration/migrations/1697618025-addWorkspaceMemberSettingTable';
 import { addWorkspaceMemberTable } from 'src/metadata/tenant-migration/migrations/1697618026-addWorspaceMemberTable';
+import { addCompanyRelations } from 'src/metadata/tenant-migration/migrations/1697618027-addCompanyRelations';
+import { addAttachmentRelations } from 'src/metadata/tenant-migration/migrations/1697618028-addAttachmentRelations';
+import { addPersonRelations } from 'src/metadata/tenant-migration/migrations/1697618029-addPersonRelations';
+import { addFavoriteRelations } from 'src/metadata/tenant-migration/migrations/1697618030-addFavoriteRelations';
+import { addOpportunitiesRelations } from 'src/metadata/tenant-migration/migrations/1697618031-addOpportunitiesRelations';
+import { addActivityTargetRelations } from 'src/metadata/tenant-migration/migrations/1697618032-addActivityTargetRelations';
 
 import { addCompanyTable } from './migrations/1697618009-addCompanyTable';
 import { addViewTable } from './migrations/1697618011-addViewTable';
@@ -19,6 +25,7 @@ import { addViewSortTable } from './migrations/1697618014-addViewSortTable';
 
 // TODO: read the folder and return all migrations
 export const standardMigrations = {
+  '1697618009-addCompanyTable': addCompanyTable,
   '1697618011-addViewTable': addViewTable,
   '1697618012-addViewFieldTable': addViewFieldTable,
   '1697618013-addViewFilterTable': addViewFilterTable,
@@ -36,5 +43,10 @@ export const standardMigrations = {
   '1697618024-addWebhookTable': addWebhookTable,
   '1697618025-addWorkspaceMemberSettingTable': addWorkspaceMemberSettingTable,
   '1697618026-addWorkspaceMemberTable': addWorkspaceMemberTable,
-  '1697618009-addCompanyTable': addCompanyTable,
+  '1697618027-addCompanyRelations': addCompanyRelations,
+  '1697618028-addAttachmentRelations': addAttachmentRelations,
+  '1697618029-addPersonRelations': addPersonRelations,
+  '1697618030-addFavoriteRelations': addFavoriteRelations,
+  '1697618031-addOpportunitiesRelations': addOpportunitiesRelations,
+  '1697618032-addActivityTargetRelations': addActivityTargetRelations,
 };
