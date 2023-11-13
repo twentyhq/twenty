@@ -56,6 +56,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       targetTableName: `_${record.nameSingular}`,
       isActive: true,
       isCustom: true,
+      isSystem: false,
     });
 
     await this.tenantMigrationService.createCustomMigration(
