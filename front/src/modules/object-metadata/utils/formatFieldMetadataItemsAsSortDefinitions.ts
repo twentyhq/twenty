@@ -10,22 +10,24 @@ export const formatFieldMetadataItemsAsSortDefinitions = ({
   fields: Array<ObjectMetadataItem['fields'][0]>;
   icons: Record<string, any>;
 }): SortDefinition[] =>
-  fields.reduce(
-    (acc, field) =>
-      [
+  fields.reduce((acc, field) => {
+    if (
+      ![
         FieldMetadataType.Date,
         FieldMetadataType.Number,
         FieldMetadataType.Text,
         FieldMetadataType.Boolean,
       ].includes(field.type)
-        ? [
-            ...acc,
-            {
-              fieldMetadataId: field.id,
-              label: field.label,
-              Icon: icons[field.icon ?? 'Icon123'],
-            },
-          ]
-        : acc,
-    [] as SortDefinition[],
-  );
+    ) {
+      return acc;
+    }
+
+    return [
+      ...acc,
+      {
+        fieldMetadataId: field.id,
+        label: field.label,
+        Icon: icons[field.icon ?? 'Icon123'],
+      },
+    ];
+  }, [] as SortDefinition[]);
