@@ -17,7 +17,7 @@ import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-me
 export class CreateRelationInput {
   @IsEnum(RelationMetadataType)
   @IsNotEmpty()
-  @Field()
+  @Field(() => RelationMetadataType)
   relationType: RelationMetadataType;
 
   @IsUUID()

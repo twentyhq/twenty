@@ -1,3 +1,5 @@
+import { registerEnumType } from '@nestjs/graphql';
+
 import {
   Column,
   CreateDateColumn,
@@ -19,6 +21,11 @@ export enum RelationMetadataType {
   ONE_TO_MANY = 'ONE_TO_MANY',
   MANY_TO_MANY = 'MANY_TO_MANY',
 }
+
+registerEnumType(RelationMetadataType, {
+  name: 'RelationMetadataType',
+  description: 'Type of the relation',
+});
 
 @Entity('relationMetadata')
 export class RelationMetadataEntity implements RelationMetadataInterface {
