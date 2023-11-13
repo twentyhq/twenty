@@ -64,7 +64,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     }
 
     const createdFields = await this.fieldMetadataService.createMany([
-      
+      // FROM
       {
         name: record.fromName,
         label: record.fromLabel,
@@ -77,6 +77,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         objectMetadataId: record.fromObjectMetadataId,
         workspaceId: record.workspaceId,
       },
+      // TO
       {
         name: record.toName,
         label: record.toLabel,
