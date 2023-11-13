@@ -82,7 +82,7 @@ export const seedViewFieldMetadata = async (
         targetColumnMap: {},
         description: 'View Fields',
         icon: null,
-        isNullable: false,
+        isNullable: true,
       },
     ])
     .execute();

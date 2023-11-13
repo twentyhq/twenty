@@ -45,6 +45,40 @@ export const turnFiltersIntoWhereClauseV2 = (
               `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
             );
         }
+      case 'NUMBER':
+        switch (filter.operand) {
+          case ViewFilterOperand.GreaterThan:
+            whereClause[correspondingField.name] = {
+              gte: parseFloat(filter.value),
+            };
+            return;
+          case ViewFilterOperand.LessThan:
+            whereClause[correspondingField.name] = {
+              lte: parseFloat(filter.value),
+            };
+            return;
+          default:
+            throw new Error(
+              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            );
+        }
+      case 'DATE':
+        switch (filter.operand) {
+          case ViewFilterOperand.GreaterThan:
+            whereClause[correspondingField.name] = {
+              gte: filter.value,
+            };
+            return;
+          case ViewFilterOperand.LessThan:
+            whereClause[correspondingField.name] = {
+              lte: filter.value,
+            };
+            return;
+          default:
+            throw new Error(
+              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            );
+        }
       default:
         throw new Error('Unknown filter type');
     }
