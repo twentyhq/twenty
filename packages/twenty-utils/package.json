@@ -5,5 +5,8 @@
   },
   "dependencies": {
     "semver": "^7.5.4"
+  },
+  "devDependencies": {
+    "danger": "^11.3.0"
   }
 }

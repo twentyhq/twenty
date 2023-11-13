@@ -1,0 +1,22 @@
+name: CI Utils
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+jobs:
+  danger-js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: Utils / Install Dependencies
+        run: cd packages/twenty-utils && yarn
+      - name: Utils / Run Danger.js
+        run: cd packages/twenty-utils && yarn danger ci
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
