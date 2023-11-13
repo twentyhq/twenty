@@ -123,6 +123,11 @@ export type AuthTokenPair = {
   refreshToken: AuthToken;
 };
 
+export type BooleanFieldComparison = {
+  is?: InputMaybe<Scalars['Boolean']['input']>;
+  isNot?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export enum ColorScheme {
   Dark = 'Dark',
   Light = 'Light',
@@ -207,7 +212,7 @@ export type CreateRelationInput = {
   fromLabel: Scalars['String']['input'];
   fromName: Scalars['String']['input'];
   fromObjectMetadataId: Scalars['String']['input'];
-  relationType: Scalars['String']['input'];
+  relationType: RelationMetadataType;
   toIcon?: InputMaybe<Scalars['String']['input']>;
   toLabel: Scalars['String']['input'];
   toName: Scalars['String']['input'];
@@ -452,15 +457,32 @@ export enum FieldMetadataType {
   Date = 'DATE',
   Email = 'EMAIL',
   Enum = 'ENUM',
-  Probability = 'PROBABILITY',
   Money = 'MONEY',
   Number = 'NUMBER',
   Phone = 'PHONE',
+  Probability = 'PROBABILITY',
   Relation = 'RELATION',
   Text = 'TEXT',
   Url = 'URL',
   Uuid = 'UUID'
 }
+
+export type IdFilterComparison = {
+  eq?: InputMaybe<Scalars['ID']['input']>;
+  gt?: InputMaybe<Scalars['ID']['input']>;
+  gte?: InputMaybe<Scalars['ID']['input']>;
+  iLike?: InputMaybe<Scalars['ID']['input']>;
+  in?: InputMaybe<Array<Scalars['ID']['input']>>;
+  is?: InputMaybe<Scalars['Boolean']['input']>;
+  isNot?: InputMaybe<Scalars['Boolean']['input']>;
+  like?: InputMaybe<Scalars['ID']['input']>;
+  lt?: InputMaybe<Scalars['ID']['input']>;
+  lte?: InputMaybe<Scalars['ID']['input']>;
+  neq?: InputMaybe<Scalars['ID']['input']>;
+  notILike?: InputMaybe<Scalars['ID']['input']>;
+  notIn?: InputMaybe<Array<Scalars['ID']['input']>>;
+  notLike?: InputMaybe<Scalars['ID']['input']>;
+};
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -527,6 +549,7 @@ export type ObjectDeleteResponse = {
   id?: Maybe<Scalars['ID']['output']>;
   isActive?: Maybe<Scalars['Boolean']['output']>;
   isCustom?: Maybe<Scalars['Boolean']['output']>;
+  isSystem?: Maybe<Scalars['Boolean']['output']>;
   labelPlural?: Maybe<Scalars['String']['output']>;
   labelSingular?: Maybe<Scalars['String']['output']>;
   namePlural?: Maybe<Scalars['String']['output']>;
@@ -658,6 +681,7 @@ export type QueryObjectArgs = {
 
 
 export type QueryObjectsArgs = {
+  filter?: ObjectFilter;
   paging?: CursorPaging;
 };
 
@@ -680,6 +704,13 @@ export type RelationConnection = {
   /** Fetch total count of records */
   totalCount: Scalars['Int']['output'];
 };
+
+/** Type of the relation */
+export enum RelationMetadataType {
+  ManyToMany = 'MANY_TO_MANY',
+  OneToMany = 'ONE_TO_MANY',
+  OneToOne = 'ONE_TO_ONE'
+}
 
 export type Support = {
   __typename?: 'Support';
@@ -850,6 +881,7 @@ export type Object = {
   id: Scalars['ID']['output'];
   isActive: Scalars['Boolean']['output'];
   isCustom: Scalars['Boolean']['output'];
+  isSystem: Scalars['Boolean']['output'];
   labelPlural: Scalars['String']['output'];
   labelSingular: Scalars['String']['output'];
   namePlural: Scalars['String']['output'];
@@ -870,6 +902,15 @@ export type ObjectEdge = {
   node: Object;
 };
 
+export type ObjectFilter = {
+  and?: InputMaybe<Array<ObjectFilter>>;
+  id?: InputMaybe<IdFilterComparison>;
+  isActive?: InputMaybe<BooleanFieldComparison>;
+  isCustom?: InputMaybe<BooleanFieldComparison>;
+  isSystem?: InputMaybe<BooleanFieldComparison>;
+  or?: InputMaybe<Array<ObjectFilter>>;
+};
+
 export type Relation = {
   __typename?: 'relation';
   createdAt: Scalars['DateTime']['output'];
@@ -877,7 +918,7 @@ export type Relation = {
   fromObjectMetadata: Object;
   fromObjectMetadataId: Scalars['String']['output'];
   id: Scalars['ID']['output'];
-  relationType: Scalars['String']['output'];
+  relationType: RelationMetadataType;
   toFieldMetadataId: Scalars['String']['output'];
   toObjectMetadata: Object;
   toObjectMetadataId: Scalars['String']['output'];
@@ -939,7 +980,7 @@ export type DeleteOneFieldMetadataItemMutation = { __typename?: 'Mutation', dele
 export type ObjectMetadataItemsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ObjectMetadataItemsQuery = { __typename?: 'Query', objects: { __typename?: 'ObjectConnection', totalCount: number, edges: Array<{ __typename?: 'objectEdge', node: { __typename?: 'object', id: string, dataSourceId: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isActive: boolean, createdAt: any, updatedAt: any, fields: { __typename?: 'ObjectFieldsConnection', totalCount: number, edges: Array<{ __typename?: 'fieldEdge', node: { __typename?: 'field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, placeholder?: string | null, isCustom: boolean, isActive: boolean, isNullable: boolean, createdAt: any, updatedAt: any, fromRelationMetadata?: { __typename?: 'relation', id: string, relationType: string } | null, toRelationMetadata?: { __typename?: 'relation', id: string, relationType: string } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } };
+export type ObjectMetadataItemsQuery = { __typename?: 'Query', objects: { __typename?: 'ObjectConnection', totalCount: number, edges: Array<{ __typename?: 'objectEdge', node: { __typename?: 'object', id: string, dataSourceId: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isActive: boolean, createdAt: any, updatedAt: any, fields: { __typename?: 'ObjectFieldsConnection', totalCount: number, edges: Array<{ __typename?: 'fieldEdge', node: { __typename?: 'field', id: string, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, placeholder?: string | null, isCustom: boolean, isActive: boolean, isNullable: boolean, createdAt: any, updatedAt: any, fromRelationMetadata?: { __typename?: 'relation', id: string, relationType: RelationMetadataType } | null, toRelationMetadata?: { __typename?: 'relation', id: string, relationType: RelationMetadataType } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } };
 
 
 export const CreateOneObjectMetadataItemDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateOneObjectMetadataItem"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateOneObjectInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createOneObject"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"dataSourceId"}},{"kind":"Field","name":{"kind":"Name","value":"nameSingular"}},{"kind":"Field","name":{"kind":"Name","value":"namePlural"}},{"kind":"Field","name":{"kind":"Name","value":"labelSingular"}},{"kind":"Field","name":{"kind":"Name","value":"labelPlural"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<CreateOneObjectMetadataItemMutation, CreateOneObjectMetadataItemMutationVariables>;
