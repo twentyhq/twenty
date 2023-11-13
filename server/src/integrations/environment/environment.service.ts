@@ -6,6 +6,7 @@ import { AwsRegion } from './interfaces/aws-region.interface';
 import { StorageType } from './interfaces/storage.interface';
 import { SupportDriver } from './interfaces/support.interface';
 import { LoggerDriver } from './interfaces/logger.interface';
+import { MessageQueueType } from './interfaces/message-queue.interface';
 
 @Injectable()
 export class EnvironmentService {
@@ -35,6 +36,14 @@ export class EnvironmentService {
 
   getPGDatabaseUrl(): string {
     return this.configService.get<string>('PG_DATABASE_URL')!;
+  }
+
+  getRedisHost(): string {
+    return this.configService.get<string>('REDIS_HOST') ?? '127.0.0.1';
+  }
+
+  getRedisPort(): number {
+    return +(this.configService.get<string>('REDIS_PORT') ?? 6379);
   }
 
   getFrontBaseUrl(): string {
@@ -99,6 +108,13 @@ export class EnvironmentService {
   getStorageType(): StorageType {
     return (
       this.configService.get<StorageType>('STORAGE_TYPE') ?? StorageType.Local
+    );
+  }
+
+  getMessageQueueType(): MessageQueueType {
+    return (
+      this.configService.get<MessageQueueType>('MESSAGE_QUEUE_TYPE') ??
+      MessageQueueType.PgBoss
     );
   }
 
