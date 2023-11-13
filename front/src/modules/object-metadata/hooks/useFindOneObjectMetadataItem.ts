@@ -7,14 +7,12 @@ import { generateFindOneCustomObjectQuery } from '@/object-record/utils/generate
 import { generateUpdateOneObjectMutation } from '@/object-record/utils/generateUpdateOneObjectMutation';
 import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
-import { FilterDefinition } from '@/ui/object/object-filter-dropdown/types/FilterDefinition';
-import { SortDefinition } from '@/ui/object/object-sort-dropdown/types/SortDefinition';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
 import { formatFieldMetadataItemAsColumnDefinition } from '../utils/formatFieldMetadataItemAsColumnDefinition';
-import { formatFieldMetadataItemAsFilterDefinition } from '../utils/formatFieldMetadataItemAsFilterDefinition';
-import { formatFieldMetadataItemAsSortDefinition } from '../utils/formatFieldMetadataItemAsSortDefinition';
+import { formatFieldMetadataItemsAsFilterDefinitions } from '../utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { formatFieldMetadataItemsAsSortDefinitions } from '../utils/formatFieldMetadataItemsAsSortDefinitions';
 
 import { useFindManyObjectMetadataItems } from './useFindManyObjectMetadataItems';
 
@@ -66,19 +64,15 @@ export const useFindOneObjectMetadataItem = ({
         )
       : [];
 
-  const filterDefinitions: FilterDefinition[] = activeFields.map((field) =>
-    formatFieldMetadataItemAsFilterDefinition({
-      field,
-      icons,
-    }),
-  );
+  const filterDefinitions = formatFieldMetadataItemsAsFilterDefinitions({
+    fields: activeFields,
+    icons,
+  });
 
-  const sortDefinitions: SortDefinition[] = activeFields.map((field) =>
-    formatFieldMetadataItemAsSortDefinition({
-      field,
-      icons,
-    }),
-  );
+  const sortDefinitions = formatFieldMetadataItemsAsSortDefinitions({
+    fields: activeFields,
+    icons,
+  });
 
   const findManyQuery = foundObjectMetadataItem
     ? generateFindManyCustomObjectsQuery({
