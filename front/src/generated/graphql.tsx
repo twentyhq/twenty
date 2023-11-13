@@ -2558,6 +2558,16 @@ export enum QueryMode {
   Insensitive = 'insensitive'
 }
 
+export type RelationConnection = {
+  __typename?: 'RelationConnection';
+  /** Array of edges. */
+  edges: Array<RelationEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+  /** Fetch total count of records */
+  totalCount: Scalars['Int'];
+};
+
 export enum SortOrder {
   Asc = 'asc',
   Desc = 'desc'
