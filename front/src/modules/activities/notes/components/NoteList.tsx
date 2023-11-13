@@ -59,7 +59,11 @@ export const NoteList = ({ title, notes, button }: NoteListProps) => (
         </StyledTitleBar>
         <StyledNoteContainer>
           {notes.map((note) => (
-            <NoteCard key={note.id} note={note} />
+            <NoteCard
+              key={note.id}
+              note={note}
+              isSingleNote={notes.length == 1}
+            />
           ))}
         </StyledNoteContainer>
       </StyledContainer>

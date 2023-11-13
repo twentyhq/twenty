@@ -1,5 +1,6 @@
 {
   "name": "twenty-utils",
+  "private": true,
   "scripts": {
     "release": "node release.js"
   },
