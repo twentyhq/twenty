@@ -124,8 +124,8 @@ const StyledCompactIconContainer = styled.div`
 `;
 
 const StyledIconEye = styled(IconEye)`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  height: 24px;
+  color: ${({ theme }) => theme.font.color.light};
+  height: 16px;
   padding-bottom: ${({ theme }) => theme.spacing(0.2)};
   padding-left: ${({ theme }) => theme.spacing(0.5)};
   padding-right: ${({ theme }) => theme.spacing(0.5)};
