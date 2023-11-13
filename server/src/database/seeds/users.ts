@@ -27,7 +27,7 @@ export const seedUsers = async (prisma: PrismaClient) => {
             id: 'twenty-7ef9d213-1c25-4d02-bf35-6aeccf7ea419',
           },
           create: {
-            workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+            workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
             settingsId: 'twenty-ge256b39-3ec3-4fe3-8997-9dcb1084c109',
           },
         },
@@ -57,7 +57,7 @@ export const seedUsers = async (prisma: PrismaClient) => {
       workspaceMember: {
         create: {
           id: 'twenty-7ef9d213-1c25-4d02-bf35-6aeccf7ea419',
-          workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+          workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
           settingsId: 'twenty-ge256b39-3ec3-4fe3-8997-2c4a2035a215',
         },
       },
@@ -86,7 +86,7 @@ export const seedUsers = async (prisma: PrismaClient) => {
       workspaceMember: {
         create: {
           id: 'twenty-7ed9d213-1c25-4d02-bf35-6aeccf7ea419',
-          workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+          workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
           settingsId: 'twenty-ge256b39-3ec3-4fe3-8997-8e1f2097b328',
         },
       },

@@ -1,6 +1,12 @@
 import { DataSource } from 'typeorm';
 
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
+import { SeedViewFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/view';
+import { SeedViewFieldFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/view-field';
+import { SeedWorkspaceId } from 'src/database/seeds/metadata';
+import { SeedViewFilterFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/view-filter';
+import { SeedViewSortFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/view-sort';
 
 const tableName = 'relationMetadata';
 
@@ -23,11 +29,27 @@ export const seedViewRelationMetadata = async (
     .values([
       {
         relationType: RelationMetadataType.ONE_TO_MANY,
-        fromObjectMetadataId: '9ab6b3dc-767f-473f-8fd0-6cdbefbf8dbe', // View
-        toObjectMetadataId: '61d9000b-485c-4c48-a22e-0d9a164f9647', // ViewField
-        fromFieldMetadataId: '064eb439-fdfa-4246-a13a-989c5bcc4d97', // View > ViewFields
-        toFieldMetadataId: 'a9a56210-a154-4965-9ace-c35f6dc43ee5', // ViewField > View
-        workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+        fromObjectMetadataId: SeedObjectMetadataIds.View,
+        toObjectMetadataId: SeedObjectMetadataIds.ViewField,
+        fromFieldMetadataId: SeedViewFieldMetadataIds.ViewFields,
+        toFieldMetadataId: SeedViewFieldFieldMetadataIds.View,
+        workspaceId: SeedWorkspaceId,
+      },
+      {
+        relationType: RelationMetadataType.ONE_TO_MANY,
+        fromObjectMetadataId: SeedObjectMetadataIds.View,
+        toObjectMetadataId: SeedObjectMetadataIds.ViewFilter,
+        fromFieldMetadataId: SeedViewFieldMetadataIds.ViewFilters,
+        toFieldMetadataId: SeedViewFilterFieldMetadataIds.View,
+        workspaceId: SeedWorkspaceId,
+      },
+      {
+        relationType: RelationMetadataType.ONE_TO_MANY,
+        fromObjectMetadataId: SeedObjectMetadataIds.View,
+        toObjectMetadataId: SeedObjectMetadataIds.ViewSort,
+        fromFieldMetadataId: SeedViewFieldMetadataIds.ViewSorts,
+        toFieldMetadataId: SeedViewSortFieldMetadataIds.View,
+        workspaceId: SeedWorkspaceId,
       },
     ])
     .execute();

@@ -139,6 +139,9 @@ export class QueryRunnerService {
         workspaceId,
       )};
     `);
+    console.log('ho');
+    console.log(query);
+    console.log('ha');
 
     return workspaceDataSource?.query<PGGraphQLResult>(`
       SELECT graphql.resolve($$

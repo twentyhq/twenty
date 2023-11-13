@@ -86,6 +86,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         'fields.fromRelationMetadata.toObjectMetadata.fields',
         'fields.toRelationMetadata',
         'fields.toRelationMetadata.fromObjectMetadata',
+        'fields.toRelationMetadata.fromObjectMetadata.fields',
         'fields.toRelationMetadata.toObjectMetadata',
       ],
     });
@@ -102,6 +103,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         'fields.fromRelationMetadata.toObjectMetadata.fields',
         'fields.toRelationMetadata',
         'fields.toRelationMetadata.fromObjectMetadata',
+        'fields.toRelationMetadata.fromObjectMetadata.fields',
         'fields.toRelationMetadata.toObjectMetadata',
       ],
     });

@@ -32,6 +32,42 @@ export const addCompanyTable: TenantMigrationTableAction[] = [
         columnType: 'integer',
         action: TenantMigrationColumnActionType.CREATE,
       },
+      {
+        columnName: 'linkedinUrl_link',
+        columnType: 'varchar',
+        action: TenantMigrationColumnActionType.CREATE,
+      },
+      {
+        columnName: 'linkedinUrl',
+        columnType: 'varchar',
+        action: TenantMigrationColumnActionType.CREATE,
+      },
+      {
+        columnName: 'xUrl',
+        columnType: 'varchar',
+        action: TenantMigrationColumnActionType.CREATE,
+      },
+      {
+        columnName: 'annualRecurringRevenue',
+        columnType: 'float',
+        action: TenantMigrationColumnActionType.CREATE,
+      },
+      {
+        columnName: 'idealCustomerProfile',
+        columnType: 'boolean',
+        action: TenantMigrationColumnActionType.CREATE,
+      },
+      {
+        columnName: 'accountOwnerId',
+        columnType: 'uuid',
+        action: TenantMigrationColumnActionType.CREATE,
+      },
+      {
+        columnName: 'accountOwnerId',
+        referencedTableName: 'workspaceMember',
+        referencedTableColumnName: 'id',
+        action: TenantMigrationColumnActionType.RELATION,
+      },
     ],
   },
 ];

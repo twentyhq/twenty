@@ -28,6 +28,7 @@ export function generateTargetColumnMap(
     case FieldMetadataType.PHONE:
     case FieldMetadataType.EMAIL:
     case FieldMetadataType.NUMBER:
+    case FieldMetadataType.PROBABILITY:
     case FieldMetadataType.BOOLEAN:
     case FieldMetadataType.DATE:
       return {
@@ -70,11 +71,12 @@ export function convertFieldMetadataToColumnActions(
         },
       ];
     case FieldMetadataType.NUMBER:
+    case FieldMetadataType.PROBABILITY:
       return [
         {
           action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.value,
-          columnType: 'integer',
+          columnType: 'float',
         },
       ];
     case FieldMetadataType.BOOLEAN:

@@ -1,6 +1,17 @@
 import { DataSource } from 'typeorm';
 
+import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
+
 const tableName = 'view';
+
+export const enum SeedViewIds {
+  PrismaCompany = '20202020-1ad3-4d1b-81f3-d7ecba29f8d3',
+  PrismaPerson = '20202020-9adf-4768-bd9c-27a82fa141f1',
+  PrismaOpportunity = '20202020-ffc7-4c81-bb41-d4baed4ed685',
+  Company = '20202020-2441-4424-8163-4002c523d415',
+  Person = '20202020-1979-447d-8115-593744eb4ead',
+  Opportunity = '20202020-b2b3-48a5-96ce-0936d6af21f7',
+}
 
 export const seedViews = async (
   workspaceDataSource: DataSource,
@@ -18,28 +29,40 @@ export const seedViews = async (
     .orIgnore()
     .values([
       {
-        id: '37a8a866-eb17-4e76-9382-03143a2f6a80',
+        id: SeedViewIds.PrismaCompany,
         name: 'All companies',
         objectMetadataId: 'company',
         type: 'table',
       },
       {
-        id: '6095799e-b48f-4e00-b071-10818083593a',
+        id: SeedViewIds.PrismaPerson,
         name: 'All people',
         objectMetadataId: 'person',
         type: 'table',
       },
       {
-        id: 'e26f66b7-f890-4a5c-b4d2-ec09987b5308',
+        id: SeedViewIds.PrismaOpportunity,
         name: 'All opportunities',
         objectMetadataId: 'company',
         type: 'kanban',
       },
       {
-        id: '10bec73c-0aea-4cc4-a3b2-8c2186f29b43',
-        name: 'All Companies (V2)',
-        objectMetadataId: '1a8487a0-480c-434e-b4c7-e22408b97047',
+        id: SeedViewIds.Company,
+        name: 'All Companies',
+        objectMetadataId: SeedObjectMetadataIds.Company,
         type: 'table',
+      },
+      {
+        id: SeedViewIds.Person,
+        name: 'All People',
+        objectMetadataId: SeedObjectMetadataIds.Company,
+        type: 'table',
+      },
+      {
+        id: SeedViewIds.Opportunity,
+        name: 'All Opportunities',
+        objectMetadataId: SeedObjectMetadataIds.Opportunity,
+        type: 'kanban',
       },
     ])
     .execute();

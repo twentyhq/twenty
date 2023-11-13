@@ -68,10 +68,10 @@ export class CompositeFieldAliasFactory {
       fieldMetadata.objectMetadataId,
       relationMetadata,
     );
-    const targetTableName =
+    const referencedObjectMetadata =
       relationDirection == RelationDirection.TO
-        ? relationMetadata.fromObjectMetadata.targetTableName
-        : relationMetadata.toObjectMetadata.targetTableName;
+        ? relationMetadata.fromObjectMetadata
+        : relationMetadata.toObjectMetadata;
 
     // If it's a relation destination is of kind MANY, we need to add the collection suffix and extract the args
     if (
@@ -84,7 +84,7 @@ export class CompositeFieldAliasFactory {
         relationMetadata.toObjectMetadata.fields ?? [],
       );
       return `
-      ${fieldKey}: ${targetTableName}Collection${
+      ${fieldKey}: ${referencedObjectMetadata.targetTableName}Collection${
         argsString ? `(${argsString})` : ''
       } {
         ${this.fieldsStringFactory.createFieldsStringRecursive(
@@ -98,11 +98,11 @@ export class CompositeFieldAliasFactory {
 
     // Otherwise it means it's a relation destination is of kind ONE
     return `
-      ${fieldKey}: ${targetTableName} {
+      ${fieldKey}: ${referencedObjectMetadata.targetTableName} {
         ${this.fieldsStringFactory.createFieldsStringRecursive(
           info,
           fieldValue,
-          relationMetadata.toObjectMetadata.fields ?? [],
+          referencedObjectMetadata.fields ?? [],
         )}
       }
     `;
