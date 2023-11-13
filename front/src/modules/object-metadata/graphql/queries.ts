@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 
 export const FIND_MANY_METADATA_OBJECTS = gql`
   query ObjectMetadataItems {
-    objects(paging: { first: 1000 }) {
+    objects(paging: { first: 1000 }, filter: { isSystem: { is: false } }) {
       edges {
         node {
           id
@@ -15,6 +15,7 @@ export const FIND_MANY_METADATA_OBJECTS = gql`
           icon
           isCustom
           isActive
+          isSystem
           createdAt
           updatedAt
           fields(paging: { first: 1000 }) {
