@@ -18,5 +18,5 @@ jobs:
       - name: Utils / Run Danger.js
         run: cd packages/twenty-utils && yarn danger ci
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ TOKEN_FOR_GITHUB_BOT }}
 
