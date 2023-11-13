@@ -26,6 +26,7 @@ export const RecordTableEffect = () => {
     setViewObjectMetadataId,
   } = useView();
 
+  //Remove
   useRecordTable();
 
   useEffect(() => {
