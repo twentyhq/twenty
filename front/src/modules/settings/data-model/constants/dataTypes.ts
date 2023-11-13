@@ -5,6 +5,7 @@ import {
   IconLink,
   IconNumbers,
   IconPlug,
+  IconTag,
   IconTextSize,
 } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
@@ -36,6 +37,11 @@ export const dataTypes: Record<
     label: 'Date',
     Icon: IconCalendarEvent,
     defaultValue: defaultDateValue.toISOString(),
+  },
+  ENUM: {
+    label: 'Select',
+    Icon: IconTag,
+    defaultValue: { color: 'green', text: 'Option 1' },
   },
   MONEY: {
     label: 'Currency',

@@ -6,6 +6,7 @@ import { DateFieldDisplay } from '../meta-types/display/components/DateFieldDisp
 import { DoubleTextChipFieldDisplay } from '../meta-types/display/components/DoubleTextChipFieldDisplay';
 import { DoubleTextFieldDisplay } from '../meta-types/display/components/DoubleTextFieldDisplay';
 import { EmailFieldDisplay } from '../meta-types/display/components/EmailFieldDisplay';
+import { EnumFieldDisplay } from '../meta-types/display/components/EnumFieldDisplay';
 import { MoneyAmountV2FieldDisplay } from '../meta-types/display/components/MoneyAmountV2FieldDisplay';
 import { MoneyFieldDisplay } from '../meta-types/display/components/MoneyFieldDisplay';
 import { NumberFieldDisplay } from '../meta-types/display/components/NumberFieldDisplay';
@@ -19,6 +20,7 @@ import { isFieldDate } from '../types/guards/isFieldDate';
 import { isFieldDoubleText } from '../types/guards/isFieldDoubleText';
 import { isFieldDoubleTextChip } from '../types/guards/isFieldDoubleTextChip';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
+import { isFieldEnum } from '../types/guards/isFieldEnum';
 import { isFieldMoney } from '../types/guards/isFieldMoney';
 import { isFieldMoneyAmountV2 } from '../types/guards/isFieldMoneyAmountV2';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
@@ -59,6 +61,8 @@ export const FieldDisplay = () => {
         <DoubleTextChipFieldDisplay />
       ) : isFieldDoubleText(fieldDefinition) ? (
         <DoubleTextFieldDisplay />
+      ) : isFieldEnum(fieldDefinition) ? (
+        <EnumFieldDisplay />
       ) : (
         <></>
       )}
