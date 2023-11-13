@@ -14,29 +14,21 @@ export const ObjectMetadataNavItems = () => {
 
   return (
     <>
-      {objectMetadataItems
-        .filter(
-          (objectMetadataItem) =>
-            objectMetadataItem.isActive &&
-            !objectMetadataItem.namePlural.endsWith('V2'),
-        )
-        .map((objectMetadataItem) => {
-          return (
-            <NavItem
-              key={objectMetadataItem.id}
-              label={objectMetadataItem.labelPlural}
-              to={`/objects/${objectMetadataItem.namePlural}`}
-              Icon={
-                objectMetadataItem.icon
-                  ? icons[objectMetadataItem.icon]
-                  : Icon123
-              }
-              onClick={() => {
-                navigate(`/objects/${objectMetadataItem.namePlural}`);
-              }}
-            />
-          );
-        })}
+      {objectMetadataItems.map((objectMetadataItem) => {
+        return (
+          <NavItem
+            key={objectMetadataItem.id}
+            label={objectMetadataItem.labelPlural}
+            to={`/objects/${objectMetadataItem.namePlural}`}
+            Icon={
+              objectMetadataItem.icon ? icons[objectMetadataItem.icon] : Icon123
+            }
+            onClick={() => {
+              navigate(`/objects/${objectMetadataItem.namePlural}`);
+            }}
+          />
+        );
+      })}
     </>
   );
 };

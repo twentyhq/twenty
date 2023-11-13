@@ -40,7 +40,6 @@ import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
           CreateDTOClass: CreateRelationInput,
           enableTotalCount: true,
           pagingStrategy: PagingStrategies.CURSOR,
-          read: { many: { disabled: true } },
           create: { many: { disabled: true } },
           update: { disabled: true },
           delete: { disabled: true },

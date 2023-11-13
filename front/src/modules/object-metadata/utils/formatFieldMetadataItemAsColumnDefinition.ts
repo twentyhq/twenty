@@ -1,8 +1,8 @@
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
-import { Field } from '~/generated-metadata/graphql';
 
+import { FieldMetadataItem } from '../types/FieldMetadataItem';
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 import { parseFieldType } from './parseFieldType';
@@ -14,7 +14,7 @@ export const formatFieldMetadataItemAsColumnDefinition = ({
   icons,
 }: {
   position: number;
-  field: Field;
+  field: FieldMetadataItem;
   objectMetadataItem: Omit<ObjectMetadataItem, 'fields'>;
   icons: Record<string, IconComponent>;
 }): ColumnDefinition<FieldMetadata> => ({

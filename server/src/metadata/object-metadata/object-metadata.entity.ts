@@ -6,12 +6,14 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 
 import { ObjectMetadataInterface } from 'src/tenant/schema-builder/interfaces/object-metadata.interface';
 
 import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 
 @Entity('objectMetadata')
 @Unique('IndexOnNameSingularAndWorkspaceIdUnique', [
@@ -53,6 +55,9 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @Column({ default: false })
   isActive: boolean;
 
+  @Column({ default: false })
+  isSystem: boolean;
+
   @Column({ nullable: false })
   workspaceId: string;
 
@@ -72,6 +77,11 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
     (relation: RelationMetadataEntity) => relation.toObjectMetadata,
   )
   toRelations: RelationMetadataEntity[];
+
+  @ManyToOne(() => DataSourceEntity, (dataSource) => dataSource.objects, {
+    onDelete: 'CASCADE',
+  })
+  dataSource: DataSourceEntity;
 
   @CreateDateColumn()
   createdAt: Date;

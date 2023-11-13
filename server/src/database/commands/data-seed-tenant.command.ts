@@ -9,9 +9,8 @@ import { TenantMigrationRunnerService } from 'src/tenant-migration-runner/tenant
 import { seedCompanies } from 'src/database/typeorm-seeds/tenant/companies';
 import { seedViewFields } from 'src/database/typeorm-seeds/tenant/view-fields';
 import { seedViews } from 'src/database/typeorm-seeds/tenant/views';
-import { seedFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata';
-import { seedObjectMetadata } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { seedMetadataSchema } from 'src/database/typeorm-seeds/metadata';
 
 // TODO: implement dry-run
 @Command({
@@ -20,7 +19,7 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
     'Seed tenant with initial data. This command is intended for development only.',
 })
 export class DataSeedTenantCommand extends CommandRunner {
-  workspaceId = 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419';
+  workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
   constructor(
     @InjectDataSource('metadata')
@@ -47,19 +46,22 @@ export class DataSeedTenantCommand extends CommandRunner {
       throw new Error('Could not connect to workspace data source');
     }
 
-    await seedObjectMetadata(this.metadataDataSource, 'metadata');
-    await seedFieldMetadata(this.metadataDataSource, 'metadata');
+    try {
+      await seedMetadataSchema(workspaceDataSource, 'metadata');
 
-    await this.tenantMigrationService.insertStandardMigrations(
-      this.workspaceId,
-    );
-    await this.migrationRunnerService.executeMigrationFromPendingMigrations(
-      this.workspaceId,
-    );
+      await this.tenantMigrationService.insertStandardMigrations(
+        this.workspaceId,
+      );
+      await this.migrationRunnerService.executeMigrationFromPendingMigrations(
+        this.workspaceId,
+      );
 
-    await seedCompanies(workspaceDataSource, dataSourceMetadata.schema);
-    await seedViewFields(workspaceDataSource, dataSourceMetadata.schema);
-    await seedViews(workspaceDataSource, dataSourceMetadata.schema);
+      await seedCompanies(workspaceDataSource, dataSourceMetadata.schema);
+      await seedViews(workspaceDataSource, dataSourceMetadata.schema);
+      await seedViewFields(workspaceDataSource, dataSourceMetadata.schema);
+    } catch (error) {
+      console.error(error);
+    }
 
     await this.typeORMService.disconnectFromDataSource(dataSourceMetadata.id);
   }

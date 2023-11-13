@@ -67,7 +67,7 @@ export const ViewBarEffect = () => {
   useFindManyObjectRecords({
     skip: !currentViewId,
     objectNamePlural: 'viewFieldsV2',
-    filter: { viewId: { eq: currentViewId } },
+    filter: { view: { eq: currentViewId } },
     onCompleted: useRecoilCallback(
       ({ snapshot, set }) =>
         async (data: PaginatedObjectTypeResults<ViewField>) => {

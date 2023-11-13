@@ -70,7 +70,7 @@ export class FilterTypeDefinitionFactory {
     for (const fieldMetadata of objectMetadata.fields) {
       // Composite field types are generated during extensin of object type definition
       if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-        continue;
+        //continue;
       }
 
       const type = this.filterTypeFactory.create(fieldMetadata, options, {

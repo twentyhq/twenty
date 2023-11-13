@@ -5,7 +5,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   DataSourceOptions,
+  OneToMany,
 } from 'typeorm';
+
+import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 
 type DataSourceType = DataSourceOptions['type'];
 
@@ -28,6 +31,11 @@ export class DataSourceEntity {
 
   @Column({ default: false })
   isRemote: boolean;
+
+  @OneToMany(() => ObjectMetadataEntity, (object) => object.dataSource, {
+    cascade: true,
+  })
+  objects: ObjectMetadataEntity[];
 
   @Column({ nullable: false })
   workspaceId: string;

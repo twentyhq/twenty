@@ -2,10 +2,10 @@ import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { Field } from '~/generated-metadata/graphql';
 
 import { dataTypes } from '../../constants/dataTypes';
 import { MetadataFieldDataType } from '../../types/ObjectFieldDataType';
@@ -14,7 +14,7 @@ import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
 type SettingsObjectFieldItemTableRowProps = {
   ActionIcon: ReactNode;
-  fieldItem: Field;
+  fieldItem: FieldMetadataItem;
 };
 
 export const StyledObjectFieldTableRow = styled(TableRow)`

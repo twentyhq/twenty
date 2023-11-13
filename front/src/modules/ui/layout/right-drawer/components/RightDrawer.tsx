@@ -56,7 +56,7 @@ export const RightDrawer = () => {
   useListenClickOutside({
     refs: [rightDrawerRef],
     callback: () => closeRightDrawer(),
-    mode: ClickOutsideMode.absolute,
+    mode: ClickOutsideMode.comparePixels,
   });
 
   const theme = useTheme();
