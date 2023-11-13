@@ -121,7 +121,7 @@ export const RecordTableV1 = ({ updateEntityMutation }: RecordTableV1Props) => {
     <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
       <StyledTableWithHeader>
         <StyledTableContainer>
-          <div ref={tableBodyRef}>
+          <div ref={tableBodyRef} onMouseLeave={leaveTableFocus}>
             <StyledTable className="entity-table-cell">
               <RecordTableHeader />
               <RecordTableBodyV1 />
