@@ -77,7 +77,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       );
     }
 
-    const foreignKeyToColumnName = `${camelCase(record.toName)}Id`;
+    const foreignKeyColumnName = `${camelCase(record.toName)}Id`;
 
     const createdFields = await this.fieldMetadataService.createMany([
       // FROM
@@ -101,7 +101,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         icon: record.toIcon,
         isCustom: true,
         targetColumnMap: {
-          value: foreignKeyToColumnName,
+          value: foreignKeyColumnName,
         },
         isActive: true,
         type: FieldMetadataType.RELATION,
@@ -131,7 +131,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
           columns: [
             {
               action: TenantMigrationColumnActionType.CREATE,
-              columnName: foreignKeyToColumnName,
+              columnName: foreignKeyColumnName,
               columnType: 'uuid',
             },
           ],
@@ -143,7 +143,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
           columns: [
             {
               action: TenantMigrationColumnActionType.RELATION,
-              columnName: foreignKeyToColumnName,
+              columnName: foreignKeyColumnName,
               referencedTableName:
                 objectMetadataMap[record.fromObjectMetadataId].targetTableName,
               referencedTableColumnName: 'id',
