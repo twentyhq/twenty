@@ -9,7 +9,6 @@ import { SeedFavoriteFieldMetadataIds } from 'src/database/typeorm-seeds/metadat
 import { SeedActivityFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/activity';
 import { SeedCommentFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/comment';
 import { SeedAttachmentFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/attachment';
-import { SeedWorkspaceMemberSettingFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/workspace-member-setting';
 
 const tableName = 'relationMetadata';
 
@@ -37,15 +36,6 @@ export const seedWorkspaceMemberRelationMetadata = async (
         fromFieldMetadataId:
           SeedWorkspaceMemberFieldMetadataIds.AccountOwnerForCompanies,
         toFieldMetadataId: SeedCompanyFieldMetadataIds.AccountOwner,
-        workspaceId: SeedWorkspaceId,
-      },
-      {
-        relationType: RelationMetadataType.ONE_TO_ONE,
-        fromObjectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
-        toObjectMetadataId: SeedObjectMetadataIds.WorkspaceMemberSetting,
-        fromFieldMetadataId: SeedWorkspaceMemberFieldMetadataIds.Settings,
-        toFieldMetadataId:
-          SeedWorkspaceMemberSettingFieldMetadataIds.WorkspaceMember,
         workspaceId: SeedWorkspaceId,
       },
       {

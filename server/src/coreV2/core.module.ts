@@ -8,7 +8,7 @@ import GraphQLJSON from 'graphql-type-json';
 // eslint-disable-next-line no-restricted-imports
 import config from '../../ormconfig';
 
-import { UserModule } from './userv2/user.module';
+import { UserModule } from './user/user.module';
 import { RefreshTokenModule } from './refresh-token/refresh-token.module';
 
 @Module({

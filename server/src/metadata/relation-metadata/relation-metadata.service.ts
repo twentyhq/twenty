@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
+import camelCase from 'lodash.camelcase';
 
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { FieldMetadataService } from 'src/metadata/field-metadata/field-metadata.service';
@@ -43,6 +44,19 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       );
     }
 
+    /**
+     * Relation types
+     *
+     * MANY TO MANY:
+     * FROM Ǝ-E TO (NOT YET SUPPORTED)
+     *
+     * ONE TO MANY:
+     * FROM --E TO (host the id in the TO table)
+     *
+     * ONE TO ONE:
+     * FROM --- TO (host the id in the TO table)
+     */
+
     const objectMetadataEntries =
       await this.objectMetadataService.findManyWithinWorkspace(
         [record.fromObjectMetadataId, record.toObjectMetadataId],
@@ -62,6 +76,8 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         'Can\t find an existing object matching fromObjectMetadataId or toObjectMetadataId',
       );
     }
+
+    const foreignKeyColumnName = `${camelCase(record.toName)}Id`;
 
     const createdFields = await this.fieldMetadataService.createMany([
       // FROM
@@ -84,7 +100,9 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         description: undefined,
         icon: record.toIcon,
         isCustom: true,
-        targetColumnMap: {},
+        targetColumnMap: {
+          value: foreignKeyColumnName,
+        },
         isActive: true,
         type: FieldMetadataType.RELATION,
         objectMetadataId: record.toObjectMetadataId,
@@ -102,10 +120,6 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       fromFieldMetadataId: createdFieldMap[record.fromObjectMetadataId].id,
       toFieldMetadataId: createdFieldMap[record.toObjectMetadataId].id,
     });
-
-    const foreignKeyColumnName = `${
-      objectMetadataMap[record.fromObjectMetadataId].targetTableName
-    }Id`;
 
     await this.tenantMigrationService.createCustomMigration(
       record.workspaceId,
@@ -133,6 +147,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
               referencedTableName:
                 objectMetadataMap[record.fromObjectMetadataId].targetTableName,
               referencedTableColumnName: 'id',
+              isUnique: record.relationType === RelationMetadataType.ONE_TO_ONE,
             },
           ],
         },
