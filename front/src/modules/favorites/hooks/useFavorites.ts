@@ -33,7 +33,7 @@ export const useFavorites = () => {
       mutation: createOneMutation,
       variables: {
         input: {
-          [`${favoriteNameToCreate}`]: favoriteIdToCreate,
+          [favoriteNameToCreate]: favoriteIdToCreate,
           position: favorites.length + 1,
           workspaceMember: workspaceMemberId,
         },
@@ -65,7 +65,7 @@ export const useFavorites = () => {
       mutation: deleteOneMutation,
       variables: {
         where: {
-          [`${favoriteNameToDelete}`]: favoriteIdToDelete,
+          [favoriteNameToDelete]: favoriteIdToDelete,
         },
       },
     });
