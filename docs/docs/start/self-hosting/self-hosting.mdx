@@ -9,32 +9,10 @@ Feel free to open issues on [GitHub](https://github.com/twentyhq/twenty/issues/n
 
 ## Production docker containers
 
-The codebase includes production-ready set of `Dockerfiles` to allow you to build your own image and deploy it to your favorite cloud provider (Amazon Web Services, Google Cloud Platform, etc.).
+Prebuilt images for both front and back-end can be found on [docker hub](https://hub.docker.com/r/twentycrm/).
 
-You will find these in the [infra/prod/front/Dockerfile](https://github.com/twentyhq/twenty/blob/main/infra/prod/front/Dockerfile) and [infra/prod/server/Dockerfile](https://github.com/twentyhq/twenty/blob/main/infra/prod/server/Dockerfile) files.
+For correct operation your will need to set [environment variables](enviroment-variables), a example configuration can be found [here](https://github.com/twentyhq/twenty/blob/main/server/.env.example).
 
-### Front
-
-```bash
-docker build \
- --build-arg REACT_APP_SERVER_BASE_URL=REPLACE_ME \
- -t twenty-front:latest \
- -f ./infra/prod/front/Dockerfile .
-```
-
-### Server
-
-:::info Note
-
-To run the server, you will need to set the environment variables listed [here](https://github.com/twentyhq/twenty/blob/main/server/.env.example).
-
-:::
-
-```bash
-docker build \
-  -t twenty-server:latest \
-  -f ./infra/prod/server/Dockerfile .
-```
 
 ## Render
 

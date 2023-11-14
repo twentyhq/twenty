@@ -10,7 +10,6 @@ export enum SeedObjectMetadataIds {
   Opportunity = '20202020-cae9-4ff4-9579-f7d9fe44c937',
   PipelineStep = '20202020-1029-4661-9e91-83bad932bdcd',
   WorkspaceMember = '20202020-b550-40bb-a96b-9ab54b664753',
-  WorkspaceMemberSetting = '20202020-166d-445c-970f-da1ea43f1dc7',
   Webhook = '20202020-ddee-40de-9c9b-5f82a3503360',
   ApiKey = '20202020-d8d0-4c2d-a370-5499b2181d02',
   Activity = '20202020-8ee3-4f67-84ab-1b7a6eb5a448',
@@ -43,6 +42,7 @@ export const seedObjectMetadata = async (
       'dataSourceId',
       'workspaceId',
       'isActive',
+      'isSystem',
     ])
     .orIgnore()
     .values([
@@ -58,6 +58,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: false,
       },
       {
         id: SeedObjectMetadataIds.Person,
@@ -71,6 +72,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: false,
       },
       {
         id: SeedObjectMetadataIds.Opportunity,
@@ -84,6 +86,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.PipelineStep,
@@ -97,6 +100,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.WorkspaceMember,
@@ -110,19 +114,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-      },
-      {
-        id: SeedObjectMetadataIds.WorkspaceMemberSetting,
-        nameSingular: 'workspaceMemberSettingV2',
-        namePlural: 'workspaceMemberSettingsV2',
-        labelSingular: 'WorkspaceMemberSetting',
-        labelPlural: 'Workspace Member Settings',
-        targetTableName: 'workspaceMemberSetting',
-        description: 'A workspace member setting',
-        icon: 'IconSettings',
-        dataSourceId: SeedDataSourceId,
-        workspaceId: SeedWorkspaceId,
-        isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.Webhook,
@@ -136,6 +128,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.ApiKey,
@@ -149,6 +142,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.Activity,
@@ -162,6 +156,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.ActivityTarget,
@@ -175,6 +170,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.Comment,
@@ -188,6 +184,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.Attachment,
@@ -201,6 +198,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.Favorite,
@@ -214,6 +212,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.View,
@@ -227,6 +226,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.ViewField,
@@ -240,6 +240,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.ViewFilter,
@@ -253,6 +254,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.ViewSort,
@@ -266,6 +268,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
     ])
     .execute();

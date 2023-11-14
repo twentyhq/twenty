@@ -11,6 +11,7 @@ import { seedViewFields } from 'src/database/typeorm-seeds/tenant/view-fields';
 import { seedViews } from 'src/database/typeorm-seeds/tenant/views';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { seedMetadataSchema } from 'src/database/typeorm-seeds/metadata';
+import { seedWorkspaceMember } from 'src/database/typeorm-seeds/tenant/workspaceMember';
 
 // TODO: implement dry-run
 @Command({
@@ -59,6 +60,7 @@ export class DataSeedTenantCommand extends CommandRunner {
       await seedCompanies(workspaceDataSource, dataSourceMetadata.schema);
       await seedViews(workspaceDataSource, dataSourceMetadata.schema);
       await seedViewFields(workspaceDataSource, dataSourceMetadata.schema);
+      await seedWorkspaceMember(workspaceDataSource, dataSourceMetadata.schema);
     } catch (error) {
       console.error(error);
     }

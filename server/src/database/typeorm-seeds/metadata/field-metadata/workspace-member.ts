@@ -8,6 +8,8 @@ const fieldMetadataTableName = 'fieldMetadata';
 export enum SeedWorkspaceMemberFieldMetadataIds {
   FirstName = '20202020-1fa8-4d38-9fa4-0cf696909298',
   LastName = '20202020-8c37-4163-ba06-1dada334ce3e',
+  Locale = '20202020-10f6-4df9-8d6f-a760b65bd800',
+  ColorScheme = '20202020-83f2-4c5f-96b0-0c51ecc160e3',
   AllowImpersonation = '20202020-bb19-44a1-8156-8866f87a5f42',
   UserId = '20202020-f2c1-4ca1-9ca5-7b9d5cc87eb0',
   AuthoredActivities = '20202020-37a0-4db4-9c9f-fd3e3f4e47fc',
@@ -107,6 +109,38 @@ export const seedWorkspaceMemberFieldMetadata = async (
         icon: 'IconEye',
         isNullable: false,
       },
+      {
+        id: SeedWorkspaceMemberFieldMetadataIds.ColorScheme,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: 'TEXT',
+        name: 'colorScheme',
+        label: 'Color Scheme',
+        targetColumnMap: {
+          value: 'colorScheme',
+        },
+        description: 'Preferred color scheme',
+        icon: 'IconColorSwatch',
+        isNullable: false,
+      },
+      {
+        id: SeedWorkspaceMemberFieldMetadataIds.Locale,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: 'TEXT',
+        name: 'locale',
+        label: 'Language',
+        targetColumnMap: {
+          value: 'locale',
+        },
+        description: 'Preferred language',
+        icon: 'IconLanguage',
+        isNullable: false,
+      },
 
       // Relationships
       {
@@ -192,22 +226,6 @@ export const seedWorkspaceMemberFieldMetadata = async (
         description: 'Authored comments',
         icon: 'IconComment',
         isNullable: true,
-      },
-      {
-        id: SeedWorkspaceMemberFieldMetadataIds.Settings,
-        objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
-        isCustom: false,
-        workspaceId: SeedWorkspaceId,
-        isActive: true,
-        type: 'RELATION',
-        name: 'setting',
-        label: 'Settings',
-        targetColumnMap: {
-          value: 'settingId',
-        },
-        description: 'Workspace member settings',
-        icon: 'IconSettings',
-        isNullable: false,
       },
     ])
     .execute();
