@@ -1322,6 +1322,7 @@ export enum FieldMetadataType {
   Money = 'MONEY',
   Number = 'NUMBER',
   Phone = 'PHONE',
+  Probability = 'PROBABILITY',
   Relation = 'RELATION',
   Text = 'TEXT',
   Url = 'URL',
@@ -1799,6 +1800,7 @@ export type ObjectDeleteResponse = {
   id?: Maybe<Scalars['ID']>;
   isActive?: Maybe<Scalars['Boolean']>;
   isCustom?: Maybe<Scalars['Boolean']>;
+  isSystem?: Maybe<Scalars['Boolean']>;
   labelPlural?: Maybe<Scalars['String']>;
   labelSingular?: Maybe<Scalars['String']>;
   namePlural?: Maybe<Scalars['String']>;
@@ -2558,6 +2560,32 @@ export enum QueryMode {
   Insensitive = 'insensitive'
 }
 
+export type RefreshToken = {
+  __typename?: 'RefreshToken';
+  createdAt: Scalars['DateTime'];
+  expiresAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type RefreshTokenConnection = {
+  __typename?: 'RefreshTokenConnection';
+  /** Array of edges. */
+  edges: Array<RefreshTokenEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+  /** Fetch total count of records */
+  totalCount: Scalars['Int'];
+};
+
+export type RefreshTokenEdge = {
+  __typename?: 'RefreshTokenEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the RefreshToken */
+  node: RefreshToken;
+};
+
 export type RelationConnection = {
   __typename?: 'RelationConnection';
   /** Array of edges. */
@@ -2567,6 +2595,13 @@ export type RelationConnection = {
   /** Fetch total count of records */
   totalCount: Scalars['Int'];
 };
+
+/** Type of the relation */
+export enum RelationMetadataType {
+  ManyToMany = 'MANY_TO_MANY',
+  OneToMany = 'ONE_TO_MANY',
+  OneToOne = 'ONE_TO_ONE'
+}
 
 export enum SortOrder {
   Asc = 'asc',
@@ -3151,6 +3186,7 @@ export type Object = {
   id: Scalars['ID'];
   isActive: Scalars['Boolean'];
   isCustom: Scalars['Boolean'];
+  isSystem: Scalars['Boolean'];
   labelPlural: Scalars['String'];
   labelSingular: Scalars['String'];
   namePlural: Scalars['String'];
@@ -3178,7 +3214,7 @@ export type Relation = {
   fromObjectMetadata: Object;
   fromObjectMetadataId: Scalars['String'];
   id: Scalars['ID'];
-  relationType: Scalars['String'];
+  relationType: RelationMetadataType;
   toFieldMetadataId: Scalars['String'];
   toObjectMetadata: Object;
   toObjectMetadataId: Scalars['String'];
