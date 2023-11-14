@@ -14,8 +14,12 @@ import { addCompanyRelations } from 'src/metadata/tenant-migration/migrations/16
 import { addAttachmentRelations } from 'src/metadata/tenant-migration/migrations/1697618028-addAttachmentRelations';
 import { addPersonRelations } from 'src/metadata/tenant-migration/migrations/1697618029-addPersonRelations';
 import { addFavoriteRelations } from 'src/metadata/tenant-migration/migrations/1697618030-addFavoriteRelations';
-import { addOpportunitiesRelations } from 'src/metadata/tenant-migration/migrations/1697618031-addOpportunitiesRelations';
 import { addActivityTargetRelations } from 'src/metadata/tenant-migration/migrations/1697618032-addActivityTargetRelations';
+import { addActivityRelations } from 'src/metadata/tenant-migration/migrations/1697618033-addActivityRelations';
+import { addCommentRelations } from 'src/metadata/tenant-migration/migrations/1697618034-addCommentRelations';
+import { addOpportunityRelations } from 'src/metadata/tenant-migration/migrations/1697618031-addOpportunityRelations';
+import { addWorkspaceMemberSettingRelations } from 'src/metadata/tenant-migration/migrations/1697618035-addWorkspaceMemberSettingRelations';
+import { addWorkspaceMemberRelations } from 'src/metadata/tenant-migration/migrations/1697618036-addWorkspaceMemberRelations';
 
 import { addCompanyTable } from './migrations/1697618009-addCompanyTable';
 import { addViewTable } from './migrations/1697618011-addViewTable';
@@ -47,6 +51,11 @@ export const standardMigrations = {
   '1697618028-addAttachmentRelations': addAttachmentRelations,
   '1697618029-addPersonRelations': addPersonRelations,
   '1697618030-addFavoriteRelations': addFavoriteRelations,
-  '1697618031-addOpportunitiesRelations': addOpportunitiesRelations,
+  '1697618031-addOpportunitiesRelations': addOpportunityRelations,
   '1697618032-addActivityTargetRelations': addActivityTargetRelations,
+  '1697618033-addActivityRelations': addActivityRelations,
+  '1697618034-addCommentRelations': addCommentRelations,
+  '1697618035-addWorkspaceMemberSettingRelations':
+    addWorkspaceMemberSettingRelations,
+  '1697618036-addWorkspaceMemberRelations': addWorkspaceMemberRelations,
 };

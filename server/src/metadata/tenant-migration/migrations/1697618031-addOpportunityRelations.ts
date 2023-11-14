@@ -3,9 +3,9 @@ import {
   TenantMigrationTableAction,
 } from 'src/metadata/tenant-migration/tenant-migration.entity';
 
-export const addFavoriteRelations: TenantMigrationTableAction[] = [
+export const addOpportunityRelations: TenantMigrationTableAction[] = [
   {
-    name: 'favorite',
+    name: 'opportunity',
     action: 'alter',
     columns: [
       {
@@ -21,8 +21,14 @@ export const addFavoriteRelations: TenantMigrationTableAction[] = [
         action: TenantMigrationColumnActionType.RELATION,
       },
       {
-        columnName: 'workspaceMemberId',
-        referencedTableName: 'workspaceMember',
+        columnName: 'pointOfContactId',
+        referencedTableName: 'person',
+        referencedTableColumnName: 'id',
+        action: TenantMigrationColumnActionType.RELATION,
+      },
+      {
+        columnName: 'pipelineStepId',
+        referencedTableName: 'pipelineStep',
         referencedTableColumnName: 'id',
         action: TenantMigrationColumnActionType.RELATION,
       },

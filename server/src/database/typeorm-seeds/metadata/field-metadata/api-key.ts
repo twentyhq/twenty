@@ -57,7 +57,7 @@ export const seedApiKeyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: 'DATE',
         name: 'expiresAt',
         label: 'Expiration date',
         targetColumnMap: {
@@ -73,7 +73,7 @@ export const seedApiKeyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: 'DATE',
         name: 'revokedAt',
         label: 'Revocation date',
         targetColumnMap: {
