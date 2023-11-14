@@ -38,4 +38,5 @@ export {
   TbBrandGraphql,
   TbApi,
   TbUsers,
+  TbVariable
 } from "react-icons/tb";
