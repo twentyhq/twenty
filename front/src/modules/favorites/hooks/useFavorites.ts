@@ -29,7 +29,7 @@ export const useFavorites = () => {
       return;
     }
 
-    return await apolloClient.mutate({
+    const result = await apolloClient.mutate({
       mutation: createOneMutation,
       variables: {
         input: {
@@ -39,12 +39,17 @@ export const useFavorites = () => {
         },
       },
     });
+
+    const createdFavorite = result?.data?.createFavoriteV2;
+    if (createdFavorite) {
+      setFavorites([...favorites, createdFavorite]);
+    }
   };
 
   const _updateFavoritePosition = async (
     favorite: Pick<Favorite, 'id' | 'position'>,
   ) => {
-    apolloClient.mutate({
+    const result = await apolloClient.mutate({
       mutation: updateOneMutation,
       variables: {
         data: {
@@ -55,20 +60,39 @@ export const useFavorites = () => {
         },
       },
     });
+
+    const updatedFavorite = result?.data?.updateFavoriteV2;
+    if (updatedFavorite) {
+      setFavorites(
+        favorites.map((favorite) =>
+          favorite.id === updatedFavorite.id ? updatedFavorite : favorite,
+        ),
+      );
+    }
   };
 
-  const deleteFavorite = (
+  const deleteFavorite = async (
     favoriteNameToDelete: string,
     favoriteIdToDelete: string,
   ) => {
-    apolloClient.mutate({
+    const idToDelete = favorites.find(
+      (favorite: Favorite) =>
+        favorite[favoriteNameToDelete].id === favoriteIdToDelete,
+    )?.id;
+
+    const result = await apolloClient.mutate({
       mutation: deleteOneMutation,
       variables: {
-        where: {
-          [favoriteNameToDelete]: favoriteIdToDelete,
-        },
+        idToDelete: idToDelete,
       },
     });
+
+    const deletedFavorite = result?.data?.deleteFavoriteV2;
+    setFavorites(
+      favorites.filter(
+        (favorite: Favorite) => favorite.id !== deletedFavorite.id,
+      ),
+    );
   };
 
   const computeNewPosition = (destIndex: number, sourceIndex: number) => {
@@ -108,6 +132,7 @@ export const useFavorites = () => {
     _updateFavoritePosition(removedFav);
   };
   return {
+    favorites,
     createFavorite,
     deleteFavorite,
     handleReorderFavorite,

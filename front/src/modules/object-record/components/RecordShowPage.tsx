@@ -80,7 +80,9 @@ export const RecordShowPage = () => {
   };
 
   const isFavorite =
-    object?.Favorite && object?.Favorite?.length > 0 ? true : false;
+    object?.favorites?.edges && object?.favorites?.edges?.length > 0
+      ? true
+      : false;
 
   const handleFavoriteButtonClick = async () => {
     if (!objectNameSingular || !object) return;
@@ -100,7 +102,7 @@ export const RecordShowPage = () => {
         Icon={IconBuildingSkyscraper}
       >
         <PageFavoriteButton
-          isFavorite={false}
+          isFavorite={isFavorite}
           onClick={handleFavoriteButtonClick}
         />
         <ShowPageAddButton
