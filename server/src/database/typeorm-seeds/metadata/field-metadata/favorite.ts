@@ -11,6 +11,7 @@ export enum SeedFavoriteFieldMetadataIds {
   WorkspaceMember = '20202020-1138-4e93-bbff-917a68161abf',
   Person = '20202020-0876-4735-8974-ff4d51aafa07',
   Company = '20202020-09e1-4384-ae3e-39e7956396fe',
+  CompanyV2 = '20202020-09e1-4384-ae3e-39e7956396ff',
 }
 
 export const seedFavoriteFieldMetadata = async (

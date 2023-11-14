@@ -3,6 +3,7 @@ import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
 import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
+import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
@@ -33,6 +34,8 @@ export const RecordShowPage = () => {
     objectNameSingular: string;
     objectMetadataId: string;
   }>();
+
+  const { createFavorite, deleteFavorite } = useFavorites();
 
   const { icons } = useLazyLoadIcons();
 
@@ -76,8 +79,14 @@ export const RecordShowPage = () => {
     return [updateEntity, { loading: false }];
   };
 
+  const isFavorite =
+    object?.Favorite && object?.Favorite?.length > 0 ? true : false;
+
   const handleFavoriteButtonClick = async () => {
-    //
+    if (!objectNameSingular || !object) return;
+    if (isFavorite)
+      deleteFavorite(objectNameSingular.replace('V2', ''), object.id);
+    else createFavorite(objectNameSingular.replace('V2', ''), object.id);
   };
 
   if (!object) return <></>;

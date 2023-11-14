@@ -22,14 +22,10 @@ export const seedUsers = async (prisma: PrismaClient) => {
       settingsId: 'twenty-ge256b39-3ec3-4fe3-8997-9dcb1084c109',
       avatarUrl: null,
       workspaceMember: {
-        connectOrCreate: {
-          where: {
-            id: '20202020-0687-4c41-b707-ed1bfca972a7',
-          },
-          create: {
-            workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
-            settingsId: 'twenty-ge256b39-3ec3-4fe3-8997-9dcb1084c109',
-          },
+        create: {
+          id: '20202020-0687-4c41-b707-ed1bfca972a7',
+          workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
+          settingsId: 'twenty-ge256b39-3ec3-4fe3-8997-9dcb1084c109',
         },
       },
     },

@@ -10,7 +10,6 @@ import { MoneyAmountV2FieldDisplay } from '../meta-types/display/components/Mone
 import { MoneyFieldDisplay } from '../meta-types/display/components/MoneyFieldDisplay';
 import { NumberFieldDisplay } from '../meta-types/display/components/NumberFieldDisplay';
 import { PhoneFieldDisplay } from '../meta-types/display/components/PhoneFieldDisplay';
-import { RelationFieldDisplay } from '../meta-types/display/components/RelationFieldDisplay';
 import { TextFieldDisplay } from '../meta-types/display/components/TextFieldDisplay';
 import { URLFieldDisplay } from '../meta-types/display/components/URLFieldDisplay';
 import { URLV2FieldDisplay } from '../meta-types/display/components/URLV2FieldDisplay';
@@ -34,7 +33,7 @@ export const FieldDisplay = () => {
   return (
     <>
       {isFieldRelation(fieldDefinition) ? (
-        <RelationFieldDisplay />
+        <></>
       ) : isFieldText(fieldDefinition) ? (
         <TextFieldDisplay />
       ) : isFieldEmail(fieldDefinition) ? (
