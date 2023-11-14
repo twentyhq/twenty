@@ -42,6 +42,7 @@ export const seedObjectMetadata = async (
       'dataSourceId',
       'workspaceId',
       'isActive',
+      'isSystem',
     ])
     .orIgnore()
     .values([
@@ -57,6 +58,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: false,
       },
       {
         id: SeedObjectMetadataIds.Person,
@@ -70,6 +72,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: false,
       },
       {
         id: SeedObjectMetadataIds.Opportunity,
@@ -83,6 +86,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.PipelineStep,
@@ -96,6 +100,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.WorkspaceMember,
@@ -109,6 +114,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.Webhook,
@@ -122,6 +128,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.ApiKey,
@@ -135,6 +142,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.Activity,
@@ -148,6 +156,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.ActivityTarget,
@@ -161,6 +170,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.Comment,
@@ -174,6 +184,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.Attachment,
@@ -187,6 +198,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.Favorite,
@@ -200,6 +212,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.View,
@@ -213,6 +226,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.ViewField,
@@ -226,6 +240,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.ViewFilter,
@@ -239,6 +254,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
       {
         id: SeedObjectMetadataIds.ViewSort,
@@ -252,6 +268,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
+        isSystem: true,
       },
     ])
     .execute();
