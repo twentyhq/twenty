@@ -62,7 +62,7 @@ const SubMenuNavbar = ({
   return (
     <StyledContainer>
       <div>
-        <NavBackButton title={backButtonTitle} />
+        {!useIsMobile() && <NavBackButton title={backButtonTitle} />}
         <NavItemsContainer>{children}</NavItemsContainer>
       </div>
       {displayVersion && (
