@@ -1,13 +1,17 @@
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState } from 'recoil';
 
+import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import NavItem from '@/ui/navigation/navbar/components/NavItem';
 import NavTitle from '@/ui/navigation/navbar/components/NavTitle';
 import { Avatar } from '@/users/components/Avatar';
-import { useGetFavoritesQuery } from '~/generated/graphql';
+import { Favorite } from '~/generated-metadata/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
+import { assertNotNull } from '~/utils/assert';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { useFavorites } from '../hooks/useFavorites';
 import { favoritesState } from '../states/favoritesState';
@@ -20,34 +24,45 @@ const StyledContainer = styled.div`
 `;
 
 export const Favorites = () => {
-  const [favorites, setFavorites] = useRecoilState(favoritesState);
+  const [favorites] = useRecoilState(favoritesState);
   const { handleReorderFavorite } = useFavorites();
 
-  useGetFavoritesQuery({
-    onCompleted: (data) =>
-      setFavorites(
-        data?.findFavorites.map((favorite) => {
-          return {
-            id: favorite.id,
-            person: favorite.person
-              ? {
-                  id: favorite.person.id,
-                  firstName: favorite.person.firstName,
-                  lastName: favorite.person.lastName,
-                  avatarUrl: favorite.person.avatarUrl,
-                }
-              : undefined,
-            company: favorite.company
-              ? {
-                  id: favorite.company.id,
-                  name: favorite.company.name,
-                  domainName: favorite.company.domainName,
-                }
-              : undefined,
-            position: favorite.position,
-          };
-        }) ?? [],
-      ),
+  useFindManyObjectRecords({
+    objectNamePlural: 'favoritesV2',
+    onCompleted: useRecoilCallback(
+      ({ snapshot, set }) =>
+        async (data: PaginatedObjectTypeResults<Required<Favorite>>) => {
+          const favoriteState = snapshot.getLoadable(favoritesState);
+          const favorites = favoriteState.getValue();
+
+          const queriedFavorites = data.edges
+            .map(({ node: favorite }) => ({
+              id: favorite.id,
+              person: favorite.person
+                ? {
+                    id: favorite.person.id,
+                    firstName: favorite.person.firstName,
+                    lastName: favorite.person.lastName,
+                    avatarUrl: favorite.person.avatarUrl,
+                  }
+                : undefined,
+              company: favorite.company
+                ? {
+                    id: favorite.company.id,
+                    name: favorite.company.name,
+                    domainName: favorite.company.domainName,
+                  }
+                : undefined,
+              position: favorite.position,
+            }))
+            .filter(assertNotNull);
+
+          if (!isDeeplyEqual(favorites, queriedFavorites)) {
+            set(favoritesState, queriedFavorites);
+          }
+        },
+      [],
+    ),
   });
 
   if (!favorites || favorites.length === 0) return <></>;

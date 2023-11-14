@@ -86,7 +86,7 @@ export const seedFavoriteFieldMetadata = async (
         },
         description: 'Favorite person',
         icon: 'IconUser',
-        isNullable: false,
+        isNullable: true,
       },
       {
         id: SeedFavoriteFieldMetadataIds.Company,
@@ -102,7 +102,7 @@ export const seedFavoriteFieldMetadata = async (
         },
         description: 'Favorite company',
         icon: 'IconBuildingSkyscraper',
-        isNullable: false,
+        isNullable: true,
       },
     ])
     .execute();
