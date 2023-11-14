@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
@@ -8,7 +9,7 @@ import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableLi
 import NavItem from '@/ui/navigation/navbar/components/NavItem';
 import NavTitle from '@/ui/navigation/navbar/components/NavTitle';
 import { Avatar } from '@/users/components/Avatar';
-import { Favorite } from '~/generated-metadata/graphql';
+import { Company, Favorite } from '~/generated-metadata/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 import { assertNotNull } from '~/utils/assert';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -26,8 +27,55 @@ const StyledContainer = styled.div`
 export const Favorites = () => {
   const [favorites] = useRecoilState(favoritesState);
   const { handleReorderFavorite } = useFavorites();
+  const [allCompanies, setAllCompanies] = useState<
+    Record<string, { name: string; domainName?: string }>
+  >({});
+  const [allPeople, setAllPeople] = useState<
+    Record<string, { firstName: string; lastName: string; avatarUrl?: string }>
+  >({});
+
+  // This is only temporary and will be refactored once we have main identifiers
+  const { loading: companiesLoading } = useFindManyObjectRecords({
+    objectNamePlural: 'companiesV2',
+    onCompleted: async (
+      data: PaginatedObjectTypeResults<Required<Company>>,
+    ) => {
+      setAllCompanies(
+        data.edges.reduce(
+          (acc, { node: company }) => ({
+            ...acc,
+            [company.id]: {
+              name: company.name,
+              domainName: company.domainName,
+            },
+          }),
+          {},
+        ),
+      );
+    },
+  });
+
+  const { loading: peopleLoading } = useFindManyObjectRecords({
+    objectNamePlural: 'peopleV2',
+    onCompleted: async (data) => {
+      setAllPeople(
+        data.edges.reduce(
+          (acc, { node: person }) => ({
+            ...acc,
+            [person.id]: {
+              firstName: person.firstName,
+              lastName: person.lastName,
+              avatarUrl: person.avatarUrl,
+            },
+          }),
+          {},
+        ),
+      );
+    },
+  });
 
   useFindManyObjectRecords({
+    skip: companiesLoading || peopleLoading,
     objectNamePlural: 'favoritesV2',
     onCompleted: useRecoilCallback(
       ({ snapshot, set }) =>
@@ -41,16 +89,17 @@ export const Favorites = () => {
               person: favorite.person
                 ? {
                     id: favorite.person.id,
-                    firstName: favorite.person.firstName,
-                    lastName: favorite.person.lastName,
-                    avatarUrl: favorite.person.avatarUrl,
+                    firstName: allPeople[favorite.person?.id]?.firstName ?? '',
+                    lastName: allPeople[favorite.person?.id]?.lastName ?? '',
+                    avatarUrl: allPeople[favorite.person?.id]?.avatarUrl ?? '',
                   }
                 : undefined,
               company: favorite.company
                 ? {
                     id: favorite.company.id,
-                    name: favorite.company.name,
-                    domainName: favorite.company.domainName,
+                    name: allCompanies[favorite.company?.id]?.name ?? '',
+                    domainName:
+                      allCompanies[favorite.company?.id]?.domainName ?? '',
                   }
                 : undefined,
               position: favorite.position,
@@ -61,7 +110,7 @@ export const Favorites = () => {
             set(favoritesState, queriedFavorites);
           }
         },
-      [],
+      [allCompanies, allPeople],
     ),
   });
 
