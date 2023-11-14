@@ -21,11 +21,6 @@ export class UpdateOneResolverFactory
     const internalContext = context;
 
     return (_source, args, context, info) => {
-      console.log({
-        _source,
-        args,
-        info,
-      });
       return this.queryRunnerService.updateOne(args, {
         targetTableName: internalContext.targetTableName,
         workspaceId: internalContext.workspaceId,
