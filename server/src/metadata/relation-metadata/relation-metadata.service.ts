@@ -111,10 +111,12 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         name: foreignKeyColumnName,
         label: `${record.toLabel} Foreign Key`,
         description: undefined,
-        icon: 'IconKey',
+        icon: undefined,
         isCustom: true,
         targetColumnMap: {},
         isActive: true,
+        // Should not be visible on the front side
+        isSystem: true,
         type: FieldMetadataType.UUID,
         objectMetadataId: record.toObjectMetadataId,
         workspaceId: record.workspaceId,

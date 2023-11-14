@@ -6,9 +6,9 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { dataTypes } from '../../constants/dataTypes';
-import { MetadataFieldDataType } from '../../types/ObjectFieldDataType';
 
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
@@ -59,7 +59,7 @@ export const SettingsObjectFieldItemTableRow = ({
       <TableCell>{fieldItem.isCustom ? 'Custom' : 'Standard'}</TableCell>
       <TableCell>
         <SettingsObjectFieldDataType
-          value={fieldItem.type as MetadataFieldDataType}
+          value={fieldItem.type as FieldMetadataType}
         />
       </TableCell>
       <StyledIconTableCell>{ActionIcon}</StyledIconTableCell>

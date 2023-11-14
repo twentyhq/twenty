@@ -8,7 +8,10 @@ import { useFindManyObjectMetadataItems } from '../hooks/useFindManyObjectMetada
 
 export const ObjectMetadataNavItems = () => {
   const { objectMetadataItems } = useFindManyObjectMetadataItems({
-    filter: {
+    objectFilter: {
+      isSystem: { is: false },
+    },
+    fieldFilter: {
       isSystem: { is: false },
     },
   });
