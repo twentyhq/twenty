@@ -31,7 +31,7 @@ const StyledTag = styled.h3<{
   flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.md};
   font-style: normal;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
   gap: ${({ theme }) => theme.spacing(2)};
   height: ${({ theme }) => theme.spacing(5)};
   margin: 0;
