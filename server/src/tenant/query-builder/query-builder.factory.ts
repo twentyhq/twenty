@@ -60,7 +60,15 @@ export class QueryBuilderFactory {
     initialArgs: UpdateOneResolverArgs<Record>,
     options: QueryBuilderOptions,
   ): string {
-    return this.updateOneQueryFactory.create<Record>(initialArgs, options);
+    console.log('before');
+    const builtQuery = this.updateOneQueryFactory.create<Record>(
+      initialArgs,
+      options,
+    );
+
+    console.log({ builtQuery });
+
+    return builtQuery;
   }
 
   deleteOne(args: DeleteOneResolverArgs, options: QueryBuilderOptions): string {

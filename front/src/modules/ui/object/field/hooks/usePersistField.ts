@@ -114,7 +114,7 @@ export const usePersistField = () => {
             variables: {
               where: { id: entityId },
               data: {
-                [`${fieldName}Id`]: valueToPersist?.id,
+                [fieldName]: valueToPersist?.id,
               },
             },
           });
