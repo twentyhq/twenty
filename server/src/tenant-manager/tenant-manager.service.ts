@@ -118,8 +118,6 @@ export class TenantManagerService {
       ).id,
     }));
 
-    console.log(relationsToCreate);
-
     await this.relationMetadataService.createMany(relationsToCreate);
   }
 

@@ -65,9 +65,6 @@ export class RelationMetadataEntity implements RelationMetadataInterface {
   @OneToOne(
     () => FieldMetadataEntity,
     (field: FieldMetadataEntity) => field.fromRelationMetadata,
-    {
-      nullable: true,
-    },
   )
   @JoinColumn()
   fromFieldMetadata: FieldMetadataEntity;
@@ -75,9 +72,6 @@ export class RelationMetadataEntity implements RelationMetadataInterface {
   @OneToOne(
     () => FieldMetadataEntity,
     (field: FieldMetadataEntity) => field.toRelationMetadata,
-    {
-      nullable: true,
-    },
   )
   @JoinColumn()
   toFieldMetadata: FieldMetadataEntity;

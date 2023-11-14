@@ -86,18 +86,12 @@ export class FieldMetadataEntity implements FieldMetadataInterface {
   @OneToOne(
     () => RelationMetadataEntity,
     (relation: RelationMetadataEntity) => relation.fromFieldMetadata,
-    {
-      cascade: true,
-    },
   )
   fromRelationMetadata: RelationMetadataEntity;
 
   @OneToOne(
     () => RelationMetadataEntity,
     (relation: RelationMetadataEntity) => relation.toFieldMetadata,
-    {
-      cascade: true,
-    },
   )
   toRelationMetadata: RelationMetadataEntity;
 
