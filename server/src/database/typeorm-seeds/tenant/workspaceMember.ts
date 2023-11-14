@@ -42,22 +42,22 @@ export const seedWorkspaceMember = async (
         userId: WorkspaceMemberUserIds.Tim,
       },
       {
-        id: WorkspaceMemberIds.Tim,
+        id: WorkspaceMemberIds.Jony,
         firstName: 'Jony',
         lastName: 'Ive',
         locale: 'en',
         colorScheme: 'light',
         allowImpersonation: true,
-        userId: WorkspaceMemberUserIds.Tim,
+        userId: WorkspaceMemberUserIds.Jony,
       },
       {
-        id: WorkspaceMemberIds.Tim,
+        id: WorkspaceMemberIds.Phil,
         firstName: 'Phil',
         lastName: 'Shiler',
         locale: 'en',
         colorScheme: 'light',
         allowImpersonation: true,
-        userId: WorkspaceMemberUserIds.Tim,
+        userId: WorkspaceMemberUserIds.Phil,
       },
     ])
     .execute();
