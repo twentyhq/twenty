@@ -13,7 +13,22 @@ export const addFavoriteTable: TenantMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
+        columnName: 'position',
+        columnType: 'float',
+        action: TenantMigrationColumnActionType.CREATE,
+      },
+      {
         columnName: 'companyId',
+        columnType: 'uuid',
+        action: TenantMigrationColumnActionType.CREATE,
+      },
+      {
+        columnName: 'personId',
+        columnType: 'uuid',
+        action: TenantMigrationColumnActionType.CREATE,
+      },
+      {
+        columnName: 'workspaceMemberId',
         columnType: 'uuid',
         action: TenantMigrationColumnActionType.CREATE,
       },

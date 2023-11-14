@@ -5,13 +5,13 @@ import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
-export enum SeedWorkspaceMemberSettingsFieldMetadataIds {
+export enum SeedWorkspaceMemberSettingFieldMetadataIds {
   ColorScheme = '20202020-d7b7-4f2e-bb52-90d3fd78007a',
   Locale = '20202020-10f6-4df9-8d6f-a760b65bd800',
   WorkspaceMember = '20202020-83f2-4c5f-96b0-0c51ecc160e3',
 }
 
-export const seedWorkspaceMemberSettingsFieldMetadata = async (
+export const seedWorkspaceMemberSettingFieldMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
 ) => {
@@ -36,8 +36,8 @@ export const seedWorkspaceMemberSettingsFieldMetadata = async (
     .values([
       // Scalar fields
       {
-        id: SeedWorkspaceMemberSettingsFieldMetadataIds.ColorScheme,
-        objectMetadataId: SeedObjectMetadataIds.WorkspaceMemberSettings,
+        id: SeedWorkspaceMemberSettingFieldMetadataIds.ColorScheme,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMemberSetting,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -52,8 +52,8 @@ export const seedWorkspaceMemberSettingsFieldMetadata = async (
         isNullable: false,
       },
       {
-        id: SeedWorkspaceMemberSettingsFieldMetadataIds.Locale,
-        objectMetadataId: SeedObjectMetadataIds.WorkspaceMemberSettings,
+        id: SeedWorkspaceMemberSettingFieldMetadataIds.Locale,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMemberSetting,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
@@ -61,7 +61,7 @@ export const seedWorkspaceMemberSettingsFieldMetadata = async (
         name: 'locale',
         label: 'Language',
         targetColumnMap: {
-          value: 'colorScheme',
+          value: 'locale',
         },
         description: 'Preferred language',
         icon: 'IconLanguage',
@@ -70,8 +70,8 @@ export const seedWorkspaceMemberSettingsFieldMetadata = async (
 
       // Relationships
       {
-        id: SeedWorkspaceMemberSettingsFieldMetadataIds.WorkspaceMember,
-        objectMetadataId: SeedObjectMetadataIds.WorkspaceMemberSettings,
+        id: SeedWorkspaceMemberSettingFieldMetadataIds.WorkspaceMember,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMemberSetting,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,

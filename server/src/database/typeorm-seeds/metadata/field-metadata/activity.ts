@@ -100,7 +100,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: 'DATE',
         name: 'reminderAt',
         label: 'Reminder Date',
         targetColumnMap: {
@@ -116,7 +116,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: 'DATE',
         name: 'dueAt',
         label: 'Due Date',
         targetColumnMap: {
@@ -132,7 +132,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: 'DATE',
         name: 'completedAt',
         label: 'Completion Date',
         targetColumnMap: {
