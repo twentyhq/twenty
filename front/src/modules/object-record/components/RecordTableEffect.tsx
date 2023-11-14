@@ -26,8 +26,6 @@ export const RecordTableEffect = () => {
     setViewObjectMetadataId,
   } = useView();
 
-  useRecordTable();
-
   useEffect(() => {
     if (!foundObjectMetadataItem) {
       return;

@@ -9,14 +9,8 @@ import { TenantMigrationRunnerService } from 'src/tenant-migration-runner/tenant
 import { seedCompanies } from 'src/database/typeorm-seeds/tenant/companies';
 import { seedViewFields } from 'src/database/typeorm-seeds/tenant/view-fields';
 import { seedViews } from 'src/database/typeorm-seeds/tenant/views';
-import { seedObjectMetadata } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { seedCompanyFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata/company';
-import { seedViewFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata/view';
-import { seedViewFieldFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata/viewField';
-import { seedViewFilterFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata/viewFilter';
-import { seedViewSortFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata/viewSort';
-import { seedViewRelationMetadata } from 'src/database/typeorm-seeds/metadata/relation-metadata/view';
+import { seedMetadataSchema } from 'src/database/typeorm-seeds/metadata';
 
 // TODO: implement dry-run
 @Command({
@@ -25,7 +19,7 @@ import { seedViewRelationMetadata } from 'src/database/typeorm-seeds/metadata/re
     'Seed tenant with initial data. This command is intended for development only.',
 })
 export class DataSeedTenantCommand extends CommandRunner {
-  workspaceId = 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419';
+  workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
   constructor(
     @InjectDataSource('metadata')
@@ -53,15 +47,7 @@ export class DataSeedTenantCommand extends CommandRunner {
     }
 
     try {
-      await seedObjectMetadata(this.metadataDataSource, 'metadata');
-
-      await seedCompanyFieldMetadata(this.metadataDataSource, 'metadata');
-      await seedViewFieldMetadata(this.metadataDataSource, 'metadata');
-      await seedViewFieldFieldMetadata(this.metadataDataSource, 'metadata');
-      await seedViewSortFieldMetadata(this.metadataDataSource, 'metadata');
-      await seedViewFilterFieldMetadata(this.metadataDataSource, 'metadata');
-
-      await seedViewRelationMetadata(this.metadataDataSource, 'metadata');
+      await seedMetadataSchema(workspaceDataSource, 'metadata');
 
       await this.tenantMigrationService.insertStandardMigrations(
         this.workspaceId,

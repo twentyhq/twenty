@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { QueryRunner, Table, TableColumn, TableForeignKey } from 'typeorm';
+import {
+  QueryRunner,
+  Table,
+  TableColumn,
+  TableForeignKey,
+  TableUnique,
+} from 'typeorm';
 
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 import { TenantDataSourceService } from 'src/tenant-datasource/tenant-datasource.service';
@@ -217,5 +223,16 @@ export class TenantMigrationRunnerService {
         onDelete: 'CASCADE',
       }),
     );
+
+    // Create unique constraint if for one to one relation
+    if (migrationColumn.isUnique) {
+      await queryRunner.createUniqueConstraint(
+        `${schemaName}.${tableName}`,
+        new TableUnique({
+          name: `UNIQUE_${tableName}_${migrationColumn.columnName}`,
+          columnNames: [migrationColumn.columnName],
+        }),
+      );
+    }
   }
 }

@@ -46,4 +46,5 @@ export {
   TbLayoutList,
   TbAddressBook,
   TbLoader2,
+  TbVariable
 } from "react-icons/tb";

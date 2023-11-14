@@ -17,7 +17,7 @@ import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-me
 export class CreateRelationInput {
   @IsEnum(RelationMetadataType)
   @IsNotEmpty()
-  @Field()
+  @Field(() => RelationMetadataType)
   relationType: RelationMetadataType;
 
   @IsUUID()
@@ -33,22 +33,37 @@ export class CreateRelationInput {
   @IsString()
   @IsNotEmpty()
   @Field()
-  name: string;
+  fromName: string;
 
   @IsString()
   @IsNotEmpty()
   @Field()
-  label: string;
+  toName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field()
+  fromLabel: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field()
+  toLabel: string;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  fromIcon?: string;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  toIcon?: string;
 
   @IsString()
   @IsOptional()
   @Field({ nullable: true })
   description?: string;
-
-  @IsString()
-  @IsOptional()
-  @Field({ nullable: true })
-  icon?: string;
 
   @HideField()
   workspaceId: string;

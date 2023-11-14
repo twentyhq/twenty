@@ -9,6 +9,7 @@ import GraphQLJSON from 'graphql-type-json';
 import config from '../../ormconfig';
 
 import { UserModule } from './userv2/user.module';
+import { RefreshTokenModule } from './refresh-token/refresh-token.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { UserModule } from './userv2/user.module';
       path: '/graphqlv2',
     }),
     UserModule,
+    RefreshTokenModule,
   ],
   exports: [UserModule],
 })

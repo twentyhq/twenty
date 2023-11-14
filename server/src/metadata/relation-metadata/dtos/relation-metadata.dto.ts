@@ -29,7 +29,7 @@ export class RelationMetadataDTO {
   @IDField(() => ID)
   id: string;
 
-  @Field()
+  @Field(() => RelationMetadataType)
   relationType: RelationMetadataType;
 
   @Field()

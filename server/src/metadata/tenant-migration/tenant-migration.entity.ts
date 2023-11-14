@@ -21,6 +21,7 @@ export type TenantMigrationColumnRelation = {
   columnName: string;
   referencedTableName: string;
   referencedTableColumnName: string;
+  isUnique?: boolean;
 };
 
 export type TenantMigrationColumnAction = {

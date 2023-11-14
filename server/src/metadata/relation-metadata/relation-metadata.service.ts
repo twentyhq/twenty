@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
+import camelCase from 'lodash.camelcase';
 
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { FieldMetadataService } from 'src/metadata/field-metadata/field-metadata.service';
@@ -43,6 +44,19 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       );
     }
 
+    /**
+     * Relation types
+     *
+     * MANY TO MANY:
+     * FROM Ǝ-E TO (NOT YET SUPPORTED)
+     *
+     * ONE TO MANY:
+     * FROM --E TO (host the id in the TO table)
+     *
+     * ONE TO ONE:
+     * FROM --- TO (host the id in the TO table)
+     */
+
     const objectMetadataEntries =
       await this.objectMetadataService.findManyWithinWorkspace(
         [record.fromObjectMetadataId, record.toObjectMetadataId],
@@ -63,12 +77,15 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       );
     }
 
+    const foreignKeyColumnName = `${camelCase(record.toName)}Id`;
+
     const createdFields = await this.fieldMetadataService.createMany([
+      // FROM
       {
-        name: record.name,
-        label: record.label,
+        name: record.fromName,
+        label: record.fromLabel,
         description: record.description,
-        icon: record.icon,
+        icon: record.fromIcon,
         isCustom: true,
         targetColumnMap: {},
         isActive: true,
@@ -76,16 +93,16 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         objectMetadataId: record.fromObjectMetadataId,
         workspaceId: record.workspaceId,
       },
-      // NOTE: Since we have to create the field-metadata for the user, we need to use the toObjectMetadata info.
-      // This is not ideal because we might see some conflicts with existing names.
-      // NOTE2: Once MANY_TO_MANY is supported, we need to use namePlural/labelPlural instead.
+      // TO
       {
-        name: objectMetadataMap[record.fromObjectMetadataId].nameSingular,
-        label: objectMetadataMap[record.fromObjectMetadataId].labelSingular,
+        name: record.toName,
+        label: record.toLabel,
         description: undefined,
-        icon: objectMetadataMap[record.fromObjectMetadataId].icon,
+        icon: record.toIcon,
         isCustom: true,
-        targetColumnMap: {},
+        targetColumnMap: {
+          value: foreignKeyColumnName,
+        },
         isActive: true,
         type: FieldMetadataType.RELATION,
         objectMetadataId: record.toObjectMetadataId,
@@ -103,10 +120,6 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       fromFieldMetadataId: createdFieldMap[record.fromObjectMetadataId].id,
       toFieldMetadataId: createdFieldMap[record.toObjectMetadataId].id,
     });
-
-    const foreignKeyColumnName = `${
-      objectMetadataMap[record.fromObjectMetadataId].targetTableName
-    }Id`;
 
     await this.tenantMigrationService.createCustomMigration(
       record.workspaceId,
@@ -134,6 +147,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
               referencedTableName:
                 objectMetadataMap[record.fromObjectMetadataId].targetTableName,
               referencedTableColumnName: 'id',
+              isUnique: record.relationType === RelationMetadataType.ONE_TO_ONE,
             },
           ],
         },
