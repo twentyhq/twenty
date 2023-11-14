@@ -6,6 +6,8 @@ const viewMetadata = {
   targetTableName: 'view',
   description: '(System) Views',
   icon: 'IconLayoutCollage',
+  isActive: true,
+  isSystem: true,
   fields: [
     {
       type: 'TEXT',

@@ -6,6 +6,8 @@ const viewFilterMetadata = {
   targetTableName: 'viewFilter',
   description: '(System) View Filters',
   icon: 'IconFilterBolt',
+  isActive: true,
+  isSystem: true,
   fields: [
     {
       isCustom: false,

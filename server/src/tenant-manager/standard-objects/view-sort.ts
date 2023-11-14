@@ -6,6 +6,8 @@ const viewSortMetadata = {
   targetTableName: 'viewSort',
   description: '(System) View Sorts',
   icon: 'IconArrowsSort',
+  isActive: true,
+  isSystem: true,
   fields: [
     {
       isCustom: false,
