@@ -1,4 +1,3 @@
-import { BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
@@ -6,7 +5,6 @@ import { Repository } from 'typeorm';
 
 import { assert } from 'src/utils/assert';
 import { User } from 'src/coreV2/user/user.entity';
-import { CreateUserInput } from 'src/coreV2/user/dtos/create-user.input';
 
 export class UserService extends TypeOrmQueryService<User> {
   constructor(
@@ -14,42 +12,6 @@ export class UserService extends TypeOrmQueryService<User> {
     private readonly userRepository: Repository<User>,
   ) {
     super(userRepository);
-  }
-
-  // Customs
-  async createUser(args: CreateUserInput, _workspaceId?: string) {
-    assert(args.email, 'email is missing', BadRequestException);
-
-    const queryRunner =
-      this.userRepository.manager.connection.createQueryRunner();
-    await queryRunner.connect();
-
-    // // FIXME: Workspace entity does not exist
-    // // Create workspace if not exists
-    // const workspace = workspaceId
-    //   ? await queryRunner.manager.findBy(Workspace, { id: workspaceId })
-    //   : await this.workspaceService.createDefaultWorkspace();
-
-    // assert(workspace, 'workspace is missing', BadRequestException);
-
-    // // FIXME: UserSettings entity does not exist
-    // const userSettings = queryRunner.manager.create(UserSettings, {
-    //   locale: 'en',
-    // });
-
-    const user = await this.userRepository.upsert(
-      {
-        ...args,
-        locale: 'en',
-        // FIXME: settings and workspaceMember relations are not defined
-        // settings: [{ id: userSettings.id }],
-        // workspaceMember: [{ id: workspace.id }],
-      },
-      { skipUpdateIfNoValuesChanged: true, conflictPaths: ['email'] },
-    );
-
-    return user;
-    // as Prisma.UserGetPayload<T>;
   }
 
   async deleteUser({

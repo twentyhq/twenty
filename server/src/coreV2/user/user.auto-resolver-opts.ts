@@ -9,9 +9,6 @@ import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 
 import { User } from './user.entity';
 
-import { CreateUserInput } from './dtos/create-user.input';
-import { UpdateUserInput } from './dtos/update-user.input';
-
 export const userAutoResolverOpts: AutoResolverOpts<
   any,
   any,
@@ -23,8 +20,6 @@ export const userAutoResolverOpts: AutoResolverOpts<
   {
     EntityClass: User,
     DTOClass: User,
-    CreateDTOClass: CreateUserInput,
-    UpdateDTOClass: UpdateUserInput,
     enableTotalCount: true,
     pagingStrategy: PagingStrategies.CURSOR,
     read: {
@@ -32,9 +27,11 @@ export const userAutoResolverOpts: AutoResolverOpts<
     },
     create: {
       many: { disabled: true },
+      one: { disabled: true },
     },
     update: {
       many: { disabled: true },
+      one: { disabled: true },
     },
     delete: { many: { disabled: true }, one: { disabled: true } },
     guards: [JwtAuthGuard],
