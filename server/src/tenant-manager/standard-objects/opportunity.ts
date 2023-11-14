@@ -48,6 +48,7 @@ const opportunityMetadata = {
       icon: 'IconProgressCheck',
       isNullable: true,
     },
+    // Relations
     {
       isCustom: false,
       isActive: true,

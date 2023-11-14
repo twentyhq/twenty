@@ -1,11 +1,25 @@
 import { DataSource, EntityManager } from 'typeorm';
 
+import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
+
 export const standardObjectsPrefillData = async (
   workspaceDataSource: DataSource,
   schemaName: string,
+  objectMetadata: ObjectMetadataEntity[],
 ) => {
+  const objectMetadataMap = objectMetadata.reduce((acc, object) => {
+    acc[object.nameSingular] = {
+      id: object.id,
+      fields: object.fields.reduce((acc, field) => {
+        acc[field.name] = field.id;
+        return acc;
+      }, {}),
+    };
+    return acc;
+  }, {});
+
   workspaceDataSource.transaction(async (entityManager: EntityManager) => {
-    const createdCompanies = await entityManager
+    await entityManager
       .createQueryBuilder()
       .insert()
       .into(`${schemaName}.company`, [
@@ -50,11 +64,6 @@ export const standardObjectsPrefillData = async (
       .returning('*')
       .execute();
 
-    const companyIdMap = createdCompanies.raw.reduce((acc, view) => {
-      acc[view.name] = view.id;
-      return acc;
-    }, {});
-
     const createdViews = await entityManager
       .createQueryBuilder()
       .insert()
@@ -78,7 +87,7 @@ export const standardObjectsPrefillData = async (
         },
         {
           name: 'All Companies (V2)',
-          objectMetadataId: companyIdMap['Airbnb'],
+          objectMetadataId: objectMetadataMap['companyV2'].id,
           type: 'table',
         },
       ])
@@ -103,7 +112,7 @@ export const standardObjectsPrefillData = async (
       .orIgnore()
       .values([
         {
-          fieldMetadataId: 'name',
+          fieldMetadataId: objectMetadataMap['companyV2'].fields['name'],
           viewId: viewIdMap['All Companies (V2)'],
           position: 0,
           isVisible: true,

@@ -10,6 +10,7 @@ const activityTargetMetadata = {
   isSystem: true,
   fields: [
     {
+      // Relations
       isCustom: false,
       isActive: true,
       type: 'RELATION',
@@ -39,12 +40,12 @@ const activityTargetMetadata = {
       isCustom: false,
       isActive: true,
       type: 'RELATION',
-      name: 'activityTarget',
-      label: 'ActivityTarget',
+      name: 'company',
+      label: 'Company',
       targetColumnMap: {
-        value: 'activityTargetId',
+        value: 'companyId',
       },
-      description: 'ActivityTarget activityTarget',
+      description: 'ActivityTarget company',
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
     },

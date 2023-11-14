@@ -8,6 +8,8 @@ const viewFilterMetadata = {
   icon: 'IconFilterBolt',
   fields: [
     {
+      isCustom: false,
+      isActive: true,
       type: 'TEXT',
       name: 'fieldMetadataId',
       label: 'Field Metadata Id',
@@ -16,20 +18,11 @@ const viewFilterMetadata = {
       },
       description: 'View Filter target field',
       icon: null,
-      isNullable: true,
-    },
-    {
-      type: 'TEXT',
-      name: 'viewId',
-      label: 'View Id',
-      targetColumnMap: {
-        value: 'viewId',
-      },
-      description: 'View Filter related view',
-      icon: null,
       isNullable: false,
     },
     {
+      isCustom: false,
+      isActive: true,
       type: 'TEXT',
       name: 'operand',
       label: 'Operand',
@@ -41,6 +34,8 @@ const viewFilterMetadata = {
       isNullable: false,
     },
     {
+      isCustom: false,
+      isActive: true,
       type: 'TEXT',
       name: 'value',
       label: 'Value',
@@ -52,6 +47,8 @@ const viewFilterMetadata = {
       isNullable: false,
     },
     {
+      isCustom: false,
+      isActive: true,
       type: 'TEXT',
       name: 'displayValue',
       label: 'Display Value',
@@ -60,6 +57,31 @@ const viewFilterMetadata = {
       },
       description: 'View Filter Display Value',
       icon: null,
+      isNullable: false,
+    },
+    {
+      isCustom: false,
+      isActive: true,
+      type: 'RELATION',
+      name: 'view',
+      label: 'View',
+      targetColumnMap: { value: 'viewId' },
+      description: 'View Filter related view',
+      icon: 'IconLayoutCollage',
+      isNullable: false,
+    },
+    // Temporary hack?
+    {
+      isCustom: false,
+      isActive: true,
+      type: 'TEXT',
+      name: 'viewId',
+      label: 'View Id',
+      targetColumnMap: {
+        value: 'viewId',
+      },
+      description: 'View Filter related view',
+      icon: 'IconLayoutCollage',
       isNullable: false,
     },
   ],

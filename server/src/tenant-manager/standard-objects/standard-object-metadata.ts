@@ -14,7 +14,6 @@ import webhookMetadata from 'src/tenant-manager/standard-objects/webhook';
 import pipelineStepMetadata from 'src/tenant-manager/standard-objects/pipeline-step';
 import companyMetadata from 'src/tenant-manager/standard-objects/company';
 import workspaceMemberMetadata from 'src/tenant-manager/standard-objects/workspace-member';
-import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 
 export const standardObjectsMetadata = {
   activityTargetV2: activityTargetMetadata,
@@ -34,13 +33,3 @@ export const standardObjectsMetadata = {
   webhookV2: webhookMetadata,
   workspaceMemberV2: workspaceMemberMetadata,
 };
-
-export const standardObjectMetadataRelations = [
-  {
-    type: RelationMetadataType.ONE_TO_MANY,
-    fromObjectNameSingular: 'activityV2',
-    fromFieldMetadataName: 'activityTargets',
-    toObjectNameSingular: 'activityTargetV2',
-    toFieldMetadataName: 'activity',
-  },
-];

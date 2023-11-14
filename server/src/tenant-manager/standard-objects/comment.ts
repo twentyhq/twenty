@@ -22,6 +22,7 @@ const commentMetadata = {
       icon: 'IconLink',
       isNullable: false,
     },
+    // Relations
     {
       isCustom: false,
       isActive: true,

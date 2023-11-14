@@ -48,6 +48,7 @@ const attachmentMetadata = {
       icon: 'IconList',
       isNullable: false,
     },
+    // Relations
     {
       isCustom: false,
       isActive: true,

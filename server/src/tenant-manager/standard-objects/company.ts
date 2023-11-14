@@ -116,7 +116,7 @@ const companyMetadata = {
       icon: 'IconTarget',
       isNullable: true,
     },
-
+    // Relations
     {
       isCustom: false,
       isActive: true,

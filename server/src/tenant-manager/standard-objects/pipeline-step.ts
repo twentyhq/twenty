@@ -48,6 +48,7 @@ const pipelineStepMetadata = {
       icon: 'IconHierarchy2',
       isNullable: false,
     },
+    // Relations
     {
       isCustom: false,
       isActive: true,

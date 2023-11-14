@@ -87,6 +87,7 @@ const activityMetadata = {
       icon: 'IconCheck',
       isNullable: true,
     },
+    // Relations
     {
       isCustom: false,
       isActive: true,
@@ -113,7 +114,7 @@ const activityMetadata = {
       isCustom: false,
       isActive: true,
       type: 'RELATION',
-      name: 'Comments',
+      name: 'comments',
       label: 'Comments',
       targetColumnMap: {},
       description: 'Activity comments',

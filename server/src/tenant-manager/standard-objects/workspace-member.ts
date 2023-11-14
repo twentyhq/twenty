@@ -87,6 +87,7 @@ const workspaceMemberMetadata = {
       icon: 'IconLanguage',
       isNullable: false,
     },
+    // Relations
     {
       isCustom: false,
       isActive: true,

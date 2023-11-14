@@ -9,11 +9,14 @@ import { standardObjectsPrefillData } from 'src/tenant-manager/standard-objects-
 import { TenantDataSourceService } from 'src/tenant-datasource/tenant-datasource.service';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { RelationMetadataService } from 'src/metadata/relation-metadata/relation-metadata.service';
-
+import { standardObjectRelationMetadata } from 'src/tenant-manager/standard-objects/standard-object-relation-metadata';
+import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import {
-  standardObjectMetadataRelations,
-  standardObjectsMetadata,
-} from './standard-objects/standard-object-metadata';
+  FieldMetadataEntity,
+  FieldMetadataType,
+} from 'src/metadata/field-metadata/field-metadata.entity';
+
+import { standardObjectsMetadata } from './standard-objects/standard-object-metadata';
 
 @Injectable()
 export class TenantManagerService {
@@ -42,21 +45,23 @@ export class TenantManagerService {
         schemaName,
       );
 
-    // await this.tenantMigrationService.insertStandardMigrations(workspaceId);
+    await this.tenantMigrationService.insertStandardMigrations(workspaceId);
 
-    // await this.migrationRunnerService.executeMigrationFromPendingMigrations(
-    //   workspaceId,
-    // );
-
-    await this.createStandardObjectsAndFieldsMetadata(
-      dataSourceMetadata.id,
+    await this.migrationRunnerService.executeMigrationFromPendingMigrations(
       workspaceId,
     );
 
-    // await this.prefillWorkspaceWithStandardObjects(
-    //   dataSourceMetadata,
-    //   workspaceId,
-    // );
+    const createdObjectMetadata =
+      await this.createStandardObjectsAndFieldsMetadata(
+        dataSourceMetadata.id,
+        workspaceId,
+      );
+
+    await this.prefillWorkspaceWithStandardObjects(
+      dataSourceMetadata,
+      workspaceId,
+      createdObjectMetadata,
+    );
   }
 
   /**
@@ -69,15 +74,14 @@ export class TenantManagerService {
   public async createStandardObjectsAndFieldsMetadata(
     dataSourceId: string,
     workspaceId: string,
-  ) {
-    const createdObjectMetadatas = await this.objectMetadataService.createMany(
+  ): Promise<ObjectMetadataEntity[]> {
+    const createdObjectMetadata = await this.objectMetadataService.createMany(
       Object.values(standardObjectsMetadata).map((objectMetadata) => ({
         ...objectMetadata,
         dataSourceId,
         workspaceId,
         isCustom: false,
         isActive: true,
-        tag: 'toto',
         fields: objectMetadata.fields.map((field) => ({
           ...field,
           workspaceId,
@@ -87,7 +91,32 @@ export class TenantManagerService {
       })),
     );
 
-    const createdObjectMetadatasMap = createdObjectMetadatas.reduce(
+    await this.relationMetadataService.createMany(
+      Object.values(standardObjectRelationMetadata).map((relationMetadata) =>
+        this.createStandardObjectRelations(
+          workspaceId,
+          createdObjectMetadata,
+          relationMetadata,
+        ),
+      ),
+    );
+
+    return createdObjectMetadata;
+  }
+
+  /**
+   *
+   * @param workspaceId
+   * @param createdObjectMetadata
+   * @param relationMetadata
+   * @returns Partial<RelationMetadataEntity>
+   */
+  private createStandardObjectRelations(
+    workspaceId: string,
+    createdObjectMetadata: ObjectMetadataEntity[],
+    relationMetadata: any,
+  ) {
+    const createdObjectMetadataByNameSingular = createdObjectMetadata.reduce(
       (acc, curr) => {
         acc[curr.nameSingular] = curr;
         return acc;
@@ -95,30 +124,69 @@ export class TenantManagerService {
       {},
     );
 
-    const relationsToCreate = Object.values(
-      standardObjectMetadataRelations,
-    ).map((relationMetadata) => ({
-      fromObjectMetadataId:
-        createdObjectMetadatasMap[relationMetadata.fromObjectNameSingular].id,
-      toObjectMetadataId:
-        createdObjectMetadatasMap[relationMetadata.toObjectNameSingular].id,
-      workspaceId,
-      isCustom: false,
-      isActive: true,
-      relationType: relationMetadata.type,
-      fromFieldMetadataId: createdObjectMetadatasMap[
+    const fromObjectMetadata =
+      createdObjectMetadataByNameSingular[
         relationMetadata.fromObjectNameSingular
-      ]?.fields.find(
-        (field) => field.name === relationMetadata.fromFieldMetadataName,
-      ).id,
-      toFieldMetadataId: createdObjectMetadatasMap[
+      ];
+    const toObjectMetadata =
+      createdObjectMetadataByNameSingular[
         relationMetadata.toObjectNameSingular
-      ]?.fields.find(
-        (field) => field.name === relationMetadata.toFieldMetadataName,
-      ).id,
-    }));
+      ];
 
-    await this.relationMetadataService.createMany(relationsToCreate);
+    if (!fromObjectMetadata) {
+      throw new Error(
+        `Could not find created object metadata with 
+          fromObjectNameSingular: ${relationMetadata.fromObjectNameSingular}`,
+      );
+    }
+
+    if (!toObjectMetadata) {
+      throw new Error(
+        `Could not find created object metadata with
+          toObjectNameSingular: ${relationMetadata.toObjectNameSingular}`,
+      );
+    }
+
+    const fromFieldMetadata = createdObjectMetadataByNameSingular[
+      relationMetadata.fromObjectNameSingular
+    ]?.fields.find(
+      (field: FieldMetadataEntity) =>
+        field.type === FieldMetadataType.RELATION &&
+        field.name === relationMetadata.fromFieldMetadataName,
+    );
+
+    const toFieldMetadata = createdObjectMetadataByNameSingular[
+      relationMetadata.toObjectNameSingular
+    ]?.fields.find(
+      (field: FieldMetadataEntity) =>
+        field.type === FieldMetadataType.RELATION &&
+        field.name === relationMetadata.toFieldMetadataName,
+    );
+
+    if (!fromFieldMetadata) {
+      throw new Error(
+        `Could not find created field metadata with 
+          fromFieldMetadataName: ${relationMetadata.fromFieldMetadataName}
+          for object: ${relationMetadata.fromObjectNameSingular}`,
+      );
+    }
+
+    if (!toFieldMetadata) {
+      throw new Error(
+        `Could not find created field metadata with 
+          toFieldMetadataName: ${relationMetadata.toFieldMetadataName}
+          for object: ${relationMetadata.toObjectNameSingular}`,
+      );
+    }
+
+    return {
+      fromObjectMetadataId: fromObjectMetadata.id,
+      toObjectMetadataId: toObjectMetadata.id,
+      workspaceId,
+      relationType: relationMetadata.type,
+      fromFieldMetadataId: fromFieldMetadata.id,
+      toFieldMetadataId: toFieldMetadata.id,
+    };
   }
 
   /**
@@ -152,6 +220,7 @@ export class TenantManagerService {
   private async prefillWorkspaceWithStandardObjects(
     dataSourceMetadata: DataSourceEntity,
     workspaceId: string,
+    createdObjectMetadata: ObjectMetadataEntity[],
   ) {
     const workspaceDataSource =
       await this.tenantDataSourceService.connectToWorkspaceDataSource(
@@ -162,7 +231,11 @@ export class TenantManagerService {
       throw new Error('Could not connect to workspace data source');
     }
 
-    standardObjectsPrefillData(workspaceDataSource, dataSourceMetadata.schema);
+    standardObjectsPrefillData(
+      workspaceDataSource,
+      dataSourceMetadata.schema,
+      createdObjectMetadata,
+    );
   }
 
   /**

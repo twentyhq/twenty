@@ -8,6 +8,8 @@ const viewSortMetadata = {
   icon: 'IconArrowsSort',
   fields: [
     {
+      isCustom: false,
+      isActive: true,
       type: 'TEXT',
       name: 'fieldMetadataId',
       label: 'Field Metadata Id',
@@ -19,17 +21,8 @@ const viewSortMetadata = {
       isNullable: false,
     },
     {
-      type: 'TEXT',
-      name: 'viewId',
-      label: 'View Id',
-      targetColumnMap: {
-        value: 'viewId',
-      },
-      description: 'View Sort related view',
-      icon: null,
-      isNullable: false,
-    },
-    {
+      isCustom: false,
+      isActive: true,
       type: 'TEXT',
       name: 'direction',
       label: 'Direction',
@@ -38,6 +31,33 @@ const viewSortMetadata = {
       },
       description: 'View Sort direction',
       icon: null,
+      isNullable: false,
+    },
+    {
+      isCustom: false,
+      isActive: true,
+      type: 'RELATION',
+      name: 'view',
+      label: 'View',
+      targetColumnMap: {
+        value: 'viewId',
+      },
+      description: 'View Sort related view',
+      icon: 'IconLayoutCollage',
+      isNullable: false,
+    },
+    // Temporary Hack?
+    {
+      isCustom: false,
+      isActive: true,
+      type: 'TEXT',
+      name: 'viewId',
+      label: 'View Id',
+      targetColumnMap: {
+        value: 'viewId',
+      },
+      description: 'View Sort related view',
+      icon: 'IconLayoutCollage',
       isNullable: false,
     },
   ],
