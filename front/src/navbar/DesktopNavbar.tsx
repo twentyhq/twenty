@@ -13,11 +13,11 @@ import {
   IconTargetArrow,
 } from '@/ui/display/icon/index';
 import { useIsSubMenuNavbarDisplayed } from '@/ui/layout/hooks/useIsSubMenuNavbarDisplayed';
-import MainNavbar from '@/ui/navigation/desktop-navbar/components/MainNavbar';
-import NavItem from '@/ui/navigation/desktop-navbar/components/NavItem';
-import NavTitle from '@/ui/navigation/desktop-navbar/components/NavTitle';
+import WorkspaceItems from '@/ui/navigation/navbar/components/WorkspaceItems';
+import MainNavbar from '@/ui/navigation/navbar/desktop-navbar/components/MainNavbar';
+import NavItem from '@/ui/navigation/navbar/desktop-navbar/components/NavItem';
 
-export const AppNavbar = () => {
+export const DesktopNavbar = () => {
   const currentPath = useLocation().pathname;
   const { toggleCommandMenu } = useCommandMenu();
 
@@ -55,7 +55,7 @@ export const AppNavbar = () => {
             count={currentUserDueTaskCount}
           />
           <Favorites />
-          <NavTitle label="Workspace" />
+          <WorkspaceItems currentPath={currentPath} />
           <ObjectMetadataNavItems />
           <NavItem
             label="Opportunities"

@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { IconBrandGithub } from '@/ui/display/icon';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-import packageJson from '../../../../../../package.json';
+import packageJson from '../../../../../../../package.json';
 import { githubLink, leftNavbarWidth } from '../constants';
 
 import NavBackButton from './NavBackButton';

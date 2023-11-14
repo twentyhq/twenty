@@ -11,7 +11,7 @@ import {
   IconButton,
   IconButtonSize,
 } from '@/ui/input/button/components/IconButton';
-import NavCollapseButton from '@/ui/navigation/desktop-navbar/components/NavCollapseButton';
+import NavCollapseButton from '@/ui/navigation/navbar/desktop-navbar/components/NavCollapseButton';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { isNavbarOpenedState } from '../states/isNavbarOpenedState';

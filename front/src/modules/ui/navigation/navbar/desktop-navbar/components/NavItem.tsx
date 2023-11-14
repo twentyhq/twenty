@@ -7,7 +7,7 @@ import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-import { isNavbarOpenedState } from '../../../layout/states/isNavbarOpenedState';
+import { isNavbarOpenedState } from '../../../../layout/states/isNavbarOpenedState';
 
 type NavItemProps = {
   label: string;

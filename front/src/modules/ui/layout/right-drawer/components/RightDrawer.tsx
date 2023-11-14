@@ -13,7 +13,7 @@ import {
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from '~/utils/isDefined';
 
-import { leftNavbarWidth } from '../../../navigation/desktop-navbar/constants';
+import { leftNavbarWidth } from '../../../navigation/navbar/desktop-navbar/constants';
 import { useRightDrawer } from '../hooks/useRightDrawer';
 import { isRightDrawerExpandedState } from '../states/isRightDrawerExpandedState';
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
