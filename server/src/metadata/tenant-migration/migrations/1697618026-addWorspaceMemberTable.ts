@@ -23,17 +23,22 @@ export const addWorkspaceMemberTable: TenantMigrationTableAction[] = [
         action: TenantMigrationColumnActionType.CREATE,
       },
       {
+        columnName: 'colorScheme',
+        columnType: 'varchar',
+        action: TenantMigrationColumnActionType.CREATE,
+      },
+      {
+        columnName: 'locale',
+        columnType: 'varchar',
+        action: TenantMigrationColumnActionType.CREATE,
+      },
+      {
         columnName: 'allowImpersonation',
         columnType: 'boolean',
         action: TenantMigrationColumnActionType.CREATE,
       },
       {
         columnName: 'userId',
-        columnType: 'uuid',
-        action: TenantMigrationColumnActionType.CREATE,
-      },
-      {
-        columnName: 'settingId',
         columnType: 'uuid',
         action: TenantMigrationColumnActionType.CREATE,
       },

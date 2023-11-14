@@ -8,7 +8,6 @@ import { addOpportunityTable } from 'src/metadata/tenant-migration/migrations/16
 import { addPersonTable } from 'src/metadata/tenant-migration/migrations/1697618022-addPersonTable';
 import { addPipelineStepTable } from 'src/metadata/tenant-migration/migrations/1697618023-addPipelineStepTable';
 import { addWebhookTable } from 'src/metadata/tenant-migration/migrations/1697618024-addWebhookTable';
-import { addWorkspaceMemberSettingTable } from 'src/metadata/tenant-migration/migrations/1697618025-addWorkspaceMemberSettingTable';
 import { addWorkspaceMemberTable } from 'src/metadata/tenant-migration/migrations/1697618026-addWorspaceMemberTable';
 import { addCompanyRelations } from 'src/metadata/tenant-migration/migrations/1697618027-addCompanyRelations';
 import { addAttachmentRelations } from 'src/metadata/tenant-migration/migrations/1697618028-addAttachmentRelations';
@@ -18,8 +17,6 @@ import { addActivityTargetRelations } from 'src/metadata/tenant-migration/migrat
 import { addActivityRelations } from 'src/metadata/tenant-migration/migrations/1697618033-addActivityRelations';
 import { addCommentRelations } from 'src/metadata/tenant-migration/migrations/1697618034-addCommentRelations';
 import { addOpportunityRelations } from 'src/metadata/tenant-migration/migrations/1697618031-addOpportunityRelations';
-import { addWorkspaceMemberSettingRelations } from 'src/metadata/tenant-migration/migrations/1697618035-addWorkspaceMemberSettingRelations';
-import { addWorkspaceMemberRelations } from 'src/metadata/tenant-migration/migrations/1697618036-addWorkspaceMemberRelations';
 
 import { addCompanyTable } from './migrations/1697618009-addCompanyTable';
 import { addViewTable } from './migrations/1697618011-addViewTable';
@@ -45,7 +42,6 @@ export const standardMigrations = {
   '1697618022-addPersonTable': addPersonTable,
   '1697618023-addPipelineStepTable': addPipelineStepTable,
   '1697618024-addWebhookTable': addWebhookTable,
-  '1697618025-addWorkspaceMemberSettingTable': addWorkspaceMemberSettingTable,
   '1697618026-addWorkspaceMemberTable': addWorkspaceMemberTable,
   '1697618027-addCompanyRelations': addCompanyRelations,
   '1697618028-addAttachmentRelations': addAttachmentRelations,
@@ -55,7 +51,4 @@ export const standardMigrations = {
   '1697618032-addActivityTargetRelations': addActivityTargetRelations,
   '1697618033-addActivityRelations': addActivityRelations,
   '1697618034-addCommentRelations': addCommentRelations,
-  '1697618035-addWorkspaceMemberSettingRelations':
-    addWorkspaceMemberSettingRelations,
-  '1697618036-addWorkspaceMemberRelations': addWorkspaceMemberRelations,
 };
