@@ -44,7 +44,7 @@ export const seedFavoriteFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: 'NUMBER',
         name: 'position',
         label: 'Position',
         targetColumnMap: {

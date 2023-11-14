@@ -5,11 +5,11 @@ import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/objec
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 import { SeedCompanyFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/company';
 import { SeedWorkspaceMemberFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/workspace-member';
-import { SeedWorkspaceMemberSettingsFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/workspace-member-settings';
 import { SeedFavoriteFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/favorite';
 import { SeedActivityFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/activity';
 import { SeedCommentFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/comment';
 import { SeedAttachmentFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/attachment';
+import { SeedWorkspaceMemberSettingFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/workspace-member-setting';
 
 const tableName = 'relationMetadata';
 
@@ -42,10 +42,10 @@ export const seedWorkspaceMemberRelationMetadata = async (
       {
         relationType: RelationMetadataType.ONE_TO_ONE,
         fromObjectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
-        toObjectMetadataId: SeedObjectMetadataIds.WorkspaceMemberSettings,
+        toObjectMetadataId: SeedObjectMetadataIds.WorkspaceMemberSetting,
         fromFieldMetadataId: SeedWorkspaceMemberFieldMetadataIds.Settings,
         toFieldMetadataId:
-          SeedWorkspaceMemberSettingsFieldMetadataIds.WorkspaceMember,
+          SeedWorkspaceMemberSettingFieldMetadataIds.WorkspaceMember,
         workspaceId: SeedWorkspaceId,
       },
       {

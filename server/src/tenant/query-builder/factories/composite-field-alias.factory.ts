@@ -95,10 +95,20 @@ export class CompositeFieldAliasFactory {
       }
     `;
     }
+    let relationAlias = fieldKey;
+
+    // For one to one relations, pg_graphql use the targetTableName on the side that is not storing the foreign key
+    // so we need to alias it to the field key
+    if (
+      relationMetadata.relationType === RelationMetadataType.ONE_TO_ONE &&
+      relationDirection === RelationDirection.FROM
+    ) {
+      relationAlias = `${fieldKey}: ${referencedObjectMetadata.targetTableName}`;
+    }
 
     // Otherwise it means it's a relation destination is of kind ONE
     return `
-      ${fieldKey} {
+      ${relationAlias} {
         ${this.fieldsStringFactory.createFieldsStringRecursive(
           info,
           fieldValue,

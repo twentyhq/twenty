@@ -6,6 +6,8 @@ import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 const fieldMetadataTableName = 'fieldMetadata';
 
 export enum SeedWorkspaceMemberFieldMetadataIds {
+  FirstName = '20202020-1fa8-4d38-9fa4-0cf696909298',
+  LastName = '20202020-8c37-4163-ba06-1dada334ce3e',
   AllowImpersonation = '20202020-bb19-44a1-8156-8866f87a5f42',
   UserId = '20202020-f2c1-4ca1-9ca5-7b9d5cc87eb0',
   AuthoredActivities = '20202020-37a0-4db4-9c9f-fd3e3f4e47fc',
@@ -41,6 +43,38 @@ export const seedWorkspaceMemberFieldMetadata = async (
     .orIgnore()
     .values([
       // Scalar fields
+      {
+        id: SeedWorkspaceMemberFieldMetadataIds.FirstName,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: 'TEXT',
+        name: 'firstName',
+        label: 'First name',
+        targetColumnMap: {
+          value: 'firstName',
+        },
+        description: 'Workspace member first name',
+        icon: 'IconCircleUser',
+        isNullable: false,
+      },
+      {
+        id: SeedWorkspaceMemberFieldMetadataIds.LastName,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: 'TEXT',
+        name: 'lastName',
+        label: 'Last name',
+        targetColumnMap: {
+          value: 'lastName',
+        },
+        description: 'Workspace member last name',
+        icon: 'IconCircleUser',
+        isNullable: false,
+      },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.UserId,
         objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
@@ -166,10 +200,10 @@ export const seedWorkspaceMemberFieldMetadata = async (
         workspaceId: SeedWorkspaceId,
         isActive: true,
         type: 'RELATION',
-        name: 'settings',
+        name: 'setting',
         label: 'Settings',
         targetColumnMap: {
-          value: 'settingsId',
+          value: 'settingId',
         },
         description: 'Workspace member settings',
         icon: 'IconSettings',

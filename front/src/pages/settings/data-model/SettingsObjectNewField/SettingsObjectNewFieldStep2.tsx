@@ -76,7 +76,7 @@ export const SettingsObjectNewFieldStep2 = () => {
     });
     objectViews.forEach(async (view) => {
       await createOneViewField?.({
-        viewId: view.id,
+        view: view.id,
         fieldMetadataId: createdField.data?.createOneField.id,
         position: activeObjectMetadataItem.fields.length,
         isVisible: true,

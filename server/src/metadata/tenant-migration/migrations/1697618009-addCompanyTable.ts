@@ -33,11 +33,6 @@ export const addCompanyTable: TenantMigrationTableAction[] = [
         action: TenantMigrationColumnActionType.CREATE,
       },
       {
-        columnName: 'linkedinUrl_link',
-        columnType: 'varchar',
-        action: TenantMigrationColumnActionType.CREATE,
-      },
-      {
         columnName: 'linkedinUrl',
         columnType: 'varchar',
         action: TenantMigrationColumnActionType.CREATE,
