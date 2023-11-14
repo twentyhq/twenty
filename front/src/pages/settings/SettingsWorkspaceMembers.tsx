@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { IconSettings, IconTrash } from '@/ui/display/icon';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
@@ -34,7 +35,7 @@ export const SettingsWorkspaceMembers = () => {
   const [userToDelete, setUserToDelete] = useState<string | undefined>();
 
   const [currentUser] = useRecoilState(currentUserState);
-  const workspace = currentUser?.workspaceMember?.workspace;
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const { data } = useGetWorkspaceMembersQuery();
 
@@ -83,14 +84,14 @@ export const SettingsWorkspaceMembers = () => {
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer width={350}>
         <StyledH1Title title="Members" />
-        {workspace?.inviteHash && (
+        {currentWorkspace?.inviteHash && (
           <Section>
             <H2Title
               title="Invite"
               description="Send an invitation to use Twenty"
             />
             <WorkspaceInviteLink
-              inviteLink={`${window.location.origin}/invite/${workspace?.inviteHash}`}
+              inviteLink={`${window.location.origin}/invite/${currentWorkspace?.inviteHash}`}
             />
           </Section>
         )}

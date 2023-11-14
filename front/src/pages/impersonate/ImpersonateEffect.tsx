@@ -48,11 +48,7 @@ export const ImpersonateEffect = () => {
 
     setCurrentUser({
       ...impersonateResult.data.impersonate.user,
-      workspaceMember: {
-        ...impersonateResult.data.impersonate.user.workspaceMember,
-        settings:
-          impersonateResult.data.impersonate.user.workspaceMember.settings,
-      },
+      // Todo also set WorkspaceMember
     });
     setTokenPair(impersonateResult.data?.impersonate.tokens);
 

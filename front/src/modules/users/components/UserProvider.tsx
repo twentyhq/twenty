@@ -14,14 +14,8 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
     if (!loading) {
       setIsLoading(false);
     }
-    if (data?.currentUser?.workspaceMember?.settings) {
-      setCurrentUser({
-        ...data.currentUser,
-        workspaceMember: {
-          ...data.currentUser.workspaceMember,
-          settings: data.currentUser.workspaceMember.settings,
-        },
-      });
+    if (data?.currentUser) {
+      setCurrentUser(data.currentUser);
     }
   }, [setCurrentUser, data, isLoading, loading]);
 

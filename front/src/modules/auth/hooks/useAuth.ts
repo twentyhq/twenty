@@ -77,10 +77,7 @@ export const useAuth = () => {
 
       setCurrentUser({
         ...verifyResult.data?.verify.user,
-        workspaceMember: {
-          ...verifyResult.data?.verify.user.workspaceMember,
-          settings: verifyResult.data?.verify.user.workspaceMember.settings,
-        },
+        // Todo set workspaceMember
       });
       setTokenPair(verifyResult.data?.verify.tokens);
 

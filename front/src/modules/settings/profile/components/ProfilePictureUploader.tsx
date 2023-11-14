@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
@@ -16,6 +17,8 @@ export const ProfilePictureUploader = () => {
     useUploadProfilePictureMutation();
   const [removePicture] = useRemoveProfilePictureMutation();
   const [currentUser] = useRecoilState(currentUserState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
   const [uploadController, setUploadController] =
     useState<AbortController | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -69,7 +72,7 @@ export const ProfilePictureUploader = () => {
 
   return (
     <ImageInput
-      picture={getImageAbsoluteURIOrBase64(currentUser?.avatarUrl)}
+      picture={getImageAbsoluteURIOrBase64(currentWorkspaceMember?.avatarUrl)}
       onUpload={handleUpload}
       onRemove={handleRemove}
       onAbort={handleAbort}
