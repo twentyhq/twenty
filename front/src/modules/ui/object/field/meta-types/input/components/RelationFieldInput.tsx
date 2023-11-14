@@ -40,7 +40,7 @@ export const RelationFieldInput = ({
 
   return (
     <StyledRelationPickerContainer>
-      {fieldDefinition.metadata.relationType === Entity.Person ? (
+      {fieldDefinition.metadata.fieldName === 'person' ? (
         <PeoplePicker
           personId={initialValue?.id ?? ''}
           companyId={initialValue?.companyId ?? ''}
@@ -48,7 +48,7 @@ export const RelationFieldInput = ({
           onCancel={onCancel}
           initialSearchFilter={initialSearchValue}
         />
-      ) : fieldDefinition.metadata.relationType === Entity.User ? (
+      ) : fieldDefinition.metadata.fieldName === 'accountOwner' ? (
         <UserPicker
           userId={initialValue?.id ?? ''}
           onSubmit={handleSubmit}

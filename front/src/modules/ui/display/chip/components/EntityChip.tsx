@@ -8,7 +8,7 @@ import { Avatar, AvatarType } from '@/users/components/Avatar';
 
 import { Chip, ChipVariant } from './Chip';
 
-type EntityChipProps = {
+export type EntityChipProps = {
   linkToEntity?: string;
   entityId: string;
   name: string;

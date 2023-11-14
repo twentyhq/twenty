@@ -1,0 +1,27 @@
+import { EntityChipProps } from '@/ui/display/chip/components/EntityChip';
+import { FieldDefinition } from '@/ui/object/field/types/FieldDefinition';
+import { FieldRelationMetadata } from '@/ui/object/field/types/FieldMetadata';
+
+export const getEntityChipFromFieldMetadata = (
+  fieldDefinition: FieldDefinition<FieldRelationMetadata>,
+  fieldValue: any,
+) => {
+  const { fieldName } = fieldDefinition.metadata;
+
+  const chipValue: Pick<
+    EntityChipProps,
+    'name' | 'pictureUrl' | 'avatarType' | 'entityId'
+  > = {
+    name: '',
+    pictureUrl: '',
+    avatarType: 'rounded',
+    entityId: fieldValue?.id,
+  };
+
+  // TODO: use every
+  if (fieldName === 'accountOwner') {
+    chipValue.name = fieldValue?.name;
+  }
+
+  return chipValue;
+};
