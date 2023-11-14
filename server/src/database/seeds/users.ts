@@ -9,10 +9,10 @@ export const seedUsers = async (prisma: PrismaClient) => {
     },
   });
   await prisma.user.upsert({
-    where: { id: 'twenty-ge256b39-3ec3-4fe3-8997-b76aa0bfc102' },
+    where: { id: '20202020-a838-4fa9-b59b-96409b9a1c30' },
     update: {},
     create: {
-      id: 'twenty-ge256b39-3ec3-4fe3-8997-b76aa0bfc102',
+      id: '20202020-a838-4fa9-b59b-96409b9a1c30',
       firstName: 'Tim',
       lastName: 'Apple',
       email: 'tim@apple.dev',
@@ -24,7 +24,7 @@ export const seedUsers = async (prisma: PrismaClient) => {
       workspaceMember: {
         connectOrCreate: {
           where: {
-            id: 'twenty-7ef9d213-1c25-4d02-bf35-6aeccf7ea419',
+            id: '20202020-0687-4c41-b707-ed1bfca972a7',
           },
           create: {
             workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
@@ -44,10 +44,10 @@ export const seedUsers = async (prisma: PrismaClient) => {
     },
   });
   await prisma.user.upsert({
-    where: { id: 'twenty-ge256b39-3ec3-4fe3-8997-b76aa0bfa408' },
+    where: { id: '20202020-c231-45c5-b9f2-cf8b70191f6d' },
     update: {},
     create: {
-      id: 'twenty-ge256b39-3ec3-4fe3-8997-b76aa0bfa408',
+      id: '20202020-c231-45c5-b9f2-cf8b70191f6d',
       firstName: 'Jony',
       lastName: 'Ive',
       email: 'jony.ive@apple.dev',
@@ -56,7 +56,7 @@ export const seedUsers = async (prisma: PrismaClient) => {
       avatarUrl: null,
       workspaceMember: {
         create: {
-          id: 'twenty-7ef9d213-1c25-4d02-bf35-6aeccf7ea419',
+          id: '20202020-77d5-4cb6-b60a-f4a835a85d61',
           workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
           settingsId: 'twenty-ge256b39-3ec3-4fe3-8997-2c4a2035a215',
         },
@@ -73,10 +73,10 @@ export const seedUsers = async (prisma: PrismaClient) => {
     },
   });
   await prisma.user.upsert({
-    where: { id: 'twenty-gk256b39-3ec3-4fe3-8997-b76aa0bfa408' },
+    where: { id: '20202020-ef2e-45df-b677-32fa06d4bd2a' },
     update: {},
     create: {
-      id: 'twenty-gk256b39-3ec3-4fe3-8997-b76aa0bfa408',
+      id: '20202020-ef2e-45df-b677-32fa06d4bd2a',
       firstName: 'Phil',
       lastName: 'Schiler',
       email: 'phil.schiler@apple.dev',
@@ -85,7 +85,7 @@ export const seedUsers = async (prisma: PrismaClient) => {
       avatarUrl: null,
       workspaceMember: {
         create: {
-          id: 'twenty-7ed9d213-1c25-4d02-bf35-6aeccf7ea419',
+          id: '20202020-1553-45c6-a028-5a9064cce07f',
           workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
           settingsId: 'twenty-ge256b39-3ec3-4fe3-8997-8e1f2097b328',
         },
