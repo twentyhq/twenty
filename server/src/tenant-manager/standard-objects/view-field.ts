@@ -1,13 +1,17 @@
-const viewFieldsMetadata = {
+const viewFieldMetadata = {
   nameSingular: 'viewFieldV2',
   namePlural: 'viewFieldsV2',
   labelSingular: 'View Field',
   labelPlural: 'View Fields',
   targetTableName: 'viewField',
   description: '(System) View Fields',
-  icon: 'IconColumns3',
+  icon: 'IconTag',
+  isActive: true,
+  isSystem: true,
   fields: [
     {
+      isCustom: false,
+      isActive: true,
       type: 'TEXT',
       name: 'fieldMetadataId',
       label: 'Field Metadata Id',
@@ -15,21 +19,23 @@ const viewFieldsMetadata = {
         value: 'fieldMetadataId',
       },
       description: 'View Field target field',
-      icon: null,
+      icon: 'IconTag',
       isNullable: false,
     },
     {
-      type: 'TEXT',
-      name: 'viewId',
+      isCustom: false,
+      isActive: true,
+      type: 'RELATION',
+      name: 'view',
       label: 'View Id',
-      targetColumnMap: {
-        value: 'viewId',
-      },
+      targetColumnMap: { value: 'viewId' },
       description: 'View Field related view',
-      icon: null,
+      icon: 'IconLayoutCollage',
       isNullable: false,
     },
     {
+      isCustom: false,
+      isActive: true,
       type: 'BOOLEAN',
       name: 'isVisible',
       label: 'Visible',
@@ -37,10 +43,12 @@ const viewFieldsMetadata = {
         value: 'isVisible',
       },
       description: 'View Field visibility',
-      icon: null,
+      icon: 'IconEye',
       isNullable: false,
     },
     {
+      isCustom: false,
+      isActive: true,
       type: 'NUMBER',
       name: 'size',
       label: 'Size',
@@ -48,10 +56,12 @@ const viewFieldsMetadata = {
         value: 'size',
       },
       description: 'View Field size',
-      icon: null,
+      icon: 'IconEye',
       isNullable: false,
     },
     {
+      isCustom: false,
+      isActive: true,
       type: 'NUMBER',
       name: 'position',
       label: 'Position',
@@ -59,10 +69,10 @@ const viewFieldsMetadata = {
         value: 'position',
       },
       description: 'View Field position',
-      icon: null,
+      icon: 'IconList',
       isNullable: false,
     },
   ],
 };
 
-export default viewFieldsMetadata;
+export default viewFieldMetadata;

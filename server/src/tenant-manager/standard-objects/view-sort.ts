@@ -1,4 +1,4 @@
-const viewSortsMetadata = {
+const viewSortMetadata = {
   nameSingular: 'viewSortV2',
   namePlural: 'viewSortsV2',
   labelSingular: 'View Sort',
@@ -43,4 +43,4 @@ const viewSortsMetadata = {
   ],
 };
 
-export default viewSortsMetadata;
+export default viewSortMetadata;

@@ -1,4 +1,4 @@
-const viewsMetadata = {
+const viewMetadata = {
   nameSingular: 'viewV2',
   namePlural: 'viewsV2',
   labelSingular: 'View',
@@ -43,4 +43,4 @@ const viewsMetadata = {
   ],
 };
 
-export default viewsMetadata;
+export default viewMetadata;

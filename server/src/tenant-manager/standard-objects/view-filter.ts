@@ -1,4 +1,4 @@
-const viewFiltersMetadata = {
+const viewFilterMetadata = {
   nameSingular: 'viewFilterV2',
   namePlural: 'viewFiltersV2',
   labelSingular: 'View Filter',
@@ -65,4 +65,4 @@ const viewFiltersMetadata = {
   ],
 };
 
-export default viewFiltersMetadata;
+export default viewFilterMetadata;
