@@ -15,7 +15,7 @@ import {
   IDField,
 } from '@ptc-org/nestjs-query-graphql';
 
-import { User } from 'src/coreV2/userv2/user.entity';
+import { User } from 'src/coreV2/user/user.entity';
 
 import { BeforeCreateOneRefreshToken } from './hooks/before-create-one-refresh-token.hook';
 
