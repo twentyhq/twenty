@@ -1,4 +1,3 @@
-import { SortDirection } from '@ptc-org/nestjs-query-core';
 import {
   AutoResolverOpts,
   ReadResolverOpts,
@@ -23,7 +22,8 @@ export const userAutoResolverOpts: AutoResolverOpts<
     enableTotalCount: true,
     pagingStrategy: PagingStrategies.CURSOR,
     read: {
-      defaultSort: [{ field: 'id', direction: SortDirection.DESC }],
+      many: { disabled: true },
+      one: { disabled: true },
     },
     create: {
       many: { disabled: true },

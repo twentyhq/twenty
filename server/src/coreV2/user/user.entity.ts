@@ -13,7 +13,7 @@ import { GraphQLJSONObject } from 'graphql-type-json';
 
 import { RefreshToken } from 'src/coreV2/refresh-token/refresh-token.entity';
 
-@Entity('users')
+@Entity('userV2')
 @ObjectType('user')
 // @Authorize({
 //   authorize: (context: any) => ({

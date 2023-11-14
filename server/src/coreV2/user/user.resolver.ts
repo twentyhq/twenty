@@ -48,7 +48,7 @@ export class UserResolver {
   ) {}
 
   @Query(() => User)
-  async currentUser(@AuthUser() { id }: User) {
+  async currentUserV2(@AuthUser() { id }: User) {
     const user = await this.userService.findById(id);
     assert(user, 'User not found');
     return user;
@@ -73,7 +73,7 @@ export class UserResolver {
   }
 
   @Mutation(() => String)
-  async uploadProfilePicture(
+  async uploadProfilePictureV2(
     @AuthUser() { id }: User,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
@@ -99,7 +99,7 @@ export class UserResolver {
   @Mutation(() => User)
   @UseGuards(AbilityGuard)
   @CheckAbilities(DeleteUserAbilityHandler)
-  async deleteUserAccount(
+  async deleteUserV2(
     @AuthUser() { id: userId }: User,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {

@@ -20,7 +20,7 @@ import { User } from 'src/coreV2/user/user.entity';
 import { BeforeCreateOneRefreshToken } from './hooks/before-create-one-refresh-token.hook';
 
 @Entity('refresh_tokens')
-@ObjectType('RefreshToken')
+@ObjectType('refreshTokenV2')
 @BeforeCreateOne(BeforeCreateOneRefreshToken)
 @Authorize({
   authorize: (context: any) => ({
