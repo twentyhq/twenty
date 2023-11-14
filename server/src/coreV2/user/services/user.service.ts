@@ -27,7 +27,7 @@ export class UserService extends TypeOrmQueryService<User> {
     //   this.userRepository.manager.connection.createQueryRunner();
     // await queryRunner.connect();
 
-    const user = await this.findById(userId);
+    const user = await this.userRepository.findBy({ id: userId });
     assert(user, 'User not found');
 
     // FIXME: Workspace entity is not defined
