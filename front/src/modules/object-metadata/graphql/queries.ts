@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const FIND_MANY_METADATA_OBJECTS = gql`
-  query ObjectMetadataItems {
-    objects(paging: { first: 1000 }, filter: { isSystem: { is: false } }) {
+  query ObjectMetadataItems($filter: objectFilter) {
+    objects(paging: { first: 1000 }, filter: $filter) {
       edges {
         node {
           id
