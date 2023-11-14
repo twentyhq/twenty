@@ -29,6 +29,7 @@ import {
   DateFilterType,
   FloatFilterType,
   IntFilterType,
+  BooleanFilterType,
 } from 'src/tenant/schema-builder/graphql-types/input';
 import { OrderByDirectionType } from 'src/tenant/schema-builder/graphql-types/enum';
 
@@ -60,6 +61,8 @@ export class TypeMapperService {
       [FieldMetadataType.DATE, dateScalar],
       [FieldMetadataType.BOOLEAN, GraphQLBoolean],
       [FieldMetadataType.NUMBER, numberScalar],
+      [FieldMetadataType.PROBABILITY, GraphQLFloat],
+      [FieldMetadataType.RELATION, GraphQLID],
     ]);
 
     return typeScalarMapping.get(fieldMetadataType);
@@ -85,8 +88,10 @@ export class TypeMapperService {
       [FieldMetadataType.PHONE, StringFilterType],
       [FieldMetadataType.EMAIL, StringFilterType],
       [FieldMetadataType.DATE, dateFilter],
-      [FieldMetadataType.BOOLEAN, GraphQLBoolean],
+      [FieldMetadataType.BOOLEAN, BooleanFilterType],
       [FieldMetadataType.NUMBER, numberScalar],
+      [FieldMetadataType.PROBABILITY, FloatFilterType],
+      [FieldMetadataType.RELATION, UUIDFilterType],
     ]);
 
     return typeFilterMapping.get(fieldMetadataType);
@@ -104,6 +109,7 @@ export class TypeMapperService {
       [FieldMetadataType.DATE, OrderByDirectionType],
       [FieldMetadataType.BOOLEAN, OrderByDirectionType],
       [FieldMetadataType.NUMBER, OrderByDirectionType],
+      [FieldMetadataType.PROBABILITY, OrderByDirectionType],
     ]);
 
     return typeOrderByMapping.get(fieldMetadataType);

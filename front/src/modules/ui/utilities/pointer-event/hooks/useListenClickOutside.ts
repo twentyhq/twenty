@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export enum ClickOutsideMode {
-  absolute = 'absolute',
-  dom = 'dom',
+  comparePixels = 'comparePixels',
+  compareHTMLRef = 'compareHTMLRef',
 }
 
 export const useListenClickOutside = <T extends Element>({
   refs,
   callback,
-  mode = ClickOutsideMode.dom,
+  mode = ClickOutsideMode.compareHTMLRef,
   enabled = true,
 }: {
   refs: Array<React.RefObject<T>>;
@@ -16,19 +16,19 @@ export const useListenClickOutside = <T extends Element>({
   mode?: ClickOutsideMode;
   enabled?: boolean;
 }) => {
+  const [isMouseDownInside, setIsMouseDownInside] = useState(false);
+
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-      if (mode === ClickOutsideMode.dom) {
+    const handleMouseDown = (event: MouseEvent | TouchEvent) => {
+      if (mode === ClickOutsideMode.compareHTMLRef) {
         const clickedOnAtLeastOneRef = refs
           .filter((ref) => !!ref.current)
           .some((ref) => ref.current?.contains(event.target as Node));
 
-        if (!clickedOnAtLeastOneRef) {
-          callback(event);
-        }
+        setIsMouseDownInside(clickedOnAtLeastOneRef);
       }
 
-      if (mode === ClickOutsideMode.absolute) {
+      if (mode === ClickOutsideMode.comparePixels) {
         const clickedOnAtLeastOneRef = refs
           .filter((ref) => !!ref.current)
           .some((ref) => {
@@ -57,20 +57,78 @@ export const useListenClickOutside = <T extends Element>({
             }
             return true;
           });
-        if (!clickedOnAtLeastOneRef) {
+
+        setIsMouseDownInside(clickedOnAtLeastOneRef);
+      }
+    };
+
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (mode === ClickOutsideMode.compareHTMLRef) {
+        const clickedOnAtLeastOneRef = refs
+          .filter((ref) => !!ref.current)
+          .some((ref) => ref.current?.contains(event.target as Node));
+
+        if (!clickedOnAtLeastOneRef && !isMouseDownInside) {
+          callback(event);
+        }
+      }
+
+      if (mode === ClickOutsideMode.comparePixels) {
+        const clickedOnAtLeastOneRef = refs
+          .filter((ref) => !!ref.current)
+          .some((ref) => {
+            if (!ref.current) {
+              return false;
+            }
+
+            const { x, y, width, height } = ref.current.getBoundingClientRect();
+
+            const clientX =
+              'clientX' in event
+                ? event.clientX
+                : event.changedTouches[0].clientX;
+            const clientY =
+              'clientY' in event
+                ? event.clientY
+                : event.changedTouches[0].clientY;
+
+            if (
+              clientX < x ||
+              clientX > x + width ||
+              clientY < y ||
+              clientY > y + height
+            ) {
+              return false;
+            }
+            return true;
+          });
+
+        if (!clickedOnAtLeastOneRef && !isMouseDownInside) {
           callback(event);
         }
       }
     };
 
     if (enabled) {
+      document.addEventListener('mousedown', handleMouseDown, {
+        capture: true,
+      });
       document.addEventListener('click', handleClickOutside, { capture: true });
+      document.addEventListener('touchstart', handleMouseDown, {
+        capture: true,
+      });
       document.addEventListener('touchend', handleClickOutside, {
         capture: true,
       });
 
       return () => {
+        document.removeEventListener('mousedown', handleMouseDown, {
+          capture: true,
+        });
         document.removeEventListener('click', handleClickOutside, {
+          capture: true,
+        });
+        document.removeEventListener('touchstart', handleMouseDown, {
           capture: true,
         });
         document.removeEventListener('touchend', handleClickOutside, {
@@ -78,7 +136,7 @@ export const useListenClickOutside = <T extends Element>({
         });
       };
     }
-  }, [refs, callback, mode, enabled]);
+  }, [refs, callback, mode, enabled, isMouseDownInside]);
 };
 
 export const useListenClickOutsideByClassName = ({

@@ -7,3 +7,4 @@ export * from './int-filter.input-type';
 export * from './string-filter.input-type';
 export * from './time-filter.input-type';
 export * from './uuid-filter.input-type';
+export * from './boolean-filter.input-type';

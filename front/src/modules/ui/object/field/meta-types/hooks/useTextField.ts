@@ -6,6 +6,7 @@ import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldText } from '../../types/guards/isFieldText';
+import { isFieldTextValue } from '../../types/guards/isFieldTextValue';
 
 export const useTextField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
@@ -20,16 +21,17 @@ export const useTextField = () => {
       fieldName: fieldName,
     }),
   );
+  const fieldTextValue = isFieldTextValue(fieldValue) ? fieldValue : '';
 
   const fieldInitialValue = useFieldInitialValue();
 
   const initialValue = fieldInitialValue?.isEmpty
     ? ''
-    : fieldInitialValue?.value ?? fieldValue;
+    : fieldInitialValue?.value ?? fieldTextValue;
 
   return {
     fieldDefinition,
-    fieldValue,
+    fieldValue: fieldTextValue,
     initialValue,
     setFieldValue,
     hotkeyScope,

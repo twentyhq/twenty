@@ -4,7 +4,7 @@ import { FieldInitialValue } from '../types/FieldInitialValue';
 
 export const entityFieldInitialValueFamilyState = atomFamily<
   FieldInitialValue | undefined,
-  { entityId: string; fieldId: string }
+  { entityId: string; fieldMetadataId: string }
 >({
   key: 'entityFieldInitialValueFamilyState',
   default: undefined,

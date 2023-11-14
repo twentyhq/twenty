@@ -17,11 +17,11 @@ export const turnFiltersIntoWhereClauseV2 = (
 
   filters.forEach((filter) => {
     const correspondingField = fields.find(
-      (field) => field.id === filter.fieldId,
+      (field) => field.id === filter.fieldMetadataId,
     );
     if (!correspondingField) {
       throw new Error(
-        `Could not find field ${filter.fieldId} in metadata object`,
+        `Could not find field ${filter.fieldMetadataId} in metadata object`,
       );
     }
 
@@ -38,6 +38,40 @@ export const turnFiltersIntoWhereClauseV2 = (
               not: {
                 eq: filter.value,
               },
+            };
+            return;
+          default:
+            throw new Error(
+              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            );
+        }
+      case 'NUMBER':
+        switch (filter.operand) {
+          case ViewFilterOperand.GreaterThan:
+            whereClause[correspondingField.name] = {
+              gte: parseFloat(filter.value),
+            };
+            return;
+          case ViewFilterOperand.LessThan:
+            whereClause[correspondingField.name] = {
+              lte: parseFloat(filter.value),
+            };
+            return;
+          default:
+            throw new Error(
+              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            );
+        }
+      case 'DATE':
+        switch (filter.operand) {
+          case ViewFilterOperand.GreaterThan:
+            whereClause[correspondingField.name] = {
+              gte: filter.value,
+            };
+            return;
+          case ViewFilterOperand.LessThan:
+            whereClause[correspondingField.name] = {
+              lte: filter.value,
             };
             return;
           default:

@@ -10,10 +10,7 @@ import {
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
-import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
-import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
-import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
-import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
+import { useRecordTable } from '../hooks/useRecordTable';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { RecordTableBody } from './RecordTableBody';
@@ -43,9 +40,6 @@ const StyledTable = styled.table`
     :first-of-type {
       border-left-color: transparent;
       border-right-color: transparent;
-    }
-    :last-of-type {
-      width: 100%;
     }
   }
 
@@ -78,7 +72,6 @@ const StyledTableContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow: auto;
   position: relative;
 `;
 
@@ -89,12 +82,14 @@ type RecordTableProps = {
 export const RecordTable = ({ updateEntityMutation }: RecordTableProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const setRowSelectedState = useSetRowSelectedState();
-  const resetTableRowSelection = useResetTableRowSelection();
+  const {
+    leaveTableFocus,
+    setRowSelectedState,
+    resetTableRowSelection,
+    useMapKeyboardToSoftFocus,
+  } = useRecordTable();
 
   useMapKeyboardToSoftFocus();
-
-  const leaveTableFocus = useLeaveTableFocus();
 
   useListenClickOutside({
     refs: [tableBodyRef],
@@ -120,10 +115,10 @@ export const RecordTable = ({ updateEntityMutation }: RecordTableProps) => {
   });
 
   return (
-    <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
-      <StyledTableWithHeader>
-        <StyledTableContainer>
-          <ScrollWrapper>
+    <ScrollWrapper>
+      <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
+        <StyledTableWithHeader>
+          <StyledTableContainer>
             <div ref={tableBodyRef}>
               <StyledTable className="entity-table-cell">
                 <RecordTableHeader />
@@ -135,9 +130,9 @@ export const RecordTable = ({ updateEntityMutation }: RecordTableProps) => {
                 onDragSelectionChange={setRowSelectedState}
               />
             </div>
-          </ScrollWrapper>
-        </StyledTableContainer>
-      </StyledTableWithHeader>
-    </EntityUpdateMutationContext.Provider>
+          </StyledTableContainer>
+        </StyledTableWithHeader>
+      </EntityUpdateMutationContext.Provider>
+    </ScrollWrapper>
   );
 };

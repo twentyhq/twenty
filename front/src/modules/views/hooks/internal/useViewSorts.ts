@@ -2,7 +2,7 @@ import { useApolloClient } from '@apollo/client';
 import { produce } from 'immer';
 import { useRecoilCallback } from 'recoil';
 
-import { useFindOneObjectMetadataItem } from '@/metadata/hooks/useFindOneObjectMetadataItem';
+import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { Sort } from '@/ui/object/object-sort-dropdown/types/Sort';
 import { savedViewSortsScopedFamilyState } from '@/views/states/savedViewSortsScopedFamilyState';
 import { ViewSort } from '@/views/types/ViewSort';
@@ -21,7 +21,9 @@ export const useViewSorts = (viewScopeId: string) => {
   });
   const apolloClient = useApolloClient();
 
-  const { currentViewSortsState } = useViewScopedStates();
+  const { currentViewSortsState } = useViewScopedStates({
+    customViewScopeId: viewScopeId,
+  });
 
   const persistViewSorts = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -52,7 +54,7 @@ export const useViewSorts = (viewScopeId: string) => {
                 mutation: createOneMutation,
                 variables: {
                   input: {
-                    fieldId: viewSort.fieldId,
+                    fieldMetadataId: viewSort.fieldMetadataId,
                     viewId: viewId ?? currentViewId,
                     direction: viewSort.direction,
                   },
@@ -97,19 +99,20 @@ export const useViewSorts = (viewScopeId: string) => {
         };
 
         const sortsToCreate = currentViewSorts.filter(
-          (sort) => !savedViewSortsByKey[sort.fieldId],
+          (sort) => !savedViewSortsByKey[sort.fieldMetadataId],
         );
 
         await createViewSorts(sortsToCreate);
 
         const sortsToUpdate = currentViewSorts.filter(
           (sort) =>
-            savedViewSortsByKey[sort.fieldId] &&
-            savedViewSortsByKey[sort.fieldId].direction !== sort.direction,
+            savedViewSortsByKey[sort.fieldMetadataId] &&
+            savedViewSortsByKey[sort.fieldMetadataId].direction !==
+              sort.direction,
         );
         await updateViewSorts(sortsToUpdate);
 
-        const sortKeys = currentViewSorts.map((sort) => sort.fieldId);
+        const sortKeys = currentViewSorts.map((sort) => sort.fieldMetadataId);
         const sortKeysToDelete = Object.keys(savedViewSortsByKey).filter(
           (previousSortKey) => !sortKeys.includes(previousSortKey),
         );
@@ -153,12 +156,12 @@ export const useViewSorts = (viewScopeId: string) => {
         }
 
         const existingSavedSortId =
-          savedViewSortsByKey[sortToUpsert.fieldId]?.id;
+          savedViewSortsByKey[sortToUpsert.fieldMetadataId]?.id;
 
         set(currentViewSortsState, (sorts) => {
           const newViewSorts = produce(sorts, (sortsDraft) => {
             const existingSortIndex = sortsDraft.findIndex(
-              (sort) => sort.fieldId === sortToUpsert.fieldId,
+              (sort) => sort.fieldMetadataId === sortToUpsert.fieldMetadataId,
             );
 
             if (existingSortIndex === -1) {
@@ -180,7 +183,7 @@ export const useViewSorts = (viewScopeId: string) => {
 
   const removeViewSort = useRecoilCallback(
     ({ snapshot, set }) =>
-      (fieldId: string) => {
+      (fieldMetadataId: string) => {
         const { currentViewId, onViewSortsChange, currentViewSorts } =
           getViewScopedStateValuesFromSnapshot({
             snapshot,
@@ -192,7 +195,7 @@ export const useViewSorts = (viewScopeId: string) => {
         }
 
         const newViewSorts = currentViewSorts.filter((filter) => {
-          return filter.fieldId !== fieldId;
+          return filter.fieldMetadataId !== fieldMetadataId;
         });
         set(currentViewSortsState, newViewSorts);
         onViewSortsChange?.(newViewSorts);

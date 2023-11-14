@@ -1,78 +1,72 @@
-import styled from '@emotion/styled';
-import { useVirtual } from '@tanstack/react-virtual';
-import { useRecoilValue } from 'recoil';
+import { useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScrollWrapperScopedRef';
+import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectRecordTable } from '@/object-record/hooks/useObjectRecordTable';
+import { isFetchingMoreObjectsFamilyState } from '@/object-record/states/isFetchingMoreObjectsFamilyState';
+import { isDefined } from '~/utils/isDefined';
 
 import { RowIdContext } from '../contexts/RowIdContext';
 import { RowIndexContext } from '../contexts/RowIndexContext';
+import { useRecordTable } from '../hooks/useRecordTable';
 import { isFetchingRecordTableDataState } from '../states/isFetchingRecordTableDataState';
 import { tableRowIdsState } from '../states/tableRowIdsState';
 
-import { RecordTableRow } from './RecordTableRow';
-
-type SpaceProps = {
-  top?: number;
-  bottom?: number;
-};
-
-const StyledSpace = styled.td<SpaceProps>`
-  ${({ top }) => top && `padding-top: ${top}px;`}
-  ${({ bottom }) => bottom && `padding-bottom: ${bottom}px;`}
-`;
+import { RecordTableRow, StyledRow } from './RecordTableRow';
 
 export const RecordTableBody = () => {
-  const scrollWrapperRef = useScrollWrapperScopedRef();
+  const { ref: lastTableRowRef, inView: lastTableRowIsVisible } = useInView();
 
   const tableRowIds = useRecoilValue(tableRowIdsState);
+
+  const { scopeId: objectNamePlural } = useRecordTable();
+
+  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
+    objectNamePlural,
+  });
+
+  const [isFetchingMoreObjects] = useRecoilState(
+    isFetchingMoreObjectsFamilyState(foundObjectMetadataItem?.namePlural),
+  );
 
   const isFetchingRecordTableData = useRecoilValue(
     isFetchingRecordTableDataState,
   );
 
-  const rowVirtualizer = useVirtual({
-    size: tableRowIds.length,
-    parentRef: scrollWrapperRef,
-    overscan: 50,
-  });
+  const { fetchMoreObjects } = useObjectRecordTable();
 
-  const items = rowVirtualizer.virtualItems;
-  const paddingTop = items.length > 0 ? items[0].start : 0;
-  const paddingBottom =
-    items.length > 0
-      ? rowVirtualizer.totalSize - items[items.length - 1].end
-      : 0;
+  useEffect(() => {
+    if (lastTableRowIsVisible && isDefined(fetchMoreObjects)) {
+      fetchMoreObjects();
+    }
+  }, [lastTableRowIsVisible, fetchMoreObjects]);
+
+  const lastRowId = tableRowIds[tableRowIds.length - 1];
 
   if (isFetchingRecordTableData) {
-    return null;
+    return <></>;
   }
 
   return (
     <tbody>
-      {paddingTop > 0 && (
-        <tr>
-          <StyledSpace top={paddingTop} />
-        </tr>
-      )}
-      {items.map((virtualItem) => {
-        const rowId = tableRowIds[virtualItem.index];
-
-        return (
-          <RowIdContext.Provider value={rowId} key={rowId}>
-            <RowIndexContext.Provider value={virtualItem.index}>
-              <RecordTableRow
-                key={virtualItem.index}
-                ref={virtualItem.measureRef}
-                rowId={rowId}
-              />
-            </RowIndexContext.Provider>
-          </RowIdContext.Provider>
-        );
-      })}
-      {paddingBottom > 0 && (
-        <tr>
-          <StyledSpace bottom={paddingBottom} />
-        </tr>
+      {tableRowIds.map((rowId, rowIndex) => (
+        <RowIdContext.Provider value={rowId} key={rowId}>
+          <RowIndexContext.Provider value={rowIndex}>
+            <RecordTableRow
+              key={rowId}
+              ref={rowId === lastRowId ? lastTableRowRef : undefined}
+              rowId={rowId}
+            />
+          </RowIndexContext.Provider>
+        </RowIdContext.Provider>
+      ))}
+      {isFetchingMoreObjects && (
+        <StyledRow selected={false}>
+          <td style={{ height: 50 }} colSpan={1000}>
+            Fetching more...
+          </td>
+        </StyledRow>
       )}
     </tbody>
   );

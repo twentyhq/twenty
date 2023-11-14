@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useCurrentUserTaskCount } from '@/activities/tasks/hooks/useCurrentUserDueTaskCount';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Favorites } from '@/favorites/components/Favorites';
-import { ObjectMetadataNavItems } from '@/metadata/components/ObjectMetadataNavItems';
+import { ObjectMetadataNavItems } from '@/object-metadata/components/ObjectMetadataNavItems';
 import { SettingsNavbar } from '@/settings/components/SettingsNavbar';
 import {
   IconBell,

@@ -44,7 +44,7 @@ const DateFieldInputWithContext = ({
     <div>
       <FieldContextProvider
         fieldDefinition={{
-          fieldId: 'date',
+          fieldMetadataId: 'date',
           label: 'Date',
           type: 'DATE',
           metadata: {

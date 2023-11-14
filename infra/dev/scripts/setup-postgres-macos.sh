@@ -56,7 +56,7 @@ current_directory=$(pwd)
 # Install PostgresSQL
 echo_header $GREEN "Step [1/4]: Installing PostgreSQL..."
 
-brew install postgresql@$PG_MAIN_VERSION
+brew reinstall postgresql@$PG_MAIN_VERSION
 
 # Install pg_graphql extensions
 echo_header $GREEN "Step [2/4]: Installing GraphQL for PostgreSQL..."
@@ -65,7 +65,7 @@ echo_header $GREEN "Step [2/4]: Installing GraphQL for PostgreSQL..."
 curl https://sh.rustup.rs -sSf | sh
 source "$HOME/.cargo/env"
 cargo install --locked cargo-pgrx@$CARGO_PGRX_VERSION
-cargo pgrx init --pg14 download
+cargo pgrx init --pg$PG_MAIN_VERSION download
 
 # Uninstall existing Rust installation if found
 existing_rust_path=$(which rustc)
@@ -88,9 +88,9 @@ curl -LJO https://github.com/supabase/pg_graphql/archive/refs/tags/v$PG_GRAPHQL_
 unzip pg_graphql-$PG_GRAPHQL_VERSION.zip
 
 cd "pg_graphql-$PG_GRAPHQL_VERSION"
-cargo pgrx install --release
+cargo pgrx install --release --pg-config /opt/homebrew/opt/postgresql@$PG_MAIN_VERSION/bin/pg_config
 
-# Clean up the temporary directory
+# # Clean up the temporary directory
 echo "Cleaning up..."
 cd "$current_directory"
 rm -rf "$temp_dir"
@@ -98,10 +98,7 @@ rm -rf "$temp_dir"
 # Start postgresql service
 echo_header $GREEN "Step [3/4]: Starting PostgreSQL service..."
 
-if ! command -v brew &> /dev/null; then
-    echo_header $RED "Warning: Homebrew is not found in your PATH. Adding it to PATH..."
-    export PATH="/opt/homebrew/bin:$PATH"
-fi 
+[[ ":$PATH:" != *":/opt/homebrew/opt/postgresql@$PG_MAIN_VERSION/bin:"* ]] && PATH="/opt/homebrew/opt/postgresql@$PG_MAIN_VERSION/bin:${PATH}"
 
 if brew services start postgresql@$PG_MAIN_VERSION; then
     echo "PostgreSQL service started successfully."

@@ -158,7 +158,7 @@ export const Modal = ({
   useListenClickOutside({
     refs: [modalRef],
     callback: () => onClose?.(),
-    mode: ClickOutsideMode.absolute,
+    mode: ClickOutsideMode.comparePixels,
   });
 
   const {

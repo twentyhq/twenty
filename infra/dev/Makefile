@@ -8,11 +8,17 @@ build:
 	@docker volume rm twenty_node_modules_docs > /dev/null 2>&1 || true
 	@docker compose build
 
-provision-postgres:
+provision-postgres-docker:
 	@docker stop twenty_postgres || true
 	@docker rm twenty_postgres || true
 	@docker volume rm twenty_db_data || true
 	@docker compose up --build postgres -d
+
+provision-postgres-macos:
+	sh ./scripts/setup-postgres-macos.sh
+
+provision-postgres-linux:
+	sh ./scripts/setup-postgres-linux.sh
 
 up:
 	@docker compose up -d

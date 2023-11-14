@@ -11,7 +11,7 @@ import {
 } from '@/ui/display/icon';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
-import { useResetTableRowSelection } from '@/ui/object/record-table/hooks/useResetTableRowSelection';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { selectedRowIdsSelector } from '@/ui/object/record-table/states/selectors/selectedRowIdsSelector';
 import { tableRowIdsState } from '@/ui/object/record-table/states/tableRowIdsState';
 import {
@@ -30,7 +30,9 @@ export const useCompanyTableContextMenuEntries = () => {
   const createActivityForCompany = useCreateActivityForCompany();
 
   const setTableRowIds = useSetRecoilState(tableRowIdsState);
-  const resetRowSelection = useResetTableRowSelection();
+  const { resetTableRowSelection } = useRecordTable({
+    recordTableScopeId: 'companies',
+  });
 
   const { data } = useGetFavoritesQuery();
   const favorites = data?.findFavorites;
@@ -50,7 +52,7 @@ export const useCompanyTableContextMenuEntries = () => {
         (favorite) => favorite.company?.id === selectedCompanyId,
       );
 
-    resetRowSelection();
+    resetTableRowSelection();
     if (isFavorite) deleteCompanyFavorite(selectedCompanyId);
     else insertCompanyFavorite(selectedCompanyId);
   });
@@ -64,7 +66,7 @@ export const useCompanyTableContextMenuEntries = () => {
       .getLoadable(selectedRowIdsSelector)
       .getValue();
 
-    resetRowSelection();
+    resetTableRowSelection();
 
     await deleteManyCompany({
       variables: {

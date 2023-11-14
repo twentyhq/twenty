@@ -13,37 +13,37 @@ import { Company } from '~/generated/graphql';
 export const companyTableFilterDefinitions: FilterDefinitionByEntity<Company>[] =
   [
     {
-      fieldId: 'name',
+      fieldMetadataId: 'name',
       label: 'Name',
       Icon: IconBuildingSkyscraper,
       type: 'TEXT',
     },
     {
-      fieldId: 'employees',
+      fieldMetadataId: 'employees',
       label: 'Employees',
       Icon: IconUsers,
       type: 'NUMBER',
     },
     {
-      fieldId: 'domainName',
+      fieldMetadataId: 'domainName',
       label: 'URL',
       Icon: IconLink,
       type: 'TEXT',
     },
     {
-      fieldId: 'address',
+      fieldMetadataId: 'address',
       label: 'Address',
       Icon: IconMap,
       type: 'TEXT',
     },
     {
-      fieldId: 'createdAt',
+      fieldMetadataId: 'createdAt',
       label: 'Created at',
       Icon: IconCalendarEvent,
       type: 'DATE',
     },
     {
-      fieldId: 'accountOwnerId',
+      fieldMetadataId: 'accountOwnerId',
       label: 'Account owner',
       Icon: IconUser,
       type: 'ENTITY',

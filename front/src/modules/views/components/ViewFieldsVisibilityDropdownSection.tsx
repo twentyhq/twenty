@@ -97,12 +97,12 @@ export const ViewFieldsVisibilityDropdownSection = ({
                   .sort((a, b) => a.position - b.position)
                   .map((field, index) => (
                     <DraggableItem
-                      key={field.fieldId}
-                      draggableId={field.fieldId}
+                      key={field.fieldMetadataId}
+                      draggableId={field.fieldMetadataId}
                       index={index + 1}
                       itemComponent={
                         <MenuItemDraggable
-                          key={field.fieldId}
+                          key={field.fieldMetadataId}
                           LeftIcon={field.Icon}
                           iconButtons={getIconButtons(index + 1, field)}
                           isTooltipOpen={openToolTipIndex === index + 1}
@@ -120,7 +120,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
         ) : (
           fields.map((field, index) => (
             <MenuItem
-              key={field.fieldId}
+              key={field.fieldMetadataId}
               LeftIcon={field.Icon}
               iconButtons={getIconButtons(index, field)}
               isTooltipOpen={openToolTipIndex === index}

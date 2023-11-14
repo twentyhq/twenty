@@ -9,7 +9,7 @@ import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpre
 import { Data } from '@/spreadsheet-import/types';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { IconTrash } from '@/ui/display/icon';
-import { useDialog } from '@/ui/feedback/dialog//hooks/useDialog';
+import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { Button } from '@/ui/input/button/components/Button';
 import { Toggle } from '@/ui/input/components/Toggle';
 import { Modal } from '@/ui/layout/modal/components/Modal';
@@ -69,7 +69,7 @@ export const ValidationStep = <T extends string>({
   file,
   onSubmitStart,
 }: ValidationStepProps<T>) => {
-  const { enqueueDialog } = useDialog();
+  const { enqueueDialog } = useDialogManager();
   const { fields, onClose, onSubmit, rowHook, tableHook } =
     useSpreadsheetImportInternal<T>();
 

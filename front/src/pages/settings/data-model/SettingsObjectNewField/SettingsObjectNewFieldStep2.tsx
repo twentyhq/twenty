@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useCreateOneObject } from '@/metadata/hooks/useCreateOneObject';
-import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
-import { useMetadataField } from '@/metadata/hooks/useMetadataField';
-import { useObjectMetadataItemForSettings } from '@/metadata/hooks/useObjectMetadataItemForSettings';
-import { PaginatedObjectTypeResults } from '@/metadata/types/PaginatedObjectTypeResults';
+import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
+import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
+import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -28,7 +28,7 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
-  const { createMetadataField } = useMetadataField();
+  const { createMetadataField } = useFieldMetadataItem();
 
   useEffect(() => {
     if (loading) return;
@@ -44,15 +44,15 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   const [objectViews, setObjectViews] = useState<View[]>([]);
 
-  const { createOneObject: createOneViewField } = useCreateOneObject({
+  const { createOneObject: createOneViewField } = useCreateOneObjectRecord({
     objectNamePlural: 'viewFieldsV2',
   });
 
-  useFindManyObjects({
+  useFindManyObjectRecords({
     objectNamePlural: 'viewsV2',
     filter: {
       type: { eq: ViewType.Table },
-      objectId: { eq: activeObjectMetadataItem?.id },
+      objectMetadataId: { eq: activeObjectMetadataItem?.id },
     },
     onCompleted: async (data: PaginatedObjectTypeResults<View>) => {
       const views = data.edges;
@@ -72,12 +72,12 @@ export const SettingsObjectNewFieldStep2 = () => {
   const handleSave = async () => {
     const createdField = await createMetadataField({
       ...formValues,
-      objectId: activeObjectMetadataItem.id,
+      objectMetadataId: activeObjectMetadataItem.id,
     });
     objectViews.forEach(async (view) => {
       await createOneViewField?.({
-        viewId: view.id,
-        fieldId: createdField.data?.createOneField.id,
+        view: view.id,
+        fieldMetadataId: createdField.data?.createOneField.id,
         position: activeObjectMetadataItem.fields.length,
         isVisible: true,
         size: 100,
@@ -118,7 +118,13 @@ export const SettingsObjectNewFieldStep2 = () => {
           }
         />
         <SettingsObjectFieldTypeSelectSection
-          type={formValues.type}
+          fieldIconKey={formValues.icon}
+          fieldLabel={formValues.label || 'Employees'}
+          fieldType={formValues.type}
+          isObjectCustom={activeObjectMetadataItem.isCustom}
+          objectIconKey={activeObjectMetadataItem.icon}
+          objectLabelPlural={activeObjectMetadataItem.labelPlural}
+          objectNamePlural={activeObjectMetadataItem.namePlural}
           onChange={(type) =>
             setFormValues((previousValues) => ({ ...previousValues, type }))
           }

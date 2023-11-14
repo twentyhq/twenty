@@ -1,42 +1,35 @@
-import { useCallback, useContext } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useCallback } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
-import { useMoveViewColumns } from '@/ui/object/record-table/hooks/useMoveViewColumns';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
+import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 import { useView } from '@/views/hooks/useView';
 
-import { TableContext } from '../contexts/TableContext';
-import { availableTableColumnsScopedState } from '../states/availableTableColumnsScopedState';
-import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
 import { savedTableColumnsFamilyState } from '../states/savedTableColumnsFamilyState';
-import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTableColumnsScopedSelector';
-import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
-export const useTableColumns = () => {
-  const { onColumnsChange } = useContext(TableContext);
+import { useRecordTableScopedStates } from './internal/useRecordTableScopedStates';
 
-  const [availableTableColumns] = useRecoilScopedState(
-    availableTableColumnsScopedState,
-    TableRecoilScopeContext,
-  );
+export const useTableColumns = () => {
+  const { onColumnsChange, setTableColumns } = useRecordTable();
+  const {
+    availableTableColumnsState,
+    tableColumnsState,
+    visibleTableColumnsSelector,
+  } = useRecordTableScopedStates();
+
+  const availableTableColumns = useRecoilValue(availableTableColumnsState);
 
   const { currentViewId } = useView();
 
   const setSavedTableColumns = useSetRecoilState(
     savedTableColumnsFamilyState(currentViewId),
   );
-  const [tableColumns, setTableColumns] = useRecoilScopedState(
-    tableColumnsScopedState,
-    TableRecoilScopeContext,
-  );
 
-  const visibleTableColumns = useRecoilScopedValue(
-    visibleTableColumnsScopedSelector,
-    TableRecoilScopeContext,
-  );
+  const tableColumns = useRecoilValue(tableColumnsState);
+  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
+
   const { handleColumnMove } = useMoveViewColumns();
 
   const handleColumnsChange = useCallback(
@@ -54,13 +47,14 @@ export const useTableColumns = () => {
       viewField: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
     ) => {
       const isNewColumn = !tableColumns.some(
-        (tableColumns) => tableColumns.fieldId === viewField.fieldId,
+        (tableColumns) =>
+          tableColumns.fieldMetadataId === viewField.fieldMetadataId,
       );
 
       if (isNewColumn) {
         const newColumn = availableTableColumns.find(
           (availableTableColumn) =>
-            availableTableColumn.fieldId === viewField.fieldId,
+            availableTableColumn.fieldMetadataId === viewField.fieldMetadataId,
         );
         if (!newColumn) return;
 
@@ -72,7 +66,7 @@ export const useTableColumns = () => {
         await handleColumnsChange(nextColumns);
       } else {
         const nextColumns = tableColumns.map((previousColumn) =>
-          previousColumn.fieldId === viewField.fieldId
+          previousColumn.fieldMetadataId === viewField.fieldMetadataId
             ? { ...previousColumn, isVisible: !viewField.isVisible }
             : previousColumn,
         );
@@ -89,7 +83,8 @@ export const useTableColumns = () => {
       column: ColumnDefinition<FieldMetadata>,
     ) => {
       const currentColumnArrayIndex = visibleTableColumns.findIndex(
-        (visibleColumn) => visibleColumn.fieldId === column.fieldId,
+        (visibleColumn) =>
+          visibleColumn.fieldMetadataId === column.fieldMetadataId,
       );
 
       const columns = handleColumnMove(

@@ -19,7 +19,7 @@ export const useBoardCardFields = () => {
   ) => {
     setBoardCardFields((previousFields) =>
       previousFields.map((previousField) =>
-        previousField.fieldId === field.fieldId
+        previousField.fieldMetadataId === field.fieldMetadataId
           ? { ...previousField, isVisible: !field.isVisible }
           : previousField,
       ),

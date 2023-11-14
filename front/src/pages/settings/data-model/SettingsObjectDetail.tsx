@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { useMetadataField } from '@/metadata/hooks/useMetadataField';
-import { useObjectMetadataItemForSettings } from '@/metadata/hooks/useObjectMetadataItemForSettings';
-import { getFieldSlug } from '@/metadata/utils/getFieldSlug';
+import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
+import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsAboutSection } from '@/settings/data-model/object-details/components/SettingsObjectAboutSection';
 import { SettingsObjectFieldActiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldActiveActionDropdown';
@@ -49,7 +49,7 @@ export const SettingsObjectDetail = () => {
   }, [activeObjectMetadataItem, loading, navigate]);
 
   const { activateMetadataField, disableMetadataField, eraseMetadataField } =
-    useMetadataField();
+    useFieldMetadataItem();
 
   if (!activeObjectMetadataItem) return null;
 

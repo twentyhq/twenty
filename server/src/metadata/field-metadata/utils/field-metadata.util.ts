@@ -1,26 +1,13 @@
-import { v4 } from 'uuid';
+import { FieldMetadataTargetColumnMap } from 'src/tenant/schema-builder/interfaces/field-metadata-target-column-map.interface';
 
-import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interfaces/field-metadata-target-column-map.interface';
-
-import { uuidToBase36 } from 'src/metadata/data-source/data-source.util';
 import {
-  FieldMetadata,
+  FieldMetadataEntity,
   FieldMetadataType,
 } from 'src/metadata/field-metadata/field-metadata.entity';
 import {
   TenantMigrationColumnAction,
   TenantMigrationColumnActionType,
 } from 'src/metadata/tenant-migration/tenant-migration.entity';
-
-/**
- * Generate a column name from a field name removing unsupported characters.
- *
- * @param name string
- * @returns string
- */
-export function generateColumnName(name: string): string {
-  return name.toLowerCase().replace(/ /g, '_');
-}
 
 /**
  * Generate a target column map for a given type, this is used to map the field to the correct column(s) in the database.
@@ -31,26 +18,31 @@ export function generateColumnName(name: string): string {
  */
 export function generateTargetColumnMap(
   type: FieldMetadataType,
+  isCustomField: boolean,
+  fieldName: string,
 ): FieldMetadataTargetColumnMap {
+  const columnName = isCustomField ? `_${fieldName}` : fieldName;
+
   switch (type) {
     case FieldMetadataType.TEXT:
     case FieldMetadataType.PHONE:
     case FieldMetadataType.EMAIL:
     case FieldMetadataType.NUMBER:
+    case FieldMetadataType.PROBABILITY:
     case FieldMetadataType.BOOLEAN:
     case FieldMetadataType.DATE:
       return {
-        value: `column_${uuidToBase36(v4())}`,
+        value: columnName,
       };
     case FieldMetadataType.URL:
       return {
-        text: `column_${uuidToBase36(v4())}`,
-        link: `column_${uuidToBase36(v4())}`,
+        text: `${columnName}_text`,
+        link: `${columnName}_link`,
       };
     case FieldMetadataType.MONEY:
       return {
-        amount: `column_${uuidToBase36(v4())}`,
-        currency: `column_${uuidToBase36(v4())}`,
+        amount: `${columnName}_amount`,
+        currency: `${columnName}_currency`,
       };
     default:
       throw new Error(`Unknown type ${type}`);
@@ -58,7 +50,7 @@ export function generateTargetColumnMap(
 }
 
 export function convertFieldMetadataToColumnActions(
-  fieldMetadata: FieldMetadata,
+  fieldMetadata: FieldMetadataEntity,
 ): TenantMigrationColumnAction[] {
   switch (fieldMetadata.type) {
     case FieldMetadataType.TEXT:
@@ -79,11 +71,12 @@ export function convertFieldMetadataToColumnActions(
         },
       ];
     case FieldMetadataType.NUMBER:
+    case FieldMetadataType.PROBABILITY:
       return [
         {
           action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.value,
-          columnType: 'integer',
+          columnType: 'float',
         },
       ];
     case FieldMetadataType.BOOLEAN:

@@ -10,6 +10,7 @@ export type Command = {
   label: string;
   type: CommandType.Navigate | CommandType.Create;
   Icon?: IconComponent;
-  shortcuts?: string[];
+  firstHotKey?: string;
+  secondHotKey?: string;
   onCommandClick?: () => void;
 };

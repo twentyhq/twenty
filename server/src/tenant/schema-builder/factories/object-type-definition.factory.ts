@@ -5,8 +5,8 @@ import { GraphQLFieldConfigMap, GraphQLObjectType } from 'graphql';
 import { BuildSchemaOptions } from 'src/tenant/schema-builder/interfaces/build-schema-optionts.interface';
 import { ObjectMetadataInterface } from 'src/tenant/schema-builder/interfaces/object-metadata.interface';
 
-import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
 import { pascalCase } from 'src/utils/pascal-case';
+import { isCompositeFieldMetadataType } from 'src/tenant/utils/is-composite-field-metadata-type.util';
 
 import { OutputTypeFactory } from './output-type.factory';
 
@@ -49,7 +49,12 @@ export class ObjectTypeDefinitionFactory {
   ): GraphQLFieldConfigMap<any, any> {
     const fields: GraphQLFieldConfigMap<any, any> = {};
 
-    objectMetadata.fields.forEach((fieldMetadata: FieldMetadata) => {
+    for (const fieldMetadata of objectMetadata.fields) {
+      // Composite field types are generated during extensin of object type definition
+      if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+        continue;
+      }
+
       const type = this.outputTypeFactory.create(fieldMetadata, kind, options, {
         nullable: fieldMetadata.isNullable,
       });
@@ -58,7 +63,7 @@ export class ObjectTypeDefinitionFactory {
         type,
         description: fieldMetadata.description,
       };
-    });
+    }
 
     return fields;
   }

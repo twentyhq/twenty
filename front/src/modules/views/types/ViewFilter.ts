@@ -4,7 +4,7 @@ import { ViewFilterOperand } from './ViewFilterOperand';
 
 export type ViewFilter = {
   id?: string;
-  fieldId: string;
+  fieldMetadataId: string;
   operand: ViewFilterOperand;
   value: string;
   displayValue: string;

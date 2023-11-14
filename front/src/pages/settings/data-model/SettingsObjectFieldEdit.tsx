@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useMetadataField } from '@/metadata/hooks/useMetadataField';
-import { useObjectMetadataItemForSettings } from '@/metadata/hooks/useObjectMetadataItemForSettings';
-import { getFieldSlug } from '@/metadata/utils/getFieldSlug';
+import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
+import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -28,7 +28,7 @@ export const SettingsObjectFieldEdit = () => {
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
 
-  const { disableMetadataField, editMetadataField } = useMetadataField();
+  const { disableMetadataField, editMetadataField } = useFieldMetadataItem();
   const activeMetadataField = activeObjectMetadataItem?.fields.find(
     (metadataField) =>
       metadataField.isActive && getFieldSlug(metadataField) === fieldSlug,
@@ -125,7 +125,14 @@ export const SettingsObjectFieldEdit = () => {
         />
         <SettingsObjectFieldTypeSelectSection
           disabled
-          type={activeMetadataField.type as MetadataFieldDataType}
+          fieldIconKey={formValues.icon}
+          fieldLabel={formValues.label || 'Employees'}
+          fieldName={activeMetadataField.name}
+          fieldType={activeMetadataField.type as MetadataFieldDataType}
+          isObjectCustom={activeObjectMetadataItem.isCustom}
+          objectIconKey={activeObjectMetadataItem.icon}
+          objectLabelPlural={activeObjectMetadataItem.labelPlural}
+          objectNamePlural={activeObjectMetadataItem.namePlural}
         />
         <Section>
           <H2Title title="Danger zone" description="Disable this field" />

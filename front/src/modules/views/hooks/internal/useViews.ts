@@ -1,7 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
-import { useFindOneObjectMetadataItem } from '@/metadata/hooks/useFindOneObjectMetadataItem';
+import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { View } from '@/views/types/View';
 import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
 
@@ -19,14 +19,13 @@ export const useViews = (scopeId: string) => {
   const createView = useRecoilCallback(
     ({ snapshot }) =>
       async (view: Pick<View, 'id' | 'name'>) => {
-        const { viewObjectId, viewType } = getViewScopedStateValuesFromSnapshot(
-          {
+        const { viewObjectMetadataId, viewType } =
+          getViewScopedStateValuesFromSnapshot({
             snapshot,
             viewScopeId: scopeId,
-          },
-        );
+          });
 
-        if (!viewObjectId || !viewType) {
+        if (!viewObjectMetadataId || !viewType) {
           return;
         }
         await apolloClient.mutate({
@@ -34,7 +33,7 @@ export const useViews = (scopeId: string) => {
           variables: {
             input: {
               ...view,
-              objectId: viewObjectId,
+              objectMetadataId: viewObjectMetadataId,
               type: viewType,
             },
           },

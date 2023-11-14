@@ -2,7 +2,7 @@ import { useApolloClient } from '@apollo/client';
 import { produce } from 'immer';
 import { useRecoilCallback } from 'recoil';
 
-import { useFindOneObjectMetadataItem } from '@/metadata/hooks/useFindOneObjectMetadataItem';
+import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { Filter } from '@/ui/object/object-filter-dropdown/types/Filter';
 import { savedViewFiltersScopedFamilyState } from '@/views/states/savedViewFiltersScopedFamilyState';
 import { ViewFilter } from '@/views/types/ViewFilter';
@@ -21,7 +21,9 @@ export const useViewFilters = (viewScopeId: string) => {
   });
   const apolloClient = useApolloClient();
 
-  const { currentViewFiltersState } = useViewScopedStates();
+  const { currentViewFiltersState } = useViewScopedStates({
+    customViewScopeId: viewScopeId,
+  });
 
   const persistViewFilters = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -51,7 +53,7 @@ export const useViewFilters = (viewScopeId: string) => {
                 mutation: createOneMutation,
                 variables: {
                   input: {
-                    fieldId: viewFilter.fieldId,
+                    fieldMetadataId: viewFilter.fieldMetadataId,
                     viewId: viewId ?? currentViewId,
                     value: viewFilter.value,
                     displayValue: viewFilter.displayValue,
@@ -100,19 +102,23 @@ export const useViewFilters = (viewScopeId: string) => {
         };
 
         const filtersToCreate = currentViewFilters.filter(
-          (filter) => !savedViewFiltersByKey[filter.fieldId],
+          (filter) => !savedViewFiltersByKey[filter.fieldMetadataId],
         );
         await createViewFilters(filtersToCreate);
 
         const filtersToUpdate = currentViewFilters.filter(
           (filter) =>
-            savedViewFiltersByKey[filter.fieldId] &&
-            (savedViewFiltersByKey[filter.fieldId].operand !== filter.operand ||
-              savedViewFiltersByKey[filter.fieldId].value !== filter.value),
+            savedViewFiltersByKey[filter.fieldMetadataId] &&
+            (savedViewFiltersByKey[filter.fieldMetadataId].operand !==
+              filter.operand ||
+              savedViewFiltersByKey[filter.fieldMetadataId].value !==
+                filter.value),
         );
         await updateViewFilters(filtersToUpdate);
 
-        const filterKeys = currentViewFilters.map((filter) => filter.fieldId);
+        const filterKeys = currentViewFilters.map(
+          (filter) => filter.fieldMetadataId,
+        );
         const filterKeysToDelete = Object.keys(savedViewFiltersByKey).filter(
           (previousFilterKey) => !filterKeys.includes(previousFilterKey),
         );
@@ -157,12 +163,13 @@ export const useViewFilters = (viewScopeId: string) => {
         }
 
         const existingSavedFilterId =
-          savedViewFiltersByKey[filterToUpsert.fieldId]?.id;
+          savedViewFiltersByKey[filterToUpsert.fieldMetadataId]?.id;
 
         set(currentViewFiltersState, (filters) => {
           const newViewFilters = produce(filters, (filtersDraft) => {
             const existingFilterIndex = filtersDraft.findIndex(
-              (filter) => filter.fieldId === filterToUpsert.fieldId,
+              (filter) =>
+                filter.fieldMetadataId === filterToUpsert.fieldMetadataId,
             );
 
             if (existingFilterIndex === -1) {
@@ -187,7 +194,7 @@ export const useViewFilters = (viewScopeId: string) => {
 
   const removeViewFilter = useRecoilCallback(
     ({ snapshot, set }) =>
-      (fieldId: string) => {
+      (fieldMetadataId: string) => {
         const { currentViewId, currentViewFilters, onViewFiltersChange } =
           getViewScopedStateValuesFromSnapshot({
             snapshot,
@@ -199,7 +206,7 @@ export const useViewFilters = (viewScopeId: string) => {
         }
 
         const newViewFilters = currentViewFilters.filter((filter) => {
-          return filter.fieldId !== fieldId;
+          return filter.fieldMetadataId !== fieldMetadataId;
         });
         set(currentViewFiltersState, newViewFilters);
         onViewFiltersChange?.(newViewFilters);

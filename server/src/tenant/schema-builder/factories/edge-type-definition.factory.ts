@@ -36,7 +36,7 @@ export class EdgeTypeDefinitionFactory {
       type: new GraphQLObjectType({
         name: `${pascalCase(objectMetadata.nameSingular)}${kind.toString()}`,
         description: objectMetadata.description,
-        fields: this.generateFields(objectMetadata, options),
+        fields: () => this.generateFields(objectMetadata, options),
       }),
     };
   }
