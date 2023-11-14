@@ -121,8 +121,10 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       },
     ]);
 
-    const createdFieldMap = createdFields.reduce((acc, curr) => {
-      acc[curr.objectMetadataId] = curr;
+    const createdFieldMap = createdFields.reduce((acc, fieldMetadata) => {
+      if (fieldMetadata.type === FieldMetadataType.RELATION) {
+        acc[fieldMetadata.objectMetadataId] = fieldMetadata;
+      }
       return acc;
     }, {});
 
