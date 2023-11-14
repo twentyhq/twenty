@@ -144,7 +144,7 @@ export const Favorites = () => {
                               placeholder={`${person.firstName} ${person.lastName}`}
                             />
                           )}
-                          to={`/person/${person.id}`}
+                          to={`/object/personV2/${person.id}`}
                         />
                       )}
                       {company && (
@@ -161,7 +161,7 @@ export const Favorites = () => {
                               placeholder={company.name}
                             />
                           )}
-                          to={`/companies/${company.id}`}
+                          to={`/object/companyV2/${company.id}`}
                         />
                       )}
                     </>
