@@ -8,7 +8,11 @@ import { useFindManyObjectMetadataItems } from './useFindManyObjectMetadataItems
 import { useUpdateOneObjectMetadataItem } from './useUpdateOneObjectMetadataItem';
 
 export const useObjectMetadataItemForSettings = () => {
-  const { objectMetadataItems, loading } = useFindManyObjectMetadataItems();
+  const { objectMetadataItems, loading } = useFindManyObjectMetadataItems({
+    filter: {
+      isSystem: { is: false },
+    },
+  });
 
   const activeObjectMetadataItems = objectMetadataItems.filter(
     ({ isActive }) => isActive,

@@ -7,7 +7,11 @@ import NavItem from '@/ui/navigation/navbar/components/NavItem';
 import { useFindManyObjectMetadataItems } from '../hooks/useFindManyObjectMetadataItems';
 
 export const ObjectMetadataNavItems = () => {
-  const { objectMetadataItems } = useFindManyObjectMetadataItems();
+  const { objectMetadataItems } = useFindManyObjectMetadataItems({
+    filter: {
+      isSystem: { is: false },
+    },
+  });
 
   const navigate = useNavigate();
   const { icons } = useLazyLoadIcons();
