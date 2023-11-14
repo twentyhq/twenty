@@ -14,6 +14,24 @@ export const addAttachmentRelations: TenantMigrationTableAction[] = [
         referencedTableColumnName: 'id',
         action: TenantMigrationColumnActionType.RELATION,
       },
+      {
+        columnName: 'personId',
+        referencedTableName: 'person',
+        referencedTableColumnName: 'id',
+        action: TenantMigrationColumnActionType.RELATION,
+      },
+      {
+        columnName: 'activityId',
+        referencedTableName: 'activity',
+        referencedTableColumnName: 'id',
+        action: TenantMigrationColumnActionType.RELATION,
+      },
+      {
+        columnName: 'authorId',
+        referencedTableName: 'workspaceMember',
+        referencedTableColumnName: 'id',
+        action: TenantMigrationColumnActionType.RELATION,
+      },
     ],
   },
 ];

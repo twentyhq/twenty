@@ -17,7 +17,6 @@ import { seedOpportunityFieldMetadata } from 'src/database/typeorm-seeds/metadat
 import { seedPersonFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata/person';
 import { seedPipelineStepFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata/pipeline-step';
 import { seedWorkspaceMemberFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata/workspace-member';
-import { seedWorkspaceMemberSettingsFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata/workspace-member-settings';
 import { seedCompanyRelationMetadata } from 'src/database/typeorm-seeds/metadata/relation-metadata/company';
 import { seedActivityRelationMetadata } from 'src/database/typeorm-seeds/metadata/relation-metadata/activity';
 import { seedPipelineStepRelationMetadata } from 'src/database/typeorm-seeds/metadata/relation-metadata/pipeline-step';
@@ -46,10 +45,6 @@ export const seedMetadataSchema = async (
   await seedViewSortFieldMetadata(workspaceDataSource, schemaName);
   await seedViewRelationMetadata(workspaceDataSource, schemaName);
   await seedWorkspaceMemberFieldMetadata(workspaceDataSource, schemaName);
-  await seedWorkspaceMemberSettingsFieldMetadata(
-    workspaceDataSource,
-    schemaName,
-  );
 
   await seedActivityRelationMetadata(workspaceDataSource, schemaName);
   await seedCompanyRelationMetadata(workspaceDataSource, schemaName);

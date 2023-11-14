@@ -46,7 +46,7 @@ export const seedOpportunityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'MONEY',
+        type: 'NUMBER',
         name: 'amount',
         label: 'Amount',
         targetColumnMap: {
@@ -78,7 +78,7 @@ export const seedOpportunityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'PROBABILITY',
+        type: 'TEXT',
         name: 'probability',
         label: 'Probability',
         targetColumnMap: {

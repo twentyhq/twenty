@@ -695,6 +695,22 @@ export type QueryRelationsArgs = {
   paging?: CursorPaging;
 };
 
+export type RefreshToken = {
+  __typename?: 'RefreshToken';
+  createdAt: Scalars['DateTime']['output'];
+  expiresAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type RefreshTokenEdge = {
+  __typename?: 'RefreshTokenEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor']['output'];
+  /** The node containing the RefreshToken */
+  node: RefreshToken;
+};
+
 export type RelationConnection = {
   __typename?: 'RelationConnection';
   /** Array of edges. */
