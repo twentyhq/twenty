@@ -33,7 +33,7 @@ export const addWorkspaceMemberTable: TenantMigrationTableAction[] = [
         action: TenantMigrationColumnActionType.CREATE,
       },
       {
-        columnName: 'settingsId',
+        columnName: 'settingId',
         columnType: 'uuid',
         action: TenantMigrationColumnActionType.CREATE,
       },

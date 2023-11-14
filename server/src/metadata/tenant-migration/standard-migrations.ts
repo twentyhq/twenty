@@ -19,6 +19,7 @@ import { addActivityRelations } from 'src/metadata/tenant-migration/migrations/1
 import { addCommentRelations } from 'src/metadata/tenant-migration/migrations/1697618034-addCommentRelations';
 import { addOpportunityRelations } from 'src/metadata/tenant-migration/migrations/1697618031-addOpportunityRelations';
 import { addWorkspaceMemberSettingRelations } from 'src/metadata/tenant-migration/migrations/1697618035-addWorkspaceMemberSettingRelations';
+import { addWorkspaceMemberRelations } from 'src/metadata/tenant-migration/migrations/1697618036-addWorkspaceMemberRelations';
 
 import { addCompanyTable } from './migrations/1697618009-addCompanyTable';
 import { addViewTable } from './migrations/1697618011-addViewTable';
@@ -56,4 +57,5 @@ export const standardMigrations = {
   '1697618034-addCommentRelations': addCommentRelations,
   '1697618035-addWorkspaceMemberSettingRelations':
     addWorkspaceMemberSettingRelations,
+  '1697618036-addWorkspaceMemberRelations': addWorkspaceMemberRelations,
 };
