@@ -1,4 +1,4 @@
-const viewsMetadata = {
+const viewMetadata = {
   nameSingular: 'viewV2',
   namePlural: 'viewsV2',
   labelSingular: 'View',
@@ -6,6 +6,8 @@ const viewsMetadata = {
   targetTableName: 'view',
   description: '(System) Views',
   icon: 'IconLayoutCollage',
+  isActive: true,
+  isSystem: true,
   fields: [
     {
       type: 'TEXT',
@@ -40,7 +42,40 @@ const viewsMetadata = {
       icon: null,
       isNullable: false,
     },
+    {
+      isCustom: false,
+      isActive: true,
+      type: 'RELATION',
+      name: 'viewFields',
+      label: 'View Fields',
+      targetColumnMap: {},
+      description: 'View Fields',
+      icon: 'IconTag',
+      isNullable: true,
+    },
+    {
+      isCustom: false,
+      isActive: true,
+      type: 'RELATION',
+      name: 'viewSorts',
+      label: 'View Sorts',
+      targetColumnMap: {},
+      description: 'View Sorts',
+      icon: 'IconArrowsSort',
+      isNullable: true,
+    },
+    {
+      isCustom: false,
+      isActive: true,
+      type: 'RELATION',
+      name: 'viewFilters',
+      label: 'View Filters',
+      targetColumnMap: {},
+      description: 'View Filters',
+      icon: 'IconFilterBolt',
+      isNullable: true,
+    },
   ],
 };
 
-export default viewsMetadata;
+export default viewMetadata;
