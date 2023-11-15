@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 import { useCurrentUserTaskCount } from '@/activities/tasks/hooks/useCurrentUserDueTaskCount';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
@@ -7,25 +7,18 @@ import { ObjectMetadataNavItems } from '@/object-metadata/components/ObjectMetad
 import { SettingsNavbar } from '@/settings/components/SettingsNavbar';
 import {
   IconBell,
-  IconBuildingSkyscraper,
   IconCheckbox,
   IconSearch,
   IconSettings,
-  IconTargetArrow,
-  IconUser,
 } from '@/ui/display/icon/index';
 import { useIsSubMenuNavbarDisplayed } from '@/ui/layout/hooks/useIsSubMenuNavbarDisplayed';
 import MainNavbar from '@/ui/navigation/navbar/components/MainNavbar';
 import NavItem from '@/ui/navigation/navbar/components/NavItem';
 import NavTitle from '@/ui/navigation/navbar/components/NavTitle';
 
-import { measureTotalFrameLoad } from './utils/measureTotalFrameLoad';
-
 export const AppNavbar = () => {
   const currentPath = useLocation().pathname;
   const { openCommandMenu } = useCommandMenu();
-
-  const navigate = useNavigate();
 
   const isInSubMenu = useIsSubMenuNavbarDisplayed();
   const { currentUserDueTaskCount } = useCurrentUserTaskCount();
@@ -62,34 +55,6 @@ export const AppNavbar = () => {
           />
           <Favorites />
           <NavTitle label="Workspace" />
-          <NavItem
-            label="Companies"
-            to="/companies"
-            Icon={IconBuildingSkyscraper}
-            active={currentPath === '/companies'}
-          />
-          <NavItem
-            label="People"
-            to="/people"
-            onClick={() => {
-              measureTotalFrameLoad('people');
-
-              navigate('/people');
-            }}
-            Icon={IconUser}
-            active={currentPath === '/people'}
-          />
-          <NavItem
-            label="Opportunities"
-            // to="/opportunities"
-            onClick={() => {
-              measureTotalFrameLoad('opportunities');
-
-              navigate('/opportunities');
-            }}
-            Icon={IconTargetArrow}
-            active={currentPath === '/opportunities'}
-          />
           <ObjectMetadataNavItems />
         </MainNavbar>
       ) : (
