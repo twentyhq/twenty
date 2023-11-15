@@ -36,6 +36,7 @@ export const seedViewSortFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
     ])
     .orIgnore()
     .values([
@@ -105,6 +106,7 @@ export const seedViewSortFieldMetadata = async (
         description: 'View Sort target field',
         icon: null,
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedViewSortFieldMetadataIds.View,
@@ -121,6 +123,7 @@ export const seedViewSortFieldMetadata = async (
         description: 'View Sort related view',
         icon: 'IconLayoutCollage',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedViewSortFieldMetadataIds.Direction,
@@ -137,6 +140,7 @@ export const seedViewSortFieldMetadata = async (
         description: 'View Sort direction',
         icon: null,
         isNullable: false,
+        isSystem: false,
       },
     ])
     .execute();

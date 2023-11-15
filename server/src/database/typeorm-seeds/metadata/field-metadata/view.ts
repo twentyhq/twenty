@@ -39,6 +39,7 @@ export const seedViewFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
     ])
     .orIgnore()
     .values([
@@ -108,6 +109,7 @@ export const seedViewFieldMetadata = async (
         description: 'View name',
         icon: null,
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedViewFieldMetadataIds.ObjectMetadataId,
@@ -124,6 +126,7 @@ export const seedViewFieldMetadata = async (
         description: 'View target object',
         icon: null,
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedViewFieldMetadataIds.Type,
@@ -140,6 +143,7 @@ export const seedViewFieldMetadata = async (
         description: 'View type',
         icon: null,
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedViewFieldMetadataIds.ViewFields,
@@ -154,6 +158,7 @@ export const seedViewFieldMetadata = async (
         description: 'View Fields',
         icon: 'IconTag',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedViewFieldMetadataIds.ViewSorts,
@@ -168,6 +173,7 @@ export const seedViewFieldMetadata = async (
         description: 'View Sorts',
         icon: 'IconArrowsSort',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedViewFieldMetadataIds.ViewFilters,
@@ -182,6 +188,7 @@ export const seedViewFieldMetadata = async (
         description: 'View Filters',
         icon: 'IconFilterBolt',
         isNullable: true,
+        isSystem: false,
       },
     ])
     .execute();

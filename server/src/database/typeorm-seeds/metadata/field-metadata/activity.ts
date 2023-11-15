@@ -117,6 +117,7 @@ export const seedActivityFieldMetadata = async (
         description: 'Activity title',
         icon: 'IconNotes',
         isNullable: true,
+        isSystem: false,
       },
 
       // Scalar fields
@@ -135,6 +136,7 @@ export const seedActivityFieldMetadata = async (
         description: 'Activity body',
         icon: 'IconList',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedActivityFieldMetadataIds.Type,
@@ -151,6 +153,7 @@ export const seedActivityFieldMetadata = async (
         description: 'Activity type',
         icon: 'IconCheckbox',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedActivityFieldMetadataIds.ReminderAt,
@@ -167,6 +170,7 @@ export const seedActivityFieldMetadata = async (
         description: 'Activity reminder date',
         icon: 'IconCalendarEvent',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedActivityFieldMetadataIds.DueAt,
@@ -183,6 +187,7 @@ export const seedActivityFieldMetadata = async (
         description: 'Activity due date',
         icon: 'IconCalendarEvent',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedActivityFieldMetadataIds.CompletedAt,
@@ -199,6 +204,7 @@ export const seedActivityFieldMetadata = async (
         description: 'Activity completion date',
         icon: 'IconCheck',
         isNullable: true,
+        isSystem: false,
       },
 
       // Relationships
@@ -215,6 +221,7 @@ export const seedActivityFieldMetadata = async (
         description: 'Activity targets',
         icon: 'IconCheckbox',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedActivityFieldMetadataIds.Attachments,
@@ -229,6 +236,7 @@ export const seedActivityFieldMetadata = async (
         description: 'Activity attachments',
         icon: 'IconFileImport',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedActivityFieldMetadataIds.Comments,
@@ -243,6 +251,7 @@ export const seedActivityFieldMetadata = async (
         description: 'Activity comments',
         icon: 'IconComment',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedActivityFieldMetadataIds.Author,
@@ -260,6 +269,7 @@ export const seedActivityFieldMetadata = async (
           'Activity author. This is the person who created the activity',
         icon: 'IconUserCircle',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedActivityFieldMetadataIds.AuthorForeignKey,
@@ -290,6 +300,7 @@ export const seedActivityFieldMetadata = async (
           'Acitivity assignee. This is the workspace member assigned to the activity ',
         icon: 'IconUserCircle',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedActivityFieldMetadataIds.AssigneeForeignKey,

@@ -47,6 +47,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
     ])
     .orIgnore()
     .values([
@@ -116,6 +117,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         description: 'Workspace member first name',
         icon: 'IconCircleUser',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.LastName,
@@ -132,6 +134,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         description: 'Workspace member last name',
         icon: 'IconCircleUser',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.AvatarUrl,
@@ -164,6 +167,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         description: 'Associated User Id',
         icon: 'IconCircleUsers',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.AllowImpersonation,
@@ -180,6 +184,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         description: 'Allow Admin Access',
         icon: 'IconEye',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.ColorScheme,
@@ -196,6 +201,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         description: 'Preferred color scheme',
         icon: 'IconColorSwatch',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.Locale,
@@ -212,6 +218,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         description: 'Preferred language',
         icon: 'IconLanguage',
         isNullable: false,
+        isSystem: false,
       },
 
       // Relationships
@@ -228,6 +235,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         description: 'Activities created by the workspace member',
         icon: 'IconCheckbox',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.AssignedActivities,
@@ -242,6 +250,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         description: 'Activities assigned to the workspace member',
         icon: 'IconCheckbox',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.Favorites,
@@ -256,6 +265,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         description: 'Favorites linked to the workspace member',
         icon: 'IconHeart',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.AccountOwnerForCompanies,
@@ -270,6 +280,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         description: 'Account owner for companies',
         icon: 'IconBriefcase',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.AuthoredAttachments,
@@ -284,6 +295,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         description: 'Attachments created by the workspace member',
         icon: 'IconFileImport',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.AuthoredComments,
@@ -298,6 +310,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         description: 'Authored comments',
         icon: 'IconComment',
         isNullable: true,
+        isSystem: false,
       },
     ])
     .execute();

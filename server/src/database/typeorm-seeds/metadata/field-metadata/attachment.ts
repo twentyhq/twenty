@@ -45,6 +45,7 @@ export const seedAttachmentFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
     ])
     .orIgnore()
     .values([
@@ -114,6 +115,7 @@ export const seedAttachmentFieldMetadata = async (
         description: 'Attachment name',
         icon: 'IconFileUpload',
         isNullable: false,
+        isSystem: false,
       },
       // Scalar fields
       {
@@ -131,6 +133,7 @@ export const seedAttachmentFieldMetadata = async (
         description: 'Attachment full path',
         icon: 'IconLink',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedAttachmentFieldMetadataIds.Type,
@@ -147,6 +150,7 @@ export const seedAttachmentFieldMetadata = async (
         description: 'Attachment type',
         icon: 'IconList',
         isNullable: false,
+        isSystem: false,
       },
 
       // Relationships
@@ -163,6 +167,7 @@ export const seedAttachmentFieldMetadata = async (
         description: 'Attachment author',
         icon: 'IconCircleUser',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedAttachmentFieldMetadataIds.AuthorForeignKey,
@@ -192,6 +197,7 @@ export const seedAttachmentFieldMetadata = async (
         description: 'Attachment activity',
         icon: 'IconNotes',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedAttachmentFieldMetadataIds.ActivityForeignKey,
@@ -221,6 +227,7 @@ export const seedAttachmentFieldMetadata = async (
         description: 'Attachment person',
         icon: 'IconUser',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedAttachmentFieldMetadataIds.PersonForeignKey,
@@ -250,6 +257,7 @@ export const seedAttachmentFieldMetadata = async (
         description: 'Attachment company',
         icon: 'IconBuildingSkyscraper',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedAttachmentFieldMetadataIds.CompanyForeignKey,

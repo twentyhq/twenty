@@ -109,6 +109,7 @@ export const seedCommentFieldMetadata = async (
         description: 'Comment body',
         icon: 'IconLink',
         isNullable: false,
+        isSystem: false,
       },
       // Relationships
       {
@@ -124,6 +125,7 @@ export const seedCommentFieldMetadata = async (
         description: 'Comment author',
         icon: 'IconCircleUser',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedCommentFieldMetadataIds.AuthorForeignKey,
@@ -153,6 +155,7 @@ export const seedCommentFieldMetadata = async (
         description: 'Comment activity',
         icon: 'IconNotes',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedCommentFieldMetadataIds.ActivityForeignKey,

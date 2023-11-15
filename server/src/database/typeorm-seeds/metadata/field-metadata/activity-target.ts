@@ -107,6 +107,7 @@ export const seedActivityTargetFieldMetadata = async (
         description: 'ActivityTarget activity',
         icon: 'IconNotes',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedActivityTargetFieldMetadataIds.ActivityForeignKey,
@@ -136,6 +137,7 @@ export const seedActivityTargetFieldMetadata = async (
         description: 'ActivityTarget person',
         icon: 'IconUser',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedActivityTargetFieldMetadataIds.PersonForeignKey,
@@ -165,6 +167,7 @@ export const seedActivityTargetFieldMetadata = async (
         description: 'ActivityTarget company',
         icon: 'IconBuildingSkyscraper',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedActivityTargetFieldMetadataIds.CompanyForeignKey,

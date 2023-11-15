@@ -36,6 +36,7 @@ export const seedApiKeyFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
     ])
     .orIgnore()
     .values([
@@ -105,6 +106,7 @@ export const seedApiKeyFieldMetadata = async (
         description: 'ApiKey name',
         icon: 'IconLink',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedApiKeyFieldMetadataIds.ExpiresAt,
@@ -121,6 +123,7 @@ export const seedApiKeyFieldMetadata = async (
         description: 'ApiKey expiration date',
         icon: 'IconCalendar',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedApiKeyFieldMetadataIds.RevokedAt,
@@ -137,6 +140,7 @@ export const seedApiKeyFieldMetadata = async (
         description: 'ApiKey revocation date',
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
     ])
     .execute();

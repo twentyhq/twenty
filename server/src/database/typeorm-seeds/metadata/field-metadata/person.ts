@@ -121,6 +121,7 @@ export const seedPersonFieldMetadata = async (
         description: 'Contact’s first name',
         icon: 'IconUser',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedPersonFieldMetadataIds.LastName,
@@ -137,6 +138,7 @@ export const seedPersonFieldMetadata = async (
         description: 'Contact’s last name',
         icon: 'IconUser',
         isNullable: false,
+        isSystem: false,
       },
 
       // Scalar Fields
@@ -155,6 +157,7 @@ export const seedPersonFieldMetadata = async (
         description: 'Contact’s Email',
         icon: 'IconMail',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedPersonFieldMetadataIds.LinkedinUrl,
@@ -171,6 +174,7 @@ export const seedPersonFieldMetadata = async (
         description: 'Contact’s Linkedin account',
         icon: 'IconBrandLinkedin',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedPersonFieldMetadataIds.XUrl,
@@ -187,6 +191,7 @@ export const seedPersonFieldMetadata = async (
         description: 'Contact’s X/Twitter account',
         icon: 'IconUser',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedPersonFieldMetadataIds.JobTitle,
@@ -203,6 +208,7 @@ export const seedPersonFieldMetadata = async (
         description: 'Contact’s job title',
         icon: 'IconBriefcase',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedPersonFieldMetadataIds.Phone,
@@ -219,6 +225,7 @@ export const seedPersonFieldMetadata = async (
         description: 'Contact’s phone number',
         icon: 'IconPhone',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedPersonFieldMetadataIds.City,
@@ -235,6 +242,7 @@ export const seedPersonFieldMetadata = async (
         description: 'Contact’s city',
         icon: 'IconMap',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedPersonFieldMetadataIds.AvatarUrl,
@@ -251,6 +259,7 @@ export const seedPersonFieldMetadata = async (
         description: 'Contact’s avatar',
         icon: 'IconFileUpload',
         isNullable: true,
+        isSystem: false,
       },
 
       // Relationships
@@ -267,6 +276,7 @@ export const seedPersonFieldMetadata = async (
         description: 'Contact’s company',
         icon: 'IconBuildingSkyscraper',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedPersonFieldMetadataIds.CompanyForeignKey,
@@ -296,6 +306,7 @@ export const seedPersonFieldMetadata = async (
         description: 'Point of Contact for Opportuniites',
         icon: 'IconArrowTarget',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedPersonFieldMetadataIds.ActivityTargets,
@@ -310,6 +321,7 @@ export const seedPersonFieldMetadata = async (
         description: 'Activities tied to the contact',
         icon: 'IconCheckbox',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedPersonFieldMetadataIds.Opportunities,
@@ -324,6 +336,7 @@ export const seedPersonFieldMetadata = async (
         description: 'Opportunities linked to the contact.',
         icon: 'IconTargetArrow',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedPersonFieldMetadataIds.Favorites,
@@ -338,6 +351,7 @@ export const seedPersonFieldMetadata = async (
         description: 'Favorites linked to the contact',
         icon: 'IconHeart',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedPersonFieldMetadataIds.Attachments,
@@ -352,6 +366,7 @@ export const seedPersonFieldMetadata = async (
         description: 'Attachments linked to the contact.',
         icon: 'IconFileImport',
         isNullable: true,
+        isSystem: false,
       },
     ])
     .execute();

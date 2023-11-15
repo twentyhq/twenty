@@ -35,6 +35,7 @@ export const seedWebhookFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
     ])
     .orIgnore()
     .values([
@@ -104,6 +105,7 @@ export const seedWebhookFieldMetadata = async (
         description: 'Webhook target url',
         icon: 'IconLink',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedWebhookFieldMetadataIds.Operation,
@@ -120,6 +122,7 @@ export const seedWebhookFieldMetadata = async (
         description: 'Webhook operation',
         icon: 'IconCheckbox',
         isNullable: false,
+        isSystem: false,
       },
     ])
     .execute();

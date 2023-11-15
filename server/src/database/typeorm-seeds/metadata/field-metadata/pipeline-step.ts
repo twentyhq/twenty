@@ -37,6 +37,7 @@ export const seedPipelineStepFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
     ])
     .orIgnore()
     .values([
@@ -106,6 +107,7 @@ export const seedPipelineStepFieldMetadata = async (
         description: 'Pipeline Step name',
         icon: 'IconCurrencyDollar',
         isNullable: false,
+        isSystem: false,
       },
 
       // Scalar Fields
@@ -124,6 +126,7 @@ export const seedPipelineStepFieldMetadata = async (
         description: 'Pipeline Step color',
         icon: 'IconColorSwatch',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedPipelineStepFieldMetadataIds.Position,
@@ -140,6 +143,7 @@ export const seedPipelineStepFieldMetadata = async (
         description: 'Pipeline Step position',
         icon: 'IconHierarchy2',
         isNullable: false,
+        isSystem: false,
       },
 
       // Relationships
@@ -156,6 +160,7 @@ export const seedPipelineStepFieldMetadata = async (
         description: 'Opportunities linked to the step.',
         icon: 'IconTargetArrow',
         isNullable: true,
+        isSystem: false,
       },
     ])
     .execute();

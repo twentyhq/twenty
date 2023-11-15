@@ -38,6 +38,7 @@ export const seedViewFilterFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
     ])
     .orIgnore()
     .values([
@@ -107,6 +108,7 @@ export const seedViewFilterFieldMetadata = async (
         description: 'View Filter target field',
         icon: null,
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedViewFilterFieldMetadataIds.View,
@@ -123,6 +125,7 @@ export const seedViewFilterFieldMetadata = async (
         description: 'View Filter related view',
         icon: 'IconLayoutCollage',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedViewFilterFieldMetadataIds.Operand,
@@ -139,6 +142,7 @@ export const seedViewFilterFieldMetadata = async (
         description: 'View Filter operand',
         icon: null,
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedViewFilterFieldMetadataIds.Value,
@@ -155,6 +159,7 @@ export const seedViewFilterFieldMetadata = async (
         description: 'View Filter value',
         icon: null,
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedViewFilterFieldMetadataIds.DisplayValue,
@@ -171,6 +176,7 @@ export const seedViewFilterFieldMetadata = async (
         description: 'View Filter Display Value',
         icon: null,
         isNullable: false,
+        isSystem: false,
       },
     ])
     .execute();

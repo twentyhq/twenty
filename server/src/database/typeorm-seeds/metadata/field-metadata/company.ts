@@ -120,6 +120,7 @@ export const seedCompanyFieldMetadata = async (
         description: 'The company name',
         icon: 'IconBuildingSkyscraper',
         isNullable: false,
+        isSystem: false,
       },
 
       // Scalar Fields
@@ -139,6 +140,7 @@ export const seedCompanyFieldMetadata = async (
           'The company website URL. We use this url to fetch the company icon',
         icon: 'IconLink',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedCompanyFieldMetadataIds.Address,
@@ -155,6 +157,7 @@ export const seedCompanyFieldMetadata = async (
         description: 'The company address',
         icon: 'IconMap',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedCompanyFieldMetadataIds.Employees,
@@ -171,6 +174,7 @@ export const seedCompanyFieldMetadata = async (
         description: 'Number of employees in the company',
         icon: 'IconUsers',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedCompanyFieldMetadataIds.LinkedinUrl,
@@ -187,6 +191,7 @@ export const seedCompanyFieldMetadata = async (
         description: 'The company Linkedin account',
         icon: 'IconBrandLinkedin',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedCompanyFieldMetadataIds.XUrl,
@@ -203,6 +208,7 @@ export const seedCompanyFieldMetadata = async (
         description: 'The company Twitter/X account',
         icon: 'IconBrandX',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedCompanyFieldMetadataIds.AnnualRecurringRevenue,
@@ -220,6 +226,7 @@ export const seedCompanyFieldMetadata = async (
           'Annual Recurring Revenue: The actual or estimated annual revenue of the company',
         icon: 'IconMoneybag',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedCompanyFieldMetadataIds.IdealCustomerProfile,
@@ -237,6 +244,7 @@ export const seedCompanyFieldMetadata = async (
           'Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you',
         icon: 'IconTarget',
         isNullable: true,
+        isSystem: false,
       },
 
       // Relationships
@@ -253,6 +261,7 @@ export const seedCompanyFieldMetadata = async (
         description: 'People linked to the company.',
         icon: 'IconUsers',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedCompanyFieldMetadataIds.AccountOwner,
@@ -268,6 +277,7 @@ export const seedCompanyFieldMetadata = async (
           'Your team member responsible for managing the company account',
         icon: 'IconUserCircle',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedCompanyFieldMetadataIds.AccountOwnerForeignKey,
@@ -297,6 +307,7 @@ export const seedCompanyFieldMetadata = async (
         description: 'Activities tied to the company',
         icon: 'IconCheckbox',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedCompanyFieldMetadataIds.Opportunities,
@@ -311,6 +322,7 @@ export const seedCompanyFieldMetadata = async (
         description: 'Opportunities linked to the company.',
         icon: 'IconTargetArrow',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedCompanyFieldMetadataIds.Favorites,
@@ -325,6 +337,7 @@ export const seedCompanyFieldMetadata = async (
         description: 'Favorites linked to the company',
         icon: 'IconHeart',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedCompanyFieldMetadataIds.Attachments,
@@ -339,6 +352,7 @@ export const seedCompanyFieldMetadata = async (
         description: 'Attachments linked to the company.',
         icon: 'IconFileImport',
         isNullable: true,
+        isSystem: false,
       },
     ])
     .execute();

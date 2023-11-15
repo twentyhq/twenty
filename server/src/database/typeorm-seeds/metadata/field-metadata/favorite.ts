@@ -16,10 +16,10 @@ export enum SeedFavoriteFieldMetadataIds {
   WorkspaceMember = '20202020-1138-4e93-bbff-917a68161abf',
   WorkspaceMemberForeignKey = '20202020-0f4c-4b9a-9b9a-917a68161a4f',
   Person = '20202020-0876-4735-8974-ff4d51aafa07',
-  PersonForeignKey = '20202020-0876-4735-8974-ff4d51aa3e4w',
+  PersonForeignKey = '20202020-0876-4735-9473-ff4d51aa4e7b',
   Company = '20202020-09e1-4384-ae3e-39e7956396fe',
   CompanyV2 = '20202020-09e1-4384-ae3e-39e7956396ff',
-  CompanyForeignKey = '20202020-09e1-4384-ae3e-45e79563dk28',
+  CompanyForeignKey = '20202020-09e1-4384-ae3e-45e79563d528',
 }
 
 export const seedFavoriteFieldMetadata = async (
@@ -112,6 +112,7 @@ export const seedFavoriteFieldMetadata = async (
         description: 'Favorite position',
         icon: 'IconList',
         isNullable: false,
+        isSystem: false,
       },
 
       // Relationships
@@ -128,6 +129,7 @@ export const seedFavoriteFieldMetadata = async (
         description: 'Favorite workspace member',
         icon: 'IconCircleUser',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedFavoriteFieldMetadataIds.WorkspaceMemberForeignKey,
@@ -159,6 +161,7 @@ export const seedFavoriteFieldMetadata = async (
         description: 'Favorite person',
         icon: 'IconUser',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedFavoriteFieldMetadataIds.PersonForeignKey,
@@ -188,6 +191,7 @@ export const seedFavoriteFieldMetadata = async (
         description: 'Favorite company',
         icon: 'IconBuildingSkyscraper',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedFavoriteFieldMetadataIds.CompanyForeignKey,

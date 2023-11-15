@@ -115,6 +115,7 @@ export const seedOpportunityFieldMetadata = async (
         description: 'Opportunity amount',
         icon: 'IconCurrencyDollar',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedOpportunityFieldMetadataIds.CloseDate,
@@ -131,6 +132,7 @@ export const seedOpportunityFieldMetadata = async (
         description: 'Opportunity close date',
         icon: 'IconCalendarEvent',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedOpportunityFieldMetadataIds.Probability,
@@ -147,6 +149,7 @@ export const seedOpportunityFieldMetadata = async (
         description: 'Opportunity amount',
         icon: 'IconProgressCheck',
         isNullable: true,
+        isSystem: false,
       },
       // Relationships
       {
@@ -162,6 +165,7 @@ export const seedOpportunityFieldMetadata = async (
         description: 'Opportunity pipeline step',
         icon: 'IconKanban',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedOpportunityFieldMetadataIds.PipelineStepForeignKey,
@@ -191,6 +195,7 @@ export const seedOpportunityFieldMetadata = async (
         description: 'Opportunity point of contact',
         icon: 'IconUser',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedOpportunityFieldMetadataIds.PointOfContactForeignKey,
@@ -220,6 +225,7 @@ export const seedOpportunityFieldMetadata = async (
         description: 'Opportunity person',
         icon: 'IconUser',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedOpportunityFieldMetadataIds.PersonForeignKey,
@@ -249,6 +255,7 @@ export const seedOpportunityFieldMetadata = async (
         description: 'Opportunity company',
         icon: 'IconBuildingSkyscraper',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedOpportunityFieldMetadataIds.CompanyForeignKey,
