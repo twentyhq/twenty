@@ -6,6 +6,7 @@ import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metada
 import { TenantMigrationModule } from 'src/metadata/tenant-migration/tenant-migration.module';
 import { TenantMigrationRunnerModule } from 'src/tenant-migration-runner/tenant-migration-runner.module';
 import { TenantDataSourceModule } from 'src/tenant-datasource/tenant-datasource.module';
+import { RelationMetadataModule } from 'src/metadata/relation-metadata/relation-metadata.module';
 
 import { TenantManagerService } from './tenant-manager.service';
 
@@ -17,6 +18,7 @@ import { TenantManagerService } from './tenant-manager.service';
     ObjectMetadataModule,
     FieldMetadataModule,
     DataSourceModule,
+    RelationMetadataModule,
   ],
   exports: [TenantManagerService],
   providers: [TenantManagerService],

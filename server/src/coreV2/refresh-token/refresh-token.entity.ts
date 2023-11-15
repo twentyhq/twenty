@@ -15,12 +15,12 @@ import {
   IDField,
 } from '@ptc-org/nestjs-query-graphql';
 
-import { User } from 'src/coreV2/user/user.entity';
+import { UserV2 } from 'src/coreV2/user/user.entity';
 
 import { BeforeCreateOneRefreshToken } from './hooks/before-create-one-refresh-token.hook';
 
 @Entity('refresh_tokens')
-@ObjectType('RefreshToken')
+@ObjectType('refreshTokenV2')
 @BeforeCreateOne(BeforeCreateOneRefreshToken)
 @Authorize({
   authorize: (context: any) => ({
@@ -32,9 +32,9 @@ export class RefreshToken {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.refreshTokens)
+  @ManyToOne(() => UserV2, (user) => user.refreshTokens)
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user: UserV2;
 
   @Column()
   userId: string;

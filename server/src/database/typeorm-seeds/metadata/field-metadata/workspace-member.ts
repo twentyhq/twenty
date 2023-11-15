@@ -8,6 +8,7 @@ const fieldMetadataTableName = 'fieldMetadata';
 export enum SeedWorkspaceMemberFieldMetadataIds {
   FirstName = '20202020-1fa8-4d38-9fa4-0cf696909298',
   LastName = '20202020-8c37-4163-ba06-1dada334ce3e',
+  AvatarUrl = '20202020-7ba6-40d5-934b-17146183a212',
   Locale = '20202020-10f6-4df9-8d6f-a760b65bd800',
   ColorScheme = '20202020-83f2-4c5f-96b0-0c51ecc160e3',
   AllowImpersonation = '20202020-bb19-44a1-8156-8866f87a5f42',
@@ -78,6 +79,22 @@ export const seedWorkspaceMemberFieldMetadata = async (
         isNullable: false,
       },
       {
+        id: SeedWorkspaceMemberFieldMetadataIds.AvatarUrl,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: 'TEXT',
+        name: 'avatarUrl',
+        label: 'Avatar Url',
+        targetColumnMap: {
+          value: 'avatarUrl',
+        },
+        description: 'Workspace member avatar',
+        icon: 'IconFileUpload',
+        isNullable: true,
+      },
+      {
         id: SeedWorkspaceMemberFieldMetadataIds.UserId,
         objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
         isCustom: false,
@@ -123,7 +140,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         },
         description: 'Preferred color scheme',
         icon: 'IconColorSwatch',
-        isNullable: false,
+        isNullable: true,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.Locale,

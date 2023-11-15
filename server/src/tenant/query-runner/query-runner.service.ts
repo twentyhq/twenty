@@ -100,8 +100,18 @@ export class QueryRunnerService {
     options: QueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { workspaceId, targetTableName } = options;
+
+    console.log({
+      workspaceId,
+      targetTableName,
+    });
     const query = this.queryBuilderFactory.updateOne(args, options);
+
+    console.log({ query });
+
     const result = await this.execute(query, workspaceId);
+
+    console.log('HEY');
 
     return this.parseResult<PGGraphQLMutation<Record>>(
       result,
@@ -139,15 +149,20 @@ export class QueryRunnerService {
         workspaceId,
       )};
     `);
-    console.log('ho');
-    console.log(query);
-    console.log('ha');
 
-    return workspaceDataSource?.query<PGGraphQLResult>(`
+    const results = await workspaceDataSource?.query<PGGraphQLResult>(`
       SELECT graphql.resolve($$
         ${query}
       $$);
     `);
+
+    console.log(
+      JSON.stringify({
+        results,
+      }),
+    );
+
+    return results;
   }
 
   private parseResult<Result>(
@@ -157,6 +172,13 @@ export class QueryRunnerService {
   ): Result {
     const entityKey = `${command}${targetTableName}Collection`;
     const result = graphqlResult?.[0]?.resolve?.data?.[entityKey];
+    const errors = graphqlResult?.[0]?.resolve?.errors;
+
+    console.log('Result : ', graphqlResult?.[0]?.resolve);
+
+    if (Array.isArray(errors) && errors.length > 0) {
+      console.error('GraphQL errors', errors);
+    }
 
     if (!result) {
       throw new BadRequestException('Malformed result from GraphQL query');

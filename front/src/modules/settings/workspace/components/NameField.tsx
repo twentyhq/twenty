@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import debounce from 'lodash.debounce';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
@@ -27,10 +27,11 @@ export const NameField = ({
   autoSave = true,
   onNameUpdate,
 }: NameFieldProps) => {
-  const [currentUser] = useRecoilState(currentUserState);
-  const workspace = currentUser?.workspaceMember?.workspace;
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  const [displayName, setDisplayName] = useState(workspace?.displayName ?? '');
+  const [displayName, setDisplayName] = useState(
+    currentWorkspace?.displayName ?? '',
+  );
 
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 

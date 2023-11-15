@@ -26,8 +26,7 @@ import { FileUploadService } from 'src/core/file/services/file-upload.service';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { assert } from 'src/utils/assert';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
-
-import { User } from './user.entity';
+import { UserV2 } from 'src/coreV2/user/user.entity';
 
 import { UserService } from './services/user.service';
 
@@ -39,7 +38,7 @@ const getHMACKey = (email?: string, key?: string | null) => {
 };
 
 @UseGuards(JwtAuthGuard)
-@Resolver(() => User)
+@Resolver(() => UserV2)
 export class UserResolver {
   constructor(
     private readonly userService: UserService,
@@ -47,8 +46,8 @@ export class UserResolver {
     private readonly fileUploadService: FileUploadService,
   ) {}
 
-  @Query(() => User)
-  async currentUser(@AuthUser() { id }: User) {
+  @Query(() => UserV2)
+  async currentUserV2(@AuthUser() { id }: UserV2) {
     const user = await this.userService.findById(id);
     assert(user, 'User not found');
     return user;
@@ -57,14 +56,14 @@ export class UserResolver {
   @ResolveField(() => String, {
     nullable: false,
   })
-  displayName(@Parent() parent: User): string {
+  displayName(@Parent() parent: UserV2): string {
     return `${parent.firstName ?? ''} ${parent.lastName ?? ''}`;
   }
 
   @ResolveField(() => String, {
     nullable: true,
   })
-  supportUserHash(@Parent() parent: User): string | null {
+  supportUserHash(@Parent() parent: UserV2): string | null {
     if (this.environmentService.getSupportDriver() !== SupportDriver.Front) {
       return null;
     }
@@ -73,8 +72,8 @@ export class UserResolver {
   }
 
   @Mutation(() => String)
-  async uploadProfilePicture(
-    @AuthUser() { id }: User,
+  async uploadProfilePictureV2(
+    @AuthUser() { id }: UserV2,
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
   ): Promise<string> {
@@ -96,11 +95,11 @@ export class UserResolver {
     return paths[0];
   }
 
-  @Mutation(() => User)
+  @Mutation(() => UserV2)
   @UseGuards(AbilityGuard)
   @CheckAbilities(DeleteUserAbilityHandler)
-  async deleteUserAccount(
-    @AuthUser() { id: userId }: User,
+  async deleteUserV2(
+    @AuthUser() { id: userId }: UserV2,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     return this.userService.deleteUser({ userId, workspaceId });

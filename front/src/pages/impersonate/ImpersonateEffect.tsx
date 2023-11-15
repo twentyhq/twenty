@@ -38,21 +38,9 @@ export const ImpersonateEffect = () => {
       throw new Error('No impersonate result');
     }
 
-    if (!impersonateResult.data?.impersonate.user.workspaceMember) {
-      throw new Error('No workspace member');
-    }
-
-    if (!impersonateResult.data?.impersonate.user.workspaceMember.settings) {
-      throw new Error('No workspace member settings');
-    }
-
     setCurrentUser({
       ...impersonateResult.data.impersonate.user,
-      workspaceMember: {
-        ...impersonateResult.data.impersonate.user.workspaceMember,
-        settings:
-          impersonateResult.data.impersonate.user.workspaceMember.settings,
-      },
+      // Todo also set WorkspaceMember
     });
     setTokenPair(impersonateResult.data?.impersonate.tokens);
 

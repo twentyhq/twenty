@@ -16,6 +16,8 @@ export const useUpdateOneObjectRecord = ({
     objectNameSingular,
   });
 
+  console.log('update one object');
+
   // TODO: type this with a minimal type at least with Record<string, any>
   const [mutate] = useMutation(updateOneMutation);
 

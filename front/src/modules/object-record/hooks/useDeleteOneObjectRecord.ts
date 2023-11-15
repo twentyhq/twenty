@@ -20,12 +20,10 @@ export const useDeleteOneObjectRecord = ({
   const [mutate] = useMutation(deleteOneMutation);
 
   const deleteOneObject = foundObjectMetadataItem
-    ? (input: Record<string, any>) => {
+    ? (idToDelete: string) => {
         return mutate({
           variables: {
-            input: {
-              ...input,
-            },
+            idToDelete,
           },
           refetchQueries: [getOperationName(findManyQuery) ?? ''],
         });

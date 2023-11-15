@@ -9,7 +9,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { generateFindManyCustomObjectsQuery } from '@/object-record/utils/generateFindManyCustomObjectsQuery';
+import { useGenerateFindManyCustomObjectsQuery } from '@/object-record/utils/useGenerateFindManyCustomObjectsQuery';
 import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
 import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
 import {
@@ -54,7 +54,7 @@ export const useOptimisticEffect = () => {
           objectMetadataItem?: ObjectMetadataItem;
         }) => {
           if (isUsingFlexibleBackend && objectMetadataItem) {
-            const generatedQuery = generateFindManyCustomObjectsQuery({
+            const generatedQuery = useGenerateFindManyCustomObjectsQuery({
               objectMetadataItem,
             });
 

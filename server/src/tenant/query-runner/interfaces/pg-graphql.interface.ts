@@ -3,6 +3,7 @@ import { Record as IRecord } from 'src/tenant/query-builder/interfaces/record.in
 export interface PGGraphQLResponse<Data = any> {
   resolve: {
     data: Data;
+    errors: any[];
   };
 }
 

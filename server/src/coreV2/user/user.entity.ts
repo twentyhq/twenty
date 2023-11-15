@@ -13,8 +13,8 @@ import { GraphQLJSONObject } from 'graphql-type-json';
 
 import { RefreshToken } from 'src/coreV2/refresh-token/refresh-token.entity';
 
-@Entity('users')
-@ObjectType('user')
+@Entity('userV2')
+@ObjectType('userV2')
 // @Authorize({
 //   authorize: (context: any) => ({
 //     // FIXME: We do not have this relation in the database
@@ -23,7 +23,7 @@ import { RefreshToken } from 'src/coreV2/refresh-token/refresh-token.entity';
 //     },
 //   }),
 // })
-export class User {
+export class UserV2 {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;

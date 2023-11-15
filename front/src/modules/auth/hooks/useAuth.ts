@@ -4,12 +4,19 @@ import {
   snapshot_UNSTABLE,
   useGotoRecoilSnapshot,
   useRecoilState,
+  useSetRecoilState,
 } from 'recoil';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
+import { CREATE_ONE_WORKSPACE_MEMBER_V2 } from '@/object-record/graphql/mutation/createOneWorkspaceMember';
+import { FIND_ONE_WORKSPACE_MEMBER_V2 } from '@/object-record/graphql/queries/findOneWorkspaceMember';
 import { REACT_APP_SERVER_AUTH_URL } from '~/config';
 import {
   useChallengeMutation,
   useCheckUserExistsLazyQuery,
+  useGetCurrentWorkspaceLazyQuery,
   useSignUpMutation,
   useVerifyMutation,
 } from '~/generated/graphql';
@@ -19,13 +26,20 @@ import { tokenPairState } from '../states/tokenPairState';
 
 export const useAuth = () => {
   const [, setTokenPair] = useRecoilState(tokenPairState);
-  const [, setCurrentUser] = useRecoilState(currentUserState);
+  const setCurrentUser = useSetRecoilState(currentUserState);
+  const setCurrentWorkspaceMember = useSetRecoilState(
+    currentWorkspaceMemberState,
+  );
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+  const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
   const [verify] = useVerifyMutation();
   const [checkUserExistsQuery, { data: checkUserExistsData }] =
     useCheckUserExistsLazyQuery();
+  const [getCurrentWorkspaceQuery, { data: getCurrentWorkspaceData }] =
+    useGetCurrentWorkspaceLazyQuery();
 
   const client = useApolloClient();
 
@@ -67,36 +81,56 @@ export const useAuth = () => {
         throw new Error('No verify result');
       }
 
-      if (!verifyResult.data?.verify.user.workspaceMember) {
-        throw new Error('No workspace member');
-      }
-
-      if (!verifyResult.data?.verify.user.workspaceMember.settings) {
-        throw new Error('No settings');
-      }
-
-      setCurrentUser({
-        ...verifyResult.data?.verify.user,
-        workspaceMember: {
-          ...verifyResult.data?.verify.user.workspaceMember,
-          settings: verifyResult.data?.verify.user.workspaceMember.settings,
+      setTokenPair(verifyResult.data?.verify.tokens);
+      const workspaceMember = await client.query({
+        query: FIND_ONE_WORKSPACE_MEMBER_V2,
+        variables: {
+          filter: {
+            userId: { eq: verifyResult.data?.verify.user.id },
+          },
         },
       });
-      setTokenPair(verifyResult.data?.verify.tokens);
+      const currentWorkspace = await getCurrentWorkspaceQuery();
 
-      return verifyResult.data?.verify;
+      setCurrentUser(verifyResult.data?.verify.user);
+      setCurrentWorkspaceMember(workspaceMember.data?.findMany);
+      setCurrentWorkspace(currentWorkspace.data?.currentWorkspace ?? null);
+      return {
+        user: verifyResult.data?.verify.user,
+        workspaceMember: workspaceMember.data?.findMany,
+        workspace: currentWorkspace.data?.currentWorkspace,
+        tokens: verifyResult.data?.verify.tokens,
+      };
     },
-    [setTokenPair, verify, setCurrentUser],
+    [
+      verify,
+      setTokenPair,
+      client,
+      getCurrentWorkspaceQuery,
+      setCurrentUser,
+      setCurrentWorkspaceMember,
+      setCurrentWorkspace,
+    ],
   );
 
   const handleCrendentialsSignIn = useCallback(
     async (email: string, password: string) => {
       const { loginToken } = await handleChallenge(email, password);
+      setIsVerifyPendingState(true);
 
-      const { user } = await handleVerify(loginToken.token);
-      return user;
+      const { user, workspaceMember, workspace } = await handleVerify(
+        loginToken.token,
+      );
+
+      setIsVerifyPendingState(false);
+
+      return {
+        user,
+        workspaceMember,
+        workspace,
+      };
     },
-    [handleChallenge, handleVerify],
+    [handleChallenge, handleVerify, setIsVerifyPendingState],
   );
 
   const handleSignOut = useCallback(() => {
@@ -110,6 +144,8 @@ export const useAuth = () => {
 
   const handleCredentialsSignUp = useCallback(
     async (email: string, password: string, workspaceInviteHash?: string) => {
+      setIsVerifyPendingState(true);
+
       const signUpResult = await signUp({
         variables: {
           email,
@@ -126,13 +162,30 @@ export const useAuth = () => {
         throw new Error('No login token');
       }
 
-      const { user } = await handleVerify(
+      const { user, workspace } = await handleVerify(
         signUpResult.data?.signUp.loginToken.token,
       );
 
-      return user;
+      const workspaceMember = await client.mutate({
+        mutation: CREATE_ONE_WORKSPACE_MEMBER_V2,
+        variables: {
+          input: {
+            firstName: user.firstName ?? '',
+            lastName: user.lastName ?? '',
+            colorScheme: 'Light',
+            userId: user.id,
+            allowImpersonation: true,
+            locale: 'en',
+          },
+        },
+      });
+      setCurrentWorkspaceMember(workspaceMember.data?.createWorkspaceMemberV2);
+
+      setIsVerifyPendingState(false);
+
+      return { user, workspaceMember, workspace };
     },
-    [signUp, handleVerify],
+    [setIsVerifyPendingState, signUp, handleVerify, client],
   );
 
   const handleGoogleLogin = useCallback((workspaceInviteHash?: string) => {

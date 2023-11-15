@@ -19,19 +19,8 @@ export const seedUsers = async (prisma: PrismaClient) => {
       locale: 'en',
       passwordHash:
         '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
-      settingsId: 'twenty-ge256b39-3ec3-4fe3-8997-9dcb1084c109',
       avatarUrl: null,
-      workspaceMember: {
-        connectOrCreate: {
-          where: {
-            id: '20202020-0687-4c41-b707-ed1bfca972a7',
-          },
-          create: {
-            workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
-            settingsId: 'twenty-ge256b39-3ec3-4fe3-8997-9dcb1084c109',
-          },
-        },
-      },
+      defaultWorkspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
     },
   });
 
@@ -52,15 +41,8 @@ export const seedUsers = async (prisma: PrismaClient) => {
       lastName: 'Ive',
       email: 'jony.ive@apple.dev',
       locale: 'en',
-      settingsId: 'twenty-ge256b39-3ec3-4fe3-8997-2c4a2035a215',
       avatarUrl: null,
-      workspaceMember: {
-        create: {
-          id: '20202020-77d5-4cb6-b60a-f4a835a85d61',
-          workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
-          settingsId: 'twenty-ge256b39-3ec3-4fe3-8997-2c4a2035a215',
-        },
-      },
+      defaultWorkspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
     },
   });
 
@@ -81,15 +63,8 @@ export const seedUsers = async (prisma: PrismaClient) => {
       lastName: 'Schiler',
       email: 'phil.schiler@apple.dev',
       locale: 'en',
-      settingsId: 'twenty-ge256b39-3ec3-4fe3-8997-8e1f2097b328',
       avatarUrl: null,
-      workspaceMember: {
-        create: {
-          id: '20202020-1553-45c6-a028-5a9064cce07f',
-          workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
-          settingsId: 'twenty-ge256b39-3ec3-4fe3-8997-8e1f2097b328',
-        },
-      },
+      defaultWorkspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
     },
   });
 
@@ -110,14 +85,6 @@ export const seedUsers = async (prisma: PrismaClient) => {
       lastName: 'Bochet',
       email: 'charles@twenty.dev',
       locale: 'en',
-      settingsId: 'twenty-ge256b39-3ec3-4fe3-8997-5e2d1049c430',
-      workspaceMember: {
-        create: {
-          id: 'twenty-dev-7ed9d213-1c25-4d02-bf35-6aeccf7oa419',
-          workspaceId: 'twenty-dev-7ed9d212-1c25-4d02-bf25-6aeccf7ea420',
-          settingsId: 'twenty-ge256b39-3ec3-4fe3-8997-5e2d1049c430',
-        },
-      },
     },
   });
 };

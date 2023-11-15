@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useDeleteOneObjectRecord } from '@/object-record/hooks/useDeleteOneObjectRecord';
+import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { IconSettings, IconTrash } from '@/ui/display/icon';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
@@ -13,10 +15,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
-import {
-  useGetWorkspaceMembersQuery,
-  useRemoveWorkspaceMemberMutation,
-} from '~/generated/graphql';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
@@ -31,51 +30,22 @@ const StyledButtonContainer = styled.div`
 
 export const SettingsWorkspaceMembers = () => {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
-  const [userToDelete, setUserToDelete] = useState<string | undefined>();
+  const [workspaceMemberToDelete, setWorkspaceMemberToDelete] = useState<
+    string | undefined
+  >();
 
-  const [currentUser] = useRecoilState(currentUserState);
-  const workspace = currentUser?.workspaceMember?.workspace;
-
-  const { data } = useGetWorkspaceMembersQuery();
-
-  const [removeWorkspaceMember] = useRemoveWorkspaceMemberMutation();
-
-  const handleRemoveWorkspaceMember = async (userId: string) => {
-    await removeWorkspaceMember({
-      variables: {
-        where: {
-          userId,
-        },
-      },
-      optimisticResponse: {
-        __typename: 'Mutation',
-        deleteWorkspaceMember: {
-          __typename: 'WorkspaceMember',
-          id: userId,
-        },
-      },
-      update: (cache, { data: responseData }) => {
-        if (!responseData) {
-          return;
-        }
-
-        cache.evict({
-          id: cache.identify({
-            id: responseData.deleteWorkspaceMember.id,
-            __typename: 'WorkspaceMember',
-          }),
-        });
-
-        cache.evict({
-          id: cache.identify({
-            id: userId,
-            __typename: 'User',
-          }),
-        });
-
-        cache.gc();
-      },
+  const { objects: workspaceMembers } =
+    useFindManyObjectRecords<WorkspaceMember>({
+      objectNamePlural: 'workspaceMembersV2',
     });
+  const { deleteOneObject: deleteOneWorkspaceMember } =
+    useDeleteOneObjectRecord({
+      objectNamePlural: 'workspaceMembersV2',
+    });
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+
+  const handleRemoveWorkspaceMember = async (workspaceMemberId: string) => {
+    await deleteOneWorkspaceMember?.(workspaceMemberId);
     setIsConfirmationModalOpen(false);
   };
 
@@ -83,14 +53,14 @@ export const SettingsWorkspaceMembers = () => {
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer width={350}>
         <StyledH1Title title="Members" />
-        {workspace?.inviteHash && (
+        {currentWorkspace?.inviteHash && (
           <Section>
             <H2Title
               title="Invite"
               description="Send an invitation to use Twenty"
             />
             <WorkspaceInviteLink
-              inviteLink={`${window.location.origin}/invite/${workspace?.inviteHash}`}
+              inviteLink={`${window.location.origin}/invite/${currentWorkspace?.inviteHash}`}
             />
           </Section>
         )}
@@ -99,17 +69,17 @@ export const SettingsWorkspaceMembers = () => {
             title="Members"
             description="Manage the members of your space here"
           />
-          {data?.workspaceMembers?.map((member) => (
+          {workspaceMembers?.map((member) => (
             <WorkspaceMemberCard
-              key={member.user.id}
-              workspaceMember={{ user: member.user }}
+              key={member.id}
+              workspaceMember={member as WorkspaceMember}
               accessory={
-                currentUser?.id !== member.user.id && (
+                currentWorkspace?.id !== member.id && (
                   <StyledButtonContainer>
                     <IconButton
                       onClick={() => {
                         setIsConfirmationModalOpen(true);
-                        setUserToDelete(member.user.id);
+                        setWorkspaceMemberToDelete(member.id);
                       }}
                       variant="tertiary"
                       size="medium"
@@ -133,7 +103,8 @@ export const SettingsWorkspaceMembers = () => {
           </>
         }
         onConfirmClick={() =>
-          userToDelete && handleRemoveWorkspaceMember(userToDelete)
+          workspaceMemberToDelete &&
+          handleRemoveWorkspaceMember(workspaceMemberToDelete)
         }
         deleteButtonText="Delete account"
       />
