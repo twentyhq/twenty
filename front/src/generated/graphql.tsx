@@ -2658,6 +2658,7 @@ export type User = {
   comments?: Maybe<Array<Comment>>;
   companies?: Maybe<Array<Company>>;
   createdAt: Scalars['DateTime'];
+  defaultWorkspaceId?: Maybe<Scalars['String']>;
   disabled: Scalars['Boolean'];
   displayName: Scalars['String'];
   email: Scalars['String'];
@@ -2673,7 +2674,6 @@ export type User = {
   settingsId: Scalars['String'];
   supportUserHash?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
-  workspaceMember?: Maybe<WorkspaceMember>;
 };
 
 export type UserCreateNestedOneWithoutAssignedActivitiesInput = {
@@ -2706,6 +2706,7 @@ export type UserOrderByWithRelationInput = {
   comments?: InputMaybe<CommentOrderByRelationAggregateInput>;
   companies?: InputMaybe<CompanyOrderByRelationAggregateInput>;
   createdAt?: InputMaybe<SortOrder>;
+  defaultWorkspaceId?: InputMaybe<SortOrder>;
   disabled?: InputMaybe<SortOrder>;
   email?: InputMaybe<SortOrder>;
   emailVerified?: InputMaybe<SortOrder>;
@@ -2730,6 +2731,7 @@ export enum UserScalarFieldEnum {
   AvatarUrl = 'avatarUrl',
   CanImpersonate = 'canImpersonate',
   CreatedAt = 'createdAt',
+  DefaultWorkspaceId = 'defaultWorkspaceId',
   DeletedAt = 'deletedAt',
   Disabled = 'disabled',
   Email = 'email',
@@ -2816,6 +2818,7 @@ export type UserUpdateInput = {
   comments?: InputMaybe<CommentUpdateManyWithoutAuthorNestedInput>;
   companies?: InputMaybe<CompanyUpdateManyWithoutAccountOwnerNestedInput>;
   createdAt?: InputMaybe<Scalars['DateTime']>;
+  defaultWorkspaceId?: InputMaybe<Scalars['String']>;
   disabled?: InputMaybe<Scalars['Boolean']>;
   email?: InputMaybe<Scalars['String']>;
   emailVerified?: InputMaybe<Scalars['Boolean']>;
@@ -2831,10 +2834,6 @@ export type UserUpdateInput = {
 };
 
 export type UserUpdateOneRequiredWithoutAuthoredActivitiesNestedInput = {
-  connect?: InputMaybe<UserWhereUniqueInput>;
-};
-
-export type UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput = {
   connect?: InputMaybe<UserWhereUniqueInput>;
 };
 
@@ -2860,6 +2859,7 @@ export type UserWhereInput = {
   comments?: InputMaybe<CommentListRelationFilter>;
   companies?: InputMaybe<CompanyListRelationFilter>;
   createdAt?: InputMaybe<DateTimeFilter>;
+  defaultWorkspaceId?: InputMaybe<StringNullableFilter>;
   disabled?: InputMaybe<BoolFilter>;
   email?: InputMaybe<StringFilter>;
   emailVerified?: InputMaybe<BoolFilter>;
@@ -2985,7 +2985,6 @@ export type WorkspaceMember = {
   settings?: Maybe<UserSettings>;
   settingsId?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
-  user: User;
   userId: Scalars['String'];
   workspace: Workspace;
 };
@@ -3029,7 +3028,6 @@ export type WorkspaceMemberOrderByWithRelationInput = {
   settings?: InputMaybe<UserSettingsOrderByWithRelationInput>;
   settingsId?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
-  user?: InputMaybe<UserOrderByWithRelationInput>;
   userId?: InputMaybe<SortOrder>;
 };
 
@@ -3061,7 +3059,7 @@ export type WorkspaceMemberUpdateInput = {
   id?: InputMaybe<Scalars['String']>;
   settings?: InputMaybe<UserSettingsUpdateOneWithoutWorkspaceMemberNestedInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
-  user?: InputMaybe<UserUpdateOneRequiredWithoutWorkspaceMemberNestedInput>;
+  userId?: InputMaybe<Scalars['String']>;
 };
 
 export type WorkspaceMemberUpdateManyWithoutSettingsNestedInput = {
@@ -3107,7 +3105,6 @@ export type WorkspaceMemberWhereInput = {
   settings?: InputMaybe<UserSettingsRelationFilter>;
   settingsId?: InputMaybe<StringNullableFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
-  user?: InputMaybe<UserRelationFilter>;
   userId?: InputMaybe<StringFilter>;
 };
 
@@ -3791,8 +3788,6 @@ export type GetUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetUsersQuery = { __typename?: 'Query', findManyUser: Array<{ __typename?: 'User', id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null }> };
 
-export type WorkspaceMemberFieldsFragmentFragment = { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null }, assignedActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredAttachments?: Array<{ __typename?: 'Attachment', id: string, name: string, type: AttachmentType }> | null, settings?: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } | null, companies?: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, body: string }> | null };
-
 export type DeleteCurrentWorkspaceMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -3802,13 +3797,6 @@ export type RemoveWorkspaceLogoMutationVariables = Exact<{ [key: string]: never;
 
 
 export type RemoveWorkspaceLogoMutation = { __typename?: 'Mutation', updateWorkspace: { __typename?: 'Workspace', id: string } };
-
-export type RemoveWorkspaceMemberMutationVariables = Exact<{
-  where: WorkspaceMemberWhereUniqueInput;
-}>;
-
-
-export type RemoveWorkspaceMemberMutation = { __typename?: 'Mutation', deleteWorkspaceMember: { __typename?: 'WorkspaceMember', id: string } };
 
 export type UpdateWorkspaceMutationVariables = Exact<{
   data: WorkspaceUpdateInput;
@@ -3823,14 +3811,6 @@ export type UploadWorkspaceLogoMutationVariables = Exact<{
 
 
 export type UploadWorkspaceLogoMutation = { __typename?: 'Mutation', uploadWorkspaceLogo: string };
-
-export type UpdateOneWorkspaceMemberMutationVariables = Exact<{
-  data: WorkspaceMemberUpdateInput;
-  where: WorkspaceMemberWhereUniqueInput;
-}>;
-
-
-export type UpdateOneWorkspaceMemberMutation = { __typename?: 'Mutation', UpdateOneWorkspaceMember: { __typename?: 'WorkspaceMember', id: string, allowImpersonation: boolean, workspace: { __typename?: 'Workspace', id: string, domainName?: string | null, displayName?: string | null, logo?: string | null, inviteHash?: string | null }, assignedActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredActivities?: Array<{ __typename?: 'Activity', id: string, title?: string | null }> | null, authoredAttachments?: Array<{ __typename?: 'Attachment', id: string, name: string, type: AttachmentType }> | null, settings?: { __typename?: 'UserSettings', id: string, colorScheme: ColorScheme, locale: string } | null, companies?: Array<{ __typename?: 'Company', id: string, name: string, domainName: string }> | null, comments?: Array<{ __typename?: 'Comment', id: string, body: string }> | null } };
 
 export type GetCurrentWorkspaceQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -3849,7 +3829,7 @@ export type GetWorkspaceMembersQueryVariables = Exact<{
 }>;
 
 
-export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string, user: { __typename?: 'User', avatarUrl?: string | null, id: string, email: string, displayName: string, firstName?: string | null, lastName?: string | null } }> };
+export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string }> };
 
 export const ActivityWithTargetsFragmentDoc = gql`
     fragment ActivityWithTargets on Activity {
@@ -4028,46 +4008,6 @@ export const UserFieldsFragmentFragmentDoc = gql`
   displayName
   firstName
   lastName
-}
-    `;
-export const WorkspaceMemberFieldsFragmentFragmentDoc = gql`
-    fragment workspaceMemberFieldsFragment on WorkspaceMember {
-  id
-  allowImpersonation
-  workspace {
-    id
-    domainName
-    displayName
-    logo
-    inviteHash
-  }
-  assignedActivities {
-    id
-    title
-  }
-  authoredActivities {
-    id
-    title
-  }
-  authoredAttachments {
-    id
-    name
-    type
-  }
-  settings {
-    id
-    colorScheme
-    locale
-  }
-  companies {
-    id
-    name
-    domainName
-  }
-  comments {
-    id
-    body
-  }
 }
     `;
 export const AddActivityTargetsOnActivityDocument = gql`
@@ -6679,39 +6619,6 @@ export function useRemoveWorkspaceLogoMutation(baseOptions?: Apollo.MutationHook
 export type RemoveWorkspaceLogoMutationHookResult = ReturnType<typeof useRemoveWorkspaceLogoMutation>;
 export type RemoveWorkspaceLogoMutationResult = Apollo.MutationResult<RemoveWorkspaceLogoMutation>;
 export type RemoveWorkspaceLogoMutationOptions = Apollo.BaseMutationOptions<RemoveWorkspaceLogoMutation, RemoveWorkspaceLogoMutationVariables>;
-export const RemoveWorkspaceMemberDocument = gql`
-    mutation RemoveWorkspaceMember($where: WorkspaceMemberWhereUniqueInput!) {
-  deleteWorkspaceMember(where: $where) {
-    id
-  }
-}
-    `;
-export type RemoveWorkspaceMemberMutationFn = Apollo.MutationFunction<RemoveWorkspaceMemberMutation, RemoveWorkspaceMemberMutationVariables>;
-
-/**
- * __useRemoveWorkspaceMemberMutation__
- *
- * To run a mutation, you first call `useRemoveWorkspaceMemberMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRemoveWorkspaceMemberMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [removeWorkspaceMemberMutation, { data, loading, error }] = useRemoveWorkspaceMemberMutation({
- *   variables: {
- *      where: // value for 'where'
- *   },
- * });
- */
-export function useRemoveWorkspaceMemberMutation(baseOptions?: Apollo.MutationHookOptions<RemoveWorkspaceMemberMutation, RemoveWorkspaceMemberMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RemoveWorkspaceMemberMutation, RemoveWorkspaceMemberMutationVariables>(RemoveWorkspaceMemberDocument, options);
-      }
-export type RemoveWorkspaceMemberMutationHookResult = ReturnType<typeof useRemoveWorkspaceMemberMutation>;
-export type RemoveWorkspaceMemberMutationResult = Apollo.MutationResult<RemoveWorkspaceMemberMutation>;
-export type RemoveWorkspaceMemberMutationOptions = Apollo.BaseMutationOptions<RemoveWorkspaceMemberMutation, RemoveWorkspaceMemberMutationVariables>;
 export const UpdateWorkspaceDocument = gql`
     mutation UpdateWorkspace($data: WorkspaceUpdateInput!) {
   updateWorkspace(data: $data) {
@@ -6779,40 +6686,6 @@ export function useUploadWorkspaceLogoMutation(baseOptions?: Apollo.MutationHook
 export type UploadWorkspaceLogoMutationHookResult = ReturnType<typeof useUploadWorkspaceLogoMutation>;
 export type UploadWorkspaceLogoMutationResult = Apollo.MutationResult<UploadWorkspaceLogoMutation>;
 export type UploadWorkspaceLogoMutationOptions = Apollo.BaseMutationOptions<UploadWorkspaceLogoMutation, UploadWorkspaceLogoMutationVariables>;
-export const UpdateOneWorkspaceMemberDocument = gql`
-    mutation UpdateOneWorkspaceMember($data: WorkspaceMemberUpdateInput!, $where: WorkspaceMemberWhereUniqueInput!) {
-  UpdateOneWorkspaceMember(data: $data, where: $where) {
-    ...workspaceMemberFieldsFragment
-  }
-}
-    ${WorkspaceMemberFieldsFragmentFragmentDoc}`;
-export type UpdateOneWorkspaceMemberMutationFn = Apollo.MutationFunction<UpdateOneWorkspaceMemberMutation, UpdateOneWorkspaceMemberMutationVariables>;
-
-/**
- * __useUpdateOneWorkspaceMemberMutation__
- *
- * To run a mutation, you first call `useUpdateOneWorkspaceMemberMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateOneWorkspaceMemberMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateOneWorkspaceMemberMutation, { data, loading, error }] = useUpdateOneWorkspaceMemberMutation({
- *   variables: {
- *      data: // value for 'data'
- *      where: // value for 'where'
- *   },
- * });
- */
-export function useUpdateOneWorkspaceMemberMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOneWorkspaceMemberMutation, UpdateOneWorkspaceMemberMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateOneWorkspaceMemberMutation, UpdateOneWorkspaceMemberMutationVariables>(UpdateOneWorkspaceMemberDocument, options);
-      }
-export type UpdateOneWorkspaceMemberMutationHookResult = ReturnType<typeof useUpdateOneWorkspaceMemberMutation>;
-export type UpdateOneWorkspaceMemberMutationResult = Apollo.MutationResult<UpdateOneWorkspaceMemberMutation>;
-export type UpdateOneWorkspaceMemberMutationOptions = Apollo.BaseMutationOptions<UpdateOneWorkspaceMemberMutation, UpdateOneWorkspaceMemberMutationVariables>;
 export const GetCurrentWorkspaceDocument = gql`
     query getCurrentWorkspace {
   currentWorkspace {
@@ -6890,13 +6763,9 @@ export const GetWorkspaceMembersDocument = gql`
     query GetWorkspaceMembers($where: WorkspaceMemberWhereInput) {
   workspaceMembers: findManyWorkspaceMember(where: $where) {
     id
-    user {
-      ...userFieldsFragment
-      avatarUrl
-    }
   }
 }
-    ${UserFieldsFragmentFragmentDoc}`;
+    `;
 
 /**
  * __useGetWorkspaceMembersQuery__

@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { gql, useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client';
 import {
   snapshot_UNSTABLE,
   useGotoRecoilSnapshot,
@@ -9,6 +9,7 @@ import {
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { FIND_ONE_WORKSPACE_MEMBER_V2 } from '@/object-record/graphql/queries/findOneWorkspaceMember';
 import { REACT_APP_SERVER_AUTH_URL } from '~/config';
 import {
   useChallengeMutation,
@@ -80,21 +81,7 @@ export const useAuth = () => {
 
       await getCurrentWorkspaceQuery();
       const workspaceMember = await client.query({
-        query: gql`
-          query FindManyWorkspaceMembersV2(
-            $filter: WorkspaceMemberV2FilterInput
-          ) {
-            workspaceMembersV2(filter: $filter) {
-              edges {
-                node {
-                  id
-                  firstName
-                  lastName
-                }
-              }
-            }
-          }
-        `,
+        query: FIND_ONE_WORKSPACE_MEMBER_V2,
         variables: {
           filter: {
             userId: { eq: verifyResult.data?.verify.user.id },
@@ -105,13 +92,6 @@ export const useAuth = () => {
       setCurrentUser(verifyResult.data?.verify.user);
       setCurrentWorkspaceMember(workspaceMember.data?.findMany);
       setCurrentWorkspace(getCurrentWorkspaceData?.currentWorkspace ?? null);
-
-      console.log({
-        user: verifyResult.data?.verify.user,
-        workspaceMember: workspaceMember.data?.findMany,
-        workspace: getCurrentWorkspaceData?.currentWorkspace,
-        tokens: verifyResult.data?.verify.tokens,
-      });
 
       return {
         user: verifyResult.data?.verify.user,
