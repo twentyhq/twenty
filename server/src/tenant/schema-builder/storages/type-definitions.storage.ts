@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Scope } from '@nestjs/common';
 
 import { GraphQLInputObjectType, GraphQLObjectType } from 'graphql';
 
@@ -12,7 +12,8 @@ import {
   ObjectTypeDefinitionKind,
 } from 'src/tenant/schema-builder/factories/object-type-definition.factory';
 
-@Injectable()
+// Must be scoped on REQUEST level
+@Injectable({ scope: Scope.REQUEST })
 export class TypeDefinitionsStorage {
   private readonly objectTypeDefinitions = new Map<
     string,
