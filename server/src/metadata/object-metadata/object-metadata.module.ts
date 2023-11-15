@@ -27,7 +27,6 @@ import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
         DataSourceModule,
         TenantMigrationModule,
         TenantMigrationRunnerModule,
-        // FieldMetadataModule,
       ],
       services: [ObjectMetadataService],
       resolvers: [

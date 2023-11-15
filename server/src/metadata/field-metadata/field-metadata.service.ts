@@ -29,6 +29,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
 
+    // @Inject(forwardRef(() => ObjectMetadataService))
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly tenantMigrationService: TenantMigrationService,
     private readonly migrationRunnerService: TenantMigrationRunnerService,

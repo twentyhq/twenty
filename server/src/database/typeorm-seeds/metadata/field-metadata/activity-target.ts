@@ -54,6 +54,8 @@ export const seedActivityTargetFieldMetadata = async (
         isNullable: false,
         // isSystem: true,
         isActive: true,
+        description: undefined,
+        icon: undefined,
       },
       {
         id: SeedActivityTargetFieldMetadataIds.CreatedAt,
@@ -66,6 +68,7 @@ export const seedActivityTargetFieldMetadata = async (
         targetColumnMap: {
           value: 'createdAt',
         },
+        description: undefined,
         icon: 'IconCalendar',
         isNullable: false,
         isActive: true,
@@ -81,6 +84,7 @@ export const seedActivityTargetFieldMetadata = async (
         targetColumnMap: {
           value: 'updatedAt',
         },
+        description: undefined,
         icon: 'IconCalendar',
         isNullable: false,
         isActive: true,
