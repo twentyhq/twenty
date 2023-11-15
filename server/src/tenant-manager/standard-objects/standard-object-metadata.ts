@@ -58,6 +58,7 @@ export const basicFieldsMetadata: Partial<FieldMetadataEntity>[] = [
     targetColumnMap: {
       value: 'createdAt',
     },
+    icon: 'IconCalendar',
     isNullable: false,
     isCustom: false,
     isActive: true,
@@ -69,6 +70,7 @@ export const basicFieldsMetadata: Partial<FieldMetadataEntity>[] = [
     targetColumnMap: {
       value: 'updatedAt',
     },
+    icon: 'IconCalendar',
     isNullable: false,
     isCustom: false,
     isActive: true,

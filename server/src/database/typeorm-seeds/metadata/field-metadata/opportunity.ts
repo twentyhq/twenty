@@ -2,10 +2,15 @@ import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
 export enum SeedOpportunityFieldMetadataIds {
+  Id = '20202020-16ef-476c-8eac-d439b84024cb',
+  CreatedAt = '20202020-a39d-4ea9-994f-28d1ebd15904',
+  UpdatedAt = '20202020-437b-4fd7-98bd-00cb91204329',
+
   Amount = '20202020-8c1f-4c83-9a89-7843e586564d',
   CloseDate = '20202020-de52-4e7b-a298-db7a7553500f',
   Probability = '20202020-3b9c-4e58-a3d2-c617d3b596b1',
@@ -39,6 +44,52 @@ export const seedOpportunityFieldMetadata = async (
     ])
     .orIgnore()
     .values([
+      // Default fields
+      {
+        id: SeedOpportunityFieldMetadataIds.Id,
+        objectMetadataId: SeedObjectMetadataIds.Opportunity,
+        workspaceId: SeedWorkspaceId,
+        isCustom: false,
+        name: 'id',
+        label: 'Id',
+        type: FieldMetadataType.UUID,
+        targetColumnMap: {
+          value: 'id',
+        },
+        isNullable: false,
+        // isSystem: true,
+        isActive: true,
+      },
+      {
+        id: SeedOpportunityFieldMetadataIds.CreatedAt,
+        objectMetadataId: SeedObjectMetadataIds.Opportunity,
+        workspaceId: SeedWorkspaceId,
+        isCustom: false,
+        name: 'createdAt',
+        label: 'Creation date',
+        type: FieldMetadataType.DATE,
+        targetColumnMap: {
+          value: 'createdAt',
+        },
+        icon: 'IconCalendar',
+        isNullable: false,
+        isActive: true,
+      },
+      {
+        id: SeedOpportunityFieldMetadataIds.UpdatedAt,
+        objectMetadataId: SeedObjectMetadataIds.Opportunity,
+        workspaceId: SeedWorkspaceId,
+        isCustom: false,
+        name: 'updatedAt',
+        label: 'Update date',
+        type: FieldMetadataType.DATE,
+        targetColumnMap: {
+          value: 'updatedAt',
+        },
+        icon: 'IconCalendar',
+        isNullable: false,
+        isActive: true,
+      },
       // Scalar fields
       {
         id: SeedOpportunityFieldMetadataIds.Amount,

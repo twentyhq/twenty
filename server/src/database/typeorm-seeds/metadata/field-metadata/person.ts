@@ -2,10 +2,15 @@ import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
 export enum SeedPersonFieldMetadataIds {
+  Id = '20202020-03cd-4cd0-9afc-92077b69f24f',
+  CreatedAt = '20202020-bec0-4cf0-bf1c-8b2ed21f027a',
+  UpdatedAt = '20202020-2bf4-42b8-8718-a3e852bfa6a6',
+
   FirstName = '20202020-9b56-4888-bfe3-f6f59aa999e3',
   LastName = '20202020-b784-458a-869d-6c53fa85483d',
 
@@ -48,6 +53,52 @@ export const seedPersonFieldMetadata = async (
     ])
     .orIgnore()
     .values([
+      // Default fields
+      {
+        id: SeedPersonFieldMetadataIds.Id,
+        objectMetadataId: SeedObjectMetadataIds.Person,
+        workspaceId: SeedWorkspaceId,
+        isCustom: false,
+        name: 'id',
+        label: 'Id',
+        type: FieldMetadataType.UUID,
+        targetColumnMap: {
+          value: 'id',
+        },
+        isNullable: false,
+        // isSystem: true,
+        isActive: true,
+      },
+      {
+        id: SeedPersonFieldMetadataIds.CreatedAt,
+        objectMetadataId: SeedObjectMetadataIds.Person,
+        workspaceId: SeedWorkspaceId,
+        isCustom: false,
+        name: 'createdAt',
+        label: 'Creation date',
+        type: FieldMetadataType.DATE,
+        targetColumnMap: {
+          value: 'createdAt',
+        },
+        icon: 'IconCalendar',
+        isNullable: false,
+        isActive: true,
+      },
+      {
+        id: SeedPersonFieldMetadataIds.UpdatedAt,
+        objectMetadataId: SeedObjectMetadataIds.Person,
+        workspaceId: SeedWorkspaceId,
+        isCustom: false,
+        name: 'updatedAt',
+        label: 'Update date',
+        type: FieldMetadataType.DATE,
+        targetColumnMap: {
+          value: 'updatedAt',
+        },
+        icon: 'IconCalendar',
+        isNullable: false,
+        isActive: true,
+      },
       // Main Identifier
       {
         id: SeedPersonFieldMetadataIds.FirstName,

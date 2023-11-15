@@ -11,7 +11,6 @@ import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { TenantMigrationRunnerModule } from 'src/tenant-migration-runner/tenant-migration-runner.module';
 import { TenantMigrationModule } from 'src/metadata/tenant-migration/tenant-migration.module';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
-import { FieldMetadataModule } from 'src/metadata/field-metadata/field-metadata.module';
 
 import { ObjectMetadataService } from './object-metadata.service';
 import { ObjectMetadataEntity } from './object-metadata.entity';
@@ -22,13 +21,13 @@ import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
 
 @Module({
   imports: [
+    DataSourceModule,
+    TenantMigrationModule,
+    TenantMigrationRunnerModule,
+    // FieldMetadataModule,
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
-        DataSourceModule,
-        TenantMigrationModule,
-        TenantMigrationRunnerModule,
-        FieldMetadataModule,
       ],
       services: [ObjectMetadataService],
       resolvers: [

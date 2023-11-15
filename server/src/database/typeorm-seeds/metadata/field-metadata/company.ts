@@ -2,10 +2,15 @@ import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
 export enum SeedCompanyFieldMetadataIds {
+  Id = '20202020-8169-44a3-9e0b-6bad1ac50f87',
+  CreatedAt = '20202020-4dc2-47c9-bb15-6e6f19ba9e46',
+  UpdatedAt = '20202020-64b8-41bf-a01c-be6a806e8b70',
+
   Name = '20202020-6d30-4111-9f40-b4301906fd3c',
 
   DomainName = '20202020-5e4e-4007-a630-8a2617914889',
@@ -47,6 +52,52 @@ export const seedCompanyFieldMetadata = async (
     ])
     .orIgnore()
     .values([
+      // Default fields
+      {
+        id: SeedCompanyFieldMetadataIds.Id,
+        objectMetadataId: SeedObjectMetadataIds.Company,
+        workspaceId: SeedWorkspaceId,
+        isCustom: false,
+        name: 'id',
+        label: 'Id',
+        type: FieldMetadataType.UUID,
+        targetColumnMap: {
+          value: 'id',
+        },
+        isNullable: false,
+        // isSystem: true,
+        isActive: true,
+      },
+      {
+        id: SeedCompanyFieldMetadataIds.CreatedAt,
+        objectMetadataId: SeedObjectMetadataIds.Company,
+        workspaceId: SeedWorkspaceId,
+        isCustom: false,
+        name: 'createdAt',
+        label: 'Creation date',
+        type: FieldMetadataType.DATE,
+        targetColumnMap: {
+          value: 'createdAt',
+        },
+        icon: 'IconCalendar',
+        isNullable: false,
+        isActive: true,
+      },
+      {
+        id: SeedCompanyFieldMetadataIds.UpdatedAt,
+        objectMetadataId: SeedObjectMetadataIds.Company,
+        workspaceId: SeedWorkspaceId,
+        isCustom: false,
+        name: 'updatedAt',
+        label: 'Update date',
+        type: FieldMetadataType.DATE,
+        targetColumnMap: {
+          value: 'updatedAt',
+        },
+        icon: 'IconCalendar',
+        isNullable: false,
+        isActive: true,
+      },
       // Main Identifier
       {
         id: SeedCompanyFieldMetadataIds.Name,

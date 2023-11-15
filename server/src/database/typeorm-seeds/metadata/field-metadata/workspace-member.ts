@@ -2,10 +2,15 @@ import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
 export enum SeedWorkspaceMemberFieldMetadataIds {
+  Id = '20202020-678e-4702-a535-2549ef07f1ca',
+  CreatedAt = '20202020-1cbf-4b32-8c33-fbfedcd9afa8',
+  UpdatedAt = '20202020-1ba3-4c24-b2cd-b0789633e8d4',
+
   FirstName = '20202020-1fa8-4d38-9fa4-0cf696909298',
   LastName = '20202020-8c37-4163-ba06-1dada334ce3e',
   AvatarUrl = '20202020-7ba6-40d5-934b-17146183a212',
@@ -45,6 +50,52 @@ export const seedWorkspaceMemberFieldMetadata = async (
     ])
     .orIgnore()
     .values([
+      // Default fields
+      {
+        id: SeedWorkspaceMemberFieldMetadataIds.Id,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
+        workspaceId: SeedWorkspaceId,
+        isCustom: false,
+        name: 'id',
+        label: 'Id',
+        type: FieldMetadataType.UUID,
+        targetColumnMap: {
+          value: 'id',
+        },
+        isNullable: false,
+        // isSystem: true,
+        isActive: true,
+      },
+      {
+        id: SeedWorkspaceMemberFieldMetadataIds.CreatedAt,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
+        workspaceId: SeedWorkspaceId,
+        isCustom: false,
+        name: 'createdAt',
+        label: 'Creation date',
+        type: FieldMetadataType.DATE,
+        targetColumnMap: {
+          value: 'createdAt',
+        },
+        icon: 'IconCalendar',
+        isNullable: false,
+        isActive: true,
+      },
+      {
+        id: SeedWorkspaceMemberFieldMetadataIds.UpdatedAt,
+        objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
+        workspaceId: SeedWorkspaceId,
+        isCustom: false,
+        name: 'updatedAt',
+        label: 'Update date',
+        type: FieldMetadataType.DATE,
+        targetColumnMap: {
+          value: 'updatedAt',
+        },
+        icon: 'IconCalendar',
+        isNullable: false,
+        isActive: true,
+      },
       // Scalar fields
       {
         id: SeedWorkspaceMemberFieldMetadataIds.FirstName,

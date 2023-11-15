@@ -2,10 +2,15 @@ import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
 export enum SeedActivityFieldMetadataIds {
+  Id = '20202020-f695-419c-b928-c488323d6df3',
+  CreatedAt = '20202020-65a2-4d9c-b640-bac54007a14d',
+  UpdatedAt = '20202020-88df-4202-bf82-6a06c6963280',
+
   Title = '20202020-2584-4797-95a8-5cc90d48c040',
   Body = '20202020-aff0-4961-be8a-0e5c2598b9a6',
   Type = '20202020-a243-4b94-a4b4-25705af86be2',
@@ -43,6 +48,52 @@ export const seedActivityFieldMetadata = async (
     ])
     .orIgnore()
     .values([
+      // Default fields
+      {
+        id: SeedActivityFieldMetadataIds.Id,
+        objectMetadataId: SeedObjectMetadataIds.Activity,
+        workspaceId: SeedWorkspaceId,
+        isCustom: false,
+        name: 'id',
+        label: 'Id',
+        type: FieldMetadataType.UUID,
+        targetColumnMap: {
+          value: 'id',
+        },
+        isNullable: false,
+        // isSystem: true,
+        isActive: true,
+      },
+      {
+        id: SeedActivityFieldMetadataIds.CreatedAt,
+        objectMetadataId: SeedObjectMetadataIds.Activity,
+        workspaceId: SeedWorkspaceId,
+        isCustom: false,
+        name: 'createdAt',
+        label: 'Creation date',
+        type: FieldMetadataType.DATE,
+        targetColumnMap: {
+          value: 'createdAt',
+        },
+        icon: 'IconCalendar',
+        isNullable: false,
+        isActive: true,
+      },
+      {
+        id: SeedActivityFieldMetadataIds.UpdatedAt,
+        objectMetadataId: SeedObjectMetadataIds.Activity,
+        workspaceId: SeedWorkspaceId,
+        isCustom: false,
+        name: 'updatedAt',
+        label: 'Update date',
+        type: FieldMetadataType.DATE,
+        targetColumnMap: {
+          value: 'updatedAt',
+        },
+        icon: 'IconCalendar',
+        isNullable: false,
+        isActive: true,
+      },
       // Primary identifier
       {
         id: SeedActivityFieldMetadataIds.Title,

@@ -20,16 +20,16 @@ import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
 
 @Module({
   imports: [
+    TenantMigrationRunnerModule,
+    TenantMigrationModule,
+    ObjectMetadataModule,
+    FieldMetadataModule,
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature(
           [RelationMetadataEntity],
           'metadata',
         ),
-        ObjectMetadataModule,
-        FieldMetadataModule,
-        TenantMigrationRunnerModule,
-        TenantMigrationModule,
       ],
       services: [RelationMetadataService],
       resolvers: [
