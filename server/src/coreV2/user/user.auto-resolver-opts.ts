@@ -1,13 +1,11 @@
-import { SortDirection } from '@ptc-org/nestjs-query-core';
 import {
   AutoResolverOpts,
   ReadResolverOpts,
   PagingStrategies,
 } from '@ptc-org/nestjs-query-graphql';
 
+import { UserV2 } from 'src/coreV2/user/user.entity';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
-
-import { User } from './user.entity';
 
 export const userAutoResolverOpts: AutoResolverOpts<
   any,
@@ -18,12 +16,13 @@ export const userAutoResolverOpts: AutoResolverOpts<
   PagingStrategies
 >[] = [
   {
-    EntityClass: User,
-    DTOClass: User,
+    EntityClass: UserV2,
+    DTOClass: UserV2,
     enableTotalCount: true,
     pagingStrategy: PagingStrategies.CURSOR,
     read: {
-      defaultSort: [{ field: 'id', direction: SortDirection.DESC }],
+      many: { disabled: true },
+      one: { disabled: true },
     },
     create: {
       many: { disabled: true },

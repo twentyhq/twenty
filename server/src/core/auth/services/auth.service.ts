@@ -175,11 +175,8 @@ export class AuthService {
     });
 
     assert(user, "This user doesn't exist", NotFoundException);
-    assert(
-      user.workspaceMember?.allowImpersonation,
-      'Impersonation not allowed',
-      ForbiddenException,
-    );
+
+    // Todo: check if workspace member can be impersonated
 
     const accessToken = await this.tokenService.generateAccessToken(user.id);
     const refreshToken = await this.tokenService.generateRefreshToken(user.id);

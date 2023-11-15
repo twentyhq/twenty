@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { Avatar } from '@/users/components/Avatar';
-import { User } from '~/generated/graphql';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -29,12 +29,7 @@ const StyledEmailText = styled.span`
 `;
 
 type WorkspaceMemberCardProps = {
-  workspaceMember: {
-    user: Pick<
-      User,
-      'id' | 'firstName' | 'lastName' | 'displayName' | 'avatarUrl' | 'email'
-    >;
-  };
+  workspaceMember: WorkspaceMember;
   accessory?: React.ReactNode;
 };
 
@@ -44,15 +39,19 @@ export const WorkspaceMemberCard = ({
 }: WorkspaceMemberCardProps) => (
   <StyledContainer>
     <Avatar
-      avatarUrl={workspaceMember.user.avatarUrl}
-      colorId={workspaceMember.user.id}
-      placeholder={workspaceMember.user.firstName || ''}
+      avatarUrl={workspaceMember.avatarUrl}
+      colorId={workspaceMember.id}
+      placeholder={workspaceMember.firstName || ''}
       type="squared"
       size="xl"
     />
     <StyledContent>
-      <OverflowingTextWithTooltip text={workspaceMember.user.displayName} />
-      <StyledEmailText>{workspaceMember.user.email}</StyledEmailText>
+      <OverflowingTextWithTooltip
+        text={workspaceMember.firstName + ' ' + workspaceMember.lastName}
+      />
+      <StyledEmailText>
+        {workspaceMember.firstName + ' ' + workspaceMember.lastName}
+      </StyledEmailText>
     </StyledContent>
 
     {accessory}

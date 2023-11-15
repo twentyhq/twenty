@@ -5,6 +5,7 @@ import debounce from 'lodash.debounce';
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { useUpdateUserMutation } from '~/generated/graphql';
@@ -30,9 +31,14 @@ export const NameFields = ({
   onLastNameUpdate,
 }: NameFieldsProps) => {
   const currentUser = useRecoilValue(currentUserState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
-  const [firstName, setFirstName] = useState(currentUser?.firstName ?? '');
-  const [lastName, setLastName] = useState(currentUser?.lastName ?? '');
+  const [firstName, setFirstName] = useState(
+    currentWorkspaceMember?.firstName ?? '',
+  );
+  const [lastName, setLastName] = useState(
+    currentWorkspaceMember?.lastName ?? '',
+  );
 
   const [updateUser] = useUpdateUserMutation();
 
@@ -69,13 +75,13 @@ export const NameFields = ({
   }, 500);
 
   useEffect(() => {
-    if (!currentUser) {
+    if (!currentWorkspaceMember) {
       return;
     }
 
     if (
-      currentUser.firstName !== firstName ||
-      currentUser.lastName !== lastName
+      currentWorkspaceMember.firstName !== firstName ||
+      currentWorkspaceMember.lastName !== lastName
     ) {
       debouncedUpdate();
     }
@@ -83,7 +89,14 @@ export const NameFields = ({
     return () => {
       debouncedUpdate.cancel();
     };
-  }, [firstName, lastName, currentUser, debouncedUpdate, autoSave]);
+  }, [
+    firstName,
+    lastName,
+    currentUser,
+    debouncedUpdate,
+    autoSave,
+    currentWorkspaceMember,
+  ]);
 
   return (
     <StyledComboInputContainer>

@@ -14,6 +14,7 @@ import { SnackBarProvider } from '@/ui/feedback/snack-bar/components/SnackBarPro
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { ThemeType } from '@/ui/theme/constants/theme';
 import { UserProvider } from '@/users/components/UserProvider';
+import { WorkspaceMemberProvider } from '@/users/components/WorkspaceMemberProvider';
 
 import '@emotion/react';
 
@@ -36,18 +37,20 @@ root.render(
           <ClientConfigProvider>
             <UserProvider>
               <ApolloMetadataClientProvider>
-                <PageChangeEffect />
-                <AppThemeProvider>
-                  <SnackBarProvider>
-                    <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                      <DialogManager>
-                        <StrictMode>
-                          <App />
-                        </StrictMode>
-                      </DialogManager>
-                    </DialogManagerScope>
-                  </SnackBarProvider>
-                </AppThemeProvider>
+                <WorkspaceMemberProvider>
+                  <PageChangeEffect />
+                  <AppThemeProvider>
+                    <SnackBarProvider>
+                      <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                        <DialogManager>
+                          <StrictMode>
+                            <App />
+                          </StrictMode>
+                        </DialogManager>
+                      </DialogManagerScope>
+                    </SnackBarProvider>
+                  </AppThemeProvider>
+                </WorkspaceMemberProvider>
               </ApolloMetadataClientProvider>
             </UserProvider>
           </ClientConfigProvider>

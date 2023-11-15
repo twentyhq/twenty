@@ -130,7 +130,6 @@ export class AuthResolver {
       defaultFields: {
         User: {
           id: true,
-          workspaceMember: { select: { allowImpersonation: true } },
         },
       },
     })

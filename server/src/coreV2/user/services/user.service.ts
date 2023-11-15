@@ -4,12 +4,12 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 
 import { assert } from 'src/utils/assert';
-import { User } from 'src/coreV2/user/user.entity';
+import { UserV2 } from 'src/coreV2/user/user.entity';
 
-export class UserService extends TypeOrmQueryService<User> {
+export class UserService extends TypeOrmQueryService<UserV2> {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    @InjectRepository(UserV2)
+    private readonly userRepository: Repository<UserV2>,
   ) {
     super(userRepository);
   }

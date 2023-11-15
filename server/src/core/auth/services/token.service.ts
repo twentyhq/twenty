@@ -33,22 +33,19 @@ export class TokenService {
 
     const user = await this.prismaService.client.user.findUnique({
       where: { id: userId },
-      include: {
-        workspaceMember: true,
-      },
     });
 
     if (!user) {
       throw new NotFoundException('User is not found');
     }
 
-    if (!user.workspaceMember) {
-      throw new ForbiddenException('User is not associated to a workspace');
+    if (!user.defaultWorkspaceId) {
+      throw new NotFoundException('User does not have a default workspace');
     }
 
     const jwtPayload: JwtPayload = {
       sub: user.id,
-      workspaceId: user.workspaceMember.workspaceId,
+      workspaceId: user.defaultWorkspaceId,
     };
 
     return {

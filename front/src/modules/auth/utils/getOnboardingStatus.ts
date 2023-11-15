@@ -1,4 +1,5 @@
-import { CurrentUser } from '../states/currentUserState';
+import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
+import { CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 
 export enum OnboardingStatus {
   OngoingUserCreation = 'ongoing_user_creation',
@@ -9,21 +10,22 @@ export enum OnboardingStatus {
 
 export const getOnboardingStatus = (
   isLoggedIn: boolean,
-  currentUser: CurrentUser | null,
+  currentWorkspaceMember: CurrentWorkspaceMember | null,
+  currentWorkspace: CurrentWorkspace | null,
 ) => {
   if (!isLoggedIn) {
     return OnboardingStatus.OngoingUserCreation;
   }
 
   // if the user has not been fetched yet, we can't know the onboarding status
-  if (!currentUser) {
+  if (!currentWorkspaceMember) {
     return undefined;
   }
 
-  if (!currentUser.workspaceMember?.workspace.displayName) {
+  if (!currentWorkspace?.displayName) {
     return OnboardingStatus.OngoingWorkspaceCreation;
   }
-  if (!currentUser.firstName || !currentUser.lastName) {
+  if (!currentWorkspaceMember.firstName || !currentWorkspaceMember.lastName) {
     return OnboardingStatus.OngoingProfileCreation;
   }
 
