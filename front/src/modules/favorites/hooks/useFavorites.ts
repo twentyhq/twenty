@@ -59,28 +59,33 @@ export const useFavorites = () => {
     [apolloClient, createOneMutation, workspaceMemberId],
   );
 
-  const _updateFavoritePosition = async (favorite: Favorite) => {
-    const result = await apolloClient.mutate({
-      mutation: updateOneMutation,
-      variables: {
-        data: {
-          position: favorite?.position,
-        },
-        where: {
-          id: favorite.id,
-        },
-      },
-    });
+  const _updateFavoritePosition = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async (favoriteToUpdate: Favorite) => {
+        const favoritesStateFromSnapshot = snapshot.getLoadable(favoritesState);
+        const favorites = favoritesStateFromSnapshot.getValue();
+        const result = await apolloClient.mutate({
+          mutation: updateOneMutation,
+          variables: {
+            input: {
+              position: favoriteToUpdate?.position,
+            },
+            idToUpdate: favoriteToUpdate?.id,
+          },
+        });
 
-    const updatedFavorite = result?.data?.updateFavoriteV2;
-    if (updatedFavorite) {
-      setFavorites(
-        favorites.map((favorite) =>
-          favorite.id === updatedFavorite.id ? updatedFavorite : favorite,
-        ),
-      );
-    }
-  };
+        const updatedFavorite = result?.data?.updateFavoriteV2;
+        if (updatedFavorite) {
+          set(
+            favoritesState,
+            favorites.map((favorite: Favorite) =>
+              favorite.id === updatedFavorite.id ? favoriteToUpdate : favorite,
+            ),
+          );
+        }
+      },
+    [apolloClient, updateOneMutation],
+  );
 
   const deleteFavorite = useRecoilCallback(
     ({ snapshot, set }) =>
