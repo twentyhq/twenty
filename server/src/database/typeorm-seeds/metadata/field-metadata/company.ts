@@ -67,7 +67,7 @@ export const seedCompanyFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: false,
+        isNullable: true,
         // isSystem: true,
       },
       {
@@ -84,7 +84,7 @@ export const seedCompanyFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: false,
+        isNullable: true,
       },
       {
         id: SeedCompanyFieldMetadataIds.UpdatedAt,
@@ -100,7 +100,7 @@ export const seedCompanyFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: false,
+        isNullable: true,
       },
       // Main Identifier
       {

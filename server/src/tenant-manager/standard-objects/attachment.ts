@@ -27,7 +27,7 @@ const attachmentMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType,
+      type: FieldMetadataType.TEXT,
       name: 'fullPath',
       label: 'Full path',
       targetColumnMap: {
@@ -40,7 +40,7 @@ const attachmentMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType,
+      type: FieldMetadataType.TEXT,
       name: 'type',
       label: 'Type',
       targetColumnMap: {

@@ -59,7 +59,7 @@ export const seedAttachmentFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: false,
+        isNullable: true,
         // isSystem: true,
       },
       {
@@ -76,7 +76,7 @@ export const seedAttachmentFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: false,
+        isNullable: true,
       },
       {
         id: SeedAttachmentFieldMetadataIds.UpdatedAt,
@@ -92,7 +92,7 @@ export const seedAttachmentFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: false,
+        isNullable: true,
       },
       // Primary Identifier
       {

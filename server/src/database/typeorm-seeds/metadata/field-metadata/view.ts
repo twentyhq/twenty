@@ -57,7 +57,7 @@ export const seedViewFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: false,
+        isNullable: true,
         // isSystem: true,
       },
       {
@@ -74,7 +74,7 @@ export const seedViewFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: false,
+        isNullable: true,
       },
       {
         id: SeedViewFieldMetadataIds.UpdatedAt,
@@ -90,7 +90,7 @@ export const seedViewFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: false,
+        isNullable: true,
       },
       // Fields
       {

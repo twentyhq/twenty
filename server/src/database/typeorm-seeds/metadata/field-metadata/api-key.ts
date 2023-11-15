@@ -71,7 +71,7 @@ export const seedApiKeyFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: false,
+        isNullable: true,
       },
       {
         id: SeedApiKeyFieldMetadataIds.UpdatedAt,
@@ -87,7 +87,7 @@ export const seedApiKeyFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: false,
+        isNullable: true,
       },
       // Scalar fields
       {
@@ -104,7 +104,7 @@ export const seedApiKeyFieldMetadata = async (
         },
         description: 'ApiKey name',
         icon: 'IconLink',
-        isNullable: false,
+        isNullable: true,
       },
       {
         id: SeedApiKeyFieldMetadataIds.ExpiresAt,

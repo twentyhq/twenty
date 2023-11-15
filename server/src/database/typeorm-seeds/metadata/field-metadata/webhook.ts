@@ -53,7 +53,7 @@ export const seedWebhookFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: false,
+        isNullable: true,
         // isSystem: true,
       },
       {
@@ -70,7 +70,7 @@ export const seedWebhookFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: false,
+        isNullable: true,
       },
       {
         id: SeedWebhookFieldMetadataIds.UpdatedAt,
@@ -86,7 +86,7 @@ export const seedWebhookFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: false,
+        isNullable: true,
       },
       // Scalar fields
       {

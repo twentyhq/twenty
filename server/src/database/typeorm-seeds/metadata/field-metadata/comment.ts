@@ -55,7 +55,7 @@ export const seedCommentFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: false,
+        isNullable: true,
         // isSystem: true,
       },
       {
@@ -72,7 +72,7 @@ export const seedCommentFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: false,
+        isNullable: true,
       },
       {
         id: SeedCommentFieldMetadataIds.UpdatedAt,
@@ -88,7 +88,7 @@ export const seedCommentFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: false,
+        isNullable: true,
       },
       // Scalar fields
       {
