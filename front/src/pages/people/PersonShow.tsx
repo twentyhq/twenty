@@ -68,7 +68,7 @@ export const PersonShow = () => {
   };
 
   const handleFavoriteButtonClick = async () => {
-    if (isFavorite) deleteFavorite('person', person.id);
+    if (isFavorite) deleteFavorite(person.id);
     else createFavorite('person', person.id);
   };
 

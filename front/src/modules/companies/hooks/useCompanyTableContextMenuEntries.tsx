@@ -53,7 +53,7 @@ export const useCompanyTableContextMenuEntries = () => {
       );
 
     resetTableRowSelection();
-    if (isFavorite) deleteFavorite('company', selectedCompanyId);
+    if (isFavorite) deleteFavorite(selectedCompanyId);
     else createFavorite('company', selectedCompanyId);
   });
 

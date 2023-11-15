@@ -1,6 +1,6 @@
 import { useApolloClient } from '@apollo/client';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { Favorite } from '@/favorites/types/Favorite';
@@ -21,37 +21,43 @@ export const useFavorites = () => {
 
   const apolloClient = useApolloClient();
 
-  const createFavorite = async (
-    favoriteNameToCreate: string,
-    favoriteIdToCreate: string,
-    additionalData?: any,
-  ) => {
-    if (!favoriteNameToCreate || !favoriteIdToCreate) {
-      return;
-    }
+  const createFavorite = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async (
+        favoriteNameToCreate: string,
+        favoriteIdToCreate: string,
+        additionalData?: any,
+      ) => {
+        const favoriteState = snapshot.getLoadable(favoritesState);
+        const favorites = favoriteState.getValue();
+        if (!favoriteNameToCreate || !favoriteIdToCreate) {
+          return;
+        }
 
-    const result = await apolloClient.mutate({
-      mutation: createOneMutation,
-      variables: {
-        input: {
-          [favoriteNameToCreate]: favoriteIdToCreate,
-          position: favorites.length + 1,
-          workspaceMember: workspaceMemberId,
-        },
+        const result = await apolloClient.mutate({
+          mutation: createOneMutation,
+          variables: {
+            input: {
+              [favoriteNameToCreate]: favoriteIdToCreate,
+              position: favorites.length + 1,
+              workspaceMember: workspaceMemberId,
+            },
+          },
+        });
+
+        const createdFavorite: Favorite = result?.data?.createFavoriteV2;
+
+        const newFavorite = {
+          ...additionalData,
+          ...createdFavorite[favoriteNameToCreate],
+        };
+
+        if (createdFavorite) {
+          set(favoritesState, [...favorites, newFavorite]);
+        }
       },
-    });
-
-    const createdFavorite: Favorite = result?.data?.createFavoriteV2;
-
-    createdFavorite[favoriteNameToCreate] = {
-      ...additionalData,
-      ...createdFavorite[favoriteNameToCreate],
-    };
-
-    if (createdFavorite) {
-      setFavorites([...favorites, createdFavorite]);
-    }
-  };
+    [apolloClient, createOneMutation, workspaceMemberId],
+  );
 
   const _updateFavoritePosition = async (favorite: Favorite) => {
     const result = await apolloClient.mutate({
@@ -76,27 +82,20 @@ export const useFavorites = () => {
     }
   };
 
-  const deleteFavorite = async (
-    favoriteNameToDelete: string,
-    favoriteIdToDelete: string,
-  ) => {
+  const deleteFavorite = async (favoriteIdToDelete: string) => {
     const idToDelete = favorites.find(
-      (favorite: Favorite) =>
-        favorite[favoriteNameToDelete].id === favoriteIdToDelete,
+      (favorite: Favorite) => favorite.recordId === favoriteIdToDelete,
     )?.id;
 
-    const result = await apolloClient.mutate({
+    await apolloClient.mutate({
       mutation: deleteOneMutation,
       variables: {
         idToDelete: idToDelete,
       },
     });
 
-    const deletedFavorite = result?.data?.deleteFavoriteV2;
     setFavorites(
-      favorites.filter(
-        (favorite: Favorite) => favorite.id !== deletedFavorite.id,
-      ),
+      favorites.filter((favorite: Favorite) => favorite.id !== idToDelete),
     );
   };
 

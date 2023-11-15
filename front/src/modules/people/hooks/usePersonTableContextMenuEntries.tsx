@@ -51,7 +51,7 @@ export const usePersonTableContextMenuEntries = () => {
       !!favorites?.find((favorite) => favorite.person?.id === selectedPersonId);
 
     resetTableRowSelection();
-    if (isFavorite) deleteFavorite('person', selectedPersonId);
+    if (isFavorite) deleteFavorite(selectedPersonId);
     else createFavorite('person', selectedPersonId);
   });
 

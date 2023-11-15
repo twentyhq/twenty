@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
+import { favoritesState } from '@/favorites/states/favoritesState';
 import { mapFavorites } from '@/favorites/utils/mapFavorites';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
@@ -11,11 +12,9 @@ import NavItem from '@/ui/navigation/navbar/components/NavItem';
 import NavTitle from '@/ui/navigation/navbar/components/NavTitle';
 import { Avatar } from '@/users/components/Avatar';
 import { Company, Favorite } from '~/generated-metadata/graphql';
-import { getLogoUrlFromDomainName } from '~/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { useFavorites } from '../hooks/useFavorites';
-import { favoritesState } from '../states/favoritesState';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -25,8 +24,7 @@ const StyledContainer = styled.div`
 `;
 
 export const Favorites = () => {
-  const [favorites] = useRecoilState(favoritesState);
-  const { handleReorderFavorite } = useFavorites();
+  const { favorites, handleReorderFavorite } = useFavorites();
   const [allCompanies, setAllCompanies] = useState<
     Record<string, { name: string; domainName?: string }>
   >({});
@@ -87,7 +85,6 @@ export const Favorites = () => {
             ...allCompanies,
             ...allPeople,
           });
-
           if (!isDeeplyEqual(favorites, queriedFavorites)) {
             set(favoritesState, queriedFavorites);
           }
@@ -106,47 +103,28 @@ export const Favorites = () => {
         draggableItems={
           <>
             {favorites.map((favorite, index) => {
-              const { id, person, company } = favorite;
+              const { id, labelIdentifier, avatarUrl, avatarType, link } =
+                favorite;
+
               return (
                 <DraggableItem
                   key={id}
                   draggableId={id}
                   index={index}
                   itemComponent={
-                    <>
-                      {person && (
-                        <NavItem
-                          key={id}
-                          label={`${person.firstName} ${person.lastName}`}
-                          Icon={() => (
-                            <Avatar
-                              colorId={person.id}
-                              avatarUrl={person.avatarUrl ?? ''}
-                              type="rounded"
-                              placeholder={`${person.firstName} ${person.lastName}`}
-                            />
-                          )}
-                          to={`/object/personV2/${person.id}`}
+                    <NavItem
+                      key={id}
+                      label={labelIdentifier}
+                      Icon={() => (
+                        <Avatar
+                          colorId={id}
+                          avatarUrl={avatarUrl}
+                          type={avatarType}
+                          placeholder={labelIdentifier}
                         />
                       )}
-                      {company && (
-                        <NavItem
-                          key={id}
-                          label={company.name}
-                          Icon={() => (
-                            <Avatar
-                              avatarUrl={
-                                getLogoUrlFromDomainName(company.domainName) ??
-                                ''
-                              }
-                              type="squared"
-                              placeholder={company.name}
-                            />
-                          )}
-                          to={`/object/companyV2/${company.id}`}
-                        />
-                      )}
-                    </>
+                      to={link}
+                    />
                   }
                 />
               );

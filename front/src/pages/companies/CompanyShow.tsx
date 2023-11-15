@@ -49,7 +49,7 @@ export const CompanyShow = () => {
     company.Favorite && company.Favorite?.length > 0 ? true : false;
 
   const handleFavoriteButtonClick = async () => {
-    if (isFavorite) deleteFavorite('company', companyId);
+    if (isFavorite) deleteFavorite(companyId);
     else createFavorite('company', companyId);
   };
 

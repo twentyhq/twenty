@@ -25,6 +25,7 @@ import { PropertyBox } from '@/ui/object/record-inline-cell/property-box/compone
 import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { getLogoUrlFromDomainName } from '~/utils';
 
 import { useFindOneObjectRecord } from '../hooks/useFindOneObjectRecord';
 import { useUpdateOneObjectRecord } from '../hooks/useUpdateOneObjectRecord';
@@ -35,7 +36,7 @@ export const RecordShowPage = () => {
     objectMetadataId: string;
   }>();
 
-  const { createFavorite, deleteFavorite } = useFavorites();
+  const { favorites, createFavorite, deleteFavorite } = useFavorites();
 
   const { icons } = useLazyLoadIcons();
 
@@ -79,21 +80,31 @@ export const RecordShowPage = () => {
     return [updateEntity, { loading: false }];
   };
 
-  const isFavorite =
-    object?.favorites?.edges && object?.favorites?.edges?.length > 0
-      ? true
-      : false;
+  const isFavorite = objectNameSingular
+    ? favorites.some((favorite) => favorite.recordId === object?.id)
+    : false;
 
   const handleFavoriteButtonClick = async () => {
     if (!objectNameSingular || !object) return;
-    if (isFavorite)
-      deleteFavorite(objectNameSingular.replace('V2', ''), object.id);
+    if (isFavorite) deleteFavorite(object?.id);
     else {
       const additionalData =
         objectNameSingular === 'peopleV2'
-          ? { firstName: object.firstName, lastName: object.lastName }
+          ? {
+              labelIdentifier: object.firstName + ' ' + object.lastName,
+              avatarUrl: object.avatarUrl,
+              avatarType: 'rounded',
+              link: `/object/personV2/${object.id}`,
+              recordId: object.id,
+            }
           : objectNameSingular === 'companyV2'
-          ? { name: object.name }
+          ? {
+              labelIdentifier: object.name,
+              avatarUrl: getLogoUrlFromDomainName(object.domainName ?? ''),
+              avatarType: 'squared',
+              link: `/object/companyV2/${object.id}`,
+              recordId: object.id,
+            }
           : {};
       createFavorite(
         objectNameSingular.replace('V2', ''),
