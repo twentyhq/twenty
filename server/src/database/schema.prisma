@@ -111,8 +111,6 @@ model User {
   authoredActivities  Activity[]   @relation(name: "authoredActivities")
   assignedActivities  Activity[]   @relation(name: "assignedActivities")
   authoredAttachments Attachment[] @relation(name: "authoredAttachments")
-  settings            UserSettings @relation(fields: [settingsId], references: [id])
-  settingsId          String       @unique
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -137,7 +135,6 @@ model UserSettings {
   /// @Validator.IsString()
   locale      String
 
-  user            User?
   WorkspaceMember WorkspaceMember[]
 
   createdAt DateTime @default(now())

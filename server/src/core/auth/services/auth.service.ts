@@ -88,7 +88,6 @@ export class AuthService {
           data: {
             email: signUpInput.email,
             passwordHash,
-            locale: 'en',
           },
         } as Prisma.UserCreateArgs,
         workspace.id,
@@ -160,11 +159,6 @@ export class AuthService {
     userId: string,
     select: Prisma.UserSelect & {
       id: true;
-      workspaceMember: {
-        select: {
-          allowImpersonation: true;
-        };
-      };
     },
   ) {
     const user = await this.userService.findUnique({

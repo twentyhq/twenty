@@ -45,9 +45,7 @@ export const SettingsWorkspaceMembers = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const handleRemoveWorkspaceMember = async (workspaceMemberId: string) => {
-    await deleteOneWorkspaceMember?.({
-      idToDelete: workspaceMemberId,
-    });
+    await deleteOneWorkspaceMember?.(workspaceMemberId);
     setIsConfirmationModalOpen(false);
   };
 

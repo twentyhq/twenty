@@ -1409,6 +1409,7 @@ export type Mutation = {
   createOnePipelineProgress: PipelineProgress;
   createOnePipelineStage: PipelineStage;
   createOneRefreshTokenV2: RefreshTokenV2;
+  createOneRelation: Relation;
   createOneWebHook: WebHook;
   deleteCurrentWorkspace: Workspace;
   deleteFavorite: Favorite;
@@ -2452,6 +2453,8 @@ export type Query = {
   findWorkspaceFromInviteHash: Workspace;
   object: Object;
   objects: ObjectConnection;
+  relation: Relation;
+  relations: RelationConnection;
 };
 
 
@@ -2650,6 +2653,7 @@ export type Telemetry = {
 
 export type User = {
   __typename?: 'User';
+  UserSettings?: Maybe<Array<UserSettings>>;
   assignedActivities?: Maybe<Array<Activity>>;
   authoredActivities?: Maybe<Array<Activity>>;
   authoredAttachments?: Maybe<Array<Attachment>>;
@@ -2670,8 +2674,6 @@ export type User = {
   locale: Scalars['String'];
   metadata?: Maybe<Scalars['JSON']>;
   phoneNumber?: Maybe<Scalars['String']>;
-  settings: UserSettings;
-  settingsId: Scalars['String'];
   supportUserHash?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
 };
@@ -2698,6 +2700,7 @@ export type UserExists = {
 };
 
 export type UserOrderByWithRelationInput = {
+  UserSettings?: InputMaybe<UserSettingsOrderByRelationAggregateInput>;
   assignedActivities?: InputMaybe<ActivityOrderByRelationAggregateInput>;
   authoredActivities?: InputMaybe<ActivityOrderByRelationAggregateInput>;
   authoredAttachments?: InputMaybe<AttachmentOrderByRelationAggregateInput>;
@@ -2717,8 +2720,6 @@ export type UserOrderByWithRelationInput = {
   locale?: InputMaybe<SortOrder>;
   metadata?: InputMaybe<SortOrder>;
   phoneNumber?: InputMaybe<SortOrder>;
-  settings?: InputMaybe<UserSettingsOrderByWithRelationInput>;
-  settingsId?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
 };
 
@@ -2744,7 +2745,6 @@ export enum UserScalarFieldEnum {
   Metadata = 'metadata',
   PasswordHash = 'passwordHash',
   PhoneNumber = 'phoneNumber',
-  SettingsId = 'settingsId',
   UpdatedAt = 'updatedAt'
 }
 
@@ -2757,6 +2757,17 @@ export type UserSettings = {
   locale: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   user?: Maybe<User>;
+  userId?: Maybe<Scalars['String']>;
+};
+
+export type UserSettingsListRelationFilter = {
+  every?: InputMaybe<UserSettingsWhereInput>;
+  none?: InputMaybe<UserSettingsWhereInput>;
+  some?: InputMaybe<UserSettingsWhereInput>;
+};
+
+export type UserSettingsOrderByRelationAggregateInput = {
+  _count?: InputMaybe<SortOrder>;
 };
 
 export type UserSettingsOrderByWithRelationInput = {
@@ -2767,6 +2778,7 @@ export type UserSettingsOrderByWithRelationInput = {
   locale?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
   user?: InputMaybe<UserOrderByWithRelationInput>;
+  userId?: InputMaybe<SortOrder>;
 };
 
 export type UserSettingsRelationFilter = {
@@ -2774,22 +2786,15 @@ export type UserSettingsRelationFilter = {
   isNot?: InputMaybe<UserSettingsWhereInput>;
 };
 
-export type UserSettingsUpdateOneRequiredWithoutUserNestedInput = {
-  update?: InputMaybe<UserSettingsUpdateWithoutUserInput>;
+export type UserSettingsUpdateManyWithoutUserNestedInput = {
+  connect?: InputMaybe<Array<UserSettingsWhereUniqueInput>>;
+  disconnect?: InputMaybe<Array<UserSettingsWhereUniqueInput>>;
+  set?: InputMaybe<Array<UserSettingsWhereUniqueInput>>;
 };
 
 export type UserSettingsUpdateOneWithoutWorkspaceMemberNestedInput = {
   connect?: InputMaybe<UserSettingsWhereUniqueInput>;
   disconnect?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type UserSettingsUpdateWithoutUserInput = {
-  WorkspaceMember?: InputMaybe<WorkspaceMemberUpdateManyWithoutSettingsNestedInput>;
-  colorScheme?: InputMaybe<ColorScheme>;
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  id?: InputMaybe<Scalars['String']>;
-  locale?: InputMaybe<Scalars['String']>;
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type UserSettingsWhereInput = {
@@ -2803,6 +2808,7 @@ export type UserSettingsWhereInput = {
   locale?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
   user?: InputMaybe<UserRelationFilter>;
+  userId?: InputMaybe<StringNullableFilter>;
 };
 
 export type UserSettingsWhereUniqueInput = {
@@ -2810,6 +2816,7 @@ export type UserSettingsWhereUniqueInput = {
 };
 
 export type UserUpdateInput = {
+  UserSettings?: InputMaybe<UserSettingsUpdateManyWithoutUserNestedInput>;
   assignedActivities?: InputMaybe<ActivityUpdateManyWithoutAssigneeNestedInput>;
   authoredActivities?: InputMaybe<ActivityUpdateManyWithoutAuthorNestedInput>;
   authoredAttachments?: InputMaybe<AttachmentUpdateManyWithoutAuthorNestedInput>;
@@ -2829,7 +2836,6 @@ export type UserUpdateInput = {
   locale?: InputMaybe<Scalars['String']>;
   metadata?: InputMaybe<Scalars['JSON']>;
   phoneNumber?: InputMaybe<Scalars['String']>;
-  settings?: InputMaybe<UserSettingsUpdateOneRequiredWithoutUserNestedInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
@@ -2851,6 +2857,7 @@ export type UserWhereInput = {
   AND?: InputMaybe<Array<UserWhereInput>>;
   NOT?: InputMaybe<Array<UserWhereInput>>;
   OR?: InputMaybe<Array<UserWhereInput>>;
+  UserSettings?: InputMaybe<UserSettingsListRelationFilter>;
   assignedActivities?: InputMaybe<ActivityListRelationFilter>;
   authoredActivities?: InputMaybe<ActivityListRelationFilter>;
   authoredAttachments?: InputMaybe<AttachmentListRelationFilter>;
@@ -2870,15 +2877,12 @@ export type UserWhereInput = {
   locale?: InputMaybe<StringFilter>;
   metadata?: InputMaybe<JsonNullableFilter>;
   phoneNumber?: InputMaybe<StringNullableFilter>;
-  settings?: InputMaybe<UserSettingsRelationFilter>;
-  settingsId?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
 };
 
 export type UserWhereUniqueInput = {
   email?: InputMaybe<Scalars['String']>;
   id?: InputMaybe<Scalars['String']>;
-  settingsId?: InputMaybe<Scalars['String']>;
 };
 
 export type Verify = {
@@ -3060,12 +3064,6 @@ export type WorkspaceMemberUpdateInput = {
   settings?: InputMaybe<UserSettingsUpdateOneWithoutWorkspaceMemberNestedInput>;
   updatedAt?: InputMaybe<Scalars['DateTime']>;
   userId?: InputMaybe<Scalars['String']>;
-};
-
-export type WorkspaceMemberUpdateManyWithoutSettingsNestedInput = {
-  connect?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
-  disconnect?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
-  set?: InputMaybe<Array<WorkspaceMemberWhereUniqueInput>>;
 };
 
 export type WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput = {

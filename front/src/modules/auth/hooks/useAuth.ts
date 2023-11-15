@@ -9,6 +9,8 @@ import {
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
+import { CREATE_ONE_WORKSPACE_MEMBER_V2 } from '@/object-record/graphql/mutation/createOneWorkspaceMember';
 import { FIND_ONE_WORKSPACE_MEMBER_V2 } from '@/object-record/graphql/queries/findOneWorkspaceMember';
 import { REACT_APP_SERVER_AUTH_URL } from '~/config';
 import {
@@ -29,6 +31,7 @@ export const useAuth = () => {
     currentWorkspaceMemberState,
   );
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+  const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
@@ -77,9 +80,8 @@ export const useAuth = () => {
       if (!verifyResult.data?.verify) {
         throw new Error('No verify result');
       }
-      setTokenPair(verifyResult.data?.verify.tokens);
 
-      await getCurrentWorkspaceQuery();
+      setTokenPair(verifyResult.data?.verify.tokens);
       const workspaceMember = await client.query({
         query: FIND_ONE_WORKSPACE_MEMBER_V2,
         variables: {
@@ -88,37 +90,39 @@ export const useAuth = () => {
           },
         },
       });
+      const currentWorkspace = await getCurrentWorkspaceQuery();
 
       setCurrentUser(verifyResult.data?.verify.user);
       setCurrentWorkspaceMember(workspaceMember.data?.findMany);
-      setCurrentWorkspace(getCurrentWorkspaceData?.currentWorkspace ?? null);
-
+      setCurrentWorkspace(currentWorkspace.data?.currentWorkspace ?? null);
       return {
         user: verifyResult.data?.verify.user,
         workspaceMember: workspaceMember.data?.findMany,
-        workspace: getCurrentWorkspaceData?.currentWorkspace,
+        workspace: currentWorkspace.data?.currentWorkspace,
         tokens: verifyResult.data?.verify.tokens,
       };
     },
     [
       verify,
-      getCurrentWorkspaceQuery,
+      setTokenPair,
       client,
+      getCurrentWorkspaceQuery,
       setCurrentUser,
       setCurrentWorkspaceMember,
       setCurrentWorkspace,
-      getCurrentWorkspaceData?.currentWorkspace,
-      setTokenPair,
     ],
   );
 
   const handleCrendentialsSignIn = useCallback(
     async (email: string, password: string) => {
       const { loginToken } = await handleChallenge(email, password);
+      setIsVerifyPendingState(true);
 
       const { user, workspaceMember, workspace } = await handleVerify(
         loginToken.token,
       );
+
+      setIsVerifyPendingState(false);
 
       return {
         user,
@@ -126,7 +130,7 @@ export const useAuth = () => {
         workspace,
       };
     },
-    [handleChallenge, handleVerify],
+    [handleChallenge, handleVerify, setIsVerifyPendingState],
   );
 
   const handleSignOut = useCallback(() => {
@@ -140,6 +144,8 @@ export const useAuth = () => {
 
   const handleCredentialsSignUp = useCallback(
     async (email: string, password: string, workspaceInviteHash?: string) => {
+      setIsVerifyPendingState(true);
+
       const signUpResult = await signUp({
         variables: {
           email,
@@ -156,13 +162,26 @@ export const useAuth = () => {
         throw new Error('No login token');
       }
 
-      const { user } = await handleVerify(
+      const { user, workspace } = await handleVerify(
         signUpResult.data?.signUp.loginToken.token,
       );
 
-      return user;
+      const workspaceMember = await client.mutate({
+        mutation: CREATE_ONE_WORKSPACE_MEMBER_V2,
+        variables: {
+          input: {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            userId: user.id,
+          },
+        },
+      });
+
+      setIsVerifyPendingState(false);
+
+      return { user, workspaceMember, workspace };
     },
-    [signUp, handleVerify],
+    [setIsVerifyPendingState, signUp, handleVerify, client],
   );
 
   const handleGoogleLogin = useCallback((workspaceInviteHash?: string) => {

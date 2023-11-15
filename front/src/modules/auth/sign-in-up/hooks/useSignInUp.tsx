@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { z } from 'zod';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { AppPath } from '@/types/AppPath';
@@ -63,10 +62,9 @@ export const useSignInUp = () => {
   });
   const [showErrors, setShowErrors] = useState(false);
 
-  const { data: workspace } = useGetWorkspaceFromInviteHashQuery({
+  const { data: workspaceFromInviteHash } = useGetWorkspaceFromInviteHashQuery({
     variables: { inviteHash: workspaceInviteHash || '' },
   });
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const form = useForm<Form>({
     mode: 'onChange',
@@ -121,14 +119,21 @@ export const useSignInUp = () => {
         if (!data.email || !data.password) {
           throw new Error('Email and password are required');
         }
+        let currentWorkspace;
+
         if (signInUpMode === SignInUpMode.SignIn) {
-          await signInWithCredentials(data.email.toLowerCase(), data.password);
+          const { workspace } = await signInWithCredentials(
+            data.email.toLowerCase(),
+            data.password,
+          );
+          currentWorkspace = workspace;
         } else {
-          await signUpWithCredentials(
+          const { workspace } = await signUpWithCredentials(
             data.email.toLowerCase(),
             data.password,
             workspaceInviteHash,
           );
+          currentWorkspace = workspace;
         }
         if (currentWorkspace?.displayName) {
           navigate('/');
@@ -143,7 +148,6 @@ export const useSignInUp = () => {
     },
     [
       signInUpMode,
-      currentWorkspace?.displayName,
       signInWithCredentials,
       signUpWithCredentials,
       workspaceInviteHash,
@@ -187,6 +191,6 @@ export const useSignInUp = () => {
     goBackToEmailStep,
     submitCredentials,
     form,
-    workspace: workspace?.findWorkspaceFromInviteHash,
+    workspace: workspaceFromInviteHash?.findWorkspaceFromInviteHash,
   };
 };
