@@ -89,14 +89,19 @@ export const ProfilePictureUploader = () => {
   };
 
   const handleRemove = async () => {
-    await removePicture({
+    await apolloClient.mutate({
+      mutation: updateOneMutation,
       variables: {
-        where: {
-          id: currentUser?.id,
+        idToUpdate: currentWorkspaceMember?.id,
+        input: {
+          avatarUrl: null,
         },
       },
-      refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
     });
+
+    setCurrentWorkspaceMember(
+      (current) => ({ ...current, avatarUrl: null } as any),
+    );
   };
 
   return (
