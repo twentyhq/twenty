@@ -45,7 +45,7 @@ export const useFavorites = () => {
           },
         });
 
-        const createdFavorite: Favorite = result?.data?.createFavoriteV2;
+        const createdFavorite = result?.data?.createFavoriteV2;
 
         const newFavorite = {
           ...additionalData,
