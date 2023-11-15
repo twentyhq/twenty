@@ -37,7 +37,7 @@ export const SettingsDevelopersApiKeysNew = () => {
           expiresAt: formValues.expirationDate
             ? DateTime.now()
                 .plus({ days: formValues.expirationDate })
-                .toISODate()
+                .toString()
             : null,
         },
       },
