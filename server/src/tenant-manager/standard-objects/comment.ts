@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+
 const commentMetadata = {
   nameSingular: 'commentV2',
   namePlural: 'commentsV2',
@@ -12,7 +14,7 @@ const commentMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'body',
       label: 'Body',
       targetColumnMap: {
@@ -26,7 +28,7 @@ const commentMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'author',
       label: 'Author',
       targetColumnMap: {
@@ -39,7 +41,7 @@ const commentMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'activity',
       label: 'Activity',
       targetColumnMap: {

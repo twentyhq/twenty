@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+
 const viewSortMetadata = {
   nameSingular: 'viewSortV2',
   namePlural: 'viewSortsV2',
@@ -12,7 +14,7 @@ const viewSortMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'fieldMetadataId',
       label: 'Field Metadata Id',
       targetColumnMap: {
@@ -25,7 +27,7 @@ const viewSortMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'direction',
       label: 'Direction',
       targetColumnMap: {
@@ -38,7 +40,7 @@ const viewSortMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'view',
       label: 'View',
       targetColumnMap: {
@@ -52,7 +54,7 @@ const viewSortMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'viewId',
       label: 'View Id',
       targetColumnMap: {

@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+
 const pipelineStepMetadata = {
   nameSingular: 'pipelineStepV2',
   namePlural: 'pipelineStepsV2',
@@ -12,7 +14,7 @@ const pipelineStepMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'name',
       label: 'Name',
       targetColumnMap: {
@@ -25,7 +27,7 @@ const pipelineStepMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'color',
       label: 'Color',
       targetColumnMap: {
@@ -38,7 +40,7 @@ const pipelineStepMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'NUMBER',
+      type: FieldMetadataType.NUMBER,
       name: 'position',
       label: 'Position',
       targetColumnMap: {
@@ -52,7 +54,7 @@ const pipelineStepMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'opportunities',
       label: 'Opportunities',
       targetColumnMap: {},

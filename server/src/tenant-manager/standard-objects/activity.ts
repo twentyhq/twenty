@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+
 const activityMetadata = {
   nameSingular: 'activityV2',
   namePlural: 'activitiesV2',
@@ -12,7 +14,7 @@ const activityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'title',
       label: 'Title',
       targetColumnMap: {
@@ -25,7 +27,7 @@ const activityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'body',
       label: 'Body',
       targetColumnMap: {
@@ -38,7 +40,7 @@ const activityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'type',
       label: 'Type',
       targetColumnMap: {
@@ -51,7 +53,7 @@ const activityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'DATE',
+      type: FieldMetadataType.DATE,
       name: 'reminderAt',
       label: 'Reminder Date',
       targetColumnMap: {
@@ -64,7 +66,7 @@ const activityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'DATE',
+      type: FieldMetadataType.DATE,
       name: 'dueAt',
       label: 'Due Date',
       targetColumnMap: {
@@ -77,7 +79,7 @@ const activityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'DATE',
+      type: FieldMetadataType.DATE,
       name: 'completedAt',
       label: 'Completion Date',
       targetColumnMap: {
@@ -91,7 +93,7 @@ const activityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'activityTargets',
       label: 'Targets',
       targetColumnMap: {},
@@ -102,7 +104,7 @@ const activityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'attachments',
       label: 'Attachments',
       targetColumnMap: {},
@@ -113,7 +115,7 @@ const activityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'comments',
       label: 'Comments',
       targetColumnMap: {},
@@ -124,7 +126,7 @@ const activityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'author',
       label: 'Author',
       targetColumnMap: {
@@ -138,7 +140,7 @@ const activityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'assignee',
       label: 'Assignee',
       targetColumnMap: {

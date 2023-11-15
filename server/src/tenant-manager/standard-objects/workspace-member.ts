@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+
 const workspaceMemberMetadata = {
   nameSingular: 'workspaceMemberV2',
   namePlural: 'workspaceMembersV2',
@@ -12,7 +14,7 @@ const workspaceMemberMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'firstName',
       label: 'First name',
       targetColumnMap: {
@@ -25,7 +27,7 @@ const workspaceMemberMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'lastName',
       label: 'Last name',
       targetColumnMap: {
@@ -38,7 +40,7 @@ const workspaceMemberMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'UUID',
+      type: FieldMetadataType.UUID,
       name: 'userId',
       label: 'User Id',
       targetColumnMap: {
@@ -51,7 +53,7 @@ const workspaceMemberMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'BOOLEAN',
+      type: FieldMetadataType.BOOLEAN,
       name: 'allowImpersonation',
       label: 'Admin Access',
       targetColumnMap: {
@@ -64,7 +66,7 @@ const workspaceMemberMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'colorScheme',
       label: 'Color Scheme',
       targetColumnMap: {
@@ -77,7 +79,7 @@ const workspaceMemberMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'locale',
       label: 'Language',
       targetColumnMap: {
@@ -91,7 +93,7 @@ const workspaceMemberMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'authoredActivities',
       label: 'Authored activities',
       targetColumnMap: {},
@@ -102,7 +104,7 @@ const workspaceMemberMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'assignedActivities',
       label: 'Assigned activities',
       targetColumnMap: {},
@@ -113,7 +115,7 @@ const workspaceMemberMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'favorites',
       label: 'Favorites',
       targetColumnMap: {},
@@ -124,7 +126,7 @@ const workspaceMemberMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'accountOwnerForCompanies',
       label: 'Account Owner For Companies',
       targetColumnMap: {},
@@ -135,7 +137,7 @@ const workspaceMemberMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'authoredAttachments',
       label: 'Authored attachments',
       targetColumnMap: {},
@@ -146,7 +148,7 @@ const workspaceMemberMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'authoredComments',
       label: 'Authored comments',
       targetColumnMap: {},
