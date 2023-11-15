@@ -1,28 +1,41 @@
-import { useRecoilValue } from 'recoil';
+import { useApolloClient } from '@apollo/client';
+import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import { Toggle } from '@/ui/input/components/Toggle';
-import { useUpdateAllowImpersonationMutation } from '~/generated/graphql';
 
 export const ToggleField = () => {
   const { enqueueSnackBar } = useSnackBar();
 
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
+    currentWorkspaceMemberState,
+  );
 
-  const [updateAllowImpersonation] = useUpdateAllowImpersonationMutation();
+  const apolloClient = useApolloClient();
+  const { updateOneMutation } = useFindOneObjectMetadataItem({
+    objectNameSingular: 'workspaceMemberV2',
+  });
 
   const handleChange = async (value: boolean) => {
     try {
-      const { data, errors } = await updateAllowImpersonation({
+      await apolloClient.mutate({
+        mutation: updateOneMutation,
         variables: {
-          allowImpersonation: value,
+          idToUpdate: currentWorkspaceMember?.id,
+          input: {
+            allowImpersonation: value,
+          },
         },
       });
-
-      if (errors || !data?.allowImpersonation) {
-        throw new Error('Error while updating user');
-      }
+      setCurrentWorkspaceMember(
+        (current) =>
+          ({
+            ...current,
+            allowImpersonation: value,
+          } as any),
+      );
     } catch (err: any) {
       enqueueSnackBar(err?.message, {
         variant: 'error',
