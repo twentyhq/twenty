@@ -97,7 +97,7 @@ export const seedPipelineStepFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'name',
         label: 'Name',
         targetColumnMap: {
@@ -115,7 +115,7 @@ export const seedPipelineStepFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'color',
         label: 'Color',
         targetColumnMap: {
@@ -131,7 +131,7 @@ export const seedPipelineStepFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'NUMBER',
+        type: FieldMetadataType.NUMBER,
         name: 'position',
         label: 'Position',
         targetColumnMap: {
@@ -149,7 +149,7 @@ export const seedPipelineStepFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'opportunities',
         label: 'Opportunities',
         targetColumnMap: {},

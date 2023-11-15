@@ -95,7 +95,7 @@ export const seedWebhookFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'targetUrl',
         label: 'Target Url',
         targetColumnMap: {
@@ -111,7 +111,7 @@ export const seedWebhookFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'operation',
         label: 'Operation',
         targetColumnMap: {

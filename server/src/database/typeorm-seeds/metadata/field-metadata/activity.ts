@@ -22,7 +22,9 @@ export enum SeedActivityFieldMetadataIds {
   Comments = '20202020-c85c-47f2-bbe4-6b36c26f9247',
   Attachments = '20202020-9755-43a8-b621-f94df0f6b839',
   Author = '20202020-3acb-46bb-b993-0dc49fa2a48c',
+  AuthorForeignKey = '20202020-3acb-46bb-b993-0dc49fa2a48d',
   Assignee = '20202020-4694-4ec6-9084-8d932ebb3065',
+  AssigneeForeignKey = '20202020-4694-4ec6-9084-8d932ebb3066',
 }
 
 export const seedActivityFieldMetadata = async (
@@ -45,6 +47,7 @@ export const seedActivityFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
     ])
     .orIgnore()
     .values([
@@ -105,7 +108,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'title',
         label: 'Title',
         targetColumnMap: {
@@ -123,7 +126,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'body',
         label: 'Body',
         targetColumnMap: {
@@ -139,7 +142,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'type',
         label: 'Type',
         targetColumnMap: {
@@ -155,7 +158,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'DATE',
+        type: FieldMetadataType.DATE,
         name: 'reminderAt',
         label: 'Reminder Date',
         targetColumnMap: {
@@ -171,7 +174,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'DATE',
+        type: FieldMetadataType.DATE,
         name: 'dueAt',
         label: 'Due Date',
         targetColumnMap: {
@@ -187,7 +190,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'DATE',
+        type: FieldMetadataType.DATE,
         name: 'completedAt',
         label: 'Completion Date',
         targetColumnMap: {
@@ -205,7 +208,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'activityTargets',
         label: 'Targets',
         targetColumnMap: {},
@@ -219,7 +222,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'attachments',
         label: 'Attachments',
         targetColumnMap: {},
@@ -233,7 +236,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'Comments',
         label: 'Comments',
         targetColumnMap: {},
@@ -247,7 +250,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'author',
         label: 'Author',
         targetColumnMap: {
@@ -259,21 +262,49 @@ export const seedActivityFieldMetadata = async (
         isNullable: false,
       },
       {
+        id: SeedActivityFieldMetadataIds.AuthorForeignKey,
+        objectMetadataId: SeedObjectMetadataIds.Activity,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: FieldMetadataType.UUID,
+        name: 'authorId',
+        label: 'Author id (foreign key)',
+        targetColumnMap: {},
+        description: 'Activity author id foreign key',
+        icon: undefined,
+        isNullable: false,
+        isSystem: true,
+      },
+      {
         id: SeedActivityFieldMetadataIds.Assignee,
         objectMetadataId: SeedObjectMetadataIds.Activity,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'assignee',
         label: 'Assignee',
-        targetColumnMap: {
-          value: 'assigneeId',
-        },
+        targetColumnMap: {},
         description:
           'Acitivity assignee. This is the workspace member assigned to the activity ',
         icon: 'IconUserCircle',
         isNullable: true,
+      },
+      {
+        id: SeedActivityFieldMetadataIds.AssigneeForeignKey,
+        objectMetadataId: SeedObjectMetadataIds.Activity,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: FieldMetadataType.UUID,
+        name: 'assigneeId',
+        label: 'Assignee id (foreign key)',
+        targetColumnMap: {},
+        description: 'Acitivity assignee id foreign key',
+        icon: undefined,
+        isNullable: true,
+        isSystem: true,
       },
     ])
     .execute();

@@ -98,7 +98,7 @@ export const seedViewFieldFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'fieldMetadataId',
         label: 'Field Metadata Id',
         targetColumnMap: {
@@ -114,7 +114,7 @@ export const seedViewFieldFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'view',
         label: 'View Id',
         targetColumnMap: { value: 'viewId' },
@@ -128,7 +128,7 @@ export const seedViewFieldFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'BOOLEAN',
+        type: FieldMetadataType.BOOLEAN,
         name: 'isVisible',
         label: 'Visible',
         targetColumnMap: {
@@ -144,7 +144,7 @@ export const seedViewFieldFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'NUMBER',
+        type: FieldMetadataType.NUMBER,
         name: 'size',
         label: 'Size',
         targetColumnMap: {
@@ -160,7 +160,7 @@ export const seedViewFieldFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'NUMBER',
+        type: FieldMetadataType.NUMBER,
         name: 'position',
         label: 'Position',
         targetColumnMap: {
