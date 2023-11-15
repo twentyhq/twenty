@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
-import { APP_FILTER, ModuleRef } from '@nestjs/core';
+import { APP_FILTER, ContextIdFactory, ModuleRef } from '@nestjs/core';
 
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import GraphQLJSON from 'graphql-type-json';
@@ -37,11 +37,6 @@ import { ExceptionFilter } from './filters/exception.filter';
       include: [CoreModule],
       conditionalSchema: async (request) => {
         try {
-          // Get the SchemaGenerationService from the AppModule
-          const tenantService = AppModule.moduleRef.get(TenantService, {
-            strict: false,
-          });
-
           // Get the JwtAuthStrategy from the AppModule
           const jwtStrategy = AppModule.moduleRef.get(JwtAuthStrategy, {
             strict: false,
@@ -72,6 +67,18 @@ import { ExceptionFilter } from './filters/exception.filter';
           // Validate JWT
           const { workspace } = await jwtStrategy.validate(
             decoded as JwtPayload,
+          );
+
+          const contextId = ContextIdFactory.create();
+          AppModule.moduleRef.registerRequestByContextId(request, contextId);
+
+          // Get the SchemaGenerationService from the AppModule
+          const tenantService = await AppModule.moduleRef.resolve(
+            TenantService,
+            contextId,
+            {
+              strict: false,
+            },
           );
 
           return await tenantService.createTenantSchema(workspace.id);
