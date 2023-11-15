@@ -27,7 +27,6 @@ export const FIND_MANY_METADATA_OBJECTS = gql`
                 label
                 description
                 icon
-                placeholder
                 isCustom
                 isActive
                 isNullable
@@ -36,10 +35,34 @@ export const FIND_MANY_METADATA_OBJECTS = gql`
                 fromRelationMetadata {
                   id
                   relationType
+                  toObjectMetadata {
+                    id
+                    dataSourceId
+                    nameSingular
+                    namePlural
+                  }
+                  fromObjectMetadata {
+                    id
+                    dataSourceId
+                    nameSingular
+                    namePlural
+                  }
                 }
                 toRelationMetadata {
                   id
                   relationType
+                  toObjectMetadata {
+                    id
+                    dataSourceId
+                    nameSingular
+                    namePlural
+                  }
+                  fromObjectMetadata {
+                    id
+                    dataSourceId
+                    nameSingular
+                    namePlural
+                  }
                 }
               }
             }

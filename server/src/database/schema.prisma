@@ -102,18 +102,15 @@ model User {
   /// @Validator.IsOptional()
   canImpersonate Boolean   @default(false)
 
-  /// @TypeGraphQL.omit(input: true)
-  workspaceMember WorkspaceMember?
-  companies       Company[]
+  companies          Company[]
   /// @TypeGraphQL.omit(input: true, output: true)
-  refreshTokens   RefreshToken[]
-  comments        Comment[]
+  refreshTokens      RefreshToken[]
+  comments           Comment[]
+  defaultWorkspaceId String?
 
   authoredActivities  Activity[]   @relation(name: "authoredActivities")
   assignedActivities  Activity[]   @relation(name: "assignedActivities")
   authoredAttachments Attachment[] @relation(name: "authoredAttachments")
-  settings            UserSettings @relation(fields: [settingsId], references: [id])
-  settingsId          String       @unique
 
   /// @TypeGraphQL.omit(input: true, output: true)
   deletedAt DateTime?
@@ -138,7 +135,6 @@ model UserSettings {
   /// @Validator.IsString()
   locale      String
 
-  user            User?
   WorkspaceMember WorkspaceMember[]
 
   createdAt DateTime @default(now())
@@ -195,7 +191,6 @@ model WorkspaceMember {
   /// @Validator.IsOptional()
   allowImpersonation Boolean @default(true)
 
-  user        User      @relation(fields: [userId], references: [id])
   userId      String    @unique
   /// @TypeGraphQL.omit(input: true, output: false)
   workspace   Workspace @relation(fields: [workspaceId], references: [id])

@@ -130,7 +130,6 @@ export class AuthResolver {
       defaultFields: {
         User: {
           id: true,
-          workspaceMember: { select: { allowImpersonation: true } },
         },
       },
     })
@@ -140,7 +139,6 @@ export class AuthResolver {
     assert(user.canImpersonate, 'User cannot impersonate', ForbiddenException);
     const select = prismaSelect.valueOf('user') as Prisma.UserSelect & {
       id: true;
-      workspaceMember: { select: { allowImpersonation: true } };
     };
 
     return this.authService.impersonate(impersonateInput.userId, select);

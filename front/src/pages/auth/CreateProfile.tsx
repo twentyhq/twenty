@@ -11,6 +11,7 @@ import { z } from 'zod';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -57,6 +58,7 @@ export const CreateProfile = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const [currentUser] = useRecoilState(currentUserState);
+  const [currentWorkspaceMember] = useRecoilState(currentWorkspaceMemberState);
 
   const [updateUser] = useUpdateUserMutation();
 
@@ -69,8 +71,8 @@ export const CreateProfile = () => {
   } = useForm<Form>({
     mode: 'onChange',
     defaultValues: {
-      firstName: currentUser?.firstName ?? '',
-      lastName: currentUser?.lastName ?? '',
+      firstName: currentWorkspaceMember?.firstName ?? '',
+      lastName: currentWorkspaceMember?.lastName ?? '',
     },
     resolver: zodResolver(validationSchema),
   });

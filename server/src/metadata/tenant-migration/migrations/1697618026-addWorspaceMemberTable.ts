@@ -23,6 +23,11 @@ export const addWorkspaceMemberTable: TenantMigrationTableAction[] = [
         action: TenantMigrationColumnActionType.CREATE,
       },
       {
+        columnName: 'avatarUrl',
+        columnType: 'varchar',
+        action: TenantMigrationColumnActionType.CREATE,
+      },
+      {
         columnName: 'colorScheme',
         columnType: 'varchar',
         action: TenantMigrationColumnActionType.CREATE,

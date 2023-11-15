@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import { Toggle } from '@/ui/input/components/Toggle';
 import { useUpdateAllowImpersonationMutation } from '~/generated/graphql';
@@ -8,7 +8,7 @@ import { useUpdateAllowImpersonationMutation } from '~/generated/graphql';
 export const ToggleField = () => {
   const { enqueueSnackBar } = useSnackBar();
 
-  const currentUser = useRecoilValue(currentUserState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const [updateAllowImpersonation] = useUpdateAllowImpersonationMutation();
 
@@ -32,7 +32,7 @@ export const ToggleField = () => {
 
   return (
     <Toggle
-      value={currentUser?.workspaceMember?.allowImpersonation}
+      value={currentWorkspaceMember?.allowImpersonation}
       onChange={handleChange}
     />
   );

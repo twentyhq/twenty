@@ -1,24 +1,27 @@
 import { EntityChip } from '@/ui/display/chip/components/EntityChip';
+import { getEntityChipFromFieldMetadata } from '@/ui/object/field/meta-types/display/utils/getEntityChipFromFieldMetadata';
 
 import { useRelationField } from '../../hooks/useRelationField';
 
 export const RelationFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useRelationField();
-  const { entityChipDisplayMapper } = fieldDefinition;
-  if (!entityChipDisplayMapper) {
-    throw new Error(
-      "Missing entityChipDisplayMapper in FieldContext. Please provide it in the FieldContextProvider's value prop.",
-    );
-  }
-  const { name, pictureUrl, avatarType } =
-    entityChipDisplayMapper?.(fieldValue);
+
+  console.log({
+    fieldDefinition,
+    fieldValue,
+  });
+
+  const entityChipProps = getEntityChipFromFieldMetadata(
+    fieldDefinition,
+    fieldValue,
+  );
 
   return (
     <EntityChip
-      entityId={fieldValue?.id}
-      name={name}
-      pictureUrl={pictureUrl}
-      avatarType={avatarType}
+      entityId={entityChipProps.entityId}
+      name={entityChipProps.name}
+      pictureUrl={entityChipProps.pictureUrl}
+      avatarType={entityChipProps.avatarType}
     />
   );
 };

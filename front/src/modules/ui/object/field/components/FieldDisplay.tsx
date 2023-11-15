@@ -1,5 +1,7 @@
 import { useContext } from 'react';
 
+import { RelationFieldDisplay } from '@/ui/object/field/meta-types/display/components/RelationFieldDisplay';
+
 import { FieldContext } from '../contexts/FieldContext';
 import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisplay';
 import { DateFieldDisplay } from '../meta-types/display/components/DateFieldDisplay';
@@ -33,7 +35,7 @@ export const FieldDisplay = () => {
   return (
     <>
       {isFieldRelation(fieldDefinition) ? (
-        <></>
+        <RelationFieldDisplay />
       ) : isFieldText(fieldDefinition) ? (
         <TextFieldDisplay />
       ) : isFieldEmail(fieldDefinition) ? (

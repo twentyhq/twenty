@@ -1,10 +1,10 @@
 import { gql } from '@apollo/client';
 
-import { generateCreateOneObjectMutation } from '@/object-record/utils/generateCreateOneObjectMutation';
-import { generateDeleteOneObjectMutation } from '@/object-record/utils/generateDeleteOneObjectMutation';
-import { generateFindManyCustomObjectsQuery } from '@/object-record/utils/generateFindManyCustomObjectsQuery';
-import { generateFindOneCustomObjectQuery } from '@/object-record/utils/generateFindOneCustomObjectQuery';
-import { generateUpdateOneObjectMutation } from '@/object-record/utils/generateUpdateOneObjectMutation';
+import { useGenerateCreateOneObjectMutation } from '@/object-record/utils/generateCreateOneObjectMutation';
+import { useGenerateDeleteOneObjectMutation } from '@/object-record/utils/useGenerateDeleteOneObjectMutation';
+import { useGenerateFindManyCustomObjectsQuery } from '@/object-record/utils/useGenerateFindManyCustomObjectsQuery';
+import { useGenerateFindOneCustomObjectQuery } from '@/object-record/utils/useGenerateFindOneCustomObjectQuery';
+import { useGenerateUpdateOneObjectMutation } from '@/object-record/utils/useGenerateUpdateOneObjectMutation';
 import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
@@ -16,13 +16,13 @@ import { formatFieldMetadataItemsAsSortDefinitions } from '../utils/formatFieldM
 
 import { useFindManyObjectMetadataItems } from './useFindManyObjectMetadataItems';
 
-const EMPTY_QUERY = gql`
+export const EMPTY_QUERY = gql`
   query EmptyQuery {
     empty
   }
 `;
 
-const EMPTY_MUTATION = gql`
+export const EMPTY_MUTATION = gql`
   mutation EmptyMutation {
     empty
   }
@@ -74,35 +74,25 @@ export const useFindOneObjectMetadataItem = ({
     icons,
   });
 
-  const findManyQuery = foundObjectMetadataItem
-    ? generateFindManyCustomObjectsQuery({
-        objectMetadataItem: foundObjectMetadataItem,
-      })
-    : EMPTY_QUERY;
+  const findManyQuery = useGenerateFindManyCustomObjectsQuery({
+    objectMetadataItem: foundObjectMetadataItem,
+  });
 
-  const findOneQuery = foundObjectMetadataItem
-    ? generateFindOneCustomObjectQuery({
-        objectMetadataItem: foundObjectMetadataItem,
-      })
-    : EMPTY_QUERY;
+  const findOneQuery = useGenerateFindOneCustomObjectQuery({
+    objectMetadataItem: foundObjectMetadataItem,
+  });
 
-  const createOneMutation = foundObjectMetadataItem
-    ? generateCreateOneObjectMutation({
-        objectMetadataItem: foundObjectMetadataItem,
-      })
-    : EMPTY_MUTATION;
+  const createOneMutation = useGenerateCreateOneObjectMutation({
+    objectMetadataItem: foundObjectMetadataItem,
+  });
 
-  const updateOneMutation = foundObjectMetadataItem
-    ? generateUpdateOneObjectMutation({
-        objectMetadataItem: foundObjectMetadataItem,
-      })
-    : EMPTY_MUTATION;
+  const updateOneMutation = useGenerateUpdateOneObjectMutation({
+    objectMetadataItem: foundObjectMetadataItem,
+  });
 
-  const deleteOneMutation = foundObjectMetadataItem
-    ? generateDeleteOneObjectMutation({
-        objectMetadataItem: foundObjectMetadataItem,
-      })
-    : EMPTY_MUTATION;
+  const deleteOneMutation = useGenerateDeleteOneObjectMutation({
+    objectMetadataItem: foundObjectMetadataItem,
+  });
 
   return {
     foundObjectMetadataItem,

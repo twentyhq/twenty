@@ -1,0 +1,107 @@
+const opportunityMetadata = {
+  nameSingular: 'opportunityV2',
+  namePlural: 'opportunitiesV2',
+  labelSingular: 'Opportunity',
+  labelPlural: 'Opportunities',
+  targetTableName: 'opportunity',
+  description: 'An opportunity',
+  icon: 'IconTargetArrow',
+  isActive: true,
+  isSystem: true,
+  fields: [
+    {
+      isCustom: false,
+      isActive: true,
+      type: 'NUMBER',
+      name: 'amount',
+      label: 'Amount',
+      targetColumnMap: {
+        value: 'amount',
+      },
+      description: 'Opportunity amount',
+      icon: 'IconCurrencyDollar',
+      isNullable: true,
+    },
+    {
+      isCustom: false,
+      isActive: true,
+      type: 'DATE',
+      name: 'closeDate',
+      label: 'Close date',
+      targetColumnMap: {
+        value: 'closeDate',
+      },
+      description: 'Opportunity close date',
+      icon: 'IconCalendarEvent',
+      isNullable: true,
+    },
+    {
+      isCustom: false,
+      isActive: true,
+      type: 'TEXT',
+      name: 'probability',
+      label: 'Probability',
+      targetColumnMap: {
+        value: 'probability',
+      },
+      description: 'Opportunity amount',
+      icon: 'IconProgressCheck',
+      isNullable: true,
+    },
+    // Relations
+    {
+      isCustom: false,
+      isActive: true,
+      type: 'RELATION',
+      name: 'pipelineStep',
+      label: 'Pipeline Step',
+      targetColumnMap: {
+        value: 'pipelineStepId',
+      },
+      description: 'Opportunity pipeline step',
+      icon: 'IconKanban',
+      isNullable: true,
+    },
+    {
+      isCustom: false,
+      isActive: true,
+      type: 'RELATION',
+      name: 'pointOfContact',
+      label: 'Point of Contact',
+      targetColumnMap: {
+        value: 'pointOfContactId',
+      },
+      description: 'Opportunity point of contact',
+      icon: 'IconUser',
+      isNullable: true,
+    },
+    {
+      isCustom: false,
+      isActive: true,
+      type: 'RELATION',
+      name: 'person',
+      label: 'Person',
+      targetColumnMap: {
+        value: 'personId',
+      },
+      description: 'Opportunity person',
+      icon: 'IconUser',
+      isNullable: true,
+    },
+    {
+      isCustom: false,
+      isActive: true,
+      type: 'RELATION',
+      name: 'company',
+      label: 'Company',
+      targetColumnMap: {
+        value: 'companyId',
+      },
+      description: 'Opportunity company',
+      icon: 'IconBuildingSkyscraper',
+      isNullable: true,
+    },
+  ],
+};
+
+export default opportunityMetadata;

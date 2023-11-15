@@ -62,8 +62,12 @@ export const SingleEntitySelectBase = <
 
   const entitiesInDropdown = [selectedEntity, ...entitiesToSelect].filter(
     (entity): entity is CustomEntityForSelect =>
-      assertNotNull(entity) && isNonEmptyString(entity.name.trim()),
+      assertNotNull(entity) && isNonEmptyString(entity.name),
   );
+
+  console.log({
+    entitiesInDropdown,
+  });
 
   const { preselectedOptionId, resetScroll } = useEntitySelectScroll({
     selectableOptionIds: [

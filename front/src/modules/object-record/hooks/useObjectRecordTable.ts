@@ -14,7 +14,7 @@ import { useFindManyObjectRecords } from './useFindManyObjectRecords';
 export const useObjectRecordTable = () => {
   const { scopeId: objectNamePlural } = useRecordTable();
 
-  const { registerOptimisticEffect } = useOptimisticEffect();
+  const { registerOptimisticEffect } = useOptimisticEffect('CompanyV2');
 
   const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
     objectNamePlural,

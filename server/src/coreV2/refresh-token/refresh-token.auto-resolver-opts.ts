@@ -3,7 +3,6 @@ import {
   PagingStrategies,
   ReadResolverOpts,
 } from '@ptc-org/nestjs-query-graphql';
-import { SortDirection } from '@ptc-org/nestjs-query-core';
 
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 
@@ -26,7 +25,8 @@ export const refreshTokenAutoResolverOpts: AutoResolverOpts<
     enableTotalCount: true,
     pagingStrategy: PagingStrategies.CURSOR,
     read: {
-      defaultSort: [{ field: 'id', direction: SortDirection.DESC }],
+      many: { disabled: true },
+      one: { disabled: true },
     },
     create: {
       many: { disabled: true },
