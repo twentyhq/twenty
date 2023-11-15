@@ -193,7 +193,7 @@ export const seedPersonFieldMetadata = async (
         },
         description: 'Contact’s avatar',
         icon: 'IconFileUpload',
-        isNullable: false,
+        isNullable: true,
       },
 
       // Relationships
@@ -225,7 +225,7 @@ export const seedPersonFieldMetadata = async (
         targetColumnMap: {},
         description: 'Point of Contact for Opportuniites',
         icon: 'IconArrowTarget',
-        isNullable: false,
+        isNullable: true,
       },
       {
         id: SeedPersonFieldMetadataIds.ActivityTargets,
