@@ -1,5 +1,3 @@
-import { InjectDataSource } from '@nestjs/typeorm';
-
 import { Command, CommandRunner } from 'nest-commander';
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
@@ -22,7 +20,6 @@ export class DataSeedTenantCommand extends CommandRunner {
   workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
   constructor(
-    @InjectDataSource('metadata')
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly tenantMigrationService: TenantMigrationService,
