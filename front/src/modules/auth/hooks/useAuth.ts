@@ -38,8 +38,7 @@ export const useAuth = () => {
   const [verify] = useVerifyMutation();
   const [checkUserExistsQuery, { data: checkUserExistsData }] =
     useCheckUserExistsLazyQuery();
-  const [getCurrentWorkspaceQuery, { data: getCurrentWorkspaceData }] =
-    useGetCurrentWorkspaceLazyQuery();
+  const [getCurrentWorkspaceQuery] = useGetCurrentWorkspaceLazyQuery();
 
   const client = useApolloClient();
 
@@ -185,7 +184,13 @@ export const useAuth = () => {
 
       return { user, workspaceMember, workspace };
     },
-    [setIsVerifyPendingState, signUp, handleVerify, client],
+    [
+      setIsVerifyPendingState,
+      signUp,
+      handleVerify,
+      client,
+      setCurrentWorkspaceMember,
+    ],
   );
 
   const handleGoogleLogin = useCallback((workspaceInviteHash?: string) => {
