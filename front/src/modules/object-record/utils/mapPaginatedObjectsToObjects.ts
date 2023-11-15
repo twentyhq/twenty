@@ -1,4 +1,4 @@
-export const formatPagedObjectsToObjects = <
+export const mapPaginatedObjectsToObjects = <
   ObjectType extends { id: string } & Record<string, any>,
   ObjectTypeQuery extends {
     [objectNamePlural: string]: {

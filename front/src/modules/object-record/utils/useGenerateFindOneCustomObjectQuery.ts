@@ -1,13 +1,20 @@
 import { gql } from '@apollo/client';
 
+import { EMPTY_QUERY } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
 
-export const generateFindOneCustomObjectQuery = ({
+export const useGenerateFindOneCustomObjectQuery = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: ObjectMetadataItem | null | undefined;
 }) => {
+  const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
+
+  if (!objectMetadataItem) {
+    return EMPTY_QUERY;
+  }
+
   return gql`
     query FindOne${objectMetadataItem.nameSingular}($objectMetadataId: UUID!) {
       ${objectMetadataItem.nameSingular}(filter: {

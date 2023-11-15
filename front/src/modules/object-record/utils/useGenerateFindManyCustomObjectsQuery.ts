@@ -1,14 +1,21 @@
 import { gql } from '@apollo/client';
 
+import { EMPTY_QUERY } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const generateFindManyCustomObjectsQuery = ({
+export const useGenerateFindManyCustomObjectsQuery = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: ObjectMetadataItem | undefined | null;
 }) => {
+  const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
+
+  if (!objectMetadataItem) {
+    return EMPTY_QUERY;
+  }
+
   return gql`
     query FindMany${capitalize(
       objectMetadataItem.namePlural,

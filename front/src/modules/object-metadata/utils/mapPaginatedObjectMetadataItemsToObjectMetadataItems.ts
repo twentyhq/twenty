@@ -2,8 +2,8 @@ import { ObjectMetadataItemsQuery } from '~/generated-metadata/graphql';
 
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
-export const formatPagedObjectMetadataItemsToObjectMetadataItems = ({
-  pagedObjectMetadataItems: pagedObjectMetadataItems,
+export const mapPaginatedObjectMetadataItemsToObjectMetadataItems = ({
+  pagedObjectMetadataItems,
 }: {
   pagedObjectMetadataItems: ObjectMetadataItemsQuery | undefined;
 }) => {

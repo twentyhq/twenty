@@ -18,9 +18,14 @@ export const getEntityChipFromFieldMetadata = (
     entityId: fieldValue?.id,
   };
 
+  console.log({
+    fieldName,
+    fieldValue,
+  });
+
   // TODO: use every
-  if (fieldName === 'accountOwner') {
-    chipValue.name = fieldValue?.name;
+  if (fieldName === 'accountOwner' && fieldValue) {
+    chipValue.name = fieldValue.firstName + ' ' + fieldValue.lastName;
   }
 
   return chipValue;
