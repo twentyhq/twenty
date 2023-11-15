@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+
 const viewFieldMetadata = {
   nameSingular: 'viewFieldV2',
   namePlural: 'viewFieldsV2',
@@ -12,7 +14,7 @@ const viewFieldMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'fieldMetadataId',
       label: 'Field Metadata Id',
       targetColumnMap: {
@@ -25,7 +27,7 @@ const viewFieldMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'BOOLEAN',
+      type: FieldMetadataType.BOOLEAN,
       name: 'isVisible',
       label: 'Visible',
       targetColumnMap: {
@@ -38,7 +40,7 @@ const viewFieldMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'NUMBER',
+      type: FieldMetadataType.NUMBER,
       name: 'size',
       label: 'Size',
       targetColumnMap: {
@@ -51,7 +53,7 @@ const viewFieldMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'NUMBER',
+      type: FieldMetadataType.NUMBER,
       name: 'position',
       label: 'Position',
       targetColumnMap: {
@@ -64,7 +66,7 @@ const viewFieldMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'view',
       label: 'View',
       targetColumnMap: { value: 'viewId' },
@@ -76,7 +78,7 @@ const viewFieldMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'viewId',
       label: 'View Id',
       targetColumnMap: {

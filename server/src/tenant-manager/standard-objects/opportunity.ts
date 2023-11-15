@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+
 const opportunityMetadata = {
   nameSingular: 'opportunityV2',
   namePlural: 'opportunitiesV2',
@@ -12,7 +14,7 @@ const opportunityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'NUMBER',
+      type: FieldMetadataType.NUMBER,
       name: 'amount',
       label: 'Amount',
       targetColumnMap: {
@@ -25,7 +27,7 @@ const opportunityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'DATE',
+      type: FieldMetadataType.DATE,
       name: 'closeDate',
       label: 'Close date',
       targetColumnMap: {
@@ -38,7 +40,7 @@ const opportunityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'probability',
       label: 'Probability',
       targetColumnMap: {
@@ -52,7 +54,7 @@ const opportunityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'pipelineStep',
       label: 'Pipeline Step',
       targetColumnMap: {
@@ -65,7 +67,7 @@ const opportunityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'pointOfContact',
       label: 'Point of Contact',
       targetColumnMap: {
@@ -78,7 +80,7 @@ const opportunityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'person',
       label: 'Person',
       targetColumnMap: {
@@ -91,7 +93,7 @@ const opportunityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'company',
       label: 'Company',
       targetColumnMap: {

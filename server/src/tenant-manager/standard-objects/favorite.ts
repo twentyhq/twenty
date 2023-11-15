@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+
 const favoriteMetadata = {
   nameSingular: 'favoriteV2',
   namePlural: 'favoritesV2',
@@ -12,7 +14,7 @@ const favoriteMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'NUMBER',
+      type: FieldMetadataType.NUMBER,
       name: 'position',
       label: 'Position',
       targetColumnMap: {
@@ -26,7 +28,7 @@ const favoriteMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'workspaceMember',
       label: 'Workspace Member',
       targetColumnMap: {
@@ -39,7 +41,7 @@ const favoriteMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'person',
       label: 'Person',
       targetColumnMap: {
@@ -52,7 +54,7 @@ const favoriteMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'company',
       label: 'Company',
       targetColumnMap: {
