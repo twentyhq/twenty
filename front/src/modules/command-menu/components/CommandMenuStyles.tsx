@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
-import { Command } from 'cmdk';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-export const StyledDialog = styled(Command.Dialog)`
+export const StyledDialog = styled.div`
   background: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
@@ -21,7 +20,7 @@ export const StyledDialog = styled(Command.Dialog)`
   z-index: 1000;
 `;
 
-export const StyledInput = styled(Command.Input)`
+export const StyledInput = styled.input`
   background: ${({ theme }) => theme.background.primary};
   border: none;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -37,7 +36,7 @@ export const StyledInput = styled(Command.Input)`
   }
 `;
 
-export const StyledList = styled(Command.List)`
+export const StyledList = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   height: min(300px, var(--cmdk-list-height));
   max-height: 400px;
@@ -47,7 +46,7 @@ export const StyledList = styled(Command.List)`
   transition-property: height;
 `;
 
-export const StyledEmpty = styled(Command.Empty)`
+export const StyledEmpty = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.light};
   display: flex;

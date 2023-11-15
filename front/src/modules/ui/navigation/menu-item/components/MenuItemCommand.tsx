@@ -1,6 +1,5 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Command } from 'cmdk';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
@@ -27,7 +26,7 @@ const StyledBigIconContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledMenuItemCommandContainer = styled(Command.Item)`
+const StyledMenuItemCommandContainer = styled.div`
   --horizontal-padding: ${({ theme }) => theme.spacing(1)};
   --vertical-padding: ${({ theme }) => theme.spacing(2)};
   align-items: center;
