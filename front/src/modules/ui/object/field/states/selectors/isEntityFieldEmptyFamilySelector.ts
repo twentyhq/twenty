@@ -1,5 +1,6 @@
 import { selectorFamily } from 'recoil';
 
+import { isFieldUuid } from '@/ui/object/field/types/guards/isFieldUuid';
 import { assertNotNull } from '~/utils/assert';
 
 import { FieldDefinition } from '../../types/FieldDefinition';
@@ -39,6 +40,7 @@ export const isEntityFieldEmptyFamilySelector = selectorFamily({
   }) => {
     return ({ get }) => {
       if (
+        isFieldUuid(fieldDefinition) ||
         isFieldText(fieldDefinition) ||
         isFieldURL(fieldDefinition) ||
         isFieldDate(fieldDefinition) ||

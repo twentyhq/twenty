@@ -16,6 +16,7 @@ import {
   FieldTextMetadata,
   FieldURLMetadata,
   FieldURLV2Metadata,
+  FieldUuidMetadata,
 } from '../FieldMetadata';
 import { FieldType } from '../FieldType';
 
@@ -23,6 +24,8 @@ type AssertFieldMetadataFunction = <
   E extends FieldType,
   T extends E extends 'TEXT'
     ? FieldTextMetadata
+    : E extends 'UUID'
+    ? FieldUuidMetadata
     : E extends 'RELATION'
     ? FieldRelationMetadata
     : E extends 'CHIP'
