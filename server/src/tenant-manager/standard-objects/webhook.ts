@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+
 const webhookMetadata = {
   nameSingular: 'webhookV2',
   namePlural: 'webhooksV2',
@@ -12,7 +14,7 @@ const webhookMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'targetUrl',
       label: 'Target Url',
       targetColumnMap: {
@@ -25,7 +27,7 @@ const webhookMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'operation',
       label: 'Operation',
       targetColumnMap: {

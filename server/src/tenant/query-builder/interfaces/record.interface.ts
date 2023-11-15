@@ -1,8 +1,5 @@
 export interface Record {
-  id?: string;
   [key: string]: any;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 export type RecordFilter = {

@@ -2,10 +2,15 @@ import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
 export enum SeedPersonFieldMetadataIds {
+  Id = '20202020-03cd-4cd0-9afc-92077b69f24f',
+  CreatedAt = '20202020-bec0-4cf0-bf1c-8b2ed21f027a',
+  UpdatedAt = '20202020-2bf4-42b8-8718-a3e852bfa6a6',
+
   FirstName = '20202020-9b56-4888-bfe3-f6f59aa999e3',
   LastName = '20202020-b784-458a-869d-6c53fa85483d',
 
@@ -48,6 +53,56 @@ export const seedPersonFieldMetadata = async (
     ])
     .orIgnore()
     .values([
+      // Default fields
+      {
+        id: SeedPersonFieldMetadataIds.Id,
+        objectMetadataId: SeedObjectMetadataIds.Person,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: FieldMetadataType.UUID,
+        name: 'id',
+        label: 'Id',
+        targetColumnMap: {
+          value: 'id',
+        },
+        description: undefined,
+        icon: undefined,
+        isNullable: true,
+        // isSystem: true,
+      },
+      {
+        id: SeedPersonFieldMetadataIds.CreatedAt,
+        objectMetadataId: SeedObjectMetadataIds.Person,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: FieldMetadataType.DATE,
+        name: 'createdAt',
+        label: 'Creation date',
+        targetColumnMap: {
+          value: 'createdAt',
+        },
+        description: undefined,
+        icon: 'IconCalendar',
+        isNullable: true,
+      },
+      {
+        id: SeedPersonFieldMetadataIds.UpdatedAt,
+        objectMetadataId: SeedObjectMetadataIds.Person,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: FieldMetadataType.DATE,
+        name: 'updatedAt',
+        label: 'Update date',
+        targetColumnMap: {
+          value: 'updatedAt',
+        },
+        description: undefined,
+        icon: 'IconCalendar',
+        isNullable: true,
+      },
       // Main Identifier
       {
         id: SeedPersonFieldMetadataIds.FirstName,

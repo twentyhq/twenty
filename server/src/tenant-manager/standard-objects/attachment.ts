@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+
 const attachmentMetadata = {
   nameSingular: 'attachmentV2',
   namePlural: 'attachmentsV2',
@@ -12,7 +14,7 @@ const attachmentMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'name',
       label: 'Name',
       targetColumnMap: {
@@ -25,7 +27,7 @@ const attachmentMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'fullPath',
       label: 'Full path',
       targetColumnMap: {
@@ -38,7 +40,7 @@ const attachmentMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'type',
       label: 'Type',
       targetColumnMap: {
@@ -52,7 +54,7 @@ const attachmentMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'author',
       label: 'Author',
       targetColumnMap: {
@@ -65,7 +67,7 @@ const attachmentMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'activity',
       label: 'Activity',
       targetColumnMap: {
@@ -78,7 +80,7 @@ const attachmentMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'person',
       label: 'Person',
       targetColumnMap: {
@@ -91,7 +93,7 @@ const attachmentMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'company',
       label: 'Company',
       targetColumnMap: {

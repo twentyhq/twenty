@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+
 const viewFilterMetadata = {
   nameSingular: 'viewFilterV2',
   namePlural: 'viewFiltersV2',
@@ -12,7 +14,7 @@ const viewFilterMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'fieldMetadataId',
       label: 'Field Metadata Id',
       targetColumnMap: {
@@ -25,7 +27,7 @@ const viewFilterMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'operand',
       label: 'Operand',
       targetColumnMap: {
@@ -38,7 +40,7 @@ const viewFilterMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'value',
       label: 'Value',
       targetColumnMap: {
@@ -51,7 +53,7 @@ const viewFilterMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'displayValue',
       label: 'Display Value',
       targetColumnMap: {
@@ -64,7 +66,7 @@ const viewFilterMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'view',
       label: 'View',
       targetColumnMap: { value: 'viewId' },
@@ -76,7 +78,7 @@ const viewFilterMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'viewId',
       label: 'View Id',
       targetColumnMap: {

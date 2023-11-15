@@ -14,6 +14,10 @@ import webhookMetadata from 'src/tenant-manager/standard-objects/webhook';
 import pipelineStepMetadata from 'src/tenant-manager/standard-objects/pipeline-step';
 import companyMetadata from 'src/tenant-manager/standard-objects/company';
 import workspaceMemberMetadata from 'src/tenant-manager/standard-objects/workspace-member';
+import {
+  FieldMetadataEntity,
+  FieldMetadataType,
+} from 'src/metadata/field-metadata/field-metadata.entity';
 
 export const standardObjectsMetadata = {
   activityTargetV2: activityTargetMetadata,
@@ -33,3 +37,42 @@ export const standardObjectsMetadata = {
   webhookV2: webhookMetadata,
   workspaceMemberV2: workspaceMemberMetadata,
 };
+
+export const basicFieldsMetadata: Partial<FieldMetadataEntity>[] = [
+  {
+    name: 'id',
+    label: 'Id',
+    type: FieldMetadataType.UUID,
+    targetColumnMap: {
+      value: 'id',
+    },
+    isNullable: true,
+    // isSystem: true,
+    isCustom: false,
+    isActive: true,
+  },
+  {
+    name: 'createdAt',
+    label: 'Creation date',
+    type: FieldMetadataType.DATE,
+    targetColumnMap: {
+      value: 'createdAt',
+    },
+    icon: 'IconCalendar',
+    isNullable: true,
+    isCustom: false,
+    isActive: true,
+  },
+  {
+    name: 'updatedAt',
+    label: 'Update date',
+    type: FieldMetadataType.DATE,
+    targetColumnMap: {
+      value: 'updatedAt',
+    },
+    icon: 'IconCalendar',
+    isNullable: true,
+    isCustom: false,
+    isActive: true,
+  },
+];

@@ -2,10 +2,15 @@ import { DataSource } from 'typeorm';
 
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
 export enum SeedViewFilterFieldMetadataIds {
+  Id = '20202020-353c-4fb0-9011-1ad8e1dd67f9',
+  CreatedAt = '20202020-da57-452d-9671-ab3ccac2a9da',
+  UpdatedAt = '20202020-96c9-4cf1-87b4-8a009c591a16',
+
   FieldMetadataId = '20202020-78bb-4f2b-a052-260bc8efd694',
   View = '20202020-65e5-4082-829d-8c634c20e7b5',
   Operand = '20202020-1d12-465d-ab2c-8af008182730',
@@ -36,7 +41,57 @@ export const seedViewFilterFieldMetadata = async (
     ])
     .orIgnore()
     .values([
-      // View Filters
+      // Default fields
+      {
+        id: SeedViewFilterFieldMetadataIds.Id,
+        objectMetadataId: SeedObjectMetadataIds.ViewFilter,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: FieldMetadataType.UUID,
+        name: 'id',
+        label: 'Id',
+        targetColumnMap: {
+          value: 'id',
+        },
+        description: undefined,
+        icon: undefined,
+        isNullable: true,
+        // isSystem: true,
+      },
+      {
+        id: SeedViewFilterFieldMetadataIds.CreatedAt,
+        objectMetadataId: SeedObjectMetadataIds.ViewFilter,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: FieldMetadataType.DATE,
+        name: 'createdAt',
+        label: 'Creation date',
+        targetColumnMap: {
+          value: 'createdAt',
+        },
+        description: undefined,
+        icon: 'IconCalendar',
+        isNullable: true,
+      },
+      {
+        id: SeedViewFilterFieldMetadataIds.UpdatedAt,
+        objectMetadataId: SeedObjectMetadataIds.ViewFilter,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: FieldMetadataType.DATE,
+        name: 'updatedAt',
+        label: 'Update date',
+        targetColumnMap: {
+          value: 'updatedAt',
+        },
+        description: undefined,
+        icon: 'IconCalendar',
+        isNullable: true,
+      },
+      // Fields
       {
         id: SeedViewFilterFieldMetadataIds.FieldMetadataId,
         objectMetadataId: SeedObjectMetadataIds.ViewFilter,
