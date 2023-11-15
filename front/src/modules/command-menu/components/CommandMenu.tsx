@@ -29,20 +29,24 @@ import {
 } from './CommandMenuStyles';
 
 export const CommandMenu = () => {
-  const { openCommandMenu, closeCommandMenu } = useCommandMenu();
+  const { toggleCommandMenu } = useCommandMenu();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [search, setSearch] = useState('');
   const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
 
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  };
+
   useScopedHotkeys(
     'ctrl+k,meta+k',
     () => {
       setSearch('');
-      openCommandMenu();
+      toggleCommandMenu();
     },
     AppHotkeyScope.CommandMenu,
-    [openCommandMenu, setSearch],
+    [toggleCommandMenu, setSearch],
   );
 
   const { data: peopleData } = useSearchPeopleQuery({
@@ -115,93 +119,90 @@ export const CommandMenu = () => {
   );
 
   return (
-    <StyledDialog
-      open={isCommandMenuOpened}
-      onOpenChange={(opened) => {
-        if (!opened) {
-          closeCommandMenu();
-        }
-      }}
-      shouldFilter={false}
-      label="Global Command Menu"
-    >
-      <StyledInput
-        value={search}
-        placeholder="Search"
-        onValueChange={setSearch}
-      />
-      <StyledList>
-        <StyledEmpty>No results found.</StyledEmpty>
-        <CommandGroup heading="Create">
-          {matchingCreateCommand.map((cmd) => (
-            <CommandMenuItem
-              to={cmd.to}
-              key={cmd.label}
-              Icon={cmd.Icon}
-              label={cmd.label}
-              onClick={cmd.onCommandClick}
-              firstHotKey={cmd.firstHotKey}
-              secondHotKey={cmd.secondHotKey}
-            />
-          ))}
-        </CommandGroup>
-        <CommandGroup heading="Navigate">
-          {matchingNavigateCommand.map((cmd) => (
-            <CommandMenuItem
-              to={cmd.to}
-              key={cmd.label}
-              label={cmd.label}
-              Icon={cmd.Icon}
-              onClick={cmd.onCommandClick}
-              firstHotKey={cmd.firstHotKey}
-              secondHotKey={cmd.secondHotKey}
-            />
-          ))}
-        </CommandGroup>
-        <CommandGroup heading="People">
-          {people.map((person) => (
-            <CommandMenuItem
-              key={person.id}
-              to={`person/${person.id}`}
-              label={person.displayName}
-              Icon={() => (
-                <Avatar
-                  type="rounded"
-                  avatarUrl={null}
-                  colorId={person.id}
-                  placeholder={person.displayName}
-                />
-              )}
-            />
-          ))}
-        </CommandGroup>
-        <CommandGroup heading="Companies">
-          {companies.map((company) => (
-            <CommandMenuItem
-              key={company.id}
-              label={company.name}
-              to={`companies/${company.id}`}
-              Icon={() => (
-                <Avatar
-                  colorId={company.id}
-                  placeholder={company.name}
-                  avatarUrl={getLogoUrlFromDomainName(company.domainName)}
-                />
-              )}
-            />
-          ))}
-        </CommandGroup>
-        <CommandGroup heading="Notes">
-          {activities.map((activity) => (
-            <CommandMenuItem
-              Icon={IconNotes}
-              key={activity.id}
-              label={activity.title ?? ''}
-              onClick={() => openActivityRightDrawer(activity.id)}
-            />
-          ))}
-        </CommandGroup>
-      </StyledList>
-    </StyledDialog>
+    isCommandMenuOpened && (
+      <StyledDialog>
+        <StyledInput
+          value={search}
+          placeholder="Search"
+          onChange={handleSearchChange}
+        />
+        <StyledList>
+          {!matchingCreateCommand.length &&
+            !matchingNavigateCommand.length &&
+            !people.length &&
+            !companies.length &&
+            !activities.length && <StyledEmpty>No results found</StyledEmpty>}
+          <CommandGroup heading="Create">
+            {matchingCreateCommand.map((cmd) => (
+              <CommandMenuItem
+                to={cmd.to}
+                key={cmd.label}
+                Icon={cmd.Icon}
+                label={cmd.label}
+                onClick={cmd.onCommandClick}
+                firstHotKey={cmd.firstHotKey}
+                secondHotKey={cmd.secondHotKey}
+              />
+            ))}
+          </CommandGroup>
+          <CommandGroup heading="Navigate">
+            {matchingNavigateCommand.map((cmd) => (
+              <CommandMenuItem
+                to={cmd.to}
+                key={cmd.label}
+                label={cmd.label}
+                Icon={cmd.Icon}
+                onClick={cmd.onCommandClick}
+                firstHotKey={cmd.firstHotKey}
+                secondHotKey={cmd.secondHotKey}
+              />
+            ))}
+          </CommandGroup>
+          <CommandGroup heading="People">
+            {people.map((person) => (
+              <CommandMenuItem
+                key={person.id}
+                to={`person/${person.id}`}
+                label={person.displayName}
+                Icon={() => (
+                  <Avatar
+                    type="rounded"
+                    avatarUrl={null}
+                    colorId={person.id}
+                    placeholder={person.displayName}
+                  />
+                )}
+              />
+            ))}
+          </CommandGroup>
+          <CommandGroup heading="Companies">
+            {companies.map((company) => (
+              <CommandMenuItem
+                key={company.id}
+                label={company.name}
+                to={`companies/${company.id}`}
+                Icon={() => (
+                  <Avatar
+                    colorId={company.id}
+                    placeholder={company.name}
+                    avatarUrl={getLogoUrlFromDomainName(company.domainName)}
+                  />
+                )}
+              />
+            ))}
+          </CommandGroup>
+          <CommandGroup heading="Notes">
+            {activities.map((activity) => (
+              <CommandMenuItem
+                Icon={IconNotes}
+                key={activity.id}
+                label={activity.title ?? ''}
+                onClick={() => openActivityRightDrawer(activity.id)}
+              />
+            ))}
+          </CommandGroup>
+        </StyledList>
+      </StyledDialog>
+    )
   );
 };
