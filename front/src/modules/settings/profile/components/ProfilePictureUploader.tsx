@@ -3,22 +3,17 @@ import { useApolloClient } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState } from 'recoil';
 
-import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
-import {
-  useRemoveProfilePictureMutation,
-  useUploadProfilePictureMutation,
-} from '~/generated/graphql';
+import { useUploadProfilePictureMutation } from '~/generated/graphql';
 
 export const ProfilePictureUploader = () => {
   const [uploadPicture, { loading: isUploading }] =
     useUploadProfilePictureMutation();
-  const [removePicture] = useRemoveProfilePictureMutation();
-  const [currentUser] = useRecoilState(currentUserState);
+
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
