@@ -24,6 +24,7 @@ export const useFavorites = () => {
   const createFavorite = async (
     favoriteNameToCreate: string,
     favoriteIdToCreate: string,
+    additionalData?: any,
   ) => {
     if (!favoriteNameToCreate || !favoriteIdToCreate) {
       return;
@@ -40,15 +41,19 @@ export const useFavorites = () => {
       },
     });
 
-    const createdFavorite = result?.data?.createFavoriteV2;
+    const createdFavorite: Favorite = result?.data?.createFavoriteV2;
+
+    createdFavorite[favoriteNameToCreate] = {
+      ...additionalData,
+      ...createdFavorite[favoriteNameToCreate],
+    };
+
     if (createdFavorite) {
       setFavorites([...favorites, createdFavorite]);
     }
   };
 
-  const _updateFavoritePosition = async (
-    favorite: Pick<Favorite, 'id' | 'position'>,
-  ) => {
+  const _updateFavoritePosition = async (favorite: Favorite) => {
     const result = await apolloClient.mutate({
       mutation: updateOneMutation,
       variables: {

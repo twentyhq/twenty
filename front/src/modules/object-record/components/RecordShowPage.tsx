@@ -88,7 +88,19 @@ export const RecordShowPage = () => {
     if (!objectNameSingular || !object) return;
     if (isFavorite)
       deleteFavorite(objectNameSingular.replace('V2', ''), object.id);
-    else createFavorite(objectNameSingular.replace('V2', ''), object.id);
+    else {
+      const additionalData =
+        objectNameSingular === 'peopleV2'
+          ? { firstName: object.firstName, lastName: object.lastName }
+          : objectNameSingular === 'companyV2'
+          ? { name: object.name }
+          : {};
+      createFavorite(
+        objectNameSingular.replace('V2', ''),
+        object.id,
+        additionalData,
+      );
+    }
   };
 
   if (!object) return <></>;

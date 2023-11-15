@@ -1,5 +1,5 @@
 export type Favorite = {
   id: string;
-  position?: number;
+  position: number;
   [key: string]: any;
 };

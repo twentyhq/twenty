@@ -2,6 +2,7 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
+import { mapFavorites } from '@/favorites/utils/mapFavorites';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
@@ -11,7 +12,6 @@ import NavTitle from '@/ui/navigation/navbar/components/NavTitle';
 import { Avatar } from '@/users/components/Avatar';
 import { Company, Favorite } from '~/generated-metadata/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
-import { assertNotNull } from '~/utils/assert';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { useFavorites } from '../hooks/useFavorites';
@@ -83,28 +83,10 @@ export const Favorites = () => {
           const favoriteState = snapshot.getLoadable(favoritesState);
           const favorites = favoriteState.getValue();
 
-          const queriedFavorites = data.edges
-            .map(({ node: favorite }) => ({
-              id: favorite.id,
-              person: favorite.person
-                ? {
-                    id: favorite.person.id,
-                    firstName: allPeople[favorite.person?.id]?.firstName ?? '',
-                    lastName: allPeople[favorite.person?.id]?.lastName ?? '',
-                    avatarUrl: allPeople[favorite.person?.id]?.avatarUrl ?? '',
-                  }
-                : undefined,
-              company: favorite.company
-                ? {
-                    id: favorite.company.id,
-                    name: allCompanies[favorite.company?.id]?.name ?? '',
-                    domainName:
-                      allCompanies[favorite.company?.id]?.domainName ?? '',
-                  }
-                : undefined,
-              position: favorite.position,
-            }))
-            .filter(assertNotNull);
+          const queriedFavorites = mapFavorites(data.edges, {
+            ...allCompanies,
+            ...allPeople,
+          });
 
           if (!isDeeplyEqual(favorites, queriedFavorites)) {
             set(favoritesState, queriedFavorites);
