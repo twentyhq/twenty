@@ -25,14 +25,14 @@ export const CommandMenuItem = ({
   secondHotKey,
 }: CommandMenuItemProps) => {
   const navigate = useNavigate();
-  const { closeCommandMenu } = useCommandMenu();
+  const { toggleCommandMenu } = useCommandMenu();
 
   if (to && !Icon) {
     Icon = IconArrowUpRight;
   }
 
   const onItemClick = () => {
-    closeCommandMenu();
+    toggleCommandMenu();
 
     if (onClick) {
       onClick();

@@ -23,7 +23,7 @@ import { measureTotalFrameLoad } from './utils/measureTotalFrameLoad';
 
 export const AppNavbar = () => {
   const currentPath = useLocation().pathname;
-  const { openCommandMenu } = useCommandMenu();
+  const { toggleCommandMenu } = useCommandMenu();
 
   const navigate = useNavigate();
 
@@ -38,7 +38,7 @@ export const AppNavbar = () => {
             label="Search"
             Icon={IconSearch}
             onClick={() => {
-              openCommandMenu();
+              toggleCommandMenu();
             }}
             keyboard={['⌘', 'K']}
           />

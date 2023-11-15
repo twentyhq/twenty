@@ -20,7 +20,7 @@ const meta: Meta<typeof CommandMenu> = {
   decorators: [
     ComponentWithRouterDecorator,
     (Story) => {
-      const { addToCommandMenu, setToIntitialCommandMenu, openCommandMenu } =
+      const { addToCommandMenu, setToIntitialCommandMenu, toggleCommandMenu } =
         useCommandMenu();
 
       useEffect(() => {
@@ -41,8 +41,8 @@ const meta: Meta<typeof CommandMenu> = {
             onCommandClick: () => console.log('create note click'),
           },
         ]);
-        openCommandMenu();
-      }, [addToCommandMenu, setToIntitialCommandMenu, openCommandMenu]);
+        toggleCommandMenu();
+      }, [addToCommandMenu, setToIntitialCommandMenu, toggleCommandMenu]);
 
       return <Story />;
     },
