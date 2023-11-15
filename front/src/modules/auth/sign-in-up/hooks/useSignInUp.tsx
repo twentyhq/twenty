@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { z } from 'zod';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { AppPath } from '@/types/AppPath';
@@ -65,6 +66,7 @@ export const useSignInUp = () => {
   const { data: workspace } = useGetWorkspaceFromInviteHashQuery({
     variables: { inviteHash: workspaceInviteHash || '' },
   });
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const form = useForm<Form>({
     mode: 'onChange',
@@ -119,20 +121,16 @@ export const useSignInUp = () => {
         if (!data.email || !data.password) {
           throw new Error('Email and password are required');
         }
-        let user;
         if (signInUpMode === SignInUpMode.SignIn) {
-          user = await signInWithCredentials(
-            data.email.toLowerCase(),
-            data.password,
-          );
+          await signInWithCredentials(data.email.toLowerCase(), data.password);
         } else {
-          user = await signUpWithCredentials(
+          await signUpWithCredentials(
             data.email.toLowerCase(),
             data.password,
             workspaceInviteHash,
           );
         }
-        if (user?.workspaceMember?.workspace?.displayName) {
+        if (currentWorkspace?.displayName) {
           navigate('/');
         } else {
           navigate('/create/workspace');
@@ -144,12 +142,13 @@ export const useSignInUp = () => {
       }
     },
     [
-      navigate,
+      signInUpMode,
+      currentWorkspace?.displayName,
       signInWithCredentials,
       signUpWithCredentials,
       workspaceInviteHash,
+      navigate,
       enqueueSnackBar,
-      signInUpMode,
     ],
   );
 

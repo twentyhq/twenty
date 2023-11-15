@@ -102,12 +102,11 @@ model User {
   /// @Validator.IsOptional()
   canImpersonate Boolean   @default(false)
 
-  /// @TypeGraphQL.omit(input: true)
-  workspaceMember WorkspaceMember?
-  companies       Company[]
+  companies          Company[]
   /// @TypeGraphQL.omit(input: true, output: true)
-  refreshTokens   RefreshToken[]
-  comments        Comment[]
+  refreshTokens      RefreshToken[]
+  comments           Comment[]
+  defaultWorkspaceId String?
 
   authoredActivities  Activity[]   @relation(name: "authoredActivities")
   assignedActivities  Activity[]   @relation(name: "assignedActivities")
@@ -195,7 +194,6 @@ model WorkspaceMember {
   /// @Validator.IsOptional()
   allowImpersonation Boolean @default(true)
 
-  user        User      @relation(fields: [userId], references: [id])
   userId      String    @unique
   /// @TypeGraphQL.omit(input: true, output: false)
   workspace   Workspace @relation(fields: [workspaceId], references: [id])

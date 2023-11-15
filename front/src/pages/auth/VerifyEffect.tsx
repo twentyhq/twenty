@@ -1,15 +1,18 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useRecoilValue } from 'recoil';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 
 import { AppPath } from '../../modules/types/AppPath';
 
 export const VerifyEffect = () => {
   const [searchParams] = useSearchParams();
   const loginToken = searchParams.get('loginToken');
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const isLogged = useIsLogged();
   const navigate = useNavigate();
@@ -21,13 +24,9 @@ export const VerifyEffect = () => {
       if (!loginToken) {
         navigate(AppPath.SignIn);
       } else {
-        const verifyResponse = await verify(loginToken);
+        await verify(loginToken);
 
-        if (
-          isNonEmptyString(
-            verifyResponse.user.workspaceMember?.workspace.displayName,
-          )
-        ) {
+        if (isNonEmptyString(currentWorkspace?.displayName)) {
           navigate(AppPath.Index);
         } else {
           navigate(AppPath.CreateWorkspace);

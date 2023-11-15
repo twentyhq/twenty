@@ -4,9 +4,8 @@ import {
   PagingStrategies,
 } from '@ptc-org/nestjs-query-graphql';
 
+import { UserV2 } from 'src/coreV2/user/user.entity';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
-
-import { User } from './user.entity';
 
 export const userAutoResolverOpts: AutoResolverOpts<
   any,
@@ -17,8 +16,8 @@ export const userAutoResolverOpts: AutoResolverOpts<
   PagingStrategies
 >[] = [
   {
-    EntityClass: User,
-    DTOClass: User,
+    EntityClass: UserV2,
+    DTOClass: UserV2,
     enableTotalCount: true,
     pagingStrategy: PagingStrategies.CURSOR,
     read: {

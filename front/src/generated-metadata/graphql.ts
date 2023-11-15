@@ -20,6 +20,8 @@ export type Scalars = {
   DateTime: { input: any; output: any; }
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: { input: any; output: any; }
+  /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSONObject: { input: any; output: any; }
 };
 
 export type Activity = {
@@ -695,22 +697,6 @@ export type QueryRelationsArgs = {
   paging?: CursorPaging;
 };
 
-export type RefreshToken = {
-  __typename?: 'RefreshToken';
-  createdAt: Scalars['DateTime']['output'];
-  expiresAt: Scalars['DateTime']['output'];
-  id: Scalars['ID']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type RefreshTokenEdge = {
-  __typename?: 'RefreshTokenEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor']['output'];
-  /** The node containing the RefreshToken */
-  node: RefreshToken;
-};
-
 export type RelationConnection = {
   __typename?: 'RelationConnection';
   /** Array of edges. */
@@ -927,6 +913,22 @@ export type ObjectFilter = {
   or?: InputMaybe<Array<ObjectFilter>>;
 };
 
+export type RefreshTokenV2 = {
+  __typename?: 'refreshTokenV2';
+  createdAt: Scalars['DateTime']['output'];
+  expiresAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type RefreshTokenV2Edge = {
+  __typename?: 'refreshTokenV2Edge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor']['output'];
+  /** The node containing the refreshTokenV2 */
+  node: RefreshTokenV2;
+};
+
 export type Relation = {
   __typename?: 'relation';
   createdAt: Scalars['DateTime']['output'];
@@ -947,6 +949,34 @@ export type RelationEdge = {
   cursor: Scalars['ConnectionCursor']['output'];
   /** The node containing the relation */
   node: Relation;
+};
+
+export type UserV2 = {
+  __typename?: 'userV2';
+  avatarUrl: Scalars['String']['output'];
+  canImpersonate: Scalars['Boolean']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  disabled?: Maybe<Scalars['Boolean']['output']>;
+  email: Scalars['String']['output'];
+  emailVerified: Scalars['Boolean']['output'];
+  firstName: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  lastName: Scalars['String']['output'];
+  lastSeen?: Maybe<Scalars['DateTime']['output']>;
+  locale: Scalars['String']['output'];
+  metadata?: Maybe<Scalars['JSONObject']['output']>;
+  passwordHash?: Maybe<Scalars['String']['output']>;
+  phoneNumber?: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type UserV2Edge = {
+  __typename?: 'userV2Edge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor']['output'];
+  /** The node containing the userV2 */
+  node: UserV2;
 };
 
 export type CreateOneObjectMetadataItemMutationVariables = Exact<{
