@@ -28,8 +28,8 @@ export const useFavorites = () => {
         favoriteIdToCreate: string,
         additionalData?: any,
       ) => {
-        const favoriteState = snapshot.getLoadable(favoritesState);
-        const favorites = favoriteState.getValue();
+        const favoritesStateFromSnapshot = snapshot.getLoadable(favoritesState);
+        const favorites = favoritesStateFromSnapshot.getValue();
         if (!favoriteNameToCreate || !favoriteIdToCreate) {
           return;
         }
@@ -82,22 +82,29 @@ export const useFavorites = () => {
     }
   };
 
-  const deleteFavorite = async (favoriteIdToDelete: string) => {
-    const idToDelete = favorites.find(
-      (favorite: Favorite) => favorite.recordId === favoriteIdToDelete,
-    )?.id;
+  const deleteFavorite = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async (favoriteIdToDelete: string) => {
+        const favoritesStateFromSnapshot = snapshot.getLoadable(favoritesState);
+        const favorites = favoritesStateFromSnapshot.getValue();
+        const idToDelete = favorites.find(
+          (favorite: Favorite) => favorite.recordId === favoriteIdToDelete,
+        )?.id;
 
-    await apolloClient.mutate({
-      mutation: deleteOneMutation,
-      variables: {
-        idToDelete: idToDelete,
+        await apolloClient.mutate({
+          mutation: deleteOneMutation,
+          variables: {
+            idToDelete: idToDelete,
+          },
+        });
+
+        set(
+          favoritesState,
+          favorites.filter((favorite: Favorite) => favorite.id !== idToDelete),
+        );
       },
-    });
-
-    setFavorites(
-      favorites.filter((favorite: Favorite) => favorite.id !== idToDelete),
-    );
-  };
+    [apolloClient, deleteOneMutation],
+  );
 
   const computeNewPosition = (destIndex: number, sourceIndex: number) => {
     if (destIndex === 0) {
