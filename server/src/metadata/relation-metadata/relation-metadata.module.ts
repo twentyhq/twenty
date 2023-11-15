@@ -6,11 +6,11 @@ import {
 } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
+import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { FieldMetadataModule } from 'src/metadata/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
-import { TenantMigrationRunnerModule } from 'src/tenant-migration-runner/tenant-migration-runner.module';
 import { TenantMigrationModule } from 'src/metadata/tenant-migration/tenant-migration.module';
-import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
+import { TenantMigrationRunnerModule } from 'src/tenant-migration-runner/tenant-migration-runner.module';
 
 import { RelationMetadataService } from './relation-metadata.service';
 import { RelationMetadataEntity } from './relation-metadata.entity';
@@ -20,16 +20,16 @@ import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
 
 @Module({
   imports: [
-    TenantMigrationRunnerModule,
-    TenantMigrationModule,
-    ObjectMetadataModule,
-    FieldMetadataModule,
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature(
           [RelationMetadataEntity],
           'metadata',
         ),
+        ObjectMetadataModule,
+        FieldMetadataModule,
+        TenantMigrationRunnerModule,
+        TenantMigrationModule,
       ],
       services: [RelationMetadataService],
       resolvers: [

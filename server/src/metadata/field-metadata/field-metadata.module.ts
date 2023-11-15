@@ -21,12 +21,12 @@ import { UpdateFieldInput } from './dtos/update-field.input';
 
 @Module({
   imports: [
-    TenantMigrationModule,
-    TenantMigrationRunnerModule,
-    ObjectMetadataModule,
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature([FieldMetadataEntity], 'metadata'),
+        TenantMigrationModule,
+        TenantMigrationRunnerModule,
+        ObjectMetadataModule,
       ],
       services: [FieldMetadataService],
       resolvers: [

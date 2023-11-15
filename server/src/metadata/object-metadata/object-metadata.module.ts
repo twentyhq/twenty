@@ -21,13 +21,13 @@ import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
 
 @Module({
   imports: [
-    DataSourceModule,
-    TenantMigrationModule,
-    TenantMigrationRunnerModule,
-    // FieldMetadataModule,
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+        DataSourceModule,
+        TenantMigrationModule,
+        TenantMigrationRunnerModule,
+        // FieldMetadataModule,
       ],
       services: [ObjectMetadataService],
       resolvers: [
