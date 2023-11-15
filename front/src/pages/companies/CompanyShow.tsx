@@ -32,7 +32,7 @@ import { companyShowFieldDefinitions } from './constants/companyShowFieldDefinit
 
 export const CompanyShow = () => {
   const companyId = useParams().companyId ?? '';
-  const { insertCompanyFavorite, deleteCompanyFavorite } = useFavorites();
+  const { createFavorite, deleteFavorite } = useFavorites();
   const navigate = useNavigate();
   const { data, loading } = useCompanyQuery(companyId);
   const company = data?.findUniqueCompany;
@@ -49,8 +49,8 @@ export const CompanyShow = () => {
     company.Favorite && company.Favorite?.length > 0 ? true : false;
 
   const handleFavoriteButtonClick = async () => {
-    if (isFavorite) deleteCompanyFavorite(companyId);
-    else insertCompanyFavorite(companyId);
+    if (isFavorite) deleteFavorite(companyId);
+    else createFavorite('company', companyId);
   };
 
   return (

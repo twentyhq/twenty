@@ -1,108 +1,114 @@
-import { getOperationName } from '@apollo/client/utilities';
+import { useApolloClient } from '@apollo/client';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
-import { useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
-import { GET_COMPANY } from '@/companies/graphql/queries/getCompany';
-import { GET_PERSON } from '@/people/graphql/queries/getPerson';
-import {
-  Favorite,
-  useDeleteFavoriteMutation,
-  useInsertCompanyFavoriteMutation,
-  useInsertPersonFavoriteMutation,
-  useUpdateOneFavoriteMutation,
-} from '~/generated/graphql';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { Favorite } from '@/favorites/types/Favorite';
+import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 
-import { GET_FAVORITES } from '../graphql/queries/getFavorites';
 import { favoritesState } from '../states/favoritesState';
 
 export const useFavorites = () => {
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
   const [favorites, setFavorites] = useRecoilState(favoritesState);
 
-  const [insertCompanyFavoriteMutation] = useInsertCompanyFavoriteMutation();
-  const [insertPersonFavoriteMutation] = useInsertPersonFavoriteMutation();
-  const [deleteFavoriteMutation] = useDeleteFavoriteMutation();
-  const [updateOneFavoritesMutation] = useUpdateOneFavoriteMutation();
-
-  const insertCompanyFavorite = (companyId: string) => {
-    insertCompanyFavoriteMutation({
-      variables: {
-        data: {
-          companyId,
-          position: favorites.length + 1,
-        },
-      },
-      refetchQueries: [
-        getOperationName(GET_FAVORITES) ?? '',
-        getOperationName(GET_COMPANY) ?? '',
-      ],
+  const { updateOneMutation, createOneMutation, deleteOneMutation } =
+    useFindOneObjectMetadataItem({
+      objectNameSingular: 'favoriteV2',
     });
-  };
 
-  const insertPersonFavorite = (personId: string) => {
-    insertPersonFavoriteMutation({
-      variables: {
-        data: {
-          personId,
-          position: favorites.length + 1,
-        },
-      },
-      refetchQueries: [
-        getOperationName(GET_FAVORITES) ?? '',
-        getOperationName(GET_PERSON) ?? '',
-      ],
-    });
-  };
+  const apolloClient = useApolloClient();
 
-  const updateFavoritePosition = async (
-    favorites: Pick<Favorite, 'id' | 'position'>,
-  ) => {
-    await updateOneFavoritesMutation({
-      variables: {
-        data: {
-          position: favorites?.position,
-        },
-        where: {
-          id: favorites.id,
-        },
-      },
-      refetchQueries: [
-        getOperationName(GET_FAVORITES) ?? '',
-        getOperationName(GET_PERSON) ?? '',
-        getOperationName(GET_COMPANY) ?? '',
-      ],
-    });
-  };
-  const deleteCompanyFavorite = (companyId: string) => {
-    deleteFavoriteMutation({
-      variables: {
-        where: {
-          companyId: {
-            equals: companyId,
+  const createFavorite = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async (
+        favoriteNameToCreate: string,
+        favoriteIdToCreate: string,
+        additionalData?: any,
+      ) => {
+        const favoritesStateFromSnapshot = snapshot.getLoadable(favoritesState);
+        const favorites = favoritesStateFromSnapshot.getValue();
+        if (!favoriteNameToCreate || !favoriteIdToCreate) {
+          return;
+        }
+
+        const result = await apolloClient.mutate({
+          mutation: createOneMutation,
+          variables: {
+            input: {
+              [favoriteNameToCreate]: favoriteIdToCreate,
+              position: favorites.length + 1,
+              workspaceMember: currentWorkspaceMember?.id,
+            },
           },
-        },
-      },
-      refetchQueries: [
-        getOperationName(GET_FAVORITES) ?? '',
-        getOperationName(GET_COMPANY) ?? '',
-      ],
-    });
-  };
+        });
 
-  const deletePersonFavorite = (personId: string) => {
-    deleteFavoriteMutation({
-      variables: {
-        where: {
-          personId: {
-            equals: personId,
-          },
-        },
+        const createdFavorite = result?.data?.createFavoriteV2;
+
+        const newFavorite = {
+          ...additionalData,
+          ...createdFavorite[favoriteNameToCreate],
+        };
+
+        if (createdFavorite) {
+          set(favoritesState, [...favorites, newFavorite]);
+        }
       },
-      refetchQueries: [
-        getOperationName(GET_FAVORITES) ?? '',
-        getOperationName(GET_PERSON) ?? '',
-      ],
-    });
-  };
+    [apolloClient, createOneMutation, currentWorkspaceMember?.id],
+  );
+
+  const _updateFavoritePosition = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async (favoriteToUpdate: Favorite) => {
+        const favoritesStateFromSnapshot = snapshot.getLoadable(favoritesState);
+        const favorites = favoritesStateFromSnapshot.getValue();
+        const result = await apolloClient.mutate({
+          mutation: updateOneMutation,
+          variables: {
+            input: {
+              position: favoriteToUpdate?.position,
+            },
+            idToUpdate: favoriteToUpdate?.id,
+          },
+        });
+
+        const updatedFavorite = result?.data?.updateFavoriteV2;
+        if (updatedFavorite) {
+          set(
+            favoritesState,
+            favorites.map((favorite: Favorite) =>
+              favorite.id === updatedFavorite.id ? favoriteToUpdate : favorite,
+            ),
+          );
+        }
+      },
+    [apolloClient, updateOneMutation],
+  );
+
+  const deleteFavorite = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async (favoriteIdToDelete: string) => {
+        const favoritesStateFromSnapshot = snapshot.getLoadable(favoritesState);
+        const favorites = favoritesStateFromSnapshot.getValue();
+        const idToDelete = favorites.find(
+          (favorite: Favorite) => favorite.recordId === favoriteIdToDelete,
+        )?.id;
+
+        await apolloClient.mutate({
+          mutation: deleteOneMutation,
+          variables: {
+            idToDelete: idToDelete,
+          },
+        });
+
+        set(
+          favoritesState,
+          favorites.filter((favorite: Favorite) => favorite.id !== idToDelete),
+        );
+      },
+    [apolloClient, deleteOneMutation],
+  );
 
   const computeNewPosition = (destIndex: number, sourceIndex: number) => {
     if (destIndex === 0) {
@@ -138,13 +144,12 @@ export const useFavorites = () => {
     const removedFav = { ...removed, position: newPosition };
     reorderFavorites.splice(result.destination.index, 0, removedFav);
     setFavorites(reorderFavorites);
-    updateFavoritePosition(removedFav);
+    _updateFavoritePosition(removedFav);
   };
   return {
-    insertCompanyFavorite,
-    insertPersonFavorite,
-    deleteCompanyFavorite,
-    deletePersonFavorite,
+    favorites,
+    createFavorite,
+    deleteFavorite,
     handleReorderFavorite,
   };
 };

@@ -35,7 +35,7 @@ import { personShowFieldDefinition } from './constants/personShowFieldDefinition
 
 export const PersonShow = () => {
   const personId = useParams().personId ?? '';
-  const { insertPersonFavorite, deletePersonFavorite } = useFavorites();
+  const { createFavorite, deleteFavorite } = useFavorites();
   const navigate = useNavigate();
 
   const { data, loading } = usePersonQuery(personId);
@@ -68,8 +68,8 @@ export const PersonShow = () => {
   };
 
   const handleFavoriteButtonClick = async () => {
-    if (isFavorite) deletePersonFavorite(personId);
-    else insertPersonFavorite(personId);
+    if (isFavorite) deleteFavorite(person.id);
+    else createFavorite('person', person.id);
   };
 
   return (

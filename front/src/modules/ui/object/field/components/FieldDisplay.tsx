@@ -1,5 +1,7 @@
 import { useContext } from 'react';
 
+import { RelationFieldDisplay } from '@/ui/object/field/meta-types/display/components/RelationFieldDisplay';
+
 import { FieldContext } from '../contexts/FieldContext';
 import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisplay';
 import { DateFieldDisplay } from '../meta-types/display/components/DateFieldDisplay';
@@ -10,7 +12,6 @@ import { MoneyAmountV2FieldDisplay } from '../meta-types/display/components/Mone
 import { MoneyFieldDisplay } from '../meta-types/display/components/MoneyFieldDisplay';
 import { NumberFieldDisplay } from '../meta-types/display/components/NumberFieldDisplay';
 import { PhoneFieldDisplay } from '../meta-types/display/components/PhoneFieldDisplay';
-import { RelationFieldDisplay } from '../meta-types/display/components/RelationFieldDisplay';
 import { TextFieldDisplay } from '../meta-types/display/components/TextFieldDisplay';
 import { URLFieldDisplay } from '../meta-types/display/components/URLFieldDisplay';
 import { URLV2FieldDisplay } from '../meta-types/display/components/URLV2FieldDisplay';

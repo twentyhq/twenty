@@ -105,7 +105,7 @@ export const seedPersonFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'URL',
+        type: 'TEXT',
         name: 'linkedinUrl',
         label: 'Linkedin',
         targetColumnMap: {
@@ -121,7 +121,7 @@ export const seedPersonFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'URL',
+        type: 'TEXT',
         name: 'xUrl',
         label: 'X',
         targetColumnMap: {

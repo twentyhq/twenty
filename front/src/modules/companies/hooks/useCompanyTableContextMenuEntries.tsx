@@ -36,7 +36,7 @@ export const useCompanyTableContextMenuEntries = () => {
 
   const { data } = useGetFavoritesQuery();
   const favorites = data?.findFavorites;
-  const { insertCompanyFavorite, deleteCompanyFavorite } = useFavorites();
+  const { createFavorite, deleteFavorite } = useFavorites();
 
   const handleFavoriteButtonClick = useRecoilCallback(({ snapshot }) => () => {
     const selectedRowIds = snapshot
@@ -53,8 +53,8 @@ export const useCompanyTableContextMenuEntries = () => {
       );
 
     resetTableRowSelection();
-    if (isFavorite) deleteCompanyFavorite(selectedCompanyId);
-    else insertCompanyFavorite(selectedCompanyId);
+    if (isFavorite) deleteFavorite(selectedCompanyId);
+    else createFavorite('company', selectedCompanyId);
   });
 
   const [deleteManyCompany] = useDeleteManyCompaniesMutation({
