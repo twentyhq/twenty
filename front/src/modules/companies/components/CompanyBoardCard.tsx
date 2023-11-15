@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil';
 
 import { EntityChipVariant } from '@/ui/display/chip/components/EntityChip';
 import { IconEye } from '@/ui/display/icon/index';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { BoardCardIdContext } from '@/ui/layout/board/contexts/BoardCardIdContext';
 import { useBoardContext } from '@/ui/layout/board/hooks/useBoardContext';
@@ -123,21 +124,6 @@ const StyledCompactIconContainer = styled.div`
   justify-content: center;
 `;
 
-const StyledIconEye = styled(IconEye)`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  height: 24px;
-  padding-bottom: ${({ theme }) => theme.spacing(0.2)};
-  padding-left: ${({ theme }) => theme.spacing(0.5)};
-  padding-right: ${({ theme }) => theme.spacing(0.5)};
-
-  padding-top: ${({ theme }) => theme.spacing(0.2)};
-
-  &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.medium};
-    border-radius: ${({ theme }) => theme.border.radius.sm};
-  }
-`;
-
 export const CompanyBoardCard = () => {
   const { BoardRecoilScopeContext } = useBoardContext();
 
@@ -203,7 +189,9 @@ export const CompanyBoardCard = () => {
           />
           {showCompactView && (
             <StyledCompactIconContainer className="compact-icon-container">
-              <StyledIconEye
+              <LightIconButton
+                Icon={IconEye}
+                accent="tertiary"
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsCardInCompactView(false);

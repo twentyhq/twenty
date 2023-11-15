@@ -1,4 +1,4 @@
-const viewFiltersMetadata = {
+const viewFilterMetadata = {
   nameSingular: 'viewFilterV2',
   namePlural: 'viewFiltersV2',
   labelSingular: 'View Filter',
@@ -6,8 +6,12 @@ const viewFiltersMetadata = {
   targetTableName: 'viewFilter',
   description: '(System) View Filters',
   icon: 'IconFilterBolt',
+  isActive: true,
+  isSystem: true,
   fields: [
     {
+      isCustom: false,
+      isActive: true,
       type: 'TEXT',
       name: 'fieldMetadataId',
       label: 'Field Metadata Id',
@@ -16,20 +20,11 @@ const viewFiltersMetadata = {
       },
       description: 'View Filter target field',
       icon: null,
-      isNullable: true,
-    },
-    {
-      type: 'TEXT',
-      name: 'viewId',
-      label: 'View Id',
-      targetColumnMap: {
-        value: 'viewId',
-      },
-      description: 'View Filter related view',
-      icon: null,
       isNullable: false,
     },
     {
+      isCustom: false,
+      isActive: true,
       type: 'TEXT',
       name: 'operand',
       label: 'Operand',
@@ -41,6 +36,8 @@ const viewFiltersMetadata = {
       isNullable: false,
     },
     {
+      isCustom: false,
+      isActive: true,
       type: 'TEXT',
       name: 'value',
       label: 'Value',
@@ -52,6 +49,8 @@ const viewFiltersMetadata = {
       isNullable: false,
     },
     {
+      isCustom: false,
+      isActive: true,
       type: 'TEXT',
       name: 'displayValue',
       label: 'Display Value',
@@ -62,7 +61,32 @@ const viewFiltersMetadata = {
       icon: null,
       isNullable: false,
     },
+    {
+      isCustom: false,
+      isActive: true,
+      type: 'RELATION',
+      name: 'view',
+      label: 'View',
+      targetColumnMap: { value: 'viewId' },
+      description: 'View Filter related view',
+      icon: 'IconLayoutCollage',
+      isNullable: false,
+    },
+    // Temporary hack?
+    {
+      isCustom: false,
+      isActive: true,
+      type: 'TEXT',
+      name: 'viewId',
+      label: 'View Id',
+      targetColumnMap: {
+        value: 'viewId',
+      },
+      description: 'View Filter related view',
+      icon: 'IconLayoutCollage',
+      isNullable: false,
+    },
   ],
 };
 
-export default viewFiltersMetadata;
+export default viewFilterMetadata;

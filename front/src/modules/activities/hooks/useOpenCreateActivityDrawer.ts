@@ -3,6 +3,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
 import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
@@ -23,6 +24,7 @@ export const useOpenCreateActivityDrawer = () => {
   const { openRightDrawer } = useRightDrawer();
   const [createActivityMutation] = useCreateActivityMutation();
   const currentUser = useRecoilValue(currentUserState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const setHotkeyScope = useSetHotkeyScope();
 
   const [, setActivityTargetableEntityArray] = useRecoilState(
@@ -49,11 +51,11 @@ export const useOpenCreateActivityDrawer = () => {
           updatedAt: now,
           author: { connect: { id: currentUser?.id ?? '' } },
           workspaceMemberAuthor: {
-            connect: { id: currentUser?.workspaceMember?.id ?? '' },
+            connect: { id: currentWorkspaceMember?.id ?? '' },
           },
           assignee: { connect: { id: assigneeId ?? currentUser?.id ?? '' } },
           workspaceMemberAssignee: {
-            connect: { id: currentUser?.workspaceMember?.id ?? '' },
+            connect: { id: currentWorkspaceMember?.id ?? '' },
           },
           type: type,
           activityTargets: {

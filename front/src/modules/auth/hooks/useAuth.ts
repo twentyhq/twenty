@@ -4,12 +4,17 @@ import {
   snapshot_UNSTABLE,
   useGotoRecoilSnapshot,
   useRecoilState,
+  useSetRecoilState,
 } from 'recoil';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { FIND_ONE_WORKSPACE_MEMBER_V2 } from '@/object-record/graphql/queries/findOneWorkspaceMember';
 import { REACT_APP_SERVER_AUTH_URL } from '~/config';
 import {
   useChallengeMutation,
   useCheckUserExistsLazyQuery,
+  useGetCurrentWorkspaceLazyQuery,
   useSignUpMutation,
   useVerifyMutation,
 } from '~/generated/graphql';
@@ -19,13 +24,19 @@ import { tokenPairState } from '../states/tokenPairState';
 
 export const useAuth = () => {
   const [, setTokenPair] = useRecoilState(tokenPairState);
-  const [, setCurrentUser] = useRecoilState(currentUserState);
+  const setCurrentUser = useSetRecoilState(currentUserState);
+  const setCurrentWorkspaceMember = useSetRecoilState(
+    currentWorkspaceMemberState,
+  );
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
   const [verify] = useVerifyMutation();
   const [checkUserExistsQuery, { data: checkUserExistsData }] =
     useCheckUserExistsLazyQuery();
+  const [getCurrentWorkspaceQuery, { data: getCurrentWorkspaceData }] =
+    useGetCurrentWorkspaceLazyQuery();
 
   const client = useApolloClient();
 
@@ -66,35 +77,54 @@ export const useAuth = () => {
       if (!verifyResult.data?.verify) {
         throw new Error('No verify result');
       }
-
-      if (!verifyResult.data?.verify.user.workspaceMember) {
-        throw new Error('No workspace member');
-      }
-
-      if (!verifyResult.data?.verify.user.workspaceMember.settings) {
-        throw new Error('No settings');
-      }
-
-      setCurrentUser({
-        ...verifyResult.data?.verify.user,
-        workspaceMember: {
-          ...verifyResult.data?.verify.user.workspaceMember,
-          settings: verifyResult.data?.verify.user.workspaceMember.settings,
-        },
-      });
       setTokenPair(verifyResult.data?.verify.tokens);
 
-      return verifyResult.data?.verify;
+      await getCurrentWorkspaceQuery();
+      const workspaceMember = await client.query({
+        query: FIND_ONE_WORKSPACE_MEMBER_V2,
+        variables: {
+          filter: {
+            userId: { eq: verifyResult.data?.verify.user.id },
+          },
+        },
+      });
+
+      setCurrentUser(verifyResult.data?.verify.user);
+      setCurrentWorkspaceMember(workspaceMember.data?.findMany);
+      setCurrentWorkspace(getCurrentWorkspaceData?.currentWorkspace ?? null);
+
+      return {
+        user: verifyResult.data?.verify.user,
+        workspaceMember: workspaceMember.data?.findMany,
+        workspace: getCurrentWorkspaceData?.currentWorkspace,
+        tokens: verifyResult.data?.verify.tokens,
+      };
     },
-    [setTokenPair, verify, setCurrentUser],
+    [
+      verify,
+      getCurrentWorkspaceQuery,
+      client,
+      setCurrentUser,
+      setCurrentWorkspaceMember,
+      setCurrentWorkspace,
+      getCurrentWorkspaceData?.currentWorkspace,
+      setTokenPair,
+    ],
   );
 
   const handleCrendentialsSignIn = useCallback(
     async (email: string, password: string) => {
       const { loginToken } = await handleChallenge(email, password);
 
-      const { user } = await handleVerify(loginToken.token);
-      return user;
+      const { user, workspaceMember, workspace } = await handleVerify(
+        loginToken.token,
+      );
+
+      return {
+        user,
+        workspaceMember,
+        workspace,
+      };
     },
     [handleChallenge, handleVerify],
   );
