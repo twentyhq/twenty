@@ -33,7 +33,9 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
           },
         },
       });
-      setCurrentWorkspaceMember(workspaceMember.data.findOneWorkspaceMemberV2);
+      setCurrentWorkspaceMember(
+        workspaceMember.data.workspaceMembersV2.edges[0].node,
+      );
       setIsWorkspaceMemberLoading(false);
     },
     onError: () => {

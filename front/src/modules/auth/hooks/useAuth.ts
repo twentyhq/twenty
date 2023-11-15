@@ -170,12 +170,16 @@ export const useAuth = () => {
         mutation: CREATE_ONE_WORKSPACE_MEMBER_V2,
         variables: {
           input: {
-            firstName: user.firstName,
-            lastName: user.lastName,
+            firstName: user.firstName ?? '',
+            lastName: user.lastName ?? '',
+            colorScheme: 'Light',
             userId: user.id,
+            allowImpersonation: true,
+            locale: 'en',
           },
         },
       });
+      setCurrentWorkspaceMember(workspaceMember.data?.createWorkspaceMemberV2);
 
       setIsVerifyPendingState(false);
 

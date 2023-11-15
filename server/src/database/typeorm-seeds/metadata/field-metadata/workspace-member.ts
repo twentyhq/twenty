@@ -140,7 +140,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         },
         description: 'Preferred color scheme',
         icon: 'IconColorSwatch',
-        isNullable: false,
+        isNullable: true,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.Locale,

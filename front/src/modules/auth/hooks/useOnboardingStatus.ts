@@ -14,6 +14,10 @@ export const useOnboardingStatus = (): OnboardingStatus | undefined => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const isLoggedIn = useIsLogged();
 
+  console.log(
+    getOnboardingStatus(isLoggedIn, currentWorkspaceMember, currentWorkspace),
+  );
+
   return getOnboardingStatus(
     isLoggedIn,
     currentWorkspaceMember,

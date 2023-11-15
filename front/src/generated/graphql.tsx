@@ -2653,7 +2653,6 @@ export type Telemetry = {
 
 export type User = {
   __typename?: 'User';
-  UserSettings?: Maybe<Array<UserSettings>>;
   assignedActivities?: Maybe<Array<Activity>>;
   authoredActivities?: Maybe<Array<Activity>>;
   authoredAttachments?: Maybe<Array<Attachment>>;
@@ -2700,7 +2699,6 @@ export type UserExists = {
 };
 
 export type UserOrderByWithRelationInput = {
-  UserSettings?: InputMaybe<UserSettingsOrderByRelationAggregateInput>;
   assignedActivities?: InputMaybe<ActivityOrderByRelationAggregateInput>;
   authoredActivities?: InputMaybe<ActivityOrderByRelationAggregateInput>;
   authoredAttachments?: InputMaybe<AttachmentOrderByRelationAggregateInput>;
@@ -2756,18 +2754,6 @@ export type UserSettings = {
   id: Scalars['ID'];
   locale: Scalars['String'];
   updatedAt: Scalars['DateTime'];
-  user?: Maybe<User>;
-  userId?: Maybe<Scalars['String']>;
-};
-
-export type UserSettingsListRelationFilter = {
-  every?: InputMaybe<UserSettingsWhereInput>;
-  none?: InputMaybe<UserSettingsWhereInput>;
-  some?: InputMaybe<UserSettingsWhereInput>;
-};
-
-export type UserSettingsOrderByRelationAggregateInput = {
-  _count?: InputMaybe<SortOrder>;
 };
 
 export type UserSettingsOrderByWithRelationInput = {
@@ -2777,19 +2763,11 @@ export type UserSettingsOrderByWithRelationInput = {
   id?: InputMaybe<SortOrder>;
   locale?: InputMaybe<SortOrder>;
   updatedAt?: InputMaybe<SortOrder>;
-  user?: InputMaybe<UserOrderByWithRelationInput>;
-  userId?: InputMaybe<SortOrder>;
 };
 
 export type UserSettingsRelationFilter = {
   is?: InputMaybe<UserSettingsWhereInput>;
   isNot?: InputMaybe<UserSettingsWhereInput>;
-};
-
-export type UserSettingsUpdateManyWithoutUserNestedInput = {
-  connect?: InputMaybe<Array<UserSettingsWhereUniqueInput>>;
-  disconnect?: InputMaybe<Array<UserSettingsWhereUniqueInput>>;
-  set?: InputMaybe<Array<UserSettingsWhereUniqueInput>>;
 };
 
 export type UserSettingsUpdateOneWithoutWorkspaceMemberNestedInput = {
@@ -2807,8 +2785,6 @@ export type UserSettingsWhereInput = {
   id?: InputMaybe<StringFilter>;
   locale?: InputMaybe<StringFilter>;
   updatedAt?: InputMaybe<DateTimeFilter>;
-  user?: InputMaybe<UserRelationFilter>;
-  userId?: InputMaybe<StringNullableFilter>;
 };
 
 export type UserSettingsWhereUniqueInput = {
@@ -2816,7 +2792,6 @@ export type UserSettingsWhereUniqueInput = {
 };
 
 export type UserUpdateInput = {
-  UserSettings?: InputMaybe<UserSettingsUpdateManyWithoutUserNestedInput>;
   assignedActivities?: InputMaybe<ActivityUpdateManyWithoutAssigneeNestedInput>;
   authoredActivities?: InputMaybe<ActivityUpdateManyWithoutAuthorNestedInput>;
   authoredAttachments?: InputMaybe<AttachmentUpdateManyWithoutAuthorNestedInput>;
@@ -2857,7 +2832,6 @@ export type UserWhereInput = {
   AND?: InputMaybe<Array<UserWhereInput>>;
   NOT?: InputMaybe<Array<UserWhereInput>>;
   OR?: InputMaybe<Array<UserWhereInput>>;
-  UserSettings?: InputMaybe<UserSettingsListRelationFilter>;
   assignedActivities?: InputMaybe<ActivityListRelationFilter>;
   authoredActivities?: InputMaybe<ActivityListRelationFilter>;
   authoredAttachments?: InputMaybe<AttachmentListRelationFilter>;
