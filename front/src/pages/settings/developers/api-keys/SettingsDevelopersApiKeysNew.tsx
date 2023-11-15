@@ -19,7 +19,7 @@ import { useInsertOneApiKeyMutation } from '~/generated/graphql';
 
 export const SettingsDevelopersApiKeysNew = () => {
   const [insertOneApiKey] = useInsertOneApiKeyMutation();
-  const { triggerOptimisticEffects } = useOptimisticEffect();
+  const { triggerOptimisticEffects } = useOptimisticEffect('ApiKeyV2');
   const navigate = useNavigate();
   const setGeneratedApi = useGeneratedApiKeys();
   const [formValues, setFormValues] = useState<{

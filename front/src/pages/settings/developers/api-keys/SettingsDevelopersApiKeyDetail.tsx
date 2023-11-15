@@ -41,7 +41,7 @@ const StyledInputContainer = styled.div`
 export const SettingsDevelopersApiKeyDetail = () => {
   const navigate = useNavigate();
   const { apiKeyId = '' } = useParams();
-  const { triggerOptimisticEffects } = useOptimisticEffect();
+  const { triggerOptimisticEffects } = useOptimisticEffect('ApiKeyV2');
 
   const setGeneratedApi = useGeneratedApiKeys();
   const [generatedApiKey] = useRecoilState(

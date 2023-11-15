@@ -24,7 +24,7 @@ const defaultFieldValues: Record<FieldMetadataType, unknown> = {
 export const useCreateOneObjectRecord = ({
   objectNamePlural,
 }: Pick<ObjectMetadataItemIdentifier, 'objectNamePlural'>) => {
-  const { triggerOptimisticEffects } = useOptimisticEffect();
+  const { triggerOptimisticEffects } = useOptimisticEffect('CompanyV2');
 
   const {
     foundObjectMetadataItem,

@@ -39,7 +39,7 @@ const StyledH1Title = styled(H1Title)`
 
 export const SettingsDevelopersApiKeys = () => {
   const navigate = useNavigate();
-  const { registerOptimisticEffect } = useOptimisticEffect();
+  const { registerOptimisticEffect } = useOptimisticEffect('ApiKeyV2');
   const apiKeysQuery = useGetApiKeysQuery({
     onCompleted: () => {
       registerOptimisticEffect({

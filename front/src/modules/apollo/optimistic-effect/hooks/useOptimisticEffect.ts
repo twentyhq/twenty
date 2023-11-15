@@ -8,8 +8,8 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 
 import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
+import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useGenerateFindManyCustomObjectsQuery } from '@/object-record/utils/useGenerateFindManyCustomObjectsQuery';
 import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
 import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
 import {
@@ -22,8 +22,11 @@ import { optimisticEffectState } from '../states/optimisticEffectState';
 import { OptimisticEffect } from '../types/internal/OptimisticEffect';
 import { OptimisticEffectDefinition } from '../types/OptimisticEffectDefinition';
 
-export const useOptimisticEffect = () => {
+export const useOptimisticEffect = (objectNameSingular: string) => {
   const apolloClient = useApolloClient();
+  const { findManyQuery } = useFindOneObjectMetadataItem({
+    objectNameSingular,
+  });
 
   const registerOptimisticEffect = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -54,12 +57,8 @@ export const useOptimisticEffect = () => {
           objectMetadataItem?: ObjectMetadataItem;
         }) => {
           if (isUsingFlexibleBackend && objectMetadataItem) {
-            const generatedQuery = useGenerateFindManyCustomObjectsQuery({
-              objectMetadataItem,
-            });
-
             const existingData = cache.readQuery({
-              query: generatedQuery,
+              query: findManyQuery,
               variables,
             });
 
@@ -68,7 +67,7 @@ export const useOptimisticEffect = () => {
             }
 
             cache.writeQuery({
-              query: generatedQuery,
+              query: findManyQuery,
               variables,
               data: {
                 [objectMetadataItem.namePlural]: definition.resolver({
