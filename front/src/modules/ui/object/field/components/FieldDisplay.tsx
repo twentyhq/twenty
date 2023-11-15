@@ -1,6 +1,8 @@
 import { useContext } from 'react';
 
 import { RelationFieldDisplay } from '@/ui/object/field/meta-types/display/components/RelationFieldDisplay';
+import { UuidFieldDisplay } from '@/ui/object/field/meta-types/display/components/UuidFieldDisplay';
+import { isFieldUuid } from '@/ui/object/field/types/guards/isFieldUuid';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisplay';
@@ -38,6 +40,8 @@ export const FieldDisplay = () => {
         <RelationFieldDisplay />
       ) : isFieldText(fieldDefinition) ? (
         <TextFieldDisplay />
+      ) : isFieldUuid(fieldDefinition) ? (
+        <UuidFieldDisplay />
       ) : isFieldEmail(fieldDefinition) ? (
         <EmailFieldDisplay />
       ) : isFieldDate(fieldDefinition) ? (
