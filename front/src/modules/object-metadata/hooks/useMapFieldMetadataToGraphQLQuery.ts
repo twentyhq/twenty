@@ -29,11 +29,6 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
       ] as FieldType[]
     ).includes(fieldType);
 
-    const fieldIsLink = fieldType === 'URL' || fieldType === 'LINK';
-
-    const fieldIsCurrencyAmount =
-      fieldType === 'MONEY' || fieldType === 'CURRENCY';
-
     if (fieldIsSimpleValue) {
       return field.name;
     } else if (
@@ -80,7 +75,7 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
           }
         }
       }`;
-    } else if (fieldIsLink) {
+    } else if (fieldType === 'LINK') {
       return `
       ${field.name}
       {
@@ -88,7 +83,7 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
         url
       }
     `;
-    } else if (fieldIsCurrencyAmount) {
+    } else if (fieldType === 'CURRENCY') {
       return `
       ${field.name}
       {

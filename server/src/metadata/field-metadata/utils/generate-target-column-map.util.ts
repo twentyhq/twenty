@@ -29,15 +29,15 @@ export function generateTargetColumnMap(
       return {
         value: columnName,
       };
-    case FieldMetadataType.URL:
+    case FieldMetadataType.LINK:
       return {
-        text: `${columnName}_text`,
-        link: `${columnName}_link`,
+        text: `${columnName}Label`,
+        link: `${columnName}Url`,
       };
-    case FieldMetadataType.MONEY:
+    case FieldMetadataType.CURRENCY:
       return {
-        amount: `${columnName}_amount`,
-        currency: `${columnName}_currency`,
+        amount: `${columnName}AmountMicros`,
+        currency: `${columnName}CurrencyCode`,
       };
     default:
       throw new BadRequestException(`Unknown type ${type}`);
