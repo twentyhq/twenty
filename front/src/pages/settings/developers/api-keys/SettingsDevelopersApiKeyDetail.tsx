@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
-import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
 import { useFindOneObjectRecord } from '@/object-record/hooks/useFindOneObjectRecord';
 import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
@@ -22,10 +21,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import {
-  useGenerateOneApiKeyTokenMutation,
-  useInsertOneApiKeyMutation,
-} from '~/generated/graphql';
+import { useGenerateOneApiKeyTokenMutation } from '~/generated/graphql';
 
 const StyledInfo = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -44,7 +40,6 @@ const StyledInputContainer = styled.div`
 export const SettingsDevelopersApiKeyDetail = () => {
   const navigate = useNavigate();
   const { apiKeyId = '' } = useParams();
-  const { triggerOptimisticEffects } = useOptimisticEffect('ApiKeyV2');
 
   const setGeneratedApi = useGeneratedApiKeys();
   const [generatedApiKey] = useRecoilState(
@@ -52,7 +47,6 @@ export const SettingsDevelopersApiKeyDetail = () => {
   );
 
   const [generateOneApiKeyToken] = useGenerateOneApiKeyTokenMutation();
-  const [insertOneApiKey] = useInsertOneApiKeyMutation();
   const { createOneObject: createOneApiKey } = useCreateOneObjectRecord({
     objectNamePlural: 'apiKeysV2',
   });

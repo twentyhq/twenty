@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DateTime } from 'luxon';
 
-import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
@@ -16,15 +15,10 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import {
-  useGenerateOneApiKeyTokenMutation,
-  useInsertOneApiKeyMutation,
-} from '~/generated/graphql';
+import { useGenerateOneApiKeyTokenMutation } from '~/generated/graphql';
 
 export const SettingsDevelopersApiKeysNew = () => {
-  const [insertOneApiKey] = useInsertOneApiKeyMutation();
   const [generateOneApiKeyToken] = useGenerateOneApiKeyTokenMutation();
-  const { triggerOptimisticEffects } = useOptimisticEffect('ApiKeyV2');
   const navigate = useNavigate();
   const setGeneratedApi = useGeneratedApiKeys();
   const [formValues, setFormValues] = useState<{
