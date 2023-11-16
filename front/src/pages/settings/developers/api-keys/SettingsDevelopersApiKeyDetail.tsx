@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
+import { useFindOneObjectRecord } from '@/object-record/hooks/useFindOneObjectRecord';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
@@ -20,7 +21,6 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import {
   useDeleteOneApiKeyMutation,
-  useGetApiKeyQuery,
   useInsertOneApiKeyMutation,
 } from '~/generated/graphql';
 
@@ -50,11 +50,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
   const [deleteApiKey] = useDeleteOneApiKeyMutation();
   const [insertOneApiKey] = useInsertOneApiKeyMutation();
-  const apiKeyData = useGetApiKeyQuery({
-    variables: {
-      apiKeyId,
-    },
-  }).data?.findManyApiKey[0];
+  const { object: apiKeyData } = useFindOneObjectRecord({
+    objectNameSingular: 'apiKeyV2',
+    objectMetadataId: apiKeyId,
+  });
 
   const deleteIntegration = async (redirect = true) => {
     await deleteApiKey({
