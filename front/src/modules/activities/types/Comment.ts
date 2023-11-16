@@ -6,5 +6,5 @@ export type Comment = {
   body: string;
   updatedAt: string;
   activityId: string;
-  author: WorkspaceMember;
+  author: Pick<WorkspaceMember, 'id' | 'firstName' | 'lastName' | 'avatarUrl'>;
 };
