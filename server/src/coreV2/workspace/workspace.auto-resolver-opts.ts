@@ -8,6 +8,7 @@ import { SortDirection } from '@ptc-org/nestjs-query-core';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 
 import { Workspace } from './workspace.entity';
+import { UpdateWorkspaceInput } from 'src/coreV2/workspace/dtos/update-workspace-input';
 
 export const workspaceAutoResolverOpts: AutoResolverOpts<
   any,
@@ -20,6 +21,7 @@ export const workspaceAutoResolverOpts: AutoResolverOpts<
   {
     EntityClass: Workspace,
     DTOClass: Workspace,
+    UpdateDTOClass: UpdateWorkspaceInput,
     enableTotalCount: true,
     pagingStrategy: PagingStrategies.CURSOR,
     read: {

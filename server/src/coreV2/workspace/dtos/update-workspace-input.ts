@@ -4,7 +4,7 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 // FIXME: We might not need this
 @InputType()
-export class CreateWorkspaceInput {
+export class UpdateWorkspaceInput {
   @Field()
   @IsString()
   @IsNotEmpty()
