@@ -40,9 +40,9 @@ export const UserPicker = ({
     objectNamePlural: 'workspaceMembersV2',
   });
 
-  const useFindManyWorkspaceMembers = () => useQuery(findManyQuery, {});
+  const useFindManyWorkspaceMembers = (options: any) =>
+    useQuery(findManyQuery, options);
 
-  // TODO: put workspace member
   const users = useFilteredSearchEntityQueryV2({
     queryHook: useFindManyWorkspaceMembers,
     filters: [
@@ -51,7 +51,7 @@ export const UserPicker = ({
         filter: relationPickerSearchFilter,
       },
     ],
-    orderByField: '',
+    orderByField: 'firstName',
     mappingFunction: (workspaceMember) => ({
       entityType: Entity.WorkspaceMember,
       id: workspaceMember.id,
@@ -62,10 +62,6 @@ export const UserPicker = ({
     }),
     selectedIds: userId ? [userId] : [],
     objectNamePlural: 'workspaceMembersV2',
-  });
-
-  console.log({
-    users,
   });
 
   const handleEntitySelected = async (selectedUser: any | null | undefined) => {
