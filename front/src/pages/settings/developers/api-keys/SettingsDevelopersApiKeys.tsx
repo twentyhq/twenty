@@ -45,6 +45,7 @@ export const SettingsDevelopersApiKeys = () => {
   const [apiKeys, setApiKeys] = useState<Array<ApiFieldItem>>([]);
   useFindManyObjectRecords({
     objectNamePlural: 'apiKeysV2',
+    filter: { revokedAt: { eq: null } },
     onCompleted: (data) => {
       setApiKeys(
         formatExpirations(
