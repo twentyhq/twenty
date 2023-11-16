@@ -12,9 +12,10 @@ export enum SeedCommentFieldMetadataIds {
   UpdatedAt = '20202020-63dd-4426-abad-9973fece49ed',
 
   Body = '20202020-354b-4f10-9425-fa3eb8fddc51',
-
   Author = '20202020-2c70-40c2-bba6-893780b25d41',
+  AuthorForeignKey = '20202021-2c70-40c2-bba6-893780b25d42',
   Activity = '20202020-a9ac-4294-9462-db0f690da906',
+  ActivityForeignKey = '20202021-a9ac-4294-9462-db0f690da907',
 }
 
 export const seedCommentFieldMetadata = async (
@@ -37,6 +38,7 @@ export const seedCommentFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
     ])
     .orIgnore()
     .values([
@@ -56,7 +58,7 @@ export const seedCommentFieldMetadata = async (
         description: undefined,
         icon: undefined,
         isNullable: true,
-        // isSystem: true,
+        isSystem: true,
       },
       {
         id: SeedCommentFieldMetadataIds.CreatedAt,
@@ -73,6 +75,7 @@ export const seedCommentFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedCommentFieldMetadataIds.UpdatedAt,
@@ -89,6 +92,7 @@ export const seedCommentFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       // Scalar fields
       {
@@ -97,7 +101,7 @@ export const seedCommentFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'body',
         label: 'Body',
         targetColumnMap: {
@@ -106,6 +110,7 @@ export const seedCommentFieldMetadata = async (
         description: 'Comment body',
         icon: 'IconLink',
         isNullable: false,
+        isSystem: false,
       },
       // Relationships
       {
@@ -114,15 +119,29 @@ export const seedCommentFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'author',
         label: 'Author',
-        targetColumnMap: {
-          value: 'authorId',
-        },
+        targetColumnMap: {},
         description: 'Comment author',
         icon: 'IconCircleUser',
         isNullable: false,
+        isSystem: false,
+      },
+      {
+        id: SeedCommentFieldMetadataIds.AuthorForeignKey,
+        objectMetadataId: SeedObjectMetadataIds.Comment,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: FieldMetadataType.UUID,
+        name: 'authorId',
+        label: 'Author id (foreign key)',
+        targetColumnMap: {},
+        description: 'Comment author id foreign key',
+        icon: undefined,
+        isNullable: false,
+        isSystem: true,
       },
       {
         id: SeedCommentFieldMetadataIds.Activity,
@@ -130,15 +149,29 @@ export const seedCommentFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'activity',
         label: 'Activity',
-        targetColumnMap: {
-          value: 'activityId',
-        },
+        targetColumnMap: {},
         description: 'Comment activity',
         icon: 'IconNotes',
         isNullable: false,
+        isSystem: false,
+      },
+      {
+        id: SeedCommentFieldMetadataIds.ActivityForeignKey,
+        objectMetadataId: SeedObjectMetadataIds.Comment,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: FieldMetadataType.UUID,
+        name: 'activityId',
+        label: 'Activity id (foreign key)',
+        targetColumnMap: {},
+        description: 'Activity id foreign key',
+        icon: undefined,
+        isNullable: false,
+        isSystem: true,
       },
     ])
     .execute();

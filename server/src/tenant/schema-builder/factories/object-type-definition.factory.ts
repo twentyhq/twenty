@@ -50,7 +50,7 @@ export class ObjectTypeDefinitionFactory {
     const fields: GraphQLFieldConfigMap<any, any> = {};
 
     for (const fieldMetadata of objectMetadata.fields) {
-      // Composite field types are generated during extensin of object type definition
+      // Composite field types are generated during extension of object type definition
       if (isCompositeFieldMetadataType(fieldMetadata.type)) {
         continue;
       }

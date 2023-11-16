@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 
 import { TextInput } from '@/ui/input/components/TextInput';
+import { FieldMetadataType } from '~/generated/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { SettingsObjectFieldPreview } from '../SettingsObjectFieldPreview';
@@ -15,7 +16,7 @@ const meta: Meta<typeof SettingsObjectFieldTypeCard> = {
       <SettingsObjectFieldPreview
         fieldIconKey="IconNotes"
         fieldLabel="Description"
-        fieldType="TEXT"
+        fieldType={FieldMetadataType.Text}
         isObjectCustom={false}
         objectIconKey="IconUser"
         objectLabelPlural="People"

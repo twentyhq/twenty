@@ -44,7 +44,7 @@ export class OrderByTypeDefinitionFactory {
     const fields: GraphQLInputFieldConfigMap = {};
 
     for (const fieldMetadata of objectMetadata.fields) {
-      // Composite field types are generated during extensin of object type definition
+      // Composite field types are generated during extension of object type definition
       if (isCompositeFieldMetadataType(fieldMetadata.type)) {
         continue;
       }

@@ -32,7 +32,7 @@ export const useFindManyObjectMetadataItems = ({
     FIND_MANY_METADATA_OBJECTS,
     {
       variables: {
-        filter,
+        objectFilter: filter,
       },
       client: apolloMetadataClient ?? undefined,
       skip: skip || !apolloMetadataClient,

@@ -77,6 +77,9 @@ export class FieldMetadataEntity implements FieldMetadataInterface {
   @Column({ default: false })
   isActive: boolean;
 
+  @Column({ default: false })
+  isSystem: boolean;
+
   @Column({ nullable: true, default: true })
   isNullable: boolean;
 

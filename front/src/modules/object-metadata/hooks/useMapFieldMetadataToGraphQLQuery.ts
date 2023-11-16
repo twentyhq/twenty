@@ -33,20 +33,16 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
       fieldType === 'RELATION' &&
       field.toRelationMetadata?.relationType === 'ONE_TO_MANY'
     ) {
-      console.log({ objectMetadataItems, field });
-
       const relationMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) =>
           objectMetadataItem.id ===
           (field.toRelationMetadata as any)?.fromObjectMetadata?.id,
       );
 
-      console.log({ relationMetadataItem });
-
       return `${field.name}
     {
       id
-      ${relationMetadataItem?.fields
+      ${(relationMetadataItem?.fields ?? [])
         .filter((field) => field.type !== 'RELATION')
         .map((field) => field.name)
         .join('\n')}
@@ -55,11 +51,21 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
       fieldType === 'RELATION' &&
       field.fromRelationMetadata?.relationType === 'ONE_TO_MANY'
     ) {
+      const relationMetadataItem = objectMetadataItems.find(
+        (objectMetadataItem) =>
+          objectMetadataItem.id ===
+          (field.fromRelationMetadata as any)?.toObjectMetadata?.id,
+      );
+
       return `${field.name}
       {
         edges {
           node {
-           id
+            id
+            ${(relationMetadataItem?.fields ?? [])
+              .filter((field) => field.type !== 'RELATION')
+              .map((field) => field.name)
+              .join('\n')}
           }
         }
       }`;

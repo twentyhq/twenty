@@ -36,6 +36,7 @@ export const seedViewSortFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
     ])
     .orIgnore()
     .values([
@@ -55,7 +56,7 @@ export const seedViewSortFieldMetadata = async (
         description: undefined,
         icon: undefined,
         isNullable: true,
-        // isSystem: true,
+        isSystem: true,
       },
       {
         id: SeedViewSortFieldMetadataIds.CreatedAt,
@@ -72,6 +73,7 @@ export const seedViewSortFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedViewSortFieldMetadataIds.UpdatedAt,
@@ -88,6 +90,7 @@ export const seedViewSortFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       // Fields
       {
@@ -96,7 +99,7 @@ export const seedViewSortFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'fieldMetadataId',
         label: 'Field Metadata Id',
         targetColumnMap: {
@@ -105,6 +108,7 @@ export const seedViewSortFieldMetadata = async (
         description: 'View Sort target field',
         icon: null,
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedViewSortFieldMetadataIds.View,
@@ -112,7 +116,7 @@ export const seedViewSortFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'viewId',
         label: 'View Id',
         targetColumnMap: {
@@ -121,6 +125,7 @@ export const seedViewSortFieldMetadata = async (
         description: 'View Sort related view',
         icon: 'IconLayoutCollage',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedViewSortFieldMetadataIds.Direction,
@@ -128,7 +133,7 @@ export const seedViewSortFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'direction',
         label: 'Direction',
         targetColumnMap: {
@@ -137,6 +142,7 @@ export const seedViewSortFieldMetadata = async (
         description: 'View Sort direction',
         icon: null,
         isNullable: false,
+        isSystem: false,
       },
     ])
     .execute();

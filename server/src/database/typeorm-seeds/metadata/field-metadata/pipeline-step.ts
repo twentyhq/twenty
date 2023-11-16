@@ -37,6 +37,7 @@ export const seedPipelineStepFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
     ])
     .orIgnore()
     .values([
@@ -56,7 +57,7 @@ export const seedPipelineStepFieldMetadata = async (
         description: undefined,
         icon: undefined,
         isNullable: true,
-        // isSystem: true,
+        isSystem: true,
       },
       {
         id: SeedPipelineStepFieldMetadataIds.CreatedAt,
@@ -73,6 +74,7 @@ export const seedPipelineStepFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedPipelineStepFieldMetadataIds.UpdatedAt,
@@ -89,6 +91,7 @@ export const seedPipelineStepFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       // Main Identifier
       {
@@ -97,7 +100,7 @@ export const seedPipelineStepFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'name',
         label: 'Name',
         targetColumnMap: {
@@ -106,6 +109,7 @@ export const seedPipelineStepFieldMetadata = async (
         description: 'Pipeline Step name',
         icon: 'IconCurrencyDollar',
         isNullable: false,
+        isSystem: false,
       },
 
       // Scalar Fields
@@ -115,7 +119,7 @@ export const seedPipelineStepFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'color',
         label: 'Color',
         targetColumnMap: {
@@ -124,6 +128,7 @@ export const seedPipelineStepFieldMetadata = async (
         description: 'Pipeline Step color',
         icon: 'IconColorSwatch',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedPipelineStepFieldMetadataIds.Position,
@@ -131,7 +136,7 @@ export const seedPipelineStepFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'NUMBER',
+        type: FieldMetadataType.NUMBER,
         name: 'position',
         label: 'Position',
         targetColumnMap: {
@@ -140,6 +145,7 @@ export const seedPipelineStepFieldMetadata = async (
         description: 'Pipeline Step position',
         icon: 'IconHierarchy2',
         isNullable: false,
+        isSystem: false,
       },
 
       // Relationships
@@ -149,13 +155,14 @@ export const seedPipelineStepFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'opportunities',
         label: 'Opportunities',
         targetColumnMap: {},
         description: 'Opportunities linked to the step.',
         icon: 'IconTargetArrow',
         isNullable: true,
+        isSystem: false,
       },
     ])
     .execute();

@@ -11,13 +11,13 @@ import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderCon
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFieldFormSection } from '@/settings/data-model/components/SettingsObjectFieldFormSection';
 import { SettingsObjectFieldTypeSelectSection } from '@/settings/data-model/components/SettingsObjectFieldTypeSelectSection';
-import { MetadataFieldDataType } from '@/settings/data-model/types/ObjectFieldDataType';
 import { AppPath } from '@/types/AppPath';
 import { IconSettings } from '@/ui/display/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
@@ -39,8 +39,8 @@ export const SettingsObjectNewFieldStep2 = () => {
     description?: string;
     icon: string;
     label: string;
-    type: MetadataFieldDataType;
-  }>({ icon: 'IconUsers', label: '', type: 'NUMBER' });
+    type: FieldMetadataType;
+  }>({ icon: 'IconUsers', label: '', type: FieldMetadataType.Number });
 
   const [objectViews, setObjectViews] = useState<View[]>([]);
 

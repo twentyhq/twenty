@@ -36,6 +36,7 @@ export const seedApiKeyFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
     ])
     .orIgnore()
     .values([
@@ -55,7 +56,7 @@ export const seedApiKeyFieldMetadata = async (
         description: undefined,
         icon: undefined,
         isNullable: false,
-        // isSystem: true,
+        isSystem: true,
       },
       {
         id: SeedApiKeyFieldMetadataIds.CreatedAt,
@@ -72,6 +73,7 @@ export const seedApiKeyFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedApiKeyFieldMetadataIds.UpdatedAt,
@@ -88,6 +90,7 @@ export const seedApiKeyFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       // Scalar fields
       {
@@ -96,7 +99,7 @@ export const seedApiKeyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'name',
         label: 'Name',
         targetColumnMap: {
@@ -105,6 +108,7 @@ export const seedApiKeyFieldMetadata = async (
         description: 'ApiKey name',
         icon: 'IconLink',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedApiKeyFieldMetadataIds.ExpiresAt,
@@ -112,7 +116,7 @@ export const seedApiKeyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'DATE',
+        type: FieldMetadataType.DATE,
         name: 'expiresAt',
         label: 'Expiration date',
         targetColumnMap: {
@@ -121,6 +125,7 @@ export const seedApiKeyFieldMetadata = async (
         description: 'ApiKey expiration date',
         icon: 'IconCalendar',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedApiKeyFieldMetadataIds.RevokedAt,
@@ -128,7 +133,7 @@ export const seedApiKeyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'DATE',
+        type: FieldMetadataType.DATE,
         name: 'revokedAt',
         label: 'Revocation date',
         targetColumnMap: {
@@ -137,6 +142,7 @@ export const seedApiKeyFieldMetadata = async (
         description: 'ApiKey revocation date',
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
     ])
     .execute();

@@ -35,6 +35,7 @@ export const seedWebhookFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
     ])
     .orIgnore()
     .values([
@@ -54,7 +55,7 @@ export const seedWebhookFieldMetadata = async (
         description: undefined,
         icon: undefined,
         isNullable: true,
-        // isSystem: true,
+        isSystem: true,
       },
       {
         id: SeedWebhookFieldMetadataIds.CreatedAt,
@@ -71,6 +72,7 @@ export const seedWebhookFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedWebhookFieldMetadataIds.UpdatedAt,
@@ -87,6 +89,7 @@ export const seedWebhookFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       // Scalar fields
       {
@@ -95,7 +98,7 @@ export const seedWebhookFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'targetUrl',
         label: 'Target Url',
         targetColumnMap: {
@@ -104,6 +107,7 @@ export const seedWebhookFieldMetadata = async (
         description: 'Webhook target url',
         icon: 'IconLink',
         isNullable: false,
+        isSystem: false,
       },
       {
         id: SeedWebhookFieldMetadataIds.Operation,
@@ -111,7 +115,7 @@ export const seedWebhookFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'operation',
         label: 'Operation',
         targetColumnMap: {
@@ -120,6 +124,7 @@ export const seedWebhookFieldMetadata = async (
         description: 'Webhook operation',
         icon: 'IconCheckbox',
         isNullable: false,
+        isSystem: false,
       },
     ])
     .execute();
