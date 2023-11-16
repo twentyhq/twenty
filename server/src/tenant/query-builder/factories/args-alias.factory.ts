@@ -57,9 +57,7 @@ export class ArgsAliasFactory {
         // Otherwise we just need to map the value
         const mappedKey = fieldMetadata.targetColumnMap.value;
 
-        if (mappedKey) {
-          newArgs[mappedKey] = value;
-        }
+        newArgs[mappedKey ?? key] = value;
       } else {
         // Recurse if value is a nested object, otherwise append field or alias
         newArgs[key] = this.createArgsObjectRecursive(value, fieldMetadataMap);

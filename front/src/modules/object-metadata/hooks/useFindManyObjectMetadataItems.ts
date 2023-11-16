@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import {
+  FieldFilter,
   ObjectFilter,
   ObjectMetadataItemsQuery,
   ObjectMetadataItemsQueryVariables,
@@ -17,8 +18,13 @@ import { useApolloMetadataClient } from './useApolloMetadataClient';
 // TODO: test fetchMore
 export const useFindManyObjectMetadataItems = ({
   skip,
-  filter,
-}: { skip?: boolean; filter?: ObjectFilter } = {}) => {
+  objectFilter,
+  fieldFilter,
+}: {
+  skip?: boolean;
+  objectFilter?: ObjectFilter;
+  fieldFilter?: FieldFilter;
+} = {}) => {
   const apolloMetadataClient = useApolloMetadataClient();
 
   const { enqueueSnackBar } = useSnackBar();
@@ -32,7 +38,8 @@ export const useFindManyObjectMetadataItems = ({
     FIND_MANY_METADATA_OBJECTS,
     {
       variables: {
-        filter,
+        objectFilter,
+        fieldFilter,
       },
       client: apolloMetadataClient ?? undefined,
       skip: skip || !apolloMetadataClient,

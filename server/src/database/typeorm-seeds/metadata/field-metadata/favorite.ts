@@ -14,9 +14,12 @@ export enum SeedFavoriteFieldMetadataIds {
   Position = '20202020-dd6d-4f67-94aa-22cc83eb0a2e',
 
   WorkspaceMember = '20202020-1138-4e93-bbff-917a68161abf',
+  WorkspaceMemberForeignKey = '20202020-0f4c-4b9a-9b9a-917a68161a4f',
   Person = '20202020-0876-4735-8974-ff4d51aafa07',
+  PersonForeignKey = '20202020-0876-4735-9473-ff4d51aa4e7b',
   Company = '20202020-09e1-4384-ae3e-39e7956396fe',
   CompanyV2 = '20202020-09e1-4384-ae3e-39e7956396ff',
+  CompanyForeignKey = '20202020-09e1-4384-ae3e-45e79563d528',
 }
 
 export const seedFavoriteFieldMetadata = async (
@@ -39,6 +42,7 @@ export const seedFavoriteFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
     ])
     .orIgnore()
     .values([
@@ -58,7 +62,7 @@ export const seedFavoriteFieldMetadata = async (
         description: undefined,
         icon: undefined,
         isNullable: true,
-        // isSystem: true,
+        isSystem: true,
       },
       {
         id: SeedFavoriteFieldMetadataIds.CreatedAt,
@@ -75,6 +79,7 @@ export const seedFavoriteFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedFavoriteFieldMetadataIds.UpdatedAt,
@@ -91,6 +96,7 @@ export const seedFavoriteFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       // Scalar fields
       {
@@ -99,7 +105,7 @@ export const seedFavoriteFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'NUMBER',
+        type: FieldMetadataType.NUMBER,
         name: 'position',
         label: 'Position',
         targetColumnMap: {
@@ -108,6 +114,7 @@ export const seedFavoriteFieldMetadata = async (
         description: 'Favorite position',
         icon: 'IconList',
         isNullable: false,
+        isSystem: false,
       },
 
       // Relationships
@@ -117,15 +124,29 @@ export const seedFavoriteFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'workspaceMember',
         label: 'Workspace Member',
-        targetColumnMap: {
-          value: 'workspaceMemberId',
-        },
+        targetColumnMap: {},
         description: 'Favorite workspace member',
         icon: 'IconCircleUser',
         isNullable: false,
+        isSystem: false,
+      },
+      {
+        id: SeedFavoriteFieldMetadataIds.WorkspaceMemberForeignKey,
+        objectMetadataId: SeedObjectMetadataIds.Favorite,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: FieldMetadataType.UUID,
+        name: 'workspaceMemberId',
+        label: 'Workspace Member ID (foreign key)',
+        targetColumnMap: {},
+        description: 'Foreign key for workspace member',
+        icon: undefined,
+        isNullable: false,
+        isSystem: true,
       },
       {
         id: SeedFavoriteFieldMetadataIds.Person,
@@ -133,7 +154,7 @@ export const seedFavoriteFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'person',
         label: 'Person',
         targetColumnMap: {
@@ -142,6 +163,22 @@ export const seedFavoriteFieldMetadata = async (
         description: 'Favorite person',
         icon: 'IconUser',
         isNullable: true,
+        isSystem: false,
+      },
+      {
+        id: SeedFavoriteFieldMetadataIds.PersonForeignKey,
+        objectMetadataId: SeedObjectMetadataIds.Favorite,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: FieldMetadataType.UUID,
+        name: 'personId',
+        label: 'Person ID (foreign key)',
+        targetColumnMap: {},
+        description: 'Foreign key for person',
+        icon: undefined,
+        isNullable: false,
+        isSystem: true,
       },
       {
         id: SeedFavoriteFieldMetadataIds.Company,
@@ -149,15 +186,29 @@ export const seedFavoriteFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'company',
         label: 'Company',
-        targetColumnMap: {
-          value: 'companyId',
-        },
+        targetColumnMap: {},
         description: 'Favorite company',
         icon: 'IconBuildingSkyscraper',
         isNullable: true,
+        isSystem: false,
+      },
+      {
+        id: SeedFavoriteFieldMetadataIds.CompanyForeignKey,
+        objectMetadataId: SeedObjectMetadataIds.Favorite,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: FieldMetadataType.UUID,
+        name: 'companyId',
+        label: 'Company ID (foreign key)',
+        targetColumnMap: {},
+        description: 'Foreign key for company',
+        icon: undefined,
+        isNullable: false,
+        isSystem: true,
       },
     ])
     .execute();

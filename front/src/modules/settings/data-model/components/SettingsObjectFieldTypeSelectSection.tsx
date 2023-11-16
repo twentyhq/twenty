@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Select } from '@/ui/input/components/Select';
 import { Section } from '@/ui/layout/section/components/Section';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { dataTypes } from '../constants/dataTypes';
-import { MetadataFieldDataType } from '../types/ObjectFieldDataType';
 
 import {
   SettingsObjectFieldPreview,
@@ -15,7 +15,7 @@ import { SettingsObjectFieldTypeCard } from './SettingsObjectFieldTypeCard';
 
 type SettingsObjectFieldTypeSelectSectionProps = {
   disabled?: boolean;
-  onChange?: (value: MetadataFieldDataType) => void;
+  onChange?: (value: FieldMetadataType) => void;
 } & Pick<
   SettingsObjectFieldPreviewProps,
   | 'fieldIconKey'
@@ -59,7 +59,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
       onChange={onChange}
       options={Object.entries(dataTypesWithoutRelation).map(
         ([key, dataType]) => ({
-          value: key as MetadataFieldDataType,
+          value: key as FieldMetadataType,
           ...dataType,
         }),
       )}

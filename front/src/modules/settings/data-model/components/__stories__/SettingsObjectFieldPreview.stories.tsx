@@ -1,6 +1,7 @@
 import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { SettingsObjectFieldPreview } from '../SettingsObjectFieldPreview';
@@ -12,7 +13,7 @@ const meta: Meta<typeof SettingsObjectFieldPreview> = {
   args: {
     fieldIconKey: 'IconNotes',
     fieldLabel: 'Description',
-    fieldType: 'TEXT',
+    fieldType: FieldMetadataType.Text,
     isObjectCustom: false,
     objectIconKey: 'IconBuildingSkyscraper',
     objectLabelPlural: 'Companies',
@@ -29,7 +30,7 @@ export const Boolean: Story = {
   args: {
     fieldIconKey: 'IconHeadphones',
     fieldLabel: 'Priority Support',
-    fieldType: 'BOOLEAN',
+    fieldType: FieldMetadataType.Boolean,
   },
 };
 
@@ -37,7 +38,7 @@ export const Currency: Story = {
   args: {
     fieldIconKey: 'IconCurrencyDollar',
     fieldLabel: 'Amount',
-    fieldType: 'MONEY',
+    fieldType: FieldMetadataType.Money,
   },
 };
 
@@ -45,7 +46,7 @@ export const Date: Story = {
   args: {
     fieldIconKey: 'IconCalendarEvent',
     fieldLabel: 'Registration Date',
-    fieldType: 'DATE',
+    fieldType: FieldMetadataType.Date,
   },
 };
 
@@ -60,7 +61,7 @@ export const Link: Story = {
   args: {
     fieldIconKey: 'IconWorldWww',
     fieldLabel: 'Website',
-    fieldType: 'URL',
+    fieldType: FieldMetadataType.Url,
   },
 };
 
@@ -68,7 +69,7 @@ export const Number: Story = {
   args: {
     fieldIconKey: 'IconUsers',
     fieldLabel: 'Employees',
-    fieldType: 'NUMBER',
+    fieldType: FieldMetadataType.Number,
   },
 };
 
