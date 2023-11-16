@@ -5,7 +5,7 @@ import { Workspace } from 'src/coreV2/workspace/workspace.entity';
 
 import { WorkspaceService } from './workspace.service';
 
-describe('RefreshTokenService', () => {
+describe('WorkspaceService', () => {
   let service: WorkspaceService;
 
   beforeEach(async () => {
