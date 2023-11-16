@@ -42,6 +42,21 @@ export class ApiKeyResolver {
     );
   }
 
+  @Mutation(() => ApiKeyToken)
+  @UseGuards(AbilityGuard)
+  @CheckAbilities(CreateApiKeyAbilityHandler)
+  async generateApiKeyV2Token(
+    @Args()
+    args: CreateOneApiKeyArgs,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ): Promise<Pick<ApiKeyToken, 'token'> | undefined> {
+    return await this.apiKeyService.generateApiKeyV2Token(
+      workspaceId,
+      args.data.id,
+      args.data.expiresAt,
+    );
+  }
+
   @Mutation(() => ApiKey)
   @UseGuards(AbilityGuard)
   @CheckAbilities(UpdateApiKeyAbilityHandler)

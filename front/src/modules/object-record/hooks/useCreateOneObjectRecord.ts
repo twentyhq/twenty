@@ -1,4 +1,5 @@
 import { useMutation } from '@apollo/client';
+import { v4 } from 'uuid';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
@@ -41,16 +42,7 @@ export const useCreateOneObjectRecord = ({
     ? async (input: Record<string, any>) => {
         const createdObject = await mutate({
           variables: {
-            input: {
-              ...foundObjectMetadataItem.fields.reduce(
-                (result, field) => ({
-                  ...result,
-                  [field.name]: defaultFieldValues[field.type],
-                }),
-                {},
-              ),
-              ...input,
-            },
+            input: { ...input, id: v4() },
           },
         });
 
@@ -60,6 +52,7 @@ export const useCreateOneObjectRecord = ({
             `create${capitalize(foundObjectMetadataItem.nameSingular)}`
           ],
         );
+        return createdObject.data;
       }
     : undefined;
 

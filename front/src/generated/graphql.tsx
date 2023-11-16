@@ -1447,6 +1447,7 @@ export type Mutation = {
   deleteUserAccount: User;
   deleteUserV2: UserV2;
   deleteWorkspaceMember: WorkspaceMember;
+  generateApiKeyV2Token: ApiKeyToken;
   impersonate: Verify;
   renewToken: AuthTokens;
   revokeOneApiKey: ApiKey;
@@ -1599,6 +1600,11 @@ export type MutationDeleteOneWebHookArgs = {
 
 export type MutationDeleteWorkspaceMemberArgs = {
   where: WorkspaceMemberWhereUniqueInput;
+};
+
+
+export type MutationGenerateApiKeyV2TokenArgs = {
+  data: ApiKeyCreateInput;
 };
 
 
@@ -3641,6 +3647,13 @@ export type DeleteOneApiKeyMutationVariables = Exact<{
 
 export type DeleteOneApiKeyMutation = { __typename?: 'Mutation', revokeOneApiKey: { __typename?: 'ApiKey', id: string } };
 
+export type GenerateOneApiKeyTokenMutationVariables = Exact<{
+  data: ApiKeyCreateInput;
+}>;
+
+
+export type GenerateOneApiKeyTokenMutation = { __typename?: 'Mutation', generateApiKeyV2Token: { __typename?: 'ApiKeyToken', token: string } };
+
 export type InsertOneApiKeyMutationVariables = Exact<{
   data: ApiKeyCreateInput;
 }>;
@@ -5650,6 +5663,39 @@ export function useDeleteOneApiKeyMutation(baseOptions?: Apollo.MutationHookOpti
 export type DeleteOneApiKeyMutationHookResult = ReturnType<typeof useDeleteOneApiKeyMutation>;
 export type DeleteOneApiKeyMutationResult = Apollo.MutationResult<DeleteOneApiKeyMutation>;
 export type DeleteOneApiKeyMutationOptions = Apollo.BaseMutationOptions<DeleteOneApiKeyMutation, DeleteOneApiKeyMutationVariables>;
+export const GenerateOneApiKeyTokenDocument = gql`
+    mutation GenerateOneApiKeyToken($data: ApiKeyCreateInput!) {
+  generateApiKeyV2Token(data: $data) {
+    token
+  }
+}
+    `;
+export type GenerateOneApiKeyTokenMutationFn = Apollo.MutationFunction<GenerateOneApiKeyTokenMutation, GenerateOneApiKeyTokenMutationVariables>;
+
+/**
+ * __useGenerateOneApiKeyTokenMutation__
+ *
+ * To run a mutation, you first call `useGenerateOneApiKeyTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGenerateOneApiKeyTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [generateOneApiKeyTokenMutation, { data, loading, error }] = useGenerateOneApiKeyTokenMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useGenerateOneApiKeyTokenMutation(baseOptions?: Apollo.MutationHookOptions<GenerateOneApiKeyTokenMutation, GenerateOneApiKeyTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GenerateOneApiKeyTokenMutation, GenerateOneApiKeyTokenMutationVariables>(GenerateOneApiKeyTokenDocument, options);
+      }
+export type GenerateOneApiKeyTokenMutationHookResult = ReturnType<typeof useGenerateOneApiKeyTokenMutation>;
+export type GenerateOneApiKeyTokenMutationResult = Apollo.MutationResult<GenerateOneApiKeyTokenMutation>;
+export type GenerateOneApiKeyTokenMutationOptions = Apollo.BaseMutationOptions<GenerateOneApiKeyTokenMutation, GenerateOneApiKeyTokenMutationVariables>;
 export const InsertOneApiKeyDocument = gql`
     mutation InsertOneApiKey($data: ApiKeyCreateInput!) {
   createOneApiKey(data: $data) {
