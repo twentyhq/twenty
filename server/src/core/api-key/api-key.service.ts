@@ -23,9 +23,12 @@ export class ApiKeyService {
 
   async generateApiKeyV2Token(
     workspaceId: string,
-    apiKeyId: string,
+    apiKeyId?: string,
     expiresAt?: Date | string,
-  ): Promise<Pick<ApiKeyToken, 'token'>> {
+  ): Promise<Pick<ApiKeyToken, 'token'> | undefined> {
+    if (!apiKeyId) {
+      return;
+    }
     const jwtPayload = {
       sub: workspaceId,
     };

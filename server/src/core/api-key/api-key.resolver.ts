@@ -49,10 +49,10 @@ export class ApiKeyResolver {
     @Args()
     args: CreateOneApiKeyArgs,
     @AuthWorkspace() { id: workspaceId }: Workspace,
-  ): Promise<Pick<ApiKeyToken, 'token'>> {
+  ): Promise<Pick<ApiKeyToken, 'token'> | undefined> {
     return await this.apiKeyService.generateApiKeyV2Token(
       workspaceId,
-      args.data.id || '',
+      args.data.id,
       args.data.expiresAt,
     );
   }
