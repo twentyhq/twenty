@@ -89,6 +89,20 @@ const workspaceMemberMetadata = {
       icon: 'IconLanguage',
       isNullable: false,
     },
+    {
+      isCustom: false,
+      isActive: true,
+      type: FieldMetadataType.TEXT,
+      name: 'avatarUrl',
+      label: 'Avatar Url',
+      targetColumnMap: {
+        value: 'avatarUrl',
+      },
+      description: 'Workspace member avatar',
+      icon: 'IconFileUpload',
+      isNullable: true,
+      isSystem: false,
+    },
     // Relations
     {
       isCustom: false,

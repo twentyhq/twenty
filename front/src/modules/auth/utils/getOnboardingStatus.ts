@@ -1,5 +1,5 @@
-import { CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 export enum OnboardingStatus {
   OngoingUserCreation = 'ongoing_user_creation',
@@ -10,7 +10,7 @@ export enum OnboardingStatus {
 
 export const getOnboardingStatus = (
   isLoggedIn: boolean,
-  currentWorkspaceMember: CurrentWorkspaceMember | null,
+  currentWorkspaceMember: WorkspaceMember | null,
   currentWorkspace: CurrentWorkspace | null,
 ) => {
   if (!isLoggedIn) {

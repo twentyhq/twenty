@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRecoilState } from 'recoil';
@@ -10,8 +9,8 @@ import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -19,8 +18,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
-import { useUpdateUserMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -57,10 +54,14 @@ export const CreateProfile = () => {
 
   const { enqueueSnackBar } = useSnackBar();
 
-  const [currentUser] = useRecoilState(currentUserState);
-  const [currentWorkspaceMember] = useRecoilState(currentWorkspaceMemberState);
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
+    currentWorkspaceMemberState,
+  );
 
-  const [updateUser] = useUpdateUserMutation();
+  const { updateOneObject, objectNotFoundInMetadata } =
+    useUpdateOneObjectRecord({
+      objectNameSingular: 'workspaceMemberV2',
+    });
 
   // Form
   const {
@@ -80,30 +81,36 @@ export const CreateProfile = () => {
   const onSubmit: SubmitHandler<Form> = useCallback(
     async (data) => {
       try {
-        if (!currentUser?.id) {
+        if (!currentWorkspaceMember?.id) {
           throw new Error('User is not logged in');
         }
         if (!data.firstName || !data.lastName) {
           throw new Error('First name or last name is missing');
         }
+        if (!updateOneObject || objectNotFoundInMetadata) {
+          throw new Error('Object not found in metadata');
+        }
 
-        const result = await updateUser({
-          variables: {
-            where: {
-              id: currentUser?.id,
-            },
-            data: {
-              firstName: data.firstName,
-              lastName: data.lastName,
-            },
+        const result = await updateOneObject({
+          idToUpdate: currentWorkspaceMember?.id,
+          input: {
+            firstName: data.firstName,
+            lastName: data.lastName,
           },
-          refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
-          awaitRefetchQueries: true,
         });
 
-        if (result.errors || !result.data?.updateUser) {
-          throw result.errors;
+        if (result.errors || !result.data?.updateWorkspaceMemberV2) {
+          throw result.errors ?? new Error('Unknown error');
         }
+
+        setCurrentWorkspaceMember(
+          (current) =>
+            ({
+              ...current,
+              firstName: data.firstName,
+              lastName: data.lastName,
+            } as any),
+        );
 
         navigate('/');
       } catch (error: any) {
@@ -112,7 +119,14 @@ export const CreateProfile = () => {
         });
       }
     },
-    [currentUser?.id, enqueueSnackBar, navigate, updateUser],
+    [
+      currentWorkspaceMember?.id,
+      enqueueSnackBar,
+      navigate,
+      objectNotFoundInMetadata,
+      setCurrentWorkspaceMember,
+      updateOneObject,
+    ],
   );
 
   useScopedHotkeys(

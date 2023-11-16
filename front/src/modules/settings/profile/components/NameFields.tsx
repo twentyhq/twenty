@@ -54,21 +54,27 @@ export const NameFields = ({
       onLastNameUpdate(lastName);
     }
     try {
+      if (!currentWorkspaceMember?.id) {
+        throw new Error('User is not logged in');
+      }
+
       if (autoSave) {
         if (!updateOneObject || objectNotFoundInMetadata) {
-          return;
+          throw new Error('Object not found in metadata');
         }
         await updateOneObject({
-          idToUpdate: currentWorkspaceMember?.id ?? '',
+          idToUpdate: currentWorkspaceMember?.id,
           input: {
             firstName,
             lastName,
           },
         });
 
-        setCurrentWorkspaceMember(
-          (current) => ({ ...current, firstName, lastName } as any),
-        );
+        setCurrentWorkspaceMember({
+          ...currentWorkspaceMember,
+          firstName,
+          lastName,
+        });
       }
     } catch (error) {
       logError(error);
