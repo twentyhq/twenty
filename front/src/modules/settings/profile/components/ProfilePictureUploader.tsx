@@ -1,27 +1,30 @@
 import { useState } from 'react';
 import { getOperationName } from '@apollo/client/utilities';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
-import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
-import {
-  useRemoveProfilePictureMutation,
-  useUploadProfilePictureMutation,
-} from '~/generated/graphql';
+import { useUploadProfilePictureMutation } from '~/generated/graphql';
 
 export const ProfilePictureUploader = () => {
   const [uploadPicture, { loading: isUploading }] =
     useUploadProfilePictureMutation();
-  const [removePicture] = useRemoveProfilePictureMutation();
-  const [currentUser] = useRecoilState(currentUserState);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
+    currentWorkspaceMemberState,
+  );
 
   const [uploadController, setUploadController] =
     useState<AbortController | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const { updateOneObject, objectNotFoundInMetadata } =
+    useUpdateOneObjectRecord({
+      objectNameSingular: 'workspaceMemberV2',
+    });
 
   const handleUpload = async (file: File) => {
     if (!file) {
@@ -46,6 +49,26 @@ export const ProfilePictureUploader = () => {
 
       setUploadController(null);
       setErrorMessage(null);
+
+      const avatarUrl = result?.data?.uploadProfilePicture;
+
+      if (!avatarUrl) {
+        return;
+      }
+      if (!updateOneObject || objectNotFoundInMetadata) {
+        return;
+      }
+      await updateOneObject({
+        idToUpdate: currentWorkspaceMember?.id ?? '',
+        input: {
+          avatarUrl,
+        },
+      });
+
+      setCurrentWorkspaceMember(
+        (current) => ({ ...current, avatarUrl } as any),
+      );
+
       return result;
     } catch (error) {
       setErrorMessage('An error occured while uploading the picture.');
@@ -60,14 +83,19 @@ export const ProfilePictureUploader = () => {
   };
 
   const handleRemove = async () => {
-    await removePicture({
-      variables: {
-        where: {
-          id: currentUser?.id,
-        },
+    if (!updateOneObject || objectNotFoundInMetadata) {
+      return;
+    }
+    await updateOneObject({
+      idToUpdate: currentWorkspaceMember?.id ?? '',
+      input: {
+        avatarUrl: null,
       },
-      refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
     });
+
+    setCurrentWorkspaceMember(
+      (current) => ({ ...current, avatarUrl: null } as any),
+    );
   };
 
   return (
