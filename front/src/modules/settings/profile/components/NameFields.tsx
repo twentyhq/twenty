@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import debounce from 'lodash.debounce';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { logError } from '~/utils/logError';
 
@@ -41,10 +40,10 @@ export const NameFields = ({
     currentWorkspaceMember?.lastName ?? '',
   );
 
-  const apolloClient = useApolloClient();
-  const { updateOneMutation } = useFindOneObjectMetadataItem({
-    objectNameSingular: 'workspaceMemberV2',
-  });
+  const { updateOneObject, objectNotFoundInMetadata } =
+    useUpdateOneObjectRecord({
+      objectNameSingular: 'workspaceMemberV2',
+    });
 
   // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)
   const debouncedUpdate = debounce(async () => {
@@ -56,14 +55,14 @@ export const NameFields = ({
     }
     try {
       if (autoSave) {
-        await apolloClient.mutate({
-          mutation: updateOneMutation,
-          variables: {
-            idToUpdate: currentWorkspaceMember?.id,
-            input: {
-              firstName,
-              lastName,
-            },
+        if (!updateOneObject || objectNotFoundInMetadata) {
+          return;
+        }
+        await updateOneObject({
+          idToUpdate: currentWorkspaceMember?.id ?? '',
+          input: {
+            firstName,
+            lastName,
           },
         });
 

@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { useApolloClient } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
@@ -22,10 +21,10 @@ export const ProfilePictureUploader = () => {
     useState<AbortController | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const apolloClient = useApolloClient();
-  const { updateOneMutation } = useFindOneObjectMetadataItem({
-    objectNameSingular: 'workspaceMemberV2',
-  });
+  const { updateOneObject, objectNotFoundInMetadata } =
+    useUpdateOneObjectRecord({
+      objectNameSingular: 'workspaceMemberV2',
+    });
 
   const handleUpload = async (file: File) => {
     if (!file) {
@@ -56,13 +55,13 @@ export const ProfilePictureUploader = () => {
       if (!avatarUrl) {
         return;
       }
-      await apolloClient.mutate({
-        mutation: updateOneMutation,
-        variables: {
-          idToUpdate: currentWorkspaceMember?.id,
-          input: {
-            avatarUrl: avatarUrl,
-          },
+      if (!updateOneObject || objectNotFoundInMetadata) {
+        return;
+      }
+      await updateOneObject({
+        idToUpdate: currentWorkspaceMember?.id ?? '',
+        input: {
+          avatarUrl,
         },
       });
 
@@ -84,13 +83,13 @@ export const ProfilePictureUploader = () => {
   };
 
   const handleRemove = async () => {
-    await apolloClient.mutate({
-      mutation: updateOneMutation,
-      variables: {
-        idToUpdate: currentWorkspaceMember?.id,
-        input: {
-          avatarUrl: null,
-        },
+    if (!updateOneObject || objectNotFoundInMetadata) {
+      return;
+    }
+    await updateOneObject({
+      idToUpdate: currentWorkspaceMember?.id ?? '',
+      input: {
+        avatarUrl: null,
       },
     });
 

@@ -1,8 +1,7 @@
-import { useApolloClient } from '@apollo/client';
 import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import { Toggle } from '@/ui/input/components/Toggle';
 
@@ -13,20 +12,20 @@ export const ToggleField = () => {
     currentWorkspaceMemberState,
   );
 
-  const apolloClient = useApolloClient();
-  const { updateOneMutation } = useFindOneObjectMetadataItem({
-    objectNameSingular: 'workspaceMemberV2',
-  });
+  const { updateOneObject, objectNotFoundInMetadata } =
+    useUpdateOneObjectRecord({
+      objectNameSingular: 'workspaceMemberV2',
+    });
 
   const handleChange = async (value: boolean) => {
     try {
-      await apolloClient.mutate({
-        mutation: updateOneMutation,
-        variables: {
-          idToUpdate: currentWorkspaceMember?.id,
-          input: {
-            allowImpersonation: value,
-          },
+      if (!updateOneObject || objectNotFoundInMetadata) {
+        return;
+      }
+      await updateOneObject({
+        idToUpdate: currentWorkspaceMember?.id ?? '',
+        input: {
+          allowImpersonation: value,
         },
       });
       setCurrentWorkspaceMember(
