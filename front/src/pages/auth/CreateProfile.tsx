@@ -9,7 +9,6 @@ import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
@@ -55,7 +54,6 @@ export const CreateProfile = () => {
 
   const { enqueueSnackBar } = useSnackBar();
 
-  const [currentUser] = useRecoilState(currentUserState);
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
@@ -83,7 +81,7 @@ export const CreateProfile = () => {
   const onSubmit: SubmitHandler<Form> = useCallback(
     async (data) => {
       try {
-        if (!currentUser?.id) {
+        if (!currentWorkspaceMember?.id) {
           throw new Error('User is not logged in');
         }
         if (!data.firstName || !data.lastName) {
@@ -94,7 +92,7 @@ export const CreateProfile = () => {
         }
 
         const result = await updateOneObject({
-          idToUpdate: currentWorkspaceMember?.id ?? '',
+          idToUpdate: currentWorkspaceMember?.id,
           input: {
             firstName: data.firstName,
             lastName: data.lastName,
@@ -122,7 +120,6 @@ export const CreateProfile = () => {
       }
     },
     [
-      currentUser?.id,
       currentWorkspaceMember?.id,
       enqueueSnackBar,
       navigate,
