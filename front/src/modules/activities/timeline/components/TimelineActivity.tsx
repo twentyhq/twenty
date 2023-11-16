@@ -3,10 +3,10 @@ import styled from '@emotion/styled';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
+import { Activity } from '@/activities/types/Activity';
 import { IconNotes } from '@/ui/display/icon';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { Activity, User } from '~/generated/graphql';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
@@ -119,9 +119,19 @@ const StyledTimelineItemContainer = styled.div`
 type TimelineActivityProps = {
   activity: Pick<
     Activity,
-    'id' | 'title' | 'body' | 'createdAt' | 'completedAt' | 'type'
-  > & { author: Pick<Activity['author'], 'displayName'> } & {
-    assignee?: Pick<User, 'id' | 'displayName'> | null;
+    | 'id'
+    | 'title'
+    | 'body'
+    | 'createdAt'
+    | 'completedAt'
+    | 'type'
+    | 'comments'
+    | 'dueAt'
+  > & { author: Pick<Activity['author'], 'firstName' | 'lastName'> } & {
+    assignee?: Pick<
+      Activity['author'],
+      'id' | 'firstName' | 'lastName' | 'avatarUrl'
+    > | null;
   };
 };
 

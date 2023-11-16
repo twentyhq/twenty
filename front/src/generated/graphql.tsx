@@ -656,6 +656,11 @@ export type BoolFilter = {
   not?: InputMaybe<NestedBoolFilter>;
 };
 
+export type BooleanFieldComparison = {
+  is?: InputMaybe<Scalars['Boolean']>;
+  isNot?: InputMaybe<Scalars['Boolean']>;
+};
+
 export type ClientConfig = {
   __typename?: 'ClientConfig';
   authProviders: AuthProviders;
@@ -1315,6 +1320,7 @@ export type FieldDeleteResponse = {
   isActive?: Maybe<Scalars['Boolean']>;
   isCustom?: Maybe<Scalars['Boolean']>;
   isNullable?: Maybe<Scalars['Boolean']>;
+  isSystem?: Maybe<Scalars['Boolean']>;
   label?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   /** @deprecated Use label name instead */
@@ -1355,6 +1361,23 @@ export type FloatFilter = {
   lte?: InputMaybe<Scalars['Float']>;
   not?: InputMaybe<NestedFloatFilter>;
   notIn?: InputMaybe<Array<Scalars['Float']>>;
+};
+
+export type IdFilterComparison = {
+  eq?: InputMaybe<Scalars['ID']>;
+  gt?: InputMaybe<Scalars['ID']>;
+  gte?: InputMaybe<Scalars['ID']>;
+  iLike?: InputMaybe<Scalars['ID']>;
+  in?: InputMaybe<Array<Scalars['ID']>>;
+  is?: InputMaybe<Scalars['Boolean']>;
+  isNot?: InputMaybe<Scalars['Boolean']>;
+  like?: InputMaybe<Scalars['ID']>;
+  lt?: InputMaybe<Scalars['ID']>;
+  lte?: InputMaybe<Scalars['ID']>;
+  neq?: InputMaybe<Scalars['ID']>;
+  notILike?: InputMaybe<Scalars['ID']>;
+  notIn?: InputMaybe<Array<Scalars['ID']>>;
+  notLike?: InputMaybe<Scalars['ID']>;
 };
 
 export type IntNullableFilter = {
@@ -3117,6 +3140,7 @@ export type Field = {
   isActive: Scalars['Boolean'];
   isCustom: Scalars['Boolean'];
   isNullable: Scalars['Boolean'];
+  isSystem: Scalars['Boolean'];
   label: Scalars['String'];
   name: Scalars['String'];
   /** @deprecated Use label name instead */
@@ -3132,6 +3156,15 @@ export type FieldEdge = {
   cursor: Scalars['ConnectionCursor'];
   /** The node containing the field */
   node: Field;
+};
+
+export type FieldFilter = {
+  and?: InputMaybe<Array<FieldFilter>>;
+  id?: InputMaybe<IdFilterComparison>;
+  isActive?: InputMaybe<BooleanFieldComparison>;
+  isCustom?: InputMaybe<BooleanFieldComparison>;
+  isSystem?: InputMaybe<BooleanFieldComparison>;
+  or?: InputMaybe<Array<FieldFilter>>;
 };
 
 export type Object = {
@@ -3154,6 +3187,7 @@ export type Object = {
 
 
 export type ObjectFieldsArgs = {
+  filter?: FieldFilter;
   paging?: CursorPaging;
 };
 
@@ -3232,94 +3266,6 @@ export type UserV2Edge = {
   /** The node containing the userV2 */
   node: UserV2;
 };
-
-export type ActivityWithTargetsFragment = { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, companyId?: string | null, personId?: string | null }> | null };
-
-export type ActivityQueryFragmentFragment = { __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, companyId?: string | null, personId?: string | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null, person?: { __typename?: 'Person', id: string, displayName: string, avatarUrl?: string | null } | null }> | null };
-
-export type ActivityUpdatePartsFragment = { __typename?: 'Activity', id: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null };
-
-export type AddActivityTargetsOnActivityMutationVariables = Exact<{
-  activityId: Scalars['String'];
-  activityTargetInputs: Array<ActivityTargetCreateManyActivityInput> | ActivityTargetCreateManyActivityInput;
-}>;
-
-
-export type AddActivityTargetsOnActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, companyId?: string | null, personId?: string | null }> | null } };
-
-export type CreateActivityMutationVariables = Exact<{
-  data: ActivityCreateInput;
-}>;
-
-
-export type CreateActivityMutation = { __typename?: 'Mutation', createOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, authorId: string, type: ActivityType, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, activityId: string, companyId?: string | null, personId?: string | null }> | null, comments?: Array<{ __typename?: 'Comment', id: string, createdAt: string, updatedAt: string, body: string, author: { __typename?: 'User', id: string } }> | null } };
-
-export type CreateCommentMutationVariables = Exact<{
-  commentId: Scalars['String'];
-  commentText: Scalars['String'];
-  authorId: Scalars['String'];
-  activityId: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-}>;
-
-
-export type CreateCommentMutation = { __typename?: 'Mutation', createOneComment: { __typename?: 'Comment', id: string, createdAt: string, body: string, activityId?: string | null, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } } };
-
-export type DeleteActivityMutationVariables = Exact<{
-  activityId: Scalars['String'];
-}>;
-
-
-export type DeleteActivityMutation = { __typename?: 'Mutation', deleteManyActivities: { __typename?: 'AffectedRows', count: number } };
-
-export type RemoveActivityTargetsOnActivityMutationVariables = Exact<{
-  activityId: Scalars['String'];
-  activityTargetIds: Array<Scalars['String']> | Scalars['String'];
-}>;
-
-
-export type RemoveActivityTargetsOnActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, createdAt: string, updatedAt: string, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, createdAt: string, updatedAt: string, companyId?: string | null, personId?: string | null }> | null } };
-
-export type UpdateActivityMutationVariables = Exact<{
-  where: ActivityWhereUniqueInput;
-  data: ActivityUpdateInput;
-}>;
-
-
-export type UpdateActivityMutation = { __typename?: 'Mutation', updateOneActivity: { __typename?: 'Activity', id: string, body?: string | null, title?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string } | null } };
-
-export type UploadAttachmentMutationVariables = Exact<{
-  file: Scalars['Upload'];
-  activityId: Scalars['String'];
-  companyId: Scalars['String'];
-  personId: Scalars['String'];
-}>;
-
-
-export type UploadAttachmentMutation = { __typename?: 'Mutation', uploadAttachment: string };
-
-export type GetActivitiesQueryVariables = Exact<{
-  where: ActivityWhereInput;
-  orderBy?: InputMaybe<Array<ActivityOrderByWithRelationInput> | ActivityOrderByWithRelationInput>;
-}>;
-
-
-export type GetActivitiesQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, companyId?: string | null, personId?: string | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null, person?: { __typename?: 'Person', id: string, displayName: string, avatarUrl?: string | null } | null }> | null }> };
-
-export type GetActivitiesByTargetsQueryVariables = Exact<{
-  activityTargetIds: Array<Scalars['String']> | Scalars['String'];
-  orderBy?: InputMaybe<Array<ActivityOrderByWithRelationInput> | ActivityOrderByWithRelationInput>;
-}>;
-
-
-export type GetActivitiesByTargetsQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, companyId?: string | null, personId?: string | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null, person?: { __typename?: 'Person', id: string, displayName: string, avatarUrl?: string | null } | null }> | null }> };
-
-export type GetActivityQueryVariables = Exact<{
-  activityId: Scalars['String'];
-}>;
-
-
-export type GetActivityQuery = { __typename?: 'Query', findManyActivities: Array<{ __typename?: 'Activity', id: string, createdAt: string, title?: string | null, body?: string | null, type: ActivityType, completedAt?: string | null, dueAt?: string | null, assignee?: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string, avatarUrl?: string | null } | null, author: { __typename?: 'User', id: string, firstName?: string | null, lastName?: string | null, displayName: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdAt: string, updatedAt: string, author: { __typename?: 'User', id: string, displayName: string, firstName?: string | null, lastName?: string | null, avatarUrl?: string | null } }> | null, activityTargets?: Array<{ __typename?: 'ActivityTarget', id: string, companyId?: string | null, personId?: string | null, company?: { __typename?: 'Company', id: string, name: string, domainName: string } | null, person?: { __typename?: 'Person', id: string, displayName: string, avatarUrl?: string | null } | null }> | null }> };
 
 export type CreateEventMutationVariables = Exact<{
   type: Scalars['String'];
@@ -3803,88 +3749,6 @@ export type GetWorkspaceMembersQueryVariables = Exact<{
 
 export type GetWorkspaceMembersQuery = { __typename?: 'Query', workspaceMembers: Array<{ __typename?: 'WorkspaceMember', id: string }> };
 
-export const ActivityWithTargetsFragmentDoc = gql`
-    fragment ActivityWithTargets on Activity {
-  id
-  createdAt
-  updatedAt
-  activityTargets {
-    id
-    createdAt
-    updatedAt
-    companyId
-    personId
-  }
-}
-    `;
-export const ActivityQueryFragmentFragmentDoc = gql`
-    fragment ActivityQueryFragment on Activity {
-  id
-  createdAt
-  title
-  body
-  type
-  completedAt
-  dueAt
-  assignee {
-    id
-    firstName
-    lastName
-    displayName
-    avatarUrl
-  }
-  author {
-    id
-    firstName
-    lastName
-    displayName
-  }
-  comments {
-    id
-    body
-    createdAt
-    updatedAt
-    author {
-      id
-      displayName
-      firstName
-      lastName
-      avatarUrl
-    }
-  }
-  activityTargets {
-    id
-    companyId
-    personId
-    company {
-      id
-      name
-      domainName
-    }
-    person {
-      id
-      displayName
-      avatarUrl
-    }
-  }
-}
-    `;
-export const ActivityUpdatePartsFragmentDoc = gql`
-    fragment ActivityUpdateParts on Activity {
-  id
-  body
-  title
-  type
-  completedAt
-  dueAt
-  assignee {
-    id
-    firstName
-    lastName
-    displayName
-  }
-}
-    `;
 export const AuthTokenFragmentFragmentDoc = gql`
     fragment AuthTokenFragment on AuthToken {
   token
@@ -3982,399 +3846,6 @@ export const UserFieldsFragmentFragmentDoc = gql`
   lastName
 }
     `;
-export const AddActivityTargetsOnActivityDocument = gql`
-    mutation AddActivityTargetsOnActivity($activityId: String!, $activityTargetInputs: [ActivityTargetCreateManyActivityInput!]!) {
-  updateOneActivity(
-    where: {id: $activityId}
-    data: {activityTargets: {createMany: {data: $activityTargetInputs}}}
-  ) {
-    ...ActivityWithTargets
-  }
-}
-    ${ActivityWithTargetsFragmentDoc}`;
-export type AddActivityTargetsOnActivityMutationFn = Apollo.MutationFunction<AddActivityTargetsOnActivityMutation, AddActivityTargetsOnActivityMutationVariables>;
-
-/**
- * __useAddActivityTargetsOnActivityMutation__
- *
- * To run a mutation, you first call `useAddActivityTargetsOnActivityMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddActivityTargetsOnActivityMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [addActivityTargetsOnActivityMutation, { data, loading, error }] = useAddActivityTargetsOnActivityMutation({
- *   variables: {
- *      activityId: // value for 'activityId'
- *      activityTargetInputs: // value for 'activityTargetInputs'
- *   },
- * });
- */
-export function useAddActivityTargetsOnActivityMutation(baseOptions?: Apollo.MutationHookOptions<AddActivityTargetsOnActivityMutation, AddActivityTargetsOnActivityMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<AddActivityTargetsOnActivityMutation, AddActivityTargetsOnActivityMutationVariables>(AddActivityTargetsOnActivityDocument, options);
-      }
-export type AddActivityTargetsOnActivityMutationHookResult = ReturnType<typeof useAddActivityTargetsOnActivityMutation>;
-export type AddActivityTargetsOnActivityMutationResult = Apollo.MutationResult<AddActivityTargetsOnActivityMutation>;
-export type AddActivityTargetsOnActivityMutationOptions = Apollo.BaseMutationOptions<AddActivityTargetsOnActivityMutation, AddActivityTargetsOnActivityMutationVariables>;
-export const CreateActivityDocument = gql`
-    mutation CreateActivity($data: ActivityCreateInput!) {
-  createOneActivity(data: $data) {
-    id
-    createdAt
-    updatedAt
-    authorId
-    type
-    activityTargets {
-      id
-      createdAt
-      updatedAt
-      activityId
-      companyId
-      personId
-    }
-    comments {
-      id
-      createdAt
-      updatedAt
-      body
-      author {
-        id
-      }
-    }
-  }
-}
-    `;
-export type CreateActivityMutationFn = Apollo.MutationFunction<CreateActivityMutation, CreateActivityMutationVariables>;
-
-/**
- * __useCreateActivityMutation__
- *
- * To run a mutation, you first call `useCreateActivityMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateActivityMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createActivityMutation, { data, loading, error }] = useCreateActivityMutation({
- *   variables: {
- *      data: // value for 'data'
- *   },
- * });
- */
-export function useCreateActivityMutation(baseOptions?: Apollo.MutationHookOptions<CreateActivityMutation, CreateActivityMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateActivityMutation, CreateActivityMutationVariables>(CreateActivityDocument, options);
-      }
-export type CreateActivityMutationHookResult = ReturnType<typeof useCreateActivityMutation>;
-export type CreateActivityMutationResult = Apollo.MutationResult<CreateActivityMutation>;
-export type CreateActivityMutationOptions = Apollo.BaseMutationOptions<CreateActivityMutation, CreateActivityMutationVariables>;
-export const CreateCommentDocument = gql`
-    mutation CreateComment($commentId: String!, $commentText: String!, $authorId: String!, $activityId: String!, $createdAt: DateTime!) {
-  createOneComment(
-    data: {id: $commentId, createdAt: $createdAt, body: $commentText, author: {connect: {id: $authorId}}, activity: {connect: {id: $activityId}}}
-  ) {
-    id
-    createdAt
-    body
-    author {
-      id
-      displayName
-      firstName
-      lastName
-      avatarUrl
-    }
-    activityId
-  }
-}
-    `;
-export type CreateCommentMutationFn = Apollo.MutationFunction<CreateCommentMutation, CreateCommentMutationVariables>;
-
-/**
- * __useCreateCommentMutation__
- *
- * To run a mutation, you first call `useCreateCommentMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateCommentMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [createCommentMutation, { data, loading, error }] = useCreateCommentMutation({
- *   variables: {
- *      commentId: // value for 'commentId'
- *      commentText: // value for 'commentText'
- *      authorId: // value for 'authorId'
- *      activityId: // value for 'activityId'
- *      createdAt: // value for 'createdAt'
- *   },
- * });
- */
-export function useCreateCommentMutation(baseOptions?: Apollo.MutationHookOptions<CreateCommentMutation, CreateCommentMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateCommentMutation, CreateCommentMutationVariables>(CreateCommentDocument, options);
-      }
-export type CreateCommentMutationHookResult = ReturnType<typeof useCreateCommentMutation>;
-export type CreateCommentMutationResult = Apollo.MutationResult<CreateCommentMutation>;
-export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentMutation, CreateCommentMutationVariables>;
-export const DeleteActivityDocument = gql`
-    mutation DeleteActivity($activityId: String!) {
-  deleteManyActivities(where: {id: {equals: $activityId}}) {
-    count
-  }
-}
-    `;
-export type DeleteActivityMutationFn = Apollo.MutationFunction<DeleteActivityMutation, DeleteActivityMutationVariables>;
-
-/**
- * __useDeleteActivityMutation__
- *
- * To run a mutation, you first call `useDeleteActivityMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useDeleteActivityMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [deleteActivityMutation, { data, loading, error }] = useDeleteActivityMutation({
- *   variables: {
- *      activityId: // value for 'activityId'
- *   },
- * });
- */
-export function useDeleteActivityMutation(baseOptions?: Apollo.MutationHookOptions<DeleteActivityMutation, DeleteActivityMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<DeleteActivityMutation, DeleteActivityMutationVariables>(DeleteActivityDocument, options);
-      }
-export type DeleteActivityMutationHookResult = ReturnType<typeof useDeleteActivityMutation>;
-export type DeleteActivityMutationResult = Apollo.MutationResult<DeleteActivityMutation>;
-export type DeleteActivityMutationOptions = Apollo.BaseMutationOptions<DeleteActivityMutation, DeleteActivityMutationVariables>;
-export const RemoveActivityTargetsOnActivityDocument = gql`
-    mutation RemoveActivityTargetsOnActivity($activityId: String!, $activityTargetIds: [String!]!) {
-  updateOneActivity(
-    where: {id: $activityId}
-    data: {activityTargets: {deleteMany: {id: {in: $activityTargetIds}}}}
-  ) {
-    ...ActivityWithTargets
-  }
-}
-    ${ActivityWithTargetsFragmentDoc}`;
-export type RemoveActivityTargetsOnActivityMutationFn = Apollo.MutationFunction<RemoveActivityTargetsOnActivityMutation, RemoveActivityTargetsOnActivityMutationVariables>;
-
-/**
- * __useRemoveActivityTargetsOnActivityMutation__
- *
- * To run a mutation, you first call `useRemoveActivityTargetsOnActivityMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRemoveActivityTargetsOnActivityMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [removeActivityTargetsOnActivityMutation, { data, loading, error }] = useRemoveActivityTargetsOnActivityMutation({
- *   variables: {
- *      activityId: // value for 'activityId'
- *      activityTargetIds: // value for 'activityTargetIds'
- *   },
- * });
- */
-export function useRemoveActivityTargetsOnActivityMutation(baseOptions?: Apollo.MutationHookOptions<RemoveActivityTargetsOnActivityMutation, RemoveActivityTargetsOnActivityMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RemoveActivityTargetsOnActivityMutation, RemoveActivityTargetsOnActivityMutationVariables>(RemoveActivityTargetsOnActivityDocument, options);
-      }
-export type RemoveActivityTargetsOnActivityMutationHookResult = ReturnType<typeof useRemoveActivityTargetsOnActivityMutation>;
-export type RemoveActivityTargetsOnActivityMutationResult = Apollo.MutationResult<RemoveActivityTargetsOnActivityMutation>;
-export type RemoveActivityTargetsOnActivityMutationOptions = Apollo.BaseMutationOptions<RemoveActivityTargetsOnActivityMutation, RemoveActivityTargetsOnActivityMutationVariables>;
-export const UpdateActivityDocument = gql`
-    mutation UpdateActivity($where: ActivityWhereUniqueInput!, $data: ActivityUpdateInput!) {
-  updateOneActivity(where: $where, data: $data) {
-    ...ActivityUpdateParts
-  }
-}
-    ${ActivityUpdatePartsFragmentDoc}`;
-export type UpdateActivityMutationFn = Apollo.MutationFunction<UpdateActivityMutation, UpdateActivityMutationVariables>;
-
-/**
- * __useUpdateActivityMutation__
- *
- * To run a mutation, you first call `useUpdateActivityMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateActivityMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [updateActivityMutation, { data, loading, error }] = useUpdateActivityMutation({
- *   variables: {
- *      where: // value for 'where'
- *      data: // value for 'data'
- *   },
- * });
- */
-export function useUpdateActivityMutation(baseOptions?: Apollo.MutationHookOptions<UpdateActivityMutation, UpdateActivityMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateActivityMutation, UpdateActivityMutationVariables>(UpdateActivityDocument, options);
-      }
-export type UpdateActivityMutationHookResult = ReturnType<typeof useUpdateActivityMutation>;
-export type UpdateActivityMutationResult = Apollo.MutationResult<UpdateActivityMutation>;
-export type UpdateActivityMutationOptions = Apollo.BaseMutationOptions<UpdateActivityMutation, UpdateActivityMutationVariables>;
-export const UploadAttachmentDocument = gql`
-    mutation UploadAttachment($file: Upload!, $activityId: String!, $companyId: String!, $personId: String!) {
-  uploadAttachment(
-    file: $file
-    activityId: $activityId
-    companyId: $companyId
-    personId: $personId
-  )
-}
-    `;
-export type UploadAttachmentMutationFn = Apollo.MutationFunction<UploadAttachmentMutation, UploadAttachmentMutationVariables>;
-
-/**
- * __useUploadAttachmentMutation__
- *
- * To run a mutation, you first call `useUploadAttachmentMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUploadAttachmentMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [uploadAttachmentMutation, { data, loading, error }] = useUploadAttachmentMutation({
- *   variables: {
- *      file: // value for 'file'
- *      activityId: // value for 'activityId'
- *      companyId: // value for 'companyId'
- *      personId: // value for 'personId'
- *   },
- * });
- */
-export function useUploadAttachmentMutation(baseOptions?: Apollo.MutationHookOptions<UploadAttachmentMutation, UploadAttachmentMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UploadAttachmentMutation, UploadAttachmentMutationVariables>(UploadAttachmentDocument, options);
-      }
-export type UploadAttachmentMutationHookResult = ReturnType<typeof useUploadAttachmentMutation>;
-export type UploadAttachmentMutationResult = Apollo.MutationResult<UploadAttachmentMutation>;
-export type UploadAttachmentMutationOptions = Apollo.BaseMutationOptions<UploadAttachmentMutation, UploadAttachmentMutationVariables>;
-export const GetActivitiesDocument = gql`
-    query GetActivities($where: ActivityWhereInput!, $orderBy: [ActivityOrderByWithRelationInput!]) {
-  findManyActivities(orderBy: $orderBy, where: $where) {
-    ...ActivityQueryFragment
-  }
-}
-    ${ActivityQueryFragmentFragmentDoc}`;
-
-/**
- * __useGetActivitiesQuery__
- *
- * To run a query within a React component, call `useGetActivitiesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetActivitiesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetActivitiesQuery({
- *   variables: {
- *      where: // value for 'where'
- *      orderBy: // value for 'orderBy'
- *   },
- * });
- */
-export function useGetActivitiesQuery(baseOptions: Apollo.QueryHookOptions<GetActivitiesQuery, GetActivitiesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetActivitiesQuery, GetActivitiesQueryVariables>(GetActivitiesDocument, options);
-      }
-export function useGetActivitiesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetActivitiesQuery, GetActivitiesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetActivitiesQuery, GetActivitiesQueryVariables>(GetActivitiesDocument, options);
-        }
-export type GetActivitiesQueryHookResult = ReturnType<typeof useGetActivitiesQuery>;
-export type GetActivitiesLazyQueryHookResult = ReturnType<typeof useGetActivitiesLazyQuery>;
-export type GetActivitiesQueryResult = Apollo.QueryResult<GetActivitiesQuery, GetActivitiesQueryVariables>;
-export const GetActivitiesByTargetsDocument = gql`
-    query GetActivitiesByTargets($activityTargetIds: [String!]!, $orderBy: [ActivityOrderByWithRelationInput!]) {
-  findManyActivities(
-    orderBy: $orderBy
-    where: {activityTargets: {some: {OR: [{personId: {in: $activityTargetIds}}, {companyId: {in: $activityTargetIds}}]}}}
-  ) {
-    ...ActivityQueryFragment
-  }
-}
-    ${ActivityQueryFragmentFragmentDoc}`;
-
-/**
- * __useGetActivitiesByTargetsQuery__
- *
- * To run a query within a React component, call `useGetActivitiesByTargetsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetActivitiesByTargetsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetActivitiesByTargetsQuery({
- *   variables: {
- *      activityTargetIds: // value for 'activityTargetIds'
- *      orderBy: // value for 'orderBy'
- *   },
- * });
- */
-export function useGetActivitiesByTargetsQuery(baseOptions: Apollo.QueryHookOptions<GetActivitiesByTargetsQuery, GetActivitiesByTargetsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetActivitiesByTargetsQuery, GetActivitiesByTargetsQueryVariables>(GetActivitiesByTargetsDocument, options);
-      }
-export function useGetActivitiesByTargetsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetActivitiesByTargetsQuery, GetActivitiesByTargetsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetActivitiesByTargetsQuery, GetActivitiesByTargetsQueryVariables>(GetActivitiesByTargetsDocument, options);
-        }
-export type GetActivitiesByTargetsQueryHookResult = ReturnType<typeof useGetActivitiesByTargetsQuery>;
-export type GetActivitiesByTargetsLazyQueryHookResult = ReturnType<typeof useGetActivitiesByTargetsLazyQuery>;
-export type GetActivitiesByTargetsQueryResult = Apollo.QueryResult<GetActivitiesByTargetsQuery, GetActivitiesByTargetsQueryVariables>;
-export const GetActivityDocument = gql`
-    query GetActivity($activityId: String!) {
-  findManyActivities(where: {id: {equals: $activityId}}) {
-    ...ActivityQueryFragment
-  }
-}
-    ${ActivityQueryFragmentFragmentDoc}`;
-
-/**
- * __useGetActivityQuery__
- *
- * To run a query within a React component, call `useGetActivityQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetActivityQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetActivityQuery({
- *   variables: {
- *      activityId: // value for 'activityId'
- *   },
- * });
- */
-export function useGetActivityQuery(baseOptions: Apollo.QueryHookOptions<GetActivityQuery, GetActivityQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetActivityQuery, GetActivityQueryVariables>(GetActivityDocument, options);
-      }
-export function useGetActivityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetActivityQuery, GetActivityQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetActivityQuery, GetActivityQueryVariables>(GetActivityDocument, options);
-        }
-export type GetActivityQueryHookResult = ReturnType<typeof useGetActivityQuery>;
-export type GetActivityLazyQueryHookResult = ReturnType<typeof useGetActivityLazyQuery>;
-export type GetActivityQueryResult = Apollo.QueryResult<GetActivityQuery, GetActivityQueryVariables>;
 export const CreateEventDocument = gql`
     mutation CreateEvent($type: String!, $data: JSON!) {
   createEvent(type: $type, data: $data) {

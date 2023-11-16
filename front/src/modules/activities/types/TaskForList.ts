@@ -1,3 +1,5 @@
-import { GetActivitiesQuery } from '~/generated/graphql';
+import { Activity } from '@/activities/types/Activity';
 
-export type TaskForList = GetActivitiesQuery['findManyActivities'][0];
+export type TaskForList = Activity & {
+  type: 'task';
+};
