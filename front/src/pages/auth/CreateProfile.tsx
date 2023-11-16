@@ -56,7 +56,9 @@ export const CreateProfile = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const [currentUser] = useRecoilState(currentUserState);
-  const [currentWorkspaceMember] = useRecoilState(currentWorkspaceMemberState);
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
+    currentWorkspaceMemberState,
+  );
 
   const { updateOneObject, objectNotFoundInMetadata } =
     useUpdateOneObjectRecord({
@@ -102,6 +104,15 @@ export const CreateProfile = () => {
         if (result.errors || !result.data?.updateWorkspaceMemberV2) {
           throw result.errors ?? new Error('Unknown error');
         }
+
+        setCurrentWorkspaceMember(
+          (current) =>
+            ({
+              ...current,
+              firstName: data.firstName,
+              lastName: data.lastName,
+            } as any),
+        );
 
         navigate('/');
       } catch (error: any) {
