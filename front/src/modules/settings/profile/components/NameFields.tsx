@@ -70,11 +70,11 @@ export const NameFields = ({
           },
         });
 
-        setCurrentWorkspaceMember(() => ({
+        setCurrentWorkspaceMember({
           ...currentWorkspaceMember,
           firstName,
           lastName,
-        }));
+        });
       }
     } catch (error) {
       logError(error);
