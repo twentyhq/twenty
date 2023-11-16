@@ -1,4 +1,3 @@
-import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { ActivityTargetableEntityForSelect } from '@/activities/types/ActivityTargetableEntityForSelect';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSearchPeopleQuery } from '~/generated/graphql';
@@ -25,7 +24,7 @@ export const useFilteredSearchPeopleQuery = ({
     mappingFunction: (entity) =>
       ({
         id: entity.id,
-        entityType: ActivityTargetableEntityType.Person,
+        entityType: 'Person',
         name: `${entity.firstName} ${entity.lastName}`,
         avatarUrl: entity.avatarUrl,
         avatarType: 'rounded',

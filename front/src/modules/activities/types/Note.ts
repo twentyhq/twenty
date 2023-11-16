@@ -1,3 +1,5 @@
 import { Activity } from '@/activities/types/Activity';
 
-export type ActivityForDrawer = Activity;
+export type Note = Activity & {
+  type: 'Note';
+};

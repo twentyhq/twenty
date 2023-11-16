@@ -1,16 +1,15 @@
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
+import { Comment } from '@/activities/types/Comment';
 import { Avatar } from '@/users/components/Avatar';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
 
-import { CommentForDrawer } from '../types/CommentForDrawer';
-
 type CommentHeaderProps = {
-  comment: Pick<CommentForDrawer, 'id' | 'author' | 'createdAt'>;
+  comment: Pick<Comment, 'id' | 'author' | 'createdAt'>;
   actionBar?: React.ReactNode;
 };
 
@@ -68,7 +67,7 @@ export const CommentHeader = ({ comment, actionBar }: CommentHeaderProps) => {
   const showDate = beautifiedCreatedAt !== '';
 
   const author = comment.author;
-  const authorName = author.displayName;
+  const authorName = author.firstName + ' ' + author.lastName;
   const avatarUrl = author.avatarUrl;
   const commentId = comment.id;
 
@@ -79,7 +78,7 @@ export const CommentHeader = ({ comment, actionBar }: CommentHeaderProps) => {
           avatarUrl={avatarUrl}
           size="md"
           colorId={author.id}
-          placeholder={author.displayName}
+          placeholder={authorName}
         />
         <StyledName>{authorName}</StyledName>
         {showDate && (

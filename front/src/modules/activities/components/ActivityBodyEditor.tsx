@@ -1,14 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useApolloClient } from '@apollo/client';
 import { BlockNoteEditor } from '@blocknote/core';
 import { useBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
 import debounce from 'lodash.debounce';
 
+import { Activity } from '@/activities/types/Activity';
+import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
-import { Activity, useUpdateActivityMutation } from '~/generated/graphql';
-
-import { ACTIVITY_UPDATE_FRAGMENT } from '../graphql/fragments/activityUpdateFragment';
 
 const StyledBlockNoteStyledContainer = styled.div`
   width: 100%;
@@ -23,15 +21,10 @@ export const ActivityBodyEditor = ({
   activity,
   onChange,
 }: ActivityBodyEditorProps) => {
-  const [updateActivityMutation] = useUpdateActivityMutation();
-
-  const client = useApolloClient();
-  const cachedActivity = client.readFragment({
-    id: `Activity:${activity.id}`,
-    fragment: ACTIVITY_UPDATE_FRAGMENT,
-  });
-
   const [body, setBody] = useState<string | null>(null);
+  const { updateOneObject } = useUpdateOneObjectRecord({
+    objectNameSingular: 'ActivityV2',
+  });
 
   useEffect(() => {
     if (body) {
@@ -42,27 +35,16 @@ export const ActivityBodyEditor = ({
   const debounceOnChange = useMemo(() => {
     const onInternalChange = (activityBody: string) => {
       setBody(activityBody);
-      updateActivityMutation({
-        variables: {
-          where: {
-            id: activity.id,
-          },
-          data: {
-            body: activityBody,
-          },
-        },
-        optimisticResponse: {
-          __typename: 'Mutation',
-          updateOneActivity: {
-            ...cachedActivity,
-            body: activityBody,
-          },
+      updateOneObject?.({
+        idToUpdate: activity.id,
+        input: {
+          body: activityBody,
         },
       });
     };
 
     return debounce(onInternalChange, 200);
-  }, [updateActivityMutation, activity.id, cachedActivity]);
+  }, [updateOneObject, activity.id]);
 
   const editor: BlockNoteEditor | null = useBlockNote({
     initialContent: activity.body ? JSON.parse(activity.body) : undefined,

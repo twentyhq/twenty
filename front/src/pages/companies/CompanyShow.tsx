@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { CompanyTeam } from '@/companies/components/CompanyTeam';
 import { useCompanyQuery } from '@/companies/hooks/useCompanyQuery';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
@@ -69,7 +68,7 @@ export const CompanyShow = () => {
           key="add"
           entity={{
             id: company.id,
-            type: ActivityTargetableEntityType.Company,
+            type: 'Company',
           }}
         />
       </PageHeader>
@@ -113,7 +112,7 @@ export const CompanyShow = () => {
             <ShowPageRightContainer
               entity={{
                 id: company.id,
-                type: ActivityTargetableEntityType.Company,
+                type: 'Company',
               }}
               timeline
               tasks

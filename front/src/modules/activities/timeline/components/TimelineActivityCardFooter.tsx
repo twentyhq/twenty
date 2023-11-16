@@ -2,13 +2,17 @@ import { isNonEmptyArray } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 
 import CommentCounter from '@/activities/comment/CommentCounter';
+import { Activity } from '@/activities/types/Activity';
 import { UserChip } from '@/users/components/UserChip';
-import { Activity, User } from '~/generated/graphql';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { beautifyExactDate } from '~/utils/date-utils';
 
 type TimelineActivityCardFooterProps = {
   activity: Pick<Activity, 'id' | 'dueAt' | 'comments'> & {
-    assignee?: Pick<User, 'id' | 'displayName' | 'avatarUrl'> | null;
+    assignee?: Pick<
+      WorkspaceMember,
+      'id' | 'firstName' | 'lastName' | 'avatarUrl'
+    > | null;
   };
 };
 
@@ -43,7 +47,11 @@ export const TimelineActivityCardFooter = ({
           {activity.assignee && (
             <UserChip
               id={activity.assignee.id}
-              name={activity.assignee.displayName ?? ''}
+              name={
+                activity.assignee.firstName +
+                  ' ' +
+                  activity.assignee.lastName ?? ''
+              }
               pictureUrl={activity.assignee.avatarUrl ?? ''}
             />
           )}

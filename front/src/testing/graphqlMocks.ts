@@ -1,8 +1,6 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { graphql } from 'msw';
 
-import { CREATE_ACTIVITY_WITH_COMMENT } from '@/activities/graphql/mutations/createActivityWithComment';
-import { GET_ACTIVITIES } from '@/activities/graphql/queries/getActivities';
 import { CREATE_EVENT } from '@/analytics/graphql/queries/createEvent';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
 import { INSERT_ONE_COMPANY } from '@/companies/graphql/mutations/insertOneCompany';
@@ -22,7 +20,6 @@ import { GET_API_KEY } from '@/settings/developers/graphql/queries/getApiKey';
 import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import {
-  ActivityType,
   GetCompaniesQuery,
   GetPeopleQuery,
   GetPersonQuery,
@@ -33,7 +30,7 @@ import {
 } from '~/generated/graphql';
 import { mockedApiKeys } from '~/testing/mock-data/api-keys';
 
-import { mockedActivities, mockedTasks } from './mock-data/activities';
+import { mockedActivities } from './mock-data/activities';
 import {
   mockedCompaniesData,
   mockedEmptyCompanyData,
@@ -250,16 +247,6 @@ export const graphqlMocks = [
       }),
     );
   }),
-  graphql.query(getOperationName(GET_ACTIVITIES) ?? '', (req, res, ctx) => {
-    return res(
-      ctx.data({
-        findManyActivities:
-          req?.variables?.where?.type?.equals === ActivityType.Task
-            ? mockedTasks
-            : mockedActivities,
-      }),
-    );
-  }),
 
   graphql.query(getOperationName(GET_API_KEY) ?? '', (req, res, ctx) => {
     return res(
@@ -275,16 +262,7 @@ export const graphqlMocks = [
       }),
     );
   }),
-  graphql.mutation(
-    getOperationName(CREATE_ACTIVITY_WITH_COMMENT) ?? '',
-    (req, res, ctx) => {
-      return res(
-        ctx.data({
-          createOneActivity: mockedTasks[0],
-        }),
-      );
-    },
-  ),
+
   graphql.mutation(
     getOperationName(INSERT_ONE_COMPANY) ?? '',
     (req, res, ctx) => {

@@ -3,8 +3,9 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { ActivityEditor } from '@/activities/components/ActivityEditor';
+import { Activity } from '@/activities/types/Activity';
+import { useFindOneObjectRecord } from '@/object-record/hooks/useFindOneObjectRecord';
 import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
-import { useGetActivityQuery } from '~/generated/graphql';
 
 import '@blocknote/core/style.css';
 
@@ -33,17 +34,14 @@ export const RightDrawerActivity = ({
     entityFieldsFamilyState(activityId),
   );
 
-  const { data } = useGetActivityQuery({
-    variables: {
-      activityId: activityId ?? '',
-    },
+  const { object: activity } = useFindOneObjectRecord({
+    objectNameSingular: 'activityId',
+    objectRecordId: activityId,
     skip: !activityId,
-    onCompleted: (data) => {
-      setEntityFields(data?.findManyActivities[0] ?? {});
+    onCompleted: (activity: Activity) => {
+      setEntityFields(activity ?? {});
     },
   });
-
-  const activity = data?.findManyActivities[0];
 
   if (!activity) {
     return <></>;

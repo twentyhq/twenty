@@ -1,24 +1,22 @@
-import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
+import { Comment } from '@/activities/comment/Comment';
+import { Activity } from '@/activities/types/Activity';
+import { Comment as CommentType } from '@/activities/types/Comment';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
 import {
   AutosizeTextInput,
   AutosizeTextInputVariant,
 } from '@/ui/input/components/AutosizeTextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { Activity, useCreateCommentMutation } from '~/generated/graphql';
-
-import { Comment } from '../comment/Comment';
-import { GET_ACTIVITY } from '../graphql/queries/getActivity';
-import { CommentForDrawer } from '../types/CommentForDrawer';
 
 type ActivityCommentsProps = {
   activity: Pick<Activity, 'id'> & {
-    comments: Array<CommentForDrawer>;
+    comments: Array<CommentType>;
   };
   scrollableContainerRef: React.RefObject<HTMLDivElement>;
 };
@@ -63,8 +61,10 @@ export const ActivityComments = ({
   activity,
   scrollableContainerRef,
 }: ActivityCommentsProps) => {
-  const [createCommentMutation] = useCreateCommentMutation();
   const currentUser = useRecoilValue(currentUserState);
+  const { createOneObject } = useCreateOneObjectRecord({
+    objectNamePlural: 'commentsV2',
+  });
 
   if (!currentUser) {
     return <></>;
@@ -75,21 +75,12 @@ export const ActivityComments = ({
       return;
     }
 
-    createCommentMutation({
-      variables: {
-        commentId: v4(),
-        authorId: currentUser?.id ?? '',
-        activityId: activity?.id ?? '',
-        commentText: commentText,
-        createdAt: new Date().toISOString(),
-      },
-      refetchQueries: [getOperationName(GET_ACTIVITY) ?? ''],
-      onCompleted: () => {
-        setTimeout(() => {
-          handleFocus();
-        }, 100);
-      },
-      awaitRefetchQueries: true,
+    createOneObject?.({
+      commentId: v4(),
+      authorId: currentUser?.id ?? '',
+      activityId: activity?.id ?? '',
+      commentText: commentText,
+      createdAt: new Date().toISOString(),
     });
   };
 

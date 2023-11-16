@@ -2,7 +2,6 @@ import { useParams } from 'react-router-dom';
 import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
-import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
@@ -50,7 +49,7 @@ export const RecordShowPage = () => {
   );
 
   const { object } = useFindOneObjectRecord({
-    objectMetadataId: objectMetadataId,
+    objectRecordId: objectMetadataId,
     objectNameSingular,
     onCompleted: (data) => {
       setEntityFields(data);
@@ -133,7 +132,7 @@ export const RecordShowPage = () => {
           key="add"
           entity={{
             id: object.id,
-            type: ActivityTargetableEntityType.Company,
+            type: 'Company',
           }}
         />
       </PageHeader>
@@ -185,7 +184,7 @@ export const RecordShowPage = () => {
             <ShowPageRightContainer
               entity={{
                 id: object.id,
-                type: ActivityTargetableEntityType.Company,
+                type: 'Company',
               }}
               timeline
               tasks
