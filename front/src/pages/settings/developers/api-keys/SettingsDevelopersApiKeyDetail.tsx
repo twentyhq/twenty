@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useFindOneObjectRecord } from '@/object-record/hooks/useFindOneObjectRecord';
+import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
@@ -50,18 +52,20 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
   const [deleteApiKey] = useDeleteOneApiKeyMutation();
   const [insertOneApiKey] = useInsertOneApiKeyMutation();
+
+  const { updateOneObject: updateApiKey } = useUpdateOneObjectRecord({
+    objectNamePlural: 'apiKeysV2',
+  });
+
   const { object: apiKeyData } = useFindOneObjectRecord({
     objectNameSingular: 'apiKeyV2',
     objectMetadataId: apiKeyId,
   });
 
   const deleteIntegration = async (redirect = true) => {
-    await deleteApiKey({
-      variables: { apiKeyId },
-      update: (cache) =>
-        cache.evict({
-          id: cache.identify({ __typename: 'ApiKey', id: apiKeyId }),
-        }),
+    await updateApiKey?.({
+      idToUpdate: apiKeyId,
+      input: { revokedAt: DateTime.now().toString() },
     });
     if (redirect) {
       navigate('/settings/developers/api-keys');
