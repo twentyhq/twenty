@@ -31,13 +31,10 @@ export const ToggleField = () => {
           allowImpersonation: value,
         },
       });
-      setCurrentWorkspaceMember(
-        (current) =>
-          ({
-            ...current,
-            allowImpersonation: value,
-          } as any),
-      );
+      setCurrentWorkspaceMember({
+        ...currentWorkspaceMember,
+        allowImpersonation: value,
+      });
     } catch (err: any) {
       enqueueSnackBar(err?.message, {
         variant: 'error',

@@ -65,9 +65,7 @@ export const ProfilePictureUploader = () => {
         },
       });
 
-      setCurrentWorkspaceMember(
-        (current) => ({ ...current, avatarUrl } as any),
-      );
+      setCurrentWorkspaceMember({ ...currentWorkspaceMember, avatarUrl });
 
       return result;
     } catch (error) {
@@ -96,9 +94,7 @@ export const ProfilePictureUploader = () => {
       },
     });
 
-    setCurrentWorkspaceMember(
-      (current) => ({ ...current, avatarUrl: null } as any),
-    );
+    setCurrentWorkspaceMember({ ...currentWorkspaceMember, avatarUrl: null });
   };
 
   return (

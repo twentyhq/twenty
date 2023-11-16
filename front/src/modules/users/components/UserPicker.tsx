@@ -18,10 +18,6 @@ export type UserPickerProps = {
   initialSearchFilter?: string | null;
 };
 
-type UserForSelect = EntityForSelect & {
-  entityType: Entity.WorkspaceMember;
-};
-
 export const UserPicker = ({
   userId,
   onSubmit,
