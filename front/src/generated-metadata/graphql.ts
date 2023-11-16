@@ -221,7 +221,7 @@ export type CreateRelationInput = {
   toObjectMetadataId: Scalars['String']['input'];
 };
 
-export enum Currency {
+export enum CurrencyCode {
   Aed = 'AED',
   Afn = 'AFN',
   All = 'ALL',
@@ -608,7 +608,7 @@ export type Person = {
 export type Pipeline = {
   __typename?: 'Pipeline';
   createdAt: Scalars['DateTime']['output'];
-  currency: Currency;
+  currency: CurrencyCode;
   icon: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];

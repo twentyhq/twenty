@@ -5,42 +5,42 @@ import { FieldContext } from '../../contexts/FieldContext';
 import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { usePersistField } from '../../hooks/usePersistField';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
-import { FieldURLV2Value } from '../../types/FieldMetadata';
+import { FieldCurrencyValue } from '../../types/FieldMetadata';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
-import { isFieldURLV2 } from '../../types/guards/isFieldURLV2';
-import { isFieldURLV2Value } from '../../types/guards/isFieldURLV2Value';
+import { isFieldCurrency } from '../../types/guards/isFieldCurrency';
+import { isFieldCurrencyValue } from '../../types/guards/isFieldCurrencyValue';
 
-export const useURLV2Field = () => {
+export const useCurrencyField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('URL_V2', isFieldURLV2, fieldDefinition);
+  assertFieldMetadata('CURRENCY', isFieldCurrency, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<FieldURLV2Value>(
+  const [fieldValue, setFieldValue] = useRecoilState<FieldCurrencyValue>(
     entityFieldsFamilySelector({
       entityId: entityId,
       fieldName: fieldName,
     }),
   );
 
-  const fieldInitialValue = useFieldInitialValue();
-
-  const initialValue: FieldURLV2Value = fieldInitialValue?.isEmpty
-    ? { link: '', text: '' }
-    : fieldInitialValue?.value
-    ? { link: fieldInitialValue.value, text: '' }
-    : fieldValue;
-
   const persistField = usePersistField();
 
-  const persistURLField = (newValue: FieldURLV2Value) => {
-    if (!isFieldURLV2Value(newValue)) {
+  const persistCurrencyField = (newValue: FieldCurrencyValue) => {
+    if (!isFieldCurrencyValue(newValue)) {
       return;
     }
 
     persistField(newValue);
   };
+
+  const fieldInitialValue = useFieldInitialValue();
+
+  const initialValue: FieldCurrencyValue = fieldInitialValue?.isEmpty
+    ? { amountMicros: 0, currencyCode: '' }
+    : !isNaN(Number(fieldInitialValue?.value))
+    ? { amountMicros: Number(fieldInitialValue?.value), currencyCode: '' }
+    : { amountMicros: 0, currencyCode: '' } ?? fieldValue;
 
   return {
     fieldDefinition,
@@ -48,6 +48,6 @@ export const useURLV2Field = () => {
     initialValue,
     setFieldValue,
     hotkeyScope,
-    persistURLField,
+    persistCurrencyField,
   };
 };

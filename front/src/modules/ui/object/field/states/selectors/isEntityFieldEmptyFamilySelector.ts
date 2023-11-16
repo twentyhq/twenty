@@ -7,12 +7,14 @@ import { FieldDefinition } from '../../types/FieldDefinition';
 import { FieldMetadata } from '../../types/FieldMetadata';
 import { isFieldBoolean } from '../../types/guards/isFieldBoolean';
 import { isFieldChip } from '../../types/guards/isFieldChip';
+import { isFieldCurrency } from '../../types/guards/isFieldCurrency';
+import { isFieldCurrencyValue } from '../../types/guards/isFieldCurrencyValue';
 import { isFieldDate } from '../../types/guards/isFieldDate';
 import { isFieldDoubleTextChip } from '../../types/guards/isFieldDoubleTextChip';
 import { isFieldEmail } from '../../types/guards/isFieldEmail';
+import { isFieldLink } from '../../types/guards/isFieldLink';
+import { isFieldLinkValue } from '../../types/guards/isFieldLinkValue';
 import { isFieldMoney } from '../../types/guards/isFieldMoney';
-import { isFieldMoneyAmountV2 } from '../../types/guards/isFieldMoneyAmountV2';
-import { isFieldMoneyAmountV2Value } from '../../types/guards/isFieldMoneyAmountV2Value';
 import { isFieldNumber } from '../../types/guards/isFieldNumber';
 import { isFieldPhone } from '../../types/guards/isFieldPhone';
 import { isFieldProbability } from '../../types/guards/isFieldProbability';
@@ -20,8 +22,6 @@ import { isFieldRelation } from '../../types/guards/isFieldRelation';
 import { isFieldRelationValue } from '../../types/guards/isFieldRelationValue';
 import { isFieldText } from '../../types/guards/isFieldText';
 import { isFieldURL } from '../../types/guards/isFieldURL';
-import { isFieldURLV2 } from '../../types/guards/isFieldURLV2';
-import { isFieldURLV2Value } from '../../types/guards/isFieldURLV2Value';
 import { entityFieldsFamilyState } from '../entityFieldsFamilyState';
 
 const isValueEmpty = (value: unknown) => !assertNotNull(value) || value === '';
@@ -98,21 +98,21 @@ export const isEntityFieldEmptyFamilySelector = selectorFamily({
         );
       }
 
-      if (isFieldMoneyAmountV2(fieldDefinition)) {
+      if (isFieldCurrency(fieldDefinition)) {
         const fieldName = fieldDefinition.metadata.fieldName;
         const fieldValue = get(entityFieldsFamilyState(entityId))?.[fieldName];
 
         return (
-          !isFieldMoneyAmountV2Value(fieldValue) ||
-          isValueEmpty(fieldValue?.amount)
+          !isFieldCurrencyValue(fieldValue) ||
+          isValueEmpty(fieldValue?.amountMicros)
         );
       }
 
-      if (isFieldURLV2(fieldDefinition)) {
+      if (isFieldLink(fieldDefinition)) {
         const fieldName = fieldDefinition.metadata.fieldName;
         const fieldValue = get(entityFieldsFamilyState(entityId))?.[fieldName];
 
-        return !isFieldURLV2Value(fieldValue) || isValueEmpty(fieldValue?.link);
+        return !isFieldLinkValue(fieldValue) || isValueEmpty(fieldValue?.url);
       }
 
       throw new Error(

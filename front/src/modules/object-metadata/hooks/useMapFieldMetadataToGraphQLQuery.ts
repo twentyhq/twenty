@@ -22,10 +22,10 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
       ] as FieldType[]
     ).includes(fieldType);
 
-    const fieldIsURL = fieldType === 'URL' || fieldType === 'URL_V2';
+    const fieldIsLink = fieldType === 'URL' || fieldType === 'LINK';
 
-    const fieldIsMoneyAmount =
-      fieldType === 'MONEY' || fieldType === 'MONEY_AMOUNT_V2';
+    const fieldIsCurrencyAmount =
+      fieldType === 'MONEY' || fieldType === 'CURRENCY';
 
     if (fieldIsSimpleValue) {
       return field.name;
@@ -69,20 +69,20 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
           }
         }
       }`;
-    } else if (fieldIsURL) {
+    } else if (fieldIsLink) {
       return `
       ${field.name}
       {
-        text
-        link
+        label
+        url
       }
     `;
-    } else if (fieldIsMoneyAmount) {
+    } else if (fieldIsCurrencyAmount) {
       return `
       ${field.name}
       {
-        amount
-        currency
+        amountMicros
+        currencyCode
       }
     `;
     }

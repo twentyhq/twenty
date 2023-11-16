@@ -3,7 +3,7 @@ import { FieldMetadataInterface } from 'src/tenant/schema-builder/interfaces/fie
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
-export const moneyObjectDefinition = {
+export const currencyObjectDefinition = {
   id: FieldMetadataType.CURRENCY.toString(),
   nameSingular: 'currency',
   namePlural: 'currency',

@@ -7,6 +7,8 @@ import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
 import { isFieldChip } from '../types/guards/isFieldChip';
 import { isFieldChipValue } from '../types/guards/isFieldChipValue';
+import { isFieldCurrency } from '../types/guards/isFieldCurrency';
+import { isFieldCurrencyValue } from '../types/guards/isFieldCurrencyValue';
 import { isFieldDate } from '../types/guards/isFieldDate';
 import { isFieldDateValue } from '../types/guards/isFieldDateValue';
 import { isFieldDoubleText } from '../types/guards/isFieldDoubleText';
@@ -15,9 +17,9 @@ import { isFieldDoubleTextChipValue } from '../types/guards/isFieldDoubleTextChi
 import { isFieldDoubleTextValue } from '../types/guards/isFieldDoubleTextValue';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
 import { isFieldEmailValue } from '../types/guards/isFieldEmailValue';
+import { isFieldLink } from '../types/guards/isFieldLink';
+import { isFieldLinkValue } from '../types/guards/isFieldLinkValue';
 import { isFieldMoney } from '../types/guards/isFieldMoney';
-import { isFieldMoneyAmountV2 } from '../types/guards/isFieldMoneyAmountV2';
-import { isFieldMoneyAmountV2Value } from '../types/guards/isFieldMoneyAmountV2Value';
 import { isFieldMoneyValue } from '../types/guards/isFieldMoneyValue';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldNumberValue } from '../types/guards/isFieldNumberValue';
@@ -30,8 +32,6 @@ import { isFieldRelationValue } from '../types/guards/isFieldRelationValue';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldTextValue } from '../types/guards/isFieldTextValue';
 import { isFieldURL } from '../types/guards/isFieldURL';
-import { isFieldURLV2 } from '../types/guards/isFieldURLV2';
-import { isFieldURLV2Value } from '../types/guards/isFieldURLV2Value';
 import { isFieldURLValue } from '../types/guards/isFieldURLValue';
 
 export const usePersistField = () => {
@@ -74,7 +74,7 @@ export const usePersistField = () => {
           isFieldURL(fieldDefinition) && isFieldURLValue(valueToPersist);
 
         const fieldIsURLV2 =
-          isFieldURLV2(fieldDefinition) && isFieldURLV2Value(valueToPersist);
+          isFieldLink(fieldDefinition) && isFieldLinkValue(valueToPersist);
 
         const fieldIsBoolean =
           isFieldBoolean(fieldDefinition) &&
@@ -91,8 +91,8 @@ export const usePersistField = () => {
           isFieldMoney(fieldDefinition) && isFieldMoneyValue(valueToPersist);
 
         const fieldIsMoneyAmountV2 =
-          isFieldMoneyAmountV2(fieldDefinition) &&
-          isFieldMoneyAmountV2Value(valueToPersist);
+          isFieldCurrency(fieldDefinition) &&
+          isFieldCurrencyValue(valueToPersist);
 
         const fieldIsPhone =
           isFieldPhone(fieldDefinition) && isFieldPhoneValue(valueToPersist);

@@ -6,7 +6,7 @@ import {
   LinkType,
   SocialLink,
 } from '@/ui/navigation/link/components/SocialLink';
-import { FieldURLV2Value } from '@/ui/object/field/types/FieldMetadata';
+import { FieldLinkValue } from '@/ui/object/field/types/FieldMetadata';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 
@@ -20,8 +20,8 @@ const StyledRawLink = styled(RoundedLink)`
   }
 `;
 
-type URLV2DisplayProps = {
-  value?: FieldURLV2Value;
+type LinkDisplayProps = {
+  value?: FieldLinkValue;
 };
 
 const checkUrlType = (url: string) => {
@@ -39,18 +39,18 @@ const checkUrlType = (url: string) => {
   return LinkType.Url;
 };
 
-export const URLV2Display = ({ value }: URLV2DisplayProps) => {
+export const LinkDisplay = ({ value }: LinkDisplayProps) => {
   const handleClick = (event: MouseEvent<HTMLElement>) => {
     event.stopPropagation();
   };
 
-  const absoluteUrl = value?.link
-    ? value.link.startsWith('http')
-      ? value.link
-      : 'https://' + value.link
+  const absoluteUrl = value?.url
+    ? value.url.startsWith('http')
+      ? value.url
+      : 'https://' + value.url
     : '';
 
-  const displayedValue = value?.text || value?.link || '';
+  const displayedValue = value?.label || value?.url || '';
 
   const type = checkUrlType(absoluteUrl);
 
