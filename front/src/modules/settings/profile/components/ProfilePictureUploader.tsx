@@ -1,11 +1,9 @@
 import { useState } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { ImageInput } from '@/ui/input/components/ImageInput';
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 import { useUploadProfilePictureMutation } from '~/generated/graphql';
 
@@ -44,7 +42,6 @@ export const ProfilePictureUploader = () => {
             signal: controller.signal,
           },
         },
-        refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
       });
 
       setUploadController(null);
