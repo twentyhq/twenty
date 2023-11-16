@@ -10,16 +10,14 @@ import { Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { DeleteOneOptions } from '@ptc-org/nestjs-query-core';
 
-import {
-  convertFieldMetadataToColumnActions,
-  generateTargetColumnMap,
-} from 'src/metadata/field-metadata/utils/field-metadata.util';
 import { TenantMigrationRunnerService } from 'src/tenant-migration-runner/tenant-migration-runner.service';
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { FieldMetadataDTO } from 'src/metadata/field-metadata/dtos/field-metadata.dto';
 import { CreateFieldInput } from 'src/metadata/field-metadata/dtos/create-field.input';
 import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
+import { generateTargetColumnMap } from 'src/metadata/field-metadata/utils/generate-target-column-map.util';
+import { convertFieldMetadataToColumnActions } from 'src/metadata/field-metadata/utils/convert-field-metadata-to-column-action.util';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 

@@ -3,11 +3,12 @@ import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.en
 
 import { ObjectMetadataInterface } from './object-metadata.interface';
 
-export interface ArgMetadata {
+export interface ArgMetadata<T = any> {
   kind?: InputTypeDefinitionKind;
   type?: FieldMetadataType;
   isNullable?: boolean;
   isArray?: boolean;
+  defaultValue?: T;
 }
 
 export interface ArgsMetadata {

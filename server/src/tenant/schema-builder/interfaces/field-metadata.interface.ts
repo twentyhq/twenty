@@ -1,4 +1,5 @@
-import { FieldMetadataTargetColumnMap } from 'src/tenant/schema-builder/interfaces/field-metadata-target-column-map.interface';
+import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interfaces/field-metadata-target-column-map.interface';
+import { FieldMetadataDefaultValue } from 'src/metadata/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
@@ -11,6 +12,7 @@ export interface FieldMetadataInterface<
   name: string;
   label: string;
   targetColumnMap: FieldMetadataTargetColumnMap<T>;
+  defaultValue?: FieldMetadataDefaultValue<T>;
   objectMetadataId: string;
   description?: string;
   isNullable?: boolean;

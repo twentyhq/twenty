@@ -60,6 +60,7 @@ export class InputTypeDefinitionFactory {
 
       const type = this.inputTypeFactory.create(fieldMetadata, kind, options, {
         nullable: fieldMetadata.isNullable,
+        defaultValue: fieldMetadata.defaultValue,
       });
 
       fields[fieldMetadata.name] = {

@@ -14,6 +14,7 @@ export type TenantMigrationColumnCreate = {
   action: TenantMigrationColumnActionType.CREATE;
   columnName: string;
   columnType: string;
+  defaultValue?: any;
 };
 
 export type TenantMigrationColumnRelation = {

@@ -203,6 +203,7 @@ export class TenantMigrationRunnerService {
       new TableColumn({
         name: migrationColumn.columnName,
         type: migrationColumn.columnType,
+        default: migrationColumn.defaultValue,
         isNullable: true,
       }),
     );

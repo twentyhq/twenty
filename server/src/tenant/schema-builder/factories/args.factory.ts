@@ -52,6 +52,7 @@ export class ArgsFactory {
         }
 
         const gqlType = this.typeMapperService.mapToGqlType(fieldType, {
+          defaultValue: arg.defaultValue,
           nullable: arg.isNullable,
           isArray: arg.isArray,
         });
