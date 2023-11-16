@@ -9,7 +9,7 @@ const opportunityMetadata = {
   description: 'An opportunity',
   icon: 'IconTargetArrow',
   isActive: true,
-  isSystem: true,
+  isSystem: false,
   fields: [
     {
       isCustom: false,
