@@ -1,3 +1,4 @@
+import { parseFieldRelationType } from '@/object-metadata/utils/parseFieldRelationType';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
@@ -30,4 +31,5 @@ export const formatFieldMetadataItemAsColumnDefinition = ({
   Icon: icons[field.icon ?? 'Icon123'],
   isVisible: true,
   basePathToShowPage: `/object/${objectMetadataItem.nameSingular}/`,
+  relationType: parseFieldRelationType(field),
 });

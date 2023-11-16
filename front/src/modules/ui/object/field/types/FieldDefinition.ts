@@ -4,6 +4,11 @@ import { AvatarType } from '@/users/components/Avatar';
 import { FieldMetadata } from './FieldMetadata';
 import { FieldType } from './FieldType';
 
+export type FieldDefinitionRelationType =
+  | 'TO_ONE_OBJECT'
+  | 'FROM_NAMY_OBJECTS'
+  | 'TO_MANY_OBJECTS';
+
 export type FieldDefinition<T extends FieldMetadata> = {
   fieldMetadataId: string;
   label: string;
@@ -17,4 +22,5 @@ export type FieldDefinition<T extends FieldMetadata> = {
     pictureUrl?: string;
     avatarType: AvatarType;
   };
+  relationType?: FieldDefinitionRelationType;
 };
