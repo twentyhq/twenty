@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 import { CompanyBoard } from '@/companies/board/components/CompanyBoard';
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
+import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { PipelineAddButton } from '@/pipeline/components/PipelineAddButton';
 import { usePipelineStages } from '@/pipeline/hooks/usePipelineStages';
 import { IconTargetArrow } from '@/ui/display/icon';
@@ -45,6 +46,12 @@ export const Opportunities = () => {
       },
     });
   };
+
+  const opportunitiesV2MetadataId = useFindOneObjectMetadataItem({
+    objectNameSingular: 'opportunityV2',
+  }).foundObjectMetadataItem?.id;
+
+  if (!opportunitiesV2MetadataId) return null;
 
   return (
     <PageContainer>
