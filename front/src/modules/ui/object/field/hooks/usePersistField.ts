@@ -109,7 +109,9 @@ export const usePersistField = () => {
             variables: {
               where: { id: entityId },
               data: {
-                [fieldName]: valueToPersist?.id ?? null,
+                // TODO: find a more elegant way to do this ?
+                // Maybe have a link between the RELATION field and the UUID field ?
+                [`${fieldName}Id`]: valueToPersist?.id ?? null,
               },
             },
           });

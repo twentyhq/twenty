@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
@@ -37,7 +38,11 @@ export const RecordTableEffect = () => {
     setAvailableFilterDefinitions?.(filterDefinitions);
     setAvailableFieldDefinitions?.(columnDefinitions);
 
-    setAvailableTableColumns(columnDefinitions);
+    const availableTableColumns = columnDefinitions.filter(
+      filterAvailableTableColumns,
+    );
+
+    setAvailableTableColumns(availableTableColumns);
   }, [
     setViewObjectMetadataId,
     setViewType,

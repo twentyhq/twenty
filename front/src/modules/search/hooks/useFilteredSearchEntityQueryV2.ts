@@ -6,22 +6,6 @@ import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/comp
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { isDefined } from '~/utils/isDefined';
 
-type SelectStringKeys<T> = NonNullable<
-  {
-    [K in keyof T]: K extends '__typename'
-      ? never
-      : T[K] extends string | undefined | null
-      ? K
-      : never;
-  }[keyof T]
->;
-
-type ExtractEntityTypeFromQueryResponse<T> = T extends {
-  searchResults: Array<infer U>;
-}
-  ? U
-  : never;
-
 type SearchFilter = { fieldNames: string[]; filter: string | number };
 
 export type OrderBy =

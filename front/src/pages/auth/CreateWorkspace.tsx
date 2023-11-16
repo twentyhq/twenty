@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -15,7 +14,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
@@ -69,8 +67,6 @@ export const CreateWorkspace = () => {
               displayName: data.name,
             },
           },
-          refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
-          awaitRefetchQueries: true,
         });
 
         if (result.errors || !result.data?.updateWorkspace) {

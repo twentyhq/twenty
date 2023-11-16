@@ -5,6 +5,7 @@ import { useRecoilState } from 'recoil';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { filterAvailableFieldMetadataItem } from '@/object-record/utils/filterAvailableFieldMetadataItem';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
 import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { PageBody } from '@/ui/layout/page/PageBody';
@@ -155,6 +156,7 @@ export const RecordShowPage = () => {
                         .diff(DateTime.fromISO(b.createdAt))
                         .toMillis(),
                     )
+                    .filter(filterAvailableFieldMetadataItem)
                     .map((metadataField, index) => {
                       return (
                         <FieldContext.Provider

@@ -20,21 +20,21 @@ export const ToggleField = () => {
   const handleChange = async (value: boolean) => {
     try {
       if (!updateOneObject || objectNotFoundInMetadata) {
-        return;
+        throw new Error('Object not found in metadata');
+      }
+      if (!currentWorkspaceMember?.id) {
+        throw new Error('User is not logged in');
       }
       await updateOneObject({
-        idToUpdate: currentWorkspaceMember?.id ?? '',
+        idToUpdate: currentWorkspaceMember?.id,
         input: {
           allowImpersonation: value,
         },
       });
-      setCurrentWorkspaceMember(
-        (current) =>
-          ({
-            ...current,
-            allowImpersonation: value,
-          } as any),
-      );
+      setCurrentWorkspaceMember({
+        ...currentWorkspaceMember,
+        allowImpersonation: value,
+      });
     } catch (err: any) {
       enqueueSnackBar(err?.message, {
         variant: 'error',
