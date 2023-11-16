@@ -127,6 +127,7 @@ export const CreateProfile = () => {
       enqueueSnackBar,
       navigate,
       objectNotFoundInMetadata,
+      setCurrentWorkspaceMember,
       updateOneObject,
     ],
   );
