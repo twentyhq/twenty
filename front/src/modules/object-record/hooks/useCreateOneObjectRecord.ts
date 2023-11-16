@@ -60,6 +60,7 @@ export const useCreateOneObjectRecord = ({
             `create${capitalize(foundObjectMetadataItem.nameSingular)}`
           ],
         );
+        return createdObject.data;
       }
     : undefined;
 
