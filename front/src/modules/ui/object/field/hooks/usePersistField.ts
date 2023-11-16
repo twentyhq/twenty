@@ -105,16 +105,11 @@ export const usePersistField = () => {
             valueToPersist,
           );
 
-          console.log({
-            fieldName,
-            valueToPersist,
-          });
-
           updateEntity?.({
             variables: {
               where: { id: entityId },
               data: {
-                [fieldName]: valueToPersist?.id,
+                [fieldName]: valueToPersist?.id ?? null,
               },
             },
           });

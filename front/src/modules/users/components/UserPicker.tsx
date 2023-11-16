@@ -40,7 +40,8 @@ export const UserPicker = ({
     objectNamePlural: 'workspaceMembersV2',
   });
 
-  const useFindManyWorkspaceMembers = () => useQuery(findManyQuery, {});
+  const useFindManyWorkspaceMembers = (options: any) =>
+    useQuery(findManyQuery, options);
 
   const users = useFilteredSearchEntityQueryV2({
     queryHook: useFindManyWorkspaceMembers,
@@ -50,7 +51,7 @@ export const UserPicker = ({
         filter: relationPickerSearchFilter,
       },
     ],
-    orderByField: '',
+    orderByField: 'firstName',
     mappingFunction: (workspaceMember) => ({
       entityType: Entity.WorkspaceMember,
       id: workspaceMember.id,

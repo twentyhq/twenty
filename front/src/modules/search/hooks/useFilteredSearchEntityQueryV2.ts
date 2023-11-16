@@ -1,9 +1,10 @@
 import { QueryHookOptions, QueryResult } from '@apollo/client';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { mapPaginatedObjectsToObjects } from '@/object-record/utils/mapPaginatedObjectsToObjects';
 import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
-import { QueryMode, SortOrder } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 type SelectStringKeys<T> = NonNullable<
   {
@@ -23,6 +24,12 @@ type ExtractEntityTypeFromQueryResponse<T> = T extends {
 
 type SearchFilter = { fieldNames: string[]; filter: string | number };
 
+export type OrderBy =
+  | 'AscNullsLast'
+  | 'DescNullsLast'
+  | 'AscNullsFirst'
+  | 'DescNullsFirst';
+
 const DEFAULT_SEARCH_REQUEST_LIMIT = 30;
 
 // TODO: use this for all search queries, because we need selectedEntities and entitiesToSelect each time we want to search
@@ -31,7 +38,7 @@ export const useFilteredSearchEntityQueryV2 = ({
   queryHook,
   orderByField,
   filters,
-  sortOrder = SortOrder.Asc,
+  sortOrder = 'AscNullsLast',
   selectedIds,
   mappingFunction,
   limit,
@@ -43,19 +50,13 @@ export const useFilteredSearchEntityQueryV2 = ({
   ) => QueryResult<any, any>;
   orderByField: string;
   filters: SearchFilter[];
-  sortOrder?: SortOrder;
+  sortOrder?: OrderBy;
   selectedIds: string[];
   mappingFunction: (entity: any) => EntityForSelect;
   limit?: number;
   excludeEntityIds?: string[];
   objectNamePlural: string;
 }): EntitiesForMultipleEntitySelect<EntityForSelect> => {
-  console.log({
-    selectedIds,
-    excludeEntityIds,
-    filters,
-  });
-
   const { loading: selectedEntitiesLoading, data: selectedEntitiesData } =
     queryHook({
       variables: {
@@ -70,30 +71,23 @@ export const useFilteredSearchEntityQueryV2 = ({
       } as any,
     });
 
-  console.log({
-    selectedEntitiesData,
-    variables: {
-      filter: {
-        id: {
-          in: selectedIds,
-        },
-      },
-      orderBy: {
-        [orderByField]: sortOrder,
-      },
-    } as any,
-  });
+  const searchFilter = filters
+    .map(({ fieldNames, filter }) => {
+      if (!isNonEmptyString(filter)) {
+        return undefined;
+      }
 
-  const searchFilter = filters.map(({ fieldNames, filter }) => {
-    return {
-      OR: fieldNames.map((fieldName) => ({
-        [fieldName]: {
-          like: `%${filter}%`,
-          mode: QueryMode.Insensitive,
-        },
-      })),
-    };
-  });
+      return {
+        or: fieldNames.map((fieldName) => ({
+          [fieldName]: {
+            like: `%${filter}%`,
+            // TODO: fix mode
+            // mode: QueryMode.Insensitive,
+          },
+        })),
+      };
+    })
+    .filter(isDefined);
 
   const {
     loading: filteredSelectedEntitiesLoading,
@@ -101,13 +95,15 @@ export const useFilteredSearchEntityQueryV2 = ({
   } = queryHook({
     variables: {
       filter: {
-        AND: [
+        and: [
           {
-            AND: searchFilter,
+            and: searchFilter,
           },
           {
-            id: {
-              in: selectedIds,
+            not: {
+              id: {
+                in: selectedIds,
+              },
             },
           },
         ],
@@ -122,13 +118,15 @@ export const useFilteredSearchEntityQueryV2 = ({
     queryHook({
       variables: {
         filter: {
-          AND: [
+          and: [
             {
-              AND: searchFilter,
+              and: searchFilter,
             },
             {
-              id: {
-                notIn: [...selectedIds, ...excludeEntityIds],
+              not: {
+                id: {
+                  in: [...selectedIds, ...excludeEntityIds],
+                },
               },
             },
           ],
@@ -139,21 +137,6 @@ export const useFilteredSearchEntityQueryV2 = ({
         },
       } as any,
     });
-
-  console.log({
-    selectedEntities: mapPaginatedObjectsToObjects({
-      objectNamePlural: objectNamePlural,
-      pagedObjects: selectedEntitiesData,
-    }),
-    filteredSelectedEntities: mapPaginatedObjectsToObjects({
-      objectNamePlural: objectNamePlural,
-      pagedObjects: filteredSelectedEntitiesData,
-    }).map(mappingFunction),
-    entitiesToSelect: mapPaginatedObjectsToObjects({
-      objectNamePlural: objectNamePlural,
-      pagedObjects: entitiesToSelectData,
-    }).map(mappingFunction),
-  });
 
   return {
     selectedEntities: mapPaginatedObjectsToObjects({

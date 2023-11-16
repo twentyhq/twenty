@@ -36,7 +36,8 @@ export const CompanyPicker = ({
     objectNamePlural: 'companiesV2',
   });
 
-  const useFindManyCompanies = () => useQuery(findManyQuery);
+  const useFindManyCompanies = (options: any) =>
+    useQuery(findManyQuery, options);
 
   const companies = useFilteredSearchEntityQueryV2({
     queryHook: useFindManyCompanies,
