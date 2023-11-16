@@ -40,6 +40,7 @@ export const seedViewFieldMetadata = async (
       'icon',
       'isNullable',
       'isSystem',
+      'defaultValue',
     ])
     .orIgnore()
     .values([
@@ -58,8 +59,9 @@ export const seedViewFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: true,
+        isNullable: false,
         isSystem: true,
+        defaultValue: { type: 'uuid' },
       },
       {
         id: SeedViewFieldMetadataIds.CreatedAt,
@@ -75,8 +77,9 @@ export const seedViewFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       {
         id: SeedViewFieldMetadataIds.UpdatedAt,
@@ -92,8 +95,9 @@ export const seedViewFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       // Fields
       {
@@ -112,6 +116,7 @@ export const seedViewFieldMetadata = async (
         icon: null,
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: '' },
       },
       {
         id: SeedViewFieldMetadataIds.ObjectMetadataId,
@@ -129,6 +134,7 @@ export const seedViewFieldMetadata = async (
         icon: null,
         isNullable: false,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedViewFieldMetadataIds.Type,
@@ -146,6 +152,7 @@ export const seedViewFieldMetadata = async (
         icon: null,
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: '' },
       },
       {
         id: SeedViewFieldMetadataIds.ViewFields,
@@ -161,6 +168,7 @@ export const seedViewFieldMetadata = async (
         icon: 'IconTag',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedViewFieldMetadataIds.ViewSorts,
@@ -176,6 +184,7 @@ export const seedViewFieldMetadata = async (
         icon: 'IconArrowsSort',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedViewFieldMetadataIds.ViewFilters,
@@ -191,6 +200,7 @@ export const seedViewFieldMetadata = async (
         icon: 'IconFilterBolt',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
     ])
     .execute();

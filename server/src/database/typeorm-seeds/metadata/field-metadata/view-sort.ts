@@ -37,6 +37,7 @@ export const seedViewSortFieldMetadata = async (
       'icon',
       'isNullable',
       'isSystem',
+      'defaultValue',
     ])
     .orIgnore()
     .values([
@@ -55,8 +56,9 @@ export const seedViewSortFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: true,
+        isNullable: false,
         isSystem: true,
+        defaultValue: { type: 'uuid' },
       },
       {
         id: SeedViewSortFieldMetadataIds.CreatedAt,
@@ -72,8 +74,9 @@ export const seedViewSortFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       {
         id: SeedViewSortFieldMetadataIds.UpdatedAt,
@@ -89,8 +92,9 @@ export const seedViewSortFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       // Fields
       {
@@ -109,6 +113,7 @@ export const seedViewSortFieldMetadata = async (
         icon: null,
         isNullable: false,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedViewSortFieldMetadataIds.View,
@@ -126,6 +131,7 @@ export const seedViewSortFieldMetadata = async (
         icon: 'IconLayoutCollage',
         isNullable: false,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedViewSortFieldMetadataIds.Direction,
@@ -143,6 +149,7 @@ export const seedViewSortFieldMetadata = async (
         icon: null,
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: '' },
       },
     ])
     .execute();

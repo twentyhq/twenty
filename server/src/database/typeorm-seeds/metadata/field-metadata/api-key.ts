@@ -37,6 +37,7 @@ export const seedApiKeyFieldMetadata = async (
       'icon',
       'isNullable',
       'isSystem',
+      'defaultValue',
     ])
     .orIgnore()
     .values([
@@ -57,6 +58,7 @@ export const seedApiKeyFieldMetadata = async (
         icon: undefined,
         isNullable: false,
         isSystem: true,
+        defaultValue: { type: 'uuid' },
       },
       {
         id: SeedApiKeyFieldMetadataIds.CreatedAt,
@@ -72,8 +74,9 @@ export const seedApiKeyFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       {
         id: SeedApiKeyFieldMetadataIds.UpdatedAt,
@@ -89,8 +92,9 @@ export const seedApiKeyFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       // Scalar fields
       {
@@ -109,6 +113,7 @@ export const seedApiKeyFieldMetadata = async (
         icon: 'IconLink',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedApiKeyFieldMetadataIds.ExpiresAt,
@@ -126,6 +131,7 @@ export const seedApiKeyFieldMetadata = async (
         icon: 'IconCalendar',
         isNullable: false,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedApiKeyFieldMetadataIds.RevokedAt,
@@ -143,6 +149,7 @@ export const seedApiKeyFieldMetadata = async (
         icon: 'IconCalendar',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
     ])
     .execute();

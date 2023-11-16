@@ -51,6 +51,7 @@ export const seedCompanyFieldMetadata = async (
       'icon',
       'isNullable',
       'isSystem',
+      'defaultValue',
     ])
     .orIgnore()
     .values([
@@ -69,8 +70,9 @@ export const seedCompanyFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: true,
+        isNullable: false,
         isSystem: true,
+        defaultValue: { type: 'uuid' },
       },
       {
         id: SeedCompanyFieldMetadataIds.CreatedAt,
@@ -86,8 +88,9 @@ export const seedCompanyFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       {
         id: SeedCompanyFieldMetadataIds.UpdatedAt,
@@ -103,8 +106,9 @@ export const seedCompanyFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       // Main Identifier
       {
@@ -123,6 +127,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconBuildingSkyscraper',
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: '' },
       },
 
       // Scalar Fields
@@ -143,6 +148,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconLink',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.Address,
@@ -160,6 +166,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconMap',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.Employees,
@@ -177,6 +184,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconUsers',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.LinkedinUrl,
@@ -194,6 +202,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconBrandLinkedin',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.XUrl,
@@ -211,6 +220,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconBrandX',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.AnnualRecurringRevenue,
@@ -229,6 +239,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconMoneybag',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.IdealCustomerProfile,
@@ -247,6 +258,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconTarget',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
 
       // Relationships
@@ -264,6 +276,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconUsers',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.AccountOwner,
@@ -280,6 +293,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconUserCircle',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.AccountOwnerForeignKey,
@@ -295,6 +309,7 @@ export const seedCompanyFieldMetadata = async (
         icon: undefined,
         isNullable: true,
         isSystem: true,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.ActivityTargets,
@@ -310,6 +325,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconCheckbox',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.Opportunities,
@@ -325,6 +341,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconTargetArrow',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.Favorites,
@@ -340,6 +357,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconHeart',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.Attachments,
@@ -355,6 +373,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconFileImport',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
     ])
     .execute();
