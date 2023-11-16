@@ -56,7 +56,7 @@ export const seedViewSortFieldMetadata = async (
         description: undefined,
         icon: undefined,
         isNullable: true,
-        // isSystem: true,
+        isSystem: true,
       },
       {
         id: SeedViewSortFieldMetadataIds.CreatedAt,
@@ -73,6 +73,7 @@ export const seedViewSortFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedViewSortFieldMetadataIds.UpdatedAt,
@@ -89,6 +90,7 @@ export const seedViewSortFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       // Fields
       {

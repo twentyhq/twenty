@@ -71,7 +71,7 @@ export const seedPersonFieldMetadata = async (
         description: undefined,
         icon: undefined,
         isNullable: true,
-        // isSystem: true,
+        isSystem: true,
       },
       {
         id: SeedPersonFieldMetadataIds.CreatedAt,
@@ -88,6 +88,7 @@ export const seedPersonFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedPersonFieldMetadataIds.UpdatedAt,
@@ -104,6 +105,7 @@ export const seedPersonFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       // Main Identifier
       {

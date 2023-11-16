@@ -1,6 +1,5 @@
 import { DataSource } from 'typeorm';
 
-import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
@@ -59,7 +58,7 @@ export const seedCommentFieldMetadata = async (
         description: undefined,
         icon: undefined,
         isNullable: true,
-        // isSystem: true,
+        isSystem: true,
       },
       {
         id: SeedCommentFieldMetadataIds.CreatedAt,
@@ -76,6 +75,7 @@ export const seedCommentFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedCommentFieldMetadataIds.UpdatedAt,
@@ -92,6 +92,7 @@ export const seedCommentFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       // Scalar fields
       {

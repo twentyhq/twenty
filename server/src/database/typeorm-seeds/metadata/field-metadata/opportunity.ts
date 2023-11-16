@@ -65,7 +65,7 @@ export const seedOpportunityFieldMetadata = async (
         description: undefined,
         icon: undefined,
         isNullable: true,
-        // isSystem: true,
+        isSystem: true,
       },
       {
         id: SeedOpportunityFieldMetadataIds.CreatedAt,
@@ -82,6 +82,7 @@ export const seedOpportunityFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedOpportunityFieldMetadataIds.UpdatedAt,
@@ -98,6 +99,7 @@ export const seedOpportunityFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       // Scalar fields
       {

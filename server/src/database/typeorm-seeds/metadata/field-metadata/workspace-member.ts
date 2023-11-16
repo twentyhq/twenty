@@ -67,7 +67,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         description: undefined,
         icon: undefined,
         isNullable: true,
-        // isSystem: true,
+        isSystem: true,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.CreatedAt,
@@ -84,6 +84,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.UpdatedAt,
@@ -100,6 +101,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       // Scalar fields
       {
@@ -151,6 +153,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         description: 'Workspace member avatar',
         icon: 'IconFileUpload',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.UserId,

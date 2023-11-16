@@ -59,7 +59,7 @@ export const seedActivityTargetFieldMetadata = async (
         description: undefined,
         icon: undefined,
         isNullable: true,
-        // isSystem: true,
+        isSystem: true,
       },
       {
         id: SeedActivityTargetFieldMetadataIds.CreatedAt,
@@ -76,6 +76,7 @@ export const seedActivityTargetFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedActivityTargetFieldMetadataIds.UpdatedAt,
@@ -92,6 +93,7 @@ export const seedActivityTargetFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       // Relationships
       {

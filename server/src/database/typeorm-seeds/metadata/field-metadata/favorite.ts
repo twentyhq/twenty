@@ -62,7 +62,7 @@ export const seedFavoriteFieldMetadata = async (
         description: undefined,
         icon: undefined,
         isNullable: true,
-        // isSystem: true,
+        isSystem: true,
       },
       {
         id: SeedFavoriteFieldMetadataIds.CreatedAt,
@@ -79,6 +79,7 @@ export const seedFavoriteFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedFavoriteFieldMetadataIds.UpdatedAt,
@@ -95,6 +96,7 @@ export const seedFavoriteFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       // Scalar fields
       {

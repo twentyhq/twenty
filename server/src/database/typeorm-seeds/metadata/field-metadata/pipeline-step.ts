@@ -57,7 +57,7 @@ export const seedPipelineStepFieldMetadata = async (
         description: undefined,
         icon: undefined,
         isNullable: true,
-        // isSystem: true,
+        isSystem: true,
       },
       {
         id: SeedPipelineStepFieldMetadataIds.CreatedAt,
@@ -74,6 +74,7 @@ export const seedPipelineStepFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedPipelineStepFieldMetadataIds.UpdatedAt,
@@ -90,6 +91,7 @@ export const seedPipelineStepFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       // Main Identifier
       {

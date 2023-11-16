@@ -58,7 +58,7 @@ export const seedViewFilterFieldMetadata = async (
         description: undefined,
         icon: undefined,
         isNullable: true,
-        // isSystem: true,
+        isSystem: true,
       },
       {
         id: SeedViewFilterFieldMetadataIds.CreatedAt,
@@ -75,6 +75,7 @@ export const seedViewFilterFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       {
         id: SeedViewFilterFieldMetadataIds.UpdatedAt,
@@ -91,6 +92,7 @@ export const seedViewFilterFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
       },
       // Fields
       {
