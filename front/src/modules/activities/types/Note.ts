@@ -1,5 +1,5 @@
 import { Activity } from '@/activities/types/Activity';
 
-export type TaskForList = Activity & {
-  type: 'task';
+export type Note = Activity & {
+  type: 'Note';
 };

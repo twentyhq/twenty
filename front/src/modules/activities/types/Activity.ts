@@ -1,11 +1,11 @@
-import { Comment } from 'xlsx-ugnis';
-
-import { ActivityTarget } from '@/activities/types/AcitivytTarget';
+import { ActivityTarget } from '@/activities/types/ActivityTarget';
+import { Comment } from '@/activities/types/Comment';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 export type ActivityType = 'Task' | 'Note';
 
 export type Activity = {
+  __typename: 'Activity';
   id: string;
   createdAt: string;
   updatedAt: string;
@@ -16,6 +16,8 @@ export type Activity = {
   title: string;
   body: string;
   author: WorkspaceMember;
+  authorId: string;
   assignee: WorkspaceMember | null;
+  assigneeId: string | null;
   comments: Comment[];
 };

@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 
+import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { IconUserCircle } from '@/ui/display/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
@@ -7,17 +8,44 @@ import { FieldDefinition } from '@/ui/object/field/types/FieldDefinition';
 import { FieldRelationMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
-import { Company, User, useUpdateActivityMutation } from '~/generated/graphql';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { Company, User } from '~/generated/graphql';
 
 type ActivityAssigneeEditableFieldProps = {
   activity: Pick<Company, 'id' | 'accountOwnerId'> & {
-    assignee?: Pick<User, 'id' | 'displayName' | 'avatarUrl'> | null;
+    assignee?: Pick<
+      WorkspaceMember,
+      'id' | 'firstName' | 'lastName' | 'avatarUrl'
+    > | null;
   };
 };
 
 export const ActivityAssigneeEditableField = ({
   activity,
 }: ActivityAssigneeEditableFieldProps) => {
+  const useUpdateOneObjectMutation: () => [(params: any) => any, any] = () => {
+    const { updateOneObject } = useUpdateOneObjectRecord({
+      objectNameSingular: 'activityV2',
+    });
+
+    const updateEntity = ({
+      variables,
+    }: {
+      variables: {
+        where: { id: string };
+        data: {
+          [fieldName: string]: any;
+        };
+      };
+    }) => {
+      updateOneObject?.({
+        idToUpdate: variables.where.id,
+        input: variables.data,
+      });
+    };
+
+    return [updateEntity, { loading: false }];
+  };
   const value = useMemo(
     () => ({
       entityId: activity.id,
@@ -39,7 +67,7 @@ export const ActivityAssigneeEditableField = ({
           };
         },
       } satisfies FieldDefinition<FieldRelationMetadata>,
-      useUpdateEntityMutation: useUpdateActivityMutation,
+      useUpdateEntityMutation: useUpdateOneObjectMutation,
       hotkeyScope: InlineCellHotkeyScope.InlineCell,
     }),
     [activity.id],

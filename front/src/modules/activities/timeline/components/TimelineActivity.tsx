@@ -150,7 +150,9 @@ export const TimelineActivity = ({ activity }: TimelineActivityProps) => {
           <IconNotes />
         </StyledIconContainer>
         <StyledItemTitleContainer>
-          <span>{activity.author.displayName}</span>
+          <span>
+            {activity.author.firstName + ' ' + activity.author.lastName}
+          </span>
           created a {activity.type.toLowerCase()}
         </StyledItemTitleContainer>
         <StyledItemTitleDate id={`id-${activity.id}`}>

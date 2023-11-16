@@ -1,26 +1,23 @@
-import { useApolloClient } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
-
+import { Activity } from '@/activities/types/Activity';
+import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
-  Activity,
   useGetWorkspaceMembersLazyQuery,
-  User,
   useSearchUserQuery,
-  useUpdateActivityMutation,
 } from '~/generated/graphql';
-
-import { ACTIVITY_UPDATE_FRAGMENT } from '../graphql/fragments/activityUpdateFragment';
-import { GET_ACTIVITIES } from '../graphql/queries/getActivities';
 
 export type ActivityAssigneePickerProps = {
   activity: Pick<Activity, 'id'> & {
-    accountOwner?: Pick<User, 'id' | 'displayName'> | null;
+    accountOwner?: Pick<
+      WorkspaceMember,
+      'id' | 'firstName' | 'lastName'
+    > | null;
   };
   onSubmit?: () => void;
   onCancel?: () => void;
@@ -38,7 +35,9 @@ export const ActivityAssigneePicker = ({
   const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
-  const [updateActivity] = useUpdateActivityMutation();
+  const { updateOneObject } = useUpdateOneObjectRecord({
+    objectNameSingular: 'ActivityV2',
+  });
   const [getWorkspaceMember] = useGetWorkspaceMembersLazyQuery();
 
   const users = useFilteredSearchEntityQuery({
@@ -63,12 +62,6 @@ export const ActivityAssigneePicker = ({
     selectedIds: activity?.accountOwner?.id ? [activity?.accountOwner?.id] : [],
   });
 
-  const client = useApolloClient();
-  const cachedActivity = client.readFragment({
-    id: `Activity:${activity.id}`,
-    fragment: ACTIVITY_UPDATE_FRAGMENT,
-  });
-
   const handleEntitySelected = async (
     selectedUser: UserForSelect | null | undefined,
   ) => {
@@ -83,28 +76,14 @@ export const ActivityAssigneePicker = ({
         })
       ).data?.workspaceMembers?.[0];
 
-      updateActivity({
-        variables: {
-          where: { id: activity.id },
-          data: {
-            assignee: { connect: { id: selectedUser.id } },
-            workspaceMemberAssignee: {
-              connect: { id: workspaceMemberAssignee?.id },
-            },
+      updateOneObject?.({
+        idToUpdate: activity.id,
+        input: {
+          assignee: { connect: { id: selectedUser.id } },
+          workspaceMemberAssignee: {
+            connect: { id: workspaceMemberAssignee?.id },
           },
         },
-        optimisticResponse: {
-          __typename: 'Mutation',
-          updateOneActivity: {
-            ...cachedActivity,
-            assignee: {
-              __typename: 'User',
-              ...selectedUser,
-              displayName: selectedUser.name,
-            },
-          },
-        },
-        refetchQueries: [getOperationName(GET_ACTIVITIES) ?? ''],
       });
     }
 

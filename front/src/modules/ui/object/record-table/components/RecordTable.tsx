@@ -82,8 +82,6 @@ type RecordTableProps = {
 export const RecordTable = ({ updateEntityMutation }: RecordTableProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  console.log('record table');
-
   const {
     leaveTableFocus,
     setRowSelectedState,

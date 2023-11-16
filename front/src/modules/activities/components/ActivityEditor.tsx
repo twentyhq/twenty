@@ -1,29 +1,22 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { useApolloClient } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 
 import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
-import { GET_ACTIVITIES } from '@/activities/graphql/queries/getActivities';
+import { Activity } from '@/activities/types/Activity';
+import { ActivityTarget } from '@/activities/types/ActivityTarget';
+import { Comment } from '@/activities/types/Comment';
+import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { PropertyBox } from '@/ui/object/record-inline-cell/property-box/components/PropertyBox';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import {
-  Activity,
-  ActivityTarget,
-  ActivityType,
-  User,
-  useUpdateActivityMutation,
-} from '~/generated/graphql';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { debounce } from '~/utils/debounce';
 
 import { ActivityAssigneeEditableField } from '../editable-fields/components/ActivityAssigneeEditableField';
 import { ActivityEditorDateField } from '../editable-fields/components/ActivityEditorDateField';
 import { ActivityRelationEditableField } from '../editable-fields/components/ActivityRelationEditableField';
-import { ACTIVITY_UPDATE_FRAGMENT } from '../graphql/fragments/activityUpdateFragment';
-import { CommentForDrawer } from '../types/CommentForDrawer';
 
 import { ActivityTitle } from './ActivityTitle';
 
@@ -65,14 +58,16 @@ type ActivityEditorProps = {
     Activity,
     'id' | 'title' | 'body' | 'type' | 'completedAt' | 'dueAt'
   > & {
-    comments?: Array<CommentForDrawer> | null;
+    comments?: Array<Comment> | null;
   } & {
     assignee?: Pick<
-      User,
-      'id' | 'firstName' | 'lastName' | 'displayName'
+      WorkspaceMember,
+      'id' | 'firstName' | 'lastName' | 'avatarUrl'
     > | null;
   } & {
-    activityTargets?: Array<Pick<ActivityTarget, 'id'>> | null;
+    activityTargets?: Array<
+      Pick<ActivityTarget, 'id' | 'companyId' | 'personId'>
+    > | null;
   };
   showComment?: boolean;
   autoFillTitle?: boolean;
@@ -91,64 +86,32 @@ export const ActivityEditor = ({
     activity.completedAt ?? '',
   );
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const [updateActivityMutation] = useUpdateActivityMutation();
-
-  const client = useApolloClient();
-  const cachedActivity = client.readFragment({
-    id: `Activity:${activity.id}`,
-    fragment: ACTIVITY_UPDATE_FRAGMENT,
+  const { updateOneObject } = useUpdateOneObjectRecord({
+    objectNamePlural: 'activitiesV2',
   });
 
   const updateTitle = useCallback(
     (newTitle: string) => {
-      updateActivityMutation({
-        variables: {
-          where: {
-            id: activity.id,
-          },
-          data: {
-            title: newTitle ?? '',
-          },
+      updateOneObject?.({
+        idToUpdate: activity.id,
+        input: {
+          title: newTitle ?? '',
         },
-        optimisticResponse: {
-          __typename: 'Mutation',
-          updateOneActivity: {
-            __typename: 'Activity',
-            ...cachedActivity,
-            title: newTitle,
-          },
-        },
-        refetchQueries: [getOperationName(GET_ACTIVITIES) ?? ''],
       });
     },
-    [activity.id, cachedActivity, updateActivityMutation],
+    [activity.id, updateOneObject],
   );
-
   const handleActivityCompletionChange = useCallback(
     (value: boolean) => {
-      updateActivityMutation({
-        variables: {
-          where: {
-            id: activity.id,
-          },
-          data: {
-            completedAt: value ? new Date().toISOString() : null,
-          },
+      updateOneObject?.({
+        idToUpdate: activity.id,
+        input: {
+          completedAt: value ? new Date().toISOString() : null,
         },
-        optimisticResponse: {
-          __typename: 'Mutation',
-          updateOneActivity: {
-            __typename: 'Activity',
-            ...cachedActivity,
-            completedAt: value ? new Date().toISOString() : null,
-          },
-        },
-        refetchQueries: [getOperationName(GET_ACTIVITIES) ?? ''],
       });
       setCompletedAt(value ? new Date().toISOString() : null);
     },
-    [activity.id, cachedActivity, updateActivityMutation],
+    [activity.id, updateOneObject],
   );
 
   const debouncedUpdateTitle = debounce(updateTitle, 200);
@@ -182,7 +145,7 @@ export const ActivityEditor = ({
             onCompletionChange={handleActivityCompletionChange}
           />
           <PropertyBox>
-            {activity.type === ActivityType.Task && (
+            {activity.type === 'Task' && (
               <>
                 <RecoilScope>
                   <ActivityEditorDateField activityId={activity.id} />

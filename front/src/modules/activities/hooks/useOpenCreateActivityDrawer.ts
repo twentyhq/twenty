@@ -1,20 +1,15 @@
-import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
+import { Activity, ActivityType } from '@/activities/types/Activity';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
-import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
+import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { ActivityType, useCreateActivityMutation } from '~/generated/graphql';
 
-import { GET_ACTIVITIES } from '../graphql/queries/getActivities';
-import { GET_ACTIVITIES_BY_TARGETS } from '../graphql/queries/getActivitiesByTarget';
-import { GET_ACTIVITY } from '../graphql/queries/getActivity';
 import { activityTargetableEntityArrayState } from '../states/activityTargetableEntityArrayState';
 import { viewableActivityIdState } from '../states/viewableActivityIdState';
 import { ActivityTargetableEntity } from '../types/ActivityTargetableEntity';
@@ -22,7 +17,9 @@ import { getRelationData } from '../utils/getRelationData';
 
 export const useOpenCreateActivityDrawer = () => {
   const { openRightDrawer } = useRightDrawer();
-  const [createActivityMutation] = useCreateActivityMutation();
+  const { createOneObject } = useCreateOneObjectRecord({
+    objectNamePlural: 'activitiesV2',
+  });
   const currentUser = useRecoilValue(currentUserState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const setHotkeyScope = useSetHotkeyScope();
@@ -43,41 +40,28 @@ export const useOpenCreateActivityDrawer = () => {
   }) => {
     const now = new Date().toISOString();
 
-    return createActivityMutation({
-      variables: {
-        data: {
-          id: v4(),
-          createdAt: now,
-          updatedAt: now,
-          author: { connect: { id: currentUser?.id ?? '' } },
-          workspaceMemberAuthor: {
-            connect: { id: currentWorkspaceMember?.id ?? '' },
-          },
-          assignee: { connect: { id: assigneeId ?? currentUser?.id ?? '' } },
-          workspaceMemberAssignee: {
-            connect: { id: currentWorkspaceMember?.id ?? '' },
-          },
-          type: type,
-          activityTargets: {
-            createMany: {
-              data: targetableEntities
-                ? getRelationData(targetableEntities)
-                : [],
-              skipDuplicates: true,
-            },
-          },
+    createOneObject?.({
+      id: v4(),
+      createdAt: now,
+      updatedAt: now,
+      author: { connect: { id: currentUser?.id ?? '' } },
+      workspaceMemberAuthor: {
+        connect: { id: currentWorkspaceMember?.id ?? '' },
+      },
+      assignee: { connect: { id: assigneeId ?? currentUser?.id ?? '' } },
+      workspaceMemberAssignee: {
+        connect: { id: currentWorkspaceMember?.id ?? '' },
+      },
+      type: type,
+      activityTargets: {
+        createMany: {
+          data: targetableEntities ? getRelationData(targetableEntities) : [],
+          skipDuplicates: true,
         },
       },
-      refetchQueries: [
-        getOperationName(GET_COMPANIES) ?? '',
-        getOperationName(GET_PEOPLE) ?? '',
-        getOperationName(GET_ACTIVITY) ?? '',
-        getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? '',
-        getOperationName(GET_ACTIVITIES) ?? '',
-      ],
-      onCompleted: (data) => {
+      onCompleted: (data: Activity) => {
         setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-        setViewableActivityId(data.createOneActivity.id);
+        setViewableActivityId(data.id);
         setActivityTargetableEntityArray(targetableEntities ?? []);
         openRightDrawer(RightDrawerPages.CreateActivity);
       },
