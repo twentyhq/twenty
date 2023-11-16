@@ -75,6 +75,7 @@ export class FilterTypeDefinitionFactory {
 
       const type = this.filterTypeFactory.create(fieldMetadata, options, {
         nullable: fieldMetadata.isNullable,
+        defaultValue: fieldMetadata.defaultValue,
       });
 
       fields[fieldMetadata.name] = {

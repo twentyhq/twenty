@@ -48,6 +48,7 @@ export const seedActivityFieldMetadata = async (
       'icon',
       'isNullable',
       'isSystem',
+      'defaultValue',
     ])
     .orIgnore()
     .values([
@@ -66,8 +67,9 @@ export const seedActivityFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: true,
+        isNullable: false,
         isSystem: true,
+        defaultValue: { type: 'uuid' },
       },
       {
         id: SeedActivityFieldMetadataIds.CreatedAt,
@@ -83,8 +85,9 @@ export const seedActivityFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       {
         id: SeedActivityFieldMetadataIds.UpdatedAt,
@@ -100,8 +103,9 @@ export const seedActivityFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       // Primary identifier
       {
@@ -120,6 +124,7 @@ export const seedActivityFieldMetadata = async (
         icon: 'IconNotes',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
 
       // Scalar fields
@@ -139,6 +144,7 @@ export const seedActivityFieldMetadata = async (
         icon: 'IconList',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedActivityFieldMetadataIds.Type,
@@ -156,6 +162,7 @@ export const seedActivityFieldMetadata = async (
         icon: 'IconCheckbox',
         isNullable: false,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedActivityFieldMetadataIds.ReminderAt,
@@ -173,6 +180,7 @@ export const seedActivityFieldMetadata = async (
         icon: 'IconCalendarEvent',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedActivityFieldMetadataIds.DueAt,
@@ -190,6 +198,7 @@ export const seedActivityFieldMetadata = async (
         icon: 'IconCalendarEvent',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedActivityFieldMetadataIds.CompletedAt,
@@ -207,6 +216,7 @@ export const seedActivityFieldMetadata = async (
         icon: 'IconCheck',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
 
       // Relationships
@@ -224,6 +234,7 @@ export const seedActivityFieldMetadata = async (
         icon: 'IconCheckbox',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedActivityFieldMetadataIds.Attachments,
@@ -239,6 +250,7 @@ export const seedActivityFieldMetadata = async (
         icon: 'IconFileImport',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedActivityFieldMetadataIds.Comments,
@@ -254,6 +266,7 @@ export const seedActivityFieldMetadata = async (
         icon: 'IconComment',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedActivityFieldMetadataIds.Author,
@@ -272,6 +285,7 @@ export const seedActivityFieldMetadata = async (
         icon: 'IconUserCircle',
         isNullable: false,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedActivityFieldMetadataIds.AuthorForeignKey,
@@ -287,6 +301,7 @@ export const seedActivityFieldMetadata = async (
         icon: undefined,
         isNullable: false,
         isSystem: true,
+        defaultValue: undefined,
       },
       {
         id: SeedActivityFieldMetadataIds.Assignee,
@@ -303,6 +318,7 @@ export const seedActivityFieldMetadata = async (
         icon: 'IconUserCircle',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedActivityFieldMetadataIds.AssigneeForeignKey,
@@ -318,6 +334,7 @@ export const seedActivityFieldMetadata = async (
         icon: undefined,
         isNullable: true,
         isSystem: true,
+        defaultValue: undefined,
       },
     ])
     .execute();

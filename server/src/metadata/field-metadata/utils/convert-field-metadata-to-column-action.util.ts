@@ -1,4 +1,4 @@
-import { FieldMetadataTargetColumnMap } from 'src/tenant/schema-builder/interfaces/field-metadata-target-column-map.interface';
+import { FieldMetadataDefaultValue } from 'src/metadata/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import {
   FieldMetadataEntity,
@@ -8,119 +8,121 @@ import {
   TenantMigrationColumnAction,
   TenantMigrationColumnActionType,
 } from 'src/metadata/tenant-migration/tenant-migration.entity';
-
-/**
- * Generate a target column map for a given type, this is used to map the field to the correct column(s) in the database.
- * This is used to support fields that map to multiple columns in the database.
- *
- * @param type string
- * @returns FieldMetadataTargetColumnMap
- */
-export function generateTargetColumnMap(
-  type: FieldMetadataType,
-  isCustomField: boolean,
-  fieldName: string,
-): FieldMetadataTargetColumnMap {
-  const columnName = isCustomField ? `_${fieldName}` : fieldName;
-
-  switch (type) {
-    case FieldMetadataType.TEXT:
-    case FieldMetadataType.PHONE:
-    case FieldMetadataType.EMAIL:
-    case FieldMetadataType.NUMBER:
-    case FieldMetadataType.PROBABILITY:
-    case FieldMetadataType.BOOLEAN:
-    case FieldMetadataType.DATE:
-      return {
-        value: columnName,
-      };
-    case FieldMetadataType.URL:
-      return {
-        text: `${columnName}_text`,
-        link: `${columnName}_link`,
-      };
-    case FieldMetadataType.MONEY:
-      return {
-        amount: `${columnName}_amount`,
-        currency: `${columnName}_currency`,
-      };
-    default:
-      throw new Error(`Unknown type ${type}`);
-  }
-}
+import { serializeDefaultValue } from 'src/metadata/field-metadata/utils/serialize-default-value';
 
 export function convertFieldMetadataToColumnActions(
   fieldMetadata: FieldMetadataEntity,
 ): TenantMigrationColumnAction[] {
   switch (fieldMetadata.type) {
-    case FieldMetadataType.TEXT:
+    case FieldMetadataType.TEXT: {
+      const defaultValue =
+        fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.TEXT>;
+
       return [
         {
           action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.value,
           columnType: 'text',
+          defaultValue: serializeDefaultValue(defaultValue?.value),
         },
       ];
+    }
     case FieldMetadataType.PHONE:
-    case FieldMetadataType.EMAIL:
+    case FieldMetadataType.EMAIL: {
+      const defaultValue =
+        fieldMetadata.defaultValue as FieldMetadataDefaultValue<
+          FieldMetadataType.PHONE | FieldMetadataType.EMAIL
+        >;
+
       return [
         {
           action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.value,
           columnType: 'varchar',
+          defaultValue: serializeDefaultValue(defaultValue?.value),
         },
       ];
+    }
     case FieldMetadataType.NUMBER:
-    case FieldMetadataType.PROBABILITY:
+    case FieldMetadataType.PROBABILITY: {
+      const defaultValue =
+        fieldMetadata.defaultValue as FieldMetadataDefaultValue<
+          FieldMetadataType.NUMBER | FieldMetadataType.PROBABILITY
+        >;
+
       return [
         {
           action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.value,
           columnType: 'float',
+          defaultValue: serializeDefaultValue(defaultValue?.value),
         },
       ];
-    case FieldMetadataType.BOOLEAN:
+    }
+    case FieldMetadataType.BOOLEAN: {
+      const defaultValue =
+        fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.BOOLEAN>;
+
       return [
         {
           action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.value,
           columnType: 'boolean',
+          defaultValue: serializeDefaultValue(defaultValue?.value),
         },
       ];
-    case FieldMetadataType.DATE:
+    }
+    case FieldMetadataType.DATE: {
+      const defaultValue =
+        fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.DATE>;
+
       return [
         {
           action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.value,
           columnType: 'timestamp',
+          defaultValue: serializeDefaultValue(defaultValue?.value),
         },
       ];
-    case FieldMetadataType.URL:
+    }
+    case FieldMetadataType.URL: {
+      const defaultValue =
+        fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.URL>;
+
       return [
         {
           action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.text,
           columnType: 'varchar',
+          defaultValue: serializeDefaultValue(defaultValue?.text),
         },
         {
           action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.link,
           columnType: 'varchar',
+          defaultValue: serializeDefaultValue(defaultValue?.link),
         },
       ];
-    case FieldMetadataType.MONEY:
+    }
+    case FieldMetadataType.MONEY: {
+      const defaultValue =
+        fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.MONEY>;
+
       return [
         {
           action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.amount,
           columnType: 'integer',
+          defaultValue: serializeDefaultValue(defaultValue?.amount),
         },
         {
           action: TenantMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.currency,
           columnType: 'varchar',
+          defaultValue: serializeDefaultValue(defaultValue?.currency),
         },
       ];
+    }
     default:
       throw new Error(`Unknown type ${fieldMetadata.type}`);
   }

@@ -39,6 +39,7 @@ export const seedViewFieldFieldMetadata = async (
       'icon',
       'isNullable',
       'isSystem',
+      'defaultValue',
     ])
     .orIgnore()
     .values([
@@ -57,8 +58,9 @@ export const seedViewFieldFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: true,
+        isNullable: false,
         isSystem: true,
+        defaultValue: { type: 'uuid' },
       },
       {
         id: SeedViewFieldFieldMetadataIds.CreatedAt,
@@ -74,8 +76,9 @@ export const seedViewFieldFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       {
         id: SeedViewFieldFieldMetadataIds.UpdatedAt,
@@ -91,8 +94,9 @@ export const seedViewFieldFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       // Fields
       {
@@ -111,6 +115,7 @@ export const seedViewFieldFieldMetadata = async (
         icon: 'IconTag',
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: '' },
       },
       {
         id: SeedViewFieldFieldMetadataIds.View,
@@ -126,6 +131,7 @@ export const seedViewFieldFieldMetadata = async (
         icon: 'IconLayoutCollage',
         isNullable: false,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedViewFieldFieldMetadataIds.IsVisible,
@@ -143,6 +149,7 @@ export const seedViewFieldFieldMetadata = async (
         icon: 'IconEye',
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: true },
       },
       {
         id: SeedViewFieldFieldMetadataIds.Size,
@@ -160,6 +167,7 @@ export const seedViewFieldFieldMetadata = async (
         icon: 'IconEye',
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: 0 },
       },
       {
         id: SeedViewFieldFieldMetadataIds.Position,
@@ -177,6 +185,7 @@ export const seedViewFieldFieldMetadata = async (
         icon: 'IconList',
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: 0 },
       },
     ])
     .execute();

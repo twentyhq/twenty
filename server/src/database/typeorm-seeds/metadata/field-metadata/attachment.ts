@@ -46,6 +46,7 @@ export const seedAttachmentFieldMetadata = async (
       'icon',
       'isNullable',
       'isSystem',
+      'defaultValue',
     ])
     .orIgnore()
     .values([
@@ -64,8 +65,9 @@ export const seedAttachmentFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: true,
+        isNullable: false,
         isSystem: true,
+        defaultValue: { type: 'uuid' },
       },
       {
         id: SeedAttachmentFieldMetadataIds.CreatedAt,
@@ -81,8 +83,9 @@ export const seedAttachmentFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       {
         id: SeedAttachmentFieldMetadataIds.UpdatedAt,
@@ -98,8 +101,9 @@ export const seedAttachmentFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       // Primary Identifier
       {
@@ -118,6 +122,7 @@ export const seedAttachmentFieldMetadata = async (
         icon: 'IconFileUpload',
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: '' },
       },
       // Scalar fields
       {
@@ -136,6 +141,7 @@ export const seedAttachmentFieldMetadata = async (
         icon: 'IconLink',
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: '' },
       },
       {
         id: SeedAttachmentFieldMetadataIds.Type,
@@ -153,6 +159,7 @@ export const seedAttachmentFieldMetadata = async (
         icon: 'IconList',
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: '' },
       },
 
       // Relationships
@@ -170,6 +177,7 @@ export const seedAttachmentFieldMetadata = async (
         icon: 'IconCircleUser',
         isNullable: false,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedAttachmentFieldMetadataIds.AuthorForeignKey,
@@ -185,6 +193,7 @@ export const seedAttachmentFieldMetadata = async (
         icon: undefined,
         isNullable: false,
         isSystem: true,
+        defaultValue: undefined,
       },
       {
         id: SeedAttachmentFieldMetadataIds.Activity,
@@ -200,6 +209,7 @@ export const seedAttachmentFieldMetadata = async (
         icon: 'IconNotes',
         isNullable: false,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedAttachmentFieldMetadataIds.ActivityForeignKey,
@@ -215,6 +225,7 @@ export const seedAttachmentFieldMetadata = async (
         icon: undefined,
         isNullable: false,
         isSystem: true,
+        defaultValue: undefined,
       },
       {
         id: SeedAttachmentFieldMetadataIds.Person,
@@ -230,6 +241,7 @@ export const seedAttachmentFieldMetadata = async (
         icon: 'IconUser',
         isNullable: false,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedAttachmentFieldMetadataIds.PersonForeignKey,
@@ -245,6 +257,7 @@ export const seedAttachmentFieldMetadata = async (
         icon: undefined,
         isNullable: false,
         isSystem: true,
+        defaultValue: undefined,
       },
       {
         id: SeedAttachmentFieldMetadataIds.Company,
@@ -260,6 +273,7 @@ export const seedAttachmentFieldMetadata = async (
         icon: 'IconBuildingSkyscraper',
         isNullable: false,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedAttachmentFieldMetadataIds.CompanyForeignKey,
@@ -275,6 +289,7 @@ export const seedAttachmentFieldMetadata = async (
         icon: undefined,
         isNullable: false,
         isSystem: true,
+        defaultValue: undefined,
       },
     ])
     .execute();

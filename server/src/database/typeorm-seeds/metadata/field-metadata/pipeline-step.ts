@@ -38,6 +38,7 @@ export const seedPipelineStepFieldMetadata = async (
       'icon',
       'isNullable',
       'isSystem',
+      'defaultValue',
     ])
     .orIgnore()
     .values([
@@ -56,8 +57,9 @@ export const seedPipelineStepFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: true,
+        isNullable: false,
         isSystem: true,
+        defaultValue: { type: 'uuid' },
       },
       {
         id: SeedPipelineStepFieldMetadataIds.CreatedAt,
@@ -73,8 +75,9 @@ export const seedPipelineStepFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       {
         id: SeedPipelineStepFieldMetadataIds.UpdatedAt,
@@ -90,8 +93,9 @@ export const seedPipelineStepFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       // Main Identifier
       {
@@ -110,6 +114,7 @@ export const seedPipelineStepFieldMetadata = async (
         icon: 'IconCurrencyDollar',
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: '' },
       },
 
       // Scalar Fields
@@ -129,6 +134,7 @@ export const seedPipelineStepFieldMetadata = async (
         icon: 'IconColorSwatch',
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: '' },
       },
       {
         id: SeedPipelineStepFieldMetadataIds.Position,
@@ -146,6 +152,7 @@ export const seedPipelineStepFieldMetadata = async (
         icon: 'IconHierarchy2',
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: 0 },
       },
 
       // Relationships
@@ -163,6 +170,7 @@ export const seedPipelineStepFieldMetadata = async (
         icon: 'IconTargetArrow',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
     ])
     .execute();

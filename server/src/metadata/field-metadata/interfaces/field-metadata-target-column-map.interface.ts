@@ -10,12 +10,12 @@ export interface FieldMetadataTargetColumnMapUrl {
 }
 
 export interface FieldMetadataTargetColumnMapMoney {
-  amount: number;
+  amount: string;
   currency: string;
 }
 
 type AllFieldMetadataTypes = {
-  [key: string]: any;
+  [key: string]: string;
 };
 
 type FieldMetadataTypeMapping = {

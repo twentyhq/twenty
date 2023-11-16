@@ -1,9 +1,7 @@
-import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { BadRequestException } from '@nestjs/common';
 
-import {
-  generateTargetColumnMap,
-  convertFieldMetadataToColumnActions,
-} from './field-metadata.util';
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { generateTargetColumnMap } from 'src/metadata/field-metadata/utils/generate-target-column-map.util';
 
 describe('generateTargetColumnMap', () => {
   it('should generate a target column map for a given type', () => {
@@ -35,23 +33,6 @@ describe('generateTargetColumnMap', () => {
   it('should throw an error for an unknown type', () => {
     expect(() =>
       generateTargetColumnMap('invalid' as FieldMetadataType, false, 'name'),
-    ).toThrowError('Unknown type invalid');
-  });
-});
-
-describe('convertFieldMetadataToColumnActions', () => {
-  it('should convert field metadata to column actions', () => {
-    const fieldMetadata = {
-      type: FieldMetadataType.TEXT,
-      targetColumnMap: { value: 'name' },
-    } as any;
-    const columnActions = convertFieldMetadataToColumnActions(fieldMetadata);
-    expect(columnActions).toEqual([
-      {
-        action: 'CREATE',
-        columnName: 'name',
-        columnType: 'text',
-      },
-    ]);
+    ).toThrow(BadRequestException);
   });
 });

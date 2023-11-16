@@ -39,6 +39,7 @@ export const seedCommentFieldMetadata = async (
       'icon',
       'isNullable',
       'isSystem',
+      'defaultValue',
     ])
     .orIgnore()
     .values([
@@ -57,8 +58,9 @@ export const seedCommentFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: true,
+        isNullable: false,
         isSystem: true,
+        defaultValue: { type: 'uuid' },
       },
       {
         id: SeedCommentFieldMetadataIds.CreatedAt,
@@ -74,8 +76,9 @@ export const seedCommentFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       {
         id: SeedCommentFieldMetadataIds.UpdatedAt,
@@ -91,8 +94,9 @@ export const seedCommentFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       // Scalar fields
       {
@@ -111,6 +115,7 @@ export const seedCommentFieldMetadata = async (
         icon: 'IconLink',
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: '' },
       },
       // Relationships
       {
@@ -127,6 +132,7 @@ export const seedCommentFieldMetadata = async (
         icon: 'IconCircleUser',
         isNullable: false,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCommentFieldMetadataIds.AuthorForeignKey,
@@ -142,6 +148,7 @@ export const seedCommentFieldMetadata = async (
         icon: undefined,
         isNullable: false,
         isSystem: true,
+        defaultValue: undefined,
       },
       {
         id: SeedCommentFieldMetadataIds.Activity,
@@ -157,6 +164,7 @@ export const seedCommentFieldMetadata = async (
         icon: 'IconNotes',
         isNullable: false,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCommentFieldMetadataIds.ActivityForeignKey,
@@ -172,6 +180,7 @@ export const seedCommentFieldMetadata = async (
         icon: undefined,
         isNullable: false,
         isSystem: true,
+        defaultValue: undefined,
       },
     ])
     .execute();
