@@ -1,5 +1,4 @@
 const path = require("path");
-const { launchEditorMiddleware } = require('@react-dev-inspector/middleware')
 
 module.exports = {
   devServer: {
@@ -15,14 +14,7 @@ module.exports = {
           }
         },
       },
-    },
-    setupMiddlewares(middlewares) {
-      
-      middlewares.unshift(launchEditorMiddleware)
-      
-        console.log({ middlewares })
-      return middlewares
-    } 
+    }
   },
   webpack: {
     alias: {
