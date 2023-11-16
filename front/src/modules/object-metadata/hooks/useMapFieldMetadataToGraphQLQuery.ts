@@ -33,15 +33,11 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
       fieldType === 'RELATION' &&
       field.toRelationMetadata?.relationType === 'ONE_TO_MANY'
     ) {
-      console.log({ objectMetadataItems, field });
-
       const relationMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) =>
           objectMetadataItem.id ===
           (field.toRelationMetadata as any)?.fromObjectMetadata?.id,
       );
-
-      console.log({ relationMetadataItem });
 
       return `${field.name}
     {

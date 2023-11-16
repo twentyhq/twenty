@@ -6,11 +6,6 @@ import { useRelationField } from '../../hooks/useRelationField';
 export const RelationFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useRelationField();
 
-  console.log({
-    fieldDefinition,
-    fieldValue,
-  });
-
   const entityChipProps = getEntityChipFromFieldMetadata(
     fieldDefinition,
     fieldValue,

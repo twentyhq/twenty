@@ -22,11 +22,6 @@ export const useRelationField = () => {
     }),
   );
 
-  console.log({
-    fieldDefinition,
-    fieldValue,
-  });
-
   const fieldInitialValue = useFieldInitialValue();
 
   const initialSearchValue = fieldInitialValue?.isEmpty

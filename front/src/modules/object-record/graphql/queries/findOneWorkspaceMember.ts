@@ -11,6 +11,7 @@ export const FIND_ONE_WORKSPACE_MEMBER_V2 = gql`
           colorScheme
           avatarUrl
           locale
+          allowImpersonation
         }
       }
     }
