@@ -13,8 +13,7 @@ import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpre
 import { Fields } from '@/spreadsheet-import/types';
 import { IconChevronDown, IconForbid } from '@/ui/display/icon';
 
-import { Column, Columns } from '../MatchColumnsStep';
-import { ColumnType } from '../MatchColumnsStep';
+import { Column, Columns, ColumnType } from '../MatchColumnsStep';
 
 import { SubMatchingSelect } from './SubMatchingSelect';
 

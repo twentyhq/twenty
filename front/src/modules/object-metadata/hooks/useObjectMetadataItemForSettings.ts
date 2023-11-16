@@ -9,7 +9,10 @@ import { useUpdateOneObjectMetadataItem } from './useUpdateOneObjectMetadataItem
 
 export const useObjectMetadataItemForSettings = () => {
   const { objectMetadataItems, loading } = useFindManyObjectMetadataItems({
-    filter: {
+    objectFilter: {
+      isSystem: { is: false },
+    },
+    fieldFilter: {
       isSystem: { is: false },
     },
   });

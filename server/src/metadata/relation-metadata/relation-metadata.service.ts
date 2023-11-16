@@ -100,18 +100,33 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         description: undefined,
         icon: record.toIcon,
         isCustom: true,
-        targetColumnMap: {
-          value: foreignKeyColumnName,
-        },
+        targetColumnMap: {},
         isActive: true,
         type: FieldMetadataType.RELATION,
         objectMetadataId: record.toObjectMetadataId,
         workspaceId: record.workspaceId,
       },
+      // FOREIGN KEY
+      {
+        name: foreignKeyColumnName,
+        label: `${record.toLabel} Foreign Key`,
+        description: undefined,
+        icon: undefined,
+        isCustom: true,
+        targetColumnMap: {},
+        isActive: true,
+        // Should not be visible on the front side
+        isSystem: true,
+        type: FieldMetadataType.UUID,
+        objectMetadataId: record.toObjectMetadataId,
+        workspaceId: record.workspaceId,
+      },
     ]);
 
-    const createdFieldMap = createdFields.reduce((acc, curr) => {
-      acc[curr.objectMetadataId] = curr;
+    const createdFieldMap = createdFields.reduce((acc, fieldMetadata) => {
+      if (fieldMetadata.type === FieldMetadataType.RELATION) {
+        acc[fieldMetadata.objectMetadataId] = fieldMetadata;
+      }
       return acc;
     }, {});
 

@@ -1,4 +1,5 @@
 export type FieldType =
+  | 'UUID'
   | 'TEXT'
   | 'RELATION'
   | 'CHIP'

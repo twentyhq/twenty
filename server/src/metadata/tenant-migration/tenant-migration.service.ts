@@ -62,7 +62,7 @@ export class TenantMigrationService {
     workspaceId: string,
   ): Promise<TenantMigrationEntity[]> {
     return await this.tenantMigrationRepository.find({
-      order: { createdAt: 'ASC' },
+      order: { createdAt: 'ASC', name: 'ASC' },
       where: {
         appliedAt: IsNull(),
         workspaceId,

@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+
 const companyMetadata = {
   nameSingular: 'companyV2',
   namePlural: 'companiesV2',
@@ -12,7 +14,7 @@ const companyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'name',
       label: 'Name',
       targetColumnMap: {
@@ -25,7 +27,7 @@ const companyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'domainName',
       label: 'Domain Name',
       targetColumnMap: {
@@ -39,7 +41,7 @@ const companyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'address',
       label: 'Address',
       targetColumnMap: {
@@ -52,7 +54,7 @@ const companyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'NUMBER',
+      type: FieldMetadataType.NUMBER,
       name: 'employees',
       label: 'Employees',
       targetColumnMap: {
@@ -65,7 +67,7 @@ const companyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'linkedinUrl',
       label: 'Linkedin',
       targetColumnMap: {
@@ -78,7 +80,7 @@ const companyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'xUrl',
       label: 'X',
       targetColumnMap: {
@@ -91,7 +93,7 @@ const companyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'NUMBER',
+      type: FieldMetadataType.NUMBER,
       name: 'annualRecurringRevenue',
       label: 'ARR',
       targetColumnMap: {
@@ -105,7 +107,7 @@ const companyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'BOOLEAN',
+      type: FieldMetadataType.BOOLEAN,
       name: 'idealCustomerProfile',
       label: 'ICP',
       targetColumnMap: {
@@ -120,7 +122,7 @@ const companyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'people',
       label: 'People',
       targetColumnMap: {},
@@ -131,7 +133,7 @@ const companyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'accountOwner',
       label: 'Account Owner',
       targetColumnMap: {
@@ -145,7 +147,7 @@ const companyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'activityTargets',
       label: 'Activities',
       targetColumnMap: {},
@@ -156,7 +158,7 @@ const companyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'opportunities',
       label: 'Opportunities',
       targetColumnMap: {},
@@ -167,7 +169,7 @@ const companyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'favorites',
       label: 'Favorites',
       targetColumnMap: {},
@@ -178,7 +180,7 @@ const companyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'attachments',
       label: 'Attachments',
       targetColumnMap: {},

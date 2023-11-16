@@ -11,6 +11,7 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
 import { TenantMigrationRunnerService } from 'src/tenant-migration-runner/tenant-migration-runner.service';
 import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -57,6 +58,55 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       isActive: true,
       isCustom: true,
       isSystem: false,
+      fields:
+        // Creating default fields.
+        // No need to create a custom migration for this though as the default columns are already
+        // created with default values which is not supported yet by tenant migrations.
+        [
+          {
+            type: FieldMetadataType.UUID,
+            name: 'id',
+            label: 'Id',
+            targetColumnMap: {
+              value: 'id',
+            },
+            icon: undefined,
+            description: 'Id',
+            isNullable: true,
+            isActive: true,
+            isCustom: false,
+            // isSystem: true,
+            workspaceId: record.workspaceId,
+          },
+          {
+            type: FieldMetadataType.DATE,
+            name: 'createdAt',
+            label: 'Creation date',
+            targetColumnMap: {
+              value: 'createdAt',
+            },
+            icon: 'IconCalendar',
+            description: 'Creation date',
+            isNullable: true,
+            isActive: true,
+            isCustom: false,
+            workspaceId: record.workspaceId,
+          },
+          {
+            type: FieldMetadataType.DATE,
+            name: 'updatedAt',
+            label: 'Update date',
+            targetColumnMap: {
+              value: 'updatedAt',
+            },
+            icon: 'IconCalendar',
+            description: 'Update date',
+            isNullable: true,
+            isActive: true,
+            isCustom: false,
+            workspaceId: record.workspaceId,
+          },
+        ],
     });
 
     await this.tenantMigrationService.createCustomMigration(

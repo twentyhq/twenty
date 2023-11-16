@@ -16,7 +16,10 @@ import {
   FieldMetadataType,
 } from 'src/metadata/field-metadata/field-metadata.entity';
 
-import { standardObjectsMetadata } from './standard-objects/standard-object-metadata';
+import {
+  basicFieldsMetadata,
+  standardObjectsMetadata,
+} from './standard-objects/standard-object-metadata';
 
 @Injectable()
 export class TenantManagerService {
@@ -76,19 +79,23 @@ export class TenantManagerService {
     workspaceId: string,
   ): Promise<ObjectMetadataEntity[]> {
     const createdObjectMetadata = await this.objectMetadataService.createMany(
-      Object.values(standardObjectsMetadata).map((objectMetadata) => ({
-        ...objectMetadata,
-        dataSourceId,
-        workspaceId,
-        isCustom: false,
-        isActive: true,
-        fields: objectMetadata.fields.map((field) => ({
-          ...field,
+      Object.values(standardObjectsMetadata).map(
+        (objectMetadata: ObjectMetadataEntity) => ({
+          ...objectMetadata,
+          dataSourceId,
           workspaceId,
           isCustom: false,
           isActive: true,
-        })),
-      })),
+          fields: [...basicFieldsMetadata, ...objectMetadata.fields].map(
+            (field) => ({
+              ...field,
+              workspaceId,
+              isCustom: false,
+              isActive: true,
+            }),
+          ),
+        }),
+      ),
     );
 
     await this.relationMetadataService.createMany(

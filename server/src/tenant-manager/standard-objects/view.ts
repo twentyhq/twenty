@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+
 const viewMetadata = {
   nameSingular: 'viewV2',
   namePlural: 'viewsV2',
@@ -10,7 +12,7 @@ const viewMetadata = {
   isSystem: true,
   fields: [
     {
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'name',
       label: 'Name',
       targetColumnMap: {
@@ -21,7 +23,7 @@ const viewMetadata = {
       isNullable: false,
     },
     {
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'objectMetadataId',
       label: 'Object Metadata Id',
       targetColumnMap: {
@@ -32,7 +34,7 @@ const viewMetadata = {
       isNullable: false,
     },
     {
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'type',
       label: 'Type',
       targetColumnMap: {
@@ -45,7 +47,7 @@ const viewMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'viewFields',
       label: 'View Fields',
       targetColumnMap: {},
@@ -56,7 +58,7 @@ const viewMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'viewSorts',
       label: 'View Sorts',
       targetColumnMap: {},
@@ -67,7 +69,7 @@ const viewMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'viewFilters',
       label: 'View Filters',
       targetColumnMap: {},

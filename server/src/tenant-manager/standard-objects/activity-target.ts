@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+
 const activityTargetMetadata = {
   nameSingular: 'activityTargetV2',
   namePlural: 'activityTargetsV2',
@@ -13,7 +15,7 @@ const activityTargetMetadata = {
       // Relations
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'activity',
       label: 'Activity',
       targetColumnMap: {
@@ -26,7 +28,7 @@ const activityTargetMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'person',
       label: 'Person',
       targetColumnMap: {
@@ -39,7 +41,7 @@ const activityTargetMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'company',
       label: 'Company',
       targetColumnMap: {

@@ -1,3 +1,5 @@
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+
 const personMetadata = {
   nameSingular: 'personV2',
   namePlural: 'peopleV2',
@@ -12,7 +14,7 @@ const personMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'firstName',
       label: 'First name',
       targetColumnMap: {
@@ -25,7 +27,7 @@ const personMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'lastName',
       label: 'Last name',
       targetColumnMap: {
@@ -38,7 +40,7 @@ const personMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'EMAIL',
+      type: FieldMetadataType.EMAIL,
       name: 'email',
       label: 'Email',
       targetColumnMap: {
@@ -51,7 +53,7 @@ const personMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'URL',
+      type: FieldMetadataType.URL,
       name: 'linkedinUrl',
       label: 'Linkedin',
       targetColumnMap: {
@@ -64,7 +66,7 @@ const personMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'URL',
+      type: FieldMetadataType.URL,
       name: 'xUrl',
       label: 'X',
       targetColumnMap: {
@@ -77,7 +79,7 @@ const personMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'jobTitle',
       label: 'Job Title',
       targetColumnMap: {
@@ -90,7 +92,7 @@ const personMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'phone',
       label: 'Phone',
       targetColumnMap: {
@@ -103,7 +105,7 @@ const personMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'city',
       label: 'City',
       targetColumnMap: {
@@ -116,7 +118,7 @@ const personMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'TEXT',
+      type: FieldMetadataType.TEXT,
       name: 'avatarUrl',
       label: 'Avatar',
       targetColumnMap: {
@@ -130,7 +132,7 @@ const personMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'company',
       label: 'Company',
       targetColumnMap: {
@@ -143,7 +145,7 @@ const personMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'pointOfContactForOpportunities',
       label: 'POC for Opportunities',
       targetColumnMap: {},
@@ -154,7 +156,7 @@ const personMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'activityTargets',
       label: 'Activities',
       targetColumnMap: {},
@@ -165,7 +167,7 @@ const personMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'opportunities',
       label: 'Opportunities',
       targetColumnMap: {},
@@ -176,7 +178,7 @@ const personMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'favorites',
       label: 'Favorites',
       targetColumnMap: {},
@@ -187,7 +189,7 @@ const personMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: 'RELATION',
+      type: FieldMetadataType.RELATION,
       name: 'attachments',
       label: 'Attachments',
       targetColumnMap: {},

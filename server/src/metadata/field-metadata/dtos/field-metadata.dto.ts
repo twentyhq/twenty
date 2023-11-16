@@ -8,6 +8,7 @@ import {
 
 import {
   Authorize,
+  FilterableField,
   IDField,
   QueryOptions,
   Relation,
@@ -29,7 +30,6 @@ registerEnumType(FieldMetadataType, {
 })
 @QueryOptions({
   defaultResultSize: 10,
-  disableFilter: true,
   disableSort: true,
   maxResultsSize: 1000,
 })
@@ -61,11 +61,14 @@ export class FieldMetadataDTO {
   @Field({ nullable: true, deprecationReason: 'Use label name instead' })
   placeholder?: string;
 
-  @Field()
+  @FilterableField()
   isCustom: boolean;
 
-  @Field()
+  @FilterableField()
   isActive: boolean;
+
+  @FilterableField()
+  isSystem: boolean;
 
   @Field()
   isNullable: boolean;

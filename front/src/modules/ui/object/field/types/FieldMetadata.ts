@@ -1,6 +1,11 @@
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 
+export type FieldUuidMetadata = {
+  placeHolder: string;
+  fieldName: string;
+};
+
 export type FieldTextMetadata = {
   placeHolder: string;
   fieldName: string;
@@ -86,6 +91,7 @@ export type FieldBooleanMetadata = {
 };
 
 export type FieldMetadata =
+  | FieldUuidMetadata
   | FieldTextMetadata
   | FieldRelationMetadata
   | FieldChipMetadata
@@ -103,6 +109,7 @@ export type FieldMetadata =
   | FieldBooleanMetadata;
 
 export type FieldTextValue = string;
+export type FieldUUidValue = string;
 
 export type FieldChipValue = string;
 export type FieldDateValue = string | null;

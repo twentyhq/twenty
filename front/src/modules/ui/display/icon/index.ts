@@ -47,6 +47,7 @@ export {
   IconHeartOff,
   IconHelpCircle,
   IconHierarchy2,
+  IconKey,
   IconLanguage,
   IconLayoutKanban,
   IconLayoutSidebarLeftCollapse,

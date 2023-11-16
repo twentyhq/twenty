@@ -15,13 +15,12 @@ import { FieldMetadataType } from '~/generated/graphql';
 import { assertNotNull } from '~/utils/assert';
 
 import { dataTypes } from '../constants/dataTypes';
-import { MetadataFieldDataType } from '../types/ObjectFieldDataType';
 
 export type SettingsObjectFieldPreviewProps = {
   fieldIconKey?: string | null;
   fieldLabel: string;
   fieldName?: string;
-  fieldType: MetadataFieldDataType;
+  fieldType: FieldMetadataType;
   isObjectCustom: boolean;
   objectIconKey?: string | null;
   objectLabelPlural: string;

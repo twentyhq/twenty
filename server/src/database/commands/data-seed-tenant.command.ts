@@ -1,7 +1,4 @@
-import { InjectDataSource } from '@nestjs/typeorm';
-
 import { Command, CommandRunner } from 'nest-commander';
-import { DataSource } from 'typeorm';
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
@@ -12,6 +9,7 @@ import { seedViews } from 'src/database/typeorm-seeds/tenant/views';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { seedMetadataSchema } from 'src/database/typeorm-seeds/metadata';
 import { seedWorkspaceMember } from 'src/database/typeorm-seeds/tenant/workspaceMember';
+import { seedPeople } from 'src/database/typeorm-seeds/tenant/people';
 
 // TODO: implement dry-run
 @Command({
@@ -23,8 +21,6 @@ export class DataSeedTenantCommand extends CommandRunner {
   workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
   constructor(
-    @InjectDataSource('metadata')
-    private readonly metadataDataSource: DataSource,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly tenantMigrationService: TenantMigrationService,
@@ -58,6 +54,8 @@ export class DataSeedTenantCommand extends CommandRunner {
       );
 
       await seedCompanies(workspaceDataSource, dataSourceMetadata.schema);
+      await seedPeople(workspaceDataSource, dataSourceMetadata.schema);
+
       await seedViews(workspaceDataSource, dataSourceMetadata.schema);
       await seedViewFields(workspaceDataSource, dataSourceMetadata.schema);
       await seedWorkspaceMember(workspaceDataSource, dataSourceMetadata.schema);

@@ -8,6 +8,10 @@ export const FIND_ONE_WORKSPACE_MEMBER_V2 = gql`
           id
           firstName
           lastName
+          colorScheme
+          avatarUrl
+          locale
+          allowImpersonation
         }
       }
     }
