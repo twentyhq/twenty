@@ -457,16 +457,16 @@ export type FieldDeleteResponse = {
 /** Type of the field */
 export enum FieldMetadataType {
   Boolean = 'BOOLEAN',
+  Currency = 'CURRENCY',
   Date = 'DATE',
   Email = 'EMAIL',
   Enum = 'ENUM',
-  Money = 'MONEY',
+  Link = 'LINK',
   Number = 'NUMBER',
   Phone = 'PHONE',
   Probability = 'PROBABILITY',
   Relation = 'RELATION',
   Text = 'TEXT',
-  Url = 'URL',
   Uuid = 'UUID'
 }
 
