@@ -31,7 +31,6 @@ export const workspaceAutoResolverOpts: AutoResolverOpts<
     },
     update: {
       many: { disabled: true },
-      one: { disabled: true },
     },
     delete: { many: { disabled: true }, one: { disabled: true } },
     guards: [JwtAuthGuard],
