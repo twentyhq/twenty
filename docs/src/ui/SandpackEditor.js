@@ -75,7 +75,18 @@ return (<ThemeProvider theme={lightTheme}>
           'react-tooltip': 'latest',
           'react-router-dom': 'latest',
           '@sniptt/guards': 'latest',
-          'react-router': 'latest'
+          'react-router': 'latest',
+          '@apollo/client': 'latest',
+          'graphql': 'latest',
+          'react-textarea-autosize': 'latest',
+          'react-hotkeys-hook': 'latest',
+          'recoil': 'latest',
+          '@floating-ui/react': 'latest',
+          'ts-key-enum': 'latest',
+          'deep-equal': 'latest',
+          'lodash.debounce': 'latest',
+          'react-loading-skeleton': 'latest',
+          
         },
       }}
     >

@@ -46,4 +46,8 @@ export {
   TbLayoutList,
   TbAddressBook,
   TbLoader2,
+  TbInputSearch,
+  TbIcons,
+  TbSquareRoundedPlusFilled,
+  TbLayoutGrid,
 } from "react-icons/tb";
