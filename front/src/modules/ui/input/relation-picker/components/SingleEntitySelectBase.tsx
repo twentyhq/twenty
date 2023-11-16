@@ -65,10 +65,6 @@ export const SingleEntitySelectBase = <
       assertNotNull(entity) && isNonEmptyString(entity.name),
   );
 
-  console.log({
-    entitiesInDropdown,
-  });
-
   const { preselectedOptionId, resetScroll } = useEntitySelectScroll({
     selectableOptionIds: [
       EmptyButtonId,

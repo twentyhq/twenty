@@ -23,7 +23,7 @@ type ExtractEntityTypeFromQueryResponse<T> = T extends {
 
 type SearchFilter = { fieldNames: string[]; filter: string | number };
 
-const DEFAULT_SEARCH_REQUEST_LIMIT = 10;
+const DEFAULT_SEARCH_REQUEST_LIMIT = 30;
 
 // TODO: use this for all search queries, because we need selectedEntities and entitiesToSelect each time we want to search
 // Filtered entities to select are
@@ -50,10 +50,16 @@ export const useFilteredSearchEntityQueryV2 = ({
   excludeEntityIds?: string[];
   objectNamePlural: string;
 }): EntitiesForMultipleEntitySelect<EntityForSelect> => {
+  console.log({
+    selectedIds,
+    excludeEntityIds,
+    filters,
+  });
+
   const { loading: selectedEntitiesLoading, data: selectedEntitiesData } =
     queryHook({
       variables: {
-        where: {
+        filter: {
           id: {
             in: selectedIds,
           },
@@ -64,11 +70,25 @@ export const useFilteredSearchEntityQueryV2 = ({
       } as any,
     });
 
+  console.log({
+    selectedEntitiesData,
+    variables: {
+      filter: {
+        id: {
+          in: selectedIds,
+        },
+      },
+      orderBy: {
+        [orderByField]: sortOrder,
+      },
+    } as any,
+  });
+
   const searchFilter = filters.map(({ fieldNames, filter }) => {
     return {
       OR: fieldNames.map((fieldName) => ({
         [fieldName]: {
-          startsWith: `%${filter}%`,
+          like: `%${filter}%`,
           mode: QueryMode.Insensitive,
         },
       })),
@@ -80,7 +100,7 @@ export const useFilteredSearchEntityQueryV2 = ({
     data: filteredSelectedEntitiesData,
   } = queryHook({
     variables: {
-      where: {
+      filter: {
         AND: [
           {
             AND: searchFilter,
@@ -101,7 +121,7 @@ export const useFilteredSearchEntityQueryV2 = ({
   const { loading: entitiesToSelectLoading, data: entitiesToSelectData } =
     queryHook({
       variables: {
-        where: {
+        filter: {
           AND: [
             {
               AND: searchFilter,
@@ -121,11 +141,18 @@ export const useFilteredSearchEntityQueryV2 = ({
     });
 
   console.log({
-    selectedEntitiesData,
-    test: mapPaginatedObjectsToObjects({
+    selectedEntities: mapPaginatedObjectsToObjects({
       objectNamePlural: objectNamePlural,
       pagedObjects: selectedEntitiesData,
     }),
+    filteredSelectedEntities: mapPaginatedObjectsToObjects({
+      objectNamePlural: objectNamePlural,
+      pagedObjects: filteredSelectedEntitiesData,
+    }).map(mappingFunction),
+    entitiesToSelect: mapPaginatedObjectsToObjects({
+      objectNamePlural: objectNamePlural,
+      pagedObjects: entitiesToSelectData,
+    }).map(mappingFunction),
   });
 
   return {

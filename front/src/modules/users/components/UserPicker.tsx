@@ -42,7 +42,6 @@ export const UserPicker = ({
 
   const useFindManyWorkspaceMembers = () => useQuery(findManyQuery, {});
 
-  // TODO: put workspace member
   const users = useFilteredSearchEntityQueryV2({
     queryHook: useFindManyWorkspaceMembers,
     filters: [
@@ -62,10 +61,6 @@ export const UserPicker = ({
     }),
     selectedIds: userId ? [userId] : [],
     objectNamePlural: 'workspaceMembersV2',
-  });
-
-  console.log({
-    users,
   });
 
   const handleEntitySelected = async (selectedUser: any | null | undefined) => {
