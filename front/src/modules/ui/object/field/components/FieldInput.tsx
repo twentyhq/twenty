@@ -10,7 +10,7 @@ import { DateFieldInput } from '../meta-types/input/components/DateFieldInput';
 import { DoubleTextChipFieldInput } from '../meta-types/input/components/DoubleTextChipFieldInput';
 import { DoubleTextFieldInput } from '../meta-types/input/components/DoubleTextFieldInput';
 import { EmailFieldInput } from '../meta-types/input/components/EmailFieldInput';
-import { URLV2FieldInput } from '../meta-types/input/components/LinkFieldInput';
+import { LinkFieldInput } from '../meta-types/input/components/LinkFieldInput';
 import { MoneyFieldInput } from '../meta-types/input/components/MoneyFieldInput';
 import { NumberFieldInput } from '../meta-types/input/components/NumberFieldInput';
 import { PhoneFieldInput } from '../meta-types/input/components/PhoneFieldInput';
@@ -103,7 +103,7 @@ export const FieldInput = ({
           onShiftTab={onShiftTab}
         />
       ) : isFieldLink(fieldDefinition) ? (
-        <URLV2FieldInput
+        <LinkFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}

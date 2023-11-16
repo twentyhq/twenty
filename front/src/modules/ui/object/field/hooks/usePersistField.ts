@@ -73,7 +73,7 @@ export const usePersistField = () => {
         const fieldIsURL =
           isFieldURL(fieldDefinition) && isFieldURLValue(valueToPersist);
 
-        const fieldIsURLV2 =
+        const fieldIsLink =
           isFieldLink(fieldDefinition) && isFieldLinkValue(valueToPersist);
 
         const fieldIsBoolean =
@@ -90,7 +90,7 @@ export const usePersistField = () => {
         const fieldIsMoney =
           isFieldMoney(fieldDefinition) && isFieldMoneyValue(valueToPersist);
 
-        const fieldIsMoneyAmountV2 =
+        const fieldIsCurrency =
           isFieldCurrency(fieldDefinition) &&
           isFieldCurrencyValue(valueToPersist);
 
@@ -169,8 +169,8 @@ export const usePersistField = () => {
           fieldIsMoney ||
           fieldIsDate ||
           fieldIsPhone ||
-          fieldIsURLV2 ||
-          fieldIsMoneyAmountV2
+          fieldIsLink ||
+          fieldIsCurrency
         ) {
           const fieldName = fieldDefinition.metadata.fieldName;
 

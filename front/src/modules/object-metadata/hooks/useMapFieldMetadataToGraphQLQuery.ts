@@ -6,7 +6,14 @@ import { FieldMetadataItem } from '../types/FieldMetadataItem';
 export const useMapFieldMetadataToGraphQLQuery = () => {
   const { objectMetadataItems } = useFindManyObjectMetadataItems();
 
-  const mapFieldMetadataToGraphQLQuery = (field: FieldMetadataItem): any => {
+  const mapFieldMetadataToGraphQLQuery = (
+    field: FieldMetadataItem,
+    maxDepthForRelations: number = 1,
+  ): any => {
+    if (maxDepthForRelations <= 0) {
+      return '';
+    }
+
     // TODO: parse
     const fieldType = field.type as FieldType;
 
@@ -44,7 +51,9 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
       id
       ${(relationMetadataItem?.fields ?? [])
         .filter((field) => field.type !== 'RELATION')
-        .map((field) => field.name)
+        .map((field) =>
+          mapFieldMetadataToGraphQLQuery(field, maxDepthForRelations - 1),
+        )
         .join('\n')}
     }`;
     } else if (
@@ -64,7 +73,9 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
             id
             ${(relationMetadataItem?.fields ?? [])
               .filter((field) => field.type !== 'RELATION')
-              .map((field) => field.name)
+              .map((field) =>
+                mapFieldMetadataToGraphQLQuery(field, maxDepthForRelations - 1),
+              )
               .join('\n')}
           }
         }

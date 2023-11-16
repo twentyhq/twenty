@@ -5,7 +5,7 @@ import { DoubleTextInput } from './internal/DoubleTextInput';
 import { FieldInputOverlay } from './internal/FieldInputOverlay';
 import { FieldInputEvent } from './DateFieldInput';
 
-export type URLV2FieldInputProps = {
+export type LinkFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
@@ -13,13 +13,13 @@ export type URLV2FieldInputProps = {
   onShiftTab?: FieldInputEvent;
 };
 
-export const URLV2FieldInput = ({
+export const LinkFieldInput = ({
   onEnter,
   onEscape,
   onClickOutside,
   onTab,
   onShiftTab,
-}: URLV2FieldInputProps) => {
+}: LinkFieldInputProps) => {
   const { initialValue, hotkeyScope, persistLinkField } = useLinkField();
 
   const handleEnter = (newURL: FieldDoubleText) => {

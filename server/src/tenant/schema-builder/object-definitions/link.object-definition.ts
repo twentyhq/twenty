@@ -18,6 +18,7 @@ export const linkObjectDefinition = {
       name: 'label',
       label: 'Label',
       targetColumnMap: { value: 'label' },
+      isNullable: true,
     } satisfies FieldMetadataInterface,
     {
       id: 'url',
@@ -26,6 +27,7 @@ export const linkObjectDefinition = {
       name: 'url',
       label: 'Url',
       targetColumnMap: { value: 'url' },
+      isNullable: true,
     } satisfies FieldMetadataInterface,
   ],
   fromRelations: [],

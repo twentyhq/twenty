@@ -3,8 +3,8 @@ import { z } from 'zod';
 import { FieldCurrencyValue } from '../FieldMetadata';
 
 const currencySchema = z.object({
-  currency: z.string(),
-  amount: z.number(),
+  currencyCode: z.string(),
+  amountMicros: z.number(),
 });
 
 export const isFieldCurrencyValue = (

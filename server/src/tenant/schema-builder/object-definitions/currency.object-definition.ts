@@ -27,6 +27,7 @@ export const currencyObjectDefinition = {
       name: 'currencyCode',
       label: 'Currency Code',
       targetColumnMap: { value: 'currencyCode' },
+      isNullable: true,
     } satisfies FieldMetadataInterface,
   ],
   fromRelations: [],
