@@ -85,41 +85,41 @@ export function convertFieldMetadataToColumnActions(
         },
       ];
     }
-    case FieldMetadataType.URL: {
+    case FieldMetadataType.LINK: {
       const defaultValue =
-        fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.URL>;
+        fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.LINK>;
 
       return [
         {
           action: TenantMigrationColumnActionType.CREATE,
-          columnName: fieldMetadata.targetColumnMap.text,
+          columnName: fieldMetadata.targetColumnMap.label,
           columnType: 'varchar',
-          defaultValue: serializeDefaultValue(defaultValue?.text),
+          defaultValue: serializeDefaultValue(defaultValue?.label),
         },
         {
           action: TenantMigrationColumnActionType.CREATE,
-          columnName: fieldMetadata.targetColumnMap.link,
+          columnName: fieldMetadata.targetColumnMap.url,
           columnType: 'varchar',
-          defaultValue: serializeDefaultValue(defaultValue?.link),
+          defaultValue: serializeDefaultValue(defaultValue?.url),
         },
       ];
     }
-    case FieldMetadataType.MONEY: {
+    case FieldMetadataType.CURRENCY: {
       const defaultValue =
-        fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.MONEY>;
+        fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.CURRENCY>;
 
       return [
         {
           action: TenantMigrationColumnActionType.CREATE,
-          columnName: fieldMetadata.targetColumnMap.amount,
+          columnName: fieldMetadata.targetColumnMap.amountMicros,
           columnType: 'integer',
-          defaultValue: serializeDefaultValue(defaultValue?.amount),
+          defaultValue: serializeDefaultValue(defaultValue?.amountMicros),
         },
         {
           action: TenantMigrationColumnActionType.CREATE,
-          columnName: fieldMetadata.targetColumnMap.currency,
+          columnName: fieldMetadata.targetColumnMap.currencyCode,
           columnType: 'varchar',
-          defaultValue: serializeDefaultValue(defaultValue?.currency),
+          defaultValue: serializeDefaultValue(defaultValue?.currencyCode),
         },
       ];
     }

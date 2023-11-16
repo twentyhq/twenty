@@ -19,8 +19,8 @@ type AllFieldMetadataTypes = {
 };
 
 type FieldMetadataTypeMapping = {
-  [FieldMetadataType.URL]: FieldMetadataTargetColumnMapUrl;
-  [FieldMetadataType.MONEY]: FieldMetadataTargetColumnMapMoney;
+  [FieldMetadataType.LINK]: FieldMetadataTargetColumnMapUrl;
+  [FieldMetadataType.CURRENCY]: FieldMetadataTargetColumnMapMoney;
 };
 
 type TypeByFieldMetadata<T extends FieldMetadataType | 'default'> =

@@ -53,7 +53,7 @@ const personMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.URL,
+      type: FieldMetadataType.LINK,
       name: 'linkedinUrl',
       label: 'Linkedin',
       targetColumnMap: {
@@ -66,7 +66,7 @@ const personMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.URL,
+      type: FieldMetadataType.LINK,
       name: 'xUrl',
       label: 'X',
       targetColumnMap: {

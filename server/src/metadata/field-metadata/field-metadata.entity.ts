@@ -27,8 +27,8 @@ export enum FieldMetadataType {
   NUMBER = 'NUMBER',
   PROBABILITY = 'PROBABILITY',
   ENUM = 'ENUM',
-  URL = 'URL',
-  MONEY = 'MONEY',
+  LINK = 'LINK',
+  CURRENCY = 'CURRENCY',
   RELATION = 'RELATION',
 }
 

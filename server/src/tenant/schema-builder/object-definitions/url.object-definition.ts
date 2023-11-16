@@ -3,29 +3,29 @@ import { FieldMetadataInterface } from 'src/tenant/schema-builder/interfaces/fie
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
-export const urlObjectDefinition = {
-  id: FieldMetadataType.URL.toString(),
-  nameSingular: 'Url',
-  namePlural: 'Url',
-  labelSingular: 'Url',
-  labelPlural: 'Url',
-  targetTableName: 'url',
+export const linkObjectDefinition = {
+  id: FieldMetadataType.LINK.toString(),
+  nameSingular: 'link',
+  namePlural: 'link',
+  labelSingular: 'Link',
+  labelPlural: 'Link',
+  targetTableName: '',
   fields: [
     {
-      id: 'text',
+      id: 'label',
       type: FieldMetadataType.TEXT,
-      objectMetadataId: FieldMetadataType.URL.toString(),
-      name: 'text',
-      label: 'Text',
-      targetColumnMap: { value: 'text' },
+      objectMetadataId: FieldMetadataType.LINK.toString(),
+      name: 'label',
+      label: 'Label',
+      targetColumnMap: { value: 'label' },
     } satisfies FieldMetadataInterface,
     {
-      id: 'link',
+      id: 'url',
       type: FieldMetadataType.TEXT,
-      objectMetadataId: FieldMetadataType.URL.toString(),
-      name: 'link',
-      label: 'Link',
-      targetColumnMap: { value: 'link' },
+      objectMetadataId: FieldMetadataType.LINK.toString(),
+      name: 'url',
+      label: 'Url',
+      targetColumnMap: { value: 'url' },
     } satisfies FieldMetadataInterface,
   ],
   fromRelations: [],
