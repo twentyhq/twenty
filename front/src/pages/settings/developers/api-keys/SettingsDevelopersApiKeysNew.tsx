@@ -15,7 +15,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { useGenerateOneApiKeyTokenMutation } from '~/generated/graphql';
+import { ApiKey, useGenerateOneApiKeyTokenMutation } from '~/generated/graphql';
 
 export const SettingsDevelopersApiKeysNew = () => {
   const [generateOneApiKeyToken] = useGenerateOneApiKeyTokenMutation();
@@ -29,9 +29,11 @@ export const SettingsDevelopersApiKeysNew = () => {
     name: '',
   });
 
-  const { createOneObject: createOneApiKey } = useCreateOneObjectRecord({
-    objectNamePlural: 'apiKeysV2',
-  });
+  const { createOneObject: createOneApiKey } = useCreateOneObjectRecord<ApiKey>(
+    {
+      objectNameSingular: 'apiKeyV2',
+    },
+  );
   const onSave = async () => {
     const expiresAt = formValues.expirationDate
       ? DateTime.now().plus({ days: formValues.expirationDate }).toString()
@@ -40,21 +42,23 @@ export const SettingsDevelopersApiKeysNew = () => {
       name: formValues.name,
       expiresAt,
     });
+
+    if (!newApiKey) {
+      return;
+    }
+
     const tokenData = await generateOneApiKeyToken({
       variables: {
         data: {
-          id: newApiKey.createApiKeyV2.id,
-          expiresAt: newApiKey.createApiKeyV2.expiresAt,
-          name: newApiKey.createApiKeyV2.name, // TODO update typing to remove useless name param here
+          id: newApiKey.id,
+          expiresAt: newApiKey.expiresAt,
+          name: newApiKey.name, // TODO update typing to remove useless name param here
         },
       },
     });
     if (tokenData.data?.generateApiKeyV2Token) {
-      setGeneratedApi(
-        newApiKey.createApiKeyV2.id,
-        tokenData.data.generateApiKeyV2Token.token,
-      );
-      navigate(`/settings/developers/api-keys/${newApiKey.createApiKeyV2.id}`);
+      setGeneratedApi(newApiKey.id, tokenData.data.generateApiKeyV2Token.token);
+      navigate(`/settings/developers/api-keys/${newApiKey.id}`);
     }
   };
   const canSave = !!formValues.name && createOneApiKey;

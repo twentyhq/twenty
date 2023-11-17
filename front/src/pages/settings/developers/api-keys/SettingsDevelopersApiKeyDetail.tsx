@@ -21,7 +21,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { useGenerateOneApiKeyTokenMutation } from '~/generated/graphql';
+import { ApiKey, useGenerateOneApiKeyTokenMutation } from '~/generated/graphql';
 
 const StyledInfo = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -47,11 +47,13 @@ export const SettingsDevelopersApiKeyDetail = () => {
   );
 
   const [generateOneApiKeyToken] = useGenerateOneApiKeyTokenMutation();
-  const { createOneObject: createOneApiKey } = useCreateOneObjectRecord({
-    objectNamePlural: 'apiKeysV2',
-  });
-  const { updateOneObject: updateApiKey } = useUpdateOneObjectRecord({
-    objectNamePlural: 'apiKeysV2',
+  const { createOneObject: createOneApiKey } = useCreateOneObjectRecord<ApiKey>(
+    {
+      objectNameSingular: 'apiKeyV2',
+    },
+  );
+  const { updateOneObject: updateApiKey } = useUpdateOneObjectRecord<ApiKey>({
+    objectNameSingular: 'apiKeyV2',
   });
 
   const { object: apiKeyData } = useFindOneObjectRecord({
@@ -77,17 +79,22 @@ export const SettingsDevelopersApiKeyDetail = () => {
       name: name,
       expiresAt: newExpiresAt,
     });
+
+    if (!newApiKey) {
+      return;
+    }
+
     const tokenData = await generateOneApiKeyToken({
       variables: {
         data: {
-          id: newApiKey.createApiKeyV2.id,
-          expiresAt: newApiKey.createApiKeyV2.expiresAt,
-          name: newApiKey.createApiKeyV2.name, // TODO update typing to remove useless name param here
+          id: newApiKey.id,
+          expiresAt: newApiKey.expiresAt,
+          name: newApiKey.name, // TODO update typing to remove useless name param here
         },
       },
     });
     return {
-      id: newApiKey.createApiKeyV2.id,
+      id: newApiKey.id,
       token: tokenData.data?.generateApiKeyV2Token.token,
     };
   };
@@ -100,7 +107,8 @@ export const SettingsDevelopersApiKeyDetail = () => {
       );
       const apiKey = await createIntegration(apiKeyData.name, newExpiresAt);
       await deleteIntegration(false);
-      if (apiKey.token) {
+
+      if (apiKey && apiKey.token) {
         setGeneratedApi(apiKey.id, apiKey.token);
         navigate(`/settings/developers/api-keys/${apiKey.id}`);
       }
