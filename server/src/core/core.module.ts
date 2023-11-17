@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { WebHookModule } from 'src/core/web-hook/web-hook.module';
 import { UserModule as UserV2Module } from 'src/coreV2/user/user.module';
 import { RefreshTokenModule as RefreshTokenV2Module } from 'src/coreV2/refresh-token/refresh-token.module';
+import { WorkspaceModule as WorkspaceV2Module } from 'src/coreV2/workspace/workspace.module';
 
 import { UserModule } from './user/user.module';
 import { CommentModule } from './comment/comment.module';
@@ -38,6 +39,7 @@ import { ApiKeyModule } from './api-key/api-key.module';
     WebHookModule,
     UserV2Module,
     RefreshTokenV2Module,
+    WorkspaceV2Module,
   ],
   exports: [
     AuthModule,
@@ -54,6 +56,7 @@ import { ApiKeyModule } from './api-key/api-key.module';
     WebHookModule,
     UserV2Module,
     RefreshTokenV2Module,
+    WorkspaceV2Module,
   ],
 })
 export class CoreModule {}
