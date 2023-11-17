@@ -16,11 +16,13 @@ export const addViewSortTable: WorkspaceMigrationTableAction[] = [
         columnName: 'fieldMetadataId',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'direction',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "'asc'",
       },
       {
         columnName: 'viewId',

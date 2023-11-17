@@ -16,6 +16,7 @@ export const addCompanyTable: WorkspaceMigrationTableAction[] = [
         columnName: 'name',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'domainName',

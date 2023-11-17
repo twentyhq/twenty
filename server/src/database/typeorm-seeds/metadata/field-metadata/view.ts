@@ -134,7 +134,7 @@ export const seedViewFieldMetadata = async (
         icon: null,
         isNullable: false,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: '' },
       },
       {
         id: SeedViewFieldMetadataIds.Type,

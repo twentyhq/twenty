@@ -50,6 +50,7 @@ export const basicFieldsMetadata: Partial<FieldMetadataEntity>[] = [
     // isSystem: true,
     isCustom: false,
     isActive: true,
+    defaultValue: { type: 'uuid' },
   },
   {
     name: 'createdAt',
@@ -62,6 +63,7 @@ export const basicFieldsMetadata: Partial<FieldMetadataEntity>[] = [
     isNullable: true,
     isCustom: false,
     isActive: true,
+    defaultValue: { type: 'now' },
   },
   {
     name: 'updatedAt',
@@ -74,5 +76,6 @@ export const basicFieldsMetadata: Partial<FieldMetadataEntity>[] = [
     isNullable: true,
     isCustom: false,
     isActive: true,
+    defaultValue: { type: 'now' },
   },
 ];

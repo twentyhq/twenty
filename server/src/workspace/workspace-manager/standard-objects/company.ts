@@ -23,6 +23,7 @@ const companyMetadata = {
       description: 'The company name',
       icon: 'IconBuildingSkyscraper',
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
