@@ -5,9 +5,10 @@ import { FieldMetadata } from './FieldMetadata';
 import { FieldType } from './FieldType';
 
 export type FieldDefinitionRelationType =
-  | 'TO_ONE_OBJECT'
-  | 'FROM_NAMY_OBJECTS'
-  | 'TO_MANY_OBJECTS';
+  | 'FROM_MANY_OBJECTS'
+  | 'FROM_ONE_OBJECT'
+  | 'TO_MANY_OBJECTS'
+  | 'TO_ONE_OBJECT';
 
 export type FieldDefinition<T extends FieldMetadata> = {
   fieldMetadataId: string;

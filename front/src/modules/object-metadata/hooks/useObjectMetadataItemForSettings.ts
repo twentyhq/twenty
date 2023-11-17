@@ -35,6 +35,11 @@ export const useObjectMetadataItemForSettings = () => {
       (objectMetadataItem) => objectMetadataItem.id === id,
     );
 
+  const findObjectMetadataItemByNamePlural = (namePlural: string) =>
+    objectMetadataItems.find(
+      (objectMetadataItem) => objectMetadataItem.namePlural === namePlural,
+    );
+
   const { createOneObjectMetadataItem } =
     useCreateOneObjectRecordMetadataItem();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
@@ -88,6 +93,8 @@ export const useObjectMetadataItemForSettings = () => {
     eraseObjectMetadataItem,
     findActiveObjectMetadataItemBySlug,
     findObjectMetadataItemById,
+    findObjectMetadataItemByNamePlural,
     loading,
+    objectMetadataItems,
   };
 };

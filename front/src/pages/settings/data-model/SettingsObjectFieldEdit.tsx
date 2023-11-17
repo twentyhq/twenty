@@ -1,14 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useRelationMetadata } from '@/object-metadata/hooks/useRelationMetadata';
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFieldFormSection } from '@/settings/data-model/components/SettingsObjectFieldFormSection';
 import { SettingsObjectFieldTypeSelectSection } from '@/settings/data-model/components/SettingsObjectFieldTypeSelectSection';
+import { useFieldMetadataForm } from '@/settings/data-model/hooks/useFieldMetadataForm';
 import { AppPath } from '@/types/AppPath';
 import { IconArchive, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -34,13 +36,22 @@ export const SettingsObjectFieldEdit = () => {
       metadataField.isActive && getFieldSlug(metadataField) === fieldSlug,
   );
 
-  const [formValues, setFormValues] = useState<
-    Partial<{
-      icon: string;
-      label: string;
-      description: string;
-    }>
-  >({});
+  const {
+    relationFieldMetadataItem,
+    relationObjectMetadataItem,
+    relationType,
+  } = useRelationMetadata({ fieldMetadataItem: activeMetadataField });
+
+  const {
+    formValues,
+    handleFormChange,
+    hasFieldFormChanged,
+    hasFormChanged,
+    hasRelationFormChanged,
+    initForm,
+    isValid,
+    validatedFormValues,
+  } = useFieldMetadataForm();
 
   useEffect(() => {
     if (loading) return;
@@ -50,36 +61,59 @@ export const SettingsObjectFieldEdit = () => {
       return;
     }
 
-    if (!Object.keys(formValues).length) {
-      setFormValues({
-        icon: activeMetadataField.icon ?? undefined,
-        label: activeMetadataField.label,
-        description: activeMetadataField.description ?? undefined,
-      });
-    }
+    initForm({
+      icon: activeMetadataField.icon ?? undefined,
+      label: activeMetadataField.label,
+      description: activeMetadataField.description ?? undefined,
+      type: activeMetadataField.type,
+      relation: {
+        field: {
+          icon: relationFieldMetadataItem?.icon,
+          label: relationFieldMetadataItem?.label,
+        },
+        objectMetadataId: relationObjectMetadataItem?.id,
+        type: relationType,
+      },
+    });
   }, [
     activeMetadataField,
     activeObjectMetadataItem,
-    formValues,
+    initForm,
     loading,
     navigate,
+    relationFieldMetadataItem?.icon,
+    relationFieldMetadataItem?.label,
+    relationObjectMetadataItem?.id,
+    relationType,
   ]);
 
   if (!activeObjectMetadataItem || !activeMetadataField) return null;
 
-  const areRequiredFieldsFilled = !!formValues.label;
-
-  const hasChanges =
-    formValues.description !== activeMetadataField.description ||
-    formValues.icon !== activeMetadataField.icon ||
-    formValues.label !== activeMetadataField.label;
-
-  const canSave = areRequiredFieldsFilled && hasChanges;
+  const canSave = isValid && hasFormChanged;
 
   const handleSave = async () => {
-    const editedField = { ...activeMetadataField, ...formValues };
+    if (!validatedFormValues) return;
 
-    await editMetadataField(editedField);
+    if (
+      validatedFormValues.type === FieldMetadataType.Relation &&
+      relationFieldMetadataItem?.id &&
+      hasRelationFormChanged
+    ) {
+      await editMetadataField({
+        icon: validatedFormValues.relation.field.icon,
+        id: relationFieldMetadataItem.id,
+        label: validatedFormValues.relation.field.label,
+      });
+    }
+
+    if (hasFieldFormChanged) {
+      await editMetadataField({
+        description: validatedFormValues.description,
+        icon: validatedFormValues.icon,
+        id: activeMetadataField.id,
+        label: validatedFormValues.label,
+      });
+    }
 
     navigate(`/settings/objects/${objectSlug}`);
   };
@@ -116,23 +150,21 @@ export const SettingsObjectFieldEdit = () => {
           name={formValues.label}
           description={formValues.description}
           iconKey={formValues.icon}
-          onChange={(values) =>
-            setFormValues((previousFormValues) => ({
-              ...previousFormValues,
-              ...values,
-            }))
-          }
+          onChange={handleFormChange}
         />
         <SettingsObjectFieldTypeSelectSection
-          disabled
-          fieldIconKey={formValues.icon}
-          fieldLabel={formValues.label || 'Employees'}
-          fieldName={activeMetadataField.name}
-          fieldType={activeMetadataField.type as FieldMetadataType}
-          isObjectCustom={activeObjectMetadataItem.isCustom}
-          objectIconKey={activeObjectMetadataItem.icon}
-          objectLabelPlural={activeObjectMetadataItem.labelPlural}
-          objectNamePlural={activeObjectMetadataItem.namePlural}
+          fieldMetadata={{
+            icon: formValues.icon,
+            label: formValues.label || 'Employees',
+            id: activeMetadataField.id,
+          }}
+          objectMetadataId={activeObjectMetadataItem.id}
+          onChange={handleFormChange}
+          relationFieldMetadataId={relationFieldMetadataItem?.id}
+          values={{
+            type: formValues.type,
+            relation: formValues.relation,
+          }}
         />
         <Section>
           <H2Title title="Danger zone" description="Disable this field" />

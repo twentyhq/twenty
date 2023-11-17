@@ -23,8 +23,8 @@ export const useRelationMetadata = ({
 
   const relationObjectMetadataId =
     relationMetadata && 'toObjectMetadata' in relationMetadata
-      ? relationMetadata.toObjectMetadata.id
-      : relationMetadata?.fromObjectMetadata.id;
+      ? relationMetadata.toObjectMetadata?.id
+      : relationMetadata?.fromObjectMetadata?.id;
 
   const relationObjectMetadataItem = relationObjectMetadataId
     ? findObjectMetadataItemById(relationObjectMetadataId)

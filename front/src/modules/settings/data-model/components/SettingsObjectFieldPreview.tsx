@@ -1,30 +1,25 @@
-import { useEffect } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
 import { parseFieldType } from '@/object-metadata/utils/parseFieldType';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { Tag } from '@/ui/display/tag/components/Tag';
-import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { FieldDisplay } from '@/ui/object/field/components/FieldDisplay';
 import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
 import { BooleanFieldInput } from '@/ui/object/field/meta-types/input/components/BooleanFieldInput';
-import { entityFieldsFamilySelector } from '@/ui/object/field/states/selectors/entityFieldsFamilySelector';
-import { FieldMetadataType } from '~/generated/graphql';
-import { assertNotNull } from '~/utils/assert';
+import { Field } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+import { SettingsObjectFieldPreviewValueEffect } from '../components/SettingsObjectFieldPreviewValueEffect';
 import { dataTypes } from '../constants/dataTypes';
+import { useFieldPreview } from '../hooks/useFieldPreview';
+import { useRelationFieldPreview } from '../hooks/useRelationFieldPreview';
 
 export type SettingsObjectFieldPreviewProps = {
-  fieldIconKey?: string | null;
-  fieldLabel: string;
-  fieldName?: string;
-  fieldType: FieldMetadataType;
-  isObjectCustom: boolean;
-  objectIconKey?: string | null;
-  objectLabelPlural: string;
-  objectNamePlural: string;
+  className?: string;
+  fieldMetadata: Pick<Field, 'icon' | 'label' | 'type'> & { id?: string };
+  objectMetadataId: string;
+  relationObjectMetadataId?: string;
+  shrink?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -52,7 +47,7 @@ const StyledObjectName = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledFieldPreview = styled.div`
+const StyledFieldPreview = styled.div<{ shrink?: boolean }>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -61,7 +56,8 @@ const StyledFieldPreview = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
   height: ${({ theme }) => theme.spacing(8)};
   overflow: hidden;
-  padding: 0 ${({ theme }) => theme.spacing(2)};
+  padding: 0
+    ${({ shrink, theme }) => (shrink ? theme.spacing(1) : theme.spacing(2))};
   white-space: nowrap;
 `;
 
@@ -73,41 +69,41 @@ const StyledFieldLabel = styled.div`
 `;
 
 export const SettingsObjectFieldPreview = ({
-  fieldIconKey,
-  fieldLabel,
-  fieldName,
-  fieldType,
-  isObjectCustom,
-  objectIconKey,
-  objectLabelPlural,
-  objectNamePlural,
+  className,
+  fieldMetadata,
+  objectMetadataId,
+  relationObjectMetadataId,
+  shrink,
 }: SettingsObjectFieldPreviewProps) => {
   const theme = useTheme();
-  const { Icon: ObjectIcon } = useLazyLoadIcon(objectIconKey ?? '');
-  const { Icon: FieldIcon } = useLazyLoadIcon(fieldIconKey ?? '');
 
-  const { objects } = useFindManyObjectRecords({
-    objectNamePlural,
-    skip: !fieldName,
+  const {
+    entityId,
+    FieldIcon,
+    fieldName,
+    hasValue,
+    ObjectIcon,
+    objectMetadataItem,
+    value,
+  } = useFieldPreview({
+    fieldMetadata,
+    objectMetadataId,
   });
 
-  const [fieldValue, setFieldValue] = useRecoilState(
-    entityFieldsFamilySelector({
-      entityId: objects[0]?.id ?? objectNamePlural,
-      fieldName: fieldName || 'new-field',
-    }),
-  );
+  const { defaultValue: relationDefaultValue, entityChipDisplayMapper } =
+    useRelationFieldPreview({
+      relationObjectMetadataId,
+      skipDefaultValue:
+        fieldMetadata.type !== FieldMetadataType.Relation || hasValue,
+    });
 
-  useEffect(() => {
-    setFieldValue(
-      fieldName && assertNotNull(objects[0]?.[fieldName])
-        ? objects[0][fieldName]
-        : dataTypes[fieldType].defaultValue,
-    );
-  }, [fieldName, fieldType, fieldValue, objects, setFieldValue]);
+  const defaultValue =
+    fieldMetadata.type === FieldMetadataType.Relation
+      ? relationDefaultValue
+      : dataTypes[fieldMetadata.type].defaultValue;
 
   return (
-    <StyledContainer>
+    <StyledContainer className={className}>
       <StyledObjectSummary>
         <StyledObjectName>
           {!!ObjectIcon && (
@@ -116,15 +112,20 @@ export const SettingsObjectFieldPreview = ({
               stroke={theme.icon.stroke.sm}
             />
           )}
-          {objectLabelPlural}
+          {objectMetadataItem?.labelPlural}
         </StyledObjectName>
-        {isObjectCustom ? (
+        {objectMetadataItem?.isCustom ? (
           <Tag color="orange" text="Custom" />
         ) : (
           <Tag color="blue" text="Standard" />
         )}
       </StyledObjectSummary>
-      <StyledFieldPreview>
+      <SettingsObjectFieldPreviewValueEffect
+        entityId={entityId}
+        fieldName={fieldName}
+        value={value ?? defaultValue}
+      />
+      <StyledFieldPreview shrink={shrink}>
         <StyledFieldLabel>
           {!!FieldIcon && (
             <FieldIcon
@@ -132,22 +133,26 @@ export const SettingsObjectFieldPreview = ({
               stroke={theme.icon.stroke.sm}
             />
           )}
-          {fieldLabel}:
+          {fieldMetadata.label}:
         </StyledFieldLabel>
         <FieldContext.Provider
           value={{
-            entityId: objects[0]?.id ?? objectNamePlural,
+            entityId,
             fieldDefinition: {
-              type: parseFieldType(fieldType as FieldMetadataType),
+              type: parseFieldType(fieldMetadata.type),
               Icon: FieldIcon,
-              fieldMetadataId: '',
-              label: fieldLabel,
-              metadata: { fieldName: fieldName || 'new-field' },
+              fieldMetadataId: fieldMetadata.id || '',
+              label: fieldMetadata.label,
+              metadata: { fieldName },
+              entityChipDisplayMapper:
+                fieldMetadata.type === FieldMetadataType.Relation
+                  ? entityChipDisplayMapper
+                  : undefined,
             },
             hotkeyScope: 'field-preview',
           }}
         >
-          {fieldType === 'BOOLEAN' ? (
+          {fieldMetadata.type === FieldMetadataType.Boolean ? (
             <BooleanFieldInput readonly />
           ) : (
             <FieldDisplay />

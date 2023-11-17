@@ -6,7 +6,6 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { dataTypes } from '../../constants/dataTypes';
 
@@ -31,9 +30,6 @@ const StyledIconTableCell = styled(TableCell)`
   padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-// TODO: remove "relation" type for now, add it back when the backend is ready.
-const { RELATION: _, ...dataTypesWithoutRelation } = dataTypes;
-
 export const SettingsObjectFieldItemTableRow = ({
   ActionIcon,
   fieldItem,
@@ -42,13 +38,11 @@ export const SettingsObjectFieldItemTableRow = ({
   const { Icon } = useLazyLoadIcon(fieldItem.icon ?? '');
 
   // TODO: parse with zod and merge types with FieldType (create a subset of FieldType for example)
-  const fieldDataTypeIsSupported = Object.keys(
-    dataTypesWithoutRelation,
-  ).includes(fieldItem.type);
+  const fieldDataTypeIsSupported = Object.keys(dataTypes).includes(
+    fieldItem.type,
+  );
 
-  if (!fieldDataTypeIsSupported) {
-    return null;
-  }
+  if (!fieldDataTypeIsSupported) return null;
 
   return (
     <StyledObjectFieldTableRow>
@@ -58,9 +52,7 @@ export const SettingsObjectFieldItemTableRow = ({
       </StyledNameTableCell>
       <TableCell>{fieldItem.isCustom ? 'Custom' : 'Standard'}</TableCell>
       <TableCell>
-        <SettingsObjectFieldDataType
-          value={fieldItem.type as FieldMetadataType}
-        />
+        <SettingsObjectFieldDataType value={fieldItem.type} />
       </TableCell>
       <StyledIconTableCell>{ActionIcon}</StyledIconTableCell>
     </StyledObjectFieldTableRow>

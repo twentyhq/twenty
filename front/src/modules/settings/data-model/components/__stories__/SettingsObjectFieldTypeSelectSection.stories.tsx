@@ -15,9 +15,6 @@ const meta: Meta<typeof SettingsObjectFieldTypeSelectSection> = {
     fieldIconKey: 'IconUsers',
     fieldLabel: 'Employees',
     fieldName: 'employees',
-    isObjectCustom: false,
-    objectIconKey: 'IconUser',
-    objectLabelPlural: 'People',
     objectNamePlural: 'people',
   },
 };
@@ -28,7 +25,7 @@ type Story = StoryObj<typeof SettingsObjectFieldTypeSelectSection>;
 export const Default: Story = {};
 
 export const Disabled: Story = {
-  args: { disabled: true },
+  args: { isEditionMode: true },
 };
 
 export const WithOpenSelect: Story = {
