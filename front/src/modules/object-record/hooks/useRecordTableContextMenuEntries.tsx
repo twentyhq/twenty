@@ -1,4 +1,6 @@
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useCallback } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useDeleteOneObjectRecord } from '@/object-record/hooks/useDeleteOneObjectRecord';
@@ -14,21 +16,21 @@ import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/con
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { selectedRowIdsSelector } from '@/ui/object/record-table/states/selectors/selectedRowIdsSelector';
 import { tableRowIdsState } from '@/ui/object/record-table/states/tableRowIdsState';
-import { useGetFavoritesQuery } from '~/generated/graphql';
 
+// TODO: refactor this
 export const useRecordTableContextMenuEntries = () => {
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
   const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState);
 
   const setTableRowIds = useSetRecoilState(tableRowIdsState);
+  const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
   const { scopeId: objectNamePlural, resetTableRowSelection } =
     useRecordTable();
 
-  const { data } = useGetFavoritesQuery();
-  const favorites = data?.findFavorites;
-
-  const { createFavorite, deleteFavorite } = useFavorites({ objectNamePlural });
+  const { createFavorite, deleteFavorite, favorites } = useFavorites({
+    objectNamePlural,
+  });
 
   const handleFavoriteButtonClick = useRecoilCallback(({ snapshot }) => () => {
     const selectedRowIds = snapshot
@@ -39,7 +41,7 @@ export const useRecordTableContextMenuEntries = () => {
 
     const isFavorite =
       !!selectedRowId &&
-      !!favorites?.find((favorite) => favorite.company?.id === selectedRowId);
+      !!favorites?.find((favorite) => favorite.recordId === selectedRowId);
 
     resetTableRowSelection();
 
@@ -73,19 +75,15 @@ export const useRecordTableContextMenuEntries = () => {
   });
 
   return {
-    setContextMenuEntries: useRecoilCallback(({ snapshot }) => () => {
-      const selectedRowIds = snapshot
-        .getLoadable(selectedRowIdsSelector)
-        .getValue();
-
+    setContextMenuEntries: useCallback(() => {
       const selectedRowId =
         selectedRowIds.length === 1 ? selectedRowIds[0] : '';
 
       const isFavorite =
-        !!selectedRowId &&
-        !!favorites?.find((favorite) => favorite.company?.id === selectedRowId);
+        isNonEmptyString(selectedRowId) &&
+        !!favorites?.find((favorite) => favorite.recordId === selectedRowId);
 
-      setContextMenuEntries([
+      const contextMenuEntries = [
         {
           label: 'New task',
           Icon: IconCheckbox,
@@ -107,8 +105,21 @@ export const useRecordTableContextMenuEntries = () => {
           accent: 'danger',
           onClick: () => handleDeleteClick(),
         },
-      ]);
-    }),
+      ];
+
+      if (selectedRowIds.length > 1) {
+        contextMenuEntries.splice(2, 1);
+      }
+
+      setContextMenuEntries(contextMenuEntries as any);
+    }, [
+      selectedRowIds,
+      favorites,
+      handleDeleteClick,
+      handleFavoriteButtonClick,
+      setContextMenuEntries,
+    ]),
+
     setActionBarEntries: useRecoilCallback(() => () => {
       setActionBarEntriesState([
         {
