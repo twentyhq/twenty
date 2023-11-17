@@ -4,26 +4,7 @@ import { v4 } from 'uuid';
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
-import { CurrencyCode, FieldMetadataType } from '~/generated-metadata/graphql';
 import { capitalize } from '~/utils/string/capitalize';
-
-const defaultFieldValues: Record<FieldMetadataType, unknown> = {
-  [FieldMetadataType.Currency]: {
-    amountMicros: null,
-    currencyCode: CurrencyCode.Usd,
-  },
-  [FieldMetadataType.Boolean]: false,
-  [FieldMetadataType.Date]: null,
-  [FieldMetadataType.Email]: '',
-  [FieldMetadataType.Enum]: null,
-  [FieldMetadataType.Number]: null,
-  [FieldMetadataType.Probability]: null,
-  [FieldMetadataType.Relation]: null,
-  [FieldMetadataType.Phone]: '',
-  [FieldMetadataType.Text]: '',
-  [FieldMetadataType.Link]: { url: '', label: '' },
-  [FieldMetadataType.Uuid]: '',
-};
 
 export const useCreateOneObjectRecord = ({
   objectNamePlural,
