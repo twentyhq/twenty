@@ -23,8 +23,8 @@ import { customTableDefaultColumns } from './utils/custom-table-default-column.u
 @Injectable()
 export class WorkspaceMigrationRunnerService {
   constructor(
-    private readonly tenantDataSourceService: WorkspaceDataSourceService,
-    private readonly tenantMigrationService: WorkspaceMigrationService,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly workspaceMigrationService: WorkspaceMigrationService,
   ) {}
 
   /**
@@ -37,7 +37,7 @@ export class WorkspaceMigrationRunnerService {
     workspaceId: string,
   ): Promise<WorkspaceMigrationTableAction[]> {
     const workspaceDataSource =
-      await this.tenantDataSourceService.connectToWorkspaceDataSource(
+      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
         workspaceId,
       );
 
@@ -46,7 +46,7 @@ export class WorkspaceMigrationRunnerService {
     }
 
     const pendingMigrations =
-      await this.tenantMigrationService.getPendingMigrations(workspaceId);
+      await this.workspaceMigrationService.getPendingMigrations(workspaceId);
 
     if (pendingMigrations.length === 0) {
       return [];
@@ -58,7 +58,8 @@ export class WorkspaceMigrationRunnerService {
       }, []);
 
     const queryRunner = workspaceDataSource?.createQueryRunner();
-    const schemaName = this.tenantDataSourceService.getSchemaName(workspaceId);
+    const schemaName =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     // Loop over each migration and create or update the table
     // TODO: Should be done in a transaction
@@ -69,7 +70,7 @@ export class WorkspaceMigrationRunnerService {
     // Update appliedAt date for each migration
     // TODO: Should be done after the migration is successful
     for (const pendingMigration of pendingMigrations) {
-      await this.tenantMigrationService.setAppliedAtForMigration(
+      await this.workspaceMigrationService.setAppliedAtForMigration(
         workspaceId,
         pendingMigration,
       );

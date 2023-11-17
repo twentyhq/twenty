@@ -13,7 +13,7 @@ import {
 export class WorkspaceMigrationService {
   constructor(
     @InjectRepository(WorkspaceMigrationEntity, 'metadata')
-    private readonly tenantMigrationRepository: Repository<WorkspaceMigrationEntity>,
+    private readonly workspaceMigrationRepository: Repository<WorkspaceMigrationEntity>,
   ) {}
 
   /**
@@ -24,7 +24,7 @@ export class WorkspaceMigrationService {
   public async insertStandardMigrations(workspaceId: string): Promise<void> {
     // TODO: we actually don't need to fetch all of them, to improve later so it scales well.
     const insertedStandardMigrations =
-      await this.tenantMigrationRepository.find({
+      await this.workspaceMigrationRepository.find({
         where: { workspaceId, isCustom: false },
       });
 
@@ -47,7 +47,7 @@ export class WorkspaceMigrationService {
         isCustom: false,
       }));
 
-    await this.tenantMigrationRepository.save(
+    await this.workspaceMigrationRepository.save(
       standardMigrationsThatNeedToBeInserted,
     );
   }
@@ -61,7 +61,7 @@ export class WorkspaceMigrationService {
   public async getPendingMigrations(
     workspaceId: string,
   ): Promise<WorkspaceMigrationEntity[]> {
-    return await this.tenantMigrationRepository.find({
+    return await this.workspaceMigrationRepository.find({
       order: { createdAt: 'ASC', name: 'ASC' },
       where: {
         appliedAt: IsNull(),
@@ -81,7 +81,7 @@ export class WorkspaceMigrationService {
     workspaceId: string,
     migration: WorkspaceMigrationEntity,
   ) {
-    await this.tenantMigrationRepository.save({
+    await this.workspaceMigrationRepository.save({
       id: migration.id,
       appliedAt: new Date(),
     });
@@ -97,7 +97,7 @@ export class WorkspaceMigrationService {
     workspaceId: string,
     migrations: WorkspaceMigrationTableAction[],
   ) {
-    await this.tenantMigrationRepository.save({
+    await this.workspaceMigrationRepository.save({
       migrations,
       workspaceId,
       isCustom: true,
@@ -105,6 +105,6 @@ export class WorkspaceMigrationService {
   }
 
   public async delete(workspaceId: string) {
-    await this.tenantMigrationRepository.delete({ workspaceId });
+    await this.workspaceMigrationRepository.delete({ workspaceId });
   }
 }

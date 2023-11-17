@@ -20,7 +20,7 @@ export class SetupMetadataTables1700140427984 implements MigrationInterface {
       `CREATE TABLE "metadata"."dataSource" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "url" character varying, "schema" character varying, "type" "metadata"."dataSource_type_enum" NOT NULL DEFAULT 'postgres', "label" character varying, "isRemote" boolean NOT NULL DEFAULT false, "workspaceId" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_6d01ae6c0f47baf4f8e37342268" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "metadata"."tenantMigration" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "migrations" jsonb, "name" character varying, "isCustom" boolean NOT NULL DEFAULT false, "appliedAt" TIMESTAMP, "workspaceId" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_f9b06eb42494795f73acb5c2350" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "metadata"."workspaceMigration" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "migrations" jsonb, "name" character varying, "isCustom" boolean NOT NULL DEFAULT false, "appliedAt" TIMESTAMP, "workspaceId" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_f9b06eb42494795f73acb5c2350" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `ALTER TABLE "metadata"."relationMetadata" ADD CONSTRAINT "FK_f2a0acd3a548ee446a1a35df44d" FOREIGN KEY ("fromObjectMetadataId") REFERENCES "metadata"."objectMetadata"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
@@ -61,7 +61,7 @@ export class SetupMetadataTables1700140427984 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "metadata"."relationMetadata" DROP CONSTRAINT "FK_f2a0acd3a548ee446a1a35df44d"`,
     );
-    await queryRunner.query(`DROP TABLE "metadata"."tenantMigration"`);
+    await queryRunner.query(`DROP TABLE "metadata"."workspaceMigration"`);
     await queryRunner.query(`DROP TABLE "metadata"."dataSource"`);
     await queryRunner.query(`DROP TYPE "metadata"."dataSource_type_enum"`);
     await queryRunner.query(`DROP TABLE "metadata"."objectMetadata"`);
