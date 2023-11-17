@@ -1,9 +1,8 @@
 import { useSetRecoilState } from 'recoil';
 
 import { IconTrash } from '@/ui/display/icon';
+import { useDeleteSelectedBoardCards } from '@/ui/layout/board/hooks/useDeleteSelectedBoardCards';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
-
-import { useDeleteSelectedBoardCards } from './useDeleteSelectedBoardCards';
 
 export const useBoardActionBarEntries = () => {
   const setActionBarEntries = useSetRecoilState(actionBarEntriesState);

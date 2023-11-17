@@ -20,7 +20,7 @@ export const useHandleCheckableActivityTargetChange = ({
     objectNameSingular: 'activityTargetV2',
   });
   const { deleteOneObject } = useDeleteOneObjectRecord({
-    objectNamePlural: 'activityTargetV2',
+    objectNameSingular: 'activityTargetV2',
   });
 
   return async (

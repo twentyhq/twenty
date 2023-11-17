@@ -1,9 +1,8 @@
 import { useSetRecoilState } from 'recoil';
 
 import { IconTrash } from '@/ui/display/icon';
+import { useDeleteSelectedBoardCards } from '@/ui/layout/board/hooks/useDeleteSelectedBoardCards';
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
-
-import { useDeleteSelectedBoardCards } from './useDeleteSelectedBoardCards';
 
 export const useBoardContextMenuEntries = () => {
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);

@@ -10,8 +10,6 @@ import { INSERT_ONE_PERSON } from '@/people/graphql/mutations/insertOnePerson';
 import { UPDATE_ONE_PERSON } from '@/people/graphql/mutations/updateOnePerson';
 import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
 import { GET_PERSON } from '@/people/graphql/queries/getPerson';
-import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
-import { GET_PIPELINES } from '@/pipeline/graphql/queries/getPipelines';
 import { SEARCH_ACTIVITY_QUERY } from '@/search/graphql/queries/searchActivityQuery';
 import { SEARCH_COMPANY_QUERY } from '@/search/graphql/queries/searchCompanyQuery';
 import { SEARCH_PEOPLE_QUERY } from '@/search/graphql/queries/searchPeopleQuery';
@@ -37,8 +35,6 @@ import {
 } from './mock-data/companies';
 import { mockedObjectMetadataItems } from './mock-data/metadata';
 import { mockedEmptyPersonData, mockedPeopleData } from './mock-data/people';
-import { mockedPipelineProgressData } from './mock-data/pipeline-progress';
-import { mockedPipelinesData } from './mock-data/pipelines';
 import { mockedUsersData } from './mock-data/users';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 import { mockedViewsData } from './mock-data/views';
@@ -47,6 +43,7 @@ import {
   filterAndSortData,
   updateOneFromData,
 } from './mock-data';
+import { createEvent } from '@storybook/testing-library';
 
 const metadataGraphql = graphql.link(
   `${process.env.REACT_APP_SERVER_BASE_URL}/metadata`,
@@ -205,23 +202,7 @@ export const graphqlMocks = [
       );
     },
   ),
-  graphql.query(getOperationName(GET_PIPELINES) ?? '', (req, res, ctx) => {
-    return res(
-      ctx.data({
-        findManyPipeline: mockedPipelinesData,
-      }),
-    );
-  }),
-  graphql.query(
-    getOperationName(GET_PIPELINE_PROGRESS) ?? '',
-    (req, res, ctx) => {
-      return res(
-        ctx.data({
-          findManyPipelineProgress: mockedPipelineProgressData,
-        }),
-      );
-    },
-  ),
+
   graphql.mutation(getOperationName(CREATE_EVENT) ?? '', (req, res, ctx) => {
     return res(
       ctx.data({

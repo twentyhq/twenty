@@ -9,7 +9,7 @@ import { seedViews } from 'src/database/typeorm-seeds/workspace/views';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { seedMetadataSchema } from 'src/database/typeorm-seeds/metadata';
 import { seedOpportunity } from 'src/database/typeorm-seeds/workspace/opportunity';
-import { seedPipelineStep } from 'src/database/typeorm-seeds/workspace/pipelineStep';
+import { seedPipelineStep } from 'src/database/typeorm-seeds/workspace/pipeline-step';
 import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/workspaceMember';
 import { seedPeople } from 'src/database/typeorm-seeds/workspace/people';
 

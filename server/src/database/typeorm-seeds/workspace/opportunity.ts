@@ -11,7 +11,8 @@ export const seedOpportunity = async (
     .insert()
     .into(`${schemaName}.${tableName}`, [
       'id',
-      'amount',
+      'amountAmountMicros',
+      'amountCurrencyCode',
       'closeDate',
       'probability',
       'pipelineStepId',
@@ -23,7 +24,8 @@ export const seedOpportunity = async (
     .values([
       {
         id: '7c887ee3-be10-412b-a663-16bd3c2228e1',
-        amount: 100000,
+        amountAmountMicros: 100000,
+        amountCurrencyCode: 'USD',
         closeDate: new Date(),
         probability: 0.5,
         pipelineStepId: '6edf4ead-006a-46e1-9c6d-228f1d0143c9',

@@ -1,6 +1,7 @@
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { useDeleteOneObjectRecord } from '@/object-record/hooks/useDeleteOneObjectRecord';
 import {
   IconCheckbox,
@@ -27,6 +28,9 @@ export const useRecordTableContextMenuEntries = () => {
 
   const { data } = useGetFavoritesQuery();
   const favorites = data?.findFavorites;
+  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
+    objectNamePlural,
+  });
 
   const { createFavorite, deleteFavorite } = useFavorites({ objectNamePlural });
 
@@ -51,7 +55,7 @@ export const useRecordTableContextMenuEntries = () => {
   });
 
   const { deleteOneObject } = useDeleteOneObjectRecord({
-    objectNamePlural,
+    objectNameSingular: foundObjectMetadataItem?.nameSingular,
   });
 
   const handleDeleteClick = useRecoilCallback(({ snapshot }) => async () => {
