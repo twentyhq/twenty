@@ -53,11 +53,79 @@ Defines custom objects and makes available a GraphQL API (graphql/metadata).
 
 ## Tenant
 
-Generates and serves custom GraphQL schema based on the metadata.
+Generates and serves custom GraphQL schema based on the metadata. 
+
+### Tenant Directory Structure 
+
+```
+tenant
+  └───schema-builder
+    └───factories 
+    └───graphql-types
+    └───database
+    └───interfaces
+    └───object-definitions
+    └───services
+    └───storage
+    └───utils
+  └───resolver-builder
+    └───factories
+    └───interfaces
+  └───query-builder
+    └───factories
+    └───interfaces
+  └───query-runner
+    └───interfaces
+    └───utils 
+  └───utils 
+  └───tenant.module.ts   
+  └───tenant.service.spec.ts  
+  └───tenant.service.ts      
+```
 
 
+The root of the tenant directory includes the `tenant.service.ts`, a file containing the `createTenantSchema` function. This function generates tenant-specific schema by using the metadata to tailor a schema for individual workspaces. By separating the schema and resolver construction, we use the `makeExecutableSchema` function, which combines these discrete elements. 
 
+This strategy is not just about organization, but also helps with optimization, such as caching generated type definitions to enhance performance and scalability.
 
+### Schema builder
 
+The schema-builder generates the GraphQL schema, and includes:  
 
+#### Factories: 
 
+Specialised constructors to generate GraphQL-related constructs.  
+- The type.factory translates field metadata into GraphQL types using `TypeMapperService`.
+- The type-definition.factory creates GraphQL input or output objects derived from `objectMetadata`.
+
+#### GraphQL Types
+
+Includes enumerations, inputs, objects, and scalars, and serves as the building blocks for the schema construction.
+
+#### Interfaces and Object Definitions
+
+Contains the blueprints for GraphQL entities, and includes both predefined and custom types like `MONEY` or `URL`.
+
+#### Services
+
+Contains the service responsible for associating FieldMetadataType with its appropriate GraphQL scalar or query modifiers.
+
+#### Storage 
+
+Includes the `TypeDefinitionsStorage` class that contains reusable type definitions, preventing duplication of GraphQL types.
+
+### Resolver Builder 
+
+Creates resolver functions for querying and mutatating the GraphQL schema. 
+
+#### Factories
+
+Each factory in this directory is responsible for producing a distinct resolver type, such as the `FindManyResolverFactory`, designed for adaptable application across various tables.
+
+### Query Builder 
+
+Includes factories that generate `pg_graphql` queries. 
+
+### Query Runner 
+
+Runs the generated queries on the database and parses the result.
