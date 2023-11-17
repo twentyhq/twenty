@@ -23,6 +23,7 @@ const viewFieldMetadata = {
       description: 'View Field target field',
       icon: 'IconTag',
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -36,6 +37,7 @@ const viewFieldMetadata = {
       description: 'View Field visibility',
       icon: 'IconEye',
       isNullable: false,
+      defaultValue: { value: true },
     },
     {
       isCustom: false,
@@ -49,6 +51,7 @@ const viewFieldMetadata = {
       description: 'View Field size',
       icon: 'IconEye',
       isNullable: false,
+      defaultValue: { value: 0 },
     },
     {
       isCustom: false,
@@ -62,6 +65,7 @@ const viewFieldMetadata = {
       description: 'View Field position',
       icon: 'IconList',
       isNullable: false,
+      defaultValue: { value: 0 },
     },
     {
       isCustom: false,

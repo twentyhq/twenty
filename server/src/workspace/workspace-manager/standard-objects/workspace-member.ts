@@ -27,28 +27,17 @@ const workspaceMemberMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.TEXT,
-      name: 'lastName',
-      label: 'Last name',
+      type: FieldMetadataType.FULL_NAME,
+      name: 'name',
+      label: 'Name',
       targetColumnMap: {
-        value: 'lastName',
+        firstName: 'nameFirstName',
+        lastName: 'nameLastName',
       },
-      description: 'Workspace member last name',
+      description: 'Workspace member name',
       icon: 'IconCircleUser',
       isNullable: false,
-    },
-    {
-      isCustom: false,
-      isActive: true,
-      type: FieldMetadataType.UUID,
-      name: 'userId',
-      label: 'User Id',
-      targetColumnMap: {
-        value: 'userId',
-      },
-      description: 'Associated User Id',
-      icon: 'IconCircleUsers',
-      isNullable: false,
+      defaultValue: { firstName: '', lastName: '' },
     },
     {
       isCustom: false,
@@ -88,6 +77,7 @@ const workspaceMemberMetadata = {
       description: 'Preferred language',
       icon: 'IconLanguage',
       isNullable: false,
+      defaultValue: { value: 'fr' },
     },
     {
       isCustom: false,

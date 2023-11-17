@@ -115,7 +115,7 @@ export const seedViewFilterFieldMetadata = async (
         icon: null,
         isNullable: false,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: '' },
       },
       {
         id: SeedViewFilterFieldMetadataIds.View,
@@ -151,7 +151,7 @@ export const seedViewFilterFieldMetadata = async (
         icon: null,
         isNullable: false,
         isSystem: false,
-        defaultValue: { value: '' },
+        defaultValue: { value: 'Contains' },
       },
       {
         id: SeedViewFilterFieldMetadataIds.Value,

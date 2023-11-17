@@ -3,6 +3,7 @@ import { DataSource } from 'typeorm';
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { SeedPersonFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/person';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
@@ -109,40 +110,23 @@ export const seedWorkspaceMemberFieldMetadata = async (
       },
       // Scalar fields
       {
-        id: SeedWorkspaceMemberFieldMetadataIds.FirstName,
+        id: SeedPersonFieldMetadataIds.Name,
         objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.TEXT,
-        name: 'firstName',
-        label: 'First name',
+        type: FieldMetadataType.FULL_NAME,
+        name: 'name',
+        label: 'Name',
         targetColumnMap: {
-          value: 'firstName',
+          firstName: 'nameFirstName',
+          lastName: 'nameLastName',
         },
-        description: 'Workspace member first name',
+        description: 'Workspace member name',
         icon: 'IconCircleUser',
         isNullable: false,
         isSystem: false,
-        defaultValue: { value: '' },
-      },
-      {
-        id: SeedWorkspaceMemberFieldMetadataIds.LastName,
-        objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
-        isCustom: false,
-        workspaceId: SeedWorkspaceId,
-        isActive: true,
-        type: FieldMetadataType.TEXT,
-        name: 'lastName',
-        label: 'Last name',
-        targetColumnMap: {
-          value: 'lastName',
-        },
-        description: 'Workspace member last name',
-        icon: 'IconCircleUser',
-        isNullable: false,
-        isSystem: false,
-        defaultValue: { value: '' },
+        defaultValue: { firstName: '', lastName: '' },
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.AvatarUrl,

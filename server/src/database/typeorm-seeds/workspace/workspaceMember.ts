@@ -23,8 +23,8 @@ export const seedWorkspaceMember = async (
     .insert()
     .into(`${schemaName}.${tableName}`, [
       'id',
-      'firstName',
-      'lastName',
+      'nameFirstName',
+      'nameLastName',
       'locale',
       'colorScheme',
       'allowImpersonation',
@@ -34,8 +34,8 @@ export const seedWorkspaceMember = async (
     .values([
       {
         id: WorkspaceMemberIds.Tim,
-        firstName: 'Tim',
-        lastName: 'Apple',
+        nameFirstName: 'Tim',
+        nameLastName: 'Apple',
         locale: 'en',
         colorScheme: 'Light',
         allowImpersonation: true,
@@ -43,8 +43,8 @@ export const seedWorkspaceMember = async (
       },
       {
         id: WorkspaceMemberIds.Jony,
-        firstName: 'Jony',
-        lastName: 'Ive',
+        nameFirstName: 'Jony',
+        nameLastName: 'Ive',
         locale: 'en',
         colorScheme: 'Light',
         allowImpersonation: true,
@@ -52,8 +52,8 @@ export const seedWorkspaceMember = async (
       },
       {
         id: WorkspaceMemberIds.Phil,
-        firstName: 'Phil',
-        lastName: 'Shiler',
+        nameFirstName: 'Phil',
+        nameLastName: 'Shiler',
         locale: 'en',
         colorScheme: 'Light',
         allowImpersonation: true,

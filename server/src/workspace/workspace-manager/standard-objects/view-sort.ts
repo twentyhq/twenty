@@ -23,6 +23,7 @@ const viewSortMetadata = {
       description: 'View Sort target field',
       icon: null,
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -36,6 +37,7 @@ const viewSortMetadata = {
       description: 'View Sort direction',
       icon: null,
       isNullable: false,
+      defaultValue: { value: 'asc' },
     },
     {
       isCustom: false,

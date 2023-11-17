@@ -16,16 +16,19 @@ export const addAttachmentTable: WorkspaceMigrationTableAction[] = [
         columnName: 'name',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'fullPath',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'type',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'companyId',

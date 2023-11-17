@@ -16,21 +16,25 @@ export const addViewFieldTable: WorkspaceMigrationTableAction[] = [
         columnName: 'fieldMetadataId',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'position',
         columnType: 'integer',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: 0,
       },
       {
         columnName: 'isVisible',
         columnType: 'boolean',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: true,
       },
       {
         columnName: 'size',
         columnType: 'integer',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: 0,
       },
       {
         columnName: 'viewId',

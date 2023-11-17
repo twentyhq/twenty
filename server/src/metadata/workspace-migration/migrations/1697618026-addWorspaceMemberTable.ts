@@ -16,11 +16,13 @@ export const addWorkspaceMemberTable: WorkspaceMigrationTableAction[] = [
         columnName: 'firstName',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'lastName',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'avatarUrl',
@@ -36,6 +38,7 @@ export const addWorkspaceMemberTable: WorkspaceMigrationTableAction[] = [
         columnName: 'locale',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: 'fr',
       },
       {
         columnName: 'allowImpersonation',
