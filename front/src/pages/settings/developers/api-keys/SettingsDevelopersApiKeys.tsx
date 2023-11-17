@@ -41,7 +41,9 @@ const StyledH1Title = styled(H1Title)`
 
 export const SettingsDevelopersApiKeys = () => {
   const navigate = useNavigate();
-  const { registerOptimisticEffect } = useOptimisticEffect('ApiKeyV2');
+  const { registerOptimisticEffect } = useOptimisticEffect({
+    objectNameSingular: 'apiKeyV2',
+  });
   const [apiKeys, setApiKeys] = useState<Array<ApiFieldItem>>([]);
   useFindManyObjectRecords({
     objectNamePlural: 'apiKeysV2',
