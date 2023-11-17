@@ -38,7 +38,7 @@ export const Currency: Story = {
   args: {
     fieldIconKey: 'IconCurrencyDollar',
     fieldLabel: 'Amount',
-    fieldType: FieldMetadataType.Money,
+    fieldType: FieldMetadataType.Currency,
   },
 };
 
@@ -61,7 +61,7 @@ export const Link: Story = {
   args: {
     fieldIconKey: 'IconWorldWww',
     fieldLabel: 'Website',
-    fieldType: FieldMetadataType.Url,
+    fieldType: FieldMetadataType.Link,
   },
 };
 

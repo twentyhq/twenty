@@ -54,22 +54,22 @@ export const validateDefaultValueBasedOnType = (
         defaultValue.value instanceof Date
       );
 
-    case FieldMetadataType.URL:
+    case FieldMetadataType.LINK:
       return (
         typeof defaultValue === 'object' &&
-        'text' in defaultValue &&
-        typeof defaultValue.text === 'string' &&
-        'link' in defaultValue &&
-        typeof defaultValue.link === 'string'
+        'label' in defaultValue &&
+        typeof defaultValue.label === 'string' &&
+        'url' in defaultValue &&
+        typeof defaultValue.url === 'string'
       );
 
-    case FieldMetadataType.MONEY:
+    case FieldMetadataType.CURRENCY:
       return (
         typeof defaultValue === 'object' &&
-        'amount' in defaultValue &&
-        typeof defaultValue.amount === 'number' &&
-        'currency' in defaultValue &&
-        typeof defaultValue.currency === 'string'
+        'amountMicros' in defaultValue &&
+        typeof defaultValue.amountMicros === 'number' &&
+        'currencyCode' in defaultValue &&
+        typeof defaultValue.currencyCode === 'string'
       );
 
     default:

@@ -1,11 +1,11 @@
 import { FieldDoubleText } from '../../../types/FieldDoubleText';
-import { useURLV2Field } from '../../hooks/useURLV2Field';
+import { useLinkField } from '../../hooks/useLinkField';
 
 import { DoubleTextInput } from './internal/DoubleTextInput';
 import { FieldInputOverlay } from './internal/FieldInputOverlay';
 import { FieldInputEvent } from './DateFieldInput';
 
-export type URLV2FieldInputProps = {
+export type LinkFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
@@ -13,29 +13,29 @@ export type URLV2FieldInputProps = {
   onShiftTab?: FieldInputEvent;
 };
 
-export const URLV2FieldInput = ({
+export const LinkFieldInput = ({
   onEnter,
   onEscape,
   onClickOutside,
   onTab,
   onShiftTab,
-}: URLV2FieldInputProps) => {
-  const { initialValue, hotkeyScope, persistURLField } = useURLV2Field();
+}: LinkFieldInputProps) => {
+  const { initialValue, hotkeyScope, persistLinkField } = useLinkField();
 
   const handleEnter = (newURL: FieldDoubleText) => {
     onEnter?.(() =>
-      persistURLField({
-        link: newURL.firstValue,
-        text: newURL.secondValue,
+      persistLinkField({
+        url: newURL.firstValue,
+        label: newURL.secondValue,
       }),
     );
   };
 
   const handleEscape = (newURL: FieldDoubleText) => {
     onEscape?.(() =>
-      persistURLField({
-        link: newURL.firstValue,
-        text: newURL.secondValue,
+      persistLinkField({
+        url: newURL.firstValue,
+        label: newURL.secondValue,
       }),
     );
   };
@@ -45,27 +45,27 @@ export const URLV2FieldInput = ({
     newURL: FieldDoubleText,
   ) => {
     onClickOutside?.(() =>
-      persistURLField({
-        link: newURL.firstValue,
-        text: newURL.secondValue,
+      persistLinkField({
+        url: newURL.firstValue,
+        label: newURL.secondValue,
       }),
     );
   };
 
   const handleTab = (newURL: FieldDoubleText) => {
     onTab?.(() =>
-      persistURLField({
-        link: newURL.firstValue,
-        text: newURL.secondValue,
+      persistLinkField({
+        url: newURL.firstValue,
+        label: newURL.secondValue,
       }),
     );
   };
 
   const handleShiftTab = (newURL: FieldDoubleText) => {
     onShiftTab?.(() =>
-      persistURLField({
-        link: newURL.firstValue,
-        text: newURL.secondValue,
+      persistLinkField({
+        url: newURL.firstValue,
+        label: newURL.secondValue,
       }),
     );
   };
@@ -73,9 +73,9 @@ export const URLV2FieldInput = ({
   return (
     <FieldInputOverlay>
       <DoubleTextInput
-        firstValue={initialValue.link}
-        secondValue={initialValue.text}
-        firstValuePlaceholder={'Link'}
+        firstValue={initialValue.url}
+        secondValue={initialValue.label}
+        firstValuePlaceholder={'Url'}
         secondValuePlaceholder={'Label'}
         hotkeyScope={hotkeyScope}
         onClickOutside={handleClickOutside}

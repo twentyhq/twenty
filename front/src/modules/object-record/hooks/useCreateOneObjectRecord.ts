@@ -4,11 +4,14 @@ import { v4 } from 'uuid';
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
-import { Currency, FieldMetadataType } from '~/generated-metadata/graphql';
+import { CurrencyCode, FieldMetadataType } from '~/generated-metadata/graphql';
 import { capitalize } from '~/utils/string/capitalize';
 
 const defaultFieldValues: Record<FieldMetadataType, unknown> = {
-  [FieldMetadataType.Money]: { amount: null, currency: Currency.Usd },
+  [FieldMetadataType.Currency]: {
+    amountMicros: null,
+    currencyCode: CurrencyCode.Usd,
+  },
   [FieldMetadataType.Boolean]: false,
   [FieldMetadataType.Date]: null,
   [FieldMetadataType.Email]: '',
@@ -18,7 +21,7 @@ const defaultFieldValues: Record<FieldMetadataType, unknown> = {
   [FieldMetadataType.Relation]: null,
   [FieldMetadataType.Phone]: '',
   [FieldMetadataType.Text]: '',
-  [FieldMetadataType.Url]: { link: '', text: '' },
+  [FieldMetadataType.Link]: { url: '', label: '' },
   [FieldMetadataType.Uuid]: '',
 };
 

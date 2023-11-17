@@ -14,8 +14,8 @@ import {
 } from './factories/input-type-definition.factory';
 import { getFieldMetadataType } from './utils/get-field-metadata-type.util';
 import { BuildSchemaOptions } from './interfaces/build-schema-optionts.interface';
-import { moneyObjectDefinition } from './object-definitions/money.object-definition';
-import { urlObjectDefinition } from './object-definitions/url.object-definition';
+import { currencyObjectDefinition } from './object-definitions/currency.object-definition';
+import { linkObjectDefinition } from './object-definitions/link.object-definition';
 import { ObjectMetadataInterface } from './interfaces/object-metadata.interface';
 import { FieldMetadataInterface } from './interfaces/field-metadata.interface';
 import { FilterTypeDefinitionFactory } from './factories/filter-type-definition.factory';
@@ -61,8 +61,8 @@ export class TypeDefinitionsGenerator {
 
   private generateStaticObjectTypeDefs(options: BuildSchemaOptions) {
     const staticObjectMetadataCollection = [
-      moneyObjectDefinition,
-      urlObjectDefinition,
+      currencyObjectDefinition,
+      linkObjectDefinition,
     ];
 
     this.logger.log(

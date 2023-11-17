@@ -21,7 +21,7 @@ export type FieldURLMetadata = {
   fieldName: string;
 };
 
-export type FieldURLV2Metadata = {
+export type FieldLinkMetadata = {
   placeHolder: string;
   fieldName: string;
 };
@@ -42,7 +42,7 @@ export type FieldMoneyMetadata = {
   isPositive?: boolean;
 };
 
-export type FieldMoneyAmountV2Metadata = {
+export type FieldCurrencyMetadata = {
   fieldName: string;
   placeHolder: string;
   isPositive?: boolean;
@@ -91,22 +91,22 @@ export type FieldBooleanMetadata = {
 };
 
 export type FieldMetadata =
-  | FieldUuidMetadata
-  | FieldTextMetadata
-  | FieldRelationMetadata
+  | FieldBooleanMetadata
   | FieldChipMetadata
+  | FieldCurrencyMetadata
+  | FieldDateMetadata
   | FieldDoubleTextChipMetadata
   | FieldDoubleTextMetadata
-  | FieldPhoneMetadata
-  | FieldURLMetadata
-  | FieldURLV2Metadata
-  | FieldNumberMetadata
-  | FieldMoneyMetadata
-  | FieldMoneyAmountV2Metadata
   | FieldEmailMetadata
-  | FieldDateMetadata
+  | FieldLinkMetadata
+  | FieldMoneyMetadata
+  | FieldNumberMetadata
+  | FieldPhoneMetadata
   | FieldProbabilityMetadata
-  | FieldBooleanMetadata;
+  | FieldRelationMetadata
+  | FieldTextMetadata
+  | FieldURLMetadata
+  | FieldUuidMetadata;
 
 export type FieldTextValue = string;
 export type FieldUUidValue = string;
@@ -115,10 +115,10 @@ export type FieldChipValue = string;
 export type FieldDateValue = string | null;
 export type FieldPhoneValue = string;
 export type FieldURLValue = string;
-export type FieldURLV2Value = { link: string; text: string };
+export type FieldLinkValue = { url: string; label: string };
 export type FieldNumberValue = number | null;
 export type FieldMoneyValue = number | null;
-export type FieldMoneyAmountV2Value = { currency: string; amount: number };
+export type FieldCurrencyValue = { currencyCode: string; amountMicros: number };
 
 export type FieldEmailValue = string;
 export type FieldProbabilityValue = number;

@@ -4,14 +4,14 @@ export interface FieldMetadataTargetColumnMapValue {
   value: string;
 }
 
-export interface FieldMetadataTargetColumnMapUrl {
-  text: string;
-  link: string;
+export interface FieldMetadataTargetColumnMapLink {
+  label: string;
+  url: string;
 }
 
-export interface FieldMetadataTargetColumnMapMoney {
-  amount: string;
-  currency: string;
+export interface FieldMetadataTargetColumnMapCurrency {
+  amountMicros: string;
+  currencyCode: string;
 }
 
 type AllFieldMetadataTypes = {
@@ -19,8 +19,8 @@ type AllFieldMetadataTypes = {
 };
 
 type FieldMetadataTypeMapping = {
-  [FieldMetadataType.URL]: FieldMetadataTargetColumnMapUrl;
-  [FieldMetadataType.MONEY]: FieldMetadataTargetColumnMapMoney;
+  [FieldMetadataType.LINK]: FieldMetadataTargetColumnMapLink;
+  [FieldMetadataType.CURRENCY]: FieldMetadataTargetColumnMapCurrency;
 };
 
 type TypeByFieldMetadata<T extends FieldMetadataType | 'default'> =

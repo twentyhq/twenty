@@ -8,7 +8,9 @@ describe('serializeDefaultValue', () => {
   });
 
   it('should handle uuid dynamic default value', () => {
-    expect(serializeDefaultValue({ type: 'uuid' })).toBe('uuid_generate_v4()');
+    expect(serializeDefaultValue({ type: 'uuid' })).toBe(
+      'public.uuid_generate_v4()',
+    );
   });
 
   it('should handle now dynamic default value', () => {

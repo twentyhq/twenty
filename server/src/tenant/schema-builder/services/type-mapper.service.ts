@@ -52,7 +52,7 @@ export class TypeMapperService {
     const numberScalar =
       numberScalarMode === 'float' ? GraphQLFloat : GraphQLInt;
 
-    // URL and MONEY are handled in the factories because they are objects
+    // LINK and CURRENCY are handled in the factories because they are objects
     const typeScalarMapping = new Map<FieldMetadataType, GraphQLScalarType>([
       [FieldMetadataType.UUID, GraphQLID],
       [FieldMetadataType.TEXT, GraphQLString],
@@ -78,7 +78,7 @@ export class TypeMapperService {
     const numberScalar =
       numberScalarMode === 'float' ? FloatFilterType : IntFilterType;
 
-    // URL and MONEY are handled in the factories because they are objects
+    // LINK and CURRENCY are handled in the factories because they are objects
     const typeFilterMapping = new Map<
       FieldMetadataType,
       GraphQLInputObjectType | GraphQLScalarType<boolean, boolean>
@@ -100,7 +100,7 @@ export class TypeMapperService {
   mapToOrderByType(
     fieldMetadataType: FieldMetadataType,
   ): GraphQLInputType | undefined {
-    // URL and MONEY are handled in the factories because they are objects
+    // LINK and CURRENCY are handled in the factories because they are objects
     const typeOrderByMapping = new Map<FieldMetadataType, GraphQLEnumType>([
       [FieldMetadataType.UUID, OrderByDirectionType],
       [FieldMetadataType.TEXT, OrderByDirectionType],

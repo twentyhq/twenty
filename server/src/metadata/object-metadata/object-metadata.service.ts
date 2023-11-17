@@ -75,7 +75,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             isNullable: true,
             isActive: true,
             isCustom: false,
-            // isSystem: true,
+            isSystem: true,
             workspaceId: record.workspaceId,
           },
           {
