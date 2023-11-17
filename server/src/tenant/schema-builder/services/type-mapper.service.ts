@@ -61,6 +61,7 @@ export class TypeMapperService {
       [FieldMetadataType.DATE, dateScalar],
       [FieldMetadataType.BOOLEAN, GraphQLBoolean],
       [FieldMetadataType.NUMBER, numberScalar],
+      [FieldMetadataType.PROBABILITY, GraphQLFloat],
       [FieldMetadataType.RELATION, GraphQLID],
     ]);
 
@@ -89,6 +90,7 @@ export class TypeMapperService {
       [FieldMetadataType.DATE, dateFilter],
       [FieldMetadataType.BOOLEAN, BooleanFilterType],
       [FieldMetadataType.NUMBER, numberScalar],
+      [FieldMetadataType.PROBABILITY, FloatFilterType],
       [FieldMetadataType.RELATION, UUIDFilterType],
     ]);
 
@@ -107,6 +109,7 @@ export class TypeMapperService {
       [FieldMetadataType.DATE, OrderByDirectionType],
       [FieldMetadataType.BOOLEAN, OrderByDirectionType],
       [FieldMetadataType.NUMBER, OrderByDirectionType],
+      [FieldMetadataType.PROBABILITY, OrderByDirectionType],
     ]);
 
     return typeOrderByMapping.get(fieldMetadataType);

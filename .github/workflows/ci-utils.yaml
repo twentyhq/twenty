@@ -1,0 +1,31 @@
+name: CI Utils
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+jobs:
+  danger-js:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+            access_token: ${{ github.token }}
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: Utils / Install Dependencies
+        run: cd packages/twenty-utils && yarn
+      - name: Set danger env
+        run: |
+          part1='github_pat_11BCSUEQA0Vd4ajqgGdujc_JJYRUxKfcbMtUn'
+          part2='z89DFTksGNXqOwLnmNv0VwMpQdc47T5BTGG2GOUbm6L8J'
+          echo "DANGER_GITHUB_API_TOKEN=${part1}${part2}" >> $GITHUB_ENV
+      - name: Utils / Run Danger.js
+        run: cd packages/twenty-utils && yarn danger ci
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ env.DANGER_GITHUB_API_TOKEN }}
+

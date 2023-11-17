@@ -57,4 +57,5 @@ export {
   TbColorPicker,
   TbCircleDot,
   TbUpload,
+  TbVariable
 } from "react-icons/tb";

@@ -68,10 +68,10 @@ export class CompositeFieldAliasFactory {
       fieldMetadata.objectMetadataId,
       relationMetadata,
     );
-    const targetTableName =
+    const referencedObjectMetadata =
       relationDirection == RelationDirection.TO
-        ? relationMetadata.fromObjectMetadata.targetTableName
-        : relationMetadata.toObjectMetadata.targetTableName;
+        ? relationMetadata.fromObjectMetadata
+        : relationMetadata.toObjectMetadata;
 
     // If it's a relation destination is of kind MANY, we need to add the collection suffix and extract the args
     if (
@@ -84,7 +84,7 @@ export class CompositeFieldAliasFactory {
         relationMetadata.toObjectMetadata.fields ?? [],
       );
       return `
-      ${fieldKey}: ${targetTableName}Collection${
+      ${fieldKey}: ${referencedObjectMetadata.targetTableName}Collection${
         argsString ? `(${argsString})` : ''
       } {
         ${this.fieldsStringFactory.createFieldsStringRecursive(
@@ -95,14 +95,24 @@ export class CompositeFieldAliasFactory {
       }
     `;
     }
+    let relationAlias = fieldKey;
+
+    // For one to one relations, pg_graphql use the targetTableName on the side that is not storing the foreign key
+    // so we need to alias it to the field key
+    if (
+      relationMetadata.relationType === RelationMetadataType.ONE_TO_ONE &&
+      relationDirection === RelationDirection.FROM
+    ) {
+      relationAlias = `${fieldKey}: ${referencedObjectMetadata.targetTableName}`;
+    }
 
     // Otherwise it means it's a relation destination is of kind ONE
     return `
-      ${fieldKey}: ${targetTableName} {
+      ${relationAlias} {
         ${this.fieldsStringFactory.createFieldsStringRecursive(
           info,
           fieldValue,
-          relationMetadata.toObjectMetadata.fields ?? [],
+          referencedObjectMetadata.fields ?? [],
         )}
       }
     `;

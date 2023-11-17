@@ -5,7 +5,7 @@ export const seedComments = async (prisma: PrismaClient) => {
     update: {},
     create: {
       id: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfb400',
-      workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+      workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
       title: 'Performance update',
       type: 'Note',
       body: '[{"id":"555df0c3-ab88-4c62-abae-c9b557c37c5b","type":"paragraph","props":{"textColor":"default","backgroundColor":"default","textAlignment":"left"},"content":[{"type":"text","text":"In the North American region, we have observed a strong growth rate of 18% in sales. Europe followed suit with a significant 14% increase, while Asia-Pacific sustained its performance with a steady 10% rise. Special kudos to the North American team for the excellent work done in penetrating new markets and establishing stronger footholds in the existing ones.","styles":{}}],"children":[]},{"id":"13530934-b3ce-4332-9238-3760aa4acb3e","type":"paragraph","props":{"textColor":"default","backgroundColor":"default","textAlignment":"left"},"content":[],"children":[]}]',
@@ -21,7 +21,7 @@ export const seedComments = async (prisma: PrismaClient) => {
       personId: null,
       companyId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfa408',
       activityId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfb400',
-      workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+      workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
     },
   });
 
@@ -30,7 +30,7 @@ export const seedComments = async (prisma: PrismaClient) => {
     update: {},
     create: {
       id: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfb200',
-      workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+      workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
       body: 'Hi Félix ! How do you like your Twenty workspace?',
       activityId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfb400',
       commentThreadId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfb400',
@@ -43,7 +43,7 @@ export const seedComments = async (prisma: PrismaClient) => {
     update: {},
     create: {
       id: 'twenty-fe256b40-3ec3-4fe3-8997-b76aa0bfb200',
-      workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+      workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
       body: 'I love it!',
       activityId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfb400',
       commentThreadId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfb400',
@@ -56,7 +56,7 @@ export const seedComments = async (prisma: PrismaClient) => {
     update: {},
     create: {
       id: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfc408',
-      workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+      workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
       title: 'Buyout Proposal',
       type: 'Task',
       assigneeId: 'twenty-ge256b39-3ec3-4fe3-8997-b76aa0bfa408',
@@ -74,7 +74,7 @@ export const seedComments = async (prisma: PrismaClient) => {
       personId: 'twenty-755035db-623d-41fe-92e7-dd45b7c568e1',
       companyId: null,
       activityId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfc408',
-      workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+      workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
     },
   });
 
@@ -83,7 +83,7 @@ export const seedComments = async (prisma: PrismaClient) => {
     update: {},
     create: {
       id: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfb100',
-      workspaceId: 'twenty-7ed9d212-1c25-4d02-bf25-6aeccf7ea419',
+      workspaceId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
       body: 'I really like this comment thread feature!',
       activityId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfc408',
       commentThreadId: 'twenty-fe256b39-3ec3-4fe3-8997-b76aa0bfc408',
