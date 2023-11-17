@@ -38,6 +38,21 @@ export const CREATE_ONE_METADATA_FIELD = gql`
   }
 `;
 
+export const CREATE_ONE_RELATION_METADATA = gql`
+  mutation CreateOneRelationMetadata($input: CreateOneRelationInput!) {
+    createOneRelation(input: $input) {
+      id
+      relationType
+      fromObjectMetadataId
+      toObjectMetadataId
+      fromFieldMetadataId
+      toFieldMetadataId
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 export const UPDATE_ONE_METADATA_FIELD = gql`
   mutation UpdateOneFieldMetadataItem(
     $idToUpdate: ID!

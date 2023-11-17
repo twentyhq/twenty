@@ -30,6 +30,11 @@ export const useObjectMetadataItemForSettings = () => {
         getObjectSlug(activeObjectMetadataItem) === slug,
     );
 
+  const findObjectMetadataItemById = (id: string) =>
+    objectMetadataItems.find(
+      (objectMetadataItem) => objectMetadataItem.id === id,
+    );
+
   const { createOneObjectMetadataItem } =
     useCreateOneObjectRecordMetadataItem();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
@@ -82,6 +87,7 @@ export const useObjectMetadataItemForSettings = () => {
     editObjectMetadataItem,
     eraseObjectMetadataItem,
     findActiveObjectMetadataItemBySlug,
+    findObjectMetadataItemById,
     loading,
   };
 };
