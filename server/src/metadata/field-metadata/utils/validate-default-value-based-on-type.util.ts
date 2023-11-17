@@ -72,6 +72,15 @@ export const validateDefaultValueBasedOnType = (
         typeof defaultValue.currencyCode === 'string'
       );
 
+    case FieldMetadataType.FULL_NAME:
+      return (
+        typeof defaultValue === 'object' &&
+        'firstName' in defaultValue &&
+        typeof defaultValue.firstName === 'string' &&
+        'lastName' in defaultValue &&
+        typeof defaultValue.lastName === 'string'
+      );
+
     default:
       return false;
   }

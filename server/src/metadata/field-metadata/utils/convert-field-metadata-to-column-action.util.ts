@@ -123,6 +123,25 @@ export function convertFieldMetadataToColumnActions(
         },
       ];
     }
+    case FieldMetadataType.FULL_NAME: {
+      const defaultValue =
+        fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.FULL_NAME>;
+
+      return [
+        {
+          action: WorkspaceMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.firstName,
+          columnType: 'varchar',
+          defaultValue: serializeDefaultValue(defaultValue?.firstName),
+        },
+        {
+          action: WorkspaceMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.lastName,
+          columnType: 'varchar',
+          defaultValue: serializeDefaultValue(defaultValue?.lastName),
+        },
+      ];
+    }
     default:
       throw new Error(`Unknown type ${fieldMetadata.type}`);
   }

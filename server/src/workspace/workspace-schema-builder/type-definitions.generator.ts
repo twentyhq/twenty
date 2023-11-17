@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
 import { customTableDefaultColumns } from 'src/workspace/workspace-migration-runner/utils/custom-table-default-column.util';
+import { fullNameObjectDefinition } from 'src/workspace/workspace-schema-builder/object-definitions/full-name.object-definition';
 
 import { TypeDefinitionsStorage } from './storages/type-definitions.storage';
 import {
@@ -63,6 +64,7 @@ export class TypeDefinitionsGenerator {
     const staticObjectMetadataCollection = [
       currencyObjectDefinition,
       linkObjectDefinition,
+      fullNameObjectDefinition,
     ];
 
     this.logger.log(
