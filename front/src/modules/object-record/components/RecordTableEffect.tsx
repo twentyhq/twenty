@@ -61,8 +61,6 @@ export const RecordTableEffect = () => {
     useRecordTableContextMenuEntries();
 
   useEffect(() => {
-    console.log('asdasda');
-
     setActionBarEntries?.();
     setContextMenuEntries?.();
   }, [setActionBarEntries, setContextMenuEntries]);
