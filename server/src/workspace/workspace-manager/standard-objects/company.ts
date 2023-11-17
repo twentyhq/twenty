@@ -67,11 +67,11 @@ const companyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.TEXT,
-      name: 'linkedinUrl',
+      type: FieldMetadataType.LINK,
+      name: 'linkedinLink',
       label: 'Linkedin',
       targetColumnMap: {
-        value: 'linkedinUrl',
+        value: 'linkedinLink',
       },
       description: 'The company Linkedin account',
       icon: 'IconBrandLinkedin',
@@ -80,11 +80,11 @@ const companyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.TEXT,
-      name: 'xUrl',
+      type: FieldMetadataType.LINK,
+      name: 'xLink',
       label: 'X',
       targetColumnMap: {
-        value: 'xUrl',
+        value: 'xLink',
       },
       description: 'The company Twitter/X account',
       icon: 'IconBrandX',

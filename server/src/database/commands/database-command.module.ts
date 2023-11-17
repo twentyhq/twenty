@@ -12,8 +12,7 @@ import { WorkspaceMigrationModule } from 'src/metadata/workspace-migration/works
 import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { WorkspaceModule } from 'src/core/workspace/workspace.module';
-
-import { DataSeedWorkspaceCommand } from './data-seed-workspace.command';
+import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-workspace.command';
 
 @Module({
   imports: [

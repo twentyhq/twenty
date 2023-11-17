@@ -33,12 +33,22 @@ export const addCompanyTable: WorkspaceMigrationTableAction[] = [
         action: WorkspaceMigrationColumnActionType.CREATE,
       },
       {
-        columnName: 'linkedinUrl',
+        columnName: 'linkedinLinklUrl',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
       },
       {
-        columnName: 'xUrl',
+        columnName: 'linkedinLinkLabel',
+        columnType: 'varchar',
+        action: WorkspaceMigrationColumnActionType.CREATE,
+      },
+      {
+        columnName: 'xLinkUrl',
+        columnType: 'varchar',
+        action: WorkspaceMigrationColumnActionType.CREATE,
+      },
+      {
+        columnName: 'xLinkLabel',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
       },
