@@ -65,7 +65,7 @@ export const SettingsObjectNewFieldStep2 = () => {
     },
   });
 
-  if (!activeObjectMetadataItem || !objectViews.length) return null;
+  if (!activeObjectMetadataItem) return null;
 
   const canSave = !!formValues.label;
 

@@ -23,12 +23,12 @@ const StyledContainer = styled.div<ContainerProps>`
 `;
 
 const StyledCircle = styled(motion.div)<{
-  toggleSize: ToggleSize;
+  size: ToggleSize;
 }>`
   background-color: ${({ theme }) => theme.background.primary};
   border-radius: 50%;
-  height: ${({ toggleSize }) => (toggleSize === 'small' ? 12 : 16)}px;
-  width: ${({ toggleSize }) => (toggleSize === 'small' ? 12 : 16)}px;
+  height: ${({ size }) => (size === 'small' ? 12 : 16)}px;
+  width: ${({ size }) => (size === 'small' ? 12 : 16)}px;
 `;
 
 export type ToggleProps = {
@@ -76,7 +76,7 @@ export const Toggle = ({
       <StyledCircle
         animate={isOn ? 'on' : 'off'}
         variants={circleVariants}
-        toggleSize={toggleSize}
+        size={toggleSize}
       />
     </StyledContainer>
   );
