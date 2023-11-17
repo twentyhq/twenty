@@ -10,6 +10,7 @@ import {
   IconCheckbox,
   IconSearch,
   IconSettings,
+  IconTargetArrow,
 } from '@/ui/display/icon/index';
 import { useIsSubMenuNavbarDisplayed } from '@/ui/layout/hooks/useIsSubMenuNavbarDisplayed';
 import MainNavbar from '@/ui/navigation/navbar/components/MainNavbar';
@@ -56,6 +57,12 @@ export const AppNavbar = () => {
           <Favorites />
           <NavTitle label="Workspace" />
           <ObjectMetadataNavItems />
+          <NavItem
+            label="Opportunities"
+            to="/opportunities"
+            active={currentPath === '/opportunities'}
+            Icon={IconTargetArrow}
+          />
         </MainNavbar>
       ) : (
         <SettingsNavbar />

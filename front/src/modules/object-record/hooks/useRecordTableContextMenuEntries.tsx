@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { useDeleteOneObjectRecord } from '@/object-record/hooks/useDeleteOneObjectRecord';
 import {
   IconCheckbox,
@@ -27,6 +28,11 @@ export const useRecordTableContextMenuEntries = () => {
 
   const { scopeId: objectNamePlural, resetTableRowSelection } =
     useRecordTable();
+
+  const { data } = useGetFavoritesQuery();
+  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
+    objectNamePlural,
+  });
 
   const { createFavorite, deleteFavorite, favorites } = useFavorites({
     objectNamePlural,
@@ -53,7 +59,7 @@ export const useRecordTableContextMenuEntries = () => {
   });
 
   const { deleteOneObject } = useDeleteOneObjectRecord({
-    objectNamePlural,
+    objectNameSingular: foundObjectMetadataItem?.nameSingular,
   });
 
   const handleDeleteClick = useRecoilCallback(({ snapshot }) => async () => {

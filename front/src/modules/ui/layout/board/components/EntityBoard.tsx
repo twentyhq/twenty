@@ -1,10 +1,11 @@
 import { useCallback, useRef } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
+import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useRecoilValue } from 'recoil';
 
-import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
+import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
+import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { StyledBoard } from '@/ui/layout/board/components/StyledBoard';
 import { BoardColumnContext } from '@/ui/layout/board/contexts/BoardColumnContext';
@@ -13,11 +14,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import {
-  PipelineProgress,
-  PipelineStage,
-  useUpdateOnePipelineProgressStageMutation,
-} from '~/generated/graphql';
+import { PipelineProgress, PipelineStage } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
 
 import { useCurrentCardSelected } from '../hooks/useCurrentCardSelected';
@@ -59,8 +56,12 @@ export const EntityBoard = ({
   const boardColumns = useRecoilValue(boardColumnsState);
   const setCardSelected = useSetCardSelected();
 
-  const [updatePipelineProgressStage] =
-    useUpdateOnePipelineProgressStageMutation();
+  const { updateOneObject: updateOneOpportunity } =
+    useUpdateOneObjectRecord<Opportunity>({
+      objectNameSingular: 'opportunityV2',
+    });
+
+  const apolloClient = useApolloClient();
 
   const { unselectAllActiveCards } = useCurrentCardSelected();
 
@@ -69,33 +70,25 @@ export const EntityBoard = ({
       pipelineProgressId: NonNullable<PipelineProgress['id']>,
       pipelineStageId: NonNullable<PipelineStage['id']>,
     ) => {
-      updatePipelineProgressStage({
-        variables: {
+      await updateOneOpportunity?.({
+        idToUpdate: pipelineProgressId,
+        input: {
+          pipelineStepId: pipelineStageId,
+        },
+      });
+
+      const cache = apolloClient.cache;
+      cache.modify({
+        id: cache.identify({
           id: pipelineProgressId,
-          pipelineStageId,
+          __typename: 'PipelineProgress',
+        }),
+        fields: {
+          pipelineStageId: () => pipelineStageId,
         },
-        optimisticResponse: {
-          __typename: 'Mutation',
-          updateOnePipelineProgress: {
-            __typename: 'PipelineProgress',
-            id: pipelineProgressId,
-          },
-        },
-        update: (cache) => {
-          cache.modify({
-            id: cache.identify({
-              id: pipelineProgressId,
-              __typename: 'PipelineProgress',
-            }),
-            fields: {
-              pipelineStageId: () => pipelineStageId,
-            },
-          });
-        },
-        refetchQueries: [getOperationName(GET_PIPELINE_PROGRESS) ?? ''],
       });
     },
-    [updatePipelineProgressStage],
+    [apolloClient.cache, updateOneOpportunity],
   );
 
   useListenClickOutsideByClassName({

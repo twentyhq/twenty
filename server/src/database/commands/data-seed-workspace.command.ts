@@ -8,6 +8,8 @@ import { seedViewFields } from 'src/database/typeorm-seeds/workspace/view-fields
 import { seedViews } from 'src/database/typeorm-seeds/workspace/views';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { seedMetadataSchema } from 'src/database/typeorm-seeds/metadata';
+import { seedOpportunity } from 'src/database/typeorm-seeds/workspace/opportunity';
+import { seedPipelineStep } from 'src/database/typeorm-seeds/workspace/pipeline-step';
 import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/workspaceMember';
 import { seedPeople } from 'src/database/typeorm-seeds/workspace/people';
 
@@ -55,6 +57,8 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
 
       await seedCompanies(workspaceDataSource, dataSourceMetadata.schema);
       await seedPeople(workspaceDataSource, dataSourceMetadata.schema);
+      await seedPipelineStep(workspaceDataSource, dataSourceMetadata.schema);
+      await seedOpportunity(workspaceDataSource, dataSourceMetadata.schema);
 
       await seedViews(workspaceDataSource, dataSourceMetadata.schema);
       await seedViewFields(workspaceDataSource, dataSourceMetadata.schema);
