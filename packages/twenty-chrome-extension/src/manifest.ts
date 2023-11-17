@@ -22,7 +22,7 @@ export default defineManifest({
 
   content_scripts: [
     {
-      matches: ['http://*/*', 'https://*/*'],
+      matches: ['https://www.linkedin.com/*'],
       js: ['src/contentScript/index.ts'],
     },
   ],
