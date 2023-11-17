@@ -36,25 +36,22 @@ export const SettingsDevelopersApiKeysNew = () => {
     const expiresAt = formValues.expirationDate
       ? DateTime.now().plus({ days: formValues.expirationDate }).toString()
       : null;
-    const newApiKey = await createOneApiKey?.({
+    const { createApiKeyV2: newApiKey } = await createOneApiKey?.({
       name: formValues.name,
       expiresAt,
     });
     const tokenData = await generateOneApiKeyToken({
       variables: {
         data: {
-          id: newApiKey.createApiKeyV2.id,
-          expiresAt: newApiKey.createApiKeyV2.expiresAt,
-          name: newApiKey.createApiKeyV2.name, // TODO update typing to remove useless name param here
+          id: newApiKey.id,
+          expiresAt: newApiKey.expiresAt,
+          name: newApiKey.name, // TODO update typing to remove useless name param here
         },
       },
     });
     if (tokenData.data?.generateApiKeyV2Token) {
-      setGeneratedApi(
-        newApiKey.createApiKeyV2.id,
-        tokenData.data.generateApiKeyV2Token.token,
-      );
-      navigate(`/settings/developers/api-keys/${newApiKey.createApiKeyV2.id}`);
+      setGeneratedApi(newApiKey.id, tokenData.data.generateApiKeyV2Token.token);
+      navigate(`/settings/developers/api-keys/${newApiKey.id}`);
     }
   };
   const canSave = !!formValues.name && createOneApiKey;
