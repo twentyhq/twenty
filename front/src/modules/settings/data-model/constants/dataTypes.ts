@@ -8,6 +8,7 @@ import {
   IconNumbers,
   IconPhone,
   IconPlug,
+  IconTag,
   IconTextSize,
   IconUser,
 } from '@/ui/display/icon';
@@ -52,6 +53,11 @@ export const dataTypes: Record<
     Icon: IconCalendarEvent,
     defaultValue: defaultDateValue.toISOString(),
   },
+  [FieldMetadataType.Enum]: {
+    label: 'Select',
+    Icon: IconTag,
+    defaultValue: { color: 'green', text: 'Option 1' },
+  },
   [FieldMetadataType.Currency]: {
     label: 'Currency',
     Icon: IconCoins,
@@ -66,5 +72,4 @@ export const dataTypes: Record<
     defaultValue: 50,
   },
   [FieldMetadataType.FullName]: { label: 'Full Name', Icon: IconUser },
-  [FieldMetadataType.Enum]: { label: 'Enum', Icon: IconPlug },
 };

@@ -1,5 +1,6 @@
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { ThemeColor } from '@/ui/theme/constants/colors';
 
 export type FieldUuidMetadata = {
   placeHolder: string;
@@ -94,6 +95,10 @@ export type FieldBooleanMetadata = {
   fieldName: string;
 };
 
+export type FieldEnumMetadata = {
+  fieldName: string;
+};
+
 export type FieldMetadata =
   | FieldBooleanMetadata
   | FieldChipMetadata
@@ -107,6 +112,7 @@ export type FieldMetadata =
   | FieldNumberMetadata
   | FieldPhoneMetadata
   | FieldProbabilityMetadata
+  | FieldEnumMetadata
   | FieldRelationMetadata
   | FieldTextMetadata
   | FieldURLMetadata
@@ -140,3 +146,5 @@ export type FieldDoubleTextChipValue = {
 };
 
 export type FieldRelationValue = EntityForSelect | null;
+
+export type FieldEnumValue = { color: ThemeColor; text: string };

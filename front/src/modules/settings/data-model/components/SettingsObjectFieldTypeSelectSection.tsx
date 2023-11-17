@@ -32,8 +32,8 @@ const StyledSettingsObjectFieldTypeCard = styled(SettingsObjectFieldTypeCard)`
   margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
-// TODO: remove "relation" type for now, add it back when the backend is ready.
-const { RELATION: _, ...dataTypesWithoutRelation } = dataTypes;
+// TODO: remove "enum" and "relation" types for now, add them back when the backend is ready.
+const { ENUM: _ENUM, RELATION: _RELATION, ...allowedDataTypes } = dataTypes;
 
 export const SettingsObjectFieldTypeSelectSection = ({
   disabled,
@@ -57,12 +57,10 @@ export const SettingsObjectFieldTypeSelectSection = ({
       dropdownScopeId="object-field-type-select"
       value={fieldType}
       onChange={onChange}
-      options={Object.entries(dataTypesWithoutRelation).map(
-        ([key, dataType]) => ({
-          value: key as FieldMetadataType,
-          ...dataType,
-        }),
-      )}
+      options={Object.entries(allowedDataTypes).map(([key, dataType]) => ({
+        value: key as FieldMetadataType,
+        ...dataType,
+      }))}
     />
     {['BOOLEAN', 'DATE', 'MONEY', 'NUMBER', 'TEXT', 'URL'].includes(
       fieldType,

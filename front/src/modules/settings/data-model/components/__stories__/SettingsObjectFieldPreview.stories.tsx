@@ -73,6 +73,14 @@ export const Number: Story = {
   },
 };
 
+export const Select: Story = {
+  args: {
+    fieldIconKey: 'IconBuildingFactory2',
+    fieldLabel: 'Industry',
+    fieldType: FieldMetadataType.Enum,
+  },
+};
+
 export const CustomObject: Story = {
   args: {
     isObjectCustom: true,
