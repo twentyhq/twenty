@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
+import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
 import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/components/SettingsApiKeysFieldItemTableRow';
-import { getApiKeysOptimisticEffectDefinition } from '@/settings/developers/optimistic-effect-definitions/getApiKeysOptimisticEffectDefinition';
 import { ApiFieldItem } from '@/settings/developers/types/ApiFieldItem';
 import { formatExpirations } from '@/settings/developers/utils/format-expiration';
 import { IconPlus, IconSettings } from '@/ui/display/icon';
@@ -41,11 +42,15 @@ const StyledH1Title = styled(H1Title)`
 
 export const SettingsDevelopersApiKeys = () => {
   const navigate = useNavigate();
-  const { registerOptimisticEffect } = useOptimisticEffect('ApiKeyV2');
   const [apiKeys, setApiKeys] = useState<Array<ApiFieldItem>>([]);
+  const { registerOptimisticEffect } = useOptimisticEffect('apiKeyV2');
+  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
+    objectNameSingular: 'apiKeyV2',
+  });
+  const filter = { revokedAt: { eq: null } };
   useFindManyObjectRecords({
     objectNamePlural: 'apiKeysV2',
-    filter: { revokedAt: { eq: null } },
+    filter,
     onCompleted: (data) => {
       setApiKeys(
         formatExpirations(
@@ -56,10 +61,14 @@ export const SettingsDevelopersApiKeys = () => {
           })),
         ),
       );
-      registerOptimisticEffect({
-        variables: {},
-        definition: getApiKeysOptimisticEffectDefinition,
-      });
+      if (foundObjectMetadataItem) {
+        registerOptimisticEffect({
+          variables: { filter },
+          definition: getRecordOptimisticEffectDefinition({
+            objectMetadataItem: foundObjectMetadataItem,
+          }),
+        });
+      }
     },
   });
 
