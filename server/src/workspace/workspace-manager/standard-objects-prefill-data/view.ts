@@ -103,7 +103,7 @@ export const viewPrefillData = async (
         size: 150,
       },
       {
-        fieldMetadataId: objectMetadataMap['companyV2'].fields['linkedinUrl'],
+        fieldMetadataId: objectMetadataMap['companyV2'].fields['linkedinLink'],
         viewId: viewIdMap['All Companies (V2)'],
         position: 5,
         isVisible: true,
@@ -167,14 +167,14 @@ export const viewPrefillData = async (
         size: 150,
       },
       {
-        fieldMetadataId: objectMetadataMap['personV2'].fields['linkedinUrl'],
+        fieldMetadataId: objectMetadataMap['personV2'].fields['linkedinLink'],
         viewId: viewIdMap['All People (V2)'],
         position: 7,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: objectMetadataMap['personV2'].fields['xUrl'],
+        fieldMetadataId: objectMetadataMap['personV2'].fields['xLink'],
         viewId: viewIdMap['All People (V2)'],
         position: 8,
         isVisible: true,

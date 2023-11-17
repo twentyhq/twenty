@@ -16,7 +16,7 @@ export enum SeedCompanyFieldMetadataIds {
   DomainName = '20202020-5e4e-4007-a630-8a2617914889',
   Address = '20202020-ad10-4117-a039-3f04b7a5f939',
   Employees = '20202020-7fbd-41ad-b64d-25a15ff62f04',
-  LinkedinUrl = '20202020-a61d-4b78-b998-3fd88b4f73a1',
+  LinkedinLink = '20202020-a61d-4b78-b998-3fd88b4f73a1',
   XUrl = '20202020-46e3-479a-b8f4-77137c74daa6',
   AnnualRecurringRevenue = '20202020-4a5a-466f-92d9-c3870d9502a9',
   IdealCustomerProfile = '20202020-9e9f-4235-98b2-c76f3e2d281e',
@@ -186,7 +186,7 @@ export const seedCompanyFieldMetadata = async (
         defaultValue: undefined,
       },
       {
-        id: SeedCompanyFieldMetadataIds.LinkedinUrl,
+        id: SeedCompanyFieldMetadataIds.LinkedinLink,
         objectMetadataId: SeedObjectMetadataIds.Company,
         isCustom: false,
         workspaceId: SeedWorkspaceId,

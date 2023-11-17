@@ -30,6 +30,7 @@ export enum FieldMetadataType {
   LINK = 'LINK',
   CURRENCY = 'CURRENCY',
   RELATION = 'RELATION',
+  FULL_NAME = 'FULL_NAME',
 }
 
 @Entity('fieldMetadata')
