@@ -1,24 +1,28 @@
 import { useState } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState } from 'recoil';
 
-import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { ImageInput } from '@/ui/input/components/ImageInput';
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
-import {
-  useRemoveProfilePictureMutation,
-  useUploadProfilePictureMutation,
-} from '~/generated/graphql';
+import { useUploadProfilePictureMutation } from '~/generated/graphql';
 
 export const ProfilePictureUploader = () => {
   const [uploadPicture, { loading: isUploading }] =
     useUploadProfilePictureMutation();
-  const [removePicture] = useRemoveProfilePictureMutation();
-  const [currentUser] = useRecoilState(currentUserState);
+
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
+    currentWorkspaceMemberState,
+  );
+
   const [uploadController, setUploadController] =
     useState<AbortController | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const { updateOneObject, objectNotFoundInMetadata } =
+    useUpdateOneObjectRecord({
+      objectNameSingular: 'workspaceMemberV2',
+    });
 
   const handleUpload = async (file: File) => {
     if (!file) {
@@ -29,6 +33,9 @@ export const ProfilePictureUploader = () => {
     setUploadController(controller);
 
     try {
+      if (!currentWorkspaceMember?.id) {
+        throw new Error('User is not logged in');
+      }
       const result = await uploadPicture({
         variables: {
           file,
@@ -38,11 +45,28 @@ export const ProfilePictureUploader = () => {
             signal: controller.signal,
           },
         },
-        refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
       });
 
       setUploadController(null);
       setErrorMessage(null);
+
+      const avatarUrl = result?.data?.uploadProfilePicture;
+
+      if (!avatarUrl) {
+        throw new Error('Avatar URL not found');
+      }
+      if (!updateOneObject || objectNotFoundInMetadata) {
+        throw new Error('Object not found in metadata');
+      }
+      await updateOneObject({
+        idToUpdate: currentWorkspaceMember?.id,
+        input: {
+          avatarUrl,
+        },
+      });
+
+      setCurrentWorkspaceMember({ ...currentWorkspaceMember, avatarUrl });
+
       return result;
     } catch (error) {
       setErrorMessage('An error occured while uploading the picture.');
@@ -57,19 +81,25 @@ export const ProfilePictureUploader = () => {
   };
 
   const handleRemove = async () => {
-    await removePicture({
-      variables: {
-        where: {
-          id: currentUser?.id,
-        },
+    if (!updateOneObject || objectNotFoundInMetadata) {
+      throw new Error('Object not found in metadata');
+    }
+    if (!currentWorkspaceMember?.id) {
+      throw new Error('User is not logged in');
+    }
+    await updateOneObject({
+      idToUpdate: currentWorkspaceMember?.id,
+      input: {
+        avatarUrl: null,
       },
-      refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
     });
+
+    setCurrentWorkspaceMember({ ...currentWorkspaceMember, avatarUrl: null });
   };
 
   return (
     <ImageInput
-      picture={getImageAbsoluteURIOrBase64(currentUser?.avatarUrl)}
+      picture={getImageAbsoluteURIOrBase64(currentWorkspaceMember?.avatarUrl)}
       onUpload={handleUpload}
       onRemove={handleRemove}
       onAbort={handleAbort}

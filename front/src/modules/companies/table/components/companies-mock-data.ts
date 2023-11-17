@@ -1,4 +1,7 @@
-import { Company, Favorite, User } from '../../../../generated/graphql';
+import { Favorite } from '@/favorites/types/Favorite';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+
+import { Company } from '../../../../generated/graphql';
 
 type MockedCompany = Pick<
   Company,
@@ -15,16 +18,7 @@ type MockedCompany = Pick<
   | 'idealCustomerProfile'
   | '_activityCount'
 > & {
-  accountOwner: Pick<
-    User,
-    | 'id'
-    | 'email'
-    | 'displayName'
-    | 'avatarUrl'
-    | '__typename'
-    | 'firstName'
-    | 'lastName'
-  > | null;
+  accountOwner: Pick<WorkspaceMember, 'id' | 'avatarUrl' | 'name'> | null;
 } & { Favorite: Pick<Favorite, 'id'> | null };
 
 export const mockedCompaniesData: Array<MockedCompany> = [
@@ -42,13 +36,12 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     Favorite: null,
     _activityCount: 0,
     accountOwner: {
-      email: 'charles@test.com',
-      displayName: 'Charles Test',
-      firstName: 'Charles',
-      lastName: 'Test',
+      name: {
+        firstName: 'Charles',
+        lastName: 'Test',
+      },
       avatarUrl: null,
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
-      __typename: 'User',
     },
     __typename: 'Company',
   },

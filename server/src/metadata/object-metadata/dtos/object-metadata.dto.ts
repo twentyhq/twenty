@@ -3,6 +3,7 @@ import { ObjectType, ID, Field, HideField } from '@nestjs/graphql';
 import {
   Authorize,
   CursorConnection,
+  FilterableField,
   IDField,
   QueryOptions,
 } from '@ptc-org/nestjs-query-graphql';
@@ -17,7 +18,6 @@ import { FieldMetadataDTO } from 'src/metadata/field-metadata/dtos/field-metadat
 })
 @QueryOptions({
   defaultResultSize: 10,
-  disableFilter: true,
   disableSort: true,
   maxResultsSize: 1000,
 })
@@ -47,13 +47,13 @@ export class ObjectMetadataDTO {
   @Field({ nullable: true })
   icon: string;
 
-  @Field()
+  @FilterableField()
   isCustom: boolean;
 
-  @Field()
+  @FilterableField()
   isActive: boolean;
 
-  @Field()
+  @FilterableField()
   isSystem: boolean;
 
   @HideField()

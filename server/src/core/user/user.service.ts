@@ -66,13 +66,6 @@ export class UserService {
       : await this.workspaceService.createDefaultWorkspace();
 
     assert(workspace, 'workspace is missing', BadRequestException);
-
-    const userSettings = await this.prismaService.client.userSettings.create({
-      data: { locale: 'en' },
-    });
-
-    const settings = { connect: { id: userSettings.id } };
-
     // Create user
     const user = await this.prismaService.client.user.upsert({
       where: {
@@ -80,17 +73,7 @@ export class UserService {
       },
       create: {
         ...(args.data as Prisma.UserCreateInput),
-        settings,
-
-        workspaceMember: {
-          create: {
-            workspace: {
-              connect: { id: workspace.id },
-            },
-            settings,
-          },
-        },
-        locale: 'en',
+        defaultWorkspaceId: workspace.id,
       },
       update: {},
       ...(args.select ? { select: args.select } : {}),

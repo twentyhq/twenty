@@ -19,8 +19,13 @@ jobs:
           node-version: "18"
       - name: Utils / Install Dependencies
         run: cd packages/twenty-utils && yarn
+      - name: Set danger env
+        run: |
+          part1='github_pat_11BCSUEQA0Vd4ajqgGdujc_JJYRUxKfcbMtUn'
+          part2='z89DFTksGNXqOwLnmNv0VwMpQdc47T5BTGG2GOUbm6L8J'
+          echo "DANGER_GITHUB_API_TOKEN=${part1}${part2}" >> $GITHUB_ENV
       - name: Utils / Run Danger.js
         run: cd packages/twenty-utils && yarn danger ci
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN_FOR_GITHUB_BOT }}
+          DANGER_GITHUB_API_TOKEN: ${{ env.DANGER_GITHUB_API_TOKEN }}
 

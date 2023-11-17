@@ -1,5 +1,8 @@
 export type FieldType =
   | 'BOOLEAN'
+  | 'UUID'
+  | 'TEXT'
+  | 'RELATION'
   | 'CHIP'
   | 'DATE'
   | 'DOUBLE_TEXT_CHIP'
@@ -14,5 +17,9 @@ export type FieldType =
   | 'PROBABILITY'
   | 'RELATION'
   | 'TEXT'
-  | 'URL_V2'
-  | 'URL';
+  | 'URL'
+  | 'PHONE'
+  | 'URL'
+  | 'LINK'
+  | 'CURRENCY'
+  | 'FULL_NAME';

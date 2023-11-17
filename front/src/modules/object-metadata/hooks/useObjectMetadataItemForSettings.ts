@@ -8,7 +8,14 @@ import { useFindManyObjectMetadataItems } from './useFindManyObjectMetadataItems
 import { useUpdateOneObjectMetadataItem } from './useUpdateOneObjectMetadataItem';
 
 export const useObjectMetadataItemForSettings = () => {
-  const { objectMetadataItems, loading } = useFindManyObjectMetadataItems();
+  const { objectMetadataItems, loading } = useFindManyObjectMetadataItems({
+    objectFilter: {
+      isSystem: { is: false },
+    },
+    fieldFilter: {
+      isSystem: { is: false },
+    },
+  });
 
   const activeObjectMetadataItems = objectMetadataItems.filter(
     ({ isActive }) => isActive,
@@ -21,6 +28,11 @@ export const useObjectMetadataItemForSettings = () => {
     activeObjectMetadataItems.find(
       (activeObjectMetadataItem) =>
         getObjectSlug(activeObjectMetadataItem) === slug,
+    );
+
+  const findObjectMetadataItemById = (id: string) =>
+    objectMetadataItems.find(
+      (objectMetadataItem) => objectMetadataItem.id === id,
     );
 
   const { createOneObjectMetadataItem } =
@@ -75,6 +87,7 @@ export const useObjectMetadataItemForSettings = () => {
     editObjectMetadataItem,
     eraseObjectMetadataItem,
     findActiveObjectMetadataItemBySlug,
+    findObjectMetadataItemById,
     loading,
   };
 };

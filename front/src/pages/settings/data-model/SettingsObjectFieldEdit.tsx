@@ -9,7 +9,6 @@ import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderCon
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFieldFormSection } from '@/settings/data-model/components/SettingsObjectFieldFormSection';
 import { SettingsObjectFieldTypeSelectSection } from '@/settings/data-model/components/SettingsObjectFieldTypeSelectSection';
-import { MetadataFieldDataType } from '@/settings/data-model/types/ObjectFieldDataType';
 import { AppPath } from '@/types/AppPath';
 import { IconArchive, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -17,6 +16,7 @@ import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const SettingsObjectFieldEdit = () => {
   const navigate = useNavigate();
@@ -128,7 +128,7 @@ export const SettingsObjectFieldEdit = () => {
           fieldIconKey={formValues.icon}
           fieldLabel={formValues.label || 'Employees'}
           fieldName={activeMetadataField.name}
-          fieldType={activeMetadataField.type as MetadataFieldDataType}
+          fieldType={activeMetadataField.type as FieldMetadataType}
           isObjectCustom={activeObjectMetadataItem.isCustom}
           objectIconKey={activeObjectMetadataItem.icon}
           objectLabelPlural={activeObjectMetadataItem.labelPlural}

@@ -1,3 +1,4 @@
+import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { IconCalendar } from '@/ui/display/icon/index';
 import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
 import { FieldDefinition } from '@/ui/object/field/types/FieldDefinition';
@@ -5,7 +6,6 @@ import { FieldDateMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { useUpdateActivityMutation } from '~/generated/graphql';
 
 type ActivityEditorDateFieldProps = {
   activityId: string;
@@ -14,6 +14,30 @@ type ActivityEditorDateFieldProps = {
 export const ActivityEditorDateField = ({
   activityId,
 }: ActivityEditorDateFieldProps) => {
+  const useUpdateOneObjectMutation: () => [(params: any) => any, any] = () => {
+    const { updateOneObject } = useUpdateOneObjectRecord({
+      objectNameSingular: 'activityV2',
+    });
+
+    const updateEntity = ({
+      variables,
+    }: {
+      variables: {
+        where: { id: string };
+        data: {
+          [fieldName: string]: any;
+        };
+      };
+    }) => {
+      updateOneObject?.({
+        idToUpdate: variables.where.id,
+        input: variables.data,
+      });
+    };
+
+    return [updateEntity, { loading: false }];
+  };
+
   return (
     <RecoilScope>
       <FieldContext.Provider
@@ -29,7 +53,7 @@ export const ActivityEditorDateField = ({
               fieldName: 'dueAt',
             },
           } satisfies FieldDefinition<FieldDateMetadata>,
-          useUpdateEntityMutation: useUpdateActivityMutation,
+          useUpdateEntityMutation: useUpdateOneObjectMutation,
           hotkeyScope: InlineCellHotkeyScope.InlineCell,
         }}
       >

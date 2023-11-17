@@ -4,14 +4,14 @@ import { DatabaseCommandModule } from 'src/database/commands/database-command.mo
 
 import { AppModule } from './app.module';
 
-import { TenantManagerCommandsModule } from './tenant-manager/commands/tenant-manager-commands.module';
-import { TenantMigrationRunnerCommandsModule } from './tenant-migration-runner/commands/tenant-migration-runner-commands.module';
+import { WorkspaceManagerCommandsModule } from './workspace/workspace-manager/commands/workspace-manager-commands.module';
+import { WorkspaceMigrationRunnerCommandsModule } from './workspace/workspace-migration-runner/commands/workspace-migration-runner-commands.module';
 
 @Module({
   imports: [
     AppModule,
-    TenantMigrationRunnerCommandsModule,
-    TenantManagerCommandsModule,
+    WorkspaceMigrationRunnerCommandsModule,
+    WorkspaceManagerCommandsModule,
     DatabaseCommandModule,
   ],
 })

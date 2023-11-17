@@ -1,29 +1,71 @@
 import { useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useApolloClient } from '@apollo/client';
+import { useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useGetCurrentUserQuery } from '~/generated/graphql';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { FIND_ONE_WORKSPACE_MEMBER_V2 } from '@/object-record/graphql/queries/findOneWorkspaceMember';
+import {
+  useGetCurrentUserQuery,
+  useGetCurrentWorkspaceQuery,
+} from '~/generated/graphql';
 
 export const UserProvider = ({ children }: React.PropsWithChildren) => {
-  const [, setCurrentUser] = useRecoilState(currentUserState);
   const [isLoading, setIsLoading] = useState(true);
+  const [isWorkspaceMemberLoading, setIsWorkspaceMemberLoading] =
+    useState(true);
+  const apolloClient = useApolloClient();
 
-  const { data, loading } = useGetCurrentUserQuery();
+  const setCurrentUser = useSetRecoilState(currentUserState);
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+  const setCurrentWorkspaceMember = useSetRecoilState(
+    currentWorkspaceMemberState,
+  );
 
-  useEffect(() => {
-    if (!loading) {
-      setIsLoading(false);
-    }
-    if (data?.currentUser?.workspaceMember?.settings) {
-      setCurrentUser({
-        ...data.currentUser,
-        workspaceMember: {
-          ...data.currentUser.workspaceMember,
-          settings: data.currentUser.workspaceMember.settings,
+  const { data: userData, loading: userLoading } = useGetCurrentUserQuery({
+    onCompleted: async (data) => {
+      const workspaceMember = await apolloClient.query({
+        query: FIND_ONE_WORKSPACE_MEMBER_V2,
+        variables: {
+          filter: {
+            userId: { eq: data.currentUser.id },
+          },
         },
       });
+      setCurrentWorkspaceMember(
+        workspaceMember.data.workspaceMembersV2.edges[0].node,
+      );
+      setIsWorkspaceMemberLoading(false);
+    },
+    onError: () => {
+      setIsWorkspaceMemberLoading(false);
+    },
+  });
+
+  const { data: workspaceData, loading: workspaceLoading } =
+    useGetCurrentWorkspaceQuery();
+
+  useEffect(() => {
+    if (!userLoading && !workspaceLoading && !isWorkspaceMemberLoading) {
+      setIsLoading(false);
     }
-  }, [setCurrentUser, data, isLoading, loading]);
+    if (userData?.currentUser) {
+      setCurrentUser(userData.currentUser);
+    }
+    if (workspaceData?.currentWorkspace) {
+      setCurrentWorkspace(workspaceData.currentWorkspace);
+    }
+  }, [
+    setCurrentUser,
+    isLoading,
+    userLoading,
+    workspaceLoading,
+    userData?.currentUser,
+    workspaceData?.currentWorkspace,
+    setCurrentWorkspace,
+    isWorkspaceMemberLoading,
+  ]);
 
   return isLoading ? <></> : <>{children}</>;
 };
