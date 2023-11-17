@@ -9,8 +9,8 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { FieldMetadataModule } from 'src/metadata/field-metadata/field-metadata.module';
 import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
-import { TenantMigrationModule } from 'src/metadata/tenant-migration/tenant-migration.module';
-import { TenantMigrationRunnerModule } from 'src/tenant-migration-runner/tenant-migration-runner.module';
+import { WorkspaceMigrationModule } from 'src/metadata/workspace-migration/workspace-migration.module';
+import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.module';
 
 import { RelationMetadataService } from './relation-metadata.service';
 import { RelationMetadataEntity } from './relation-metadata.entity';
@@ -28,8 +28,8 @@ import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
         ),
         ObjectMetadataModule,
         FieldMetadataModule,
-        TenantMigrationRunnerModule,
-        TenantMigrationModule,
+        WorkspaceMigrationRunnerModule,
+        WorkspaceMigrationModule,
       ],
       services: [RelationMetadataService],
       resolvers: [

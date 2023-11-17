@@ -5,14 +5,14 @@ import {
   FieldMetadataType,
 } from 'src/metadata/field-metadata/field-metadata.entity';
 import {
-  TenantMigrationColumnAction,
-  TenantMigrationColumnActionType,
-} from 'src/metadata/tenant-migration/tenant-migration.entity';
+  WorkspaceMigrationColumnAction,
+  WorkspaceMigrationColumnActionType,
+} from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { serializeDefaultValue } from 'src/metadata/field-metadata/utils/serialize-default-value';
 
 export function convertFieldMetadataToColumnActions(
   fieldMetadata: FieldMetadataEntity,
-): TenantMigrationColumnAction[] {
+): WorkspaceMigrationColumnAction[] {
   switch (fieldMetadata.type) {
     case FieldMetadataType.TEXT: {
       const defaultValue =
@@ -20,7 +20,7 @@ export function convertFieldMetadataToColumnActions(
 
       return [
         {
-          action: TenantMigrationColumnActionType.CREATE,
+          action: WorkspaceMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.value,
           columnType: 'text',
           defaultValue: serializeDefaultValue(defaultValue?.value),
@@ -36,7 +36,7 @@ export function convertFieldMetadataToColumnActions(
 
       return [
         {
-          action: TenantMigrationColumnActionType.CREATE,
+          action: WorkspaceMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.value,
           columnType: 'varchar',
           defaultValue: serializeDefaultValue(defaultValue?.value),
@@ -52,7 +52,7 @@ export function convertFieldMetadataToColumnActions(
 
       return [
         {
-          action: TenantMigrationColumnActionType.CREATE,
+          action: WorkspaceMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.value,
           columnType: 'float',
           defaultValue: serializeDefaultValue(defaultValue?.value),
@@ -65,7 +65,7 @@ export function convertFieldMetadataToColumnActions(
 
       return [
         {
-          action: TenantMigrationColumnActionType.CREATE,
+          action: WorkspaceMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.value,
           columnType: 'boolean',
           defaultValue: serializeDefaultValue(defaultValue?.value),
@@ -78,7 +78,7 @@ export function convertFieldMetadataToColumnActions(
 
       return [
         {
-          action: TenantMigrationColumnActionType.CREATE,
+          action: WorkspaceMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.value,
           columnType: 'timestamp',
           defaultValue: serializeDefaultValue(defaultValue?.value),
@@ -91,13 +91,13 @@ export function convertFieldMetadataToColumnActions(
 
       return [
         {
-          action: TenantMigrationColumnActionType.CREATE,
+          action: WorkspaceMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.label,
           columnType: 'varchar',
           defaultValue: serializeDefaultValue(defaultValue?.label),
         },
         {
-          action: TenantMigrationColumnActionType.CREATE,
+          action: WorkspaceMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.url,
           columnType: 'varchar',
           defaultValue: serializeDefaultValue(defaultValue?.url),
@@ -110,13 +110,13 @@ export function convertFieldMetadataToColumnActions(
 
       return [
         {
-          action: TenantMigrationColumnActionType.CREATE,
+          action: WorkspaceMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.amountMicros,
           columnType: 'integer',
           defaultValue: serializeDefaultValue(defaultValue?.amountMicros),
         },
         {
-          action: TenantMigrationColumnActionType.CREATE,
+          action: WorkspaceMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.currencyCode,
           columnType: 'varchar',
           defaultValue: serializeDefaultValue(defaultValue?.currencyCode),

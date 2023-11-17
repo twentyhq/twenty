@@ -16,13 +16,13 @@ import { IntegrationsModule } from './integrations/integrations.module';
 import { PrismaModule } from './database/prisma.module';
 import { HealthModule } from './health/health.module';
 import { AbilityModule } from './ability/ability.module';
-import { TenantModule } from './tenant/tenant.module';
+import { WorkspaceModule } from './workspace/workspace.module';
 import { EnvironmentService } from './integrations/environment/environment.service';
 import {
   JwtAuthStrategy,
   JwtPayload,
 } from './core/auth/strategies/jwt.auth.strategy';
-import { TenantService } from './tenant/tenant.service';
+import { WorkspaceFactory } from './workspace/workspace.factory';
 import { ExceptionFilter } from './filters/exception.filter';
 
 @Module({
@@ -73,15 +73,15 @@ import { ExceptionFilter } from './filters/exception.filter';
           AppModule.moduleRef.registerRequestByContextId(request, contextId);
 
           // Get the SchemaGenerationService from the AppModule
-          const tenantService = await AppModule.moduleRef.resolve(
-            TenantService,
+          const workspaceFactory = await AppModule.moduleRef.resolve(
+            WorkspaceFactory,
             contextId,
             {
               strict: false,
             },
           );
 
-          return await tenantService.createTenantSchema(workspace.id);
+          return await workspaceFactory.createGraphQLSchema(workspace.id);
         } catch (error) {
           if (error instanceof JsonWebTokenError) {
             //mockedUserJWT
@@ -109,7 +109,7 @@ import { ExceptionFilter } from './filters/exception.filter';
     AbilityModule,
     IntegrationsModule,
     CoreModule,
-    TenantModule,
+    WorkspaceModule,
   ],
   providers: [
     AppService,
