@@ -31,13 +31,13 @@ export function generateTargetColumnMap(
       };
     case FieldMetadataType.LINK:
       return {
-        text: `${columnName}Label`,
-        link: `${columnName}Url`,
+        label: `${columnName}Label`,
+        url: `${columnName}Url`,
       };
     case FieldMetadataType.CURRENCY:
       return {
-        amount: `${columnName}AmountMicros`,
-        currency: `${columnName}CurrencyCode`,
+        amountMicros: `${columnName}AmountMicros`,
+        currencyCode: `${columnName}CurrencyCode`,
       };
     default:
       throw new BadRequestException(`Unknown type ${type}`);
