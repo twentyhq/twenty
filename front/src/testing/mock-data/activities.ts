@@ -17,11 +17,8 @@ type MockedActivity = Pick<
   | 'dueAt'
   | 'completedAt'
 > & {
-  author: Pick<WorkspaceMember, 'id' | 'firstName' | 'lastName' | 'avatarUrl'>;
-  assignee: Pick<
-    WorkspaceMember,
-    'id' | 'firstName' | 'lastName' | 'avatarUrl'
-  >;
+  author: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'>;
+  assignee: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'>;
   comments: Comment[];
   activityTargets: Array<
     Pick<
@@ -53,14 +50,18 @@ export const mockedTasks: Array<MockedActivity> = [
     completedAt: null,
     author: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
-      firstName: 'Charles',
-      lastName: 'Test',
+      name: {
+        firstName: 'Charles',
+        lastName: 'Test',
+      },
       avatarUrl: '',
     },
     assignee: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
-      firstName: 'Charles',
-      lastName: 'Test',
+      name: {
+        firstName: 'Charles',
+        lastName: 'Test',
+      },
       avatarUrl: '',
     },
     authorId: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
@@ -82,14 +83,18 @@ export const mockedActivities: Array<MockedActivity> = [
     completedAt: null,
     author: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
-      firstName: 'Charles',
-      lastName: 'Test',
+      name: {
+        firstName: 'Charles',
+        lastName: 'Test',
+      },
       avatarUrl: '',
     },
     assignee: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
-      firstName: 'Charles',
-      lastName: 'Test',
+      name: {
+        firstName: 'Charles',
+        lastName: 'Test',
+      },
       avatarUrl: '',
     },
     authorId: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
@@ -149,14 +154,18 @@ export const mockedActivities: Array<MockedActivity> = [
     dueAt: '2029-08-26T10:12:42.33625+00:00',
     author: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
-      firstName: 'Charles',
-      lastName: 'Test',
+      name: {
+        firstName: 'Charles',
+        lastName: 'Test',
+      },
       avatarUrl: '',
     },
     assignee: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
-      firstName: 'Charles',
-      lastName: 'Test',
+      name: {
+        firstName: 'Charles',
+        lastName: 'Test',
+      },
       avatarUrl: '',
     },
     authorId: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',

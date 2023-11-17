@@ -21,12 +21,12 @@ export const getEntityChipFromFieldMetadata = (
 
   // TODO: use every
   if (fieldName === 'accountOwner' && fieldValue) {
-    chipValue.name = fieldValue.firstName + ' ' + fieldValue.lastName;
+    chipValue.name = fieldValue.name.firstName + ' ' + fieldValue.name.lastName;
   } else if (fieldName === 'company' && fieldValue) {
     chipValue.name = fieldValue.name;
     chipValue.pictureUrl = getLogoUrlFromDomainName(fieldValue.domainName);
   } else if (fieldName === 'person' && fieldValue) {
-    chipValue.name = fieldValue.firstName + ' ' + fieldValue.lastName;
+    chipValue.name = fieldValue.name.firstName + ' ' + fieldValue.name.lastName;
   }
 
   return chipValue;

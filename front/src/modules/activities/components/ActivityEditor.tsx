@@ -60,10 +60,7 @@ type ActivityEditorProps = {
   > & {
     comments?: Array<Comment> | null;
   } & {
-    assignee?: Pick<
-      WorkspaceMember,
-      'id' | 'firstName' | 'lastName' | 'avatarUrl'
-    > | null;
+    assignee?: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'> | null;
   } & {
     activityTargets?: Array<
       Pick<ActivityTarget, 'id' | 'companyId' | 'personId'>

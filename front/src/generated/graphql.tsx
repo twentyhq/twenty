@@ -1336,6 +1336,7 @@ export enum FieldMetadataType {
   Date = 'DATE',
   Email = 'EMAIL',
   Enum = 'ENUM',
+  FullName = 'FULL_NAME',
   Link = 'LINK',
   Number = 'NUMBER',
   Phone = 'PHONE',
@@ -1443,6 +1444,7 @@ export type Mutation = {
   deleteOneField: FieldDeleteResponse;
   deleteOneObject: ObjectDeleteResponse;
   deleteOnePipelineStage: PipelineStage;
+  deleteOneRelation: RelationDeleteResponse;
   deleteOneWebHook: WebHook;
   deleteUserAccount: User;
   deleteUserV2: UserV2;
@@ -2624,6 +2626,18 @@ export type RelationConnection = {
   pageInfo: PageInfo;
   /** Fetch total count of records */
   totalCount: Scalars['Int'];
+};
+
+export type RelationDeleteResponse = {
+  __typename?: 'RelationDeleteResponse';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  fromFieldMetadataId?: Maybe<Scalars['String']>;
+  fromObjectMetadataId?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['ID']>;
+  relationType?: Maybe<RelationMetadataType>;
+  toFieldMetadataId?: Maybe<Scalars['String']>;
+  toObjectMetadataId?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
 /** Type of the relation */

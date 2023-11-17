@@ -1,6 +1,9 @@
 import { DataSource } from 'typeorm';
 
 import { SeedViewIds } from 'src/database/typeorm-seeds/workspace/views';
+import { SeedCompanyFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/company';
+import { SeedPersonFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/person';
+import { SeedOpportunityFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/opportunity';
 
 const tableName = 'viewField';
 
@@ -21,112 +24,112 @@ export const seedViewFields = async (
     .orIgnore()
     .values([
       {
-        fieldMetadataId: 'name',
+        fieldMetadataId: SeedCompanyFieldMetadataIds.Name,
         viewId: SeedViewIds.Company,
         position: 0,
         isVisible: true,
         size: 180,
       },
       {
-        fieldMetadataId: 'domainName',
+        fieldMetadataId: SeedCompanyFieldMetadataIds.DomainName,
         viewId: SeedViewIds.Company,
         position: 1,
         isVisible: true,
         size: 100,
       },
       {
-        fieldMetadataId: 'accountOwner',
+        fieldMetadataId: SeedCompanyFieldMetadataIds.AccountOwner,
         viewId: SeedViewIds.Company,
         position: 2,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: 'createdAt',
+        fieldMetadataId: SeedCompanyFieldMetadataIds.CreatedAt,
         viewId: SeedViewIds.Company,
         position: 3,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: 'employees',
+        fieldMetadataId: SeedCompanyFieldMetadataIds.Employees,
         viewId: SeedViewIds.Company,
         position: 4,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: 'linkedin',
+        fieldMetadataId: SeedCompanyFieldMetadataIds.LinkedinLink,
         viewId: SeedViewIds.Company,
         position: 5,
         isVisible: true,
         size: 170,
       },
       {
-        fieldMetadataId: 'address',
+        fieldMetadataId: SeedCompanyFieldMetadataIds.Address,
         viewId: SeedViewIds.Company,
         position: 6,
         isVisible: true,
         size: 170,
       },
       {
-        fieldMetadataId: 'displayName',
+        fieldMetadataId: SeedPersonFieldMetadataIds.Name,
         viewId: SeedViewIds.Person,
         position: 0,
         isVisible: true,
         size: 210,
       },
       {
-        fieldMetadataId: 'email',
+        fieldMetadataId: SeedPersonFieldMetadataIds.Email,
         viewId: SeedViewIds.Person,
         position: 1,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: 'company',
+        fieldMetadataId: SeedPersonFieldMetadataIds.Company,
         viewId: SeedViewIds.Person,
         position: 2,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: 'phone',
+        fieldMetadataId: SeedPersonFieldMetadataIds.Phone,
         viewId: SeedViewIds.Person,
         position: 3,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: 'createdAt',
+        fieldMetadataId: SeedPersonFieldMetadataIds.CreatedAt,
         viewId: SeedViewIds.Person,
         position: 4,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: 'city',
+        fieldMetadataId: SeedPersonFieldMetadataIds.City,
         viewId: SeedViewIds.Person,
         position: 5,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: 'jobTitle',
+        fieldMetadataId: SeedPersonFieldMetadataIds.JobTitle,
         viewId: SeedViewIds.Person,
         position: 6,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: 'linkedin',
+        fieldMetadataId: SeedPersonFieldMetadataIds.LinkedinLink,
         viewId: SeedViewIds.Person,
         position: 7,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: 'x',
+        fieldMetadataId: SeedPersonFieldMetadataIds.XLink,
         viewId: SeedViewIds.Person,
         position: 8,
         isVisible: true,
@@ -134,28 +137,28 @@ export const seedViewFields = async (
       },
 
       {
-        fieldMetadataId: 'amount',
+        fieldMetadataId: SeedOpportunityFieldMetadataIds.Amount,
         viewId: SeedViewIds.Opportunity,
         position: 0,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: 'closeDate',
+        fieldMetadataId: SeedOpportunityFieldMetadataIds.CloseDate,
         viewId: SeedViewIds.Opportunity,
         position: 1,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: 'probability',
+        fieldMetadataId: SeedOpportunityFieldMetadataIds.Probability,
         viewId: SeedViewIds.Opportunity,
         position: 2,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: 'pointOfContact',
+        fieldMetadataId: SeedOpportunityFieldMetadataIds.PointOfContact,
         viewId: SeedViewIds.Opportunity,
         position: 3,
         isVisible: true,

@@ -73,16 +73,15 @@ const viewFieldMetadata = {
       type: FieldMetadataType.RELATION,
       name: 'view',
       label: 'View',
-      targetColumnMap: { value: 'viewId' },
+      targetColumnMap: {},
       description: 'View Field related view',
       icon: 'IconLayoutCollage',
-      isNullable: false,
+      isNullable: true,
     },
-    // Temporary hack?
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.TEXT,
+      type: FieldMetadataType.UUID,
       name: 'viewId',
       label: 'View Id',
       targetColumnMap: {

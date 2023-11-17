@@ -22,9 +22,9 @@ export const TasksEffect = () => {
         value: currentWorkspaceMember.id,
         operand: ViewFilterOperand.Is,
         displayValue:
-          currentWorkspaceMember.firstName +
+          currentWorkspaceMember.name.firstName +
           ' ' +
-          currentWorkspaceMember.lastName,
+          currentWorkspaceMember.name.lastName,
         displayAvatarUrl: currentWorkspaceMember.avatarUrl ?? undefined,
         definition: tasksFilterDefinitions[0],
       });

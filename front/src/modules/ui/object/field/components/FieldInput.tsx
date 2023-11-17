@@ -8,7 +8,6 @@ import { ChipFieldInput } from '../meta-types/input/components/ChipFieldInput';
 import { CurrencyFieldInput } from '../meta-types/input/components/CurrencyFieldInput';
 import { DateFieldInput } from '../meta-types/input/components/DateFieldInput';
 import { DoubleTextChipFieldInput } from '../meta-types/input/components/DoubleTextChipFieldInput';
-import { DoubleTextFieldInput } from '../meta-types/input/components/DoubleTextFieldInput';
 import { EmailFieldInput } from '../meta-types/input/components/EmailFieldInput';
 import { LinkFieldInput } from '../meta-types/input/components/LinkFieldInput';
 import { MoneyFieldInput } from '../meta-types/input/components/MoneyFieldInput';
@@ -23,7 +22,6 @@ import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldChip } from '../types/guards/isFieldChip';
 import { isFieldCurrency } from '../types/guards/isFieldCurrency';
 import { isFieldDate } from '../types/guards/isFieldDate';
-import { isFieldDoubleText } from '../types/guards/isFieldDoubleText';
 import { isFieldDoubleTextChip } from '../types/guards/isFieldDoubleTextChip';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
 import { isFieldLink } from '../types/guards/isFieldLink';
@@ -140,14 +138,6 @@ export const FieldInput = ({
         />
       ) : isFieldDoubleTextChip(fieldDefinition) ? (
         <DoubleTextChipFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
-      ) : isFieldDoubleText(fieldDefinition) ? (
-        <DoubleTextFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}

@@ -29,7 +29,6 @@ export const useRecordTableContextMenuEntries = () => {
   const { scopeId: objectNamePlural, resetTableRowSelection } =
     useRecordTable();
 
-  const { data } = useGetFavoritesQuery();
   const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
     objectNamePlural,
   });

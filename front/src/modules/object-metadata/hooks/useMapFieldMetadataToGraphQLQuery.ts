@@ -91,6 +91,14 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
         currencyCode
       }
     `;
+    } else if (fieldType === 'FULL_NAME') {
+      return `
+      ${field.name}
+      {
+        firstName
+        lastName
+      }
+    `;
     }
   };
 

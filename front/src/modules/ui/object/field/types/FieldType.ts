@@ -15,4 +15,5 @@ export type FieldType =
   | 'PROBABILITY'
   | 'CURRENCY'
   | 'MONEY_AMOUNT'
-  | 'MONEY';
+  | 'MONEY'
+  | 'FULL_NAME';

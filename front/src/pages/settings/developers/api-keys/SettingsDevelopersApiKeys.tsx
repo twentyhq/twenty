@@ -44,7 +44,9 @@ export const SettingsDevelopersApiKeys = () => {
   const navigate = useNavigate();
 
   const [apiKeys, setApiKeys] = useState<Array<ApiFieldItem>>([]);
-  const { registerOptimisticEffect } = useOptimisticEffect('apiKeyV2');
+  const { registerOptimisticEffect } = useOptimisticEffect({
+    objectNameSingular: 'apiKeyV2',
+  });
   const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
     objectNameSingular: 'apiKeyV2',
   });

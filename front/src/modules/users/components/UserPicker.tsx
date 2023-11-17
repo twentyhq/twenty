@@ -33,25 +33,26 @@ export const UserPicker = ({
   }, [initialSearchFilter, setRelationPickerSearchFilter]);
 
   const { findManyQuery } = useFindOneObjectMetadataItem({
-    objectNamePlural: 'workspaceMembersV2',
+    objectNameSingular: 'workspaceMemberV2',
   });
 
   const useFindManyWorkspaceMembers = (options: any) =>
     useQuery(findManyQuery, options);
 
-  const users = useFilteredSearchEntityQueryV2({
+  const workspaceMembers = useFilteredSearchEntityQueryV2({
     queryHook: useFindManyWorkspaceMembers,
     filters: [
       {
-        fieldNames: ['firstName', 'lastName'],
+        fieldNames: ['name.firstName', 'name.lastName'],
         filter: relationPickerSearchFilter,
       },
     ],
-    orderByField: 'firstName',
+    orderByField: 'createdAt',
     mappingFunction: (workspaceMember) => ({
       entityType: Entity.WorkspaceMember,
       id: workspaceMember.id,
-      name: workspaceMember.firstName,
+      name:
+        workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName,
       avatarType: 'rounded',
       avatarUrl: '',
       originalEntity: workspaceMember,
@@ -68,11 +69,11 @@ export const UserPicker = ({
     <SingleEntitySelect
       EmptyIcon={IconUserCircle}
       emptyLabel="No Owner"
-      entitiesToSelect={users.entitiesToSelect}
-      loading={users.loading}
+      entitiesToSelect={workspaceMembers.entitiesToSelect}
+      loading={workspaceMembers.loading}
       onCancel={onCancel}
       onEntitySelected={handleEntitySelected}
-      selectedEntity={users.selectedEntities[0]}
+      selectedEntity={workspaceMembers.selectedEntities[0]}
       width={width}
     />
   );

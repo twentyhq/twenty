@@ -13,10 +13,7 @@ import { Company, User } from '~/generated/graphql';
 
 type ActivityAssigneeEditableFieldProps = {
   activity: Pick<Company, 'id' | 'accountOwnerId'> & {
-    assignee?: Pick<
-      WorkspaceMember,
-      'id' | 'firstName' | 'lastName' | 'avatarUrl'
-    > | null;
+    assignee?: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'> | null;
   };
 };
 

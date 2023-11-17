@@ -3,7 +3,6 @@ import { DataSource } from 'typeorm';
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-import { SeedPersonFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/person';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
@@ -12,8 +11,7 @@ export enum SeedWorkspaceMemberFieldMetadataIds {
   CreatedAt = '20202020-1cbf-4b32-8c33-fbfedcd9afa8',
   UpdatedAt = '20202020-1ba3-4c24-b2cd-b0789633e8d4',
 
-  FirstName = '20202020-1fa8-4d38-9fa4-0cf696909298',
-  LastName = '20202020-8c37-4163-ba06-1dada334ce3e',
+  Name = '20202020-8c37-4163-ba06-1dada334ce3e',
   AvatarUrl = '20202020-7ba6-40d5-934b-17146183a212',
   Locale = '20202020-10f6-4df9-8d6f-a760b65bd800',
   ColorScheme = '20202020-83f2-4c5f-96b0-0c51ecc160e3',
@@ -110,7 +108,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
       },
       // Scalar fields
       {
-        id: SeedPersonFieldMetadataIds.Name,
+        id: SeedWorkspaceMemberFieldMetadataIds.Name,
         objectMetadataId: SeedObjectMetadataIds.WorkspaceMember,
         isCustom: false,
         workspaceId: SeedWorkspaceId,

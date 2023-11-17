@@ -14,19 +14,6 @@ const workspaceMemberMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.TEXT,
-      name: 'firstName',
-      label: 'First name',
-      targetColumnMap: {
-        value: 'firstName',
-      },
-      description: 'Workspace member first name',
-      icon: 'IconCircleUser',
-      isNullable: false,
-    },
-    {
-      isCustom: false,
-      isActive: true,
       type: FieldMetadataType.FULL_NAME,
       name: 'name',
       label: 'Name',
@@ -91,6 +78,20 @@ const workspaceMemberMetadata = {
       description: 'Workspace member avatar',
       icon: 'IconFileUpload',
       isNullable: true,
+      isSystem: false,
+    },
+    {
+      isCustom: false,
+      isActive: true,
+      type: FieldMetadataType.UUID,
+      name: 'userId',
+      label: 'User Id',
+      targetColumnMap: {
+        value: 'userId',
+      },
+      description: 'Associated User Id',
+      icon: 'IconCircleUsers',
+      isNullable: false,
       isSystem: false,
     },
     // Relations

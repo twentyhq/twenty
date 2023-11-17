@@ -13,6 +13,7 @@ export enum SeedViewSortFieldMetadataIds {
 
   FieldMetadataId = '20202020-cb2c-4c8f-a289-c9851b23d064',
   View = '20202020-f5d0-467f-a3d8-395ba16b8ebf',
+  ViewForeignKey = '20202020-c852-4c28-b13a-07788c845d6c',
   Direction = '20202020-077e-4451-b1d8-e602c956ebd2',
 }
 
@@ -124,13 +125,27 @@ export const seedViewSortFieldMetadata = async (
         type: FieldMetadataType.TEXT,
         name: 'viewId',
         label: 'View Id',
-        targetColumnMap: {
-          value: 'viewId',
-        },
+        targetColumnMap: {},
         description: 'View Sort related view',
         icon: 'IconLayoutCollage',
         isNullable: false,
         isSystem: false,
+        defaultValue: undefined,
+      },
+      {
+        id: SeedViewSortFieldMetadataIds.ViewForeignKey,
+        objectMetadataId: SeedObjectMetadataIds.ViewField,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: FieldMetadataType.UUID,
+        name: 'viewId',
+        label: 'View ID (foreign key)',
+        targetColumnMap: {},
+        description: 'Foreign key for view',
+        icon: undefined,
+        isNullable: false,
+        isSystem: true,
         defaultValue: undefined,
       },
       {

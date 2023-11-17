@@ -9,6 +9,7 @@ import {
   IconPhone,
   IconPlug,
   IconTextSize,
+  IconUser,
 } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { CurrencyCode, FieldMetadataType } from '~/generated-metadata/graphql';
@@ -64,5 +65,6 @@ export const dataTypes: Record<
     Icon: IconNumbers,
     defaultValue: 50,
   },
+  [FieldMetadataType.FullName]: { label: 'Full Name', Icon: IconUser },
   [FieldMetadataType.Enum]: { label: 'Enum', Icon: IconPlug },
 };

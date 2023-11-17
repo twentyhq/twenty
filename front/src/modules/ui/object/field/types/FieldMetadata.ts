@@ -48,6 +48,10 @@ export type FieldCurrencyMetadata = {
   isPositive?: boolean;
 };
 
+export type FieldFullnameMetadata = {
+  fieldName: string;
+};
+
 export type FieldEmailMetadata = {
   fieldName: string;
   placeHolder: string;
@@ -119,6 +123,7 @@ export type FieldLinkValue = { url: string; label: string };
 export type FieldNumberValue = number | null;
 export type FieldMoneyValue = number | null;
 export type FieldCurrencyValue = { currencyCode: string; amountMicros: number };
+export type FieldFullNameValue = { firstName: string; lastName: string };
 
 export type FieldEmailValue = string;
 export type FieldProbabilityValue = number;

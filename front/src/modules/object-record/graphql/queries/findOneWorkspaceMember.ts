@@ -6,8 +6,10 @@ export const FIND_ONE_WORKSPACE_MEMBER_V2 = gql`
       edges {
         node {
           id
-          firstName
-          lastName
+          name {
+            firstName
+            lastName
+          }
           colorScheme
           avatarUrl
           locale

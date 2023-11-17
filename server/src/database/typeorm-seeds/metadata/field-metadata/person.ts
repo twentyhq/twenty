@@ -15,7 +15,7 @@ export enum SeedPersonFieldMetadataIds {
 
   Email = '20202020-8a96-4e4b-86fd-ea126530e0c1',
   LinkedinLink = '20202020-dcf6-445a-b543-37e55de43c25',
-  XUrl = '20202020-a3a7-4f63-9303-10226f6055be',
+  XLink = '20202020-a3a7-4f63-9303-10226f6055be',
   JobTitle = '20202020-3b86-413e-ab56-0ebd1a583ff3',
   Phone = '20202020-486f-45f9-bbdf-aac18b1831c0',
   City = '20202020-78f8-4b4c-90ff-86adf77590f5',
@@ -170,7 +170,7 @@ export const seedPersonFieldMetadata = async (
         defaultValue: undefined,
       },
       {
-        id: SeedPersonFieldMetadataIds.XUrl,
+        id: SeedPersonFieldMetadataIds.XLink,
         objectMetadataId: SeedObjectMetadataIds.Person,
         isCustom: false,
         workspaceId: SeedWorkspaceId,

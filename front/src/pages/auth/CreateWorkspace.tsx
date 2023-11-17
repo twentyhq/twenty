@@ -3,10 +3,12 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useSetRecoilState } from 'recoil';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -41,6 +43,7 @@ export const CreateWorkspace = () => {
   const navigate = useNavigate();
 
   const { enqueueSnackBar } = useSnackBar();
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
 
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
@@ -68,6 +71,10 @@ export const CreateWorkspace = () => {
             },
           },
         });
+        setCurrentWorkspace({
+          id: result.data?.updateWorkspace?.id ?? '',
+          displayName: data.name,
+        });
 
         if (result.errors || !result.data?.updateWorkspace) {
           throw result.errors ?? new Error('Unknown error');
@@ -82,7 +89,7 @@ export const CreateWorkspace = () => {
         });
       }
     },
-    [enqueueSnackBar, navigate, updateWorkspace],
+    [enqueueSnackBar, navigate, setCurrentWorkspace, updateWorkspace],
   );
 
   useScopedHotkeys(

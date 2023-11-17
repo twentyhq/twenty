@@ -73,8 +73,8 @@ export const CreateProfile = () => {
   } = useForm<Form>({
     mode: 'onChange',
     defaultValues: {
-      firstName: currentWorkspaceMember?.firstName ?? '',
-      lastName: currentWorkspaceMember?.lastName ?? '',
+      firstName: currentWorkspaceMember?.name.firstName ?? '',
+      lastName: currentWorkspaceMember?.name.lastName ?? '',
     },
     resolver: zodResolver(validationSchema),
   });
@@ -95,8 +95,10 @@ export const CreateProfile = () => {
         await updateOneObject({
           idToUpdate: currentWorkspaceMember?.id,
           input: {
-            firstName: data.firstName,
-            lastName: data.lastName,
+            name: {
+              firstName: data.firstName,
+              lastName: data.lastName,
+            },
           },
         });
 
@@ -104,8 +106,10 @@ export const CreateProfile = () => {
           (current) =>
             ({
               ...current,
-              firstName: data.firstName,
-              lastName: data.lastName,
+              name: {
+                firstName: data.firstName,
+                lastName: data.lastName,
+              },
             } as any),
         );
 

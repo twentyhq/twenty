@@ -91,9 +91,10 @@ export const RecordShowPage = () => {
     if (isFavorite) deleteFavorite(object?.id);
     else {
       const additionalData =
-        objectNameSingular === 'peopleV2'
+        objectNameSingular === 'personV2'
           ? {
-              labelIdentifier: object.firstName + ' ' + object.lastName,
+              labelIdentifier:
+                object.name.firstName + ' ' + object.name.lastName,
               avatarUrl: object.avatarUrl,
               avatarType: 'rounded',
               link: `/object/personV2/${object.id}`,
@@ -114,11 +115,16 @@ export const RecordShowPage = () => {
 
   if (!object) return <></>;
 
+  const pageName =
+    objectNameSingular === 'personV2'
+      ? object.name.firstName + ' ' + object.name.lastName
+      : object.name;
+
   return (
     <PageContainer>
-      <PageTitle title={object.name || 'No Name'} />
+      <PageTitle title={pageName} />
       <PageHeader
-        title={object.name ?? ''}
+        title={pageName ?? ''}
         hasBackButton
         Icon={IconBuildingSkyscraper}
       >

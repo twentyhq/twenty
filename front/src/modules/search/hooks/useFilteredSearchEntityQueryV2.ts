@@ -62,13 +62,26 @@ export const useFilteredSearchEntityQueryV2 = ({
       }
 
       return {
-        or: fieldNames.map((fieldName) => ({
-          [fieldName]: {
-            like: `%${filter}%`,
-            // TODO: fix mode
-            // mode: QueryMode.Insensitive,
-          },
-        })),
+        or: fieldNames.map((fieldName) => {
+          const fieldNameParts = fieldName.split('.');
+
+          if (fieldNameParts.length > 1) {
+            // Composite field
+
+            return {
+              [fieldNameParts[0]]: {
+                [fieldNameParts[1]]: {
+                  ilike: `%${filter}%`,
+                },
+              },
+            };
+          }
+          return {
+            [fieldName]: {
+              ilike: `%${filter}%`,
+            },
+          };
+        }),
       };
     })
     .filter(isDefined);

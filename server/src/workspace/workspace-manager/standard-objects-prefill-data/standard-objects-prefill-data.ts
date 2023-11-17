@@ -5,7 +5,6 @@ import { viewPrefillData } from 'src/workspace/workspace-manager/standard-object
 import { companyPrefillData } from 'src/workspace/workspace-manager/standard-objects-prefill-data/company';
 import { personPrefillData } from 'src/workspace/workspace-manager/standard-objects-prefill-data/person';
 import { pipelineStepPrefillData } from 'src/workspace/workspace-manager/standard-objects-prefill-data/pipeline-step';
-import { opportunityPrefillData } from 'src/workspace/workspace-manager/standard-objects-prefill-data/opportunity';
 
 export const standardObjectsPrefillData = async (
   workspaceDataSource: DataSource,
@@ -28,6 +27,5 @@ export const standardObjectsPrefillData = async (
     await personPrefillData(entityManager, schemaName);
     await viewPrefillData(entityManager, schemaName, objectMetadataMap);
     await pipelineStepPrefillData(entityManager, schemaName);
-    await opportunityPrefillData(entityManager, schemaName);
   });
 };

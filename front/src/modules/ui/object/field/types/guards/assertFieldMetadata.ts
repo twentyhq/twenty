@@ -7,6 +7,7 @@ import {
   FieldDoubleTextChipMetadata,
   FieldDoubleTextMetadata,
   FieldEmailMetadata,
+  FieldFullnameMetadata,
   FieldLinkMetadata,
   FieldMetadata,
   FieldMoneyMetadata,
@@ -28,6 +29,8 @@ type AssertFieldMetadataFunction = <
     ? FieldChipMetadata
     : E extends 'CURRENCY'
     ? FieldCurrencyMetadata
+    : E extends 'FULL_NAME'
+    ? FieldFullnameMetadata
     : E extends 'DATE'
     ? FieldDateMetadata
     : E extends 'DOUBLE_TEXT'
