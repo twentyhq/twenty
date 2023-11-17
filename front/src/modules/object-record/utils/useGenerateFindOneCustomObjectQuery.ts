@@ -24,7 +24,7 @@ export const useGenerateFindOneCustomObjectQuery = ({
       }){
         id
         ${objectMetadataItem.fields
-          .map(mapFieldMetadataToGraphQLQuery)
+          .map((field) => mapFieldMetadataToGraphQLQuery(field))
           .join('\n')}
       }
     }
