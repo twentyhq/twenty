@@ -31,7 +31,9 @@ import { companyShowFieldDefinitions } from './constants/companyShowFieldDefinit
 
 export const CompanyShow = () => {
   const companyId = useParams().companyId ?? '';
-  const { createFavorite, deleteFavorite } = useFavorites();
+  const { createFavorite, deleteFavorite } = useFavorites({
+    objectNamePlural: 'companies',
+  });
   const navigate = useNavigate();
   const { data, loading } = useCompanyQuery(companyId);
   const company = data?.findUniqueCompany;

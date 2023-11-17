@@ -13,7 +13,7 @@ export type AvatarSize = 'xl' | 'lg' | 'md' | 'sm' | 'xs';
 export type AvatarProps = {
   avatarUrl: string | null | undefined;
   size?: AvatarSize;
-  placeholder: string;
+  placeholder: string | undefined;
   colorId?: string;
   type?: AvatarType;
   onClick?: () => void;
@@ -118,11 +118,11 @@ export const Avatar = ({
       placeholder={placeholder}
       size={size}
       type={type}
-      colorId={colorId}
+      colorId={colorId ?? ''}
       onClick={onClick}
     >
       {(noAvatarUrl || isInvalidAvatarUrl) &&
-        placeholder[0]?.toLocaleUpperCase()}
+        placeholder?.[0]?.toLocaleUpperCase()}
     </StyledAvatar>
   );
 };
