@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { RelationMetadataInterface } from 'src/tenant/schema-builder/interfaces/relation-metadata.interface';
+import { RelationMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/relation-metadata.interface';
 
 import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';

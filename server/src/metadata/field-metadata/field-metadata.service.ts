@@ -10,12 +10,12 @@ import { Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { DeleteOneOptions } from '@ptc-org/nestjs-query-core';
 
-import { TenantMigrationRunnerService } from 'src/tenant-migration-runner/tenant-migration-runner.service';
-import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
+import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
+import { WorkspaceMigrationService } from 'src/metadata/workspace-migration/workspace-migration.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { FieldMetadataDTO } from 'src/metadata/field-metadata/dtos/field-metadata.dto';
 import { CreateFieldInput } from 'src/metadata/field-metadata/dtos/create-field.input';
-import { TenantMigrationTableAction } from 'src/metadata/tenant-migration/tenant-migration.entity';
+import { WorkspaceMigrationTableAction } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { generateTargetColumnMap } from 'src/metadata/field-metadata/utils/generate-target-column-map.util';
 import { convertFieldMetadataToColumnActions } from 'src/metadata/field-metadata/utils/convert-field-metadata-to-column-action.util';
 
@@ -28,8 +28,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
 
     private readonly objectMetadataService: ObjectMetadataService,
-    private readonly tenantMigrationService: TenantMigrationService,
-    private readonly migrationRunnerService: TenantMigrationRunnerService,
+    private readonly workspaceMigrationService: WorkspaceMigrationService,
+    private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
   ) {
     super(fieldMetadataRepository);
   }
@@ -90,18 +90,18 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       isCustom: true,
     });
 
-    await this.tenantMigrationService.createCustomMigration(
+    await this.workspaceMigrationService.createCustomMigration(
       record.workspaceId,
       [
         {
           name: objectMetadata.targetTableName,
           action: 'alter',
           columns: convertFieldMetadataToColumnActions(createdFieldMetadata),
-        } satisfies TenantMigrationTableAction,
+        } satisfies WorkspaceMigrationTableAction,
       ],
     );
 
-    await this.migrationRunnerService.executeMigrationFromPendingMigrations(
+    await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
       record.workspaceId,
     );
 
