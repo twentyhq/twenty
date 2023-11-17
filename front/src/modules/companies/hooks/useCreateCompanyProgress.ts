@@ -1,20 +1,15 @@
-import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
-import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
-import { GET_PIPELINES } from '@/pipeline/graphql/queries/getPipelines';
+import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
+import { Opportunity } from '@/pipeline/types/Opportunity';
 import { boardCardIdsByColumnIdFamilyState } from '@/ui/layout/board/states/boardCardIdsByColumnIdFamilyState';
-import { useCreateOneCompanyPipelineProgressMutation } from '~/generated/graphql';
 
 export const useCreateCompanyProgress = () => {
-  const [createOneCompanyPipelineProgress] =
-    useCreateOneCompanyPipelineProgressMutation({
-      refetchQueries: [
-        getOperationName(GET_PIPELINE_PROGRESS) ?? '',
-        getOperationName(GET_PIPELINES) ?? '',
-      ],
+  const { createOneObject: createOneOpportunity } =
+    useCreateOneObjectRecord<Opportunity>({
+      objectNameSingular: 'opportunityV2',
     });
 
   const [currentPipeline] = useRecoilState(currentPipelineState);
@@ -33,15 +28,11 @@ export const useCreateCompanyProgress = () => {
           newUuid,
         ]);
 
-        await createOneCompanyPipelineProgress({
-          variables: {
-            uuid: newUuid,
-            pipelineStageId: pipelineStageId,
-            pipelineId: currentPipeline?.id ?? '',
-            companyId: companyId,
-          },
+        await createOneOpportunity?.({
+          pipelineStepId: pipelineStageId,
+          companyId: companyId,
         });
       },
-    [createOneCompanyPipelineProgress, currentPipeline],
+    [createOneOpportunity, currentPipeline?.id],
   );
 };

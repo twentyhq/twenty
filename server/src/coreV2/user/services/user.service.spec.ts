@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { User } from 'src/coreV2/user/user.entity';
+import { UserV2 } from 'src/coreV2/user/user.entity';
 
 import { UserService } from './user.service';
 
@@ -13,7 +13,7 @@ describe('UserService', () => {
       providers: [
         UserService,
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(UserV2),
           useValue: {},
         },
       ],

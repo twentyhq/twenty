@@ -30,9 +30,10 @@ export type RecordTablePageProps = Pick<
 export const RecordTablePage = () => {
   const objectNamePlural = useParams().objectNamePlural ?? '';
 
-  const { objectNotFoundInMetadata, loading } = useFindOneObjectMetadataItem({
-    objectNamePlural,
-  });
+  const { objectNotFoundInMetadata, loading, foundObjectMetadataItem } =
+    useFindOneObjectMetadataItem({
+      objectNamePlural,
+    });
 
   const navigate = useNavigate();
 
@@ -43,7 +44,7 @@ export const RecordTablePage = () => {
   }, [objectNotFoundInMetadata, loading, navigate]);
 
   const { createOneObject } = useCreateOneObjectRecord({
-    objectNamePlural,
+    objectNameSingular: foundObjectMetadataItem?.nameSingular,
   });
 
   const handleAddButtonClick = async () => {

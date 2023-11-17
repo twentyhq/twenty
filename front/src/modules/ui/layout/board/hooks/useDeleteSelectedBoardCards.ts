@@ -1,40 +1,41 @@
-import { getOperationName } from '@apollo/client/utilities';
-import { useRecoilValue } from 'recoil';
+import { useApolloClient } from '@apollo/client';
+import { useRecoilCallback } from 'recoil';
 
-import { GET_PIPELINES } from '@/pipeline/graphql/queries/getPipelines';
-import { useDeleteManyPipelineProgressMutation } from '~/generated/graphql';
+import { useDeleteOneObjectRecord } from '@/object-record/hooks/useDeleteOneObjectRecord';
+import { Opportunity } from '@/pipeline/types/Opportunity';
 
 import { selectedCardIdsSelector } from '../states/selectors/selectedCardIdsSelector';
 
 import { useRemoveCardIds } from './useRemoveCardIds';
 
 export const useDeleteSelectedBoardCards = () => {
-  const selectedCardIds = useRecoilValue(selectedCardIdsSelector);
   const removeCardIds = useRemoveCardIds();
+  const apolloClient = useApolloClient();
 
-  const [deletePipelineProgress] = useDeleteManyPipelineProgressMutation({
-    refetchQueries: [getOperationName(GET_PIPELINES) ?? ''],
-  });
+  const { deleteOneObject: deleteOneOpportunity } =
+    useDeleteOneObjectRecord<Opportunity>({
+      objectNameSingular: 'opportunityV2',
+    });
 
-  const deleteSelectedBoardCards = async () => {
-    await deletePipelineProgress({
-      variables: {
-        ids: selectedCardIds,
-      },
-      optimisticResponse: {
-        __typename: 'Mutation',
-        deleteManyPipelineProgress: {
-          count: selectedCardIds.length,
-        },
-      },
-      update: (cache) => {
+  const deleteSelectedBoardCards = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const selectedCardIds = snapshot
+          .getLoadable(selectedCardIdsSelector)
+          .getValue();
+
+        await Promise.all(
+          selectedCardIds.map(async (id) => {
+            await deleteOneOpportunity?.(id);
+          }),
+        );
         removeCardIds(selectedCardIds);
         selectedCardIds.forEach((id) => {
-          cache.evict({ id: `PipelineProgress:${id}` });
+          apolloClient.cache.evict({ id: `Opportunity:${id}` });
         });
       },
-    });
-  };
+    [apolloClient.cache, deleteOneOpportunity, removeCardIds],
+  );
 
   return deleteSelectedBoardCards;
 };

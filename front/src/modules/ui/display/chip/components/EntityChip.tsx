@@ -45,31 +45,31 @@ export const EntityChip = ({
   };
 
   return isNonEmptyString(name) ? (
-    <div onClick={handleLinkClick}>
-      <Chip
-        label={name}
-        variant={
-          linkToEntity
-            ? variant === EntityChipVariant.Regular
-              ? ChipVariant.Highlighted
-              : ChipVariant.Regular
-            : ChipVariant.Transparent
-        }
-        leftComponent={
-          LeftIcon ? (
-            <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-          ) : (
-            <Avatar
-              avatarUrl={pictureUrl}
-              colorId={entityId}
-              placeholder={name}
-              size="sm"
-              type={avatarType}
-            />
-          )
-        }
-      />
-    </div>
+    <Chip
+      label={name}
+      variant={
+        linkToEntity
+          ? variant === EntityChipVariant.Regular
+            ? ChipVariant.Highlighted
+            : ChipVariant.Regular
+          : ChipVariant.Transparent
+      }
+      leftComponent={
+        LeftIcon ? (
+          <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+        ) : (
+          <Avatar
+            avatarUrl={pictureUrl}
+            colorId={entityId}
+            placeholder={name}
+            size="sm"
+            type={avatarType}
+          />
+        )
+      }
+      clickable={!!linkToEntity}
+      onClick={handleLinkClick}
+    />
   ) : (
     <></>
   );

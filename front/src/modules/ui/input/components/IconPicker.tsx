@@ -19,6 +19,7 @@ import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
 
 type IconPickerProps = {
   disabled?: boolean;
+  dropdownScopeId?: string;
   onChange: (params: { iconKey: string; Icon: IconComponent }) => void;
   selectedIconKey?: string;
   onClickOutside?: () => void;
@@ -31,11 +32,12 @@ const StyledMenuIconItemsContainer = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  gap: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 const StyledLightIconButton = styled(LightIconButton)<{ isSelected?: boolean }>`
   background: ${({ theme, isSelected }) =>
-    isSelected ? theme.background.transparent.light : 'transparent'};
+    isSelected ? theme.background.transparent.medium : 'transparent'};
 `;
 
 const convertIconKeyToLabel = (iconKey: string) =>
@@ -43,6 +45,7 @@ const convertIconKeyToLabel = (iconKey: string) =>
 
 export const IconPicker = ({
   disabled,
+  dropdownScopeId = 'icon-picker',
   onChange,
   selectedIconKey,
   onClickOutside,
@@ -52,7 +55,7 @@ export const IconPicker = ({
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
 
-  const { closeDropdown } = useDropdown({ dropdownScopeId: 'icon-picker' });
+  const { closeDropdown } = useDropdown({ dropdownScopeId });
 
   const { icons, isLoadingIcons: isLoading } = useLazyLoadIcons();
 
@@ -74,7 +77,7 @@ export const IconPicker = ({
   }, [icons, searchString, selectedIconKey]);
 
   return (
-    <DropdownScope dropdownScopeId="icon-picker">
+    <DropdownScope dropdownScopeId={dropdownScopeId}>
       <Dropdown
         dropdownHotkeyScope={{ scope: IconPickerHotkeyScope.IconPicker }}
         clickableComponent={
@@ -84,9 +87,9 @@ export const IconPicker = ({
             variant={variant}
           />
         }
-        dropdownMenuWidth={168}
+        dropdownMenuWidth={176}
         dropdownComponents={
-          <DropdownMenu width={168}>
+          <DropdownMenu width={176}>
             <DropdownMenuSearchInput
               placeholder="Search icon"
               autoFocus

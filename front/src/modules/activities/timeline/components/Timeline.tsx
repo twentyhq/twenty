@@ -3,14 +3,10 @@ import styled from '@emotion/styled';
 
 import { ActivityCreateButton } from '@/activities/components/ActivityCreateButton';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { ActivityForDrawer } from '@/activities/types/ActivityForDrawer';
+import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
+import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import {
-  ActivityType,
-  SortOrder,
-  useGetActivitiesByTargetsQuery,
-} from '~/generated/graphql';
 
 import { TimelineItemsContainer } from './TimelineItemsContainer';
 
@@ -52,20 +48,28 @@ const StyledEmptyTimelineSubTitle = styled.div`
 `;
 
 export const Timeline = ({ entity }: { entity: ActivityTargetableEntity }) => {
-  const { data: queryResult, loading } = useGetActivitiesByTargetsQuery({
-    variables: {
-      activityTargetIds: [entity.id],
-      orderBy: [
-        {
-          createdAt: SortOrder.Desc,
-        },
-      ],
+  const { objects: activityTargets, loading } = useFindManyObjectRecords({
+    objectNamePlural: 'activityTargetsV2',
+    filter: {
+      or: {
+        companyId: { eq: entity.id },
+        personId: { eq: entity.id },
+      },
+    },
+  });
+
+  const { objects: activities } = useFindManyObjectRecords({
+    skip: !activityTargets?.length,
+    objectNamePlural: 'activitiesV2',
+    filter: {
+      activityTargets: { in: activityTargets?.map((at) => at.id) },
+    },
+    orderBy: {
+      createdAt: 'AscNullsFirst',
     },
   });
 
   const openCreateActivity = useOpenCreateActivityDrawer();
-
-  const activities: ActivityForDrawer[] = queryResult?.findManyActivities ?? [];
 
   if (loading) {
     return <></>;
@@ -79,13 +83,13 @@ export const Timeline = ({ entity }: { entity: ActivityTargetableEntity }) => {
         <ActivityCreateButton
           onNoteClick={() =>
             openCreateActivity({
-              type: ActivityType.Note,
+              type: 'Note',
               targetableEntities: [entity],
             })
           }
           onTaskClick={() =>
             openCreateActivity({
-              type: ActivityType.Task,
+              type: 'Task',
               targetableEntities: [entity],
             })
           }
@@ -96,7 +100,7 @@ export const Timeline = ({ entity }: { entity: ActivityTargetableEntity }) => {
 
   return (
     <StyledMainContainer>
-      <TimelineItemsContainer activities={activities} />
+      <TimelineItemsContainer activities={activities as Activity[]} />
     </StyledMainContainer>
   );
 };

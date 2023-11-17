@@ -34,6 +34,17 @@ export const Default: Story = {
   },
 };
 
+export const WithLongText: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    color: 'green',
+    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+  },
+  parameters: {
+    container: { width: 100 },
+  },
+};
+
 export const Catalog: CatalogStory<Story, typeof Tag> = {
   args: { text: 'Urgent' },
   argTypes: {

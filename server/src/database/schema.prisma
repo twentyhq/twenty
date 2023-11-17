@@ -446,7 +446,7 @@ model ActivityTarget {
 }
 
 // All of the world's currently active currencies based on the ISO 4217 standard
-enum Currency {
+enum CurrencyCode {
   AED
   AFN
   ALL
@@ -615,6 +615,8 @@ enum Currency {
   ZAR
   ZMW
   ZWL
+
+  @@map("CurrencyCode")
 }
 
 model Pipeline {
@@ -640,7 +642,7 @@ model Pipeline {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  currency Currency @default(USD)
+  currency CurrencyCode @default(USD)
 
   @@map("pipelines")
 }

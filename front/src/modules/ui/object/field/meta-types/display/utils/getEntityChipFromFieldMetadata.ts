@@ -1,14 +1,16 @@
 import { EntityChipProps } from '@/ui/display/chip/components/EntityChip';
 import { FieldDefinition } from '@/ui/object/field/types/FieldDefinition';
 import { FieldRelationMetadata } from '@/ui/object/field/types/FieldMetadata';
+import { getLogoUrlFromDomainName } from '~/utils';
 
 export const getEntityChipFromFieldMetadata = (
   fieldDefinition: FieldDefinition<FieldRelationMetadata>,
   fieldValue: any,
 ) => {
+  const { entityChipDisplayMapper } = fieldDefinition;
   const { fieldName } = fieldDefinition.metadata;
 
-  const chipValue: Pick<
+  const defaultChipValue: Pick<
     EntityChipProps,
     'name' | 'pictureUrl' | 'avatarType' | 'entityId'
   > = {
@@ -18,15 +20,23 @@ export const getEntityChipFromFieldMetadata = (
     entityId: fieldValue?.id,
   };
 
-  console.log({
-    fieldName,
-    fieldValue,
-  });
-
-  // TODO: use every
-  if (fieldName === 'accountOwner' && fieldValue) {
-    chipValue.name = fieldValue.firstName + ' ' + fieldValue.lastName;
+  if (['accountOwner', 'person'].includes(fieldName) && fieldValue) {
+    return {
+      ...defaultChipValue,
+      name: `${fieldValue.firstName} ${fieldValue.lastName}`,
+    };
   }
 
-  return chipValue;
+  if (fieldName === 'company' && fieldValue) {
+    return {
+      ...defaultChipValue,
+      name: fieldValue.name,
+      pictureUrl: getLogoUrlFromDomainName(fieldValue.domainName),
+    };
+  }
+
+  return {
+    ...defaultChipValue,
+    ...entityChipDisplayMapper?.(fieldValue),
+  };
 };

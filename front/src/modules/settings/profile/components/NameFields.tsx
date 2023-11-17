@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import debounce from 'lodash.debounce';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
-import { useUpdateUserMutation } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
 
 const StyledComboInputContainer = styled.div`
@@ -31,16 +29,21 @@ export const NameFields = ({
   onLastNameUpdate,
 }: NameFieldsProps) => {
   const currentUser = useRecoilValue(currentUserState);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
+    currentWorkspaceMemberState,
+  );
 
   const [firstName, setFirstName] = useState(
-    currentWorkspaceMember?.firstName ?? '',
+    currentWorkspaceMember?.name.firstName ?? '',
   );
   const [lastName, setLastName] = useState(
-    currentWorkspaceMember?.lastName ?? '',
+    currentWorkspaceMember?.name.lastName ?? '',
   );
 
-  const [updateUser] = useUpdateUserMutation();
+  const { updateOneObject, objectNotFoundInMetadata } =
+    useUpdateOneObjectRecord({
+      objectNameSingular: 'workspaceMemberV2',
+    });
 
   // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)
   const debouncedUpdate = debounce(async () => {
@@ -51,23 +54,31 @@ export const NameFields = ({
       onLastNameUpdate(lastName);
     }
     try {
+      if (!currentWorkspaceMember?.id) {
+        throw new Error('User is not logged in');
+      }
+
       if (autoSave) {
-        const { data, errors } = await updateUser({
-          variables: {
-            where: {
-              id: currentUser?.id,
-            },
-            data: {
-              firstName,
-              lastName,
+        if (!updateOneObject || objectNotFoundInMetadata) {
+          throw new Error('Object not found in metadata');
+        }
+        await updateOneObject({
+          idToUpdate: currentWorkspaceMember?.id,
+          input: {
+            name: {
+              firstName: firstName,
+              lastName: lastName,
             },
           },
-          refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
         });
 
-        if (errors || !data?.updateUser) {
-          throw errors;
-        }
+        setCurrentWorkspaceMember({
+          ...currentWorkspaceMember,
+          name: {
+            firstName,
+            lastName,
+          },
+        });
       }
     } catch (error) {
       logError(error);
@@ -80,8 +91,8 @@ export const NameFields = ({
     }
 
     if (
-      currentWorkspaceMember.firstName !== firstName ||
-      currentWorkspaceMember.lastName !== lastName
+      currentWorkspaceMember.name.firstName !== firstName ||
+      currentWorkspaceMember.name.lastName !== lastName
     ) {
       debouncedUpdate();
     }

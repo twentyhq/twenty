@@ -10,8 +10,9 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { FieldMetadataInterface } from 'src/tenant/schema-builder/interfaces/field-metadata.interface';
-import { FieldMetadataTargetColumnMap } from 'src/tenant/schema-builder/interfaces/field-metadata-target-column-map.interface';
+import { FieldMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/field-metadata.interface';
+import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interfaces/field-metadata-target-column-map.interface';
+import { FieldMetadataDefaultValue } from 'src/metadata/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
@@ -26,9 +27,10 @@ export enum FieldMetadataType {
   NUMBER = 'NUMBER',
   PROBABILITY = 'PROBABILITY',
   ENUM = 'ENUM',
-  URL = 'URL',
-  MONEY = 'MONEY',
+  LINK = 'LINK',
+  CURRENCY = 'CURRENCY',
   RELATION = 'RELATION',
+  FULL_NAME = 'FULL_NAME',
 }
 
 @Entity('fieldMetadata')
@@ -62,6 +64,9 @@ export class FieldMetadataEntity implements FieldMetadataInterface {
   @Column({ nullable: false, type: 'jsonb' })
   targetColumnMap: FieldMetadataTargetColumnMap;
 
+  @Column({ nullable: true, type: 'jsonb' })
+  defaultValue: FieldMetadataDefaultValue;
+
   @Column({ nullable: true, type: 'text' })
   description: string;
 
@@ -76,6 +81,9 @@ export class FieldMetadataEntity implements FieldMetadataInterface {
 
   @Column({ default: false })
   isActive: boolean;
+
+  @Column({ default: false })
+  isSystem: boolean;
 
   @Column({ nullable: true, default: true })
   isNullable: boolean;

@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
+import { ActivityType } from '@/activities/types/Activity';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
-import { ActivityType } from '~/generated/graphql';
 
 const StyledTitleContainer = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
@@ -44,7 +44,7 @@ export const TimelineActivityTitle = ({
   onCompletionChange,
 }: TimelineActivityTitleProps) => (
   <StyledTitleContainer>
-    {type === ActivityType.Task && (
+    {type === 'Task' && (
       <StyledCheckboxContainer
         onClick={(event) => {
           event.preventDefault();
@@ -55,10 +55,7 @@ export const TimelineActivityTitle = ({
         <Checkbox checked={completed ?? false} shape={CheckboxShape.Rounded} />
       </StyledCheckboxContainer>
     )}
-    <StyledTitleText
-      completed={completed}
-      hasCheckbox={type === ActivityType.Task}
-    >
+    <StyledTitleText completed={completed} hasCheckbox={type === 'Task'}>
       <OverflowingTextWithTooltip text={title ? title : 'Task title'} />
     </StyledTitleText>
   </StyledTitleContainer>

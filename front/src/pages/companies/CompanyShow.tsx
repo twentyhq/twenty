@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { CompanyTeam } from '@/companies/components/CompanyTeam';
 import { useCompanyQuery } from '@/companies/hooks/useCompanyQuery';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
@@ -32,7 +31,9 @@ import { companyShowFieldDefinitions } from './constants/companyShowFieldDefinit
 
 export const CompanyShow = () => {
   const companyId = useParams().companyId ?? '';
-  const { createFavorite, deleteFavorite } = useFavorites();
+  const { createFavorite, deleteFavorite } = useFavorites({
+    objectNamePlural: 'companies',
+  });
   const navigate = useNavigate();
   const { data, loading } = useCompanyQuery(companyId);
   const company = data?.findUniqueCompany;
@@ -69,7 +70,7 @@ export const CompanyShow = () => {
           key="add"
           entity={{
             id: company.id,
-            type: ActivityTargetableEntityType.Company,
+            type: 'Company',
           }}
         />
       </PageHeader>
@@ -113,7 +114,7 @@ export const CompanyShow = () => {
             <ShowPageRightContainer
               entity={{
                 id: company.id,
-                type: ActivityTargetableEntityType.Company,
+                type: 'Company',
               }}
               timeline
               tasks

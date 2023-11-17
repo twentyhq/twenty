@@ -16,7 +16,7 @@ const PeopleTableEffect = () => {
     setViewObjectMetadataId,
   } = useView();
 
-  const { setAvailableTableColumns, setTableColumns } = useRecordTable();
+  const { setAvailableTableColumns } = useRecordTable();
 
   useEffect(() => {
     setAvailableSortDefinitions?.(personTableSortDefinitions);
@@ -31,7 +31,6 @@ const PeopleTableEffect = () => {
     setAvailableFilterDefinitions,
     setAvailableSortDefinitions,
     setAvailableTableColumns,
-    setTableColumns,
     setViewObjectMetadataId,
     setViewType,
   ]);

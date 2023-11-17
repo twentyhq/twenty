@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 import { CompanyPicker } from '@/companies/components/CompanyPicker';
 import { PeoplePicker } from '@/people/components/PeoplePicker';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
-import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { UserPicker } from '@/users/components/UserPicker';
 
 import { usePersistField } from '../../../hooks/usePersistField';
@@ -55,7 +54,7 @@ export const RelationFieldInput = ({
           onCancel={onCancel}
           initialSearchFilter={initialSearchValue}
         />
-      ) : fieldDefinition.metadata.relationType === Entity.Company ? (
+      ) : fieldDefinition.metadata.fieldName === 'company' ? (
         <CompanyPicker
           companyId={initialValue?.id ?? ''}
           onSubmit={handleSubmit}

@@ -35,7 +35,10 @@ export const RecordTableEffect = ({
   const { setRecordTableData } = useRecordTable();
   const { tableSortsOrderBySelector, tableFiltersWhereSelector } =
     useRecordTableScopedStates();
-  const { registerOptimisticEffect } = useOptimisticEffect('CompanyV2');
+
+  const { registerOptimisticEffect } = useOptimisticEffect({
+    objectNameSingular: 'companyV2',
+  });
 
   const tableSortsOrderBy = useRecoilValue(tableSortsOrderBySelector);
   const sortsOrderBy = defaults(tableSortsOrderBy, [

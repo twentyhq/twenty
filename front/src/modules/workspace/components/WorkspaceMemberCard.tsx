@@ -41,16 +41,18 @@ export const WorkspaceMemberCard = ({
     <Avatar
       avatarUrl={workspaceMember.avatarUrl}
       colorId={workspaceMember.id}
-      placeholder={workspaceMember.firstName || ''}
+      placeholder={workspaceMember.name.firstName || ''}
       type="squared"
       size="xl"
     />
     <StyledContent>
       <OverflowingTextWithTooltip
-        text={workspaceMember.firstName + ' ' + workspaceMember.lastName}
+        text={
+          workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName
+        }
       />
       <StyledEmailText>
-        {workspaceMember.firstName + ' ' + workspaceMember.lastName}
+        {workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName}
       </StyledEmailText>
     </StyledContent>
 

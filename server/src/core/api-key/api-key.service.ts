@@ -21,6 +21,34 @@ export class ApiKeyService {
   update = this.prismaService.client.apiKey.update;
   delete = this.prismaService.client.apiKey.delete;
 
+  async generateApiKeyV2Token(
+    workspaceId: string,
+    apiKeyId?: string,
+    expiresAt?: Date | string,
+  ): Promise<Pick<ApiKeyToken, 'token'> | undefined> {
+    if (!apiKeyId) {
+      return;
+    }
+    const jwtPayload = {
+      sub: workspaceId,
+    };
+    const secret = this.environmentService.getAccessTokenSecret();
+    let expiresIn: string | number;
+    if (expiresAt) {
+      expiresIn = Math.floor(
+        (new Date(expiresAt).getTime() - new Date().getTime()) / 1000,
+      );
+    } else {
+      expiresIn = this.environmentService.getApiTokenExpiresIn();
+    }
+    const token = this.jwtService.sign(jwtPayload, {
+      secret,
+      expiresIn,
+      jwtid: apiKeyId,
+    });
+    return { token };
+  }
+
   async generateApiKeyToken(
     workspaceId: string,
     name: string,

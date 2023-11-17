@@ -1,18 +1,8 @@
 import { atom } from 'recoil';
 
-import { ColorScheme } from '~/generated-metadata/graphql';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
-export type CurrentWorkspaceMember = {
-  id: string;
-  locale: string;
-  colorScheme: ColorScheme;
-  allowImpersonation: boolean;
-  firstName: string;
-  lastName: string;
-  avatarUrl: string;
-};
-
-export const currentWorkspaceMemberState = atom<CurrentWorkspaceMember | null>({
+export const currentWorkspaceMemberState = atom<WorkspaceMember | null>({
   key: 'currentWorkspaceMemberState',
   default: null,
 });

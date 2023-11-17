@@ -18,10 +18,6 @@ export type UserPickerProps = {
   initialSearchFilter?: string | null;
 };
 
-type UserForSelect = EntityForSelect & {
-  entityType: Entity.WorkspaceMember;
-};
-
 export const UserPicker = ({
   userId,
   onSubmit,
@@ -37,35 +33,32 @@ export const UserPicker = ({
   }, [initialSearchFilter, setRelationPickerSearchFilter]);
 
   const { findManyQuery } = useFindOneObjectMetadataItem({
-    objectNamePlural: 'workspaceMembersV2',
+    objectNameSingular: 'workspaceMemberV2',
   });
 
-  const useFindManyWorkspaceMembers = () => useQuery(findManyQuery, {});
+  const useFindManyWorkspaceMembers = (options: any) =>
+    useQuery(findManyQuery, options);
 
-  // TODO: put workspace member
-  const users = useFilteredSearchEntityQueryV2({
+  const workspaceMembers = useFilteredSearchEntityQueryV2({
     queryHook: useFindManyWorkspaceMembers,
     filters: [
       {
-        fieldNames: ['firstName', 'lastName'],
+        fieldNames: ['name.firstName', 'name.lastName'],
         filter: relationPickerSearchFilter,
       },
     ],
-    orderByField: '',
+    orderByField: 'createdAt',
     mappingFunction: (workspaceMember) => ({
       entityType: Entity.WorkspaceMember,
       id: workspaceMember.id,
-      name: workspaceMember.firstName,
+      name:
+        workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName,
       avatarType: 'rounded',
       avatarUrl: '',
       originalEntity: workspaceMember,
     }),
     selectedIds: userId ? [userId] : [],
     objectNamePlural: 'workspaceMembersV2',
-  });
-
-  console.log({
-    users,
   });
 
   const handleEntitySelected = async (selectedUser: any | null | undefined) => {
@@ -76,11 +69,11 @@ export const UserPicker = ({
     <SingleEntitySelect
       EmptyIcon={IconUserCircle}
       emptyLabel="No Owner"
-      entitiesToSelect={users.entitiesToSelect}
-      loading={users.loading}
+      entitiesToSelect={workspaceMembers.entitiesToSelect}
+      loading={workspaceMembers.loading}
       onCancel={onCancel}
       onEntitySelected={handleEntitySelected}
-      selectedEntity={users.selectedEntities[0]}
+      selectedEntity={workspaceMembers.selectedEntities[0]}
       width={width}
     />
   );

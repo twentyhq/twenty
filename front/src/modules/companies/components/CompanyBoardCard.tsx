@@ -2,6 +2,7 @@ import { ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
+import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { EntityChipVariant } from '@/ui/display/chip/components/EntityChip';
 import { IconEye } from '@/ui/display/icon/index';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
@@ -17,7 +18,6 @@ import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/Reco
 import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 import { companyProgressesFamilyState } from '../states/companyProgressesFamilyState';
@@ -150,6 +150,30 @@ export const CompanyBoardCard = () => {
     BoardRecoilScopeContext,
   );
 
+  const useUpdateOneObjectMutation: () => [(params: any) => any, any] = () => {
+    const { updateOneObject } = useUpdateOneObjectRecord({
+      objectNameSingular: 'opportunityV2',
+    });
+
+    const updateEntity = ({
+      variables,
+    }: {
+      variables: {
+        where: { id: string };
+        data: {
+          [fieldName: string]: any;
+        };
+      };
+    }) => {
+      updateOneObject?.({
+        idToUpdate: variables.where.id,
+        input: variables.data,
+      });
+    };
+
+    return [updateEntity, { loading: false }];
+  };
+
   // boardCardId check can be moved to a wrapper to avoid unnecessary logic above
   if (!company || !pipelineProgress || !boardCardId) {
     return null;
@@ -224,8 +248,7 @@ export const CompanyBoardCard = () => {
                       entityChipDisplayMapper:
                         viewField.entityChipDisplayMapper,
                     },
-                    useUpdateEntityMutation:
-                      useUpdateOnePipelineProgressMutation,
+                    useUpdateEntityMutation: useUpdateOneObjectMutation,
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,
                   }}
                 >

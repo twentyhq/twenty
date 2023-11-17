@@ -11,6 +11,7 @@ module.exports = {
     'unused-imports',
     'simple-import-sort',
     'prefer-arrow',
+    'import',
     'twenty',
   ],
   extends: [
@@ -42,6 +43,7 @@ module.exports = {
         'react/jsx-uses-react': 'off',
         'react/react-in-jsx-scope': 'off',
         'no-control-regex': 0,
+        'import/no-duplicates': ["error", {"considerQueryString": true}],
         'simple-import-sort/imports': [
           'error',
           {

@@ -6,7 +6,14 @@ import { FieldMetadataItem } from '../types/FieldMetadataItem';
 export const useMapFieldMetadataToGraphQLQuery = () => {
   const { objectMetadataItems } = useFindManyObjectMetadataItems();
 
-  const mapFieldMetadataToGraphQLQuery = (field: FieldMetadataItem): any => {
+  const mapFieldMetadataToGraphQLQuery = (
+    field: FieldMetadataItem,
+    maxDepthForRelations: number = 1,
+  ): any => {
+    if (maxDepthForRelations <= 0) {
+      return '';
+    }
+
     // TODO: parse
     const fieldType = field.type as FieldType;
 
@@ -22,61 +29,74 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
       ] as FieldType[]
     ).includes(fieldType);
 
-    const fieldIsURL = fieldType === 'URL' || fieldType === 'URL_V2';
-
-    const fieldIsMoneyAmount =
-      fieldType === 'MONEY' || fieldType === 'MONEY_AMOUNT_V2';
-
     if (fieldIsSimpleValue) {
       return field.name;
     } else if (
       fieldType === 'RELATION' &&
       field.toRelationMetadata?.relationType === 'ONE_TO_MANY'
     ) {
-      console.log({ objectMetadataItems, field });
-
       const relationMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) =>
           objectMetadataItem.id ===
           (field.toRelationMetadata as any)?.fromObjectMetadata?.id,
       );
 
-      console.log({ relationMetadataItem });
-
       return `${field.name}
     {
       id
-      ${relationMetadataItem?.fields
+      ${(relationMetadataItem?.fields ?? [])
         .filter((field) => field.type !== 'RELATION')
-        .map((field) => field.name)
+        .map((field) =>
+          mapFieldMetadataToGraphQLQuery(field, maxDepthForRelations - 1),
+        )
         .join('\n')}
     }`;
     } else if (
       fieldType === 'RELATION' &&
       field.fromRelationMetadata?.relationType === 'ONE_TO_MANY'
     ) {
+      const relationMetadataItem = objectMetadataItems.find(
+        (objectMetadataItem) =>
+          objectMetadataItem.id ===
+          (field.fromRelationMetadata as any)?.toObjectMetadata?.id,
+      );
+
       return `${field.name}
       {
         edges {
           node {
-           id
+            id
+            ${(relationMetadataItem?.fields ?? [])
+              .filter((field) => field.type !== 'RELATION')
+              .map((field) =>
+                mapFieldMetadataToGraphQLQuery(field, maxDepthForRelations - 1),
+              )
+              .join('\n')}
           }
         }
       }`;
-    } else if (fieldIsURL) {
+    } else if (fieldType === 'LINK') {
       return `
       ${field.name}
       {
-        text
-        link
+        label
+        url
       }
     `;
-    } else if (fieldIsMoneyAmount) {
+    } else if (fieldType === 'CURRENCY') {
       return `
       ${field.name}
       {
-        amount
-        currency
+        amountMicros
+        currencyCode
+      }
+    `;
+    } else if (fieldType === 'FULL_NAME') {
+      return `
+      ${field.name}
+      {
+        firstName
+        lastName
       }
     `;
     }

@@ -1,10 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
-import {
-  ActivityTargetableEntity,
-  ActivityTargetableEntityType,
-} from '@/activities/types/ActivityTargetableEntity';
+import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
 import { selectedRowIdsSelector } from '@/ui/object/record-table/states/selectors/selectedRowIdsSelector';
 import { ActivityType, Person } from '~/generated/graphql';
@@ -30,16 +27,12 @@ export const useCreateActivityForPeople = () => {
           ) {
             relatedEntites.push({
               id: person.company.id,
-              type: ActivityTargetableEntityType.Company,
+              type: 'Company',
             });
           }
         }
 
-        openCreateActivityRightDrawer(
-          type,
-          ActivityTargetableEntityType.Person,
-          relatedEntites,
-        );
+        openCreateActivityRightDrawer(type, 'Person', relatedEntites);
       },
     [openCreateActivityRightDrawer],
   );

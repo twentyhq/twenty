@@ -23,15 +23,15 @@ export const useGenerateFindManyCustomObjectsQuery = ({
     objectMetadataItem.nameSingular,
   )}FilterInput, $orderBy: ${capitalize(
     objectMetadataItem.nameSingular,
-  )}OrderByInput, $lastCursor: String) {
+  )}OrderByInput, $lastCursor: String, $limit: Float = 30) {
       ${
         objectMetadataItem.namePlural
-      }(filter: $filter, orderBy: $orderBy, first: 30, after: $lastCursor){
+      }(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor){
         edges {
           node {
             id
             ${objectMetadataItem.fields
-              .map(mapFieldMetadataToGraphQLQuery)
+              .map((field) => mapFieldMetadataToGraphQLQuery(field))
               .join('\n')}
           }
           cursor

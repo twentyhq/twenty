@@ -4,9 +4,6 @@ import { Meta, StoryObj } from '@storybook/react';
 import { fireEvent, within } from '@storybook/testing-library';
 import { graphql } from 'msw';
 
-import { CREATE_ACTIVITY_WITH_COMMENT } from '@/activities/graphql/mutations/createActivityWithComment';
-import { GET_ACTIVITIES_BY_TARGETS } from '@/activities/graphql/queries/getActivitiesByTarget';
-import { GET_ACTIVITY } from '@/activities/graphql/queries/getActivity';
 import { UPDATE_ONE_COMPANY } from '@/companies/graphql/mutations/updateOneCompany';
 import { GET_COMPANY } from '@/companies/graphql/queries/getCompany';
 import { AppPath } from '@/types/AppPath';
@@ -16,7 +13,6 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedActivities, mockedTasks } from '~/testing/mock-data/activities';
 import { mockedCompaniesData } from '~/testing/mock-data/companies';
 
 import { CompanyShow } from '../CompanyShow';
@@ -32,19 +28,6 @@ const meta: Meta<PageDecoratorArgs> = {
   parameters: {
     msw: [
       ...graphqlMocks,
-      graphql.query(
-        getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? '',
-        (req, res, ctx) => {
-          return res(
-            ctx.data({
-              findManyActivities:
-                req?.variables?.where?.type?.equals === 'Task'
-                  ? mockedTasks
-                  : mockedActivities,
-            }),
-          );
-        },
-      ),
       graphql.query(getOperationName(GET_COMPANY) ?? '', (req, res, ctx) => {
         return res(
           ctx.data({
@@ -91,23 +74,6 @@ export const EditNoteByAddButton: Story = {
     msw: [
       ...meta.parameters?.msw,
       graphql.mutation(
-        getOperationName(CREATE_ACTIVITY_WITH_COMMENT) ?? '',
-        (req, res, ctx) => {
-          return res(
-            ctx.data({
-              createOneActivity: mockedActivities[0],
-            }),
-          );
-        },
-      ),
-      graphql.query(getOperationName(GET_ACTIVITY) ?? '', (req, res, ctx) => {
-        return res(
-          ctx.data({
-            findManyActivities: [mockedActivities[0]],
-          }),
-        );
-      }),
-      graphql.mutation(
         getOperationName(UPDATE_ONE_COMPANY) ?? '',
         (req, res, ctx) => {
           return res(
@@ -145,23 +111,6 @@ export const NoteTab: Story = {
   parameters: {
     msw: [
       ...meta.parameters?.msw,
-      graphql.mutation(
-        getOperationName(CREATE_ACTIVITY_WITH_COMMENT) ?? '',
-        (req, res, ctx) => {
-          return res(
-            ctx.data({
-              createOneActivity: mockedActivities[0],
-            }),
-          );
-        },
-      ),
-      graphql.query(getOperationName(GET_ACTIVITY) ?? '', (req, res, ctx) => {
-        return res(
-          ctx.data({
-            findManyActivities: [mockedActivities[0]],
-          }),
-        );
-      }),
       graphql.mutation(
         getOperationName(UPDATE_ONE_COMPANY) ?? '',
         (req, res, ctx) => {
@@ -207,23 +156,6 @@ export const TaskTab: Story = {
   parameters: {
     msw: [
       ...meta.parameters?.msw,
-      graphql.mutation(
-        getOperationName(CREATE_ACTIVITY_WITH_COMMENT) ?? '',
-        (req, res, ctx) => {
-          return res(
-            ctx.data({
-              createOneActivity: mockedTasks[0],
-            }),
-          );
-        },
-      ),
-      graphql.query(getOperationName(GET_ACTIVITY) ?? '', (req, res, ctx) => {
-        return res(
-          ctx.data({
-            findManyActivities: [mockedTasks[0]],
-          }),
-        );
-      }),
       graphql.mutation(
         getOperationName(UPDATE_ONE_COMPANY) ?? '',
         (req, res, ctx) => {
