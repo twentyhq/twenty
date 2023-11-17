@@ -132,6 +132,14 @@ export const seedViewFields = async (
         isVisible: true,
         size: 150,
       },
+
+      {
+        fieldMetadataId: 'amount',
+        viewId: SeedViewIds.Opportunity,
+        position: 0,
+        isVisible: true,
+        size: 150,
+      },
     ])
     .execute();
 };
