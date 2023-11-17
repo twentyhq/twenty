@@ -196,7 +196,8 @@ export const seedCompanyFieldMetadata = async (
         name: 'linkedinLink',
         label: 'Linkedin',
         targetColumnMap: {
-          value: 'linkedinLink',
+          label: 'linkedinLinkLabel',
+          url: 'linkedinLinkUrl',
         },
         description: 'The company Linkedin account',
         icon: 'IconBrandLinkedin',
@@ -214,7 +215,8 @@ export const seedCompanyFieldMetadata = async (
         name: 'xLink',
         label: 'X',
         targetColumnMap: {
-          value: 'xLink',
+          label: 'xLinkLabel',
+          url: 'xLinkUrl',
         },
         description: 'The company Twitter/X account',
         icon: 'IconBrandX',
