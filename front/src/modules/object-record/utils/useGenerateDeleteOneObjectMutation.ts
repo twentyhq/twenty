@@ -1,0 +1,25 @@
+import { gql } from '@apollo/client';
+
+import { EMPTY_MUTATION } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { capitalize } from '~/utils/string/capitalize';
+
+export const useGenerateDeleteOneObjectMutation = ({
+  objectMetadataItem,
+}: {
+  objectMetadataItem: ObjectMetadataItem | undefined | null;
+}) => {
+  if (!objectMetadataItem) {
+    return EMPTY_MUTATION;
+  }
+
+  const capitalizedObjectName = capitalize(objectMetadataItem?.nameSingular);
+
+  return gql`
+    mutation DeleteOne${capitalizedObjectName}($idToDelete: ID!)  {
+      delete${capitalizedObjectName}(id: $idToDelete) {
+        id
+      }
+    }
+  `;
+};

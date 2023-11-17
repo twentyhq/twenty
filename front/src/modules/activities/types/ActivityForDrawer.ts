@@ -1,4 +1,3 @@
-import { GetActivitiesByTargetsQuery } from '~/generated/graphql';
+import { Activity } from '@/activities/types/Activity';
 
-export type ActivityForDrawer =
-  GetActivitiesByTargetsQuery['findManyActivities'][0];
+export type ActivityForDrawer = Activity;

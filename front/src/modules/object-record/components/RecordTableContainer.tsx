@@ -38,7 +38,6 @@ export const RecordTableContainer = ({
     });
 
   const { updateOneObject } = useUpdateOneObjectRecord({
-    objectNamePlural,
     objectNameSingular: foundObjectMetadataItem?.nameSingular,
   });
 

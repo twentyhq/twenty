@@ -8,8 +8,6 @@ import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWith
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedTasks } from '~/testing/mock-data/activities';
 
-import { ActivityTargetableEntityType } from '../../types/ActivityTargetableEntity';
-
 const meta: Meta<typeof TaskGroups> = {
   title: 'Modules/Activity/TaskGroups',
   component: TaskGroups,
@@ -37,7 +35,7 @@ export const WithTasks: Story = {
   args: {
     entity: {
       id: mockedTasks[0].authorId,
-      type: ActivityTargetableEntityType.Person,
+      type: 'Person',
     },
   },
 };

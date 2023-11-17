@@ -33,7 +33,7 @@ export const SettingsNewObject = () => {
   } = useObjectMetadataItemForSettings();
 
   const { createOneObject: createOneView } = useCreateOneObjectRecord({
-    objectNamePlural: 'viewsV2',
+    objectNameSingular: 'viewV2',
   });
 
   const [

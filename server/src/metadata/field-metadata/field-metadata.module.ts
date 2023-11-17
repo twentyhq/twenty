@@ -7,8 +7,8 @@ import {
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { SortDirection } from '@ptc-org/nestjs-query-core';
 
-import { TenantMigrationRunnerModule } from 'src/tenant-migration-runner/tenant-migration-runner.module';
-import { TenantMigrationModule } from 'src/metadata/tenant-migration/tenant-migration.module';
+import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.module';
+import { WorkspaceMigrationModule } from 'src/metadata/workspace-migration/workspace-migration.module';
 import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 
@@ -24,8 +24,8 @@ import { UpdateFieldInput } from './dtos/update-field.input';
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature([FieldMetadataEntity], 'metadata'),
-        TenantMigrationModule,
-        TenantMigrationRunnerModule,
+        WorkspaceMigrationModule,
+        WorkspaceMigrationRunnerModule,
         ObjectMetadataModule,
       ],
       services: [FieldMetadataService],

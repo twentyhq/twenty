@@ -6,30 +6,29 @@ import { PipelineModule } from 'src/core/pipeline/pipeline.module';
 import { CompanyModule } from 'src/core/company/company.module';
 import { PersonModule } from 'src/core/person/person.module';
 import { PrismaModule } from 'src/database/prisma.module';
-import { TenantManagerModule } from 'src/tenant-manager/tenant-manager.module';
+import { WorkspaceManagerModule } from 'src/workspace/workspace-manager/workspace-manager.module';
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
-import { TenantMigrationModule } from 'src/metadata/tenant-migration/tenant-migration.module';
-import { TenantMigrationRunnerModule } from 'src/tenant-migration-runner/tenant-migration-runner.module';
+import { WorkspaceMigrationModule } from 'src/metadata/workspace-migration/workspace-migration.module';
+import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { WorkspaceModule } from 'src/core/workspace/workspace.module';
-
-import { DataSeedTenantCommand } from './data-seed-tenant.command';
+import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-workspace.command';
 
 @Module({
   imports: [
     PipelineModule,
     CompanyModule,
     PersonModule,
-    TenantManagerModule,
+    WorkspaceManagerModule,
     PrismaModule,
     DataSourceModule,
     TypeORMModule,
-    TenantMigrationModule,
-    TenantMigrationRunnerModule,
+    WorkspaceMigrationModule,
+    WorkspaceMigrationRunnerModule,
     WorkspaceModule,
   ],
   providers: [
-    DataSeedTenantCommand,
+    DataSeedWorkspaceCommand,
     DataCleanInactiveCommand,
     ConfirmationQuestion,
   ],

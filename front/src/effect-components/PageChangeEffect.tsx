@@ -181,7 +181,10 @@ export const PageChangeEffect = () => {
         )?.params.id;
 
         const entity = !!companyId
-          ? { id: companyId, type: ActivityTargetableEntityType.Company }
+          ? {
+              id: companyId,
+              type: 'Company' as ActivityTargetableEntityType,
+            }
           : undefined;
 
         addToCommandMenu([
@@ -192,7 +195,7 @@ export const PageChangeEffect = () => {
             Icon: IconCheckbox,
             onCommandClick: () =>
               openCreateActivity({
-                type: ActivityType.Task,
+                type: 'Task',
                 targetableEntities: entity ? [entity] : undefined,
               }),
           },
@@ -215,7 +218,7 @@ export const PageChangeEffect = () => {
           ?.params.id;
 
         const entity = !!personId
-          ? { id: personId, type: ActivityTargetableEntityType.Person }
+          ? { id: personId, type: 'Person' as ActivityTargetableEntityType }
           : undefined;
 
         addToCommandMenu([

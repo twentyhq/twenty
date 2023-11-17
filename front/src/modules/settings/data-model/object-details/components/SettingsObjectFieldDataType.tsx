@@ -1,10 +1,11 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { dataTypes } from '../../constants/dataTypes';
-import { MetadataFieldDataType } from '../../types/ObjectFieldDataType';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-const StyledDataType = styled.div<{ value: MetadataFieldDataType }>`
+import { dataTypes } from '../../constants/dataTypes';
+
+const StyledDataType = styled.div<{ value: FieldMetadataType }>`
   align-items: center;
   border: 1px solid transparent;
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -15,7 +16,7 @@ const StyledDataType = styled.div<{ value: MetadataFieldDataType }>`
   padding: 0 ${({ theme }) => theme.spacing(2)};
 
   ${({ theme, value }) =>
-    value === 'RELATION'
+    value === FieldMetadataType.Relation
       ? css`
           border-color: ${theme.color.purple20};
           color: ${theme.color.purple};
@@ -24,7 +25,7 @@ const StyledDataType = styled.div<{ value: MetadataFieldDataType }>`
 `;
 
 type SettingsObjectFieldDataTypeProps = {
-  value: MetadataFieldDataType;
+  value: FieldMetadataType;
 };
 
 export const SettingsObjectFieldDataType = ({

@@ -1,13 +1,13 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { NoteForList } from '../../types/NoteForList';
+import { Note } from '@/activities/types/Note';
 
 import { NoteCard } from './NoteCard';
 
 type NoteListProps = {
   title: string;
-  notes: NoteForList[];
+  notes: Note[];
   button?: ReactElement | false;
 };
 
