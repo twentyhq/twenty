@@ -45,7 +45,7 @@ export const SettingsObjectNewFieldStep2 = () => {
   const [objectViews, setObjectViews] = useState<View[]>([]);
 
   const { createOneObject: createOneViewField } = useCreateOneObjectRecord({
-    objectNamePlural: 'viewFieldsV2',
+    objectNameSingular: 'viewFieldV2',
   });
 
   useFindManyObjectRecords({

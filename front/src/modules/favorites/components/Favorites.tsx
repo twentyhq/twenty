@@ -24,7 +24,10 @@ const StyledContainer = styled.div`
 `;
 
 export const Favorites = () => {
-  const { favorites, handleReorderFavorite } = useFavorites();
+  // This is only temporary and will be refactored once we have main identifiers
+  const { favorites, handleReorderFavorite } = useFavorites({
+    objectNamePlural: 'companiesV2',
+  });
   const [allCompanies, setAllCompanies] = useState<
     Record<string, { name: string; domainName?: string }>
   >({});

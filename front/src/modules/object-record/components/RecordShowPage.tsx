@@ -36,12 +36,14 @@ export const RecordShowPage = () => {
     objectMetadataId: string;
   }>();
 
-  const { favorites, createFavorite, deleteFavorite } = useFavorites();
-
   const { icons } = useLazyLoadIcons();
 
   const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
     objectNameSingular,
+  });
+
+  const { favorites, createFavorite, deleteFavorite } = useFavorites({
+    objectNamePlural: foundObjectMetadataItem?.namePlural,
   });
 
   const [, setEntityFields] = useRecoilState(
@@ -106,11 +108,7 @@ export const RecordShowPage = () => {
               recordId: object.id,
             }
           : {};
-      createFavorite(
-        objectNameSingular.replace('V2', ''),
-        object.id,
-        additionalData,
-      );
+      createFavorite(object.id, additionalData);
     }
   };
 

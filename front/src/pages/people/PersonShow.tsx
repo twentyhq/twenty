@@ -34,7 +34,9 @@ import { personShowFieldDefinition } from './constants/personShowFieldDefinition
 
 export const PersonShow = () => {
   const personId = useParams().personId ?? '';
-  const { createFavorite, deleteFavorite } = useFavorites();
+  const { createFavorite, deleteFavorite } = useFavorites({
+    objectNamePlural: 'peopleV2',
+  });
   const navigate = useNavigate();
 
   const { data, loading } = usePersonQuery(personId);

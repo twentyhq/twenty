@@ -8,38 +8,45 @@ import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOne
 
 import { favoritesState } from '../states/favoritesState';
 
-export const useFavorites = () => {
+export const useFavorites = ({
+  objectNamePlural,
+}: {
+  objectNamePlural: string | undefined;
+}) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const [favorites, setFavorites] = useRecoilState(favoritesState);
 
   const { updateOneMutation, createOneMutation, deleteOneMutation } =
     useFindOneObjectMetadataItem({
-      objectNameSingular: 'favoriteV2',
+      objectNamePlural: 'favoritesV2',
+    });
+
+  const { foundObjectMetadataItem: favoriteTargetObjectMetadataItem } =
+    useFindOneObjectMetadataItem({
+      objectNamePlural,
     });
 
   const apolloClient = useApolloClient();
 
   const createFavorite = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (
-        favoriteNameToCreate: string,
-        favoriteIdToCreate: string,
-        additionalData?: any,
-      ) => {
+      async (favoriteTargetObjectId: string, additionalData?: any) => {
         const favoritesStateFromSnapshot = snapshot.getLoadable(favoritesState);
         const favorites = favoritesStateFromSnapshot.getValue();
-        if (!favoriteNameToCreate || !favoriteIdToCreate) {
-          return;
-        }
+
+        const targetObjectName =
+          favoriteTargetObjectMetadataItem?.nameSingular.replace('V2', '') ??
+          '';
 
         const result = await apolloClient.mutate({
           mutation: createOneMutation,
           variables: {
             input: {
-              [favoriteNameToCreate]: favoriteIdToCreate,
+              [`${targetObjectName}Id`]: favoriteTargetObjectId,
               position: favorites.length + 1,
-              workspaceMember: currentWorkspaceMember?.id,
+              // workspaceMember: currentWorkspaceMember?.id,
+              workspaceMemberId: currentWorkspaceMember?.id,
             },
           },
         });
@@ -48,14 +55,19 @@ export const useFavorites = () => {
 
         const newFavorite = {
           ...additionalData,
-          ...createdFavorite[favoriteNameToCreate],
+          ...createdFavorite[targetObjectName],
         };
 
         if (createdFavorite) {
           set(favoritesState, [...favorites, newFavorite]);
         }
       },
-    [apolloClient, createOneMutation, currentWorkspaceMember?.id],
+    [
+      apolloClient,
+      createOneMutation,
+      currentWorkspaceMember?.id,
+      favoriteTargetObjectMetadataItem,
+    ],
   );
 
   const _updateFavoritePosition = useRecoilCallback(

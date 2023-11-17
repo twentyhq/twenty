@@ -112,7 +112,7 @@ export const seedActivityTargetFieldMetadata = async (
         targetColumnMap: {},
         description: 'ActivityTarget activity',
         icon: 'IconNotes',
-        isNullable: false,
+        isNullable: true,
         isSystem: false,
         defaultValue: undefined,
       },

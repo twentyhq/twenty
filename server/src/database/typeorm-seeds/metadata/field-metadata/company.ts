@@ -125,11 +125,10 @@ export const seedCompanyFieldMetadata = async (
         },
         description: 'The company name',
         icon: 'IconBuildingSkyscraper',
-        isNullable: false,
+        isNullable: true,
         isSystem: false,
         defaultValue: { value: '' },
       },
-
       // Scalar Fields
       {
         id: SeedCompanyFieldMetadataIds.DomainName,
