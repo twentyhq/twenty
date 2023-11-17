@@ -11,8 +11,7 @@ export enum SeedPersonFieldMetadataIds {
   CreatedAt = '20202020-bec0-4cf0-bf1c-8b2ed21f027a',
   UpdatedAt = '20202020-2bf4-42b8-8718-a3e852bfa6a6',
 
-  FirstName = '20202020-9b56-4888-bfe3-f6f59aa999e3',
-  LastName = '20202020-b784-458a-869d-6c53fa85483d',
+  Name = '20202020-9b56-4888-bfe3-f6f59aa999e3',
 
   Email = '20202020-8a96-4e4b-86fd-ea126530e0c1',
   LinkedinLink = '20202020-dcf6-445a-b543-37e55de43c25',
@@ -113,40 +112,23 @@ export const seedPersonFieldMetadata = async (
       },
       // Main Identifier
       {
-        id: SeedPersonFieldMetadataIds.FirstName,
+        id: SeedPersonFieldMetadataIds.Name,
         objectMetadataId: SeedObjectMetadataIds.Person,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.TEXT,
-        name: 'firstName',
-        label: 'First name',
+        type: FieldMetadataType.FULL_NAME,
+        name: 'name',
+        label: 'Name',
         targetColumnMap: {
-          value: 'firstName',
+          firstName: 'nameFirstName',
+          lastName: 'nameLastName',
         },
-        description: 'Contact’s first name',
+        description: 'Contact’s name',
         icon: 'IconUser',
         isNullable: false,
         isSystem: false,
-        defaultValue: { value: '' },
-      },
-      {
-        id: SeedPersonFieldMetadataIds.LastName,
-        objectMetadataId: SeedObjectMetadataIds.Person,
-        isCustom: false,
-        workspaceId: SeedWorkspaceId,
-        isActive: true,
-        type: FieldMetadataType.TEXT,
-        name: 'lastName',
-        label: 'Last name',
-        targetColumnMap: {
-          value: 'lastName',
-        },
-        description: 'Contact’s last name',
-        icon: 'IconUser',
-        isNullable: false,
-        isSystem: false,
-        defaultValue: { value: '' },
+        defaultValue: { firstName: '', lastName: '' },
       },
 
       // Scalar Fields

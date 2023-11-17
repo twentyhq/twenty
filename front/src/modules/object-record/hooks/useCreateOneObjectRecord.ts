@@ -9,7 +9,9 @@ import { capitalize } from '~/utils/string/capitalize';
 export const useCreateOneObjectRecord = <T>({
   objectNameSingular,
 }: Pick<ObjectMetadataItemIdentifier, 'objectNameSingular'>) => {
-  const { triggerOptimisticEffects } = useOptimisticEffect(objectNameSingular);
+  const { triggerOptimisticEffects } = useOptimisticEffect({
+    objectNameSingular,
+  });
 
   const {
     foundObjectMetadataItem,

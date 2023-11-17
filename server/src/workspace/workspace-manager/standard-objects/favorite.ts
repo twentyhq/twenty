@@ -23,6 +23,7 @@ const favoriteMetadata = {
       description: 'Favorite position',
       icon: 'IconList',
       isNullable: false,
+      defaultValue: { value: 0 },
     },
     // Relations
     {

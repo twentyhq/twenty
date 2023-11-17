@@ -25,7 +25,11 @@ import { optimisticEffectState } from '../states/optimisticEffectState';
 import { OptimisticEffect } from '../types/internal/OptimisticEffect';
 import { OptimisticEffectDefinition } from '../types/OptimisticEffectDefinition';
 
-export const useOptimisticEffect = (objectNameSingular?: string) => {
+export const useOptimisticEffect = ({
+  objectNameSingular,
+}: {
+  objectNameSingular: string | undefined;
+}) => {
   const apolloClient = useApolloClient();
   const { findManyQuery } = useFindOneObjectMetadataItem({
     objectNameSingular,

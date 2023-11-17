@@ -23,6 +23,7 @@ const viewFilterMetadata = {
       description: 'View Filter target field',
       icon: null,
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -36,6 +37,7 @@ const viewFilterMetadata = {
       description: 'View Filter operand',
       icon: null,
       isNullable: false,
+      defaultValue: { value: 'Contains' },
     },
     {
       isCustom: false,
@@ -49,6 +51,7 @@ const viewFilterMetadata = {
       description: 'View Filter value',
       icon: null,
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -62,6 +65,7 @@ const viewFilterMetadata = {
       description: 'View Filter Display Value',
       icon: null,
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,

@@ -16,6 +16,7 @@ export const addCommentTable: WorkspaceMigrationTableAction[] = [
         columnName: 'body',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'authorId',

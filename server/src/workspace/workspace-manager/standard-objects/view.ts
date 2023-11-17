@@ -21,6 +21,7 @@ const viewMetadata = {
       description: 'View name',
       icon: null,
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       type: FieldMetadataType.TEXT,
@@ -32,6 +33,7 @@ const viewMetadata = {
       description: 'View target object',
       icon: null,
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       type: FieldMetadataType.TEXT,
@@ -43,6 +45,7 @@ const viewMetadata = {
       description: 'View type',
       icon: null,
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,

@@ -23,6 +23,7 @@ const commentMetadata = {
       description: 'Comment body',
       icon: 'IconLink',
       isNullable: false,
+      defaultValue: { value: '' },
     },
     // Relations
     {

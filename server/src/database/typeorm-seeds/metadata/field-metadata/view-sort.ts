@@ -113,7 +113,7 @@ export const seedViewSortFieldMetadata = async (
         icon: null,
         isNullable: false,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: '' },
       },
       {
         id: SeedViewSortFieldMetadataIds.View,
@@ -149,7 +149,7 @@ export const seedViewSortFieldMetadata = async (
         icon: null,
         isNullable: false,
         isSystem: false,
-        defaultValue: { value: '' },
+        defaultValue: { value: 'asc' },
       },
     ])
     .execute();

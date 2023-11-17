@@ -23,6 +23,7 @@ const attachmentMetadata = {
       description: 'Attachment name',
       icon: 'IconFileUpload',
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -36,6 +37,7 @@ const attachmentMetadata = {
       description: 'Attachment full path',
       icon: 'IconLink',
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -49,6 +51,7 @@ const attachmentMetadata = {
       description: 'Attachment type',
       icon: 'IconList',
       isNullable: false,
+      defaultValue: { value: '' },
     },
     // Relations
     {

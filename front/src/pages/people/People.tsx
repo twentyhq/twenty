@@ -27,7 +27,9 @@ export const People = () => {
     recordTableScopeId: 'people',
   });
   const upsertTableRowIds = useUpsertTableRowId();
-  const { triggerOptimisticEffects } = useOptimisticEffect('Person');
+  const { triggerOptimisticEffects } = useOptimisticEffect({
+    objectNameSingular: 'Person',
+  });
 
   const handleAddButtonClick = async () => {
     const newPersonId: string = v4();
