@@ -18,7 +18,7 @@ export const useCurrentUserTaskCount = () => {
     objectNamePlural: 'activitiesV2',
     filter: {
       type: { equals: ActivityType.Task },
-      completedAt: { equals: null },
+      completedAt: { eq: null },
       ...(currentUser
         ? turnFilterIntoWhereClause({
             fieldMetadataId: 'assigneeId',

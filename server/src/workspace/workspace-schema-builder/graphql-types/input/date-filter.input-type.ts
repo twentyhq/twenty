@@ -6,6 +6,7 @@ export const DateFilterType = new GraphQLInputObjectType({
   name: 'DateFilter',
   fields: {
     eq: { type: DateScalarType },
+    is: { type: DateScalarType },
     gt: { type: DateScalarType },
     gte: { type: DateScalarType },
     in: { type: new GraphQLList(new GraphQLNonNull(DateScalarType)) },

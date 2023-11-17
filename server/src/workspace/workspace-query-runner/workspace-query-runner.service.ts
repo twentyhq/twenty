@@ -150,9 +150,13 @@ export class WorkspaceQueryRunnerService {
       )};
     `);
 
+    const queryFormatted = query
+      .replace('neq:null', 'is:NOT_NULL')
+      .replace('eq:null', 'is:NULL');
+
     const results = await workspaceDataSource?.query<PGGraphQLResult>(`
       SELECT graphql.resolve($$
-        ${query}
+        ${queryFormatted}
       $$);
     `);
 
