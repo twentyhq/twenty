@@ -90,6 +90,7 @@ export const RecordTableV1 = ({ updateEntityMutation }: RecordTableV1Props) => {
     setRowSelectedState,
     resetTableRowSelection,
     useMapKeyboardToSoftFocus,
+    getIsSomeCellInEditMode,
   } = useRecordTable();
 
   useMapKeyboardToSoftFocus();
@@ -117,11 +118,17 @@ export const RecordTableV1 = ({ updateEntityMutation }: RecordTableV1Props) => {
     },
   });
 
+  const handleMouseLeave = () => {
+    const isSomeCellInEditMode = getIsSomeCellInEditMode();
+    if (isSomeCellInEditMode) return;
+    leaveTableFocus();
+  };
+
   return (
     <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
       <StyledTableWithHeader>
         <StyledTableContainer>
-          <div ref={tableBodyRef}>
+          <div ref={tableBodyRef} onMouseLeave={handleMouseLeave}>
             <StyledTable className="entity-table-cell">
               <RecordTableHeader />
               <RecordTableBodyV1 />

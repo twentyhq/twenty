@@ -1,13 +1,14 @@
 import { useCallback } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useSetRecoilState } from 'recoil';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -15,7 +16,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 
 const StyledContentContainer = styled.div`
@@ -43,6 +43,7 @@ export const CreateWorkspace = () => {
   const navigate = useNavigate();
 
   const { enqueueSnackBar } = useSnackBar();
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
 
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
@@ -69,8 +70,10 @@ export const CreateWorkspace = () => {
               displayName: data.name,
             },
           },
-          refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
-          awaitRefetchQueries: true,
+        });
+        setCurrentWorkspace({
+          id: result.data?.updateWorkspace?.id ?? '',
+          displayName: data.name,
         });
 
         if (result.errors || !result.data?.updateWorkspace) {
@@ -86,7 +89,7 @@ export const CreateWorkspace = () => {
         });
       }
     },
-    [enqueueSnackBar, navigate, updateWorkspace],
+    [enqueueSnackBar, navigate, setCurrentWorkspace, updateWorkspace],
   );
 
   useScopedHotkeys(

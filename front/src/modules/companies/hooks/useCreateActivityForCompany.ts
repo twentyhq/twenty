@@ -1,8 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
-import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
-import { ActivityType } from '~/generated/graphql';
+import { ActivityType } from '@/activities/types/Activity';
 
 export const useCreateActivityForCompany = () => {
   const openCreateActivityRightDrawer =
@@ -10,7 +9,7 @@ export const useCreateActivityForCompany = () => {
 
   return useRecoilCallback(
     () => (type: ActivityType) => {
-      openCreateActivityRightDrawer(type, ActivityTargetableEntityType.Company);
+      openCreateActivityRightDrawer(type, 'Company');
     },
     [openCreateActivityRightDrawer],
   );

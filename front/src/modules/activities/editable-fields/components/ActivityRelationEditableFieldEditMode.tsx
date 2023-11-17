@@ -2,12 +2,13 @@ import { useCallback, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { useHandleCheckableActivityTargetChange } from '@/activities/hooks/useHandleCheckableActivityTargetChange';
+import { Activity } from '@/activities/types/Activity';
+import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/activities/utils/flatMapAndSortEntityForSelectArrayByName';
 import { useFilteredSearchCompanyQuery } from '@/companies/hooks/useFilteredSearchCompanyQuery';
 import { useFilteredSearchPeopleQuery } from '@/people/hooks/useFilteredSearchPeopleQuery';
 import { MultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { useInlineCell } from '@/ui/object/record-inline-cell/hooks/useInlineCell';
-import { Activity, ActivityTarget } from '~/generated/graphql';
 import { assertNotNull } from '~/utils/assert';
 
 type ActivityRelationEditableFieldEditModeProps = {

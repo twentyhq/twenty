@@ -1,9 +1,7 @@
-import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilState } from 'recoil';
 
-import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { ImageInput } from '@/ui/input/components/ImageInput';
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 import {
   useRemoveWorkspaceLogoMutation,
@@ -13,30 +11,47 @@ import {
 export const WorkspaceLogoUploader = () => {
   const [uploadLogo] = useUploadWorkspaceLogoMutation();
   const [removeLogo] = useRemoveWorkspaceLogoMutation();
-  const [currentUser] = useRecoilState(currentUserState);
+  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
+    currentWorkspaceState,
+  );
+
   const onUpload = async (file: File) => {
     if (!file) {
       return;
+    }
+    if (!currentWorkspace?.id) {
+      throw new Error('Workspace id not found');
     }
     await uploadLogo({
       variables: {
         file,
       },
-      refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
+      onCompleted: (data) => {
+        setCurrentWorkspace({
+          ...currentWorkspace,
+          logo: data.uploadWorkspaceLogo,
+        });
+      },
     });
   };
 
   const onRemove = async () => {
+    if (!currentWorkspace?.id) {
+      throw new Error('Workspace id not found');
+    }
     await removeLogo({
-      refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
+      onCompleted: () => {
+        setCurrentWorkspace({
+          ...currentWorkspace,
+          logo: null,
+        });
+      },
     });
   };
 
   return (
     <ImageInput
-      picture={getImageAbsoluteURIOrBase64(
-        currentUser?.workspaceMember?.workspace.logo,
-      )}
+      picture={getImageAbsoluteURIOrBase64(currentWorkspace?.logo)}
       onUpload={onUpload}
       onRemove={onRemove}
     />

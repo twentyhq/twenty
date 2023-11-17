@@ -3,20 +3,28 @@ import { useQuery } from '@apollo/client';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import {
+  FieldFilter,
+  ObjectFilter,
   ObjectMetadataItemsQuery,
   ObjectMetadataItemsQueryVariables,
 } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 
 import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
-import { formatPagedObjectMetadataItemsToObjectMetadataItems } from '../utils/formatPagedObjectMetadataItemsToObjectMetadataItems';
+import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '../utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
 
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 // TODO: test fetchMore
 export const useFindManyObjectMetadataItems = ({
   skip,
-}: { skip?: boolean } = {}) => {
+  objectFilter,
+  fieldFilter,
+}: {
+  skip?: boolean;
+  objectFilter?: ObjectFilter;
+  fieldFilter?: FieldFilter;
+} = {}) => {
   const apolloMetadataClient = useApolloMetadataClient();
 
   const { enqueueSnackBar } = useSnackBar();
@@ -29,6 +37,10 @@ export const useFindManyObjectMetadataItems = ({
   } = useQuery<ObjectMetadataItemsQuery, ObjectMetadataItemsQueryVariables>(
     FIND_MANY_METADATA_OBJECTS,
     {
+      variables: {
+        objectFilter,
+        fieldFilter,
+      },
       client: apolloMetadataClient ?? undefined,
       skip: skip || !apolloMetadataClient,
       onError: (error) => {
@@ -54,7 +66,7 @@ export const useFindManyObjectMetadataItems = ({
     });
 
   const objectMetadataItems = useMemo(() => {
-    return formatPagedObjectMetadataItemsToObjectMetadataItems({
+    return mapPaginatedObjectMetadataItemsToObjectMetadataItems({
       pagedObjectMetadataItems: data,
     });
   }, [data]);

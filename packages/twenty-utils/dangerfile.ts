@@ -11,6 +11,15 @@ if (packageChanged && !lockfileChanged) {
   warn(`${message} - <i>${idea}</i>`);
 }
 
+// Check if .env.example was changed, but not enviroment variable documentation
+const envChanged = danger.git.modified_files.includes('.env.example') || danger.git.modified_files.includes('environment.service.ts');
+const envDocsChanged = danger.git.modified_files.includes('enviroment-variables.mdx');
+if (envChanged && !envDocsChanged) {
+  const message = 'Changes were made to the enviroment variables, but not to the documentation';
+  const idea = 'Please review your changes and check if a change needs to be documented!';
+  warn(`${message} - <i>${idea}</i>`);
+}
+
 
 // CLA alert if first time contributor
 if(danger.github.pr.author_association === 'FIRST_TIME_CONTRIBUTOR' || danger.github.pr.author_association === 'NONE') {

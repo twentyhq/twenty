@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getOperationName } from '@apollo/client/utilities';
 
-import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { GET_PERSON } from '@/people/graphql/queries/getPerson';
 import { usePersonQuery } from '@/people/hooks/usePersonQuery';
@@ -35,7 +34,9 @@ import { personShowFieldDefinition } from './constants/personShowFieldDefinition
 
 export const PersonShow = () => {
   const personId = useParams().personId ?? '';
-  const { insertPersonFavorite, deletePersonFavorite } = useFavorites();
+  const { createFavorite, deleteFavorite } = useFavorites({
+    objectNamePlural: 'peopleV2',
+  });
   const navigate = useNavigate();
 
   const { data, loading } = usePersonQuery(personId);
@@ -68,8 +69,8 @@ export const PersonShow = () => {
   };
 
   const handleFavoriteButtonClick = async () => {
-    if (isFavorite) deletePersonFavorite(personId);
-    else insertPersonFavorite(personId);
+    if (isFavorite) deleteFavorite(person.id);
+    else createFavorite('person', person.id);
   };
 
   return (
@@ -84,12 +85,12 @@ export const PersonShow = () => {
           key="add"
           entity={{
             id: person.id,
-            type: ActivityTargetableEntityType.Person,
+            type: 'Person',
             relatedEntities: person.company?.id
               ? [
                   {
                     id: person.company?.id,
-                    type: ActivityTargetableEntityType.Company,
+                    type: 'Company',
                   },
                 ]
               : undefined,
@@ -137,12 +138,12 @@ export const PersonShow = () => {
             <ShowPageRightContainer
               entity={{
                 id: person.id ?? '',
-                type: ActivityTargetableEntityType.Person,
+                type: 'Person',
                 relatedEntities: person.company?.id
                   ? [
                       {
                         id: person.company?.id,
-                        type: ActivityTargetableEntityType.Company,
+                        type: 'Company',
                       },
                     ]
                   : undefined,

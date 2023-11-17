@@ -7,7 +7,14 @@ import NavItem from '@/ui/navigation/navbar/components/NavItem';
 import { useFindManyObjectMetadataItems } from '../hooks/useFindManyObjectMetadataItems';
 
 export const ObjectMetadataNavItems = () => {
-  const { objectMetadataItems } = useFindManyObjectMetadataItems();
+  const { objectMetadataItems } = useFindManyObjectMetadataItems({
+    objectFilter: {
+      isSystem: { is: false },
+    },
+    fieldFilter: {
+      isSystem: { is: false },
+    },
+  });
 
   const navigate = useNavigate();
   const { icons } = useLazyLoadIcons();
@@ -15,6 +22,7 @@ export const ObjectMetadataNavItems = () => {
   return (
     <>
       {objectMetadataItems.map((objectMetadataItem) => {
+        if (objectMetadataItem.nameSingular === 'opportunityV2') return null;
         return (
           <NavItem
             key={objectMetadataItem.id}

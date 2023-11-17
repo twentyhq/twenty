@@ -36,7 +36,9 @@ export const usePersonTableContextMenuEntries = () => {
 
   const { data } = useGetFavoritesQuery();
   const favorites = data?.findFavorites;
-  const { insertPersonFavorite, deletePersonFavorite } = useFavorites();
+  const { createFavorite, deleteFavorite } = useFavorites({
+    objectNamePlural: 'people',
+  });
 
   const handleFavoriteButtonClick = useRecoilCallback(({ snapshot }) => () => {
     const selectedRowIds = snapshot
@@ -51,8 +53,8 @@ export const usePersonTableContextMenuEntries = () => {
       !!favorites?.find((favorite) => favorite.person?.id === selectedPersonId);
 
     resetTableRowSelection();
-    if (isFavorite) deletePersonFavorite(selectedPersonId);
-    else insertPersonFavorite(selectedPersonId);
+    if (isFavorite) deleteFavorite(selectedPersonId);
+    else createFavorite('person', selectedPersonId);
   });
 
   const [deleteManyPerson] = useDeleteManyPersonMutation({

@@ -18,7 +18,7 @@ import {
   PaginatedObjectTypeEdge,
   PaginatedObjectTypeResults,
 } from '../types/PaginatedObjectTypeResults';
-import { formatPagedObjectsToObjects } from '../utils/formatPagedObjectsToObjects';
+import { mapPaginatedObjectsToObjects } from '../utils/mapPaginatedObjectsToObjects';
 
 // TODO: test with a wrong name
 // TODO: add zod to validate that we have at least id on each object
@@ -163,7 +163,7 @@ export const useFindManyObjectRecords = <
   const objects = useMemo(
     () =>
       objectNamePlural
-        ? formatPagedObjectsToObjects({
+        ? mapPaginatedObjectsToObjects({
             pagedObjects: data,
             objectNamePlural,
           })

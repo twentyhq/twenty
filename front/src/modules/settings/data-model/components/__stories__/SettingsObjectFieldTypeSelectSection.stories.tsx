@@ -9,16 +9,7 @@ const meta: Meta<typeof SettingsObjectFieldTypeSelectSection> = {
   title: 'Modules/Settings/DataModel/SettingsObjectFieldTypeSelectSection',
   component: SettingsObjectFieldTypeSelectSection,
   decorators: [ComponentDecorator],
-  args: {
-    fieldType: 'NUMBER',
-    fieldIconKey: 'IconUsers',
-    fieldLabel: 'Employees',
-    fieldName: 'employees',
-    isObjectCustom: false,
-    objectIconKey: 'IconUser',
-    objectLabelPlural: 'People',
-    objectNamePlural: 'people',
-  },
+  args: {},
 };
 
 export default meta;
@@ -27,7 +18,7 @@ type Story = StoryObj<typeof SettingsObjectFieldTypeSelectSection>;
 export const Default: Story = {};
 
 export const Disabled: Story = {
-  args: { disabled: true },
+  args: {},
 };
 
 export const WithOpenSelect: Story = {

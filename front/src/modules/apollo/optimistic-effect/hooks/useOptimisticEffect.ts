@@ -8,8 +8,11 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 
 import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
+import {
+  EMPTY_QUERY,
+  useFindOneObjectMetadataItem,
+} from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { generateFindManyCustomObjectsQuery } from '@/object-record/utils/generateFindManyCustomObjectsQuery';
 import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
 import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
 import {
@@ -22,8 +25,15 @@ import { optimisticEffectState } from '../states/optimisticEffectState';
 import { OptimisticEffect } from '../types/internal/OptimisticEffect';
 import { OptimisticEffectDefinition } from '../types/OptimisticEffectDefinition';
 
-export const useOptimisticEffect = () => {
+export const useOptimisticEffect = ({
+  objectNameSingular,
+}: {
+  objectNameSingular: string | undefined;
+}) => {
   const apolloClient = useApolloClient();
+  const { findManyQuery } = useFindOneObjectMetadataItem({
+    objectNameSingular,
+  });
 
   const registerOptimisticEffect = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -34,6 +44,12 @@ export const useOptimisticEffect = () => {
         variables: OperationVariables;
         definition: OptimisticEffectDefinition;
       }) => {
+        if (findManyQuery === EMPTY_QUERY) {
+          throw new Error(
+            `Trying to register an optimistic effect for unknown object ${objectNameSingular}`,
+          );
+        }
+
         const optimisticEffects = snapshot
           .getLoadable(optimisticEffectState)
           .getValue();
@@ -54,12 +70,8 @@ export const useOptimisticEffect = () => {
           objectMetadataItem?: ObjectMetadataItem;
         }) => {
           if (isUsingFlexibleBackend && objectMetadataItem) {
-            const generatedQuery = generateFindManyCustomObjectsQuery({
-              objectMetadataItem,
-            });
-
             const existingData = cache.readQuery({
-              query: generatedQuery,
+              query: findManyQuery,
               variables,
             });
 
@@ -68,7 +80,7 @@ export const useOptimisticEffect = () => {
             }
 
             cache.writeQuery({
-              query: generatedQuery,
+              query: findManyQuery,
               variables,
               data: {
                 [objectMetadataItem.namePlural]: definition.resolver({
