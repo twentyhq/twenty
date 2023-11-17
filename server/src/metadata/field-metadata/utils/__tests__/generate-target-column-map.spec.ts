@@ -17,7 +17,7 @@ describe('generateTargetColumnMap', () => {
       false,
       'website',
     );
-    expect(linkMap).toEqual({ text: 'websiteLabel', link: 'websiteUrl' });
+    expect(linkMap).toEqual({ label: 'websiteLabel', url: 'websiteUrl' });
 
     const currencyMap = generateTargetColumnMap(
       FieldMetadataType.CURRENCY,
@@ -25,8 +25,8 @@ describe('generateTargetColumnMap', () => {
       'price',
     );
     expect(currencyMap).toEqual({
-      amount: '_priceAmountMicros',
-      currency: '_priceCurrencyCode',
+      amountMicros: '_priceAmountMicros',
+      currencyCode: '_priceCurrencyCode',
     });
   });
 
