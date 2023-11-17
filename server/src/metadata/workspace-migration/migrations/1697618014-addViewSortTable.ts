@@ -22,7 +22,7 @@ export const addViewSortTable: WorkspaceMigrationTableAction[] = [
         columnName: 'direction',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
-        defaultValue: 'asc',
+        defaultValue: "'asc'",
       },
       {
         columnName: 'viewId',

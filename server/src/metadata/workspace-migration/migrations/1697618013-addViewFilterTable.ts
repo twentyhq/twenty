@@ -22,19 +22,19 @@ export const addViewFilterTable: WorkspaceMigrationTableAction[] = [
         columnName: 'operand',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
-        defaultValue: 'Contains',
+        defaultValue: "'Contains'",
       },
       {
         columnName: 'value',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
-        defaultValue: { value: '' },
+        defaultValue: "''",
       },
       {
         columnName: 'displayValue',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
-        defaultValue: { value: '' },
+        defaultValue: "''",
       },
       {
         columnName: 'viewId',
