@@ -50,4 +50,11 @@ export {
   TbIcons,
   TbSquareRoundedPlusFilled,
   TbLayoutGrid,
+  TbColorFilter,
+  TbTextSize,
+  TbComponents,
+  TbCheckbox,
+  TbColorPicker,
+  TbCircleDot,
+  TbUpload,
 } from "react-icons/tb";
