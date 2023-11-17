@@ -151,7 +151,7 @@ export const seedFavoriteFieldMetadata = async (
         targetColumnMap: {},
         description: 'Foreign key for workspace member',
         icon: undefined,
-        isNullable: true,
+        isNullable: false,
         isSystem: true,
         defaultValue: undefined,
       },

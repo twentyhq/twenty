@@ -45,7 +45,6 @@ export const useFavorites = ({
             input: {
               [`${targetObjectName}Id`]: favoriteTargetObjectId,
               position: favorites.length + 1,
-              // workspaceMember: currentWorkspaceMember?.id,
               workspaceMemberId: currentWorkspaceMember?.id,
             },
           },
@@ -65,8 +64,8 @@ export const useFavorites = ({
     [
       apolloClient,
       createOneMutation,
-      currentWorkspaceMember?.id,
-      favoriteTargetObjectMetadataItem,
+      currentWorkspaceMember,
+      favoriteTargetObjectMetadataItem?.nameSingular,
     ],
   );
 
