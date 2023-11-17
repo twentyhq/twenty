@@ -71,7 +71,8 @@ const companyMetadata = {
       name: 'linkedinLink',
       label: 'Linkedin',
       targetColumnMap: {
-        value: 'linkedinLink',
+        label: 'linkedinLinkLabel',
+        url: 'linkedinLinkUrl',
       },
       description: 'The company Linkedin account',
       icon: 'IconBrandLinkedin',
@@ -84,7 +85,8 @@ const companyMetadata = {
       name: 'xLink',
       label: 'X',
       targetColumnMap: {
-        value: 'xLink',
+        label: 'xLinkLabel',
+        url: 'xLinkUrl',
       },
       description: 'The company Twitter/X account',
       icon: 'IconBrandX',
@@ -93,11 +95,12 @@ const companyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.NUMBER,
+      type: FieldMetadataType.CURRENCY,
       name: 'annualRecurringRevenue',
       label: 'ARR',
       targetColumnMap: {
-        value: 'annualRecurringRevenue',
+        amountMicros: 'annualRecurringRevenueAmountMicros',
+        currencyCode: 'annualRecurringRevenueCurrencyCode',
       },
       description:
         'Annual Recurring Revenue: The actual or estimated annual revenue of the company',

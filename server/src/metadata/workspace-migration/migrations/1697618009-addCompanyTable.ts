@@ -33,7 +33,7 @@ export const addCompanyTable: WorkspaceMigrationTableAction[] = [
         action: WorkspaceMigrationColumnActionType.CREATE,
       },
       {
-        columnName: 'linkedinLinklUrl',
+        columnName: 'linkedinLinkUrl',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
       },
@@ -53,8 +53,13 @@ export const addCompanyTable: WorkspaceMigrationTableAction[] = [
         action: WorkspaceMigrationColumnActionType.CREATE,
       },
       {
-        columnName: 'annualRecurringRevenue',
-        columnType: 'float',
+        columnName: 'annualRecurringRevenueAmountMicros',
+        columnType: 'integer',
+        action: WorkspaceMigrationColumnActionType.CREATE,
+      },
+      {
+        columnName: 'annualRecurringRevenueCurrencyCode',
+        columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
       },
       {

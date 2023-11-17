@@ -14,11 +14,12 @@ const opportunityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.NUMBER,
+      type: FieldMetadataType.CURRENCY,
       name: 'amount',
       label: 'Amount',
       targetColumnMap: {
-        value: 'amount',
+        amountMicros: 'amountAmountMicros',
+        currencyCode: 'amountCurrencyCode',
       },
       description: 'Opportunity amount',
       icon: 'IconCurrencyDollar',

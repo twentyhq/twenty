@@ -13,8 +13,13 @@ export const addOpportunityTable: WorkspaceMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        columnName: 'amount',
-        columnType: 'float',
+        columnName: 'amountAmountMicros',
+        columnType: 'integer',
+        action: WorkspaceMigrationColumnActionType.CREATE,
+      },
+      {
+        columnName: 'amountCurrencyCode',
+        columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
       },
       {

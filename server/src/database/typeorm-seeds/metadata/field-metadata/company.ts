@@ -230,11 +230,12 @@ export const seedCompanyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.NUMBER,
+        type: FieldMetadataType.CURRENCY,
         name: 'annualRecurringRevenue',
         label: 'ARR',
         targetColumnMap: {
-          value: 'annualRecurringRevenue',
+          amountMicros: 'annualRecurringRevenueAmountMicros',
+          currencyCode: 'annualRecurringRevenueCurrencyCode',
         },
         description:
           'Annual Recurring Revenue: The actual or estimated annual revenue of the company',
