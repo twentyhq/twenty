@@ -981,7 +981,7 @@ export type CreateRefreshTokenInput = {
   expiresAt: Scalars['DateTime'];
 };
 
-export enum Currency {
+export enum CurrencyCode {
   Aed = 'AED',
   Afn = 'AFN',
   All = 'ALL',
@@ -1206,11 +1206,11 @@ export type EnumColorSchemeFilter = {
   notIn?: InputMaybe<Array<ColorScheme>>;
 };
 
-export type EnumCurrencyFilter = {
-  equals?: InputMaybe<Currency>;
-  in?: InputMaybe<Array<Currency>>;
-  not?: InputMaybe<NestedEnumCurrencyFilter>;
-  notIn?: InputMaybe<Array<Currency>>;
+export type EnumCurrencyCodeFilter = {
+  equals?: InputMaybe<CurrencyCode>;
+  in?: InputMaybe<Array<CurrencyCode>>;
+  not?: InputMaybe<NestedEnumCurrencyCodeFilter>;
+  notIn?: InputMaybe<Array<CurrencyCode>>;
 };
 
 export type EnumPipelineProgressableTypeFilter = {
@@ -1332,16 +1332,16 @@ export type FieldDeleteResponse = {
 /** Type of the field */
 export enum FieldMetadataType {
   Boolean = 'BOOLEAN',
+  Currency = 'CURRENCY',
   Date = 'DATE',
   Email = 'EMAIL',
   Enum = 'ENUM',
-  Money = 'MONEY',
+  Link = 'LINK',
   Number = 'NUMBER',
   Phone = 'PHONE',
   Probability = 'PROBABILITY',
   Relation = 'RELATION',
   Text = 'TEXT',
-  Url = 'URL',
   Uuid = 'UUID'
 }
 
@@ -1770,11 +1770,11 @@ export type NestedEnumColorSchemeFilter = {
   notIn?: InputMaybe<Array<ColorScheme>>;
 };
 
-export type NestedEnumCurrencyFilter = {
-  equals?: InputMaybe<Currency>;
-  in?: InputMaybe<Array<Currency>>;
-  not?: InputMaybe<NestedEnumCurrencyFilter>;
-  notIn?: InputMaybe<Array<Currency>>;
+export type NestedEnumCurrencyCodeFilter = {
+  equals?: InputMaybe<CurrencyCode>;
+  in?: InputMaybe<Array<CurrencyCode>>;
+  not?: InputMaybe<NestedEnumCurrencyCodeFilter>;
+  notIn?: InputMaybe<Array<CurrencyCode>>;
 };
 
 export type NestedEnumPipelineProgressableTypeFilter = {
@@ -2093,7 +2093,7 @@ export type PersonWhereUniqueInput = {
 export type Pipeline = {
   __typename?: 'Pipeline';
   createdAt: Scalars['DateTime'];
-  currency: Currency;
+  currency: CurrencyCode;
   icon: Scalars['String'];
   id: Scalars['ID'];
   name: Scalars['String'];
@@ -2442,7 +2442,7 @@ export type PipelineWhereInput = {
   NOT?: InputMaybe<Array<PipelineWhereInput>>;
   OR?: InputMaybe<Array<PipelineWhereInput>>;
   createdAt?: InputMaybe<DateTimeFilter>;
-  currency?: InputMaybe<EnumCurrencyFilter>;
+  currency?: InputMaybe<EnumCurrencyCodeFilter>;
   icon?: InputMaybe<StringFilter>;
   id?: InputMaybe<StringFilter>;
   name?: InputMaybe<StringFilter>;

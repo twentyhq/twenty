@@ -12,21 +12,21 @@ describe('generateTargetColumnMap', () => {
     );
     expect(textMap).toEqual({ value: 'name' });
 
-    const urlMap = generateTargetColumnMap(
-      FieldMetadataType.URL,
+    const linkMap = generateTargetColumnMap(
+      FieldMetadataType.LINK,
       false,
       'website',
     );
-    expect(urlMap).toEqual({ text: 'website_text', link: 'website_link' });
+    expect(linkMap).toEqual({ label: 'websiteLabel', url: 'websiteUrl' });
 
-    const moneyMap = generateTargetColumnMap(
-      FieldMetadataType.MONEY,
+    const currencyMap = generateTargetColumnMap(
+      FieldMetadataType.CURRENCY,
       true,
       'price',
     );
-    expect(moneyMap).toEqual({
-      amount: '_price_amount',
-      currency: '_price_currency',
+    expect(currencyMap).toEqual({
+      amountMicros: '_priceAmountMicros',
+      currencyCode: '_priceCurrencyCode',
     });
   });
 

@@ -13,7 +13,7 @@ export const serializeDefaultValue = (
   if (typeof defaultValue === 'object' && 'type' in defaultValue) {
     switch (defaultValue.type) {
       case 'uuid':
-        return 'uuid_generate_v4()';
+        return 'public.uuid_generate_v4()';
       case 'now':
         return 'now()';
       default:

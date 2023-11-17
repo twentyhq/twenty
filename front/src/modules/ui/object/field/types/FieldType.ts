@@ -11,8 +11,8 @@ export type FieldType =
   | 'DATE'
   | 'PHONE'
   | 'URL'
-  | 'URL_V2'
+  | 'LINK'
   | 'PROBABILITY'
-  | 'MONEY_AMOUNT_V2'
+  | 'CURRENCY'
   | 'MONEY_AMOUNT'
   | 'MONEY';

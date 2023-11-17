@@ -19,46 +19,49 @@ describe('convertFieldMetadataToColumnActions', () => {
     ]);
   });
 
-  it('should convert URL field metadata to column actions', () => {
+  it('should convert LINK field metadata to column actions', () => {
     const fieldMetadata = {
-      type: FieldMetadataType.URL,
-      targetColumnMap: { text: 'url_text', link: 'url_link' },
-      defaultValue: { text: 'http://example.com', link: 'Example' },
+      type: FieldMetadataType.LINK,
+      targetColumnMap: { label: 'linkLabel', url: 'linkURL' },
+      defaultValue: { label: 'http://example.com', url: 'Example' },
     } as any;
     const columnActions = convertFieldMetadataToColumnActions(fieldMetadata);
     expect(columnActions).toEqual([
       {
         action: 'CREATE',
-        columnName: 'url_text',
+        columnName: 'linkLabel',
         columnType: 'varchar',
         defaultValue: "'http://example.com'",
       },
       {
         action: 'CREATE',
-        columnName: 'url_link',
+        columnName: 'linkURL',
         columnType: 'varchar',
         defaultValue: "'Example'",
       },
     ]);
   });
 
-  it('should convert MONEY field metadata to column actions', () => {
+  it('should convert CURRENCY field metadata to column actions', () => {
     const fieldMetadata = {
-      type: FieldMetadataType.MONEY,
-      targetColumnMap: { amount: 'money_amount', currency: 'money_currency' },
-      defaultValue: { amount: 100, currency: 'USD' },
+      type: FieldMetadataType.CURRENCY,
+      targetColumnMap: {
+        amountMicros: 'moneyAmountMicros',
+        currencyCode: 'moneyCurrencyCode',
+      },
+      defaultValue: { amountMicros: 100 * 1_000_000, currencyCode: 'USD' },
     } as any;
     const columnActions = convertFieldMetadataToColumnActions(fieldMetadata);
     expect(columnActions).toEqual([
       {
         action: 'CREATE',
-        columnName: 'money_amount',
+        columnName: 'moneyAmountMicros',
         columnType: 'integer',
-        defaultValue: 100,
+        defaultValue: 100 * 1_000_000,
       },
       {
         action: 'CREATE',
-        columnName: 'money_currency',
+        columnName: 'moneyCurrencyCode',
         columnType: 'varchar',
         defaultValue: "'USD'",
       },

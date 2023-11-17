@@ -124,44 +124,44 @@ describe('validateDefaultValueBasedOnType', () => {
     ).toBe(false);
   });
 
-  // URL type
-  it('should validate URL default value', () => {
+  // LINK type
+  it('should validate LINK default value', () => {
     expect(
       validateDefaultValueBasedOnType(
-        { text: 'http://example.com', link: 'Example' },
-        FieldMetadataType.URL,
+        { label: 'http://example.com', url: 'Example' },
+        FieldMetadataType.LINK,
       ),
     ).toBe(true);
   });
 
-  it('should return false for invalid URL default value', () => {
+  it('should return false for invalid LINK default value', () => {
     expect(
       validateDefaultValueBasedOnType(
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error Just for testing purposes
-        { text: 123, link: {} },
-        FieldMetadataType.URL,
+        { label: 123, url: {} },
+        FieldMetadataType.LINK,
       ),
     ).toBe(false);
   });
 
-  // MONEY type
-  it('should validate MONEY default value', () => {
+  // CURRENCY type
+  it('should validate CURRENCY default value', () => {
     expect(
       validateDefaultValueBasedOnType(
-        { amount: 100, currency: 'USD' },
-        FieldMetadataType.MONEY,
+        { amountMicros: 100, currencyCode: 'USD' },
+        FieldMetadataType.CURRENCY,
       ),
     ).toBe(true);
   });
 
-  it('should return false for invalid MONEY default value', () => {
+  it('should return false for invalid CURRENCY default value', () => {
     expect(
       validateDefaultValueBasedOnType(
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error Just for testing purposes
-        { amount: '100', currency: 'USD' },
-        FieldMetadataType.MONEY,
+        { amountMicros: '100', currencyCode: 'USD' },
+        FieldMetadataType.CURRENCY,
       ),
     ).toBe(false);
   });

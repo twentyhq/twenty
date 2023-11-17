@@ -11,7 +11,7 @@ import {
   IconTextSize,
 } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { Currency, FieldMetadataType } from '~/generated-metadata/graphql';
+import { CurrencyCode, FieldMetadataType } from '~/generated-metadata/graphql';
 
 const defaultDateValue = new Date();
 defaultDateValue.setFullYear(defaultDateValue.getFullYear() + 2);
@@ -36,10 +36,10 @@ export const dataTypes: Record<
     Icon: IconNumbers,
     defaultValue: 2000,
   },
-  [FieldMetadataType.Url]: {
+  [FieldMetadataType.Link]: {
     label: 'Link',
     Icon: IconLink,
-    defaultValue: { link: 'www.twenty.com', text: '' },
+    defaultValue: { url: 'www.twenty.com', label: '' },
   },
   [FieldMetadataType.Boolean]: {
     label: 'True/False',
@@ -51,10 +51,10 @@ export const dataTypes: Record<
     Icon: IconCalendarEvent,
     defaultValue: defaultDateValue.toISOString(),
   },
-  [FieldMetadataType.Money]: {
+  [FieldMetadataType.Currency]: {
     label: 'Currency',
     Icon: IconCoins,
-    defaultValue: { amount: 2000, currency: Currency.Usd },
+    defaultValue: { amount: 2000, currency: CurrencyCode.Usd },
   },
   [FieldMetadataType.Relation]: { label: 'Relation', Icon: IconPlug },
   [FieldMetadataType.Email]: { label: 'Email', Icon: IconMail },

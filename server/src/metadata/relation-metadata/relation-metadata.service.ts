@@ -12,10 +12,10 @@ import camelCase from 'lodash.camelcase';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { FieldMetadataService } from 'src/metadata/field-metadata/field-metadata.service';
 import { CreateRelationInput } from 'src/metadata/relation-metadata/dtos/create-relation.input';
-import { TenantMigrationRunnerService } from 'src/tenant-migration-runner/tenant-migration-runner.service';
-import { TenantMigrationService } from 'src/metadata/tenant-migration/tenant-migration.service';
+import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
+import { WorkspaceMigrationService } from 'src/metadata/workspace-migration/workspace-migration.service';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-import { TenantMigrationColumnActionType } from 'src/metadata/tenant-migration/tenant-migration.entity';
+import { WorkspaceMigrationColumnActionType } from 'src/metadata/workspace-migration/workspace-migration.entity';
 
 import {
   RelationMetadataEntity,
@@ -29,8 +29,8 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,
-    private readonly tenantMigrationService: TenantMigrationService,
-    private readonly migrationRunnerService: TenantMigrationRunnerService,
+    private readonly workspaceMigrationService: WorkspaceMigrationService,
+    private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
   ) {
     super(relationMetadataRepository);
   }
@@ -136,7 +136,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       toFieldMetadataId: createdFieldMap[record.toObjectMetadataId].id,
     });
 
-    await this.tenantMigrationService.createCustomMigration(
+    await this.workspaceMigrationService.createCustomMigration(
       record.workspaceId,
       [
         // Create the column
@@ -145,7 +145,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
           action: 'alter',
           columns: [
             {
-              action: TenantMigrationColumnActionType.CREATE,
+              action: WorkspaceMigrationColumnActionType.CREATE,
               columnName: foreignKeyColumnName,
               columnType: 'uuid',
             },
@@ -157,7 +157,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
           action: 'alter',
           columns: [
             {
-              action: TenantMigrationColumnActionType.RELATION,
+              action: WorkspaceMigrationColumnActionType.RELATION,
               columnName: foreignKeyColumnName,
               referencedTableName:
                 objectMetadataMap[record.fromObjectMetadataId].targetTableName,
@@ -169,7 +169,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       ],
     );
 
-    await this.migrationRunnerService.executeMigrationFromPendingMigrations(
+    await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
       record.workspaceId,
     );
 

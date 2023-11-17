@@ -5,11 +5,12 @@ import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope'
 import { FieldContext } from '../contexts/FieldContext';
 import { BooleanFieldInput } from '../meta-types/input/components/BooleanFieldInput';
 import { ChipFieldInput } from '../meta-types/input/components/ChipFieldInput';
+import { CurrencyFieldInput } from '../meta-types/input/components/CurrencyFieldInput';
 import { DateFieldInput } from '../meta-types/input/components/DateFieldInput';
 import { DoubleTextChipFieldInput } from '../meta-types/input/components/DoubleTextChipFieldInput';
 import { DoubleTextFieldInput } from '../meta-types/input/components/DoubleTextFieldInput';
 import { EmailFieldInput } from '../meta-types/input/components/EmailFieldInput';
-import { MoneyAmountV2FieldInput } from '../meta-types/input/components/MoneyAmountV2FieldInput';
+import { LinkFieldInput } from '../meta-types/input/components/LinkFieldInput';
 import { MoneyFieldInput } from '../meta-types/input/components/MoneyFieldInput';
 import { NumberFieldInput } from '../meta-types/input/components/NumberFieldInput';
 import { PhoneFieldInput } from '../meta-types/input/components/PhoneFieldInput';
@@ -17,23 +18,22 @@ import { ProbabilityFieldInput } from '../meta-types/input/components/Probabilit
 import { RelationFieldInput } from '../meta-types/input/components/RelationFieldInput';
 import { TextFieldInput } from '../meta-types/input/components/TextFieldInput';
 import { URLFieldInput } from '../meta-types/input/components/URLFieldInput';
-import { URLV2FieldInput } from '../meta-types/input/components/URLV2FieldInput';
 import { FieldInputEvent } from '../types/FieldInputEvent';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldChip } from '../types/guards/isFieldChip';
+import { isFieldCurrency } from '../types/guards/isFieldCurrency';
 import { isFieldDate } from '../types/guards/isFieldDate';
 import { isFieldDoubleText } from '../types/guards/isFieldDoubleText';
 import { isFieldDoubleTextChip } from '../types/guards/isFieldDoubleTextChip';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
+import { isFieldLink } from '../types/guards/isFieldLink';
 import { isFieldMoney } from '../types/guards/isFieldMoney';
-import { isFieldMoneyAmountV2 } from '../types/guards/isFieldMoneyAmountV2';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldPhone } from '../types/guards/isFieldPhone';
 import { isFieldProbability } from '../types/guards/isFieldProbability';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldURL } from '../types/guards/isFieldURL';
-import { isFieldURLV2 } from '../types/guards/isFieldURLV2';
 
 type FieldInputProps = {
   onSubmit?: FieldInputEvent;
@@ -102,16 +102,16 @@ export const FieldInput = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
         />
-      ) : isFieldURLV2(fieldDefinition) ? (
-        <URLV2FieldInput
+      ) : isFieldLink(fieldDefinition) ? (
+        <LinkFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}
           onTab={onTab}
           onShiftTab={onShiftTab}
         />
-      ) : isFieldMoneyAmountV2(fieldDefinition) ? (
-        <MoneyAmountV2FieldInput
+      ) : isFieldCurrency(fieldDefinition) ? (
+        <CurrencyFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}

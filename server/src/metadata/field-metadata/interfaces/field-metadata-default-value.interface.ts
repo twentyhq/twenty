@@ -23,21 +23,21 @@ export type FieldMetadataDynamicDefaultValue =
   | { type: 'uuid' }
   | { type: 'now' };
 
-interface FieldMetadataDefaultValueUrl {
-  text: string;
-  link: string;
+interface FieldMetadataDefaultValueLink {
+  label: string;
+  url: string;
 }
 
-interface FieldMetadataDefaultValueMoney {
-  amount: number;
-  currency: string;
+interface FieldMetadataDefaultValueCurrency {
+  amountMicros: number;
+  currencyCode: string;
 }
 
 type AllFieldMetadataDefaultValueTypes =
   | FieldMetadataScalarDefaultValue
   | FieldMetadataDynamicDefaultValue
-  | FieldMetadataDefaultValueUrl
-  | FieldMetadataDefaultValueMoney;
+  | FieldMetadataDefaultValueLink
+  | FieldMetadataDefaultValueCurrency;
 
 type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.UUID]: FieldMetadataDefaultValueString;
@@ -49,8 +49,8 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.NUMBER]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.PROBABILITY]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.ENUM]: FieldMetadataDefaultValueString;
-  [FieldMetadataType.URL]: FieldMetadataDefaultValueUrl;
-  [FieldMetadataType.MONEY]: FieldMetadataDefaultValueMoney;
+  [FieldMetadataType.LINK]: FieldMetadataDefaultValueLink;
+  [FieldMetadataType.CURRENCY]: FieldMetadataDefaultValueCurrency;
 };
 
 type DefaultValueByFieldMetadata<T extends FieldMetadataType | 'default'> = [
