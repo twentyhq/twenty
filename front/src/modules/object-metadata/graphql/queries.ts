@@ -45,28 +45,18 @@ export const FIND_MANY_METADATA_OBJECTS = gql`
                     nameSingular
                     namePlural
                   }
-                  fromObjectMetadata {
-                    id
-                    dataSourceId
-                    nameSingular
-                    namePlural
-                  }
+                  toFieldMetadataId
                 }
                 toRelationMetadata {
                   id
                   relationType
-                  toObjectMetadata {
-                    id
-                    dataSourceId
-                    nameSingular
-                    namePlural
-                  }
                   fromObjectMetadata {
                     id
                     dataSourceId
                     nameSingular
                     namePlural
                   }
+                  fromFieldMetadataId
                 }
               }
             }
