@@ -53,6 +53,10 @@ export const SettingsObjectFieldTypeSelectSection = ({
 }: SettingsObjectFieldTypeSelectSectionProps) => {
   const relationFormConfig = values?.relation;
 
+  const allowedFieldTypes = Object.entries(dataTypes).filter(
+    ([key]) => key !== FieldMetadataType.Relation,
+  );
+
   return (
     <Section>
       <H2Title
@@ -64,7 +68,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
         dropdownScopeId="object-field-type-select"
         value={values?.type}
         onChange={(value) => onChange({ type: value })}
-        options={Object.entries(dataTypes).map(([key, dataType]) => ({
+        options={allowedFieldTypes.map(([key, dataType]) => ({
           value: key as FieldMetadataType,
           ...dataType,
         }))}

@@ -69,7 +69,7 @@ export const SettingsObjectNewFieldStep2 = () => {
   const [relationObjectViews, setRelationObjectViews] = useState<View[]>([]);
 
   const { createOneObject: createOneViewField } = useCreateOneObjectRecord({
-    objectNamePlural: 'viewFieldsV2',
+    objectNameSingular: 'viewFieldV2',
   });
 
   useFindManyObjectRecords({
@@ -105,7 +105,7 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   const { createOneRelationMetadata } = useCreateOneRelationMetadata();
 
-  if (!activeObjectMetadataItem || !objectViews.length) return null;
+  if (!activeObjectMetadataItem) return null;
 
   const handleSave = async () => {
     if (!validatedFormValues) return;

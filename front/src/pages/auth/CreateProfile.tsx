@@ -18,6 +18,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -59,7 +60,7 @@ export const CreateProfile = () => {
   );
 
   const { updateOneObject, objectNotFoundInMetadata } =
-    useUpdateOneObjectRecord({
+    useUpdateOneObjectRecord<WorkspaceMember>({
       objectNameSingular: 'workspaceMemberV2',
     });
 
@@ -72,8 +73,8 @@ export const CreateProfile = () => {
   } = useForm<Form>({
     mode: 'onChange',
     defaultValues: {
-      firstName: currentWorkspaceMember?.firstName ?? '',
-      lastName: currentWorkspaceMember?.lastName ?? '',
+      firstName: currentWorkspaceMember?.name.firstName ?? '',
+      lastName: currentWorkspaceMember?.name.lastName ?? '',
     },
     resolver: zodResolver(validationSchema),
   });
@@ -91,24 +92,24 @@ export const CreateProfile = () => {
           throw new Error('Object not found in metadata');
         }
 
-        const result = await updateOneObject({
+        await updateOneObject({
           idToUpdate: currentWorkspaceMember?.id,
           input: {
-            firstName: data.firstName,
-            lastName: data.lastName,
+            name: {
+              firstName: data.firstName,
+              lastName: data.lastName,
+            },
           },
         });
-
-        if (result.errors || !result.data?.updateWorkspaceMemberV2) {
-          throw result.errors ?? new Error('Unknown error');
-        }
 
         setCurrentWorkspaceMember(
           (current) =>
             ({
               ...current,
-              firstName: data.firstName,
-              lastName: data.lastName,
+              name: {
+                firstName: data.firstName,
+                lastName: data.lastName,
+              },
             } as any),
         );
 

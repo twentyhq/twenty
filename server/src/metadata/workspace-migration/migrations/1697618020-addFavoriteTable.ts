@@ -16,6 +16,7 @@ export const addFavoriteTable: WorkspaceMigrationTableAction[] = [
         columnName: 'position',
         columnType: 'float',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: 0,
       },
       {
         columnName: 'companyId',

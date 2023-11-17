@@ -15,12 +15,9 @@ export type Activity = {
   type: ActivityType;
   title: string;
   body: string;
-  author: Pick<WorkspaceMember, 'id' | 'firstName' | 'lastName' | 'avatarUrl'>;
+  author: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'>;
   authorId: string;
-  assignee: Pick<
-    WorkspaceMember,
-    'id' | 'firstName' | 'lastName' | 'avatarUrl'
-  > | null;
+  assignee: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'> | null;
   assigneeId: string | null;
   comments: Comment[];
 };

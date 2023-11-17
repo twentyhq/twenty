@@ -7,9 +7,10 @@ import {
   IconMail,
   IconNumbers,
   IconPhone,
-  IconPlug,
   IconRelationManyToMany,
+  IconTag,
   IconTextSize,
+  IconUser,
 } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { CurrencyCode, FieldMetadataType } from '~/generated-metadata/graphql';
@@ -52,6 +53,11 @@ export const dataTypes: Record<
     Icon: IconCalendarEvent,
     defaultValue: defaultDateValue.toISOString(),
   },
+  [FieldMetadataType.Enum]: {
+    label: 'Select',
+    Icon: IconTag,
+    defaultValue: { color: 'green', text: 'Option 1' },
+  },
   [FieldMetadataType.Currency]: {
     label: 'Currency',
     Icon: IconCoins,
@@ -68,5 +74,5 @@ export const dataTypes: Record<
     Icon: IconNumbers,
     defaultValue: 50,
   },
-  [FieldMetadataType.Enum]: { label: 'Enum', Icon: IconPlug },
+  [FieldMetadataType.FullName]: { label: 'Full Name', Icon: IconUser },
 };

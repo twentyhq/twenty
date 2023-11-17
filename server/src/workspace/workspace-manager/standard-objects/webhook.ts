@@ -23,6 +23,7 @@ const webhookMetadata = {
       description: 'Webhook target url',
       icon: 'IconLink',
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -36,6 +37,7 @@ const webhookMetadata = {
       description: 'Webhook operation',
       icon: 'IconCheckbox',
       isNullable: false,
+      defaultValue: { value: '' },
     },
   ],
 };

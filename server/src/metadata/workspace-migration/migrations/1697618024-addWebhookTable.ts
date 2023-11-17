@@ -16,11 +16,13 @@ export const addWebhookTable: WorkspaceMigrationTableAction[] = [
         columnName: 'targetUrl',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'operation',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
     ],
   },

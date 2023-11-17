@@ -1,7 +1,11 @@
 import { useContext } from 'react';
 
+import { FullNameFieldDisplay } from '@/ui/object/field/meta-types/display/components/FullNameFieldDisplay';
+import { LinkFieldDisplay } from '@/ui/object/field/meta-types/display/components/LinkFieldDisplay';
 import { RelationFieldDisplay } from '@/ui/object/field/meta-types/display/components/RelationFieldDisplay';
 import { UuidFieldDisplay } from '@/ui/object/field/meta-types/display/components/UuidFieldDisplay';
+import { isFieldFullName } from '@/ui/object/field/types/guards/isFieldFullName';
+import { isFieldLink } from '@/ui/object/field/types/guards/isFieldLink';
 import { isFieldUuid } from '@/ui/object/field/types/guards/isFieldUuid';
 
 import { FieldContext } from '../contexts/FieldContext';
@@ -9,9 +13,8 @@ import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisp
 import { CurrencyFieldDisplay } from '../meta-types/display/components/CurrencyFieldDisplay';
 import { DateFieldDisplay } from '../meta-types/display/components/DateFieldDisplay';
 import { DoubleTextChipFieldDisplay } from '../meta-types/display/components/DoubleTextChipFieldDisplay';
-import { DoubleTextFieldDisplay } from '../meta-types/display/components/DoubleTextFieldDisplay';
 import { EmailFieldDisplay } from '../meta-types/display/components/EmailFieldDisplay';
-import { LinkFieldDisplay } from '../meta-types/display/components/LinkFieldDisplay';
+import { EnumFieldDisplay } from '../meta-types/display/components/EnumFieldDisplay';
 import { MoneyFieldDisplay } from '../meta-types/display/components/MoneyFieldDisplay';
 import { NumberFieldDisplay } from '../meta-types/display/components/NumberFieldDisplay';
 import { PhoneFieldDisplay } from '../meta-types/display/components/PhoneFieldDisplay';
@@ -20,10 +23,9 @@ import { URLFieldDisplay } from '../meta-types/display/components/URLFieldDispla
 import { isFieldChip } from '../types/guards/isFieldChip';
 import { isFieldCurrency } from '../types/guards/isFieldCurrency';
 import { isFieldDate } from '../types/guards/isFieldDate';
-import { isFieldDoubleText } from '../types/guards/isFieldDoubleText';
 import { isFieldDoubleTextChip } from '../types/guards/isFieldDoubleTextChip';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
-import { isFieldLink } from '../types/guards/isFieldLink';
+import { isFieldEnum } from '../types/guards/isFieldEnum';
 import { isFieldMoney } from '../types/guards/isFieldMoney';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldPhone } from '../types/guards/isFieldPhone';
@@ -56,14 +58,16 @@ export const FieldDisplay = () => {
         <LinkFieldDisplay />
       ) : isFieldCurrency(fieldDefinition) ? (
         <CurrencyFieldDisplay />
+      ) : isFieldFullName(fieldDefinition) ? (
+        <FullNameFieldDisplay />
       ) : isFieldPhone(fieldDefinition) ? (
         <PhoneFieldDisplay />
       ) : isFieldChip(fieldDefinition) ? (
         <ChipFieldDisplay />
       ) : isFieldDoubleTextChip(fieldDefinition) ? (
         <DoubleTextChipFieldDisplay />
-      ) : isFieldDoubleText(fieldDefinition) ? (
-        <DoubleTextFieldDisplay />
+      ) : isFieldEnum(fieldDefinition) ? (
+        <EnumFieldDisplay />
       ) : (
         <></>
       )}

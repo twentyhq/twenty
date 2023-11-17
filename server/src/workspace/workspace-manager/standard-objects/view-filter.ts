@@ -23,6 +23,7 @@ const viewFilterMetadata = {
       description: 'View Filter target field',
       icon: null,
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -36,6 +37,7 @@ const viewFilterMetadata = {
       description: 'View Filter operand',
       icon: null,
       isNullable: false,
+      defaultValue: { value: 'Contains' },
     },
     {
       isCustom: false,
@@ -49,6 +51,7 @@ const viewFilterMetadata = {
       description: 'View Filter value',
       icon: null,
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -62,6 +65,7 @@ const viewFilterMetadata = {
       description: 'View Filter Display Value',
       icon: null,
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -69,16 +73,15 @@ const viewFilterMetadata = {
       type: FieldMetadataType.RELATION,
       name: 'view',
       label: 'View',
-      targetColumnMap: { value: 'viewId' },
+      targetColumnMap: {},
       description: 'View Filter related view',
       icon: 'IconLayoutCollage',
-      isNullable: false,
+      isNullable: true,
     },
-    // Temporary hack?
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.TEXT,
+      type: FieldMetadataType.UUID,
       name: 'viewId',
       label: 'View Id',
       targetColumnMap: {

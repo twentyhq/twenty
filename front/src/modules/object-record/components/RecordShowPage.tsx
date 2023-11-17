@@ -36,12 +36,14 @@ export const RecordShowPage = () => {
     objectMetadataId: string;
   }>();
 
-  const { favorites, createFavorite, deleteFavorite } = useFavorites();
-
   const { icons } = useLazyLoadIcons();
 
   const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
     objectNameSingular,
+  });
+
+  const { favorites, createFavorite, deleteFavorite } = useFavorites({
+    objectNamePlural: foundObjectMetadataItem?.namePlural,
   });
 
   const [, setEntityFields] = useRecoilState(
@@ -89,9 +91,10 @@ export const RecordShowPage = () => {
     if (isFavorite) deleteFavorite(object?.id);
     else {
       const additionalData =
-        objectNameSingular === 'peopleV2'
+        objectNameSingular === 'personV2'
           ? {
-              labelIdentifier: object.firstName + ' ' + object.lastName,
+              labelIdentifier:
+                object.name.firstName + ' ' + object.name.lastName,
               avatarUrl: object.avatarUrl,
               avatarType: 'rounded',
               link: `/object/personV2/${object.id}`,
@@ -106,21 +109,22 @@ export const RecordShowPage = () => {
               recordId: object.id,
             }
           : {};
-      createFavorite(
-        objectNameSingular.replace('V2', ''),
-        object.id,
-        additionalData,
-      );
+      createFavorite(object.id, additionalData);
     }
   };
 
   if (!object) return <></>;
 
+  const pageName =
+    objectNameSingular === 'personV2'
+      ? object.name.firstName + ' ' + object.name.lastName
+      : object.name;
+
   return (
     <PageContainer>
-      <PageTitle title={object.name || 'No Name'} />
+      <PageTitle title={pageName} />
       <PageHeader
-        title={object.name ?? ''}
+        title={pageName ?? ''}
         hasBackButton
         Icon={IconBuildingSkyscraper}
       >

@@ -22,6 +22,7 @@ export const ObjectMetadataNavItems = () => {
   return (
     <>
       {objectMetadataItems.map((objectMetadataItem) => {
+        if (objectMetadataItem.nameSingular === 'opportunityV2') return null;
         return (
           <NavItem
             key={objectMetadataItem.id}

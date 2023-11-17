@@ -86,7 +86,7 @@ export const seedObjectMetadata = async (
         dataSourceId: SeedDataSourceId,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        isSystem: true,
+        isSystem: false,
       },
       {
         id: SeedObjectMetadataIds.PipelineStep,

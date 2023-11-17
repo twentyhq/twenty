@@ -415,6 +415,11 @@ export type DeleteOneObjectInput = {
   id: Scalars['ID']['input'];
 };
 
+export type DeleteOneRelationInput = {
+  /** The id of the record to delete. */
+  id: Scalars['ID']['input'];
+};
+
 export type Favorite = {
   __typename?: 'Favorite';
   company?: Maybe<Company>;
@@ -463,6 +468,7 @@ export enum FieldMetadataType {
   Date = 'DATE',
   Email = 'EMAIL',
   Enum = 'ENUM',
+  FullName = 'FULL_NAME',
   Link = 'LINK',
   Number = 'NUMBER',
   Phone = 'PHONE',
@@ -496,6 +502,7 @@ export type Mutation = {
   createOneRelation: Relation;
   deleteOneField: FieldDeleteResponse;
   deleteOneObject: ObjectDeleteResponse;
+  deleteOneRelation: RelationDeleteResponse;
   updateOneField: Field;
   updateOneObject: Object;
 };
@@ -523,6 +530,11 @@ export type MutationDeleteOneFieldArgs = {
 
 export type MutationDeleteOneObjectArgs = {
   input: DeleteOneObjectInput;
+};
+
+
+export type MutationDeleteOneRelationArgs = {
+  input: DeleteOneRelationInput;
 };
 
 
@@ -709,6 +721,18 @@ export type RelationConnection = {
   pageInfo: PageInfo;
   /** Fetch total count of records */
   totalCount: Scalars['Int']['output'];
+};
+
+export type RelationDeleteResponse = {
+  __typename?: 'RelationDeleteResponse';
+  createdAt?: Maybe<Scalars['DateTime']['output']>;
+  fromFieldMetadataId?: Maybe<Scalars['String']['output']>;
+  fromObjectMetadataId?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['ID']['output']>;
+  relationType?: Maybe<RelationMetadataType>;
+  toFieldMetadataId?: Maybe<Scalars['String']['output']>;
+  toObjectMetadataId?: Maybe<Scalars['String']['output']>;
+  updatedAt?: Maybe<Scalars['DateTime']['output']>;
 };
 
 /** Type of the relation */
@@ -988,6 +1012,26 @@ export type UserV2Edge = {
   cursor: Scalars['ConnectionCursor']['output'];
   /** The node containing the userV2 */
   node: UserV2;
+};
+
+export type WorkspaceV2 = {
+  __typename?: 'workspaceV2';
+  createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  displayName?: Maybe<Scalars['String']['output']>;
+  domainName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  inviteHash?: Maybe<Scalars['String']['output']>;
+  logo?: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type WorkspaceV2Edge = {
+  __typename?: 'workspaceV2Edge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor']['output'];
+  /** The node containing the workspaceV2 */
+  node: WorkspaceV2;
 };
 
 export type CreateOneObjectMetadataItemMutationVariables = Exact<{

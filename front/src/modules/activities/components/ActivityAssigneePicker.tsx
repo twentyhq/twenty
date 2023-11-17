@@ -14,10 +14,7 @@ import {
 
 export type ActivityAssigneePickerProps = {
   activity: Pick<Activity, 'id'> & {
-    accountOwner?: Pick<
-      WorkspaceMember,
-      'id' | 'firstName' | 'lastName'
-    > | null;
+    accountOwner?: Pick<WorkspaceMember, 'id' | 'name'> | null;
   };
   onSubmit?: () => void;
   onCancel?: () => void;

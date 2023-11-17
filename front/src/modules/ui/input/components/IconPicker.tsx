@@ -32,11 +32,12 @@ const StyledMenuIconItemsContainer = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  gap: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 const StyledLightIconButton = styled(LightIconButton)<{ isSelected?: boolean }>`
   background: ${({ theme, isSelected }) =>
-    isSelected ? theme.background.transparent.light : 'transparent'};
+    isSelected ? theme.background.transparent.medium : 'transparent'};
 `;
 
 const convertIconKeyToLabel = (iconKey: string) =>
@@ -86,9 +87,9 @@ export const IconPicker = ({
             variant={variant}
           />
         }
-        dropdownMenuWidth={168}
+        dropdownMenuWidth={176}
         dropdownComponents={
-          <DropdownMenu width={168}>
+          <DropdownMenu width={176}>
             <DropdownMenuSearchInput
               placeholder="Search icon"
               autoFocus

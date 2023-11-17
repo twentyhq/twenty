@@ -35,6 +35,44 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     super(relationMetadataRepository);
   }
 
+  override async deleteOne(id: string): Promise<RelationMetadataEntity> {
+    const relationMetadata = await this.relationMetadataRepository.findOne({
+      where: { id },
+      relations: ['fromFieldMetadata', 'toFieldMetadata'],
+    });
+
+    if (!relationMetadata) {
+      throw new NotFoundException('Relation does not exist');
+    }
+
+    if (
+      !relationMetadata.toFieldMetadata.isCustom ||
+      !relationMetadata.fromFieldMetadata.isCustom
+    ) {
+      throw new BadRequestException("Standard Relations can't be deleted");
+    }
+
+    if (
+      relationMetadata.toFieldMetadata.isActive ||
+      relationMetadata.fromFieldMetadata.isActive
+    ) {
+      throw new BadRequestException("Active relations can't be deleted");
+    }
+
+    const deletedRelationMetadata = super.deleteOne(id);
+
+    this.fieldMetadataService.deleteMany({
+      id: {
+        in: [
+          relationMetadata.fromFieldMetadataId,
+          relationMetadata.toFieldMetadataId,
+        ],
+      },
+    });
+
+    return deletedRelationMetadata;
+  }
+
   override async createOne(
     record: CreateRelationInput,
   ): Promise<RelationMetadataEntity> {

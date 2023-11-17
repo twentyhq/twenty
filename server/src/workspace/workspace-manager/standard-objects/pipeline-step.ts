@@ -23,6 +23,7 @@ const pipelineStepMetadata = {
       description: 'Pipeline Step name',
       icon: 'IconCurrencyDollar',
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -36,6 +37,7 @@ const pipelineStepMetadata = {
       description: 'Pipeline Step color',
       icon: 'IconColorSwatch',
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -49,6 +51,7 @@ const pipelineStepMetadata = {
       description: 'Pipeline Step position',
       icon: 'IconHierarchy2',
       isNullable: false,
+      defaultValue: { value: 0 },
     },
     // Relations
     {

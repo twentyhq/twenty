@@ -34,10 +34,10 @@ export const NameFields = ({
   );
 
   const [firstName, setFirstName] = useState(
-    currentWorkspaceMember?.firstName ?? '',
+    currentWorkspaceMember?.name.firstName ?? '',
   );
   const [lastName, setLastName] = useState(
-    currentWorkspaceMember?.lastName ?? '',
+    currentWorkspaceMember?.name.lastName ?? '',
   );
 
   const { updateOneObject, objectNotFoundInMetadata } =
@@ -65,15 +65,19 @@ export const NameFields = ({
         await updateOneObject({
           idToUpdate: currentWorkspaceMember?.id,
           input: {
-            firstName,
-            lastName,
+            name: {
+              firstName: firstName,
+              lastName: lastName,
+            },
           },
         });
 
         setCurrentWorkspaceMember({
           ...currentWorkspaceMember,
-          firstName,
-          lastName,
+          name: {
+            firstName,
+            lastName,
+          },
         });
       }
     } catch (error) {
@@ -87,8 +91,8 @@ export const NameFields = ({
     }
 
     if (
-      currentWorkspaceMember.firstName !== firstName ||
-      currentWorkspaceMember.lastName !== lastName
+      currentWorkspaceMember.name.firstName !== firstName ||
+      currentWorkspaceMember.name.lastName !== lastName
     ) {
       debouncedUpdate();
     }

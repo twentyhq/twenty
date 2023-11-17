@@ -25,7 +25,10 @@ export const getOnboardingStatus = (
   if (!currentWorkspace?.displayName) {
     return OnboardingStatus.OngoingWorkspaceCreation;
   }
-  if (!currentWorkspaceMember.firstName || !currentWorkspaceMember.lastName) {
+  if (
+    !currentWorkspaceMember.name.firstName ||
+    !currentWorkspaceMember.name.lastName
+  ) {
     return OnboardingStatus.OngoingProfileCreation;
   }
 

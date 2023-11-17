@@ -10,7 +10,11 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 
 import { WorkspaceMigrationService } from 'src/metadata/workspace-migration/workspace-migration.service';
 import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
-import { WorkspaceMigrationTableAction } from 'src/metadata/workspace-migration/workspace-migration.entity';
+import {
+  WorkspaceMigrationColumnActionType,
+  WorkspaceMigrationColumnCreate,
+  WorkspaceMigrationTableAction,
+} from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
@@ -77,6 +81,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             isCustom: false,
             isSystem: true,
             workspaceId: record.workspaceId,
+            defaultValue: { type: 'uuid' },
           },
           {
             type: FieldMetadataType.DATE,
@@ -91,6 +96,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             isActive: true,
             isCustom: false,
             workspaceId: record.workspaceId,
+            defaultValue: { type: 'now' },
           },
           {
             type: FieldMetadataType.DATE,
@@ -105,6 +111,22 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             isActive: true,
             isCustom: false,
             workspaceId: record.workspaceId,
+            defaultValue: { type: 'now' },
+          },
+          {
+            type: FieldMetadataType.TEXT,
+            name: 'name',
+            label: 'Name',
+            targetColumnMap: {
+              value: 'name',
+            },
+            icon: 'IconAbc',
+            description: 'Name',
+            isNullable: true,
+            isActive: true,
+            isCustom: false,
+            workspaceId: record.workspaceId,
+            defaultValue: { value: 'Untitled' },
           },
         ],
     });
@@ -115,6 +137,19 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           name: createdObjectMetadata.targetTableName,
           action: 'create',
+        } satisfies WorkspaceMigrationTableAction,
+        // This is temporary until we implement mainIdentifier
+        {
+          name: createdObjectMetadata.targetTableName,
+          action: 'alter',
+          columns: [
+            {
+              action: WorkspaceMigrationColumnActionType.CREATE,
+              columnName: 'name',
+              columnType: 'varchar',
+              defaultValue: "'Untitled'",
+            } satisfies WorkspaceMigrationColumnCreate,
+          ],
         } satisfies WorkspaceMigrationTableAction,
       ],
     );

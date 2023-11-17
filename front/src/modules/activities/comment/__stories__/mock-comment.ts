@@ -10,8 +10,10 @@ export const mockComment: Pick<
   body: 'Hello, this is a comment.',
   author: {
     id: 'fake_comment_1_author_uuid',
-    firstName: 'Jony' ?? '',
-    lastName: 'Ive' ?? '',
+    name: {
+      firstName: 'Jony' ?? '',
+      lastName: 'Ive' ?? '',
+    },
     avatarUrl: null,
   },
   createdAt: DateTime.fromFormat('2021-03-12', 'yyyy-MM-dd').toISO() ?? '',
@@ -26,8 +28,10 @@ export const mockCommentWithLongValues: Pick<
   body: 'Hello, this is a comment. Hello, this is a comment. Hello, this is a comment. Hello, this is a comment. Hello, this is a comment. Hello, this is a comment.',
   author: {
     id: 'fake_comment_1_author_uuid',
-    firstName: 'Jony' ?? '',
-    lastName: 'Ive' ?? '',
+    name: {
+      firstName: 'Jony' ?? '',
+      lastName: 'Ive' ?? '',
+    },
     avatarUrl: null,
   },
   createdAt: DateTime.fromFormat('2021-03-12', 'yyyy-MM-dd').toISO() ?? '',

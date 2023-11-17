@@ -23,6 +23,7 @@ const viewSortMetadata = {
       description: 'View Sort target field',
       icon: null,
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -36,6 +37,7 @@ const viewSortMetadata = {
       description: 'View Sort direction',
       icon: null,
       isNullable: false,
+      defaultValue: { value: 'asc' },
     },
     {
       isCustom: false,
@@ -43,18 +45,15 @@ const viewSortMetadata = {
       type: FieldMetadataType.RELATION,
       name: 'view',
       label: 'View',
-      targetColumnMap: {
-        value: 'viewId',
-      },
+      targetColumnMap: {},
       description: 'View Sort related view',
       icon: 'IconLayoutCollage',
-      isNullable: false,
+      isNullable: true,
     },
-    // Temporary Hack?
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.TEXT,
+      type: FieldMetadataType.UUID,
       name: 'viewId',
       label: 'View Id',
       targetColumnMap: {

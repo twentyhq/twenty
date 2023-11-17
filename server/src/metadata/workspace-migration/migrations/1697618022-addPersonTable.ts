@@ -13,14 +13,16 @@ export const addPersonTable: WorkspaceMigrationTableAction[] = [
     action: 'alter',
     columns: [
       {
-        columnName: 'firstName',
+        columnName: 'nameFirstName',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
-        columnName: 'lastName',
+        columnName: 'nameLastName',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'email',

@@ -1,5 +1,7 @@
 import { selectorFamily } from 'recoil';
 
+import { isFieldFullName } from '@/ui/object/field/types/guards/isFieldFullName';
+import { isFieldFullNameValue } from '@/ui/object/field/types/guards/isFieldFullNameValue';
 import { isFieldUuid } from '@/ui/object/field/types/guards/isFieldUuid';
 import { assertNotNull } from '~/utils/assert';
 
@@ -105,6 +107,16 @@ export const isEntityFieldEmptyFamilySelector = selectorFamily({
         return (
           !isFieldCurrencyValue(fieldValue) ||
           isValueEmpty(fieldValue?.amountMicros)
+        );
+      }
+
+      if (isFieldFullName(fieldDefinition)) {
+        const fieldName = fieldDefinition.metadata.fieldName;
+        const fieldValue = get(entityFieldsFamilyState(entityId))?.[fieldName];
+
+        return (
+          !isFieldFullNameValue(fieldValue) ||
+          isValueEmpty(fieldValue?.firstName + fieldValue?.lastName)
         );
       }
 

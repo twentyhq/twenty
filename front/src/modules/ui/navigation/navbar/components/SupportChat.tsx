@@ -40,7 +40,7 @@ const SupportChat = () => {
     (
       chatId: string,
       currentUser: Pick<User, 'email' | 'supportUserHash'>,
-      currentWorkspaceMember: Pick<WorkspaceMember, 'firstName' | 'lastName'>,
+      currentWorkspaceMember: Pick<WorkspaceMember, 'name'>,
     ) => {
       const url = 'https://chat-assets.frontapp.com/v1/chat.bundle.js';
       const script = document.querySelector(`script[src="${url}"]`);
@@ -54,9 +54,9 @@ const SupportChat = () => {
               useDefaultLauncher: false,
               email: currentUser.email,
               name:
-                currentWorkspaceMember.firstName +
+                currentWorkspaceMember.name.firstName +
                 ' ' +
-                currentWorkspaceMember.lastName,
+                currentWorkspaceMember.name.lastName,
               userHash: currentUser?.supportUserHash,
             });
             setIsFrontChatLoaded(true);

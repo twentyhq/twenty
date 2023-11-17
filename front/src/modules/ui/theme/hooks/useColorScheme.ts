@@ -6,11 +6,13 @@ import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObje
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
 export const useColorScheme = () => {
-  const [currentWorkspaceMember] = useRecoilState(currentWorkspaceMemberState);
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
+    currentWorkspaceMemberState,
+  );
 
   const { updateOneObject: updateOneWorkspaceMember } =
     useUpdateOneObjectRecord({
-      objectNamePlural: 'workspaceMembersV2',
+      objectNameSingular: 'workspaceMemberV2',
     });
   const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
 
@@ -19,6 +21,15 @@ export const useColorScheme = () => {
       if (!currentWorkspaceMember) {
         return;
       }
+      setCurrentWorkspaceMember((current) => {
+        if (!current) {
+          return current;
+        }
+        return {
+          ...current,
+          colorScheme: value,
+        };
+      });
       await updateOneWorkspaceMember?.({
         idToUpdate: currentWorkspaceMember?.id,
         input: {
@@ -26,7 +37,11 @@ export const useColorScheme = () => {
         },
       });
     },
-    [currentWorkspaceMember, updateOneWorkspaceMember],
+    [
+      currentWorkspaceMember,
+      setCurrentWorkspaceMember,
+      updateOneWorkspaceMember,
+    ],
   );
 
   return {

@@ -60,10 +60,7 @@ type ActivityEditorProps = {
   > & {
     comments?: Array<Comment> | null;
   } & {
-    assignee?: Pick<
-      WorkspaceMember,
-      'id' | 'firstName' | 'lastName' | 'avatarUrl'
-    > | null;
+    assignee?: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'> | null;
   } & {
     activityTargets?: Array<
       Pick<ActivityTarget, 'id' | 'companyId' | 'personId'>
@@ -86,8 +83,8 @@ export const ActivityEditor = ({
     activity.completedAt ?? '',
   );
   const containerRef = useRef<HTMLDivElement>(null);
-  const { updateOneObject } = useUpdateOneObjectRecord({
-    objectNamePlural: 'activitiesV2',
+  const { updateOneObject } = useUpdateOneObjectRecord<Activity>({
+    objectNameSingular: 'activityV2',
   });
 
   const updateTitle = useCallback(

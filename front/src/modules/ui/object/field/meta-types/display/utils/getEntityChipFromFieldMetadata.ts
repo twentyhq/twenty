@@ -20,7 +20,6 @@ export const getEntityChipFromFieldMetadata = (
     entityId: fieldValue?.id,
   };
 
-  // TODO: use every
   if (['accountOwner', 'person'].includes(fieldName) && fieldValue) {
     return {
       ...defaultChipValue,

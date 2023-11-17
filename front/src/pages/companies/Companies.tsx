@@ -29,7 +29,9 @@ export const Companies = () => {
     recordTableScopeId: 'companies',
   });
   const upsertTableRowIds = useUpsertTableRowId();
-  const { triggerOptimisticEffects } = useOptimisticEffect('Company');
+  const { triggerOptimisticEffects } = useOptimisticEffect({
+    objectNameSingular: 'company',
+  });
 
   const handleAddButtonClick = async () => {
     const newCompanyId: string = v4();

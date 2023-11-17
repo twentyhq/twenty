@@ -9,10 +9,7 @@ import { beautifyExactDate } from '~/utils/date-utils';
 
 type TimelineActivityCardFooterProps = {
   activity: Pick<Activity, 'id' | 'dueAt' | 'comments'> & {
-    assignee?: Pick<
-      WorkspaceMember,
-      'id' | 'firstName' | 'lastName' | 'avatarUrl'
-    > | null;
+    assignee?: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'> | null;
   };
 };
 
@@ -48,9 +45,9 @@ export const TimelineActivityCardFooter = ({
             <UserChip
               id={activity.assignee.id}
               name={
-                activity.assignee.firstName +
+                activity.assignee.name.firstName +
                   ' ' +
-                  activity.assignee.lastName ?? ''
+                  activity.assignee.name.lastName ?? ''
               }
               pictureUrl={activity.assignee.avatarUrl ?? ''}
             />

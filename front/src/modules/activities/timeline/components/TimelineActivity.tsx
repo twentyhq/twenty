@@ -7,6 +7,7 @@ import { Activity } from '@/activities/types/Activity';
 import { IconNotes } from '@/ui/display/icon';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
@@ -127,11 +128,8 @@ type TimelineActivityProps = {
     | 'type'
     | 'comments'
     | 'dueAt'
-  > & { author: Pick<Activity['author'], 'firstName' | 'lastName'> } & {
-    assignee?: Pick<
-      Activity['author'],
-      'id' | 'firstName' | 'lastName' | 'avatarUrl'
-    > | null;
+  > & { author: Pick<WorkspaceMember, 'name'> } & {
+    assignee?: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'> | null;
   };
 };
 
@@ -151,7 +149,9 @@ export const TimelineActivity = ({ activity }: TimelineActivityProps) => {
         </StyledIconContainer>
         <StyledItemTitleContainer>
           <span>
-            {activity.author.firstName + ' ' + activity.author.lastName}
+            {activity.author.name.firstName +
+              ' ' +
+              activity.author.name.lastName}
           </span>
           created a {activity.type.toLowerCase()}
         </StyledItemTitleContainer>

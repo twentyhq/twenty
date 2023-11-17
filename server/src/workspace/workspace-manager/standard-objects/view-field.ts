@@ -23,6 +23,7 @@ const viewFieldMetadata = {
       description: 'View Field target field',
       icon: 'IconTag',
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -36,6 +37,7 @@ const viewFieldMetadata = {
       description: 'View Field visibility',
       icon: 'IconEye',
       isNullable: false,
+      defaultValue: { value: true },
     },
     {
       isCustom: false,
@@ -49,6 +51,7 @@ const viewFieldMetadata = {
       description: 'View Field size',
       icon: 'IconEye',
       isNullable: false,
+      defaultValue: { value: 0 },
     },
     {
       isCustom: false,
@@ -62,6 +65,7 @@ const viewFieldMetadata = {
       description: 'View Field position',
       icon: 'IconList',
       isNullable: false,
+      defaultValue: { value: 0 },
     },
     {
       isCustom: false,
@@ -69,16 +73,15 @@ const viewFieldMetadata = {
       type: FieldMetadataType.RELATION,
       name: 'view',
       label: 'View',
-      targetColumnMap: { value: 'viewId' },
+      targetColumnMap: {},
       description: 'View Field related view',
       icon: 'IconLayoutCollage',
-      isNullable: false,
+      isNullable: true,
     },
-    // Temporary hack?
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.TEXT,
+      type: FieldMetadataType.UUID,
       name: 'viewId',
       label: 'View Id',
       targetColumnMap: {

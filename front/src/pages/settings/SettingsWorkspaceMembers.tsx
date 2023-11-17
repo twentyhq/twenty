@@ -39,8 +39,8 @@ export const SettingsWorkspaceMembers = () => {
       objectNamePlural: 'workspaceMembersV2',
     });
   const { deleteOneObject: deleteOneWorkspaceMember } =
-    useDeleteOneObjectRecord({
-      objectNamePlural: 'workspaceMembersV2',
+    useDeleteOneObjectRecord<WorkspaceMember>({
+      objectNameSingular: 'workspaceMemberV2',
     });
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 

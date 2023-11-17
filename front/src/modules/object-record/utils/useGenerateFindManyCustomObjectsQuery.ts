@@ -31,7 +31,7 @@ export const useGenerateFindManyCustomObjectsQuery = ({
           node {
             id
             ${objectMetadataItem.fields
-              .map(mapFieldMetadataToGraphQLQuery)
+              .map((field) => mapFieldMetadataToGraphQLQuery(field))
               .join('\n')}
           }
           cursor

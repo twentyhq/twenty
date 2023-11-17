@@ -67,7 +67,7 @@ export const CommentHeader = ({ comment, actionBar }: CommentHeaderProps) => {
   const showDate = beautifiedCreatedAt !== '';
 
   const author = comment.author;
-  const authorName = author.firstName + ' ' + author.lastName;
+  const authorName = author.name.firstName + ' ' + author.name.lastName;
   const avatarUrl = author.avatarUrl;
   const commentId = comment.id;
 

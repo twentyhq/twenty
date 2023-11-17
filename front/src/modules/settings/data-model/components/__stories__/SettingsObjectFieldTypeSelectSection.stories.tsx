@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { SettingsObjectFieldTypeSelectSection } from '../SettingsObjectFieldTypeSelectSection';
@@ -10,13 +9,7 @@ const meta: Meta<typeof SettingsObjectFieldTypeSelectSection> = {
   title: 'Modules/Settings/DataModel/SettingsObjectFieldTypeSelectSection',
   component: SettingsObjectFieldTypeSelectSection,
   decorators: [ComponentDecorator],
-  args: {
-    fieldType: FieldMetadataType.Number,
-    fieldIconKey: 'IconUsers',
-    fieldLabel: 'Employees',
-    fieldName: 'employees',
-    objectNamePlural: 'people',
-  },
+  args: {},
 };
 
 export default meta;
@@ -25,7 +18,7 @@ type Story = StoryObj<typeof SettingsObjectFieldTypeSelectSection>;
 export const Default: Story = {};
 
 export const Disabled: Story = {
-  args: { isEditionMode: true },
+  args: {},
 };
 
 export const WithOpenSelect: Story = {
