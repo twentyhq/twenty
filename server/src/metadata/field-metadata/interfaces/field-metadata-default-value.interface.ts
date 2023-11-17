@@ -33,11 +33,17 @@ interface FieldMetadataDefaultValueCurrency {
   currencyCode: string;
 }
 
+interface FieldMetadataDefaultValueFullName {
+  firstName: string;
+  lastName: string;
+}
+
 type AllFieldMetadataDefaultValueTypes =
   | FieldMetadataScalarDefaultValue
   | FieldMetadataDynamicDefaultValue
   | FieldMetadataDefaultValueLink
-  | FieldMetadataDefaultValueCurrency;
+  | FieldMetadataDefaultValueCurrency
+  | FieldMetadataDefaultValueFullName;
 
 type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.UUID]: FieldMetadataDefaultValueString;
@@ -51,6 +57,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.ENUM]: FieldMetadataDefaultValueString;
   [FieldMetadataType.LINK]: FieldMetadataDefaultValueLink;
   [FieldMetadataType.CURRENCY]: FieldMetadataDefaultValueCurrency;
+  [FieldMetadataType.FULL_NAME]: FieldMetadataDefaultValueFullName;
 };
 
 type DefaultValueByFieldMetadata<T extends FieldMetadataType | 'default'> = [

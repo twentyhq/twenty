@@ -14,6 +14,11 @@ export interface FieldMetadataTargetColumnMapCurrency {
   currencyCode: string;
 }
 
+export interface FieldMetadataTargetColumnMapFullName {
+  firstName: string;
+  lastName: string;
+}
+
 type AllFieldMetadataTypes = {
   [key: string]: string;
 };
@@ -21,6 +26,7 @@ type AllFieldMetadataTypes = {
 type FieldMetadataTypeMapping = {
   [FieldMetadataType.LINK]: FieldMetadataTargetColumnMapLink;
   [FieldMetadataType.CURRENCY]: FieldMetadataTargetColumnMapCurrency;
+  [FieldMetadataType.FULL_NAME]: FieldMetadataTargetColumnMapFullName;
 };
 
 type TypeByFieldMetadata<T extends FieldMetadataType | 'default'> =

@@ -39,6 +39,12 @@ export function generateTargetColumnMap(
         amountMicros: `${columnName}AmountMicros`,
         currencyCode: `${columnName}CurrencyCode`,
       };
+    case FieldMetadataType.FULL_NAME:
+      return {
+        firstName: `${columnName}FirstName`,
+        lastName: `${columnName}LastName`,
+      };
+
     default:
       throw new BadRequestException(`Unknown type ${type}`);
   }
