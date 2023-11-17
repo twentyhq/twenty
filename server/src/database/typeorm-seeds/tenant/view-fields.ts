@@ -140,6 +140,27 @@ export const seedViewFields = async (
         isVisible: true,
         size: 150,
       },
+      {
+        fieldMetadataId: 'closeDate',
+        viewId: SeedViewIds.Opportunity,
+        position: 1,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId: 'probability',
+        viewId: SeedViewIds.Opportunity,
+        position: 2,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId: 'pointOfContact',
+        viewId: SeedViewIds.Opportunity,
+        position: 3,
+        isVisible: true,
+        size: 150,
+      },
     ])
     .execute();
 };
