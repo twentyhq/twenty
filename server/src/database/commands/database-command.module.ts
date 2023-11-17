@@ -13,7 +13,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migratio
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { WorkspaceModule } from 'src/core/workspace/workspace.module';
 
-import { DataSeedWorkspaceCommand } from './data-seed-tenant.command';
+import { DataSeedWorkspaceCommand } from './data-seed-workspace.command';
 
 @Module({
   imports: [
