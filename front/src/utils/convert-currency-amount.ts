@@ -1,7 +1,7 @@
 export const convertCurrencyToCurrencyMicros = (
   currencyAmount: number | undefined,
 ) => {
-  if (currencyAmount === undefined) {
+  if (!currencyAmount) {
     return undefined;
   }
   const currencyAmountAsNumber = +currencyAmount;
@@ -18,7 +18,7 @@ export const convertCurrencyToCurrencyMicros = (
 export const convertCurrencyMicrosToCurrency = (
   currencyAmountMicros: number | undefined,
 ) => {
-  if (currencyAmountMicros === undefined) {
+  if (!currencyAmountMicros) {
     return undefined;
   }
   const currencyAmountMicrosAsNumber = +currencyAmountMicros;
