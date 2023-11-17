@@ -39,6 +39,7 @@ export const seedViewFilterFieldMetadata = async (
       'icon',
       'isNullable',
       'isSystem',
+      'defaultValue',
     ])
     .orIgnore()
     .values([
@@ -57,8 +58,9 @@ export const seedViewFilterFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: true,
+        isNullable: false,
         isSystem: true,
+        defaultValue: { type: 'uuid' },
       },
       {
         id: SeedViewFilterFieldMetadataIds.CreatedAt,
@@ -74,8 +76,9 @@ export const seedViewFilterFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       {
         id: SeedViewFilterFieldMetadataIds.UpdatedAt,
@@ -91,8 +94,9 @@ export const seedViewFilterFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       // Fields
       {
@@ -111,6 +115,7 @@ export const seedViewFilterFieldMetadata = async (
         icon: null,
         isNullable: false,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedViewFilterFieldMetadataIds.View,
@@ -128,6 +133,7 @@ export const seedViewFilterFieldMetadata = async (
         icon: 'IconLayoutCollage',
         isNullable: false,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedViewFilterFieldMetadataIds.Operand,
@@ -145,6 +151,7 @@ export const seedViewFilterFieldMetadata = async (
         icon: null,
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: '' },
       },
       {
         id: SeedViewFilterFieldMetadataIds.Value,
@@ -162,6 +169,7 @@ export const seedViewFilterFieldMetadata = async (
         icon: null,
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: '' },
       },
       {
         id: SeedViewFilterFieldMetadataIds.DisplayValue,
@@ -179,6 +187,7 @@ export const seedViewFilterFieldMetadata = async (
         icon: null,
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: '' },
       },
     ])
     .execute();

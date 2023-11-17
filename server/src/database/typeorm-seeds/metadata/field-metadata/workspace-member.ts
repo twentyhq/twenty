@@ -48,6 +48,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
       'icon',
       'isNullable',
       'isSystem',
+      'defaultValue',
     ])
     .orIgnore()
     .values([
@@ -66,8 +67,9 @@ export const seedWorkspaceMemberFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: true,
+        isNullable: false,
         isSystem: true,
+        defaultValue: { type: 'uuid' },
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.CreatedAt,
@@ -83,8 +85,9 @@ export const seedWorkspaceMemberFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.UpdatedAt,
@@ -100,8 +103,9 @@ export const seedWorkspaceMemberFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       // Scalar fields
       {
@@ -120,6 +124,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         icon: 'IconCircleUser',
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: '' },
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.LastName,
@@ -137,6 +142,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         icon: 'IconCircleUser',
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: '' },
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.AvatarUrl,
@@ -154,6 +160,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         icon: 'IconFileUpload',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.UserId,
@@ -171,6 +178,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         icon: 'IconCircleUsers',
         isNullable: false,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.AllowImpersonation,
@@ -188,6 +196,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         icon: 'IconEye',
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: false },
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.ColorScheme,
@@ -205,6 +214,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         icon: 'IconColorSwatch',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.Locale,
@@ -222,6 +232,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         icon: 'IconLanguage',
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: 'fr' },
       },
 
       // Relationships
@@ -239,6 +250,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         icon: 'IconCheckbox',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.AssignedActivities,
@@ -254,6 +266,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         icon: 'IconCheckbox',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.Favorites,
@@ -269,6 +282,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         icon: 'IconHeart',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.AccountOwnerForCompanies,
@@ -284,6 +298,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         icon: 'IconBriefcase',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.AuthoredAttachments,
@@ -299,6 +314,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         icon: 'IconFileImport',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.AuthoredComments,
@@ -314,6 +330,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         icon: 'IconComment',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
     ])
     .execute();

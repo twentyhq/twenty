@@ -10,7 +10,7 @@ export const useColorScheme = () => {
 
   const { updateOneObject: updateOneWorkspaceMember } =
     useUpdateOneObjectRecord({
-      objectNamePlural: 'workspaceMembersV2',
+      objectNameSingular: 'workspaceMemberV2',
     });
   const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
 

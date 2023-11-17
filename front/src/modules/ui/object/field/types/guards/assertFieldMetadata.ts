@@ -2,12 +2,13 @@ import { FieldDefinition } from '../FieldDefinition';
 import {
   FieldBooleanMetadata,
   FieldChipMetadata,
+  FieldCurrencyMetadata,
   FieldDateMetadata,
   FieldDoubleTextChipMetadata,
   FieldDoubleTextMetadata,
   FieldEmailMetadata,
+  FieldLinkMetadata,
   FieldMetadata,
-  FieldMoneyAmountV2Metadata,
   FieldMoneyMetadata,
   FieldNumberMetadata,
   FieldPhoneMetadata,
@@ -15,45 +16,44 @@ import {
   FieldRelationMetadata,
   FieldTextMetadata,
   FieldURLMetadata,
-  FieldURLV2Metadata,
   FieldUuidMetadata,
 } from '../FieldMetadata';
 import { FieldType } from '../FieldType';
 
 type AssertFieldMetadataFunction = <
   E extends FieldType,
-  T extends E extends 'TEXT'
-    ? FieldTextMetadata
-    : E extends 'UUID'
-    ? FieldUuidMetadata
-    : E extends 'RELATION'
-    ? FieldRelationMetadata
+  T extends E extends 'BOOLEAN'
+    ? FieldBooleanMetadata
     : E extends 'CHIP'
     ? FieldChipMetadata
-    : E extends 'DOUBLE_TEXT_CHIP'
-    ? FieldDoubleTextChipMetadata
-    : E extends 'DOUBLE_TEXT'
-    ? FieldDoubleTextMetadata
-    : E extends 'NUMBER'
-    ? FieldNumberMetadata
-    : E extends 'EMAIL'
-    ? FieldEmailMetadata
-    : E extends 'BOOLEAN'
-    ? FieldBooleanMetadata
+    : E extends 'CURRENCY'
+    ? FieldCurrencyMetadata
     : E extends 'DATE'
     ? FieldDateMetadata
-    : E extends 'PHONE'
-    ? FieldPhoneMetadata
-    : E extends 'URL'
-    ? FieldURLMetadata
-    : E extends 'URL_V2'
-    ? FieldURLV2Metadata
-    : E extends 'PROBABILITY'
-    ? FieldProbabilityMetadata
+    : E extends 'DOUBLE_TEXT'
+    ? FieldDoubleTextMetadata
+    : E extends 'DOUBLE_TEXT_CHIP'
+    ? FieldDoubleTextChipMetadata
+    : E extends 'EMAIL'
+    ? FieldEmailMetadata
+    : E extends 'LINK'
+    ? FieldLinkMetadata
     : E extends 'MONEY_AMOUNT'
     ? FieldMoneyMetadata
-    : E extends 'MONEY_AMOUNT_V2'
-    ? FieldMoneyAmountV2Metadata
+    : E extends 'NUMBER'
+    ? FieldNumberMetadata
+    : E extends 'PHONE'
+    ? FieldPhoneMetadata
+    : E extends 'PROBABILITY'
+    ? FieldProbabilityMetadata
+    : E extends 'RELATION'
+    ? FieldRelationMetadata
+    : E extends 'TEXT'
+    ? FieldTextMetadata
+    : E extends 'URL'
+    ? FieldURLMetadata
+    : E extends 'UUID'
+    ? FieldUuidMetadata
     : never,
 >(
   fieldType: E,

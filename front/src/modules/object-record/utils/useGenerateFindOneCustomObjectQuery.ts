@@ -16,15 +16,15 @@ export const useGenerateFindOneCustomObjectQuery = ({
   }
 
   return gql`
-    query FindOne${objectMetadataItem.nameSingular}($objectMetadataId: UUID!) {
+    query FindOne${objectMetadataItem.nameSingular}($objectRecordId: UUID!) {
       ${objectMetadataItem.nameSingular}(filter: {
         id: {
-          eq: $objectMetadataId
+          eq: $objectRecordId
         }
       }){
         id
         ${objectMetadataItem.fields
-          .map(mapFieldMetadataToGraphQLQuery)
+          .map((field) => mapFieldMetadataToGraphQLQuery(field))
           .join('\n')}
       }
     }

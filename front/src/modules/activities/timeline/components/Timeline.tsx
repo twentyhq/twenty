@@ -4,11 +4,9 @@ import styled from '@emotion/styled';
 import { ActivityCreateButton } from '@/activities/components/ActivityCreateButton';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { Activity } from '@/activities/types/Activity';
-import { ActivityForDrawer } from '@/activities/types/ActivityForDrawer';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { SortOrder } from '~/generated/graphql';
 
 import { TimelineItemsContainer } from './TimelineItemsContainer';
 
@@ -50,21 +48,28 @@ const StyledEmptyTimelineSubTitle = styled.div`
 `;
 
 export const Timeline = ({ entity }: { entity: ActivityTargetableEntity }) => {
-  const { objects, loading } = useFindManyObjectRecords({
+  const { objects: activityTargets, loading } = useFindManyObjectRecords({
+    objectNamePlural: 'activityTargetsV2',
+    filter: {
+      or: {
+        companyId: { eq: entity.id },
+        personId: { eq: entity.id },
+      },
+    },
+  });
+
+  const { objects: activities } = useFindManyObjectRecords({
+    skip: !activityTargets?.length,
     objectNamePlural: 'activitiesV2',
     filter: {
-      companyId: { eq: entity.id },
+      activityTargets: { in: activityTargets?.map((at) => at.id) },
     },
-    orderBy: [
-      {
-        createdAt: SortOrder.Desc,
-      },
-    ],
+    orderBy: {
+      createdAt: 'AscNullsFirst',
+    },
   });
 
   const openCreateActivity = useOpenCreateActivityDrawer();
-
-  const activities: ActivityForDrawer[] = (objects ?? []) as Activity[];
 
   if (loading) {
     return <></>;
@@ -95,7 +100,7 @@ export const Timeline = ({ entity }: { entity: ActivityTargetableEntity }) => {
 
   return (
     <StyledMainContainer>
-      <TimelineItemsContainer activities={activities} />
+      <TimelineItemsContainer activities={activities as Activity[]} />
     </StyledMainContainer>
   );
 };

@@ -221,7 +221,7 @@ export type CreateRelationInput = {
   toObjectMetadataId: Scalars['String']['input'];
 };
 
-export enum Currency {
+export enum CurrencyCode {
   Aed = 'AED',
   Afn = 'AFN',
   All = 'ALL',
@@ -457,16 +457,16 @@ export type FieldDeleteResponse = {
 /** Type of the field */
 export enum FieldMetadataType {
   Boolean = 'BOOLEAN',
+  Currency = 'CURRENCY',
   Date = 'DATE',
   Email = 'EMAIL',
   Enum = 'ENUM',
-  Money = 'MONEY',
+  Link = 'LINK',
   Number = 'NUMBER',
   Phone = 'PHONE',
   Probability = 'PROBABILITY',
   Relation = 'RELATION',
   Text = 'TEXT',
-  Url = 'URL',
   Uuid = 'UUID'
 }
 
@@ -608,7 +608,7 @@ export type Person = {
 export type Pipeline = {
   __typename?: 'Pipeline';
   createdAt: Scalars['DateTime']['output'];
-  currency: Currency;
+  currency: CurrencyCode;
   icon: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];

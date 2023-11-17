@@ -36,6 +36,7 @@ export const seedWebhookFieldMetadata = async (
       'icon',
       'isNullable',
       'isSystem',
+      'defaultValue',
     ])
     .orIgnore()
     .values([
@@ -54,8 +55,9 @@ export const seedWebhookFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: true,
+        isNullable: false,
         isSystem: true,
+        defaultValue: { type: 'uuid' },
       },
       {
         id: SeedWebhookFieldMetadataIds.CreatedAt,
@@ -71,8 +73,9 @@ export const seedWebhookFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       {
         id: SeedWebhookFieldMetadataIds.UpdatedAt,
@@ -88,8 +91,9 @@ export const seedWebhookFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       // Scalar fields
       {
@@ -108,6 +112,7 @@ export const seedWebhookFieldMetadata = async (
         icon: 'IconLink',
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: '' },
       },
       {
         id: SeedWebhookFieldMetadataIds.Operation,
@@ -125,6 +130,7 @@ export const seedWebhookFieldMetadata = async (
         icon: 'IconCheckbox',
         isNullable: false,
         isSystem: false,
+        defaultValue: { value: '' },
       },
     ])
     .execute();

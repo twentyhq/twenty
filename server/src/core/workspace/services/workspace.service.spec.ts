@@ -7,7 +7,7 @@ import { PipelineStageService } from 'src/core/pipeline/services/pipeline-stage.
 import { PersonService } from 'src/core/person/person.service';
 import { CompanyService } from 'src/core/company/company.service';
 import { PipelineProgressService } from 'src/core/pipeline/services/pipeline-progress.service';
-import { TenantManagerService } from 'src/tenant-manager/tenant-manager.service';
+import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
 
 import { WorkspaceService } from './workspace.service';
 
@@ -43,7 +43,7 @@ describe('WorkspaceService', () => {
           useValue: {},
         },
         {
-          provide: TenantManagerService,
+          provide: WorkspaceManagerService,
           useValue: {},
         },
       ],

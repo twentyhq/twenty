@@ -10,7 +10,7 @@ import { PipelineStageService } from 'src/core/pipeline/services/pipeline-stage.
 import { PipelineService } from 'src/core/pipeline/services/pipeline.service';
 import { PrismaService } from 'src/database/prisma.service';
 import { assert } from 'src/utils/assert';
-import { TenantManagerService } from 'src/tenant-manager/tenant-manager.service';
+import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
 
 @Injectable()
 export class WorkspaceService {
@@ -21,7 +21,7 @@ export class WorkspaceService {
     private readonly personService: PersonService,
     private readonly pipelineStageService: PipelineStageService,
     private readonly pipelineProgressService: PipelineProgressService,
-    private readonly tenantManagerService: TenantManagerService,
+    private readonly workspaceManagerService: WorkspaceManagerService,
   ) {}
 
   // Find
@@ -64,7 +64,7 @@ export class WorkspaceService {
     });
 
     // Create workspace schema
-    await this.tenantManagerService.init(workspace.id);
+    await this.workspaceManagerService.init(workspace.id);
 
     // Create default companies
     const companies = await this.companyService.createDefaultCompanies({
@@ -161,7 +161,7 @@ export class WorkspaceService {
       this.delete({ where: { id: workspaceId } }),
     ]);
 
-    await this.tenantManagerService.delete(workspaceId);
+    await this.workspaceManagerService.delete(workspaceId);
 
     return workspace;
   }

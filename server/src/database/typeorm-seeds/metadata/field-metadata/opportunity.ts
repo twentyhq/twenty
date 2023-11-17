@@ -46,6 +46,7 @@ export const seedOpportunityFieldMetadata = async (
       'icon',
       'isNullable',
       'isSystem',
+      'defaultValue',
     ])
     .orIgnore()
     .values([
@@ -64,8 +65,9 @@ export const seedOpportunityFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: true,
+        isNullable: false,
         isSystem: true,
+        defaultValue: { type: 'uuid' },
       },
       {
         id: SeedOpportunityFieldMetadataIds.CreatedAt,
@@ -81,8 +83,9 @@ export const seedOpportunityFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       {
         id: SeedOpportunityFieldMetadataIds.UpdatedAt,
@@ -98,8 +101,9 @@ export const seedOpportunityFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
-        isSystem: false,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       // Scalar fields
       {
@@ -108,16 +112,18 @@ export const seedOpportunityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.NUMBER,
+        type: FieldMetadataType.CURRENCY,
         name: 'amount',
         label: 'Amount',
         targetColumnMap: {
-          value: 'amount',
+          amountMicros: 'amountAmountMicros',
+          currencyCode: 'amountCurrencyCode',
         },
         description: 'Opportunity amount',
         icon: 'IconCurrencyDollar',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedOpportunityFieldMetadataIds.CloseDate,
@@ -135,6 +141,7 @@ export const seedOpportunityFieldMetadata = async (
         icon: 'IconCalendarEvent',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedOpportunityFieldMetadataIds.Probability,
@@ -152,6 +159,7 @@ export const seedOpportunityFieldMetadata = async (
         icon: 'IconProgressCheck',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       // Relationships
       {
@@ -168,6 +176,7 @@ export const seedOpportunityFieldMetadata = async (
         icon: 'IconKanban',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedOpportunityFieldMetadataIds.PipelineStepForeignKey,
@@ -183,6 +192,7 @@ export const seedOpportunityFieldMetadata = async (
         icon: undefined,
         isNullable: true,
         isSystem: true,
+        defaultValue: undefined,
       },
       {
         id: SeedOpportunityFieldMetadataIds.PointOfContact,
@@ -198,6 +208,7 @@ export const seedOpportunityFieldMetadata = async (
         icon: 'IconUser',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedOpportunityFieldMetadataIds.PointOfContactForeignKey,
@@ -213,6 +224,7 @@ export const seedOpportunityFieldMetadata = async (
         icon: undefined,
         isNullable: true,
         isSystem: true,
+        defaultValue: undefined,
       },
       {
         id: SeedOpportunityFieldMetadataIds.Person,
@@ -228,6 +240,7 @@ export const seedOpportunityFieldMetadata = async (
         icon: 'IconUser',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedOpportunityFieldMetadataIds.PersonForeignKey,
@@ -243,6 +256,7 @@ export const seedOpportunityFieldMetadata = async (
         icon: undefined,
         isNullable: true,
         isSystem: true,
+        defaultValue: undefined,
       },
       {
         id: SeedOpportunityFieldMetadataIds.Company,
@@ -258,6 +272,7 @@ export const seedOpportunityFieldMetadata = async (
         icon: 'IconBuildingSkyscraper',
         isNullable: true,
         isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedOpportunityFieldMetadataIds.CompanyForeignKey,
@@ -273,6 +288,7 @@ export const seedOpportunityFieldMetadata = async (
         icon: undefined,
         isNullable: true,
         isSystem: true,
+        defaultValue: undefined,
       },
     ])
     .execute();

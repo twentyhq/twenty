@@ -1,5 +1,5 @@
 import { ApiFieldItem } from '@/settings/developers/types/ApiFieldItem';
-import { GetApiKeysQuery } from '~/generated/graphql';
+import { ApiKey } from '~/generated/graphql';
 import { beautifyDateDiff } from '~/utils/date-utils';
 
 export const formatExpiration = (
@@ -18,9 +18,9 @@ export const formatExpiration = (
 };
 
 export const formatExpirations = (
-  apiKeysQuery: GetApiKeysQuery,
+  apiKeys: Array<Pick<ApiKey, 'id' | 'name' | 'expiresAt'>>,
 ): ApiFieldItem[] => {
-  return apiKeysQuery.findManyApiKey.map(({ id, name, expiresAt }) => {
+  return apiKeys.map(({ id, name, expiresAt }) => {
     return {
       id,
       name,
