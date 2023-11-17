@@ -36,7 +36,9 @@ export const usePersonTableContextMenuEntries = () => {
 
   const { data } = useGetFavoritesQuery();
   const favorites = data?.findFavorites;
-  const { createFavorite, deleteFavorite } = useFavorites();
+  const { createFavorite, deleteFavorite } = useFavorites({
+    objectNamePlural: 'people',
+  });
 
   const handleFavoriteButtonClick = useRecoilCallback(({ snapshot }) => () => {
     const selectedRowIds = snapshot
