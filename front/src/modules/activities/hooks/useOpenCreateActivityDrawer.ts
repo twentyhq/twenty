@@ -12,7 +12,7 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { activityTargetableEntityArrayState } from '../states/activityTargetableEntityArrayState';
 import { viewableActivityIdState } from '../states/viewableActivityIdState';
 import { ActivityTargetableEntity } from '../types/ActivityTargetableEntity';
-import { getRelationData } from '../utils/getRelationData';
+import { getTargetableEntitiesWithParents } from '../utils/getTargetableEntitiesWithParents';
 
 export const useOpenCreateActivityDrawer = () => {
   const { openRightDrawer } = useRightDrawer();
@@ -41,23 +41,35 @@ export const useOpenCreateActivityDrawer = () => {
     targetableEntities?: ActivityTargetableEntity[];
     assigneeId?: string;
   }) => {
-    await createOneActivityTarget?.({});
-    createOneActivity?.({
-      authorId: { eq: currentWorkspaceMember?.id },
-      assigneeId: { eq: assigneeId ?? currentWorkspaceMember?.id },
+    const targetableEntitiesWithRelations = targetableEntities
+      ? getTargetableEntitiesWithParents(targetableEntities)
+      : [];
+
+    const createdActivity = await createOneActivity?.({
+      authorId: currentWorkspaceMember?.id,
+      assigneeId: assigneeId ?? currentWorkspaceMember?.id,
       type: type,
-      activityTargets: {
-        createMany: {
-          data: targetableEntities ? getRelationData(targetableEntities) : [],
-          skipDuplicates: true,
-        },
-      },
-      onCompleted: (data: Activity) => {
-        setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-        setViewableActivityId(data.id);
-        setActivityTargetableEntityArray(targetableEntities ?? []);
-        openRightDrawer(RightDrawerPages.CreateActivity);
-      },
     });
+
+    if (!createdActivity) {
+      return;
+    }
+
+    await Promise.all(
+      targetableEntitiesWithRelations.map(async (targetableEntity) => {
+        await createOneActivityTarget?.({
+          companyId:
+            targetableEntity.type === 'Company' ? targetableEntity.id : null,
+          personId:
+            targetableEntity.type === 'Person' ? targetableEntity.id : null,
+          activityId: createdActivity.id,
+        });
+      }),
+    );
+
+    setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
+    setViewableActivityId(createdActivity.id);
+    setActivityTargetableEntityArray(targetableEntities ?? []);
+    openRightDrawer(RightDrawerPages.CreateActivity);
   };
 };

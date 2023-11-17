@@ -1,3 +1,4 @@
+import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const activityMetadata = {
@@ -129,9 +130,7 @@ const activityMetadata = {
       type: FieldMetadataType.RELATION,
       name: 'author',
       label: 'Author',
-      targetColumnMap: {
-        value: 'authorId',
-      },
+      targetColumnMap: {},
       description:
         'Activity author. This is the person who created the activity',
       icon: 'IconUserCircle',
@@ -139,17 +138,43 @@ const activityMetadata = {
     },
     {
       isCustom: false,
+      workspaceId: SeedWorkspaceId,
+      isActive: true,
+      type: FieldMetadataType.UUID,
+      name: 'authorId',
+      label: 'Author id (foreign key)',
+      targetColumnMap: {},
+      description: 'Activity author id foreign key',
+      icon: undefined,
+      isNullable: false,
+      isSystem: true,
+      defaultValue: undefined,
+    },
+    {
+      isCustom: false,
       isActive: true,
       type: FieldMetadataType.RELATION,
       name: 'assignee',
       label: 'Assignee',
-      targetColumnMap: {
-        value: 'assigneeId',
-      },
+      targetColumnMap: {},
       description:
         'Acitivity assignee. This is the workspace member assigned to the activity ',
       icon: 'IconUserCircle',
       isNullable: true,
+    },
+    {
+      isCustom: false,
+      workspaceId: SeedWorkspaceId,
+      isActive: true,
+      type: FieldMetadataType.UUID,
+      name: 'assigneeId',
+      label: 'Assignee id (foreign key)',
+      targetColumnMap: {},
+      description: 'Acitivity assignee id foreign key',
+      icon: undefined,
+      isNullable: true,
+      isSystem: true,
+      defaultValue: undefined,
     },
   ],
 };

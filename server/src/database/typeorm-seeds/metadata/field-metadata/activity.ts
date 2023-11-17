@@ -283,7 +283,7 @@ export const seedActivityFieldMetadata = async (
         description:
           'Activity author. This is the person who created the activity',
         icon: 'IconUserCircle',
-        isNullable: false,
+        isNullable: true,
         isSystem: false,
         defaultValue: undefined,
       },
