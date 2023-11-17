@@ -6,7 +6,7 @@ import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOne
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const useCreateOneObjectRecord = <T>({
+export const useCreateManyObjectRecords = <T>({
   objectNameSingular,
 }: Pick<ObjectMetadataItemIdentifier, 'objectNameSingular'>) => {
   const { triggerOptimisticEffects } = useOptimisticEffect(objectNameSingular);
@@ -22,10 +22,10 @@ export const useCreateOneObjectRecord = <T>({
   // TODO: type this with a minimal type at least with Record<string, any>
   const [mutate] = useMutation(createOneMutation);
 
-  const createOneObject =
+  const createManyObject =
     objectNameSingular && foundObjectMetadataItem
       ? async (input: Record<string, any>) => {
-          const createdObject = await mutate({
+          const createdObjects = await mutate({
             variables: {
               input: { ...input, id: v4() },
             },
@@ -33,18 +33,18 @@ export const useCreateOneObjectRecord = <T>({
 
           triggerOptimisticEffects(
             `${capitalize(foundObjectMetadataItem.nameSingular)}Edge`,
-            createdObject.data[
+            createdObjects.data[
               `create${capitalize(foundObjectMetadataItem.nameSingular)}`
             ],
           );
-          return createdObject.data[
-            `create${capitalize(objectNameSingular)}`
+          return createdObjects.data[
+            `update${capitalize(objectNameSingular)}`
           ] as T;
         }
       : undefined;
 
   return {
-    createOneObject,
+    createManyObject,
     objectNotFoundInMetadata,
   };
 };

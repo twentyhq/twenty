@@ -1,8 +1,7 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { v4 } from 'uuid';
 
 import { Activity, ActivityType } from '@/activities/types/Activity';
-import { currentUserState } from '@/auth/states/currentUserState';
+import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
@@ -17,10 +16,14 @@ import { getRelationData } from '../utils/getRelationData';
 
 export const useOpenCreateActivityDrawer = () => {
   const { openRightDrawer } = useRightDrawer();
-  const { createOneObject } = useCreateOneObjectRecord({
-    objectNamePlural: 'activitiesV2',
-  });
-  const currentUser = useRecoilValue(currentUserState);
+  const { createOneObject: createOneActivityTarget } =
+    useCreateOneObjectRecord<ActivityTarget>({
+      objectNameSingular: 'activityTargetV2',
+    });
+  const { createOneObject: createOneActivity } =
+    useCreateOneObjectRecord<Activity>({
+      objectNameSingular: 'activityV2',
+    });
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const setHotkeyScope = useSetHotkeyScope();
 
@@ -29,7 +32,7 @@ export const useOpenCreateActivityDrawer = () => {
   );
   const [, setViewableActivityId] = useRecoilState(viewableActivityIdState);
 
-  return ({
+  return async ({
     type,
     targetableEntities,
     assigneeId,
@@ -38,20 +41,10 @@ export const useOpenCreateActivityDrawer = () => {
     targetableEntities?: ActivityTargetableEntity[];
     assigneeId?: string;
   }) => {
-    const now = new Date().toISOString();
-
-    createOneObject?.({
-      id: v4(),
-      createdAt: now,
-      updatedAt: now,
-      author: { connect: { id: currentUser?.id ?? '' } },
-      workspaceMemberAuthor: {
-        connect: { id: currentWorkspaceMember?.id ?? '' },
-      },
-      assignee: { connect: { id: assigneeId ?? currentUser?.id ?? '' } },
-      workspaceMemberAssignee: {
-        connect: { id: currentWorkspaceMember?.id ?? '' },
-      },
+    await createOneActivityTarget?.({});
+    createOneActivity?.({
+      authorId: { eq: currentWorkspaceMember?.id },
+      assigneeId: { eq: assigneeId ?? currentWorkspaceMember?.id },
       type: type,
       activityTargets: {
         createMany: {

@@ -8,7 +8,10 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 
 import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import {
+  EMPTY_QUERY,
+  useFindOneObjectMetadataItem,
+} from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
 import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
@@ -22,7 +25,7 @@ import { optimisticEffectState } from '../states/optimisticEffectState';
 import { OptimisticEffect } from '../types/internal/OptimisticEffect';
 import { OptimisticEffectDefinition } from '../types/OptimisticEffectDefinition';
 
-export const useOptimisticEffect = (objectNameSingular: string) => {
+export const useOptimisticEffect = (objectNameSingular?: string) => {
   const apolloClient = useApolloClient();
   const { findManyQuery } = useFindOneObjectMetadataItem({
     objectNameSingular,
@@ -37,6 +40,12 @@ export const useOptimisticEffect = (objectNameSingular: string) => {
         variables: OperationVariables;
         definition: OptimisticEffectDefinition;
       }) => {
+        if (findManyQuery === EMPTY_QUERY) {
+          throw new Error(
+            `Trying to register an optimistic effect for unknown object ${objectNameSingular}`,
+          );
+        }
+
         const optimisticEffects = snapshot
           .getLoadable(optimisticEffectState)
           .getValue();

@@ -86,8 +86,8 @@ export const ActivityEditor = ({
     activity.completedAt ?? '',
   );
   const containerRef = useRef<HTMLDivElement>(null);
-  const { updateOneObject } = useUpdateOneObjectRecord({
-    objectNamePlural: 'activitiesV2',
+  const { updateOneObject } = useUpdateOneObjectRecord<Activity>({
+    objectNameSingular: 'activityV2',
   });
 
   const updateTitle = useCallback(
