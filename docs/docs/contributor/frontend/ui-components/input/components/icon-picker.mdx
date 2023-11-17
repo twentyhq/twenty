@@ -10,6 +10,7 @@ import TabItem from '@theme/TabItem';
 import { SandpackEditor} from '@site/src/ui/SandpackEditor'
 import iconPickerCode from '!!raw-loader!@site/src/ui/input/components/iconPickerCode.js'
 
+A dropdown-based icon picker that allows users to select an icon from a list. 
 
 <Tabs>
 <TabItem value="usage" label="Usage" default>
@@ -29,38 +30,58 @@ import iconPickerCode from '!!raw-loader!@site/src/ui/input/components/iconPicke
       <th>Props</th>
       <th>Type</th>
       <th>Description</th>
+      <th>Default</th>
     </tr>
   </thead>
 
   <tbody>
     <tr>
+      <td>disabled</td>
+      <td>boolean</td>
+      <td>Disables the icon picker if set to `true`</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>onChange</td>
+      <td>function</td>
+      <td>The callback function triggered when the user selects an icon. It receives an object with `iconKey` and `Icon` properties</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>selectedIconKey</td>
+      <td>string</td>
+      <td>The key of the initially selected icon</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>onClickOutside</td>
+      <td>function</td>
+      <td>Callback function triggered when the user clicks outside the dropdown</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>onClose</td>
+      <td>function</td>
+      <td>Callback function triggered when the dropdown is closed</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>onOpen</td>
+      <td>function</td>
+      <td>Callback function triggered when the dropdown is opened</td>
+      <td></td>
+    </tr>
+
+    <tr>
       <td>variant</td>
       <td>string</td>
-      <td>The visual style variant of the buttons within the group. Options include `primary`, `secondary`, and `tertiary`</td>
-    </tr>
-
-    <tr>
-      <td>size</td>
-      <td>string</td>
-      <td>The size of the buttons within the group. Has two options: `medium` and `small`</td>
-    </tr>
-
-    <tr>
-      <td>accent</td>
-      <td>string</td>
-      <td>The accent color of the buttons within the group. Options include `default`, `blue` and `danger`</td>
-    </tr>
-
-    <tr>
-      <td>className</td>
-      <td>string</td>
-      <td>Optional class name for additional styling</td>
-    </tr>
-
-    <tr>
-      <td>children</td>
-      <td>ReactNode</td>
-      <td>An array of React elements representing the individual buttons within the group</td>
+      <td>The visual style variant of the clickable icon. Options include: `primary`, `secondary`, and `tertiary`</td>
+      <td>secondary</td>
     </tr>
 
   </tbody>

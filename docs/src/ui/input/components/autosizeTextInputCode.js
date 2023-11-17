@@ -5,13 +5,13 @@ export const MyComponent = () => {
   return (
     <RecoilRoot>
       <AutosizeTextInput
-      onValidate
-      minRows={1}
-      placeholder="Write a comment"
-      onFocus
-      variant="icon"
-      buttonTitle
-      value='' 
+        onValidate={() => console.log("onValidate function fired")}
+        minRows={1}
+        placeholder="Write a comment"
+        onFocus={() => console.log("onFocus function fired")}
+        variant="icon"
+        buttonTitle
+        value="Task: "
       />
     </RecoilRoot>
   );

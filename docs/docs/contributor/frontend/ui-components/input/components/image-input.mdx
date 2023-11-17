@@ -10,6 +10,7 @@ import TabItem from '@theme/TabItem';
 import { SandpackEditor} from '@site/src/ui/SandpackEditor'
 import imageInputCode from '!!raw-loader!@site/src/ui/input/components/imageInputCode.js'
 
+Allows users to upload and remove an image. 
 
 <Tabs>
 <TabItem value="usage" label="Usage" default>
@@ -29,38 +30,58 @@ import imageInputCode from '!!raw-loader!@site/src/ui/input/components/imageInpu
       <th>Props</th>
       <th>Type</th>
       <th>Description</th>
+      <th>Default</th>
     </tr>
   </thead>
 
   <tbody>
     <tr>
-      <td>variant</td>
+      <td>picture</td>
       <td>string</td>
-      <td>The visual style variant of the buttons within the group. Options include `primary`, `secondary`, and `tertiary`</td>
+      <td>The image source URL</td>
+      <td></td>
     </tr>
 
     <tr>
-      <td>size</td>
-      <td>string</td>
-      <td>The size of the buttons within the group. Has two options: `medium` and `small`</td>
+      <td>onUpload</td>
+      <td>function</td>
+      <td>The function called when a user uploads a new image. It receives the `File` object as a parameter</td>
+      <td></td>
     </tr>
 
     <tr>
-      <td>accent</td>
-      <td>string</td>
-      <td>The accent color of the buttons within the group. Options include `default`, `blue` and `danger`</td>
+      <td>onRemove</td>
+      <td>function</td>
+      <td>The function called when the user clicks on the remove button</td>
+      <td></td>
     </tr>
 
     <tr>
-      <td>className</td>
-      <td>string</td>
-      <td>Optional class name for additional styling</td>
+      <td>onAbort</td>
+      <td>function</td>
+      <td>The function called when a user clicks on the abort button during image upload</td>
+      <td></td>
     </tr>
 
     <tr>
-      <td>children</td>
-      <td>ReactNode</td>
-      <td>An array of React elements representing the individual buttons within the group</td>
+      <td>isUploading</td>
+      <td>boolean</td>
+      <td>Indicates whether an image is currently being uploaded</td>
+      <td>`false`</td>
+    </tr>
+
+    <tr>
+      <td>errorMessage</td>
+      <td>string</td>
+      <td>An optional error message to display below the image input</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>disabled</td>
+      <td>boolean</td>
+      <td>If `true`, the entire input is disabled, and the buttons are not clickable</td>
+      <td>`false`</td>
     </tr>
 
   </tbody>

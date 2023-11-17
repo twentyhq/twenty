@@ -34,6 +34,7 @@ Represents different color schemes and is specially tailored for light and dark 
       <th>Props</th>
       <th>Type</th>
       <th>Description</th>
+      <th>Default</th>
     </tr>
   </thead>
 
@@ -41,31 +42,20 @@ Represents different color schemes and is specially tailored for light and dark 
     <tr>
       <td>variant</td>
       <td>string</td>
-      <td>The visual style variant of the buttons within the group. Options include `primary`, `secondary`, and `tertiary`</td>
+      <td>The color scheme variant. Options include `dark`, `light`, and `system`</td>
+      <td>light</td>
     </tr>
 
     <tr>
-      <td>size</td>
-      <td>string</td>
-      <td>The size of the buttons within the group. Has two options: `medium` and `small`</td>
+      <td>selected</td>
+      <td>boolean</td>
+      <td>If `true`, displays a checkmark to indicate the selected color scheme</td>
     </tr>
 
     <tr>
-      <td>accent</td>
-      <td>string</td>
-      <td>The accent color of the buttons within the group. Options include `default`, `blue` and `danger`</td>
-    </tr>
-
-    <tr>
-      <td>className</td>
-      <td>string</td>
-      <td>Optional class name for additional styling</td>
-    </tr>
-
-    <tr>
-      <td>children</td>
-      <td>ReactNode</td>
-      <td>An array of React elements representing the individual buttons within the group</td>
+      <td>additional props</td>
+      <td>`React.ComponentPropsWithoutRef<'div'>`</td>
+      <td>Standard HTML `div` element props</td>
     </tr>
 
   </tbody>
@@ -76,6 +66,8 @@ Represents different color schemes and is specially tailored for light and dark 
 </Tabs>
 
 ## Color Scheme Picker 
+
+Allows users to choose between different color schemes.
 
 <Tabs>
 <TabItem value="usage" label="Usage" default>
@@ -100,33 +92,15 @@ Represents different color schemes and is specially tailored for light and dark 
 
   <tbody>
     <tr>
-      <td>variant</td>
-      <td>string</td>
-      <td>The visual style variant of the buttons within the group. Options include `primary`, `secondary`, and `tertiary`</td>
+      <td>value</td>
+      <td>`Color Scheme`</td>
+      <td>The currently selected color scheme</td>
     </tr>
 
     <tr>
-      <td>size</td>
-      <td>string</td>
-      <td>The size of the buttons within the group. Has two options: `medium` and `small`</td>
-    </tr>
-
-    <tr>
-      <td>accent</td>
-      <td>string</td>
-      <td>The accent color of the buttons within the group. Options include `default`, `blue` and `danger`</td>
-    </tr>
-
-    <tr>
-      <td>className</td>
-      <td>string</td>
-      <td>Optional class name for additional styling</td>
-    </tr>
-
-    <tr>
-      <td>children</td>
-      <td>ReactNode</td>
-      <td>An array of React elements representing the individual buttons within the group</td>
+      <td>onChange</td>
+      <td>function</td>
+      <td>The callback function you want to trigger when a user selects a color scheme</td>
     </tr>
 
   </tbody>

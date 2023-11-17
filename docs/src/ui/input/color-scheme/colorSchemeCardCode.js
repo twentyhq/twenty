@@ -2,8 +2,9 @@ import { ColorSchemeCard } from "@/ui/input/color-scheme/components/ColorSchemeC
 
 export const MyComponent = () => {
   return (
-    <div>
-      <ColorSchemeCard variant="dark" selected={true} />
-    </div>
+      <ColorSchemeCard
+      variant="dark"
+      selected={true}
+      />
   );
 };
