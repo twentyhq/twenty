@@ -42,7 +42,7 @@ import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
           pagingStrategy: PagingStrategies.CURSOR,
           create: { many: { disabled: true } },
           update: { disabled: true },
-          delete: { disabled: true },
+          delete: { many: { disabled: true } },
           guards: [JwtAuthGuard],
         },
       ],
