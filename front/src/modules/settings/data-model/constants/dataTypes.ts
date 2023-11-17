@@ -7,7 +7,7 @@ import {
   IconMail,
   IconNumbers,
   IconPhone,
-  IconPlug,
+  IconRelationManyToMany,
   IconTag,
   IconTextSize,
   IconUser,
@@ -61,9 +61,12 @@ export const dataTypes: Record<
   [FieldMetadataType.Currency]: {
     label: 'Currency',
     Icon: IconCoins,
-    defaultValue: { amount: 2000, currency: CurrencyCode.Usd },
+    defaultValue: { amountMicros: 2000000000, currencyCode: CurrencyCode.Usd },
   },
-  [FieldMetadataType.Relation]: { label: 'Relation', Icon: IconPlug },
+  [FieldMetadataType.Relation]: {
+    label: 'Relation',
+    Icon: IconRelationManyToMany,
+  },
   [FieldMetadataType.Email]: { label: 'Email', Icon: IconMail },
   [FieldMetadataType.Phone]: { label: 'Phone', Icon: IconPhone },
   [FieldMetadataType.Probability]: {

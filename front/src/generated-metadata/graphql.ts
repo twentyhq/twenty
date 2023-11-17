@@ -1014,6 +1014,26 @@ export type UserV2Edge = {
   node: UserV2;
 };
 
+export type WorkspaceV2 = {
+  __typename?: 'workspaceV2';
+  createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  displayName?: Maybe<Scalars['String']['output']>;
+  domainName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  inviteHash?: Maybe<Scalars['String']['output']>;
+  logo?: Maybe<Scalars['String']['output']>;
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type WorkspaceV2Edge = {
+  __typename?: 'workspaceV2Edge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor']['output'];
+  /** The node containing the workspaceV2 */
+  node: WorkspaceV2;
+};
+
 export type CreateOneObjectMetadataItemMutationVariables = Exact<{
   input: CreateOneObjectInput;
 }>;

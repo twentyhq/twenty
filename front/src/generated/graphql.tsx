@@ -1462,6 +1462,7 @@ export type Mutation = {
   updateOnePerson?: Maybe<Person>;
   updateOnePipelineProgress?: Maybe<PipelineProgress>;
   updateOnePipelineStage?: Maybe<PipelineStage>;
+  updateOneWorkspaceV2: WorkspaceV2;
   updateUser: User;
   updateWorkspace: Workspace;
   uploadAttachment: Scalars['String'];
@@ -1665,6 +1666,11 @@ export type MutationUpdateOnePipelineProgressArgs = {
 export type MutationUpdateOnePipelineStageArgs = {
   data: PipelineStageUpdateInput;
   where: PipelineStageWhereUniqueInput;
+};
+
+
+export type MutationUpdateOneWorkspaceV2Args = {
+  input: UpdateOneWorkspaceV2Input;
 };
 
 
@@ -2486,6 +2492,8 @@ export type Query = {
   objects: ObjectConnection;
   relation: Relation;
   relations: RelationConnection;
+  workspaceV2: WorkspaceV2;
+  workspaceV2s: WorkspaceV2Connection;
 };
 
 
@@ -2613,6 +2621,18 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String'];
 };
 
+
+export type QueryWorkspaceV2Args = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryWorkspaceV2sArgs = {
+  filter?: WorkspaceV2Filter;
+  paging?: CursorPaging;
+  sorting?: Array<WorkspaceV2Sort>;
+};
+
 export enum QueryMode {
   Default = 'default',
   Insensitive = 'insensitive'
@@ -2645,6 +2665,18 @@ export enum RelationMetadataType {
   ManyToMany = 'MANY_TO_MANY',
   OneToMany = 'ONE_TO_MANY',
   OneToOne = 'ONE_TO_ONE'
+}
+
+/** Sort Directions */
+export enum SortDirection {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}
+
+/** Sort Nulls Options */
+export enum SortNulls {
+  NullsFirst = 'NULLS_FIRST',
+  NullsLast = 'NULLS_LAST'
 }
 
 export enum SortOrder {
@@ -2692,6 +2724,20 @@ export type Telemetry = {
   __typename?: 'Telemetry';
   anonymizationEnabled: Scalars['Boolean'];
   enabled: Scalars['Boolean'];
+};
+
+export type UpdateOneWorkspaceV2Input = {
+  /** The id of the record to update */
+  id: Scalars['ID'];
+  /** The update to apply. */
+  update: UpdateWorkspaceInput;
+};
+
+export type UpdateWorkspaceInput = {
+  displayName: Scalars['String'];
+  domainName: Scalars['String'];
+  inviteHash: Scalars['String'];
+  logo: Scalars['String'];
 };
 
 export type User = {
@@ -3150,6 +3196,16 @@ export type WorkspaceUpdateInput = {
   workspaceMember?: InputMaybe<WorkspaceMemberUpdateManyWithoutWorkspaceNestedInput>;
 };
 
+export type WorkspaceV2Connection = {
+  __typename?: 'WorkspaceV2Connection';
+  /** Array of edges. */
+  edges: Array<WorkspaceV2Edge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+  /** Fetch total count of records */
+  totalCount: Scalars['Int'];
+};
+
 export type Field = {
   __typename?: 'field';
   createdAt: Scalars['DateTime'];
@@ -3286,6 +3342,42 @@ export type UserV2Edge = {
   /** The node containing the userV2 */
   node: UserV2;
 };
+
+export type WorkspaceV2 = {
+  __typename?: 'workspaceV2';
+  createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
+  displayName?: Maybe<Scalars['String']>;
+  domainName?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  inviteHash?: Maybe<Scalars['String']>;
+  logo?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['DateTime'];
+};
+
+export type WorkspaceV2Edge = {
+  __typename?: 'workspaceV2Edge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the workspaceV2 */
+  node: WorkspaceV2;
+};
+
+export type WorkspaceV2Filter = {
+  and?: InputMaybe<Array<WorkspaceV2Filter>>;
+  id?: InputMaybe<IdFilterComparison>;
+  or?: InputMaybe<Array<WorkspaceV2Filter>>;
+};
+
+export type WorkspaceV2Sort = {
+  direction: SortDirection;
+  field: WorkspaceV2SortFields;
+  nulls?: InputMaybe<SortNulls>;
+};
+
+export enum WorkspaceV2SortFields {
+  Id = 'id'
+}
 
 export type CreateEventMutationVariables = Exact<{
   type: Scalars['String'];

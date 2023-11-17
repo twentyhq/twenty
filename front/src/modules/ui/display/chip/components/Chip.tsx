@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { MouseEvent, ReactNode } from 'react';
 import styled from '@emotion/styled';
 
 import { OverflowingTextWithTooltip } from '../../tooltip/OverflowingTextWithTooltip';
@@ -28,9 +28,10 @@ type ChipProps = {
   maxWidth?: string;
   variant?: ChipVariant;
   accent?: ChipAccent;
-  leftComponent?: React.ReactNode;
-  rightComponent?: React.ReactNode;
+  leftComponent?: ReactNode;
+  rightComponent?: ReactNode;
   className?: string;
+  onClick?: (event: MouseEvent<HTMLDivElement>) => void;
 };
 
 const StyledContainer = styled.div<Partial<ChipProps>>`
@@ -125,6 +126,7 @@ export const Chip = ({
   accent = ChipAccent.TextPrimary,
   maxWidth,
   className,
+  onClick,
 }: ChipProps) => (
   <StyledContainer
     data-testid="chip"
@@ -135,6 +137,7 @@ export const Chip = ({
     disabled={disabled}
     className={className}
     maxWidth={maxWidth}
+    onClick={onClick}
   >
     {leftComponent}
     <StyledLabel>

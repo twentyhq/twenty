@@ -3,82 +3,142 @@ import styled from '@emotion/styled';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Select } from '@/ui/input/components/Select';
 import { Section } from '@/ui/layout/section/components/Section';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { dataTypes } from '../constants/dataTypes';
+import { relationTypes } from '../constants/relationTypes';
 
 import {
   SettingsObjectFieldPreview,
   SettingsObjectFieldPreviewProps,
 } from './SettingsObjectFieldPreview';
+import {
+  SettingsObjectFieldRelationForm,
+  SettingsObjectFieldRelationFormValues,
+} from './SettingsObjectFieldRelationForm';
 import { SettingsObjectFieldTypeCard } from './SettingsObjectFieldTypeCard';
 
+export type SettingsObjectFieldTypeSelectSectionFormValues = Partial<{
+  type: FieldMetadataType;
+  relation: SettingsObjectFieldRelationFormValues;
+}>;
+
 type SettingsObjectFieldTypeSelectSectionProps = {
-  disabled?: boolean;
-  onChange?: (value: FieldMetadataType) => void;
-} & Pick<
-  SettingsObjectFieldPreviewProps,
-  | 'fieldIconKey'
-  | 'fieldLabel'
-  | 'fieldName'
-  | 'fieldType'
-  | 'isObjectCustom'
-  | 'objectIconKey'
-  | 'objectLabelPlural'
-  | 'objectNamePlural'
->;
+  fieldMetadata: Pick<Field, 'icon' | 'label'> & { id?: string };
+  relationFieldMetadataId?: string;
+  onChange: (values: SettingsObjectFieldTypeSelectSectionFormValues) => void;
+  values?: SettingsObjectFieldTypeSelectSectionFormValues;
+} & Pick<SettingsObjectFieldPreviewProps, 'objectMetadataId'>;
 
 const StyledSettingsObjectFieldTypeCard = styled(SettingsObjectFieldTypeCard)`
   margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
-// TODO: remove "enum" and "relation" types for now, add them back when the backend is ready.
-const { ENUM: _ENUM, RELATION: _RELATION, ...allowedDataTypes } = dataTypes;
+const StyledSettingsObjectFieldPreview = styled(SettingsObjectFieldPreview)`
+  display: grid;
+  flex: 1 1 100%;
+`;
+
+const StyledRelationImage = styled.img<{ flip?: boolean }>`
+  transform: ${({ flip }) => (flip ? 'scaleX(-1)' : 'none')};
+  width: 54px;
+`;
 
 export const SettingsObjectFieldTypeSelectSection = ({
-  disabled,
-  fieldIconKey,
-  fieldLabel,
-  fieldName,
-  fieldType,
-  isObjectCustom,
-  objectIconKey,
-  objectLabelPlural,
-  objectNamePlural,
+  fieldMetadata,
+  relationFieldMetadataId,
+  objectMetadataId,
   onChange,
-}: SettingsObjectFieldTypeSelectSectionProps) => (
-  <Section>
-    <H2Title
-      title="Type and values"
-      description="The field's type and values."
-    />
-    <Select
-      disabled={disabled}
-      dropdownScopeId="object-field-type-select"
-      value={fieldType}
-      onChange={onChange}
-      options={Object.entries(allowedDataTypes).map(([key, dataType]) => ({
-        value: key as FieldMetadataType,
-        ...dataType,
-      }))}
-    />
-    {['BOOLEAN', 'DATE', 'MONEY', 'NUMBER', 'TEXT', 'URL'].includes(
-      fieldType,
-    ) && (
-      <StyledSettingsObjectFieldTypeCard
-        preview={
-          <SettingsObjectFieldPreview
-            fieldIconKey={fieldIconKey}
-            fieldLabel={fieldLabel}
-            fieldName={fieldName}
-            fieldType={fieldType}
-            isObjectCustom={isObjectCustom}
-            objectIconKey={objectIconKey}
-            objectLabelPlural={objectLabelPlural}
-            objectNamePlural={objectNamePlural}
-          />
-        }
+  values,
+}: SettingsObjectFieldTypeSelectSectionProps) => {
+  const relationFormConfig = values?.relation;
+
+  const allowedFieldTypes = Object.entries(dataTypes).filter(
+    ([key]) => key !== FieldMetadataType.Relation,
+  );
+
+  return (
+    <Section>
+      <H2Title
+        title="Type and values"
+        description="The field's type and values."
       />
-    )}
-  </Section>
-);
+      <Select
+        disabled={!!fieldMetadata.id}
+        dropdownScopeId="object-field-type-select"
+        value={values?.type}
+        onChange={(value) => onChange({ type: value })}
+        options={allowedFieldTypes.map(([key, dataType]) => ({
+          value: key as FieldMetadataType,
+          ...dataType,
+        }))}
+      />
+      {!!values?.type &&
+        [
+          FieldMetadataType.Boolean,
+          FieldMetadataType.Currency,
+          FieldMetadataType.Date,
+          FieldMetadataType.Link,
+          FieldMetadataType.Number,
+          FieldMetadataType.Relation,
+          FieldMetadataType.Text,
+        ].includes(values.type) && (
+          <StyledSettingsObjectFieldTypeCard
+            preview={
+              <>
+                <StyledSettingsObjectFieldPreview
+                  fieldMetadata={{
+                    ...fieldMetadata,
+                    type: values.type,
+                  }}
+                  shrink={values.type === FieldMetadataType.Relation}
+                  objectMetadataId={objectMetadataId}
+                  relationObjectMetadataId={
+                    relationFormConfig?.objectMetadataId
+                  }
+                />
+                {values.type === FieldMetadataType.Relation &&
+                  !!relationFormConfig?.type &&
+                  !!relationFormConfig.objectMetadataId && (
+                    <>
+                      <StyledRelationImage
+                        src={relationTypes[relationFormConfig.type].imageSrc}
+                        flip={
+                          relationTypes[relationFormConfig.type].isImageFlipped
+                        }
+                        alt={relationTypes[relationFormConfig.type].label}
+                      />
+                      <StyledSettingsObjectFieldPreview
+                        fieldMetadata={{
+                          ...relationFormConfig.field,
+                          label:
+                            relationFormConfig.field?.label || 'Field name',
+                          type: FieldMetadataType.Relation,
+                          id: relationFieldMetadataId,
+                        }}
+                        shrink
+                        objectMetadataId={relationFormConfig.objectMetadataId}
+                        relationObjectMetadataId={objectMetadataId}
+                      />
+                    </>
+                  )}
+              </>
+            }
+            form={
+              values.type === FieldMetadataType.Relation && (
+                <SettingsObjectFieldRelationForm
+                  disableRelationEdition={!!relationFieldMetadataId}
+                  values={relationFormConfig}
+                  onChange={(nextValues) =>
+                    onChange({
+                      relation: { ...relationFormConfig, ...nextValues },
+                    })
+                  }
+                />
+              )
+            }
+          />
+        )}
+    </Section>
+  );
+};

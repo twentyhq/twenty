@@ -19,6 +19,7 @@ import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
 
 type IconPickerProps = {
   disabled?: boolean;
+  dropdownScopeId?: string;
   onChange: (params: { iconKey: string; Icon: IconComponent }) => void;
   selectedIconKey?: string;
   onClickOutside?: () => void;
@@ -44,6 +45,7 @@ const convertIconKeyToLabel = (iconKey: string) =>
 
 export const IconPicker = ({
   disabled,
+  dropdownScopeId = 'icon-picker',
   onChange,
   selectedIconKey,
   onClickOutside,
@@ -53,7 +55,7 @@ export const IconPicker = ({
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
 
-  const { closeDropdown } = useDropdown({ dropdownScopeId: 'icon-picker' });
+  const { closeDropdown } = useDropdown({ dropdownScopeId });
 
   const { icons, isLoadingIcons: isLoading } = useLazyLoadIcons();
 
@@ -75,7 +77,7 @@ export const IconPicker = ({
   }, [icons, searchString, selectedIconKey]);
 
   return (
-    <DropdownScope dropdownScopeId="icon-picker">
+    <DropdownScope dropdownScopeId={dropdownScopeId}>
       <Dropdown
         dropdownHotkeyScope={{ scope: IconPickerHotkeyScope.IconPicker }}
         clickableComponent={

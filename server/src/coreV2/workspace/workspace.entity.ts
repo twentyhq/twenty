@@ -9,8 +9,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('workspaces')
-@ObjectType('workspace')
+@Entity('workspaceV2')
+@ObjectType('workspaceV2')
 export class Workspace {
   @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
