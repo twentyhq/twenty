@@ -56,7 +56,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
   const { object: apiKeyData } = useFindOneObjectRecord({
     objectNameSingular: 'apiKeyV2',
-    objectMetadataId: apiKeyId,
+    objectRecordId: apiKeyId,
   });
 
   const deleteIntegration = async (redirect = true) => {
