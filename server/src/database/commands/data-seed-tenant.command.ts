@@ -10,6 +10,8 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { seedMetadataSchema } from 'src/database/typeorm-seeds/metadata';
 import { seedWorkspaceMember } from 'src/database/typeorm-seeds/tenant/workspaceMember';
 import { seedPeople } from 'src/database/typeorm-seeds/tenant/people';
+import { seedOpportunity } from 'src/database/typeorm-seeds/tenant/opportunity';
+import { seedPipelineStep } from 'src/database/typeorm-seeds/tenant/pipelineStep';
 
 // TODO: implement dry-run
 @Command({
@@ -55,6 +57,8 @@ export class DataSeedTenantCommand extends CommandRunner {
 
       await seedCompanies(workspaceDataSource, dataSourceMetadata.schema);
       await seedPeople(workspaceDataSource, dataSourceMetadata.schema);
+      await seedPipelineStep(workspaceDataSource, dataSourceMetadata.schema);
+      await seedOpportunity(workspaceDataSource, dataSourceMetadata.schema);
 
       await seedViews(workspaceDataSource, dataSourceMetadata.schema);
       await seedViewFields(workspaceDataSource, dataSourceMetadata.schema);

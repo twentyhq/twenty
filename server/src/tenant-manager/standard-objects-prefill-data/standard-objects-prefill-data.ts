@@ -5,6 +5,7 @@ import { viewPrefillData } from 'src/tenant-manager/standard-objects-prefill-dat
 import { companyPrefillData } from 'src/tenant-manager/standard-objects-prefill-data/company';
 import { personPrefillData } from 'src/tenant-manager/standard-objects-prefill-data/person';
 import { pipelineStepPrefillData } from 'src/tenant-manager/standard-objects-prefill-data/pipeline-step';
+import { opportunityPrefillData } from 'src/tenant-manager/standard-objects-prefill-data/opportunity';
 
 export const standardObjectsPrefillData = async (
   workspaceDataSource: DataSource,
@@ -27,5 +28,6 @@ export const standardObjectsPrefillData = async (
     await personPrefillData(entityManager, schemaName);
     await viewPrefillData(entityManager, schemaName, objectMetadataMap);
     await pipelineStepPrefillData(entityManager, schemaName);
+    await opportunityPrefillData(entityManager, schemaName);
   });
 };
