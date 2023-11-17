@@ -6,7 +6,7 @@ export const MyComponent = () => {
   icon={null}
   title="Click Me"
   accent="secondary"
-  active={true}
+  active={false}
   disabled={false}
   focus={true}
   onClick={()=>console.log('click')} 

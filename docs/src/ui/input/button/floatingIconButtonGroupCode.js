@@ -1,10 +1,10 @@
 import { FloatingIconButtonGroup } from "@/ui/input/button/components/FloatingIconButtonGroup";
-import { IconSearch, IconCheckbox } from "@tabler/icons-react";
+import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
 
 export const MyComponent = () => {
   const iconButtons = [
     {
-      Icon: IconSearch,
+      Icon: IconClipboardText,
       onClick: () => console.log("Button 1 clicked"),
       isActive: true,
     },

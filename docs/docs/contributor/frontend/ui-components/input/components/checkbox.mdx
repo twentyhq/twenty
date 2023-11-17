@@ -1,0 +1,71 @@
+---
+title: Checkbox
+sidebar_position: 2
+sidebar_custom_props:
+  icon: TbCheckbox
+---
+
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import checkboxCode from '!!raw-loader!@site/src/ui/input/components/checkboxCode.js'
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/input/components/Checkbox']}
+  componentCode={checkboxCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>variant</td>
+      <td>string</td>
+      <td>The visual style variant of the buttons within the group. Options include `primary`, `secondary`, and `tertiary`</td>
+    </tr>
+
+    <tr>
+      <td>size</td>
+      <td>string</td>
+      <td>The size of the buttons within the group. Has two options: `medium` and `small`</td>
+    </tr>
+
+    <tr>
+      <td>accent</td>
+      <td>string</td>
+      <td>The accent color of the buttons within the group. Options include `default`, `blue` and `danger`</td>
+    </tr>
+
+    <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>Optional class name for additional styling</td>
+    </tr>
+
+    <tr>
+      <td>children</td>
+      <td>ReactNode</td>
+      <td>An array of React elements representing the individual buttons within the group</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>

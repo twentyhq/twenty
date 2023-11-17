@@ -7,11 +7,11 @@ export const MyComponent = () => {
       className
       Icon={IconSearch}
       size="small"
-      position="middle"
+      position="standalone"
       applyShadow={true}
-      applyBlur={false}
+      applyBlur={true}
       disabled={false}
-      focus={true}
+      focus={false}
       onClick={() => console.log("click")}
       isActive={true}
     />

@@ -4,6 +4,9 @@ sidebar_position: 1
 sidebar_custom_props:
   icon: TbSquareRoundedPlusFilled
 ---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
 import buttonCode from '!!raw-loader!@site/src/ui/input/button/buttonCode.js'
 import buttonGroupCode from '!!raw-loader!@site/src/ui/input/button/buttonGroupCode.js'
 import floatingButtonCode from '!!raw-loader!@site/src/ui/input/button/floatingButtonCode.js'
@@ -14,10 +17,6 @@ import lightButtonCode from '!!raw-loader!@site/src/ui/input/button/lightButtonC
 import lightIconButtonCode from '!!raw-loader!@site/src/ui/input/button/lightIconButtonCode.js'
 import mainButtonCode from '!!raw-loader!@site/src/ui/input/button/mainButtonCode.js'
 import roundedIconButtonCode from '!!raw-loader!@site/src/ui/input/button/roundedIconButtonCode.js'
-
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-import { SandpackEditor} from '@site/src/ui/SandpackEditor'
 
 A list of buttons and button groups used throughout the app. 
 
@@ -125,7 +124,7 @@ A list of buttons and button groups used throughout the app.
     <tr>
       <td>onClick</td>
       <td>function</td>
-      <td>A callback function that triggers when someone clicks on the button</td>
+      <td>A callback function that triggers when the user clicks on the button</td>
       <td></td>
     </tr>
 
@@ -297,7 +296,7 @@ A list of buttons and button groups used throughout the app.
 <TabItem value="usage" label="Usage" default>
 
 <SandpackEditor
-  availableComponentPaths={['@/ui/input/button/components/FloatingButton', '@/ui/display/icon/types/IconComponent', '@/ui/input/button/components/FloatingButtonGroup']}
+  availableComponentPaths={['@/ui/input/button/components/FloatingButton', '@/ui/input/button/components/FloatingButtonGroup']}
   componentCode={floatingButtonGroupCode} 
 />
 
@@ -327,6 +326,7 @@ A list of buttons and button groups used throughout the app.
       <td>children</td>
       <td>ReactNode</td>
       <td>An array of React elements representing the individual buttons within the group</td>
+      <td></td>
     </tr>
 
   </tbody>
@@ -370,78 +370,64 @@ A list of buttons and button groups used throughout the app.
 
     <tr>
       <td>Icon</td>
+      <td>`React.ComponentType`</td>
+      <td>An optional icon component that's displayed within the button</td>
       <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-
-    <tr>
-      <td>title</td>
-      <td>string</td>
-      <td></td>
-      <td></td>
-    </tr>
-
-    <tr>
-      <td>fullWidth</td>
-      <td>boolean</td>
-      <td></td>
-      <td>`false`</td>
-    </tr>
-
-    <tr>
-      <td>variant</td>
-      <td>string</td>
-      <td></td>
-      <td>primary</td>
     </tr>
 
     <tr>
       <td>size</td>
       <td>string</td>
-      <td></td>
-      <td>medium</td>
-    </tr>
-
-    <tr>
-      <td>accent</td>
-      <td>string</td>
-      <td></td>
-      <td>default</td>
+      <td>The size of the button. Has two options: `small` and `medium`</td>
+      <td>small</td>
     </tr>
 
     <tr>
       <td>position</td>
       <td>string</td>
-      <td></td>
+      <td>The position of the button in relation to its siblings. Options include: `standalone`, `left`, `right`, and `middle`</td>
       <td>standalone</td>
     </tr>
 
     <tr>
-      <td>soon</td>
+      <td>applyShadow</td>
       <td>boolean</td>
-      <td></td>
-      <td>`false`</td>
+      <td>Determines whether to apply shadow to a button</td>
+      <td>`true`</td>
     </tr>
+
+    <tr>
+      <td>applyBlur</td>
+      <td>boolean</td>
+      <td>Determines whether to apply a blur effect to the button</td>
+      <td>`true`</td>
+    </tr>    
 
     <tr>
       <td>disabled</td>
       <td>boolean</td>
-      <td></td>
+      <td>Determines whether the button is disabled</td>
       <td>`false`</td>
     </tr>
 
     <tr>
       <td>focus</td>
       <td>boolean</td>
-      <td></td>
+      <td>Indicates if the button has focus</td>
       <td>`false`</td>
     </tr>
 
     <tr>
       <td>onClick</td>
       <td>function</td>
+      <td>A callback function that triggers when the user clicks on the button</td>
       <td></td>
+    </tr>
+
+    <tr>
+      <td>isActive</td>
+      <td>boolean</td>
+      <td>Determines if the button is in an active state</td>
       <td></td>
     </tr>
 
@@ -458,7 +444,7 @@ A list of buttons and button groups used throughout the app.
 <TabItem value="usage" label="Usage" default>
 
 <SandpackEditor
-  availableComponentPaths={['@/ui/input/button/components/FloatingIconButton','@/ui/input/button/components/FloatingIconButtonGroup']}
+  availableComponentPaths={['@/ui/input/button/components/FloatingIconButtonGroup']}
   componentCode={floatingIconButtonGroupCode} 
 />
 
@@ -472,7 +458,6 @@ A list of buttons and button groups used throughout the app.
       <th>Props</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Default</th>
     </tr>
   </thead>
 
@@ -481,84 +466,18 @@ A list of buttons and button groups used throughout the app.
       <td>className</td>
       <td>string</td>
       <td>Optional name for additional styling</td>
-      <td></td>
-    </tr>
-
-    <tr>
-      <td>Icon</td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-
-    <tr>
-      <td>title</td>
-      <td>string</td>
-      <td></td>
-      <td></td>
-    </tr>
-
-    <tr>
-      <td>fullWidth</td>
-      <td>boolean</td>
-      <td></td>
-      <td>`false`</td>
-    </tr>
-
-    <tr>
-      <td>variant</td>
-      <td>string</td>
-      <td></td>
-      <td>primary</td>
     </tr>
 
     <tr>
       <td>size</td>
       <td>string</td>
-      <td></td>
-      <td>medium</td>
+      <td>The size of the button. Has two options: `small` and `medium`</td>
     </tr>
 
     <tr>
-      <td>accent</td>
-      <td>string</td>
-      <td></td>
-      <td>default</td>
-    </tr>
-
-    <tr>
-      <td>position</td>
-      <td>string</td>
-      <td></td>
-      <td>standalone</td>
-    </tr>
-
-    <tr>
-      <td>soon</td>
-      <td>boolean</td>
-      <td></td>
-      <td>`false`</td>
-    </tr>
-
-    <tr>
-      <td>disabled</td>
-      <td>boolean</td>
-      <td></td>
-      <td>`false`</td>
-    </tr>
-
-    <tr>
-      <td>focus</td>
-      <td>boolean</td>
-      <td></td>
-      <td>`false`</td>
-    </tr>
-
-    <tr>
-      <td>onClick</td>
-      <td>function</td>
-      <td></td>
-      <td></td>
+      <td>iconButtons</td>
+      <td>array</td>
+      <td>An array of objects, each representing an icon button in the group. Each object should include the icon component you want to display in the button, the function you want to call when a user clicks on the button, and whether the button should be active or not.</td>
     </tr>
 
   </tbody>
@@ -601,79 +520,51 @@ A list of buttons and button groups used throughout the app.
     </tr>
 
     <tr>
-      <td>Icon</td>
-      <td></td>
-      <td></td>
+      <td>icon</td>
+      <td>`React.ReactNode`</td>
+      <td>The icon you want to display in the button</td>
       <td></td>
     </tr>
 
     <tr>
       <td>title</td>
       <td>string</td>
+      <td>The text content of the button</td>
       <td></td>
-      <td></td>
-    </tr>
-
-    <tr>
-      <td>fullWidth</td>
-      <td>boolean</td>
-      <td></td>
-      <td>`false`</td>
-    </tr>
-
-    <tr>
-      <td>variant</td>
-      <td>string</td>
-      <td></td>
-      <td>primary</td>
-    </tr>
-
-    <tr>
-      <td>size</td>
-      <td>string</td>
-      <td></td>
-      <td>medium</td>
     </tr>
 
     <tr>
       <td>accent</td>
       <td>string</td>
-      <td></td>
-      <td>default</td>
+      <td>The accent color of the button. Options include: `secondary` and `tertiary`</td>
+      <td>secondary</td>
     </tr>
 
     <tr>
-      <td>position</td>
-      <td>string</td>
-      <td></td>
-      <td>standalone</td>
-    </tr>
-
-    <tr>
-      <td>soon</td>
+      <td>active</td>
       <td>boolean</td>
-      <td></td>
+      <td>Determines if the button is in an active state</td>
       <td>`false`</td>
     </tr>
 
     <tr>
       <td>disabled</td>
       <td>boolean</td>
-      <td></td>
+      <td>Determines whether the button is disabled</td>
       <td>`false`</td>
     </tr>
 
     <tr>
       <td>focus</td>
       <td>boolean</td>
-      <td></td>
+      <td>Indicates if the button has focus</td>
       <td>`false`</td>
     </tr>
 
     <tr>
       <td>onClick</td>
       <td>function</td>
-      <td></td>
+      <td>A callback function that triggers when the user clicks on the button</td>
       <td></td>
     </tr>
 
@@ -717,81 +608,68 @@ A list of buttons and button groups used throughout the app.
     </tr>
 
     <tr>
+      <td>testId</td>
+      <td>string</td>
+      <td>Test identifier for the button</td>
+      <td></td>
+    </tr>
+
+    <tr>
       <td>Icon</td>
-      <td></td>
-      <td></td>
+      <td>`React.ComponentType`</td>
+      <td>An optional icon component that's displayed within the button</td>
       <td></td>
     </tr>
 
     <tr>
       <td>title</td>
       <td>string</td>
+      <td>The text content of the button</td>
       <td></td>
-      <td></td>
-    </tr>
-
-    <tr>
-      <td>fullWidth</td>
-      <td>boolean</td>
-      <td></td>
-      <td>`false`</td>
-    </tr>
-
-    <tr>
-      <td>variant</td>
-      <td>string</td>
-      <td></td>
-      <td>primary</td>
     </tr>
 
     <tr>
       <td>size</td>
       <td>string</td>
-      <td></td>
-      <td>medium</td>
+      <td>The size of the button. Has two options: `small` and `medium`</td>
+      <td>small</td>
     </tr>
 
     <tr>
       <td>accent</td>
       <td>string</td>
-      <td></td>
-      <td>default</td>
+      <td>The accent color of the button. Options include: `secondary` and `tertiary`</td>
+      <td>secondary</td>
     </tr>
 
     <tr>
-      <td>position</td>
-      <td>string</td>
-      <td></td>
-      <td>standalone</td>
-    </tr>
-
-    <tr>
-      <td>soon</td>
+      <td>active</td>
       <td>boolean</td>
-      <td></td>
+      <td>Determines if the button is in an active state</td>
       <td>`false`</td>
     </tr>
 
     <tr>
       <td>disabled</td>
       <td>boolean</td>
-      <td></td>
+      <td>Determines whether the button is disabled</td>
       <td>`false`</td>
     </tr>
 
     <tr>
       <td>focus</td>
       <td>boolean</td>
-      <td></td>
+      <td>Indicates if the button has focus</td>
       <td>`false`</td>
     </tr>
 
     <tr>
       <td>onClick</td>
       <td>function</td>
-      <td></td>
+      <td>A callback function that triggers when the user clicks on the button</td>
       <td></td>
     </tr>
+   
 
   </tbody>
 </table>
@@ -826,88 +704,46 @@ A list of buttons and button groups used throughout the app.
 
   <tbody>
     <tr>
-      <td>className</td>
-      <td>string</td>
-      <td>Optional name for additional styling</td>
-      <td></td>
-    </tr>
-
-    <tr>
-      <td>Icon</td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-
-    <tr>
       <td>title</td>
       <td>string</td>
-      <td></td>
+      <td>The text content of the button</td>
       <td></td>
     </tr>
 
     <tr>
       <td>fullWidth</td>
       <td>boolean</td>
-      <td></td>
+      <td>efines whether the button should span the whole width of its container</td>
       <td>`false`</td>
     </tr>
 
     <tr>
       <td>variant</td>
       <td>string</td>
-      <td></td>
+      <td>The visual style variant of the button. Options include `primary` and `secondary`</td>
       <td>primary</td>
-    </tr>
-
-    <tr>
-      <td>size</td>
-      <td>string</td>
-      <td></td>
-      <td>medium</td>
-    </tr>
-
-    <tr>
-      <td>accent</td>
-      <td>string</td>
-      <td></td>
-      <td>default</td>
-    </tr>
-
-    <tr>
-      <td>position</td>
-      <td>string</td>
-      <td></td>
-      <td>standalone</td>
     </tr>
 
     <tr>
       <td>soon</td>
       <td>boolean</td>
-      <td></td>
+      <td>Indicates if the button is marked as "soon" (such as for upcoming features)</td>
       <td>`false`</td>
     </tr>
 
-    <tr>
-      <td>disabled</td>
-      <td>boolean</td>
+     <tr>
+      <td>Icon</td>
+      <td>`React.ComponentType`</td>
+      <td>An optional icon component that's displayed within the button</td>
       <td></td>
-      <td>`false`</td>
-    </tr>
+    </tr> 
 
-    <tr>
-      <td>focus</td>
-      <td>boolean</td>
+     <tr>
+      <td>React `button` props</td>
+      <td>`React.ComponentProps<'button'>`</td>
+      <td>Additional props from React's `button` element</td>
       <td></td>
-      <td>`false`</td>
-    </tr>
-
-    <tr>
-      <td>onClick</td>
-      <td>function</td>
-      <td></td>
-      <td></td>
-    </tr>
+    </tr>     
 
   </tbody>
 </table>
@@ -941,89 +777,19 @@ A list of buttons and button groups used throughout the app.
   </thead>
 
   <tbody>
-    <tr>
-      <td>className</td>
-      <td>string</td>
-      <td>Optional name for additional styling</td>
-      <td></td>
-    </tr>
-
-    <tr>
+     <tr>
       <td>Icon</td>
+      <td>`React.ComponentType`</td>
+      <td>An optional icon component that's displayed within the button</td>
       <td></td>
-      <td></td>
-      <td></td>
-    </tr>
+    </tr> 
 
-    <tr>
-      <td>title</td>
-      <td>string</td>
+     <tr>
+      <td>React `button` props</td>
+      <td>`React.ButtonHTMLAttributes<HTMLButtonElement>`</td>
+      <td>Additional props from React's `button` element</td>
       <td></td>
-      <td></td>
-    </tr>
-
-    <tr>
-      <td>fullWidth</td>
-      <td>boolean</td>
-      <td></td>
-      <td>`false`</td>
-    </tr>
-
-    <tr>
-      <td>variant</td>
-      <td>string</td>
-      <td></td>
-      <td>primary</td>
-    </tr>
-
-    <tr>
-      <td>size</td>
-      <td>string</td>
-      <td></td>
-      <td>medium</td>
-    </tr>
-
-    <tr>
-      <td>accent</td>
-      <td>string</td>
-      <td></td>
-      <td>default</td>
-    </tr>
-
-    <tr>
-      <td>position</td>
-      <td>string</td>
-      <td></td>
-      <td>standalone</td>
-    </tr>
-
-    <tr>
-      <td>soon</td>
-      <td>boolean</td>
-      <td></td>
-      <td>`false`</td>
-    </tr>
-
-    <tr>
-      <td>disabled</td>
-      <td>boolean</td>
-      <td></td>
-      <td>`false`</td>
-    </tr>
-
-    <tr>
-      <td>focus</td>
-      <td>boolean</td>
-      <td></td>
-      <td>`false`</td>
-    </tr>
-
-    <tr>
-      <td>onClick</td>
-      <td>function</td>
-      <td></td>
-      <td></td>
-    </tr>
+    </tr>   
 
   </tbody>
 </table>

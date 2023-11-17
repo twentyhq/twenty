@@ -7,7 +7,7 @@ export const MyComponent = () => {
       className
       testId="test1"
       Icon={IconSearch}
-      title="testing"
+      title="Click Me"
       size="small"
       accent="secondary"
       active={true}
