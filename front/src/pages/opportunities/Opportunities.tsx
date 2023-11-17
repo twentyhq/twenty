@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import styled from '@emotion/styled';
 
 import { CompanyBoard } from '@/companies/board/components/CompanyBoard';
@@ -11,6 +12,7 @@ import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { useView } from '@/views/hooks/useView';
 import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
@@ -51,7 +53,13 @@ export const Opportunities = () => {
     objectNameSingular: 'opportunityV2',
   }).foundObjectMetadataItem?.id;
 
-  if (!opportunitiesV2MetadataId) return null;
+  const { setViewObjectMetadataId } = useView({
+    viewScopeId: 'company-board-view',
+  });
+
+  useEffect(() => {
+    setViewObjectMetadataId?.(opportunitiesV2MetadataId);
+  }, [opportunitiesV2MetadataId, setViewObjectMetadataId]);
 
   return (
     <PageContainer>
