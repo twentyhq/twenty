@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 
-import { CompanyTableMockMode } from '@/companies/table/components/CompanyTableMockMode';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
@@ -16,9 +15,7 @@ export const CompaniesMockMode = () => {
     <PageContainer>
       <PageHeader title="Companies" Icon={IconBuildingSkyscraper} />
       <PageBody>
-        <StyledTableContainer>
-          <CompanyTableMockMode />
-        </StyledTableContainer>
+        <StyledTableContainer></StyledTableContainer>
       </PageBody>
     </PageContainer>
   );

@@ -73,7 +73,7 @@ export const CompanyProgressPicker = ({
   const selectedPipelineStage = useMemo(
     () =>
       currentPipelineStages.find(
-        (pipelineStage) => pipelineStage.id === selectedPipelineStageId,
+        (pipelineStage: any) => pipelineStage.id === selectedPipelineStageId,
       ),
     [currentPipelineStages, selectedPipelineStageId],
   );
@@ -85,7 +85,7 @@ export const CompanyProgressPicker = ({
     >
       {isProgressSelectionUnfolded ? (
         <DropdownMenuItemsContainer>
-          {currentPipelineStages.map((pipelineStage, index) => (
+          {currentPipelineStages.map((pipelineStage: any, index: number) => (
             <MenuItem
               key={pipelineStage.id}
               testId={`select-pipeline-stage-${index}`}

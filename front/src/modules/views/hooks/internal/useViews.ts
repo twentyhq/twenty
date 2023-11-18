@@ -12,7 +12,7 @@ export const useViews = (scopeId: string) => {
     deleteOneMutation,
     findManyQuery,
   } = useFindOneObjectMetadataItem({
-    objectNameSingular: 'viewV2',
+    objectNameSingular: 'view',
   });
   const apolloClient = useApolloClient();
 

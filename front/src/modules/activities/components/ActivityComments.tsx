@@ -63,7 +63,7 @@ export const ActivityComments = ({
 }: ActivityCommentsProps) => {
   const currentUser = useRecoilValue(currentUserState);
   const { createOneObject } = useCreateOneObjectRecord({
-    objectNameSingular: 'commentV2',
+    objectNameSingular: 'comment',
   });
 
   if (!currentUser) {

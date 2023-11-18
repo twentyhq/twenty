@@ -3,8 +3,8 @@ import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-me
 const pipelineStepRelationMetadata = [
   {
     type: RelationMetadataType.ONE_TO_MANY,
-    fromObjectNameSingular: 'pipelineStepV2',
-    toObjectNameSingular: 'opportunityV2',
+    fromObjectNameSingular: 'pipelineStep',
+    toObjectNameSingular: 'opportunity',
     fromFieldMetadataName: 'opportunities',
     toFieldMetadataName: 'pipelineStep',
   },

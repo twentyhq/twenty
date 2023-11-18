@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
 
-import { SeedDataSourceId, SeedWorkspaceId } from 'src/database/seeds/metadata';
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
+import { SeedDataSourceId } from 'src/database/typeorm-seeds/metadata/data-source';
 
 const tableName = 'objectMetadata';
 
@@ -48,8 +49,8 @@ export const seedObjectMetadata = async (
     .values([
       {
         id: SeedObjectMetadataIds.Company,
-        nameSingular: 'companyV2',
-        namePlural: 'companiesV2',
+        nameSingular: 'company',
+        namePlural: 'companies',
         labelSingular: 'Company',
         labelPlural: 'Companies',
         targetTableName: 'company',
@@ -62,8 +63,8 @@ export const seedObjectMetadata = async (
       },
       {
         id: SeedObjectMetadataIds.Person,
-        nameSingular: 'personV2',
-        namePlural: 'peopleV2',
+        nameSingular: 'person',
+        namePlural: 'people',
         labelSingular: 'Person',
         labelPlural: 'People',
         targetTableName: 'person',
@@ -76,8 +77,8 @@ export const seedObjectMetadata = async (
       },
       {
         id: SeedObjectMetadataIds.Opportunity,
-        nameSingular: 'opportunityV2',
-        namePlural: 'opportunitiesV2',
+        nameSingular: 'opportunity',
+        namePlural: 'opportunities',
         labelSingular: 'Opportunity',
         labelPlural: 'Opportunities',
         targetTableName: 'opportunity',
@@ -90,8 +91,8 @@ export const seedObjectMetadata = async (
       },
       {
         id: SeedObjectMetadataIds.PipelineStep,
-        nameSingular: 'pipelineStepV2',
-        namePlural: 'pipelineStepsV2',
+        nameSingular: 'pipelineStep',
+        namePlural: 'pipelineSteps',
         labelSingular: 'Pipeline Step',
         labelPlural: 'Pipeline Steps',
         targetTableName: 'pipelineStep',
@@ -104,8 +105,8 @@ export const seedObjectMetadata = async (
       },
       {
         id: SeedObjectMetadataIds.WorkspaceMember,
-        nameSingular: 'workspaceMemberV2',
-        namePlural: 'workspaceMembersV2',
+        nameSingular: 'workspaceMember',
+        namePlural: 'workspaceMembers',
         labelSingular: 'Workspace Member',
         labelPlural: 'Workspace Members',
         targetTableName: 'workspaceMember',
@@ -118,8 +119,8 @@ export const seedObjectMetadata = async (
       },
       {
         id: SeedObjectMetadataIds.Webhook,
-        nameSingular: 'webhookV2',
-        namePlural: 'webhooksV2',
+        nameSingular: 'webhook',
+        namePlural: 'webhooks',
         labelSingular: 'Webhook',
         labelPlural: 'Webhooks',
         targetTableName: 'webhook',
@@ -132,8 +133,8 @@ export const seedObjectMetadata = async (
       },
       {
         id: SeedObjectMetadataIds.ApiKey,
-        nameSingular: 'apiKeyV2',
-        namePlural: 'apiKeysV2',
+        nameSingular: 'apiKey',
+        namePlural: 'apiKeys',
         labelSingular: 'Api Key',
         labelPlural: 'Api Keys',
         targetTableName: 'apiKey',
@@ -146,8 +147,8 @@ export const seedObjectMetadata = async (
       },
       {
         id: SeedObjectMetadataIds.Activity,
-        nameSingular: 'activityV2',
-        namePlural: 'activitiesV2',
+        nameSingular: 'activity',
+        namePlural: 'activities',
         labelSingular: 'Activity',
         labelPlural: 'Activities',
         targetTableName: 'activity',
@@ -160,8 +161,8 @@ export const seedObjectMetadata = async (
       },
       {
         id: SeedObjectMetadataIds.ActivityTarget,
-        nameSingular: 'activityTargetV2',
-        namePlural: 'activityTargetsV2',
+        nameSingular: 'activityTarget',
+        namePlural: 'activityTargets',
         labelSingular: 'Activity Target',
         labelPlural: 'Activity Targets',
         targetTableName: 'activityTarget',
@@ -174,8 +175,8 @@ export const seedObjectMetadata = async (
       },
       {
         id: SeedObjectMetadataIds.Comment,
-        nameSingular: 'commentV2',
-        namePlural: 'commentsV2',
+        nameSingular: 'comment',
+        namePlural: 'comments',
         labelSingular: 'Comment',
         labelPlural: 'Comments',
         targetTableName: 'comment',
@@ -188,8 +189,8 @@ export const seedObjectMetadata = async (
       },
       {
         id: SeedObjectMetadataIds.Attachment,
-        nameSingular: 'attachmentV2',
-        namePlural: 'attachmentsV2',
+        nameSingular: 'attachment',
+        namePlural: 'attachments',
         labelSingular: 'Attachment',
         labelPlural: 'Attachments',
         targetTableName: 'attachment',
@@ -202,8 +203,8 @@ export const seedObjectMetadata = async (
       },
       {
         id: SeedObjectMetadataIds.Favorite,
-        nameSingular: 'favoriteV2',
-        namePlural: 'favoritesV2',
+        nameSingular: 'favorite',
+        namePlural: 'favorites',
         labelSingular: 'Favorite',
         labelPlural: 'Favorites',
         targetTableName: 'favorite',
@@ -216,8 +217,8 @@ export const seedObjectMetadata = async (
       },
       {
         id: SeedObjectMetadataIds.View,
-        nameSingular: 'viewV2',
-        namePlural: 'viewsV2',
+        nameSingular: 'view',
+        namePlural: 'views',
         labelSingular: 'View',
         labelPlural: 'Views',
         targetTableName: 'view',
@@ -230,8 +231,8 @@ export const seedObjectMetadata = async (
       },
       {
         id: SeedObjectMetadataIds.ViewField,
-        nameSingular: 'viewFieldV2',
-        namePlural: 'viewFieldsV2',
+        nameSingular: 'viewField',
+        namePlural: 'viewFields',
         labelSingular: 'View Field',
         labelPlural: 'View Fields',
         targetTableName: 'viewField',
@@ -244,8 +245,8 @@ export const seedObjectMetadata = async (
       },
       {
         id: SeedObjectMetadataIds.ViewFilter,
-        nameSingular: 'viewFilterV2',
-        namePlural: 'viewFiltersV2',
+        nameSingular: 'viewFilter',
+        namePlural: 'viewFilters',
         labelSingular: 'View Filter',
         labelPlural: 'View Filters',
         targetTableName: 'viewFilter',
@@ -258,8 +259,8 @@ export const seedObjectMetadata = async (
       },
       {
         id: SeedObjectMetadataIds.ViewSort,
-        nameSingular: 'viewSortV2',
-        namePlural: 'viewSortsV2',
+        nameSingular: 'viewSort',
+        namePlural: 'viewSorts',
         labelSingular: 'View Sort',
         labelPlural: 'View Sorts',
         targetTableName: 'viewSort',

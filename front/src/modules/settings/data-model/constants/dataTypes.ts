@@ -13,7 +13,7 @@ import {
   IconUser,
 } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { CurrencyCode, FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const defaultDateValue = new Date();
 defaultDateValue.setFullYear(defaultDateValue.getFullYear() + 2);
@@ -61,7 +61,7 @@ export const dataTypes: Record<
   [FieldMetadataType.Currency]: {
     label: 'Currency',
     Icon: IconCoins,
-    defaultValue: { amountMicros: 2000000000, currencyCode: CurrencyCode.Usd },
+    defaultValue: { amountMicros: 2000000000, currencyCode: 'USD' },
   },
   [FieldMetadataType.Relation]: {
     label: 'Relation',

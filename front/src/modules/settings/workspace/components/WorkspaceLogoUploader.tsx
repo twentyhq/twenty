@@ -4,13 +4,13 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 import {
-  useRemoveWorkspaceLogoMutation,
+  useUpdateWorkspaceMutation,
   useUploadWorkspaceLogoMutation,
 } from '~/generated/graphql';
 
 export const WorkspaceLogoUploader = () => {
   const [uploadLogo] = useUploadWorkspaceLogoMutation();
-  const [removeLogo] = useRemoveWorkspaceLogoMutation();
+  const [updateWorkspce] = useUpdateWorkspaceMutation();
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
@@ -39,7 +39,12 @@ export const WorkspaceLogoUploader = () => {
     if (!currentWorkspace?.id) {
       throw new Error('Workspace id not found');
     }
-    await removeLogo({
+    await updateWorkspce({
+      variables: {
+        input: {
+          logo: null,
+        },
+      },
       onCompleted: () => {
         setCurrentWorkspace({
           ...currentWorkspace,

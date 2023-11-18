@@ -14,7 +14,7 @@ export const useBoardColumns = () => {
 
   const { updateOneObject: updateOnePipelineStep } =
     useUpdateOneObjectRecord<PipelineStep>({
-      objectNameSingular: 'pipelineStepV2',
+      objectNameSingular: 'pipelineStep',
     });
 
   const updatedPipelineStages = (stages: BoardColumnDefinition[]) => {

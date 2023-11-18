@@ -61,7 +61,7 @@ export const CreateProfile = () => {
 
   const { updateOneObject, objectNotFoundInMetadata } =
     useUpdateOneObjectRecord<WorkspaceMember>({
-      objectNameSingular: 'workspaceMemberV2',
+      objectNameSingular: 'workspaceMember',
     });
 
   // Form

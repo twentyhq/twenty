@@ -20,22 +20,22 @@ import {
 } from 'src/metadata/field-metadata/field-metadata.entity';
 
 export const standardObjectsMetadata = {
-  activityTargetV2: activityTargetMetadata,
-  activityV2: activityMetadata,
-  apiKeyV2: apiKeyMetadata,
-  attachmentV2: attachmentMetadata,
-  commentV2: commentMetadata,
-  companyV2: companyMetadata,
-  favoriteV2: favoriteMetadata,
-  opportunityV2: opportunityMetadata,
-  personV2: personMetadata,
-  pipelineStepV2: pipelineStepMetadata,
-  viewFieldV2: viewFieldMetadata,
-  viewFilterV2: viewFilterMetadata,
-  viewSortV2: viewSortMetadata,
-  viewV2: viewMetadata,
-  webhookV2: webhookMetadata,
-  workspaceMemberV2: workspaceMemberMetadata,
+  activityTarget: activityTargetMetadata,
+  activity: activityMetadata,
+  apiKey: apiKeyMetadata,
+  attachment: attachmentMetadata,
+  comment: commentMetadata,
+  company: companyMetadata,
+  favorite: favoriteMetadata,
+  opportunity: opportunityMetadata,
+  person: personMetadata,
+  pipelineStep: pipelineStepMetadata,
+  viewField: viewFieldMetadata,
+  viewFilter: viewFilterMetadata,
+  viewSort: viewSortMetadata,
+  view: viewMetadata,
+  webhook: webhookMetadata,
+  workspaceMember: workspaceMemberMetadata,
 };
 
 export const basicFieldsMetadata: Partial<FieldMetadataEntity>[] = [

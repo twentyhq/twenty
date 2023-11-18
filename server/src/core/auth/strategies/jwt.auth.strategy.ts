@@ -1,16 +1,13 @@
 import { PassportStrategy } from '@nestjs/passport';
-import {
-  ForbiddenException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Strategy, ExtractJwt } from 'passport-jwt';
-import { User, Workspace } from '@prisma/client';
+import { Repository } from 'typeorm';
 
-import { PrismaService } from 'src/database/prisma.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { assert } from 'src/utils/assert';
+import { Workspace } from 'src/core/workspace/workspace.entity';
+import { User } from 'src/core/user/user.entity';
 
 export type JwtPayload = { sub: string; workspaceId: string; jti?: string };
 export type PassportUser = { user?: User; workspace: Workspace };
@@ -19,7 +16,10 @@ export type PassportUser = { user?: User; workspace: Workspace };
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly environmentService: EnvironmentService,
-    private readonly prismaService: PrismaService,
+    @InjectRepository(Workspace)
+    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -29,25 +29,29 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: JwtPayload): Promise<PassportUser> {
-    const workspace = await this.prismaService.client.workspace.findUnique({
-      where: { id: payload.workspaceId ?? payload.sub },
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: payload.workspaceId ?? payload.sub,
     });
     if (!workspace) {
       throw new UnauthorizedException();
     }
     if (payload.jti) {
       // If apiKey has been deleted or revoked, we throw an error
-      const apiKey = await this.prismaService.client.apiKey.findUniqueOrThrow({
-        where: { id: payload.jti },
-      });
-      assert(!apiKey.revokedAt, 'This API Key is revoked', ForbiddenException);
+      // const apiKey = await this.prismaService.client.apiKey.findUniqueOrThrow({
+      //   where: { id: payload.jti },
+      // });
+      // assert(!apiKey.revokedAt, 'This API Key is revoked', ForbiddenException);
     }
 
     const user = payload.workspaceId
-      ? await this.prismaService.client.user.findUniqueOrThrow({
-          where: { id: payload.sub },
+      ? await this.userRepository.findOneBy({
+          id: payload.sub,
         })
       : undefined;
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
 
     return { user, workspace };
   }

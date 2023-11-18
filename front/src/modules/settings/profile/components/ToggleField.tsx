@@ -14,7 +14,7 @@ export const ToggleField = () => {
 
   const { updateOneObject, objectNotFoundInMetadata } =
     useUpdateOneObjectRecord({
-      objectNameSingular: 'workspaceMemberV2',
+      objectNameSingular: 'workspaceMember',
     });
 
   const handleChange = async (value: boolean) => {

@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { CompanyPicker } from '@/companies/components/CompanyPicker';
 import { PeoplePicker } from '@/people/components/PeoplePicker';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
-import { UserPicker } from '@/users/components/UserPicker';
+import { WorkspaceMemberPicker } from '@/workspace-member/components/WorkspaceMemberPicker';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useRelationField } from '../../hooks/useRelationField';
@@ -48,7 +48,7 @@ export const RelationFieldInput = ({
           initialSearchFilter={initialSearchValue}
         />
       ) : fieldDefinition.metadata.fieldName === 'accountOwner' ? (
-        <UserPicker
+        <WorkspaceMemberPicker
           userId={initialValue?.id ?? ''}
           onSubmit={handleSubmit}
           onCancel={onCancel}

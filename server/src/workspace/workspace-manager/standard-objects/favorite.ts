@@ -1,8 +1,8 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const favoriteMetadata = {
-  nameSingular: 'favoriteV2',
-  namePlural: 'favoritesV2',
+  nameSingular: 'favorite',
+  namePlural: 'favorites',
   labelSingular: 'Favorite',
   labelPlural: 'Favorites',
   targetTableName: 'favorite',

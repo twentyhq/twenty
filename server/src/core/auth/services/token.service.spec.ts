@@ -1,8 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
 
-import { PrismaService } from 'src/database/prisma.service';
-import { prismaMock } from 'src/database/client-mock/jest-prisma-singleton';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 import { TokenService } from './token.service';
@@ -21,10 +19,6 @@ describe('TokenService', () => {
         {
           provide: EnvironmentService,
           useValue: {},
-        },
-        {
-          provide: PrismaService,
-          useValue: prismaMock,
         },
       ],
     }).compile();

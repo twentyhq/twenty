@@ -1,11 +1,17 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { PrismaService } from 'src/database/prisma.service';
-import { UserModule } from 'src/core/user/user.module';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
+
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { WorkspaceModule } from 'src/core/workspace/workspace.module';
 import { FileModule } from 'src/core/file/file.module';
+import { Workspace } from 'src/core/workspace/workspace.entity';
+import { User } from 'src/core/user/user.entity';
+import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
+
+// eslint-disable-next-line no-restricted-imports
+import config from '../../../ormconfig';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -28,15 +34,16 @@ const jwtModule = JwtModule.registerAsync({
 });
 
 @Module({
-  imports: [jwtModule, UserModule, WorkspaceModule, FileModule],
-  controllers: [GoogleAuthController, VerifyAuthController],
-  providers: [
-    AuthService,
-    TokenService,
-    JwtAuthStrategy,
-    PrismaService,
-    AuthResolver,
+  imports: [
+    jwtModule,
+    FileModule,
+    TypeOrmModule.forRoot(config),
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [TypeOrmModule.forFeature([Workspace, User, RefreshToken])],
+    }),
   ],
+  controllers: [GoogleAuthController, VerifyAuthController],
+  providers: [AuthService, TokenService, JwtAuthStrategy, AuthResolver],
   exports: [jwtModule],
 })
 export class AuthModule {}

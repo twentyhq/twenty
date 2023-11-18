@@ -92,14 +92,9 @@ export const ActivityRelationEditableFieldEditMode = ({
   const { closeInlineCell: closeEditableField } = useInlineCell();
 
   const handleSubmit = useCallback(() => {
-    handleCheckItemsChange(selectedEntityIds, entitiesToSelect);
+    //handleCheckItemsChange(selectedEntityIds, entitiesToSelect);
     closeEditableField();
-  }, [
-    handleCheckItemsChange,
-    selectedEntityIds,
-    entitiesToSelect,
-    closeEditableField,
-  ]);
+  }, [closeEditableField]);
 
   const handleCancel = () => {
     closeEditableField();

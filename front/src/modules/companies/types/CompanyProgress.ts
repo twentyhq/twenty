@@ -1,5 +1,5 @@
+import { Company } from '@/companies/types/Company';
 import { Opportunity } from '@/pipeline/types/Opportunity';
-import { Company } from '~/generated/graphql';
 
 export type CompanyForBoard = Pick<Company, 'id' | 'name' | 'domainName'>;
 export type PipelineProgressForBoard = Opportunity;

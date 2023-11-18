@@ -3,7 +3,7 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -43,7 +43,9 @@ export const CreateWorkspace = () => {
   const navigate = useNavigate();
 
   const { enqueueSnackBar } = useSnackBar();
-  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
+    currentWorkspaceState,
+  );
 
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
@@ -66,7 +68,7 @@ export const CreateWorkspace = () => {
       try {
         const result = await updateWorkspace({
           variables: {
-            data: {
+            input: {
               displayName: data.name,
             },
           },

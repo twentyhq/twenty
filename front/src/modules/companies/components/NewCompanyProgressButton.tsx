@@ -9,7 +9,6 @@ import { BoardColumnContext } from '@/ui/layout/board/contexts/BoardColumnContex
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { useCreateCompanyProgress } from '../hooks/useCreateCompanyProgress';
 import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompanyQuery';
 
 export const NewCompanyProgressButton = () => {
@@ -25,8 +24,6 @@ export const NewCompanyProgressButton = () => {
     setHotkeyScopeAndMemorizePreviousScope,
   } = usePreviousHotkeyScope();
 
-  const createCompanyProgress = useCreateCompanyProgress();
-
   const handleEntitySelect = (company: any) => {
     setIsCreatingCard(false);
     goBackToPreviousHotkeyScope();
@@ -39,7 +36,7 @@ export const NewCompanyProgressButton = () => {
       throw new Error('Pipeline stage id is not defined');
     }
 
-    createCompanyProgress(company.id, pipelineStageId);
+    //createCompanyProgress(company.id, pipelineStageId);
   };
 
   const handleNewClick = useCallback(() => {

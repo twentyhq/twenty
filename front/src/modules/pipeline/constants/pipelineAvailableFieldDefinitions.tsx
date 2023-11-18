@@ -1,3 +1,4 @@
+import { Person } from '@/people/types/Person';
 import {
   IconCalendarEvent,
   IconCurrencyDollar,
@@ -13,7 +14,6 @@ import {
   FieldRelationMetadata,
 } from '@/ui/object/field/types/FieldMetadata';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
-import { Person } from '~/generated/graphql';
 
 export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
@@ -75,7 +75,7 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
       infoTooltipContent: 'Primary contact within the company.',
       entityChipDisplayMapper: (dataObject: Person) => {
         return {
-          name: dataObject?.displayName,
+          name: dataObject?.name.firstName + ' ' + dataObject?.name.lastName,
           pictureUrl: dataObject?.avatarUrl ?? undefined,
           avatarType: 'rounded',
         };

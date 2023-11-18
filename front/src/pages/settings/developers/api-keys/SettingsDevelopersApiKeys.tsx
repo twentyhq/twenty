@@ -45,14 +45,14 @@ export const SettingsDevelopersApiKeys = () => {
 
   const [apiKeys, setApiKeys] = useState<Array<ApiFieldItem>>([]);
   const { registerOptimisticEffect } = useOptimisticEffect({
-    objectNameSingular: 'apiKeyV2',
+    objectNameSingular: 'apiKey',
   });
   const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
-    objectNameSingular: 'apiKeyV2',
+    objectNameSingular: 'apiKey',
   });
   const filter = { revokedAt: { eq: null } };
   useFindManyObjectRecords({
-    objectNamePlural: 'apiKeysV2',
+    objectNamePlural: 'apiKeys',
     filter,
     onCompleted: (data) => {
       setApiKeys(

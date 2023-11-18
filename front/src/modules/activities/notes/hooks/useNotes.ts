@@ -5,7 +5,7 @@ import { ActivityTargetableEntity } from '../../types/ActivityTargetableEntity';
 
 export const useNotes = (entity: ActivityTargetableEntity) => {
   const { objects: notes } = useFindManyObjectRecords({
-    objectNamePlural: 'activitiesV2',
+    objectNamePlural: 'activities',
     filter: {
       type: { equals: 'None' },
       activityTargets: {

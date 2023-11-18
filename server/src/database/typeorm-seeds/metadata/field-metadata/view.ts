@@ -1,8 +1,8 @@
 import { DataSource } from 'typeorm';
 
-import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const fieldMetadataTableName = 'fieldMetadata';
 

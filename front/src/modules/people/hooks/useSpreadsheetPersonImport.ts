@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
 import { SpreadsheetOptions } from '@/spreadsheet-import/types';
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
-import { useInsertManyPersonMutation } from '~/generated/graphql';
 
 import { fieldsForPerson } from '../utils/fieldsForPerson';
 
@@ -12,8 +11,6 @@ export type FieldPersonMapping = (typeof fieldsForPerson)[number]['key'];
 export const useSpreadsheetPersonImport = () => {
   const { openSpreadsheetImport } = useSpreadsheetImport<FieldPersonMapping>();
   const { enqueueSnackBar } = useSnackBar();
-
-  const [createManyPerson] = useInsertManyPersonMutation();
 
   const openPersonSpreadsheetImport = (
     options?: Omit<
@@ -37,22 +34,23 @@ export const useSpreadsheetPersonImport = () => {
           city: person.city as string | undefined,
         }));
 
-        try {
-          const result = await createManyPerson({
-            variables: {
-              data: createInputs,
-            },
-            refetchQueries: 'active',
-          });
+        // TODO : abstract this part for any object
+        // try {
+        //   const result = await createManyPerson({
+        //     variables: {
+        //       data: createInputs,
+        //     },
+        //     refetchQueries: 'active',
+        //   });
 
-          if (result.errors) {
-            throw result.errors;
-          }
-        } catch (error: any) {
-          enqueueSnackBar(error?.message || 'Something went wrong', {
-            variant: 'error',
-          });
-        }
+        //   if (result.errors) {
+        //     throw result.errors;
+        //   }
+        // } catch (error: any) {
+        //   enqueueSnackBar(error?.message || 'Something went wrong', {
+        //     variant: 'error',
+        //   });
+        // }
       },
       fields: fieldsForPerson,
     });

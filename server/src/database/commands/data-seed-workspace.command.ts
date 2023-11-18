@@ -12,6 +12,7 @@ import { seedOpportunity } from 'src/database/typeorm-seeds/workspace/opportunit
 import { seedPipelineStep } from 'src/database/typeorm-seeds/workspace/pipeline-step';
 import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/workspaceMember';
 import { seedPeople } from 'src/database/typeorm-seeds/workspace/people';
+import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
 
 // TODO: implement dry-run
 @Command({
@@ -46,6 +47,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     }
 
     try {
+      await seedCoreSchema(workspaceDataSource, 'core');
       await seedMetadataSchema(workspaceDataSource, 'metadata');
 
       await this.workspaceMigrationService.insertStandardMigrations(

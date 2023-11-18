@@ -91,7 +91,7 @@ export const RecordShowPage = () => {
     if (isFavorite) deleteFavorite(object?.id);
     else {
       const additionalData =
-        objectNameSingular === 'personV2'
+        objectNameSingular === 'person'
           ? {
               labelIdentifier:
                 object.name.firstName + ' ' + object.name.lastName,
@@ -100,7 +100,7 @@ export const RecordShowPage = () => {
               link: `/object/personV2/${object.id}`,
               recordId: object.id,
             }
-          : objectNameSingular === 'companyV2'
+          : objectNameSingular === 'company'
           ? {
               labelIdentifier: object.name,
               avatarUrl: getLogoUrlFromDomainName(object.domainName ?? ''),
@@ -116,7 +116,7 @@ export const RecordShowPage = () => {
   if (!object) return <></>;
 
   const pageName =
-    objectNameSingular === 'personV2'
+    objectNameSingular === 'person'
       ? object.name.firstName + ' ' + object.name.lastName
       : object.name;
 

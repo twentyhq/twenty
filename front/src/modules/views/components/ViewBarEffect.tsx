@@ -34,7 +34,7 @@ export const ViewBarEffect = () => {
   const viewObjectMetadataId = useRecoilValue(viewObjectMetadataIdState);
 
   useFindManyObjectRecords({
-    objectNamePlural: 'viewsV2',
+    objectNamePlural: 'views',
     filter: {
       type: { eq: viewType },
       objectMetadataId: { eq: viewObjectMetadataId },
@@ -66,7 +66,7 @@ export const ViewBarEffect = () => {
 
   useFindManyObjectRecords({
     skip: !currentViewId,
-    objectNamePlural: 'viewFieldsV2',
+    objectNamePlural: 'viewFields',
     filter: { viewId: { eq: currentViewId } },
     onCompleted: useRecoilCallback(
       ({ snapshot, set }) =>
@@ -107,7 +107,7 @@ export const ViewBarEffect = () => {
 
   useFindManyObjectRecords({
     skip: !currentViewId,
-    objectNamePlural: 'viewFiltersV2',
+    objectNamePlural: 'viewFilters',
     filter: { viewId: { eq: currentViewId } },
     onCompleted: useRecoilCallback(
       ({ snapshot, set }) =>
@@ -161,7 +161,7 @@ export const ViewBarEffect = () => {
 
   useFindManyObjectRecords({
     skip: !currentViewId,
-    objectNamePlural: 'viewSortsV2',
+    objectNamePlural: 'viewSorts',
     filter: { viewId: { eq: currentViewId } },
     onCompleted: useRecoilCallback(
       ({ snapshot, set }) =>

@@ -152,7 +152,7 @@ export const CompanyBoardCard = () => {
 
   const useUpdateOneObjectMutation: () => [(params: any) => any, any] = () => {
     const { updateOneObject } = useUpdateOneObjectRecord({
-      objectNameSingular: 'opportunityV2',
+      objectNameSingular: 'opportunity',
     });
 
     const updateEntity = ({

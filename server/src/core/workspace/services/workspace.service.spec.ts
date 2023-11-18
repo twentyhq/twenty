@@ -1,13 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { PrismaService } from 'src/database/prisma.service';
-import { prismaMock } from 'src/database/client-mock/jest-prisma-singleton';
-import { PipelineService } from 'src/core/pipeline/services/pipeline.service';
-import { PipelineStageService } from 'src/core/pipeline/services/pipeline-stage.service';
-import { PersonService } from 'src/core/person/person.service';
-import { CompanyService } from 'src/core/company/company.service';
-import { PipelineProgressService } from 'src/core/pipeline/services/pipeline-progress.service';
-import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
+import { Workspace } from 'src/core/workspace/workspace.entity';
 
 import { WorkspaceService } from './workspace.service';
 
@@ -19,31 +13,7 @@ describe('WorkspaceService', () => {
       providers: [
         WorkspaceService,
         {
-          provide: PrismaService,
-          useValue: prismaMock,
-        },
-        {
-          provide: PipelineService,
-          useValue: {},
-        },
-        {
-          provide: PipelineStageService,
-          useValue: {},
-        },
-        {
-          provide: PersonService,
-          useValue: {},
-        },
-        {
-          provide: CompanyService,
-          useValue: {},
-        },
-        {
-          provide: PipelineProgressService,
-          useValue: {},
-        },
-        {
-          provide: WorkspaceManagerService,
+          provide: getRepositoryToken(Workspace),
           useValue: {},
         },
       ],

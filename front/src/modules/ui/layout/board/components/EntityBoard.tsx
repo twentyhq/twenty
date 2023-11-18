@@ -14,7 +14,6 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { PipelineProgress, PipelineStage } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
 
 import { useCurrentCardSelected } from '../hooks/useCurrentCardSelected';
@@ -58,7 +57,7 @@ export const EntityBoard = ({
 
   const { updateOneObject: updateOneOpportunity } =
     useUpdateOneObjectRecord<Opportunity>({
-      objectNameSingular: 'opportunityV2',
+      objectNameSingular: 'opportunity',
     });
 
   const apolloClient = useApolloClient();
@@ -66,10 +65,7 @@ export const EntityBoard = ({
   const { unselectAllActiveCards } = useCurrentCardSelected();
 
   const updatePipelineProgressStageInDB = useCallback(
-    async (
-      pipelineProgressId: NonNullable<PipelineProgress['id']>,
-      pipelineStageId: NonNullable<PipelineStage['id']>,
-    ) => {
+    async (pipelineProgressId: string, pipelineStageId: string) => {
       await updateOneOpportunity?.({
         idToUpdate: pipelineProgressId,
         input: {

@@ -4,11 +4,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { Prisma } from '@prisma/client';
+import { Repository } from 'typeorm';
 
 import { ChallengeInput } from 'src/core/auth/dto/challenge.input';
-import { UserService } from 'src/core/user/user.service';
 import { assert } from 'src/utils/assert';
 import {
   PASSWORD_REGEX,
@@ -17,9 +17,10 @@ import {
 } from 'src/core/auth/auth.util';
 import { Verify } from 'src/core/auth/dto/verify.entity';
 import { UserExists } from 'src/core/auth/dto/user-exists.entity';
-import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 import { WorkspaceInviteHashValid } from 'src/core/auth/dto/workspace-invite-hash-valid.entity';
 import { SignUpInput } from 'src/core/auth/dto/sign-up.input';
+import { User } from 'src/core/user/user.entity';
+import { Workspace } from 'src/core/workspace/workspace.entity';
 
 import { TokenService } from './token.service';
 
@@ -33,15 +34,15 @@ export type UserPayload = {
 export class AuthService {
   constructor(
     private readonly tokenService: TokenService,
-    private readonly userService: UserService,
-    private readonly workspaceService: WorkspaceService,
+    @InjectRepository(Workspace)
+    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async challenge(challengeInput: ChallengeInput) {
-    const user = await this.userService.findUnique({
-      where: {
-        email: challengeInput.email,
-      },
+    const user = await this.userRepository.findOneBy({
+      email: challengeInput.email,
     });
 
     assert(user, "This user doesn't exist", NotFoundException);
@@ -58,10 +59,8 @@ export class AuthService {
   }
 
   async signUp(signUpInput: SignUpInput) {
-    const existingUser = await this.userService.findUnique({
-      where: {
-        email: signUpInput.email,
-      },
+    const existingUser = await this.userRepository.findOneBy({
+      email: signUpInput.email,
     });
     assert(!existingUser, 'This user already exists', ForbiddenException);
 
@@ -71,10 +70,8 @@ export class AuthService {
     const passwordHash = await hashPassword(signUpInput.password);
 
     if (signUpInput.workspaceInviteHash) {
-      const workspace = await this.workspaceService.findFirst({
-        where: {
-          inviteHash: signUpInput.workspaceInviteHash,
-        },
+      const workspace = await this.workspaceRepository.findOneBy({
+        inviteHash: signUpInput.workspaceInviteHash,
       });
 
       assert(
@@ -83,37 +80,21 @@ export class AuthService {
         ForbiddenException,
       );
 
-      return await this.userService.createUser(
-        {
-          data: {
-            email: signUpInput.email,
-            passwordHash,
-          },
-        } as Prisma.UserCreateArgs,
-        workspace.id,
-      );
-    }
-
-    return await this.userService.createUser({
-      data: {
+      return await this.userRepository.create({
         email: signUpInput.email,
         passwordHash,
-        locale: 'en',
-      },
-    } as Prisma.UserCreateArgs);
+      });
+    }
+
+    return await this.userRepository.create({
+      email: signUpInput.email,
+      passwordHash,
+    });
   }
 
-  async verify(
-    email: string,
-    select: Prisma.UserSelect & {
-      id: true;
-    },
-  ): Promise<Verify> {
-    const user = await this.userService.findUnique({
-      where: {
-        email,
-      },
-      select,
+  async verify(email: string): Promise<Verify> {
+    const user = await this.userRepository.findOneBy({
+      email,
     });
 
     assert(user, "This user doesn't exist", NotFoundException);
@@ -134,10 +115,8 @@ export class AuthService {
   }
 
   async checkUserExists(email: string): Promise<UserExists> {
-    const user = await this.userService.findUnique({
-      where: {
-        email,
-      },
+    const user = await this.userRepository.findOneBy({
+      email,
     });
 
     return { exists: !!user };
@@ -146,26 +125,16 @@ export class AuthService {
   async checkWorkspaceInviteHashIsValid(
     inviteHash: string,
   ): Promise<WorkspaceInviteHashValid> {
-    const workspace = await this.workspaceService.findFirst({
-      where: {
-        inviteHash,
-      },
+    const workspace = await this.workspaceRepository.findOneBy({
+      inviteHash,
     });
 
     return { isValid: !!workspace };
   }
 
-  async impersonate(
-    userId: string,
-    select: Prisma.UserSelect & {
-      id: true;
-    },
-  ) {
-    const user = await this.userService.findUnique({
-      where: {
-        id: userId,
-      },
-      select,
+  async impersonate(userId: string) {
+    const user = await this.userRepository.findOneBy({
+      id: userId,
     });
 
     assert(user, "This user doesn't exist", NotFoundException);

@@ -1,8 +1,10 @@
-import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
+import { useQuery } from '@apollo/client';
+
+import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useFilteredSearchEntityQueryV2 } from '@/search/hooks/useFilteredSearchEntityQueryV2';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { ObjectFilterDropdownEntitySearchSelect } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownEntitySearchSelect';
 import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
-import { useSearchUserQuery } from '~/generated/graphql';
 
 export const FilterDropdownUserSearchSelect = () => {
   const {
@@ -10,31 +12,40 @@ export const FilterDropdownUserSearchSelect = () => {
     objectFilterDropdownSelectedEntityId,
   } = useFilter();
 
-  const usersForSelect = useFilteredSearchEntityQuery({
-    queryHook: useSearchUserQuery,
+  const { findManyQuery } = useFindOneObjectMetadataItem({
+    objectNameSingular: 'workspaceMember',
+  });
+
+  const useFindManyWorkspaceMembers = (options: any) =>
+    useQuery(findManyQuery, options);
+
+  const workspaceMembers = useFilteredSearchEntityQueryV2({
+    queryHook: useFindManyWorkspaceMembers,
     filters: [
       {
-        fieldNames: ['firstName', 'lastName'],
+        fieldNames: ['name.firstName', 'name.lastName'],
         filter: objectFilterDropdownSearchInput,
       },
     ],
-    orderByField: 'lastName',
-    mappingFunction: (user) => ({
-      id: user.id,
-      entityType: Entity.User,
-      name: `${user.displayName}`,
+    orderByField: 'createdAt',
+    mappingFunction: (workspaceMember) => ({
+      entityType: Entity.WorkspaceMember,
+      id: workspaceMember.id,
+      name:
+        workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName,
       avatarType: 'rounded',
-      avatarUrl: user.avatarUrl ?? '',
-      originalEntity: user,
+      avatarUrl: '',
+      originalEntity: workspaceMember,
     }),
     selectedIds: objectFilterDropdownSelectedEntityId
       ? [objectFilterDropdownSelectedEntityId]
       : [],
+    objectNamePlural: 'workspaceMembers',
   });
 
   return (
     <ObjectFilterDropdownEntitySearchSelect
-      entitiesForSelect={usersForSelect}
+      entitiesForSelect={workspaceMembers}
     />
   );
 };

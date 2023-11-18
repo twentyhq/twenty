@@ -1,4 +1,5 @@
 import { FilterDropdownCompanySearchSelect } from '@/companies/components/FilterDropdownCompanySearchSelect';
+import { Opportunity } from '@/pipeline/types/Opportunity';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -6,11 +7,10 @@ import {
   IconUser,
 } from '@/ui/display/icon/index';
 import { FilterDefinitionByEntity } from '@/ui/object/object-filter-dropdown/types/FilterDefinitionByEntity';
-import { PipelineProgress } from '~/generated/graphql';
 
 import { FilterDropdownPeopleSearchSelect } from '../../../modules/people/components/FilterDropdownPeopleSearchSelect';
 
-export const opportunityBoardFilterDefinitions: FilterDefinitionByEntity<PipelineProgress>[] =
+export const opportunityBoardFilterDefinitions: FilterDefinitionByEntity<Opportunity>[] =
   [
     {
       fieldMetadataId: 'amount',

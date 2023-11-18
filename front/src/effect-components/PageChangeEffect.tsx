@@ -16,10 +16,7 @@ import { IconCheckbox, IconNotes } from '@/ui/display/icon';
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import { TableHotkeyScope } from '@/ui/object/record-table/types/TableHotkeyScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import {
-  ActivityType,
-  useGetWorkspaceFromInviteHashLazyQuery,
-} from '~/generated/graphql';
+import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
 
 import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
 
@@ -206,7 +203,7 @@ export const PageChangeEffect = () => {
             Icon: IconNotes,
             onCommandClick: () =>
               openCreateActivity({
-                type: ActivityType.Note,
+                type: 'Note',
                 targetableEntities: entity ? [entity] : undefined,
               }),
           },
@@ -229,7 +226,7 @@ export const PageChangeEffect = () => {
             Icon: IconCheckbox,
             onCommandClick: () =>
               openCreateActivity({
-                type: ActivityType.Task,
+                type: 'Task',
                 targetableEntities: entity ? [entity] : undefined,
               }),
           },
@@ -240,7 +237,7 @@ export const PageChangeEffect = () => {
             Icon: IconNotes,
             onCommandClick: () =>
               openCreateActivity({
-                type: ActivityType.Note,
+                type: 'Note',
                 targetableEntities: entity ? [entity] : undefined,
               }),
           },
@@ -254,8 +251,7 @@ export const PageChangeEffect = () => {
             label: 'Create Task',
             type: CommandType.Create,
             Icon: IconCheckbox,
-            onCommandClick: () =>
-              openCreateActivity({ type: ActivityType.Task }),
+            onCommandClick: () => openCreateActivity({ type: 'Task' }),
           },
         ]);
         break;

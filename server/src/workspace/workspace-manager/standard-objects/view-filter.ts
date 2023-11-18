@@ -1,8 +1,8 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const viewFilterMetadata = {
-  nameSingular: 'viewFilterV2',
-  namePlural: 'viewFiltersV2',
+  nameSingular: 'viewFilter',
+  namePlural: 'viewFilters',
   labelSingular: 'View Filter',
   labelPlural: 'View Filters',
   targetTableName: 'viewFilter',

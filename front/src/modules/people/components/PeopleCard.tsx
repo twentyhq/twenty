@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 
+import { Person } from '@/people/types/Person';
 import { IconDotsVertical, IconLinkOff, IconTrash } from '@/ui/display/icon';
 import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -11,16 +11,9 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
-import {
-  Person,
-  useDeleteManyPersonMutation,
-  useUpdateOnePersonMutation,
-} from '~/generated/graphql';
-
-import { GET_PEOPLE } from '../graphql/queries/getPeople';
 
 export type PeopleCardProps = {
-  person: Pick<Person, 'id' | 'avatarUrl' | 'displayName' | 'jobTitle'>;
+  person: Pick<Person, 'id' | 'avatarUrl' | 'name' | 'jobTitle'>;
   hasBottomBorder?: boolean;
 };
 
@@ -78,8 +71,6 @@ export const PeopleCard = ({
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
-  const [updatePerson] = useUpdateOnePersonMutation();
-  const [deletePerson] = useDeleteManyPersonMutation();
 
   const { refs, floatingStyles } = useFloating({
     strategy: 'absolute',
@@ -114,28 +105,28 @@ export const PeopleCard = ({
   };
 
   const handleDetachPerson = () => {
-    updatePerson({
-      variables: {
-        where: {
-          id: person.id,
-        },
-        data: {
-          company: {
-            disconnect: true,
-          },
-        },
-      },
-      refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
-    });
+    // updatePerson({
+    //   variables: {
+    //     where: {
+    //       id: person.id,
+    //     },
+    //     data: {
+    //       company: {
+    //         disconnect: true,
+    //       },
+    //     },
+    //   },
+    //   refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
+    // });
   };
 
   const handleDeletePerson = () => {
-    deletePerson({
-      variables: {
-        ids: person.id,
-      },
-      refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
-    });
+    // deletePerson({
+    //   variables: {
+    //     ids: person.id,
+    //   },
+    //   refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
+    // });
   };
 
   return (
@@ -149,11 +140,13 @@ export const PeopleCard = ({
       <Avatar
         size="lg"
         type="rounded"
-        placeholder={person.displayName}
+        placeholder={person.name.firstName + ' ' + person.name.lastName}
         avatarUrl={person.avatarUrl}
       />
       <StyledCardInfo>
-        <StyledTitle>{person.displayName}</StyledTitle>
+        <StyledTitle>
+          {person.name.firstName + ' ' + person.name.lastName}
+        </StyledTitle>
         {person.jobTitle && <StyledJobTitle>{person.jobTitle}</StyledJobTitle>}
       </StyledCardInfo>
       {isHovered && (

@@ -17,7 +17,7 @@ import { SingleEntitySelect } from '../SingleEntitySelect';
 const entities = mockedPeopleData.map<EntityForSelect>((person) => ({
   id: person.id,
   entityType: Entity.Person,
-  name: person.displayName,
+  name: person.name.firstName + ' ' + person.name.lastName,
   originalEntity: person,
 }));
 

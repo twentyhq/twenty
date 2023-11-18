@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { flip, offset, useFloating } from '@floating-ui/react';
 import { v4 } from 'uuid';
@@ -8,7 +7,6 @@ import {
   PeoplePicker,
   PersonForSelect,
 } from '@/people/components/PeoplePicker';
-import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
 import { IconPlus } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
@@ -16,10 +14,6 @@ import { DoubleTextInput } from '@/ui/object/field/meta-types/input/components/i
 import { FieldDoubleText } from '@/ui/object/field/types/FieldDoubleText';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import {
-  useInsertOnePersonMutation,
-  useUpdateOnePersonMutation,
-} from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   position: static;
@@ -56,8 +50,6 @@ export const AddPersonToCompany = ({
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCreationDropdownOpen, setIsCreationDropdownOpen] = useState(false);
-  const [updatePerson] = useUpdateOnePersonMutation();
-  const [insertOnePerson] = useInsertOnePersonMutation();
   const { refs, floatingStyles } = useFloating({
     open: isDropdownOpen,
     placement: 'right-start',
@@ -77,17 +69,17 @@ export const AddPersonToCompany = ({
   const handlePersonSelected =
     (companyId: string) => async (newPerson: PersonForSelect | null) => {
       if (newPerson) {
-        await updatePerson({
-          variables: {
-            where: {
-              id: newPerson.id,
-            },
-            data: {
-              company: { connect: { id: companyId } },
-            },
-          },
-          refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
-        });
+        // await updatePerson({
+        //   variables: {
+        //     where: {
+        //       id: newPerson.id,
+        //     },
+        //     data: {
+        //       company: { connect: { id: companyId } },
+        //     },
+        //   },
+        //   refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
+        // });
         handleClosePicker();
       }
     };
@@ -114,17 +106,17 @@ export const AddPersonToCompany = ({
   }: FieldDoubleText) => {
     if (!firstValue && !secondValue) return;
     const newPersonId = v4();
-    await insertOnePerson({
-      variables: {
-        data: {
-          company: { connect: { id: companyId } },
-          id: newPersonId,
-          firstName: firstValue,
-          lastName: secondValue,
-        },
-      },
-      refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
-    });
+    // await insertOnePerson({
+    //   variables: {
+    //     data: {
+    //       company: { connect: { id: companyId } },
+    //       id: newPersonId,
+    //       firstName: firstValue,
+    //       lastName: secondValue,
+    //     },
+    //   },
+    //   refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
+    // });
     setIsCreationDropdownOpen(false);
   };
 

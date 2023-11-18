@@ -1,8 +1,8 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const webhookMetadata = {
-  nameSingular: 'webhookV2',
-  namePlural: 'webhooksV2',
+  nameSingular: 'webhook',
+  namePlural: 'webhooks',
   labelSingular: 'Webhook',
   labelPlural: 'Webhooks',
   targetTableName: 'webhook',

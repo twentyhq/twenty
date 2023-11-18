@@ -20,91 +20,7 @@ export type Scalars = {
   DateTime: { input: any; output: any; }
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: { input: any; output: any; }
-  /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-  JSONObject: { input: any; output: any; }
 };
-
-export type Activity = {
-  __typename?: 'Activity';
-  activityTargets?: Maybe<Array<ActivityTarget>>;
-  assignee?: Maybe<User>;
-  assigneeId?: Maybe<Scalars['String']['output']>;
-  attachments?: Maybe<Array<Attachment>>;
-  author: User;
-  authorId: Scalars['String']['output'];
-  body?: Maybe<Scalars['String']['output']>;
-  comments?: Maybe<Array<Comment>>;
-  completedAt?: Maybe<Scalars['DateTime']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  dueAt?: Maybe<Scalars['DateTime']['output']>;
-  id: Scalars['ID']['output'];
-  reminderAt?: Maybe<Scalars['DateTime']['output']>;
-  title?: Maybe<Scalars['String']['output']>;
-  type: ActivityType;
-  updatedAt: Scalars['DateTime']['output'];
-  workspaceMemberAssignee?: Maybe<WorkspaceMember>;
-  workspaceMemberAssigneeId?: Maybe<Scalars['String']['output']>;
-  workspaceMemberAuthor?: Maybe<WorkspaceMember>;
-  workspaceMemberAuthorId?: Maybe<Scalars['String']['output']>;
-};
-
-export type ActivityTarget = {
-  __typename?: 'ActivityTarget';
-  activity: Activity;
-  activityId: Scalars['String']['output'];
-  company?: Maybe<Company>;
-  companyId?: Maybe<Scalars['String']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['ID']['output'];
-  person?: Maybe<Person>;
-  personId?: Maybe<Scalars['String']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export enum ActivityType {
-  Note = 'Note',
-  Task = 'Task'
-}
-
-export type ApiKey = {
-  __typename?: 'ApiKey';
-  createdAt: Scalars['DateTime']['output'];
-  expiresAt?: Maybe<Scalars['DateTime']['output']>;
-  id: Scalars['ID']['output'];
-  name: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type Attachment = {
-  __typename?: 'Attachment';
-  activity?: Maybe<Activity>;
-  activityId?: Maybe<Scalars['String']['output']>;
-  author: User;
-  authorId: Scalars['String']['output'];
-  company?: Maybe<Company>;
-  companyId?: Maybe<Scalars['String']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  fullPath: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  name: Scalars['String']['output'];
-  person?: Maybe<Person>;
-  personId?: Maybe<Scalars['String']['output']>;
-  type: AttachmentType;
-  updatedAt: Scalars['DateTime']['output'];
-  workspace: Workspace;
-  workspaceMemberAuthor?: Maybe<WorkspaceMember>;
-  workspaceMemberAuthorId?: Maybe<Scalars['String']['output']>;
-};
-
-export enum AttachmentType {
-  Archive = 'Archive',
-  Audio = 'Audio',
-  Image = 'Image',
-  Other = 'Other',
-  Spreadsheet = 'Spreadsheet',
-  TextDocument = 'TextDocument',
-  Video = 'Video'
-}
 
 export type AuthProviders = {
   __typename?: 'AuthProviders';
@@ -130,53 +46,8 @@ export type BooleanFieldComparison = {
   isNot?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export enum ColorScheme {
-  Dark = 'Dark',
-  Light = 'Light',
-  System = 'System'
-}
-
-export type Comment = {
-  __typename?: 'Comment';
-  activity?: Maybe<Activity>;
-  activityId?: Maybe<Scalars['String']['output']>;
-  author: User;
-  authorId: Scalars['String']['output'];
-  body: Scalars['String']['output'];
-  commentThreadId?: Maybe<Scalars['String']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['ID']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-  workspaceMemberAuthor?: Maybe<WorkspaceMember>;
-  workspaceMemberAuthorId?: Maybe<Scalars['String']['output']>;
-};
-
-export type Company = {
-  __typename?: 'Company';
-  ActivityTarget?: Maybe<Array<ActivityTarget>>;
-  Attachment?: Maybe<Array<Attachment>>;
-  Favorite?: Maybe<Array<Favorite>>;
-  PipelineProgress?: Maybe<Array<PipelineProgress>>;
-  accountOwner?: Maybe<User>;
-  accountOwnerId?: Maybe<Scalars['String']['output']>;
-  address: Scalars['String']['output'];
-  annualRecurringRevenue?: Maybe<Scalars['Int']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  domainName: Scalars['String']['output'];
-  employees?: Maybe<Scalars['Int']['output']>;
-  id: Scalars['ID']['output'];
-  idealCustomerProfile: Scalars['Boolean']['output'];
-  linkedinUrl?: Maybe<Scalars['String']['output']>;
-  name: Scalars['String']['output'];
-  people?: Maybe<Array<Person>>;
-  updatedAt: Scalars['DateTime']['output'];
-  workspaceMemberAccountOwner?: Maybe<WorkspaceMember>;
-  workspaceMemberAccountOwnerId?: Maybe<Scalars['String']['output']>;
-  xUrl?: Maybe<Scalars['String']['output']>;
-};
-
 export type CreateFieldInput = {
-  defaultValue?: InputMaybe<Scalars['JSONObject']['input']>;
+  defaultValue?: InputMaybe<Scalars['JSON']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   isNullable?: InputMaybe<Scalars['Boolean']['input']>;
@@ -223,177 +94,6 @@ export type CreateRelationInput = {
   toObjectMetadataId: Scalars['String']['input'];
 };
 
-export enum CurrencyCode {
-  Aed = 'AED',
-  Afn = 'AFN',
-  All = 'ALL',
-  Amd = 'AMD',
-  Ang = 'ANG',
-  Aoa = 'AOA',
-  Ars = 'ARS',
-  Aud = 'AUD',
-  Awg = 'AWG',
-  Azn = 'AZN',
-  Bam = 'BAM',
-  Bbd = 'BBD',
-  Bdt = 'BDT',
-  Bgn = 'BGN',
-  Bhd = 'BHD',
-  Bif = 'BIF',
-  Bmd = 'BMD',
-  Bnd = 'BND',
-  Bob = 'BOB',
-  Bov = 'BOV',
-  Brl = 'BRL',
-  Bsd = 'BSD',
-  Btn = 'BTN',
-  Bwp = 'BWP',
-  Byn = 'BYN',
-  Bzd = 'BZD',
-  Cad = 'CAD',
-  Cdf = 'CDF',
-  Chf = 'CHF',
-  Clf = 'CLF',
-  Clp = 'CLP',
-  Cny = 'CNY',
-  Cop = 'COP',
-  Cou = 'COU',
-  Crc = 'CRC',
-  Cuc = 'CUC',
-  Cup = 'CUP',
-  Cve = 'CVE',
-  Czk = 'CZK',
-  Djf = 'DJF',
-  Dkk = 'DKK',
-  Dop = 'DOP',
-  Dzd = 'DZD',
-  Egp = 'EGP',
-  Ern = 'ERN',
-  Etb = 'ETB',
-  Eur = 'EUR',
-  Fjd = 'FJD',
-  Fkp = 'FKP',
-  Gbp = 'GBP',
-  Gel = 'GEL',
-  Ghs = 'GHS',
-  Gip = 'GIP',
-  Gmd = 'GMD',
-  Gnf = 'GNF',
-  Gtq = 'GTQ',
-  Gyd = 'GYD',
-  Hkd = 'HKD',
-  Hnl = 'HNL',
-  Hrk = 'HRK',
-  Htg = 'HTG',
-  Huf = 'HUF',
-  Idr = 'IDR',
-  Ils = 'ILS',
-  Inr = 'INR',
-  Iqd = 'IQD',
-  Irr = 'IRR',
-  Isk = 'ISK',
-  Jmd = 'JMD',
-  Jod = 'JOD',
-  Jpy = 'JPY',
-  Kes = 'KES',
-  Kgs = 'KGS',
-  Khr = 'KHR',
-  Kmf = 'KMF',
-  Kpw = 'KPW',
-  Krw = 'KRW',
-  Kwd = 'KWD',
-  Kyd = 'KYD',
-  Kzt = 'KZT',
-  Lak = 'LAK',
-  Lbp = 'LBP',
-  Lkr = 'LKR',
-  Lrd = 'LRD',
-  Lsl = 'LSL',
-  Lyd = 'LYD',
-  Mad = 'MAD',
-  Mdl = 'MDL',
-  Mga = 'MGA',
-  Mkd = 'MKD',
-  Mmk = 'MMK',
-  Mnt = 'MNT',
-  Mop = 'MOP',
-  Mro = 'MRO',
-  Mru = 'MRU',
-  Mur = 'MUR',
-  Mvr = 'MVR',
-  Mwk = 'MWK',
-  Mxn = 'MXN',
-  Mxv = 'MXV',
-  Myr = 'MYR',
-  Mzn = 'MZN',
-  Nad = 'NAD',
-  Ngn = 'NGN',
-  Nio = 'NIO',
-  Nok = 'NOK',
-  Npr = 'NPR',
-  Nzd = 'NZD',
-  Omr = 'OMR',
-  Pab = 'PAB',
-  Pen = 'PEN',
-  Pgk = 'PGK',
-  Php = 'PHP',
-  Pkr = 'PKR',
-  Pln = 'PLN',
-  Pyg = 'PYG',
-  Qar = 'QAR',
-  Ron = 'RON',
-  Rsd = 'RSD',
-  Rub = 'RUB',
-  Rwf = 'RWF',
-  Sar = 'SAR',
-  Sbd = 'SBD',
-  Scr = 'SCR',
-  Sdd = 'SDD',
-  Sdg = 'SDG',
-  Sek = 'SEK',
-  Sgd = 'SGD',
-  Shp = 'SHP',
-  Sll = 'SLL',
-  Sos = 'SOS',
-  Srd = 'SRD',
-  Ssp = 'SSP',
-  Std = 'STD',
-  Stn = 'STN',
-  Svc = 'SVC',
-  Syp = 'SYP',
-  Szl = 'SZL',
-  Thb = 'THB',
-  Tjs = 'TJS',
-  Tmm = 'TMM',
-  Tmt = 'TMT',
-  Tnd = 'TND',
-  Top = 'TOP',
-  Try = 'TRY',
-  Ttd = 'TTD',
-  Twd = 'TWD',
-  Tzs = 'TZS',
-  Uah = 'UAH',
-  Ugx = 'UGX',
-  Usd = 'USD',
-  Uyu = 'UYU',
-  Uzs = 'UZS',
-  Vef = 'VEF',
-  Ves = 'VES',
-  Vnd = 'VND',
-  Vuv = 'VUV',
-  Wst = 'WST',
-  Xaf = 'XAF',
-  Xcd = 'XCD',
-  Xof = 'XOF',
-  Xpf = 'XPF',
-  Xsu = 'XSU',
-  Xua = 'XUA',
-  Yer = 'YER',
-  Zar = 'ZAR',
-  Zmw = 'ZMW',
-  Zwl = 'ZWL'
-}
-
 export type CursorPaging = {
   /** Paginate after opaque cursor */
   after?: InputMaybe<Scalars['ConnectionCursor']['input']>;
@@ -418,19 +118,6 @@ export type DeleteOneObjectInput = {
 export type DeleteOneRelationInput = {
   /** The id of the record to delete. */
   id: Scalars['ID']['input'];
-};
-
-export type Favorite = {
-  __typename?: 'Favorite';
-  company?: Maybe<Company>;
-  companyId?: Maybe<Scalars['String']['output']>;
-  id: Scalars['ID']['output'];
-  person?: Maybe<Person>;
-  personId?: Maybe<Scalars['String']['output']>;
-  position: Scalars['Float']['output'];
-  workspaceId?: Maybe<Scalars['String']['output']>;
-  workspaceMember?: Maybe<WorkspaceMember>;
-  workspaceMemberId?: Maybe<Scalars['String']['output']>;
 };
 
 export type FieldConnection = {
@@ -596,81 +283,6 @@ export type PageInfo = {
   startCursor?: Maybe<Scalars['ConnectionCursor']['output']>;
 };
 
-export type Person = {
-  __typename?: 'Person';
-  ActivityTarget?: Maybe<Array<ActivityTarget>>;
-  Attachment?: Maybe<Array<Attachment>>;
-  Favorite?: Maybe<Array<Favorite>>;
-  PipelineProgress?: Maybe<Array<PipelineProgress>>;
-  avatarUrl?: Maybe<Scalars['String']['output']>;
-  city?: Maybe<Scalars['String']['output']>;
-  company?: Maybe<Company>;
-  companyId?: Maybe<Scalars['String']['output']>;
-  contactPipelineProgresses?: Maybe<Array<PipelineProgress>>;
-  createdAt: Scalars['DateTime']['output'];
-  email?: Maybe<Scalars['String']['output']>;
-  firstName?: Maybe<Scalars['String']['output']>;
-  id: Scalars['ID']['output'];
-  jobTitle?: Maybe<Scalars['String']['output']>;
-  lastName?: Maybe<Scalars['String']['output']>;
-  linkedinUrl?: Maybe<Scalars['String']['output']>;
-  phone?: Maybe<Scalars['String']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
-  xUrl?: Maybe<Scalars['String']['output']>;
-};
-
-export type Pipeline = {
-  __typename?: 'Pipeline';
-  createdAt: Scalars['DateTime']['output'];
-  currency: CurrencyCode;
-  icon: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  name: Scalars['String']['output'];
-  pipelineProgressableType: PipelineProgressableType;
-  pipelineProgresses?: Maybe<Array<PipelineProgress>>;
-  pipelineStages?: Maybe<Array<PipelineStage>>;
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type PipelineProgress = {
-  __typename?: 'PipelineProgress';
-  amount?: Maybe<Scalars['Int']['output']>;
-  closeDate?: Maybe<Scalars['DateTime']['output']>;
-  company?: Maybe<Company>;
-  companyId?: Maybe<Scalars['String']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['ID']['output'];
-  person?: Maybe<Person>;
-  personId?: Maybe<Scalars['String']['output']>;
-  pipeline: Pipeline;
-  pipelineId: Scalars['String']['output'];
-  pipelineStage: PipelineStage;
-  pipelineStageId: Scalars['String']['output'];
-  pointOfContact?: Maybe<Person>;
-  pointOfContactId?: Maybe<Scalars['String']['output']>;
-  probability?: Maybe<Scalars['Int']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export enum PipelineProgressableType {
-  Company = 'Company',
-  Person = 'Person'
-}
-
-export type PipelineStage = {
-  __typename?: 'PipelineStage';
-  color: Scalars['String']['output'];
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['ID']['output'];
-  name: Scalars['String']['output'];
-  pipeline: Pipeline;
-  pipelineId: Scalars['String']['output'];
-  pipelineProgresses?: Maybe<Array<PipelineProgress>>;
-  position?: Maybe<Scalars['Int']['output']>;
-  type: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-};
-
 export type Query = {
   __typename?: 'Query';
   field: Field;
@@ -711,6 +323,22 @@ export type QueryRelationArgs = {
 
 export type QueryRelationsArgs = {
   paging?: CursorPaging;
+};
+
+export type RefreshToken = {
+  __typename?: 'RefreshToken';
+  createdAt: Scalars['DateTime']['output'];
+  expiresAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type RefreshTokenEdge = {
+  __typename?: 'RefreshTokenEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor']['output'];
+  /** The node containing the RefreshToken */
+  node: RefreshToken;
 };
 
 export type RelationConnection = {
@@ -788,86 +416,49 @@ export type UpdateOneObjectInput = {
 
 export type User = {
   __typename?: 'User';
-  assignedActivities?: Maybe<Array<Activity>>;
-  authoredActivities?: Maybe<Array<Activity>>;
-  authoredAttachments?: Maybe<Array<Attachment>>;
-  avatarUrl?: Maybe<Scalars['String']['output']>;
+  avatarUrl: Scalars['String']['output'];
   canImpersonate: Scalars['Boolean']['output'];
-  comments?: Maybe<Array<Comment>>;
-  companies?: Maybe<Array<Company>>;
   createdAt: Scalars['DateTime']['output'];
-  defaultWorkspaceId?: Maybe<Scalars['String']['output']>;
-  disabled: Scalars['Boolean']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
+  disabled?: Maybe<Scalars['Boolean']['output']>;
   email: Scalars['String']['output'];
   emailVerified: Scalars['Boolean']['output'];
-  firstName?: Maybe<Scalars['String']['output']>;
+  firstName: Scalars['String']['output'];
   id: Scalars['ID']['output'];
-  lastName?: Maybe<Scalars['String']['output']>;
+  lastName: Scalars['String']['output'];
   lastSeen?: Maybe<Scalars['DateTime']['output']>;
   locale: Scalars['String']['output'];
-  metadata?: Maybe<Scalars['JSON']['output']>;
+  passwordHash?: Maybe<Scalars['String']['output']>;
   phoneNumber?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type UserSettings = {
-  __typename?: 'UserSettings';
-  WorkspaceMember?: Maybe<Array<WorkspaceMember>>;
-  colorScheme: ColorScheme;
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['ID']['output'];
-  locale: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type WebHook = {
-  __typename?: 'WebHook';
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['ID']['output'];
-  operation: Scalars['String']['output'];
-  targetUrl: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
+export type UserEdge = {
+  __typename?: 'UserEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor']['output'];
+  /** The node containing the User */
+  node: User;
 };
 
 export type Workspace = {
   __typename?: 'Workspace';
-  Attachment?: Maybe<Array<Attachment>>;
-  activities?: Maybe<Array<Activity>>;
-  activityTargets?: Maybe<Array<ActivityTarget>>;
-  apiKeys?: Maybe<Array<ApiKey>>;
-  comments?: Maybe<Array<Comment>>;
-  companies?: Maybe<Array<Company>>;
   createdAt: Scalars['DateTime']['output'];
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
   displayName?: Maybe<Scalars['String']['output']>;
   domainName?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   inviteHash?: Maybe<Scalars['String']['output']>;
   logo?: Maybe<Scalars['String']['output']>;
-  people?: Maybe<Array<Person>>;
-  pipelineProgresses?: Maybe<Array<PipelineProgress>>;
-  pipelineStages?: Maybe<Array<PipelineStage>>;
-  pipelines?: Maybe<Array<Pipeline>>;
   updatedAt: Scalars['DateTime']['output'];
-  webHooks?: Maybe<Array<WebHook>>;
-  workspaceMember?: Maybe<Array<WorkspaceMember>>;
 };
 
-export type WorkspaceMember = {
-  __typename?: 'WorkspaceMember';
-  Favorite?: Maybe<Array<Favorite>>;
-  allowImpersonation: Scalars['Boolean']['output'];
-  assignedActivities?: Maybe<Array<Activity>>;
-  authoredActivities?: Maybe<Array<Activity>>;
-  authoredAttachments?: Maybe<Array<Attachment>>;
-  comments?: Maybe<Array<Comment>>;
-  companies?: Maybe<Array<Company>>;
-  createdAt: Scalars['DateTime']['output'];
-  id: Scalars['ID']['output'];
-  settings?: Maybe<UserSettings>;
-  settingsId?: Maybe<Scalars['String']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
-  userId: Scalars['String']['output'];
-  workspace: Workspace;
+export type WorkspaceEdge = {
+  __typename?: 'WorkspaceEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor']['output'];
+  /** The node containing the Workspace */
+  node: Workspace;
 };
 
 export type Field = {
@@ -948,22 +539,6 @@ export type ObjectFilter = {
   or?: InputMaybe<Array<ObjectFilter>>;
 };
 
-export type RefreshTokenV2 = {
-  __typename?: 'refreshTokenV2';
-  createdAt: Scalars['DateTime']['output'];
-  expiresAt: Scalars['DateTime']['output'];
-  id: Scalars['ID']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type RefreshTokenV2Edge = {
-  __typename?: 'refreshTokenV2Edge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor']['output'];
-  /** The node containing the refreshTokenV2 */
-  node: RefreshTokenV2;
-};
-
 export type Relation = {
   __typename?: 'relation';
   createdAt: Scalars['DateTime']['output'];
@@ -984,54 +559,6 @@ export type RelationEdge = {
   cursor: Scalars['ConnectionCursor']['output'];
   /** The node containing the relation */
   node: Relation;
-};
-
-export type UserV2 = {
-  __typename?: 'userV2';
-  avatarUrl: Scalars['String']['output'];
-  canImpersonate: Scalars['Boolean']['output'];
-  createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
-  disabled?: Maybe<Scalars['Boolean']['output']>;
-  email: Scalars['String']['output'];
-  emailVerified: Scalars['Boolean']['output'];
-  firstName: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  lastName: Scalars['String']['output'];
-  lastSeen?: Maybe<Scalars['DateTime']['output']>;
-  locale: Scalars['String']['output'];
-  metadata?: Maybe<Scalars['JSONObject']['output']>;
-  passwordHash?: Maybe<Scalars['String']['output']>;
-  phoneNumber?: Maybe<Scalars['String']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type UserV2Edge = {
-  __typename?: 'userV2Edge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor']['output'];
-  /** The node containing the userV2 */
-  node: UserV2;
-};
-
-export type WorkspaceV2 = {
-  __typename?: 'workspaceV2';
-  createdAt: Scalars['DateTime']['output'];
-  deletedAt?: Maybe<Scalars['DateTime']['output']>;
-  displayName?: Maybe<Scalars['String']['output']>;
-  domainName?: Maybe<Scalars['String']['output']>;
-  id: Scalars['ID']['output'];
-  inviteHash?: Maybe<Scalars['String']['output']>;
-  logo?: Maybe<Scalars['String']['output']>;
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type WorkspaceV2Edge = {
-  __typename?: 'workspaceV2Edge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor']['output'];
-  /** The node containing the workspaceV2 */
-  node: WorkspaceV2;
 };
 
 export type CreateOneObjectMetadataItemMutationVariables = Exact<{

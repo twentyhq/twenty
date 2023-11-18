@@ -1,7 +1,7 @@
+import { Activity } from '@/activities/types/Activity';
 import { IconUser, IconUserCircle } from '@/ui/display/icon';
 import { FilterDefinitionByEntity } from '@/ui/object/object-filter-dropdown/types/FilterDefinitionByEntity';
 import { FilterDropdownUserSearchSelect } from '@/users/components/FilterDropdownUserSearchSelect';
-import { Activity } from '~/generated/graphql';
 
 export const tasksFilterDefinitions: FilterDefinitionByEntity<Activity>[] = [
   {

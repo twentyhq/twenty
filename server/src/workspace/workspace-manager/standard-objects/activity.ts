@@ -1,9 +1,9 @@
-import { SeedWorkspaceId } from 'src/database/seeds/metadata';
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const activityMetadata = {
-  nameSingular: 'activityV2',
-  namePlural: 'activitiesV2',
+  nameSingular: 'activity',
+  namePlural: 'activities',
   labelSingular: 'Activity',
   labelPlural: 'Activities',
   targetTableName: 'activity',
