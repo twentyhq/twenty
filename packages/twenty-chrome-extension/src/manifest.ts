@@ -24,8 +24,11 @@ export default defineManifest({
     {
       matches: ['https://www.linkedin.com/*'],
       js: ['src/contentScript/index.ts'],
+      run_at: 'document_end',
     },
   ],
 
-  permissions: ['storage'],
+  permissions: ['tabs', 'activeTab'],
+
+  host_permissions: ['https://www.linkedin.com/*'],
 });
