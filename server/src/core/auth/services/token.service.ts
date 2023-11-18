@@ -37,7 +37,10 @@ export class TokenService {
     assert(expiresIn, '', InternalServerErrorException);
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
-    const user = await this.userRepository.findOneBy({ id: userId });
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['defaultWorkspace'],
+    });
 
     if (!user) {
       throw new NotFoundException('User is not found');
@@ -51,6 +54,8 @@ export class TokenService {
       sub: user.id,
       workspaceId: user.defaultWorkspace.id,
     };
+
+    console.log(jwtPayload);
 
     return {
       token: this.jwtService.sign(jwtPayload),
@@ -72,9 +77,13 @@ export class TokenService {
       sub: userId,
     };
 
-    const refreshToken = await this.refreshTokenRepository.create(
-      refreshTokenPayload,
-    );
+    const refreshToken =
+      this.refreshTokenRepository.create(refreshTokenPayload);
+    console.log(refreshToken);
+
+    await this.refreshTokenRepository.save(refreshToken);
+
+    console.log('toto');
 
     return {
       token: this.jwtService.sign(jwtPayload, {

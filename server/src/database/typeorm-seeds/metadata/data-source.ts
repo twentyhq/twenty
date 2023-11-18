@@ -1,5 +1,7 @@
 import { DataSource } from 'typeorm';
 
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
+
 export const SeedWorkspaceSchemaName = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 
 const tableName = 'dataSource';
@@ -24,7 +26,7 @@ export const seedDataSource = async (
         id: SeedDataSourceId,
         schema: SeedWorkspaceSchemaName,
         type: 'postgres',
-        workspaceId: 'SeedWorkspaceId',
+        workspaceId: SeedWorkspaceId,
       },
     ])
     .execute();

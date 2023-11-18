@@ -14,7 +14,7 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 
-@Entity({ name: 'users', schema: 'public' })
+@Entity({ name: 'user', schema: 'core' })
 @ObjectType('User')
 export class User {
   @IDField(() => ID)

@@ -12,7 +12,7 @@ import {
 
 import { User } from 'src/core/user/user.entity';
 
-@Entity({ name: 'workspaces', schema: 'public' })
+@Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
 export class Workspace {
   @IDField(() => ID)

@@ -50,7 +50,7 @@ export const App = () => {
           <Route path={AppPath.Invite} element={<SignInUp />} />
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
-          <Route path="/" element={<Navigate to={AppPath.CompaniesPage} />} />
+          <Route path="/" element={<Navigate to="/objects/companies" />} />
           <Route path={AppPath.TasksPage} element={<Tasks />} />
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
 

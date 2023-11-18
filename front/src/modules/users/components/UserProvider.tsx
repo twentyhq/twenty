@@ -5,7 +5,7 @@ import { useSetRecoilState } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { FIND_ONE_WORKSPACE_MEMBER_V2 } from '@/object-record/graphql/queries/findOneWorkspaceMember';
+import { FIND_ONE_WORKSPACE_MEMBER } from '@/object-record/graphql/queries/findOneWorkspaceMember';
 import {
   useGetCurrentUserQuery,
   useGetCurrentWorkspaceQuery,
@@ -26,7 +26,7 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
   const { data: userData, loading: userLoading } = useGetCurrentUserQuery({
     onCompleted: async (data) => {
       const workspaceMember = await apolloClient.query({
-        query: FIND_ONE_WORKSPACE_MEMBER_V2,
+        query: FIND_ONE_WORKSPACE_MEMBER,
         variables: {
           filter: {
             userId: { eq: data.currentUser.id },
@@ -34,7 +34,7 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
         },
       });
       setCurrentWorkspaceMember(
-        workspaceMember.data.workspaceMembersV2.edges[0].node,
+        workspaceMember.data.workspaceMembers.edges[0].node,
       );
       setIsWorkspaceMemberLoading(false);
     },

@@ -15,7 +15,7 @@ import { User } from 'src/core/user/user.entity';
 
 import { BeforeCreateOneRefreshToken } from './hooks/before-create-one-refresh-token.hook';
 
-@Entity({ name: 'refresh_tokens', schema: 'public' })
+@Entity({ name: 'refreshToken', schema: 'core' })
 @ObjectType('RefreshToken')
 @BeforeCreateOne(BeforeCreateOneRefreshToken)
 export class RefreshToken {
@@ -31,7 +31,7 @@ export class RefreshToken {
   userId: string;
 
   @Field()
-  @Column('time with time zone')
+  @Column('timestamp with time zone')
   expiresAt: Date;
 
   @Column('timestamp with time zone', { nullable: true })

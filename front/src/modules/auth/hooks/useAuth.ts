@@ -11,7 +11,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
 import { CREATE_ONE_WORKSPACE_MEMBER_V2 } from '@/object-record/graphql/mutation/createOneWorkspaceMember';
-import { FIND_ONE_WORKSPACE_MEMBER_V2 } from '@/object-record/graphql/queries/findOneWorkspaceMember';
+import { FIND_ONE_WORKSPACE_MEMBER } from '@/object-record/graphql/queries/findOneWorkspaceMember';
 import { REACT_APP_SERVER_AUTH_URL } from '~/config';
 import {
   useChallengeMutation,
@@ -82,7 +82,7 @@ export const useAuth = () => {
 
       setTokenPair(verifyResult.data?.verify.tokens);
       const workspaceMember = await client.query({
-        query: FIND_ONE_WORKSPACE_MEMBER_V2,
+        query: FIND_ONE_WORKSPACE_MEMBER,
         variables: {
           filter: {
             userId: { eq: verifyResult.data?.verify.user.id },
@@ -180,7 +180,7 @@ export const useAuth = () => {
           },
         },
       });
-      setCurrentWorkspaceMember(workspaceMember.data?.createWorkspaceMemberV2);
+      setCurrentWorkspaceMember(workspaceMember.data?.createWorkspaceMember);
 
       setIsVerifyPendingState(false);
 

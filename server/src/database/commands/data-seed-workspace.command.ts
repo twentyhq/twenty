@@ -1,4 +1,5 @@
 import { Command, CommandRunner } from 'nest-commander';
+import { DataSource } from 'typeorm';
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { WorkspaceMigrationService } from 'src/metadata/workspace-migration/workspace-migration.service';
@@ -13,6 +14,7 @@ import { seedPipelineStep } from 'src/database/typeorm-seeds/workspace/pipeline-
 import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/workspaceMember';
 import { seedPeople } from 'src/database/typeorm-seeds/workspace/people';
 import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 // TODO: implement dry-run
 @Command({
@@ -24,6 +26,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
   workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
   constructor(
+    private readonly environmentService: EnvironmentService,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
@@ -33,6 +36,22 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
   }
 
   async run(): Promise<void> {
+    try {
+      const dataSource = new DataSource({
+        url: this.environmentService.getPGDatabaseUrl(),
+        type: 'postgres',
+        logging: true,
+        schema: 'public',
+      });
+      await dataSource.initialize();
+
+      await seedCoreSchema(dataSource);
+      await seedMetadataSchema(dataSource);
+    } catch (error) {
+      console.error(error);
+      return;
+    }
+
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         this.workspaceId,
@@ -47,9 +66,6 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     }
 
     try {
-      await seedCoreSchema(workspaceDataSource, 'core');
-      await seedMetadataSchema(workspaceDataSource, 'metadata');
-
       await this.workspaceMigrationService.insertStandardMigrations(
         this.workspaceId,
       );
