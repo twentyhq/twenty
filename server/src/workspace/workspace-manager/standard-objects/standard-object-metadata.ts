@@ -55,7 +55,7 @@ export const basicFieldsMetadata: Partial<FieldMetadataEntity>[] = [
   {
     name: 'createdAt',
     label: 'Creation date',
-    type: FieldMetadataType.DATETIME,
+    type: FieldMetadataType.DATE_TIME,
     targetColumnMap: {
       value: 'createdAt',
     },
@@ -68,7 +68,7 @@ export const basicFieldsMetadata: Partial<FieldMetadataEntity>[] = [
   {
     name: 'updatedAt',
     label: 'Update date',
-    type: FieldMetadataType.DATETIME,
+    type: FieldMetadataType.DATE_TIME,
     targetColumnMap: {
       value: 'updatedAt',
     },

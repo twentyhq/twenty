@@ -22,7 +22,7 @@ export enum FieldMetadataType {
   TEXT = 'TEXT',
   PHONE = 'PHONE',
   EMAIL = 'EMAIL',
-  DATETIME = 'DATE',
+  DATE_TIME = 'DATE_TIME',
   BOOLEAN = 'BOOLEAN',
   NUMBER = 'NUMBER',
   PROBABILITY = 'PROBABILITY',

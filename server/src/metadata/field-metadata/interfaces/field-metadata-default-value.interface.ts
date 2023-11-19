@@ -50,7 +50,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.TEXT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.PHONE]: FieldMetadataDefaultValueString;
   [FieldMetadataType.EMAIL]: FieldMetadataDefaultValueString;
-  [FieldMetadataType.DATETIME]: FieldMetadataDefaultValueDateTime;
+  [FieldMetadataType.DATE_TIME]: FieldMetadataDefaultValueDateTime;
   [FieldMetadataType.BOOLEAN]: FieldMetadataDefaultValueBoolean;
   [FieldMetadataType.NUMBER]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.PROBABILITY]: FieldMetadataDefaultValueNumber;

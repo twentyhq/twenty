@@ -13,7 +13,7 @@ export const validateDefaultValueBasedOnType = (
     if (type === FieldMetadataType.UUID && defaultValue.type === 'uuid') {
       return true;
     }
-    if (type === FieldMetadataType.DATETIME && defaultValue.type === 'now') {
+    if (type === FieldMetadataType.DATE_TIME && defaultValue.type === 'now') {
       return true;
     }
 
@@ -47,7 +47,7 @@ export const validateDefaultValueBasedOnType = (
         typeof defaultValue.value === 'boolean'
       );
 
-    case FieldMetadataType.DATETIME:
+    case FieldMetadataType.DATE_TIME:
       return (
         typeof defaultValue === 'object' &&
         'value' in defaultValue &&
