@@ -1,4 +1,5 @@
 import createNewButton from './createButton';
+import extractDomain from './utils/extractDomain';
 
 function insertButtonForCompany(): void {
   const parentDiv: HTMLDivElement | null = document.querySelector('.org-top-card-primary-actions__inner');
@@ -7,13 +8,13 @@ function insertButtonForCompany(): void {
     const newButtonCompany: HTMLButtonElement = createNewButton('Add to Twenty', () => {
       // Extract company-specific data from the DOM
       const companyNameElement = document.querySelector('.org-top-card-summary__title');
-      const domainNameElement = document.querySelectorAll('.org-top-card-summary-info-list__info-item')[0];
+      const domainNameElement = document.querySelector('.org-top-card-primary-actions__inner a');
       const addressElement = document.querySelectorAll('.org-top-card-summary-info-list__info-item')[1];
       const employeesNumberElement = document.querySelectorAll('.org-top-card-summary-info-list__info-item')[3];
 
       // Get the text content or other necessary data from the DOM elements
       const companyName = companyNameElement ? companyNameElement.getAttribute('title') : '';
-      const domainName = domainNameElement ? domainNameElement.textContent?.trim().replace(/\s+/g, ' ') : '';
+      const domainName = extractDomain(domainNameElement && domainNameElement.getAttribute('href'));
       const address = addressElement ? addressElement.textContent?.trim().replace(/\s+/g, ' ') : '';
       const employees = employeesNumberElement ? employeesNumberElement.textContent?.trim().replace(/\s+/g, ' ').split('-')[0] : '';
 
