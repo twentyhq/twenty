@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './Options';
 import '../index.css';
-import { AppThemeProvider } from '../modules/ui/theme/components/AppThemeProvider';
-import { ThemeType } from '../modules/ui/theme/constants/theme';
+import { AppThemeProvider } from './modules/ui/theme/components/AppThemeProvider';
+import { ThemeType } from './modules/ui/theme/constants/theme';
 
 ReactDOM.createRoot(document.getElementById('app') as HTMLElement).render(
   <AppThemeProvider>

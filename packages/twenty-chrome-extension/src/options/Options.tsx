@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { ApiKeyForm } from '../modules/api-key/components/ApiKeyForm';
+import { ApiKeyForm } from './modules/api-key/components/ApiKeyForm';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.background.noisy};

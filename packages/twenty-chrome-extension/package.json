@@ -9,6 +9,7 @@
     "build": "tsc && vite build"
   },
   "dependencies": {
+    "@apollo/client": "^3.8.7",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@sniptt/guards": "^0.2.0",
