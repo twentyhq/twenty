@@ -20,13 +20,14 @@ export const KeyboardShortcutMenu = () => {
     isKeyboardShortcutMenuOpenedState,
   );
   useScopedHotkeys(
-    'shift+?,meta+?',
+    'shift+?,meta+?,esc',
     () => {
       toggleKeyboardShortcutMenu();
     },
     AppHotkeyScope.KeyboardShortcutMenu,
     [toggleKeyboardShortcutMenu],
   );
+
   return (
     isKeyboardShortcutMenuOpened && (
       <KeyboardMenuDialog onClose={toggleKeyboardShortcutMenu}>

@@ -29,7 +29,19 @@ export const useKeyboardShortcutMenu = () => {
     }
   };
 
+  const openKeyboardShortcutMenu = () => {
+    setIsKeyboardShortcutMenuOpened(true);
+    setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.KeyboardShortcutMenu);
+  };
+
+  const closeKeyboardShortcutMenu = () => {
+    setIsKeyboardShortcutMenuOpened(false);
+    goBackToPreviousHotkeyScope();
+  };
+
   return {
     toggleKeyboardShortcutMenu,
+    openKeyboardShortcutMenu,
+    closeKeyboardShortcutMenu,
   };
 };

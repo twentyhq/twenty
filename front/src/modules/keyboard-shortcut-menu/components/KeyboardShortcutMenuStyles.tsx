@@ -23,6 +23,7 @@ export const StyledDialog = styled.div`
 export const StyledHeading = styled.div`
   align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
+  color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   flex-direction: row;
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
@@ -38,8 +39,8 @@ export const StyledContainer = styled.div`
   padding-top: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const StyledGroupHeading = styled.div`
-  color: ${({ theme }) => theme.color.gray40};
+export const StyledGroupHeading = styled.label`
+  color: ${({ theme }) => theme.color.gray50};
   padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-top: ${({ theme }) => theme.spacing(4)};
 `;
@@ -52,8 +53,10 @@ export const StyledGroup = styled.div`
 
 export const StyledItem = styled.div`
   align-items: center;
+  color: ${({ theme }) => theme.font.color.primary};
   display: flex;
   flex-direction: row;
+  font-weight: ${({ theme }) => theme.font.weight.regular};
   height: 24px;
   justify-content: space-between;
 `;
