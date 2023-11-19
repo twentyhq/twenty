@@ -14,12 +14,12 @@ import { useFindManyObjectRecords } from './useFindManyObjectRecords';
 export const useObjectRecordTable = () => {
   const { scopeId: objectNamePlural } = useRecordTable();
 
-  const { registerOptimisticEffect } = useOptimisticEffect({
-    objectNameSingular: 'company',
-  });
-
   const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
     objectNamePlural,
+  });
+
+  const { registerOptimisticEffect } = useOptimisticEffect({
+    objectNameSingular: foundObjectMetadataItem?.nameSingular,
   });
 
   const { setRecordTableData } = useRecordTable();

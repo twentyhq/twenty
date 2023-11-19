@@ -54,10 +54,10 @@ export const SettingsObjectDetail = () => {
   if (!activeObjectMetadataItem) return null;
 
   const activeMetadataFields = activeObjectMetadataItem.fields.filter(
-    (metadataField) => metadataField.isActive,
+    (metadataField) => metadataField.isActive && !metadataField.isSystem,
   );
   const disabledMetadataFields = activeObjectMetadataItem.fields.filter(
-    (metadataField) => !metadataField.isActive,
+    (metadataField) => !metadataField.isActive && !metadataField.isSystem,
   );
 
   const handleDisable = async () => {

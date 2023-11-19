@@ -61,15 +61,13 @@ export class UserService extends TypeOrmQueryService<User> {
       dataSourceMetadata,
     );
 
-    const workspaceMember = await workspaceDataSource?.query(
+    await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."workspaceMember"
       ("nameFirstName", "nameLastName", "colorScheme", "userId", "allowImpersonation", "avatarUrl")
       VALUES ('${user.firstName}', '${user.lastName}', 'Light', '${
         user.id
       }', true, '${avatarUrl ?? ''}')`,
     );
-
-    console.log('workspaceMember', workspaceMember);
   }
 
   async deleteUser({

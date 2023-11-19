@@ -112,7 +112,7 @@ export const useFavorites = ({
         const favorites = snapshot.getLoadable(favoritesState).getValue();
 
         const targetObjectName =
-          favoriteTargetObjectMetadataItem?.nameSingular.replace('', '') ?? '';
+          favoriteTargetObjectMetadataItem?.nameSingular ?? '';
 
         const result = await apolloClient.mutate({
           mutation: createOneMutation,

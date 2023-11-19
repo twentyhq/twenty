@@ -19,6 +19,7 @@ import { RecordTableContainer } from './RecordTableContainer';
 
 const StyledTableContainer = styled.div`
   display: flex;
+  height: 100%;
   width: 100%;
 `;
 
@@ -48,7 +49,8 @@ export const RecordTablePage = () => {
   });
 
   const handleAddButtonClick = async () => {
-    createOneObject?.({});
+    const createdObject = await createOneObject?.({});
+    console.log(createdObject);
   };
 
   return (
