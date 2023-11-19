@@ -18,3 +18,18 @@ chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
     return true; // Indicates an asynchronous response
   }
 });
+
+const injectedTabs: Set<number> = new Set();
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  const isDesiredRoute = tab.url?.match(/^https?:\/\/(?:www\.)?linkedin\.com\/company(?:\/\S+)?/) || tab.url?.match(/^https?:\/\/(?:www\.)?linkedin\.com\/in(?:\/\S+)?/);
+
+  if (changeInfo.status === 'complete' && tab.active) {
+    if (isDesiredRoute && !injectedTabs.has(tabId)) {
+      chrome.tabs.sendMessage(tabId, { action: 'executeContentScript' });
+      injectedTabs.add(tabId);
+    } else if (!isDesiredRoute) {
+      injectedTabs.delete(tabId); // Clear entry if navigated away from LinkedIn company page
+    }
+  }
+});
