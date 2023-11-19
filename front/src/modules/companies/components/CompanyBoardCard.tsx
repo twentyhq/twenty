@@ -239,14 +239,13 @@ export const CompanyBoardCard = () => {
                   value={{
                     entityId: boardCardId,
                     recoilScopeId: boardCardId + viewField.fieldMetadataId,
+                    isMainIdentifier: false,
                     fieldDefinition: {
                       fieldMetadataId: viewField.fieldMetadataId,
                       label: viewField.label,
                       iconName: viewField.iconName,
                       type: viewField.type,
                       metadata: viewField.metadata,
-                      entityChipDisplayMapper:
-                        viewField.entityChipDisplayMapper,
                     },
                     useUpdateEntityMutation: useUpdateOneObjectMutation,
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,

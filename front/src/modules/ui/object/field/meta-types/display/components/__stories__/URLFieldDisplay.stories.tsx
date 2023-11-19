@@ -25,6 +25,7 @@ const meta: Meta = {
       <FieldContext.Provider
         value={{
           entityId: '',
+          isMainIdentifier: false,
           fieldDefinition: {
             fieldMetadataId: 'URL',
             label: 'URL',

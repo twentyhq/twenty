@@ -18,6 +18,7 @@ export const FieldContextProvider = ({
     <FieldContext.Provider
       value={{
         entityId: entityId ?? '1',
+        isMainIdentifier: false,
         recoilScopeId: '1',
         hotkeyScope: 'hotkey-scope',
         fieldDefinition,

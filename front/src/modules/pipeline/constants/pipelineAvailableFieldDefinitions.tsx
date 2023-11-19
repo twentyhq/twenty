@@ -1,4 +1,3 @@
-import { Person } from '@/people/types/Person';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import {
   FieldDateMetadata,
@@ -67,12 +66,5 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
       size: 0,
       isVisible: true,
       infoTooltipContent: 'Primary contact within the company.',
-      entityChipDisplayMapper: (dataObject: Person) => {
-        return {
-          name: dataObject?.name.firstName + ' ' + dataObject?.name.lastName,
-          pictureUrl: dataObject?.avatarUrl ?? undefined,
-          avatarType: 'rounded',
-        };
-      },
     } satisfies ColumnDefinition<FieldRelationMetadata>,
   ];
