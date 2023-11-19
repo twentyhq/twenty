@@ -140,7 +140,7 @@ export const SettingsObjectFieldPreview = ({
             entityId,
             fieldDefinition: {
               type: parseFieldType(fieldMetadata.type),
-              Icon: FieldIcon,
+              iconName: 'FieldIcon',
               fieldMetadataId: fieldMetadata.id || '',
               label: fieldMetadata.label,
               metadata: { fieldName },

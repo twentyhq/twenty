@@ -22,7 +22,6 @@ const meta: Meta<typeof ActionBar> = {
       <RecordTableScope
         recordTableScopeId="companies"
         onColumnsChange={() => {}}
-        onEntityCountChange={() => {}}
       >
         <MemoryRouter>
           <Story />

@@ -28,6 +28,7 @@ const meta: Meta = {
             fieldMetadataId: 'money',
             label: 'Money',
             type: 'MONEY_AMOUNT',
+            iconName: 'Icon123',
             metadata: {
               fieldName: 'Amount',
               placeHolder: 'Amount',

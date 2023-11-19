@@ -24,6 +24,7 @@ import { assert } from 'src/utils/assert';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { User } from 'src/core/user/user.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
+import { UserWorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
 
 import { UserService } from './services/user.service';
 
@@ -45,9 +46,18 @@ export class UserResolver {
 
   @Query(() => User)
   async currentUser(@AuthUser() { id }: User) {
-    const user = await this.userService.findById(id);
+    const user = await this.userService.findById(id, {
+      relations: [{ name: 'defaultWorkspace', query: {} }],
+    });
     assert(user, 'User not found');
     return user;
+  }
+
+  @ResolveField(() => UserWorkspaceMember, {
+    nullable: false,
+  })
+  async workspaceMember(@Parent() user: User): Promise<UserWorkspaceMember> {
+    return this.userService.loadWorkspaceMember(user);
   }
 
   @ResolveField(() => String, {
@@ -67,6 +77,10 @@ export class UserResolver {
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
   ): Promise<string> {
+    if (!id) {
+      throw new Error('User not found');
+    }
+
     const stream = createReadStream();
     const buffer = await streamToBuffer(stream);
     const fileFolder = FileFolder.ProfilePicture;
@@ -76,10 +90,6 @@ export class UserResolver {
       filename,
       mimeType: mimetype,
       fileFolder,
-    });
-
-    await this.userService.updateOne(id, {
-      avatarUrl: paths[0],
     });
 
     return paths[0];

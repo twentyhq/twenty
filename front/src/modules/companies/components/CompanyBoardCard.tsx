@@ -242,7 +242,7 @@ export const CompanyBoardCard = () => {
                     fieldDefinition: {
                       fieldMetadataId: viewField.fieldMetadataId,
                       label: viewField.label,
-                      Icon: viewField.Icon,
+                      iconName: viewField.iconName,
                       type: viewField.type,
                       metadata: viewField.metadata,
                       entityChipDisplayMapper:

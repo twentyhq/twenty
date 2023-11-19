@@ -8,6 +8,7 @@ import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
+import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar/components/SnackBarProvider';
@@ -36,18 +37,20 @@ root.render(
           <ClientConfigProvider>
             <UserProvider>
               <ApolloMetadataClientProvider>
-                <PageChangeEffect />
-                <AppThemeProvider>
-                  <SnackBarProvider>
-                    <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                      <DialogManager>
-                        <StrictMode>
-                          <App />
-                        </StrictMode>
-                      </DialogManager>
-                    </DialogManagerScope>
-                  </SnackBarProvider>
-                </AppThemeProvider>
+                <ObjectMetadataItemsProvider>
+                  <PageChangeEffect />
+                  <AppThemeProvider>
+                    <SnackBarProvider>
+                      <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                        <DialogManager>
+                          <StrictMode>
+                            <App />
+                          </StrictMode>
+                        </DialogManager>
+                      </DialogManagerScope>
+                    </SnackBarProvider>
+                  </AppThemeProvider>
+                </ObjectMetadataItemsProvider>
               </ApolloMetadataClientProvider>
             </UserProvider>
           </ClientConfigProvider>

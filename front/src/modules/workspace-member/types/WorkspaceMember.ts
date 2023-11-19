@@ -6,8 +6,8 @@ export type WorkspaceMember = {
     firstName: string;
     lastName: string;
   };
-  avatarUrl: string | null;
+  avatarUrl?: string | null;
   locale: string;
-  colorScheme: ColorScheme;
+  colorScheme?: ColorScheme;
   allowImpersonation: boolean;
 };

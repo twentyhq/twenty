@@ -29,6 +29,7 @@ const meta: Meta = {
             fieldMetadataId: 'email',
             label: 'Email',
             type: 'EMAIL',
+            iconName: 'IconLink',
             metadata: {
               fieldName: 'Email',
               placeHolder: 'Email',

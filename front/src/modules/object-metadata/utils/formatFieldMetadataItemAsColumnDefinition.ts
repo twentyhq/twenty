@@ -1,5 +1,4 @@
 import { parseFieldRelationType } from '@/object-metadata/utils/parseFieldRelationType';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 
@@ -12,12 +11,10 @@ export const formatFieldMetadataItemAsColumnDefinition = ({
   position,
   field,
   objectMetadataItem,
-  icons,
 }: {
   position: number;
   field: FieldMetadataItem;
   objectMetadataItem: Omit<ObjectMetadataItem, 'fields'>;
-  icons: Record<string, IconComponent>;
 }): ColumnDefinition<FieldMetadata> => ({
   position,
   fieldMetadataId: field.id,
@@ -28,7 +25,7 @@ export const formatFieldMetadataItemAsColumnDefinition = ({
     fieldName: field.name,
     placeHolder: field.label,
   },
-  Icon: icons[field.icon ?? 'Icon123'],
+  iconName: field.icon ?? 'Icon123',
   isVisible: true,
   basePathToShowPage: `/object/${objectMetadataItem.nameSingular}/`,
   relationType: parseFieldRelationType(field),

@@ -120,12 +120,13 @@ export class AuthResolver {
     return this.authService.impersonate(impersonateInput.userId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Mutation(() => ApiKeyToken)
   async generateApiKeyToken(
-    @Args()
-    args: ApiKeyTokenInput,
+    @Args() args: ApiKeyTokenInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
-  ): Promise<Pick<ApiKeyToken, 'token'> | undefined> {
+  ): Promise<ApiKeyToken | undefined> {
+    console.log('toto');
     return await this.tokenService.generateApiKeyToken(
       workspaceId,
       args.apiKeyId,

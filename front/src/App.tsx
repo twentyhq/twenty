@@ -36,7 +36,6 @@ import { SettingsObjectNewFieldStep2 } from './pages/settings/data-model/Setting
 export const App = () => {
   const { pathname } = useLocation();
   const pageTitle = getPageTitleFromPath(pathname);
-
   return (
     <>
       <PageTitle title={pageTitle} />

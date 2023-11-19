@@ -31,9 +31,7 @@ export const SettingsDevelopersApiKeysNew = () => {
   });
 
   const { createOneObject: createOneApiKey } = useCreateOneObjectRecord<ApiKey>(
-    {
-      objectNameSingular: 'apiKey',
-    },
+    { objectNameSingular: 'apiKey' },
   );
   const onSave = async () => {
     const expiresAt = DateTime.now()

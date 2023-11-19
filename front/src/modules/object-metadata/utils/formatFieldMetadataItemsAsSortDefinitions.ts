@@ -5,10 +5,8 @@ import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 export const formatFieldMetadataItemsAsSortDefinitions = ({
   fields,
-  icons,
 }: {
   fields: Array<ObjectMetadataItem['fields'][0]>;
-  icons: Record<string, any>;
 }): SortDefinition[] =>
   fields.reduce((acc, field) => {
     if (
@@ -27,7 +25,7 @@ export const formatFieldMetadataItemsAsSortDefinitions = ({
       {
         fieldMetadataId: field.id,
         label: field.label,
-        Icon: icons[field.icon ?? 'Icon123'],
+        iconName: field.icon ?? 'Icon123',
       },
     ];
   }, [] as SortDefinition[]);

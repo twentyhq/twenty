@@ -1,6 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
@@ -38,11 +39,14 @@ const StyledText = styled.span`
 export const ColumnHead = ({ column }: ColumnHeadProps) => {
   const theme = useTheme();
 
+  const { icons, isLoadingIcons } = useLazyLoadIcons();
+  const Icon = icons[column.iconName];
+
   return (
     <>
       <StyledTitle>
         <StyledIcon>
-          {column.Icon && <column.Icon size={theme.icon.size.md} />}
+          {!isLoadingIcons && <Icon size={theme.icon.size.md} />}
         </StyledIcon>
         <StyledText>{column.label}</StyledText>
       </StyledTitle>

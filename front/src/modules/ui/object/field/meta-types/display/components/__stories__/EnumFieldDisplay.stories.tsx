@@ -28,6 +28,7 @@ const meta: Meta = {
           fieldDefinition: {
             fieldMetadataId: 'enum',
             label: 'Enum',
+            iconName: 'IconTag',
             type: 'ENUM',
             metadata: {
               fieldName: 'Enum',

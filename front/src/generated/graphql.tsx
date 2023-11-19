@@ -407,9 +407,9 @@ export type UpdateWorkspaceInput = {
 
 export type User = {
   __typename?: 'User';
-  avatarUrl: Scalars['String'];
   canImpersonate: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
+  defaultWorkspace: Workspace;
   deletedAt?: Maybe<Scalars['DateTime']>;
   disabled?: Maybe<Scalars['Boolean']>;
   email: Scalars['String'];
@@ -417,12 +417,10 @@ export type User = {
   firstName: Scalars['String'];
   id: Scalars['ID'];
   lastName: Scalars['String'];
-  lastSeen?: Maybe<Scalars['DateTime']>;
-  locale: Scalars['String'];
   passwordHash?: Maybe<Scalars['String']>;
-  phoneNumber?: Maybe<Scalars['String']>;
   supportUserHash?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
+  workspaceMember: UserWorkspaceMember;
 };
 
 export type UserEdge = {
@@ -436,6 +434,22 @@ export type UserEdge = {
 export type UserExists = {
   __typename?: 'UserExists';
   exists: Scalars['Boolean'];
+};
+
+export type UserWorkspaceMember = {
+  __typename?: 'UserWorkspaceMember';
+  allowImpersonation: Scalars['Boolean'];
+  avatarUrl?: Maybe<Scalars['String']>;
+  colorScheme: Scalars['String'];
+  id: Scalars['ID'];
+  locale: Scalars['String'];
+  name: UserWorkspaceMemberName;
+};
+
+export type UserWorkspaceMemberName = {
+  __typename?: 'UserWorkspaceMemberName';
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
 };
 
 export type Verify = {
@@ -572,8 +586,6 @@ export type AuthTokenFragmentFragment = { __typename?: 'AuthToken', token: strin
 
 export type AuthTokensFragmentFragment = { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, canImpersonate: boolean };
-
 export type ChallengeMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
@@ -595,7 +607,7 @@ export type ImpersonateMutationVariables = Exact<{
 }>;
 
 
-export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, canImpersonate: boolean }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember: { __typename?: 'UserWorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, allowImpersonation: boolean, name: { __typename?: 'UserWorkspaceMemberName', firstName: string, lastName: string } }, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type RenewTokenMutationVariables = Exact<{
   refreshToken: Scalars['String'];
@@ -618,7 +630,7 @@ export type VerifyMutationVariables = Exact<{
 }>;
 
 
-export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, canImpersonate: boolean }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember: { __typename?: 'UserWorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, allowImpersonation: boolean, name: { __typename?: 'UserWorkspaceMemberName', firstName: string, lastName: string } }, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
@@ -631,6 +643,8 @@ export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null } } };
+
+export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember: { __typename?: 'UserWorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, allowImpersonation: boolean, name: { __typename?: 'UserWorkspaceMemberName', firstName: string, lastName: string } }, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null } };
 
 export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -647,7 +661,7 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember: { __typename?: 'UserWorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, allowImpersonation: boolean, name: { __typename?: 'UserWorkspaceMemberName', firstName: string, lastName: string } }, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null } } };
 
 export type DeleteCurrentWorkspaceMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -667,11 +681,6 @@ export type UploadWorkspaceLogoMutationVariables = Exact<{
 
 
 export type UploadWorkspaceLogoMutation = { __typename?: 'Mutation', uploadWorkspaceLogo: string };
-
-export type GetCurrentWorkspaceQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetCurrentWorkspaceQuery = { __typename?: 'Query', currentWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null } };
 
 export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
   inviteHash: Scalars['String'];
@@ -699,10 +708,29 @@ export const AuthTokensFragmentFragmentDoc = gql`
 export const UserQueryFragmentFragmentDoc = gql`
     fragment UserQueryFragment on User {
   id
-  email
   firstName
   lastName
+  email
   canImpersonate
+  supportUserHash
+  workspaceMember {
+    id
+    name {
+      firstName
+      lastName
+    }
+    colorScheme
+    avatarUrl
+    locale
+    allowImpersonation
+  }
+  defaultWorkspace {
+    id
+    displayName
+    logo
+    domainName
+    inviteHash
+  }
 }
     `;
 export const CreateEventDocument = gql`
@@ -1116,6 +1144,25 @@ export const GetCurrentUserDocument = gql`
     lastName
     email
     canImpersonate
+    supportUserHash
+    workspaceMember {
+      id
+      name {
+        firstName
+        lastName
+      }
+      colorScheme
+      avatarUrl
+      locale
+      allowImpersonation
+    }
+    defaultWorkspace {
+      id
+      displayName
+      logo
+      domainName
+      inviteHash
+    }
   }
 }
     `;
@@ -1245,42 +1292,6 @@ export function useUploadWorkspaceLogoMutation(baseOptions?: Apollo.MutationHook
 export type UploadWorkspaceLogoMutationHookResult = ReturnType<typeof useUploadWorkspaceLogoMutation>;
 export type UploadWorkspaceLogoMutationResult = Apollo.MutationResult<UploadWorkspaceLogoMutation>;
 export type UploadWorkspaceLogoMutationOptions = Apollo.BaseMutationOptions<UploadWorkspaceLogoMutation, UploadWorkspaceLogoMutationVariables>;
-export const GetCurrentWorkspaceDocument = gql`
-    query getCurrentWorkspace {
-  currentWorkspace {
-    id
-    displayName
-    logo
-  }
-}
-    `;
-
-/**
- * __useGetCurrentWorkspaceQuery__
- *
- * To run a query within a React component, call `useGetCurrentWorkspaceQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCurrentWorkspaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetCurrentWorkspaceQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetCurrentWorkspaceQuery(baseOptions?: Apollo.QueryHookOptions<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>(GetCurrentWorkspaceDocument, options);
-      }
-export function useGetCurrentWorkspaceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>(GetCurrentWorkspaceDocument, options);
-        }
-export type GetCurrentWorkspaceQueryHookResult = ReturnType<typeof useGetCurrentWorkspaceQuery>;
-export type GetCurrentWorkspaceLazyQueryHookResult = ReturnType<typeof useGetCurrentWorkspaceLazyQuery>;
-export type GetCurrentWorkspaceQueryResult = Apollo.QueryResult<GetCurrentWorkspaceQuery, GetCurrentWorkspaceQueryVariables>;
 export const GetWorkspaceFromInviteHashDocument = gql`
     query GetWorkspaceFromInviteHash($inviteHash: String!) {
   findWorkspaceFromInviteHash(inviteHash: $inviteHash) {

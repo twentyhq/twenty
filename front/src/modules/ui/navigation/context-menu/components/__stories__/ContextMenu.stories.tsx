@@ -28,7 +28,6 @@ const meta: Meta<typeof ContextMenu> = {
       <RecordTableScope
         recordTableScopeId="companies"
         onColumnsChange={() => {}}
-        onEntityCountChange={() => {}}
       >
         <MemoryRouter>
           <Story />

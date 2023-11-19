@@ -3,12 +3,14 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
+import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -43,9 +45,8 @@ export const CreateWorkspace = () => {
   const navigate = useNavigate();
 
   const { enqueueSnackBar } = useSnackBar();
-  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
-    currentWorkspaceState,
-  );
+  const onboardingStatus = useOnboardingStatus();
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
 
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
@@ -102,6 +103,10 @@ export const CreateWorkspace = () => {
     PageHotkeyScope.CreateWokspace,
     [onSubmit],
   );
+
+  if (onboardingStatus !== OnboardingStatus.OngoingWorkspaceCreation) {
+    return null;
+  }
 
   return (
     <>

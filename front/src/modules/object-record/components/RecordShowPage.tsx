@@ -7,7 +7,6 @@ import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOne
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { filterAvailableFieldMetadataItem } from '@/object-record/utils/filterAvailableFieldMetadataItem';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
-import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageFavoriteButton } from '@/ui/layout/page/PageFavoriteButton';
@@ -35,8 +34,6 @@ export const RecordShowPage = () => {
     objectNameSingular: string;
     objectMetadataId: string;
   }>();
-
-  const { icons } = useLazyLoadIcons();
 
   const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
     objectNameSingular,
@@ -173,7 +170,6 @@ export const RecordShowPage = () => {
                                 field: metadataField,
                                 position: index,
                                 objectMetadataItem: foundObjectMetadataItem,
-                                icons,
                               }),
                             useUpdateEntityMutation: useUpdateOneObjectMutation,
                             hotkeyScope: InlineCellHotkeyScope.InlineCell,

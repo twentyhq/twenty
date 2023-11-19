@@ -66,7 +66,7 @@ export const SettingsDevelopersApiKeys = () => {
       );
       if (foundObjectMetadataItem) {
         registerOptimisticEffect({
-          variables: { filter },
+          variables: { filter, first: 30, orderBy: {} },
           definition: getRecordOptimisticEffectDefinition({
             objectMetadataItem: foundObjectMetadataItem,
           }),

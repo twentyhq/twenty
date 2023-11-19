@@ -24,7 +24,6 @@ export const seedUsers = async (
       'email',
       'passwordHash',
       'defaultWorkspaceId',
-      'locale',
     ])
     .orIgnore()
     .values([
@@ -36,7 +35,6 @@ export const seedUsers = async (
         passwordHash:
           '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
         defaultWorkspaceId: SeedWorkspaceId,
-        locale: 'en',
       },
       {
         id: SeedUserIds.Jony,
@@ -46,7 +44,6 @@ export const seedUsers = async (
         passwordHash:
           '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
         defaultWorkspaceId: SeedWorkspaceId,
-        locale: 'en ',
       },
       ,
       {
@@ -57,7 +54,6 @@ export const seedUsers = async (
         passwordHash:
           '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
         defaultWorkspaceId: SeedWorkspaceId,
-        locale: 'en',
       },
     ])
     .execute();

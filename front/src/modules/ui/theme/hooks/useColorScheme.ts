@@ -14,6 +14,7 @@ export const useColorScheme = () => {
     useUpdateOneObjectRecord({
       objectNameSingular: 'workspaceMember',
     });
+
   const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
 
   const setColorScheme = useCallback(

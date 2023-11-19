@@ -53,7 +53,7 @@ export const seedWorkspaceMember = async (
         locale: 'en',
         colorScheme: 'Light',
         allowImpersonation: true,
-        userId: SeedUserIds.Tim,
+        userId: SeedUserIds.Phil,
       },
     ])
     .execute();

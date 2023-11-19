@@ -1,4 +1,3 @@
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { AvatarType } from '@/users/components/Avatar';
 
 import { FieldMetadata } from './FieldMetadata';
@@ -13,7 +12,7 @@ export type FieldDefinitionRelationType =
 export type FieldDefinition<T extends FieldMetadata> = {
   fieldMetadataId: string;
   label: string;
-  Icon?: IconComponent;
+  iconName: string;
   type: FieldType;
   metadata: T;
   basePathToShowPage?: string;

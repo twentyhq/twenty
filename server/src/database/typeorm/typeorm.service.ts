@@ -4,6 +4,9 @@ import { DataSource } from 'typeorm';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
+import { User } from 'src/core/user/user.entity';
+import { Workspace } from 'src/core/workspace/workspace.entity';
+import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
 
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
@@ -15,8 +18,13 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
       url: environmentService.getPGDatabaseUrl(),
       type: 'postgres',
       logging: false,
-      schema: 'public',
+      schema: 'core',
+      entities: [User, Workspace, RefreshToken],
     });
+  }
+
+  public async getMainDataSource(): Promise<DataSource> {
+    return this.mainDataSource;
   }
 
   /**

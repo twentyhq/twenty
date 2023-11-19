@@ -46,6 +46,7 @@ const EmailFieldInputWithContext = ({
           fieldMetadataId: 'email',
           label: 'Email',
           type: 'EMAIL',
+          iconName: 'IconLink',
           metadata: {
             fieldName: 'email',
             placeHolder: 'username@email.com',

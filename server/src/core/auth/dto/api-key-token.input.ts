@@ -1,6 +1,6 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
-import { IsDate, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 @ArgsType()
 export class ApiKeyTokenInput {
@@ -11,6 +11,5 @@ export class ApiKeyTokenInput {
 
   @Field(() => String)
   @IsNotEmpty()
-  @IsDate()
-  expiresAt: Date;
+  expiresAt: string;
 }

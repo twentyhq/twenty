@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports */
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,8 +10,11 @@ import { FileModule } from 'src/core/file/file.module';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { User } from 'src/core/user/user.entity';
 import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
+import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
+import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { UserModule } from 'src/core/user/user.module';
+import { WorkspaceManagerModule } from 'src/workspace/workspace-manager/workspace-manager.module';
 
-// eslint-disable-next-line no-restricted-imports
 import config from '../../../ormconfig';
 
 import { AuthResolver } from './auth.resolver';
@@ -37,9 +41,15 @@ const jwtModule = JwtModule.registerAsync({
   imports: [
     jwtModule,
     FileModule,
+    DataSourceModule,
+    UserModule,
+    WorkspaceManagerModule,
     TypeOrmModule.forRoot(config),
     NestjsQueryGraphQLModule.forFeature({
-      imports: [TypeOrmModule.forFeature([Workspace, User, RefreshToken])],
+      imports: [
+        TypeOrmModule.forFeature([Workspace, User, RefreshToken]),
+        TypeORMModule,
+      ],
     }),
   ],
   controllers: [GoogleAuthController, VerifyAuthController],

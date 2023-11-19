@@ -8,6 +8,25 @@ export const GET_CURRENT_USER = gql`
       lastName
       email
       canImpersonate
+      supportUserHash
+      workspaceMember {
+        id
+        name {
+          firstName
+          lastName
+        }
+        colorScheme
+        avatarUrl
+        locale
+        allowImpersonation
+      }
+      defaultWorkspace {
+        id
+        displayName
+        logo
+        domainName
+        inviteHash
+      }
     }
   }
 `;

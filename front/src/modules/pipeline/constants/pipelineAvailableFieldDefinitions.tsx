@@ -1,10 +1,4 @@
 import { Person } from '@/people/types/Person';
-import {
-  IconCalendarEvent,
-  IconCurrencyDollar,
-  IconProgressCheck,
-  IconUser,
-} from '@/ui/display/icon';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import {
   FieldDateMetadata,
@@ -20,7 +14,7 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
     {
       fieldMetadataId: 'closeDate',
       label: 'Close Date',
-      Icon: IconCalendarEvent,
+      iconName: 'IconCalendarEvent',
       position: 0,
       type: 'DATE',
       metadata: {
@@ -34,7 +28,7 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
     {
       fieldMetadataId: 'amount',
       label: 'Amount',
-      Icon: IconCurrencyDollar,
+      iconName: 'IconCurrencyDollar',
       position: 1,
       type: 'NUMBER',
       metadata: {
@@ -48,7 +42,7 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
     {
       fieldMetadataId: 'probability',
       label: 'Probability',
-      Icon: IconProgressCheck,
+      iconName: 'IconProgressCheck',
       position: 2,
       type: 'PROBABILITY',
       metadata: {
@@ -62,7 +56,7 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
     {
       fieldMetadataId: 'pointOfContact',
       label: 'Point of Contact',
-      Icon: IconUser,
+      iconName: 'IconUser',
       position: 3,
       type: 'RELATION',
       metadata: {
