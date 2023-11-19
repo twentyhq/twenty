@@ -66,7 +66,7 @@ export const seedApiKeyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATETIME,
         name: 'createdAt',
         label: 'Creation date',
         targetColumnMap: {
@@ -84,7 +84,7 @@ export const seedApiKeyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATETIME,
         name: 'updatedAt',
         label: 'Update date',
         targetColumnMap: {
@@ -121,7 +121,7 @@ export const seedApiKeyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATETIME,
         name: 'expiresAt',
         label: 'Expiration date',
         targetColumnMap: {
@@ -139,7 +139,7 @@ export const seedApiKeyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATETIME,
         name: 'revokedAt',
         label: 'Revocation date',
         targetColumnMap: {

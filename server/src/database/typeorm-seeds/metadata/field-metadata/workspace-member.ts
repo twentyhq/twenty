@@ -76,7 +76,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATETIME,
         name: 'createdAt',
         label: 'Creation date',
         targetColumnMap: {
@@ -94,7 +94,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATETIME,
         name: 'updatedAt',
         label: 'Update date',
         targetColumnMap: {

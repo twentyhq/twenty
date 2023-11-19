@@ -54,7 +54,7 @@ const activityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.DATE,
+      type: FieldMetadataType.DATETIME,
       name: 'reminderAt',
       label: 'Reminder Date',
       targetColumnMap: {
@@ -67,7 +67,7 @@ const activityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.DATE,
+      type: FieldMetadataType.DATETIME,
       name: 'dueAt',
       label: 'Due Date',
       targetColumnMap: {
@@ -80,7 +80,7 @@ const activityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.DATE,
+      type: FieldMetadataType.DATETIME,
       name: 'completedAt',
       label: 'Completion Date',
       targetColumnMap: {

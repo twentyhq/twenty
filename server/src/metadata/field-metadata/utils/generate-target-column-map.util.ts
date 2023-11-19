@@ -25,7 +25,7 @@ export function generateTargetColumnMap(
     case FieldMetadataType.NUMBER:
     case FieldMetadataType.PROBABILITY:
     case FieldMetadataType.BOOLEAN:
-    case FieldMetadataType.DATE:
+    case FieldMetadataType.DATETIME:
       return {
         value: columnName,
       };

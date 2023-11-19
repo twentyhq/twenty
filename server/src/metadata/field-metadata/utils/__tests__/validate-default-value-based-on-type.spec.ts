@@ -17,7 +17,10 @@ describe('validateDefaultValueBasedOnType', () => {
 
   it('should validate now dynamic default value for DATE type', () => {
     expect(
-      validateDefaultValueBasedOnType({ type: 'now' }, FieldMetadataType.DATE),
+      validateDefaultValueBasedOnType(
+        { type: 'now' },
+        FieldMetadataType.DATETIME,
+      ),
     ).toBe(true);
   });
 

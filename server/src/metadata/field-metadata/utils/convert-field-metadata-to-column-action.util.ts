@@ -72,9 +72,9 @@ export function convertFieldMetadataToColumnActions(
         },
       ];
     }
-    case FieldMetadataType.DATE: {
+    case FieldMetadataType.DATETIME: {
       const defaultValue =
-        fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.DATE>;
+        fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.DATETIME>;
 
       return [
         {

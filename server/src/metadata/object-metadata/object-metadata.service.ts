@@ -88,7 +88,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             defaultValue: { type: 'uuid' },
           },
           {
-            type: FieldMetadataType.DATE,
+            type: FieldMetadataType.DATETIME,
             name: 'createdAt',
             label: 'Creation date',
             targetColumnMap: {
@@ -103,7 +103,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             defaultValue: { type: 'now' },
           },
           {
-            type: FieldMetadataType.DATE,
+            type: FieldMetadataType.DATETIME,
             name: 'updatedAt',
             label: 'Update date',
             targetColumnMap: {
