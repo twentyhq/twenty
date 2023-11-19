@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
 
+import { Company } from '@/companies/types/Company';
 import { PeopleCard } from '@/people/components/PeopleCard';
-import { Company, useGetPeopleQuery } from '~/generated/graphql';
+import { Person } from '@/people/types/Person';
 
 import { AddPersonToCompany } from './AddPersonToCompany';
 
@@ -43,16 +44,19 @@ const StyledTitle = styled.div`
 `;
 
 export const CompanyTeam = ({ company }: CompanyTeamProps) => {
-  const { data } = useGetPeopleQuery({
-    variables: {
-      orderBy: [],
-      where: {
-        companyId: {
-          equals: company.id,
-        },
-      },
-    },
-  });
+  // const { data } = useGetPeopleQuery({
+  //   variables: {
+  //     orderBy: [],
+  //     where: {
+  //       companyId: {
+  //         equals: company.id,
+  //       },
+  //     },
+  //   },
+  // });
+  const data = {
+    people: [],
+  };
 
   const peopleIds = data?.people?.map(({ id }) => id);
 
@@ -65,7 +69,7 @@ export const CompanyTeam = ({ company }: CompanyTeamProps) => {
             <AddPersonToCompany companyId={company.id} peopleIds={peopleIds} />
           </StyledTitleContainer>
           <StyledListContainer>
-            {data?.people?.map((person, id) => (
+            {data?.people?.map((person: Person, id) => (
               <PeopleCard
                 key={person.id}
                 person={person}

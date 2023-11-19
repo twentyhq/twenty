@@ -28,6 +28,7 @@ const meta: Meta = {
             fieldMetadataId: 'text',
             label: 'Text',
             type: 'TEXT',
+            iconName: 'IconLink',
             metadata: {
               fieldName: 'Text',
               placeHolder: 'Text',

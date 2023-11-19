@@ -23,7 +23,7 @@ export const ActivityBodyEditor = ({
 }: ActivityBodyEditorProps) => {
   const [body, setBody] = useState<string | null>(null);
   const { updateOneObject } = useUpdateOneObjectRecord({
-    objectNameSingular: 'ActivityV2',
+    objectNameSingular: 'Activity',
   });
 
   useEffect(() => {

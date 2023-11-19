@@ -4,8 +4,6 @@ import { availableTableColumnsScopedState } from '../states/availableTableColumn
 import { onColumnsChangeScopedState } from '../states/onColumnsChangeScopedState';
 import { hiddenTableColumnsScopedSelector } from '../states/selectors/hiddenTableColumnsScopedSelector';
 import { tableColumnsByKeyScopedSelector } from '../states/selectors/tableColumnsByKeyScopedSelector';
-import { tableFiltersWhereScopedSelector } from '../states/selectors/tablefiltersWhereScopedSelector';
-import { tableSortsOrderByScopedSelector } from '../states/selectors/tableSortsOrderByScopedSelector';
 import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTableColumnsScopedSelector';
 import { tableColumnsScopedState } from '../states/tableColumnsScopedState';
 import { tableFiltersScopedState } from '../states/tableFiltersScopedState';
@@ -32,12 +30,6 @@ export const getRecordTableScopedStates = ({
     tableSortsScopedState,
     recordTableScopeId,
   );
-
-  const tableSortsOrderBySelector =
-    tableSortsOrderByScopedSelector(recordTableScopeId);
-
-  const tableFiltersWhereSelector =
-    tableFiltersWhereScopedSelector(recordTableScopeId);
 
   const tableColumnsState = getScopedState(
     tableColumnsScopedState,
@@ -67,8 +59,6 @@ export const getRecordTableScopedStates = ({
     availableTableColumnsState,
     tableFiltersState,
     tableSortsState,
-    tableSortsOrderBySelector,
-    tableFiltersWhereSelector,
     tableColumnsState,
     tableColumnsByKeySelector,
     hiddenTableColumnsSelector,

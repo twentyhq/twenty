@@ -47,6 +47,7 @@ const ChipFieldInputWithContext = ({
           fieldMetadataId: 'chip',
           label: 'Chip',
           type: 'CHIP',
+          iconName: 'Icon123',
           metadata: {
             contentFieldName: 'name',
             urlFieldName: 'xURL',

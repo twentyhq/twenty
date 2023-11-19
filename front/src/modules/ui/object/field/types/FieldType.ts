@@ -9,7 +9,7 @@ export type FieldType =
   | 'DOUBLE_TEXT'
   | 'EMAIL'
   | 'ENUM'
-  | 'MONEY_AMOUNT_V2'
+  | 'MONEY_AMOUNT_'
   | 'MONEY_AMOUNT'
   | 'MONEY'
   | 'NUMBER'

@@ -1,8 +1,9 @@
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { Comment } from '@/activities/types/Comment';
+import { Company } from '@/companies/types/Company';
+import { Person } from '@/people/types/Person';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { Company, Person } from '~/generated/graphql';
 
 type MockedActivity = Pick<
   Activity,
@@ -32,7 +33,7 @@ type MockedActivity = Pick<
       | 'companyId'
     > & {
       activity: Pick<Activity, 'id' | 'createdAt' | 'updatedAt'>;
-      person?: Pick<Person, 'id' | 'displayName' | 'avatarUrl'> | null;
+      person?: Pick<Person, 'id' | 'name' | 'avatarUrl'> | null;
       company?: Pick<Company, 'id' | 'name' | 'domainName'> | null;
     }
   >;
@@ -178,7 +179,10 @@ export const mockedActivities: Array<MockedActivity> = [
         personId: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b', // Alexandre
         person: {
           id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
-          displayName: 'Alexandre Test',
+          name: {
+            firstName: 'Alexandre',
+            lastName: 'Test',
+          },
           avatarUrl: '',
         },
         company: null,
@@ -200,7 +204,10 @@ export const mockedActivities: Array<MockedActivity> = [
         company: null,
         person: {
           id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
-          displayName: "Jean d'Eau",
+          name: {
+            firstName: 'Jean',
+            lastName: "d'Eau",
+          },
           avatarUrl: '',
         },
         activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',

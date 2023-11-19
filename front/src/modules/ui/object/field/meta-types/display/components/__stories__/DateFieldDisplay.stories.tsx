@@ -30,6 +30,7 @@ const meta: Meta = {
             fieldMetadataId: 'date',
             label: 'Date',
             type: 'DATE',
+            iconName: 'IconCalendarEvent',
             metadata: {
               fieldName: 'Date',
             },

@@ -19,7 +19,6 @@ import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { ViewType } from '@/views/types/ViewType';
 
 export const SettingsNewObject = () => {
   const navigate = useNavigate();
@@ -33,7 +32,7 @@ export const SettingsNewObject = () => {
   } = useObjectMetadataItemForSettings();
 
   const { createOneObject: createOneView } = useCreateOneObjectRecord({
-    objectNameSingular: 'viewV2',
+    objectNameSingular: 'view',
   });
 
   const [
@@ -77,12 +76,6 @@ export const SettingsNewObject = () => {
         labelSingular: customFormValues.labelSingular,
         description: customFormValues.description,
         icon: customFormValues.icon,
-      });
-
-      await createOneView?.({
-        objectMetadataId: createdObject.data?.createOneObject.id,
-        type: ViewType.Table,
-        name: `All ${customFormValues.labelPlural}`,
       });
 
       navigate(

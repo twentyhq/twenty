@@ -3,22 +3,22 @@ import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-me
 const viewRelationMetadata = [
   {
     type: RelationMetadataType.ONE_TO_MANY,
-    fromObjectNameSingular: 'viewV2',
-    toObjectNameSingular: 'viewFieldV2',
+    fromObjectNameSingular: 'view',
+    toObjectNameSingular: 'viewField',
     fromFieldMetadataName: 'viewFields',
     toFieldMetadataName: 'view',
   },
   {
     type: RelationMetadataType.ONE_TO_MANY,
-    fromObjectNameSingular: 'viewV2',
-    toObjectNameSingular: 'viewFilterV2',
+    fromObjectNameSingular: 'view',
+    toObjectNameSingular: 'viewFilter',
     fromFieldMetadataName: 'viewFilters',
     toFieldMetadataName: 'view',
   },
   {
     type: RelationMetadataType.ONE_TO_MANY,
-    fromObjectNameSingular: 'viewV2',
-    toObjectNameSingular: 'viewSortV2',
+    fromObjectNameSingular: 'view',
+    toObjectNameSingular: 'viewSort',
     fromFieldMetadataName: 'viewSorts',
     toFieldMetadataName: 'view',
   },

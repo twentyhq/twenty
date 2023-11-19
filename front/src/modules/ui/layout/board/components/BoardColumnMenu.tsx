@@ -2,7 +2,6 @@ import { useCallback, useContext, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
-import { useCreateCompanyProgress } from '@/companies/hooks/useCreateCompanyProgress';
 import { useFilteredSearchCompanyQuery } from '@/companies/hooks/useFilteredSearchCompanyQuery';
 import {
   IconArrowLeft,
@@ -57,7 +56,6 @@ export const BoardColumnMenu = ({
   const boardColumnMenuRef = useRef<HTMLDivElement>(null);
 
   const { enqueueSnackBar } = useSnackBar();
-  const createCompanyProgress = useCreateCompanyProgress();
   const { handleMoveBoardColumn } = useBoardColumns();
 
   const handleCompanySelected = (
@@ -75,7 +73,7 @@ export const BoardColumnMenu = ({
       return;
     }
 
-    createCompanyProgress(selectedCompany.id, stageId);
+    //createCompanyProgress(selectedCompany.id, stageId);
     closeMenu();
   };
 

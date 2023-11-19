@@ -4,8 +4,7 @@ import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
-import { turnFilterIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFilterIntoWhereClause';
-import { SortOrder } from '~/generated/graphql';
+import { turnFiltersIntoWhereClauseV2 } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClauseV2';
 import { parseDate } from '~/utils/date-utils';
 
 export const useTasks = (entity?: ActivityTargetableEntity) => {
@@ -22,10 +21,10 @@ export const useTasks = (entity?: ActivityTargetableEntity) => {
           },
         },
       }
-    : Object.assign({}, turnFilterIntoWhereClause(selectedFilter));
+    : Object.assign({}, turnFiltersIntoWhereClauseV2([], []));
 
   const { objects: completeTasksData } = useFindManyObjectRecords({
-    objectNamePlural: 'activitiesV2',
+    objectNamePlural: 'activities',
     skip: !entity && !selectedFilter,
     filter: {
       type: { equals: 'Task' },
@@ -34,13 +33,13 @@ export const useTasks = (entity?: ActivityTargetableEntity) => {
     },
     orderBy: [
       {
-        createdAt: SortOrder.Desc,
+        createdAt: 'AscNullIsFirst',
       },
     ],
   });
 
   const { objects: incompleteTaskData } = useFindManyObjectRecords({
-    objectNamePlural: 'activitiesV2',
+    objectNamePlural: 'activities',
     skip: !entity && !selectedFilter,
     filter: {
       type: { equals: 'Task' },
@@ -49,7 +48,7 @@ export const useTasks = (entity?: ActivityTargetableEntity) => {
     },
     orderBy: [
       {
-        createdAt: SortOrder.Desc,
+        createdAt: 'DescNullIsFirst',
       },
     ],
   });

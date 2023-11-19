@@ -10,7 +10,7 @@ import { Command, CommandType } from '../types/Command';
 
 export const commandMenuCommands: Command[] = [
   {
-    to: '/people',
+    to: '/objects/people',
     label: 'Go to People',
     type: CommandType.Navigate,
     firstHotKey: 'G',
@@ -18,7 +18,7 @@ export const commandMenuCommands: Command[] = [
     Icon: IconUser,
   },
   {
-    to: '/companies',
+    to: '/objects/companies',
     label: 'Go to Companies',
     type: CommandType.Navigate,
     firstHotKey: 'G',
@@ -26,7 +26,7 @@ export const commandMenuCommands: Command[] = [
     Icon: IconBuildingSkyscraper,
   },
   {
-    to: '/opportunities',
+    to: '/objects/opportunities',
     label: 'Go to Opportunities',
     type: CommandType.Navigate,
     firstHotKey: 'G',

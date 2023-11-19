@@ -60,6 +60,7 @@ const DoubleTextChipFieldInputWithContext = ({
           fieldMetadataId: 'double-text-chip',
           label: 'Double-Text-Chip',
           type: 'DOUBLE_TEXT_CHIP',
+          iconName: 'IconUser',
           metadata: {
             firstValueFieldName: 'First-text',
             firstValuePlaceholder: 'First-text',

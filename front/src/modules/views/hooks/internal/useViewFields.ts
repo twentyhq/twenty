@@ -8,7 +8,7 @@ import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScope
 export const useViewFields = (viewScopeId: string) => {
   const { updateOneMutation, createOneMutation, findManyQuery } =
     useFindOneObjectMetadataItem({
-      objectNameSingular: 'viewFieldV2',
+      objectNameSingular: 'viewField',
     });
 
   const apolloClient = useApolloClient();

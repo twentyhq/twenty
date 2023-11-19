@@ -17,7 +17,7 @@ export const useViewFilters = (viewScopeId: string) => {
     deleteOneMutation,
     findManyQuery,
   } = useFindOneObjectMetadataItem({
-    objectNameSingular: 'viewFilterV2',
+    objectNameSingular: 'viewFilter',
   });
   const apolloClient = useApolloClient();
 

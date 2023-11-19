@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
+import { useQuery } from '@apollo/client';
 
-import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
+import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useFilteredSearchEntityQueryV2 } from '@/search/hooks/useFilteredSearchEntityQueryV2';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useSearchPeopleQuery } from '~/generated/graphql';
 
 export type PeoplePickerProps = {
   personId: string | null;
@@ -40,7 +41,7 @@ export const PeoplePicker = ({
 
   const queryFilters = [
     {
-      fieldNames: ['firstName', 'lastName'],
+      fieldNames: ['name.firstName', 'name.lastName'],
       filter: relationPickerSearchFilter,
     },
   ];
@@ -52,24 +53,32 @@ export const PeoplePicker = ({
     });
   }
 
-  const people = useFilteredSearchEntityQuery({
-    queryHook: useSearchPeopleQuery,
-    selectedIds: [personId ?? ''],
+  const { findManyQuery } = useFindOneObjectMetadataItem({
+    objectNameSingular: 'person',
+  });
+
+  const useFindManyPeople = (options: any) => useQuery(findManyQuery, options);
+
+  const people = useFilteredSearchEntityQueryV2({
+    queryHook: useFindManyPeople,
     filters: queryFilters,
-    mappingFunction: (person) => ({
-      entityType: Entity.Person,
-      id: person.id,
-      name: `${person.firstName} ${person.lastName}`,
+    orderByField: 'createdAt',
+    mappingFunction: (workspaceMember) => ({
+      entityType: Entity.WorkspaceMember,
+      id: workspaceMember.id,
+      name:
+        workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName,
       avatarType: 'rounded',
-      avatarUrl: person.avatarUrl ?? '',
-      originalEntity: person,
+      avatarUrl: '',
+      originalEntity: workspaceMember,
     }),
-    orderByField: 'firstName',
+    selectedIds: [personId ?? ''],
     excludeEntityIds: excludePersonIds,
+    objectNamePlural: 'people',
   });
 
   const handleEntitySelected = async (
-    selectedPerson: PersonForSelect | null | undefined,
+    selectedPerson: any | null | undefined,
   ) => {
     onSubmit(selectedPerson ?? null);
   };

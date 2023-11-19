@@ -1,6 +1,8 @@
-import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
-import { useSearchCompanyQuery } from '~/generated/graphql';
-import { getLogoUrlFromDomainName } from '~/utils';
+import { useQuery } from '@apollo/client';
+
+import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useFilteredSearchEntityQueryV2 } from '@/search/hooks/useFilteredSearchEntityQueryV2';
+import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 
 export const useFilteredSearchCompanyQuery = ({
   searchFilter,
@@ -11,25 +13,32 @@ export const useFilteredSearchCompanyQuery = ({
   selectedIds?: string[];
   limit?: number;
 }) => {
-  return useFilteredSearchEntityQuery({
-    queryHook: useSearchCompanyQuery,
+  const { findManyQuery } = useFindOneObjectMetadataItem({
+    objectNameSingular: 'company',
+  });
+
+  const useFindManyCompanies = (options: any) =>
+    useQuery(findManyQuery, options);
+
+  return useFilteredSearchEntityQueryV2({
+    queryHook: useFindManyCompanies,
     filters: [
       {
-        fieldNames: ['name'],
+        fieldNames: ['name.firstName', 'name.lastName'],
         filter: searchFilter,
       },
     ],
-    orderByField: 'name',
+    orderByField: 'createdAt',
     mappingFunction: (company) => ({
+      entityType: Entity.Company,
       id: company.id,
-      entityType: 'Company',
       name: company.name,
-      avatarUrl: getLogoUrlFromDomainName(company.domainName),
-      domainName: company.domainName,
       avatarType: 'squared',
+      avatarUrl: '',
       originalEntity: company,
     }),
     selectedIds: selectedIds,
+    objectNamePlural: 'workspaceMembers',
     limit,
   });
 };

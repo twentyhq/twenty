@@ -46,6 +46,7 @@ const MoneyFieldInputWithContext = ({
           fieldMetadataId: 'moneyAmount',
           label: 'MoneyAmout',
           type: 'MONEY_AMOUNT',
+          iconName: 'Icon123',
           metadata: {
             fieldName: 'moneyAmount',
             placeHolder: 'Enter Amount',

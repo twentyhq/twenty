@@ -4,12 +4,12 @@ import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { Company } from '@/companies/types/Company';
 import { Favorite } from '@/favorites/types/Favorite';
 import { mapFavorites } from '@/favorites/utils/mapFavorites';
 import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
-import { Company } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { favoritesState } from '../states/favoritesState';
@@ -25,7 +25,7 @@ export const useFavorites = ({
 
   const { updateOneMutation, createOneMutation, deleteOneMutation } =
     useFindOneObjectMetadataItem({
-      objectNamePlural: 'favoritesV2',
+      objectNamePlural: 'favorites',
     });
 
   const { foundObjectMetadataItem: favoriteTargetObjectMetadataItem } =
@@ -44,7 +44,7 @@ export const useFavorites = ({
 
   // This is only temporary and will be refactored once we have main identifiers
   const { loading: companiesLoading } = useFindManyObjectRecords({
-    objectNamePlural: 'companiesV2',
+    objectNamePlural: 'companies',
     onCompleted: async (
       data: PaginatedObjectTypeResults<Required<Company>>,
     ) => {
@@ -64,7 +64,7 @@ export const useFavorites = ({
   });
 
   const { loading: peopleLoading } = useFindManyObjectRecords({
-    objectNamePlural: 'peopleV2',
+    objectNamePlural: 'people',
     onCompleted: async (data) => {
       setAllPeople(
         data.edges.reduce(
@@ -84,7 +84,7 @@ export const useFavorites = ({
 
   useFindManyObjectRecords({
     skip: companiesLoading || peopleLoading,
-    objectNamePlural: 'favoritesV2',
+    objectNamePlural: 'favorites',
     onCompleted: useRecoilCallback(
       ({ snapshot, set }) =>
         async (data: PaginatedObjectTypeResults<Required<Favorite>>) => {
@@ -112,8 +112,7 @@ export const useFavorites = ({
         const favorites = snapshot.getLoadable(favoritesState).getValue();
 
         const targetObjectName =
-          favoriteTargetObjectMetadataItem?.nameSingular.replace('V2', '') ??
-          '';
+          favoriteTargetObjectMetadataItem?.nameSingular ?? '';
 
         const result = await apolloClient.mutate({
           mutation: createOneMutation,

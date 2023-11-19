@@ -49,6 +49,7 @@ const RelationFieldInputWithContext = ({
           fieldMetadataId: 'relation',
           label: 'Relation',
           type: 'RELATION',
+          iconName: 'IconLink',
           metadata: {
             fieldName: 'Relation',
             relationType: Entity.Person,

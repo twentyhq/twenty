@@ -4,9 +4,9 @@ import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-me
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedViewFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/view';
 import { SeedViewFieldFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/view-field';
-import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 import { SeedViewFilterFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/view-filter';
 import { SeedViewSortFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/view-sort';
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const tableName = 'relationMetadata';
 

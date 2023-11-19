@@ -54,7 +54,7 @@ export const SettingsObjectNewFieldStep2 = () => {
     initForm({
       relation: {
         field: { icon: activeObjectMetadataItem.icon },
-        objectMetadataId: findObjectMetadataItemByNamePlural('peopleV2')?.id,
+        objectMetadataId: findObjectMetadataItemByNamePlural('people')?.id,
       },
     });
   }, [
@@ -69,11 +69,11 @@ export const SettingsObjectNewFieldStep2 = () => {
   const [relationObjectViews, setRelationObjectViews] = useState<View[]>([]);
 
   const { createOneObject: createOneViewField } = useCreateOneObjectRecord({
-    objectNameSingular: 'viewFieldV2',
+    objectNameSingular: 'viewField',
   });
 
   useFindManyObjectRecords({
-    objectNamePlural: 'viewsV2',
+    objectNamePlural: 'views',
     filter: {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: activeObjectMetadataItem?.id },
@@ -88,7 +88,7 @@ export const SettingsObjectNewFieldStep2 = () => {
   });
 
   useFindManyObjectRecords({
-    objectNamePlural: 'viewsV2',
+    objectNamePlural: 'views',
     skip: !formValues.relation?.objectMetadataId,
     filter: {
       type: { eq: ViewType.Table },

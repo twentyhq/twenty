@@ -12,12 +12,12 @@ export const usePipelineStages = () => {
 
   const { createOneObject: createOnePipelineStep } =
     useCreateOneObjectRecord<PipelineStep>({
-      objectNameSingular: 'pipelineStepV2',
+      objectNameSingular: 'pipelineStep',
     });
 
   const { deleteOneObject: deleteOnePipelineStep } =
     useDeleteOneObjectRecord<PipelineStep>({
-      objectNameSingular: 'pipelineStepV2',
+      objectNameSingular: 'pipelineStep',
     });
 
   const handlePipelineStageAdd = async (boardColumn: BoardColumnDefinition) => {

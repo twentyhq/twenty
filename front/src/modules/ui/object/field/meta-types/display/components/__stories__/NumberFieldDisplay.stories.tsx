@@ -28,6 +28,7 @@ const meta: Meta = {
             fieldMetadataId: 'number',
             label: 'Number',
             type: 'NUMBER',
+            iconName: 'Icon123',
             metadata: {
               fieldName: 'Number',
               placeHolder: 'Number',

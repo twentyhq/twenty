@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { Company } from '@/companies/types/Company';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
 import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
@@ -13,13 +14,11 @@ import { useBoardContextMenuEntries } from '@/ui/layout/board/hooks/useBoardCont
 import { availableBoardCardFieldsScopedState } from '@/ui/layout/board/states/availableBoardCardFieldsScopedState';
 import { boardCardFieldsScopedState } from '@/ui/layout/board/states/boardCardFieldsScopedState';
 import { isBoardLoadedState } from '@/ui/layout/board/states/isBoardLoadedState';
-import { turnFilterIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFilterIntoWhereClause';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewFieldsToBoardFieldDefinitions';
-import { Company } from '~/generated-metadata/graphql';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
 import { useUpdateCompanyBoardCardIds } from '../hooks/useUpdateBoardCardIds';
@@ -62,7 +61,7 @@ export const HooksCompanyBoardEffect = () => {
   const updateCompanyBoard = useUpdateCompanyBoard();
 
   useFindManyObjectRecords({
-    objectNamePlural: 'pipelineStepsV2',
+    objectNamePlural: 'pipelineSteps',
     filter: {},
     onCompleted: useCallback(
       (data: PaginatedObjectTypeResults<PipelineStep>) => {
@@ -80,14 +79,14 @@ export const HooksCompanyBoardEffect = () => {
             in: pipelineSteps.map((pipelineStep) => pipelineStep.id),
           },
         },
-        ...(currentViewFilters?.map(turnFilterIntoWhereClause) || []),
+        ...[],
       ],
     };
-  }, [currentViewFilters, pipelineSteps]) as any;
+  }, [pipelineSteps]) as any;
 
   useFindManyObjectRecords({
     skip: !pipelineSteps.length,
-    objectNamePlural: 'opportunitiesV2',
+    objectNamePlural: 'opportunities',
     filter: whereFilters,
     onCompleted: useCallback(
       (_data: PaginatedObjectTypeResults<Opportunity>) => {
@@ -104,7 +103,7 @@ export const HooksCompanyBoardEffect = () => {
 
   useFindManyObjectRecords({
     skip: !opportunities.length,
-    objectNamePlural: 'companiesV2',
+    objectNamePlural: 'companies',
     filter: {
       id: {
         in: opportunities.map((opportuntiy) => opportuntiy.companyId || ''),

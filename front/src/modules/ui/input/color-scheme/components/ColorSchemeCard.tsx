@@ -10,7 +10,7 @@ import {
 import { Checkmark } from '@/ui/display/checkmark/components/Checkmark';
 import DarkNoise from '@/ui/theme/assets/dark-noise.jpg';
 import LightNoise from '@/ui/theme/assets/light-noise.png';
-import { ColorScheme } from '~/generated/graphql';
+import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
 const StyledColorSchemeBackground = styled.div<
   Pick<ColorSchemeCardProps, 'variant'>
@@ -18,18 +18,18 @@ const StyledColorSchemeBackground = styled.div<
   align-items: flex-end;
   background: ${({ variant }) => {
     switch (variant) {
-      case 'dark':
+      case 'Dark':
         return `url(${DarkNoise.toString()});`;
-      case 'light':
+      case 'Light':
       default:
         return `url(${LightNoise.toString()});`;
     }
   }};
   border: ${({ variant, theme }) => {
     switch (variant) {
-      case 'dark':
+      case 'Dark':
         return `1px solid ${theme.grayScale.gray70};`;
-      case 'light':
+      case 'Light':
       default:
         return `1px solid ${theme.grayScale.gray20};`;
     }
@@ -51,18 +51,18 @@ const StyledColorSchemeContent = styled(motion.div)<
 >`
   background: ${({ theme, variant }) => {
     switch (variant) {
-      case 'dark':
+      case 'Dark':
         return theme.grayScale.gray75;
-      case 'light':
+      case 'Light':
         return theme.grayScale.gray0;
     }
   }};
 
   border-left: ${({ variant, theme }) => {
     switch (variant) {
-      case 'dark':
+      case 'Dark':
         return `1px solid ${theme.grayScale.gray60};`;
-      case 'light':
+      case 'Light':
       default:
         return `1px solid ${theme.grayScale.gray20};`;
     }
@@ -70,9 +70,9 @@ const StyledColorSchemeContent = styled(motion.div)<
   border-radius: ${({ theme }) => theme.border.radius.md} 0px 0px 0px;
   border-top: ${({ variant, theme }) => {
     switch (variant) {
-      case 'dark':
+      case 'Dark':
         return `1px solid ${theme.grayScale.gray60};`;
-      case 'light':
+      case 'Light':
       default:
         return `1px solid ${theme.grayScale.gray20};`;
     }
@@ -80,9 +80,9 @@ const StyledColorSchemeContent = styled(motion.div)<
   box-sizing: border-box;
   color: ${({ variant, theme }) => {
     switch (variant) {
-      case 'dark':
+      case 'Dark':
         return theme.grayScale.gray30;
-      case 'light':
+      case 'Light':
       default:
         return theme.grayScale.gray60;
     }
@@ -96,7 +96,7 @@ const StyledColorSchemeContent = styled(motion.div)<
 `;
 
 export type ColorSchemeSegmentProps = {
-  variant: `${Lowercase<ColorScheme.Dark | ColorScheme.Light>}`;
+  variant: ColorScheme;
   controls: AnimationControls;
 } & React.ComponentPropsWithoutRef<'div'>;
 
@@ -139,7 +139,7 @@ const StyledCheckmarkContainer = styled(motion.div)`
 `;
 
 export type ColorSchemeCardProps = {
-  variant: `${Lowercase<ColorScheme>}`;
+  variant: ColorScheme;
   selected?: boolean;
 } & React.ComponentPropsWithoutRef<'div'>;
 
@@ -172,7 +172,7 @@ export const ColorSchemeCard = ({
     });
   };
 
-  if (variant === 'system') {
+  if (variant === 'System') {
     return (
       <StyledContainer>
         <StyledMixedColorSchemeSegment
@@ -183,12 +183,12 @@ export const ColorSchemeCard = ({
           <ColorSchemeSegment
             style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
             controls={controls}
-            variant="light"
+            variant="Light"
           />
           <ColorSchemeSegment
             style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
             controls={controls}
-            variant="dark"
+            variant="Dark"
           />
         </StyledMixedColorSchemeSegment>
         <AnimatePresence>

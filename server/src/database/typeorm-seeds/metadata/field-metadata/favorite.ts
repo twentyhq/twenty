@@ -1,8 +1,8 @@
 import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
-import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
@@ -17,8 +17,7 @@ export enum SeedFavoriteFieldMetadataIds {
   WorkspaceMemberForeignKey = '20202020-0f4c-4b9a-9b9a-917a68161a4f',
   Person = '20202020-0876-4735-8974-ff4d51aafa07',
   PersonForeignKey = '20202020-0876-4735-9473-ff4d51aa4e7b',
-  Company = '20202020-09e1-4384-ae3e-39e7956396fe',
-  CompanyV2 = '20202020-09e1-4384-ae3e-39e7956396ff',
+  Company = '20202020-09e1-4384-ae3e-39e7956396ff',
   CompanyForeignKey = '20202020-09e1-4384-ae3e-45e79563d528',
 }
 

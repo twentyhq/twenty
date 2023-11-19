@@ -29,6 +29,7 @@ const meta: Meta = {
             fieldMetadataId: 'phone',
             label: 'Phone',
             type: 'PHONE',
+            iconName: 'IconPhone',
             metadata: {
               fieldName: 'Phone',
               placeHolder: 'Phone',

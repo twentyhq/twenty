@@ -5,10 +5,8 @@ import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 export const formatFieldMetadataItemsAsFilterDefinitions = ({
   fields,
-  icons,
 }: {
   fields: Array<ObjectMetadataItem['fields'][0]>;
-  icons: Record<string, any>;
 }): FilterDefinition[] =>
   fields.reduce((acc, field) => {
     if (
@@ -20,22 +18,17 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
     ) {
       return acc;
     }
-    return [
-      ...acc,
-      formatFieldMetadataItemAsFilterDefinition({ field, icons }),
-    ];
+    return [...acc, formatFieldMetadataItemAsFilterDefinition({ field })];
   }, [] as FilterDefinition[]);
 
 const formatFieldMetadataItemAsFilterDefinition = ({
   field,
-  icons,
 }: {
   field: ObjectMetadataItem['fields'][0];
-  icons: Record<string, any>;
 }): FilterDefinition => ({
   fieldMetadataId: field.id,
   label: field.label,
-  Icon: icons[field.icon ?? 'Icon123'],
+  iconName: field.icon ?? 'Icon123',
   type:
     field.type === FieldMetadataType.Date
       ? 'DATE'

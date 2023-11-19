@@ -1,8 +1,8 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const opportunityMetadata = {
-  nameSingular: 'opportunityV2',
-  namePlural: 'opportunitiesV2',
+  nameSingular: 'opportunity',
+  namePlural: 'opportunities',
   labelSingular: 'Opportunity',
   labelPlural: 'Opportunities',
   targetTableName: 'opportunity',

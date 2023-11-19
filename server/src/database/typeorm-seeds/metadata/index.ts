@@ -22,11 +22,11 @@ import { seedActivityRelationMetadata } from 'src/database/typeorm-seeds/metadat
 import { seedPipelineStepRelationMetadata } from 'src/database/typeorm-seeds/metadata/relation-metadata/pipeline-step';
 import { seedPersonRelationMetadata } from 'src/database/typeorm-seeds/metadata/relation-metadata/person';
 import { seedWorkspaceMemberRelationMetadata } from 'src/database/typeorm-seeds/metadata/relation-metadata/workspace-member';
+import { seedDataSource } from 'src/database/typeorm-seeds/metadata/data-source';
 
-export const seedMetadataSchema = async (
-  workspaceDataSource: DataSource,
-  schemaName: string,
-) => {
+export const seedMetadataSchema = async (workspaceDataSource: DataSource) => {
+  const schemaName = 'metadata';
+  await seedDataSource(workspaceDataSource, schemaName);
   await seedObjectMetadata(workspaceDataSource, schemaName);
 
   await seedActivityTargetFieldMetadata(workspaceDataSource, schemaName);

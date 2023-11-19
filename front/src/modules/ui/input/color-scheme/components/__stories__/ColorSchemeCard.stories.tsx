@@ -36,9 +36,9 @@ type Story = StoryObj<typeof ColorSchemeCard>;
 export const Default: Story = {
   render: (args) => (
     <>
-      <ColorSchemeCard variant="light" selected={args.selected} />
-      <ColorSchemeCard variant="dark" selected={args.selected} />
-      <ColorSchemeCard variant="system" selected={args.selected} />
+      <ColorSchemeCard variant="Light" selected={args.selected} />
+      <ColorSchemeCard variant="Dark" selected={args.selected} />
+      <ColorSchemeCard variant="System" selected={args.selected} />
     </>
   ),
 };

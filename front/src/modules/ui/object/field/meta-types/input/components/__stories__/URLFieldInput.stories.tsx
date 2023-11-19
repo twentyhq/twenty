@@ -46,6 +46,7 @@ const URLFieldInputWithContext = ({
           fieldMetadataId: 'url',
           label: 'URL',
           type: 'URL',
+          iconName: 'IconLink',
           metadata: {
             fieldName: 'URL',
             placeHolder: 'Enter URL',

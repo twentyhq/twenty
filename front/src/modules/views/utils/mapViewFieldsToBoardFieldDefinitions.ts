@@ -23,7 +23,7 @@ export const mapViewFieldsToBoardFieldDefinitions = (
               correspondingFieldMetadata.entityChipDisplayMapper,
             infoTooltipContent: correspondingFieldMetadata.infoTooltipContent,
             basePathToShowPage: correspondingFieldMetadata.basePathToShowPage,
-            Icon: correspondingFieldMetadata.Icon,
+            iconName: correspondingFieldMetadata.iconName,
             type: correspondingFieldMetadata.type,
             position: viewField.position,
             isVisible: viewField.isVisible,

@@ -14,7 +14,7 @@ export const useDeleteSelectedBoardCards = () => {
 
   const { deleteOneObject: deleteOneOpportunity } =
     useDeleteOneObjectRecord<Opportunity>({
-      objectNameSingular: 'opportunityV2',
+      objectNameSingular: 'opportunity',
     });
 
   const deleteSelectedBoardCards = useRecoilCallback(

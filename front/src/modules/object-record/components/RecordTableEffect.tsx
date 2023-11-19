@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+import { useComputeDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useComputeDefinitionsFromFieldMetadata';
 import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
@@ -8,17 +9,18 @@ import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
 
 export const RecordTableEffect = () => {
-  const { scopeId: objectNamePlural, setAvailableTableColumns } =
-    useRecordTable();
-
   const {
-    columnDefinitions,
-    filterDefinitions,
-    sortDefinitions,
-    foundObjectMetadataItem,
-  } = useFindOneObjectMetadataItem({
+    scopeId: objectNamePlural,
+    setAvailableTableColumns,
+    setOnEntityCountChange,
+  } = useRecordTable();
+
+  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
     objectNamePlural,
   });
+
+  const { columnDefinitions, filterDefinitions, sortDefinitions } =
+    useComputeDefinitionsFromFieldMetadata(foundObjectMetadataItem);
 
   const {
     setAvailableSortDefinitions,
@@ -26,6 +28,7 @@ export const RecordTableEffect = () => {
     setAvailableFieldDefinitions,
     setViewType,
     setViewObjectMetadataId,
+    setEntityCountInCurrentView,
   } = useView();
 
   useEffect(() => {
@@ -64,6 +67,12 @@ export const RecordTableEffect = () => {
     setActionBarEntries?.();
     setContextMenuEntries?.();
   }, [setActionBarEntries, setContextMenuEntries]);
+
+  useEffect(() => {
+    setOnEntityCountChange(
+      () => (entityCount: number) => setEntityCountInCurrentView(entityCount),
+    );
+  }, [setEntityCountInCurrentView, setOnEntityCountChange]);
 
   return <></>;
 };

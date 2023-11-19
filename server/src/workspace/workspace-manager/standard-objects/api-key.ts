@@ -1,8 +1,8 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const apiKeyMetadata = {
-  nameSingular: 'apiKeyV2',
-  namePlural: 'apiKeysV2',
+  nameSingular: 'apiKey',
+  namePlural: 'apiKeys',
   labelSingular: 'Api Key',
   labelPlural: 'Api Keys',
   targetTableName: 'apiKey',

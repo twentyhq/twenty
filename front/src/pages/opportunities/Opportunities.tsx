@@ -28,7 +28,7 @@ export const Opportunities = () => {
 
   const { updateOneObject: updateOnePipelineStep } =
     useUpdateOneObjectRecord<PipelineStep>({
-      objectNameSingular: 'pipelineStepV2',
+      objectNameSingular: 'pipelineStep',
     });
 
   const handleEditColumnTitle = (
@@ -46,7 +46,7 @@ export const Opportunities = () => {
   };
 
   const opportunitiesV2MetadataId = useFindOneObjectMetadataItem({
-    objectNameSingular: 'opportunityV2',
+    objectNameSingular: 'opportunity',
   }).foundObjectMetadataItem?.id;
 
   const { setViewObjectMetadataId } = useView({

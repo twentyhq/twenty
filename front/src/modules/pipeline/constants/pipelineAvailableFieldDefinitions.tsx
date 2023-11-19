@@ -1,9 +1,4 @@
-import {
-  IconCalendarEvent,
-  IconCurrencyDollar,
-  IconProgressCheck,
-  IconUser,
-} from '@/ui/display/icon';
+import { Person } from '@/people/types/Person';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import {
   FieldDateMetadata,
@@ -13,14 +8,13 @@ import {
   FieldRelationMetadata,
 } from '@/ui/object/field/types/FieldMetadata';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
-import { Person } from '~/generated/graphql';
 
 export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[] =
   [
     {
       fieldMetadataId: 'closeDate',
       label: 'Close Date',
-      Icon: IconCalendarEvent,
+      iconName: 'IconCalendarEvent',
       position: 0,
       type: 'DATE',
       metadata: {
@@ -34,7 +28,7 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
     {
       fieldMetadataId: 'amount',
       label: 'Amount',
-      Icon: IconCurrencyDollar,
+      iconName: 'IconCurrencyDollar',
       position: 1,
       type: 'NUMBER',
       metadata: {
@@ -48,7 +42,7 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
     {
       fieldMetadataId: 'probability',
       label: 'Probability',
-      Icon: IconProgressCheck,
+      iconName: 'IconProgressCheck',
       position: 2,
       type: 'PROBABILITY',
       metadata: {
@@ -62,7 +56,7 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
     {
       fieldMetadataId: 'pointOfContact',
       label: 'Point of Contact',
-      Icon: IconUser,
+      iconName: 'IconUser',
       position: 3,
       type: 'RELATION',
       metadata: {
@@ -75,7 +69,7 @@ export const pipelineAvailableFieldDefinitions: ColumnDefinition<FieldMetadata>[
       infoTooltipContent: 'Primary contact within the company.',
       entityChipDisplayMapper: (dataObject: Person) => {
         return {
-          name: dataObject?.displayName,
+          name: dataObject?.name.firstName + ' ' + dataObject?.name.lastName,
           pictureUrl: dataObject?.avatarUrl ?? undefined,
           avatarType: 'rounded',
         };

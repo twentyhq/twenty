@@ -33,7 +33,7 @@ export const CompanyPicker = ({
   }, [initialSearchFilter, setRelationPickerSearchFilter]);
 
   const { findManyQuery } = useFindOneObjectMetadataItem({
-    objectNamePlural: 'companiesV2',
+    objectNamePlural: 'companies',
   });
 
   const useFindManyCompanies = (options: any) =>
@@ -57,7 +57,7 @@ export const CompanyPicker = ({
       originalEntity: company,
     }),
     selectedIds: companyId ? [companyId] : [],
-    objectNamePlural: 'companiesV2',
+    objectNamePlural: 'companies',
   });
 
   const handleEntitySelected = async (

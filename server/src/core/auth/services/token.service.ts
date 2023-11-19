@@ -7,23 +7,29 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { TokenExpiredError } from 'jsonwebtoken';
+import { Repository } from 'typeorm';
 
 import { JwtPayload } from 'src/core/auth/strategies/jwt.auth.strategy';
-import { PrismaService } from 'src/database/prisma.service';
 import { assert } from 'src/utils/assert';
-import { AuthToken } from 'src/core/auth/dto/token.entity';
+import { ApiKeyToken, AuthToken } from 'src/core/auth/dto/token.entity';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { User } from 'src/core/user/user.entity';
+import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
 
 @Injectable()
 export class TokenService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly environmentService: EnvironmentService,
-    private readonly prismaService: PrismaService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(RefreshToken)
+    private readonly refreshTokenRepository: Repository<RefreshToken>,
   ) {}
 
   async generateAccessToken(userId: string): Promise<AuthToken> {
@@ -31,22 +37,25 @@ export class TokenService {
     assert(expiresIn, '', InternalServerErrorException);
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
-    const user = await this.prismaService.client.user.findUnique({
+    const user = await this.userRepository.findOne({
       where: { id: userId },
+      relations: ['defaultWorkspace'],
     });
 
     if (!user) {
       throw new NotFoundException('User is not found');
     }
 
-    if (!user.defaultWorkspaceId) {
+    if (!user.defaultWorkspace) {
       throw new NotFoundException('User does not have a default workspace');
     }
 
     const jwtPayload: JwtPayload = {
       sub: user.id,
-      workspaceId: user.defaultWorkspaceId,
+      workspaceId: user.defaultWorkspace.id,
     };
+
+    console.log(jwtPayload);
 
     return {
       token: this.jwtService.sign(jwtPayload),
@@ -68,9 +77,13 @@ export class TokenService {
       sub: userId,
     };
 
-    const refreshToken = await this.prismaService.client.refreshToken.create({
-      data: refreshTokenPayload,
-    });
+    const refreshToken =
+      this.refreshTokenRepository.create(refreshTokenPayload);
+    console.log(refreshToken);
+
+    await this.refreshTokenRepository.save(refreshToken);
+
+    console.log('toto');
 
     return {
       token: this.jwtService.sign(jwtPayload, {
@@ -101,6 +114,34 @@ export class TokenService {
     };
   }
 
+  async generateApiKeyToken(
+    workspaceId: string,
+    apiKeyId?: string,
+    expiresAt?: Date | string,
+  ): Promise<Pick<ApiKeyToken, 'token'> | undefined> {
+    if (!apiKeyId) {
+      return;
+    }
+    const jwtPayload = {
+      sub: workspaceId,
+    };
+    const secret = this.environmentService.getAccessTokenSecret();
+    let expiresIn: string | number;
+    if (expiresAt) {
+      expiresIn = Math.floor(
+        (new Date(expiresAt).getTime() - new Date().getTime()) / 1000,
+      );
+    } else {
+      expiresIn = this.environmentService.getApiTokenExpiresIn();
+    }
+    const token = this.jwtService.sign(jwtPayload, {
+      secret,
+      expiresIn,
+      jwtid: apiKeyId,
+    });
+    return { token };
+  }
+
   async verifyLoginToken(loginToken: string): Promise<string> {
     const loginTokenSecret = this.environmentService.getLoginTokenSecret();
 
@@ -120,19 +161,14 @@ export class TokenService {
       UnprocessableEntityException,
     );
 
-    const token = await this.prismaService.client.refreshToken.findUnique({
-      where: { id: jwtPayload.jti },
+    const token = await this.refreshTokenRepository.findOneBy({
+      id: jwtPayload.jti,
     });
 
     assert(token, "This refresh token doesn't exist", NotFoundException);
 
-    const user = await this.prismaService.client.user.findUnique({
-      where: {
-        id: jwtPayload.sub,
-      },
-      include: {
-        refreshTokens: true,
-      },
+    const user = await this.userRepository.findOneBy({
+      id: jwtPayload.sub,
     });
 
     assert(user, 'User not found', NotFoundException);
@@ -143,16 +179,17 @@ export class TokenService {
       token.revokedAt.getTime() <= Date.now() - ms(coolDown)
     ) {
       // Revoke all user refresh tokens
-      await this.prismaService.client.refreshToken.updateMany({
-        where: {
-          id: {
-            in: user.refreshTokens.map(({ id }) => id),
-          },
-        },
-        data: {
-          revokedAt: new Date(),
-        },
-      });
+      await Promise.all(
+        user.refreshTokens.map(
+          async ({ id }) =>
+            await this.refreshTokenRepository.update(
+              { id },
+              {
+                revokedAt: new Date(),
+              },
+            ),
+        ),
+      );
 
       throw new ForbiddenException(
         'Suspicious activity detected, this refresh token has been revoked. All tokens has been revoked.',
@@ -172,14 +209,14 @@ export class TokenService {
     } = await this.verifyRefreshToken(token);
 
     // Revoke old refresh token
-    await this.prismaService.client.refreshToken.update({
-      where: {
+    await this.refreshTokenRepository.update(
+      {
         id,
       },
-      data: {
+      {
         revokedAt: new Date(),
       },
-    });
+    );
 
     const accessToken = await this.generateAccessToken(user.id);
     const refreshToken = await this.generateRefreshToken(user.id);

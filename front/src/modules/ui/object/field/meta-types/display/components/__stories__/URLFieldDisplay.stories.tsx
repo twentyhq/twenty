@@ -29,6 +29,7 @@ const meta: Meta = {
             fieldMetadataId: 'URL',
             label: 'URL',
             type: 'URL',
+            iconName: 'IconLink',
             metadata: {
               fieldName: 'URL',
               placeHolder: 'URL',

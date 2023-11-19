@@ -1,21 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { ColorScheme } from '~/generated/graphql';
+import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
-type SystemColorScheme = ColorScheme.Light | ColorScheme.Dark;
-
-export const useSystemColorScheme = (): SystemColorScheme => {
+export const useSystemColorScheme = (): ColorScheme => {
   const mediaQuery = useMemo(
     () => window.matchMedia('(prefers-color-scheme: dark)'),
     [],
   );
 
-  const [preferredColorScheme, setPreferredColorScheme] =
-    useState<SystemColorScheme>(
-      !window.matchMedia || !mediaQuery.matches
-        ? ColorScheme.Light
-        : ColorScheme.Dark,
-    );
+  const [preferredColorScheme, setPreferredColorScheme] = useState<ColorScheme>(
+    !window.matchMedia || !mediaQuery.matches ? 'Light' : 'Dark',
+  );
 
   useEffect(() => {
     if (!window.matchMedia) {
@@ -23,9 +18,7 @@ export const useSystemColorScheme = (): SystemColorScheme => {
     }
 
     const handleChange = (event: MediaQueryListEvent): void => {
-      setPreferredColorScheme(
-        event.matches ? ColorScheme.Dark : ColorScheme.Light,
-      );
+      setPreferredColorScheme(event.matches ? 'Dark' : 'Light');
     };
 
     mediaQuery.addEventListener('change', handleChange);

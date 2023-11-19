@@ -1,6 +1,8 @@
-import { ActivityTargetableEntityForSelect } from '@/activities/types/ActivityTargetableEntityForSelect';
-import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
-import { useSearchPeopleQuery } from '~/generated/graphql';
+import { useQuery } from '@apollo/client';
+
+import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useFilteredSearchEntityQueryV2 } from '@/search/hooks/useFilteredSearchEntityQueryV2';
+import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 
 export const useFilteredSearchPeopleQuery = ({
   searchFilter,
@@ -10,24 +12,32 @@ export const useFilteredSearchPeopleQuery = ({
   searchFilter: string;
   selectedIds?: string[];
   limit?: number;
-}) =>
-  useFilteredSearchEntityQuery({
-    queryHook: useSearchPeopleQuery,
+}) => {
+  const { findManyQuery } = useFindOneObjectMetadataItem({
+    objectNameSingular: 'person',
+  });
+
+  const useFindManyPeople = (options: any) => useQuery(findManyQuery, options);
+
+  return useFilteredSearchEntityQueryV2({
+    queryHook: useFindManyPeople,
     filters: [
       {
-        fieldNames: ['firstName', 'lastName'],
+        fieldNames: ['name.firstName', 'name.lastName'],
         filter: searchFilter,
       },
     ],
-    orderByField: 'lastName',
+    orderByField: 'createdAt',
+    mappingFunction: (person) => ({
+      entityType: Entity.Person,
+      id: person.id,
+      name: person.name.firstName + ' ' + person.name.lastName,
+      avatarType: 'rounded',
+      avatarUrl: '',
+      originalEntity: person,
+    }),
     selectedIds: selectedIds,
-    mappingFunction: (entity) =>
-      ({
-        id: entity.id,
-        entityType: 'Person',
-        name: `${entity.firstName} ${entity.lastName}`,
-        avatarUrl: entity.avatarUrl,
-        avatarType: 'rounded',
-      } as ActivityTargetableEntityForSelect),
+    objectNamePlural: 'workspaceMembers',
     limit,
   });
+};

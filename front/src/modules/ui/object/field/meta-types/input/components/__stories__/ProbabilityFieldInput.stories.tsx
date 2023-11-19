@@ -44,6 +44,7 @@ const ProbabilityFieldInputWithContext = ({
         fieldMetadataId: 'probability',
         label: 'Probability',
         type: 'PROBABILITY',
+        iconName: 'Icon123',
         metadata: {
           fieldName: 'Probability',
         },

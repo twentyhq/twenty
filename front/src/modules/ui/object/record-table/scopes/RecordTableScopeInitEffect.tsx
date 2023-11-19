@@ -12,23 +12,14 @@ type RecordTableScopeInitEffectProps = {
 
 export const RecordTableScopeInitEffect = ({
   onColumnsChange,
-  onEntityCountChange,
 }: RecordTableScopeInitEffectProps) => {
-  const { onColumnsChangeState, onEntityCountChangeState } =
-    useRecordTableScopedStates();
+  const { onColumnsChangeState } = useRecordTableScopedStates();
 
-  const setOnEntityCountChange = useSetRecoilState(onEntityCountChangeState);
   const setOnColumnsChange = useSetRecoilState(onColumnsChangeState);
 
   useEffect(() => {
-    setOnEntityCountChange(() => onEntityCountChange);
     setOnColumnsChange(() => onColumnsChange);
-  }, [
-    onColumnsChange,
-    onEntityCountChange,
-    setOnColumnsChange,
-    setOnEntityCountChange,
-  ]);
+  }, [onColumnsChange, setOnColumnsChange]);
 
   return <></>;
 };

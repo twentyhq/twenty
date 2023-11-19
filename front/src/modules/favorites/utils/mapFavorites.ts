@@ -1,4 +1,5 @@
-import { Company, Person } from '~/generated/graphql';
+import { Company } from '@/companies/types/Company';
+import { Person } from '@/people/types/Person';
 import { getLogoUrlFromDomainName } from '~/utils';
 import { assertNotNull } from '~/utils/assert';
 import { isDefined } from '~/utils/isDefined';
@@ -7,8 +8,8 @@ export const mapFavorites = (
   favorites: any,
   recordsDict: {
     [key: string]: {
-      firstName?: Person['firstName'];
-      lastName?: Person['lastName'];
+      firstName?: Person['name']['firstName'];
+      lastName?: Person['name']['lastName'];
       avatarUrl?: Person['avatarUrl'];
       name?: Company['name'];
       domainName?: Company['domainName'];

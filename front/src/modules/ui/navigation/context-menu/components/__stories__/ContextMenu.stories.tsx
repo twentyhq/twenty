@@ -2,8 +2,6 @@ import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 import { useSetRecoilState } from 'recoil';
 
-import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
-import { CompanyTableMockMode } from '@/companies/table/components/CompanyTableMockMode';
 import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
@@ -12,8 +10,6 @@ import { contextMenuPositionState } from '../../states/contextMenuPositionState'
 import { ContextMenu } from '../ContextMenu';
 
 const FilledContextMenu = (props: { selectedIds: string[] }) => {
-  const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
-  setContextMenuEntries();
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   setContextMenuPosition({
     x: 100,
@@ -32,10 +28,8 @@ const meta: Meta<typeof ContextMenu> = {
       <RecordTableScope
         recordTableScopeId="companies"
         onColumnsChange={() => {}}
-        onEntityCountChange={() => {}}
       >
         <MemoryRouter>
-          <CompanyTableMockMode></CompanyTableMockMode>
           <Story />
         </MemoryRouter>
       </RecordTableScope>

@@ -4,21 +4,19 @@ import {
   ForbiddenException,
   UseGuards,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { Prisma } from '@prisma/client';
+import { Repository } from 'typeorm';
 
-import {
-  PrismaSelect,
-  PrismaSelector,
-} from 'src/decorators/prisma-select.decorator';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { AuthUser } from 'src/decorators/auth-user.decorator';
 import { assert } from 'src/utils/assert';
-import { User } from 'src/core/@generated/user/user.model';
-import { Workspace } from 'src/core/@generated/workspace/workspace.model';
-import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
+import { Workspace } from 'src/core/workspace/workspace.entity';
+import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
+import { User } from 'src/core/user/user.entity';
+import { ApiKeyTokenInput } from 'src/core/auth/dto/api-key-token.input';
 
-import { AuthTokens } from './dto/token.entity';
+import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { TokenService } from './services/token.service';
 import { RefreshTokenInput } from './dto/refresh-token.input';
 import { Verify } from './dto/verify.entity';
@@ -36,7 +34,8 @@ import { ImpersonateInput } from './dto/impersonate.input';
 @Resolver()
 export class AuthResolver {
   constructor(
-    private workspaceService: WorkspaceService,
+    @InjectRepository(Workspace)
+    private readonly workspaceRepository: Repository<Workspace>,
     private authService: AuthService,
     private tokenService: TokenService,
   ) {}
@@ -64,10 +63,8 @@ export class AuthResolver {
   async findWorkspaceFromInviteHash(
     @Args() workspaceInviteHashValidInput: WorkspaceInviteHashValidInput,
   ) {
-    return await this.workspaceService.findFirst({
-      where: {
-        inviteHash: workspaceInviteHashValidInput.inviteHash,
-      },
+    return await this.workspaceRepository.findOneBy({
+      inviteHash: workspaceInviteHashValidInput.inviteHash,
     });
   }
 
@@ -88,21 +85,12 @@ export class AuthResolver {
   }
 
   @Mutation(() => Verify)
-  async verify(
-    @Args() verifyInput: VerifyInput,
-    @PrismaSelector({
-      modelName: 'User',
-      defaultFields: { User: { id: true } },
-    })
-    prismaSelect: PrismaSelect<'User'>,
-  ): Promise<Verify> {
+  async verify(@Args() verifyInput: VerifyInput): Promise<Verify> {
     const email = await this.tokenService.verifyLoginToken(
       verifyInput.loginToken,
     );
-    const select = prismaSelect.valueOf('user') as Prisma.UserSelect & {
-      id: true;
-    };
-    const result = await this.authService.verify(email, select);
+
+    const result = await this.authService.verify(email);
 
     return result;
   }
@@ -125,22 +113,24 @@ export class AuthResolver {
   async impersonate(
     @Args() impersonateInput: ImpersonateInput,
     @AuthUser() user: User,
-    @PrismaSelector({
-      modelName: 'User',
-      defaultFields: {
-        User: {
-          id: true,
-        },
-      },
-    })
-    prismaSelect: PrismaSelect<'User'>,
   ): Promise<Verify> {
     // Check if user can impersonate
     assert(user.canImpersonate, 'User cannot impersonate', ForbiddenException);
-    const select = prismaSelect.valueOf('user') as Prisma.UserSelect & {
-      id: true;
-    };
 
-    return this.authService.impersonate(impersonateInput.userId, select);
+    return this.authService.impersonate(impersonateInput.userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Mutation(() => ApiKeyToken)
+  async generateApiKeyToken(
+    @Args() args: ApiKeyTokenInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ): Promise<ApiKeyToken | undefined> {
+    console.log('toto');
+    return await this.tokenService.generateApiKeyToken(
+      workspaceId,
+      args.apiKeyId,
+      args.expiresAt,
+    );
   }
 }

@@ -16,6 +16,8 @@ import {
   WorkspaceMigrationTableAction,
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -27,6 +29,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
 
+    private readonly dataSourceService: DataSourceService,
+    private readonly typeORMService: TypeORMService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
   ) {
@@ -74,7 +78,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             targetColumnMap: {
               value: 'id',
             },
-            icon: undefined,
+            icon: 'Icon123',
             description: 'Id',
             isNullable: true,
             isActive: true,
@@ -157,6 +161,32 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
       createdObjectMetadata.workspaceId,
     );
+
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        createdObjectMetadata.workspaceId,
+      );
+
+    const workspaceDataSource = await this.typeORMService.connectToDataSource(
+      dataSourceMetadata,
+    );
+
+    const view = await workspaceDataSource?.query(
+      `INSERT INTO ${dataSourceMetadata.schema}."view"
+      ("objectMetadataId", "type", "name")
+      VALUES ('${createdObjectMetadata.id}', 'table', 'All ${createdObjectMetadata.namePlural}') RETURNING *`,
+    );
+    createdObjectMetadata.fields.map(async (field, index) => {
+      if (field.name === 'id') {
+        return;
+      }
+
+      await workspaceDataSource?.query(
+        `INSERT INTO ${dataSourceMetadata.schema}."viewField"
+      ("fieldMetadataId", "position", "isVisible", "size", "viewId")
+      VALUES ('${field.id}', '${index}', true, 180, '${view[0].id}') RETURNING *`,
+      );
+    });
 
     return createdObjectMetadata;
   }
