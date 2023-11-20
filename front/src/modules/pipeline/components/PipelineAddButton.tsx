@@ -1,5 +1,4 @@
 import { CompanyProgressPicker } from '@/companies/components/CompanyProgressPicker';
-import { useCreateCompanyProgress } from '@/companies/hooks/useCreateCompanyProgress';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { IconPlus } from '@/ui/display/icon/index';
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
@@ -17,8 +16,6 @@ export const PipelineAddButton = () => {
   const { closeDropdown, toggleDropdown } = useDropdown({
     dropdownScopeId: 'add-pipeline-progress',
   });
-
-  const createCompanyProgress = useCreateCompanyProgress();
 
   const handleCompanySelected = (
     selectedCompany: EntityForSelect | null,
@@ -48,7 +45,7 @@ export const PipelineAddButton = () => {
       return;
     }
     closeDropdown();
-    createCompanyProgress(selectedCompany.id, selectedPipelineStageId);
+    //createCompanyProgress(selectedCompany.id, selectedPipelineStageId);
   };
 
   return (

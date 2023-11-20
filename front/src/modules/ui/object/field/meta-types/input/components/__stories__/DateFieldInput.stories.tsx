@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import { expect } from '@storybook/jest';
-import { jest } from '@storybook/jest';
+import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
@@ -44,9 +43,10 @@ const DateFieldInputWithContext = ({
     <div>
       <FieldContextProvider
         fieldDefinition={{
-          fieldId: 'date',
+          fieldMetadataId: 'date',
           label: 'Date',
-          type: 'date',
+          type: 'DATE',
+          iconName: 'IconCalendarEvent',
           metadata: {
             fieldName: 'Date',
           },

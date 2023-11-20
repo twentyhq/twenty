@@ -12,14 +12,16 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
 export type SelectProps<Value extends string | number | null> = {
+  className?: string;
   disabled?: boolean;
   dropdownScopeId: string;
+  label?: string;
   onChange?: (value: Value) => void;
   options: { value: Value; label: string; Icon?: IconComponent }[];
   value?: Value;
 };
 
-const StyledContainer = styled.div<{ disabled?: boolean }>`
+const StyledControlContainer = styled.div<{ disabled?: boolean }>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -34,7 +36,16 @@ const StyledContainer = styled.div<{ disabled?: boolean }>`
   padding: 0 ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledLabel = styled.div`
+const StyledLabel = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
+  display: block;
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  text-transform: uppercase;
+`;
+
+const StyledControlLabel = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
@@ -46,8 +57,10 @@ const StyledIconChevronDown = styled(IconChevronDown)<{ disabled?: boolean }>`
 `;
 
 export const Select = <Value extends string | number | null>({
+  className,
   disabled,
   dropdownScopeId,
+  label,
   onChange,
   options,
   value,
@@ -59,46 +72,49 @@ export const Select = <Value extends string | number | null>({
   const { closeDropdown } = useDropdown({ dropdownScopeId });
 
   const selectControl = (
-    <StyledContainer disabled={disabled}>
-      <StyledLabel>
-        {!!selectedOption.Icon && (
+    <StyledControlContainer disabled={disabled}>
+      <StyledControlLabel>
+        {!!selectedOption?.Icon && (
           <selectedOption.Icon
             color={disabled ? theme.font.color.light : theme.font.color.primary}
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.sm}
           />
         )}
-        {selectedOption.label}
-      </StyledLabel>
+        {selectedOption?.label}
+      </StyledControlLabel>
       <StyledIconChevronDown disabled={disabled} size={theme.icon.size.md} />
-    </StyledContainer>
+    </StyledControlContainer>
   );
 
   return disabled ? (
     selectControl
   ) : (
     <DropdownScope dropdownScopeId={dropdownScopeId}>
-      <Dropdown
-        dropdownMenuWidth={176}
-        dropdownPlacement="bottom-start"
-        clickableComponent={selectControl}
-        dropdownComponents={
-          <DropdownMenuItemsContainer>
-            {options.map((option) => (
-              <MenuItem
-                key={option.value}
-                LeftIcon={option.Icon}
-                text={option.label}
-                onClick={() => {
-                  onChange?.(option.value);
-                  closeDropdown();
-                }}
-              />
-            ))}
-          </DropdownMenuItemsContainer>
-        }
-        dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
-      />
+      <div className={className}>
+        {!!label && <StyledLabel>{label}</StyledLabel>}
+        <Dropdown
+          dropdownMenuWidth={176}
+          dropdownPlacement="bottom-start"
+          clickableComponent={selectControl}
+          dropdownComponents={
+            <DropdownMenuItemsContainer>
+              {options.map((option) => (
+                <MenuItem
+                  key={option.value}
+                  LeftIcon={option.Icon}
+                  text={option.label}
+                  onClick={() => {
+                    onChange?.(option.value);
+                    closeDropdown();
+                  }}
+                />
+              ))}
+            </DropdownMenuItemsContainer>
+          }
+          dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
+        />
+      </div>
     </DropdownScope>
   );
 };

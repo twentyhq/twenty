@@ -7,6 +7,8 @@ import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
 import { isFieldChip } from '../types/guards/isFieldChip';
 import { isFieldChipValue } from '../types/guards/isFieldChipValue';
+import { isFieldCurrency } from '../types/guards/isFieldCurrency';
+import { isFieldCurrencyValue } from '../types/guards/isFieldCurrencyValue';
 import { isFieldDate } from '../types/guards/isFieldDate';
 import { isFieldDateValue } from '../types/guards/isFieldDateValue';
 import { isFieldDoubleText } from '../types/guards/isFieldDoubleText';
@@ -15,9 +17,9 @@ import { isFieldDoubleTextChipValue } from '../types/guards/isFieldDoubleTextChi
 import { isFieldDoubleTextValue } from '../types/guards/isFieldDoubleTextValue';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
 import { isFieldEmailValue } from '../types/guards/isFieldEmailValue';
+import { isFieldLink } from '../types/guards/isFieldLink';
+import { isFieldLinkValue } from '../types/guards/isFieldLinkValue';
 import { isFieldMoney } from '../types/guards/isFieldMoney';
-import { isFieldMoneyAmountV2 } from '../types/guards/isFieldMoneyAmountV2';
-import { isFieldMoneyAmountV2Value } from '../types/guards/isFieldMoneyAmountV2Value';
 import { isFieldMoneyValue } from '../types/guards/isFieldMoneyValue';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldNumberValue } from '../types/guards/isFieldNumberValue';
@@ -30,13 +32,14 @@ import { isFieldRelationValue } from '../types/guards/isFieldRelationValue';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldTextValue } from '../types/guards/isFieldTextValue';
 import { isFieldURL } from '../types/guards/isFieldURL';
-import { isFieldURLV2 } from '../types/guards/isFieldURLV2';
-import { isFieldURLV2Value } from '../types/guards/isFieldURLV2Value';
 import { isFieldURLValue } from '../types/guards/isFieldURLValue';
 
 export const usePersistField = () => {
-  const { entityId, fieldDefinition, useUpdateEntityMutation } =
-    useContext(FieldContext);
+  const {
+    entityId,
+    fieldDefinition,
+    useUpdateEntityMutation = () => [],
+  } = useContext(FieldContext);
 
   const [updateEntity] = useUpdateEntityMutation();
 
@@ -70,8 +73,8 @@ export const usePersistField = () => {
         const fieldIsURL =
           isFieldURL(fieldDefinition) && isFieldURLValue(valueToPersist);
 
-        const fieldIsURLV2 =
-          isFieldURLV2(fieldDefinition) && isFieldURLV2Value(valueToPersist);
+        const fieldIsLink =
+          isFieldLink(fieldDefinition) && isFieldLinkValue(valueToPersist);
 
         const fieldIsBoolean =
           isFieldBoolean(fieldDefinition) &&
@@ -87,9 +90,9 @@ export const usePersistField = () => {
         const fieldIsMoney =
           isFieldMoney(fieldDefinition) && isFieldMoneyValue(valueToPersist);
 
-        const fieldIsMoneyAmountV2 =
-          isFieldMoneyAmountV2(fieldDefinition) &&
-          isFieldMoneyAmountV2Value(valueToPersist);
+        const fieldIsCurrency =
+          isFieldCurrency(fieldDefinition) &&
+          isFieldCurrencyValue(valueToPersist);
 
         const fieldIsPhone =
           isFieldPhone(fieldDefinition) && isFieldPhoneValue(valueToPersist);
@@ -102,13 +105,13 @@ export const usePersistField = () => {
             valueToPersist,
           );
 
-          updateEntity({
+          updateEntity?.({
             variables: {
               where: { id: entityId },
               data: {
-                [fieldName]: valueToPersist
-                  ? { connect: { id: valueToPersist.id } }
-                  : { disconnect: true },
+                // TODO: find a more elegant way to do this ?
+                // Maybe have a link between the RELATION field and the UUID field ?
+                [`${fieldName}Id`]: valueToPersist?.id ?? null,
               },
             },
           });
@@ -120,7 +123,7 @@ export const usePersistField = () => {
             valueToPersist,
           );
 
-          updateEntity({
+          updateEntity?.({
             variables: {
               where: { id: entityId },
               data: {
@@ -145,7 +148,7 @@ export const usePersistField = () => {
             valueToPersist.secondValue,
           );
 
-          updateEntity({
+          updateEntity?.({
             variables: {
               where: { id: entityId },
               data: {
@@ -166,8 +169,8 @@ export const usePersistField = () => {
           fieldIsMoney ||
           fieldIsDate ||
           fieldIsPhone ||
-          fieldIsURLV2 ||
-          fieldIsMoneyAmountV2
+          fieldIsLink ||
+          fieldIsCurrency
         ) {
           const fieldName = fieldDefinition.metadata.fieldName;
 
@@ -176,7 +179,7 @@ export const usePersistField = () => {
             valueToPersist,
           );
 
-          updateEntity({
+          updateEntity?.({
             variables: {
               where: { id: entityId },
               data: {

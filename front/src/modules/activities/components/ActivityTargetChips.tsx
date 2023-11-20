@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
 
+import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { CompanyChip } from '@/companies/components/CompanyChip';
+import { Company } from '@/companies/types/Company';
 import { PersonChip } from '@/people/components/PersonChip';
-import { ActivityTarget, Company, Person } from '~/generated/graphql';
+import { Person } from '@/people/types/Person';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 const StyledContainer = styled.div`
@@ -16,7 +18,7 @@ export const ActivityTargetChips = ({
 }: {
   targets?: Array<
     Pick<ActivityTarget, 'id'> & {
-      person?: Pick<Person, 'id' | 'displayName' | 'avatarUrl'> | null;
+      person?: Pick<Person, 'id' | 'name' | 'avatarUrl'> | null;
       company?: Pick<Company, 'id' | 'domainName' | 'name'> | null;
     }
   > | null;
@@ -34,7 +36,7 @@ export const ActivityTargetChips = ({
               key={company.id}
               id={company.id}
               name={company.name}
-              pictureUrl={getLogoUrlFromDomainName(company.domainName)}
+              avatarUrl={getLogoUrlFromDomainName(company.domainName)}
             />
           );
         }
@@ -43,8 +45,8 @@ export const ActivityTargetChips = ({
             <PersonChip
               key={person.id}
               id={person.id}
-              name={person.displayName}
-              pictureUrl={person.avatarUrl ?? undefined}
+              name={person.name.firstName + ' ' + person.name.lastName}
+              avatarUrl={person.avatarUrl ?? undefined}
             />
           );
         }

@@ -3,16 +3,22 @@ build:
 	rm -rf ../../front/node_modules
 	rm -rf ../../server/node_modules
 	rm -rf ../../docs/node_modules
-	@docker volume rm dev_twenty_node_modules_front > /dev/null 2>&1 || true
-	@docker volume rm dev_twenty_node_modules_server > /dev/null 2>&1 || true
-	@docker volume rm dev_twenty_node_modules_docs > /dev/null 2>&1 || true
+	@docker volume rm twenty_node_modules_front > /dev/null 2>&1 || true
+	@docker volume rm twenty_node_modules_server > /dev/null 2>&1 || true
+	@docker volume rm twenty_node_modules_docs > /dev/null 2>&1 || true
 	@docker compose build
 
-provision-postgres:
+provision-postgres-docker:
 	@docker stop twenty_postgres || true
 	@docker rm twenty_postgres || true
 	@docker volume rm twenty_db_data || true
 	@docker compose up --build postgres -d
+
+provision-postgres-macos:
+	sh ./scripts/setup-postgres-macos.sh
+
+provision-postgres-linux:
+	sh ./scripts/setup-postgres-linux.sh
 
 up:
 	@docker compose up -d
@@ -52,9 +58,6 @@ server-database-setup:
 
 server-database-migrate:
 	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:migrate"
-
-server-database-generate:
-	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:generate"
 
 server-database-seed:
 	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:seed"

@@ -43,9 +43,10 @@ const NumberFieldInputWithContext = ({
     <div>
       <FieldContextProvider
         fieldDefinition={{
-          fieldId: 'number',
+          fieldMetadataId: 'number',
           label: 'Number',
-          type: 'number',
+          iconName: 'Icon123',
+          type: 'NUMBER',
           metadata: {
             fieldName: 'number',
             placeHolder: 'Enter number',

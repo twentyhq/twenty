@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useCreateOneObject } from '@/metadata/hooks/useCreateOneObject';
-import { useObjectMetadataItemForSettings } from '@/metadata/hooks/useObjectMetadataItemForSettings';
-import { getObjectSlug } from '@/metadata/utils/getObjectSlug';
+import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
+import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -19,7 +19,6 @@ import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { ViewType } from '@/views/types/ViewType';
 
 export const SettingsNewObject = () => {
   const navigate = useNavigate();
@@ -32,13 +31,14 @@ export const SettingsNewObject = () => {
     disabledObjectMetadataItems: disabledObjects,
   } = useObjectMetadataItemForSettings();
 
-  const { createOneObject: createOneView } = useCreateOneObject({
-    objectNamePlural: 'viewsV2',
+  const { createOneObject: createOneView } = useCreateOneObjectRecord({
+    objectNameSingular: 'view',
   });
 
-  const [selectedStandardObjectIds, setSelectedStandardObjectIds] = useState<
-    Record<string, boolean>
-  >({});
+  const [
+    selectedStandardObjectMetadataIds,
+    setSelectedStandardObjectMetadataIds,
+  ] = useState<Record<string, boolean>>({});
 
   const [customFormValues, setCustomFormValues] = useState<{
     description?: string;
@@ -49,7 +49,7 @@ export const SettingsNewObject = () => {
 
   const canSave =
     (selectedObjectType === 'Standard' &&
-      Object.values(selectedStandardObjectIds).some(
+      Object.values(selectedStandardObjectMetadataIds).some(
         (isSelected) => isSelected,
       )) ||
     (selectedObjectType === 'Custom' &&
@@ -59,9 +59,11 @@ export const SettingsNewObject = () => {
   const handleSave = async () => {
     if (selectedObjectType === 'Standard') {
       await Promise.all(
-        Object.entries(selectedStandardObjectIds).map(
-          ([standardObjectId, isSelected]) =>
-            isSelected ? activateObject({ id: standardObjectId }) : undefined,
+        Object.entries(selectedStandardObjectMetadataIds).map(
+          ([standardObjectMetadataId, isSelected]) =>
+            isSelected
+              ? activateObject({ id: standardObjectMetadataId })
+              : undefined,
         ),
       );
 
@@ -74,12 +76,6 @@ export const SettingsNewObject = () => {
         labelSingular: customFormValues.labelSingular,
         description: customFormValues.description,
         icon: customFormValues.icon,
-      });
-
-      await createOneView?.({
-        objectId: createdObject.data?.createOneObject.id,
-        type: ViewType.Table,
-        name: `All ${customFormValues.labelPlural}`,
       });
 
       navigate(
@@ -124,12 +120,12 @@ export const SettingsNewObject = () => {
           <SettingsAvailableStandardObjectsSection
             objectItems={disabledObjects.filter(({ isCustom }) => !isCustom)}
             onChange={(selectedIds) =>
-              setSelectedStandardObjectIds((previousSelectedIds) => ({
+              setSelectedStandardObjectMetadataIds((previousSelectedIds) => ({
                 ...previousSelectedIds,
                 ...selectedIds,
               }))
             }
-            selectedIds={selectedStandardObjectIds}
+            selectedIds={selectedStandardObjectMetadataIds}
           />
         )}
         {selectedObjectType === 'Custom' && (

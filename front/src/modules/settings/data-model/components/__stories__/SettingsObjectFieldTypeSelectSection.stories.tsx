@@ -9,13 +9,17 @@ const meta: Meta<typeof SettingsObjectFieldTypeSelectSection> = {
   title: 'Modules/Settings/DataModel/SettingsObjectFieldTypeSelectSection',
   component: SettingsObjectFieldTypeSelectSection,
   decorators: [ComponentDecorator],
-  args: { type: 'number' },
+  args: {},
 };
 
 export default meta;
 type Story = StoryObj<typeof SettingsObjectFieldTypeSelectSection>;
 
 export const Default: Story = {};
+
+export const Disabled: Story = {
+  args: {},
+};
 
 export const WithOpenSelect: Story = {
   play: async ({ canvasElement }) => {

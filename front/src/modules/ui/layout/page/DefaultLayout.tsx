@@ -39,16 +39,11 @@ const StyledLayout = styled.div`
   }
 `;
 
-const NAVBAR_WIDTH = '236px';
-
 const StyledMainContainer = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: row;
   overflow: hidden;
-  width: ${() =>
-    useRecoilValue(isNavbarOpenedState)
-      ? `calc(100% - ${NAVBAR_WIDTH})`
-      : '100%'};
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: ${() => (useRecoilValue(isNavbarOpenedState) ? '0' : '100%')};
   }
@@ -60,7 +55,6 @@ type DefaultLayoutProps = {
 
 export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
   const onboardingStatus = useOnboardingStatus();
-
   return (
     <StyledLayout>
       <CommandMenu />

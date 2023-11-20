@@ -11,6 +11,9 @@ import { isFieldURL } from '../types/guards/isFieldURL';
 
 export const useGetButtonIcon = (): IconComponent | undefined => {
   const { fieldDefinition } = useContext(FieldContext);
+
+  if (!fieldDefinition) return undefined;
+
   if (
     isFieldURL(fieldDefinition) ||
     isFieldEmail(fieldDefinition) ||

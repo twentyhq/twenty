@@ -3,12 +3,12 @@ import styled from '@emotion/styled';
 
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { Activity } from '@/activities/types/Activity';
 import { IconCalendar, IconComment } from '@/ui/display/icon';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
-import { TaskForList } from '../../types/TaskForList';
 import { useCompleteTask } from '../hooks/useCompleteTask';
 
 const StyledContainer = styled.div`
@@ -61,7 +61,7 @@ const StyledFieldsContainer = styled.div`
   display: flex;
 `;
 
-export const TaskRow = ({ task }: { task: TaskForList }) => {
+export const TaskRow = ({ task }: { task: Omit<Activity, 'assigneeId'> }) => {
   const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
 

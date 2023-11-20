@@ -6,7 +6,7 @@ import { useFilter } from '../hooks/useFilter';
 export const ObjectFilterDropdownEntitySelect = () => {
   const { filterDefinitionUsedInDropdown } = useFilter();
 
-  if (filterDefinitionUsedInDropdown?.type !== 'entity') {
+  if (filterDefinitionUsedInDropdown?.type !== 'ENTITY') {
     return null;
   }
 

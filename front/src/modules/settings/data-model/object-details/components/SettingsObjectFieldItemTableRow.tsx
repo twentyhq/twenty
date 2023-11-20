@@ -2,18 +2,18 @@ import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { Field } from '~/generated-metadata/graphql';
 
-import { MetadataFieldDataType } from '../../types/ObjectFieldDataType';
+import { dataTypes } from '../../constants/dataTypes';
 
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
 type SettingsObjectFieldItemTableRowProps = {
   ActionIcon: ReactNode;
-  fieldItem: Field;
+  fieldItem: FieldMetadataItem;
 };
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
@@ -38,16 +38,11 @@ export const SettingsObjectFieldItemTableRow = ({
   const { Icon } = useLazyLoadIcon(fieldItem.icon ?? '');
 
   // TODO: parse with zod and merge types with FieldType (create a subset of FieldType for example)
-  const fieldDataTypeIsSupported = [
-    'text',
-    'number',
-    'boolean',
-    'url',
-  ].includes(fieldItem.type);
+  const fieldDataTypeIsSupported = Object.keys(dataTypes).includes(
+    fieldItem.type,
+  );
 
-  if (!fieldDataTypeIsSupported) {
-    return <></>;
-  }
+  if (!fieldDataTypeIsSupported) return null;
 
   return (
     <StyledObjectFieldTableRow>
@@ -57,9 +52,7 @@ export const SettingsObjectFieldItemTableRow = ({
       </StyledNameTableCell>
       <TableCell>{fieldItem.isCustom ? 'Custom' : 'Standard'}</TableCell>
       <TableCell>
-        <SettingsObjectFieldDataType
-          value={fieldItem.type as MetadataFieldDataType}
-        />
+        <SettingsObjectFieldDataType value={fieldItem.type} />
       </TableCell>
       <StyledIconTableCell>{ActionIcon}</StyledIconTableCell>
     </StyledObjectFieldTableRow>

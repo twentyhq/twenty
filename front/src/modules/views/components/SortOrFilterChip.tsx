@@ -1,31 +1,22 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
 import { IconX } from '@/ui/display/icon/index';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { ObjectFilterDropdownButton } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownButton';
-import { ObjectSortDropdownButton } from '@/ui/object/object-sort-dropdown/components/ObjectSortDropdownButton';
-
-import { activeViewBarFilterState } from '../states/activeViewBarFilterState';
 
 type SortOrFilterChipProps = {
   labelKey?: string;
   labelValue: string;
   Icon?: IconComponent;
   onRemove: () => void;
-  isSortChip?: boolean;
+  isSort?: boolean;
   testId?: string;
+  onClick?: () => void;
 };
 
 type StyledChipProps = {
-  isSortChip?: boolean;
+  isSort?: boolean;
 };
-
-const StyledContainer = styled.div`
-  position: relative;
-`;
 
 const StyledChip = styled.div<StyledChipProps>`
   align-items: center;
@@ -33,27 +24,29 @@ const StyledChip = styled.div<StyledChipProps>`
   border: 1px solid ${({ theme }) => theme.accent.tertiary};
   border-radius: 4px;
   color: ${({ theme }) => theme.color.blue};
-  cursor: pointer;
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
   font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ isSortChip }) => (isSortChip ? 'bold' : 'normal')};
+  font-weight: ${({ isSort }) => (isSort ? 'bold' : 'normal')};
   padding: ${({ theme }) => theme.spacing(1) + ' ' + theme.spacing(2)};
-  user-select: none;
-  &:hover {
-    background-color: ${({ theme }) => theme.accent.tertiary};
-    border-color: ${({ theme }) => theme.accent.primary};
-  }
 `;
 const StyledIcon = styled.div`
   align-items: center;
+
   display: flex;
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledLabelAndIcon = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+`;
+
 const StyledDelete = styled.div`
   align-items: center;
+  cursor: pointer;
   display: flex;
   font-size: ${({ theme }) => theme.font.size.sm};
   margin-left: ${({ theme }) => theme.spacing(2)};
@@ -74,29 +67,14 @@ const SortOrFilterChip = ({
   labelValue,
   Icon,
   onRemove,
-  isSortChip,
+  isSort,
   testId,
+  onClick,
 }: SortOrFilterChipProps) => {
   const theme = useTheme();
-
-  const dropdownId = `${testId ?? ''}-${
-    isSortChip ? 'sort' : 'filter'
-  }-dropdown-button`;
-
-  const { toggleDropdown } = useDropdown({
-    dropdownScopeId: dropdownId,
-  });
-
-  const [, setActiveViewBarFilter] = useRecoilState(activeViewBarFilterState);
-
-  const handleClick = () => {
-    toggleDropdown();
-    setActiveViewBarFilter(testId ?? '');
-  };
-
   return (
-    <StyledContainer>
-      <StyledChip isSortChip={isSortChip} onClick={handleClick}>
+    <StyledChip isSort={isSort}>
+      <StyledLabelAndIcon onClick={onClick}>
         {Icon && (
           <StyledIcon>
             <Icon size={theme.icon.size.sm} />
@@ -104,25 +82,11 @@ const SortOrFilterChip = ({
         )}
         {labelKey && <StyledLabelKey>{labelKey}</StyledLabelKey>}
         {labelValue}
-        <StyledDelete onClick={onRemove} data-testid={'remove-icon-' + testId}>
-          <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
-        </StyledDelete>
-      </StyledChip>
-      {isSortChip ? (
-        <ObjectSortDropdownButton
-          key={testId}
-          hotkeyScope={{ scope: dropdownId }}
-          customDropdownId={dropdownId}
-          isInViewBar
-        />
-      ) : (
-        <ObjectFilterDropdownButton
-          hotkeyScope={{ scope: dropdownId }}
-          isInViewBar
-          customDropDownId={dropdownId}
-        />
-      )}
-    </StyledContainer>
+      </StyledLabelAndIcon>
+      <StyledDelete onClick={onRemove} data-testid={'remove-icon-' + testId}>
+        <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
+      </StyledDelete>
+    </StyledChip>
   );
 };
 

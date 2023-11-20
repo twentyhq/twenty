@@ -2,8 +2,8 @@ import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { useFindManyObjects } from '@/metadata/hooks/useFindManyObjects';
-import { ObjectMetadataItem } from '@/metadata/types/ObjectMetadataItem';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -24,11 +24,6 @@ const StyledNameTableCell = styled(TableCell)`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledTag = styled(Tag)`
-  box-sizing: border-box;
-  height: ${({ theme }) => theme.spacing(4)};
-`;
-
 const StyledActionTableCell = styled(TableCell)`
   justify-content: center;
   padding-right: ${({ theme }) => theme.spacing(1)};
@@ -41,7 +36,7 @@ export const SettingsObjectItemTableRow = ({
 }: SettingsObjectItemTableRowProps) => {
   const theme = useTheme();
 
-  const { objects } = useFindManyObjects({
+  const { objects } = useFindManyObjectRecords({
     objectNamePlural: objectItem.namePlural,
   });
 
@@ -55,12 +50,14 @@ export const SettingsObjectItemTableRow = ({
       </StyledNameTableCell>
       <TableCell>
         {objectItem.isCustom ? (
-          <StyledTag color="orange" text="Custom" />
+          <Tag color="orange" text="Custom" />
         ) : (
-          <StyledTag color="blue" text="Standard" />
+          <Tag color="blue" text="Standard" />
         )}
       </TableCell>
-      <TableCell align="right">{objectItem.fields.length}</TableCell>
+      <TableCell align="right">
+        {objectItem.fields.filter((field) => !field.isSystem).length}
+      </TableCell>
       <TableCell align="right">{objects.length}</TableCell>
       <StyledActionTableCell>{action}</StyledActionTableCell>
     </StyledObjectTableRow>

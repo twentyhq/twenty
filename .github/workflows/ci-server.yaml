@@ -24,6 +24,10 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+            access_token: ${{ github.token }}
       - uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v3

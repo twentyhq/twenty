@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { tasksFilterDefinitions } from './tasks-filter-definitions';
 
 export const TasksEffect = () => {
-  const [currentUser] = useRecoilState(currentUserState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { setSelectedFilter, setAvailableFilterDefinitions } = useFilter();
 
   useEffect(() => {
@@ -16,16 +16,19 @@ export const TasksEffect = () => {
   }, [setAvailableFilterDefinitions]);
 
   useEffect(() => {
-    if (currentUser) {
+    if (currentWorkspaceMember) {
       setSelectedFilter({
-        fieldId: 'assigneeId',
-        value: currentUser.id,
+        fieldMetadataId: 'assigneeId',
+        value: currentWorkspaceMember.id,
         operand: ViewFilterOperand.Is,
-        displayValue: currentUser.displayName,
-        displayAvatarUrl: currentUser.avatarUrl ?? undefined,
+        displayValue:
+          currentWorkspaceMember.name.firstName +
+          ' ' +
+          currentWorkspaceMember.name.lastName,
+        displayAvatarUrl: currentWorkspaceMember.avatarUrl ?? undefined,
         definition: tasksFilterDefinitions[0],
       });
     }
-  }, [currentUser, setSelectedFilter]);
+  }, [currentWorkspaceMember, setSelectedFilter]);
   return <></>;
 };

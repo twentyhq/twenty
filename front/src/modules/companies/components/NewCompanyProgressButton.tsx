@@ -1,16 +1,12 @@
 import { useCallback, useContext, useState } from 'react';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
-import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { NewButton } from '@/ui/layout/board/components/NewButton';
 import { BoardColumnContext } from '@/ui/layout/board/contexts/BoardColumnContext';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-
-import { useCreateCompanyProgress } from '../hooks/useCreateCompanyProgress';
-import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompanyQuery';
 
 export const NewCompanyProgressButton = () => {
   const [isCreatingCard, setIsCreatingCard] = useState(false);
@@ -25,8 +21,6 @@ export const NewCompanyProgressButton = () => {
     setHotkeyScopeAndMemorizePreviousScope,
   } = usePreviousHotkeyScope();
 
-  const createCompanyProgress = useCreateCompanyProgress();
-
   const handleEntitySelect = (company: any) => {
     setIsCreatingCard(false);
     goBackToPreviousHotkeyScope();
@@ -39,7 +33,7 @@ export const NewCompanyProgressButton = () => {
       throw new Error('Pipeline stage id is not defined');
     }
 
-    createCompanyProgress(company.id, pipelineStageId);
+    //createCompanyProgress(company.id, pipelineStageId);
   };
 
   const handleNewClick = useCallback(() => {
@@ -58,22 +52,23 @@ export const NewCompanyProgressButton = () => {
     relationPickerSearchFilterScopedState,
   );
 
-  const companies = useFilteredSearchCompanyQuery({
-    searchFilter: relationPickerSearchFilter,
-  });
+  // const companies = useFilteredSearchCompanyQuery({
+  //   searchFilter: relationPickerSearchFilter,
+  // });
 
   return (
     <>
       {isCreatingCard ? (
-        <SingleEntitySelect
-          disableBackgroundBlur
-          entitiesToSelect={companies.entitiesToSelect}
-          loading={companies.loading}
-          onCancel={handleCancel}
-          onEntitySelected={handleEntitySelect}
-          selectedEntity={companies.selectedEntities[0]}
-        />
+        <>TODO</>
       ) : (
+        // <SingleEntitySelect
+        //   disableBackgroundBlur
+        //   entitiesToSelect={companies.entitiesToSelect}
+        //   loading={companies.loading}
+        //   onCancel={handleCancel}
+        //   onEntitySelected={handleEntitySelect}
+        //   selectedEntity={companies.selectedEntities[0]}
+        // />
         <NewButton onClick={handleNewClick} />
       )}
     </>

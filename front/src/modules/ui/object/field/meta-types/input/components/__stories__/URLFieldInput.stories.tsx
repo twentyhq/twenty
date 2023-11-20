@@ -43,9 +43,10 @@ const URLFieldInputWithContext = ({
     <div>
       <FieldContextProvider
         fieldDefinition={{
-          fieldId: 'url',
+          fieldMetadataId: 'url',
           label: 'URL',
-          type: 'url',
+          type: 'URL',
+          iconName: 'IconLink',
           metadata: {
             fieldName: 'URL',
             placeHolder: 'Enter URL',

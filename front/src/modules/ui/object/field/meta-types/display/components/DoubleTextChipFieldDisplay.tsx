@@ -2,7 +2,7 @@ import { useDoubleTextChipField } from '../../hooks/useDoubleTextChipField';
 import { ChipDisplay } from '../content-display/components/ChipDisplay';
 
 export const DoubleTextChipFieldDisplay = () => {
-  const { avatarUrl, firstValue, secondValue, entityType, entityId } =
+  const { avatarUrl, firstValue, secondValue, entityId } =
     useDoubleTextChipField();
 
   const content = [firstValue, secondValue].filter(Boolean).join(' ');
@@ -11,7 +11,6 @@ export const DoubleTextChipFieldDisplay = () => {
     <ChipDisplay
       displayName={content}
       avatarUrlValue={avatarUrl}
-      entityType={entityType}
       entityId={entityId}
     />
   );

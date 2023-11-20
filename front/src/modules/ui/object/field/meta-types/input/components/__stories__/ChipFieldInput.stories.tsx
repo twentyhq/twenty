@@ -3,7 +3,6 @@ import { expect, jest } from '@storybook/jest';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { userEvent, waitFor, within } from '@storybook/testing-library';
 
-import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
@@ -44,14 +43,14 @@ const ChipFieldInputWithContext = ({
     <div>
       <FieldContextProvider
         fieldDefinition={{
-          fieldId: 'chip',
+          fieldMetadataId: 'chip',
           label: 'Chip',
-          type: 'chip',
+          type: 'CHIP',
+          iconName: 'Icon123',
           metadata: {
             contentFieldName: 'name',
             urlFieldName: 'xURL',
             placeHolder: 'X URL',
-            relationType: Entity.Person,
           },
         }}
         entityId={entityId}

@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 
+import { ActivityType } from '@/activities/types/Activity';
 import {
   Checkbox,
   CheckboxShape,
   CheckboxSize,
 } from '@/ui/input/components/Checkbox';
-import { ActivityType } from '~/generated/graphql';
 
 const StyledEditableTitleInput = styled.input<{
   completed: boolean;
@@ -60,7 +60,7 @@ export const ActivityTitle = ({
   onCompletionChange,
 }: ActivityTitleProps) => (
   <StyledContainer>
-    {type === ActivityType.Task && (
+    {type === 'Task' && (
       <StyledCheckboxContainer onClick={() => onCompletionChange(!completed)}>
         <Checkbox
           size={CheckboxSize.Large}

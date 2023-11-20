@@ -1,37 +1,23 @@
 import { DateTime } from 'luxon';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import { currentUserState } from '@/auth/states/currentUserState';
-import { turnFilterIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFilterIntoWhereClause';
-import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { parseDate } from '~/utils/date-utils';
 
 export const useCurrentUserTaskCount = () => {
-  const [currentUser] = useRecoilState(currentUserState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
-  const { data } = useGetActivitiesQuery({
-    variables: {
-      where: {
-        type: { equals: ActivityType.Task },
-        completedAt: { equals: null },
-        ...(currentUser
-          ? turnFilterIntoWhereClause({
-              fieldId: 'assigneeId',
-              value: currentUser.id,
-              operand: ViewFilterOperand.Is,
-              displayValue: currentUser.displayName,
-              displayAvatarUrl: currentUser.avatarUrl ?? undefined,
-              definition: {
-                type: 'entity',
-              },
-            })
-          : {}),
-      },
+  const { objects } = useFindManyObjectRecords({
+    objectNamePlural: 'activities',
+    filter: {
+      type: { eq: 'Task' },
+      completedAt: { eq: null },
+      assigneeId: { eq: currentWorkspaceMember?.id },
     },
   });
 
-  const currentUserDueTaskCount = data?.findManyActivities.filter((task) => {
+  const currentUserDueTaskCount = objects.filter((task) => {
     if (!task.dueAt) {
       return false;
     }

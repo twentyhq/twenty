@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { User, Workspace } from '@prisma/client';
 import axios, { AxiosInstance } from 'axios';
 
 import { anonymize } from 'src/utils/anonymize';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { User } from 'src/core/user/user.entity';
+import { Workspace } from 'src/core/workspace/workspace.entity';
 
 import { CreateAnalyticsInput } from './dto/create-analytics.input';
 

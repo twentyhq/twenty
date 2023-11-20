@@ -1,7 +1,8 @@
 import { useRecoilState } from 'recoil';
 
-import { useMoveViewColumns } from '@/ui/object/record-table/hooks/useMoveViewColumns';
-import { useUpdatePipelineStageMutation } from '~/generated/graphql';
+import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
+import { PipelineStep } from '@/pipeline/types/PipelineStep';
+import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 
 import { boardColumnsState } from '../states/boardColumnsState';
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
@@ -11,19 +12,20 @@ export const useBoardColumns = () => {
 
   const { handleColumnMove } = useMoveViewColumns();
 
-  const [updatePipelineStageMutation] = useUpdatePipelineStageMutation();
+  const { updateOneObject: updateOnePipelineStep } =
+    useUpdateOneObjectRecord<PipelineStep>({
+      objectNameSingular: 'pipelineStep',
+    });
 
   const updatedPipelineStages = (stages: BoardColumnDefinition[]) => {
     if (!stages.length) return;
 
     return Promise.all(
       stages.map((stage) =>
-        updatePipelineStageMutation({
-          variables: {
-            data: {
-              position: stage.position,
-            },
-            id: stage.id,
+        updateOnePipelineStep?.({
+          idToUpdate: stage.id,
+          input: {
+            position: stage.position,
           },
         }),
       ),

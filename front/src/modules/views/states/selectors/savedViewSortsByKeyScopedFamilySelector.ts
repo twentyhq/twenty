@@ -18,7 +18,7 @@ export const savedViewSortsByKeyScopedFamilySelector = selectorFamily({
           familyKey: viewId,
         }),
       ).reduce<Record<string, ViewSort>>(
-        (result, sort) => ({ ...result, [sort.fieldId]: sort }),
+        (result, sort) => ({ ...result, [sort.fieldMetadataId]: sort }),
         {},
       );
     },

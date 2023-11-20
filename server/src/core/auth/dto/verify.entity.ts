@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { User } from 'src/core/@generated/user/user.model';
+import { User } from 'src/core/user/user.entity';
 
 import { AuthTokens } from './token.entity';
 

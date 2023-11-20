@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DateTime } from 'luxon';
 
-import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
+import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ExpirationDates } from '@/settings/developers/constants/expirationDates';
 import { useGeneratedApiKeys } from '@/settings/developers/hooks/useGeneratedApiKeys';
+import { ApiKey } from '@/settings/developers/types/ApiKey';
 import { IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Select } from '@/ui/input/components/Select';
@@ -15,11 +16,10 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { useInsertOneApiKeyMutation } from '~/generated/graphql';
+import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 
 export const SettingsDevelopersApiKeysNew = () => {
-  const [insertOneApiKey] = useInsertOneApiKeyMutation();
-  const { triggerOptimisticEffects } = useOptimisticEffect();
+  const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const navigate = useNavigate();
   const setGeneratedApi = useGeneratedApiKeys();
   const [formValues, setFormValues] = useState<{
@@ -29,35 +29,35 @@ export const SettingsDevelopersApiKeysNew = () => {
     expirationDate: ExpirationDates[0].value,
     name: '',
   });
+
+  const { createOneObject: createOneApiKey } = useCreateOneObjectRecord<ApiKey>(
+    { objectNameSingular: 'apiKey' },
+  );
   const onSave = async () => {
-    const apiKey = await insertOneApiKey({
+    const expiresAt = DateTime.now()
+      .plus({ days: formValues.expirationDate ?? 30 })
+      .toString();
+    const newApiKey = await createOneApiKey?.({
+      name: formValues.name,
+      expiresAt,
+    });
+
+    if (!newApiKey) {
+      return;
+    }
+
+    const tokenData = await generateOneApiKeyToken({
       variables: {
-        data: {
-          name: formValues.name,
-          expiresAt: formValues.expirationDate
-            ? DateTime.now()
-                .plus({ days: formValues.expirationDate })
-                .toISODate()
-            : null,
-        },
-      },
-      update: (_cache, { data }) => {
-        if (data?.createOneApiKey) {
-          triggerOptimisticEffects('ApiKey', [data?.createOneApiKey]);
-        }
+        apiKeyId: newApiKey.id,
+        expiresAt: expiresAt,
       },
     });
-    if (apiKey.data?.createOneApiKey) {
-      setGeneratedApi(
-        apiKey.data.createOneApiKey.id,
-        apiKey.data.createOneApiKey.token,
-      );
-      navigate(
-        `/settings/developers/api-keys/${apiKey.data.createOneApiKey.id}`,
-      );
+    if (tokenData.data?.generateApiKeyToken) {
+      setGeneratedApi(newApiKey.id, tokenData.data.generateApiKeyToken.token);
+      navigate(`/settings/developers/api-keys/${newApiKey.id}`);
     }
   };
-  const canSave = !!formValues.name;
+  const canSave = !!formValues.name && createOneApiKey;
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>

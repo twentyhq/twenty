@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import { jest } from '@storybook/jest';
-import { expect } from '@storybook/jest';
+import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
@@ -34,9 +33,10 @@ const BooleanFieldInputWithContext = ({
   return (
     <FieldContextProvider
       fieldDefinition={{
-        fieldId: 'boolean',
+        fieldMetadataId: 'boolean',
         label: 'Boolean',
-        type: 'boolean',
+        iconName: 'Icon123',
+        type: 'BOOLEAN',
         metadata: {
           fieldName: 'Boolean',
         },

@@ -4,6 +4,7 @@ import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
 import { Providers } from '@/spreadsheet-import/components/Providers';
 import { MatchColumnsStep } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { mockRsiValues } from '@/spreadsheet-import/tests/mockRsiValues';
+import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 
 const meta: Meta<typeof MatchColumnsStep> = {
   title: 'Modules/SpreadsheetImport/MatchColumnsStep',
@@ -57,13 +58,15 @@ const mockData = [
 ];
 
 export const Default = () => (
-  <Providers values={mockRsiValues}>
-    <ModalWrapper isOpen={true} onClose={() => null}>
-      <MatchColumnsStep
-        headerValues={mockData[0] as string[]}
-        data={mockData.slice(1)}
-        onContinue={() => null}
-      />
-    </ModalWrapper>
-  </Providers>
+  <DialogManagerScope dialogManagerScopeId="dialog-manager">
+    <Providers values={mockRsiValues}>
+      <ModalWrapper isOpen={true} onClose={() => null}>
+        <MatchColumnsStep
+          headerValues={mockData[0] as string[]}
+          data={mockData.slice(1)}
+          onContinue={() => null}
+        />
+      </ModalWrapper>
+    </Providers>
+  </DialogManagerScope>
 );

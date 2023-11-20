@@ -2,8 +2,10 @@ import { ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
+import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { EntityChipVariant } from '@/ui/display/chip/components/EntityChip';
 import { IconEye } from '@/ui/display/icon/index';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { BoardCardIdContext } from '@/ui/layout/board/contexts/BoardCardIdContext';
 import { useBoardContext } from '@/ui/layout/board/hooks/useBoardContext';
@@ -12,11 +14,10 @@ import { isCardInCompactViewState } from '@/ui/layout/board/states/isCardInCompa
 import { isCompactViewEnabledState } from '@/ui/layout/board/states/isCompactViewEnabledState';
 import { visibleBoardCardFieldsScopedSelector } from '@/ui/layout/board/states/selectors/visibleBoardCardFieldsScopedSelector';
 import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
-import { InlineCell } from '@/ui/object/record-inline-cell/components/InlineCell';
+import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
-import { useUpdateOnePipelineProgressMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 import { companyProgressesFamilyState } from '../states/companyProgressesFamilyState';
@@ -123,21 +124,6 @@ const StyledCompactIconContainer = styled.div`
   justify-content: center;
 `;
 
-const StyledIconEye = styled(IconEye)`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  height: 24px;
-  padding-bottom: ${({ theme }) => theme.spacing(0.2)};
-  padding-left: ${({ theme }) => theme.spacing(0.5)};
-  padding-right: ${({ theme }) => theme.spacing(0.5)};
-
-  padding-top: ${({ theme }) => theme.spacing(0.2)};
-
-  &:hover {
-    background-color: ${({ theme }) => theme.background.transparent.medium};
-    border-radius: ${({ theme }) => theme.border.radius.sm};
-  }
-`;
-
 export const CompanyBoardCard = () => {
   const { BoardRecoilScopeContext } = useBoardContext();
 
@@ -163,6 +149,30 @@ export const CompanyBoardCard = () => {
     visibleBoardCardFieldsScopedSelector,
     BoardRecoilScopeContext,
   );
+
+  const useUpdateOneObjectMutation: () => [(params: any) => any, any] = () => {
+    const { updateOneObject } = useUpdateOneObjectRecord({
+      objectNameSingular: 'opportunity',
+    });
+
+    const updateEntity = ({
+      variables,
+    }: {
+      variables: {
+        where: { id: string };
+        data: {
+          [fieldName: string]: any;
+        };
+      };
+    }) => {
+      updateOneObject?.({
+        idToUpdate: variables.where.id,
+        input: variables.data,
+      });
+    };
+
+    return [updateEntity, { loading: false }];
+  };
 
   // boardCardId check can be moved to a wrapper to avoid unnecessary logic above
   if (!company || !pipelineProgress || !boardCardId) {
@@ -198,12 +208,14 @@ export const CompanyBoardCard = () => {
           <CompanyChip
             id={company.id}
             name={company.name}
-            pictureUrl={getLogoUrlFromDomainName(company.domainName)}
+            avatarUrl={getLogoUrlFromDomainName(company.domainName)}
             variant={EntityChipVariant.Transparent}
           />
           {showCompactView && (
             <StyledCompactIconContainer className="compact-icon-container">
-              <StyledIconEye
+              <LightIconButton
+                Icon={IconEye}
+                accent="tertiary"
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsCardInCompactView(false);
@@ -222,26 +234,24 @@ export const CompanyBoardCard = () => {
         <StyledBoardCardBody>
           <AnimatedEaseInOut isOpen={!showCompactView}>
             {visibleBoardCardFields.map((viewField) => (
-              <PreventSelectOnClickContainer key={viewField.fieldId}>
+              <PreventSelectOnClickContainer key={viewField.fieldMetadataId}>
                 <FieldContext.Provider
                   value={{
                     entityId: boardCardId,
-                    recoilScopeId: boardCardId + viewField.fieldId,
+                    recoilScopeId: boardCardId + viewField.fieldMetadataId,
+                    isMainIdentifier: false,
                     fieldDefinition: {
-                      fieldId: viewField.fieldId,
+                      fieldMetadataId: viewField.fieldMetadataId,
                       label: viewField.label,
-                      Icon: viewField.Icon,
+                      iconName: viewField.iconName,
                       type: viewField.type,
                       metadata: viewField.metadata,
-                      entityChipDisplayMapper:
-                        viewField.entityChipDisplayMapper,
                     },
-                    useUpdateEntityMutation:
-                      useUpdateOnePipelineProgressMutation,
+                    useUpdateEntityMutation: useUpdateOneObjectMutation,
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,
                   }}
                 >
-                  <InlineCell />
+                  <RecordInlineCell />
                 </FieldContext.Provider>
               </PreventSelectOnClickContainer>
             ))}

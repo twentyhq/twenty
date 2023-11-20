@@ -2,17 +2,8 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
-import { IconNotes } from '@/ui/display/icon';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
-import { Avatar } from '@/users/components/Avatar';
-import {
-  QueryMode,
-  useSearchActivityQuery,
-  useSearchCompanyQuery,
-  useSearchPeopleQuery,
-} from '~/generated/graphql';
-import { getLogoUrlFromDomainName } from '~/utils';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
 import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
@@ -45,52 +36,52 @@ export const CommandMenu = () => {
     [openCommandMenu, setSearch],
   );
 
-  const { data: peopleData } = useSearchPeopleQuery({
-    variables: {
-      where: {
-        OR: [
-          { firstName: { contains: search, mode: QueryMode.Insensitive } },
-          { lastName: { contains: search, mode: QueryMode.Insensitive } },
-        ],
-      },
-      limit: 3,
-    },
-  });
-  const people = peopleData?.searchResults ?? [];
+  // const { data: peopleData } = useSearchPeopleQuery({
+  //   skip: !isCommandMenuOpened,
+  //   variables: {
+  //     where: {
+  //       OR: [
+  //         { firstName: { contains: search, mode: QueryMode.Insensitive } },
+  //         { lastName: { contains: search, mode: QueryMode.Insensitive } },
+  //       ],
+  //     },
+  //     limit: 3,
+  //   },
+  // });
 
-  const { data: companyData } = useSearchCompanyQuery({
-    variables: {
-      where: {
-        OR: [{ name: { contains: search, mode: QueryMode.Insensitive } }],
-      },
-      limit: 3,
-    },
-  });
+  // const people = peopleData?.searchResults ?? [];
 
-  const companies = companyData?.searchResults ?? [];
+  // const { data: companyData } = useSearchCompanyQuery({
+  //   skip: !isCommandMenuOpened,
+  //   variables: {
+  //     where: {
+  //       OR: [{ name: { contains: search, mode: QueryMode.Insensitive } }],
+  //     },
+  //     limit: 3,
+  //   },
+  // });
 
-  const { data: activityData } = useSearchActivityQuery({
-    variables: {
-      where: {
-        OR: [
-          { title: { contains: search, mode: QueryMode.Insensitive } },
-          { body: { contains: search, mode: QueryMode.Insensitive } },
-        ],
-      },
-      limit: 3,
-    },
-  });
+  // const companies = companyData?.searchResults ?? [];
 
-  const activities = activityData?.searchResults ?? [];
+  // const { data: activityData } = useSearchActivityQuery({
+  //   skip: !isCommandMenuOpened,
+  //   variables: {
+  //     where: {
+  //       OR: [
+  //         { title: { contains: search, mode: QueryMode.Insensitive } },
+  //         { body: { contains: search, mode: QueryMode.Insensitive } },
+  //       ],
+  //     },
+  //     limit: 3,
+  //   },
+  // });
+
+  // const activities = activityData?.searchResults ?? [];
 
   const checkInShortcuts = (cmd: Command, search: string) => {
-    if (cmd.shortcuts && cmd.shortcuts.length > 0) {
-      return cmd.shortcuts
-        .join('')
-        .toLowerCase()
-        .includes(search.toLowerCase());
-    }
-    return false;
+    return (cmd.firstHotKey + (cmd.secondHotKey ?? ''))
+      .toLowerCase()
+      .includes(search.toLowerCase());
   };
 
   const checkInLabels = (cmd: Command, search: string) => {
@@ -140,7 +131,8 @@ export const CommandMenu = () => {
               Icon={cmd.Icon}
               label={cmd.label}
               onClick={cmd.onCommandClick}
-              shortcuts={cmd.shortcuts || []}
+              firstHotKey={cmd.firstHotKey}
+              secondHotKey={cmd.secondHotKey}
             />
           ))}
         </CommandGroup>
@@ -152,11 +144,12 @@ export const CommandMenu = () => {
               label={cmd.label}
               Icon={cmd.Icon}
               onClick={cmd.onCommandClick}
-              shortcuts={cmd.shortcuts || []}
+              firstHotKey={cmd.firstHotKey}
+              secondHotKey={cmd.secondHotKey}
             />
           ))}
         </CommandGroup>
-        <CommandGroup heading="People">
+        {/* <CommandGroup heading="People">
           {people.map((person) => (
             <CommandMenuItem
               key={person.id}
@@ -198,7 +191,7 @@ export const CommandMenu = () => {
               onClick={() => openActivityRightDrawer(activity.id)}
             />
           ))}
-        </CommandGroup>
+        </CommandGroup> */}
       </StyledList>
     </StyledDialog>
   );

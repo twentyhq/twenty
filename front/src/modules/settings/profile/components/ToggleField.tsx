@@ -1,28 +1,40 @@
-import { useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
-import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import { Toggle } from '@/ui/input/components/Toggle';
-import { useUpdateAllowImpersonationMutation } from '~/generated/graphql';
 
 export const ToggleField = () => {
   const { enqueueSnackBar } = useSnackBar();
 
-  const currentUser = useRecoilValue(currentUserState);
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
+    currentWorkspaceMemberState,
+  );
 
-  const [updateAllowImpersonation] = useUpdateAllowImpersonationMutation();
+  const { updateOneObject, objectNotFoundInMetadata } =
+    useUpdateOneObjectRecord({
+      objectNameSingular: 'workspaceMember',
+    });
 
   const handleChange = async (value: boolean) => {
     try {
-      const { data, errors } = await updateAllowImpersonation({
-        variables: {
+      if (!updateOneObject || objectNotFoundInMetadata) {
+        throw new Error('Object not found in metadata');
+      }
+      if (!currentWorkspaceMember?.id) {
+        throw new Error('User is not logged in');
+      }
+      await updateOneObject({
+        idToUpdate: currentWorkspaceMember?.id,
+        input: {
           allowImpersonation: value,
         },
       });
-
-      if (errors || !data?.allowImpersonation) {
-        throw new Error('Error while updating user');
-      }
+      setCurrentWorkspaceMember({
+        ...currentWorkspaceMember,
+        allowImpersonation: value,
+      });
     } catch (err: any) {
       enqueueSnackBar(err?.message, {
         variant: 'error',
@@ -32,7 +44,7 @@ export const ToggleField = () => {
 
   return (
     <Toggle
-      value={currentUser?.workspaceMember?.allowImpersonation}
+      value={currentWorkspaceMember?.allowImpersonation}
       onChange={handleChange}
     />
   );

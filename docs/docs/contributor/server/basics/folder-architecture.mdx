@@ -7,7 +7,7 @@ sidebar_custom_props:
 ---
 
 
-Our backend directory structure is as follows:
+The backend directory structure is as follows:
 
 ```
 server
@@ -21,7 +21,7 @@ server
   └───health
   └───integrations
   └───metadata
-  └───tenant
+  └───workspace
   └───utils
 ```
 
@@ -45,13 +45,13 @@ See [guards](https://docs.nestjs.com/guards) for more details.
 
 ## Health
 
-Includes a publicly available REST API (healthz) that returns a JSON to indicate if the database is working as it should. 
+Includes a publicly available REST API (healthz) that returns a JSON to confirm whether the database is working as expected.
 
 ## Metadata
 
 Defines custom objects and makes available a GraphQL API (graphql/metadata).
 
-## Tenant
+## Workspace
 
 Generates and serves custom GraphQL schema based on the metadata.
 

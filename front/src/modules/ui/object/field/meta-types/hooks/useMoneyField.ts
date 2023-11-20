@@ -7,6 +7,7 @@ import {
 } from '~/utils/cast-as-integer-or-null';
 
 import { FieldContext } from '../../contexts/FieldContext';
+import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { usePersistField } from '../../hooks/usePersistField';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
@@ -15,7 +16,7 @@ import { isFieldMoney } from '../../types/guards/isFieldMoney';
 export const useMoneyField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('moneyAmount', isFieldMoney, fieldDefinition);
+  assertFieldMetadata('MONEY_AMOUNT', isFieldMoney, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
@@ -38,9 +39,18 @@ export const useMoneyField = () => {
     persistField(castedValue);
   };
 
+  const fieldInitialValue = useFieldInitialValue();
+
+  const initialValue = fieldInitialValue?.isEmpty
+    ? null
+    : !isNaN(Number(fieldInitialValue?.value))
+    ? Number(fieldInitialValue?.value)
+    : null ?? fieldValue;
+
   return {
     fieldDefinition,
     fieldValue,
+    initialValue,
     setFieldValue,
     hotkeyScope,
     persistMoneyField,

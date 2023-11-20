@@ -1,24 +1,25 @@
 import { useCallback } from 'react';
+import { useRecoilValue } from 'recoil';
 
 import { IconPlus } from '@/ui/display/icon';
+import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 
 import { FieldMetadata } from '../../field/types/FieldMetadata';
+import { useRecordTableScopedStates } from '../hooks/internal/useRecordTableScopedStates';
 import { useTableColumns } from '../hooks/useTableColumns';
-import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
-import { hiddenTableColumnsScopedSelector } from '../states/selectors/hiddenTableColumnsScopedSelector';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
 export const RecordTableHeaderPlusButtonContent = () => {
   const { closeDropdown } = useDropdown();
 
-  const hiddenTableColumns = useRecoilScopedValue(
-    hiddenTableColumnsScopedSelector,
-    TableRecoilScopeContext,
-  );
+  const { hiddenTableColumnsSelector } = useRecordTableScopedStates();
+
+  const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector);
+
+  const { icons } = useLazyLoadIcons();
 
   const { handleColumnVisibilityChange } = useTableColumns();
 
@@ -34,14 +35,14 @@ export const RecordTableHeaderPlusButtonContent = () => {
     <DropdownMenuItemsContainer>
       {hiddenTableColumns.map((column) => (
         <MenuItem
-          key={column.fieldId}
+          key={column.fieldMetadataId}
           iconButtons={[
             {
               Icon: IconPlus,
               onClick: () => handleAddColumn(column),
             },
           ]}
-          LeftIcon={column.Icon}
+          LeftIcon={icons[column.iconName]}
           text={column.label}
         />
       ))}

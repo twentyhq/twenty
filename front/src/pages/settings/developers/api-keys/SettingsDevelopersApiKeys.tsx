@@ -1,10 +1,14 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
+import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
+import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
 import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/components/SettingsApiKeysFieldItemTableRow';
-import { getApiKeysOptimisticEffectDefinition } from '@/settings/developers/optimistic-effect-definitions/getApiKeysOptimisticEffectDefinition';
+import { ApiFieldItem } from '@/settings/developers/types/ApiFieldItem';
 import { formatExpirations } from '@/settings/developers/utils/format-expiration';
 import { IconPlus, IconSettings } from '@/ui/display/icon';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
@@ -14,7 +18,6 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useGetApiKeysQuery } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   height: fit-content;
@@ -39,16 +42,38 @@ const StyledH1Title = styled(H1Title)`
 
 export const SettingsDevelopersApiKeys = () => {
   const navigate = useNavigate();
-  const { registerOptimisticEffect } = useOptimisticEffect();
-  const apiKeysQuery = useGetApiKeysQuery({
-    onCompleted: () => {
-      registerOptimisticEffect({
-        variables: {},
-        definition: getApiKeysOptimisticEffectDefinition,
-      });
+
+  const [apiKeys, setApiKeys] = useState<Array<ApiFieldItem>>([]);
+  const { registerOptimisticEffect } = useOptimisticEffect({
+    objectNameSingular: 'apiKey',
+  });
+  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
+    objectNameSingular: 'apiKey',
+  });
+  const filter = { revokedAt: { eq: null } };
+  useFindManyObjectRecords({
+    objectNamePlural: 'apiKeys',
+    filter,
+    onCompleted: (data) => {
+      setApiKeys(
+        formatExpirations(
+          data.edges.map((apiKey) => ({
+            id: apiKey.node.id,
+            name: apiKey.node.name,
+            expiresAt: apiKey.node.expiresAt,
+          })),
+        ),
+      );
+      if (foundObjectMetadataItem) {
+        registerOptimisticEffect({
+          variables: { filter, first: 30, orderBy: {} },
+          definition: getRecordOptimisticEffectDefinition({
+            objectMetadataItem: foundObjectMetadataItem,
+          }),
+        });
+      }
     },
   });
-  const apiKeys = apiKeysQuery.data ? formatExpirations(apiKeysQuery.data) : [];
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">

@@ -1,13 +1,13 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { NoteForList } from '../../types/NoteForList';
+import { Note } from '@/activities/types/Note';
 
 import { NoteCard } from './NoteCard';
 
 type NoteListProps = {
   title: string;
-  notes: NoteForList[];
+  notes: Note[];
   button?: ReactElement | false;
 };
 
@@ -59,7 +59,11 @@ export const NoteList = ({ title, notes, button }: NoteListProps) => (
         </StyledTitleBar>
         <StyledNoteContainer>
           {notes.map((note) => (
-            <NoteCard key={note.id} note={note} />
+            <NoteCard
+              key={note.id}
+              note={note}
+              isSingleNote={notes.length == 1}
+            />
           ))}
         </StyledNoteContainer>
       </StyledContainer>

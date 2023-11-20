@@ -1,6 +1,9 @@
 export type MetadataFieldDataType =
-  | 'boolean'
-  | 'number'
-  | 'relation'
-  | 'text'
-  | 'url';
+  | 'BOOLEAN'
+  | 'DATE'
+  | 'ENUM'
+  | 'MONEY'
+  | 'NUMBER'
+  | 'RELATION'
+  | 'TEXT'
+  | 'URL';

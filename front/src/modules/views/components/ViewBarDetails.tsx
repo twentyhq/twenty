@@ -1,14 +1,13 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
-import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
 import { AddObjectFilterFromDetailsButton } from '@/ui/object/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
-import { getOperandLabelShort } from '@/ui/object/object-filter-dropdown/utils/getOperandLabel';
+import { EditObjectFilter } from '@/ui/object/object-filter-dropdown/components/EditObjectFilter';
+import { EditObjectSort } from '@/ui/object/object-sort-dropdown/components/EditObjectSort';
 
+import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 import { useView } from '../hooks/useView';
-import { useViewGetStates } from '../hooks/useViewGetStates';
-
-import SortOrFilterChip from './SortOrFilterChip';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
@@ -33,6 +32,7 @@ const StyledChipcontainer = styled.div`
   height: 40px;
   justify-content: space-between;
   margin-left: ${({ theme }) => theme.spacing(2)};
+  overflow-x: auto;
 `;
 
 const StyledCancelButton = styled.button`
@@ -87,14 +87,20 @@ export const ViewBarDetails = ({
   rightComponent,
 }: ViewBarDetailsProps) => {
   const {
-    currentViewSorts,
-    currentViewFilters,
-    canPersistFilters,
-    canPersistSorts,
-    isViewBarExpanded,
-  } = useViewGetStates();
+    currentViewSortsState,
+    currentViewFiltersState,
+    canPersistFiltersSelector,
+    canPersistSortsSelector,
+    isViewBarExpandedState,
+  } = useViewScopedStates();
 
-  const { resetViewBar, removeViewSort, removeViewFilter } = useView();
+  const currentViewSorts = useRecoilValue(currentViewSortsState);
+  const currentViewFilters = useRecoilValue(currentViewFiltersState);
+  const canPersistFilters = useRecoilValue(canPersistFiltersSelector);
+  const canPersistSorts = useRecoilValue(canPersistSortsSelector);
+  const isViewBarExpanded = useRecoilValue(isViewBarExpandedState);
+
+  const { resetViewBar } = useView();
 
   const canPersistView = canPersistFilters || canPersistSorts;
 
@@ -117,14 +123,14 @@ export const ViewBarDetails = ({
         <StyledChipcontainer>
           {currentViewSorts?.map((sort) => {
             return (
-              <SortOrFilterChip
-                key={sort.fieldId}
-                testId={sort.fieldId}
-                labelValue={sort.definition.label}
-                Icon={sort.direction === 'desc' ? IconArrowDown : IconArrowUp}
-                isSortChip
-                onRemove={() => removeViewSort(sort.fieldId)}
-              />
+              <>
+                <EditObjectSort
+                  key={sort.fieldMetadataId}
+                  fieldMetadataId={sort.fieldMetadataId}
+                  label={sort.definition.label}
+                  direction={sort.direction}
+                />
+              </>
             );
           })}
           {!!currentViewSorts?.length && !!currentViewFilters?.length && (
@@ -132,22 +138,16 @@ export const ViewBarDetails = ({
               <StyledSeperator />
             </StyledSeperatorContainer>
           )}
-          {currentViewFilters?.map((filter) => {
-            return (
-              <SortOrFilterChip
-                key={filter.fieldId}
-                testId={filter.fieldId}
-                labelKey={filter.definition.label}
-                labelValue={`${getOperandLabelShort(filter.operand)} ${
-                  filter.displayValue
-                }`}
-                Icon={filter.definition.Icon}
-                onRemove={() => {
-                  removeViewFilter(filter.fieldId);
-                }}
-              />
-            );
-          })}
+          {currentViewFilters?.map((filter) => (
+            <EditObjectFilter
+              key={filter.fieldMetadataId}
+              fieldMetadataId={filter.fieldMetadataId}
+              label={filter.definition.label}
+              iconName={filter.definition.iconName}
+              value={filter.value}
+              displayValue={filter.displayValue}
+            />
+          ))}
         </StyledChipcontainer>
         {hasFilterButton && (
           <StyledAddFilterContainer>

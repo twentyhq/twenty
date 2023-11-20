@@ -4,9 +4,14 @@ import {
   snapshot_UNSTABLE,
   useGotoRecoilSnapshot,
   useRecoilState,
+  useSetRecoilState,
 } from 'recoil';
 
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
+import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { REACT_APP_SERVER_AUTH_URL } from '~/config';
 import {
   useChallengeMutation,
   useCheckUserExistsLazyQuery,
@@ -19,7 +24,12 @@ import { tokenPairState } from '../states/tokenPairState';
 
 export const useAuth = () => {
   const [, setTokenPair] = useRecoilState(tokenPairState);
-  const [, setCurrentUser] = useRecoilState(currentUserState);
+  const setCurrentUser = useSetRecoilState(currentUserState);
+  const setCurrentWorkspaceMember = useSetRecoilState(
+    currentWorkspaceMemberState,
+  );
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+  const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
@@ -67,36 +77,51 @@ export const useAuth = () => {
         throw new Error('No verify result');
       }
 
-      if (!verifyResult.data?.verify.user.workspaceMember) {
-        throw new Error('No workspace member');
-      }
-
-      if (!verifyResult.data?.verify.user.workspaceMember.settings) {
-        throw new Error('No settings');
-      }
-
-      setCurrentUser({
-        ...verifyResult.data?.verify.user,
-        workspaceMember: {
-          ...verifyResult.data?.verify.user.workspaceMember,
-          settings: verifyResult.data?.verify.user.workspaceMember.settings,
-        },
-      });
       setTokenPair(verifyResult.data?.verify.tokens);
 
-      return verifyResult.data?.verify;
+      const user = verifyResult.data?.verify.user;
+      const workspaceMember = {
+        ...user.workspaceMember,
+        colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
+      };
+      const workspace = user.defaultWorkspace ?? null;
+      setCurrentUser(user);
+      setCurrentWorkspaceMember(workspaceMember);
+      setCurrentWorkspace(workspace);
+      return {
+        user,
+        workspaceMember,
+        workspace,
+        tokens: verifyResult.data?.verify.tokens,
+      };
     },
-    [setTokenPair, verify, setCurrentUser],
+    [
+      verify,
+      setTokenPair,
+      setCurrentUser,
+      setCurrentWorkspaceMember,
+      setCurrentWorkspace,
+    ],
   );
 
   const handleCrendentialsSignIn = useCallback(
     async (email: string, password: string) => {
       const { loginToken } = await handleChallenge(email, password);
+      setIsVerifyPendingState(true);
 
-      const { user } = await handleVerify(loginToken.token);
-      return user;
+      const { user, workspaceMember, workspace } = await handleVerify(
+        loginToken.token,
+      );
+
+      setIsVerifyPendingState(false);
+
+      return {
+        user,
+        workspaceMember,
+        workspace,
+      };
     },
-    [handleChallenge, handleVerify],
+    [handleChallenge, handleVerify, setIsVerifyPendingState],
   );
 
   const handleSignOut = useCallback(() => {
@@ -110,6 +135,8 @@ export const useAuth = () => {
 
   const handleCredentialsSignUp = useCallback(
     async (email: string, password: string, workspaceInviteHash?: string) => {
+      setIsVerifyPendingState(true);
+
       const signUpResult = await signUp({
         variables: {
           email,
@@ -126,18 +153,19 @@ export const useAuth = () => {
         throw new Error('No login token');
       }
 
-      const { user } = await handleVerify(
+      const { user, workspace, workspaceMember } = await handleVerify(
         signUpResult.data?.signUp.loginToken.token,
       );
 
-      return user;
+      setIsVerifyPendingState(false);
+
+      return { user, workspaceMember, workspace };
     },
-    [signUp, handleVerify],
+    [setIsVerifyPendingState, signUp, handleVerify],
   );
 
   const handleGoogleLogin = useCallback((workspaceInviteHash?: string) => {
-    const authServerUrl =
-      REACT_APP_SERVER_BASE_URL ?? REACT_APP_SERVER_BASE_URL + '/auth';
+    const authServerUrl = REACT_APP_SERVER_AUTH_URL;
     window.location.href =
       `${authServerUrl}/google/${
         workspaceInviteHash ? '?inviteHash=' + workspaceInviteHash : ''

@@ -1,31 +1,26 @@
 import { useRecoilCallback } from 'recoil';
 
-import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
+import { currentPipelineStepsState } from '@/pipeline/states/currentPipelineStepsState';
+import { Opportunity } from '@/pipeline/types/Opportunity';
+import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { boardCardIdsByColumnIdFamilyState } from '@/ui/layout/board/states/boardCardIdsByColumnIdFamilyState';
 import { boardColumnsState } from '@/ui/layout/board/states/boardColumnsState';
 import { savedBoardColumnsState } from '@/ui/layout/board/states/savedBoardColumnsState';
 import { BoardColumnDefinition } from '@/ui/layout/board/types/BoardColumnDefinition';
 import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
 import { isThemeColor } from '@/ui/theme/utils/castStringAsThemeColor';
-import { Pipeline } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';
 
 import { companyProgressesFamilyState } from '../states/companyProgressesFamilyState';
-import {
-  CompanyForBoard,
-  CompanyProgressDict,
-  PipelineProgressForBoard,
-} from '../types/CompanyProgress';
+import { CompanyForBoard, CompanyProgressDict } from '../types/CompanyProgress';
 
 export const useUpdateCompanyBoard = () =>
   useRecoilCallback(
     ({ set, snapshot }) =>
       (
-        pipeline: Pipeline,
-        pipelineProgresses: (PipelineProgressForBoard & {
-          pipelineStageId: string;
-        })[],
+        pipelineSteps: PipelineStep[],
+        pipelineProgresses: Opportunity[],
         companies: CompanyForBoard[],
       ) => {
         const indexCompanyByIdReducer = (
@@ -44,7 +39,7 @@ export const useUpdateCompanyBoard = () =>
 
         const indexPipelineProgressByIdReducer = (
           acc: CompanyProgressDict,
-          pipelineProgress: PipelineProgressForBoard,
+          pipelineProgress: Opportunity,
         ) => {
           const company =
             pipelineProgress.companyId &&
@@ -77,21 +72,19 @@ export const useUpdateCompanyBoard = () =>
           }
         }
 
-        const currentPipeline = snapshot
-          .getLoadable(currentPipelineState)
+        const currentPipelineSteps = snapshot
+          .getLoadable(currentPipelineStepsState)
           .valueOrThrow();
 
         const currentBoardColumns = snapshot
           .getLoadable(boardColumnsState)
           .valueOrThrow();
 
-        if (!isDeeplyEqual(pipeline, currentPipeline)) {
-          set(currentPipelineState, pipeline);
+        if (!isDeeplyEqual(pipelineSteps, currentPipelineSteps)) {
+          set(currentPipelineStepsState, currentPipelineSteps);
         }
 
-        const pipelineStages = pipeline?.pipelineStages ?? [];
-
-        const orderedPipelineStages = [...pipelineStages].sort((a, b) => {
+        const orderedPipelineStages = [...pipelineSteps].sort((a, b) => {
           if (!a.position || !b.position) return 0;
           return a.position - b.position;
         });
