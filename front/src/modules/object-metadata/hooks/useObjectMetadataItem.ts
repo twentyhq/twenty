@@ -37,23 +37,23 @@ export const useObjectMetadataItem = ({
   const objectNotFoundInMetadata = !isDefined(objectMetadataItem);
 
   const findManyQuery = useGenerateFindManyCustomObjectsQuery({
-    objectMetadataItem: objectMetadataItem,
+    objectMetadataItem,
   });
 
   const findOneQuery = useGenerateFindOneCustomObjectQuery({
-    objectMetadataItem: objectMetadataItem,
+    objectMetadataItem,
   });
 
   const createOneMutation = useGenerateCreateOneObjectMutation({
-    objectMetadataItem: objectMetadataItem,
+    objectMetadataItem,
   });
 
   const updateOneMutation = useGenerateUpdateOneObjectMutation({
-    objectMetadataItem: objectMetadataItem,
+    objectMetadataItem,
   });
 
   const deleteOneMutation = useGenerateDeleteOneObjectMutation({
-    objectMetadataItem: objectMetadataItem,
+    objectMetadataItem,
   });
 
   return {

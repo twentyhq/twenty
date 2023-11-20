@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useQuery } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
@@ -18,7 +18,6 @@ import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '../utils/m
 
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
-// TODO: test fetchMore
 export const useFindManyObjectMetadataItems = ({
   skip,
   objectFilter,
@@ -32,73 +31,44 @@ export const useFindManyObjectMetadataItems = ({
 
   const { enqueueSnackBar } = useSnackBar();
 
-  const {
-    data,
-    fetchMore: fetchMoreInternal,
-    loading,
-    error,
-  } = useQuery<ObjectMetadataItemsQuery, ObjectMetadataItemsQueryVariables>(
-    FIND_MANY_METADATA_OBJECTS,
-    {
-      variables: {
-        objectFilter,
-        fieldFilter,
-      },
-      client: apolloMetadataClient ?? undefined,
-      skip: skip || !apolloMetadataClient,
-      onError: (error) => {
-        logError('useFindManyObjectMetadataItems error : ' + error);
-        enqueueSnackBar(
-          `Error during useFindManyObjectMetadataItems, ${error.message}`,
-          {
-            variant: 'error',
-          },
-        );
-      },
-      onCompleted: useRecoilCallback(
-        ({ snapshot, set }) =>
-          (data) => {
-            const objectMetadataItems =
-              mapPaginatedObjectMetadataItemsToObjectMetadataItems({
-                pagedObjectMetadataItems: data,
-              });
-
-            const actualObjectMetadataItems = snapshot
-              .getLoadable(objectMetadataItemsState)
-              .getValue();
-
-            if (
-              !isDeeplyEqual(objectMetadataItems, actualObjectMetadataItems)
-            ) {
-              set(objectMetadataItemsState, objectMetadataItems);
-            }
-          },
-        [],
-      ),
+  const { data, loading, error } = useQuery<
+    ObjectMetadataItemsQuery,
+    ObjectMetadataItemsQueryVariables
+  >(FIND_MANY_METADATA_OBJECTS, {
+    variables: {
+      objectFilter,
+      fieldFilter,
     },
-  );
+    client: apolloMetadataClient ?? undefined,
+    skip: skip || !apolloMetadataClient,
+    onError: (error) => {
+      logError('useFindManyObjectMetadataItems error : ' + error);
+      enqueueSnackBar(
+        `Error during useFindManyObjectMetadataItems, ${error.message}`,
+        {
+          variant: 'error',
+        },
+      );
+    },
+    onCompleted: useRecoilCallback(
+      ({ snapshot, set }) =>
+        (data) => {
+          const objectMetadataItems =
+            mapPaginatedObjectMetadataItemsToObjectMetadataItems({
+              pagedObjectMetadataItems: data,
+            });
 
-  const hasMore = useMemo(
-    () => data?.objects?.pageInfo?.hasNextPage,
-    [data?.objects?.pageInfo?.hasNextPage],
-  );
+          const actualObjectMetadataItems = snapshot
+            .getLoadable(objectMetadataItemsState)
+            .getValue();
 
-  const fetchMore = useCallback(() => {
-    const returnedData = fetchMoreInternal({
-      variables: {
-        afterCursor: data?.objects?.pageInfo?.endCursor,
-      },
-    });
-
-    return returnedData;
-  }, [data?.objects?.pageInfo?.endCursor, fetchMoreInternal]);
-
-  // useEffect(() => {
-  //   console.log({ hasMore, fetchMore });
-  //   if (hasMore) {
-  //     fetchMore();
-  //   }
-  // }, [hasMore, fetchMore]);
+          if (!isDeeplyEqual(objectMetadataItems, actualObjectMetadataItems)) {
+            set(objectMetadataItemsState, objectMetadataItems);
+          }
+        },
+      [],
+    ),
+  });
 
   const objectMetadataItems = useMemo(() => {
     return mapPaginatedObjectMetadataItemsToObjectMetadataItems({
@@ -108,8 +78,6 @@ export const useFindManyObjectMetadataItems = ({
 
   return {
     objectMetadataItems,
-    hasMore,
-    fetchMore,
     loading,
     error,
   };

@@ -23,7 +23,7 @@ export const useGenerateCreateOneObjectMutation = ({
       create${capitalizedObjectName}(data: $input) {
         id
         ${objectMetadataItem.fields
-          .map(mapFieldMetadataToGraphQLQuery)
+          .map((field) => mapFieldMetadataToGraphQLQuery(field))
           .join('\n')}
       }
     }
