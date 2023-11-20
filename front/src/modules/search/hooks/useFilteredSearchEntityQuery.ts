@@ -18,7 +18,7 @@ const DEFAULT_SEARCH_REQUEST_LIMIT = 30;
 
 // TODO: use this for all search queries, because we need selectedEntities and entitiesToSelect each time we want to search
 // Filtered entities to select are
-export const useFilteredSearchEntityQueryV2 = ({
+export const useFilteredSearchEntityQuery = ({
   queryHook,
   orderByField,
   filters,

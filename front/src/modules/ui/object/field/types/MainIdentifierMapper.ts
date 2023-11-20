@@ -1,9 +1,9 @@
 import { AvatarType } from '@/users/components/Avatar';
 
-export type EntityForSelect = {
+export type MainIdentifierMapper = (record: any) => {
   id: string;
   name: string;
   avatarUrl?: string;
-  avatarType?: AvatarType;
+  avatarType: AvatarType;
   record: any;
 };

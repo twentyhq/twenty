@@ -1,13 +1,20 @@
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { Repository } from 'typeorm';
 
+import { assert } from 'src/utils/assert';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { User } from 'src/core/user/user.entity';
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 
 export type JwtPayload = { sub: string; workspaceId: string; jti?: string };
 export type PassportUser = { user?: User; workspace: Workspace };
@@ -16,6 +23,8 @@ export type PassportUser = { user?: User; workspace: Workspace };
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly environmentService: EnvironmentService,
+    private readonly typeORMService: TypeORMService,
+    private readonly dataSourceService: DataSourceService,
     @InjectRepository(Workspace)
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(User)
@@ -36,21 +45,34 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       throw new UnauthorizedException();
     }
     if (payload.jti) {
-      // If apiKey has been deleted or revoked, we throw an error
-      // const apiKey = await this.prismaService.client.apiKey.findUniqueOrThrow({
-      //   where: { id: payload.jti },
-      // });
-      // assert(!apiKey.revokedAt, 'This API Key is revoked', ForbiddenException);
+      const dataSourceMetadata =
+        await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+          workspace.id,
+        );
+
+      const workspaceDataSource = await this.typeORMService.connectToDataSource(
+        dataSourceMetadata,
+      );
+
+      const apiKey = await workspaceDataSource?.query(
+        `SELECT * FROM ${dataSourceMetadata.schema}."apiKey" WHERE id = '${payload.jti}'`,
+      );
+
+      assert(
+        apiKey.length === 1 && !apiKey[0].revokedAt,
+        'This API Key is revoked',
+        ForbiddenException,
+      );
     }
 
-    const user = payload.workspaceId
-      ? await this.userRepository.findOneBy({
-          id: payload.sub,
-        })
-      : undefined;
-
-    if (!user) {
-      throw new UnauthorizedException();
+    let user;
+    if (payload.workspaceId) {
+      user = await this.userRepository.findOneBy({
+        id: payload.sub,
+      });
+      if (!user) {
+        throw new UnauthorizedException();
+      }
     }
 
     return { user, workspace };

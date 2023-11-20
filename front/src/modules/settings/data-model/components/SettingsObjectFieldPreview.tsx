@@ -90,12 +90,11 @@ export const SettingsObjectFieldPreview = ({
     objectMetadataId,
   });
 
-  const { defaultValue: relationDefaultValue, entityChipDisplayMapper } =
-    useRelationFieldPreview({
-      relationObjectMetadataId,
-      skipDefaultValue:
-        fieldMetadata.type !== FieldMetadataType.Relation || hasValue,
-    });
+  const { defaultValue: relationDefaultValue } = useRelationFieldPreview({
+    relationObjectMetadataId,
+    skipDefaultValue:
+      fieldMetadata.type !== FieldMetadataType.Relation || hasValue,
+  });
 
   const defaultValue =
     fieldMetadata.type === FieldMetadataType.Relation
@@ -138,16 +137,13 @@ export const SettingsObjectFieldPreview = ({
         <FieldContext.Provider
           value={{
             entityId,
+            isMainIdentifier: false,
             fieldDefinition: {
               type: parseFieldType(fieldMetadata.type),
               iconName: 'FieldIcon',
               fieldMetadataId: fieldMetadata.id || '',
               label: fieldMetadata.label,
               metadata: { fieldName },
-              entityChipDisplayMapper:
-                fieldMetadata.type === FieldMetadataType.Relation
-                  ? entityChipDisplayMapper
-                  : undefined,
             },
             hotkeyScope: 'field-preview',
           }}

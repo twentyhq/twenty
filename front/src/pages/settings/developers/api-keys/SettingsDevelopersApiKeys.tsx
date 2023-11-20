@@ -50,7 +50,7 @@ export const SettingsDevelopersApiKeys = () => {
   const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
     objectNameSingular: 'apiKey',
   });
-  const filter = { revokedAt: { eq: null } };
+  const filter = { revokedAt: { is: 'NULL' } };
   useFindManyObjectRecords({
     objectNamePlural: 'apiKeys',
     filter,

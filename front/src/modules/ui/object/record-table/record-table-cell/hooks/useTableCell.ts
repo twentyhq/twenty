@@ -37,7 +37,8 @@ export const useTableCell = () => {
 
   const isEmpty = useIsFieldEmpty();
 
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { entityId, fieldDefinition, basePathToShowPage } =
+    useContext(FieldContext);
 
   const [, setFieldInitialValue] = useRecoilState(
     entityFieldInitialValueFamilyState({
@@ -47,8 +48,8 @@ export const useTableCell = () => {
   );
 
   const openTableCell = (options?: { initialValue?: FieldInitialValue }) => {
-    if (isFirstColumnCell && !isEmpty && fieldDefinition.basePathToShowPage) {
-      navigate(`${fieldDefinition.basePathToShowPage}${entityId}`);
+    if (isFirstColumnCell && !isEmpty && basePathToShowPage) {
+      navigate(`${basePathToShowPage}${entityId}`);
       return;
     }
 

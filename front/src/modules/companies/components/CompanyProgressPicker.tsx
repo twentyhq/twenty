@@ -3,7 +3,6 @@ import { useRecoilState } from 'recoil';
 
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
 import { IconChevronDown } from '@/ui/display/icon';
-import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
 import { useEntitySelectSearch } from '@/ui/input/relation-picker/hooks/useEntitySelectSearch';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -13,8 +12,6 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-
-import { useFilteredSearchCompanyQuery } from '../hooks/useFilteredSearchCompanyQuery';
 
 export type CompanyProgressPickerProps = {
   companyId: string | null;
@@ -34,10 +31,10 @@ export const CompanyProgressPicker = ({
 
   const { searchFilter, handleSearchFilterChange } = useEntitySelectSearch();
 
-  const companies = useFilteredSearchCompanyQuery({
-    searchFilter,
-    selectedIds: companyId ? [companyId] : [],
-  });
+  // const companies = useFilteredSearchCompanyQuery({
+  //   searchFilter,
+  //   selectedIds: companyId ? [companyId] : [],
+  // });
 
   const [isProgressSelectionUnfolded, setIsProgressSelectionUnfolded] =
     useState(false);
@@ -113,13 +110,13 @@ export const CompanyProgressPicker = ({
           />
           <DropdownMenuSeparator />
           <RecoilScope>
-            <SingleEntitySelectBase
+            {/* <SingleEntitySelectBase
               entitiesToSelect={companies.entitiesToSelect}
               loading={companies.loading}
               onCancel={onCancel}
               onEntitySelected={handleEntitySelected}
               selectedEntity={companies.selectedEntities[0]}
-            />
+            /> */}
           </RecoilScope>
         </>
       )}

@@ -6,14 +6,14 @@ import {
 type CompanyChipProps = {
   id: string;
   name: string;
-  pictureUrl?: string;
+  avatarUrl?: string;
   variant?: EntityChipVariant;
 };
 
 export const CompanyChip = ({
   id,
   name,
-  pictureUrl,
+  avatarUrl,
   variant = EntityChipVariant.Regular,
 }: CompanyChipProps) => (
   <EntityChip
@@ -21,7 +21,7 @@ export const CompanyChip = ({
     linkToEntity={`/objects/companies/${id}`}
     name={name}
     avatarType="squared"
-    pictureUrl={pictureUrl}
+    avatarUrl={avatarUrl}
     variant={variant}
   />
 );

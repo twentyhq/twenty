@@ -10,6 +10,13 @@ export type GenericFieldContextType = {
   entityId: string;
   recoilScopeId?: string;
   hotkeyScope: string;
+  isMainIdentifier: boolean;
+  mainIdentifierMapper?: (record: any) => {
+    name: string;
+    avatarUrl?: string;
+    avatarType: string;
+  };
+  basePathToShowPage?: string;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(

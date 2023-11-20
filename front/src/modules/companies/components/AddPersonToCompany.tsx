@@ -3,10 +3,6 @@ import styled from '@emotion/styled';
 import { flip, offset, useFloating } from '@floating-ui/react';
 import { v4 } from 'uuid';
 
-import {
-  PeoplePicker,
-  PersonForSelect,
-} from '@/people/components/PeoplePicker';
 import { IconPlus } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
@@ -67,7 +63,7 @@ export const AddPersonToCompany = ({
   } = usePreviousHotkeyScope();
 
   const handlePersonSelected =
-    (companyId: string) => async (newPerson: PersonForSelect | null) => {
+    (companyId: string) => async (newPerson: any | null) => {
       if (newPerson) {
         // await updatePerson({
         //   variables: {
@@ -146,13 +142,14 @@ export const AddPersonToCompany = ({
                 />
               </StyledInputContainer>
             ) : (
-              <PeoplePicker
-                personId={''}
-                onSubmit={handlePersonSelected(companyId)}
-                onCancel={handleClosePicker}
-                onCreate={() => setIsCreationDropdownOpen(true)}
-                excludePersonIds={peopleIds}
-              />
+              <>todo</>
+              // <PeoplePicker
+              //   personId={''}
+              //   onSubmit={handlePersonSelected(companyId)}
+              //   onCancel={handleClosePicker}
+              //   onCreate={() => setIsCreationDropdownOpen(true)}
+              //   excludePersonIds={peopleIds}
+              // />
             )}
           </div>
         )}

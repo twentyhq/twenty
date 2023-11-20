@@ -16,7 +16,7 @@ export const GenericEntityFilterChip = ({
     entityId={filter.value}
     name={filter.displayValue}
     avatarType="rounded"
-    pictureUrl={filter.displayAvatarUrl}
+    avatarUrl={filter.displayAvatarUrl}
     LeftIcon={Icon}
   />
 );

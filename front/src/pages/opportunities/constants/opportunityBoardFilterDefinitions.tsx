@@ -1,8 +1,5 @@
-import { FilterDropdownCompanySearchSelect } from '@/companies/components/FilterDropdownCompanySearchSelect';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { FilterDefinitionByEntity } from '@/ui/object/object-filter-dropdown/types/FilterDefinitionByEntity';
-
-import { FilterDropdownPeopleSearchSelect } from '../../../modules/people/components/FilterDropdownPeopleSearchSelect';
 
 export const opportunityBoardFilterDefinitions: FilterDefinitionByEntity<Opportunity>[] =
   [
@@ -23,13 +20,13 @@ export const opportunityBoardFilterDefinitions: FilterDefinitionByEntity<Opportu
       label: 'Company',
       iconName: 'IconBuildingSkyscraper',
       type: 'ENTITY',
-      entitySelectComponent: <FilterDropdownCompanySearchSelect />,
+      // entitySelectComponent: <FilterDropdownCompanySearchSelect />,
     },
     {
       fieldMetadataId: 'pointOfContactId',
       label: 'Point of contact',
       iconName: 'IconUser',
       type: 'ENTITY',
-      entitySelectComponent: <FilterDropdownPeopleSearchSelect />,
+      //entitySelectComponent: <FilterDropdownPeopleSearchSelect />,
     },
   ];

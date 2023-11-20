@@ -8,7 +8,7 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
 
   const mapFieldMetadataToGraphQLQuery = (
     field: FieldMetadataItem,
-    maxDepthForRelations: number = 1,
+    maxDepthForRelations: number = 2,
   ): any => {
     if (maxDepthForRelations <= 0) {
       return '';
