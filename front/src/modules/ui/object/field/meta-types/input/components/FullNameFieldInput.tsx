@@ -1,13 +1,13 @@
+import { useFullNameField } from '@/ui/object/field/meta-types/hooks/useFullNameField';
 import { DoubleTextInput } from '@/ui/object/field/meta-types/input/components/internal/DoubleTextInput';
 import { FieldDoubleText } from '@/ui/object/field/types/FieldDoubleText';
 
 import { usePersistField } from '../../../hooks/usePersistField';
-import { useDoubleTextChipField } from '../../hooks/useDoubleTextChipField';
 
 import { FieldInputOverlay } from './internal/FieldInputOverlay';
 import { FieldInputEvent } from './DateFieldInput';
 
-export type DoubleTextChipFieldInputProps = {
+export type FullNameFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
@@ -15,52 +15,53 @@ export type DoubleTextChipFieldInputProps = {
   onShiftTab?: FieldInputEvent;
 };
 
-export const DoubleTextChipFieldInput = ({
+export const FullNameFieldInput = ({
   onEnter,
   onEscape,
   onClickOutside,
   onTab,
   onShiftTab,
-}: DoubleTextChipFieldInputProps) => {
-  const {
-    fieldDefinition,
-    initialFirstValue,
-    initialSecondValue,
-    hotkeyScope,
-  } = useDoubleTextChipField();
+}: FullNameFieldInputProps) => {
+  const { hotkeyScope, initialValue } = useFullNameField();
 
   const persistField = usePersistField();
+  const convertToFullName = (newDoubleText: FieldDoubleText) => {
+    return {
+      firstName: newDoubleText.firstValue,
+      lastName: newDoubleText.secondValue,
+    };
+  };
 
   const handleEnter = (newDoubleText: FieldDoubleText) => {
-    onEnter?.(() => persistField(newDoubleText));
+    onEnter?.(() => persistField(convertToFullName(newDoubleText)));
   };
 
   const handleEscape = (newDoubleText: FieldDoubleText) => {
-    onEscape?.(() => persistField(newDoubleText));
+    onEscape?.(() => persistField(convertToFullName(newDoubleText)));
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
     newDoubleText: FieldDoubleText,
   ) => {
-    onClickOutside?.(() => persistField(newDoubleText));
+    onClickOutside?.(() => persistField(convertToFullName(newDoubleText)));
   };
 
   const handleTab = (newDoubleText: FieldDoubleText) => {
-    onTab?.(() => persistField(newDoubleText));
+    onTab?.(() => persistField(convertToFullName(newDoubleText)));
   };
 
   const handleShiftTab = (newDoubleText: FieldDoubleText) => {
-    onShiftTab?.(() => persistField(newDoubleText));
+    onShiftTab?.(() => persistField(convertToFullName(newDoubleText)));
   };
 
   return (
     <FieldInputOverlay>
       <DoubleTextInput
-        firstValue={initialFirstValue}
-        secondValue={initialSecondValue}
-        firstValuePlaceholder={fieldDefinition.metadata.firstValuePlaceholder}
-        secondValuePlaceholder={fieldDefinition.metadata.secondValuePlaceholder}
+        firstValue={initialValue.firstName}
+        secondValue={initialValue.lastName}
+        firstValuePlaceholder={'F‌‌irst name'}
+        secondValuePlaceholder={'L‌‌ast name'}
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}

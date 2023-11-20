@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 
 import { useComputeDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useComputeDefinitionsFromFieldMetadata';
 import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMainIdentifier } from '@/object-metadata/hooks/useObjectMainIdentifier';
 import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
@@ -13,11 +14,18 @@ export const RecordTableEffect = () => {
     scopeId: objectNamePlural,
     setAvailableTableColumns,
     setOnEntityCountChange,
+    setObjectMetadataConfig,
   } = useRecordTable();
 
   const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
     objectNamePlural,
   });
+
+  const {
+    mainIdentifierMapper,
+    basePathToShowPage,
+    mainIdentifierFieldMetadataId,
+  } = useObjectMainIdentifier(foundObjectMetadataItem);
 
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
     useComputeDefinitionsFromFieldMetadata(foundObjectMetadataItem);
@@ -30,6 +38,26 @@ export const RecordTableEffect = () => {
     setViewObjectMetadataId,
     setEntityCountInCurrentView,
   } = useView();
+
+  useEffect(() => {
+    if (
+      mainIdentifierMapper &&
+      basePathToShowPage &&
+      mainIdentifierFieldMetadataId
+    ) {
+      setObjectMetadataConfig?.({
+        mainIdentifierMapper,
+        basePathToShowPage,
+        mainIdentifierFieldMetadataId,
+      });
+    }
+  }, [
+    basePathToShowPage,
+    foundObjectMetadataItem,
+    mainIdentifierFieldMetadataId,
+    mainIdentifierMapper,
+    setObjectMetadataConfig,
+  ]);
 
   useEffect(() => {
     if (!foundObjectMetadataItem) {

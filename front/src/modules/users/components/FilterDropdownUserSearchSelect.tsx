@@ -1,8 +1,7 @@
 import { useQuery } from '@apollo/client';
 
 import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
-import { useFilteredSearchEntityQueryV2 } from '@/search/hooks/useFilteredSearchEntityQueryV2';
-import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { ObjectFilterDropdownEntitySearchSelect } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownEntitySearchSelect';
 import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
 
@@ -19,7 +18,7 @@ export const FilterDropdownUserSearchSelect = () => {
   const useFindManyWorkspaceMembers = (options: any) =>
     useQuery(findManyQuery, options);
 
-  const workspaceMembers = useFilteredSearchEntityQueryV2({
+  const workspaceMembers = useFilteredSearchEntityQuery({
     queryHook: useFindManyWorkspaceMembers,
     filters: [
       {
@@ -29,13 +28,13 @@ export const FilterDropdownUserSearchSelect = () => {
     ],
     orderByField: 'createdAt',
     mappingFunction: (workspaceMember) => ({
-      entityType: Entity.WorkspaceMember,
+      entityType: 'WorkspaceMember',
       id: workspaceMember.id,
       name:
         workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName,
       avatarType: 'rounded',
       avatarUrl: '',
-      originalEntity: workspaceMember,
+      record: workspaceMember,
     }),
     selectedIds: objectFilterDropdownSelectedEntityId
       ? [objectFilterDropdownSelectedEntityId]

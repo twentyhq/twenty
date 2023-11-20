@@ -1,23 +1,17 @@
 import { FieldDefinition } from '../FieldDefinition';
 import {
   FieldBooleanMetadata,
-  FieldChipMetadata,
   FieldCurrencyMetadata,
   FieldDateMetadata,
-  FieldDoubleTextChipMetadata,
-  FieldDoubleTextMetadata,
   FieldEmailMetadata,
-  FieldEnumMetadata,
-  FieldFullnameMetadata,
+  FieldFullNameMetadata,
   FieldLinkMetadata,
   FieldMetadata,
-  FieldMoneyMetadata,
   FieldNumberMetadata,
   FieldPhoneMetadata,
   FieldProbabilityMetadata,
   FieldRelationMetadata,
   FieldTextMetadata,
-  FieldURLMetadata,
   FieldUuidMetadata,
 } from '../FieldMetadata';
 import { FieldType } from '../FieldType';
@@ -26,26 +20,16 @@ type AssertFieldMetadataFunction = <
   E extends FieldType,
   T extends E extends 'BOOLEAN'
     ? FieldBooleanMetadata
-    : E extends 'CHIP'
-    ? FieldChipMetadata
     : E extends 'CURRENCY'
     ? FieldCurrencyMetadata
     : E extends 'FULL_NAME'
-    ? FieldFullnameMetadata
+    ? FieldFullNameMetadata
     : E extends 'DATE'
     ? FieldDateMetadata
-    : E extends 'DOUBLE_TEXT'
-    ? FieldDoubleTextMetadata
-    : E extends 'DOUBLE_TEXT_CHIP'
-    ? FieldDoubleTextChipMetadata
     : E extends 'EMAIL'
     ? FieldEmailMetadata
     : E extends 'LINK'
     ? FieldLinkMetadata
-    : E extends 'MONEY_AMOUNT'
-    ? FieldMoneyMetadata
-    : E extends 'ENUM'
-    ? FieldEnumMetadata
     : E extends 'NUMBER'
     ? FieldNumberMetadata
     : E extends 'PHONE'
@@ -56,8 +40,6 @@ type AssertFieldMetadataFunction = <
     ? FieldRelationMetadata
     : E extends 'TEXT'
     ? FieldTextMetadata
-    : E extends 'URL'
-    ? FieldURLMetadata
     : E extends 'UUID'
     ? FieldUuidMetadata
     : never,
