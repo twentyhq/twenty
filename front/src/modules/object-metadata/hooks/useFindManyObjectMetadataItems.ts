@@ -1,7 +1,6 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useQuery } from '@apollo/client';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import {
   FieldFilter,
   ObjectFilter,
@@ -25,9 +24,15 @@ export const useFindManyObjectMetadataItems = ({
   objectFilter?: ObjectFilter;
   fieldFilter?: FieldFilter;
 } = {}) => {
+  console.log('useFindManyObjectMetadataItems', {
+    skip,
+    objectFilter,
+    fieldFilter,
+  });
+
   const apolloMetadataClient = useApolloMetadataClient();
 
-  const { enqueueSnackBar } = useSnackBar();
+  // const { enqueueSnackBar } = useSnackBar();
 
   const {
     data,
@@ -45,31 +50,47 @@ export const useFindManyObjectMetadataItems = ({
       skip: skip || !apolloMetadataClient,
       onError: (error) => {
         logError('useFindManyObjectMetadataItems error : ' + error);
-        enqueueSnackBar(
-          `Error during useFindManyObjectMetadataItems, ${error.message}`,
-          {
-            variant: 'error',
-          },
-        );
+        // enqueueSnackBar(
+        //   `Error during useFindManyObjectMetadataItems, ${error.message}`,
+        //   {
+        //     variant: 'error',
+        //   },
+        // );
       },
-      onCompleted: () => {},
+      onCompleted: () => {
+        console.log('useFindManyObjectMetadataItems completed');
+      },
     },
   );
 
-  const hasMore = data?.objects?.pageInfo?.hasNextPage;
+  const hasMore = useMemo(() => data?.objects?.pageInfo?.hasNextPage, [data]);
 
-  const fetchMore = () =>
-    fetchMoreInternal({
-      variables: {
-        afterCursor: data?.objects?.pageInfo?.endCursor,
-      },
-    });
+  const fetchMore = useCallback(
+    () =>
+      fetchMoreInternal({
+        variables: {
+          afterCursor: data?.objects?.pageInfo?.endCursor,
+        },
+      }),
+    [data?.objects?.pageInfo?.endCursor, fetchMoreInternal],
+  );
 
   const objectMetadataItems = useMemo(() => {
     return mapPaginatedObjectMetadataItemsToObjectMetadataItems({
       pagedObjectMetadataItems: data,
     });
   }, [data]);
+
+  console.log({
+    data,
+    objectMetadataItems,
+    hasMore,
+    fetchMore,
+    loading,
+    error,
+    objectFilter,
+    fieldFilter,
+  });
 
   return {
     objectMetadataItems,

@@ -14,6 +14,8 @@ export const hiddenBoardCardFieldsScopedSelector = selectorFamily({
         availableBoardCardFieldsScopedState(scopeId),
       ).filter(({ fieldMetadataId }) => !fieldKeys.includes(fieldMetadataId));
 
+      console.log('selector');
+
       return [
         ...fields.filter((field) => !field.isVisible),
         ...otherAvailableKeys,

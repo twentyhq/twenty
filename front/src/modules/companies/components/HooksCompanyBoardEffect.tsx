@@ -9,7 +9,6 @@ import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { useBoardActionBarEntries } from '@/ui/layout/board/hooks/useBoardActionBarEntries';
 import { useBoardContext } from '@/ui/layout/board/hooks/useBoardContext';
-import { useBoardContextMenuEntries } from '@/ui/layout/board/hooks/useBoardContextMenuEntries';
 import { availableBoardCardFieldsScopedState } from '@/ui/layout/board/states/availableBoardCardFieldsScopedState';
 import { boardCardFieldsScopedState } from '@/ui/layout/board/states/boardCardFieldsScopedState';
 import { isBoardLoadedState } from '@/ui/layout/board/states/isBoardLoadedState';
@@ -56,6 +55,9 @@ export const HooksCompanyBoardEffect = () => {
     availableBoardCardFieldsScopedState,
     BoardRecoilScopeContext,
   );
+
+  console.log('HooksCompanyBoardEffect', currentViewFields, currentViewFilters);
+
   const updateCompanyBoardCardIds = useUpdateCompanyBoardCardIds();
   const updateCompanyBoard = useUpdateCompanyBoard();
 
@@ -114,6 +116,7 @@ export const HooksCompanyBoardEffect = () => {
   });
 
   useEffect(() => {
+    console.log('1');
     setAvailableFilterDefinitions(opportunitiesBoardOptions.filterDefinitions);
     setAvailableSortDefinitions?.(opportunitiesBoardOptions.sortDefinitions);
     setAvailableFieldDefinitions?.([]);
@@ -124,6 +127,7 @@ export const HooksCompanyBoardEffect = () => {
   ]);
 
   useEffect(() => {
+    console.log('2');
     setViewObjectMetadataId?.('company');
     setViewType?.(ViewType.Kanban);
   }, [setViewObjectMetadataId, setViewType]);
@@ -133,12 +137,14 @@ export const HooksCompanyBoardEffect = () => {
   const loading = !companies;
 
   const { setActionBarEntries } = useBoardActionBarEntries();
-  const { setContextMenuEntries } = useBoardContextMenuEntries();
+  // const { setContextMenuEntries } = useBoardContextMenuEntries();
 
   useEffect(() => {
+    console.log('3');
     if (!loading && opportunities && companies) {
+      console.log('loading');
       setActionBarEntries();
-      setContextMenuEntries();
+      // setContextMenuEntries();
       setAvailableBoardCardFields([]);
       updateCompanyBoard(pipelineSteps, opportunities, companies);
       setEntityCountInCurrentView(companies.length);
@@ -147,7 +153,7 @@ export const HooksCompanyBoardEffect = () => {
     loading,
     updateCompanyBoard,
     setActionBarEntries,
-    setContextMenuEntries,
+    // setContextMenuEntries,
     searchParams,
     setEntityCountInCurrentView,
     setAvailableBoardCardFields,
@@ -157,6 +163,7 @@ export const HooksCompanyBoardEffect = () => {
   ]);
 
   useEffect(() => {
+    console.log('4');
     if (currentViewFields) {
       setBoardCardFields(
         mapViewFieldsToBoardFieldDefinitions(currentViewFields, []),
