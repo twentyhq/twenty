@@ -20,7 +20,7 @@ export const boardColumnTotalsFamilySelector = selectorFamily({
       const pipelineStepTotal: number =
         opportunities?.reduce(
           (acc: number, curr: any) =>
-            acc + curr?.opportunity.amount.amountMicros,
+            acc + curr?.opportunity.amount.amountMicros / 1000000,
           0,
         ) || 0;
 
