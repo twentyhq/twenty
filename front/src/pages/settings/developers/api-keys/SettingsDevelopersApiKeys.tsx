@@ -47,9 +47,11 @@ export const SettingsDevelopersApiKeys = () => {
   const { registerOptimisticEffect } = useOptimisticEffect({
     objectNameSingular: 'apiKey',
   });
-  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: 'apiKey',
-  });
+  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
+    {
+      objectNameSingular: 'apiKey',
+    },
+  );
   const filter = { revokedAt: { is: 'NULL' } };
   useFindManyObjectRecords({
     objectNamePlural: 'apiKeys',

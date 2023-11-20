@@ -48,11 +48,14 @@ export const useFindManyObjectRecords = <
     isFetchingMoreObjectsFamilyState(objectNamePlural),
   );
 
-  const { objectMetadataItem: foundObjectMetadataItem, objectNotFoundInMetadata, findManyQuery } =
-    useObjectMetadataItem({
-      objectNamePlural,
-      skip,
-    });
+  const {
+    objectMetadataItem: foundObjectMetadataItem,
+    objectNotFoundInMetadata,
+    findManyQuery,
+  } = useObjectMetadataItem({
+    objectNamePlural,
+    skip,
+  });
 
   const { enqueueSnackBar } = useSnackBar();
 

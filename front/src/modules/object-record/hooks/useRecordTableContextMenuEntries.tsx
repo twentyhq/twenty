@@ -29,9 +29,11 @@ export const useRecordTableContextMenuEntries = () => {
   const { scopeId: objectNamePlural, resetTableRowSelection } =
     useRecordTable();
 
-  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem({
-    objectNamePlural,
-  });
+  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
+    {
+      objectNamePlural,
+    },
+  );
 
   const { createFavorite, deleteFavorite, favorites } = useFavorites({
     objectNamePlural,

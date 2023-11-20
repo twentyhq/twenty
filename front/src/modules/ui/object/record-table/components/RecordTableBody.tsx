@@ -22,9 +22,11 @@ export const RecordTableBody = () => {
 
   const { scopeId: objectNamePlural } = useRecordTable();
 
-  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem({
-    objectNamePlural,
-  });
+  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
+    {
+      objectNamePlural,
+    },
+  );
 
   const [isFetchingMoreObjects] = useRecoilState(
     isFetchingMoreObjectsFamilyState(foundObjectMetadataItem?.namePlural),

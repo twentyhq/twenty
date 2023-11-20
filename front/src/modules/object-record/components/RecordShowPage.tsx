@@ -35,9 +35,11 @@ export const RecordShowPage = () => {
     objectMetadataId: string;
   }>();
 
-  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
+    {
+      objectNameSingular,
+    },
+  );
 
   const { favorites, createFavorite, deleteFavorite } = useFavorites({
     objectNamePlural: foundObjectMetadataItem?.namePlural,

@@ -55,8 +55,6 @@ export class TokenService {
       workspaceId: user.defaultWorkspace.id,
     };
 
-    console.log(jwtPayload);
-
     return {
       token: this.jwtService.sign(jwtPayload),
       expiresAt,
@@ -79,11 +77,8 @@ export class TokenService {
 
     const refreshToken =
       this.refreshTokenRepository.create(refreshTokenPayload);
-    console.log(refreshToken);
 
     await this.refreshTokenRepository.save(refreshToken);
-
-    console.log('toto');
 
     return {
       token: this.jwtService.sign(jwtPayload, {

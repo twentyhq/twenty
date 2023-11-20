@@ -14,9 +14,11 @@ import { useFindManyObjectRecords } from './useFindManyObjectRecords';
 export const useObjectRecordTable = () => {
   const { scopeId: objectNamePlural } = useRecordTable();
 
-  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem({
-    objectNamePlural,
-  });
+  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
+    {
+      objectNamePlural,
+    },
+  );
 
   const { registerOptimisticEffect } = useOptimisticEffect({
     objectNameSingular: foundObjectMetadataItem?.nameSingular,

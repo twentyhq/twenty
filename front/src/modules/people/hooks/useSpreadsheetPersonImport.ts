@@ -1,8 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
-
 import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
 import { SpreadsheetOptions } from '@/spreadsheet-import/types';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 
 import { fieldsForPerson } from '../utils/fieldsForPerson';
 
@@ -10,7 +7,6 @@ export type FieldPersonMapping = (typeof fieldsForPerson)[number]['key'];
 
 export const useSpreadsheetPersonImport = () => {
   const { openSpreadsheetImport } = useSpreadsheetImport<FieldPersonMapping>();
-  const { enqueueSnackBar } = useSnackBar();
 
   const openPersonSpreadsheetImport = (
     options?: Omit<
@@ -20,20 +16,19 @@ export const useSpreadsheetPersonImport = () => {
   ) => {
     openSpreadsheetImport({
       ...options,
-      onSubmit: async (data) => {
+      onSubmit: async (_data) => {
         // TODO: Add better type checking in spreadsheet import later
-        const createInputs = data.validData.map((person) => ({
-          id: uuidv4(),
-          firstName: person.firstName as string | undefined,
-          lastName: person.lastName as string | undefined,
-          email: person.email as string | undefined,
-          linkedinUrl: person.linkedinUrl as string | undefined,
-          xUrl: person.xUrl as string | undefined,
-          jobTitle: person.jobTitle as string | undefined,
-          phone: person.phone as string | undefined,
-          city: person.city as string | undefined,
-        }));
-
+        // const createInputs = data.validData.map((person) => ({
+        //   id: uuidv4(),
+        //   firstName: person.firstName as string | undefined,
+        //   lastName: person.lastName as string | undefined,
+        //   email: person.email as string | undefined,
+        //   linkedinUrl: person.linkedinUrl as string | undefined,
+        //   xUrl: person.xUrl as string | undefined,
+        //   jobTitle: person.jobTitle as string | undefined,
+        //   phone: person.phone as string | undefined,
+        //   city: person.city as string | undefined,
+        // }));
         // TODO : abstract this part for any object
         // try {
         //   const result = await createManyPerson({
@@ -42,7 +37,6 @@ export const useSpreadsheetPersonImport = () => {
         //     },
         //     refetchQueries: 'active',
         //   });
-
         //   if (result.errors) {
         //     throw result.errors;
         //   }

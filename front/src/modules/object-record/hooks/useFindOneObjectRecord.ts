@@ -15,10 +15,13 @@ export const useFindOneObjectRecord = <
   onCompleted?: (data: ObjectType) => void;
   skip?: boolean;
 }) => {
-  const { objectMetadataItem: foundObjectMetadataItem, objectNotFoundInMetadata, findOneQuery } =
-    useObjectMetadataItem({
-      objectNameSingular,
-    });
+  const {
+    objectMetadataItem: foundObjectMetadataItem,
+    objectNotFoundInMetadata,
+    findOneQuery,
+  } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
   const { data, loading, error } = useQuery<
     { [nameSingular: string]: ObjectType },

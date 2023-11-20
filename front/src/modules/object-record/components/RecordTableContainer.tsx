@@ -32,9 +32,11 @@ export const RecordTableContainer = ({
 }: {
   objectNamePlural: string;
 }) => {
-  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem({
-    objectNamePlural,
-  });
+  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
+    {
+      objectNamePlural,
+    },
+  );
   const { columnDefinitions } = useComputeDefinitionsFromFieldMetadata(
     foundObjectMetadataItem,
   );
