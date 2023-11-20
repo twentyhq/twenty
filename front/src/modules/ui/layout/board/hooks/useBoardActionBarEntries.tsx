@@ -10,8 +10,6 @@ export const useBoardActionBarEntries = () => {
 
   const deleteSelectedBoardCards = useDeleteSelectedBoardCards();
 
-  console.log('useBoardActionBarEntries');
-
   const setActionBarEntries = useCallback(() => {
     setActionBarEntriesRecoil([
       {

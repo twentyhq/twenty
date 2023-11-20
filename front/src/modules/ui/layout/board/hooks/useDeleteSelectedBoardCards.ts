@@ -17,8 +17,6 @@ export const useDeleteSelectedBoardCards = () => {
       objectNameSingular: 'opportunity',
     });
 
-  console.log('useDeleteSelectedBoardCards');
-
   const deleteSelectedBoardCards = useRecoilCallback(
     ({ snapshot }) =>
       async () => {

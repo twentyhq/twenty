@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useQuery } from '@apollo/client';
 
+import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import {
   FieldFilter,
   ObjectFilter,
@@ -24,15 +25,9 @@ export const useFindManyObjectMetadataItems = ({
   objectFilter?: ObjectFilter;
   fieldFilter?: FieldFilter;
 } = {}) => {
-  console.log('useFindManyObjectMetadataItems', {
-    skip,
-    objectFilter,
-    fieldFilter,
-  });
-
   const apolloMetadataClient = useApolloMetadataClient();
 
-  // const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSnackBar } = useSnackBar();
 
   const {
     data,
@@ -50,16 +45,14 @@ export const useFindManyObjectMetadataItems = ({
       skip: skip || !apolloMetadataClient,
       onError: (error) => {
         logError('useFindManyObjectMetadataItems error : ' + error);
-        // enqueueSnackBar(
-        //   `Error during useFindManyObjectMetadataItems, ${error.message}`,
-        //   {
-        //     variant: 'error',
-        //   },
-        // );
+        enqueueSnackBar(
+          `Error during useFindManyObjectMetadataItems, ${error.message}`,
+          {
+            variant: 'error',
+          },
+        );
       },
-      onCompleted: () => {
-        console.log('useFindManyObjectMetadataItems completed');
-      },
+      onCompleted: () => {},
     },
   );
 
@@ -80,17 +73,6 @@ export const useFindManyObjectMetadataItems = ({
       pagedObjectMetadataItems: data,
     });
   }, [data]);
-
-  console.log({
-    data,
-    objectMetadataItems,
-    hasMore,
-    fetchMore,
-    loading,
-    error,
-    objectFilter,
-    fieldFilter,
-  });
 
   return {
     objectMetadataItems,
