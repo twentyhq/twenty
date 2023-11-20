@@ -13,13 +13,14 @@ export const boardColumnTotalsFamilySelector = selectorFamily({
     ({ get }) => {
       const cardIds = get(boardCardIdsByColumnIdFamilyState(pipelineStepId));
 
-      const pipelineProgresses = cardIds.map((pipelineProgressId: string) =>
-        get(companyProgressesFamilyState(pipelineProgressId)),
+      const opportunities = cardIds.map((opportunityId: string) =>
+        get(companyProgressesFamilyState(opportunityId)),
       );
 
       const pipelineStepTotal: number =
-        pipelineProgresses?.reduce(
-          (acc: number, curr: any) => acc + curr?.pipelineProgress.amount,
+        opportunities?.reduce(
+          (acc: number, curr: any) =>
+            acc + curr?.opportunity.amount.amountMicros,
           0,
         ) || 0;
 
