@@ -128,7 +128,7 @@ const personMetadata = {
       targetColumnMap: {},
       description: 'Contact’s company',
       icon: 'IconBuildingSkyscraper',
-      isNullable: false,
+      isNullable: true,
       isSystem: false,
     },
     {
@@ -140,7 +140,7 @@ const personMetadata = {
       targetColumnMap: {},
       description: 'Foreign key for company',
       icon: undefined,
-      isNullable: false,
+      isNullable: true,
       isSystem: true,
     },
     {
