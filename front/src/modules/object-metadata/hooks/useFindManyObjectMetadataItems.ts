@@ -32,8 +32,6 @@ export const useFindManyObjectMetadataItems = ({
 
   const { enqueueSnackBar } = useSnackBar();
 
-  console.log('useFindManyObjectMetadataItems');
-
   const {
     data,
     fetchMore: fetchMoreInternal,

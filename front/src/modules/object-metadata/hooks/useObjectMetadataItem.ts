@@ -27,8 +27,6 @@ export const useObjectMetadataItem = ({
   objectNamePlural,
   objectNameSingular,
 }: ObjectMetadataItemIdentifier & { skip?: boolean }) => {
-  console.log('useObjectMetadataItem');
-
   const objectMetadataItem = useRecoilValue(
     objectMetadataItemFamilySelector({
       objectNamePlural,
