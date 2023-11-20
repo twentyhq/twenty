@@ -48,8 +48,8 @@ export const dataTypes: Record<
     Icon: IconCheck,
     defaultValue: true,
   },
-  [FieldMetadataType.Date]: {
-    label: 'Date',
+  [FieldMetadataType.DateTime]: {
+    label: 'Date & Time',
     Icon: IconCalendarEvent,
     defaultValue: defaultDateValue.toISOString(),
   },

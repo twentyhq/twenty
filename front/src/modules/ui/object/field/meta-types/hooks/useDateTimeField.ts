@@ -4,12 +4,12 @@ import { useRecoilState } from 'recoil';
 import { FieldContext } from '../../contexts/FieldContext';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
-import { isFieldDate } from '../../types/guards/isFieldDate';
+import { isFieldDateTime } from '../../types/guards/isFieldDateTime';
 
-export const useDateField = () => {
+export const useDateTimeField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('DATE', isFieldDate, fieldDefinition);
+  assertFieldMetadata('DATE_TIME', isFieldDateTime, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

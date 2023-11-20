@@ -21,11 +21,10 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
       [
         'TEXT',
         'PHONE',
-        'DATE',
+        'DATE_TIME',
         'EMAIL',
         'NUMBER',
         'BOOLEAN',
-        'DATE',
       ] as FieldType[]
     ).includes(fieldType);
 

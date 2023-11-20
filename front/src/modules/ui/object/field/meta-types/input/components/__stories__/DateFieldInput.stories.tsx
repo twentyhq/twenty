@@ -6,13 +6,13 @@ import { userEvent, within } from '@storybook/testing-library';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
-import { useDateField } from '../../../hooks/useDateField';
+import { useDateTimeField } from '../../../hooks/useDateTimeField';
 import { DateFieldInput, DateFieldInputProps } from '../DateFieldInput';
 
 const formattedDate = new Date();
 
 const DateFieldValueSetterEffect = ({ value }: { value: Date }) => {
-  const { setFieldValue } = useDateField();
+  const { setFieldValue } = useDateTimeField();
 
   useEffect(() => {
     setFieldValue(value.toISOString());
@@ -45,7 +45,7 @@ const DateFieldInputWithContext = ({
         fieldDefinition={{
           fieldMetadataId: 'date',
           label: 'Date',
-          type: 'DATE',
+          type: 'DATE_TIME',
           iconName: 'IconCalendarEvent',
           metadata: {
             fieldName: 'Date',

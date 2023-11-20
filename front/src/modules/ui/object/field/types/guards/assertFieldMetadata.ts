@@ -2,7 +2,7 @@ import { FieldDefinition } from '../FieldDefinition';
 import {
   FieldBooleanMetadata,
   FieldCurrencyMetadata,
-  FieldDateMetadata,
+  FieldDateTimeMetadata,
   FieldEmailMetadata,
   FieldFullNameMetadata,
   FieldLinkMetadata,
@@ -24,8 +24,8 @@ type AssertFieldMetadataFunction = <
     ? FieldCurrencyMetadata
     : E extends 'FULL_NAME'
     ? FieldFullNameMetadata
-    : E extends 'DATE'
-    ? FieldDateMetadata
+    : E extends 'DATE_TIME'
+    ? FieldDateTimeMetadata
     : E extends 'EMAIL'
     ? FieldEmailMetadata
     : E extends 'LINK'
