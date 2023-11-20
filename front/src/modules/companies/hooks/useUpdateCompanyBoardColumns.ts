@@ -20,7 +20,7 @@ export const useUpdateCompanyBoard = () =>
     ({ set, snapshot }) =>
       (
         pipelineSteps: PipelineStep[],
-        pipelineProgresses: Opportunity[],
+        opportunities: Opportunity[],
         companies: CompanyForBoard[],
       ) => {
         const indexCompanyByIdReducer = (
@@ -37,27 +37,26 @@ export const useUpdateCompanyBoard = () =>
             {} as { [key: string]: CompanyForBoard },
           ) ?? {};
 
-        const indexPipelineProgressByIdReducer = (
+        const indexOpportunityByIdReducer = (
           acc: CompanyProgressDict,
-          pipelineProgress: Opportunity,
+          opportunity: Opportunity,
         ) => {
           const company =
-            pipelineProgress.companyId &&
-            companiesDict[pipelineProgress.companyId];
+            opportunity.companyId && companiesDict[opportunity.companyId];
 
           if (!company) return acc;
 
           return {
             ...acc,
-            [pipelineProgress.id]: {
-              pipelineProgress,
+            [opportunity.id]: {
+              opportunity,
               company,
             },
           };
         };
 
-        const companyBoardIndex = pipelineProgresses.reduce(
-          indexPipelineProgressByIdReducer,
+        const companyBoardIndex = opportunities.reduce(
+          indexOpportunityByIdReducer,
           {} as CompanyProgressDict,
         );
 
@@ -68,7 +67,7 @@ export const useUpdateCompanyBoard = () =>
 
           if (!isDeeplyEqual(currentCompanyProgress, companyProgress)) {
             set(companyProgressesFamilyState(id), companyProgress);
-            set(entityFieldsFamilyState(id), companyProgress.pipelineProgress);
+            set(entityFieldsFamilyState(id), companyProgress.opportunity);
           }
         }
 
@@ -111,12 +110,12 @@ export const useUpdateCompanyBoard = () =>
           set(savedBoardColumnsState, newBoardColumns);
         }
         for (const boardColumn of newBoardColumns) {
-          const boardCardIds = pipelineProgresses
+          const boardCardIds = opportunities
             .filter(
-              (pipelineProgressToFilter) =>
-                pipelineProgressToFilter.pipelineStepId === boardColumn.id,
+              (opportunityToFilter) =>
+                opportunityToFilter.pipelineStepId === boardColumn.id,
             )
-            .map((pipelineProgress) => pipelineProgress.id);
+            .map((opportunity) => opportunity.id);
 
           const currentBoardCardIds = snapshot
             .getLoadable(boardCardIdsByColumnIdFamilyState(boardColumn.id))
