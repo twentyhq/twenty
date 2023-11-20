@@ -1,10 +1,12 @@
-import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
+import { useRecoilValue } from 'recoil';
+
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { FieldType } from '@/ui/object/field/types/FieldType';
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
 export const useMapFieldMetadataToGraphQLQuery = () => {
-  const { objectMetadataItems } = useFindManyObjectMetadataItems();
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const mapFieldMetadataToGraphQLQuery = (
     field: FieldMetadataItem,
@@ -19,6 +21,7 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
 
     const fieldIsSimpleValue = (
       [
+        'UUID',
         'TEXT',
         'PHONE',
         'DATE',

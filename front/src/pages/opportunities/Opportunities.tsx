@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { CompanyBoard } from '@/companies/board/components/CompanyBoard';
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { PipelineAddButton } from '@/pipeline/components/PipelineAddButton';
 import { usePipelineStages } from '@/pipeline/hooks/usePipelineStages';
@@ -45,9 +45,9 @@ export const Opportunities = () => {
     });
   };
 
-  const opportunitiesV2MetadataId = useFindOneObjectMetadataItem({
+  const opportunitiesV2MetadataId = useObjectMetadataItem({
     objectNameSingular: 'opportunity',
-  }).foundObjectMetadataItem?.id;
+  }).objectMetadataItem?.id;
 
   const { setViewObjectMetadataId } = useView({
     viewScopeId: 'company-board-view',

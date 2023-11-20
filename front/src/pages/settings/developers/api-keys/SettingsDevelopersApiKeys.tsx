@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
@@ -47,7 +47,7 @@ export const SettingsDevelopersApiKeys = () => {
   const { registerOptimisticEffect } = useOptimisticEffect({
     objectNameSingular: 'apiKey',
   });
-  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
+  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: 'apiKey',
   });
   const filter = { revokedAt: { is: 'NULL' } };

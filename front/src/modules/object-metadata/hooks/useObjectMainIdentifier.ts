@@ -1,8 +1,9 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { MainIdentifierMapper } from '@/ui/object/field/types/MainIdentifierMapper';
+import { Nullable } from '~/types/Nullable';
 
 export const useObjectMainIdentifier = (
-  objectMetadataItem?: ObjectMetadataItem,
+  objectMetadataItem?: Nullable<ObjectMetadataItem>,
 ) => {
   if (!objectMetadataItem) {
     return {

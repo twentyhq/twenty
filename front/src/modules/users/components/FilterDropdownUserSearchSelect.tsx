@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { ObjectFilterDropdownEntitySearchSelect } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownEntitySearchSelect';
 import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
@@ -11,7 +11,7 @@ export const FilterDropdownUserSearchSelect = () => {
     objectFilterDropdownSelectedEntityId,
   } = useFilter();
 
-  const { findManyQuery } = useFindOneObjectMetadataItem({
+  const { findManyQuery } = useObjectMetadataItem({
     objectNameSingular: 'workspaceMember',
   });
 

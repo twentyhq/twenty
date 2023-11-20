@@ -37,7 +37,7 @@ export const SettingsObjectNewFieldStep1 = () => {
   const navigate = useNavigate();
 
   const { objectSlug = '' } = useParams();
-  const { findActiveObjectMetadataItemBySlug, loading } =
+  const { findActiveObjectMetadataItemBySlug } =
     useObjectMetadataItemForSettings();
 
   const activeObjectMetadataItem =
@@ -60,8 +60,6 @@ export const SettingsObjectNewFieldStep1 = () => {
   );
 
   useEffect(() => {
-    if (loading) return;
-
     if (!activeObjectMetadataItem) {
       navigate(AppPath.NotFound);
       return;
@@ -69,7 +67,7 @@ export const SettingsObjectNewFieldStep1 = () => {
 
     if (!metadataFields.length)
       setMetadataFields(activeObjectMetadataItem.fields);
-  }, [activeObjectMetadataItem, metadataFields.length, loading, navigate]);
+  }, [activeObjectMetadataItem, metadataFields.length, navigate]);
 
   if (!activeObjectMetadataItem) return null;
 

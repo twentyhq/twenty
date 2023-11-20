@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { IconUserCircle } from '@/ui/display/icon';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
@@ -35,7 +35,7 @@ export const RelationPicker = ({
     setRelationPickerSearchFilter(initialSearchFilter ?? '');
   }, [initialSearchFilter, setRelationPickerSearchFilter]);
 
-  const { findManyQuery } = useFindOneObjectMetadataItem({
+  const { findManyQuery } = useObjectMetadataItem({
     objectNameSingular: fieldDefinition.metadata.objectMetadataNameSingular,
   });
 

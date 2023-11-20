@@ -1,7 +1,7 @@
 import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -9,11 +9,11 @@ export const useDeleteOneObjectRecord = <T>({
   objectNameSingular,
 }: Pick<ObjectMetadataItemIdentifier, 'objectNameSingular'>) => {
   const {
-    foundObjectMetadataItem,
+    objectMetadataItem: foundObjectMetadataItem,
     objectNotFoundInMetadata,
     findManyQuery,
     deleteOneMutation,
-  } = useFindOneObjectMetadataItem({
+  } = useObjectMetadataItem({
     objectNameSingular,
   });
 

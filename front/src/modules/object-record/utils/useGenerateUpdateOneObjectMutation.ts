@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
-import { EMPTY_MUTATION } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
+import { EMPTY_MUTATION } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -36,7 +36,7 @@ export const useGenerateUpdateOneObjectMutation = ({
        ${graphQLFieldForUpdateOneObjectMutation}(id: $idToUpdate, data: $input) {
         id
         ${objectMetadataItem.fields
-          .map(mapFieldMetadataToGraphQLQuery)
+          .map((field) => mapFieldMetadataToGraphQLQuery(field))
           .join('\n')}
       }
     }

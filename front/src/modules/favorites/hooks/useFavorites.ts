@@ -7,7 +7,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { Company } from '@/companies/types/Company';
 import { Favorite } from '@/favorites/types/Favorite';
 import { mapFavorites } from '@/favorites/utils/mapFavorites';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -24,12 +24,12 @@ export const useFavorites = ({
   const [favorites, setFavorites] = useRecoilState(favoritesState);
 
   const { updateOneMutation, createOneMutation, deleteOneMutation } =
-    useFindOneObjectMetadataItem({
+    useObjectMetadataItem({
       objectNamePlural: 'favorites',
     });
 
-  const { foundObjectMetadataItem: favoriteTargetObjectMetadataItem } =
-    useFindOneObjectMetadataItem({
+  const { objectMetadataItem: favoriteTargetObjectMetadataItem } =
+    useObjectMetadataItem({
       objectNamePlural,
     });
 
