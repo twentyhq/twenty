@@ -1,5 +1,7 @@
+import { useObjectMainIdentifier } from '@/object-metadata/hooks/useObjectMainIdentifier';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { MainIdentifierMapper } from '@/ui/object/field/types/MainIdentifierMapper';
 
 export const useRelationFieldPreview = ({
   relationObjectMetadataId,
@@ -19,11 +21,24 @@ export const useRelationFieldPreview = ({
     skip: skipDefaultValue || !relationObjectMetadataItem,
   });
 
+  const { mainIdentifierMapper } = useObjectMainIdentifier(
+    relationObjectMetadataItem,
+  );
+
+  const recordMapper: MainIdentifierMapper | undefined =
+    relationObjectMetadataItem && mainIdentifierMapper
+      ? (record: { id: string }) => {
+          const mappedRecord = mainIdentifierMapper(record);
+
+          return {
+            ...mappedRecord,
+            name: mappedRecord.name || relationObjectMetadataItem.labelSingular,
+          };
+        }
+      : undefined;
+
   return {
     defaultValue: relationObjects?.[0],
-    entityChipDisplayMapper: (fieldValue?: { id: string }) => ({
-      name: fieldValue?.id || relationObjectMetadataItem?.labelSingular || '',
-      avatarType: 'squared' as const,
-    }),
+    recordMapper,
   };
 };
