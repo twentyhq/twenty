@@ -28,7 +28,7 @@ const opportunityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.DATE,
+      type: FieldMetadataType.DATE_TIME,
       name: 'closeDate',
       label: 'Close date',
       targetColumnMap: {

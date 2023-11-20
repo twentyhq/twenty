@@ -79,7 +79,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
         [
           FieldMetadataType.Boolean,
           FieldMetadataType.Currency,
-          FieldMetadataType.Date,
+          FieldMetadataType.DateTime,
           FieldMetadataType.Link,
           FieldMetadataType.Number,
           FieldMetadataType.Relation,

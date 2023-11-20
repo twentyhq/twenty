@@ -9,7 +9,7 @@ export const getOperandsForFilterType = (
     case 'TEXT':
       return [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain];
     case 'NUMBER':
-    case 'DATE':
+    case 'DATE_TIME':
       return [ViewFilterOperand.GreaterThan, ViewFilterOperand.LessThan];
     case 'ENTITY':
       return [ViewFilterOperand.Is, ViewFilterOperand.IsNot];

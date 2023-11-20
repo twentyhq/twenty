@@ -152,7 +152,7 @@ export type FieldDeleteResponse = {
 export enum FieldMetadataType {
   Boolean = 'BOOLEAN',
   Currency = 'CURRENCY',
-  Date = 'DATE',
+  DateTime = 'DATE_TIME',
   Email = 'EMAIL',
   Enum = 'ENUM',
   FullName = 'FULL_NAME',
@@ -416,9 +416,9 @@ export type UpdateOneObjectInput = {
 
 export type User = {
   __typename?: 'User';
-  avatarUrl: Scalars['String']['output'];
   canImpersonate: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
+  defaultWorkspace: Workspace;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   disabled?: Maybe<Scalars['Boolean']['output']>;
   email: Scalars['String']['output'];
@@ -426,11 +426,9 @@ export type User = {
   firstName: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   lastName: Scalars['String']['output'];
-  lastSeen?: Maybe<Scalars['DateTime']['output']>;
-  locale: Scalars['String']['output'];
   passwordHash?: Maybe<Scalars['String']['output']>;
-  phoneNumber?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
+  workspaceMember: UserWorkspaceMember;
 };
 
 export type UserEdge = {
@@ -439,6 +437,22 @@ export type UserEdge = {
   cursor: Scalars['ConnectionCursor']['output'];
   /** The node containing the User */
   node: User;
+};
+
+export type UserWorkspaceMember = {
+  __typename?: 'UserWorkspaceMember';
+  allowImpersonation: Scalars['Boolean']['output'];
+  avatarUrl?: Maybe<Scalars['String']['output']>;
+  colorScheme: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  locale: Scalars['String']['output'];
+  name: UserWorkspaceMemberName;
+};
+
+export type UserWorkspaceMemberName = {
+  __typename?: 'UserWorkspaceMemberName';
+  firstName: Scalars['String']['output'];
+  lastName: Scalars['String']['output'];
 };
 
 export type Workspace = {

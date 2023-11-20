@@ -16,7 +16,7 @@ import { NumberFieldDisplay } from '../meta-types/display/components/NumberField
 import { PhoneFieldDisplay } from '../meta-types/display/components/PhoneFieldDisplay';
 import { TextFieldDisplay } from '../meta-types/display/components/TextFieldDisplay';
 import { isFieldCurrency } from '../types/guards/isFieldCurrency';
-import { isFieldDate } from '../types/guards/isFieldDate';
+import { isFieldDateTime } from '../types/guards/isFieldDateTime';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldPhone } from '../types/guards/isFieldPhone';
@@ -36,7 +36,7 @@ export const FieldDisplay = () => {
         <UuidFieldDisplay />
       ) : isFieldEmail(fieldDefinition) ? (
         <EmailFieldDisplay />
-      ) : isFieldDate(fieldDefinition) ? (
+      ) : isFieldDateTime(fieldDefinition) ? (
         <DateFieldDisplay />
       ) : isFieldNumber(fieldDefinition) ? (
         <NumberFieldDisplay />
