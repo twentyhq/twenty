@@ -19,6 +19,7 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
 
     const fieldIsSimpleValue = (
       [
+        'UUID',
         'TEXT',
         'PHONE',
         'DATE',

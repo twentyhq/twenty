@@ -80,7 +80,7 @@ export const useUpdateCompanyBoard = () =>
           .valueOrThrow();
 
         if (!isDeeplyEqual(pipelineSteps, currentPipelineSteps)) {
-          set(currentPipelineStepsState, currentPipelineSteps);
+          set(currentPipelineStepsState, pipelineSteps);
         }
 
         const orderedPipelineSteps = [...pipelineSteps].sort((a, b) => {

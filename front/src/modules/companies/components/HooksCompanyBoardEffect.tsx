@@ -89,8 +89,10 @@ export const HooksCompanyBoardEffect = () => {
     objectNamePlural: 'opportunities',
     filter: whereFilters,
     onCompleted: useCallback(
-      (_data: PaginatedObjectTypeResults<Opportunity>) => {
-        const pipelineProgresses: Array<Opportunity> = [];
+      (data: PaginatedObjectTypeResults<Opportunity>) => {
+        const pipelineProgresses: Array<Opportunity> = data.edges.map(
+          (edge) => edge.node,
+        );
 
         updateCompanyBoardCardIds(pipelineProgresses);
 
