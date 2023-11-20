@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconCopy } from '@/ui/display/icon';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBarManager } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBarManager';
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 
@@ -21,7 +21,7 @@ type ApiKeyInputProps = { apiKey: string };
 export const ApiKeyInput = ({ apiKey }: ApiKeyInputProps) => {
   const theme = useTheme();
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSnackBar } = useSnackBarManager();
   return (
     <StyledContainer>
       <StyledLinkContainer>

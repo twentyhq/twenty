@@ -1,6 +1,6 @@
 import { useCallback, useContext, useState } from 'react';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBarManager } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBarManager';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
@@ -17,7 +17,7 @@ export const NewCompanyProgressButton = () => {
 
   const pipelineStageId = column?.columnDefinition.id || '';
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSnackBar } = useSnackBarManager();
 
   const {
     goBackToPreviousHotkeyScope,

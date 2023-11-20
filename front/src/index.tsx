@@ -11,7 +11,8 @@ import { ApolloMetadataClientProvider } from '@/object-metadata/components/Apoll
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
-import { SnackBarProvider } from '@/ui/feedback/snack-bar/components/SnackBarProvider';
+import { SnackBarManager } from '@/ui/feedback/snack-bar-manager/components/SnackBarManager';
+import { SnackBarManagerScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarManagerScope';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { ThemeType } from '@/ui/theme/constants/theme';
 import { UserProvider } from '@/users/components/UserProvider';
@@ -37,20 +38,22 @@ root.render(
           <ClientConfigProvider>
             <UserProvider>
               <ApolloMetadataClientProvider>
-                <ObjectMetadataItemsProvider>
-                  <PageChangeEffect />
-                  <AppThemeProvider>
-                    <SnackBarProvider>
-                      <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                        <DialogManager>
-                          <StrictMode>
-                            <App />
-                          </StrictMode>
-                        </DialogManager>
-                      </DialogManagerScope>
-                    </SnackBarProvider>
-                  </AppThemeProvider>
-                </ObjectMetadataItemsProvider>
+                <SnackBarManagerScope snackBarManagerScopeId="snack-bar-manager">
+                  <ObjectMetadataItemsProvider>
+                    <PageChangeEffect />
+                    <AppThemeProvider>
+                      <SnackBarManager>
+                        <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                          <DialogManager>
+                            <StrictMode>
+                              <App />
+                            </StrictMode>
+                          </DialogManager>
+                        </DialogManagerScope>
+                      </SnackBarManager>
+                    </AppThemeProvider>
+                  </ObjectMetadataItemsProvider>
+                </SnackBarManagerScope>
               </ApolloMetadataClientProvider>
             </UserProvider>
           </ClientConfigProvider>

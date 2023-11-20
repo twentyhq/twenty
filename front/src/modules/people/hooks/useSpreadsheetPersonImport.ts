@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
 import { SpreadsheetOptions } from '@/spreadsheet-import/types';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBarManager } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBarManager';
 
 import { fieldsForPerson } from '../utils/fieldsForPerson';
 
@@ -10,7 +10,7 @@ export type FieldPersonMapping = (typeof fieldsForPerson)[number]['key'];
 
 export const useSpreadsheetPersonImport = () => {
   const { openSpreadsheetImport } = useSpreadsheetImport<FieldPersonMapping>();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSnackBar } = useSnackBarManager();
 
   const openPersonSpreadsheetImport = (
     options?: Omit<

@@ -9,7 +9,7 @@ import {
   IconPencil,
   IconPlus,
 } from '@/ui/display/icon';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBarManager } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBarManager';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
@@ -55,7 +55,7 @@ export const BoardColumnMenu = ({
 
   const boardColumnMenuRef = useRef<HTMLDivElement>(null);
 
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSnackBar } = useSnackBarManager();
   const { handleMoveBoardColumn } = useBoardColumns();
 
   const handleCompanySelected = (

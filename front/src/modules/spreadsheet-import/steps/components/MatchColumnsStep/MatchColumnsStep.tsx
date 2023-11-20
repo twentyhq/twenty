@@ -12,7 +12,7 @@ import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBarManager } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBarManager';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { ColumnGrid } from './components/ColumnGrid';
@@ -113,7 +113,7 @@ export const MatchColumnsStep = <T extends string>({
   onContinue,
 }: MatchColumnsStepProps<T>) => {
   const { enqueueDialog } = useDialogManager();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSnackBar } = useSnackBarManager();
   const dataExample = data.slice(0, 2);
   const { fields, autoMapHeaders, autoMapDistance } =
     useSpreadsheetImportInternal<T>();

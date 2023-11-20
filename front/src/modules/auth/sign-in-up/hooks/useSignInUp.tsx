@@ -9,7 +9,7 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBarManager } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBarManager';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
@@ -43,7 +43,7 @@ type Form = z.infer<typeof validationSchema>;
 
 export const useSignInUp = () => {
   const navigate = useNavigate();
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSnackBar } = useSnackBarManager();
   const isMatchingLocation = useIsMatchingLocation();
   const [authProviders] = useRecoilState(authProvidersState);
   const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);

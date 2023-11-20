@@ -1,11 +1,10 @@
 import styled from '@emotion/styled';
 import { motion, useReducedMotion } from 'framer-motion';
-import { useRecoilState } from 'recoil';
 
-import { snackBarInternalState } from '../states/snackBarState';
+import { useSnackBarManagerScopedStates } from '@/ui/feedback/snack-bar-manager/hooks/internal/useSnackBarManagerScopedStates';
+import { useSnackBarManager } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBarManager';
 
 import { SnackBar } from './SnackBar';
-
 const StyledSnackBarContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -50,20 +49,11 @@ const reducedVariants = {
   },
 };
 
-export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
+export const SnackBarManager = ({ children }: React.PropsWithChildren) => {
   const reducedMotion = useReducedMotion();
 
-  const [snackBarInternal, setSnackBarInternal] = useRecoilState(
-    snackBarInternalState,
-  );
-
-  // Handle snackbar close event
-  const handleSnackBarClose = (id: string) => {
-    setSnackBarInternal((prevState) => ({
-      ...prevState,
-      queue: prevState.queue.filter((snackBar) => snackBar.id !== id),
-    }));
-  };
+  const { snackBarInternal } = useSnackBarManagerScopedStates();
+  const { handleSnackBarClose } = useSnackBarManager();
 
   return (
     <>

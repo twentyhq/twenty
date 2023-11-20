@@ -1,7 +1,7 @@
 import { CompanyProgressPicker } from '@/companies/components/CompanyProgressPicker';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { IconPlus } from '@/ui/display/icon/index';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBarManager } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBarManager';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
@@ -11,7 +11,7 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { logError } from '~/utils/logError';
 
 export const PipelineAddButton = () => {
-  const { enqueueSnackBar } = useSnackBar();
+  const { enqueueSnackBar } = useSnackBarManager();
 
   const { closeDropdown, toggleDropdown } = useDropdown({
     dropdownScopeId: 'add-pipeline-progress',
