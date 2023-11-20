@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { Company } from '@/companies/types/Company';
 import { useComputeDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useComputeDefinitionsFromFieldMetadata';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
@@ -22,6 +22,7 @@ import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates'
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewFieldsToBoardFieldDefinitions';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { useUpdateCompanyBoardCardIds } from '../hooks/useUpdateBoardCardIds';
 import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
@@ -44,12 +45,16 @@ export const HooksCompanyBoardEffect = () => {
 
   const currentViewFields = useRecoilValue(currentViewFieldsState);
 
-  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNamePlural: 'opportunities',
   });
 
+  useEffect(() => {
+    console.log('objectMetadataItem', objectMetadataItem);
+  }, [objectMetadataItem]);
+
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
-    useComputeDefinitionsFromFieldMetadata(foundObjectMetadataItem);
+    useComputeDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
 
@@ -58,11 +63,6 @@ export const HooksCompanyBoardEffect = () => {
   const [, setBoardCardFields] = useRecoilScopedState(
     boardCardFieldsScopedState,
     BoardRecoilScopeContext,
-  );
-
-  const [, setAvailableBoardCardFields] = useRecoilScopedStateV2(
-    availableBoardCardFieldsScopedState,
-    'company-board-view',
   );
 
   const updateCompanyBoardCardIds = useUpdateCompanyBoardCardIds();
@@ -125,29 +125,86 @@ export const HooksCompanyBoardEffect = () => {
   });
 
   useEffect(() => {
-    if (!foundObjectMetadataItem) {
+    if (!objectMetadataItem) {
       return;
     }
     setAvailableFilterDefinitions?.(filterDefinitions);
     setAvailableSortDefinitions?.(sortDefinitions);
     setAvailableFieldDefinitions?.(columnDefinitions);
-
-    const availableTableColumns = columnDefinitions.filter(
-      filterAvailableTableColumns,
-    );
-
-    setAvailableBoardCardFields(availableTableColumns);
-    console.log('1');
   }, [
     columnDefinitions,
     filterDefinitions,
-    foundObjectMetadataItem,
-    setAvailableBoardCardFields,
+    objectMetadataItem,
     setAvailableFieldDefinitions,
     setAvailableFilterDefinitions,
     setAvailableSortDefinitions,
     sortDefinitions,
   ]);
+
+  const setAvailableBoardCardFields = useRecoilCallback(
+    ({ snapshot, set }) =>
+      (availableBoardCardFields: any) => {
+        const availableBoardCardFieldsFromState = snapshot
+          .getLoadable(
+            availableBoardCardFieldsScopedState({
+              scopeId: 'company-board-view',
+            }),
+          )
+          .getValue();
+
+        console.log(
+          'availableBoardCardFieldsFromState',
+          availableBoardCardFieldsFromState,
+        );
+        console.log('availableBoardCardFields', availableBoardCardFields);
+
+        if (
+          !isDeeplyEqual(
+            availableBoardCardFieldsFromState.map((field: any) => {
+              const { mainIdentifierMapper, ...rest } = field.metadata;
+
+              const newField = {
+                ...field,
+                metadata: rest,
+              };
+              console.log('rest', rest);
+              return newField;
+            }),
+            availableBoardCardFields.map((field: any) => {
+              const { mainIdentifierMapper, ...rest } = field.metadata;
+              const newField = {
+                ...field,
+                metadata: rest,
+              };
+              console.log('rest', rest);
+              return newField;
+            }),
+          )
+        ) {
+          console.log('setAvailableBoardCardFields');
+          set(
+            availableBoardCardFieldsScopedState({
+              scopeId: 'company-board-view',
+            }),
+            availableBoardCardFields,
+          );
+        }
+      },
+    [],
+  );
+
+  useRecoilScopedStateV2(
+    availableBoardCardFieldsScopedState,
+    'company-board-view',
+  );
+
+  useEffect(() => {
+    const availableTableColumns = columnDefinitions.filter(
+      filterAvailableTableColumns,
+    );
+
+    setAvailableBoardCardFields(availableTableColumns);
+  }, [columnDefinitions, setAvailableBoardCardFields]);
 
   useEffect(() => {
     setViewObjectMetadataId?.('company');
@@ -170,16 +227,14 @@ export const HooksCompanyBoardEffect = () => {
       setEntityCountInCurrentView(companies.length);
     }
   }, [
+    companies,
     loading,
-    updateCompanyBoard,
+    opportunities,
+    pipelineSteps,
     setActionBarEntries,
     setContextMenuEntries,
-    searchParams,
     setEntityCountInCurrentView,
-    setAvailableBoardCardFields,
-    opportunities,
-    companies,
-    pipelineSteps,
+    updateCompanyBoard,
   ]);
 
   useEffect(() => {
