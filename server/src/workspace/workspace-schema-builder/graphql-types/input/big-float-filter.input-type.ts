@@ -5,6 +5,8 @@ import {
   GraphQLFloat,
 } from 'graphql';
 
+import { FilterIsNullable } from 'src/workspace/workspace-schema-builder/graphql-types/input/filter-is-nullable.input-type';
+
 export const BigFloatFilterType = new GraphQLInputObjectType({
   name: 'BigFloatFilter',
   fields: {
@@ -15,5 +17,6 @@ export const BigFloatFilterType = new GraphQLInputObjectType({
     lt: { type: GraphQLFloat },
     lte: { type: GraphQLFloat },
     neq: { type: GraphQLFloat },
+    is: { type: FilterIsNullable },
   },
 });

@@ -29,7 +29,6 @@ export const SettingsObjectNewFieldStep2 = () => {
     findActiveObjectMetadataItemBySlug,
     findObjectMetadataItemById,
     findObjectMetadataItemByNamePlural,
-    loading,
   } = useObjectMetadataItemForSettings();
 
   const activeObjectMetadataItem =
@@ -45,7 +44,6 @@ export const SettingsObjectNewFieldStep2 = () => {
   } = useFieldMetadataForm();
 
   useEffect(() => {
-    if (loading) return;
     if (!activeObjectMetadataItem) {
       navigate(AppPath.NotFound);
       return;
@@ -61,7 +59,7 @@ export const SettingsObjectNewFieldStep2 = () => {
     activeObjectMetadataItem,
     findObjectMetadataItemByNamePlural,
     initForm,
-    loading,
+
     navigate,
   ]);
 

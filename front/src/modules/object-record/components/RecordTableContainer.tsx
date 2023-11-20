@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
 
 import { useComputeDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useComputeDefinitionsFromFieldMetadata';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
@@ -32,9 +32,11 @@ export const RecordTableContainer = ({
 }: {
   objectNamePlural: string;
 }) => {
-  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
-    objectNamePlural,
-  });
+  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
+    {
+      objectNamePlural,
+    },
+  );
   const { columnDefinitions } = useComputeDefinitionsFromFieldMetadata(
     foundObjectMetadataItem,
   );

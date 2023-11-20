@@ -9,8 +9,8 @@ import { useRecoilCallback } from 'recoil';
 
 import {
   EMPTY_QUERY,
-  useFindOneObjectMetadataItem,
-} from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+  useObjectMetadataItem,
+} from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 import { optimisticEffectState } from '../states/optimisticEffectState';
@@ -23,7 +23,7 @@ export const useOptimisticEffect = ({
   objectNameSingular: string | undefined;
 }) => {
   const apolloClient = useApolloClient();
-  const { findManyQuery } = useFindOneObjectMetadataItem({
+  const { findManyQuery } = useObjectMetadataItem({
     objectNameSingular,
   });
 

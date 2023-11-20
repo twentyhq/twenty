@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/client';
 import { v4 } from 'uuid';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -14,10 +14,10 @@ export const useCreateOneObjectRecord = <T>({
   });
 
   const {
-    foundObjectMetadataItem,
+    objectMetadataItem: foundObjectMetadataItem,
     objectNotFoundInMetadata,
     createOneMutation,
-  } = useFindOneObjectMetadataItem({
+  } = useObjectMetadataItem({
     objectNameSingular,
   });
 

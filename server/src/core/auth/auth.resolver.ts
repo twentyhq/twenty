@@ -126,7 +126,6 @@ export class AuthResolver {
     @Args() args: ApiKeyTokenInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ): Promise<ApiKeyToken | undefined> {
-    console.log('toto');
     return await this.tokenService.generateApiKeyToken(
       workspaceId,
       args.apiKeyId,

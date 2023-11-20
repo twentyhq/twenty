@@ -12,7 +12,7 @@ export const useCurrentUserTaskCount = () => {
     objectNamePlural: 'activities',
     filter: {
       type: { eq: 'Task' },
-      completedAt: { eq: null },
+      completedAt: { is: 'NULL' },
       assigneeId: { eq: currentWorkspaceMember?.id },
     },
   });

@@ -1,13 +1,13 @@
 import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ViewField } from '@/views/types/ViewField';
 import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
 
 export const useViewFields = (viewScopeId: string) => {
   const { updateOneMutation, createOneMutation, findManyQuery } =
-    useFindOneObjectMetadataItem({
+    useObjectMetadataItem({
       objectNameSingular: 'viewField',
     });
 
