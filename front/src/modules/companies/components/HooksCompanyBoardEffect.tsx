@@ -3,8 +3,11 @@ import { useSearchParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { Company } from '@/companies/types/Company';
+import { useComputeDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useComputeDefinitionsFromFieldMetadata';
+import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
+import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { useBoardActionBarEntries } from '@/ui/layout/board/hooks/useBoardActionBarEntries';
@@ -18,7 +21,6 @@ import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates'
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewFieldsToBoardFieldDefinitions';
-import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
 import { useUpdateCompanyBoardCardIds } from '../hooks/useUpdateBoardCardIds';
 import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
@@ -42,6 +44,13 @@ export const HooksCompanyBoardEffect = () => {
 
   const currentViewFields = useRecoilValue(currentViewFieldsState);
   const currentViewFilters = useRecoilValue(currentViewFiltersState);
+
+  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
+    objectNamePlural: 'opportunities',
+  });
+
+  const { columnDefinitions, filterDefinitions, sortDefinitions } =
+    useComputeDefinitionsFromFieldMetadata(foundObjectMetadataItem);
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
 
@@ -117,13 +126,16 @@ export const HooksCompanyBoardEffect = () => {
   });
 
   useEffect(() => {
-    setAvailableFilterDefinitions(opportunitiesBoardOptions.filterDefinitions);
-    setAvailableSortDefinitions?.(opportunitiesBoardOptions.sortDefinitions);
-    setAvailableFieldDefinitions?.([]);
+    setAvailableFilterDefinitions?.(filterDefinitions);
+    setAvailableSortDefinitions?.(sortDefinitions);
+    setAvailableFieldDefinitions?.(columnDefinitions);
   }, [
+    columnDefinitions,
+    filterDefinitions,
     setAvailableFieldDefinitions,
     setAvailableFilterDefinitions,
     setAvailableSortDefinitions,
+    sortDefinitions,
   ]);
 
   useEffect(() => {
@@ -142,7 +154,12 @@ export const HooksCompanyBoardEffect = () => {
     if (!loading && opportunities && companies) {
       setActionBarEntries();
       setContextMenuEntries();
-      setAvailableBoardCardFields([]);
+
+      const availableTableColumns = columnDefinitions.filter(
+        filterAvailableTableColumns,
+      );
+
+      setAvailableBoardCardFields(availableTableColumns);
       updateCompanyBoard(pipelineSteps, opportunities, companies);
       setEntityCountInCurrentView(companies.length);
     }
