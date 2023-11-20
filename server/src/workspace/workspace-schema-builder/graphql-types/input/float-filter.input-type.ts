@@ -5,6 +5,8 @@ import {
   GraphQLNonNull,
 } from 'graphql';
 
+import { FilterIsNullable } from 'src/workspace/workspace-schema-builder/graphql-types/input/filter-is-nullable.input-type';
+
 export const FloatFilterType = new GraphQLInputObjectType({
   name: 'FloatFilter',
   fields: {
@@ -15,5 +17,6 @@ export const FloatFilterType = new GraphQLInputObjectType({
     lt: { type: GraphQLFloat },
     lte: { type: GraphQLFloat },
     neq: { type: GraphQLFloat },
+    is: { type: FilterIsNullable },
   },
 });
