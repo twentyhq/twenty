@@ -26,7 +26,6 @@ export const useComputeDefinitionsFromFieldMetadata = (
       formatFieldMetadataItemAsColumnDefinition({
         position: index,
         field,
-        objectMetadataItem: objectMetadataItem,
       }),
     );
 

@@ -1,3 +1,4 @@
+import { objectMetadataConfigScopedState } from '@/ui/object/record-table/states/objectMetadataConfigScopedState';
 import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
 
 import { availableTableColumnsScopedState } from '../states/availableTableColumnsScopedState';
@@ -36,6 +37,11 @@ export const getRecordTableScopedStates = ({
     recordTableScopeId,
   );
 
+  const objectMetadataConfigState = getScopedState(
+    objectMetadataConfigScopedState,
+    recordTableScopeId,
+  );
+
   const tableColumnsByKeySelector =
     tableColumnsByKeyScopedSelector(recordTableScopeId);
 
@@ -60,6 +66,7 @@ export const getRecordTableScopedStates = ({
     tableFiltersState,
     tableSortsState,
     tableColumnsState,
+    objectMetadataConfigState,
     tableColumnsByKeySelector,
     hiddenTableColumnsSelector,
     visibleTableColumnsSelector,

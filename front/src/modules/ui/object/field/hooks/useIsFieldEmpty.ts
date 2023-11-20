@@ -10,10 +10,8 @@ export const useIsFieldEmpty = () => {
   const isFieldEmpty = useRecoilValue(
     isEntityFieldEmptyFamilySelector({
       fieldDefinition: {
-        fieldMetadataId: fieldDefinition.fieldMetadataId,
-        label: fieldDefinition.label,
         type: fieldDefinition.type,
-        metadata: fieldDefinition.metadata,
+        metadata: { ...fieldDefinition.metadata, mainIdentifierMapper: null },
       },
       entityId,
     }),

@@ -29,8 +29,6 @@ export const useChipField = () => {
     }),
   );
 
-  const entityType = fieldDefinition.metadata.relationType;
-
   const fieldInitialValue = useFieldInitialValue();
 
   const initialContentValue = fieldInitialValue?.isEmpty
@@ -51,7 +49,6 @@ export const useChipField = () => {
     avatarFieldValue,
     initialAvatarValue,
     setAvatarFieldValue,
-    entityType,
     entityId,
     hotkeyScope,
   };

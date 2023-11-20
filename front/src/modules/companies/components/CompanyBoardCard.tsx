@@ -208,7 +208,7 @@ export const CompanyBoardCard = () => {
           <CompanyChip
             id={company.id}
             name={company.name}
-            pictureUrl={getLogoUrlFromDomainName(company.domainName)}
+            avatarUrl={getLogoUrlFromDomainName(company.domainName)}
             variant={EntityChipVariant.Transparent}
           />
           {showCompactView && (
@@ -239,14 +239,13 @@ export const CompanyBoardCard = () => {
                   value={{
                     entityId: boardCardId,
                     recoilScopeId: boardCardId + viewField.fieldMetadataId,
+                    isMainIdentifier: false,
                     fieldDefinition: {
                       fieldMetadataId: viewField.fieldMetadataId,
                       label: viewField.label,
                       iconName: viewField.iconName,
                       type: viewField.type,
                       metadata: viewField.metadata,
-                      entityChipDisplayMapper:
-                        viewField.entityChipDisplayMapper,
                     },
                     useUpdateEntityMutation: useUpdateOneObjectMutation,
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,

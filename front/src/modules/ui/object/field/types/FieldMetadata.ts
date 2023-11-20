@@ -1,5 +1,5 @@
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
-import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { MainIdentifierMapper } from '@/ui/object/field/types/MainIdentifierMapper';
 import { ThemeColor } from '@/ui/theme/constants/colors';
 
 export type FieldUuidMetadata = {
@@ -58,14 +58,23 @@ export type FieldEmailMetadata = {
   placeHolder: string;
 };
 
+export type FieldDefinitionRelationType =
+  | 'FROM_MANY_OBJECTS'
+  | 'FROM_ONE_OBJECT'
+  | 'TO_MANY_OBJECTS'
+  | 'TO_ONE_OBJECT';
+
 export type FieldRelationMetadata = {
-  relationType: Entity;
   fieldName: string;
   useEditButton?: boolean;
+  relationType?: FieldDefinitionRelationType;
+  mainIdentifierMapper: MainIdentifierMapper;
+  searchFields: string[];
+  objectMetadataNameSingular: string;
+  objectMetadataNamePlural: string;
 };
 
 export type FieldChipMetadata = {
-  relationType: Entity;
   contentFieldName: string;
   urlFieldName: string;
   placeHolder: string;
@@ -84,7 +93,6 @@ export type FieldDoubleTextChipMetadata = {
   secondValueFieldName: string;
   secondValuePlaceholder: string;
   avatarUrlFieldName: string;
-  entityType: Entity;
 };
 
 export type FieldProbabilityMetadata = {

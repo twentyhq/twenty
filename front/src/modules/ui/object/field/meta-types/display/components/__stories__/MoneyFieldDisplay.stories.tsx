@@ -24,6 +24,7 @@ const meta: Meta = {
       <FieldContext.Provider
         value={{
           entityId: '',
+          isMainIdentifier: false,
           fieldDefinition: {
             fieldMetadataId: 'money',
             label: 'Money',

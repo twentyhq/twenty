@@ -43,6 +43,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     tableFiltersState,
     tableSortsState,
     tableColumnsState,
+    objectMetadataConfigState,
     onEntityCountChangeState,
   } = useRecordTableScopedStates({
     customRecordTableScopeId: scopeId,
@@ -54,6 +55,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const setOnEntityCountChange = useSetRecoilState(onEntityCountChangeState);
   const setTableFilters = useSetRecoilState(tableFiltersState);
+  const setObjectMetadataConfig = useSetRecoilState(objectMetadataConfigState);
 
   const setTableSorts = useSetRecoilState(tableSortsState);
 
@@ -301,6 +303,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setAvailableTableColumns,
     setTableFilters,
     setTableSorts,
+    setObjectMetadataConfig,
     setOnEntityCountChange,
     setRecordTableData,
     setTableColumns,

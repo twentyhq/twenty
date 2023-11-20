@@ -4,10 +4,6 @@ import styled from '@emotion/styled';
 import { useHandleCheckableActivityTargetChange } from '@/activities/hooks/useHandleCheckableActivityTargetChange';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
-import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/activities/utils/flatMapAndSortEntityForSelectArrayByName';
-import { useFilteredSearchCompanyQuery } from '@/companies/hooks/useFilteredSearchCompanyQuery';
-import { useFilteredSearchPeopleQuery } from '@/people/hooks/useFilteredSearchPeopleQuery';
-import { MultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { useInlineCell } from '@/ui/object/record-inline-cell/hooks/useInlineCell';
 import { assertNotNull } from '~/utils/assert';
 
@@ -60,31 +56,31 @@ export const ActivityRelationEditableFieldEditMode = ({
     Record<string, boolean>
   >(initialSelectedEntityIds);
 
-  const personsForMultiSelect = useFilteredSearchPeopleQuery({
-    searchFilter,
-    selectedIds: initialPeopleIds,
-  });
+  // const personsForMultiSelect = useFilteredSearchPeopleQuery({
+  //   searchFilter,
+  //   selectedIds: initialPeopleIds,
+  // });
 
-  const companiesForMultiSelect = useFilteredSearchCompanyQuery({
-    searchFilter,
-    selectedIds: initialCompanyIds,
-  });
+  // const companiesForMultiSelect = useFilteredSearchCompanyQuery({
+  //   searchFilter,
+  //   selectedIds: initialCompanyIds,
+  // });
 
-  const selectedEntities = flatMapAndSortEntityForSelectArrayOfArrayByName([
-    personsForMultiSelect.selectedEntities,
-    companiesForMultiSelect.selectedEntities,
-  ]);
+  // const selectedEntities = flatMapAndSortEntityForSelectArrayOfArrayByName([
+  //   personsForMultiSelect.selectedEntities,
+  //   companiesForMultiSelect.selectedEntities,
+  // ]);
 
-  const filteredSelectedEntities =
-    flatMapAndSortEntityForSelectArrayOfArrayByName([
-      personsForMultiSelect.filteredSelectedEntities,
-      companiesForMultiSelect.filteredSelectedEntities,
-    ]);
+  // const filteredSelectedEntities =
+  //   flatMapAndSortEntityForSelectArrayOfArrayByName([
+  //     personsForMultiSelect.filteredSelectedEntities,
+  //     companiesForMultiSelect.filteredSelectedEntities,
+  //   ]);
 
-  const entitiesToSelect = flatMapAndSortEntityForSelectArrayOfArrayByName([
-    personsForMultiSelect.entitiesToSelect,
-    companiesForMultiSelect.entitiesToSelect,
-  ]);
+  // const entitiesToSelect = flatMapAndSortEntityForSelectArrayOfArrayByName([
+  //   personsForMultiSelect.entitiesToSelect,
+  //   companiesForMultiSelect.entitiesToSelect,
+  // ]);
 
   const handleCheckItemsChange = useHandleCheckableActivityTargetChange({
     activity,
@@ -102,7 +98,7 @@ export const ActivityRelationEditableFieldEditMode = ({
 
   return (
     <StyledSelectContainer>
-      <MultipleEntitySelect
+      {/* <MultipleEntitySelect
         entities={{
           entitiesToSelect,
           filteredSelectedEntities,
@@ -115,7 +111,7 @@ export const ActivityRelationEditableFieldEditMode = ({
         value={selectedEntityIds}
         onCancel={handleCancel}
         onSubmit={handleSubmit}
-      />
+      /> */}
     </StyledSelectContainer>
   );
 };

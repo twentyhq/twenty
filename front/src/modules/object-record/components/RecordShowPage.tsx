@@ -165,11 +165,11 @@ export const RecordShowPage = () => {
                           value={{
                             entityId: object.id,
                             recoilScopeId: object.id + metadataField.id,
+                            isMainIdentifier: false,
                             fieldDefinition:
                               formatFieldMetadataItemAsColumnDefinition({
                                 field: metadataField,
                                 position: index,
-                                objectMetadataItem: foundObjectMetadataItem,
                               }),
                             useUpdateEntityMutation: useUpdateOneObjectMutation,
                             hotkeyScope: InlineCellHotkeyScope.InlineCell,
