@@ -17,6 +17,7 @@ import { availableBoardCardFieldsScopedState } from '@/ui/layout/board/states/av
 import { boardCardFieldsScopedState } from '@/ui/layout/board/states/boardCardFieldsScopedState';
 import { isBoardLoadedState } from '@/ui/layout/board/states/isBoardLoadedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
@@ -61,9 +62,9 @@ export const HooksCompanyBoardEffect = () => {
     BoardRecoilScopeContext,
   );
 
-  const [, setAvailableBoardCardFields] = useRecoilScopedState(
+  const [, setAvailableBoardCardFields] = useRecoilScopedStateV2(
     availableBoardCardFieldsScopedState,
-    BoardRecoilScopeContext,
+    'company-board-view',
   );
 
   const updateCompanyBoardCardIds = useUpdateCompanyBoardCardIds();
@@ -126,12 +127,24 @@ export const HooksCompanyBoardEffect = () => {
   });
 
   useEffect(() => {
+    if (!foundObjectMetadataItem) {
+      return;
+    }
     setAvailableFilterDefinitions?.(filterDefinitions);
     setAvailableSortDefinitions?.(sortDefinitions);
     setAvailableFieldDefinitions?.(columnDefinitions);
+
+    const availableTableColumns = columnDefinitions.filter(
+      filterAvailableTableColumns,
+    );
+
+    setAvailableBoardCardFields(availableTableColumns);
+    console.log('1');
   }, [
     columnDefinitions,
     filterDefinitions,
+    foundObjectMetadataItem,
+    setAvailableBoardCardFields,
     setAvailableFieldDefinitions,
     setAvailableFilterDefinitions,
     setAvailableSortDefinitions,
@@ -155,11 +168,6 @@ export const HooksCompanyBoardEffect = () => {
       setActionBarEntries();
       setContextMenuEntries();
 
-      const availableTableColumns = columnDefinitions.filter(
-        filterAvailableTableColumns,
-      );
-
-      setAvailableBoardCardFields(availableTableColumns);
       updateCompanyBoard(pipelineSteps, opportunities, companies);
       setEntityCountInCurrentView(companies.length);
     }
