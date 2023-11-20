@@ -1,6 +1,8 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useQuery } from '@apollo/client';
+import { useRecoilCallback } from 'recoil';
 
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import {
   FieldFilter,
@@ -8,6 +10,7 @@ import {
   ObjectMetadataItemsQuery,
   ObjectMetadataItemsQueryVariables,
 } from '~/generated-metadata/graphql';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';
 
 import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
@@ -28,6 +31,8 @@ export const useFindManyObjectMetadataItems = ({
   const apolloMetadataClient = useApolloMetadataClient();
 
   const { enqueueSnackBar } = useSnackBar();
+
+  console.log('useFindManyObjectMetadataItems');
 
   const {
     data,
@@ -52,18 +57,50 @@ export const useFindManyObjectMetadataItems = ({
           },
         );
       },
-      onCompleted: () => {},
+      onCompleted: useRecoilCallback(
+        ({ snapshot, set }) =>
+          (data) => {
+            const objectMetadataItems =
+              mapPaginatedObjectMetadataItemsToObjectMetadataItems({
+                pagedObjectMetadataItems: data,
+              });
+
+            const actualObjectMetadataItems = snapshot
+              .getLoadable(objectMetadataItemsState)
+              .getValue();
+
+            if (
+              !isDeeplyEqual(objectMetadataItems, actualObjectMetadataItems)
+            ) {
+              set(objectMetadataItemsState, objectMetadataItems);
+            }
+          },
+        [],
+      ),
     },
   );
 
-  const hasMore = data?.objects?.pageInfo?.hasNextPage;
+  const hasMore = useMemo(
+    () => data?.objects?.pageInfo?.hasNextPage,
+    [data?.objects?.pageInfo?.hasNextPage],
+  );
 
-  const fetchMore = () =>
-    fetchMoreInternal({
+  const fetchMore = useCallback(() => {
+    const returnedData = fetchMoreInternal({
       variables: {
         afterCursor: data?.objects?.pageInfo?.endCursor,
       },
     });
+
+    return returnedData;
+  }, [data?.objects?.pageInfo?.endCursor, fetchMoreInternal]);
+
+  // useEffect(() => {
+  //   console.log({ hasMore, fetchMore });
+  //   if (hasMore) {
+  //     fetchMore();
+  //   }
+  // }, [hasMore, fetchMore]);
 
   const objectMetadataItems = useMemo(() => {
     return mapPaginatedObjectMetadataItemsToObjectMetadataItems({

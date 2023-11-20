@@ -4,7 +4,7 @@ import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState } from 'recoil';
 
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
@@ -48,8 +48,8 @@ export const useFindManyObjectRecords = <
     isFetchingMoreObjectsFamilyState(objectNamePlural),
   );
 
-  const { foundObjectMetadataItem, objectNotFoundInMetadata, findManyQuery } =
-    useFindOneObjectMetadataItem({
+  const { objectMetadataItem: foundObjectMetadataItem, objectNotFoundInMetadata, findManyQuery } =
+    useObjectMetadataItem({
       objectNamePlural,
       skip,
     });

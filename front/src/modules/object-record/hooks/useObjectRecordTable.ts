@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { turnFiltersIntoWhereClauseV2 } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClauseV2';
 import { turnSortsIntoOrderByV2 } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderByV2';
 import { useRecordTableScopedStates } from '@/ui/object/record-table/hooks/internal/useRecordTableScopedStates';
@@ -14,7 +14,7 @@ import { useFindManyObjectRecords } from './useFindManyObjectRecords';
 export const useObjectRecordTable = () => {
   const { scopeId: objectNamePlural } = useRecordTable();
 
-  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
+  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem({
     objectNamePlural,
   });
 

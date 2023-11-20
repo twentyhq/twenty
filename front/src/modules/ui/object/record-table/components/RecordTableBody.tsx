@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectRecordTable } from '@/object-record/hooks/useObjectRecordTable';
 import { isFetchingMoreObjectsFamilyState } from '@/object-record/states/isFetchingMoreObjectsFamilyState';
 import { isDefined } from '~/utils/isDefined';
@@ -22,7 +22,7 @@ export const RecordTableBody = () => {
 
   const { scopeId: objectNamePlural } = useRecordTable();
 
-  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
+  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem({
     objectNamePlural,
   });
 

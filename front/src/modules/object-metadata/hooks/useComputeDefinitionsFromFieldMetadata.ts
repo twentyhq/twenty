@@ -1,13 +1,14 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
+import { Nullable } from '~/types/Nullable';
 
 import { formatFieldMetadataItemAsColumnDefinition } from '../utils/formatFieldMetadataItemAsColumnDefinition';
 import { formatFieldMetadataItemsAsFilterDefinitions } from '../utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { formatFieldMetadataItemsAsSortDefinitions } from '../utils/formatFieldMetadataItemsAsSortDefinitions';
 
 export const useComputeDefinitionsFromFieldMetadata = (
-  objectMetadataItem?: ObjectMetadataItem,
+  objectMetadataItem?: Nullable<ObjectMetadataItem>,
 ) => {
   if (!objectMetadataItem) {
     return {

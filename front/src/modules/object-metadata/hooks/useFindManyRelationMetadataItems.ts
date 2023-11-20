@@ -15,7 +15,7 @@ import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '../utils/m
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 // TODO: test fetchMore
-export const useFindManyObjectMetadataItems = ({
+export const useFindManyRelationMetadataItems = ({
   skip,
   filter,
 }: { skip?: boolean; filter?: ObjectFilter } = {}) => {
@@ -37,9 +37,9 @@ export const useFindManyObjectMetadataItems = ({
       client: apolloMetadataClient ?? undefined,
       skip: skip || !apolloMetadataClient,
       onError: (error) => {
-        logError('useFindManyObjectMetadataItems error : ' + error);
+        logError('useFindManyRelationMetadataItems error : ' + error);
         enqueueSnackBar(
-          `Error during useFindManyObjectMetadataItems, ${error.message}`,
+          `Error during useFindManyRelationMetadataItems, ${error.message}`,
           {
             variant: 'error',
           },

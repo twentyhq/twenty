@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client';
 
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -8,10 +8,10 @@ export const useUpdateOneObjectRecord = <T>({
   objectNameSingular,
 }: Pick<ObjectMetadataItemIdentifier, 'objectNameSingular'>) => {
   const {
-    foundObjectMetadataItem,
+    objectMetadataItem: foundObjectMetadataItem,
     objectNotFoundInMetadata,
     updateOneMutation,
-  } = useFindOneObjectMetadataItem({
+  } = useObjectMetadataItem({
     objectNameSingular,
   });
 
