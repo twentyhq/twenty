@@ -24,7 +24,7 @@ export const SettingsObjectFieldEdit = () => {
   const navigate = useNavigate();
 
   const { objectSlug = '', fieldSlug = '' } = useParams();
-  const { findActiveObjectMetadataItemBySlug, loading } =
+  const { findActiveObjectMetadataItemBySlug } =
     useObjectMetadataItemForSettings();
 
   const activeObjectMetadataItem =
@@ -54,8 +54,6 @@ export const SettingsObjectFieldEdit = () => {
   } = useFieldMetadataForm();
 
   useEffect(() => {
-    if (loading) return;
-
     if (!activeObjectMetadataItem || !activeMetadataField) {
       navigate(AppPath.NotFound);
       return;
@@ -79,7 +77,6 @@ export const SettingsObjectFieldEdit = () => {
     activeMetadataField,
     activeObjectMetadataItem,
     initForm,
-    loading,
     navigate,
     relationFieldMetadataItem?.icon,
     relationFieldMetadataItem?.label,

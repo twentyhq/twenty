@@ -33,15 +33,13 @@ export const HooksCompanyBoardEffect = () => {
     setViewType,
   } = useView();
 
-  const { currentViewFiltersState, currentViewFieldsState } =
-    useViewScopedStates();
+  const { currentViewFieldsState } = useViewScopedStates();
 
   const [pipelineSteps, setPipelineSteps] = useState<PipelineStep[]>([]);
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
 
   const currentViewFields = useRecoilValue(currentViewFieldsState);
-  const currentViewFilters = useRecoilValue(currentViewFiltersState);
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
 

@@ -11,8 +11,8 @@ import { ApolloMetadataClientProvider } from '@/object-metadata/components/Apoll
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
-import { SnackBarManager } from '@/ui/feedback/snack-bar-manager/components/SnackBarManager';
-import { SnackBarManagerScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarManagerScope';
+import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
+import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { ThemeType } from '@/ui/theme/constants/theme';
 import { UserProvider } from '@/users/components/UserProvider';
@@ -38,11 +38,11 @@ root.render(
           <ClientConfigProvider>
             <UserProvider>
               <ApolloMetadataClientProvider>
-                <SnackBarManagerScope snackBarManagerScopeId="snack-bar-manager">
+                <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
                   <ObjectMetadataItemsProvider>
                     <PageChangeEffect />
                     <AppThemeProvider>
-                      <SnackBarManager>
+                      <SnackBarProvider>
                         <DialogManagerScope dialogManagerScopeId="dialog-manager">
                           <DialogManager>
                             <StrictMode>
@@ -50,10 +50,10 @@ root.render(
                             </StrictMode>
                           </DialogManager>
                         </DialogManagerScope>
-                      </SnackBarManager>
+                      </SnackBarProvider>
                     </AppThemeProvider>
                   </ObjectMetadataItemsProvider>
-                </SnackBarManagerScope>
+                </SnackBarProviderScope>
               </ApolloMetadataClientProvider>
             </UserProvider>
           </ClientConfigProvider>

@@ -1,14 +1,15 @@
 import { gql } from '@apollo/client';
+import { useRecoilValue } from 'recoil';
 
+import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useGenerateCreateOneObjectMutation } from '@/object-record/utils/generateCreateOneObjectMutation';
 import { useGenerateDeleteOneObjectMutation } from '@/object-record/utils/useGenerateDeleteOneObjectMutation';
 import { useGenerateFindManyCustomObjectsQuery } from '@/object-record/utils/useGenerateFindManyCustomObjectsQuery';
 import { useGenerateFindOneCustomObjectQuery } from '@/object-record/utils/useGenerateFindOneCustomObjectQuery';
 import { useGenerateUpdateOneObjectMutation } from '@/object-record/utils/useGenerateUpdateOneObjectMutation';
+import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
-
-import { useFindManyObjectMetadataItems } from './useFindManyObjectMetadataItems';
 
 export const EMPTY_QUERY = gql`
   query EmptyQuery {
@@ -22,53 +23,46 @@ export const EMPTY_MUTATION = gql`
   }
 `;
 
-export const useFindOneObjectMetadataItem = ({
+export const useObjectMetadataItem = ({
   objectNamePlural,
   objectNameSingular,
-  skip,
 }: ObjectMetadataItemIdentifier & { skip?: boolean }) => {
-  const { objectMetadataItems, loading } = useFindManyObjectMetadataItems({
-    skip,
-  });
-
-  const foundObjectMetadataItem = objectMetadataItems.find(
-    (object) =>
-      object.namePlural === objectNamePlural ||
-      object.nameSingular === objectNameSingular,
+  const objectMetadataItem = useRecoilValue(
+    objectMetadataItemFamilySelector({
+      objectNamePlural,
+      objectNameSingular,
+    }),
   );
 
-  const objectNotFoundInMetadata =
-    objectMetadataItems.length === 0 ||
-    (objectMetadataItems.length > 0 && !foundObjectMetadataItem);
+  const objectNotFoundInMetadata = !isDefined(objectMetadataItem);
 
   const findManyQuery = useGenerateFindManyCustomObjectsQuery({
-    objectMetadataItem: foundObjectMetadataItem,
+    objectMetadataItem,
   });
 
   const findOneQuery = useGenerateFindOneCustomObjectQuery({
-    objectMetadataItem: foundObjectMetadataItem,
+    objectMetadataItem,
   });
 
   const createOneMutation = useGenerateCreateOneObjectMutation({
-    objectMetadataItem: foundObjectMetadataItem,
+    objectMetadataItem,
   });
 
   const updateOneMutation = useGenerateUpdateOneObjectMutation({
-    objectMetadataItem: foundObjectMetadataItem,
+    objectMetadataItem,
   });
 
   const deleteOneMutation = useGenerateDeleteOneObjectMutation({
-    objectMetadataItem: foundObjectMetadataItem,
+    objectMetadataItem,
   });
 
   return {
-    foundObjectMetadataItem,
+    objectMetadataItem,
     objectNotFoundInMetadata,
     findManyQuery,
     findOneQuery,
     createOneMutation,
     updateOneMutation,
     deleteOneMutation,
-    loading,
   };
 };

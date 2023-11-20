@@ -24,7 +24,6 @@ export const SettingsObjectEdit = () => {
     disableObjectMetadataItem,
     editObjectMetadataItem,
     findActiveObjectMetadataItemBySlug,
-    loading,
   } = useObjectMetadataItemForSettings();
 
   const activeObjectMetadataItem =
@@ -40,8 +39,6 @@ export const SettingsObjectEdit = () => {
   >({});
 
   useEffect(() => {
-    if (loading) return;
-
     if (!activeObjectMetadataItem) {
       navigate(AppPath.NotFound);
       return;
@@ -55,7 +52,7 @@ export const SettingsObjectEdit = () => {
         description: activeObjectMetadataItem.description ?? undefined,
       });
     }
-  }, [activeObjectMetadataItem, formValues, loading, navigate]);
+  }, [activeObjectMetadataItem, formValues, navigate]);
 
   if (!activeObjectMetadataItem) return null;
 

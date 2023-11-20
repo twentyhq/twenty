@@ -34,19 +34,15 @@ export const SettingsObjectDetail = () => {
   const navigate = useNavigate();
 
   const { objectSlug = '' } = useParams();
-  const {
-    disableObjectMetadataItem,
-    findActiveObjectMetadataItemBySlug,
-    loading,
-  } = useObjectMetadataItemForSettings();
+  const { disableObjectMetadataItem, findActiveObjectMetadataItemBySlug } =
+    useObjectMetadataItemForSettings();
 
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
 
   useEffect(() => {
-    if (loading) return;
     if (!activeObjectMetadataItem) navigate(AppPath.NotFound);
-  }, [activeObjectMetadataItem, loading, navigate]);
+  }, [activeObjectMetadataItem, navigate]);
 
   const { activateMetadataField, disableMetadataField, eraseMetadataField } =
     useFieldMetadataItem();

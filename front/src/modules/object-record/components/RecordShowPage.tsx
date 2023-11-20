@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { filterAvailableFieldMetadataItem } from '@/object-record/utils/filterAvailableFieldMetadataItem';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
@@ -35,9 +35,11 @@ export const RecordShowPage = () => {
     objectMetadataId: string;
   }>();
 
-  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
-    objectNameSingular,
-  });
+  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
+    {
+      objectNameSingular,
+    },
+  );
 
   const { favorites, createFavorite, deleteFavorite } = useFavorites({
     objectNamePlural: foundObjectMetadataItem?.namePlural,

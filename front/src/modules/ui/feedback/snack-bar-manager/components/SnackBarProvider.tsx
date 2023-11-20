@@ -49,7 +49,7 @@ const reducedVariants = {
   },
 };
 
-export const SnackBarManager = ({ children }: React.PropsWithChildren) => {
+export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
   const reducedMotion = useReducedMotion();
 
   const { snackBarInternal } = useSnackBarManagerScopedStates();

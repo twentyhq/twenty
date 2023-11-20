@@ -2,7 +2,7 @@ import { useApolloClient } from '@apollo/client';
 import { produce } from 'immer';
 import { useRecoilCallback } from 'recoil';
 
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { Filter } from '@/ui/object/object-filter-dropdown/types/Filter';
 import { savedViewFiltersScopedFamilyState } from '@/views/states/savedViewFiltersScopedFamilyState';
 import { ViewFilter } from '@/views/types/ViewFilter';
@@ -16,7 +16,7 @@ export const useViewFilters = (viewScopeId: string) => {
     createOneMutation,
     deleteOneMutation,
     findManyQuery,
-  } = useFindOneObjectMetadataItem({
+  } = useObjectMetadataItem({
     objectNameSingular: 'viewFilter',
   });
   const apolloClient = useApolloClient();

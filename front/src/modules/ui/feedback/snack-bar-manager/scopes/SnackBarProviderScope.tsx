@@ -2,15 +2,15 @@ import { ReactNode } from 'react';
 
 import { SnackBarManagerScopeInternalContext } from './scope-internal-context/SnackBarManagerScopeInternalContext';
 
-type SnackBarManagerScopeProps = {
+type SnackBarProviderScopeProps = {
   children: ReactNode;
   snackBarManagerScopeId: string;
 };
 
-export const SnackBarManagerScope = ({
+export const SnackBarProviderScope = ({
   children,
   snackBarManagerScopeId,
-}: SnackBarManagerScopeProps) => {
+}: SnackBarProviderScopeProps) => {
   return (
     <SnackBarManagerScopeInternalContext.Provider
       value={{
