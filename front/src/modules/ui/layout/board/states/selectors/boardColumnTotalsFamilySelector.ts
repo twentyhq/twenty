@@ -17,12 +17,12 @@ export const boardColumnTotalsFamilySelector = selectorFamily({
         get(companyProgressesFamilyState(pipelineProgressId)),
       );
 
-      const pipelineStageTotal: number =
+      const pipelineStepTotal: number =
         pipelineProgresses?.reduce(
           (acc: number, curr: any) => acc + curr?.pipelineProgress.amount,
           0,
         ) || 0;
 
-      return pipelineStageTotal;
+      return pipelineStepTotal;
     },
 });

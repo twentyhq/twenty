@@ -84,26 +84,26 @@ export const useUpdateCompanyBoard = () =>
           set(currentPipelineStepsState, currentPipelineSteps);
         }
 
-        const orderedPipelineStages = [...pipelineSteps].sort((a, b) => {
+        const orderedPipelineSteps = [...pipelineSteps].sort((a, b) => {
           if (!a.position || !b.position) return 0;
           return a.position - b.position;
         });
 
         const newBoardColumns: BoardColumnDefinition[] =
-          orderedPipelineStages?.map((pipelineStage) => {
-            if (!isThemeColor(pipelineStage.color)) {
+          orderedPipelineSteps?.map((pipelineStep) => {
+            if (!isThemeColor(pipelineStep.color)) {
               logError(
-                `Color ${pipelineStage.color} is not recognized in useUpdateCompanyBoard.`,
+                `Color ${pipelineStep.color} is not recognized in useUpdateCompanyBoard.`,
               );
             }
 
             return {
-              id: pipelineStage.id,
-              title: pipelineStage.name,
-              colorCode: isThemeColor(pipelineStage.color)
-                ? pipelineStage.color
+              id: pipelineStep.id,
+              title: pipelineStep.name,
+              colorCode: isThemeColor(pipelineStep.color)
+                ? pipelineStep.color
                 : undefined,
-              position: pipelineStage.position ?? 0,
+              position: pipelineStep.position ?? 0,
             };
           });
         if (currentBoardColumns.length === 0) {

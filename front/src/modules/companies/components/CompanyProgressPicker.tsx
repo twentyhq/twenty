@@ -17,7 +17,7 @@ export type CompanyProgressPickerProps = {
   companyId: string | null;
   onSubmit: (
     newCompanyId: EntityForSelect | null,
-    newPipelineStageId: string | null,
+    newPipelineStepId: string | null,
   ) => void;
   onCancel?: () => void;
 };
@@ -39,40 +39,40 @@ export const CompanyProgressPicker = ({
   const [isProgressSelectionUnfolded, setIsProgressSelectionUnfolded] =
     useState(false);
 
-  const [selectedPipelineStageId, setSelectedPipelineStageId] = useState<
+  const [selectedPipelineStepId, setSelectedPipelineStepId] = useState<
     string | null
   >(null);
 
   const [currentPipeline] = useRecoilState(currentPipelineState);
 
-  const currentPipelineStages = useMemo(
-    () => currentPipeline?.pipelineStages ?? [],
+  const currentPipelineSteps = useMemo(
+    () => currentPipeline?.pipelineSteps ?? [],
     [currentPipeline],
   );
 
-  const handlePipelineStageChange = (newPipelineStageId: string) => {
-    setSelectedPipelineStageId(newPipelineStageId);
+  const handlePipelineStepChange = (newPipelineStepId: string) => {
+    setSelectedPipelineStepId(newPipelineStepId);
     setIsProgressSelectionUnfolded(false);
   };
 
   const handleEntitySelected = async (
     selectedCompany: EntityForSelect | null | undefined,
   ) => {
-    onSubmit(selectedCompany ?? null, selectedPipelineStageId);
+    onSubmit(selectedCompany ?? null, selectedPipelineStepId);
   };
 
   useEffect(() => {
-    if (currentPipelineStages?.[0]?.id) {
-      setSelectedPipelineStageId(currentPipelineStages?.[0]?.id);
+    if (currentPipelineSteps?.[0]?.id) {
+      setSelectedPipelineStepId(currentPipelineSteps?.[0]?.id);
     }
-  }, [currentPipelineStages]);
+  }, [currentPipelineSteps]);
 
-  const selectedPipelineStage = useMemo(
+  const selectedPipelineStep = useMemo(
     () =>
-      currentPipelineStages.find(
-        (pipelineStage: any) => pipelineStage.id === selectedPipelineStageId,
+      currentPipelineSteps.find(
+        (pipelineStep: any) => pipelineStep.id === selectedPipelineStepId,
       ),
-    [currentPipelineStages, selectedPipelineStageId],
+    [currentPipelineSteps, selectedPipelineStepId],
   );
 
   return (
@@ -82,14 +82,14 @@ export const CompanyProgressPicker = ({
     >
       {isProgressSelectionUnfolded ? (
         <DropdownMenuItemsContainer>
-          {currentPipelineStages.map((pipelineStage: any, index: number) => (
+          {currentPipelineSteps.map((pipelineStep: any, index: number) => (
             <MenuItem
-              key={pipelineStage.id}
+              key={pipelineStep.id}
               testId={`select-pipeline-stage-${index}`}
               onClick={() => {
-                handlePipelineStageChange(pipelineStage.id);
+                handlePipelineStepChange(pipelineStep.id);
               }}
-              text={pipelineStage.name}
+              text={pipelineStep.name}
             />
           ))}
         </DropdownMenuItemsContainer>
@@ -100,7 +100,7 @@ export const CompanyProgressPicker = ({
             EndIcon={IconChevronDown}
             onClick={() => setIsProgressSelectionUnfolded(true)}
           >
-            {selectedPipelineStage?.name}
+            {selectedPipelineStep?.name}
           </DropdownMenuHeader>
           <DropdownMenuSeparator />
           <DropdownMenuSearchInput
