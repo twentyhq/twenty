@@ -49,7 +49,7 @@ export const usePersistField = () => {
         const fieldIsEmail =
           isFieldEmail(fieldDefinition) && isFieldEmailValue(valueToPersist);
 
-        const fieldIsDate =
+        const fieldIsDateTime =
           isFieldDateTime(fieldDefinition) &&
           isFieldDateTimeValue(valueToPersist);
 
@@ -102,7 +102,7 @@ export const usePersistField = () => {
           fieldIsEmail ||
           fieldIsProbability ||
           fieldIsNumber ||
-          fieldIsDate ||
+          fieldIsDateTime ||
           fieldIsPhone ||
           fieldIsLink ||
           fieldIsCurrency ||

@@ -1,8 +1,9 @@
-import { isDate } from '@sniptt/guards';
+import { isString } from '@sniptt/guards';
 
 import { FieldDateTimeValue } from '../FieldMetadata';
 
 // TODO: add zod
 export const isFieldDateTimeValue = (
   fieldValue: unknown,
-): fieldValue is FieldDateTimeValue => isDate(fieldValue);
+): fieldValue is FieldDateTimeValue =>
+  isString(fieldValue) && !isNaN(Date.parse(fieldValue));
