@@ -114,7 +114,7 @@ export const useUpdateCompanyBoard = () =>
           const boardCardIds = pipelineProgresses
             .filter(
               (pipelineProgressToFilter) =>
-                pipelineProgressToFilter.pipelineStageId === boardColumn.id,
+                pipelineProgressToFilter.pipelineStepId === boardColumn.id,
             )
             .map((pipelineProgress) => pipelineProgress.id);
 

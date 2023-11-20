@@ -7,7 +7,7 @@ import { boardColumnsState } from '@/ui/layout/board/states/boardColumnsState';
 export const useUpdateCompanyBoardCardIds = () =>
   useRecoilCallback(
     ({ snapshot, set }) =>
-      (pipelineProgresses: Opportunity[]) => {
+      (pipelineProgresses: Pick<Opportunity, 'pipelineStepId' | 'id'>[]) => {
         const boardColumns = snapshot
           .getLoadable(boardColumnsState)
           .valueOrThrow();
@@ -16,7 +16,7 @@ export const useUpdateCompanyBoardCardIds = () =>
           const boardCardIds = pipelineProgresses
             .filter(
               (pipelineProgressToFilter) =>
-                pipelineProgressToFilter.pipelineStageId === boardColumn.id,
+                pipelineProgressToFilter.pipelineStepId === boardColumn.id,
             )
             .map((pipelineProgress) => pipelineProgress.id);
 

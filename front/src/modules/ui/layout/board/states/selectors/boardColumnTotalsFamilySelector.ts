@@ -9,9 +9,9 @@ import { boardCardIdsByColumnIdFamilyState } from '../boardCardIdsByColumnIdFami
 export const boardColumnTotalsFamilySelector = selectorFamily({
   key: 'boardColumnTotalsFamilySelector',
   get:
-    (pipelineStageId: string) =>
+    (pipelineStepId: string) =>
     ({ get }) => {
-      const cardIds = get(boardCardIdsByColumnIdFamilyState(pipelineStageId));
+      const cardIds = get(boardCardIdsByColumnIdFamilyState(pipelineStepId));
 
       const pipelineProgresses = cardIds.map((pipelineProgressId: string) =>
         get(companyProgressesFamilyState(pipelineProgressId)),
