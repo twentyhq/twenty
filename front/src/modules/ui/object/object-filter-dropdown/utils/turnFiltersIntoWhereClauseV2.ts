@@ -62,7 +62,7 @@ export const turnFiltersIntoWhereClauseV2 = (
               `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
             );
         }
-      case 'DATE':
+      case 'DATE_TIME':
         switch (filter.operand) {
           case ViewFilterOperand.GreaterThan:
             whereClause[correspondingField.name] = {

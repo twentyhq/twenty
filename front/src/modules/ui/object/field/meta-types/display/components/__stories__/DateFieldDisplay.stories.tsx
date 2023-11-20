@@ -4,13 +4,13 @@ import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { FieldContext } from '../../../../contexts/FieldContext';
-import { useDateField } from '../../../hooks/useDateField';
+import { useDateTimeField } from '../../../hooks/useDateTimeField';
 import { DateFieldDisplay } from '../DateFieldDisplay';
 
 const formattedDate = new Date('2023-04-01');
 
 const DateFieldValueSetterEffect = ({ value }: { value: string }) => {
-  const { setFieldValue } = useDateField();
+  const { setFieldValue } = useDateTimeField();
 
   useEffect(() => {
     setFieldValue(value);
@@ -30,7 +30,7 @@ const meta: Meta = {
           fieldDefinition: {
             fieldMetadataId: 'date',
             label: 'Date',
-            type: 'DATE',
+            type: 'DATE_TIME',
             iconName: 'IconCalendarEvent',
             metadata: {
               fieldName: 'Date',

@@ -120,7 +120,7 @@ export type FieldDeleteResponse = {
 export enum FieldMetadataType {
   Boolean = 'BOOLEAN',
   Currency = 'CURRENCY',
-  Date = 'DATE',
+  DateTime = 'DATE_TIME',
   Email = 'EMAIL',
   Enum = 'ENUM',
   FullName = 'FULL_NAME',

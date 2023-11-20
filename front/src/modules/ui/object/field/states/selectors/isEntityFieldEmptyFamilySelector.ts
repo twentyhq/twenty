@@ -10,7 +10,7 @@ import { FieldMetadata } from '../../types/FieldMetadata';
 import { isFieldBoolean } from '../../types/guards/isFieldBoolean';
 import { isFieldCurrency } from '../../types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '../../types/guards/isFieldCurrencyValue';
-import { isFieldDate } from '../../types/guards/isFieldDate';
+import { isFieldDateTime } from '../../types/guards/isFieldDateTime';
 import { isFieldEmail } from '../../types/guards/isFieldEmail';
 import { isFieldLink } from '../../types/guards/isFieldLink';
 import { isFieldLinkValue } from '../../types/guards/isFieldLinkValue';
@@ -39,7 +39,7 @@ export const isEntityFieldEmptyFamilySelector = selectorFamily({
       if (
         isFieldUuid(fieldDefinition) ||
         isFieldText(fieldDefinition) ||
-        isFieldDate(fieldDefinition) ||
+        isFieldDateTime(fieldDefinition) ||
         isFieldNumber(fieldDefinition) ||
         isFieldProbability(fieldDefinition) ||
         isFieldEmail(fieldDefinition) ||

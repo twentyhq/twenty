@@ -14,7 +14,7 @@ export type FieldTextMetadata = {
   fieldName: string;
 };
 
-export type FieldDateMetadata = {
+export type FieldDateTimeMetadata = {
   placeHolder: string;
   fieldName: string;
 };
@@ -74,7 +74,7 @@ export type FieldRelationMetadata = {
 export type FieldMetadata =
   | FieldBooleanMetadata
   | FieldNumberMetadata
-  | FieldDateMetadata
+  | FieldDateTimeMetadata
   | FieldTextMetadata
   | FieldUuidMetadata
   | FieldCurrencyMetadata
@@ -87,7 +87,7 @@ export type FieldMetadata =
 
 export type FieldTextValue = string;
 export type FieldUUidValue = string;
-export type FieldDateValue = string | null;
+export type FieldDateTimeValue = string | null;
 export type FieldNumberValue = number | null;
 export type FieldBooleanValue = boolean;
 

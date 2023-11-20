@@ -10,8 +10,8 @@ import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
 import { isFieldCurrency } from '../types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '../types/guards/isFieldCurrencyValue';
-import { isFieldDate } from '../types/guards/isFieldDate';
-import { isFieldDateValue } from '../types/guards/isFieldDateValue';
+import { isFieldDateTime } from '../types/guards/isFieldDateTime';
+import { isFieldDateTimeValue } from '../types/guards/isFieldDateTimeValue';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
 import { isFieldEmailValue } from '../types/guards/isFieldEmailValue';
 import { isFieldLink } from '../types/guards/isFieldLink';
@@ -49,8 +49,9 @@ export const usePersistField = () => {
         const fieldIsEmail =
           isFieldEmail(fieldDefinition) && isFieldEmailValue(valueToPersist);
 
-        const fieldIsDate =
-          isFieldDate(fieldDefinition) && isFieldDateValue(valueToPersist);
+        const fieldIsDateTime =
+          isFieldDateTime(fieldDefinition) &&
+          isFieldDateTimeValue(valueToPersist);
 
         const fieldIsLink =
           isFieldLink(fieldDefinition) && isFieldLinkValue(valueToPersist);
@@ -101,7 +102,7 @@ export const usePersistField = () => {
           fieldIsEmail ||
           fieldIsProbability ||
           fieldIsNumber ||
-          fieldIsDate ||
+          fieldIsDateTime ||
           fieldIsPhone ||
           fieldIsLink ||
           fieldIsCurrency ||
