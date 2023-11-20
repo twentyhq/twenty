@@ -205,6 +205,10 @@ export const SettingsObjectNewFieldStep2 = () => {
           onChange={handleFormChange}
         />
         <SettingsObjectFieldTypeSelectSection
+          excludedFieldTypes={[
+            FieldMetadataType.Enum,
+            FieldMetadataType.Relation,
+          ]}
           fieldMetadata={{
             icon: formValues.icon,
             label: formValues.label || 'Employees',
