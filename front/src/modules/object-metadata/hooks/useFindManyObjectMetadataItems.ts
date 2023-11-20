@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useQuery } from '@apollo/client';
 
-import { useSnackBarManager } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBarManager';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   FieldFilter,
   ObjectFilter,
@@ -27,7 +27,7 @@ export const useFindManyObjectMetadataItems = ({
 } = {}) => {
   const apolloMetadataClient = useApolloMetadataClient();
 
-  const { enqueueSnackBar } = useSnackBarManager();
+  const { enqueueSnackBar } = useSnackBar();
 
   const {
     data,

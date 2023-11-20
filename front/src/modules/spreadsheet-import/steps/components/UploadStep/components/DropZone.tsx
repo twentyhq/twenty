@@ -5,7 +5,7 @@ import * as XLSX from 'xlsx-ugnis';
 
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
-import { useSnackBarManager } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBarManager';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 
 const StyledContainer = styled.div`
@@ -87,7 +87,7 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
 
   const [loading, setLoading] = useState(false);
 
-  const { enqueueSnackBar } = useSnackBarManager();
+  const { enqueueSnackBar } = useSnackBar();
 
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     noClick: true,

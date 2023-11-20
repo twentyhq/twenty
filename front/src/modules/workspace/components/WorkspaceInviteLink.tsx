@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconCopy, IconLink } from '@/ui/display/icon';
-import { useSnackBarManager } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBarManager';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 
@@ -26,7 +26,7 @@ export const WorkspaceInviteLink = ({
 }: WorkspaceInviteLinkProps) => {
   const theme = useTheme();
 
-  const { enqueueSnackBar } = useSnackBarManager();
+  const { enqueueSnackBar } = useSnackBar();
 
   return (
     <StyledContainer>

@@ -2,11 +2,11 @@ import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
-import { useSnackBarManager } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBarManager';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Toggle } from '@/ui/input/components/Toggle';
 
 export const ToggleField = () => {
-  const { enqueueSnackBar } = useSnackBarManager();
+  const { enqueueSnackBar } = useSnackBar();
 
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,

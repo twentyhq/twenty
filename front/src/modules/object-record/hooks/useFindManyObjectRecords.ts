@@ -6,7 +6,7 @@ import { useRecoilState } from 'recoil';
 
 import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
-import { useSnackBarManager } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBarManager';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -54,7 +54,7 @@ export const useFindManyObjectRecords = <
       skip,
     });
 
-  const { enqueueSnackBar } = useSnackBarManager();
+  const { enqueueSnackBar } = useSnackBar();
 
   const { data, loading, error, fetchMore } = useQuery<
     PaginatedObjectType<ObjectType>

@@ -12,7 +12,7 @@ import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
 import { IconCheckbox } from '@/ui/display/icon';
-import { useSnackBarManager } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBarManager';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TableHotkeyScope } from '@/ui/object/record-table/types/TableHotkeyScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
@@ -23,7 +23,7 @@ import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
 export const PageChangeEffect = () => {
   const navigate = useNavigate();
   const isMatchingLocation = useIsMatchingLocation();
-  const { enqueueSnackBar } = useSnackBarManager();
+  const { enqueueSnackBar } = useSnackBar();
 
   const [previousLocation, setPreviousLocation] = useState('');
 

@@ -8,7 +8,7 @@ import {
 } from '@/ui/feedback/snack-bar-manager/states/snackBarInternalScopedState';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
-export const useSnackBarManager = () => {
+export const useSnackBar = () => {
   const scopeId = useAvailableScopeIdOrThrow(
     SnackBarManagerScopeInternalContext,
   );

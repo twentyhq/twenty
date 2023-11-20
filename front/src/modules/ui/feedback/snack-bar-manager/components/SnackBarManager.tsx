@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { motion, useReducedMotion } from 'framer-motion';
 
 import { useSnackBarManagerScopedStates } from '@/ui/feedback/snack-bar-manager/hooks/internal/useSnackBarManagerScopedStates';
-import { useSnackBarManager } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBarManager';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { SnackBar } from './SnackBar';
 const StyledSnackBarContainer = styled.div`
@@ -53,7 +53,7 @@ export const SnackBarManager = ({ children }: React.PropsWithChildren) => {
   const reducedMotion = useReducedMotion();
 
   const { snackBarInternal } = useSnackBarManagerScopedStates();
-  const { handleSnackBarClose } = useSnackBarManager();
+  const { handleSnackBarClose } = useSnackBar();
 
   return (
     <>
