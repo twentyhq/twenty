@@ -136,7 +136,7 @@ export const SettingsObjectNewFieldStep1 = () => {
                 {activeMetadataFields.map((field) => (
                   <SettingsObjectFieldItemTableRow
                     key={field.id}
-                    fieldItem={field}
+                    fieldMetadataItem={field}
                     ActionIcon={
                       <LightIconButton
                         Icon={IconMinus}
@@ -153,7 +153,7 @@ export const SettingsObjectNewFieldStep1 = () => {
                 {disabledMetadataFields.map((field) => (
                   <SettingsObjectFieldItemTableRow
                     key={field.name}
-                    fieldItem={field}
+                    fieldMetadataItem={field}
                     ActionIcon={
                       <LightIconButton
                         Icon={IconPlus}

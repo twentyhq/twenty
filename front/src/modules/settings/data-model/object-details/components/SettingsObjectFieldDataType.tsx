@@ -1,9 +1,17 @@
-import { css, useTheme } from '@emotion/react';
+import { ClassNames, css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { dataTypes } from '../../constants/dataTypes';
+
+type SettingsObjectFieldDataTypeProps = {
+  onClick?: () => void;
+  Icon?: IconComponent;
+  label?: string;
+  value: FieldMetadataType;
+};
 
 const StyledDataType = styled.div<{ value: FieldMetadataType }>`
   align-items: center;
@@ -13,7 +21,15 @@ const StyledDataType = styled.div<{ value: FieldMetadataType }>`
   font-size: ${({ theme }) => theme.font.size.sm};
   gap: ${({ theme }) => theme.spacing(1)};
   height: 20px;
+  overflow: hidden;
   padding: 0 ${({ theme }) => theme.spacing(2)};
+
+  ${({ onClick }) =>
+    onClick
+      ? css`
+          cursor: pointer;
+        `
+      : ''}
 
   ${({ theme, value }) =>
     value === FieldMetadataType.Relation
@@ -24,21 +40,33 @@ const StyledDataType = styled.div<{ value: FieldMetadataType }>`
       : ''}
 `;
 
-type SettingsObjectFieldDataTypeProps = {
-  value: FieldMetadataType;
-};
+const StyledLabelContainer = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
 
 export const SettingsObjectFieldDataType = ({
+  onClick,
   value,
+  Icon = dataTypes?.[value]?.Icon,
+  label = dataTypes?.[value]?.label,
 }: SettingsObjectFieldDataTypeProps) => {
   const theme = useTheme();
 
-  const { label, Icon } = dataTypes?.[value];
-
   return (
-    <StyledDataType value={value}>
-      <Icon size={theme.icon.size.sm} />
-      {label}
+    <StyledDataType onClick={onClick} value={value}>
+      <ClassNames>
+        {({ css }) => (
+          <Icon
+            className={css`
+              flex: 1 0 auto;
+            `}
+            size={theme.icon.size.sm}
+          />
+        )}
+      </ClassNames>
+      <StyledLabelContainer>{label}</StyledLabelContainer>
     </StyledDataType>
   );
 };
