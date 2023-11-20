@@ -5,7 +5,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { Company } from '@/companies/types/Company';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
-import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { useBoardActionBarEntries } from '@/ui/layout/board/hooks/useBoardActionBarEntries';
@@ -117,7 +116,7 @@ export const HooksCompanyBoardEffect = () => {
   useEffect(() => {
     setAvailableFilterDefinitions(opportunitiesBoardOptions.filterDefinitions);
     setAvailableSortDefinitions?.(opportunitiesBoardOptions.sortDefinitions);
-    setAvailableFieldDefinitions?.(pipelineAvailableFieldDefinitions);
+    setAvailableFieldDefinitions?.([]);
   }, [
     setAvailableFieldDefinitions,
     setAvailableFilterDefinitions,
@@ -140,7 +139,7 @@ export const HooksCompanyBoardEffect = () => {
     if (!loading && opportunities && companies) {
       setActionBarEntries();
       setContextMenuEntries();
-      setAvailableBoardCardFields(pipelineAvailableFieldDefinitions);
+      setAvailableBoardCardFields([]);
       updateCompanyBoard(pipelineSteps, opportunities, companies);
       setEntityCountInCurrentView(companies.length);
     }
@@ -160,10 +159,7 @@ export const HooksCompanyBoardEffect = () => {
   useEffect(() => {
     if (currentViewFields) {
       setBoardCardFields(
-        mapViewFieldsToBoardFieldDefinitions(
-          currentViewFields,
-          pipelineAvailableFieldDefinitions,
-        ),
+        mapViewFieldsToBoardFieldDefinitions(currentViewFields, []),
       );
     }
   }, [currentViewFields, setBoardCardFields]);

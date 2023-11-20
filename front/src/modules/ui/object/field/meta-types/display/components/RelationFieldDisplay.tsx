@@ -5,17 +5,18 @@ import { useRelationField } from '../../hooks/useRelationField';
 export const RelationFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useRelationField();
 
-  if (!fieldValue || !fieldDefinition.mainIdentifierMapper) {
+  if (!fieldValue || !fieldDefinition) {
     return <></>;
   }
 
-  const mainIdentifierMapped = fieldDefinition.mainIdentifierMapper(fieldValue);
+  const mainIdentifierMapped =
+    fieldDefinition.metadata.mainIdentifierMapper(fieldValue);
 
   return (
     <EntityChip
       entityId={fieldValue.id}
       name={mainIdentifierMapped.name}
-      pictureUrl={mainIdentifierMapped.pictureUrl}
+      avatarUrl={mainIdentifierMapped.avatarUrl}
       avatarType={mainIdentifierMapped.avatarType}
     />
   );

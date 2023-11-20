@@ -1,5 +1,3 @@
-import { MainIdentifierMapper } from '@/object-metadata/types/MainIdentifierMapper';
-
 import { FieldMetadata } from './FieldMetadata';
 import { FieldType } from './FieldType';
 
@@ -16,6 +14,4 @@ export type FieldDefinition<T extends FieldMetadata> = {
   type: FieldType;
   metadata: T;
   infoTooltipContent?: string;
-  relationType?: FieldDefinitionRelationType;
-  mainIdentifierMapper?: MainIdentifierMapper;
 };

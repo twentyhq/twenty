@@ -208,7 +208,7 @@ export const CompanyBoardCard = () => {
           <CompanyChip
             id={company.id}
             name={company.name}
-            pictureUrl={getLogoUrlFromDomainName(company.domainName)}
+            avatarUrl={getLogoUrlFromDomainName(company.domainName)}
             variant={EntityChipVariant.Transparent}
           />
           {showCompactView && (

@@ -1,5 +1,5 @@
-import { MainIdentifierMapper } from '@/object-metadata/types/MainIdentifierMapper';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { MainIdentifierMapper } from '@/ui/object/field/types/MainIdentifierMapper';
 
 export const useObjectMainIdentifier = (
   objectMetadataItem?: ObjectMetadataItem,
@@ -15,24 +15,30 @@ export const useObjectMainIdentifier = (
   const mainIdentifierMapper: MainIdentifierMapper = (record: any) => {
     if (objectMetadataItem.nameSingular === 'company') {
       return {
+        id: record.id,
         name: record.name,
-        pictureUrl: record.pictureUrl,
+        avatarUrl: record.avatarUrl,
         avatarType: 'squared',
+        record: record,
       };
     }
 
     if (objectMetadataItem.nameSingular === 'workspaceMember') {
       return {
+        id: record.id,
         name: record.name.firstName + ' ' + record.name.lastName,
-        pictureUrl: record.avatarUrl,
+        avatarUrl: record.avatarUrl,
         avatarType: 'rounded',
+        record: record,
       };
     }
 
     return {
+      id: record.id,
       name: record.name,
-      pictureUrl: record.pictureUrl,
+      avatarUrl: record.avatarUrl,
       avatarType: 'rounded',
+      record: record,
     };
   };
 

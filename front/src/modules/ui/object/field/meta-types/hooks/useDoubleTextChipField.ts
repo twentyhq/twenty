@@ -39,8 +39,6 @@ export const useDoubleTextChipField = () => {
 
   const fullValue = [firstValue, secondValue].filter(Boolean).join(' ');
 
-  const entityType = fieldDefinition.metadata.entityType;
-
   const fieldInitialValue = useFieldInitialValue();
 
   const initialFirstValue = fieldInitialValue?.isEmpty
@@ -68,7 +66,6 @@ export const useDoubleTextChipField = () => {
     firstValue,
     setFirstValue,
     fullValue,
-    entityType,
     entityId,
     hotkeyScope,
     initialAvatarUrl,

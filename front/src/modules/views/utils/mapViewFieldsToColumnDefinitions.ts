@@ -26,8 +26,6 @@ export const mapViewFieldsToColumnDefinitions = (
             size: viewField.size ?? correspondingFieldMetadata.size,
             isVisible: viewField.isVisible,
             viewFieldId: viewField.id,
-            mainIdentifierMapper:
-              correspondingFieldMetadata.mainIdentifierMapper,
           }
         : null;
     })

@@ -1,12 +1,13 @@
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
+import { isFieldRelation } from '@/ui/object/field/types/guards/isFieldRelation';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 
 export const filterAvailableTableColumns = (
   columnDefinition: ColumnDefinition<FieldMetadata>,
 ): boolean => {
   if (
-    columnDefinition.type === 'RELATION' &&
-    columnDefinition.relationType !== 'TO_ONE_OBJECT'
+    isFieldRelation(columnDefinition) &&
+    columnDefinition.metadata?.relationType !== 'TO_ONE_OBJECT'
   ) {
     return false;
   }

@@ -4,7 +4,7 @@ export type ObjectMetadataConfig = {
   mainIdentifierFieldMetadataId: string;
   mainIdentifierMapper: (record: any) => {
     name: string;
-    pictureUrl?: string;
+    avatarUrl?: string;
     avatarType: AvatarType;
   };
   basePathToShowPage: string;

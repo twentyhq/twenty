@@ -2,29 +2,32 @@ import { useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 
 import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
-import { useFilteredSearchEntityQueryV2 } from '@/search/hooks/useFilteredSearchEntityQueryV2';
+import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { IconUserCircle } from '@/ui/display/icon';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
-import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
+import { FieldDefinition } from '@/ui/object/field/types/FieldDefinition';
+import { FieldRelationMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-export type WorkspaceMemberPickerProps = {
-  userId: string;
+export type RelationPickerProps = {
+  recordId: string;
   onSubmit: (newUser: EntityForSelect | null) => void;
   onCancel?: () => void;
   width?: number;
   initialSearchFilter?: string | null;
+  fieldDefinition: FieldDefinition<FieldRelationMetadata>;
 };
 
-export const WorkspaceMemberPicker = ({
-  userId,
+export const RelationPicker = ({
+  recordId,
   onSubmit,
   onCancel,
   width,
   initialSearchFilter,
-}: WorkspaceMemberPickerProps) => {
+  fieldDefinition,
+}: RelationPickerProps) => {
   const [relationPickerSearchFilter, setRelationPickerSearchFilter] =
     useRecoilScopedState(relationPickerSearchFilterScopedState);
 
@@ -33,32 +36,23 @@ export const WorkspaceMemberPicker = ({
   }, [initialSearchFilter, setRelationPickerSearchFilter]);
 
   const { findManyQuery } = useFindOneObjectMetadataItem({
-    objectNameSingular: 'workspaceMember',
+    objectNameSingular: fieldDefinition.metadata.objectMetadataNameSingular,
   });
 
-  const useFindManyWorkspaceMembers = (options: any) =>
-    useQuery(findManyQuery, options);
+  const useFindManyQuery = (options: any) => useQuery(findManyQuery, options);
 
-  const workspaceMembers = useFilteredSearchEntityQueryV2({
-    queryHook: useFindManyWorkspaceMembers,
+  const workspaceMembers = useFilteredSearchEntityQuery({
+    queryHook: useFindManyQuery,
     filters: [
       {
-        fieldNames: ['name.firstName', 'name.lastName'],
+        fieldNames: fieldDefinition.metadata.searchFields,
         filter: relationPickerSearchFilter,
       },
     ],
     orderByField: 'createdAt',
-    mappingFunction: (workspaceMember) => ({
-      entityType: Entity.WorkspaceMember,
-      id: workspaceMember.id,
-      name:
-        workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName,
-      avatarType: 'rounded',
-      avatarUrl: '',
-      originalEntity: workspaceMember,
-    }),
-    selectedIds: userId ? [userId] : [],
-    objectNamePlural: 'workspaceMembers',
+    mappingFunction: fieldDefinition.metadata.mainIdentifierMapper,
+    selectedIds: recordId ? [recordId] : [],
+    objectNamePlural: fieldDefinition.metadata.objectMetadataNamePlural,
   });
 
   const handleEntitySelected = async (selectedUser: any | null | undefined) => {

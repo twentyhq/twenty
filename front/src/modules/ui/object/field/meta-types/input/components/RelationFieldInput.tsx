@@ -1,10 +1,8 @@
 import { useEffect } from 'react';
 import styled from '@emotion/styled';
 
-import { CompanyPicker } from '@/companies/components/CompanyPicker';
-import { PeoplePicker } from '@/people/components/PeoplePicker';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
-import { WorkspaceMemberPicker } from '@/workspace-member/components/WorkspaceMemberPicker';
+import { RelationPicker } from '@/ui/object/field/meta-types/input/components/internal/RelationPicker';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useRelationField } from '../../hooks/useRelationField';
@@ -32,24 +30,24 @@ export const RelationFieldInput = ({
   const persistField = usePersistField();
 
   const handleSubmit = (newEntity: EntityForSelect | null) => {
-    onSubmit?.(() => persistField(newEntity?.originalEntity ?? null));
+    onSubmit?.(() => persistField(newEntity?.record ?? null));
   };
 
   useEffect(() => {}, [initialSearchValue]);
 
   return (
     <StyledRelationPickerContainer>
-      {fieldDefinition.metadata.fieldName === 'person' ? (
+      <RelationPicker
+        fieldDefinition={fieldDefinition}
+        recordId={initialValue?.id ?? ''}
+        onSubmit={handleSubmit}
+        onCancel={onCancel}
+        initialSearchFilter={initialSearchValue}
+      />
+      {/* {fieldDefinition.metadata.fieldName === 'person' ? (
         <PeoplePicker
           personId={initialValue?.id ?? ''}
           companyId={initialValue?.companyId ?? ''}
-          onSubmit={handleSubmit}
-          onCancel={onCancel}
-          initialSearchFilter={initialSearchValue}
-        />
-      ) : fieldDefinition.metadata.fieldName === 'accountOwner' ? (
-        <WorkspaceMemberPicker
-          userId={initialValue?.id ?? ''}
           onSubmit={handleSubmit}
           onCancel={onCancel}
           initialSearchFilter={initialSearchValue}
@@ -61,7 +59,7 @@ export const RelationFieldInput = ({
           onCancel={onCancel}
           initialSearchFilter={initialSearchValue}
         />
-      ) : null}
+      ) : null} */}
     </StyledRelationPickerContainer>
   );
 };
