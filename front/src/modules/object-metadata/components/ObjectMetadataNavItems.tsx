@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { Icon123 } from '@/ui/input/constants/icons';
@@ -9,6 +9,7 @@ export const ObjectMetadataNavItems = () => {
   const { activeObjectMetadataItems } = useObjectMetadataItemForSettings();
   const navigate = useNavigate();
   const { icons } = useLazyLoadIcons();
+  const currentPath = useLocation().pathname;
 
   return (
     <>
@@ -19,6 +20,7 @@ export const ObjectMetadataNavItems = () => {
             key={objectMetadataItem.id}
             label={objectMetadataItem.labelPlural}
             to={`/objects/${objectMetadataItem.namePlural}`}
+            active={currentPath == `/objects/${objectMetadataItem.namePlural}`}
             Icon={
               objectMetadataItem.icon ? icons[objectMetadataItem.icon] : Icon123
             }
