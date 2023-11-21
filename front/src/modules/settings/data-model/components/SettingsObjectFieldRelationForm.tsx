@@ -18,6 +18,7 @@ export type SettingsObjectFieldRelationFormValues = Partial<{
 }>;
 
 type SettingsObjectFieldRelationFormProps = {
+  disableFieldEdition?: boolean;
   disableRelationEdition?: boolean;
   onChange: (values: SettingsObjectFieldRelationFormValues) => void;
   values?: SettingsObjectFieldRelationFormValues;
@@ -46,6 +47,7 @@ const StyledInputsContainer = styled.div`
 `;
 
 export const SettingsObjectFieldRelationForm = ({
+  disableFieldEdition,
   disableRelationEdition,
   onChange,
   values,
@@ -96,6 +98,7 @@ export const SettingsObjectFieldRelationForm = ({
       </StyledInputsLabel>
       <StyledInputsContainer>
         <IconPicker
+          disabled={disableFieldEdition}
           dropdownScopeId="field-destination-icon-picker"
           selectedIconKey={values?.field?.icon || undefined}
           onChange={(value) =>
@@ -106,6 +109,7 @@ export const SettingsObjectFieldRelationForm = ({
           variant="primary"
         />
         <TextInput
+          disabled={disableFieldEdition}
           placeholder="Field name"
           value={values?.field?.label || ''}
           onChange={(value) => {

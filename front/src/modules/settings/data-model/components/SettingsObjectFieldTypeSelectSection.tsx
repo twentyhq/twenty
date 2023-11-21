@@ -27,7 +27,7 @@ type SettingsObjectFieldTypeSelectSectionProps = {
   excludedFieldTypes?: FieldMetadataType[];
   fieldMetadata: Pick<Field, 'icon' | 'label'> & { id?: string };
   onChange: (values: SettingsObjectFieldTypeSelectSectionFormValues) => void;
-  relationFieldMetadataId?: string;
+  relationFieldMetadata?: Pick<Field, 'id' | 'isCustom'>;
   values?: SettingsObjectFieldTypeSelectSectionFormValues;
 } & Pick<SettingsObjectFieldPreviewProps, 'objectMetadataId'>;
 
@@ -50,7 +50,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
   fieldMetadata,
   objectMetadataId,
   onChange,
-  relationFieldMetadataId,
+  relationFieldMetadata,
   values,
 }: SettingsObjectFieldTypeSelectSectionProps) => {
   const relationFormConfig = values?.relation;
@@ -116,7 +116,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
                           label:
                             relationFormConfig.field?.label || 'Field name',
                           type: FieldMetadataType.Relation,
-                          id: relationFieldMetadataId,
+                          id: relationFieldMetadata?.id,
                         }}
                         shrink
                         objectMetadataId={relationFormConfig.objectMetadataId}
@@ -129,7 +129,10 @@ export const SettingsObjectFieldTypeSelectSection = ({
             form={
               values.type === FieldMetadataType.Relation && (
                 <SettingsObjectFieldRelationForm
-                  disableRelationEdition={!!relationFieldMetadataId}
+                  disableFieldEdition={
+                    relationFieldMetadata && !relationFieldMetadata.isCustom
+                  }
+                  disableRelationEdition={!!relationFieldMetadata}
                   values={relationFormConfig}
                   onChange={(nextValues) =>
                     onChange({
