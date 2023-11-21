@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Equal, In, Repository } from 'typeorm';
@@ -37,31 +33,17 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     super(objectMetadataRepository);
   }
 
-  override async deleteOne(id: string): Promise<ObjectMetadataEntity> {
-    const objectMetadata = await this.objectMetadataRepository.findOne({
-      where: { id },
-    });
-
-    if (!objectMetadata) {
-      throw new NotFoundException('Object does not exist');
-    }
-
-    if (!objectMetadata.isCustom) {
-      throw new BadRequestException("Standard Objects can't be deleted");
-    }
-
-    if (objectMetadata.isActive) {
-      throw new BadRequestException("Active objects can't be deleted");
-    }
-
-    return super.deleteOne(id);
-  }
-
   override async createOne(
     record: CreateObjectInput,
   ): Promise<ObjectMetadataEntity> {
+    const lastDataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        record.workspaceId,
+      );
+
     const createdObjectMetadata = await super.createOne({
       ...record,
+      dataSourceId: lastDataSourceMetadata.id,
       targetTableName: `_${record.nameSingular}`,
       isActive: true,
       isCustom: true,
@@ -194,23 +176,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   public async getObjectMetadataFromWorkspaceId(workspaceId: string) {
     return this.objectMetadataRepository.find({
       where: { workspaceId },
-      relations: [
-        'fields',
-        'fields.fromRelationMetadata',
-        'fields.fromRelationMetadata.fromObjectMetadata',
-        'fields.fromRelationMetadata.toObjectMetadata',
-        'fields.fromRelationMetadata.toObjectMetadata.fields',
-        'fields.toRelationMetadata',
-        'fields.toRelationMetadata.fromObjectMetadata',
-        'fields.toRelationMetadata.fromObjectMetadata.fields',
-        'fields.toRelationMetadata.toObjectMetadata',
-      ],
-    });
-  }
-
-  public async getObjectMetadataFromDataSourceId(dataSourceId: string) {
-    return this.objectMetadataRepository.find({
-      where: { dataSourceId },
       relations: [
         'fields',
         'fields.fromRelationMetadata',
