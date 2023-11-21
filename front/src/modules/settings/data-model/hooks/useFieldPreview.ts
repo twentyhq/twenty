@@ -1,8 +1,7 @@
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
-import { Field } from '~/generated-metadata/graphql';
-import { assertNotNull } from '~/utils/assert';
+import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useFieldPreview = ({
   fieldMetadata,
@@ -26,13 +25,15 @@ export const useFieldPreview = ({
   const fieldName = fieldMetadata.id
     ? objectMetadataItem?.fields.find(({ id }) => id === fieldMetadata.id)?.name
     : undefined;
-  const value = fieldName ? firstRecord?.[fieldName] : undefined;
+  const value =
+    fieldName && fieldMetadata.type !== FieldMetadataType.Relation
+      ? firstRecord?.[fieldName]
+      : undefined;
 
   return {
     entityId: firstRecord?.id || `${objectMetadataId}-no-records`,
     FieldIcon,
     fieldName: fieldName || `${fieldMetadata.type}-new-field`,
-    hasValue: assertNotNull(value),
     ObjectIcon,
     objectMetadataItem,
     value,

@@ -81,7 +81,6 @@ export const SettingsObjectFieldPreview = ({
     entityId,
     FieldIcon,
     fieldName,
-    hasValue,
     ObjectIcon,
     objectMetadataItem,
     value,
@@ -98,8 +97,7 @@ export const SettingsObjectFieldPreview = ({
     imageIdentifierFormat,
   } = useRelationFieldPreview({
     relationObjectMetadataId,
-    skipDefaultValue:
-      fieldMetadata.type !== FieldMetadataType.Relation || hasValue,
+    skipDefaultValue: fieldMetadata.type !== FieldMetadataType.Relation,
   });
 
   const defaultValue =
@@ -110,7 +108,6 @@ export const SettingsObjectFieldPreview = ({
   if (
     !labelIdentifierFieldPaths ||
     !imageIdentifierUrlField ||
-    !imageIdentifierUrlPrefix ||
     !imageIdentifierFormat
   ) {
     return <></>;

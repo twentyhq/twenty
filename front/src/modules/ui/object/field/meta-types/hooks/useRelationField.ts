@@ -49,12 +49,12 @@ export const useRelationField = () => {
 
     return {
       id: record.id,
-      name: record[name],
+      name,
       avatarUrl:
         fieldDefinition.metadata.imageIdentifierUrlPrefix +
         record[fieldDefinition.metadata.imageIdentifierUrlField],
       avatarType: fieldDefinition.metadata.imageIdentifierFormat,
-      record: record,
+      record,
     };
   };
 

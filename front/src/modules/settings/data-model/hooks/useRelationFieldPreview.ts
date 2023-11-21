@@ -28,7 +28,11 @@ export const useRelationFieldPreview = ({
   } = useObjectMainIdentifier(relationObjectMetadataItem);
 
   return {
-    defaultValue: relationObjects?.[0],
+    defaultValue:
+      relationObjects?.[0] ||
+      (relationObjectMetadataItem
+        ? { name: relationObjectMetadataItem.nameSingular }
+        : undefined),
     labelIdentifierFieldPaths,
     imageIdentifierUrlField,
     imageIdentifierUrlPrefix,

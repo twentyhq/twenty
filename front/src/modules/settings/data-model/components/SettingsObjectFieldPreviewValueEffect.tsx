@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import { entityFieldsFamilySelector } from '@/ui/object/field/states/selectors/entityFieldsFamilySelector';
 
@@ -14,7 +14,7 @@ export const SettingsObjectFieldPreviewValueEffect = ({
   fieldName,
   value,
 }: SettingsObjectFieldPreviewValueEffectProps) => {
-  const [, setFieldValue] = useRecoilState(
+  const setFieldValue = useSetRecoilState(
     entityFieldsFamilySelector({
       entityId,
       fieldName,
