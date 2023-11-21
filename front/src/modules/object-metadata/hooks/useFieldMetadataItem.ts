@@ -1,5 +1,6 @@
-import { MetadataFieldDataType } from '@/settings/data-model/types/ObjectFieldDataType';
+import { FieldType } from '@/ui/object/field/types/FieldType';
 import { Field } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 import { formatFieldMetadataItemInput } from '../utils/formatFieldMetadataItemInput';
@@ -16,13 +17,13 @@ export const useFieldMetadataItem = () => {
   const createMetadataField = (
     input: Pick<Field, 'label' | 'icon' | 'description'> & {
       objectMetadataId: string;
-      type: MetadataFieldDataType;
+      type: FieldMetadataType;
     },
   ) =>
     createOneFieldMetadataItem({
       ...formatFieldMetadataItemInput(input),
       objectMetadataId: input.objectMetadataId,
-      type: input.type,
+      type: input.type as FieldType,
     });
 
   const editMetadataField = (

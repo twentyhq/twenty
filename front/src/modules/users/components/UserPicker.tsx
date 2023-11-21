@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
+import { useQuery } from '@apollo/client';
 
-import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
+import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useFilteredSearchEntityQueryV2 } from '@/search/hooks/useFilteredSearchEntityQueryV2';
 import { IconUserCircle } from '@/ui/display/icon';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useSearchUserQuery } from '~/generated/graphql';
 
 export type UserPickerProps = {
   userId: string;
@@ -15,10 +16,6 @@ export type UserPickerProps = {
   onCancel?: () => void;
   width?: number;
   initialSearchFilter?: string | null;
-};
-
-type UserForSelect = EntityForSelect & {
-  entityType: Entity.User;
 };
 
 export const UserPicker = ({
@@ -35,29 +32,36 @@ export const UserPicker = ({
     setRelationPickerSearchFilter(initialSearchFilter ?? '');
   }, [initialSearchFilter, setRelationPickerSearchFilter]);
 
-  const users = useFilteredSearchEntityQuery({
-    queryHook: useSearchUserQuery,
+  const { findManyQuery } = useFindOneObjectMetadataItem({
+    objectNameSingular: 'workspaceMemberV2',
+  });
+
+  const useFindManyWorkspaceMembers = (options: any) =>
+    useQuery(findManyQuery, options);
+
+  const workspaceMembers = useFilteredSearchEntityQueryV2({
+    queryHook: useFindManyWorkspaceMembers,
     filters: [
       {
-        fieldNames: ['firstName', 'lastName'],
+        fieldNames: ['name.firstName', 'name.lastName'],
         filter: relationPickerSearchFilter,
       },
     ],
-    orderByField: 'firstName',
-    mappingFunction: (user) => ({
-      entityType: Entity.User,
-      id: user.id,
-      name: user.displayName,
+    orderByField: 'createdAt',
+    mappingFunction: (workspaceMember) => ({
+      entityType: Entity.WorkspaceMember,
+      id: workspaceMember.id,
+      name:
+        workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName,
       avatarType: 'rounded',
-      avatarUrl: user.avatarUrl ?? '',
-      originalEntity: user,
+      avatarUrl: '',
+      originalEntity: workspaceMember,
     }),
     selectedIds: userId ? [userId] : [],
+    objectNamePlural: 'workspaceMembersV2',
   });
 
-  const handleEntitySelected = async (
-    selectedUser: UserForSelect | null | undefined,
-  ) => {
+  const handleEntitySelected = async (selectedUser: any | null | undefined) => {
     onSubmit(selectedUser ?? null);
   };
 
@@ -65,11 +69,11 @@ export const UserPicker = ({
     <SingleEntitySelect
       EmptyIcon={IconUserCircle}
       emptyLabel="No Owner"
-      entitiesToSelect={users.entitiesToSelect}
-      loading={users.loading}
+      entitiesToSelect={workspaceMembers.entitiesToSelect}
+      loading={workspaceMembers.loading}
       onCancel={onCancel}
       onEntitySelected={handleEntitySelected}
-      selectedEntity={users.selectedEntities[0]}
+      selectedEntity={workspaceMembers.selectedEntities[0]}
       width={width}
     />
   );

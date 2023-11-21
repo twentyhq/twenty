@@ -1,8 +1,6 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { graphql } from 'msw';
 
-import { CREATE_ACTIVITY_WITH_COMMENT } from '@/activities/graphql/mutations/createActivityWithComment';
-import { GET_ACTIVITIES } from '@/activities/graphql/queries/getActivities';
 import { CREATE_EVENT } from '@/analytics/graphql/queries/createEvent';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
 import { INSERT_ONE_COMPANY } from '@/companies/graphql/mutations/insertOneCompany';
@@ -12,8 +10,6 @@ import { INSERT_ONE_PERSON } from '@/people/graphql/mutations/insertOnePerson';
 import { UPDATE_ONE_PERSON } from '@/people/graphql/mutations/updateOnePerson';
 import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
 import { GET_PERSON } from '@/people/graphql/queries/getPerson';
-import { GET_PIPELINE_PROGRESS } from '@/pipeline/graphql/queries/getPipelineProgress';
-import { GET_PIPELINES } from '@/pipeline/graphql/queries/getPipelines';
 import { SEARCH_ACTIVITY_QUERY } from '@/search/graphql/queries/searchActivityQuery';
 import { SEARCH_COMPANY_QUERY } from '@/search/graphql/queries/searchCompanyQuery';
 import { SEARCH_PEOPLE_QUERY } from '@/search/graphql/queries/searchPeopleQuery';
@@ -22,7 +18,6 @@ import { GET_API_KEY } from '@/settings/developers/graphql/queries/getApiKey';
 import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import {
-  ActivityType,
   GetCompaniesQuery,
   GetPeopleQuery,
   GetPersonQuery,
@@ -33,15 +28,13 @@ import {
 } from '~/generated/graphql';
 import { mockedApiKeys } from '~/testing/mock-data/api-keys';
 
-import { mockedActivities, mockedTasks } from './mock-data/activities';
+import { mockedActivities } from './mock-data/activities';
 import {
   mockedCompaniesData,
   mockedEmptyCompanyData,
 } from './mock-data/companies';
 import { mockedObjectMetadataItems } from './mock-data/metadata';
 import { mockedEmptyPersonData, mockedPeopleData } from './mock-data/people';
-import { mockedPipelineProgressData } from './mock-data/pipeline-progress';
-import { mockedPipelinesData } from './mock-data/pipelines';
 import { mockedUsersData } from './mock-data/users';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 import { mockedViewsData } from './mock-data/views';
@@ -50,6 +43,7 @@ import {
   filterAndSortData,
   updateOneFromData,
 } from './mock-data';
+import { createEvent } from '@storybook/testing-library';
 
 const metadataGraphql = graphql.link(
   `${process.env.REACT_APP_SERVER_BASE_URL}/metadata`,
@@ -208,23 +202,7 @@ export const graphqlMocks = [
       );
     },
   ),
-  graphql.query(getOperationName(GET_PIPELINES) ?? '', (req, res, ctx) => {
-    return res(
-      ctx.data({
-        findManyPipeline: mockedPipelinesData,
-      }),
-    );
-  }),
-  graphql.query(
-    getOperationName(GET_PIPELINE_PROGRESS) ?? '',
-    (req, res, ctx) => {
-      return res(
-        ctx.data({
-          findManyPipelineProgress: mockedPipelineProgressData,
-        }),
-      );
-    },
-  ),
+
   graphql.mutation(getOperationName(CREATE_EVENT) ?? '', (req, res, ctx) => {
     return res(
       ctx.data({
@@ -250,16 +228,6 @@ export const graphqlMocks = [
       }),
     );
   }),
-  graphql.query(getOperationName(GET_ACTIVITIES) ?? '', (req, res, ctx) => {
-    return res(
-      ctx.data({
-        findManyActivities:
-          req?.variables?.where?.type?.equals === ActivityType.Task
-            ? mockedTasks
-            : mockedActivities,
-      }),
-    );
-  }),
 
   graphql.query(getOperationName(GET_API_KEY) ?? '', (req, res, ctx) => {
     return res(
@@ -275,16 +243,7 @@ export const graphqlMocks = [
       }),
     );
   }),
-  graphql.mutation(
-    getOperationName(CREATE_ACTIVITY_WITH_COMMENT) ?? '',
-    (req, res, ctx) => {
-      return res(
-        ctx.data({
-          createOneActivity: mockedTasks[0],
-        }),
-      );
-    },
-  ),
+
   graphql.mutation(
     getOperationName(INSERT_ONE_COMPANY) ?? '',
     (req, res, ctx) => {

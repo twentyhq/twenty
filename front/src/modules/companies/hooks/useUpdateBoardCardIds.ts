@@ -1,15 +1,13 @@
 import { useRecoilCallback } from 'recoil';
 
+import { Opportunity } from '@/pipeline/types/Opportunity';
 import { boardCardIdsByColumnIdFamilyState } from '@/ui/layout/board/states/boardCardIdsByColumnIdFamilyState';
 import { boardColumnsState } from '@/ui/layout/board/states/boardColumnsState';
-import { GetPipelineProgressQuery } from '~/generated/graphql';
 
 export const useUpdateCompanyBoardCardIds = () =>
   useRecoilCallback(
     ({ snapshot, set }) =>
-      (
-        pipelineProgresses: GetPipelineProgressQuery['findManyPipelineProgress'],
-      ) => {
+      (pipelineProgresses: Opportunity[]) => {
         const boardColumns = snapshot
           .getLoadable(boardColumnsState)
           .valueOrThrow();

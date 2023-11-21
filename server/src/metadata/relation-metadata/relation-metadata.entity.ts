@@ -1,5 +1,3 @@
-import { registerEnumType } from '@nestjs/graphql';
-
 import {
   Column,
   CreateDateColumn,
@@ -11,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { RelationMetadataInterface } from 'src/tenant/schema-builder/interfaces/relation-metadata.interface';
+import { RelationMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/relation-metadata.interface';
 
 import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
@@ -21,11 +19,6 @@ export enum RelationMetadataType {
   ONE_TO_MANY = 'ONE_TO_MANY',
   MANY_TO_MANY = 'MANY_TO_MANY',
 }
-
-registerEnumType(RelationMetadataType, {
-  name: 'RelationMetadataType',
-  description: 'Type of the relation',
-});
 
 @Entity('relationMetadata')
 export class RelationMetadataEntity implements RelationMetadataInterface {

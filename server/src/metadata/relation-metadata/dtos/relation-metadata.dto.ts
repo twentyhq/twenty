@@ -1,4 +1,10 @@
-import { ObjectType, ID, Field, HideField } from '@nestjs/graphql';
+import {
+  ObjectType,
+  ID,
+  Field,
+  HideField,
+  registerEnumType,
+} from '@nestjs/graphql';
 
 import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import {
@@ -10,6 +16,11 @@ import {
 
 import { ObjectMetadataDTO } from 'src/metadata/object-metadata/dtos/object-metadata.dto';
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
+
+registerEnumType(RelationMetadataType, {
+  name: 'RelationMetadataType',
+  description: 'Type of the relation',
+});
 
 @ObjectType('relation')
 @Authorize({

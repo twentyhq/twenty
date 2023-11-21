@@ -2,9 +2,10 @@ import { useParams } from 'react-router-dom';
 import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
-import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
+import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { filterAvailableFieldMetadataItem } from '@/object-record/utils/filterAvailableFieldMetadataItem';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
 import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { PageBody } from '@/ui/layout/page/PageBody';
@@ -24,6 +25,7 @@ import { PropertyBox } from '@/ui/object/record-inline-cell/property-box/compone
 import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { getLogoUrlFromDomainName } from '~/utils';
 
 import { useFindOneObjectRecord } from '../hooks/useFindOneObjectRecord';
 import { useUpdateOneObjectRecord } from '../hooks/useUpdateOneObjectRecord';
@@ -40,12 +42,16 @@ export const RecordShowPage = () => {
     objectNameSingular,
   });
 
+  const { favorites, createFavorite, deleteFavorite } = useFavorites({
+    objectNamePlural: foundObjectMetadataItem?.namePlural,
+  });
+
   const [, setEntityFields] = useRecoilState(
     entityFieldsFamilyState(objectMetadataId ?? ''),
   );
 
   const { object } = useFindOneObjectRecord({
-    objectMetadataId: objectMetadataId,
+    objectRecordId: objectMetadataId,
     objectNameSingular,
     onCompleted: (data) => {
       setEntityFields(data);
@@ -76,29 +82,61 @@ export const RecordShowPage = () => {
     return [updateEntity, { loading: false }];
   };
 
+  const isFavorite = objectNameSingular
+    ? favorites.some((favorite) => favorite.recordId === object?.id)
+    : false;
+
   const handleFavoriteButtonClick = async () => {
-    //
+    if (!objectNameSingular || !object) return;
+    if (isFavorite) deleteFavorite(object?.id);
+    else {
+      const additionalData =
+        objectNameSingular === 'personV2'
+          ? {
+              labelIdentifier:
+                object.name.firstName + ' ' + object.name.lastName,
+              avatarUrl: object.avatarUrl,
+              avatarType: 'rounded',
+              link: `/object/personV2/${object.id}`,
+              recordId: object.id,
+            }
+          : objectNameSingular === 'companyV2'
+          ? {
+              labelIdentifier: object.name,
+              avatarUrl: getLogoUrlFromDomainName(object.domainName ?? ''),
+              avatarType: 'squared',
+              link: `/object/companyV2/${object.id}`,
+              recordId: object.id,
+            }
+          : {};
+      createFavorite(object.id, additionalData);
+    }
   };
 
   if (!object) return <></>;
 
+  const pageName =
+    objectNameSingular === 'personV2'
+      ? object.name.firstName + ' ' + object.name.lastName
+      : object.name;
+
   return (
     <PageContainer>
-      <PageTitle title={object.name || 'No Name'} />
+      <PageTitle title={pageName} />
       <PageHeader
-        title={object.name ?? ''}
+        title={pageName ?? ''}
         hasBackButton
         Icon={IconBuildingSkyscraper}
       >
         <PageFavoriteButton
-          isFavorite={false}
+          isFavorite={isFavorite}
           onClick={handleFavoriteButtonClick}
         />
         <ShowPageAddButton
           key="add"
           entity={{
             id: object.id,
-            type: ActivityTargetableEntityType.Company,
+            type: 'Company',
           }}
         />
       </PageHeader>
@@ -122,6 +160,7 @@ export const RecordShowPage = () => {
                         .diff(DateTime.fromISO(b.createdAt))
                         .toMillis(),
                     )
+                    .filter(filterAvailableFieldMetadataItem)
                     .map((metadataField, index) => {
                       return (
                         <FieldContext.Provider
@@ -149,7 +188,7 @@ export const RecordShowPage = () => {
             <ShowPageRightContainer
               entity={{
                 id: object.id,
-                type: ActivityTargetableEntityType.Company,
+                type: 'Company',
               }}
               timeline
               tasks

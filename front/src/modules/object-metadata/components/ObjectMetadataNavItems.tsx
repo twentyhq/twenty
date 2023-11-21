@@ -8,7 +8,10 @@ import { useFindManyObjectMetadataItems } from '../hooks/useFindManyObjectMetada
 
 export const ObjectMetadataNavItems = () => {
   const { objectMetadataItems } = useFindManyObjectMetadataItems({
-    filter: {
+    objectFilter: {
+      isSystem: { is: false },
+    },
+    fieldFilter: {
       isSystem: { is: false },
     },
   });
@@ -19,6 +22,7 @@ export const ObjectMetadataNavItems = () => {
   return (
     <>
       {objectMetadataItems.map((objectMetadataItem) => {
+        if (objectMetadataItem.nameSingular === 'opportunityV2') return null;
         return (
           <NavItem
             key={objectMetadataItem.id}

@@ -1,4 +1,3 @@
-import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSearchCompanyQuery } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
@@ -23,7 +22,7 @@ export const useFilteredSearchCompanyQuery = ({
     orderByField: 'name',
     mappingFunction: (company) => ({
       id: company.id,
-      entityType: ActivityTargetableEntityType.Company,
+      entityType: 'Company',
       name: company.name,
       avatarUrl: getLogoUrlFromDomainName(company.domainName),
       domainName: company.domainName,

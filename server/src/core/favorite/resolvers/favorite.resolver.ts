@@ -1,7 +1,12 @@
-import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Args,
+  Mutation,
+  InputType,
+  Field,
+} from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import { InputType } from '@nestjs/graphql';
-import { Field } from '@nestjs/graphql';
 
 import { Prisma, Workspace } from '@prisma/client';
 
