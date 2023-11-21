@@ -2,9 +2,22 @@ import { useEffect } from 'react';
 
 import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
 import { IdentifiersMapper } from '@/ui/input/components/internal/relation-picker/types/IdentifiersMapper';
+import { getLogoUrlFromDomainName } from '~/utils';
 
 export const ObjectMetadataItemsRelationPickerEffect = () => {
-  const { setIdentifiersMapper } = useRelationPicker();
+  const { setIdentifiersMapper, setSearchQuery } = useRelationPicker();
+
+  const computeFilterFields = (relationPickerType: string) => {
+    if (relationPickerType === 'company') {
+      return ['name'];
+    }
+
+    if (['workspaceMember', 'person'].includes(relationPickerType)) {
+      return ['name.firstName', 'name.lastName'];
+    }
+
+    return ['name'];
+  };
 
   const identifierMapper: IdentifiersMapper = (
     record: any,
@@ -18,16 +31,28 @@ export const ObjectMetadataItemsRelationPickerEffect = () => {
       return {
         id: record.id,
         name: record.name,
-        avatarUrl: record.avatarUrl,
+        avatarUrl: getLogoUrlFromDomainName(record.domainName ?? ''),
         avatarType: 'squared',
         record: record,
       };
     }
 
-    if (objectMetadataItemSingularName === 'workspaceMember') {
+    if (
+      ['workspaceMember', 'person'].includes(objectMetadataItemSingularName)
+    ) {
       return {
         id: record.id,
         name: record.name.firstName + ' ' + record.name.lastName,
+        avatarUrl: record.avatarUrl,
+        avatarType: 'rounded',
+        record: record,
+      };
+    }
+
+    if (['opportunity'].includes(objectMetadataItemSingularName)) {
+      return {
+        id: record.id,
+        name: record.company.name,
         avatarUrl: record.avatarUrl,
         avatarType: 'rounded',
         record: record,
@@ -45,7 +70,10 @@ export const ObjectMetadataItemsRelationPickerEffect = () => {
 
   useEffect(() => {
     setIdentifiersMapper(() => identifierMapper);
-  }, [setIdentifiersMapper]);
+    setSearchQuery({
+      computeFilterFields,
+    });
+  }, [setIdentifiersMapper, setSearchQuery]);
 
   return <></>;
 };

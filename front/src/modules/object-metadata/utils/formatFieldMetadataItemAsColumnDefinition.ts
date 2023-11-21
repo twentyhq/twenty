@@ -1,3 +1,4 @@
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { parseFieldRelationType } from '@/object-metadata/utils/parseFieldRelationType';
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
@@ -9,9 +10,11 @@ import { parseFieldType } from './parseFieldType';
 export const formatFieldMetadataItemAsColumnDefinition = ({
   position,
   field,
+  objectMetadataItem,
 }: {
   position: number;
   field: FieldMetadataItem;
+  objectMetadataItem: ObjectMetadataItem;
 }): ColumnDefinition<FieldMetadata> => {
   const relationObjectMetadataItem =
     field.toRelationMetadata?.fromObjectMetadata;
@@ -26,9 +29,11 @@ export const formatFieldMetadataItemAsColumnDefinition = ({
       fieldName: field.name,
       placeHolder: field.label,
       relationType: parseFieldRelationType(field),
-      objectMetadataNameSingular:
+      relationObjectMetadataNameSingular:
         relationObjectMetadataItem?.nameSingular ?? '',
-      objectMetadataNamePlural: relationObjectMetadataItem?.namePlural ?? '',
+      relationObjectMetadataNamePlural:
+        relationObjectMetadataItem?.namePlural ?? '',
+      objectMetadataNameSingular: objectMetadataItem.nameSingular ?? '',
     },
     iconName: field.icon ?? 'Icon123',
     isVisible: true,

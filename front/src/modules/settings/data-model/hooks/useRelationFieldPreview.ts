@@ -1,5 +1,6 @@
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { capitalize } from '~/utils/string/capitalize';
 
 export const useRelationFieldPreview = ({
   relationObjectMetadataId,
@@ -20,6 +21,9 @@ export const useRelationFieldPreview = ({
   });
 
   return {
-    defaultValue: relationObjects?.[0],
+    relationObjectMetadataItem,
+    defaultValue: relationObjects?.[0] ?? {
+      name: capitalize(relationObjectMetadataItem?.nameSingular ?? ''),
+    },
   };
 };

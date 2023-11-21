@@ -13,7 +13,7 @@ export const RelationFieldDisplay = () => {
 
   const objectIdentifiers = identifiersMapper(
     fieldValue,
-    fieldDefinition.metadata.objectMetadataNameSingular,
+    fieldDefinition.metadata.relationObjectMetadataNameSingular,
   );
 
   return (

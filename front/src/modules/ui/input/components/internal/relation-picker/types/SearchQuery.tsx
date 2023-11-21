@@ -1,3 +1,3 @@
 export type SearchQuery = {
-  filterFields: (relationPickerType: string) => string[];
+  computeFilterFields: (relationPickerType: string) => string[];
 };

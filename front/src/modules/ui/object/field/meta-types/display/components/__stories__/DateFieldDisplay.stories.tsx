@@ -26,7 +26,7 @@ const meta: Meta = {
       <FieldContext.Provider
         value={{
           entityId: '',
-          isMainIdentifier: false,
+          isLabelIdentifier: false,
           fieldDefinition: {
             fieldMetadataId: 'date',
             label: 'Date',

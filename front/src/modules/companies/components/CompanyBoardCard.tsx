@@ -239,7 +239,7 @@ export const CompanyBoardCard = () => {
                   value={{
                     entityId: boardCardId,
                     recoilScopeId: boardCardId + viewField.fieldMetadataId,
-                    isMainIdentifier: false,
+                    isLabelIdentifier: false,
                     fieldDefinition: {
                       fieldMetadataId: viewField.fieldMetadataId,
                       label: viewField.label,

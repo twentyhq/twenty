@@ -22,13 +22,16 @@ export const useComputeDefinitionsFromFieldMetadata = (
 
   const columnDefinitions: ColumnDefinition<FieldMetadata>[] = useMemo(
     () =>
-      activeFieldMetadataItems.map((field, index) =>
-        formatFieldMetadataItemAsColumnDefinition({
-          position: index,
-          field,
-        }),
-      ),
-    [activeFieldMetadataItems],
+      objectMetadataItem
+        ? activeFieldMetadataItems.map((field, index) =>
+            formatFieldMetadataItemAsColumnDefinition({
+              position: index,
+              field,
+              objectMetadataItem,
+            }),
+          )
+        : [],
+    [activeFieldMetadataItems, objectMetadataItem],
   );
 
   const filterDefinitions = formatFieldMetadataItemsAsFilterDefinitions({
