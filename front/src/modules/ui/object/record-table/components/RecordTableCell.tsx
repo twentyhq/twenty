@@ -62,7 +62,7 @@ export const RecordTableCell = ({ cellIndex }: { cellIndex: number }) => {
               hotkeyScope: customHotkeyScope,
               isMainIdentifier:
                 columnDefinition.fieldMetadataId ===
-                objectMetadataConfig?.mainIdentifierFieldMetadataId,
+                objectMetadataConfig?.labelIdentifierFieldMetadataId,
             }}
           >
             <TableCell customHotkeyScope={{ scope: customHotkeyScope }} />
