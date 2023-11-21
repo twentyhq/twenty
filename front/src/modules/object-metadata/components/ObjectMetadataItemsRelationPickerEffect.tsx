@@ -49,6 +49,16 @@ export const ObjectMetadataItemsRelationPickerEffect = () => {
       };
     }
 
+    if (['opportunity'].includes(objectMetadataItemSingularName)) {
+      return {
+        id: record.id,
+        name: record.company.name,
+        avatarUrl: record.avatarUrl,
+        avatarType: 'rounded',
+        record: record,
+      };
+    }
+
     return {
       id: record.id,
       name: record.name,
