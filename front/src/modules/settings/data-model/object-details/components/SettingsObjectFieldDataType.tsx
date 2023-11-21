@@ -1,4 +1,4 @@
-import { ClassNames, css, useTheme } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
@@ -49,23 +49,18 @@ const StyledLabelContainer = styled.div`
 export const SettingsObjectFieldDataType = ({
   onClick,
   value,
-  Icon = settingsFieldMetadataTypes?.[value]?.Icon,
-  label = settingsFieldMetadataTypes?.[value]?.label,
+  Icon = settingsFieldMetadataTypes[value].Icon,
+  label = settingsFieldMetadataTypes[value].label,
 }: SettingsObjectFieldDataTypeProps) => {
   const theme = useTheme();
 
+  const StyledIcon = styled(Icon)`
+    flex: 1 0 auto;
+  `;
+
   return (
     <StyledDataType onClick={onClick} value={value}>
-      <ClassNames>
-        {({ css }) => (
-          <Icon
-            className={css`
-              flex: 1 0 auto;
-            `}
-            size={theme.icon.size.sm}
-          />
-        )}
-      </ClassNames>
+      <StyledIcon size={theme.icon.size.sm} />
       <StyledLabelContainer>{label}</StyledLabelContainer>
     </StyledDataType>
   );
