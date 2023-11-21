@@ -42,7 +42,8 @@ export const ObjectMetadataItemsRelationPickerEffect = () => {
     ) {
       return {
         id: record.id,
-        name: record.name.firstName + ' ' + record.name.lastName,
+        name:
+          (record.name?.firstName ?? '') + ' ' + (record.name?.lastName ?? ''),
         avatarUrl: record.avatarUrl,
         avatarType: 'rounded',
         record: record,
@@ -52,7 +53,7 @@ export const ObjectMetadataItemsRelationPickerEffect = () => {
     if (['opportunity'].includes(objectMetadataItemSingularName)) {
       return {
         id: record.id,
-        name: record.company.name,
+        name: record?.company?.name,
         avatarUrl: record.avatarUrl,
         avatarType: 'rounded',
         record: record,

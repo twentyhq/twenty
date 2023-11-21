@@ -20,10 +20,15 @@ export const useRelationFieldPreview = ({
     skip: skipDefaultValue || !relationObjectMetadataItem,
   });
 
+  const mockValueName = capitalize(
+    relationObjectMetadataItem?.nameSingular ?? '',
+  );
+
   return {
     relationObjectMetadataItem,
     defaultValue: relationObjects?.[0] ?? {
-      name: capitalize(relationObjectMetadataItem?.nameSingular ?? ''),
+      company: { name: mockValueName }, // Temporary mock for opportunities, this needs to be replaced once labelIdentifiers are implemented
+      name: mockValueName,
     },
   };
 };
