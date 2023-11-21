@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { dataTypes } from '../../constants/dataTypes';
+import { settingsFieldMetadataTypes } from '../../constants/settingsFieldMetadataTypes';
 
 type SettingsObjectFieldDataTypeProps = {
   onClick?: () => void;
@@ -49,8 +49,8 @@ const StyledLabelContainer = styled.div`
 export const SettingsObjectFieldDataType = ({
   onClick,
   value,
-  Icon = dataTypes?.[value]?.Icon,
-  label = dataTypes?.[value]?.label,
+  Icon = settingsFieldMetadataTypes?.[value]?.Icon,
+  label = settingsFieldMetadataTypes?.[value]?.label,
 }: SettingsObjectFieldDataTypeProps) => {
   const theme = useTheme();
 

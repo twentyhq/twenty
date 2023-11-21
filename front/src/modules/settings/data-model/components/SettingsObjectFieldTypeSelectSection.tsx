@@ -5,8 +5,8 @@ import { Select } from '@/ui/input/components/Select';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { dataTypes } from '../constants/dataTypes';
 import { relationTypes } from '../constants/relationTypes';
+import { settingsFieldMetadataTypes } from '../constants/settingsFieldMetadataTypes';
 
 import {
   SettingsObjectFieldPreview,
@@ -55,11 +55,11 @@ export const SettingsObjectFieldTypeSelectSection = ({
 }: SettingsObjectFieldTypeSelectSectionProps) => {
   const relationFormConfig = values?.relation;
 
-  const fieldTypeOptions = Object.entries(dataTypes)
+  const fieldTypeOptions = Object.entries(settingsFieldMetadataTypes)
     .filter(([key]) => !excludedFieldTypes?.includes(key as FieldMetadataType))
-    .map(([key, dataType]) => ({
+    .map(([key, dataTypeConfig]) => ({
       value: key as FieldMetadataType,
-      ...dataType,
+      ...dataTypeConfig,
     }));
 
   return (

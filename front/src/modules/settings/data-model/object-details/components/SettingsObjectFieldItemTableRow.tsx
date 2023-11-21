@@ -10,8 +10,8 @@ import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
-import { dataTypes } from '../../constants/dataTypes';
 import { relationTypes } from '../../constants/relationTypes';
+import { settingsFieldMetadataTypes } from '../../constants/settingsFieldMetadataTypes';
 
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
@@ -43,7 +43,8 @@ export const SettingsObjectFieldItemTableRow = ({
   const navigate = useNavigate();
 
   // TODO: parse with zod and merge types with FieldType (create a subset of FieldType for example)
-  const fieldDataTypeIsSupported = fieldMetadataItem.type in dataTypes;
+  const fieldDataTypeIsSupported =
+    fieldMetadataItem.type in settingsFieldMetadataTypes;
 
   const { relationObjectMetadataItem, relationType } = useRelationMetadata({
     fieldMetadataItem,
