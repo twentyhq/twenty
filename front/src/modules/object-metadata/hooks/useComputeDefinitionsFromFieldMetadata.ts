@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
@@ -10,26 +12,27 @@ import { formatFieldMetadataItemsAsSortDefinitions } from '../utils/formatFieldM
 export const useComputeDefinitionsFromFieldMetadata = (
   objectMetadataItem?: Nullable<ObjectMetadataItem>,
 ) => {
-  if (!objectMetadataItem) {
-    return {
-      columnDefinitions: [],
-      filterDefinitions: [],
-      sortDefinitions: [],
-    };
-  }
-
-  const activeFieldMetadataItems = objectMetadataItem.fields.filter(
-    ({ isActive }) => isActive,
+  const activeFieldMetadataItems = useMemo(
+    () =>
+      objectMetadataItem
+        ? objectMetadataItem.fields.filter(({ isActive }) => isActive)
+        : [],
+    [objectMetadataItem],
   );
 
-  const columnDefinitions: ColumnDefinition<FieldMetadata>[] =
-    activeFieldMetadataItems.map((field, index) =>
-      formatFieldMetadataItemAsColumnDefinition({
-        position: index,
-        field,
-        objectMetadataItem,
-      }),
-    );
+  const columnDefinitions: ColumnDefinition<FieldMetadata>[] = useMemo(
+    () =>
+      objectMetadataItem
+        ? activeFieldMetadataItems.map((field, index) =>
+            formatFieldMetadataItemAsColumnDefinition({
+              position: index,
+              field,
+              objectMetadataItem,
+            }),
+          )
+        : [],
+    [activeFieldMetadataItems, objectMetadataItem],
+  );
 
   const filterDefinitions = formatFieldMetadataItemsAsFilterDefinitions({
     fields: activeFieldMetadataItems,

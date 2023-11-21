@@ -1,1 +1,6 @@
-export type FilterType = 'TEXT' | 'DATE_TIME' | 'ENTITY' | 'NUMBER';
+export type FilterType =
+  | 'TEXT'
+  | 'DATE_TIME'
+  | 'ENTITY'
+  | 'NUMBER'
+  | 'CURRENCY';

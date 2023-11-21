@@ -13,8 +13,10 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
       ![
         FieldMetadataType.DateTime,
         FieldMetadataType.Number,
+        FieldMetadataType.Currency,
         FieldMetadataType.Text,
-      ].includes(field.type)
+      ].includes(field.type) ||
+      field.name === 'probability'
     ) {
       return acc;
     }
@@ -34,5 +36,7 @@ const formatFieldMetadataItemAsFilterDefinition = ({
       ? 'DATE_TIME'
       : field.type === FieldMetadataType.Number
       ? 'NUMBER'
+      : field.type === FieldMetadataType.Currency
+      ? 'CURRENCY'
       : 'TEXT',
 });
