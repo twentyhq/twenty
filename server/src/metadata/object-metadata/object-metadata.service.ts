@@ -60,8 +60,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   override async createOne(
     record: CreateObjectInput,
   ): Promise<ObjectMetadataEntity> {
+    const lastDataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        record.workspaceId,
+      );
+
     const createdObjectMetadata = await super.createOne({
       ...record,
+      dataSourceId: lastDataSourceMetadata.id,
       targetTableName: `_${record.nameSingular}`,
       isActive: true,
       isCustom: true,
@@ -194,23 +200,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   public async getObjectMetadataFromWorkspaceId(workspaceId: string) {
     return this.objectMetadataRepository.find({
       where: { workspaceId },
-      relations: [
-        'fields',
-        'fields.fromRelationMetadata',
-        'fields.fromRelationMetadata.fromObjectMetadata',
-        'fields.fromRelationMetadata.toObjectMetadata',
-        'fields.fromRelationMetadata.toObjectMetadata.fields',
-        'fields.toRelationMetadata',
-        'fields.toRelationMetadata.fromObjectMetadata',
-        'fields.toRelationMetadata.fromObjectMetadata.fields',
-        'fields.toRelationMetadata.toObjectMetadata',
-      ],
-    });
-  }
-
-  public async getObjectMetadataFromDataSourceId(dataSourceId: string) {
-    return this.objectMetadataRepository.find({
-      where: { dataSourceId },
       relations: [
         'fields',
         'fields.fromRelationMetadata',
