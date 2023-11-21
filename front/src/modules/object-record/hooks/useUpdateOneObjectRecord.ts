@@ -18,29 +18,28 @@ export const useUpdateOneObjectRecord = <T>({
   // TODO: type this with a minimal type at least with Record<string, any>
   const [mutate] = useMutation(updateOneMutation);
 
-  const updateOneObject =
-    objectNameSingular && foundObjectMetadataItem
-      ? async ({
-          idToUpdate,
-          input,
-        }: {
-          idToUpdate: string;
-          input: Record<string, any>;
-        }) => {
-          const updatedObject = await mutate({
-            variables: {
-              idToUpdate: idToUpdate,
-              input: {
-                ...input,
-              },
-            },
-          });
+  const updateOneObject = async ({
+    idToUpdate,
+    input,
+  }: {
+    idToUpdate: string;
+    input: Record<string, any>;
+  }) => {
+    if (!foundObjectMetadataItem || !objectNameSingular) {
+      return null;
+    }
 
-          return updatedObject.data[
-            `update${capitalize(objectNameSingular)}`
-          ] as T;
-        }
-      : undefined;
+    const updatedObject = await mutate({
+      variables: {
+        idToUpdate: idToUpdate,
+        input: {
+          ...input,
+        },
+      },
+    });
+
+    return updatedObject.data[`update${capitalize(objectNameSingular)}`] as T;
+  };
 
   return {
     updateOneObject,

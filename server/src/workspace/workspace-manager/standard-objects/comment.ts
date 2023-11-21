@@ -37,7 +37,7 @@ const commentMetadata = {
       },
       description: 'Comment author',
       icon: 'IconCircleUser',
-      isNullable: false,
+      isNullable: true,
     },
     {
       isCustom: false,
@@ -50,7 +50,7 @@ const commentMetadata = {
       },
       description: 'Comment activity',
       icon: 'IconNotes',
-      isNullable: false,
+      isNullable: true,
     },
   ],
 };

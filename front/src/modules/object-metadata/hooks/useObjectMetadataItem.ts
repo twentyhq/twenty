@@ -26,7 +26,7 @@ export const EMPTY_MUTATION = gql`
 export const useObjectMetadataItem = ({
   objectNamePlural,
   objectNameSingular,
-}: ObjectMetadataItemIdentifier & { skip?: boolean }) => {
+}: ObjectMetadataItemIdentifier) => {
   const objectMetadataItem = useRecoilValue(
     objectMetadataItemFamilySelector({
       objectNamePlural,
@@ -56,7 +56,15 @@ export const useObjectMetadataItem = ({
     objectMetadataItem,
   });
 
+  const labelIdentifierFieldMetadataId = objectMetadataItem?.fields.find(
+    ({ name }) => name === 'name',
+  )?.id;
+
+  const basePathToShowPage = `/object/${objectMetadataItem?.nameSingular}/`;
+
   return {
+    labelIdentifierFieldMetadataId,
+    basePathToShowPage,
     objectMetadataItem,
     objectNotFoundInMetadata,
     findManyQuery,

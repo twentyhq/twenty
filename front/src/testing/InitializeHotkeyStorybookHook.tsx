@@ -7,7 +7,11 @@ export const InitializeHotkeyStorybookHookEffect = () => {
   const setHotkeyScope = useSetHotkeyScope();
 
   useEffect(() => {
-    setHotkeyScope(AppHotkeyScope.App, { commandMenu: true, goto: false });
+    setHotkeyScope(AppHotkeyScope.App, {
+      commandMenu: true,
+      goto: false,
+      keyboardShortcutMenu: true,
+    });
   }, [setHotkeyScope]);
 
   return <></>;

@@ -8,8 +8,9 @@ export const getOperandsForFilterType = (
   switch (filterType) {
     case 'TEXT':
       return [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain];
+    case 'CURRENCY':
     case 'NUMBER':
-    case 'DATE':
+    case 'DATE_TIME':
       return [ViewFilterOperand.GreaterThan, ViewFilterOperand.LessThan];
     case 'ENTITY':
       return [ViewFilterOperand.Is, ViewFilterOperand.IsNot];

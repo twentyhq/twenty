@@ -9,6 +9,7 @@ import {
 import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import {
   Authorize,
+  BeforeDeleteOne,
   IDField,
   QueryOptions,
   Relation,
@@ -16,6 +17,7 @@ import {
 
 import { ObjectMetadataDTO } from 'src/metadata/object-metadata/dtos/object-metadata.dto';
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { BeforeDeleteOneRelation } from 'src/metadata/relation-metadata/hooks/before-delete-one-field.hook';
 
 registerEnumType(RelationMetadataType, {
   name: 'RelationMetadataType',
@@ -34,6 +36,7 @@ registerEnumType(RelationMetadataType, {
   disableSort: true,
   maxResultsSize: 1000,
 })
+@BeforeDeleteOne(BeforeDeleteOneRelation)
 @Relation('fromObjectMetadata', () => ObjectMetadataDTO)
 @Relation('toObjectMetadata', () => ObjectMetadataDTO)
 export class RelationMetadataDTO {

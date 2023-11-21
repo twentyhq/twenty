@@ -18,7 +18,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 const defaultDateValue = new Date();
 defaultDateValue.setFullYear(defaultDateValue.getFullYear() + 2);
 
-export const dataTypes: Record<
+export const settingsFieldMetadataTypes: Record<
   FieldMetadataType,
   { label: string; Icon: IconComponent; defaultValue?: unknown }
 > = {
@@ -48,8 +48,8 @@ export const dataTypes: Record<
     Icon: IconCheck,
     defaultValue: true,
   },
-  [FieldMetadataType.Date]: {
-    label: 'Date',
+  [FieldMetadataType.DateTime]: {
+    label: 'Date & Time',
     Icon: IconCalendarEvent,
     defaultValue: defaultDateValue.toISOString(),
   },

@@ -157,7 +157,7 @@ export const SettingsObjectFieldEdit = () => {
           }}
           objectMetadataId={activeObjectMetadataItem.id}
           onChange={handleFormChange}
-          relationFieldMetadataId={relationFieldMetadataItem?.id}
+          relationFieldMetadata={relationFieldMetadataItem}
           values={{
             type: formValues.type,
             relation: formValues.relation,

@@ -19,7 +19,7 @@ export const PipelineAddButton = () => {
 
   const handleCompanySelected = (
     selectedCompany: EntityForSelect | null,
-    selectedPipelineStageId: string | null,
+    selectedPipelineStepId: string | null,
   ) => {
     if (!selectedCompany?.id) {
       enqueueSnackBar(
@@ -33,7 +33,7 @@ export const PipelineAddButton = () => {
       return;
     }
 
-    if (!selectedPipelineStageId) {
+    if (!selectedPipelineStepId) {
       enqueueSnackBar(
         'There was a problem with the pipeline stage selection, please retry.',
         {
@@ -45,7 +45,7 @@ export const PipelineAddButton = () => {
       return;
     }
     closeDropdown();
-    //createCompanyProgress(selectedCompany.id, selectedPipelineStageId);
+    //createCompanyProgress(selectedCompany.id, selectedPipelineStepId);
   };
 
   return (

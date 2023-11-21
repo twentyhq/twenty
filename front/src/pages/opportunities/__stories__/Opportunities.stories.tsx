@@ -43,17 +43,17 @@ export const AddCompanyFromHeader: Story = {
     });
 
     await step('Change pipeline stage', async () => {
-      const pipelineStageDropdownHeader = await canvas.findByRole(
+      const pipelineStepDropdownHeader = await canvas.findByRole(
         'listitem',
         { name: (_, element) => !!element?.textContent?.includes('New') },
         { timeout: 1000 },
       );
 
-      const pipelineStageDropdownUnfoldButton = within(
-        pipelineStageDropdownHeader,
+      const pipelineStepDropdownUnfoldButton = within(
+        pipelineStepDropdownHeader,
       ).getByRole('button');
 
-      await userEvent.click(pipelineStageDropdownUnfoldButton);
+      await userEvent.click(pipelineStepDropdownUnfoldButton);
 
       const menuItem1 = await canvas.findByRole(
         'listitem',

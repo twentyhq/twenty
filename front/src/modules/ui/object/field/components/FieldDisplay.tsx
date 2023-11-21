@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 
+import { ChipFieldDisplay } from '@/ui/object/field/meta-types/display/components/ChipFieldDisplay';
 import { FullNameFieldDisplay } from '@/ui/object/field/meta-types/display/components/FullNameFieldDisplay';
 import { LinkFieldDisplay } from '@/ui/object/field/meta-types/display/components/LinkFieldDisplay';
 import { RelationFieldDisplay } from '@/ui/object/field/meta-types/display/components/RelationFieldDisplay';
@@ -16,7 +17,7 @@ import { NumberFieldDisplay } from '../meta-types/display/components/NumberField
 import { PhoneFieldDisplay } from '../meta-types/display/components/PhoneFieldDisplay';
 import { TextFieldDisplay } from '../meta-types/display/components/TextFieldDisplay';
 import { isFieldCurrency } from '../types/guards/isFieldCurrency';
-import { isFieldDate } from '../types/guards/isFieldDate';
+import { isFieldDateTime } from '../types/guards/isFieldDateTime';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldPhone } from '../types/guards/isFieldPhone';
@@ -24,8 +25,14 @@ import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldText } from '../types/guards/isFieldText';
 
 export const FieldDisplay = () => {
-  const { fieldDefinition } = useContext(FieldContext);
+  const { fieldDefinition, isLabelIdentifier } = useContext(FieldContext);
 
+  if (
+    isLabelIdentifier &&
+    (isFieldText(fieldDefinition) || isFieldFullName(fieldDefinition))
+  ) {
+    return <ChipFieldDisplay />;
+  }
   return (
     <>
       {isFieldRelation(fieldDefinition) ? (
@@ -36,7 +43,7 @@ export const FieldDisplay = () => {
         <UuidFieldDisplay />
       ) : isFieldEmail(fieldDefinition) ? (
         <EmailFieldDisplay />
-      ) : isFieldDate(fieldDefinition) ? (
+      ) : isFieldDateTime(fieldDefinition) ? (
         <DateFieldDisplay />
       ) : isFieldNumber(fieldDefinition) ? (
         <NumberFieldDisplay />

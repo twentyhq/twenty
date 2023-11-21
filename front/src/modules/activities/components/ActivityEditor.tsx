@@ -13,8 +13,6 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { debounce } from '~/utils/debounce';
 
-import { ActivityRelationEditableField } from '../editable-fields/components/ActivityRelationEditableField';
-
 import { ActivityTitle } from './ActivityTitle';
 
 import '@blocknote/core/style.css';
@@ -74,6 +72,10 @@ export const ActivityEditor = ({
 }: ActivityEditorProps) => {
   const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
     useState<boolean>(false);
+
+  console.log({
+    activity,
+  });
 
   const [title, setTitle] = useState<string | null>(activity.title ?? '');
   const [completedAt, setCompletedAt] = useState<string | null>(
@@ -149,7 +151,7 @@ export const ActivityEditor = ({
                 </RecoilScope> */}
               </>
             )}
-            <ActivityRelationEditableField activity={activity} />
+            {/* <ActivityRelationEditableField activity={activity} /> */}
           </PropertyBox>
         </StyledTopContainer>
         <ActivityBodyEditor
@@ -159,10 +161,7 @@ export const ActivityEditor = ({
       </StyledUpperPartContainer>
       {showComment && (
         <ActivityComments
-          activity={{
-            id: activity.id,
-            comments: activity.comments ?? [],
-          }}
+          activity={activity}
           scrollableContainerRef={containerRef}
         />
       )}

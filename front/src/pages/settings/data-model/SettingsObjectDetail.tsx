@@ -94,7 +94,7 @@ export const SettingsObjectDetail = () => {
                 {activeMetadataFields.map((activeMetadataField) => (
                   <SettingsObjectFieldItemTableRow
                     key={activeMetadataField.id}
-                    fieldItem={activeMetadataField}
+                    fieldMetadataItem={activeMetadataField}
                     ActionIcon={
                       <SettingsObjectFieldActiveActionDropdown
                         isCustomField={activeMetadataField.isCustom}
@@ -116,7 +116,7 @@ export const SettingsObjectDetail = () => {
                 {disabledMetadataFields.map((disabledMetadataField) => (
                   <SettingsObjectFieldItemTableRow
                     key={disabledMetadataField.id}
-                    fieldItem={disabledMetadataField}
+                    fieldMetadataItem={disabledMetadataField}
                     ActionIcon={
                       <SettingsObjectFieldDisabledActionDropdown
                         isCustomField={disabledMetadataField.isCustom}

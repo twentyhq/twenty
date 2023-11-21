@@ -1,5 +1,4 @@
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
-import { MainIdentifierMapper } from '@/ui/object/field/types/MainIdentifierMapper';
 
 export type FieldUuidMetadata = {
   fieldName: string;
@@ -10,11 +9,12 @@ export type FieldBooleanMetadata = {
 };
 
 export type FieldTextMetadata = {
+  objectMetadataNameSingular: string;
   placeHolder: string;
   fieldName: string;
 };
 
-export type FieldDateMetadata = {
+export type FieldDateTimeMetadata = {
   placeHolder: string;
   fieldName: string;
 };
@@ -37,6 +37,7 @@ export type FieldCurrencyMetadata = {
 };
 
 export type FieldFullNameMetadata = {
+  objectMetadataNameSingular: string;
   placeHolder: string;
   fieldName: string;
 };
@@ -65,16 +66,14 @@ export type FieldRelationMetadata = {
   fieldName: string;
   useEditButton?: boolean;
   relationType?: FieldDefinitionRelationType;
-  mainIdentifierMapper: MainIdentifierMapper;
-  searchFields: string[];
-  objectMetadataNameSingular: string;
-  objectMetadataNamePlural: string;
+  relationObjectMetadataNameSingular: string;
+  relationObjectMetadataNamePlural: string;
 };
 
 export type FieldMetadata =
   | FieldBooleanMetadata
   | FieldNumberMetadata
-  | FieldDateMetadata
+  | FieldDateTimeMetadata
   | FieldTextMetadata
   | FieldUuidMetadata
   | FieldCurrencyMetadata
@@ -87,7 +86,7 @@ export type FieldMetadata =
 
 export type FieldTextValue = string;
 export type FieldUUidValue = string;
-export type FieldDateValue = string | null;
+export type FieldDateTimeValue = string | null;
 export type FieldNumberValue = number | null;
 export type FieldBooleanValue = boolean;
 

@@ -12,7 +12,7 @@ export const NewCompanyProgressButton = () => {
   const [isCreatingCard, setIsCreatingCard] = useState(false);
   const column = useContext(BoardColumnContext);
 
-  const pipelineStageId = column?.columnDefinition.id || '';
+  const pipelineStepId = column?.columnDefinition.id || '';
 
   const { enqueueSnackBar } = useSnackBar();
 
@@ -25,7 +25,7 @@ export const NewCompanyProgressButton = () => {
     setIsCreatingCard(false);
     goBackToPreviousHotkeyScope();
 
-    if (!pipelineStageId) {
+    if (!pipelineStepId) {
       enqueueSnackBar('Pipeline stage id is not defined', {
         variant: 'error',
       });
@@ -33,7 +33,7 @@ export const NewCompanyProgressButton = () => {
       throw new Error('Pipeline stage id is not defined');
     }
 
-    //createCompanyProgress(company.id, pipelineStageId);
+    //createCompanyProgress(company.id, pipelineStepId);
   };
 
   const handleNewClick = useCallback(() => {

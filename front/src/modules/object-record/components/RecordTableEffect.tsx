@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 
 import { useComputeDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useComputeDefinitionsFromFieldMetadata';
-import { useObjectMainIdentifier } from '@/object-metadata/hooks/useObjectMainIdentifier';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
@@ -17,15 +16,13 @@ export const RecordTableEffect = () => {
     setObjectMetadataConfig,
   } = useRecordTable();
 
-  const { objectMetadataItem } = useObjectMetadataItem({
+  const {
+    objectMetadataItem,
+    basePathToShowPage,
+    labelIdentifierFieldMetadataId,
+  } = useObjectMetadataItem({
     objectNamePlural,
   });
-
-  const {
-    mainIdentifierMapper,
-    basePathToShowPage,
-    mainIdentifierFieldMetadataId,
-  } = useObjectMainIdentifier(objectMetadataItem);
 
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
     useComputeDefinitionsFromFieldMetadata(objectMetadataItem);
@@ -40,22 +37,16 @@ export const RecordTableEffect = () => {
   } = useView();
 
   useEffect(() => {
-    if (
-      mainIdentifierMapper &&
-      basePathToShowPage &&
-      mainIdentifierFieldMetadataId
-    ) {
+    if (basePathToShowPage && labelIdentifierFieldMetadataId) {
       setObjectMetadataConfig?.({
-        mainIdentifierMapper,
         basePathToShowPage,
-        mainIdentifierFieldMetadataId,
+        labelIdentifierFieldMetadataId,
       });
     }
   }, [
     basePathToShowPage,
     objectMetadataItem,
-    mainIdentifierFieldMetadataId,
-    mainIdentifierMapper,
+    labelIdentifierFieldMetadataId,
     setObjectMetadataConfig,
   ]);
 

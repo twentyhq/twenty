@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
+import { CompanyTeam } from '@/companies/components/CompanyTeam';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
@@ -35,14 +36,12 @@ export const RecordShowPage = () => {
     objectMetadataId: string;
   }>();
 
-  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
-    {
-      objectNameSingular,
-    },
-  );
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
   const { favorites, createFavorite, deleteFavorite } = useFavorites({
-    objectNamePlural: foundObjectMetadataItem?.namePlural,
+    objectNamePlural: objectMetadataItem?.namePlural,
   });
 
   const [, setEntityFields] = useRecoilState(
@@ -152,8 +151,8 @@ export const RecordShowPage = () => {
                 avatarType="squared"
               />
               <PropertyBox extraPadding={true}>
-                {foundObjectMetadataItem &&
-                  [...foundObjectMetadataItem.fields]
+                {objectMetadataItem &&
+                  [...objectMetadataItem.fields]
                     .sort((a, b) =>
                       DateTime.fromISO(a.createdAt)
                         .diff(DateTime.fromISO(b.createdAt))
@@ -167,11 +166,12 @@ export const RecordShowPage = () => {
                           value={{
                             entityId: object.id,
                             recoilScopeId: object.id + metadataField.id,
-                            isMainIdentifier: false,
+                            isLabelIdentifier: false,
                             fieldDefinition:
                               formatFieldMetadataItemAsColumnDefinition({
                                 field: metadataField,
                                 position: index,
+                                objectMetadataItem,
                               }),
                             useUpdateEntityMutation: useUpdateOneObjectMutation,
                             hotkeyScope: InlineCellHotkeyScope.InlineCell,
@@ -182,6 +182,13 @@ export const RecordShowPage = () => {
                       );
                     })}
               </PropertyBox>
+              {objectNameSingular === 'company' ? (
+                <>
+                  <CompanyTeam company={object} />
+                </>
+              ) : (
+                <></>
+              )}
             </ShowPageLeftContainer>
             <ShowPageRightContainer
               entity={{

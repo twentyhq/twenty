@@ -1,7 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtService } from '@nestjs/jwt';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
+import { User } from 'src/core/user/user.entity';
 
 import { TokenService } from './token.service';
 
@@ -18,6 +21,14 @@ describe('TokenService', () => {
         },
         {
           provide: EnvironmentService,
+          useValue: {},
+        },
+        {
+          provide: getRepositoryToken(User),
+          useValue: {},
+        },
+        {
+          provide: getRepositoryToken(RefreshToken),
           useValue: {},
         },
       ],

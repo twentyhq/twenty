@@ -11,10 +11,12 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
   fields.reduce((acc, field) => {
     if (
       ![
-        FieldMetadataType.Date,
+        FieldMetadataType.DateTime,
         FieldMetadataType.Number,
+        FieldMetadataType.Currency,
         FieldMetadataType.Text,
-      ].includes(field.type)
+      ].includes(field.type) ||
+      field.name === 'probability'
     ) {
       return acc;
     }
@@ -30,9 +32,11 @@ const formatFieldMetadataItemAsFilterDefinition = ({
   label: field.label,
   iconName: field.icon ?? 'Icon123',
   type:
-    field.type === FieldMetadataType.Date
-      ? 'DATE'
+    field.type === FieldMetadataType.DateTime
+      ? 'DATE_TIME'
       : field.type === FieldMetadataType.Number
       ? 'NUMBER'
+      : field.type === FieldMetadataType.Currency
+      ? 'CURRENCY'
       : 'TEXT',
 });

@@ -51,10 +51,7 @@ export const Timeline = ({ entity }: { entity: ActivityTargetableEntity }) => {
   const { objects: activityTargets, loading } = useFindManyObjectRecords({
     objectNamePlural: 'activityTargets',
     filter: {
-      or: {
-        companyId: { eq: entity.id },
-        personId: { eq: entity.id },
-      },
+      [entity.type === 'Company' ? 'companyId' : 'personId']: { eq: entity.id },
     },
   });
 
@@ -62,7 +59,9 @@ export const Timeline = ({ entity }: { entity: ActivityTargetableEntity }) => {
     skip: !activityTargets?.length,
     objectNamePlural: 'activities',
     filter: {
-      activityTargets: { in: activityTargets?.map((at) => at.id) },
+      id: {
+        in: activityTargets?.map((activityTarget) => activityTarget.activityId),
+      },
     },
     orderBy: {
       createdAt: 'AscNullsFirst',

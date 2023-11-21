@@ -65,11 +65,11 @@ export const EntityBoard = ({
   const { unselectAllActiveCards } = useCurrentCardSelected();
 
   const updatePipelineProgressStageInDB = useCallback(
-    async (pipelineProgressId: string, pipelineStageId: string) => {
+    async (pipelineProgressId: string, pipelineStepId: string) => {
       await updateOneOpportunity?.({
         idToUpdate: pipelineProgressId,
         input: {
-          pipelineStepId: pipelineStageId,
+          pipelineStepId: pipelineStepId,
         },
       });
 
@@ -80,7 +80,7 @@ export const EntityBoard = ({
           __typename: 'PipelineProgress',
         }),
         fields: {
-          pipelineStageId: () => pipelineStageId,
+          pipelineStepId: () => pipelineStepId,
         },
       });
     },
