@@ -82,7 +82,7 @@ export const MenuItemCommand = ({
   const theme = useTheme();
 
   return (
-    <StyledMenuItemCommandContainer onSelect={onClick} className={className}>
+    <StyledMenuItemCommandContainer onClick={onClick} className={className}>
       <StyledMenuItemLeftContent>
         {LeftIcon && (
           <StyledBigIconContainer>
