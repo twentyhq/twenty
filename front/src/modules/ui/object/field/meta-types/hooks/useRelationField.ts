@@ -39,7 +39,7 @@ export const useRelationField = () => {
       if (fieldPathParts.length === 1) {
         name += record[fieldPathParts[0]];
       } else if (fieldPathParts.length === 2) {
-        name += record[fieldPathParts[0]][fieldPathParts[1]];
+        name += record[fieldPathParts[0]][fieldPathParts[1]] + ' ';
       } else {
         throw new Error(
           `Invalid field path ${fieldPath}. Relation picker only supports field paths with 1 or 2 parts.`,
@@ -47,12 +47,14 @@ export const useRelationField = () => {
       }
     }
 
+    const avatarUrl = record[fieldDefinition.metadata.imageIdentifierUrlField];
     return {
       id: record.id,
-      name: record[name],
-      avatarUrl:
-        fieldDefinition.metadata.imageIdentifierUrlPrefix +
-        record[fieldDefinition.metadata.imageIdentifierUrlField],
+      name: name.trimEnd(),
+      avatarUrl: avatarUrl
+        ? fieldDefinition.metadata.imageIdentifierUrlPrefix +
+          record[fieldDefinition.metadata.imageIdentifierUrlField]
+        : '',
       avatarType: fieldDefinition.metadata.imageIdentifierFormat,
       record: record,
     };
