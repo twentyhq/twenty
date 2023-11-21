@@ -48,20 +48,17 @@ export const useFindManyObjectRecords = <
     isFetchingMoreObjectsFamilyState(objectNamePlural),
   );
 
-  const {
-    objectMetadataItem: foundObjectMetadataItem,
-    objectNotFoundInMetadata,
-    findManyQuery,
-  } = useObjectMetadataItem({
-    objectNamePlural,
-  });
+  const { objectMetadataItem, objectNotFoundInMetadata, findManyQuery } =
+    useObjectMetadataItem({
+      objectNamePlural,
+    });
 
   const { enqueueSnackBar } = useSnackBar();
 
   const { data, loading, error, fetchMore } = useQuery<
     PaginatedObjectType<ObjectType>
   >(findManyQuery, {
-    skip: skip || !foundObjectMetadataItem || !objectNamePlural,
+    skip: skip || !objectMetadataItem || !objectNamePlural,
     variables: {
       filter: filter ?? {},
       orderBy: orderBy ?? {},
@@ -130,7 +127,7 @@ export const useFindManyObjectRecords = <
             return Object.assign({}, prev, {
               [objectNamePlural]: {
                 __typename: `${capitalize(
-                  foundObjectMetadataItem?.nameSingular ?? '',
+                  objectMetadataItem?.nameSingular ?? '',
                 )}Connection`,
                 edges: newEdges,
                 pageInfo: fetchMoreResult?.[objectNamePlural].pageInfo,
@@ -156,7 +153,7 @@ export const useFindManyObjectRecords = <
     fetchMore,
     filter,
     orderBy,
-    foundObjectMetadataItem,
+    objectMetadataItem,
     hasNextPage,
     setIsFetchingMoreObjects,
     enqueueSnackBar,
@@ -174,6 +171,7 @@ export const useFindManyObjectRecords = <
   );
 
   return {
+    objectMetadataItem,
     objects,
     loading,
     error,

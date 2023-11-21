@@ -259,7 +259,7 @@ export const seedActivityFieldMetadata = async (
         workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.RELATION,
-        name: 'Comments',
+        name: 'comments',
         label: 'Comments',
         targetColumnMap: {},
         description: 'Activity comments',

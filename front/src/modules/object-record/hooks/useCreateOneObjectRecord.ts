@@ -24,26 +24,25 @@ export const useCreateOneObjectRecord = <T>({
   // TODO: type this with a minimal type at least with Record<string, any>
   const [mutate] = useMutation(createOneMutation);
 
-  const createOneObject =
-    objectNameSingular && foundObjectMetadataItem
-      ? async (input: Record<string, any>) => {
-          const createdObject = await mutate({
-            variables: {
-              input: { ...input, id: v4() },
-            },
-          });
+  const createOneObject = async (input: Record<string, any>) => {
+    if (!foundObjectMetadataItem || !objectNameSingular) {
+      return null;
+    }
 
-          triggerOptimisticEffects(
-            `${capitalize(foundObjectMetadataItem.nameSingular)}Edge`,
-            createdObject.data[
-              `create${capitalize(foundObjectMetadataItem.nameSingular)}`
-            ],
-          );
-          return createdObject.data[
-            `create${capitalize(objectNameSingular)}`
-          ] as T;
-        }
-      : undefined;
+    const createdObject = await mutate({
+      variables: {
+        input: { ...input, id: v4() },
+      },
+    });
+
+    triggerOptimisticEffects(
+      `${capitalize(foundObjectMetadataItem.nameSingular)}Edge`,
+      createdObject.data[
+        `create${capitalize(foundObjectMetadataItem.nameSingular)}`
+      ],
+    );
+    return createdObject.data[`create${capitalize(objectNameSingular)}`] as T;
+  };
 
   return {
     createOneObject,

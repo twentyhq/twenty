@@ -23,20 +23,18 @@ export const useDeleteOneObjectRecord = <T>({
 
   const deleteOneObject = useCallback(
     async (idToDelete: string) => {
-      if (objectNameSingular && foundObjectMetadataItem) {
-        const deletedObject = await mutate({
-          variables: {
-            idToDelete,
-          },
-          refetchQueries: [getOperationName(findManyQuery) ?? ''],
-        });
-
-        return deletedObject.data[
-          `create${capitalize(objectNameSingular)}`
-        ] as T;
+      if (!foundObjectMetadataItem || !objectNameSingular) {
+        return null;
       }
 
-      return null;
+      const deletedObject = await mutate({
+        variables: {
+          idToDelete,
+        },
+        refetchQueries: [getOperationName(findManyQuery) ?? ''],
+      });
+
+      return deletedObject.data[`create${capitalize(objectNameSingular)}`] as T;
     },
     [foundObjectMetadataItem, mutate, objectNameSingular, findManyQuery],
   );
