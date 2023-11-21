@@ -36,6 +36,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
   }
 
   override async deleteOne(id: string): Promise<RelationMetadataEntity> {
+    // TODO: This logic is duplicated with the BeforeDeleteOneRelation hook
     const relationMetadata = await this.relationMetadataRepository.findOne({
       where: { id },
       relations: ['fromFieldMetadata', 'toFieldMetadata'],
@@ -45,22 +46,9 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       throw new NotFoundException('Relation does not exist');
     }
 
-    if (
-      !relationMetadata.toFieldMetadata.isCustom ||
-      !relationMetadata.fromFieldMetadata.isCustom
-    ) {
-      throw new BadRequestException("Standard Relations can't be deleted");
-    }
-
-    if (
-      relationMetadata.toFieldMetadata.isActive ||
-      relationMetadata.fromFieldMetadata.isActive
-    ) {
-      throw new BadRequestException("Active relations can't be deleted");
-    }
-
     const deletedRelationMetadata = super.deleteOne(id);
 
+    // TODO: Move to a cdc scheduler
     this.fieldMetadataService.deleteMany({
       id: {
         in: [
@@ -212,5 +200,15 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     );
 
     return createdRelationMetadata;
+  }
+
+  public async findOneWithinWorkspace(
+    relationMetadataId: string,
+    workspaceId: string,
+  ) {
+    return this.relationMetadataRepository.findOne({
+      where: { id: relationMetadataId, workspaceId },
+      relations: ['fromFieldMetadata', 'toFieldMetadata'],
+    });
   }
 }

@@ -83,6 +83,20 @@ export class BeforeUpdateOneObject<T extends UpdateObjectInput>
       }
     }
 
+    this.checkIfFieldIsEditable(instance.update);
+
     return instance;
+  }
+
+  // This is temporary until we properly use the MigrationRunner to update column names
+  private checkIfFieldIsEditable(update: UpdateObjectInput) {
+    if (
+      update.nameSingular ||
+      update.namePlural ||
+      update.labelSingular ||
+      update.labelPlural
+    ) {
+      throw new BadRequestException("Object's name and label can't be updated");
+    }
   }
 }
