@@ -2,12 +2,15 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, ContextIdFactory, ModuleRef } from '@nestjs/core';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import GraphQLJSON from 'graphql-type-json';
 import { GraphQLError, GraphQLSchema } from 'graphql';
 import { ExtractJwt } from 'passport-jwt';
 import { TokenExpiredError, JsonWebTokenError, verify } from 'jsonwebtoken';
+
+import { WorkspaceFactory } from 'src/workspace/workspace.factory';
 
 import { AppService } from './app.service';
 
@@ -20,7 +23,6 @@ import {
   JwtAuthStrategy,
   JwtPayload,
 } from './core/auth/strategies/jwt.auth.strategy';
-import { WorkspaceFactory } from './workspace/workspace.factory';
 import { ExceptionFilter } from './filters/exception.filter';
 
 @Module({
@@ -102,6 +104,7 @@ import { ExceptionFilter } from './filters/exception.filter';
       resolvers: { JSON: GraphQLJSON },
       plugins: [],
     }),
+    EventEmitterModule.forRoot(),
     HealthModule,
     IntegrationsModule,
     CoreModule,
