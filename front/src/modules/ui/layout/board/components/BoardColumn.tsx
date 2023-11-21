@@ -1,7 +1,9 @@
 import React, { useContext } from 'react';
 import styled from '@emotion/styled';
 
+import { IconDotsVertical, IconPlus } from '@/ui/display/icon';
 import { Tag } from '@/ui/display/tag/components/Tag';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
 import { BoardColumnContext } from '../contexts/BoardColumnContext';
@@ -23,17 +25,6 @@ const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
   position: relative;
 `;
 
-const StyledHeader = styled.div`
-  align-items: center;
-  cursor: pointer;
-  display: flex;
-  flex-direction: row;
-  height: 24px;
-  justify-content: left;
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
-  width: 100%;
-`;
-
 const StyledAmount = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   margin-left: ${({ theme }) => theme.spacing(2)};
@@ -50,6 +41,32 @@ const StyledNumChildren = styled.div`
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
   margin-left: auto;
   width: 16px;
+`;
+
+const StyledButtonGroup = styled.div`
+  align-items: center;
+  display: none;
+  flex-direction: row;
+  margin-left: auto;
+`;
+
+const StyledHeader = styled.div`
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  height: 24px;
+  justify-content: left;
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
+  &:hover {
+    .StyledButtonGroup {
+      display: flex;
+    }
+    .StyledNumChildren {
+      display: none;
+    }
+  }
 `;
 
 export type BoardColumnProps = {
@@ -79,14 +96,14 @@ export const BoardColumn = ({
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const handleTitleClick = () => {
+  const handleBoardColumnMenuOpen = () => {
     setIsBoardColumnMenuOpen(true);
     setHotkeyScopeAndMemorizePreviousScope(BoardColumnHotkeyScope.BoardColumn, {
       goto: false,
     });
   };
 
-  const handleClose = () => {
+  const handleBoardColumnMenuClose = () => {
     goBackToPreviousHotkeyScope();
     setIsBoardColumnMenuOpen(false);
   };
@@ -99,16 +116,26 @@ export const BoardColumn = ({
     <StyledColumn isFirstColumn={isFirstColumn}>
       <StyledHeader>
         <Tag
-          onClick={handleTitleClick}
+          onClick={handleBoardColumnMenuOpen}
           color={columnDefinition.colorCode ?? 'gray'}
           text={columnDefinition.title}
         />
         {!!totalAmount && <StyledAmount>${totalAmount}</StyledAmount>}
-        <StyledNumChildren>{numChildren}</StyledNumChildren>
+        <StyledNumChildren className="StyledNumChildren">
+          {numChildren}
+        </StyledNumChildren>
+        <StyledButtonGroup className="StyledButtonGroup">
+          <LightIconButton
+            Icon={IconDotsVertical}
+            accent="tertiary"
+            onClick={handleBoardColumnMenuOpen}
+          />
+          <LightIconButton Icon={IconPlus} accent="tertiary" />
+        </StyledButtonGroup>
       </StyledHeader>
       {isBoardColumnMenuOpen && (
         <BoardColumnMenu
-          onClose={handleClose}
+          onClose={handleBoardColumnMenuClose}
           onDelete={onDelete}
           onTitleEdit={onTitleEdit}
           stageId={stageId}
