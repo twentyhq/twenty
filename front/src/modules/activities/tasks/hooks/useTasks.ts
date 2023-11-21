@@ -28,7 +28,7 @@ export const useTasks = (entity?: ActivityTargetableEntity) => {
     skip: !entity && !selectedFilter,
     filter: {
       type: { equals: 'Task' },
-      completedAt: { neq: null },
+      completedAt: { is: 'NOT_NULL' },
       ...whereFilters,
     },
     orderBy: [
@@ -43,7 +43,7 @@ export const useTasks = (entity?: ActivityTargetableEntity) => {
     skip: !entity && !selectedFilter,
     filter: {
       type: { equals: 'Task' },
-      completedAt: { eq: null },
+      completedAt: { is: 'NULL' },
       ...whereFilters,
     },
     orderBy: [

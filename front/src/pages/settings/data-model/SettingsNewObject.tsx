@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
-import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -30,10 +29,6 @@ export const SettingsNewObject = () => {
     createObjectMetadataItem: createObject,
     disabledObjectMetadataItems: disabledObjects,
   } = useObjectMetadataItemForSettings();
-
-  const { createOneObject: createOneView } = useCreateOneObjectRecord({
-    objectNameSingular: 'view',
-  });
 
   const [
     selectedStandardObjectMetadataIds,

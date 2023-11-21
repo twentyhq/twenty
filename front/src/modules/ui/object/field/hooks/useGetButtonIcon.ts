@@ -5,9 +5,9 @@ import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
+import { isFieldLink } from '../types/guards/isFieldLink';
 import { isFieldPhone } from '../types/guards/isFieldPhone';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
-import { isFieldURL } from '../types/guards/isFieldURL';
 
 export const useGetButtonIcon = (): IconComponent | undefined => {
   const { fieldDefinition } = useContext(FieldContext);
@@ -15,7 +15,7 @@ export const useGetButtonIcon = (): IconComponent | undefined => {
   if (!fieldDefinition) return undefined;
 
   if (
-    isFieldURL(fieldDefinition) ||
+    isFieldLink(fieldDefinition) ||
     isFieldEmail(fieldDefinition) ||
     isFieldPhone(fieldDefinition) ||
     isFieldRelation(fieldDefinition)

@@ -1,6 +1,6 @@
 export type MetadataFieldDataType =
   | 'BOOLEAN'
-  | 'DATE'
+  | 'DATE_TIME'
   | 'ENUM'
   | 'MONEY'
   | 'NUMBER'

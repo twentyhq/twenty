@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { IconUserCircle } from '@/ui/display/icon';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { useRelationField } from '@/ui/object/field/meta-types/hooks/useRelationField';
 import { FieldDefinition } from '@/ui/object/field/types/FieldDefinition';
 import { FieldRelationMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -35,11 +36,13 @@ export const RelationPicker = ({
     setRelationPickerSearchFilter(initialSearchFilter ?? '');
   }, [initialSearchFilter, setRelationPickerSearchFilter]);
 
-  const { findManyQuery } = useFindOneObjectMetadataItem({
+  const { findManyQuery } = useObjectMetadataItem({
     objectNameSingular: fieldDefinition.metadata.objectMetadataNameSingular,
   });
 
   const useFindManyQuery = (options: any) => useQuery(findManyQuery, options);
+
+  const { mapToObjectIdentifiers } = useRelationField();
 
   const workspaceMembers = useFilteredSearchEntityQuery({
     queryHook: useFindManyQuery,
@@ -50,7 +53,7 @@ export const RelationPicker = ({
       },
     ],
     orderByField: 'createdAt',
-    mappingFunction: fieldDefinition.metadata.mainIdentifierMapper,
+    mappingFunction: mapToObjectIdentifiers,
     selectedIds: recordId ? [recordId] : [],
     objectNamePlural: fieldDefinition.metadata.objectMetadataNamePlural,
   });

@@ -27,7 +27,7 @@ const apiKeyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.DATE,
+      type: FieldMetadataType.DATE_TIME,
       name: 'expiresAt',
       label: 'Expiration date',
       targetColumnMap: {
@@ -40,7 +40,7 @@ const apiKeyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.DATE,
+      type: FieldMetadataType.DATE_TIME,
       name: 'revokedAt',
       label: 'Revocation date',
       targetColumnMap: {

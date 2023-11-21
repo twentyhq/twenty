@@ -15,9 +15,8 @@ export const mapPaginatedObjectsToObjects = <
   pagedObjects: ObjectTypeQuery | undefined;
   objectNamePlural: string;
 }) => {
-  console.log(objectNamePlural);
   const formattedObjects: ObjectType[] =
-    pagedObjects?.[objectNamePlural].edges.map((objectEdge: ObjectEdge) => ({
+    pagedObjects?.[objectNamePlural]?.edges?.map((objectEdge: ObjectEdge) => ({
       ...objectEdge.node,
     })) ?? [];
 

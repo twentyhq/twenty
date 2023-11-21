@@ -17,7 +17,7 @@ export const useBoardColumns = () => {
       objectNameSingular: 'pipelineStep',
     });
 
-  const updatedPipelineStages = (stages: BoardColumnDefinition[]) => {
+  const updatedPipelineSteps = (stages: BoardColumnDefinition[]) => {
     if (!stages.length) return;
 
     return Promise.all(
@@ -33,7 +33,7 @@ export const useBoardColumns = () => {
   };
 
   const persistBoardColumns = async () => {
-    await updatedPipelineStages(boardColumns);
+    await updatedPipelineSteps(boardColumns);
   };
 
   const handleMoveBoardColumn = (

@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
 import { useComputeDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useComputeDefinitionsFromFieldMetadata';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { useObjectMainIdentifier } from '@/object-metadata/hooks/useObjectMainIdentifier';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
@@ -17,18 +17,21 @@ export const RecordTableEffect = () => {
     setObjectMetadataConfig,
   } = useRecordTable();
 
-  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNamePlural,
   });
 
   const {
-    mainIdentifierMapper,
     basePathToShowPage,
     mainIdentifierFieldMetadataId,
-  } = useObjectMainIdentifier(foundObjectMetadataItem);
+    labelIdentifierFieldPaths,
+    imageIdentifierUrlField,
+    imageIdentifierUrlPrefix,
+    imageIdentifierFormat,
+  } = useObjectMainIdentifier(objectMetadataItem);
 
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
-    useComputeDefinitionsFromFieldMetadata(foundObjectMetadataItem);
+    useComputeDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const {
     setAvailableSortDefinitions,
@@ -40,30 +43,32 @@ export const RecordTableEffect = () => {
   } = useView();
 
   useEffect(() => {
-    if (
-      mainIdentifierMapper &&
-      basePathToShowPage &&
-      mainIdentifierFieldMetadataId
-    ) {
+    if (basePathToShowPage && mainIdentifierFieldMetadataId) {
       setObjectMetadataConfig?.({
-        mainIdentifierMapper,
+        labelIdentifierFieldPaths,
+        imageIdentifierUrlField,
+        imageIdentifierUrlPrefix,
+        imageIdentifierFormat,
         basePathToShowPage,
         mainIdentifierFieldMetadataId,
       });
     }
   }, [
     basePathToShowPage,
-    foundObjectMetadataItem,
+    objectMetadataItem,
     mainIdentifierFieldMetadataId,
-    mainIdentifierMapper,
     setObjectMetadataConfig,
+    labelIdentifierFieldPaths,
+    imageIdentifierUrlField,
+    imageIdentifierUrlPrefix,
+    imageIdentifierFormat,
   ]);
 
   useEffect(() => {
-    if (!foundObjectMetadataItem) {
+    if (!objectMetadataItem) {
       return;
     }
-    setViewObjectMetadataId?.(foundObjectMetadataItem.id);
+    setViewObjectMetadataId?.(objectMetadataItem.id);
     setViewType?.(ViewType.Table);
 
     setAvailableSortDefinitions?.(sortDefinitions);
@@ -82,7 +87,7 @@ export const RecordTableEffect = () => {
     setAvailableSortDefinitions,
     setAvailableFilterDefinitions,
     setAvailableFieldDefinitions,
-    foundObjectMetadataItem,
+    objectMetadataItem,
     sortDefinitions,
     filterDefinitions,
     setAvailableTableColumns,

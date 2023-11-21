@@ -101,17 +101,9 @@ export class WorkspaceQueryRunnerService {
   ): Promise<Record | undefined> {
     const { workspaceId, targetTableName } = options;
 
-    console.log({
-      workspaceId,
-      targetTableName,
-    });
     const query = this.workspaceQueryBuilderFactory.updateOne(args, options);
 
-    console.log({ query });
-
     const result = await this.execute(query, workspaceId);
-
-    console.log('HEY');
 
     return this.parseResult<PGGraphQLMutation<Record>>(
       result,
@@ -160,12 +152,6 @@ export class WorkspaceQueryRunnerService {
       $$);
     `);
 
-    console.log(
-      JSON.stringify({
-        results,
-      }),
-    );
-
     return results;
   }
 
@@ -177,8 +163,6 @@ export class WorkspaceQueryRunnerService {
     const entityKey = `${command}${targetTableName}Collection`;
     const result = graphqlResult?.[0]?.resolve?.data?.[entityKey];
     const errors = graphqlResult?.[0]?.resolve?.errors;
-
-    console.log('Result : ', graphqlResult?.[0]?.resolve);
 
     if (Array.isArray(errors) && errors.length > 0) {
       console.error('GraphQL errors', errors);

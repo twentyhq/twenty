@@ -13,7 +13,7 @@ export const opportunityBoardFilterDefinitions: FilterDefinitionByEntity<Opportu
       fieldMetadataId: 'closeDate',
       label: 'Close date',
       iconName: 'IconCalendarEvent',
-      type: 'DATE',
+      type: 'DATE_TIME',
     },
     {
       fieldMetadataId: 'companyId',

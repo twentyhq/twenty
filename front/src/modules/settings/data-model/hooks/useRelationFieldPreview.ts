@@ -1,3 +1,4 @@
+import { useObjectMainIdentifier } from '@/object-metadata/hooks/useObjectMainIdentifier';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 
@@ -19,11 +20,18 @@ export const useRelationFieldPreview = ({
     skip: skipDefaultValue || !relationObjectMetadataItem,
   });
 
+  const {
+    labelIdentifierFieldPaths,
+    imageIdentifierUrlField,
+    imageIdentifierUrlPrefix,
+    imageIdentifierFormat,
+  } = useObjectMainIdentifier(relationObjectMetadataItem);
+
   return {
     defaultValue: relationObjects?.[0],
-    entityChipDisplayMapper: (fieldValue?: { id: string }) => ({
-      name: fieldValue?.id || relationObjectMetadataItem?.labelSingular || '',
-      avatarType: 'squared' as const,
-    }),
+    labelIdentifierFieldPaths,
+    imageIdentifierUrlField,
+    imageIdentifierUrlPrefix,
+    imageIdentifierFormat,
   };
 };

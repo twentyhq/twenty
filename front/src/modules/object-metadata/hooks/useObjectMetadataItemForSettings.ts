@@ -1,14 +1,17 @@
+import { useRecoilValue } from 'recoil';
+
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 import { formatObjectMetadataItemInput } from '../utils/formatObjectMetadataItemInput';
 import { getObjectSlug } from '../utils/getObjectSlug';
 
 import { useCreateOneObjectRecordMetadataItem } from './useCreateOneObjectMetadataItem';
 import { useDeleteOneObjectMetadataItem } from './useDeleteOneObjectMetadataItem';
-import { useFindManyObjectMetadataItems } from './useFindManyObjectMetadataItems';
 import { useUpdateOneObjectMetadataItem } from './useUpdateOneObjectMetadataItem';
 
 export const useObjectMetadataItemForSettings = () => {
-  const { objectMetadataItems, loading } = useFindManyObjectMetadataItems();
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const activeObjectMetadataItems = objectMetadataItems.filter(
     ({ isActive, isSystem }) => isActive && !isSystem,
@@ -87,7 +90,6 @@ export const useObjectMetadataItemForSettings = () => {
     findActiveObjectMetadataItemBySlug,
     findObjectMetadataItemById,
     findObjectMetadataItemByNamePlural,
-    loading,
     objectMetadataItems,
   };
 };

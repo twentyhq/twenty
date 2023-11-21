@@ -11,8 +11,8 @@ export const useIsFieldEmpty = () => {
     isEntityFieldEmptyFamilySelector({
       fieldDefinition: {
         type: fieldDefinition.type,
-        metadata: { ...fieldDefinition.metadata, mainIdentifierMapper: null },
       },
+      fieldName: fieldDefinition.metadata.fieldName,
       entityId,
     }),
   );
