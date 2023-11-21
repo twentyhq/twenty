@@ -6,7 +6,7 @@ import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { PipelineAddButton } from '@/pipeline/components/PipelineAddButton';
-import { usePipelineStages } from '@/pipeline/hooks/usePipelineStages';
+import { usePipelineSteps } from '@/pipeline/hooks/usePipelineSteps';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { IconTargetArrow } from '@/ui/display/icon';
 import { BoardOptionsContext } from '@/ui/layout/board/contexts/BoardOptionsContext';
@@ -23,8 +23,8 @@ const StyledBoardContainer = styled.div`
 `;
 
 export const Opportunities = () => {
-  const { handlePipelineStageAdd, handlePipelineStageDelete } =
-    usePipelineStages();
+  const { handlePipelineStepAdd, handlePipelineStepDelete } =
+    usePipelineSteps();
 
   const { updateOneObject: updateOnePipelineStep } =
     useUpdateOneObjectRecord<PipelineStep>({
@@ -68,8 +68,8 @@ export const Opportunities = () => {
             <CompanyBoardRecoilScopeContext.Provider value="opportunities">
               <StyledBoardContainer>
                 <CompanyBoard
-                  onColumnAdd={handlePipelineStageAdd}
-                  onColumnDelete={handlePipelineStageDelete}
+                  onColumnAdd={handlePipelineStepAdd}
+                  onColumnDelete={handlePipelineStepDelete}
                   onEditColumnTitle={handleEditColumnTitle}
                 />
               </StyledBoardContainer>

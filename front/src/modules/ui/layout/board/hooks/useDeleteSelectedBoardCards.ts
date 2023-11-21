@@ -34,7 +34,7 @@ export const useDeleteSelectedBoardCards = () => {
           apolloClient.cache.evict({ id: `Opportunity:${id}` });
         });
       },
-    [apolloClient.cache, deleteOneOpportunity, removeCardIds],
+    [apolloClient.cache, removeCardIds, deleteOneOpportunity],
   );
 
   return deleteSelectedBoardCards;

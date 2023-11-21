@@ -1,5 +1,4 @@
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
-import { MainIdentifierMapper } from '@/ui/object/field/types/MainIdentifierMapper';
 
 export type FieldUuidMetadata = {
   fieldName: string;
@@ -65,7 +64,10 @@ export type FieldRelationMetadata = {
   fieldName: string;
   useEditButton?: boolean;
   relationType?: FieldDefinitionRelationType;
-  mainIdentifierMapper: MainIdentifierMapper;
+  labelIdentifierFieldPaths: string[];
+  imageIdentifierUrlField: string;
+  imageIdentifierUrlPrefix: string;
+  imageIdentifierFormat: 'squared' | 'rounded';
   searchFields: string[];
   objectMetadataNameSingular: string;
   objectMetadataNamePlural: string;

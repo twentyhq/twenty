@@ -7,6 +7,7 @@ import { IconUserCircle } from '@/ui/display/icon';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { useRelationField } from '@/ui/object/field/meta-types/hooks/useRelationField';
 import { FieldDefinition } from '@/ui/object/field/types/FieldDefinition';
 import { FieldRelationMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
@@ -41,6 +42,8 @@ export const RelationPicker = ({
 
   const useFindManyQuery = (options: any) => useQuery(findManyQuery, options);
 
+  const { mapToObjectIdentifiers } = useRelationField();
+
   const workspaceMembers = useFilteredSearchEntityQuery({
     queryHook: useFindManyQuery,
     filters: [
@@ -50,7 +53,7 @@ export const RelationPicker = ({
       },
     ],
     orderByField: 'createdAt',
-    mappingFunction: fieldDefinition.metadata.mainIdentifierMapper,
+    mappingFunction: mapToObjectIdentifiers,
     selectedIds: recordId ? [recordId] : [],
     objectNamePlural: fieldDefinition.metadata.objectMetadataNamePlural,
   });
