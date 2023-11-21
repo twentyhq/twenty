@@ -1,14 +1,14 @@
 import { isObject, isString } from '@sniptt/guards';
 import { GraphQLVariables } from 'msw';
 
-import {
-  CompanyOrderByWithRelationInput,
-  PersonOrderByWithRelationInput,
-  StringFilter,
-  UserOrderByWithRelationInput,
-} from '~/generated/graphql';
-
 import { isDefined } from '../../utils/isDefined';
+
+type StringFilter = {
+  equals?: string;
+  contains?: string;
+  in?: Array<string>;
+  notIn?: Array<string>;
+};
 
 const filterData = <DataT>(
   data: Array<DataT>,
@@ -90,11 +90,7 @@ const filterData = <DataT>(
 export const filterAndSortData = <DataT>(
   data: Array<DataT>,
   where?: Record<string, any>,
-  orderBy?: Array<
-    PersonOrderByWithRelationInput &
-      CompanyOrderByWithRelationInput &
-      UserOrderByWithRelationInput
-  >,
+  orderBy?: Array<any>,
   limit?: number,
 ): Array<DataT> => {
   let filteredData = data;

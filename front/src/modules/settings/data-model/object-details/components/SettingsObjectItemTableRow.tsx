@@ -55,7 +55,9 @@ export const SettingsObjectItemTableRow = ({
           <Tag color="blue" text="Standard" />
         )}
       </TableCell>
-      <TableCell align="right">{objectItem.fields.length}</TableCell>
+      <TableCell align="right">
+        {objectItem.fields.filter((field) => !field.isSystem).length}
+      </TableCell>
       <TableCell align="right">{objects.length}</TableCell>
       <StyledActionTableCell>{action}</StyledActionTableCell>
     </StyledObjectTableRow>

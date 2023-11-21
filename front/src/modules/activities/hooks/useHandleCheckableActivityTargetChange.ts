@@ -17,10 +17,10 @@ export const useHandleCheckableActivityTargetChange = ({
   };
 }) => {
   const { createOneObject } = useCreateOneObjectRecord<ActivityTarget>({
-    objectNameSingular: 'activityTargetV2',
+    objectNameSingular: 'activityTarget',
   });
   const { deleteOneObject } = useDeleteOneObjectRecord({
-    objectNameSingular: 'activityTargetV2',
+    objectNameSingular: 'activityTarget',
   });
 
   return async (

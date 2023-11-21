@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "viewFields" ALTER COLUMN "index" SET DATA TYPE DOUBLE PRECISION;

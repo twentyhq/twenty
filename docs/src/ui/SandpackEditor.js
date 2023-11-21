@@ -46,8 +46,6 @@ root.render(
 import { lightTheme, darkTheme } from "${availableComponentPaths[0]}";
 import { MyComponent } from "./MyComponent.tsx";
 
-console.log("lightTheme", lightTheme);
-
 export default function App() {
 return (<ThemeProvider theme={lightTheme}>
  <MyComponent />

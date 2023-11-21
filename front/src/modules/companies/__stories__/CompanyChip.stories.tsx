@@ -17,7 +17,7 @@ export const SmallName: Story = {
   args: {
     id: 'airbnb',
     name: 'Airbnb',
-    pictureUrl: 'https://api.faviconkit.com/airbnb.com/144',
+    avatarUrl: 'https://api.faviconkit.com/airbnb.com/144',
   },
 };
 
@@ -25,6 +25,6 @@ export const BigName: Story = {
   args: {
     id: 'google',
     name: 'Google with a real big name to overflow the cell',
-    pictureUrl: 'https://api.faviconkit.com/google.com/144',
+    avatarUrl: 'https://api.faviconkit.com/google.com/144',
   },
 };

@@ -42,7 +42,7 @@ export const NameFields = ({
 
   const { updateOneObject, objectNotFoundInMetadata } =
     useUpdateOneObjectRecord({
-      objectNameSingular: 'workspaceMemberV2',
+      objectNameSingular: 'workspaceMember',
     });
 
   // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)

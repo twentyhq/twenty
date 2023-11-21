@@ -6,7 +6,6 @@ import { ColumnDefinition } from '../../types/ColumnDefinition';
 
 type RecordTableScopeInternalContextProps = ScopedStateKey & {
   onColumnsChange: (columns: ColumnDefinition<FieldMetadata>[]) => void;
-  onEntityCountChange: (entityCount: number) => void;
 };
 
 export const RecordTableScopeInternalContext =

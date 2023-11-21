@@ -14,7 +14,7 @@ export const useDeleteSelectedBoardCards = () => {
 
   const { deleteOneObject: deleteOneOpportunity } =
     useDeleteOneObjectRecord<Opportunity>({
-      objectNameSingular: 'opportunityV2',
+      objectNameSingular: 'opportunity',
     });
 
   const deleteSelectedBoardCards = useRecoilCallback(
@@ -34,7 +34,7 @@ export const useDeleteSelectedBoardCards = () => {
           apolloClient.cache.evict({ id: `Opportunity:${id}` });
         });
       },
-    [apolloClient.cache, deleteOneOpportunity, removeCardIds],
+    [apolloClient.cache, removeCardIds, deleteOneOpportunity],
   );
 
   return deleteSelectedBoardCards;

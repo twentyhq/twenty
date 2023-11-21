@@ -46,6 +46,7 @@ const PhoneFieldInputWithContext = ({
           fieldMetadataId: 'phone',
           label: 'Phone',
           type: 'PHONE',
+          iconName: 'IconPhone',
           metadata: {
             fieldName: 'Phone',
             placeHolder: 'Enter phone number',

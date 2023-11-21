@@ -5,41 +5,38 @@ import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 export const formatFieldMetadataItemsAsFilterDefinitions = ({
   fields,
-  icons,
 }: {
   fields: Array<ObjectMetadataItem['fields'][0]>;
-  icons: Record<string, any>;
 }): FilterDefinition[] =>
   fields.reduce((acc, field) => {
     if (
       ![
-        FieldMetadataType.Date,
+        FieldMetadataType.DateTime,
         FieldMetadataType.Number,
+        FieldMetadataType.Currency,
         FieldMetadataType.Text,
-      ].includes(field.type)
+      ].includes(field.type) ||
+      field.name === 'probability'
     ) {
       return acc;
     }
-    return [
-      ...acc,
-      formatFieldMetadataItemAsFilterDefinition({ field, icons }),
-    ];
+    return [...acc, formatFieldMetadataItemAsFilterDefinition({ field })];
   }, [] as FilterDefinition[]);
 
 const formatFieldMetadataItemAsFilterDefinition = ({
   field,
-  icons,
 }: {
   field: ObjectMetadataItem['fields'][0];
-  icons: Record<string, any>;
 }): FilterDefinition => ({
   fieldMetadataId: field.id,
   label: field.label,
-  Icon: icons[field.icon ?? 'Icon123'],
+  iconName: field.icon ?? 'Icon123',
   type:
-    field.type === FieldMetadataType.Date
-      ? 'DATE'
+    field.type === FieldMetadataType.DateTime
+      ? 'DATE_TIME'
       : field.type === FieldMetadataType.Number
       ? 'NUMBER'
+      : field.type === FieldMetadataType.Currency
+      ? 'CURRENCY'
       : 'TEXT',
 });

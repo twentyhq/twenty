@@ -18,11 +18,11 @@ export const useOpenCreateActivityDrawer = () => {
   const { openRightDrawer } = useRightDrawer();
   const { createOneObject: createOneActivityTarget } =
     useCreateOneObjectRecord<ActivityTarget>({
-      objectNameSingular: 'activityTargetV2',
+      objectNameSingular: 'activityTarget',
     });
   const { createOneObject: createOneActivity } =
     useCreateOneObjectRecord<Activity>({
-      objectNameSingular: 'activityV2',
+      objectNameSingular: 'activity',
     });
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const setHotkeyScope = useSetHotkeyScope();

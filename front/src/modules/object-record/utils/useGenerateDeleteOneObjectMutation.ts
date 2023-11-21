@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-import { EMPTY_MUTATION } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { EMPTY_MUTATION } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { capitalize } from '~/utils/string/capitalize';
 

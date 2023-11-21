@@ -2,7 +2,6 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
-import { ActivityType } from '~/generated/graphql';
 
 export const AddTaskButton = ({
   activityTargetEntity,
@@ -23,7 +22,7 @@ export const AddTaskButton = ({
       title="Add task"
       onClick={() =>
         openCreateActivity({
-          type: ActivityType.Task,
+          type: 'Task',
           targetableEntities: [activityTargetEntity],
         })
       }

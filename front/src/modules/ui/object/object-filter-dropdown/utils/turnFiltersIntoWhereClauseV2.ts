@@ -62,7 +62,24 @@ export const turnFiltersIntoWhereClauseV2 = (
               `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
             );
         }
-      case 'DATE':
+      case 'CURRENCY':
+        switch (filter.operand) {
+          case ViewFilterOperand.GreaterThan:
+            whereClause[correspondingField.name] = {
+              amountMicros: { gte: parseFloat(filter.value) * 1000000 },
+            };
+            return;
+          case ViewFilterOperand.LessThan:
+            whereClause[correspondingField.name] = {
+              amountMicros: { lte: parseFloat(filter.value) * 1000000 },
+            };
+            return;
+          default:
+            throw new Error(
+              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            );
+        }
+      case 'DATE_TIME':
         switch (filter.operand) {
           case ViewFilterOperand.GreaterThan:
             whereClause[correspondingField.name] = {

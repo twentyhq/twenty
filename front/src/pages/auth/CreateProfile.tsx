@@ -9,12 +9,14 @@ import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
+import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -52,6 +54,7 @@ type Form = z.infer<typeof validationSchema>;
 
 export const CreateProfile = () => {
   const navigate = useNavigate();
+  const onboardingStatus = useOnboardingStatus();
 
   const { enqueueSnackBar } = useSnackBar();
 
@@ -61,7 +64,7 @@ export const CreateProfile = () => {
 
   const { updateOneObject, objectNotFoundInMetadata } =
     useUpdateOneObjectRecord<WorkspaceMember>({
-      objectNameSingular: 'workspaceMemberV2',
+      objectNameSingular: 'workspaceMember',
     });
 
   // Form
@@ -138,6 +141,10 @@ export const CreateProfile = () => {
     PageHotkeyScope.CreateProfile,
     [onSubmit],
   );
+
+  if (onboardingStatus !== OnboardingStatus.OngoingProfileCreation) {
+    return null;
+  }
 
   return (
     <>

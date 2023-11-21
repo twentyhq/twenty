@@ -1,14 +1,11 @@
 import { useState } from 'react';
+import { useMutation, useQuery } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { flip, offset, useFloating } from '@floating-ui/react';
 import { v4 } from 'uuid';
 
-import {
-  PeoplePicker,
-  PersonForSelect,
-} from '@/people/components/PeoplePicker';
-import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { IconPlus } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
@@ -16,10 +13,6 @@ import { DoubleTextInput } from '@/ui/object/field/meta-types/input/components/i
 import { FieldDoubleText } from '@/ui/object/field/types/FieldDoubleText';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import {
-  useInsertOnePersonMutation,
-  useUpdateOnePersonMutation,
-} from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   position: static;
@@ -56,8 +49,6 @@ export const AddPersonToCompany = ({
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCreationDropdownOpen, setIsCreationDropdownOpen] = useState(false);
-  const [updatePerson] = useUpdateOnePersonMutation();
-  const [insertOnePerson] = useInsertOnePersonMutation();
   const { refs, floatingStyles } = useFloating({
     open: isDropdownOpen,
     placement: 'right-start',
@@ -74,23 +65,43 @@ export const AddPersonToCompany = ({
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const handlePersonSelected =
-    (companyId: string) => async (newPerson: PersonForSelect | null) => {
-      if (newPerson) {
-        await updatePerson({
-          variables: {
-            where: {
-              id: newPerson.id,
-            },
-            data: {
-              company: { connect: { id: companyId } },
-            },
-          },
-          refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
-        });
-        handleClosePicker();
-      }
-    };
+  // TODO: refactor with useObjectMetadataItem V2 with typed hooks
+  const { findManyQuery, updateOneMutation, createOneMutation } =
+    useObjectMetadataItem({
+      objectNameSingular: 'person',
+    });
+
+  const { data: peopleNotInCompany } = useQuery(findManyQuery, {
+    variables: {
+      filter: {
+        companyId: {
+          neq: companyId,
+        },
+      },
+    },
+  });
+
+  const [updatePerson] = useMutation(updateOneMutation);
+  const [createPerson] = useMutation(createOneMutation);
+
+  const handlePersonSelected = async ({
+    selectedPersonId,
+    companyId,
+  }: {
+    selectedPersonId: string;
+    companyId: string | null;
+  }) => {
+    await updatePerson({
+      variables: {
+        idToUpdate: selectedPersonId,
+        input: {
+          companyId: companyId,
+        },
+      },
+      refetchQueries: [getOperationName(findManyQuery) ?? ''],
+    });
+    handleClosePicker();
+  };
 
   const handleClosePicker = () => {
     if (isDropdownOpen) {
@@ -100,31 +111,44 @@ export const AddPersonToCompany = ({
   };
 
   const handleOpenPicker = () => {
-    if (!isDropdownOpen) {
-      setIsDropdownOpen(true);
-      setHotkeyScopeAndMemorizePreviousScope(
-        RelationPickerHotkeyScope.RelationPicker,
-      );
-    }
+    // TODO: TEMPORARY - example to implement when the picker is back
+    handleCreatePerson({
+      firstValue: 'John',
+      secondValue: 'Doe',
+    });
+    // handlePersonSelected({
+    //   companyId,
+    //   selectedPersonId: peopleNotInCompany.people.edges[0].node.id,
+    // });
+    // if (!isDropdownOpen) {
+    //   setIsDropdownOpen(true);
+    //   setHotkeyScopeAndMemorizePreviousScope(
+    //     RelationPickerHotkeyScope.RelationPicker,
+    //   );
+    // }
   };
 
-  const handleInputKeyDown = async ({
+  const handleCreatePerson = async ({
     firstValue,
     secondValue,
   }: FieldDoubleText) => {
     if (!firstValue && !secondValue) return;
     const newPersonId = v4();
-    await insertOnePerson({
+
+    await createPerson({
       variables: {
-        data: {
-          company: { connect: { id: companyId } },
+        input: {
+          companyId: companyId,
           id: newPersonId,
-          firstName: firstValue,
-          lastName: secondValue,
+          name: {
+            firstName: firstValue,
+            lastName: secondValue,
+          },
         },
       },
-      refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
+      refetchQueries: [getOperationName(findManyQuery) ?? ''],
     });
+
     setIsCreationDropdownOpen(false);
   };
 
@@ -148,19 +172,20 @@ export const AddPersonToCompany = ({
                   firstValuePlaceholder="First Name"
                   secondValuePlaceholder="Last Name"
                   onClickOutside={handleEscape}
-                  onEnter={handleInputKeyDown}
+                  onEnter={handleCreatePerson}
                   onEscape={handleEscape}
                   hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
                 />
               </StyledInputContainer>
             ) : (
-              <PeoplePicker
-                personId={''}
-                onSubmit={handlePersonSelected(companyId)}
-                onCancel={handleClosePicker}
-                onCreate={() => setIsCreationDropdownOpen(true)}
-                excludePersonIds={peopleIds}
-              />
+              <>todo</>
+              // <PeoplePicker
+              //   personId={''}
+              //   onSubmit={handlePersonSelected(companyId)}
+              //   onCancel={handleClosePicker}
+              //   onCreate={() => setIsCreationDropdownOpen(true)}
+              //   excludePersonIds={peopleIds}
+              // />
             )}
           </div>
         )}

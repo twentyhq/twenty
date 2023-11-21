@@ -1,3 +1,4 @@
+import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
@@ -13,6 +14,8 @@ export const ObjectFilterDropdownFilterSelect = () => {
     setObjectFilterDropdownSearchInput,
     availableFilterDefinitions,
   } = useFilter();
+
+  const { icons } = useLazyLoadIcons();
 
   const setHotkeyScope = useSetHotkeyScope();
 
@@ -35,7 +38,7 @@ export const ObjectFilterDropdownFilterSelect = () => {
 
             setObjectFilterDropdownSearchInput('');
           }}
-          LeftIcon={availableFilterDefinition.Icon}
+          LeftIcon={icons[availableFilterDefinition.iconName]}
           text={availableFilterDefinition.label}
         />
       ))}

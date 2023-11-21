@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useApolloClient } from '@apollo/client';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
@@ -6,10 +5,9 @@ import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { Favorite } from '@/favorites/types/Favorite';
 import { mapFavorites } from '@/favorites/utils/mapFavorites';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
-import { Company } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { favoritesState } from '../states/favoritesState';
@@ -24,67 +22,19 @@ export const useFavorites = ({
   const [favorites, setFavorites] = useRecoilState(favoritesState);
 
   const { updateOneMutation, createOneMutation, deleteOneMutation } =
-    useFindOneObjectMetadataItem({
-      objectNamePlural: 'favoritesV2',
+    useObjectMetadataItem({
+      objectNamePlural: 'favorites',
     });
 
-  const { foundObjectMetadataItem: favoriteTargetObjectMetadataItem } =
-    useFindOneObjectMetadataItem({
+  const { objectMetadataItem: favoriteTargetObjectMetadataItem } =
+    useObjectMetadataItem({
       objectNamePlural,
     });
 
   const apolloClient = useApolloClient();
 
-  const [allCompanies, setAllCompanies] = useState<
-    Record<string, { name: string; domainName?: string }>
-  >({});
-  const [allPeople, setAllPeople] = useState<
-    Record<string, { firstName: string; lastName: string; avatarUrl?: string }>
-  >({});
-
-  // This is only temporary and will be refactored once we have main identifiers
-  const { loading: companiesLoading } = useFindManyObjectRecords({
-    objectNamePlural: 'companiesV2',
-    onCompleted: async (
-      data: PaginatedObjectTypeResults<Required<Company>>,
-    ) => {
-      setAllCompanies(
-        data.edges.reduce(
-          (acc, { node: company }) => ({
-            ...acc,
-            [company.id]: {
-              name: company.name,
-              domainName: company.domainName,
-            },
-          }),
-          {},
-        ),
-      );
-    },
-  });
-
-  const { loading: peopleLoading } = useFindManyObjectRecords({
-    objectNamePlural: 'peopleV2',
-    onCompleted: async (data) => {
-      setAllPeople(
-        data.edges.reduce(
-          (acc, { node: person }) => ({
-            ...acc,
-            [person.id]: {
-              firstName: person.firstName,
-              lastName: person.lastName,
-              avatarUrl: person.avatarUrl,
-            },
-          }),
-          {},
-        ),
-      );
-    },
-  });
-
   useFindManyObjectRecords({
-    skip: companiesLoading || peopleLoading,
-    objectNamePlural: 'favoritesV2',
+    objectNamePlural: 'favorites',
     onCompleted: useRecoilCallback(
       ({ snapshot, set }) =>
         async (data: PaginatedObjectTypeResults<Required<Favorite>>) => {
@@ -92,17 +42,13 @@ export const useFavorites = ({
 
           const queriedFavorites = mapFavorites(
             data.edges.map((edge) => edge.node),
-            {
-              ...allCompanies,
-              ...allPeople,
-            },
           );
 
           if (!isDeeplyEqual(favorites, queriedFavorites)) {
             set(favoritesState, queriedFavorites);
           }
         },
-      [allCompanies, allPeople],
+      [],
     ),
   });
 
@@ -112,8 +58,7 @@ export const useFavorites = ({
         const favorites = snapshot.getLoadable(favoritesState).getValue();
 
         const targetObjectName =
-          favoriteTargetObjectMetadataItem?.nameSingular.replace('V2', '') ??
-          '';
+          favoriteTargetObjectMetadataItem?.nameSingular ?? '';
 
         const result = await apolloClient.mutate({
           mutation: createOneMutation,
@@ -126,25 +71,20 @@ export const useFavorites = ({
           },
         });
 
-        const createdFavorite = result?.data?.createFavoriteV2;
+        const createdFavorite = result?.data?.createFavorite;
 
         const newFavorite = {
           ...additionalData,
           ...createdFavorite,
         };
 
-        const newFavoritesMapped = mapFavorites([newFavorite], {
-          ...allCompanies,
-          ...allPeople,
-        });
+        const newFavoritesMapped = mapFavorites([newFavorite]);
 
         if (createdFavorite) {
           set(favoritesState, [...favorites, ...newFavoritesMapped]);
         }
       },
     [
-      allCompanies,
-      allPeople,
       apolloClient,
       createOneMutation,
       currentWorkspaceMember,

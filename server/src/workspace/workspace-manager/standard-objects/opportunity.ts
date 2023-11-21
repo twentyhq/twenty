@@ -1,8 +1,8 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const opportunityMetadata = {
-  nameSingular: 'opportunityV2',
-  namePlural: 'opportunitiesV2',
+  nameSingular: 'opportunity',
+  namePlural: 'opportunities',
   labelSingular: 'Opportunity',
   labelPlural: 'Opportunities',
   targetTableName: 'opportunity',
@@ -28,7 +28,7 @@ const opportunityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.DATE,
+      type: FieldMetadataType.DATE_TIME,
       name: 'closeDate',
       label: 'Close date',
       targetColumnMap: {

@@ -1,9 +1,9 @@
-import { SeedWorkspaceId } from 'src/database/seeds/metadata';
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const activityMetadata = {
-  nameSingular: 'activityV2',
-  namePlural: 'activitiesV2',
+  nameSingular: 'activity',
+  namePlural: 'activities',
   labelSingular: 'Activity',
   labelPlural: 'Activities',
   targetTableName: 'activity',
@@ -54,7 +54,7 @@ const activityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.DATE,
+      type: FieldMetadataType.DATE_TIME,
       name: 'reminderAt',
       label: 'Reminder Date',
       targetColumnMap: {
@@ -67,7 +67,7 @@ const activityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.DATE,
+      type: FieldMetadataType.DATE_TIME,
       name: 'dueAt',
       label: 'Due Date',
       targetColumnMap: {
@@ -80,7 +80,7 @@ const activityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.DATE,
+      type: FieldMetadataType.DATE_TIME,
       name: 'completedAt',
       label: 'Completion Date',
       targetColumnMap: {

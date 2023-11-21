@@ -21,7 +21,7 @@ export const ProfilePictureUploader = () => {
 
   const { updateOneObject, objectNotFoundInMetadata } =
     useUpdateOneObjectRecord({
-      objectNameSingular: 'workspaceMemberV2',
+      objectNameSingular: 'workspaceMember',
     });
 
   const handleUpload = async (file: File) => {

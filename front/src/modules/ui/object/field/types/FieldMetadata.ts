@@ -1,33 +1,21 @@
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
-import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { ThemeColor } from '@/ui/theme/constants/colors';
 
 export type FieldUuidMetadata = {
-  placeHolder: string;
+  fieldName: string;
+};
+
+export type FieldBooleanMetadata = {
   fieldName: string;
 };
 
 export type FieldTextMetadata = {
+  objectMetadataNameSingular: string;
   placeHolder: string;
   fieldName: string;
 };
 
-export type FieldPhoneMetadata = {
+export type FieldDateTimeMetadata = {
   placeHolder: string;
-  fieldName: string;
-};
-
-export type FieldURLMetadata = {
-  placeHolder: string;
-  fieldName: string;
-};
-
-export type FieldLinkMetadata = {
-  placeHolder: string;
-  fieldName: string;
-};
-
-export type FieldDateMetadata = {
   fieldName: string;
 };
 
@@ -37,10 +25,9 @@ export type FieldNumberMetadata = {
   isPositive?: boolean;
 };
 
-export type FieldMoneyMetadata = {
-  fieldName: string;
+export type FieldLinkMetadata = {
   placeHolder: string;
-  isPositive?: boolean;
+  fieldName: string;
 };
 
 export type FieldCurrencyMetadata = {
@@ -49,102 +36,65 @@ export type FieldCurrencyMetadata = {
   isPositive?: boolean;
 };
 
-export type FieldFullnameMetadata = {
+export type FieldFullNameMetadata = {
+  objectMetadataNameSingular: string;
+  placeHolder: string;
   fieldName: string;
 };
 
 export type FieldEmailMetadata = {
-  fieldName: string;
   placeHolder: string;
-};
-
-export type FieldRelationMetadata = {
-  relationType: Entity;
   fieldName: string;
-  useEditButton?: boolean;
 };
 
-export type FieldChipMetadata = {
-  relationType: Entity;
-  contentFieldName: string;
-  urlFieldName: string;
+export type FieldPhoneMetadata = {
   placeHolder: string;
-};
-
-export type FieldDoubleTextMetadata = {
-  firstValueFieldName: string;
-  firstValuePlaceholder: string;
-  secondValueFieldName: string;
-  secondValuePlaceholder: string;
-};
-
-export type FieldDoubleTextChipMetadata = {
-  firstValueFieldName: string;
-  firstValuePlaceholder: string;
-  secondValueFieldName: string;
-  secondValuePlaceholder: string;
-  avatarUrlFieldName: string;
-  entityType: Entity;
+  fieldName: string;
 };
 
 export type FieldProbabilityMetadata = {
   fieldName: string;
 };
 
-export type FieldBooleanMetadata = {
-  fieldName: string;
-};
+export type FieldDefinitionRelationType =
+  | 'FROM_MANY_OBJECTS'
+  | 'FROM_ONE_OBJECT'
+  | 'TO_MANY_OBJECTS'
+  | 'TO_ONE_OBJECT';
 
-export type FieldEnumMetadata = {
+export type FieldRelationMetadata = {
   fieldName: string;
+  useEditButton?: boolean;
+  relationType?: FieldDefinitionRelationType;
+  relationObjectMetadataNameSingular: string;
+  relationObjectMetadataNamePlural: string;
 };
 
 export type FieldMetadata =
   | FieldBooleanMetadata
-  | FieldChipMetadata
-  | FieldCurrencyMetadata
-  | FieldDateMetadata
-  | FieldDoubleTextChipMetadata
-  | FieldDoubleTextMetadata
-  | FieldEmailMetadata
-  | FieldLinkMetadata
-  | FieldMoneyMetadata
   | FieldNumberMetadata
-  | FieldPhoneMetadata
-  | FieldProbabilityMetadata
-  | FieldEnumMetadata
-  | FieldRelationMetadata
+  | FieldDateTimeMetadata
   | FieldTextMetadata
-  | FieldURLMetadata
-  | FieldUuidMetadata;
+  | FieldUuidMetadata
+  | FieldCurrencyMetadata
+  | FieldLinkMetadata
+  | FieldPhoneMetadata
+  | FieldEmailMetadata
+  | FieldProbabilityMetadata
+  | FieldRelationMetadata
+  | FieldFullNameMetadata;
 
 export type FieldTextValue = string;
 export type FieldUUidValue = string;
-
-export type FieldChipValue = string;
-export type FieldDateValue = string | null;
-export type FieldPhoneValue = string;
-export type FieldURLValue = string;
-export type FieldLinkValue = { url: string; label: string };
+export type FieldDateTimeValue = string | null;
 export type FieldNumberValue = number | null;
-export type FieldMoneyValue = number | null;
-export type FieldCurrencyValue = { currencyCode: string; amountMicros: number };
-export type FieldFullNameValue = { firstName: string; lastName: string };
-
-export type FieldEmailValue = string;
-export type FieldProbabilityValue = number;
 export type FieldBooleanValue = boolean;
 
-export type FieldDoubleTextValue = {
-  firstValue: string;
-  secondValue: string;
-};
-
-export type FieldDoubleTextChipValue = {
-  firstValue: string;
-  secondValue: string;
-};
+export type FieldPhoneValue = string;
+export type FieldEmailValue = string;
+export type FieldLinkValue = { url: string; label: string };
+export type FieldCurrencyValue = { currencyCode: string; amountMicros: number };
+export type FieldFullNameValue = { firstName: string; lastName: string };
+export type FieldProbabilityValue = number;
 
 export type FieldRelationValue = EntityForSelect | null;
-
-export type FieldEnumValue = { color: ThemeColor; text: string };

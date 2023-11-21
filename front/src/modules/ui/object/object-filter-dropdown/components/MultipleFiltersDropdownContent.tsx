@@ -33,10 +33,10 @@ export const MultipleFiltersDropdownContent = () => {
             {filterDefinitionUsedInDropdown.type === 'TEXT' && (
               <ObjectFilterDropdownTextSearchInput />
             )}
-            {filterDefinitionUsedInDropdown.type === 'NUMBER' && (
-              <ObjectFilterDropdownNumberSearchInput />
-            )}
-            {filterDefinitionUsedInDropdown.type === 'DATE' && (
+            {['NUMBER', 'CURRENCY'].includes(
+              filterDefinitionUsedInDropdown.type,
+            ) && <ObjectFilterDropdownNumberSearchInput />}
+            {filterDefinitionUsedInDropdown.type === 'DATE_TIME' && (
               <ObjectFilterDropdownDateSearchInput />
             )}
             {filterDefinitionUsedInDropdown.type === 'ENTITY' && (

@@ -58,6 +58,12 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @Column({ default: false })
   isSystem: boolean;
 
+  @Column({ nullable: true })
+  labelIdentifierFieldMetadataId?: string;
+
+  @Column({ nullable: true })
+  imageIdentifierFieldMetadataId?: string;
+
   @Column({ nullable: false })
   workspaceId: string;
 

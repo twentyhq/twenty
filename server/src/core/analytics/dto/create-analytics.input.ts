@@ -1,6 +1,6 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
-import GraphQLJSON from 'graphql-type-json';
+import graphqlTypeJson from 'graphql-type-json';
 import { IsNotEmpty, IsString, IsObject } from 'class-validator';
 
 @ArgsType()
@@ -10,7 +10,7 @@ export class CreateAnalyticsInput {
   @IsString()
   type: string;
 
-  @Field(() => GraphQLJSON, { description: 'Event data in JSON format' })
+  @Field(() => graphqlTypeJson, { description: 'Event data in JSON format' })
   @IsObject()
   data: JSON;
 }

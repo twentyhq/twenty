@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { IconPlus } from '@/ui/display/icon';
+import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
@@ -17,6 +18,8 @@ export const RecordTableHeaderPlusButtonContent = () => {
   const { hiddenTableColumnsSelector } = useRecordTableScopedStates();
 
   const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector);
+
+  const { icons } = useLazyLoadIcons();
 
   const { handleColumnVisibilityChange } = useTableColumns();
 
@@ -39,7 +42,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
               onClick: () => handleAddColumn(column),
             },
           ]}
-          LeftIcon={column.Icon}
+          LeftIcon={icons[column.iconName]}
           text={column.label}
         />
       ))}

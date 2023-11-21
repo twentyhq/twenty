@@ -13,6 +13,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { useGeneratedApiKeys } from '@/settings/developers/hooks/useGeneratedApiKeys';
 import { generatedApiKeyFamilyState } from '@/settings/developers/states/generatedApiKeyFamilyState';
+import { ApiKey } from '@/settings/developers/types/ApiKey';
 import { computeNewExpirationDate } from '@/settings/developers/utils/compute-new-expiration-date';
 import { formatExpiration } from '@/settings/developers/utils/format-expiration';
 import { IconRepeat, IconSettings, IconTrash } from '@/ui/display/icon';
@@ -22,7 +23,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { ApiKey, useGenerateOneApiKeyTokenMutation } from '~/generated/graphql';
+import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 
 const StyledInfo = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -48,18 +49,18 @@ export const SettingsDevelopersApiKeyDetail = () => {
   );
   const { performOptimisticEvict } = useOptimisticEvict();
 
-  const [generateOneApiKeyToken] = useGenerateOneApiKeyTokenMutation();
+  const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const { createOneObject: createOneApiKey } = useCreateOneObjectRecord<ApiKey>(
     {
-      objectNameSingular: 'apiKeyV2',
+      objectNameSingular: 'apiKey',
     },
   );
   const { updateOneObject: updateApiKey } = useUpdateOneObjectRecord<ApiKey>({
-    objectNameSingular: 'apiKeyV2',
+    objectNameSingular: 'apiKey',
   });
 
   const { object: apiKeyData } = useFindOneObjectRecord({
-    objectNameSingular: 'apiKeyV2',
+    objectNameSingular: 'apiKey',
     objectRecordId: apiKeyId,
   });
 
@@ -68,7 +69,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
       idToUpdate: apiKeyId,
       input: { revokedAt: DateTime.now().toString() },
     });
-    performOptimisticEvict('ApiKeyV2', 'id', apiKeyId);
+    performOptimisticEvict('ApiKey', 'id', apiKeyId);
     if (redirect) {
       navigate('/settings/developers/api-keys');
     }
@@ -89,16 +90,13 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
     const tokenData = await generateOneApiKeyToken({
       variables: {
-        data: {
-          id: newApiKey.id,
-          expiresAt: newApiKey.expiresAt,
-          name: newApiKey.name, // TODO update typing to remove useless name param here
-        },
+        apiKeyId: newApiKey.id,
+        expiresAt: newApiKey?.expiresAt,
       },
     });
     return {
       id: newApiKey.id,
-      token: tokenData.data?.generateApiKeyV2Token.token,
+      token: tokenData.data?.generateApiKeyToken.token,
     };
   };
 

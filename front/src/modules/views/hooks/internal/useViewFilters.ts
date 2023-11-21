@@ -2,7 +2,7 @@ import { useApolloClient } from '@apollo/client';
 import { produce } from 'immer';
 import { useRecoilCallback } from 'recoil';
 
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { Filter } from '@/ui/object/object-filter-dropdown/types/Filter';
 import { savedViewFiltersScopedFamilyState } from '@/views/states/savedViewFiltersScopedFamilyState';
 import { ViewFilter } from '@/views/types/ViewFilter';
@@ -11,14 +11,10 @@ import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScope
 import { useViewScopedStates } from './useViewScopedStates';
 
 export const useViewFilters = (viewScopeId: string) => {
-  const {
-    updateOneMutation,
-    createOneMutation,
-    deleteOneMutation,
-    findManyQuery,
-  } = useFindOneObjectMetadataItem({
-    objectNameSingular: 'viewFilterV2',
-  });
+  const { updateOneMutation, createOneMutation, deleteOneMutation } =
+    useObjectMetadataItem({
+      objectNameSingular: 'viewFilter',
+    });
   const apolloClient = useApolloClient();
 
   const { currentViewFiltersState } = useViewScopedStates({
@@ -60,7 +56,6 @@ export const useViewFilters = (viewScopeId: string) => {
                     operand: viewFilter.operand,
                   },
                 },
-                refetchQueries: [findManyQuery],
               }),
             ),
           );
@@ -139,7 +134,6 @@ export const useViewFilters = (viewScopeId: string) => {
       apolloClient,
       createOneMutation,
       deleteOneMutation,
-      findManyQuery,
       updateOneMutation,
       viewScopeId,
     ],

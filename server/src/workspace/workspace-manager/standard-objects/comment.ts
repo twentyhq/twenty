@@ -1,8 +1,8 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const commentMetadata = {
-  nameSingular: 'commentV2',
-  namePlural: 'commentsV2',
+  nameSingular: 'comment',
+  namePlural: 'comments',
   labelSingular: 'Comment',
   labelPlural: 'Comments',
   targetTableName: 'comment',
@@ -37,7 +37,7 @@ const commentMetadata = {
       },
       description: 'Comment author',
       icon: 'IconCircleUser',
-      isNullable: false,
+      isNullable: true,
     },
     {
       isCustom: false,
@@ -50,7 +50,7 @@ const commentMetadata = {
       },
       description: 'Comment activity',
       icon: 'IconNotes',
-      isNullable: false,
+      isNullable: true,
     },
   ],
 };

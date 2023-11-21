@@ -2,6 +2,6 @@ import { FieldDefinition } from '../FieldDefinition';
 import { FieldMetadata, FieldProbabilityMetadata } from '../FieldMetadata';
 
 export const isFieldProbability = (
-  field: FieldDefinition<FieldMetadata>,
+  field: Pick<FieldDefinition<FieldMetadata>, 'type'>,
 ): field is FieldDefinition<FieldProbabilityMetadata> =>
   field.type === 'PROBABILITY';

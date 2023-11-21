@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useDeleteOneObjectRecord } from '@/object-record/hooks/useDeleteOneObjectRecord';
 import {
   IconCheckbox,
@@ -29,9 +29,11 @@ export const useRecordTableContextMenuEntries = () => {
   const { scopeId: objectNamePlural, resetTableRowSelection } =
     useRecordTable();
 
-  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
-    objectNamePlural,
-  });
+  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
+    {
+      objectNamePlural,
+    },
+  );
 
   const { createFavorite, deleteFavorite, favorites } = useFavorites({
     objectNamePlural,

@@ -30,18 +30,18 @@ export const viewPrefillData = async (
         type: 'kanban',
       },
       {
-        name: 'All Companies (V2)',
-        objectMetadataId: objectMetadataMap['companyV2'].id,
+        name: 'All Companies',
+        objectMetadataId: objectMetadataMap['company'].id,
         type: 'table',
       },
       {
-        name: 'All People (V2)',
-        objectMetadataId: objectMetadataMap['personV2'].id,
+        name: 'All People',
+        objectMetadataId: objectMetadataMap['person'].id,
         type: 'table',
       },
       {
-        name: 'All Opportunities (V2)',
-        objectMetadataId: objectMetadataMap['companyV2'].id,
+        name: 'All Opportunities',
+        objectMetadataId: objectMetadataMap['company'].id,
         type: 'kanban',
       },
     ])
@@ -66,116 +66,88 @@ export const viewPrefillData = async (
     ])
     .orIgnore()
     .values([
-      // CompanyV2
+      // Company
       {
-        fieldMetadataId: objectMetadataMap['companyV2'].fields['name'],
-        viewId: viewIdMap['All Companies (V2)'],
+        fieldMetadataId: objectMetadataMap['company'].fields['name'],
+        viewId: viewIdMap['All Companies'],
         position: 0,
         isVisible: true,
         size: 180,
       },
       {
-        fieldMetadataId: objectMetadataMap['companyV2'].fields['domainName'],
-        viewId: viewIdMap['All Companies (V2)'],
+        fieldMetadataId: objectMetadataMap['company'].fields['domainName'],
+        viewId: viewIdMap['All Companies'],
         position: 1,
         isVisible: true,
         size: 100,
       },
-      // {
-      //   fieldMetadataId: objectMetadataMap['companyV2'].fields['accountOwner'],
-      //   viewId: viewIdMap['All Companies (V2)'],
-      //   position: 2,
-      //   isVisible: true,
-      //   size: 150,
-      // },
-      // {
-      //   fieldMetadataId: 'createdAt',
-      //   viewId: viewIdMap['All Companies (V2)'],
-      //   position: 3,
-      //   isVisible: true,
-      //   size: 150,
-      // },
       {
-        fieldMetadataId: objectMetadataMap['companyV2'].fields['employees'],
-        viewId: viewIdMap['All Companies (V2)'],
+        fieldMetadataId: objectMetadataMap['company'].fields['employees'],
+        viewId: viewIdMap['All Companies'],
         position: 4,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: objectMetadataMap['companyV2'].fields['linkedinLink'],
-        viewId: viewIdMap['All Companies (V2)'],
+        fieldMetadataId: objectMetadataMap['company'].fields['linkedinLink'],
+        viewId: viewIdMap['All Companies'],
         position: 5,
         isVisible: true,
         size: 170,
       },
       {
-        fieldMetadataId: objectMetadataMap['companyV2'].fields['address'],
-        viewId: viewIdMap['All Companies (V2)'],
+        fieldMetadataId: objectMetadataMap['company'].fields['address'],
+        viewId: viewIdMap['All Companies'],
         position: 6,
         isVisible: true,
         size: 170,
       },
-      // PeopleV2
+      // Person
       {
-        fieldMetadataId: objectMetadataMap['personV2'].fields['firstName'], // TODO: change to displayName once we have name field type
-        viewId: viewIdMap['All People (V2)'],
+        fieldMetadataId: objectMetadataMap['person'].fields['firstName'], // TODO: change to displayName once we have name field type
+        viewId: viewIdMap['All People'],
         position: 0,
         isVisible: true,
         size: 210,
       },
       {
-        fieldMetadataId: objectMetadataMap['personV2'].fields['email'],
-        viewId: viewIdMap['All People (V2)'],
+        fieldMetadataId: objectMetadataMap['person'].fields['email'],
+        viewId: viewIdMap['All People'],
         position: 1,
         isVisible: true,
         size: 150,
       },
-      // {
-      //   fieldMetadataId: objectMetadataMap['personV2'].fields['company'],
-      //   viewId: viewIdMap['All People (V2)'],
-      //   position: 2,
-      //   isVisible: true,
-      //   size: 150,
-      // },
       {
-        fieldMetadataId: objectMetadataMap['personV2'].fields['phone'],
-        viewId: viewIdMap['All People (V2)'],
+        fieldMetadataId: objectMetadataMap['person'].fields['phone'],
+        viewId: viewIdMap['All People'],
         position: 3,
         isVisible: true,
         size: 150,
       },
-      // {
-      //   fieldMetadataId: 'createdAt',
-      //   viewId: viewIdMap['All People (V2)'],
-      //   position: 4,
-      //   isVisible: true,
-      //   size: 150,
-      // },
       {
-        fieldMetadataId: objectMetadataMap['personV2'].fields['city'],
-        viewId: viewIdMap['All People (V2)'],
+        fieldMetadataId: objectMetadataMap['person'].fields['city'],
+        viewId: viewIdMap['All People'],
         position: 5,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: objectMetadataMap['personV2'].fields['jobTitle'],
-        viewId: viewIdMap['All People (V2)'],
+        fieldMetadataId: objectMetadataMap['person'].fields['jobTitle'],
+        viewId: viewIdMap['All People'],
         position: 6,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: objectMetadataMap['personV2'].fields['linkedinLink'],
-        viewId: viewIdMap['All People (V2)'],
+        fieldMetadataId: objectMetadataMap['person'].fields['linkedinLink'],
+        viewId: viewIdMap['All People'],
         position: 7,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: objectMetadataMap['personV2'].fields['xLink'],
-        viewId: viewIdMap['All People (V2)'],
+        fieldMetadataId: objectMetadataMap['person'].fields['xLink'],
+        viewId: viewIdMap['All People'],
         position: 8,
         isVisible: true,
         size: 150,
@@ -230,7 +202,7 @@ export const viewPrefillData = async (
         isVisible: true,
         size: 170,
       },
-      // Opportunities
+      // Opportunity
       {
         fieldMetadataId: 'amount',
         viewId: viewIdMap['All opportunities'],

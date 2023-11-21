@@ -1,48 +1,32 @@
 import {
-  Args,
   Resolver,
   Query,
-  ResolveField,
+  Args,
   Parent,
+  ResolveField,
   Mutation,
 } from '@nestjs/graphql';
-import { UseFilters, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 
 import crypto from 'crypto';
 
-import { accessibleBy } from '@casl/prisma';
-import { Prisma, Workspace } from '@prisma/client';
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 
-import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
 import { SupportDriver } from 'src/integrations/environment/interfaces/support.interface';
+import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
 
-import { FindManyUserArgs } from 'src/core/@generated/user/find-many-user.args';
-import { User } from 'src/core/@generated/user/user.model';
-import { ExceptionFilter } from 'src/filters/exception.filter';
-import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
-import {
-  PrismaSelect,
-  PrismaSelector,
-} from 'src/decorators/prisma-select.decorator';
-import { AbilityGuard } from 'src/guards/ability.guard';
-import { CheckAbilities } from 'src/decorators/check-abilities.decorator';
-import {
-  DeleteUserAbilityHandler,
-  ReadUserAbilityHandler,
-  UpdateUserAbilityHandler,
-} from 'src/ability/handlers/user.ability-handler';
-import { UserAbility } from 'src/decorators/user-ability.decorator';
-import { AppAbility } from 'src/ability/ability.factory';
 import { AuthUser } from 'src/decorators/auth-user.decorator';
-import { assert } from 'src/utils/assert';
-import { UpdateOneUserArgs } from 'src/core/@generated/user/update-one-user.args';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { FileUploadService } from 'src/core/file/services/file-upload.service';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { assert } from 'src/utils/assert';
+import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
+import { User } from 'src/core/user/user.entity';
+import { Workspace } from 'src/core/workspace/workspace.entity';
+import { UserWorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
 
-import { UserService } from './user.service';
+import { UserService } from './services/user.service';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -56,85 +40,24 @@ const getHMACKey = (email?: string, key?: string | null) => {
 export class UserResolver {
   constructor(
     private readonly userService: UserService,
+    private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
-    private environmentService: EnvironmentService,
   ) {}
 
   @Query(() => User)
-  async currentUser(
-    @AuthUser() { id }: User,
-    @PrismaSelector({ modelName: 'User' })
-    prismaSelect: PrismaSelect<'User'>,
-  ) {
-    const select = prismaSelect.value;
-
-    const user = await this.userService.findUnique({
-      where: {
-        id,
-      },
-      select,
+  async currentUser(@AuthUser() { id }: User) {
+    const user = await this.userService.findById(id, {
+      relations: [{ name: 'defaultWorkspace', query: {} }],
     });
     assert(user, 'User not found');
-
     return user;
   }
 
-  @UseFilters(ExceptionFilter)
-  @Query(() => [User], {
+  @ResolveField(() => UserWorkspaceMember, {
     nullable: false,
   })
-  @UseGuards(AbilityGuard)
-  @CheckAbilities(ReadUserAbilityHandler)
-  async findManyUser(
-    @Args() args: FindManyUserArgs,
-    @UserAbility() ability: AppAbility,
-    @PrismaSelector({ modelName: 'User' })
-    prismaSelect: PrismaSelect<'User'>,
-  ): Promise<Partial<User>[]> {
-    return await this.userService.findMany({
-      where: args.where
-        ? {
-            AND: [args.where, accessibleBy(ability).User],
-          }
-        : accessibleBy(ability).User,
-      orderBy: args.orderBy,
-      cursor: args.cursor,
-      take: args.take,
-      skip: args.skip,
-      distinct: args.distinct,
-      select: prismaSelect.value,
-    });
-  }
-
-  @Mutation(() => User)
-  @UseGuards(AbilityGuard)
-  @CheckAbilities(UpdateUserAbilityHandler)
-  async updateUser(
-    @Args() args: UpdateOneUserArgs,
-    @AuthUser() { id }: User,
-    @PrismaSelector({ modelName: 'User' })
-    prismaSelect: PrismaSelect<'User'>,
-  ) {
-    const user = await this.userService.findUnique({
-      where: {
-        id,
-      },
-      select: prismaSelect.value,
-    });
-    assert(user, 'User not found');
-
-    return this.userService.update({
-      where: args.where,
-      data: args.data,
-      select: prismaSelect.value,
-    } as Prisma.UserUpdateArgs);
-  }
-
-  @ResolveField(() => String, {
-    nullable: false,
-  })
-  displayName(@Parent() parent: User): string {
-    return `${parent.firstName ?? ''} ${parent.lastName ?? ''}`;
+  async workspaceMember(@Parent() user: User): Promise<UserWorkspaceMember> {
+    return this.userService.loadWorkspaceMember(user);
   }
 
   @ResolveField(() => String, {
@@ -154,6 +77,10 @@ export class UserResolver {
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream, filename, mimetype }: FileUpload,
   ): Promise<string> {
+    if (!id) {
+      throw new Error('User not found');
+    }
+
     const stream = createReadStream();
     const buffer = await streamToBuffer(stream);
     const fileFolder = FileFolder.ProfilePicture;
@@ -165,20 +92,11 @@ export class UserResolver {
       fileFolder,
     });
 
-    await this.userService.update({
-      where: { id },
-      data: {
-        avatarUrl: paths[0],
-      },
-    });
-
     return paths[0];
   }
 
   @Mutation(() => User)
-  @UseGuards(AbilityGuard)
-  @CheckAbilities(DeleteUserAbilityHandler)
-  async deleteUserAccount(
+  async deleteUser(
     @AuthUser() { id: userId }: User,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
