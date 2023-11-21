@@ -5,6 +5,7 @@ import { HotkeyScope } from '../types/HotkeyScope';
 export const DEFAULT_HOTKEYS_SCOPE_CUSTOM_SCOPES: CustomHotkeyScopes = {
   commandMenu: true,
   goto: false,
+  keyboardShortcutMenu: true,
 };
 
 export const INITIAL_HOTKEYS_SCOPE: HotkeyScope = {
@@ -12,5 +13,6 @@ export const INITIAL_HOTKEYS_SCOPE: HotkeyScope = {
   customScopes: {
     commandMenu: true,
     goto: true,
+    keyboardShortcutMenu: true,
   },
 };
