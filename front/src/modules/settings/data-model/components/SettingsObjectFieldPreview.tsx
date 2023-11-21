@@ -137,7 +137,7 @@ export const SettingsObjectFieldPreview = ({
         <FieldContext.Provider
           value={{
             entityId,
-            isMainIdentifier: false,
+            isLabelIdentifier: false,
             fieldDefinition: {
               type: parseFieldType(fieldMetadata.type),
               iconName: 'FieldIcon',

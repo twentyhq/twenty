@@ -37,7 +37,8 @@ export const RelationPicker = ({
   }, [initialSearchFilter, setRelationPickerSearchFilter]);
 
   const { findManyQuery } = useObjectMetadataItem({
-    objectNameSingular: fieldDefinition.metadata.objectMetadataNameSingular,
+    objectNameSingular:
+      fieldDefinition.metadata.relationObjectMetadataNameSingular,
   });
 
   const useFindManyQuery = (options: any) => useQuery(findManyQuery, options);
@@ -49,8 +50,8 @@ export const RelationPicker = ({
     filters: [
       {
         fieldNames:
-          searchQuery?.filterFields?.(
-            fieldDefinition.metadata.objectMetadataNameSingular,
+          searchQuery?.computeFilterFields?.(
+            fieldDefinition.metadata.relationObjectMetadataNameSingular,
           ) ?? [],
         filter: relationPickerSearchFilter,
       },
@@ -59,10 +60,10 @@ export const RelationPicker = ({
     mappingFunction: (record: any) =>
       identifiersMapper?.(
         record,
-        fieldDefinition.metadata.objectMetadataNameSingular,
+        fieldDefinition.metadata.relationObjectMetadataNameSingular,
       ),
     selectedIds: recordId ? [recordId] : [],
-    objectNamePlural: fieldDefinition.metadata.objectMetadataNamePlural,
+    objectNamePlural: fieldDefinition.metadata.relationObjectMetadataNamePlural,
   });
 
   const handleEntitySelected = async (selectedUser: any | null | undefined) => {
