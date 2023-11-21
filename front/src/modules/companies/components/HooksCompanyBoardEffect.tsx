@@ -49,10 +49,6 @@ export const HooksCompanyBoardEffect = () => {
     objectNamePlural: 'opportunities',
   });
 
-  useEffect(() => {
-    console.log('objectMetadataItem', objectMetadataItem);
-  }, [objectMetadataItem]);
-
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
     useComputeDefinitionsFromFieldMetadata(objectMetadataItem);
 
@@ -152,36 +148,12 @@ export const HooksCompanyBoardEffect = () => {
           )
           .getValue();
 
-        console.log(
-          'availableBoardCardFieldsFromState',
-          availableBoardCardFieldsFromState,
-        );
-        console.log('availableBoardCardFields', availableBoardCardFields);
-
         if (
           !isDeeplyEqual(
-            availableBoardCardFieldsFromState.map((field: any) => {
-              const { mainIdentifierMapper, ...rest } = field.metadata;
-
-              const newField = {
-                ...field,
-                metadata: rest,
-              };
-              console.log('rest', rest);
-              return newField;
-            }),
-            availableBoardCardFields.map((field: any) => {
-              const { mainIdentifierMapper, ...rest } = field.metadata;
-              const newField = {
-                ...field,
-                metadata: rest,
-              };
-              console.log('rest', rest);
-              return newField;
-            }),
+            availableBoardCardFieldsFromState,
+            availableBoardCardFields,
           )
         ) {
-          console.log('setAvailableBoardCardFields');
           set(
             availableBoardCardFieldsScopedState({
               scopeId: 'company-board-view',

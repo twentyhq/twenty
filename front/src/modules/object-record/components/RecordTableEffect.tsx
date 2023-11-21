@@ -22,9 +22,12 @@ export const RecordTableEffect = () => {
   });
 
   const {
-    mainIdentifierMapper,
     basePathToShowPage,
     mainIdentifierFieldMetadataId,
+    labelIdentifierFieldPaths,
+    imageIdentifierUrlField,
+    imageIdentifierUrlPrefix,
+    imageIdentifierFormat,
   } = useObjectMainIdentifier(objectMetadataItem);
 
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
@@ -40,13 +43,12 @@ export const RecordTableEffect = () => {
   } = useView();
 
   useEffect(() => {
-    if (
-      mainIdentifierMapper &&
-      basePathToShowPage &&
-      mainIdentifierFieldMetadataId
-    ) {
+    if (basePathToShowPage && mainIdentifierFieldMetadataId) {
       setObjectMetadataConfig?.({
-        mainIdentifierMapper,
+        labelIdentifierFieldPaths,
+        imageIdentifierUrlField,
+        imageIdentifierUrlPrefix,
+        imageIdentifierFormat,
         basePathToShowPage,
         mainIdentifierFieldMetadataId,
       });
@@ -55,8 +57,11 @@ export const RecordTableEffect = () => {
     basePathToShowPage,
     objectMetadataItem,
     mainIdentifierFieldMetadataId,
-    mainIdentifierMapper,
     setObjectMetadataConfig,
+    labelIdentifierFieldPaths,
+    imageIdentifierUrlField,
+    imageIdentifierUrlPrefix,
+    imageIdentifierFormat,
   ]);
 
   useEffect(() => {

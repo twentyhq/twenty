@@ -92,7 +92,10 @@ export const SettingsObjectFieldPreview = ({
 
   const {
     defaultValue: relationDefaultValue,
-    recordMapper: mainIdentifierMapper,
+    labelIdentifierFieldPaths,
+    imageIdentifierUrlField,
+    imageIdentifierUrlPrefix,
+    imageIdentifierFormat,
   } = useRelationFieldPreview({
     relationObjectMetadataId,
     skipDefaultValue:
@@ -103,6 +106,15 @@ export const SettingsObjectFieldPreview = ({
     fieldMetadata.type === FieldMetadataType.Relation
       ? relationDefaultValue
       : dataTypes[fieldMetadata.type].defaultValue;
+
+  if (
+    !labelIdentifierFieldPaths ||
+    !imageIdentifierUrlField ||
+    !imageIdentifierUrlPrefix ||
+    !imageIdentifierFormat
+  ) {
+    return <></>;
+  }
 
   return (
     <StyledContainer className={className}>
@@ -146,7 +158,13 @@ export const SettingsObjectFieldPreview = ({
               iconName: 'FieldIcon',
               fieldMetadataId: fieldMetadata.id || '',
               label: fieldMetadata.label,
-              metadata: { fieldName, mainIdentifierMapper },
+              metadata: {
+                fieldName,
+                labelIdentifierFieldPaths,
+                imageIdentifierUrlField,
+                imageIdentifierUrlPrefix,
+                imageIdentifierFormat,
+              },
             },
             hotkeyScope: 'field-preview',
           }}

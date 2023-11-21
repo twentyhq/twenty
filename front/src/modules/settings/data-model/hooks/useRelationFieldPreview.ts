@@ -1,7 +1,6 @@
 import { useObjectMainIdentifier } from '@/object-metadata/hooks/useObjectMainIdentifier';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
-import { MainIdentifierMapper } from '@/ui/object/field/types/MainIdentifierMapper';
 
 export const useRelationFieldPreview = ({
   relationObjectMetadataId,
@@ -21,24 +20,18 @@ export const useRelationFieldPreview = ({
     skip: skipDefaultValue || !relationObjectMetadataItem,
   });
 
-  const { mainIdentifierMapper } = useObjectMainIdentifier(
-    relationObjectMetadataItem,
-  );
-
-  const recordMapper: MainIdentifierMapper | undefined =
-    relationObjectMetadataItem && mainIdentifierMapper
-      ? (record: { id: string }) => {
-          const mappedRecord = mainIdentifierMapper(record);
-
-          return {
-            ...mappedRecord,
-            name: mappedRecord.name || relationObjectMetadataItem.labelSingular,
-          };
-        }
-      : undefined;
+  const {
+    labelIdentifierFieldPaths,
+    imageIdentifierUrlField,
+    imageIdentifierUrlPrefix,
+    imageIdentifierFormat,
+  } = useObjectMainIdentifier(relationObjectMetadataItem);
 
   return {
     defaultValue: relationObjects?.[0],
-    recordMapper,
+    labelIdentifierFieldPaths,
+    imageIdentifierUrlField,
+    imageIdentifierUrlPrefix,
+    imageIdentifierFormat,
   };
 };
