@@ -1,7 +1,7 @@
 import { ScopedStateKey } from '@/ui/utilities/recoil-scope/scopes-internal/types/ScopedStateKey';
 import { createScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/utils/createScopeInternalContext';
 
-type DropdownScopeInternalContextProps = ScopedStateKey;
+type RelationPickerScopeInternalContextProps = ScopedStateKey;
 
-export const DropdownScopeInternalContext =
-  createScopeInternalContext<DropdownScopeInternalContextProps>();
+export const RelationPickerScopeInternalContext =
+  createScopeInternalContext<RelationPickerScopeInternalContextProps>();

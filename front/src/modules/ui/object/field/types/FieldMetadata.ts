@@ -64,11 +64,6 @@ export type FieldRelationMetadata = {
   fieldName: string;
   useEditButton?: boolean;
   relationType?: FieldDefinitionRelationType;
-  labelIdentifierFieldPaths: string[];
-  imageIdentifierUrlField: string;
-  imageIdentifierUrlPrefix: string;
-  imageIdentifierFormat: 'squared' | 'rounded';
-  searchFields: string[];
   objectMetadataNameSingular: string;
   objectMetadataNamePlural: string;
 };

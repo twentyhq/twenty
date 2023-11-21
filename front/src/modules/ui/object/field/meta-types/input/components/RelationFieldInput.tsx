@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import styled from '@emotion/styled';
 
+import { RelationPicker } from '@/ui/input/components/internal/relation-picker/RelationPicker';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
-import { RelationPicker } from '@/ui/object/field/meta-types/input/components/internal/RelationPicker';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useRelationField } from '../../hooks/useRelationField';

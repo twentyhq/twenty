@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { mapPaginatedObjectsToObjects } from '@/object-record/utils/mapPaginatedObjectsToObjects';
 import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { assertNotNull } from '~/utils/assert';
 import { isDefined } from '~/utils/isDefined';
 
 type SearchFilter = { fieldNames: string[]; filter: string | number };
@@ -36,7 +37,7 @@ export const useFilteredSearchEntityQuery = ({
   filters: SearchFilter[];
   sortOrder?: OrderBy;
   selectedIds: string[];
-  mappingFunction: (entity: any) => EntityForSelect;
+  mappingFunction: (entity: any) => EntityForSelect | undefined;
   limit?: number;
   excludeEntityIds?: string[];
   objectNamePlural: string;
@@ -139,15 +140,21 @@ export const useFilteredSearchEntityQuery = ({
     selectedEntities: mapPaginatedObjectsToObjects({
       objectNamePlural: objectNamePlural,
       pagedObjects: selectedEntitiesData,
-    }).map(mappingFunction),
+    })
+      .map(mappingFunction)
+      .filter(assertNotNull),
     filteredSelectedEntities: mapPaginatedObjectsToObjects({
       objectNamePlural: objectNamePlural,
       pagedObjects: filteredSelectedEntitiesData,
-    }).map(mappingFunction),
+    })
+      .map(mappingFunction)
+      .filter(assertNotNull),
     entitiesToSelect: mapPaginatedObjectsToObjects({
       objectNamePlural: objectNamePlural,
       pagedObjects: entitiesToSelectData,
-    }).map(mappingFunction),
+    })
+      .map(mappingFunction)
+      .filter(assertNotNull),
     loading:
       entitiesToSelectLoading ||
       filteredSelectedEntitiesLoading ||

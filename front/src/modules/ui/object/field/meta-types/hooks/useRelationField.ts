@@ -1,6 +1,8 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
+import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
+
 import { FieldContext } from '../../contexts/FieldContext';
 import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
@@ -30,35 +32,7 @@ export const useRelationField = () => {
 
   const initialValue = fieldInitialValue?.isEmpty ? null : fieldValue;
 
-  const mapToObjectIdentifiers = (record: any) => {
-    let name = '';
-    for (const fieldPath of fieldDefinition.metadata
-      .labelIdentifierFieldPaths) {
-      const fieldPathParts = fieldPath.split('.');
-
-      if (fieldPathParts.length === 1) {
-        name += record[fieldPathParts[0]];
-      } else if (fieldPathParts.length === 2) {
-        name += record[fieldPathParts[0]][fieldPathParts[1]] + ' ';
-      } else {
-        throw new Error(
-          `Invalid field path ${fieldPath}. Relation picker only supports field paths with 1 or 2 parts.`,
-        );
-      }
-    }
-
-    const avatarUrl = record[fieldDefinition.metadata.imageIdentifierUrlField];
-    return {
-      id: record.id,
-      name: name.trimEnd(),
-      avatarUrl: avatarUrl
-        ? fieldDefinition.metadata.imageIdentifierUrlPrefix +
-          record[fieldDefinition.metadata.imageIdentifierUrlField]
-        : '',
-      avatarType: fieldDefinition.metadata.imageIdentifierFormat,
-      record: record,
-    };
-  };
+  const { identifiersMapper, searchQuery } = useRelationPicker();
 
   return {
     fieldDefinition,
@@ -66,6 +40,7 @@ export const useRelationField = () => {
     initialValue,
     initialSearchValue,
     setFieldValue,
-    mapToObjectIdentifiers,
+    searchQuery,
+    identifiersMapper,
   };
 };

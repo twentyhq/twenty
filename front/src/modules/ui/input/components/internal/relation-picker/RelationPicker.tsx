@@ -42,18 +42,25 @@ export const RelationPicker = ({
 
   const useFindManyQuery = (options: any) => useQuery(findManyQuery, options);
 
-  const { mapToObjectIdentifiers } = useRelationField();
+  const { identifiersMapper, searchQuery } = useRelationField();
 
   const workspaceMembers = useFilteredSearchEntityQuery({
     queryHook: useFindManyQuery,
     filters: [
       {
-        fieldNames: fieldDefinition.metadata.searchFields,
+        fieldNames:
+          searchQuery?.filterFields?.(
+            fieldDefinition.metadata.objectMetadataNameSingular,
+          ) ?? [],
         filter: relationPickerSearchFilter,
       },
     ],
     orderByField: 'createdAt',
-    mappingFunction: mapToObjectIdentifiers,
+    mappingFunction: (record: any) =>
+      identifiersMapper?.(
+        record,
+        fieldDefinition.metadata.objectMetadataNameSingular,
+      ),
     selectedIds: recordId ? [recordId] : [],
     objectNamePlural: fieldDefinition.metadata.objectMetadataNamePlural,
   });
