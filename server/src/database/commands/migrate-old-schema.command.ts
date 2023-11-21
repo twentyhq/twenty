@@ -338,7 +338,8 @@ export class MigrateOldSchemaCommand extends CommandRunner {
               "workspaceId"
           FROM public."attachments"
         `);
-      const comments: Array<any> = await performQuery(`
+      const comments: Array<any> = this.cleanIds(
+        await performQuery(`
             SELECT
                 c."id",
                 c."createdAt",
@@ -350,7 +351,9 @@ export class MigrateOldSchemaCommand extends CommandRunner {
                 c."workspaceId"
             FROM public."comments" AS c
             JOIN public."workspace_members" AS w ON c."authorId"=w."userId"
-        `);
+        `),
+        'activityId',
+      );
       const pipelineStages: Array<any> = this.cleanIds(
         await performQuery(`
             SELECT
