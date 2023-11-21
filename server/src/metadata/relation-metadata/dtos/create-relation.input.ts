@@ -62,8 +62,18 @@ export class CreateRelationInput {
 
   @IsString()
   @IsOptional()
-  @Field({ nullable: true })
+  @Field({ nullable: true, deprecationReason: 'Use fromDescription instead' })
   description?: string;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  fromDescription?: string;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  toDescription?: string;
 
   @HideField()
   workspaceId: string;

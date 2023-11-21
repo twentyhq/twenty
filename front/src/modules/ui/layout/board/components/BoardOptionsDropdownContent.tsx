@@ -74,6 +74,7 @@ export const BoardOptionsDropdownContent = ({
     hiddenBoardCardFieldsScopedSelector,
     BoardRecoilScopeContext,
   );
+
   const hasHiddenFields = hiddenBoardCardFields.length > 0;
   const visibleBoardCardFields = useRecoilScopedValue(
     visibleBoardCardFieldsScopedSelector,

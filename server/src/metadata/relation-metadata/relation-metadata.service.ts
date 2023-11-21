@@ -122,7 +122,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       {
         name: record.fromName,
         label: record.fromLabel,
-        description: record.description,
+        description: record.fromDescription,
         icon: record.fromIcon,
         isCustom: true,
         targetColumnMap: {},
@@ -135,7 +135,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       {
         name: record.toName,
         label: record.toLabel,
-        description: undefined,
+        description: record.toDescription,
         icon: record.toIcon,
         isCustom: true,
         targetColumnMap: {},

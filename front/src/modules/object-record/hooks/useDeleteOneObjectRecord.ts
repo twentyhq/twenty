@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
@@ -20,20 +21,25 @@ export const useDeleteOneObjectRecord = <T>({
   // TODO: type this with a minimal type at least with Record<string, any>
   const [mutate] = useMutation(deleteOneMutation);
 
-  const deleteOneObject =
-    objectNameSingular && foundObjectMetadataItem
-      ? async (idToDelete: string) => {
-          const deletedObject = await mutate({
-            variables: {
-              idToDelete,
-            },
-            refetchQueries: [getOperationName(findManyQuery) ?? ''],
-          });
-          return deletedObject.data[
-            `create${capitalize(objectNameSingular)}`
-          ] as T;
-        }
-      : undefined;
+  const deleteOneObject = useCallback(
+    async (idToDelete: string) => {
+      if (objectNameSingular && foundObjectMetadataItem) {
+        const deletedObject = await mutate({
+          variables: {
+            idToDelete,
+          },
+          refetchQueries: [getOperationName(findManyQuery) ?? ''],
+        });
+
+        return deletedObject.data[
+          `create${capitalize(objectNameSingular)}`
+        ] as T;
+      }
+
+      return null;
+    },
+    [foundObjectMetadataItem, mutate, objectNameSingular, findManyQuery],
+  );
 
   return {
     deleteOneObject,

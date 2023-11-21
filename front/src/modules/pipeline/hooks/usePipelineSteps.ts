@@ -7,7 +7,7 @@ import { BoardColumnDefinition } from '@/ui/layout/board/types/BoardColumnDefini
 
 import { currentPipelineState } from '../states/currentPipelineState';
 
-export const usePipelineStages = () => {
+export const usePipelineSteps = () => {
   const currentPipeline = useRecoilValue(currentPipelineState);
 
   const { createOneObject: createOnePipelineStep } =
@@ -20,7 +20,7 @@ export const usePipelineStages = () => {
       objectNameSingular: 'pipelineStep',
     });
 
-  const handlePipelineStageAdd = async (boardColumn: BoardColumnDefinition) => {
+  const handlePipelineStepAdd = async (boardColumn: BoardColumnDefinition) => {
     if (!currentPipeline?.id) return;
 
     return createOnePipelineStep?.({
@@ -37,11 +37,11 @@ export const usePipelineStages = () => {
     });
   };
 
-  const handlePipelineStageDelete = async (boardColumnId: string) => {
+  const handlePipelineStepDelete = async (boardColumnId: string) => {
     if (!currentPipeline?.id) return;
 
     return deleteOnePipelineStep?.(boardColumnId);
   };
 
-  return { handlePipelineStageAdd, handlePipelineStageDelete };
+  return { handlePipelineStepAdd, handlePipelineStepDelete };
 };

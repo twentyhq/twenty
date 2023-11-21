@@ -1,47 +1,34 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { MainIdentifierMapper } from '@/ui/object/field/types/MainIdentifierMapper';
+import { AvatarType } from '@/users/components/Avatar';
 import { Nullable } from '~/types/Nullable';
 
 export const useObjectMainIdentifier = (
   objectMetadataItem?: Nullable<ObjectMetadataItem>,
 ) => {
   if (!objectMetadataItem) {
-    return {
-      mainIdentifierMapper: undefined,
-      mainIdentifierFieldMetadataId: undefined,
-      basePathToShowPage: undefined,
-    };
+    return {};
   }
 
-  const mainIdentifierMapper: MainIdentifierMapper = (record: any) => {
-    if (objectMetadataItem.nameSingular === 'company') {
-      return {
-        id: record.id,
-        name: record.name,
-        avatarUrl: record.avatarUrl,
-        avatarType: 'squared',
-        record: record,
-      };
-    }
-
-    if (objectMetadataItem.nameSingular === 'workspaceMember') {
-      return {
-        id: record.id,
-        name: record.name.firstName + ' ' + record.name.lastName,
-        avatarUrl: record.avatarUrl,
-        avatarType: 'rounded',
-        record: record,
-      };
-    }
-
-    return {
-      id: record.id,
-      name: record.name,
-      avatarUrl: record.avatarUrl,
-      avatarType: 'rounded',
-      record: record,
-    };
-  };
+  const labelIdentifierFieldPaths = ['person', 'workspaceMember'].includes(
+    objectMetadataItem.nameSingular,
+  )
+    ? ['name.firstName', 'name.lastName']
+    : ['name'];
+  const imageIdentifierFormat: AvatarType = ['company'].includes(
+    objectMetadataItem.nameSingular,
+  )
+    ? 'squared'
+    : 'rounded';
+  const imageIdentifierUrlPrefix = ['company'].includes(
+    objectMetadataItem.nameSingular,
+  )
+    ? 'https://favicon.twenty.com/'
+    : '';
+  const imageIdentifierUrlField = ['company'].includes(
+    objectMetadataItem.nameSingular,
+  )
+    ? 'domainName'
+    : 'avatarUrl';
 
   const mainIdentifierFieldMetadataId = objectMetadataItem.fields.find(
     ({ name }) => name === 'name',
@@ -50,7 +37,10 @@ export const useObjectMainIdentifier = (
   const basePathToShowPage = `/object/${objectMetadataItem.nameSingular}/`;
 
   return {
-    mainIdentifierMapper,
+    labelIdentifierFieldPaths,
+    imageIdentifierUrlField,
+    imageIdentifierUrlPrefix,
+    imageIdentifierFormat,
     mainIdentifierFieldMetadataId,
     basePathToShowPage,
   };

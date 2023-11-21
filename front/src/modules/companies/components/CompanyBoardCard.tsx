@@ -143,7 +143,7 @@ export const CompanyBoardCard = () => {
 
   const showCompactView = isCompactViewEnabled && isCardInCompactView;
 
-  const { pipelineProgress, company } = companyProgress ?? {};
+  const { opportunity, company } = companyProgress ?? {};
 
   const visibleBoardCardFields = useRecoilScopedValue(
     visibleBoardCardFieldsScopedSelector,
@@ -175,7 +175,7 @@ export const CompanyBoardCard = () => {
   };
 
   // boardCardId check can be moved to a wrapper to avoid unnecessary logic above
-  if (!company || !pipelineProgress || !boardCardId) {
+  if (!company || !opportunity || !boardCardId) {
     return null;
   }
 

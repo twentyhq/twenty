@@ -9,20 +9,21 @@ import { boardCardIdsByColumnIdFamilyState } from '../boardCardIdsByColumnIdFami
 export const boardColumnTotalsFamilySelector = selectorFamily({
   key: 'boardColumnTotalsFamilySelector',
   get:
-    (pipelineStageId: string) =>
+    (pipelineStepId: string) =>
     ({ get }) => {
-      const cardIds = get(boardCardIdsByColumnIdFamilyState(pipelineStageId));
+      const cardIds = get(boardCardIdsByColumnIdFamilyState(pipelineStepId));
 
-      const pipelineProgresses = cardIds.map((pipelineProgressId: string) =>
-        get(companyProgressesFamilyState(pipelineProgressId)),
+      const opportunities = cardIds.map((opportunityId: string) =>
+        get(companyProgressesFamilyState(opportunityId)),
       );
 
-      const pipelineStageTotal: number =
-        pipelineProgresses?.reduce(
-          (acc: number, curr: any) => acc + curr?.pipelineProgress.amount,
+      const pipelineStepTotal: number =
+        opportunities?.reduce(
+          (acc: number, curr: any) =>
+            acc + curr?.opportunity.amount.amountMicros / 1000000,
           0,
         ) || 0;
 
-      return pipelineStageTotal;
+      return pipelineStepTotal;
     },
 });

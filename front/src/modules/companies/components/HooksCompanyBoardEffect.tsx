@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { Company } from '@/companies/types/Company';
+import { useComputeDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useComputeDefinitionsFromFieldMetadata';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
+import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { useBoardActionBarEntries } from '@/ui/layout/board/hooks/useBoardActionBarEntries';
@@ -14,11 +17,12 @@ import { availableBoardCardFieldsScopedState } from '@/ui/layout/board/states/av
 import { boardCardFieldsScopedState } from '@/ui/layout/board/states/boardCardFieldsScopedState';
 import { isBoardLoadedState } from '@/ui/layout/board/states/isBoardLoadedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewFieldsToBoardFieldDefinitions';
-import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { useUpdateCompanyBoardCardIds } from '../hooks/useUpdateBoardCardIds';
 import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
@@ -41,6 +45,13 @@ export const HooksCompanyBoardEffect = () => {
 
   const currentViewFields = useRecoilValue(currentViewFieldsState);
 
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNamePlural: 'opportunities',
+  });
+
+  const { columnDefinitions, filterDefinitions, sortDefinitions } =
+    useComputeDefinitionsFromFieldMetadata(objectMetadataItem);
+
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
 
   const { BoardRecoilScopeContext } = useBoardContext();
@@ -50,10 +61,6 @@ export const HooksCompanyBoardEffect = () => {
     BoardRecoilScopeContext,
   );
 
-  const [, setAvailableBoardCardFields] = useRecoilScopedState(
-    availableBoardCardFieldsScopedState,
-    BoardRecoilScopeContext,
-  );
   const updateCompanyBoardCardIds = useUpdateCompanyBoardCardIds();
   const updateCompanyBoard = useUpdateCompanyBoard();
 
@@ -70,9 +77,9 @@ export const HooksCompanyBoardEffect = () => {
 
   const whereFilters = useMemo(() => {
     return {
-      AND: [
+      and: [
         {
-          pipelineStageId: {
+          pipelineStepId: {
             in: pipelineSteps.map((pipelineStep) => pipelineStep.id),
           },
         },
@@ -86,8 +93,10 @@ export const HooksCompanyBoardEffect = () => {
     objectNamePlural: 'opportunities',
     filter: whereFilters,
     onCompleted: useCallback(
-      (_data: PaginatedObjectTypeResults<Opportunity>) => {
-        const pipelineProgresses: Array<Opportunity> = [];
+      (data: PaginatedObjectTypeResults<Opportunity>) => {
+        const pipelineProgresses: Array<Opportunity> = data.edges.map(
+          (edge) => edge.node,
+        );
 
         updateCompanyBoardCardIds(pipelineProgresses);
 
@@ -112,14 +121,62 @@ export const HooksCompanyBoardEffect = () => {
   });
 
   useEffect(() => {
-    setAvailableFilterDefinitions(opportunitiesBoardOptions.filterDefinitions);
-    setAvailableSortDefinitions?.(opportunitiesBoardOptions.sortDefinitions);
-    setAvailableFieldDefinitions?.([]);
+    if (!objectMetadataItem) {
+      return;
+    }
+    setAvailableFilterDefinitions?.(filterDefinitions);
+    setAvailableSortDefinitions?.(sortDefinitions);
+    setAvailableFieldDefinitions?.(columnDefinitions);
   }, [
+    columnDefinitions,
+    filterDefinitions,
+    objectMetadataItem,
     setAvailableFieldDefinitions,
     setAvailableFilterDefinitions,
     setAvailableSortDefinitions,
+    sortDefinitions,
   ]);
+
+  const setAvailableBoardCardFields = useRecoilCallback(
+    ({ snapshot, set }) =>
+      (availableBoardCardFields: any) => {
+        const availableBoardCardFieldsFromState = snapshot
+          .getLoadable(
+            availableBoardCardFieldsScopedState({
+              scopeId: 'company-board-view',
+            }),
+          )
+          .getValue();
+
+        if (
+          !isDeeplyEqual(
+            availableBoardCardFieldsFromState,
+            availableBoardCardFields,
+          )
+        ) {
+          set(
+            availableBoardCardFieldsScopedState({
+              scopeId: 'company-board-view',
+            }),
+            availableBoardCardFields,
+          );
+        }
+      },
+    [],
+  );
+
+  useRecoilScopedStateV2(
+    availableBoardCardFieldsScopedState,
+    'company-board-view',
+  );
+
+  useEffect(() => {
+    const availableTableColumns = columnDefinitions.filter(
+      filterAvailableTableColumns,
+    );
+
+    setAvailableBoardCardFields(availableTableColumns);
+  }, [columnDefinitions, setAvailableBoardCardFields]);
 
   useEffect(() => {
     setViewObjectMetadataId?.('company');
@@ -137,21 +194,19 @@ export const HooksCompanyBoardEffect = () => {
     if (!loading && opportunities && companies) {
       setActionBarEntries();
       setContextMenuEntries();
-      setAvailableBoardCardFields([]);
+
       updateCompanyBoard(pipelineSteps, opportunities, companies);
       setEntityCountInCurrentView(companies.length);
     }
   }, [
+    companies,
     loading,
-    updateCompanyBoard,
+    opportunities,
+    pipelineSteps,
     setActionBarEntries,
     setContextMenuEntries,
-    searchParams,
     setEntityCountInCurrentView,
-    setAvailableBoardCardFields,
-    opportunities,
-    companies,
-    pipelineSteps,
+    updateCompanyBoard,
   ]);
 
   useEffect(() => {

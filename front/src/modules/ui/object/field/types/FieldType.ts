@@ -4,7 +4,7 @@ export type FieldType =
   | 'TEXT'
   | 'RELATION'
   | 'CHIP'
-  | 'DATE'
+  | 'DATE_TIME'
   | 'DOUBLE_TEXT_CHIP'
   | 'DOUBLE_TEXT'
   | 'EMAIL'

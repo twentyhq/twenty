@@ -18,7 +18,7 @@ import { TextFieldInput } from '../meta-types/input/components/TextFieldInput';
 import { FieldInputEvent } from '../types/FieldInputEvent';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldCurrency } from '../types/guards/isFieldCurrency';
-import { isFieldDate } from '../types/guards/isFieldDate';
+import { isFieldDateTime } from '../types/guards/isFieldDateTime';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
 import { isFieldLink } from '../types/guards/isFieldLink';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
@@ -78,7 +78,7 @@ export const FieldInput = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
         />
-      ) : isFieldDate(fieldDefinition) ? (
+      ) : isFieldDateTime(fieldDefinition) ? (
         <DateFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
