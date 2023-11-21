@@ -68,7 +68,9 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     const workspaceDataSource = new DataSource({
       url: dataSource.url ?? this.environmentService.getPGDatabaseUrl(),
       type: 'postgres',
-      logging: false ? ['query', 'error'] : ['error'],
+      logging: this.environmentService.isDebugMode()
+        ? ['query', 'error']
+        : ['error'],
       schema,
     });
 
