@@ -174,7 +174,7 @@ export const HooksCompanyBoardEffect = () => {
       setActionBarEntries();
       setContextMenuEntries();
       updateCompanyBoard(pipelineSteps, opportunities, companies);
-      setEntityCountInCurrentView(companies.length);
+      setEntityCountInCurrentView(opportunities.length);
     }
   }, [
     companies,

@@ -12,6 +12,7 @@ import { EntityBoardActionBar } from '@/ui/layout/board/components/EntityBoardAc
 import { EntityBoardContextMenu } from '@/ui/layout/board/components/EntityBoardContextMenu';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
+import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
@@ -46,6 +47,8 @@ export const CompanyBoard = ({
   const setSavedViewFields = useSetRecoilState(savedViewFieldsState);
   const setSavedViewFilters = useSetRecoilState(savedViewFiltersState);
   const setSavedViewSorts = useSetRecoilState(savedViewSortsState);
+
+  const { persistViewFields } = useView({ viewScopeId });
 
   return (
     <ViewScope
