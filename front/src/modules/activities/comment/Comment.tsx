@@ -5,7 +5,7 @@ import { Comment as CommentType } from '@/activities/types/Comment';
 import { CommentHeader } from './CommentHeader';
 
 type CommentProps = {
-  comment: Omit<CommentType, 'activityId'>;
+  comment: CommentType;
   actionBar?: React.ReactNode;
 };
 
