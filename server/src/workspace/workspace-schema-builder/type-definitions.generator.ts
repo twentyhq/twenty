@@ -67,11 +67,11 @@ export class TypeDefinitionsGenerator {
       fullNameObjectDefinition,
     ];
 
-    // this.logger.log(
-    //   `Generating staticObjects: [${staticObjectMetadataCollection
-    //     .map((object) => object.nameSingular)
-    //     .join(', ')}]`,
-    // );
+    this.logger.log(
+      `Generating staticObjects: [${staticObjectMetadataCollection
+        .map((object) => object.nameSingular)
+        .join(', ')}]`,
+    );
 
     // Generate static objects first because they can be used in dynamic objects
     this.generateObjectTypeDefs(staticObjectMetadataCollection, options);
@@ -82,11 +82,11 @@ export class TypeDefinitionsGenerator {
     dynamicObjectMetadataCollection: ObjectMetadataInterface[],
     options: WorkspaceBuildSchemaOptions,
   ) {
-    // this.logger.log(
-    //   `Generating dynamicObjects: [${dynamicObjectMetadataCollection
-    //     .map((object) => object.nameSingular)
-    //     .join(', ')}]`,
-    // );
+    this.logger.log(
+      `Generating dynamicObjects: [${dynamicObjectMetadataCollection
+        .map((object) => object.nameSingular)
+        .join(', ')}]`,
+    );
 
     // Generate dynamic objects
     this.generateObjectTypeDefs(dynamicObjectMetadataCollection, options);
