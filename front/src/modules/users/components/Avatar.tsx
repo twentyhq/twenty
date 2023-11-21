@@ -98,7 +98,6 @@ export const Avatar = ({
 }: AvatarProps) => {
   const noAvatarUrl = !isNonEmptyString(avatarUrl);
   const [isInvalidAvatarUrl, setIsInvalidAvatarUrl] = useState(false);
-
   useEffect(() => {
     if (avatarUrl) {
       new Promise((resolve) => {
