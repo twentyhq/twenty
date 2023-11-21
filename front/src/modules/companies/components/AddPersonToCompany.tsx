@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import { useMutation, useQuery } from '@apollo/client';
+import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { flip, offset, useFloating } from '@floating-ui/react';
 import { v4 } from 'uuid';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { IconPlus } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
@@ -62,23 +65,43 @@ export const AddPersonToCompany = ({
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const handlePersonSelected =
-    (companyId: string) => async (newPerson: any | null) => {
-      if (newPerson) {
-        // await updatePerson({
-        //   variables: {
-        //     where: {
-        //       id: newPerson.id,
-        //     },
-        //     data: {
-        //       company: { connect: { id: companyId } },
-        //     },
-        //   },
-        //   refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
-        // });
-        handleClosePicker();
-      }
-    };
+  // TODO: refactor with useObjectMetadataItem V2 with typed hooks
+  const { findManyQuery, updateOneMutation, createOneMutation } =
+    useObjectMetadataItem({
+      objectNameSingular: 'person',
+    });
+
+  const { data: peopleNotInCompany } = useQuery(findManyQuery, {
+    variables: {
+      filter: {
+        companyId: {
+          neq: companyId,
+        },
+      },
+    },
+  });
+
+  const [updatePerson] = useMutation(updateOneMutation);
+  const [createPerson] = useMutation(createOneMutation);
+
+  const handlePersonSelected = async ({
+    selectedPersonId,
+    companyId,
+  }: {
+    selectedPersonId: string;
+    companyId: string | null;
+  }) => {
+    await updatePerson({
+      variables: {
+        idToUpdate: selectedPersonId,
+        input: {
+          companyId: companyId,
+        },
+      },
+      refetchQueries: [getOperationName(findManyQuery) ?? ''],
+    });
+    handleClosePicker();
+  };
 
   const handleClosePicker = () => {
     if (isDropdownOpen) {
@@ -88,31 +111,44 @@ export const AddPersonToCompany = ({
   };
 
   const handleOpenPicker = () => {
-    if (!isDropdownOpen) {
-      setIsDropdownOpen(true);
-      setHotkeyScopeAndMemorizePreviousScope(
-        RelationPickerHotkeyScope.RelationPicker,
-      );
-    }
+    // TODO: TEMPORARY - example to implement when the picker is back
+    handleCreatePerson({
+      firstValue: 'John',
+      secondValue: 'Doe',
+    });
+    // handlePersonSelected({
+    //   companyId,
+    //   selectedPersonId: peopleNotInCompany.people.edges[0].node.id,
+    // });
+    // if (!isDropdownOpen) {
+    //   setIsDropdownOpen(true);
+    //   setHotkeyScopeAndMemorizePreviousScope(
+    //     RelationPickerHotkeyScope.RelationPicker,
+    //   );
+    // }
   };
 
-  const handleInputKeyDown = async ({
+  const handleCreatePerson = async ({
     firstValue,
     secondValue,
   }: FieldDoubleText) => {
     if (!firstValue && !secondValue) return;
     const newPersonId = v4();
-    // await insertOnePerson({
-    //   variables: {
-    //     data: {
-    //       company: { connect: { id: companyId } },
-    //       id: newPersonId,
-    //       firstName: firstValue,
-    //       lastName: secondValue,
-    //     },
-    //   },
-    //   refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
-    // });
+
+    await createPerson({
+      variables: {
+        input: {
+          companyId: companyId,
+          id: newPersonId,
+          name: {
+            firstName: firstValue,
+            lastName: secondValue,
+          },
+        },
+      },
+      refetchQueries: [getOperationName(findManyQuery) ?? ''],
+    });
+
     setIsCreationDropdownOpen(false);
   };
 
@@ -136,7 +172,7 @@ export const AddPersonToCompany = ({
                   firstValuePlaceholder="First Name"
                   secondValuePlaceholder="Last Name"
                   onClickOutside={handleEscape}
-                  onEnter={handleInputKeyDown}
+                  onEnter={handleCreatePerson}
                   onEscape={handleEscape}
                   hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
                 />
