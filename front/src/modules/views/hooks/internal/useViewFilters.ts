@@ -11,14 +11,10 @@ import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScope
 import { useViewScopedStates } from './useViewScopedStates';
 
 export const useViewFilters = (viewScopeId: string) => {
-  const {
-    updateOneMutation,
-    createOneMutation,
-    deleteOneMutation,
-    findManyQuery,
-  } = useObjectMetadataItem({
-    objectNameSingular: 'viewFilter',
-  });
+  const { updateOneMutation, createOneMutation, deleteOneMutation } =
+    useObjectMetadataItem({
+      objectNameSingular: 'viewFilter',
+    });
   const apolloClient = useApolloClient();
 
   const { currentViewFiltersState } = useViewScopedStates({
@@ -60,7 +56,6 @@ export const useViewFilters = (viewScopeId: string) => {
                     operand: viewFilter.operand,
                   },
                 },
-                refetchQueries: [findManyQuery],
               }),
             ),
           );
@@ -139,7 +134,6 @@ export const useViewFilters = (viewScopeId: string) => {
       apolloClient,
       createOneMutation,
       deleteOneMutation,
-      findManyQuery,
       updateOneMutation,
       viewScopeId,
     ],
