@@ -54,7 +54,6 @@ export const useFindManyObjectRecords = <
     findManyQuery,
   } = useObjectMetadataItem({
     objectNamePlural,
-    skip,
   });
 
   const { enqueueSnackBar } = useSnackBar();
