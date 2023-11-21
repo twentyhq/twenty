@@ -1,8 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { BeforeUpdateOne } from '@ptc-org/nestjs-query-graphql';
+import { IsBoolean, IsOptional, IsString, IsUUID } from 'class-validator';
+
+import { BeforeUpdateOneObject } from 'src/metadata/object-metadata/hooks/before-update-one-object.hook';
 
 @InputType()
+@BeforeUpdateOne(BeforeUpdateOneObject)
 export class UpdateObjectInput {
   @IsString()
   @IsOptional()
@@ -38,4 +42,14 @@ export class UpdateObjectInput {
   @IsOptional()
   @Field({ nullable: true })
   isActive?: boolean;
+
+  @IsUUID()
+  @IsOptional()
+  @Field({ nullable: true })
+  labelIdentifierFieldMetadataId?: string;
+
+  @IsUUID()
+  @IsOptional()
+  @Field({ nullable: true })
+  imageIdentifierFieldMetadataId?: string;
 }

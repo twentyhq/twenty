@@ -1,8 +1,8 @@
 import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
-import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
@@ -80,7 +80,7 @@ export const seedPersonFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
         label: 'Creation date',
         targetColumnMap: {
@@ -98,7 +98,7 @@ export const seedPersonFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
         label: 'Update date',
         targetColumnMap: {
@@ -274,7 +274,7 @@ export const seedPersonFieldMetadata = async (
         targetColumnMap: {},
         description: 'Contact’s company',
         icon: 'IconBuildingSkyscraper',
-        isNullable: false,
+        isNullable: true,
         isSystem: false,
         defaultValue: undefined,
       },
@@ -290,7 +290,7 @@ export const seedPersonFieldMetadata = async (
         targetColumnMap: {},
         description: 'Foreign key for company',
         icon: undefined,
-        isNullable: false,
+        isNullable: true,
         isSystem: true,
         defaultValue: undefined,
       },

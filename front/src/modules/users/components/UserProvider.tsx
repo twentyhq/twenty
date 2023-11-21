@@ -1,21 +1,14 @@
 import { useEffect, useState } from 'react';
-import { useApolloClient } from '@apollo/client';
 import { useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { FIND_ONE_WORKSPACE_MEMBER_V2 } from '@/object-record/graphql/queries/findOneWorkspaceMember';
-import {
-  useGetCurrentUserQuery,
-  useGetCurrentWorkspaceQuery,
-} from '~/generated/graphql';
+import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { useGetCurrentUserQuery } from '~/generated/graphql';
 
 export const UserProvider = ({ children }: React.PropsWithChildren) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [isWorkspaceMemberLoading, setIsWorkspaceMemberLoading] =
-    useState(true);
-  const apolloClient = useApolloClient();
 
   const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
@@ -23,48 +16,28 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
     currentWorkspaceMemberState,
   );
 
-  const { data: userData, loading: userLoading } = useGetCurrentUserQuery({
-    onCompleted: async (data) => {
-      const workspaceMember = await apolloClient.query({
-        query: FIND_ONE_WORKSPACE_MEMBER_V2,
-        variables: {
-          filter: {
-            userId: { eq: data.currentUser.id },
-          },
-        },
-      });
-      setCurrentWorkspaceMember(
-        workspaceMember.data.workspaceMembersV2.edges[0].node,
-      );
-      setIsWorkspaceMemberLoading(false);
-    },
-    onError: () => {
-      setIsWorkspaceMemberLoading(false);
-    },
-  });
-
-  const { data: workspaceData, loading: workspaceLoading } =
-    useGetCurrentWorkspaceQuery();
+  const { data: userData, loading: userLoading } = useGetCurrentUserQuery({});
 
   useEffect(() => {
-    if (!userLoading && !workspaceLoading && !isWorkspaceMemberLoading) {
+    if (!userLoading) {
       setIsLoading(false);
     }
-    if (userData?.currentUser) {
+    if (userData?.currentUser?.workspaceMember) {
       setCurrentUser(userData.currentUser);
-    }
-    if (workspaceData?.currentWorkspace) {
-      setCurrentWorkspace(workspaceData.currentWorkspace);
+      setCurrentWorkspace(userData.currentUser.defaultWorkspace);
+      const workspaceMember = userData.currentUser.workspaceMember;
+      setCurrentWorkspaceMember({
+        ...workspaceMember,
+        colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
+      });
     }
   }, [
     setCurrentUser,
     isLoading,
     userLoading,
-    workspaceLoading,
-    userData?.currentUser,
-    workspaceData?.currentWorkspace,
     setCurrentWorkspace,
-    isWorkspaceMemberLoading,
+    setCurrentWorkspaceMember,
+    userData?.currentUser,
   ]);
 
   return isLoading ? <></> : <>{children}</>;

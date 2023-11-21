@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
-import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -19,7 +18,6 @@ import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { ViewType } from '@/views/types/ViewType';
 
 export const SettingsNewObject = () => {
   const navigate = useNavigate();
@@ -31,10 +29,6 @@ export const SettingsNewObject = () => {
     createObjectMetadataItem: createObject,
     disabledObjectMetadataItems: disabledObjects,
   } = useObjectMetadataItemForSettings();
-
-  const { createOneObject: createOneView } = useCreateOneObjectRecord({
-    objectNameSingular: 'viewV2',
-  });
 
   const [
     selectedStandardObjectMetadataIds,
@@ -77,12 +71,6 @@ export const SettingsNewObject = () => {
         labelSingular: customFormValues.labelSingular,
         description: customFormValues.description,
         icon: customFormValues.icon,
-      });
-
-      await createOneView?.({
-        objectMetadataId: createdObject.data?.createOneObject.id,
-        type: ViewType.Table,
-        name: `All ${customFormValues.labelPlural}`,
       });
 
       navigate(

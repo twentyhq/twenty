@@ -5,6 +5,8 @@ import {
   GraphQLInt,
 } from 'graphql';
 
+import { FilterIsNullable } from 'src/workspace/workspace-schema-builder/graphql-types/input/filter-is-nullable.input-type';
+
 export const IntFilterType = new GraphQLInputObjectType({
   name: 'IntFilter',
   fields: {
@@ -15,5 +17,6 @@ export const IntFilterType = new GraphQLInputObjectType({
     lt: { type: GraphQLInt },
     lte: { type: GraphQLInt },
     neq: { type: GraphQLInt },
+    is: { type: FilterIsNullable },
   },
 });

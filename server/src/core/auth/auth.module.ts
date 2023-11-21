@@ -1,11 +1,21 @@
+/* eslint-disable no-restricted-imports */
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { PrismaService } from 'src/database/prisma.service';
-import { UserModule } from 'src/core/user/user.module';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
+
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { WorkspaceModule } from 'src/core/workspace/workspace.module';
 import { FileModule } from 'src/core/file/file.module';
+import { Workspace } from 'src/core/workspace/workspace.entity';
+import { User } from 'src/core/user/user.entity';
+import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
+import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
+import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { UserModule } from 'src/core/user/user.module';
+import { WorkspaceManagerModule } from 'src/workspace/workspace-manager/workspace-manager.module';
+
+import config from '../../../ormconfig';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -28,15 +38,22 @@ const jwtModule = JwtModule.registerAsync({
 });
 
 @Module({
-  imports: [jwtModule, UserModule, WorkspaceModule, FileModule],
-  controllers: [GoogleAuthController, VerifyAuthController],
-  providers: [
-    AuthService,
-    TokenService,
-    JwtAuthStrategy,
-    PrismaService,
-    AuthResolver,
+  imports: [
+    jwtModule,
+    FileModule,
+    DataSourceModule,
+    UserModule,
+    WorkspaceManagerModule,
+    TypeOrmModule.forRoot(config),
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [
+        TypeOrmModule.forFeature([Workspace, User, RefreshToken]),
+        TypeORMModule,
+      ],
+    }),
   ],
+  controllers: [GoogleAuthController, VerifyAuthController],
+  providers: [AuthService, TokenService, JwtAuthStrategy, AuthResolver],
   exports: [jwtModule],
 })
 export class AuthModule {}

@@ -143,7 +143,7 @@ export const CompanyBoardCard = () => {
 
   const showCompactView = isCompactViewEnabled && isCardInCompactView;
 
-  const { pipelineProgress, company } = companyProgress ?? {};
+  const { opportunity, company } = companyProgress ?? {};
 
   const visibleBoardCardFields = useRecoilScopedValue(
     visibleBoardCardFieldsScopedSelector,
@@ -152,7 +152,7 @@ export const CompanyBoardCard = () => {
 
   const useUpdateOneObjectMutation: () => [(params: any) => any, any] = () => {
     const { updateOneObject } = useUpdateOneObjectRecord({
-      objectNameSingular: 'opportunityV2',
+      objectNameSingular: 'opportunity',
     });
 
     const updateEntity = ({
@@ -175,7 +175,7 @@ export const CompanyBoardCard = () => {
   };
 
   // boardCardId check can be moved to a wrapper to avoid unnecessary logic above
-  if (!company || !pipelineProgress || !boardCardId) {
+  if (!company || !opportunity || !boardCardId) {
     return null;
   }
 
@@ -208,7 +208,7 @@ export const CompanyBoardCard = () => {
           <CompanyChip
             id={company.id}
             name={company.name}
-            pictureUrl={getLogoUrlFromDomainName(company.domainName)}
+            avatarUrl={getLogoUrlFromDomainName(company.domainName)}
             variant={EntityChipVariant.Transparent}
           />
           {showCompactView && (
@@ -239,14 +239,13 @@ export const CompanyBoardCard = () => {
                   value={{
                     entityId: boardCardId,
                     recoilScopeId: boardCardId + viewField.fieldMetadataId,
+                    isLabelIdentifier: false,
                     fieldDefinition: {
                       fieldMetadataId: viewField.fieldMetadataId,
                       label: viewField.label,
-                      Icon: viewField.Icon,
+                      iconName: viewField.iconName,
                       type: viewField.type,
                       metadata: viewField.metadata,
-                      entityChipDisplayMapper:
-                        viewField.entityChipDisplayMapper,
                     },
                     useUpdateEntityMutation: useUpdateOneObjectMutation,
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,

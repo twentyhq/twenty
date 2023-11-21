@@ -56,7 +56,6 @@ type DefaultLayoutProps = {
 
 export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
   const onboardingStatus = useOnboardingStatus();
-
   return (
     <StyledLayout>
       <CommandMenu />

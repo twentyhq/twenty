@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { ActivityType } from '@/activities/types/Activity';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { IconCheckbox, IconNotes, IconPlus } from '@/ui/display/icon/index';
@@ -8,7 +9,6 @@ import { IconButton } from '@/ui/input/button/components/IconButton';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { ActivityType } from '~/generated/graphql';
 
 import { Dropdown } from '../../dropdown/components/Dropdown';
 import { DropdownMenu } from '../../dropdown/components/DropdownMenu';
@@ -51,13 +51,13 @@ export const ShowPageAddButton = ({
             <DropdownMenu>
               <DropdownMenuItemsContainer>
                 <MenuItem
-                  onClick={() => handleSelect(ActivityType.Note)}
+                  onClick={() => handleSelect('Note')}
                   accent="default"
                   LeftIcon={IconNotes}
                   text="Note"
                 />
                 <MenuItem
-                  onClick={() => handleSelect(ActivityType.Task)}
+                  onClick={() => handleSelect('Task')}
                   accent="default"
                   LeftIcon={IconCheckbox}
                   text="Task"

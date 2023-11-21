@@ -12,13 +12,9 @@ import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { VerifyEffect } from '~/pages/auth/VerifyEffect';
-import { Companies } from '~/pages/companies/Companies';
-import { CompanyShow } from '~/pages/companies/CompanyShow';
 import { ImpersonateEffect } from '~/pages/impersonate/ImpersonateEffect';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { Opportunities } from '~/pages/opportunities/Opportunities';
-import { People } from '~/pages/people/People';
-import { PersonShow } from '~/pages/people/PersonShow';
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
 import { SettingsObjectDetail } from '~/pages/settings/data-model/SettingsObjectDetail';
 import { SettingsObjectEdit } from '~/pages/settings/data-model/SettingsObjectEdit';
@@ -40,7 +36,6 @@ import { SettingsObjectNewFieldStep2 } from './pages/settings/data-model/Setting
 export const App = () => {
   const { pathname } = useLocation();
   const pageTitle = getPageTitleFromPath(pathname);
-
   return (
     <>
       <PageTitle title={pageTitle} />
@@ -54,11 +49,7 @@ export const App = () => {
           <Route path={AppPath.Invite} element={<SignInUp />} />
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
-          <Route path="/" element={<Navigate to={AppPath.CompaniesPage} />} />
-          <Route path={AppPath.PeoplePage} element={<People />} />
-          <Route path={AppPath.PersonShowPage} element={<PersonShow />} />
-          <Route path={AppPath.CompaniesPage} element={<Companies />} />
-          <Route path={AppPath.CompanyShowPage} element={<CompanyShow />} />
+          <Route path="/" element={<Navigate to="/objects/companies" />} />
           <Route path={AppPath.TasksPage} element={<Tasks />} />
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
 

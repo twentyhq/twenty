@@ -26,7 +26,10 @@ export const useFieldPreview = ({
   const fieldName = fieldMetadata.id
     ? objectMetadataItem?.fields.find(({ id }) => id === fieldMetadata.id)?.name
     : undefined;
-  const value = fieldName ? firstRecord?.[fieldName] : undefined;
+  const value =
+    fieldMetadata.type !== 'RELATION' && fieldName
+      ? firstRecord?.[fieldName]
+      : undefined;
 
   return {
     entityId: firstRecord?.id || `${objectMetadataId}-no-records`,

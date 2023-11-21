@@ -9,14 +9,9 @@ import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { Comment } from '@/activities/types/Comment';
 import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { PropertyBox } from '@/ui/object/record-inline-cell/property-box/components/PropertyBox';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { debounce } from '~/utils/debounce';
-
-import { ActivityAssigneeEditableField } from '../editable-fields/components/ActivityAssigneeEditableField';
-import { ActivityEditorDateField } from '../editable-fields/components/ActivityEditorDateField';
-import { ActivityRelationEditableField } from '../editable-fields/components/ActivityRelationEditableField';
 
 import { ActivityTitle } from './ActivityTitle';
 
@@ -78,13 +73,17 @@ export const ActivityEditor = ({
   const [hasUserManuallySetTitle, setHasUserManuallySetTitle] =
     useState<boolean>(false);
 
+  console.log({
+    activity,
+  });
+
   const [title, setTitle] = useState<string | null>(activity.title ?? '');
   const [completedAt, setCompletedAt] = useState<string | null>(
     activity.completedAt ?? '',
   );
   const containerRef = useRef<HTMLDivElement>(null);
   const { updateOneObject } = useUpdateOneObjectRecord<Activity>({
-    objectNameSingular: 'activityV2',
+    objectNameSingular: 'activity',
   });
 
   const updateTitle = useCallback(
@@ -144,15 +143,15 @@ export const ActivityEditor = ({
           <PropertyBox>
             {activity.type === 'Task' && (
               <>
-                <RecoilScope>
+                {/* <RecoilScope>
                   <ActivityEditorDateField activityId={activity.id} />
                 </RecoilScope>
                 <RecoilScope>
                   <ActivityAssigneeEditableField activity={activity} />
-                </RecoilScope>
+                </RecoilScope> */}
               </>
             )}
-            <ActivityRelationEditableField activity={activity} />
+            {/* <ActivityRelationEditableField activity={activity} /> */}
           </PropertyBox>
         </StyledTopContainer>
         <ActivityBodyEditor
@@ -162,10 +161,7 @@ export const ActivityEditor = ({
       </StyledUpperPartContainer>
       {showComment && (
         <ActivityComments
-          activity={{
-            id: activity.id,
-            comments: activity.comments ?? [],
-          }}
+          activity={activity}
           scrollableContainerRef={containerRef}
         />
       )}

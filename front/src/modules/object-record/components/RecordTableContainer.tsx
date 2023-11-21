@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
 
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useComputeDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useComputeDefinitionsFromFieldMetadata';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
@@ -9,7 +10,6 @@ import { TableOptionsDropdown } from '@/ui/object/record-table/options/component
 import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
-import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
@@ -32,10 +32,14 @@ export const RecordTableContainer = ({
 }: {
   objectNamePlural: string;
 }) => {
-  const { columnDefinitions, foundObjectMetadataItem } =
-    useFindOneObjectMetadataItem({
+  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
+    {
       objectNamePlural,
-    });
+    },
+  );
+  const { columnDefinitions } = useComputeDefinitionsFromFieldMetadata(
+    foundObjectMetadataItem,
+  );
 
   const { updateOneObject } = useUpdateOneObjectRecord({
     objectNameSingular: foundObjectMetadataItem?.nameSingular,
@@ -49,8 +53,6 @@ export const RecordTableContainer = ({
   const { setTableFilters, setTableSorts, setTableColumns } = useRecordTable({
     recordTableScopeId: tableScopeId,
   });
-
-  const { setEntityCountInCurrentView } = useView({ viewScopeId });
 
   const updateEntity = ({
     variables,
@@ -89,9 +91,6 @@ export const RecordTableContainer = ({
           onColumnsChange={useRecoilCallback(() => (columns) => {
             persistViewFields(mapColumnDefinitionsToViewFields(columns));
           })}
-          onEntityCountChange={(entityCount) => {
-            setEntityCountInCurrentView(entityCount);
-          }}
         >
           <ViewBar
             optionsDropdownButton={<TableOptionsDropdown />}

@@ -9,7 +9,7 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import { GraphQLJSONObject } from 'graphql-type-json';
+import graphqlTypeJson from 'graphql-type-json';
 
 import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interfaces/field-metadata-target-column-map.interface';
 import { FieldMetadataDefaultValue } from 'src/metadata/field-metadata/interfaces/field-metadata-default-value.interface';
@@ -57,7 +57,7 @@ export class CreateFieldInput {
 
   @IsDefaultValue({ message: 'Invalid default value for the specified type' })
   @IsOptional()
-  @Field(() => GraphQLJSONObject, { nullable: true })
+  @Field(() => graphqlTypeJson, { nullable: true })
   defaultValue: FieldMetadataDefaultValue;
 
   @HideField()

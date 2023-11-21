@@ -35,6 +35,7 @@ const BooleanFieldInputWithContext = ({
       fieldDefinition={{
         fieldMetadataId: 'boolean',
         label: 'Boolean',
+        iconName: 'Icon123',
         type: 'BOOLEAN',
         metadata: {
           fieldName: 'Boolean',

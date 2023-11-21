@@ -3,143 +3,19 @@ import { graphql } from 'msw';
 
 import { CREATE_EVENT } from '@/analytics/graphql/queries/createEvent';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
-import { INSERT_ONE_COMPANY } from '@/companies/graphql/mutations/insertOneCompany';
-import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
 import { FIND_MANY_METADATA_OBJECTS } from '@/object-metadata/graphql/queries';
-import { INSERT_ONE_PERSON } from '@/people/graphql/mutations/insertOnePerson';
-import { UPDATE_ONE_PERSON } from '@/people/graphql/mutations/updateOnePerson';
-import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
-import { GET_PERSON } from '@/people/graphql/queries/getPerson';
-import { SEARCH_ACTIVITY_QUERY } from '@/search/graphql/queries/searchActivityQuery';
-import { SEARCH_COMPANY_QUERY } from '@/search/graphql/queries/searchCompanyQuery';
-import { SEARCH_PEOPLE_QUERY } from '@/search/graphql/queries/searchPeopleQuery';
-import { SEARCH_USER_QUERY } from '@/search/graphql/queries/searchUserQuery';
-import { GET_API_KEY } from '@/settings/developers/graphql/queries/getApiKey';
-import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
-import {
-  GetCompaniesQuery,
-  GetPeopleQuery,
-  GetPersonQuery,
-  SearchActivityQuery,
-  SearchCompanyQuery,
-  SearchPeopleQuery,
-  SearchUserQuery,
-} from '~/generated/graphql';
-import { mockedApiKeys } from '~/testing/mock-data/api-keys';
 
-import { mockedActivities } from './mock-data/activities';
-import {
-  mockedCompaniesData,
-  mockedEmptyCompanyData,
-} from './mock-data/companies';
 import { mockedObjectMetadataItems } from './mock-data/metadata';
-import { mockedEmptyPersonData, mockedPeopleData } from './mock-data/people';
 import { mockedUsersData } from './mock-data/users';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 import { mockedViewsData } from './mock-data/views';
-import {
-  fetchOneFromData,
-  filterAndSortData,
-  updateOneFromData,
-} from './mock-data';
-import { createEvent } from '@storybook/testing-library';
 
 const metadataGraphql = graphql.link(
   `${process.env.REACT_APP_SERVER_BASE_URL}/metadata`,
 );
 
 export const graphqlMocks = [
-  graphql.query(getOperationName(GET_COMPANIES) ?? '', (req, res, ctx) => {
-    const returnedMockedData = filterAndSortData<
-      GetCompaniesQuery['companies'][0]
-    >(
-      mockedCompaniesData,
-      req.variables.where,
-      req.variables.orderBy,
-      req.variables.limit,
-    );
-    return res(
-      ctx.data({
-        companies: returnedMockedData,
-      }),
-    );
-  }),
-  graphql.query(
-    getOperationName(SEARCH_COMPANY_QUERY) ?? '',
-    (req, res, ctx) => {
-      const returnedMockedData = filterAndSortData<
-        SearchCompanyQuery['searchResults'][0]
-      >(
-        mockedCompaniesData,
-        req.variables.where,
-        !req.variables.orderBy || Array.isArray(req.variables.orderBy)
-          ? req.variables.orderBy
-          : [req.variables.orderBy],
-        req.variables.limit,
-      );
-      return res(
-        ctx.data({
-          searchResults: returnedMockedData,
-        }),
-      );
-    },
-  ),
-  graphql.query(
-    getOperationName(SEARCH_PEOPLE_QUERY) ?? '',
-    (req, res, ctx) => {
-      const returnedMockedData = filterAndSortData<
-        SearchPeopleQuery['searchResults'][0]
-      >(
-        mockedPeopleData,
-        req.variables.where,
-        !req.variables.orderBy || Array.isArray(req.variables.orderBy)
-          ? req.variables.orderBy
-          : [req.variables.orderBy],
-        req.variables.limit,
-      );
-      return res(
-        ctx.data({
-          searchResults: returnedMockedData,
-        }),
-      );
-    },
-  ),
-  graphql.query(getOperationName(SEARCH_USER_QUERY) ?? '', (req, res, ctx) => {
-    const returnedMockedData = filterAndSortData<
-      SearchUserQuery['searchResults'][0]
-    >(
-      mockedUsersData,
-      req.variables.where,
-      req.variables.orderBy,
-      req.variables.limit,
-    );
-    return res(
-      ctx.data({
-        searchResults: returnedMockedData,
-      }),
-    );
-  }),
-  graphql.query(
-    getOperationName(SEARCH_ACTIVITY_QUERY) ?? '',
-    (req, res, ctx) => {
-      const returnedMockedData = filterAndSortData<
-        SearchActivityQuery['searchResults'][0]
-      >(
-        mockedActivities,
-        req.variables.where,
-        !req.variables.orderBy || Array.isArray(req.variables.orderBy)
-          ? req.variables.orderBy
-          : [req.variables.orderBy],
-        req.variables.limit,
-      );
-      return res(
-        ctx.data({
-          searchResults: returnedMockedData,
-        }),
-      );
-    },
-  ),
   graphql.query(getOperationName(GET_CURRENT_USER) ?? '', (req, res, ctx) => {
     return res(
       ctx.data({
@@ -147,62 +23,6 @@ export const graphqlMocks = [
       }),
     );
   }),
-  graphql.query(getOperationName(GET_PERSON) ?? '', (req, res, ctx) => {
-    const returnedMockedData = fetchOneFromData<
-      GetPersonQuery['findUniquePerson']
-    >(mockedPeopleData, req.variables.id);
-    return res(
-      ctx.data({
-        findUniquePerson: returnedMockedData,
-      }),
-    );
-  }),
-  graphql.query(getOperationName(GET_PEOPLE) ?? '', (req, res, ctx) => {
-    const returnedMockedData = filterAndSortData<GetPeopleQuery['people'][0]>(
-      mockedPeopleData,
-      req.variables.where,
-      req.variables.orderBy,
-      req.variables.limit,
-    );
-    return res(
-      ctx.data({
-        people: returnedMockedData,
-      }),
-    );
-  }),
-  graphql.mutation(
-    getOperationName(UPDATE_ONE_PERSON) ?? '',
-    (req, res, ctx) => {
-      const updatedCompanyId = req.variables.data?.company?.connect?.id;
-      const updatedCompany = mockedCompaniesData.find(
-        ({ id }) => id === updatedCompanyId,
-      );
-      const updatedCompanyData = updatedCompany
-        ? {
-            companyId: updatedCompany.id,
-            company: {
-              id: updatedCompany.id,
-              name: updatedCompany.name,
-              domainName: updatedCompany.domainName,
-              __typename: 'Company',
-            },
-          }
-        : {};
-      return res(
-        ctx.data({
-          updateOnePerson: {
-            ...updateOneFromData(
-              mockedPeopleData,
-              req.variables.where.id,
-              req.variables,
-            ),
-            ...updatedCompanyData,
-          },
-        }),
-      );
-    },
-  ),
-
   graphql.mutation(getOperationName(CREATE_EVENT) ?? '', (req, res, ctx) => {
     return res(
       ctx.data({
@@ -228,55 +48,13 @@ export const graphqlMocks = [
       }),
     );
   }),
-
-  graphql.query(getOperationName(GET_API_KEY) ?? '', (req, res, ctx) => {
-    return res(
-      ctx.data({
-        findManyApiKey: [mockedApiKeys[0]],
-      }),
-    );
-  }),
-  graphql.query(getOperationName(GET_API_KEYS) ?? '', (req, res, ctx) => {
-    return res(
-      ctx.data({
-        findManyApiKey: mockedApiKeys,
-      }),
-    );
-  }),
-
-  graphql.mutation(
-    getOperationName(INSERT_ONE_COMPANY) ?? '',
-    (req, res, ctx) => {
-      return res(
-        ctx.data({
-          createOneCompany: {
-            ...mockedEmptyCompanyData,
-            ...req.variables.data,
-          },
-        }),
-      );
-    },
-  ),
-  graphql.mutation(
-    getOperationName(INSERT_ONE_PERSON) ?? '',
-    (req, res, ctx) => {
-      return res(
-        ctx.data({
-          createOnePerson: {
-            ...mockedEmptyPersonData,
-            ...req.variables.data,
-          },
-        }),
-      );
-    },
-  ),
   metadataGraphql.query(
     getOperationName(FIND_MANY_METADATA_OBJECTS) ?? '',
     (req, res, ctx) => {
       return res(ctx.data({ objects: mockedObjectMetadataItems }));
     },
   ),
-  graphql.query('FindManyViewsV2', (req, res, ctx) => {
+  graphql.query('FindManyViews', (req, res, ctx) => {
     const objectMetadataId = req.variables.filter.objectMetadataId.eq;
     const viewType = req.variables.filter.type.eq;
 
@@ -303,7 +81,7 @@ export const graphqlMocks = [
       }),
     );
   }),
-  graphql.query('FindManyViewFieldsV2', (req, res, ctx) => {
+  graphql.query('FindManyViewFields', (req, res, ctx) => {
     const viewId = req.variables.filter.view.eq;
 
     return res(

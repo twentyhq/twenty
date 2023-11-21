@@ -49,7 +49,7 @@ export const TimelineActivityCardFooter = ({
                   ' ' +
                   activity.assignee.name.lastName ?? ''
               }
-              pictureUrl={activity.assignee.avatarUrl ?? ''}
+              avatarUrl={activity.assignee.avatarUrl ?? ''}
             />
           )}
 

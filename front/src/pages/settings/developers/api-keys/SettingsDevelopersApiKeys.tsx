@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
@@ -45,14 +45,16 @@ export const SettingsDevelopersApiKeys = () => {
 
   const [apiKeys, setApiKeys] = useState<Array<ApiFieldItem>>([]);
   const { registerOptimisticEffect } = useOptimisticEffect({
-    objectNameSingular: 'apiKeyV2',
+    objectNameSingular: 'apiKey',
   });
-  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
-    objectNameSingular: 'apiKeyV2',
-  });
-  const filter = { revokedAt: { eq: null } };
+  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
+    {
+      objectNameSingular: 'apiKey',
+    },
+  );
+  const filter = { revokedAt: { is: 'NULL' } };
   useFindManyObjectRecords({
-    objectNamePlural: 'apiKeysV2',
+    objectNamePlural: 'apiKeys',
     filter,
     onCompleted: (data) => {
       setApiKeys(
@@ -66,7 +68,7 @@ export const SettingsDevelopersApiKeys = () => {
       );
       if (foundObjectMetadataItem) {
         registerOptimisticEffect({
-          variables: { filter },
+          variables: { filter, first: 30, orderBy: {} },
           definition: getRecordOptimisticEffectDefinition({
             objectMetadataItem: foundObjectMetadataItem,
           }),

@@ -1,37 +1,17 @@
-import {
-  Activity,
-  Attachment,
-  ColorScheme,
-  Company,
-  User,
-  UserSettings,
-  Workspace,
-  WorkspaceMember,
-} from '~/generated/graphql';
+import { Activity } from '@/activities/types/Activity';
+import { Attachment } from '@/attachments/types/Attachment';
+import { Company } from '@/companies/types/Company';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { User, Workspace } from '~/generated/graphql';
 
 type MockedUser = Pick<
   User,
-  | 'id'
-  | 'email'
-  | 'displayName'
-  | 'firstName'
-  | 'lastName'
-  | 'avatarUrl'
-  | 'canImpersonate'
-  | 'supportUserHash'
-  | '__typename'
+  'id' | 'email' | 'firstName' | 'lastName' | 'canImpersonate' | '__typename'
 > & {
-  workspaceMember: Pick<
-    WorkspaceMember,
-    'id' | 'allowImpersonation' | '__typename'
-  > & {
+  workspaceMember: Pick<WorkspaceMember, 'id' | 'allowImpersonation'> & {
     workspace: Pick<
       Workspace,
       'id' | 'displayName' | 'domainName' | 'inviteHash' | 'logo' | '__typename'
-    >;
-    settings: Pick<
-      UserSettings,
-      'id' | 'colorScheme' | 'locale' | '__typename'
     >;
     assignedActivities: Array<Activity>;
     authoredActivities: Array<Activity>;
@@ -39,7 +19,6 @@ type MockedUser = Pick<
     companies: Array<Company>;
     comments: Array<Comment>;
   };
-  settings: Pick<UserSettings, 'id' | 'colorScheme' | 'locale' | '__typename'>;
 };
 
 export const avatarUrl =
@@ -52,14 +31,10 @@ export const mockedUsersData: Array<MockedUser> = [
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
     __typename: 'User',
     email: 'charles@test.com',
-    displayName: 'Charles Test',
     firstName: 'Charles',
     lastName: 'Test',
-    avatarUrl: null,
     canImpersonate: false,
-    supportUserHash: '',
     workspaceMember: {
-      __typename: 'WorkspaceMember',
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       allowImpersonation: true,
       workspace: {
@@ -70,36 +45,21 @@ export const mockedUsersData: Array<MockedUser> = [
         inviteHash: 'twenty.com-invite-hash',
         logo: workspaceLogoUrl,
       },
-      settings: {
-        id: '7dfbc3f7-6e5e-4128-957e-8d86808cde9y',
-        __typename: 'UserSettings',
-        locale: 'en',
-        colorScheme: ColorScheme.System,
-      },
       authoredAttachments: [],
       assignedActivities: [],
       authoredActivities: [],
       companies: [],
       comments: [],
-    },
-    settings: {
-      id: '7dfbc3f7-6e5e-4128-957e-8d86808cde9y',
-      __typename: 'UserSettings',
-      locale: 'en',
-      colorScheme: ColorScheme.System,
     },
   },
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6c',
     __typename: 'User',
     email: 'felix@test.com',
-    displayName: 'Felix Test',
     firstName: 'Felix',
     lastName: 'Test',
     canImpersonate: false,
-    supportUserHash: '',
     workspaceMember: {
-      __typename: 'WorkspaceMember',
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       allowImpersonation: true,
       workspace: {
@@ -110,23 +70,11 @@ export const mockedUsersData: Array<MockedUser> = [
         inviteHash: 'twenty.com-invite-hash',
         logo: workspaceLogoUrl,
       },
-      settings: {
-        id: '7dfbc3f7-6e5e-4128-957e-8d86808cde9y',
-        __typename: 'UserSettings',
-        locale: 'en',
-        colorScheme: ColorScheme.System,
-      },
       authoredAttachments: [],
       assignedActivities: [],
       authoredActivities: [],
       companies: [],
       comments: [],
-    },
-    settings: {
-      id: '7dfbc3f7-6e5e-4128-957e-8d86808cdt7a',
-      __typename: 'UserSettings',
-      locale: 'en',
-      colorScheme: ColorScheme.System,
     },
   },
 ];
@@ -136,14 +84,10 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
     __typename: 'User',
     email: 'workspace-onboarding@test.com',
-    displayName: '',
     firstName: '',
     lastName: '',
-    avatarUrl: null,
     canImpersonate: false,
-    supportUserHash: '',
     workspaceMember: {
-      __typename: 'WorkspaceMember',
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       allowImpersonation: true,
       workspace: {
@@ -154,37 +98,21 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
         inviteHash: 'twenty.com-invite-hash-1',
         logo: '',
       },
-      settings: {
-        id: '7dfbc3f7-6e5e-4128-957e-8d86808cde9y',
-        __typename: 'UserSettings',
-        locale: 'en',
-        colorScheme: ColorScheme.System,
-      },
       authoredAttachments: [],
       assignedActivities: [],
       authoredActivities: [],
       companies: [],
       comments: [],
     },
-    settings: {
-      id: '7dfbc3f7-6e5e-4128-957e-8d86808cde9y',
-      __typename: 'UserSettings',
-      locale: 'en',
-      colorScheme: ColorScheme.System,
-    },
   },
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
     __typename: 'User',
     email: 'profile-onboarding@test.com',
-    displayName: '',
     firstName: '',
     lastName: '',
-    avatarUrl: null,
     canImpersonate: false,
-    supportUserHash: '',
     workspaceMember: {
-      __typename: 'WorkspaceMember',
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
       allowImpersonation: true,
       workspace: {
@@ -195,23 +123,11 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
         inviteHash: 'twenty.com-invite-hash-2',
         logo: '',
       },
-      settings: {
-        id: '7dfbc3f7-6e5e-4128-957e-8d86808cde9y',
-        __typename: 'UserSettings',
-        locale: 'en',
-        colorScheme: ColorScheme.System,
-      },
       authoredAttachments: [],
       assignedActivities: [],
       authoredActivities: [],
       companies: [],
       comments: [],
-    },
-    settings: {
-      id: '7dfbc3f7-6e5e-4128-957e-8d86808cde9y',
-      __typename: 'UserSettings',
-      locale: 'en',
-      colorScheme: ColorScheme.System,
     },
   },
 ];

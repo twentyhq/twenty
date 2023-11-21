@@ -1,5 +1,5 @@
 import { ApiFieldItem } from '@/settings/developers/types/ApiFieldItem';
-import { ApiKey } from '~/generated/graphql';
+import { ApiKey } from '@/settings/developers/types/ApiKey';
 import { beautifyDateDiff } from '~/utils/date-utils';
 
 export const formatExpiration = (

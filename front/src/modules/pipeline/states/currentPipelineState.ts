@@ -1,8 +1,7 @@
 import { atom } from 'recoil';
+import { undefined } from 'zod';
 
-import { Pipeline } from '~/generated/graphql';
-
-export const currentPipelineState = atom<Pipeline | undefined>({
+export const currentPipelineState = atom<any | undefined>({
   key: 'currentPipelineState',
   default: undefined,
 });

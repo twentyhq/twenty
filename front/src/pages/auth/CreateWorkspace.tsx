@@ -8,7 +8,9 @@ import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
+import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -43,6 +45,7 @@ export const CreateWorkspace = () => {
   const navigate = useNavigate();
 
   const { enqueueSnackBar } = useSnackBar();
+  const onboardingStatus = useOnboardingStatus();
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
 
   const [updateWorkspace] = useUpdateWorkspaceMutation();
@@ -66,7 +69,7 @@ export const CreateWorkspace = () => {
       try {
         const result = await updateWorkspace({
           variables: {
-            data: {
+            input: {
               displayName: data.name,
             },
           },
@@ -100,6 +103,10 @@ export const CreateWorkspace = () => {
     PageHotkeyScope.CreateWokspace,
     [onSubmit],
   );
+
+  if (onboardingStatus !== OnboardingStatus.OngoingWorkspaceCreation) {
+    return null;
+  }
 
   return (
     <>

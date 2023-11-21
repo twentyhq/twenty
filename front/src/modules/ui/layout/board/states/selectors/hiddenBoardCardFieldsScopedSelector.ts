@@ -11,7 +11,7 @@ export const hiddenBoardCardFieldsScopedSelector = selectorFamily({
       const fields = get(boardCardFieldsScopedState(scopeId));
       const fieldKeys = fields.map(({ fieldMetadataId }) => fieldMetadataId);
       const otherAvailableKeys = get(
-        availableBoardCardFieldsScopedState(scopeId),
+        availableBoardCardFieldsScopedState({ scopeId }),
       ).filter(({ fieldMetadataId }) => !fieldKeys.includes(fieldMetadataId));
 
       return [

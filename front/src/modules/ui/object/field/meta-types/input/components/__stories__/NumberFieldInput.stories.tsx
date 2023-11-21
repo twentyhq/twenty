@@ -45,6 +45,7 @@ const NumberFieldInputWithContext = ({
         fieldDefinition={{
           fieldMetadataId: 'number',
           label: 'Number',
+          iconName: 'Icon123',
           type: 'NUMBER',
           metadata: {
             fieldName: 'number',

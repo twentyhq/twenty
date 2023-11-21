@@ -2,8 +2,6 @@ import { useCallback, useContext, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
-import { useCreateCompanyProgress } from '@/companies/hooks/useCreateCompanyProgress';
-import { useFilteredSearchCompanyQuery } from '@/companies/hooks/useFilteredSearchCompanyQuery';
 import {
   IconArrowLeft,
   IconArrowRight,
@@ -11,7 +9,6 @@ import {
   IconPlus,
 } from '@/ui/display/icon';
 import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
-import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
@@ -57,7 +54,6 @@ export const BoardColumnMenu = ({
   const boardColumnMenuRef = useRef<HTMLDivElement>(null);
 
   const { enqueueSnackBar } = useSnackBar();
-  const createCompanyProgress = useCreateCompanyProgress();
   const { handleMoveBoardColumn } = useBoardColumns();
 
   const handleCompanySelected = (
@@ -75,7 +71,7 @@ export const BoardColumnMenu = ({
       return;
     }
 
-    createCompanyProgress(selectedCompany.id, stageId);
+    //createCompanyProgress(selectedCompany.id, stageId);
     closeMenu();
   };
 
@@ -100,9 +96,9 @@ export const BoardColumnMenu = ({
   const [relationPickerSearchFilter] = useRecoilScopedState(
     relationPickerSearchFilterScopedState,
   );
-  const companies = useFilteredSearchCompanyQuery({
-    searchFilter: relationPickerSearchFilter,
-  });
+  // const companies = useFilteredSearchCompanyQuery({
+  //   searchFilter: relationPickerSearchFilter,
+  // });
 
   useListenClickOutside({
     refs: [boardColumnMenuRef],
@@ -174,14 +170,15 @@ export const BoardColumnMenu = ({
           />
         )}
         {currentMenu === 'add' && (
-          <SingleEntitySelect
-            disableBackgroundBlur
-            entitiesToSelect={companies.entitiesToSelect}
-            loading={companies.loading}
-            onCancel={closeMenu}
-            onEntitySelected={handleCompanySelected}
-            selectedEntity={companies.selectedEntities[0]}
-          />
+          <div>add</div>
+          // <SingleEntitySelect
+          //   disableBackgroundBlur
+          //   entitiesToSelect={companies.entitiesToSelect}
+          //   loading={companies.loading}
+          //   onCancel={closeMenu}
+          //   onEntitySelected={handleCompanySelected}
+          //   selectedEntity={companies.selectedEntities[0]}
+          // />
         )}
       </DropdownMenu>
     </StyledMenuContainer>

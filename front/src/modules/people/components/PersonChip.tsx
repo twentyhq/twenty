@@ -6,14 +6,14 @@ import {
 export type PersonChipProps = {
   id: string;
   name: string;
-  pictureUrl?: string;
+  avatarUrl?: string;
   variant?: EntityChipVariant;
 };
 
 export const PersonChip = ({
   id,
   name,
-  pictureUrl,
+  avatarUrl,
   variant,
 }: PersonChipProps) => (
   <EntityChip
@@ -21,7 +21,7 @@ export const PersonChip = ({
     linkToEntity={`/person/${id}`}
     name={name}
     avatarType="rounded"
-    pictureUrl={pictureUrl}
+    avatarUrl={avatarUrl}
     variant={variant}
   />
 );

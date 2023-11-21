@@ -4,7 +4,7 @@ import { getFieldMetadataType } from 'src/workspace/workspace-schema-builder/uti
 describe('getFieldMetadataType', () => {
   it.each([
     ['uuid', FieldMetadataType.UUID],
-    ['timestamp', FieldMetadataType.DATE],
+    ['timestamp', FieldMetadataType.DATE_TIME],
   ])(
     'should return correct FieldMetadataType for type %s',
     (type, expectedMetadataType) => {
