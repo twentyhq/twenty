@@ -33,9 +33,9 @@ export const MultipleFiltersDropdownContent = () => {
             {filterDefinitionUsedInDropdown.type === 'TEXT' && (
               <ObjectFilterDropdownTextSearchInput />
             )}
-            {filterDefinitionUsedInDropdown.type === 'NUMBER' && (
-              <ObjectFilterDropdownNumberSearchInput />
-            )}
+            {['NUMBER', 'CURRENCY'].includes(
+              filterDefinitionUsedInDropdown.type,
+            ) && <ObjectFilterDropdownNumberSearchInput />}
             {filterDefinitionUsedInDropdown.type === 'DATE_TIME' && (
               <ObjectFilterDropdownDateSearchInput />
             )}
