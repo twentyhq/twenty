@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useSetRecoilState } from 'recoil';
 
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { BoardOptionsDropdown } from '@/ui/layout/board/components/BoardOptionsDropdown';
@@ -10,6 +11,7 @@ import {
 import { EntityBoardActionBar } from '@/ui/layout/board/components/EntityBoardActionBar';
 import { EntityBoardContextMenu } from '@/ui/layout/board/components/EntityBoardContextMenu';
 import { ViewBar } from '@/views/components/ViewBar';
+import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
@@ -35,8 +37,29 @@ export const CompanyBoard = ({
   onEditColumnTitle,
 }: CompanyBoardProps) => {
   const viewScopeId = 'company-board-view';
+
+  const { savedViewFieldsState, savedViewFiltersState, savedViewSortsState } =
+    useViewScopedStates({
+      customViewScopeId: viewScopeId,
+    });
+
+  const setSavedViewFields = useSetRecoilState(savedViewFieldsState);
+  const setSavedViewFilters = useSetRecoilState(savedViewFiltersState);
+  const setSavedViewSorts = useSetRecoilState(savedViewSortsState);
+
   return (
-    <ViewScope viewScopeId={viewScopeId}>
+    <ViewScope
+      viewScopeId={viewScopeId}
+      onViewFieldsChange={(viewFields) => {
+        setSavedViewFields(viewFields);
+      }}
+      onViewFiltersChange={(viewFilters) => {
+        setSavedViewFilters(viewFilters);
+      }}
+      onViewSortsChange={(viewSorts) => {
+        setSavedViewSorts(viewSorts);
+      }}
+    >
       <StyledContainer>
         <BoardContext.Provider
           value={{

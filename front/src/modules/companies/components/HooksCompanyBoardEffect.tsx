@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { Company } from '@/companies/types/Company';
@@ -15,12 +15,16 @@ import { useBoardContextMenuEntries } from '@/ui/layout/board/hooks/useBoardCont
 import { availableBoardCardFieldsScopedState } from '@/ui/layout/board/states/availableBoardCardFieldsScopedState';
 import { boardCardFieldsScopedState } from '@/ui/layout/board/states/boardCardFieldsScopedState';
 import { isBoardLoadedState } from '@/ui/layout/board/states/isBoardLoadedState';
+import { turnFiltersIntoWhereClauseV2 } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClauseV2';
+import { turnSortsIntoOrderByV2 } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderByV2';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedStateV2';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewFieldsToBoardFieldDefinitions';
+import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
+import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 
 import { useUpdateCompanyBoardCardIds } from '../hooks/useUpdateBoardCardIds';
 import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
@@ -35,13 +39,19 @@ export const HooksCompanyBoardEffect = () => {
     setViewType,
   } = useView();
 
-  const { currentViewFieldsState } = useViewScopedStates();
+  const {
+    currentViewFieldsState,
+    currentViewFiltersState,
+    currentViewSortsState,
+  } = useViewScopedStates();
 
   const [pipelineSteps, setPipelineSteps] = useState<PipelineStep[]>([]);
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
 
   const currentViewFields = useRecoilValue(currentViewFieldsState);
+  const currentViewFilters = useRecoilValue(currentViewFiltersState);
+  const currentViewSorts = useRecoilValue(currentViewSortsState);
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNamePlural: 'opportunities',
@@ -78,23 +88,21 @@ export const HooksCompanyBoardEffect = () => {
     ),
   });
 
-  const whereFilters = useMemo(() => {
-    return {
-      and: [
-        {
-          pipelineStepId: {
-            in: pipelineSteps.map((pipelineStep) => pipelineStep.id),
-          },
-        },
-        ...[],
-      ],
-    };
-  }, [pipelineSteps]) as any;
+  const filter = turnFiltersIntoWhereClauseV2(
+    mapViewFiltersToFilters(currentViewFilters),
+    objectMetadataItem?.fields ?? [],
+  );
+
+  const orderBy = turnSortsIntoOrderByV2(
+    mapViewSortsToSorts(currentViewSorts),
+    objectMetadataItem?.fields ?? [],
+  );
 
   useFindManyObjectRecords({
     skip: !pipelineSteps.length,
     objectNamePlural: 'opportunities',
-    filter: whereFilters,
+    filter: filter,
+    orderBy: orderBy,
     onCompleted: useCallback(
       (data: PaginatedObjectTypeResults<Opportunity>) => {
         const pipelineProgresses: Array<Opportunity> = data.edges.map(
