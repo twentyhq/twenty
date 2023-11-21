@@ -62,6 +62,11 @@ export const HooksCompanyBoardEffect = () => {
   const updateCompanyBoardCardIds = useUpdateCompanyBoardCardIds();
   const updateCompanyBoard = useUpdateCompanyBoard();
 
+  const setAvailableBoardCardFields = useSetRecoilScopedStateV2(
+    availableBoardCardFieldsScopedState,
+    'company-board-view',
+  );
+
   useFindManyObjectRecords({
     objectNamePlural: 'pipelineSteps',
     filter: {},
@@ -135,11 +140,6 @@ export const HooksCompanyBoardEffect = () => {
     sortDefinitions,
   ]);
 
-  const setAvailableBoardCardFields = useSetRecoilScopedStateV2(
-    availableBoardCardFieldsScopedState,
-    'company-board-view',
-  );
-
   useEffect(() => {
     const availableTableColumns = columnDefinitions.filter(
       filterAvailableTableColumns,
@@ -149,9 +149,12 @@ export const HooksCompanyBoardEffect = () => {
   }, [columnDefinitions, setAvailableBoardCardFields]);
 
   useEffect(() => {
-    setViewObjectMetadataId?.('company');
+    if (!objectMetadataItem) {
+      return;
+    }
+    setViewObjectMetadataId?.(objectMetadataItem.id);
     setViewType?.(ViewType.Kanban);
-  }, [setViewObjectMetadataId, setViewType]);
+  }, [objectMetadataItem, setViewObjectMetadataId, setViewType]);
 
   const loading = !companies;
 
@@ -162,7 +165,6 @@ export const HooksCompanyBoardEffect = () => {
     if (!loading && opportunities && companies) {
       setActionBarEntries();
       setContextMenuEntries();
-
       updateCompanyBoard(pipelineSteps, opportunities, companies);
       setEntityCountInCurrentView(companies.length);
     }
@@ -180,10 +182,13 @@ export const HooksCompanyBoardEffect = () => {
   useEffect(() => {
     if (currentViewFields) {
       setBoardCardFields(
-        mapViewFieldsToBoardFieldDefinitions(currentViewFields, []),
+        mapViewFieldsToBoardFieldDefinitions(
+          currentViewFields,
+          columnDefinitions,
+        ),
       );
     }
-  }, [currentViewFields, setBoardCardFields]);
+  }, [columnDefinitions, currentViewFields, setBoardCardFields]);
 
   return <></>;
 };
