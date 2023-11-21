@@ -1,6 +1,6 @@
 import { useCallback, useContext, useState } from 'react';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { NewButton } from '@/ui/layout/board/components/NewButton';

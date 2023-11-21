@@ -9,7 +9,7 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';

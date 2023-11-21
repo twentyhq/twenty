@@ -6,7 +6,7 @@ import { useRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
 import { capitalize } from '~/utils/string/capitalize';
 

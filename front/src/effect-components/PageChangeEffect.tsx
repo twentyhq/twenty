@@ -12,7 +12,7 @@ import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
 import { IconCheckbox } from '@/ui/display/icon';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TableHotkeyScope } from '@/ui/object/record-table/types/TableHotkeyScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';

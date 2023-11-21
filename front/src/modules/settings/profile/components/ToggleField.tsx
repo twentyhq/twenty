@@ -2,7 +2,7 @@ import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Toggle } from '@/ui/input/components/Toggle';
 
 export const ToggleField = () => {

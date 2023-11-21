@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   FieldFilter,
   ObjectFilter,
