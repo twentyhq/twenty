@@ -26,7 +26,7 @@ export const EMPTY_MUTATION = gql`
 export const useObjectMetadataItem = ({
   objectNamePlural,
   objectNameSingular,
-}: ObjectMetadataItemIdentifier & { skip?: boolean }) => {
+}: ObjectMetadataItemIdentifier) => {
   const objectMetadataItem = useRecoilValue(
     objectMetadataItemFamilySelector({
       objectNamePlural,
