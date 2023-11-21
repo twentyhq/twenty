@@ -77,7 +77,6 @@ export const ViewBar = ({
                 hotkeyScope={{
                   scope: FiltersHotkeyScope.ObjectSortDropdownButton,
                 }}
-                isPrimaryButton
               />
               {optionsDropdownButton}
             </>

@@ -82,7 +82,7 @@ export const EditObjectFilter = ({
             {availableFilter?.type === 'NUMBER' && (
               <ObjectFilterDropdownNumberSearchInput />
             )}
-            {availableFilter?.type === 'DATE' && (
+            {availableFilter?.type === 'DATE_TIME' && (
               <ObjectFilterDropdownDateSearchInput />
             )}
             {availableFilter?.type === 'ENTITY' && (
