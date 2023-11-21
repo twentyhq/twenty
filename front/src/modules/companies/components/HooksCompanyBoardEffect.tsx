@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { Company } from '@/companies/types/Company';
 import { useComputeDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useComputeDefinitionsFromFieldMetadata';
@@ -17,12 +16,11 @@ import { availableBoardCardFieldsScopedState } from '@/ui/layout/board/states/av
 import { boardCardFieldsScopedState } from '@/ui/layout/board/states/boardCardFieldsScopedState';
 import { isBoardLoadedState } from '@/ui/layout/board/states/isBoardLoadedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
+import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedStateV2';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewFieldsToBoardFieldDefinitions';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { useUpdateCompanyBoardCardIds } from '../hooks/useUpdateBoardCardIds';
 import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
@@ -137,35 +135,7 @@ export const HooksCompanyBoardEffect = () => {
     sortDefinitions,
   ]);
 
-  const setAvailableBoardCardFields = useRecoilCallback(
-    ({ snapshot, set }) =>
-      (availableBoardCardFields: any) => {
-        const availableBoardCardFieldsFromState = snapshot
-          .getLoadable(
-            availableBoardCardFieldsScopedState({
-              scopeId: 'company-board-view',
-            }),
-          )
-          .getValue();
-
-        if (
-          !isDeeplyEqual(
-            availableBoardCardFieldsFromState,
-            availableBoardCardFields,
-          )
-        ) {
-          set(
-            availableBoardCardFieldsScopedState({
-              scopeId: 'company-board-view',
-            }),
-            availableBoardCardFields,
-          );
-        }
-      },
-    [],
-  );
-
-  useRecoilScopedStateV2(
+  const setAvailableBoardCardFields = useSetRecoilScopedStateV2(
     availableBoardCardFieldsScopedState,
     'company-board-view',
   );
@@ -182,8 +152,6 @@ export const HooksCompanyBoardEffect = () => {
     setViewObjectMetadataId?.('company');
     setViewType?.(ViewType.Kanban);
   }, [setViewObjectMetadataId, setViewType]);
-
-  const [searchParams] = useSearchParams();
 
   const loading = !companies;
 
