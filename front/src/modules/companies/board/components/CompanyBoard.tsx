@@ -12,7 +12,6 @@ import { EntityBoardActionBar } from '@/ui/layout/board/components/EntityBoardAc
 import { EntityBoardContextMenu } from '@/ui/layout/board/components/EntityBoardContextMenu';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
-import { useView } from '@/views/hooks/useView';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
@@ -39,28 +38,29 @@ export const CompanyBoard = ({
 }: CompanyBoardProps) => {
   const viewScopeId = 'company-board-view';
 
-  const { savedViewFieldsState, savedViewFiltersState, savedViewSortsState } =
-    useViewScopedStates({
-      customViewScopeId: viewScopeId,
-    });
+  const {
+    currentViewFieldsState,
+    currentViewFiltersState,
+    currentViewSortsState,
+  } = useViewScopedStates({
+    customViewScopeId: viewScopeId,
+  });
 
-  const setSavedViewFields = useSetRecoilState(savedViewFieldsState);
-  const setSavedViewFilters = useSetRecoilState(savedViewFiltersState);
-  const setSavedViewSorts = useSetRecoilState(savedViewSortsState);
-
-  const { persistViewFields } = useView({ viewScopeId });
+  const setCurrentViewFields = useSetRecoilState(currentViewFieldsState);
+  const setCurrentViewFilters = useSetRecoilState(currentViewFiltersState);
+  const setCurrentViewSorts = useSetRecoilState(currentViewSortsState);
 
   return (
     <ViewScope
       viewScopeId={viewScopeId}
       onViewFieldsChange={(viewFields) => {
-        setSavedViewFields(viewFields);
+        setCurrentViewFields(viewFields);
       }}
       onViewFiltersChange={(viewFilters) => {
-        setSavedViewFilters(viewFilters);
+        setCurrentViewFilters(viewFilters);
       }}
       onViewSortsChange={(viewSorts) => {
-        setSavedViewSorts(viewSorts);
+        setCurrentViewSorts(viewSorts);
       }}
     >
       <StyledContainer>
