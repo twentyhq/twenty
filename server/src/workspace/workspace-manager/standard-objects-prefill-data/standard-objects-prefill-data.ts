@@ -10,6 +10,7 @@ export const standardObjectsPrefillData = async (
   workspaceDataSource: DataSource,
   schemaName: string,
   objectMetadata: ObjectMetadataEntity[],
+  prefillViewsOnly = false,
 ) => {
   const objectMetadataMap = objectMetadata.reduce((acc, object) => {
     acc[object.nameSingular] = {
@@ -22,10 +23,16 @@ export const standardObjectsPrefillData = async (
     return acc;
   }, {});
 
-  workspaceDataSource.transaction(async (entityManager: EntityManager) => {
-    await companyPrefillData(entityManager, schemaName);
-    await personPrefillData(entityManager, schemaName);
-    await viewPrefillData(entityManager, schemaName, objectMetadataMap);
-    await pipelineStepPrefillData(entityManager, schemaName);
-  });
+  await workspaceDataSource.transaction(
+    async (entityManager: EntityManager) => {
+      if (!prefillViewsOnly) {
+        await companyPrefillData(entityManager, schemaName);
+        await personPrefillData(entityManager, schemaName);
+      }
+      await viewPrefillData(entityManager, schemaName, objectMetadataMap);
+      if (!prefillViewsOnly) {
+        await pipelineStepPrefillData(entityManager, schemaName);
+      }
+    },
+  );
 };

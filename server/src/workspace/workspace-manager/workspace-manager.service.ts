@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { EntityManager } from 'typeorm';
+
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { FieldMetadataService } from 'src/metadata/field-metadata/field-metadata.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
@@ -35,10 +37,13 @@ export class WorkspaceManagerService {
 
   /**
    * Init a workspace by creating a new data source and running all migrations
-   * @param workspaceId
+   * @params workspaceId, prefillSeedData
    * @returns Promise<void>
    */
-  public async init(workspaceId: string): Promise<void> {
+  public async init(
+    workspaceId: string,
+    prefillViewData = false,
+  ): Promise<void> {
     const schemaName =
       await this.workspaceDataSourceService.createWorkspaceDBSchema(
         workspaceId,
@@ -61,11 +66,11 @@ export class WorkspaceManagerService {
         dataSourceMetadata.id,
         workspaceId,
       );
-
     await this.prefillWorkspaceWithStandardObjects(
       dataSourceMetadata,
       workspaceId,
       createdObjectMetadata,
+      prefillViewData,
     );
   }
 
@@ -230,6 +235,7 @@ export class WorkspaceManagerService {
     dataSourceMetadata: DataSourceEntity,
     workspaceId: string,
     createdObjectMetadata: ObjectMetadataEntity[],
+    prefillViewsOnly = false,
   ) {
     const workspaceDataSource =
       await this.workspaceDataSourceService.connectToWorkspaceDataSource(
@@ -244,7 +250,85 @@ export class WorkspaceManagerService {
       workspaceDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,
+      prefillViewsOnly,
     );
+  }
+
+  public async injectWorkspaceData(
+    table: string,
+    workspaceId: string,
+    values,
+    columns,
+  ) {
+    if (!(await this.workspaceDataSourceService.hasSchema(workspaceId))) {
+      await this.init(workspaceId, true);
+    }
+    const schema = this.workspaceDataSourceService.getSchemaName(workspaceId);
+    const workspaceDataSource =
+      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
+        workspaceId,
+      );
+
+    await workspaceDataSource.transaction(
+      async (entityManager: EntityManager) => {
+        await entityManager
+          .createQueryBuilder()
+          .insert()
+          .into(`${schema}.${table}`, columns)
+          .orIgnore()
+          .values(values)
+          .execute();
+      },
+    );
+  }
+
+  public async injectPublicData(table: string, values, columns) {
+    const workspaceDataSource =
+      await this.workspaceDataSourceService.connectToMainSchemaDataSource();
+
+    // https://stackoverflow.com/questions/8495687/split-array-into-chunks
+    const chunk = (array, perChunk) => {
+      return array.reduce((all, one, i) => {
+        const ch = Math.floor(i / perChunk);
+        all[ch] = [].concat(all[ch] || [], one);
+        return all;
+      }, []);
+    };
+
+    await workspaceDataSource.transaction(
+      async (entityManager: EntityManager) => {
+        for (const chunkValues of chunk(values, 1000)) {
+          await entityManager
+            .createQueryBuilder()
+            .insert()
+            .into(`core.${table}`, columns)
+            .orIgnore()
+            .values(chunkValues)
+            .execute();
+        }
+      },
+    );
+  }
+
+  public async updateDefaultWorkspaceIds(
+    values: { id: string; defaultWorkspaceId: string }[],
+  ) {
+    const workspaceDataSource =
+      await this.workspaceDataSourceService.connectToMainSchemaDataSource();
+    for (const value of values) {
+      if (value.defaultWorkspaceId !== null) {
+        await workspaceDataSource.transaction(
+          async (entityManager: EntityManager) => {
+            await entityManager.query(
+              `UPDATE core.user
+            SET "defaultWorkspaceId"='${value.defaultWorkspaceId}'
+            WHERE id='${value.id}'
+            `,
+            );
+          },
+        );
+      }
+    }
   }
 
   /**

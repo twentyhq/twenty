@@ -45,7 +45,6 @@ export const seedUsers = async (
           '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
         defaultWorkspaceId: SeedWorkspaceId,
       },
-      ,
       {
         id: SeedUserIds.Phil,
         firstName: 'Phil',

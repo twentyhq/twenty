@@ -9,7 +9,7 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 export class WorkspaceDataSourceService {
   constructor(
     private readonly dataSourceService: DataSourceService,
-    private readonly typeormService: TypeORMService,
+    private readonly typeORMService: TypeORMService,
   ) {}
 
   /**
@@ -26,18 +26,25 @@ export class WorkspaceDataSourceService {
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
       );
-
-    const dataSource = await this.typeormService.connectToDataSource(
+    const dataSource = await this.typeORMService.connectToDataSource(
       dataSourceMetadata,
     );
-
     if (!dataSource) {
       throw new Error(
         `Could not connect to workspace data source for workspace ${workspaceId}`,
       );
     }
-
     return dataSource;
+  }
+
+  /**
+   *
+   * Connect to the main schema data source
+   *
+   * @returns
+   */
+  public async connectToMainSchemaDataSource(): Promise<DataSource> {
+    return await this.typeORMService.getMainDataSource();
   }
 
   /**
@@ -50,7 +57,19 @@ export class WorkspaceDataSourceService {
   public async createWorkspaceDBSchema(workspaceId: string): Promise<string> {
     const schemaName = this.getSchemaName(workspaceId);
 
-    return await this.typeormService.createSchema(schemaName);
+    return await this.typeORMService.createSchema(schemaName);
+  }
+
+  /**
+   *
+   * Check if workspace has a schema
+   *
+   * @param workspaceId
+   * @returns
+   */
+  public async hasSchema(workspaceId: string): Promise<boolean> {
+    const schemaName = this.getSchemaName(workspaceId);
+    return await this.typeORMService.hasSchema(schemaName);
   }
 
   /**
@@ -63,7 +82,7 @@ export class WorkspaceDataSourceService {
   public async deleteWorkspaceDBSchema(workspaceId: string): Promise<void> {
     const schemaName = this.getSchemaName(workspaceId);
 
-    return await this.typeormService.deleteSchema(schemaName);
+    return await this.typeORMService.deleteSchema(schemaName);
   }
 
   /**

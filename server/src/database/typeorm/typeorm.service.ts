@@ -3,10 +3,10 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { User } from 'src/core/user/user.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
+import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
@@ -40,11 +40,12 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     }
 
     const schema = dataSource.schema;
+    const debugMode = this.environmentService.isDebugMode();
 
     const workspaceDataSource = new DataSource({
       url: dataSource.url ?? this.environmentService.getPGDatabaseUrl(),
       type: 'postgres',
-      logging: ['query'],
+      logging: debugMode ? ['query'] : ['error'],
       schema,
     });
 
@@ -75,7 +76,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
 
   /**
    * Creates a new schema
-   * @param workspaceId
+   * @param schemaName
    * @returns Promise<void>
    */
   public async createSchema(schemaName: string): Promise<string> {
@@ -94,6 +95,13 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     await queryRunner.dropSchema(schemaName, true, true);
 
     await queryRunner.release();
+  }
+
+  public async hasSchema(schemaName: string): Promise<boolean> {
+    const queryRunner = this.mainDataSource.createQueryRunner();
+    const schemaAlreadyExists = await queryRunner.hasSchema(schemaName);
+    await queryRunner.release();
+    return schemaAlreadyExists;
   }
 
   async onModuleInit() {

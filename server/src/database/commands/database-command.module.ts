@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
+import { MigrateOldSchemaCommand } from 'src/database/commands/migrate-old-schema.command';
 import { WorkspaceManagerModule } from 'src/workspace/workspace-manager/workspace-manager.module';
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { WorkspaceMigrationModule } from 'src/metadata/workspace-migration/workspace-migration.module';
@@ -18,6 +19,10 @@ import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-worksp
     WorkspaceMigrationRunnerModule,
     WorkspaceModule,
   ],
-  providers: [DataSeedWorkspaceCommand, ConfirmationQuestion],
+  providers: [
+    MigrateOldSchemaCommand,
+    ConfirmationQuestion,
+    DataSeedWorkspaceCommand,
+  ],
 })
 export class DatabaseCommandModule {}
