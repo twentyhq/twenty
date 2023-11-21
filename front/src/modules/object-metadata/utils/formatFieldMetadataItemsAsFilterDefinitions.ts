@@ -15,7 +15,8 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
         FieldMetadataType.Number,
         FieldMetadataType.Currency,
         FieldMetadataType.Text,
-      ].includes(field.type)
+      ].includes(field.type) ||
+      field.name === 'probability'
     ) {
       return acc;
     }
