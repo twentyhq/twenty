@@ -10,7 +10,7 @@ import { Field } from '~/generated/graphql';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { SettingsObjectFieldPreviewValueEffect } from '../components/SettingsObjectFieldPreviewValueEffect';
-import { dataTypes } from '../constants/dataTypes';
+import { settingsFieldMetadataTypes } from '../constants/settingsFieldMetadataTypes';
 import { useFieldPreview } from '../hooks/useFieldPreview';
 import { useRelationFieldPreview } from '../hooks/useRelationFieldPreview';
 
@@ -99,7 +99,7 @@ export const SettingsObjectFieldPreview = ({
   const defaultValue =
     fieldMetadata.type === FieldMetadataType.Relation
       ? relationDefaultValue
-      : dataTypes[fieldMetadata.type].defaultValue;
+      : settingsFieldMetadataTypes[fieldMetadata.type].defaultValue;
 
   return (
     <StyledContainer className={className}>
