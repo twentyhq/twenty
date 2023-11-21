@@ -1,4 +1,5 @@
 import { ProgressBar } from "@/ui/feedback/progress-bar/components/ProgressBar";
+
 export const MyComponent = () => {
   return (
     <ProgressBar

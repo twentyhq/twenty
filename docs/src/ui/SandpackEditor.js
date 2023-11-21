@@ -4,7 +4,7 @@ import uiModule from "!!raw-loader!@site/src/ui/generated/index.js";
 export const SandpackEditor = ({ availableComponentPaths, componentCode}) => {
   const fakePackagesJson = availableComponentPaths.reduce((acc, componentPath, index) => {
     acc[`/node_modules/${componentPath}/package.json`] = {
-      hidden: false,
+      hidden: true,
       code: JSON.stringify({
         name: componentPath,
         main: "./index.js",
@@ -15,7 +15,7 @@ export const SandpackEditor = ({ availableComponentPaths, componentCode}) => {
 
   const fakeIndexesJs = availableComponentPaths.reduce((acc, componentPath, index) => {
     acc[`/node_modules/${componentPath}/index.js`] = {
-      hidden: false,
+      hidden: true,
       code: uiModule,
     };
     return acc;

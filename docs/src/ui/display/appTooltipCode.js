@@ -1,4 +1,5 @@
 import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
+
 export const MyComponent = () => {
   return (
     <>

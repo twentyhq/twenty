@@ -1,6 +1,5 @@
 import { Tag } from "@/ui/display/tag/components/Tag";
 
-
 export const MyComponent = () => {
   return (
     <Tag
