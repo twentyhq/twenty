@@ -130,9 +130,9 @@ export const SettingsObjectFieldTypeSelectSection = ({
               values.type === FieldMetadataType.Relation && (
                 <SettingsObjectFieldRelationForm
                   disableFieldEdition={
-                    !!relationFieldMetadata && !relationFieldMetadata.isCustom
+                    relationFieldMetadata && !relationFieldMetadata.isCustom
                   }
-                  disableRelationEdition={!!relationFieldMetadata?.id}
+                  disableRelationEdition={!!relationFieldMetadata}
                   values={relationFormConfig}
                   onChange={(nextValues) =>
                     onChange({
