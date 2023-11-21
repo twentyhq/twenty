@@ -12,6 +12,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migratio
 import { WorkspaceMigrationModule } from 'src/metadata/workspace-migration/workspace-migration.module';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
 
 import { ObjectMetadataService } from './object-metadata.service';
 import { ObjectMetadataEntity } from './object-metadata.entity';
@@ -25,7 +26,10 @@ import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         TypeORMModule,
-        NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+        NestjsQueryTypeOrmModule.forFeature(
+          [ObjectMetadataEntity, FieldMetadataEntity],
+          'metadata',
+        ),
         DataSourceModule,
         WorkspaceMigrationModule,
         WorkspaceMigrationRunnerModule,
