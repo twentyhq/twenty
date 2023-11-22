@@ -1,13 +1,8 @@
 import { CompanyBoardCard } from '@/companies/components/CompanyBoardCard';
-import { NewCompanyProgressButton } from '@/companies/components/NewCompanyProgressButton';
+import { NewOpportunityButton } from '@/companies/components/NewOpportunityButton';
 import { BoardOptions } from '@/ui/object/record-board/types/BoardOptions';
 
-import { opportunityBoardFilterDefinitions } from './constants/opportunityBoardFilterDefinitions';
-import { opportunityBoardSortDefinitions } from './constants/opportunityBoardSortDefinitions';
-
 export const opportunitiesBoardOptions: BoardOptions = {
-  newCardComponent: <NewCompanyProgressButton />,
+  newCardComponent: <NewOpportunityButton />,
   CardComponent: CompanyBoardCard,
-  filterDefinitions: opportunityBoardFilterDefinitions,
-  sortDefinitions: opportunityBoardSortDefinitions,
 };

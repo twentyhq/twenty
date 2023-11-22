@@ -89,7 +89,7 @@ export const seedCompanyFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: false,
-        isSystem: true,
+        isSystem: false,
         defaultValue: { type: 'now' },
       },
       {

@@ -1,4 +1,5 @@
-import { CompanyProgressPicker } from '@/companies/components/CompanyProgressPicker';
+import { OpportunityPicker } from '@/companies/components/OpportunityPicker';
+import { useCreateOpportunity } from '@/companies/hooks/useCreateOpportunity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { IconPlus } from '@/ui/display/icon/index';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -17,6 +18,8 @@ export const PipelineAddButton = () => {
     dropdownScopeId: 'add-pipeline-progress',
   });
 
+  const { createOpportunity } = useCreateOpportunity();
+
   const handleCompanySelected = (
     selectedCompany: EntityForSelect | null,
     selectedPipelineStepId: string | null,
@@ -24,9 +27,7 @@ export const PipelineAddButton = () => {
     if (!selectedCompany?.id) {
       enqueueSnackBar(
         'There was a problem with the company selection, please retry.',
-        {
-          variant: 'error',
-        },
+        { variant: 'error' },
       );
 
       logError('There was a problem with the company selection, please retry.');
@@ -36,16 +37,14 @@ export const PipelineAddButton = () => {
     if (!selectedPipelineStepId) {
       enqueueSnackBar(
         'There was a problem with the pipeline stage selection, please retry.',
-        {
-          variant: 'error',
-        },
+        { variant: 'error' },
       );
 
-      logError('There was a problem with the pipeline stage selection.');
+      logError('There was a problem with the pipeline step selection.');
       return;
     }
     closeDropdown();
-    //createCompanyProgress(selectedCompany.id, selectedPipelineStepId);
+    createOpportunity(selectedCompany.id, selectedPipelineStepId);
   };
 
   return (
@@ -62,7 +61,7 @@ export const PipelineAddButton = () => {
           />
         }
         dropdownComponents={
-          <CompanyProgressPicker
+          <OpportunityPicker
             companyId={null}
             onSubmit={handleCompanySelected}
             onCancel={closeDropdown}

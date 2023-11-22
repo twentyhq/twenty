@@ -8,6 +8,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { filterAvailableFieldMetadataItem } from '@/object-record/utils/filterAvailableFieldMetadataItem';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
+import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageFavoriteButton } from '@/ui/layout/page/PageFavoriteButton';
@@ -39,6 +40,8 @@ export const RecordShowPage = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+
+  const { identifiersMapper } = useRelationPicker();
 
   const { favorites, createFavorite, deleteFavorite } = useFavorites({
     objectNamePlural: objectMetadataItem?.namePlural,
@@ -118,6 +121,11 @@ export const RecordShowPage = () => {
       ? object.name.firstName + ' ' + object.name.lastName
       : object.name;
 
+  const recordIdentifiers = identifiersMapper?.(
+    object,
+    objectMetadataItem?.nameSingular ?? '',
+  );
+
   return (
     <PageContainer>
       <PageTitle title={pageName} />
@@ -144,8 +152,8 @@ export const RecordShowPage = () => {
             <ShowPageLeftContainer>
               <ShowPageSummaryCard
                 id={object.id}
-                logoOrAvatar={''}
-                title={object.name ?? 'No name'}
+                logoOrAvatar={recordIdentifiers?.avatarUrl}
+                title={recordIdentifiers?.name ?? 'No name'}
                 date={object.createdAt ?? ''}
                 renderTitleEditComponent={() => <></>}
                 avatarType="squared"

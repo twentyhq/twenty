@@ -2,8 +2,8 @@ import { useRecoilValue } from 'recoil';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { turnFiltersIntoWhereClauseV2 } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClauseV2';
-import { turnSortsIntoOrderByV2 } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderByV2';
+import { turnFiltersIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClause';
+import { turnSortsIntoOrderBy } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordTableScopedStates } from '@/ui/object/record-table/hooks/internal/useRecordTableScopedStates';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 
@@ -31,11 +31,11 @@ export const useObjectRecordTable = () => {
   const tableFilters = useRecoilValue(tableFiltersState);
   const tableSorts = useRecoilValue(tableSortsState);
 
-  const filter = turnFiltersIntoWhereClauseV2(
+  const filter = turnFiltersIntoWhereClause(
     tableFilters,
     foundObjectMetadataItem?.fields ?? [],
   );
-  const orderBy = turnSortsIntoOrderByV2(
+  const orderBy = turnSortsIntoOrderBy(
     tableSorts,
     foundObjectMetadataItem?.fields ?? [],
   );

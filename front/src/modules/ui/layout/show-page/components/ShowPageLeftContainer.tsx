@@ -31,6 +31,12 @@ const StyledInnerContainer = styled.div`
   }};
 `;
 
+const StyledIntermediateContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding-bottom: ${({ theme }) => theme.spacing(3)};
+`;
+
 export type ShowPageLeftContainerProps = {
   children: ReactElement[];
 };
@@ -46,7 +52,9 @@ export const ShowPageLeftContainer = ({
   ) : (
     <StyledOuterContainer>
       <ScrollWrapper>
-        <StyledInnerContainer>{children}</StyledInnerContainer>
+        <StyledIntermediateContainer>
+          <StyledInnerContainer>{children}</StyledInnerContainer>
+        </StyledIntermediateContainer>
       </ScrollWrapper>
     </StyledOuterContainer>
   );

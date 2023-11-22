@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { flip, offset, useFloating } from '@floating-ui/react';
@@ -8,11 +8,14 @@ import { v4 } from 'uuid';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { IconPlus } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { RelationPicker } from '@/ui/input/components/internal/relation-picker/components/RelationPicker';
+import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { DoubleTextInput } from '@/ui/object/field/meta-types/input/components/internal/DoubleTextInput';
 import { FieldDoubleText } from '@/ui/object/field/types/FieldDoubleText';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   position: static;
@@ -65,43 +68,29 @@ export const AddPersonToCompany = ({
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  // TODO: refactor with useObjectMetadataItem V2 with typed hooks
   const { findManyQuery, updateOneMutation, createOneMutation } =
     useObjectMetadataItem({
       objectNameSingular: 'person',
     });
 
-  const { data: peopleNotInCompany } = useQuery(findManyQuery, {
-    variables: {
-      filter: {
-        companyId: {
-          neq: companyId,
-        },
-      },
-    },
-  });
-
   const [updatePerson] = useMutation(updateOneMutation);
   const [createPerson] = useMutation(createOneMutation);
 
-  const handlePersonSelected = async ({
-    selectedPersonId,
-    companyId,
-  }: {
-    selectedPersonId: string;
-    companyId: string | null;
-  }) => {
-    await updatePerson({
-      variables: {
-        idToUpdate: selectedPersonId,
-        input: {
-          companyId: companyId,
+  const handlePersonSelected =
+    (companyId: string) => async (newPerson: EntityForSelect | null) => {
+      if (!newPerson) return;
+      await updatePerson({
+        variables: {
+          idToUpdate: newPerson.id,
+          input: {
+            companyId: companyId,
+          },
         },
-      },
-      refetchQueries: [getOperationName(findManyQuery) ?? ''],
-    });
-    handleClosePicker();
-  };
+        refetchQueries: [getOperationName(findManyQuery) ?? ''],
+      });
+
+      handleClosePicker();
+    };
 
   const handleClosePicker = () => {
     if (isDropdownOpen) {
@@ -111,21 +100,12 @@ export const AddPersonToCompany = ({
   };
 
   const handleOpenPicker = () => {
-    // TODO: TEMPORARY - example to implement when the picker is back
-    handleCreatePerson({
-      firstValue: 'John',
-      secondValue: 'Doe',
-    });
-    // handlePersonSelected({
-    //   companyId,
-    //   selectedPersonId: peopleNotInCompany.people.edges[0].node.id,
-    // });
-    // if (!isDropdownOpen) {
-    //   setIsDropdownOpen(true);
-    //   setHotkeyScopeAndMemorizePreviousScope(
-    //     RelationPickerHotkeyScope.RelationPicker,
-    //   );
-    // }
+    if (!isDropdownOpen) {
+      setIsDropdownOpen(true);
+      setHotkeyScopeAndMemorizePreviousScope(
+        RelationPickerHotkeyScope.RelationPicker,
+      );
+    }
   };
 
   const handleCreatePerson = async ({
@@ -178,14 +158,23 @@ export const AddPersonToCompany = ({
                 />
               </StyledInputContainer>
             ) : (
-              <>todo</>
-              // <PeoplePicker
-              //   personId={''}
-              //   onSubmit={handlePersonSelected(companyId)}
-              //   onCancel={handleClosePicker}
-              //   onCreate={() => setIsCreationDropdownOpen(true)}
-              //   excludePersonIds={peopleIds}
-              // />
+              <RelationPicker
+                recordId={''}
+                onSubmit={handlePersonSelected(companyId)}
+                onCancel={handleClosePicker}
+                excludeRecordIds={peopleIds ?? []}
+                fieldDefinition={{
+                  label: 'Person',
+                  iconName: 'IconUser',
+                  fieldMetadataId: '',
+                  type: FieldMetadataType.Relation,
+                  metadata: {
+                    relationObjectMetadataNameSingular: 'person',
+                    relationObjectMetadataNamePlural: 'people',
+                    fieldName: 'person',
+                  },
+                }}
+              />
             )}
           </div>
         )}

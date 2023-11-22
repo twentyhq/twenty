@@ -91,16 +91,18 @@ export const ShowPageSummaryCard = ({
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) onUploadPicture?.(e.target.files[0]);
   };
-  const handleAvatarClick = () => {
-    inputFileRef?.current?.click?.();
-  };
+
+  // Todo - add back in when we have the ability to upload a picture
+  // const handleAvatarClick = () => {
+  //   inputFileRef?.current?.click?.();
+  // };
 
   return (
     <StyledShowPageSummaryCard>
       <StyledAvatarWrapper>
         <Avatar
           avatarUrl={logoOrAvatar}
-          onClick={onUploadPicture ? handleAvatarClick : undefined}
+          // onClick={onUploadPicture ? handleAvatarClick : undefined}
           size="xl"
           colorId={id}
           placeholder={title}

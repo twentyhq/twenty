@@ -9,8 +9,8 @@ import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjec
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
-import { turnFiltersIntoWhereClauseV2 } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClauseV2';
-import { turnSortsIntoOrderByV2 } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderByV2';
+import { turnFiltersIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClause';
+import { turnSortsIntoOrderBy } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useBoardActionBarEntries } from '@/ui/object/record-board/hooks/useBoardActionBarEntries';
 import { useBoardContext } from '@/ui/object/record-board/hooks/useBoardContext';
 import { useBoardContextMenuEntries } from '@/ui/object/record-board/hooks/useBoardContextMenuEntries';
@@ -88,12 +88,12 @@ export const HooksCompanyBoardEffect = () => {
     ),
   });
 
-  const filter = turnFiltersIntoWhereClauseV2(
+  const filter = turnFiltersIntoWhereClause(
     mapViewFiltersToFilters(currentViewFilters),
     objectMetadataItem?.fields ?? [],
   );
 
-  const orderBy = turnSortsIntoOrderByV2(
+  const orderBy = turnSortsIntoOrderBy(
     mapViewSortsToSorts(currentViewSorts),
     objectMetadataItem?.fields ?? [],
   );
