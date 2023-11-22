@@ -4,9 +4,9 @@ import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState } from 'recoil';
 
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -48,10 +48,9 @@ export const useFindManyObjectRecords = <
     isFetchingMoreObjectsFamilyState(objectNamePlural),
   );
 
-  const { foundObjectMetadataItem, objectNotFoundInMetadata, findManyQuery } =
-    useFindOneObjectMetadataItem({
+  const { objectMetadataItem, objectNotFoundInMetadata, findManyQuery } =
+    useObjectMetadataItem({
       objectNamePlural,
-      skip,
     });
 
   const { enqueueSnackBar } = useSnackBar();
@@ -59,7 +58,7 @@ export const useFindManyObjectRecords = <
   const { data, loading, error, fetchMore } = useQuery<
     PaginatedObjectType<ObjectType>
   >(findManyQuery, {
-    skip: skip || !foundObjectMetadataItem || !objectNamePlural,
+    skip: skip || !objectMetadataItem || !objectNamePlural,
     variables: {
       filter: filter ?? {},
       orderBy: orderBy ?? {},
@@ -128,7 +127,7 @@ export const useFindManyObjectRecords = <
             return Object.assign({}, prev, {
               [objectNamePlural]: {
                 __typename: `${capitalize(
-                  foundObjectMetadataItem?.nameSingular ?? '',
+                  objectMetadataItem?.nameSingular ?? '',
                 )}Connection`,
                 edges: newEdges,
                 pageInfo: fetchMoreResult?.[objectNamePlural].pageInfo,
@@ -154,7 +153,7 @@ export const useFindManyObjectRecords = <
     fetchMore,
     filter,
     orderBy,
-    foundObjectMetadataItem,
+    objectMetadataItem,
     hasNextPage,
     setIsFetchingMoreObjects,
     enqueueSnackBar,
@@ -172,6 +171,7 @@ export const useFindManyObjectRecords = <
   );
 
   return {
+    objectMetadataItem,
     objects,
     loading,
     error,

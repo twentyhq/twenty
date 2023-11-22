@@ -10,27 +10,21 @@ type RecordTableScopeProps = {
   children: ReactNode;
   recordTableScopeId: string;
   onColumnsChange: (columns: ColumnDefinition<FieldMetadata>[]) => void;
-  onEntityCountChange: (entityCount: number) => void;
 };
 
 export const RecordTableScope = ({
   children,
   recordTableScopeId,
   onColumnsChange,
-  onEntityCountChange,
 }: RecordTableScopeProps) => {
   return (
     <RecordTableScopeInternalContext.Provider
       value={{
         scopeId: recordTableScopeId,
         onColumnsChange,
-        onEntityCountChange,
       }}
     >
-      <RecordTableScopeInitEffect
-        onColumnsChange={onColumnsChange}
-        onEntityCountChange={onEntityCountChange}
-      />
+      <RecordTableScopeInitEffect onColumnsChange={onColumnsChange} />
       {children}
     </RecordTableScopeInternalContext.Provider>
   );

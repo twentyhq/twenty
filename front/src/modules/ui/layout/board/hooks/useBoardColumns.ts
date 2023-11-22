@@ -14,10 +14,10 @@ export const useBoardColumns = () => {
 
   const { updateOneObject: updateOnePipelineStep } =
     useUpdateOneObjectRecord<PipelineStep>({
-      objectNameSingular: 'pipelineStepV2',
+      objectNameSingular: 'pipelineStep',
     });
 
-  const updatedPipelineStages = (stages: BoardColumnDefinition[]) => {
+  const updatedPipelineSteps = (stages: BoardColumnDefinition[]) => {
     if (!stages.length) return;
 
     return Promise.all(
@@ -33,7 +33,7 @@ export const useBoardColumns = () => {
   };
 
   const persistBoardColumns = async () => {
-    await updatedPipelineStages(boardColumns);
+    await updatedPipelineSteps(boardColumns);
   };
 
   const handleMoveBoardColumn = (

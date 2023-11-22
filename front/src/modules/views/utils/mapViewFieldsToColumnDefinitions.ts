@@ -19,11 +19,8 @@ export const mapViewFieldsToColumnDefinitions = (
             fieldMetadataId: viewField.fieldMetadataId,
             label: correspondingFieldMetadata.label,
             metadata: correspondingFieldMetadata.metadata,
-            entityChipDisplayMapper:
-              correspondingFieldMetadata.entityChipDisplayMapper,
             infoTooltipContent: correspondingFieldMetadata.infoTooltipContent,
-            basePathToShowPage: correspondingFieldMetadata.basePathToShowPage,
-            Icon: correspondingFieldMetadata.Icon,
+            iconName: correspondingFieldMetadata.iconName,
             type: correspondingFieldMetadata.type,
             position: viewField.position,
             size: viewField.size ?? correspondingFieldMetadata.size,

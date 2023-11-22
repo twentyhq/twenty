@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Equal, In, Repository } from 'typeorm';
@@ -16,6 +12,8 @@ import {
   WorkspaceMigrationTableAction,
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -27,37 +25,25 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
 
+    private readonly dataSourceService: DataSourceService,
+    private readonly typeORMService: TypeORMService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
   ) {
     super(objectMetadataRepository);
   }
 
-  override async deleteOne(id: string): Promise<ObjectMetadataEntity> {
-    const objectMetadata = await this.objectMetadataRepository.findOne({
-      where: { id },
-    });
-
-    if (!objectMetadata) {
-      throw new NotFoundException('Object does not exist');
-    }
-
-    if (!objectMetadata.isCustom) {
-      throw new BadRequestException("Standard Objects can't be deleted");
-    }
-
-    if (objectMetadata.isActive) {
-      throw new BadRequestException("Active objects can't be deleted");
-    }
-
-    return super.deleteOne(id);
-  }
-
   override async createOne(
     record: CreateObjectInput,
   ): Promise<ObjectMetadataEntity> {
+    const lastDataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        record.workspaceId,
+      );
+
     const createdObjectMetadata = await super.createOne({
       ...record,
+      dataSourceId: lastDataSourceMetadata.id,
       targetTableName: `_${record.nameSingular}`,
       isActive: true,
       isCustom: true,
@@ -74,7 +60,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             targetColumnMap: {
               value: 'id',
             },
-            icon: undefined,
+            icon: 'Icon123',
             description: 'Id',
             isNullable: true,
             isActive: true,
@@ -84,7 +70,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             defaultValue: { type: 'uuid' },
           },
           {
-            type: FieldMetadataType.DATE,
+            type: FieldMetadataType.DATE_TIME,
             name: 'createdAt',
             label: 'Creation date',
             targetColumnMap: {
@@ -99,7 +85,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             defaultValue: { type: 'now' },
           },
           {
-            type: FieldMetadataType.DATE,
+            type: FieldMetadataType.DATE_TIME,
             name: 'updatedAt',
             label: 'Update date',
             targetColumnMap: {
@@ -158,29 +144,38 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       createdObjectMetadata.workspaceId,
     );
 
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        createdObjectMetadata.workspaceId,
+      );
+
+    const workspaceDataSource = await this.typeORMService.connectToDataSource(
+      dataSourceMetadata,
+    );
+
+    const view = await workspaceDataSource?.query(
+      `INSERT INTO ${dataSourceMetadata.schema}."view"
+      ("objectMetadataId", "type", "name")
+      VALUES ('${createdObjectMetadata.id}', 'table', 'All ${createdObjectMetadata.namePlural}') RETURNING *`,
+    );
+    createdObjectMetadata.fields.map(async (field, index) => {
+      if (field.name === 'id') {
+        return;
+      }
+
+      await workspaceDataSource?.query(
+        `INSERT INTO ${dataSourceMetadata.schema}."viewField"
+      ("fieldMetadataId", "position", "isVisible", "size", "viewId")
+      VALUES ('${field.id}', '${index}', true, 180, '${view[0].id}') RETURNING *`,
+      );
+    });
+
     return createdObjectMetadata;
   }
 
   public async getObjectMetadataFromWorkspaceId(workspaceId: string) {
     return this.objectMetadataRepository.find({
       where: { workspaceId },
-      relations: [
-        'fields',
-        'fields.fromRelationMetadata',
-        'fields.fromRelationMetadata.fromObjectMetadata',
-        'fields.fromRelationMetadata.toObjectMetadata',
-        'fields.fromRelationMetadata.toObjectMetadata.fields',
-        'fields.toRelationMetadata',
-        'fields.toRelationMetadata.fromObjectMetadata',
-        'fields.toRelationMetadata.fromObjectMetadata.fields',
-        'fields.toRelationMetadata.toObjectMetadata',
-      ],
-    });
-  }
-
-  public async getObjectMetadataFromDataSourceId(dataSourceId: string) {
-    return this.objectMetadataRepository.find({
-      where: { dataSourceId },
       relations: [
         'fields',
         'fields.fromRelationMetadata',

@@ -10,7 +10,7 @@ import { Field } from '~/generated/graphql';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { SettingsObjectFieldPreviewValueEffect } from '../components/SettingsObjectFieldPreviewValueEffect';
-import { dataTypes } from '../constants/dataTypes';
+import { settingsFieldMetadataTypes } from '../constants/settingsFieldMetadataTypes';
 import { useFieldPreview } from '../hooks/useFieldPreview';
 import { useRelationFieldPreview } from '../hooks/useRelationFieldPreview';
 
@@ -90,7 +90,7 @@ export const SettingsObjectFieldPreview = ({
     objectMetadataId,
   });
 
-  const { defaultValue: relationDefaultValue, entityChipDisplayMapper } =
+  const { defaultValue: relationDefaultValue, relationObjectMetadataItem } =
     useRelationFieldPreview({
       relationObjectMetadataId,
       skipDefaultValue:
@@ -100,7 +100,7 @@ export const SettingsObjectFieldPreview = ({
   const defaultValue =
     fieldMetadata.type === FieldMetadataType.Relation
       ? relationDefaultValue
-      : dataTypes[fieldMetadata.type].defaultValue;
+      : settingsFieldMetadataTypes[fieldMetadata.type].defaultValue;
 
   return (
     <StyledContainer className={className}>
@@ -138,16 +138,17 @@ export const SettingsObjectFieldPreview = ({
         <FieldContext.Provider
           value={{
             entityId,
+            isLabelIdentifier: false,
             fieldDefinition: {
               type: parseFieldType(fieldMetadata.type),
-              Icon: FieldIcon,
+              iconName: 'FieldIcon',
               fieldMetadataId: fieldMetadata.id || '',
               label: fieldMetadata.label,
-              metadata: { fieldName },
-              entityChipDisplayMapper:
-                fieldMetadata.type === FieldMetadataType.Relation
-                  ? entityChipDisplayMapper
-                  : undefined,
+              metadata: {
+                fieldName,
+                relationObjectMetadataNameSingular:
+                  relationObjectMetadataItem?.nameSingular,
+              },
             },
             hotkeyScope: 'field-preview',
           }}

@@ -6,12 +6,18 @@ export type FieldMetadataItem = Omit<
 > & {
   fromRelationMetadata?:
     | (Pick<Relation, 'id' | 'toFieldMetadataId' | 'relationType'> & {
-        toObjectMetadata: Pick<Relation['toObjectMetadata'], 'id'>;
+        toObjectMetadata: Pick<
+          Relation['toObjectMetadata'],
+          'id' | 'nameSingular' | 'namePlural'
+        >;
       })
     | null;
   toRelationMetadata?:
     | (Pick<Relation, 'id' | 'fromFieldMetadataId' | 'relationType'> & {
-        fromObjectMetadata: Pick<Relation['fromObjectMetadata'], 'id'>;
+        fromObjectMetadata: Pick<
+          Relation['fromObjectMetadata'],
+          'id' | 'nameSingular' | 'namePlural'
+        >;
       })
     | null;
 };

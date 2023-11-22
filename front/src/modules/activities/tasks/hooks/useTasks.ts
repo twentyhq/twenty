@@ -2,56 +2,108 @@ import { DateTime } from 'luxon';
 
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
+import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
-import { turnFilterIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFilterIntoWhereClause';
-import { SortOrder } from '~/generated/graphql';
 import { parseDate } from '~/utils/date-utils';
 
 export const useTasks = (entity?: ActivityTargetableEntity) => {
   const { selectedFilter } = useFilter();
 
-  const whereFilters = entity
-    ? {
-        activityTargets: {
-          some: {
-            OR: [
-              { companyId: { equals: entity.id } },
-              { personId: { equals: entity.id } },
-            ],
-          },
-        },
-      }
-    : Object.assign({}, turnFilterIntoWhereClause(selectedFilter));
+  const { objects: activityTargets } = useFindManyObjectRecords({
+    objectNamePlural: 'activityTargets',
+    filter: {
+      [entity?.type === 'Company' ? 'companyId' : 'personId']: {
+        eq: entity?.id,
+      },
+    },
+  });
+
+  const { objectMetadataItem: activityObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: 'activity',
+    });
+
+  const { registerOptimisticEffect } = useOptimisticEffect({
+    objectNameSingular: activityObjectMetadataItem?.nameSingular,
+  });
 
   const { objects: completeTasksData } = useFindManyObjectRecords({
-    objectNamePlural: 'activitiesV2',
+    objectNamePlural: 'activities',
     skip: !entity && !selectedFilter,
     filter: {
-      type: { equals: 'Task' },
-      completedAt: { neq: null },
-      ...whereFilters,
-    },
-    orderBy: [
-      {
-        createdAt: SortOrder.Desc,
+      completedAt: { is: 'NOT_NULL' },
+      id: {
+        in: activityTargets?.map((activityTarget) => activityTarget.activityId),
       },
-    ],
+      type: { eq: 'Task' },
+    },
+    orderBy: {
+      createdAt: 'DescNullsFirst',
+    },
+    onCompleted: () => {
+      if (activityObjectMetadataItem) {
+        registerOptimisticEffect({
+          variables: {
+            filter: {
+              completedAt: { is: 'NOT_NULL' },
+              id: {
+                in: activityTargets?.map(
+                  (activityTarget) => activityTarget.activityId,
+                ),
+              },
+              type: { eq: 'Task' },
+            },
+            orderBy: {
+              createdAt: 'DescNullsFirst',
+            },
+          },
+          definition: getRecordOptimisticEffectDefinition({
+            objectMetadataItem: activityObjectMetadataItem,
+          }),
+        });
+      }
+    },
   });
 
   const { objects: incompleteTaskData } = useFindManyObjectRecords({
-    objectNamePlural: 'activitiesV2',
+    objectNamePlural: 'activities',
     skip: !entity && !selectedFilter,
     filter: {
-      type: { equals: 'Task' },
-      completedAt: { eq: null },
-      ...whereFilters,
-    },
-    orderBy: [
-      {
-        createdAt: SortOrder.Desc,
+      completedAt: { is: 'NULL' },
+      id: {
+        in: activityTargets?.map((activityTarget) => activityTarget.activityId),
       },
-    ],
+      type: { eq: 'Task' },
+    },
+    orderBy: {
+      createdAt: 'DescNullsFirst',
+    },
+    onCompleted: () => {
+      if (activityObjectMetadataItem) {
+        registerOptimisticEffect({
+          variables: {
+            filter: {
+              completedAt: { is: 'NULL' },
+              id: {
+                in: activityTargets?.map(
+                  (activityTarget) => activityTarget.activityId,
+                ),
+              },
+              type: { eq: 'Task' },
+            },
+            orderBy: {
+              createdAt: 'DescNullsFirst',
+            },
+          },
+          definition: getRecordOptimisticEffectDefinition({
+            objectMetadataItem: activityObjectMetadataItem,
+          }),
+        });
+      }
+    },
   });
 
   const todayOrPreviousTasks = incompleteTaskData?.filter((task) => {

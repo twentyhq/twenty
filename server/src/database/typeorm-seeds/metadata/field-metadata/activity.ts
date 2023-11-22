@@ -1,8 +1,8 @@
 import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
-import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
@@ -77,7 +77,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
         label: 'Creation date',
         targetColumnMap: {
@@ -95,7 +95,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
         label: 'Update date',
         targetColumnMap: {
@@ -170,7 +170,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'reminderAt',
         label: 'Reminder Date',
         targetColumnMap: {
@@ -188,7 +188,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'dueAt',
         label: 'Due Date',
         targetColumnMap: {
@@ -206,7 +206,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'completedAt',
         label: 'Completion Date',
         targetColumnMap: {
@@ -259,7 +259,7 @@ export const seedActivityFieldMetadata = async (
         workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.RELATION,
-        name: 'Comments',
+        name: 'comments',
         label: 'Comments',
         targetColumnMap: {},
         description: 'Activity comments',

@@ -1,8 +1,8 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const workspaceMemberMetadata = {
-  nameSingular: 'workspaceMemberV2',
-  namePlural: 'workspaceMembersV2',
+  nameSingular: 'workspaceMember',
+  namePlural: 'workspaceMembers',
   labelSingular: 'Workspace Member',
   labelPlural: 'Workspace Members',
   targetTableName: 'workspaceMember',

@@ -12,7 +12,7 @@ type ActivityActionBarProps = {
 export const ActivityActionBar = ({ activityId }: ActivityActionBarProps) => {
   const [, setIsRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
   const { deleteOneObject } = useDeleteOneObjectRecord({
-    objectNameSingular: 'activityV2',
+    objectNameSingular: 'activity',
   });
 
   const deleteActivity = () => {

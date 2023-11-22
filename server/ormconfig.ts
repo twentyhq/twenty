@@ -5,7 +5,7 @@ dotenv.config();
 export default {
   url: process.env.PG_DATABASE_URL,
   type: 'postgres',
-  entities: [__dirname + '/src/coreV2/**/*.entity{.ts,.js}'],
+  entities: [__dirname + '/src/core/**/*.entity{.ts,.js}'],
   synchronize: false,
   migrationsRun: false,
   migrationsTableName: '_typeorm_migrations',

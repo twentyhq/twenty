@@ -25,10 +25,12 @@ const meta: Meta = {
       <FieldContext.Provider
         value={{
           entityId: '',
+          isLabelIdentifier: false,
           fieldDefinition: {
             fieldMetadataId: 'email',
             label: 'Email',
             type: 'EMAIL',
+            iconName: 'IconLink',
             metadata: {
               fieldName: 'Email',
               placeHolder: 'Email',

@@ -8,6 +8,7 @@ import {
 
 import {
   Authorize,
+  BeforeDeleteOne,
   FilterableField,
   IDField,
   QueryOptions,
@@ -16,6 +17,7 @@ import {
 
 import { RelationMetadataDTO } from 'src/metadata/relation-metadata/dtos/relation-metadata.dto';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { BeforeDeleteOneField } from 'src/metadata/field-metadata/hooks/before-delete-one-field.hook';
 
 registerEnumType(FieldMetadataType, {
   name: 'FieldMetadataType',
@@ -33,6 +35,7 @@ registerEnumType(FieldMetadataType, {
   disableSort: true,
   maxResultsSize: 1000,
 })
+@BeforeDeleteOne(BeforeDeleteOneField)
 @Relation('toRelationMetadata', () => RelationMetadataDTO, {
   nullable: true,
 })

@@ -14,6 +14,10 @@ connectionSource
       'create schema "metadata"',
     );
     await performQuery(
+      'CREATE SCHEMA IF NOT EXISTS "core"',
+      'create schema "core"',
+    );
+    await performQuery(
       'CREATE EXTENSION IF NOT EXISTS pg_graphql',
       'create extension pg_graphql',
     );
@@ -24,7 +28,7 @@ connectionSource
     );
 
     await performQuery(
-      `COMMENT ON SCHEMA "public" IS '@graphql({"inflect_names": true})';`,
+      `COMMENT ON SCHEMA "core" IS '@graphql({"inflect_names": true})';`,
       'inflect names for graphql',
     );
 

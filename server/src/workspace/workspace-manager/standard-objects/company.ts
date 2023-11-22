@@ -1,8 +1,8 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const companyMetadata = {
-  nameSingular: 'companyV2',
-  namePlural: 'companiesV2',
+  nameSingular: 'company',
+  namePlural: 'companies',
   labelSingular: 'Company',
   labelPlural: 'Companies',
   targetTableName: 'company',

@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
+import { Workspace } from 'src/core/workspace/workspace.entity';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -15,7 +16,7 @@ describe('AuthResolver', () => {
       providers: [
         AuthResolver,
         {
-          provide: WorkspaceService,
+          provide: getRepositoryToken(Workspace),
           useValue: {},
         },
         {

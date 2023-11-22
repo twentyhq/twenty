@@ -5,8 +5,8 @@ import { Select } from '@/ui/input/components/Select';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { dataTypes } from '../constants/dataTypes';
 import { relationTypes } from '../constants/relationTypes';
+import { settingsFieldMetadataTypes } from '../constants/settingsFieldMetadataTypes';
 
 import {
   SettingsObjectFieldPreview,
@@ -24,9 +24,10 @@ export type SettingsObjectFieldTypeSelectSectionFormValues = Partial<{
 }>;
 
 type SettingsObjectFieldTypeSelectSectionProps = {
+  excludedFieldTypes?: FieldMetadataType[];
   fieldMetadata: Pick<Field, 'icon' | 'label'> & { id?: string };
-  relationFieldMetadataId?: string;
   onChange: (values: SettingsObjectFieldTypeSelectSectionFormValues) => void;
+  relationFieldMetadata?: Pick<Field, 'id' | 'isCustom'>;
   values?: SettingsObjectFieldTypeSelectSectionFormValues;
 } & Pick<SettingsObjectFieldPreviewProps, 'objectMetadataId'>;
 
@@ -45,17 +46,21 @@ const StyledRelationImage = styled.img<{ flip?: boolean }>`
 `;
 
 export const SettingsObjectFieldTypeSelectSection = ({
+  excludedFieldTypes,
   fieldMetadata,
-  relationFieldMetadataId,
   objectMetadataId,
   onChange,
+  relationFieldMetadata,
   values,
 }: SettingsObjectFieldTypeSelectSectionProps) => {
   const relationFormConfig = values?.relation;
 
-  const allowedFieldTypes = Object.entries(dataTypes).filter(
-    ([key]) => key !== FieldMetadataType.Relation,
-  );
+  const fieldTypeOptions = Object.entries(settingsFieldMetadataTypes)
+    .filter(([key]) => !excludedFieldTypes?.includes(key as FieldMetadataType))
+    .map(([key, dataTypeConfig]) => ({
+      value: key as FieldMetadataType,
+      ...dataTypeConfig,
+    }));
 
   return (
     <Section>
@@ -68,16 +73,13 @@ export const SettingsObjectFieldTypeSelectSection = ({
         dropdownScopeId="object-field-type-select"
         value={values?.type}
         onChange={(value) => onChange({ type: value })}
-        options={allowedFieldTypes.map(([key, dataType]) => ({
-          value: key as FieldMetadataType,
-          ...dataType,
-        }))}
+        options={fieldTypeOptions}
       />
       {!!values?.type &&
         [
           FieldMetadataType.Boolean,
           FieldMetadataType.Currency,
-          FieldMetadataType.Date,
+          FieldMetadataType.DateTime,
           FieldMetadataType.Link,
           FieldMetadataType.Number,
           FieldMetadataType.Relation,
@@ -114,7 +116,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
                           label:
                             relationFormConfig.field?.label || 'Field name',
                           type: FieldMetadataType.Relation,
-                          id: relationFieldMetadataId,
+                          id: relationFieldMetadata?.id,
                         }}
                         shrink
                         objectMetadataId={relationFormConfig.objectMetadataId}
@@ -127,7 +129,10 @@ export const SettingsObjectFieldTypeSelectSection = ({
             form={
               values.type === FieldMetadataType.Relation && (
                 <SettingsObjectFieldRelationForm
-                  disableRelationEdition={!!relationFieldMetadataId}
+                  disableFieldEdition={
+                    relationFieldMetadata && !relationFieldMetadata.isCustom
+                  }
+                  disableRelationEdition={!!relationFieldMetadata}
                   values={relationFormConfig}
                   onChange={(nextValues) =>
                     onChange({

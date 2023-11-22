@@ -2,7 +2,7 @@ import { DateInput } from '@/ui/object/field/meta-types/input/components/interna
 import { Nullable } from '~/types/Nullable';
 
 import { usePersistField } from '../../../hooks/usePersistField';
-import { useDateField } from '../../hooks/useDateField';
+import { useDateTimeField } from '../../hooks/useDateTimeField';
 
 export type FieldInputEvent = (persist: () => void) => void;
 
@@ -19,7 +19,7 @@ export const DateFieldInput = ({
   onEscape,
   onClickOutside,
 }: DateFieldInputProps) => {
-  const { fieldValue, hotkeyScope } = useDateField();
+  const { fieldValue, hotkeyScope } = useDateTimeField();
 
   const persistField = usePersistField();
 

@@ -55,6 +55,7 @@ export const useView = (props?: UseViewProps) => {
   } = useViews(scopeId);
 
   const [currentViewId, setCurrentViewId] = useRecoilState(currentViewIdState);
+
   const setAvailableFieldDefinitions = useSetRecoilState(
     availableFieldDefinitionsState,
   );

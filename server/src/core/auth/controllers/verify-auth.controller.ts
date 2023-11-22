@@ -17,13 +17,7 @@ export class VerifyAuthController {
     const email = await this.tokenService.verifyLoginToken(
       verifyInput.loginToken,
     );
-    const result = await this.authService.verify(email, {
-      id: true,
-      firstName: true,
-      lastName: true,
-      email: true,
-      emailVerified: true,
-    });
+    const result = await this.authService.verify(email);
 
     return result;
   }

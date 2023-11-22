@@ -16,10 +16,6 @@ export const getPageTitleFromPath = (pathname: string): string => {
       return 'Create Workspace';
     case AppPath.CreateProfile:
       return 'Create Profile';
-    case AppPath.PeoplePage:
-      return 'People';
-    case AppPath.CompaniesPage:
-      return 'Companies';
     case AppPath.TasksPage:
       return 'Tasks';
     case AppPath.OpportunitiesPage:

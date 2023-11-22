@@ -1,5 +1,6 @@
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { capitalize } from '~/utils/string/capitalize';
 
 export const useRelationFieldPreview = ({
   relationObjectMetadataId,
@@ -19,11 +20,15 @@ export const useRelationFieldPreview = ({
     skip: skipDefaultValue || !relationObjectMetadataItem,
   });
 
+  const mockValueName = capitalize(
+    relationObjectMetadataItem?.nameSingular ?? '',
+  );
+
   return {
-    defaultValue: relationObjects?.[0],
-    entityChipDisplayMapper: (fieldValue?: { id: string }) => ({
-      name: fieldValue?.id || relationObjectMetadataItem?.labelSingular || '',
-      avatarType: 'squared' as const,
-    }),
+    relationObjectMetadataItem,
+    defaultValue: relationObjects?.[0] ?? {
+      company: { name: mockValueName }, // Temporary mock for opportunities, this needs to be replaced once labelIdentifiers are implemented
+      name: mockValueName,
+    },
   };
 };

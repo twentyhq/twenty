@@ -59,8 +59,8 @@ export const AppNavbar = () => {
           <ObjectMetadataNavItems />
           <NavItem
             label="Opportunities"
-            to="/opportunities"
-            active={currentPath === '/opportunities'}
+            to="/objects/opportunities"
+            active={currentPath === '/objects/opportunities'}
             Icon={IconTargetArrow}
           />
         </MainNavbar>
