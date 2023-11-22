@@ -6,7 +6,6 @@ import { useRecoilValue } from 'recoil';
 import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { StyledBoard } from '@/ui/object/record-board/components/StyledBoard';
 import { BoardColumnContext } from '@/ui/object/record-board/contexts/BoardColumnContext';
 import { useSetCardSelected } from '@/ui/object/record-board/hooks/useSetCardSelected';
 import { useUpdateBoardCardIds } from '@/ui/object/record-board/hooks/useUpdateBoardCardIds';
@@ -30,6 +29,15 @@ export type RecordBoardProps = {
   onColumnDelete?: (boardColumnId: string) => void;
   onEditColumnTitle: (columnId: string, title: string, color: string) => void;
 };
+
+const StyledBoard = styled.div`
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  margin-left: ${({ theme }) => theme.spacing(2)};
+  margin-right: ${({ theme }) => theme.spacing(2)};
+`;
 
 const StyledWrapper = styled.div`
   display: flex;

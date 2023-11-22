@@ -2,12 +2,12 @@ import styled from '@emotion/styled';
 
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { mapBoardFieldDefinitionsToViewFields } from '@/companies/utils/mapBoardFieldDefinitionsToViewFields';
+import { RecordBoardActionBar } from '@/ui/object/record-board/action-bar/components/RecordBoardActionBar';
 import { BoardOptionsDropdownId } from '@/ui/object/record-board/components/constants/BoardOptionsDropdownId';
 import {
   RecordBoard,
   RecordBoardProps,
 } from '@/ui/object/record-board/components/RecordBoard';
-import { RecordBoardActionBar } from '@/ui/object/record-board/components/RecordBoardActionBar';
 import { RecordBoardContextMenu } from '@/ui/object/record-board/context-menu/components/RecordBoardContextMenu';
 import { BoardOptionsDropdown } from '@/ui/object/record-board/options/components/BoardOptionsDropdown';
 import { ViewBar } from '@/views/components/ViewBar';
