@@ -10,6 +10,7 @@ export type CurrencyFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
+  onChange?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
 };
@@ -18,6 +19,7 @@ export const CurrencyFieldInput = ({
   onEnter,
   onEscape,
   onClickOutside,
+  onChange,
   onTab,
   onShiftTab,
 }: CurrencyFieldInputProps) => {
@@ -36,6 +38,16 @@ export const CurrencyFieldInput = ({
 
   const handleEscape = (newValue: string) => {
     onEscape?.(() =>
+      persistCurrencyField({
+        amountMicros:
+          convertCurrencyToCurrencyMicros(parseFloat(newValue)) ?? 0,
+        currencyCode: initialValue.currencyCode,
+      }),
+    );
+  };
+
+  const handleChange = (newValue: string) => {
+    onChange?.(() =>
       persistCurrencyField({
         amountMicros:
           convertCurrencyToCurrencyMicros(parseFloat(newValue)) ?? 0,
@@ -85,6 +97,7 @@ export const CurrencyFieldInput = ({
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}
+        onChange={handleChange}
         onShiftTab={handleShiftTab}
         onTab={handleTab}
         hotkeyScope={hotkeyScope}

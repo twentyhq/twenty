@@ -34,6 +34,7 @@ type DoubleTextInputProps = {
   onEscape: (newDoubleTextValue: FieldDoubleText) => void;
   onTab?: (newDoubleTextValue: FieldDoubleText) => void;
   onShiftTab?: (newDoubleTextValue: FieldDoubleText) => void;
+  onChange?: (newDoubleTextValue: FieldDoubleText) => void;
   onClickOutside: (
     event: MouseEvent | TouchEvent,
     newDoubleTextValue: FieldDoubleText,
@@ -49,6 +50,7 @@ export const DoubleTextInput = ({
   onClickOutside,
   onEnter,
   onEscape,
+  onChange,
   onShiftTab,
   onTab,
 }: DoubleTextInputProps) => {
@@ -70,6 +72,11 @@ export const DoubleTextInput = ({
   ): void => {
     setFirstInternalValue(newFirstValue);
     setSecondInternalValue(newSecondValue);
+    onChange &&
+      onChange({
+        firstValue: newFirstValue,
+        secondValue: newSecondValue,
+      });
   };
 
   const [focusPosition, setFocusPosition] = useState<'left' | 'right'>('left');

@@ -11,6 +11,7 @@ export type FullNameFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
+  onChange?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
 };
@@ -19,6 +20,7 @@ export const FullNameFieldInput = ({
   onEnter,
   onEscape,
   onClickOutside,
+  onChange,
   onTab,
   onShiftTab,
 }: FullNameFieldInputProps) => {
@@ -38,6 +40,10 @@ export const FullNameFieldInput = ({
 
   const handleEscape = (newDoubleText: FieldDoubleText) => {
     onEscape?.(() => persistField(convertToFullName(newDoubleText)));
+  };
+
+  const handleChange = (newDoubleText: FieldDoubleText) => {
+    onChange?.(() => persistField(convertToFullName(newDoubleText)));
   };
 
   const handleClickOutside = (
@@ -65,6 +71,7 @@ export const FullNameFieldInput = ({
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}
+        onChange={handleChange}
         onShiftTab={handleShiftTab}
         onTab={handleTab}
         hotkeyScope={hotkeyScope}

@@ -10,6 +10,7 @@ export type EmailFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
+  onChange?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
 };
@@ -18,6 +19,7 @@ export const EmailFieldInput = ({
   onEnter,
   onEscape,
   onClickOutside,
+  onChange,
   onTab,
   onShiftTab,
 }: EmailFieldInputProps) => {
@@ -31,6 +33,10 @@ export const EmailFieldInput = ({
 
   const handleEscape = (newText: string) => {
     onEscape?.(() => persistField(newText));
+  };
+
+  const handleChange = (newText: string) => {
+    onChange?.(() => persistField(newText));
   };
 
   const handleClickOutside = (
@@ -57,6 +63,7 @@ export const EmailFieldInput = ({
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}
+        onChange={handleChange}
         onShiftTab={handleShiftTab}
         onTab={handleTab}
         hotkeyScope={hotkeyScope}

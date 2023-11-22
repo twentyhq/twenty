@@ -8,6 +8,7 @@ import { FieldInputEvent } from './DateFieldInput';
 export type LinkFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
+  onChange?: FieldInputEvent;
   onEscape?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
@@ -15,6 +16,7 @@ export type LinkFieldInputProps = {
 
 export const LinkFieldInput = ({
   onEnter,
+  onChange,
   onEscape,
   onClickOutside,
   onTab,
@@ -33,6 +35,15 @@ export const LinkFieldInput = ({
 
   const handleEscape = (newURL: FieldDoubleText) => {
     onEscape?.(() =>
+      persistLinkField({
+        url: newURL.firstValue,
+        label: newURL.secondValue,
+      }),
+    );
+  };
+
+  const handleChange = (newURL: FieldDoubleText) => {
+    onChange?.(() =>
       persistLinkField({
         url: newURL.firstValue,
         label: newURL.secondValue,
@@ -78,6 +89,7 @@ export const LinkFieldInput = ({
         firstValuePlaceholder={'Url'}
         secondValuePlaceholder={'Label'}
         hotkeyScope={hotkeyScope}
+        onChange={handleChange}
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}

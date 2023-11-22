@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import styled from '@emotion/styled';
+import { E164Number } from 'libphonenumber-js';
 
 import { CountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/CountryPickerDropdownButton';
 
@@ -51,6 +52,7 @@ export type PhoneInputProps = {
   value: string;
   onEnter: (newText: string) => void;
   onEscape: (newText: string) => void;
+  onChange: (newText: string) => void;
   onTab?: (newText: string) => void;
   onShiftTab?: (newText: string) => void;
   onClickOutside: (event: MouseEvent | TouchEvent, inputValue: string) => void;
@@ -61,6 +63,7 @@ export const PhoneInput = ({
   autoFocus,
   value,
   onEnter,
+  onChange,
   onEscape,
   onTab,
   onShiftTab,
@@ -70,6 +73,11 @@ export const PhoneInput = ({
   const [internalValue, setInternalValue] = useState<string | undefined>(value);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const handleChange = (value: E164Number | undefined) => {
+    setInternalValue(value);
+    onChange(value || '');
+  };
 
   useEffect(() => {
     setInternalValue(value);
@@ -92,7 +100,7 @@ export const PhoneInput = ({
         autoFocus={autoFocus}
         placeholder="Phone number"
         value={value}
-        onChange={setInternalValue}
+        onChange={handleChange}
         international={true}
         withCountryCallingCode={true}
         countrySelectComponent={CountryPickerDropdownButton}

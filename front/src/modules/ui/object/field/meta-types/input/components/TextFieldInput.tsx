@@ -10,6 +10,7 @@ export type TextFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
+  onChange?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
 };
@@ -17,6 +18,7 @@ export type TextFieldInputProps = {
 export const TextFieldInput = ({
   onEnter,
   onEscape,
+  onChange,
   onClickOutside,
   onTab,
   onShiftTab,
@@ -31,6 +33,10 @@ export const TextFieldInput = ({
 
   const handleEscape = (newText: string) => {
     onEscape?.(() => persistField(newText));
+  };
+
+  const handleChange = (newText: string) => {
+    onChange?.(() => persistField(newText));
   };
 
   const handleClickOutside = (
@@ -57,6 +63,7 @@ export const TextFieldInput = ({
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}
+        onChange={handleChange}
         onShiftTab={handleShiftTab}
         onTab={handleTab}
         hotkeyScope={hotkeyScope}

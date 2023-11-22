@@ -9,6 +9,7 @@ export type PhoneFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
+  onChange?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
 };
@@ -16,6 +17,7 @@ export type PhoneFieldInputProps = {
 export const PhoneFieldInput = ({
   onEnter,
   onEscape,
+  onChange,
   onClickOutside,
   onTab,
   onShiftTab,
@@ -38,6 +40,10 @@ export const PhoneFieldInput = ({
     onClickOutside?.(() => persistPhoneField(newText));
   };
 
+  const handleChange = (newText: string) => {
+    onChange?.(() => persistPhoneField(newText));
+  };
+
   const handleTab = (newText: string) => {
     onTab?.(() => persistPhoneField(newText));
   };
@@ -54,6 +60,7 @@ export const PhoneFieldInput = ({
         value={initialValue}
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
+        onChange={handleChange}
         onEscape={handleEscape}
         onShiftTab={handleShiftTab}
         onTab={handleTab}

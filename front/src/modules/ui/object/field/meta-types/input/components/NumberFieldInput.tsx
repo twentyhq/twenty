@@ -10,6 +10,7 @@ export type NumberFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
+  onChange?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
 };
@@ -18,6 +19,7 @@ export const NumberFieldInput = ({
   onEnter,
   onEscape,
   onClickOutside,
+  onChange,
   onTab,
   onShiftTab,
 }: NumberFieldInputProps) => {
@@ -43,6 +45,10 @@ export const NumberFieldInput = ({
     onTab?.(() => persistNumberField(newText));
   };
 
+  const handleChange = (newText: string) => {
+    onChange?.(() => persistNumberField(newText));
+  };
+
   const handleShiftTab = (newText: string) => {
     onShiftTab?.(() => persistNumberField(newText));
   };
@@ -56,6 +62,7 @@ export const NumberFieldInput = ({
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
         onEscape={handleEscape}
+        onChange={handleChange}
         onShiftTab={handleShiftTab}
         onTab={handleTab}
         hotkeyScope={hotkeyScope}

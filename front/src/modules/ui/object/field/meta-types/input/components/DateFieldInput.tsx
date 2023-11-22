@@ -10,12 +10,14 @@ export type DateFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
+  onChange?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
 };
 
 export const DateFieldInput = ({
   onEnter,
+  onChange,
   onEscape,
   onClickOutside,
 }: DateFieldInputProps) => {
@@ -41,6 +43,10 @@ export const DateFieldInput = ({
     onEscape?.(() => persistDate(newDate));
   };
 
+  const handleChange = (newDate: Nullable<Date>) => {
+    onChange?.(() => persistDate(newDate));
+  };
+
   const handleClickOutside = (
     _event: MouseEvent | TouchEvent,
     newDate: Nullable<Date>,
@@ -55,6 +61,7 @@ export const DateFieldInput = ({
       hotkeyScope={hotkeyScope}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}
+      onChange={handleChange}
       onEscape={handleEscape}
       value={dateValue}
     />

@@ -31,6 +31,7 @@ const StyledInputContainer = styled.div`
 export type DateInputProps = {
   value: Nullable<Date>;
   onEnter: (newDate: Nullable<Date>) => void;
+  onChange: (newDate: Nullable<Date>) => void;
   onEscape: (newDate: Nullable<Date>) => void;
   onClickOutside: (
     event: MouseEvent | TouchEvent,
@@ -43,6 +44,7 @@ export const DateInput = ({
   value,
   hotkeyScope,
   onEnter,
+  onChange,
   onEscape,
   onClickOutside,
 }: DateInputProps) => {
@@ -64,6 +66,7 @@ export const DateInput = ({
 
   const handleChange = (newDate: Date) => {
     setInternalValue(newDate);
+    onChange(newDate);
   };
 
   useEffect(() => {
