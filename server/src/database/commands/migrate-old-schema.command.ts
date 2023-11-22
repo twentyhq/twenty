@@ -42,6 +42,17 @@ export class MigrateOldSchemaCommand extends CommandRunner {
     return val;
   }
 
+  formatPipelineProgresses(pipelineProgresses) {
+    return pipelineProgresses.map((pipelineProgresse) => {
+      return {
+        ...pipelineProgresse,
+        amountAmountMicros: pipelineProgresse.amountAmountMicros
+          ? 1000000 * pipelineProgresse.amountAmountMicros
+          : pipelineProgresse.amountAmountMicros,
+      };
+    });
+  }
+
   filterDataByWorkspace(data, workspaceId) {
     return data.reduce((filtered, elem) => {
       if (elem.workspaceId === workspaceId) {
@@ -371,11 +382,13 @@ export class MigrateOldSchemaCommand extends CommandRunner {
             FROM public."pipeline_stages"
         `),
       );
-      const pipelineProgresses: Array<any> = this.cleanIds(
-        await performQuery(`
+      const pipelineProgresses: Array<any> = this.formatPipelineProgresses(
+        this.cleanIds(
+          await performQuery(`
             SELECT
                 id,
                 "amount" AS "amountAmountMicros",
+                '' AS "amountCurrencyCode",
                 "probability",
                 "closeDate",
                 "companyId",
@@ -387,7 +400,8 @@ export class MigrateOldSchemaCommand extends CommandRunner {
                 "deletedAt",
                 "workspaceId"
             FROM public."pipeline_progresses"`),
-        'pipelineStepId',
+          'pipelineStepId',
+        ),
       );
 
       let count = 1;
