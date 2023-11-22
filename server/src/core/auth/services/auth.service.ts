@@ -194,8 +194,11 @@ export class AuthService {
   }
 
   async impersonate(userId: string) {
-    const user = await this.userRepository.findOneBy({
-      id: userId,
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+      relations: ['defaultWorkspace'],
     });
 
     assert(user, "This user doesn't exist", NotFoundException);
