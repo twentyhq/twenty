@@ -26,6 +26,7 @@ export const GET_CURRENT_USER = gql`
         logo
         domainName
         inviteHash
+        allowImpersonation
       }
     }
   }
