@@ -36,6 +36,12 @@ export const useUpdateOneObjectRecord = <T>({
           ...input,
         },
       },
+      optimisticResponse: {
+        [`update${capitalize(objectNameSingular)}`]: {
+          id: idToUpdate,
+          ...input,
+        },
+      },
     });
 
     return updatedObject.data[`update${capitalize(objectNameSingular)}`] as T;

@@ -70,15 +70,13 @@ export class UserService extends TypeOrmQueryService<User> {
     );
   }
 
-  async deleteUser({
-    workspaceId: _workspaceId,
-    userId,
-  }: {
-    workspaceId: string;
-    userId: string;
-  }) {
-    const user = await this.userRepository.findBy({ id: userId });
+  async deleteUser(userId: string): Promise<User> {
+    const user = await this.userRepository.findOneBy({
+      id: userId,
+    });
     assert(user, 'User not found');
+
+    await this.userRepository.delete(user.id);
 
     return user;
   }

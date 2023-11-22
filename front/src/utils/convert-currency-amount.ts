@@ -1,3 +1,5 @@
+import { isUndefined } from '@sniptt/guards';
+
 export const convertCurrencyToCurrencyMicros = (
   currencyAmount: number | undefined,
 ) => {
@@ -18,13 +20,12 @@ export const convertCurrencyToCurrencyMicros = (
 export const convertCurrencyMicrosToCurrency = (
   currencyAmountMicros: number | undefined,
 ) => {
-  if (!currencyAmountMicros) {
+  if (isUndefined(currencyAmountMicros)) {
     return undefined;
   }
   const currencyAmountMicrosAsNumber = +currencyAmountMicros;
   if (isNaN(currencyAmountMicrosAsNumber)) {
     throw new Error(`Cannot convert ${currencyAmountMicros} to currency`);
   }
-  const currencyAmount = currencyAmountMicrosAsNumber / 1000000;
-  return currencyAmount;
+  return currencyAmountMicrosAsNumber / 1000000;
 };

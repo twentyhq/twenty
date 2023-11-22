@@ -159,9 +159,17 @@ export class AuthService {
 
     assert(user, "This user doesn't exist", NotFoundException);
 
+    assert(
+      user.defaultWorkspace,
+      'User has no default workspace',
+      NotFoundException,
+    );
+
     // passwordHash is hidden for security reasons
     user.passwordHash = '';
     user.workspaceMember = await this.userService.loadWorkspaceMember(user);
+
+    console.log(user.workspaceMember);
 
     const accessToken = await this.tokenService.generateAccessToken(user.id);
     const refreshToken = await this.tokenService.generateRefreshToken(user.id);
