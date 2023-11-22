@@ -395,7 +395,9 @@ export type UpdateFieldInput = {
 export type UpdateObjectInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
+  imageIdentifierFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  labelIdentifierFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
   labelPlural?: InputMaybe<Scalars['String']['input']>;
   labelSingular?: InputMaybe<Scalars['String']['input']>;
   namePlural?: InputMaybe<Scalars['String']['input']>;
