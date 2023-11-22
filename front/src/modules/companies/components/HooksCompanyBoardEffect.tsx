@@ -123,7 +123,7 @@ export const HooksCompanyBoardEffect = () => {
     objectNamePlural: 'companies',
     filter: {
       id: {
-        in: opportunities.map((opportuntiy) => opportuntiy.companyId || ''),
+        in: opportunities.map((opportunity) => opportunity.companyId || ''),
       },
     },
     onCompleted: useCallback((data: PaginatedObjectTypeResults<Company>) => {
