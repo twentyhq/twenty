@@ -16,11 +16,16 @@ import {
   SettingsObjectFieldRelationForm,
   SettingsObjectFieldRelationFormValues,
 } from './SettingsObjectFieldRelationForm';
+import {
+  SettingsObjectFieldSelectForm,
+  SettingsObjectFieldSelectFormValues,
+} from './SettingsObjectFieldSelectForm';
 import { SettingsObjectFieldTypeCard } from './SettingsObjectFieldTypeCard';
 
 export type SettingsObjectFieldTypeSelectSectionFormValues = Partial<{
   type: FieldMetadataType;
   relation: SettingsObjectFieldRelationFormValues;
+  select: SettingsObjectFieldSelectFormValues;
 }>;
 
 type SettingsObjectFieldTypeSelectSectionProps = {
@@ -54,6 +59,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
   values,
 }: SettingsObjectFieldTypeSelectSectionProps) => {
   const relationFormConfig = values?.relation;
+  const selectFormConfig = values?.select;
 
   const fieldTypeOptions = Object.entries(settingsFieldMetadataTypes)
     .filter(([key]) => !excludedFieldTypes?.includes(key as FieldMetadataType))
@@ -80,6 +86,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
           FieldMetadataType.Boolean,
           FieldMetadataType.Currency,
           FieldMetadataType.DateTime,
+          FieldMetadataType.Enum,
           FieldMetadataType.Link,
           FieldMetadataType.Number,
           FieldMetadataType.Relation,
@@ -98,6 +105,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
                   relationObjectMetadataId={
                     relationFormConfig?.objectMetadataId
                   }
+                  selectOptions={selectFormConfig}
                 />
                 {values.type === FieldMetadataType.Relation &&
                   !!relationFormConfig?.type &&
@@ -127,7 +135,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
               </>
             }
             form={
-              values.type === FieldMetadataType.Relation && (
+              values.type === FieldMetadataType.Relation ? (
                 <SettingsObjectFieldRelationForm
                   disableFieldEdition={
                     relationFieldMetadata && !relationFieldMetadata.isCustom
@@ -140,7 +148,12 @@ export const SettingsObjectFieldTypeSelectSection = ({
                     })
                   }
                 />
-              )
+              ) : values.type === FieldMetadataType.Enum ? (
+                <SettingsObjectFieldSelectForm
+                  values={selectFormConfig}
+                  onChange={(nextValues) => onChange({ select: nextValues })}
+                />
+              ) : undefined
             }
           />
         )}

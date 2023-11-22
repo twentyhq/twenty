@@ -11,6 +11,7 @@ import {
   FieldPhoneMetadata,
   FieldProbabilityMetadata,
   FieldRelationMetadata,
+  FieldSelectMetadata,
   FieldTextMetadata,
   FieldUuidMetadata,
 } from '../FieldMetadata';
@@ -28,6 +29,8 @@ type AssertFieldMetadataFunction = <
     ? FieldDateTimeMetadata
     : E extends 'EMAIL'
     ? FieldEmailMetadata
+    : E extends 'ENUM'
+    ? FieldSelectMetadata
     : E extends 'LINK'
     ? FieldLinkMetadata
     : E extends 'NUMBER'
