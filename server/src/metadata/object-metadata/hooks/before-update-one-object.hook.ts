@@ -48,7 +48,12 @@ export class BeforeUpdateOneObject<T extends UpdateObjectInput>
     }
 
     if (!objectMetadata.isCustom) {
-      throw new BadRequestException("Standard Objects can't be updated");
+      return {
+        id: instance.id,
+        update: {
+          isActive: instance.update.isActive,
+        } as T,
+      };
     }
 
     if (

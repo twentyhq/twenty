@@ -40,7 +40,12 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     }
 
     if (!fieldMetadata.isCustom) {
-      throw new BadRequestException("Standard Fields can't be updated");
+      return {
+        id: instance.id,
+        update: {
+          isActive: instance.update.isActive,
+        } as T,
+      };
     }
 
     this.checkIfFieldIsEditable(instance.update);
