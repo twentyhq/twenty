@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
 
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { iconsState } from '@/ui/input/states/iconsState';
 
 export const useLazyLoadIcons = () => {
-  const [icons, setIcons] = useState<Record<string, IconComponent>>({});
+  const [icons, setIcons] = useRecoilState(iconsState);
   const [isLoadingIcons, setIsLoadingIcons] = useState(true);
 
   useEffect(() => {
@@ -11,7 +12,7 @@ export const useLazyLoadIcons = () => {
       setIcons(lazyLoadedIcons);
       setIsLoadingIcons(false);
     });
-  }, []);
+  }, [setIcons]);
 
   return { icons, isLoadingIcons };
 };

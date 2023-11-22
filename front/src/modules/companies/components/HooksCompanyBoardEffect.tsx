@@ -164,21 +164,19 @@ export const HooksCompanyBoardEffect = () => {
     setViewType?.(ViewType.Kanban);
   }, [objectMetadataItem, setViewObjectMetadataId, setViewType]);
 
-  const loading = !companies;
-
   const { setActionBarEntries } = useBoardActionBarEntries();
   const { setContextMenuEntries } = useBoardContextMenuEntries();
 
   useEffect(() => {
-    if (!loading && opportunities && companies) {
+    if (opportunities && companies) {
       setActionBarEntries();
       setContextMenuEntries();
+
       updateCompanyBoard(pipelineSteps, opportunities, companies);
       setEntityCountInCurrentView(opportunities.length);
     }
   }, [
     companies,
-    loading,
     opportunities,
     pipelineSteps,
     setActionBarEntries,
