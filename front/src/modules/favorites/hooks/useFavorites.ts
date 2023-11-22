@@ -3,6 +3,7 @@ import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
+import { useOptimisticEvict } from '@/apollo/optimistic-effect/hooks/useOptimisticEvict';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { Favorite } from '@/favorites/types/Favorite';
 import { mapFavorites } from '@/favorites/utils/mapFavorites';
@@ -36,6 +37,7 @@ export const useFavorites = ({
     useOptimisticEffect({
       objectNameSingular: 'favorite',
     });
+  const { performOptimisticEvict } = useOptimisticEvict();
 
   const { objectMetadataItem: favoriteTargetObjectMetadataItem } =
     useObjectMetadataItem({
@@ -70,7 +72,7 @@ export const useFavorites = ({
             }),
           });
         },
-      [],
+      [favoriteObjectMetadataItem, registerOptimisticEffect],
     ),
   });
 
@@ -162,6 +164,8 @@ export const useFavorites = ({
             idToDelete: idToDelete,
           },
         });
+
+        performOptimisticEvict('Favorite', 'id', idToDelete ?? '');
 
         set(
           favoritesState,
