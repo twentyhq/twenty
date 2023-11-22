@@ -48,6 +48,10 @@ export const TableCell = ({
     moveLeft();
   };
 
+  const handleOnChange: FieldInputEvent = (persistField) => {
+    persistField();
+  };
+
   return (
     <TableCellContainer
       editHotkeyScope={customHotkeyScope}
@@ -57,6 +61,7 @@ export const TableCell = ({
           onClickOutside={handleCancel}
           onEnter={handleEnter}
           onEscape={handleEscape}
+          onChange={handleOnChange}
           onShiftTab={handleShiftTab}
           onSubmit={handleSubmit}
           onTab={handleTab}

@@ -33,6 +33,7 @@ type FieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
+  onChange?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
 };
@@ -43,6 +44,7 @@ export const FieldInput = ({
   onEnter,
   onEscape,
   onShiftTab,
+  onChange,
   onTab,
   onClickOutside,
 }: FieldInputProps) => {
@@ -59,6 +61,7 @@ export const FieldInput = ({
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}
+          onChange={onChange}
           onTab={onTab}
           onShiftTab={onShiftTab}
         />
@@ -66,6 +69,7 @@ export const FieldInput = ({
         <EmailFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
+          onChange={onChange}
           onClickOutside={onClickOutside}
           onTab={onTab}
           onShiftTab={onShiftTab}
@@ -82,6 +86,7 @@ export const FieldInput = ({
         <DateFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
+          onChange={onChange}
           onClickOutside={onClickOutside}
           onTab={onTab}
           onShiftTab={onShiftTab}
@@ -90,6 +95,7 @@ export const FieldInput = ({
         <NumberFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
+          onChange={onChange}
           onClickOutside={onClickOutside}
           onTab={onTab}
           onShiftTab={onShiftTab}
@@ -98,6 +104,7 @@ export const FieldInput = ({
         <LinkFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
+          onChange={onChange}
           onClickOutside={onClickOutside}
           onTab={onTab}
           onShiftTab={onShiftTab}
@@ -106,6 +113,7 @@ export const FieldInput = ({
         <CurrencyFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
+          onChange={onChange}
           onClickOutside={onClickOutside}
           onTab={onTab}
           onShiftTab={onShiftTab}
@@ -114,6 +122,7 @@ export const FieldInput = ({
         <PhoneFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
+          onChange={onChange}
           onClickOutside={onClickOutside}
           onTab={onTab}
           onShiftTab={onShiftTab}
