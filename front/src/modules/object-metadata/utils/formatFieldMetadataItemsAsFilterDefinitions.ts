@@ -12,14 +12,29 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
     if (
       ![
         FieldMetadataType.DateTime,
-        FieldMetadataType.Number,
-        FieldMetadataType.Currency,
         FieldMetadataType.Text,
-      ].includes(field.type) ||
-      field.name === 'probability'
+        FieldMetadataType.Email,
+        FieldMetadataType.Number,
+        FieldMetadataType.Link,
+        FieldMetadataType.FullName,
+        FieldMetadataType.Relation,
+        FieldMetadataType.Currency,
+      ].includes(field.type)
     ) {
       return acc;
     }
+
+    // Todo: remove once Rating fieldtype is implemented
+    if (field.name === 'probability') {
+      return acc;
+    }
+
+    if (field.type === FieldMetadataType.Relation) {
+      if (field.fromRelationMetadata) {
+        return acc;
+      }
+    }
+
     return [...acc, formatFieldMetadataItemAsFilterDefinition({ field })];
   }, [] as FilterDefinition[]);
 
@@ -34,9 +49,19 @@ const formatFieldMetadataItemAsFilterDefinition = ({
   type:
     field.type === FieldMetadataType.DateTime
       ? 'DATE_TIME'
+      : field.type === FieldMetadataType.Link
+      ? 'LINK'
+      : field.type === FieldMetadataType.FullName
+      ? 'FULL_NAME'
       : field.type === FieldMetadataType.Number
       ? 'NUMBER'
       : field.type === FieldMetadataType.Currency
       ? 'CURRENCY'
+      : field.type === FieldMetadataType.Email
+      ? 'TEXT'
+      : field.type === FieldMetadataType.Phone
+      ? 'TEXT'
+      : field.type === FieldMetadataType.Relation
+      ? 'RELATION'
       : 'TEXT',
 });

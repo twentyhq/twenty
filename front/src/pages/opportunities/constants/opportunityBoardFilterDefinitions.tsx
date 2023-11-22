@@ -19,14 +19,12 @@ export const opportunityBoardFilterDefinitions: FilterDefinitionByEntity<Opportu
       fieldMetadataId: 'companyId',
       label: 'Company',
       iconName: 'IconBuildingSkyscraper',
-      type: 'ENTITY',
-      // entitySelectComponent: <FilterDropdownCompanySearchSelect />,
+      type: 'RELATION',
     },
     {
       fieldMetadataId: 'pointOfContactId',
       label: 'Point of contact',
       iconName: 'IconUser',
-      type: 'ENTITY',
-      //entitySelectComponent: <FilterDropdownPeopleSearchSelect />,
+      type: 'RELATION',
     },
   ];
