@@ -11,7 +11,7 @@ import {
 import { EntityBoardActionBar } from '@/ui/layout/board/components/EntityBoardActionBar';
 import { EntityBoardContextMenu } from '@/ui/layout/board/components/EntityBoardContextMenu';
 import { ViewBar } from '@/views/components/ViewBar';
-import { useView } from '@/views/hooks/useView';
+import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
@@ -38,7 +38,7 @@ export const CompanyBoard = ({
 }: CompanyBoardProps) => {
   const viewScopeId = 'company-board-view';
 
-  const { persistViewFields } = useView({ viewScopeId });
+  const { persistViewFields } = useViewFields(viewScopeId);
 
   return (
     <ViewScope
