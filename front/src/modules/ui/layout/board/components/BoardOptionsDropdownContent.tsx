@@ -1,4 +1,5 @@
-import { useContext, useRef, useState } from 'react';
+import { useCallback, useContext, useRef, useState } from 'react';
+import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { v4 } from 'uuid';
@@ -107,9 +108,29 @@ export const BoardOptionsDropdownContent = ({
     setCurrentMenu(menu);
   };
 
-  const { handleFieldVisibilityChange } = useBoardCardFields();
+  const { handleFieldVisibilityChange, handleFieldsReorder } =
+    useBoardCardFields();
 
   const { closeDropdown } = useDropdown();
+
+  const handleReorderField: OnDragEndResponder = useCallback(
+    (result) => {
+      if (
+        !result.destination ||
+        result.destination.index === 1 ||
+        result.source.index === 1
+      ) {
+        return;
+      }
+
+      const reorderFields = [...visibleBoardCardFields];
+      const [removed] = reorderFields.splice(result.source.index - 1, 1);
+      reorderFields.splice(result.destination.index - 1, 0, removed);
+
+      handleFieldsReorder(reorderFields);
+    },
+    [handleFieldsReorder, visibleBoardCardFields],
+  );
 
   useScopedHotkeys(
     Key.Escape,
@@ -209,6 +230,7 @@ export const BoardOptionsDropdownContent = ({
               fields={visibleBoardCardFields}
               onVisibilityChange={handleFieldVisibilityChange}
               isDraggable={true}
+              onDragEnd={handleReorderField}
             />
           )}
           {hasVisibleFields && hasHiddenFields && <DropdownMenuSeparator />}
@@ -218,6 +240,7 @@ export const BoardOptionsDropdownContent = ({
               fields={hiddenBoardCardFields}
               onVisibilityChange={handleFieldVisibilityChange}
               isDraggable={false}
+              onDragEnd={handleReorderField}
             />
           )}
         </>

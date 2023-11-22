@@ -47,6 +47,9 @@ export const CompanyBoard = ({
         <BoardContext.Provider
           value={{
             BoardRecoilScopeContext: CompanyBoardRecoilScopeContext,
+            onFieldsChange: (fields) => {
+              console.log('fields', fields);
+            },
           }}
         >
           <ViewBar
