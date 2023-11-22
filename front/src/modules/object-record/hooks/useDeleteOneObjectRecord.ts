@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useMutation } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 
+import { useOptimisticEvict } from '@/apollo/optimistic-effect/hooks/useOptimisticEvict';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { capitalize } from '~/utils/string/capitalize';
@@ -9,10 +9,11 @@ import { capitalize } from '~/utils/string/capitalize';
 export const useDeleteOneObjectRecord = <T>({
   objectNameSingular,
 }: Pick<ObjectMetadataItemIdentifier, 'objectNameSingular'>) => {
+  const { performOptimisticEvict } = useOptimisticEvict();
+
   const {
     objectMetadataItem: foundObjectMetadataItem,
     objectNotFoundInMetadata,
-    findManyQuery,
     deleteOneMutation,
   } = useObjectMetadataItem({
     objectNameSingular,
@@ -31,12 +32,18 @@ export const useDeleteOneObjectRecord = <T>({
         variables: {
           idToDelete,
         },
-        refetchQueries: [getOperationName(findManyQuery) ?? ''],
       });
+
+      performOptimisticEvict(capitalize(objectNameSingular), 'id', idToDelete);
 
       return deletedObject.data[`create${capitalize(objectNameSingular)}`] as T;
     },
-    [foundObjectMetadataItem, mutate, objectNameSingular, findManyQuery],
+    [
+      performOptimisticEvict,
+      foundObjectMetadataItem,
+      mutate,
+      objectNameSingular,
+    ],
   );
 
   return {

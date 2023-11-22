@@ -4,8 +4,10 @@ import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState } from 'recoil';
 
+import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
+import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
 import { capitalize } from '~/utils/string/capitalize';
@@ -53,6 +55,10 @@ export const useFindManyObjectRecords = <
       objectNamePlural,
     });
 
+  const { registerOptimisticEffect } = useOptimisticEffect({
+    objectNameSingular: objectMetadataItem?.nameSingular,
+  });
+
   const { enqueueSnackBar } = useSnackBar();
 
   const { data, loading, error, fetchMore } = useQuery<
@@ -64,6 +70,18 @@ export const useFindManyObjectRecords = <
       orderBy: orderBy ?? {},
     },
     onCompleted: (data) => {
+      if (objectMetadataItem) {
+        registerOptimisticEffect({
+          variables: {
+            filter: filter ?? {},
+            orderBy: orderBy ?? {},
+          },
+          definition: getRecordOptimisticEffectDefinition({
+            objectMetadataItem,
+          }),
+        });
+      }
+
       if (objectNamePlural) {
         onCompleted?.(data[objectNamePlural]);
 
