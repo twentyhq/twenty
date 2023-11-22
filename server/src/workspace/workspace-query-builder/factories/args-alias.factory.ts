@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/field-metadata.interface';
 
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+
 @Injectable()
 export class ArgsAliasFactory {
   create(
@@ -50,7 +52,12 @@ export class ArgsAliasFactory {
           const mappedKey = fieldMetadata.targetColumnMap[subKey];
 
           if (mappedKey) {
-            newArgs[mappedKey] = subValue;
+            // Currency metadata type value should be a string to match graphql bigInt requirements
+            if (fieldMetadata.type === FieldMetadataType.CURRENCY) {
+              newArgs[mappedKey] = `${subValue}`;
+            } else {
+              newArgs[mappedKey] = subValue;
+            }
           }
         }
       } else if (fieldMetadata) {
