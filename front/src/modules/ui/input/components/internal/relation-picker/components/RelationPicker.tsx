@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/client';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
-import { IconUserCircle } from '@/ui/display/icon';
+import { IconForbid } from '@/ui/display/icon';
 import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
@@ -17,6 +17,7 @@ export type RelationPickerProps = {
   onSubmit: (newUser: EntityForSelect | null) => void;
   onCancel?: () => void;
   width?: number;
+  excludeRecordIds?: string[];
   initialSearchFilter?: string | null;
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
 };
@@ -25,6 +26,7 @@ export const RelationPicker = ({
   recordId,
   onSubmit,
   onCancel,
+  excludeRecordIds,
   width,
   initialSearchFilter,
   fieldDefinition,
@@ -63,6 +65,7 @@ export const RelationPicker = ({
         fieldDefinition.metadata.relationObjectMetadataNameSingular,
       ),
     selectedIds: recordId ? [recordId] : [],
+    excludeEntityIds: excludeRecordIds,
     objectNamePlural: fieldDefinition.metadata.relationObjectMetadataNamePlural,
   });
 
@@ -72,8 +75,8 @@ export const RelationPicker = ({
 
   return (
     <SingleEntitySelect
-      EmptyIcon={IconUserCircle}
-      emptyLabel="No Owner"
+      EmptyIcon={IconForbid}
+      emptyLabel={'No ' + fieldDefinition.label}
       entitiesToSelect={records.entitiesToSelect}
       loading={records.loading}
       onCancel={onCancel}

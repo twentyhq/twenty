@@ -9,7 +9,7 @@ type FilterToTurnIntoWhereClause = Omit<Filter, 'definition'> & {
   };
 };
 
-export const turnFiltersIntoWhereClauseV2 = (
+export const turnFiltersIntoWhereClause = (
   filters: FilterToTurnIntoWhereClause[],
   fields: Pick<Field, 'id' | 'name'>[],
 ) => {

@@ -23,7 +23,7 @@ const personMetadata = {
       },
       description: 'Contact’s name',
       icon: 'IconUser',
-      isNullable: false,
+      isNullable: true,
     },
     {
       isCustom: false,
@@ -116,7 +116,7 @@ const personMetadata = {
       },
       description: 'Contact’s avatar',
       icon: 'IconFileUpload',
-      isNullable: false,
+      isNullable: true,
     },
     // Relations
     {
@@ -151,8 +151,8 @@ const personMetadata = {
       label: 'POC for Opportunities',
       targetColumnMap: {},
       description: 'Point of Contact for Opportunities',
-      icon: 'IconArrowTarget',
-      isNullable: false,
+      icon: 'IconTargetArrow',
+      isNullable: true,
     },
     {
       isCustom: false,
