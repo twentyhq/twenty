@@ -77,6 +77,8 @@ export const CreateWorkspace = () => {
         setCurrentWorkspace({
           id: result.data?.updateWorkspace?.id ?? '',
           displayName: data.name,
+          allowImpersonation:
+            result.data?.updateWorkspace?.allowImpersonation ?? false,
         });
 
         if (result.errors || !result.data?.updateWorkspace) {

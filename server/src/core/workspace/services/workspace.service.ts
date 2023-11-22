@@ -10,7 +10,7 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly workspaceManagerService: WorkspaceManagerService,
   ) {

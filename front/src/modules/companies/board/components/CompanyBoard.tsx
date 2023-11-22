@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
+import { mapBoardFieldDefinitionsToViewFields } from '@/companies/utils/mapBoardFieldDefinitionsToViewFields';
 import { BoardOptionsDropdown } from '@/ui/layout/board/components/BoardOptionsDropdown';
 import { BoardOptionsDropdownId } from '@/ui/layout/board/components/constants/BoardOptionsDropdownId';
 import {
@@ -10,6 +11,7 @@ import {
 import { EntityBoardActionBar } from '@/ui/layout/board/components/EntityBoardActionBar';
 import { EntityBoardContextMenu } from '@/ui/layout/board/components/EntityBoardContextMenu';
 import { ViewBar } from '@/views/components/ViewBar';
+import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
@@ -36,6 +38,8 @@ export const CompanyBoard = ({
 }: CompanyBoardProps) => {
   const viewScopeId = 'company-board-view';
 
+  const { persistViewFields } = useViewFields(viewScopeId);
+
   return (
     <ViewScope
       viewScopeId={viewScopeId}
@@ -47,6 +51,9 @@ export const CompanyBoard = ({
         <BoardContext.Provider
           value={{
             BoardRecoilScopeContext: CompanyBoardRecoilScopeContext,
+            onFieldsChange: (fields) => {
+              persistViewFields(mapBoardFieldDefinitionsToViewFields(fields));
+            },
           }}
         >
           <ViewBar

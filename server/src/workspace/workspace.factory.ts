@@ -39,6 +39,9 @@ export class WorkspaceFactory {
       return new GraphQLSchema({});
     }
 
+    // Validate cache version
+    await this.workspaceSchemaStorageService.validateCacheVersion(workspaceId);
+
     // Get object metadata from cache
     let objectMetadataCollection =
       await this.workspaceSchemaStorageService.getObjectMetadata(workspaceId);

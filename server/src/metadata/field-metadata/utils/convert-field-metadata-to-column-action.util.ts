@@ -14,6 +14,19 @@ export function convertFieldMetadataToColumnActions(
   fieldMetadata: FieldMetadataEntity,
 ): WorkspaceMigrationColumnAction[] {
   switch (fieldMetadata.type) {
+    case FieldMetadataType.UUID: {
+      const defaultValue =
+        fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.UUID>;
+
+      return [
+        {
+          action: WorkspaceMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.value,
+          columnType: 'uuid',
+          defaultValue: serializeDefaultValue(defaultValue?.value),
+        },
+      ];
+    }
     case FieldMetadataType.TEXT: {
       const defaultValue =
         fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.TEXT>;

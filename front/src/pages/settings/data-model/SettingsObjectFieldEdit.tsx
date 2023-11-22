@@ -49,6 +49,7 @@ export const SettingsObjectFieldEdit = () => {
     hasFormChanged,
     hasRelationFormChanged,
     initForm,
+    isInitialized,
     isValid,
     validatedFormValues,
   } = useFieldMetadataForm();
@@ -84,7 +85,8 @@ export const SettingsObjectFieldEdit = () => {
     relationType,
   ]);
 
-  if (!activeObjectMetadataItem || !activeMetadataField) return null;
+  if (!isInitialized || !activeObjectMetadataItem || !activeMetadataField)
+    return null;
 
   const canSave = isValid && hasFormChanged;
 

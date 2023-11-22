@@ -49,4 +49,8 @@ export class Workspace {
 
   @OneToMany(() => User, (user) => user.defaultWorkspace)
   users: User[];
+
+  @Field()
+  @Column({ default: true })
+  allowImpersonation: boolean;
 }
