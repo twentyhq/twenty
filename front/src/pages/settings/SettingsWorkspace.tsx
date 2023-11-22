@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
 import { NameField } from '@/settings/workspace/components/NameField';
+import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { IconSettings } from '@/ui/display/icon';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
@@ -26,7 +27,13 @@ export const SettingsWorkspace = () => (
         <H2Title title="Name" description="Name of your workspace" />
         <NameField />
       </Section>
-
+      <Section>
+        <H2Title
+          title="Support"
+          addornment={<ToggleImpersonate />}
+          description="Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+        />
+      </Section>
       <Section>
         <DeleteWorkspace />
       </Section>

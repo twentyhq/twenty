@@ -7,6 +7,7 @@ export const UPDATE_WORKSPACE = gql`
       domainName
       displayName
       logo
+      allowImpersonation
     }
   }
 `;
