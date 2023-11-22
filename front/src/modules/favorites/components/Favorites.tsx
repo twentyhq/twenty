@@ -16,7 +16,6 @@ const StyledContainer = styled.div`
 `;
 
 export const Favorites = () => {
-  // This is only temporary and will be refactored once we have main identifiers
   const { favorites, handleReorderFavorite } = useFavorites({
     objectNamePlural: 'companies',
   });

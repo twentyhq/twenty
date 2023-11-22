@@ -15,21 +15,6 @@ export const viewPrefillData = async (
     .orIgnore()
     .values([
       {
-        name: 'All companies',
-        objectMetadataId: 'company',
-        type: 'table',
-      },
-      {
-        name: 'All people',
-        objectMetadataId: 'person',
-        type: 'table',
-      },
-      {
-        name: 'All opportunities',
-        objectMetadataId: 'company',
-        type: 'kanban',
-      },
-      {
         name: 'All Companies',
         objectMetadataId: objectMetadataMap['company'].id,
         type: 'table',
@@ -41,7 +26,7 @@ export const viewPrefillData = async (
       },
       {
         name: 'All Opportunities',
-        objectMetadataId: objectMetadataMap['company'].id,
+        objectMetadataId: objectMetadataMap['opportunity'].id,
         type: 'kanban',
       },
     ])
