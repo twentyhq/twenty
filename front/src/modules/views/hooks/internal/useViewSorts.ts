@@ -11,14 +11,10 @@ import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScope
 import { useViewScopedStates } from './useViewScopedStates';
 
 export const useViewSorts = (viewScopeId: string) => {
-  const {
-    updateOneMutation,
-    createOneMutation,
-    deleteOneMutation,
-    findManyQuery,
-  } = useObjectMetadataItem({
-    objectNameSingular: 'viewSort',
-  });
+  const { updateOneMutation, createOneMutation, deleteOneMutation } =
+    useObjectMetadataItem({
+      objectNameSingular: 'viewSort',
+    });
   const apolloClient = useApolloClient();
 
   const { currentViewSortsState } = useViewScopedStates({
@@ -59,7 +55,6 @@ export const useViewSorts = (viewScopeId: string) => {
                     direction: viewSort.direction,
                   },
                 },
-                refetchQueries: [findManyQuery],
               }),
             ),
           );
@@ -132,7 +127,6 @@ export const useViewSorts = (viewScopeId: string) => {
       apolloClient,
       createOneMutation,
       deleteOneMutation,
-      findManyQuery,
       updateOneMutation,
       viewScopeId,
     ],

@@ -9,6 +9,7 @@ export type FieldBooleanMetadata = {
 };
 
 export type FieldTextMetadata = {
+  objectMetadataNameSingular: string;
   placeHolder: string;
   fieldName: string;
 };
@@ -36,6 +37,7 @@ export type FieldCurrencyMetadata = {
 };
 
 export type FieldFullNameMetadata = {
+  objectMetadataNameSingular: string;
   placeHolder: string;
   fieldName: string;
 };
@@ -64,13 +66,8 @@ export type FieldRelationMetadata = {
   fieldName: string;
   useEditButton?: boolean;
   relationType?: FieldDefinitionRelationType;
-  labelIdentifierFieldPaths: string[];
-  imageIdentifierUrlField: string;
-  imageIdentifierUrlPrefix: string;
-  imageIdentifierFormat: 'squared' | 'rounded';
-  searchFields: string[];
-  objectMetadataNameSingular: string;
-  objectMetadataNamePlural: string;
+  relationObjectMetadataNameSingular: string;
+  relationObjectMetadataNamePlural: string;
 };
 
 export type FieldMetadata =

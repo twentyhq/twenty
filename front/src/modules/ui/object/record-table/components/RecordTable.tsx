@@ -1,17 +1,12 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
 
+import { RecordTableInternalEffect } from '@/ui/object/record-table/components/RecordTableInternalEffect';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import {
-  useListenClickOutside,
-  useListenClickOutsideByClassName,
-} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
-import { useRecordTable } from '../hooks/useRecordTable';
-import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { RecordTableBody } from './RecordTableBody';
 import { RecordTableHeader } from './RecordTableHeader';
@@ -82,37 +77,7 @@ type RecordTableProps = {
 export const RecordTable = ({ updateEntityMutation }: RecordTableProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const {
-    leaveTableFocus,
-    setRowSelectedState,
-    resetTableRowSelection,
-    useMapKeyboardToSoftFocus,
-  } = useRecordTable();
-
-  useMapKeyboardToSoftFocus();
-
-  useListenClickOutside({
-    refs: [tableBodyRef],
-    callback: () => {
-      leaveTableFocus();
-    },
-  });
-
-  useScopedHotkeys(
-    'escape',
-    () => {
-      resetTableRowSelection();
-    },
-    TableHotkeyScope.Table,
-  );
-
-  useListenClickOutsideByClassName({
-    classNames: ['entity-table-cell'],
-    excludeClassNames: ['action-bar', 'context-menu'],
-    callback: () => {
-      resetTableRowSelection();
-    },
-  });
+  const { resetTableRowSelection, setRowSelectedState } = useRecordTable();
 
   return (
     <ScrollWrapper>
@@ -130,6 +95,7 @@ export const RecordTable = ({ updateEntityMutation }: RecordTableProps) => {
                 onDragSelectionChange={setRowSelectedState}
               />
             </div>
+            <RecordTableInternalEffect tableBodyRef={tableBodyRef} />
           </StyledTableContainer>
         </StyledTableWithHeader>
       </EntityUpdateMutationContext.Provider>

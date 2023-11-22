@@ -60,9 +60,10 @@ export const RecordTableCell = ({ cellIndex }: { cellIndex: number }) => {
               fieldDefinition: columnDefinition,
               useUpdateEntityMutation: () => [updateEntityMutation, {}],
               hotkeyScope: customHotkeyScope,
-              isMainIdentifier:
+              basePathToShowPage: objectMetadataConfig?.basePathToShowPage,
+              isLabelIdentifier:
                 columnDefinition.fieldMetadataId ===
-                objectMetadataConfig?.mainIdentifierFieldMetadataId,
+                objectMetadataConfig?.labelIdentifierFieldMetadataId,
             }}
           >
             <TableCell customHotkeyScope={{ scope: customHotkeyScope }} />

@@ -8,7 +8,7 @@ import {
   IconPencil,
   IconPlus,
 } from '@/ui/display/icon';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';

@@ -10,7 +10,7 @@ import { Field } from '~/generated/graphql';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { SettingsObjectFieldPreviewValueEffect } from '../components/SettingsObjectFieldPreviewValueEffect';
-import { dataTypes } from '../constants/dataTypes';
+import { settingsFieldMetadataTypes } from '../constants/settingsFieldMetadataTypes';
 import { useFieldPreview } from '../hooks/useFieldPreview';
 import { useRelationFieldPreview } from '../hooks/useRelationFieldPreview';
 
@@ -90,31 +90,17 @@ export const SettingsObjectFieldPreview = ({
     objectMetadataId,
   });
 
-  const {
-    defaultValue: relationDefaultValue,
-    labelIdentifierFieldPaths,
-    imageIdentifierUrlField,
-    imageIdentifierUrlPrefix,
-    imageIdentifierFormat,
-  } = useRelationFieldPreview({
-    relationObjectMetadataId,
-    skipDefaultValue:
-      fieldMetadata.type !== FieldMetadataType.Relation || hasValue,
-  });
+  const { defaultValue: relationDefaultValue, relationObjectMetadataItem } =
+    useRelationFieldPreview({
+      relationObjectMetadataId,
+      skipDefaultValue:
+        fieldMetadata.type !== FieldMetadataType.Relation || hasValue,
+    });
 
   const defaultValue =
     fieldMetadata.type === FieldMetadataType.Relation
       ? relationDefaultValue
-      : dataTypes[fieldMetadata.type].defaultValue;
-
-  if (
-    !labelIdentifierFieldPaths ||
-    !imageIdentifierUrlField ||
-    !imageIdentifierUrlPrefix ||
-    !imageIdentifierFormat
-  ) {
-    return <></>;
-  }
+      : settingsFieldMetadataTypes[fieldMetadata.type].defaultValue;
 
   return (
     <StyledContainer className={className}>
@@ -152,7 +138,7 @@ export const SettingsObjectFieldPreview = ({
         <FieldContext.Provider
           value={{
             entityId,
-            isMainIdentifier: false,
+            isLabelIdentifier: false,
             fieldDefinition: {
               type: parseFieldType(fieldMetadata.type),
               iconName: 'FieldIcon',
@@ -160,10 +146,8 @@ export const SettingsObjectFieldPreview = ({
               label: fieldMetadata.label,
               metadata: {
                 fieldName,
-                labelIdentifierFieldPaths,
-                imageIdentifierUrlField,
-                imageIdentifierUrlPrefix,
-                imageIdentifierFormat,
+                relationObjectMetadataNameSingular:
+                  relationObjectMetadataItem?.nameSingular,
               },
             },
             hotkeyScope: 'field-preview',

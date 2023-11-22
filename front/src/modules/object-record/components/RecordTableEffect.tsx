@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 
 import { useComputeDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useComputeDefinitionsFromFieldMetadata';
-import { useObjectMainIdentifier } from '@/object-metadata/hooks/useObjectMainIdentifier';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
@@ -17,18 +16,13 @@ export const RecordTableEffect = () => {
     setObjectMetadataConfig,
   } = useRecordTable();
 
-  const { objectMetadataItem } = useObjectMetadataItem({
+  const {
+    objectMetadataItem,
+    basePathToShowPage,
+    labelIdentifierFieldMetadataId,
+  } = useObjectMetadataItem({
     objectNamePlural,
   });
-
-  const {
-    basePathToShowPage,
-    mainIdentifierFieldMetadataId,
-    labelIdentifierFieldPaths,
-    imageIdentifierUrlField,
-    imageIdentifierUrlPrefix,
-    imageIdentifierFormat,
-  } = useObjectMainIdentifier(objectMetadataItem);
 
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
     useComputeDefinitionsFromFieldMetadata(objectMetadataItem);
@@ -43,25 +37,17 @@ export const RecordTableEffect = () => {
   } = useView();
 
   useEffect(() => {
-    if (basePathToShowPage && mainIdentifierFieldMetadataId) {
+    if (basePathToShowPage && labelIdentifierFieldMetadataId) {
       setObjectMetadataConfig?.({
-        labelIdentifierFieldPaths,
-        imageIdentifierUrlField,
-        imageIdentifierUrlPrefix,
-        imageIdentifierFormat,
         basePathToShowPage,
-        mainIdentifierFieldMetadataId,
+        labelIdentifierFieldMetadataId,
       });
     }
   }, [
     basePathToShowPage,
     objectMetadataItem,
-    mainIdentifierFieldMetadataId,
+    labelIdentifierFieldMetadataId,
     setObjectMetadataConfig,
-    labelIdentifierFieldPaths,
-    imageIdentifierUrlField,
-    imageIdentifierUrlPrefix,
-    imageIdentifierFormat,
   ]);
 
   useEffect(() => {

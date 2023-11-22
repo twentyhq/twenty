@@ -19,6 +19,7 @@ import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBo
 
 const StyledBoardContainer = styled.div`
   display: flex;
+  height: 100%;
   width: 100%;
 `;
 
