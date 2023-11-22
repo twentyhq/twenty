@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
+import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
@@ -36,13 +38,18 @@ export const RecordTablePage = () => {
       objectNamePlural,
     });
 
+  const onboardingStatus = useOnboardingStatus();
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (objectNotFoundInMetadata) {
+    if (
+      objectNotFoundInMetadata &&
+      onboardingStatus === OnboardingStatus.Completed
+    ) {
       navigate('/');
     }
-  }, [objectNotFoundInMetadata, navigate]);
+  }, [objectNotFoundInMetadata, navigate, onboardingStatus]);
 
   const { createOneObject } = useCreateOneObjectRecord({
     objectNameSingular: objectMetadataItem?.nameSingular,

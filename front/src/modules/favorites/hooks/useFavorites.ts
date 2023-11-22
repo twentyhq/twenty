@@ -2,10 +2,12 @@ import { useApolloClient } from '@apollo/client';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
+import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { Favorite } from '@/favorites/types/Favorite';
 import { mapFavorites } from '@/favorites/utils/mapFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -21,9 +23,18 @@ export const useFavorites = ({
 
   const [favorites, setFavorites] = useRecoilState(favoritesState);
 
-  const { updateOneMutation, createOneMutation, deleteOneMutation } =
-    useObjectMetadataItem({
-      objectNamePlural: 'favorites',
+  const {
+    updateOneMutation,
+    createOneMutation,
+    deleteOneMutation,
+    objectMetadataItem: favoriteObjectMetadataItem,
+  } = useObjectMetadataItem({
+    objectNamePlural: 'favorites',
+  });
+
+  const { registerOptimisticEffect, triggerOptimisticEffects } =
+    useOptimisticEffect({
+      objectNameSingular: 'favorite',
     });
 
   const { objectMetadataItem: favoriteTargetObjectMetadataItem } =
@@ -47,6 +58,17 @@ export const useFavorites = ({
           if (!isDeeplyEqual(favorites, queriedFavorites)) {
             set(favoritesState, queriedFavorites);
           }
+
+          if (!favoriteObjectMetadataItem) {
+            return;
+          }
+
+          registerOptimisticEffect({
+            variables: { filter: {}, orderBy: {} },
+            definition: getRecordOptimisticEffectDefinition({
+              objectMetadataItem: favoriteObjectMetadataItem,
+            }),
+          });
         },
       [],
     ),
@@ -57,8 +79,10 @@ export const useFavorites = ({
       async (favoriteTargetObjectId: string, additionalData?: any) => {
         const favorites = snapshot.getLoadable(favoritesState).getValue();
 
-        const targetObjectName =
-          favoriteTargetObjectMetadataItem?.nameSingular ?? '';
+        if (!favoriteTargetObjectMetadataItem) {
+          return;
+        }
+        const targetObjectName = favoriteTargetObjectMetadataItem.nameSingular;
 
         const result = await apolloClient.mutate({
           mutation: createOneMutation,
@@ -70,6 +94,8 @@ export const useFavorites = ({
             },
           },
         });
+
+        triggerOptimisticEffects(`FavoriteEdge`, result.data[`createFavorite`]);
 
         const createdFavorite = result?.data?.createFavorite;
 
@@ -87,8 +113,9 @@ export const useFavorites = ({
     [
       apolloClient,
       createOneMutation,
-      currentWorkspaceMember,
-      favoriteTargetObjectMetadataItem?.nameSingular,
+      currentWorkspaceMember?.id,
+      favoriteTargetObjectMetadataItem,
+      triggerOptimisticEffects,
     ],
   );
 

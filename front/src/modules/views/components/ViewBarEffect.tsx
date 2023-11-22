@@ -58,7 +58,10 @@ export const ViewBarEffect = () => {
             data.edges
               .map((view) => view.node)
               .find((view) => view.id === currentViewIdFromUrl) ??
-            data.edges[0].node;
+            data.edges[0]?.node ??
+            null;
+
+          if (!currentView) return;
 
           set(currentViewIdState, currentView.id);
 
