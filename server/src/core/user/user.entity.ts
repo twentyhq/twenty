@@ -23,11 +23,11 @@ export class User {
   id: string;
 
   @Field()
-  @Column({ nullable: true })
+  @Column({ default: '' })
   firstName: string;
 
   @Field()
-  @Column({ nullable: true })
+  @Column({ default: '' })
   lastName: string;
 
   @Field()

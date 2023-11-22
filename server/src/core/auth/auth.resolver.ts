@@ -34,7 +34,7 @@ import { ImpersonateInput } from './dto/impersonate.input';
 @Resolver()
 export class AuthResolver {
   constructor(
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private authService: AuthService,
     private tokenService: TokenService,
