@@ -97,15 +97,17 @@ export const ObjectSortDropdownButton = ({
                 </DropdownMenuHeader>
                 <DropdownMenuSeparator />
                 <DropdownMenuItemsContainer>
-                  {availableSortDefinitions.map((availableSort, index) => (
-                    <MenuItem
-                      testId={`select-sort-${index}`}
-                      key={index}
-                      onClick={() => handleAddSort(availableSort)}
-                      LeftIcon={availableSort.Icon}
-                      text={availableSort.label}
-                    />
-                  ))}
+                  {[...availableSortDefinitions]
+                    .sort((a, b) => a.label.localeCompare(b.label))
+                    .map((availableSort, index) => (
+                      <MenuItem
+                        testId={`select-sort-${index}`}
+                        key={index}
+                        onClick={() => handleAddSort(availableSort)}
+                        LeftIcon={availableSort.Icon}
+                        text={availableSort.label}
+                      />
+                    ))}
                 </DropdownMenuItemsContainer>
               </>
             )}
