@@ -3,13 +3,13 @@ import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import {
-  BoardColumnEditTitleMenu,
   COLUMN_COLOR_OPTIONS,
-} from '../BoardColumnEditTitleMenu';
+  RecordBoardColumnEditTitleMenu,
+} from '../RecordBoardColumnEditTitleMenu';
 
-const meta: Meta<typeof BoardColumnEditTitleMenu> = {
+const meta: Meta<typeof RecordBoardColumnEditTitleMenu> = {
   title: 'UI/Layout/Board/BoardColumnMenu',
-  component: BoardColumnEditTitleMenu,
+  component: RecordBoardColumnEditTitleMenu,
   decorators: [ComponentDecorator],
   argTypes: {
     color: {
@@ -21,6 +21,6 @@ const meta: Meta<typeof BoardColumnEditTitleMenu> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof BoardColumnEditTitleMenu>;
+type Story = StoryObj<typeof RecordBoardColumnEditTitleMenu>;
 
 export const AllTags: Story = {};

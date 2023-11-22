@@ -1,10 +1,10 @@
 import { useView } from '@/views/hooks/useView';
 
-import { Dropdown } from '../../dropdown/components/Dropdown';
-import { DropdownScope } from '../../dropdown/scopes/DropdownScope';
-import { BoardOptionsHotkeyScope } from '../types/BoardOptionsHotkeyScope';
+import { Dropdown } from '../../../../layout/dropdown/components/Dropdown';
+import { DropdownScope } from '../../../../layout/dropdown/scopes/DropdownScope';
+import { BoardOptionsDropdownId } from '../../components/constants/BoardOptionsDropdownId';
+import { BoardOptionsHotkeyScope } from '../../types/BoardOptionsHotkeyScope';
 
-import { BoardOptionsDropdownId } from './constants/BoardOptionsDropdownId';
 import { BoardOptionsDropdownButton } from './BoardOptionsDropdownButton';
 import {
   BoardOptionsDropdownContent,
