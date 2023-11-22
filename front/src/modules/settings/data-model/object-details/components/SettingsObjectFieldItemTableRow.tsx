@@ -70,7 +70,8 @@ export const SettingsObjectFieldItemTableRow = ({
           Icon={RelationIcon}
           label={relationObjectMetadataItem?.labelPlural}
           onClick={
-            relationObjectMetadataItem?.namePlural
+            relationObjectMetadataItem?.namePlural &&
+            !relationObjectMetadataItem.isSystem
               ? () =>
                   navigate(
                     `/settings/objects/${getObjectSlug(
