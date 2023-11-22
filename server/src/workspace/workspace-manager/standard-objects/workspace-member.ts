@@ -29,19 +29,6 @@ const workspaceMemberMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.BOOLEAN,
-      name: 'allowImpersonation',
-      label: 'Admin Access',
-      targetColumnMap: {
-        value: 'allowImpersonation',
-      },
-      description: 'Allow Admin Access',
-      icon: 'IconEye',
-      isNullable: false,
-    },
-    {
-      isCustom: false,
-      isActive: true,
       type: FieldMetadataType.TEXT,
       name: 'colorScheme',
       label: 'Color Scheme',
