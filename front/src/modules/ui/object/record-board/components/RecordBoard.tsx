@@ -6,11 +6,10 @@ import { useRecoilValue } from 'recoil';
 import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { StyledBoard } from '@/ui/layout/board/components/StyledBoard';
-import { BoardColumnContext } from '@/ui/layout/board/contexts/BoardColumnContext';
-import { useSetCardSelected } from '@/ui/layout/board/hooks/useSetCardSelected';
-import { useUpdateBoardCardIds } from '@/ui/layout/board/hooks/useUpdateBoardCardIds';
-import { boardColumnsState } from '@/ui/layout/board/states/boardColumnsState';
+import { BoardColumnContext } from '@/ui/object/record-board/contexts/BoardColumnContext';
+import { useSetCardSelected } from '@/ui/object/record-board/hooks/useSetCardSelected';
+import { useUpdateBoardCardIds } from '@/ui/object/record-board/hooks/useUpdateBoardCardIds';
+import { boardColumnsState } from '@/ui/object/record-board/states/boardColumnsState';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -22,14 +21,23 @@ import { BoardColumnRecoilScopeContext } from '../states/recoil-scope-contexts/B
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptions } from '../types/BoardOptions';
 
-import { EntityBoardColumn } from './EntityBoardColumn';
+import { RecordBoardColumn } from './RecordBoardColumn';
 
-export type EntityBoardProps = {
+export type RecordBoardProps = {
   boardOptions: BoardOptions;
   onColumnAdd?: (boardColumn: BoardColumnDefinition) => void;
   onColumnDelete?: (boardColumnId: string) => void;
   onEditColumnTitle: (columnId: string, title: string, color: string) => void;
 };
+
+const StyledBoard = styled.div`
+  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  margin-left: ${({ theme }) => theme.spacing(2)};
+  margin-right: ${({ theme }) => theme.spacing(2)};
+`;
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -45,11 +53,11 @@ const StyledBoardHeader = styled.div`
   z-index: 1;
 `;
 
-export const EntityBoard = ({
+export const RecordBoard = ({
   boardOptions,
   onColumnDelete,
   onEditColumnTitle,
-}: EntityBoardProps) => {
+}: RecordBoardProps) => {
   const boardColumns = useRecoilValue(boardColumnsState);
 
   const { updateOneObject: updateOneOpportunity } =
@@ -140,7 +148,7 @@ export const EntityBoard = ({
                   CustomRecoilScopeContext={BoardColumnRecoilScopeContext}
                   key={column.id}
                 >
-                  <EntityBoardColumn
+                  <RecordBoardColumn
                     boardOptions={boardOptions}
                     onDelete={onColumnDelete}
                     onTitleEdit={onEditColumnTitle}

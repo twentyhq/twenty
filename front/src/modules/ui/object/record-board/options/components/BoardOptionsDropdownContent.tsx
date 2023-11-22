@@ -28,13 +28,13 @@ import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFiel
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useView } from '@/views/hooks/useView';
 
-import { useBoardCardFields } from '../hooks/useBoardCardFields';
-import { boardColumnsState } from '../states/boardColumnsState';
-import { isCompactViewEnabledState } from '../states/isCompactViewEnabledState';
-import { hiddenBoardCardFieldsScopedSelector } from '../states/selectors/hiddenBoardCardFieldsScopedSelector';
-import { visibleBoardCardFieldsScopedSelector } from '../states/selectors/visibleBoardCardFieldsScopedSelector';
-import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
-import { BoardOptionsHotkeyScope } from '../types/BoardOptionsHotkeyScope';
+import { useBoardCardFields } from '../../hooks/useBoardCardFields';
+import { boardColumnsState } from '../../states/boardColumnsState';
+import { isCompactViewEnabledState } from '../../states/isCompactViewEnabledState';
+import { hiddenBoardCardFieldsScopedSelector } from '../../states/selectors/hiddenBoardCardFieldsScopedSelector';
+import { visibleBoardCardFieldsScopedSelector } from '../../states/selectors/visibleBoardCardFieldsScopedSelector';
+import { BoardColumnDefinition } from '../../types/BoardColumnDefinition';
+import { BoardOptionsHotkeyScope } from '../../types/BoardOptionsHotkeyScope';
 
 export type BoardOptionsDropdownContentProps = {
   onStageAdd?: (boardColumn: BoardColumnDefinition) => void;

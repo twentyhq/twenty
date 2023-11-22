@@ -3,8 +3,8 @@ import { useCallback, useContext, useState } from 'react';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
-import { NewButton } from '@/ui/layout/board/components/NewButton';
-import { BoardColumnContext } from '@/ui/layout/board/contexts/BoardColumnContext';
+import { NewButton } from '@/ui/object/record-board/components/NewButton';
+import { BoardColumnContext } from '@/ui/object/record-board/contexts/BoardColumnContext';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 

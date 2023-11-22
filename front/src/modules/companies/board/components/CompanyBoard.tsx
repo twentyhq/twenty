@@ -2,14 +2,14 @@ import styled from '@emotion/styled';
 
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { mapBoardFieldDefinitionsToViewFields } from '@/companies/utils/mapBoardFieldDefinitionsToViewFields';
-import { BoardOptionsDropdown } from '@/ui/layout/board/components/BoardOptionsDropdown';
-import { BoardOptionsDropdownId } from '@/ui/layout/board/components/constants/BoardOptionsDropdownId';
+import { RecordBoardActionBar } from '@/ui/object/record-board/action-bar/components/RecordBoardActionBar';
+import { BoardOptionsDropdownId } from '@/ui/object/record-board/components/constants/BoardOptionsDropdownId';
 import {
-  EntityBoard,
-  EntityBoardProps,
-} from '@/ui/layout/board/components/EntityBoard';
-import { EntityBoardActionBar } from '@/ui/layout/board/components/EntityBoardActionBar';
-import { EntityBoardContextMenu } from '@/ui/layout/board/components/EntityBoardContextMenu';
+  RecordBoard,
+  RecordBoardProps,
+} from '@/ui/object/record-board/components/RecordBoard';
+import { RecordBoardContextMenu } from '@/ui/object/record-board/context-menu/components/RecordBoardContextMenu';
+import { BoardOptionsDropdown } from '@/ui/object/record-board/options/components/BoardOptionsDropdown';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { ViewScope } from '@/views/scopes/ViewScope';
@@ -27,7 +27,7 @@ const StyledContainer = styled.div`
 `;
 
 type CompanyBoardProps = Pick<
-  EntityBoardProps,
+  RecordBoardProps,
   'onColumnAdd' | 'onColumnDelete' | 'onEditColumnTitle'
 >;
 
@@ -61,14 +61,14 @@ export const CompanyBoard = ({
             optionsDropdownScopeId={BoardOptionsDropdownId}
           />
           <HooksCompanyBoardEffect />
-          <EntityBoard
+          <RecordBoard
             boardOptions={opportunitiesBoardOptions}
             onColumnAdd={onColumnAdd}
             onColumnDelete={onColumnDelete}
             onEditColumnTitle={onEditColumnTitle}
           />
-          <EntityBoardActionBar />
-          <EntityBoardContextMenu />
+          <RecordBoardActionBar />
+          <RecordBoardContextMenu />
         </BoardContext.Provider>
       </StyledContainer>
     </ViewScope>

@@ -2,9 +2,6 @@ import { DateTime } from 'luxon';
 
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
-import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
 import { parseDate } from '~/utils/date-utils';
@@ -21,15 +18,6 @@ export const useTasks = (entity?: ActivityTargetableEntity) => {
     },
   });
 
-  const { objectMetadataItem: activityObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: 'activity',
-    });
-
-  const { registerOptimisticEffect } = useOptimisticEffect({
-    objectNameSingular: activityObjectMetadataItem?.nameSingular,
-  });
-
   const { objects: completeTasksData } = useFindManyObjectRecords({
     objectNamePlural: 'activities',
     skip: !entity && !selectedFilter,
@@ -42,29 +30,6 @@ export const useTasks = (entity?: ActivityTargetableEntity) => {
     },
     orderBy: {
       createdAt: 'DescNullsFirst',
-    },
-    onCompleted: () => {
-      if (activityObjectMetadataItem) {
-        registerOptimisticEffect({
-          variables: {
-            filter: {
-              completedAt: { is: 'NOT_NULL' },
-              id: {
-                in: activityTargets?.map(
-                  (activityTarget) => activityTarget.activityId,
-                ),
-              },
-              type: { eq: 'Task' },
-            },
-            orderBy: {
-              createdAt: 'DescNullsFirst',
-            },
-          },
-          definition: getRecordOptimisticEffectDefinition({
-            objectMetadataItem: activityObjectMetadataItem,
-          }),
-        });
-      }
     },
   });
 
@@ -80,29 +45,6 @@ export const useTasks = (entity?: ActivityTargetableEntity) => {
     },
     orderBy: {
       createdAt: 'DescNullsFirst',
-    },
-    onCompleted: () => {
-      if (activityObjectMetadataItem) {
-        registerOptimisticEffect({
-          variables: {
-            filter: {
-              completedAt: { is: 'NULL' },
-              id: {
-                in: activityTargets?.map(
-                  (activityTarget) => activityTarget.activityId,
-                ),
-              },
-              type: { eq: 'Task' },
-            },
-            orderBy: {
-              createdAt: 'DescNullsFirst',
-            },
-          },
-          definition: getRecordOptimisticEffectDefinition({
-            objectMetadataItem: activityObjectMetadataItem,
-          }),
-        });
-      }
     },
   });
 

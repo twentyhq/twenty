@@ -1,6 +1,6 @@
 import { CompanyBoardCard } from '@/companies/components/CompanyBoardCard';
 import { NewCompanyProgressButton } from '@/companies/components/NewCompanyProgressButton';
-import { BoardOptions } from '@/ui/layout/board/types/BoardOptions';
+import { BoardOptions } from '@/ui/object/record-board/types/BoardOptions';
 
 import { opportunityBoardFilterDefinitions } from './constants/opportunityBoardFilterDefinitions';
 import { opportunityBoardSortDefinitions } from './constants/opportunityBoardSortDefinitions';

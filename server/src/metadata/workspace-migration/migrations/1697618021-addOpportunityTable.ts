@@ -14,7 +14,7 @@ export const addOpportunityTable: WorkspaceMigrationTableAction[] = [
     columns: [
       {
         columnName: 'amountAmountMicros',
-        columnType: 'integer',
+        columnType: 'numeric',
         action: WorkspaceMigrationColumnActionType.CREATE,
       },
       {

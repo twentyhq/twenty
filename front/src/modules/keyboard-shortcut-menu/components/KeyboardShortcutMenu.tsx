@@ -20,7 +20,7 @@ export const KeyboardShortcutMenu = () => {
     isKeyboardShortcutMenuOpenedState,
   );
   useScopedHotkeys(
-    'shift+?,meta+?,esc',
+    'shift+?,meta+?',
     () => {
       toggleKeyboardShortcutMenu();
     },

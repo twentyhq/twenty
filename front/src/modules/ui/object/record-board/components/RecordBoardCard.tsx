@@ -7,7 +7,7 @@ import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/co
 import { useCurrentCardSelected } from '../hooks/useCurrentCardSelected';
 import { BoardOptions } from '../types/BoardOptions';
 
-export const EntityBoardCard = ({
+export const RecordBoardCard = ({
   boardOptions,
   cardId,
   index,

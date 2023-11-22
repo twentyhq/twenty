@@ -40,7 +40,7 @@ const StyledEditModeInput = styled.input`
   width: 100%;
 `;
 
-export type BoardColumnEditTitleMenuProps = {
+type RecordBoardColumnEditTitleMenuProps = {
   onClose: () => void;
   onDelete?: (id: string) => void;
   title: string;
@@ -67,14 +67,14 @@ export const COLUMN_COLOR_OPTIONS: ColumnColorOption[] = [
   { name: 'Gray', id: 'gray' },
 ];
 
-export const BoardColumnEditTitleMenu = ({
+export const RecordBoardColumnEditTitleMenu = ({
   onClose,
   onDelete,
   stageId,
   onTitleEdit,
   title,
   color,
-}: BoardColumnEditTitleMenuProps) => {
+}: RecordBoardColumnEditTitleMenuProps) => {
   const [internalValue, setInternalValue] = useState(title);
   const [, setBoardColumns] = useRecoilState(boardColumnsState);
   const debouncedOnUpdateTitle = debounce(
