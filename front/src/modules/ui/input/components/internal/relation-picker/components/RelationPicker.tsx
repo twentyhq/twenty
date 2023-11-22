@@ -4,16 +4,16 @@ import { useQuery } from '@apollo/client';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { IconUserCircle } from '@/ui/display/icon';
+import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
 import { SingleEntitySelect } from '@/ui/input/relation-picker/components/SingleEntitySelect';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
-import { useRelationField } from '@/ui/object/field/meta-types/hooks/useRelationField';
 import { FieldDefinition } from '@/ui/object/field/types/FieldDefinition';
 import { FieldRelationMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 export type RelationPickerProps = {
-  recordId: string;
+  recordId?: string;
   onSubmit: (newUser: EntityForSelect | null) => void;
   onCancel?: () => void;
   width?: number;
@@ -43,9 +43,9 @@ export const RelationPicker = ({
 
   const useFindManyQuery = (options: any) => useQuery(findManyQuery, options);
 
-  const { identifiersMapper, searchQuery } = useRelationField();
+  const { identifiersMapper, searchQuery } = useRelationPicker();
 
-  const workspaceMembers = useFilteredSearchEntityQuery({
+  const records = useFilteredSearchEntityQuery({
     queryHook: useFindManyQuery,
     filters: [
       {
@@ -74,11 +74,11 @@ export const RelationPicker = ({
     <SingleEntitySelect
       EmptyIcon={IconUserCircle}
       emptyLabel="No Owner"
-      entitiesToSelect={workspaceMembers.entitiesToSelect}
-      loading={workspaceMembers.loading}
+      entitiesToSelect={records.entitiesToSelect}
+      loading={records.loading}
       onCancel={onCancel}
       onEntitySelected={handleEntitySelected}
-      selectedEntity={workspaceMembers.selectedEntities[0]}
+      selectedEntity={records.selectedEntities[0]}
       width={width}
     />
   );
