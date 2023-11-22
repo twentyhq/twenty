@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 
+import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { savedBoardCardFieldsFamilyState } from '@/ui/object/record-board/states/savedBoardCardFieldsFamilyState';
 import { BoardFieldDefinition } from '@/ui/object/record-board/types/BoardFieldDefinition';
-import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 

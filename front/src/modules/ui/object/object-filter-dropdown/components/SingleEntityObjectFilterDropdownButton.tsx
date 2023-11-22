@@ -25,7 +25,6 @@ export const SingleEntityObjectFilterDropdownButton = ({
     selectedFilter,
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
-    resetFilter,
   } = useFilter();
 
   const availableFilter = availableFilterDefinitions[0];
