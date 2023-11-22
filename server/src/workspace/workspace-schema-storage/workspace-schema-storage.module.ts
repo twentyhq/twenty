@@ -6,11 +6,13 @@ import { MemoryStorageModule } from 'src/integrations/memory-storage/memory-stor
 import { MemoryStorageJsonSerializer } from 'src/integrations/memory-storage/serializers/json.serializer';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
+import { WorkspaceCacheVersionModule } from 'src/metadata/workspace-cache-version/workspace-cache-version.module';
 import { WorkspaceSchemaStorageService } from 'src/workspace/workspace-schema-storage/workspace-schema-storage.service';
 
 @Module({
   imports: [
     ObjectMetadataModule,
+    WorkspaceCacheVersionModule,
     MemoryStorageModule.forRoot({
       identifier: 'objectMetadataCollection',
       type: MemoryStorageType.Local,
@@ -19,6 +21,11 @@ import { WorkspaceSchemaStorageService } from 'src/workspace/workspace-schema-st
     }),
     MemoryStorageModule.forRoot({
       identifier: 'typeDefs',
+      type: MemoryStorageType.Local,
+      options: {},
+    }),
+    MemoryStorageModule.forRoot({
+      identifier: 'cacheVersion',
       type: MemoryStorageType.Local,
       options: {},
     }),
