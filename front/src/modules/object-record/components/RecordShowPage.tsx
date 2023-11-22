@@ -193,7 +193,13 @@ export const RecordShowPage = () => {
             <ShowPageRightContainer
               entity={{
                 id: object.id,
-                type: 'Company',
+                // TODO: refacto
+                type:
+                  objectMetadataItem?.nameSingular === 'company'
+                    ? 'Company'
+                    : objectMetadataItem?.nameSingular === 'person'
+                    ? 'Person'
+                    : 'Person',
               }}
               timeline
               tasks
