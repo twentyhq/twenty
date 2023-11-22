@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import {
   QueryRunner,
@@ -18,8 +17,7 @@ import {
   WorkspaceMigrationColumnCreate,
   WorkspaceMigrationColumnRelation,
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
-import { WorkspaceMigrationEvents } from 'src/workspace/workspace-migration-runner/events/workspace-migration-events';
-import { WorkspaceMigrationAppliedEvent } from 'src/workspace/workspace-migration-runner/events/workspace-migration-applied.event';
+import { WorkspaceCacheVersionService } from 'src/metadata/workspace-cache-version/workspace-cache-version.service';
 
 import { customTableDefaultColumns } from './utils/custom-table-default-column.util';
 
@@ -28,7 +26,7 @@ export class WorkspaceMigrationRunnerService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
-    private readonly eventEmitter: EventEmitter2,
+    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
   ) {}
 
   /**
@@ -82,11 +80,8 @@ export class WorkspaceMigrationRunnerService {
 
     await queryRunner.release();
 
-    // Emit event when migration is applied
-    this.eventEmitter.emit(
-      WorkspaceMigrationEvents.MigrationApplied,
-      new WorkspaceMigrationAppliedEvent(workspaceId),
-    );
+    // Increment workspace cache version
+    await this.workspaceCacheVersionService.incrementVersion(workspaceId);
 
     return flattenedPendingMigrations;
   }
