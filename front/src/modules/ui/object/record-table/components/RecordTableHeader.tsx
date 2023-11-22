@@ -71,7 +71,7 @@ const StyledColumnHeadContainer = styled.div`
   z-index: 1;
 `;
 
-const StyledPlusIconHeaderCell = styled.th`
+const StyledPlusIconHeaderCell = styled.th<{ isSticky: boolean }>`
   ${({ theme }) => {
     return `
   &:hover {
@@ -83,16 +83,22 @@ const StyledPlusIconHeaderCell = styled.th`
   border-bottom: none !important;
   border-left: none !important;
   min-width: 32px;
-  position: relative;
+  ${({ isSticky }) =>
+    isSticky
+      ? `position: sticky;
+    right: 0;
+    width: 32px;`
+      : `position: relative;`};
   z-index: 1;
 `;
 
 const StyledPlusIconContainer = styled.div`
   align-items: center;
+  background: ${({ theme }) => theme.background.primary};
   display: flex;
   height: 32px;
   justify-content: center;
-  width: 32px;
+  width: 33px;
 `;
 
 const HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID =
@@ -224,7 +230,7 @@ export const RecordTableHeader = () => {
           </StyledColumnHeaderCell>
         ))}
         {hiddenTableColumns.length > 0 && (
-          <StyledPlusIconHeaderCell>
+          <StyledPlusIconHeaderCell isSticky={visibleTableColumns.length > 0}>
             <DropdownScope
               dropdownScopeId={HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID}
             >

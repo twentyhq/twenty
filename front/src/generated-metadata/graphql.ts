@@ -83,11 +83,13 @@ export type CreateOneRelationInput = {
 
 export type CreateRelationInput = {
   description?: InputMaybe<Scalars['String']['input']>;
+  fromDescription?: InputMaybe<Scalars['String']['input']>;
   fromIcon?: InputMaybe<Scalars['String']['input']>;
   fromLabel: Scalars['String']['input'];
   fromName: Scalars['String']['input'];
   fromObjectMetadataId: Scalars['String']['input'];
   relationType: RelationMetadataType;
+  toDescription?: InputMaybe<Scalars['String']['input']>;
   toIcon?: InputMaybe<Scalars['String']['input']>;
   toLabel: Scalars['String']['input'];
   toName: Scalars['String']['input'];
