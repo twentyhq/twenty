@@ -260,7 +260,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconTarget',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: false,
       },
 
       // Relationships
