@@ -55,7 +55,7 @@ export const addCompanyTable: WorkspaceMigrationTableAction[] = [
       },
       {
         columnName: 'annualRecurringRevenueAmountMicros',
-        columnType: 'integer',
+        columnType: 'numeric',
         action: WorkspaceMigrationColumnActionType.CREATE,
       },
       {

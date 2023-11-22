@@ -125,7 +125,7 @@ export function convertFieldMetadataToColumnActions(
         {
           action: WorkspaceMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.amountMicros,
-          columnType: 'integer',
+          columnType: 'numeric',
           defaultValue: serializeDefaultValue(defaultValue?.amountMicros),
         },
         {
