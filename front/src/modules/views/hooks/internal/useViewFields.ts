@@ -3,18 +3,18 @@ import { useRecoilCallback } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ViewField } from '@/views/types/ViewField';
+import { getViewScopedStatesFromSnapshot } from '@/views/utils/getViewScopedStatesFromSnapshot';
 import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
 
 export const useViewFields = (viewScopeId: string) => {
-  const { updateOneMutation, createOneMutation, findManyQuery } =
-    useObjectMetadataItem({
-      objectNameSingular: 'viewField',
-    });
+  const { updateOneMutation, createOneMutation } = useObjectMetadataItem({
+    objectNameSingular: 'viewField',
+  });
 
   const apolloClient = useApolloClient();
 
   const persistViewFields = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       async (viewFieldsToPersist: ViewField[], viewId?: string) => {
         const { viewObjectMetadataId, currentViewId, savedViewFieldsByKey } =
           getViewScopedStateValuesFromSnapshot({
@@ -22,6 +22,12 @@ export const useViewFields = (viewScopeId: string) => {
             viewScopeId,
             viewId,
           });
+
+        const { isPersistingViewState } = getViewScopedStatesFromSnapshot({
+          snapshot,
+          viewScopeId,
+          viewId,
+        });
 
         const viewIdToPersist = viewId ?? currentViewId;
 
@@ -47,7 +53,6 @@ export const useViewFields = (viewScopeId: string) => {
                     position: viewField.position,
                   },
                 },
-                refetchQueries: [findManyQuery],
               }),
             ),
           );
@@ -90,17 +95,13 @@ export const useViewFields = (viewScopeId: string) => {
                 .isVisible !== viewFieldToPersit.isVisible),
         );
 
+        set(isPersistingViewState, true);
         await _createViewFields(viewFieldsToCreate);
 
         await _updateViewFields(viewFieldsToUpdate);
+        set(isPersistingViewState, false);
       },
-    [
-      apolloClient,
-      createOneMutation,
-      findManyQuery,
-      updateOneMutation,
-      viewScopeId,
-    ],
+    [apolloClient, createOneMutation, updateOneMutation, viewScopeId],
   );
 
   return { persistViewFields };

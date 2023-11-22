@@ -2,6 +2,7 @@ import { getScopedFamilyState } from '@/ui/utilities/recoil-scope/utils/getScope
 import { getScopedSelector } from '@/ui/utilities/recoil-scope/utils/getScopedSelector';
 import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
+import { isPersistingViewScopedState } from '@/views/states/isPersistingViewScopedState';
 import { currentViewScopedSelector } from '@/views/states/selectors/currentViewScopedSelector';
 
 import { availableFieldDefinitionsScopedState } from '../../states/availableFieldDefinitionsScopedState';
@@ -56,6 +57,11 @@ export const getViewScopedStates = ({
 
   const isViewBarExpandedState = getScopedState(
     isViewBarExpandedScopedState,
+    viewScopeId,
+  );
+
+  const isPersistingViewState = getScopedState(
+    isPersistingViewScopedState,
     viewScopeId,
   );
 
@@ -170,6 +176,7 @@ export const getViewScopedStates = ({
     currentViewSelector,
 
     isViewBarExpandedState,
+    isPersistingViewState,
 
     viewsState,
     viewEditModeState,

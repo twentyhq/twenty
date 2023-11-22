@@ -1,7 +1,7 @@
 import { CompanyProgressPicker } from '@/companies/components/CompanyProgressPicker';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { IconPlus } from '@/ui/display/icon/index';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';

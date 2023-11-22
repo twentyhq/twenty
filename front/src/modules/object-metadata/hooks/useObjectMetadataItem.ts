@@ -56,7 +56,15 @@ export const useObjectMetadataItem = ({
     objectMetadataItem,
   });
 
+  const labelIdentifierFieldMetadataId = objectMetadataItem?.fields.find(
+    ({ name }) => name === 'name',
+  )?.id;
+
+  const basePathToShowPage = `/object/${objectMetadataItem?.nameSingular}/`;
+
   return {
+    labelIdentifierFieldMetadataId,
+    basePathToShowPage,
     objectMetadataItem,
     objectNotFoundInMetadata,
     findManyQuery,

@@ -18,7 +18,6 @@ import { ColumnDefinition } from '../types/ColumnDefinition';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { useDisableSoftFocus } from './internal/useDisableSoftFocus';
-import { useGetIsSomeCellInEditMode } from './internal/useGetIsSomeCellInEditMode';
 import { useLeaveTableFocus } from './internal/useLeaveTableFocus';
 import { useRecordTableScopedStates } from './internal/useRecordTableScopedStates';
 import { useResetTableRowSelection } from './internal/useResetTableRowSelection';
@@ -98,8 +97,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   const setRecordTableData = useSetRecordTableData({ onEntityCountChange });
 
   const leaveTableFocus = useLeaveTableFocus();
-
-  const getIsSomeCellInEditMode = useGetIsSomeCellInEditMode();
 
   const setRowSelectedState = useSetRowSelectedState();
 
@@ -308,7 +305,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setRecordTableData,
     setTableColumns,
     leaveTableFocus,
-    getIsSomeCellInEditMode,
     setRowSelectedState,
     resetTableRowSelection,
     upsertRecordTableItem,

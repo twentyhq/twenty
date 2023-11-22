@@ -10,12 +10,7 @@ export type GenericFieldContextType = {
   entityId: string;
   recoilScopeId?: string;
   hotkeyScope: string;
-  isMainIdentifier: boolean;
-  mainIdentifierMapper?: (record: any) => {
-    name: string;
-    avatarUrl?: string;
-    avatarType: string;
-  };
+  isLabelIdentifier: boolean;
   basePathToShowPage?: string;
 };
 

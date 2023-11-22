@@ -105,7 +105,10 @@ export const useUpdateCompanyBoard = () =>
               position: pipelineStep.position ?? 0,
             };
           });
-        if (currentBoardColumns.length === 0) {
+        if (
+          currentBoardColumns.length === 0 &&
+          !isDeeplyEqual(newBoardColumns, currentBoardColumns)
+        ) {
           set(boardColumnsState, newBoardColumns);
           set(savedBoardColumnsState, newBoardColumns);
         }

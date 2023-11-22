@@ -15,7 +15,8 @@ const isCustomScopesEqual = (
 ) => {
   return (
     customScopesA?.commandMenu === customScopesB?.commandMenu &&
-    customScopesA?.goto === customScopesB?.goto
+    customScopesA?.goto === customScopesB?.goto &&
+    customScopesA?.keyboardShortcutMenu === customScopesB?.keyboardShortcutMenu
   );
 };
 
@@ -54,6 +55,7 @@ export const useSetHotkeyScope = () =>
           customScopes: {
             commandMenu: customScopes?.commandMenu ?? true,
             goto: customScopes?.goto ?? false,
+            keyboardShortcutMenu: customScopes?.keyboardShortcutMenu ?? true,
           },
         };
 
@@ -65,6 +67,10 @@ export const useSetHotkeyScope = () =>
 
         if (newHotkeyScope?.customScopes?.goto) {
           scopesToSet.push(AppHotkeyScope.Goto);
+        }
+
+        if (newHotkeyScope?.customScopes?.keyboardShortcutMenu) {
+          scopesToSet.push(AppHotkeyScope.KeyboardShortcutMenu);
         }
 
         scopesToSet.push(newHotkeyScope.scope);
