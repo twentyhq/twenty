@@ -1,4 +1,4 @@
-import { BoardFieldDefinition } from '@/ui/layout/board/types/BoardFieldDefinition';
+import { BoardFieldDefinition } from '@/ui/object/record-board/types/BoardFieldDefinition';
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { ViewField } from '@/views/types/ViewField';
 

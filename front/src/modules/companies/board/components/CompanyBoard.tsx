@@ -2,14 +2,14 @@ import styled from '@emotion/styled';
 
 import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { mapBoardFieldDefinitionsToViewFields } from '@/companies/utils/mapBoardFieldDefinitionsToViewFields';
-import { BoardOptionsDropdown } from '@/ui/layout/board/components/BoardOptionsDropdown';
-import { BoardOptionsDropdownId } from '@/ui/layout/board/components/constants/BoardOptionsDropdownId';
+import { BoardOptionsDropdownId } from '@/ui/object/record-board/components/constants/BoardOptionsDropdownId';
 import {
   RecordBoard,
   RecordBoardProps,
-} from '@/ui/layout/board/components/RecordBoard';
-import { RecordBoardActionBar } from '@/ui/layout/board/components/RecordBoardActionBar';
-import { RecordBoardContextMenu } from '@/ui/layout/board/components/RecordBoardContextMenu';
+} from '@/ui/object/record-board/components/RecordBoard';
+import { RecordBoardActionBar } from '@/ui/object/record-board/components/RecordBoardActionBar';
+import { RecordBoardContextMenu } from '@/ui/object/record-board/context-menu/components/RecordBoardContextMenu';
+import { BoardOptionsDropdown } from '@/ui/object/record-board/options/components/BoardOptionsDropdown';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { ViewScope } from '@/views/scopes/ViewScope';

@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { IconTrash } from '@/ui/display/icon';
-import { useDeleteSelectedBoardCards } from '@/ui/layout/board/hooks/useDeleteSelectedBoardCards';
+import { useDeleteSelectedBoardCards } from '@/ui/object/record-board/hooks/useDeleteSelectedBoardCards';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 
 export const useBoardActionBarEntries = () => {

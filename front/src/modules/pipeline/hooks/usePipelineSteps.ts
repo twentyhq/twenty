@@ -4,7 +4,7 @@ import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObje
 import { useDeleteOneObjectRecord } from '@/object-record/hooks/useDeleteOneObjectRecord';
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
-import { BoardColumnDefinition } from '@/ui/layout/board/types/BoardColumnDefinition';
+import { BoardColumnDefinition } from '@/ui/object/record-board/types/BoardColumnDefinition';
 
 export const usePipelineSteps = () => {
   const { createOneObject: createOnePipelineStep } =

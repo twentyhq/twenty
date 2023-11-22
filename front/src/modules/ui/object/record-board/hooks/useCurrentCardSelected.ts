@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { activeCardIdsState } from '@/ui/layout/board/states/activeCardIdsState';
+import { activeCardIdsState } from '@/ui/object/record-board/states/activeCardIdsState';
 import { actionBarOpenState } from '@/ui/navigation/action-bar/states/actionBarIsOpenState';
 
 import { BoardCardIdContext } from '../contexts/BoardCardIdContext';

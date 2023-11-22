@@ -3,10 +3,10 @@ import styled from '@emotion/styled';
 import { Draggable, Droppable, DroppableProvided } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
 
-import { BoardColumn } from '@/ui/layout/board/components/BoardColumn';
-import { RecordBoardCard } from '@/ui/layout/board/components/RecordBoardCard';
-import { BoardCardIdContext } from '@/ui/layout/board/contexts/BoardCardIdContext';
-import { BoardColumnContext } from '@/ui/layout/board/contexts/BoardColumnContext';
+import { BoardColumn } from '@/ui/object/record-board/components/BoardColumn';
+import { RecordBoardCard } from '@/ui/object/record-board/components/RecordBoardCard';
+import { BoardCardIdContext } from '@/ui/object/record-board/contexts/BoardCardIdContext';
+import { BoardColumnContext } from '@/ui/object/record-board/contexts/BoardColumnContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { boardCardIdsByColumnIdFamilyState } from '../states/boardCardIdsByColumnIdFamilyState';

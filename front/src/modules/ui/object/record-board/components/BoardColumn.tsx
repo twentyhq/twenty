@@ -7,7 +7,7 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { BoardColumnContext } from '../contexts/BoardColumnContext';
 import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 
-import { BoardColumnMenu } from './BoardColumnMenu';
+import { RecordBoardColumnDropdownMenu } from './RecordBoardColumnDropdownMenu';
 
 const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
   background-color: ${({ theme }) => theme.background.primary};
@@ -107,7 +107,7 @@ export const BoardColumn = ({
         <StyledNumChildren>{numChildren}</StyledNumChildren>
       </StyledHeader>
       {isBoardColumnMenuOpen && (
-        <BoardColumnMenu
+        <RecordBoardColumnDropdownMenu
           onClose={handleClose}
           onDelete={onDelete}
           onTitleEdit={onTitleEdit}

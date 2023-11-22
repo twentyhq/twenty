@@ -7,7 +7,7 @@ import { PipelineAddButton } from '@/pipeline/components/PipelineAddButton';
 import { usePipelineSteps } from '@/pipeline/hooks/usePipelineSteps';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { IconTargetArrow } from '@/ui/display/icon';
-import { BoardOptionsContext } from '@/ui/layout/board/contexts/BoardOptionsContext';
+import { BoardOptionsContext } from '@/ui/object/record-board/contexts/BoardOptionsContext';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageHeader } from '@/ui/layout/page/PageHeader';

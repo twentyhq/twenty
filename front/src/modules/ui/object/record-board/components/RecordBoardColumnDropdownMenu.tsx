@@ -25,7 +25,7 @@ import { BoardColumnContext } from '../contexts/BoardColumnContext';
 import { useBoardColumns } from '../hooks/useBoardColumns';
 import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 
-import { BoardColumnEditTitleMenu } from './BoardColumnEditTitleMenu';
+import { RecordBoardColumnEditTitleMenu } from './RecordBoardColumnEditTitleMenu';
 const StyledMenuContainer = styled.div`
   position: absolute;
   top: ${({ theme }) => theme.spacing(10)};
@@ -33,7 +33,7 @@ const StyledMenuContainer = styled.div`
   z-index: 1;
 `;
 
-type BoardColumnMenuProps = {
+type RecordBoardColumnDropdownMenuProps = {
   onClose: () => void;
   onDelete?: (id: string) => void;
   onTitleEdit: (title: string, color: string) => void;
@@ -42,12 +42,12 @@ type BoardColumnMenuProps = {
 
 type Menu = 'actions' | 'add' | 'title';
 
-export const BoardColumnMenu = ({
+export const RecordBoardColumnDropdownMenu = ({
   onClose,
   onDelete,
   onTitleEdit,
   stageId,
-}: BoardColumnMenuProps) => {
+}: RecordBoardColumnDropdownMenuProps) => {
   const [currentMenu, setCurrentMenu] = useState('actions');
   const column = useContext(BoardColumnContext);
 
@@ -160,7 +160,7 @@ export const BoardColumnMenu = ({
           </DropdownMenuItemsContainer>
         )}
         {currentMenu === 'title' && (
-          <BoardColumnEditTitleMenu
+          <RecordBoardColumnEditTitleMenu
             color={columnDefinition.colorCode ?? 'gray'}
             onClose={closeMenu}
             onTitleEdit={onTitleEdit}
