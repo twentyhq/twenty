@@ -1,7 +1,7 @@
 export { ThemeProvider } from '@emotion/react';
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import * as React$1 from 'react';
-import React__default, { FunctionComponent, ReactNode, MouseEvent, ComponentProps } from 'react';
+import React__default, { ReactNode, MouseEvent, FunctionComponent, ComponentProps } from 'react';
 import { motion, AnimationControls } from 'framer-motion';
 import { TablerIconsProps } from '@tabler/icons-react';
 import { PlacesType, PositionStrategy } from 'react-tooltip';
@@ -317,11 +317,12 @@ type ChipProps = {
     maxWidth?: string;
     variant?: ChipVariant;
     accent?: ChipAccent;
-    leftComponent?: React$1.ReactNode;
-    rightComponent?: React$1.ReactNode;
+    leftComponent?: ReactNode;
+    rightComponent?: ReactNode;
     className?: string;
+    onClick?: (event: MouseEvent<HTMLDivElement>) => void;
 };
-declare const Chip: ({ size, label, disabled, clickable, variant, leftComponent, rightComponent, accent, maxWidth, className, }: ChipProps) => react_jsx_runtime.JSX.Element;
+declare const Chip: ({ size, label, disabled, clickable, variant, leftComponent, rightComponent, accent, maxWidth, className, onClick, }: ChipProps) => react_jsx_runtime.JSX.Element;
 
 type IconComponent = FunctionComponent<{
     color?: string;
@@ -537,21 +538,23 @@ type RoundedIconButtonProps = {
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 declare const RoundedIconButton: ({ Icon, onClick, disabled, }: RoundedIconButtonProps) => react_jsx_runtime.JSX.Element;
 
-declare enum ColorScheme {
+declare enum ColorScheme$1 {
     Dark = "Dark",
     Light = "Light",
     System = "System"
 }
 
 type ColorSchemeSegmentProps = {
-    variant: `${Lowercase<ColorScheme.Dark | ColorScheme.Light>}`;
+    variant: `${Lowercase<ColorScheme$1.Dark | ColorScheme$1.Light>}`;
     controls: AnimationControls;
 } & React__default.ComponentPropsWithoutRef<'div'>;
 type ColorSchemeCardProps = {
-    variant: `${Lowercase<ColorScheme>}`;
+    variant: `${Lowercase<ColorScheme$1>}`;
     selected?: boolean;
 } & React__default.ComponentPropsWithoutRef<'div'>;
 declare const ColorSchemeCard: ({ variant, selected, onClick, }: ColorSchemeCardProps) => react_jsx_runtime.JSX.Element;
+
+type ColorScheme = 'Dark' | 'Light' | 'System';
 
 type ColorSchemePickerProps = {
     value: ColorScheme;
@@ -612,6 +615,7 @@ type IconButtonVariant = 'primary' | 'secondary' | 'tertiary';
 
 type IconPickerProps = {
     disabled?: boolean;
+    dropdownScopeId?: string;
     onChange: (params: {
         iconKey: string;
         Icon: IconComponent;
@@ -622,7 +626,7 @@ type IconPickerProps = {
     onOpen?: () => void;
     variant?: IconButtonVariant;
 };
-declare const IconPicker: ({ disabled, onChange, selectedIconKey, onClickOutside, onClose, onOpen, variant, }: IconPickerProps) => react_jsx_runtime.JSX.Element;
+declare const IconPicker: ({ disabled, dropdownScopeId, onChange, selectedIconKey, onClickOutside, onClose, onOpen, variant, }: IconPickerProps) => react_jsx_runtime.JSX.Element;
 
 type ImageInputProps = Omit<React__default.ComponentProps<'div'>, 'children'> & {
     picture: string | null | undefined;
@@ -677,4 +681,4 @@ declare module '@emotion/react' {
     }
 }
 
-export { AnimatedCheckmark, AnimatedCheckmarkProps, AppTooltip, AppTooltipProps, AutosizeTextInput, AutosizeTextInputVariant, Button, ButtonAccent, ButtonGroup, ButtonGroupProps, ButtonPosition, ButtonProps, ButtonSize, ButtonVariant, Checkbox, CheckboxShape, CheckboxSize, CheckboxVariant, Checkmark, CheckmarkProps, Chip, ChipAccent, ChipSize, ChipVariant, CircularProgressBar, ColorSchemeCard, ColorSchemeCardProps, ColorSchemePicker, ColorSchemePickerProps, ColorSchemeSegmentProps, EntityChip, EntityChipVariant, EntityTitleDoubleTextInput, EntityTitleDoubleTextInputProps, FloatingButton, FloatingButtonGroup, FloatingButtonGroupProps, FloatingButtonPosition, FloatingButtonProps, FloatingButtonSize, FloatingIconButton, FloatingIconButtonGroup, FloatingIconButtonGroupProps, FloatingIconButtonPosition, FloatingIconButtonProps, FloatingIconButtonSize, IconAddressBook, IconPicker, ImageInput, LabelPosition, LightButton, LightButtonAccent, LightButtonProps, LightIconButton, LightIconButtonAccent, LightIconButtonProps, LightIconButtonSize, MainButton, OverflowingTextWithTooltip, ProgressBar, ProgressBarControls, ProgressBarProps, Radio, RadioGroup, RadioProps, RadioSize, RoundedIconButton, SoonPill, Tag, TagColor, TagProps, TooltipPosition, castToTagColor, darkTheme, lightTheme };
+export { AnimatedCheckmark, AnimatedCheckmarkProps, AppTooltip, AppTooltipProps, AutosizeTextInput, AutosizeTextInputVariant, Button, ButtonAccent, ButtonGroup, ButtonGroupProps, ButtonPosition, ButtonProps, ButtonSize, ButtonVariant, Checkbox, CheckboxShape, CheckboxSize, CheckboxVariant, Checkmark, CheckmarkProps, Chip, ChipAccent, ChipSize, ChipVariant, CircularProgressBar, ColorSchemeCard, ColorSchemeCardProps, ColorSchemePicker, ColorSchemePickerProps, ColorSchemeSegmentProps, EntityChip, EntityChipProps, EntityChipVariant, EntityTitleDoubleTextInput, EntityTitleDoubleTextInputProps, FloatingButton, FloatingButtonGroup, FloatingButtonGroupProps, FloatingButtonPosition, FloatingButtonProps, FloatingButtonSize, FloatingIconButton, FloatingIconButtonGroup, FloatingIconButtonGroupProps, FloatingIconButtonPosition, FloatingIconButtonProps, FloatingIconButtonSize, IconAddressBook, IconPicker, ImageInput, LabelPosition, LightButton, LightButtonAccent, LightButtonProps, LightIconButton, LightIconButtonAccent, LightIconButtonProps, LightIconButtonSize, MainButton, OverflowingTextWithTooltip, ProgressBar, ProgressBarControls, ProgressBarProps, Radio, RadioGroup, RadioProps, RadioSize, RoundedIconButton, SoonPill, Tag, TagColor, TagProps, TooltipPosition, castToTagColor, darkTheme, lightTheme };
