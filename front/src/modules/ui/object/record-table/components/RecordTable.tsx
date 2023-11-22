@@ -4,10 +4,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { RecordTableInternalEffect } from '@/ui/object/record-table/components/RecordTableInternalEffect';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
-import {
-  RecordTableScope,
-  RecordTableScope,
-} from '@/ui/object/record-table/scopes/RecordTableScope';
+import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
