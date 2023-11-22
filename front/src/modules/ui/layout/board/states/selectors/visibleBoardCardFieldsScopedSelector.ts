@@ -7,7 +7,7 @@ export const visibleBoardCardFieldsScopedSelector = selectorFamily({
   get:
     (scopeId: string) =>
     ({ get }) =>
-      get(boardCardFieldsScopedState(scopeId)).filter(
-        (field) => field.isVisible,
-      ),
+      get(boardCardFieldsScopedState(scopeId))
+        .filter((field) => field.isVisible)
+        .sort((a, b) => a.position - b.position),
 });
