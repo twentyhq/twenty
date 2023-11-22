@@ -72,9 +72,13 @@ const StyledTableContainer = styled.div`
 
 type RecordTableProps = {
   updateEntityMutation: (params: any) => void;
+  createObject: () => void;
 };
 
-export const RecordTable = ({ updateEntityMutation }: RecordTableProps) => {
+export const RecordTable = ({
+  updateEntityMutation,
+  createObject,
+}: RecordTableProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
   const { resetTableRowSelection, setRowSelectedState } = useRecordTable();
@@ -86,7 +90,7 @@ export const RecordTable = ({ updateEntityMutation }: RecordTableProps) => {
           <StyledTableContainer>
             <div ref={tableBodyRef}>
               <StyledTable className="entity-table-cell">
-                <RecordTableHeader />
+                <RecordTableHeader createObject={createObject} />
                 <RecordTableBody />
               </StyledTable>
               <DragSelect

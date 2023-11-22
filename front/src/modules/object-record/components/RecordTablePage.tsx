@@ -67,7 +67,10 @@ export const RecordTablePage = () => {
       </PageHeader>
       <PageBody>
         <StyledTableContainer>
-          <RecordTableContainer objectNamePlural={objectNamePlural} />
+          <RecordTableContainer
+            objectNamePlural={objectNamePlural}
+            createObject={handleAddButtonClick}
+          />
         </StyledTableContainer>
         <RecordTableActionBar />
         <RecordTableContextMenu />

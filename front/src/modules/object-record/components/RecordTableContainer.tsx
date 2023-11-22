@@ -29,8 +29,10 @@ const StyledContainer = styled.div`
 
 export const RecordTableContainer = ({
   objectNamePlural,
+  createObject,
 }: {
   objectNamePlural: string;
+  createObject: () => void;
 }) => {
   const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
     {
@@ -97,7 +99,10 @@ export const RecordTableContainer = ({
             optionsDropdownScopeId={TableOptionsDropdownId}
           />
           <RecordTableEffect />
-          <RecordTable updateEntityMutation={updateEntity} />
+          <RecordTable
+            updateEntityMutation={updateEntity}
+            createObject={createObject}
+          />
         </RecordTableScope>
       </StyledContainer>
     </ViewScope>

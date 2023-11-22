@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { IconPlus } from '@/ui/display/icon';
+import { IconButton } from '@/ui/input/button/components/IconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
@@ -67,8 +68,25 @@ const StyledTableHead = styled.thead`
 `;
 
 const StyledColumnHeadContainer = styled.div`
+  align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   position: relative;
   z-index: 1;
+
+  &:hover {
+    .StyledHeaderIcon {
+      display: block;
+    }
+  }
+`;
+
+const StyledHeaderIcon = styled.div`
+  display: none;
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  margin-right: ${({ theme }) => theme.spacing(1)};
+  margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledPlusIconHeaderCell = styled.th`
@@ -101,7 +119,11 @@ const HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID =
 const HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID =
   'hidden-table-columns-dropdown-hotkey-scope-id';
 
-export const RecordTableHeader = () => {
+export const RecordTableHeader = ({
+  createObject,
+}: {
+  createObject: () => void;
+}) => {
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
     resizeFieldOffsetState,
   );
@@ -200,7 +222,8 @@ export const RecordTableHeader = () => {
               tableColumnsByKey[column.fieldMetadataId].size +
                 (resizedFieldKey === column.fieldMetadataId
                   ? resizeFieldOffset
-                  : 0),
+                  : 0) +
+                24,
               COLUMN_MIN_WIDTH,
             )}
           >
@@ -213,6 +236,14 @@ export const RecordTableHeader = () => {
                 }
                 primaryColumnKey={primaryColumn?.fieldMetadataId || ''}
               />
+              <StyledHeaderIcon className="StyledHeaderIcon">
+                <IconButton
+                  Icon={IconPlus}
+                  variant="tertiary"
+                  size="small"
+                  onClick={createObject}
+                />
+              </StyledHeaderIcon>
             </StyledColumnHeadContainer>
             <StyledResizeHandler
               className="cursor-col-resize"
