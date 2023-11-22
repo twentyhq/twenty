@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, ContextIdFactory, ModuleRef } from '@nestjs/core';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import GraphQLJSON from 'graphql-type-json';
@@ -104,7 +103,6 @@ import { ExceptionFilter } from './filters/exception.filter';
       resolvers: { JSON: GraphQLJSON },
       plugins: [],
     }),
-    EventEmitterModule.forRoot(),
     HealthModule,
     IntegrationsModule,
     CoreModule,

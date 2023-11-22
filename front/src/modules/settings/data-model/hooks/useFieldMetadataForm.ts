@@ -134,6 +134,7 @@ export const useFieldMetadataForm = () => {
     hasFormChanged: hasFieldFormChanged || hasRelationFormChanged,
     hasRelationFormChanged,
     initForm,
+    isInitialized,
     isValid: validationResult.success,
     validatedFormValues: validationResult.success
       ? validationResult.data

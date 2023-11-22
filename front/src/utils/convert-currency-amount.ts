@@ -1,3 +1,5 @@
+import { isUndefined } from '@sniptt/guards';
+
 export const convertCurrencyToCurrencyMicros = (
   currencyAmount: number | undefined,
 ) => {
@@ -18,7 +20,7 @@ export const convertCurrencyToCurrencyMicros = (
 export const convertCurrencyMicrosToCurrency = (
   currencyAmountMicros: number | undefined,
 ) => {
-  if (currencyAmountMicros === undefined) {
+  if (isUndefined(currencyAmountMicros)) {
     return undefined;
   }
   const currencyAmountMicrosAsNumber = +currencyAmountMicros;
