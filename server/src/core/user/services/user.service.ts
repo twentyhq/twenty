@@ -11,7 +11,7 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 
 export class UserService extends TypeOrmQueryService<User> {
   constructor(
-    @InjectRepository(User)
+    @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,

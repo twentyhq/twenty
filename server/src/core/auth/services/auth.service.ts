@@ -44,9 +44,9 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly fileUploadService: FileUploadService,
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(User)
+    @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
   ) {}
 
@@ -194,13 +194,18 @@ export class AuthService {
   }
 
   async impersonate(userId: string) {
-    const user = await this.userRepository.findOneBy({
-      id: userId,
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+      relations: ['defaultWorkspace'],
     });
 
     assert(user, "This user doesn't exist", NotFoundException);
 
-    // Todo: check if workspace member can be impersonated
+    if (!user.defaultWorkspace.allowImpersonation) {
+      throw new ForbiddenException('Impersonation not allowed');
+    }
 
     const accessToken = await this.tokenService.generateAccessToken(user.id);
     const refreshToken = await this.tokenService.generateRefreshToken(user.id);

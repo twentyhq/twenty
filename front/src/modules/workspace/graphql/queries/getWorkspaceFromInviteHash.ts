@@ -6,6 +6,7 @@ export const GET_WORKSPACE_FROM_INVITE_HASH = gql`
       id
       displayName
       logo
+      allowImpersonation
     }
   }
 `;
