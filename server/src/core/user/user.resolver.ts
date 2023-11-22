@@ -19,11 +19,9 @@ import { AuthUser } from 'src/decorators/auth-user.decorator';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { FileUploadService } from 'src/core/file/services/file-upload.service';
-import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { assert } from 'src/utils/assert';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { User } from 'src/core/user/user.entity';
-import { Workspace } from 'src/core/workspace/workspace.entity';
 import { UserWorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
 
 import { UserService } from './services/user.service';
@@ -96,10 +94,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  async deleteUser(
-    @AuthUser() { id: userId }: User,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
-  ) {
-    return this.userService.deleteUser({ userId, workspaceId });
+  async deleteUser(@AuthUser() { id: userId }: User) {
+    return this.userService.deleteUser(userId);
   }
 }

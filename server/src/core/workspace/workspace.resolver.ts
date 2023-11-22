@@ -65,6 +65,7 @@ export class WorkspaceResolver {
 
   @Mutation(() => Workspace)
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
+    console.log('allu');
     return this.workspaceService.deleteWorkspace(id);
   }
 }
