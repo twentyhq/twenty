@@ -127,7 +127,7 @@ const StyledCompactIconContainer = styled.div`
 export const CompanyBoardCard = () => {
   const { BoardRecoilScopeContext } = useBoardContext();
 
-  const { currentCardSelected, setCurrentCardSelected } =
+  const { isCurrentCardSelected, setCurrentCardSelected } =
     useCurrentCardSelected();
   const boardCardId = useContext(BoardCardIdContext);
 
@@ -200,9 +200,9 @@ export const CompanyBoardCard = () => {
   return (
     <StyledBoardCardWrapper>
       <StyledBoardCard
-        selected={currentCardSelected}
+        selected={isCurrentCardSelected}
         onMouseLeave={OnMouseLeaveBoard}
-        onClick={() => setCurrentCardSelected(!currentCardSelected)}
+        onClick={() => setCurrentCardSelected(!isCurrentCardSelected)}
       >
         <StyledBoardCardHeader showCompactView={showCompactView}>
           <CompanyChip
@@ -225,8 +225,8 @@ export const CompanyBoardCard = () => {
           )}
           <StyledCheckboxContainer className="checkbox-container">
             <Checkbox
-              checked={currentCardSelected}
-              onChange={() => setCurrentCardSelected(!currentCardSelected)}
+              checked={isCurrentCardSelected}
+              onChange={() => setCurrentCardSelected(!isCurrentCardSelected)}
               variant={CheckboxVariant.Secondary}
             />
           </StyledCheckboxContainer>

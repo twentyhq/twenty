@@ -1,5 +1,4 @@
 import { useCallback, useRef } from 'react';
-import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useRecoilValue } from 'recoil';
@@ -9,6 +8,9 @@ import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { StyledBoard } from '@/ui/layout/board/components/StyledBoard';
 import { BoardColumnContext } from '@/ui/layout/board/contexts/BoardColumnContext';
+import { useSetCardSelected } from '@/ui/layout/board/hooks/useSetCardSelected';
+import { useUpdateBoardCardIds } from '@/ui/layout/board/hooks/useUpdateBoardCardIds';
+import { boardColumnsState } from '@/ui/layout/board/states/boardColumnsState';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -16,10 +18,6 @@ import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope'
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { logError } from '~/utils/logError';
 
-import { useCurrentCardSelected } from '../hooks/useCurrentCardSelected';
-import { useSetCardSelected } from '../hooks/useSetCardSelected';
-import { useUpdateBoardCardIds } from '../hooks/useUpdateBoardCardIds';
-import { boardColumnsState } from '../states/boardColumnsState';
 import { BoardColumnRecoilScopeContext } from '../states/recoil-scope-contexts/BoardColumnRecoilScopeContext';
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptions } from '../types/BoardOptions';
@@ -53,16 +51,13 @@ export const EntityBoard = ({
   onEditColumnTitle,
 }: EntityBoardProps) => {
   const boardColumns = useRecoilValue(boardColumnsState);
-  const setCardSelected = useSetCardSelected();
 
   const { updateOneObject: updateOneOpportunity } =
     useUpdateOneObjectRecord<Opportunity>({
       objectNameSingular: 'opportunity',
     });
 
-  const apolloClient = useApolloClient();
-
-  const { unselectAllActiveCards } = useCurrentCardSelected();
+  const { unselectAllActiveCards, setCardSelected } = useSetCardSelected();
 
   const updatePipelineProgressStageInDB = useCallback(
     async (pipelineProgressId: string, pipelineStepId: string) => {
@@ -72,19 +67,8 @@ export const EntityBoard = ({
           pipelineStepId: pipelineStepId,
         },
       });
-
-      const cache = apolloClient.cache;
-      cache.modify({
-        id: cache.identify({
-          id: pipelineProgressId,
-          __typename: 'PipelineProgress',
-        }),
-        fields: {
-          pipelineStepId: () => pipelineStepId,
-        },
-      });
     },
-    [apolloClient.cache, updateOneOpportunity],
+    [updateOneOpportunity],
   );
 
   useListenClickOutsideByClassName({
@@ -135,7 +119,7 @@ export const EntityBoard = ({
     PageHotkeyScope.OpportunitiesPage,
   );
 
-  return (boardColumns?.length ?? 0) > 0 ? (
+  return (
     <StyledWrapper>
       <StyledBoardHeader />
       <ScrollWrapper>
@@ -172,7 +156,5 @@ export const EntityBoard = ({
         onDragSelectionChange={setCardSelected}
       />
     </StyledWrapper>
-  ) : (
-    <></>
   );
 };
