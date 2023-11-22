@@ -7,6 +7,11 @@ export const turnSortsIntoOrderByV2 = (
   fields: Pick<Field, 'id' | 'name'>[],
 ) => {
   const sortsObject: Record<string, 'AscNullsFirst' | 'DescNullsLast'> = {};
+  if (!sorts.length) {
+    return {
+      createdAt: 'DescNullsFirst',
+    };
+  }
   sorts.forEach((sort) => {
     const correspondingField = fields.find(
       (field) => field.id === sort.fieldMetadataId,
