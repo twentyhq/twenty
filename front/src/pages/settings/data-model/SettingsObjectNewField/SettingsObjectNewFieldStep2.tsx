@@ -206,6 +206,7 @@ export const SettingsObjectNewFieldStep2 = () => {
           excludedFieldTypes={[
             FieldMetadataType.Enum,
             FieldMetadataType.Relation,
+            FieldMetadataType.Uuid,
           ]}
           fieldMetadata={{
             icon: formValues.icon,
