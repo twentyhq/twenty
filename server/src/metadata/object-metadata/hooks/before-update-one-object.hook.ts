@@ -48,7 +48,22 @@ export class BeforeUpdateOneObject<T extends UpdateObjectInput>
     }
 
     if (!objectMetadata.isCustom) {
-      throw new BadRequestException("Standard Objects can't be updated");
+      if (
+        Object.keys(instance.update).length === 1 &&
+        instance.update.hasOwnProperty('isActive') &&
+        instance.update.isActive !== undefined
+      ) {
+        return {
+          id: instance.id,
+          update: {
+            isActive: instance.update.isActive,
+          } as T,
+        };
+      }
+
+      throw new BadRequestException(
+        'Only isActive field can be updated for standard objects',
+      );
     }
 
     if (
