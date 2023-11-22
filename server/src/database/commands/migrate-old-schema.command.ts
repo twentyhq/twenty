@@ -166,7 +166,8 @@ export class MigrateOldSchemaCommand extends CommandRunner {
       console.log(`Migrating \x1b[36m${workspaces.length}\x1b[0m workspace(s)`);
       await this.copyPublicData();
       const workspaceMembers: Array<any> = this.cleanIds(
-        await performQuery(`
+        this.cleanIds(
+          await performQuery(`
             SELECT
                 w.id,
                 w."createdAt",
@@ -186,6 +187,8 @@ export class MigrateOldSchemaCommand extends CommandRunner {
             JOIN public."user_settings" AS s
             ON s."id"=w."settingsId"
         `),
+        ),
+        'userId',
       );
       const rawActivities: object[] = this.cleanIds(
         await performQuery(`
