@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 
 import { IconChevronDown } from '@/ui/display/icon';
 import { LightButton } from '@/ui/input/button/components/LightButton';
+import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -60,6 +61,8 @@ export const ObjectSortDropdownButton = ({
     resetState();
   };
 
+  const { icons } = useLazyLoadIcons();
+
   return (
     <DropdownScope dropdownScopeId={ObjectSortDropdownId}>
       <Dropdown
@@ -99,13 +102,13 @@ export const ObjectSortDropdownButton = ({
                 <DropdownMenuItemsContainer>
                   {[...availableSortDefinitions]
                     .sort((a, b) => a.label.localeCompare(b.label))
-                    .map((availableSort, index) => (
+                    .map((availableSortDefinition, index) => (
                       <MenuItem
                         testId={`select-sort-${index}`}
                         key={index}
-                        onClick={() => handleAddSort(availableSort)}
-                        LeftIcon={availableSort.Icon}
-                        text={availableSort.label}
+                        onClick={() => handleAddSort(availableSortDefinition)}
+                        LeftIcon={icons[availableSortDefinition.iconName]}
+                        text={availableSortDefinition.label}
                       />
                     ))}
                 </DropdownMenuItemsContainer>
