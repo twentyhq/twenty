@@ -4,6 +4,7 @@ import { Draggable, Droppable, DroppableProvided } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
 
 import { BoardColumn } from '@/ui/layout/board/components/BoardColumn';
+import { RecordBoardCard } from '@/ui/layout/board/components/RecordBoardCard';
 import { BoardCardIdContext } from '@/ui/layout/board/contexts/BoardCardIdContext';
 import { BoardColumnContext } from '@/ui/layout/board/contexts/BoardColumnContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
@@ -11,8 +12,6 @@ import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope'
 import { boardCardIdsByColumnIdFamilyState } from '../states/boardCardIdsByColumnIdFamilyState';
 import { boardColumnTotalsFamilySelector } from '../states/selectors/boardColumnTotalsFamilySelector';
 import { BoardOptions } from '../types/BoardOptions';
-
-import { EntityBoardCard } from './EntityBoardCard';
 
 const StyledPlaceholder = styled.div`
   min-height: 1px;
@@ -33,7 +32,7 @@ type BoardColumnCardsContainerProps = {
   droppableProvided: DroppableProvided;
 };
 
-type EntityBoardColumnProps = {
+type RecordBoardColumnProps = {
   boardOptions: BoardOptions;
   onDelete?: (columnId: string) => void;
   onTitleEdit: (columnId: string, title: string, color: string) => void;
@@ -55,11 +54,11 @@ const BoardColumnCardsContainer = ({
   );
 };
 
-export const EntityBoardColumn = ({
+export const RecordBoardColumn = ({
   boardOptions,
   onDelete,
   onTitleEdit,
-}: EntityBoardColumnProps) => {
+}: RecordBoardColumnProps) => {
   const column = useContext(BoardColumnContext);
 
   const boardColumnId = column?.id || '';
@@ -91,7 +90,7 @@ export const EntityBoardColumn = ({
           <BoardColumnCardsContainer droppableProvided={droppableProvided}>
             {cardIds.map((cardId, index) => (
               <BoardCardIdContext.Provider value={cardId} key={cardId}>
-                <EntityBoardCard
+                <RecordBoardCard
                   index={index}
                   cardId={cardId}
                   boardOptions={boardOptions}

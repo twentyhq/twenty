@@ -22,9 +22,9 @@ import { BoardColumnRecoilScopeContext } from '../states/recoil-scope-contexts/B
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptions } from '../types/BoardOptions';
 
-import { EntityBoardColumn } from './EntityBoardColumn';
+import { RecordBoardColumn } from './RecordBoardColumn';
 
-export type EntityBoardProps = {
+export type RecordBoardProps = {
   boardOptions: BoardOptions;
   onColumnAdd?: (boardColumn: BoardColumnDefinition) => void;
   onColumnDelete?: (boardColumnId: string) => void;
@@ -45,11 +45,11 @@ const StyledBoardHeader = styled.div`
   z-index: 1;
 `;
 
-export const EntityBoard = ({
+export const RecordBoard = ({
   boardOptions,
   onColumnDelete,
   onEditColumnTitle,
-}: EntityBoardProps) => {
+}: RecordBoardProps) => {
   const boardColumns = useRecoilValue(boardColumnsState);
 
   const { updateOneObject: updateOneOpportunity } =
@@ -140,7 +140,7 @@ export const EntityBoard = ({
                   CustomRecoilScopeContext={BoardColumnRecoilScopeContext}
                   key={column.id}
                 >
-                  <EntityBoardColumn
+                  <RecordBoardColumn
                     boardOptions={boardOptions}
                     onDelete={onColumnDelete}
                     onTitleEdit={onEditColumnTitle}

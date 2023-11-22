@@ -5,11 +5,11 @@ import { mapBoardFieldDefinitionsToViewFields } from '@/companies/utils/mapBoard
 import { BoardOptionsDropdown } from '@/ui/layout/board/components/BoardOptionsDropdown';
 import { BoardOptionsDropdownId } from '@/ui/layout/board/components/constants/BoardOptionsDropdownId';
 import {
-  EntityBoard,
-  EntityBoardProps,
-} from '@/ui/layout/board/components/EntityBoard';
-import { EntityBoardActionBar } from '@/ui/layout/board/components/EntityBoardActionBar';
-import { EntityBoardContextMenu } from '@/ui/layout/board/components/EntityBoardContextMenu';
+  RecordBoard,
+  RecordBoardProps,
+} from '@/ui/layout/board/components/RecordBoard';
+import { RecordBoardActionBar } from '@/ui/layout/board/components/RecordBoardActionBar';
+import { RecordBoardContextMenu } from '@/ui/layout/board/components/RecordBoardContextMenu';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { ViewScope } from '@/views/scopes/ViewScope';
@@ -27,7 +27,7 @@ const StyledContainer = styled.div`
 `;
 
 type CompanyBoardProps = Pick<
-  EntityBoardProps,
+  RecordBoardProps,
   'onColumnAdd' | 'onColumnDelete' | 'onEditColumnTitle'
 >;
 
@@ -61,14 +61,14 @@ export const CompanyBoard = ({
             optionsDropdownScopeId={BoardOptionsDropdownId}
           />
           <HooksCompanyBoardEffect />
-          <EntityBoard
+          <RecordBoard
             boardOptions={opportunitiesBoardOptions}
             onColumnAdd={onColumnAdd}
             onColumnDelete={onColumnDelete}
             onEditColumnTitle={onEditColumnTitle}
           />
-          <EntityBoardActionBar />
-          <EntityBoardContextMenu />
+          <RecordBoardActionBar />
+          <RecordBoardContextMenu />
         </BoardContext.Provider>
       </StyledContainer>
     </ViewScope>
