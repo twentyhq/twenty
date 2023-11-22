@@ -40,7 +40,7 @@ const StyledEditModeInput = styled.input`
   width: 100%;
 `;
 
-export type RecordBoardColumnEditTitleMenuProps = {
+type RecordBoardColumnEditTitleMenuProps = {
   onClose: () => void;
   onDelete?: (id: string) => void;
   title: string;
