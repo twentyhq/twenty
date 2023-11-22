@@ -1,7 +1,6 @@
 import { Activity } from '@/activities/types/Activity';
 import { IconUserCircle } from '@/ui/display/icon';
 import { FilterDefinitionByEntity } from '@/ui/object/object-filter-dropdown/types/FilterDefinitionByEntity';
-import { FilterDropdownUserSearchSelect } from '@/users/components/FilterDropdownUserSearchSelect';
 
 export const tasksFilterDefinitions: FilterDefinitionByEntity<Activity>[] = [
   {
@@ -9,7 +8,8 @@ export const tasksFilterDefinitions: FilterDefinitionByEntity<Activity>[] = [
     label: 'Assignee',
     iconName: 'IconUser',
     type: 'RELATION',
-    entitySelectComponent: <FilterDropdownUserSearchSelect />,
+    relationObjectMetadataNamePlural: 'workspaceMembers',
+    relationObjectMetadataNameSingular: 'workspaceMember',
     selectAllLabel: 'All assignees',
     SelectAllIcon: IconUserCircle,
   },
