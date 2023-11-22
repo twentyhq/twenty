@@ -115,11 +115,7 @@ export const BoardOptionsDropdownContent = ({
 
   const handleReorderField: OnDragEndResponder = useCallback(
     (result) => {
-      if (
-        !result.destination ||
-        result.destination.index === 1 ||
-        result.source.index === 1
-      ) {
+      if (!result.destination) {
         return;
       }
 
@@ -240,7 +236,6 @@ export const BoardOptionsDropdownContent = ({
               fields={hiddenBoardCardFields}
               onVisibilityChange={handleFieldVisibilityChange}
               isDraggable={false}
-              onDragEnd={handleReorderField}
             />
           )}
         </>
