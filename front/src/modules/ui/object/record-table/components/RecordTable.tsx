@@ -1,10 +1,17 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilCallback } from 'recoil';
 
 import { RecordTableInternalEffect } from '@/ui/object/record-table/components/RecordTableInternalEffect';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
+import {
+  RecordTableScope,
+  RecordTableScope,
+} from '@/ui/object/record-table/scopes/RecordTableScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useViewFields } from '@/views/hooks/internal/useViewFields';
+import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
 
@@ -71,34 +78,48 @@ const StyledTableContainer = styled.div`
 `;
 
 type RecordTableProps = {
+  recordTableId: string;
+  viewId: string;
   updateEntityMutation: (params: any) => void;
 };
 
-export const RecordTable = ({ updateEntityMutation }: RecordTableProps) => {
+export const RecordTable = ({
+  recordTableId,
+  viewId,
+  updateEntityMutation,
+}: RecordTableProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
   const { resetTableRowSelection, setRowSelectedState } = useRecordTable();
+  const { persistViewFields } = useViewFields(viewId);
 
   return (
-    <ScrollWrapper>
-      <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
-        <StyledTableWithHeader>
-          <StyledTableContainer>
-            <div ref={tableBodyRef}>
-              <StyledTable className="entity-table-cell">
-                <RecordTableHeader />
-                <RecordTableBody />
-              </StyledTable>
-              <DragSelect
-                dragSelectable={tableBodyRef}
-                onDragSelectionStart={resetTableRowSelection}
-                onDragSelectionChange={setRowSelectedState}
-              />
-            </div>
-            <RecordTableInternalEffect tableBodyRef={tableBodyRef} />
-          </StyledTableContainer>
-        </StyledTableWithHeader>
-      </EntityUpdateMutationContext.Provider>
-    </ScrollWrapper>
+    <RecordTableScope
+      recordTableScopeId={recordTableId}
+      onColumnsChange={useRecoilCallback(() => (columns) => {
+        persistViewFields(mapColumnDefinitionsToViewFields(columns));
+      })}
+    >
+      <ScrollWrapper>
+        <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
+          <StyledTableWithHeader>
+            <StyledTableContainer>
+              <div ref={tableBodyRef}>
+                <StyledTable className="entity-table-cell">
+                  <RecordTableHeader />
+                  <RecordTableBody />
+                </StyledTable>
+                <DragSelect
+                  dragSelectable={tableBodyRef}
+                  onDragSelectionStart={resetTableRowSelection}
+                  onDragSelectionChange={setRowSelectedState}
+                />
+              </div>
+              <RecordTableInternalEffect tableBodyRef={tableBodyRef} />
+            </StyledTableContainer>
+          </StyledTableWithHeader>
+        </EntityUpdateMutationContext.Provider>
+      </ScrollWrapper>
+    </RecordTableScope>
   );
 };

@@ -8,13 +8,17 @@ import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
 
-export const RecordTableEffect = () => {
+export const RecordTableEffect = ({
+  recordTableId,
+}: {
+  recordTableId: string;
+}) => {
   const {
     scopeId: objectNamePlural,
     setAvailableTableColumns,
     setOnEntityCountChange,
     setObjectMetadataConfig,
-  } = useRecordTable();
+  } = useRecordTable({ recordTableScopeId: recordTableId });
 
   const {
     objectMetadataItem,
