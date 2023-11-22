@@ -35,7 +35,6 @@ export const useObjectRecordTable = () => {
     tableFilters,
     foundObjectMetadataItem?.fields ?? [],
   );
-
   const orderBy = turnSortsIntoOrderByV2(
     tableSorts,
     foundObjectMetadataItem?.fields ?? [],
