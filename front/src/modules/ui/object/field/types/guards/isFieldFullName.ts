@@ -1,7 +1,7 @@
 import { FieldDefinition } from '../FieldDefinition';
-import { FieldCurrencyMetadata, FieldMetadata } from '../FieldMetadata';
+import { FieldFullNameMetadata, FieldMetadata } from '../FieldMetadata';
 
 export const isFieldFullName = (
-  field: FieldDefinition<FieldMetadata>,
-): field is FieldDefinition<FieldCurrencyMetadata> =>
+  field: Pick<FieldDefinition<FieldMetadata>, 'type'>,
+): field is FieldDefinition<FieldFullNameMetadata> =>
   field.type === 'FULL_NAME';

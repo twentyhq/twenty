@@ -6,6 +6,7 @@ import { AuthModal } from '@/auth/components/Modal';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
+import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 import { NavbarAnimatedContainer } from '@/ui/navigation/navbar/components/NavbarAnimatedContainer';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { AppNavbar } from '~/AppNavbar';
@@ -55,10 +56,10 @@ type DefaultLayoutProps = {
 
 export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
   const onboardingStatus = useOnboardingStatus();
-
   return (
     <StyledLayout>
       <CommandMenu />
+      <KeyboardShortcutMenu />
       <NavbarAnimatedContainer>
         <AppNavbar />
       </NavbarAnimatedContainer>

@@ -1,8 +1,8 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const attachmentMetadata = {
-  nameSingular: 'attachmentV2',
-  namePlural: 'attachmentsV2',
+  nameSingular: 'attachment',
+  namePlural: 'attachments',
   labelSingular: 'Attachment',
   labelPlural: 'Attachments',
   targetTableName: 'attachment',

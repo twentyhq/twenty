@@ -1,8 +1,8 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const apiKeyMetadata = {
-  nameSingular: 'apiKeyV2',
-  namePlural: 'apiKeysV2',
+  nameSingular: 'apiKey',
+  namePlural: 'apiKeys',
   labelSingular: 'Api Key',
   labelPlural: 'Api Keys',
   targetTableName: 'apiKey',
@@ -27,7 +27,7 @@ const apiKeyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.DATE,
+      type: FieldMetadataType.DATE_TIME,
       name: 'expiresAt',
       label: 'Expiration date',
       targetColumnMap: {
@@ -40,7 +40,7 @@ const apiKeyMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.DATE,
+      type: FieldMetadataType.DATE_TIME,
       name: 'revokedAt',
       label: 'Revocation date',
       targetColumnMap: {

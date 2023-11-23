@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import debounce from 'lodash.debounce';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
 
@@ -48,12 +46,10 @@ export const NameField = ({
       try {
         const { data, errors } = await updateWorkspace({
           variables: {
-            data: {
+            input: {
               displayName: name,
             },
           },
-          refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
-          awaitRefetchQueries: true,
         });
 
         if (errors || !data?.updateWorkspace) {

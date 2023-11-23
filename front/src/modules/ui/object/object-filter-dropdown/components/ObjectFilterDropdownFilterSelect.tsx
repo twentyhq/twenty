@@ -1,3 +1,4 @@
+import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
@@ -14,31 +15,35 @@ export const ObjectFilterDropdownFilterSelect = () => {
     availableFilterDefinitions,
   } = useFilter();
 
+  const { icons } = useLazyLoadIcons();
+
   const setHotkeyScope = useSetHotkeyScope();
 
   return (
     <DropdownMenuItemsContainer>
-      {availableFilterDefinitions.map((availableFilterDefinition, index) => (
-        <MenuItem
-          key={`select-filter-${index}`}
-          testId={`select-filter-${index}`}
-          onClick={() => {
-            setFilterDefinitionUsedInDropdown(availableFilterDefinition);
+      {[...availableFilterDefinitions]
+        .sort((a, b) => a.label.localeCompare(b.label))
+        .map((availableFilterDefinition, index) => (
+          <MenuItem
+            key={`select-filter-${index}`}
+            testId={`select-filter-${index}`}
+            onClick={() => {
+              setFilterDefinitionUsedInDropdown(availableFilterDefinition);
 
-            if (availableFilterDefinition.type === 'ENTITY') {
-              setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
-            }
+              if (availableFilterDefinition.type === 'RELATION') {
+                setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
+              }
 
-            setSelectedOperandInDropdown(
-              getOperandsForFilterType(availableFilterDefinition.type)?.[0],
-            );
+              setSelectedOperandInDropdown(
+                getOperandsForFilterType(availableFilterDefinition.type)?.[0],
+              );
 
-            setObjectFilterDropdownSearchInput('');
-          }}
-          LeftIcon={availableFilterDefinition.Icon}
-          text={availableFilterDefinition.label}
-        />
-      ))}
+              setObjectFilterDropdownSearchInput('');
+            }}
+            LeftIcon={icons[availableFilterDefinition.iconName]}
+            text={availableFilterDefinition.label}
+          />
+        ))}
     </DropdownMenuItemsContainer>
   );
 };

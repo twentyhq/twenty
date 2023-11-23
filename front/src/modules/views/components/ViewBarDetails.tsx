@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
+import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { AddObjectFilterFromDetailsButton } from '@/ui/object/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { getOperandLabelShort } from '@/ui/object/object-filter-dropdown/utils/getOperandLabel';
 
@@ -95,6 +96,7 @@ export const ViewBarDetails = ({
     canPersistSortsSelector,
     isViewBarExpandedState,
   } = useViewScopedStates();
+  const { icons } = useLazyLoadIcons();
 
   const currentViewSorts = useRecoilValue(currentViewSortsState);
   const currentViewFilters = useRecoilValue(currentViewFiltersState);
@@ -149,7 +151,7 @@ export const ViewBarDetails = ({
                 labelValue={`${getOperandLabelShort(filter.operand)} ${
                   filter.displayValue
                 }`}
-                Icon={filter.definition.Icon}
+                Icon={icons[filter.definition.iconName]}
                 onRemove={() => {
                   removeViewFilter(filter.fieldMetadataId);
                 }}

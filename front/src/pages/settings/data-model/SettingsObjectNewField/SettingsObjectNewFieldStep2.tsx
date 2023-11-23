@@ -29,7 +29,6 @@ export const SettingsObjectNewFieldStep2 = () => {
     findActiveObjectMetadataItemBySlug,
     findObjectMetadataItemById,
     findObjectMetadataItemByNamePlural,
-    loading,
   } = useObjectMetadataItemForSettings();
 
   const activeObjectMetadataItem =
@@ -45,7 +44,6 @@ export const SettingsObjectNewFieldStep2 = () => {
   } = useFieldMetadataForm();
 
   useEffect(() => {
-    if (loading) return;
     if (!activeObjectMetadataItem) {
       navigate(AppPath.NotFound);
       return;
@@ -54,14 +52,14 @@ export const SettingsObjectNewFieldStep2 = () => {
     initForm({
       relation: {
         field: { icon: activeObjectMetadataItem.icon },
-        objectMetadataId: findObjectMetadataItemByNamePlural('peopleV2')?.id,
+        objectMetadataId: findObjectMetadataItemByNamePlural('people')?.id,
       },
     });
   }, [
     activeObjectMetadataItem,
     findObjectMetadataItemByNamePlural,
     initForm,
-    loading,
+
     navigate,
   ]);
 
@@ -69,11 +67,11 @@ export const SettingsObjectNewFieldStep2 = () => {
   const [relationObjectViews, setRelationObjectViews] = useState<View[]>([]);
 
   const { createOneObject: createOneViewField } = useCreateOneObjectRecord({
-    objectNameSingular: 'viewFieldV2',
+    objectNameSingular: 'viewField',
   });
 
   useFindManyObjectRecords({
-    objectNamePlural: 'viewsV2',
+    objectNamePlural: 'views',
     filter: {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: activeObjectMetadataItem?.id },
@@ -88,7 +86,7 @@ export const SettingsObjectNewFieldStep2 = () => {
   });
 
   useFindManyObjectRecords({
-    objectNamePlural: 'viewsV2',
+    objectNamePlural: 'views',
     skip: !formValues.relation?.objectMetadataId,
     filter: {
       type: { eq: ViewType.Table },
@@ -205,6 +203,11 @@ export const SettingsObjectNewFieldStep2 = () => {
           onChange={handleFormChange}
         />
         <SettingsObjectFieldTypeSelectSection
+          excludedFieldTypes={[
+            FieldMetadataType.Enum,
+            FieldMetadataType.Relation,
+            FieldMetadataType.Uuid,
+          ]}
           fieldMetadata={{
             icon: formValues.icon,
             label: formValues.label || 'Employees',

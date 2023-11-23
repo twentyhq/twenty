@@ -2,7 +2,7 @@ import { useApolloClient } from '@apollo/client';
 import { produce } from 'immer';
 import { useRecoilCallback } from 'recoil';
 
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { Sort } from '@/ui/object/object-sort-dropdown/types/Sort';
 import { savedViewSortsScopedFamilyState } from '@/views/states/savedViewSortsScopedFamilyState';
 import { ViewSort } from '@/views/types/ViewSort';
@@ -11,14 +11,10 @@ import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScope
 import { useViewScopedStates } from './useViewScopedStates';
 
 export const useViewSorts = (viewScopeId: string) => {
-  const {
-    updateOneMutation,
-    createOneMutation,
-    deleteOneMutation,
-    findManyQuery,
-  } = useFindOneObjectMetadataItem({
-    objectNameSingular: 'viewSortV2',
-  });
+  const { updateOneMutation, createOneMutation, deleteOneMutation } =
+    useObjectMetadataItem({
+      objectNameSingular: 'viewSort',
+    });
   const apolloClient = useApolloClient();
 
   const { currentViewSortsState } = useViewScopedStates({
@@ -59,7 +55,6 @@ export const useViewSorts = (viewScopeId: string) => {
                     direction: viewSort.direction,
                   },
                 },
-                refetchQueries: [findManyQuery],
               }),
             ),
           );
@@ -132,7 +127,6 @@ export const useViewSorts = (viewScopeId: string) => {
       apolloClient,
       createOneMutation,
       deleteOneMutation,
-      findManyQuery,
       updateOneMutation,
       viewScopeId,
     ],

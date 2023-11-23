@@ -2,12 +2,13 @@ import { useParams } from 'react-router-dom';
 import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
+import { CompanyTeam } from '@/companies/components/CompanyTeam';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { filterAvailableFieldMetadataItem } from '@/object-record/utils/filterAvailableFieldMetadataItem';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
-import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
+import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageFavoriteButton } from '@/ui/layout/page/PageFavoriteButton';
@@ -36,14 +37,14 @@ export const RecordShowPage = () => {
     objectMetadataId: string;
   }>();
 
-  const { icons } = useLazyLoadIcons();
-
-  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 
+  const { identifiersMapper } = useRelationPicker();
+
   const { favorites, createFavorite, deleteFavorite } = useFavorites({
-    objectNamePlural: foundObjectMetadataItem?.namePlural,
+    objectNamePlural: objectMetadataItem?.namePlural,
   });
 
   const [, setEntityFields] = useRecoilState(
@@ -91,7 +92,7 @@ export const RecordShowPage = () => {
     if (isFavorite) deleteFavorite(object?.id);
     else {
       const additionalData =
-        objectNameSingular === 'personV2'
+        objectNameSingular === 'person'
           ? {
               labelIdentifier:
                 object.name.firstName + ' ' + object.name.lastName,
@@ -100,7 +101,7 @@ export const RecordShowPage = () => {
               link: `/object/personV2/${object.id}`,
               recordId: object.id,
             }
-          : objectNameSingular === 'companyV2'
+          : objectNameSingular === 'company'
           ? {
               labelIdentifier: object.name,
               avatarUrl: getLogoUrlFromDomainName(object.domainName ?? ''),
@@ -116,9 +117,14 @@ export const RecordShowPage = () => {
   if (!object) return <></>;
 
   const pageName =
-    objectNameSingular === 'personV2'
+    objectNameSingular === 'person'
       ? object.name.firstName + ' ' + object.name.lastName
       : object.name;
+
+  const recordIdentifiers = identifiersMapper?.(
+    object,
+    objectMetadataItem?.nameSingular ?? '',
+  );
 
   return (
     <PageContainer>
@@ -146,15 +152,15 @@ export const RecordShowPage = () => {
             <ShowPageLeftContainer>
               <ShowPageSummaryCard
                 id={object.id}
-                logoOrAvatar={''}
-                title={object.name ?? 'No name'}
+                logoOrAvatar={recordIdentifiers?.avatarUrl}
+                title={recordIdentifiers?.name ?? 'No name'}
                 date={object.createdAt ?? ''}
                 renderTitleEditComponent={() => <></>}
                 avatarType="squared"
               />
               <PropertyBox extraPadding={true}>
-                {foundObjectMetadataItem &&
-                  [...foundObjectMetadataItem.fields]
+                {objectMetadataItem &&
+                  [...objectMetadataItem.fields]
                     .sort((a, b) =>
                       DateTime.fromISO(a.createdAt)
                         .diff(DateTime.fromISO(b.createdAt))
@@ -168,12 +174,12 @@ export const RecordShowPage = () => {
                           value={{
                             entityId: object.id,
                             recoilScopeId: object.id + metadataField.id,
+                            isLabelIdentifier: false,
                             fieldDefinition:
                               formatFieldMetadataItemAsColumnDefinition({
                                 field: metadataField,
                                 position: index,
-                                objectMetadataItem: foundObjectMetadataItem,
-                                icons,
+                                objectMetadataItem,
                               }),
                             useUpdateEntityMutation: useUpdateOneObjectMutation,
                             hotkeyScope: InlineCellHotkeyScope.InlineCell,
@@ -184,11 +190,24 @@ export const RecordShowPage = () => {
                       );
                     })}
               </PropertyBox>
+              {objectNameSingular === 'company' ? (
+                <>
+                  <CompanyTeam company={object} />
+                </>
+              ) : (
+                <></>
+              )}
             </ShowPageLeftContainer>
             <ShowPageRightContainer
               entity={{
                 id: object.id,
-                type: 'Company',
+                // TODO: refacto
+                type:
+                  objectMetadataItem?.nameSingular === 'company'
+                    ? 'Company'
+                    : objectMetadataItem?.nameSingular === 'person'
+                    ? 'Person'
+                    : 'Person',
               }}
               timeline
               tasks

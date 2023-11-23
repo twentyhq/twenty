@@ -1,8 +1,8 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const workspaceMemberMetadata = {
-  nameSingular: 'workspaceMemberV2',
-  namePlural: 'workspaceMembersV2',
+  nameSingular: 'workspaceMember',
+  namePlural: 'workspaceMembers',
   labelSingular: 'Workspace Member',
   labelPlural: 'Workspace Members',
   targetTableName: 'workspaceMember',
@@ -25,19 +25,6 @@ const workspaceMemberMetadata = {
       icon: 'IconCircleUser',
       isNullable: false,
       defaultValue: { firstName: '', lastName: '' },
-    },
-    {
-      isCustom: false,
-      isActive: true,
-      type: FieldMetadataType.BOOLEAN,
-      name: 'allowImpersonation',
-      label: 'Admin Access',
-      targetColumnMap: {
-        value: 'allowImpersonation',
-      },
-      description: 'Allow Admin Access',
-      icon: 'IconEye',
-      isNullable: false,
     },
     {
       isCustom: false,

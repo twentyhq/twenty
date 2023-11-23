@@ -40,7 +40,7 @@ export const useToggleEditOnlyInput = () => {
           });
         } else {
           throw new Error(
-            `Invalid value to toggle for type : ${fieldDefinition.type}, type may not be implemented in useToggleEditOnlyInput.`,
+            `Invalid value to toggle for type : ${fieldDefinition}, type may not be implemented in useToggleEditOnlyInput.`,
           );
         }
       },

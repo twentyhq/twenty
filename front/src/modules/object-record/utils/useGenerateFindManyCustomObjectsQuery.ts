@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
-import { EMPTY_QUERY } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
+import { EMPTY_QUERY } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { capitalize } from '~/utils/string/capitalize';
 

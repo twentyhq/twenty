@@ -59,9 +59,6 @@ server-database-setup:
 server-database-migrate:
 	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:migrate"
 
-server-database-generate:
-	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:generate"
-
 server-database-seed:
 	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:seed"
 

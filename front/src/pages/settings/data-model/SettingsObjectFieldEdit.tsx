@@ -24,7 +24,7 @@ export const SettingsObjectFieldEdit = () => {
   const navigate = useNavigate();
 
   const { objectSlug = '', fieldSlug = '' } = useParams();
-  const { findActiveObjectMetadataItemBySlug, loading } =
+  const { findActiveObjectMetadataItemBySlug } =
     useObjectMetadataItemForSettings();
 
   const activeObjectMetadataItem =
@@ -49,13 +49,12 @@ export const SettingsObjectFieldEdit = () => {
     hasFormChanged,
     hasRelationFormChanged,
     initForm,
+    isInitialized,
     isValid,
     validatedFormValues,
   } = useFieldMetadataForm();
 
   useEffect(() => {
-    if (loading) return;
-
     if (!activeObjectMetadataItem || !activeMetadataField) {
       navigate(AppPath.NotFound);
       return;
@@ -79,7 +78,6 @@ export const SettingsObjectFieldEdit = () => {
     activeMetadataField,
     activeObjectMetadataItem,
     initForm,
-    loading,
     navigate,
     relationFieldMetadataItem?.icon,
     relationFieldMetadataItem?.label,
@@ -87,7 +85,8 @@ export const SettingsObjectFieldEdit = () => {
     relationType,
   ]);
 
-  if (!activeObjectMetadataItem || !activeMetadataField) return null;
+  if (!isInitialized || !activeObjectMetadataItem || !activeMetadataField)
+    return null;
 
   const canSave = isValid && hasFormChanged;
 
@@ -160,7 +159,7 @@ export const SettingsObjectFieldEdit = () => {
           }}
           objectMetadataId={activeObjectMetadataItem.id}
           onChange={handleFormChange}
-          relationFieldMetadataId={relationFieldMetadataItem?.id}
+          relationFieldMetadata={relationFieldMetadataItem}
           values={{
             type: formValues.type,
             relation: formValues.relation,

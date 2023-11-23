@@ -1,8 +1,8 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const pipelineStepMetadata = {
-  nameSingular: 'pipelineStepV2',
-  namePlural: 'pipelineStepsV2',
+  nameSingular: 'pipelineStep',
+  namePlural: 'pipelineSteps',
   labelSingular: 'Pipeline Step',
   labelPlural: 'Pipeline Steps',
   targetTableName: 'pipelineStep',

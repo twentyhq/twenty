@@ -188,8 +188,8 @@ export const mockedObjectMetadataItems = {
       node: {
         id: 'b25eb5e6-9fdc-4df2-a039-40ccea4c8032',
         dataSourceId: '',
-        nameSingular: 'viewV2',
-        namePlural: 'viewsV2',
+        nameSingular: 'view',
+        namePlural: 'views',
         labelSingular: 'View',
         labelPlural: 'Views',
         description: '(System) Views',
@@ -269,8 +269,8 @@ export const mockedObjectMetadataItems = {
       node: {
         id: 'c419540f-ff6e-47bf-9d87-3aa366afd8e4',
         dataSourceId: '',
-        nameSingular: 'viewFieldV2',
-        namePlural: 'viewFieldsV2',
+        nameSingular: 'viewField',
+        namePlural: 'viewFields',
         labelSingular: 'View Field',
         labelPlural: 'View Fields',
         description: '(System) View Fields',

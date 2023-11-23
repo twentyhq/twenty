@@ -9,7 +9,7 @@ export interface FieldMetadataDefaultValueNumber {
 export interface FieldMetadataDefaultValueBoolean {
   value: boolean;
 }
-export interface FieldMetadataDefaultValueDate {
+export interface FieldMetadataDefaultValueDateTime {
   value: Date;
 }
 
@@ -17,7 +17,7 @@ type FieldMetadataScalarDefaultValue =
   | FieldMetadataDefaultValueString
   | FieldMetadataDefaultValueNumber
   | FieldMetadataDefaultValueBoolean
-  | FieldMetadataDefaultValueDate;
+  | FieldMetadataDefaultValueDateTime;
 
 export type FieldMetadataDynamicDefaultValue =
   | { type: 'uuid' }
@@ -50,7 +50,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.TEXT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.PHONE]: FieldMetadataDefaultValueString;
   [FieldMetadataType.EMAIL]: FieldMetadataDefaultValueString;
-  [FieldMetadataType.DATE]: FieldMetadataDefaultValueDate;
+  [FieldMetadataType.DATE_TIME]: FieldMetadataDefaultValueDateTime;
   [FieldMetadataType.BOOLEAN]: FieldMetadataDefaultValueBoolean;
   [FieldMetadataType.NUMBER]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.PROBABILITY]: FieldMetadataDefaultValueNumber;

@@ -1,0 +1,164 @@
+---
+title: Radio
+sidebar_position: 7
+sidebar_custom_props:
+  icon: TbCircleDot
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import radioCode from '!!raw-loader!@site/src/ui/input/components/radioCode.js'
+import radioGroupCode from '!!raw-loader!@site/src/ui/input/components/radioGroupCode.js'
+
+Used when users may only choose one option from a series of options. 
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/input/components/Radio']}
+  componentCode={radioCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>style</td>
+      <td>`React.CSS` properties</td>
+      <td>Additional inline styles for the component</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>Optional CSS class for additional styling</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>checked</td>
+      <td>boolean</td>
+      <td>Indicates whether the radio button is checked</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>value</td>
+      <td>string</td>
+      <td>The label or text associated with the radio button</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>onChange</td>
+      <td>function</td>
+      <td>The function called when the selected radio button is changed</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>onCheckedChange</td>
+      <td>function</td>
+      <td>The function called when the `checked` state of the radio button changes</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>size</td>
+      <td>string</td>
+      <td>The size of the radio button. Options include: `large` and `small`</td>
+      <td>small</td>
+    </tr>
+
+    <tr>
+      <td>disabled</td>
+      <td>boolean</td>
+      <td>If `true`, the radio button is disabled and not clickable</td>
+      <td>false</td>
+    </tr>
+
+    <tr>
+      <td>labelPosition</td>
+      <td>string</td>
+      <td>The position of the label text relative to the radio button. Has two options: `left` and `right`</td>
+      <td>right</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>
+
+## Radio Group
+
+Groups together related radio buttons. 
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/input/components/RadioGroup', '@/ui/input/components/Radio']}
+  componentCode={radioGroupCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>value</td>
+      <td>string</td>
+      <td>The value of the currently selected radio button</td>
+    </tr>
+
+    <tr>
+      <td>onChange</td>
+      <td>function</td>
+      <td>The callback function triggered when the radio button is changed</td>
+    </tr>
+
+    <tr>
+      <td>onValueChange</td>
+      <td>function</td>
+      <td>The callback function triggered when the selected value in the group changes.</td>
+    </tr>
+
+    <tr>
+      <td>children</td>
+      <td>`React.ReactNode`</td>
+      <td>Allows you to pass React components (such as Radio) as children to the Radio Group</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>

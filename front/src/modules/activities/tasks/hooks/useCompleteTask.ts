@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
 
+import { Activity } from '@/activities/types/Activity';
 import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
-import { Activity } from '~/generated/graphql';
 
 type Task = Pick<Activity, 'id' | 'completedAt'>;
 
 export const useCompleteTask = (task: Task) => {
   const { updateOneObject } = useUpdateOneObjectRecord({
-    objectNameSingular: 'activityV2',
+    objectNameSingular: 'activity',
   });
 
   const completeTask = useCallback(

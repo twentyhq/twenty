@@ -1,0 +1,139 @@
+---
+title: App Tooltip
+sidebar_position: 6
+sidebar_custom_props:
+  icon: TbTooltip
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import appTooltipCode from '!!raw-loader!@site/src/ui/display/appTooltipCode.js'
+import overflowingTextWithTooltipCode from '!!raw-loader!@site/src/ui/display/overflowingTextWithTooltipCode.js'
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+
+A brief message that displays additional information when a user interacts with an element.
+
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/display/tooltip/AppTooltip']}
+  componentCode={appTooltipCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>Optional CSS class for additional styling</td>
+    </tr>
+
+    <tr>
+      <td>anchorSelect</td>
+      <td>CSS selector</td>
+      <td>Selector for the tooltip anchor (the element that triggers the tooltip)</td>
+    </tr>
+
+    <tr>
+      <td>content</td>
+      <td>string</td>
+      <td>The content you want to display within the tooltip</td>
+    </tr>
+
+    <tr>
+      <td>delayHide</td>
+      <td>number</td>
+      <td>The delay in seconds before hiding the tooltip after the cursor leaves the anchor</td>
+    </tr>
+
+    <tr>
+      <td>offset</td>
+      <td>number</td>
+      <td>The offset in pixels for positioning the tooltip</td>
+    </tr>
+
+    <tr>
+      <td>noArrow</td>
+      <td>boolean</td>
+      <td>If `true`, hides the arrow on the tooltip</td>
+    </tr>
+
+    <tr>
+      <td>isOpen</td>
+      <td>boolean</td>
+      <td>If `true`, the tooltip is open by default</td>
+    </tr>
+
+    <tr>
+      <td>place</td>
+      <td>`PlacesType` string from `react-tooltip`</td>
+      <td>Specifies the placement of the tooltip. Values include `bottom`, `left`, `right`, `top`, `top-start`, `top-end`, `right-start`, `right-end`, `bottom-start`, `bottom-end`, `left-start`, and `left-end`</td>
+    </tr>
+
+    <tr>
+      <td>positionStrategy</td>
+      <td>`PositionStrategy` string from `react-tooltip`</td>
+      <td>Position strategy for the tooltip. Has two values: `absolute` and `fixed`</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+
+</Tabs>
+
+## Overflowing Text with Tooltip
+
+Handles overflowing text and displays a tooltip when the text overflows. 
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/display/tooltip/OverflowingTextWithTooltip']}
+  componentCode={overflowingTextWithTooltipCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>text</td>
+      <td>string</td>
+      <td>The content you want to display in the overflowing text area</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>

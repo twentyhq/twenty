@@ -1,16 +1,24 @@
-import { useChipField } from '../../hooks/useChipField';
-import { ChipDisplay } from '../content-display/components/ChipDisplay';
+import { EntityChip } from '@/ui/display/chip/components/EntityChip';
+import { useChipField } from '@/ui/object/field/meta-types/hooks/useChipField';
 
 export const ChipFieldDisplay = () => {
-  const { avatarFieldValue, contentFieldValue, entityType, entityId } =
-    useChipField();
+  const {
+    record,
+    entityId,
+    identifiersMapper,
+    objectNameSingular,
+    basePathToShowPage,
+  } = useChipField();
+
+  const identifiers = identifiersMapper?.(record, objectNameSingular ?? '');
 
   return (
-    <ChipDisplay
-      displayName={contentFieldValue}
-      avatarUrlValue={avatarFieldValue}
-      entityType={entityType}
+    <EntityChip
+      name={identifiers?.name ?? ''}
+      avatarUrl={identifiers?.avatarUrl}
+      avatarType={identifiers?.avatarType}
       entityId={entityId}
+      linkToEntity={basePathToShowPage + entityId}
     />
   );
 };

@@ -3,7 +3,6 @@ import { expect, jest } from '@storybook/jest';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { userEvent, waitFor, within } from '@storybook/testing-library';
 
-import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -49,9 +48,9 @@ const RelationFieldInputWithContext = ({
           fieldMetadataId: 'relation',
           label: 'Relation',
           type: 'RELATION',
+          iconName: 'IconLink',
           metadata: {
             fieldName: 'Relation',
-            relationType: Entity.Person,
           },
         }}
         entityId={entityId}

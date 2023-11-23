@@ -10,13 +10,11 @@ import {
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
-import { CREATE_ONE_WORKSPACE_MEMBER_V2 } from '@/object-record/graphql/mutation/createOneWorkspaceMember';
-import { FIND_ONE_WORKSPACE_MEMBER_V2 } from '@/object-record/graphql/queries/findOneWorkspaceMember';
+import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { REACT_APP_SERVER_AUTH_URL } from '~/config';
 import {
   useChallengeMutation,
   useCheckUserExistsLazyQuery,
-  useGetCurrentWorkspaceLazyQuery,
   useSignUpMutation,
   useVerifyMutation,
 } from '~/generated/graphql';
@@ -38,7 +36,6 @@ export const useAuth = () => {
   const [verify] = useVerifyMutation();
   const [checkUserExistsQuery, { data: checkUserExistsData }] =
     useCheckUserExistsLazyQuery();
-  const [getCurrentWorkspaceQuery] = useGetCurrentWorkspaceLazyQuery();
 
   const client = useApolloClient();
 
@@ -81,31 +78,26 @@ export const useAuth = () => {
       }
 
       setTokenPair(verifyResult.data?.verify.tokens);
-      const workspaceMember = await client.query({
-        query: FIND_ONE_WORKSPACE_MEMBER_V2,
-        variables: {
-          filter: {
-            userId: { eq: verifyResult.data?.verify.user.id },
-          },
-        },
-      });
-      const currentWorkspace = await getCurrentWorkspaceQuery();
 
-      setCurrentUser(verifyResult.data?.verify.user);
-      setCurrentWorkspaceMember(workspaceMember.data?.findMany);
-      setCurrentWorkspace(currentWorkspace.data?.currentWorkspace ?? null);
+      const user = verifyResult.data?.verify.user;
+      const workspaceMember = {
+        ...user.workspaceMember,
+        colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
+      };
+      const workspace = user.defaultWorkspace ?? null;
+      setCurrentUser(user);
+      setCurrentWorkspaceMember(workspaceMember);
+      setCurrentWorkspace(workspace);
       return {
-        user: verifyResult.data?.verify.user,
-        workspaceMember: workspaceMember.data?.findMany,
-        workspace: currentWorkspace.data?.currentWorkspace,
+        user,
+        workspaceMember,
+        workspace,
         tokens: verifyResult.data?.verify.tokens,
       };
     },
     [
       verify,
       setTokenPair,
-      client,
-      getCurrentWorkspaceQuery,
       setCurrentUser,
       setCurrentWorkspaceMember,
       setCurrentWorkspace,
@@ -161,38 +153,15 @@ export const useAuth = () => {
         throw new Error('No login token');
       }
 
-      const { user, workspace } = await handleVerify(
+      const { user, workspace, workspaceMember } = await handleVerify(
         signUpResult.data?.signUp.loginToken.token,
       );
-
-      const workspaceMember = await client.mutate({
-        mutation: CREATE_ONE_WORKSPACE_MEMBER_V2,
-        variables: {
-          input: {
-            name: {
-              firstName: user.firstName ?? '',
-              lastName: user.lastName ?? '',
-            },
-            colorScheme: 'Light',
-            userId: user.id,
-            allowImpersonation: true,
-            locale: 'en',
-          },
-        },
-      });
-      setCurrentWorkspaceMember(workspaceMember.data?.createWorkspaceMemberV2);
 
       setIsVerifyPendingState(false);
 
       return { user, workspaceMember, workspace };
     },
-    [
-      setIsVerifyPendingState,
-      signUp,
-      handleVerify,
-      client,
-      setCurrentWorkspaceMember,
-    ],
+    [setIsVerifyPendingState, signUp, handleVerify],
   );
 
   const handleGoogleLogin = useCallback((workspaceInviteHash?: string) => {

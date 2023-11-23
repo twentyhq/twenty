@@ -1,8 +1,8 @@
-import { CompanyProgressPicker } from '@/companies/components/CompanyProgressPicker';
-import { useCreateCompanyProgress } from '@/companies/hooks/useCreateCompanyProgress';
+import { OpportunityPicker } from '@/companies/components/OpportunityPicker';
+import { useCreateOpportunity } from '@/companies/hooks/useCreateOpportunity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { IconPlus } from '@/ui/display/icon/index';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
@@ -18,37 +18,33 @@ export const PipelineAddButton = () => {
     dropdownScopeId: 'add-pipeline-progress',
   });
 
-  const createCompanyProgress = useCreateCompanyProgress();
+  const { createOpportunity } = useCreateOpportunity();
 
   const handleCompanySelected = (
     selectedCompany: EntityForSelect | null,
-    selectedPipelineStageId: string | null,
+    selectedPipelineStepId: string | null,
   ) => {
     if (!selectedCompany?.id) {
       enqueueSnackBar(
         'There was a problem with the company selection, please retry.',
-        {
-          variant: 'error',
-        },
+        { variant: 'error' },
       );
 
       logError('There was a problem with the company selection, please retry.');
       return;
     }
 
-    if (!selectedPipelineStageId) {
+    if (!selectedPipelineStepId) {
       enqueueSnackBar(
         'There was a problem with the pipeline stage selection, please retry.',
-        {
-          variant: 'error',
-        },
+        { variant: 'error' },
       );
 
-      logError('There was a problem with the pipeline stage selection.');
+      logError('There was a problem with the pipeline step selection.');
       return;
     }
     closeDropdown();
-    createCompanyProgress(selectedCompany.id, selectedPipelineStageId);
+    createOpportunity(selectedCompany.id, selectedPipelineStepId);
   };
 
   return (
@@ -65,7 +61,7 @@ export const PipelineAddButton = () => {
           />
         }
         dropdownComponents={
-          <CompanyProgressPicker
+          <OpportunityPicker
             companyId={null}
             onSubmit={handleCompanySelected}
             onCancel={closeDropdown}

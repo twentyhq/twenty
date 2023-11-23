@@ -1,8 +1,8 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const activityTargetMetadata = {
-  nameSingular: 'activityTargetV2',
-  namePlural: 'activityTargetsV2',
+  nameSingular: 'activityTarget',
+  namePlural: 'activityTargets',
   labelSingular: 'Activity Target',
   labelPlural: 'Activity Targets',
   targetTableName: 'activityTarget',

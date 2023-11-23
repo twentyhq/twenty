@@ -7,16 +7,13 @@ import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdo
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { Comment } from '@/activities/types/Comment';
+import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
+import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/ui/object/record-inline-cell/property-box/components/PropertyBox';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { debounce } from '~/utils/debounce';
-
-import { ActivityAssigneeEditableField } from '../editable-fields/components/ActivityAssigneeEditableField';
-import { ActivityEditorDateField } from '../editable-fields/components/ActivityEditorDateField';
-import { ActivityRelationEditableField } from '../editable-fields/components/ActivityRelationEditableField';
 
 import { ActivityTitle } from './ActivityTitle';
 
@@ -84,8 +81,23 @@ export const ActivityEditor = ({
   );
   const containerRef = useRef<HTMLDivElement>(null);
   const { updateOneObject } = useUpdateOneObjectRecord<Activity>({
-    objectNameSingular: 'activityV2',
+    objectNameSingular: 'activity',
   });
+
+  const { FieldContextProvider: DueAtFieldContextProvider } = useFieldContext({
+    objectNameSingular: 'activity',
+    objectRecordId: activity.id,
+    fieldMetadataName: 'dueAt',
+    fieldPosition: 0,
+  });
+
+  const { FieldContextProvider: AssigneeFieldContextProvider } =
+    useFieldContext({
+      objectNameSingular: 'activity',
+      objectRecordId: activity.id,
+      fieldMetadataName: 'assignee',
+      fieldPosition: 1,
+    });
 
   const updateTitle = useCallback(
     (newTitle: string) => {
@@ -142,17 +154,19 @@ export const ActivityEditor = ({
             onCompletionChange={handleActivityCompletionChange}
           />
           <PropertyBox>
-            {activity.type === 'Task' && (
-              <>
-                <RecoilScope>
-                  <ActivityEditorDateField activityId={activity.id} />
-                </RecoilScope>
-                <RecoilScope>
-                  <ActivityAssigneeEditableField activity={activity} />
-                </RecoilScope>
-              </>
-            )}
-            <ActivityRelationEditableField activity={activity} />
+            {activity.type === 'Task' &&
+              DueAtFieldContextProvider &&
+              AssigneeFieldContextProvider && (
+                <>
+                  <DueAtFieldContextProvider>
+                    <RecordInlineCell />
+                  </DueAtFieldContextProvider>
+                  <AssigneeFieldContextProvider>
+                    <RecordInlineCell />
+                  </AssigneeFieldContextProvider>
+                </>
+              )}
+            {/* <ActivityRelationEditableField activity={activity} /> */}
           </PropertyBox>
         </StyledTopContainer>
         <ActivityBodyEditor
@@ -162,10 +176,7 @@ export const ActivityEditor = ({
       </StyledUpperPartContainer>
       {showComment && (
         <ActivityComments
-          activity={{
-            id: activity.id,
-            comments: activity.comments ?? [],
-          }}
+          activity={activity}
           scrollableContainerRef={containerRef}
         />
       )}

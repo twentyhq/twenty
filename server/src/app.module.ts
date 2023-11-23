@@ -9,20 +9,19 @@ import { GraphQLError, GraphQLSchema } from 'graphql';
 import { ExtractJwt } from 'passport-jwt';
 import { TokenExpiredError, JsonWebTokenError, verify } from 'jsonwebtoken';
 
+import { WorkspaceFactory } from 'src/workspace/workspace.factory';
+
 import { AppService } from './app.service';
 
 import { CoreModule } from './core/core.module';
 import { IntegrationsModule } from './integrations/integrations.module';
-import { PrismaModule } from './database/prisma.module';
 import { HealthModule } from './health/health.module';
-import { AbilityModule } from './ability/ability.module';
 import { WorkspaceModule } from './workspace/workspace.module';
 import { EnvironmentService } from './integrations/environment/environment.service';
 import {
   JwtAuthStrategy,
   JwtPayload,
 } from './core/auth/strategies/jwt.auth.strategy';
-import { WorkspaceFactory } from './workspace/workspace.factory';
 import { ExceptionFilter } from './filters/exception.filter';
 
 @Module({
@@ -104,9 +103,7 @@ import { ExceptionFilter } from './filters/exception.filter';
       resolvers: { JSON: GraphQLJSON },
       plugins: [],
     }),
-    PrismaModule,
     HealthModule,
-    AbilityModule,
     IntegrationsModule,
     CoreModule,
     WorkspaceModule,

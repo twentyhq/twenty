@@ -8,11 +8,6 @@ import {
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
 
-type CommentHeaderProps = {
-  comment: Pick<Comment, 'id' | 'author' | 'createdAt'>;
-  actionBar?: React.ReactNode;
-};
-
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
@@ -60,6 +55,11 @@ const StyledTooltip = styled(Tooltip)`
   opacity: 1;
   padding: 8px;
 `;
+
+type CommentHeaderProps = {
+  comment: Pick<Comment, 'id' | 'author' | 'createdAt'>;
+  actionBar?: React.ReactNode;
+};
 
 export const CommentHeader = ({ comment, actionBar }: CommentHeaderProps) => {
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(comment.createdAt);

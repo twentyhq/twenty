@@ -35,7 +35,7 @@ export const RightDrawerActivity = ({
   );
 
   const { object: activity } = useFindOneObjectRecord({
-    objectNameSingular: 'activityId',
+    objectNameSingular: 'activity',
     objectRecordId: activityId,
     skip: !activityId,
     onCompleted: (activity: Activity) => {

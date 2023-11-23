@@ -1,5 +1,5 @@
-import { BoardFieldDefinition } from '@/ui/layout/board/types/BoardFieldDefinition';
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
+import { BoardFieldDefinition } from '@/ui/object/record-board/types/BoardFieldDefinition';
 import { assertNotNull } from '~/utils/assert';
 
 import { ViewField } from '../types/ViewField';
@@ -19,11 +19,8 @@ export const mapViewFieldsToBoardFieldDefinitions = (
             fieldMetadataId: viewField.fieldMetadataId,
             label: correspondingFieldMetadata.label,
             metadata: correspondingFieldMetadata.metadata,
-            entityChipDisplayMapper:
-              correspondingFieldMetadata.entityChipDisplayMapper,
             infoTooltipContent: correspondingFieldMetadata.infoTooltipContent,
-            basePathToShowPage: correspondingFieldMetadata.basePathToShowPage,
-            Icon: correspondingFieldMetadata.Icon,
+            iconName: correspondingFieldMetadata.iconName,
             type: correspondingFieldMetadata.type,
             position: viewField.position,
             isVisible: viewField.isVisible,

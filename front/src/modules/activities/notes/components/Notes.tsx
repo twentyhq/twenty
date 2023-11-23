@@ -6,7 +6,6 @@ import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
-import { ActivityType } from '~/generated/graphql';
 
 const StyledTaskGroupEmptyContainer = styled.div`
   align-items: center;
@@ -61,7 +60,7 @@ export const Notes = ({ entity }: { entity: ActivityTargetableEntity }) => {
           variant="secondary"
           onClick={() =>
             openCreateActivity({
-              type: ActivityType.Note,
+              type: 'Note',
               targetableEntities: [entity],
             })
           }
@@ -83,7 +82,7 @@ export const Notes = ({ entity }: { entity: ActivityTargetableEntity }) => {
             title="Add note"
             onClick={() =>
               openCreateActivity({
-                type: ActivityType.Note,
+                type: 'Note',
                 targetableEntities: [entity],
               })
             }

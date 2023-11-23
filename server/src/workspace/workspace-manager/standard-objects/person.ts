@@ -1,8 +1,8 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const personMetadata = {
-  nameSingular: 'personV2',
-  namePlural: 'peopleV2',
+  nameSingular: 'person',
+  namePlural: 'people',
   labelSingular: 'Person',
   labelPlural: 'People',
   targetTableName: 'person',
@@ -23,7 +23,7 @@ const personMetadata = {
       },
       description: 'Contact’s name',
       icon: 'IconUser',
-      isNullable: false,
+      isNullable: true,
     },
     {
       isCustom: false,
@@ -116,7 +116,7 @@ const personMetadata = {
       },
       description: 'Contact’s avatar',
       icon: 'IconFileUpload',
-      isNullable: false,
+      isNullable: true,
     },
     // Relations
     {
@@ -128,7 +128,7 @@ const personMetadata = {
       targetColumnMap: {},
       description: 'Contact’s company',
       icon: 'IconBuildingSkyscraper',
-      isNullable: false,
+      isNullable: true,
       isSystem: false,
     },
     {
@@ -140,7 +140,7 @@ const personMetadata = {
       targetColumnMap: {},
       description: 'Foreign key for company',
       icon: undefined,
-      isNullable: false,
+      isNullable: true,
       isSystem: true,
     },
     {
@@ -151,8 +151,8 @@ const personMetadata = {
       label: 'POC for Opportunities',
       targetColumnMap: {},
       description: 'Point of Contact for Opportunities',
-      icon: 'IconArrowTarget',
-      isNullable: false,
+      icon: 'IconTargetArrow',
+      isNullable: true,
     },
     {
       isCustom: false,

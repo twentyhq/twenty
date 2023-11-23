@@ -1,7 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { View } from '@/views/types/View';
 import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
 
@@ -11,8 +11,8 @@ export const useViews = (scopeId: string) => {
     createOneMutation,
     deleteOneMutation,
     findManyQuery,
-  } = useFindOneObjectMetadataItem({
-    objectNameSingular: 'viewV2',
+  } = useObjectMetadataItem({
+    objectNameSingular: 'view',
   });
   const apolloClient = useApolloClient();
 

@@ -2,16 +2,12 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { Person } from '@/people/types/Person';
 import { IconNotes } from '@/ui/display/icon';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { Avatar } from '@/users/components/Avatar';
-import {
-  QueryMode,
-  useSearchActivityQuery,
-  useSearchCompanyQuery,
-  useSearchPeopleQuery,
-} from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
@@ -49,47 +45,38 @@ export const CommandMenu = () => {
     [toggleCommandMenu, setSearch],
   );
 
-  const { data: peopleData } = useSearchPeopleQuery({
+  const { objects: people } = useFindManyObjectRecords<Person>({
     skip: !isCommandMenuOpened,
-    variables: {
-      where: {
-        OR: [
-          { firstName: { contains: search, mode: QueryMode.Insensitive } },
-          { lastName: { contains: search, mode: QueryMode.Insensitive } },
-        ],
-      },
-      limit: 3,
+    objectNamePlural: 'people',
+    filter: {
+      or: [
+        { name: { firstName: { like: `%${search}%` } } },
+        { name: { firstName: { like: `%${search}%` } } },
+      ],
     },
+    limit: 3,
   });
 
-  const people = peopleData?.searchResults ?? [];
-
-  const { data: companyData } = useSearchCompanyQuery({
+  const { objects: companies } = useFindManyObjectRecords<Person>({
     skip: !isCommandMenuOpened,
-    variables: {
-      where: {
-        OR: [{ name: { contains: search, mode: QueryMode.Insensitive } }],
-      },
-      limit: 3,
+    objectNamePlural: 'companies',
+    filter: {
+      name: { like: `%${search}%` },
     },
+    limit: 3,
   });
 
-  const companies = companyData?.searchResults ?? [];
-
-  const { data: activityData } = useSearchActivityQuery({
+  const { objects: activities } = useFindManyObjectRecords<Person>({
     skip: !isCommandMenuOpened,
-    variables: {
-      where: {
-        OR: [
-          { title: { contains: search, mode: QueryMode.Insensitive } },
-          { body: { contains: search, mode: QueryMode.Insensitive } },
-        ],
-      },
-      limit: 3,
+    objectNamePlural: 'activities',
+    filter: {
+      or: [
+        { title: { like: `%${search}%` } },
+        { body: { like: `%${search}%` } },
+      ],
     },
+    limit: 3,
   });
-
-  const activities = activityData?.searchResults ?? [];
 
   const checkInShortcuts = (cmd: Command, search: string) => {
     return (cmd.firstHotKey + (cmd.secondHotKey ?? ''))

@@ -1,7 +1,11 @@
+import { useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
+import { isNonEmptyArray } from '@sniptt/guards';
 
+import { Company } from '@/companies/types/Company';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { mapPaginatedObjectsToObjects } from '@/object-record/utils/mapPaginatedObjectsToObjects';
 import { PeopleCard } from '@/people/components/PeopleCard';
-import { Company, useGetPeopleQuery } from '~/generated/graphql';
 
 import { AddPersonToCompany } from './AddPersonToCompany';
 
@@ -13,7 +17,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(6)};
 `;
 
 const StyledTitleContainer = styled.div`
@@ -42,34 +46,44 @@ const StyledTitle = styled.div`
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
 `;
 
-export const CompanyTeam = ({ company }: CompanyTeamProps) => {
-  const { data } = useGetPeopleQuery({
+export const CompanyTeam = ({ company }: { company: any }) => {
+  const { findManyQuery } = useObjectMetadataItem({
+    objectNameSingular: 'person',
+  });
+
+  const { data } = useQuery(findManyQuery, {
     variables: {
-      orderBy: [],
-      where: {
+      filter: {
         companyId: {
-          equals: company.id,
+          eq: company.id,
         },
       },
     },
   });
 
-  const peopleIds = data?.people?.map(({ id }) => id);
+  const people = mapPaginatedObjectsToObjects({
+    objectNamePlural: 'people',
+    pagedObjects: data ?? [],
+  });
+
+  const peopleIds = people.map((person) => person.id);
+
+  const hasPeople = isNonEmptyArray(peopleIds);
 
   return (
     <>
-      {Boolean(data?.people?.length) && (
+      {hasPeople && (
         <StyledContainer>
           <StyledTitleContainer>
             <StyledTitle>Team</StyledTitle>
             <AddPersonToCompany companyId={company.id} peopleIds={peopleIds} />
           </StyledTitleContainer>
           <StyledListContainer>
-            {data?.people?.map((person, id) => (
+            {people.map((person: any) => (
               <PeopleCard
                 key={person.id}
                 person={person}
-                hasBottomBorder={id !== data.people.length - 1}
+                hasBottomBorder={person.id !== people.length - 1}
               />
             ))}
           </StyledListContainer>
