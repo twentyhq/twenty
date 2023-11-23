@@ -2,13 +2,15 @@ import styled from '@emotion/styled';
 
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { mainColors, ThemeColor } from '@/ui/theme/constants/colors';
 
-export type SettingsObjectFieldSelectFormValues = {
-  color: ThemeColor;
-  text: string;
-}[];
+import {
+  SettingsObjectFieldSelectFormOption,
+  SettingsObjectFieldSelectFormOptionRow,
+} from './SettingsObjectFieldSelectFormOptionRow';
+
+export type SettingsObjectFieldSelectFormValues =
+  SettingsObjectFieldSelectFormOption[];
 
 type SettingsObjectFieldSelectFormProps = {
   onChange: (values: SettingsObjectFieldSelectFormValues) => void;
@@ -33,21 +35,6 @@ const StyledRows = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledRow = styled.div`
-  align-items: center;
-  display: flex;
-  height: ${({ theme }) => theme.spacing(6)};
-  padding: ${({ theme }) => theme.spacing(1)} 0;
-`;
-
-const StyledOptionInput = styled(TextInput)`
-  flex: 1 0 auto;
-
-  & input {
-    height: ${({ theme }) => theme.spacing(2)};
-  }
 `;
 
 const StyledButton = styled(Button)`
@@ -75,16 +62,24 @@ export const SettingsObjectFieldSelectForm = ({
         <StyledLabel>Options</StyledLabel>
         <StyledRows>
           {values.map((value, index) => (
-            <StyledRow>
-              <StyledOptionInput
-                value={value.text}
-                onChange={(text) => {
-                  const nextValues = [...values];
-                  nextValues.splice(index, 1, { ...values[index], text });
-                  onChange(nextValues);
-                }}
-              />
-            </StyledRow>
+            <SettingsObjectFieldSelectFormOptionRow
+              key={index}
+              onChange={(optionValue) => {
+                const nextValues = [...values];
+                nextValues.splice(index, 1, optionValue);
+                onChange(nextValues);
+              }}
+              onRemove={
+                values.length > 1
+                  ? () => {
+                      const nextValues = [...values];
+                      nextValues.splice(index, 1);
+                      onChange(nextValues);
+                    }
+                  : undefined
+              }
+              value={value}
+            />
           ))}
         </StyledRows>
       </StyledContainer>
