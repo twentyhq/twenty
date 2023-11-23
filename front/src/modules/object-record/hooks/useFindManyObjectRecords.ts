@@ -30,24 +30,29 @@ export const useFindManyObjectRecords = <
   objectNamePlural,
   filter,
   orderBy,
+  limit,
   onCompleted,
   skip,
 }: Pick<ObjectMetadataItemIdentifier, 'objectNamePlural'> & {
   filter?: any;
   orderBy?: any;
+  limit?: number;
   onCompleted?: (data: PaginatedObjectTypeResults<ObjectType>) => void;
   skip?: boolean;
 }) => {
+  const findManyQueryStateIdentifier =
+    objectNamePlural + JSON.stringify(filter);
+
   const [lastCursor, setLastCursor] = useRecoilState(
-    cursorFamilyState(objectNamePlural),
+    cursorFamilyState(findManyQueryStateIdentifier),
   );
 
   const [hasNextPage, setHasNextPage] = useRecoilState(
-    hasNextPageFamilyState(objectNamePlural),
+    hasNextPageFamilyState(findManyQueryStateIdentifier),
   );
 
   const [, setIsFetchingMoreObjects] = useRecoilState(
-    isFetchingMoreObjectsFamilyState(objectNamePlural),
+    isFetchingMoreObjectsFamilyState(findManyQueryStateIdentifier),
   );
 
   const { objectMetadataItem, objectNotFoundInMetadata, findManyQuery } =
@@ -68,6 +73,7 @@ export const useFindManyObjectRecords = <
     variables: {
       filter: filter ?? {},
       orderBy: orderBy ?? {},
+      limit: limit ?? 30,
     },
     onCompleted: (data) => {
       if (objectMetadataItem) {

@@ -14,8 +14,14 @@ export const ObjectFilterDropdownEntitySelect = () => {
     objectFilterDropdownSelectedEntityId,
   } = useFilter();
 
+  const objectMetadataNameSingular =
+    filterDefinitionUsedInDropdown?.relationObjectMetadataNameSingular ?? '';
+
+  const objectMetadataNamePlural =
+    filterDefinitionUsedInDropdown?.relationObjectMetadataNamePlural ?? '';
+
   const { findManyQuery } = useObjectMetadataItem({
-    objectNameSingular: 'company',
+    objectNameSingular: objectMetadataNameSingular,
   });
 
   const useFindManyQuery = (options: any) => useQuery(findManyQuery, options);
@@ -26,7 +32,8 @@ export const ObjectFilterDropdownEntitySelect = () => {
     queryHook: useFindManyQuery,
     filters: [
       {
-        fieldNames: searchQuery?.computeFilterFields?.('company') ?? [],
+        fieldNames:
+          searchQuery?.computeFilterFields?.(objectMetadataNameSingular) ?? [],
         filter: objectFilterDropdownSearchInput,
       },
     ],
@@ -34,8 +41,9 @@ export const ObjectFilterDropdownEntitySelect = () => {
     selectedIds: objectFilterDropdownSelectedEntityId
       ? [objectFilterDropdownSelectedEntityId]
       : [],
-    mappingFunction: (record: any) => identifiersMapper?.(record, 'company'),
-    objectNamePlural: 'companies',
+    mappingFunction: (record: any) =>
+      identifiersMapper?.(record, objectMetadataNameSingular),
+    objectNamePlural: objectMetadataNamePlural,
   });
 
   if (filterDefinitionUsedInDropdown?.type !== 'RELATION') {

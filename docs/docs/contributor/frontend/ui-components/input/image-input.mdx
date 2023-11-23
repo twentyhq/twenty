@@ -1,0 +1,92 @@
+---
+title: Image Input
+sidebar_position: 6
+sidebar_custom_props:
+  icon: TbUpload
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import imageInputCode from '!!raw-loader!@site/src/ui/input/components/imageInputCode.js'
+
+Allows users to upload and remove an image. 
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/input/components/ImageInput']}
+  componentCode={imageInputCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>picture</td>
+      <td>string</td>
+      <td>The image source URL</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>onUpload</td>
+      <td>function</td>
+      <td>The function called when a user uploads a new image. It receives the `File` object as a parameter</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>onRemove</td>
+      <td>function</td>
+      <td>The function called when the user clicks on the remove button</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>onAbort</td>
+      <td>function</td>
+      <td>The function called when a user clicks on the abort button during image upload</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>isUploading</td>
+      <td>boolean</td>
+      <td>Indicates whether an image is currently being uploaded</td>
+      <td>`false`</td>
+    </tr>
+
+    <tr>
+      <td>errorMessage</td>
+      <td>string</td>
+      <td>An optional error message to display below the image input</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>disabled</td>
+      <td>boolean</td>
+      <td>If `true`, the entire input is disabled, and the buttons are not clickable</td>
+      <td>`false`</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>

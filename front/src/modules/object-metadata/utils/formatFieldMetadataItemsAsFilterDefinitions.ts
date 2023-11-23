@@ -46,6 +46,10 @@ const formatFieldMetadataItemAsFilterDefinition = ({
   fieldMetadataId: field.id,
   label: field.label,
   iconName: field.icon ?? 'Icon123',
+  relationObjectMetadataNamePlural:
+    field.toRelationMetadata?.fromObjectMetadata.namePlural,
+  relationObjectMetadataNameSingular:
+    field.toRelationMetadata?.fromObjectMetadata.nameSingular,
   type:
     field.type === FieldMetadataType.DateTime
       ? 'DATE_TIME'

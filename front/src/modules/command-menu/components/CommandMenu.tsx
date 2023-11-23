@@ -2,8 +2,13 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { Person } from '@/people/types/Person';
+import { IconNotes } from '@/ui/display/icon';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { Avatar } from '@/users/components/Avatar';
+import { getLogoUrlFromDomainName } from '~/utils';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
 import { commandMenuCommandsState } from '../states/commandMenuCommandsState';
@@ -36,47 +41,38 @@ export const CommandMenu = () => {
     [openCommandMenu, setSearch],
   );
 
-  // const { data: peopleData } = useSearchPeopleQuery({
-  //   skip: !isCommandMenuOpened,
-  //   variables: {
-  //     where: {
-  //       OR: [
-  //         { firstName: { contains: search, mode: QueryMode.Insensitive } },
-  //         { lastName: { contains: search, mode: QueryMode.Insensitive } },
-  //       ],
-  //     },
-  //     limit: 3,
-  //   },
-  // });
+  const { objects: people } = useFindManyObjectRecords<Person>({
+    skip: !isCommandMenuOpened,
+    objectNamePlural: 'people',
+    filter: {
+      or: [
+        { name: { firstName: { like: `%${search}%` } } },
+        { name: { firstName: { like: `%${search}%` } } },
+      ],
+    },
+    limit: 3,
+  });
 
-  // const people = peopleData?.searchResults ?? [];
+  const { objects: companies } = useFindManyObjectRecords<Person>({
+    skip: !isCommandMenuOpened,
+    objectNamePlural: 'companies',
+    filter: {
+      name: { like: `%${search}%` },
+    },
+    limit: 3,
+  });
 
-  // const { data: companyData } = useSearchCompanyQuery({
-  //   skip: !isCommandMenuOpened,
-  //   variables: {
-  //     where: {
-  //       OR: [{ name: { contains: search, mode: QueryMode.Insensitive } }],
-  //     },
-  //     limit: 3,
-  //   },
-  // });
-
-  // const companies = companyData?.searchResults ?? [];
-
-  // const { data: activityData } = useSearchActivityQuery({
-  //   skip: !isCommandMenuOpened,
-  //   variables: {
-  //     where: {
-  //       OR: [
-  //         { title: { contains: search, mode: QueryMode.Insensitive } },
-  //         { body: { contains: search, mode: QueryMode.Insensitive } },
-  //       ],
-  //     },
-  //     limit: 3,
-  //   },
-  // });
-
-  // const activities = activityData?.searchResults ?? [];
+  const { objects: activities } = useFindManyObjectRecords<Person>({
+    skip: !isCommandMenuOpened,
+    objectNamePlural: 'activities',
+    filter: {
+      or: [
+        { title: { like: `%${search}%` } },
+        { body: { like: `%${search}%` } },
+      ],
+    },
+    limit: 3,
+  });
 
   const checkInShortcuts = (cmd: Command, search: string) => {
     return (cmd.firstHotKey + (cmd.secondHotKey ?? ''))
@@ -149,12 +145,12 @@ export const CommandMenu = () => {
             />
           ))}
         </CommandGroup>
-        {/* <CommandGroup heading="People">
+        <CommandGroup heading="People">
           {people.map((person) => (
             <CommandMenuItem
               key={person.id}
-              to={`person/${person.id}`}
-              label={person.displayName}
+              to={`object/person/${person.id}`}
+              label={person.name?.firstName + ' ' + person.name?.lastName}
               Icon={() => (
                 <Avatar
                   type="rounded"
@@ -171,7 +167,7 @@ export const CommandMenu = () => {
             <CommandMenuItem
               key={company.id}
               label={company.name}
-              to={`companies/${company.id}`}
+              to={`object/company/${company.id}`}
               Icon={() => (
                 <Avatar
                   colorId={company.id}
@@ -191,7 +187,7 @@ export const CommandMenu = () => {
               onClick={() => openActivityRightDrawer(activity.id)}
             />
           ))}
-        </CommandGroup> */}
+        </CommandGroup>
       </StyledList>
     </StyledDialog>
   );

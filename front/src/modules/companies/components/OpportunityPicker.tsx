@@ -1,8 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useQuery } from '@apollo/client';
+import { useRecoilValue } from 'recoil';
 
-import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { currentPipelineStepsState } from '@/pipeline/states/currentPipelineStepsState';
+import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { IconChevronDown } from '@/ui/display/icon';
+import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
+import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
 import { useEntitySelectSearch } from '@/ui/input/relation-picker/hooks/useEntitySelectSearch';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -13,7 +18,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
-export type CompanyProgressPickerProps = {
+export type OpportunityPickerProps = {
   companyId: string | null;
   onSubmit: (
     newCompanyId: EntityForSelect | null,
@@ -22,19 +27,33 @@ export type CompanyProgressPickerProps = {
   onCancel?: () => void;
 };
 
-export const CompanyProgressPicker = ({
-  companyId,
+export const OpportunityPicker = ({
   onSubmit,
   onCancel,
-}: CompanyProgressPickerProps) => {
+}: OpportunityPickerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { searchFilter, handleSearchFilterChange } = useEntitySelectSearch();
 
-  // const companies = useFilteredSearchCompanyQuery({
-  //   searchFilter,
-  //   selectedIds: companyId ? [companyId] : [],
-  // });
+  const { findManyQuery } = useObjectMetadataItem({
+    objectNameSingular: 'company',
+  });
+  const useFindManyQuery = (options: any) => useQuery(findManyQuery, options);
+  const { identifiersMapper, searchQuery } = useRelationPicker();
+
+  const filteredSearchEntityResults = useFilteredSearchEntityQuery({
+    queryHook: useFindManyQuery,
+    filters: [
+      {
+        fieldNames: searchQuery?.computeFilterFields?.('company') ?? [],
+        filter: searchFilter,
+      },
+    ],
+    orderByField: 'createdAt',
+    selectedIds: [],
+    mappingFunction: (record: any) => identifiersMapper?.(record, 'company'),
+    objectNamePlural: 'companies',
+  });
 
   const [isProgressSelectionUnfolded, setIsProgressSelectionUnfolded] =
     useState(false);
@@ -43,12 +62,7 @@ export const CompanyProgressPicker = ({
     string | null
   >(null);
 
-  const [currentPipeline] = useRecoilState(currentPipelineState);
-
-  const currentPipelineSteps = useMemo(
-    () => currentPipeline?.pipelineSteps ?? [],
-    [currentPipeline],
-  );
+  const currentPipelineSteps = useRecoilValue(currentPipelineStepsState);
 
   const handlePipelineStepChange = (newPipelineStepId: string) => {
     setSelectedPipelineStepId(newPipelineStepId);
@@ -110,13 +124,13 @@ export const CompanyProgressPicker = ({
           />
           <DropdownMenuSeparator />
           <RecoilScope>
-            {/* <SingleEntitySelectBase
-              entitiesToSelect={companies.entitiesToSelect}
-              loading={companies.loading}
+            <SingleEntitySelectBase
+              entitiesToSelect={filteredSearchEntityResults.entitiesToSelect}
+              loading={filteredSearchEntityResults.loading}
               onCancel={onCancel}
               onEntitySelected={handleEntitySelected}
-              selectedEntity={companies.selectedEntities[0]}
-            /> */}
+              selectedEntity={filteredSearchEntityResults.selectedEntities[0]}
+            />
           </RecoilScope>
         </>
       )}

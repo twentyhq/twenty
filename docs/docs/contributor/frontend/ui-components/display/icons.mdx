@@ -1,0 +1,134 @@
+---
+title: Icons
+sidebar_position: 3
+sidebar_custom_props:
+  icon: TbIcons
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import tablerIconExampleCode from '!!raw-loader!@site/src/ui/display/tablerIconExampleCode.js'
+import iconAddressBookCode from '!!raw-loader!@site/src/ui/display/iconAddressBookCode.js'
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+
+A list of icons used throughout our app. 
+
+## Tabler Icons
+
+We use Tabler icons for React throughout the app. 
+
+<Tabs>
+
+<TabItem value="installation" label="Installation">
+
+```
+yarn add @tabler/icons-react
+```
+
+</TabItem>
+
+<TabItem value="usage" label="Usage" default>
+
+You can import each icon as a component. Here's an example:
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/display/icon/components/IconAddressBook']}
+  componentCode={tablerIconExampleCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>size</td>
+      <td>number</td>
+      <td>The height and width of the icon in pixels</td>
+      <td>24</td>
+    </tr>
+
+    <tr>
+      <td>color</td>
+      <td>string</td>
+      <td>The color of the icons</td>
+      <td>currentColor</td>
+    </tr>
+
+    <tr>
+      <td>stroke</td>
+      <td>number</td>
+      <td>The stroke width of the icon in pixels</td>
+      <td>2</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>
+
+
+## Custom Icons
+
+In addition to Tabler icons, the app also uses some custom icons.  
+
+### Icon Address Book
+
+Displays an address book icon. 
+
+<Tabs>
+
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/display/icon/components/IconAddressBook']}
+  componentCode={iconAddressBookCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>size</td>
+      <td>number</td>
+      <td>The height and width of the icon in pixels</td>
+      <td>24</td>
+    </tr>
+
+    <tr>
+      <td>stroke</td>
+      <td>number</td>
+      <td>The stroke width of the icon in pixels</td>
+      <td>2</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>
