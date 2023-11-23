@@ -1,22 +1,13 @@
-import { v4 } from 'uuid';
-
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
-import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
 import { useDeleteOneObjectRecord } from '@/object-record/hooks/useDeleteOneObjectRecord';
 
-import { ActivityTargetableEntityForSelect } from '../types/ActivityTargetableEntityForSelect';
-
 export const useHandleCheckableActivityTargetChange = ({
-  activity,
+  activityId,
+  currentActivityTargets,
 }: {
-  activity?: Pick<GraphQLActivity, 'id'> & {
-    activityTargets?: {
-      edges: Array<{
-        node: Pick<ActivityTarget, 'id' | 'personId' | 'companyId'>;
-      }> | null;
-    };
-  };
+  activityId: string;
+  currentActivityTargets: any[];
 }) => {
   const { createOneObject } = useCreateOneObjectRecord<ActivityTarget>({
     objectNameSingular: 'activityTarget',
@@ -27,49 +18,56 @@ export const useHandleCheckableActivityTargetChange = ({
 
   return async (
     entityValues: Record<string, boolean>,
-    entities: ActivityTargetableEntityForSelect[],
+    entitiesToSelect: any,
+    selectedEntities: any,
   ) => {
-    if (!activity) {
+    if (!activityId) {
       return;
     }
-
-    const currentEntityIds = activity.activityTargets?.edges
-      ? activity.activityTargets.edges.map(
-          ({ node }) => node.personId ?? node.companyId,
-        )
-      : [];
-
-    const entitiesToAdd = entities.filter(
-      ({ id }) => entityValues[id] && !currentEntityIds.includes(id),
+    const currentActivityTargetRecordIds = currentActivityTargets.map(
+      ({ companyId, personId }) => companyId ?? personId ?? '',
     );
 
-    if (entitiesToAdd.length) {
-      entitiesToAdd.map((entity) => {
+    const idsToAdd = Object.entries(entityValues)
+      .filter(
+        ([recordId, value]) =>
+          value && !currentActivityTargetRecordIds.includes(recordId),
+      )
+      .map(([id, _]) => id);
+
+    const idsToDelete = Object.entries(entityValues)
+      .filter(([_, value]) => !value)
+      .map(([id, _]) => id);
+
+    if (idsToAdd.length) {
+      idsToAdd.map((id) => {
+        const entityFromToSelect = entitiesToSelect.filter(
+          (entity: any) => entity.id === id,
+        ).length
+          ? entitiesToSelect.filter((entity: any) => entity.id === id)[0]
+          : null;
+
+        const entityFromSelected = selectedEntities.filter(
+          (entity: any) => entity.id === id,
+        ).length
+          ? selectedEntities.filter((entity: any) => entity.id === id)[0]
+          : null;
+
+        const entity = entityFromToSelect ?? entityFromSelected;
         createOneObject?.({
-          activityId: activity.id,
-          activityTargetInputs: {
-            id: v4(),
-            createdAt: new Date().toISOString(),
-            companyId: entity.entityType === 'Company' ? entity.id : null,
-            personId: entity.entityType === 'Person' ? entity.id : null,
-          },
+          activityId: activityId,
+          companyId: entity.record.__typename === 'Company' ? entity.id : null,
+          personId: entity.record.__typename === 'Person' ? entity.id : null,
         });
       });
     }
 
-    const activityTargetIdsToDelete = activity.activityTargets?.edges
-      ? activity.activityTargets.edges
-          .filter(
-            ({ node }) =>
-              (node.personId ?? node.companyId) &&
-              !entityValues[node.personId ?? node.companyId ?? ''],
-          )
-          .map(({ node }) => node.id)
-      : [];
-
-    if (activityTargetIdsToDelete.length) {
-      activityTargetIdsToDelete.map((id) => {
-        deleteOneObject?.(id);
+    if (idsToDelete.length) {
+      idsToDelete.map((id) => {
+        const currentActivityTargetId = currentActivityTargets.filter(
+          ({ companyId, personId }) => companyId === id || personId === id,
+        )[0].id;
+        deleteOneObject?.(currentActivityTargetId);
       });
     }
   };

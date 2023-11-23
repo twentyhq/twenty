@@ -47,8 +47,8 @@ export const CommandMenu = () => {
     objectNamePlural: 'people',
     filter: {
       or: [
-        { name: { firstName: { like: `%${search}%` } } },
-        { name: { firstName: { like: `%${search}%` } } },
+        { name: { firstName: { ilike: `%${search}%` } } },
+        { name: { firstName: { ilike: `%${search}%` } } },
       ],
     },
     limit: 3,
@@ -58,7 +58,7 @@ export const CommandMenu = () => {
     skip: !isCommandMenuOpened,
     objectNamePlural: 'companies',
     filter: {
-      name: { like: `%${search}%` },
+      name: { ilike: `%${search}%` },
     },
     limit: 3,
   });
