@@ -74,6 +74,7 @@ export const LinkFieldInput = ({
     <FieldInputOverlay>
       <TextInput
         value={initialValue.url}
+        autoFocus
         placeholder="URL"
         hotkeyScope={hotkeyScope}
         onClickOutside={handleClickOutside}
