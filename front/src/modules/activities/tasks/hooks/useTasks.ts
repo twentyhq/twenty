@@ -12,11 +12,6 @@ import { isDefined } from '~/utils/isDefined';
 export const useTasks = (entity?: ActivityTargetableEntity) => {
   const { selectedFilter } = useFilter();
 
-  console.log({
-    selectedFilter,
-    entity,
-  });
-
   const { objects: activityTargets } = useFindManyObjectRecords({
     objectNamePlural: 'activityTargets',
     filter: isDefined(entity)
@@ -74,12 +69,6 @@ export const useTasks = (entity?: ActivityTargetableEntity) => {
     orderBy: {
       createdAt: 'DescNullsFirst',
     },
-  });
-
-  console.log({
-    completeTasksData,
-    incompleteTaskData,
-    activityTargets,
   });
 
   const todayOrPreviousTasks = incompleteTaskData?.filter((task) => {
