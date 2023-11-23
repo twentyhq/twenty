@@ -1,5 +1,4 @@
 import { FieldCurrencyValue } from '@/ui/object/field/types/FieldMetadata';
-import { convertCurrencyMicrosToCurrency } from '~/utils/convert-currency-amount';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 
@@ -9,6 +8,6 @@ type CurrencyDisplayProps = {
 
 // TODO: convert currencyCode to currency symbol
 export const CurrencyDisplay = ({ value }: CurrencyDisplayProps) => {
-  const amount = convertCurrencyMicrosToCurrency(value?.amountMicros);
+  const amount = value?.amount;
   return <EllipsisDisplay>{amount}</EllipsisDisplay>;
 };

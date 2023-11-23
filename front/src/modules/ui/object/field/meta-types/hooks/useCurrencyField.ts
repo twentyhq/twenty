@@ -17,11 +17,11 @@ const initializeValue = (
   fieldValue: FieldCurrencyValue,
 ) => {
   if (fieldInitialValue?.isEmpty) {
-    return { amountMicros: null, currencyCode: 'USD' };
+    return { amount: null, currencyCode: 'USD' };
   }
   if (!isNaN(Number(fieldInitialValue?.value))) {
     return {
-      amountMicros: Number(fieldInitialValue?.value),
+      amount: Number(fieldInitialValue?.value),
       currencyCode: 'USD',
     };
   }
