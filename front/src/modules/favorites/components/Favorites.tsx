@@ -30,8 +30,14 @@ export const Favorites = () => {
         draggableItems={
           <>
             {favorites.map((favorite, index) => {
-              const { id, labelIdentifier, avatarUrl, avatarType, link } =
-                favorite;
+              const {
+                id,
+                labelIdentifier,
+                avatarUrl,
+                avatarType,
+                link,
+                recordId,
+              } = favorite;
 
               return (
                 <DraggableItem
@@ -44,7 +50,7 @@ export const Favorites = () => {
                       label={labelIdentifier}
                       Icon={() => (
                         <Avatar
-                          colorId={id}
+                          colorId={recordId}
                           avatarUrl={avatarUrl}
                           type={avatarType}
                           placeholder={labelIdentifier}

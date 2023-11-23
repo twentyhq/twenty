@@ -183,7 +183,7 @@ export const seedPersonFieldMetadata = async (
           url: 'xLinkUrl',
         },
         description: 'Contact’s X/Twitter account',
-        icon: 'IconUser',
+        icon: 'IconBrandX',
         isNullable: true,
         isSystem: false,
         defaultValue: undefined,
@@ -257,7 +257,7 @@ export const seedPersonFieldMetadata = async (
         description: 'Contact’s avatar',
         icon: 'IconFileUpload',
         isNullable: true,
-        isSystem: false,
+        isSystem: true,
         defaultValue: undefined,
       },
 

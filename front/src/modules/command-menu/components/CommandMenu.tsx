@@ -25,7 +25,8 @@ import {
 } from './CommandMenuStyles';
 
 export const CommandMenu = () => {
-  const { openCommandMenu, closeCommandMenu } = useCommandMenu();
+  const { openCommandMenu, closeCommandMenu, toggleCommandMenu } =
+    useCommandMenu();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [search, setSearch] = useState('');
@@ -35,7 +36,7 @@ export const CommandMenu = () => {
     'ctrl+k,meta+k',
     () => {
       setSearch('');
-      openCommandMenu();
+      toggleCommandMenu();
     },
     AppHotkeyScope.CommandMenu,
     [openCommandMenu, setSearch],
@@ -154,9 +155,11 @@ export const CommandMenu = () => {
               Icon={() => (
                 <Avatar
                   type="rounded"
-                  avatarUrl={null}
+                  avatarUrl={person.avatarUrl}
                   colorId={person.id}
-                  placeholder={person.displayName}
+                  placeholder={
+                    person.name?.firstName + ' ' + person.name?.lastName
+                  }
                 />
               )}
             />
