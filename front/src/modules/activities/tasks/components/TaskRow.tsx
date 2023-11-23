@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
@@ -71,7 +72,8 @@ export const TaskRow = ({
   const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
 
-  const body = JSON.parse(task.body ?? '{}')[0]?.content[0]?.text;
+  const body = JSON.parse(isNonEmptyString(task.body) ? task.body : '{}')[0]
+    ?.content[0]?.text;
   const { completeTask } = useCompleteTask(task);
 
   const activityTargetIds =
