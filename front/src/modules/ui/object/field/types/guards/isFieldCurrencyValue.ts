@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { FieldCurrencyValue } from '../FieldMetadata';
 
 const currencySchema = z.object({
-  currencyCode: z.string(),
+  currencyCode: z.string().nullable(),
   amountMicros: z.number().nullable(),
 });
 

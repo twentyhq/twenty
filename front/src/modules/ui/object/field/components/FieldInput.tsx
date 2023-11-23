@@ -48,8 +48,6 @@ export const FieldInput = ({
 }: FieldInputProps) => {
   const { fieldDefinition } = useContext(FieldContext);
 
-  console.log(fieldDefinition);
-
   return (
     <>
       {isFieldRelation(fieldDefinition) ? (
