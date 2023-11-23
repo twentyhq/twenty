@@ -55,7 +55,7 @@ export const useSetHotkeyScope = () =>
           customScopes: {
             commandMenu: customScopes?.commandMenu ?? true,
             goto: customScopes?.goto ?? false,
-            keyboardShortcutMenu: customScopes?.keyboardShortcutMenu ?? true,
+            keyboardShortcutMenu: customScopes?.keyboardShortcutMenu ?? false,
           },
         };
 
