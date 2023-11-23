@@ -1,20 +1,20 @@
 import { useCallback, useMemo, useState } from 'react';
+import { useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
 
 import { useHandleCheckableActivityTargetChange } from '@/activities/hooks/useHandleCheckableActivityTargetChange';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
-import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
+import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/activities/utils/flatMapAndSortEntityForSelectArrayByName';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
+import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
+import { MultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { useInlineCell } from '@/ui/object/record-inline-cell/hooks/useInlineCell';
 import { assertNotNull } from '~/utils/assert';
 
 type ActivityTargetInlineCellEditModeProps = {
-  activity?: Pick<GraphQLActivity, 'id'> & {
-    activityTargets?: {
-      edges: Array<{
-        node: Pick<ActivityTarget, 'id' | 'personId' | 'companyId'>;
-      }> | null;
-    };
-  };
+  activityId: string;
+  activityTargets: Array<Pick<ActivityTarget, 'id' | 'personId' | 'companyId'>>;
 };
 
 const StyledSelectContainer = styled.div`
@@ -24,26 +24,27 @@ const StyledSelectContainer = styled.div`
 `;
 
 export const ActivityTargetInlineCellEditMode = ({
-  activity,
+  activityId,
+  activityTargets,
 }: ActivityTargetInlineCellEditModeProps) => {
   const [searchFilter, setSearchFilter] = useState('');
 
   const initialPeopleIds = useMemo(
     () =>
-      activity?.activityTargets?.edges
-        ?.filter(({ node }) => node.personId !== null)
-        .map(({ node }) => node.personId)
+      activityTargets
+        ?.filter(({ personId }) => personId !== null)
+        .map(({ personId }) => personId)
         .filter(assertNotNull) ?? [],
-    [activity?.activityTargets],
+    [activityTargets],
   );
 
   const initialCompanyIds = useMemo(
     () =>
-      activity?.activityTargets?.edges
-        ?.filter(({ node }) => node.companyId !== null)
-        .map(({ node }) => node.companyId)
+      activityTargets
+        ?.filter(({ companyId }) => companyId !== null)
+        .map(({ companyId }) => companyId)
         .filter(assertNotNull) ?? [],
-    [activity?.activityTargets],
+    [activityTargets],
   );
 
   const initialSelectedEntityIds = useMemo(
@@ -54,45 +55,92 @@ export const ActivityTargetInlineCellEditMode = ({
     [initialPeopleIds, initialCompanyIds],
   );
 
+  const { findManyQuery: findManyPeopleQuery } = useObjectMetadataItem({
+    objectNameSingular: 'person',
+  });
+
+  const { findManyQuery: findManyCompaniesQuery } = useObjectMetadataItem({
+    objectNameSingular: 'company',
+  });
+
+  const useFindManyPeopleQuery = (options: any) =>
+    useQuery(findManyPeopleQuery, options);
+
+  const useFindManyCompaniesQuery = (options: any) =>
+    useQuery(findManyCompaniesQuery, options);
+
   const [selectedEntityIds, setSelectedEntityIds] = useState<
     Record<string, boolean>
   >(initialSelectedEntityIds);
 
-  // const personsForMultiSelect = useFilteredSearchPeopleQuery({
-  //   searchFilter,
-  //   selectedIds: initialPeopleIds,
-  // });
+  const { identifiersMapper, searchQuery } = useRelationPicker();
 
-  // const companiesForMultiSelect = useFilteredSearchCompanyQuery({
-  //   searchFilter,
-  //   selectedIds: initialCompanyIds,
-  // });
+  const people = useFilteredSearchEntityQuery({
+    queryHook: useFindManyPeopleQuery,
+    filters: [
+      {
+        fieldNames: searchQuery?.computeFilterFields?.('person') ?? [],
+        filter: searchFilter,
+      },
+    ],
+    orderByField: 'createdAt',
+    mappingFunction: (record: any) => identifiersMapper?.(record, 'person'),
+    selectedIds: initialPeopleIds,
+    objectNamePlural: 'people',
+    limit: 3,
+  });
 
-  // const selectedEntities = flatMapAndSortEntityForSelectArrayOfArrayByName([
-  //   personsForMultiSelect.selectedEntities,
-  //   companiesForMultiSelect.selectedEntities,
-  // ]);
+  const companies = useFilteredSearchEntityQuery({
+    queryHook: useFindManyCompaniesQuery,
+    filters: [
+      {
+        fieldNames: searchQuery?.computeFilterFields?.('company') ?? [],
+        filter: searchFilter,
+      },
+    ],
+    orderByField: 'createdAt',
+    mappingFunction: (record: any) => identifiersMapper?.(record, 'company'),
+    selectedIds: initialCompanyIds,
+    objectNamePlural: 'companies',
+    limit: 3,
+  });
 
-  // const filteredSelectedEntities =
-  //   flatMapAndSortEntityForSelectArrayOfArrayByName([
-  //     personsForMultiSelect.filteredSelectedEntities,
-  //     companiesForMultiSelect.filteredSelectedEntities,
-  //   ]);
+  const selectedEntities = flatMapAndSortEntityForSelectArrayOfArrayByName([
+    people.selectedEntities,
+    companies.selectedEntities,
+  ]);
 
-  // const entitiesToSelect = flatMapAndSortEntityForSelectArrayOfArrayByName([
-  //   personsForMultiSelect.entitiesToSelect,
-  //   companiesForMultiSelect.entitiesToSelect,
-  // ]);
+  const filteredSelectedEntities =
+    flatMapAndSortEntityForSelectArrayOfArrayByName([
+      people.filteredSelectedEntities,
+      companies.filteredSelectedEntities,
+    ]);
+
+  const entitiesToSelect = flatMapAndSortEntityForSelectArrayOfArrayByName([
+    people.entitiesToSelect,
+    companies.entitiesToSelect,
+  ]);
 
   const handleCheckItemsChange = useHandleCheckableActivityTargetChange({
-    activity,
+    activityId,
+    currentActivityTargets: activityTargets,
   });
   const { closeInlineCell: closeEditableField } = useInlineCell();
 
   const handleSubmit = useCallback(() => {
-    //handleCheckItemsChange(selectedEntityIds, entitiesToSelect);
+    handleCheckItemsChange(
+      selectedEntityIds,
+      entitiesToSelect,
+      selectedEntities,
+    );
     closeEditableField();
-  }, [closeEditableField]);
+  }, [
+    closeEditableField,
+    entitiesToSelect,
+    handleCheckItemsChange,
+    selectedEntities,
+    selectedEntityIds,
+  ]);
 
   const handleCancel = () => {
     closeEditableField();
@@ -100,7 +148,7 @@ export const ActivityTargetInlineCellEditMode = ({
 
   return (
     <StyledSelectContainer>
-      {/* <MultipleEntitySelect
+      <MultipleEntitySelect
         entities={{
           entitiesToSelect,
           filteredSelectedEntities,
@@ -113,7 +161,7 @@ export const ActivityTargetInlineCellEditMode = ({
         value={selectedEntityIds}
         onCancel={handleCancel}
         onSubmit={handleSubmit}
-      /> */}
+      />
     </StyledSelectContainer>
   );
 };
