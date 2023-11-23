@@ -142,7 +142,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           objectMetadataId: createdObjectMetadata.id,
           workspaceId: record.workspaceId,
-          isCustom: false,
+          isCustom: true,
           isActive: true,
           type: FieldMetadataType.RELATION,
           name: 'activityTargets',
@@ -156,7 +156,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           objectMetadataId: activityTargetObjectMetadata.id,
           workspaceId: record.workspaceId,
-          isCustom: false,
+          isCustom: true,
           isActive: true,
           type: FieldMetadataType.RELATION,
           name: record.nameSingular,
@@ -170,7 +170,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           objectMetadataId: activityTargetObjectMetadata.id,
           workspaceId: record.workspaceId,
-          isCustom: false,
+          isCustom: true,
           isActive: true,
           type: FieldMetadataType.UUID,
           name: `${createdObjectMetadata.targetTableName}Id`,
