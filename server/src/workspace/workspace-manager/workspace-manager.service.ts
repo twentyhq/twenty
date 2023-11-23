@@ -99,16 +99,13 @@ export class WorkspaceManagerService {
     );
 
     await this.relationMetadataService.createMany(
-      Object.values(standardObjectRelationMetadata).map((relationMetadata) => {
-        const metadata = this.createStandardObjectRelations(
+      Object.values(standardObjectRelationMetadata).map((relationMetadata) =>
+        this.createStandardObjectRelations(
           workspaceId,
           createdObjectMetadata,
           relationMetadata,
-        );
-        console.log(metadata);
-
-        return metadata;
-      }),
+        ),
+      ),
     );
 
     return createdObjectMetadata;
