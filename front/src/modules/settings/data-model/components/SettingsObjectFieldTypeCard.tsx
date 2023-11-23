@@ -39,7 +39,7 @@ const StyledFormContainer = styled.div`
   border-top: 0;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-  padding: ${({ theme }) => theme.spacing(4)};
+  overflow: hidden;
 `;
 
 export const SettingsObjectFieldTypeCard = ({
