@@ -2,7 +2,7 @@ import { Field } from '~/generated/graphql';
 
 import { Sort } from '../types/Sort';
 
-export const turnSortsIntoOrderByV2 = (
+export const turnSortsIntoOrderBy = (
   sorts: Sort[],
   fields: Pick<Field, 'id' | 'name'>[],
 ) => {

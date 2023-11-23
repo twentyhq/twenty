@@ -83,6 +83,18 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
             onErrorCb?.(graphQLErrors);
 
             for (const graphQLError of graphQLErrors) {
+              if (graphQLError.message === 'Unauthorized') {
+                return fromPromise(
+                  renewToken(uri, this.tokenPair)
+                    .then((tokens) => {
+                      onTokenPairChange?.(tokens);
+                    })
+                    .catch(() => {
+                      onUnauthenticatedError?.();
+                    }),
+                ).flatMap(() => forward(operation));
+              }
+
               switch (graphQLError?.extensions?.code) {
                 case 'UNAUTHENTICATED': {
                   return fromPromise(

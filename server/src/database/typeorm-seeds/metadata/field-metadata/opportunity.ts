@@ -84,7 +84,7 @@ export const seedOpportunityFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: false,
-        isSystem: true,
+        isSystem: false,
         defaultValue: { type: 'now' },
       },
       {
@@ -175,7 +175,7 @@ export const seedOpportunityFieldMetadata = async (
         description: 'Opportunity pipeline step',
         icon: 'IconKanban',
         isNullable: true,
-        isSystem: false,
+        isSystem: true,
         defaultValue: undefined,
       },
       {
@@ -239,7 +239,7 @@ export const seedOpportunityFieldMetadata = async (
         description: 'Opportunity person',
         icon: 'IconUser',
         isNullable: true,
-        isSystem: false,
+        isSystem: true,
         defaultValue: undefined,
       },
       {

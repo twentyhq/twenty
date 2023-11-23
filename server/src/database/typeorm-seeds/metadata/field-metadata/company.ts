@@ -89,7 +89,7 @@ export const seedCompanyFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: false,
-        isSystem: true,
+        isSystem: false,
         defaultValue: { type: 'now' },
       },
       {
@@ -260,7 +260,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconTarget',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: false,
       },
 
       // Relationships

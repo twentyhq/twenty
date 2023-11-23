@@ -70,6 +70,21 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             defaultValue: { type: 'uuid' },
           },
           {
+            type: FieldMetadataType.TEXT,
+            name: 'name',
+            label: 'Name',
+            targetColumnMap: {
+              value: 'name',
+            },
+            icon: 'IconAbc',
+            description: 'Name',
+            isNullable: true,
+            isActive: true,
+            isCustom: false,
+            workspaceId: record.workspaceId,
+            defaultValue: { value: 'Untitled' },
+          },
+          {
             type: FieldMetadataType.DATE_TIME,
             name: 'createdAt',
             label: 'Creation date',
@@ -98,21 +113,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             isCustom: false,
             workspaceId: record.workspaceId,
             defaultValue: { type: 'now' },
-          },
-          {
-            type: FieldMetadataType.TEXT,
-            name: 'name',
-            label: 'Name',
-            targetColumnMap: {
-              value: 'name',
-            },
-            icon: 'IconAbc',
-            description: 'Name',
-            isNullable: true,
-            isActive: true,
-            isCustom: false,
-            workspaceId: record.workspaceId,
-            defaultValue: { value: 'Untitled' },
           },
         ],
     });
@@ -166,7 +166,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       await workspaceDataSource?.query(
         `INSERT INTO ${dataSourceMetadata.schema}."viewField"
       ("fieldMetadataId", "position", "isVisible", "size", "viewId")
-      VALUES ('${field.id}', '${index}', true, 180, '${view[0].id}') RETURNING *`,
+      VALUES ('${field.id}', '${index - 1}', true, 180, '${
+          view[0].id
+        }') RETURNING *`,
       );
     });
 

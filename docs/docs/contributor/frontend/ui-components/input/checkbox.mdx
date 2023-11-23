@@ -1,0 +1,93 @@
+---
+title: Checkbox
+sidebar_position: 4
+sidebar_custom_props:
+  icon: TbCheckbox
+---
+
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import checkboxCode from '!!raw-loader!@site/src/ui/input/components/checkboxCode.js'
+
+Used when a user needs to select multiple values from several options.
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/input/components/Checkbox']}
+  componentCode={checkboxCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>checked</td>
+      <td>boolean</td>
+      <td>Indicates whether the checkbox is checked</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>indeterminate</td>
+      <td>boolean</td>
+      <td>Indicates whether the checkbox is in an indeterminate state (neither checked nor unchecked)</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>onChange</td>
+      <td>function</td>
+      <td>The callback function you want to trigger when the checkbox state changes</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>onCheckedChange</td>
+      <td>function</td>
+      <td>The callback function you want to trigger when the `checked` state changes</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>variant</td>
+      <td>string</td>
+      <td>The visual style variant of the box. Options include: `primary`, `secondary`, and `tertiary`</td>
+      <td>primary</td>
+    </tr>
+
+    <tr>
+      <td>size</td>
+      <td>string</td>
+      <td>The size of the checkbox. Has two options: `small` and `large`</td>
+      <td>small</td>
+    </tr>
+
+    <tr>
+      <td>shape</td>
+      <td>string</td>
+      <td>The shape of the checkbox. Has two options: `squared` and `rounded`</td>
+      <td>squared</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>

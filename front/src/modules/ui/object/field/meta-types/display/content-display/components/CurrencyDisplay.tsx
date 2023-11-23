@@ -11,8 +11,7 @@ type CurrencyDisplayProps = {
 export const CurrencyDisplay = ({ value }: CurrencyDisplayProps) => {
   return (
     <EllipsisDisplay>
-      {convertCurrencyMicrosToCurrency(value?.amountMicros)}{' '}
-      {value?.currencyCode}
+      {convertCurrencyMicrosToCurrency(value?.amountMicros)}
     </EllipsisDisplay>
   );
 };

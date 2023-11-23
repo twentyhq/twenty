@@ -102,8 +102,6 @@ export const ActivityComments = ({
     });
   };
 
-  console.log('asd', { activity, comments });
-
   return (
     <>
       {comments.length > 0 && (
