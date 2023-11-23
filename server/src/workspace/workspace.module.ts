@@ -4,7 +4,7 @@ import { MetadataModule } from 'src/metadata/metadata.module';
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { WorkspaceSchemaStorageModule } from 'src/workspace/workspace-schema-storage/workspace-schema-storage.module';
 import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
-import { ScalarsExplorerService } from 'src/workspace/services/ScalarsExplorer.service';
+import { ScalarsExplorerService } from 'src/workspace/services/scalars-explorer.service';
 
 import { WorkspaceFactory } from './workspace.factory';
 
