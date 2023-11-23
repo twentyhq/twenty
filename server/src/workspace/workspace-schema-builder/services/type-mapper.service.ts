@@ -30,10 +30,10 @@ import {
   FloatFilterType,
   IntFilterType,
   BooleanFilterType,
-  BigIntFilterType,
+  BigFloatFilterType,
 } from 'src/workspace/workspace-schema-builder/graphql-types/input';
 import { OrderByDirectionType } from 'src/workspace/workspace-schema-builder/graphql-types/enum';
-import { BigIntScalarType } from 'src/workspace/workspace-schema-builder/graphql-types/scalars';
+import { BigFloatScalarType } from 'src/workspace/workspace-schema-builder/graphql-types/scalars';
 
 export interface TypeOptions<T = any> {
   nullable?: boolean;
@@ -63,7 +63,7 @@ export class TypeMapperService {
       [FieldMetadataType.DATE_TIME, dateScalar],
       [FieldMetadataType.BOOLEAN, GraphQLBoolean],
       [FieldMetadataType.NUMBER, numberScalar],
-      [FieldMetadataType.NUMERIC, BigIntScalarType],
+      [FieldMetadataType.NUMERIC, BigFloatScalarType],
       [FieldMetadataType.PROBABILITY, GraphQLFloat],
       [FieldMetadataType.RELATION, GraphQLID],
     ]);
@@ -93,7 +93,7 @@ export class TypeMapperService {
       [FieldMetadataType.DATE_TIME, dateFilter],
       [FieldMetadataType.BOOLEAN, BooleanFilterType],
       [FieldMetadataType.NUMBER, numberScalar],
-      [FieldMetadataType.NUMERIC, BigIntFilterType],
+      [FieldMetadataType.NUMERIC, BigFloatFilterType],
       [FieldMetadataType.PROBABILITY, FloatFilterType],
       [FieldMetadataType.RELATION, UUIDFilterType],
     ]);
