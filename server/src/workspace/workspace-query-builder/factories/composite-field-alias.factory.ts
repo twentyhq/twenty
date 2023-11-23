@@ -60,9 +60,7 @@ export class CompositeFieldAliasFactory {
 
     if (!relationMetadata) {
       throw new Error(
-        `Relation metadata not found for field ${JSON.stringify(
-          fieldMetadata,
-        )}`,
+        `Relation metadata not found for field ${fieldMetadata.name}`,
       );
     }
 
