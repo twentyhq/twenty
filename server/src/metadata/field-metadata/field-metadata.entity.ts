@@ -25,6 +25,7 @@ export enum FieldMetadataType {
   DATE_TIME = 'DATE_TIME',
   BOOLEAN = 'BOOLEAN',
   NUMBER = 'NUMBER',
+  NUMERIC = 'NUMERIC',
   PROBABILITY = 'PROBABILITY',
   ENUM = 'ENUM',
   LINK = 'LINK',
