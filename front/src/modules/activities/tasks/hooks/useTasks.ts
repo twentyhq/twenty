@@ -1,21 +1,31 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { DateTime } from 'luxon';
+import { undefined } from 'zod';
 
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
 import { parseDate } from '~/utils/date-utils';
+import { isDefined } from '~/utils/isDefined';
 
 export const useTasks = (entity?: ActivityTargetableEntity) => {
   const { selectedFilter } = useFilter();
 
+  console.log({
+    selectedFilter,
+    entity,
+  });
+
   const { objects: activityTargets } = useFindManyObjectRecords({
     objectNamePlural: 'activityTargets',
-    filter: {
-      [entity?.type === 'Company' ? 'companyId' : 'personId']: {
-        eq: entity?.id,
-      },
-    },
+    filter: isDefined(entity)
+      ? {
+          [entity?.type === 'Company' ? 'companyId' : 'personId']: {
+            eq: entity?.id,
+          },
+        }
+      : undefined,
   });
 
   const { objects: completeTasksData } = useFindManyObjectRecords({
@@ -23,10 +33,19 @@ export const useTasks = (entity?: ActivityTargetableEntity) => {
     skip: !entity && !selectedFilter,
     filter: {
       completedAt: { is: 'NOT_NULL' },
-      id: {
-        in: activityTargets?.map((activityTarget) => activityTarget.activityId),
-      },
+      id: isDefined(entity)
+        ? {
+            in: activityTargets?.map(
+              (activityTarget) => activityTarget.activityId,
+            ),
+          }
+        : undefined,
       type: { eq: 'Task' },
+      assigneeId: isNonEmptyString(selectedFilter?.value)
+        ? {
+            eq: selectedFilter?.value,
+          }
+        : undefined,
     },
     orderBy: {
       createdAt: 'DescNullsFirst',
@@ -38,14 +57,29 @@ export const useTasks = (entity?: ActivityTargetableEntity) => {
     skip: !entity && !selectedFilter,
     filter: {
       completedAt: { is: 'NULL' },
-      id: {
-        in: activityTargets?.map((activityTarget) => activityTarget.activityId),
-      },
+      id: isDefined(entity)
+        ? {
+            in: activityTargets?.map(
+              (activityTarget) => activityTarget.activityId,
+            ),
+          }
+        : undefined,
       type: { eq: 'Task' },
+      assigneeId: isNonEmptyString(selectedFilter?.value)
+        ? {
+            eq: selectedFilter?.value,
+          }
+        : undefined,
     },
     orderBy: {
       createdAt: 'DescNullsFirst',
     },
+  });
+
+  console.log({
+    completeTasksData,
+    incompleteTaskData,
+    activityTargets,
   });
 
   const todayOrPreviousTasks = incompleteTaskData?.filter((task) => {
