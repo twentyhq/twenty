@@ -204,7 +204,13 @@ export const SettingsObjectNewFieldStep2 = () => {
         />
         <SettingsObjectFieldTypeSelectSection
           excludedFieldTypes={[
+            FieldMetadataType.Currency,
+            FieldMetadataType.Email,
             FieldMetadataType.Enum,
+            FieldMetadataType.FullName,
+            FieldMetadataType.Link,
+            FieldMetadataType.Phone,
+            FieldMetadataType.Probability,
             FieldMetadataType.Relation,
             FieldMetadataType.Uuid,
           ]}
