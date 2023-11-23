@@ -26,10 +26,12 @@ const StyledBigIconContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledMenuItemCommandContainer = styled.div`
+const StyledMenuItemCommandContainer = styled.div<{ isSelected: boolean }>`
   --horizontal-padding: ${({ theme }) => theme.spacing(1)};
   --vertical-padding: ${({ theme }) => theme.spacing(2)};
   align-items: center;
+  background: ${({ isSelected, theme }) =>
+    isSelected ? theme.background.transparent.light : theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.secondary};
   cursor: pointer;
@@ -37,8 +39,8 @@ const StyledMenuItemCommandContainer = styled.div`
   flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.sm};
   gap: ${({ theme }) => theme.spacing(2)};
-  height: calc(32px - 2 * var(--vertical-padding));
   height: 24px;
+  height: calc(32px - 2 * var(--vertical-padding));
   justify-content: space-between;
   padding: var(--vertical-padding) var(--horizontal-padding);
   position: relative;
@@ -68,6 +70,7 @@ export type MenuItemCommandProps = {
   firstHotKey?: string;
   secondHotKey?: string;
   className?: string;
+  isSelected: boolean;
   onClick?: () => void;
 };
 
@@ -77,12 +80,17 @@ export const MenuItemCommand = ({
   firstHotKey,
   secondHotKey,
   className,
+  isSelected,
   onClick,
 }: MenuItemCommandProps) => {
   const theme = useTheme();
 
   return (
-    <StyledMenuItemCommandContainer onClick={onClick} className={className}>
+    <StyledMenuItemCommandContainer
+      onClick={onClick}
+      className={className}
+      isSelected={isSelected}
+    >
       <StyledMenuItemLeftContent>
         {LeftIcon && (
           <StyledBigIconContainer>

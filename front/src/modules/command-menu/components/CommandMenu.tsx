@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { Key } from 'ts-key-enum';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
@@ -105,6 +106,45 @@ export const CommandMenu = () => {
         : true) && cmd.type === CommandType.Create,
   );
 
+  const totalMenuItems =
+    matchingCreateCommand.length +
+    matchingNavigateCommand.length +
+    people.length +
+    companies.length +
+    activities.length;
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const arrowUpHandler = () => {
+    if (selectedIndex - 1 >= 0) {
+      setSelectedIndex(selectedIndex - 1);
+    }
+  };
+
+  const arrowDownHandler = () => {
+    if (selectedIndex + 1 < totalMenuItems) {
+      setSelectedIndex(selectedIndex + 1);
+    }
+  };
+
+  useScopedHotkeys(
+    Key.ArrowUp,
+    () => {
+      arrowUpHandler();
+    },
+    AppHotkeyScope.CommandMenu,
+    [arrowUpHandler],
+  );
+
+  useScopedHotkeys(
+    Key.ArrowDown,
+    () => {
+      arrowDownHandler();
+    },
+    AppHotkeyScope.CommandMenu,
+    [arrowDownHandler],
+  );
+
   return (
     isCommandMenuOpened && (
       <StyledDialog>
@@ -120,7 +160,7 @@ export const CommandMenu = () => {
             !companies.length &&
             !activities.length && <StyledEmpty>No results found</StyledEmpty>}
           <CommandGroup heading="Create">
-            {matchingCreateCommand.map((cmd) => (
+            {matchingCreateCommand.map((cmd, index) => (
               <CommandMenuItem
                 to={cmd.to}
                 key={cmd.label}
@@ -129,11 +169,12 @@ export const CommandMenu = () => {
                 onClick={cmd.onCommandClick}
                 firstHotKey={cmd.firstHotKey}
                 secondHotKey={cmd.secondHotKey}
+                isSelected={index == selectedIndex}
               />
             ))}
           </CommandGroup>
           <CommandGroup heading="Navigate">
-            {matchingNavigateCommand.map((cmd) => (
+            {matchingNavigateCommand.map((cmd, index) => (
               <CommandMenuItem
                 to={cmd.to}
                 key={cmd.label}
@@ -142,15 +183,24 @@ export const CommandMenu = () => {
                 onClick={cmd.onCommandClick}
                 firstHotKey={cmd.firstHotKey}
                 secondHotKey={cmd.secondHotKey}
+                isSelected={
+                  matchingCreateCommand.length + index == selectedIndex
+                }
               />
             ))}
           </CommandGroup>
           <CommandGroup heading="People">
-            {people.map((person) => (
+            {people.map((person, index) => (
               <CommandMenuItem
                 key={person.id}
                 to={`person/${person.id}`}
                 label={person.displayName}
+                isSelected={
+                  matchingNavigateCommand.length +
+                    matchingCreateCommand.length +
+                    index ==
+                  selectedIndex
+                }
                 Icon={() => (
                   <Avatar
                     type="rounded"
@@ -163,7 +213,7 @@ export const CommandMenu = () => {
             ))}
           </CommandGroup>
           <CommandGroup heading="Companies">
-            {companies.map((company) => (
+            {companies.map((company, index) => (
               <CommandMenuItem
                 key={company.id}
                 label={company.name}
@@ -175,16 +225,31 @@ export const CommandMenu = () => {
                     avatarUrl={getLogoUrlFromDomainName(company.domainName)}
                   />
                 )}
+                isSelected={
+                  people.length +
+                    matchingNavigateCommand.length +
+                    matchingCreateCommand.length +
+                    index ==
+                  selectedIndex
+                }
               />
             ))}
           </CommandGroup>
           <CommandGroup heading="Notes">
-            {activities.map((activity) => (
+            {activities.map((activity, index) => (
               <CommandMenuItem
                 Icon={IconNotes}
                 key={activity.id}
                 label={activity.title ?? ''}
                 onClick={() => openActivityRightDrawer(activity.id)}
+                isSelected={
+                  companies.length +
+                    people.length +
+                    matchingNavigateCommand.length +
+                    matchingCreateCommand.length +
+                    index ==
+                  selectedIndex
+                }
               />
             ))}
           </CommandGroup>

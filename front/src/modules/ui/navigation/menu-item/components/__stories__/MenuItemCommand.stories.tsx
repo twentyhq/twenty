@@ -32,6 +32,7 @@ export const Default: Story = {
         secondHotKey={props.secondHotKey}
         className={props.className}
         onClick={props.onClick}
+        isSelected={false}
       ></MenuItemCommand>
     </Command>
   ),
@@ -91,6 +92,7 @@ export const Catalog: CatalogStory<Story, typeof MenuItemCommand> = {
         secondHotKey={props.secondHotKey}
         className={props.className}
         onClick={props.onClick}
+        isSelected={false}
       ></MenuItemCommand>
     </Command>
   ),
