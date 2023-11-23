@@ -38,6 +38,7 @@ const companyMetadata = {
         'The company website URL. We use this url to fetch the company icon',
       icon: 'IconLink',
       isNullable: true,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -51,6 +52,7 @@ const companyMetadata = {
       description: 'The company address',
       icon: 'IconMap',
       isNullable: true,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,

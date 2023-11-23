@@ -81,33 +81,34 @@ export class WorkspaceManagerService {
     workspaceId: string,
   ): Promise<ObjectMetadataEntity[]> {
     const createdObjectMetadata = await this.objectMetadataService.createMany(
-      Object.values(standardObjectsMetadata).map(
-        (objectMetadata: ObjectMetadataEntity) => ({
-          ...objectMetadata,
-          dataSourceId,
-          workspaceId,
-          isCustom: false,
-          isActive: true,
-          fields: [...basicFieldsMetadata, ...objectMetadata.fields].map(
-            (field) => ({
-              ...field,
-              workspaceId,
-              isCustom: false,
-              isActive: true,
-            }),
-          ),
-        }),
-      ),
+      Object.values(standardObjectsMetadata).map((objectMetadata: any) => ({
+        ...objectMetadata,
+        dataSourceId,
+        workspaceId,
+        isCustom: false,
+        isActive: true,
+        fields: [...basicFieldsMetadata, ...objectMetadata.fields].map(
+          (field) => ({
+            ...field,
+            workspaceId,
+            isCustom: false,
+            isActive: true,
+          }),
+        ),
+      })),
     );
 
     await this.relationMetadataService.createMany(
-      Object.values(standardObjectRelationMetadata).map((relationMetadata) =>
-        this.createStandardObjectRelations(
+      Object.values(standardObjectRelationMetadata).map((relationMetadata) => {
+        const metadata = this.createStandardObjectRelations(
           workspaceId,
           createdObjectMetadata,
           relationMetadata,
-        ),
-      ),
+        );
+        console.log(metadata);
+
+        return metadata;
+      }),
     );
 
     return createdObjectMetadata;

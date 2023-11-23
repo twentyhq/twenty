@@ -25,6 +25,18 @@ const commentMetadata = {
       isNullable: false,
       defaultValue: { value: '' },
     },
+    {
+      isCustom: false,
+      isActive: true,
+      type: FieldMetadataType.UUID,
+      name: 'authorId',
+      label: 'Author',
+      targetColumnMap: {},
+      description: 'Comment author',
+      icon: 'IconCircleUser',
+      isNullable: true,
+      isSystem: true,
+    },
     // Relations
     {
       isCustom: false,
@@ -36,18 +48,6 @@ const commentMetadata = {
       description: 'Comment author',
       icon: 'IconCircleUser',
       isNullable: true,
-    },
-    {
-      isCustom: false,
-      isActive: true,
-      type: FieldMetadataType.RELATION,
-      name: 'authorId',
-      label: 'Author',
-      targetColumnMap: {},
-      description: 'Comment author',
-      icon: 'IconCircleUser',
-      isNullable: true,
-      isSystem: true,
     },
     {
       isCustom: false,

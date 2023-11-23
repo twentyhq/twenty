@@ -178,7 +178,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         icon: 'IconColorSwatch',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: 'Light' },
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.Locale,
@@ -196,7 +196,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         icon: 'IconLanguage',
         isNullable: false,
         isSystem: false,
-        defaultValue: { value: 'fr' },
+        defaultValue: { value: 'en' },
       },
 
       // Relationships

@@ -124,7 +124,7 @@ export const seedActivityFieldMetadata = async (
         icon: 'IconNotes',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: '' },
       },
 
       // Scalar fields
@@ -144,7 +144,7 @@ export const seedActivityFieldMetadata = async (
         icon: 'IconList',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: '' },
       },
       {
         id: SeedActivityFieldMetadataIds.Type,
@@ -162,7 +162,7 @@ export const seedActivityFieldMetadata = async (
         icon: 'IconCheckbox',
         isNullable: false,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: 'Note' },
       },
       {
         id: SeedActivityFieldMetadataIds.ReminderAt,
