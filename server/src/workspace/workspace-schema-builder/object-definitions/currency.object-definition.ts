@@ -13,7 +13,7 @@ export const currencyObjectDefinition = {
   fields: [
     {
       id: 'amountMicros',
-      type: FieldMetadataType.NUMBER,
+      type: FieldMetadataType.NUMERIC,
       objectMetadataId: FieldMetadataType.CURRENCY.toString(),
       name: 'amountMicros',
       label: 'AmountMicros',

@@ -56,6 +56,19 @@ export function convertFieldMetadataToColumnActions(
         },
       ];
     }
+    case FieldMetadataType.NUMERIC: {
+      const defaultValue =
+        fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.NUMERIC>;
+
+      return [
+        {
+          action: WorkspaceMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.value,
+          columnType: 'numeric',
+          defaultValue: serializeDefaultValue(defaultValue?.value),
+        },
+      ];
+    }
     case FieldMetadataType.NUMBER:
     case FieldMetadataType.PROBABILITY: {
       const defaultValue =
@@ -117,6 +130,7 @@ export function convertFieldMetadataToColumnActions(
         },
       ];
     }
+
     case FieldMetadataType.CURRENCY: {
       const defaultValue =
         fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.CURRENCY>;
@@ -125,7 +139,7 @@ export function convertFieldMetadataToColumnActions(
         {
           action: WorkspaceMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.amountMicros,
-          columnType: 'integer',
+          columnType: 'numeric',
           defaultValue: serializeDefaultValue(defaultValue?.amountMicros),
         },
         {
