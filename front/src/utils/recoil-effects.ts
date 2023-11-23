@@ -32,6 +32,8 @@ export const cookieStorageEffect =
       }
       isReset
         ? cookieStorage.removeItem(key)
-        : cookieStorage.setItem(key, JSON.stringify(newValue));
+        : cookieStorage.setItem(key, JSON.stringify(newValue), {
+            expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+          });
     });
   };
