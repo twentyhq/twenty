@@ -48,12 +48,22 @@ export const FieldInput = ({
 }: FieldInputProps) => {
   const { fieldDefinition } = useContext(FieldContext);
 
+  console.log(fieldDefinition);
+
   return (
     <>
       {isFieldRelation(fieldDefinition) ? (
         <RecoilScope>
           <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
         </RecoilScope>
+      ) : isFieldPhone(fieldDefinition) ? (
+        <PhoneFieldInput
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
+        />
       ) : isFieldText(fieldDefinition) ? (
         <TextFieldInput
           onEnter={onEnter}
@@ -104,14 +114,6 @@ export const FieldInput = ({
         />
       ) : isFieldCurrency(fieldDefinition) ? (
         <CurrencyFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
-      ) : isFieldPhone(fieldDefinition) ? (
-        <PhoneFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}
