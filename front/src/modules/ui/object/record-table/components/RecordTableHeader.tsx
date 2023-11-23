@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { IconPlus } from '@/ui/display/icon';
-import { IconButton } from '@/ui/input/button/components/IconButton';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
@@ -237,10 +237,10 @@ export const RecordTableHeader = ({
                 primaryColumnKey={primaryColumn?.fieldMetadataId || ''}
               />
               <StyledHeaderIcon className="StyledHeaderIcon">
-                <IconButton
+                <LightIconButton
                   Icon={IconPlus}
-                  variant="tertiary"
                   size="small"
+                  accent="tertiary"
                   onClick={createObject}
                 />
               </StyledHeaderIcon>
