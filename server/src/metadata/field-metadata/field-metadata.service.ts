@@ -56,6 +56,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw new ConflictException('Field already exists');
     }
 
+    if (record.name == record.label) {
+      throw new ConflictException('Field name and label cannot be the same');
+    }
+
     const createdFieldMetadata = await super.createOne({
       ...record,
       targetColumnMap: generateTargetColumnMap(record.type, true, record.name),

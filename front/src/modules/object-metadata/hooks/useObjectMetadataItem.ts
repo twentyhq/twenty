@@ -24,10 +24,10 @@ export const EMPTY_MUTATION = gql`
   }
 `;
 
-export const useObjectMetadataItem = ({
-  objectNamePlural,
-  objectNameSingular,
-}: ObjectMetadataItemIdentifier) => {
+export const useObjectMetadataItem = (
+  { objectNamePlural, objectNameSingular }: ObjectMetadataItemIdentifier,
+  depth?: number,
+) => {
   const objectMetadataItem = useRecoilValue(
     objectMetadataItemFamilySelector({
       objectNamePlural,
@@ -43,10 +43,12 @@ export const useObjectMetadataItem = ({
 
   const findManyQuery = useGenerateFindManyCustomObjectsQuery({
     objectMetadataItem,
+    depth,
   });
 
   const findOneQuery = useGenerateFindOneCustomObjectQuery({
     objectMetadataItem,
+    depth,
   });
 
   const createOneMutation = useGenerateCreateOneObjectMutation({

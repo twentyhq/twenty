@@ -1,4 +1,5 @@
 import { useApolloClient } from '@apollo/client';
+import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilCallback } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -9,6 +10,10 @@ import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScope
 export const useViewFields = (viewScopeId: string) => {
   const { updateOneMutation, createOneMutation } = useObjectMetadataItem({
     objectNameSingular: 'viewField',
+  });
+
+  const { findManyQuery: findManyViewsQuery } = useObjectMetadataItem({
+    objectNameSingular: 'view',
   });
 
   const apolloClient = useApolloClient();
@@ -53,6 +58,9 @@ export const useViewFields = (viewScopeId: string) => {
                     position: viewField.position,
                   },
                 },
+                // TODO: implement optimistic response
+                refetchQueries: [getOperationName(findManyViewsQuery) ?? ''],
+                awaitRefetchQueries: true,
               }),
             ),
           );
@@ -75,6 +83,9 @@ export const useViewFields = (viewScopeId: string) => {
                     position: viewField.position,
                   },
                 },
+                // TODO: implement optimistic response
+                refetchQueries: [getOperationName(findManyViewsQuery) ?? ''],
+                awaitRefetchQueries: true,
               }),
             ),
           );
@@ -96,12 +107,20 @@ export const useViewFields = (viewScopeId: string) => {
         );
 
         set(isPersistingViewState, true);
+
         await _createViewFields(viewFieldsToCreate);
 
         await _updateViewFields(viewFieldsToUpdate);
+
         set(isPersistingViewState, false);
       },
-    [apolloClient, createOneMutation, updateOneMutation, viewScopeId],
+    [
+      apolloClient,
+      createOneMutation,
+      updateOneMutation,
+      viewScopeId,
+      findManyViewsQuery,
+    ],
   );
 
   return { persistViewFields };
