@@ -1,41 +1,30 @@
-import { FilterDropdownCompanySearchSelect } from '@/companies/components/FilterDropdownCompanySearchSelect';
-import {
-  IconBuildingSkyscraper,
-  IconCalendarEvent,
-  IconCurrencyDollar,
-  IconUser,
-} from '@/ui/display/icon/index';
+import { Opportunity } from '@/pipeline/types/Opportunity';
 import { FilterDefinitionByEntity } from '@/ui/object/object-filter-dropdown/types/FilterDefinitionByEntity';
-import { PipelineProgress } from '~/generated/graphql';
 
-import { FilterDropdownPeopleSearchSelect } from '../../../modules/people/components/FilterDropdownPeopleSearchSelect';
-
-export const opportunityBoardFilterDefinitions: FilterDefinitionByEntity<PipelineProgress>[] =
+export const opportunityBoardFilterDefinitions: FilterDefinitionByEntity<Opportunity>[] =
   [
     {
-      fieldId: 'amount',
+      fieldMetadataId: 'amount',
       label: 'Amount',
-      Icon: IconCurrencyDollar,
-      type: 'number',
+      iconName: 'IconCurrencyDollar',
+      type: 'NUMBER',
     },
     {
-      fieldId: 'closeDate',
+      fieldMetadataId: 'closeDate',
       label: 'Close date',
-      Icon: IconCalendarEvent,
-      type: 'date',
+      iconName: 'IconCalendarEvent',
+      type: 'DATE_TIME',
     },
     {
-      fieldId: 'companyId',
+      fieldMetadataId: 'companyId',
       label: 'Company',
-      Icon: IconBuildingSkyscraper,
-      type: 'entity',
-      entitySelectComponent: <FilterDropdownCompanySearchSelect />,
+      iconName: 'IconBuildingSkyscraper',
+      type: 'RELATION',
     },
     {
-      fieldId: 'pointOfContactId',
+      fieldMetadataId: 'pointOfContactId',
       label: 'Point of contact',
-      Icon: IconUser,
-      type: 'entity',
-      entitySelectComponent: <FilterDropdownPeopleSearchSelect />,
+      iconName: 'IconUser',
+      type: 'RELATION',
     },
   ];

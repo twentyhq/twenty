@@ -1,0 +1,95 @@
+---
+title: Checkmark
+sidebar_position: 1
+sidebar_custom_props:
+  icon: TbCheck
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import checkmarkCode from '!!raw-loader!@site/src/ui/display/checkmarkCode.js'
+import animatedCheckmarkCode from '!!raw-loader!@site/src/ui/display/animatedCheckmarkCode.js'
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+
+Represents a successful or completed action. 
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/display/checkmark/components/Checkmark']}
+  componentCode={checkmarkCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+Extends `React.ComponentPropsWithoutRef<'div'>` and accepts all the props of a regular `div` element.
+
+</TabItem >
+
+</Tabs>
+
+## Animated Checkmark 
+
+Represents a checkmark icon with the added feature of animation. 
+
+<Tabs>
+
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/display/checkmark/components/AnimatedCheckmark']}
+  componentCode={animatedCheckmarkCode}
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props" default>
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>isAnimating</td>
+      <td>boolean</td>
+      <td>Controls whether the checkmark is animating</td>
+      <td>`false`</td>
+    </tr>
+
+    <tr>
+      <td>color</td>
+      <td>string</td>
+      <td>Color of the checkmark</td>
+      <td>Theme's gray0</td>
+    </tr>
+
+    <tr>
+      <td>duration</td>
+      <td>number</td>
+      <td>The duration of the animation in seconds</td>
+      <td>0.5 seconds</td>
+    </tr>
+
+    <tr>
+      <td>size</td>
+      <td>number</td>
+      <td>The size of the checkmark</td>
+      <td>28 pixels</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>

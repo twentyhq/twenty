@@ -1,25 +1,21 @@
 import { useState } from 'react';
+import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { flip, offset, useFloating } from '@floating-ui/react';
 import { v4 } from 'uuid';
 
-import {
-  PeoplePicker,
-  PersonForSelect,
-} from '@/people/components/PeoplePicker';
-import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { IconPlus } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { RelationPicker } from '@/ui/input/components/internal/relation-picker/components/RelationPicker';
+import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { DoubleTextInput } from '@/ui/object/field/meta-types/input/components/internal/DoubleTextInput';
 import { FieldDoubleText } from '@/ui/object/field/types/FieldDoubleText';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import {
-  useInsertOnePersonMutation,
-  useUpdateOnePersonMutation,
-} from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
   position: static;
@@ -56,8 +52,6 @@ export const AddPersonToCompany = ({
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isCreationDropdownOpen, setIsCreationDropdownOpen] = useState(false);
-  const [updatePerson] = useUpdateOnePersonMutation();
-  const [insertOnePerson] = useInsertOnePersonMutation();
   const { refs, floatingStyles } = useFloating({
     open: isDropdownOpen,
     placement: 'right-start',
@@ -74,22 +68,28 @@ export const AddPersonToCompany = ({
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
+  const { findManyQuery, updateOneMutation, createOneMutation } =
+    useObjectMetadataItem({
+      objectNameSingular: 'person',
+    });
+
+  const [updatePerson] = useMutation(updateOneMutation);
+  const [createPerson] = useMutation(createOneMutation);
+
   const handlePersonSelected =
-    (companyId: string) => async (newPerson: PersonForSelect | null) => {
-      if (newPerson) {
-        await updatePerson({
-          variables: {
-            where: {
-              id: newPerson.id,
-            },
-            data: {
-              company: { connect: { id: companyId } },
-            },
+    (companyId: string) => async (newPerson: EntityForSelect | null) => {
+      if (!newPerson) return;
+      await updatePerson({
+        variables: {
+          idToUpdate: newPerson.id,
+          input: {
+            companyId: companyId,
           },
-          refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
-        });
-        handleClosePicker();
-      }
+        },
+        refetchQueries: [getOperationName(findManyQuery) ?? ''],
+      });
+
+      handleClosePicker();
     };
 
   const handleClosePicker = () => {
@@ -108,23 +108,27 @@ export const AddPersonToCompany = ({
     }
   };
 
-  const handleInputKeyDown = async ({
+  const handleCreatePerson = async ({
     firstValue,
     secondValue,
   }: FieldDoubleText) => {
     if (!firstValue && !secondValue) return;
     const newPersonId = v4();
-    await insertOnePerson({
+
+    await createPerson({
       variables: {
-        data: {
-          company: { connect: { id: companyId } },
+        input: {
+          companyId: companyId,
           id: newPersonId,
-          firstName: firstValue,
-          lastName: secondValue,
+          name: {
+            firstName: firstValue,
+            lastName: secondValue,
+          },
         },
       },
-      refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
+      refetchQueries: [getOperationName(findManyQuery) ?? ''],
     });
+
     setIsCreationDropdownOpen(false);
   };
 
@@ -148,18 +152,28 @@ export const AddPersonToCompany = ({
                   firstValuePlaceholder="First Name"
                   secondValuePlaceholder="Last Name"
                   onClickOutside={handleEscape}
-                  onEnter={handleInputKeyDown}
+                  onEnter={handleCreatePerson}
                   onEscape={handleEscape}
                   hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
                 />
               </StyledInputContainer>
             ) : (
-              <PeoplePicker
-                personId={''}
+              <RelationPicker
+                recordId={''}
                 onSubmit={handlePersonSelected(companyId)}
                 onCancel={handleClosePicker}
-                onCreate={() => setIsCreationDropdownOpen(true)}
-                excludePersonIds={peopleIds}
+                excludeRecordIds={peopleIds ?? []}
+                fieldDefinition={{
+                  label: 'Person',
+                  iconName: 'IconUser',
+                  fieldMetadataId: '',
+                  type: FieldMetadataType.Relation,
+                  metadata: {
+                    relationObjectMetadataNameSingular: 'person',
+                    relationObjectMetadataNamePlural: 'people',
+                    fieldName: 'person',
+                  },
+                }}
               />
             )}
           </div>

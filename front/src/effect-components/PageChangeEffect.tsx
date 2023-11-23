@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { ActivityTargetableEntityType } from '@/activities/types/ActivityTargetableEntity';
 import { useEventTracker } from '@/analytics/hooks/useEventTracker';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
@@ -12,14 +11,11 @@ import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
-import { IconCheckbox, IconNotes } from '@/ui/display/icon';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { IconCheckbox } from '@/ui/display/icon';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TableHotkeyScope } from '@/ui/object/record-table/types/TableHotkeyScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import {
-  ActivityType,
-  useGetWorkspaceFromInviteHashLazyQuery,
-} from '~/generated/graphql';
+import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
 
 import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
 
@@ -114,28 +110,32 @@ export const PageChangeEffect = () => {
     }
 
     switch (true) {
-      case isMatchingLocation(AppPath.CompaniesPage): {
-        setHotkeyScope(TableHotkeyScope.Table, { goto: true });
+      case isMatchingLocation(AppPath.RecordTablePage): {
+        setHotkeyScope(TableHotkeyScope.Table, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
         break;
       }
-      case isMatchingLocation(AppPath.PeoplePage): {
-        setHotkeyScope(TableHotkeyScope.Table, { goto: true });
-        break;
-      }
-      case isMatchingLocation(AppPath.CompanyShowPage): {
-        setHotkeyScope(PageHotkeyScope.CompanyShowPage, { goto: true });
-        break;
-      }
-      case isMatchingLocation(AppPath.PersonShowPage): {
-        setHotkeyScope(PageHotkeyScope.PersonShowPage, { goto: true });
+      case isMatchingLocation(AppPath.RecordShowPage): {
+        setHotkeyScope(PageHotkeyScope.CompanyShowPage, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
         break;
       }
       case isMatchingLocation(AppPath.OpportunitiesPage): {
-        setHotkeyScope(PageHotkeyScope.OpportunitiesPage, { goto: true });
+        setHotkeyScope(PageHotkeyScope.OpportunitiesPage, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
         break;
       }
       case isMatchingLocation(AppPath.TasksPage): {
-        setHotkeyScope(PageHotkeyScope.TaskPage, { goto: true });
+        setHotkeyScope(PageHotkeyScope.TaskPage, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
         break;
       }
 
@@ -160,103 +160,35 @@ export const PageChangeEffect = () => {
         break;
       }
       case isMatchingLocation(SettingsPath.ProfilePage, AppBasePath.Settings): {
-        setHotkeyScope(PageHotkeyScope.ProfilePage, { goto: true });
+        setHotkeyScope(PageHotkeyScope.ProfilePage, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
         break;
       }
       case isMatchingLocation(
         SettingsPath.WorkspaceMembersPage,
         AppBasePath.Settings,
       ): {
-        setHotkeyScope(PageHotkeyScope.WorkspaceMemberPage, { goto: true });
+        setHotkeyScope(PageHotkeyScope.WorkspaceMemberPage, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
         break;
       }
     }
 
     setToIntitialCommandMenu();
-    switch (true) {
-      case isMatchingLocation(AppPath.CompanyShowPage): {
-        const companyId = matchPath(
-          { path: '/companies/:id' },
-          location.pathname,
-        )?.params.id;
 
-        const entity = !!companyId
-          ? { id: companyId, type: ActivityTargetableEntityType.Company }
-          : undefined;
-
-        addToCommandMenu([
-          {
-            to: '',
-            label: 'Create Task',
-            type: CommandType.Create,
-            Icon: IconCheckbox,
-            onCommandClick: () =>
-              openCreateActivity({
-                type: ActivityType.Task,
-                targetableEntities: entity ? [entity] : undefined,
-              }),
-          },
-          {
-            to: '',
-            label: 'Create Note',
-            type: CommandType.Create,
-            Icon: IconNotes,
-            onCommandClick: () =>
-              openCreateActivity({
-                type: ActivityType.Note,
-                targetableEntities: entity ? [entity] : undefined,
-              }),
-          },
-        ]);
-        break;
-      }
-      case isMatchingLocation(AppPath.PersonShowPage): {
-        const personId = matchPath({ path: '/person/:id' }, location.pathname)
-          ?.params.id;
-
-        const entity = !!personId
-          ? { id: personId, type: ActivityTargetableEntityType.Person }
-          : undefined;
-
-        addToCommandMenu([
-          {
-            to: '',
-            label: 'Create Task',
-            type: CommandType.Create,
-            Icon: IconCheckbox,
-            onCommandClick: () =>
-              openCreateActivity({
-                type: ActivityType.Task,
-                targetableEntities: entity ? [entity] : undefined,
-              }),
-          },
-          {
-            to: '',
-            label: 'Create Note',
-            type: CommandType.Create,
-            Icon: IconNotes,
-            onCommandClick: () =>
-              openCreateActivity({
-                type: ActivityType.Note,
-                targetableEntities: entity ? [entity] : undefined,
-              }),
-          },
-        ]);
-        break;
-      }
-      default:
-        addToCommandMenu([
-          {
-            to: '',
-            label: 'Create Task',
-            type: CommandType.Create,
-            Icon: IconCheckbox,
-            onCommandClick: () =>
-              openCreateActivity({ type: ActivityType.Task }),
-          },
-        ]);
-        break;
-    }
+    addToCommandMenu([
+      {
+        to: '',
+        label: 'Create Task',
+        type: CommandType.Create,
+        Icon: IconCheckbox,
+        onCommandClick: () => openCreateActivity({ type: 'Task' }),
+      },
+    ]);
 
     setTimeout(() => {
       eventTracker('pageview', {

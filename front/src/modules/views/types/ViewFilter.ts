@@ -3,8 +3,8 @@ import { FilterDefinition } from '@/ui/object/object-filter-dropdown/types/Filte
 import { ViewFilterOperand } from './ViewFilterOperand';
 
 export type ViewFilter = {
-  id?: string;
-  fieldId: string;
+  id: string;
+  fieldMetadataId: string;
   operand: ViewFilterOperand;
   value: string;
   displayValue: string;

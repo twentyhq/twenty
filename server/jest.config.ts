@@ -2,9 +2,6 @@ module.exports = {
   clearMocks: true,
   preset: 'ts-jest',
   testEnvironment: 'node',
-  setupFilesAfterEnv: [
-    '<rootDir>/src/database/client-mock/jest-prisma-singleton.ts',
-  ],
 
   moduleFileExtensions: ['js', 'json', 'ts'],
   moduleNameMapper: {

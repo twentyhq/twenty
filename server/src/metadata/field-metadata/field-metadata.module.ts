@@ -1,28 +1,56 @@
 import { Module } from '@nestjs/common';
 
-import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
+import {
+  NestjsQueryGraphQLModule,
+  PagingStrategies,
+} from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
+import { SortDirection } from '@ptc-org/nestjs-query-core';
 
-import { MigrationRunnerModule } from 'src/metadata/migration-runner/migration-runner.module';
-import { TenantMigrationModule } from 'src/metadata/tenant-migration/tenant-migration.module';
+import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.module';
+import { WorkspaceMigrationModule } from 'src/metadata/workspace-migration/workspace-migration.module';
 import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
+import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 
-import { FieldMetadata } from './field-metadata.entity';
-import { fieldMetadataAutoResolverOpts } from './field-metadata.auto-resolver-opts';
+import { FieldMetadataService } from './field-metadata.service';
+import { FieldMetadataEntity } from './field-metadata.entity';
 
-import { FieldMetadataService } from './services/field-metadata.service';
+import { CreateFieldInput } from './dtos/create-field.input';
+import { FieldMetadataDTO } from './dtos/field-metadata.dto';
+import { UpdateFieldInput } from './dtos/update-field.input';
 
 @Module({
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature([FieldMetadata], 'metadata'),
-        TenantMigrationModule,
-        MigrationRunnerModule,
+        NestjsQueryTypeOrmModule.forFeature([FieldMetadataEntity], 'metadata'),
+        WorkspaceMigrationModule,
+        WorkspaceMigrationRunnerModule,
         ObjectMetadataModule,
       ],
       services: [FieldMetadataService],
-      resolvers: fieldMetadataAutoResolverOpts,
+      resolvers: [
+        {
+          EntityClass: FieldMetadataEntity,
+          DTOClass: FieldMetadataDTO,
+          CreateDTOClass: CreateFieldInput,
+          UpdateDTOClass: UpdateFieldInput,
+          ServiceClass: FieldMetadataService,
+          enableTotalCount: true,
+          pagingStrategy: PagingStrategies.CURSOR,
+          read: {
+            defaultSort: [{ field: 'id', direction: SortDirection.DESC }],
+          },
+          create: {
+            many: { disabled: true },
+          },
+          update: {
+            many: { disabled: true },
+          },
+          delete: { many: { disabled: true } },
+          guards: [JwtAuthGuard],
+        },
+      ],
     }),
   ],
   providers: [FieldMetadataService],

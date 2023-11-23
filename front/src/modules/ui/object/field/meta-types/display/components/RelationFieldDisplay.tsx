@@ -1,24 +1,28 @@
 import { EntityChip } from '@/ui/display/chip/components/EntityChip';
+import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
 
 import { useRelationField } from '../../hooks/useRelationField';
 
 export const RelationFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useRelationField();
-  const { entityChipDisplayMapper } = fieldDefinition;
-  if (!entityChipDisplayMapper) {
-    throw new Error(
-      "Missing entityChipDisplayMapper in FieldContext. Please provide it in the FieldContextProvider's value prop.",
-    );
+
+  const { identifiersMapper } = useRelationPicker();
+
+  if (!fieldValue || !fieldDefinition || !identifiersMapper) {
+    return <></>;
   }
-  const { name, pictureUrl, avatarType } =
-    entityChipDisplayMapper?.(fieldValue);
+
+  const objectIdentifiers = identifiersMapper(
+    fieldValue,
+    fieldDefinition.metadata.relationObjectMetadataNameSingular,
+  );
 
   return (
     <EntityChip
-      entityId={fieldValue?.id}
-      name={name}
-      pictureUrl={pictureUrl}
-      avatarType={avatarType}
+      entityId={fieldValue.id}
+      name={objectIdentifiers?.name ?? ''}
+      avatarUrl={objectIdentifiers?.avatarUrl}
+      avatarType={objectIdentifiers?.avatarType}
     />
   );
 };

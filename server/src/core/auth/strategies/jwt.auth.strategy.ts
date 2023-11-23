@@ -4,13 +4,17 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Strategy, ExtractJwt } from 'passport-jwt';
-import { User, Workspace } from '@prisma/client';
+import { Repository } from 'typeorm';
 
-import { PrismaService } from 'src/database/prisma.service';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { assert } from 'src/utils/assert';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { Workspace } from 'src/core/workspace/workspace.entity';
+import { User } from 'src/core/user/user.entity';
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 
 export type JwtPayload = { sub: string; workspaceId: string; jti?: string };
 export type PassportUser = { user?: User; workspace: Workspace };
@@ -19,7 +23,12 @@ export type PassportUser = { user?: User; workspace: Workspace };
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly environmentService: EnvironmentService,
-    private readonly prismaService: PrismaService,
+    private readonly typeORMService: TypeORMService,
+    private readonly dataSourceService: DataSourceService,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(User, 'core')
+    private readonly userRepository: Repository<User>,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -29,25 +38,42 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: JwtPayload): Promise<PassportUser> {
-    const workspace = await this.prismaService.client.workspace.findUnique({
-      where: { id: payload.workspaceId ?? payload.sub },
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: payload.workspaceId ?? payload.sub,
     });
     if (!workspace) {
       throw new UnauthorizedException();
     }
     if (payload.jti) {
-      // If apiKey has been deleted or revoked, we throw an error
-      const apiKey = await this.prismaService.client.apiKey.findUniqueOrThrow({
-        where: { id: payload.jti },
-      });
-      assert(!apiKey.revokedAt, 'This API Key is revoked', ForbiddenException);
+      const dataSourceMetadata =
+        await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+          workspace.id,
+        );
+
+      const workspaceDataSource = await this.typeORMService.connectToDataSource(
+        dataSourceMetadata,
+      );
+
+      const apiKey = await workspaceDataSource?.query(
+        `SELECT * FROM ${dataSourceMetadata.schema}."apiKey" WHERE id = '${payload.jti}'`,
+      );
+
+      assert(
+        apiKey.length === 1 && !apiKey[0].revokedAt,
+        'This API Key is revoked',
+        ForbiddenException,
+      );
     }
 
-    const user = payload.workspaceId
-      ? await this.prismaService.client.user.findUniqueOrThrow({
-          where: { id: payload.sub },
-        })
-      : undefined;
+    let user;
+    if (payload.workspaceId) {
+      user = await this.userRepository.findOneBy({
+        id: payload.sub,
+      });
+      if (!user) {
+        throw new UnauthorizedException();
+      }
+    }
 
     return { user, workspace };
   }

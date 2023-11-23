@@ -43,9 +43,10 @@ const TextFieldInputWithContext = ({
     <div>
       <FieldContextProvider
         fieldDefinition={{
-          fieldId: 'text',
+          fieldMetadataId: 'text',
           label: 'Text',
-          type: 'text',
+          type: 'TEXT',
+          iconName: 'IconTag',
           metadata: {
             fieldName: 'Text',
             placeHolder: 'Enter text',

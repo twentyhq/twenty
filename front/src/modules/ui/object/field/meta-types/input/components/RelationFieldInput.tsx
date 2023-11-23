@@ -1,11 +1,8 @@
 import { useEffect } from 'react';
 import styled from '@emotion/styled';
 
-import { CompanyPicker } from '@/companies/components/CompanyPicker';
-import { PeoplePicker } from '@/people/components/PeoplePicker';
+import { RelationPicker } from '@/ui/input/components/internal/relation-picker/components/RelationPicker';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
-import { Entity } from '@/ui/input/relation-picker/types/EntityTypeForSelect';
-import { UserPicker } from '@/users/components/UserPicker';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useRelationField } from '../../hooks/useRelationField';
@@ -33,14 +30,21 @@ export const RelationFieldInput = ({
   const persistField = usePersistField();
 
   const handleSubmit = (newEntity: EntityForSelect | null) => {
-    onSubmit?.(() => persistField(newEntity?.originalEntity ?? null));
+    onSubmit?.(() => persistField(newEntity?.record ?? null));
   };
 
   useEffect(() => {}, [initialSearchValue]);
 
   return (
     <StyledRelationPickerContainer>
-      {fieldDefinition.metadata.relationType === Entity.Person ? (
+      <RelationPicker
+        fieldDefinition={fieldDefinition}
+        recordId={initialValue?.id ?? ''}
+        onSubmit={handleSubmit}
+        onCancel={onCancel}
+        initialSearchFilter={initialSearchValue}
+      />
+      {/* {fieldDefinition.metadata.fieldName === 'person' ? (
         <PeoplePicker
           personId={initialValue?.id ?? ''}
           companyId={initialValue?.companyId ?? ''}
@@ -48,21 +52,14 @@ export const RelationFieldInput = ({
           onCancel={onCancel}
           initialSearchFilter={initialSearchValue}
         />
-      ) : fieldDefinition.metadata.relationType === Entity.User ? (
-        <UserPicker
-          userId={initialValue?.id ?? ''}
-          onSubmit={handleSubmit}
-          onCancel={onCancel}
-          initialSearchFilter={initialSearchValue}
-        />
-      ) : fieldDefinition.metadata.relationType === Entity.Company ? (
+      ) : fieldDefinition.metadata.fieldName === 'company' ? (
         <CompanyPicker
           companyId={initialValue?.id ?? ''}
           onSubmit={handleSubmit}
           onCancel={onCancel}
           initialSearchFilter={initialSearchValue}
         />
-      ) : null}
+      ) : null} */}
     </StyledRelationPickerContainer>
   );
 };

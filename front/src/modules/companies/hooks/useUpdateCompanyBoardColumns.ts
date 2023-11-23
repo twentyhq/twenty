@@ -1,31 +1,26 @@
 import { useRecoilCallback } from 'recoil';
 
-import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
-import { boardCardIdsByColumnIdFamilyState } from '@/ui/layout/board/states/boardCardIdsByColumnIdFamilyState';
-import { boardColumnsState } from '@/ui/layout/board/states/boardColumnsState';
-import { savedBoardColumnsState } from '@/ui/layout/board/states/savedBoardColumnsState';
-import { BoardColumnDefinition } from '@/ui/layout/board/types/BoardColumnDefinition';
+import { currentPipelineStepsState } from '@/pipeline/states/currentPipelineStepsState';
+import { Opportunity } from '@/pipeline/types/Opportunity';
+import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
+import { boardCardIdsByColumnIdFamilyState } from '@/ui/object/record-board/states/boardCardIdsByColumnIdFamilyState';
+import { boardColumnsState } from '@/ui/object/record-board/states/boardColumnsState';
+import { savedBoardColumnsState } from '@/ui/object/record-board/states/savedBoardColumnsState';
+import { BoardColumnDefinition } from '@/ui/object/record-board/types/BoardColumnDefinition';
 import { isThemeColor } from '@/ui/theme/utils/castStringAsThemeColor';
-import { Pipeline } from '~/generated/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';
 
 import { companyProgressesFamilyState } from '../states/companyProgressesFamilyState';
-import {
-  CompanyForBoard,
-  CompanyProgressDict,
-  PipelineProgressForBoard,
-} from '../types/CompanyProgress';
+import { CompanyForBoard, CompanyProgressDict } from '../types/CompanyProgress';
 
 export const useUpdateCompanyBoard = () =>
   useRecoilCallback(
     ({ set, snapshot }) =>
       (
-        pipeline: Pipeline,
-        pipelineProgresses: (PipelineProgressForBoard & {
-          pipelineStageId: string;
-        })[],
+        pipelineSteps: PipelineStep[],
+        opportunities: Opportunity[],
         companies: CompanyForBoard[],
       ) => {
         const indexCompanyByIdReducer = (
@@ -42,27 +37,26 @@ export const useUpdateCompanyBoard = () =>
             {} as { [key: string]: CompanyForBoard },
           ) ?? {};
 
-        const indexPipelineProgressByIdReducer = (
+        const indexOpportunityByIdReducer = (
           acc: CompanyProgressDict,
-          pipelineProgress: PipelineProgressForBoard,
+          opportunity: Opportunity,
         ) => {
           const company =
-            pipelineProgress.companyId &&
-            companiesDict[pipelineProgress.companyId];
+            opportunity.companyId && companiesDict[opportunity.companyId];
 
           if (!company) return acc;
 
           return {
             ...acc,
-            [pipelineProgress.id]: {
-              pipelineProgress,
+            [opportunity.id]: {
+              opportunity,
               company,
             },
           };
         };
 
-        const companyBoardIndex = pipelineProgresses.reduce(
-          indexPipelineProgressByIdReducer,
+        const companyBoardIndex = opportunities.reduce(
+          indexOpportunityByIdReducer,
           {} as CompanyProgressDict,
         );
 
@@ -73,57 +67,58 @@ export const useUpdateCompanyBoard = () =>
 
           if (!isDeeplyEqual(currentCompanyProgress, companyProgress)) {
             set(companyProgressesFamilyState(id), companyProgress);
-            set(entityFieldsFamilyState(id), companyProgress.pipelineProgress);
+            set(entityFieldsFamilyState(id), companyProgress.opportunity);
           }
         }
 
-        const currentPipeline = snapshot
-          .getLoadable(currentPipelineState)
+        const currentPipelineSteps = snapshot
+          .getLoadable(currentPipelineStepsState)
           .valueOrThrow();
 
         const currentBoardColumns = snapshot
           .getLoadable(boardColumnsState)
           .valueOrThrow();
 
-        if (!isDeeplyEqual(pipeline, currentPipeline)) {
-          set(currentPipelineState, pipeline);
+        if (!isDeeplyEqual(pipelineSteps, currentPipelineSteps)) {
+          set(currentPipelineStepsState, pipelineSteps);
         }
 
-        const pipelineStages = pipeline?.pipelineStages ?? [];
-
-        const orderedPipelineStages = [...pipelineStages].sort((a, b) => {
+        const orderedPipelineSteps = [...pipelineSteps].sort((a, b) => {
           if (!a.position || !b.position) return 0;
           return a.position - b.position;
         });
 
         const newBoardColumns: BoardColumnDefinition[] =
-          orderedPipelineStages?.map((pipelineStage) => {
-            if (!isThemeColor(pipelineStage.color)) {
+          orderedPipelineSteps?.map((pipelineStep) => {
+            if (!isThemeColor(pipelineStep.color)) {
               logError(
-                `Color ${pipelineStage.color} is not recognized in useUpdateCompanyBoard.`,
+                `Color ${pipelineStep.color} is not recognized in useUpdateCompanyBoard.`,
               );
             }
 
             return {
-              id: pipelineStage.id,
-              title: pipelineStage.name,
-              colorCode: isThemeColor(pipelineStage.color)
-                ? pipelineStage.color
+              id: pipelineStep.id,
+              title: pipelineStep.name,
+              colorCode: isThemeColor(pipelineStep.color)
+                ? pipelineStep.color
                 : undefined,
-              position: pipelineStage.position ?? 0,
+              position: pipelineStep.position ?? 0,
             };
           });
-        if (currentBoardColumns.length === 0) {
+        if (
+          currentBoardColumns.length === 0 &&
+          !isDeeplyEqual(newBoardColumns, currentBoardColumns)
+        ) {
           set(boardColumnsState, newBoardColumns);
           set(savedBoardColumnsState, newBoardColumns);
         }
         for (const boardColumn of newBoardColumns) {
-          const boardCardIds = pipelineProgresses
+          const boardCardIds = opportunities
             .filter(
-              (pipelineProgressToFilter) =>
-                pipelineProgressToFilter.pipelineStageId === boardColumn.id,
+              (opportunityToFilter) =>
+                opportunityToFilter.pipelineStepId === boardColumn.id,
             )
-            .map((pipelineProgress) => pipelineProgress.id);
+            .map((opportunity) => opportunity.id);
 
           const currentBoardCardIds = snapshot
             .getLoadable(boardCardIdsByColumnIdFamilyState(boardColumn.id))

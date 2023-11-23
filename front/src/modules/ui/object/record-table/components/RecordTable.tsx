@@ -1,20 +1,12 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
 
+import { RecordTableInternalEffect } from '@/ui/object/record-table/components/RecordTableInternalEffect';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import {
-  useListenClickOutside,
-  useListenClickOutsideByClassName,
-} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
-import { useLeaveTableFocus } from '../hooks/useLeaveTableFocus';
-import { useMapKeyboardToSoftFocus } from '../hooks/useMapKeyboardToSoftFocus';
-import { useResetTableRowSelection } from '../hooks/useResetTableRowSelection';
-import { useSetRowSelectedState } from '../hooks/useSetRowSelectedState';
-import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { RecordTableBody } from './RecordTableBody';
 import { RecordTableHeader } from './RecordTableHeader';
@@ -43,9 +35,6 @@ const StyledTable = styled.table`
     :first-of-type {
       border-left-color: transparent;
       border-right-color: transparent;
-    }
-    :last-of-type {
-      width: 100%;
     }
   }
 
@@ -78,7 +67,6 @@ const StyledTableContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow: auto;
   position: relative;
 `;
 
@@ -89,41 +77,13 @@ type RecordTableProps = {
 export const RecordTable = ({ updateEntityMutation }: RecordTableProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const setRowSelectedState = useSetRowSelectedState();
-  const resetTableRowSelection = useResetTableRowSelection();
-
-  useMapKeyboardToSoftFocus();
-
-  const leaveTableFocus = useLeaveTableFocus();
-
-  useListenClickOutside({
-    refs: [tableBodyRef],
-    callback: () => {
-      leaveTableFocus();
-    },
-  });
-
-  useScopedHotkeys(
-    'escape',
-    () => {
-      resetTableRowSelection();
-    },
-    TableHotkeyScope.Table,
-  );
-
-  useListenClickOutsideByClassName({
-    classNames: ['entity-table-cell'],
-    excludeClassNames: ['action-bar', 'context-menu'],
-    callback: () => {
-      resetTableRowSelection();
-    },
-  });
+  const { resetTableRowSelection, setRowSelectedState } = useRecordTable();
 
   return (
-    <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
-      <StyledTableWithHeader>
-        <StyledTableContainer>
-          <ScrollWrapper>
+    <ScrollWrapper>
+      <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
+        <StyledTableWithHeader>
+          <StyledTableContainer>
             <div ref={tableBodyRef}>
               <StyledTable className="entity-table-cell">
                 <RecordTableHeader />
@@ -135,9 +95,10 @@ export const RecordTable = ({ updateEntityMutation }: RecordTableProps) => {
                 onDragSelectionChange={setRowSelectedState}
               />
             </div>
-          </ScrollWrapper>
-        </StyledTableContainer>
-      </StyledTableWithHeader>
-    </EntityUpdateMutationContext.Provider>
+            <RecordTableInternalEffect tableBodyRef={tableBodyRef} />
+          </StyledTableContainer>
+        </StyledTableWithHeader>
+      </EntityUpdateMutationContext.Provider>
+    </ScrollWrapper>
   );
 };

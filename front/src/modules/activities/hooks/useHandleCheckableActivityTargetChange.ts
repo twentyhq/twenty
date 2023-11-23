@@ -1,45 +1,29 @@
-import { getOperationName } from '@apollo/client/utilities';
 import { v4 } from 'uuid';
 
-import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
-import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
-import {
-  Activity,
-  ActivityTarget,
-  useAddActivityTargetsOnActivityMutation,
-  useRemoveActivityTargetsOnActivityMutation,
-} from '~/generated/graphql';
+import { ActivityTarget } from '@/activities/types/ActivityTarget';
+import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
+import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
+import { useDeleteOneObjectRecord } from '@/object-record/hooks/useDeleteOneObjectRecord';
 
-import { GET_ACTIVITY } from '../graphql/queries/getActivity';
-import { ActivityTargetableEntityType } from '../types/ActivityTargetableEntity';
 import { ActivityTargetableEntityForSelect } from '../types/ActivityTargetableEntityForSelect';
 
 export const useHandleCheckableActivityTargetChange = ({
   activity,
 }: {
-  activity?: Pick<Activity, 'id'> & {
-    activityTargets?: Array<
-      Pick<ActivityTarget, 'id' | 'personId' | 'companyId'>
-    > | null;
+  activity?: Pick<GraphQLActivity, 'id'> & {
+    activityTargets?: {
+      edges: Array<{
+        node: Pick<ActivityTarget, 'id' | 'personId' | 'companyId'>;
+      }> | null;
+    };
   };
 }) => {
-  const [addActivityTargetsOnActivity] =
-    useAddActivityTargetsOnActivityMutation({
-      refetchQueries: [
-        getOperationName(GET_COMPANIES) ?? '',
-        getOperationName(GET_PEOPLE) ?? '',
-        getOperationName(GET_ACTIVITY) ?? '',
-      ],
-    });
-
-  const [removeActivityTargetsOnActivity] =
-    useRemoveActivityTargetsOnActivityMutation({
-      refetchQueries: [
-        getOperationName(GET_COMPANIES) ?? '',
-        getOperationName(GET_PEOPLE) ?? '',
-        getOperationName(GET_ACTIVITY) ?? '',
-      ],
-    });
+  const { createOneObject } = useCreateOneObjectRecord<ActivityTarget>({
+    objectNameSingular: 'activityTarget',
+  });
+  const { deleteOneObject } = useDeleteOneObjectRecord({
+    objectNameSingular: 'activityTarget',
+  });
 
   return async (
     entityValues: Record<string, boolean>,
@@ -49,9 +33,9 @@ export const useHandleCheckableActivityTargetChange = ({
       return;
     }
 
-    const currentEntityIds = activity.activityTargets
-      ? activity.activityTargets.map(
-          ({ personId, companyId }) => personId ?? companyId,
+    const currentEntityIds = activity.activityTargets?.edges
+      ? activity.activityTargets.edges.map(
+          ({ node }) => node.personId ?? node.companyId,
         )
       : [];
 
@@ -59,41 +43,34 @@ export const useHandleCheckableActivityTargetChange = ({
       ({ id }) => entityValues[id] && !currentEntityIds.includes(id),
     );
 
-    if (entitiesToAdd.length)
-      await addActivityTargetsOnActivity({
-        variables: {
+    if (entitiesToAdd.length) {
+      entitiesToAdd.map((entity) => {
+        createOneObject?.({
           activityId: activity.id,
-          activityTargetInputs: entitiesToAdd.map((entity) => ({
+          activityTargetInputs: {
             id: v4(),
             createdAt: new Date().toISOString(),
-            companyId:
-              entity.entityType === ActivityTargetableEntityType.Company
-                ? entity.id
-                : null,
-            personId:
-              entity.entityType === ActivityTargetableEntityType.Person
-                ? entity.id
-                : null,
-          })),
-        },
+            companyId: entity.entityType === 'Company' ? entity.id : null,
+            personId: entity.entityType === 'Person' ? entity.id : null,
+          },
+        });
       });
+    }
 
-    const activityTargetIdsToDelete = activity.activityTargets
-      ? activity.activityTargets
+    const activityTargetIdsToDelete = activity.activityTargets?.edges
+      ? activity.activityTargets.edges
           .filter(
-            ({ personId, companyId }) =>
-              (personId ?? companyId) &&
-              !entityValues[personId ?? companyId ?? ''],
+            ({ node }) =>
+              (node.personId ?? node.companyId) &&
+              !entityValues[node.personId ?? node.companyId ?? ''],
           )
-          .map(({ id }) => id)
+          .map(({ node }) => node.id)
       : [];
 
-    if (activityTargetIdsToDelete.length)
-      await removeActivityTargetsOnActivity({
-        variables: {
-          activityId: activity.id,
-          activityTargetIds: activityTargetIdsToDelete,
-        },
+    if (activityTargetIdsToDelete.length) {
+      activityTargetIdsToDelete.map((id) => {
+        deleteOneObject?.(id);
       });
+    }
   };
 };

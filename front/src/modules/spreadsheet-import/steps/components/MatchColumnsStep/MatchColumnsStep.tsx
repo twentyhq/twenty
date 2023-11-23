@@ -11,8 +11,8 @@ import { normalizeTableData } from '@/spreadsheet-import/utils/normalizeTableDat
 import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
-import { useDialog } from '@/ui/feedback/dialog//hooks/useDialog';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { ColumnGrid } from './components/ColumnGrid';
@@ -112,7 +112,7 @@ export const MatchColumnsStep = <T extends string>({
   headerValues,
   onContinue,
 }: MatchColumnsStepProps<T>) => {
-  const { enqueueDialog } = useDialog();
+  const { enqueueDialog } = useDialogManager();
   const { enqueueSnackBar } = useSnackBar();
   const dataExample = data.slice(0, 2);
   const { fields, autoMapHeaders, autoMapDistance } =

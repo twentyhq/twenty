@@ -1,19 +1,18 @@
 import { useEffect } from 'react';
-import { expect } from '@storybook/jest';
-import { jest } from '@storybook/jest';
+import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
-import { useDateField } from '../../../hooks/useDateField';
+import { useDateTimeField } from '../../../hooks/useDateTimeField';
 import { DateFieldInput, DateFieldInputProps } from '../DateFieldInput';
 
 const formattedDate = new Date();
 
 const DateFieldValueSetterEffect = ({ value }: { value: Date }) => {
-  const { setFieldValue } = useDateField();
+  const { setFieldValue } = useDateTimeField();
 
   useEffect(() => {
     setFieldValue(value.toISOString());
@@ -44,9 +43,10 @@ const DateFieldInputWithContext = ({
     <div>
       <FieldContextProvider
         fieldDefinition={{
-          fieldId: 'date',
+          fieldMetadataId: 'date',
           label: 'Date',
-          type: 'date',
+          type: 'DATE_TIME',
+          iconName: 'IconCalendarEvent',
           metadata: {
             fieldName: 'Date',
           },

@@ -91,6 +91,7 @@ export const ShowPageSummaryCard = ({
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) onUploadPicture?.(e.target.files[0]);
   };
+
   const handleAvatarClick = () => {
     inputFileRef?.current?.click?.();
   };

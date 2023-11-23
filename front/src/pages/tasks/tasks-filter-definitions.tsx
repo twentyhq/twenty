@@ -1,15 +1,15 @@
-import { IconUser, IconUserCircle } from '@/ui/display/icon';
+import { Activity } from '@/activities/types/Activity';
+import { IconUserCircle } from '@/ui/display/icon';
 import { FilterDefinitionByEntity } from '@/ui/object/object-filter-dropdown/types/FilterDefinitionByEntity';
-import { FilterDropdownUserSearchSelect } from '@/users/components/FilterDropdownUserSearchSelect';
-import { Activity } from '~/generated/graphql';
 
 export const tasksFilterDefinitions: FilterDefinitionByEntity<Activity>[] = [
   {
-    fieldId: 'assigneeId',
+    fieldMetadataId: 'assigneeId',
     label: 'Assignee',
-    Icon: IconUser,
-    type: 'entity',
-    entitySelectComponent: <FilterDropdownUserSearchSelect />,
+    iconName: 'IconUser',
+    type: 'RELATION',
+    relationObjectMetadataNamePlural: 'workspaceMembers',
+    relationObjectMetadataNameSingular: 'workspaceMember',
     selectAllLabel: 'All assignees',
     SelectAllIcon: IconUserCircle,
   },

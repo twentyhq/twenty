@@ -1,8 +1,8 @@
-import { atomFamily } from 'recoil';
+import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
 
 import { Sort } from '../../object-sort-dropdown/types/Sort';
 
-export const tableSortsScopedState = atomFamily<Sort[], string>({
+export const tableSortsScopedState = createScopedState<Sort[]>({
   key: 'tableSortsScopedState',
-  default: [],
+  defaultValue: [],
 });

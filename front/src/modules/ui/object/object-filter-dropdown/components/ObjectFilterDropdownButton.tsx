@@ -16,7 +16,7 @@ export const ObjectFilterDropdownButton = ({
 
   const hasOnlyOneEntityFilter =
     availableFilterDefinitions.length === 1 &&
-    availableFilterDefinitions[0].type === 'entity';
+    availableFilterDefinitions[0].type === 'RELATION';
 
   if (!availableFilterDefinitions.length) {
     return <></>;

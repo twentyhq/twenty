@@ -2,10 +2,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 import { useSetRecoilState } from 'recoil';
 
-import { useCompanyTableContextMenuEntries } from '@/companies/hooks/useCompanyTableContextMenuEntries';
-import { CompanyTableMockMode } from '@/companies/table/components/CompanyTableMockMode';
-import { TableRecoilScopeContext } from '@/ui/object/record-table/states/recoil-scope-contexts/TableRecoilScopeContext';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { contextMenuIsOpenState } from '../../states/contextMenuIsOpenState';
@@ -13,8 +10,6 @@ import { contextMenuPositionState } from '../../states/contextMenuPositionState'
 import { ContextMenu } from '../ContextMenu';
 
 const FilledContextMenu = (props: { selectedIds: string[] }) => {
-  const { setContextMenuEntries } = useCompanyTableContextMenuEntries();
-  setContextMenuEntries();
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   setContextMenuPosition({
     x: 100,
@@ -30,12 +25,14 @@ const meta: Meta<typeof ContextMenu> = {
   component: FilledContextMenu,
   decorators: [
     (Story) => (
-      <RecoilScope CustomRecoilScopeContext={TableRecoilScopeContext}>
+      <RecordTableScope
+        recordTableScopeId="companies"
+        onColumnsChange={() => {}}
+      >
         <MemoryRouter>
-          <CompanyTableMockMode></CompanyTableMockMode>
           <Story />
         </MemoryRouter>
-      </RecoilScope>
+      </RecordTableScope>
     ),
     ComponentDecorator,
   ],

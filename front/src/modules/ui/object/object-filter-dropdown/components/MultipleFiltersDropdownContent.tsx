@@ -30,19 +30,19 @@ export const MultipleFiltersDropdownContent = () => {
           <>
             <ObjectFilterDropdownOperandButton />
             <DropdownMenuSeparator />
-            {filterDefinitionUsedInDropdown.type === 'text' && (
-              <ObjectFilterDropdownTextSearchInput />
-            )}
-            {filterDefinitionUsedInDropdown.type === 'number' && (
-              <ObjectFilterDropdownNumberSearchInput />
-            )}
-            {filterDefinitionUsedInDropdown.type === 'date' && (
+            {['TEXT', 'EMAIL', 'PHONE', 'FULL_NAME', 'LINK'].includes(
+              filterDefinitionUsedInDropdown.type,
+            ) && <ObjectFilterDropdownTextSearchInput />}
+            {['NUMBER', 'CURRENCY'].includes(
+              filterDefinitionUsedInDropdown.type,
+            ) && <ObjectFilterDropdownNumberSearchInput />}
+            {filterDefinitionUsedInDropdown.type === 'DATE_TIME' && (
               <ObjectFilterDropdownDateSearchInput />
             )}
-            {filterDefinitionUsedInDropdown.type === 'entity' && (
+            {filterDefinitionUsedInDropdown.type === 'RELATION' && (
               <ObjectFilterDropdownEntitySearchInput />
             )}
-            {filterDefinitionUsedInDropdown.type === 'entity' && (
+            {filterDefinitionUsedInDropdown.type === 'RELATION' && (
               <ObjectFilterDropdownEntitySelect />
             )}
           </>

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { validateMetadataLabel } from '@/metadata/utils/validateMetadataLabel';
+import { validateMetadataLabel } from '@/object-metadata/utils/validateMetadataLabel';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';

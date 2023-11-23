@@ -1,102 +1,90 @@
 import { selectorFamily } from 'recoil';
 
+import { isFieldFullName } from '@/ui/object/field/types/guards/isFieldFullName';
+import { isFieldFullNameValue } from '@/ui/object/field/types/guards/isFieldFullNameValue';
+import { isFieldUuid } from '@/ui/object/field/types/guards/isFieldUuid';
+import { assertNotNull } from '~/utils/assert';
+
 import { FieldDefinition } from '../../types/FieldDefinition';
 import { FieldMetadata } from '../../types/FieldMetadata';
 import { isFieldBoolean } from '../../types/guards/isFieldBoolean';
-import { isFieldChip } from '../../types/guards/isFieldChip';
-import { isFieldDate } from '../../types/guards/isFieldDate';
-import { isFieldDoubleTextChip } from '../../types/guards/isFieldDoubleTextChip';
+import { isFieldCurrency } from '../../types/guards/isFieldCurrency';
+import { isFieldCurrencyValue } from '../../types/guards/isFieldCurrencyValue';
+import { isFieldDateTime } from '../../types/guards/isFieldDateTime';
 import { isFieldEmail } from '../../types/guards/isFieldEmail';
-import { isFieldMoney } from '../../types/guards/isFieldMoney';
+import { isFieldLink } from '../../types/guards/isFieldLink';
+import { isFieldLinkValue } from '../../types/guards/isFieldLinkValue';
 import { isFieldNumber } from '../../types/guards/isFieldNumber';
-import { isFieldPhone } from '../../types/guards/isFieldPhone';
+import { isFieldProbability } from '../../types/guards/isFieldProbability';
 import { isFieldRelation } from '../../types/guards/isFieldRelation';
 import { isFieldRelationValue } from '../../types/guards/isFieldRelationValue';
 import { isFieldText } from '../../types/guards/isFieldText';
-import { isFieldURL } from '../../types/guards/isFieldURL';
 import { entityFieldsFamilyState } from '../entityFieldsFamilyState';
+
+const isValueEmpty = (value: unknown) => !assertNotNull(value) || value === '';
 
 export const isEntityFieldEmptyFamilySelector = selectorFamily({
   key: 'isEntityFieldEmptyFamilySelector',
   get: ({
     fieldDefinition,
+    fieldName,
     entityId,
   }: {
-    fieldDefinition: Pick<
-      FieldDefinition<FieldMetadata>,
-      'type' | 'metadata' | 'fieldId' | 'label'
-    >;
+    fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type'>;
+    fieldName: string;
     entityId: string;
   }) => {
     return ({ get }) => {
       if (
+        isFieldUuid(fieldDefinition) ||
         isFieldText(fieldDefinition) ||
-        isFieldURL(fieldDefinition) ||
-        isFieldDate(fieldDefinition) ||
+        isFieldDateTime(fieldDefinition) ||
         isFieldNumber(fieldDefinition) ||
-        isFieldMoney(fieldDefinition) ||
+        isFieldProbability(fieldDefinition) ||
         isFieldEmail(fieldDefinition) ||
-        isFieldBoolean(fieldDefinition) ||
-        isFieldPhone(fieldDefinition)
+        isFieldBoolean(fieldDefinition)
+        //|| isFieldPhone(fieldDefinition)
       ) {
-        const fieldName = fieldDefinition.metadata.fieldName;
         const fieldValue = get(entityFieldsFamilyState(entityId))?.[
           fieldName
-        ] as string | null;
+        ] as string | number | boolean | null;
 
-        return (
-          fieldValue === null || fieldValue === undefined || fieldValue === ''
-        );
-      } else if (isFieldRelation(fieldDefinition)) {
-        const fieldName = fieldDefinition.metadata.fieldName;
+        return isValueEmpty(fieldValue);
+      }
 
+      if (isFieldRelation(fieldDefinition)) {
         const fieldValue = get(entityFieldsFamilyState(entityId))?.[fieldName];
 
-        if (isFieldRelationValue(fieldValue)) {
-          return fieldValue === null || fieldValue === undefined;
-        }
-      } else if (isFieldChip(fieldDefinition)) {
-        const contentFieldName = fieldDefinition.metadata.contentFieldName;
+        return isFieldRelationValue(fieldValue) && isValueEmpty(fieldValue);
+      }
 
-        const contentFieldValue = get(entityFieldsFamilyState(entityId))?.[
-          contentFieldName
-        ] as string | null;
+      if (isFieldCurrency(fieldDefinition)) {
+        const fieldValue = get(entityFieldsFamilyState(entityId))?.[fieldName];
 
         return (
-          contentFieldValue === null ||
-          contentFieldValue === undefined ||
-          contentFieldValue === ''
-        );
-      } else if (isFieldDoubleTextChip(fieldDefinition)) {
-        const firstValueFieldName =
-          fieldDefinition.metadata.firstValueFieldName;
-
-        const secondValueFieldName =
-          fieldDefinition.metadata.secondValueFieldName;
-
-        const contentFieldFirstValue = get(entityFieldsFamilyState(entityId))?.[
-          firstValueFieldName
-        ] as string | null;
-
-        const contentFieldSecondValue = get(
-          entityFieldsFamilyState(entityId),
-        )?.[secondValueFieldName] as string | null;
-
-        return (
-          (contentFieldFirstValue === null ||
-            contentFieldFirstValue === undefined ||
-            contentFieldFirstValue === '') &&
-          (contentFieldSecondValue === null ||
-            contentFieldSecondValue === undefined ||
-            contentFieldSecondValue === '')
-        );
-      } else {
-        throw new Error(
-          `Entity field type not supported in isEntityFieldEmptyFamilySelector : ${fieldDefinition.type}}`,
+          !isFieldCurrencyValue(fieldValue) ||
+          isValueEmpty(fieldValue?.amountMicros)
         );
       }
 
-      return false;
+      if (isFieldFullName(fieldDefinition)) {
+        const fieldValue = get(entityFieldsFamilyState(entityId))?.[fieldName];
+
+        return (
+          !isFieldFullNameValue(fieldValue) ||
+          isValueEmpty(fieldValue?.firstName + fieldValue?.lastName)
+        );
+      }
+
+      if (isFieldLink(fieldDefinition)) {
+        const fieldValue = get(entityFieldsFamilyState(entityId))?.[fieldName];
+
+        return !isFieldLinkValue(fieldValue) || isValueEmpty(fieldValue?.url);
+      }
+
+      throw new Error(
+        `Entity field type not supported in isEntityFieldEmptyFamilySelector : ${fieldDefinition.type}}`,
+      );
     };
   },
 });

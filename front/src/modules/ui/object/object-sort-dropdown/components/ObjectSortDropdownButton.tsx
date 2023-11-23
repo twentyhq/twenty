@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 
 import { IconChevronDown } from '@/ui/display/icon';
 import { LightButton } from '@/ui/input/button/components/LightButton';
+import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -50,7 +51,7 @@ export const ObjectSortDropdownButton = ({
   const handleAddSort = (selectedSortDefinition: SortDefinition) => {
     toggleDropdown();
     onSortSelect?.({
-      fieldId: selectedSortDefinition.fieldId,
+      fieldMetadataId: selectedSortDefinition.fieldMetadataId,
       direction: selectedSortDirection,
       definition: selectedSortDefinition,
     });
@@ -59,6 +60,8 @@ export const ObjectSortDropdownButton = ({
   const handleDropdownButtonClose = () => {
     resetState();
   };
+
+  const { icons } = useLazyLoadIcons();
 
   return (
     <DropdownScope dropdownScopeId={ObjectSortDropdownId}>
@@ -97,15 +100,17 @@ export const ObjectSortDropdownButton = ({
                 </DropdownMenuHeader>
                 <DropdownMenuSeparator />
                 <DropdownMenuItemsContainer>
-                  {availableSortDefinitions.map((availableSort, index) => (
-                    <MenuItem
-                      testId={`select-sort-${index}`}
-                      key={index}
-                      onClick={() => handleAddSort(availableSort)}
-                      LeftIcon={availableSort.Icon}
-                      text={availableSort.label}
-                    />
-                  ))}
+                  {[...availableSortDefinitions]
+                    .sort((a, b) => a.label.localeCompare(b.label))
+                    .map((availableSortDefinition, index) => (
+                      <MenuItem
+                        testId={`select-sort-${index}`}
+                        key={index}
+                        onClick={() => handleAddSort(availableSortDefinition)}
+                        LeftIcon={icons[availableSortDefinition.iconName]}
+                        text={availableSortDefinition.label}
+                      />
+                    ))}
                 </DropdownMenuItemsContainer>
               </>
             )}

@@ -3,10 +3,11 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { Activity } from '@/activities/types/Activity';
 import { IconCheckbox, IconNotes } from '@/ui/display/icon';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Avatar } from '@/users/components/Avatar';
-import { Activity, ActivityType, User } from '~/generated/graphql';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
@@ -137,11 +138,16 @@ const StyledTimelineItemContainer = styled.div<{ isGap?: boolean }>`
 type TimelineActivityProps = {
   activity: Pick<
     Activity,
-    'id' | 'title' | 'body' | 'createdAt' | 'completedAt' | 'type'
-  > & {
-    author: Pick<Activity['author'], 'displayName' | 'avatarUrl' | 'firstName'>;
-  } & {
-    assignee?: Pick<User, 'id' | 'displayName'> | null;
+    | 'id'
+    | 'title'
+    | 'body'
+    | 'createdAt'
+    | 'completedAt'
+    | 'type'
+    | 'comments'
+    | 'dueAt'
+  > & { author: Pick<WorkspaceMember, 'name' | 'avatarUrl'> } & {
+    assignee?: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'> | null;
   };
   isLastActivity?: boolean;
 };
@@ -161,7 +167,7 @@ export const TimelineActivity = ({
         <StyledAvatarContainer>
           <Avatar
             avatarUrl={activity.author.avatarUrl}
-            placeholder={activity.author.firstName ?? ''}
+            placeholder={activity.author.name.firstName ?? ''}
             size="sm"
             type="rounded"
           />
@@ -169,20 +175,21 @@ export const TimelineActivity = ({
         <StyledItemContainer>
           <StyledItemTitleContainer>
             <StyledItemAuthorText>
-              <span>{activity.author.displayName}</span>
+              <span>
+                {activity.author.name.firstName} {activity.author.name.lastName}
+              </span>
               created a {activity.type.toLowerCase()}
             </StyledItemAuthorText>
             <StyledItemTitle>
               <StyledIconContainer>
-                {activity.type === ActivityType.Note && (
+                {activity.type === 'Note' && (
                   <IconNotes size={theme.icon.size.sm} />
                 )}
-                {activity.type === ActivityType.Task && (
+                {activity.type === 'Task' && (
                   <IconCheckbox size={theme.icon.size.sm} />
                 )}
               </StyledIconContainer>
-              {(activity.type === ActivityType.Note ||
-                activity.type === ActivityType.Task) && (
+              {(activity.type === 'Note' || activity.type === 'Task') && (
                 <StyledActivityTitle
                   onClick={() => openActivityRightDrawer(activity.id)}
                 >

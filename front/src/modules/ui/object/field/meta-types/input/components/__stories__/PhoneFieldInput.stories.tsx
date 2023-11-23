@@ -43,9 +43,10 @@ const PhoneFieldInputWithContext = ({
     <div>
       <FieldContextProvider
         fieldDefinition={{
-          fieldId: 'phone',
+          fieldMetadataId: 'phone',
           label: 'Phone',
-          type: 'phone',
+          type: 'PHONE',
+          iconName: 'IconPhone',
           metadata: {
             fieldName: 'Phone',
             placeHolder: 'Enter phone number',

@@ -1,28 +1,6 @@
-import { ConfigService } from '@nestjs/config';
-
 import console from 'console';
 
-import { config } from 'dotenv';
-import { DataSource } from 'typeorm';
-
-config();
-
-const configService = new ConfigService();
-
-export const connectionSource = new DataSource({
-  type: 'postgres',
-  logging: false,
-  url: configService.get<string>('PG_DATABASE_URL'),
-});
-
-const performQuery = async (query: string, consoleDescription: string) => {
-  try {
-    await connectionSource.query(query);
-    console.log(`Performed '${consoleDescription}' successfully`);
-  } catch (err) {
-    console.error(`Failed to perform '${consoleDescription}':`, err);
-  }
-};
+import { connectionSource, performQuery } from './utils';
 
 connectionSource
   .initialize()
@@ -36,6 +14,10 @@ connectionSource
       'create schema "metadata"',
     );
     await performQuery(
+      'CREATE SCHEMA IF NOT EXISTS "core"',
+      'create schema "core"',
+    );
+    await performQuery(
       'CREATE EXTENSION IF NOT EXISTS pg_graphql',
       'create extension pg_graphql',
     );
@@ -46,7 +28,7 @@ connectionSource
     );
 
     await performQuery(
-      `COMMENT ON SCHEMA "public" IS '@graphql({"inflect_names": true})';`,
+      `COMMENT ON SCHEMA "core" IS '@graphql({"inflect_names": true})';`,
       'inflect names for graphql',
     );
 

@@ -1,9 +1,10 @@
 import { useContext } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
+import { useRecordTableScopedStates } from '@/ui/object/record-table/hooks/internal/useRecordTableScopedStates';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { FieldContext } from '../../field/contexts/FieldContext';
@@ -12,14 +13,17 @@ import { ColumnContext } from '../contexts/ColumnContext';
 import { ColumnIndexContext } from '../contexts/ColumnIndexContext';
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
 import { RowIdContext } from '../contexts/RowIdContext';
-import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
-import { TableCell } from '../table-cell/components/TableCell';
+import { TableCell } from '../record-table-cell/components/RecordTableCell';
+import { useCurrentRowSelected } from '../record-table-row/hooks/useCurrentRowSelected';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 export const RecordTableCell = ({ cellIndex }: { cellIndex: number }) => {
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
   const currentRowId = useContext(RowIdContext);
+  const { objectMetadataConfigState } = useRecordTableScopedStates();
+
+  const objectMetadataConfig = useRecoilValue(objectMetadataConfigState);
 
   const { setCurrentRowSelected } = useCurrentRowSelected();
 
@@ -56,6 +60,10 @@ export const RecordTableCell = ({ cellIndex }: { cellIndex: number }) => {
               fieldDefinition: columnDefinition,
               useUpdateEntityMutation: () => [updateEntityMutation, {}],
               hotkeyScope: customHotkeyScope,
+              basePathToShowPage: objectMetadataConfig?.basePathToShowPage,
+              isLabelIdentifier:
+                columnDefinition.fieldMetadataId ===
+                objectMetadataConfig?.labelIdentifierFieldMetadataId,
             }}
           >
             <TableCell customHotkeyScope={{ scope: customHotkeyScope }} />

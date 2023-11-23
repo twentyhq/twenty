@@ -31,13 +31,19 @@ const StyledTag = styled.h3<{
   flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.md};
   font-style: normal;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
   gap: ${({ theme }) => theme.spacing(2)};
+  height: ${({ theme }) => theme.spacing(5)};
   margin: 0;
-  padding-bottom: ${({ theme }) => theme.spacing(1)};
+  overflow: hidden;
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledContent = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export type TagProps = {
@@ -53,6 +59,6 @@ export const Tag = ({ className, color, text, onClick }: TagProps) => (
     color={castToTagColor(color)}
     onClick={onClick}
   >
-    {text}
+    <StyledContent>{text}</StyledContent>
   </StyledTag>
 );

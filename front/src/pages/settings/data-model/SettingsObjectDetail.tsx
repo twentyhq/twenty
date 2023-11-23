@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { useMetadataField } from '@/metadata/hooks/useMetadataField';
-import { useObjectMetadataItemForSettings } from '@/metadata/hooks/useObjectMetadataItemForSettings';
-import { getFieldSlug } from '@/metadata/utils/getFieldSlug';
+import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
+import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsAboutSection } from '@/settings/data-model/object-details/components/SettingsObjectAboutSection';
 import { SettingsObjectFieldActiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldActiveActionDropdown';
@@ -34,30 +34,26 @@ export const SettingsObjectDetail = () => {
   const navigate = useNavigate();
 
   const { objectSlug = '' } = useParams();
-  const {
-    disableObjectMetadataItem,
-    findActiveObjectMetadataItemBySlug,
-    loading,
-  } = useObjectMetadataItemForSettings();
+  const { disableObjectMetadataItem, findActiveObjectMetadataItemBySlug } =
+    useObjectMetadataItemForSettings();
 
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
 
   useEffect(() => {
-    if (loading) return;
     if (!activeObjectMetadataItem) navigate(AppPath.NotFound);
-  }, [activeObjectMetadataItem, loading, navigate]);
+  }, [activeObjectMetadataItem, navigate]);
 
   const { activateMetadataField, disableMetadataField, eraseMetadataField } =
-    useMetadataField();
+    useFieldMetadataItem();
 
   if (!activeObjectMetadataItem) return null;
 
   const activeMetadataFields = activeObjectMetadataItem.fields.filter(
-    (metadataField) => metadataField.isActive,
+    (metadataField) => metadataField.isActive && !metadataField.isSystem,
   );
   const disabledMetadataFields = activeObjectMetadataItem.fields.filter(
-    (metadataField) => !metadataField.isActive,
+    (metadataField) => !metadataField.isActive && !metadataField.isSystem,
   );
 
   const handleDisable = async () => {
@@ -98,7 +94,7 @@ export const SettingsObjectDetail = () => {
                 {activeMetadataFields.map((activeMetadataField) => (
                   <SettingsObjectFieldItemTableRow
                     key={activeMetadataField.id}
-                    fieldItem={activeMetadataField}
+                    fieldMetadataItem={activeMetadataField}
                     ActionIcon={
                       <SettingsObjectFieldActiveActionDropdown
                         isCustomField={activeMetadataField.isCustom}
@@ -120,7 +116,7 @@ export const SettingsObjectDetail = () => {
                 {disabledMetadataFields.map((disabledMetadataField) => (
                   <SettingsObjectFieldItemTableRow
                     key={disabledMetadataField.id}
-                    fieldItem={disabledMetadataField}
+                    fieldMetadataItem={disabledMetadataField}
                     ActionIcon={
                       <SettingsObjectFieldDisabledActionDropdown
                         isCustomField={disabledMetadataField.isCustom}

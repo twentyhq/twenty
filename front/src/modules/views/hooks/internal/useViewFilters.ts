@@ -2,36 +2,41 @@ import { useApolloClient } from '@apollo/client';
 import { produce } from 'immer';
 import { useRecoilCallback } from 'recoil';
 
-import { useFindOneObjectMetadataItem } from '@/metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { Filter } from '@/ui/object/object-filter-dropdown/types/Filter';
-import { currentViewFiltersScopedFamilyState } from '@/views/states/currentViewFiltersScopedFamilyState';
-import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
-import { onViewFiltersChangeScopedState } from '@/views/states/onViewFiltersChangeScopedState';
 import { savedViewFiltersScopedFamilyState } from '@/views/states/savedViewFiltersScopedFamilyState';
-import { savedViewFiltersByKeyScopedFamilySelector } from '@/views/states/selectors/savedViewFiltersByKeyScopedFamilySelector';
 import { ViewFilter } from '@/views/types/ViewFilter';
+import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
 
-import { useViewSetStates } from '../useViewSetStates';
+import { useViewScopedStates } from './useViewScopedStates';
 
 export const useViewFilters = (viewScopeId: string) => {
-  const {
-    updateOneMutation,
-    createOneMutation,
-    deleteOneMutation,
-    findManyQuery,
-  } = useFindOneObjectMetadataItem({
-    objectNameSingular: 'viewFilterV2',
-  });
+  const { updateOneMutation, createOneMutation, deleteOneMutation } =
+    useObjectMetadataItem({
+      objectNameSingular: 'viewFilter',
+    });
   const apolloClient = useApolloClient();
-  const { setCurrentViewFilters } = useViewSetStates(viewScopeId);
+
+  const { currentViewFiltersState } = useViewScopedStates({
+    customViewScopeId: viewScopeId,
+  });
 
   const persistViewFilters = useRecoilCallback(
     ({ snapshot, set }) =>
       async (viewId?: string) => {
-        const currentViewId = snapshot
-          .getLoadable(currentViewIdScopedState({ scopeId: viewScopeId }))
-          .getValue();
+        const { currentViewId, currentViewFilters, savedViewFiltersByKey } =
+          getViewScopedStateValuesFromSnapshot({
+            snapshot,
+            viewScopeId,
+          });
+
         if (!currentViewId) {
+          return;
+        }
+        if (!currentViewFilters) {
+          return;
+        }
+        if (!savedViewFiltersByKey) {
           return;
         }
 
@@ -44,14 +49,13 @@ export const useViewFilters = (viewScopeId: string) => {
                 mutation: createOneMutation,
                 variables: {
                   input: {
-                    fieldId: viewFilter.fieldId,
+                    fieldMetadataId: viewFilter.fieldMetadataId,
                     viewId: viewId ?? currentViewId,
                     value: viewFilter.value,
                     displayValue: viewFilter.displayValue,
                     operand: viewFilter.operand,
                   },
                 },
-                refetchQueries: [findManyQuery],
               }),
             ),
           );
@@ -92,45 +96,24 @@ export const useViewFilters = (viewScopeId: string) => {
           );
         };
 
-        const currentViewFilters = snapshot
-          .getLoadable(
-            currentViewFiltersScopedFamilyState({
-              scopeId: viewScopeId,
-              familyKey: currentViewId,
-            }),
-          )
-          .getValue();
-
-        const savedViewFiltersByKey = snapshot
-          .getLoadable(
-            savedViewFiltersByKeyScopedFamilySelector({
-              scopeId: viewScopeId,
-              viewId: viewId ?? currentViewId,
-            }),
-          )
-          .getValue();
-
-        if (!currentViewFilters) {
-          return;
-        }
-        if (!savedViewFiltersByKey) {
-          return;
-        }
-
         const filtersToCreate = currentViewFilters.filter(
-          (filter) => !savedViewFiltersByKey[filter.fieldId],
+          (filter) => !savedViewFiltersByKey[filter.fieldMetadataId],
         );
         await createViewFilters(filtersToCreate);
 
         const filtersToUpdate = currentViewFilters.filter(
           (filter) =>
-            savedViewFiltersByKey[filter.fieldId] &&
-            (savedViewFiltersByKey[filter.fieldId].operand !== filter.operand ||
-              savedViewFiltersByKey[filter.fieldId].value !== filter.value),
+            savedViewFiltersByKey[filter.fieldMetadataId] &&
+            (savedViewFiltersByKey[filter.fieldMetadataId].operand !==
+              filter.operand ||
+              savedViewFiltersByKey[filter.fieldMetadataId].value !==
+                filter.value),
         );
         await updateViewFilters(filtersToUpdate);
 
-        const filterKeys = currentViewFilters.map((filter) => filter.fieldId);
+        const filterKeys = currentViewFilters.map(
+          (filter) => filter.fieldMetadataId,
+        );
         const filterKeysToDelete = Object.keys(savedViewFiltersByKey).filter(
           (previousFilterKey) => !filterKeys.includes(previousFilterKey),
         );
@@ -151,54 +134,48 @@ export const useViewFilters = (viewScopeId: string) => {
       apolloClient,
       createOneMutation,
       deleteOneMutation,
-      findManyQuery,
       updateOneMutation,
       viewScopeId,
     ],
   );
 
   const upsertViewFilter = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       (filterToUpsert: Filter) => {
-        const currentViewId = snapshot
-          .getLoadable(currentViewIdScopedState({ scopeId: viewScopeId }))
-          .getValue();
+        const { currentViewId, savedViewFiltersByKey, onViewFiltersChange } =
+          getViewScopedStateValuesFromSnapshot({
+            snapshot,
+            viewScopeId,
+          });
 
         if (!currentViewId) {
           return;
         }
 
-        const savedViewFiltersByKey = snapshot
-          .getLoadable(
-            savedViewFiltersByKeyScopedFamilySelector({
-              scopeId: viewScopeId,
-              viewId: currentViewId,
-            }),
-          )
-          .getValue();
-
         if (!savedViewFiltersByKey) {
           return;
         }
 
-        const onViewFiltersChange = snapshot
-          .getLoadable(onViewFiltersChangeScopedState({ scopeId: viewScopeId }))
-          .getValue();
-
         const existingSavedFilterId =
-          savedViewFiltersByKey[filterToUpsert.fieldId]?.id;
+          savedViewFiltersByKey[filterToUpsert.fieldMetadataId]?.id;
 
-        setCurrentViewFilters?.((filters) => {
+        set(currentViewFiltersState, (filters) => {
           const newViewFilters = produce(filters, (filtersDraft) => {
             const existingFilterIndex = filtersDraft.findIndex(
-              (filter) => filter.fieldId === filterToUpsert.fieldId,
+              (filter) =>
+                filter.fieldMetadataId === filterToUpsert.fieldMetadataId,
             );
 
-            if (existingFilterIndex === -1) {
+            if (existingFilterIndex === -1 && filterToUpsert.value !== '') {
               filtersDraft.push({
                 ...filterToUpsert,
                 id: existingSavedFilterId,
               });
+              return filtersDraft;
+            }
+
+            if (filterToUpsert.value === '') {
+              filtersDraft.splice(existingFilterIndex, 1);
               return filtersDraft;
             }
 
@@ -211,38 +188,29 @@ export const useViewFilters = (viewScopeId: string) => {
           return newViewFilters;
         });
       },
+    [currentViewFiltersState, viewScopeId],
   );
 
   const removeViewFilter = useRecoilCallback(
-    ({ snapshot }) =>
-      (fieldId: string) => {
-        const currentViewId = snapshot
-          .getLoadable(currentViewIdScopedState({ scopeId: viewScopeId }))
-          .getValue();
+    ({ snapshot, set }) =>
+      (fieldMetadataId: string) => {
+        const { currentViewId, currentViewFilters, onViewFiltersChange } =
+          getViewScopedStateValuesFromSnapshot({
+            snapshot,
+            viewScopeId,
+          });
 
         if (!currentViewId) {
           return;
         }
 
-        const onViewFiltersChange = snapshot
-          .getLoadable(onViewFiltersChangeScopedState({ scopeId: viewScopeId }))
-          .getValue();
-
-        const currentViewFilters = snapshot
-          .getLoadable(
-            currentViewFiltersScopedFamilyState({
-              scopeId: viewScopeId,
-              familyKey: currentViewId,
-            }),
-          )
-          .getValue();
-
         const newViewFilters = currentViewFilters.filter((filter) => {
-          return filter.fieldId !== fieldId;
+          return filter.fieldMetadataId !== fieldMetadataId;
         });
-        setCurrentViewFilters?.(newViewFilters);
+        set(currentViewFiltersState, newViewFilters);
         onViewFiltersChange?.(newViewFilters);
       },
+    [currentViewFiltersState, viewScopeId],
   );
 
   return { persistViewFilters, removeViewFilter, upsertViewFilter };

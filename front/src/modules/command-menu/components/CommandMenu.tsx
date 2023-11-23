@@ -2,16 +2,12 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { Person } from '@/people/types/Person';
 import { IconNotes } from '@/ui/display/icon';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { Avatar } from '@/users/components/Avatar';
-import {
-  QueryMode,
-  useSearchActivityQuery,
-  useSearchCompanyQuery,
-  useSearchPeopleQuery,
-} from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
@@ -29,7 +25,8 @@ import {
 } from './CommandMenuStyles';
 
 export const CommandMenu = () => {
-  const { openCommandMenu, closeCommandMenu } = useCommandMenu();
+  const { openCommandMenu, closeCommandMenu, toggleCommandMenu } =
+    useCommandMenu();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [search, setSearch] = useState('');
@@ -39,58 +36,49 @@ export const CommandMenu = () => {
     'ctrl+k,meta+k',
     () => {
       setSearch('');
-      openCommandMenu();
+      toggleCommandMenu();
     },
     AppHotkeyScope.CommandMenu,
     [openCommandMenu, setSearch],
   );
 
-  const { data: peopleData } = useSearchPeopleQuery({
-    variables: {
-      where: {
-        OR: [
-          { firstName: { contains: search, mode: QueryMode.Insensitive } },
-          { lastName: { contains: search, mode: QueryMode.Insensitive } },
-        ],
-      },
-      limit: 3,
+  const { objects: people } = useFindManyObjectRecords<Person>({
+    skip: !isCommandMenuOpened,
+    objectNamePlural: 'people',
+    filter: {
+      or: [
+        { name: { firstName: { like: `%${search}%` } } },
+        { name: { firstName: { like: `%${search}%` } } },
+      ],
     },
-  });
-  const people = peopleData?.searchResults ?? [];
-
-  const { data: companyData } = useSearchCompanyQuery({
-    variables: {
-      where: {
-        OR: [{ name: { contains: search, mode: QueryMode.Insensitive } }],
-      },
-      limit: 3,
-    },
+    limit: 3,
   });
 
-  const companies = companyData?.searchResults ?? [];
-
-  const { data: activityData } = useSearchActivityQuery({
-    variables: {
-      where: {
-        OR: [
-          { title: { contains: search, mode: QueryMode.Insensitive } },
-          { body: { contains: search, mode: QueryMode.Insensitive } },
-        ],
-      },
-      limit: 3,
+  const { objects: companies } = useFindManyObjectRecords<Person>({
+    skip: !isCommandMenuOpened,
+    objectNamePlural: 'companies',
+    filter: {
+      name: { like: `%${search}%` },
     },
+    limit: 3,
   });
 
-  const activities = activityData?.searchResults ?? [];
+  const { objects: activities } = useFindManyObjectRecords<Person>({
+    skip: !isCommandMenuOpened,
+    objectNamePlural: 'activities',
+    filter: {
+      or: [
+        { title: { like: `%${search}%` } },
+        { body: { like: `%${search}%` } },
+      ],
+    },
+    limit: 3,
+  });
 
   const checkInShortcuts = (cmd: Command, search: string) => {
-    if (cmd.shortcuts && cmd.shortcuts.length > 0) {
-      return cmd.shortcuts
-        .join('')
-        .toLowerCase()
-        .includes(search.toLowerCase());
-    }
-    return false;
+    return (cmd.firstHotKey + (cmd.secondHotKey ?? ''))
+      .toLowerCase()
+      .includes(search.toLowerCase());
   };
 
   const checkInLabels = (cmd: Command, search: string) => {
@@ -140,7 +128,8 @@ export const CommandMenu = () => {
               Icon={cmd.Icon}
               label={cmd.label}
               onClick={cmd.onCommandClick}
-              shortcuts={cmd.shortcuts || []}
+              firstHotKey={cmd.firstHotKey}
+              secondHotKey={cmd.secondHotKey}
             />
           ))}
         </CommandGroup>
@@ -152,7 +141,8 @@ export const CommandMenu = () => {
               label={cmd.label}
               Icon={cmd.Icon}
               onClick={cmd.onCommandClick}
-              shortcuts={cmd.shortcuts || []}
+              firstHotKey={cmd.firstHotKey}
+              secondHotKey={cmd.secondHotKey}
             />
           ))}
         </CommandGroup>
@@ -160,14 +150,16 @@ export const CommandMenu = () => {
           {people.map((person) => (
             <CommandMenuItem
               key={person.id}
-              to={`person/${person.id}`}
-              label={person.displayName}
+              to={`object/person/${person.id}`}
+              label={person.name?.firstName + ' ' + person.name?.lastName}
               Icon={() => (
                 <Avatar
                   type="rounded"
-                  avatarUrl={null}
+                  avatarUrl={person.avatarUrl}
                   colorId={person.id}
-                  placeholder={person.displayName}
+                  placeholder={
+                    person.name?.firstName + ' ' + person.name?.lastName
+                  }
                 />
               )}
             />
@@ -178,7 +170,7 @@ export const CommandMenu = () => {
             <CommandMenuItem
               key={company.id}
               label={company.name}
-              to={`companies/${company.id}`}
+              to={`object/company/${company.id}`}
               Icon={() => (
                 <Avatar
                   colorId={company.id}

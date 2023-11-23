@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useObjectMetadataItemForSettings } from '@/metadata/hooks/useObjectMetadataItemForSettings';
-import { getObjectSlug } from '@/metadata/utils/getObjectSlug';
+import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -24,7 +24,6 @@ export const SettingsObjectEdit = () => {
     disableObjectMetadataItem,
     editObjectMetadataItem,
     findActiveObjectMetadataItemBySlug,
-    loading,
   } = useObjectMetadataItemForSettings();
 
   const activeObjectMetadataItem =
@@ -40,8 +39,6 @@ export const SettingsObjectEdit = () => {
   >({});
 
   useEffect(() => {
-    if (loading) return;
-
     if (!activeObjectMetadataItem) {
       navigate(AppPath.NotFound);
       return;
@@ -55,7 +52,7 @@ export const SettingsObjectEdit = () => {
         description: activeObjectMetadataItem.description ?? undefined,
       });
     }
-  }, [activeObjectMetadataItem, formValues, loading, navigate]);
+  }, [activeObjectMetadataItem, formValues, navigate]);
 
   if (!activeObjectMetadataItem) return null;
 

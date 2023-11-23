@@ -1,17 +1,15 @@
 import { forwardRef } from 'react';
 import styled from '@emotion/styled';
-
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
+import { useRecoilValue } from 'recoil';
 
 import { ColumnContext } from '../contexts/ColumnContext';
-import { useCurrentRowSelected } from '../hooks/useCurrentRowSelected';
-import { TableRecoilScopeContext } from '../states/recoil-scope-contexts/TableRecoilScopeContext';
-import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTableColumnsScopedSelector';
+import { useRecordTableScopedStates } from '../hooks/internal/useRecordTableScopedStates';
+import { useCurrentRowSelected } from '../record-table-row/hooks/useCurrentRowSelected';
 
 import { CheckboxCell } from './CheckboxCell';
 import { RecordTableCell } from './RecordTableCell';
 
-const StyledRow = styled.tr<{ selected: boolean }>`
+export const StyledRow = styled.tr<{ selected: boolean }>`
   background: ${(props) =>
     props.selected ? props.theme.accent.quaternary : 'none'};
 `;
@@ -24,10 +22,10 @@ export const RecordTableRow = forwardRef<
   HTMLTableRowElement,
   RecordTableRowProps
 >(({ rowId }, ref) => {
-  const visibleTableColumns = useRecoilScopedValue(
-    visibleTableColumnsScopedSelector,
-    TableRecoilScopeContext,
-  );
+  const { visibleTableColumnsSelector } = useRecordTableScopedStates();
+
+  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
+
   const { currentRowSelected } = useCurrentRowSelected();
 
   return (
@@ -44,7 +42,7 @@ export const RecordTableRow = forwardRef<
         .sort((columnA, columnB) => columnA.position - columnB.position)
         .map((column, columnIndex) => {
           return (
-            <ColumnContext.Provider value={column} key={column.fieldId}>
+            <ColumnContext.Provider value={column} key={column.fieldMetadataId}>
               <RecordTableCell cellIndex={columnIndex} />
             </ColumnContext.Provider>
           );

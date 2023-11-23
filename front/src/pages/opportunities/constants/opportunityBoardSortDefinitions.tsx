@@ -1,20 +1,19 @@
-import { IconCalendarEvent, IconCurrencyDollar } from '@/ui/display/icon/index';
 import { SortDefinition } from '@/ui/object/object-sort-dropdown/types/SortDefinition';
 
 export const opportunityBoardSortDefinitions: SortDefinition[] = [
   {
-    fieldId: 'createdAt',
+    fieldMetadataId: 'createdAt',
     label: 'Creation',
-    Icon: IconCalendarEvent,
+    iconName: 'IconCalendarEvent',
   },
   {
-    fieldId: 'amount',
+    fieldMetadataId: 'amount',
     label: 'Amount',
-    Icon: IconCurrencyDollar,
+    iconName: 'IconCurrencyDollar',
   },
   {
-    fieldId: 'closeDate',
+    fieldMetadataId: 'closeDate',
     label: 'Expected close date',
-    Icon: IconCalendarEvent,
+    iconName: 'IconCalendarEvent',
   },
 ];

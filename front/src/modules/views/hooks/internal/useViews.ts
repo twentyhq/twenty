@@ -1,10 +1,9 @@
 import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
-import { useFindOneObjectMetadataItem } from '@/metadata/hooks/useFindOneObjectMetadataItem';
-import { viewObjectIdScopeState } from '@/views/states/viewObjectIdScopeState';
-import { viewTypeScopedState } from '@/views/states/viewTypeScopedState';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { View } from '@/views/types/View';
+import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
 
 export const useViews = (scopeId: string) => {
   const {
@@ -12,23 +11,21 @@ export const useViews = (scopeId: string) => {
     createOneMutation,
     deleteOneMutation,
     findManyQuery,
-  } = useFindOneObjectMetadataItem({
-    objectNameSingular: 'viewV2',
+  } = useObjectMetadataItem({
+    objectNameSingular: 'view',
   });
   const apolloClient = useApolloClient();
 
   const createView = useRecoilCallback(
     ({ snapshot }) =>
       async (view: Pick<View, 'id' | 'name'>) => {
-        const viewObjectId = await snapshot
-          .getLoadable(viewObjectIdScopeState({ scopeId }))
-          .getValue();
+        const { viewObjectMetadataId, viewType } =
+          getViewScopedStateValuesFromSnapshot({
+            snapshot,
+            viewScopeId: scopeId,
+          });
 
-        const viewType = await snapshot
-          .getLoadable(viewTypeScopedState({ scopeId }))
-          .getValue();
-
-        if (!viewObjectId || !viewType) {
+        if (!viewObjectMetadataId || !viewType) {
           return;
         }
         await apolloClient.mutate({
@@ -36,13 +33,14 @@ export const useViews = (scopeId: string) => {
           variables: {
             input: {
               ...view,
-              objectId: viewObjectId,
+              objectMetadataId: viewObjectMetadataId,
               type: viewType,
             },
           },
           refetchQueries: [findManyQuery],
         });
       },
+    [scopeId, apolloClient, createOneMutation, findManyQuery],
   );
 
   const updateView = async (view: View) => {

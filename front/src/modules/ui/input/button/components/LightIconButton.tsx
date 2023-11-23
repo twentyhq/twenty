@@ -18,7 +18,7 @@ export type LightIconButtonProps = {
   disabled?: boolean;
   focus?: boolean;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
-} & Pick<ComponentProps<'button'>, 'aria-label'>;
+} & Pick<ComponentProps<'button'>, 'aria-label' | 'title'>;
 
 const StyledButton = styled.button<
   Pick<LightIconButtonProps, 'accent' | 'active' | 'size' | 'focus'>
@@ -90,6 +90,7 @@ export const LightIconButton = ({
   disabled = false,
   focus = false,
   onClick,
+  title,
 }: LightIconButtonProps) => {
   const theme = useTheme();
   return (
@@ -103,6 +104,7 @@ export const LightIconButton = ({
       className={className}
       size={size}
       active={active}
+      title={title}
     >
       {Icon && <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />}
     </StyledButton>

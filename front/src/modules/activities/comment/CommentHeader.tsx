@@ -1,18 +1,12 @@
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
+import { Comment } from '@/activities/types/Comment';
 import { Avatar } from '@/users/components/Avatar';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
-
-import { CommentForDrawer } from '../types/CommentForDrawer';
-
-type CommentHeaderProps = {
-  comment: Pick<CommentForDrawer, 'id' | 'author' | 'createdAt'>;
-  actionBar?: React.ReactNode;
-};
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -62,13 +56,18 @@ const StyledTooltip = styled(Tooltip)`
   padding: 8px;
 `;
 
+type CommentHeaderProps = {
+  comment: Pick<Comment, 'id' | 'author' | 'createdAt'>;
+  actionBar?: React.ReactNode;
+};
+
 export const CommentHeader = ({ comment, actionBar }: CommentHeaderProps) => {
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(comment.createdAt);
   const exactCreatedAt = beautifyExactDateTime(comment.createdAt);
   const showDate = beautifiedCreatedAt !== '';
 
   const author = comment.author;
-  const authorName = author.displayName;
+  const authorName = author.name.firstName + ' ' + author.name.lastName;
   const avatarUrl = author.avatarUrl;
   const commentId = comment.id;
 
@@ -79,7 +78,7 @@ export const CommentHeader = ({ comment, actionBar }: CommentHeaderProps) => {
           avatarUrl={avatarUrl}
           size="md"
           colorId={author.id}
-          placeholder={author.displayName}
+          placeholder={authorName}
         />
         <StyledName>{authorName}</StyledName>
         {showDate && (

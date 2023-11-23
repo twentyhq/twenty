@@ -6,7 +6,7 @@ ARG SHOULD_INDEX_DOC
 
 COPY ./docs/package.json .
 COPY ./docs/yarn.lock .
-RUN yarn install --prod
+RUN yarn install
 
 COPY ./docs .
 RUN npm run build

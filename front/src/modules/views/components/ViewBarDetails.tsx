@@ -1,12 +1,14 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
+import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { AddObjectFilterFromDetailsButton } from '@/ui/object/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { getOperandLabelShort } from '@/ui/object/object-filter-dropdown/utils/getOperandLabel';
 
+import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 import { useView } from '../hooks/useView';
-import { useViewGetStates } from '../hooks/useViewGetStates';
 
 import SortOrFilterChip from './SortOrFilterChip';
 
@@ -88,12 +90,19 @@ export const ViewBarDetails = ({
   rightComponent,
 }: ViewBarDetailsProps) => {
   const {
-    currentViewSorts,
-    currentViewFilters,
-    canPersistFilters,
-    canPersistSorts,
-    isViewBarExpanded,
-  } = useViewGetStates();
+    currentViewSortsState,
+    currentViewFiltersState,
+    canPersistFiltersSelector,
+    canPersistSortsSelector,
+    isViewBarExpandedState,
+  } = useViewScopedStates();
+  const { icons } = useLazyLoadIcons();
+
+  const currentViewSorts = useRecoilValue(currentViewSortsState);
+  const currentViewFilters = useRecoilValue(currentViewFiltersState);
+  const canPersistFilters = useRecoilValue(canPersistFiltersSelector);
+  const canPersistSorts = useRecoilValue(canPersistSortsSelector);
+  const isViewBarExpanded = useRecoilValue(isViewBarExpandedState);
 
   const { resetViewBar, removeViewSort, removeViewFilter } = useView();
 
@@ -119,12 +128,12 @@ export const ViewBarDetails = ({
           {currentViewSorts?.map((sort) => {
             return (
               <SortOrFilterChip
-                key={sort.fieldId}
-                testId={sort.fieldId}
+                key={sort.fieldMetadataId}
+                testId={sort.fieldMetadataId}
                 labelValue={sort.definition.label}
                 Icon={sort.direction === 'desc' ? IconArrowDown : IconArrowUp}
                 isSort
-                onRemove={() => removeViewSort(sort.fieldId)}
+                onRemove={() => removeViewSort(sort.fieldMetadataId)}
               />
             );
           })}
@@ -136,15 +145,15 @@ export const ViewBarDetails = ({
           {currentViewFilters?.map((filter) => {
             return (
               <SortOrFilterChip
-                key={filter.fieldId}
-                testId={filter.fieldId}
+                key={filter.fieldMetadataId}
+                testId={filter.fieldMetadataId}
                 labelKey={filter.definition.label}
                 labelValue={`${getOperandLabelShort(filter.operand)} ${
                   filter.displayValue
                 }`}
-                Icon={filter.definition.Icon}
+                Icon={icons[filter.definition.iconName]}
                 onRemove={() => {
-                  removeViewFilter(filter.fieldId);
+                  removeViewFilter(filter.fieldMetadataId);
                 }}
               />
             );

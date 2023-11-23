@@ -18,13 +18,14 @@ export const savedViewFieldByKeyScopedFamilySelector = selectorFamily({
       if (viewId === undefined) {
         return undefined;
       }
+
       return get(
         savedViewFieldsScopedFamilyState({
           scopeId: viewScopeId,
           familyKey: viewId,
         }),
       ).reduce<Record<string, ViewField>>(
-        (result, column) => ({ ...result, [column.fieldId]: column }),
+        (result, column) => ({ ...result, [column.fieldMetadataId]: column }),
         {},
       );
     },

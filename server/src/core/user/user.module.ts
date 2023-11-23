@@ -1,23 +1,33 @@
+/* eslint-disable no-restricted-imports */
 import { Module } from '@nestjs/common';
 
-import { FileModule } from 'src/core/file/file.module';
-import { WorkspaceModule } from 'src/core/workspace/workspace.module';
-import { EnvironmentModule } from 'src/integrations/environment/environment.module';
-import { AbilityModule } from 'src/ability/ability.module';
-import { PrismaModule } from 'src/database/prisma.module';
+import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
+import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
-import { UserService } from './user.service';
-import { UserResolver } from './user.resolver';
+import { FileModule } from 'src/core/file/file.module';
+import { User } from 'src/core/user/user.entity';
+import { UserResolver } from 'src/core/user/user.resolver';
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
+import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+
+import { userAutoResolverOpts } from './user.auto-resolver-opts';
+
+import { UserService } from './services/user.service';
 
 @Module({
   imports: [
+    NestjsQueryGraphQLModule.forFeature({
+      imports: [
+        NestjsQueryTypeOrmModule.forFeature([User], 'core'),
+        TypeORMModule,
+      ],
+      resolvers: userAutoResolverOpts,
+    }),
+    DataSourceModule,
     FileModule,
-    WorkspaceModule,
-    EnvironmentModule,
-    AbilityModule,
-    PrismaModule,
   ],
-  providers: [UserService, UserResolver],
   exports: [UserService],
+  providers: [UserService, UserResolver, TypeORMService],
 })
 export class UserModule {}

@@ -1,103 +1,103 @@
-import { ObjectType, ID, Field } from '@nestjs/graphql';
-
 import {
-  Column,
-  CreateDateColumn,
   Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
   Unique,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
-import {
-  Authorize,
-  BeforeCreateOne,
-  CursorConnection,
-  IDField,
-  QueryOptions,
-} from '@ptc-org/nestjs-query-graphql';
 
-import { FieldMetadata } from 'src/metadata/field-metadata/field-metadata.entity';
+import { ObjectMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/object-metadata.interface';
 
-import { BeforeCreateOneObject } from './hooks/before-create-one-object.hook';
+import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
+import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 
-@Entity('object_metadata')
-@ObjectType('object')
-@BeforeCreateOne(BeforeCreateOneObject)
-@Authorize({
-  authorize: (context: any) => ({
-    workspaceId: { eq: context?.req?.user?.workspace?.id },
-  }),
-})
-@QueryOptions({
-  defaultResultSize: 10,
-  disableFilter: true,
-  disableSort: true,
-  maxResultsSize: 1000,
-})
-@CursorConnection('fields', () => FieldMetadata)
+@Entity('objectMetadata')
 @Unique('IndexOnNameSingularAndWorkspaceIdUnique', [
   'nameSingular',
   'workspaceId',
 ])
 @Unique('IndexOnNamePluralAndWorkspaceIdUnique', ['namePlural', 'workspaceId'])
-export class ObjectMetadata {
-  @IDField(() => ID)
+export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Field()
-  @Column({ nullable: false, name: 'data_source_id' })
+  @Column({ nullable: false, type: 'uuid' })
   dataSourceId: string;
 
-  @Field()
-  @Column({ nullable: false, name: 'name_singular' })
+  @Column({ nullable: false })
   nameSingular: string;
 
-  @Field()
-  @Column({ nullable: false, name: 'name_plural' })
+  @Column({ nullable: false })
   namePlural: string;
 
-  @Field()
-  @Column({ nullable: false, name: 'label_singular' })
+  @Column({ nullable: false })
   labelSingular: string;
 
-  @Field()
-  @Column({ nullable: false, name: 'label_plural' })
+  @Column({ nullable: false })
   labelPlural: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true, name: 'description', type: 'text' })
+  @Column({ nullable: true, type: 'text' })
   description: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true, name: 'icon' })
+  @Column({ nullable: true })
   icon: string;
 
-  @Column({ nullable: false, name: 'target_table_name' })
+  @Column({ nullable: false })
   targetTableName: string;
 
-  @Field()
-  @Column({ default: false, name: 'is_custom' })
+  @Column({ default: false })
   isCustom: boolean;
 
-  @Field()
-  @Column({ default: false, name: 'is_active' })
+  @Column({ default: false })
   isActive: boolean;
 
-  @Column({ nullable: false, name: 'workspace_id' })
+  @Column({ default: false })
+  isSystem: boolean;
+
+  @Column({ nullable: true })
+  labelIdentifierFieldMetadataId?: string;
+
+  @Column({ nullable: true })
+  imageIdentifierFieldMetadataId?: string;
+
+  @Column({ nullable: false })
   workspaceId: string;
 
-  @OneToMany(() => FieldMetadata, (field) => field.object, {
+  @OneToMany(() => FieldMetadataEntity, (field) => field.object, {
     cascade: true,
   })
-  fields: FieldMetadata[];
+  fields: FieldMetadataEntity[];
 
-  @Field()
-  @CreateDateColumn({ name: 'created_at' })
+  @OneToMany(
+    () => RelationMetadataEntity,
+    (relation: RelationMetadataEntity) => relation.fromObjectMetadata,
+    {
+      cascade: true,
+    },
+  )
+  fromRelations: RelationMetadataEntity[];
+
+  @OneToMany(
+    () => RelationMetadataEntity,
+    (relation: RelationMetadataEntity) => relation.toObjectMetadata,
+    {
+      cascade: true,
+    },
+  )
+  toRelations: RelationMetadataEntity[];
+
+  @ManyToOne(() => DataSourceEntity, (dataSource) => dataSource.objects, {
+    onDelete: 'CASCADE',
+  })
+  dataSource: DataSourceEntity;
+
+  @CreateDateColumn()
   createdAt: Date;
 
-  @Field()
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }

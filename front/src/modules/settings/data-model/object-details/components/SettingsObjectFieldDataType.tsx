@@ -1,10 +1,19 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { dataTypes } from '../../constants/dataTypes';
-import { MetadataFieldDataType } from '../../types/ObjectFieldDataType';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-const StyledDataType = styled.div<{ value: MetadataFieldDataType }>`
+import { settingsFieldMetadataTypes } from '../../constants/settingsFieldMetadataTypes';
+
+type SettingsObjectFieldDataTypeProps = {
+  onClick?: () => void;
+  Icon?: IconComponent;
+  label?: string;
+  value: FieldMetadataType;
+};
+
+const StyledDataType = styled.div<{ value: FieldMetadataType }>`
   align-items: center;
   border: 1px solid transparent;
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -12,10 +21,18 @@ const StyledDataType = styled.div<{ value: MetadataFieldDataType }>`
   font-size: ${({ theme }) => theme.font.size.sm};
   gap: ${({ theme }) => theme.spacing(1)};
   height: 20px;
+  overflow: hidden;
   padding: 0 ${({ theme }) => theme.spacing(2)};
 
+  ${({ onClick }) =>
+    onClick
+      ? css`
+          cursor: pointer;
+        `
+      : ''}
+
   ${({ theme, value }) =>
-    value === 'relation'
+    value === FieldMetadataType.Relation
       ? css`
           border-color: ${theme.color.purple20};
           color: ${theme.color.purple};
@@ -23,21 +40,28 @@ const StyledDataType = styled.div<{ value: MetadataFieldDataType }>`
       : ''}
 `;
 
-type SettingsObjectFieldDataTypeProps = {
-  value: MetadataFieldDataType;
-};
+const StyledLabelContainer = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
 
 export const SettingsObjectFieldDataType = ({
+  onClick,
   value,
+  Icon = settingsFieldMetadataTypes[value].Icon,
+  label = settingsFieldMetadataTypes[value].label,
 }: SettingsObjectFieldDataTypeProps) => {
   const theme = useTheme();
 
-  const { label, Icon } = dataTypes?.[value];
+  const StyledIcon = styled(Icon)`
+    flex: 1 0 auto;
+  `;
 
   return (
-    <StyledDataType value={value}>
-      <Icon size={theme.icon.size.sm} />
-      {label}
+    <StyledDataType onClick={onClick} value={value}>
+      <StyledIcon size={theme.icon.size.sm} />
+      <StyledLabelContainer>{label}</StyledLabelContainer>
     </StyledDataType>
   );
 };

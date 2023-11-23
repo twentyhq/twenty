@@ -1,56 +1,47 @@
 import { FieldDefinition } from '../FieldDefinition';
 import {
   FieldBooleanMetadata,
-  FieldChipMetadata,
-  FieldDateMetadata,
-  FieldDoubleTextChipMetadata,
-  FieldDoubleTextMetadata,
+  FieldCurrencyMetadata,
+  FieldDateTimeMetadata,
   FieldEmailMetadata,
+  FieldFullNameMetadata,
+  FieldLinkMetadata,
   FieldMetadata,
-  FieldMoneyAmountV2Metadata,
-  FieldMoneyMetadata,
   FieldNumberMetadata,
   FieldPhoneMetadata,
   FieldProbabilityMetadata,
   FieldRelationMetadata,
   FieldTextMetadata,
-  FieldURLMetadata,
-  FieldURLV2Metadata,
+  FieldUuidMetadata,
 } from '../FieldMetadata';
 import { FieldType } from '../FieldType';
 
 type AssertFieldMetadataFunction = <
   E extends FieldType,
-  T extends E extends 'text'
-    ? FieldTextMetadata
-    : E extends 'relation'
-    ? FieldRelationMetadata
-    : E extends 'chip'
-    ? FieldChipMetadata
-    : E extends 'double-text-chip'
-    ? FieldDoubleTextChipMetadata
-    : E extends 'double-text'
-    ? FieldDoubleTextMetadata
-    : E extends 'number'
-    ? FieldNumberMetadata
-    : E extends 'email'
-    ? FieldEmailMetadata
-    : E extends 'boolean'
+  T extends E extends 'BOOLEAN'
     ? FieldBooleanMetadata
-    : E extends 'date'
-    ? FieldDateMetadata
-    : E extends 'phone'
+    : E extends 'CURRENCY'
+    ? FieldCurrencyMetadata
+    : E extends 'FULL_NAME'
+    ? FieldFullNameMetadata
+    : E extends 'DATE_TIME'
+    ? FieldDateTimeMetadata
+    : E extends 'EMAIL'
+    ? FieldEmailMetadata
+    : E extends 'LINK'
+    ? FieldLinkMetadata
+    : E extends 'NUMBER'
+    ? FieldNumberMetadata
+    : E extends 'PHONE'
     ? FieldPhoneMetadata
-    : E extends 'url'
-    ? FieldURLMetadata
-    : E extends 'urlV2'
-    ? FieldURLV2Metadata
-    : E extends 'probability'
+    : E extends 'PROBABILITY'
     ? FieldProbabilityMetadata
-    : E extends 'moneyAmount'
-    ? FieldMoneyMetadata
-    : E extends 'moneyAmountV2'
-    ? FieldMoneyAmountV2Metadata
+    : E extends 'RELATION'
+    ? FieldRelationMetadata
+    : E extends 'TEXT'
+    ? FieldTextMetadata
+    : E extends 'UUID'
+    ? FieldUuidMetadata
     : never,
 >(
   fieldType: E,

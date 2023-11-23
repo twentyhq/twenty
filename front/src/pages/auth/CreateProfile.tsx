@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRecoilState } from 'recoil';
@@ -10,16 +9,18 @@ import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { currentUserState } from '@/auth/states/currentUserState';
+import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
+import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
-import { useUpdateUserMutation } from '~/generated/graphql';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -53,12 +54,18 @@ type Form = z.infer<typeof validationSchema>;
 
 export const CreateProfile = () => {
   const navigate = useNavigate();
+  const onboardingStatus = useOnboardingStatus();
 
   const { enqueueSnackBar } = useSnackBar();
 
-  const [currentUser] = useRecoilState(currentUserState);
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
+    currentWorkspaceMemberState,
+  );
 
-  const [updateUser] = useUpdateUserMutation();
+  const { updateOneObject, objectNotFoundInMetadata } =
+    useUpdateOneObjectRecord<WorkspaceMember>({
+      objectNameSingular: 'workspaceMember',
+    });
 
   // Form
   const {
@@ -69,8 +76,8 @@ export const CreateProfile = () => {
   } = useForm<Form>({
     mode: 'onChange',
     defaultValues: {
-      firstName: currentUser?.firstName ?? '',
-      lastName: currentUser?.lastName ?? '',
+      firstName: currentWorkspaceMember?.name.firstName ?? '',
+      lastName: currentWorkspaceMember?.name.lastName ?? '',
     },
     resolver: zodResolver(validationSchema),
   });
@@ -78,30 +85,36 @@ export const CreateProfile = () => {
   const onSubmit: SubmitHandler<Form> = useCallback(
     async (data) => {
       try {
-        if (!currentUser?.id) {
+        if (!currentWorkspaceMember?.id) {
           throw new Error('User is not logged in');
         }
         if (!data.firstName || !data.lastName) {
           throw new Error('First name or last name is missing');
         }
+        if (!updateOneObject || objectNotFoundInMetadata) {
+          throw new Error('Object not found in metadata');
+        }
 
-        const result = await updateUser({
-          variables: {
-            where: {
-              id: currentUser?.id,
-            },
-            data: {
+        await updateOneObject({
+          idToUpdate: currentWorkspaceMember?.id,
+          input: {
+            name: {
               firstName: data.firstName,
               lastName: data.lastName,
             },
           },
-          refetchQueries: [getOperationName(GET_CURRENT_USER) ?? ''],
-          awaitRefetchQueries: true,
         });
 
-        if (result.errors || !result.data?.updateUser) {
-          throw result.errors;
-        }
+        setCurrentWorkspaceMember(
+          (current) =>
+            ({
+              ...current,
+              name: {
+                firstName: data.firstName,
+                lastName: data.lastName,
+              },
+            } as any),
+        );
 
         navigate('/');
       } catch (error: any) {
@@ -110,7 +123,14 @@ export const CreateProfile = () => {
         });
       }
     },
-    [currentUser?.id, enqueueSnackBar, navigate, updateUser],
+    [
+      currentWorkspaceMember?.id,
+      enqueueSnackBar,
+      navigate,
+      objectNotFoundInMetadata,
+      setCurrentWorkspaceMember,
+      updateOneObject,
+    ],
   );
 
   useScopedHotkeys(
@@ -121,6 +141,10 @@ export const CreateProfile = () => {
     PageHotkeyScope.CreateProfile,
     [onSubmit],
   );
+
+  if (onboardingStatus !== OnboardingStatus.OngoingProfileCreation) {
+    return null;
+  }
 
   return (
     <>

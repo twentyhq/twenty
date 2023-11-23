@@ -7,6 +7,7 @@ import {
   headerSelectionTableFields,
   mockRsiValues,
 } from '@/spreadsheet-import/tests/mockRsiValues';
+import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 
 const meta: Meta<typeof SelectHeaderStep> = {
   title: 'Modules/SpreadsheetImport/SelectHeaderStep',
@@ -19,12 +20,14 @@ const meta: Meta<typeof SelectHeaderStep> = {
 export default meta;
 
 export const Default = () => (
-  <Providers values={mockRsiValues}>
-    <ModalWrapper isOpen={true} onClose={() => null}>
-      <SelectHeaderStep
-        data={headerSelectionTableFields}
-        onContinue={() => Promise.resolve()}
-      />
-    </ModalWrapper>
-  </Providers>
+  <DialogManagerScope dialogManagerScopeId="dialog-manager">
+    <Providers values={mockRsiValues}>
+      <ModalWrapper isOpen={true} onClose={() => null}>
+        <SelectHeaderStep
+          data={headerSelectionTableFields}
+          onContinue={() => Promise.resolve()}
+        />
+      </ModalWrapper>
+    </Providers>
+  </DialogManagerScope>
 );

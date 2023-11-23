@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 
-import { CommentForDrawer } from '../types/CommentForDrawer';
+import { Comment as CommentType } from '@/activities/types/Comment';
 
 import { CommentHeader } from './CommentHeader';
 
 type CommentProps = {
-  comment: CommentForDrawer;
+  comment: CommentType;
   actionBar?: React.ReactNode;
 };
 

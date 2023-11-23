@@ -8,16 +8,17 @@ export const visibleTableColumnsScopedSelector = selectorFamily({
   get:
     (scopeId: string) =>
     ({ get }) => {
-      const columns = get(tableColumnsScopedState(scopeId));
+      const columns = get(tableColumnsScopedState({ scopeId }));
       const availableColumnKeys = get(
-        availableTableColumnsScopedState(scopeId),
-      ).map(({ fieldId }) => fieldId);
+        availableTableColumnsScopedState({ scopeId }),
+      ).map(({ fieldMetadataId }) => fieldMetadataId);
 
-      return columns
+      return [...columns]
         .filter(
           (column) =>
-            column.isVisible && availableColumnKeys.includes(column.fieldId),
+            column.isVisible &&
+            availableColumnKeys.includes(column.fieldMetadataId),
         )
-        .toSorted((a, b) => a.position - b.position);
+        .sort((a, b) => a.position - b.position);
     },
 });

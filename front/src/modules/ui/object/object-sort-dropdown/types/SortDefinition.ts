@@ -1,10 +1,8 @@
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-
 import { SortDirection } from './SortDirection';
 
 export type SortDefinition = {
-  fieldId: string;
+  fieldMetadataId: string;
   label: string;
-  Icon?: IconComponent;
+  iconName: string;
   getOrderByTemplate?: (direction: SortDirection) => any[];
 };

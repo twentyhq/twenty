@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
-import { APP_FILTER, ModuleRef } from '@nestjs/core';
+import { APP_FILTER, ContextIdFactory, ModuleRef } from '@nestjs/core';
 
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import GraphQLJSON from 'graphql-type-json';
@@ -9,20 +9,19 @@ import { GraphQLError, GraphQLSchema } from 'graphql';
 import { ExtractJwt } from 'passport-jwt';
 import { TokenExpiredError, JsonWebTokenError, verify } from 'jsonwebtoken';
 
+import { WorkspaceFactory } from 'src/workspace/workspace.factory';
+
 import { AppService } from './app.service';
 
 import { CoreModule } from './core/core.module';
 import { IntegrationsModule } from './integrations/integrations.module';
-import { PrismaModule } from './database/prisma.module';
 import { HealthModule } from './health/health.module';
-import { AbilityModule } from './ability/ability.module';
-import { TenantModule } from './tenant/tenant.module';
+import { WorkspaceModule } from './workspace/workspace.module';
 import { EnvironmentService } from './integrations/environment/environment.service';
 import {
   JwtAuthStrategy,
   JwtPayload,
 } from './core/auth/strategies/jwt.auth.strategy';
-import { TenantService } from './tenant/tenant.service';
 import { ExceptionFilter } from './filters/exception.filter';
 
 @Module({
@@ -37,11 +36,6 @@ import { ExceptionFilter } from './filters/exception.filter';
       include: [CoreModule],
       conditionalSchema: async (request) => {
         try {
-          // Get the SchemaGenerationService from the AppModule
-          const tenantService = AppModule.moduleRef.get(TenantService, {
-            strict: false,
-          });
-
           // Get the JwtAuthStrategy from the AppModule
           const jwtStrategy = AppModule.moduleRef.get(JwtAuthStrategy, {
             strict: false,
@@ -74,7 +68,19 @@ import { ExceptionFilter } from './filters/exception.filter';
             decoded as JwtPayload,
           );
 
-          return await tenantService.createTenantSchema(workspace.id);
+          const contextId = ContextIdFactory.create();
+          AppModule.moduleRef.registerRequestByContextId(request, contextId);
+
+          // Get the SchemaGenerationService from the AppModule
+          const workspaceFactory = await AppModule.moduleRef.resolve(
+            WorkspaceFactory,
+            contextId,
+            {
+              strict: false,
+            },
+          );
+
+          return await workspaceFactory.createGraphQLSchema(workspace.id);
         } catch (error) {
           if (error instanceof JsonWebTokenError) {
             //mockedUserJWT
@@ -97,12 +103,10 @@ import { ExceptionFilter } from './filters/exception.filter';
       resolvers: { JSON: GraphQLJSON },
       plugins: [],
     }),
-    PrismaModule,
     HealthModule,
-    AbilityModule,
     IntegrationsModule,
     CoreModule,
-    TenantModule,
+    WorkspaceModule,
   ],
   providers: [
     AppService,

@@ -9,7 +9,7 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
@@ -62,7 +62,7 @@ export const useSignInUp = () => {
   });
   const [showErrors, setShowErrors] = useState(false);
 
-  const { data: workspace } = useGetWorkspaceFromInviteHashQuery({
+  const { data: workspaceFromInviteHash } = useGetWorkspaceFromInviteHashQuery({
     variables: { inviteHash: workspaceInviteHash || '' },
   });
 
@@ -119,20 +119,23 @@ export const useSignInUp = () => {
         if (!data.email || !data.password) {
           throw new Error('Email and password are required');
         }
-        let user;
+        let currentWorkspace;
+
         if (signInUpMode === SignInUpMode.SignIn) {
-          user = await signInWithCredentials(
+          const { workspace } = await signInWithCredentials(
             data.email.toLowerCase(),
             data.password,
           );
+          currentWorkspace = workspace;
         } else {
-          user = await signUpWithCredentials(
+          const { workspace } = await signUpWithCredentials(
             data.email.toLowerCase(),
             data.password,
             workspaceInviteHash,
           );
+          currentWorkspace = workspace;
         }
-        if (user?.workspaceMember?.workspace?.displayName) {
+        if (currentWorkspace?.displayName) {
           navigate('/');
         } else {
           navigate('/create/workspace');
@@ -144,12 +147,12 @@ export const useSignInUp = () => {
       }
     },
     [
-      navigate,
+      signInUpMode,
       signInWithCredentials,
       signUpWithCredentials,
       workspaceInviteHash,
+      navigate,
       enqueueSnackBar,
-      signInUpMode,
     ],
   );
 
@@ -188,6 +191,6 @@ export const useSignInUp = () => {
     goBackToEmailStep,
     submitCredentials,
     form,
-    workspace: workspace?.findWorkspaceFromInviteHash,
+    workspace: workspaceFromInviteHash?.findWorkspaceFromInviteHash,
   };
 };

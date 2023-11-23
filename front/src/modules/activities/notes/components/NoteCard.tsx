@@ -2,16 +2,17 @@ import { useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { ActivityRelationEditableField } from '@/activities/editable-fields/components/ActivityRelationEditableField';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
+import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
+import { Note } from '@/activities/types/Note';
 import { IconComment } from '@/ui/display/icon';
 import {
   FieldContext,
   GenericFieldContextType,
 } from '@/ui/object/field/contexts/FieldContext';
-import { Activity, ActivityTarget, Comment } from '~/generated/graphql';
 
-const StyledCard = styled.div`
+const StyledCard = styled.div<{ isSingleNote: boolean }>`
   align-items: flex-start;
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -20,6 +21,7 @@ const StyledCard = styled.div`
   flex-direction: column;
   height: 300px;
   justify-content: space-between;
+  max-width: ${({ isSingleNote }) => (isSingleNote ? '300px' : 'unset')};
 `;
 
 const StyledCardDetailsContainer = styled.div`
@@ -73,14 +75,10 @@ const StyledCommentIcon = styled.div`
 
 export const NoteCard = ({
   note,
+  isSingleNote,
 }: {
-  note: Pick<
-    Activity,
-    'id' | 'title' | 'body' | 'type' | 'completedAt' | 'dueAt'
-  > & {
-    activityTargets?: Array<Pick<ActivityTarget, 'id'>> | null;
-    comments?: Array<Pick<Comment, 'id'>> | null;
-  };
+  note: Note;
+  isSingleNote: boolean;
 }) => {
   const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
@@ -95,7 +93,7 @@ export const NoteCard = ({
 
   return (
     <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
-      <StyledCard>
+      <StyledCard isSingleNote={isSingleNote}>
         <StyledCardDetailsContainer
           onClick={() => openActivityRightDrawer(note.id)}
         >
@@ -103,7 +101,9 @@ export const NoteCard = ({
           <StyledCardContent>{body}</StyledCardContent>
         </StyledCardDetailsContainer>
         <StyledFooter>
-          <ActivityRelationEditableField activity={note} />
+          <ActivityTargetsInlineCell
+            activity={note as unknown as GraphQLActivity}
+          />
           {note.comments && note.comments.length > 0 && (
             <StyledCommentIcon>
               <IconComment size={theme.icon.size.md} />
