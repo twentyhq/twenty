@@ -117,6 +117,7 @@ const personMetadata = {
       description: 'Contact’s avatar',
       icon: 'IconFileUpload',
       isNullable: true,
+      isSystem: true,
     },
     // Relations
     {

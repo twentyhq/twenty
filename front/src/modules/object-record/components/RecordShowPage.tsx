@@ -127,8 +127,6 @@ export const RecordShowPage = () => {
     objectMetadataItem?.nameSingular ?? '',
   );
 
-  const controller = new AbortController();
-
   const onUploadPicture = async (file: File) => {
     if (objectNameSingular !== 'person') {
       return;
@@ -138,11 +136,6 @@ export const RecordShowPage = () => {
       variables: {
         file,
         fileFolder: FileFolder.PersonPicture,
-      },
-      context: {
-        fetchOptions: {
-          signal: controller.signal,
-        },
       },
     });
 
