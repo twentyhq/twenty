@@ -1,7 +1,7 @@
-import { FieldDoubleText } from '../../../types/FieldDoubleText';
+import { TextInput } from '@/ui/object/field/meta-types/input/components/internal/TextInput';
+
 import { useLinkField } from '../../hooks/useLinkField';
 
-import { DoubleTextInput } from './internal/DoubleTextInput';
 import { FieldInputOverlay } from './internal/FieldInputOverlay';
 import { FieldInputEvent } from './DateFieldInput';
 
@@ -22,61 +22,59 @@ export const LinkFieldInput = ({
 }: LinkFieldInputProps) => {
   const { initialValue, hotkeyScope, persistLinkField } = useLinkField();
 
-  const handleEnter = (newURL: FieldDoubleText) => {
+  const handleEnter = (newURL: string) => {
     onEnter?.(() =>
       persistLinkField({
-        url: newURL.firstValue,
-        label: newURL.secondValue,
+        url: newURL,
+        label: newURL,
       }),
     );
   };
 
-  const handleEscape = (newURL: FieldDoubleText) => {
+  const handleEscape = (newURL: string) => {
     onEscape?.(() =>
       persistLinkField({
-        url: newURL.firstValue,
-        label: newURL.secondValue,
+        url: newURL,
+        label: newURL,
       }),
     );
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
-    newURL: FieldDoubleText,
+    newURL: string,
   ) => {
     onClickOutside?.(() =>
       persistLinkField({
-        url: newURL.firstValue,
-        label: newURL.secondValue,
+        url: newURL,
+        label: newURL,
       }),
     );
   };
 
-  const handleTab = (newURL: FieldDoubleText) => {
+  const handleTab = (newURL: string) => {
     onTab?.(() =>
       persistLinkField({
-        url: newURL.firstValue,
-        label: newURL.secondValue,
+        url: newURL,
+        label: newURL,
       }),
     );
   };
 
-  const handleShiftTab = (newURL: FieldDoubleText) => {
+  const handleShiftTab = (newURL: string) => {
     onShiftTab?.(() =>
       persistLinkField({
-        url: newURL.firstValue,
-        label: newURL.secondValue,
+        url: newURL,
+        label: newURL,
       }),
     );
   };
 
   return (
     <FieldInputOverlay>
-      <DoubleTextInput
-        firstValue={initialValue.url}
-        secondValue={initialValue.label}
-        firstValuePlaceholder={'Url'}
-        secondValuePlaceholder={'Label'}
+      <TextInput
+        value={initialValue.url}
+        placeholder="URL"
         hotkeyScope={hotkeyScope}
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
