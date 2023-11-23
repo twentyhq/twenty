@@ -9,9 +9,6 @@ type CurrencyDisplayProps = {
 
 // TODO: convert currencyCode to currency symbol
 export const CurrencyDisplay = ({ value }: CurrencyDisplayProps) => {
-  return (
-    <EllipsisDisplay>
-      {convertCurrencyMicrosToCurrency(value?.amountMicros)}
-    </EllipsisDisplay>
-  );
+  const amount = convertCurrencyMicrosToCurrency(value?.amountMicros);
+  return <EllipsisDisplay>{amount}</EllipsisDisplay>;
 };

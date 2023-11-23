@@ -4,7 +4,7 @@ import { FieldCurrencyValue } from '../FieldMetadata';
 
 const currencySchema = z.object({
   currencyCode: z.string(),
-  amountMicros: z.number(),
+  amountMicros: z.number().nullable(),
 });
 
 export const isFieldCurrencyValue = (

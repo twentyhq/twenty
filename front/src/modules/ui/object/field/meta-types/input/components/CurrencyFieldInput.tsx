@@ -28,46 +28,74 @@ export const CurrencyFieldInput = ({
     useCurrencyField();
 
   const handleEnter = (newValue: string) => {
-    onEnter?.(() =>
-      persistCurrencyField({
-        amountMicros:
-          convertCurrencyToCurrencyMicros(parseFloat(newValue)) ?? 0,
-        currencyCode: initialValue.currencyCode,
-      }),
-    );
+    onEnter?.(() => {
+      if (newValue === '') {
+        persistCurrencyField({
+          amountMicros: null,
+          currencyCode: initialValue.currencyCode,
+        });
+      } else {
+        persistCurrencyField({
+          amountMicros:
+            convertCurrencyToCurrencyMicros(parseFloat(newValue)) ?? 0,
+          currencyCode: initialValue.currencyCode,
+        });
+      }
+    });
   };
 
   const handleEscape = (newValue: string) => {
-    onEscape?.(() =>
-      persistCurrencyField({
-        amountMicros:
-          convertCurrencyToCurrencyMicros(parseFloat(newValue)) ?? 0,
-        currencyCode: initialValue.currencyCode,
-      }),
-    );
+    onEscape?.(() => {
+      if (newValue === '') {
+        persistCurrencyField({
+          amountMicros: null,
+          currencyCode: initialValue.currencyCode,
+        });
+      } else {
+        persistCurrencyField({
+          amountMicros:
+            convertCurrencyToCurrencyMicros(parseFloat(newValue)) ?? 0,
+          currencyCode: initialValue.currencyCode,
+        });
+      }
+    });
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
     newValue: string,
   ) => {
-    onClickOutside?.(() =>
-      persistCurrencyField({
-        amountMicros:
-          convertCurrencyToCurrencyMicros(parseFloat(newValue)) ?? 0,
-        currencyCode: initialValue.currencyCode,
-      }),
-    );
+    onClickOutside?.(() => {
+      if (newValue === '') {
+        persistCurrencyField({
+          amountMicros: null,
+          currencyCode: initialValue.currencyCode,
+        });
+      } else {
+        persistCurrencyField({
+          amountMicros:
+            convertCurrencyToCurrencyMicros(parseFloat(newValue)) ?? 0,
+          currencyCode: initialValue.currencyCode,
+        });
+      }
+    });
   };
 
   const handleTab = (newValue: string) => {
-    onTab?.(() =>
-      persistCurrencyField({
-        amountMicros:
-          convertCurrencyToCurrencyMicros(parseFloat(newValue)) ?? 0,
-        currencyCode: initialValue.currencyCode,
-      }),
-    );
+    onTab?.(() => {
+      if (newValue === '') {
+        persistCurrencyField({
+          amountMicros: null,
+          currencyCode: initialValue.currencyCode,
+        });
+      } else {
+        persistCurrencyField({
+          amountMicros:
+            convertCurrencyToCurrencyMicros(parseFloat(newValue)) ?? 0,
+          currencyCode: initialValue.currencyCode,
+        });
+      }
+    });
   };
 
   const handleShiftTab = (newValue: string) => {
@@ -85,7 +113,7 @@ export const CurrencyFieldInput = ({
       <TextInput
         value={
           convertCurrencyMicrosToCurrency(
-            initialValue.amountMicros,
+            initialValue?.amountMicros,
           )?.toString() ?? ''
         }
         placeholder="Currency"
