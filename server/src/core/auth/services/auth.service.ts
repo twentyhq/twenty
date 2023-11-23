@@ -169,8 +169,6 @@ export class AuthService {
     user.passwordHash = '';
     user.workspaceMember = await this.userService.loadWorkspaceMember(user);
 
-    console.log(user.workspaceMember);
-
     const accessToken = await this.tokenService.generateAccessToken(user.id);
     const refreshToken = await this.tokenService.generateRefreshToken(user.id);
 
