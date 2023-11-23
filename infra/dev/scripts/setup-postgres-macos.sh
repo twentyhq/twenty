@@ -87,19 +87,18 @@ curl -LJO https://github.com/supabase/pg_graphql/archive/refs/tags/v$PG_GRAPHQL_
 
 unzip pg_graphql-$PG_GRAPHQL_VERSION.zip
 
-[[ ":$PATH:" != *":/usr/local/opt/postgresql@$PG_MAIN_VERSION/bin:"* ]] && PATH="/usr/local/opt/postgresql@$PG_MAIN_VERSION/bin:${PATH}"
-
 cd "pg_graphql-$PG_GRAPHQL_VERSION"
-cargo pgrx install --release --pg-config /usr/local/opt/postgresql@$PG_MAIN_VERSION/bin/pg_config
+cargo pgrx install --release --pg-config /opt/homebrew/opt/postgresql@$PG_MAIN_VERSION/bin/pg_config
 
 # # Clean up the temporary directory
-# echo "Cleaning up..."
-# cd "$current_directory"
-# rm -rf "$temp_dir"
+echo "Cleaning up..."
+cd "$current_directory"
+rm -rf "$temp_dir"
 
 # Start postgresql service
 echo_header $GREEN "Step [3/4]: Starting PostgreSQL service..."
 
+[[ ":$PATH:" != *":/opt/homebrew/opt/postgresql@$PG_MAIN_VERSION/bin:"* ]] && PATH="/opt/homebrew/opt/postgresql@$PG_MAIN_VERSION/bin:${PATH}"
 
 if brew services start postgresql@$PG_MAIN_VERSION; then
     echo "PostgreSQL service started successfully."
