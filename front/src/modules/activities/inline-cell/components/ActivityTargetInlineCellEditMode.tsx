@@ -2,16 +2,18 @@ import { useCallback, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { useHandleCheckableActivityTargetChange } from '@/activities/hooks/useHandleCheckableActivityTargetChange';
-import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
+import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { useInlineCell } from '@/ui/object/record-inline-cell/hooks/useInlineCell';
 import { assertNotNull } from '~/utils/assert';
 
-type ActivityRelationEditableFieldEditModeProps = {
-  activity?: Pick<Activity, 'id'> & {
-    activityTargets?: Array<
-      Pick<ActivityTarget, 'id' | 'personId' | 'companyId'>
-    > | null;
+type ActivityTargetInlineCellEditModeProps = {
+  activity?: Pick<GraphQLActivity, 'id'> & {
+    activityTargets?: {
+      edges: Array<{
+        node: Pick<ActivityTarget, 'id' | 'personId' | 'companyId'>;
+      }> | null;
+    };
   };
 };
 
@@ -21,25 +23,25 @@ const StyledSelectContainer = styled.div`
   top: -8px;
 `;
 
-export const ActivityRelationEditableFieldEditMode = ({
+export const ActivityTargetInlineCellEditMode = ({
   activity,
-}: ActivityRelationEditableFieldEditModeProps) => {
+}: ActivityTargetInlineCellEditModeProps) => {
   const [searchFilter, setSearchFilter] = useState('');
 
   const initialPeopleIds = useMemo(
     () =>
-      activity?.activityTargets
-        ?.filter((relation) => relation.personId !== null)
-        .map((relation) => relation.personId)
+      activity?.activityTargets?.edges
+        ?.filter(({ node }) => node.personId !== null)
+        .map(({ node }) => node.personId)
         .filter(assertNotNull) ?? [],
     [activity?.activityTargets],
   );
 
   const initialCompanyIds = useMemo(
     () =>
-      activity?.activityTargets
-        ?.filter((relation) => relation.companyId !== null)
-        .map((relation) => relation.companyId)
+      activity?.activityTargets?.edges
+        ?.filter(({ node }) => node.companyId !== null)
+        .map(({ node }) => node.companyId)
         .filter(assertNotNull) ?? [],
     [activity?.activityTargets],
   );

@@ -1,7 +1,7 @@
 import { v4 } from 'uuid';
 
-import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
+import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
 import { useDeleteOneObjectRecord } from '@/object-record/hooks/useDeleteOneObjectRecord';
 
@@ -10,10 +10,12 @@ import { ActivityTargetableEntityForSelect } from '../types/ActivityTargetableEn
 export const useHandleCheckableActivityTargetChange = ({
   activity,
 }: {
-  activity?: Pick<Activity, 'id'> & {
-    activityTargets?: Array<
-      Pick<ActivityTarget, 'id' | 'personId' | 'companyId'>
-    > | null;
+  activity?: Pick<GraphQLActivity, 'id'> & {
+    activityTargets?: {
+      edges: Array<{
+        node: Pick<ActivityTarget, 'id' | 'personId' | 'companyId'>;
+      }> | null;
+    };
   };
 }) => {
   const { createOneObject } = useCreateOneObjectRecord<ActivityTarget>({
@@ -31,9 +33,9 @@ export const useHandleCheckableActivityTargetChange = ({
       return;
     }
 
-    const currentEntityIds = activity.activityTargets
-      ? activity.activityTargets.map(
-          ({ personId, companyId }) => personId ?? companyId,
+    const currentEntityIds = activity.activityTargets?.edges
+      ? activity.activityTargets.edges.map(
+          ({ node }) => node.personId ?? node.companyId,
         )
       : [];
 
@@ -55,14 +57,14 @@ export const useHandleCheckableActivityTargetChange = ({
       });
     }
 
-    const activityTargetIdsToDelete = activity.activityTargets
-      ? activity.activityTargets
+    const activityTargetIdsToDelete = activity.activityTargets?.edges
+      ? activity.activityTargets.edges
           .filter(
-            ({ personId, companyId }) =>
-              (personId ?? companyId) &&
-              !entityValues[personId ?? companyId ?? ''],
+            ({ node }) =>
+              (node.personId ?? node.companyId) &&
+              !entityValues[node.personId ?? node.companyId ?? ''],
           )
-          .map(({ id }) => id)
+          .map(({ node }) => node.id)
       : [];
 
     if (activityTargetIdsToDelete.length) {

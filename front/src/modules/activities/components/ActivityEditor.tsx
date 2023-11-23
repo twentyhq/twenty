@@ -4,9 +4,11 @@ import styled from '@emotion/styled';
 import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
+import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { Comment } from '@/activities/types/Comment';
+import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/RecordInlineCell';
@@ -166,7 +168,9 @@ export const ActivityEditor = ({
                   </AssigneeFieldContextProvider>
                 </>
               )}
-            {/* <ActivityRelationEditableField activity={activity} /> */}
+            <ActivityTargetsInlineCell
+              activity={activity as unknown as GraphQLActivity}
+            />
           </PropertyBox>
         </StyledTopContainer>
         <ActivityBodyEditor
