@@ -155,11 +155,11 @@ export const seedOpportunityFieldMetadata = async (
         targetColumnMap: {
           value: 'probability',
         },
-        description: 'Opportunity amount',
+        description: 'Opportunity probability',
         icon: 'IconProgressCheck',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: '0' },
       },
       // Relationships
       {

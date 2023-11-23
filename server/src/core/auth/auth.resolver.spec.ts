@@ -16,7 +16,7 @@ describe('AuthResolver', () => {
       providers: [
         AuthResolver,
         {
-          provide: getRepositoryToken(Workspace),
+          provide: getRepositoryToken(Workspace, 'core'),
           useValue: {},
         },
         {

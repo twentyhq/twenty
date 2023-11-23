@@ -23,7 +23,6 @@ export const seedWorkspaceMember = async (
       'nameLastName',
       'locale',
       'colorScheme',
-      'allowImpersonation',
       'userId',
     ])
     .orIgnore()
@@ -34,7 +33,6 @@ export const seedWorkspaceMember = async (
         nameLastName: 'Apple',
         locale: 'en',
         colorScheme: 'Light',
-        allowImpersonation: true,
         userId: SeedUserIds.Tim,
       },
       {
@@ -43,7 +41,6 @@ export const seedWorkspaceMember = async (
         nameLastName: 'Ive',
         locale: 'en',
         colorScheme: 'Light',
-        allowImpersonation: true,
         userId: SeedUserIds.Jony,
       },
       {
@@ -52,7 +49,6 @@ export const seedWorkspaceMember = async (
         nameLastName: 'Shiler',
         locale: 'en',
         colorScheme: 'Light',
-        allowImpersonation: true,
         userId: SeedUserIds.Phil,
       },
     ])

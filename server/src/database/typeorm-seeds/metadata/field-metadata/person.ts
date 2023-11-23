@@ -204,7 +204,7 @@ export const seedPersonFieldMetadata = async (
         icon: 'IconBriefcase',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: '' },
       },
       {
         id: SeedPersonFieldMetadataIds.Phone,
@@ -222,7 +222,7 @@ export const seedPersonFieldMetadata = async (
         icon: 'IconPhone',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: '' },
       },
       {
         id: SeedPersonFieldMetadataIds.City,
@@ -240,7 +240,7 @@ export const seedPersonFieldMetadata = async (
         icon: 'IconMap',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: '' },
       },
       {
         id: SeedPersonFieldMetadataIds.AvatarUrl,
@@ -258,7 +258,7 @@ export const seedPersonFieldMetadata = async (
         icon: 'IconFileUpload',
         isNullable: true,
         isSystem: true,
-        defaultValue: undefined,
+        defaultValue: { value: '' },
       },
 
       // Relationships

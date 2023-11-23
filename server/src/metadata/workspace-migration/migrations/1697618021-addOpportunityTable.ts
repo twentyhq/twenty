@@ -26,6 +26,7 @@ export const addOpportunityTable: WorkspaceMigrationTableAction[] = [
         columnName: 'probability',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "'0'",
       },
       {
         columnName: 'closeDate',
