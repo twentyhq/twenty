@@ -40,7 +40,7 @@ export const useCurrencyField = () => {
     ? { amountMicros: 0, currencyCode: '' }
     : !isNaN(Number(fieldInitialValue?.value))
     ? { amountMicros: Number(fieldInitialValue?.value), currencyCode: '' }
-    : { amountMicros: 0, currencyCode: '' } ?? fieldValue;
+    : fieldValue;
 
   return {
     fieldDefinition,
