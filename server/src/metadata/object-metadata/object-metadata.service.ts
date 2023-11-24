@@ -54,6 +54,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         record.workspaceId,
       );
 
+    if (record.labelSingular === record.labelPlural) {
+      throw new Error(
+        'The singular and plural labels cannot be the same for an object',
+      );
+    }
+
     const createdObjectMetadata = await super.createOne({
       ...record,
       dataSourceId: lastDataSourceMetadata.id,

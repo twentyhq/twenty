@@ -15,6 +15,8 @@ import { CreateFieldInput } from 'src/metadata/field-metadata/dtos/create-field.
 import { WorkspaceMigrationTableAction } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { generateTargetColumnMap } from 'src/metadata/field-metadata/utils/generate-target-column-map.util';
 import { convertFieldMetadataToColumnActions } from 'src/metadata/field-metadata/utils/convert-field-metadata-to-column-action.util';
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
@@ -27,6 +29,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
+    private readonly dataSourceService: DataSourceService,
+    private readonly typeORMService: TypeORMService,
   ) {
     super(fieldMetadataRepository);
   }
@@ -56,10 +60,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw new ConflictException('Field already exists');
     }
 
-    if (record.name == record.label) {
-      throw new ConflictException('Field name and label cannot be the same');
-    }
-
     const createdFieldMetadata = await super.createOne({
       ...record,
       targetColumnMap: generateTargetColumnMap(record.type, true, record.name),
@@ -80,6 +80,44 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
       record.workspaceId,
+    );
+
+    // TODO: Move viewField creation to a cdc scheduler
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        record.workspaceId,
+      );
+
+    const workspaceDataSource = await this.typeORMService.connectToDataSource(
+      dataSourceMetadata,
+    );
+
+    // TODO: use typeorm repository
+    const view = await workspaceDataSource?.query(
+      `SELECT id FROM ${dataSourceMetadata.schema}."view"
+      WHERE "objectMetadataId" = '${createdFieldMetadata.objectMetadataId}'`,
+    );
+
+    const existingViewFields = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."viewField"
+      WHERE "viewId" = '${view[0].id}'`,
+    );
+
+    const lastPosition = existingViewFields
+      .map((viewField) => viewField.position)
+      .reduce((acc, position) => {
+        if (position > acc) {
+          return position;
+        }
+        return acc;
+      }, -1);
+
+    await workspaceDataSource?.query(
+      `INSERT INTO ${dataSourceMetadata.schema}."viewField"
+    ("fieldMetadataId", "position", "isVisible", "size", "viewId")
+    VALUES ('${createdFieldMetadata.id}', '${lastPosition + 1}', true, 180, '${
+        view[0].id
+      }')`,
     );
 
     return createdFieldMetadata;

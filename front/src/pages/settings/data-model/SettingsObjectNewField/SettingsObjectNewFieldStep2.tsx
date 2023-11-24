@@ -155,21 +155,12 @@ export const SettingsObjectNewFieldStep2 = () => {
         });
       });
     } else {
-      const createdField = await createMetadataField({
+      await createMetadataField({
         description: validatedFormValues.description,
         icon: validatedFormValues.icon,
         label: validatedFormValues.label,
         objectMetadataId: activeObjectMetadataItem.id,
         type: validatedFormValues.type,
-      });
-      objectViews.forEach(async (view) => {
-        await createOneViewField?.({
-          view: view.id,
-          fieldMetadataId: createdField.data?.createOneField.id,
-          position: activeObjectMetadataItem.fields.length,
-          isVisible: true,
-          size: 100,
-        });
       });
     }
 
