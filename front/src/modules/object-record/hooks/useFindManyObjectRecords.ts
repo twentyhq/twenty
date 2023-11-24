@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useQuery } from '@apollo/client';
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -8,8 +8,8 @@ import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimis
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
+import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { isDefined } from '~/utils/isDefined';
 import { logError } from '~/utils/logError';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -31,7 +31,7 @@ export const useFindManyObjectRecords = <
   objectNamePlural,
   filter,
   orderBy,
-  limit = 30,
+  limit = DEFAULT_SEARCH_REQUEST_LIMIT,
   onCompleted,
   skip,
 }: Pick<ObjectMetadataItemIdentifier, 'objectNamePlural'> & {
@@ -183,18 +183,6 @@ export const useFindManyObjectRecords = <
     setIsFetchingMoreObjects,
     enqueueSnackBar,
   ]);
-
-  useEffect(() => {
-    if (
-      data &&
-      objectNamePlural &&
-      hasNextPage &&
-      data[objectNamePlural].edges?.length < limit &&
-      isDefined(fetchMoreObjects)
-    ) {
-      fetchMoreObjects();
-    }
-  }, [data, objectNamePlural, limit, fetchMoreObjects, hasNextPage]);
 
   const objects = useMemo(
     () =>
