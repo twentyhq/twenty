@@ -15,6 +15,11 @@ export const useViewFilters = (viewScopeId: string) => {
     useObjectMetadataItem({
       objectNameSingular: 'viewFilter',
     });
+
+  const { modifyRecordFromCache } = useObjectMetadataItem({
+    objectNameSingular: 'view',
+  });
+
   const apolloClient = useApolloClient();
 
   const { currentViewFiltersState } = useViewScopedStates({
@@ -24,11 +29,15 @@ export const useViewFilters = (viewScopeId: string) => {
   const persistViewFilters = useRecoilCallback(
     ({ snapshot, set }) =>
       async (viewId?: string) => {
-        const { currentViewId, currentViewFilters, savedViewFiltersByKey } =
-          getViewScopedStateValuesFromSnapshot({
-            snapshot,
-            viewScopeId,
-          });
+        const {
+          currentViewId,
+          currentViewFilters,
+          savedViewFiltersByKey,
+          views,
+        } = getViewScopedStateValuesFromSnapshot({
+          snapshot,
+          viewScopeId,
+        });
 
         if (!currentViewId) {
           return;
@@ -129,11 +138,34 @@ export const useViewFilters = (viewScopeId: string) => {
           }),
           currentViewFilters,
         );
+
+        const existingViewId = viewId ?? currentViewId;
+        const existingView = views.find((view) => view.id === existingViewId);
+
+        if (!existingView) {
+          return;
+        }
+
+        modifyRecordFromCache(existingViewId, {
+          viewFilters: () => ({
+            edges: currentViewFilters.map((viewFilter) => ({
+              node: viewFilter,
+              cursor: '',
+            })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: '',
+              endCursor: '',
+            },
+          }),
+        });
       },
     [
       apolloClient,
       createOneMutation,
       deleteOneMutation,
+      modifyRecordFromCache,
       updateOneMutation,
       viewScopeId,
     ],

@@ -31,7 +31,6 @@ export const TableOptionsDropdownContent = ({
 
   const viewEditMode = useRecoilValue(viewEditModeState);
   const currentView = useRecoilValue(currentViewSelector);
-
   const { closeDropdown } = useDropdown();
 
   const [currentMenu, setCurrentMenu] = useState<TableOptionsMenu | undefined>(

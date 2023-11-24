@@ -30,6 +30,11 @@ const initializeValue = (
       currencyCode: 'USD',
     };
   }
+
+  if (!fieldValue) {
+    return { amount: null, currencyCode: 'USD' };
+  }
+
   return {
     amount: convertCurrencyMicrosToCurrency(fieldValue.amountMicros),
     currencyCode: fieldValue.currencyCode,

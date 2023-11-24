@@ -3,7 +3,13 @@ import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
+import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { ViewField } from '@/views/types/ViewField';
+import { ViewFilter } from '@/views/types/ViewFilter';
+import { ViewSort } from '@/views/types/ViewSort';
+import { assertNotNull } from '~/utils/assert';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { ViewScopeInternalContext } from '../scopes/scope-internal-context/ViewScopeInternalContext';
 import { currentViewFieldsScopedFamilyState } from '../states/currentViewFieldsScopedFamilyState';
@@ -85,29 +91,174 @@ export const useView = (props?: UseViewProps) => {
     [setSearchParams],
   );
 
+  const loadViewFields = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async (
+        data: PaginatedObjectTypeResults<ViewField>,
+        currentViewId: string,
+      ) => {
+        const {
+          availableFieldDefinitions,
+          onViewFieldsChange,
+          savedViewFields,
+          isPersistingView,
+        } = getViewScopedStateValuesFromSnapshot({
+          snapshot,
+          viewScopeId: scopeId,
+          viewId: currentViewId,
+        });
+
+        const { savedViewFieldsState, currentViewFieldsState } =
+          getViewScopedStatesFromSnapshot({
+            snapshot,
+            viewScopeId: scopeId,
+            viewId: currentViewId,
+          });
+
+        if (!availableFieldDefinitions) {
+          return;
+        }
+
+        const queriedViewFields = data.edges
+          .map((viewField) => viewField.node)
+          .filter(assertNotNull);
+
+        if (isPersistingView) {
+          return;
+        }
+
+        if (!isDeeplyEqual(savedViewFields, queriedViewFields)) {
+          set(currentViewFieldsState, queriedViewFields);
+          set(savedViewFieldsState, queriedViewFields);
+          onViewFieldsChange?.(queriedViewFields);
+        }
+      },
+    [scopeId],
+  );
+
+  const loadViewFilters = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async (
+        data: PaginatedObjectTypeResults<Required<ViewFilter>>,
+        currentViewId: string,
+      ) => {
+        const {
+          availableFilterDefinitions,
+          savedViewFilters,
+          onViewFiltersChange,
+        } = getViewScopedStateValuesFromSnapshot({
+          snapshot,
+          viewScopeId: scopeId,
+          viewId: currentViewId,
+        });
+
+        const { savedViewFiltersState, currentViewFiltersState } =
+          getViewScopedStatesFromSnapshot({
+            snapshot,
+            viewScopeId: scopeId,
+            viewId: currentViewId,
+          });
+
+        if (!availableFilterDefinitions) {
+          return;
+        }
+
+        const queriedViewFilters = data.edges
+          .map(({ node }) => {
+            const availableFilterDefinition = availableFilterDefinitions.find(
+              (filterDefinition) =>
+                filterDefinition.fieldMetadataId === node.fieldMetadataId,
+            );
+
+            if (!availableFilterDefinition) return null;
+
+            return {
+              ...node,
+              displayValue: node.displayValue ?? node.value,
+              definition: availableFilterDefinition,
+            };
+          })
+          .filter(assertNotNull);
+
+        if (!isDeeplyEqual(savedViewFilters, queriedViewFilters)) {
+          set(savedViewFiltersState, queriedViewFilters);
+          set(currentViewFiltersState, queriedViewFilters);
+        }
+        onViewFiltersChange?.(queriedViewFilters);
+      },
+    [scopeId],
+  );
+
+  const loadViewSorts = useRecoilCallback(
+    ({ snapshot, set }) =>
+      async (
+        data: PaginatedObjectTypeResults<Required<ViewSort>>,
+        currentViewId: string,
+      ) => {
+        const { availableSortDefinitions, savedViewSorts, onViewSortsChange } =
+          getViewScopedStateValuesFromSnapshot({
+            snapshot,
+            viewScopeId: scopeId,
+            viewId: currentViewId,
+          });
+
+        const { savedViewSortsState, currentViewSortsState } =
+          getViewScopedStatesFromSnapshot({
+            snapshot,
+            viewScopeId: scopeId,
+            viewId: currentViewId,
+          });
+
+        if (!availableSortDefinitions || !currentViewId) {
+          return;
+        }
+
+        const queriedViewSorts = data.edges
+          .map(({ node }) => {
+            const availableSortDefinition = availableSortDefinitions.find(
+              (sort) => sort.fieldMetadataId === node.fieldMetadataId,
+            );
+
+            if (!availableSortDefinition) return null;
+
+            return {
+              id: node.id,
+              fieldMetadataId: node.fieldMetadataId,
+              direction: node.direction,
+              definition: availableSortDefinition,
+            };
+          })
+          .filter(assertNotNull);
+
+        if (!isDeeplyEqual(savedViewSorts, queriedViewSorts)) {
+          set(savedViewSortsState, queriedViewSorts);
+          set(currentViewSortsState, queriedViewSorts);
+        }
+        onViewSortsChange?.(queriedViewSorts);
+      },
+    [scopeId],
+  );
+
   const loadView = useRecoilCallback(
     ({ snapshot }) =>
       (viewId: string) => {
         setCurrentViewId?.(viewId);
 
-        const {
-          currentViewFields,
-          onViewFieldsChange,
-          currentViewFilters,
-          onViewFiltersChange,
-          currentViewSorts,
-          onViewSortsChange,
-        } = getViewScopedStateValuesFromSnapshot({
+        const { currentView } = getViewScopedStateValuesFromSnapshot({
           snapshot,
           viewScopeId: scopeId,
           viewId,
         });
 
-        onViewFieldsChange?.(currentViewFields);
-        onViewFiltersChange?.(currentViewFilters);
-        onViewSortsChange?.(currentViewSorts);
+        if (!currentView) {
+          return;
+        }
+
+        loadViewFields(currentView.viewFields, viewId);
+        loadViewFilters(currentView.viewFilters, viewId);
+        loadViewSorts(currentView.viewSorts, viewId);
       },
-    [setCurrentViewId, scopeId],
+    [setCurrentViewId, scopeId, loadViewFields, loadViewFilters, loadViewSorts],
   );
 
   const resetViewBar = useRecoilCallback(
@@ -246,12 +397,12 @@ export const useView = (props?: UseViewProps) => {
 
         if (viewEditMode === 'create' && name) {
           await createView(name);
-        } else {
-          await internalUpdateView({
-            ...currentView,
-            name,
-          });
         }
+
+        await internalUpdateView({
+          ...currentView,
+          name,
+        });
       },
     [createView, internalUpdateView, scopeId],
   );
@@ -284,5 +435,8 @@ export const useView = (props?: UseViewProps) => {
     persistViewFields,
     changeViewInUrl,
     loadView,
+    loadViewFields,
+    loadViewFilters,
+    loadViewSorts,
   };
 };

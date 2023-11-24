@@ -1,4 +1,4 @@
-import { useApolloClient, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -12,13 +12,11 @@ export const useUpdateOneObjectRecord = <T>({
     objectMetadataItem: foundObjectMetadataItem,
     objectNotFoundInMetadata,
     updateOneMutation,
-    cacheFragment,
+    getRecordFromCache,
     findManyQuery,
   } = useObjectMetadataItem({
     objectNameSingular,
   });
-
-  const { cache } = useApolloClient();
 
   // TODO: type this with a minimal type at least with Record<string, any>
   const [mutate] = useMutation(updateOneMutation);
@@ -36,14 +34,7 @@ export const useUpdateOneObjectRecord = <T>({
       return null;
     }
 
-    const cachedRecordId = cache.identify({
-      __typename: capitalize(foundObjectMetadataItem?.nameSingular ?? ''),
-      id: idToUpdate,
-    });
-    const cachedRecord = cache.readFragment({
-      id: cachedRecordId,
-      fragment: cacheFragment,
-    });
+    const cachedRecord = getRecordFromCache(idToUpdate);
 
     const updatedObject = await mutate({
       variables: {
