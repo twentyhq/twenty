@@ -28,7 +28,8 @@ export const useMoveSoftFocusToCurrentCellOnHover = () => {
 
         if (
           currentHotkeyScope.scope !== TableHotkeyScope.TableSoftFocus &&
-          currentHotkeyScope.scope !== TableHotkeyScope.CellEditMode
+          currentHotkeyScope.scope !== TableHotkeyScope.CellEditMode &&
+          currentHotkeyScope.scope !== TableHotkeyScope.Table
         ) {
           return;
         }
