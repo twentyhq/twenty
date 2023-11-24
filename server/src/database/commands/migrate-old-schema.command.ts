@@ -7,6 +7,7 @@ import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspa
 
 interface MigrateOldSchemaOptions {
   workspaceIds?: string[];
+  excludedWorkspaceIds?: string[];
 }
 
 const performQuery = async (query: string) => {
@@ -39,6 +40,14 @@ export class MigrateOldSchemaCommand extends CommandRunner {
     description: 'A list of workspace ids to migrate',
   })
   parseWorkspace(val: string): string[] {
+    return val.split(',');
+  }
+
+  @Option({
+    flags: '-ew, --excludedWorkspaceIds [excluded workspace ids]',
+    description: 'A list of workspace ids to exclude from migration',
+  })
+  parseExcludedWorkspace(val: string): string[] {
     return val.split(',');
   }
 
@@ -95,6 +104,14 @@ export class MigrateOldSchemaCommand extends CommandRunner {
     let query = 'SELECT * FROM public.workspaces';
     if (options.workspaceIds) {
       query += ` WHERE id IN ('${options.workspaceIds.join("','")}')`;
+    }
+    if (options.excludedWorkspaceIds) {
+      if (query.includes('WHERE')) {
+        query += ' AND ';
+      } else {
+        query += ' WHERE ';
+      }
+      query += `id NOT IN ('${options.excludedWorkspaceIds.join("','")}')`;
     }
     return await performQuery(query);
   }
