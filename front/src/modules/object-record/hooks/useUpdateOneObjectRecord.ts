@@ -1,4 +1,5 @@
 import { useApolloClient, useMutation } from '@apollo/client';
+import { getOperationName } from '@apollo/client/utilities';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
@@ -12,6 +13,7 @@ export const useUpdateOneObjectRecord = <T>({
     objectNotFoundInMetadata,
     updateOneMutation,
     cacheFragment,
+    findManyQuery,
   } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -24,9 +26,11 @@ export const useUpdateOneObjectRecord = <T>({
   const updateOneObject = async ({
     idToUpdate,
     input,
+    forceRefetch,
   }: {
     idToUpdate: string;
     input: Record<string, any>;
+    forceRefetch?: boolean;
   }) => {
     if (!foundObjectMetadataItem || !objectNameSingular) {
       return null;
@@ -54,6 +58,10 @@ export const useUpdateOneObjectRecord = <T>({
           ...input,
         },
       },
+      refetchQueries: forceRefetch
+        ? [getOperationName(findManyQuery) ?? '']
+        : undefined,
+      awaitRefetchQueries: forceRefetch,
     });
 
     return updatedObject.data[`update${capitalize(objectNameSingular)}`] as T;
