@@ -103,15 +103,14 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       WHERE "viewId" = '${view[0].id}'`,
     );
 
-    const lastPosition =
-      existingViewFields
-        .map((viewField) => viewField.position)
-        .reduce((acc, position) => {
-          if (position > acc) {
-            return position;
-          }
-          return acc;
-        }) ?? -1;
+    const lastPosition = existingViewFields
+      .map((viewField) => viewField.position)
+      .reduce((acc, position) => {
+        if (position > acc) {
+          return position;
+        }
+        return acc;
+      }, -1);
 
     await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."viewField"
