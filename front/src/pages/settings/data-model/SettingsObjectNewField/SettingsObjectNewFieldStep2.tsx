@@ -15,6 +15,7 @@ import { SettingsObjectFieldTypeSelectSection } from '@/settings/data-model/comp
 import { useFieldMetadataForm } from '@/settings/data-model/hooks/useFieldMetadataForm';
 import { AppPath } from '@/types/AppPath';
 import { IconSettings } from '@/ui/display/icon';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
@@ -24,6 +25,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
+  const { enqueueSnackBar } = useSnackBar();
 
   const {
     findActiveObjectMetadataItemBySlug,
@@ -108,63 +110,69 @@ export const SettingsObjectNewFieldStep2 = () => {
   const handleSave = async () => {
     if (!validatedFormValues) return;
 
-    if (validatedFormValues.type === FieldMetadataType.Relation) {
-      const createdRelation = await createOneRelationMetadata({
-        relationType: validatedFormValues.relation.type,
-        field: {
+    try {
+      if (validatedFormValues.type === FieldMetadataType.Relation) {
+        const createdRelation = await createOneRelationMetadata({
+          relationType: validatedFormValues.relation.type,
+          field: {
+            description: validatedFormValues.description,
+            icon: validatedFormValues.icon,
+            label: validatedFormValues.label,
+          },
+          objectMetadataId: activeObjectMetadataItem.id,
+          connect: {
+            field: {
+              icon: validatedFormValues.relation.field.icon,
+              label: validatedFormValues.relation.field.label,
+            },
+            objectMetadataId: validatedFormValues.relation.objectMetadataId,
+          },
+        });
+
+        const relationObjectMetadataItem = findObjectMetadataItemById(
+          validatedFormValues.relation.objectMetadataId,
+        );
+
+        objectViews.forEach(async (view) => {
+          await createOneViewField?.({
+            view: view.id,
+            fieldMetadataId:
+              validatedFormValues.relation.type === 'MANY_TO_ONE'
+                ? createdRelation.data?.createOneRelation.toFieldMetadataId
+                : createdRelation.data?.createOneRelation.fromFieldMetadataId,
+            position: activeObjectMetadataItem.fields.length,
+            isVisible: true,
+            size: 100,
+          });
+        });
+        relationObjectViews.forEach(async (view) => {
+          await createOneViewField?.({
+            view: view.id,
+            fieldMetadataId:
+              validatedFormValues.relation.type === 'MANY_TO_ONE'
+                ? createdRelation.data?.createOneRelation.fromFieldMetadataId
+                : createdRelation.data?.createOneRelation.toFieldMetadataId,
+            position: relationObjectMetadataItem?.fields.length,
+            isVisible: true,
+            size: 100,
+          });
+        });
+      } else {
+        await createMetadataField({
           description: validatedFormValues.description,
           icon: validatedFormValues.icon,
           label: validatedFormValues.label,
-        },
-        objectMetadataId: activeObjectMetadataItem.id,
-        connect: {
-          field: {
-            icon: validatedFormValues.relation.field.icon,
-            label: validatedFormValues.relation.field.label,
-          },
-          objectMetadataId: validatedFormValues.relation.objectMetadataId,
-        },
-      });
-
-      const relationObjectMetadataItem = findObjectMetadataItemById(
-        validatedFormValues.relation.objectMetadataId,
-      );
-
-      objectViews.forEach(async (view) => {
-        await createOneViewField?.({
-          view: view.id,
-          fieldMetadataId:
-            validatedFormValues.relation.type === 'MANY_TO_ONE'
-              ? createdRelation.data?.createOneRelation.toFieldMetadataId
-              : createdRelation.data?.createOneRelation.fromFieldMetadataId,
-          position: activeObjectMetadataItem.fields.length,
-          isVisible: true,
-          size: 100,
+          objectMetadataId: activeObjectMetadataItem.id,
+          type: validatedFormValues.type,
         });
-      });
-      relationObjectViews.forEach(async (view) => {
-        await createOneViewField?.({
-          view: view.id,
-          fieldMetadataId:
-            validatedFormValues.relation.type === 'MANY_TO_ONE'
-              ? createdRelation.data?.createOneRelation.fromFieldMetadataId
-              : createdRelation.data?.createOneRelation.toFieldMetadataId,
-          position: relationObjectMetadataItem?.fields.length,
-          isVisible: true,
-          size: 100,
-        });
-      });
-    } else {
-      await createMetadataField({
-        description: validatedFormValues.description,
-        icon: validatedFormValues.icon,
-        label: validatedFormValues.label,
-        objectMetadataId: activeObjectMetadataItem.id,
-        type: validatedFormValues.type,
+      }
+
+      navigate(`/settings/objects/${objectSlug}`);
+    } catch (error) {
+      enqueueSnackBar((error as Error).message, {
+        variant: 'error',
       });
     }
-
-    navigate(`/settings/objects/${objectSlug}`);
   };
 
   return (
