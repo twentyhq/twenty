@@ -13,6 +13,7 @@ const StyledScrollWrapper = styled.div`
   overflow: auto;
   scrollbar-gutter: stable;
   width: 100%;
+
   &.scrolling::-webkit-scrollbar-thumb {
     background-color: ${({ theme }) => theme.border.color.medium};
   }
