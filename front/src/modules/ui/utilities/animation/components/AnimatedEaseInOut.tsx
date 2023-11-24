@@ -9,6 +9,7 @@ type AnimatedEaseInOutProps = {
   duration?: AnimationDuration;
   marginBottom?: string;
   marginTop?: string;
+  initial?: boolean;
 };
 
 export const AnimatedEaseInOut = ({
@@ -17,11 +18,12 @@ export const AnimatedEaseInOut = ({
   marginBottom,
   marginTop,
   duration = 'normal',
+  initial = true,
 }: AnimatedEaseInOutProps) => {
   const theme = useTheme();
 
   return (
-    <AnimatePresence>
+    <AnimatePresence initial={initial}>
       {isOpen && (
         <motion.div
           initial={{
