@@ -19,7 +19,7 @@ export const addViewFieldTable: WorkspaceMigrationTableAction[] = [
       },
       {
         columnName: 'position',
-        columnType: 'integer',
+        columnType: 'float',
         action: WorkspaceMigrationColumnActionType.CREATE,
         defaultValue: 0,
       },

@@ -2,12 +2,7 @@ import { useCallback, useContext, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
-import {
-  IconArrowLeft,
-  IconArrowRight,
-  IconPencil,
-  IconPlus,
-} from '@/ui/display/icon';
+import { IconArrowLeft, IconArrowRight, IconPencil } from '@/ui/display/icon';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
@@ -152,11 +147,11 @@ export const RecordBoardColumnDropdownMenu = ({
               onClick={handleColumnMoveRight}
               text="Move right"
             />
-            <MenuItem
+            {/* <MenuItem
               onClick={() => setMenu('add')}
               LeftIcon={IconPlus}
               text="New opportunity"
-            />
+            /> */}
           </DropdownMenuItemsContainer>
         )}
         {currentMenu === 'title' && (

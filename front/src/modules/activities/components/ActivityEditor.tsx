@@ -78,9 +78,7 @@ export const ActivityEditor = ({
     useState<boolean>(false);
 
   const [title, setTitle] = useState<string | null>(activity.title ?? '');
-  const [completedAt, setCompletedAt] = useState<string | null>(
-    activity.completedAt ?? '',
-  );
+
   const containerRef = useRef<HTMLDivElement>(null);
   const { updateOneObject } = useUpdateOneObjectRecord<Activity>({
     objectNameSingular: 'activity',
@@ -91,6 +89,7 @@ export const ActivityEditor = ({
     objectRecordId: activity.id,
     fieldMetadataName: 'dueAt',
     fieldPosition: 0,
+    forceRefetch: true,
   });
 
   const { FieldContextProvider: AssigneeFieldContextProvider } =
@@ -99,6 +98,7 @@ export const ActivityEditor = ({
       objectRecordId: activity.id,
       fieldMetadataName: 'assignee',
       fieldPosition: 1,
+      forceRefetch: true,
     });
 
   const updateTitle = useCallback(
@@ -119,8 +119,8 @@ export const ActivityEditor = ({
         input: {
           completedAt: value ? new Date().toISOString() : null,
         },
+        forceRefetch: true,
       });
-      setCompletedAt(value ? new Date().toISOString() : null);
     },
     [activity.id, updateOneObject],
   );
@@ -146,7 +146,7 @@ export const ActivityEditor = ({
           <ActivityTypeDropdown activity={activity} />
           <ActivityTitle
             title={title ?? ''}
-            completed={!!completedAt}
+            completed={!!activity.completedAt}
             type={activity.type}
             onTitleChange={(newTitle) => {
               setTitle(newTitle);
