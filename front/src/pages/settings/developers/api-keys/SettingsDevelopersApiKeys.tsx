@@ -2,9 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
 import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/components/SettingsApiKeysFieldItemTableRow';
@@ -44,18 +41,12 @@ export const SettingsDevelopersApiKeys = () => {
   const navigate = useNavigate();
 
   const [apiKeys, setApiKeys] = useState<Array<ApiFieldItem>>([]);
-  const { registerOptimisticEffect } = useOptimisticEffect({
-    objectNameSingular: 'apiKey',
-  });
-  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
-    {
-      objectNameSingular: 'apiKey',
-    },
-  );
+
   const filter = { revokedAt: { is: 'NULL' } };
   useFindManyObjectRecords({
     objectNamePlural: 'apiKeys',
     filter,
+    orderBy: {},
     onCompleted: (data) => {
       setApiKeys(
         formatExpirations(
@@ -66,14 +57,6 @@ export const SettingsDevelopersApiKeys = () => {
           })),
         ),
       );
-      if (foundObjectMetadataItem) {
-        registerOptimisticEffect({
-          variables: { filter, first: 30, orderBy: {} },
-          definition: getRecordOptimisticEffectDefinition({
-            objectMetadataItem: foundObjectMetadataItem,
-          }),
-        });
-      }
     },
   });
 
