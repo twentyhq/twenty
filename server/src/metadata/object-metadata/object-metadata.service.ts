@@ -54,9 +54,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         record.workspaceId,
       );
 
-    if (record.labelSingular === record.labelPlural) {
+    if (record.nameSingular.toLowerCase() === record.namePlural.toLowerCase()) {
       throw new Error(
-        'The singular and plural labels cannot be the same for an object',
+        'The singular and plural name cannot be the same for an object',
       );
     }
 
