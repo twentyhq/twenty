@@ -29,14 +29,14 @@ const StyledButton = styled.div<{ accent: ActionBarItemAccent }>`
   &:hover {
     background: ${({ theme, accent }) =>
       accent === 'danger'
-        ? theme.tag.background.red
+        ? theme.background.danger
         : theme.background.tertiary};
   }
 `;
 
 const StyledButtonLabel = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-left: ${({ theme }) => theme.spacing(2)};
+  margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const ActionBarItem = ({
