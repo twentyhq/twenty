@@ -148,8 +148,8 @@ export const useViewFilters = (viewScopeId: string) => {
 
         modifyRecordFromCache(existingViewId, {
           viewFilters: () => ({
-            edges: currentViewFilters.map((vf) => ({
-              node: vf,
+            edges: currentViewFilters.map((viewFilter) => ({
+              node: viewFilter,
               cursor: '',
             })),
             pageInfo: {

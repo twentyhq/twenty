@@ -135,8 +135,8 @@ export const useViewSorts = (viewScopeId: string) => {
 
         modifyRecordFromCache(existingViewId, {
           viewSorts: () => ({
-            edges: currentViewSorts.map((vf) => ({
-              node: vf,
+            edges: currentViewSorts.map((viewSort) => ({
+              node: viewSort,
               cursor: '',
             })),
             pageInfo: {

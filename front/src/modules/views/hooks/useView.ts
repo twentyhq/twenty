@@ -397,12 +397,12 @@ export const useView = (props?: UseViewProps) => {
 
         if (viewEditMode === 'create' && name) {
           await createView(name);
-        } else {
-          await internalUpdateView({
-            ...currentView,
-            name,
-          });
         }
+
+        await internalUpdateView({
+          ...currentView,
+          name,
+        });
       },
     [createView, internalUpdateView, scopeId],
   );
