@@ -16,16 +16,19 @@ export const addActivityTable: WorkspaceMigrationTableAction[] = [
         columnName: 'title',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'body',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'type',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "'Note'",
       },
       {
         columnName: 'reminderAt',

@@ -81,23 +81,21 @@ export class WorkspaceManagerService {
     workspaceId: string,
   ): Promise<ObjectMetadataEntity[]> {
     const createdObjectMetadata = await this.objectMetadataService.createMany(
-      Object.values(standardObjectsMetadata).map(
-        (objectMetadata: ObjectMetadataEntity) => ({
-          ...objectMetadata,
-          dataSourceId,
-          workspaceId,
-          isCustom: false,
-          isActive: true,
-          fields: [...basicFieldsMetadata, ...objectMetadata.fields].map(
-            (field) => ({
-              ...field,
-              workspaceId,
-              isCustom: false,
-              isActive: true,
-            }),
-          ),
-        }),
-      ),
+      Object.values(standardObjectsMetadata).map((objectMetadata: any) => ({
+        ...objectMetadata,
+        dataSourceId,
+        workspaceId,
+        isCustom: false,
+        isActive: true,
+        fields: [...basicFieldsMetadata, ...objectMetadata.fields].map(
+          (field) => ({
+            ...field,
+            workspaceId,
+            isCustom: false,
+            isActive: true,
+          }),
+        ),
+      })),
     );
 
     await this.relationMetadataService.createMany(
@@ -255,7 +253,6 @@ export class WorkspaceManagerService {
    */
   public async delete(workspaceId: string): Promise<void> {
     // Delete data from metadata tables
-    await this.fieldMetadataService.deleteFieldsMetadata(workspaceId);
     await this.objectMetadataService.deleteObjectsMetadata(workspaceId);
     await this.workspaceMigrationService.delete(workspaceId);
     await this.dataSourceService.delete(workspaceId);

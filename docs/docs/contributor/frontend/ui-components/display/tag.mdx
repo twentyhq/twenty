@@ -1,0 +1,68 @@
+---
+title: Tag
+sidebar_position: 5
+sidebar_custom_props:
+  icon: TbTag
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import tagCode from '!!raw-loader!@site/src/ui/display/tagCode.js'
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+
+Component to visually categorize or label content. 
+
+<Tabs>
+
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/display/tag/components/Tag']}
+  componentCode={tagCode} 
+/>
+
+</TabItem>
+
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>Optional name for additional styling</td>
+    </tr>
+
+    <tr>
+      <td>color</td>
+      <td>string</td>
+      <td>Color of the tag. Options include: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, `gray`</td>
+    </tr>
+
+    <tr>
+      <td>text</td>
+      <td>string</td>
+      <td>The content of the tag</td>
+    </tr>
+
+    <tr>
+      <td>onClick</td>
+      <td>function</td>
+      <td>Optional function called when a user clicks on the tag</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>

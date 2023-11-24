@@ -14,7 +14,7 @@ const viewFieldMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.TEXT,
+      type: FieldMetadataType.UUID,
       name: 'fieldMetadataId',
       label: 'Field Metadata Id',
       targetColumnMap: {
@@ -23,7 +23,6 @@ const viewFieldMetadata = {
       description: 'View Field target field',
       icon: 'IconTag',
       isNullable: false,
-      defaultValue: { value: '' },
     },
     {
       isCustom: false,

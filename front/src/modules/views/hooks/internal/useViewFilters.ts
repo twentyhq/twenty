@@ -166,11 +166,16 @@ export const useViewFilters = (viewScopeId: string) => {
                 filter.fieldMetadataId === filterToUpsert.fieldMetadataId,
             );
 
-            if (existingFilterIndex === -1) {
+            if (existingFilterIndex === -1 && filterToUpsert.value !== '') {
               filtersDraft.push({
                 ...filterToUpsert,
                 id: existingSavedFilterId,
               });
+              return filtersDraft;
+            }
+
+            if (filterToUpsert.value === '') {
+              filtersDraft.splice(existingFilterIndex, 1);
               return filtersDraft;
             }
 

@@ -34,6 +34,7 @@ export type WorkspaceMigrationTableAction = {
   action: 'create' | 'alter';
   columns?: WorkspaceMigrationColumnAction[];
 };
+
 @Entity('workspaceMigration')
 export class WorkspaceMigrationEntity {
   @PrimaryGeneratedColumn('uuid')

@@ -22,11 +22,13 @@ export const addCompanyTable: WorkspaceMigrationTableAction[] = [
         columnName: 'domainName',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'address',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'employees',
@@ -55,7 +57,7 @@ export const addCompanyTable: WorkspaceMigrationTableAction[] = [
       },
       {
         columnName: 'annualRecurringRevenueAmountMicros',
-        columnType: 'integer',
+        columnType: 'numeric',
         action: WorkspaceMigrationColumnActionType.CREATE,
       },
       {

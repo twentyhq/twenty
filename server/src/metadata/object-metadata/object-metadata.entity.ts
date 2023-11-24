@@ -75,12 +75,18 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @OneToMany(
     () => RelationMetadataEntity,
     (relation: RelationMetadataEntity) => relation.fromObjectMetadata,
+    {
+      cascade: true,
+    },
   )
   fromRelations: RelationMetadataEntity[];
 
   @OneToMany(
     () => RelationMetadataEntity,
     (relation: RelationMetadataEntity) => relation.toObjectMetadata,
+    {
+      cascade: true,
+    },
   )
   toRelations: RelationMetadataEntity[];
 

@@ -1,6 +1,8 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
+import { FieldInitialValue } from '@/ui/object/field/types/FieldInitialValue';
+
 import { FieldContext } from '../../contexts/FieldContext';
 import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { usePersistField } from '../../hooks/usePersistField';
@@ -9,6 +11,22 @@ import { FieldCurrencyValue } from '../../types/FieldMetadata';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldCurrency } from '../../types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '../../types/guards/isFieldCurrencyValue';
+
+const initializeValue = (
+  fieldInitialValue: FieldInitialValue | undefined,
+  fieldValue: FieldCurrencyValue,
+) => {
+  if (fieldInitialValue?.isEmpty) {
+    return { amountMicros: 0, currencyCode: 'USD' };
+  }
+  if (!isNaN(Number(fieldInitialValue?.value))) {
+    return {
+      amountMicros: Number(fieldInitialValue?.value),
+      currencyCode: 'USD',
+    };
+  }
+  return fieldValue;
+};
 
 export const useCurrencyField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
@@ -36,11 +54,7 @@ export const useCurrencyField = () => {
 
   const fieldInitialValue = useFieldInitialValue();
 
-  const initialValue: FieldCurrencyValue = fieldInitialValue?.isEmpty
-    ? { amountMicros: 0, currencyCode: '' }
-    : !isNaN(Number(fieldInitialValue?.value))
-    ? { amountMicros: Number(fieldInitialValue?.value), currencyCode: '' }
-    : { amountMicros: 0, currencyCode: '' } ?? fieldValue;
+  const initialValue = initializeValue(fieldInitialValue, fieldValue);
 
   return {
     fieldDefinition,

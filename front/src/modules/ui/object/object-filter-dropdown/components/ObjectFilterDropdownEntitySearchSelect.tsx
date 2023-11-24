@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { useFilter } from '../hooks/useFilter';
@@ -21,9 +22,11 @@ export const ObjectFilterDropdownEntitySearchSelect = ({
     selectFilter,
   } = useFilter();
 
+  const { closeDropdown } = useDropdown();
+
   const [isAllEntitySelected, setIsAllEntitySelected] = useState(false);
 
-  const handleUserSelected = (
+  const handleRecordSelected = (
     selectedEntity: EntityForSelect | null | undefined,
   ) => {
     if (
@@ -39,6 +42,7 @@ export const ObjectFilterDropdownEntitySearchSelect = ({
     }
 
     setObjectFilterDropdownSelectedEntityId(selectedEntity.id);
+    closeDropdown();
 
     selectFilter?.({
       displayValue: selectedEntity.name,
@@ -69,6 +73,7 @@ export const ObjectFilterDropdownEntitySearchSelect = ({
 
     setIsAllEntitySelected(true);
     setObjectFilterDropdownSelectedEntityId(null);
+    closeDropdown();
 
     selectFilter?.({
       displayValue: filterDefinitionUsedInDropdown.selectAllLabel,
@@ -100,7 +105,7 @@ export const ObjectFilterDropdownEntitySearchSelect = ({
         entitiesToSelect={entitiesForSelect.entitiesToSelect}
         selectedEntity={entitiesForSelect.selectedEntities[0]}
         loading={entitiesForSelect.loading}
-        onEntitySelected={handleUserSelected}
+        onEntitySelected={handleRecordSelected}
         SelectAllIcon={filterDefinitionUsedInDropdown?.SelectAllIcon}
         selectAllLabel={filterDefinitionUsedInDropdown?.selectAllLabel}
         isAllEntitySelected={isAllEntitySelected}

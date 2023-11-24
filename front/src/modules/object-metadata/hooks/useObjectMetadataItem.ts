@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useGenerateCreateOneObjectMutation } from '@/object-record/utils/generateCreateOneObjectMutation';
+import { useGenerateCacheFragment } from '@/object-record/utils/useGenerateCacheFragment';
 import { useGenerateDeleteOneObjectMutation } from '@/object-record/utils/useGenerateDeleteOneObjectMutation';
 import { useGenerateFindManyCustomObjectsQuery } from '@/object-record/utils/useGenerateFindManyCustomObjectsQuery';
 import { useGenerateFindOneCustomObjectQuery } from '@/object-record/utils/useGenerateFindOneCustomObjectQuery';
@@ -23,10 +24,10 @@ export const EMPTY_MUTATION = gql`
   }
 `;
 
-export const useObjectMetadataItem = ({
-  objectNamePlural,
-  objectNameSingular,
-}: ObjectMetadataItemIdentifier) => {
+export const useObjectMetadataItem = (
+  { objectNamePlural, objectNameSingular }: ObjectMetadataItemIdentifier,
+  depth?: number,
+) => {
   const objectMetadataItem = useRecoilValue(
     objectMetadataItemFamilySelector({
       objectNamePlural,
@@ -36,12 +37,18 @@ export const useObjectMetadataItem = ({
 
   const objectNotFoundInMetadata = !isDefined(objectMetadataItem);
 
+  const cacheFragment = useGenerateCacheFragment({
+    objectMetadataItem,
+  });
+
   const findManyQuery = useGenerateFindManyCustomObjectsQuery({
     objectMetadataItem,
+    depth,
   });
 
   const findOneQuery = useGenerateFindOneCustomObjectQuery({
     objectMetadataItem,
+    depth,
   });
 
   const createOneMutation = useGenerateCreateOneObjectMutation({
@@ -67,6 +74,7 @@ export const useObjectMetadataItem = ({
     basePathToShowPage,
     objectMetadataItem,
     objectNotFoundInMetadata,
+    cacheFragment,
     findManyQuery,
     findOneQuery,
     createOneMutation,

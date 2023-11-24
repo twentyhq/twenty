@@ -160,6 +160,7 @@ export enum FieldMetadataType {
   FullName = 'FULL_NAME',
   Link = 'LINK',
   Number = 'NUMBER',
+  Numeric = 'NUMERIC',
   Phone = 'PHONE',
   Probability = 'PROBABILITY',
   Relation = 'RELATION',
@@ -445,7 +446,6 @@ export type UserEdge = {
 
 export type UserWorkspaceMember = {
   __typename?: 'UserWorkspaceMember';
-  allowImpersonation: Scalars['Boolean']['output'];
   avatarUrl?: Maybe<Scalars['String']['output']>;
   colorScheme: Scalars['String']['output'];
   id: Scalars['ID']['output'];
@@ -461,6 +461,7 @@ export type UserWorkspaceMemberName = {
 
 export type Workspace = {
   __typename?: 'Workspace';
+  allowImpersonation: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   displayName?: Maybe<Scalars['String']['output']>;

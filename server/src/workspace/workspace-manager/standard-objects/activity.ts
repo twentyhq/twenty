@@ -24,6 +24,7 @@ const activityMetadata = {
       description: 'Activity title',
       icon: 'IconNotes',
       isNullable: true,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -37,6 +38,7 @@ const activityMetadata = {
       description: 'Activity body',
       icon: 'IconList',
       isNullable: true,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -50,6 +52,7 @@ const activityMetadata = {
       description: 'Activity type',
       icon: 'IconCheckbox',
       isNullable: false,
+      defaultValue: { value: 'Note' },
     },
     {
       isCustom: false,
@@ -148,7 +151,6 @@ const activityMetadata = {
       icon: undefined,
       isNullable: false,
       isSystem: true,
-      defaultValue: undefined,
     },
     {
       isCustom: false,

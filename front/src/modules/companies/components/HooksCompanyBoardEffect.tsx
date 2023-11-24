@@ -9,14 +9,14 @@ import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjec
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
-import { useBoardActionBarEntries } from '@/ui/layout/board/hooks/useBoardActionBarEntries';
-import { useBoardContext } from '@/ui/layout/board/hooks/useBoardContext';
-import { useBoardContextMenuEntries } from '@/ui/layout/board/hooks/useBoardContextMenuEntries';
-import { availableBoardCardFieldsScopedState } from '@/ui/layout/board/states/availableBoardCardFieldsScopedState';
-import { boardCardFieldsScopedState } from '@/ui/layout/board/states/boardCardFieldsScopedState';
-import { isBoardLoadedState } from '@/ui/layout/board/states/isBoardLoadedState';
-import { turnFiltersIntoWhereClauseV2 } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClauseV2';
-import { turnSortsIntoOrderByV2 } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderByV2';
+import { turnFiltersIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClause';
+import { turnSortsIntoOrderBy } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderBy';
+import { useBoardActionBarEntries } from '@/ui/object/record-board/hooks/useBoardActionBarEntries';
+import { useBoardContext } from '@/ui/object/record-board/hooks/useBoardContext';
+import { useBoardContextMenuEntries } from '@/ui/object/record-board/hooks/useBoardContextMenuEntries';
+import { availableBoardCardFieldsScopedState } from '@/ui/object/record-board/states/availableBoardCardFieldsScopedState';
+import { boardCardFieldsScopedState } from '@/ui/object/record-board/states/boardCardFieldsScopedState';
+import { isBoardLoadedState } from '@/ui/object/record-board/states/isBoardLoadedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedStateV2';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
@@ -88,12 +88,12 @@ export const HooksCompanyBoardEffect = () => {
     ),
   });
 
-  const filter = turnFiltersIntoWhereClauseV2(
+  const filter = turnFiltersIntoWhereClause(
     mapViewFiltersToFilters(currentViewFilters),
     objectMetadataItem?.fields ?? [],
   );
 
-  const orderBy = turnSortsIntoOrderByV2(
+  const orderBy = turnSortsIntoOrderBy(
     mapViewSortsToSorts(currentViewSorts),
     objectMetadataItem?.fields ?? [],
   );
@@ -123,7 +123,7 @@ export const HooksCompanyBoardEffect = () => {
     objectNamePlural: 'companies',
     filter: {
       id: {
-        in: opportunities.map((opportuntiy) => opportuntiy.companyId || ''),
+        in: opportunities.map((opportunity) => opportunity.companyId || ''),
       },
     },
     onCompleted: useCallback((data: PaginatedObjectTypeResults<Company>) => {

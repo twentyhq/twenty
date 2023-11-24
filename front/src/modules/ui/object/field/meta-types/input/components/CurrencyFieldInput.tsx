@@ -1,5 +1,8 @@
 import { TextInput } from '@/ui/object/field/meta-types/input/components/internal/TextInput';
-import { convertCurrencyToCurrencyMicros } from '~/utils/convert-currency-amount';
+import {
+  convertCurrencyMicrosToCurrency,
+  convertCurrencyToCurrencyMicros,
+} from '~/utils/convert-currency-amount';
 
 import { useCurrencyField } from '../../hooks/useCurrencyField';
 
@@ -80,7 +83,11 @@ export const CurrencyFieldInput = ({
   return (
     <FieldInputOverlay>
       <TextInput
-        value={initialValue.amountMicros?.toString() ?? ''}
+        value={
+          convertCurrencyMicrosToCurrency(
+            initialValue.amountMicros,
+          )?.toString() ?? ''
+        }
         placeholder="Currency"
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
