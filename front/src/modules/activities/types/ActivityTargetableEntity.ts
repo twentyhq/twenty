@@ -1,4 +1,4 @@
-export type ActivityTargetableEntityType = 'Person' | 'Company';
+export type ActivityTargetableEntityType = 'Person' | 'Company' | 'Custom';
 
 export type ActivityTargetableEntity = {
   id: string;

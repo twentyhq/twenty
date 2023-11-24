@@ -47,7 +47,8 @@ export const ActivityBodyEditor = ({
   }, [updateOneObject, activity.id]);
 
   const editor: BlockNoteEditor | null = useBlockNote({
-    initialContent: activity.body ? JSON.parse(activity.body) : undefined,
+    initialContent:
+      activity.body !== '{}' ? JSON.parse(activity.body) : undefined,
     editorDOMAttributes: { class: 'editor' },
     onEditorContentChange: (editor) => {
       debounceOnChange(JSON.stringify(editor.topLevelBlocks) ?? '');

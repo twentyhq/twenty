@@ -238,7 +238,7 @@ export const RecordShowPage = () => {
                     ? 'Company'
                     : objectMetadataItem?.nameSingular === 'person'
                     ? 'Person'
-                    : 'Person',
+                    : 'Custom',
               }}
               timeline
               tasks

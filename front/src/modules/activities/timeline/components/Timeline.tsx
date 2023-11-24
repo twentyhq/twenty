@@ -70,7 +70,7 @@ export const Timeline = ({ entity }: { entity: ActivityTargetableEntity }) => {
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  if (loading) {
+  if (loading || entity.type === 'Custom') {
     return <></>;
   }
 

@@ -198,6 +198,7 @@ export const SettingsObjectNewFieldStep2 = () => {
             FieldMetadataType.Currency,
             FieldMetadataType.Email,
             FieldMetadataType.Enum,
+            FieldMetadataType.Numeric,
             FieldMetadataType.FullName,
             FieldMetadataType.Link,
             FieldMetadataType.Phone,
