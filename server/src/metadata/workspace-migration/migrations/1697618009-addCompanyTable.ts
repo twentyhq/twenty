@@ -68,7 +68,6 @@ export const addCompanyTable: WorkspaceMigrationTableAction[] = [
         columnName: 'annualRecurringRevenueCurrencyCode',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
-        defaultValue: "''",
       },
       {
         columnName: 'idealCustomerProfile',

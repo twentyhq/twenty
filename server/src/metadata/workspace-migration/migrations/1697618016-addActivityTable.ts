@@ -22,7 +22,7 @@ export const addActivityTable: WorkspaceMigrationTableAction[] = [
         columnName: 'body',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
-        defaultValue: "''",
+        defaultValue: "'{}'",
       },
       {
         columnName: 'type',

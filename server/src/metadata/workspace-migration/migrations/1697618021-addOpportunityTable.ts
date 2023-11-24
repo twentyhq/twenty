@@ -21,7 +21,6 @@ export const addOpportunityTable: WorkspaceMigrationTableAction[] = [
         columnName: 'amountCurrencyCode',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
-        defaultValue: "''",
       },
       {
         columnName: 'probability',
