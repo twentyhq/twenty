@@ -3,6 +3,10 @@ import { useRecoilState } from 'recoil';
 
 import { FieldInitialValue } from '@/ui/object/field/types/FieldInitialValue';
 import { canBeCastAsIntegerOrNull } from '~/utils/cast-as-integer-or-null';
+import {
+  convertCurrencyMicrosToCurrency,
+  convertCurrencyToCurrencyMicros,
+} from '~/utils/convert-currency-amount';
 
 import { FieldContext } from '../../contexts/FieldContext';
 import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
@@ -12,11 +16,6 @@ import { FieldCurrencyValue } from '../../types/FieldMetadata';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldCurrency } from '../../types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '../../types/guards/isFieldCurrencyValue';
-
-import {
-  convertCurrencyMicrosToCurrency,
-  convertCurrencyToCurrencyMicros,
-} from './../../../../../../utils/convert-currency-amount';
 
 const initializeValue = (
   fieldInitialValue: FieldInitialValue | undefined,
