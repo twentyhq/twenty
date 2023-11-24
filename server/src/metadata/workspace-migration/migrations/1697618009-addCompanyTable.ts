@@ -39,21 +39,25 @@ export const addCompanyTable: WorkspaceMigrationTableAction[] = [
         columnName: 'linkedinLinkUrl',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'linkedinLinkLabel',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'xLinkUrl',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'xLinkLabel',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'annualRecurringRevenueAmountMicros',
@@ -64,6 +68,7 @@ export const addCompanyTable: WorkspaceMigrationTableAction[] = [
         columnName: 'annualRecurringRevenueCurrencyCode',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'idealCustomerProfile',
