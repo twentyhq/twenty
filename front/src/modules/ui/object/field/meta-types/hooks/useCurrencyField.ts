@@ -44,22 +44,29 @@ export const useCurrencyField = () => {
 
   const persistField = usePersistField();
 
-  const persistCurrencyField = (newValue: FieldCurrencyValue) => {
-    if (!isFieldCurrencyValue(newValue)) {
+  const persistCurrencyField = (newAmount: number, newCurrencyCode: string) => {
+    const newCurrencyValue = {
+      amountMicros: newAmount * 1000000,
+      currencyCode: newCurrencyCode,
+    };
+
+    if (!isFieldCurrencyValue(newCurrencyValue)) {
       return;
     }
 
-    persistField(newValue);
+    persistField(newCurrencyValue);
   };
 
   const fieldInitialValue = useFieldInitialValue();
 
-  const initialValue = initializeValue(fieldInitialValue, fieldValue);
+  const initialAmount = fieldInitialValue ?? fieldValue.amountMicros / 1000000;
+  const initialCurrencyCode = fieldValue.currencyCode ?? 'USD';
 
   return {
     fieldDefinition,
     fieldValue,
-    initialValue,
+    initialAmount,
+    initialCurrencyCode,
     setFieldValue,
     hotkeyScope,
     persistCurrencyField,

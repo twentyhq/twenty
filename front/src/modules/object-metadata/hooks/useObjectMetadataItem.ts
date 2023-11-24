@@ -3,11 +3,12 @@ import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useGenerateCreateOneObjectMutation } from '@/object-record/utils/generateCreateOneObjectMutation';
-import { useGenerateCacheFragment } from '@/object-record/utils/useGenerateCacheFragment';
 import { useGenerateDeleteOneObjectMutation } from '@/object-record/utils/useGenerateDeleteOneObjectMutation';
 import { useGenerateFindManyCustomObjectsQuery } from '@/object-record/utils/useGenerateFindManyCustomObjectsQuery';
 import { useGenerateFindOneCustomObjectQuery } from '@/object-record/utils/useGenerateFindOneCustomObjectQuery';
 import { useGenerateUpdateOneObjectMutation } from '@/object-record/utils/useGenerateUpdateOneObjectMutation';
+import { useGetRecordFromCache } from '@/object-record/utils/useGetRecordFromCache';
+import { useModifyRecordFromCache } from '@/object-record/utils/useModifyRecordFromCache';
 import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
@@ -37,7 +38,11 @@ export const useObjectMetadataItem = (
 
   const objectNotFoundInMetadata = !isDefined(objectMetadataItem);
 
-  const cacheFragment = useGenerateCacheFragment({
+  const getRecordFromCache = useGetRecordFromCache({
+    objectMetadataItem,
+  });
+
+  const modifyRecordFromCache = useModifyRecordFromCache({
     objectMetadataItem,
   });
 
@@ -74,7 +79,8 @@ export const useObjectMetadataItem = (
     basePathToShowPage,
     objectMetadataItem,
     objectNotFoundInMetadata,
-    cacheFragment,
+    getRecordFromCache,
+    modifyRecordFromCache,
     findManyQuery,
     findOneQuery,
     createOneMutation,

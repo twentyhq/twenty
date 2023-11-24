@@ -1,5 +1,4 @@
 import { useApolloClient } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilCallback } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -12,23 +11,27 @@ export const useViewFields = (viewScopeId: string) => {
     objectNameSingular: 'viewField',
   });
 
-  const { findManyQuery: findManyViewsQuery } = useObjectMetadataItem({
-    objectNameSingular: 'view',
-  });
-
   const apolloClient = useApolloClient();
 
   const persistViewFields = useRecoilCallback(
     ({ snapshot, set }) =>
       async (viewFieldsToPersist: ViewField[], viewId?: string) => {
-        const { viewObjectMetadataId, currentViewId, savedViewFieldsByKey } =
-          getViewScopedStateValuesFromSnapshot({
-            snapshot,
-            viewScopeId,
-            viewId,
-          });
+        const {
+          viewObjectMetadataId,
+          currentViewId,
+          savedViewFieldsByKey,
+          onViewFieldsChange,
+        } = getViewScopedStateValuesFromSnapshot({
+          snapshot,
+          viewScopeId,
+          viewId,
+        });
 
-        const { isPersistingViewState } = getViewScopedStatesFromSnapshot({
+        const {
+          isPersistingViewState,
+          currentViewFieldsState,
+          savedViewFieldsState,
+        } = getViewScopedStatesFromSnapshot({
           snapshot,
           viewScopeId,
           viewId,
@@ -58,9 +61,6 @@ export const useViewFields = (viewScopeId: string) => {
                     position: viewField.position,
                   },
                 },
-                // TODO: implement optimistic response
-                refetchQueries: [getOperationName(findManyViewsQuery) ?? ''],
-                awaitRefetchQueries: true,
               }),
             ),
           );
@@ -83,9 +83,6 @@ export const useViewFields = (viewScopeId: string) => {
                     position: viewField.position,
                   },
                 },
-                // TODO: implement optimistic response
-                refetchQueries: [getOperationName(findManyViewsQuery) ?? ''],
-                awaitRefetchQueries: true,
               }),
             ),
           );
@@ -113,14 +110,11 @@ export const useViewFields = (viewScopeId: string) => {
         await _updateViewFields(viewFieldsToUpdate);
 
         set(isPersistingViewState, false);
+        set(currentViewFieldsState, viewFieldsToPersist);
+        set(savedViewFieldsState, viewFieldsToPersist);
+        onViewFieldsChange?.(viewFieldsToPersist);
       },
-    [
-      apolloClient,
-      createOneMutation,
-      updateOneMutation,
-      viewScopeId,
-      findManyViewsQuery,
-    ],
+    [viewScopeId, apolloClient, createOneMutation, updateOneMutation],
   );
 
   return { persistViewFields };

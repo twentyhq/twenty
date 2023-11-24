@@ -79,7 +79,7 @@ export const ViewsDropdownButton = ({
     entityCountInCurrentViewState,
   );
 
-  const { setViewEditMode } = useView();
+  const { setViewEditMode, setCurrentViewId } = useView();
 
   const {
     isDropdownOpen: isViewsDropdownOpen,
@@ -114,6 +114,7 @@ export const ViewsDropdownButton = ({
   ) => {
     event.stopPropagation();
     changeViewInUrl(viewId);
+    setCurrentViewId(viewId);
     setViewEditMode('edit');
     onViewEditModeChange?.();
     closeViewsDropdown();

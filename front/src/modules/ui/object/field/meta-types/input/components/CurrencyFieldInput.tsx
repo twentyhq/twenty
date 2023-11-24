@@ -1,8 +1,5 @@
 import { TextInput } from '@/ui/object/field/meta-types/input/components/internal/TextInput';
-import {
-  convertCurrencyMicrosToCurrency,
-  convertCurrencyToCurrencyMicros,
-} from '~/utils/convert-currency-amount';
+import { convertCurrencyToCurrencyMicros } from '~/utils/convert-currency-amount';
 
 import { useCurrencyField } from '../../hooks/useCurrencyField';
 
@@ -24,17 +21,15 @@ export const CurrencyFieldInput = ({
   onTab,
   onShiftTab,
 }: CurrencyFieldInputProps) => {
-  const { hotkeyScope, initialValue, persistCurrencyField } =
-    useCurrencyField();
+  const {
+    hotkeyScope,
+    initialAmount,
+    initialCurrencyCode,
+    persistCurrencyField,
+  } = useCurrencyField();
 
   const handleEnter = (newValue: string) => {
-    onEnter?.(() =>
-      persistCurrencyField({
-        amountMicros:
-          convertCurrencyToCurrencyMicros(parseFloat(newValue)) ?? 0,
-        currencyCode: initialValue.currencyCode,
-      }),
-    );
+    onEnter?.(() => persistCurrencyField(initialAmount, initialCurrencyCode));
   };
 
   const handleEscape = (newValue: string) => {
@@ -83,11 +78,7 @@ export const CurrencyFieldInput = ({
   return (
     <FieldInputOverlay>
       <TextInput
-        value={
-          convertCurrencyMicrosToCurrency(
-            initialValue.amountMicros,
-          )?.toString() ?? ''
-        }
+        value={initialValue.amountMicros.toString()}
         placeholder="Currency"
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}

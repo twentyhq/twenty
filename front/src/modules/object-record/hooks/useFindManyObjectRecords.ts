@@ -41,7 +41,7 @@ export const useFindManyObjectRecords = <
   skip?: boolean;
 }) => {
   const findManyQueryStateIdentifier =
-    objectNamePlural + JSON.stringify(filter);
+    objectNamePlural + JSON.stringify(filter) + JSON.stringify(orderBy) + limit;
 
   const [lastCursor, setLastCursor] = useRecoilState(
     cursorFamilyState(findManyQueryStateIdentifier),
