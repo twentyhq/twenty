@@ -10,6 +10,7 @@ import {
 } from '@ptc-org/nestjs-query-graphql';
 
 import { UpdateFieldInput } from 'src/metadata/field-metadata/dtos/update-field.input';
+import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/metadata/field-metadata/field-metadata.service';
 
 @Injectable()
@@ -58,15 +59,26 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
       );
     }
 
-    this.checkIfFieldIsEditable(instance.update);
+    this.checkIfFieldIsEditable(instance.update, fieldMetadata);
 
     return instance;
   }
 
   // This is temporary until we properly use the MigrationRunner to update column names
-  private checkIfFieldIsEditable(update: UpdateFieldInput) {
-    if (update.name || update.label) {
-      throw new BadRequestException("Field's name and label can't be updated");
+  private checkIfFieldIsEditable(
+    update: UpdateFieldInput,
+    fieldMetadata: FieldMetadataEntity,
+  ) {
+    if (update.name && update.name !== fieldMetadata.name) {
+      throw new BadRequestException(
+        "Field's name can't be updated. Please create a new field instead",
+      );
+    }
+
+    if (update.label && update.label !== fieldMetadata.label) {
+      throw new BadRequestException(
+        "Field's label can't be updated. Please create a new field instead",
+      );
     }
   }
 }
