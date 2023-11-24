@@ -50,6 +50,8 @@ export class WorkspaceManagerService {
         schemaName,
       );
 
+    await this.setWorkspaceMaxRow(workspaceId, schemaName);
+
     await this.workspaceMigrationService.insertStandardMigrations(workspaceId);
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
@@ -214,6 +216,23 @@ export class WorkspaceManagerService {
     await this.createStandardObjectsAndFieldsMetadata(
       dataSourceId,
       workspaceId,
+    );
+  }
+
+  /**
+   *
+   * We are updating the pg_graphql max_rows from 30 (default value) to 60
+   *
+   * @params workspaceId, schemaName
+   * @param workspaceId
+   */
+  private async setWorkspaceMaxRow(workspaceId, schemaName) {
+    const workspaceDataSource =
+      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
+        workspaceId,
+      );
+    await workspaceDataSource.query(
+      `comment on schema ${schemaName} is e'@graphql({"max_rows": 60})'`,
     );
   }
 

@@ -8,6 +8,7 @@ import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimis
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
+import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
 import { capitalize } from '~/utils/string/capitalize';
@@ -30,7 +31,7 @@ export const useFindManyObjectRecords = <
   objectNamePlural,
   filter,
   orderBy,
-  limit,
+  limit = DEFAULT_SEARCH_REQUEST_LIMIT,
   onCompleted,
   skip,
 }: Pick<ObjectMetadataItemIdentifier, 'objectNamePlural'> & {
@@ -72,8 +73,8 @@ export const useFindManyObjectRecords = <
     skip: skip || !objectMetadataItem || !objectNamePlural,
     variables: {
       filter: filter ?? {},
+      limit: limit,
       orderBy: orderBy ?? {},
-      limit: limit ?? 30,
     },
     onCompleted: (data) => {
       if (objectMetadataItem) {
