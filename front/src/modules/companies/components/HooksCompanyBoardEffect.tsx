@@ -101,6 +101,7 @@ export const HooksCompanyBoardEffect = () => {
   useFindManyObjectRecords({
     skip: !pipelineSteps.length,
     objectNamePlural: 'opportunities',
+    limit: 1000,
     filter: filter,
     orderBy: orderBy,
     onCompleted: useCallback(
