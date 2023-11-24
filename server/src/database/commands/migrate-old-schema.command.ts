@@ -6,7 +6,7 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
 
 interface MigrateOldSchemaOptions {
-  workspaceId?: string;
+  workspaceIds?: string[];
 }
 
 const performQuery = async (query: string) => {
@@ -35,11 +35,11 @@ export class MigrateOldSchemaCommand extends CommandRunner {
   }
 
   @Option({
-    flags: '-w, --workspaceId [workspace id]',
-    description: 'Specific workspaceId to apply cleaning',
+    flags: '-w, --workspaceIds [workspace ids]',
+    description: 'A list of workspace ids to migrate',
   })
-  parseWorkspace(val: string): string {
-    return val;
+  parseWorkspace(val: string): string[] {
+    return val.split(',');
   }
 
   formatPipelineProgresses(pipelineProgresses) {
@@ -93,8 +93,8 @@ export class MigrateOldSchemaCommand extends CommandRunner {
 
   async getWorkspaces(options) {
     let query = 'SELECT * FROM public.workspaces';
-    if (options.workspaceId) {
-      query += ` WHERE id='${options.workspaceId}'`;
+    if (options.workspaceIds) {
+      query += ` WHERE id IN ('${options.workspaceIds.join("','")}')`;
     }
     return await performQuery(query);
   }
