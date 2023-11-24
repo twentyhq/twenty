@@ -1,8 +1,4 @@
 import { TextInput } from '@/ui/object/field/meta-types/input/components/internal/TextInput';
-import {
-  convertCurrencyMicrosToCurrency,
-  convertCurrencyToCurrencyMicros,
-} from '~/utils/convert-currency-amount';
 
 import { useCurrencyField } from '../../hooks/useCurrencyField';
 
@@ -24,58 +20,57 @@ export const CurrencyFieldInput = ({
   onTab,
   onShiftTab,
 }: CurrencyFieldInputProps) => {
-  const { hotkeyScope, initialValue, persistCurrencyField } =
-    useCurrencyField();
+  const {
+    hotkeyScope,
+    initialAmount,
+    initialCurrencyCode,
+    persistCurrencyField,
+  } = useCurrencyField();
 
   const handleEnter = (newValue: string) => {
-    onEnter?.(() =>
+    onEnter?.(() => {
       persistCurrencyField({
-        amountMicros:
-          convertCurrencyToCurrencyMicros(parseFloat(newValue)) ?? 0,
-        currencyCode: initialValue.currencyCode,
-      }),
-    );
+        amountText: newValue,
+        currencyCode: initialCurrencyCode,
+      });
+    });
   };
 
   const handleEscape = (newValue: string) => {
-    onEscape?.(() =>
+    onEscape?.(() => {
       persistCurrencyField({
-        amountMicros:
-          convertCurrencyToCurrencyMicros(parseFloat(newValue)) ?? 0,
-        currencyCode: initialValue.currencyCode,
-      }),
-    );
+        amountText: newValue,
+        currencyCode: initialCurrencyCode,
+      });
+    });
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
     newValue: string,
   ) => {
-    onClickOutside?.(() =>
+    onClickOutside?.(() => {
       persistCurrencyField({
-        amountMicros:
-          convertCurrencyToCurrencyMicros(parseFloat(newValue)) ?? 0,
-        currencyCode: initialValue.currencyCode,
-      }),
-    );
+        amountText: newValue,
+        currencyCode: initialCurrencyCode,
+      });
+    });
   };
 
   const handleTab = (newValue: string) => {
-    onTab?.(() =>
+    onTab?.(() => {
       persistCurrencyField({
-        amountMicros:
-          convertCurrencyToCurrencyMicros(parseFloat(newValue)) ?? 0,
-        currencyCode: initialValue.currencyCode,
-      }),
-    );
+        amountText: newValue,
+        currencyCode: initialCurrencyCode,
+      });
+    });
   };
 
   const handleShiftTab = (newValue: string) => {
     onShiftTab?.(() =>
       persistCurrencyField({
-        amountMicros:
-          convertCurrencyToCurrencyMicros(parseFloat(newValue)) ?? 0,
-        currencyCode: initialValue.currencyCode,
+        amountText: newValue,
+        currencyCode: initialCurrencyCode,
       }),
     );
   };
@@ -83,11 +78,8 @@ export const CurrencyFieldInput = ({
   return (
     <FieldInputOverlay>
       <TextInput
-        value={
-          convertCurrencyMicrosToCurrency(
-            initialValue.amountMicros,
-          )?.toString() ?? ''
-        }
+        value={initialAmount?.toString() ?? ''}
+        autoFocus
         placeholder="Currency"
         onClickOutside={handleClickOutside}
         onEnter={handleEnter}
