@@ -176,6 +176,7 @@ export class MigrateOldSchemaCommand extends CommandRunner {
       const workspaces = await this.getWorkspaces(options);
       console.log(`Migrating \x1b[36m${workspaces.length}\x1b[0m workspace(s)`);
       await this.copyPublicData();
+      process.stdout.write('Requesting data from old production ');
       const workspaceMembers: Array<any> = this.cleanIds(
         this.cleanIds(
           await performQuery(`
@@ -187,7 +188,6 @@ export class MigrateOldSchemaCommand extends CommandRunner {
                 u."firstName" AS "nameFirstName",
                 u."lastName" AS "nameLastName",
                 u."avatarUrl",
-                w."allowImpersonation",
                 w."userId",
                 s."colorScheme",
                 s.locale,
@@ -201,6 +201,7 @@ export class MigrateOldSchemaCommand extends CommandRunner {
         ),
         'userId',
       );
+      process.stdout.write('.');
       const rawActivities: object[] = this.cleanIds(
         await performQuery(`
             SELECT
@@ -222,6 +223,7 @@ export class MigrateOldSchemaCommand extends CommandRunner {
             JOIN public."workspace_members" AS w2 ON a."assigneeId"=w2."userId"
             `),
       );
+      process.stdout.write('.');
       const rawActivitiesNullAssignees: object[] = this.cleanIds(
         await performQuery(`
             SELECT
@@ -243,6 +245,7 @@ export class MigrateOldSchemaCommand extends CommandRunner {
             WHERE a."assigneeId" IS NULL
             `),
       );
+      process.stdout.write('.');
       const activities: Array<any> = rawActivities.concat(
         rawActivitiesNullAssignees,
       );
@@ -265,6 +268,7 @@ export class MigrateOldSchemaCommand extends CommandRunner {
             FROM public."companies" AS c
             JOIN public."workspace_members" AS w ON c."accountOwnerId"=w."userId"
         `);
+      process.stdout.write('.');
       const rawCompaniesNullAccountOwnerId: object[] = await performQuery(`
             SELECT
                 "id",
@@ -284,6 +288,7 @@ export class MigrateOldSchemaCommand extends CommandRunner {
             FROM public."companies"
             WHERE "accountOwnerId" IS NULL
         `);
+      process.stdout.write('.');
       const companies: Array<any> = rawCompanies.concat(
         rawCompaniesNullAccountOwnerId,
       );
@@ -308,6 +313,7 @@ export class MigrateOldSchemaCommand extends CommandRunner {
             WHERE "avatarUrl" IS NOT NULL
             `,
       );
+      process.stdout.write('.');
       const peopleAvatarNull: Array<any> = await performQuery(
         `SELECT
              "id",
@@ -329,13 +335,16 @@ export class MigrateOldSchemaCommand extends CommandRunner {
             WHERE "avatarUrl" IS NULL
             `,
       );
+      process.stdout.write('.');
       const people = peopleAvatarNull.concat(peopleAvatarNotNull);
       const activityTargets: Array<any> = await performQuery(
         `SELECT * FROM public."activity_targets"`,
       );
+      process.stdout.write('.');
       const apiKeys: Array<any> = await performQuery(
         `SELECT * FROM public."api_keys"`,
       );
+      process.stdout.write('.');
       const attachments: Array<any> = await performQuery(`
           SELECT
               id,
@@ -352,6 +361,7 @@ export class MigrateOldSchemaCommand extends CommandRunner {
               "workspaceId"
           FROM public."attachments"
         `);
+      process.stdout.write('.');
       const comments: Array<any> = this.cleanIds(
         await performQuery(`
             SELECT
@@ -368,6 +378,7 @@ export class MigrateOldSchemaCommand extends CommandRunner {
         `),
         'activityId',
       );
+      process.stdout.write('.');
       const pipelineStages: Array<any> = this.cleanIds(
         await performQuery(`
             SELECT
@@ -382,6 +393,7 @@ export class MigrateOldSchemaCommand extends CommandRunner {
             FROM public."pipeline_stages"
         `),
       );
+      process.stdout.write('.');
       const pipelineProgresses: Array<any> = this.formatPipelineProgresses(
         this.cleanIds(
           await performQuery(`
@@ -403,7 +415,7 @@ export class MigrateOldSchemaCommand extends CommandRunner {
           'pipelineStepId',
         ),
       );
-
+      console.log(' Done!');
       let count = 1;
       for (const workspace of workspaces) {
         process.stdout.write(`- copying data for ${workspace.id} `);
