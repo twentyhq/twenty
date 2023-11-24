@@ -13,6 +13,11 @@ export const visibleTableColumnsScopedSelector = selectorFamily({
         availableTableColumnsScopedState({ scopeId }),
       ).map(({ fieldMetadataId }) => fieldMetadataId);
 
+      console.log({
+        columns,
+        availableColumnKeys,
+      });
+
       return [...columns]
         .filter(
           (column) =>

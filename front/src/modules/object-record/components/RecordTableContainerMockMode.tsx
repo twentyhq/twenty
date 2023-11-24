@@ -3,6 +3,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { useComputeDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useComputeDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { RecordTableMockModeEffect } from '@/object-record/components/RecordTableMockModeEffect';
 import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
@@ -12,13 +13,8 @@ import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
-import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
-
-import { useUpdateOneObjectRecord } from '../hooks/useUpdateOneObjectRecord';
-
-import { RecordTableEffect } from './RecordTableEffect';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -27,7 +23,7 @@ const StyledContainer = styled.div`
   overflow: auto;
 `;
 
-export const RecordTableContainer = ({
+export const RecordTableContainerMockMode = ({
   objectNamePlural,
 }: {
   objectNamePlural: string;
@@ -41,10 +37,6 @@ export const RecordTableContainer = ({
     foundObjectMetadataItem,
   );
 
-  const { updateOneObject } = useUpdateOneObjectRecord({
-    objectNameSingular: foundObjectMetadataItem?.nameSingular,
-  });
-
   const tableScopeId = objectNamePlural ?? '';
   const viewScopeId = objectNamePlural ?? '';
 
@@ -54,34 +46,12 @@ export const RecordTableContainer = ({
     recordTableScopeId: tableScopeId,
   });
 
-  const updateEntity = ({
-    variables,
-  }: {
-    variables: {
-      where: { id: string };
-      data: {
-        [fieldName: string]: any;
-      };
-    };
-  }) => {
-    updateOneObject?.({
-      idToUpdate: variables.where.id,
-      input: variables.data,
-    });
-  };
+  const updateEntity = () => {};
 
   return (
     <ViewScope
       viewScopeId={viewScopeId}
-      onViewFieldsChange={(viewFields) => {
-        console.log({
-          viewFields,
-          columnDefinitions,
-        });
-        setTableColumns(
-          mapViewFieldsToColumnDefinitions(viewFields, columnDefinitions),
-        );
-      }}
+      onViewFieldsChange={() => {}}
       onViewFiltersChange={(viewFilters) => {
         setTableFilters(mapViewFiltersToFilters(viewFilters));
       }}
@@ -100,7 +70,7 @@ export const RecordTableContainer = ({
             optionsDropdownButton={<TableOptionsDropdown />}
             optionsDropdownScopeId={TableOptionsDropdownId}
           />
-          <RecordTableEffect />
+          <RecordTableMockModeEffect />
           <RecordTable updateEntityMutation={updateEntity} />
         </RecordTableScope>
       </StyledContainer>

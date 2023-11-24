@@ -37,6 +37,11 @@ export const RecordTableEffect = () => {
   } = useView();
 
   useEffect(() => {
+    console.log({
+      basePathToShowPage,
+      labelIdentifierFieldMetadataId,
+    });
+
     if (basePathToShowPage && labelIdentifierFieldMetadataId) {
       setObjectMetadataConfig?.({
         basePathToShowPage,
@@ -66,6 +71,13 @@ export const RecordTableEffect = () => {
     );
 
     setAvailableTableColumns(availableTableColumns);
+
+    console.log({
+      objectMetadataItem,
+      columnDefinitions,
+      filterDefinitions,
+      sortDefinitions,
+    });
   }, [
     setViewObjectMetadataId,
     setViewType,
