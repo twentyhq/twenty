@@ -105,7 +105,7 @@ export type FieldEmailValue = string;
 export type FieldLinkValue = { url: string; label: string };
 export type FieldCurrencyValue = {
   currencyCode: string;
-  amount: number | null;
+  amountMicros: number | null;
 };
 export type FieldFullNameValue = { firstName: string; lastName: string };
 export type FieldProbabilityValue = number;

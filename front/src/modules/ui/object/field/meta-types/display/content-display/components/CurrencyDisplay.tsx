@@ -1,13 +1,10 @@
-import { FieldCurrencyValue } from '@/ui/object/field/types/FieldMetadata';
-
 import { EllipsisDisplay } from './EllipsisDisplay';
 
 type CurrencyDisplayProps = {
-  value?: FieldCurrencyValue;
+  amount?: number | null;
 };
 
 // TODO: convert currencyCode to currency symbol
-export const CurrencyDisplay = ({ value }: CurrencyDisplayProps) => {
-  const amount = value?.amount;
+export const CurrencyDisplay = ({ amount }: CurrencyDisplayProps) => {
   return <EllipsisDisplay>{amount}</EllipsisDisplay>;
 };

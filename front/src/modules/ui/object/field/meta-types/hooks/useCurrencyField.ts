@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { FieldInitialValue } from '@/ui/object/field/types/FieldInitialValue';
+import { canBeCastAsIntegerOrNull } from '~/utils/cast-as-integer-or-null';
 
 import { FieldContext } from '../../contexts/FieldContext';
 import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
@@ -11,6 +12,11 @@ import { FieldCurrencyValue } from '../../types/FieldMetadata';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldCurrency } from '../../types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '../../types/guards/isFieldCurrencyValue';
+
+import {
+  convertCurrencyMicrosToCurrency,
+  convertCurrencyToCurrencyMicros,
+} from './../../../../../../utils/convert-currency-amount';
 
 const initializeValue = (
   fieldInitialValue: FieldInitialValue | undefined,
@@ -25,7 +31,10 @@ const initializeValue = (
       currencyCode: 'USD',
     };
   }
-  return fieldValue;
+  return {
+    amount: convertCurrencyMicrosToCurrency(fieldValue.amountMicros),
+    currencyCode: fieldValue.currencyCode,
+  };
 };
 
 export const useCurrencyField = () => {
@@ -44,22 +53,43 @@ export const useCurrencyField = () => {
 
   const persistField = usePersistField();
 
-  const persistCurrencyField = (newValue: FieldCurrencyValue) => {
-    if (!isFieldCurrencyValue(newValue)) {
+  const persistCurrencyField = ({
+    amountText,
+    currencyCode,
+  }: {
+    amountText: string;
+    currencyCode: string;
+  }) => {
+    if (!canBeCastAsIntegerOrNull(amountText)) {
       return;
     }
+    const amount = parseFloat(amountText);
 
-    persistField(newValue);
+    const newCurrencyValue = {
+      amountMicros: isNaN(amount)
+        ? null
+        : convertCurrencyToCurrencyMicros(amount),
+      currencyCode: currencyCode,
+    };
+
+    if (!isFieldCurrencyValue(newCurrencyValue)) {
+      return;
+    }
+    persistField(newCurrencyValue);
   };
 
   const fieldInitialValue = useFieldInitialValue();
 
   const initialValue = initializeValue(fieldInitialValue, fieldValue);
 
+  const initialAmount = initialValue.amount;
+  const initialCurrencyCode = initialValue.currencyCode;
+
   return {
     fieldDefinition,
     fieldValue,
-    initialValue,
+    initialAmount,
+    initialCurrencyCode,
     setFieldValue,
     hotkeyScope,
     persistCurrencyField,
