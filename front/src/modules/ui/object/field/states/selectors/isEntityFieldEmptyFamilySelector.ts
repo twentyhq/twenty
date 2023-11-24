@@ -15,7 +15,6 @@ import { isFieldEmail } from '../../types/guards/isFieldEmail';
 import { isFieldLink } from '../../types/guards/isFieldLink';
 import { isFieldLinkValue } from '../../types/guards/isFieldLinkValue';
 import { isFieldNumber } from '../../types/guards/isFieldNumber';
-import { isFieldPhone } from '../../types/guards/isFieldPhone';
 import { isFieldProbability } from '../../types/guards/isFieldProbability';
 import { isFieldRelation } from '../../types/guards/isFieldRelation';
 import { isFieldRelationValue } from '../../types/guards/isFieldRelationValue';
@@ -43,8 +42,8 @@ export const isEntityFieldEmptyFamilySelector = selectorFamily({
         isFieldNumber(fieldDefinition) ||
         isFieldProbability(fieldDefinition) ||
         isFieldEmail(fieldDefinition) ||
-        isFieldBoolean(fieldDefinition) ||
-        isFieldPhone(fieldDefinition)
+        isFieldBoolean(fieldDefinition)
+        //|| isFieldPhone(fieldDefinition)
       ) {
         const fieldValue = get(entityFieldsFamilyState(entityId))?.[
           fieldName

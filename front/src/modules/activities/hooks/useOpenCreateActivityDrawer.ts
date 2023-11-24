@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { Activity, ActivityType } from '@/activities/types/Activity';
@@ -47,7 +48,10 @@ export const useOpenCreateActivityDrawer = () => {
 
     const createdActivity = await createOneActivity?.({
       authorId: currentWorkspaceMember?.id,
-      assigneeId: assigneeId ?? currentWorkspaceMember?.id,
+      assigneeId:
+        assigneeId ?? isNonEmptyString(currentWorkspaceMember?.id)
+          ? currentWorkspaceMember?.id
+          : undefined,
       type: type,
     });
 

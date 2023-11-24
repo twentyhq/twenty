@@ -1,58 +1,67 @@
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 
 export type FieldUuidMetadata = {
+  objectMetadataNameSingular?: string;
   fieldName: string;
 };
 
 export type FieldBooleanMetadata = {
+  objectMetadataNameSingular?: string;
   fieldName: string;
 };
 
 export type FieldTextMetadata = {
-  objectMetadataNameSingular: string;
+  objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
 };
 
 export type FieldDateTimeMetadata = {
+  objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
 };
 
 export type FieldNumberMetadata = {
+  objectMetadataNameSingular?: string;
   fieldName: string;
   placeHolder: string;
   isPositive?: boolean;
 };
 
 export type FieldLinkMetadata = {
+  objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
 };
 
 export type FieldCurrencyMetadata = {
+  objectMetadataNameSingular?: string;
   fieldName: string;
   placeHolder: string;
   isPositive?: boolean;
 };
 
 export type FieldFullNameMetadata = {
-  objectMetadataNameSingular: string;
+  objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
 };
 
 export type FieldEmailMetadata = {
+  objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
 };
 
 export type FieldPhoneMetadata = {
+  objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
 };
 
 export type FieldProbabilityMetadata = {
+  objectMetadataNameSingular?: string;
   fieldName: string;
 };
 
@@ -63,6 +72,7 @@ export type FieldDefinitionRelationType =
   | 'TO_ONE_OBJECT';
 
 export type FieldRelationMetadata = {
+  objectMetadataNameSingular?: string;
   fieldName: string;
   useEditButton?: boolean;
   relationType?: FieldDefinitionRelationType;

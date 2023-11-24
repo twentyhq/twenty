@@ -47,9 +47,10 @@ const opportunityMetadata = {
       targetColumnMap: {
         value: 'probability',
       },
-      description: 'Opportunity amount',
+      description: 'Opportunity probability',
       icon: 'IconProgressCheck',
       isNullable: true,
+      defaultValue: { value: '0' },
     },
     // Relations
     {

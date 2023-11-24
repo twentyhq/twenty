@@ -8,7 +8,7 @@ type MockedUser = Pick<
   User,
   'id' | 'email' | 'firstName' | 'lastName' | 'canImpersonate' | '__typename'
 > & {
-  workspaceMember: Pick<WorkspaceMember, 'id' | 'allowImpersonation'> & {
+  workspaceMember: Pick<WorkspaceMember, 'id'> & {
     workspace: Pick<
       Workspace,
       'id' | 'displayName' | 'domainName' | 'inviteHash' | 'logo' | '__typename'
@@ -36,7 +36,6 @@ export const mockedUsersData: Array<MockedUser> = [
     canImpersonate: false,
     workspaceMember: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
-      allowImpersonation: true,
       workspace: {
         __typename: 'Workspace',
         id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
@@ -61,7 +60,6 @@ export const mockedUsersData: Array<MockedUser> = [
     canImpersonate: false,
     workspaceMember: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
-      allowImpersonation: true,
       workspace: {
         __typename: 'Workspace',
         id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
@@ -89,7 +87,6 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
     canImpersonate: false,
     workspaceMember: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
-      allowImpersonation: true,
       workspace: {
         __typename: 'Workspace',
         id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
@@ -114,7 +111,6 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
     canImpersonate: false,
     workspaceMember: {
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
-      allowImpersonation: true,
       workspace: {
         __typename: 'Workspace',
         id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',

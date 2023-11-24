@@ -98,10 +98,8 @@ export const useFilteredSearchEntityQuery = ({
             and: searchFilter,
           },
           {
-            not: {
-              id: {
-                in: selectedIds,
-              },
+            id: {
+              in: selectedIds,
             },
           },
         ],

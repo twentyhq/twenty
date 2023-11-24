@@ -18,7 +18,7 @@ export const ActivityTargetChips = ({ targets }: { targets?: any }) => {
 
   return (
     <StyledContainer>
-      {targets?.edges?.map(({ company, person }: any) => {
+      {targets?.map(({ company, person }: any) => {
         if (company) {
           return (
             <CompanyChip
