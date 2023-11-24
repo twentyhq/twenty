@@ -63,7 +63,7 @@ const personMetadata = {
         url: 'xLinkUrl',
       },
       description: 'Contact’s X/Twitter account',
-      icon: 'IconUser',
+      icon: 'IconBrandX',
       isNullable: true,
     },
     {

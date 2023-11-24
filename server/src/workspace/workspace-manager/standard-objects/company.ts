@@ -153,6 +153,18 @@ const companyMetadata = {
     {
       isCustom: false,
       isActive: true,
+      type: FieldMetadataType.UUID,
+      name: 'accountOwnerId',
+      label: 'Account Owner ID (foreign key)',
+      targetColumnMap: {},
+      description: 'Foreign key for account owner',
+      icon: undefined,
+      isNullable: true,
+      isSystem: true,
+    },
+    {
+      isCustom: false,
+      isActive: true,
       type: FieldMetadataType.RELATION,
       name: 'activityTargets',
       label: 'Activities',
