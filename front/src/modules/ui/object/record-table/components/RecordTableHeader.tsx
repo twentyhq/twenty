@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
@@ -15,6 +15,10 @@ import { resizeFieldOffsetState } from '../states/resizeFieldOffsetState';
 import { ColumnHeadWithDropdown } from './ColumnHeadWithDropdown';
 import { RecordTableHeaderPlusButtonContent } from './RecordTableHeaderPlusButtonContent';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
+
+type RecordTableHeaderProps = {
+  tableBodyRef: React.RefObject<HTMLDivElement>;
+};
 
 const COLUMN_MIN_WIDTH = 104;
 
@@ -74,7 +78,7 @@ const StyledColumnHeadContainer = styled.div`
 const StyledPlusIconHeaderCell = styled.th<{ isSticky: boolean }>`
   ${({ theme }) => {
     return `
-  &:hover {
+  &:hover > div {
     background: ${theme.background.transparent.light};
   };
   padding-left: ${theme.spacing(3)};
@@ -83,22 +87,24 @@ const StyledPlusIconHeaderCell = styled.th<{ isSticky: boolean }>`
   border-bottom: none !important;
   border-left: none !important;
   min-width: 32px;
-  ${({ isSticky }) =>
+  ${({ isSticky, theme }) =>
     isSticky
       ? `position: sticky;
     right: 0;
-    width: 32px;`
+    width: 32px;
+    border-right: none !important;
+    background-color: ${theme.background.primary};
+    `
       : `position: relative;`};
   z-index: 1;
 `;
 
 const StyledPlusIconContainer = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.background.primary};
   display: flex;
   height: 32px;
   justify-content: center;
-  width: 33px;
+  width: 32px;
 `;
 
 const HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID =
@@ -107,7 +113,7 @@ const HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID =
 const HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID =
   'hidden-table-columns-dropdown-hotkey-scope-id';
 
-export const RecordTableHeader = () => {
+export const RecordTableHeader = ({ tableBodyRef }: RecordTableHeaderProps) => {
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
     resizeFieldOffsetState,
   );
@@ -142,6 +148,14 @@ export const RecordTableHeader = () => {
     },
     [setResizeFieldOffset, initialPointerPositionX],
   );
+
+  const [isPlusButtonSticky, setIsPlusButtonSticky] = useState(false);
+
+  useEffect(() => {
+    const tableClientWidth = tableBodyRef.current?.clientWidth ?? 0;
+    const tableScrollWidth = tableBodyRef.current?.scrollWidth ?? 0;
+    setIsPlusButtonSticky(tableClientWidth < tableScrollWidth);
+  }, [visibleTableColumns.length, resizedFieldKey, tableBodyRef]);
 
   const handleResizeHandlerEnd = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -230,7 +244,7 @@ export const RecordTableHeader = () => {
           </StyledColumnHeaderCell>
         ))}
         {hiddenTableColumns.length > 0 && (
-          <StyledPlusIconHeaderCell isSticky={visibleTableColumns.length > 0}>
+          <StyledPlusIconHeaderCell isSticky={isPlusButtonSticky}>
             <DropdownScope
               dropdownScopeId={HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID}
             >

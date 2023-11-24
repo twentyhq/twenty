@@ -86,7 +86,7 @@ export const RecordTable = ({ updateEntityMutation }: RecordTableProps) => {
           <StyledTableContainer>
             <div ref={tableBodyRef}>
               <StyledTable className="entity-table-cell">
-                <RecordTableHeader />
+                <RecordTableHeader tableBodyRef={tableBodyRef} />
                 <RecordTableBody />
               </StyledTable>
               <DragSelect
