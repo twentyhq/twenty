@@ -26,7 +26,6 @@ import OptionTable from '@site/src/theme/OptionTable'
     ['PG_DATABASE_URL', 'postgres://user:pw@localhost:5432/default?connection_limit=1', 'Database connection'],
     ['FRONT_BASE_URL', 'http://localhost:3001', 'Url to the hosted frontend'],
     ['PORT', '3000', 'Port'],
-    ['TELEMETRY_ANONYMIZATION_ENABLED', 'true', 'Anonymized telemetry is collected if not disabled'],
     ]}></OptionTable>
 
 ### Tokens
@@ -79,6 +78,11 @@ import OptionTable from '@site/src/theme/OptionTable'
     ['SUPPORT_FRONT_CHAT_ID', '<id>', 'Support chat id'],
     ]}></OptionTable>
 
+### Telemetry
+<OptionTable options={[
+    ['TELEMETRY_ENABLED', 'true', 'Change this if you want to disable telemetry'],
+    ['TELEMETRY_ANONYMIZATION_ENABLED', 'true', 'Telemetry is anonymized by default, you probably don\'t want to change this'],
+    ]}></OptionTable>
 
 ### Debug / Development
 

@@ -172,7 +172,7 @@ export const useFavorites = ({
           favorites.filter((favorite: Favorite) => favorite.id !== idToDelete),
         );
       },
-    [apolloClient, deleteOneMutation],
+    [apolloClient, deleteOneMutation, performOptimisticEvict],
   );
 
   const computeNewPosition = (destIndex: number, sourceIndex: number) => {

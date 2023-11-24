@@ -17,5 +17,9 @@ export const filterAvailableFieldMetadataItem = (
     return false;
   }
 
+  if (fieldMetadataItem.isSystem) {
+    return false;
+  }
+
   return true;
 };

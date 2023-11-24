@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { WorkspaceSchemaStorageService } from 'src/workspace/workspace-schema-storage/workspace-schema-storage.service';
+import { ScalarsExplorerService } from 'src/workspace/services/scalars-explorer.service';
 
 import { WorkspaceFactory } from './workspace.factory';
 
@@ -22,6 +23,10 @@ describe('WorkspaceFactory', () => {
         },
         {
           provide: ObjectMetadataService,
+          useValue: {},
+        },
+        {
+          provide: ScalarsExplorerService,
           useValue: {},
         },
         {

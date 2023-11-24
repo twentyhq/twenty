@@ -1,5 +1,6 @@
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { useCompleteTask } from '@/activities/tasks/hooks/useCompleteTask';
@@ -136,7 +137,9 @@ type TimelineActivityProps = {
 export const TimelineActivity = ({ activity }: TimelineActivityProps) => {
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(activity.createdAt);
   const exactCreatedAt = beautifyExactDateTime(activity.createdAt);
-  const body = JSON.parse(activity.body ?? '{}')[0]?.content[0]?.text;
+  const body = JSON.parse(
+    isNonEmptyString(activity.body) ? activity.body : '{}',
+  )[0]?.content[0]?.text;
 
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const { completeTask } = useCompleteTask(activity);

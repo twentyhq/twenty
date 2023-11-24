@@ -21,27 +21,29 @@ export const ObjectFilterDropdownFilterSelect = () => {
 
   return (
     <DropdownMenuItemsContainer>
-      {availableFilterDefinitions.map((availableFilterDefinition, index) => (
-        <MenuItem
-          key={`select-filter-${index}`}
-          testId={`select-filter-${index}`}
-          onClick={() => {
-            setFilterDefinitionUsedInDropdown(availableFilterDefinition);
+      {[...availableFilterDefinitions]
+        .sort((a, b) => a.label.localeCompare(b.label))
+        .map((availableFilterDefinition, index) => (
+          <MenuItem
+            key={`select-filter-${index}`}
+            testId={`select-filter-${index}`}
+            onClick={() => {
+              setFilterDefinitionUsedInDropdown(availableFilterDefinition);
 
-            if (availableFilterDefinition.type === 'ENTITY') {
-              setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
-            }
+              if (availableFilterDefinition.type === 'RELATION') {
+                setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
+              }
 
-            setSelectedOperandInDropdown(
-              getOperandsForFilterType(availableFilterDefinition.type)?.[0],
-            );
+              setSelectedOperandInDropdown(
+                getOperandsForFilterType(availableFilterDefinition.type)?.[0],
+              );
 
-            setObjectFilterDropdownSearchInput('');
-          }}
-          LeftIcon={icons[availableFilterDefinition.iconName]}
-          text={availableFilterDefinition.label}
-        />
-      ))}
+              setObjectFilterDropdownSearchInput('');
+            }}
+            LeftIcon={icons[availableFilterDefinition.iconName]}
+            text={availableFilterDefinition.label}
+          />
+        ))}
     </DropdownMenuItemsContainer>
   );
 };

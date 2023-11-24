@@ -53,6 +53,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.DATE_TIME]: FieldMetadataDefaultValueDateTime;
   [FieldMetadataType.BOOLEAN]: FieldMetadataDefaultValueBoolean;
   [FieldMetadataType.NUMBER]: FieldMetadataDefaultValueNumber;
+  [FieldMetadataType.NUMERIC]: FieldMetadataDefaultValueString;
   [FieldMetadataType.PROBABILITY]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.ENUM]: FieldMetadataDefaultValueString;
   [FieldMetadataType.LINK]: FieldMetadataDefaultValueLink;

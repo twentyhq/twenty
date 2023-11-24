@@ -4,8 +4,11 @@ import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState } from 'recoil';
 
+import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
+import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
+import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
 import { capitalize } from '~/utils/string/capitalize';
@@ -28,30 +31,39 @@ export const useFindManyObjectRecords = <
   objectNamePlural,
   filter,
   orderBy,
+  limit = DEFAULT_SEARCH_REQUEST_LIMIT,
   onCompleted,
   skip,
 }: Pick<ObjectMetadataItemIdentifier, 'objectNamePlural'> & {
   filter?: any;
   orderBy?: any;
+  limit?: number;
   onCompleted?: (data: PaginatedObjectTypeResults<ObjectType>) => void;
   skip?: boolean;
 }) => {
+  const findManyQueryStateIdentifier =
+    objectNamePlural + JSON.stringify(filter) + JSON.stringify(orderBy) + limit;
+
   const [lastCursor, setLastCursor] = useRecoilState(
-    cursorFamilyState(objectNamePlural),
+    cursorFamilyState(findManyQueryStateIdentifier),
   );
 
   const [hasNextPage, setHasNextPage] = useRecoilState(
-    hasNextPageFamilyState(objectNamePlural),
+    hasNextPageFamilyState(findManyQueryStateIdentifier),
   );
 
   const [, setIsFetchingMoreObjects] = useRecoilState(
-    isFetchingMoreObjectsFamilyState(objectNamePlural),
+    isFetchingMoreObjectsFamilyState(findManyQueryStateIdentifier),
   );
 
   const { objectMetadataItem, objectNotFoundInMetadata, findManyQuery } =
     useObjectMetadataItem({
       objectNamePlural,
     });
+
+  const { registerOptimisticEffect } = useOptimisticEffect({
+    objectNameSingular: objectMetadataItem?.nameSingular,
+  });
 
   const { enqueueSnackBar } = useSnackBar();
 
@@ -61,9 +73,22 @@ export const useFindManyObjectRecords = <
     skip: skip || !objectMetadataItem || !objectNamePlural,
     variables: {
       filter: filter ?? {},
+      limit: limit,
       orderBy: orderBy ?? {},
     },
     onCompleted: (data) => {
+      if (objectMetadataItem) {
+        registerOptimisticEffect({
+          variables: {
+            filter: filter ?? {},
+            orderBy: orderBy ?? {},
+          },
+          definition: getRecordOptimisticEffectDefinition({
+            objectMetadataItem,
+          }),
+        });
+      }
+
       if (objectNamePlural) {
         onCompleted?.(data[objectNamePlural]);
 

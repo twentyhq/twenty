@@ -38,6 +38,7 @@ const companyMetadata = {
         'The company website URL. We use this url to fetch the company icon',
       icon: 'IconLink',
       isNullable: true,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -51,6 +52,7 @@ const companyMetadata = {
       description: 'The company address',
       icon: 'IconMap',
       isNullable: true,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -147,6 +149,18 @@ const companyMetadata = {
         'Your team member responsible for managing the company account',
       icon: 'IconUserCircle',
       isNullable: true,
+    },
+    {
+      isCustom: false,
+      isActive: true,
+      type: FieldMetadataType.UUID,
+      name: 'accountOwnerId',
+      label: 'Account Owner ID (foreign key)',
+      targetColumnMap: {},
+      description: 'Foreign key for account owner',
+      icon: undefined,
+      isNullable: true,
+      isSystem: true,
     },
     {
       isCustom: false,

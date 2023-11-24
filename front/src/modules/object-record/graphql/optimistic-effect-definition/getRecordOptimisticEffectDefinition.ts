@@ -34,6 +34,7 @@ export const getRecordOptimisticEffectDefinition = ({
             },
           };
         }
+
         draft.edges.unshift({ node: newData, cursor: '' });
       });
 

@@ -36,10 +36,8 @@ export const useCreateOneObjectRecord = <T>({
     });
 
     triggerOptimisticEffects(
-      `${capitalize(foundObjectMetadataItem.nameSingular)}Edge`,
-      createdObject.data[
-        `create${capitalize(foundObjectMetadataItem.nameSingular)}`
-      ],
+      `${capitalize(objectNameSingular)}Edge`,
+      createdObject.data[`create${capitalize(objectNameSingular)}`],
     );
     return createdObject.data[`create${capitalize(objectNameSingular)}`] as T;
   };

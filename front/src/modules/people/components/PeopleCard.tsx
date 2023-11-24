@@ -142,7 +142,7 @@ export const PeopleCard = ({
       isHovered={isHovered}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onClick={() => navigate(`/person/${person.id}`)}
+      onClick={() => navigate(`/object/person/${person.id}`)}
       hasBottomBorder={hasBottomBorder}
     >
       <Avatar

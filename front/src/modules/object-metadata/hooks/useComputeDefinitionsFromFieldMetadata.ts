@@ -15,7 +15,9 @@ export const useComputeDefinitionsFromFieldMetadata = (
   const activeFieldMetadataItems = useMemo(
     () =>
       objectMetadataItem
-        ? objectMetadataItem.fields.filter(({ isActive }) => isActive)
+        ? objectMetadataItem.fields.filter(
+            ({ isActive, isSystem }) => isActive && !isSystem,
+          )
         : [],
     [objectMetadataItem],
   );

@@ -109,7 +109,6 @@ export const usePersistField = () => {
           fieldIsFullName
         ) {
           const fieldName = fieldDefinition.metadata.fieldName;
-
           set(
             entityFieldsFamilySelector({ entityId, fieldName }),
             valueToPersist,
