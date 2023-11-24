@@ -137,6 +137,7 @@ export const TableOptionsDropdownContent = ({
           <ViewFieldsVisibilityDropdownSection
             title="Visible"
             fields={visibleTableColumns}
+            isVisible={true}
             onVisibilityChange={handleColumnVisibilityChange}
             isDraggable={true}
             onDragEnd={handleReorderField}
@@ -147,6 +148,7 @@ export const TableOptionsDropdownContent = ({
               <ViewFieldsVisibilityDropdownSection
                 title="Hidden"
                 fields={hiddenTableColumns}
+                isVisible={false}
                 onVisibilityChange={handleColumnVisibilityChange}
                 isDraggable={false}
               />
