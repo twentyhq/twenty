@@ -1,4 +1,3 @@
-import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const activityMetadata = {
@@ -137,11 +136,10 @@ const activityMetadata = {
       description:
         'Activity author. This is the person who created the activity',
       icon: 'IconUserCircle',
-      isNullable: false,
+      isNullable: true,
     },
     {
       isCustom: false,
-      workspaceId: SeedWorkspaceId,
       isActive: true,
       type: FieldMetadataType.UUID,
       name: 'authorId',
@@ -166,7 +164,6 @@ const activityMetadata = {
     },
     {
       isCustom: false,
-      workspaceId: SeedWorkspaceId,
       isActive: true,
       type: FieldMetadataType.UUID,
       name: 'assigneeId',
