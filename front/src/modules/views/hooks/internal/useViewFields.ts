@@ -31,6 +31,7 @@ export const useViewFields = (viewScopeId: string) => {
           isPersistingViewState,
           currentViewFieldsState,
           savedViewFieldsState,
+          viewsState,
         } = getViewScopedStatesFromSnapshot({
           snapshot,
           viewScopeId,
@@ -112,6 +113,27 @@ export const useViewFields = (viewScopeId: string) => {
         set(isPersistingViewState, false);
         set(currentViewFieldsState, viewFieldsToPersist);
         set(savedViewFieldsState, viewFieldsToPersist);
+        set(viewsState, (currentViews) =>
+          currentViews.map((view) =>
+            view.id === viewIdToPersist
+              ? {
+                  ...view,
+                  viewFields: {
+                    edges: viewFieldsToPersist.map((vf) => ({
+                      node: vf,
+                      cursor: '',
+                    })),
+                    pageInfo: {
+                      hasNextPage: false,
+                      hasPreviousPage: false,
+                      startCursor: '',
+                      endCursor: '',
+                    },
+                  },
+                }
+              : view,
+          ),
+        );
         onViewFieldsChange?.(viewFieldsToPersist);
       },
     [viewScopeId, apolloClient, createOneMutation, updateOneMutation],
