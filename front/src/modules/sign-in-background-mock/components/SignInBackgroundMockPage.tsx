@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 
-import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
-import { RecordTableContainerMockMode } from '@/object-record/components/RecordTableContainerMockMode';
+import { SignInBackgroundMockContainer } from '@/sign-in-background-mock/components/SignInBackgroundMockContainer';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
 import { PageBody } from '@/ui/layout/page/PageBody';
@@ -17,14 +16,7 @@ const StyledTableContainer = styled.div`
   width: 100%;
 `;
 
-export type RecordTablePageProps = Pick<
-  ObjectMetadataItemIdentifier,
-  'objectNamePlural'
->;
-
-export const RecordTablePageMockMode = () => {
-  const objectNamePlural = 'companies';
-
+export const SignInBackgroundMockPage = () => {
   return (
     <PageContainer>
       <PageHeader title="Objects" Icon={IconBuildingSkyscraper}>
@@ -33,7 +25,7 @@ export const RecordTablePageMockMode = () => {
       </PageHeader>
       <PageBody>
         <StyledTableContainer>
-          <RecordTableContainerMockMode objectNamePlural={objectNamePlural} />
+          <SignInBackgroundMockContainer />
         </StyledTableContainer>
         <RecordTableActionBar />
         <RecordTableContextMenu />
