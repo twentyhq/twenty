@@ -54,12 +54,6 @@ export const RecordTableMockModeEffect = () => {
     setTableColumns(
       mapViewFieldsToColumnDefinitions(mockViewFields, mock.columnDefinitions),
     );
-
-    console.log({
-      availableTableColumns,
-      entities,
-      mock,
-    });
   }, [
     setViewObjectMetadataId,
     setViewType,
@@ -74,7 +68,7 @@ export const RecordTableMockModeEffect = () => {
 
   useEffect(() => {
     setObjectMetadataConfig?.(mockIdentifier);
-  }, [setObjectMetadataConfig, mockIdentifier]);
+  }, [setObjectMetadataConfig]);
 
   const { setActionBarEntries, setContextMenuEntries } =
     useRecordTableContextMenuEntries();

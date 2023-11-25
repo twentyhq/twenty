@@ -74,10 +74,6 @@ export const RecordTableContainer = ({
     <ViewScope
       viewScopeId={viewScopeId}
       onViewFieldsChange={(viewFields) => {
-        console.log({
-          viewFields,
-          columnDefinitions,
-        });
         setTableColumns(
           mapViewFieldsToColumnDefinitions(viewFields, columnDefinitions),
         );

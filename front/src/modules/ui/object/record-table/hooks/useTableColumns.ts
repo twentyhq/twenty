@@ -34,9 +34,6 @@ export const useTableColumns = () => {
 
   const handleColumnsChange = useCallback(
     async (columns: ColumnDefinition<FieldMetadata>[]) => {
-      console.log({
-        columns,
-      });
       setSavedTableColumns(columns);
       setTableColumns(columns);
 
