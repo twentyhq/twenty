@@ -29,8 +29,17 @@ function createNewButton(text: string, onClickHandler: () => void): HTMLButtonEl
     Object.assign(newButton.style, buttonStyles);
   });
 
-  newButton.addEventListener('click', () => {
+  newButton.addEventListener('click', async () => {
+    const { apiKey } = await chrome.storage.local.get('apiKey');
+    console.log(apiKey);
+
+    if (!apiKey) {
+      chrome.runtime.sendMessage({ action: 'openOptionsPage' });
+      return;
+    }
+
     newButton.textContent = 'Saving...';
+
     // Call the provided onClickHandler function to handle button click logic
     onClickHandler();
   });

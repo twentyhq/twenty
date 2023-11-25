@@ -1,22 +1,32 @@
+import { openOptionsPage } from './utils/openOptionsPage';
+
 console.log('Background Script Works');
 
 chrome.runtime.onInstalled.addListener(function (details) {
   if (details.reason === 'install') {
     // Open options page programmatically in a new tab.
-    chrome.runtime.openOptionsPage();
+    openOptionsPage();
   }
 });
 
-chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
-  if (request.message === 'getActiveTabUrl') {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs && tabs[0]) {
-        const activeTabUrl: string | undefined = tabs[0].url;
-        sendResponse({ url: activeTabUrl });
-      }
-    });
-    return true; // Indicates an asynchronous response
+chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
+  switch (message.action) {
+    case 'getActiveTabUrl':
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (tabs && tabs[0]) {
+          const activeTabUrl: string | undefined = tabs[0].url;
+          sendResponse({ url: activeTabUrl });
+        }
+      });
+      break;
+    case 'openOptionsPage':
+      openOptionsPage();
+      break;
+    default:
+      break;
   }
+
+  return true;
 });
 
 const injectedTabs: Set<number> = new Set();

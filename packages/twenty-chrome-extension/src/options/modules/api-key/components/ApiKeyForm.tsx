@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { H2Title } from '../../ui/display/typography/components/H2Title';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TextInput } from '../../ui/input/components/TextInput';
 import { Button } from '../../ui/input/button/Button';
 import { Toggle } from '../../ui/input/components/Toggle';
@@ -52,6 +52,10 @@ export const ApiKeyForm = () => {
   const [apiKey, setApiKey] = useState('');
   const [route, setRoute] = useState('');
   const [showSection, setShowSection] = useState(false);
+
+  useEffect(() => {
+    chrome.storage.local.set({ apiKey });
+  }, [apiKey]);
 
   const handleGenerateClick = () => {
     window.open('http://localhost:3001/settings/developers/api-keys');
