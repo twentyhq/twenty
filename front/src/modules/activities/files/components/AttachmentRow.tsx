@@ -6,6 +6,7 @@ import { AttachmentDropdown } from '@/activities/files/components/AttachmentDrop
 import { AttachmentIcon } from '@/activities/files/components/AttachmentIcon';
 import { Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
+import { useDeleteOneObjectRecord } from '@/object-record/hooks/useDeleteOneObjectRecord';
 import { IconCalendar } from '@/ui/display/icon';
 import {
   FieldContext,
@@ -59,6 +60,15 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
     [attachment?.id],
   );
 
+  const { deleteOneObject: deleteOneAttachment } =
+    useDeleteOneObjectRecord<Attachment>({
+      objectNameSingular: 'attachment',
+    });
+
+  const handleDelete = () => {
+    deleteOneAttachment(attachment.id);
+  };
+
   return (
     <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
       <StyledRow>
@@ -82,7 +92,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
           {formatToHumanReadableDate(attachment.createdAt)}
           <AttachmentDropdown
             scopeKey={attachment.id}
-            onDelete={() => {}}
+            onDelete={handleDelete}
             onDownload={() => {
               downloadFile(attachment.fullPath, attachment.name);
             }}
