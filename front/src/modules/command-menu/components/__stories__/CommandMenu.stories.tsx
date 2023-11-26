@@ -7,6 +7,7 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
 import { IconCheckbox, IconNotes } from '@/ui/display/icon';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/testing/sleep';
 
@@ -46,6 +47,7 @@ const meta: Meta<typeof CommandMenu> = {
 
       return <Story />;
     },
+    SnackBarDecorator,
   ],
   parameters: {
     msw: graphqlMocks,

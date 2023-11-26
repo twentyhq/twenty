@@ -2,6 +2,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Decorator } from '@storybook/react';
 
+import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
 import { DefaultLayout } from '~/modules/ui/layout/page/DefaultLayout';
 import { UserProvider } from '~/modules/users/components/UserProvider';
@@ -37,11 +38,13 @@ export const PageDecorator: Decorator<{
       >
         <FullHeightStorybookLayout>
           <HelmetProvider>
-            <DefaultLayout>
-              <Routes>
-                <Route path={args.routePath} element={<Story />} />
-              </Routes>
-            </DefaultLayout>
+            <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+              <DefaultLayout>
+                <Routes>
+                  <Route path={args.routePath} element={<Story />} />
+                </Routes>
+              </DefaultLayout>
+            </SnackBarProviderScope>
           </HelmetProvider>
         </FullHeightStorybookLayout>
       </MemoryRouter>

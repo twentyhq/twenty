@@ -69,7 +69,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
         description="The field's type and values."
       />
       <Select
-        disabled={!!fieldMetadata.id}
+        disabled={!!fieldMetadata?.id}
         dropdownScopeId="object-field-type-select"
         value={values?.type}
         onChange={(value) => onChange({ type: value })}

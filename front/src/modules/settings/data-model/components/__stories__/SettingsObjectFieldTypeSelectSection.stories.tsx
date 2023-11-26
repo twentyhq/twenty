@@ -25,6 +25,9 @@ export const WithOpenSelect: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    const input = await canvas.findByText('Unique ID');
+    await userEvent.click(input);
+
     const selectLabel = canvas.getByText('Number');
 
     await userEvent.click(selectLabel);
