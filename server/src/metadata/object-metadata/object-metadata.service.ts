@@ -54,6 +54,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         record.workspaceId,
       );
 
+    if (record.nameSingular.toLowerCase() === record.namePlural.toLowerCase()) {
+      throw new Error(
+        'The singular and plural name cannot be the same for an object',
+      );
+    }
+
     const createdObjectMetadata = await super.createOne({
       ...record,
       dataSourceId: lastDataSourceMetadata.id,

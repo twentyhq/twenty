@@ -11,6 +11,8 @@ import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migratio
 import { WorkspaceMigrationModule } from 'src/metadata/workspace-migration/workspace-migration.module';
 import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
+import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
+import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 
 import { FieldMetadataService } from './field-metadata.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
@@ -27,6 +29,8 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         WorkspaceMigrationModule,
         WorkspaceMigrationRunnerModule,
         ObjectMetadataModule,
+        DataSourceModule,
+        TypeORMModule,
       ],
       services: [FieldMetadataService],
       resolvers: [

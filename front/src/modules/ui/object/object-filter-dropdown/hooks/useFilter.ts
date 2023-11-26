@@ -52,8 +52,10 @@ export const useFilter = (props?: UseFilterProps) => {
     setObjectFilterDropdownSearchInput('');
     setObjectFilterDropdownSelectedEntityId(null);
     setSelectedFilter(undefined);
+    setFilterDefinitionUsedInDropdown(null);
     setSelectedOperandInDropdown(null);
   }, [
+    setFilterDefinitionUsedInDropdown,
     setObjectFilterDropdownSearchInput,
     setObjectFilterDropdownSelectedEntityId,
     setSelectedFilter,

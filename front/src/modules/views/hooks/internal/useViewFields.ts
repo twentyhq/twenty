@@ -1,5 +1,4 @@
 import { useApolloClient } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilCallback } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -12,7 +11,7 @@ export const useViewFields = (viewScopeId: string) => {
     objectNameSingular: 'viewField',
   });
 
-  const { findManyQuery: findManyViewsQuery } = useObjectMetadataItem({
+  const { modifyRecordFromCache } = useObjectMetadataItem({
     objectNameSingular: 'view',
   });
 
@@ -21,14 +20,23 @@ export const useViewFields = (viewScopeId: string) => {
   const persistViewFields = useRecoilCallback(
     ({ snapshot, set }) =>
       async (viewFieldsToPersist: ViewField[], viewId?: string) => {
-        const { viewObjectMetadataId, currentViewId, savedViewFieldsByKey } =
-          getViewScopedStateValuesFromSnapshot({
-            snapshot,
-            viewScopeId,
-            viewId,
-          });
+        const {
+          viewObjectMetadataId,
+          currentViewId,
+          savedViewFieldsByKey,
+          onViewFieldsChange,
+          views,
+        } = getViewScopedStateValuesFromSnapshot({
+          snapshot,
+          viewScopeId,
+          viewId,
+        });
 
-        const { isPersistingViewState } = getViewScopedStatesFromSnapshot({
+        const {
+          isPersistingViewState,
+          currentViewFieldsState,
+          savedViewFieldsState,
+        } = getViewScopedStatesFromSnapshot({
           snapshot,
           viewScopeId,
           viewId,
@@ -58,9 +66,6 @@ export const useViewFields = (viewScopeId: string) => {
                     position: viewField.position,
                   },
                 },
-                // TODO: implement optimistic response
-                refetchQueries: [getOperationName(findManyViewsQuery) ?? ''],
-                awaitRefetchQueries: true,
               }),
             ),
           );
@@ -83,9 +88,6 @@ export const useViewFields = (viewScopeId: string) => {
                     position: viewField.position,
                   },
                 },
-                // TODO: implement optimistic response
-                refetchQueries: [getOperationName(findManyViewsQuery) ?? ''],
-                awaitRefetchQueries: true,
               }),
             ),
           );
@@ -113,13 +115,38 @@ export const useViewFields = (viewScopeId: string) => {
         await _updateViewFields(viewFieldsToUpdate);
 
         set(isPersistingViewState, false);
+        set(currentViewFieldsState, viewFieldsToPersist);
+        set(savedViewFieldsState, viewFieldsToPersist);
+
+        const existingView = views.find((view) => view.id === viewIdToPersist);
+
+        if (!existingView) {
+          return;
+        }
+
+        modifyRecordFromCache(viewIdToPersist ?? '', {
+          viewFields: () => ({
+            edges: viewFieldsToPersist.map((viewField) => ({
+              node: viewField,
+              cursor: '',
+            })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: '',
+              endCursor: '',
+            },
+          }),
+        });
+
+        onViewFieldsChange?.(viewFieldsToPersist);
       },
     [
+      viewScopeId,
+      modifyRecordFromCache,
       apolloClient,
       createOneMutation,
       updateOneMutation,
-      viewScopeId,
-      findManyViewsQuery,
     ],
   );
 

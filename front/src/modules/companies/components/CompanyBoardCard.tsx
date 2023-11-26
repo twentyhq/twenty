@@ -232,7 +232,7 @@ export const CompanyBoardCard = () => {
           </StyledCheckboxContainer>
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
-          <AnimatedEaseInOut isOpen={!showCompactView}>
+          <AnimatedEaseInOut isOpen={!showCompactView} initial={false}>
             {visibleBoardCardFields.map((viewField) => (
               <PreventSelectOnClickContainer key={viewField.fieldMetadataId}>
                 <FieldContext.Provider

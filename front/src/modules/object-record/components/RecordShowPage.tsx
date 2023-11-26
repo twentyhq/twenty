@@ -172,7 +172,12 @@ export const RecordShowPage = () => {
           key="add"
           entity={{
             id: object.id,
-            type: 'Company',
+            type:
+              objectMetadataItem?.nameSingular === 'company'
+                ? 'Company'
+                : objectMetadataItem?.nameSingular === 'person'
+                ? 'Person'
+                : 'Custom',
           }}
         />
       </PageHeader>
@@ -238,7 +243,7 @@ export const RecordShowPage = () => {
                     ? 'Company'
                     : objectMetadataItem?.nameSingular === 'person'
                     ? 'Person'
-                    : 'Person',
+                    : 'Custom',
               }}
               timeline
               tasks

@@ -11,11 +11,13 @@ export const useFieldContext = ({
   fieldMetadataName,
   objectRecordId,
   fieldPosition,
+  forceRefetch,
 }: {
   objectNameSingular: string;
   objectRecordId: string;
   fieldMetadataName: string;
   fieldPosition: number;
+  forceRefetch?: boolean;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -43,6 +45,7 @@ export const useFieldContext = ({
       updateOneObject?.({
         idToUpdate: variables.where.id,
         input: variables.data,
+        forceRefetch,
       });
     };
 

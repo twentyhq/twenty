@@ -5,13 +5,7 @@ import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useDeleteOneObjectRecord } from '@/object-record/hooks/useDeleteOneObjectRecord';
-import {
-  IconCheckbox,
-  IconHeart,
-  IconHeartOff,
-  IconNotes,
-  IconTrash,
-} from '@/ui/display/icon';
+import { IconHeart, IconHeartOff, IconTrash } from '@/ui/display/icon';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
@@ -91,16 +85,16 @@ export const useRecordTableContextMenuEntries = () => {
         !!favorites?.find((favorite) => favorite.recordId === selectedRowId);
 
       const contextMenuEntries = [
-        {
-          label: 'New task',
-          Icon: IconCheckbox,
-          onClick: () => {},
-        },
-        {
-          label: 'New note',
-          Icon: IconNotes,
-          onClick: () => {},
-        },
+        // {
+        //   label: 'New task',
+        //   Icon: IconCheckbox,
+        //   onClick: () => {},
+        // },
+        // {
+        //   label: 'New note',
+        //   Icon: IconNotes,
+        //   onClick: () => {},
+        // },
         {
           label: isFavorite ? 'Remove from favorites' : 'Add to favorites',
           Icon: isFavorite ? IconHeartOff : IconHeart,
@@ -129,16 +123,16 @@ export const useRecordTableContextMenuEntries = () => {
 
     setActionBarEntries: useRecoilCallback(() => () => {
       setActionBarEntriesState([
-        {
-          label: 'Task',
-          Icon: IconCheckbox,
-          onClick: () => {},
-        },
-        {
-          label: 'Note',
-          Icon: IconNotes,
-          onClick: () => {},
-        },
+        // {
+        //   label: 'Task',
+        //   Icon: IconCheckbox,
+        //   onClick: () => {},
+        // },
+        // {
+        //   label: 'Note',
+        //   Icon: IconNotes,
+        //   onClick: () => {},
+        // },
         {
           label: 'Delete',
           Icon: IconTrash,

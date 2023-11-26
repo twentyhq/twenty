@@ -31,7 +31,6 @@ export const TableOptionsDropdownContent = ({
 
   const viewEditMode = useRecoilValue(viewEditModeState);
   const currentView = useRecoilValue(currentViewSelector);
-
   const { closeDropdown } = useDropdown();
 
   const [currentMenu, setCurrentMenu] = useState<TableOptionsMenu | undefined>(
@@ -138,6 +137,7 @@ export const TableOptionsDropdownContent = ({
           <ViewFieldsVisibilityDropdownSection
             title="Visible"
             fields={visibleTableColumns}
+            isVisible={true}
             onVisibilityChange={handleColumnVisibilityChange}
             isDraggable={true}
             onDragEnd={handleReorderField}
@@ -148,6 +148,7 @@ export const TableOptionsDropdownContent = ({
               <ViewFieldsVisibilityDropdownSection
                 title="Hidden"
                 fields={hiddenTableColumns}
+                isVisible={false}
                 onVisibilityChange={handleColumnVisibilityChange}
                 isDraggable={false}
               />

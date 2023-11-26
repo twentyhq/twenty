@@ -15,7 +15,7 @@ export type OrderBy =
   | 'AscNullsFirst'
   | 'DescNullsFirst';
 
-const DEFAULT_SEARCH_REQUEST_LIMIT = 30;
+export const DEFAULT_SEARCH_REQUEST_LIMIT = 60;
 
 // TODO: use this for all search queries, because we need selectedEntities and entitiesToSelect each time we want to search
 // Filtered entities to select are

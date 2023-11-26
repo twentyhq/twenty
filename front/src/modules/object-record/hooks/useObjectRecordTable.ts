@@ -51,7 +51,7 @@ export const useObjectRecordTable = () => {
 
       if (foundObjectMetadataItem) {
         registerOptimisticEffect({
-          variables: { orderBy, filter },
+          variables: { orderBy, filter, limit: 60 },
           definition: getRecordOptimisticEffectDefinition({
             objectMetadataItem: foundObjectMetadataItem,
           }),

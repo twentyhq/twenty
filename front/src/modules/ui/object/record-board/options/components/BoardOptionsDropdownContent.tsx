@@ -224,6 +224,7 @@ export const BoardOptionsDropdownContent = ({
             <ViewFieldsVisibilityDropdownSection
               title="Visible"
               fields={visibleBoardCardFields}
+              isVisible={true}
               onVisibilityChange={handleFieldVisibilityChange}
               isDraggable={true}
               onDragEnd={handleReorderField}
@@ -234,6 +235,7 @@ export const BoardOptionsDropdownContent = ({
             <ViewFieldsVisibilityDropdownSection
               title="Hidden"
               fields={hiddenBoardCardFields}
+              isVisible={false}
               onVisibilityChange={handleFieldVisibilityChange}
               isDraggable={false}
             />
