@@ -66,6 +66,10 @@ export const TaskGroups = ({ entity, showAddButton }: TaskGroupsProps) => {
     TasksRecoilScopeContext,
   );
 
+  if (entity?.type === 'Custom') {
+    return <></>;
+  }
+
   if (
     (activeTabId !== 'done' &&
       todayOrPreviousTasks?.length === 0 &&
