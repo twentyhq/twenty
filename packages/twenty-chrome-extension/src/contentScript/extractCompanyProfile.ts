@@ -1,11 +1,14 @@
+import handleQueryParams from '../utils/handleQueryParams';
+import requestDb from '../utils/requestDb';
 import createNewButton from './createButton';
+import extractCompanyLinkedinLink from './utils/extractCompanyLinkedinLink';
 import extractDomain from './utils/extractDomain';
 
 function insertButtonForCompany(): void {
   const parentDiv: HTMLDivElement | null = document.querySelector('.org-top-card-primary-actions__inner');
 
   if (parentDiv) {
-    const newButtonCompany: HTMLButtonElement = createNewButton('Add to Twenty', () => {
+    const newButtonCompany: HTMLButtonElement = createNewButton('Add to Twenty', async () => {
       // Extract company-specific data from the DOM
       const companyNameElement = document.querySelector('.org-top-card-summary__title');
       const domainNameElement = document.querySelector('.org-top-card-primary-actions__inner a');
@@ -16,39 +19,40 @@ function insertButtonForCompany(): void {
       const companyName = companyNameElement ? companyNameElement.getAttribute('title') : '';
       const domainName = extractDomain(domainNameElement && domainNameElement.getAttribute('href'));
       const address = addressElement ? addressElement.textContent?.trim().replace(/\s+/g, ' ') : '';
-      const employees = employeesNumberElement ? employeesNumberElement.textContent?.trim().replace(/\s+/g, ' ').split('-')[0] : '';
+      const employees = employeesNumberElement ? Number(employeesNumberElement.textContent?.trim().replace(/\s+/g, ' ').split('-')[0]) : 0;
 
       // Prepare company data to send to the backend
       const companyData = {
         name: companyName,
-        domain: domainName,
+        domainName: domainName,
         address: address,
         employees: employees,
-        linkedInUrl: '',
+        linkedinLink: { url: '', label: '' },
       };
 
-      chrome.runtime.sendMessage({ message: 'getActiveTabUrl' }, (response) => {
-        if (response && response.url) {
-          const activeTabUrl: string = response.url;
-          // Regular expression to match the company ID
-          const regex = /\/company\/([^/]*)/;
+      const { url: activeTabUrl } = await chrome.runtime.sendMessage({ action: 'getActiveTabUrl' });
+      const companyURL = extractCompanyLinkedinLink(activeTabUrl);
+      companyData.linkedinLink = { url: companyURL, label: companyURL };
 
-          // Extract the company ID using the regex
-          const match = activeTabUrl.match(regex);
+      const query = `mutation CreateOneCompany { createCompany(data:{${handleQueryParams(companyData)}}) {id} }`;
 
-          if (match && match[1]) {
-            const companyID = match[1];
-            const cleanCompanyURL = `https://www.linkedin.com/company/${companyID}/`;
-            companyData.linkedInUrl = cleanCompanyURL;
-          }
-        }
-      });
+      const response = await requestDb(query);
 
-      // Simulate backend call with company data
-      setTimeout(() => {
-        console.log('Sending data to the backend for company:', companyData);
+      if (response.data) {
         newButtonCompany.textContent = 'Saved';
-      }, 2000);
+        newButtonCompany.setAttribute('disabled', 'true');
+
+        newButtonCompany.addEventListener('mouseenter', () => {
+          const hoverStyles = {
+            backgroundColor: 'black',
+            borderColor: 'black',
+            cursor: 'default',
+          };
+          Object.assign(newButtonCompany.style, hoverStyles);
+        });
+      } else {
+        newButtonCompany.textContent = 'Try Again';
+      }
     });
 
     parentDiv.prepend(newButtonCompany);

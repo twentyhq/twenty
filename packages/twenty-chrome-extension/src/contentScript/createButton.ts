@@ -31,7 +31,6 @@ function createNewButton(text: string, onClickHandler: () => void): HTMLButtonEl
 
   newButton.addEventListener('click', async () => {
     const { apiKey } = await chrome.storage.local.get('apiKey');
-    console.log(apiKey);
 
     if (!apiKey) {
       chrome.runtime.sendMessage({ action: 'openOptionsPage' });
