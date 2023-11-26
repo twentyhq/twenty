@@ -16,6 +16,8 @@ import { SignInUpMode, SignInUpStep, useSignInUp } from '../hooks/useSignInUp';
 import { FooterNote } from './FooterNote';
 import { HorizontalSeparator } from './HorizontalSeparator';
 
+import { ReactComponent as GoogleLogo } from '../../../ui/display/icon/assets/google-logo.svg';
+
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
   margin-top: ${({ theme }) => theme.spacing(4)};
@@ -92,13 +94,23 @@ export const SignInUpForm = () => {
       </AnimatedEaseIn>
       <Title animate>{title}</Title>
       <StyledContentContainer>
-        {authProviders.google && (
+        <>
+          {/* <IconAddressBookRaw height={size} width={size} strokeWidth={stroke} />; */}
+          <MainButton
+            Icon={() => <GoogleLogo height={20} width={20} />}
+            title="Continue with Google"
+            onClick={signInWithGoogle}
+            fullWidth
+          />
+          <HorizontalSeparator />
+        </>
+        {/* {authProviders.google && (
           <>
             <MainButton
               Icon={() => (
                 <IconBrandGoogle
-                  size={theme.icon.size.md}
-                  stroke={theme.icon.stroke.lg}
+                  size={20} // Set to 20 for the 20x20 format
+                  stroke="currentColor" // Use "currentColor" or specify the desired color
                 />
               )}
               title="Continue with Google"
@@ -107,8 +119,7 @@ export const SignInUpForm = () => {
             />
             <HorizontalSeparator />
           </>
-        )}
-
+        )} */}
         <StyledForm
           onSubmit={(event) => {
             event.preventDefault();
