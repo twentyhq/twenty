@@ -95,7 +95,7 @@ export class CompositeFieldAliasFactory {
       }
     `;
     }
-    let relationAlias = fieldKey;
+    let relationAlias = fieldMetadata.isCustom ? `_${fieldKey}` : fieldKey;
 
     // For one to one relations, pg_graphql use the targetTableName on the side that is not storing the foreign key
     // so we need to alias it to the field key

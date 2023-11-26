@@ -27,6 +27,7 @@ type ViewFieldsVisibilityDropdownSectionProps = {
     field: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
   ) => void;
   title: string;
+  isVisible: boolean;
   isDraggable: boolean;
   onDragEnd?: OnDragEndResponder;
 };
@@ -35,6 +36,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
   fields,
   onVisibilityChange,
   title,
+  isVisible,
   isDraggable,
   onDragEnd,
 }: ViewFieldsVisibilityDropdownSectionProps) => {
@@ -71,7 +73,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
     if (!field.infoTooltipContent) {
       return [
         {
-          Icon: field.isVisible ? IconMinus : IconPlus,
+          Icon: isVisible ? IconMinus : IconPlus,
           onClick: () => onVisibilityChange(field),
         },
       ];

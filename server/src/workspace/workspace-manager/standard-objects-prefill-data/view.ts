@@ -15,21 +15,6 @@ export const viewPrefillData = async (
     .orIgnore()
     .values([
       {
-        name: 'All companies',
-        objectMetadataId: 'company',
-        type: 'table',
-      },
-      {
-        name: 'All people',
-        objectMetadataId: 'person',
-        type: 'table',
-      },
-      {
-        name: 'All opportunities',
-        objectMetadataId: 'company',
-        type: 'kanban',
-      },
-      {
         name: 'All Companies',
         objectMetadataId: objectMetadataMap['company'].id,
         type: 'table',
@@ -41,7 +26,7 @@ export const viewPrefillData = async (
       },
       {
         name: 'All Opportunities',
-        objectMetadataId: objectMetadataMap['company'].id,
+        objectMetadataId: objectMetadataMap['opportunity'].id,
         type: 'kanban',
       },
     ])
@@ -82,6 +67,20 @@ export const viewPrefillData = async (
         size: 100,
       },
       {
+        fieldMetadataId: objectMetadataMap['company'].fields['accountOwner'],
+        viewId: viewIdMap['All Companies'],
+        position: 2,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId: objectMetadataMap['company'].fields['createdAt'],
+        viewId: viewIdMap['All Companies'],
+        position: 3,
+        isVisible: true,
+        size: 150,
+      },
+      {
         fieldMetadataId: objectMetadataMap['company'].fields['employees'],
         viewId: viewIdMap['All Companies'],
         position: 4,
@@ -104,7 +103,7 @@ export const viewPrefillData = async (
       },
       // Person
       {
-        fieldMetadataId: objectMetadataMap['person'].fields['firstName'], // TODO: change to displayName once we have name field type
+        fieldMetadataId: objectMetadataMap['person'].fields['name'],
         viewId: viewIdMap['All People'],
         position: 0,
         isVisible: true,
@@ -118,9 +117,23 @@ export const viewPrefillData = async (
         size: 150,
       },
       {
+        fieldMetadataId: objectMetadataMap['person'].fields['company'],
+        viewId: viewIdMap['All People'],
+        position: 2,
+        isVisible: true,
+        size: 150,
+      },
+      {
         fieldMetadataId: objectMetadataMap['person'].fields['phone'],
         viewId: viewIdMap['All People'],
         position: 3,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId: objectMetadataMap['person'].fields['createdAt'],
+        viewId: viewIdMap['All People'],
+        position: 4,
         isVisible: true,
         size: 150,
       },
@@ -152,96 +165,33 @@ export const viewPrefillData = async (
         isVisible: true,
         size: 150,
       },
-      // Companies
-      {
-        fieldMetadataId: 'name',
-        viewId: viewIdMap['All companies'],
-        position: 0,
-        isVisible: true,
-        size: 180,
-      },
-      {
-        fieldMetadataId: 'domainName',
-        viewId: viewIdMap['All companies'],
-        position: 1,
-        isVisible: true,
-        size: 100,
-      },
-      {
-        fieldMetadataId: 'accountOwner',
-        viewId: viewIdMap['All companies'],
-        position: 2,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: 'createdAt',
-        viewId: viewIdMap['All companies'],
-        position: 3,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: 'employees',
-        viewId: viewIdMap['All companies'],
-        position: 4,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: 'linkedin',
-        viewId: viewIdMap['All companies'],
-        position: 5,
-        isVisible: true,
-        size: 170,
-      },
-      {
-        fieldMetadataId: 'address',
-        viewId: viewIdMap['All companies'],
-        position: 6,
-        isVisible: true,
-        size: 170,
-      },
       // Opportunity
       {
-        fieldMetadataId: 'amount',
-        viewId: viewIdMap['All opportunities'],
+        fieldMetadataId: objectMetadataMap['opportunity'].fields['amount'],
+        viewId: viewIdMap['All Opportunities'],
         position: 0,
         isVisible: true,
-        size: 180,
+        size: 150,
       },
       {
-        fieldMetadataId: 'probability',
-        viewId: viewIdMap['All opportunities'],
+        fieldMetadataId: objectMetadataMap['opportunity'].fields['closeDate'],
+        viewId: viewIdMap['All Opportunities'],
         position: 1,
         isVisible: true,
         size: 150,
       },
       {
-        fieldMetadataId: 'closeDate',
-        viewId: viewIdMap['All opportunities'],
+        fieldMetadataId: objectMetadataMap['opportunity'].fields['probability'],
+        viewId: viewIdMap['All Opportunities'],
         position: 2,
         isVisible: true,
-        size: 100,
+        size: 150,
       },
       {
-        fieldMetadataId: 'company',
-        viewId: viewIdMap['All opportunities'],
+        fieldMetadataId:
+          objectMetadataMap['opportunity'].fields['pointOfContact'],
+        viewId: viewIdMap['All Opportunities'],
         position: 3,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: 'createdAt',
-        viewId: viewIdMap['All opportunities'],
-        position: 4,
-        isVisible: true,
-        size: 150,
-      },
-      {
-        fieldMetadataId: 'pointOfContact',
-        viewId: viewIdMap['All opportunities'],
-        position: 5,
         isVisible: true,
         size: 150,
       },

@@ -7,6 +7,8 @@ import { useGenerateDeleteOneObjectMutation } from '@/object-record/utils/useGen
 import { useGenerateFindManyCustomObjectsQuery } from '@/object-record/utils/useGenerateFindManyCustomObjectsQuery';
 import { useGenerateFindOneCustomObjectQuery } from '@/object-record/utils/useGenerateFindOneCustomObjectQuery';
 import { useGenerateUpdateOneObjectMutation } from '@/object-record/utils/useGenerateUpdateOneObjectMutation';
+import { useGetRecordFromCache } from '@/object-record/utils/useGetRecordFromCache';
+import { useModifyRecordFromCache } from '@/object-record/utils/useModifyRecordFromCache';
 import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
@@ -23,10 +25,10 @@ export const EMPTY_MUTATION = gql`
   }
 `;
 
-export const useObjectMetadataItem = ({
-  objectNamePlural,
-  objectNameSingular,
-}: ObjectMetadataItemIdentifier) => {
+export const useObjectMetadataItem = (
+  { objectNamePlural, objectNameSingular }: ObjectMetadataItemIdentifier,
+  depth?: number,
+) => {
   const objectMetadataItem = useRecoilValue(
     objectMetadataItemFamilySelector({
       objectNamePlural,
@@ -36,12 +38,22 @@ export const useObjectMetadataItem = ({
 
   const objectNotFoundInMetadata = !isDefined(objectMetadataItem);
 
+  const getRecordFromCache = useGetRecordFromCache({
+    objectMetadataItem,
+  });
+
+  const modifyRecordFromCache = useModifyRecordFromCache({
+    objectMetadataItem,
+  });
+
   const findManyQuery = useGenerateFindManyCustomObjectsQuery({
     objectMetadataItem,
+    depth,
   });
 
   const findOneQuery = useGenerateFindOneCustomObjectQuery({
     objectMetadataItem,
+    depth,
   });
 
   const createOneMutation = useGenerateCreateOneObjectMutation({
@@ -67,6 +79,8 @@ export const useObjectMetadataItem = ({
     basePathToShowPage,
     objectMetadataItem,
     objectNotFoundInMetadata,
+    getRecordFromCache,
+    modifyRecordFromCache,
     findManyQuery,
     findOneQuery,
     createOneMutation,

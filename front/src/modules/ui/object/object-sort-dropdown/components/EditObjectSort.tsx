@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 
 import { IconArrowDown, IconArrowUp } from '@/ui/display/icon';
-import { ObjectSortDropdown } from '@/ui/object/object-sort-dropdown/components/ObjectSortDropdownProps';
+import { ObjectSortDropdown } from '@/ui/object/object-sort-dropdown/components/ObjectSortDropdown';
 import SortOrFilterChip from '@/views/components/SortOrFilterChip';
 import { useView } from '@/views/hooks/useView';
 

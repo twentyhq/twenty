@@ -1,8 +1,8 @@
 export const convertCurrencyToCurrencyMicros = (
-  currencyAmount: number | undefined,
+  currencyAmount: number | null | undefined,
 ) => {
-  if (!currencyAmount) {
-    return undefined;
+  if (currencyAmount == null) {
+    return null;
   }
   const currencyAmountAsNumber = +currencyAmount;
   if (isNaN(currencyAmountAsNumber)) {
@@ -16,15 +16,14 @@ export const convertCurrencyToCurrencyMicros = (
 };
 
 export const convertCurrencyMicrosToCurrency = (
-  currencyAmountMicros: number | undefined,
+  currencyAmountMicros: number | null | undefined,
 ) => {
-  if (!currencyAmountMicros) {
-    return undefined;
+  if (currencyAmountMicros == null) {
+    return null;
   }
   const currencyAmountMicrosAsNumber = +currencyAmountMicros;
   if (isNaN(currencyAmountMicrosAsNumber)) {
     throw new Error(`Cannot convert ${currencyAmountMicros} to currency`);
   }
-  const currencyAmount = currencyAmountMicrosAsNumber / 1000000;
-  return currencyAmount;
+  return currencyAmountMicrosAsNumber / 1000000;
 };

@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { ObjectSortDropdown } from '@/ui/object/object-sort-dropdown/components/ObjectSortDropdownProps';
+import { ObjectSortDropdown } from '@/ui/object/object-sort-dropdown/components/ObjectSortDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { ObjectSortDropdownId } from '../constants/ObjectSortDropdownId';

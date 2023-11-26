@@ -106,7 +106,7 @@ export const seedViewFilterFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.TEXT,
+        type: FieldMetadataType.UUID,
         name: 'fieldMetadataId',
         label: 'Field Metadata Id',
         targetColumnMap: {
@@ -116,7 +116,7 @@ export const seedViewFilterFieldMetadata = async (
         icon: null,
         isNullable: false,
         isSystem: false,
-        defaultValue: { value: '' },
+        defaultValue: undefined,
       },
       {
         id: SeedViewFilterFieldMetadataIds.View,
@@ -124,7 +124,7 @@ export const seedViewFilterFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.TEXT,
+        type: FieldMetadataType.UUID,
         name: 'viewId',
         label: 'View Id',
         targetColumnMap: {},

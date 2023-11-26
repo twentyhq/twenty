@@ -15,14 +15,24 @@ import { KeyboardMenuGroup } from './KeyboardShortcutMenuGroup';
 import { KeyboardMenuItem } from './KeyboardShortcutMenuItem';
 
 export const KeyboardShortcutMenu = () => {
-  const { toggleKeyboardShortcutMenu } = useKeyboardShortcutMenu();
+  const { toggleKeyboardShortcutMenu, closeKeyboardShortcutMenu } =
+    useKeyboardShortcutMenu();
   const isKeyboardShortcutMenuOpened = useRecoilValue(
     isKeyboardShortcutMenuOpenedState,
   );
   useScopedHotkeys(
-    'shift+?,meta+?,esc',
+    'shift+?,meta+?',
     () => {
       toggleKeyboardShortcutMenu();
+    },
+    AppHotkeyScope.KeyboardShortcutMenu,
+    [toggleKeyboardShortcutMenu],
+  );
+
+  useScopedHotkeys(
+    'Esc',
+    () => {
+      closeKeyboardShortcutMenu();
     },
     AppHotkeyScope.KeyboardShortcutMenu,
     [toggleKeyboardShortcutMenu],

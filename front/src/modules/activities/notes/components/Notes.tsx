@@ -49,7 +49,7 @@ export const Notes = ({ entity }: { entity: ActivityTargetableEntity }) => {
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  if (notes?.length === 0) {
+  if (notes?.length === 0 && entity.type !== 'Custom') {
     return (
       <StyledTaskGroupEmptyContainer>
         <StyledEmptyTaskGroupTitle>No note yet</StyledEmptyTaskGroupTitle>

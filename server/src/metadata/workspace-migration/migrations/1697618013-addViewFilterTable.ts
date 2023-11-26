@@ -14,9 +14,8 @@ export const addViewFilterTable: WorkspaceMigrationTableAction[] = [
     columns: [
       {
         columnName: 'fieldMetadataId',
-        columnType: 'varchar',
+        columnType: 'uuid',
         action: WorkspaceMigrationColumnActionType.CREATE,
-        defaultValue: "''",
       },
       {
         columnName: 'operand',

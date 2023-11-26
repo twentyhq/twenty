@@ -19,10 +19,12 @@ export function generateTargetColumnMap(
   const columnName = isCustomField ? `_${fieldName}` : fieldName;
 
   switch (type) {
+    case FieldMetadataType.UUID:
     case FieldMetadataType.TEXT:
     case FieldMetadataType.PHONE:
     case FieldMetadataType.EMAIL:
     case FieldMetadataType.NUMBER:
+    case FieldMetadataType.NUMERIC:
     case FieldMetadataType.PROBABILITY:
     case FieldMetadataType.BOOLEAN:
     case FieldMetadataType.DATE_TIME:

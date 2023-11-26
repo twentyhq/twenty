@@ -1,6 +1,10 @@
 export type FilterType =
   | 'TEXT'
+  | 'PHONE'
+  | 'EMAIL'
   | 'DATE_TIME'
-  | 'ENTITY'
   | 'NUMBER'
-  | 'CURRENCY';
+  | 'CURRENCY'
+  | 'FULL_NAME'
+  | 'LINK'
+  | 'RELATION';
