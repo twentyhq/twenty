@@ -94,32 +94,17 @@ export const SignInUpForm = () => {
       </AnimatedEaseIn>
       <Title animate>{title}</Title>
       <StyledContentContainer>
-        <>
-          {/* <IconAddressBookRaw height={size} width={size} strokeWidth={stroke} />; */}
-          <MainButton
-            Icon={() => <GoogleLogo height={20} width={20} />}
-            title="Continue with Google"
-            onClick={signInWithGoogle}
-            fullWidth
-          />
-          <HorizontalSeparator />
-        </>
-        {/* {authProviders.google && (
+        {authProviders.google && (
           <>
             <MainButton
-              Icon={() => (
-                <IconBrandGoogle
-                  size={20} // Set to 20 for the 20x20 format
-                  stroke="currentColor" // Use "currentColor" or specify the desired color
-                />
-              )}
+              Icon={() => <GoogleLogo height={20} width={20} />}
               title="Continue with Google"
               onClick={signInWithGoogle}
               fullWidth
             />
             <HorizontalSeparator />
           </>
-        )} */}
+        )}
         <StyledForm
           onSubmit={(event) => {
             event.preventDefault();
