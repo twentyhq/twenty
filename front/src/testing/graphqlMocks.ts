@@ -5,6 +5,9 @@ import { CREATE_EVENT } from '@/analytics/graphql/queries/createEvent';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
 import { FIND_MANY_METADATA_OBJECTS } from '@/object-metadata/graphql/queries';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { mockedActivities } from '~/testing/mock-data/activities';
+import { mockedCompaniesData } from '~/testing/mock-data/companies';
+import { mockedPeopleData } from '~/testing/mock-data/people';
 
 import { mockedObjectMetadataItems } from './mock-data/metadata';
 import { mockedUsersData } from './mock-data/users';
@@ -99,6 +102,72 @@ export const graphqlMocks = [
             startCursor: null,
             endCursor: null,
           },
+        },
+      }),
+    );
+  }),
+  graphql.query('FindManyCompanies', (req, res, ctx) => {
+    return res(
+      ctx.data({
+        companies: {
+          edges: [
+            {
+              node: mockedCompaniesData[0],
+            },
+            {
+              node: mockedCompaniesData[1],
+            },
+          ],
+          pageInfo: {
+            hasNextPage: false,
+            startCursor:
+              'WyIyMDIzLTExLTI0VDA2OjI5OjE5LjU5OTUzOSIsICIwNGIyZTlmNS0wNzEzLTQwYTUtODIxNi04MjgwMjQwMWQzM2UiXQ==',
+            endCursor:
+              'WyIyMDIzLTExLTI0VDA2OjI5OjE5LjU5OTUzOSIsICJmZTI1NmIzOS0zZWMzLTRmZTMtODk5Ny1iNzZhYTBiZmE0MDgiXQ==',
+            __typename: 'PageInfo',
+          },
+          __typename: 'CompanyConnection',
+        },
+      }),
+    );
+  }),
+  graphql.query('FindManyPeople', (req, res, ctx) => {
+    return res(
+      ctx.data({
+        people: {
+          edges: [{ node: mockedPeopleData[0] }, { node: mockedPeopleData[1] }],
+          pageInfo: {
+            hasNextPage: false,
+            startCursor:
+              'WyIyMDIzLTExLTI0VDA2OjI5OjE5LjYwMzY0NyIsICIwYWEwMGJlYi1hYzczLTQ3OTctODI0ZS04N2ExZjVhZWE5ZTAiXQ==',
+            endCursor:
+              'WyIyMDIzLTExLTI0VDA2OjI5OjE5LjYwMzY0NyIsICJlZWVhY2FjZi1lZWUxLTQ2OTAtYWQyYy04NjE5ZTViNTZhMmUiXQ==',
+            __typename: 'PageInfo',
+          },
+          __typename: 'PersonConnection',
+        },
+      }),
+    );
+  }),
+  graphql.query('FindManyActivities', (req, res, ctx) => {
+    return res(
+      ctx.data({
+        activities: {
+          edges: [
+            {
+              node: mockedActivities[0],
+            },
+            { node: mockedActivities[1] },
+          ],
+          pageInfo: {
+            hasNextPage: false,
+            startCursor:
+              'WyIyMDIzLTExLTI0VDA2OjI5OjE5LjYwMzY0NyIsICIwYWEwMGJlYi1hYzczLTQ3OTctODI0ZS04N2ExZjVhZWE5ZTAiXQ==',
+            endCursor:
+              'WyIyMDIzLTExLTI0VDA2OjI5OjE5LjYwMzY0NyIsICJlZWVhY2FjZi1lZWUxLTQ2OTAtYWQyYy04NjE5ZTViNTZhMmUiXQ==',
+            __typename: 'PageInfo',
+          },
+          __typename: 'ActivityConnection',
         },
       }),
     );

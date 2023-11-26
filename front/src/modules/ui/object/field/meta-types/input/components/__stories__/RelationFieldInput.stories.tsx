@@ -111,7 +111,7 @@ export const Submit: Story = {
 
     expect(submitJestFn).toHaveBeenCalledTimes(0);
 
-    // bug here
+    // FIXME: Failing because the picker is not fetching any items
     const item = await canvas.findByText('Jane Doe');
 
     userEvent.click(item);
