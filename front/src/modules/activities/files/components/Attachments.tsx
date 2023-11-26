@@ -5,9 +5,9 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { AttachmentList } from '@/activities/files/components/AttachmentList';
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
+import { Attachment } from '@/activities/files/types/Attachment';
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
-import { Attachment } from '@/attachments/types/Attachment';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
 import { useFindOneObjectRecord } from '@/object-record/hooks/useFindOneObjectRecord';
@@ -123,7 +123,8 @@ export const Attachments = ({
       name: file.name,
       fullPath: attachmentUrl,
       type: getFileType(file.name),
-      companyId: entity.id,
+      companyId: entity.type == 'Company' ? entity.id : null,
+      personId: entity.type == 'Person' ? entity.id : null,
     });
   };
 
