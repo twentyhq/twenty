@@ -10,7 +10,7 @@ export const useAttachments = (entity: ActivityTargetableEntity) => {
       [entity.type === 'Company' ? 'companyId' : 'personId']: { eq: entity.id },
     },
     orderBy: {
-      type: 'DescNullsFirst',
+      createdAt: 'DescNullsFirst',
     },
   });
 

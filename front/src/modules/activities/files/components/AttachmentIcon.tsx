@@ -12,6 +12,7 @@ import {
   IconFileZip,
   IconHeadphones,
   IconPhoto,
+  IconPresentation,
   IconTable,
   IconVideo,
 } from '@/ui/input/constants/icons';
@@ -32,10 +33,11 @@ const IconMapping: { [key in AttachmentType]: IconComponent } = {
   Archive: IconFileZip,
   Audio: IconHeadphones,
   Image: IconPhoto,
-  Other: IconFile,
+  Presentation: IconPresentation,
   Spreadsheet: IconTable,
   TextDocument: IconFileText,
   Video: IconVideo,
+  Other: IconFile,
 };
 
 export const AttachmentIcon = ({ attachment }: { attachment: Attachment }) => {
@@ -43,12 +45,13 @@ export const AttachmentIcon = ({ attachment }: { attachment: Attachment }) => {
 
   const IconColors: { [key in AttachmentType]: string } = {
     Archive: theme.color.gray,
-    Audio: theme.color.orange,
+    Audio: theme.color.pink,
     Image: theme.color.yellow,
-    Other: theme.color.gray,
+    Presentation: theme.color.orange,
     Spreadsheet: theme.color.turquoise,
     TextDocument: theme.color.blue,
     Video: theme.color.purple,
+    Other: theme.color.gray,
   };
 
   const Icon = IconMapping[attachment.type];

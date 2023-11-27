@@ -1,7 +1,6 @@
 import { ChangeEvent, useRef } from 'react';
-import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { AttachmentList } from '@/activities/files/components/AttachmentList';
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
@@ -10,10 +9,8 @@ import { getFileType } from '@/activities/files/utils/getFileType';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
-import { useFindOneObjectRecord } from '@/object-record/hooks/useFindOneObjectRecord';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
-import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 
 const StyledTaskGroupEmptyContainer = styled.div`
@@ -58,29 +55,13 @@ const StyledFileInput = styled.input`
 `;
 
 export const Attachments = ({
-  entity,
+  targetableEntity,
 }: {
-  entity: ActivityTargetableEntity;
+  targetableEntity: ActivityTargetableEntity;
 }) => {
   const inputFileRef = useRef<HTMLInputElement>(null);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const { attachments } = useAttachments(entity);
-  const { objectNameSingular, objectMetadataId } = useParams<{
-    objectNameSingular: string;
-    objectMetadataId: string;
-  }>();
-
-  const [, setEntityFields] = useRecoilState(
-    entityFieldsFamilyState(objectMetadataId ?? ''),
-  );
-
-  const { object } = useFindOneObjectRecord({
-    objectRecordId: objectMetadataId,
-    objectNameSingular,
-    onCompleted: (data) => {
-      setEntityFields(data);
-    },
-  });
+  const { attachments } = useAttachments(targetableEntity);
 
   const [uploadFile] = useUploadFileMutation();
 
@@ -89,11 +70,7 @@ export const Attachments = ({
       objectNameSingular: 'attachment',
     });
 
-  if (!object) {
-    return;
-  }
-
-  const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) onUploadFile?.(e.target.files[0]);
   };
 
@@ -123,17 +100,18 @@ export const Attachments = ({
       name: file.name,
       fullPath: attachmentUrl,
       type: getFileType(file.name),
-      companyId: entity.type == 'Company' ? entity.id : null,
-      personId: entity.type == 'Person' ? entity.id : null,
+      companyId:
+        targetableEntity.type == 'Company' ? targetableEntity.id : null,
+      personId: targetableEntity.type == 'Person' ? targetableEntity.id : null,
     });
   };
 
-  if (attachments?.length === 0 && entity.type !== 'Custom') {
+  if (attachments?.length === 0 && targetableEntity.type !== 'Custom') {
     return (
       <StyledTaskGroupEmptyContainer>
         <StyledFileInput
           ref={inputFileRef}
-          onChange={onFileChange}
+          onChange={handleFileChange}
           type="file"
         />
 
@@ -151,7 +129,11 @@ export const Attachments = ({
 
   return (
     <StyledAttachmentsContainer>
-      <StyledFileInput ref={inputFileRef} onChange={onFileChange} type="file" />
+      <StyledFileInput
+        ref={inputFileRef}
+        onChange={handleFileChange}
+        type="file"
+      />
       <AttachmentList
         title="All"
         attachments={attachments ?? []}

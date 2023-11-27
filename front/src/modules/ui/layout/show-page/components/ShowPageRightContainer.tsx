@@ -103,7 +103,7 @@ export const ShowPageRightContainer = ({
       {activeTabId === 'timeline' && <Timeline entity={entity} />}
       {activeTabId === 'tasks' && <EntityTasks entity={entity} />}
       {activeTabId === 'notes' && <Notes entity={entity} />}
-      {activeTabId === 'files' && <Attachments entity={entity} />}
+      {activeTabId === 'files' && <Attachments targetableEntity={entity} />}
     </StyledShowPageRightContainer>
   );
 };

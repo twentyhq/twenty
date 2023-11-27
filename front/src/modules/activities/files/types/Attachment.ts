@@ -13,7 +13,8 @@ export type AttachmentType =
   | 'Archive'
   | 'Audio'
   | 'Image'
-  | 'Other'
+  | 'Presentation'
   | 'Spreadsheet'
   | 'TextDocument'
-  | 'Video';
+  | 'Video'
+  | 'Other';
