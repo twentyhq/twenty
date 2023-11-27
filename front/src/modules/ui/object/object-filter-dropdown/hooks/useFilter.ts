@@ -13,10 +13,12 @@ type UseFilterProps = {
 };
 
 export const useFilter = (props?: UseFilterProps) => {
+  console.log(props?.filterScopeId);
   const scopeId = useAvailableScopeIdOrThrow(
     ObjectFilterDropdownScopeInternalContext,
     props?.filterScopeId,
   );
+
   const {
     availableFilterDefinitions,
     setAvailableFilterDefinitions,

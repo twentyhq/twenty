@@ -4,16 +4,15 @@ import { useRecoilValue } from 'recoil';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { TopBar } from '@/ui/layout/top-bar/TopBar';
 import { ObjectFilterDropdownButton } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownButton';
-import { ObjectFilterDropdownScope } from '@/ui/object/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
+import { ObjectFilterDropdownScopeInitEffect } from '@/ui/object/object-filter-dropdown/scopes/init-effect/ObjectFilterDropdownScopeInitEffect';
 import { FiltersHotkeyScope } from '@/ui/object/object-filter-dropdown/types/FiltersHotkeyScope';
 import { ObjectSortDropdownButton } from '@/ui/object/object-sort-dropdown/components/ObjectSortDropdownButton';
-import { ObjectSortDropdownScope } from '@/ui/object/object-sort-dropdown/scopes/ObjectSortDropdownScope';
+import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewSort } from '@/views/types/ViewSort';
 
-import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 import { useView } from '../hooks/useView';
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
@@ -48,14 +47,13 @@ export const ViewBar = ({
     viewScopeId: viewId,
   });
 
-  const { availableFilterDefinitionsState, availableSortDefinitionsState } =
-    useViewScopedStates({
-      customViewScopeId: viewId,
-    });
+  const filterId = 'view-filter';
+  const sortId = 'view-sort';
 
-  const availableFilterDefinitions = useRecoilValue(
-    availableFilterDefinitionsState,
-  );
+  const { availableSortDefinitionsState } = useViewScopedStates({
+    customViewScopeId: viewId,
+  });
+
   const availableSortDefinitions = useRecoilValue(
     availableSortDefinitionsState,
   );
@@ -67,57 +65,54 @@ export const ViewBar = ({
       onViewFiltersChange={onViewFiltersChange}
       onViewSortsChange={onViewSortsChange}
     >
-      <ObjectFilterDropdownScope
-        filterScopeId="view-filter"
-        availableFilterDefinitions={availableFilterDefinitions}
-        onFilterSelect={upsertViewFilter}
-      >
-        <ObjectSortDropdownScope
-          sortScopeId="view-sort"
-          availableSortDefinitions={availableSortDefinitions}
-          onSortSelect={upsertViewSort}
-        >
-          <ViewBarEffect />
-          <TopBar
-            className={className}
-            leftComponent={
-              <ViewsDropdownButton
-                onViewEditModeChange={openOptionsDropdownButton}
-                hotkeyScope={{ scope: ViewsHotkeyScope.ListDropdown }}
-                optionsDropdownScopeId={optionsDropdownScopeId}
-              />
-            }
-            displayBottomBorder={false}
+      <ViewBarEffect />
+      <ObjectFilterDropdownScopeInitEffect
+        filterScopeId={filterId}
+        viewId={viewId}
+      />
+
+      <TopBar
+        className={className}
+        leftComponent={
+          <ViewsDropdownButton
+            onViewEditModeChange={openOptionsDropdownButton}
+            hotkeyScope={{ scope: ViewsHotkeyScope.ListDropdown }}
+            optionsDropdownScopeId={optionsDropdownScopeId}
+          />
+        }
+        displayBottomBorder={false}
+        rightComponent={
+          <>
+            <ObjectFilterDropdownButton
+              filterId={filterId}
+              onFilterSelect={upsertViewFilter}
+              hotkeyScope={{
+                scope: FiltersHotkeyScope.ObjectFilterDropdownButton,
+              }}
+            />
+            <ObjectSortDropdownButton
+              sortId={sortId}
+              onSortSelect={upsertViewSort}
+              availableSortDefinitions={availableSortDefinitions}
+              hotkeyScope={{
+                scope: FiltersHotkeyScope.ObjectSortDropdownButton,
+              }}
+            />
+            {optionsDropdownButton}
+          </>
+        }
+        bottomComponent={
+          <ViewBarDetails
+            hasFilterButton
             rightComponent={
-              <>
-                <ObjectFilterDropdownButton
-                  hotkeyScope={{
-                    scope: FiltersHotkeyScope.ObjectFilterDropdownButton,
-                  }}
-                />
-                <ObjectSortDropdownButton
-                  hotkeyScope={{
-                    scope: FiltersHotkeyScope.ObjectSortDropdownButton,
-                  }}
-                  isPrimaryButton
-                />
-                {optionsDropdownButton}
-              </>
-            }
-            bottomComponent={
-              <ViewBarDetails
-                hasFilterButton
-                rightComponent={
-                  <UpdateViewButtonGroup
-                    onViewEditModeChange={openOptionsDropdownButton}
-                    hotkeyScope={ViewsHotkeyScope.CreateDropdown}
-                  />
-                }
+              <UpdateViewButtonGroup
+                onViewEditModeChange={openOptionsDropdownButton}
+                hotkeyScope={ViewsHotkeyScope.CreateDropdown}
               />
             }
           />
-        </ObjectSortDropdownScope>
-      </ObjectFilterDropdownScope>
+        }
+      />
     </ViewScope>
   );
 };

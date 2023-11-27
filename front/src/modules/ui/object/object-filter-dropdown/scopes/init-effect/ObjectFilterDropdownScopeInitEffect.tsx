@@ -1,18 +1,26 @@
 import { useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
 
-import { FilterDefinition } from '@/ui/object/object-filter-dropdown/types/FilterDefinition';
+import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 
 import { useFilterStates } from '../../hooks/useFilterStates';
 
 type ObjectFilterDropdownScopeInitEffectProps = {
   filterScopeId: string;
-  availableFilterDefinitions?: FilterDefinition[];
+  viewId: string;
 };
 
 export const ObjectFilterDropdownScopeInitEffect = ({
   filterScopeId,
-  availableFilterDefinitions,
+  viewId,
 }: ObjectFilterDropdownScopeInitEffectProps) => {
+  const { availableFilterDefinitionsState } = useViewScopedStates({
+    customViewScopeId: viewId,
+  });
+
+  const availableFilterDefinitions = useRecoilValue(
+    availableFilterDefinitionsState,
+  );
   const { setAvailableFilterDefinitions } = useFilterStates(filterScopeId);
 
   useEffect(() => {
