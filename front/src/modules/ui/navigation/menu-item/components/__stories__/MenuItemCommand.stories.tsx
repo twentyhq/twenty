@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { Command } from 'cmdk';
 
 import { IconBell } from '@/ui/display/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
@@ -24,17 +23,15 @@ export const Default: Story = {
     secondHotKey: '1',
   },
   render: (props) => (
-    <Command>
-      <MenuItemCommand
-        LeftIcon={props.LeftIcon}
-        text={props.text}
-        firstHotKey={props.firstHotKey}
-        secondHotKey={props.secondHotKey}
-        className={props.className}
-        onClick={props.onClick}
-        isSelected={false}
-      ></MenuItemCommand>
-    </Command>
+    <MenuItemCommand
+      LeftIcon={props.LeftIcon}
+      text={props.text}
+      firstHotKey={props.firstHotKey}
+      secondHotKey={props.secondHotKey}
+      className={props.className}
+      onClick={props.onClick}
+      isSelected={false}
+    ></MenuItemCommand>
   ),
   decorators: [ComponentDecorator],
 };
