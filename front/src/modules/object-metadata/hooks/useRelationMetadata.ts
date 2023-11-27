@@ -19,7 +19,7 @@ export const useRelationMetadata = ({
     relationMetadata?.relationType === RelationMetadataType.OneToMany &&
     fieldMetadataItem?.toRelationMetadata
       ? 'MANY_TO_ONE'
-      : (relationMetadata?.relationType as RelationType);
+      : (relationMetadata?.relationType as RelationType | undefined);
 
   const relationObjectMetadataId =
     relationMetadata && 'toObjectMetadata' in relationMetadata

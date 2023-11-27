@@ -48,6 +48,20 @@ export const useFilter = (props?: UseFilterProps) => {
     [setSelectedFilter, onFilterSelect],
   );
 
+  const resetFilter = useCallback(() => {
+    setObjectFilterDropdownSearchInput('');
+    setObjectFilterDropdownSelectedEntityId(null);
+    setSelectedFilter(undefined);
+    setFilterDefinitionUsedInDropdown(null);
+    setSelectedOperandInDropdown(null);
+  }, [
+    setFilterDefinitionUsedInDropdown,
+    setObjectFilterDropdownSearchInput,
+    setObjectFilterDropdownSelectedEntityId,
+    setSelectedFilter,
+    setSelectedOperandInDropdown,
+  ]);
+
   return {
     scopeId,
     availableFilterDefinitions,
@@ -67,5 +81,6 @@ export const useFilter = (props?: UseFilterProps) => {
     selectedOperandInDropdown,
     setSelectedOperandInDropdown,
     selectFilter,
+    resetFilter,
   };
 };

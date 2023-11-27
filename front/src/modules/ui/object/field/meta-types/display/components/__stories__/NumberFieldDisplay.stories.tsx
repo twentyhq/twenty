@@ -24,6 +24,7 @@ const meta: Meta = {
       <FieldContext.Provider
         value={{
           entityId: '',
+          isLabelIdentifier: false,
           fieldDefinition: {
             fieldMetadataId: 'number',
             label: 'Number',

@@ -2,7 +2,9 @@ import { Module } from '@nestjs/common';
 
 import { MetadataModule } from 'src/metadata/metadata.module';
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
+import { WorkspaceSchemaStorageModule } from 'src/workspace/workspace-schema-storage/workspace-schema-storage.module';
 import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
+import { ScalarsExplorerService } from 'src/workspace/services/scalars-explorer.service';
 
 import { WorkspaceFactory } from './workspace.factory';
 
@@ -16,8 +18,9 @@ import { WorkspaceResolverBuilderModule } from './workspace-resolver-builder/wor
     ObjectMetadataModule,
     WorkspaceSchemaBuilderModule,
     WorkspaceResolverBuilderModule,
+    WorkspaceSchemaStorageModule,
   ],
-  providers: [WorkspaceFactory],
+  providers: [WorkspaceFactory, ScalarsExplorerService],
   exports: [WorkspaceFactory],
 })
 export class WorkspaceModule {}

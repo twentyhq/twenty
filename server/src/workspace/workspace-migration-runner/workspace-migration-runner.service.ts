@@ -17,6 +17,7 @@ import {
   WorkspaceMigrationColumnCreate,
   WorkspaceMigrationColumnRelation,
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
+import { WorkspaceCacheVersionService } from 'src/metadata/workspace-cache-version/workspace-cache-version.service';
 
 import { customTableDefaultColumns } from './utils/custom-table-default-column.util';
 
@@ -25,6 +26,7 @@ export class WorkspaceMigrationRunnerService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
+    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
   ) {}
 
   /**
@@ -77,6 +79,9 @@ export class WorkspaceMigrationRunnerService {
     }
 
     await queryRunner.release();
+
+    // Increment workspace cache version
+    await this.workspaceCacheVersionService.incrementVersion(workspaceId);
 
     return flattenedPendingMigrations;
   }

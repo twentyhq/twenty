@@ -83,11 +83,13 @@ export type CreateOneRelationInput = {
 
 export type CreateRelationInput = {
   description?: InputMaybe<Scalars['String']['input']>;
+  fromDescription?: InputMaybe<Scalars['String']['input']>;
   fromIcon?: InputMaybe<Scalars['String']['input']>;
   fromLabel: Scalars['String']['input'];
   fromName: Scalars['String']['input'];
   fromObjectMetadataId: Scalars['String']['input'];
   relationType: RelationMetadataType;
+  toDescription?: InputMaybe<Scalars['String']['input']>;
   toIcon?: InputMaybe<Scalars['String']['input']>;
   toLabel: Scalars['String']['input'];
   toName: Scalars['String']['input'];
@@ -152,12 +154,13 @@ export type FieldDeleteResponse = {
 export enum FieldMetadataType {
   Boolean = 'BOOLEAN',
   Currency = 'CURRENCY',
-  Date = 'DATE',
+  DateTime = 'DATE_TIME',
   Email = 'EMAIL',
   Enum = 'ENUM',
   FullName = 'FULL_NAME',
   Link = 'LINK',
   Number = 'NUMBER',
+  Numeric = 'NUMERIC',
   Phone = 'PHONE',
   Probability = 'PROBABILITY',
   Relation = 'RELATION',
@@ -393,7 +396,9 @@ export type UpdateFieldInput = {
 export type UpdateObjectInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
+  imageIdentifierFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  labelIdentifierFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
   labelPlural?: InputMaybe<Scalars['String']['input']>;
   labelSingular?: InputMaybe<Scalars['String']['input']>;
   namePlural?: InputMaybe<Scalars['String']['input']>;
@@ -416,9 +421,9 @@ export type UpdateOneObjectInput = {
 
 export type User = {
   __typename?: 'User';
-  avatarUrl: Scalars['String']['output'];
   canImpersonate: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
+  defaultWorkspace: Workspace;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   disabled?: Maybe<Scalars['Boolean']['output']>;
   email: Scalars['String']['output'];
@@ -426,11 +431,9 @@ export type User = {
   firstName: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   lastName: Scalars['String']['output'];
-  lastSeen?: Maybe<Scalars['DateTime']['output']>;
-  locale: Scalars['String']['output'];
   passwordHash?: Maybe<Scalars['String']['output']>;
-  phoneNumber?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
+  workspaceMember: UserWorkspaceMember;
 };
 
 export type UserEdge = {
@@ -441,8 +444,24 @@ export type UserEdge = {
   node: User;
 };
 
+export type UserWorkspaceMember = {
+  __typename?: 'UserWorkspaceMember';
+  avatarUrl?: Maybe<Scalars['String']['output']>;
+  colorScheme: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  locale: Scalars['String']['output'];
+  name: UserWorkspaceMemberName;
+};
+
+export type UserWorkspaceMemberName = {
+  __typename?: 'UserWorkspaceMemberName';
+  firstName: Scalars['String']['output'];
+  lastName: Scalars['String']['output'];
+};
+
 export type Workspace = {
   __typename?: 'Workspace';
+  allowImpersonation: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   displayName?: Maybe<Scalars['String']['output']>;

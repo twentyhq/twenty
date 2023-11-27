@@ -5,7 +5,6 @@ import { DeleteAccount } from '@/settings/profile/components/DeleteAccount';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
-import { ToggleField } from '@/settings/profile/components/ToggleField';
 import { IconSettings } from '@/ui/display/icon';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -34,13 +33,6 @@ export const SettingsProfile = () => (
           description="The email associated to your account"
         />
         <EmailField />
-      </Section>
-      <Section>
-        <H2Title
-          title="Support"
-          addornment={<ToggleField />}
-          description="Grant Twenty support temporary access to your account so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
-        />
       </Section>
       <Section>
         <DeleteAccount />

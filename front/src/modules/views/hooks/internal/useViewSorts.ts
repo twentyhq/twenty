@@ -2,7 +2,7 @@ import { useApolloClient } from '@apollo/client';
 import { produce } from 'immer';
 import { useRecoilCallback } from 'recoil';
 
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { Sort } from '@/ui/object/object-sort-dropdown/types/Sort';
 import { savedViewSortsScopedFamilyState } from '@/views/states/savedViewSortsScopedFamilyState';
 import { ViewSort } from '@/views/types/ViewSort';
@@ -11,13 +11,13 @@ import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScope
 import { useViewScopedStates } from './useViewScopedStates';
 
 export const useViewSorts = (viewScopeId: string) => {
-  const {
-    updateOneMutation,
-    createOneMutation,
-    deleteOneMutation,
-    findManyQuery,
-  } = useFindOneObjectMetadataItem({
-    objectNameSingular: 'viewSort',
+  const { updateOneMutation, createOneMutation, deleteOneMutation } =
+    useObjectMetadataItem({
+      objectNameSingular: 'viewSort',
+    });
+
+  const { modifyRecordFromCache } = useObjectMetadataItem({
+    objectNameSingular: 'view',
   });
   const apolloClient = useApolloClient();
 
@@ -28,7 +28,7 @@ export const useViewSorts = (viewScopeId: string) => {
   const persistViewSorts = useRecoilCallback(
     ({ snapshot, set }) =>
       async (viewId?: string) => {
-        const { currentViewId, currentViewSorts, savedViewSortsByKey } =
+        const { currentViewId, currentViewSorts, savedViewSortsByKey, views } =
           getViewScopedStateValuesFromSnapshot({
             snapshot,
             viewScopeId,
@@ -59,7 +59,6 @@ export const useViewSorts = (viewScopeId: string) => {
                     direction: viewSort.direction,
                   },
                 },
-                refetchQueries: [findManyQuery],
               }),
             ),
           );
@@ -127,12 +126,33 @@ export const useViewSorts = (viewScopeId: string) => {
           }),
           currentViewSorts,
         );
+        const existingViewId = viewId ?? currentViewId;
+        const existingView = views.find((view) => view.id === existingViewId);
+
+        if (!existingView) {
+          return;
+        }
+
+        modifyRecordFromCache(existingViewId, {
+          viewSorts: () => ({
+            edges: currentViewSorts.map((viewSort) => ({
+              node: viewSort,
+              cursor: '',
+            })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: '',
+              endCursor: '',
+            },
+          }),
+        });
       },
     [
       apolloClient,
       createOneMutation,
       deleteOneMutation,
-      findManyQuery,
+      modifyRecordFromCache,
       updateOneMutation,
       viewScopeId,
     ],

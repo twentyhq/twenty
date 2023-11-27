@@ -10,6 +10,8 @@ export type GenericFieldContextType = {
   entityId: string;
   recoilScopeId?: string;
   hotkeyScope: string;
+  isLabelIdentifier: boolean;
+  basePathToShowPage?: string;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(

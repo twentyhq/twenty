@@ -20,15 +20,14 @@ export const addViewTable: WorkspaceMigrationTableAction[] = [
       },
       {
         columnName: 'objectMetadataId',
-        columnType: 'varchar',
+        columnType: 'uuid',
         action: WorkspaceMigrationColumnActionType.CREATE,
-        defaultValue: "''",
       },
       {
         columnName: 'type',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
-        defaultValue: "''",
+        defaultValue: "'table'",
       },
     ],
   },

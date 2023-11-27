@@ -1,56 +1,74 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { DateTime } from 'luxon';
+import { undefined } from 'zod';
 
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
-import { turnFiltersIntoWhereClauseV2 } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClauseV2';
 import { parseDate } from '~/utils/date-utils';
+import { isDefined } from '~/utils/isDefined';
 
 export const useTasks = (entity?: ActivityTargetableEntity) => {
   const { selectedFilter } = useFilter();
 
-  const whereFilters = entity
-    ? {
-        activityTargets: {
-          some: {
-            OR: [
-              { companyId: { equals: entity.id } },
-              { personId: { equals: entity.id } },
-            ],
+  const { objects: activityTargets } = useFindManyObjectRecords({
+    objectNamePlural: 'activityTargets',
+    filter: isDefined(entity)
+      ? {
+          [entity?.type === 'Company' ? 'companyId' : 'personId']: {
+            eq: entity?.id,
           },
-        },
-      }
-    : Object.assign({}, turnFiltersIntoWhereClauseV2([], []));
+        }
+      : undefined,
+  });
 
   const { objects: completeTasksData } = useFindManyObjectRecords({
     objectNamePlural: 'activities',
     skip: !entity && !selectedFilter,
     filter: {
-      type: { equals: 'Task' },
-      completedAt: { neq: null },
-      ...whereFilters,
+      completedAt: { is: 'NOT_NULL' },
+      id: isDefined(entity)
+        ? {
+            in: activityTargets?.map(
+              (activityTarget) => activityTarget.activityId,
+            ),
+          }
+        : undefined,
+      type: { eq: 'Task' },
+      assigneeId: isNonEmptyString(selectedFilter?.value)
+        ? {
+            eq: selectedFilter?.value,
+          }
+        : undefined,
     },
-    orderBy: [
-      {
-        createdAt: 'AscNullIsFirst',
-      },
-    ],
+    orderBy: {
+      createdAt: 'DescNullsFirst',
+    },
   });
 
   const { objects: incompleteTaskData } = useFindManyObjectRecords({
     objectNamePlural: 'activities',
     skip: !entity && !selectedFilter,
     filter: {
-      type: { equals: 'Task' },
-      completedAt: { eq: null },
-      ...whereFilters,
+      completedAt: { is: 'NULL' },
+      id: isDefined(entity)
+        ? {
+            in: activityTargets?.map(
+              (activityTarget) => activityTarget.activityId,
+            ),
+          }
+        : undefined,
+      type: { eq: 'Task' },
+      assigneeId: isNonEmptyString(selectedFilter?.value)
+        ? {
+            eq: selectedFilter?.value,
+          }
+        : undefined,
     },
-    orderBy: [
-      {
-        createdAt: 'DescNullIsFirst',
-      },
-    ],
+    orderBy: {
+      createdAt: 'DescNullsFirst',
+    },
   });
 
   const todayOrPreviousTasks = incompleteTaskData?.filter((task) => {

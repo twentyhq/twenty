@@ -47,7 +47,7 @@ export const basicFieldsMetadata: Partial<FieldMetadataEntity>[] = [
       value: 'id',
     },
     isNullable: true,
-    // isSystem: true,
+    isSystem: true,
     isCustom: false,
     isActive: true,
     defaultValue: { type: 'uuid' },
@@ -55,7 +55,7 @@ export const basicFieldsMetadata: Partial<FieldMetadataEntity>[] = [
   {
     name: 'createdAt',
     label: 'Creation date',
-    type: FieldMetadataType.DATE,
+    type: FieldMetadataType.DATE_TIME,
     targetColumnMap: {
       value: 'createdAt',
     },
@@ -68,13 +68,14 @@ export const basicFieldsMetadata: Partial<FieldMetadataEntity>[] = [
   {
     name: 'updatedAt',
     label: 'Update date',
-    type: FieldMetadataType.DATE,
+    type: FieldMetadataType.DATE_TIME,
     targetColumnMap: {
       value: 'updatedAt',
     },
     icon: 'IconCalendar',
     isNullable: true,
     isCustom: false,
+    isSystem: true,
     isActive: true,
     defaultValue: { type: 'now' },
   },

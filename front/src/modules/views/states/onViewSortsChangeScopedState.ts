@@ -1,8 +1,8 @@
-import { Sort } from '@/ui/object/object-sort-dropdown/types/Sort';
 import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { ViewSort } from '@/views/types/ViewSort';
 
 export const onViewSortsChangeScopedState = createScopedState<
-  ((sorts: Sort[]) => void | Promise<void>) | undefined
+  ((sorts: ViewSort[]) => void | Promise<void>) | undefined
 >({
   key: 'onViewSortsChangeScopedState',
   defaultValue: undefined,

@@ -7,7 +7,8 @@ export type FilterDefinition = {
   label: string;
   iconName: string;
   type: FilterType;
-  entitySelectComponent?: JSX.Element;
+  relationObjectMetadataNamePlural?: string;
+  relationObjectMetadataNameSingular?: string;
   selectAllLabel?: string;
   SelectAllIcon?: IconComponent;
 };

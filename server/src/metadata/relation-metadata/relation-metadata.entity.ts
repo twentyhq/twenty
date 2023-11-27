@@ -46,12 +46,18 @@ export class RelationMetadataEntity implements RelationMetadataInterface {
   @ManyToOne(
     () => ObjectMetadataEntity,
     (object: ObjectMetadataEntity) => object.fromRelations,
+    {
+      onDelete: 'CASCADE',
+    },
   )
   fromObjectMetadata: ObjectMetadataEntity;
 
   @ManyToOne(
     () => ObjectMetadataEntity,
     (object: ObjectMetadataEntity) => object.toRelations,
+    {
+      onDelete: 'CASCADE',
+    },
   )
   toObjectMetadata: ObjectMetadataEntity;
 

@@ -7,13 +7,13 @@ import { EntityChipVariant } from '@/ui/display/chip/components/EntityChip';
 import { IconEye } from '@/ui/display/icon/index';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
-import { BoardCardIdContext } from '@/ui/layout/board/contexts/BoardCardIdContext';
-import { useBoardContext } from '@/ui/layout/board/hooks/useBoardContext';
-import { useCurrentCardSelected } from '@/ui/layout/board/hooks/useCurrentCardSelected';
-import { isCardInCompactViewState } from '@/ui/layout/board/states/isCardInCompactViewState';
-import { isCompactViewEnabledState } from '@/ui/layout/board/states/isCompactViewEnabledState';
-import { visibleBoardCardFieldsScopedSelector } from '@/ui/layout/board/states/selectors/visibleBoardCardFieldsScopedSelector';
 import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
+import { BoardCardIdContext } from '@/ui/object/record-board/contexts/BoardCardIdContext';
+import { useBoardContext } from '@/ui/object/record-board/hooks/useBoardContext';
+import { useCurrentCardSelected } from '@/ui/object/record-board/hooks/useCurrentCardSelected';
+import { isCardInCompactViewState } from '@/ui/object/record-board/states/isCardInCompactViewState';
+import { isCompactViewEnabledState } from '@/ui/object/record-board/states/isCompactViewEnabledState';
+import { visibleBoardCardFieldsScopedSelector } from '@/ui/object/record-board/states/selectors/visibleBoardCardFieldsScopedSelector';
 import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
@@ -127,7 +127,7 @@ const StyledCompactIconContainer = styled.div`
 export const CompanyBoardCard = () => {
   const { BoardRecoilScopeContext } = useBoardContext();
 
-  const { currentCardSelected, setCurrentCardSelected } =
+  const { isCurrentCardSelected, setCurrentCardSelected } =
     useCurrentCardSelected();
   const boardCardId = useContext(BoardCardIdContext);
 
@@ -143,7 +143,7 @@ export const CompanyBoardCard = () => {
 
   const showCompactView = isCompactViewEnabled && isCardInCompactView;
 
-  const { pipelineProgress, company } = companyProgress ?? {};
+  const { opportunity, company } = companyProgress ?? {};
 
   const visibleBoardCardFields = useRecoilScopedValue(
     visibleBoardCardFieldsScopedSelector,
@@ -175,7 +175,7 @@ export const CompanyBoardCard = () => {
   };
 
   // boardCardId check can be moved to a wrapper to avoid unnecessary logic above
-  if (!company || !pipelineProgress || !boardCardId) {
+  if (!company || !opportunity || !boardCardId) {
     return null;
   }
 
@@ -200,15 +200,15 @@ export const CompanyBoardCard = () => {
   return (
     <StyledBoardCardWrapper>
       <StyledBoardCard
-        selected={currentCardSelected}
+        selected={isCurrentCardSelected}
         onMouseLeave={OnMouseLeaveBoard}
-        onClick={() => setCurrentCardSelected(!currentCardSelected)}
+        onClick={() => setCurrentCardSelected(!isCurrentCardSelected)}
       >
         <StyledBoardCardHeader showCompactView={showCompactView}>
           <CompanyChip
             id={company.id}
             name={company.name}
-            pictureUrl={getLogoUrlFromDomainName(company.domainName)}
+            avatarUrl={getLogoUrlFromDomainName(company.domainName)}
             variant={EntityChipVariant.Transparent}
           />
           {showCompactView && (
@@ -225,28 +225,27 @@ export const CompanyBoardCard = () => {
           )}
           <StyledCheckboxContainer className="checkbox-container">
             <Checkbox
-              checked={currentCardSelected}
-              onChange={() => setCurrentCardSelected(!currentCardSelected)}
+              checked={isCurrentCardSelected}
+              onChange={() => setCurrentCardSelected(!isCurrentCardSelected)}
               variant={CheckboxVariant.Secondary}
             />
           </StyledCheckboxContainer>
         </StyledBoardCardHeader>
         <StyledBoardCardBody>
-          <AnimatedEaseInOut isOpen={!showCompactView}>
+          <AnimatedEaseInOut isOpen={!showCompactView} initial={false}>
             {visibleBoardCardFields.map((viewField) => (
               <PreventSelectOnClickContainer key={viewField.fieldMetadataId}>
                 <FieldContext.Provider
                   value={{
                     entityId: boardCardId,
                     recoilScopeId: boardCardId + viewField.fieldMetadataId,
+                    isLabelIdentifier: false,
                     fieldDefinition: {
                       fieldMetadataId: viewField.fieldMetadataId,
                       label: viewField.label,
                       iconName: viewField.iconName,
                       type: viewField.type,
                       metadata: viewField.metadata,
-                      entityChipDisplayMapper:
-                        viewField.entityChipDisplayMapper,
                     },
                     useUpdateEntityMutation: useUpdateOneObjectMutation,
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,

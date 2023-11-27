@@ -1,12 +1,13 @@
 import { useParams } from 'react-router-dom';
-import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
+import { CompanyTeam } from '@/companies/components/CompanyTeam';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { filterAvailableFieldMetadataItem } from '@/object-record/utils/filterAvailableFieldMetadataItem';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
+import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageFavoriteButton } from '@/ui/layout/page/PageFavoriteButton';
@@ -24,6 +25,7 @@ import { PropertyBox } from '@/ui/object/record-inline-cell/property-box/compone
 import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { FileFolder, useUploadImageMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 import { useFindOneObjectRecord } from '../hooks/useFindOneObjectRecord';
@@ -35,12 +37,14 @@ export const RecordShowPage = () => {
     objectMetadataId: string;
   }>();
 
-  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 
+  const { identifiersMapper } = useRelationPicker();
+
   const { favorites, createFavorite, deleteFavorite } = useFavorites({
-    objectNamePlural: foundObjectMetadataItem?.namePlural,
+    objectNamePlural: objectMetadataItem?.namePlural,
   });
 
   const [, setEntityFields] = useRecoilState(
@@ -55,11 +59,12 @@ export const RecordShowPage = () => {
     },
   });
 
-  const useUpdateOneObjectMutation: () => [(params: any) => any, any] = () => {
-    const { updateOneObject } = useUpdateOneObjectRecord({
-      objectNameSingular,
-    });
+  const [uploadImage] = useUploadImageMutation();
+  const { updateOneObject } = useUpdateOneObjectRecord({
+    objectNameSingular,
+  });
 
+  const useUpdateOneObjectMutation: () => [(params: any) => any, any] = () => {
     const updateEntity = ({
       variables,
     }: {
@@ -117,6 +122,40 @@ export const RecordShowPage = () => {
       ? object.name.firstName + ' ' + object.name.lastName
       : object.name;
 
+  const recordIdentifiers = identifiersMapper?.(
+    object,
+    objectMetadataItem?.nameSingular ?? '',
+  );
+
+  const onUploadPicture = async (file: File) => {
+    if (objectNameSingular !== 'person') {
+      return;
+    }
+
+    const result = await uploadImage({
+      variables: {
+        file,
+        fileFolder: FileFolder.PersonPicture,
+      },
+    });
+
+    const avatarUrl = result?.data?.uploadImage;
+
+    if (!avatarUrl) {
+      return;
+    }
+    if (!updateOneObject) {
+      return;
+    }
+
+    await updateOneObject({
+      idToUpdate: object?.id,
+      input: {
+        avatarUrl,
+      },
+    });
+  };
+
   return (
     <PageContainer>
       <PageTitle title={pageName} />
@@ -133,7 +172,12 @@ export const RecordShowPage = () => {
           key="add"
           entity={{
             id: object.id,
-            type: 'Company',
+            type:
+              objectMetadataItem?.nameSingular === 'company'
+                ? 'Company'
+                : objectMetadataItem?.nameSingular === 'person'
+                ? 'Person'
+                : 'Custom',
           }}
         />
       </PageHeader>
@@ -143,19 +187,20 @@ export const RecordShowPage = () => {
             <ShowPageLeftContainer>
               <ShowPageSummaryCard
                 id={object.id}
-                logoOrAvatar={''}
-                title={object.name ?? 'No name'}
+                logoOrAvatar={recordIdentifiers?.avatarUrl}
+                title={recordIdentifiers?.name ?? 'No name'}
                 date={object.createdAt ?? ''}
                 renderTitleEditComponent={() => <></>}
-                avatarType="squared"
+                avatarType={recordIdentifiers?.avatarType ?? 'rounded'}
+                onUploadPicture={
+                  objectNameSingular === 'person' ? onUploadPicture : undefined
+                }
               />
               <PropertyBox extraPadding={true}>
-                {foundObjectMetadataItem &&
-                  [...foundObjectMetadataItem.fields]
+                {objectMetadataItem &&
+                  [...objectMetadataItem.fields]
                     .sort((a, b) =>
-                      DateTime.fromISO(a.createdAt)
-                        .diff(DateTime.fromISO(b.createdAt))
-                        .toMillis(),
+                      a.name === 'name' ? -1 : a.name.localeCompare(b.name),
                     )
                     .filter(filterAvailableFieldMetadataItem)
                     .map((metadataField, index) => {
@@ -165,11 +210,12 @@ export const RecordShowPage = () => {
                           value={{
                             entityId: object.id,
                             recoilScopeId: object.id + metadataField.id,
+                            isLabelIdentifier: false,
                             fieldDefinition:
                               formatFieldMetadataItemAsColumnDefinition({
                                 field: metadataField,
                                 position: index,
-                                objectMetadataItem: foundObjectMetadataItem,
+                                objectMetadataItem,
                               }),
                             useUpdateEntityMutation: useUpdateOneObjectMutation,
                             hotkeyScope: InlineCellHotkeyScope.InlineCell,
@@ -180,11 +226,24 @@ export const RecordShowPage = () => {
                       );
                     })}
               </PropertyBox>
+              {objectNameSingular === 'company' ? (
+                <>
+                  <CompanyTeam company={object} />
+                </>
+              ) : (
+                <></>
+              )}
             </ShowPageLeftContainer>
             <ShowPageRightContainer
               entity={{
                 id: object.id,
-                type: 'Company',
+                // TODO: refacto
+                type:
+                  objectMetadataItem?.nameSingular === 'company'
+                    ? 'Company'
+                    : objectMetadataItem?.nameSingular === 'person'
+                    ? 'Person'
+                    : 'Custom',
               }}
               timeline
               tasks

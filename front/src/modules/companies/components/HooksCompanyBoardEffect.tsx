@@ -1,25 +1,31 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { Company } from '@/companies/types/Company';
+import { useComputeDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useComputeDefinitionsFromFieldMetadata';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
-import { pipelineAvailableFieldDefinitions } from '@/pipeline/constants/pipelineAvailableFieldDefinitions';
+import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
-import { useBoardActionBarEntries } from '@/ui/layout/board/hooks/useBoardActionBarEntries';
-import { useBoardContext } from '@/ui/layout/board/hooks/useBoardContext';
-import { useBoardContextMenuEntries } from '@/ui/layout/board/hooks/useBoardContextMenuEntries';
-import { availableBoardCardFieldsScopedState } from '@/ui/layout/board/states/availableBoardCardFieldsScopedState';
-import { boardCardFieldsScopedState } from '@/ui/layout/board/states/boardCardFieldsScopedState';
-import { isBoardLoadedState } from '@/ui/layout/board/states/isBoardLoadedState';
+import { turnFiltersIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClause';
+import { turnSortsIntoOrderBy } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderBy';
+import { useBoardActionBarEntries } from '@/ui/object/record-board/hooks/useBoardActionBarEntries';
+import { useBoardContext } from '@/ui/object/record-board/hooks/useBoardContext';
+import { useBoardContextMenuEntries } from '@/ui/object/record-board/hooks/useBoardContextMenuEntries';
+import { availableBoardCardFieldsScopedState } from '@/ui/object/record-board/states/availableBoardCardFieldsScopedState';
+import { boardCardFieldsScopedState } from '@/ui/object/record-board/states/boardCardFieldsScopedState';
+import { isBoardLoadedState } from '@/ui/object/record-board/states/isBoardLoadedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedStateV2';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewFieldsToBoardFieldDefinitions';
-import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
+import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
+import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
+import { isDefined } from '~/utils/isDefined';
 
 import { useUpdateCompanyBoardCardIds } from '../hooks/useUpdateBoardCardIds';
 import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
@@ -34,8 +40,11 @@ export const HooksCompanyBoardEffect = () => {
     setViewType,
   } = useView();
 
-  const { currentViewFiltersState, currentViewFieldsState } =
-    useViewScopedStates();
+  const {
+    currentViewFieldsState,
+    currentViewFiltersState,
+    currentViewSortsState,
+  } = useViewScopedStates();
 
   const [pipelineSteps, setPipelineSteps] = useState<PipelineStep[]>([]);
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
@@ -43,6 +52,14 @@ export const HooksCompanyBoardEffect = () => {
 
   const currentViewFields = useRecoilValue(currentViewFieldsState);
   const currentViewFilters = useRecoilValue(currentViewFiltersState);
+  const currentViewSorts = useRecoilValue(currentViewSortsState);
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNamePlural: 'opportunities',
+  });
+
+  const { columnDefinitions, filterDefinitions, sortDefinitions } =
+    useComputeDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
 
@@ -53,12 +70,13 @@ export const HooksCompanyBoardEffect = () => {
     BoardRecoilScopeContext,
   );
 
-  const [, setAvailableBoardCardFields] = useRecoilScopedState(
-    availableBoardCardFieldsScopedState,
-    BoardRecoilScopeContext,
-  );
   const updateCompanyBoardCardIds = useUpdateCompanyBoardCardIds();
   const updateCompanyBoard = useUpdateCompanyBoard();
+
+  const setAvailableBoardCardFields = useSetRecoilScopedStateV2(
+    availableBoardCardFieldsScopedState,
+    'company-board-view',
+  );
 
   useFindManyObjectRecords({
     objectNamePlural: 'pipelineSteps',
@@ -71,42 +89,49 @@ export const HooksCompanyBoardEffect = () => {
     ),
   });
 
-  const whereFilters = useMemo(() => {
-    return {
-      AND: [
-        {
-          pipelineStageId: {
-            in: pipelineSteps.map((pipelineStep) => pipelineStep.id),
-          },
+  const filter = turnFiltersIntoWhereClause(
+    mapViewFiltersToFilters(currentViewFilters),
+    objectMetadataItem?.fields ?? [],
+  );
+
+  const orderBy = turnSortsIntoOrderBy(
+    mapViewSortsToSorts(currentViewSorts),
+    objectMetadataItem?.fields ?? [],
+  );
+
+  const { fetchMoreObjects: fetchMoreOpportunities } = useFindManyObjectRecords(
+    {
+      skip: !pipelineSteps.length,
+      objectNamePlural: 'opportunities',
+      filter: filter,
+      orderBy: orderBy,
+      onCompleted: useCallback(
+        (data: PaginatedObjectTypeResults<Opportunity>) => {
+          const pipelineProgresses: Array<Opportunity> = data.edges.map(
+            (edge) => edge.node,
+          );
+
+          updateCompanyBoardCardIds(pipelineProgresses);
+
+          setOpportunities(pipelineProgresses);
+          setIsBoardLoaded(true);
         },
-        ...[],
-      ],
-    };
-  }, [pipelineSteps]) as any;
+        [setIsBoardLoaded, updateCompanyBoardCardIds],
+      ),
+    },
+  );
+  useEffect(() => {
+    if (isDefined(fetchMoreOpportunities)) {
+      fetchMoreOpportunities();
+    }
+  }, [fetchMoreOpportunities]);
 
-  useFindManyObjectRecords({
-    skip: !pipelineSteps.length,
-    objectNamePlural: 'opportunities',
-    filter: whereFilters,
-    onCompleted: useCallback(
-      (_data: PaginatedObjectTypeResults<Opportunity>) => {
-        const pipelineProgresses: Array<Opportunity> = [];
-
-        updateCompanyBoardCardIds(pipelineProgresses);
-
-        setOpportunities(pipelineProgresses);
-        setIsBoardLoaded(true);
-      },
-      [setIsBoardLoaded, updateCompanyBoardCardIds],
-    ),
-  });
-
-  useFindManyObjectRecords({
+  const { fetchMoreObjects: fetchMoreCompanies } = useFindManyObjectRecords({
     skip: !opportunities.length,
     objectNamePlural: 'companies',
     filter: {
       id: {
-        in: opportunities.map((opportuntiy) => opportuntiy.companyId || ''),
+        in: opportunities.map((opportunity) => opportunity.companyId || ''),
       },
     },
     onCompleted: useCallback((data: PaginatedObjectTypeResults<Company>) => {
@@ -115,46 +140,63 @@ export const HooksCompanyBoardEffect = () => {
   });
 
   useEffect(() => {
-    setAvailableFilterDefinitions(opportunitiesBoardOptions.filterDefinitions);
-    setAvailableSortDefinitions?.(opportunitiesBoardOptions.sortDefinitions);
-    setAvailableFieldDefinitions?.(pipelineAvailableFieldDefinitions);
+    if (isDefined(fetchMoreCompanies)) {
+      fetchMoreCompanies();
+    }
+  }, [fetchMoreCompanies]);
+
+  useEffect(() => {
+    if (!objectMetadataItem) {
+      return;
+    }
+    setAvailableFilterDefinitions?.(filterDefinitions);
+    setAvailableSortDefinitions?.(sortDefinitions);
+    setAvailableFieldDefinitions?.(columnDefinitions);
   }, [
+    columnDefinitions,
+    filterDefinitions,
+    objectMetadataItem,
     setAvailableFieldDefinitions,
     setAvailableFilterDefinitions,
     setAvailableSortDefinitions,
+    sortDefinitions,
   ]);
 
   useEffect(() => {
-    setViewObjectMetadataId?.('company');
+    const availableTableColumns = columnDefinitions.filter(
+      filterAvailableTableColumns,
+    );
+
+    setAvailableBoardCardFields(availableTableColumns);
+  }, [columnDefinitions, setAvailableBoardCardFields]);
+
+  useEffect(() => {
+    if (!objectMetadataItem) {
+      return;
+    }
+    setViewObjectMetadataId?.(objectMetadataItem.id);
     setViewType?.(ViewType.Kanban);
-  }, [setViewObjectMetadataId, setViewType]);
-
-  const [searchParams] = useSearchParams();
-
-  const loading = !companies;
+  }, [objectMetadataItem, setViewObjectMetadataId, setViewType]);
 
   const { setActionBarEntries } = useBoardActionBarEntries();
   const { setContextMenuEntries } = useBoardContextMenuEntries();
 
   useEffect(() => {
-    if (!loading && opportunities && companies) {
+    if (opportunities && companies) {
       setActionBarEntries();
       setContextMenuEntries();
-      setAvailableBoardCardFields(pipelineAvailableFieldDefinitions);
+
       updateCompanyBoard(pipelineSteps, opportunities, companies);
-      setEntityCountInCurrentView(companies.length);
+      setEntityCountInCurrentView(opportunities.length);
     }
   }, [
-    loading,
-    updateCompanyBoard,
+    companies,
+    opportunities,
+    pipelineSteps,
     setActionBarEntries,
     setContextMenuEntries,
-    searchParams,
     setEntityCountInCurrentView,
-    setAvailableBoardCardFields,
-    opportunities,
-    companies,
-    pipelineSteps,
+    updateCompanyBoard,
   ]);
 
   useEffect(() => {
@@ -162,11 +204,11 @@ export const HooksCompanyBoardEffect = () => {
       setBoardCardFields(
         mapViewFieldsToBoardFieldDefinitions(
           currentViewFields,
-          pipelineAvailableFieldDefinitions,
+          columnDefinitions,
         ),
       );
     }
-  }, [currentViewFields, setBoardCardFields]);
+  }, [columnDefinitions, currentViewFields, setBoardCardFields]);
 
   return <></>;
 };

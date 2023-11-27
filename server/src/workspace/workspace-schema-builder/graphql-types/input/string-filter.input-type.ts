@@ -5,6 +5,8 @@ import {
   GraphQLString,
 } from 'graphql';
 
+import { FilterIsNullable } from 'src/workspace/workspace-schema-builder/graphql-types/input/filter-is-nullable.input-type';
+
 export const StringFilterType = new GraphQLInputObjectType({
   name: 'StringFilter',
   fields: {
@@ -20,5 +22,6 @@ export const StringFilterType = new GraphQLInputObjectType({
     ilike: { type: GraphQLString },
     regex: { type: GraphQLString },
     iregex: { type: GraphQLString },
+    is: { type: FilterIsNullable },
   },
 });

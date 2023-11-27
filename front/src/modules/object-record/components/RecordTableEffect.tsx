@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { useComputeDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useComputeDefinitionsFromFieldMetadata';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
@@ -13,14 +13,19 @@ export const RecordTableEffect = () => {
     scopeId: objectNamePlural,
     setAvailableTableColumns,
     setOnEntityCountChange,
+    setObjectMetadataConfig,
   } = useRecordTable();
 
-  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
+  const {
+    objectMetadataItem,
+    basePathToShowPage,
+    labelIdentifierFieldMetadataId,
+  } = useObjectMetadataItem({
     objectNamePlural,
   });
 
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
-    useComputeDefinitionsFromFieldMetadata(foundObjectMetadataItem);
+    useComputeDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const {
     setAvailableSortDefinitions,
@@ -32,10 +37,24 @@ export const RecordTableEffect = () => {
   } = useView();
 
   useEffect(() => {
-    if (!foundObjectMetadataItem) {
+    if (basePathToShowPage && labelIdentifierFieldMetadataId) {
+      setObjectMetadataConfig?.({
+        basePathToShowPage,
+        labelIdentifierFieldMetadataId,
+      });
+    }
+  }, [
+    basePathToShowPage,
+    objectMetadataItem,
+    labelIdentifierFieldMetadataId,
+    setObjectMetadataConfig,
+  ]);
+
+  useEffect(() => {
+    if (!objectMetadataItem) {
       return;
     }
-    setViewObjectMetadataId?.(foundObjectMetadataItem.id);
+    setViewObjectMetadataId?.(objectMetadataItem.id);
     setViewType?.(ViewType.Table);
 
     setAvailableSortDefinitions?.(sortDefinitions);
@@ -54,7 +73,7 @@ export const RecordTableEffect = () => {
     setAvailableSortDefinitions,
     setAvailableFilterDefinitions,
     setAvailableFieldDefinitions,
-    foundObjectMetadataItem,
+    objectMetadataItem,
     sortDefinitions,
     filterDefinitions,
     setAvailableTableColumns,

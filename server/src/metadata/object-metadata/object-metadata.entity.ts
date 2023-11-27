@@ -58,6 +58,12 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @Column({ default: false })
   isSystem: boolean;
 
+  @Column({ nullable: true })
+  labelIdentifierFieldMetadataId?: string;
+
+  @Column({ nullable: true })
+  imageIdentifierFieldMetadataId?: string;
+
   @Column({ nullable: false })
   workspaceId: string;
 
@@ -69,12 +75,18 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @OneToMany(
     () => RelationMetadataEntity,
     (relation: RelationMetadataEntity) => relation.fromObjectMetadata,
+    {
+      cascade: true,
+    },
   )
   fromRelations: RelationMetadataEntity[];
 
   @OneToMany(
     () => RelationMetadataEntity,
     (relation: RelationMetadataEntity) => relation.toObjectMetadata,
+    {
+      cascade: true,
+    },
   )
   toRelations: RelationMetadataEntity[];
 

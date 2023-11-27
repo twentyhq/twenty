@@ -29,19 +29,6 @@ const workspaceMemberMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.BOOLEAN,
-      name: 'allowImpersonation',
-      label: 'Admin Access',
-      targetColumnMap: {
-        value: 'allowImpersonation',
-      },
-      description: 'Allow Admin Access',
-      icon: 'IconEye',
-      isNullable: false,
-    },
-    {
-      isCustom: false,
-      isActive: true,
       type: FieldMetadataType.TEXT,
       name: 'colorScheme',
       label: 'Color Scheme',
@@ -51,6 +38,7 @@ const workspaceMemberMetadata = {
       description: 'Preferred color scheme',
       icon: 'IconColorSwatch',
       isNullable: false,
+      defaultValue: { value: 'Light' },
     },
     {
       isCustom: false,
@@ -64,7 +52,7 @@ const workspaceMemberMetadata = {
       description: 'Preferred language',
       icon: 'IconLanguage',
       isNullable: false,
-      defaultValue: { value: 'fr' },
+      defaultValue: { value: 'en' },
     },
     {
       isCustom: false,
@@ -79,6 +67,7 @@ const workspaceMemberMetadata = {
       icon: 'IconFileUpload',
       isNullable: true,
       isSystem: false,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,

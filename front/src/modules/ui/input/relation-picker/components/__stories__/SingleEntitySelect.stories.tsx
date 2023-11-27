@@ -11,14 +11,12 @@ import { sleep } from '~/testing/sleep';
 
 import { relationPickerSearchFilterScopedState } from '../../states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '../../types/EntityForSelect';
-import { Entity } from '../../types/EntityTypeForSelect';
 import { SingleEntitySelect } from '../SingleEntitySelect';
 
 const entities = mockedPeopleData.map<EntityForSelect>((person) => ({
   id: person.id,
-  entityType: Entity.Person,
   name: person.name.firstName + ' ' + person.name.lastName,
-  originalEntity: person,
+  record: person,
 }));
 
 const meta: Meta<typeof SingleEntitySelect> = {

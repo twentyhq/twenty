@@ -1,10 +1,10 @@
 import { atom } from 'recoil';
 
-import { Workspace } from '~/generated-metadata/graphql';
+import { Workspace } from '~/generated/graphql';
 
 export type CurrentWorkspace = Pick<
   Workspace,
-  'id' | 'inviteHash' | 'logo' | 'displayName'
+  'id' | 'inviteHash' | 'logo' | 'displayName' | 'allowImpersonation'
 >;
 
 export const currentWorkspaceState = atom<CurrentWorkspace | null>({

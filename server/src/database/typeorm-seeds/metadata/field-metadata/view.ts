@@ -69,7 +69,7 @@ export const seedViewFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
         label: 'Creation date',
         targetColumnMap: {
@@ -87,7 +87,7 @@ export const seedViewFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
         label: 'Update date',
         targetColumnMap: {
@@ -124,7 +124,7 @@ export const seedViewFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.TEXT,
+        type: FieldMetadataType.UUID,
         name: 'objectMetadataId',
         label: 'Object Metadata Id',
         targetColumnMap: {
@@ -134,7 +134,7 @@ export const seedViewFieldMetadata = async (
         icon: null,
         isNullable: false,
         isSystem: false,
-        defaultValue: { value: '' },
+        defaultValue: undefined,
       },
       {
         id: SeedViewFieldMetadataIds.Type,
@@ -152,7 +152,7 @@ export const seedViewFieldMetadata = async (
         icon: null,
         isNullable: false,
         isSystem: false,
-        defaultValue: { value: '' },
+        defaultValue: { value: 'table' },
       },
       {
         id: SeedViewFieldMetadataIds.ViewFields,

@@ -34,7 +34,7 @@ import { ImpersonateInput } from './dto/impersonate.input';
 @Resolver()
 export class AuthResolver {
   constructor(
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private authService: AuthService,
     private tokenService: TokenService,
@@ -126,7 +126,6 @@ export class AuthResolver {
     @Args() args: ApiKeyTokenInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ): Promise<ApiKeyToken | undefined> {
-    console.log('toto');
     return await this.tokenService.generateApiKeyToken(
       workspaceId,
       args.apiKeyId,

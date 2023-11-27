@@ -12,7 +12,7 @@ export type EntityChipProps = {
   linkToEntity?: string;
   entityId: string;
   name: string;
-  pictureUrl?: string;
+  avatarUrl?: string;
   avatarType?: AvatarType;
   variant?: EntityChipVariant;
   LeftIcon?: IconComponent;
@@ -27,7 +27,7 @@ export const EntityChip = ({
   linkToEntity,
   entityId,
   name,
-  pictureUrl,
+  avatarUrl,
   avatarType = 'rounded',
   variant = EntityChipVariant.Regular,
   LeftIcon,
@@ -59,7 +59,7 @@ export const EntityChip = ({
           <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         ) : (
           <Avatar
-            avatarUrl={pictureUrl}
+            avatarUrl={avatarUrl}
             colorId={entityId}
             placeholder={name}
             size="sm"

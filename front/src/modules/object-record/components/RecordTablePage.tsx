@@ -2,7 +2,9 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
@@ -31,26 +33,30 @@ export type RecordTablePageProps = Pick<
 export const RecordTablePage = () => {
   const objectNamePlural = useParams().objectNamePlural ?? '';
 
-  const { objectNotFoundInMetadata, loading, foundObjectMetadataItem } =
-    useFindOneObjectMetadataItem({
+  const { objectNotFoundInMetadata, objectMetadataItem } =
+    useObjectMetadataItem({
       objectNamePlural,
     });
+
+  const onboardingStatus = useOnboardingStatus();
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && objectNotFoundInMetadata) {
+    if (
+      objectNotFoundInMetadata &&
+      onboardingStatus === OnboardingStatus.Completed
+    ) {
       navigate('/');
     }
-  }, [objectNotFoundInMetadata, loading, navigate]);
+  }, [objectNotFoundInMetadata, navigate, onboardingStatus]);
 
   const { createOneObject } = useCreateOneObjectRecord({
-    objectNameSingular: foundObjectMetadataItem?.nameSingular,
+    objectNameSingular: objectMetadataItem?.nameSingular,
   });
 
   const handleAddButtonClick = async () => {
-    const createdObject = await createOneObject?.({});
-    console.log(createdObject);
+    await createOneObject?.({});
   };
 
   return (

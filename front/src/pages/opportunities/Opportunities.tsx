@@ -1,30 +1,28 @@
-import { useEffect } from 'react';
 import styled from '@emotion/styled';
 
 import { CompanyBoard } from '@/companies/board/components/CompanyBoard';
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
 import { PipelineAddButton } from '@/pipeline/components/PipelineAddButton';
-import { usePipelineStages } from '@/pipeline/hooks/usePipelineStages';
+import { usePipelineSteps } from '@/pipeline/hooks/usePipelineSteps';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { IconTargetArrow } from '@/ui/display/icon';
-import { BoardOptionsContext } from '@/ui/layout/board/contexts/BoardOptionsContext';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
+import { BoardOptionsContext } from '@/ui/object/record-board/contexts/BoardOptionsContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { useView } from '@/views/hooks/useView';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
 const StyledBoardContainer = styled.div`
   display: flex;
+  height: 100%;
   width: 100%;
 `;
 
 export const Opportunities = () => {
-  const { handlePipelineStageAdd, handlePipelineStageDelete } =
-    usePipelineStages();
+  const { handlePipelineStepAdd, handlePipelineStepDelete } =
+    usePipelineSteps();
 
   const { updateOneObject: updateOnePipelineStep } =
     useUpdateOneObjectRecord<PipelineStep>({
@@ -45,18 +43,6 @@ export const Opportunities = () => {
     });
   };
 
-  const opportunitiesV2MetadataId = useFindOneObjectMetadataItem({
-    objectNameSingular: 'opportunity',
-  }).foundObjectMetadataItem?.id;
-
-  const { setViewObjectMetadataId } = useView({
-    viewScopeId: 'company-board-view',
-  });
-
-  useEffect(() => {
-    setViewObjectMetadataId?.(opportunitiesV2MetadataId);
-  }, [opportunitiesV2MetadataId, setViewObjectMetadataId]);
-
   return (
     <PageContainer>
       <RecoilScope>
@@ -68,8 +54,8 @@ export const Opportunities = () => {
             <CompanyBoardRecoilScopeContext.Provider value="opportunities">
               <StyledBoardContainer>
                 <CompanyBoard
-                  onColumnAdd={handlePipelineStageAdd}
-                  onColumnDelete={handlePipelineStageDelete}
+                  onColumnAdd={handlePipelineStepAdd}
+                  onColumnDelete={handlePipelineStepDelete}
                   onEditColumnTitle={handleEditColumnTitle}
                 />
               </StyledBoardContainer>

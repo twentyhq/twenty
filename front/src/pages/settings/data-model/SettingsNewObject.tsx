@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
-import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -16,6 +15,7 @@ import {
 import { SettingsObjectIconSection } from '@/settings/data-model/object-edit/SettingsObjectIconSection';
 import { IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
@@ -24,16 +24,13 @@ export const SettingsNewObject = () => {
   const navigate = useNavigate();
   const [selectedObjectType, setSelectedObjectType] =
     useState<NewObjectType>('Standard');
+  const { enqueueSnackBar } = useSnackBar();
 
   const {
     activateObjectMetadataItem: activateObject,
     createObjectMetadataItem: createObject,
     disabledObjectMetadataItems: disabledObjects,
   } = useObjectMetadataItemForSettings();
-
-  const { createOneObject: createOneView } = useCreateOneObjectRecord({
-    objectNameSingular: 'view',
-  });
 
   const [
     selectedStandardObjectMetadataIds,
@@ -71,20 +68,26 @@ export const SettingsNewObject = () => {
     }
 
     if (selectedObjectType === 'Custom') {
-      const createdObject = await createObject({
-        labelPlural: customFormValues.labelPlural,
-        labelSingular: customFormValues.labelSingular,
-        description: customFormValues.description,
-        icon: customFormValues.icon,
-      });
+      try {
+        const createdObject = await createObject({
+          labelPlural: customFormValues.labelPlural,
+          labelSingular: customFormValues.labelSingular,
+          description: customFormValues.description,
+          icon: customFormValues.icon,
+        });
 
-      navigate(
-        createdObject.data?.createOneObject.isActive
-          ? `/settings/objects/${getObjectSlug(
-              createdObject.data.createOneObject,
-            )}`
-          : '/settings/objects',
-      );
+        navigate(
+          createdObject.data?.createOneObject.isActive
+            ? `/settings/objects/${getObjectSlug(
+                createdObject.data.createOneObject,
+              )}`
+            : '/settings/objects',
+        );
+      } catch (error) {
+        enqueueSnackBar((error as Error).message, {
+          variant: 'error',
+        });
+      }
     }
   };
 

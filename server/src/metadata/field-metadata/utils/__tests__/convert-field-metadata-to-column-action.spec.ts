@@ -56,7 +56,7 @@ describe('convertFieldMetadataToColumnActions', () => {
       {
         action: 'CREATE',
         columnName: 'moneyAmountMicros',
-        columnType: 'integer',
+        columnType: 'numeric',
         defaultValue: 100 * 1_000_000,
       },
       {

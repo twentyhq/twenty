@@ -79,7 +79,7 @@ export const ViewsDropdownButton = ({
     entityCountInCurrentViewState,
   );
 
-  const { setViewEditMode } = useView();
+  const { setViewEditMode, setCurrentViewId, loadView } = useView();
 
   const {
     isDropdownOpen: isViewsDropdownOpen,
@@ -95,10 +95,10 @@ export const ViewsDropdownButton = ({
   const handleViewSelect = useRecoilCallback(
     () => async (viewId: string) => {
       changeViewInUrl(viewId);
-
+      loadView(viewId);
       closeViewsDropdown();
     },
-    [changeViewInUrl, closeViewsDropdown],
+    [changeViewInUrl, closeViewsDropdown, loadView],
   );
 
   const handleAddViewButtonClick = () => {
@@ -114,6 +114,7 @@ export const ViewsDropdownButton = ({
   ) => {
     event.stopPropagation();
     changeViewInUrl(viewId);
+    setCurrentViewId(viewId);
     setViewEditMode('edit');
     onViewEditModeChange?.();
     closeViewsDropdown();
@@ -137,7 +138,7 @@ export const ViewsDropdownButton = ({
         clickableComponent={
           <StyledDropdownButtonContainer isUnfolded={isViewsDropdownOpen}>
             <StyledViewIcon size={theme.icon.size.md} />
-            <StyledViewName>{currentView?.name}</StyledViewName>
+            <StyledViewName>{currentView?.name ?? 'All'}</StyledViewName>
             <StyledDropdownLabelAdornments>
               · {entityCountInCurrentView}{' '}
               <IconChevronDown size={theme.icon.size.sm} />

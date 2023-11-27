@@ -30,7 +30,7 @@ jobs:
         with:
           files: ${{ steps.directories.outputs.LIST }}
           fail_on_error: true
-          vale_flags: '--minAlertLevel=error'
+          vale_flags: "--minAlertLevel=error --config=docs/.vale.ini"
           reporter: github-pr-check
           token: ${{ github.token }}
           filter_mode: nofilter

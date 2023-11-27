@@ -9,6 +9,8 @@ import { GraphQLError, GraphQLSchema } from 'graphql';
 import { ExtractJwt } from 'passport-jwt';
 import { TokenExpiredError, JsonWebTokenError, verify } from 'jsonwebtoken';
 
+import { WorkspaceFactory } from 'src/workspace/workspace.factory';
+
 import { AppService } from './app.service';
 
 import { CoreModule } from './core/core.module';
@@ -20,7 +22,6 @@ import {
   JwtAuthStrategy,
   JwtPayload,
 } from './core/auth/strategies/jwt.auth.strategy';
-import { WorkspaceFactory } from './workspace/workspace.factory';
 import { ExceptionFilter } from './filters/exception.filter';
 
 @Module({

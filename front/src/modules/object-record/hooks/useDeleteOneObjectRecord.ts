@@ -1,39 +1,50 @@
+import { useCallback } from 'react';
 import { useMutation } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useOptimisticEvict } from '@/apollo/optimistic-effect/hooks/useOptimisticEvict';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useDeleteOneObjectRecord = <T>({
   objectNameSingular,
 }: Pick<ObjectMetadataItemIdentifier, 'objectNameSingular'>) => {
+  const { performOptimisticEvict } = useOptimisticEvict();
+
   const {
-    foundObjectMetadataItem,
+    objectMetadataItem: foundObjectMetadataItem,
     objectNotFoundInMetadata,
-    findManyQuery,
     deleteOneMutation,
-  } = useFindOneObjectMetadataItem({
+  } = useObjectMetadataItem({
     objectNameSingular,
   });
 
   // TODO: type this with a minimal type at least with Record<string, any>
   const [mutate] = useMutation(deleteOneMutation);
 
-  const deleteOneObject =
-    objectNameSingular && foundObjectMetadataItem
-      ? async (idToDelete: string) => {
-          const deletedObject = await mutate({
-            variables: {
-              idToDelete,
-            },
-            refetchQueries: [getOperationName(findManyQuery) ?? ''],
-          });
-          return deletedObject.data[
-            `create${capitalize(objectNameSingular)}`
-          ] as T;
-        }
-      : undefined;
+  const deleteOneObject = useCallback(
+    async (idToDelete: string) => {
+      if (!foundObjectMetadataItem || !objectNameSingular) {
+        return null;
+      }
+
+      const deletedObject = await mutate({
+        variables: {
+          idToDelete,
+        },
+      });
+
+      performOptimisticEvict(capitalize(objectNameSingular), 'id', idToDelete);
+
+      return deletedObject.data[`create${capitalize(objectNameSingular)}`] as T;
+    },
+    [
+      performOptimisticEvict,
+      foundObjectMetadataItem,
+      mutate,
+      objectNameSingular,
+    ],
+  );
 
   return {
     deleteOneObject,

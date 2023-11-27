@@ -1,4 +1,3 @@
-import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 const activityMetadata = {
@@ -24,6 +23,7 @@ const activityMetadata = {
       description: 'Activity title',
       icon: 'IconNotes',
       isNullable: true,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -37,6 +37,7 @@ const activityMetadata = {
       description: 'Activity body',
       icon: 'IconList',
       isNullable: true,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -50,11 +51,12 @@ const activityMetadata = {
       description: 'Activity type',
       icon: 'IconCheckbox',
       isNullable: false,
+      defaultValue: { value: 'Note' },
     },
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.DATE,
+      type: FieldMetadataType.DATE_TIME,
       name: 'reminderAt',
       label: 'Reminder Date',
       targetColumnMap: {
@@ -67,7 +69,7 @@ const activityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.DATE,
+      type: FieldMetadataType.DATE_TIME,
       name: 'dueAt',
       label: 'Due Date',
       targetColumnMap: {
@@ -80,7 +82,7 @@ const activityMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.DATE,
+      type: FieldMetadataType.DATE_TIME,
       name: 'completedAt',
       label: 'Completion Date',
       targetColumnMap: {
@@ -134,11 +136,10 @@ const activityMetadata = {
       description:
         'Activity author. This is the person who created the activity',
       icon: 'IconUserCircle',
-      isNullable: false,
+      isNullable: true,
     },
     {
       isCustom: false,
-      workspaceId: SeedWorkspaceId,
       isActive: true,
       type: FieldMetadataType.UUID,
       name: 'authorId',
@@ -148,7 +149,6 @@ const activityMetadata = {
       icon: undefined,
       isNullable: false,
       isSystem: true,
-      defaultValue: undefined,
     },
     {
       isCustom: false,
@@ -164,7 +164,6 @@ const activityMetadata = {
     },
     {
       isCustom: false,
-      workspaceId: SeedWorkspaceId,
       isActive: true,
       type: FieldMetadataType.UUID,
       name: 'assigneeId',

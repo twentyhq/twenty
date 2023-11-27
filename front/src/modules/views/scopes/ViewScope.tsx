@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
-import { Filter } from '@/ui/object/object-filter-dropdown/types/Filter';
-import { Sort } from '@/ui/object/object-sort-dropdown/types/Sort';
+import { ViewFilter } from '@/views/types/ViewFilter';
+import { ViewSort } from '@/views/types/ViewSort';
 
 import { ViewField } from '../types/ViewField';
 
@@ -11,8 +11,8 @@ import { ViewScopeInternalContext } from './scope-internal-context/ViewScopeInte
 type ViewScopeProps = {
   children: ReactNode;
   viewScopeId: string;
-  onViewSortsChange?: (sorts: Sort[]) => void | Promise<void>;
-  onViewFiltersChange?: (filters: Filter[]) => void | Promise<void>;
+  onViewSortsChange?: (sorts: ViewSort[]) => void | Promise<void>;
+  onViewFiltersChange?: (filters: ViewFilter[]) => void | Promise<void>;
   onViewFieldsChange?: (fields: ViewField[]) => void | Promise<void>;
 };
 

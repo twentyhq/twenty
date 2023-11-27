@@ -80,7 +80,7 @@ export const seedCompanyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
         label: 'Creation date',
         targetColumnMap: {
@@ -89,7 +89,7 @@ export const seedCompanyFieldMetadata = async (
         description: undefined,
         icon: 'IconCalendar',
         isNullable: false,
-        isSystem: true,
+        isSystem: false,
         defaultValue: { type: 'now' },
       },
       {
@@ -98,7 +98,7 @@ export const seedCompanyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
         label: 'Update date',
         targetColumnMap: {
@@ -147,7 +147,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconLink',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: '' },
       },
       {
         id: SeedCompanyFieldMetadataIds.Address,
@@ -165,7 +165,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconMap',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: '' },
       },
       {
         id: SeedCompanyFieldMetadataIds.Employees,
@@ -260,7 +260,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconTarget',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: false,
       },
 
       // Relationships

@@ -1,13 +1,15 @@
 import { gql } from '@apollo/client';
 
-import { EMPTY_QUERY } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
 import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
+import { EMPTY_QUERY } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export const useGenerateFindOneCustomObjectQuery = ({
   objectMetadataItem,
+  depth,
 }: {
   objectMetadataItem: ObjectMetadataItem | null | undefined;
+  depth?: number;
 }) => {
   const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
 
@@ -24,7 +26,7 @@ export const useGenerateFindOneCustomObjectQuery = ({
       }){
         id
         ${objectMetadataItem.fields
-          .map((field) => mapFieldMetadataToGraphQLQuery(field))
+          .map((field) => mapFieldMetadataToGraphQLQuery(field, depth))
           .join('\n')}
       }
     }

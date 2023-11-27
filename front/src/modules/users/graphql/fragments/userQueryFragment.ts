@@ -17,7 +17,6 @@ export const USER_QUERY_FRAGMENT = gql`
       colorScheme
       avatarUrl
       locale
-      allowImpersonation
     }
     defaultWorkspace {
       id
@@ -25,6 +24,7 @@ export const USER_QUERY_FRAGMENT = gql`
       logo
       domainName
       inviteHash
+      allowImpersonation
     }
   }
 `;

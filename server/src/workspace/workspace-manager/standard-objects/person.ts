@@ -23,7 +23,7 @@ const personMetadata = {
       },
       description: 'Contact’s name',
       icon: 'IconUser',
-      isNullable: false,
+      isNullable: true,
     },
     {
       isCustom: false,
@@ -63,7 +63,7 @@ const personMetadata = {
         url: 'xLinkUrl',
       },
       description: 'Contact’s X/Twitter account',
-      icon: 'IconUser',
+      icon: 'IconBrandX',
       isNullable: true,
     },
     {
@@ -78,6 +78,7 @@ const personMetadata = {
       description: 'Contact’s job title',
       icon: 'IconBriefcase',
       isNullable: true,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -91,6 +92,7 @@ const personMetadata = {
       description: 'Contact’s phone number',
       icon: 'IconPhone',
       isNullable: true,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -104,6 +106,7 @@ const personMetadata = {
       description: 'Contact’s city',
       icon: 'IconMap',
       isNullable: true,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -116,7 +119,9 @@ const personMetadata = {
       },
       description: 'Contact’s avatar',
       icon: 'IconFileUpload',
-      isNullable: false,
+      isNullable: true,
+      isSystem: true,
+      defaultValue: { value: '' },
     },
     // Relations
     {
@@ -128,7 +133,7 @@ const personMetadata = {
       targetColumnMap: {},
       description: 'Contact’s company',
       icon: 'IconBuildingSkyscraper',
-      isNullable: false,
+      isNullable: true,
       isSystem: false,
     },
     {
@@ -140,7 +145,7 @@ const personMetadata = {
       targetColumnMap: {},
       description: 'Foreign key for company',
       icon: undefined,
-      isNullable: false,
+      isNullable: true,
       isSystem: true,
     },
     {
@@ -151,8 +156,8 @@ const personMetadata = {
       label: 'POC for Opportunities',
       targetColumnMap: {},
       description: 'Point of Contact for Opportunities',
-      icon: 'IconArrowTarget',
-      isNullable: false,
+      icon: 'IconTargetArrow',
+      isNullable: true,
     },
     {
       isCustom: false,

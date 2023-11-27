@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -8,16 +7,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { DeleteOneOptions } from '@ptc-org/nestjs-query-core';
 
 import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
 import { WorkspaceMigrationService } from 'src/metadata/workspace-migration/workspace-migration.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
-import { FieldMetadataDTO } from 'src/metadata/field-metadata/dtos/field-metadata.dto';
 import { CreateFieldInput } from 'src/metadata/field-metadata/dtos/create-field.input';
 import { WorkspaceMigrationTableAction } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { generateTargetColumnMap } from 'src/metadata/field-metadata/utils/generate-target-column-map.util';
 import { convertFieldMetadataToColumnActions } from 'src/metadata/field-metadata/utils/convert-field-metadata-to-column-action.util';
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
@@ -30,32 +29,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
+    private readonly dataSourceService: DataSourceService,
+    private readonly typeORMService: TypeORMService,
   ) {
     super(fieldMetadataRepository);
-  }
-
-  override async deleteOne(
-    id: string,
-    opts?: DeleteOneOptions<FieldMetadataDTO> | undefined,
-  ): Promise<FieldMetadataEntity> {
-    const fieldMetadata = await this.fieldMetadataRepository.findOne({
-      where: { id },
-    });
-    if (!fieldMetadata) {
-      throw new NotFoundException('Field does not exist');
-    }
-
-    if (!fieldMetadata.isCustom) {
-      throw new BadRequestException("Standard fields can't be deleted");
-    }
-
-    if (fieldMetadata.isActive) {
-      throw new BadRequestException("Active fields can't be deleted");
-    }
-
-    // TODO: delete associated relation-metadata and field-metadata from the relation
-
-    return super.deleteOne(id, opts);
   }
 
   override async createOne(
@@ -105,7 +82,54 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       record.workspaceId,
     );
 
+    // TODO: Move viewField creation to a cdc scheduler
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        record.workspaceId,
+      );
+
+    const workspaceDataSource = await this.typeORMService.connectToDataSource(
+      dataSourceMetadata,
+    );
+
+    // TODO: use typeorm repository
+    const view = await workspaceDataSource?.query(
+      `SELECT id FROM ${dataSourceMetadata.schema}."view"
+      WHERE "objectMetadataId" = '${createdFieldMetadata.objectMetadataId}'`,
+    );
+
+    const existingViewFields = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."viewField"
+      WHERE "viewId" = '${view[0].id}'`,
+    );
+
+    const lastPosition = existingViewFields
+      .map((viewField) => viewField.position)
+      .reduce((acc, position) => {
+        if (position > acc) {
+          return position;
+        }
+        return acc;
+      }, -1);
+
+    await workspaceDataSource?.query(
+      `INSERT INTO ${dataSourceMetadata.schema}."viewField"
+    ("fieldMetadataId", "position", "isVisible", "size", "viewId")
+    VALUES ('${createdFieldMetadata.id}', '${lastPosition + 1}', true, 180, '${
+        view[0].id
+      }')`,
+    );
+
     return createdFieldMetadata;
+  }
+
+  public async findOneWithinWorkspace(
+    fieldMetadataId: string,
+    workspaceId: string,
+  ) {
+    return this.fieldMetadataRepository.findOne({
+      where: { id: fieldMetadataId, workspaceId },
+    });
   }
 
   public async deleteFieldsMetadata(workspaceId: string) {

@@ -14,6 +14,19 @@ export function convertFieldMetadataToColumnActions(
   fieldMetadata: FieldMetadataEntity,
 ): WorkspaceMigrationColumnAction[] {
   switch (fieldMetadata.type) {
+    case FieldMetadataType.UUID: {
+      const defaultValue =
+        fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.UUID>;
+
+      return [
+        {
+          action: WorkspaceMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.value,
+          columnType: 'uuid',
+          defaultValue: serializeDefaultValue(defaultValue?.value),
+        },
+      ];
+    }
     case FieldMetadataType.TEXT: {
       const defaultValue =
         fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.TEXT>;
@@ -23,7 +36,7 @@ export function convertFieldMetadataToColumnActions(
           action: WorkspaceMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.value,
           columnType: 'text',
-          defaultValue: serializeDefaultValue(defaultValue?.value),
+          defaultValue: serializeDefaultValue(defaultValue?.value ?? ''),
         },
       ];
     }
@@ -39,6 +52,19 @@ export function convertFieldMetadataToColumnActions(
           action: WorkspaceMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.value,
           columnType: 'varchar',
+          defaultValue: serializeDefaultValue(defaultValue?.value ?? ''),
+        },
+      ];
+    }
+    case FieldMetadataType.NUMERIC: {
+      const defaultValue =
+        fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.NUMERIC>;
+
+      return [
+        {
+          action: WorkspaceMigrationColumnActionType.CREATE,
+          columnName: fieldMetadata.targetColumnMap.value,
+          columnType: 'numeric',
           defaultValue: serializeDefaultValue(defaultValue?.value),
         },
       ];
@@ -72,9 +98,9 @@ export function convertFieldMetadataToColumnActions(
         },
       ];
     }
-    case FieldMetadataType.DATE: {
+    case FieldMetadataType.DATE_TIME: {
       const defaultValue =
-        fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.DATE>;
+        fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.DATE_TIME>;
 
       return [
         {
@@ -94,16 +120,17 @@ export function convertFieldMetadataToColumnActions(
           action: WorkspaceMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.label,
           columnType: 'varchar',
-          defaultValue: serializeDefaultValue(defaultValue?.label),
+          defaultValue: serializeDefaultValue(defaultValue?.label ?? ''),
         },
         {
           action: WorkspaceMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.url,
           columnType: 'varchar',
-          defaultValue: serializeDefaultValue(defaultValue?.url),
+          defaultValue: serializeDefaultValue(defaultValue?.url ?? ''),
         },
       ];
     }
+
     case FieldMetadataType.CURRENCY: {
       const defaultValue =
         fieldMetadata.defaultValue as FieldMetadataDefaultValue<FieldMetadataType.CURRENCY>;
@@ -112,14 +139,14 @@ export function convertFieldMetadataToColumnActions(
         {
           action: WorkspaceMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.amountMicros,
-          columnType: 'integer',
+          columnType: 'numeric',
           defaultValue: serializeDefaultValue(defaultValue?.amountMicros),
         },
         {
           action: WorkspaceMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.currencyCode,
           columnType: 'varchar',
-          defaultValue: serializeDefaultValue(defaultValue?.currencyCode),
+          defaultValue: serializeDefaultValue(defaultValue?.currencyCode ?? ''),
         },
       ];
     }
@@ -132,13 +159,13 @@ export function convertFieldMetadataToColumnActions(
           action: WorkspaceMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.firstName,
           columnType: 'varchar',
-          defaultValue: serializeDefaultValue(defaultValue?.firstName),
+          defaultValue: serializeDefaultValue(defaultValue?.firstName ?? ''),
         },
         {
           action: WorkspaceMigrationColumnActionType.CREATE,
           columnName: fieldMetadata.targetColumnMap.lastName,
           columnType: 'varchar',
-          defaultValue: serializeDefaultValue(defaultValue?.lastName),
+          defaultValue: serializeDefaultValue(defaultValue?.lastName ?? ''),
         },
       ];
     }

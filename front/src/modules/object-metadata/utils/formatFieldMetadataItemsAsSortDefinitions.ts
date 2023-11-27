@@ -11,7 +11,7 @@ export const formatFieldMetadataItemsAsSortDefinitions = ({
   fields.reduce((acc, field) => {
     if (
       ![
-        FieldMetadataType.Date,
+        FieldMetadataType.DateTime,
         FieldMetadataType.Number,
         FieldMetadataType.Text,
         FieldMetadataType.Boolean,

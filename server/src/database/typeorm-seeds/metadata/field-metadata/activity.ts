@@ -77,7 +77,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
         label: 'Creation date',
         targetColumnMap: {
@@ -95,7 +95,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
         label: 'Update date',
         targetColumnMap: {
@@ -124,7 +124,7 @@ export const seedActivityFieldMetadata = async (
         icon: 'IconNotes',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: '' },
       },
 
       // Scalar fields
@@ -144,7 +144,7 @@ export const seedActivityFieldMetadata = async (
         icon: 'IconList',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: '' },
       },
       {
         id: SeedActivityFieldMetadataIds.Type,
@@ -162,7 +162,7 @@ export const seedActivityFieldMetadata = async (
         icon: 'IconCheckbox',
         isNullable: false,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: 'Note' },
       },
       {
         id: SeedActivityFieldMetadataIds.ReminderAt,
@@ -170,7 +170,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'reminderAt',
         label: 'Reminder Date',
         targetColumnMap: {
@@ -188,7 +188,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'dueAt',
         label: 'Due Date',
         targetColumnMap: {
@@ -206,7 +206,7 @@ export const seedActivityFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'completedAt',
         label: 'Completion Date',
         targetColumnMap: {
@@ -259,7 +259,7 @@ export const seedActivityFieldMetadata = async (
         workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.RELATION,
-        name: 'Comments',
+        name: 'comments',
         label: 'Comments',
         targetColumnMap: {},
         description: 'Activity comments',

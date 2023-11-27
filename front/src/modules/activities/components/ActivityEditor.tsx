@@ -4,16 +4,18 @@ import styled from '@emotion/styled';
 import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
+import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { Comment } from '@/activities/types/Comment';
+import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
+import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
+import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/ui/object/record-inline-cell/property-box/components/PropertyBox';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { debounce } from '~/utils/debounce';
-
-import { ActivityRelationEditableField } from '../editable-fields/components/ActivityRelationEditableField';
 
 import { ActivityTitle } from './ActivityTitle';
 
@@ -76,13 +78,28 @@ export const ActivityEditor = ({
     useState<boolean>(false);
 
   const [title, setTitle] = useState<string | null>(activity.title ?? '');
-  const [completedAt, setCompletedAt] = useState<string | null>(
-    activity.completedAt ?? '',
-  );
+
   const containerRef = useRef<HTMLDivElement>(null);
   const { updateOneObject } = useUpdateOneObjectRecord<Activity>({
     objectNameSingular: 'activity',
   });
+
+  const { FieldContextProvider: DueAtFieldContextProvider } = useFieldContext({
+    objectNameSingular: 'activity',
+    objectRecordId: activity.id,
+    fieldMetadataName: 'dueAt',
+    fieldPosition: 0,
+    forceRefetch: true,
+  });
+
+  const { FieldContextProvider: AssigneeFieldContextProvider } =
+    useFieldContext({
+      objectNameSingular: 'activity',
+      objectRecordId: activity.id,
+      fieldMetadataName: 'assignee',
+      fieldPosition: 1,
+      forceRefetch: true,
+    });
 
   const updateTitle = useCallback(
     (newTitle: string) => {
@@ -102,8 +119,8 @@ export const ActivityEditor = ({
         input: {
           completedAt: value ? new Date().toISOString() : null,
         },
+        forceRefetch: true,
       });
-      setCompletedAt(value ? new Date().toISOString() : null);
     },
     [activity.id, updateOneObject],
   );
@@ -129,7 +146,7 @@ export const ActivityEditor = ({
           <ActivityTypeDropdown activity={activity} />
           <ActivityTitle
             title={title ?? ''}
-            completed={!!completedAt}
+            completed={!!activity.completedAt}
             type={activity.type}
             onTitleChange={(newTitle) => {
               setTitle(newTitle);
@@ -139,17 +156,21 @@ export const ActivityEditor = ({
             onCompletionChange={handleActivityCompletionChange}
           />
           <PropertyBox>
-            {activity.type === 'Task' && (
-              <>
-                {/* <RecoilScope>
-                  <ActivityEditorDateField activityId={activity.id} />
-                </RecoilScope>
-                <RecoilScope>
-                  <ActivityAssigneeEditableField activity={activity} />
-                </RecoilScope> */}
-              </>
-            )}
-            <ActivityRelationEditableField activity={activity} />
+            {activity.type === 'Task' &&
+              DueAtFieldContextProvider &&
+              AssigneeFieldContextProvider && (
+                <>
+                  <DueAtFieldContextProvider>
+                    <RecordInlineCell />
+                  </DueAtFieldContextProvider>
+                  <AssigneeFieldContextProvider>
+                    <RecordInlineCell />
+                  </AssigneeFieldContextProvider>
+                </>
+              )}
+            <ActivityTargetsInlineCell
+              activity={activity as unknown as GraphQLActivity}
+            />
           </PropertyBox>
         </StyledTopContainer>
         <ActivityBodyEditor
@@ -159,10 +180,7 @@ export const ActivityEditor = ({
       </StyledUpperPartContainer>
       {showComment && (
         <ActivityComments
-          activity={{
-            id: activity.id,
-            comments: activity.comments ?? [],
-          }}
+          activity={activity}
           scrollableContainerRef={containerRef}
         />
       )}

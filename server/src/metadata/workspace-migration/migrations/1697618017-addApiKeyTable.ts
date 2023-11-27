@@ -16,6 +16,7 @@ export const addApiKeyTable: WorkspaceMigrationTableAction[] = [
         columnName: 'name',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
       },
       {
         columnName: 'revokedAt',
