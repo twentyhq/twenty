@@ -12,8 +12,8 @@ describe('utils.handleQueryParams', () => {
       name: 'Company Name',
       address: 'Company Address',
       domainName: 'Company Domain Name',
-      linkedinUrl: 'Test linkedinUrl',
-      xUrl: 'Test xUrl',
+      linkedinUrl: {url: '/linkedin_url', label: "Test linkedinUrl"},
+      xUrl: {url: '/x_url', label: "Test xUrl"},
       annualRecurringRevenue: 100000,
       idealCustomerProfile: true,
       employees: 25,
@@ -23,8 +23,8 @@ describe('utils.handleQueryParams', () => {
       'name: "Company Name", ' +
       'address: "Company Address", ' +
       'domainName: "Company Domain Name", ' +
-      'linkedinUrl: "Test linkedinUrl", ' +
-      'xUrl: "Test xUrl", ' +
+      'linkedinUrl: {url: "/linkedin_url", label: "Test linkedinUrl"}, ' +
+      'xUrl: {url: "/x_url", label: "Test xUrl"}, ' +
       'annualRecurringRevenue: 100000, ' +
       'idealCustomerProfile: true, ' +
       'employees: 25';

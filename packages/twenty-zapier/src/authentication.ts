@@ -5,7 +5,7 @@ const testAuthentication = async (z: ZObject, bundle: Bundle) => {
   return await requestDb(
     z,
     bundle,
-    'query currentWorkspace {currentWorkspace {id displayName}}',
+    'query CurrentWorkspace {currentWorkspace {id displayName}}',
   );
 };
 

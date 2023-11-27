@@ -11,9 +11,9 @@ describe('creates.create_company', () => {
       name: 'Company Name',
       address: 'Company Address',
       domainName: 'Company Domain Name',
-      linkedinUrl: 'Test linkedinUrl',
-      xUrl: 'Test xUrl',
-      annualRecurringRevenue: 100000,
+      linkedinLink: {url: '/linkedin_url', label: "Test linkedinUrl"},
+      xLink: {url: '/x_url', label: "Test xUrl"},
+      annualRecurringRevenue: {amountMicros:100000000000,currencyCode: 'USD'},
       idealCustomerProfile: true,
       employees: 25,
     });
@@ -22,18 +22,18 @@ describe('creates.create_company', () => {
       bundle,
     );
     expect(result).toBeDefined();
-    expect(result.data?.createOneCompany?.id).toBeDefined();
+    expect(result.data?.createCompany?.id).toBeDefined();
     const checkDbResult = await appTester(
       (z: ZObject, bundle: Bundle) =>
         requestDb(
           z,
           bundle,
-          `query findCompany {findUniqueCompany(where: {id: "${result.data.createOneCompany.id}"}){id, annualRecurringRevenue}}`,
+          `query findCompany {company(filter: {id: {eq: "${result.data.createCompany.id}"}}){id annualRecurringRevenue{amountMicros currencyCode}}}`,
         ),
       bundle,
     );
-    expect(checkDbResult.data.findUniqueCompany.annualRecurringRevenue).toEqual(
-      100000,
+    expect(checkDbResult.data.company.annualRecurringRevenue.amountMicros).toEqual(
+      100000000000,
     );
   });
   test('should run with not required missing params', async () => {
@@ -41,8 +41,8 @@ describe('creates.create_company', () => {
       name: 'Company Name',
       address: 'Company Address',
       domainName: 'Company Domain Name',
-      linkedinUrl: 'Test linkedinUrl',
-      xUrl: 'Test xUrl',
+      linkedinLink: {url: '/linkedin_url', label: "Test linkedinUrl"},
+      xLink: {url: '/x_url', label: "Test xUrl"},
       idealCustomerProfile: true,
       employees: 25,
     });
@@ -51,17 +51,17 @@ describe('creates.create_company', () => {
       bundle,
     );
     expect(result).toBeDefined();
-    expect(result.data?.createOneCompany?.id).toBeDefined();
+    expect(result.data?.createCompany?.id).toBeDefined();
     const checkDbResult = await appTester(
       (z: ZObject, bundle: Bundle) =>
         requestDb(
           z,
           bundle,
-          `query findCompany {findUniqueCompany(where: {id: "${result.data.createOneCompany.id}"}){id, annualRecurringRevenue}}`,
+          `query findCompany {company(filter: {id: {eq: "${result.data.createCompany.id}"}}){id annualRecurringRevenue{amountMicros currencyCode}}}`,
         ),
       bundle,
     );
-    expect(checkDbResult.data.findUniqueCompany.annualRecurringRevenue).toEqual(
+    expect(checkDbResult.data.company.annualRecurringRevenue.amountMicros).toEqual(
       null,
     );
   });
