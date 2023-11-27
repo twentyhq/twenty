@@ -101,7 +101,7 @@ const HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID =
 const HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID =
   'hidden-table-columns-dropdown-hotkey-scope-id';
 
-export const RecordTableHeader = ({}) => {
+export const RecordTableHeader = () => {
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
     resizeFieldOffsetState,
   );
