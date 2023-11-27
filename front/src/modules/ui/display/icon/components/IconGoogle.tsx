@@ -5,7 +5,7 @@ interface IconGoogleProps {
 }
 
 export const IconGoogle = (props: IconGoogleProps): JSX.Element => {
-  const size = props.size ?? 24;
+  const size = props.size ?? 20;
 
   return <IconGoogleRaw height={size} width={size} />;
 };
