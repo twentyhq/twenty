@@ -87,7 +87,9 @@ export const RecordTable = ({
 }: RecordTableProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const { resetTableRowSelection, setRowSelectedState } = useRecordTable();
+  const { resetTableRowSelection, setRowSelectedState } = useRecordTable({
+    recordTableScopeId: recordTableId,
+  });
   const { persistViewFields } = useViewFields(viewId);
 
   return (

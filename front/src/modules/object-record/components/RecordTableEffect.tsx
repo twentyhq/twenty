@@ -10,8 +10,10 @@ import { ViewType } from '@/views/types/ViewType';
 
 export const RecordTableEffect = ({
   recordTableId,
+  viewId,
 }: {
   recordTableId: string;
+  viewId: string;
 }) => {
   const {
     scopeId: objectNamePlural,
@@ -38,7 +40,7 @@ export const RecordTableEffect = ({
     setViewType,
     setViewObjectMetadataId,
     setEntityCountInCurrentView,
-  } = useView();
+  } = useView({ viewScopeId: viewId });
 
   useEffect(() => {
     if (basePathToShowPage && labelIdentifierFieldMetadataId) {
@@ -84,7 +86,9 @@ export const RecordTableEffect = ({
   ]);
 
   const { setActionBarEntries, setContextMenuEntries } =
-    useRecordTableContextMenuEntries();
+    useRecordTableContextMenuEntries({
+      recordTableScopeId: recordTableId,
+    });
 
   useEffect(() => {
     setActionBarEntries?.();

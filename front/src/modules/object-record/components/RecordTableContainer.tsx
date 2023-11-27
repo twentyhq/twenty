@@ -84,7 +84,7 @@ export const RecordTableContainer = ({
           optionsDropdownButton={<TableOptionsDropdown />}
           optionsDropdownScopeId={TableOptionsDropdownId}
         />
-        <RecordTableEffect recordTableId={recordTableId} />
+        <RecordTableEffect recordTableId={recordTableId} viewId={viewId} />
         <RecordTable
           recordTableId={recordTableId}
           viewId={viewId}
