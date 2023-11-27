@@ -5,5 +5,5 @@ import { useSelectField } from '../../hooks/useSelectField';
 export const SelectFieldDisplay = () => {
   const { fieldValue } = useSelectField();
 
-  return <Tag color={fieldValue.color} text={fieldValue.text} />;
+  return <Tag color={fieldValue.color} text={fieldValue.label} />;
 };

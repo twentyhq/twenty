@@ -19,7 +19,10 @@ import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  RelationMetadataType,
+} from '~/generated-metadata/graphql';
 
 export const SettingsObjectFieldEdit = () => {
   const navigate = useNavigate();
@@ -70,10 +73,10 @@ export const SettingsObjectFieldEdit = () => {
       relation: {
         field: {
           icon: relationFieldMetadataItem?.icon,
-          label: relationFieldMetadataItem?.label,
+          label: relationFieldMetadataItem?.label || '',
         },
-        objectMetadataId: relationObjectMetadataItem?.id,
-        type: relationType,
+        objectMetadataId: relationObjectMetadataItem?.id || '',
+        type: relationType || RelationMetadataType.OneToMany,
       },
     });
   }, [

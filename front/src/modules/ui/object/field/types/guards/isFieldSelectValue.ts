@@ -5,7 +5,7 @@ import { mainColors, ThemeColor } from '@/ui/theme/constants/colors';
 const selectColors = Object.keys(mainColors) as [ThemeColor, ...ThemeColor[]];
 const selectValueSchema = z.object({
   color: z.enum(selectColors),
-  text: z.string(),
+  label: z.string(),
 });
 
 export const isFieldSelectValue = (
