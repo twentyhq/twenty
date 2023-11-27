@@ -12,15 +12,26 @@ import requestDb from '../utils/requestDb';
 const appTester = createAppTester(App);
 tools.env.inject();
 
-const generateKey = async (z: ZObject, bundle: Bundle) => {
+const createApiKey = async (z: ZObject, bundle: Bundle) => {
   const query = `
-  mutation CreateApiKey {
-    createOneApiKey(
+  mutation createApiKey {
+    createApiKey(
       data:{${handleQueryParams(bundle.inputData)}}
+    )
+    {id}
+  }`;
+  return (await requestDb(z, bundle, query)).data.createApiKey.id;
+};
+
+const generateApiKeyToken = async (z: ZObject, bundle: Bundle) => {
+  const query = `
+  mutation generateApiKeyToken {
+    generateApiKeyToken(
+      ${handleQueryParams(bundle.inputData)}
     )
     {token}
   }`;
-  return (await requestDb(z, bundle, query)).data.createOneApiKey.token;
+  return (await requestDb(z, bundle, query)).data.generateApiKeyToken.token;
 };
 
 describe('custom auth', () => {
@@ -37,18 +48,24 @@ describe('custom auth', () => {
     try {
       await appTester(App.authentication.test, bundle);
     } catch (error: any) {
-      expect(error.message).toContain('The API Key you supplied is incorrect');
+      expect(error.message).toContain('UNAUTHENTICATED');
       return;
     }
     throw new Error('appTester should have thrown');
   });
 
   it('fails on invalid auth token', async () => {
-    const bundle = getBundle({
+    const expiresAt = '2020-01-01 10:10:10.000'
+    const apiKeyBundle = getBundle({
       name: 'Test',
-      expiresAt: '2020-01-01 10:10:10.000',
+      expiresAt,
     });
-    const expiredToken = await appTester(generateKey, bundle);
+    const apiKeyId = await appTester(createApiKey, apiKeyBundle);
+    const generateTokenBundle = getBundle({
+      apiKeyId: apiKeyId,
+      expiresAt,
+    });
+    const expiredToken = await appTester(generateApiKeyToken, generateTokenBundle);
     const bundleWithExpiredApiKey = {
       authData: { apiKey: expiredToken },
     };
@@ -56,7 +73,7 @@ describe('custom auth', () => {
     try {
       await appTester(App.authentication.test, bundleWithExpiredApiKey);
     } catch (error: any) {
-      expect(error.message).toContain('The API Key you supplied is incorrect');
+      expect(error.message).toContain('UNAUTHENTICATED');
       return;
     }
     throw new Error('appTester should have thrown');
