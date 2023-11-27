@@ -54,7 +54,7 @@ export const CompanyBoard = ({
           optionsDropdownButton={<BoardOptionsDropdown />}
           optionsDropdownScopeId={BoardOptionsDropdownId}
         />
-        <HooksCompanyBoardEffect />
+        <HooksCompanyBoardEffect viewId={viewId} />
         <RecordBoard
           boardOptions={opportunitiesBoardOptions}
           onColumnAdd={onColumnAdd}

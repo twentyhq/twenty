@@ -30,7 +30,13 @@ import { isDefined } from '~/utils/isDefined';
 import { useUpdateCompanyBoardCardIds } from '../hooks/useUpdateBoardCardIds';
 import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
 
-export const HooksCompanyBoardEffect = () => {
+type HooksCompanyBoardEffectProps = {
+  viewId: string;
+};
+
+export const HooksCompanyBoardEffect = ({
+  viewId,
+}: HooksCompanyBoardEffectProps) => {
   const {
     setAvailableFilterDefinitions,
     setAvailableSortDefinitions,
@@ -38,13 +44,13 @@ export const HooksCompanyBoardEffect = () => {
     setEntityCountInCurrentView,
     setViewObjectMetadataId,
     setViewType,
-  } = useView();
+  } = useView({ viewScopeId: viewId });
 
   const {
     currentViewFieldsState,
     currentViewFiltersState,
     currentViewSortsState,
-  } = useViewScopedStates();
+  } = useViewScopedStates({ customViewScopeId: viewId });
 
   const [pipelineSteps, setPipelineSteps] = useState<PipelineStep[]>([]);
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
