@@ -16,19 +16,19 @@ const StyledContainer = styled.div`
 `;
 
 export const SignInBackgroundMockContainer = () => {
-  const tableScopeId = 'sign-in-background-mock-table';
-  const viewScopeId = 'sign-in-background-mock-view';
+  const recordTableId = 'sign-in-background-mock-table';
+  const viewId = 'sign-in-background-mock-view';
 
   return (
     <ViewScope
-      viewScopeId={viewScopeId}
+      viewScopeId={viewId}
       onViewFieldsChange={() => {}}
       onViewFiltersChange={() => {}}
       onViewSortsChange={() => {}}
     >
       <StyledContainer>
         <RecordTableScope
-          recordTableScopeId={tableScopeId}
+          recordTableScopeId={recordTableId}
           onColumnsChange={() => {}}
         >
           <ViewBar
@@ -36,7 +36,11 @@ export const SignInBackgroundMockContainer = () => {
             optionsDropdownScopeId={TableOptionsDropdownId}
           />
           <SignInBackgroundMockContainerEffect />
-          <RecordTable updateEntityMutation={() => {}} />
+          <RecordTable
+            recordTableId={recordTableId}
+            viewId={viewId}
+            updateEntityMutation={() => {}}
+          />
         </RecordTableScope>
       </StyledContainer>
     </ViewScope>
