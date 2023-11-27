@@ -4,8 +4,8 @@ import requestDb from '../utils/requestDb';
 
 const perform = async (z: ZObject, bundle: Bundle) => {
   const query = `
-  mutation CreateCompany {
-    createOneCompany(
+  mutation createCompany {
+    createCompany(
       data:{${handleQueryParams(bundle.inputData)}}
     )
     {id}
@@ -47,25 +47,49 @@ export default {
         altersDynamicFields: false,
       },
       {
-        key: 'linkedinUrl',
-        label: 'Linkedin',
+        key: 'linkedinLink__url',
+        label: 'Linkedin Link Url',
         type: 'string',
         required: false,
         list: false,
         altersDynamicFields: false,
       },
       {
-        key: 'xUrl',
-        label: 'Twitter',
+        key: 'linkedinLink__label',
+        label: 'Linkedin Link Label',
         type: 'string',
         required: false,
         list: false,
         altersDynamicFields: false,
       },
       {
-        key: 'annualRecurringRevenue',
-        label: 'ARR (Annual Recurring Revenue)',
+        key: 'xLink__url',
+        label: 'Twitter Link Url',
+        type: 'string',
+        required: false,
+        list: false,
+        altersDynamicFields: false,
+      },
+      {
+        key: 'xLink__label',
+        label: 'Twitter Link Label',
+        type: 'string',
+        required: false,
+        list: false,
+        altersDynamicFields: false,
+      },
+      {
+        key: 'annualRecurringRevenue__amountMicros',
+        label: 'ARR (Annual Recurring Revenue) amount micros',
         type: 'number',
+        required: false,
+        list: false,
+        altersDynamicFields: false,
+      },
+      {
+        key: 'annualRecurringRevenue__currencyCode',
+        label: 'ARR (Annual Recurring Revenue) currency Code',
+        type: 'string',
         required: false,
         list: false,
         altersDynamicFields: false,

@@ -3,26 +3,26 @@ import requestDb from '../utils/requestDb';
 import handleQueryParams from '../utils/handleQueryParams';
 
 const performSubscribe = async (z: ZObject, bundle: Bundle) => {
-  const data = { targetUrl: bundle.targetUrl, operation: 'createOneCompany' };
+  const data = { targetUrl: bundle.targetUrl, operation: 'company' };
   const result = await requestDb(
     z,
     bundle,
-    `mutation createOneWebHook {createOneWebHook(data:{${handleQueryParams(
+    `mutation createWebhook {createWebhook(data:{${handleQueryParams(
       data,
     )}}) {id}}`,
   );
-  return result.data.createOneWebHook;
+  return result.data.createWebhook;
 };
 const performUnsubscribe = async (z: ZObject, bundle: Bundle) => {
   const data = { id: bundle.subscribeData?.id };
   const result = await requestDb(
     z,
     bundle,
-    `mutation deleteOneWebHook {deleteOneWebHook(where:{${handleQueryParams(
+    `mutation deleteWebhook {deleteWebhook(${handleQueryParams(
       data,
-    )}}) {id}}`,
+    )}) {id}}`,
   );
-  return result.data.deleteOneWebHook;
+  return result.data.deleteWebhook;
 };
 const perform = (z: ZObject, bundle: Bundle) => {
   return [bundle.cleanedRequest];
@@ -31,20 +31,20 @@ const performList = async (z: ZObject, bundle: Bundle) => {
   const results = await requestDb(
     z,
     bundle,
-    `query FindManyCompany {findManyCompany {
+    `query company {companies {edges {node {
       id
       name
       domainName
       createdAt
       address
       employees
-      linkedinUrl
-      xUrl
-      annualRecurringRevenue
+      linkedinLink{label url}
+      xLink{label url}
+      annualRecurringRevenue{amountMicros currencyCode}
       idealCustomerProfile
-    }}`,
+    }}}}`,
   );
-  return results.data.findManyCompany;
+  return results.data.companies.edges;
 };
 export default {
   key: 'company',
@@ -55,7 +55,7 @@ export default {
   },
   operation: {
     inputFields: [],
-    type: 'web-hook',
+    type: 'hook',
     performSubscribe,
     performUnsubscribe,
     perform,

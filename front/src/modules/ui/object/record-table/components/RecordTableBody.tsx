@@ -66,7 +66,7 @@ export const RecordTableBody = () => {
       {isFetchingMoreObjects && (
         <StyledRow selected={false}>
           <td style={{ height: 50 }} colSpan={1000}>
-            Fetching more...
+            Loading more...
           </td>
         </StyledRow>
       )}

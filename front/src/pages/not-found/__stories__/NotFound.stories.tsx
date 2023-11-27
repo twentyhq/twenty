@@ -3,13 +3,19 @@ import { within } from '@storybook/testing-library';
 
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { PageDecoratorArgs } from '~/testing/decorators/PageDecorator';
+import { RelationPickerDecorator } from '~/testing/decorators/RelationPickerDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { NotFound } from '../NotFound';
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/NotFound/Default',
   component: NotFound,
-  decorators: [ComponentWithRouterDecorator],
+  decorators: [
+    ComponentWithRouterDecorator,
+    SnackBarDecorator,
+    RelationPickerDecorator,
+  ],
   args: {
     routePath: 'toto-not-found',
   },
