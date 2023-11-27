@@ -8,8 +8,14 @@ export const turnSortsIntoOrderBy = (
 ) => {
   const sortsObject: Record<string, 'AscNullsFirst' | 'DescNullsLast'> = {};
   if (!sorts.length) {
+    const createdAtField = fields.find((field) => field.name === 'createdAt');
+    if (createdAtField) {
+      return {
+        createdAt: 'DescNullsFirst',
+      };
+    }
     return {
-      createdAt: 'DescNullsFirst',
+      [fields[0].name]: 'DescNullsFirst',
     };
   }
   sorts.forEach((sort) => {
