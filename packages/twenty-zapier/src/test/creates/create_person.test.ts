@@ -24,11 +24,11 @@ describe('creates.create_person', () => {
         requestDb(
           z,
           bundle,
-          `query findPeople {people(filter: {id: {eq: "${results.data.createPerson.id}"}}){edges {node {phone}}}}`,
+          `query findPerson {person(filter: {id: {eq: "${results.data.createPerson.id}"}}){phone}}`,
         ),
       bundle,
     );
-    expect(checkDbResult.data.people.edges[0].node.phone).toEqual('+33610203040');
+    expect(checkDbResult.data.person.phone).toEqual('+33610203040');
   });
 
   test('should run with not required missing params', async () => {
@@ -48,10 +48,10 @@ describe('creates.create_person', () => {
         requestDb(
           z,
           bundle,
-          `query findPeople {people(filter: {id: {eq: "${results.data.createPerson.id}"}}){edges {node {phone}}}}`,
+          `query findPerson {person(filter: {id: {eq: "${results.data.createPerson.id}"}}){phone}}`,
         ),
       bundle,
     );
-    expect(checkDbResult.data.people.edges[0].node.phone).toEqual("");
+    expect(checkDbResult.data.person.phone).toEqual("");
   });
 });

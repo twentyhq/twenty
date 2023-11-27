@@ -4,7 +4,7 @@ import requestDb from '../utils/requestDb';
 
 const perform = async (z: ZObject, bundle: Bundle) => {
   const query = `
-  mutation CreateCompany {
+  mutation createCompany {
     createCompany(
       data:{${handleQueryParams(bundle.inputData)}}
     )

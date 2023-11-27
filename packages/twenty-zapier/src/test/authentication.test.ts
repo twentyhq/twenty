@@ -14,7 +14,7 @@ tools.env.inject();
 
 const createApiKey = async (z: ZObject, bundle: Bundle) => {
   const query = `
-  mutation CreateApiKey {
+  mutation createApiKey {
     createApiKey(
       data:{${handleQueryParams(bundle.inputData)}}
     )
@@ -25,7 +25,7 @@ const createApiKey = async (z: ZObject, bundle: Bundle) => {
 
 const generateApiKeyToken = async (z: ZObject, bundle: Bundle) => {
   const query = `
-  mutation GenerateApiKeyToken {
+  mutation generateApiKeyToken {
     generateApiKeyToken(
       ${handleQueryParams(bundle.inputData)}
     )
