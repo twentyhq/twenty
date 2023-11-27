@@ -7,7 +7,6 @@ import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/Table
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
 import { ViewBar } from '@/views/components/ViewBar';
-import { ViewScope } from '@/views/scopes/ViewScope';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
@@ -65,32 +64,31 @@ export const RecordTableContainer = ({
   };
 
   return (
-    <ViewScope
-      viewScopeId={viewId}
-      onViewFieldsChange={(viewFields) => {
-        setTableColumns(
-          mapViewFieldsToColumnDefinitions(viewFields, columnDefinitions),
-        );
-      }}
-      onViewFiltersChange={(viewFilters) => {
-        setTableFilters(mapViewFiltersToFilters(viewFilters));
-      }}
-      onViewSortsChange={(viewSorts) => {
-        setTableSorts(mapViewSortsToSorts(viewSorts));
-      }}
-    >
-      <StyledContainer>
-        <ViewBar
-          optionsDropdownButton={<TableOptionsDropdown />}
-          optionsDropdownScopeId={TableOptionsDropdownId}
-        />
-        <RecordTableEffect recordTableId={recordTableId} viewId={viewId} />
-        <RecordTable
-          recordTableId={recordTableId}
-          viewId={viewId}
-          updateEntityMutation={updateEntity}
-        />
-      </StyledContainer>
-    </ViewScope>
+    <StyledContainer>
+      <ViewBar
+        viewId={viewId}
+        optionsDropdownButton={
+          <TableOptionsDropdown recordTableId={recordTableId} />
+        }
+        optionsDropdownScopeId={TableOptionsDropdownId}
+        onViewFieldsChange={(viewFields) => {
+          setTableColumns(
+            mapViewFieldsToColumnDefinitions(viewFields, columnDefinitions),
+          );
+        }}
+        onViewFiltersChange={(viewFilters) => {
+          setTableFilters(mapViewFiltersToFilters(viewFilters));
+        }}
+        onViewSortsChange={(viewSorts) => {
+          setTableSorts(mapViewSortsToSorts(viewSorts));
+        }}
+      />
+      <RecordTableEffect recordTableId={recordTableId} viewId={viewId} />
+      <RecordTable
+        recordTableId={recordTableId}
+        viewId={viewId}
+        updateEntityMutation={updateEntity}
+      />
+    </StyledContainer>
   );
 };

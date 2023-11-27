@@ -23,8 +23,10 @@ type TableOptionsMenu = 'fields';
 
 export const TableOptionsDropdownContent = ({
   onImport,
+  recordTableId,
 }: {
   onImport?: () => void;
+  recordTableId: string;
 }) => {
   const { setViewEditMode, handleViewNameSubmit } = useView();
   const { viewEditModeState, currentViewSelector } = useViewScopedStates();
@@ -40,13 +42,14 @@ export const TableOptionsDropdownContent = ({
   const viewEditInputRef = useRef<HTMLInputElement>(null);
 
   const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
-    useRecordTableScopedStates();
+    useRecordTableScopedStates({ customRecordTableScopeId: recordTableId });
 
   const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector);
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
 
-  const { handleColumnVisibilityChange, handleColumnReorder } =
-    useTableColumns();
+  const { handleColumnVisibilityChange, handleColumnReorder } = useTableColumns(
+    { recordTableScopeId: recordTableId },
+  );
 
   const handleSelectMenu = (option: TableOptionsMenu) => {
     const name = viewEditInputRef.current?.value;

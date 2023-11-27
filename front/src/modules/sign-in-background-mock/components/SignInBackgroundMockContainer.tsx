@@ -4,9 +4,7 @@ import { SignInBackgroundMockContainerEffect } from '@/sign-in-background-mock/c
 import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
 import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
-import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
 import { ViewBar } from '@/views/components/ViewBar';
-import { ViewScope } from '@/views/scopes/ViewScope';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -20,29 +18,23 @@ export const SignInBackgroundMockContainer = () => {
   const viewId = 'sign-in-background-mock-view';
 
   return (
-    <ViewScope
-      viewScopeId={viewId}
-      onViewFieldsChange={() => {}}
-      onViewFiltersChange={() => {}}
-      onViewSortsChange={() => {}}
-    >
-      <StyledContainer>
-        <RecordTableScope
-          recordTableScopeId={recordTableId}
-          onColumnsChange={() => {}}
-        >
-          <ViewBar
-            optionsDropdownButton={<TableOptionsDropdown />}
-            optionsDropdownScopeId={TableOptionsDropdownId}
-          />
-          <SignInBackgroundMockContainerEffect />
-          <RecordTable
-            recordTableId={recordTableId}
-            viewId={viewId}
-            updateEntityMutation={() => {}}
-          />
-        </RecordTableScope>
-      </StyledContainer>
-    </ViewScope>
+    <StyledContainer>
+      <ViewBar
+        viewId={viewId}
+        optionsDropdownButton={
+          <TableOptionsDropdown recordTableId={recordTableId} />
+        }
+        optionsDropdownScopeId={TableOptionsDropdownId}
+      />
+      <SignInBackgroundMockContainerEffect
+        recordTableId={recordTableId}
+        viewId={viewId}
+      />
+      <RecordTable
+        recordTableId={recordTableId}
+        viewId={viewId}
+        updateEntityMutation={() => {}}
+      />
+    </StyledContainer>
   );
 };

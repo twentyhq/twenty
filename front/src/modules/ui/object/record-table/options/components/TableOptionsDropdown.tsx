@@ -10,8 +10,10 @@ import { TableOptionsDropdownContent } from './TableOptionsDropdownContent';
 
 export const TableOptionsDropdown = ({
   onImport,
+  recordTableId,
 }: {
   onImport?: () => void;
+  recordTableId: string;
 }) => {
   const { setViewEditMode } = useView();
 
@@ -21,7 +23,12 @@ export const TableOptionsDropdown = ({
         clickableComponent={<TableOptionsDropdownButton />}
         dropdownHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
         dropdownOffset={{ y: 8 }}
-        dropdownComponents={<TableOptionsDropdownContent onImport={onImport} />}
+        dropdownComponents={
+          <TableOptionsDropdownContent
+            onImport={onImport}
+            recordTableId={recordTableId}
+          />
+        }
         onClickOutside={() => setViewEditMode('none')}
       />
     </DropdownScope>

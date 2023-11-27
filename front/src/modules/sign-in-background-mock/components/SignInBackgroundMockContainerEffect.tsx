@@ -15,7 +15,15 @@ import { useView } from '@/views/hooks/useView';
 import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 
-export const SignInBackgroundMockContainerEffect = () => {
+type SignInBackgroundMockContainerEffectProps = {
+  recordTableId: string;
+  viewId: string;
+};
+
+export const SignInBackgroundMockContainerEffect = ({
+  recordTableId,
+  viewId,
+}: SignInBackgroundMockContainerEffectProps) => {
   const {
     scopeId: objectNamePlural,
     setAvailableTableColumns,
@@ -23,7 +31,9 @@ export const SignInBackgroundMockContainerEffect = () => {
     setRecordTableData,
     setTableColumns,
     setObjectMetadataConfig,
-  } = useRecordTable();
+  } = useRecordTable({
+    recordTableScopeId: recordTableId,
+  });
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNamePlural,
@@ -36,7 +46,7 @@ export const SignInBackgroundMockContainerEffect = () => {
     setViewType,
     setViewObjectMetadataId,
     setEntityCountInCurrentView,
-  } = useView();
+  } = useView({ viewScopeId: viewId });
 
   useEffect(() => {
     setViewObjectMetadataId?.('company-mock-object-metadata-id');
@@ -76,7 +86,9 @@ export const SignInBackgroundMockContainerEffect = () => {
   }, [setObjectMetadataConfig]);
 
   const { setActionBarEntries, setContextMenuEntries } =
-    useRecordTableContextMenuEntries();
+    useRecordTableContextMenuEntries({
+      recordTableScopeId: recordTableId,
+    });
 
   useEffect(() => {
     setActionBarEntries?.();
