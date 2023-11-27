@@ -71,7 +71,6 @@ module.exports = {
     config.resolve.extensions.push('.mjs');
     config.resolve.alias = {
       ...config.resolve.alias,
-      // resolver here
       '~': path.resolve(__dirname, '../src'),
       '@': path.resolve(__dirname, '../src/modules'),
     };
