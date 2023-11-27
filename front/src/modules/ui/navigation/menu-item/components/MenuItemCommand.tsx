@@ -26,7 +26,7 @@ const StyledBigIconContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledMenuItemCommandContainer = styled.div<{ isSelected: boolean }>`
+const StyledMenuItemCommandContainer = styled.div<{ isSelected?: boolean }>`
   --horizontal-padding: ${({ theme }) => theme.spacing(1)};
   --vertical-padding: ${({ theme }) => theme.spacing(2)};
   align-items: center;
@@ -70,7 +70,7 @@ export type MenuItemCommandProps = {
   firstHotKey?: string;
   secondHotKey?: string;
   className?: string;
-  isSelected: boolean;
+  isSelected?: boolean;
   onClick?: () => void;
 };
 

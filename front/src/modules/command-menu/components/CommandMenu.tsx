@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { Key } from 'ts-key-enum';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { CommandMenuSelectableListEffect } from '@/command-menu/components/CommandMenuSelectableListEffect';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { Person } from '@/people/types/Person';
 import { IconNotes } from '@/ui/display/icon';
+import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { Avatar } from '@/users/components/Avatar';
@@ -117,44 +119,12 @@ export const CommandMenu = () => {
         : true) && cmd.type === CommandType.Create,
   );
 
-  const totalMenuItems =
-    matchingCreateCommand.length +
-    matchingNavigateCommand.length +
-    people.length +
-    companies.length +
-    activities.length;
-
-  const [selectedIndex, setSelectedIndex] = useState(0);
-
-  const arrowUpHandler = () => {
-    if (selectedIndex - 1 >= 0) {
-      setSelectedIndex(selectedIndex - 1);
-    }
-  };
-
-  const arrowDownHandler = () => {
-    if (selectedIndex + 1 < totalMenuItems) {
-      setSelectedIndex(selectedIndex + 1);
-    }
-  };
-
-  useScopedHotkeys(
-    Key.ArrowUp,
-    () => {
-      arrowUpHandler();
-    },
-    AppHotkeyScope.CommandMenu,
-    [arrowUpHandler],
-  );
-
-  useScopedHotkeys(
-    Key.ArrowDown,
-    () => {
-      arrowDownHandler();
-    },
-    AppHotkeyScope.CommandMenu,
-    [arrowDownHandler],
-  );
+  const selectableItemIds = matchingCreateCommand
+    .map((cmd) => cmd.id)
+    .concat(matchingNavigateCommand.map((cmd) => cmd.id))
+    .concat(people.map((person) => person.id))
+    .concat(companies.map((company) => company.id))
+    .concat(activities.map((activity) => activity.id));
 
   return (
     isCommandMenuOpened && (
@@ -165,107 +135,100 @@ export const CommandMenu = () => {
           onChange={handleSearchChange}
         />
         <StyledList>
-          {!matchingCreateCommand.length &&
-            !matchingNavigateCommand.length &&
-            !people.length &&
-            !companies.length &&
-            !activities.length && <StyledEmpty>No results found</StyledEmpty>}
-          <CommandGroup heading="Create">
-            {matchingCreateCommand.map((cmd, index) => (
-              <CommandMenuItem
-                to={cmd.to}
-                key={cmd.label}
-                Icon={cmd.Icon}
-                label={cmd.label}
-                onClick={cmd.onCommandClick}
-                firstHotKey={cmd.firstHotKey}
-                secondHotKey={cmd.secondHotKey}
-                isSelected={index == selectedIndex}
-              />
-            ))}
-          </CommandGroup>
-          <CommandGroup heading="Navigate">
-            {matchingNavigateCommand.map((cmd, index) => (
-              <CommandMenuItem
-                to={cmd.to}
-                key={cmd.label}
-                label={cmd.label}
-                Icon={cmd.Icon}
-                onClick={cmd.onCommandClick}
-                firstHotKey={cmd.firstHotKey}
-                secondHotKey={cmd.secondHotKey}
-                isSelected={
-                  matchingCreateCommand.length + index == selectedIndex
-                }
-              />
-            ))}
-          </CommandGroup>
-          <CommandGroup heading="People">
-            {people.map((person, index) => (
-              <CommandMenuItem
-                key={person.id}
-                to={`object/person/${person.id}`}
-                label={person.name.firstName + ' ' + person.name.lastName}
-                isSelected={
-                  matchingNavigateCommand.length +
-                    matchingCreateCommand.length +
-                    index ==
-                  selectedIndex
-                }
-                Icon={() => (
-                  <Avatar
-                    type="rounded"
-                    avatarUrl={null}
-                    colorId={person.id}
-                    placeholder={
-                      person.name.firstName + ' ' + person.name.lastName
-                    }
+          <CommandMenuSelectableListEffect
+            selectableItemIds={selectableItemIds}
+          />
+          <SelectableList
+            selectableListId="command-menu-list"
+            selectableItemIds={selectableItemIds}
+          >
+            {!matchingCreateCommand.length &&
+              !matchingNavigateCommand.length &&
+              !people.length &&
+              !companies.length &&
+              !activities.length && <StyledEmpty>No results found</StyledEmpty>}
+            <CommandGroup heading="Create">
+              {matchingCreateCommand.map((cmd) => (
+                <SelectableItem itemId={cmd.id} key={cmd.id}>
+                  <CommandMenuItem
+                    to={cmd.to}
+                    key={cmd.id}
+                    Icon={cmd.Icon}
+                    label={cmd.label}
+                    onClick={cmd.onCommandClick}
+                    firstHotKey={cmd.firstHotKey}
+                    secondHotKey={cmd.secondHotKey}
                   />
-                )}
-              />
-            ))}
-          </CommandGroup>
-          <CommandGroup heading="Companies">
-            {companies.map((company, index) => (
-              <CommandMenuItem
-                key={company.id}
-                label={company.name}
-                to={`object/company/${company.id}`}
-                Icon={() => (
-                  <Avatar
-                    colorId={company.id}
-                    placeholder={company.name}
-                    avatarUrl={getLogoUrlFromDomainName(company.domainName)}
+                </SelectableItem>
+              ))}
+            </CommandGroup>
+            <CommandGroup heading="Navigate">
+              {matchingNavigateCommand.map((cmd) => (
+                <SelectableItem itemId={cmd.id} key={cmd.id}>
+                  <CommandMenuItem
+                    to={cmd.to}
+                    key={cmd.id}
+                    label={cmd.label}
+                    Icon={cmd.Icon}
+                    onClick={cmd.onCommandClick}
+                    firstHotKey={cmd.firstHotKey}
+                    secondHotKey={cmd.secondHotKey}
                   />
-                )}
-                isSelected={
-                  people.length +
-                    matchingNavigateCommand.length +
-                    matchingCreateCommand.length +
-                    index ==
-                  selectedIndex
-                }
-              />
-            ))}
-          </CommandGroup>
-          <CommandGroup heading="Notes">
-            {activities.map((activity, index) => (
-              <CommandMenuItem
-                Icon={IconNotes}
-                key={activity.id}
-                label={activity.title ?? ''}
-                onClick={() => openActivityRightDrawer(activity.id)}
-                isSelected={
-                  companies.length +
-                    people.length +
-                    matchingNavigateCommand.length +
-                    matchingCreateCommand.length +
-                    index ==
-                  selectedIndex
-                }
-              />
-            ))}
-          </CommandGroup>
+                </SelectableItem>
+              ))}
+            </CommandGroup>
+            <CommandGroup heading="People">
+              {people.map((person) => (
+                <SelectableItem itemId={person.id} key={person.id}>
+                  <CommandMenuItem
+                    key={person.id}
+                    to={`object/person/${person.id}`}
+                    label={person.name.firstName + ' ' + person.name.lastName}
+                    Icon={() => (
+                      <Avatar
+                        type="rounded"
+                        avatarUrl={null}
+                        colorId={person.id}
+                        placeholder={
+                          person.name.firstName + ' ' + person.name.lastName
+                        }
+                      />
+                    )}
+                  />
+                </SelectableItem>
+              ))}
+            </CommandGroup>
+            <CommandGroup heading="Companies">
+              {companies.map((company) => (
+                <SelectableItem itemId={company.id} key={company.id}>
+                  <CommandMenuItem
+                    key={company.id}
+                    label={company.name}
+                    to={`object/company/${company.id}`}
+                    Icon={() => (
+                      <Avatar
+                        colorId={company.id}
+                        placeholder={company.name}
+                        avatarUrl={getLogoUrlFromDomainName(company.domainName)}
+                      />
+                    )}
+                  />
+                </SelectableItem>
+              ))}
+            </CommandGroup>
+            <CommandGroup heading="Notes">
+              {activities.map((activity) => (
+                <SelectableItem itemId={activity.id} key={activity.id}>
+                  <CommandMenuItem
+                    Icon={IconNotes}
+                    key={activity.id}
+                    label={activity.title ?? ''}
+                    onClick={() => openActivityRightDrawer(activity.id)}
+                  />
+                </SelectableItem>
+              ))}
+            </CommandGroup>
+          </SelectableList>
         </StyledList>
       </StyledDialog>
     )

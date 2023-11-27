@@ -14,7 +14,7 @@ export type CommandMenuItemProps = {
   Icon?: IconComponent;
   firstHotKey?: string;
   secondHotKey?: string;
-  isSelected: boolean;
+  isSelected?: boolean;
 };
 
 export const CommandMenuItem = ({

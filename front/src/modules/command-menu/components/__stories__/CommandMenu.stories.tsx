@@ -27,6 +27,7 @@ const meta: Meta<typeof CommandMenu> = {
         setToIntitialCommandMenu();
         addToCommandMenu([
           {
+            id: 'create-task',
             to: '',
             label: 'Create Task',
             type: CommandType.Create,
@@ -34,6 +35,7 @@ const meta: Meta<typeof CommandMenu> = {
             onCommandClick: () => console.log('create task click'),
           },
           {
+            id: 'create-note',
             to: '',
             label: 'Create Note',
             type: CommandType.Create,
