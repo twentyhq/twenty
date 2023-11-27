@@ -56,18 +56,21 @@ export const ShowPageRightContainer = ({
       title: 'Timeline',
       Icon: IconTimelineEvent,
       hide: !timeline,
+      disabled: entity.type === 'Custom',
     },
     {
       id: 'tasks',
       title: 'Tasks',
       Icon: IconCheckbox,
       hide: !tasks,
+      disabled: entity.type === 'Custom',
     },
     {
       id: 'notes',
       title: 'Notes',
       Icon: IconNotes,
       hide: !notes,
+      disabled: entity.type === 'Custom',
     },
     {
       id: 'emails',

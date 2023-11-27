@@ -26,6 +26,7 @@ export const validateDefaultValueBasedOnType = (
     case FieldMetadataType.PHONE:
     case FieldMetadataType.EMAIL:
     case FieldMetadataType.ENUM:
+    case FieldMetadataType.NUMERIC:
       return (
         typeof defaultValue === 'object' &&
         'value' in defaultValue &&

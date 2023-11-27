@@ -29,9 +29,7 @@ const activityTargetMetadata = {
       type: FieldMetadataType.RELATION,
       name: 'person',
       label: 'Person',
-      targetColumnMap: {
-        value: 'personId',
-      },
+      targetColumnMap: {},
       description: 'ActivityTarget person',
       icon: 'IconUser',
       isNullable: true,
@@ -42,9 +40,7 @@ const activityTargetMetadata = {
       type: FieldMetadataType.RELATION,
       name: 'company',
       label: 'Company',
-      targetColumnMap: {
-        value: 'companyId',
-      },
+      targetColumnMap: {},
       description: 'ActivityTarget company',
       icon: 'IconBuildingSkyscraper',
       isNullable: true,

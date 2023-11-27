@@ -14,6 +14,10 @@ export class WorkspaceSchemaStorageService {
     >,
     @InjectMemoryStorage('typeDefs')
     private readonly typeDefsMemoryStorageService: MemoryStorageService<string>,
+    @InjectMemoryStorage('usedScalarNames')
+    private readonly usedScalarNamesMemoryStorageService: MemoryStorageService<
+      string[]
+    >,
     @InjectMemoryStorage('cacheVersion')
     private readonly cacheVersionMemoryStorageService: MemoryStorageService<string>,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
@@ -71,8 +75,25 @@ export class WorkspaceSchemaStorageService {
     });
   }
 
+  setUsedScalarNames(
+    workspaceId: string,
+    scalarsUsed: string[],
+  ): Promise<void> {
+    return this.usedScalarNamesMemoryStorageService.write({
+      key: workspaceId,
+      data: scalarsUsed,
+    });
+  }
+
+  getUsedScalarNames(workspaceId: string): Promise<string[] | null> {
+    return this.usedScalarNamesMemoryStorageService.read({
+      key: workspaceId,
+    });
+  }
+
   async invalidateCache(workspaceId: string): Promise<void> {
     await this.objectMetadataMemoryStorageService.delete({ key: workspaceId });
     await this.typeDefsMemoryStorageService.delete({ key: workspaceId });
+    await this.usedScalarNamesMemoryStorageService.delete({ key: workspaceId });
   }
 }

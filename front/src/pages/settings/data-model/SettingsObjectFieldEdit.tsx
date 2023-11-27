@@ -14,6 +14,7 @@ import { useFieldMetadataForm } from '@/settings/data-model/hooks/useFieldMetada
 import { AppPath } from '@/types/AppPath';
 import { IconArchive, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
@@ -22,6 +23,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const SettingsObjectFieldEdit = () => {
   const navigate = useNavigate();
+  const { enqueueSnackBar } = useSnackBar();
 
   const { objectSlug = '', fieldSlug = '' } = useParams();
   const { findActiveObjectMetadataItemBySlug } =
@@ -93,28 +95,34 @@ export const SettingsObjectFieldEdit = () => {
   const handleSave = async () => {
     if (!validatedFormValues) return;
 
-    if (
-      validatedFormValues.type === FieldMetadataType.Relation &&
-      relationFieldMetadataItem?.id &&
-      hasRelationFormChanged
-    ) {
-      await editMetadataField({
-        icon: validatedFormValues.relation.field.icon,
-        id: relationFieldMetadataItem.id,
-        label: validatedFormValues.relation.field.label,
+    try {
+      if (
+        validatedFormValues.type === FieldMetadataType.Relation &&
+        relationFieldMetadataItem?.id &&
+        hasRelationFormChanged
+      ) {
+        await editMetadataField({
+          icon: validatedFormValues.relation.field.icon,
+          id: relationFieldMetadataItem.id,
+          label: validatedFormValues.relation.field.label,
+        });
+      }
+
+      if (hasFieldFormChanged) {
+        await editMetadataField({
+          description: validatedFormValues.description,
+          icon: validatedFormValues.icon,
+          id: activeMetadataField.id,
+          label: validatedFormValues.label,
+        });
+      }
+
+      navigate(`/settings/objects/${objectSlug}`);
+    } catch (error) {
+      enqueueSnackBar((error as Error).message, {
+        variant: 'error',
       });
     }
-
-    if (hasFieldFormChanged) {
-      await editMetadataField({
-        description: validatedFormValues.description,
-        icon: validatedFormValues.icon,
-        id: activeMetadataField.id,
-        label: validatedFormValues.label,
-      });
-    }
-
-    navigate(`/settings/objects/${objectSlug}`);
   };
 
   const handleDisable = async () => {
@@ -146,6 +154,7 @@ export const SettingsObjectFieldEdit = () => {
         </SettingsHeaderContainer>
         <SettingsObjectFieldFormSection
           disabled={!activeMetadataField.isCustom}
+          disableNameEdition
           name={formValues.label}
           description={formValues.description}
           iconKey={formValues.icon}

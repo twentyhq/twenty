@@ -18,4 +18,5 @@ export interface FieldMetadataInterface<
   isNullable?: boolean;
   fromRelationMetadata?: RelationMetadataEntity;
   toRelationMetadata?: RelationMetadataEntity;
+  isCustom?: boolean;
 }

@@ -11,19 +11,32 @@ export const useViewFields = (viewScopeId: string) => {
     objectNameSingular: 'viewField',
   });
 
+  const { modifyRecordFromCache } = useObjectMetadataItem({
+    objectNameSingular: 'view',
+  });
+
   const apolloClient = useApolloClient();
 
   const persistViewFields = useRecoilCallback(
     ({ snapshot, set }) =>
       async (viewFieldsToPersist: ViewField[], viewId?: string) => {
-        const { viewObjectMetadataId, currentViewId, savedViewFieldsByKey } =
-          getViewScopedStateValuesFromSnapshot({
-            snapshot,
-            viewScopeId,
-            viewId,
-          });
+        const {
+          viewObjectMetadataId,
+          currentViewId,
+          savedViewFieldsByKey,
+          onViewFieldsChange,
+          views,
+        } = getViewScopedStateValuesFromSnapshot({
+          snapshot,
+          viewScopeId,
+          viewId,
+        });
 
-        const { isPersistingViewState } = getViewScopedStatesFromSnapshot({
+        const {
+          isPersistingViewState,
+          currentViewFieldsState,
+          savedViewFieldsState,
+        } = getViewScopedStatesFromSnapshot({
           snapshot,
           viewScopeId,
           viewId,
@@ -96,12 +109,45 @@ export const useViewFields = (viewScopeId: string) => {
         );
 
         set(isPersistingViewState, true);
+
         await _createViewFields(viewFieldsToCreate);
 
         await _updateViewFields(viewFieldsToUpdate);
+
         set(isPersistingViewState, false);
+        set(currentViewFieldsState, viewFieldsToPersist);
+        set(savedViewFieldsState, viewFieldsToPersist);
+
+        const existingView = views.find((view) => view.id === viewIdToPersist);
+
+        if (!existingView) {
+          return;
+        }
+
+        modifyRecordFromCache(viewIdToPersist ?? '', {
+          viewFields: () => ({
+            edges: viewFieldsToPersist.map((viewField) => ({
+              node: viewField,
+              cursor: '',
+            })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: '',
+              endCursor: '',
+            },
+          }),
+        });
+
+        onViewFieldsChange?.(viewFieldsToPersist);
       },
-    [apolloClient, createOneMutation, updateOneMutation, viewScopeId],
+    [
+      viewScopeId,
+      modifyRecordFromCache,
+      apolloClient,
+      createOneMutation,
+      updateOneMutation,
+    ],
   );
 
   return { persistViewFields };

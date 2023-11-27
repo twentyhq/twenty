@@ -5,7 +5,7 @@ const StyledSoonPill = styled.span`
   background: ${({ theme }) => theme.background.transparent.light};
   border-radius: 50px;
   color: ${({ theme }) => theme.font.color.light};
-  display: flex;
+  display: inline-block;
   font-size: ${({ theme }) => theme.font.size.xs};
   font-style: normal;
   font-weight: ${({ theme }) => theme.font.weight.medium};

@@ -38,12 +38,6 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledCheckboxContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-`;
-
 type ActivityTitleProps = {
   title: string;
   type: ActivityType;
@@ -61,13 +55,12 @@ export const ActivityTitle = ({
 }: ActivityTitleProps) => (
   <StyledContainer>
     {type === 'Task' && (
-      <StyledCheckboxContainer onClick={() => onCompletionChange(!completed)}>
-        <Checkbox
-          size={CheckboxSize.Large}
-          shape={CheckboxShape.Rounded}
-          checked={completed}
-        />
-      </StyledCheckboxContainer>
+      <Checkbox
+        size={CheckboxSize.Large}
+        shape={CheckboxShape.Rounded}
+        checked={completed}
+        onCheckedChange={(value) => onCompletionChange(value)}
+      />
     )}
     <StyledEditableTitleInput
       autoComplete="off"

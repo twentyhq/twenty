@@ -7,12 +7,15 @@ export const getOperandsForFilterType = (
 ): ViewFilterOperand[] => {
   switch (filterType) {
     case 'TEXT':
+    case 'EMAIL':
+    case 'FULL_NAME':
+    case 'LINK':
       return [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain];
     case 'CURRENCY':
     case 'NUMBER':
     case 'DATE_TIME':
       return [ViewFilterOperand.GreaterThan, ViewFilterOperand.LessThan];
-    case 'ENTITY':
+    case 'RELATION':
       return [ViewFilterOperand.Is, ViewFilterOperand.IsNot];
     default:
       return [];

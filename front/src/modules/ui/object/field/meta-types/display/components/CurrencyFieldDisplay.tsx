@@ -2,7 +2,7 @@ import { useCurrencyField } from '../../hooks/useCurrencyField';
 import { CurrencyDisplay } from '../content-display/components/CurrencyDisplay';
 
 export const CurrencyFieldDisplay = () => {
-  const { fieldValue } = useCurrencyField();
+  const { initialAmount } = useCurrencyField();
 
-  return <CurrencyDisplay value={fieldValue} />;
+  return <CurrencyDisplay amount={initialAmount} />;
 };

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { BlockNoteEditor } from '@blocknote/core';
 import { useBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import debounce from 'lodash.debounce';
 
 import { Activity } from '@/activities/types/Activity';
@@ -47,7 +48,10 @@ export const ActivityBodyEditor = ({
   }, [updateOneObject, activity.id]);
 
   const editor: BlockNoteEditor | null = useBlockNote({
-    initialContent: activity.body ? JSON.parse(activity.body) : undefined,
+    initialContent:
+      isNonEmptyString(activity.body) && activity.body !== '{}'
+        ? JSON.parse(activity.body)
+        : undefined,
     editorDOMAttributes: { class: 'editor' },
     onEditorContentChange: (editor) => {
       debounceOnChange(JSON.stringify(editor.topLevelBlocks) ?? '');

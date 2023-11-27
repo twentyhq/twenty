@@ -63,10 +63,14 @@ export class User {
   deletedAt: Date;
 
   @Field(() => Workspace, { nullable: false })
-  @ManyToOne(() => Workspace, (workspace) => workspace.users)
+  @ManyToOne(() => Workspace, (workspace) => workspace.users, {
+    onDelete: 'SET NULL',
+  })
   defaultWorkspace: Workspace;
 
-  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
+  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
+    cascade: true,
+  })
   refreshTokens: RefreshToken[];
 
   @Field(() => UserWorkspaceMember, { nullable: false })

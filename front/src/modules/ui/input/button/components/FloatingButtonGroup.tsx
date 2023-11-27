@@ -8,7 +8,7 @@ const StyledFloatingButtonGroupContainer = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) =>
     `0px 2px 4px 0px ${theme.background.transparent.light}, 0px 0px 4px 0px ${theme.background.transparent.medium}`};
-  display: flex;
+  display: inline-flex;
 `;
 
 export type FloatingButtonGroupProps = Pick<FloatingButtonProps, 'size'> & {

@@ -15,6 +15,10 @@ export const useViewSorts = (viewScopeId: string) => {
     useObjectMetadataItem({
       objectNameSingular: 'viewSort',
     });
+
+  const { modifyRecordFromCache } = useObjectMetadataItem({
+    objectNameSingular: 'view',
+  });
   const apolloClient = useApolloClient();
 
   const { currentViewSortsState } = useViewScopedStates({
@@ -24,7 +28,7 @@ export const useViewSorts = (viewScopeId: string) => {
   const persistViewSorts = useRecoilCallback(
     ({ snapshot, set }) =>
       async (viewId?: string) => {
-        const { currentViewId, currentViewSorts, savedViewSortsByKey } =
+        const { currentViewId, currentViewSorts, savedViewSortsByKey, views } =
           getViewScopedStateValuesFromSnapshot({
             snapshot,
             viewScopeId,
@@ -122,11 +126,33 @@ export const useViewSorts = (viewScopeId: string) => {
           }),
           currentViewSorts,
         );
+        const existingViewId = viewId ?? currentViewId;
+        const existingView = views.find((view) => view.id === existingViewId);
+
+        if (!existingView) {
+          return;
+        }
+
+        modifyRecordFromCache(existingViewId, {
+          viewSorts: () => ({
+            edges: currentViewSorts.map((viewSort) => ({
+              node: viewSort,
+              cursor: '',
+            })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: '',
+              endCursor: '',
+            },
+          }),
+        });
       },
     [
       apolloClient,
       createOneMutation,
       deleteOneMutation,
+      modifyRecordFromCache,
       updateOneMutation,
       viewScopeId,
     ],
