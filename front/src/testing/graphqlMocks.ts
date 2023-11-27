@@ -6,7 +6,9 @@ import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConf
 import { FIND_MANY_METADATA_OBJECTS } from '@/object-metadata/graphql/queries';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 
+import { mockedCompaniesData } from './mock-data/companies';
 import { mockedObjectMetadataItems } from './mock-data/metadata';
+import { mockedPeopleData } from './mock-data/people';
 import { mockedUsersData } from './mock-data/users';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 import { mockedViewsData } from './mock-data/views';
@@ -60,7 +62,7 @@ export const graphqlMocks = [
 
     return res(
       ctx.data({
-        viewsV2: {
+        views: {
           edges: mockedViewsData
             .filter(
               (view) =>
@@ -86,13 +88,49 @@ export const graphqlMocks = [
 
     return res(
       ctx.data({
-        viewFieldsV2: {
+        viewFields: {
           edges: mockedViewFieldsData
             .filter((viewField) => viewField.viewId === viewId)
             .map((viewField) => ({
               node: viewField,
               cursor: null,
             })),
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: null,
+            endCursor: null,
+          },
+        },
+      }),
+    );
+  }),
+  graphql.query('FindManyCompanies', (req, res, ctx) => {
+    return res(
+      ctx.data({
+        companies: {
+          edges: mockedCompaniesData.map((company) => ({
+            node: company,
+            cursor: null,
+          })),
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: null,
+            endCursor: null,
+          },
+        },
+      }),
+    );
+  }),
+  graphql.query('FindManyPeople', (req, res, ctx) => {
+    return res(
+      ctx.data({
+        people: {
+          edges: mockedPeopleData.map((person) => ({
+            node: person,
+            cursor: null,
+          })),
           pageInfo: {
             hasNextPage: false,
             hasPreviousPage: false,
