@@ -5,6 +5,7 @@ import { CREATE_EVENT } from '@/analytics/graphql/queries/createEvent';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
 import { FIND_MANY_METADATA_OBJECTS } from '@/object-metadata/graphql/queries';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { mockedCompaniesData } from '~/testing/mock-data/companies';
 
 import { mockedObjectMetadataItems } from './mock-data/metadata';
 import { mockedUsersData } from './mock-data/users';
@@ -54,13 +55,31 @@ export const graphqlMocks = [
       return res(ctx.data({ objects: mockedObjectMetadataItems }));
     },
   ),
+  graphql.query('FindManyCompanies', (req, res, ctx) => {
+    return res(
+      ctx.data({
+        companies: {
+          edges: mockedCompaniesData.map((view) => ({
+            node: view,
+            cursor: null,
+          })),
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: null,
+            endCursor: null,
+          },
+        },
+      }),
+    );
+  }),
   graphql.query('FindManyViews', (req, res, ctx) => {
     const objectMetadataId = req.variables.filter.objectMetadataId.eq;
     const viewType = req.variables.filter.type.eq;
 
     return res(
       ctx.data({
-        viewsV2: {
+        views: {
           edges: mockedViewsData
             .filter(
               (view) =>
