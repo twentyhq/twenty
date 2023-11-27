@@ -8,8 +8,7 @@ tools.env.inject();
 describe('creates.create_person', () => {
   test('should run', async () => {
     const bundle = getBundle({
-      firstName: 'John',
-      lastName: 'Doe',
+      name: {firstName: 'John', lastName: 'Doe'},
       email: 'johndoe@gmail.com',
       phone: '+33610203040',
       city: 'Paris',
@@ -19,23 +18,22 @@ describe('creates.create_person', () => {
       bundle,
     );
     expect(results).toBeDefined();
-    expect(results.data?.createOnePerson?.id).toBeDefined();
+    expect(results.data?.createPerson?.id).toBeDefined();
     const checkDbResult = await appTester(
       (z: ZObject, bundle: Bundle) =>
         requestDb(
           z,
           bundle,
-          `query findPerson {findUniquePerson(id: "${results.data.createOnePerson.id}"){id, phone}}`,
+          `query findPerson {person(filter: {id: {eq: "${results.data.createPerson.id}"}}){phone}}`,
         ),
       bundle,
     );
-    expect(checkDbResult.data.findUniquePerson.phone).toEqual('+33610203040');
+    expect(checkDbResult.data.person.phone).toEqual('+33610203040');
   });
 
   test('should run with not required missing params', async () => {
     const bundle = getBundle({
-      firstName: 'John',
-      lastName: 'Doe',
+      name: {firstName: 'John', lastName: 'Doe'},
       email: 'johndoe@gmail.com',
       city: 'Paris',
     });
@@ -44,16 +42,16 @@ describe('creates.create_person', () => {
       bundle,
     );
     expect(results).toBeDefined();
-    expect(results.data?.createOnePerson?.id).toBeDefined();
+    expect(results.data?.createPerson?.id).toBeDefined();
     const checkDbResult = await appTester(
       (z: ZObject, bundle: Bundle) =>
         requestDb(
           z,
           bundle,
-          `query findPerson {findUniquePerson(id: "${results.data.createOnePerson.id}"){id, phone}}`,
+          `query findPerson {person(filter: {id: {eq: "${results.data.createPerson.id}"}}){phone}}`,
         ),
       bundle,
     );
-    expect(checkDbResult.data.findUniquePerson.phone).toEqual(null);
+    expect(checkDbResult.data.person.phone).toEqual("");
   });
 });

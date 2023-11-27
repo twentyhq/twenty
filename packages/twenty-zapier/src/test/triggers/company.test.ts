@@ -19,13 +19,12 @@ describe('triggers.company', () => {
         requestDb(
           z,
           bundle,
-          `query findManyWebHook {findManyWebHook(where: {id: {equals: "${result.id}"}}){id operation}}`,
+          `query webhook {webhook(filter: {id: {eq: "${result.id}"}}){id operation}}`,
         ),
       bundle,
     );
-    expect(checkDbResult.data.findManyWebHook.length).toEqual(1);
-    expect(checkDbResult.data.findManyWebHook[0].operation).toEqual(
-      'createOneCompany',
+    expect(checkDbResult.data.webhook.operation).toEqual(
+      'company',
     );
   });
   test('should succeed to unsubscribe', async () => {
@@ -48,13 +47,13 @@ describe('triggers.company', () => {
         requestDb(
           z,
           bundle,
-          `query findManyWebHook {findManyWebHook(where: {id: {equals: "${result.id}"}}){id}}`,
+          `query webhook {webhook(filter: {id: {eq: "${result.id}"}}){id}}`,
         ),
       bundle,
     );
-    expect(checkDbResult.data.findManyWebHook.length).toEqual(0);
+    expect(checkDbResult.data.webhook).toEqual(null);
   });
-  test('should load company from web-hook', async () => {
+  test('should load company from webhook', async () => {
     const bundle = {
       cleanedRequest: {
         id: 'd6ccb1d1-a90b-4822-a992-a0dd946592c9',
@@ -85,6 +84,6 @@ describe('triggers.company', () => {
     );
     expect(results.length).toBeGreaterThan(1);
     const firstCompany = results[0];
-    expect(firstCompany.id).toBeDefined();
+    expect(firstCompany.node.id).toBeDefined();
   });
 });
