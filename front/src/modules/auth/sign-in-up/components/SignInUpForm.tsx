@@ -95,12 +95,7 @@ export const SignInUpForm = () => {
         {authProviders.google && (
           <>
             <MainButton
-              Icon={() => (
-                <IconGoogle
-                  size={theme.icon.size.md}
-                  stroke={theme.icon.stroke.lg}
-                />
-              )}
+              Icon={() => <IconGoogle size={theme.icon.size.lg} />}
               title="Continue with Google"
               onClick={signInWithGoogle}
               fullWidth
