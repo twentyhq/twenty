@@ -24,6 +24,7 @@ export function generateTargetColumnMap(
     case FieldMetadataType.PHONE:
     case FieldMetadataType.EMAIL:
     case FieldMetadataType.NUMBER:
+    case FieldMetadataType.NUMERIC:
     case FieldMetadataType.PROBABILITY:
     case FieldMetadataType.BOOLEAN:
     case FieldMetadataType.DATE_TIME:

@@ -42,7 +42,6 @@ export const ObjectFilterDropdownEntitySearchSelect = ({
     }
 
     setObjectFilterDropdownSelectedEntityId(selectedEntity.id);
-    closeDropdown();
 
     selectFilter?.({
       displayValue: selectedEntity.name,
@@ -52,6 +51,7 @@ export const ObjectFilterDropdownEntitySearchSelect = ({
       displayAvatarUrl: selectedEntity.avatarUrl,
       definition: filterDefinitionUsedInDropdown,
     });
+    closeDropdown();
   };
 
   const isAllEntitySelectShown =

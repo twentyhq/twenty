@@ -18,6 +18,7 @@ export const useCompleteTask = (task: Task) => {
         input: {
           completedAt,
         },
+        forceRefetch: true,
       });
     },
     [task.id, updateOneObject],

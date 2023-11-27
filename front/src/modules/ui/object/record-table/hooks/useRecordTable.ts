@@ -284,7 +284,10 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     useScopedHotkeys(
       [Key.Escape],
       () => {
-        setHotkeyScope(TableHotkeyScope.Table, { goto: true });
+        setHotkeyScope(TableHotkeyScope.Table, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
         disableSoftFocus();
       },
       TableHotkeyScope.TableSoftFocus,

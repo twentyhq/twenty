@@ -25,6 +25,12 @@ import { WorkspaceSchemaStorageService } from 'src/workspace/workspace-schema-st
       options: {},
     }),
     MemoryStorageModule.forRoot({
+      identifier: 'usedScalarNames',
+      type: MemoryStorageType.Local,
+      options: {},
+      serializer: new MemoryStorageJsonSerializer<string[]>(),
+    }),
+    MemoryStorageModule.forRoot({
       identifier: 'cacheVersion',
       type: MemoryStorageType.Local,
       options: {},

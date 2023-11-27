@@ -26,7 +26,8 @@ import {
 } from './CommandMenuStyles';
 
 export const CommandMenu = () => {
-  const { toggleCommandMenu } = useCommandMenu();
+  const { toggleCommandMenu, closeCommandMenu } = useCommandMenu();
+
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [search, setSearch] = useState('');
@@ -46,13 +47,23 @@ export const CommandMenu = () => {
     [toggleCommandMenu, setSearch],
   );
 
+  useScopedHotkeys(
+    'esc',
+    () => {
+      setSearch('');
+      closeCommandMenu();
+    },
+    AppHotkeyScope.CommandMenu,
+    [toggleCommandMenu, setSearch],
+  );
+
   const { objects: people } = useFindManyObjectRecords<Person>({
     skip: !isCommandMenuOpened,
     objectNamePlural: 'people',
     filter: {
       or: [
-        { name: { firstName: { like: `%${search}%` } } },
-        { name: { firstName: { like: `%${search}%` } } },
+        { name: { firstName: { ilike: `%${search}%` } } },
+        { name: { firstName: { ilike: `%${search}%` } } },
       ],
     },
     limit: 3,
@@ -62,7 +73,7 @@ export const CommandMenu = () => {
     skip: !isCommandMenuOpened,
     objectNamePlural: 'companies',
     filter: {
-      name: { like: `%${search}%` },
+      name: { ilike: `%${search}%` },
     },
     limit: 3,
   });
@@ -193,8 +204,8 @@ export const CommandMenu = () => {
             {people.map((person, index) => (
               <CommandMenuItem
                 key={person.id}
-                to={`person/${person.id}`}
-                label={person.displayName}
+                to={`object/person/${person.id}`}
+                label={person.name.firstName + ' ' + person.name.lastName}
                 isSelected={
                   matchingNavigateCommand.length +
                     matchingCreateCommand.length +
@@ -206,7 +217,9 @@ export const CommandMenu = () => {
                     type="rounded"
                     avatarUrl={null}
                     colorId={person.id}
-                    placeholder={person.displayName}
+                    placeholder={
+                      person.name.firstName + ' ' + person.name.lastName
+                    }
                   />
                 )}
               />
@@ -217,7 +230,7 @@ export const CommandMenu = () => {
               <CommandMenuItem
                 key={company.id}
                 label={company.name}
-                to={`companies/${company.id}`}
+                to={`object/company/${company.id}`}
                 Icon={() => (
                   <Avatar
                     colorId={company.id}

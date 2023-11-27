@@ -2,8 +2,9 @@ import { useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { ActivityRelationEditableField } from '@/activities/editable-fields/components/ActivityRelationEditableField';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
+import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { Note } from '@/activities/types/Note';
 import { IconComment } from '@/ui/display/icon';
 import {
@@ -100,7 +101,9 @@ export const NoteCard = ({
           <StyledCardContent>{body}</StyledCardContent>
         </StyledCardDetailsContainer>
         <StyledFooter>
-          <ActivityRelationEditableField activity={note} />
+          <ActivityTargetsInlineCell
+            activity={note as unknown as GraphQLActivity}
+          />
           {note.comments && note.comments.length > 0 && (
             <StyledCommentIcon>
               <IconComment size={theme.icon.size.md} />

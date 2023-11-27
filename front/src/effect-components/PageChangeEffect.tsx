@@ -111,19 +111,31 @@ export const PageChangeEffect = () => {
 
     switch (true) {
       case isMatchingLocation(AppPath.RecordTablePage): {
-        setHotkeyScope(TableHotkeyScope.Table, { goto: true });
+        setHotkeyScope(TableHotkeyScope.Table, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
         break;
       }
       case isMatchingLocation(AppPath.RecordShowPage): {
-        setHotkeyScope(PageHotkeyScope.CompanyShowPage, { goto: true });
+        setHotkeyScope(PageHotkeyScope.CompanyShowPage, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
         break;
       }
       case isMatchingLocation(AppPath.OpportunitiesPage): {
-        setHotkeyScope(PageHotkeyScope.OpportunitiesPage, { goto: true });
+        setHotkeyScope(PageHotkeyScope.OpportunitiesPage, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
         break;
       }
       case isMatchingLocation(AppPath.TasksPage): {
-        setHotkeyScope(PageHotkeyScope.TaskPage, { goto: true });
+        setHotkeyScope(PageHotkeyScope.TaskPage, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
         break;
       }
 
@@ -148,14 +160,20 @@ export const PageChangeEffect = () => {
         break;
       }
       case isMatchingLocation(SettingsPath.ProfilePage, AppBasePath.Settings): {
-        setHotkeyScope(PageHotkeyScope.ProfilePage, { goto: true });
+        setHotkeyScope(PageHotkeyScope.ProfilePage, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
         break;
       }
       case isMatchingLocation(
         SettingsPath.WorkspaceMembersPage,
         AppBasePath.Settings,
       ): {
-        setHotkeyScope(PageHotkeyScope.WorkspaceMemberPage, { goto: true });
+        setHotkeyScope(PageHotkeyScope.WorkspaceMemberPage, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
         break;
       }
     }

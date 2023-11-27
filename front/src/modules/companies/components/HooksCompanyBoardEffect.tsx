@@ -25,6 +25,7 @@ import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewFieldsToBoardFieldDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
+import { isDefined } from '~/utils/isDefined';
 
 import { useUpdateCompanyBoardCardIds } from '../hooks/useUpdateBoardCardIds';
 import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
@@ -98,27 +99,34 @@ export const HooksCompanyBoardEffect = () => {
     objectMetadataItem?.fields ?? [],
   );
 
-  useFindManyObjectRecords({
-    skip: !pipelineSteps.length,
-    objectNamePlural: 'opportunities',
-    filter: filter,
-    orderBy: orderBy,
-    onCompleted: useCallback(
-      (data: PaginatedObjectTypeResults<Opportunity>) => {
-        const pipelineProgresses: Array<Opportunity> = data.edges.map(
-          (edge) => edge.node,
-        );
+  const { fetchMoreObjects: fetchMoreOpportunities } = useFindManyObjectRecords(
+    {
+      skip: !pipelineSteps.length,
+      objectNamePlural: 'opportunities',
+      filter: filter,
+      orderBy: orderBy,
+      onCompleted: useCallback(
+        (data: PaginatedObjectTypeResults<Opportunity>) => {
+          const pipelineProgresses: Array<Opportunity> = data.edges.map(
+            (edge) => edge.node,
+          );
 
-        updateCompanyBoardCardIds(pipelineProgresses);
+          updateCompanyBoardCardIds(pipelineProgresses);
 
-        setOpportunities(pipelineProgresses);
-        setIsBoardLoaded(true);
-      },
-      [setIsBoardLoaded, updateCompanyBoardCardIds],
-    ),
-  });
+          setOpportunities(pipelineProgresses);
+          setIsBoardLoaded(true);
+        },
+        [setIsBoardLoaded, updateCompanyBoardCardIds],
+      ),
+    },
+  );
+  useEffect(() => {
+    if (isDefined(fetchMoreOpportunities)) {
+      fetchMoreOpportunities();
+    }
+  }, [fetchMoreOpportunities]);
 
-  useFindManyObjectRecords({
+  const { fetchMoreObjects: fetchMoreCompanies } = useFindManyObjectRecords({
     skip: !opportunities.length,
     objectNamePlural: 'companies',
     filter: {
@@ -130,6 +138,12 @@ export const HooksCompanyBoardEffect = () => {
       setCompanies(data.edges.map((edge) => edge.node));
     }, []),
   });
+
+  useEffect(() => {
+    if (isDefined(fetchMoreCompanies)) {
+      fetchMoreCompanies();
+    }
+  }, [fetchMoreCompanies]);
 
   useEffect(() => {
     if (!objectMetadataItem) {

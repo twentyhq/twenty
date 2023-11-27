@@ -40,8 +40,6 @@ export class UserService extends TypeOrmQueryService<User> {
     userWorkspaceMember.id = workspaceMembers[0].id;
     userWorkspaceMember.colorScheme = workspaceMembers[0].colorScheme;
     userWorkspaceMember.locale = workspaceMembers[0].locale;
-    userWorkspaceMember.allowImpersonation =
-      workspaceMembers[0].allowImpersonation;
     userWorkspaceMember.avatarUrl = workspaceMembers[0].avatarUrl;
     userWorkspaceMember.name = {
       firstName: workspaceMembers[0].nameFirstName,
@@ -63,10 +61,10 @@ export class UserService extends TypeOrmQueryService<User> {
 
     await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."workspaceMember"
-      ("nameFirstName", "nameLastName", "colorScheme", "userId", "allowImpersonation", "avatarUrl")
+      ("nameFirstName", "nameLastName", "colorScheme", "userId", "avatarUrl")
       VALUES ('${user.firstName}', '${user.lastName}', 'Light', '${
         user.id
-      }', true, '${avatarUrl ?? ''}')`,
+      }', '${avatarUrl ?? ''}')`,
     );
   }
 

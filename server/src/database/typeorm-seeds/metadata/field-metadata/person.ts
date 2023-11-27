@@ -183,7 +183,7 @@ export const seedPersonFieldMetadata = async (
           url: 'xLinkUrl',
         },
         description: 'Contact’s X/Twitter account',
-        icon: 'IconUser',
+        icon: 'IconBrandX',
         isNullable: true,
         isSystem: false,
         defaultValue: undefined,
@@ -204,7 +204,7 @@ export const seedPersonFieldMetadata = async (
         icon: 'IconBriefcase',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: '' },
       },
       {
         id: SeedPersonFieldMetadataIds.Phone,
@@ -222,7 +222,7 @@ export const seedPersonFieldMetadata = async (
         icon: 'IconPhone',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: '' },
       },
       {
         id: SeedPersonFieldMetadataIds.City,
@@ -240,7 +240,7 @@ export const seedPersonFieldMetadata = async (
         icon: 'IconMap',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: '' },
       },
       {
         id: SeedPersonFieldMetadataIds.AvatarUrl,
@@ -257,8 +257,8 @@ export const seedPersonFieldMetadata = async (
         description: 'Contact’s avatar',
         icon: 'IconFileUpload',
         isNullable: true,
-        isSystem: false,
-        defaultValue: undefined,
+        isSystem: true,
+        defaultValue: { value: '' },
       },
 
       // Relationships
