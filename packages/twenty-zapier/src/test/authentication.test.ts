@@ -48,7 +48,7 @@ describe('custom auth', () => {
     try {
       await appTester(App.authentication.test, bundle);
     } catch (error: any) {
-      expect(error.message).toContain('The API Key you supplied is incorrect');
+      expect(error.message).toContain('UNAUTHENTICATED');
       return;
     }
     throw new Error('appTester should have thrown');
@@ -73,7 +73,7 @@ describe('custom auth', () => {
     try {
       await appTester(App.authentication.test, bundleWithExpiredApiKey);
     } catch (error: any) {
-      expect(error.message).toContain('The API Key you supplied is incorrect');
+      expect(error.message).toContain('UNAUTHENTICATED');
       return;
     }
     throw new Error('appTester should have thrown');
