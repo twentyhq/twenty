@@ -37,7 +37,7 @@ export class ApiRestService {
       },
       {
         headers: {
-          authorization: `Bearer ${request.query.apiKey}`,
+          authorization: request.headers.authorization,
         },
       },
     );
