@@ -55,7 +55,6 @@ export class Workspace {
   @Column({ default: true })
   allowImpersonation: boolean;
 
-  @Field()
   @OneToMany(() => FeatureFlagEntity, (featureFlag) => featureFlag.workspace)
   featureFlags: FeatureFlagEntity[];
 }

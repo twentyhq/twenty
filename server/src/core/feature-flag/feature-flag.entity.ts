@@ -10,7 +10,7 @@ import {
 
 import { Workspace } from 'src/core/workspace/workspace.entity';
 
-@Entity('featureFlag')
+@Entity({ name: 'featureFlag', schema: 'core' })
 @Unique('IndexOnKeyAndWorkspaceIdUnique', ['key', 'workspaceId'])
 export class FeatureFlagEntity {
   @PrimaryGeneratedColumn('uuid')
