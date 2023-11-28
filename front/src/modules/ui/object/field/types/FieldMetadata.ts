@@ -82,6 +82,7 @@ export type FieldRelationMetadata = {
 };
 
 export type FieldSelectMetadata = {
+  objectMetadataNameSingular?: string;
   fieldName: string;
 };
 
