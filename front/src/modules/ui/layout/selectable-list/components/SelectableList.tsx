@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
-import { SelectableListInternalEffect } from '@/ui/layout/selectable-list/components/SelectableListInternalEffect';
+import { useSelectableListHotKeys } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListHotKeys';
 import { SelectableListScope } from '@/ui/layout/selectable-list/scopes/SelectableListScope';
 type SelectableListProps = {
   children: ReactNode;
@@ -17,11 +17,11 @@ const StyledSelectableItemsContainer = styled.div`
 export const SelectableList = ({
   children,
   selectableListId,
-  selectableItemIds,
 }: SelectableListProps) => {
+  useSelectableListHotKeys(selectableListId);
+
   return (
     <SelectableListScope selectableListScopeId={selectableListId}>
-      <SelectableListInternalEffect />
       <StyledSelectableItemsContainer>
         {children}
       </StyledSelectableItemsContainer>

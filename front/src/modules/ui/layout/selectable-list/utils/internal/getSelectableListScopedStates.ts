@@ -1,8 +1,9 @@
-import { selectableItemIdsScopeState } from '@/ui/layout/selectable-list/states/selectableItemIdsScopeState';
-import { selectableItemIdsSelectedMapScopedFamilyState } from '@/ui/layout/selectable-list/states/selectableItemIdsSelectedMapScopedFamilyState';
+import { selectableItemIdsScopedState } from '@/ui/layout/selectable-list/states/selectableItemIdsScopedState';
 import { selectedItemIdScopedState } from '@/ui/layout/selectable-list/states/selectedItemIdScopedState';
-import { getScopedFamilyState } from '@/ui/utilities/recoil-scope/utils/getScopedFamilyState';
+import { isSelectedItemIdScopedFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdScopedFamilySelector';
 import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
+
+const UNDEFINED_SELECTABLE_ITEM_ID = 'UNDEFINED_SELECTABLE_ITEM_ID';
 
 export const getSelectableListScopedStates = ({
   selectableListScopeId,
@@ -11,23 +12,22 @@ export const getSelectableListScopedStates = ({
   selectableListScopeId: string;
   itemId?: string;
 }) => {
-  const selectableItemIdsSelectedMapState = getScopedFamilyState(
-    selectableItemIdsSelectedMapScopedFamilyState,
-    selectableListScopeId,
-    itemId ?? '',
-  );
+  const isSelectedItemIdSelector = isSelectedItemIdScopedFamilySelector({
+    scopeId: selectableListScopeId,
+    itemId: itemId ?? UNDEFINED_SELECTABLE_ITEM_ID,
+  });
 
   const selectedItemIdState = getScopedState(
     selectedItemIdScopedState,
     selectableListScopeId,
   );
   const selectableItemIdsState = getScopedState(
-    selectableItemIdsScopeState,
+    selectableItemIdsScopedState,
     selectableListScopeId,
   );
 
   return {
-    selectableItemIdsSelectedMapState,
+    isSelectedItemIdSelector,
     selectableItemIdsState,
     selectedItemIdState,
   };

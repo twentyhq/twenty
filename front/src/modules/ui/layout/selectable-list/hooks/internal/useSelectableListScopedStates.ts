@@ -1,5 +1,5 @@
 import { SelectableListScopeInternalContext } from '@/ui/layout/selectable-list/scopes/scope-internal-context/SelectableListScopeInternalContext';
-import { getSelectableListScopedStates } from '@/ui/layout/selectable-list/utils/getSelectableListScopedStates';
+import { getSelectableListScopedStates } from '@/ui/layout/selectable-list/utils/internal/getSelectableListScopedStates';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
 type UseSelectableListScopedStatesProps = {
@@ -18,8 +18,8 @@ export const useSelectableListScopedStates = (
 
   const {
     selectedItemIdState,
-    selectableItemIdsSelectedMapState,
     selectableItemIdsState,
+    isSelectedItemIdSelector,
   } = getSelectableListScopedStates({
     selectableListScopeId: scopeId,
     itemId: itemId,
@@ -27,7 +27,7 @@ export const useSelectableListScopedStates = (
 
   return {
     scopeId,
-    selectableItemIdsSelectedMapState,
+    isSelectedItemIdSelector,
     selectableItemIdsState,
     selectedItemIdState,
   };

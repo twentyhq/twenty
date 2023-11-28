@@ -9,27 +9,22 @@ type SelectableItemProps = {
 };
 
 export const SelectableItem = ({ itemId, children }: SelectableItemProps) => {
-  const { selectableItemIdsSelectedMapState } = useSelectableListScopedStates({
+  const { isSelectedItemIdSelector } = useSelectableListScopedStates({
     itemId: itemId,
   });
 
+  const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector);
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const selectableItemIdsSelectedMap = useRecoilValue(
-    selectableItemIdsSelectedMapState,
-  );
-
   useEffect(() => {
-    if (!selectableItemIdsSelectedMap) {
-      return;
-    }
     scrollRef.current?.scrollIntoView({ block: 'nearest' });
-  }, [selectableItemIdsSelectedMap]);
+  }, [isSelectedItemId]);
 
   return (
     <div ref={scrollRef}>
       {React.cloneElement(children, {
-        isSelected: selectableItemIdsSelectedMap,
+        isSelected: isSelectedItemId,
       })}
     </div>
   );

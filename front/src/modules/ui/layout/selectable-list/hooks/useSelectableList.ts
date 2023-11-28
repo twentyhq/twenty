@@ -6,6 +6,7 @@ import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-i
 
 type UseSelectableListProps = {
   selectableListId?: string;
+  itemId?: string;
 };
 
 export const useSelectableList = (props?: UseSelectableListProps) => {
@@ -14,14 +15,17 @@ export const useSelectableList = (props?: UseSelectableListProps) => {
     props?.selectableListId,
   );
 
-  const { selectableItemIdsState } = useSelectableListScopedStates({
-    selectableListScopeId: scopeId,
-  });
+  const { selectableItemIdsState, isSelectedItemIdSelector } =
+    useSelectableListScopedStates({
+      selectableListScopeId: scopeId,
+      itemId: props?.itemId,
+    });
 
   const setSelectableItemIds = useSetRecoilState(selectableItemIdsState);
 
   return {
     setSelectableItemIds,
     selectableListId: scopeId,
+    isSelectedItemIdSelector,
   };
 };

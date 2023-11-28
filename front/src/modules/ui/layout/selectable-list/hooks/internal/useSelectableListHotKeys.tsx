@@ -2,15 +2,12 @@ import { isNull } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { useSelectableListScopedStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListScopedStates';
-import { getSelectableListScopedStates } from '@/ui/layout/selectable-list/utils/getSelectableListScopedStates';
+import { getSelectableListScopedStates } from '@/ui/layout/selectable-list/utils/internal/getSelectableListScopedStates';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
-export const SelectableListInternalEffect = () => {
-  const { scopeId } = useSelectableListScopedStates();
-
+export const useSelectableListHotKeys = (scopeId: string) => {
   const handleSelect = useRecoilCallback(
     ({ snapshot, set }) =>
       (direction: 'up' | 'down') => {
@@ -54,22 +51,20 @@ export const SelectableListInternalEffect = () => {
         const nextId = computeNextId(direction);
 
         if (nextId) {
-          const { selectableItemIdsSelectedMapState } =
-            getSelectableListScopedStates({
-              selectableListScopeId: scopeId,
-              itemId: nextId,
-            });
-          set(selectableItemIdsSelectedMapState, true);
+          const { isSelectedItemIdSelector } = getSelectableListScopedStates({
+            selectableListScopeId: scopeId,
+            itemId: nextId,
+          });
+          set(isSelectedItemIdSelector, true);
           set(selectedItemIdState, nextId);
         }
 
         if (selectedItemId) {
-          const { selectableItemIdsSelectedMapState } =
-            getSelectableListScopedStates({
-              selectableListScopeId: scopeId,
-              itemId: selectedItemId,
-            });
-          set(selectableItemIdsSelectedMapState, false);
+          const { isSelectedItemIdSelector } = getSelectableListScopedStates({
+            selectableListScopeId: scopeId,
+            itemId: selectedItemId,
+          });
+          set(isSelectedItemIdSelector, false);
         }
       },
     [scopeId],
