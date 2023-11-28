@@ -6,6 +6,7 @@ export const commandMenuCommandsState = atom<Command[]>({
   key: 'command-menu/commandMenuCommandsState',
   default: [
     {
+      id: '',
       to: '',
       label: '',
       type: CommandType.Navigate,

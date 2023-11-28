@@ -9,19 +9,33 @@ import { IconHeart, IconHeartOff, IconTrash } from '@/ui/display/icon';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
+import { RecordTableScopeInternalContext } from '@/ui/object/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { selectedRowIdsSelector } from '@/ui/object/record-table/states/selectors/selectedRowIdsSelector';
 import { tableRowIdsState } from '@/ui/object/record-table/states/tableRowIdsState';
+import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+
+type useRecordTableContextMenuEntriesProps = {
+  recordTableScopeId?: string;
+};
 
 // TODO: refactor this
-export const useRecordTableContextMenuEntries = () => {
+export const useRecordTableContextMenuEntries = (
+  props?: useRecordTableContextMenuEntriesProps,
+) => {
+  const scopeId = useAvailableScopeIdOrThrow(
+    RecordTableScopeInternalContext,
+    props?.recordTableScopeId,
+  );
+
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
   const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState);
 
   const setTableRowIds = useSetRecoilState(tableRowIdsState);
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
-  const { scopeId: objectNamePlural, resetTableRowSelection } =
-    useRecordTable();
+  const { scopeId: objectNamePlural, resetTableRowSelection } = useRecordTable({
+    recordTableScopeId: scopeId,
+  });
 
   const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
     {

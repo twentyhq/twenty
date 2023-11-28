@@ -6,10 +6,10 @@ import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConf
 import { FIND_MANY_METADATA_OBJECTS } from '@/object-metadata/graphql/queries';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { mockedActivities } from '~/testing/mock-data/activities';
-import { mockedCompaniesData } from '~/testing/mock-data/companies';
-import { mockedPeopleData } from '~/testing/mock-data/people';
 
+import { mockedCompaniesData } from './mock-data/companies';
 import { mockedObjectMetadataItems } from './mock-data/metadata';
+import { mockedPeopleData } from './mock-data/people';
 import { mockedUsersData } from './mock-data/users';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 import { mockedViewsData } from './mock-data/views';
@@ -63,7 +63,7 @@ export const graphqlMocks = [
 
     return res(
       ctx.data({
-        viewsV2: {
+        views: {
           edges: mockedViewsData
             .filter(
               (view) =>
@@ -89,7 +89,7 @@ export const graphqlMocks = [
 
     return res(
       ctx.data({
-        viewFieldsV2: {
+        viewFields: {
           edges: mockedViewFieldsData
             .filter((viewField) => viewField.viewId === viewId)
             .map((viewField) => ({
@@ -110,8 +110,8 @@ export const graphqlMocks = [
     return res(
       ctx.data({
         companies: {
-          edges: mockedCompaniesData.map((data) => ({
-            node: data,
+          edges: mockedCompaniesData.map((company) => ({
+            node: company,
             cursor: null,
           })),
           pageInfo: {
@@ -129,7 +129,10 @@ export const graphqlMocks = [
     return res(
       ctx.data({
         people: {
-          edges: mockedPeopleData.map((data) => ({ node: data, cursor: null })),
+          edges: mockedPeopleData.map((person) => ({
+            node: person,
+            cursor: null,
+          })),
           pageInfo: {
             hasNextPage: false,
             hasPreviousPage: false,
@@ -145,7 +148,10 @@ export const graphqlMocks = [
     return res(
       ctx.data({
         activities: {
-          edges: mockedActivities.map((data) => ({ node: data, cursor: null })),
+          edges: mockedActivities.map((activities) => ({
+            node: activities,
+            cursor: null,
+          })),
           pageInfo: {
             hasNextPage: false,
             hasPreviousPage: false,

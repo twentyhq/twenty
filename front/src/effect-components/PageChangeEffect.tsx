@@ -182,6 +182,7 @@ export const PageChangeEffect = () => {
 
     addToCommandMenu([
       {
+        id: 'create-task',
         to: '',
         label: 'Create Task',
         type: CommandType.Create,
