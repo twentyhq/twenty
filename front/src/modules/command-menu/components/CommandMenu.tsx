@@ -151,6 +151,7 @@ export const CommandMenu = () => {
               {matchingCreateCommand.map((cmd) => (
                 <SelectableItem itemId={cmd.id} key={cmd.id}>
                   <CommandMenuItem
+                    id={cmd.id}
                     to={cmd.to}
                     key={cmd.id}
                     Icon={cmd.Icon}
@@ -166,6 +167,7 @@ export const CommandMenu = () => {
               {matchingNavigateCommand.map((cmd) => (
                 <SelectableItem itemId={cmd.id} key={cmd.id}>
                   <CommandMenuItem
+                    id={cmd.id}
                     to={cmd.to}
                     key={cmd.id}
                     label={cmd.label}
@@ -181,6 +183,7 @@ export const CommandMenu = () => {
               {people.map((person) => (
                 <SelectableItem itemId={person.id} key={person.id}>
                   <CommandMenuItem
+                    id={person.id}
                     key={person.id}
                     to={`object/person/${person.id}`}
                     label={person.name.firstName + ' ' + person.name.lastName}
@@ -202,6 +205,7 @@ export const CommandMenu = () => {
               {companies.map((company) => (
                 <SelectableItem itemId={company.id} key={company.id}>
                   <CommandMenuItem
+                    id={company.id}
                     key={company.id}
                     label={company.name}
                     to={`object/company/${company.id}`}
@@ -220,6 +224,7 @@ export const CommandMenu = () => {
               {activities.map((activity) => (
                 <SelectableItem itemId={activity.id} key={activity.id}>
                   <CommandMenuItem
+                    id={activity.id}
                     Icon={IconNotes}
                     key={activity.id}
                     label={activity.title ?? ''}

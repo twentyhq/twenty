@@ -21,6 +21,7 @@ export const getSelectableListScopedStates = ({
     selectedItemIdScopedState,
     selectableListScopeId,
   );
+
   const selectableItemIdsState = getScopedState(
     selectableItemIdsScopedState,
     selectableListScopeId,

@@ -18,14 +18,10 @@ export const SelectableItem = ({ itemId, children }: SelectableItemProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ block: 'nearest' });
+    if (isSelectedItemId) {
+      scrollRef.current?.scrollIntoView({ block: 'nearest' });
+    }
   }, [isSelectedItemId]);
 
-  return (
-    <div ref={scrollRef}>
-      {React.cloneElement(children, {
-        isSelected: isSelectedItemId,
-      })}
-    </div>
-  );
+  return <div ref={scrollRef}>{children}</div>;
 };

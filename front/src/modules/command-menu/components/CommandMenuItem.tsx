@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 
 import { IconArrowUpRight } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { MenuItemCommand } from '@/ui/navigation/menu-item/components/MenuItemCommand';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
@@ -9,20 +11,19 @@ import { useCommandMenu } from '../hooks/useCommandMenu';
 export type CommandMenuItemProps = {
   label: string;
   to?: string;
-  key: string;
+  id: string;
   onClick?: () => void;
   Icon?: IconComponent;
   firstHotKey?: string;
   secondHotKey?: string;
-  isSelected?: boolean;
 };
 
 export const CommandMenuItem = ({
   label,
   to,
+  id,
   onClick,
   Icon,
-  isSelected,
   firstHotKey,
   secondHotKey,
 }: CommandMenuItemProps) => {
@@ -32,6 +33,10 @@ export const CommandMenuItem = ({
   if (to && !Icon) {
     Icon = IconArrowUpRight;
   }
+
+  const { isSelectedItemIdSelector } = useSelectableList({ itemId: id });
+
+  const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector);
 
   const onItemClick = () => {
     toggleCommandMenu();
@@ -53,7 +58,7 @@ export const CommandMenuItem = ({
       firstHotKey={firstHotKey}
       secondHotKey={secondHotKey}
       onClick={onItemClick}
-      isSelected={isSelected}
+      isSelected={isSelectedItemId}
     />
   );
 };
