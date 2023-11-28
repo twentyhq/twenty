@@ -1,7 +1,10 @@
 import { HelmetProvider } from 'react-helmet-async';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Decorator } from '@storybook/react';
+import { RecoilRoot } from 'recoil';
 
+import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { RelationPickerScope } from '@/ui/input/components/internal/relation-picker/scopes/RelationPickerScope';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
 import { DefaultLayout } from '~/modules/ui/layout/page/DefaultLayout';
 import { UserProvider } from '~/modules/users/components/UserProvider';
@@ -30,21 +33,27 @@ export const PageDecorator: Decorator<{
   routePath: string;
   routeParams: RouteParams;
 }> = (Story, { args }) => (
-  <UserProvider>
-    <ClientConfigProvider>
-      <MemoryRouter
-        initialEntries={[computeLocation(args.routePath, args.routeParams)]}
-      >
-        <FullHeightStorybookLayout>
-          <HelmetProvider>
-            <DefaultLayout>
-              <Routes>
-                <Route path={args.routePath} element={<Story />} />
-              </Routes>
-            </DefaultLayout>
-          </HelmetProvider>
-        </FullHeightStorybookLayout>
-      </MemoryRouter>
-    </ClientConfigProvider>
-  </UserProvider>
+  <RecoilRoot>
+    <UserProvider>
+      <ClientConfigProvider>
+        <MemoryRouter
+          initialEntries={[computeLocation(args.routePath, args.routeParams)]}
+        >
+          <FullHeightStorybookLayout>
+            <HelmetProvider>
+              <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+                <RelationPickerScope relationPickerScopeId="relation-picker">
+                  <DefaultLayout>
+                    <Routes>
+                      <Route path={args.routePath} element={<Story />} />
+                    </Routes>
+                  </DefaultLayout>
+                </RelationPickerScope>
+              </SnackBarProviderScope>
+            </HelmetProvider>
+          </FullHeightStorybookLayout>
+        </MemoryRouter>
+      </ClientConfigProvider>
+    </UserProvider>
+  </RecoilRoot>
 );
