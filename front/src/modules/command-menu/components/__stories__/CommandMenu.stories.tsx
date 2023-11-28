@@ -20,8 +20,8 @@ const meta: Meta<typeof CommandMenu> = {
   title: 'Modules/CommandMenu/CommandMenu',
   component: CommandMenu,
   decorators: [
+    ObjectMetadataItemsDecorator,
     ComponentWithRouterDecorator,
-
     (Story) => {
       const { addToCommandMenu, setToIntitialCommandMenu, toggleCommandMenu } =
         useCommandMenu();
@@ -51,7 +51,6 @@ const meta: Meta<typeof CommandMenu> = {
 
       return <Story />;
     },
-    ObjectMetadataItemsDecorator,
     SnackBarDecorator,
   ],
   parameters: {
