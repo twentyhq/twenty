@@ -67,6 +67,8 @@ export default {
       name__firstName: 'John',
       name__lastName: 'Doe',
       email: 'johndoe@gmail.com',
+      phone: '0390900909',
+      city: 'Paris',
     },
     perform,
   },
