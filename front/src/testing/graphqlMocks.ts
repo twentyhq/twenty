@@ -6,6 +6,7 @@ import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConf
 import { FIND_MANY_METADATA_OBJECTS } from '@/object-metadata/graphql/queries';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { mockedCompaniesData } from '~/testing/mock-data/companies';
+import { mockedPipelineSteps } from '~/testing/mock-data/pipeline-steps';
 
 import { mockedObjectMetadataItems } from './mock-data/metadata';
 import { mockedUsersData } from './mock-data/users';
@@ -59,8 +60,8 @@ export const graphqlMocks = [
     return res(
       ctx.data({
         companies: {
-          edges: mockedCompaniesData.map((view) => ({
-            node: view,
+          edges: mockedCompaniesData.map((data) => ({
+            node: data,
             cursor: null,
           })),
           pageInfo: {
@@ -112,6 +113,24 @@ export const graphqlMocks = [
               node: viewField,
               cursor: null,
             })),
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: null,
+            endCursor: null,
+          },
+        },
+      }),
+    );
+  }),
+  graphql.query('FindManyPipelineSteps', (req, res, ctx) => {
+    return res(
+      ctx.data({
+        pipelineSteps: {
+          edges: mockedPipelineSteps.map((data) => ({
+            node: data,
+            cursor: null,
+          })),
           pageInfo: {
             hasNextPage: false,
             hasPreviousPage: false,

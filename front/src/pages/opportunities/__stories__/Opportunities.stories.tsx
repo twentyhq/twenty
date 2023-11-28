@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
+import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
@@ -10,9 +11,15 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { Opportunities } from '../Opportunities';
 
+const OpportunitesWithMetadata = () => (
+  <ObjectMetadataItemsProvider>
+    <Opportunities />
+  </ObjectMetadataItemsProvider>
+);
+
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Opportunities/Default',
-  component: Opportunities,
+  component: OpportunitesWithMetadata,
   decorators: [PageDecorator],
   args: { routePath: AppPath.OpportunitiesPage },
   parameters: {

@@ -191,6 +191,112 @@ export const mockedWorkspacesMetadata = {
   },
 };
 
+export const mockedPipelineStepsMetadata = {
+  node: {
+    __typename: 'object',
+    id: '20202020-1029-4661-9e91-83bad932bdcd',
+    dataSourceId: '20202020-7f63-47a9-b1b3-6c7290ca9fb1',
+    nameSingular: 'pipelineStep',
+    namePlural: 'pipelineSteps',
+    labelSingular: 'Pipeline Step',
+    labelPlural: 'Pipeline Steps',
+    description: 'A pipeline step',
+    icon: 'IconLayoutKanban',
+    isCustom: false,
+    isActive: true,
+    isSystem: true,
+    createdAt: '2023-11-24T03:29:18.207Z',
+    updatedAt: '2023-11-24T03:29:18.207Z',
+    fields: {
+      edges: [
+        {
+          node: {
+            __typename: 'field',
+            id: '20202020-039a-4fbd-b4c1-66dfa9e4bd3f',
+            type: 'UUID',
+            name: 'id',
+            label: 'Id',
+            description: null,
+            icon: null,
+            isCustom: false,
+            isActive: true,
+            isSystem: true,
+            isNullable: false,
+            createdAt: '2023-11-24T03:29:18.275Z',
+            updatedAt: '2023-11-24T03:29:18.275Z',
+            fromRelationMetadata: null,
+            toRelationMetadata: null,
+          },
+        },
+        {
+          node: {
+            __typename: 'field',
+            id: '20202020-5b93-4b28-8c45-7988ea68f91b',
+            type: 'TEXT',
+            name: 'color',
+            label: 'Color',
+            description: 'Pipeline Step color',
+            icon: 'IconColorSwatch',
+            isCustom: false,
+            isActive: true,
+            isSystem: false,
+            isNullable: false,
+            createdAt: '2023-11-24T03:29:18.275Z',
+            updatedAt: '2023-11-24T03:29:18.275Z',
+            fromRelationMetadata: null,
+            toRelationMetadata: null,
+          },
+        },
+        {
+          node: {
+            __typename: 'field',
+            id: '20202020-f294-430e-b800-3a411fc05ad3',
+            type: 'TEXT',
+            name: 'name',
+            label: 'Name',
+            description: 'Pipeline Step name',
+            icon: 'IconCurrencyDollar',
+            isCustom: false,
+            isActive: true,
+            isSystem: false,
+            isNullable: false,
+            createdAt: '2023-11-24T03:29:18.275Z',
+            updatedAt: '2023-11-24T03:29:18.275Z',
+            fromRelationMetadata: null,
+            toRelationMetadata: null,
+          },
+        },
+        {
+          node: {
+            __typename: 'field',
+            id: '20202020-6296-4cab-aafb-121ef5822b13',
+            type: 'NUMBER',
+            name: 'position',
+            label: 'Position',
+            description: 'Pipeline Step position',
+            icon: 'IconHierarchy2',
+            isCustom: false,
+            isActive: true,
+            isSystem: false,
+            isNullable: false,
+            createdAt: '2023-11-24T03:29:18.275Z',
+            updatedAt: '2023-11-24T03:29:18.275Z',
+            fromRelationMetadata: null,
+            toRelationMetadata: null,
+          },
+        },
+      ],
+      pageInfo: {
+        hasNextPage: false,
+        hasPreviousPage: false,
+        startCursor: null,
+        endCursor: null,
+      },
+      totalCount: 4,
+    },
+  },
+};
+
 export const mockedObjectMetadataItems = {
   edges: [
     {
@@ -403,6 +509,7 @@ export const mockedObjectMetadataItems = {
     },
     mockedCompaniesMetadata,
     mockedWorkspacesMetadata,
+    mockedPipelineStepsMetadata,
   ],
   pageInfo: {
     hasNextPage: false,
@@ -410,5 +517,5 @@ export const mockedObjectMetadataItems = {
     startCursor: null,
     endCursor: null,
   },
-  totalCount: 4,
+  totalCount: 5,
 };
