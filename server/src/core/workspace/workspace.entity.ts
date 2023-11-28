@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 
 import { User } from 'src/core/user/user.entity';
+import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
@@ -53,4 +54,7 @@ export class Workspace {
   @Field()
   @Column({ default: true })
   allowImpersonation: boolean;
+
+  @OneToMany(() => FeatureFlagEntity, (featureFlag) => featureFlag.workspace)
+  featureFlags: FeatureFlagEntity[];
 }
