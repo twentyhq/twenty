@@ -5,7 +5,10 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
+
+import { Workspace } from 'src/core/workspace/workspace.entity';
 
 @Entity('featureFlag')
 @Unique('IndexOnKeyAndWorkspaceIdUnique', ['key', 'workspaceId'])
@@ -19,7 +22,12 @@ export class FeatureFlagEntity {
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
-  @Column({ nullable: false, type: 'boolean' })
+  @ManyToOne(() => Workspace, (workspace) => workspace.featureFlags, {
+    onDelete: 'CASCADE',
+  })
+  workspace: Workspace;
+
+  @Column({ nullable: false })
   value: boolean;
 
   @CreateDateColumn()
