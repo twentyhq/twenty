@@ -104,5 +104,5 @@ fi
 
 # Run the init.sql to setup database
 echo_header $GREEN "Step [4/4]: Setting up database..."
-cp ./infra/dev/postgres/init.sql /tmp/init.sql
+cp ./postgres/init.sql /tmp/init.sql
 psql -f /tmp/init.sql -d postgres|| handle_error "Failed to execute init.sql script."
