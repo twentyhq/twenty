@@ -52,7 +52,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
 
     this.tokenPair = initialTokenPair;
 
-    const buildApolloLink = (): ApolloLink => {
+    const buildApolloLink = () => {
       const httpLink = createUploadLink({
         uri,
       });
@@ -136,7 +136,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
         [
           errorLink,
           authLink,
-          ...(extraLinks ? extraLinks : []),
+          ...(extraLinks || []),
           isDebugMode ? logger : null,
           retryLink,
           httpLink,

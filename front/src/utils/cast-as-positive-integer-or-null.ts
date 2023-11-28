@@ -50,17 +50,17 @@ export const castAsPositiveIntegerOrNull = (
     return null;
   }
 
-  if (probablePositiveNumberOrNull === '') {
-    return null;
+  if (isString(probablePositiveNumberOrNull)) {
+    if (probablePositiveNumberOrNull === '') {
+      return null;
+    }
+    return +probablePositiveNumberOrNull;
   }
 
   if (isNumber(probablePositiveNumberOrNull)) {
     return probablePositiveNumberOrNull;
   }
 
-  if (isString(probablePositiveNumberOrNull)) {
-    return +probablePositiveNumberOrNull;
-  }
-
   return null;
 };
+

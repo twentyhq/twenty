@@ -11,7 +11,7 @@ type TimingProfilerProps = {
 export const TimingProfiler = ({ id, children }: TimingProfilerProps) => {
   const handleRender = (
     id: string,
-    phase: 'mount' | 'update',
+    phase: 'mount' | 'update' | 'nested-update',
     actualDuration: number,
     baseDuration: number,
     startTime: number,

@@ -60,16 +60,15 @@ export const castAsIntegerOrNull = (
     return null;
   }
 
-  if (probableNumberOrNull === '') {
-    return null;
+  if (isString(probableNumberOrNull)) {
+    if (probableNumberOrNull === '') {
+      return null;
+    }
+    return +probableNumberOrNull;
   }
 
   if (isNumber(probableNumberOrNull)) {
     return probableNumberOrNull;
-  }
-
-  if (isString(probableNumberOrNull)) {
-    return +probableNumberOrNull;
   }
 
   return null;
