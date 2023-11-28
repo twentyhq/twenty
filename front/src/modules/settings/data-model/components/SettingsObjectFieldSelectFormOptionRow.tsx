@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
+import { ColorSample } from '@/ui/display/color/components/ColorSample';
 import {
   IconCheck,
   IconDotsVertical,
@@ -16,6 +17,8 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { MenuItemSelectColor } from '@/ui/navigation/menu-item/components/MenuItemSelectColor';
+import { mainColorNames } from '@/ui/theme/constants/colors';
 
 import { SettingsObjectFieldSelectFormOption } from '../types/SettingsObjectFieldSelectFormOption';
 
@@ -33,6 +36,11 @@ const StyledRow = styled.div`
   padding: ${({ theme }) => theme.spacing(1)} 0;
 `;
 
+const StyledColorSample = styled(ColorSample)`
+  cursor: pointer;
+  margin-right: 14px;
+`;
+
 const StyledOptionInput = styled(TextInput)`
   flex: 1 0 auto;
   margin-right: ${({ theme }) => theme.spacing(2)};
@@ -48,22 +56,56 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
   onRemove,
   option,
 }: SettingsObjectFieldSelectFormOptionRowProps) => {
-  const dropdownScopeId = useMemo(() => `select-field-option-row-${v4()}`, []);
+  const dropdownScopeIds = useMemo(() => {
+    const baseScopeId = `select-field-option-row-${v4()}`;
+    return { color: `${baseScopeId}-color`, actions: `${baseScopeId}-actions` };
+  }, []);
 
-  const { closeDropdown } = useDropdown({ dropdownScopeId });
+  const { closeDropdown: closeColorDropdown } = useDropdown({
+    dropdownScopeId: dropdownScopeIds.color,
+  });
+  const { closeDropdown: closeActionsDropdown } = useDropdown({
+    dropdownScopeId: dropdownScopeIds.actions,
+  });
 
   return (
     <StyledRow>
+      <DropdownScope dropdownScopeId={dropdownScopeIds.color}>
+        <Dropdown
+          dropdownPlacement="bottom-start"
+          dropdownHotkeyScope={{
+            scope: dropdownScopeIds.color,
+          }}
+          clickableComponent={<StyledColorSample colorName={option.color} />}
+          dropdownComponents={
+            <DropdownMenu>
+              <DropdownMenuItemsContainer>
+                {mainColorNames.map((colorName) => (
+                  <MenuItemSelectColor
+                    key={colorName}
+                    onClick={() => {
+                      onChange({ ...option, color: colorName });
+                      closeColorDropdown();
+                    }}
+                    color={colorName}
+                    selected={colorName === option.color}
+                  />
+                ))}
+              </DropdownMenuItemsContainer>
+            </DropdownMenu>
+          }
+        />
+      </DropdownScope>
       <StyledOptionInput
         value={option.label}
         onChange={(label) => onChange({ ...option, label })}
         RightIcon={isDefault ? IconCheck : undefined}
       />
-      <DropdownScope dropdownScopeId={dropdownScopeId}>
+      <DropdownScope dropdownScopeId={dropdownScopeIds.actions}>
         <Dropdown
           dropdownPlacement="right-start"
           dropdownHotkeyScope={{
-            scope: dropdownScopeId,
+            scope: dropdownScopeIds.actions,
           }}
           clickableComponent={<LightIconButton Icon={IconDotsVertical} />}
           dropdownComponents={
@@ -75,7 +117,7 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
                     text="Remove as default"
                     onClick={() => {
                       onChange({ ...option, isDefault: false });
-                      closeDropdown();
+                      closeActionsDropdown();
                     }}
                   />
                 ) : (
@@ -84,7 +126,7 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
                     text="Set as default"
                     onClick={() => {
                       onChange({ ...option, isDefault: true });
-                      closeDropdown();
+                      closeActionsDropdown();
                     }}
                   />
                 )}
@@ -95,7 +137,7 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
                     text="Remove option"
                     onClick={() => {
                       onRemove();
-                      closeDropdown();
+                      closeActionsDropdown();
                     }}
                   />
                 )}

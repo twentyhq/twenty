@@ -8,7 +8,7 @@ import { boardCardIdsByColumnIdFamilyState } from '@/ui/object/record-board/stat
 import { boardColumnsState } from '@/ui/object/record-board/states/boardColumnsState';
 import { savedBoardColumnsState } from '@/ui/object/record-board/states/savedBoardColumnsState';
 import { BoardColumnDefinition } from '@/ui/object/record-board/types/BoardColumnDefinition';
-import { isThemeColor } from '@/ui/theme/utils/castStringAsThemeColor';
+import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';
 
@@ -90,7 +90,11 @@ export const useUpdateCompanyBoard = () =>
 
         const newBoardColumns: BoardColumnDefinition[] =
           orderedPipelineSteps?.map((pipelineStep) => {
-            if (!isThemeColor(pipelineStep.color)) {
+            const colorValidationResult = themeColorSchema.safeParse(
+              pipelineStep.color,
+            );
+
+            if (!colorValidationResult.success) {
               logError(
                 `Color ${pipelineStep.color} is not recognized in useUpdateCompanyBoard.`,
               );
@@ -99,8 +103,8 @@ export const useUpdateCompanyBoard = () =>
             return {
               id: pipelineStep.id,
               title: pipelineStep.name,
-              colorCode: isThemeColor(pipelineStep.color)
-                ? pipelineStep.color
+              colorCode: colorValidationResult.success
+                ? colorValidationResult.data
                 : undefined,
               position: pipelineStep.position ?? 0,
             };
