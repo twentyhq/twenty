@@ -42,7 +42,7 @@ export default {
         key: 'email',
         label: 'Email',
         type: 'string',
-        required: true,
+        required: false,
         list: false,
         altersDynamicFields: false,
       },
