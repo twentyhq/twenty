@@ -39,8 +39,6 @@ const StyledMenuItemCommandContainer = styled.div<{ isSelected?: boolean }>`
   flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.sm};
   gap: ${({ theme }) => theme.spacing(2)};
-  height: 24px;
-  height: calc(32px - 2 * var(--vertical-padding));
   justify-content: space-between;
   padding: var(--vertical-padding) var(--horizontal-padding);
   position: relative;
