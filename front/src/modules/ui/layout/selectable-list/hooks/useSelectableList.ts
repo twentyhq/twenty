@@ -1,4 +1,4 @@
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useSelectableListScopedStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListScopedStates';
 import { SelectableListScopeInternalContext } from '@/ui/layout/selectable-list/scopes/scope-internal-context/SelectableListScopeInternalContext';
@@ -22,9 +22,11 @@ export const useSelectableList = (props?: UseSelectableListProps) => {
     });
 
   const setSelectableItemIds = useSetRecoilState(selectableItemIdsState);
+  const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector);
 
   return {
     setSelectableItemIds,
+    isSelectedItemId,
     selectableListId: scopeId,
     isSelectedItemIdSelector,
   };

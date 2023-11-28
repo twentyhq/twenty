@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 
 import { IconArrowUpRight } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
@@ -34,9 +33,7 @@ export const CommandMenuItem = ({
     Icon = IconArrowUpRight;
   }
 
-  const { isSelectedItemIdSelector } = useSelectableList({ itemId: id });
-
-  const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector);
+  const { isSelectedItemId } = useSelectableList({ itemId: id });
 
   const onItemClick = () => {
     toggleCommandMenu();
