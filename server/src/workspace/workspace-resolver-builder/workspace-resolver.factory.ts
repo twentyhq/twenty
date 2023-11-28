@@ -5,6 +5,8 @@ import { IResolvers } from '@graphql-tools/utils';
 import { ObjectMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/object-metadata.interface';
 
 import { getResolverName } from 'src/workspace/utils/get-resolver-name.util';
+import { UpdateManyResolverFactory } from 'src/workspace/workspace-resolver-builder/factories/update-many-resolver.factory';
+import { DeleteManyResolverFactory } from 'src/workspace/workspace-resolver-builder/factories/delete-many-resolver.factory';
 
 import { FindManyResolverFactory } from './factories/find-many-resolver.factory';
 import { FindOneResolverFactory } from './factories/find-one-resolver.factory';
@@ -29,6 +31,8 @@ export class WorkspaceResolverFactory {
     private readonly createOneResolverFactory: CreateOneResolverFactory,
     private readonly updateOneResolverFactory: UpdateOneResolverFactory,
     private readonly deleteOneResolverFactory: DeleteOneResolverFactory,
+    private readonly updateManyResolverFactory: UpdateManyResolverFactory,
+    private readonly deleteManyResolverFactory: DeleteManyResolverFactory,
   ) {}
 
   async create(
@@ -46,6 +50,8 @@ export class WorkspaceResolverFactory {
       ['createOne', this.createOneResolverFactory],
       ['updateOne', this.updateOneResolverFactory],
       ['deleteOne', this.deleteOneResolverFactory],
+      ['updateMany', this.updateManyResolverFactory],
+      ['deleteMany', this.deleteManyResolverFactory],
     ]);
     const resolvers: IResolvers = {
       Query: {},

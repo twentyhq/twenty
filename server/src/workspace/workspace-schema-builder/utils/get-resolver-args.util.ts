@@ -75,6 +75,24 @@ export const getResolverArgs = (
           isNullable: false,
         },
       };
+    case 'updateMany':
+      return {
+        data: {
+          kind: InputTypeDefinitionKind.Update,
+          isNullable: false,
+        },
+        filter: {
+          kind: InputTypeDefinitionKind.Filter,
+          isNullable: false,
+        },
+      };
+    case 'deleteMany':
+      return {
+        filter: {
+          kind: InputTypeDefinitionKind.Filter,
+          isNullable: false,
+        },
+      };
     default:
       throw new Error(`Unknown resolver type: ${type}`);
   }
