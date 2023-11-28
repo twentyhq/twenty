@@ -1,3 +1,82 @@
+import {
+  FieldMetadataType,
+  RelationMetadataType,
+} from '~/generated-metadata/graphql';
+
+export const mockedPeopleMetadata = {
+  node: {
+    id: 'e3802178-cfe8-4df1-8be6-b1b26ba10a21',
+    dataSourceId: '',
+    nameSingular: 'person',
+    namePlural: 'people',
+    labelSingular: 'Person',
+    labelPlural: 'People',
+    description: null,
+    icon: 'IconUser',
+    isCustom: false,
+    isActive: true,
+    createdAt: '',
+    updatedAt: '',
+    fields: {
+      edges: [
+        {
+          node: {
+            id: '86b696ea-9b43-46b4-9162-e1ee8b558a38',
+            type: FieldMetadataType.Text,
+            name: 'name',
+            label: 'Name',
+            description: '',
+            placeholder: null,
+            icon: 'IconUser',
+            isCustom: false,
+            isActive: true,
+            isNullable: false,
+            createdAt: '',
+            updatedAt: '',
+            fromRelationMetadata: null,
+            toRelationMetadata: null,
+          },
+        },
+        {
+          node: {
+            id: '531d5d57-1104-4ba9-b47b-6e526fc46cb6',
+            type: FieldMetadataType.Relation,
+            name: 'company',
+            label: 'Company',
+            description: '',
+            placeholder: null,
+            icon: 'IconBuildingSkyscraper',
+            isCustom: false,
+            isActive: true,
+            isNullable: true,
+            createdAt: '',
+            updatedAt: '',
+            fromRelationMetadata: null,
+            toRelationMetadata: {
+              id: 'b53f8e8d-357c-4e75-8789-ecf95de200c9',
+              relationType: RelationMetadataType.OneToMany,
+              toObjectMetadata: {
+                id: 'a3195559-cc20-4749-9565-572a2f506581',
+                dataSourceId: '',
+                nameSingular: 'company',
+                namePlural: 'companies',
+              },
+              toFieldMetadataId: 'a578ffb2-13db-483c-ace7-5c30a13dff2d',
+            },
+          },
+        },
+      ],
+      pageInfo: {
+        hasNextPage: false,
+        hasPreviousPage: false,
+        startCursor: null,
+        endCursor: null,
+      },
+      totalCount: 2,
+    },
+  },
+};
+
 export const mockedCompaniesMetadata = {
   node: {
     id: 'a3195559-cc20-4749-9565-572a2f506581',
@@ -17,7 +96,7 @@ export const mockedCompaniesMetadata = {
         {
           node: {
             id: '397eabc0-c5a1-4550-8e68-839c878a8d0e',
-            type: 'TEXT',
+            type: FieldMetadataType.Text,
             name: 'name',
             label: 'Name',
             description: 'The company name.',
@@ -35,7 +114,7 @@ export const mockedCompaniesMetadata = {
         {
           node: {
             id: '7ad234c7-f3b9-4efc-813c-43dc97070b07',
-            type: 'URL',
+            type: FieldMetadataType.Link,
             name: 'URL',
             label: 'URL',
             description:
@@ -54,26 +133,35 @@ export const mockedCompaniesMetadata = {
         {
           node: {
             id: 'a578ffb2-13db-483c-ace7-5c30a13dff2d',
-            type: 'RELATION',
-            name: 'accountOwner',
-            label: 'Account Owner',
-            description:
-              'Your team member responsible for managing the company account.',
+            type: FieldMetadataType.Relation,
+            name: 'people',
+            label: 'People',
+            description: 'People linked to the company.',
             placeholder: null,
-            icon: 'IconUserCircle',
+            icon: 'IconUsers',
             isCustom: false,
             isActive: true,
             isNullable: true,
             createdAt: '',
             updatedAt: '',
-            fromRelationMetadata: null,
+            fromRelationMetadata: {
+              id: '91f07688-2243-43a4-91b4-e2984669fe8e',
+              relationType: RelationMetadataType.OneToMany,
+              toObjectMetadata: {
+                id: mockedPeopleMetadata.node.id,
+                dataSourceId: mockedPeopleMetadata.node.dataSourceId,
+                nameSingular: mockedPeopleMetadata.node.nameSingular,
+                namePlural: mockedPeopleMetadata.node.namePlural,
+              },
+              toFieldMetadataId: '531d5d57-1104-4ba9-b47b-6e526fc46cb6',
+            },
             toRelationMetadata: null,
           },
         },
         {
           node: {
             id: 'b7fd622d-7d8b-4f5a-b148-a7e9fd2c4660',
-            type: 'NUMBER',
+            type: FieldMetadataType.Number,
             name: 'employees',
             label: 'Employees',
             description: 'Number of employees in the company.',
@@ -91,9 +179,9 @@ export const mockedCompaniesMetadata = {
         {
           node: {
             id: '60ab27ed-a959-471e-b583-887387f7accd',
-            type: 'URL',
-            name: 'linkedin',
-            label: 'Linkedin',
+            type: FieldMetadataType.Link,
+            name: 'linkedinUrl',
+            label: 'Linkedin URL',
             description: null,
             placeholder: null,
             icon: 'IconBrandLinkedin',
@@ -109,15 +197,51 @@ export const mockedCompaniesMetadata = {
         {
           node: {
             id: '6daadb98-83ca-4c85-bca5-7792a7d958ad',
-            type: 'BOOLEAN',
-            name: 'prioritySupport',
-            label: 'Priority Support',
-            description: 'Whether the company has priority support.',
+            type: FieldMetadataType.Boolean,
+            name: 'idealCustomerProfile',
+            label: 'ICP',
+            description: '',
             placeholder: null,
-            icon: 'IconHeadphones',
+            icon: 'IconTarget',
             isCustom: true,
             isActive: false,
             isNullable: true,
+            createdAt: '',
+            updatedAt: '',
+            fromRelationMetadata: null,
+            toRelationMetadata: null,
+          },
+        },
+        {
+          node: {
+            id: 'd9e366d5-d43d-4f71-ac97-f1d32768f79b',
+            type: FieldMetadataType.Currency,
+            name: 'annualRecurringRevenue',
+            label: 'ARR',
+            description: '',
+            placeholder: null,
+            icon: 'IconMoneybag',
+            isCustom: false,
+            isActive: true,
+            isNullable: false,
+            createdAt: '',
+            updatedAt: '',
+            fromRelationMetadata: null,
+            toRelationMetadata: null,
+          },
+        },
+        {
+          node: {
+            id: '39c55b95-f8cf-49a3-9713-fc52bbd117ae',
+            type: FieldMetadataType.DateTime,
+            name: 'createdAt',
+            label: 'Created At',
+            description: '',
+            placeholder: null,
+            icon: 'IconCalendar',
+            isCustom: false,
+            isActive: false,
+            isNullable: false,
             createdAt: '',
             updatedAt: '',
             fromRelationMetadata: null,
@@ -131,7 +255,7 @@ export const mockedCompaniesMetadata = {
         startCursor: null,
         endCursor: null,
       },
-      totalCount: 6,
+      totalCount: 8,
     },
   },
 };
@@ -382,6 +506,7 @@ export const mockedObjectMetadataItems = {
         },
       },
     },
+    mockedPeopleMetadata,
     mockedCompaniesMetadata,
     mockedWorkspacesMetadata,
   ],
@@ -391,5 +516,5 @@ export const mockedObjectMetadataItems = {
     startCursor: null,
     endCursor: null,
   },
-  totalCount: 4,
+  totalCount: 5,
 };
