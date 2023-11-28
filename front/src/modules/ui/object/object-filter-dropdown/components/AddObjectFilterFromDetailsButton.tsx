@@ -5,12 +5,20 @@ import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
 
 import { ObjectFilterDropdownId } from '../constants/ObjectFilterDropdownId';
 
-export const AddObjectFilterFromDetailsButton = () => {
+type AddObjectFilterFromDetailsButtonProps = {
+  filterId?: string;
+};
+
+export const AddObjectFilterFromDetailsButton = ({
+  filterId,
+}: AddObjectFilterFromDetailsButtonProps) => {
   const { toggleDropdown } = useDropdown({
     dropdownScopeId: ObjectFilterDropdownId,
   });
 
-  const { resetFilter } = useFilter();
+  const { resetFilter } = useFilter({
+    filterScopeId: filterId,
+  });
 
   const handleClick = () => {
     resetFilter();

@@ -174,6 +174,7 @@ export const useViewFilters = (viewScopeId: string) => {
   const upsertViewFilter = useRecoilCallback(
     ({ snapshot, set }) =>
       (filterToUpsert: Filter) => {
+        console.log('upsertViewFilter', filterToUpsert);
         const { currentViewId, savedViewFiltersByKey, onViewFiltersChange } =
           getViewScopedStateValuesFromSnapshot({
             snapshot,

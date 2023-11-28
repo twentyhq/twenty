@@ -15,6 +15,7 @@ import SortOrFilterChip from './SortOrFilterChip';
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
   rightComponent?: ReactNode;
+  filterId?: string;
 };
 
 const StyledBar = styled.div`
@@ -88,6 +89,7 @@ const StyledAddFilterContainer = styled.div`
 export const ViewBarDetails = ({
   hasFilterButton = false,
   rightComponent,
+  filterId,
 }: ViewBarDetailsProps) => {
   const {
     currentViewSortsState,
@@ -161,7 +163,7 @@ export const ViewBarDetails = ({
         </StyledChipcontainer>
         {hasFilterButton && (
           <StyledAddFilterContainer>
-            <AddObjectFilterFromDetailsButton />
+            <AddObjectFilterFromDetailsButton filterId={filterId} />
           </StyledAddFilterContainer>
         )}
       </StyledFilterContainer>
