@@ -31,12 +31,8 @@ describe('creates.create_person', () => {
     expect(checkDbResult.data.person.phone).toEqual('+33610203040');
   });
 
-  test('should run with not required missing params', async () => {
-    const bundle = getBundle({
-      name: {firstName: 'John', lastName: 'Doe'},
-      email: 'johndoe@gmail.com',
-      city: 'Paris',
-    });
+  test('should run with not required params', async () => {
+    const bundle = getBundle({});
     const results = await appTester(
       App.creates.create_person.operation.perform,
       bundle,

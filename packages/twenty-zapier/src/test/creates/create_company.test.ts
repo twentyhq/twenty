@@ -36,16 +36,8 @@ describe('creates.create_company', () => {
       100000000000,
     );
   });
-  test('should run with not required missing params', async () => {
-    const bundle = getBundle({
-      name: 'Company Name',
-      address: 'Company Address',
-      domainName: 'Company Domain Name',
-      linkedinLink: {url: '/linkedin_url', label: "Test linkedinUrl"},
-      xLink: {url: '/x_url', label: "Test xUrl"},
-      idealCustomerProfile: true,
-      employees: 25,
-    });
+  test('should run with not required params', async () => {
+    const bundle = getBundle({});
     const result = await appTester(
       App.creates.create_company.operation.perform,
       bundle,
