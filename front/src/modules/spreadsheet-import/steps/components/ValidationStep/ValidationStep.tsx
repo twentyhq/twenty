@@ -219,7 +219,7 @@ export const ValidationStep = <T extends string>({
             onRowsChange={updateRow}
             columns={columns}
             selectedRows={selectedRows}
-            onSelectedRowsChange={setSelectedRows}
+            onSelectedRowsChange={setSelectedRows as any} // TODO: replace 'any'
             components={{
               noRowsFallback: (
                 <StyledNoRowsContainer>
@@ -235,4 +235,5 @@ export const ValidationStep = <T extends string>({
       <ContinueButton onContinue={onContinue} title="Confirm" />
     </>
   );
+
 };
