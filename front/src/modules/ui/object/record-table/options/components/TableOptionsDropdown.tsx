@@ -1,6 +1,6 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { useView } from '@/views/hooks/useView';
+import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { TableOptionsDropdownId } from '../../constants/TableOptionsDropdownId';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
@@ -15,7 +15,7 @@ export const TableOptionsDropdown = ({
   onImport?: () => void;
   recordTableId: string;
 }) => {
-  const { setViewEditMode } = useView();
+  const { setViewEditMode } = useViewBar();
 
   return (
     <DropdownScope dropdownScopeId={TableOptionsDropdownId}>

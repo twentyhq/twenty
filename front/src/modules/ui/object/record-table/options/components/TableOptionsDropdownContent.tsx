@@ -13,7 +13,7 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
-import { useView } from '@/views/hooks/useView';
+import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useRecordTableScopedStates } from '../../hooks/internal/useRecordTableScopedStates';
 import { useTableColumns } from '../../hooks/useTableColumns';
@@ -28,7 +28,7 @@ export const TableOptionsDropdownContent = ({
   onImport?: () => void;
   recordTableId: string;
 }) => {
-  const { setViewEditMode, handleViewNameSubmit } = useView();
+  const { setViewEditMode, handleViewNameSubmit } = useViewBar();
   const { viewEditModeState, currentViewSelector } = useViewScopedStates();
 
   const viewEditMode = useRecoilValue(viewEditModeState);

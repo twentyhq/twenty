@@ -10,21 +10,21 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { useSortDropdown } from '@/ui/object/object-sort-dropdown/hooks/useSortDropdown';
 import { ObjectSortDropdownScope } from '@/ui/object/object-sort-dropdown/scopes/ObjectSortDropdownScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { ObjectSortDropdownId } from '../constants/ObjectSortDropdownId';
-import { useSort } from '../hooks/useSort';
 import { SortDefinition } from '../types/SortDefinition';
 import { SORT_DIRECTIONS, SortDirection } from '../types/SortDirection';
 
 export type ObjectSortDropdownButtonProps = {
-  sortId: string;
+  sortDropdownId: string;
   hotkeyScope: HotkeyScope;
 };
 
 export const ObjectSortDropdownButton = ({
-  sortId,
+  sortDropdownId,
   hotkeyScope,
 }: ObjectSortDropdownButtonProps) => {
   const [isSortDirectionMenuUnfolded, setIsSortDirectionMenuUnfolded] =
@@ -38,8 +38,8 @@ export const ObjectSortDropdownButton = ({
     setSelectedSortDirection('asc');
   }, []);
 
-  const { isSortSelected } = useSort({
-    sortScopeId: sortId,
+  const { isSortSelected } = useSortDropdown({
+    sortDropdownId: sortDropdownId,
   });
 
   const { toggleDropdown } = useDropdown({
@@ -51,8 +51,8 @@ export const ObjectSortDropdownButton = ({
     resetState();
   };
 
-  const { availableSortDefinitions, onSortSelect } = useSort({
-    sortScopeId: sortId,
+  const { availableSortDefinitions, onSortSelect } = useSortDropdown({
+    sortDropdownId: sortDropdownId,
   });
 
   const handleAddSort = (selectedSortDefinition: SortDefinition) => {
@@ -71,7 +71,7 @@ export const ObjectSortDropdownButton = ({
   const { icons } = useLazyLoadIcons();
 
   return (
-    <ObjectSortDropdownScope sortScopeId={sortId}>
+    <ObjectSortDropdownScope sortScopeId={sortDropdownId}>
       <DropdownScope dropdownScopeId={ObjectSortDropdownId}>
         <Dropdown
           dropdownHotkeyScope={hotkeyScope}

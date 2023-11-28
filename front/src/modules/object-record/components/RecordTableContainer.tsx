@@ -41,7 +41,7 @@ export const RecordTableContainer = ({
   });
 
   const recordTableId = objectNamePlural ?? '';
-  const viewId = objectNamePlural ?? '';
+  const viewBarId = objectNamePlural ?? '';
 
   const { setTableFilters, setTableSorts, setTableColumns } = useRecordTable({
     recordTableScopeId: recordTableId,
@@ -66,7 +66,7 @@ export const RecordTableContainer = ({
   return (
     <StyledContainer>
       <ViewBar
-        viewId={viewId}
+        viewBarId={viewBarId}
         optionsDropdownButton={
           <TableOptionsDropdown recordTableId={recordTableId} />
         }
@@ -83,10 +83,10 @@ export const RecordTableContainer = ({
           setTableSorts(mapViewSortsToSorts(viewSorts));
         }}
       />
-      <RecordTableEffect recordTableId={recordTableId} viewId={viewId} />
+      <RecordTableEffect recordTableId={recordTableId} viewBarId={viewBarId} />
       <RecordTable
         recordTableId={recordTableId}
-        viewId={viewId}
+        viewBarId={viewBarId}
         updateEntityMutation={updateEntity}
       />
     </StyledContainer>

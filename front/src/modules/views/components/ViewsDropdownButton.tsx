@@ -19,11 +19,11 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { useViewBar } from '@/views/hooks/useViewBar';
 import { assertNotNull } from '~/utils/assert';
 
 import { ViewsDropdownId } from '../constants/ViewsDropdownId';
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
-import { useView } from '../hooks/useView';
 
 const StyledBoldDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   font-weight: ${({ theme }) => theme.font.weight.regular};
@@ -68,7 +68,7 @@ export const ViewsDropdownButton = ({
   optionsDropdownScopeId,
 }: ViewsDropdownButtonProps) => {
   const theme = useTheme();
-  const { removeView, changeViewInUrl } = useView();
+  const { removeView, changeViewInUrl } = useViewBar();
 
   const { viewsState, currentViewSelector, entityCountInCurrentViewState } =
     useViewScopedStates();
@@ -79,7 +79,7 @@ export const ViewsDropdownButton = ({
     entityCountInCurrentViewState,
   );
 
-  const { setViewEditMode, setCurrentViewId, loadView } = useView();
+  const { setViewEditMode, setCurrentViewId, loadView } = useViewBar();
 
   const {
     isDropdownOpen: isViewsDropdownOpen,

@@ -35,9 +35,9 @@ export const CompanyBoard = ({
   onColumnDelete,
   onEditColumnTitle,
 }: CompanyBoardProps) => {
-  const viewId = 'company-board-view';
+  const viewBarId = 'company-board-view';
 
-  const { persistViewFields } = useViewFields(viewId);
+  const { persistViewFields } = useViewFields(viewBarId);
 
   return (
     <StyledContainer>
@@ -50,11 +50,11 @@ export const CompanyBoard = ({
         }}
       >
         <ViewBar
-          viewId={viewId}
+          viewBarId={viewBarId}
           optionsDropdownButton={<BoardOptionsDropdown />}
           optionsDropdownScopeId={BoardOptionsDropdownId}
         />
-        <HooksCompanyBoardEffect viewId={viewId} />
+        <HooksCompanyBoardEffect viewBarId={viewBarId} />
         <RecordBoard
           boardOptions={opportunitiesBoardOptions}
           onColumnAdd={onColumnAdd}

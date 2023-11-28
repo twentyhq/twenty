@@ -1,18 +1,17 @@
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 import { Filter } from '@/ui/object/object-filter-dropdown/types/Filter';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 
-import { useFilterStates } from '../../ui/object/object-filter-dropdown/hooks/useFilterStates';
-
 type ViewBarFilterEffectProps = {
-  filterScopeId: string;
+  filterDropdownId: string;
   onFilterSelect?: ((filter: Filter) => void) | undefined;
 };
 
 export const ViewBarFilterEffect = ({
-  filterScopeId,
+  filterDropdownId,
   onFilterSelect,
 }: ViewBarFilterEffectProps) => {
   const { availableFilterDefinitionsState } = useViewScopedStates();
@@ -21,7 +20,7 @@ export const ViewBarFilterEffect = ({
     availableFilterDefinitionsState,
   );
   const { setAvailableFilterDefinitions, setOnFilterSelect } =
-    useFilterStates(filterScopeId);
+    useFilterDropdown({ filterDropdownId: filterDropdownId });
 
   useEffect(() => {
     if (availableFilterDefinitions) {

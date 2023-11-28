@@ -1,18 +1,17 @@
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { useSortDropdown } from '@/ui/object/object-sort-dropdown/hooks/useSortDropdown';
 import { Sort } from '@/ui/object/object-sort-dropdown/types/Sort';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 
-import { useSortStates } from '../../ui/object/object-sort-dropdown/hooks/useSortStates';
-
 type ViewBarSortEffectProps = {
-  sortScopeId: string;
+  sortDropdownId: string;
   onSortSelect?: ((sort: Sort) => void) | undefined;
 };
 
 export const ViewBarSortEffect = ({
-  sortScopeId,
+  sortDropdownId,
   onSortSelect,
 }: ViewBarSortEffectProps) => {
   const { availableSortDefinitionsState } = useViewScopedStates();
@@ -21,8 +20,9 @@ export const ViewBarSortEffect = ({
     availableSortDefinitionsState,
   );
 
-  const { setAvailableSortDefinitions, setOnSortSelect } =
-    useSortStates(sortScopeId);
+  const { setAvailableSortDefinitions, setOnSortSelect } = useSortDropdown({
+    sortDropdownId,
+  });
 
   useEffect(() => {
     if (availableSortDefinitions) {

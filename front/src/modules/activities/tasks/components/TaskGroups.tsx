@@ -13,7 +13,7 @@ import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
 
 type TaskGroupsProps = {
-  filterId?: string;
+  filterDropdownId?: string;
   entity?: ActivityTargetableEntity;
   showAddButton?: boolean;
 };
@@ -53,7 +53,7 @@ const StyledContainer = styled.div`
 `;
 
 export const TaskGroups = ({
-  filterId,
+  filterDropdownId,
   entity,
   showAddButton,
 }: TaskGroupsProps) => {
@@ -62,7 +62,7 @@ export const TaskGroups = ({
     upcomingTasks,
     unscheduledTasks,
     completedTasks,
-  } = useTasks({ filterScopeId: filterId, entity });
+  } = useTasks({ filterDropdownId: filterDropdownId, entity });
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 

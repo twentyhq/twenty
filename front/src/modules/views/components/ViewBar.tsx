@@ -7,12 +7,12 @@ import { FiltersHotkeyScope } from '@/ui/object/object-filter-dropdown/types/Fil
 import { ObjectSortDropdownButton } from '@/ui/object/object-sort-dropdown/components/ObjectSortDropdownButton';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { ViewBarSortEffect } from '@/views/components/ViewBarSortEffect';
+import { useViewBar } from '@/views/hooks/useViewBar';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewSort } from '@/views/types/ViewSort';
 
-import { useView } from '../hooks/useView';
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
 import { UpdateViewButtonGroup } from './UpdateViewButtonGroup';
@@ -21,7 +21,7 @@ import { ViewBarEffect } from './ViewBarEffect';
 import { ViewsDropdownButton } from './ViewsDropdownButton';
 
 export type ViewBarProps = {
-  viewId: string;
+  viewBarId: string;
   className?: string;
   optionsDropdownButton: ReactNode;
   optionsDropdownScopeId: string;
@@ -31,7 +31,7 @@ export type ViewBarProps = {
 };
 
 export const ViewBar = ({
-  viewId,
+  viewBarId,
   className,
   optionsDropdownButton,
   optionsDropdownScopeId,
@@ -42,26 +42,29 @@ export const ViewBar = ({
   const { openDropdown: openOptionsDropdownButton } = useDropdown({
     dropdownScopeId: optionsDropdownScopeId,
   });
-  const { upsertViewSort, upsertViewFilter } = useView({
-    viewScopeId: viewId,
+  const { upsertViewSort, upsertViewFilter } = useViewBar({
+    viewBarId: viewBarId,
   });
 
-  const filterId = 'view-filter';
-  const sortId = 'view-sort';
+  const filterDropdownId = 'view-filter';
+  const sortDropdownId = 'view-sort';
 
   return (
     <ViewScope
-      viewScopeId={viewId}
+      viewScopeId={viewBarId}
       onViewFieldsChange={onViewFieldsChange}
       onViewFiltersChange={onViewFiltersChange}
       onViewSortsChange={onViewSortsChange}
     >
       <ViewBarEffect />
       <ViewBarFilterEffect
-        filterScopeId={filterId}
+        filterDropdownId={filterDropdownId}
         onFilterSelect={upsertViewFilter}
       />
-      <ViewBarSortEffect sortScopeId={sortId} onSortSelect={upsertViewSort} />
+      <ViewBarSortEffect
+        sortDropdownId={sortDropdownId}
+        onSortSelect={upsertViewSort}
+      />
 
       <TopBar
         className={className}
@@ -76,13 +79,13 @@ export const ViewBar = ({
         rightComponent={
           <>
             <ObjectFilterDropdownButton
-              filterId={filterId}
+              filterDropdownId={filterDropdownId}
               hotkeyScope={{
                 scope: FiltersHotkeyScope.ObjectFilterDropdownButton,
               }}
             />
             <ObjectSortDropdownButton
-              sortId={sortId}
+              sortDropdownId={sortDropdownId}
               hotkeyScope={{
                 scope: FiltersHotkeyScope.ObjectSortDropdownButton,
               }}
@@ -92,7 +95,7 @@ export const ViewBar = ({
         }
         bottomComponent={
           <ViewBarDetails
-            filterId={filterId}
+            filterDropdownId={filterDropdownId}
             hasFilterButton
             rightComponent={
               <UpdateViewButtonGroup

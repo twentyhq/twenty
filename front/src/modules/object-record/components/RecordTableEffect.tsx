@@ -5,15 +5,15 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
-import { useView } from '@/views/hooks/useView';
+import { useViewBar } from '@/views/hooks/useViewBar';
 import { ViewType } from '@/views/types/ViewType';
 
 export const RecordTableEffect = ({
   recordTableId,
-  viewId,
+  viewBarId,
 }: {
   recordTableId: string;
-  viewId: string;
+  viewBarId: string;
 }) => {
   const {
     scopeId: objectNamePlural,
@@ -40,7 +40,7 @@ export const RecordTableEffect = ({
     setViewType,
     setViewObjectMetadataId,
     setEntityCountInCurrentView,
-  } = useView({ viewScopeId: viewId });
+  } = useViewBar({ viewBarId });
 
   useEffect(() => {
     if (basePathToShowPage && labelIdentifierFieldMetadataId) {

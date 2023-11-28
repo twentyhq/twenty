@@ -2,15 +2,17 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
-import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
+import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 
 type PageAddTaskButtonProps = {
-  filterId: string;
+  filterDropdownId: string;
 };
 
-export const PageAddTaskButton = ({ filterId }: PageAddTaskButtonProps) => {
-  const { selectedFilter } = useFilter({
-    filterScopeId: filterId,
+export const PageAddTaskButton = ({
+  filterDropdownId,
+}: PageAddTaskButtonProps) => {
+  const { selectedFilter } = useFilterDropdown({
+    filterDropdownId: filterDropdownId,
   });
   const openCreateActivity = useOpenCreateActivityDrawer();
 

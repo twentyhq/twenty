@@ -15,12 +15,12 @@ const StyledContainer = styled.div`
 
 export const SignInBackgroundMockContainer = () => {
   const recordTableId = 'sign-in-background-mock-table';
-  const viewId = 'sign-in-background-mock-view';
+  const viewBarId = 'sign-in-background-mock-view';
 
   return (
     <StyledContainer>
       <ViewBar
-        viewId={viewId}
+        viewBarId={viewBarId}
         optionsDropdownButton={
           <TableOptionsDropdown recordTableId={recordTableId} />
         }
@@ -28,11 +28,11 @@ export const SignInBackgroundMockContainer = () => {
       />
       <SignInBackgroundMockContainerEffect
         recordTableId={recordTableId}
-        viewId={viewId}
+        viewId={viewBarId}
       />
       <RecordTable
         recordTableId={recordTableId}
-        viewId={viewId}
+        viewBarId={viewBarId}
         updateEntityMutation={() => {}}
       />
     </StyledContainer>

@@ -76,13 +76,13 @@ const StyledTableContainer = styled.div`
 
 type RecordTableProps = {
   recordTableId: string;
-  viewId: string;
+  viewBarId: string;
   updateEntityMutation: (params: any) => void;
 };
 
 export const RecordTable = ({
   recordTableId,
-  viewId,
+  viewBarId,
   updateEntityMutation,
 }: RecordTableProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
@@ -90,7 +90,7 @@ export const RecordTable = ({
   const { resetTableRowSelection, setRowSelectedState } = useRecordTable({
     recordTableScopeId: recordTableId,
   });
-  const { persistViewFields } = useViewFields(viewId);
+  const { persistViewFields } = useViewFields(viewBarId);
 
   return (
     <RecordTableScope

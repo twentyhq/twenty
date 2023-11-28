@@ -1,4 +1,4 @@
-import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
+import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 import { ObjectFilterDropdownScope } from '@/ui/object/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
@@ -6,16 +6,16 @@ import { MultipleFiltersDropdownButton } from './MultipleFiltersDropdownButton';
 import { SingleEntityObjectFilterDropdownButton } from './SingleEntityObjectFilterDropdownButton';
 
 type ObjectFilterDropdownButtonProps = {
-  filterId: string;
+  filterDropdownId: string;
   hotkeyScope: HotkeyScope;
 };
 
 export const ObjectFilterDropdownButton = ({
-  filterId,
+  filterDropdownId,
   hotkeyScope,
 }: ObjectFilterDropdownButtonProps) => {
-  const { availableFilterDefinitions } = useFilter({
-    filterScopeId: filterId,
+  const { availableFilterDefinitions } = useFilterDropdown({
+    filterDropdownId: filterDropdownId,
   });
   const hasOnlyOneEntityFilter =
     availableFilterDefinitions.length === 1 &&
@@ -26,7 +26,7 @@ export const ObjectFilterDropdownButton = ({
   }
 
   return (
-    <ObjectFilterDropdownScope filterScopeId={filterId}>
+    <ObjectFilterDropdownScope filterScopeId={filterDropdownId}>
       {hasOnlyOneEntityFilter ? (
         <SingleEntityObjectFilterDropdownButton hotkeyScope={hotkeyScope} />
       ) : (

@@ -26,7 +26,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
-import { useView } from '@/views/hooks/useView';
+import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useBoardCardFields } from '../../hooks/useBoardCardFields';
 import { boardColumnsState } from '../../states/boardColumnsState';
@@ -52,7 +52,7 @@ type ColumnForCreate = {
 export const BoardOptionsDropdownContent = ({
   onStageAdd,
 }: BoardOptionsDropdownContentProps) => {
-  const { setViewEditMode, handleViewNameSubmit } = useView();
+  const { setViewEditMode, handleViewNameSubmit } = useViewBar();
   const { viewEditModeState, currentViewSelector } = useViewScopedStates();
   const { BoardRecoilScopeContext } = useContext(BoardContext);
 

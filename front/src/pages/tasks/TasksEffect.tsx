@@ -2,20 +2,21 @@ import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
+import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { tasksFilterDefinitions } from './tasks-filter-definitions';
 
 type TasksEffectProps = {
-  filterId: string;
+  filterDropdownId: string;
 };
 
-export const TasksEffect = ({ filterId }: TasksEffectProps) => {
+export const TasksEffect = ({ filterDropdownId }: TasksEffectProps) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const { setSelectedFilter, setAvailableFilterDefinitions } = useFilter({
-    filterScopeId: filterId,
-  });
+  const { setSelectedFilter, setAvailableFilterDefinitions } =
+    useFilterDropdown({
+      filterDropdownId: filterDropdownId,
+    });
 
   useEffect(() => {
     setAvailableFilterDefinitions(tasksFilterDefinitions);

@@ -20,7 +20,7 @@ import { isBoardLoadedState } from '@/ui/object/record-board/states/isBoardLoade
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedStateV2';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
-import { useView } from '@/views/hooks/useView';
+import { useViewBar } from '@/views/hooks/useViewBar';
 import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewFieldsToBoardFieldDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
@@ -31,11 +31,11 @@ import { useUpdateCompanyBoardCardIds } from '../hooks/useUpdateBoardCardIds';
 import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
 
 type HooksCompanyBoardEffectProps = {
-  viewId: string;
+  viewBarId: string;
 };
 
 export const HooksCompanyBoardEffect = ({
-  viewId,
+  viewBarId,
 }: HooksCompanyBoardEffectProps) => {
   const {
     setAvailableFilterDefinitions,
@@ -44,13 +44,13 @@ export const HooksCompanyBoardEffect = ({
     setEntityCountInCurrentView,
     setViewObjectMetadataId,
     setViewType,
-  } = useView({ viewScopeId: viewId });
+  } = useViewBar({ viewBarId: viewBarId });
 
   const {
     currentViewFieldsState,
     currentViewFiltersState,
     currentViewSortsState,
-  } = useViewScopedStates({ customViewScopeId: viewId });
+  } = useViewScopedStates({ viewScopeId: viewBarId });
 
   const [pipelineSteps, setPipelineSteps] = useState<PipelineStep[]>([]);
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);

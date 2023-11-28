@@ -10,7 +10,7 @@ import { objectFilterDropdownSelectedEntityIdScopedState } from '../states/objec
 import { selectedFilterScopedState } from '../states/selectedFilterScopedState';
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
 
-export const useFilterStates = (scopeId: string) => {
+export const useFilterDropdownStates = (scopeId: string) => {
   const [availableFilterDefinitions, setAvailableFilterDefinitions] =
     useRecoilScopedStateV2(availableFilterDefinitionsScopedState, scopeId);
 

@@ -5,19 +5,21 @@ import { undefined } from 'zod';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
-import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
+import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 import { parseDate } from '~/utils/date-utils';
 import { isDefined } from '~/utils/isDefined';
 
 type UseTasksProps = {
-  filterScopeId?: string;
+  filterDropdownId?: string;
   entity?: ActivityTargetableEntity;
 };
 
 export const useTasks = (props?: UseTasksProps) => {
-  const { filterScopeId, entity } = props ?? {};
+  const { filterDropdownId, entity } = props ?? {};
 
-  const { selectedFilter } = useFilter({ filterScopeId: filterScopeId });
+  const { selectedFilter } = useFilterDropdown({
+    filterDropdownId: filterDropdownId,
+  });
 
   const { objects: activityTargets } = useFindManyObjectRecords({
     objectNamePlural: 'activityTargets',
