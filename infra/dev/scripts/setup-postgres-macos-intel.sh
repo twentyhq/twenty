@@ -61,12 +61,6 @@ brew reinstall postgresql@$PG_MAIN_VERSION
 # Install pg_graphql extensions
 echo_header $GREEN "Step [2/4]: Installing GraphQL for PostgreSQL..."
 
-# To force a reinstall of cargo-pgrx, pass --force to the command below
-curl https://sh.rustup.rs -sSf | sh
-source "$HOME/.cargo/env"
-cargo install --locked cargo-pgrx@$CARGO_PGRX_VERSION
-cargo pgrx init --pg$PG_MAIN_VERSION download
-
 # Uninstall existing Rust installation if found
 existing_rust_path=$(which rustc)
 if [ -n "$existing_rust_path" ]; then
@@ -74,10 +68,11 @@ if [ -n "$existing_rust_path" ]; then
     rm -rf "$existing_rust_path"
 fi
 
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-
-# Add Cargo's bin directory to PATH
-. "$HOME/.cargo/env"
+# To force a reinstall of cargo-pgrx, pass --force to the command below
+curl  https://sh.rustup.rs -sSf | sh
+source "$HOME/.cargo/env"
+cargo install --locked cargo-pgrx@$CARGO_PGRX_VERSION --force
+cargo pgrx init --pg$PG_MAIN_VERSION download
 
 # Create a temporary directory
 temp_dir=$(mktemp -d)
@@ -87,8 +82,10 @@ curl -LJO https://github.com/supabase/pg_graphql/archive/refs/tags/v$PG_GRAPHQL_
 
 unzip pg_graphql-$PG_GRAPHQL_VERSION.zip
 
+[[ ":$PATH:" != *":/usr/local/opt/postgresql@$PG_MAIN_VERSION/bin:"* ]] && PATH="/usr/local/opt/postgresql@$PG_MAIN_VERSION/bin:${PATH}"
+
 cd "pg_graphql-$PG_GRAPHQL_VERSION"
-cargo pgrx install --release --pg-config /opt/homebrew/opt/postgresql@$PG_MAIN_VERSION/bin/pg_config
+cargo pgrx install --release --pg-config /usr/local/opt/postgresql@$PG_MAIN_VERSION/bin/pg_config
 
 # # Clean up the temporary directory
 echo "Cleaning up..."
@@ -98,7 +95,6 @@ rm -rf "$temp_dir"
 # Start postgresql service
 echo_header $GREEN "Step [3/4]: Starting PostgreSQL service..."
 
-[[ ":$PATH:" != *":/opt/homebrew/opt/postgresql@$PG_MAIN_VERSION/bin:"* ]] && PATH="/opt/homebrew/opt/postgresql@$PG_MAIN_VERSION/bin:${PATH}"
 
 if brew services start postgresql@$PG_MAIN_VERSION; then
     echo "PostgreSQL service started successfully."
@@ -108,5 +104,5 @@ fi
 
 # Run the init.sql to setup database
 echo_header $GREEN "Step [4/4]: Setting up database..."
-cp ./infra/dev/postgres/init.sql /tmp/init.sql
+cp ./postgres/init.sql /tmp/init.sql
 psql -f /tmp/init.sql -d postgres|| handle_error "Failed to execute init.sql script."
