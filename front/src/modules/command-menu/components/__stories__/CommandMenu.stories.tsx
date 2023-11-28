@@ -2,18 +2,14 @@ import { useEffect } from 'react';
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
-import { useSetRecoilState } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { IconCheckbox, IconNotes } from '@/ui/display/icon';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedActivitiesMetadata } from '~/testing/mock-data/activities';
-import { mockedCompanyMetadata } from '~/testing/mock-data/companies';
-import { mockedPersonMetadata } from '~/testing/mock-data/people';
 import { sleep } from '~/testing/sleep';
 
 import { CommandMenu } from '../CommandMenu';
@@ -25,6 +21,7 @@ const meta: Meta<typeof CommandMenu> = {
   component: CommandMenu,
   decorators: [
     ComponentWithRouterDecorator,
+
     (Story) => {
       const { addToCommandMenu, setToIntitialCommandMenu, openCommandMenu } =
         useCommandMenu();
@@ -52,17 +49,7 @@ const meta: Meta<typeof CommandMenu> = {
 
       return <Story />;
     },
-    (Story) => {
-      const setMetadata = useSetRecoilState(objectMetadataItemsState);
-
-      setMetadata([
-        mockedCompanyMetadata,
-        mockedPersonMetadata,
-        mockedActivitiesMetadata,
-      ]);
-
-      return <Story />;
-    },
+    ObjectMetadataItemsDecorator,
     SnackBarDecorator,
   ],
   parameters: {

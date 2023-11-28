@@ -110,21 +110,15 @@ export const graphqlMocks = [
     return res(
       ctx.data({
         companies: {
-          edges: [
-            {
-              node: mockedCompaniesData[0],
-            },
-            {
-              node: mockedCompaniesData[1],
-            },
-          ],
+          edges: mockedCompaniesData.map((data) => ({
+            node: data,
+            cursor: null,
+          })),
           pageInfo: {
             hasNextPage: false,
-            startCursor:
-              'WyIyMDIzLTExLTI0VDA2OjI5OjE5LjU5OTUzOSIsICIwNGIyZTlmNS0wNzEzLTQwYTUtODIxNi04MjgwMjQwMWQzM2UiXQ==',
-            endCursor:
-              'WyIyMDIzLTExLTI0VDA2OjI5OjE5LjU5OTUzOSIsICJmZTI1NmIzOS0zZWMzLTRmZTMtODk5Ny1iNzZhYTBiZmE0MDgiXQ==',
-            __typename: 'PageInfo',
+            hasPreviousPage: false,
+            startCursor: null,
+            endCursor: null,
           },
           __typename: 'CompanyConnection',
         },
@@ -135,14 +129,12 @@ export const graphqlMocks = [
     return res(
       ctx.data({
         people: {
-          edges: [{ node: mockedPeopleData[0] }, { node: mockedPeopleData[1] }],
+          edges: mockedPeopleData.map((data) => ({ node: data, cursor: null })),
           pageInfo: {
             hasNextPage: false,
-            startCursor:
-              'WyIyMDIzLTExLTI0VDA2OjI5OjE5LjYwMzY0NyIsICIwYWEwMGJlYi1hYzczLTQ3OTctODI0ZS04N2ExZjVhZWE5ZTAiXQ==',
-            endCursor:
-              'WyIyMDIzLTExLTI0VDA2OjI5OjE5LjYwMzY0NyIsICJlZWVhY2FjZi1lZWUxLTQ2OTAtYWQyYy04NjE5ZTViNTZhMmUiXQ==',
-            __typename: 'PageInfo',
+            hasPreviousPage: false,
+            startCursor: null,
+            endCursor: null,
           },
           __typename: 'PersonConnection',
         },
@@ -153,19 +145,12 @@ export const graphqlMocks = [
     return res(
       ctx.data({
         activities: {
-          edges: [
-            {
-              node: mockedActivities[0],
-            },
-            { node: mockedActivities[1] },
-          ],
+          edges: mockedActivities.map((data) => ({ node: data, cursor: null })),
           pageInfo: {
             hasNextPage: false,
-            startCursor:
-              'WyIyMDIzLTExLTI0VDA2OjI5OjE5LjYwMzY0NyIsICIwYWEwMGJlYi1hYzczLTQ3OTctODI0ZS04N2ExZjVhZWE5ZTAiXQ==',
-            endCursor:
-              'WyIyMDIzLTExLTI0VDA2OjI5OjE5LjYwMzY0NyIsICJlZWVhY2FjZi1lZWUxLTQ2OTAtYWQyYy04NjE5ZTViNTZhMmUiXQ==',
-            __typename: 'PageInfo',
+            hasPreviousPage: false,
+            startCursor: null,
+            endCursor: null,
           },
           __typename: 'ActivityConnection',
         },
