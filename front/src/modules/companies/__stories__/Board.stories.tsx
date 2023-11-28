@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { CompanyBoard } from '../board/components/CompanyBoard';
@@ -16,6 +17,7 @@ const meta: Meta<typeof CompanyBoard> = {
       </CompanyBoardRecoilScopeContext.Provider>
     ),
     ComponentWithRouterDecorator,
+    SnackBarDecorator,
   ],
   parameters: {
     msw: graphqlMocks,
