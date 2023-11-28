@@ -12,7 +12,6 @@ import { RecordBoardContextMenu } from '@/ui/object/record-board/context-menu/co
 import { BoardOptionsDropdown } from '@/ui/object/record-board/options/components/BoardOptionsDropdown';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
-import { ViewScope } from '@/views/scopes/ViewScope';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
 import { HooksCompanyBoardEffect } from '../../components/HooksCompanyBoardEffect';
@@ -36,41 +35,35 @@ export const CompanyBoard = ({
   onColumnDelete,
   onEditColumnTitle,
 }: CompanyBoardProps) => {
-  const viewScopeId = 'company-board-view';
+  const viewBarId = 'company-board-view';
 
-  const { persistViewFields } = useViewFields(viewScopeId);
+  const { persistViewFields } = useViewFields(viewBarId);
 
   return (
-    <ViewScope
-      viewScopeId={viewScopeId}
-      onViewFieldsChange={() => {}}
-      onViewFiltersChange={() => {}}
-      onViewSortsChange={() => {}}
-    >
-      <StyledContainer>
-        <BoardContext.Provider
-          value={{
-            BoardRecoilScopeContext: CompanyBoardRecoilScopeContext,
-            onFieldsChange: (fields) => {
-              persistViewFields(mapBoardFieldDefinitionsToViewFields(fields));
-            },
-          }}
-        >
-          <ViewBar
-            optionsDropdownButton={<BoardOptionsDropdown />}
-            optionsDropdownScopeId={BoardOptionsDropdownId}
-          />
-          <HooksCompanyBoardEffect />
-          <RecordBoard
-            boardOptions={opportunitiesBoardOptions}
-            onColumnAdd={onColumnAdd}
-            onColumnDelete={onColumnDelete}
-            onEditColumnTitle={onEditColumnTitle}
-          />
-          <RecordBoardActionBar />
-          <RecordBoardContextMenu />
-        </BoardContext.Provider>
-      </StyledContainer>
-    </ViewScope>
+    <StyledContainer>
+      <BoardContext.Provider
+        value={{
+          BoardRecoilScopeContext: CompanyBoardRecoilScopeContext,
+          onFieldsChange: (fields) => {
+            persistViewFields(mapBoardFieldDefinitionsToViewFields(fields));
+          },
+        }}
+      >
+        <ViewBar
+          viewBarId={viewBarId}
+          optionsDropdownButton={<BoardOptionsDropdown />}
+          optionsDropdownScopeId={BoardOptionsDropdownId}
+        />
+        <HooksCompanyBoardEffect viewBarId={viewBarId} />
+        <RecordBoard
+          boardOptions={opportunitiesBoardOptions}
+          onColumnAdd={onColumnAdd}
+          onColumnDelete={onColumnDelete}
+          onEditColumnTitle={onEditColumnTitle}
+        />
+        <RecordBoardActionBar />
+        <RecordBoardContextMenu />
+      </BoardContext.Provider>
+    </StyledContainer>
   );
 };

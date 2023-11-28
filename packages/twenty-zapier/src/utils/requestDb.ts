@@ -20,9 +20,9 @@ const requestDb = async (z: ZObject, bundle: Bundle, query: string) => {
       const results = response.json;
       if (results.errors) {
         throw new z.errors.Error(
-          'The API Key you supplied is incorrect',
-          'AuthenticationError',
-          results.errors,
+          `query: ${query}, error: ${JSON.stringify(results.errors)}`,
+          'ApiError',
+          response.status
         );
       }
       response.throwForStatus();
@@ -30,9 +30,9 @@ const requestDb = async (z: ZObject, bundle: Bundle, query: string) => {
     })
     .catch((err) => {
       throw new z.errors.Error(
-        'The API Key you supplied is incorrect',
-        'AuthenticationError',
-        err.message,
+        `query: ${query}, error: ${err.message}`,
+        'Error',
+        err.status
       );
     });
 };

@@ -82,6 +82,7 @@ export const useFindManyObjectRecords = <
           variables: {
             filter: filter ?? {},
             orderBy: orderBy ?? {},
+            limit: limit,
           },
           definition: getRecordOptimisticEffectDefinition({
             objectMetadataItem,

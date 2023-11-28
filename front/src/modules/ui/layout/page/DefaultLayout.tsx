@@ -7,10 +7,10 @@ import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
+import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { NavbarAnimatedContainer } from '@/ui/navigation/navbar/components/NavbarAnimatedContainer';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { AppNavbar } from '~/AppNavbar';
-import { CompaniesMockMode } from '~/pages/companies/CompaniesMockMode';
 
 import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
 
@@ -66,7 +66,7 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
       <StyledMainContainer>
         {onboardingStatus && onboardingStatus !== OnboardingStatus.Completed ? (
           <>
-            <CompaniesMockMode />
+            <SignInBackgroundMockPage />
             <AnimatePresence mode="wait">
               <LayoutGroup>
                 <AuthModal>{children}</AuthModal>
