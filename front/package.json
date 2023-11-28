@@ -22,7 +22,6 @@
     "@types/react-helmet-async": "^1.0.3",
     "afterframe": "^1.0.2",
     "apollo-upload-client": "^17.0.0",
-    "cmdk": "^0.2.0",
     "date-fns": "^2.30.0",
     "deep-equal": "^2.2.2",
     "framer-motion": "^10.12.17",
