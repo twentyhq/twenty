@@ -1,12 +1,12 @@
 import { ReactNode } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { TopBar } from '@/ui/layout/top-bar/TopBar';
 import { ObjectFilterDropdownButton } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownButton';
-import { ObjectFilterDropdownScopeInitEffect } from '@/ui/object/object-filter-dropdown/scopes/init-effect/ObjectFilterDropdownScopeInitEffect';
 import { FiltersHotkeyScope } from '@/ui/object/object-filter-dropdown/types/FiltersHotkeyScope';
-import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
+import { ObjectSortDropdownButton } from '@/ui/object/object-sort-dropdown/components/ObjectSortDropdownButton';
+import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
+import { ViewBarSortEffect } from '@/views/components/ViewBarSortEffect';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';
@@ -49,14 +49,6 @@ export const ViewBar = ({
   const filterId = 'view-filter';
   const sortId = 'view-sort';
 
-  const { availableSortDefinitionsState } = useViewScopedStates({
-    customViewScopeId: viewId,
-  });
-
-  const availableSortDefinitions = useRecoilValue(
-    availableSortDefinitionsState,
-  );
-
   return (
     <ViewScope
       viewScopeId={viewId}
@@ -65,11 +57,11 @@ export const ViewBar = ({
       onViewSortsChange={onViewSortsChange}
     >
       <ViewBarEffect />
-      <ObjectFilterDropdownScopeInitEffect
+      <ViewBarFilterEffect
         filterScopeId={filterId}
-        viewId={viewId}
         onFilterSelect={upsertViewFilter}
       />
+      <ViewBarSortEffect sortScopeId={sortId} onSortSelect={upsertViewSort} />
 
       <TopBar
         className={className}
@@ -89,14 +81,12 @@ export const ViewBar = ({
                 scope: FiltersHotkeyScope.ObjectFilterDropdownButton,
               }}
             />
-            {/* <ObjectSortDropdownButton
+            <ObjectSortDropdownButton
               sortId={sortId}
-              onSortSelect={upsertViewSort}
-              availableSortDefinitions={availableSortDefinitions}
               hotkeyScope={{
                 scope: FiltersHotkeyScope.ObjectSortDropdownButton,
               }}
-            /> */}
+            />
             {optionsDropdownButton}
           </>
         }

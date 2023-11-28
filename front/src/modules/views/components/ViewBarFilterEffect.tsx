@@ -4,22 +4,18 @@ import { useRecoilValue } from 'recoil';
 import { Filter } from '@/ui/object/object-filter-dropdown/types/Filter';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 
-import { useFilterStates } from '../../hooks/useFilterStates';
+import { useFilterStates } from '../../ui/object/object-filter-dropdown/hooks/useFilterStates';
 
-type ObjectFilterDropdownScopeInitEffectProps = {
+type ViewBarFilterEffectProps = {
   filterScopeId: string;
-  viewId: string;
   onFilterSelect?: ((filter: Filter) => void) | undefined;
 };
 
-export const ObjectFilterDropdownScopeInitEffect = ({
+export const ViewBarFilterEffect = ({
   filterScopeId,
-  viewId,
   onFilterSelect,
-}: ObjectFilterDropdownScopeInitEffectProps) => {
-  const { availableFilterDefinitionsState } = useViewScopedStates({
-    customViewScopeId: viewId,
-  });
+}: ViewBarFilterEffectProps) => {
+  const { availableFilterDefinitionsState } = useViewScopedStates();
 
   const availableFilterDefinitions = useRecoilValue(
     availableFilterDefinitionsState,

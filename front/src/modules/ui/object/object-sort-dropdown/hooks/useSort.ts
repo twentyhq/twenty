@@ -1,15 +1,14 @@
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
-import { useScopeInternalContextOrThrow } from '../../../utilities/recoil-scope/scopes-internal/hooks/useScopeInternalContextOrThrow';
 import { ObjectSortDropdownScopeInternalContext } from '../scopes/scope-internal-context/ObjectSortDropdownScopeInternalContext';
 
-import { useObjectSortDropdownStates } from './useObjectSortDropdownStates';
+import { useSortStates } from './useSortStates';
 
 type UseSortProps = {
   sortScopeId?: string;
 };
 
-export const useObjectSortDropdown = (props?: UseSortProps) => {
+export const useSort = (props?: UseSortProps) => {
   const scopeId = useAvailableScopeIdOrThrow(
     ObjectSortDropdownScopeInternalContext,
     props?.sortScopeId,
@@ -19,18 +18,17 @@ export const useObjectSortDropdown = (props?: UseSortProps) => {
     setAvailableSortDefinitions,
     isSortSelected,
     setIsSortSelected,
-  } = useObjectSortDropdownStates(scopeId);
-
-  const { onSortSelect } = useScopeInternalContextOrThrow(
-    ObjectSortDropdownScopeInternalContext,
-  );
+    onSortSelect,
+    setOnSortSelect,
+  } = useSortStates(scopeId);
 
   return {
-    onSortSelect,
     scopeId,
     availableSortDefinitions,
     isSortSelected,
     setIsSortSelected,
     setAvailableSortDefinitions,
+    onSortSelect,
+    setOnSortSelect,
   };
 };
