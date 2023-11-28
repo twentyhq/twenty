@@ -7,9 +7,15 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { tasksFilterDefinitions } from './tasks-filter-definitions';
 
-export const TasksEffect = () => {
+type TasksEffectProps = {
+  filterId: string;
+};
+
+export const TasksEffect = ({ filterId }: TasksEffectProps) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const { setSelectedFilter, setAvailableFilterDefinitions } = useFilter();
+  const { setSelectedFilter, setAvailableFilterDefinitions } = useFilter({
+    filterScopeId: filterId,
+  });
 
   useEffect(() => {
     setAvailableFilterDefinitions(tasksFilterDefinitions);

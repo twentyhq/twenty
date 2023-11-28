@@ -9,8 +9,15 @@ import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
 import { parseDate } from '~/utils/date-utils';
 import { isDefined } from '~/utils/isDefined';
 
-export const useTasks = (entity?: ActivityTargetableEntity) => {
-  const { selectedFilter } = useFilter();
+type UseTasksProps = {
+  filterScopeId?: string;
+  entity?: ActivityTargetableEntity;
+};
+
+export const useTasks = (props?: UseTasksProps) => {
+  const { filterScopeId, entity } = props ?? {};
+
+  const { selectedFilter } = useFilter({ filterScopeId: filterScopeId });
 
   const { objects: activityTargets } = useFindManyObjectRecords({
     objectNamePlural: 'activityTargets',

@@ -44,12 +44,14 @@ export const Tasks = () => {
     },
   ];
 
+  const filterId = 'tasks-filter-scope';
+
   return (
     <PageContainer>
       <RecoilScope CustomRecoilScopeContext={TasksRecoilScopeContext}>
-        <TasksEffect />
+        <TasksEffect filterId={filterId} />
         <PageHeader title="Tasks" Icon={IconCheckbox}>
-          <PageAddTaskButton />
+          <PageAddTaskButton filterId={filterId} />
         </PageHeader>
         <PageBody>
           <StyledTasksContainer>
@@ -61,7 +63,7 @@ export const Tasks = () => {
               }
               rightComponent={
                 <ObjectFilterDropdownButton
-                  filterId="tasks-filter-scope"
+                  filterId={filterId}
                   key="tasks-filter-dropdown-button"
                   hotkeyScope={{
                     scope: RelationPickerHotkeyScope.RelationPicker,
@@ -69,7 +71,7 @@ export const Tasks = () => {
                 />
               }
             />
-            <TaskGroups />
+            <TaskGroups filterId={filterId} />
           </StyledTasksContainer>
         </PageBody>
       </RecoilScope>
