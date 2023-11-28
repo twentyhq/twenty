@@ -20,13 +20,14 @@ const meta: Meta<typeof CommandMenu> = {
   decorators: [
     ComponentWithRouterDecorator,
     (Story) => {
-      const { addToCommandMenu, setToIntitialCommandMenu, openCommandMenu } =
+      const { addToCommandMenu, setToIntitialCommandMenu, toggleCommandMenu } =
         useCommandMenu();
 
       useEffect(() => {
         setToIntitialCommandMenu();
         addToCommandMenu([
           {
+            id: 'create-task',
             to: '',
             label: 'Create Task',
             type: CommandType.Create,
@@ -34,6 +35,7 @@ const meta: Meta<typeof CommandMenu> = {
             onCommandClick: () => console.log('create task click'),
           },
           {
+            id: 'create-note',
             to: '',
             label: 'Create Note',
             type: CommandType.Create,
@@ -41,8 +43,8 @@ const meta: Meta<typeof CommandMenu> = {
             onCommandClick: () => console.log('create note click'),
           },
         ]);
-        openCommandMenu();
-      }, [addToCommandMenu, setToIntitialCommandMenu, openCommandMenu]);
+        toggleCommandMenu();
+      }, [addToCommandMenu, setToIntitialCommandMenu, toggleCommandMenu]);
 
       return <Story />;
     },

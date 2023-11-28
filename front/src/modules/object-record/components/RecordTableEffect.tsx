@@ -5,16 +5,22 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
-import { useView } from '@/views/hooks/useView';
+import { useViewBar } from '@/views/hooks/useViewBar';
 import { ViewType } from '@/views/types/ViewType';
 
-export const RecordTableEffect = () => {
+export const RecordTableEffect = ({
+  recordTableId,
+  viewBarId,
+}: {
+  recordTableId: string;
+  viewBarId: string;
+}) => {
   const {
     scopeId: objectNamePlural,
     setAvailableTableColumns,
     setOnEntityCountChange,
     setObjectMetadataConfig,
-  } = useRecordTable();
+  } = useRecordTable({ recordTableScopeId: recordTableId });
 
   const {
     objectMetadataItem,
@@ -34,7 +40,7 @@ export const RecordTableEffect = () => {
     setViewType,
     setViewObjectMetadataId,
     setEntityCountInCurrentView,
-  } = useView();
+  } = useViewBar({ viewBarId });
 
   useEffect(() => {
     if (basePathToShowPage && labelIdentifierFieldMetadataId) {
@@ -80,7 +86,9 @@ export const RecordTableEffect = () => {
   ]);
 
   const { setActionBarEntries, setContextMenuEntries } =
-    useRecordTableContextMenuEntries();
+    useRecordTableContextMenuEntries({
+      recordTableScopeId: recordTableId,
+    });
 
   useEffect(() => {
     setActionBarEntries?.();

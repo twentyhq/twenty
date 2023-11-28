@@ -1,16 +1,24 @@
 import { IconPlus } from '@/ui/display/icon';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
+import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 
 import { ObjectFilterDropdownId } from '../constants/ObjectFilterDropdownId';
 
-export const AddObjectFilterFromDetailsButton = () => {
+type AddObjectFilterFromDetailsButtonProps = {
+  filterDropdownId?: string;
+};
+
+export const AddObjectFilterFromDetailsButton = ({
+  filterDropdownId,
+}: AddObjectFilterFromDetailsButtonProps) => {
   const { toggleDropdown } = useDropdown({
     dropdownScopeId: ObjectFilterDropdownId,
   });
 
-  const { resetFilter } = useFilter();
+  const { resetFilter } = useFilterDropdown({
+    filterDropdownId: filterDropdownId,
+  });
 
   const handleClick = () => {
     resetFilter();
