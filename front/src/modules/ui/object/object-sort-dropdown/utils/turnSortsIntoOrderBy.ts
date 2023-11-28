@@ -14,6 +14,11 @@ export const turnSortsIntoOrderBy = (
         createdAt: 'DescNullsFirst',
       };
     }
+
+    if (!fields.length) {
+      return {};
+    }
+
     return {
       [fields[0].name]: 'DescNullsFirst',
     };

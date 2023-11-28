@@ -1,8 +1,8 @@
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
-import { useFilter } from '../hooks/useFilter';
 import { getOperandLabel } from '../utils/getOperandLabel';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
@@ -14,7 +14,7 @@ export const ObjectFilterDropdownOperandSelect = () => {
     setIsObjectFilterDropdownOperandSelectUnfolded,
     selectedFilter,
     selectFilter,
-  } = useFilter();
+  } = useFilterDropdown();
 
   const operandsForFilterType = getOperandsForFilterType(
     filterDefinitionUsedInDropdown?.type,

@@ -1,7 +1,7 @@
 import { IconChevronDown } from '@/ui/display/icon';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 
-import { useFilter } from '../hooks/useFilter';
 import { getOperandLabel } from '../utils/getOperandLabel';
 
 export const ObjectFilterDropdownOperandButton = () => {
@@ -9,7 +9,7 @@ export const ObjectFilterDropdownOperandButton = () => {
     selectedOperandInDropdown,
     setIsObjectFilterDropdownOperandSelectUnfolded,
     isObjectFilterDropdownOperandSelectUnfolded,
-  } = useFilter();
+  } = useFilterDropdown();
 
   if (isObjectFilterDropdownOperandSelectUnfolded) {
     return null;
