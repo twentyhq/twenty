@@ -1,9 +1,15 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Req } from '@nestjs/common';
+
+import { Request } from 'express';
+
+import { ApiRestService } from 'src/core/api-rest/api-rest.service';
 
 @Controller('api/*')
 export class ApiRestController {
+  constructor(private readonly apiRestService: ApiRestService) {}
   @Get()
-  handleApiGet(): string {
-    return 'get handled';
+  async handleApiGet(@Req() request: Request): Promise<object> {
+    const result = await this.apiRestService.callGraphql(request);
+    return result.data;
   }
 }
