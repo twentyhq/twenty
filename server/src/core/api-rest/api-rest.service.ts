@@ -5,8 +5,14 @@ import { Request } from 'express';
 import { verify } from 'jsonwebtoken';
 import { ExtractJwt } from 'passport-jwt';
 
+import {
+  OrderByDirection,
+  RecordOrderBy,
+} from 'src/workspace/workspace-query-builder/interfaces/record.interface';
+
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
+import { capitalize } from 'src/utils/capitalize';
 
 @Injectable()
 export class ApiRestService {
@@ -114,27 +120,19 @@ export class ApiRestService {
   }
 
   async convertToGraphqlQuery(
-    requestPath: string,
-    workspaceId: string,
+    objectMetadataItems,
+    objectMetadataItem,
   ): Promise<string> {
-    const objectMetadataItems =
-      await this.objectMetadataService.getObjectMetadataFromWorkspaceId(
-        workspaceId,
-      );
-    const queryAction = requestPath.replace('/api/', '');
-    const objectMetadata = objectMetadataItems.filter(
-      (object) =>
-        object.nameSingular === queryAction ||
-        object.namePlural === queryAction,
-    );
-    if (objectMetadata.length !== 1) {
-      return '';
-    }
-    const objectMetadataItem = objectMetadata[0];
-
     return `
-      query ${queryAction} {
-        ${queryAction} {
+      query FindMany${capitalize(objectMetadataItem.namePlural)}(
+        $filter: ${capitalize(objectMetadataItem.nameSingular)}FilterInput,
+        $orderBy: ${capitalize(objectMetadataItem.nameSingular)}OrderByInput,
+        $lastCursor: String,
+        $limit: Float = 60
+        ) {
+        ${objectMetadataItem.namePlural}(
+        filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor
+        ) {
           edges {
             node {
               id
@@ -146,31 +144,128 @@ export class ApiRestService {
                   ),
                 )
                 .join('\n')}
-            }
+              }
+            cursor
+          }
+          pageInfo {
+            hasNextPage
+            startCursor
+            endCursor
           }
         }
       }
     `;
   }
-  async callGraphql(request: Request) {
+
+  async getObjectMetadataItem(request: Request, workspaceId: string) {
+    const objectMetadataItems =
+      await this.objectMetadataService.getObjectMetadataFromWorkspaceId(
+        workspaceId,
+      );
+    const queryAction = request.path.replace('/api/', '');
+    const objectMetadata = objectMetadataItems.filter(
+      (object) =>
+        object.nameSingular === queryAction ||
+        object.namePlural === queryAction,
+    );
+    if (objectMetadata.length !== 1) {
+      throw Error(`object '${queryAction}' not found`);
+    }
+    return [objectMetadataItems, objectMetadata[0]];
+  }
+
+  parseOrderBy(orderByQuery: string, objectMetadataItem): RecordOrderBy {
+    const orderByItems = orderByQuery.split(',');
+    const result = {};
+    for (const orderByItem of orderByItems) {
+      if (orderByItem.includes('(') && orderByItem.includes(')')) {
+        const [direction, field] = orderByItem.replace(')', '').split('(');
+        if (!(direction in OrderByDirection)) {
+          throw Error(
+            `'order_by' direction '${direction}' invalid. Allowed values are ${Object.values(
+              OrderByDirection,
+            ).join(
+              ', ',
+            )} eg: ?order_by=AscNullsFirst(field_1),DescNullsLast(field_2),field_3`,
+          );
+        }
+        result[field] = direction;
+      } else {
+        result[orderByItem] = OrderByDirection.AscNullsFirst;
+      }
+    }
+    for (const orderByField of Object.keys(result)) {
+      if (
+        !objectMetadataItem.fields
+          .map((field) => field.name)
+          .includes(orderByField)
+      ) {
+        throw Error(
+          `'order_by' field '${orderByField}' does not exist in '${objectMetadataItem.targetTableName}' object`,
+        );
+      }
+    }
+    return <RecordOrderBy>result;
+  }
+
+  parseQueryParams(
+    request: Request,
+    objectMetadataItem,
+  ): {
+    orderBy: object;
+    filter: object;
+    limit: number;
+    lastCursor?: string;
+  } {
+    return {
+      filter: {},
+      orderBy:
+        typeof request.query.order_by === 'string'
+          ? this.parseOrderBy(request.query.order_by, objectMetadataItem)
+          : {},
+      limit:
+        typeof request.query.limit === 'string'
+          ? parseInt(request.query.limit)
+          : 60,
+      lastCursor:
+        typeof request.query.last_cursor === 'string'
+          ? request.query.last_cursor
+          : undefined,
+    };
+  }
+
+  extractWorkspaceId(request: Request) {
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
     if (!token) {
-      return { data: { error: 'UNAUTHENTICATED' } };
+      throw Error('missing authentication token');
     }
-    const workspaceId = verify(
-      token,
-      this.environmentService.getAccessTokenSecret(),
-    )['workspaceId'];
-    return await axios.post(
-      `${request.protocol}://${request.headers.host}/graphql`,
-      {
-        query: await this.convertToGraphqlQuery(request.path, workspaceId),
-      },
-      {
-        headers: {
-          authorization: request.headers.authorization,
+    return verify(token, this.environmentService.getAccessTokenSecret())[
+      'workspaceId'
+    ];
+  }
+
+  async callGraphql(request: Request) {
+    try {
+      const workspaceId = this.extractWorkspaceId(request);
+      const [objectMetadataItems, objectMetadataItem] =
+        await this.getObjectMetadataItem(request, workspaceId);
+      return await axios.post(
+        `${request.protocol}://${request.headers.host}/graphql`,
+        {
+          query: await this.convertToGraphqlQuery(
+            objectMetadataItems,
+            objectMetadataItem,
+          ),
+          variables: this.parseQueryParams(request, objectMetadataItem),
         },
-      },
-    );
+        {
+          headers: {
+            authorization: request.headers.authorization,
+          },
+        },
+      );
+    } catch (err) {
+      return { data: { error: `${err}` } };
+    }
   }
 }
