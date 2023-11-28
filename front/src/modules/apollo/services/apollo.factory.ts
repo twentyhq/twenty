@@ -52,7 +52,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
 
     this.tokenPair = initialTokenPair;
 
-    const buildApolloLink = () => {
+    const buildApolloLink = (): ApolloLink => {
       const httpLink = createUploadLink({
         uri,
       });
