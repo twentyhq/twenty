@@ -22,9 +22,9 @@ export const getResolverName = (
     case 'deleteOne':
       return `delete${pascalCase(objectMetadata.nameSingular)}`;
     case 'updateMany':
-      return `updateMany${pascalCase(objectMetadata.namePlural)}`;
+      return `update${pascalCase(objectMetadata.namePlural)}`;
     case 'deleteMany':
-      return `deleteMany${pascalCase(objectMetadata.namePlural)}`;
+      return `delete${pascalCase(objectMetadata.namePlural)}`;
     default:
       throw new Error(`Unknown resolver type: ${type}`);
   }

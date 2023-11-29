@@ -34,6 +34,7 @@ export class UpdateManyQueryFactory {
       args,
       options.fieldMetadataCollection,
     );
+
     return `
     mutation {
       update${options.targetTableName}Collection(

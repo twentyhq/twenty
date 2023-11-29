@@ -132,7 +132,7 @@ export class WorkspaceQueryRunnerService {
   async updateMany<Record extends IRecord = IRecord>(
     args: UpdateManyResolverArgs<Record>,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<Record | undefined> {
+  ): Promise<Record[] | undefined> {
     const { workspaceId, targetTableName } = options;
 
     const query = this.workspaceQueryBuilderFactory.updateMany(args, options);
@@ -143,7 +143,7 @@ export class WorkspaceQueryRunnerService {
       result,
       targetTableName,
       'update',
-    )?.records[0];
+    )?.records;
   }
 
   async deleteMany<
@@ -152,7 +152,7 @@ export class WorkspaceQueryRunnerService {
   >(
     args: DeleteManyResolverArgs<Filter>,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<Record | undefined> {
+  ): Promise<Record[] | undefined> {
     const { workspaceId, targetTableName } = options;
 
     const query = this.workspaceQueryBuilderFactory.deleteMany(args, options);
@@ -163,7 +163,7 @@ export class WorkspaceQueryRunnerService {
       result,
       targetTableName,
       'deleteFrom',
-    )?.records[0];
+    )?.records;
   }
 
   private async execute(

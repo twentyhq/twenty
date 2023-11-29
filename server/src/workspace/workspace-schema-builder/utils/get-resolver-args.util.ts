@@ -36,6 +36,7 @@ export const getResolverArgs = (
         },
       };
     case 'findOne':
+    case 'deleteMany':
       return {
         filter: {
           kind: InputTypeDefinitionKind.Filter,
@@ -81,13 +82,6 @@ export const getResolverArgs = (
           kind: InputTypeDefinitionKind.Update,
           isNullable: false,
         },
-        filter: {
-          kind: InputTypeDefinitionKind.Filter,
-          isNullable: false,
-        },
-      };
-    case 'deleteMany':
-      return {
         filter: {
           kind: InputTypeDefinitionKind.Filter,
           isNullable: false,
