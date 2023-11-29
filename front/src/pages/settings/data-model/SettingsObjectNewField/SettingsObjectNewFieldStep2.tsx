@@ -54,7 +54,8 @@ export const SettingsObjectNewFieldStep2 = () => {
     initForm({
       relation: {
         field: { icon: activeObjectMetadataItem.icon },
-        objectMetadataId: findObjectMetadataItemByNamePlural('people')?.id,
+        objectMetadataId:
+          findObjectMetadataItemByNamePlural('people')?.id || '',
       },
     });
   }, [
@@ -223,6 +224,7 @@ export const SettingsObjectNewFieldStep2 = () => {
           values={{
             type: formValues.type,
             relation: formValues.relation,
+            select: formValues.select,
           }}
         />
       </SettingsPageContainer>

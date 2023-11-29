@@ -24,7 +24,6 @@ export const grayScale = {
 };
 
 export const mainColors = {
-  yellow: '#ffd338',
   green: '#55ef3c',
   turquoise: '#15de8f',
   sky: '#00e0ff',
@@ -33,10 +32,13 @@ export const mainColors = {
   pink: '#f54bd0',
   red: '#f83e3e',
   orange: '#ff7222',
+  yellow: '#ffd338',
   gray: grayScale.gray30,
 };
 
 export type ThemeColor = keyof typeof mainColors;
+
+export const mainColorNames = Object.keys(mainColors) as ThemeColor[];
 
 export const secondaryColors = {
   yellow80: '#2e2a1a',

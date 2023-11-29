@@ -49,25 +49,54 @@ echo_header $BLUE "                    DATABASE SETUP"
 
 PG_MAIN_VERSION=15
 PG_GRAPHQL_VERSION=1.3.0
-TARGETARCH=$(dpkg --print-architecture)
+CARGO_PGRX_VERSION=0.9.8
+
+current_directory=$(pwd)
 
 # Install PostgresSQL
 echo_header $GREEN "Step [1/4]: Installing PostgreSQL..."
-sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-wget -qO- https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo tee /etc/apt/trusted.gpg.d/pgdg.asc &>/dev/null
-sudo apt update -y || handle_error "Failed to update package list."
-sudo apt install -y postgresql-$PG_MAIN_VERSION postgresql-contrib || handle_error "Failed to install PostgreSQL."su
-sudo apt install -y curl || handle_error "Failed to install curl."
+
+brew reinstall postgresql@$PG_MAIN_VERSION
 
 # Install pg_graphql extensions
 echo_header $GREEN "Step [2/4]: Installing GraphQL for PostgreSQL..."
-curl -L https://github.com/supabase/pg_graphql/releases/download/v$PG_GRAPHQL_VERSION/pg_graphql-v$PG_GRAPHQL_VERSION-pg$PG_MAIN_VERSION-$TARGETARCH-linux-gnu.deb -o pg_graphql.deb || handle_error "Failed to download pg_graphql package."
-sudo dpkg --install pg_graphql.deb || handle_error "Failed to install pg_graphql package."
-rm pg_graphql.deb
+
+# Uninstall existing Rust installation if found
+existing_rust_path=$(which rustc)
+if [ -n "$existing_rust_path" ]; then
+    echo "Uninstalling existing Rust installation..."
+    rm -rf "$existing_rust_path"
+fi
+
+# To force a reinstall of cargo-pgrx, pass --force to the command below
+curl  https://sh.rustup.rs -sSf | sh
+source "$HOME/.cargo/env"
+cargo install --locked cargo-pgrx@$CARGO_PGRX_VERSION --force
+cargo pgrx init --pg$PG_MAIN_VERSION download
+
+# Create a temporary directory
+temp_dir=$(mktemp -d)
+cd "$temp_dir"
+
+curl -LJO https://github.com/supabase/pg_graphql/archive/refs/tags/v$PG_GRAPHQL_VERSION.zip || handle_error "Failed to download pg_graphql package."
+
+unzip pg_graphql-$PG_GRAPHQL_VERSION.zip
+
+[[ ":$PATH:" != *":/opt/homebrew/opt/postgresql@$PG_MAIN_VERSION/bin:"* ]] && PATH="/opt/homebrew/opt/postgresql@$PG_MAIN_VERSION/bin:${PATH}"
+
+cd "pg_graphql-$PG_GRAPHQL_VERSION"
+cargo pgrx install --release --pg-config /opt/homebrew/opt/postgresql@$PG_MAIN_VERSION/bin/pg_config
+
+# # Clean up the temporary directory
+echo "Cleaning up..."
+cd "$current_directory"
+rm -rf "$temp_dir"
 
 # Start postgresql service
 echo_header $GREEN "Step [3/4]: Starting PostgreSQL service..."
-if sudo service postgresql start; then
+
+
+if brew services start postgresql@$PG_MAIN_VERSION; then
     echo "PostgreSQL service started successfully."
 else
     handle_error "Failed to start PostgreSQL service."
@@ -76,4 +105,4 @@ fi
 # Run the init.sql to setup database
 echo_header $GREEN "Step [4/4]: Setting up database..."
 cp ./postgres/init.sql /tmp/init.sql
-sudo -u postgres psql -f /tmp/init.sql || handle_error "Failed to execute init.sql script."
+psql -f /tmp/init.sql -d postgres|| handle_error "Failed to execute init.sql script."

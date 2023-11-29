@@ -14,9 +14,11 @@ import {
   mockedCompaniesMetadata,
   mockedPeopleMetadata,
 } from '~/testing/mock-data/metadata';
-import { sleep } from '~/testing/sleep';
 
-import { SettingsObjectFieldTypeSelectSection } from '../SettingsObjectFieldTypeSelectSection';
+import {
+  SettingsObjectFieldTypeSelectSection,
+  SettingsObjectFieldTypeSelectSectionFormValues,
+} from '../SettingsObjectFieldTypeSelectSection';
 
 const fieldMetadata = mockedCompaniesMetadata.node.fields.edges.find(
   ({ node }) => node.type === FieldMetadataType.Text,
@@ -39,7 +41,9 @@ const meta: Meta<typeof SettingsObjectFieldTypeSelectSection> = {
   args: {
     fieldMetadata: fieldMetadataWithoutId,
     objectMetadataId: mockedCompaniesMetadata.node.id,
-    values: { type: FieldMetadataType.Text },
+    values: {
+      type: FieldMetadataType.Text,
+    } as SettingsObjectFieldTypeSelectSectionFormValues,
   },
   parameters: {
     msw: graphqlMocks,
@@ -61,9 +65,10 @@ export const WithOpenSelect: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await sleep(500);
+    const input = await canvas.findByText('Unique ID');
+    await userEvent.click(input);
 
-    const selectLabel = canvas.getByText('Text');
+    const selectLabel = canvas.getByText('Number');
 
     await userEvent.click(selectLabel);
   },
@@ -93,6 +98,6 @@ export const WithRelationForm: Story = {
         objectMetadataId: mockedPeopleMetadata.node.id,
         type: RelationMetadataType.OneToMany,
       },
-    },
+    } as unknown as SettingsObjectFieldTypeSelectSectionFormValues,
   },
 };

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { DeepPartial } from 'react-hook-form';
 import { z } from 'zod';
 
+import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 import {
   FieldMetadataType,
   RelationMetadataType,
@@ -16,6 +17,7 @@ type FormValues = {
   label: string;
   type: FieldMetadataType;
   relation: SettingsObjectFieldTypeSelectSectionFormValues['relation'];
+  select: SettingsObjectFieldTypeSelectSectionFormValues['select'];
 };
 
 const defaultValues: FormValues = {
@@ -24,7 +26,10 @@ const defaultValues: FormValues = {
   type: FieldMetadataType.Text,
   relation: {
     type: RelationMetadataType.OneToMany,
+    objectMetadataId: '',
+    field: { label: '' },
   },
+  select: [{ color: 'green', label: 'Option 1' }],
 };
 
 const fieldSchema = z.object({
@@ -48,7 +53,26 @@ const relationSchema = fieldSchema.merge(
   }),
 );
 
-const { Relation: _, ...otherFieldTypes } = FieldMetadataType;
+const selectSchema = fieldSchema.merge(
+  z.object({
+    type: z.literal(FieldMetadataType.Enum),
+    select: z
+      .array(
+        z.object({
+          color: themeColorSchema,
+          isDefault: z.boolean().optional(),
+          label: z.string().min(1),
+        }),
+      )
+      .nonempty(),
+  }),
+);
+
+const {
+  Enum: _Enum,
+  Relation: _Relation,
+  ...otherFieldTypes
+} = FieldMetadataType;
 
 const otherFieldTypesSchema = fieldSchema.merge(
   z.object({
@@ -63,8 +87,12 @@ const otherFieldTypesSchema = fieldSchema.merge(
 
 const schema = z.discriminatedUnion('type', [
   relationSchema,
+  selectSchema,
   otherFieldTypesSchema,
 ]);
+
+type PartialFormValues = Partial<Omit<FormValues, 'relation'>> &
+  DeepPartial<Pick<FormValues, 'relation'>>;
 
 export const useFieldMetadataForm = () => {
   const [isInitialized, setIsInitialized] = useState(false);
@@ -73,14 +101,15 @@ export const useFieldMetadataForm = () => {
   const [formValues, setFormValues] = useState<FormValues>(defaultValues);
   const [hasFieldFormChanged, setHasFieldFormChanged] = useState(false);
   const [hasRelationFormChanged, setHasRelationFormChanged] = useState(false);
+  const [hasSelectFormChanged, setHasSelectFormChanged] = useState(false);
   const [validationResult, setValidationResult] = useState(
     schema.safeParse(formValues),
   );
 
   const mergePartialValues = (
     previousValues: FormValues,
-    nextValues: DeepPartial<FormValues>,
-  ) => ({
+    nextValues: PartialFormValues,
+  ): FormValues => ({
     ...previousValues,
     ...nextValues,
     relation: {
@@ -93,7 +122,7 @@ export const useFieldMetadataForm = () => {
     },
   });
 
-  const initForm = (lazyInitialFormValues: DeepPartial<FormValues>) => {
+  const initForm = (lazyInitialFormValues: PartialFormValues) => {
     if (isInitialized) return;
 
     const mergedFormValues = mergePartialValues(
@@ -107,16 +136,22 @@ export const useFieldMetadataForm = () => {
     setIsInitialized(true);
   };
 
-  const handleFormChange = (values: DeepPartial<FormValues>) => {
+  const handleFormChange = (values: PartialFormValues) => {
     const nextFormValues = mergePartialValues(formValues, values);
 
     setFormValues(nextFormValues);
     setValidationResult(schema.safeParse(nextFormValues));
 
-    const { relation: initialRelationFormValues, ...initialFieldFormValues } =
-      initialFormValues;
-    const { relation: nextRelationFormValues, ...nextFieldFormValues } =
-      nextFormValues;
+    const {
+      relation: initialRelationFormValues,
+      select: initialSelectFormValues,
+      ...initialFieldFormValues
+    } = initialFormValues;
+    const {
+      relation: nextRelationFormValues,
+      select: nextSelectFormValues,
+      ...nextFieldFormValues
+    } = nextFormValues;
 
     setHasFieldFormChanged(
       !isDeeplyEqual(initialFieldFormValues, nextFieldFormValues),
@@ -125,13 +160,18 @@ export const useFieldMetadataForm = () => {
       nextFieldFormValues.type === FieldMetadataType.Relation &&
         !isDeeplyEqual(initialRelationFormValues, nextRelationFormValues),
     );
+    setHasSelectFormChanged(
+      nextFieldFormValues.type === FieldMetadataType.Enum &&
+        !isDeeplyEqual(initialSelectFormValues, nextSelectFormValues),
+    );
   };
 
   return {
     formValues,
     handleFormChange,
     hasFieldFormChanged,
-    hasFormChanged: hasFieldFormChanged || hasRelationFormChanged,
+    hasFormChanged:
+      hasFieldFormChanged || hasRelationFormChanged || hasSelectFormChanged,
     hasRelationFormChanged,
     initForm,
     isInitialized,
