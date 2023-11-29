@@ -278,7 +278,11 @@ export class ApiRestService {
     if (typeof limitQuery !== 'string') {
       return 60;
     }
-    return parseInt(limitQuery);
+    const limitParsed = parseInt(limitQuery);
+    if (!Number.isInteger(limitParsed)) {
+      throw Error(`limit '${limitQuery}' is invalid. Should be an integer`);
+    }
+    return limitParsed;
   }
 
   parseCursor(cursorQuery) {
