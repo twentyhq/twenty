@@ -23,6 +23,7 @@ const apiKeyMetadata = {
       description: 'ApiKey name',
       icon: 'IconLink',
       isNullable: false,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,

@@ -4,8 +4,8 @@ import requestDb from '../utils/requestDb';
 
 const perform = async (z: ZObject, bundle: Bundle) => {
   const query = `
-  mutation CreatePerson {
-    createOnePerson(
+  mutation createPerson {
+    createPerson(
       data:{${handleQueryParams(bundle.inputData)}}
     )
     {id}
@@ -23,15 +23,15 @@ export default {
   operation: {
     inputFields: [
       {
-        key: 'firstName',
+        key: 'name__firstName',
         label: 'First Name',
         type: 'string',
-        required: true,
+        required: false,
         list: false,
         altersDynamicFields: false,
       },
       {
-        key: 'lastName',
+        key: 'name__lastName',
         label: 'Last Name',
         type: 'string',
         required: false,
@@ -42,7 +42,7 @@ export default {
         key: 'email',
         label: 'Email',
         type: 'string',
-        required: true,
+        required: false,
         list: false,
         altersDynamicFields: false,
       },
@@ -64,9 +64,11 @@ export default {
       },
     ],
     sample: {
-      firstName: 'John',
-      lastName: 'Doe',
+      name__firstName: 'John',
+      name__lastName: 'Doe',
       email: 'johndoe@gmail.com',
+      phone: '0390900909',
+      city: 'Paris',
     },
     perform,
   },

@@ -24,7 +24,7 @@ const viewMetadata = {
       defaultValue: { value: '' },
     },
     {
-      type: FieldMetadataType.TEXT,
+      type: FieldMetadataType.UUID,
       name: 'objectMetadataId',
       label: 'Object Metadata Id',
       targetColumnMap: {
@@ -33,7 +33,6 @@ const viewMetadata = {
       description: 'View target object',
       icon: null,
       isNullable: false,
-      defaultValue: { value: '' },
     },
     {
       type: FieldMetadataType.TEXT,

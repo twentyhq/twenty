@@ -19,7 +19,7 @@ import NavTitle from '@/ui/navigation/navbar/components/NavTitle';
 
 export const AppNavbar = () => {
   const currentPath = useLocation().pathname;
-  const { openCommandMenu } = useCommandMenu();
+  const { toggleCommandMenu } = useCommandMenu();
 
   const isInSubMenu = useIsSubMenuNavbarDisplayed();
   const { currentUserDueTaskCount } = useCurrentUserTaskCount();
@@ -32,7 +32,7 @@ export const AppNavbar = () => {
             label="Search"
             Icon={IconSearch}
             onClick={() => {
-              openCommandMenu();
+              toggleCommandMenu();
             }}
             keyboard={['⌘', 'K']}
           />

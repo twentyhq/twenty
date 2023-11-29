@@ -4,21 +4,28 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
 import { ObjectFilterDropdownEntitySearchSelect } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownEntitySearchSelect';
-
-import { useFilter } from '../hooks/useFilter';
+import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 
 export const ObjectFilterDropdownEntitySelect = () => {
   const {
     filterDefinitionUsedInDropdown,
     objectFilterDropdownSearchInput,
     objectFilterDropdownSelectedEntityId,
-  } = useFilter();
+  } = useFilterDropdown();
 
-  const { findManyQuery } = useObjectMetadataItem({
-    objectNameSingular: 'company',
+  const objectMetadataNameSingular =
+    filterDefinitionUsedInDropdown?.relationObjectMetadataNameSingular ?? '';
+
+  const objectMetadataNamePlural =
+    filterDefinitionUsedInDropdown?.relationObjectMetadataNamePlural ?? '';
+
+  // TODO: refactor useFilteredSearchEntityQuery
+  const { findManyRecordsQuery } = useObjectMetadataItem({
+    objectNameSingular: objectMetadataNameSingular,
   });
 
-  const useFindManyQuery = (options: any) => useQuery(findManyQuery, options);
+  const useFindManyQuery = (options: any) =>
+    useQuery(findManyRecordsQuery, options);
 
   const { identifiersMapper, searchQuery } = useRelationPicker();
 
@@ -26,7 +33,8 @@ export const ObjectFilterDropdownEntitySelect = () => {
     queryHook: useFindManyQuery,
     filters: [
       {
-        fieldNames: searchQuery?.computeFilterFields?.('company') ?? [],
+        fieldNames:
+          searchQuery?.computeFilterFields?.(objectMetadataNameSingular) ?? [],
         filter: objectFilterDropdownSearchInput,
       },
     ],
@@ -34,8 +42,9 @@ export const ObjectFilterDropdownEntitySelect = () => {
     selectedIds: objectFilterDropdownSelectedEntityId
       ? [objectFilterDropdownSelectedEntityId]
       : [],
-    mappingFunction: (record: any) => identifiersMapper?.(record, 'company'),
-    objectNamePlural: 'companies',
+    mappingFunction: (record: any) =>
+      identifiersMapper?.(record, objectMetadataNameSingular),
+    objectNamePlural: objectMetadataNamePlural,
   });
 
   if (filterDefinitionUsedInDropdown?.type !== 'RELATION') {

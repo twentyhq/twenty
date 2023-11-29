@@ -4,9 +4,8 @@ import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/comp
 import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-
-import { useFilter } from '../hooks/useFilter';
 
 export const ObjectFilterDropdownEntitySearchSelect = ({
   entitiesForSelect,
@@ -20,7 +19,7 @@ export const ObjectFilterDropdownEntitySearchSelect = ({
     objectFilterDropdownSearchInput,
     selectedFilter,
     selectFilter,
-  } = useFilter();
+  } = useFilterDropdown();
 
   const { closeDropdown } = useDropdown();
 
@@ -42,7 +41,6 @@ export const ObjectFilterDropdownEntitySearchSelect = ({
     }
 
     setObjectFilterDropdownSelectedEntityId(selectedEntity.id);
-    closeDropdown();
 
     selectFilter?.({
       displayValue: selectedEntity.name,
@@ -52,6 +50,7 @@ export const ObjectFilterDropdownEntitySearchSelect = ({
       displayAvatarUrl: selectedEntity.avatarUrl,
       definition: filterDefinitionUsedInDropdown,
     });
+    closeDropdown();
   };
 
   const isAllEntitySelectShown =

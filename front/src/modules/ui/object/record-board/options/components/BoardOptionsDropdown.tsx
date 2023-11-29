@@ -1,4 +1,4 @@
-import { useView } from '@/views/hooks/useView';
+import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { Dropdown } from '../../../../layout/dropdown/components/Dropdown';
 import { DropdownScope } from '../../../../layout/dropdown/scopes/DropdownScope';
@@ -19,7 +19,7 @@ type BoardOptionsDropdownProps = Pick<
 export const BoardOptionsDropdown = ({
   onStageAdd,
 }: BoardOptionsDropdownProps) => {
-  const { setViewEditMode } = useView();
+  const { setViewEditMode } = useViewBar();
 
   return (
     <DropdownScope dropdownScopeId={BoardOptionsDropdownId}>

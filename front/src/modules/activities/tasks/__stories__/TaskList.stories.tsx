@@ -3,6 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { TaskList } from '@/activities/tasks/components/TaskList';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedActivities } from '~/testing/mock-data/activities';
 
@@ -16,6 +17,7 @@ const meta: Meta<typeof TaskList> = {
       </MemoryRouter>
     ),
     ComponentDecorator,
+    SnackBarDecorator,
   ],
   args: {
     title: 'Tasks',

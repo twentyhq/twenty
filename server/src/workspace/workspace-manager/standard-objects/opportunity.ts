@@ -47,9 +47,10 @@ const opportunityMetadata = {
       targetColumnMap: {
         value: 'probability',
       },
-      description: 'Opportunity amount',
+      description: 'Opportunity probability',
       icon: 'IconProgressCheck',
       isNullable: true,
+      defaultValue: { value: '0' },
     },
     // Relations
     {
@@ -63,6 +64,7 @@ const opportunityMetadata = {
       },
       description: 'Opportunity pipeline step',
       icon: 'IconKanban',
+      isSystem: true,
       isNullable: true,
     },
     {
@@ -90,6 +92,7 @@ const opportunityMetadata = {
       description: 'Opportunity person',
       icon: 'IconUser',
       isNullable: true,
+      isSystem: true,
     },
     {
       isCustom: false,

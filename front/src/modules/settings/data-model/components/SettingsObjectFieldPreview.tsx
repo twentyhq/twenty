@@ -10,15 +10,16 @@ import { Field } from '~/generated/graphql';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { SettingsObjectFieldPreviewValueEffect } from '../components/SettingsObjectFieldPreviewValueEffect';
-import { settingsFieldMetadataTypes } from '../constants/settingsFieldMetadataTypes';
 import { useFieldPreview } from '../hooks/useFieldPreview';
-import { useRelationFieldPreview } from '../hooks/useRelationFieldPreview';
+
+import { SettingsObjectFieldSelectFormValues } from './SettingsObjectFieldSelectForm';
 
 export type SettingsObjectFieldPreviewProps = {
   className?: string;
   fieldMetadata: Pick<Field, 'icon' | 'label' | 'type'> & { id?: string };
   objectMetadataId: string;
   relationObjectMetadataId?: string;
+  selectOptions?: SettingsObjectFieldSelectFormValues;
   shrink?: boolean;
 };
 
@@ -73,6 +74,7 @@ export const SettingsObjectFieldPreview = ({
   fieldMetadata,
   objectMetadataId,
   relationObjectMetadataId,
+  selectOptions,
   shrink,
 }: SettingsObjectFieldPreviewProps) => {
   const theme = useTheme();
@@ -81,26 +83,16 @@ export const SettingsObjectFieldPreview = ({
     entityId,
     FieldIcon,
     fieldName,
-    hasValue,
     ObjectIcon,
     objectMetadataItem,
+    relationObjectMetadataItem,
     value,
   } = useFieldPreview({
     fieldMetadata,
     objectMetadataId,
+    relationObjectMetadataId,
+    selectOptions,
   });
-
-  const { defaultValue: relationDefaultValue, relationObjectMetadataItem } =
-    useRelationFieldPreview({
-      relationObjectMetadataId,
-      skipDefaultValue:
-        fieldMetadata.type !== FieldMetadataType.Relation || hasValue,
-    });
-
-  const defaultValue =
-    fieldMetadata.type === FieldMetadataType.Relation
-      ? relationDefaultValue
-      : settingsFieldMetadataTypes[fieldMetadata.type].defaultValue;
 
   return (
     <StyledContainer className={className}>
@@ -123,7 +115,7 @@ export const SettingsObjectFieldPreview = ({
       <SettingsObjectFieldPreviewValueEffect
         entityId={entityId}
         fieldName={fieldName}
-        value={value ?? defaultValue}
+        value={value}
       />
       <StyledFieldPreview shrink={shrink}>
         <StyledFieldLabel>

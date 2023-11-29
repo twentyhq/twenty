@@ -27,7 +27,4 @@ export class UserWorkspaceMember {
 
   @Field({ nullable: false })
   locale: string;
-
-  @Field({ nullable: false })
-  allowImpersonation: boolean;
 }

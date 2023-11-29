@@ -26,7 +26,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
-import { useView } from '@/views/hooks/useView';
+import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useBoardCardFields } from '../../hooks/useBoardCardFields';
 import { boardColumnsState } from '../../states/boardColumnsState';
@@ -52,7 +52,7 @@ type ColumnForCreate = {
 export const BoardOptionsDropdownContent = ({
   onStageAdd,
 }: BoardOptionsDropdownContentProps) => {
-  const { setViewEditMode, handleViewNameSubmit } = useView();
+  const { setViewEditMode, handleViewNameSubmit } = useViewBar();
   const { viewEditModeState, currentViewSelector } = useViewScopedStates();
   const { BoardRecoilScopeContext } = useContext(BoardContext);
 
@@ -224,6 +224,7 @@ export const BoardOptionsDropdownContent = ({
             <ViewFieldsVisibilityDropdownSection
               title="Visible"
               fields={visibleBoardCardFields}
+              isVisible={true}
               onVisibilityChange={handleFieldVisibilityChange}
               isDraggable={true}
               onDragEnd={handleReorderField}
@@ -234,6 +235,7 @@ export const BoardOptionsDropdownContent = ({
             <ViewFieldsVisibilityDropdownSection
               title="Hidden"
               fields={hiddenBoardCardFields}
+              isVisible={false}
               onVisibilityChange={handleFieldVisibilityChange}
               isDraggable={false}
             />

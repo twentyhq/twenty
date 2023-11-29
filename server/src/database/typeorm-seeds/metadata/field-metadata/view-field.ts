@@ -106,7 +106,7 @@ export const seedViewFieldFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.TEXT,
+        type: FieldMetadataType.UUID,
         name: 'fieldMetadataId',
         label: 'Field Metadata Id',
         targetColumnMap: {
@@ -116,7 +116,7 @@ export const seedViewFieldFieldMetadata = async (
         icon: 'IconTag',
         isNullable: false,
         isSystem: false,
-        defaultValue: { value: '' },
+        defaultValue: undefined,
       },
       {
         id: SeedViewFieldFieldMetadataIds.View,

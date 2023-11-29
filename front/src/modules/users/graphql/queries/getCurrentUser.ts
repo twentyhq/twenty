@@ -18,7 +18,6 @@ export const GET_CURRENT_USER = gql`
         colorScheme
         avatarUrl
         locale
-        allowImpersonation
       }
       defaultWorkspace {
         id
@@ -27,6 +26,12 @@ export const GET_CURRENT_USER = gql`
         domainName
         inviteHash
         allowImpersonation
+        featureFlags {
+          id
+          key
+          value
+          workspaceId
+        }
       }
     }
   }

@@ -1,5 +1,4 @@
 import { useParams } from 'react-router-dom';
-import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
 import { CompanyTeam } from '@/companies/components/CompanyTeam';
@@ -8,6 +7,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { filterAvailableFieldMetadataItem } from '@/object-record/utils/filterAvailableFieldMetadataItem';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
+import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageFavoriteButton } from '@/ui/layout/page/PageFavoriteButton';
@@ -25,42 +25,49 @@ import { PropertyBox } from '@/ui/object/record-inline-cell/property-box/compone
 import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { FileFolder, useUploadImageMutation } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
-import { useFindOneObjectRecord } from '../hooks/useFindOneObjectRecord';
-import { useUpdateOneObjectRecord } from '../hooks/useUpdateOneObjectRecord';
+import { useFindOneRecord } from '../hooks/useFindOneRecord';
+import { useUpdateOneRecord } from '../hooks/useUpdateOneRecord';
 
 export const RecordShowPage = () => {
-  const { objectNameSingular, objectMetadataId } = useParams<{
+  const { objectNameSingular, objectRecordId } = useParams<{
     objectNameSingular: string;
-    objectMetadataId: string;
+    objectRecordId: string;
   }>();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 
+  const { identifiersMapper } = useRelationPicker();
+
   const { favorites, createFavorite, deleteFavorite } = useFavorites({
     objectNamePlural: objectMetadataItem?.namePlural,
   });
 
   const [, setEntityFields] = useRecoilState(
-    entityFieldsFamilyState(objectMetadataId ?? ''),
+    entityFieldsFamilyState(objectRecordId ?? ''),
   );
 
-  const { object } = useFindOneObjectRecord({
-    objectRecordId: objectMetadataId,
+  const { record } = useFindOneRecord({
+    objectRecordId,
     objectNameSingular,
     onCompleted: (data) => {
       setEntityFields(data);
     },
   });
 
-  const useUpdateOneObjectMutation: () => [(params: any) => any, any] = () => {
-    const { updateOneObject } = useUpdateOneObjectRecord({
-      objectNameSingular,
-    });
+  const [uploadImage] = useUploadImageMutation();
+  const { updateOneRecord } = useUpdateOneRecord({
+    objectNameSingular,
+  });
 
+  const useUpdateOneObjectRecordMutation: () => [
+    (params: any) => any,
+    any,
+  ] = () => {
     const updateEntity = ({
       variables,
     }: {
@@ -71,7 +78,7 @@ export const RecordShowPage = () => {
         };
       };
     }) => {
-      updateOneObject?.({
+      updateOneRecord?.({
         idToUpdate: variables.where.id,
         input: variables.data,
       });
@@ -81,42 +88,76 @@ export const RecordShowPage = () => {
   };
 
   const isFavorite = objectNameSingular
-    ? favorites.some((favorite) => favorite.recordId === object?.id)
+    ? favorites.some((favorite) => favorite.recordId === record?.id)
     : false;
 
   const handleFavoriteButtonClick = async () => {
-    if (!objectNameSingular || !object) return;
-    if (isFavorite) deleteFavorite(object?.id);
+    if (!objectNameSingular || !record) return;
+    if (isFavorite) deleteFavorite(record?.id);
     else {
       const additionalData =
         objectNameSingular === 'person'
           ? {
               labelIdentifier:
-                object.name.firstName + ' ' + object.name.lastName,
-              avatarUrl: object.avatarUrl,
+                record.name.firstName + ' ' + record.name.lastName,
+              avatarUrl: record.avatarUrl,
               avatarType: 'rounded',
-              link: `/object/personV2/${object.id}`,
-              recordId: object.id,
+              link: `/object/personV2/${record.id}`,
+              recordId: record.id,
             }
           : objectNameSingular === 'company'
           ? {
-              labelIdentifier: object.name,
-              avatarUrl: getLogoUrlFromDomainName(object.domainName ?? ''),
+              labelIdentifier: record.name,
+              avatarUrl: getLogoUrlFromDomainName(record.domainName ?? ''),
               avatarType: 'squared',
-              link: `/object/companyV2/${object.id}`,
-              recordId: object.id,
+              link: `/object/companyV2/${record.id}`,
+              recordId: record.id,
             }
           : {};
-      createFavorite(object.id, additionalData);
+      createFavorite(record.id, additionalData);
     }
   };
 
-  if (!object) return <></>;
+  if (!record) return <></>;
 
   const pageName =
     objectNameSingular === 'person'
-      ? object.name.firstName + ' ' + object.name.lastName
-      : object.name;
+      ? record.name.firstName + ' ' + record.name.lastName
+      : record.name;
+
+  const recordIdentifiers = identifiersMapper?.(
+    record,
+    objectMetadataItem?.nameSingular ?? '',
+  );
+
+  const onUploadPicture = async (file: File) => {
+    if (objectNameSingular !== 'person') {
+      return;
+    }
+
+    const result = await uploadImage({
+      variables: {
+        file,
+        fileFolder: FileFolder.PersonPicture,
+      },
+    });
+
+    const avatarUrl = result?.data?.uploadImage;
+
+    if (!avatarUrl) {
+      return;
+    }
+    if (!updateOneRecord) {
+      return;
+    }
+
+    await updateOneRecord({
+      idToUpdate: record?.id,
+      input: {
+        avatarUrl,
+      },
+    });
+  };
 
   return (
     <PageContainer>
@@ -133,8 +174,13 @@ export const RecordShowPage = () => {
         <ShowPageAddButton
           key="add"
           entity={{
-            id: object.id,
-            type: 'Company',
+            id: record.id,
+            type:
+              objectMetadataItem?.nameSingular === 'company'
+                ? 'Company'
+                : objectMetadataItem?.nameSingular === 'person'
+                ? 'Person'
+                : 'Custom',
           }}
         />
       </PageHeader>
@@ -143,29 +189,30 @@ export const RecordShowPage = () => {
           <ShowPageContainer>
             <ShowPageLeftContainer>
               <ShowPageSummaryCard
-                id={object.id}
-                logoOrAvatar={''}
-                title={object.name ?? 'No name'}
-                date={object.createdAt ?? ''}
+                id={record.id}
+                logoOrAvatar={recordIdentifiers?.avatarUrl}
+                title={recordIdentifiers?.name ?? 'No name'}
+                date={record.createdAt ?? ''}
                 renderTitleEditComponent={() => <></>}
-                avatarType="squared"
+                avatarType={recordIdentifiers?.avatarType ?? 'rounded'}
+                onUploadPicture={
+                  objectNameSingular === 'person' ? onUploadPicture : undefined
+                }
               />
               <PropertyBox extraPadding={true}>
                 {objectMetadataItem &&
                   [...objectMetadataItem.fields]
                     .sort((a, b) =>
-                      DateTime.fromISO(a.createdAt)
-                        .diff(DateTime.fromISO(b.createdAt))
-                        .toMillis(),
+                      a.name === 'name' ? -1 : a.name.localeCompare(b.name),
                     )
                     .filter(filterAvailableFieldMetadataItem)
                     .map((metadataField, index) => {
                       return (
                         <FieldContext.Provider
-                          key={object.id + metadataField.id}
+                          key={record.id + metadataField.id}
                           value={{
-                            entityId: object.id,
-                            recoilScopeId: object.id + metadataField.id,
+                            entityId: record.id,
+                            recoilScopeId: record.id + metadataField.id,
                             isLabelIdentifier: false,
                             fieldDefinition:
                               formatFieldMetadataItemAsColumnDefinition({
@@ -173,7 +220,8 @@ export const RecordShowPage = () => {
                                 position: index,
                                 objectMetadataItem,
                               }),
-                            useUpdateEntityMutation: useUpdateOneObjectMutation,
+                            useUpdateEntityMutation:
+                              useUpdateOneObjectRecordMutation,
                             hotkeyScope: InlineCellHotkeyScope.InlineCell,
                           }}
                         >
@@ -184,7 +232,7 @@ export const RecordShowPage = () => {
               </PropertyBox>
               {objectNameSingular === 'company' ? (
                 <>
-                  <CompanyTeam company={object} />
+                  <CompanyTeam company={record} />
                 </>
               ) : (
                 <></>
@@ -192,8 +240,14 @@ export const RecordShowPage = () => {
             </ShowPageLeftContainer>
             <ShowPageRightContainer
               entity={{
-                id: object.id,
-                type: 'Company',
+                id: record.id,
+                // TODO: refacto
+                type:
+                  objectMetadataItem?.nameSingular === 'company'
+                    ? 'Company'
+                    : objectMetadataItem?.nameSingular === 'person'
+                    ? 'Person'
+                    : 'Custom',
               }}
               timeline
               tasks

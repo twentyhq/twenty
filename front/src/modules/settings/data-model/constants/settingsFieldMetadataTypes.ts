@@ -33,6 +33,11 @@ export const settingsFieldMetadataTypes: Record<
     defaultValue:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum magna enim, dapibus non enim in, lacinia faucibus nunc. Sed interdum ante sed felis facilisis, eget ultricies neque molestie. Mauris auctor, justo eu volutpat cursus, libero erat tempus nulla, non sodales lorem lacus a est.',
   },
+  [FieldMetadataType.Numeric]: {
+    label: 'Numeric',
+    Icon: IconNumbers,
+    defaultValue: 2000,
+  },
   [FieldMetadataType.Number]: {
     label: 'Number',
     Icon: IconNumbers,
@@ -56,7 +61,6 @@ export const settingsFieldMetadataTypes: Record<
   [FieldMetadataType.Enum]: {
     label: 'Select',
     Icon: IconTag,
-    defaultValue: { color: 'green', text: 'Option 1' },
   },
   [FieldMetadataType.Currency]: {
     label: 'Currency',

@@ -18,7 +18,7 @@ export const CompanyChip = ({
 }: CompanyChipProps) => (
   <EntityChip
     entityId={id}
-    linkToEntity={`/objects/companies/${id}`}
+    linkToEntity={`/object/company/${id}`}
     name={name}
     avatarType="squared"
     avatarUrl={avatarUrl}

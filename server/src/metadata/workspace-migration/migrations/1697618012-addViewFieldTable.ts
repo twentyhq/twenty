@@ -14,13 +14,12 @@ export const addViewFieldTable: WorkspaceMigrationTableAction[] = [
     columns: [
       {
         columnName: 'fieldMetadataId',
-        columnType: 'varchar',
+        columnType: 'uuid',
         action: WorkspaceMigrationColumnActionType.CREATE,
-        defaultValue: "''",
       },
       {
         columnName: 'position',
-        columnType: 'integer',
+        columnType: 'float',
         action: WorkspaceMigrationColumnActionType.CREATE,
         defaultValue: 0,
       },

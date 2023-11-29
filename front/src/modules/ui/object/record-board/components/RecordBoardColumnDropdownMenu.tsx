@@ -2,15 +2,7 @@ import { useCallback, useContext, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
-import {
-  IconArrowLeft,
-  IconArrowRight,
-  IconPencil,
-  IconPlus,
-} from '@/ui/display/icon';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { relationPickerSearchFilterScopedState } from '@/ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
-import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { IconArrowLeft, IconArrowRight, IconPencil } from '@/ui/display/icon';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -18,8 +10,6 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { logError } from '~/utils/logError';
 
 import { BoardColumnContext } from '../contexts/BoardColumnContext';
 import { useBoardColumns } from '../hooks/useBoardColumns';
@@ -53,27 +43,7 @@ export const RecordBoardColumnDropdownMenu = ({
 
   const boardColumnMenuRef = useRef<HTMLDivElement>(null);
 
-  const { enqueueSnackBar } = useSnackBar();
   const { handleMoveBoardColumn } = useBoardColumns();
-
-  const handleCompanySelected = (
-    selectedCompany: EntityForSelect | null | undefined,
-  ) => {
-    if (!selectedCompany?.id) {
-      enqueueSnackBar(
-        'There was a problem with the company selection, please retry.',
-        {
-          variant: 'error',
-        },
-      );
-
-      logError('There was a problem with the company selection, please retry.');
-      return;
-    }
-
-    //createCompanyProgress(selectedCompany.id, stageId);
-    closeMenu();
-  };
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -93,12 +63,6 @@ export const RecordBoardColumnDropdownMenu = ({
     }
     setCurrentMenu(menu);
   };
-  const [relationPickerSearchFilter] = useRecoilScopedState(
-    relationPickerSearchFilterScopedState,
-  );
-  // const companies = useFilteredSearchCompanyQuery({
-  //   searchFilter: relationPickerSearchFilter,
-  // });
 
   useListenClickOutside({
     refs: [boardColumnMenuRef],
@@ -152,11 +116,11 @@ export const RecordBoardColumnDropdownMenu = ({
               onClick={handleColumnMoveRight}
               text="Move right"
             />
-            <MenuItem
+            {/* <MenuItem
               onClick={() => setMenu('add')}
               LeftIcon={IconPlus}
               text="New opportunity"
-            />
+            /> */}
           </DropdownMenuItemsContainer>
         )}
         {currentMenu === 'title' && (

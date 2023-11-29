@@ -33,17 +33,13 @@ export const addWorkspaceMemberTable: WorkspaceMigrationTableAction[] = [
         columnName: 'colorScheme',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "'Light'",
       },
       {
         columnName: 'locale',
         columnType: 'varchar',
         action: WorkspaceMigrationColumnActionType.CREATE,
-        defaultValue: "'fr'",
-      },
-      {
-        columnName: 'allowImpersonation',
-        columnType: 'boolean',
-        action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "'en'",
       },
       {
         columnName: 'userId',

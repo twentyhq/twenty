@@ -2,13 +2,13 @@ import { DateTime } from 'luxon';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { parseDate } from '~/utils/date-utils';
 
 export const useCurrentUserTaskCount = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
-  const { objects } = useFindManyObjectRecords({
+  const { records: tasks } = useFindManyRecords({
     objectNamePlural: 'activities',
     filter: {
       type: { eq: 'Task' },
@@ -17,7 +17,7 @@ export const useCurrentUserTaskCount = () => {
     },
   });
 
-  const currentUserDueTaskCount = objects.filter((task) => {
+  const currentUserDueTaskCount = tasks.filter((task) => {
     if (!task.dueAt) {
       return false;
     }
