@@ -48,7 +48,7 @@ export const MenuItem = ({
   return (
     <StyledHoverableMenuItemBase
       data-testid={testId ?? undefined}
-      onClick={handleMenuItemClick}
+      onClick={onClick ? handleMenuItemClick : undefined}
       className={className}
       accent={accent}
       isMenuOpen={!!isTooltipOpen}
