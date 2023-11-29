@@ -122,14 +122,6 @@ export type DeleteOneRelationInput = {
   id: Scalars['ID']['input'];
 };
 
-export type FeatureFlag = {
-  __typename?: 'FeatureFlag';
-  id: Scalars['ID']['output'];
-  key: Scalars['String']['output'];
-  value: Scalars['Boolean']['output'];
-  workspaceId: Scalars['String']['output'];
-};
-
 export type FieldConnection = {
   __typename?: 'FieldConnection';
   /** Array of edges. */
@@ -474,7 +466,6 @@ export type Workspace = {
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   displayName?: Maybe<Scalars['String']['output']>;
   domainName?: Maybe<Scalars['String']['output']>;
-  featureFlags: Array<FeatureFlag>;
   id: Scalars['ID']['output'];
   inviteHash?: Maybe<Scalars['String']['output']>;
   logo?: Maybe<Scalars['String']['output']>;
