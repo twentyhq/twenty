@@ -191,9 +191,8 @@ export class ApiRestService {
 
   //TODO: make it work for ?filter=eq(createdAt=2023-07-14T15:09:17.679Z)
   parseFilter(filterQuery, objectMetadataItem, parsedObjectId?: string) {
-    //?filter=eq(field_1=value),gt(field_2=value)
-    //?filter=or(price[gte]=10,and(price[lte]=100,price[lte]=100),not(price[lte]=100))
-    //?filter=price[gte]=10,price[lte]=100 simple-version
+    // full-version -> ?filter=or(price[gte]:10,and(price[lte]:100,price[lte]:100),not(price[lte]:100))
+    // simple-version -> ?filter=price[gte]:10,price[lte]:100
     if (parsedObjectId) {
       return { id: { eq: parsedObjectId } };
     }
@@ -206,20 +205,26 @@ export class ApiRestService {
       };
     const filterItems = filterQuery.split(',');
     for (const filterItem of filterItems) {
-      if (!filterItem.match('^\\w+\\([\\w^,]+=[^,]+\\)$')) {
+      if (
+        !filterItem.match(
+          `^([^\\[\\]]+)\\[(${FILTER_COMPARATORS.join('|')})\\]:([^\\[\\]]+)$`,
+        )
+      ) {
         throw Error(
-          `'filter' invalid for ${filterItem}. eg: ?filter=eq(field_1=value),gt(field_2=value)`,
+          `'filter' invalid for '${filterItem}'. eg: ?filter=price[gte]:10,price[lte]:100`,
         );
       }
-      const [comparator, fieldValue] = filterItem.replace(')', '').split('(');
+      const [fieldAndComparator, value] = filterItem.split(/:(.*)/s);
+      const [field, comparator] = fieldAndComparator
+        .replace(']', '')
+        .split('[');
       if (!FILTER_COMPARATORS.includes(comparator)) {
         throw Error(
-          `'filter' invalid for ${filterItem}, comparator ${comparator} not in ${FILTER_COMPARATORS.join(
+          `'filter' invalid for '${filterItem}', comparator ${comparator} not in ${FILTER_COMPARATORS.join(
             ',',
           )}`,
         );
       }
-      const [field, value] = fieldValue.split(/=(.+)/, 2);
       if (
         !objectMetadataItem.fields.map((field) => field.name).includes(field)
       ) {
@@ -350,7 +355,7 @@ export class ApiRestService {
       const [objectMetadataItems, objectMetadataItem] =
         await this.getObjectMetadata(request, workspaceId);
       return await axios.post(
-        `${request.protocol}://${request.headers.host}/graphql`,
+        `${request.protocol}://${request.headers.host}/graphql`, // Add an env variable INTERNAL_SERVER_URL
         {
           query: await this.computeQuery(
             objectMetadataItems,
