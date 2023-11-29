@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import { AddObjectFilterFromDetailsButton } from '@/ui/object/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { EditObjectFilter } from '@/ui/object/object-filter-dropdown/components/EditObjectFilter';
+import { ObjectFilterDropdownScope } from '@/ui/object/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { EditObjectSort } from '@/ui/object/object-sort-dropdown/components/EditObjectSort';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
@@ -144,14 +145,17 @@ export const ViewBarDetails = ({
             </StyledSeperatorContainer>
           )}
           {currentViewFilters?.map((filter) => (
-            <EditObjectFilter
-              key={filter.fieldMetadataId}
-              fieldMetadataId={filter.fieldMetadataId}
-              label={filter.definition.label}
-              iconName={filter.definition.iconName}
-              value={filter.value}
-              displayValue={filter.displayValue}
-            />
+            <ObjectFilterDropdownScope filterScopeId={filter.fieldMetadataId}>
+              <EditObjectFilter
+                key={filter.fieldMetadataId}
+                fieldMetadataId={filter.fieldMetadataId}
+                label={filter.definition.label}
+                iconName={filter.definition.iconName}
+                value={filter.value}
+                displayValue={filter.displayValue}
+                filterDropdownId={filterDropdownId}
+              />
+            </ObjectFilterDropdownScope>
           ))}
         </StyledChipcontainer>
         {hasFilterButton && (

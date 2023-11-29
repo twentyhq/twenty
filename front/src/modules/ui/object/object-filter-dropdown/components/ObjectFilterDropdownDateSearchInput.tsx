@@ -1,13 +1,19 @@
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 
-export const ObjectFilterDropdownDateSearchInput = () => {
+type ObjectFilterDropdownDateSearchInputProps = {
+  filterDropdownId?: string;
+};
+
+export const ObjectFilterDropdownDateSearchInput = ({
+  filterDropdownId,
+}: ObjectFilterDropdownDateSearchInputProps) => {
   const {
     filterDefinitionUsedInDropdown,
     selectedOperandInDropdown,
     setIsObjectFilterDropdownUnfolded,
     selectFilter,
-  } = useFilterDropdown();
+  } = useFilterDropdown({ filterDropdownId });
 
   const handleChange = (date: Date) => {
     if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) return;

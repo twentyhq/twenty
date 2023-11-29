@@ -12,7 +12,6 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useSortDropdown } from '@/ui/object/object-sort-dropdown/hooks/useSortDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
-import { ObjectSortDropdownId } from '../constants/ObjectSortDropdownId';
 import { SortDefinition } from '../types/SortDefinition';
 import { SORT_DIRECTIONS } from '../types/SortDirection';
 
@@ -44,7 +43,7 @@ export const ObjectSortDropdown = ({
   });
 
   const { toggleDropdown } = useDropdown({
-    dropdownScopeId: ObjectSortDropdownId,
+    dropdownScopeId,
   });
 
   const handleAddSort = (selectedSortDefinition: SortDefinition) => {

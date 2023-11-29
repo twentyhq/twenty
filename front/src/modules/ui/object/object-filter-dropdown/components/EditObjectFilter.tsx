@@ -1,9 +1,11 @@
 import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MultipleFiltersDropdownFilterOnFilterChangedEffect } from '@/ui/object/object-filter-dropdown/components/MultipleFiltersDropdownFilterOnFilterChangedEffect';
 import { ObjectFilterDropdownDateSearchInput } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownDateSearchInput';
 import { ObjectFilterDropdownNumberSearchInput } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownNumberSearchInput';
+import { ObjectFilterDropdownOperandButton } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownOperandButton';
 import { ObjectFilterDropdownTextSearchInput } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownTextSearchInput';
 import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 import { FilterDefinition } from '@/ui/object/object-filter-dropdown/types/FilterDefinition';
@@ -21,20 +23,23 @@ export const EditObjectFilter = ({
   iconName,
   value,
   displayValue,
+  filterDropdownId,
 }: {
   fieldMetadataId: string;
   label: string;
   iconName: string;
   value: string;
   displayValue: string;
+  filterDropdownId?: string;
 }) => {
   const {
     availableFilterDefinitions,
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
     setObjectFilterDropdownSearchInput,
+    setIsObjectFilterDropdownOperandSelectUnfolded,
     selectFilter,
-  } = useFilterDropdown();
+  } = useFilterDropdown({ filterDropdownId });
 
   const { removeViewFilter } = useViewBar();
   const { icons } = useLazyLoadIcons();
@@ -45,11 +50,14 @@ export const EditObjectFilter = ({
     (filter) => filter.fieldMetadataId === fieldMetadataId,
   ) as FilterDefinition;
 
+  console.log({ availableFilter, availableFilterDefinitions });
+
   const handleClick = () => {
     setFilterDefinitionUsedInDropdown(availableFilter);
     const defaultOperand = getOperandsForFilterType(availableFilter?.type)[0];
     setSelectedOperandInDropdown(defaultOperand);
     setObjectFilterDropdownSearchInput(value);
+    setIsObjectFilterDropdownOperandSelectUnfolded(false);
 
     selectFilter?.({
       fieldMetadataId,
@@ -76,20 +84,36 @@ export const EditObjectFilter = ({
         }
         dropdownComponents={
           <>
+            <ObjectFilterDropdownOperandButton
+              filterDropdownId={filterDropdownId}
+            />
+            <DropdownMenuSeparator />
             {['TEXT', 'EMAIL', 'PHONE', 'FULL_NAME', 'LINK'].includes(
               availableFilter?.type,
-            ) && <ObjectFilterDropdownTextSearchInput />}
+            ) && (
+              <ObjectFilterDropdownTextSearchInput
+                filterDropdownId={filterDropdownId}
+              />
+            )}
             {['NUMBER', 'CURRENCY'].includes(availableFilter?.type) && (
-              <ObjectFilterDropdownNumberSearchInput />
+              <ObjectFilterDropdownNumberSearchInput
+                filterDropdownId={filterDropdownId}
+              />
             )}
             {availableFilter?.type === 'DATE_TIME' && (
-              <ObjectFilterDropdownDateSearchInput />
+              <ObjectFilterDropdownDateSearchInput
+                filterDropdownId={filterDropdownId}
+              />
             )}
             {availableFilter?.type === 'RELATION' && (
-              <ObjectFilterDropdownEntitySearchInput />
+              <ObjectFilterDropdownEntitySearchInput
+                filterDropdownId={filterDropdownId}
+              />
             )}
             {availableFilter?.type === 'RELATION' && (
-              <ObjectFilterDropdownEntitySelect />
+              <ObjectFilterDropdownEntitySelect
+                filterDropdownId={filterDropdownId}
+              />
             )}
           </>
         }

@@ -6,12 +6,18 @@ import { useRelationPicker } from '@/ui/input/components/internal/relation-picke
 import { ObjectFilterDropdownEntitySearchSelect } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownEntitySearchSelect';
 import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 
-export const ObjectFilterDropdownEntitySelect = () => {
+type ObjectFilterDropdownEntitySelectProps = {
+  filterDropdownId?: string;
+};
+
+export const ObjectFilterDropdownEntitySelect = ({
+  filterDropdownId,
+}: ObjectFilterDropdownEntitySelectProps) => {
   const {
     filterDefinitionUsedInDropdown,
     objectFilterDropdownSearchInput,
     objectFilterDropdownSelectedEntityId,
-  } = useFilterDropdown();
+  } = useFilterDropdown({ filterDropdownId });
 
   const objectMetadataNameSingular =
     filterDefinitionUsedInDropdown?.relationObjectMetadataNameSingular ?? '';

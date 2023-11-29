@@ -4,12 +4,18 @@ import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useF
 
 import { getOperandLabel } from '../utils/getOperandLabel';
 
-export const ObjectFilterDropdownOperandButton = () => {
+type ObjectFilterDropdownOperandButtonProps = {
+  filterDropdownId?: string;
+};
+
+export const ObjectFilterDropdownOperandButton = ({
+  filterDropdownId,
+}: ObjectFilterDropdownOperandButtonProps) => {
   const {
     selectedOperandInDropdown,
     setIsObjectFilterDropdownOperandSelectUnfolded,
     isObjectFilterDropdownOperandSelectUnfolded,
-  } = useFilterDropdown();
+  } = useFilterDropdown({ filterDropdownId });
 
   if (isObjectFilterDropdownOperandSelectUnfolded) {
     return null;

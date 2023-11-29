@@ -3,7 +3,13 @@ import { ChangeEvent } from 'react';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 
-export const ObjectFilterDropdownTextSearchInput = () => {
+type ObjectFilterDropdownTextSearchInputProps = {
+  filterDropdownId?: string;
+};
+
+export const ObjectFilterDropdownTextSearchInput = ({
+  filterDropdownId,
+}: ObjectFilterDropdownTextSearchInputProps) => {
   const {
     filterDefinitionUsedInDropdown,
     selectedOperandInDropdown,
@@ -11,7 +17,7 @@ export const ObjectFilterDropdownTextSearchInput = () => {
     setObjectFilterDropdownSearchInput,
     selectedFilter,
     selectFilter,
-  } = useFilterDropdown();
+  } = useFilterDropdown({ filterDropdownId });
 
   return (
     filterDefinitionUsedInDropdown &&
