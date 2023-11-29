@@ -325,6 +325,7 @@ type ChipProps = {
 declare const Chip: ({ size, label, disabled, clickable, variant, leftComponent, rightComponent, accent, maxWidth, className, onClick, }: ChipProps) => react_jsx_runtime.JSX.Element;
 
 type IconComponent = FunctionComponent<{
+    className?: string;
     color?: string;
     size?: number;
     stroke?: number;
@@ -336,7 +337,7 @@ type EntityChipProps = {
     linkToEntity?: string;
     entityId: string;
     name: string;
-    pictureUrl?: string;
+    avatarUrl?: string;
     avatarType?: AvatarType;
     variant?: EntityChipVariant;
     LeftIcon?: IconComponent;
@@ -345,7 +346,7 @@ declare enum EntityChipVariant {
     Regular = "regular",
     Transparent = "transparent"
 }
-declare const EntityChip: ({ linkToEntity, entityId, name, pictureUrl, avatarType, variant, LeftIcon, }: EntityChipProps) => react_jsx_runtime.JSX.Element;
+declare const EntityChip: ({ linkToEntity, entityId, name, avatarUrl, avatarType, variant, LeftIcon, }: EntityChipProps) => react_jsx_runtime.JSX.Element;
 
 type IconAddressBookProps = TablerIconsProps;
 declare const IconAddressBook: (props: IconAddressBookProps) => JSX.Element;
@@ -538,23 +539,17 @@ type RoundedIconButtonProps = {
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 declare const RoundedIconButton: ({ Icon, onClick, disabled, }: RoundedIconButtonProps) => react_jsx_runtime.JSX.Element;
 
-declare enum ColorScheme$1 {
-    Dark = "Dark",
-    Light = "Light",
-    System = "System"
-}
+type ColorScheme = 'Dark' | 'Light' | 'System';
 
 type ColorSchemeSegmentProps = {
-    variant: `${Lowercase<ColorScheme$1.Dark | ColorScheme$1.Light>}`;
+    variant: ColorScheme;
     controls: AnimationControls;
 } & React__default.ComponentPropsWithoutRef<'div'>;
 type ColorSchemeCardProps = {
-    variant: `${Lowercase<ColorScheme$1>}`;
+    variant: ColorScheme;
     selected?: boolean;
 } & React__default.ComponentPropsWithoutRef<'div'>;
 declare const ColorSchemeCard: ({ variant, selected, onClick, }: ColorSchemeCardProps) => react_jsx_runtime.JSX.Element;
-
-type ColorScheme = 'Dark' | 'Light' | 'System';
 
 type ColorSchemePickerProps = {
     value: ColorScheme;
