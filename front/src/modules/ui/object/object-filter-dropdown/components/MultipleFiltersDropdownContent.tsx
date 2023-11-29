@@ -1,6 +1,5 @@
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-
-import { useFilter } from '../hooks/useFilter';
+import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 
 import { MultipleFiltersDropdownFilterOnFilterChangedEffect } from './MultipleFiltersDropdownFilterOnFilterChangedEffect';
 import { ObjectFilterDropdownDateSearchInput } from './ObjectFilterDropdownDateSearchInput';
@@ -17,7 +16,7 @@ export const MultipleFiltersDropdownContent = () => {
     isObjectFilterDropdownOperandSelectUnfolded,
     filterDefinitionUsedInDropdown,
     selectedOperandInDropdown,
-  } = useFilter();
+  } = useFilterDropdown();
 
   return (
     <>

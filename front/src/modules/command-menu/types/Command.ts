@@ -6,6 +6,7 @@ export enum CommandType {
 }
 
 export type Command = {
+  id: string;
   to: string;
   label: string;
   type: CommandType.Navigate | CommandType.Create;

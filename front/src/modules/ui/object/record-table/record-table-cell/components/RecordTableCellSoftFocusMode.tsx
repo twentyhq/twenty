@@ -61,10 +61,6 @@ export const TableCellSoftFocusMode = ({
     '*',
     (keyboardEvent) => {
       if (!isFieldInputOnly) {
-        keyboardEvent.preventDefault();
-        keyboardEvent.stopPropagation();
-        keyboardEvent.stopImmediatePropagation();
-
         const isWritingText =
           !isNonTextWritingKey(keyboardEvent.key) &&
           !keyboardEvent.ctrlKey &&
@@ -73,6 +69,10 @@ export const TableCellSoftFocusMode = ({
         if (!isWritingText) {
           return;
         }
+
+        keyboardEvent.preventDefault();
+        keyboardEvent.stopPropagation();
+        keyboardEvent.stopImmediatePropagation();
 
         openTableCell({
           initialValue: {

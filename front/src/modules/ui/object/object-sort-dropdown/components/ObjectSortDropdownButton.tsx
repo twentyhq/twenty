@@ -10,19 +10,21 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { useSortDropdown } from '@/ui/object/object-sort-dropdown/hooks/useSortDropdown';
+import { ObjectSortDropdownScope } from '@/ui/object/object-sort-dropdown/scopes/ObjectSortDropdownScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { ObjectSortDropdownId } from '../constants/ObjectSortDropdownId';
-import { useObjectSortDropdown } from '../hooks/useObjectSortDropdown';
 import { SortDefinition } from '../types/SortDefinition';
 import { SORT_DIRECTIONS, SortDirection } from '../types/SortDirection';
 
 export type ObjectSortDropdownButtonProps = {
+  sortDropdownId: string;
   hotkeyScope: HotkeyScope;
-  isPrimaryButton?: boolean;
 };
 
 export const ObjectSortDropdownButton = ({
+  sortDropdownId,
   hotkeyScope,
 }: ObjectSortDropdownButtonProps) => {
   const [isSortDirectionMenuUnfolded, setIsSortDirectionMenuUnfolded] =
@@ -36,8 +38,9 @@ export const ObjectSortDropdownButton = ({
     setSelectedSortDirection('asc');
   }, []);
 
-  const { availableSortDefinitions, onSortSelect, isSortSelected } =
-    useObjectSortDropdown();
+  const { isSortSelected } = useSortDropdown({
+    sortDropdownId: sortDropdownId,
+  });
 
   const { toggleDropdown } = useDropdown({
     dropdownScopeId: ObjectSortDropdownId,
@@ -47,6 +50,10 @@ export const ObjectSortDropdownButton = ({
     toggleDropdown();
     resetState();
   };
+
+  const { availableSortDefinitions, onSortSelect } = useSortDropdown({
+    sortDropdownId: sortDropdownId,
+  });
 
   const handleAddSort = (selectedSortDefinition: SortDefinition) => {
     toggleDropdown();
@@ -64,60 +71,64 @@ export const ObjectSortDropdownButton = ({
   const { icons } = useLazyLoadIcons();
 
   return (
-    <DropdownScope dropdownScopeId={ObjectSortDropdownId}>
-      <Dropdown
-        dropdownHotkeyScope={hotkeyScope}
-        dropdownOffset={{ y: 8 }}
-        clickableComponent={
-          <LightButton
-            title="Sort"
-            active={isSortSelected}
-            onClick={handleButtonClick}
-          />
-        }
-        dropdownComponents={
-          <>
-            {isSortDirectionMenuUnfolded ? (
-              <DropdownMenuItemsContainer>
-                {SORT_DIRECTIONS.map((sortOrder, index) => (
-                  <MenuItem
-                    key={index}
-                    onClick={() => {
-                      setSelectedSortDirection(sortOrder);
-                      setIsSortDirectionMenuUnfolded(false);
-                    }}
-                    text={sortOrder === 'asc' ? 'Ascending' : 'Descending'}
-                  />
-                ))}
-              </DropdownMenuItemsContainer>
-            ) : (
-              <>
-                <DropdownMenuHeader
-                  EndIcon={IconChevronDown}
-                  onClick={() => setIsSortDirectionMenuUnfolded(true)}
-                >
-                  {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
-                </DropdownMenuHeader>
-                <DropdownMenuSeparator />
+    <ObjectSortDropdownScope sortScopeId={sortDropdownId}>
+      <DropdownScope dropdownScopeId={ObjectSortDropdownId}>
+        <Dropdown
+          dropdownHotkeyScope={hotkeyScope}
+          dropdownOffset={{ y: 8 }}
+          clickableComponent={
+            <LightButton
+              title="Sort"
+              active={isSortSelected}
+              onClick={handleButtonClick}
+            />
+          }
+          dropdownComponents={
+            <>
+              {isSortDirectionMenuUnfolded ? (
                 <DropdownMenuItemsContainer>
-                  {[...availableSortDefinitions]
-                    .sort((a, b) => a.label.localeCompare(b.label))
-                    .map((availableSortDefinition, index) => (
-                      <MenuItem
-                        testId={`select-sort-${index}`}
-                        key={index}
-                        onClick={() => handleAddSort(availableSortDefinition)}
-                        LeftIcon={icons[availableSortDefinition.iconName]}
-                        text={availableSortDefinition.label}
-                      />
-                    ))}
+                  {SORT_DIRECTIONS.map((sortOrder, index) => (
+                    <MenuItem
+                      key={index}
+                      onClick={() => {
+                        setSelectedSortDirection(sortOrder);
+                        setIsSortDirectionMenuUnfolded(false);
+                      }}
+                      text={sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+                    />
+                  ))}
                 </DropdownMenuItemsContainer>
-              </>
-            )}
-          </>
-        }
-        onClose={handleDropdownButtonClose}
-      />
-    </DropdownScope>
+              ) : (
+                <>
+                  <DropdownMenuHeader
+                    EndIcon={IconChevronDown}
+                    onClick={() => setIsSortDirectionMenuUnfolded(true)}
+                  >
+                    {selectedSortDirection === 'asc'
+                      ? 'Ascending'
+                      : 'Descending'}
+                  </DropdownMenuHeader>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItemsContainer>
+                    {[...availableSortDefinitions]
+                      .sort((a, b) => a.label.localeCompare(b.label))
+                      .map((availableSortDefinition, index) => (
+                        <MenuItem
+                          testId={`select-sort-${index}`}
+                          key={index}
+                          onClick={() => handleAddSort(availableSortDefinition)}
+                          LeftIcon={icons[availableSortDefinition.iconName]}
+                          text={availableSortDefinition.label}
+                        />
+                      ))}
+                  </DropdownMenuItemsContainer>
+                </>
+              )}
+            </>
+          }
+          onClose={handleDropdownButtonClose}
+        />
+      </DropdownScope>
+    </ObjectSortDropdownScope>
   );
 };

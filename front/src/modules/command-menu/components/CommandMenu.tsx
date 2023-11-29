@@ -1,12 +1,18 @@
 import { useState } from 'react';
+import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { CommandMenuSelectableListEffect } from '@/command-menu/components/CommandMenuSelectableListEffect';
 import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { Person } from '@/people/types/Person';
 import { IconNotes } from '@/ui/display/icon';
+import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { Avatar } from '@/users/components/Avatar';
 import { getLogoUrlFromDomainName } from '~/utils';
 
@@ -17,20 +23,76 @@ import { Command, CommandType } from '../types/Command';
 
 import { CommandGroup } from './CommandGroup';
 import { CommandMenuItem } from './CommandMenuItem';
-import {
-  StyledDialog,
-  StyledEmpty,
-  StyledInput,
-  StyledList,
-} from './CommandMenuStyles';
+
+export const StyledDialog = styled.div`
+  background: ${({ theme }) => theme.background.primary};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
+  font-family: ${({ theme }) => theme.font.family};
+  left: 50%;
+  max-width: 640px;
+  overflow: hidden;
+  padding: 0;
+  position: fixed;
+  top: 30%;
+  transform: ${() =>
+    useIsMobile() ? 'translateX(-49.5%)' : 'translateX(-50%)'};
+  width: ${() => (useIsMobile() ? 'calc(100% - 40px)' : '100%')};
+  z-index: 1000;
+`;
+
+export const StyledInput = styled.input`
+  background: ${({ theme }) => theme.background.primary};
+  border: none;
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-radius: 0;
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.lg};
+  margin: 0;
+  outline: none;
+  padding: ${({ theme }) => theme.spacing(5)};
+  width: ${({ theme }) => `calc(100% - ${theme.spacing(10)})`};
+
+  &::placeholder {
+    color: ${({ theme }) => theme.font.color.light};
+  }
+`;
+
+export const StyledList = styled.div`
+  background: ${({ theme }) => theme.background.secondary};
+  height: 400px;
+  max-height: 400px;
+  overscroll-behavior: contain;
+  transition: 100ms ease;
+  transition-property: height;
+`;
+
+export const StyledInnerList = styled.div`
+  padding-left: ${({ theme }) => theme.spacing(1)};
+  width: 100%;
+`;
+
+export const StyledEmpty = styled.div`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.light};
+  display: flex;
+  font-size: ${({ theme }) => theme.font.size.md};
+  height: 64px;
+  justify-content: center;
+  white-space: pre-wrap;
+`;
 
 export const CommandMenu = () => {
-  const { openCommandMenu, closeCommandMenu, toggleCommandMenu } =
-    useCommandMenu();
+  const { toggleCommandMenu, closeCommandMenu } = useCommandMenu();
+
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [search, setSearch] = useState('');
   const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  };
 
   useScopedHotkeys(
     'ctrl+k,meta+k',
@@ -39,7 +101,17 @@ export const CommandMenu = () => {
       toggleCommandMenu();
     },
     AppHotkeyScope.CommandMenu,
-    [openCommandMenu, setSearch],
+    [toggleCommandMenu, setSearch],
+  );
+
+  useScopedHotkeys(
+    'esc',
+    () => {
+      setSearch('');
+      closeCommandMenu();
+    },
+    AppHotkeyScope.CommandMenu,
+    [toggleCommandMenu, setSearch],
   );
 
   const { objects: people } = useFindManyObjectRecords<Person>({
@@ -102,96 +174,133 @@ export const CommandMenu = () => {
         : true) && cmd.type === CommandType.Create,
   );
 
+  const selectableItemIds = matchingCreateCommand
+    .map((cmd) => cmd.id)
+    .concat(matchingNavigateCommand.map((cmd) => cmd.id))
+    .concat(people.map((person) => person.id))
+    .concat(companies.map((company) => company.id))
+    .concat(activities.map((activity) => activity.id));
+
   return (
-    <StyledDialog
-      open={isCommandMenuOpened}
-      onOpenChange={(opened) => {
-        if (!opened) {
-          closeCommandMenu();
-        }
-      }}
-      shouldFilter={false}
-      label="Global Command Menu"
-    >
-      <StyledInput
-        value={search}
-        placeholder="Search"
-        onValueChange={setSearch}
-      />
-      <StyledList>
-        <StyledEmpty>No results found.</StyledEmpty>
-        <CommandGroup heading="Create">
-          {matchingCreateCommand.map((cmd) => (
-            <CommandMenuItem
-              to={cmd.to}
-              key={cmd.label}
-              Icon={cmd.Icon}
-              label={cmd.label}
-              onClick={cmd.onCommandClick}
-              firstHotKey={cmd.firstHotKey}
-              secondHotKey={cmd.secondHotKey}
-            />
-          ))}
-        </CommandGroup>
-        <CommandGroup heading="Navigate">
-          {matchingNavigateCommand.map((cmd) => (
-            <CommandMenuItem
-              to={cmd.to}
-              key={cmd.label}
-              label={cmd.label}
-              Icon={cmd.Icon}
-              onClick={cmd.onCommandClick}
-              firstHotKey={cmd.firstHotKey}
-              secondHotKey={cmd.secondHotKey}
-            />
-          ))}
-        </CommandGroup>
-        <CommandGroup heading="People">
-          {people.map((person) => (
-            <CommandMenuItem
-              key={person.id}
-              to={`object/person/${person.id}`}
-              label={person.name?.firstName + ' ' + person.name?.lastName}
-              Icon={() => (
-                <Avatar
-                  type="rounded"
-                  avatarUrl={person.avatarUrl}
-                  colorId={person.id}
-                  placeholder={
-                    person.name?.firstName + ' ' + person.name?.lastName
-                  }
-                />
-              )}
-            />
-          ))}
-        </CommandGroup>
-        <CommandGroup heading="Companies">
-          {companies.map((company) => (
-            <CommandMenuItem
-              key={company.id}
-              label={company.name}
-              to={`object/company/${company.id}`}
-              Icon={() => (
-                <Avatar
-                  colorId={company.id}
-                  placeholder={company.name}
-                  avatarUrl={getLogoUrlFromDomainName(company.domainName)}
-                />
-              )}
-            />
-          ))}
-        </CommandGroup>
-        <CommandGroup heading="Notes">
-          {activities.map((activity) => (
-            <CommandMenuItem
-              Icon={IconNotes}
-              key={activity.id}
-              label={activity.title ?? ''}
-              onClick={() => openActivityRightDrawer(activity.id)}
-            />
-          ))}
-        </CommandGroup>
-      </StyledList>
-    </StyledDialog>
+    isCommandMenuOpened && (
+      <StyledDialog>
+        <StyledInput
+          value={search}
+          placeholder="Search"
+          onChange={handleSearchChange}
+        />
+        <StyledList>
+          <ScrollWrapper>
+            <StyledInnerList>
+              <CommandMenuSelectableListEffect
+                selectableItemIds={selectableItemIds}
+              />
+              <SelectableList
+                selectableListId="command-menu-list"
+                selectableItemIds={selectableItemIds}
+              >
+                {!matchingCreateCommand.length &&
+                  !matchingNavigateCommand.length &&
+                  !people.length &&
+                  !companies.length &&
+                  !activities.length && (
+                    <StyledEmpty>No results found</StyledEmpty>
+                  )}
+                <CommandGroup heading="Create">
+                  {matchingCreateCommand.map((cmd) => (
+                    <SelectableItem itemId={cmd.id} key={cmd.id}>
+                      <CommandMenuItem
+                        id={cmd.id}
+                        to={cmd.to}
+                        key={cmd.id}
+                        Icon={cmd.Icon}
+                        label={cmd.label}
+                        onClick={cmd.onCommandClick}
+                        firstHotKey={cmd.firstHotKey}
+                        secondHotKey={cmd.secondHotKey}
+                      />
+                    </SelectableItem>
+                  ))}
+                </CommandGroup>
+                <CommandGroup heading="Navigate">
+                  {matchingNavigateCommand.map((cmd) => (
+                    <SelectableItem itemId={cmd.id} key={cmd.id}>
+                      <CommandMenuItem
+                        id={cmd.id}
+                        to={cmd.to}
+                        key={cmd.id}
+                        label={cmd.label}
+                        Icon={cmd.Icon}
+                        onClick={cmd.onCommandClick}
+                        firstHotKey={cmd.firstHotKey}
+                        secondHotKey={cmd.secondHotKey}
+                      />
+                    </SelectableItem>
+                  ))}
+                </CommandGroup>
+                <CommandGroup heading="People">
+                  {people.map((person) => (
+                    <SelectableItem itemId={person.id} key={person.id}>
+                      <CommandMenuItem
+                        id={person.id}
+                        key={person.id}
+                        to={`object/person/${person.id}`}
+                        label={
+                          person.name.firstName + ' ' + person.name.lastName
+                        }
+                        Icon={() => (
+                          <Avatar
+                            type="rounded"
+                            avatarUrl={null}
+                            colorId={person.id}
+                            placeholder={
+                              person.name.firstName + ' ' + person.name.lastName
+                            }
+                          />
+                        )}
+                      />
+                    </SelectableItem>
+                  ))}
+                </CommandGroup>
+                <CommandGroup heading="Companies">
+                  {companies.map((company) => (
+                    <SelectableItem itemId={company.id} key={company.id}>
+                      <CommandMenuItem
+                        id={company.id}
+                        key={company.id}
+                        label={company.name}
+                        to={`object/company/${company.id}`}
+                        Icon={() => (
+                          <Avatar
+                            colorId={company.id}
+                            placeholder={company.name}
+                            avatarUrl={getLogoUrlFromDomainName(
+                              company.domainName,
+                            )}
+                          />
+                        )}
+                      />
+                    </SelectableItem>
+                  ))}
+                </CommandGroup>
+                <CommandGroup heading="Notes">
+                  {activities.map((activity) => (
+                    <SelectableItem itemId={activity.id} key={activity.id}>
+                      <CommandMenuItem
+                        id={activity.id}
+                        Icon={IconNotes}
+                        key={activity.id}
+                        label={activity.title ?? ''}
+                        onClick={() => openActivityRightDrawer(activity.id)}
+                      />
+                    </SelectableItem>
+                  ))}
+                </CommandGroup>
+              </SelectableList>
+            </StyledInnerList>
+          </ScrollWrapper>
+        </StyledList>
+      </StyledDialog>
+    )
   );
 };
