@@ -15,6 +15,7 @@ import {
   mockedPeopleMetadata,
 } from '~/testing/mock-data/metadata';
 
+import { fieldMetadataFormDefaultValues } from '../../hooks/useFieldMetadataForm';
 import {
   SettingsObjectFieldTypeSelectSection,
   SettingsObjectFieldTypeSelectSectionFormValues,
@@ -41,11 +42,10 @@ const meta: Meta<typeof SettingsObjectFieldTypeSelectSection> = {
   args: {
     fieldMetadata: fieldMetadataWithoutId,
     objectMetadataId: mockedCompaniesMetadata.node.id,
-    values: {
-      type: FieldMetadataType.Text,
-    } as SettingsObjectFieldTypeSelectSectionFormValues,
+    values: fieldMetadataFormDefaultValues,
   },
   parameters: {
+    container: { width: 512 },
     msw: graphqlMocks,
   },
 };
@@ -92,6 +92,7 @@ export const WithRelationForm: Story = {
     )?.node,
     relationFieldMetadata,
     values: {
+      ...fieldMetadataFormDefaultValues,
       type: FieldMetadataType.Relation,
       relation: {
         field: relationFieldMetadata,
@@ -99,5 +100,40 @@ export const WithRelationForm: Story = {
         type: RelationMetadataType.OneToMany,
       },
     } as unknown as SettingsObjectFieldTypeSelectSectionFormValues,
+  },
+};
+
+export const WithSelectForm: Story = {
+  args: {
+    fieldMetadata: { label: 'Industry', icon: 'IconBuildingFactory2' },
+    values: {
+      ...fieldMetadataFormDefaultValues,
+      type: FieldMetadataType.Enum,
+      select: [
+        {
+          color: 'pink',
+          isDefault: true,
+          label: '💊 Health',
+          value: 'HEALTH',
+        },
+        {
+          color: 'purple',
+          label: '🏭 Industry',
+          value: 'INDUSTRY',
+        },
+        { color: 'sky', label: '🤖 SaaS', value: 'SAAS' },
+        {
+          color: 'turquoise',
+          label: '🌿 Green tech',
+          value: 'GREEN_TECH',
+        },
+        {
+          color: 'yellow',
+          label: '🚲 Mobility',
+          value: 'MOBILITY',
+        },
+        { color: 'green', label: '🌏 NGO', value: 'NGO' },
+      ],
+    },
   },
 };
