@@ -189,7 +189,6 @@ export class ApiRestService {
     return [objectMetadataItems, objectMetadata[0]];
   }
 
-  //TODO: make it work for ?filter=eq(createdAt=2023-07-14T15:09:17.679Z)
   parseFilter(filterQuery, objectMetadataItem, parsedObjectId?: string) {
     // full-version -> ?filter=or(price[gte]:10,and(price[lte]:100,price[lte]:100),not(price[lte]:100))
     // simple-version -> ?filter=price[gte]:10,price[lte]:100
