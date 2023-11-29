@@ -39,6 +39,7 @@ export const MenuItem = ({
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
 
   const handleMenuItemClick = (event: MouseEvent<HTMLLIElement>) => {
+    if (!onClick) return;
     event.preventDefault();
     event.stopPropagation();
 
@@ -48,7 +49,7 @@ export const MenuItem = ({
   return (
     <StyledHoverableMenuItemBase
       data-testid={testId ?? undefined}
-      onClick={onClick ? handleMenuItemClick : undefined}
+      onClick={handleMenuItemClick}
       className={className}
       accent={accent}
       isMenuOpen={!!isTooltipOpen}
