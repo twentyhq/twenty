@@ -311,10 +311,10 @@ export class ApiRestService {
   }
 
   parseObject(request) {
-    const queryAction = request.path.replace('/api/', '').split('/');
+    const queryAction = request.path.replace('/rest/', '').split('/');
     if (queryAction.length > 2) {
       throw Error(
-        `Query path '${request.path}' invalid. Valid examples: /api/companies/id or /api/companies`,
+        `Query path '${request.path}' invalid. Valid examples: /rest/companies/id or /rest/companies`,
       );
     }
     if (queryAction.length === 1) {

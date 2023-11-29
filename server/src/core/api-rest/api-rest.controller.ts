@@ -4,7 +4,7 @@ import { Request } from 'express';
 
 import { ApiRestService } from 'src/core/api-rest/api-rest.service';
 
-@Controller('api/*')
+@Controller('rest/*')
 export class ApiRestController {
   constructor(private readonly apiRestService: ApiRestService) {}
   @Get()
