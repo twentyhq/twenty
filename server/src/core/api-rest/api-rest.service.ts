@@ -219,19 +219,19 @@ export class ApiRestService {
   }
 
   parseOrderBy(orderByQuery: string, objectMetadataItem): RecordOrderBy {
-    //?order_by=AscNullsFirst(field_1),DescNullsLast(field_2),field_3
+    //?order_by=field_1[AscNullsFirst],field_2[DescNullsLast],field_3
     const orderByItems = orderByQuery.split(',');
     const result = {};
     for (const orderByItem of orderByItems) {
-      if (orderByItem.includes('(') && orderByItem.includes(')')) {
-        const [direction, field] = orderByItem.replace(')', '').split('(');
+      if (orderByItem.includes('[') && orderByItem.includes(']')) {
+        const [field, direction] = orderByItem.replace(']', '').split('[');
         if (!(direction in OrderByDirection)) {
           throw Error(
-            `'order_by' direction '${direction}' invalid. Allowed values are ${Object.values(
+            `'order_by' direction '${direction}' invalid. Allowed values are '${Object.values(
               OrderByDirection,
             ).join(
-              ', ',
-            )} eg: ?order_by=AscNullsFirst(field_1),DescNullsLast(field_2),field_3`,
+              "', '",
+            )}'. eg: ?order_by=field_1[AscNullsFirst],field_2[DescNullsLast],field_3`,
           );
         }
         result[field] = direction;
