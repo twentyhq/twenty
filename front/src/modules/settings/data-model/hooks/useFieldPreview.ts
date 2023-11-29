@@ -1,5 +1,5 @@
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { Field } from '~/generated-metadata/graphql';
 import { assertNotNull } from '~/utils/assert';
@@ -14,7 +14,7 @@ export const useFieldPreview = ({
   const { findObjectMetadataItemById } = useObjectMetadataItemForSettings();
   const objectMetadataItem = findObjectMetadataItemById(objectMetadataId);
 
-  const { objects } = useFindManyObjectRecords({
+  const { records: objects } = useFindManyRecords({
     objectNamePlural: objectMetadataItem?.namePlural,
     skip: !objectMetadataItem || !fieldMetadata.id,
   });

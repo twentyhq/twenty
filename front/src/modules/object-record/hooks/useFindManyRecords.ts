@@ -8,6 +8,7 @@ import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimis
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
+import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
@@ -15,18 +16,16 @@ import { capitalize } from '~/utils/string/capitalize';
 
 import { cursorFamilyState } from '../states/cursorFamilyState';
 import { hasNextPageFamilyState } from '../states/hasNextPageFamilyState';
-import { isFetchingMoreObjectsFamilyState } from '../states/isFetchingMoreObjectsFamilyState';
-import { PaginatedObjectType } from '../types/PaginatedObjectType';
+import { isFetchingMoreRecordsFamilyState } from '../states/isFetchingMoreRecordsFamilyState';
+import { PaginatedRecordType } from '../types/PaginatedRecordType';
 import {
-  PaginatedObjectTypeEdge,
-  PaginatedObjectTypeResults,
-} from '../types/PaginatedObjectTypeResults';
-import { mapPaginatedObjectsToObjects } from '../utils/mapPaginatedObjectsToObjects';
+  PaginatedRecordTypeEdge,
+  PaginatedRecordTypeResults,
+} from '../types/PaginatedRecordTypeResults';
+import { mapPaginatedRecordsToRecords } from '../utils/mapPaginatedRecordsToRecords';
 
-// TODO: test with a wrong name
-// TODO: add zod to validate that we have at least id on each object
-export const useFindManyObjectRecords = <
-  ObjectType extends { id: string } & Record<string, any>,
+export const useFindManyRecords = <
+  RecordType extends { id: string } & Record<string, any>,
 >({
   objectNamePlural,
   filter,
@@ -38,7 +37,7 @@ export const useFindManyObjectRecords = <
   filter?: any;
   orderBy?: any;
   limit?: number;
-  onCompleted?: (data: PaginatedObjectTypeResults<ObjectType>) => void;
+  onCompleted?: (data: PaginatedRecordTypeResults<RecordType>) => void;
   skip?: boolean;
 }) => {
   const findManyQueryStateIdentifier =
@@ -53,13 +52,16 @@ export const useFindManyObjectRecords = <
   );
 
   const [, setIsFetchingMoreObjects] = useRecoilState(
-    isFetchingMoreObjectsFamilyState(findManyQueryStateIdentifier),
+    isFetchingMoreRecordsFamilyState(findManyQueryStateIdentifier),
   );
 
-  const { objectMetadataItem, objectNotFoundInMetadata, findManyQuery } =
-    useObjectMetadataItem({
-      objectNamePlural,
-    });
+  const {
+    objectMetadataItem,
+    objectMetadataItemNotFound,
+    findManyRecordsQuery,
+  } = useObjectMetadataItem({
+    objectNamePlural,
+  });
 
   const { registerOptimisticEffect } = useOptimisticEffect({
     objectNameSingular: objectMetadataItem?.nameSingular,
@@ -68,8 +70,8 @@ export const useFindManyObjectRecords = <
   const { enqueueSnackBar } = useSnackBar();
 
   const { data, loading, error, fetchMore } = useQuery<
-    PaginatedObjectType<ObjectType>
-  >(findManyQuery, {
+    PaginatedRecordType<RecordType>
+  >(findManyRecordsQuery, {
     skip: skip || !objectMetadataItem || !objectNamePlural,
     variables: {
       filter: filter ?? {},
@@ -112,7 +114,7 @@ export const useFindManyObjectRecords = <
     },
   });
 
-  const fetchMoreObjects = useCallback(async () => {
+  const fetchMoreRecords = useCallback(async () => {
     if (objectNamePlural && hasNextPage) {
       setIsFetchingMoreObjects(true);
 
@@ -124,27 +126,13 @@ export const useFindManyObjectRecords = <
             lastCursor: isNonEmptyString(lastCursor) ? lastCursor : undefined,
           },
           updateQuery: (prev, { fetchMoreResult }) => {
-            const uniqueByCursor = (
-              a: PaginatedObjectTypeEdge<ObjectType>[],
-            ) => {
-              const seenCursors = new Set();
-
-              return a.filter((item) => {
-                const currentCursor = item.cursor;
-
-                return seenCursors.has(currentCursor)
-                  ? false
-                  : seenCursors.add(currentCursor);
-              });
-            };
-
             const previousEdges = prev?.[objectNamePlural]?.edges;
             const nextEdges = fetchMoreResult?.[objectNamePlural]?.edges;
 
-            let newEdges: any[] = [];
+            let newEdges: PaginatedRecordTypeEdge<RecordType>[] = [];
 
             if (isNonEmptyArray(previousEdges) && isNonEmptyArray(nextEdges)) {
-              newEdges = uniqueByCursor([
+              newEdges = filterUniqueRecordEdgesByCursor([
                 ...prev?.[objectNamePlural]?.edges,
                 ...fetchMoreResult?.[objectNamePlural]?.edges,
               ]);
@@ -158,7 +146,7 @@ export const useFindManyObjectRecords = <
                 edges: newEdges,
                 pageInfo: fetchMoreResult?.[objectNamePlural].pageInfo,
               },
-            } as PaginatedObjectType<ObjectType>);
+            } as PaginatedRecordType<RecordType>);
           },
         });
       } catch (error) {
@@ -185,11 +173,11 @@ export const useFindManyObjectRecords = <
     enqueueSnackBar,
   ]);
 
-  const objects = useMemo(
+  const records = useMemo(
     () =>
       objectNamePlural
-        ? mapPaginatedObjectsToObjects({
-            pagedObjects: data,
+        ? mapPaginatedRecordsToRecords({
+            pagedRecords: data,
             objectNamePlural,
           })
         : [],
@@ -198,10 +186,10 @@ export const useFindManyObjectRecords = <
 
   return {
     objectMetadataItem,
-    objects,
+    records,
     loading,
     error,
-    objectNotFoundInMetadata,
-    fetchMoreObjects,
+    objectMetadataItemNotFound,
+    fetchMoreRecords,
   };
 };

@@ -6,7 +6,7 @@ import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { IconCalendar, IconComment } from '@/ui/display/icon';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
@@ -81,12 +81,10 @@ export const TaskRow = ({
       (activityTarget) => activityTarget.node.id,
     ) ?? [];
 
-  const { objects: activityTargets } = useFindManyObjectRecords<ActivityTarget>(
-    {
-      objectNamePlural: 'activityTargets',
-      filter: { id: { in: activityTargetIds } },
-    },
-  );
+  const { records: activityTargets } = useFindManyRecords<ActivityTarget>({
+    objectNamePlural: 'activityTargets',
+    filter: { id: { in: activityTargetIds } },
+  });
 
   return (
     <StyledContainer

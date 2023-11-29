@@ -1,19 +1,19 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
-import { useDeleteOneObjectRecord } from '@/object-record/hooks/useDeleteOneObjectRecord';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { BoardColumnDefinition } from '@/ui/object/record-board/types/BoardColumnDefinition';
 
 export const usePipelineSteps = () => {
-  const { createOneObject: createOnePipelineStep } =
-    useCreateOneObjectRecord<PipelineStep>({
+  const { createOneRecord: createOnePipelineStep } =
+    useCreateOneRecord<PipelineStep>({
       objectNameSingular: 'pipelineStep',
     });
 
-  const { deleteOneObject: deleteOnePipelineStep } =
-    useDeleteOneObjectRecord<PipelineStep>({
+  const { deleteOneRecord: deleteOnePipelineStep } =
+    useDeleteOneRecord<PipelineStep>({
       objectNameSingular: 'pipelineStep',
     });
 

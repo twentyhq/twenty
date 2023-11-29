@@ -4,7 +4,7 @@ import { undefined } from 'zod';
 
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 import { parseDate } from '~/utils/date-utils';
 import { isDefined } from '~/utils/isDefined';
@@ -21,7 +21,7 @@ export const useTasks = (props?: UseTasksProps) => {
     filterDropdownId: filterDropdownId,
   });
 
-  const { objects: activityTargets } = useFindManyObjectRecords({
+  const { records: activityTargets } = useFindManyRecords({
     objectNamePlural: 'activityTargets',
     filter: isDefined(entity)
       ? {
@@ -32,7 +32,7 @@ export const useTasks = (props?: UseTasksProps) => {
       : undefined,
   });
 
-  const { objects: completeTasksData } = useFindManyObjectRecords({
+  const { records: completeTasksData } = useFindManyRecords({
     objectNamePlural: 'activities',
     skip: !entity && !selectedFilter,
     filter: {
@@ -56,7 +56,7 @@ export const useTasks = (props?: UseTasksProps) => {
     },
   });
 
-  const { objects: incompleteTaskData } = useFindManyObjectRecords({
+  const { records: incompleteTaskData } = useFindManyRecords({
     objectNamePlural: 'activities',
     skip: !entity && !selectedFilter,
     filter: {

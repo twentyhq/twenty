@@ -68,13 +68,16 @@ export const AddPersonToCompany = ({
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const { findManyQuery, updateOneMutation, createOneMutation } =
-    useObjectMetadataItem({
-      objectNameSingular: 'person',
-    });
+  const {
+    findManyRecordsQuery,
+    updateOneRecordMutation,
+    createOneRecordMutation,
+  } = useObjectMetadataItem({
+    objectNameSingular: 'person',
+  });
 
-  const [updatePerson] = useMutation(updateOneMutation);
-  const [createPerson] = useMutation(createOneMutation);
+  const [updatePerson] = useMutation(updateOneRecordMutation);
+  const [createPerson] = useMutation(createOneRecordMutation);
 
   const handlePersonSelected =
     (companyId: string) => async (newPerson: EntityForSelect | null) => {
@@ -86,7 +89,7 @@ export const AddPersonToCompany = ({
             companyId: companyId,
           },
         },
-        refetchQueries: [getOperationName(findManyQuery) ?? ''],
+        refetchQueries: [getOperationName(findManyRecordsQuery) ?? ''],
       });
 
       handleClosePicker();
@@ -126,7 +129,7 @@ export const AddPersonToCompany = ({
           },
         },
       },
-      refetchQueries: [getOperationName(findManyQuery) ?? ''],
+      refetchQueries: [getOperationName(findManyRecordsQuery) ?? ''],
     });
 
     setIsCreationDropdownOpen(false);

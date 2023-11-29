@@ -108,13 +108,16 @@ export const PeopleCard = ({
   };
 
   // TODO: refactor with useObjectMetadataItem V2 with typed hooks
-  const { findManyQuery, updateOneMutation, deleteOneMutation } =
-    useObjectMetadataItem({
-      objectNameSingular: 'person',
-    });
+  const {
+    findManyRecordsQuery,
+    updateOneRecordMutation,
+    deleteOneRecordMutation,
+  } = useObjectMetadataItem({
+    objectNameSingular: 'person',
+  });
 
-  const [updatePerson] = useMutation(updateOneMutation);
-  const [deletePerson] = useMutation(deleteOneMutation);
+  const [updatePerson] = useMutation(updateOneRecordMutation);
+  const [deletePerson] = useMutation(deleteOneRecordMutation);
 
   const handleDetachPerson = async () => {
     await updatePerson({
@@ -124,7 +127,7 @@ export const PeopleCard = ({
           companyId: null,
         },
       },
-      refetchQueries: [getOperationName(findManyQuery) ?? ''],
+      refetchQueries: [getOperationName(findManyRecordsQuery) ?? ''],
     });
   };
 
@@ -133,7 +136,7 @@ export const PeopleCard = ({
       variables: {
         idToDelete: person.id,
       },
-      refetchQueries: [getOperationName(findManyQuery) ?? ''],
+      refetchQueries: [getOperationName(findManyRecordsQuery) ?? ''],
     });
   };
 

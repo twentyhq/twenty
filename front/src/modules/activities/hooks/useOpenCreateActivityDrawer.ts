@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { Activity, ActivityType } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
@@ -17,14 +17,13 @@ import { getTargetableEntitiesWithParents } from '../utils/getTargetableEntities
 
 export const useOpenCreateActivityDrawer = () => {
   const { openRightDrawer } = useRightDrawer();
-  const { createOneObject: createOneActivityTarget } =
-    useCreateOneObjectRecord<ActivityTarget>({
+  const { createOneRecord: createOneActivityTarget } =
+    useCreateOneRecord<ActivityTarget>({
       objectNameSingular: 'activityTarget',
     });
-  const { createOneObject: createOneActivity } =
-    useCreateOneObjectRecord<Activity>({
-      objectNameSingular: 'activity',
-    });
+  const { createOneRecord: createOneActivity } = useCreateOneRecord<Activity>({
+    objectNameSingular: 'activity',
+  });
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const setHotkeyScope = useSetHotkeyScope();
 
