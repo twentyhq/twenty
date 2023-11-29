@@ -6,7 +6,13 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { getOperandLabel } from '../utils/getOperandLabel';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
-export const ObjectFilterDropdownOperandSelect = () => {
+type ObjectFilterDropdownOperandSelectProps = {
+  filterDropdownId?: string;
+};
+
+export const ObjectFilterDropdownOperandSelect = ({
+  filterDropdownId,
+}: ObjectFilterDropdownOperandSelectProps) => {
   const {
     filterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
@@ -14,7 +20,7 @@ export const ObjectFilterDropdownOperandSelect = () => {
     setIsObjectFilterDropdownOperandSelectUnfolded,
     selectedFilter,
     selectFilter,
-  } = useFilterDropdown();
+  } = useFilterDropdown({ filterDropdownId });
 
   const operandsForFilterType = getOperandsForFilterType(
     filterDefinitionUsedInDropdown?.type,

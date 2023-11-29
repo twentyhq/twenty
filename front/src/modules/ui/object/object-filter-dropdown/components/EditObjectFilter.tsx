@@ -6,6 +6,7 @@ import { MultipleFiltersDropdownFilterOnFilterChangedEffect } from '@/ui/object/
 import { ObjectFilterDropdownDateSearchInput } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownDateSearchInput';
 import { ObjectFilterDropdownNumberSearchInput } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownNumberSearchInput';
 import { ObjectFilterDropdownOperandButton } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownOperandButton';
+import { ObjectFilterDropdownOperandSelect } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownOperandSelect';
 import { ObjectFilterDropdownTextSearchInput } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownTextSearchInput';
 import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 import { FilterDefinition } from '@/ui/object/object-filter-dropdown/types/FilterDefinition';
@@ -39,6 +40,7 @@ export const EditObjectFilter = ({
     setObjectFilterDropdownSearchInput,
     setIsObjectFilterDropdownOperandSelectUnfolded,
     selectFilter,
+    isObjectFilterDropdownOperandSelectUnfolded,
   } = useFilterDropdown({ filterDropdownId });
 
   const { removeViewFilter } = useViewBar();
@@ -49,8 +51,6 @@ export const EditObjectFilter = ({
   const availableFilter = availableFilterDefinitions.find(
     (filter) => filter.fieldMetadataId === fieldMetadataId,
   ) as FilterDefinition;
-
-  console.log({ availableFilter, availableFilterDefinitions });
 
   const handleClick = () => {
     setFilterDefinitionUsedInDropdown(availableFilter);
@@ -83,39 +83,45 @@ export const EditObjectFilter = ({
           />
         }
         dropdownComponents={
-          <>
-            <ObjectFilterDropdownOperandButton
+          isObjectFilterDropdownOperandSelectUnfolded ? (
+            <ObjectFilterDropdownOperandSelect
               filterDropdownId={filterDropdownId}
             />
-            <DropdownMenuSeparator />
-            {['TEXT', 'EMAIL', 'PHONE', 'FULL_NAME', 'LINK'].includes(
-              availableFilter?.type,
-            ) && (
-              <ObjectFilterDropdownTextSearchInput
+          ) : (
+            <>
+              <ObjectFilterDropdownOperandButton
                 filterDropdownId={filterDropdownId}
               />
-            )}
-            {['NUMBER', 'CURRENCY'].includes(availableFilter?.type) && (
-              <ObjectFilterDropdownNumberSearchInput
-                filterDropdownId={filterDropdownId}
-              />
-            )}
-            {availableFilter?.type === 'DATE_TIME' && (
-              <ObjectFilterDropdownDateSearchInput
-                filterDropdownId={filterDropdownId}
-              />
-            )}
-            {availableFilter?.type === 'RELATION' && (
-              <ObjectFilterDropdownEntitySearchInput
-                filterDropdownId={filterDropdownId}
-              />
-            )}
-            {availableFilter?.type === 'RELATION' && (
-              <ObjectFilterDropdownEntitySelect
-                filterDropdownId={filterDropdownId}
-              />
-            )}
-          </>
+              <DropdownMenuSeparator />
+              {['TEXT', 'EMAIL', 'PHONE', 'FULL_NAME', 'LINK'].includes(
+                availableFilter?.type,
+              ) && (
+                <ObjectFilterDropdownTextSearchInput
+                  filterDropdownId={filterDropdownId}
+                />
+              )}
+              {['NUMBER', 'CURRENCY'].includes(availableFilter?.type) && (
+                <ObjectFilterDropdownNumberSearchInput
+                  filterDropdownId={filterDropdownId}
+                />
+              )}
+              {availableFilter?.type === 'DATE_TIME' && (
+                <ObjectFilterDropdownDateSearchInput
+                  filterDropdownId={filterDropdownId}
+                />
+              )}
+              {availableFilter?.type === 'RELATION' && (
+                <ObjectFilterDropdownEntitySearchInput
+                  filterDropdownId={filterDropdownId}
+                />
+              )}
+              {availableFilter?.type === 'RELATION' && (
+                <ObjectFilterDropdownEntitySelect
+                  filterDropdownId={filterDropdownId}
+                />
+              )}
+            </>
+          )
         }
       />
       <MultipleFiltersDropdownFilterOnFilterChangedEffect
