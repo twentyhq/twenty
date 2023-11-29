@@ -25,7 +25,7 @@ const StyledDoubleTextContainer = styled.div`
 const StyledTextInput = styled(StyledInput)`
   margin: 0 ${({ theme }) => theme.spacing(0.5)};
   padding: 0;
-  width: ${({ width }) => (width ? `${width}px` : 'auto')};
+  width: ${({ width }) => (width ? `calc(${width}px + 1.5%)` : 'auto')};
 
   &:hover:not(:focus) {
     background-color: ${({ theme }) => theme.background.transparent.light};
