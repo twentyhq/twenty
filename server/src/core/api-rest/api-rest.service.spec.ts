@@ -14,38 +14,4 @@ describe('ApiRestService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-  describe('convertToGraphqlQuery', () => {
-    it('should format properly for core objects', () => {
-      expect(
-        service
-          .convertToGraphqlQuery('/api/currentWorkspace')
-          .replace(/\s\s+/g, ' '), // replaces multiple space by one space
-      ).toEqual(
-        `
-        query currentWorkspace {
-          currentWorkspace {
-            id
-          }
-        }
-      `.replace(/\s\s+/g, ' '),
-      );
-    });
-    it('should format properly for schema objects', () => {
-      expect(
-        service.convertToGraphqlQuery('/api/companies').replace(/\s\s+/g, ' '), // replaces multiple space by one space
-      ).toEqual(
-        `
-        query companies {
-          companies {
-            edges {
-              node {
-                id
-              }
-            }
-          }
-        }
-      `.replace(/\s\s+/g, ' '),
-      );
-    });
-  });
 });

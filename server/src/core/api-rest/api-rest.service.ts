@@ -191,18 +191,33 @@ export class ApiRestService {
 
   parseFilter(filterQuery, objectMetadataItem, parsedObjectId?: string) {
     // full-version -> ?filter=or(price[gte]:10,and(price[lte]:100,price[lte]:100),not(price[lte]:100))
-    // simple-version -> ?filter=price[gte]:10,price[lte]:100
     if (parsedObjectId) {
       return { id: { eq: parsedObjectId } };
     }
     if (typeof filterQuery !== 'string') {
       return {};
     }
-    const result: { [x: string]: { [x: string]: { [x: string]: string } }[] } =
-      {
-        and: [],
-      };
-    const filterItems = filterQuery.split(',');
+    const result = {};
+    const parsedFilters = filterQuery.match(/^(or|and|not)\(([^)]+)\)$/s);
+    if (parsedFilters) {
+      const conjunctionOperator = parsedFilters[1];
+      const subFilterQuery = parsedFilters[2];
+      result[conjunctionOperator] = this.parseFilter(
+        subFilterQuery,
+        objectMetadataItem,
+        parsedObjectId,
+      );
+      return result;
+    } else {
+      return this.parseSimpleFilter(filterQuery, objectMetadataItem);
+    }
+  }
+
+  parseSimpleFilter(filterString: string, objectMetadataItem) {
+    // full-version -> ?filter=or(price[gte]:10,and(price[lte]:100,price[lte]:100),not(price[lte]:100))
+    // simple-version -> ?filter=price[gte]:10,price[lte]:100
+    const result: { [x: string]: { [x: string]: string } }[] = [];
+    const filterItems = filterString.split(',');
     for (const filterItem of filterItems) {
       if (
         !filterItem.match(
@@ -231,7 +246,7 @@ export class ApiRestService {
           `'filter' field '${field}' does not exist in '${objectMetadataItem.targetTableName}' object`,
         );
       }
-      result.and.push({ [field]: { [comparator]: value } });
+      result.push({ [field]: { [comparator]: value } });
     }
     return result;
   }

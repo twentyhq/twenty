@@ -6,7 +6,6 @@ import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metada
 
 @Module({
   imports: [ObjectMetadataModule],
-
   controllers: [ApiRestController],
   providers: [ApiRestService],
 })
