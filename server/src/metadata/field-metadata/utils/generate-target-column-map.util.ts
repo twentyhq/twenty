@@ -21,6 +21,7 @@ export function generateTargetColumnMap(
   switch (type) {
     case FieldMetadataType.UUID:
     case FieldMetadataType.TEXT:
+    case FieldMetadataType.VARCHAR:
     case FieldMetadataType.PHONE:
     case FieldMetadataType.EMAIL:
     case FieldMetadataType.NUMBER:
@@ -28,6 +29,9 @@ export function generateTargetColumnMap(
     case FieldMetadataType.PROBABILITY:
     case FieldMetadataType.BOOLEAN:
     case FieldMetadataType.DATE_TIME:
+    case FieldMetadataType.RATING:
+    case FieldMetadataType.SELECT:
+    case FieldMetadataType.MULTI_SELECT:
       return {
         value: columnName,
       };

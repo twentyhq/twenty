@@ -1,5 +1,5 @@
-import { FieldMetadataInterface } from './field-metadata.interface';
 import { RelationMetadataInterface } from './relation-metadata.interface';
+import { FieldMetadataInterface } from './field-metadata.interface';
 
 export interface ObjectMetadataInterface {
   id: string;

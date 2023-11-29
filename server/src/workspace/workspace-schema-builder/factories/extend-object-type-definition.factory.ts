@@ -7,13 +7,13 @@ import {
 } from 'graphql';
 
 import { WorkspaceBuildSchemaOptions } from 'src/workspace/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
-import { ObjectMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/object-metadata.interface';
+import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { TypeDefinitionsStorage } from 'src/workspace/workspace-schema-builder/storages/type-definitions.storage';
-import { objectContainsCompositeField } from 'src/workspace/workspace-schema-builder/utils/object-contains-composite-field';
+import { objectContainsRelationField } from 'src/workspace/workspace-schema-builder/utils/object-contains-relation-field';
 import { getResolverArgs } from 'src/workspace/workspace-schema-builder/utils/get-resolver-args.util';
-import { isCompositeFieldMetadataType } from 'src/workspace/utils/is-composite-field-metadata-type.util';
+import { isRelationFieldMetadataType } from 'src/workspace/utils/is-relation-field-metadata-type.util';
 import {
   RelationDirection,
   deduceRelationDirection,
@@ -54,7 +54,7 @@ export class ExtendObjectTypeDefinitionFactory {
       objectMetadata.id,
       kind,
     );
-    const containsCompositeField = objectContainsCompositeField(objectMetadata);
+    const containsRelationField = objectContainsRelationField(objectMetadata);
 
     if (!gqlType) {
       this.logger.error(
@@ -71,7 +71,7 @@ export class ExtendObjectTypeDefinitionFactory {
     }
 
     // Security check to avoid extending an object that does not need to be extended
-    if (!containsCompositeField) {
+    if (!containsRelationField) {
       this.logger.error(
         `This object does not need to be extended: ${objectMetadata.id.toString()}`,
         {
@@ -109,8 +109,8 @@ export class ExtendObjectTypeDefinitionFactory {
     const fields: GraphQLFieldConfigMap<any, any> = {};
 
     for (const fieldMetadata of objectMetadata.fields) {
-      // Ignore non composite fields as they are already defined
-      if (!isCompositeFieldMetadataType(fieldMetadata.type)) {
+      // Ignore relation fields as they are already defined
+      if (!isRelationFieldMetadataType(fieldMetadata.type)) {
         continue;
       }
 

@@ -1,8 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
+import { FieldMetadataInterface } from 'src/metadata/field-metadata/interfaces/field-metadata.interface';
+
 import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
 import { customTableDefaultColumns } from 'src/workspace/workspace-migration-runner/utils/custom-table-default-column.util';
-import { fullNameObjectDefinition } from 'src/workspace/workspace-schema-builder/object-definitions/full-name.object-definition';
+import { fullNameObjectDefinition } from 'src/metadata/field-metadata/composite-types/full-name.composite-type';
+import { currencyObjectDefinition } from 'src/metadata/field-metadata/composite-types/currency.composite-type';
+import { linkObjectDefinition } from 'src/metadata/field-metadata/composite-types/link.composite-type';
+import { EnumTypeDefinitionFactory } from 'src/workspace/workspace-schema-builder/factories/enum-type-definition.factory';
 
 import { TypeDefinitionsStorage } from './storages/type-definitions.storage';
 import {
@@ -15,16 +21,12 @@ import {
 } from './factories/input-type-definition.factory';
 import { getFieldMetadataType } from './utils/get-field-metadata-type.util';
 import { WorkspaceBuildSchemaOptions } from './interfaces/workspace-build-schema-optionts.interface';
-import { currencyObjectDefinition } from './object-definitions/currency.object-definition';
-import { linkObjectDefinition } from './object-definitions/link.object-definition';
-import { ObjectMetadataInterface } from './interfaces/object-metadata.interface';
-import { FieldMetadataInterface } from './interfaces/field-metadata.interface';
 import { FilterTypeDefinitionFactory } from './factories/filter-type-definition.factory';
 import { ConnectionTypeDefinitionFactory } from './factories/connection-type-definition.factory';
 import { EdgeTypeDefinitionFactory } from './factories/edge-type-definition.factory';
 import { OrderByTypeDefinitionFactory } from './factories/order-by-type-definition.factory';
 import { ExtendObjectTypeDefinitionFactory } from './factories/extend-object-type-definition.factory';
-import { objectContainsCompositeField } from './utils/object-contains-composite-field';
+import { objectContainsRelationField } from './utils/object-contains-relation-field';
 
 // Create a default field for each custom table default column
 const defaultFields = customTableDefaultColumns.map((column) => {
@@ -42,6 +44,7 @@ export class TypeDefinitionsGenerator {
   constructor(
     private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
     private readonly objectTypeDefinitionFactory: ObjectTypeDefinitionFactory,
+    private readonly enumTypeDefinitionFactory: EnumTypeDefinitionFactory,
     private readonly inputTypeDefinitionFactory: InputTypeDefinitionFactory,
     private readonly filterTypeDefintionFactory: FilterTypeDefinitionFactory,
     private readonly orderByTypeDefinitionFactory: OrderByTypeDefinitionFactory,
@@ -74,6 +77,7 @@ export class TypeDefinitionsGenerator {
     );
 
     // Generate static objects first because they can be used in dynamic objects
+    this.generateEnumTypeDefs(staticObjectMetadataCollection, options);
     this.generateObjectTypeDefs(staticObjectMetadataCollection, options);
     this.generateInputTypeDefs(staticObjectMetadataCollection, options);
   }
@@ -89,6 +93,7 @@ export class TypeDefinitionsGenerator {
     );
 
     // Generate dynamic objects
+    this.generateEnumTypeDefs(dynamicObjectMetadataCollection, options);
     this.generateObjectTypeDefs(dynamicObjectMetadataCollection, options);
     this.generatePaginationTypeDefs(dynamicObjectMetadataCollection, options);
     this.generateInputTypeDefs(dynamicObjectMetadataCollection, options);
@@ -203,13 +208,26 @@ export class TypeDefinitionsGenerator {
     this.typeDefinitionsStorage.addInputTypes(inputTypeDefs);
   }
 
+  private generateEnumTypeDefs(
+    objectMetadataCollection: ObjectMetadataInterface[],
+    options: WorkspaceBuildSchemaOptions,
+  ) {
+    const enumTypeDefs = objectMetadataCollection
+      .map((objectMetadata) =>
+        this.enumTypeDefinitionFactory.create(objectMetadata, options),
+      )
+      .flat();
+
+    this.typeDefinitionsStorage.addEnumTypes(enumTypeDefs);
+  }
+
   private generateExtendedObjectTypeDefs(
     objectMetadataCollection: ObjectMetadataInterface[],
     options: WorkspaceBuildSchemaOptions,
   ) {
     // Generate extended object type defs only for objects that contain composite fields
     const objectMetadataCollectionWithCompositeFields =
-      objectMetadataCollection.filter(objectContainsCompositeField);
+      objectMetadataCollection.filter(objectContainsRelationField);
     const objectTypeDefs = objectMetadataCollectionWithCompositeFields.map(
       (objectMetadata) =>
         this.extendObjectTypeDefinitionFactory.create(objectMetadata, options),

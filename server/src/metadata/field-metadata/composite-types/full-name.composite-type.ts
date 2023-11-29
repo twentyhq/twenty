@@ -1,5 +1,5 @@
-import { ObjectMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/object-metadata.interface';
-import { FieldMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/field-metadata.interface';
+import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
+import { FieldMetadataInterface } from 'src/metadata/field-metadata/interfaces/field-metadata.interface';
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
@@ -13,7 +13,7 @@ export const fullNameObjectDefinition = {
   fields: [
     {
       id: 'firstName',
-      type: FieldMetadataType.TEXT,
+      type: FieldMetadataType.VARCHAR,
       objectMetadataId: FieldMetadataType.FULL_NAME.toString(),
       name: 'firstName',
       label: 'First Name',
@@ -22,7 +22,7 @@ export const fullNameObjectDefinition = {
     } satisfies FieldMetadataInterface,
     {
       id: 'lastName',
-      type: FieldMetadataType.TEXT,
+      type: FieldMetadataType.VARCHAR,
       objectMetadataId: FieldMetadataType.FULL_NAME.toString(),
       name: 'lastName',
       label: 'Last Name',

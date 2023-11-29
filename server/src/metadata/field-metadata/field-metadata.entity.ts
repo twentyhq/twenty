@@ -10,9 +10,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { FieldMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/field-metadata.interface';
+import { FieldMetadataInterface } from 'src/metadata/field-metadata/interfaces/field-metadata.interface';
 import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interfaces/field-metadata-target-column-map.interface';
 import { FieldMetadataDefaultValue } from 'src/metadata/field-metadata/interfaces/field-metadata-default-value.interface';
+import { FieldMetadataOptions } from 'src/metadata/field-metadata/interfaces/field-metadata-options.interface';
 
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
@@ -20,6 +21,8 @@ import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-
 export enum FieldMetadataType {
   UUID = 'UUID',
   TEXT = 'TEXT',
+  // Temporary workaround for composite field with wrong type
+  VARCHAR = 'VARCHAR',
   PHONE = 'PHONE',
   EMAIL = 'EMAIL',
   DATE_TIME = 'DATE_TIME',
@@ -27,11 +30,13 @@ export enum FieldMetadataType {
   NUMBER = 'NUMBER',
   NUMERIC = 'NUMERIC',
   PROBABILITY = 'PROBABILITY',
-  ENUM = 'ENUM',
   LINK = 'LINK',
   CURRENCY = 'CURRENCY',
-  RELATION = 'RELATION',
   FULL_NAME = 'FULL_NAME',
+  RATING = 'RATING',
+  SELECT = 'SELECT',
+  MULTI_SELECT = 'MULTI_SELECT',
+  RELATION = 'RELATION',
 }
 
 @Entity('fieldMetadata')
@@ -40,7 +45,10 @@ export enum FieldMetadataType {
   'objectMetadataId',
   'workspaceId',
 ])
-export class FieldMetadataEntity implements FieldMetadataInterface {
+export class FieldMetadataEntity<
+  T extends FieldMetadataType | 'default' = 'default',
+> implements FieldMetadataInterface<T>
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -63,10 +71,10 @@ export class FieldMetadataEntity implements FieldMetadataInterface {
   label: string;
 
   @Column({ nullable: false, type: 'jsonb' })
-  targetColumnMap: FieldMetadataTargetColumnMap;
+  targetColumnMap: FieldMetadataTargetColumnMap<T>;
 
   @Column({ nullable: true, type: 'jsonb' })
-  defaultValue: FieldMetadataDefaultValue;
+  defaultValue: FieldMetadataDefaultValue<T>;
 
   @Column({ nullable: true, type: 'text' })
   description: string;
@@ -74,8 +82,8 @@ export class FieldMetadataEntity implements FieldMetadataInterface {
   @Column({ nullable: true })
   icon: string;
 
-  @Column('text', { nullable: true, array: true })
-  enums: string[];
+  @Column('jsonb', { nullable: true })
+  options: FieldMetadataOptions<T>;
 
   @Column({ default: false })
   isCustom: boolean;
