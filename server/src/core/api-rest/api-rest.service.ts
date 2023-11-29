@@ -172,26 +172,34 @@ export class ApiRestService {
       await this.objectMetadataService.getObjectMetadataFromWorkspaceId(
         workspaceId,
       );
-    const queryAction = request.path.replace('/api/', '');
+    const parsedObject = this.parseObject(request)[0];
     const objectMetadata = objectMetadataItems.filter(
-      (object) => object.namePlural === queryAction,
+      (object) => object.namePlural === parsedObject,
     );
     if (!objectMetadata.length) {
       const objectMetadata = objectMetadataItems.filter(
-        (object) => object.nameSingular === queryAction,
+        (object) => object.nameSingular === parsedObject,
       );
       let hint = 'eg: companies';
       if (objectMetadata.length) {
         hint = `Did you mean '${objectMetadata[0].namePlural}'?`;
       }
-      throw Error(`object '${queryAction}' not found. ${hint}`);
+      throw Error(`object '${parsedObject}' not found. ${hint}`);
     }
     return [objectMetadataItems, objectMetadata[0]];
   }
 
   //TODO: make it work for ?filter=eq(createdAt=2023-07-14T15:09:17.679Z)
-  parseFilter(filterQuery: string, objectMetadataItem) {
+  parseFilter(filterQuery, objectMetadataItem, parsedObjectId?: string) {
     //?filter=eq(field_1=value),gt(field_2=value)
+    //?filter=or(price[gte]=10,and(price[lte]=100,price[lte]=100),not(price[lte]=100))
+    //?filter=price[gte]=10,price[lte]=100 simple-version
+    if (parsedObjectId) {
+      return { id: { eq: parsedObjectId } };
+    }
+    if (typeof filterQuery !== 'string') {
+      return {};
+    }
     const result: { [x: string]: { [x: string]: { [x: string]: string } }[] } =
       {
         and: [],
@@ -224,8 +232,11 @@ export class ApiRestService {
     return result;
   }
 
-  parseOrderBy(orderByQuery: string, objectMetadataItem): RecordOrderBy {
+  parseOrderBy(orderByQuery, objectMetadataItem) {
     //?order_by=field_1[AscNullsFirst],field_2[DescNullsLast],field_3
+    if (typeof orderByQuery !== 'string') {
+      return {};
+    }
     const orderByItems = orderByQuery.split(',');
     const result = {};
     for (const orderByItem of orderByItems) {
@@ -259,6 +270,20 @@ export class ApiRestService {
     return <RecordOrderBy>result;
   }
 
+  parseLimit(limitQuery) {
+    if (typeof limitQuery !== 'string') {
+      return 60;
+    }
+    return parseInt(limitQuery);
+  }
+
+  parseCursor(cursorQuery) {
+    if (typeof cursorQuery !== 'string') {
+      return undefined;
+    }
+    return cursorQuery;
+  }
+
   computeVariables(
     request: Request,
     objectMetadataItem,
@@ -268,24 +293,30 @@ export class ApiRestService {
     limit: number;
     lastCursor?: string;
   } {
+    const parsedObjectId = this.parseObject(request)[1];
     return {
-      filter:
-        typeof request.query.filter === 'string'
-          ? this.parseFilter(request.query.filter, objectMetadataItem)
-          : {},
-      orderBy:
-        typeof request.query.order_by === 'string'
-          ? this.parseOrderBy(request.query.order_by, objectMetadataItem)
-          : {},
-      limit:
-        typeof request.query.limit === 'string'
-          ? parseInt(request.query.limit)
-          : 60,
-      lastCursor:
-        typeof request.query.last_cursor === 'string'
-          ? request.query.last_cursor
-          : undefined,
+      filter: this.parseFilter(
+        request.query.filter,
+        objectMetadataItem,
+        parsedObjectId,
+      ),
+      orderBy: this.parseOrderBy(request.query.order_by, objectMetadataItem),
+      limit: this.parseLimit(request.query.limit),
+      lastCursor: this.parseCursor(request.query.last_cursor),
     };
+  }
+
+  parseObject(request) {
+    const queryAction = request.path.replace('/api/', '').split('/');
+    if (queryAction.length > 2) {
+      throw Error(
+        `Query path '${request.path}' invalid. Valid examples: /api/companies/id or /api/companies`,
+      );
+    }
+    if (queryAction.length === 1) {
+      return [queryAction[0], undefined];
+    }
+    return queryAction;
   }
 
   extractWorkspaceId(request: Request) {
