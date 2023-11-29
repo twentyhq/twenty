@@ -125,17 +125,17 @@ const StyledMixedColorSchemeSegment = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};
   cursor: pointer;
   display: flex;
-  display: flex;
   height: 80px;
   overflow: hidden;
+  position: relative;
   width: 120px;
 `;
 
 const StyledCheckmarkContainer = styled(motion.div)`
   bottom: 0px;
+  left: 80px;
   padding: ${({ theme }) => theme.spacing(2)};
   position: absolute;
-  right: 0px;
 `;
 
 export type ColorSchemeCardProps = {
