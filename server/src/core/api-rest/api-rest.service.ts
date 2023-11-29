@@ -168,12 +168,17 @@ export class ApiRestService {
       );
     const queryAction = request.path.replace('/api/', '');
     const objectMetadata = objectMetadataItems.filter(
-      (object) =>
-        object.nameSingular === queryAction ||
-        object.namePlural === queryAction,
+      (object) => object.namePlural === queryAction,
     );
-    if (objectMetadata.length !== 1) {
-      throw Error(`object '${queryAction}' not found`);
+    if (!objectMetadata.length) {
+      const objectMetadata = objectMetadataItems.filter(
+        (object) => object.nameSingular === queryAction,
+      );
+      let hint = 'eg: companies';
+      if (objectMetadata.length) {
+        hint = `Did you mean '${objectMetadata[0].namePlural}'?`;
+      }
+      throw Error(`object '${queryAction}' not found. ${hint}`);
     }
     return [objectMetadataItems, objectMetadata[0]];
   }
