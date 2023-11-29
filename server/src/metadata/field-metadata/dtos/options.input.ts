@@ -1,8 +1,9 @@
 import { IsString, IsNumber, IsOptional } from 'class-validator';
 
 export class FieldMetadataDefaultOptions {
+  @IsOptional()
   @IsString()
-  id: string;
+  id?: string;
 
   @IsNumber()
   position: number;

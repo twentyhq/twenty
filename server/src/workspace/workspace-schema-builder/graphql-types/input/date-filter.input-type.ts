@@ -1,6 +1,6 @@
 import { GraphQLInputObjectType, GraphQLList, GraphQLNonNull } from 'graphql';
 
-import { FilterIsNullable } from 'src/workspace/workspace-schema-builder/graphql-types/input/filter-is-nullable.input-type';
+import { FilterIs } from 'src/workspace/workspace-schema-builder/graphql-types/input/filter-is.input-type';
 import { DateScalarType } from 'src/workspace/workspace-schema-builder/graphql-types/scalars';
 
 export const DateFilterType = new GraphQLInputObjectType({
@@ -13,6 +13,6 @@ export const DateFilterType = new GraphQLInputObjectType({
     lt: { type: DateScalarType },
     lte: { type: DateScalarType },
     neq: { type: DateScalarType },
-    is: { type: FilterIsNullable },
+    is: { type: FilterIs },
   },
 });

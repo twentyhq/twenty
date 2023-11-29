@@ -17,7 +17,7 @@ import {
 import { TypeDefinitionsStorage } from 'src/workspace/workspace-schema-builder/storages/type-definitions.storage';
 import { isCompositeFieldMetadataType } from 'src/metadata/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isEnumFieldMetadataType } from 'src/metadata/field-metadata/utils/is-enum-field-metadata-type.util';
-import { FilterIsNullable } from 'src/workspace/workspace-schema-builder/graphql-types/input/filter-is-nullable.input-type';
+import { FilterIs } from 'src/workspace/workspace-schema-builder/graphql-types/input/filter-is.input-type';
 
 import { InputTypeDefinitionKind } from './input-type-definition.factory';
 
@@ -95,7 +95,7 @@ export class FilterTypeFactory {
         eq: { type: enumType },
         neq: { type: enumType },
         in: { type: new GraphQLList(enumType) },
-        is: { type: FilterIsNullable },
+        is: { type: FilterIs },
       }),
     });
   }

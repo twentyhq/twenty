@@ -1,7 +1,7 @@
 import { GraphQLEnumType } from 'graphql';
 
-export const FilterIsNullable = new GraphQLEnumType({
-  name: 'FilterIsNullable',
+export const FilterIs = new GraphQLEnumType({
+  name: 'FilterIs',
   description: 'This enum to filter by nullability',
   values: {
     NULL: {
