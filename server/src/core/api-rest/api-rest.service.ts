@@ -355,7 +355,7 @@ export class ApiRestService {
       const [objectMetadataItems, objectMetadataItem] =
         await this.getObjectMetadata(request, workspaceId);
       return await axios.post(
-        `${request.protocol}://${request.headers.host}/graphql`, // Add an env variable INTERNAL_SERVER_URL
+        `${this.environmentService.getInternalServerUrl()}/graphql`,
         {
           query: await this.computeQuery(
             objectMetadataItems,

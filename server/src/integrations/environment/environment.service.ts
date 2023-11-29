@@ -41,6 +41,10 @@ export class EnvironmentService {
     return this.configService.get<string>('FRONT_BASE_URL')!;
   }
 
+  getInternalServerUrl(): string {
+    return this.configService.get<string>('INTERNAL_SERVER_URL')!;
+  }
+
   getAccessTokenSecret(): string {
     return this.configService.get<string>('ACCESS_TOKEN_SECRET')!;
   }
