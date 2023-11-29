@@ -20,6 +20,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const SettingsObjectNewFieldStep2 = () => {
@@ -36,6 +37,10 @@ export const SettingsObjectNewFieldStep2 = () => {
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
   const { createMetadataField } = useFieldMetadataItem();
+
+  const isRelationFieldTypeEnabled = useIsFeatureEnabled(
+    'IS_RELATION_FIELD_TYPE_ENABLED',
+  );
 
   const {
     formValues,
@@ -177,6 +182,22 @@ export const SettingsObjectNewFieldStep2 = () => {
     }
   };
 
+  const excludedFieldTypes = [
+    FieldMetadataType.Currency,
+    FieldMetadataType.Email,
+    FieldMetadataType.Enum,
+    FieldMetadataType.Numeric,
+    FieldMetadataType.FullName,
+    FieldMetadataType.Link,
+    FieldMetadataType.Phone,
+    FieldMetadataType.Probability,
+    FieldMetadataType.Uuid,
+  ];
+
+  if (!isRelationFieldTypeEnabled) {
+    excludedFieldTypes.push(FieldMetadataType.Relation);
+  }
+
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
@@ -204,18 +225,7 @@ export const SettingsObjectNewFieldStep2 = () => {
           onChange={handleFormChange}
         />
         <SettingsObjectFieldTypeSelectSection
-          excludedFieldTypes={[
-            FieldMetadataType.Currency,
-            FieldMetadataType.Email,
-            FieldMetadataType.Enum,
-            FieldMetadataType.Numeric,
-            FieldMetadataType.FullName,
-            FieldMetadataType.Link,
-            FieldMetadataType.Phone,
-            FieldMetadataType.Probability,
-            FieldMetadataType.Relation,
-            FieldMetadataType.Uuid,
-          ]}
+          excludedFieldTypes={excludedFieldTypes}
           fieldMetadata={{
             icon: formValues.icon,
             label: formValues.label || 'Employees',
