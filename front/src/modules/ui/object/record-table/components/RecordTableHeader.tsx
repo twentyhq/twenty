@@ -7,6 +7,8 @@ import { IconPlus } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
+import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 
 import { useRecordTableScopedStates } from '../hooks/internal/useRecordTableScopedStates';
@@ -74,16 +76,9 @@ const StyledColumnHeadContainer = styled.div`
   justify-content: space-between;
   position: relative;
   z-index: 1;
-
-  &:hover {
-    .StyledHeaderIcon {
-      display: block;
-    }
-  }
 `;
 
 const StyledHeaderIcon = styled.div`
-  display: none;
   margin-bottom: ${({ theme }) => theme.spacing(1)};
   margin-right: ${({ theme }) => theme.spacing(1)};
   margin-top: ${({ theme }) => theme.spacing(1)};
@@ -202,6 +197,64 @@ export const RecordTableHeader = ({
 
   const theme = useTheme();
 
+  const HeaderCell = ({
+    column,
+    resizedFieldKey,
+    resizeFieldOffset,
+    createObject,
+  }: {
+    column: ColumnDefinition<FieldMetadata>;
+    resizedFieldKey: string | null;
+    resizeFieldOffset: number;
+    createObject: () => void;
+  }) => {
+    const [iconVisibility, setIconVisibility] = useState(false);
+
+    return (
+      <StyledColumnHeaderCell
+        key={column.fieldMetadataId}
+        isResizing={resizedFieldKey === column.fieldMetadataId}
+        columnWidth={Math.max(
+          tableColumnsByKey[column.fieldMetadataId].size +
+            (resizedFieldKey === column.fieldMetadataId
+              ? resizeFieldOffset
+              : 0) +
+            24,
+          COLUMN_MIN_WIDTH,
+        )}
+      >
+        <StyledColumnHeadContainer
+          onMouseEnter={() => setIconVisibility(true)}
+          onMouseLeave={() => setIconVisibility(false)}
+        >
+          <ColumnHeadWithDropdown
+            column={column}
+            isFirstColumn={column.position === 1}
+            isLastColumn={column.position === visibleTableColumns.length - 1}
+            primaryColumnKey={primaryColumn?.fieldMetadataId || ''}
+          />
+          {iconVisibility && (
+            <StyledHeaderIcon>
+              <LightIconButton
+                Icon={IconPlus}
+                size="small"
+                accent="tertiary"
+                onClick={createObject}
+              />
+            </StyledHeaderIcon>
+          )}
+        </StyledColumnHeadContainer>
+        <StyledResizeHandler
+          className="cursor-col-resize"
+          role="separator"
+          onPointerDown={() => {
+            setResizedFieldKey(column.fieldMetadataId);
+          }}
+        />
+      </StyledColumnHeaderCell>
+    );
+  };
+
   return (
     <StyledTableHead data-select-disable>
       <tr>
@@ -215,44 +268,13 @@ export const RecordTableHeader = ({
           <SelectAllCheckbox />
         </th>
         {visibleTableColumns.map((column) => (
-          <StyledColumnHeaderCell
+          <HeaderCell
             key={column.fieldMetadataId}
-            isResizing={resizedFieldKey === column.fieldMetadataId}
-            columnWidth={Math.max(
-              tableColumnsByKey[column.fieldMetadataId].size +
-                (resizedFieldKey === column.fieldMetadataId
-                  ? resizeFieldOffset
-                  : 0) +
-                24,
-              COLUMN_MIN_WIDTH,
-            )}
-          >
-            <StyledColumnHeadContainer>
-              <ColumnHeadWithDropdown
-                column={column}
-                isFirstColumn={column.position === 1}
-                isLastColumn={
-                  column.position === visibleTableColumns.length - 1
-                }
-                primaryColumnKey={primaryColumn?.fieldMetadataId || ''}
-              />
-              <StyledHeaderIcon className="StyledHeaderIcon">
-                <LightIconButton
-                  Icon={IconPlus}
-                  size="small"
-                  accent="tertiary"
-                  onClick={createObject}
-                />
-              </StyledHeaderIcon>
-            </StyledColumnHeadContainer>
-            <StyledResizeHandler
-              className="cursor-col-resize"
-              role="separator"
-              onPointerDown={() => {
-                setResizedFieldKey(column.fieldMetadataId);
-              }}
-            />
-          </StyledColumnHeaderCell>
+            column={column}
+            resizedFieldKey={resizedFieldKey}
+            resizeFieldOffset={resizeFieldOffset}
+            createObject={createObject}
+          />
         ))}
         {hiddenTableColumns.length > 0 && (
           <StyledPlusIconHeaderCell>
