@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
@@ -6,6 +7,7 @@ import { ColorSample } from '@/ui/display/color/components/ColorSample';
 import {
   IconCheck,
   IconDotsVertical,
+  IconGripVertical,
   IconTrash,
   IconX,
 } from '@/ui/display/icon';
@@ -23,6 +25,7 @@ import { mainColorNames } from '@/ui/theme/constants/colors';
 import { SettingsObjectFieldSelectFormOption } from '../types/SettingsObjectFieldSelectFormOption';
 
 type SettingsObjectFieldSelectFormOptionRowProps = {
+  className?: string;
   isDefault?: boolean;
   onChange: (value: SettingsObjectFieldSelectFormOption) => void;
   onRemove?: () => void;
@@ -33,11 +36,12 @@ const StyledRow = styled.div`
   align-items: center;
   display: flex;
   height: ${({ theme }) => theme.spacing(6)};
-  padding: ${({ theme }) => theme.spacing(1)} 0;
+  padding: ${({ theme }) => theme.spacing(1.5)} 0;
 `;
 
 const StyledColorSample = styled(ColorSample)`
   cursor: pointer;
+  margin-left: 9px;
   margin-right: 14px;
 `;
 
@@ -51,11 +55,14 @@ const StyledOptionInput = styled(TextInput)`
 `;
 
 export const SettingsObjectFieldSelectFormOptionRow = ({
+  className,
   isDefault,
   onChange,
   onRemove,
   option,
 }: SettingsObjectFieldSelectFormOptionRowProps) => {
+  const theme = useTheme();
+
   const dropdownScopeIds = useMemo(() => {
     const baseScopeId = `select-field-option-row-${v4()}`;
     return { color: `${baseScopeId}-color`, actions: `${baseScopeId}-actions` };
@@ -69,7 +76,12 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
   });
 
   return (
-    <StyledRow>
+    <StyledRow className={className}>
+      <IconGripVertical
+        size={theme.icon.size.md}
+        stroke={theme.icon.stroke.sm}
+        color={theme.font.color.extraLight}
+      />
       <DropdownScope dropdownScopeId={dropdownScopeIds.color}>
         <Dropdown
           dropdownPlacement="bottom-start"

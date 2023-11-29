@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { DeepPartial } from 'react-hook-form';
+import { v4 } from 'uuid';
 import { z } from 'zod';
 
 import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
@@ -20,7 +21,7 @@ type FormValues = {
   select: SettingsObjectFieldTypeSelectSectionFormValues['select'];
 };
 
-const defaultValues: FormValues = {
+export const fieldMetadataFormDefaultValues: FormValues = {
   icon: 'IconUsers',
   label: '',
   type: FieldMetadataType.Text,
@@ -29,7 +30,7 @@ const defaultValues: FormValues = {
     objectMetadataId: '',
     field: { label: '' },
   },
-  select: [{ color: 'green', label: 'Option 1' }],
+  select: [{ color: 'green', label: 'Option 1', value: v4() }],
 };
 
 const fieldSchema = z.object({
@@ -96,9 +97,12 @@ type PartialFormValues = Partial<Omit<FormValues, 'relation'>> &
 
 export const useFieldMetadataForm = () => {
   const [isInitialized, setIsInitialized] = useState(false);
-  const [initialFormValues, setInitialFormValues] =
-    useState<FormValues>(defaultValues);
-  const [formValues, setFormValues] = useState<FormValues>(defaultValues);
+  const [initialFormValues, setInitialFormValues] = useState<FormValues>(
+    fieldMetadataFormDefaultValues,
+  );
+  const [formValues, setFormValues] = useState<FormValues>(
+    fieldMetadataFormDefaultValues,
+  );
   const [hasFieldFormChanged, setHasFieldFormChanged] = useState(false);
   const [hasRelationFormChanged, setHasRelationFormChanged] = useState(false);
   const [hasSelectFormChanged, setHasSelectFormChanged] = useState(false);
