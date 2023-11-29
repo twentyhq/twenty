@@ -36,7 +36,7 @@ export const RecordTableBody = () => {
     isFetchingRecordTableDataState,
   );
 
-  const { fetchMoreObjects } = useObjectRecordTable();
+  const { fetchMoreRecords: fetchMoreObjects } = useObjectRecordTable();
 
   useEffect(() => {
     if (lastTableRowIsVisible && isDefined(fetchMoreObjects)) {

@@ -38,7 +38,7 @@ export const useObjectRecordTable = () => {
     foundObjectMetadataItem?.fields ?? [],
   );
 
-  const { records: objects, loading, fetchMoreRecords: fetchMoreObjects } = useFindManyRecords({
+  const { records, loading, fetchMoreRecords } = useFindManyRecords({
     objectNamePlural,
     filter,
     orderBy,
@@ -59,8 +59,8 @@ export const useObjectRecordTable = () => {
   });
 
   return {
-    objects,
+    records,
     loading,
-    fetchMoreObjects,
+    fetchMoreRecords,
   };
 };
