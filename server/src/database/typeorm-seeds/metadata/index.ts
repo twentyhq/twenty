@@ -24,32 +24,97 @@ import { seedPersonRelationMetadata } from 'src/database/typeorm-seeds/metadata/
 import { seedWorkspaceMemberRelationMetadata } from 'src/database/typeorm-seeds/metadata/relation-metadata/workspace-member';
 import { seedDataSource } from 'src/database/typeorm-seeds/metadata/data-source';
 
-export const seedMetadataSchema = async (workspaceDataSource: DataSource) => {
+export const seedMetadataSchema = async (
+  workspaceDataSource: DataSource,
+  workspaceId: string,
+  dataSourceId: string,
+  workspaceSchemaName: string,
+) => {
   const schemaName = 'metadata';
-  await seedDataSource(workspaceDataSource, schemaName);
-  await seedObjectMetadata(workspaceDataSource, schemaName);
+  await seedDataSource(
+    workspaceDataSource,
+    schemaName,
+    workspaceId,
+    dataSourceId,
+    workspaceSchemaName,
+  );
+  await seedObjectMetadata(
+    workspaceDataSource,
+    schemaName,
+    workspaceId,
+    dataSourceId,
+  );
 
-  await seedActivityTargetFieldMetadata(workspaceDataSource, schemaName);
-  await seedActivityFieldMetadata(workspaceDataSource, schemaName);
-  await seedApiKeyFieldMetadata(workspaceDataSource, schemaName);
-  await seedAttachmentFieldMetadata(workspaceDataSource, schemaName);
-  await seedCommentFieldMetadata(workspaceDataSource, schemaName);
-  await seedCompanyFieldMetadata(workspaceDataSource, schemaName);
-  await seedFavoriteFieldMetadata(workspaceDataSource, schemaName);
-  await seedOpportunityFieldMetadata(workspaceDataSource, schemaName);
-  await seedPersonFieldMetadata(workspaceDataSource, schemaName);
-  await seedPipelineStepFieldMetadata(workspaceDataSource, schemaName);
-  await seedViewFieldMetadata(workspaceDataSource, schemaName);
-  await seedViewFieldFieldMetadata(workspaceDataSource, schemaName);
-  await seedViewFilterFieldMetadata(workspaceDataSource, schemaName);
-  await seedViewSortFieldMetadata(workspaceDataSource, schemaName);
-  await seedViewRelationMetadata(workspaceDataSource, schemaName);
-  await seedWorkspaceMemberFieldMetadata(workspaceDataSource, schemaName);
+  await seedActivityTargetFieldMetadata(
+    workspaceDataSource,
+    schemaName,
+    workspaceId,
+  );
+  await seedActivityFieldMetadata(workspaceDataSource, schemaName, workspaceId);
+  await seedApiKeyFieldMetadata(workspaceDataSource, schemaName, workspaceId);
+  await seedAttachmentFieldMetadata(
+    workspaceDataSource,
+    schemaName,
+    workspaceId,
+  );
+  await seedCommentFieldMetadata(workspaceDataSource, schemaName, workspaceId);
 
-  await seedActivityRelationMetadata(workspaceDataSource, schemaName);
-  await seedCompanyRelationMetadata(workspaceDataSource, schemaName);
-  await seedPersonRelationMetadata(workspaceDataSource, schemaName);
-  await seedPipelineStepRelationMetadata(workspaceDataSource, schemaName);
-  await seedViewRelationMetadata(workspaceDataSource, schemaName);
-  await seedWorkspaceMemberRelationMetadata(workspaceDataSource, schemaName);
+  await seedCompanyFieldMetadata(workspaceDataSource, schemaName, workspaceId);
+  await seedFavoriteFieldMetadata(workspaceDataSource, schemaName, workspaceId);
+  await seedOpportunityFieldMetadata(
+    workspaceDataSource,
+    schemaName,
+    workspaceId,
+  );
+  await seedPersonFieldMetadata(workspaceDataSource, schemaName, workspaceId);
+  await seedPipelineStepFieldMetadata(
+    workspaceDataSource,
+    schemaName,
+    workspaceId,
+  );
+  await seedViewFieldMetadata(workspaceDataSource, schemaName, workspaceId);
+  await seedViewFieldFieldMetadata(
+    workspaceDataSource,
+    schemaName,
+    workspaceId,
+  );
+  await seedViewFilterFieldMetadata(
+    workspaceDataSource,
+    schemaName,
+    workspaceId,
+  );
+  await seedViewSortFieldMetadata(workspaceDataSource, schemaName, workspaceId);
+  await seedViewRelationMetadata(workspaceDataSource, schemaName, workspaceId);
+  await seedWorkspaceMemberFieldMetadata(
+    workspaceDataSource,
+    schemaName,
+    workspaceId,
+  );
+
+  await seedActivityRelationMetadata(
+    workspaceDataSource,
+    schemaName,
+    workspaceId,
+  );
+  await seedCompanyRelationMetadata(
+    workspaceDataSource,
+    schemaName,
+    workspaceId,
+  );
+  await seedPersonRelationMetadata(
+    workspaceDataSource,
+    schemaName,
+    workspaceId,
+  );
+  await seedPipelineStepRelationMetadata(
+    workspaceDataSource,
+    schemaName,
+    workspaceId,
+  );
+  await seedViewRelationMetadata(workspaceDataSource, schemaName, workspaceId);
+  await seedWorkspaceMemberRelationMetadata(
+    workspaceDataSource,
+    schemaName,
+    workspaceId,
+  );
 };

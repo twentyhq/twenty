@@ -4,13 +4,13 @@ import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-me
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { SeedPipelineStepFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/pipeline-step';
 import { SeedOpportunityFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/opportunity';
-import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const tableName = 'relationMetadata';
 
 export const seedPipelineStepRelationMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
+  workspaceId: string,
 ) => {
   await workspaceDataSource
     .createQueryBuilder()
@@ -31,7 +31,7 @@ export const seedPipelineStepRelationMetadata = async (
         toObjectMetadataId: SeedObjectMetadataIds.Opportunity,
         fromFieldMetadataId: SeedPipelineStepFieldMetadataIds.Opportunities,
         toFieldMetadataId: SeedOpportunityFieldMetadataIds.PipelineStep,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
       },
     ])
     .execute();

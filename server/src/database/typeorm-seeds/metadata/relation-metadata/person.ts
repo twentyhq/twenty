@@ -7,13 +7,13 @@ import { SeedPersonFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/
 import { SeedActivityTargetFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/activity-target';
 import { SeedAttachmentFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/attachment';
 import { SeedOpportunityFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/opportunity';
-import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const tableName = 'relationMetadata';
 
 export const seedPersonRelationMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
+  workspaceId: string,
 ) => {
   await workspaceDataSource
     .createQueryBuilder()
@@ -34,7 +34,7 @@ export const seedPersonRelationMetadata = async (
         toObjectMetadataId: SeedObjectMetadataIds.Favorite,
         fromFieldMetadataId: SeedPersonFieldMetadataIds.Favorites,
         toFieldMetadataId: SeedFavoriteFieldMetadataIds.Person,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
       },
       {
         relationType: RelationMetadataType.ONE_TO_MANY,
@@ -42,7 +42,7 @@ export const seedPersonRelationMetadata = async (
         toObjectMetadataId: SeedObjectMetadataIds.Attachment,
         fromFieldMetadataId: SeedPersonFieldMetadataIds.Attachments,
         toFieldMetadataId: SeedAttachmentFieldMetadataIds.Person,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
       },
       {
         relationType: RelationMetadataType.ONE_TO_MANY,
@@ -50,7 +50,7 @@ export const seedPersonRelationMetadata = async (
         toObjectMetadataId: SeedObjectMetadataIds.Opportunity,
         fromFieldMetadataId: SeedPersonFieldMetadataIds.Opportunities,
         toFieldMetadataId: SeedOpportunityFieldMetadataIds.Person,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
       },
       {
         relationType: RelationMetadataType.ONE_TO_MANY,
@@ -58,7 +58,7 @@ export const seedPersonRelationMetadata = async (
         toObjectMetadataId: SeedObjectMetadataIds.Opportunity,
         fromFieldMetadataId: SeedPersonFieldMetadataIds.ContactForOpportunities,
         toFieldMetadataId: SeedOpportunityFieldMetadataIds.PointOfContact,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
       },
       {
         relationType: RelationMetadataType.ONE_TO_MANY,
@@ -66,7 +66,7 @@ export const seedPersonRelationMetadata = async (
         toObjectMetadataId: SeedObjectMetadataIds.ActivityTarget,
         fromFieldMetadataId: SeedPersonFieldMetadataIds.ActivityTargets,
         toFieldMetadataId: SeedActivityTargetFieldMetadataIds.Person,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
       },
     ])
     .execute();

@@ -8,13 +8,13 @@ import { SeedFavoriteFieldMetadataIds } from 'src/database/typeorm-seeds/metadat
 import { SeedActivityFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/activity';
 import { SeedCommentFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/comment';
 import { SeedAttachmentFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/attachment';
-import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const tableName = 'relationMetadata';
 
 export const seedWorkspaceMemberRelationMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
+  workspaceId: string,
 ) => {
   await workspaceDataSource
     .createQueryBuilder()
@@ -36,7 +36,7 @@ export const seedWorkspaceMemberRelationMetadata = async (
         fromFieldMetadataId:
           SeedWorkspaceMemberFieldMetadataIds.AccountOwnerForCompanies,
         toFieldMetadataId: SeedCompanyFieldMetadataIds.AccountOwner,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
       },
       {
         relationType: RelationMetadataType.ONE_TO_MANY,
@@ -44,7 +44,7 @@ export const seedWorkspaceMemberRelationMetadata = async (
         toObjectMetadataId: SeedObjectMetadataIds.Favorite,
         fromFieldMetadataId: SeedWorkspaceMemberFieldMetadataIds.Favorites,
         toFieldMetadataId: SeedFavoriteFieldMetadataIds.WorkspaceMember,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
       },
       {
         relationType: RelationMetadataType.ONE_TO_MANY,
@@ -53,7 +53,7 @@ export const seedWorkspaceMemberRelationMetadata = async (
         fromFieldMetadataId:
           SeedWorkspaceMemberFieldMetadataIds.AuthoredActivities,
         toFieldMetadataId: SeedActivityFieldMetadataIds.Author,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
       },
       {
         relationType: RelationMetadataType.ONE_TO_MANY,
@@ -62,7 +62,7 @@ export const seedWorkspaceMemberRelationMetadata = async (
         fromFieldMetadataId:
           SeedWorkspaceMemberFieldMetadataIds.AssignedActivities,
         toFieldMetadataId: SeedActivityFieldMetadataIds.Assignee,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
       },
       {
         relationType: RelationMetadataType.ONE_TO_MANY,
@@ -71,7 +71,7 @@ export const seedWorkspaceMemberRelationMetadata = async (
         fromFieldMetadataId:
           SeedWorkspaceMemberFieldMetadataIds.AuthoredComments,
         toFieldMetadataId: SeedCommentFieldMetadataIds.Author,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
       },
       {
         relationType: RelationMetadataType.ONE_TO_MANY,
@@ -80,7 +80,7 @@ export const seedWorkspaceMemberRelationMetadata = async (
         fromFieldMetadataId:
           SeedWorkspaceMemberFieldMetadataIds.AuthoredAttachments,
         toFieldMetadataId: SeedAttachmentFieldMetadataIds.Author,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
       },
     ])
     .execute();

@@ -8,6 +8,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migratio
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { WorkspaceModule } from 'src/core/workspace/workspace.module';
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-workspace.command';
+import { DataSeedDemoWorkspaceCommand } from 'src/database/commands/data-seed-demo-workspace.command';
 
 @Module({
   imports: [
@@ -18,6 +19,10 @@ import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-worksp
     WorkspaceMigrationRunnerModule,
     WorkspaceModule,
   ],
-  providers: [DataSeedWorkspaceCommand, ConfirmationQuestion],
+  providers: [
+    DataSeedWorkspaceCommand,
+    DataSeedDemoWorkspaceCommand,
+    ConfirmationQuestion,
+  ],
 })
 export class DatabaseCommandModule {}

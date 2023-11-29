@@ -2,7 +2,7 @@ import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
+// import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
@@ -21,6 +21,7 @@ export enum SeedCommentFieldMetadataIds {
 export const seedCommentFieldMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
+  workspaceId: string,
 ) => {
   await workspaceDataSource
     .createQueryBuilder()
@@ -48,7 +49,7 @@ export const seedCommentFieldMetadata = async (
         id: SeedCommentFieldMetadataIds.Id,
         objectMetadataId: SeedObjectMetadataIds.Comment,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'id',
@@ -66,7 +67,7 @@ export const seedCommentFieldMetadata = async (
         id: SeedCommentFieldMetadataIds.CreatedAt,
         objectMetadataId: SeedObjectMetadataIds.Comment,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
@@ -84,7 +85,7 @@ export const seedCommentFieldMetadata = async (
         id: SeedCommentFieldMetadataIds.UpdatedAt,
         objectMetadataId: SeedObjectMetadataIds.Comment,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
@@ -103,7 +104,7 @@ export const seedCommentFieldMetadata = async (
         id: SeedCommentFieldMetadataIds.Body,
         objectMetadataId: SeedObjectMetadataIds.Comment,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.TEXT,
         name: 'body',
@@ -122,7 +123,7 @@ export const seedCommentFieldMetadata = async (
         id: SeedCommentFieldMetadataIds.Author,
         objectMetadataId: SeedObjectMetadataIds.Comment,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.RELATION,
         name: 'author',
@@ -138,7 +139,7 @@ export const seedCommentFieldMetadata = async (
         id: SeedCommentFieldMetadataIds.AuthorForeignKey,
         objectMetadataId: SeedObjectMetadataIds.Comment,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'authorId',
@@ -154,7 +155,7 @@ export const seedCommentFieldMetadata = async (
         id: SeedCommentFieldMetadataIds.Activity,
         objectMetadataId: SeedObjectMetadataIds.Comment,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.RELATION,
         name: 'activity',
@@ -170,7 +171,7 @@ export const seedCommentFieldMetadata = async (
         id: SeedCommentFieldMetadataIds.ActivityForeignKey,
         objectMetadataId: SeedObjectMetadataIds.Comment,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'activityId',

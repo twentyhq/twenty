@@ -2,7 +2,7 @@ import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
+// import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
@@ -24,6 +24,7 @@ export enum SeedFavoriteFieldMetadataIds {
 export const seedFavoriteFieldMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
+  workspaceId: string,
 ) => {
   await workspaceDataSource
     .createQueryBuilder()
@@ -51,7 +52,7 @@ export const seedFavoriteFieldMetadata = async (
         id: SeedFavoriteFieldMetadataIds.Id,
         objectMetadataId: SeedObjectMetadataIds.Favorite,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'id',
@@ -69,7 +70,7 @@ export const seedFavoriteFieldMetadata = async (
         id: SeedFavoriteFieldMetadataIds.CreatedAt,
         objectMetadataId: SeedObjectMetadataIds.Favorite,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
@@ -87,7 +88,7 @@ export const seedFavoriteFieldMetadata = async (
         id: SeedFavoriteFieldMetadataIds.UpdatedAt,
         objectMetadataId: SeedObjectMetadataIds.Favorite,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
@@ -106,7 +107,7 @@ export const seedFavoriteFieldMetadata = async (
         id: SeedFavoriteFieldMetadataIds.Position,
         objectMetadataId: SeedObjectMetadataIds.Favorite,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.NUMBER,
         name: 'position',
@@ -126,7 +127,7 @@ export const seedFavoriteFieldMetadata = async (
         id: SeedFavoriteFieldMetadataIds.WorkspaceMember,
         objectMetadataId: SeedObjectMetadataIds.Favorite,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.RELATION,
         name: 'workspaceMember',
@@ -142,7 +143,7 @@ export const seedFavoriteFieldMetadata = async (
         id: SeedFavoriteFieldMetadataIds.WorkspaceMemberForeignKey,
         objectMetadataId: SeedObjectMetadataIds.Favorite,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'workspaceMemberId',
@@ -158,7 +159,7 @@ export const seedFavoriteFieldMetadata = async (
         id: SeedFavoriteFieldMetadataIds.Person,
         objectMetadataId: SeedObjectMetadataIds.Favorite,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.RELATION,
         name: 'person',
@@ -176,7 +177,7 @@ export const seedFavoriteFieldMetadata = async (
         id: SeedFavoriteFieldMetadataIds.PersonForeignKey,
         objectMetadataId: SeedObjectMetadataIds.Favorite,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'personId',
@@ -192,7 +193,7 @@ export const seedFavoriteFieldMetadata = async (
         id: SeedFavoriteFieldMetadataIds.Company,
         objectMetadataId: SeedObjectMetadataIds.Favorite,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.RELATION,
         name: 'company',
@@ -208,7 +209,7 @@ export const seedFavoriteFieldMetadata = async (
         id: SeedFavoriteFieldMetadataIds.CompanyForeignKey,
         objectMetadataId: SeedObjectMetadataIds.Favorite,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'companyId',

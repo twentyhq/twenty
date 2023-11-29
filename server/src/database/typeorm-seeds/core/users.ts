@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 
-import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
+// import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const tableName = 'user';
 
@@ -13,6 +14,7 @@ export enum SeedUserIds {
 export const seedUsers = async (
   workspaceDataSource: DataSource,
   schemaName: string,
+  workspaceId: string,
 ) => {
   await workspaceDataSource
     .createQueryBuilder()
@@ -28,32 +30,32 @@ export const seedUsers = async (
     .orIgnore()
     .values([
       {
-        id: SeedUserIds.Tim,
+        id: uuidv4(),
         firstName: 'Tim',
         lastName: 'Apple',
         email: 'tim@apple.dev',
         passwordHash:
           '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
-        defaultWorkspaceId: SeedWorkspaceId,
+        defaultWorkspaceId: workspaceId,
       },
       {
-        id: SeedUserIds.Jony,
+        id: uuidv4(),
         firstName: 'Jony',
         lastName: 'Ive',
         email: 'jony.ive@apple.dev',
         passwordHash:
           '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
-        defaultWorkspaceId: SeedWorkspaceId,
+        defaultWorkspaceId: workspaceId,
       },
       ,
       {
-        id: SeedUserIds.Phil,
+        id: uuidv4(),
         firstName: 'Phil',
         lastName: 'Schiler',
         email: 'phil.schiler@apple.dev',
         passwordHash:
           '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
-        defaultWorkspaceId: SeedWorkspaceId,
+        defaultWorkspaceId: workspaceId,
       },
     ])
     .execute();

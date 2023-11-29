@@ -2,7 +2,6 @@ import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
@@ -20,6 +19,7 @@ export enum SeedPipelineStepFieldMetadataIds {
 export const seedPipelineStepFieldMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
+  workspaceId: string,
 ) => {
   await workspaceDataSource
     .createQueryBuilder()
@@ -47,7 +47,7 @@ export const seedPipelineStepFieldMetadata = async (
         id: SeedPipelineStepFieldMetadataIds.Id,
         objectMetadataId: SeedObjectMetadataIds.PipelineStep,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'id',
@@ -65,7 +65,7 @@ export const seedPipelineStepFieldMetadata = async (
         id: SeedPipelineStepFieldMetadataIds.CreatedAt,
         objectMetadataId: SeedObjectMetadataIds.PipelineStep,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
@@ -83,7 +83,7 @@ export const seedPipelineStepFieldMetadata = async (
         id: SeedPipelineStepFieldMetadataIds.UpdatedAt,
         objectMetadataId: SeedObjectMetadataIds.PipelineStep,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
@@ -102,7 +102,7 @@ export const seedPipelineStepFieldMetadata = async (
         id: SeedPipelineStepFieldMetadataIds.Name,
         objectMetadataId: SeedObjectMetadataIds.PipelineStep,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.TEXT,
         name: 'name',
@@ -122,7 +122,7 @@ export const seedPipelineStepFieldMetadata = async (
         id: SeedPipelineStepFieldMetadataIds.Color,
         objectMetadataId: SeedObjectMetadataIds.PipelineStep,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.TEXT,
         name: 'color',
@@ -140,7 +140,7 @@ export const seedPipelineStepFieldMetadata = async (
         id: SeedPipelineStepFieldMetadataIds.Position,
         objectMetadataId: SeedObjectMetadataIds.PipelineStep,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.NUMBER,
         name: 'position',
@@ -160,7 +160,7 @@ export const seedPipelineStepFieldMetadata = async (
         id: SeedPipelineStepFieldMetadataIds.Opportunities,
         objectMetadataId: SeedObjectMetadataIds.PipelineStep,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.RELATION,
         name: 'opportunities',

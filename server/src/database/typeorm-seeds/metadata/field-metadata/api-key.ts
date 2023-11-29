@@ -2,7 +2,7 @@ import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
+// import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
@@ -19,6 +19,7 @@ export enum SeedApiKeyFieldMetadataIds {
 export const seedApiKeyFieldMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
+  workspaceId: string,
 ) => {
   await workspaceDataSource
     .createQueryBuilder()
@@ -46,7 +47,7 @@ export const seedApiKeyFieldMetadata = async (
         id: SeedApiKeyFieldMetadataIds.Id,
         objectMetadataId: SeedObjectMetadataIds.ApiKey,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'id',
@@ -64,7 +65,7 @@ export const seedApiKeyFieldMetadata = async (
         id: SeedApiKeyFieldMetadataIds.CreatedAt,
         objectMetadataId: SeedObjectMetadataIds.ApiKey,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
@@ -82,7 +83,7 @@ export const seedApiKeyFieldMetadata = async (
         id: SeedApiKeyFieldMetadataIds.UpdatedAt,
         objectMetadataId: SeedObjectMetadataIds.ApiKey,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
@@ -101,7 +102,7 @@ export const seedApiKeyFieldMetadata = async (
         id: SeedApiKeyFieldMetadataIds.Name,
         objectMetadataId: SeedObjectMetadataIds.ApiKey,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.TEXT,
         name: 'name',
@@ -119,7 +120,7 @@ export const seedApiKeyFieldMetadata = async (
         id: SeedApiKeyFieldMetadataIds.ExpiresAt,
         objectMetadataId: SeedObjectMetadataIds.ApiKey,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.DATE_TIME,
         name: 'expiresAt',
@@ -137,7 +138,7 @@ export const seedApiKeyFieldMetadata = async (
         id: SeedApiKeyFieldMetadataIds.RevokedAt,
         objectMetadataId: SeedObjectMetadataIds.ApiKey,
         isCustom: false,
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         isActive: true,
         type: FieldMetadataType.DATE_TIME,
         name: 'revokedAt',
