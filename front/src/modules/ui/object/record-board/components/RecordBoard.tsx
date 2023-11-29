@@ -9,7 +9,7 @@ import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { BoardColumnContext } from '@/ui/object/record-board/contexts/BoardColumnContext';
 import { useSetCardSelected } from '@/ui/object/record-board/hooks/useSetCardSelected';
 import { useUpdateBoardCardIds } from '@/ui/object/record-board/hooks/useUpdateBoardCardIds';
-import { boardColumnsState } from '@/ui/object/record-board/states/boardColumnsState';
+import { boardColumnsScopedState } from '@/ui/object/record-board/states/boardColumnsScopedState';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -58,7 +58,7 @@ export const RecordBoard = ({
   onColumnDelete,
   onEditColumnTitle,
 }: RecordBoardProps) => {
-  const boardColumns = useRecoilValue(boardColumnsState);
+  const boardColumns = useRecoilValue(boardColumnsScopedState);
 
   const { updateOneRecord: updateOneOpportunity } =
     useUpdateOneRecord<Opportunity>({

@@ -29,7 +29,7 @@ import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates'
 import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useBoardCardFields } from '../../hooks/useBoardCardFields';
-import { boardColumnsState } from '../../states/boardColumnsState';
+import { boardColumnsScopedState } from '../../states/boardColumnsScopedState';
 import { isCompactViewEnabledScopedState } from '../../states/isCompactViewEnabledScopedState';
 import { hiddenBoardCardFieldsScopedSelector } from '../../states/selectors/hiddenBoardCardFieldsScopedSelector';
 import { visibleBoardCardFieldsScopedSelector } from '../../states/selectors/visibleBoardCardFieldsScopedSelector';
@@ -66,7 +66,9 @@ export const BoardOptionsDropdownContent = ({
     BoardOptionsMenu | undefined
   >();
 
-  const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
+  const [boardColumns, setBoardColumns] = useRecoilState(
+    boardColumnsScopedState,
+  );
   const [isCompactViewEnabled, setIsCompactViewEnabled] = useRecoilState(
     isCompactViewEnabledScopedState,
   );

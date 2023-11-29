@@ -3,9 +3,9 @@ import { useRecoilValue } from 'recoil';
 
 import { ContextMenu } from '@/ui/navigation/context-menu/components/ContextMenu';
 
-import { selectedCardIdsSelector } from '../../states/selectors/selectedCardIdsSelector';
+import { selectedCardIdsScopedSelector } from '../../states/selectors/selectedCardIdsScopedSelector';
 
 export const RecordBoardContextMenu = () => {
-  const selectedCardIds = useRecoilValue(selectedCardIdsSelector);
+  const selectedCardIds = useRecoilValue(selectedCardIdsScopedSelector);
   return <ContextMenu selectedIds={selectedCardIds}></ContextMenu>;
 };

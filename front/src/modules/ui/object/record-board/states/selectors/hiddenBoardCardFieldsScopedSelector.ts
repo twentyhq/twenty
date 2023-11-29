@@ -1,14 +1,14 @@
 import { selectorFamily } from 'recoil';
 
 import { availableBoardCardFieldsScopedState } from '../availableBoardCardFieldsScopedState';
-import { boardCardFieldsScopedFamilyState } from '../boardCardFieldsScopedFamilyState';
+import { boardCardFieldsFamilyState } from '../boardCardFieldsFamilyState';
 
 export const hiddenBoardCardFieldsScopedSelector = selectorFamily({
   key: 'hiddenBoardCardFieldsScopedSelector',
   get:
     (scopeId: string) =>
     ({ get }) => {
-      const fields = get(boardCardFieldsScopedFamilyState(scopeId));
+      const fields = get(boardCardFieldsFamilyState(scopeId));
       const fieldKeys = fields.map(({ fieldMetadataId }) => fieldMetadataId);
       const otherAvailableKeys = get(
         availableBoardCardFieldsScopedState({ scopeId }),

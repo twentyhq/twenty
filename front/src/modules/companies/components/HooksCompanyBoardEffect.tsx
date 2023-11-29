@@ -15,8 +15,8 @@ import { useBoardActionBarEntries } from '@/ui/object/record-board/hooks/useBoar
 import { useBoardContext } from '@/ui/object/record-board/hooks/useBoardContext';
 import { useBoardContextMenuEntries } from '@/ui/object/record-board/hooks/useBoardContextMenuEntries';
 import { availableBoardCardFieldsScopedState } from '@/ui/object/record-board/states/availableBoardCardFieldsScopedState';
-import { boardCardFieldsScopedFamilyState } from '@/ui/object/record-board/states/boardCardFieldsScopedFamilyState';
-import { isBoardLoadedState } from '@/ui/object/record-board/states/isBoardLoadedState';
+import { boardCardFieldsFamilyState } from '@/ui/object/record-board/states/boardCardFieldsFamilyState';
+import { isBoardLoadedScopedState } from '@/ui/object/record-board/states/isBoardLoadedScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedStateV2';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
@@ -67,12 +67,12 @@ export const HooksCompanyBoardEffect = ({
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
-  const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedState);
+  const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedScopedState);
 
   const { BoardRecoilScopeContext } = useBoardContext();
 
   const [, setBoardCardFields] = useRecoilScopedState(
-    boardCardFieldsScopedFamilyState,
+    boardCardFieldsFamilyState,
     BoardRecoilScopeContext,
   );
 

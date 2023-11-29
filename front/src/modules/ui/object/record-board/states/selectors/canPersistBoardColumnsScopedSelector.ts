@@ -2,7 +2,7 @@ import { boardColumnsScopedState } from '@/ui/object/record-board/states/boardCo
 import { createScopedSelector } from '@/ui/utilities/recoil-scope/utils/createScopedSelector';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-import { savedBoardColumnsState } from '../savedBoardColumnsState';
+import { savedBoardColumnsScopedState } from '../savedBoardColumnsScopedState';
 
 export const canPersistBoardColumnsScopedSelector =
   createScopedSelector<boolean>({
@@ -12,6 +12,6 @@ export const canPersistBoardColumnsScopedSelector =
       ({ get }) =>
         !isDeeplyEqual(
           get(boardColumnsScopedState({ scopeId })),
-          get(savedBoardColumnsState),
+          get(savedBoardColumnsScopedState),
         ),
   });

@@ -6,7 +6,7 @@ import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
 import { boardCardIdsByColumnIdFamilyState } from '@/ui/object/record-board/states/boardCardIdsByColumnIdFamilyState';
 import { boardColumnsScopedState } from '@/ui/object/record-board/states/boardColumnsScopedState';
-import { savedBoardColumnsState } from '@/ui/object/record-board/states/savedBoardColumnsState';
+import { savedBoardColumnsScopedState } from '@/ui/object/record-board/states/savedBoardColumnsScopedState';
 import { BoardColumnDefinition } from '@/ui/object/record-board/types/BoardColumnDefinition';
 import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -114,7 +114,7 @@ export const useUpdateCompanyBoard = () =>
           !isDeeplyEqual(newBoardColumns, currentBoardColumns)
         ) {
           set(boardColumnsState, newBoardColumns);
-          set(savedBoardColumnsState, newBoardColumns);
+          set(savedBoardColumnsScopedState, newBoardColumns);
         }
         for (const boardColumn of newBoardColumns) {
           const boardCardIds = opportunities

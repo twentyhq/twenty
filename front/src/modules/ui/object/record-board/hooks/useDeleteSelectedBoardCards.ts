@@ -4,7 +4,7 @@ import { useRecoilCallback } from 'recoil';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 
-import { selectedCardIdsSelector } from '../states/selectors/selectedCardIdsSelector';
+import { selectedCardIdsScopedSelector } from '../states/selectors/selectedCardIdsScopedSelector';
 
 import { useRemoveCardIds } from './useRemoveCardIds';
 
@@ -21,7 +21,7 @@ export const useDeleteSelectedBoardCards = () => {
     ({ snapshot }) =>
       async () => {
         const selectedCardIds = snapshot
-          .getLoadable(selectedCardIdsSelector)
+          .getLoadable(selectedCardIdsScopedSelector)
           .getValue();
 
         await Promise.all(
