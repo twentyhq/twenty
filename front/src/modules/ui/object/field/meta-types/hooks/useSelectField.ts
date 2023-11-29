@@ -26,15 +26,15 @@ export const useSelectField = () => {
   );
   const fieldSelectValue = isFieldSelectValue(fieldValue)
     ? fieldValue
-    : { color: 'green' as ThemeColor, text: '' };
+    : { color: 'green' as ThemeColor, label: '' };
 
   const fieldInitialValue = useFieldInitialValue();
 
   const initialValue = {
     color: 'green' as ThemeColor,
-    text: fieldInitialValue?.isEmpty
+    label: fieldInitialValue?.isEmpty
       ? ''
-      : fieldInitialValue?.value ?? fieldSelectValue?.text ?? '',
+      : fieldInitialValue?.value ?? fieldSelectValue?.label ?? '',
   };
 
   return {

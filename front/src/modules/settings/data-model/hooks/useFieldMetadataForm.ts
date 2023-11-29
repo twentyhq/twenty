@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { DeepPartial } from 'react-hook-form';
 import { z } from 'zod';
 
-import { mainColors, ThemeColor } from '@/ui/theme/constants/colors';
+import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 import {
   FieldMetadataType,
   RelationMetadataType,
@@ -26,8 +26,10 @@ const defaultValues: FormValues = {
   type: FieldMetadataType.Text,
   relation: {
     type: RelationMetadataType.OneToMany,
+    objectMetadataId: '',
+    field: { label: '' },
   },
-  select: [{ color: 'green', text: 'Option 1' }],
+  select: [{ color: 'green', label: 'Option 1' }],
 };
 
 const fieldSchema = z.object({
@@ -57,10 +59,9 @@ const selectSchema = fieldSchema.merge(
     select: z
       .array(
         z.object({
-          color: z.enum(
-            Object.keys(mainColors) as [ThemeColor, ...ThemeColor[]],
-          ),
-          text: z.string().min(1),
+          color: themeColorSchema,
+          isDefault: z.boolean().optional(),
+          label: z.string().min(1),
         }),
       )
       .nonempty(),
@@ -90,7 +91,7 @@ const schema = z.discriminatedUnion('type', [
   otherFieldTypesSchema,
 ]);
 
-type PartialFormValues = Partial<FormValues> &
+type PartialFormValues = Partial<Omit<FormValues, 'relation'>> &
   DeepPartial<Pick<FormValues, 'relation'>>;
 
 export const useFieldMetadataForm = () => {

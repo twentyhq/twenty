@@ -2,17 +2,18 @@ import styled from '@emotion/styled';
 
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
-import { TextInput } from '@/ui/input/components/TextInput';
-import { mainColors, ThemeColor } from '@/ui/theme/constants/colors';
+import { mainColorNames, ThemeColor } from '@/ui/theme/constants/colors';
 
-export type SettingsObjectFieldSelectFormValues = {
-  color: ThemeColor;
-  text: string;
-}[];
+import { SettingsObjectFieldSelectFormOption } from '../types/SettingsObjectFieldSelectFormOption';
+
+import { SettingsObjectFieldSelectFormOptionRow } from './SettingsObjectFieldSelectFormOptionRow';
+
+export type SettingsObjectFieldSelectFormValues =
+  SettingsObjectFieldSelectFormOption[];
 
 type SettingsObjectFieldSelectFormProps = {
   onChange: (values: SettingsObjectFieldSelectFormValues) => void;
-  values?: SettingsObjectFieldSelectFormValues;
+  values: SettingsObjectFieldSelectFormValues;
 };
 
 const StyledContainer = styled.div`
@@ -35,21 +36,6 @@ const StyledRows = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledRow = styled.div`
-  align-items: center;
-  display: flex;
-  height: ${({ theme }) => theme.spacing(6)};
-  padding: ${({ theme }) => theme.spacing(1)} 0;
-`;
-
-const StyledOptionInput = styled(TextInput)`
-  flex: 1 0 auto;
-
-  & input {
-    height: ${({ theme }) => theme.spacing(2)};
-  }
-`;
-
 const StyledButton = styled(Button)`
   border-bottom: 0;
   border-left: 0;
@@ -60,31 +46,48 @@ const StyledButton = styled(Button)`
 `;
 
 const getNextColor = (currentColor: ThemeColor) => {
-  const colors = Object.keys(mainColors) as ThemeColor[];
-  const currentColorIndex = colors.findIndex((color) => color === currentColor);
-  return colors[(currentColorIndex + 1) % colors.length];
+  const currentColorIndex = mainColorNames.findIndex(
+    (color) => color === currentColor,
+  );
+  const nextColorIndex = (currentColorIndex + 1) % mainColorNames.length;
+  return mainColorNames[nextColorIndex];
 };
 
 export const SettingsObjectFieldSelectForm = ({
   onChange,
-  values = [],
+  values,
 }: SettingsObjectFieldSelectFormProps) => {
   return (
     <>
       <StyledContainer>
         <StyledLabel>Options</StyledLabel>
         <StyledRows>
-          {values.map((value, index) => (
-            <StyledRow>
-              <StyledOptionInput
-                value={value.text}
-                onChange={(text) => {
-                  const nextValues = [...values];
-                  nextValues.splice(index, 1, { ...values[index], text });
-                  onChange(nextValues);
-                }}
-              />
-            </StyledRow>
+          {values.map((option, index) => (
+            <SettingsObjectFieldSelectFormOptionRow
+              key={index}
+              isDefault={option.isDefault}
+              onChange={(nextOption) => {
+                const hasDefaultOptionChanged =
+                  !option.isDefault && nextOption.isDefault;
+                const nextOptions = hasDefaultOptionChanged
+                  ? values.map((value) => ({ ...value, isDefault: false }))
+                  : [...values];
+
+                nextOptions.splice(index, 1, nextOption);
+
+                onChange(nextOptions);
+              }}
+              onRemove={
+                values.length > 1
+                  ? () => {
+                      const nextOptions = [...values];
+                      nextOptions.splice(index, 1);
+                      onChange(nextOptions);
+                    }
+                  : undefined
+              }
+              option={option}
+            />
           ))}
         </StyledRows>
       </StyledContainer>
@@ -97,7 +100,7 @@ export const SettingsObjectFieldSelectForm = ({
             ...values,
             {
               color: getNextColor(values[values.length - 1].color),
-              text: `Option ${values.length + 1}`,
+              label: `Option ${values.length + 1}`,
             },
           ])
         }

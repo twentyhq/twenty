@@ -15,7 +15,10 @@ import {
   mockedPeopleMetadata,
 } from '~/testing/mock-data/metadata';
 
-import { SettingsObjectFieldTypeSelectSection } from '../SettingsObjectFieldTypeSelectSection';
+import {
+  SettingsObjectFieldTypeSelectSection,
+  SettingsObjectFieldTypeSelectSectionFormValues,
+} from '../SettingsObjectFieldTypeSelectSection';
 
 const fieldMetadata = mockedCompaniesMetadata.node.fields.edges.find(
   ({ node }) => node.type === FieldMetadataType.Text,
@@ -38,7 +41,9 @@ const meta: Meta<typeof SettingsObjectFieldTypeSelectSection> = {
   args: {
     fieldMetadata: fieldMetadataWithoutId,
     objectMetadataId: mockedCompaniesMetadata.node.id,
-    values: { type: FieldMetadataType.Text },
+    values: {
+      type: FieldMetadataType.Text,
+    } as SettingsObjectFieldTypeSelectSectionFormValues,
   },
   parameters: {
     msw: graphqlMocks,
@@ -93,6 +98,6 @@ export const WithRelationForm: Story = {
         objectMetadataId: mockedPeopleMetadata.node.id,
         type: RelationMetadataType.OneToMany,
       },
-    },
+    } as unknown as SettingsObjectFieldTypeSelectSectionFormValues,
   },
 };
