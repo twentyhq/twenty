@@ -7,6 +7,7 @@ import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/
 
 import { pascalCase } from 'src/utils/pascal-case';
 import { isRelationFieldMetadataType } from 'src/workspace/utils/is-relation-field-metadata-type.util';
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 import { InputTypeFactory } from './input-type.factory';
 
@@ -61,6 +62,7 @@ export class InputTypeDefinitionFactory {
       const type = this.inputTypeFactory.create(fieldMetadata, kind, options, {
         nullable: fieldMetadata.isNullable,
         defaultValue: fieldMetadata.defaultValue,
+        isArray: fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
       });
 
       fields[fieldMetadata.name] = {
