@@ -1,8 +1,8 @@
 import { selectorFamily } from 'recoil';
 
+import { boardCardFieldsScopedFamilyState } from '@/ui/object/record-board/states/boardCardFieldsScopedFamilyState';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-import { boardCardFieldsScopedState } from '../boardCardFieldsScopedState';
 import { savedBoardCardFieldsFamilyState } from '../savedBoardCardFieldsFamilyState';
 
 export const canPersistBoardCardFieldsScopedFamilySelector = selectorFamily({
@@ -18,6 +18,6 @@ export const canPersistBoardCardFieldsScopedFamilySelector = selectorFamily({
     ({ get }) =>
       !isDeeplyEqual(
         get(savedBoardCardFieldsFamilyState(viewId)),
-        get(boardCardFieldsScopedState(recoilScopeId)),
+        get(boardCardFieldsScopedFamilyState(recoilScopeId)),
       ),
 });

@@ -4,10 +4,10 @@ import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 
 import { BoardFieldDefinition } from '../types/BoardFieldDefinition';
 
-export const boardCardFieldsScopedState = atomFamily<
+export const boardCardFieldsScopedFamilyState = atomFamily<
   BoardFieldDefinition<FieldMetadata>[],
   string
 >({
-  key: 'boardCardFieldsScopedState',
+  key: 'boardCardFieldsScopedFamilyState',
   default: [],
 });

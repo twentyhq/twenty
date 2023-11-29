@@ -5,7 +5,7 @@ import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
 import { boardCardIdsByColumnIdFamilyState } from '@/ui/object/record-board/states/boardCardIdsByColumnIdFamilyState';
-import { boardColumnsState } from '@/ui/object/record-board/states/boardColumnsState';
+import { boardColumnsScopedState } from '@/ui/object/record-board/states/boardColumnsScopedState';
 import { savedBoardColumnsState } from '@/ui/object/record-board/states/savedBoardColumnsState';
 import { BoardColumnDefinition } from '@/ui/object/record-board/types/BoardColumnDefinition';
 import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
@@ -76,7 +76,7 @@ export const useUpdateCompanyBoard = () =>
           .valueOrThrow();
 
         const currentBoardColumns = snapshot
-          .getLoadable(boardColumnsState)
+          .getLoadable(boardColumnsScopedState)
           .valueOrThrow();
 
         if (!isDeeplyEqual(pipelineSteps, currentPipelineSteps)) {

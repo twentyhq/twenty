@@ -2,14 +2,14 @@
 import { useRecoilCallback } from 'recoil';
 
 import { boardCardIdsByColumnIdFamilyState } from '../states/boardCardIdsByColumnIdFamilyState';
-import { boardColumnsState } from '../states/boardColumnsState';
+import { boardColumnsScopedState } from '../states/boardColumnsScopedState';
 
 export const useRemoveCardIds = () =>
   useRecoilCallback(
     ({ snapshot, set }) =>
       (cardIdToRemove: string[]) => {
         const boardColumns = snapshot
-          .getLoadable(boardColumnsState)
+          .getLoadable(boardColumnsScopedState)
           .valueOrThrow();
 
         boardColumns.forEach((boardColumn) => {

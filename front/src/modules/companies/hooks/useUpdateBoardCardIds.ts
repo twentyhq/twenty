@@ -2,14 +2,14 @@ import { useRecoilCallback } from 'recoil';
 
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { boardCardIdsByColumnIdFamilyState } from '@/ui/object/record-board/states/boardCardIdsByColumnIdFamilyState';
-import { boardColumnsState } from '@/ui/object/record-board/states/boardColumnsState';
+import { boardColumnsScopedState } from '@/ui/object/record-board/states/boardColumnsScopedState';
 
 export const useUpdateCompanyBoardCardIds = () =>
   useRecoilCallback(
     ({ snapshot, set }) =>
       (pipelineProgresses: Pick<Opportunity, 'pipelineStepId' | 'id'>[]) => {
         const boardColumns = snapshot
-          .getLoadable(boardColumnsState)
+          .getLoadable(boardColumnsScopedState)
           .valueOrThrow();
 
         for (const boardColumn of boardColumns) {

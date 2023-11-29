@@ -15,7 +15,7 @@ import { useBoardActionBarEntries } from '@/ui/object/record-board/hooks/useBoar
 import { useBoardContext } from '@/ui/object/record-board/hooks/useBoardContext';
 import { useBoardContextMenuEntries } from '@/ui/object/record-board/hooks/useBoardContextMenuEntries';
 import { availableBoardCardFieldsScopedState } from '@/ui/object/record-board/states/availableBoardCardFieldsScopedState';
-import { boardCardFieldsScopedState } from '@/ui/object/record-board/states/boardCardFieldsScopedState';
+import { boardCardFieldsScopedFamilyState } from '@/ui/object/record-board/states/boardCardFieldsScopedFamilyState';
 import { isBoardLoadedState } from '@/ui/object/record-board/states/isBoardLoadedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedStateV2';
@@ -72,7 +72,7 @@ export const HooksCompanyBoardEffect = ({
   const { BoardRecoilScopeContext } = useBoardContext();
 
   const [, setBoardCardFields] = useRecoilScopedState(
-    boardCardFieldsScopedState,
+    boardCardFieldsScopedFamilyState,
     BoardRecoilScopeContext,
   );
 

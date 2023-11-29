@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
 
-export const isBoardLoadedState = atom<boolean>({
+export const isBoardLoadedState = createScopedState<boolean>({
   key: 'isBoardLoadedState',
-  default: false,
+  defaultValue: false,
 });

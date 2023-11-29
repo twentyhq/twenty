@@ -1,22 +1,24 @@
-import { selector } from 'recoil';
+import { createScopedSelector } from '@/ui/utilities/recoil-scope/utils/createScopedSelector';
 
 import { boardCardIdsByColumnIdFamilyState } from '../boardCardIdsByColumnIdFamilyState';
-import { boardColumnsState } from '../boardColumnsState';
+import { boardColumnsScopedState } from '../boardColumnsScopedState';
 import { isCardSelectedFamilyState } from '../isCardSelectedFamilyState';
 
-export const selectedCardIdsSelector = selector<string[]>({
+export const selectedCardIdsScopedSelector = createScopedSelector<string[]>({
   key: 'selectedCardIdsSelector',
-  get: ({ get }) => {
-    const boardColumns = get(boardColumnsState);
+  get:
+    ({ scopeId }) =>
+    ({ get }) => {
+      const boardColumns = get(boardColumnsScopedState({ scopeId }));
 
-    const cardIds = boardColumns.flatMap((boardColumn) =>
-      get(boardCardIdsByColumnIdFamilyState(boardColumn.id)),
-    );
+      const cardIds = boardColumns.flatMap((boardColumn) =>
+        get(boardCardIdsByColumnIdFamilyState(boardColumn.id)),
+      );
 
-    const selectedCardIds = cardIds.filter(
-      (cardId) => get(isCardSelectedFamilyState(cardId)) === true,
-    );
+      const selectedCardIds = cardIds.filter(
+        (cardId) => get(isCardSelectedFamilyState(cardId)) === true,
+      );
 
-    return selectedCardIds;
-  },
+      return selectedCardIds;
+    },
 });

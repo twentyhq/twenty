@@ -4,11 +4,13 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 
-import { boardColumnsState } from '../states/boardColumnsState';
+import { boardColumnsScopedState } from '../states/boardColumnsScopedState';
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 
 export const useBoardColumns = () => {
-  const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
+  const [boardColumns, setBoardColumns] = useRecoilState(
+    boardColumnsScopedState,
+  );
 
   const { handleColumnMove } = useMoveViewColumns();
 

@@ -11,7 +11,7 @@ import { mainColorNames, ThemeColor } from '@/ui/theme/constants/colors';
 import { textInputStyle } from '@/ui/theme/constants/effects';
 import { debounce } from '~/utils/debounce';
 
-import { boardColumnsState } from '../states/boardColumnsState';
+import { boardColumnsScopedState } from '../states/boardColumnsScopedState';
 
 const StyledEditTitleContainer = styled.div`
   --vertical-padding: ${({ theme }) => theme.spacing(1)};
@@ -58,7 +58,7 @@ export const RecordBoardColumnEditTitleMenu = ({
   color,
 }: RecordBoardColumnEditTitleMenuProps) => {
   const [internalValue, setInternalValue] = useState(title);
-  const [, setBoardColumns] = useRecoilState(boardColumnsState);
+  const [, setBoardColumns] = useRecoilState(boardColumnsScopedState);
   const debouncedOnUpdateTitle = debounce(
     (newTitle) => onTitleEdit(newTitle, color),
     200,

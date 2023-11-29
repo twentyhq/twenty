@@ -2,23 +2,25 @@ import { useRecoilCallback } from 'recoil';
 
 import { actionBarOpenState } from '@/ui/navigation/action-bar/states/actionBarIsOpenState';
 
-import { activeCardIdsState } from '../states/activeCardIdsState';
+import { activeCardIdsScopedState } from '../states/activeCardIdsScopedState';
 import { isCardSelectedFamilyState } from '../states/isCardSelectedFamilyState';
 
 export const useSetCardSelected = () => {
   const setCardSelected = useRecoilCallback(
     ({ set, snapshot }) =>
       (cardId: string, selected: boolean) => {
-        const activeCardIds = snapshot.getLoadable(activeCardIdsState).contents;
+        const activeCardIds = snapshot.getLoadable(
+          activeCardIdsScopedState,
+        ).contents;
 
         set(isCardSelectedFamilyState(cardId), selected);
         set(actionBarOpenState, selected || activeCardIds.length > 0);
 
         if (selected) {
-          set(activeCardIdsState, [...activeCardIds, cardId]);
+          set(activeCardIdsScopedState, [...activeCardIds, cardId]);
         } else {
           set(
-            activeCardIdsState,
+            activeCardIdsScopedState,
             activeCardIds.filter((id: string) => id !== cardId),
           );
         }
@@ -28,13 +30,15 @@ export const useSetCardSelected = () => {
   const unselectAllActiveCards = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
-        const activeCardIds = snapshot.getLoadable(activeCardIdsState).contents;
+        const activeCardIds = snapshot.getLoadable(
+          activeCardIdsScopedState,
+        ).contents;
 
         activeCardIds.forEach((cardId: string) => {
           set(isCardSelectedFamilyState(cardId), false);
         });
 
-        set(activeCardIdsState, []);
+        set(activeCardIdsScopedState, []);
         set(actionBarOpenState, false);
       },
     [],

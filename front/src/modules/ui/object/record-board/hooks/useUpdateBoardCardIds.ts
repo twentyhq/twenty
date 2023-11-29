@@ -1,8 +1,9 @@
 import { DropResult } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useRecoilCallback } from 'recoil';
 
+import { boardColumnsScopedState } from '@/ui/object/record-board/states/boardColumnsScopedState';
+
 import { boardCardIdsByColumnIdFamilyState } from '../states/boardCardIdsByColumnIdFamilyState';
-import { boardColumnsState } from '../states/boardColumnsState';
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 
 export const useUpdateBoardCardIds = () =>
@@ -10,7 +11,7 @@ export const useUpdateBoardCardIds = () =>
     ({ snapshot, set }) =>
       (result: DropResult) => {
         const currentBoardColumns = snapshot
-          .getLoadable(boardColumnsState)
+          .getLoadable(boardColumnsScopedState)
           .valueOrThrow();
 
         const newBoardColumns = [...currentBoardColumns];

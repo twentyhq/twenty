@@ -6,7 +6,7 @@ import { BoardFieldDefinition } from '@/ui/object/record-board/types/BoardFieldD
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { boardCardFieldsScopedState } from '../states/boardCardFieldsScopedState';
+import { boardCardFieldsScopedFamilyState } from '../states/boardCardFieldsScopedFamilyState';
 
 import { useBoardContext } from './useBoardContext';
 
@@ -14,7 +14,7 @@ export const useBoardCardFields = () => {
   const { BoardRecoilScopeContext, onFieldsChange } = useBoardContext();
 
   const [, setBoardCardFields] = useRecoilScopedState(
-    boardCardFieldsScopedState,
+    boardCardFieldsScopedFamilyState,
     BoardRecoilScopeContext,
   );
 
