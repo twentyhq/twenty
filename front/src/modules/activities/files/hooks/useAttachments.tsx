@@ -1,10 +1,10 @@
 import { Attachment } from '@/activities/files/types/Attachment';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
 import { ActivityTargetableEntity } from '../../types/ActivityTargetableEntity';
 
 export const useAttachments = (entity: ActivityTargetableEntity) => {
-  const { objects: attachments } = useFindManyObjectRecords({
+  const { records: attachments } = useFindManyRecords({
     objectNamePlural: 'attachments',
     filter: {
       [entity.type === 'Company' ? 'companyId' : 'personId']: { eq: entity.id },

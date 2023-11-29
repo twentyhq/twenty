@@ -8,7 +8,7 @@ import { Attachment } from '@/activities/files/types/Attachment';
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
@@ -65,8 +65,8 @@ export const Attachments = ({
 
   const [uploadFile] = useUploadFileMutation();
 
-  const { createOneObject: createOneAttachment } =
-    useCreateOneObjectRecord<Attachment>({
+  const { createOneRecord: createOneAttachment } =
+    useCreateOneRecord<Attachment>({
       objectNameSingular: 'attachment',
     });
 
