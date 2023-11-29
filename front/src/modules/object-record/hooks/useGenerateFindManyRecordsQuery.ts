@@ -5,7 +5,7 @@ import { EMPTY_QUERY } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const useGenerateFindManyCustomObjectsQuery = ({
+export const useGenerateFindManyRecordsQuery = ({
   objectMetadataItem,
   depth,
 }: {

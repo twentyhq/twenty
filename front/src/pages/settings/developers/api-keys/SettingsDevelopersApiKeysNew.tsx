@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DateTime } from 'luxon';
 
-import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -30,9 +30,9 @@ export const SettingsDevelopersApiKeysNew = () => {
     name: '',
   });
 
-  const { createOneObject: createOneApiKey } = useCreateOneObjectRecord<ApiKey>(
-    { objectNameSingular: 'apiKey' },
-  );
+  const { createOneRecord: createOneApiKey } = useCreateOneRecord<ApiKey>({
+    objectNameSingular: 'apiKey',
+  });
   const onSave = async () => {
     const expiresAt = DateTime.now()
       .plus({ days: formValues.expirationDate ?? 30 })

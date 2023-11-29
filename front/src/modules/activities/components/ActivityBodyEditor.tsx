@@ -6,7 +6,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import debounce from 'lodash.debounce';
 
 import { Activity } from '@/activities/types/Activity';
-import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 
 const StyledBlockNoteStyledContainer = styled.div`
@@ -23,7 +23,7 @@ export const ActivityBodyEditor = ({
   onChange,
 }: ActivityBodyEditorProps) => {
   const [body, setBody] = useState<string | null>(null);
-  const { updateOneObject } = useUpdateOneObjectRecord({
+  const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: 'activity',
   });
 
@@ -36,7 +36,7 @@ export const ActivityBodyEditor = ({
   const debounceOnChange = useMemo(() => {
     const onInternalChange = (activityBody: string) => {
       setBody(activityBody);
-      updateOneObject?.({
+      updateOneRecord?.({
         idToUpdate: activity.id,
         input: {
           body: activityBody,
@@ -45,7 +45,7 @@ export const ActivityBodyEditor = ({
     };
 
     return debounce(onInternalChange, 200);
-  }, [updateOneObject, activity.id]);
+  }, [updateOneRecord, activity.id]);
 
   const editor: BlockNoteEditor | null = useBlockNote({
     initialContent:

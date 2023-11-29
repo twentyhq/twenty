@@ -15,7 +15,7 @@ import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';
 import { RecordTableActionBar } from '@/ui/object/record-table/action-bar/components/RecordTableActionBar';
 import { RecordTableContextMenu } from '@/ui/object/record-table/context-menu/components/RecordTableContextMenu';
 
-import { useCreateOneObjectRecord } from '../hooks/useCreateOneObjectRecord';
+import { useCreateOneRecord } from '../hooks/useCreateOneRecord';
 
 import { RecordTableContainer } from './RecordTableContainer';
 
@@ -33,7 +33,7 @@ export type RecordTablePageProps = Pick<
 export const RecordTablePage = () => {
   const objectNamePlural = useParams().objectNamePlural ?? '';
 
-  const { objectNotFoundInMetadata, objectMetadataItem } =
+  const { objectMetadataItemNotFound, objectMetadataItem } =
     useObjectMetadataItem({
       objectNamePlural,
     });
@@ -44,14 +44,14 @@ export const RecordTablePage = () => {
 
   useEffect(() => {
     if (
-      objectNotFoundInMetadata &&
+      objectMetadataItemNotFound &&
       onboardingStatus === OnboardingStatus.Completed
     ) {
       navigate('/');
     }
-  }, [objectNotFoundInMetadata, navigate, onboardingStatus]);
+  }, [objectMetadataItemNotFound, navigate, onboardingStatus]);
 
-  const { createOneObject } = useCreateOneObjectRecord({
+  const { createOneRecord: createOneObject } = useCreateOneRecord({
     objectNameSingular: objectMetadataItem?.nameSingular,
   });
 

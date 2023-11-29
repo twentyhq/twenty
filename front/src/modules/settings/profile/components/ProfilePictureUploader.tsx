@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 import { useUploadProfilePictureMutation } from '~/generated/graphql';
@@ -19,10 +19,9 @@ export const ProfilePictureUploader = () => {
     useState<AbortController | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const { updateOneObject, objectNotFoundInMetadata } =
-    useUpdateOneObjectRecord({
-      objectNameSingular: 'workspaceMember',
-    });
+  const { updateOneRecord, objectMetadataItemNotFound } = useUpdateOneRecord({
+    objectNameSingular: 'workspaceMember',
+  });
 
   const handleUpload = async (file: File) => {
     if (!file) {
@@ -55,10 +54,10 @@ export const ProfilePictureUploader = () => {
       if (!avatarUrl) {
         throw new Error('Avatar URL not found');
       }
-      if (!updateOneObject || objectNotFoundInMetadata) {
+      if (!updateOneRecord || objectMetadataItemNotFound) {
         throw new Error('Object not found in metadata');
       }
-      await updateOneObject({
+      await updateOneRecord({
         idToUpdate: currentWorkspaceMember?.id,
         input: {
           avatarUrl,
@@ -81,13 +80,13 @@ export const ProfilePictureUploader = () => {
   };
 
   const handleRemove = async () => {
-    if (!updateOneObject || objectNotFoundInMetadata) {
+    if (!updateOneRecord || objectMetadataItemNotFound) {
       throw new Error('Object not found in metadata');
     }
     if (!currentWorkspaceMember?.id) {
       throw new Error('User is not logged in');
     }
-    await updateOneObject({
+    await updateOneRecord({
       idToUpdate: currentWorkspaceMember?.id,
       input: {
         avatarUrl: null,

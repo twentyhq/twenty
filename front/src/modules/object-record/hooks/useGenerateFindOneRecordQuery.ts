@@ -4,7 +4,7 @@ import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMa
 import { EMPTY_QUERY } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
-export const useGenerateFindOneCustomObjectQuery = ({
+export const useGenerateFindOneRecordQuery = ({
   objectMetadataItem,
   depth,
 }: {

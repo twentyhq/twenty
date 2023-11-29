@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { useComputeDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useComputeDefinitionsFromFieldMetadata';
+import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
@@ -11,7 +11,7 @@ import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToC
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 
-import { useUpdateOneObjectRecord } from '../hooks/useUpdateOneObjectRecord';
+import { useUpdateOneRecord } from '../hooks/useUpdateOneRecord';
 
 import { RecordTableEffect } from './RecordTableEffect';
 
@@ -32,11 +32,11 @@ export const RecordTableContainer = ({
       objectNamePlural,
     },
   );
-  const { columnDefinitions } = useComputeDefinitionsFromFieldMetadata(
+  const { columnDefinitions } = useColumnDefinitionsFromFieldMetadata(
     foundObjectMetadataItem,
   );
 
-  const { updateOneObject } = useUpdateOneObjectRecord({
+  const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: foundObjectMetadataItem?.nameSingular,
   });
 
@@ -57,7 +57,7 @@ export const RecordTableContainer = ({
       };
     };
   }) => {
-    updateOneObject?.({
+    updateOneRecord?.({
       idToUpdate: variables.where.id,
       input: variables.data,
     });

@@ -10,7 +10,7 @@ import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { Comment } from '@/activities/types/Comment';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
-import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/ui/object/record-inline-cell/property-box/components/PropertyBox';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -80,7 +80,7 @@ export const ActivityEditor = ({
   const [title, setTitle] = useState<string | null>(activity.title ?? '');
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const { updateOneObject } = useUpdateOneObjectRecord<Activity>({
+  const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<Activity>({
     objectNameSingular: 'activity',
   });
 
@@ -103,18 +103,18 @@ export const ActivityEditor = ({
 
   const updateTitle = useCallback(
     (newTitle: string) => {
-      updateOneObject?.({
+      updateOneActivity?.({
         idToUpdate: activity.id,
         input: {
           title: newTitle ?? '',
         },
       });
     },
-    [activity.id, updateOneObject],
+    [activity.id, updateOneActivity],
   );
   const handleActivityCompletionChange = useCallback(
     (value: boolean) => {
-      updateOneObject?.({
+      updateOneActivity?.({
         idToUpdate: activity.id,
         input: {
           completedAt: value ? new Date().toISOString() : null,
@@ -122,7 +122,7 @@ export const ActivityEditor = ({
         forceRefetch: true,
       });
     },
-    [activity.id, updateOneObject],
+    [activity.id, updateOneActivity],
   );
 
   const debouncedUpdateTitle = debounce(updateTitle, 200);

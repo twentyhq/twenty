@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useCreateOneRelationMetadata } from '@/object-metadata/hooks/useCreateOneRelationMetadata';
+import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
-import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
-import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -69,17 +69,17 @@ export const SettingsObjectNewFieldStep2 = () => {
   const [objectViews, setObjectViews] = useState<View[]>([]);
   const [relationObjectViews, setRelationObjectViews] = useState<View[]>([]);
 
-  const { createOneObject: createOneViewField } = useCreateOneObjectRecord({
+  const { createOneRecord: createOneViewField } = useCreateOneRecord({
     objectNameSingular: 'viewField',
   });
 
-  useFindManyObjectRecords({
+  useFindManyRecords({
     objectNamePlural: 'views',
     filter: {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: activeObjectMetadataItem?.id },
     },
-    onCompleted: async (data: PaginatedObjectTypeResults<View>) => {
+    onCompleted: async (data: PaginatedRecordTypeResults<View>) => {
       const views = data.edges;
 
       if (!views) return;
@@ -88,14 +88,14 @@ export const SettingsObjectNewFieldStep2 = () => {
     },
   });
 
-  useFindManyObjectRecords({
+  useFindManyRecords({
     objectNamePlural: 'views',
     skip: !formValues.relation?.objectMetadataId,
     filter: {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: formValues.relation?.objectMetadataId },
     },
-    onCompleted: async (data: PaginatedObjectTypeResults<View>) => {
+    onCompleted: async (data: PaginatedRecordTypeResults<View>) => {
       const views = data.edges;
 
       if (!views) return;
@@ -104,7 +104,8 @@ export const SettingsObjectNewFieldStep2 = () => {
     },
   });
 
-  const { createOneRelationMetadata } = useCreateOneRelationMetadata();
+  const { createOneRelationMetadataItem: createOneRelationMetadata } =
+    useCreateOneRelationMetadataItem();
 
   if (!activeObjectMetadataItem) return null;
 
