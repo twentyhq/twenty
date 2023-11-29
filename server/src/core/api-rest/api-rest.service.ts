@@ -15,7 +15,8 @@ import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metad
 import { capitalize } from 'src/utils/capitalize';
 
 const FILTER_COMPARATORS = ['eq', 'gt', 'gte', 'lt', 'lte'];
-
+const ALLOWED_DEPTH_VALUES = [1, 2];
+const DEFAULT_DEPTH_VALUE = 2;
 @Injectable()
 export class ApiRestService {
   constructor(
@@ -26,7 +27,7 @@ export class ApiRestService {
   mapFieldMetadataToGraphQLQuery(
     objectMetadataItems,
     field,
-    maxDepthForRelations = 2,
+    maxDepthForRelations = DEFAULT_DEPTH_VALUE,
   ): any {
     if (maxDepthForRelations <= 0) {
       return '';
@@ -126,7 +127,11 @@ export class ApiRestService {
     }
   }
 
-  async computeQuery(objectMetadataItems, objectMetadataItem): Promise<string> {
+  async computeQuery(
+    objectMetadataItems,
+    objectMetadataItem,
+    depth = DEFAULT_DEPTH_VALUE,
+  ): Promise<string> {
     return `
       query FindMany${capitalize(objectMetadataItem.namePlural)}(
         $filter: ${capitalize(objectMetadataItem.nameSingular)}FilterInput,
@@ -145,6 +150,7 @@ export class ApiRestService {
                   this.mapFieldMetadataToGraphQLQuery(
                     objectMetadataItems,
                     field,
+                    depth,
                   ),
                 )
                 .join('\n')}
@@ -292,6 +298,21 @@ export class ApiRestService {
     ];
   }
 
+  computeDepth(request): number {
+    const depth =
+      typeof request.query.depth === 'string'
+        ? parseInt(request.query.depth)
+        : DEFAULT_DEPTH_VALUE;
+    if (!ALLOWED_DEPTH_VALUES.includes(depth)) {
+      throw Error(
+        `'depth=${depth}' parameter invalid. Allowed values are ${ALLOWED_DEPTH_VALUES.join(
+          ', ',
+        )}`,
+      );
+    }
+    return depth;
+  }
+
   async callGraphql(request: Request) {
     try {
       const workspaceId = this.extractWorkspaceId(request);
@@ -303,6 +324,7 @@ export class ApiRestService {
           query: await this.computeQuery(
             objectMetadataItems,
             objectMetadataItem,
+            this.computeDepth(request),
           ),
           variables: this.computeVariables(request, objectMetadataItem),
         },
