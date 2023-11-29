@@ -14,7 +14,6 @@ import {
   mockedCompaniesMetadata,
   mockedPeopleMetadata,
 } from '~/testing/mock-data/metadata';
-import { sleep } from '~/testing/sleep';
 
 import { SettingsObjectFieldTypeSelectSection } from '../SettingsObjectFieldTypeSelectSection';
 
@@ -61,9 +60,10 @@ export const WithOpenSelect: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await sleep(500);
+    const input = await canvas.findByText('Unique ID');
+    await userEvent.click(input);
 
-    const selectLabel = canvas.getByText('Text');
+    const selectLabel = canvas.getByText('Number');
 
     await userEvent.click(selectLabel);
   },

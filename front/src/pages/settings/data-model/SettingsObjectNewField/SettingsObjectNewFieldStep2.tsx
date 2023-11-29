@@ -224,6 +224,7 @@ export const SettingsObjectNewFieldStep2 = () => {
           values={{
             type: formValues.type,
             relation: formValues.relation,
+            select: formValues.select,
           }}
         />
       </SettingsPageContainer>

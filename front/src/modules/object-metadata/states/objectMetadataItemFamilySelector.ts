@@ -18,7 +18,6 @@ export const objectMetadataItemFamilySelector = selectorFamily<
     }) =>
     ({ get }) => {
       const objectMetadataItems = get(objectMetadataItemsState);
-
       return (
         objectMetadataItems.find(
           (objectMetadataItem) =>

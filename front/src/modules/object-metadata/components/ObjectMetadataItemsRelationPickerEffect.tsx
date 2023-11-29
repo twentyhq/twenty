@@ -5,7 +5,9 @@ import { IdentifiersMapper } from '@/ui/input/components/internal/relation-picke
 import { getLogoUrlFromDomainName } from '~/utils';
 
 export const ObjectMetadataItemsRelationPickerEffect = () => {
-  const { setIdentifiersMapper, setSearchQuery } = useRelationPicker();
+  const { setIdentifiersMapper, setSearchQuery } = useRelationPicker({
+    relationPickerScopeId: 'relation-picker',
+  });
 
   const computeFilterFields = (relationPickerType: string) => {
     if (relationPickerType === 'company') {

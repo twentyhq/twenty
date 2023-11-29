@@ -77,7 +77,7 @@ export const TaskRow = ({
   const { completeTask } = useCompleteTask(task);
 
   const activityTargetIds =
-    task?.activityTargets?.edges.map(
+    task?.activityTargets?.edges?.map(
       (activityTarget) => activityTarget.node.id,
     ) ?? [];
 
