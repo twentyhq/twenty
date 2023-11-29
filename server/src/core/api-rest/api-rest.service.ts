@@ -17,6 +17,7 @@ import { capitalize } from 'src/utils/capitalize';
 const FILTER_COMPARATORS = ['eq', 'gt', 'gte', 'lt', 'lte'];
 const ALLOWED_DEPTH_VALUES = [1, 2];
 const DEFAULT_DEPTH_VALUE = 2;
+const MAX_CONJUNCTION_ENCAPSULATION = 102;
 @Injectable()
 export class ApiRestService {
   constructor(
@@ -173,77 +174,59 @@ export class ApiRestService {
         workspaceId,
       );
     const parsedObject = this.parseObject(request)[0];
-    const objectMetadata = objectMetadataItems.filter(
+    const [objectMetadata] = objectMetadataItems.filter(
       (object) => object.namePlural === parsedObject,
     );
-    if (!objectMetadata.length) {
-      const objectMetadata = objectMetadataItems.filter(
+    if (!objectMetadata) {
+      const [wrongObjectMetadata] = objectMetadataItems.filter(
         (object) => object.nameSingular === parsedObject,
       );
       let hint = 'eg: companies';
-      if (objectMetadata.length) {
-        hint = `Did you mean '${objectMetadata[0].namePlural}'?`;
+      if (wrongObjectMetadata) {
+        hint = `Did you mean '${wrongObjectMetadata.namePlural}'?`;
       }
       throw Error(`object '${parsedObject}' not found. ${hint}`);
     }
-    return [objectMetadataItems, objectMetadata[0]];
+    return [objectMetadataItems, objectMetadata];
   }
 
-  extractContent(input) {
-    const regexPattern = /\(([^()]*)\)/;
-    let match = input.match(regexPattern);
-    while (match && match[1].includes('(')) {
-      match = match[1].match(regexPattern);
+  extractDeepestFilterQuery(filterQuery) {
+    const match = filterQuery.match(/\(([^()]*)\)/);
+    if (match) {
+      const matchRegex = match[1].replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return filterQuery.match(`(or|and|not)\\(${matchRegex}\\)`)[0];
     }
-    return match
-      ? input.match(
-          `(or|and|not)\\(${match[1].replace(
-            /[.*+?^${}()|[\]\\]/g,
-            '\\$&',
-          )}\\)`,
-        )[0]
-      : null;
   }
 
-  parseFilter(filterQuery, objectMetadataItem, parsedObjectId?: string) {
-    //filterQuery = or(and(type[lte]:1,or(type[lte]:2,updatedAt[eq]:3)),type[lte]:4)
-    if (parsedObjectId) {
-      return { id: { eq: parsedObjectId } };
-    }
-    if (typeof filterQuery !== 'string') {
-      return {};
-    }
+  computeStringFilterBlocks(filterQuery) {
     const stringFilterBlocks: string[] = [];
-    let remaining = filterQuery;
-    let subQuery = remaining;
-    while (subQuery) {
-      subQuery = this.extractContent(remaining);
-      remaining = remaining
-        .replace(subQuery, '')
+    let remainingFilterQuery = filterQuery;
+    let deepestFilterQuery = filterQuery;
+    let securityCount = MAX_CONJUNCTION_ENCAPSULATION; // Avoids indefinite loop if wrong filterQuery
+    while (deepestFilterQuery && securityCount > 0) {
+      deepestFilterQuery = this.extractDeepestFilterQuery(remainingFilterQuery);
+      remainingFilterQuery = remainingFilterQuery
+        .replace(deepestFilterQuery, '')
         .replace(',,', ',')
         .replace('(,', '(')
         .replace(',)', ')');
-      if (subQuery) {
-        stringFilterBlocks.push(subQuery);
+      if (deepestFilterQuery) {
+        stringFilterBlocks.push(deepestFilterQuery);
       }
+      securityCount--;
     }
-    // stringFilterBlocks = [
-    //   or(type[lte]:2,updatedAt[eq]:3),
-    //   and(type[lte]:1),
-    //   or(type[lte]:4),
-    // ]
-    const filterBlocks: object[] = [];
-    for (const elem of stringFilterBlocks) {
-      const parsedFilters = this.parseFilterBlock(elem, objectMetadataItem);
-      filterBlocks.push(parsedFilters);
+    if (securityCount === 0) {
+      throw Error(
+        `'filter' invalid. Maximum of ${
+          MAX_CONJUNCTION_ENCAPSULATION - 2
+        } (or|and|not) encapsulations reached`,
+      );
     }
+    return stringFilterBlocks;
+  }
 
-    // stringFilterBlocks = [
-    //   { or: [{ type: { lte: '2' } }, { updatedAt: { eq: '3' } }] },
-    //   { and: [{ type: { lte: '1' } }] },
-    //   { or: [{ type: { lte: '4' } }] },
-    // ]
-    const result = filterBlocks.reduce((acc, filterBlock) => {
+  mergeFilterBlocks(filterBlocks) {
+    return filterBlocks.reduce((acc, filterBlock) => {
       if (!acc) {
         return filterBlock;
       } else {
@@ -251,17 +234,57 @@ export class ApiRestService {
         return filterBlock;
       }
     });
-    // result = [{
-    //   or: [
+  }
+
+  parseFilter(request, objectMetadataItem) {
+    const parsedObjectId = this.parseObject(request)[1];
+    if (parsedObjectId) {
+      return { id: { eq: parsedObjectId } };
+    }
+    const filterQuery = request.query.filter;
+    if (typeof filterQuery !== 'string') {
+      return {};
+    }
+    //filterQuery = or(and(type[lte]:1,or(type[lte]:2,updatedAt[eq]:3)),type[lte]:4)
+    const stringFilterBlocks = this.computeStringFilterBlocks(filterQuery);
+
+    // stringFilterBlocks = [
+    //   'or(type[lte]:2,updatedAt[eq]:3)',
+    //   'and(type[lte]:1)',
+    //   'or(type[lte]:4)',
+    // ]
+    const filterBlocks = stringFilterBlocks.map((stringFilterBlock) =>
+      this.parseFilterBlock(stringFilterBlock, objectMetadataItem),
+    );
+
+    // stringFilterBlocks = [
+    //   { or: [{ type: { lte: '2' } }, { updatedAt: { eq: '3' } }] },
+    //   { and: [{ type: { lte: '1' } }] },
+    //   { or: [{ type: { lte: '4' } }] },
+    // ]
+    const result = this.mergeFilterBlocks(filterBlocks);
+
+    // result = [
+    //   { or: [
     //     { type: { lte: '4' } },
     //     { and: [
     //       { type: { lte: '1' } },
-    //       { or: [{ type: { lte: '2' } }, { updatedAt: { eq: '3' } }]
+    //       { or: [
+    //         { type: { lte: '2' } },
+    //         { updatedAt: { eq: '3' }
+    //       }]
     //     }]
     //   }]
     // }]
     return result;
   }
+
+  //TODO:
+  //- handle 'not' conjunction for filters
+  //- add default behaviour and(blabla) for filters
+  //- parse filter values with metadata field type
+  //- add function docstrings
+  //- add tests
 
   parseFilterBlock(filterQuery, objectMetadataItem) {
     // and(price[lte]:100,price[lte]:100)
@@ -284,15 +307,11 @@ export class ApiRestService {
   parseSimpleFilter(filterString: string, objectMetadataItem) {
     // price[lte]:100
     if (
-      !filterString.match(
-        `^([^\\[\\]]+)\\[(${FILTER_COMPARATORS.join('|')})\\]:([^\\[\\]]+)$`,
-      )
+      !filterString.match(`^(.+)\\[(${FILTER_COMPARATORS.join('|')})\\]:(.+)$`)
     ) {
-      throw Error(
-        `'filter' invalid for '${filterString}'. eg: ?filter=price[gte]:10,price[lte]:100`,
-      );
+      throw Error(`'filter' invalid for '${filterString}'. eg: price[gte]:10`);
     }
-    const [fieldAndComparator, value] = filterString.split(/:(.*)/s);
+    const [fieldAndComparator, value] = filterString.split(':');
     const [field, comparator] = fieldAndComparator.replace(']', '').split('[');
     if (!FILTER_COMPARATORS.includes(comparator)) {
       throw Error(
@@ -301,24 +320,23 @@ export class ApiRestService {
         )}`,
       );
     }
-    if (!objectMetadataItem.fields.map((field) => field.name).includes(field)) {
-      throw Error(
-        `'filter' field '${field}' does not exist in '${objectMetadataItem.targetTableName}' object`,
-      );
-    }
+    this.checkFields(objectMetadataItem, [field], 'filter');
     return { [field]: { [comparator]: value } };
   }
 
-  parseOrderBy(orderByQuery, objectMetadataItem) {
+  parseOrderBy(request, objectMetadataItem) {
     //?order_by=field_1[AscNullsFirst],field_2[DescNullsLast],field_3
+    const orderByQuery = request.query.order_by;
     if (typeof orderByQuery !== 'string') {
       return {};
     }
     const orderByItems = orderByQuery.split(',');
     const result = {};
     for (const orderByItem of orderByItems) {
+      // orderByItem -> field_1[AscNullsFirst]
       if (orderByItem.includes('[') && orderByItem.includes(']')) {
         const [field, direction] = orderByItem.replace(']', '').split('[');
+        // field -> field_1 ; direction -> AscNullsFirst
         if (!(direction in OrderByDirection)) {
           throw Error(
             `'order_by' direction '${direction}' invalid. Allowed values are '${Object.values(
@@ -330,24 +348,28 @@ export class ApiRestService {
         }
         result[field] = direction;
       } else {
+        // orderByItem -> field_3
         result[orderByItem] = OrderByDirection.AscNullsFirst;
       }
     }
-    for (const orderByField of Object.keys(result)) {
-      if (
-        !objectMetadataItem.fields
-          .map((field) => field.name)
-          .includes(orderByField)
-      ) {
-        throw Error(
-          `'order_by' field '${orderByField}' does not exist in '${objectMetadataItem.targetTableName}' object`,
-        );
-      }
-    }
+    this.checkFields(objectMetadataItem, Object.keys(result), 'order_by');
     return <RecordOrderBy>result;
   }
 
-  parseLimit(limitQuery) {
+  checkFields(objectMetadataItem, fields, queryParam) {
+    for (const field of fields) {
+      if (
+        !objectMetadataItem.fields.map((field) => field.name).includes(field)
+      ) {
+        throw Error(
+          `'${queryParam}' field '${field}' does not exist in '${objectMetadataItem.targetTableName}' object`,
+        );
+      }
+    }
+  }
+
+  parseLimit(request) {
+    const limitQuery = request.query.limit;
     if (typeof limitQuery !== 'string') {
       return 60;
     }
@@ -358,34 +380,20 @@ export class ApiRestService {
     return limitParsed;
   }
 
-  parseCursor(cursorQuery) {
+  parseCursor(request) {
+    const cursorQuery = request.query.last_cursor;
     if (typeof cursorQuery !== 'string') {
       return undefined;
     }
     return cursorQuery;
   }
 
-  computeVariables(
-    request: Request,
-    objectMetadataItem,
-  ): {
-    orderBy: object;
-    filter: object;
-    limit: number;
-    lastCursor?: string;
-  } {
-    const parsedObjectId = this.parseObject(request)[1];
-    const filter = this.parseFilter(
-      request.query.filter,
-      objectMetadataItem,
-      parsedObjectId,
-    );
-    console.log(JSON.stringify(filter));
+  computeVariables(request: Request, objectMetadataItem) {
     return {
-      filter,
-      orderBy: this.parseOrderBy(request.query.order_by, objectMetadataItem),
-      limit: this.parseLimit(request.query.limit),
-      lastCursor: this.parseCursor(request.query.last_cursor),
+      filter: this.parseFilter(request, objectMetadataItem),
+      orderBy: this.parseOrderBy(request, objectMetadataItem),
+      limit: this.parseLimit(request),
+      lastCursor: this.parseCursor(request),
     };
   }
 
