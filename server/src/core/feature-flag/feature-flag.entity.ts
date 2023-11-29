@@ -1,4 +1,4 @@
-import { ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 import {
   Entity,
@@ -21,9 +21,11 @@ export class FeatureFlagEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Field()
   @Column({ nullable: false, type: 'text' })
   key: string;
 
+  @Field()
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
@@ -32,6 +34,7 @@ export class FeatureFlagEntity {
   })
   workspace: Workspace;
 
+  @Field()
   @Column({ nullable: false })
   value: boolean;
 

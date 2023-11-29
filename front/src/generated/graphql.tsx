@@ -88,6 +88,14 @@ export type CursorPaging = {
   last?: InputMaybe<Scalars['Int']>;
 };
 
+export type FeatureFlag = {
+  __typename?: 'FeatureFlag';
+  id: Scalars['ID'];
+  key: Scalars['String'];
+  value: Scalars['Boolean'];
+  workspaceId: Scalars['String'];
+};
+
 export type FieldConnection = {
   __typename?: 'FieldConnection';
   /** Array of edges. */
@@ -466,6 +474,7 @@ export type Workspace = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;
   domainName?: Maybe<Scalars['String']>;
+  featureFlags: Array<FeatureFlag>;
   id: Scalars['ID'];
   inviteHash?: Maybe<Scalars['String']>;
   logo?: Maybe<Scalars['String']>;
