@@ -812,7 +812,7 @@ export {
   IconBrandTabler,
   IconBrandTailwind,
   IconBrandTaobao,
-  IconBrandTeams,
+  //IconBrandTeams,
   IconBrandTed,
   IconBrandTelegram,
   IconBrandTerraform,

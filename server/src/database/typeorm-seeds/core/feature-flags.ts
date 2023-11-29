@@ -15,14 +15,9 @@ export const seedFeatureFlags = async (
     .orIgnore()
     .values([
       {
-        key: 'feature1',
+        key: 'IS_RELATION_FIELD_TYPE_ENABLED',
         workspaceId: SeedWorkspaceId,
         value: true,
-      },
-      {
-        key: 'feature2',
-        workspaceId: SeedWorkspaceId,
-        value: false,
       },
     ])
     .execute();
