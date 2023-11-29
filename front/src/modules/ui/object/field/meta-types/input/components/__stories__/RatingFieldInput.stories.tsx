@@ -4,16 +4,19 @@ import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
-import { useProbabilityField } from '../../../hooks/useProbabilityField';
-import {
-  ProbabilityFieldInput,
-  ProbabilityFieldInputProps,
-} from '../ProbabilityFieldInput';
+import { useRatingField } from '../../../hooks/useRatingField';
+import { RatingFieldInput, RatingFieldInputProps } from '../RatingFieldInput';
+import { FieldRatingValue } from '../../../../types/FieldMetadata';
 
-const ProbabilityFieldValueSetterEffect = ({ value }: { value: number }) => {
-  const { setFieldValue } = useProbabilityField();
+const RatingFieldValueSetterEffect = ({
+  value,
+}: {
+  value: FieldRatingValue;
+}) => {
+  const { setFieldValue } = useRatingField();
 
   useEffect(() => {
     setFieldValue(value);
@@ -22,16 +25,16 @@ const ProbabilityFieldValueSetterEffect = ({ value }: { value: number }) => {
   return <></>;
 };
 
-type ProbabilityFieldInputWithContextProps = ProbabilityFieldInputProps & {
-  value: number;
+type RatingFieldInputWithContextProps = RatingFieldInputProps & {
+  value: FieldRatingValue;
   entityId?: string;
 };
 
-const ProbabilityFieldInputWithContext = ({
+const RatingFieldInputWithContext = ({
   entityId,
   value,
   onSubmit,
-}: ProbabilityFieldInputWithContextProps) => {
+}: RatingFieldInputWithContextProps) => {
   const setHotKeyScope = useSetHotkeyScope();
 
   useEffect(() => {
@@ -41,18 +44,18 @@ const ProbabilityFieldInputWithContext = ({
   return (
     <FieldContextProvider
       fieldDefinition={{
-        fieldMetadataId: 'probability',
-        label: 'Probability',
-        type: 'PROBABILITY',
+        fieldMetadataId: 'rating',
+        label: 'Rating',
+        type: FieldMetadataType.Probability,
         iconName: 'Icon123',
         metadata: {
-          fieldName: 'Probability',
+          fieldName: 'Rating',
         },
       }}
       entityId={entityId}
     >
-      <ProbabilityFieldValueSetterEffect value={value} />
-      <ProbabilityFieldInput onSubmit={onSubmit} />
+      <RatingFieldValueSetterEffect value={value} />
+      <RatingFieldInput onSubmit={onSubmit} />
     </FieldContextProvider>
   );
 };
@@ -67,11 +70,10 @@ const clearMocksDecorator: Decorator = (Story, context) => {
 };
 
 const meta: Meta = {
-  title: 'UI/Data/Field/Input/ProbabilityFieldInput',
-  component: ProbabilityFieldInputWithContext,
+  title: 'UI/Data/Field/Input/RatingFieldInput',
+  component: RatingFieldInputWithContext,
   args: {
-    value: 25,
-    isPositive: true,
+    value: '3',
     onSubmit: submitJestFn,
   },
   argTypes: {
@@ -85,7 +87,7 @@ const meta: Meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof ProbabilityFieldInputWithContext>;
+type Story = StoryObj<typeof RatingFieldInputWithContext>;
 
 export const Default: Story = {};
 
@@ -95,12 +97,10 @@ export const Submit: Story = {
 
     expect(submitJestFn).toHaveBeenCalledTimes(0);
 
-    const item = (await canvas.findByText('25%'))?.nextElementSibling
-      ?.firstElementChild;
+    const input = canvas.getByRole('slider', { name: 'Rating' });
+    const firstStar = input.firstElementChild;
 
-    if (item) {
-      userEvent.click(item);
-    }
+    if (firstStar) userEvent.click(firstStar);
 
     expect(submitJestFn).toHaveBeenCalledTimes(1);
   },

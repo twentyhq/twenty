@@ -1,30 +1,37 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+
 import { FieldContext } from '../../contexts/FieldContext';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
-import { isFieldProbability } from '../../types/guards/isFieldProbability';
+import { isFieldRating } from '../../types/guards/isFieldRating';
+import { FieldRatingValue } from '../../types/FieldMetadata';
 
-export const useProbabilityField = () => {
+export const useRatingField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata('PROBABILITY', isFieldProbability, fieldDefinition);
+  assertFieldMetadata(
+    FieldMetadataType.Probability,
+    isFieldRating,
+    fieldDefinition,
+  );
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<number | null>(
+  const [fieldValue, setFieldValue] = useRecoilState<FieldRatingValue | null>(
     entityFieldsFamilySelector({
       entityId: entityId,
       fieldName: fieldName,
     }),
   );
 
-  const probabilityIndex = Math.ceil((fieldValue ?? 0) / 25);
+  const rating = +(fieldValue ?? 0);
 
   return {
     fieldDefinition,
-    probabilityIndex,
+    rating,
     setFieldValue,
     hotkeyScope,
   };
