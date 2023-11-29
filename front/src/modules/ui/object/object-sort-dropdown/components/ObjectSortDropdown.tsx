@@ -9,14 +9,15 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { useSortDropdown } from '@/ui/object/object-sort-dropdown/hooks/useSortDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { ObjectSortDropdownId } from '../constants/ObjectSortDropdownId';
-import { useObjectSortDropdown } from '../hooks/useObjectSortDropdown';
 import { SortDefinition } from '../types/SortDefinition';
 import { SORT_DIRECTIONS } from '../types/SortDirection';
 
 export type ObjectSortDropdownProps = {
+  sortDropdownId?: string;
   clickableComponent: JSX.Element;
   dropdownScopeId: string;
   dropdownHotkeyScope: HotkeyScope;
@@ -28,6 +29,7 @@ export type ObjectSortDropdownProps = {
 };
 
 export const ObjectSortDropdown = ({
+  sortDropdownId,
   clickableComponent,
   dropdownScopeId,
   dropdownHotkeyScope,
@@ -37,7 +39,9 @@ export const ObjectSortDropdown = ({
   setSelectedSortDirection,
   resetState,
 }: ObjectSortDropdownProps) => {
-  const { availableSortDefinitions, onSortSelect } = useObjectSortDropdown();
+  const { availableSortDefinitions, onSortSelect } = useSortDropdown({
+    sortDropdownId,
+  });
 
   const { toggleDropdown } = useDropdown({
     dropdownScopeId: ObjectSortDropdownId,

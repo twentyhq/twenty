@@ -3,17 +3,19 @@ import { useCallback, useState } from 'react';
 import { IconArrowDown, IconArrowUp } from '@/ui/display/icon';
 import { ObjectSortDropdown } from '@/ui/object/object-sort-dropdown/components/ObjectSortDropdown';
 import SortOrFilterChip from '@/views/components/SortOrFilterChip';
-import { useView } from '@/views/hooks/useView';
+import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { SortDirection } from '../types/SortDirection';
 
 export type EditObjectSortProps = {
+  sortDropdownId?: string;
   fieldMetadataId: string;
   label: string;
   direction: 'asc' | 'desc';
 };
 
 export const EditObjectSort = ({
+  sortDropdownId,
   fieldMetadataId,
   label,
   direction,
@@ -31,10 +33,11 @@ export const EditObjectSort = ({
 
   const dropdownScopeId = `sort-${fieldMetadataId}`;
 
-  const { removeViewSort } = useView();
+  const { removeViewSort } = useViewBar();
 
   return (
     <ObjectSortDropdown
+      sortDropdownId={sortDropdownId}
       clickableComponent={
         <SortOrFilterChip
           key={fieldMetadataId}

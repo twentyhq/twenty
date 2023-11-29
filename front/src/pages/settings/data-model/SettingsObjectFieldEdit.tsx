@@ -172,6 +172,7 @@ export const SettingsObjectFieldEdit = () => {
           values={{
             type: formValues.type,
             relation: formValues.relation,
+            select: formValues.select,
           }}
         />
         <Section>

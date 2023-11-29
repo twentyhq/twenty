@@ -32,7 +32,14 @@ export const TableCell = ({
     closeTableCell();
   };
 
-  const handleEscape = () => {
+  const handleClickOutside: FieldInputEvent = (persistField) => {
+    persistField();
+
+    closeTableCell();
+  };
+
+  const handleEscape: FieldInputEvent = (persistField) => {
+    persistField();
     closeTableCell();
   };
 
@@ -54,7 +61,7 @@ export const TableCell = ({
       editModeContent={
         <FieldInput
           onCancel={handleCancel}
-          onClickOutside={handleCancel}
+          onClickOutside={handleClickOutside}
           onEnter={handleEnter}
           onEscape={handleEscape}
           onShiftTab={handleShiftTab}

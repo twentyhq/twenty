@@ -5,11 +5,11 @@ import { MultipleFiltersDropdownFilterOnFilterChangedEffect } from '@/ui/object/
 import { ObjectFilterDropdownDateSearchInput } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownDateSearchInput';
 import { ObjectFilterDropdownNumberSearchInput } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownNumberSearchInput';
 import { ObjectFilterDropdownTextSearchInput } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownTextSearchInput';
+import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 import { FilterDefinition } from '@/ui/object/object-filter-dropdown/types/FilterDefinition';
 import SortOrFilterChip from '@/views/components/SortOrFilterChip';
-import { useView } from '@/views/hooks/useView';
+import { useViewBar } from '@/views/hooks/useViewBar';
 
-import { useFilter } from '../hooks/useFilter';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
 import { ObjectFilterDropdownEntitySearchInput } from './ObjectFilterDropdownEntitySearchInput';
@@ -34,9 +34,9 @@ export const EditObjectFilter = ({
     setSelectedOperandInDropdown,
     setObjectFilterDropdownSearchInput,
     selectFilter,
-  } = useFilter();
+  } = useFilterDropdown();
 
-  const { removeViewFilter } = useView();
+  const { removeViewFilter } = useViewBar();
   const { icons } = useLazyLoadIcons();
 
   const dropdownScopeId = `filter-${fieldMetadataId}`;
@@ -76,19 +76,19 @@ export const EditObjectFilter = ({
         }
         dropdownComponents={
           <>
-            {availableFilter?.type === 'TEXT' && (
-              <ObjectFilterDropdownTextSearchInput />
-            )}
-            {availableFilter?.type === 'NUMBER' && (
+            {['TEXT', 'EMAIL', 'PHONE', 'FULL_NAME', 'LINK'].includes(
+              availableFilter?.type,
+            ) && <ObjectFilterDropdownTextSearchInput />}
+            {['NUMBER', 'CURRENCY'].includes(availableFilter?.type) && (
               <ObjectFilterDropdownNumberSearchInput />
             )}
             {availableFilter?.type === 'DATE_TIME' && (
               <ObjectFilterDropdownDateSearchInput />
             )}
-            {availableFilter?.type === 'ENTITY' && (
+            {availableFilter?.type === 'RELATION' && (
               <ObjectFilterDropdownEntitySearchInput />
             )}
-            {availableFilter?.type === 'ENTITY' && (
+            {availableFilter?.type === 'RELATION' && (
               <ObjectFilterDropdownEntitySelect />
             )}
           </>

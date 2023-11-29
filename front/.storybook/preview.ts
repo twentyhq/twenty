@@ -1,4 +1,4 @@
-import { initialize, mswDecorator } from 'msw-storybook-addon';
+import { initialize, mswLoader } from 'msw-storybook-addon';
 import { Preview } from '@storybook/react';
 import { ThemeProvider } from '@emotion/react';
 import { withThemeFromJSXProvider } from '@storybook/addon-styling';
@@ -6,12 +6,12 @@ import { lightTheme, darkTheme } from '../src/modules/ui/theme/constants/theme';
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { mockedUserJWT } from '../src/testing/mock-data/jwt';
+import { rest } from 'msw'
 
 initialize();
 
 const preview: Preview = {
   decorators: [
-    mswDecorator,
     withThemeFromJSXProvider({
       themes: {
         light: lightTheme,
@@ -39,6 +39,7 @@ const preview: Preview = {
       },
     },
   },
+  loaders: [mswLoader],
 };
 
 export default preview;

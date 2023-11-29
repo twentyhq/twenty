@@ -76,8 +76,8 @@ export const CreateProfile = () => {
   } = useForm<Form>({
     mode: 'onChange',
     defaultValues: {
-      firstName: currentWorkspaceMember?.name.firstName ?? '',
-      lastName: currentWorkspaceMember?.name.lastName ?? '',
+      firstName: currentWorkspaceMember?.name?.firstName ?? '',
+      lastName: currentWorkspaceMember?.name?.lastName ?? '',
     },
     resolver: zodResolver(validationSchema),
   });

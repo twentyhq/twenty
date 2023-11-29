@@ -24,6 +24,10 @@ type SettingsObjectFieldRelationFormProps = {
   values?: SettingsObjectFieldRelationFormValues;
 };
 
+const StyledContainer = styled.div`
+  padding: ${({ theme }) => theme.spacing(4)};
+`;
+
 const StyledSelectsContainer = styled.div`
   display: grid;
   gap: ${({ theme }) => theme.spacing(4)};
@@ -62,7 +66,7 @@ export const SettingsObjectFieldRelationForm = ({
       : undefined) || objectMetadataItems[0];
 
   return (
-    <div>
+    <StyledContainer>
       <StyledSelectsContainer>
         <Select
           label="Relation type"
@@ -122,6 +126,6 @@ export const SettingsObjectFieldRelationForm = ({
           fullWidth
         />
       </StyledInputsContainer>
-    </div>
+    </StyledContainer>
   );
 };

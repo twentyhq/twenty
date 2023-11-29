@@ -1,3 +1,4 @@
+import { onFilterSelectScopedState } from '@/ui/object/object-filter-dropdown/states/onFilterSelectScopedState';
 import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
 
 import { availableFilterDefinitionsScopedState } from '../states/availableFilterDefinitionsScopedState';
@@ -9,7 +10,7 @@ import { objectFilterDropdownSelectedEntityIdScopedState } from '../states/objec
 import { selectedFilterScopedState } from '../states/selectedFilterScopedState';
 import { selectedOperandInDropdownScopedState } from '../states/selectedOperandInDropdownScopedState';
 
-export const useFilterStates = (scopeId: string) => {
+export const useFilterDropdownStates = (scopeId: string) => {
   const [availableFilterDefinitions, setAvailableFilterDefinitions] =
     useRecoilScopedStateV2(availableFilterDefinitionsScopedState, scopeId);
 
@@ -46,6 +47,11 @@ export const useFilterStates = (scopeId: string) => {
   const [selectedOperandInDropdown, setSelectedOperandInDropdown] =
     useRecoilScopedStateV2(selectedOperandInDropdownScopedState, scopeId);
 
+  const [onFilterSelect, setOnFilterSelect] = useRecoilScopedStateV2(
+    onFilterSelectScopedState,
+    scopeId,
+  );
+
   return {
     availableFilterDefinitions,
     setAvailableFilterDefinitions,
@@ -63,5 +69,7 @@ export const useFilterStates = (scopeId: string) => {
     setSelectedFilter,
     selectedOperandInDropdown,
     setSelectedOperandInDropdown,
+    onFilterSelect,
+    setOnFilterSelect,
   };
 };

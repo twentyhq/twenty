@@ -25,13 +25,13 @@ import { useViewScopedStates } from './internal/useViewScopedStates';
 import { useViewSorts } from './internal/useViewSorts';
 
 type UseViewProps = {
-  viewScopeId?: string;
+  viewBarId?: string;
 };
 
-export const useView = (props?: UseViewProps) => {
+export const useViewBar = (props?: UseViewProps) => {
   const scopeId = useAvailableScopeIdOrThrow(
     ViewScopeInternalContext,
-    props?.viewScopeId,
+    props?.viewBarId,
   );
 
   const {
@@ -46,7 +46,7 @@ export const useView = (props?: UseViewProps) => {
     viewObjectMetadataIdState,
     viewTypeState,
   } = useViewScopedStates({
-    customViewScopeId: scopeId,
+    viewScopeId: scopeId,
   });
 
   const { persistViewSorts, upsertViewSort, removeViewSort } =

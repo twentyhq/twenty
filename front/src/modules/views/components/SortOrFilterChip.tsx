@@ -33,7 +33,6 @@ const StyledChip = styled.div<StyledChipProps>`
 `;
 const StyledIcon = styled.div`
   align-items: center;
-
   display: flex;
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;

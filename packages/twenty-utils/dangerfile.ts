@@ -30,9 +30,9 @@ if (envChanged && !envDocsChanged) {
 }
 
 // CLA alert if first time contributor
-if (
-  danger.github.pr.author_association === "FIRST_TIME_CONTRIBUTOR" ||
-  danger.github.pr.author_association === "NONE"
+if (danger.github && danger.github.pr &&
+  (danger.github.pr.author_association === "FIRST_TIME_CONTRIBUTOR" ||
+  danger.github.pr.author_association === "NONE")
 ) {
   markdown(getMdSection('CLA', `
 Hello there and welcome to our project!

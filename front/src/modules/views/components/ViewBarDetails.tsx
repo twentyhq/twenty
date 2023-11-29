@@ -5,13 +5,15 @@ import { useRecoilValue } from 'recoil';
 import { AddObjectFilterFromDetailsButton } from '@/ui/object/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { EditObjectFilter } from '@/ui/object/object-filter-dropdown/components/EditObjectFilter';
 import { EditObjectSort } from '@/ui/object/object-sort-dropdown/components/EditObjectSort';
+import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
-import { useView } from '../hooks/useView';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
   rightComponent?: ReactNode;
+  filterDropdownId?: string;
+  sortDropdownId?: string;
 };
 
 const StyledBar = styled.div`
@@ -85,6 +87,8 @@ const StyledAddFilterContainer = styled.div`
 export const ViewBarDetails = ({
   hasFilterButton = false,
   rightComponent,
+  filterDropdownId,
+  sortDropdownId,
 }: ViewBarDetailsProps) => {
   const {
     currentViewSortsState,
@@ -100,7 +104,7 @@ export const ViewBarDetails = ({
   const canPersistSorts = useRecoilValue(canPersistSortsSelector);
   const isViewBarExpanded = useRecoilValue(isViewBarExpandedState);
 
-  const { resetViewBar } = useView();
+  const { resetViewBar } = useViewBar();
 
   const canPersistView = canPersistFilters || canPersistSorts;
 
@@ -125,6 +129,7 @@ export const ViewBarDetails = ({
             return (
               <>
                 <EditObjectSort
+                  sortDropdownId={sortDropdownId}
                   key={sort.fieldMetadataId}
                   fieldMetadataId={sort.fieldMetadataId}
                   label={sort.definition.label}
@@ -151,7 +156,9 @@ export const ViewBarDetails = ({
         </StyledChipcontainer>
         {hasFilterButton && (
           <StyledAddFilterContainer>
-            <AddObjectFilterFromDetailsButton />
+            <AddObjectFilterFromDetailsButton
+              filterDropdownId={filterDropdownId}
+            />
           </StyledAddFilterContainer>
         )}
       </StyledFilterContainer>
