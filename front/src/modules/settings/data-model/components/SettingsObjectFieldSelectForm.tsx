@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
-import { mainColors, ThemeColor } from '@/ui/theme/constants/colors';
+import { mainColorNames, ThemeColor } from '@/ui/theme/constants/colors';
 
 import { SettingsObjectFieldSelectFormOption } from '../types/SettingsObjectFieldSelectFormOption';
 
@@ -46,9 +46,11 @@ const StyledButton = styled(Button)`
 `;
 
 const getNextColor = (currentColor: ThemeColor) => {
-  const colors = Object.keys(mainColors) as ThemeColor[];
-  const currentColorIndex = colors.findIndex((color) => color === currentColor);
-  return colors[(currentColorIndex + 1) % colors.length];
+  const currentColorIndex = mainColorNames.findIndex(
+    (color) => color === currentColor,
+  );
+  const nextColorIndex = (currentColorIndex + 1) % mainColorNames.length;
+  return mainColorNames[nextColorIndex];
 };
 
 export const SettingsObjectFieldSelectForm = ({

@@ -1,10 +1,9 @@
 import { z } from 'zod';
 
-import { mainColors, ThemeColor } from '@/ui/theme/constants/colors';
+import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 
-const selectColors = Object.keys(mainColors) as [ThemeColor, ...ThemeColor[]];
 const selectValueSchema = z.object({
-  color: z.enum(selectColors),
+  color: themeColorSchema,
   label: z.string(),
 });
 

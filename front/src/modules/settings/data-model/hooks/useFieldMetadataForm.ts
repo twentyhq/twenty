@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { DeepPartial } from 'react-hook-form';
 import { z } from 'zod';
 
-import { mainColors, ThemeColor } from '@/ui/theme/constants/colors';
+import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 import {
   FieldMetadataType,
   RelationMetadataType,
@@ -59,9 +59,7 @@ const selectSchema = fieldSchema.merge(
     select: z
       .array(
         z.object({
-          color: z.enum(
-            Object.keys(mainColors) as [ThemeColor, ...ThemeColor[]],
-          ),
+          color: themeColorSchema,
           isDefault: z.boolean().optional(),
           label: z.string().min(1),
         }),
