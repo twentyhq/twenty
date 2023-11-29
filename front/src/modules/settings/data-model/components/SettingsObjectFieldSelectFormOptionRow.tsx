@@ -2,7 +2,12 @@ import { useMemo } from 'react';
 import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
-import { IconDotsVertical, IconTrash } from '@/ui/display/icon';
+import {
+  IconCheck,
+  IconDotsVertical,
+  IconTrash,
+  IconX,
+} from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -11,17 +16,14 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { ThemeColor } from '@/ui/theme/constants/colors';
 
-export type SettingsObjectFieldSelectFormOption = {
-  color: ThemeColor;
-  text: string;
-};
+import { SettingsObjectFieldSelectFormOption } from '../types/SettingsObjectFieldSelectFormOption';
 
 type SettingsObjectFieldSelectFormOptionRowProps = {
+  isDefault?: boolean;
   onChange: (value: SettingsObjectFieldSelectFormOption) => void;
   onRemove?: () => void;
-  value: SettingsObjectFieldSelectFormOption;
+  option: SettingsObjectFieldSelectFormOption;
 };
 
 const StyledRow = styled.div`
@@ -41,9 +43,10 @@ const StyledOptionInput = styled(TextInput)`
 `;
 
 export const SettingsObjectFieldSelectFormOptionRow = ({
+  isDefault,
   onChange,
   onRemove,
-  value,
+  option,
 }: SettingsObjectFieldSelectFormOptionRowProps) => {
   const dropdownScopeId = useMemo(() => `select-field-option-row-${v4()}`, []);
 
@@ -52,8 +55,9 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
   return (
     <StyledRow>
       <StyledOptionInput
-        value={value.text}
-        onChange={(text) => onChange({ ...value, text })}
+        value={option.label}
+        onChange={(label) => onChange({ ...option, label })}
+        RightIcon={isDefault ? IconCheck : undefined}
       />
       <DropdownScope dropdownScopeId={dropdownScopeId}>
         <Dropdown
@@ -65,6 +69,25 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
           dropdownComponents={
             <DropdownMenu>
               <DropdownMenuItemsContainer>
+                {isDefault ? (
+                  <MenuItem
+                    LeftIcon={IconX}
+                    text="Remove as default"
+                    onClick={() => {
+                      onChange({ ...option, isDefault: false });
+                      closeDropdown();
+                    }}
+                  />
+                ) : (
+                  <MenuItem
+                    LeftIcon={IconCheck}
+                    text="Set as default"
+                    onClick={() => {
+                      onChange({ ...option, isDefault: true });
+                      closeDropdown();
+                    }}
+                  />
+                )}
                 {!!onRemove && (
                   <MenuItem
                     accent="danger"

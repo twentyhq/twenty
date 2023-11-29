@@ -22,18 +22,20 @@ import {
 } from './SettingsObjectFieldSelectForm';
 import { SettingsObjectFieldTypeCard } from './SettingsObjectFieldTypeCard';
 
-export type SettingsObjectFieldTypeSelectSectionFormValues = Partial<{
+export type SettingsObjectFieldTypeSelectSectionFormValues = {
   type: FieldMetadataType;
   relation: SettingsObjectFieldRelationFormValues;
   select: SettingsObjectFieldSelectFormValues;
-}>;
+};
 
 type SettingsObjectFieldTypeSelectSectionProps = {
   excludedFieldTypes?: FieldMetadataType[];
   fieldMetadata: Pick<Field, 'icon' | 'label'> & { id?: string };
-  onChange: (values: SettingsObjectFieldTypeSelectSectionFormValues) => void;
+  onChange: (
+    values: Partial<SettingsObjectFieldTypeSelectSectionFormValues>,
+  ) => void;
   relationFieldMetadata?: Pick<Field, 'id' | 'isCustom'>;
-  values?: SettingsObjectFieldTypeSelectSectionFormValues;
+  values: SettingsObjectFieldTypeSelectSectionFormValues;
 } & Pick<SettingsObjectFieldPreviewProps, 'objectMetadataId'>;
 
 const StyledSettingsObjectFieldTypeCard = styled(SettingsObjectFieldTypeCard)`
@@ -58,8 +60,8 @@ export const SettingsObjectFieldTypeSelectSection = ({
   relationFieldMetadata,
   values,
 }: SettingsObjectFieldTypeSelectSectionProps) => {
-  const relationFormConfig = values?.relation;
-  const selectFormConfig = values?.select;
+  const relationFormConfig = values.relation;
+  const selectFormConfig = values.select;
 
   const fieldTypeOptions = Object.entries(settingsFieldMetadataTypes)
     .filter(([key]) => !excludedFieldTypes?.includes(key as FieldMetadataType))

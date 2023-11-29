@@ -4,17 +4,16 @@ import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { mainColors, ThemeColor } from '@/ui/theme/constants/colors';
 
-import {
-  SettingsObjectFieldSelectFormOption,
-  SettingsObjectFieldSelectFormOptionRow,
-} from './SettingsObjectFieldSelectFormOptionRow';
+import { SettingsObjectFieldSelectFormOption } from '../types/SettingsObjectFieldSelectFormOption';
+
+import { SettingsObjectFieldSelectFormOptionRow } from './SettingsObjectFieldSelectFormOptionRow';
 
 export type SettingsObjectFieldSelectFormValues =
   SettingsObjectFieldSelectFormOption[];
 
 type SettingsObjectFieldSelectFormProps = {
   onChange: (values: SettingsObjectFieldSelectFormValues) => void;
-  values?: SettingsObjectFieldSelectFormValues;
+  values: SettingsObjectFieldSelectFormValues;
 };
 
 const StyledContainer = styled.div`
@@ -54,31 +53,38 @@ const getNextColor = (currentColor: ThemeColor) => {
 
 export const SettingsObjectFieldSelectForm = ({
   onChange,
-  values = [],
+  values,
 }: SettingsObjectFieldSelectFormProps) => {
   return (
     <>
       <StyledContainer>
         <StyledLabel>Options</StyledLabel>
         <StyledRows>
-          {values.map((value, index) => (
+          {values.map((option, index) => (
             <SettingsObjectFieldSelectFormOptionRow
               key={index}
-              onChange={(optionValue) => {
-                const nextValues = [...values];
-                nextValues.splice(index, 1, optionValue);
-                onChange(nextValues);
+              isDefault={option.isDefault}
+              onChange={(nextOption) => {
+                const hasDefaultOptionChanged =
+                  !option.isDefault && nextOption.isDefault;
+                const nextOptions = hasDefaultOptionChanged
+                  ? values.map((value) => ({ ...value, isDefault: false }))
+                  : [...values];
+
+                nextOptions.splice(index, 1, nextOption);
+
+                onChange(nextOptions);
               }}
               onRemove={
                 values.length > 1
                   ? () => {
-                      const nextValues = [...values];
-                      nextValues.splice(index, 1);
-                      onChange(nextValues);
+                      const nextOptions = [...values];
+                      nextOptions.splice(index, 1);
+                      onChange(nextOptions);
                     }
                   : undefined
               }
-              value={value}
+              option={option}
             />
           ))}
         </StyledRows>
@@ -92,7 +98,7 @@ export const SettingsObjectFieldSelectForm = ({
             ...values,
             {
               color: getNextColor(values[values.length - 1].color),
-              text: `Option ${values.length + 1}`,
+              label: `Option ${values.length + 1}`,
             },
           ])
         }
