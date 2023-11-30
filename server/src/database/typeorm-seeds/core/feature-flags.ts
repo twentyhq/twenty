@@ -2,11 +2,12 @@ import { DataSource } from 'typeorm';
 
 const tableName = 'featureFlag';
 
-import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
+// import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 export const seedFeatureFlags = async (
   workspaceDataSource: DataSource,
   schemaName: string,
+  workspaceId: string,
 ) => {
   await workspaceDataSource
     .createQueryBuilder()
@@ -16,7 +17,7 @@ export const seedFeatureFlags = async (
     .values([
       {
         key: 'IS_RELATION_FIELD_TYPE_ENABLED',
-        workspaceId: SeedWorkspaceId,
+        workspaceId: workspaceId,
         value: true,
       },
     ])
