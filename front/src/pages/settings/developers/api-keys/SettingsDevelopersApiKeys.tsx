@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
 import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/components/SettingsApiKeysFieldItemTableRow';
 import { ApiFieldItem } from '@/settings/developers/types/ApiFieldItem';
@@ -43,7 +43,7 @@ export const SettingsDevelopersApiKeys = () => {
   const [apiKeys, setApiKeys] = useState<Array<ApiFieldItem>>([]);
 
   const filter = { revokedAt: { is: 'NULL' } };
-  useFindManyObjectRecords({
+  useFindManyRecords({
     objectNamePlural: 'apiKeys',
     filter,
     orderBy: {},

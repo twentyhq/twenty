@@ -3,13 +3,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLSchema } from 'graphql';
 
 import { WorkspaceResolverBuilderMethods } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
 
 import { TypeDefinitionsGenerator } from './type-definitions.generator';
 
 import { WorkspaceBuildSchemaOptions } from './interfaces/workspace-build-schema-optionts.interface';
 import { QueryTypeFactory } from './factories/query-type.factory';
 import { MutationTypeFactory } from './factories/mutation-type.factory';
-import { ObjectMetadataInterface } from './interfaces/object-metadata.interface';
 import { OrphanedTypesFactory } from './factories/orphaned-types.factory';
 
 @Injectable()

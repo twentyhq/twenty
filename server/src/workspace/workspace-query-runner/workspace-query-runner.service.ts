@@ -9,9 +9,11 @@ import {
 import {
   CreateManyResolverArgs,
   CreateOneResolverArgs,
+  DeleteManyResolverArgs,
   DeleteOneResolverArgs,
   FindManyResolverArgs,
   FindOneResolverArgs,
+  UpdateManyResolverArgs,
   UpdateOneResolverArgs,
 } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -125,6 +127,43 @@ export class WorkspaceQueryRunnerService {
       targetTableName,
       'deleteFrom',
     )?.records?.[0];
+  }
+
+  async updateMany<Record extends IRecord = IRecord>(
+    args: UpdateManyResolverArgs<Record>,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<Record[] | undefined> {
+    const { workspaceId, targetTableName } = options;
+
+    const query = this.workspaceQueryBuilderFactory.updateMany(args, options);
+
+    const result = await this.execute(query, workspaceId);
+
+    return this.parseResult<PGGraphQLMutation<Record>>(
+      result,
+      targetTableName,
+      'update',
+    )?.records;
+  }
+
+  async deleteMany<
+    Record extends IRecord = IRecord,
+    Filter extends RecordFilter = RecordFilter,
+  >(
+    args: DeleteManyResolverArgs<Filter>,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<Record[] | undefined> {
+    const { workspaceId, targetTableName } = options;
+
+    const query = this.workspaceQueryBuilderFactory.deleteMany(args, options);
+
+    const result = await this.execute(query, workspaceId);
+
+    return this.parseResult<PGGraphQLMutation<Record>>(
+      result,
+      targetTableName,
+      'deleteFrom',
+    )?.records;
   }
 
   private async execute(

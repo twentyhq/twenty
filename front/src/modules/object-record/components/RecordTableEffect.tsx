@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useComputeDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useComputeDefinitionsFromFieldMetadata';
+import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
@@ -31,7 +31,7 @@ export const RecordTableEffect = ({
   });
 
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
-    useComputeDefinitionsFromFieldMetadata(objectMetadataItem);
+    useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const {
     setAvailableSortDefinitions,

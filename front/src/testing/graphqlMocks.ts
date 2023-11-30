@@ -3,7 +3,7 @@ import { graphql } from 'msw';
 
 import { CREATE_EVENT } from '@/analytics/graphql/queries/createEvent';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
-import { FIND_MANY_METADATA_OBJECTS } from '@/object-metadata/graphql/queries';
+import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { mockedActivities } from '~/testing/mock-data/activities';
 
@@ -56,7 +56,7 @@ export const graphqlMocks = {
       },
     ),
     metadataGraphql.query(
-      getOperationName(FIND_MANY_METADATA_OBJECTS) ?? '',
+      getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? '',
       (req, res, ctx) => {
         return res(ctx.data({ objects: mockedObjectMetadataItems }));
       },

@@ -75,7 +75,7 @@ export class TypeMapperService {
     fieldMetadataType: FieldMetadataType,
     dateScalarMode: DateScalarMode = 'isoDate',
     numberScalarMode: NumberScalarMode = 'float',
-  ): GraphQLInputObjectType | GraphQLScalarType<boolean, boolean> | undefined {
+  ): GraphQLInputObjectType | GraphQLScalarType | undefined {
     const dateFilter =
       dateScalarMode === 'timestamp' ? DatetimeFilterType : DateFilterType;
     const numberScalar =
@@ -84,7 +84,7 @@ export class TypeMapperService {
     // LINK and CURRENCY are handled in the factories because they are objects
     const typeFilterMapping = new Map<
       FieldMetadataType,
-      GraphQLInputObjectType | GraphQLScalarType<boolean, boolean>
+      GraphQLInputObjectType | GraphQLScalarType
     >([
       [FieldMetadataType.UUID, UUIDFilterType],
       [FieldMetadataType.TEXT, StringFilterType],
@@ -115,6 +115,9 @@ export class TypeMapperService {
       [FieldMetadataType.NUMBER, OrderByDirectionType],
       [FieldMetadataType.NUMERIC, OrderByDirectionType],
       [FieldMetadataType.PROBABILITY, OrderByDirectionType],
+      [FieldMetadataType.RATING, OrderByDirectionType],
+      [FieldMetadataType.SELECT, OrderByDirectionType],
+      [FieldMetadataType.MULTI_SELECT, OrderByDirectionType],
     ]);
 
     return typeOrderByMapping.get(fieldMetadataType);

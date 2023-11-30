@@ -26,6 +26,12 @@ export const GET_CURRENT_USER = gql`
         domainName
         inviteHash
         allowImpersonation
+        featureFlags {
+          id
+          key
+          value
+          workspaceId
+        }
       }
     }
   }

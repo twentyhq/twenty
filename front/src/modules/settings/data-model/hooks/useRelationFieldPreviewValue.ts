@@ -1,5 +1,5 @@
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
 export const useRelationFieldPreviewValue = ({
   relationObjectMetadataId,
@@ -14,7 +14,7 @@ export const useRelationFieldPreviewValue = ({
     ? findObjectMetadataItemById(relationObjectMetadataId)
     : undefined;
 
-  const { objects: relationObjects } = useFindManyObjectRecords({
+  const { records: relationObjects } = useFindManyRecords({
     objectNamePlural: relationObjectMetadataItem?.namePlural,
     skip: skip || !relationObjectMetadataItem,
   });

@@ -2,7 +2,7 @@ import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips
 import { ActivityTargetInlineCellEditMode } from '@/activities/inline-cell/components/ActivityTargetInlineCellEditMode';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { IconArrowUpRight, IconPencil } from '@/ui/display/icon';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { RecordInlineCellContainer } from '@/ui/object/record-inline-cell/components/RecordInlineCellContainer';
@@ -27,12 +27,10 @@ export const ActivityTargetsInlineCell = ({
       (activityTarget) => activityTarget.node.id,
     ) ?? [];
 
-  const { objects: activityTargets } = useFindManyObjectRecords<ActivityTarget>(
-    {
-      objectNamePlural: 'activityTargets',
-      filter: { id: { in: activityTargetIds } },
-    },
-  );
+  const { records: activityTargets } = useFindManyRecords<ActivityTarget>({
+    objectNamePlural: 'activityTargets',
+    filter: { id: { in: activityTargetIds } },
+  });
 
   return (
     <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>

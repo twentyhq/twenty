@@ -2,6 +2,7 @@ import { DataSource } from 'typeorm';
 
 import { seedUsers } from 'src/database/typeorm-seeds/core/users';
 import { seedWorkspaces } from 'src/database/typeorm-seeds/core/workspaces';
+import { seedFeatureFlags } from 'src/database/typeorm-seeds/core/feature-flags';
 
 export const seedCoreSchema = async (
   workspaceDataSource: DataSource,
@@ -10,4 +11,5 @@ export const seedCoreSchema = async (
   const schemaName = 'core';
   await seedWorkspaces(workspaceDataSource, schemaName, workspaceId);
   await seedUsers(workspaceDataSource, schemaName, workspaceId);
+  await seedFeatureFlags(workspaceDataSource, schemaName, workspaceId);
 };

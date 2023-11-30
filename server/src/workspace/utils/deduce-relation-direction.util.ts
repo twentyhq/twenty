@@ -1,4 +1,4 @@
-import { RelationMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/relation-metadata.interface';
+import { RelationMetadataInterface } from 'src/metadata/field-metadata/interfaces/relation-metadata.interface';
 
 export enum RelationDirection {
   FROM = 'from',

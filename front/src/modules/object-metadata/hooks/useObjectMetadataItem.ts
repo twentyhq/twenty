@@ -2,13 +2,13 @@ import { gql } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { useGenerateCreateOneObjectMutation } from '@/object-record/utils/generateCreateOneObjectMutation';
-import { useGenerateDeleteOneObjectMutation } from '@/object-record/utils/useGenerateDeleteOneObjectMutation';
-import { useGenerateFindManyCustomObjectsQuery } from '@/object-record/utils/useGenerateFindManyCustomObjectsQuery';
-import { useGenerateFindOneCustomObjectQuery } from '@/object-record/utils/useGenerateFindOneCustomObjectQuery';
-import { useGenerateUpdateOneObjectMutation } from '@/object-record/utils/useGenerateUpdateOneObjectMutation';
-import { useGetRecordFromCache } from '@/object-record/utils/useGetRecordFromCache';
-import { useModifyRecordFromCache } from '@/object-record/utils/useModifyRecordFromCache';
+import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
+import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
+import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
+import { useGenerateUpdateOneRecordMutation } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
+import { useGetRecordFromCache } from '@/object-record/hooks/useGetRecordFromCache';
+import { useModifyRecordFromCache } from '@/object-record/hooks/useModifyRecordFromCache';
+import { generateDeleteOneRecordMutation } from '@/object-record/utils/generateDeleteOneRecordMutation';
 import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
@@ -36,7 +36,7 @@ export const useObjectMetadataItem = (
     }),
   );
 
-  const objectNotFoundInMetadata = !isDefined(objectMetadataItem);
+  const objectMetadataItemNotFound = !isDefined(objectMetadataItem);
 
   const getRecordFromCache = useGetRecordFromCache({
     objectMetadataItem,
@@ -46,25 +46,25 @@ export const useObjectMetadataItem = (
     objectMetadataItem,
   });
 
-  const findManyQuery = useGenerateFindManyCustomObjectsQuery({
+  const findManyRecordsQuery = useGenerateFindManyRecordsQuery({
     objectMetadataItem,
     depth,
   });
 
-  const findOneQuery = useGenerateFindOneCustomObjectQuery({
+  const findOneRecordQuery = useGenerateFindOneRecordQuery({
     objectMetadataItem,
     depth,
   });
 
-  const createOneMutation = useGenerateCreateOneObjectMutation({
+  const createOneRecordMutation = useGenerateCreateOneRecordMutation({
     objectMetadataItem,
   });
 
-  const updateOneMutation = useGenerateUpdateOneObjectMutation({
+  const updateOneRecordMutation = useGenerateUpdateOneRecordMutation({
     objectMetadataItem,
   });
 
-  const deleteOneMutation = useGenerateDeleteOneObjectMutation({
+  const deleteOneRecordMutation = generateDeleteOneRecordMutation({
     objectMetadataItem,
   });
 
@@ -78,13 +78,13 @@ export const useObjectMetadataItem = (
     labelIdentifierFieldMetadataId,
     basePathToShowPage,
     objectMetadataItem,
-    objectNotFoundInMetadata,
+    objectMetadataItemNotFound,
     getRecordFromCache,
     modifyRecordFromCache,
-    findManyQuery,
-    findOneQuery,
-    createOneMutation,
-    updateOneMutation,
-    deleteOneMutation,
+    findManyRecordsQuery,
+    findOneRecordQuery,
+    createOneRecordMutation,
+    updateOneRecordMutation,
+    deleteOneRecordMutation,
   };
 };

@@ -2,8 +2,8 @@ import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObj
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { SettingsObjectFieldSelectFormValues } from '../components/SettingsObjectFieldSelectForm';
 import { settingsFieldMetadataTypes } from '../constants/settingsFieldMetadataTypes';
+import { SettingsObjectFieldSelectFormOption } from '../types/SettingsObjectFieldSelectFormOption';
 
 import { useFieldPreviewValue } from './useFieldPreviewValue';
 import { useRelationFieldPreviewValue } from './useRelationFieldPreviewValue';
@@ -17,7 +17,7 @@ export const useFieldPreview = ({
   fieldMetadata: Pick<Field, 'icon' | 'label' | 'type'> & { id?: string };
   objectMetadataId: string;
   relationObjectMetadataId?: string;
-  selectOptions?: SettingsObjectFieldSelectFormValues;
+  selectOptions?: SettingsObjectFieldSelectFormOption[];
 }) => {
   const { findObjectMetadataItemById } = useObjectMetadataItemForSettings();
   const objectMetadataItem = findObjectMetadataItemById(objectMetadataId);
@@ -44,17 +44,16 @@ export const useFieldPreview = ({
       skip: fieldMetadata.type !== FieldMetadataType.Relation,
     });
 
-  const defaultValue =
-    fieldMetadata.type === FieldMetadataType.Enum
-      ? selectOptions?.[0]
-      : settingsFieldMetadataTypes[fieldMetadata.type].defaultValue;
+  const { defaultValue } = settingsFieldMetadataTypes[fieldMetadata.type];
 
-  const isValidSelectValue =
+  const defaultSelectValue = selectOptions?.[0];
+  const selectValue =
     fieldMetadata.type === FieldMetadataType.Enum &&
-    !!firstRecordFieldValue &&
-    selectOptions?.some(
-      (selectOption) => selectOption.text === firstRecordFieldValue,
-    );
+    typeof firstRecordFieldValue === 'string'
+      ? selectOptions?.find(
+          (selectOption) => selectOption.value === firstRecordFieldValue,
+        )
+      : undefined;
 
   return {
     entityId: `${objectMetadataId}-field-form`,
@@ -64,10 +63,10 @@ export const useFieldPreview = ({
     objectMetadataItem,
     relationObjectMetadataItem,
     value:
-      (fieldMetadata.type === FieldMetadataType.Relation
+      fieldMetadata.type === FieldMetadataType.Relation
         ? relationValue
-        : fieldMetadata.type !== FieldMetadataType.Enum || isValidSelectValue
-        ? firstRecordFieldValue
-        : undefined) || defaultValue,
+        : fieldMetadata.type === FieldMetadataType.Enum
+        ? selectValue || defaultSelectValue
+        : firstRecordFieldValue || defaultValue,
   };
 };

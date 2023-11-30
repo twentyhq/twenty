@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { GraphQLOutputType } from 'graphql';
 
-import { FieldMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/field-metadata.interface';
-import { RelationMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/relation-metadata.interface';
+import { FieldMetadataInterface } from 'src/metadata/field-metadata/interfaces/field-metadata.interface';
+import { RelationMetadataInterface } from 'src/metadata/field-metadata/interfaces/relation-metadata.interface';
 
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { TypeDefinitionsStorage } from 'src/workspace/workspace-schema-builder/storages/type-definitions.storage';
