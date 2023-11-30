@@ -5,23 +5,22 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const useUpdateOneObjectRecord = <T>({
+export const useUpdateOneRecord = <T>({
   objectNameSingular,
 }: Pick<ObjectMetadataItemIdentifier, 'objectNameSingular'>) => {
   const {
-    objectMetadataItem: foundObjectMetadataItem,
-    objectNotFoundInMetadata,
-    updateOneMutation,
+    objectMetadataItem,
+    objectMetadataItemNotFound,
+    updateOneRecordMutation,
     getRecordFromCache,
-    findManyQuery,
+    findManyRecordsQuery,
   } = useObjectMetadataItem({
     objectNameSingular,
   });
 
-  // TODO: type this with a minimal type at least with Record<string, any>
-  const [mutate] = useMutation(updateOneMutation);
+  const [mutateUpdateOneRecord] = useMutation(updateOneRecordMutation);
 
-  const updateOneObject = async ({
+  const updateOneRecord = async ({
     idToUpdate,
     input,
     forceRefetch,
@@ -30,13 +29,13 @@ export const useUpdateOneObjectRecord = <T>({
     input: Record<string, any>;
     forceRefetch?: boolean;
   }) => {
-    if (!foundObjectMetadataItem || !objectNameSingular) {
+    if (!objectMetadataItem || !objectNameSingular) {
       return null;
     }
 
     const cachedRecord = getRecordFromCache(idToUpdate);
 
-    const updatedObject = await mutate({
+    const updatedRecord = await mutateUpdateOneRecord({
       variables: {
         idToUpdate: idToUpdate,
         input: {
@@ -50,16 +49,16 @@ export const useUpdateOneObjectRecord = <T>({
         },
       },
       refetchQueries: forceRefetch
-        ? [getOperationName(findManyQuery) ?? '']
+        ? [getOperationName(findManyRecordsQuery) ?? '']
         : undefined,
       awaitRefetchQueries: forceRefetch,
     });
 
-    return updatedObject.data[`update${capitalize(objectNameSingular)}`] as T;
+    return updatedRecord.data[`update${capitalize(objectNameSingular)}`] as T;
   };
 
   return {
-    updateOneObject,
-    objectNotFoundInMetadata,
+    updateOneRecord,
+    objectMetadataItemNotFound,
   };
 };

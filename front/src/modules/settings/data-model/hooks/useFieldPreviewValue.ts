@@ -1,4 +1,4 @@
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { assertNotNull } from '~/utils/assert';
 
 export const useFieldPreviewValue = ({
@@ -10,12 +10,12 @@ export const useFieldPreviewValue = ({
   objectNamePlural: string;
   skip?: boolean;
 }) => {
-  const { objects } = useFindManyObjectRecords({
+  const { records } = useFindManyRecords({
     objectNamePlural,
     skip,
   });
 
-  const firstRecordWithValue = objects.find(
+  const firstRecordWithValue = records.find(
     (record) => assertNotNull(record[fieldName]) && record[fieldName] !== '',
   );
 

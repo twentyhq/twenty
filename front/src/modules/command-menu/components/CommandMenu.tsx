@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { CommandMenuSelectableListEffect } from '@/command-menu/components/CommandMenuSelectableListEffect';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Person } from '@/people/types/Person';
 import { IconNotes } from '@/ui/display/icon';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
@@ -114,7 +114,7 @@ export const CommandMenu = () => {
     [toggleCommandMenu, setSearch],
   );
 
-  const { objects: people } = useFindManyObjectRecords<Person>({
+  const { records: people } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened,
     objectNamePlural: 'people',
     filter: {
@@ -126,7 +126,7 @@ export const CommandMenu = () => {
     limit: 3,
   });
 
-  const { objects: companies } = useFindManyObjectRecords<Person>({
+  const { records: companies } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened,
     objectNamePlural: 'companies',
     filter: {
@@ -135,7 +135,7 @@ export const CommandMenu = () => {
     limit: 3,
   });
 
-  const { objects: activities } = useFindManyObjectRecords<Person>({
+  const { records: activities } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened,
     objectNamePlural: 'activities',
     filter: {

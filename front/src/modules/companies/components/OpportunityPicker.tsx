@@ -35,10 +35,12 @@ export const OpportunityPicker = ({
 
   const { searchFilter, handleSearchFilterChange } = useEntitySelectSearch();
 
-  const { findManyQuery } = useObjectMetadataItem({
+  // TODO: refactor useFilteredSearchEntityQuery
+  const { findManyRecordsQuery: findManyCompanies } = useObjectMetadataItem({
     objectNameSingular: 'company',
   });
-  const useFindManyQuery = (options: any) => useQuery(findManyQuery, options);
+  const useFindManyQuery = (options: any) =>
+    useQuery(findManyCompanies, options);
   const { identifiersMapper, searchQuery } = useRelationPicker();
 
   const filteredSearchEntityResults = useFilteredSearchEntityQuery({

@@ -4,5 +4,5 @@ export type SettingsObjectFieldSelectFormOption = {
   color: ThemeColor;
   isDefault?: boolean;
   label: string;
-  value?: string;
+  value: string;
 };

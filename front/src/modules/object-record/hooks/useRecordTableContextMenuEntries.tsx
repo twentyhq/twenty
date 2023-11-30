@@ -4,10 +4,11 @@ import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useDeleteOneObjectRecord } from '@/object-record/hooks/useDeleteOneObjectRecord';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { IconHeart, IconHeartOff, IconTrash } from '@/ui/display/icon';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
+import { ContextMenuEntry } from '@/ui/navigation/context-menu/types/ContextMenuEntry';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { RecordTableScopeInternalContext } from '@/ui/object/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { selectedRowIdsSelector } from '@/ui/object/record-table/states/selectors/selectedRowIdsSelector';
@@ -37,11 +38,9 @@ export const useRecordTableContextMenuEntries = (
     recordTableScopeId: scopeId,
   });
 
-  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
-    {
-      objectNamePlural,
-    },
-  );
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNamePlural,
+  });
 
   const { createFavorite, deleteFavorite, favorites } = useFavorites({
     objectNamePlural,
@@ -67,8 +66,8 @@ export const useRecordTableContextMenuEntries = (
     }
   });
 
-  const { deleteOneObject } = useDeleteOneObjectRecord({
-    objectNameSingular: foundObjectMetadataItem?.nameSingular,
+  const { deleteOneRecord } = useDeleteOneRecord({
+    objectNameSingular: objectMetadataItem?.nameSingular,
   });
 
   const handleDeleteClick = useRecoilCallback(({ snapshot }) => async () => {
@@ -78,9 +77,9 @@ export const useRecordTableContextMenuEntries = (
 
     resetTableRowSelection();
 
-    if (deleteOneObject) {
+    if (deleteOneRecord) {
       for (const rowId of rowIdsToDelete) {
-        await deleteOneObject(rowId);
+        await deleteOneRecord(rowId);
       }
 
       setTableRowIds((tableRowIds) =>
@@ -109,24 +108,24 @@ export const useRecordTableContextMenuEntries = (
         //   Icon: IconNotes,
         //   onClick: () => {},
         // },
-        {
-          label: isFavorite ? 'Remove from favorites' : 'Add to favorites',
-          Icon: isFavorite ? IconHeartOff : IconHeart,
-          onClick: () => handleFavoriteButtonClick(),
-        },
+
         {
           label: 'Delete',
           Icon: IconTrash,
           accent: 'danger',
           onClick: () => handleDeleteClick(),
         },
-      ];
+      ] as ContextMenuEntry[];
 
-      if (selectedRowIds.length > 1) {
-        contextMenuEntries.splice(2, 1);
+      if (selectedRowIds.length === 1) {
+        contextMenuEntries.unshift({
+          label: isFavorite ? 'Remove from favorites' : 'Add to favorites',
+          Icon: isFavorite ? IconHeartOff : IconHeart,
+          onClick: () => handleFavoriteButtonClick(),
+        });
       }
 
-      setContextMenuEntries(contextMenuEntries as any);
+      setContextMenuEntries(contextMenuEntries);
     }, [
       selectedRowIds,
       favorites,

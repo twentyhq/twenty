@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
 export const useColorScheme = () => {
@@ -10,10 +10,9 @@ export const useColorScheme = () => {
     currentWorkspaceMemberState,
   );
 
-  const { updateOneObject: updateOneWorkspaceMember } =
-    useUpdateOneObjectRecord({
-      objectNameSingular: 'workspaceMember',
-    });
+  const { updateOneRecord: updateOneWorkspaceMember } = useUpdateOneRecord({
+    objectNameSingular: 'workspaceMember',
+  });
 
   const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
 
