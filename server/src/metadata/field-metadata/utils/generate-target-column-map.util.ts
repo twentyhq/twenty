@@ -28,6 +28,9 @@ export function generateTargetColumnMap(
     case FieldMetadataType.PROBABILITY:
     case FieldMetadataType.BOOLEAN:
     case FieldMetadataType.DATE_TIME:
+    case FieldMetadataType.RATING:
+    case FieldMetadataType.SELECT:
+    case FieldMetadataType.MULTI_SELECT:
       return {
         value: columnName,
       };

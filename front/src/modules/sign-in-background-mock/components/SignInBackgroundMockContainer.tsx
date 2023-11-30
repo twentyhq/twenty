@@ -33,7 +33,8 @@ export const SignInBackgroundMockContainer = () => {
       <RecordTable
         recordTableId={recordTableId}
         viewBarId={viewBarId}
-        updateEntityMutation={() => {}}
+        createRecord={() => {}}
+        updateRecordMutation={() => {}}
       />
     </StyledContainer>
   );

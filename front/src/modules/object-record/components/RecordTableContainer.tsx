@@ -25,8 +25,10 @@ const StyledContainer = styled.div`
 
 export const RecordTableContainer = ({
   objectNamePlural,
+  createRecord,
 }: {
   objectNamePlural: string;
+  createRecord: () => void;
 }) => {
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
@@ -90,7 +92,8 @@ export const RecordTableContainer = ({
       <RecordTable
         recordTableId={recordTableId}
         viewBarId={viewBarId}
-        updateEntityMutation={updateEntity}
+        updateRecordMutation={updateEntity}
+        createRecord={createRecord}
       />
     </StyledContainer>
   );

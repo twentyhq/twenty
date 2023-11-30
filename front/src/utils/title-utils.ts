@@ -22,8 +22,8 @@ export const getPageTitleFromPath = (pathname: string): string => {
       return 'Opportunities';
     case `${AppBasePath.Settings}/${SettingsPath.ProfilePage}`:
       return 'Profile';
-    case `${AppBasePath.Settings}/${SettingsPath.Experience}`:
-      return 'Experience';
+    case `${AppBasePath.Settings}/${SettingsPath.Appearance}`:
+      return 'Appearance';
     case `${AppBasePath.Settings}/${SettingsPath.WorkspaceMembersPage}`:
       return 'Workspace Members';
     case `${AppBasePath.Settings}/${SettingsPath.Workspace}`:

@@ -3,13 +3,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLInputType } from 'graphql';
 
 import { WorkspaceBuildSchemaOptions } from 'src/workspace/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
-import { FieldMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/field-metadata.interface';
+import { FieldMetadataInterface } from 'src/metadata/field-metadata/interfaces/field-metadata.interface';
 
 import {
   TypeMapperService,
   TypeOptions,
 } from 'src/workspace/workspace-schema-builder/services/type-mapper.service';
 import { TypeDefinitionsStorage } from 'src/workspace/workspace-schema-builder/storages/type-definitions.storage';
+import { isCompositeFieldMetadataType } from 'src/metadata/field-metadata/utils/is-composite-field-metadata-type.util';
 
 import { InputTypeDefinitionKind } from './input-type-definition.factory';
 
@@ -27,30 +28,26 @@ export class OrderByTypeFactory {
     buildOtions: WorkspaceBuildSchemaOptions,
     typeOptions: TypeOptions,
   ): GraphQLInputType {
+    const target = isCompositeFieldMetadataType(fieldMetadata.type)
+      ? fieldMetadata.type.toString()
+      : fieldMetadata.id;
     let orderByType = this.typeMapperService.mapToOrderByType(
       fieldMetadata.type,
     );
 
+    orderByType ??= this.typeDefinitionsStorage.getInputTypeByKey(
+      target,
+      InputTypeDefinitionKind.OrderBy,
+    );
+
     if (!orderByType) {
-      orderByType = this.typeDefinitionsStorage.getInputTypeByKey(
-        fieldMetadata.type.toString(),
-        InputTypeDefinitionKind.OrderBy,
-      );
+      this.logger.error(`Could not find a GraphQL type for ${target}`, {
+        fieldMetadata,
+        buildOtions,
+        typeOptions,
+      });
 
-      if (!orderByType) {
-        this.logger.error(
-          `Could not find a GraphQL type for ${fieldMetadata.type.toString()}`,
-          {
-            fieldMetadata,
-            buildOtions,
-            typeOptions,
-          },
-        );
-
-        throw new Error(
-          `Could not find a GraphQL type for ${fieldMetadata.type.toString()}`,
-        );
-      }
+      throw new Error(`Could not find a GraphQL type for ${target}`);
     }
 
     return this.typeMapperService.mapToGqlType(orderByType, typeOptions);
