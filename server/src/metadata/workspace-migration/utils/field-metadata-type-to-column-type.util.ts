@@ -12,6 +12,9 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
       return 'uuid';
     case FieldMetadataType.TEXT:
       return 'text';
+    case FieldMetadataType.PHONE:
+    case FieldMetadataType.EMAIL:
+      return 'varchar';
     case FieldMetadataType.NUMERIC:
       return 'numeric';
     case FieldMetadataType.NUMBER:

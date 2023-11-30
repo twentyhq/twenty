@@ -49,6 +49,24 @@ export class WorkspaceMigrationFactory {
           },
         },
       ],
+      [
+        FieldMetadataType.PHONE,
+        {
+          factory: this.basicColumnActionFactory,
+          options: {
+            defaultValue: '',
+          },
+        },
+      ],
+      [
+        FieldMetadataType.EMAIL,
+        {
+          factory: this.basicColumnActionFactory,
+          options: {
+            defaultValue: '',
+          },
+        },
+      ],
       [FieldMetadataType.NUMERIC, { factory: this.basicColumnActionFactory }],
       [FieldMetadataType.NUMBER, { factory: this.basicColumnActionFactory }],
       [

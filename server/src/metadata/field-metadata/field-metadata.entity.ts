@@ -21,6 +21,8 @@ import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-
 export enum FieldMetadataType {
   UUID = 'UUID',
   TEXT = 'TEXT',
+  PHONE = 'PHONE',
+  EMAIL = 'EMAIL',
   DATE_TIME = 'DATE_TIME',
   BOOLEAN = 'BOOLEAN',
   NUMBER = 'NUMBER',

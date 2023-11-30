@@ -1,5 +1,7 @@
 export type FilterType =
   | 'TEXT'
+  | 'PHONE'
+  | 'EMAIL'
   | 'DATE_TIME'
   | 'NUMBER'
   | 'CURRENCY'

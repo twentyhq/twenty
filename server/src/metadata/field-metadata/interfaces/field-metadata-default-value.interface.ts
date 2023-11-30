@@ -53,6 +53,8 @@ type AllFieldMetadataDefaultValueTypes =
 type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.UUID]: FieldMetadataDefaultValueString;
   [FieldMetadataType.TEXT]: FieldMetadataDefaultValueString;
+  [FieldMetadataType.PHONE]: FieldMetadataDefaultValueString;
+  [FieldMetadataType.EMAIL]: FieldMetadataDefaultValueString;
   [FieldMetadataType.DATE_TIME]: FieldMetadataDefaultValueDateTime;
   [FieldMetadataType.BOOLEAN]: FieldMetadataDefaultValueBoolean;
   [FieldMetadataType.NUMBER]: FieldMetadataDefaultValueNumber;

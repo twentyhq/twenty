@@ -21,6 +21,8 @@ export function generateTargetColumnMap(
   switch (type) {
     case FieldMetadataType.UUID:
     case FieldMetadataType.TEXT:
+    case FieldMetadataType.PHONE:
+    case FieldMetadataType.EMAIL:
     case FieldMetadataType.NUMBER:
     case FieldMetadataType.NUMERIC:
     case FieldMetadataType.PROBABILITY:

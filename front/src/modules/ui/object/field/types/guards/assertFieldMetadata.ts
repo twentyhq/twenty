@@ -3,10 +3,12 @@ import {
   FieldBooleanMetadata,
   FieldCurrencyMetadata,
   FieldDateTimeMetadata,
+  FieldEmailMetadata,
   FieldFullNameMetadata,
   FieldLinkMetadata,
   FieldMetadata,
   FieldNumberMetadata,
+  FieldPhoneMetadata,
   FieldProbabilityMetadata,
   FieldRelationMetadata,
   FieldSelectMetadata,
@@ -25,12 +27,16 @@ type AssertFieldMetadataFunction = <
     ? FieldFullNameMetadata
     : E extends 'DATE_TIME'
     ? FieldDateTimeMetadata
+    : E extends 'EMAIL'
+    ? FieldEmailMetadata
     : E extends 'ENUM'
     ? FieldSelectMetadata
     : E extends 'LINK'
     ? FieldLinkMetadata
     : E extends 'NUMBER'
     ? FieldNumberMetadata
+    : E extends 'PHONE'
+    ? FieldPhoneMetadata
     : E extends 'PROBABILITY'
     ? FieldProbabilityMetadata
     : E extends 'RELATION'

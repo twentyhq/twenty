@@ -16,6 +16,8 @@ import { ColumnActionAbstractFactory } from 'src/metadata/workspace-migration/fa
 export type BasicFieldMetadataType =
   | FieldMetadataType.UUID
   | FieldMetadataType.TEXT
+  | FieldMetadataType.PHONE
+  | FieldMetadataType.EMAIL
   | FieldMetadataType.NUMERIC
   | FieldMetadataType.NUMBER
   | FieldMetadataType.PROBABILITY
