@@ -293,24 +293,35 @@ export class ApiRestService {
   }
 
   //TODO:
-  //- handle 'not' conjunction for filters
   //- parse filter values with metadata field type
   //- handler nested filtering eg: filter=type.assignee.name.firstName[eq]:Charles
   //- add function docstrings
-  //- add tests
 
   parseFilterBlock(filterQuery, objectMetadataItem) {
     // and(price[lte]:100,price[lte]:100)
     const result = {};
     const parsedFilters = filterQuery.match(/^(or|and|not)\((.+)\)$/s);
+    console.log(filterQuery, parsedFilters);
     if (parsedFilters) {
       const conjunctionOperator = parsedFilters[1];
       const subFilterQuery = parsedFilters[2];
-      result[conjunctionOperator] = subFilterQuery
-        .split(',')
-        .map((subQuery) =>
-          this.parseSimpleFilter(subQuery, objectMetadataItem),
+      if (conjunctionOperator === 'not') {
+        if (subFilterQuery.split(',').length > 1) {
+          throw Error(
+            `'filter' invalid. 'not' conjunction should contain only 1 condition. eg: not(field[eq]:1)`,
+          );
+        }
+        result[conjunctionOperator] = this.parseSimpleFilter(
+          subFilterQuery,
+          objectMetadataItem,
         );
+      } else {
+        result[conjunctionOperator] = subFilterQuery
+          .split(',')
+          .map((subQuery) =>
+            this.parseSimpleFilter(subQuery, objectMetadataItem),
+          );
+      }
       return result;
     } else {
       return this.parseSimpleFilter(filterQuery, objectMetadataItem);
