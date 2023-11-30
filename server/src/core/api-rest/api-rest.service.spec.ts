@@ -70,4 +70,22 @@ describe('ApiRestService', () => {
       expect(service.mergeFilterBlocks(filterBlocks)).toEqual(expectedResult);
     });
   });
+  describe('checkFilterQuery', () => {
+    it('should check filter query', () => {
+      expect(() => service.checkFilterQuery('(')).toThrow();
+      expect(() => service.checkFilterQuery(')')).toThrow();
+      expect(() => service.checkFilterQuery('(()')).toThrow();
+      expect(() => service.checkFilterQuery('())')).toThrow();
+      expect(() =>
+        service.checkFilterQuery(
+          'and(or(field_1[eq]:1,field_2[eq]:2)),field_3[eq]:3)',
+        ),
+      ).toThrow();
+      expect(() =>
+        service.checkFilterQuery(
+          'and(or(field_1[eq]:1,field_2[eq]:2),field_3[eq]:3)',
+        ),
+      ).not.toThrow();
+    });
+  });
 });

@@ -246,6 +246,22 @@ export class ApiRestService {
     return filterQuery;
   }
 
+  checkFilterQuery(filterQuery) {
+    const countOpenedBrackets = (filterQuery.match(/\(/g) || []).length;
+    const countClosedBrackets = (filterQuery.match(/\)/g) || []).length;
+    const diff = countOpenedBrackets - countClosedBrackets;
+    if (diff !== 0) {
+      const hint =
+        diff > 0
+          ? `${diff} open bracket${diff > 1 ? 's are' : ' is'}`
+          : `${Math.abs(diff)} close bracket${
+              Math.abs(diff) > 1 ? 's are' : ' is'
+            }`;
+      throw Error(`'filter' invalid. ${hint} missing in the query`);
+    }
+    return;
+  }
+
   parseFilter(request, objectMetadataItem) {
     const parsedObjectId = this.parseObject(request)[1];
     if (parsedObjectId) {
@@ -255,6 +271,8 @@ export class ApiRestService {
     if (typeof rawFilterQuery !== 'string') {
       return {};
     }
+
+    this.checkFilterQuery(rawFilterQuery);
 
     const filterQuery = this.addDefaultConjunctionIfMissing(rawFilterQuery);
 
@@ -295,13 +313,13 @@ export class ApiRestService {
   //TODO:
   //- parse filter values with metadata field type
   //- handler nested filtering eg: filter=type.assignee.name.firstName[eq]:Charles
+  //- support multiple conjunction on same level: and(not(field_1[eq]:1),or(field_2[eq]:2,field_3[eq]:3))
   //- add function docstrings
 
   parseFilterBlock(filterQuery, objectMetadataItem) {
     // and(price[lte]:100,price[lte]:100)
     const result = {};
     const parsedFilters = filterQuery.match(/^(or|and|not)\((.+)\)$/s);
-    console.log(filterQuery, parsedFilters);
     if (parsedFilters) {
       const conjunctionOperator = parsedFilters[1];
       const subFilterQuery = parsedFilters[2];
