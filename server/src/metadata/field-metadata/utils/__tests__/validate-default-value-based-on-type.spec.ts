@@ -46,36 +46,6 @@ describe('validateDefaultValueBasedOnType', () => {
     ).toBe(false);
   });
 
-  it('should validate string default value for PHONE type', () => {
-    expect(
-      validateDefaultValueBasedOnType(
-        { value: '+123456789' },
-        FieldMetadataType.PHONE,
-      ),
-    ).toBe(true);
-  });
-
-  it('should return false for invalid string default value for PHONE type', () => {
-    expect(
-      validateDefaultValueBasedOnType({ value: 123 }, FieldMetadataType.PHONE),
-    ).toBe(false);
-  });
-
-  it('should validate string default value for EMAIL type', () => {
-    expect(
-      validateDefaultValueBasedOnType(
-        { value: 'test@example.com' },
-        FieldMetadataType.EMAIL,
-      ),
-    ).toBe(true);
-  });
-
-  it('should return false for invalid string default value for EMAIL type', () => {
-    expect(
-      validateDefaultValueBasedOnType({ value: 123 }, FieldMetadataType.EMAIL),
-    ).toBe(false);
-  });
-
   it('should validate number default value for NUMBER type', () => {
     expect(
       validateDefaultValueBasedOnType({ value: 100 }, FieldMetadataType.NUMBER),

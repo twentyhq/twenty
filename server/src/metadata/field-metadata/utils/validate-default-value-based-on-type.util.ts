@@ -24,8 +24,6 @@ export const validateDefaultValueBasedOnType = (
   switch (type) {
     case FieldMetadataType.TEXT:
     case FieldMetadataType.VARCHAR:
-    case FieldMetadataType.PHONE:
-    case FieldMetadataType.EMAIL:
     case FieldMetadataType.RATING:
     case FieldMetadataType.SELECT:
     case FieldMetadataType.NUMERIC:

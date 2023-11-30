@@ -23,8 +23,6 @@ export enum FieldMetadataType {
   TEXT = 'TEXT',
   // Temporary workaround for composite field with wrong type
   VARCHAR = 'VARCHAR',
-  PHONE = 'PHONE',
-  EMAIL = 'EMAIL',
   DATE_TIME = 'DATE_TIME',
   BOOLEAN = 'BOOLEAN',
   NUMBER = 'NUMBER',

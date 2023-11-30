@@ -22,8 +22,6 @@ export function generateTargetColumnMap(
     case FieldMetadataType.UUID:
     case FieldMetadataType.TEXT:
     case FieldMetadataType.VARCHAR:
-    case FieldMetadataType.PHONE:
-    case FieldMetadataType.EMAIL:
     case FieldMetadataType.NUMBER:
     case FieldMetadataType.NUMERIC:
     case FieldMetadataType.PROBABILITY:

@@ -13,8 +13,6 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
     case FieldMetadataType.TEXT:
       return 'text';
     case FieldMetadataType.VARCHAR:
-    case FieldMetadataType.PHONE:
-    case FieldMetadataType.EMAIL:
       return 'varchar';
     case FieldMetadataType.NUMERIC:
       return 'numeric';

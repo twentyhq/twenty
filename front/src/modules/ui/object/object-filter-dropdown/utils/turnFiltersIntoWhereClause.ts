@@ -26,8 +26,6 @@ export const turnFiltersIntoWhereClause = (
     }
 
     switch (filter.definition.type) {
-      case 'EMAIL':
-      case 'PHONE':
       case 'TEXT':
         switch (filter.operand) {
           case ViewFilterOperand.Contains:

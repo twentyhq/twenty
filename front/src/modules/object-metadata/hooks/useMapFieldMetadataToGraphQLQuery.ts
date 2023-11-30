@@ -20,15 +20,7 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
     const fieldType = field.type as FieldType;
 
     const fieldIsSimpleValue = (
-      [
-        'UUID',
-        'TEXT',
-        'PHONE',
-        'DATE_TIME',
-        'EMAIL',
-        'NUMBER',
-        'BOOLEAN',
-      ] as FieldType[]
+      ['UUID', 'TEXT', 'DATE_TIME', 'NUMBER', 'BOOLEAN'] as FieldType[]
     ).includes(fieldType);
 
     if (fieldIsSimpleValue) {
