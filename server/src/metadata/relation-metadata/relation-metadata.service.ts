@@ -105,8 +105,8 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     }
 
     const baseColumnName = `${camelCase(record.toName)}Id`;
-    const foreignKeyColumnName = objectMetadataMap[record.toObjectMetadataId]
-      .isCustom
+    const toIsCustom = objectMetadataMap[record.toObjectMetadataId].isCustom;
+    const foreignKeyColumnName = toIsCustom
       ? createCustomColumnName(baseColumnName)
       : baseColumnName;
 
@@ -131,9 +131,11 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         description: record.toDescription,
         icon: record.toIcon,
         isCustom: true,
-        targetColumnMap: {
-          value: createCustomColumnName(record.toName),
-        },
+        targetColumnMap: toIsCustom
+          ? {
+              value: createCustomColumnName(record.toName),
+            }
+          : {},
         isActive: true,
         type: FieldMetadataType.RELATION,
         objectMetadataId: record.toObjectMetadataId,
