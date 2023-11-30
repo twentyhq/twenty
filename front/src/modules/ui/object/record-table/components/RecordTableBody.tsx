@@ -33,8 +33,6 @@ export const RecordTableBody = () => {
     },
   );
 
-  console.log('asdasd3');
-
   const [isFetchingMoreObjects] = useRecoilState(
     isFetchingMoreRecordsFamilyState(foundObjectMetadataItem?.namePlural),
   );

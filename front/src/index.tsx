@@ -7,7 +7,7 @@ import { RecoilRoot } from 'recoil';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
-import { ErrorCatchAll } from '@/errors/components/ErrorCatchAll';
+import { ErrorBoundary } from '@/errors/components/ErrorBoundary';
 import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
@@ -31,7 +31,7 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <ErrorCatchAll>
+  <ErrorBoundary>
     <RecoilRoot>
       <RecoilDebugObserverEffect />
       <BrowserRouter>
@@ -63,7 +63,7 @@ root.render(
         </SnackBarProviderScope>
       </BrowserRouter>
     </RecoilRoot>
-  </ErrorCatchAll>,
+  </ErrorBoundary>,
 );
 
 declare module '@emotion/react' {

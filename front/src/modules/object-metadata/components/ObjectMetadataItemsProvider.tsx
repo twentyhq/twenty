@@ -1,25 +1,39 @@
+import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
-import { objectMetadataItemsLoadingState } from '@/object-metadata/states/objectMetadataItemsLoadingState';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { RelationPickerScope } from '@/ui/input/components/internal/relation-picker/scopes/RelationPickerScope';
 
 export const ObjectMetadataItemsProvider = ({
   children,
 }: React.PropsWithChildren) => {
-  const { loading, objectMetadataItems } = useFindManyObjectMetadataItems();
+  const { loading, objectMetadataItems: objectMetadataItemsFromServer } =
+    useFindManyObjectMetadataItems();
 
-  console.log({
-    loading,
-    objectMetadataItems,
-  });
+  const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
-  const [objectMetadataItemsLoading] = useRecoilState(
-    objectMetadataItemsLoadingState,
+  const [objectMetadataItems, setObjectMetadataItems] = useRecoilState(
+    objectMetadataItemsState,
   );
 
-  return loading ? (
+  useEffect(() => {
+    if (
+      objectMetadataItemsFromServer.length < 1 &&
+      objectMetadataItems.length < 1
+    ) {
+      setObjectMetadataItems(mockObjectMetadataItems as any[]);
+    }
+  }, [
+    objectMetadataItemsFromServer,
+    objectMetadataItems,
+    setObjectMetadataItems,
+    mockObjectMetadataItems,
+  ]);
+
+  return loading || objectMetadataItems.length < 1 ? (
     <></>
   ) : (
     <>

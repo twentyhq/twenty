@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
-import { objectMetadataItemsLoadingState } from '@/object-metadata/states/objectMetadataItemsLoadingState';
+import { isMockModeState } from '@/object-metadata/states/isMockModeState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
@@ -54,7 +54,6 @@ export const useFindManyObjectMetadataItems = ({
     onCompleted: useRecoilCallback(
       ({ snapshot, set }) =>
         (data) => {
-          console.log({ data });
           const objectMetadataItems =
             mapPaginatedObjectMetadataItemsToObjectMetadataItems({
               pagedObjectMetadataItems: data,
@@ -64,9 +63,14 @@ export const useFindManyObjectMetadataItems = ({
             .getLoadable(objectMetadataItemsState)
             .getValue();
 
-          if (!isDeeplyEqual(objectMetadataItems, actualObjectMetadataItems)) {
+          const isMockMode = snapshot.getLoadable(isMockModeState).getValue();
+
+          if (
+            isMockMode ||
+            !isDeeplyEqual(objectMetadataItems, actualObjectMetadataItems)
+          ) {
             set(objectMetadataItemsState, objectMetadataItems);
-            set(objectMetadataItemsLoadingState, false);
+            set(isMockModeState, false);
           }
         },
       [],

@@ -6,6 +6,7 @@ import { useRecoilState } from 'recoil';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { isMockModeState } from '@/object-metadata/states/isMockModeState';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
@@ -68,10 +69,12 @@ export const useFindManyRecords = <
 
   const { enqueueSnackBar } = useSnackBar();
 
+  const [isMockMode] = useRecoilState(isMockModeState);
+
   const { data, loading, error, fetchMore } = useQuery<
     PaginatedRecordType<RecordType>
   >(findManyRecordsQuery, {
-    skip: skip || !objectMetadataItem,
+    skip: skip || !objectMetadataItem || isMockMode,
     variables: {
       filter: filter ?? {},
       limit: limit,
@@ -104,11 +107,11 @@ export const useFindManyRecords = <
     },
     onError: (error) => {
       logError(
-        `useFindManyObjectRecords for "${objectMetadataItem.namePlural}" error : ` +
+        `useFindManyRecords for "${objectMetadataItem.namePlural}" error : ` +
           error,
       );
       enqueueSnackBar(
-        `Error during useFindManyObjectRecords for "${objectMetadataItem.namePlural}", ${error.message}`,
+        `Error during useFindManyRecords for "${objectMetadataItem.namePlural}", ${error.message}`,
         {
           variant: 'error',
         },

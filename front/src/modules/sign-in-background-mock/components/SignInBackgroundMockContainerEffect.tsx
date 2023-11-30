@@ -36,8 +36,6 @@ export const SignInBackgroundMockContainerEffect = ({
     recordTableScopeId: recordTableId,
   });
 
-  console.log('asdasd1');
-
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
   });
@@ -45,8 +43,6 @@ export const SignInBackgroundMockContainerEffect = ({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
-
-  console.log('asdasd2');
 
   const {
     setAvailableSortDefinitions,

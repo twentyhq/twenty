@@ -18,12 +18,6 @@ export const objectMetadataItemFamilySelector = selectorFamily<
     ({ get }) => {
       const objectMetadataItems = get(objectMetadataItemsState);
 
-      console.log({
-        objectMetadataItems,
-        objectNameType,
-        objectName,
-      });
-
       if (objectNameType === 'singular') {
         return (
           objectMetadataItems.find(
