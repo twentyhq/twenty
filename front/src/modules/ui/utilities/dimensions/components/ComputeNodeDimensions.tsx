@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useLayoutEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
 type ComputeNodeDimensionsProps = {
@@ -27,18 +27,26 @@ export const ComputeNodeDimensions = ({
     | undefined
   >(undefined);
 
-  useEffect(() => {
-    nodeWrapperRef.current &&
-      setNodeDimensions({
-        width: nodeWrapperRef.current.offsetWidth,
-        height: nodeWrapperRef.current.offsetHeight,
-      });
-  }, [node]);
+  useLayoutEffect(() => {
+    if (!nodeWrapperRef.current) {
+      return;
+    }
+    const resizeObserver = new ResizeObserver(() => {
+      if (nodeWrapperRef.current) {
+        setNodeDimensions({
+          width: nodeWrapperRef.current.offsetWidth,
+          height: nodeWrapperRef.current.offsetHeight,
+        });
+      }
+    });
+    resizeObserver.observe(nodeWrapperRef.current);
+    return () => resizeObserver.disconnect();
+  }, [nodeWrapperRef]);
 
   return (
     <>
       <StyledNodeWrapper ref={nodeWrapperRef}>{node}</StyledNodeWrapper>
-      {children(nodeDimensions)}
+      {nodeDimensions && children(nodeDimensions)}
     </>
   );
 };
