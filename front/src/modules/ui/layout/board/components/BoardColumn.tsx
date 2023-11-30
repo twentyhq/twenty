@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { IconDotsVertical, IconPlus } from '@/ui/display/icon';
 import { Tag } from '@/ui/display/tag/components/Tag';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { LightIconButtonGroup } from '@/ui/input/button/components/LightIconButtonGroup';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
 import { BoardColumnContext } from '../contexts/BoardColumnContext';
@@ -43,10 +43,7 @@ const StyledNumChildren = styled.div`
   width: 16px;
 `;
 
-const StyledButtonGroup = styled.div`
-  align-items: center;
-  display: none;
-  flex-direction: row;
+const StyledButtonGroupContainer = styled.div`
   margin-left: auto;
 `;
 
@@ -60,9 +57,6 @@ const StyledHeader = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
   width: 100%;
   &:hover {
-    .StyledButtonGroup {
-      display: flex;
-    }
     .StyledNumChildren {
       display: none;
     }
@@ -87,9 +81,9 @@ export const BoardColumn = ({
   stageId,
 }: BoardColumnProps) => {
   const boardColumn = useContext(BoardColumnContext);
+  const [buttonGroupVisible, setButtonGroupVisible] = useState(false);
 
-  const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] =
-    React.useState(false);
+  const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] = useState(false);
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -104,17 +98,19 @@ export const BoardColumn = ({
   };
 
   const handleBoardColumnMenuClose = () => {
-    goBackToPreviousHotkeyScope();
     setIsBoardColumnMenuOpen(false);
+    goBackToPreviousHotkeyScope();
   };
 
   if (!boardColumn) return <></>;
 
   const { isFirstColumn, columnDefinition } = boardColumn;
-
   return (
     <StyledColumn isFirstColumn={isFirstColumn}>
-      <StyledHeader>
+      <StyledHeader
+        onMouseEnter={() => setButtonGroupVisible(true)}
+        onMouseLeave={() => setButtonGroupVisible(false)}
+      >
         <Tag
           onClick={handleBoardColumnMenuOpen}
           color={columnDefinition.colorCode ?? 'gray'}
@@ -124,14 +120,22 @@ export const BoardColumn = ({
         <StyledNumChildren className="StyledNumChildren">
           {numChildren}
         </StyledNumChildren>
-        <StyledButtonGroup className="StyledButtonGroup">
-          <LightIconButton
-            Icon={IconDotsVertical}
-            accent="tertiary"
-            onClick={handleBoardColumnMenuOpen}
-          />
-          <LightIconButton Icon={IconPlus} accent="tertiary" />
-        </StyledButtonGroup>
+        {buttonGroupVisible && (
+          <StyledButtonGroupContainer>
+            <LightIconButtonGroup
+              accent="tertiary"
+              iconButtons={[
+                {
+                  Icon: IconDotsVertical,
+                  onClick: handleBoardColumnMenuOpen,
+                },
+                {
+                  Icon: IconPlus,
+                },
+              ]}
+            />
+          </StyledButtonGroupContainer>
+        )}
       </StyledHeader>
       {isBoardColumnMenuOpen && (
         <BoardColumnMenu
