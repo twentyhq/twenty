@@ -17,7 +17,10 @@ import { capitalize } from 'src/utils/capitalize';
 const FILTER_COMPARATORS = ['eq', 'gt', 'gte', 'lt', 'lte'];
 const ALLOWED_DEPTH_VALUES = [1, 2];
 const DEFAULT_DEPTH_VALUE = 2;
+const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
+const DEFAULT_FILTER_CONJUNCTION = 'and';
 const MAX_CONJUNCTION_ENCAPSULATION = 102;
+
 @Injectable()
 export class ApiRestService {
   constructor(
@@ -236,15 +239,25 @@ export class ApiRestService {
     });
   }
 
+  addDefaultConjunctionIfMissing(filterQuery) {
+    if (!(filterQuery.includes('(') && filterQuery.includes(')'))) {
+      return `${DEFAULT_FILTER_CONJUNCTION}(${filterQuery})`;
+    }
+    return filterQuery;
+  }
+
   parseFilter(request, objectMetadataItem) {
     const parsedObjectId = this.parseObject(request)[1];
     if (parsedObjectId) {
       return { id: { eq: parsedObjectId } };
     }
-    const filterQuery = request.query.filter;
-    if (typeof filterQuery !== 'string') {
+    const rawFilterQuery = request.query.filter;
+    if (typeof rawFilterQuery !== 'string') {
       return {};
     }
+
+    const filterQuery = this.addDefaultConjunctionIfMissing(rawFilterQuery);
+
     //filterQuery = or(and(type[lte]:1,or(type[lte]:2,updatedAt[eq]:3)),type[lte]:4)
     const stringFilterBlocks = this.computeStringFilterBlocks(filterQuery);
 
@@ -281,8 +294,8 @@ export class ApiRestService {
 
   //TODO:
   //- handle 'not' conjunction for filters
-  //- add default behaviour and(blabla) for filters
   //- parse filter values with metadata field type
+  //- handler nested filtering eg: filter=type.assignee.name.firstName[eq]:Charles
   //- add function docstrings
   //- add tests
 
@@ -349,7 +362,7 @@ export class ApiRestService {
         result[field] = direction;
       } else {
         // orderByItem -> field_3
-        result[orderByItem] = OrderByDirection.AscNullsFirst;
+        result[orderByItem] = DEFAULT_ORDER_DIRECTION;
       }
     }
     this.checkFields(objectMetadataItem, Object.keys(result), 'order_by');
