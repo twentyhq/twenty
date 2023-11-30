@@ -11,7 +11,7 @@ import {
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { serializeDefaultValue } from 'src/metadata/field-metadata/utils/serialize-default-value';
 import { fieldMetadataTypeToColumnType } from 'src/metadata/workspace-migration/utils/field-metadata-type-to-column-type.util';
-import { AbstractFactory } from 'src/metadata/workspace-migration/factories/abstract.factory';
+import { ColumnActionAbstractFactory } from 'src/metadata/workspace-migration/factories/column-action-abstract.factory';
 
 export type BasicFieldMetadataType =
   | FieldMetadataType.UUID
@@ -25,7 +25,7 @@ export type BasicFieldMetadataType =
   | FieldMetadataType.DATE_TIME;
 
 @Injectable()
-export class BasicColumnActionFactory extends AbstractFactory<BasicFieldMetadataType> {
+export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicFieldMetadataType> {
   protected readonly logger = new Logger(BasicColumnActionFactory.name);
 
   protected handleCreateAction(

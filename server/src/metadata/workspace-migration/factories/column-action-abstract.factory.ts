@@ -13,10 +13,11 @@ import {
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
-export class AbstractFactory<T extends FieldMetadataType | 'default'>
-  implements WorkspaceColumnActionFactory<T>
+export class ColumnActionAbstractFactory<
+  T extends FieldMetadataType | 'default',
+> implements WorkspaceColumnActionFactory<T>
 {
-  protected readonly logger = new Logger(AbstractFactory.name);
+  protected readonly logger = new Logger(ColumnActionAbstractFactory.name);
 
   create(
     action:

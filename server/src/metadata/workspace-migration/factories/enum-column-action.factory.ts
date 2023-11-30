@@ -11,7 +11,7 @@ import {
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { serializeDefaultValue } from 'src/metadata/field-metadata/utils/serialize-default-value';
 import { fieldMetadataTypeToColumnType } from 'src/metadata/workspace-migration/utils/field-metadata-type-to-column-type.util';
-import { AbstractFactory } from 'src/metadata/workspace-migration/factories/abstract.factory';
+import { ColumnActionAbstractFactory } from 'src/metadata/workspace-migration/factories/column-action-abstract.factory';
 
 export type EnumFieldMetadataType =
   | FieldMetadataType.RATING
@@ -19,7 +19,7 @@ export type EnumFieldMetadataType =
   | FieldMetadataType.MULTI_SELECT;
 
 @Injectable()
-export class EnumColumnActionFactory extends AbstractFactory<EnumFieldMetadataType> {
+export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFieldMetadataType> {
   protected readonly logger = new Logger(EnumColumnActionFactory.name);
 
   protected handleCreateAction(
