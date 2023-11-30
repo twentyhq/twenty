@@ -1,5 +1,3 @@
-import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
-
 import { InputTypeDefinitionKind } from 'src/workspace/workspace-schema-builder/factories/input-type-definition.factory';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
@@ -15,5 +13,5 @@ export interface ArgsMetadata {
   args: {
     [key: string]: ArgMetadata;
   };
-  objectMetadata: ObjectMetadataInterface;
+  objectMetadataId: string;
 }

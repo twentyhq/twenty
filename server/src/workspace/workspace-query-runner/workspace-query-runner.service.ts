@@ -45,7 +45,10 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<Record> | undefined> {
     const { workspaceId, targetTableName } = options;
-    const query = this.workspaceQueryBuilderFactory.findMany(args, options);
+    const query = await this.workspaceQueryBuilderFactory.findMany(
+      args,
+      options,
+    );
     const result = await this.execute(query, workspaceId);
 
     return this.parseResult<IConnection<Record>>(result, targetTableName, '');
@@ -62,7 +65,10 @@ export class WorkspaceQueryRunnerService {
       throw new BadRequestException('Missing filter argument');
     }
     const { workspaceId, targetTableName } = options;
-    const query = this.workspaceQueryBuilderFactory.findOne(args, options);
+    const query = await this.workspaceQueryBuilderFactory.findOne(
+      args,
+      options,
+    );
     const result = await this.execute(query, workspaceId);
     const parsedResult = this.parseResult<IConnection<Record>>(
       result,
@@ -78,7 +84,10 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { workspaceId, targetTableName } = options;
-    const query = this.workspaceQueryBuilderFactory.createMany(args, options);
+    const query = await this.workspaceQueryBuilderFactory.createMany(
+      args,
+      options,
+    );
     const result = await this.execute(query, workspaceId);
 
     return this.parseResult<PGGraphQLMutation<Record>>(
@@ -102,9 +111,10 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { workspaceId, targetTableName } = options;
-
-    const query = this.workspaceQueryBuilderFactory.updateOne(args, options);
-
+    const query = await this.workspaceQueryBuilderFactory.updateOne(
+      args,
+      options,
+    );
     const result = await this.execute(query, workspaceId);
 
     return this.parseResult<PGGraphQLMutation<Record>>(
@@ -119,7 +129,10 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { workspaceId, targetTableName } = options;
-    const query = this.workspaceQueryBuilderFactory.deleteOne(args, options);
+    const query = await this.workspaceQueryBuilderFactory.deleteOne(
+      args,
+      options,
+    );
     const result = await this.execute(query, workspaceId);
 
     return this.parseResult<PGGraphQLMutation<Record>>(
@@ -134,9 +147,10 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { workspaceId, targetTableName } = options;
-
-    const query = this.workspaceQueryBuilderFactory.updateMany(args, options);
-
+    const query = await this.workspaceQueryBuilderFactory.updateMany(
+      args,
+      options,
+    );
     const result = await this.execute(query, workspaceId);
 
     return this.parseResult<PGGraphQLMutation<Record>>(
@@ -154,9 +168,10 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { workspaceId, targetTableName } = options;
-
-    const query = this.workspaceQueryBuilderFactory.deleteMany(args, options);
-
+    const query = await this.workspaceQueryBuilderFactory.deleteMany(
+      args,
+      options,
+    );
     const result = await this.execute(query, workspaceId);
 
     return this.parseResult<PGGraphQLMutation<Record>>(

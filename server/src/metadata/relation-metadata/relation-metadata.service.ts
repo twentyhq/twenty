@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import camelCase from 'lodash.camelcase';
 
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
@@ -83,11 +83,10 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
      * FROM --- TO (host the id in the TO table)
      */
 
-    const objectMetadataEntries =
-      await this.objectMetadataService.findManyWithinWorkspace(
-        [record.fromObjectMetadataId, record.toObjectMetadataId],
-        record.workspaceId,
-      );
+    const objectMetadataEntries = await this.objectMetadataService.findMany({
+      id: In([record.fromObjectMetadataId, record.toObjectMetadataId]),
+      workspaceId: record.workspaceId,
+    });
 
     const objectMetadataMap = objectMetadataEntries.reduce((acc, curr) => {
       acc[curr.id] = curr;

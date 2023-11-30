@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Equal, In, Repository } from 'typeorm';
+import { FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 
 import { WorkspaceMigrationService } from 'src/metadata/workspace-migration/workspace-migration.service';
@@ -298,19 +298,30 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     return createdObjectMetadata;
   }
 
-  public async getObjectMetadataFromWorkspaceId(workspaceId: string) {
-    return this.objectMetadataRepository.find({
-      where: { workspaceId },
+  public async findOne(
+    options: FindOneOptions<ObjectMetadataEntity>,
+  ): Promise<ObjectMetadataEntity | null> {
+    return this.objectMetadataRepository.findOne({
+      ...options,
       relations: [
         'fields',
         'fields.fromRelationMetadata',
-        'fields.fromRelationMetadata.fromObjectMetadata',
-        'fields.fromRelationMetadata.toObjectMetadata',
-        'fields.fromRelationMetadata.toObjectMetadata.fields',
         'fields.toRelationMetadata',
-        'fields.toRelationMetadata.fromObjectMetadata',
-        'fields.toRelationMetadata.fromObjectMetadata.fields',
-        'fields.toRelationMetadata.toObjectMetadata',
+      ],
+    });
+  }
+
+  public async findMany(
+    where:
+      | FindOptionsWhere<ObjectMetadataEntity>[]
+      | FindOptionsWhere<ObjectMetadataEntity>,
+  ) {
+    return this.objectMetadataRepository.find({
+      where,
+      relations: [
+        'fields',
+        'fields.fromRelationMetadata',
+        'fields.toRelationMetadata',
       ],
     });
   }
@@ -321,16 +332,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   ) {
     return this.objectMetadataRepository.findOne({
       where: { id: objectMetadataId, workspaceId },
-    });
-  }
-
-  public async findManyWithinWorkspace(
-    objectMetadataIds: string[],
-    workspaceId: string,
-  ) {
-    return this.objectMetadataRepository.findBy({
-      id: In(objectMetadataIds),
-      workspaceId: Equal(workspaceId),
     });
   }
 
