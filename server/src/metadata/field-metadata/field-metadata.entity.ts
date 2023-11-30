@@ -21,8 +21,6 @@ import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-
 export enum FieldMetadataType {
   UUID = 'UUID',
   TEXT = 'TEXT',
-  // Temporary workaround for composite field with wrong type
-  VARCHAR = 'VARCHAR',
   DATE_TIME = 'DATE_TIME',
   BOOLEAN = 'BOOLEAN',
   NUMBER = 'NUMBER',

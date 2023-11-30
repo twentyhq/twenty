@@ -13,7 +13,7 @@ export const fullNameObjectDefinition = {
   fields: [
     {
       id: 'firstName',
-      type: FieldMetadataType.VARCHAR,
+      type: FieldMetadataType.TEXT,
       objectMetadataId: FieldMetadataType.FULL_NAME.toString(),
       name: 'firstName',
       label: 'First Name',
@@ -22,7 +22,7 @@ export const fullNameObjectDefinition = {
     } satisfies FieldMetadataInterface,
     {
       id: 'lastName',
-      type: FieldMetadataType.VARCHAR,
+      type: FieldMetadataType.TEXT,
       objectMetadataId: FieldMetadataType.FULL_NAME.toString(),
       name: 'lastName',
       label: 'Last Name',

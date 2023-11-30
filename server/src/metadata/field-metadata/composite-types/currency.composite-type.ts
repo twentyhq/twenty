@@ -22,7 +22,7 @@ export const currencyObjectDefinition = {
     } satisfies FieldMetadataInterface,
     {
       id: 'currencyCode',
-      type: FieldMetadataType.VARCHAR,
+      type: FieldMetadataType.TEXT,
       objectMetadataId: FieldMetadataType.CURRENCY.toString(),
       name: 'currencyCode',
       label: 'Currency Code',

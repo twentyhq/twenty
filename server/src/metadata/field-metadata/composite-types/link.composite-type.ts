@@ -13,7 +13,7 @@ export const linkObjectDefinition = {
   fields: [
     {
       id: 'label',
-      type: FieldMetadataType.VARCHAR,
+      type: FieldMetadataType.TEXT,
       objectMetadataId: FieldMetadataType.LINK.toString(),
       name: 'label',
       label: 'Label',
@@ -22,7 +22,7 @@ export const linkObjectDefinition = {
     } satisfies FieldMetadataInterface,
     {
       id: 'url',
-      type: FieldMetadataType.VARCHAR,
+      type: FieldMetadataType.TEXT,
       objectMetadataId: FieldMetadataType.LINK.toString(),
       name: 'url',
       label: 'Url',
