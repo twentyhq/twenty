@@ -311,7 +311,6 @@ export class ApiRestService {
   }
 
   //TODO:
-  //- parse filter values with metadata field type
   //- handler nested filtering eg: filter=type.assignee.name.firstName[eq]:Charles
   //- support multiple conjunction on same level: and(not(field_1[eq]:1),or(field_2[eq]:2,field_3[eq]:3))
   //- add function docstrings
@@ -363,7 +362,19 @@ export class ApiRestService {
       );
     }
     this.checkFields(objectMetadataItem, [field], 'filter');
-    return { [field]: { [comparator]: value } };
+    const fieldType = this.getFieldType(objectMetadataItem, field);
+    const formattedValue = this.formatFieldValue(value, fieldType);
+    return { [field]: { [comparator]: formattedValue } };
+  }
+
+  formatFieldValue(value, fieldType) {
+    if (fieldType === 'NUMBER') {
+      return parseInt(value);
+    }
+    if (fieldType === 'BOOLEAN') {
+      return value.toLowerCase() === 'true';
+    }
+    return value;
   }
 
   parseOrderBy(request, objectMetadataItem) {
@@ -398,16 +409,29 @@ export class ApiRestService {
     return <RecordOrderBy>result;
   }
 
-  checkFields(objectMetadataItem, fields, queryParam) {
-    for (const field of fields) {
+  checkFields(objectMetadataItem, fieldNames, queryParam) {
+    for (const fieldName of fieldNames) {
       if (
-        !objectMetadataItem.fields.map((field) => field.name).includes(field)
+        !objectMetadataItem.fields
+          .map((itemField) => itemField.name)
+          .includes(fieldName)
       ) {
         throw Error(
-          `'${queryParam}' field '${field}' does not exist in '${objectMetadataItem.targetTableName}' object`,
+          `'${queryParam}' field '${fieldName}' does not exist in '${objectMetadataItem.targetTableName}' object`,
         );
       }
     }
+  }
+
+  getFieldType(objectMetadataItem, fieldName) {
+    for (const itemField of objectMetadataItem.fields) {
+      if (fieldName === itemField.name) {
+        return itemField.type;
+      }
+    }
+    throw Error(
+      `'${fieldName}' does not exist in '${objectMetadataItem.targetTableName}' object`,
+    );
   }
 
   parseLimit(request) {

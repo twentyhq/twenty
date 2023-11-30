@@ -88,4 +88,15 @@ describe('ApiRestService', () => {
       ).not.toThrow();
     });
   });
+  describe('formatFieldValue', () => {
+    it('should format field value', () => {
+      expect(service.formatFieldValue('1', 'NUMBER')).toEqual(1);
+      expect(service.formatFieldValue(1, 'NUMBER')).toEqual(1);
+      expect(service.formatFieldValue('a', 'NUMBER')).toEqual(NaN);
+      expect(service.formatFieldValue('true', 'BOOLEAN')).toEqual(true);
+      expect(service.formatFieldValue('True', 'BOOLEAN')).toEqual(true);
+      expect(service.formatFieldValue('false', 'BOOLEAN')).toEqual(false);
+      expect(service.formatFieldValue('1', 'TEXT')).toEqual('1');
+    });
+  });
 });
