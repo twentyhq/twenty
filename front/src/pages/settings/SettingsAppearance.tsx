@@ -13,15 +13,15 @@ const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
 `;
 
-export const SettingsExperience = () => {
+export const SettingsAppearance = () => {
   const { colorScheme, setColorScheme } = useColorScheme();
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
-        <StyledH1Title title="Experience" />
+        <StyledH1Title title="Appearance" />
         <Section>
-          <H2Title title="Appearance" />
+          <H2Title title="Theme" />
           <ColorSchemePicker value={colorScheme} onChange={setColorScheme} />
         </Section>
       </SettingsPageContainer>
