@@ -2,10 +2,9 @@ import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 
 import { GraphQLResolveInfo } from 'graphql';
 
-import { FieldMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/field-metadata.interface';
+import { FieldMetadataInterface } from 'src/metadata/field-metadata/interfaces/field-metadata.interface';
 
-import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-import { isCompositeFieldMetadataType } from 'src/workspace/utils/is-composite-field-metadata-type.util';
+import { isRelationFieldMetadataType } from 'src/workspace/utils/is-relation-field-metadata-type.util';
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import {
   deduceRelationDirection,
@@ -17,8 +16,8 @@ import { FieldsStringFactory } from './fields-string.factory';
 import { ArgsStringFactory } from './args-string.factory';
 
 @Injectable()
-export class CompositeFieldAliasFactory {
-  private logger = new Logger(CompositeFieldAliasFactory.name);
+export class RelationFieldAliasFactory {
+  private logger = new Logger(RelationFieldAliasFactory.name);
 
   constructor(
     @Inject(forwardRef(() => FieldsStringFactory))
@@ -32,21 +31,11 @@ export class CompositeFieldAliasFactory {
     fieldMetadata: FieldMetadataInterface,
     info: GraphQLResolveInfo,
   ) {
-    if (!isCompositeFieldMetadataType(fieldMetadata.type)) {
-      throw new Error(`Field ${fieldMetadata.name} is not a composite field`);
+    if (!isRelationFieldMetadataType(fieldMetadata.type)) {
+      throw new Error(`Field ${fieldMetadata.name} is not a relation field`);
     }
 
-    switch (fieldMetadata.type) {
-      case FieldMetadataType.RELATION:
-        return this.createRelationAlias(
-          fieldKey,
-          fieldValue,
-          fieldMetadata,
-          info,
-        );
-    }
-
-    return null;
+    return this.createRelationAlias(fieldKey, fieldValue, fieldMetadata, info);
   }
 
   private createRelationAlias(

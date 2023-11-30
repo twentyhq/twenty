@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { IResolvers } from '@graphql-tools/utils';
 
-import { ObjectMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/object-metadata.interface';
+import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
 
 import { getResolverName } from 'src/workspace/utils/get-resolver-name.util';
 import { UpdateManyResolverFactory } from 'src/workspace/workspace-resolver-builder/factories/update-many-resolver.factory';

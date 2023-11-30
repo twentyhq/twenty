@@ -1,5 +1,7 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
-export const isCompositeFieldMetadataType = (type: FieldMetadataType) => {
+export const isRelationFieldMetadataType = (
+  type: FieldMetadataType,
+): type is FieldMetadataType.RELATION => {
   return type === FieldMetadataType.RELATION;
 };
