@@ -31,8 +31,8 @@ const navItems = (
       active
     />
     <NavItem
-      label="Experience"
-      to="/settings/profile/experience"
+      label="Appearance"
+      to="/settings/profile/appearance"
       Icon={IconColorSwatch}
     />
     <NavTitle label="Workspace" />

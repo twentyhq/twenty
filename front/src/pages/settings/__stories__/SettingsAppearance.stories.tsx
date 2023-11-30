@@ -6,13 +6,13 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { SettingsExperience } from '../SettingsExperience';
+import { SettingsAppearance } from '../SettingsAppearance';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/SettingsExperience',
-  component: SettingsExperience,
+  title: 'Pages/Settings/SettingsAppearance',
+  component: SettingsAppearance,
   decorators: [PageDecorator],
-  args: { routePath: '/settings/experience' },
+  args: { routePath: '/settings/appearance' },
   parameters: {
     msw: graphqlMocks,
   },
@@ -20,6 +20,6 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsExperience>;
+export type Story = StoryObj<typeof SettingsAppearance>;
 
 export const Default: Story = {};
