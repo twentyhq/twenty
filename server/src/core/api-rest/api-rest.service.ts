@@ -37,7 +37,6 @@ export class ApiRestService {
       return '';
     }
 
-    // TODO: parse
     const fieldType = field.type;
 
     const fieldIsSimpleValue = [
@@ -311,7 +310,6 @@ export class ApiRestService {
   }
 
   //TODO:
-  //- handler nested filtering eg: filter=type.assignee.name.firstName[eq]:Charles
   //- support multiple conjunction on same level: and(not(field_1[eq]:1),or(field_2[eq]:2,field_3[eq]:3))
   //- add function docstrings
 
@@ -361,13 +359,19 @@ export class ApiRestService {
         )}`,
       );
     }
-    this.checkFields(objectMetadataItem, [field], 'filter');
-    const fieldType = this.getFieldType(objectMetadataItem, field);
+    const fields = field.split('.');
+    this.checkFields(objectMetadataItem, [fields[0]], 'filter');
+    const fieldType = this.getFieldType(objectMetadataItem, fields[0]);
     const formattedValue = this.formatFieldValue(value, fieldType);
-    return { [field]: { [comparator]: formattedValue } };
+    return fields.reverse().reduce(
+      (acc, currentValue) => {
+        return { [currentValue]: acc };
+      },
+      { [comparator]: formattedValue },
+    );
   }
 
-  formatFieldValue(value, fieldType) {
+  formatFieldValue(value, fieldType?) {
     if (fieldType === 'NUMBER') {
       return parseInt(value);
     }
@@ -429,9 +433,6 @@ export class ApiRestService {
         return itemField.type;
       }
     }
-    throw Error(
-      `'${fieldName}' does not exist in '${objectMetadataItem.targetTableName}' object`,
-    );
   }
 
   parseLimit(request) {
