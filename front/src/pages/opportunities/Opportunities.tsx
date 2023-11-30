@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 import { CompanyBoard } from '@/companies/board/components/CompanyBoard';
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
-import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { PipelineAddButton } from '@/pipeline/components/PipelineAddButton';
 import { usePipelineSteps } from '@/pipeline/hooks/usePipelineSteps';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
@@ -24,8 +24,8 @@ export const Opportunities = () => {
   const { handlePipelineStepAdd, handlePipelineStepDelete } =
     usePipelineSteps();
 
-  const { updateOneObject: updateOnePipelineStep } =
-    useUpdateOneObjectRecord<PipelineStep>({
+  const { updateOneRecord: updateOnePipelineStep } =
+    useUpdateOneRecord<PipelineStep>({
       objectNameSingular: 'pipelineStep',
     });
 

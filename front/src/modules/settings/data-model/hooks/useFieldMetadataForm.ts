@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { DeepPartial } from 'react-hook-form';
+import { v4 } from 'uuid';
 import { z } from 'zod';
 
-import { mainColors, ThemeColor } from '@/ui/theme/constants/colors';
+import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 import {
   FieldMetadataType,
   RelationMetadataType,
@@ -20,14 +21,16 @@ type FormValues = {
   select: SettingsObjectFieldTypeSelectSectionFormValues['select'];
 };
 
-const defaultValues: FormValues = {
+export const fieldMetadataFormDefaultValues: FormValues = {
   icon: 'IconUsers',
   label: '',
   type: FieldMetadataType.Text,
   relation: {
     type: RelationMetadataType.OneToMany,
+    objectMetadataId: '',
+    field: { label: '' },
   },
-  select: [{ color: 'green', text: 'Option 1' }],
+  select: [{ color: 'green', label: 'Option 1', value: v4() }],
 };
 
 const fieldSchema = z.object({
@@ -57,10 +60,9 @@ const selectSchema = fieldSchema.merge(
     select: z
       .array(
         z.object({
-          color: z.enum(
-            Object.keys(mainColors) as [ThemeColor, ...ThemeColor[]],
-          ),
-          text: z.string().min(1),
+          color: themeColorSchema,
+          isDefault: z.boolean().optional(),
+          label: z.string().min(1),
         }),
       )
       .nonempty(),
@@ -90,14 +92,17 @@ const schema = z.discriminatedUnion('type', [
   otherFieldTypesSchema,
 ]);
 
-type PartialFormValues = Partial<FormValues> &
+type PartialFormValues = Partial<Omit<FormValues, 'relation'>> &
   DeepPartial<Pick<FormValues, 'relation'>>;
 
 export const useFieldMetadataForm = () => {
   const [isInitialized, setIsInitialized] = useState(false);
-  const [initialFormValues, setInitialFormValues] =
-    useState<FormValues>(defaultValues);
-  const [formValues, setFormValues] = useState<FormValues>(defaultValues);
+  const [initialFormValues, setInitialFormValues] = useState<FormValues>(
+    fieldMetadataFormDefaultValues,
+  );
+  const [formValues, setFormValues] = useState<FormValues>(
+    fieldMetadataFormDefaultValues,
+  );
   const [hasFieldFormChanged, setHasFieldFormChanged] = useState(false);
   const [hasRelationFormChanged, setHasRelationFormChanged] = useState(false);
   const [hasSelectFormChanged, setHasSelectFormChanged] = useState(false);

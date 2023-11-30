@@ -11,10 +11,13 @@ import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScope
 import { useViewScopedStates } from './useViewScopedStates';
 
 export const useViewFilters = (viewScopeId: string) => {
-  const { updateOneMutation, createOneMutation, deleteOneMutation } =
-    useObjectMetadataItem({
-      objectNameSingular: 'viewFilter',
-    });
+  const {
+    updateOneRecordMutation,
+    createOneRecordMutation,
+    deleteOneRecordMutation,
+  } = useObjectMetadataItem({
+    objectNameSingular: 'viewFilter',
+  });
 
   const { modifyRecordFromCache } = useObjectMetadataItem({
     objectNameSingular: 'view',
@@ -55,7 +58,7 @@ export const useViewFilters = (viewScopeId: string) => {
           return Promise.all(
             viewFiltersToCreate.map((viewFilter) =>
               apolloClient.mutate({
-                mutation: createOneMutation,
+                mutation: createOneRecordMutation,
                 variables: {
                   input: {
                     fieldMetadataId: viewFilter.fieldMetadataId,
@@ -76,7 +79,7 @@ export const useViewFilters = (viewScopeId: string) => {
           return Promise.all(
             viewFiltersToUpdate.map((viewFilter) =>
               apolloClient.mutate({
-                mutation: updateOneMutation,
+                mutation: updateOneRecordMutation,
                 variables: {
                   idToUpdate: viewFilter.id,
                   input: {
@@ -96,7 +99,7 @@ export const useViewFilters = (viewScopeId: string) => {
           return Promise.all(
             viewFilterIdsToDelete.map((viewFilterId) =>
               apolloClient.mutate({
-                mutation: deleteOneMutation,
+                mutation: deleteOneRecordMutation,
                 variables: {
                   idToDelete: viewFilterId,
                 },
@@ -163,10 +166,10 @@ export const useViewFilters = (viewScopeId: string) => {
       },
     [
       apolloClient,
-      createOneMutation,
-      deleteOneMutation,
+      createOneRecordMutation,
+      deleteOneRecordMutation,
       modifyRecordFromCache,
-      updateOneMutation,
+      updateOneRecordMutation,
       viewScopeId,
     ],
   );

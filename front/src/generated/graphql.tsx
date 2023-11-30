@@ -88,6 +88,30 @@ export type CursorPaging = {
   last?: InputMaybe<Scalars['Int']>;
 };
 
+export type FeatureFlag = {
+  __typename?: 'FeatureFlag';
+  id: Scalars['ID'];
+  key: Scalars['String'];
+  value: Scalars['Boolean'];
+  workspaceId: Scalars['String'];
+};
+
+export type FeatureFlagFilter = {
+  and?: InputMaybe<Array<FeatureFlagFilter>>;
+  id?: InputMaybe<IdFilterComparison>;
+  or?: InputMaybe<Array<FeatureFlagFilter>>;
+};
+
+export type FeatureFlagSort = {
+  direction: SortDirection;
+  field: FeatureFlagSortFields;
+  nulls?: InputMaybe<SortNulls>;
+};
+
+export enum FeatureFlagSortFields {
+  Id = 'id'
+}
+
 export type FieldConnection = {
   __typename?: 'FieldConnection';
   /** Array of edges. */
@@ -387,6 +411,18 @@ export enum RelationMetadataType {
   OneToOne = 'ONE_TO_ONE'
 }
 
+/** Sort Directions */
+export enum SortDirection {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}
+
+/** Sort Nulls Options */
+export enum SortNulls {
+  NullsFirst = 'NULLS_FIRST',
+  NullsLast = 'NULLS_LAST'
+}
+
 export type Support = {
   __typename?: 'Support';
   supportDriver: Scalars['String'];
@@ -466,10 +502,17 @@ export type Workspace = {
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;
   domainName?: Maybe<Scalars['String']>;
+  featureFlags?: Maybe<Array<FeatureFlag>>;
   id: Scalars['ID'];
   inviteHash?: Maybe<Scalars['String']>;
   logo?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
+};
+
+
+export type WorkspaceFeatureFlagsArgs = {
+  filter?: FeatureFlagFilter;
+  sorting?: Array<FeatureFlagSort>;
 };
 
 export type WorkspaceEdge = {
@@ -646,6 +689,14 @@ export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null } } };
 
+export type UploadFileMutationVariables = Exact<{
+  file: Scalars['Upload'];
+  fileFolder?: InputMaybe<FileFolder>;
+}>;
+
+
+export type UploadFileMutation = { __typename?: 'Mutation', uploadFile: string };
+
 export type UploadImageMutationVariables = Exact<{
   file: Scalars['Upload'];
   fileFolder?: InputMaybe<FileFolder>;
@@ -671,7 +722,7 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember: { __typename?: 'UserWorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'UserWorkspaceMemberName', firstName: string, lastName: string } }, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean } } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember: { __typename?: 'UserWorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'UserWorkspaceMemberName', firstName: string, lastName: string } }, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } } };
 
 export type DeleteCurrentWorkspaceMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -1083,6 +1134,38 @@ export function useGetClientConfigLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetClientConfigQueryHookResult = ReturnType<typeof useGetClientConfigQuery>;
 export type GetClientConfigLazyQueryHookResult = ReturnType<typeof useGetClientConfigLazyQuery>;
 export type GetClientConfigQueryResult = Apollo.QueryResult<GetClientConfigQuery, GetClientConfigQueryVariables>;
+export const UploadFileDocument = gql`
+    mutation uploadFile($file: Upload!, $fileFolder: FileFolder) {
+  uploadFile(file: $file, fileFolder: $fileFolder)
+}
+    `;
+export type UploadFileMutationFn = Apollo.MutationFunction<UploadFileMutation, UploadFileMutationVariables>;
+
+/**
+ * __useUploadFileMutation__
+ *
+ * To run a mutation, you first call `useUploadFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadFileMutation, { data, loading, error }] = useUploadFileMutation({
+ *   variables: {
+ *      file: // value for 'file'
+ *      fileFolder: // value for 'fileFolder'
+ *   },
+ * });
+ */
+export function useUploadFileMutation(baseOptions?: Apollo.MutationHookOptions<UploadFileMutation, UploadFileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UploadFileMutation, UploadFileMutationVariables>(UploadFileDocument, options);
+      }
+export type UploadFileMutationHookResult = ReturnType<typeof useUploadFileMutation>;
+export type UploadFileMutationResult = Apollo.MutationResult<UploadFileMutation>;
+export type UploadFileMutationOptions = Apollo.BaseMutationOptions<UploadFileMutation, UploadFileMutationVariables>;
 export const UploadImageDocument = gql`
     mutation uploadImage($file: Upload!, $fileFolder: FileFolder) {
   uploadImage(file: $file, fileFolder: $fileFolder)
@@ -1204,6 +1287,12 @@ export const GetCurrentUserDocument = gql`
       domainName
       inviteHash
       allowImpersonation
+      featureFlags {
+        id
+        key
+        value
+        workspaceId
+      }
     }
   }
 }

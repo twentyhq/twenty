@@ -9,7 +9,7 @@ import { formatFieldMetadataItemAsColumnDefinition } from '../utils/formatFieldM
 import { formatFieldMetadataItemsAsFilterDefinitions } from '../utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { formatFieldMetadataItemsAsSortDefinitions } from '../utils/formatFieldMetadataItemsAsSortDefinitions';
 
-export const useComputeDefinitionsFromFieldMetadata = (
+export const useColumnDefinitionsFromFieldMetadata = (
   objectMetadataItem?: Nullable<ObjectMetadataItem>,
 ) => {
   const activeFieldMetadataItems = useMemo(

@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useRecoilValue } from 'recoil';
 
-import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { BoardColumnContext } from '@/ui/object/record-board/contexts/BoardColumnContext';
@@ -60,8 +60,8 @@ export const RecordBoard = ({
 }: RecordBoardProps) => {
   const boardColumns = useRecoilValue(boardColumnsState);
 
-  const { updateOneObject: updateOneOpportunity } =
-    useUpdateOneObjectRecord<Opportunity>({
+  const { updateOneRecord: updateOneOpportunity } =
+    useUpdateOneRecord<Opportunity>({
       objectNameSingular: 'opportunity',
     });
 

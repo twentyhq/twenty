@@ -19,11 +19,13 @@ export const ObjectFilterDropdownEntitySelect = () => {
   const objectMetadataNamePlural =
     filterDefinitionUsedInDropdown?.relationObjectMetadataNamePlural ?? '';
 
-  const { findManyQuery } = useObjectMetadataItem({
+  // TODO: refactor useFilteredSearchEntityQuery
+  const { findManyRecordsQuery } = useObjectMetadataItem({
     objectNameSingular: objectMetadataNameSingular,
   });
 
-  const useFindManyQuery = (options: any) => useQuery(findManyQuery, options);
+  const useFindManyQuery = (options: any) =>
+    useQuery(findManyRecordsQuery, options);
 
   const { identifiersMapper, searchQuery } = useRelationPicker();
 

@@ -6,8 +6,8 @@ import {
   CreateOneRelationMetadataMutationVariables,
 } from '~/generated-metadata/graphql';
 
-import { CREATE_ONE_RELATION_METADATA } from '../graphql/mutations';
-import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
+import { CREATE_ONE_RELATION_METADATA_ITEM } from '../graphql/mutations';
+import { FIND_MANY_OBJECT_METADATA_ITEMS } from '../graphql/queries';
 import {
   formatRelationMetadataInput,
   FormatRelationMetadataInputParams,
@@ -15,27 +15,27 @@ import {
 
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
-export const useCreateOneRelationMetadata = () => {
+export const useCreateOneRelationMetadataItem = () => {
   const apolloMetadataClient = useApolloMetadataClient();
 
   const [mutate] = useMutation<
     CreateOneRelationMetadataMutation,
     CreateOneRelationMetadataMutationVariables
-  >(CREATE_ONE_RELATION_METADATA, {
+  >(CREATE_ONE_RELATION_METADATA_ITEM, {
     client: apolloMetadataClient ?? ({} as ApolloClient<any>),
   });
 
-  const createOneRelationMetadata = async (
+  const createOneRelationMetadataItem = async (
     input: FormatRelationMetadataInputParams,
   ) => {
     return await mutate({
       variables: { input: { relation: formatRelationMetadataInput(input) } },
       awaitRefetchQueries: true,
-      refetchQueries: [getOperationName(FIND_MANY_METADATA_OBJECTS) ?? ''],
+      refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
     });
   };
 
   return {
-    createOneRelationMetadata,
+    createOneRelationMetadataItem,
   };
 };
