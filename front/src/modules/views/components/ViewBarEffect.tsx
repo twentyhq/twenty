@@ -32,7 +32,7 @@ export const ViewBarEffect = () => {
 
   useFindManyRecords({
     skip: !viewObjectMetadataId,
-    objectNamePlural: 'views',
+    objectNameSingular: 'view',
     filter: {
       type: { eq: viewType },
       objectMetadataId: { eq: viewObjectMetadataId },

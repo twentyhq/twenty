@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { signInBackgroundMockCompanies } from '@/sign-in-background-mock/constants/signInBackgroundMockCompanies';
@@ -35,9 +36,17 @@ export const SignInBackgroundMockContainerEffect = ({
     recordTableScopeId: recordTableId,
   });
 
-  const { objectMetadataItem } = useObjectMetadataItem({
+  console.log('asdasd1');
+
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
   });
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
+  console.log('asdasd2');
 
   const {
     setAvailableSortDefinitions,

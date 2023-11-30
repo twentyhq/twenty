@@ -44,7 +44,7 @@ export const ObjectFilterDropdownEntitySelect = () => {
       : [],
     mappingFunction: (record: any) =>
       identifiersMapper?.(record, objectMetadataNameSingular),
-    objectNamePlural: objectMetadataNamePlural,
+    objectNameSingular: objectMetadataNameSingular,
   });
 
   if (filterDefinitionUsedInDropdown?.type !== 'RELATION') {

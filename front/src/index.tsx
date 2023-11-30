@@ -7,6 +7,7 @@ import { RecoilRoot } from 'recoil';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
+import { ErrorCatchAll } from '@/errors/components/ErrorCatchAll';
 import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
@@ -30,37 +31,39 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <RecoilRoot>
-    <RecoilDebugObserverEffect />
-    <BrowserRouter>
-      <ApolloProvider>
-        <HelmetProvider>
-          <ClientConfigProvider>
-            <UserProvider>
-              <ApolloMetadataClientProvider>
-                <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-                  <ObjectMetadataItemsProvider>
-                    <PageChangeEffect />
-                    <AppThemeProvider>
-                      <SnackBarProvider>
-                        <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                          <DialogManager>
-                            <StrictMode>
-                              <App />
-                            </StrictMode>
-                          </DialogManager>
-                        </DialogManagerScope>
-                      </SnackBarProvider>
-                    </AppThemeProvider>
-                  </ObjectMetadataItemsProvider>
-                </SnackBarProviderScope>
-              </ApolloMetadataClientProvider>
-            </UserProvider>
-          </ClientConfigProvider>
-        </HelmetProvider>
-      </ApolloProvider>
-    </BrowserRouter>
-  </RecoilRoot>,
+  <ErrorCatchAll>
+    <RecoilRoot>
+      <RecoilDebugObserverEffect />
+      <BrowserRouter>
+        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+          <ApolloProvider>
+            <HelmetProvider>
+              <ClientConfigProvider>
+                <UserProvider>
+                  <ApolloMetadataClientProvider>
+                    <ObjectMetadataItemsProvider>
+                      <PageChangeEffect />
+                      <AppThemeProvider>
+                        <SnackBarProvider>
+                          <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                            <DialogManager>
+                              <StrictMode>
+                                <App />
+                              </StrictMode>
+                            </DialogManager>
+                          </DialogManagerScope>
+                        </SnackBarProvider>
+                      </AppThemeProvider>
+                    </ObjectMetadataItemsProvider>
+                  </ApolloMetadataClientProvider>
+                </UserProvider>
+              </ClientConfigProvider>
+            </HelmetProvider>
+          </ApolloProvider>
+        </SnackBarProviderScope>
+      </BrowserRouter>
+    </RecoilRoot>
+  </ErrorCatchAll>,
 );
 
 declare module '@emotion/react' {

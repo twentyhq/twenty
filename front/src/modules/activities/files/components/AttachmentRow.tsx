@@ -6,7 +6,7 @@ import { AttachmentDropdown } from '@/activities/files/components/AttachmentDrop
 import { AttachmentIcon } from '@/activities/files/components/AttachmentIcon';
 import { Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
-import { useDeleteOneObjectRecord } from '@/object-record/hooks/useDeleteOneObjectRecord';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { IconCalendar } from '@/ui/display/icon';
 import {
   FieldContext,
@@ -60,8 +60,8 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
     [attachment?.id],
   );
 
-  const { deleteOneObject: deleteOneAttachment } =
-    useDeleteOneObjectRecord<Attachment>({
+  const { deleteOneRecord: deleteOneAttachment } =
+    useDeleteOneRecord<Attachment>({
       objectNameSingular: 'attachment',
     });
 

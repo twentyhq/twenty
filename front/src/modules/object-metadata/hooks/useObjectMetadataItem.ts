@@ -26,17 +26,21 @@ export const EMPTY_MUTATION = gql`
 `;
 
 export const useObjectMetadataItem = (
-  { objectNamePlural, objectNameSingular }: ObjectMetadataItemIdentifier,
+  { objectNameSingular }: ObjectMetadataItemIdentifier,
   depth?: number,
 ) => {
   const objectMetadataItem = useRecoilValue(
     objectMetadataItemFamilySelector({
-      objectNamePlural,
-      objectNameSingular,
+      objectName: objectNameSingular,
+      objectNameType: 'singular',
     }),
   );
 
-  const objectMetadataItemNotFound = !isDefined(objectMetadataItem);
+  if (!isDefined(objectMetadataItem)) {
+    throw new Error(
+      `Object metadata item not found for ${objectNameSingular} object`,
+    );
+  }
 
   const getRecordFromCache = useGetRecordFromCache({
     objectMetadataItem,
@@ -68,17 +72,16 @@ export const useObjectMetadataItem = (
     objectMetadataItem,
   });
 
-  const labelIdentifierFieldMetadataId = objectMetadataItem?.fields.find(
+  const labelIdentifierFieldMetadataId = objectMetadataItem.fields.find(
     ({ name }) => name === 'name',
   )?.id;
 
-  const basePathToShowPage = `/object/${objectMetadataItem?.nameSingular}/`;
+  const basePathToShowPage = `/object/${objectMetadataItem.nameSingular}/`;
 
   return {
     labelIdentifierFieldMetadataId,
     basePathToShowPage,
     objectMetadataItem,
-    objectMetadataItemNotFound,
     getRecordFromCache,
     modifyRecordFromCache,
     findManyRecordsQuery,

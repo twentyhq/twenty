@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
+import { objectMetadataItemsLoadingState } from '@/object-metadata/states/objectMetadataItemsLoadingState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
@@ -53,6 +54,7 @@ export const useFindManyObjectMetadataItems = ({
     onCompleted: useRecoilCallback(
       ({ snapshot, set }) =>
         (data) => {
+          console.log({ data });
           const objectMetadataItems =
             mapPaginatedObjectMetadataItemsToObjectMetadataItems({
               pagedObjectMetadataItems: data,
@@ -64,6 +66,7 @@ export const useFindManyObjectMetadataItems = ({
 
           if (!isDeeplyEqual(objectMetadataItems, actualObjectMetadataItems)) {
             set(objectMetadataItemsState, objectMetadataItems);
+            set(objectMetadataItemsLoadingState, false);
           }
         },
       [],

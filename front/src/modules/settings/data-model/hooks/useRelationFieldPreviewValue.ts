@@ -10,12 +10,13 @@ export const useRelationFieldPreviewValue = ({
 }) => {
   const { findObjectMetadataItemById } = useObjectMetadataItemForSettings();
 
+  // TODO: make this impossible to be undefined
   const relationObjectMetadataItem = relationObjectMetadataId
     ? findObjectMetadataItemById(relationObjectMetadataId)
     : undefined;
 
   const { records: relationObjects } = useFindManyRecords({
-    objectNamePlural: relationObjectMetadataItem?.namePlural,
+    objectNameSingular: relationObjectMetadataItem?.nameSingular ?? '',
     skip: skip || !relationObjectMetadataItem,
   });
 

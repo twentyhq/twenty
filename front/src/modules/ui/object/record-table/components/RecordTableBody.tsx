@@ -3,6 +3,7 @@ import { useInView } from 'react-intersection-observer';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useObjectRecordTable } from '@/object-record/hooks/useObjectRecordTable';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { isDefined } from '~/utils/isDefined';
@@ -22,11 +23,17 @@ export const RecordTableBody = () => {
 
   const { scopeId: objectNamePlural } = useRecordTable();
 
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
+    objectNamePlural,
+  });
+
   const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
     {
-      objectNamePlural,
+      objectNameSingular,
     },
   );
+
+  console.log('asdasd3');
 
   const [isFetchingMoreObjects] = useRecoilState(
     isFetchingMoreRecordsFamilyState(foundObjectMetadataItem?.namePlural),
