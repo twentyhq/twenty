@@ -8,21 +8,19 @@ import {
 } from 'framer-motion';
 
 import { Checkmark } from '@/ui/display/checkmark/components/Checkmark';
-import DarkNoise from '@/ui/theme/assets/dark-noise.jpg';
-import LightNoise from '@/ui/theme/assets/light-noise.png';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
 const StyledColorSchemeBackground = styled.div<
   Pick<ColorSchemeCardProps, 'variant'>
 >`
   align-items: flex-end;
-  background: ${({ variant }) => {
+  background: ${({ variant, theme }) => {
     switch (variant) {
       case 'Dark':
-        return `url(${DarkNoise.toString()});`;
+        return theme.grayScale.gray75;
       case 'Light':
       default:
-        return `url(${LightNoise.toString()});`;
+        return theme.grayScale.gray15;
     }
   }};
   border: ${({ variant, theme }) => {
