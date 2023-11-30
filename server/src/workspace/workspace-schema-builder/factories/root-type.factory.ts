@@ -9,6 +9,7 @@ import { ObjectMetadataInterface } from 'src/workspace/workspace-schema-builder/
 import { TypeDefinitionsStorage } from 'src/workspace/workspace-schema-builder/storages/type-definitions.storage';
 import { getResolverName } from 'src/workspace/utils/get-resolver-name.util';
 import { getResolverArgs } from 'src/workspace/workspace-schema-builder/utils/get-resolver-args.util';
+import { TypeMapperService } from 'src/workspace/workspace-schema-builder/services/type-mapper.service';
 
 import { ArgsFactory } from './args.factory';
 import { ObjectTypeDefinitionKind } from './object-type-definition.factory';
@@ -25,6 +26,7 @@ export class RootTypeFactory {
 
   constructor(
     private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
+    private readonly typeMapperService: TypeMapperService,
     private readonly argsFactory: ArgsFactory,
   ) {}
 
@@ -70,7 +72,7 @@ export class RootTypeFactory {
       for (const methodName of workspaceResolverMethodNames) {
         const name = getResolverName(objectMetadata, methodName);
         const args = getResolverArgs(methodName);
-        const outputType = this.typeDefinitionsStorage.getObjectTypeByKey(
+        const objectType = this.typeDefinitionsStorage.getObjectTypeByKey(
           objectMetadata.id,
           methodName === 'findMany'
             ? ObjectTypeDefinitionKind.Connection
@@ -84,7 +86,7 @@ export class RootTypeFactory {
           options,
         );
 
-        if (!outputType) {
+        if (!objectType) {
           this.logger.error(
             `Could not find a GraphQL type for ${objectMetadata.id} for method ${methodName}`,
             {
@@ -98,6 +100,12 @@ export class RootTypeFactory {
             `Could not find a GraphQL type for ${objectMetadata.id} for method ${methodName}`,
           );
         }
+
+        const outputType = this.typeMapperService.mapToGqlType(objectType, {
+          isArray: ['updateMany', 'deleteMany', 'createMany'].includes(
+            methodName,
+          ),
+        });
 
         fieldConfigMap[name] = {
           type: outputType,
