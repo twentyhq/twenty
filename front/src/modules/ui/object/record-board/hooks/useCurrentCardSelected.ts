@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { actionBarOpenState } from '@/ui/navigation/action-bar/states/actionBarIsOpenState';
-import { activeCardIdsScopedState } from '@/ui/object/record-board/states/activeCardIdsScopedState';
+import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/useRecordBoardScopedStates';
 
 import { BoardCardIdContext } from '../contexts/BoardCardIdContext';
 import { isCardSelectedFamilyState } from '../states/isCardSelectedFamilyState';
@@ -14,7 +14,9 @@ export const useCurrentCardSelected = () => {
     isCardSelectedFamilyState(currentCardId ?? ''),
   );
 
-  const setActiveCardIds = useSetRecoilState(activeCardIdsScopedState);
+  const { activeCardIdsState } = useRecordBoardScopedStates();
+
+  const setActiveCardIds = useSetRecoilState(activeCardIdsState);
 
   const setCurrentCardSelected = useRecoilCallback(
     ({ set }) =>

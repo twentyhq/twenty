@@ -1,11 +1,10 @@
-import React from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { ContextMenu } from '@/ui/navigation/context-menu/components/ContextMenu';
-
-import { selectedCardIdsScopedSelector } from '../../states/selectors/selectedCardIdsScopedSelector';
+import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/useRecordBoardScopedStates';
 
 export const RecordBoardContextMenu = () => {
-  const selectedCardIds = useRecoilValue(selectedCardIdsScopedSelector);
+  const { selectedCardIdsSelector } = useRecordBoardScopedStates();
+  const selectedCardIds = useRecoilValue(selectedCardIdsSelector);
   return <ContextMenu selectedIds={selectedCardIds}></ContextMenu>;
 };

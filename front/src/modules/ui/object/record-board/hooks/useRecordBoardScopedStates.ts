@@ -23,6 +23,11 @@ export const useRecordBoardScopedStates = (
     isBoardLoadedState,
     isCompactViewEnabledState,
     savedBoardColumnsState,
+    boardCardFieldsByKeySelector,
+    canPersistBoardCardFieldsScopedFamilySelector,
+    hiddenBoardCardFieldsSelector,
+    selectedCardIdsSelector,
+    visibleBoardCardFieldsSelector,
   } = getRecordBoardScopedStates({
     recordBoardScopeId: scopeId,
   });
@@ -35,5 +40,10 @@ export const useRecordBoardScopedStates = (
     isBoardLoadedState,
     isCompactViewEnabledState,
     savedBoardColumnsState,
+    boardCardFieldsByKeySelector,
+    canPersistBoardCardFieldsScopedFamilySelector,
+    hiddenBoardCardFieldsSelector,
+    selectedCardIdsSelector,
+    visibleBoardCardFieldsSelector,
   };
 };

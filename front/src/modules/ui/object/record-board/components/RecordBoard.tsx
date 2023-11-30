@@ -6,6 +6,7 @@ import { useRecoilValue } from 'recoil';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
+import { RecordBoardInternalEffect } from '@/ui/object/record-board/components/RecordBoardInternalEffect';
 import { BoardColumnContext } from '@/ui/object/record-board/contexts/BoardColumnContext';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/useRecordBoardScopedStates';
 import { useSetCardSelected } from '@/ui/object/record-board/hooks/useSetCardSelected';
@@ -137,6 +138,7 @@ export const RecordBoard = ({
 
   return (
     <RecordBoardScope recordBoardScopeId={recordBoardId}>
+      <RecordBoardInternalEffect />
       <StyledWrapper>
         <StyledBoardHeader />
         <ScrollWrapper>

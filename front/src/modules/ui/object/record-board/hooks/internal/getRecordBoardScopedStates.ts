@@ -4,6 +4,11 @@ import { boardColumnsScopedState } from '@/ui/object/record-board/states/boardCo
 import { isBoardLoadedScopedState } from '@/ui/object/record-board/states/isBoardLoadedScopedState';
 import { isCompactViewEnabledScopedState } from '@/ui/object/record-board/states/isCompactViewEnabledScopedState';
 import { savedBoardColumnsScopedState } from '@/ui/object/record-board/states/savedBoardColumnsScopedState';
+import { boardCardFieldsByKeyScopedSelector } from '@/ui/object/record-board/states/selectors/boardCardFieldsByKeyScopedSelector';
+import { canPersistBoardCardFieldsScopedFamilySelector } from '@/ui/object/record-board/states/selectors/canPersistBoardCardFieldsScopedFamilySelector';
+import { hiddenBoardCardFieldsScopedSelector } from '@/ui/object/record-board/states/selectors/hiddenBoardCardFieldsScopedSelector';
+import { selectedCardIdsScopedSelector } from '@/ui/object/record-board/states/selectors/selectedCardIdsScopedSelector';
+import { visibleBoardCardFieldsScopedSelector } from '@/ui/object/record-board/states/selectors/visibleBoardCardFieldsScopedSelector';
 import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
 
 export const getRecordBoardScopedStates = ({
@@ -41,6 +46,22 @@ export const getRecordBoardScopedStates = ({
     recordBoardScopeId,
   );
 
+  // TODO: Family scoped selector
+  const boardCardFieldsByKeySelector =
+    boardCardFieldsByKeyScopedSelector(recordBoardScopeId);
+
+  const hiddenBoardCardFieldsSelector = hiddenBoardCardFieldsScopedSelector({
+    scopeId: recordBoardScopeId,
+  });
+
+  const selectedCardIdsSelector = selectedCardIdsScopedSelector({
+    scopeId: recordBoardScopeId,
+  });
+
+  const visibleBoardCardFieldsSelector = visibleBoardCardFieldsScopedSelector({
+    scopeId: recordBoardScopeId,
+  });
+
   return {
     activeCardIdsState,
     availableBoardCardFieldsState,
@@ -48,5 +69,10 @@ export const getRecordBoardScopedStates = ({
     isBoardLoadedState,
     isCompactViewEnabledState,
     savedBoardColumnsState,
+    boardCardFieldsByKeySelector,
+    canPersistBoardCardFieldsScopedFamilySelector,
+    hiddenBoardCardFieldsSelector,
+    selectedCardIdsSelector,
+    visibleBoardCardFieldsSelector,
   };
 };

@@ -4,9 +4,8 @@ import { currentPipelineStepsState } from '@/pipeline/states/currentPipelineStep
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
+import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/useRecordBoardScopedStates';
 import { boardCardIdsByColumnIdFamilyState } from '@/ui/object/record-board/states/boardCardIdsByColumnIdFamilyState';
-import { boardColumnsScopedState } from '@/ui/object/record-board/states/boardColumnsScopedState';
-import { savedBoardColumnsScopedState } from '@/ui/object/record-board/states/savedBoardColumnsScopedState';
 import { BoardColumnDefinition } from '@/ui/object/record-board/types/BoardColumnDefinition';
 import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -15,8 +14,11 @@ import { logError } from '~/utils/logError';
 import { companyProgressesFamilyState } from '../states/companyProgressesFamilyState';
 import { CompanyForBoard, CompanyProgressDict } from '../types/CompanyProgress';
 
-export const useUpdateCompanyBoard = () =>
-  useRecoilCallback(
+export const useUpdateCompanyBoard = () => {
+  const { boardColumnsState, savedBoardColumnsState } =
+    useRecordBoardScopedStates();
+
+  return useRecoilCallback(
     ({ set, snapshot }) =>
       (
         pipelineSteps: PipelineStep[],
@@ -76,7 +78,7 @@ export const useUpdateCompanyBoard = () =>
           .valueOrThrow();
 
         const currentBoardColumns = snapshot
-          .getLoadable(boardColumnsScopedState)
+          .getLoadable(boardColumnsState)
           .valueOrThrow();
 
         if (!isDeeplyEqual(pipelineSteps, currentPipelineSteps)) {
@@ -114,7 +116,7 @@ export const useUpdateCompanyBoard = () =>
           !isDeeplyEqual(newBoardColumns, currentBoardColumns)
         ) {
           set(boardColumnsState, newBoardColumns);
-          set(savedBoardColumnsScopedState, newBoardColumns);
+          set(savedBoardColumnsState, newBoardColumns);
         }
         for (const boardColumn of newBoardColumns) {
           const boardCardIds = opportunities
@@ -136,5 +138,6 @@ export const useUpdateCompanyBoard = () =>
           }
         }
       },
-    [],
+    [boardColumnsState, savedBoardColumnsState],
   );
+};

@@ -2,10 +2,10 @@ import React from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { ActionBar } from '@/ui/navigation/action-bar/components/ActionBar';
-
-import { selectedCardIdsScopedSelector } from '../../states/selectors/selectedCardIdsScopedSelector';
+import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/useRecordBoardScopedStates';
 
 export const RecordBoardActionBar = () => {
-  const selectedCardIds = useRecoilValue(selectedCardIdsScopedSelector);
+  const { selectedCardIdsSelector } = useRecordBoardScopedStates();
+  const selectedCardIds = useRecoilValue(selectedCardIdsSelector);
   return <ActionBar selectedIds={selectedCardIds}></ActionBar>;
 };

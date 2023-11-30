@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { Company } from '@/companies/types/Company';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
@@ -14,9 +14,9 @@ import { turnSortsIntoOrderBy } from '@/ui/object/object-sort-dropdown/utils/tur
 import { useBoardActionBarEntries } from '@/ui/object/record-board/hooks/useBoardActionBarEntries';
 import { useBoardContext } from '@/ui/object/record-board/hooks/useBoardContext';
 import { useBoardContextMenuEntries } from '@/ui/object/record-board/hooks/useBoardContextMenuEntries';
+import { useRecordBoard } from '@/ui/object/record-board/hooks/useRecordBoard';
 import { availableBoardCardFieldsScopedState } from '@/ui/object/record-board/states/availableBoardCardFieldsScopedState';
 import { boardCardFieldsFamilyState } from '@/ui/object/record-board/states/boardCardFieldsFamilyState';
-import { isBoardLoadedScopedState } from '@/ui/object/record-board/states/isBoardLoadedScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedStateV2';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
@@ -27,15 +27,17 @@ import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { isDefined } from '~/utils/isDefined';
 
-import { useUpdateCompanyBoardCardIds } from '../hooks/useUpdateBoardCardIds';
+import { useUpdateCompanyBoardCardIds } from '../hooks/useUpdateCompanyBoardCardIds';
 import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
 
 type HooksCompanyBoardEffectProps = {
   viewBarId: string;
+  recordBoardId: string;
 };
 
 export const HooksCompanyBoardEffect = ({
   viewBarId,
+  recordBoardId,
 }: HooksCompanyBoardEffectProps) => {
   const {
     setAvailableFilterDefinitions,
@@ -67,7 +69,9 @@ export const HooksCompanyBoardEffect = ({
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
-  const [, setIsBoardLoaded] = useRecoilState(isBoardLoadedScopedState);
+  const { setIsBoardLoaded } = useRecordBoard({
+    recordTableScopeId: recordBoardId,
+  });
 
   const { BoardRecoilScopeContext } = useBoardContext();
 

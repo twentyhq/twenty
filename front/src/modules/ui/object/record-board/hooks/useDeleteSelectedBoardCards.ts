@@ -3,8 +3,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { Opportunity } from '@/pipeline/types/Opportunity';
-
-import { selectedCardIdsScopedSelector } from '../states/selectors/selectedCardIdsScopedSelector';
+import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/useRecordBoardScopedStates';
 
 import { useRemoveCardIds } from './useRemoveCardIds';
 
@@ -17,11 +16,13 @@ export const useDeleteSelectedBoardCards = () => {
       objectNameSingular: 'opportunity',
     });
 
+  const { selectedCardIdsSelector } = useRecordBoardScopedStates();
+
   const deleteSelectedBoardCards = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
         const selectedCardIds = snapshot
-          .getLoadable(selectedCardIdsScopedSelector)
+          .getLoadable(selectedCardIdsSelector)
           .getValue();
 
         await Promise.all(
@@ -34,7 +35,12 @@ export const useDeleteSelectedBoardCards = () => {
           apolloClient.cache.evict({ id: `Opportunity:${id}` });
         });
       },
-    [apolloClient.cache, removeCardIds, deleteOneOpportunity],
+    [
+      selectedCardIdsSelector,
+      removeCardIds,
+      deleteOneOpportunity,
+      apolloClient.cache,
+    ],
   );
 
   return deleteSelectedBoardCards;

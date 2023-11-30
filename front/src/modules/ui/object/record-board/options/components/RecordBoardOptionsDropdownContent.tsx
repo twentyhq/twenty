@@ -24,14 +24,11 @@ import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemTog
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/useRecordBoardScopedStates';
 import { ThemeColor } from '@/ui/theme/constants/colors';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useBoardCardFields } from '../../hooks/useBoardCardFields';
-import { hiddenBoardCardFieldsScopedSelector } from '../../states/selectors/hiddenBoardCardFieldsScopedSelector';
-import { visibleBoardCardFieldsScopedSelector } from '../../states/selectors/visibleBoardCardFieldsScopedSelector';
 import { BoardColumnDefinition } from '../../types/BoardColumnDefinition';
 import { BoardOptionsHotkeyScope } from '../../types/BoardOptionsHotkeyScope';
 
@@ -65,24 +62,22 @@ export const RecordBoardOptionsDropdownContent = ({
     BoardOptionsMenu | undefined
   >();
 
-  const { boardColumnsState, isCompactViewEnabledState } =
-    useRecordBoardScopedStates();
+  const {
+    boardColumnsState,
+    isCompactViewEnabledState,
+    hiddenBoardCardFieldsSelector,
+    visibleBoardCardFieldsSelector,
+  } = useRecordBoardScopedStates();
 
   const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
   const [isCompactViewEnabled, setIsCompactViewEnabled] = useRecoilState(
     isCompactViewEnabledState,
   );
 
-  const hiddenBoardCardFields = useRecoilScopedValue(
-    hiddenBoardCardFieldsScopedSelector,
-    BoardRecoilScopeContext,
-  );
-
+  const hiddenBoardCardFields = useRecoilValue(hiddenBoardCardFieldsSelector);
   const hasHiddenFields = hiddenBoardCardFields.length > 0;
-  const visibleBoardCardFields = useRecoilScopedValue(
-    visibleBoardCardFieldsScopedSelector,
-    BoardRecoilScopeContext,
-  );
+
+  const visibleBoardCardFields = useRecoilValue(visibleBoardCardFieldsSelector);
   const hasVisibleFields = visibleBoardCardFields.length > 0;
 
   const handleStageSubmit = () => {

@@ -2,15 +2,14 @@ import { useRecoilState } from 'recoil';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
+import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/useRecordBoardScopedStates';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 
-import { boardColumnsScopedState } from '../states/boardColumnsScopedState';
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 
 export const useBoardColumns = () => {
-  const [boardColumns, setBoardColumns] = useRecoilState(
-    boardColumnsScopedState,
-  );
+  const { boardColumnsState } = useRecordBoardScopedStates();
+  const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
 
   const { handleColumnMove } = useMoveViewColumns();
 
