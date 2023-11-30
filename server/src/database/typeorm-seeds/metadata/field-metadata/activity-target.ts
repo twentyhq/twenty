@@ -2,6 +2,7 @@ import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
@@ -21,7 +22,6 @@ export enum SeedActivityTargetFieldMetadataIds {
 export const seedActivityTargetFieldMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
-  workspaceId: string,
 ) => {
   await workspaceDataSource
     .createQueryBuilder()
@@ -49,7 +49,7 @@ export const seedActivityTargetFieldMetadata = async (
         id: SeedActivityTargetFieldMetadataIds.Id,
         objectMetadataId: SeedObjectMetadataIds.ActivityTarget,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'id',
@@ -67,7 +67,7 @@ export const seedActivityTargetFieldMetadata = async (
         id: SeedActivityTargetFieldMetadataIds.CreatedAt,
         objectMetadataId: SeedObjectMetadataIds.ActivityTarget,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
@@ -85,7 +85,7 @@ export const seedActivityTargetFieldMetadata = async (
         id: SeedActivityTargetFieldMetadataIds.UpdatedAt,
         objectMetadataId: SeedObjectMetadataIds.ActivityTarget,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
@@ -104,7 +104,7 @@ export const seedActivityTargetFieldMetadata = async (
         id: SeedActivityTargetFieldMetadataIds.Activity,
         objectMetadataId: SeedObjectMetadataIds.ActivityTarget,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.RELATION,
         name: 'activity',
@@ -120,7 +120,7 @@ export const seedActivityTargetFieldMetadata = async (
         id: SeedActivityTargetFieldMetadataIds.ActivityForeignKey,
         objectMetadataId: SeedObjectMetadataIds.ActivityTarget,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'activityId',
@@ -136,7 +136,7 @@ export const seedActivityTargetFieldMetadata = async (
         id: SeedActivityTargetFieldMetadataIds.Person,
         objectMetadataId: SeedObjectMetadataIds.ActivityTarget,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.RELATION,
         name: 'person',
@@ -152,7 +152,7 @@ export const seedActivityTargetFieldMetadata = async (
         id: SeedActivityTargetFieldMetadataIds.PersonForeignKey,
         objectMetadataId: SeedObjectMetadataIds.ActivityTarget,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'personId',
@@ -168,7 +168,7 @@ export const seedActivityTargetFieldMetadata = async (
         id: SeedActivityTargetFieldMetadataIds.Company,
         objectMetadataId: SeedObjectMetadataIds.ActivityTarget,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.RELATION,
         name: 'company',
@@ -184,7 +184,7 @@ export const seedActivityTargetFieldMetadata = async (
         id: SeedActivityTargetFieldMetadataIds.CompanyForeignKey,
         objectMetadataId: SeedObjectMetadataIds.ActivityTarget,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'companyId',

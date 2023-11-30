@@ -6,13 +6,13 @@ import { SeedViewFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/fi
 import { SeedViewFieldFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/view-field';
 import { SeedViewFilterFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/view-filter';
 import { SeedViewSortFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/view-sort';
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const tableName = 'relationMetadata';
 
 export const seedViewRelationMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
-  workspaceId: string,
 ) => {
   await workspaceDataSource
     .createQueryBuilder()
@@ -33,7 +33,7 @@ export const seedViewRelationMetadata = async (
         toObjectMetadataId: SeedObjectMetadataIds.ViewField,
         fromFieldMetadataId: SeedViewFieldMetadataIds.ViewFields,
         toFieldMetadataId: SeedViewFieldFieldMetadataIds.View,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
       },
       {
         relationType: RelationMetadataType.ONE_TO_MANY,
@@ -41,7 +41,7 @@ export const seedViewRelationMetadata = async (
         toObjectMetadataId: SeedObjectMetadataIds.ViewFilter,
         fromFieldMetadataId: SeedViewFieldMetadataIds.ViewFilters,
         toFieldMetadataId: SeedViewFilterFieldMetadataIds.View,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
       },
       {
         relationType: RelationMetadataType.ONE_TO_MANY,
@@ -49,7 +49,7 @@ export const seedViewRelationMetadata = async (
         toObjectMetadataId: SeedObjectMetadataIds.ViewSort,
         fromFieldMetadataId: SeedViewFieldMetadataIds.ViewSorts,
         toFieldMetadataId: SeedViewSortFieldMetadataIds.View,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
       },
     ])
     .execute();

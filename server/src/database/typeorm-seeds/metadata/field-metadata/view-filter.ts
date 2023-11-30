@@ -2,6 +2,7 @@ import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
@@ -21,7 +22,6 @@ export enum SeedViewFilterFieldMetadataIds {
 export const seedViewFilterFieldMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
-  workspaceId: string,
 ) => {
   await workspaceDataSource
     .createQueryBuilder()
@@ -49,7 +49,7 @@ export const seedViewFilterFieldMetadata = async (
         id: SeedViewFilterFieldMetadataIds.Id,
         objectMetadataId: SeedObjectMetadataIds.ViewFilter,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'id',
@@ -67,7 +67,7 @@ export const seedViewFilterFieldMetadata = async (
         id: SeedViewFilterFieldMetadataIds.CreatedAt,
         objectMetadataId: SeedObjectMetadataIds.ViewFilter,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
@@ -85,7 +85,7 @@ export const seedViewFilterFieldMetadata = async (
         id: SeedViewFilterFieldMetadataIds.UpdatedAt,
         objectMetadataId: SeedObjectMetadataIds.ViewFilter,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
@@ -104,7 +104,7 @@ export const seedViewFilterFieldMetadata = async (
         id: SeedViewFilterFieldMetadataIds.FieldMetadataId,
         objectMetadataId: SeedObjectMetadataIds.ViewFilter,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'fieldMetadataId',
@@ -122,7 +122,7 @@ export const seedViewFilterFieldMetadata = async (
         id: SeedViewFilterFieldMetadataIds.View,
         objectMetadataId: SeedObjectMetadataIds.ViewFilter,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'viewId',
@@ -138,7 +138,7 @@ export const seedViewFilterFieldMetadata = async (
         id: SeedViewFilterFieldMetadataIds.ViewForeignKey,
         objectMetadataId: SeedObjectMetadataIds.ViewField,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'viewId',
@@ -154,7 +154,7 @@ export const seedViewFilterFieldMetadata = async (
         id: SeedViewFilterFieldMetadataIds.Operand,
         objectMetadataId: SeedObjectMetadataIds.ViewFilter,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.TEXT,
         name: 'operand',
@@ -172,7 +172,7 @@ export const seedViewFilterFieldMetadata = async (
         id: SeedViewFilterFieldMetadataIds.Value,
         objectMetadataId: SeedObjectMetadataIds.ViewFilter,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.TEXT,
         name: 'value',
@@ -190,7 +190,7 @@ export const seedViewFilterFieldMetadata = async (
         id: SeedViewFilterFieldMetadataIds.DisplayValue,
         objectMetadataId: SeedObjectMetadataIds.ViewFilter,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.TEXT,
         name: 'displayValue',

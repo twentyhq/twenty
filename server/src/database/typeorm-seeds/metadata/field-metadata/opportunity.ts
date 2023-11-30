@@ -2,7 +2,7 @@ import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-// import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
@@ -28,7 +28,6 @@ export enum SeedOpportunityFieldMetadataIds {
 export const seedOpportunityFieldMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
-  workspaceId: string,
 ) => {
   await workspaceDataSource
     .createQueryBuilder()
@@ -56,7 +55,7 @@ export const seedOpportunityFieldMetadata = async (
         id: SeedOpportunityFieldMetadataIds.Id,
         objectMetadataId: SeedObjectMetadataIds.Opportunity,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'id',
@@ -74,7 +73,7 @@ export const seedOpportunityFieldMetadata = async (
         id: SeedOpportunityFieldMetadataIds.CreatedAt,
         objectMetadataId: SeedObjectMetadataIds.Opportunity,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
@@ -92,7 +91,7 @@ export const seedOpportunityFieldMetadata = async (
         id: SeedOpportunityFieldMetadataIds.UpdatedAt,
         objectMetadataId: SeedObjectMetadataIds.Opportunity,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
@@ -111,7 +110,7 @@ export const seedOpportunityFieldMetadata = async (
         id: SeedOpportunityFieldMetadataIds.Amount,
         objectMetadataId: SeedObjectMetadataIds.Opportunity,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.CURRENCY,
         name: 'amount',
@@ -130,7 +129,7 @@ export const seedOpportunityFieldMetadata = async (
         id: SeedOpportunityFieldMetadataIds.CloseDate,
         objectMetadataId: SeedObjectMetadataIds.Opportunity,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.DATE_TIME,
         name: 'closeDate',
@@ -148,7 +147,7 @@ export const seedOpportunityFieldMetadata = async (
         id: SeedOpportunityFieldMetadataIds.Probability,
         objectMetadataId: SeedObjectMetadataIds.Opportunity,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.TEXT,
         name: 'probability',
@@ -167,7 +166,7 @@ export const seedOpportunityFieldMetadata = async (
         id: SeedOpportunityFieldMetadataIds.PipelineStep,
         objectMetadataId: SeedObjectMetadataIds.Opportunity,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.RELATION,
         name: 'pipelineStep',
@@ -183,7 +182,7 @@ export const seedOpportunityFieldMetadata = async (
         id: SeedOpportunityFieldMetadataIds.PipelineStepForeignKey,
         objectMetadataId: SeedObjectMetadataIds.Opportunity,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'pipelineStepId',
@@ -199,7 +198,7 @@ export const seedOpportunityFieldMetadata = async (
         id: SeedOpportunityFieldMetadataIds.PointOfContact,
         objectMetadataId: SeedObjectMetadataIds.Opportunity,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.RELATION,
         name: 'pointOfContact',
@@ -215,7 +214,7 @@ export const seedOpportunityFieldMetadata = async (
         id: SeedOpportunityFieldMetadataIds.PointOfContactForeignKey,
         objectMetadataId: SeedObjectMetadataIds.Opportunity,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'pointOfContactId',
@@ -231,7 +230,7 @@ export const seedOpportunityFieldMetadata = async (
         id: SeedOpportunityFieldMetadataIds.Person,
         objectMetadataId: SeedObjectMetadataIds.Opportunity,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.RELATION,
         name: 'person',
@@ -247,7 +246,7 @@ export const seedOpportunityFieldMetadata = async (
         id: SeedOpportunityFieldMetadataIds.PersonForeignKey,
         objectMetadataId: SeedObjectMetadataIds.Opportunity,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'personId',
@@ -263,7 +262,7 @@ export const seedOpportunityFieldMetadata = async (
         id: SeedOpportunityFieldMetadataIds.Company,
         objectMetadataId: SeedObjectMetadataIds.Opportunity,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.RELATION,
         name: 'company',
@@ -279,7 +278,7 @@ export const seedOpportunityFieldMetadata = async (
         id: SeedOpportunityFieldMetadataIds.CompanyForeignKey,
         objectMetadataId: SeedObjectMetadataIds.Opportunity,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'companyId',
