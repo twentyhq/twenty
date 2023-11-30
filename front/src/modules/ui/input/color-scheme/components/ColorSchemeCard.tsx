@@ -119,6 +119,7 @@ const ColorSchemeSegment = ({
 
 const StyledContainer = styled.div`
   position: relative;
+  width: 120px;
 `;
 
 const StyledMixedColorSchemeSegment = styled.div`
@@ -133,9 +134,9 @@ const StyledMixedColorSchemeSegment = styled.div`
 
 const StyledCheckmarkContainer = styled(motion.div)`
   bottom: 0px;
-  left: 80px;
   padding: ${({ theme }) => theme.spacing(2)};
   position: absolute;
+  right: 0px;
 `;
 
 export type ColorSchemeCardProps = {

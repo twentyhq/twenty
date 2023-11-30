@@ -28,17 +28,19 @@ export const ComputeNodeDimensions = ({
   >(undefined);
 
   useEffect(() => {
-    nodeWrapperRef.current &&
-      setNodeDimensions({
-        width: nodeWrapperRef.current.offsetWidth,
-        height: nodeWrapperRef.current.offsetHeight,
-      });
-  }, [node]);
+    if (nodeWrapperRef.current) {
+      nodeWrapperRef.current &&
+        setNodeDimensions({
+          width: nodeWrapperRef.current.offsetWidth,
+          height: nodeWrapperRef.current.offsetHeight,
+        });
+    }
+  }, [nodeWrapperRef?.current?.offsetWidth]);
 
   return (
     <>
       <StyledNodeWrapper ref={nodeWrapperRef}>{node}</StyledNodeWrapper>
-      {children(nodeDimensions)}
+      {nodeDimensions && children(nodeDimensions)}
     </>
   );
 };
