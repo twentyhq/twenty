@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
-import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { GraphQLView } from '@/views/types/GraphQLView';
@@ -30,7 +30,7 @@ export const ViewBarEffect = () => {
   const viewType = useRecoilValue(viewTypeState);
   const viewObjectMetadataId = useRecoilValue(viewObjectMetadataIdState);
 
-  useFindManyObjectRecords({
+  useFindManyRecords({
     skip: !viewObjectMetadataId,
     objectNamePlural: 'views',
     filter: {
@@ -39,7 +39,7 @@ export const ViewBarEffect = () => {
     },
     onCompleted: useRecoilCallback(
       ({ snapshot, set }) =>
-        async (data: PaginatedObjectTypeResults<GraphQLView>) => {
+        async (data: PaginatedRecordTypeResults<GraphQLView>) => {
           const nextViews = data.edges.map(({ node }) => node);
 
           const { viewsState, currentViewIdState } =

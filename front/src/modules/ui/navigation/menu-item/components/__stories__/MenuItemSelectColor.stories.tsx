@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { tagLight } from '@/ui/theme/constants/tag';
+import { ColorSampleVariant } from '@/ui/display/color/components/ColorSample';
+import { mainColorNames, ThemeColor } from '@/ui/theme/constants/colors';
 import {
   CatalogDecorator,
   CatalogDimension,
@@ -21,32 +22,22 @@ export default meta;
 type Story = StoryObj<typeof MenuItemSelectColor>;
 
 export const Default: Story = {
-  args: {
-    text: 'First option',
-    color: 'green',
-  },
-  argTypes: {
-    className: { control: false },
-  },
+  args: { color: 'green' },
+  argTypes: { className: { control: false } },
   decorators: [ComponentDecorator],
 };
 
 export const Catalog: CatalogStory<Story, typeof MenuItemSelectColor> = {
-  args: { text: 'Menu item' },
-  argTypes: {
-    className: { control: false },
-  },
+  argTypes: { className: { control: false } },
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
     catalog: {
       dimensions: [
         {
           name: 'color',
-          values: Object.keys(tagLight.background),
-          props: (color: string) => ({
-            color: color,
-          }),
-          labels: (color: string) => color,
+          values: mainColorNames,
+          props: (color: ThemeColor) => ({ color }),
+          labels: (color: ThemeColor) => color,
         },
         {
           name: 'states',
@@ -74,6 +65,12 @@ export const Catalog: CatalogStory<Story, typeof MenuItemSelectColor> = {
                 return {};
             }
           },
+        },
+        {
+          name: 'variant',
+          values: ['default', 'pipeline'],
+          props: (variant: ColorSampleVariant) => ({ variant }),
+          labels: (variant: ColorSampleVariant) => variant,
         },
       ] as CatalogDimension[],
       options: {

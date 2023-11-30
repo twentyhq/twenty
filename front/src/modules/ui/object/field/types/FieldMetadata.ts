@@ -116,6 +116,6 @@ export type FieldCurrencyValue = {
 };
 export type FieldFullNameValue = { firstName: string; lastName: string };
 export type FieldProbabilityValue = number;
-export type FieldSelectValue = { color: ThemeColor; text: string };
+export type FieldSelectValue = { color: ThemeColor; label: string };
 
 export type FieldRelationValue = EntityForSelect | null;

@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
-import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
 import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
 
@@ -28,7 +28,7 @@ export const useFieldContext = ({
   );
 
   const useUpdateOneObjectMutation: () => [(params: any) => any, any] = () => {
-    const { updateOneObject } = useUpdateOneObjectRecord({
+    const { updateOneRecord } = useUpdateOneRecord({
       objectNameSingular,
     });
 
@@ -42,7 +42,7 @@ export const useFieldContext = ({
         };
       };
     }) => {
-      updateOneObject?.({
+      updateOneRecord?.({
         idToUpdate: variables.where.id,
         input: variables.data,
         forceRefetch,

@@ -6,7 +6,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const useCreateOneObjectRecord = <T>({
+export const useCreateOneRecord = <T>({
   objectNameSingular,
 }: Pick<ObjectMetadataItemIdentifier, 'objectNameSingular'>) => {
   const { triggerOptimisticEffects } = useOptimisticEffect({
@@ -14,22 +14,22 @@ export const useCreateOneObjectRecord = <T>({
   });
 
   const {
-    objectMetadataItem: foundObjectMetadataItem,
-    objectNotFoundInMetadata,
-    createOneMutation,
+    objectMetadataItem,
+    objectMetadataItemNotFound,
+    createOneRecordMutation,
   } = useObjectMetadataItem({
     objectNameSingular,
   });
 
   // TODO: type this with a minimal type at least with Record<string, any>
-  const [mutate] = useMutation(createOneMutation);
+  const [mutate] = useMutation(createOneRecordMutation);
 
-  const createOneObject = async (input: Record<string, any>) => {
-    if (!foundObjectMetadataItem || !objectNameSingular) {
+  const createOneRecord = async (input: Record<string, any>) => {
+    if (!objectMetadataItem || !objectNameSingular) {
       return null;
     }
 
-    const createdObject = await mutate({
+    const createdRecord = await mutate({
       variables: {
         input: { ...input, id: v4() },
       },
@@ -37,13 +37,13 @@ export const useCreateOneObjectRecord = <T>({
 
     triggerOptimisticEffects(
       `${capitalize(objectNameSingular)}Edge`,
-      createdObject.data[`create${capitalize(objectNameSingular)}`],
+      createdRecord.data[`create${capitalize(objectNameSingular)}`],
     );
-    return createdObject.data[`create${capitalize(objectNameSingular)}`] as T;
+    return createdRecord.data[`create${capitalize(objectNameSingular)}`] as T;
   };
 
   return {
-    createOneObject,
-    objectNotFoundInMetadata,
+    createOneRecord,
+    objectMetadataItemNotFound,
   };
 };

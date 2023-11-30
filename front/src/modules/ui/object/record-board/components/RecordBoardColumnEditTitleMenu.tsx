@@ -7,7 +7,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelectColor } from '@/ui/navigation/menu-item/components/MenuItemSelectColor';
-import { ThemeColor } from '@/ui/theme/constants/colors';
+import { mainColorNames, ThemeColor } from '@/ui/theme/constants/colors';
 import { textInputStyle } from '@/ui/theme/constants/effects';
 import { debounce } from '~/utils/debounce';
 
@@ -48,24 +48,6 @@ type RecordBoardColumnEditTitleMenuProps = {
   color: ThemeColor;
   stageId: string;
 };
-
-type ColumnColorOption = {
-  name: string;
-  id: ThemeColor;
-};
-
-export const COLUMN_COLOR_OPTIONS: ColumnColorOption[] = [
-  { name: 'Green', id: 'green' },
-  { name: 'Turquoise', id: 'turquoise' },
-  { name: 'Sky', id: 'sky' },
-  { name: 'Blue', id: 'blue' },
-  { name: 'Purple', id: 'purple' },
-  { name: 'Pink', id: 'pink' },
-  { name: 'Red', id: 'red' },
-  { name: 'Orange', id: 'orange' },
-  { name: 'Yellow', id: 'yellow' },
-  { name: 'Gray', id: 'gray' },
-];
 
 export const RecordBoardColumnEditTitleMenu = ({
   onClose,
@@ -124,15 +106,13 @@ export const RecordBoardColumnEditTitleMenu = ({
         />
       </StyledEditTitleContainer>
       <DropdownMenuSeparator />
-      {COLUMN_COLOR_OPTIONS.map((colorOption) => (
+      {mainColorNames.map((colorName) => (
         <MenuItemSelectColor
-          key={colorOption.name}
-          onClick={() => {
-            handleColorChange(colorOption.id);
-          }}
-          color={colorOption.id}
-          selected={colorOption.id === color}
-          text={colorOption.name}
+          key={colorName}
+          onClick={() => handleColorChange(colorName)}
+          color={colorName}
+          selected={colorName === color}
+          variant="pipeline"
         />
       ))}
       <DropdownMenuSeparator />

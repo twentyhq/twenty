@@ -3,7 +3,7 @@ import { useQuery } from '@apollo/client';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 
-export const useFindOneObjectRecord = <
+export const useFindOneRecord = <
   ObjectType extends { id: string } & Record<string, any>,
 >({
   objectNameSingular,
@@ -17,22 +17,19 @@ export const useFindOneObjectRecord = <
   skip?: boolean;
   depth?: number;
 }) => {
-  const {
-    objectMetadataItem: foundObjectMetadataItem,
-    objectNotFoundInMetadata,
-    findOneQuery,
-  } = useObjectMetadataItem(
-    {
-      objectNameSingular,
-    },
-    depth,
-  );
+  const { objectMetadataItem, objectMetadataItemNotFound, findOneRecordQuery } =
+    useObjectMetadataItem(
+      {
+        objectNameSingular,
+      },
+      depth,
+    );
 
   const { data, loading, error } = useQuery<
     { [nameSingular: string]: ObjectType },
     { objectRecordId: string }
-  >(findOneQuery, {
-    skip: !foundObjectMetadataItem || !objectRecordId || skip,
+  >(findOneRecordQuery, {
+    skip: !objectMetadataItem || !objectRecordId || skip,
     variables: {
       objectRecordId: objectRecordId ?? '',
     },
@@ -43,13 +40,13 @@ export const useFindOneObjectRecord = <
     },
   });
 
-  const object =
+  const record =
     objectNameSingular && data ? data[objectNameSingular] : undefined;
 
   return {
-    object,
+    record,
     loading,
     error,
-    objectNotFoundInMetadata,
+    objectMetadataItemNotFound,
   };
 };

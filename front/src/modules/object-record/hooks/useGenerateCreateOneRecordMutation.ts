@@ -5,15 +5,7 @@ import { EMPTY_MUTATION } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const getUpdateOneObjectMutationGraphQLField = ({
-  objectNameSingular,
-}: {
-  objectNameSingular: string;
-}) => {
-  return `update${capitalize(objectNameSingular)}`;
-};
-
-export const useGenerateUpdateOneObjectMutation = ({
+export const useGenerateCreateOneRecordMutation = ({
   objectMetadataItem,
 }: {
   objectMetadataItem: ObjectMetadataItem | undefined | null;
@@ -26,14 +18,9 @@ export const useGenerateUpdateOneObjectMutation = ({
 
   const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
 
-  const graphQLFieldForUpdateOneObjectMutation =
-    getUpdateOneObjectMutationGraphQLField({
-      objectNameSingular: objectMetadataItem.nameSingular,
-    });
-
   return gql`
-    mutation UpdateOne${capitalizedObjectName}($idToUpdate: ID!, $input: ${capitalizedObjectName}UpdateInput!)  {
-       ${graphQLFieldForUpdateOneObjectMutation}(id: $idToUpdate, data: $input) {
+    mutation CreateOne${capitalizedObjectName}($input: ${capitalizedObjectName}CreateInput!)  {
+      create${capitalizedObjectName}(data: $input) {
         id
         ${objectMetadataItem.fields
           .map((field) => mapFieldMetadataToGraphQLQuery(field))
