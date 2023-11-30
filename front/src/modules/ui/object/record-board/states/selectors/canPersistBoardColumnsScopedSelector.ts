@@ -12,6 +12,6 @@ export const canPersistBoardColumnsScopedSelector =
       ({ get }) =>
         !isDeeplyEqual(
           get(boardColumnsScopedState({ scopeId })),
-          get(savedBoardColumnsScopedState),
+          get(savedBoardColumnsScopedState({ scopeId })),
         ),
   });

@@ -9,7 +9,7 @@ import {
   RecordBoardProps,
 } from '@/ui/object/record-board/components/RecordBoard';
 import { RecordBoardContextMenu } from '@/ui/object/record-board/context-menu/components/RecordBoardContextMenu';
-import { BoardOptionsDropdown } from '@/ui/object/record-board/options/components/BoardOptionsDropdown';
+import { RecordBoardOptionsDropdown } from '@/ui/object/record-board/options/components/RecordBoardOptionsDropdown';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
@@ -36,6 +36,7 @@ export const CompanyBoard = ({
   onEditColumnTitle,
 }: CompanyBoardProps) => {
   const viewBarId = 'company-board-view';
+  const recordBoardId = 'company-board';
 
   const { persistViewFields } = useViewFields(viewBarId);
 
@@ -51,11 +52,12 @@ export const CompanyBoard = ({
       >
         <ViewBar
           viewBarId={viewBarId}
-          optionsDropdownButton={<BoardOptionsDropdown />}
+          optionsDropdownButton={<RecordBoardOptionsDropdown />}
           optionsDropdownScopeId={BoardOptionsDropdownId}
         />
         <HooksCompanyBoardEffect viewBarId={viewBarId} />
         <RecordBoard
+          recordBoardId={recordBoardId}
           boardOptions={opportunitiesBoardOptions}
           onColumnAdd={onColumnAdd}
           onColumnDelete={onColumnDelete}

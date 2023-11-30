@@ -21,6 +21,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemNavigate } from '@/ui/navigation/menu-item/components/MenuItemNavigate';
 import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
+import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/useRecordBoardScopedStates';
 import { ThemeColor } from '@/ui/theme/constants/colors';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
@@ -29,14 +30,12 @@ import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates'
 import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useBoardCardFields } from '../../hooks/useBoardCardFields';
-import { boardColumnsScopedState } from '../../states/boardColumnsScopedState';
-import { isCompactViewEnabledScopedState } from '../../states/isCompactViewEnabledScopedState';
 import { hiddenBoardCardFieldsScopedSelector } from '../../states/selectors/hiddenBoardCardFieldsScopedSelector';
 import { visibleBoardCardFieldsScopedSelector } from '../../states/selectors/visibleBoardCardFieldsScopedSelector';
 import { BoardColumnDefinition } from '../../types/BoardColumnDefinition';
 import { BoardOptionsHotkeyScope } from '../../types/BoardOptionsHotkeyScope';
 
-export type BoardOptionsDropdownContentProps = {
+export type RecordBoardOptionsDropdownContentProps = {
   onStageAdd?: (boardColumn: BoardColumnDefinition) => void;
 };
 
@@ -49,9 +48,9 @@ type ColumnForCreate = {
   title: string;
 };
 
-export const BoardOptionsDropdownContent = ({
+export const RecordBoardOptionsDropdownContent = ({
   onStageAdd,
-}: BoardOptionsDropdownContentProps) => {
+}: RecordBoardOptionsDropdownContentProps) => {
   const { setViewEditMode, handleViewNameSubmit } = useViewBar();
   const { viewEditModeState, currentViewSelector } = useViewScopedStates();
   const { BoardRecoilScopeContext } = useContext(BoardContext);
@@ -66,11 +65,12 @@ export const BoardOptionsDropdownContent = ({
     BoardOptionsMenu | undefined
   >();
 
-  const [boardColumns, setBoardColumns] = useRecoilState(
-    boardColumnsScopedState,
-  );
+  const { boardColumnsState, isCompactViewEnabledState } =
+    useRecordBoardScopedStates();
+
+  const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
   const [isCompactViewEnabled, setIsCompactViewEnabled] = useRecoilState(
-    isCompactViewEnabledScopedState,
+    isCompactViewEnabledState,
   );
 
   const hiddenBoardCardFields = useRecoilScopedValue(

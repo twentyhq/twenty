@@ -6,7 +6,7 @@ import { isCompactViewEnabledScopedState } from '@/ui/object/record-board/states
 import { savedBoardColumnsScopedState } from '@/ui/object/record-board/states/savedBoardColumnsScopedState';
 import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
 
-export const getBoardScopedStates = ({
+export const getRecordBoardScopedStates = ({
   recordBoardScopeId,
 }: {
   recordBoardScopeId: string;

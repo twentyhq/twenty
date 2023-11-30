@@ -5,28 +5,28 @@ import { DropdownScope } from '../../../../layout/dropdown/scopes/DropdownScope'
 import { BoardOptionsDropdownId } from '../../components/constants/BoardOptionsDropdownId';
 import { BoardOptionsHotkeyScope } from '../../types/BoardOptionsHotkeyScope';
 
-import { BoardOptionsDropdownButton } from './BoardOptionsDropdownButton';
+import { RecordBoardOptionsDropdownButton } from './RecordBoardOptionsDropdownButton';
 import {
-  BoardOptionsDropdownContent,
-  BoardOptionsDropdownContentProps,
-} from './BoardOptionsDropdownContent';
+  RecordBoardOptionsDropdownContent,
+  RecordBoardOptionsDropdownContentProps,
+} from './RecordBoardOptionsDropdownContent';
 
-type BoardOptionsDropdownProps = Pick<
-  BoardOptionsDropdownContentProps,
+type RecordBoardOptionsDropdownProps = Pick<
+  RecordBoardOptionsDropdownContentProps,
   'onStageAdd'
 >;
 
-export const BoardOptionsDropdown = ({
+export const RecordBoardOptionsDropdown = ({
   onStageAdd,
-}: BoardOptionsDropdownProps) => {
+}: RecordBoardOptionsDropdownProps) => {
   const { setViewEditMode } = useViewBar();
 
   return (
     <DropdownScope dropdownScopeId={BoardOptionsDropdownId}>
       <Dropdown
-        clickableComponent={<BoardOptionsDropdownButton />}
+        clickableComponent={<RecordBoardOptionsDropdownButton />}
         dropdownComponents={
-          <BoardOptionsDropdownContent onStageAdd={onStageAdd} />
+          <RecordBoardOptionsDropdownContent onStageAdd={onStageAdd} />
         }
         dropdownHotkeyScope={{ scope: BoardOptionsHotkeyScope.Dropdown }}
         onClickOutside={() => setViewEditMode('none')}
