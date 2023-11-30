@@ -16,6 +16,8 @@ import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migrati
 import { WorkspaceMigrationService } from 'src/metadata/workspace-migration/workspace-migration.service';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { WorkspaceMigrationColumnActionType } from 'src/metadata/workspace-migration/workspace-migration.entity';
+import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
+import { createCustomColumnName } from 'src/metadata/utils/create-custom-column-name.util';
 
 import {
   RelationMetadataEntity,
@@ -91,7 +93,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     const objectMetadataMap = objectMetadataEntries.reduce((acc, curr) => {
       acc[curr.id] = curr;
       return acc;
-    }, {});
+    }, {} as { [key: string]: ObjectMetadataEntity });
 
     if (
       objectMetadataMap[record.fromObjectMetadataId] === undefined ||
@@ -102,7 +104,11 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       );
     }
 
-    const foreignKeyColumnName = `${camelCase(record.toName)}Id`;
+    const baseColumnName = `${camelCase(record.toName)}Id`;
+    const foreignKeyColumnName = objectMetadataMap[record.toObjectMetadataId]
+      .isCustom
+      ? createCustomColumnName(baseColumnName)
+      : baseColumnName;
 
     const createdFields = await this.fieldMetadataService.createMany([
       // FROM
@@ -125,7 +131,9 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         description: record.toDescription,
         icon: record.toIcon,
         isCustom: true,
-        targetColumnMap: {},
+        targetColumnMap: {
+          value: createCustomColumnName(record.toName),
+        },
         isActive: true,
         type: FieldMetadataType.RELATION,
         objectMetadataId: record.toObjectMetadataId,
@@ -133,12 +141,14 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       },
       // FOREIGN KEY
       {
-        name: foreignKeyColumnName,
+        name: baseColumnName,
         label: `${record.toLabel} Foreign Key`,
-        description: undefined,
+        description: `${record.toDescription} Foreign Key`,
         icon: undefined,
         isCustom: true,
-        targetColumnMap: {},
+        targetColumnMap: {
+          value: foreignKeyColumnName,
+        },
         isActive: true,
         // Should not be visible on the front side
         isSystem: true,

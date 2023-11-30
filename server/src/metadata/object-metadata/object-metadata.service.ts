@@ -21,6 +21,7 @@ import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { createCustomColumnName } from 'src/metadata/utils/create-custom-column-name.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -63,7 +64,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const createdObjectMetadata = await super.createOne({
       ...record,
       dataSourceId: lastDataSourceMetadata.id,
-      targetTableName: `_${record.nameSingular}`,
+      targetTableName: createCustomColumnName(record.nameSingular),
       isActive: true,
       isCustom: true,
       isSystem: false,
