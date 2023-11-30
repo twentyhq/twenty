@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
+import { Key } from 'ts-key-enum';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -9,6 +10,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { IconButton, IconButtonVariant } from '../button/components/IconButton';
 import { LightIconButton } from '../button/components/LightIconButton';
@@ -54,6 +56,7 @@ export const IconPicker = ({
   variant = 'secondary',
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
+  const [selectedIcon, setSelectedIcon] = useState(selectedIconKey);
 
   const { closeDropdown } = useDropdown({ dropdownScopeId });
 
@@ -75,6 +78,53 @@ export const IconPicker = ({
         : filteredIconKeys
     ).slice(0, 25);
   }, [icons, searchString, selectedIconKey]);
+
+  const findKey: number = iconKeys.indexOf(selectedIcon as string);
+
+  const handleArrowKey = (goToIndex: number) => {
+    const newIndex = findKey + goToIndex;
+    if (newIndex >= 0 && newIndex < iconKeys.length) {
+      setSelectedIcon(iconKeys[newIndex]);
+    }
+  };
+
+  useScopedHotkeys(
+    Key.ArrowRight,
+    () => handleArrowKey(1),
+    IconPickerHotkeyScope.IconPicker,
+    [selectedIcon],
+  );
+
+  useScopedHotkeys(
+    Key.ArrowLeft,
+    () => handleArrowKey(-1),
+    IconPickerHotkeyScope.IconPicker,
+    [selectedIcon],
+  );
+  useScopedHotkeys(
+    Key.ArrowUp,
+    () => handleArrowKey(-5),
+    IconPickerHotkeyScope.IconPicker,
+    [selectedIcon],
+  );
+
+  useScopedHotkeys(
+    Key.ArrowDown,
+    () => handleArrowKey(5),
+    IconPickerHotkeyScope.IconPicker,
+    [selectedIcon],
+  );
+
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      const iconKey = selectedIcon as string;
+      onChange({ iconKey, Icon: icons[findKey] });
+      closeDropdown();
+    },
+    IconPickerHotkeyScope.IconPicker,
+    [selectedIcon],
+  );
 
   return (
     <DropdownScope dropdownScopeId={dropdownScopeId}>
@@ -105,7 +155,7 @@ export const IconPicker = ({
                     <StyledLightIconButton
                       key={iconKey}
                       aria-label={convertIconKeyToLabel(iconKey)}
-                      isSelected={selectedIconKey === iconKey}
+                      isSelected={selectedIcon === iconKey}
                       size="medium"
                       title={iconKey}
                       Icon={icons[iconKey]}
