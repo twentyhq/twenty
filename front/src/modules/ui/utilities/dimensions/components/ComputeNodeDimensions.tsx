@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useLayoutEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
 type ComputeNodeDimensionsProps = {
@@ -27,15 +27,21 @@ export const ComputeNodeDimensions = ({
     | undefined
   >(undefined);
 
-  useEffect(() => {
-    if (nodeWrapperRef.current) {
-      nodeWrapperRef.current &&
+  useLayoutEffect(() => {
+    if (!nodeWrapperRef.current) {
+      return;
+    }
+    const resizeObserver = new ResizeObserver(() => {
+      if (nodeWrapperRef.current) {
         setNodeDimensions({
           width: nodeWrapperRef.current.offsetWidth,
           height: nodeWrapperRef.current.offsetHeight,
         });
-    }
-  }, [nodeWrapperRef?.current?.offsetWidth]);
+      }
+    });
+    resizeObserver.observe(nodeWrapperRef.current);
+    return () => resizeObserver.disconnect();
+  }, [nodeWrapperRef]);
 
   return (
     <>
