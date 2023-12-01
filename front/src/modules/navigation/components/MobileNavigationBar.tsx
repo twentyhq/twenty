@@ -10,7 +10,7 @@ import {
   IconSettings,
 } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { navigationDrawerState } from '@/ui/layout/states/isNavbarOpenedState';
+import { navigationDrawerState } from '@/ui/layout/states/navigationDrawerState';
 import { NavigationBar } from '@/ui/navigation/navigation-bar/components/NavigationBar';
 
 import { useIsSettingsPage } from '../hooks/useIsSettingsPage';

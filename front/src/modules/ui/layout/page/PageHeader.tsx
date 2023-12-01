@@ -2,11 +2,14 @@ import { ComponentProps, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { IconChevronLeft } from '@/ui/display/icon/index';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { IconButton } from '@/ui/input/button/components/IconButton';
+import { navigationDrawerState } from '@/ui/layout/states/navigationDrawerState';
+import NavCollapseButton from '@/ui/navigation/navigation-drawer/components/NavCollapseButton';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
@@ -67,6 +70,11 @@ const StyledPageActionContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledTopBarButtonContainer = styled.div`
+  margin-left: ${({ theme }) => theme.spacing(1)};
+  margin-right: ${({ theme }) => theme.spacing(1)};
+`;
+
 type PageHeaderProps = ComponentProps<'div'> & {
   title: string;
   hasBackButton?: boolean;
@@ -83,9 +91,16 @@ export const PageHeader = ({
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const theme = useTheme();
+  const navigationDrawer = useRecoilValue(navigationDrawerState);
+
   return (
     <StyledTopBarContainer>
       <StyledLeftContainer>
+        {navigationDrawer === '' && (
+          <StyledTopBarButtonContainer>
+            <NavCollapseButton direction="right" />
+          </StyledTopBarButtonContainer>
+        )}
         {hasBackButton && (
           <StyledBackIconButton
             Icon={IconChevronLeft}

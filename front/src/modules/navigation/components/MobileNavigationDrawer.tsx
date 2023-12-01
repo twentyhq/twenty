@@ -2,7 +2,7 @@ import { useRecoilState } from 'recoil';
 
 import { Favorites } from '@/favorites/components/Favorites';
 import { SettingsNavbar } from '@/settings/components/SettingsNavbar';
-import { navigationDrawerState } from '@/ui/layout/states/isNavbarOpenedState';
+import { navigationDrawerState } from '@/ui/layout/states/navigationDrawerState';
 import MainNavbar from '@/ui/navigation/navigation-drawer/components/MainNavbar';
 
 import { WorkspaceNavItems } from './WorkspaceNavItems';

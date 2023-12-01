@@ -8,7 +8,7 @@ import {
   IconLayoutSidebarRightCollapse,
 } from '@/ui/display/icon';
 import { IconButton } from '@/ui/input/button/components/IconButton';
-import { navigationDrawerState } from '@/ui/layout/states/isNavbarOpenedState';
+import { navigationDrawerState } from '@/ui/layout/states/navigationDrawerState';
 
 const StyledCollapseButton = styled(motion.div)`
   align-items: center;
@@ -56,7 +56,11 @@ const NavCollapseButton = ({
         transition={{
           duration: theme.animation.duration.normal,
         }}
-        onClick={() => setNavigationDrawer('')}
+        onClick={() =>
+          setNavigationDrawer((navigationDrawer) =>
+            navigationDrawer === '' ? 'main' : '',
+          )
+        }
       >
         <IconButton
           Icon={

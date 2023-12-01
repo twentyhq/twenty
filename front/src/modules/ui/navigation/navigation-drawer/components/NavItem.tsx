@@ -4,8 +4,9 @@ import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { navigationDrawerState } from '@/ui/layout/states/isNavbarOpenedState';
+import { navigationDrawerState } from '@/ui/layout/states/navigationDrawerState';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 type NavItemProps = {
   className?: string;
@@ -126,11 +127,14 @@ const NavItem = ({
   keyboard,
 }: NavItemProps) => {
   const theme = useTheme();
+  const isMobile = useIsMobile();
   const navigate = useNavigate();
   const setNavigationDrawer = useSetRecoilState(navigationDrawerState);
 
   const handleItemClick = () => {
-    setNavigationDrawer('');
+    if (isMobile) {
+      setNavigationDrawer('');
+    }
 
     if (onClick) {
       onClick();
