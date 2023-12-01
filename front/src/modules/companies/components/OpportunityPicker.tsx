@@ -54,7 +54,7 @@ export const OpportunityPicker = ({
     orderByField: 'createdAt',
     selectedIds: [],
     mappingFunction: (record: any) => identifiersMapper?.(record, 'company'),
-    objectNamePlural: 'companies',
+    objectNameSingular: 'company',
   });
 
   const [isProgressSelectionUnfolded, setIsProgressSelectionUnfolded] =

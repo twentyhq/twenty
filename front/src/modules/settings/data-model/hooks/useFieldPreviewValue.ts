@@ -1,3 +1,4 @@
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { assertNotNull } from '~/utils/assert';
 
@@ -10,8 +11,12 @@ export const useFieldPreviewValue = ({
   objectNamePlural: string;
   skip?: boolean;
 }) => {
-  const { records } = useFindManyRecords({
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
+  });
+
+  const { records } = useFindManyRecords({
+    objectNameSingular,
     skip,
   });
 

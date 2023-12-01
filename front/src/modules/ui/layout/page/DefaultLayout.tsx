@@ -6,6 +6,7 @@ import { AuthModal } from '@/auth/components/Modal';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
+import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { NavbarAnimatedContainer } from '@/ui/navigation/navbar/components/NavbarAnimatedContainer';
@@ -74,7 +75,7 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
             </AnimatePresence>
           </>
         ) : (
-          <>{children}</>
+          <AppErrorBoundary>{children}</AppErrorBoundary>
         )}
       </StyledMainContainer>
     </StyledLayout>

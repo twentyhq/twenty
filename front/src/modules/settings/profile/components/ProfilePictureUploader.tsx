@@ -19,7 +19,7 @@ export const ProfilePictureUploader = () => {
     useState<AbortController | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const { updateOneRecord, objectMetadataItemNotFound } = useUpdateOneRecord({
+  const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: 'workspaceMember',
   });
 
@@ -54,9 +54,7 @@ export const ProfilePictureUploader = () => {
       if (!avatarUrl) {
         throw new Error('Avatar URL not found');
       }
-      if (!updateOneRecord || objectMetadataItemNotFound) {
-        throw new Error('Object not found in metadata');
-      }
+
       await updateOneRecord({
         idToUpdate: currentWorkspaceMember?.id,
         input: {
@@ -80,12 +78,10 @@ export const ProfilePictureUploader = () => {
   };
 
   const handleRemove = async () => {
-    if (!updateOneRecord || objectMetadataItemNotFound) {
-      throw new Error('Object not found in metadata');
-    }
     if (!currentWorkspaceMember?.id) {
       throw new Error('User is not logged in');
     }
+
     await updateOneRecord({
       idToUpdate: currentWorkspaceMember?.id,
       input: {

@@ -8,7 +8,7 @@ import { capitalize } from '~/utils/string/capitalize';
 export const useGetRecordFromCache = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem: ObjectMetadataItem | undefined | null;
+  objectMetadataItem: ObjectMetadataItem;
 }) => {
   const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
   const apolloClient = useApolloClient();
@@ -31,7 +31,7 @@ export const useGetRecordFromCache = ({
 
     const cache = apolloClient.cache;
     const cachedRecordId = cache.identify({
-      __typename: capitalize(objectMetadataItem?.nameSingular ?? ''),
+      __typename: capitalize(objectMetadataItem.nameSingular),
       id: recordId,
     });
 
