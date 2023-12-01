@@ -4,10 +4,10 @@ import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { actionBarOpenState } from '@/ui/navigation/action-bar/states/actionBarIsOpenState';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 
-import { BoardCardIdContext } from '../contexts/BoardCardIdContext';
-import { isCardSelectedFamilyState } from '../states/isCardSelectedFamilyState';
+import { BoardCardIdContext } from '../../contexts/BoardCardIdContext';
+import { isCardSelectedFamilyState } from '../../states/isCardSelectedFamilyState';
 
-export const useCurrentCardSelected = () => {
+export const useCurrentCardSelectedInternal = () => {
   const currentCardId = useContext(BoardCardIdContext);
 
   const isCurrentCardSelected = useRecoilValue(

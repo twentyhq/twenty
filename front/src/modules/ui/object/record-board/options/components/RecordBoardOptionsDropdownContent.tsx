@@ -28,7 +28,7 @@ import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFiel
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
-import { useBoardCardFields } from '../../hooks/internal/useBoardCardFields';
+import { useBoardCardFieldsInternal } from '../../hooks/internal/useBoardCardFieldsInternal';
 import { BoardColumnDefinition } from '../../types/BoardColumnDefinition';
 import { BoardOptionsHotkeyScope } from '../../types/BoardOptionsHotkeyScope';
 
@@ -106,7 +106,7 @@ export const RecordBoardOptionsDropdownContent = ({
   };
 
   const { handleFieldVisibilityChange, handleFieldsReorder } =
-    useBoardCardFields();
+    useBoardCardFieldsInternal();
 
   const { closeDropdown } = useDropdown();
 

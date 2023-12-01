@@ -8,8 +8,8 @@ import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { BoardColumnContext } from '@/ui/object/record-board/contexts/BoardColumnContext';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
-import { useSetCardSelected } from '@/ui/object/record-board/hooks/useSetCardSelected';
-import { useUpdateBoardCardIds } from '@/ui/object/record-board/hooks/useUpdateBoardCardIds';
+import { useSetCardSelectedInternal } from '@/ui/object/record-board/hooks/internal/useSetCardSelectedInternal';
+import { useUpdateBoardCardIdsInternal } from '@/ui/object/record-board/hooks/internal/useUpdateBoardCardIdsInternal';
 import { RecordBoardScope } from '@/ui/object/record-board/scopes/RecordBoardScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -73,7 +73,8 @@ export const RecordBoard = ({
       objectNameSingular: 'opportunity',
     });
 
-  const { unselectAllActiveCards, setCardSelected } = useSetCardSelected();
+  const { unselectAllActiveCards, setCardSelected } =
+    useSetCardSelectedInternal();
 
   const updatePipelineProgressStageInDB = useCallback(
     async (pipelineProgressId: string, pipelineStepId: string) => {
@@ -93,7 +94,7 @@ export const RecordBoard = ({
     callback: unselectAllActiveCards,
   });
 
-  const updateBoardCardIds = useUpdateBoardCardIds();
+  const updateBoardCardIds = useUpdateBoardCardIdsInternal();
 
   const onDragEnd: OnDragEndResponder = useCallback(
     async (result) => {

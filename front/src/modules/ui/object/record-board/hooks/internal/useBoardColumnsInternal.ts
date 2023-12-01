@@ -5,9 +5,9 @@ import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 
-import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
+import { BoardColumnDefinition } from '../../types/BoardColumnDefinition';
 
-export const useBoardColumns = () => {
+export const useBoardColumnsInternal = () => {
   const { boardColumnsState } = useRecordBoardScopedStates();
   const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
 

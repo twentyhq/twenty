@@ -5,10 +5,10 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 
-import { useRemoveCardIds } from './internal/useRemoveCardIds';
+import { useRemoveCardIdsInternal } from './useRemoveCardIdsInternal';
 
-export const useDeleteSelectedBoardCards = () => {
-  const removeCardIds = useRemoveCardIds();
+export const useDeleteSelectedBoardCardsInternal = () => {
+  const removeCardIds = useRemoveCardIdsInternal();
   const apolloClient = useApolloClient();
 
   const { deleteOneRecord: deleteOneOpportunity } =

@@ -11,9 +11,9 @@ import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { turnFiltersIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClause';
 import { turnSortsIntoOrderBy } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderBy';
-import { useBoardActionBarEntries } from '@/ui/object/record-board/hooks/useBoardActionBarEntries';
+import { useBoardActionBarEntriesInternal } from '@/ui/object/record-board/hooks/internal/useBoardActionBarEntriesInternal';
+import { useBoardContextMenuEntriesInternal } from '@/ui/object/record-board/hooks/internal/useBoardContextMenuEntriesInternal';
 import { useBoardContext } from '@/ui/object/record-board/hooks/useBoardContext';
-import { useBoardContextMenuEntries } from '@/ui/object/record-board/hooks/useBoardContextMenuEntries';
 import { useRecordBoard } from '@/ui/object/record-board/hooks/useRecordBoard';
 import { availableBoardCardFieldsScopedState } from '@/ui/object/record-board/states/availableBoardCardFieldsScopedState';
 import { boardCardFieldsFamilyState } from '@/ui/object/record-board/states/boardCardFieldsFamilyState';
@@ -27,8 +27,8 @@ import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { isDefined } from '~/utils/isDefined';
 
-import { useUpdateCompanyBoardCardIds } from '../../ui/object/record-board/hooks/internal/useUpdateCompanyBoardCardIds';
-import { useUpdateCompanyBoard } from '../../ui/object/record-board/hooks/internal/useUpdateCompanyBoardColumns';
+import { useUpdateCompanyBoardCardIdsInternal } from '../../ui/object/record-board/hooks/internal/useUpdateCompanyBoardCardIdsInternal';
+import { useUpdateCompanyBoardColumnsInternal } from '../../ui/object/record-board/hooks/internal/useUpdateCompanyBoardColumnsInternal';
 
 type HooksCompanyBoardEffectProps = {
   viewBarId: string;
@@ -80,8 +80,8 @@ export const HooksCompanyBoardEffect = ({
     BoardRecoilScopeContext,
   );
 
-  const updateCompanyBoardCardIds = useUpdateCompanyBoardCardIds();
-  const updateCompanyBoard = useUpdateCompanyBoard();
+  const updateCompanyBoardCardIds = useUpdateCompanyBoardCardIdsInternal();
+  const updateCompanyBoard = useUpdateCompanyBoardColumnsInternal();
 
   const setAvailableBoardCardFields = useSetRecoilScopedStateV2(
     availableBoardCardFieldsScopedState,
@@ -186,8 +186,8 @@ export const HooksCompanyBoardEffect = ({
     setViewType?.(ViewType.Kanban);
   }, [objectMetadataItem, setViewObjectMetadataId, setViewType]);
 
-  const { setActionBarEntries } = useBoardActionBarEntries();
-  const { setContextMenuEntries } = useBoardContextMenuEntries();
+  const { setActionBarEntries } = useBoardActionBarEntriesInternal();
+  const { setContextMenuEntries } = useBoardContextMenuEntriesInternal();
 
   useEffect(() => {
     if (opportunities && companies) {

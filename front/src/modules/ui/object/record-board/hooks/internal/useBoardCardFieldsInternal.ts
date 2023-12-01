@@ -9,7 +9,7 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 import { boardCardFieldsFamilyState } from '../../states/boardCardFieldsFamilyState';
 import { useBoardContext } from '../useBoardContext';
 
-export const useBoardCardFields = () => {
+export const useBoardCardFieldsInternal = () => {
   const { BoardRecoilScopeContext, onFieldsChange } = useBoardContext();
 
   const [, setBoardCardFields] = useRecoilScopedState(

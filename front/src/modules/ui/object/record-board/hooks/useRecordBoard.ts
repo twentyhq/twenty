@@ -1,8 +1,8 @@
 import { useSetRecoilState } from 'recoil';
 
-import { useBoardActionBarEntries } from '@/ui/object/record-board/hooks/internal/useBoardActionBarEntries';
-import { useBoardCardFields } from '@/ui/object/record-board/hooks/internal/useBoardCardFields';
-import { useBoardContextMenuEntries } from '@/ui/object/record-board/hooks/internal/useBoardContextMenuEntries';
+import { useBoardActionBarEntriesInternal } from '@/ui/object/record-board/hooks/internal/useBoardActionBarEntriesInternal';
+import { useBoardCardFieldsInternal } from '@/ui/object/record-board/hooks/internal/useBoardCardFieldsInternal';
+import { useBoardContextMenuEntriesInternal } from '@/ui/object/record-board/hooks/internal/useBoardContextMenuEntriesInternal';
 import { useCreateOpportunity } from '@/ui/object/record-board/hooks/internal/useCreateOpportunity';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 import { RecordBoardScopeInternalContext } from '@/ui/object/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
@@ -27,11 +27,11 @@ export const useRecordBoard = (props?: useRecordBoardProps) => {
 
   const createOpportunity = useCreateOpportunity();
 
-  const { setActionBarEntries } = useBoardActionBarEntries();
-  const { setContextMenuEntries } = useBoardContextMenuEntries();
+  const { setActionBarEntries } = useBoardActionBarEntriesInternal();
+  const { setContextMenuEntries } = useBoardContextMenuEntriesInternal();
 
   const { handleFieldVisibilityChange, handleFieldsReorder } =
-    useBoardCardFields();
+    useBoardCardFieldsInternal();
 
   return {
     scopeId,

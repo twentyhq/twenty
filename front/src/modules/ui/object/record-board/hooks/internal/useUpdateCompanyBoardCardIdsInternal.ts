@@ -4,7 +4,7 @@ import { Opportunity } from '@/pipeline/types/Opportunity';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 import { boardCardIdsByColumnIdFamilyState } from '@/ui/object/record-board/states/boardCardIdsByColumnIdFamilyState';
 
-export const useUpdateCompanyBoardCardIds = () => {
+export const useUpdateCompanyBoardCardIdsInternal = () => {
   const { boardColumnsState } = useRecordBoardScopedStates();
 
   return useRecoilCallback(

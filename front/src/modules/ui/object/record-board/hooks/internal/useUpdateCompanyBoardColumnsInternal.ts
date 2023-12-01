@@ -17,7 +17,7 @@ import {
   CompanyProgressDict,
 } from '../../../../../companies/types/CompanyProgress';
 
-export const useUpdateCompanyBoard = () => {
+export const useUpdateCompanyBoardColumnsInternal = () => {
   const { boardColumnsState, savedBoardColumnsState } =
     useRecordBoardScopedStates();
 
