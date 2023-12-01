@@ -1,5 +1,5 @@
-import { getRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/getRecordBoardScopedStates';
 import { RecordBoardScopeInternalContext } from '@/ui/object/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
+import { getRecordBoardScopedStates } from '@/ui/object/record-board/utils/getRecordBoardScopedStates';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
 type useRecordBoardScopedStates = {

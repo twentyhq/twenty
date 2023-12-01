@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { actionBarOpenState } from '@/ui/navigation/action-bar/states/actionBarIsOpenState';
-import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/useRecordBoardScopedStates';
+import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 
 import { BoardCardIdContext } from '../contexts/BoardCardIdContext';
 import { isCardSelectedFamilyState } from '../states/isCardSelectedFamilyState';

@@ -4,7 +4,7 @@ import { currentPipelineStepsState } from '@/pipeline/states/currentPipelineStep
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
-import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/useRecordBoardScopedStates';
+import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 import { boardCardIdsByColumnIdFamilyState } from '@/ui/object/record-board/states/boardCardIdsByColumnIdFamilyState';
 import { BoardColumnDefinition } from '@/ui/object/record-board/types/BoardColumnDefinition';
 import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
