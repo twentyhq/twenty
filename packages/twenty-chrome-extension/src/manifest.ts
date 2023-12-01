@@ -13,6 +13,8 @@ export default defineManifest({
     48: 'logo/32-32.png',
   },
 
+  action: {},
+
   options_page: 'options.html',
 
   background: {

@@ -9,6 +9,11 @@ chrome.runtime.onInstalled.addListener(function (details) {
   }
 });
 
+// Open options page when extension icon is clicked.
+chrome.action.onClicked.addListener(function () {
+  openOptionsPage();
+});
+
 chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
   switch (message.action) {
     case 'getActiveTabUrl':
