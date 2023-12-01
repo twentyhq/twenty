@@ -1,4 +1,3 @@
-import { useSearchParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
@@ -46,9 +45,6 @@ export const RecordTableContainer = ({
     objectNameSingular,
   });
 
-  const [searchParam] = useSearchParams();
-
-  console.log('tot');
   const recordTableId = objectNamePlural ?? '';
   const viewBarId = objectNamePlural ?? '';
 
@@ -93,14 +89,14 @@ export const RecordTableContainer = ({
         }}
       />
       <RecordTableEffect recordTableId={recordTableId} viewBarId={viewBarId} />
-      {searchParam.get('view') && (
+      {
         <RecordTable
           recordTableId={recordTableId}
           viewBarId={viewBarId}
           updateRecordMutation={updateEntity}
           createRecord={createRecord}
         />
-      )}
+      }
     </StyledContainer>
   );
 };

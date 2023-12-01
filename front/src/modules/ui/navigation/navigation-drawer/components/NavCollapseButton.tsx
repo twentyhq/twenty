@@ -8,7 +8,7 @@ import {
   IconLayoutSidebarRightCollapse,
 } from '@/ui/display/icon';
 import { IconButton } from '@/ui/input/button/components/IconButton';
-import { navigationDrawerState } from '@/ui/layout/states/navigationDrawerState';
+import { navigationDrawerState } from '@/ui/navigation/states/navigationDrawerState';
 
 const StyledCollapseButton = styled(motion.div)`
   align-items: center;

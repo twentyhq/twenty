@@ -2,11 +2,10 @@ import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { isNavbarSwitchingSizeState } from '@/ui/layout/states/isNavbarSwitchingSizeState';
-import { navigationDrawerState } from '@/ui/layout/states/navigationDrawerState';
+import { navigationDrawerState } from '@/ui/navigation/states/navigationDrawerState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { desktopNavDrawerWidths } from '../constants';
@@ -27,9 +26,7 @@ export const NavbarAnimatedContainer = ({
   children,
 }: NavbarAnimatedContainerProps) => {
   const navigationDrawer = useRecoilValue(navigationDrawerState);
-  const setIsNavbarSwitchingSize = useSetRecoilState(
-    isNavbarSwitchingSizeState,
-  );
+
   const isInSubMenu = useIsSettingsPage();
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -44,7 +41,6 @@ export const NavbarAnimatedContainer = ({
   return (
     <StyledNavbarContainer
       initial={false}
-      onAnimationComplete={() => setIsNavbarSwitchingSize(false)}
       animate={{
         width: !isMobile ? desktopWidth : navigationDrawer ? '100%' : 0,
         opacity: navigationDrawer === '' ? 0 : 1,

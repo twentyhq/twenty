@@ -6,15 +6,17 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useObjectRecordTable } from '@/object-record/hooks/useObjectRecordTable';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
+import {
+  RecordTableRow,
+  StyledRow,
+} from '@/ui/object/record-table/components/RecordTableRow';
+import { RowIdContext } from '@/ui/object/record-table/contexts/RowIdContext';
+import { RowIndexContext } from '@/ui/object/record-table/contexts/RowIndexContext';
+import { isFetchingRecordTableDataState } from '@/ui/object/record-table/states/isFetchingRecordTableDataState';
 import { isDefined } from '~/utils/isDefined';
 
-import { RowIdContext } from '../contexts/RowIdContext';
-import { RowIndexContext } from '../contexts/RowIndexContext';
 import { useRecordTable } from '../hooks/useRecordTable';
-import { isFetchingRecordTableDataState } from '../states/isFetchingRecordTableDataState';
 import { tableRowIdsState } from '../states/tableRowIdsState';
-
-import { RecordTableRow, StyledRow } from './RecordTableRow';
 
 export const RecordTableBody = () => {
   const { ref: lastTableRowRef, inView: lastTableRowIsVisible } = useInView();
@@ -41,6 +43,7 @@ export const RecordTableBody = () => {
     isFetchingRecordTableDataState,
   );
 
+  // Todo, move this to an effect to not trigger many re-renders
   const { fetchMoreRecords: fetchMoreObjects } = useObjectRecordTable();
 
   useEffect(() => {

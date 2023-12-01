@@ -8,8 +8,8 @@ import { IconChevronLeft } from '@/ui/display/icon/index';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { IconButton } from '@/ui/input/button/components/IconButton';
-import { navigationDrawerState } from '@/ui/layout/states/navigationDrawerState';
 import NavCollapseButton from '@/ui/navigation/navigation-drawer/components/NavCollapseButton';
+import { navigationDrawerState } from '@/ui/navigation/states/navigationDrawerState';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 

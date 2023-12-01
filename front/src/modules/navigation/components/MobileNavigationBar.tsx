@@ -10,8 +10,8 @@ import {
   IconSettings,
 } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { navigationDrawerState } from '@/ui/layout/states/navigationDrawerState';
 import { NavigationBar } from '@/ui/navigation/navigation-bar/components/NavigationBar';
+import { navigationDrawerState } from '@/ui/navigation/states/navigationDrawerState';
 
 import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
 import { useIsTasksPage } from '../hooks/useIsTasksPage';

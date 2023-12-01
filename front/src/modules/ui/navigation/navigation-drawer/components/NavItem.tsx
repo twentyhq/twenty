@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { navigationDrawerState } from '@/ui/layout/states/navigationDrawerState';
+import { navigationDrawerState } from '@/ui/navigation/states/navigationDrawerState';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 

@@ -1,3 +1,6 @@
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+
 import { useCurrentUserTaskCount } from '@/activities/tasks/hooks/useCurrentUserDueTaskCount';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Favorites } from '@/favorites/components/Favorites';
@@ -11,6 +14,7 @@ import {
 } from '@/ui/display/icon/index';
 import MainNavbar from '@/ui/navigation/navigation-drawer/components/MainNavbar';
 import NavItem from '@/ui/navigation/navigation-drawer/components/NavItem';
+import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 
 import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
 
@@ -21,6 +25,11 @@ export const DesktopNavigationDrawer = () => {
   const isSettingsPage = useIsSettingsPage();
   const isTasksPage = useIsTasksPage();
   const { currentUserDueTaskCount } = useCurrentUserTaskCount();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const setNavigationMemorizedUrl = useSetRecoilState(
+    navigationMemorizedUrlState,
+  );
 
   return isSettingsPage ? (
     <SettingsNavbar />
@@ -33,7 +42,14 @@ export const DesktopNavigationDrawer = () => {
         keyboard={['⌘', 'K']}
       />
       <NavItem label="Notifications" to="/inbox" Icon={IconBell} soon />
-      <NavItem label="Settings" to="/settings/profile" Icon={IconSettings} />
+      <NavItem
+        label="Settings"
+        onClick={() => {
+          setNavigationMemorizedUrl(location.pathname + location.search);
+          navigate('/settings/profile');
+        }}
+        Icon={IconSettings}
+      />
       <NavItem
         label="Tasks"
         to="/tasks"
