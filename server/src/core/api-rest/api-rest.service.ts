@@ -550,104 +550,116 @@ export class ApiRestService {
   }
 
   async callGraphql(request: Request, data) {
-    try {
-      return await axios.post(
-        `${this.environmentService.getInternalServerUrl()}/graphql`,
-        data,
-        {
-          headers: {
-            authorization: request.headers.authorization,
-          },
+    return await axios.post(
+      `${this.environmentService.getInternalServerUrl()}/graphql`,
+      data,
+      {
+        headers: {
+          authorization: request.headers.authorization,
         },
-      );
+      },
+    );
+  }
+
+  async get(request: Request) {
+    try {
+      const objectMetadata = await this.getObjectMetadata(request);
+      const id = this.parseObject(request)[1];
+      const depth = this.computeDepth(request);
+      const data = {
+        query: id
+          ? this.computeFindOneQuery(
+              objectMetadata.objectMetadataItems,
+              objectMetadata.objectMetadataItem,
+              depth,
+            )
+          : this.computeFindManyQuery(
+              objectMetadata.objectMetadataItems,
+              objectMetadata.objectMetadataItem,
+              depth,
+            ),
+        variables: id
+          ? { filter: { id: { eq: id } } }
+          : this.computeQueryVariables(
+              request,
+              objectMetadata.objectMetadataItem,
+            ),
+      };
+      return await this.callGraphql(request, data);
     } catch (err) {
       return { data: { error: `${err}` } };
     }
   }
 
-  async get(request: Request) {
-    const objectMetadata = await this.getObjectMetadata(request);
-    const id = this.parseObject(request)[1];
-    const depth = this.computeDepth(request);
-    const data = {
-      query: id
-        ? this.computeFindOneQuery(
-            objectMetadata.objectMetadataItems,
-            objectMetadata.objectMetadataItem,
-            depth,
-          )
-        : this.computeFindManyQuery(
-            objectMetadata.objectMetadataItems,
-            objectMetadata.objectMetadataItem,
-            depth,
-          ),
-      variables: id
-        ? { filter: { id: { eq: id } } }
-        : this.computeQueryVariables(
-            request,
-            objectMetadata.objectMetadataItem,
-          ),
-    };
-    return await this.callGraphql(request, data);
-  }
-
   async delete(request: Request) {
-    const objectMetadata = await this.getObjectMetadata(request);
-    const id = this.parseObject(request)[1];
-    if (!id) {
-      return {
-        data: {
-          error: `delete ${objectMetadata.objectMetadataItem.nameSingular} query invalid. Id missing. eg: /rest/${objectMetadata.objectMetadataItem.namePlural}/0d4389ef-ea9c-4ae8-ada1-1cddc440fb56`,
+    try {
+      const objectMetadata = await this.getObjectMetadata(request);
+      const id = this.parseObject(request)[1];
+      if (!id) {
+        return {
+          data: {
+            error: `delete ${objectMetadata.objectMetadataItem.nameSingular} query invalid. Id missing. eg: /rest/${objectMetadata.objectMetadataItem.namePlural}/0d4389ef-ea9c-4ae8-ada1-1cddc440fb56`,
+          },
+        };
+      }
+      const data = {
+        query: this.computeDeleteQuery(objectMetadata.objectMetadataItem),
+        variables: {
+          id: this.parseObject(request)[1],
         },
       };
+      return await this.callGraphql(request, data);
+    } catch (err) {
+      return { data: { error: `${err}` } };
     }
-    const data = {
-      query: this.computeDeleteQuery(objectMetadata.objectMetadataItem),
-      variables: {
-        id: this.parseObject(request)[1],
-      },
-    };
-    return await this.callGraphql(request, data);
   }
 
   async create(request: Request) {
-    const objectMetadata = await this.getObjectMetadata(request);
-    const depth = this.computeDepth(request);
-    const data = {
-      query: this.computeCreateQuery(
-        objectMetadata.objectMetadataItems,
-        objectMetadata.objectMetadataItem,
-        depth,
-      ),
-      variables: {
-        data: request.body,
-      },
-    };
-    return await this.callGraphql(request, data);
+    try {
+      const objectMetadata = await this.getObjectMetadata(request);
+      const depth = this.computeDepth(request);
+      const data = {
+        query: this.computeCreateQuery(
+          objectMetadata.objectMetadataItems,
+          objectMetadata.objectMetadataItem,
+          depth,
+        ),
+        variables: {
+          data: request.body,
+        },
+      };
+      return await this.callGraphql(request, data);
+    } catch (err) {
+      return { data: { error: `${err}` } };
+    }
   }
 
   async update(request: Request) {
-    const objectMetadata = await this.getObjectMetadata(request);
-    const depth = this.computeDepth(request);
-    const id = this.parseObject(request)[1];
-    if (!id) {
-      return {
-        data: {
-          error: `update ${objectMetadata.objectMetadataItem.nameSingular} query invalid. Id missing. eg: /rest/${objectMetadata.objectMetadataItem.namePlural}/0d4389ef-ea9c-4ae8-ada1-1cddc440fb56`,
+    try {
+      const objectMetadata = await this.getObjectMetadata(request);
+      const depth = this.computeDepth(request);
+      const id = this.parseObject(request)[1];
+      if (!id) {
+        return {
+          data: {
+            error: `update ${objectMetadata.objectMetadataItem.nameSingular} query invalid. Id missing. eg: /rest/${objectMetadata.objectMetadataItem.namePlural}/0d4389ef-ea9c-4ae8-ada1-1cddc440fb56`,
+          },
+        };
+      }
+      const data = {
+        query: this.computeUpdateQuery(
+          objectMetadata.objectMetadataItems,
+          objectMetadata.objectMetadataItem,
+          depth,
+        ),
+        variables: {
+          id: this.parseObject(request)[1],
+          data: request.body,
         },
       };
+      return await this.callGraphql(request, data);
+    } catch (err) {
+      return { data: { error: `${err}` } };
     }
-    const data = {
-      query: this.computeUpdateQuery(
-        objectMetadata.objectMetadataItems,
-        objectMetadata.objectMetadataItem,
-        depth,
-      ),
-      variables: {
-        id: this.parseObject(request)[1],
-        data: request.body,
-      },
-    };
-    return await this.callGraphql(request, data);
   }
 }
