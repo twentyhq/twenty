@@ -140,7 +140,7 @@ export class ApiRestService {
     }
   }
 
-  computeDelete(objectMetadataItem) {
+  computeDeleteQuery(objectMetadataItem) {
     return `
       mutation Delete${capitalize(objectMetadataItem.nameSingular)}($id: ID!) {
         delete${capitalize(objectMetadataItem.nameSingular)}(id: $id) {
@@ -150,7 +150,7 @@ export class ApiRestService {
     `;
   }
 
-  computeCreate(objectMetadataItems, objectMetadataItem) {
+  computeCreateQuery(objectMetadataItems, objectMetadataItem) {
     return `
       mutation Create${capitalize(
         objectMetadataItem.nameSingular,
@@ -167,7 +167,7 @@ export class ApiRestService {
     `;
   }
 
-  computeQuery(
+  computeGetQuery(
     objectMetadataItems,
     objectMetadataItem,
     depth = DEFAULT_DEPTH_VALUE,
@@ -508,7 +508,7 @@ export class ApiRestService {
   async get(request: Request) {
     const objectMetadata = await this.getObjectMetadata(request);
     const data = {
-      query: this.computeQuery(
+      query: this.computeGetQuery(
         objectMetadata.objectMetadataItems,
         objectMetadata.objectMetadataItem,
         this.computeDepth(request),
@@ -532,7 +532,7 @@ export class ApiRestService {
       };
     }
     const data = {
-      query: this.computeDelete(objectMetadata.objectMetadataItem),
+      query: this.computeDeleteQuery(objectMetadata.objectMetadataItem),
       variables: {
         id: this.parseObject(request)[1],
       },
@@ -543,7 +543,7 @@ export class ApiRestService {
   async create(request: Request) {
     const objectMetadata = await this.getObjectMetadata(request);
     const data = {
-      query: this.computeCreate(
+      query: this.computeCreateQuery(
         objectMetadata.objectMetadataItems,
         objectMetadata.objectMetadataItem,
       ),
