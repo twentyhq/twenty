@@ -140,11 +140,21 @@ export class ApiRestService {
     }
   }
 
-  async computeQuery(
+  computeDelete(objectMetadataItem) {
+    return `
+      mutation ${capitalize(objectMetadataItem.nameSingular)}($id: ID!) {
+        delete${capitalize(objectMetadataItem.nameSingular)}(id: $id) {
+          id
+        }
+      }
+    `;
+  }
+
+  computeQuery(
     objectMetadataItems,
     objectMetadataItem,
     depth = DEFAULT_DEPTH_VALUE,
-  ): Promise<string> {
+  ): string {
     return `
       query FindMany${capitalize(objectMetadataItem.namePlural)}(
         $filter: ${capitalize(objectMetadataItem.nameSingular)}FilterInput,
@@ -180,7 +190,8 @@ export class ApiRestService {
     `;
   }
 
-  async getObjectMetadata(request: Request, workspaceId: string) {
+  async getObjectMetadata(request: Request) {
+    const workspaceId = this.extractWorkspaceId(request);
     const objectMetadataItems =
       await this.objectMetadataService.getObjectMetadataFromWorkspaceId(
         workspaceId,
@@ -199,7 +210,10 @@ export class ApiRestService {
       }
       throw Error(`object '${parsedObject}' not found. ${hint}`);
     }
-    return [objectMetadataItems, objectMetadata];
+    return {
+      objectMetadataItems,
+      objectMetadataItem: objectMetadata,
+    };
   }
 
   addDefaultConjunctionIfMissing(filterQuery) {
@@ -411,7 +425,7 @@ export class ApiRestService {
     return cursorQuery;
   }
 
-  computeVariables(request: Request, objectMetadataItem) {
+  computeQueryVariables(request: Request, objectMetadataItem) {
     return {
       filter: this.parseFilter(request, objectMetadataItem),
       orderBy: this.parseOrderBy(request, objectMetadataItem),
@@ -458,21 +472,11 @@ export class ApiRestService {
     return depth;
   }
 
-  async callGraphql(request: Request) {
+  async callGraphql(request: Request, data) {
     try {
-      const workspaceId = this.extractWorkspaceId(request);
-      const [objectMetadataItems, objectMetadataItem] =
-        await this.getObjectMetadata(request, workspaceId);
       return await axios.post(
         `${this.environmentService.getInternalServerUrl()}/graphql`,
-        {
-          query: await this.computeQuery(
-            objectMetadataItems,
-            objectMetadataItem,
-            this.computeDepth(request),
-          ),
-          variables: this.computeVariables(request, objectMetadataItem),
-        },
+        data,
         {
           headers: {
             authorization: request.headers.authorization,
@@ -482,5 +486,40 @@ export class ApiRestService {
     } catch (err) {
       return { data: { error: `${err}` } };
     }
+  }
+
+  async get(request: Request) {
+    const objectMetadata = await this.getObjectMetadata(request);
+    const data = {
+      query: this.computeQuery(
+        objectMetadata.objectMetadataItems,
+        objectMetadata.objectMetadataItem,
+        this.computeDepth(request),
+      ),
+      variables: this.computeQueryVariables(
+        request,
+        objectMetadata.objectMetadataItem,
+      ),
+    };
+    return await this.callGraphql(request, data);
+  }
+
+  async delete(request: Request) {
+    const objectMetadata = await this.getObjectMetadata(request);
+    const id = this.parseObject(request)[1];
+    if (!id) {
+      return {
+        data: {
+          error: `delete ${objectMetadata.objectMetadataItem.nameSingular} query invalid. Id missing. eg: /rest/${objectMetadata.objectMetadataItem.namePlural}/0d4389ef-ea9c-4ae8-ada1-1cddc440fb56`,
+        },
+      };
+    }
+    const data = {
+      query: this.computeDelete(objectMetadata.objectMetadataItem),
+      variables: {
+        id: this.parseObject(request)[1],
+      },
+    };
+    return await this.callGraphql(request, data);
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Req } from '@nestjs/common';
+import { Controller, Delete, Get, Req } from '@nestjs/common';
 
 import { Request } from 'express';
 
@@ -7,9 +7,16 @@ import { ApiRestService } from 'src/core/api-rest/api-rest.service';
 @Controller('rest/*')
 export class ApiRestController {
   constructor(private readonly apiRestService: ApiRestService) {}
+
   @Get()
   async handleApiGet(@Req() request: Request): Promise<object> {
-    const result = await this.apiRestService.callGraphql(request);
+    const result = await this.apiRestService.get(request);
+    return result.data;
+  }
+
+  @Delete()
+  async handleApiDelete(@Req() request: Request): Promise<object> {
+    const result = await this.apiRestService.delete(request);
     return result.data;
   }
 }
