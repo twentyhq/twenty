@@ -18,14 +18,14 @@ export class UpdateManyQueryFactory {
     private readonly argsAliasFactory: ArgsAliasFactory,
   ) {}
 
-  create<
+  async create<
     Record extends IRecord = IRecord,
     Filter extends RecordFilter = RecordFilter,
   >(
     args: UpdateManyResolverArgs<Record, Filter>,
     options: WorkspaceQueryBuilderOptions,
   ) {
-    const fieldsString = this.fieldsStringFactory.create(
+    const fieldsString = await this.fieldsStringFactory.create(
       options.info,
       options.fieldMetadataCollection,
     );

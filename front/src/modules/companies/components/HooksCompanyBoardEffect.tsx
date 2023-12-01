@@ -61,7 +61,7 @@ export const HooksCompanyBoardEffect = ({
   const currentViewSorts = useRecoilValue(currentViewSortsState);
 
   const { objectMetadataItem } = useObjectMetadataItem({
-    objectNamePlural: 'opportunities',
+    objectNameSingular: 'opportunity',
   });
 
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
@@ -85,7 +85,7 @@ export const HooksCompanyBoardEffect = ({
   );
 
   useFindManyRecords({
-    objectNamePlural: 'pipelineSteps',
+    objectNameSingular: 'pipelineStep',
     filter: {},
     onCompleted: useCallback(
       (data: PaginatedRecordTypeResults<PipelineStep>) => {
@@ -107,7 +107,7 @@ export const HooksCompanyBoardEffect = ({
 
   const { fetchMoreRecords: fetchMoreOpportunities } = useFindManyRecords({
     skip: !pipelineSteps.length,
-    objectNamePlural: 'opportunities',
+    objectNameSingular: 'opportunity',
     filter: filter,
     orderBy: orderBy,
     onCompleted: useCallback(
@@ -132,7 +132,7 @@ export const HooksCompanyBoardEffect = ({
 
   const { fetchMoreRecords: fetchMoreCompanies } = useFindManyRecords({
     skip: !opportunities.length,
-    objectNamePlural: 'companies',
+    objectNameSingular: 'company',
     filter: {
       id: {
         in: opportunities.map((opportunity) => opportunity.companyId || ''),

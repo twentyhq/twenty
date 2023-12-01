@@ -18,11 +18,11 @@ export class UpdateOneQueryFactory {
     private readonly argsAliasFactory: ArgsAliasFactory,
   ) {}
 
-  create<Record extends IRecord = IRecord>(
+  async create<Record extends IRecord = IRecord>(
     args: UpdateOneResolverArgs<Record>,
     options: WorkspaceQueryBuilderOptions,
   ) {
-    const fieldsString = this.fieldsStringFactory.create(
+    const fieldsString = await this.fieldsStringFactory.create(
       options.info,
       options.fieldMetadataCollection,
     );

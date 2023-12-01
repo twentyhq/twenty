@@ -12,9 +12,9 @@ import {
   IconUserCircle,
   IconUsers,
 } from '@/ui/display/icon/index';
-import NavItem from '@/ui/navigation/navbar/components/NavItem';
-import NavTitle from '@/ui/navigation/navbar/components/NavTitle';
-import SubMenuNavbar from '@/ui/navigation/navbar/components/SubMenuNavbar';
+import NavItem from '@/ui/navigation/navigation-drawer/components/NavItem';
+import NavTitle from '@/ui/navigation/navigation-drawer/components/NavTitle';
+import SubMenuNavbar from '@/ui/navigation/navigation-drawer/components/SubMenuNavbar';
 
 export const SettingsNavbar = () => {
   const navigate = useNavigate();

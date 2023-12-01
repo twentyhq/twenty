@@ -82,7 +82,7 @@ export const TaskRow = ({
     ) ?? [];
 
   const { records: activityTargets } = useFindManyRecords<ActivityTarget>({
-    objectNamePlural: 'activityTargets',
+    objectNameSingular: 'activityTarget',
     filter: { id: { in: activityTargetIds } },
   });
 

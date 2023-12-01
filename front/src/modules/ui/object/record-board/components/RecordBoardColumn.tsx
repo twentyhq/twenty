@@ -1,9 +1,11 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from '@emotion/styled';
 import { Draggable, Droppable, DroppableProvided } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
 
+import { IconDotsVertical } from '@/ui/display/icon';
 import { Tag } from '@/ui/display/tag/components/Tag';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { RecordBoardCard } from '@/ui/object/record-board/components/RecordBoardCard';
 import { BoardCardIdContext } from '@/ui/object/record-board/contexts/BoardCardIdContext';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
@@ -74,6 +76,11 @@ const StyledNumChildren = styled.div`
   width: 16px;
 `;
 
+const StyledHeaderActions = styled.div`
+  display: flex;
+  margin-left: auto;
+`;
+
 type BoardColumnCardsContainerProps = {
   children: React.ReactNode;
   droppableProvided: DroppableProvided;
@@ -108,22 +115,22 @@ export const RecordBoardColumn = ({
 }: RecordBoardColumnProps) => {
   const column = useContext(BoardColumnContext);
 
-  const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] =
-    React.useState(false);
+  const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] = useState(false);
+  const [isHeaderHovered, setIsHeaderHovered] = useState(false);
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const handleTitleClick = () => {
+  const handleBoardColumnMenuOpen = () => {
     setIsBoardColumnMenuOpen(true);
     setHotkeyScopeAndMemorizePreviousScope(BoardColumnHotkeyScope.BoardColumn, {
       goto: false,
     });
   };
 
-  const handleClose = () => {
+  const handleBoardColumnMenuClose = () => {
     goBackToPreviousHotkeyScope();
     setIsBoardColumnMenuOpen(false);
   };
@@ -150,20 +157,39 @@ export const RecordBoardColumn = ({
     <Droppable droppableId={column.id}>
       {(droppableProvided) => (
         <StyledColumn isFirstColumn={isFirstColumn}>
-          <StyledHeader>
+          <StyledHeader
+            onMouseEnter={() => setIsHeaderHovered(true)}
+            onMouseLeave={() => setIsHeaderHovered(false)}
+          >
             <Tag
-              onClick={handleTitleClick}
+              onClick={handleBoardColumnMenuOpen}
               color={columnDefinition.colorCode ?? 'gray'}
               text={columnDefinition.title}
             />
             {!!boardColumnTotal && (
               <StyledAmount>${boardColumnTotal}</StyledAmount>
             )}
-            <StyledNumChildren>{cardIds.length}</StyledNumChildren>
+            {!isHeaderHovered && (
+              <StyledNumChildren>{cardIds.length}</StyledNumChildren>
+            )}
+            {isHeaderHovered && (
+              <StyledHeaderActions>
+                <LightIconButton
+                  accent="tertiary"
+                  Icon={IconDotsVertical}
+                  onClick={handleBoardColumnMenuOpen}
+                />
+                {/* <LightIconButton
+                  accent="tertiary"
+                  Icon={IconPlus}
+                  onClick={() => {}}
+                /> */}
+              </StyledHeaderActions>
+            )}
           </StyledHeader>
           {isBoardColumnMenuOpen && (
             <RecordBoardColumnDropdownMenu
-              onClose={handleClose}
+              onClose={handleBoardColumnMenuClose}
               onDelete={onDelete}
               onTitleEdit={handleTitleEdit}
               stageId={boardColumnId}

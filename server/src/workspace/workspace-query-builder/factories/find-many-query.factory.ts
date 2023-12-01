@@ -19,14 +19,14 @@ export class FindManyQueryFactory {
     private readonly argsStringFactory: ArgsStringFactory,
   ) {}
 
-  create<
+  async create<
     Filter extends RecordFilter = RecordFilter,
     OrderBy extends RecordOrderBy = RecordOrderBy,
   >(
     args: FindManyResolverArgs<Filter, OrderBy>,
     options: WorkspaceQueryBuilderOptions,
   ) {
-    const fieldsString = this.fieldsStringFactory.create(
+    const fieldsString = await this.fieldsStringFactory.create(
       options.info,
       options.fieldMetadataCollection,
     );

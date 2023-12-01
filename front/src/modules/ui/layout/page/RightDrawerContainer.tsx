@@ -1,25 +1,30 @@
+import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
 import { RightDrawer } from '@/ui/layout/right-drawer/components/RightDrawer';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 
 import { PagePanel } from './PagePanel';
 
 type RightDrawerContainerProps = {
-  children: JSX.Element | JSX.Element[];
-  topMargin?: number;
+  children: ReactNode;
 };
 
-const StyledMainContainer = styled.div<{ topMargin: number }>`
+const StyledMainContainer = styled.div`
   background: ${({ theme }) => theme.background.noisy};
+  box-sizing: border-box;
   display: flex;
-
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
-  height: calc(100% - ${(props) => props.topMargin}px);
-
+  height: 100%;
   padding-bottom: ${({ theme }) => theme.spacing(3)};
   padding-right: ${({ theme }) => theme.spacing(3)};
-  width: calc(100% - ${({ theme }) => theme.spacing(3)});
+  width: 100%;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    padding-left: ${({ theme }) => theme.spacing(3)};
+    padding-bottom: 0;
+  }
 `;
 
 type LeftContainerProps = {
@@ -35,9 +40,8 @@ const StyledLeftContainer = styled.div<LeftContainerProps>`
 
 export const RightDrawerContainer = ({
   children,
-  topMargin,
 }: RightDrawerContainerProps) => (
-  <StyledMainContainer topMargin={topMargin ?? 0}>
+  <StyledMainContainer>
     <StyledLeftContainer>
       <PagePanel>{children}</PagePanel>
     </StyledLeftContainer>

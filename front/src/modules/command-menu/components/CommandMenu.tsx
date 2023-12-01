@@ -124,7 +124,7 @@ export const CommandMenu = () => {
 
   const { records: people } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened,
-    objectNamePlural: 'people',
+    objectNameSingular: 'person',
     filter: {
       or: [
         { name: { firstName: { ilike: `%${search}%` } } },
@@ -136,7 +136,7 @@ export const CommandMenu = () => {
 
   const { records: companies } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened,
-    objectNamePlural: 'companies',
+    objectNameSingular: 'company',
     filter: {
       name: { ilike: `%${search}%` },
     },
@@ -145,7 +145,7 @@ export const CommandMenu = () => {
 
   const { records: activities } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened,
-    objectNamePlural: 'activities',
+    objectNameSingular: 'activity',
     filter: {
       or: [
         { title: { like: `%${search}%` } },

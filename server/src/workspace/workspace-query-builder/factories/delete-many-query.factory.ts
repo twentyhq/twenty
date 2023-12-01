@@ -11,8 +11,11 @@ import { FieldsStringFactory } from './fields-string.factory';
 export class DeleteManyQueryFactory {
   constructor(private readonly fieldsStringFactory: FieldsStringFactory) {}
 
-  create(args: DeleteManyResolverArgs, options: WorkspaceQueryBuilderOptions) {
-    const fieldsString = this.fieldsStringFactory.create(
+  async create(
+    args: DeleteManyResolverArgs,
+    options: WorkspaceQueryBuilderOptions,
+  ) {
+    const fieldsString = await this.fieldsStringFactory.create(
       options.info,
       options.fieldMetadataCollection,
     );

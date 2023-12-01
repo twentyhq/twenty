@@ -11,6 +11,7 @@ import {
   RelationDirection,
 } from 'src/workspace/utils/deduce-relation-direction.util';
 import { getFieldArgumentsByKey } from 'src/workspace/workspace-query-builder/utils/get-field-arguments-by-key.util';
+import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 
 import { FieldsStringFactory } from './fields-string.factory';
 import { ArgsStringFactory } from './args-string.factory';
@@ -23,6 +24,7 @@ export class RelationFieldAliasFactory {
     @Inject(forwardRef(() => FieldsStringFactory))
     private readonly fieldsStringFactory: FieldsStringFactory,
     private readonly argsStringFactory: ArgsStringFactory,
+    private readonly objectMetadataService: ObjectMetadataService,
   ) {}
 
   create(
@@ -30,7 +32,7 @@ export class RelationFieldAliasFactory {
     fieldValue: any,
     fieldMetadata: FieldMetadataInterface,
     info: GraphQLResolveInfo,
-  ) {
+  ): Promise<string> {
     if (!isRelationFieldMetadataType(fieldMetadata.type)) {
       throw new Error(`Field ${fieldMetadata.name} is not a relation field`);
     }
@@ -38,12 +40,12 @@ export class RelationFieldAliasFactory {
     return this.createRelationAlias(fieldKey, fieldValue, fieldMetadata, info);
   }
 
-  private createRelationAlias(
+  private async createRelationAlias(
     fieldKey: string,
     fieldValue: any,
     fieldMetadata: FieldMetadataInterface,
     info: GraphQLResolveInfo,
-  ) {
+  ): Promise<string> {
     const relationMetadata =
       fieldMetadata.fromRelationMetadata ?? fieldMetadata.toRelationMetadata;
 
@@ -53,14 +55,36 @@ export class RelationFieldAliasFactory {
       );
     }
 
+    if (!fieldMetadata.workspaceId) {
+      throw new Error(
+        `Workspace id not found for field ${fieldMetadata.name} in object metadata ${fieldMetadata.objectMetadataId}`,
+      );
+    }
+
     const relationDirection = deduceRelationDirection(
       fieldMetadata.objectMetadataId,
       relationMetadata,
     );
+    // Retrieve the referenced object metadata based on the relation direction
+    // Mandatory to handle n+n relations
     const referencedObjectMetadata =
-      relationDirection == RelationDirection.TO
-        ? relationMetadata.fromObjectMetadata
-        : relationMetadata.toObjectMetadata;
+      await this.objectMetadataService.findOneWithinWorkspace(
+        fieldMetadata.workspaceId,
+        {
+          where: {
+            id:
+              relationDirection == RelationDirection.TO
+                ? relationMetadata.fromObjectMetadataId
+                : relationMetadata.toObjectMetadataId,
+          },
+        },
+      );
+
+    if (!referencedObjectMetadata) {
+      throw new Error(
+        `Referenced object metadata not found for relation ${relationMetadata.id}`,
+      );
+    }
 
     // If it's a relation destination is of kind MANY, we need to add the collection suffix and extract the args
     if (
@@ -70,21 +94,26 @@ export class RelationFieldAliasFactory {
       const args = getFieldArgumentsByKey(info, fieldKey);
       const argsString = this.argsStringFactory.create(
         args,
-        relationMetadata.toObjectMetadata.fields ?? [],
+        referencedObjectMetadata.fields ?? [],
       );
+      const fieldsString =
+        await this.fieldsStringFactory.createFieldsStringRecursive(
+          info,
+          fieldValue,
+          referencedObjectMetadata.fields ?? [],
+        );
+
       return `
       ${fieldKey}: ${referencedObjectMetadata.targetTableName}Collection${
         argsString ? `(${argsString})` : ''
       } {
-        ${this.fieldsStringFactory.createFieldsStringRecursive(
-          info,
-          fieldValue,
-          relationMetadata.toObjectMetadata.fields ?? [],
-        )}
+        ${fieldsString}
       }
     `;
     }
-    let relationAlias = fieldMetadata.isCustom ? `_${fieldKey}` : fieldKey;
+    let relationAlias = fieldMetadata.isCustom
+      ? `${fieldKey}: ${fieldMetadata.targetColumnMap.value}`
+      : fieldKey;
 
     // For one to one relations, pg_graphql use the targetTableName on the side that is not storing the foreign key
     // so we need to alias it to the field key
@@ -94,15 +123,17 @@ export class RelationFieldAliasFactory {
     ) {
       relationAlias = `${fieldKey}: ${referencedObjectMetadata.targetTableName}`;
     }
+    const fieldsString =
+      await this.fieldsStringFactory.createFieldsStringRecursive(
+        info,
+        fieldValue,
+        referencedObjectMetadata.fields ?? [],
+      );
 
     // Otherwise it means it's a relation destination is of kind ONE
     return `
       ${relationAlias} {
-        ${this.fieldsStringFactory.createFieldsStringRecursive(
-          info,
-          fieldValue,
-          referencedObjectMetadata.fields ?? [],
-        )}
+        ${fieldsString}
       }
     `;
   }

@@ -49,7 +49,7 @@ const StyledEmptyTimelineSubTitle = styled.div`
 
 export const Timeline = ({ entity }: { entity: ActivityTargetableEntity }) => {
   const { records: activityTargets, loading } = useFindManyRecords({
-    objectNamePlural: 'activityTargets',
+    objectNameSingular: 'activityTarget',
     filter: {
       [entity.type === 'Company' ? 'companyId' : 'personId']: { eq: entity.id },
     },
@@ -57,7 +57,7 @@ export const Timeline = ({ entity }: { entity: ActivityTargetableEntity }) => {
 
   const { records: activities } = useFindManyRecords({
     skip: !activityTargets?.length,
-    objectNamePlural: 'activities',
+    objectNameSingular: 'activity',
     filter: {
       id: {
         in: activityTargets?.map((activityTarget) => activityTarget.activityId),
