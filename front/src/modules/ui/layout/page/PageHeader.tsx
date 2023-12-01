@@ -1,20 +1,14 @@
-import { ComponentProps, useCallback } from 'react';
+import { ComponentProps, ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { IconChevronLeft } from '@/ui/display/icon/index';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
-import {
-  IconButton,
-  IconButtonSize,
-} from '@/ui/input/button/components/IconButton';
-import NavCollapseButton from '@/ui/navigation/navbar/desktop-navbar/components/NavCollapseButton';
+import { IconButton } from '@/ui/input/button/components/IconButton';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-
-import { isNavbarOpenedState } from '../states/isNavbarOpenedState';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
@@ -31,6 +25,10 @@ const StyledTopBarContainer = styled.div`
   padding-left: 0;
   padding-right: ${({ theme }) => theme.spacing(3)};
   z-index: 20;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    padding-left: ${({ theme }) => theme.spacing(3)};
+  }
 `;
 
 const StyledLeftContainer = styled.div`
@@ -38,6 +36,12 @@ const StyledLeftContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(1)};
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    padding-left: ${({ theme }) => theme.spacing(1)};
+  }
 `;
 
 const StyledTitleContainer = styled.div`
@@ -47,24 +51,15 @@ const StyledTitleContainer = styled.div`
   max-width: 50%;
 `;
 
-const StyledTopBarButtonContainer = styled.div`
-  margin-left: ${({ theme }) => theme.spacing(1)};
-  margin-right: ${({ theme }) => theme.spacing(1)};
-`;
-
 const StyledBackIconButton = styled(IconButton)`
   margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledTopBarIconStyledTitleContainer = styled.div<{
-  hideLeftPadding?: boolean;
-}>`
+const StyledTopBarIconStyledTitleContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  padding-left: ${({ theme, hideLeftPadding }) =>
-    hideLeftPadding ? theme.spacing(2) : undefined};
-  width: 100%;
+  flex: 1 0 100%;
 `;
 
 const StyledPageActionContainer = styled.div`
@@ -76,7 +71,7 @@ type PageHeaderProps = ComponentProps<'div'> & {
   title: string;
   hasBackButton?: boolean;
   Icon: IconComponent;
-  children?: JSX.Element | JSX.Element[];
+  children?: ReactNode;
 };
 
 export const PageHeader = ({
@@ -87,32 +82,19 @@ export const PageHeader = ({
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
-  const navigateBack = useCallback(() => navigate(-1), [navigate]);
-
-  const isNavbarOpened = useRecoilValue(isNavbarOpenedState);
-
-  const iconSize: IconButtonSize = isMobile ? 'small' : 'medium';
   const theme = useTheme();
-
   return (
     <StyledTopBarContainer>
       <StyledLeftContainer>
-        {!isMobile && !isNavbarOpened && (
-          <StyledTopBarButtonContainer>
-            <NavCollapseButton direction="right" />
-          </StyledTopBarButtonContainer>
-        )}
         {hasBackButton && (
-          <StyledTopBarButtonContainer>
-            <StyledBackIconButton
-              Icon={IconChevronLeft}
-              size={iconSize}
-              onClick={navigateBack}
-              variant="tertiary"
-            />
-          </StyledTopBarButtonContainer>
+          <StyledBackIconButton
+            Icon={IconChevronLeft}
+            size={isMobile ? 'small' : 'medium'}
+            onClick={() => navigate(-1)}
+            variant="tertiary"
+          />
         )}
-        <StyledTopBarIconStyledTitleContainer hideLeftPadding={!hasBackButton}>
+        <StyledTopBarIconStyledTitleContainer>
           {Icon && <Icon size={theme.icon.size.md} />}
           <StyledTitleContainer data-testid="top-bar-title">
             <OverflowingTextWithTooltip text={title} />
