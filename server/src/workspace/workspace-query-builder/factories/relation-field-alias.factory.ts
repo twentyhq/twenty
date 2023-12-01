@@ -91,7 +91,6 @@ export class RelationFieldAliasFactory {
       relationMetadata.relationType === RelationMetadataType.ONE_TO_MANY &&
       relationDirection === RelationDirection.FROM
     ) {
-      console.log('1');
       const args = getFieldArgumentsByKey(info, fieldKey);
       const argsString = this.argsStringFactory.create(
         args,
@@ -122,7 +121,6 @@ export class RelationFieldAliasFactory {
       relationMetadata.relationType === RelationMetadataType.ONE_TO_ONE &&
       relationDirection === RelationDirection.FROM
     ) {
-      console.log('2');
       relationAlias = `${fieldKey}: ${referencedObjectMetadata.targetTableName}`;
     }
     const fieldsString =
@@ -131,8 +129,6 @@ export class RelationFieldAliasFactory {
         fieldValue,
         referencedObjectMetadata.fields ?? [],
       );
-
-    console.log('3');
 
     // Otherwise it means it's a relation destination is of kind ONE
     return `
