@@ -23,7 +23,7 @@ export const useOptimisticEffect = ({
   objectNameSingular: string | undefined;
 }) => {
   const apolloClient = useApolloClient();
-  const { findManyQuery } = useObjectMetadataItem({
+  const { findManyRecordsQuery } = useObjectMetadataItem({
     objectNameSingular,
   });
 
@@ -36,7 +36,7 @@ export const useOptimisticEffect = ({
         variables: OperationVariables;
         definition: OptimisticEffectDefinition;
       }) => {
-        if (findManyQuery === EMPTY_QUERY) {
+        if (findManyRecordsQuery === EMPTY_QUERY) {
           throw new Error(
             `Trying to register an optimistic effect for unknown object ${objectNameSingular}`,
           );
@@ -62,7 +62,7 @@ export const useOptimisticEffect = ({
         }) => {
           if (objectMetadataItem) {
             const existingData = cache.readQuery({
-              query: findManyQuery,
+              query: findManyRecordsQuery,
               variables,
             });
 
@@ -71,7 +71,7 @@ export const useOptimisticEffect = ({
             }
 
             cache.writeQuery({
-              query: findManyQuery,
+              query: findManyRecordsQuery,
               variables,
               data: {
                 [objectMetadataItem.namePlural]: definition.resolver({

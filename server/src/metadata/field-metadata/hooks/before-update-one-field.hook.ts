@@ -61,6 +61,8 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
 
     this.checkIfFieldIsEditable(instance.update, fieldMetadata);
 
+    instance.update.workspaceId = workspaceId;
+
     return instance;
   }
 

@@ -1,6 +1,5 @@
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
-
-import { useFilter } from '../hooks/useFilter';
+import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 
 export const ObjectFilterDropdownDateSearchInput = () => {
   const {
@@ -8,7 +7,7 @@ export const ObjectFilterDropdownDateSearchInput = () => {
     selectedOperandInDropdown,
     setIsObjectFilterDropdownUnfolded,
     selectFilter,
-  } = useFilter();
+  } = useFilterDropdown();
 
   const handleChange = (date: Date) => {
     if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) return;

@@ -3,6 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/testing-library';
 import { graphql } from 'msw';
 
+import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
 import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
@@ -26,6 +27,31 @@ const meta: Meta<PageDecoratorArgs> = {
           return res(
             ctx.data({
               currentUser: mockedOnboardingUsersData[0],
+            }),
+          );
+        },
+      ),
+      graphql.query(
+        getOperationName(GET_CLIENT_CONFIG) ?? '',
+        (req, res, ctx) => {
+          return res(
+            ctx.data({
+              clientConfig: {
+                signInPrefilled: true,
+                dataModelSettingsEnabled: true,
+                developersSettingsEnabled: true,
+                debugMode: false,
+                authProviders: {
+                  google: true,
+                  password: true,
+                  magicLink: false,
+                },
+                telemetry: { enabled: false, anonymizationEnabled: true },
+                support: {
+                  supportDriver: 'front',
+                  supportFrontChatId: null,
+                },
+              },
             }),
           );
         },

@@ -40,27 +40,27 @@ export const PageDecorator: Decorator<{
     <ApolloProvider client={mockedClient}>
       <ApolloMetadataClientProvider>
         <UserProvider>
-          <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-            <RelationPickerScope relationPickerScopeId="relation-picker">
-              <ClientConfigProvider>
-                <MemoryRouter
-                  initialEntries={[
-                    computeLocation(args.routePath, args.routeParams),
-                  ]}
-                >
-                  <FullHeightStorybookLayout>
-                    <HelmetProvider>
+          <ClientConfigProvider>
+            <MemoryRouter
+              initialEntries={[
+                computeLocation(args.routePath, args.routeParams),
+              ]}
+            >
+              <FullHeightStorybookLayout>
+                <HelmetProvider>
+                  <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+                    <RelationPickerScope relationPickerScopeId="relation-picker">
                       <DefaultLayout>
                         <Routes>
                           <Route path={args.routePath} element={<Story />} />
                         </Routes>
                       </DefaultLayout>
-                    </HelmetProvider>
-                  </FullHeightStorybookLayout>
-                </MemoryRouter>
-              </ClientConfigProvider>
-            </RelationPickerScope>
-          </SnackBarProviderScope>
+                    </RelationPickerScope>
+                  </SnackBarProviderScope>
+                </HelmetProvider>
+              </FullHeightStorybookLayout>
+            </MemoryRouter>
+          </ClientConfigProvider>
         </UserProvider>
       </ApolloMetadataClientProvider>
     </ApolloProvider>

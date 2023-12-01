@@ -13,6 +13,7 @@ import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
 
 type TaskGroupsProps = {
+  filterDropdownId?: string;
   entity?: ActivityTargetableEntity;
   showAddButton?: boolean;
 };
@@ -51,13 +52,17 @@ const StyledContainer = styled.div`
   flex-direction: column;
 `;
 
-export const TaskGroups = ({ entity, showAddButton }: TaskGroupsProps) => {
+export const TaskGroups = ({
+  filterDropdownId,
+  entity,
+  showAddButton,
+}: TaskGroupsProps) => {
   const {
     todayOrPreviousTasks,
     upcomingTasks,
     unscheduledTasks,
     completedTasks,
-  } = useTasks(entity);
+  } = useTasks({ filterDropdownId: filterDropdownId, entity });
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 

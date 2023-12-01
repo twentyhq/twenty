@@ -5,10 +5,10 @@ import { IconChevronDown } from '@/ui/display/icon/index';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
-import { useFilter } from '../hooks/useFilter';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
 import { GenericEntityFilterChip } from './GenericEntityFilterChip';
@@ -25,7 +25,7 @@ export const SingleEntityObjectFilterDropdownButton = ({
     selectedFilter,
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
-  } = useFilter();
+  } = useFilterDropdown();
 
   const availableFilter = availableFilterDefinitions[0];
 

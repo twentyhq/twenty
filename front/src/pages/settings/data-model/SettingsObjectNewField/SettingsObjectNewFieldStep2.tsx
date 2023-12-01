@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useCreateOneRelationMetadata } from '@/object-metadata/hooks/useCreateOneRelationMetadata';
+import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
-import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
-import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -20,6 +20,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const SettingsObjectNewFieldStep2 = () => {
@@ -36,6 +37,10 @@ export const SettingsObjectNewFieldStep2 = () => {
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
   const { createMetadataField } = useFieldMetadataItem();
+
+  const isRelationFieldTypeEnabled = useIsFeatureEnabled(
+    'IS_RELATION_FIELD_TYPE_ENABLED',
+  );
 
   const {
     formValues,
@@ -54,7 +59,8 @@ export const SettingsObjectNewFieldStep2 = () => {
     initForm({
       relation: {
         field: { icon: activeObjectMetadataItem.icon },
-        objectMetadataId: findObjectMetadataItemByNamePlural('people')?.id,
+        objectMetadataId:
+          findObjectMetadataItemByNamePlural('people')?.id || '',
       },
     });
   }, [
@@ -68,17 +74,17 @@ export const SettingsObjectNewFieldStep2 = () => {
   const [objectViews, setObjectViews] = useState<View[]>([]);
   const [relationObjectViews, setRelationObjectViews] = useState<View[]>([]);
 
-  const { createOneObject: createOneViewField } = useCreateOneObjectRecord({
+  const { createOneRecord: createOneViewField } = useCreateOneRecord({
     objectNameSingular: 'viewField',
   });
 
-  useFindManyObjectRecords({
+  useFindManyRecords({
     objectNamePlural: 'views',
     filter: {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: activeObjectMetadataItem?.id },
     },
-    onCompleted: async (data: PaginatedObjectTypeResults<View>) => {
+    onCompleted: async (data: PaginatedRecordTypeResults<View>) => {
       const views = data.edges;
 
       if (!views) return;
@@ -87,14 +93,14 @@ export const SettingsObjectNewFieldStep2 = () => {
     },
   });
 
-  useFindManyObjectRecords({
+  useFindManyRecords({
     objectNamePlural: 'views',
     skip: !formValues.relation?.objectMetadataId,
     filter: {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: formValues.relation?.objectMetadataId },
     },
-    onCompleted: async (data: PaginatedObjectTypeResults<View>) => {
+    onCompleted: async (data: PaginatedRecordTypeResults<View>) => {
       const views = data.edges;
 
       if (!views) return;
@@ -103,7 +109,8 @@ export const SettingsObjectNewFieldStep2 = () => {
     },
   });
 
-  const { createOneRelationMetadata } = useCreateOneRelationMetadata();
+  const { createOneRelationMetadataItem: createOneRelationMetadata } =
+    useCreateOneRelationMetadataItem();
 
   if (!activeObjectMetadataItem) return null;
 
@@ -175,6 +182,22 @@ export const SettingsObjectNewFieldStep2 = () => {
     }
   };
 
+  const excludedFieldTypes = [
+    FieldMetadataType.Currency,
+    FieldMetadataType.Email,
+    FieldMetadataType.Enum,
+    FieldMetadataType.Numeric,
+    FieldMetadataType.FullName,
+    FieldMetadataType.Link,
+    FieldMetadataType.Phone,
+    FieldMetadataType.Probability,
+    FieldMetadataType.Uuid,
+  ];
+
+  if (!isRelationFieldTypeEnabled) {
+    excludedFieldTypes.push(FieldMetadataType.Relation);
+  }
+
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
@@ -202,18 +225,7 @@ export const SettingsObjectNewFieldStep2 = () => {
           onChange={handleFormChange}
         />
         <SettingsObjectFieldTypeSelectSection
-          excludedFieldTypes={[
-            FieldMetadataType.Currency,
-            FieldMetadataType.Email,
-            FieldMetadataType.Enum,
-            FieldMetadataType.Numeric,
-            FieldMetadataType.FullName,
-            FieldMetadataType.Link,
-            FieldMetadataType.Phone,
-            FieldMetadataType.Probability,
-            FieldMetadataType.Relation,
-            FieldMetadataType.Uuid,
-          ]}
+          excludedFieldTypes={excludedFieldTypes}
           fieldMetadata={{
             icon: formValues.icon,
             label: formValues.label || 'Employees',
@@ -223,6 +235,7 @@ export const SettingsObjectNewFieldStep2 = () => {
           values={{
             type: formValues.type,
             relation: formValues.relation,
+            select: formValues.select,
           }}
         />
       </SettingsPageContainer>

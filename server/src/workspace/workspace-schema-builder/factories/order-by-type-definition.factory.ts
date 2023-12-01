@@ -3,10 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { GraphQLInputFieldConfigMap, GraphQLInputObjectType } from 'graphql';
 
 import { WorkspaceBuildSchemaOptions } from 'src/workspace/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
-import { ObjectMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/object-metadata.interface';
+import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
 
 import { pascalCase } from 'src/utils/pascal-case';
-import { isCompositeFieldMetadataType } from 'src/workspace/utils/is-composite-field-metadata-type.util';
+import { isRelationFieldMetadataType } from 'src/workspace/utils/is-relation-field-metadata-type.util';
 
 import {
   InputTypeDefinition,
@@ -44,8 +44,8 @@ export class OrderByTypeDefinitionFactory {
     const fields: GraphQLInputFieldConfigMap = {};
 
     for (const fieldMetadata of objectMetadata.fields) {
-      // Composite field types are generated during extension of object type definition
-      if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+      // Relation field types are generated during extension of object type definition
+      if (isRelationFieldMetadataType(fieldMetadata.type)) {
         continue;
       }
 

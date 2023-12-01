@@ -61,7 +61,6 @@ export const settingsFieldMetadataTypes: Record<
   [FieldMetadataType.Enum]: {
     label: 'Select',
     Icon: IconTag,
-    defaultValue: { color: 'green', text: 'Option 1' },
   },
   [FieldMetadataType.Currency]: {
     label: 'Currency',

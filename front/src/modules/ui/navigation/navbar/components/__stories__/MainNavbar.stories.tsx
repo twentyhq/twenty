@@ -11,6 +11,7 @@ import {
   IconUser,
 } from '@/ui/display/icon';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 import MainNavbar from '../MainNavbar';
 import NavItem from '../NavItem';
@@ -19,6 +20,7 @@ import NavTitle from '../NavTitle';
 const meta: Meta<typeof MainNavbar> = {
   title: 'UI/Navigation/Navbar/MainNavbar',
   component: MainNavbar,
+  decorators: [SnackBarDecorator],
 };
 
 export default meta;

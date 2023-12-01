@@ -39,8 +39,20 @@ export interface UpdateOneResolverArgs<Data extends Record = Record> {
   data: Data;
 }
 
+export interface UpdateManyResolverArgs<
+  Data extends Record = Record,
+  Filter = any,
+> {
+  filter: Filter;
+  data: Data;
+}
+
 export interface DeleteOneResolverArgs {
   id: string;
+}
+
+export interface DeleteManyResolverArgs<Filter = any> {
+  filter: Filter;
 }
 
 export type WorkspaceResolverBuilderQueryMethodNames =

@@ -4,12 +4,12 @@ import { GraphQLResolveInfo } from 'graphql';
 import graphqlFields from 'graphql-fields';
 import isEmpty from 'lodash.isempty';
 
-import { FieldMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/field-metadata.interface';
+import { FieldMetadataInterface } from 'src/metadata/field-metadata/interfaces/field-metadata.interface';
 
-import { isCompositeFieldMetadataType } from 'src/workspace/utils/is-composite-field-metadata-type.util';
+import { isRelationFieldMetadataType } from 'src/workspace/utils/is-relation-field-metadata-type.util';
 
 import { FieldAliasFacotry } from './field-alias.factory';
-import { CompositeFieldAliasFactory } from './composite-field-alias.factory';
+import { RelationFieldAliasFactory } from './relation-field-alias.factory';
 
 @Injectable()
 export class FieldsStringFactory {
@@ -17,7 +17,7 @@ export class FieldsStringFactory {
 
   constructor(
     private readonly fieldAliasFactory: FieldAliasFacotry,
-    private readonly compositeFieldAliasFactory: CompositeFieldAliasFactory,
+    private readonly relationFieldAliasFactory: RelationFieldAliasFactory,
   ) {}
 
   create(
@@ -52,9 +52,9 @@ export class FieldsStringFactory {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const fieldMetadata = fieldMetadataMap.get(fieldKey)!;
 
-        // If the field is a composite field, we need to create a special alias
-        if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-          const alias = this.compositeFieldAliasFactory.create(
+        // If the field is a relation field, we need to create a special alias
+        if (isRelationFieldMetadataType(fieldMetadata.type)) {
+          const alias = this.relationFieldAliasFactory.create(
             fieldKey,
             fieldValue,
             fieldMetadata,

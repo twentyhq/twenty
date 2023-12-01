@@ -38,12 +38,14 @@ export const RelationPicker = ({
     setRelationPickerSearchFilter(initialSearchFilter ?? '');
   }, [initialSearchFilter, setRelationPickerSearchFilter]);
 
-  const { findManyQuery } = useObjectMetadataItem({
+  // TODO: refactor useFilteredSearchEntityQuery
+  const { findManyRecordsQuery } = useObjectMetadataItem({
     objectNameSingular:
       fieldDefinition.metadata.relationObjectMetadataNameSingular,
   });
 
-  const useFindManyQuery = (options: any) => useQuery(findManyQuery, options);
+  const useFindManyQuery = (options: any) =>
+    useQuery(findManyRecordsQuery, options);
 
   const { identifiersMapper, searchQuery } = useRelationPicker();
 

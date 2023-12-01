@@ -26,7 +26,7 @@ const StyledContainer = styled.div<{ labelPosition?: LabelPosition }>`
     flex-direction: row;
   `};
   align-items: center;
-  display: flex;
+  display: inline-flex;
 `;
 
 type RadioInputProps = {

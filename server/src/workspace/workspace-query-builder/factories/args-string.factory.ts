@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/field-metadata.interface';
+import { FieldMetadataInterface } from 'src/metadata/field-metadata/interfaces/field-metadata.interface';
 
 import { stringifyWithoutKeyQuote } from 'src/workspace/workspace-query-builder/utils/stringify-without-key-quote.util';
 

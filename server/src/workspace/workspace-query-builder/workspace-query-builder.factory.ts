@@ -12,6 +12,8 @@ import {
   CreateManyResolverArgs,
   UpdateOneResolverArgs,
   DeleteOneResolverArgs,
+  UpdateManyResolverArgs,
+  DeleteManyResolverArgs,
 } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { FindManyQueryFactory } from './factories/find-many-query.factory';
@@ -19,6 +21,8 @@ import { FindOneQueryFactory } from './factories/find-one-query.factory';
 import { CreateManyQueryFactory } from './factories/create-many-query.factory';
 import { UpdateOneQueryFactory } from './factories/update-one-query.factory';
 import { DeleteOneQueryFactory } from './factories/delete-one-query.factory';
+import { UpdateManyQueryFactory } from './factories/update-many-query.factory';
+import { DeleteManyQueryFactory } from './factories/delete-many-query.factory';
 
 @Injectable()
 export class WorkspaceQueryBuilderFactory {
@@ -30,6 +34,8 @@ export class WorkspaceQueryBuilderFactory {
     private readonly createManyQueryFactory: CreateManyQueryFactory,
     private readonly updateOneQueryFactory: UpdateOneQueryFactory,
     private readonly deleteOneQueryFactory: DeleteOneQueryFactory,
+    private readonly updateManyQueryFactory: UpdateManyQueryFactory,
+    private readonly deleteManyQueryFactory: DeleteManyQueryFactory,
   ) {}
 
   findMany<
@@ -68,5 +74,22 @@ export class WorkspaceQueryBuilderFactory {
     options: WorkspaceQueryBuilderOptions,
   ): string {
     return this.deleteOneQueryFactory.create(args, options);
+  }
+
+  updateMany<
+    Record extends IRecord = IRecord,
+    Filter extends RecordFilter = RecordFilter,
+  >(
+    args: UpdateManyResolverArgs<Record, Filter>,
+    options: WorkspaceQueryBuilderOptions,
+  ): string {
+    return this.updateManyQueryFactory.create(args, options);
+  }
+
+  deleteMany<Filter extends RecordFilter = RecordFilter>(
+    args: DeleteManyResolverArgs<Filter>,
+    options: WorkspaceQueryBuilderOptions,
+  ): string {
+    return this.deleteManyQueryFactory.create(args, options);
   }
 }

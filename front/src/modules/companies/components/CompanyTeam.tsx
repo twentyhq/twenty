@@ -4,7 +4,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 
 import { Company } from '@/companies/types/Company';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { mapPaginatedObjectsToObjects } from '@/object-record/utils/mapPaginatedObjectsToObjects';
+import { mapPaginatedRecordsToRecords } from '@/object-record/utils/mapPaginatedRecordsToRecords';
 import { PeopleCard } from '@/people/components/PeopleCard';
 
 import { AddPersonToCompany } from './AddPersonToCompany';
@@ -47,11 +47,11 @@ const StyledTitle = styled.div`
 `;
 
 export const CompanyTeam = ({ company }: { company: any }) => {
-  const { findManyQuery } = useObjectMetadataItem({
+  const { findManyRecordsQuery } = useObjectMetadataItem({
     objectNameSingular: 'person',
   });
 
-  const { data } = useQuery(findManyQuery, {
+  const { data } = useQuery(findManyRecordsQuery, {
     variables: {
       filter: {
         companyId: {
@@ -61,9 +61,9 @@ export const CompanyTeam = ({ company }: { company: any }) => {
     },
   });
 
-  const people = mapPaginatedObjectsToObjects({
+  const people = mapPaginatedRecordsToRecords({
     objectNamePlural: 'people',
-    pagedObjects: data ?? [],
+    pagedRecords: data ?? [],
   });
 
   const peopleIds = people.map((person) => person.id);

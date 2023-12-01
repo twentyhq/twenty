@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-export const FIND_MANY_METADATA_OBJECTS = gql`
+export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
   query ObjectMetadataItems(
     $objectFilter: objectFilter
     $fieldFilter: fieldFilter

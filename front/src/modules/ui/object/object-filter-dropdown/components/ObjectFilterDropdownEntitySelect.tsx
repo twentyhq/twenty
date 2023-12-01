@@ -4,15 +4,14 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
 import { ObjectFilterDropdownEntitySearchSelect } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownEntitySearchSelect';
-
-import { useFilter } from '../hooks/useFilter';
+import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 
 export const ObjectFilterDropdownEntitySelect = () => {
   const {
     filterDefinitionUsedInDropdown,
     objectFilterDropdownSearchInput,
     objectFilterDropdownSelectedEntityId,
-  } = useFilter();
+  } = useFilterDropdown();
 
   const objectMetadataNameSingular =
     filterDefinitionUsedInDropdown?.relationObjectMetadataNameSingular ?? '';
@@ -20,11 +19,13 @@ export const ObjectFilterDropdownEntitySelect = () => {
   const objectMetadataNamePlural =
     filterDefinitionUsedInDropdown?.relationObjectMetadataNamePlural ?? '';
 
-  const { findManyQuery } = useObjectMetadataItem({
+  // TODO: refactor useFilteredSearchEntityQuery
+  const { findManyRecordsQuery } = useObjectMetadataItem({
     objectNameSingular: objectMetadataNameSingular,
   });
 
-  const useFindManyQuery = (options: any) => useQuery(findManyQuery, options);
+  const useFindManyQuery = (options: any) =>
+    useQuery(findManyRecordsQuery, options);
 
   const { identifiersMapper, searchQuery } = useRelationPicker();
 
