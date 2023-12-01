@@ -7,7 +7,8 @@ import { RecoilRoot } from 'recoil';
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
-import { ErrorBoundary } from '@/errors/components/ErrorBoundary';
+import { AppErrorBoundary } from '@/errors/components/AppErrorBoundary';
+import { PromiseRejectionEffect } from '@/errors/components/PromiseRejectionEffect';
 import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
@@ -31,8 +32,8 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <ErrorBoundary>
-    <RecoilRoot>
+  <RecoilRoot>
+    <AppErrorBoundary>
       <RecoilDebugObserverEffect />
       <BrowserRouter>
         <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
@@ -48,6 +49,7 @@ root.render(
                           <DialogManagerScope dialogManagerScopeId="dialog-manager">
                             <DialogManager>
                               <StrictMode>
+                                <PromiseRejectionEffect />
                                 <App />
                               </StrictMode>
                             </DialogManager>
@@ -62,8 +64,8 @@ root.render(
           </ApolloProvider>
         </SnackBarProviderScope>
       </BrowserRouter>
-    </RecoilRoot>
-  </ErrorBoundary>,
+    </AppErrorBoundary>
+  </RecoilRoot>,
 );
 
 declare module '@emotion/react' {

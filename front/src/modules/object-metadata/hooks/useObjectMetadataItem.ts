@@ -1,7 +1,9 @@
 import { gql } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
+import { ObjectMetadataItemNotFoundError } from '@/errors/classes/ObjectMetadataNotFoundError';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
 import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
@@ -36,9 +38,12 @@ export const useObjectMetadataItem = (
     }),
   );
 
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+
   if (!isDefined(objectMetadataItem)) {
-    throw new Error(
-      `Object metadata item not found for ${objectNameSingular} object`,
+    throw new ObjectMetadataItemNotFoundError(
+      objectNameSingular,
+      objectMetadataItems,
     );
   }
 
