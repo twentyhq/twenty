@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 
 import { mapBoardFieldDefinitionsToViewFields } from '@/companies/utils/mapBoardFieldDefinitionsToViewFields';
-import { BoardOptionsDropdownId } from '@/ui/object/record-board/components/constants/BoardOptionsDropdownId';
 import {
   RecordBoard,
   RecordBoardProps,
@@ -44,7 +43,7 @@ export const CompanyBoard = ({
         optionsDropdownButton={
           <RecordBoardOptionsDropdown recordBoardId={recordBoardId} />
         }
-        optionsDropdownScopeId={BoardOptionsDropdownId}
+        optionsDropdownScopeId={recordBoardId}
       />
       <HooksCompanyBoardEffect viewBarId={viewBarId} />
 

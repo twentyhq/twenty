@@ -1,12 +1,16 @@
 import { useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { availableBoardCardFieldsScopedState } from '@/ui/object/record-board/states/availableBoardCardFieldsScopedState';
+import { boardCardFieldsScopedState } from '@/ui/object/record-board/states/boardCardFieldsScopedState';
 import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedStateV2';
+import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { ViewType } from '@/views/types/ViewType';
+import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewFieldsToBoardFieldDefinitions';
 
 type HooksCompanyBoardEffectProps = {
   viewBarId: string;
@@ -68,16 +72,28 @@ export const HooksCompanyBoardEffect = ({
     setViewType?.(ViewType.Kanban);
   }, [objectMetadataItem, setViewObjectMetadataId, setViewType]);
 
-  // useEffect(() => {
-  //   if (currentViewFields) {
-  //     setBoardCardFields(
-  //       mapViewFieldsToBoardFieldDefinitions(
-  //         currentViewFields,
-  //         columnDefinitions,
-  //       ),
-  //     );
-  //   }
-  // }, [columnDefinitions, currentViewFields, setBoardCardFields]);
+  const { currentViewFieldsState } = useViewScopedStates({
+    viewScopeId: viewBarId,
+  });
+
+  const currentViewFields = useRecoilValue(currentViewFieldsState);
+
+  //TODO: Modify to use scopeId
+  const setBoardCardFields = useSetRecoilScopedStateV2(
+    boardCardFieldsScopedState,
+    'company-board',
+  );
+
+  useEffect(() => {
+    if (currentViewFields) {
+      setBoardCardFields(
+        mapViewFieldsToBoardFieldDefinitions(
+          currentViewFields,
+          columnDefinitions,
+        ),
+      );
+    }
+  }, [columnDefinitions, currentViewFields, setBoardCardFields]);
 
   return <></>;
 };
