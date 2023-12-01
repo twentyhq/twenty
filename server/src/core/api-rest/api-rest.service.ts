@@ -142,9 +142,26 @@ export class ApiRestService {
 
   computeDelete(objectMetadataItem) {
     return `
-      mutation ${capitalize(objectMetadataItem.nameSingular)}($id: ID!) {
+      mutation Delete${capitalize(objectMetadataItem.nameSingular)}($id: ID!) {
         delete${capitalize(objectMetadataItem.nameSingular)}(id: $id) {
           id
+        }
+      }
+    `;
+  }
+
+  computeCreate(objectMetadataItems, objectMetadataItem) {
+    return `
+      mutation Create${capitalize(
+        objectMetadataItem.nameSingular,
+      )}($data: CompanyCreateInput!) {
+        create${capitalize(objectMetadataItem.nameSingular)}(data: $data) {
+          id
+          ${objectMetadataItem.fields
+            .map((field) =>
+              this.mapFieldMetadataToGraphQLQuery(objectMetadataItems, field),
+            )
+            .join('\n')}
         }
       }
     `;
@@ -518,6 +535,20 @@ export class ApiRestService {
       query: this.computeDelete(objectMetadata.objectMetadataItem),
       variables: {
         id: this.parseObject(request)[1],
+      },
+    };
+    return await this.callGraphql(request, data);
+  }
+
+  async create(request: Request) {
+    const objectMetadata = await this.getObjectMetadata(request);
+    const data = {
+      query: this.computeCreate(
+        objectMetadata.objectMetadataItems,
+        objectMetadata.objectMetadataItem,
+      ),
+      variables: {
+        data: request.body,
       },
     };
     return await this.callGraphql(request, data);

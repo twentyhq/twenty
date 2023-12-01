@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Req } from '@nestjs/common';
+import { Controller, Delete, Get, Post, Req } from '@nestjs/common';
 
 import { Request } from 'express';
 
@@ -17,6 +17,12 @@ export class ApiRestController {
   @Delete()
   async handleApiDelete(@Req() request: Request): Promise<object> {
     const result = await this.apiRestService.delete(request);
+    return result.data;
+  }
+
+  @Post()
+  async handleApiPost(@Req() request: Request): Promise<object> {
+    const result = await this.apiRestService.create(request);
     return result.data;
   }
 }
