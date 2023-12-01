@@ -150,7 +150,11 @@ export class ApiRestService {
     `;
   }
 
-  computeCreateQuery(objectMetadataItems, objectMetadataItem) {
+  computeCreateQuery(
+    objectMetadataItems,
+    objectMetadataItem,
+    depth = DEFAULT_DEPTH_VALUE,
+  ) {
     return `
       mutation Create${capitalize(
         objectMetadataItem.nameSingular,
@@ -159,7 +163,11 @@ export class ApiRestService {
           id
           ${objectMetadataItem.fields
             .map((field) =>
-              this.mapFieldMetadataToGraphQLQuery(objectMetadataItems, field),
+              this.mapFieldMetadataToGraphQLQuery(
+                objectMetadataItems,
+                field,
+                depth,
+              ),
             )
             .join('\n')}
         }
@@ -167,7 +175,11 @@ export class ApiRestService {
     `;
   }
 
-  computeUpdateQuery(objectMetadataItems, objectMetadataItem) {
+  computeUpdateQuery(
+    objectMetadataItems,
+    objectMetadataItem,
+    depth = DEFAULT_DEPTH_VALUE,
+  ) {
     return `
       mutation Update${capitalize(
         objectMetadataItem.nameSingular,
@@ -178,7 +190,11 @@ export class ApiRestService {
           id
           ${objectMetadataItem.fields
             .map((field) =>
-              this.mapFieldMetadataToGraphQLQuery(objectMetadataItems, field),
+              this.mapFieldMetadataToGraphQLQuery(
+                objectMetadataItems,
+                field,
+                depth,
+              ),
             )
             .join('\n')}
         }
@@ -186,7 +202,32 @@ export class ApiRestService {
     `;
   }
 
-  computeGetQuery(
+  computeFindOneQuery(
+    objectMetadataItems,
+    objectMetadataItem,
+    depth = DEFAULT_DEPTH_VALUE,
+  ) {
+    return `
+      query FindOne${capitalize(objectMetadataItem.nameSingular)}(
+        $filter: ${capitalize(objectMetadataItem.nameSingular)}FilterInput!,
+        ) {
+        ${objectMetadataItem.nameSingular}(filter: $filter) {
+          id
+          ${objectMetadataItem.fields
+            .map((field) =>
+              this.mapFieldMetadataToGraphQLQuery(
+                objectMetadataItems,
+                field,
+                depth,
+              ),
+            )
+            .join('\n')}
+        }
+      }
+    `;
+  }
+
+  computeFindManyQuery(
     objectMetadataItems,
     objectMetadataItem,
     depth = DEFAULT_DEPTH_VALUE,
@@ -526,16 +567,26 @@ export class ApiRestService {
 
   async get(request: Request) {
     const objectMetadata = await this.getObjectMetadata(request);
+    const id = this.parseObject(request)[1];
+    const depth = this.computeDepth(request);
     const data = {
-      query: this.computeGetQuery(
-        objectMetadata.objectMetadataItems,
-        objectMetadata.objectMetadataItem,
-        this.computeDepth(request),
-      ),
-      variables: this.computeQueryVariables(
-        request,
-        objectMetadata.objectMetadataItem,
-      ),
+      query: id
+        ? this.computeFindOneQuery(
+            objectMetadata.objectMetadataItems,
+            objectMetadata.objectMetadataItem,
+            depth,
+          )
+        : this.computeFindManyQuery(
+            objectMetadata.objectMetadataItems,
+            objectMetadata.objectMetadataItem,
+            depth,
+          ),
+      variables: id
+        ? { filter: { id: { eq: id } } }
+        : this.computeQueryVariables(
+            request,
+            objectMetadata.objectMetadataItem,
+          ),
     };
     return await this.callGraphql(request, data);
   }
@@ -561,10 +612,12 @@ export class ApiRestService {
 
   async create(request: Request) {
     const objectMetadata = await this.getObjectMetadata(request);
+    const depth = this.computeDepth(request);
     const data = {
       query: this.computeCreateQuery(
         objectMetadata.objectMetadataItems,
         objectMetadata.objectMetadataItem,
+        depth,
       ),
       variables: {
         data: request.body,
@@ -575,6 +628,7 @@ export class ApiRestService {
 
   async update(request: Request) {
     const objectMetadata = await this.getObjectMetadata(request);
+    const depth = this.computeDepth(request);
     const id = this.parseObject(request)[1];
     if (!id) {
       return {
@@ -587,6 +641,7 @@ export class ApiRestService {
       query: this.computeUpdateQuery(
         objectMetadata.objectMetadataItems,
         objectMetadata.objectMetadataItem,
+        depth,
       ),
       variables: {
         id: this.parseObject(request)[1],
