@@ -11,7 +11,6 @@ import { savedCompaniesScopedState } from '@/ui/object/record-board/states/saved
 import { savedOpportunitiesScopedState } from '@/ui/object/record-board/states/savedOpportunitiesScopedState';
 import { savedPipelineStepsScopedState } from '@/ui/object/record-board/states/savedPipelineStepsScopedState';
 import { boardCardFieldsByKeyScopedSelector } from '@/ui/object/record-board/states/selectors/boardCardFieldsByKeyScopedSelector';
-import { canPersistBoardCardFieldsScopedFamilySelector } from '@/ui/object/record-board/states/selectors/canPersistBoardCardFieldsScopedFamilySelector';
 import { hiddenBoardCardFieldsScopedSelector } from '@/ui/object/record-board/states/selectors/hiddenBoardCardFieldsScopedSelector';
 import { selectedCardIdsScopedSelector } from '@/ui/object/record-board/states/selectors/selectedCardIdsScopedSelector';
 import { visibleBoardCardFieldsScopedSelector } from '@/ui/object/record-board/states/selectors/visibleBoardCardFieldsScopedSelector';
@@ -109,7 +108,6 @@ export const getRecordBoardScopedStates = ({
     boardSortsState,
     onFieldsChangeState,
     boardCardFieldsByKeySelector,
-    canPersistBoardCardFieldsScopedFamilySelector,
     hiddenBoardCardFieldsSelector,
     selectedCardIdsSelector,
     visibleBoardCardFieldsSelector,

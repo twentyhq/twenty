@@ -3,13 +3,12 @@ import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { RecordBoardScopeInternalContext } from '@/ui/object/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
+import { boardCardFieldsScopedState } from '@/ui/object/record-board/states/boardCardFieldsScopedState';
 import { onFieldsChangeScopedState } from '@/ui/object/record-board/states/onFieldsChangeScopedState';
-import { savedBoardCardFieldsFamilyState } from '@/ui/object/record-board/states/savedBoardCardFieldsFamilyState';
+import { savedBoardCardFieldsScopedState } from '@/ui/object/record-board/states/savedBoardCardFieldsScopedState';
 import { BoardFieldDefinition } from '@/ui/object/record-board/types/BoardFieldDefinition';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-
-import { boardCardFieldsFamilyState } from '../../states/boardCardFieldsFamilyState';
 
 type useBoardCardFieldsInternalProps = {
   recordBoardScopeId?: string;
@@ -24,11 +23,11 @@ export const useBoardCardFieldsInternal = (
   );
 
   const setBoardCardFields = useSetRecoilState(
-    boardCardFieldsFamilyState(scopeId),
+    boardCardFieldsScopedState({ scopeId }),
   );
 
   const setSavedBoardCardFields = useSetRecoilState(
-    savedBoardCardFieldsFamilyState(scopeId),
+    savedBoardCardFieldsScopedState({ scopeId }),
   );
 
   const handleFieldVisibilityChange = (
