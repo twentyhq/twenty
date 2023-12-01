@@ -551,7 +551,7 @@ export class ApiRestService {
 
   async callGraphql(request: Request, data) {
     return await axios.post(
-      `${this.environmentService.getInternalServerUrl()}/graphql`,
+      `${this.environmentService.getLocalServerUrl()}/graphql`,
       data,
       {
         headers: {

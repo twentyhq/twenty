@@ -61,7 +61,7 @@ export class EnvironmentVariables {
 
   // Server internal URL
   @IsUrl({ require_tld: false })
-  INTERNAL_SERVER_URL: string;
+  LOCAL_SERVER_URL: string;
 
   // Json Web Token
   @IsString()
