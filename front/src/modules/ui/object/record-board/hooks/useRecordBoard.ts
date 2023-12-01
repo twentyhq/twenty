@@ -1,8 +1,5 @@
 import { useSetRecoilState } from 'recoil';
 
-import { useBoardActionBarEntriesInternal } from '@/ui/object/record-board/hooks/internal/useBoardActionBarEntriesInternal';
-import { useBoardCardFieldsInternal } from '@/ui/object/record-board/hooks/internal/useBoardCardFieldsInternal';
-import { useBoardContextMenuEntriesInternal } from '@/ui/object/record-board/hooks/internal/useBoardContextMenuEntriesInternal';
 import { useCreateOpportunity } from '@/ui/object/record-board/hooks/internal/useCreateOpportunity';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 import { RecordBoardScopeInternalContext } from '@/ui/object/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
@@ -28,12 +25,6 @@ export const useRecordBoard = (props?: useRecordBoardProps) => {
 
   const createOpportunity = useCreateOpportunity();
 
-  const { setActionBarEntries } = useBoardActionBarEntriesInternal();
-  const { setContextMenuEntries } = useBoardContextMenuEntriesInternal();
-
-  const { handleFieldVisibilityChange, handleFieldsReorder } =
-    useBoardCardFieldsInternal();
-
   const setOnFieldsChange = useSetRecoilState(onFieldsChangeState);
 
   return {
@@ -41,10 +32,6 @@ export const useRecordBoard = (props?: useRecordBoardProps) => {
     setIsBoardLoaded,
     setBoardColumns,
     createOpportunity,
-    setActionBarEntries,
-    setContextMenuEntries,
-    handleFieldVisibilityChange,
-    handleFieldsReorder,
     setOnFieldsChange,
   };
 };

@@ -18,7 +18,7 @@ export const RecordBoardEffect = ({
   });
 
   useEffect(() => {
-    setOnFieldsChange(onFieldsChange);
+    setOnFieldsChange(() => onFieldsChange);
   }, [onFieldsChange, setOnFieldsChange]);
 
   return <></>;
