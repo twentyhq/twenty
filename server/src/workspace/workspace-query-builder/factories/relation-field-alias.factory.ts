@@ -55,20 +55,30 @@ export class RelationFieldAliasFactory {
       );
     }
 
+    if (!fieldMetadata.workspaceId) {
+      throw new Error(
+        `Workspace id not found for field ${fieldMetadata.name} in object metadata ${fieldMetadata.objectMetadataId}`,
+      );
+    }
+
     const relationDirection = deduceRelationDirection(
       fieldMetadata.objectMetadataId,
       relationMetadata,
     );
     // Retrieve the referenced object metadata based on the relation direction
     // Mandatory to handle n+n relations
-    const referencedObjectMetadata = await this.objectMetadataService.findOne({
-      where: {
-        id:
-          relationDirection == RelationDirection.TO
-            ? relationMetadata.fromObjectMetadataId
-            : relationMetadata.toObjectMetadataId,
-      },
-    });
+    const referencedObjectMetadata =
+      await this.objectMetadataService.findOneWithinWorkspace(
+        fieldMetadata.workspaceId,
+        {
+          where: {
+            id:
+              relationDirection == RelationDirection.TO
+                ? relationMetadata.fromObjectMetadataId
+                : relationMetadata.toObjectMetadataId,
+          },
+        },
+      );
 
     if (!referencedObjectMetadata) {
       throw new Error(

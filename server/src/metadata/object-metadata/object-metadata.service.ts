@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { FindOneOptions, FindOptionsWhere, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 
 import { WorkspaceMigrationService } from 'src/metadata/workspace-migration/workspace-migration.service';
@@ -299,11 +299,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     return createdObjectMetadata;
   }
 
-  public async findOne(
+  public async findOneWithinWorkspace(
+    workspaceId: string,
     options: FindOneOptions<ObjectMetadataEntity>,
   ): Promise<ObjectMetadataEntity | null> {
     return this.objectMetadataRepository.findOne({
       ...options,
+      where: {
+        ...options.where,
+        workspaceId,
+      },
       relations: [
         'fields',
         'fields.fromRelationMetadata',
@@ -312,27 +317,21 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     });
   }
 
-  public async findMany(
-    where:
-      | FindOptionsWhere<ObjectMetadataEntity>[]
-      | FindOptionsWhere<ObjectMetadataEntity>,
+  public async findManyWithinWorkspace(
+    workspaceId: string,
+    options?: FindManyOptions<ObjectMetadataEntity>,
   ) {
     return this.objectMetadataRepository.find({
-      where,
+      ...options,
+      where: {
+        ...options?.where,
+        workspaceId,
+      },
       relations: [
         'fields',
         'fields.fromRelationMetadata',
         'fields.toRelationMetadata',
       ],
-    });
-  }
-
-  public async findOneWithinWorkspace(
-    objectMetadataId: string,
-    workspaceId: string,
-  ) {
-    return this.objectMetadataRepository.findOne({
-      where: { id: objectMetadataId, workspaceId },
     });
   }
 

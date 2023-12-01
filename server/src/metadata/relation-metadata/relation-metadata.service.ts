@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { In, Repository } from 'typeorm';
+import { FindOneOptions, In, Repository } from 'typeorm';
 import camelCase from 'lodash.camelcase';
 
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
@@ -85,10 +85,15 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
      * FROM --- TO (host the id in the TO table)
      */
 
-    const objectMetadataEntries = await this.objectMetadataService.findMany({
-      id: In([record.fromObjectMetadataId, record.toObjectMetadataId]),
-      workspaceId: record.workspaceId,
-    });
+    const objectMetadataEntries =
+      await this.objectMetadataService.findManyWithinWorkspace(
+        record.workspaceId,
+        {
+          where: {
+            id: In([record.fromObjectMetadataId, record.toObjectMetadataId]),
+          },
+        },
+      );
 
     const objectMetadataMap = objectMetadataEntries.reduce((acc, curr) => {
       acc[curr.id] = curr;
@@ -214,11 +219,15 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
   }
 
   public async findOneWithinWorkspace(
-    relationMetadataId: string,
     workspaceId: string,
+    options: FindOneOptions<RelationMetadataEntity>,
   ) {
     return this.relationMetadataRepository.findOne({
-      where: { id: relationMetadataId, workspaceId },
+      ...options,
+      where: {
+        ...options.where,
+        workspaceId,
+      },
       relations: ['fromFieldMetadata', 'toFieldMetadata'],
     });
   }

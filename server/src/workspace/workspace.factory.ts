@@ -50,9 +50,8 @@ export class WorkspaceFactory {
 
     // If object metadata is not cached, get it from the database
     if (!objectMetadataCollection) {
-      objectMetadataCollection = await this.objectMetadataService.findMany({
-        workspaceId,
-      });
+      objectMetadataCollection =
+        await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
       await this.workspaceSchemaStorageService.setObjectMetadata(
         workspaceId,

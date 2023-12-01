@@ -31,10 +31,11 @@ export class BeforeUpdateOneField<T extends UpdateFieldInput>
     }
 
     const fieldMetadata =
-      await this.fieldMetadataService.findOneWithinWorkspace(
-        instance.id.toString(),
-        workspaceId,
-      );
+      await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
+        where: {
+          id: instance.id.toString(),
+        },
+      });
 
     if (!fieldMetadata) {
       throw new BadRequestException('Field does not exist');
