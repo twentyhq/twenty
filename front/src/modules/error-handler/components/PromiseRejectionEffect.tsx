@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 
-import { ObjectMetadataItemNotFoundError } from '@/errors/classes/ObjectMetadataNotFoundError';
+import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 export const PromiseRejectionEffect = () => {

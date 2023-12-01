@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
-import { ObjectMetadataItemNotFoundError } from '@/errors/classes/ObjectMetadataNotFoundError';
+import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';

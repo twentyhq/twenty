@@ -1,7 +1,7 @@
 import { ErrorInfo, ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
-import { GenericErrorFallback } from '@/errors/components/GenericErrorFallback';
+import { GenericErrorFallback } from '@/error-handler/components/GenericErrorFallback';
 
 export const AppErrorBoundary = ({ children }: { children: ReactNode }) => {
   const handleError = (error: Error, info: ErrorInfo) => {
