@@ -15,7 +15,7 @@ const StyledContainer = styled.div`
 
 export const SignInBackgroundMockContainer = () => {
   const recordTableId = 'companies';
-  const viewBarId = 'companies';
+  const viewBarId = 'companies-mock';
 
   return (
     <StyledContainer>

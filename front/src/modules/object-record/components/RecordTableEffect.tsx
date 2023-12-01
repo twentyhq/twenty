@@ -17,6 +17,7 @@ export const RecordTableEffect = ({
   viewBarId: string;
 }) => {
   const {
+    // Todo: do not infer objectNamePlural from recordTableId
     scopeId: objectNamePlural,
     setAvailableTableColumns,
     setOnEntityCountChange,

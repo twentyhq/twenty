@@ -3,7 +3,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { IconHeart, IconHeartOff, IconTrash } from '@/ui/display/icon';
@@ -41,10 +40,6 @@ export const useRecordTableContextMenuEntries = (
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
-  });
-
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
   });
 
   const { createFavorite, deleteFavorite, favorites } = useFavorites({

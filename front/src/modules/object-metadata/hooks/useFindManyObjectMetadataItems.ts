@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { useQuery } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
-import { isMockModeState } from '@/object-metadata/states/isMockModeState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
@@ -63,14 +62,8 @@ export const useFindManyObjectMetadataItems = ({
             .getLoadable(objectMetadataItemsState)
             .getValue();
 
-          const isMockMode = snapshot.getLoadable(isMockModeState).getValue();
-
-          if (
-            isMockMode ||
-            !isDeeplyEqual(objectMetadataItems, actualObjectMetadataItems)
-          ) {
+          if (!isDeeplyEqual(objectMetadataItems, actualObjectMetadataItems)) {
             set(objectMetadataItemsState, objectMetadataItems);
-            set(isMockModeState, false);
           }
         },
       [],

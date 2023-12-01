@@ -2,11 +2,11 @@ import { useCallback, useMemo } from 'react';
 import { useQuery } from '@apollo/client';
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { isMockModeState } from '@/object-metadata/states/isMockModeState';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
@@ -68,13 +68,12 @@ export const useFindManyRecords = <
   });
 
   const { enqueueSnackBar } = useSnackBar();
-
-  const [isMockMode] = useRecoilState(isMockModeState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const { data, loading, error, fetchMore } = useQuery<
     PaginatedRecordType<RecordType>
   >(findManyRecordsQuery, {
-    skip: skip || !objectMetadataItem || isMockMode,
+    skip: skip || !objectMetadataItem || !currentWorkspace,
     variables: {
       filter: filter ?? {},
       limit: limit,

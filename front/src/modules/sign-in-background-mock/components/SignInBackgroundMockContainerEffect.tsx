@@ -54,7 +54,7 @@ export const SignInBackgroundMockContainerEffect = ({
   } = useViewBar({ viewBarId: viewId });
 
   useEffect(() => {
-    setViewObjectMetadataId?.('company-mock-object-metadata-id');
+    setViewObjectMetadataId?.(objectMetadataItem.id);
     setViewType?.(ViewType.Table);
 
     setAvailableSortDefinitions?.(signInBackgroundMockSortDefinitions);

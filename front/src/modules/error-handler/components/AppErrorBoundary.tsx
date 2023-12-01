@@ -4,9 +4,8 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { GenericErrorFallback } from '@/error-handler/components/GenericErrorFallback';
 
 export const AppErrorBoundary = ({ children }: { children: ReactNode }) => {
-  const handleError = (error: Error, info: ErrorInfo) => {
+  const handleError = (_error: Error, _info: ErrorInfo) => {
     // TODO: log error to Sentry
-    console.error('error', error, info);
   };
 
   return (

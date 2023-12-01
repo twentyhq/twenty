@@ -1,3 +1,5 @@
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+
 export const getObjectMetadataItemsMock = () => {
   const mockArray = [
     {
@@ -3669,5 +3671,6 @@ export const getObjectMetadataItemsMock = () => {
     },
   ];
 
-  return mockArray;
+  // Todo fix typing here (the backend is not in sync with the frontend)
+  return mockArray as ObjectMetadataItem[];
 };

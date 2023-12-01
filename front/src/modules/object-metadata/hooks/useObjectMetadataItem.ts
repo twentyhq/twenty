@@ -1,9 +1,11 @@
 import { gql } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
 import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
@@ -31,14 +33,26 @@ export const useObjectMetadataItem = (
   { objectNameSingular }: ObjectMetadataItemIdentifier,
   depth?: number,
 ) => {
-  const objectMetadataItem = useRecoilValue(
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const mockObjectMetadataItems = getObjectMetadataItemsMock();
+
+  let objectMetadataItem = useRecoilValue(
     objectMetadataItemFamilySelector({
       objectName: objectNameSingular,
       objectNameType: 'singular',
     }),
   );
 
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  let objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+
+  if (!currentWorkspace) {
+    objectMetadataItem =
+      mockObjectMetadataItems.find(
+        (objectMetadataItem) =>
+          objectMetadataItem.nameSingular === objectNameSingular,
+      ) ?? null;
+    objectMetadataItems = mockObjectMetadataItems;
+  }
 
   if (!isDefined(objectMetadataItem)) {
     throw new ObjectMetadataItemNotFoundError(

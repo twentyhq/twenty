@@ -16,9 +16,6 @@ export const ObjectFilterDropdownEntitySelect = () => {
   const objectMetadataNameSingular =
     filterDefinitionUsedInDropdown?.relationObjectMetadataNameSingular ?? '';
 
-  const objectMetadataNamePlural =
-    filterDefinitionUsedInDropdown?.relationObjectMetadataNamePlural ?? '';
-
   // TODO: refactor useFilteredSearchEntityQuery
   const { findManyRecordsQuery } = useObjectMetadataItem({
     objectNameSingular: objectMetadataNameSingular,
