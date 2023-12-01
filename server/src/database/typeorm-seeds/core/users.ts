@@ -1,5 +1,4 @@
 import { DataSource } from 'typeorm';
-import { v4 as uuidv4 } from 'uuid';
 
 // import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
@@ -30,7 +29,7 @@ export const seedUsers = async (
     .orIgnore()
     .values([
       {
-        id: uuidv4(),
+        id: SeedUserIds.Tim,
         firstName: 'Tim',
         lastName: 'Apple',
         email: 'tim@apple.dev',
@@ -39,7 +38,7 @@ export const seedUsers = async (
         defaultWorkspaceId: workspaceId,
       },
       {
-        id: uuidv4(),
+        id: SeedUserIds.Jony,
         firstName: 'Jony',
         lastName: 'Ive',
         email: 'jony.ive@apple.dev',
@@ -49,7 +48,7 @@ export const seedUsers = async (
       },
       ,
       {
-        id: uuidv4(),
+        id: SeedUserIds.Phil,
         firstName: 'Phil',
         lastName: 'Schiler',
         email: 'phil.schiler@apple.dev',
