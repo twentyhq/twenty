@@ -5,7 +5,6 @@ import { useRecoilValue } from 'recoil';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { CommandMenuSelectableListEffect } from '@/command-menu/components/CommandMenuSelectableListEffect';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
-import { isKeyboardShortcutMenuOpenedState } from '@/keyboard-shortcut-menu/states/isKeyboardShortcutMenuOpenedState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Person } from '@/people/types/Person';
 import { IconNotes } from '@/ui/display/icon';
@@ -92,9 +91,7 @@ export const CommandMenu = () => {
   const [search, setSearch] = useState('');
   const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
-  const isKeyboardShortcutMenuOpened = useRecoilValue(
-    isKeyboardShortcutMenuOpenedState,
-  );
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
   };
@@ -102,9 +99,7 @@ export const CommandMenu = () => {
   useScopedHotkeys(
     'ctrl+k,meta+k',
     () => {
-      if (isKeyboardShortcutMenuOpened === true) {
-        closeKeyboardShortcutMenu();
-      }
+      closeKeyboardShortcutMenu();
       setSearch('');
       toggleCommandMenu();
     },
@@ -116,6 +111,7 @@ export const CommandMenu = () => {
     'esc',
     () => {
       setSearch('');
+      closeKeyboardShortcutMenu();
       closeCommandMenu();
     },
     AppHotkeyScope.CommandMenu,
