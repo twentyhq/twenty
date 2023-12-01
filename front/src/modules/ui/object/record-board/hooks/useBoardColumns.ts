@@ -2,7 +2,7 @@ import { useRecoilState } from 'recoil';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
-import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/useRecordBoardScopedStates';
+import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
