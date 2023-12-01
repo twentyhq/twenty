@@ -90,6 +90,16 @@ export const Number: Story = {
   },
 };
 
+export const Rating: Story = {
+  args: {
+    fieldMetadata: {
+      icon: 'IconHandClick',
+      label: 'Engagement',
+      type: FieldMetadataType.Probability,
+    },
+  },
+};
+
 export const Relation: Story = {
   decorators: [
     (Story) => (

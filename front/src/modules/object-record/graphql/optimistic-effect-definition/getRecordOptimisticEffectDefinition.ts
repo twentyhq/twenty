@@ -2,7 +2,7 @@ import { produce } from 'immer';
 
 import { OptimisticEffectDefinition } from '@/apollo/optimistic-effect/types/OptimisticEffectDefinition';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
+import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const getRecordOptimisticEffectDefinition = ({
@@ -21,8 +21,8 @@ export const getRecordOptimisticEffectDefinition = ({
       newData: unknown;
     }) => {
       const newRecordPaginatedCacheField = produce<
-        PaginatedObjectTypeResults<any>
-      >(currentData as PaginatedObjectTypeResults<any>, (draft) => {
+        PaginatedRecordTypeResults<any>
+      >(currentData as PaginatedRecordTypeResults<any>, (draft) => {
         if (!draft) {
           return {
             edges: [{ node: newData, cursor: '' }],

@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectRecordTable } from '@/object-record/hooks/useObjectRecordTable';
-import { isFetchingMoreObjectsFamilyState } from '@/object-record/states/isFetchingMoreObjectsFamilyState';
+import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { isDefined } from '~/utils/isDefined';
 
 import { RowIdContext } from '../contexts/RowIdContext';
@@ -29,14 +29,14 @@ export const RecordTableBody = () => {
   );
 
   const [isFetchingMoreObjects] = useRecoilState(
-    isFetchingMoreObjectsFamilyState(foundObjectMetadataItem?.namePlural),
+    isFetchingMoreRecordsFamilyState(foundObjectMetadataItem?.namePlural),
   );
 
   const isFetchingRecordTableData = useRecoilValue(
     isFetchingRecordTableDataState,
   );
 
-  const { fetchMoreObjects } = useObjectRecordTable();
+  const { fetchMoreRecords: fetchMoreObjects } = useObjectRecordTable();
 
   useEffect(() => {
     if (lastTableRowIsVisible && isDefined(fetchMoreObjects)) {

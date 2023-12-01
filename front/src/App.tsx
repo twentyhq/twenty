@@ -22,7 +22,7 @@ import { SettingsObjects } from '~/pages/settings/data-model/SettingsObjects';
 import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail';
 import { SettingsDevelopersApiKeys } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeys';
 import { SettingsDevelopersApiKeysNew } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew';
-import { SettingsExperience } from '~/pages/settings/SettingsExperience';
+import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
@@ -66,8 +66,8 @@ export const App = () => {
                   element={<SettingsProfile />}
                 />
                 <Route
-                  path={SettingsPath.Experience}
-                  element={<SettingsExperience />}
+                  path={SettingsPath.Appearance}
+                  element={<SettingsAppearance />}
                 />
                 <Route
                   path={SettingsPath.WorkspaceMembersPage}

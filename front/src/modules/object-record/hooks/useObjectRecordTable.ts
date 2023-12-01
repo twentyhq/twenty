@@ -9,10 +9,10 @@ import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 
 import { getRecordOptimisticEffectDefinition } from '../graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
 
-import { useFindManyObjectRecords } from './useFindManyObjectRecords';
+import { useFindManyRecords } from './useFindManyRecords';
 
 export const useObjectRecordTable = () => {
-  const { scopeId: objectNamePlural } = useRecordTable();
+  const { scopeId: objectNamePlural, setRecordTableData } = useRecordTable();
 
   const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
     {
@@ -23,8 +23,6 @@ export const useObjectRecordTable = () => {
   const { registerOptimisticEffect } = useOptimisticEffect({
     objectNameSingular: foundObjectMetadataItem?.nameSingular,
   });
-
-  const { setRecordTableData } = useRecordTable();
 
   const { tableFiltersState, tableSortsState } = useRecordTableScopedStates();
 
@@ -40,7 +38,7 @@ export const useObjectRecordTable = () => {
     foundObjectMetadataItem?.fields ?? [],
   );
 
-  const { objects, loading, fetchMoreObjects } = useFindManyObjectRecords({
+  const { records, loading, fetchMoreRecords } = useFindManyRecords({
     objectNamePlural,
     filter,
     orderBy,
@@ -61,8 +59,8 @@ export const useObjectRecordTable = () => {
   });
 
   return {
-    objects,
+    records,
     loading,
-    fetchMoreObjects,
+    fetchMoreRecords,
   };
 };

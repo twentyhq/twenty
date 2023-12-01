@@ -6,6 +6,7 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 
+import { GraphQLJSON } from 'graphql-type-json';
 import {
   Authorize,
   BeforeDeleteOne,
@@ -14,6 +15,9 @@ import {
   QueryOptions,
   Relation,
 } from '@ptc-org/nestjs-query-graphql';
+
+import { FieldMetadataOptions } from 'src/metadata/field-metadata/interfaces/field-metadata-options.interface';
+import { FieldMetadataDefaultValue } from 'src/metadata/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { RelationMetadataDTO } from 'src/metadata/relation-metadata/dtos/relation-metadata.dto';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
@@ -75,6 +79,12 @@ export class FieldMetadataDTO {
 
   @Field()
   isNullable: boolean;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  defaultValue?: FieldMetadataDefaultValue;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  options?: FieldMetadataOptions;
 
   @HideField()
   workspaceId: string;

@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
 
+import { RecordTableHeader } from '@/ui/object/record-table/components/RecordTableHeader';
 import { RecordTableInternalEffect } from '@/ui/object/record-table/components/RecordTableInternalEffect';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
@@ -13,7 +14,6 @@ import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinit
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
 
 import { RecordTableBody } from './RecordTableBody';
-import { RecordTableHeader } from './RecordTableHeader';
 
 const StyledTable = styled.table`
   border-collapse: collapse;
@@ -77,13 +77,15 @@ const StyledTableContainer = styled.div`
 type RecordTableProps = {
   recordTableId: string;
   viewBarId: string;
-  updateEntityMutation: (params: any) => void;
+  updateRecordMutation: (params: any) => void;
+  createRecord: () => void;
 };
 
 export const RecordTable = ({
+  updateRecordMutation,
+  createRecord,
   recordTableId,
   viewBarId,
-  updateEntityMutation,
 }: RecordTableProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
@@ -100,12 +102,12 @@ export const RecordTable = ({
       })}
     >
       <ScrollWrapper>
-        <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
+        <EntityUpdateMutationContext.Provider value={updateRecordMutation}>
           <StyledTableWithHeader>
             <StyledTableContainer>
               <div ref={tableBodyRef}>
                 <StyledTable className="entity-table-cell">
-                  <RecordTableHeader />
+                  <RecordTableHeader createRecord={createRecord} />
                   <RecordTableBody />
                 </StyledTable>
                 <DragSelect

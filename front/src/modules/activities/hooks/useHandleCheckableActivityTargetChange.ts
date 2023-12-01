@@ -1,6 +1,6 @@
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
-import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
-import { useDeleteOneObjectRecord } from '@/object-record/hooks/useDeleteOneObjectRecord';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 
 export const useHandleCheckableActivityTargetChange = ({
   activityId,
@@ -9,10 +9,11 @@ export const useHandleCheckableActivityTargetChange = ({
   activityId: string;
   currentActivityTargets: any[];
 }) => {
-  const { createOneObject } = useCreateOneObjectRecord<ActivityTarget>({
-    objectNameSingular: 'activityTarget',
-  });
-  const { deleteOneObject } = useDeleteOneObjectRecord({
+  const { createOneRecord: createOneActivityTarget } =
+    useCreateOneRecord<ActivityTarget>({
+      objectNameSingular: 'activityTarget',
+    });
+  const { deleteOneRecord: deleteOneActivityTarget } = useDeleteOneRecord({
     objectNameSingular: 'activityTarget',
   });
 
@@ -54,7 +55,7 @@ export const useHandleCheckableActivityTargetChange = ({
           : null;
 
         const entity = entityFromToSelect ?? entityFromSelected;
-        createOneObject?.({
+        createOneActivityTarget?.({
           activityId: activityId,
           companyId: entity.record.__typename === 'Company' ? entity.id : null,
           personId: entity.record.__typename === 'Person' ? entity.id : null,
@@ -67,7 +68,7 @@ export const useHandleCheckableActivityTargetChange = ({
         const currentActivityTargetId = currentActivityTargets.filter(
           ({ companyId, personId }) => companyId === id || personId === id,
         )[0].id;
-        deleteOneObject?.(currentActivityTargetId);
+        deleteOneActivityTarget?.(currentActivityTargetId);
       });
     }
   };
