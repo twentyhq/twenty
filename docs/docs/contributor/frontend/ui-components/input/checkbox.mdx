@@ -11,7 +11,8 @@ import TabItem from '@theme/TabItem';
 import { SandpackEditor} from '@site/src/ui/SandpackEditor'
 import checkboxCode from '!!raw-loader!@site/src/ui/input/components/checkboxCode.js'
 
-Used when a user needs to select multiple values from several options.
+
+Allows users to select one or more options from a list of options, turn something on or off, or agree to terms and conditions. 
 
 <Tabs>
 <TabItem value="usage" label="Usage" default>
@@ -91,3 +92,50 @@ Used when a user needs to select multiple values from several options.
 </TabItem>
 
 </Tabs>
+
+## When to use
+
+Use checkboxes to: 
+
+- Allow users to select one or more options from a list of options or to indicate whether they agree to the terms & conditions  
+- Get the user's explicit confirmation to apply certain settings
+- Filter data and for batch editing 
+
+## When not to use 
+
+Avoid using checkboxes when:
+
+- You want to allow users to turn an option on or off. Use a toggle instead.
+- Users can only select one option from a list. Use radio buttons instead. 
+
+## Anatomy
+
+The Checkbox component comprises of a container and the icon. 
+
+<div style={{textAlign: 'center'}}>
+    <img src="/img/ui-components/checkbox/checkbox-anatomy.png" alt="Checkbox Anatomy" />
+</div>
+
+## 
+
+## Behavior 
+
+Checkboxes can either be checked, unchecked, or indeterminate. 
+
+<div style={{textAlign: 'center'}}>
+    <img src="/img/ui-components/checkbox/checkbox-behavior.png" alt="Checkbox Behavior" />
+</div>
+
+## Variants 
+
+The Checkbox component has two shapes and three style variants:
+
+<div style={{textAlign: 'center'}}>
+    <img src="/img/ui-components/checkbox/checkbox-variants.png" alt="Checkbox Variants" />
+</div>
+
+And two size variants:
+
+<div style={{textAlign: 'center'}}>
+    <img src="/img/ui-components/checkbox/checkbox-sizes.png" alt="Checkbox Sizes" />
+</div>
