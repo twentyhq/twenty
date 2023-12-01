@@ -1,95 +1,69 @@
+import { plainToInstance } from 'class-transformer';
+import { validateSync } from 'class-validator';
+
 import { FieldMetadataDefaultValue } from 'src/metadata/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import {
+  FieldMetadataDefaultValueBoolean,
+  FieldMetadataDefaultValueCurrency,
+  FieldMetadataDefaultValueDateTime,
+  FieldMetadataDefaultValueFullName,
+  FieldMetadataDefaultValueLink,
+  FieldMetadataDefaultValueNumber,
+  FieldMetadataDefaultValueString,
+  FieldMetadataDefaultValueStringArray,
+  FieldMetadataDynamicDefaultValueNow,
+  FieldMetadataDynamicDefaultValueUuid,
+} from 'src/metadata/field-metadata/dtos/default-value.input';
+
+export const defaultValueValidatorsMap = {
+  [FieldMetadataType.UUID]: [
+    FieldMetadataDefaultValueString,
+    FieldMetadataDynamicDefaultValueUuid,
+  ],
+  [FieldMetadataType.TEXT]: [FieldMetadataDefaultValueString],
+  [FieldMetadataType.PHONE]: [FieldMetadataDefaultValueString],
+  [FieldMetadataType.EMAIL]: [FieldMetadataDefaultValueString],
+  [FieldMetadataType.DATE_TIME]: [
+    FieldMetadataDefaultValueDateTime,
+    FieldMetadataDynamicDefaultValueNow,
+  ],
+  [FieldMetadataType.BOOLEAN]: [FieldMetadataDefaultValueBoolean],
+  [FieldMetadataType.NUMBER]: [FieldMetadataDefaultValueNumber],
+  [FieldMetadataType.NUMERIC]: [FieldMetadataDefaultValueString],
+  [FieldMetadataType.PROBABILITY]: [FieldMetadataDefaultValueNumber],
+  [FieldMetadataType.LINK]: [FieldMetadataDefaultValueLink],
+  [FieldMetadataType.CURRENCY]: [FieldMetadataDefaultValueCurrency],
+  [FieldMetadataType.FULL_NAME]: [FieldMetadataDefaultValueFullName],
+  [FieldMetadataType.RATING]: [FieldMetadataDefaultValueString],
+  [FieldMetadataType.SELECT]: [FieldMetadataDefaultValueString],
+  [FieldMetadataType.MULTI_SELECT]: [FieldMetadataDefaultValueStringArray],
+};
 
 export const validateDefaultValueBasedOnType = (
-  defaultValue: FieldMetadataDefaultValue,
   type: FieldMetadataType,
+  defaultValue: FieldMetadataDefaultValue,
 ): boolean => {
+  console.log('validateDefaultValueBasedOnType: ', type, defaultValue);
   if (defaultValue === null) return true;
 
-  // Dynamic default values
-  if (typeof defaultValue === 'object' && 'type' in defaultValue) {
-    if (type === FieldMetadataType.UUID && defaultValue.type === 'uuid') {
-      return true;
-    }
-    if (type === FieldMetadataType.DATE_TIME && defaultValue.type === 'now') {
-      return true;
-    }
+  const validators = defaultValueValidatorsMap[type];
 
-    return false;
-  }
+  if (!validators) return false;
 
-  // Static default values
-  switch (type) {
-    case FieldMetadataType.TEXT:
-    case FieldMetadataType.PHONE:
-    case FieldMetadataType.EMAIL:
-    case FieldMetadataType.RATING:
-    case FieldMetadataType.SELECT:
-    case FieldMetadataType.NUMERIC:
-      return (
-        typeof defaultValue === 'object' &&
-        'value' in defaultValue &&
-        typeof defaultValue.value === 'string'
-      );
+  console.log('validators: ', validators);
 
-    case FieldMetadataType.NUMBER:
-    case FieldMetadataType.PROBABILITY:
-      return (
-        typeof defaultValue === 'object' &&
-        'value' in defaultValue &&
-        typeof defaultValue.value === 'number'
-      );
+  const isValid = validators.some((validator) => {
+    const defaultValueInstance = plainToInstance<
+      any,
+      FieldMetadataDefaultValue
+    >(validator, defaultValue);
 
-    case FieldMetadataType.BOOLEAN:
-      return (
-        typeof defaultValue === 'object' &&
-        'value' in defaultValue &&
-        typeof defaultValue.value === 'boolean'
-      );
+    console.log('err: ', validateSync(defaultValueInstance));
 
-    case FieldMetadataType.DATE_TIME:
-      return (
-        typeof defaultValue === 'object' &&
-        'value' in defaultValue &&
-        defaultValue.value instanceof Date
-      );
+    return validateSync(defaultValueInstance).length === 0;
+  });
 
-    case FieldMetadataType.LINK:
-      return (
-        typeof defaultValue === 'object' &&
-        'label' in defaultValue &&
-        typeof defaultValue.label === 'string' &&
-        'url' in defaultValue &&
-        typeof defaultValue.url === 'string'
-      );
-
-    case FieldMetadataType.CURRENCY:
-      return (
-        typeof defaultValue === 'object' &&
-        'amountMicros' in defaultValue &&
-        typeof defaultValue.amountMicros === 'number' &&
-        'currencyCode' in defaultValue &&
-        typeof defaultValue.currencyCode === 'string'
-      );
-
-    case FieldMetadataType.FULL_NAME:
-      return (
-        typeof defaultValue === 'object' &&
-        'firstName' in defaultValue &&
-        typeof defaultValue.firstName === 'string' &&
-        'lastName' in defaultValue &&
-        typeof defaultValue.lastName === 'string'
-      );
-
-    case FieldMetadataType.MULTI_SELECT:
-      return (
-        Array.isArray(defaultValue) &&
-        defaultValue.every((value) => typeof value === 'string')
-      );
-
-    default:
-      return false;
-  }
+  return isValid;
 };

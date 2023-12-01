@@ -19,7 +19,7 @@ export const IsDefaultValue = (validationOptions?: ValidationOptions) => {
           // Extract type value from the object
           const type = (args.object as any)['type'];
 
-          return validateDefaultValueBasedOnType(value, type);
+          return validateDefaultValueBasedOnType(type, value);
         },
       },
     });

@@ -1,0 +1,47 @@
+--- root-type.factory.ts	2023-11-30 09:54:52
++++ root-type.factory.new.ts	2023-11-30 09:54:37
+@@ -9,6 +9,7 @@
+ import { TypeDefinitionsStorage } from 'src/workspace/workspace-schema-builder/storages/type-definitions.storage';
+ import { getResolverName } from 'src/workspace/utils/get-resolver-name.util';
+ import { getResolverArgs } from 'src/workspace/workspace-schema-builder/utils/get-resolver-args.util';
++import { TypeMapperService } from 'src/workspace/workspace-schema-builder/services/type-mapper.service';
+ 
+ import { ArgsFactory } from './args.factory';
+ import { ObjectTypeDefinitionKind } from './object-type-definition.factory';
+@@ -25,6 +26,7 @@
+ 
+   constructor(
+     private readonly typeDefinitionsStorage: TypeDefinitionsStorage,
++    private readonly typeMapperService: TypeMapperService,
+     private readonly argsFactory: ArgsFactory,
+   ) {}
+ 
+@@ -70,7 +72,7 @@
+       for (const methodName of workspaceResolverMethodNames) {
+         const name = getResolverName(objectMetadata, methodName);
+         const args = getResolverArgs(methodName);
+-        const outputType = this.typeDefinitionsStorage.getObjectTypeByKey(
++        const objectType = this.typeDefinitionsStorage.getObjectTypeByKey(
+           objectMetadata.id,
+           methodName === 'findMany'
+             ? ObjectTypeDefinitionKind.Connection
+@@ -84,7 +86,7 @@
+           options,
+         );
+ 
+-        if (!outputType) {
++        if (!objectType) {
+           this.logger.error(
+             `Could not find a GraphQL type for ${objectMetadata.id} for method ${methodName}`,
+             {
+@@ -99,6 +101,10 @@
+           );
+         }
+ 
++        const outputType = this.typeMapperService.mapToGqlType(objectType, {
++          isArray: ['updateMany', 'deleteMany'].includes(methodName),
++        });
++
+         fieldConfigMap[name] = {
+           type: outputType,
+           args: argsType,

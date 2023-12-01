@@ -57,7 +57,7 @@ export class CreateFieldInput {
 
   @IsBoolean()
   @IsOptional()
-  @Field({ nullable: true })
+  @Field({ nullable: true, defaultValue: true })
   isNullable?: boolean;
 
   @IsDefaultValue({ message: 'Invalid default value for the specified type' })
