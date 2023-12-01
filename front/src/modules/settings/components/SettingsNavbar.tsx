@@ -41,12 +41,12 @@ export const SettingsNavbar = () => {
         }
       />
       <NavItem
-        label="Experience"
-        to="/settings/profile/experience"
+        label="Appearance"
+        to="/settings/profile/appearance"
         Icon={IconColorSwatch}
         active={
           !!useMatch({
-            path: useResolvedPath('/settings/profile/experience').pathname,
+            path: useResolvedPath('/settings/profile/appearance').pathname,
             end: true,
           })
         }

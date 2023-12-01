@@ -1,6 +1,6 @@
 import { useRecoilState } from 'recoil';
 
-import { useDeleteOneObjectRecord } from '@/object-record/hooks/useDeleteOneObjectRecord';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { IconTrash } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
@@ -11,12 +11,12 @@ type ActivityActionBarProps = {
 
 export const ActivityActionBar = ({ activityId }: ActivityActionBarProps) => {
   const [, setIsRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
-  const { deleteOneObject } = useDeleteOneObjectRecord({
+  const { deleteOneRecord: deleteOneActivity } = useDeleteOneRecord({
     objectNameSingular: 'activity',
   });
 
   const deleteActivity = () => {
-    deleteOneObject?.(activityId);
+    deleteOneActivity?.(activityId);
 
     setIsRightDrawerOpen(false);
   };

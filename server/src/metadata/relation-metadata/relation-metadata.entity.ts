@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { RelationMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/relation-metadata.interface';
+import { RelationMetadataInterface } from 'src/metadata/field-metadata/interfaces/relation-metadata.interface';
 
 import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
@@ -46,12 +46,18 @@ export class RelationMetadataEntity implements RelationMetadataInterface {
   @ManyToOne(
     () => ObjectMetadataEntity,
     (object: ObjectMetadataEntity) => object.fromRelations,
+    {
+      onDelete: 'CASCADE',
+    },
   )
   fromObjectMetadata: ObjectMetadataEntity;
 
   @ManyToOne(
     () => ObjectMetadataEntity,
     (object: ObjectMetadataEntity) => object.toRelations,
+    {
+      onDelete: 'CASCADE',
+    },
   )
   toObjectMetadata: ObjectMetadataEntity;
 

@@ -9,5 +9,4 @@ export type WorkspaceMember = {
   avatarUrl?: string | null;
   locale: string;
   colorScheme?: ColorScheme;
-  allowImpersonation: boolean;
 };

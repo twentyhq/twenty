@@ -140,7 +140,8 @@ export const CountryPickerDropdownButton = ({
             onChange={handleChange}
           />
         }
-        dropdownOffset={{ x: -60, y: -34 }}
+        dropdownPlacement="bottom-start"
+        dropdownOffset={{ x: 0, y: 4 }}
       />
     </DropdownScope>
   );

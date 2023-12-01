@@ -7,13 +7,29 @@ import {
 
 export enum WorkspaceMigrationColumnActionType {
   CREATE = 'CREATE',
+  ALTER = 'ALTER',
   RELATION = 'RELATION',
 }
+
+export type WorkspaceMigrationEnum = string | { from: string; to: string };
 
 export type WorkspaceMigrationColumnCreate = {
   action: WorkspaceMigrationColumnActionType.CREATE;
   columnName: string;
   columnType: string;
+  enum?: WorkspaceMigrationEnum[];
+  isArray?: boolean;
+  isNullable?: boolean;
+  defaultValue?: any;
+};
+
+export type WorkspaceMigrationColumnAlter = {
+  action: WorkspaceMigrationColumnActionType.ALTER;
+  columnName: string;
+  columnType: string;
+  enum?: WorkspaceMigrationEnum[];
+  isArray?: boolean;
+  isNullable?: boolean;
   defaultValue?: any;
 };
 
@@ -27,13 +43,18 @@ export type WorkspaceMigrationColumnRelation = {
 
 export type WorkspaceMigrationColumnAction = {
   action: WorkspaceMigrationColumnActionType;
-} & (WorkspaceMigrationColumnCreate | WorkspaceMigrationColumnRelation);
+} & (
+  | WorkspaceMigrationColumnCreate
+  | WorkspaceMigrationColumnAlter
+  | WorkspaceMigrationColumnRelation
+);
 
 export type WorkspaceMigrationTableAction = {
   name: string;
   action: 'create' | 'alter';
   columns?: WorkspaceMigrationColumnAction[];
 };
+
 @Entity('workspaceMigration')
 export class WorkspaceMigrationEntity {
   @PrimaryGeneratedColumn('uuid')

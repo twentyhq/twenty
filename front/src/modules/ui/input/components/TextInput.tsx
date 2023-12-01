@@ -13,6 +13,7 @@ import { Key } from 'ts-key-enum';
 
 import { IconAlertCircle } from '@/ui/display/icon';
 import { IconEye, IconEyeOff } from '@/ui/display/icon/index';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
@@ -29,6 +30,7 @@ export type TextInputComponentProps = Omit<
   fullWidth?: boolean;
   disableHotkeys?: boolean;
   error?: string;
+  RightIcon?: IconComponent;
 };
 
 const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
@@ -101,7 +103,7 @@ const StyledTrailingIconContainer = styled.div`
 const StyledTrailingIcon = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.light};
-  cursor: pointer;
+  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
   display: flex;
   justify-content: center;
 `;
@@ -125,6 +127,7 @@ const TextInputComponent = (
     placeholder,
     disabled,
     tabIndex,
+    RightIcon,
   }: TextInputComponentProps,
   // eslint-disable-next-line twenty/component-props-naming
   ref: ForwardedRef<HTMLInputElement>,
@@ -199,6 +202,11 @@ const TextInputComponent = (
               ) : (
                 <IconEye size={theme.icon.size.md} />
               )}
+            </StyledTrailingIcon>
+          )}
+          {!error && type !== INPUT_TYPE_PASSWORD && !!RightIcon && (
+            <StyledTrailingIcon>
+              <RightIcon size={theme.icon.size.md} />
             </StyledTrailingIcon>
           )}
         </StyledTrailingIconContainer>

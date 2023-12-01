@@ -12,23 +12,26 @@ import { useViewScopedStates } from './useViewScopedStates';
 
 export const useViewSorts = (viewScopeId: string) => {
   const {
-    updateOneMutation,
-    createOneMutation,
-    deleteOneMutation,
-    findManyQuery,
+    updateOneRecordMutation,
+    createOneRecordMutation,
+    deleteOneRecordMutation,
   } = useObjectMetadataItem({
     objectNameSingular: 'viewSort',
+  });
+
+  const { modifyRecordFromCache } = useObjectMetadataItem({
+    objectNameSingular: 'view',
   });
   const apolloClient = useApolloClient();
 
   const { currentViewSortsState } = useViewScopedStates({
-    customViewScopeId: viewScopeId,
+    viewScopeId: viewScopeId,
   });
 
   const persistViewSorts = useRecoilCallback(
     ({ snapshot, set }) =>
       async (viewId?: string) => {
-        const { currentViewId, currentViewSorts, savedViewSortsByKey } =
+        const { currentViewId, currentViewSorts, savedViewSortsByKey, views } =
           getViewScopedStateValuesFromSnapshot({
             snapshot,
             viewScopeId,
@@ -51,7 +54,7 @@ export const useViewSorts = (viewScopeId: string) => {
           return Promise.all(
             viewSortsToCreate.map((viewSort) =>
               apolloClient.mutate({
-                mutation: createOneMutation,
+                mutation: createOneRecordMutation,
                 variables: {
                   input: {
                     fieldMetadataId: viewSort.fieldMetadataId,
@@ -59,7 +62,6 @@ export const useViewSorts = (viewScopeId: string) => {
                     direction: viewSort.direction,
                   },
                 },
-                refetchQueries: [findManyQuery],
               }),
             ),
           );
@@ -71,7 +73,7 @@ export const useViewSorts = (viewScopeId: string) => {
           return Promise.all(
             viewSortsToUpdate.map((viewSort) =>
               apolloClient.mutate({
-                mutation: updateOneMutation,
+                mutation: updateOneRecordMutation,
                 variables: {
                   idToUpdate: viewSort.id,
                   input: {
@@ -89,7 +91,7 @@ export const useViewSorts = (viewScopeId: string) => {
           return Promise.all(
             viewSortIdsToDelete.map((viewSortId) =>
               apolloClient.mutate({
-                mutation: deleteOneMutation,
+                mutation: deleteOneRecordMutation,
                 variables: {
                   idToDelete: viewSortId,
                 },
@@ -127,13 +129,34 @@ export const useViewSorts = (viewScopeId: string) => {
           }),
           currentViewSorts,
         );
+        const existingViewId = viewId ?? currentViewId;
+        const existingView = views.find((view) => view.id === existingViewId);
+
+        if (!existingView) {
+          return;
+        }
+
+        modifyRecordFromCache(existingViewId, {
+          viewSorts: () => ({
+            edges: currentViewSorts.map((viewSort) => ({
+              node: viewSort,
+              cursor: '',
+            })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: '',
+              endCursor: '',
+            },
+          }),
+        });
       },
     [
       apolloClient,
-      createOneMutation,
-      deleteOneMutation,
-      findManyQuery,
-      updateOneMutation,
+      createOneRecordMutation,
+      deleteOneRecordMutation,
+      modifyRecordFromCache,
+      updateOneRecordMutation,
       viewScopeId,
     ],
   );

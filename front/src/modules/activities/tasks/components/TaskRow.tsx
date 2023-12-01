@@ -1,9 +1,12 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
-import { Activity } from '@/activities/types/Activity';
+import { ActivityTarget } from '@/activities/types/ActivityTarget';
+import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { IconCalendar, IconComment } from '@/ui/display/icon';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
@@ -61,12 +64,27 @@ const StyledFieldsContainer = styled.div`
   display: flex;
 `;
 
-export const TaskRow = ({ task }: { task: Omit<Activity, 'assigneeId'> }) => {
+export const TaskRow = ({
+  task,
+}: {
+  task: Omit<GraphQLActivity, 'assigneeId'>;
+}) => {
   const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
 
-  const body = JSON.parse(task.body ?? '{}')[0]?.content[0]?.text;
+  const body = JSON.parse(isNonEmptyString(task.body) ? task.body : '{}')[0]
+    ?.content[0]?.text;
   const { completeTask } = useCompleteTask(task);
+
+  const activityTargetIds =
+    task?.activityTargets?.edges?.map(
+      (activityTarget) => activityTarget.node.id,
+    ) ?? [];
+
+  const { records: activityTargets } = useFindManyRecords<ActivityTarget>({
+    objectNamePlural: 'activityTargets',
+    filter: { id: { in: activityTargetIds } },
+  });
 
   return (
     <StyledContainer
@@ -97,7 +115,7 @@ export const TaskRow = ({ task }: { task: Omit<Activity, 'assigneeId'> }) => {
         )}
       </StyledTaskBody>
       <StyledFieldsContainer>
-        <ActivityTargetChips targets={task.activityTargets} />
+        <ActivityTargetChips targets={activityTargets} />
         <StyledDueDate
           isPast={
             !!task.dueAt && hasDatePassed(task.dueAt) && !task.completedAt

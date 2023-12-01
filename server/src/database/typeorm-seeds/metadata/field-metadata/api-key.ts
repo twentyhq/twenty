@@ -113,7 +113,7 @@ export const seedApiKeyFieldMetadata = async (
         icon: 'IconLink',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: '' },
       },
       {
         id: SeedApiKeyFieldMetadataIds.ExpiresAt,

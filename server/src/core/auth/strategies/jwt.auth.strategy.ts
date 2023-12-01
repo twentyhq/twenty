@@ -25,9 +25,9 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     private readonly environmentService: EnvironmentService,
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
-    @InjectRepository(Workspace)
+    @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(User)
+    @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
   ) {
     super({

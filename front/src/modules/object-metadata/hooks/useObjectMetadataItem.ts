@@ -2,11 +2,13 @@ import { gql } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { useGenerateCreateOneObjectMutation } from '@/object-record/utils/generateCreateOneObjectMutation';
-import { useGenerateDeleteOneObjectMutation } from '@/object-record/utils/useGenerateDeleteOneObjectMutation';
-import { useGenerateFindManyCustomObjectsQuery } from '@/object-record/utils/useGenerateFindManyCustomObjectsQuery';
-import { useGenerateFindOneCustomObjectQuery } from '@/object-record/utils/useGenerateFindOneCustomObjectQuery';
-import { useGenerateUpdateOneObjectMutation } from '@/object-record/utils/useGenerateUpdateOneObjectMutation';
+import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
+import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
+import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
+import { useGenerateUpdateOneRecordMutation } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
+import { useGetRecordFromCache } from '@/object-record/hooks/useGetRecordFromCache';
+import { useModifyRecordFromCache } from '@/object-record/hooks/useModifyRecordFromCache';
+import { generateDeleteOneRecordMutation } from '@/object-record/utils/generateDeleteOneRecordMutation';
 import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
@@ -23,10 +25,10 @@ export const EMPTY_MUTATION = gql`
   }
 `;
 
-export const useObjectMetadataItem = ({
-  objectNamePlural,
-  objectNameSingular,
-}: ObjectMetadataItemIdentifier) => {
+export const useObjectMetadataItem = (
+  { objectNamePlural, objectNameSingular }: ObjectMetadataItemIdentifier,
+  depth?: number,
+) => {
   const objectMetadataItem = useRecoilValue(
     objectMetadataItemFamilySelector({
       objectNamePlural,
@@ -34,35 +36,55 @@ export const useObjectMetadataItem = ({
     }),
   );
 
-  const objectNotFoundInMetadata = !isDefined(objectMetadataItem);
+  const objectMetadataItemNotFound = !isDefined(objectMetadataItem);
 
-  const findManyQuery = useGenerateFindManyCustomObjectsQuery({
+  const getRecordFromCache = useGetRecordFromCache({
     objectMetadataItem,
   });
 
-  const findOneQuery = useGenerateFindOneCustomObjectQuery({
+  const modifyRecordFromCache = useModifyRecordFromCache({
     objectMetadataItem,
   });
 
-  const createOneMutation = useGenerateCreateOneObjectMutation({
+  const findManyRecordsQuery = useGenerateFindManyRecordsQuery({
+    objectMetadataItem,
+    depth,
+  });
+
+  const findOneRecordQuery = useGenerateFindOneRecordQuery({
+    objectMetadataItem,
+    depth,
+  });
+
+  const createOneRecordMutation = useGenerateCreateOneRecordMutation({
     objectMetadataItem,
   });
 
-  const updateOneMutation = useGenerateUpdateOneObjectMutation({
+  const updateOneRecordMutation = useGenerateUpdateOneRecordMutation({
     objectMetadataItem,
   });
 
-  const deleteOneMutation = useGenerateDeleteOneObjectMutation({
+  const deleteOneRecordMutation = generateDeleteOneRecordMutation({
     objectMetadataItem,
   });
+
+  const labelIdentifierFieldMetadataId = objectMetadataItem?.fields.find(
+    ({ name }) => name === 'name',
+  )?.id;
+
+  const basePathToShowPage = `/object/${objectMetadataItem?.nameSingular}/`;
 
   return {
+    labelIdentifierFieldMetadataId,
+    basePathToShowPage,
     objectMetadataItem,
-    objectNotFoundInMetadata,
-    findManyQuery,
-    findOneQuery,
-    createOneMutation,
-    updateOneMutation,
-    deleteOneMutation,
+    objectMetadataItemNotFound,
+    getRecordFromCache,
+    modifyRecordFromCache,
+    findManyRecordsQuery,
+    findOneRecordQuery,
+    createOneRecordMutation,
+    updateOneRecordMutation,
+    deleteOneRecordMutation,
   };
 };

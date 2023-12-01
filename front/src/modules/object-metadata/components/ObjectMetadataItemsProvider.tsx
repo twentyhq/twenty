@@ -10,9 +10,11 @@ export const ObjectMetadataItemsProvider = ({
   return loading ? (
     <></>
   ) : (
-    <RelationPickerScope relationPickerScopeId="relation-picker">
+    <>
       <ObjectMetadataItemsRelationPickerEffect />
-      {children}
-    </RelationPickerScope>
+      <RelationPickerScope relationPickerScopeId="relation-picker">
+        {children}
+      </RelationPickerScope>
+    </>
   );
 };

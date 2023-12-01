@@ -3,25 +3,45 @@ import { useRecoilCallback } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ViewField } from '@/views/types/ViewField';
+import { getViewScopedStatesFromSnapshot } from '@/views/utils/getViewScopedStatesFromSnapshot';
 import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
 
 export const useViewFields = (viewScopeId: string) => {
-  const { updateOneMutation, createOneMutation, findManyQuery } =
+  const { updateOneRecordMutation, createOneRecordMutation } =
     useObjectMetadataItem({
       objectNameSingular: 'viewField',
     });
 
+  const { modifyRecordFromCache } = useObjectMetadataItem({
+    objectNameSingular: 'view',
+  });
+
   const apolloClient = useApolloClient();
 
   const persistViewFields = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       async (viewFieldsToPersist: ViewField[], viewId?: string) => {
-        const { viewObjectMetadataId, currentViewId, savedViewFieldsByKey } =
-          getViewScopedStateValuesFromSnapshot({
-            snapshot,
-            viewScopeId,
-            viewId,
-          });
+        const {
+          viewObjectMetadataId,
+          currentViewId,
+          savedViewFieldsByKey,
+          onViewFieldsChange,
+          views,
+        } = getViewScopedStateValuesFromSnapshot({
+          snapshot,
+          viewScopeId,
+          viewId,
+        });
+
+        const {
+          isPersistingViewState,
+          currentViewFieldsState,
+          savedViewFieldsState,
+        } = getViewScopedStatesFromSnapshot({
+          snapshot,
+          viewScopeId,
+          viewId,
+        });
 
         const viewIdToPersist = viewId ?? currentViewId;
 
@@ -37,7 +57,7 @@ export const useViewFields = (viewScopeId: string) => {
           return Promise.all(
             viewFieldsToCreate.map((viewField) =>
               apolloClient.mutate({
-                mutation: createOneMutation,
+                mutation: createOneRecordMutation,
                 variables: {
                   input: {
                     fieldMetadataId: viewField.fieldMetadataId,
@@ -47,7 +67,6 @@ export const useViewFields = (viewScopeId: string) => {
                     position: viewField.position,
                   },
                 },
-                refetchQueries: [findManyQuery],
               }),
             ),
           );
@@ -61,7 +80,7 @@ export const useViewFields = (viewScopeId: string) => {
           return Promise.all(
             viewFieldsToUpdate.map((viewField) =>
               apolloClient.mutate({
-                mutation: updateOneMutation,
+                mutation: updateOneRecordMutation,
                 variables: {
                   idToUpdate: viewField.id,
                   input: {
@@ -90,16 +109,45 @@ export const useViewFields = (viewScopeId: string) => {
                 .isVisible !== viewFieldToPersit.isVisible),
         );
 
+        set(isPersistingViewState, true);
+
         await _createViewFields(viewFieldsToCreate);
 
         await _updateViewFields(viewFieldsToUpdate);
+
+        set(isPersistingViewState, false);
+        set(currentViewFieldsState, viewFieldsToPersist);
+        set(savedViewFieldsState, viewFieldsToPersist);
+
+        const existingView = views.find((view) => view.id === viewIdToPersist);
+
+        if (!existingView) {
+          return;
+        }
+
+        modifyRecordFromCache(viewIdToPersist ?? '', {
+          viewFields: () => ({
+            edges: viewFieldsToPersist.map((viewField) => ({
+              node: viewField,
+              cursor: '',
+            })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: '',
+              endCursor: '',
+            },
+          }),
+        });
+
+        onViewFieldsChange?.(viewFieldsToPersist);
       },
     [
-      apolloClient,
-      createOneMutation,
-      findManyQuery,
-      updateOneMutation,
       viewScopeId,
+      modifyRecordFromCache,
+      apolloClient,
+      createOneRecordMutation,
+      updateOneRecordMutation,
     ],
   );
 

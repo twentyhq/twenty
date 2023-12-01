@@ -1,9 +1,12 @@
+import { UpdateManyResolverFactory } from 'src/workspace/workspace-resolver-builder/factories/update-many-resolver.factory';
+
 import { FindManyResolverFactory } from './find-many-resolver.factory';
 import { FindOneResolverFactory } from './find-one-resolver.factory';
 import { CreateManyResolverFactory } from './create-many-resolver.factory';
 import { CreateOneResolverFactory } from './create-one-resolver.factory';
 import { UpdateOneResolverFactory } from './update-one-resolver.factory';
 import { DeleteOneResolverFactory } from './delete-one-resolver.factory';
+import { DeleteManyResolverFactory } from './delete-many-resolver.factory';
 
 export const workspaceResolverBuilderFactories = [
   FindManyResolverFactory,
@@ -12,6 +15,8 @@ export const workspaceResolverBuilderFactories = [
   CreateOneResolverFactory,
   UpdateOneResolverFactory,
   DeleteOneResolverFactory,
+  UpdateManyResolverFactory,
+  DeleteManyResolverFactory,
 ];
 
 export const workspaceResolverBuilderMethodNames = {
@@ -24,5 +29,7 @@ export const workspaceResolverBuilderMethodNames = {
     CreateOneResolverFactory.methodName,
     UpdateOneResolverFactory.methodName,
     DeleteOneResolverFactory.methodName,
+    UpdateManyResolverFactory.methodName,
+    DeleteManyResolverFactory.methodName,
   ],
 } as const;

@@ -12,7 +12,7 @@ import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
 import { IconCheckbox } from '@/ui/display/icon';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TableHotkeyScope } from '@/ui/object/record-table/types/TableHotkeyScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
@@ -111,19 +111,31 @@ export const PageChangeEffect = () => {
 
     switch (true) {
       case isMatchingLocation(AppPath.RecordTablePage): {
-        setHotkeyScope(TableHotkeyScope.Table, { goto: true });
+        setHotkeyScope(TableHotkeyScope.Table, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
         break;
       }
       case isMatchingLocation(AppPath.RecordShowPage): {
-        setHotkeyScope(PageHotkeyScope.CompanyShowPage, { goto: true });
+        setHotkeyScope(PageHotkeyScope.CompanyShowPage, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
         break;
       }
       case isMatchingLocation(AppPath.OpportunitiesPage): {
-        setHotkeyScope(PageHotkeyScope.OpportunitiesPage, { goto: true });
+        setHotkeyScope(PageHotkeyScope.OpportunitiesPage, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
         break;
       }
       case isMatchingLocation(AppPath.TasksPage): {
-        setHotkeyScope(PageHotkeyScope.TaskPage, { goto: true });
+        setHotkeyScope(PageHotkeyScope.TaskPage, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
         break;
       }
 
@@ -148,14 +160,20 @@ export const PageChangeEffect = () => {
         break;
       }
       case isMatchingLocation(SettingsPath.ProfilePage, AppBasePath.Settings): {
-        setHotkeyScope(PageHotkeyScope.ProfilePage, { goto: true });
+        setHotkeyScope(PageHotkeyScope.ProfilePage, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
         break;
       }
       case isMatchingLocation(
         SettingsPath.WorkspaceMembersPage,
         AppBasePath.Settings,
       ): {
-        setHotkeyScope(PageHotkeyScope.WorkspaceMemberPage, { goto: true });
+        setHotkeyScope(PageHotkeyScope.WorkspaceMemberPage, {
+          goto: true,
+          keyboardShortcutMenu: true,
+        });
         break;
       }
     }
@@ -164,6 +182,7 @@ export const PageChangeEffect = () => {
 
     addToCommandMenu([
       {
+        id: 'create-task',
         to: '',
         label: 'Create Task',
         type: CommandType.Create,

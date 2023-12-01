@@ -25,7 +25,9 @@ export const validateDefaultValueBasedOnType = (
     case FieldMetadataType.TEXT:
     case FieldMetadataType.PHONE:
     case FieldMetadataType.EMAIL:
-    case FieldMetadataType.ENUM:
+    case FieldMetadataType.RATING:
+    case FieldMetadataType.SELECT:
+    case FieldMetadataType.NUMERIC:
       return (
         typeof defaultValue === 'object' &&
         'value' in defaultValue &&
@@ -79,6 +81,12 @@ export const validateDefaultValueBasedOnType = (
         typeof defaultValue.firstName === 'string' &&
         'lastName' in defaultValue &&
         typeof defaultValue.lastName === 'string'
+      );
+
+    case FieldMetadataType.MULTI_SELECT:
+      return (
+        Array.isArray(defaultValue) &&
+        defaultValue.every((value) => typeof value === 'string')
       );
 
     default:

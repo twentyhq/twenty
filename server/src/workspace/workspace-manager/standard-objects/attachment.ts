@@ -65,7 +65,19 @@ const attachmentMetadata = {
       },
       description: 'Attachment author',
       icon: 'IconCircleUser',
+      isNullable: true,
+    },
+    {
+      isCustom: false,
+      isActive: true,
+      type: FieldMetadataType.UUID,
+      name: 'authorId',
+      label: 'Author id (foreign key)',
+      targetColumnMap: {},
+      description: 'Activity author id foreign key',
+      icon: undefined,
       isNullable: false,
+      isSystem: true,
     },
     {
       isCustom: false,
@@ -78,7 +90,7 @@ const attachmentMetadata = {
       },
       description: 'Attachment activity',
       icon: 'IconNotes',
-      isNullable: false,
+      isNullable: true,
     },
     {
       isCustom: false,
@@ -91,7 +103,7 @@ const attachmentMetadata = {
       },
       description: 'Attachment person',
       icon: 'IconUser',
-      isNullable: false,
+      isNullable: true,
     },
     {
       isCustom: false,
@@ -104,7 +116,7 @@ const attachmentMetadata = {
       },
       description: 'Attachment company',
       icon: 'IconBuildingSkyscraper',
-      isNullable: false,
+      isNullable: true,
     },
   ],
 };

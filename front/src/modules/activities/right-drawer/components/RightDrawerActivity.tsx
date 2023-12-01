@@ -4,7 +4,7 @@ import { useRecoilState } from 'recoil';
 
 import { ActivityEditor } from '@/activities/components/ActivityEditor';
 import { Activity } from '@/activities/types/Activity';
-import { useFindOneObjectRecord } from '@/object-record/hooks/useFindOneObjectRecord';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
 
 import '@blocknote/core/style.css';
@@ -34,8 +34,8 @@ export const RightDrawerActivity = ({
     entityFieldsFamilyState(activityId),
   );
 
-  const { object: activity } = useFindOneObjectRecord({
-    objectNameSingular: 'activityId',
+  const { record: activity } = useFindOneRecord({
+    objectNameSingular: 'activity',
     objectRecordId: activityId,
     skip: !activityId,
     onCompleted: (activity: Activity) => {

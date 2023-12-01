@@ -83,11 +83,13 @@ export type CreateOneRelationInput = {
 
 export type CreateRelationInput = {
   description?: InputMaybe<Scalars['String']['input']>;
+  fromDescription?: InputMaybe<Scalars['String']['input']>;
   fromIcon?: InputMaybe<Scalars['String']['input']>;
   fromLabel: Scalars['String']['input'];
   fromName: Scalars['String']['input'];
   fromObjectMetadataId: Scalars['String']['input'];
   relationType: RelationMetadataType;
+  toDescription?: InputMaybe<Scalars['String']['input']>;
   toIcon?: InputMaybe<Scalars['String']['input']>;
   toLabel: Scalars['String']['input'];
   toName: Scalars['String']['input'];
@@ -158,6 +160,7 @@ export enum FieldMetadataType {
   FullName = 'FULL_NAME',
   Link = 'LINK',
   Number = 'NUMBER',
+  Numeric = 'NUMERIC',
   Phone = 'PHONE',
   Probability = 'PROBABILITY',
   Relation = 'RELATION',
@@ -393,7 +396,9 @@ export type UpdateFieldInput = {
 export type UpdateObjectInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
+  imageIdentifierFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
+  labelIdentifierFieldMetadataId?: InputMaybe<Scalars['String']['input']>;
   labelPlural?: InputMaybe<Scalars['String']['input']>;
   labelSingular?: InputMaybe<Scalars['String']['input']>;
   namePlural?: InputMaybe<Scalars['String']['input']>;
@@ -441,7 +446,6 @@ export type UserEdge = {
 
 export type UserWorkspaceMember = {
   __typename?: 'UserWorkspaceMember';
-  allowImpersonation: Scalars['Boolean']['output'];
   avatarUrl?: Maybe<Scalars['String']['output']>;
   colorScheme: Scalars['String']['output'];
   id: Scalars['ID']['output'];
@@ -457,6 +461,7 @@ export type UserWorkspaceMemberName = {
 
 export type Workspace = {
   __typename?: 'Workspace';
+  allowImpersonation: Scalars['Boolean']['output'];
   createdAt: Scalars['DateTime']['output'];
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   displayName?: Maybe<Scalars['String']['output']>;

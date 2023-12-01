@@ -5,11 +5,11 @@ import { IconArrowUpRight } from '@/ui/display/icon';
 import { useGetButtonIcon } from '@/ui/object/field/hooks/useGetButtonIcon';
 import { useIsFieldEmpty } from '@/ui/object/field/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/ui/object/field/hooks/useIsFieldInputOnly';
+import { useGetIsSomeCellInEditMode } from '@/ui/object/record-table/hooks/internal/useGetIsSomeCellInEditMode';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { ColumnIndexContext } from '../../contexts/ColumnIndexContext';
-import { useRecordTable } from '../../hooks/useRecordTable';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useCurrentTableCellEditMode } from '../hooks/useCurrentTableCellEditMode';
 import { useIsSoftFocusOnCurrentTableCell } from '../hooks/useIsSoftFocusOnCurrentTableCell';
@@ -57,7 +57,7 @@ export const TableCellContainer = ({
 }: TableCellContainerProps) => {
   const { isCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
 
-  const { getIsSomeCellInEditMode } = useRecordTable();
+  const getIsSomeCellInEditMode = useGetIsSomeCellInEditMode();
 
   const [isHovered, setIsHovered] = useState(false);
 

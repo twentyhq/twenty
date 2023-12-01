@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { BlockNoteEditor } from '@blocknote/core';
 import { useBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import debounce from 'lodash.debounce';
 
 import { Activity } from '@/activities/types/Activity';
-import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 
 const StyledBlockNoteStyledContainer = styled.div`
@@ -22,8 +23,8 @@ export const ActivityBodyEditor = ({
   onChange,
 }: ActivityBodyEditorProps) => {
   const [body, setBody] = useState<string | null>(null);
-  const { updateOneObject } = useUpdateOneObjectRecord({
-    objectNameSingular: 'Activity',
+  const { updateOneRecord } = useUpdateOneRecord({
+    objectNameSingular: 'activity',
   });
 
   useEffect(() => {
@@ -35,7 +36,7 @@ export const ActivityBodyEditor = ({
   const debounceOnChange = useMemo(() => {
     const onInternalChange = (activityBody: string) => {
       setBody(activityBody);
-      updateOneObject?.({
+      updateOneRecord?.({
         idToUpdate: activity.id,
         input: {
           body: activityBody,
@@ -44,10 +45,13 @@ export const ActivityBodyEditor = ({
     };
 
     return debounce(onInternalChange, 200);
-  }, [updateOneObject, activity.id]);
+  }, [updateOneRecord, activity.id]);
 
   const editor: BlockNoteEditor | null = useBlockNote({
-    initialContent: activity.body ? JSON.parse(activity.body) : undefined,
+    initialContent:
+      isNonEmptyString(activity.body) && activity.body !== '{}'
+        ? JSON.parse(activity.body)
+        : undefined,
     editorDOMAttributes: { class: 'editor' },
     onEditorContentChange: (editor) => {
       debounceOnChange(JSON.stringify(editor.topLevelBlocks) ?? '');

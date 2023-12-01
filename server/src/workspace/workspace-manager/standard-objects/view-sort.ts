@@ -14,7 +14,7 @@ const viewSortMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.TEXT,
+      type: FieldMetadataType.UUID,
       name: 'fieldMetadataId',
       label: 'Field Metadata Id',
       targetColumnMap: {
@@ -23,7 +23,6 @@ const viewSortMetadata = {
       description: 'View Sort target field',
       icon: null,
       isNullable: false,
-      defaultValue: { value: '' },
     },
     {
       isCustom: false,

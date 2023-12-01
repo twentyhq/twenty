@@ -26,9 +26,9 @@ export class TokenService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly environmentService: EnvironmentService,
-    @InjectRepository(User)
+    @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectRepository(RefreshToken)
+    @InjectRepository(RefreshToken, 'core')
     private readonly refreshTokenRepository: Repository<RefreshToken>,
   ) {}
 

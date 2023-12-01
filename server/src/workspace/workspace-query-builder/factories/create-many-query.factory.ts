@@ -20,11 +20,11 @@ export class CreateManyQueryFactory {
     private readonly argsAliasFactory: ArgsAliasFactory,
   ) {}
 
-  create<Record extends IRecord = IRecord>(
+  async create<Record extends IRecord = IRecord>(
     args: CreateManyResolverArgs<Record>,
     options: WorkspaceQueryBuilderOptions,
   ) {
-    const fieldsString = this.fieldsStringFactory.create(
+    const fieldsString = await this.fieldsStringFactory.create(
       options.info,
       options.fieldMetadataCollection,
     );

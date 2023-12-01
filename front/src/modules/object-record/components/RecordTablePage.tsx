@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
+import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
@@ -13,7 +15,7 @@ import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';
 import { RecordTableActionBar } from '@/ui/object/record-table/action-bar/components/RecordTableActionBar';
 import { RecordTableContextMenu } from '@/ui/object/record-table/context-menu/components/RecordTableContextMenu';
 
-import { useCreateOneObjectRecord } from '../hooks/useCreateOneObjectRecord';
+import { useCreateOneRecord } from '../hooks/useCreateOneRecord';
 
 import { RecordTableContainer } from './RecordTableContainer';
 
@@ -31,20 +33,25 @@ export type RecordTablePageProps = Pick<
 export const RecordTablePage = () => {
   const objectNamePlural = useParams().objectNamePlural ?? '';
 
-  const { objectNotFoundInMetadata, objectMetadataItem } =
+  const { objectMetadataItemNotFound, objectMetadataItem } =
     useObjectMetadataItem({
       objectNamePlural,
     });
 
+  const onboardingStatus = useOnboardingStatus();
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (objectNotFoundInMetadata) {
+    if (
+      objectMetadataItemNotFound &&
+      onboardingStatus === OnboardingStatus.Completed
+    ) {
       navigate('/');
     }
-  }, [objectNotFoundInMetadata, navigate]);
+  }, [objectMetadataItemNotFound, navigate, onboardingStatus]);
 
-  const { createOneObject } = useCreateOneObjectRecord({
+  const { createOneRecord: createOneObject } = useCreateOneRecord({
     objectNameSingular: objectMetadataItem?.nameSingular,
   });
 
@@ -60,7 +67,10 @@ export const RecordTablePage = () => {
       </PageHeader>
       <PageBody>
         <StyledTableContainer>
-          <RecordTableContainer objectNamePlural={objectNamePlural} />
+          <RecordTableContainer
+            objectNamePlural={objectNamePlural}
+            createRecord={handleAddButtonClick}
+          />
         </StyledTableContainer>
         <RecordTableActionBar />
         <RecordTableContextMenu />

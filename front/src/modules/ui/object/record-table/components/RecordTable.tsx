@@ -1,20 +1,19 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilCallback } from 'recoil';
 
+import { RecordTableHeader } from '@/ui/object/record-table/components/RecordTableHeader';
+import { RecordTableInternalEffect } from '@/ui/object/record-table/components/RecordTableInternalEffect';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
+import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import {
-  useListenClickOutside,
-  useListenClickOutsideByClassName,
-} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useViewFields } from '@/views/hooks/internal/useViewFields';
+import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
-import { useRecordTable } from '../hooks/useRecordTable';
-import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { RecordTableBody } from './RecordTableBody';
-import { RecordTableHeader } from './RecordTableHeader';
 
 const StyledTable = styled.table`
   border-collapse: collapse;
@@ -76,63 +75,52 @@ const StyledTableContainer = styled.div`
 `;
 
 type RecordTableProps = {
-  updateEntityMutation: (params: any) => void;
+  recordTableId: string;
+  viewBarId: string;
+  updateRecordMutation: (params: any) => void;
+  createRecord: () => void;
 };
 
-export const RecordTable = ({ updateEntityMutation }: RecordTableProps) => {
+export const RecordTable = ({
+  updateRecordMutation,
+  createRecord,
+  recordTableId,
+  viewBarId,
+}: RecordTableProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const {
-    leaveTableFocus,
-    setRowSelectedState,
-    resetTableRowSelection,
-    useMapKeyboardToSoftFocus,
-  } = useRecordTable();
-
-  useMapKeyboardToSoftFocus();
-
-  useListenClickOutside({
-    refs: [tableBodyRef],
-    callback: () => {
-      leaveTableFocus();
-    },
+  const { resetTableRowSelection, setRowSelectedState } = useRecordTable({
+    recordTableScopeId: recordTableId,
   });
-
-  useScopedHotkeys(
-    'escape',
-    () => {
-      resetTableRowSelection();
-    },
-    TableHotkeyScope.Table,
-  );
-
-  useListenClickOutsideByClassName({
-    classNames: ['entity-table-cell'],
-    excludeClassNames: ['action-bar', 'context-menu'],
-    callback: () => {
-      resetTableRowSelection();
-    },
-  });
+  const { persistViewFields } = useViewFields(viewBarId);
 
   return (
-    <ScrollWrapper>
-      <EntityUpdateMutationContext.Provider value={updateEntityMutation}>
-        <StyledTableWithHeader>
-          <StyledTableContainer>
-            <div ref={tableBodyRef}>
-              <StyledTable className="entity-table-cell">
-                <RecordTableHeader />
-                <RecordTableBody />
-              </StyledTable>
-              <DragSelect
-                dragSelectable={tableBodyRef}
-                onDragSelectionStart={resetTableRowSelection}
-                onDragSelectionChange={setRowSelectedState}
-              />
-            </div>
-          </StyledTableContainer>
-        </StyledTableWithHeader>
-      </EntityUpdateMutationContext.Provider>
-    </ScrollWrapper>
+    <RecordTableScope
+      recordTableScopeId={recordTableId}
+      onColumnsChange={useRecoilCallback(() => (columns) => {
+        persistViewFields(mapColumnDefinitionsToViewFields(columns));
+      })}
+    >
+      <ScrollWrapper>
+        <EntityUpdateMutationContext.Provider value={updateRecordMutation}>
+          <StyledTableWithHeader>
+            <StyledTableContainer>
+              <div ref={tableBodyRef}>
+                <StyledTable className="entity-table-cell">
+                  <RecordTableHeader createRecord={createRecord} />
+                  <RecordTableBody />
+                </StyledTable>
+                <DragSelect
+                  dragSelectable={tableBodyRef}
+                  onDragSelectionStart={resetTableRowSelection}
+                  onDragSelectionChange={setRowSelectedState}
+                />
+              </div>
+              <RecordTableInternalEffect tableBodyRef={tableBodyRef} />
+            </StyledTableContainer>
+          </StyledTableWithHeader>
+        </EntityUpdateMutationContext.Provider>
+      </ScrollWrapper>
+    </RecordTableScope>
   );
 };

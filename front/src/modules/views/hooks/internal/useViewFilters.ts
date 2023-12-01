@@ -12,27 +12,35 @@ import { useViewScopedStates } from './useViewScopedStates';
 
 export const useViewFilters = (viewScopeId: string) => {
   const {
-    updateOneMutation,
-    createOneMutation,
-    deleteOneMutation,
-    findManyQuery,
+    updateOneRecordMutation,
+    createOneRecordMutation,
+    deleteOneRecordMutation,
   } = useObjectMetadataItem({
     objectNameSingular: 'viewFilter',
   });
+
+  const { modifyRecordFromCache } = useObjectMetadataItem({
+    objectNameSingular: 'view',
+  });
+
   const apolloClient = useApolloClient();
 
   const { currentViewFiltersState } = useViewScopedStates({
-    customViewScopeId: viewScopeId,
+    viewScopeId: viewScopeId,
   });
 
   const persistViewFilters = useRecoilCallback(
     ({ snapshot, set }) =>
       async (viewId?: string) => {
-        const { currentViewId, currentViewFilters, savedViewFiltersByKey } =
-          getViewScopedStateValuesFromSnapshot({
-            snapshot,
-            viewScopeId,
-          });
+        const {
+          currentViewId,
+          currentViewFilters,
+          savedViewFiltersByKey,
+          views,
+        } = getViewScopedStateValuesFromSnapshot({
+          snapshot,
+          viewScopeId,
+        });
 
         if (!currentViewId) {
           return;
@@ -50,7 +58,7 @@ export const useViewFilters = (viewScopeId: string) => {
           return Promise.all(
             viewFiltersToCreate.map((viewFilter) =>
               apolloClient.mutate({
-                mutation: createOneMutation,
+                mutation: createOneRecordMutation,
                 variables: {
                   input: {
                     fieldMetadataId: viewFilter.fieldMetadataId,
@@ -60,7 +68,6 @@ export const useViewFilters = (viewScopeId: string) => {
                     operand: viewFilter.operand,
                   },
                 },
-                refetchQueries: [findManyQuery],
               }),
             ),
           );
@@ -72,7 +79,7 @@ export const useViewFilters = (viewScopeId: string) => {
           return Promise.all(
             viewFiltersToUpdate.map((viewFilter) =>
               apolloClient.mutate({
-                mutation: updateOneMutation,
+                mutation: updateOneRecordMutation,
                 variables: {
                   idToUpdate: viewFilter.id,
                   input: {
@@ -92,7 +99,7 @@ export const useViewFilters = (viewScopeId: string) => {
           return Promise.all(
             viewFilterIdsToDelete.map((viewFilterId) =>
               apolloClient.mutate({
-                mutation: deleteOneMutation,
+                mutation: deleteOneRecordMutation,
                 variables: {
                   idToDelete: viewFilterId,
                 },
@@ -134,13 +141,35 @@ export const useViewFilters = (viewScopeId: string) => {
           }),
           currentViewFilters,
         );
+
+        const existingViewId = viewId ?? currentViewId;
+        const existingView = views.find((view) => view.id === existingViewId);
+
+        if (!existingView) {
+          return;
+        }
+
+        modifyRecordFromCache(existingViewId, {
+          viewFilters: () => ({
+            edges: currentViewFilters.map((viewFilter) => ({
+              node: viewFilter,
+              cursor: '',
+            })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: '',
+              endCursor: '',
+            },
+          }),
+        });
       },
     [
       apolloClient,
-      createOneMutation,
-      deleteOneMutation,
-      findManyQuery,
-      updateOneMutation,
+      createOneRecordMutation,
+      deleteOneRecordMutation,
+      modifyRecordFromCache,
+      updateOneRecordMutation,
       viewScopeId,
     ],
   );
@@ -172,11 +201,16 @@ export const useViewFilters = (viewScopeId: string) => {
                 filter.fieldMetadataId === filterToUpsert.fieldMetadataId,
             );
 
-            if (existingFilterIndex === -1) {
+            if (existingFilterIndex === -1 && filterToUpsert.value !== '') {
               filtersDraft.push({
                 ...filterToUpsert,
                 id: existingSavedFilterId,
               });
+              return filtersDraft;
+            }
+
+            if (filterToUpsert.value === '') {
+              filtersDraft.splice(existingFilterIndex, 1);
               return filtersDraft;
             }
 

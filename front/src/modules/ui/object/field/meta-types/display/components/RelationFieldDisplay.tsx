@@ -1,11 +1,12 @@
 import { EntityChip } from '@/ui/display/chip/components/EntityChip';
+import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
 
 import { useRelationField } from '../../hooks/useRelationField';
 
 export const RelationFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useRelationField();
 
-  const { identifiersMapper } = useRelationField();
+  const { identifiersMapper } = useRelationPicker();
 
   if (!fieldValue || !fieldDefinition || !identifiersMapper) {
     return <></>;
@@ -13,7 +14,7 @@ export const RelationFieldDisplay = () => {
 
   const objectIdentifiers = identifiersMapper(
     fieldValue,
-    fieldDefinition.metadata.objectMetadataNameSingular,
+    fieldDefinition.metadata.relationObjectMetadataNameSingular,
   );
 
   return (

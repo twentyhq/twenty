@@ -1,8 +1,6 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
-
 import { FieldContext } from '../../contexts/FieldContext';
 import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
@@ -32,15 +30,11 @@ export const useRelationField = () => {
 
   const initialValue = fieldInitialValue?.isEmpty ? null : fieldValue;
 
-  const { identifiersMapper, searchQuery } = useRelationPicker();
-
   return {
     fieldDefinition,
     fieldValue,
     initialValue,
     initialSearchValue,
     setFieldValue,
-    searchQuery,
-    identifiersMapper,
   };
 };

@@ -6,19 +6,21 @@ import { Tag } from '@/ui/display/tag/components/Tag';
 import { FieldDisplay } from '@/ui/object/field/components/FieldDisplay';
 import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
 import { BooleanFieldInput } from '@/ui/object/field/meta-types/input/components/BooleanFieldInput';
+import { RatingFieldInput } from '@/ui/object/field/meta-types/input/components/RatingFieldInput';
 import { Field } from '~/generated/graphql';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { SettingsObjectFieldPreviewValueEffect } from '../components/SettingsObjectFieldPreviewValueEffect';
-import { settingsFieldMetadataTypes } from '../constants/settingsFieldMetadataTypes';
 import { useFieldPreview } from '../hooks/useFieldPreview';
-import { useRelationFieldPreview } from '../hooks/useRelationFieldPreview';
+
+import { SettingsObjectFieldSelectFormValues } from './SettingsObjectFieldSelectForm';
 
 export type SettingsObjectFieldPreviewProps = {
   className?: string;
   fieldMetadata: Pick<Field, 'icon' | 'label' | 'type'> & { id?: string };
   objectMetadataId: string;
   relationObjectMetadataId?: string;
+  selectOptions?: SettingsObjectFieldSelectFormValues;
   shrink?: boolean;
 };
 
@@ -73,6 +75,7 @@ export const SettingsObjectFieldPreview = ({
   fieldMetadata,
   objectMetadataId,
   relationObjectMetadataId,
+  selectOptions,
   shrink,
 }: SettingsObjectFieldPreviewProps) => {
   const theme = useTheme();
@@ -81,25 +84,16 @@ export const SettingsObjectFieldPreview = ({
     entityId,
     FieldIcon,
     fieldName,
-    hasValue,
     ObjectIcon,
     objectMetadataItem,
+    relationObjectMetadataItem,
     value,
   } = useFieldPreview({
     fieldMetadata,
     objectMetadataId,
-  });
-
-  const { defaultValue: relationDefaultValue } = useRelationFieldPreview({
     relationObjectMetadataId,
-    skipDefaultValue:
-      fieldMetadata.type !== FieldMetadataType.Relation || hasValue,
+    selectOptions,
   });
-
-  const defaultValue =
-    fieldMetadata.type === FieldMetadataType.Relation
-      ? relationDefaultValue
-      : settingsFieldMetadataTypes[fieldMetadata.type].defaultValue;
 
   return (
     <StyledContainer className={className}>
@@ -122,7 +116,7 @@ export const SettingsObjectFieldPreview = ({
       <SettingsObjectFieldPreviewValueEffect
         entityId={entityId}
         fieldName={fieldName}
-        value={value ?? defaultValue}
+        value={value}
       />
       <StyledFieldPreview shrink={shrink}>
         <StyledFieldLabel>
@@ -137,7 +131,7 @@ export const SettingsObjectFieldPreview = ({
         <FieldContext.Provider
           value={{
             entityId,
-            isMainIdentifier: false,
+            isLabelIdentifier: false,
             fieldDefinition: {
               type: parseFieldType(fieldMetadata.type),
               iconName: 'FieldIcon',
@@ -145,6 +139,8 @@ export const SettingsObjectFieldPreview = ({
               label: fieldMetadata.label,
               metadata: {
                 fieldName,
+                relationObjectMetadataNameSingular:
+                  relationObjectMetadataItem?.nameSingular,
               },
             },
             hotkeyScope: 'field-preview',
@@ -152,6 +148,8 @@ export const SettingsObjectFieldPreview = ({
         >
           {fieldMetadata.type === FieldMetadataType.Boolean ? (
             <BooleanFieldInput readonly />
+          ) : fieldMetadata.type === FieldMetadataType.Probability ? (
+            <RatingFieldInput readonly />
           ) : (
             <FieldDisplay />
           )}

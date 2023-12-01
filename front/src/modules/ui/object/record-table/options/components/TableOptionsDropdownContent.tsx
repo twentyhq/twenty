@@ -13,7 +13,7 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
-import { useView } from '@/views/hooks/useView';
+import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useRecordTableScopedStates } from '../../hooks/internal/useRecordTableScopedStates';
 import { useTableColumns } from '../../hooks/useTableColumns';
@@ -23,15 +23,16 @@ type TableOptionsMenu = 'fields';
 
 export const TableOptionsDropdownContent = ({
   onImport,
+  recordTableId,
 }: {
   onImport?: () => void;
+  recordTableId: string;
 }) => {
-  const { setViewEditMode, handleViewNameSubmit } = useView();
+  const { setViewEditMode, handleViewNameSubmit } = useViewBar();
   const { viewEditModeState, currentViewSelector } = useViewScopedStates();
 
   const viewEditMode = useRecoilValue(viewEditModeState);
   const currentView = useRecoilValue(currentViewSelector);
-
   const { closeDropdown } = useDropdown();
 
   const [currentMenu, setCurrentMenu] = useState<TableOptionsMenu | undefined>(
@@ -41,13 +42,14 @@ export const TableOptionsDropdownContent = ({
   const viewEditInputRef = useRef<HTMLInputElement>(null);
 
   const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
-    useRecordTableScopedStates();
+    useRecordTableScopedStates({ customRecordTableScopeId: recordTableId });
 
   const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector);
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
 
-  const { handleColumnVisibilityChange, handleColumnReorder } =
-    useTableColumns();
+  const { handleColumnVisibilityChange, handleColumnReorder } = useTableColumns(
+    { recordTableScopeId: recordTableId },
+  );
 
   const handleSelectMenu = (option: TableOptionsMenu) => {
     const name = viewEditInputRef.current?.value;
@@ -138,6 +140,7 @@ export const TableOptionsDropdownContent = ({
           <ViewFieldsVisibilityDropdownSection
             title="Visible"
             fields={visibleTableColumns}
+            isVisible={true}
             onVisibilityChange={handleColumnVisibilityChange}
             isDraggable={true}
             onDragEnd={handleReorderField}
@@ -148,6 +151,7 @@ export const TableOptionsDropdownContent = ({
               <ViewFieldsVisibilityDropdownSection
                 title="Hidden"
                 fields={hiddenTableColumns}
+                isVisible={false}
                 onVisibilityChange={handleColumnVisibilityChange}
                 isDraggable={false}
               />

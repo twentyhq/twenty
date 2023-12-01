@@ -21,8 +21,8 @@ export class GoogleAuthController {
     private readonly environmentService: EnvironmentService,
     private readonly typeORMService: TypeORMService,
     private readonly authService: AuthService,
-    @InjectRepository(Workspace)
-    @InjectRepository(User, 'metadata')
+    @InjectRepository(Workspace, 'core')
+    @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
   ) {}
 

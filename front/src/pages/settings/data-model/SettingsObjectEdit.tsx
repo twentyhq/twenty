@@ -11,6 +11,7 @@ import { SettingsObjectIconSection } from '@/settings/data-model/object-edit/Set
 import { AppPath } from '@/types/AppPath';
 import { IconArchive, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
@@ -18,6 +19,7 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 export const SettingsObjectEdit = () => {
   const navigate = useNavigate();
+  const { enqueueSnackBar } = useSnackBar();
 
   const { objectSlug = '' } = useParams();
   const {
@@ -73,9 +75,15 @@ export const SettingsObjectEdit = () => {
       ...formValues,
     };
 
-    await editObjectMetadataItem(editedObjectMetadataItem);
+    try {
+      await editObjectMetadataItem(editedObjectMetadataItem);
 
-    navigate(`/settings/objects/${getObjectSlug(editedObjectMetadataItem)}`);
+      navigate(`/settings/objects/${getObjectSlug(editedObjectMetadataItem)}`);
+    } catch (error) {
+      enqueueSnackBar((error as Error).message, {
+        variant: 'error',
+      });
+    }
   };
 
   const handleDisable = async () => {

@@ -6,20 +6,14 @@ import { v4 } from 'uuid';
 import { Comment } from '@/activities/comment/Comment';
 import { Activity } from '@/activities/types/Activity';
 import { Comment as CommentType } from '@/activities/types/Comment';
-import { currentUserState } from '@/auth/states/currentUserState';
-import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import {
   AutosizeTextInput,
   AutosizeTextInputVariant,
 } from '@/ui/input/components/AutosizeTextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-
-type ActivityCommentsProps = {
-  activity: Pick<Activity, 'id'> & {
-    comments: Array<CommentType>;
-  };
-  scrollableContainerRef: React.RefObject<HTMLDivElement>;
-};
 
 const StyledThreadItemListContainer = styled.div`
   align-items: flex-start;
@@ -57,16 +51,31 @@ const StyledThreadCommentTitle = styled.div`
   text-transform: uppercase;
 `;
 
+type ActivityCommentsProps = {
+  activity: Pick<Activity, 'id'>;
+  scrollableContainerRef: React.RefObject<HTMLDivElement>;
+};
+
 export const ActivityComments = ({
   activity,
   scrollableContainerRef,
 }: ActivityCommentsProps) => {
-  const currentUser = useRecoilValue(currentUserState);
-  const { createOneObject } = useCreateOneObjectRecord({
+  const { createOneRecord: createOneComment } = useCreateOneRecord({
     objectNameSingular: 'comment',
   });
 
-  if (!currentUser) {
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
+  const { records: comments } = useFindManyRecords({
+    objectNamePlural: 'comments',
+    filter: {
+      activityId: {
+        eq: activity?.id ?? '',
+      },
+    },
+  });
+
+  if (!currentWorkspaceMember) {
     return <></>;
   }
 
@@ -75,11 +84,11 @@ export const ActivityComments = ({
       return;
     }
 
-    createOneObject?.({
-      commentId: v4(),
-      authorId: currentUser?.id ?? '',
+    createOneComment?.({
+      id: v4(),
+      authorId: currentWorkspaceMember?.id ?? '',
       activityId: activity?.id ?? '',
-      commentText: commentText,
+      body: commentText,
       createdAt: new Date().toISOString(),
     });
   };
@@ -95,24 +104,24 @@ export const ActivityComments = ({
 
   return (
     <>
-      {activity?.comments.length > 0 && (
+      {comments.length > 0 && (
         <>
           <StyledThreadItemListContainer>
             <StyledThreadCommentTitle>Comments</StyledThreadCommentTitle>
-            {activity?.comments?.map((comment) => (
-              <Comment key={comment.id} comment={comment} />
+            {comments?.map((comment) => (
+              <Comment key={comment.id} comment={comment as CommentType} />
             ))}
           </StyledThreadItemListContainer>
         </>
       )}
 
       <StyledCommentActionBar>
-        {currentUser && (
+        {currentWorkspaceMember && (
           <AutosizeTextInput
             onValidate={handleSendComment}
             onFocus={handleFocus}
             variant={AutosizeTextInputVariant.Button}
-            placeholder={activity?.comments.length > 0 ? 'Reply...' : undefined}
+            placeholder={comments.length > 0 ? 'Reply...' : undefined}
           />
         )}
       </StyledCommentActionBar>

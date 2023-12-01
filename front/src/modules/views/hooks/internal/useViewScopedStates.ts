@@ -8,12 +8,12 @@ import { ViewScopeInternalContext } from '../../scopes/scope-internal-context/Vi
 import { currentViewIdScopedState } from '../../states/currentViewIdScopedState';
 import { getViewScopedStates } from '../../utils/internal/getViewScopedStates';
 
-export const useViewScopedStates = (args?: { customViewScopeId?: string }) => {
-  const { customViewScopeId } = args ?? {};
+export const useViewScopedStates = (args?: { viewScopeId?: string }) => {
+  const { viewScopeId } = args ?? {};
 
   const scopeId = useAvailableScopeIdOrThrow(
     ViewScopeInternalContext,
-    customViewScopeId,
+    viewScopeId,
   );
 
   // View
@@ -36,6 +36,7 @@ export const useViewScopedStates = (args?: { customViewScopeId?: string }) => {
     currentViewSortsState,
     entityCountInCurrentViewState,
     isViewBarExpandedState,
+    isPersistingViewState,
     onViewFieldsChangeState,
     onViewFiltersChangeState,
     onViewSortsChangeState,
@@ -67,6 +68,7 @@ export const useViewScopedStates = (args?: { customViewScopeId?: string }) => {
     currentViewSortsState,
     entityCountInCurrentViewState,
     isViewBarExpandedState,
+    isPersistingViewState,
     onViewFieldsChangeState,
     onViewFiltersChangeState,
     onViewSortsChangeState,

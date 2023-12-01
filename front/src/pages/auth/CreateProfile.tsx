@@ -12,11 +12,11 @@ import { Title } from '@/auth/components/Title';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
-import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
-import { useSnackBar } from '@/ui/feedback/snack-bar/hooks/useSnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -62,8 +62,8 @@ export const CreateProfile = () => {
     currentWorkspaceMemberState,
   );
 
-  const { updateOneObject, objectNotFoundInMetadata } =
-    useUpdateOneObjectRecord<WorkspaceMember>({
+  const { updateOneRecord, objectMetadataItemNotFound } =
+    useUpdateOneRecord<WorkspaceMember>({
       objectNameSingular: 'workspaceMember',
     });
 
@@ -76,8 +76,8 @@ export const CreateProfile = () => {
   } = useForm<Form>({
     mode: 'onChange',
     defaultValues: {
-      firstName: currentWorkspaceMember?.name.firstName ?? '',
-      lastName: currentWorkspaceMember?.name.lastName ?? '',
+      firstName: currentWorkspaceMember?.name?.firstName ?? '',
+      lastName: currentWorkspaceMember?.name?.lastName ?? '',
     },
     resolver: zodResolver(validationSchema),
   });
@@ -91,11 +91,11 @@ export const CreateProfile = () => {
         if (!data.firstName || !data.lastName) {
           throw new Error('First name or last name is missing');
         }
-        if (!updateOneObject || objectNotFoundInMetadata) {
+        if (!updateOneRecord || objectMetadataItemNotFound) {
           throw new Error('Object not found in metadata');
         }
 
-        await updateOneObject({
+        await updateOneRecord({
           idToUpdate: currentWorkspaceMember?.id,
           input: {
             name: {
@@ -127,9 +127,9 @@ export const CreateProfile = () => {
       currentWorkspaceMember?.id,
       enqueueSnackBar,
       navigate,
-      objectNotFoundInMetadata,
+      objectMetadataItemNotFound,
       setCurrentWorkspaceMember,
-      updateOneObject,
+      updateOneRecord,
     ],
   );
 

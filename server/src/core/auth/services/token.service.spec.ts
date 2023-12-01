@@ -24,11 +24,11 @@ describe('TokenService', () => {
           useValue: {},
         },
         {
-          provide: getRepositoryToken(User),
+          provide: getRepositoryToken(User, 'core'),
           useValue: {},
         },
         {
-          provide: getRepositoryToken(RefreshToken),
+          provide: getRepositoryToken(RefreshToken, 'core'),
           useValue: {},
         },
       ],

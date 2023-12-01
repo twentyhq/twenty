@@ -11,7 +11,7 @@ export const MultipleFiltersDropdownFilterOnFilterChangedEffect = ({
 
   useEffect(() => {
     switch (filterDefinitionUsedInDropdownType) {
-      case 'DATE':
+      case 'DATE_TIME':
         setDropdownWidth(280);
         break;
       default:

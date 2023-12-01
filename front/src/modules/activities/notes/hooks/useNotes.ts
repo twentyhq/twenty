@@ -1,22 +1,31 @@
 import { Note } from '@/activities/types/Note';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
 import { ActivityTargetableEntity } from '../../types/ActivityTargetableEntity';
 
 export const useNotes = (entity: ActivityTargetableEntity) => {
-  const { objects: notes } = useFindManyObjectRecords({
-    objectNamePlural: 'activities',
+  const { records: activityTargets } = useFindManyRecords({
+    objectNamePlural: 'activityTargets',
     filter: {
-      type: { equals: 'None' },
-      activityTargets: {
-        some: {
-          OR: [
-            { companyId: { equals: entity.id } },
-            { personId: { equals: entity.id } },
-          ],
-        },
-      },
+      [entity.type === 'Company' ? 'companyId' : 'personId']: { eq: entity.id },
     },
+  });
+
+  const filter = {
+    id: {
+      in: activityTargets?.map((activityTarget) => activityTarget.activityId),
+    },
+    type: { eq: 'Note' },
+  };
+  const orderBy = {
+    createdAt: 'AscNullsFirst',
+  };
+
+  const { records: notes } = useFindManyRecords({
+    skip: !activityTargets?.length,
+    objectNamePlural: 'activities',
+    filter,
+    orderBy,
   });
 
   return {

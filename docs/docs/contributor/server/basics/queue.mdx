@@ -1,0 +1,46 @@
+---
+title: Message Queue
+sidebar_position: 5
+sidebar_custom_props:
+  icon: TbTopologyStar
+---
+
+Queues facilitate async operations to be performed.It could be used for performing background tasks such as sending a welcome email on register.
+Each use case will have its own queue class extended from `MessageQueueServiceBase`.
+
+Currently queue supports 2 drivers which can be configurred by env variable `MESSAGE_QUEUE_TYPE`
+1. `pg-boss` this is the default driver, uses [pg-boss](https://github.com/timgit/pg-boss) under the hood.
+2. `bull-mq` it uses [bull-mq](https://bullmq.io/) under the hood.
+
+Steps to create and use a new queue
+1. add a queue name for your new queue under enum `MESSAGE_QUEUES`.
+2. provide factory implementation of the queue with queue name as dependency token.
+3. inject the queue that you created in the required module/service with queue name as dependency token.
+4. add worker class with token based injection just like producer.
+
+### Example usage
+```ts
+class Resolver {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+  async onSomeAction() {
+    //business logic
+    await this.queue.add(someData);
+  }
+}
+
+//async worker
+class CustomWorker {
+  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+    this.initWorker();
+  }
+
+  async initWorker() {
+    await this.queue.work(async ({ id, data }) => {
+      //worker logic
+    });
+  }
+}
+
+```
+
