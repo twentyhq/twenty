@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { ColorScheme } from '~/generated/graphql';
+import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
 import { ColorSchemeCard } from './ColorSchemeCard';
 
@@ -37,25 +37,25 @@ export const ColorSchemePicker = ({
   <StyledContainer>
     <StyledCardContainer>
       <ColorSchemeCard
-        onClick={() => onChange(ColorScheme.Light)}
-        variant="light"
-        selected={value === ColorScheme.Light}
+        onClick={() => onChange('Light')}
+        variant="Light"
+        selected={value === 'Light'}
       />
       <StyledLabel>Light</StyledLabel>
     </StyledCardContainer>
     <StyledCardContainer>
       <ColorSchemeCard
-        onClick={() => onChange(ColorScheme.Dark)}
-        variant="dark"
-        selected={value === ColorScheme.Dark}
+        onClick={() => onChange('Dark')}
+        variant="Dark"
+        selected={value === 'Dark'}
       />
       <StyledLabel>Dark</StyledLabel>
     </StyledCardContainer>
     <StyledCardContainer>
       <ColorSchemeCard
-        onClick={() => onChange(ColorScheme.System)}
-        variant="system"
-        selected={value === ColorScheme.System}
+        onClick={() => onChange('System')}
+        variant="System"
+        selected={value === 'System'}
       />
       <StyledLabel>System settings</StyledLabel>
     </StyledCardContainer>

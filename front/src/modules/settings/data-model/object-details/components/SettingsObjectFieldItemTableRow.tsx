@@ -1,20 +1,23 @@
 import { ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { useRelationMetadata } from '@/object-metadata/hooks/useRelationMetadata';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
-import { dataTypes } from '../../constants/dataTypes';
-import { MetadataFieldDataType } from '../../types/ObjectFieldDataType';
+import { relationTypes } from '../../constants/relationTypes';
+import { settingsFieldMetadataTypes } from '../../constants/settingsFieldMetadataTypes';
 
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
 type SettingsObjectFieldItemTableRowProps = {
   ActionIcon: ReactNode;
-  fieldItem: FieldMetadataItem;
+  fieldMetadataItem: FieldMetadataItem;
 };
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
@@ -31,35 +34,53 @@ const StyledIconTableCell = styled(TableCell)`
   padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
-// TODO: remove "relation" type for now, add it back when the backend is ready.
-const { RELATION: _, ...dataTypesWithoutRelation } = dataTypes;
-
 export const SettingsObjectFieldItemTableRow = ({
   ActionIcon,
-  fieldItem,
+  fieldMetadataItem: fieldMetadataItem,
 }: SettingsObjectFieldItemTableRowProps) => {
   const theme = useTheme();
-  const { Icon } = useLazyLoadIcon(fieldItem.icon ?? '');
+  const { Icon } = useLazyLoadIcon(fieldMetadataItem.icon ?? '');
+  const navigate = useNavigate();
 
   // TODO: parse with zod and merge types with FieldType (create a subset of FieldType for example)
-  const fieldDataTypeIsSupported = Object.keys(
-    dataTypesWithoutRelation,
-  ).includes(fieldItem.type);
+  const fieldDataTypeIsSupported =
+    fieldMetadataItem.type in settingsFieldMetadataTypes;
 
-  if (!fieldDataTypeIsSupported) {
-    return null;
-  }
+  const { relationObjectMetadataItem, relationType } = useRelationMetadata({
+    fieldMetadataItem,
+  });
+
+  if (!fieldDataTypeIsSupported) return null;
+
+  const RelationIcon = relationType
+    ? relationTypes[relationType].Icon
+    : undefined;
 
   return (
     <StyledObjectFieldTableRow>
       <StyledNameTableCell>
         {!!Icon && <Icon size={theme.icon.size.md} />}
-        {fieldItem.label}
+        {fieldMetadataItem.label}
       </StyledNameTableCell>
-      <TableCell>{fieldItem.isCustom ? 'Custom' : 'Standard'}</TableCell>
+      <TableCell>
+        {fieldMetadataItem.isCustom ? 'Custom' : 'Standard'}
+      </TableCell>
       <TableCell>
         <SettingsObjectFieldDataType
-          value={fieldItem.type as MetadataFieldDataType}
+          Icon={RelationIcon}
+          label={relationObjectMetadataItem?.labelPlural}
+          onClick={
+            relationObjectMetadataItem?.namePlural &&
+            !relationObjectMetadataItem.isSystem
+              ? () =>
+                  navigate(
+                    `/settings/objects/${getObjectSlug(
+                      relationObjectMetadataItem,
+                    )}`,
+                  )
+              : undefined
+          }
+          value={fieldMetadataItem.type}
         />
       </TableCell>
       <StyledIconTableCell>{ActionIcon}</StyledIconTableCell>

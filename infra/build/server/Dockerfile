@@ -7,8 +7,6 @@ COPY ./server/patches ./patches
 RUN yarn install
 
 COPY ./server .
-RUN npx prisma generate
-
 RUN yarn build
 
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty

@@ -8,9 +8,12 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { SortDirection } from '@ptc-org/nestjs-query-core';
 
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
-import { TenantMigrationRunnerModule } from 'src/tenant-migration-runner/tenant-migration-runner.module';
-import { TenantMigrationModule } from 'src/metadata/tenant-migration/tenant-migration.module';
+import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.module';
+import { WorkspaceMigrationModule } from 'src/metadata/workspace-migration/workspace-migration.module';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
+import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
+import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
 
 import { ObjectMetadataService } from './object-metadata.service';
 import { ObjectMetadataEntity } from './object-metadata.entity';
@@ -23,10 +26,14 @@ import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
+        TypeORMModule,
+        NestjsQueryTypeOrmModule.forFeature(
+          [ObjectMetadataEntity, FieldMetadataEntity, RelationMetadataEntity],
+          'metadata',
+        ),
         DataSourceModule,
-        TenantMigrationModule,
-        TenantMigrationRunnerModule,
+        WorkspaceMigrationModule,
+        WorkspaceMigrationRunnerModule,
       ],
       services: [ObjectMetadataService],
       resolvers: [

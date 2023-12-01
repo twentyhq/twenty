@@ -7,24 +7,23 @@ import {
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 
-import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
-import { GET_API_KEYS } from '@/settings/developers/graphql/queries/getApiKeys';
 import {
-  GetApiKeysQuery,
-  GetCompaniesQuery,
-  GetPeopleQuery,
-} from '~/generated/graphql';
+  EMPTY_QUERY,
+  useObjectMetadataItem,
+} from '@/object-metadata/hooks/useObjectMetadataItem';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 import { optimisticEffectState } from '../states/optimisticEffectState';
 import { OptimisticEffect } from '../types/internal/OptimisticEffect';
 import { OptimisticEffectDefinition } from '../types/OptimisticEffectDefinition';
 
-export const useOptimisticEffect = (objectNameSingular: string) => {
+export const useOptimisticEffect = ({
+  objectNameSingular,
+}: {
+  objectNameSingular: string | undefined;
+}) => {
   const apolloClient = useApolloClient();
-  const { findManyQuery } = useFindOneObjectMetadataItem({
+  const { findManyRecordsQuery } = useObjectMetadataItem({
     objectNameSingular,
   });
 
@@ -37,6 +36,12 @@ export const useOptimisticEffect = (objectNameSingular: string) => {
         variables: OperationVariables;
         definition: OptimisticEffectDefinition;
       }) => {
+        if (findManyRecordsQuery === EMPTY_QUERY) {
+          throw new Error(
+            `Trying to register an optimistic effect for unknown object ${objectNameSingular}`,
+          );
+        }
+
         const optimisticEffects = snapshot
           .getLoadable(optimisticEffectState)
           .getValue();
@@ -46,7 +51,6 @@ export const useOptimisticEffect = (objectNameSingular: string) => {
           newData,
           query,
           variables,
-          isUsingFlexibleBackend,
           objectMetadataItem,
         }: {
           cache: ApolloCache<unknown>;
@@ -56,9 +60,9 @@ export const useOptimisticEffect = (objectNameSingular: string) => {
           isUsingFlexibleBackend?: boolean;
           objectMetadataItem?: ObjectMetadataItem;
         }) => {
-          if (isUsingFlexibleBackend && objectMetadataItem) {
+          if (objectMetadataItem) {
             const existingData = cache.readQuery({
-              query: findManyQuery,
+              query: findManyRecordsQuery,
               variables,
             });
 
@@ -67,7 +71,7 @@ export const useOptimisticEffect = (objectNameSingular: string) => {
             }
 
             cache.writeQuery({
-              query: findManyQuery,
+              query: findManyRecordsQuery,
               variables,
               data: {
                 [objectMetadataItem.namePlural]: definition.resolver({
@@ -90,50 +94,6 @@ export const useOptimisticEffect = (objectNameSingular: string) => {
 
           if (!existingData) {
             return;
-          }
-
-          if (query === GET_PEOPLE) {
-            cache.writeQuery({
-              query,
-              variables,
-              data: {
-                people: definition.resolver({
-                  currentData: (existingData as GetPeopleQuery).people as T[],
-                  newData: newData as T[],
-                  variables,
-                }),
-              },
-            });
-          }
-
-          if (query === GET_COMPANIES) {
-            cache.writeQuery({
-              query,
-              variables,
-              data: {
-                companies: definition.resolver({
-                  currentData: (existingData as GetCompaniesQuery)
-                    .companies as T[],
-                  newData: newData as T[],
-                  variables,
-                }),
-              },
-            });
-          }
-
-          if (query === GET_API_KEYS) {
-            cache.writeQuery({
-              query,
-              variables,
-              data: {
-                findManyApiKey: definition.resolver({
-                  currentData: (existingData as GetApiKeysQuery)
-                    .findManyApiKey as T[],
-                  newData: newData as T[],
-                  variables,
-                }),
-              },
-            });
           }
         };
 

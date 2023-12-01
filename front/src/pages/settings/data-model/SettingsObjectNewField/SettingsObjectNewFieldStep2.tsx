@@ -1,90 +1,202 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
-import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
-import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFieldFormSection } from '@/settings/data-model/components/SettingsObjectFieldFormSection';
 import { SettingsObjectFieldTypeSelectSection } from '@/settings/data-model/components/SettingsObjectFieldTypeSelectSection';
-import { MetadataFieldDataType } from '@/settings/data-model/types/ObjectFieldDataType';
+import { useFieldMetadataForm } from '@/settings/data-model/hooks/useFieldMetadataForm';
 import { AppPath } from '@/types/AppPath';
 import { IconSettings } from '@/ui/display/icon';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
+  const { enqueueSnackBar } = useSnackBar();
 
-  const { findActiveObjectMetadataItemBySlug, loading } =
-    useObjectMetadataItemForSettings();
+  const {
+    findActiveObjectMetadataItemBySlug,
+    findObjectMetadataItemById,
+    findObjectMetadataItemByNamePlural,
+  } = useObjectMetadataItemForSettings();
 
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
   const { createMetadataField } = useFieldMetadataItem();
 
-  useEffect(() => {
-    if (loading) return;
-    if (!activeObjectMetadataItem) navigate(AppPath.NotFound);
-  }, [activeObjectMetadataItem, loading, navigate]);
+  const isRelationFieldTypeEnabled = useIsFeatureEnabled(
+    'IS_RELATION_FIELD_TYPE_ENABLED',
+  );
 
-  const [formValues, setFormValues] = useState<{
-    description?: string;
-    icon: string;
-    label: string;
-    type: MetadataFieldDataType;
-  }>({ icon: 'IconUsers', label: '', type: 'NUMBER' });
+  const {
+    formValues,
+    handleFormChange,
+    initForm,
+    isValid: canSave,
+    validatedFormValues,
+  } = useFieldMetadataForm();
+
+  useEffect(() => {
+    if (!activeObjectMetadataItem) {
+      navigate(AppPath.NotFound);
+      return;
+    }
+
+    initForm({
+      relation: {
+        field: { icon: activeObjectMetadataItem.icon },
+        objectMetadataId:
+          findObjectMetadataItemByNamePlural('people')?.id || '',
+      },
+    });
+  }, [
+    activeObjectMetadataItem,
+    findObjectMetadataItemByNamePlural,
+    initForm,
+
+    navigate,
+  ]);
 
   const [objectViews, setObjectViews] = useState<View[]>([]);
+  const [relationObjectViews, setRelationObjectViews] = useState<View[]>([]);
 
-  const { createOneObject: createOneViewField } = useCreateOneObjectRecord({
-    objectNamePlural: 'viewFieldsV2',
+  const { createOneRecord: createOneViewField } = useCreateOneRecord({
+    objectNameSingular: 'viewField',
   });
 
-  useFindManyObjectRecords({
-    objectNamePlural: 'viewsV2',
+  useFindManyRecords({
+    objectNamePlural: 'views',
     filter: {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: activeObjectMetadataItem?.id },
     },
-    onCompleted: async (data: PaginatedObjectTypeResults<View>) => {
+    onCompleted: async (data: PaginatedRecordTypeResults<View>) => {
       const views = data.edges;
 
-      if (!views) {
-        return;
-      }
+      if (!views) return;
 
       setObjectViews(data.edges.map(({ node }) => node));
     },
   });
 
-  if (!activeObjectMetadataItem || !objectViews.length) return null;
+  useFindManyRecords({
+    objectNamePlural: 'views',
+    skip: !formValues.relation?.objectMetadataId,
+    filter: {
+      type: { eq: ViewType.Table },
+      objectMetadataId: { eq: formValues.relation?.objectMetadataId },
+    },
+    onCompleted: async (data: PaginatedRecordTypeResults<View>) => {
+      const views = data.edges;
 
-  const canSave = !!formValues.label;
+      if (!views) return;
+
+      setRelationObjectViews(data.edges.map(({ node }) => node));
+    },
+  });
+
+  const { createOneRelationMetadataItem: createOneRelationMetadata } =
+    useCreateOneRelationMetadataItem();
+
+  if (!activeObjectMetadataItem) return null;
 
   const handleSave = async () => {
-    const createdField = await createMetadataField({
-      ...formValues,
-      objectMetadataId: activeObjectMetadataItem.id,
-    });
-    objectViews.forEach(async (view) => {
-      await createOneViewField?.({
-        view: view.id,
-        fieldMetadataId: createdField.data?.createOneField.id,
-        position: activeObjectMetadataItem.fields.length,
-        isVisible: true,
-        size: 100,
+    if (!validatedFormValues) return;
+
+    try {
+      if (validatedFormValues.type === FieldMetadataType.Relation) {
+        const createdRelation = await createOneRelationMetadata({
+          relationType: validatedFormValues.relation.type,
+          field: {
+            description: validatedFormValues.description,
+            icon: validatedFormValues.icon,
+            label: validatedFormValues.label,
+          },
+          objectMetadataId: activeObjectMetadataItem.id,
+          connect: {
+            field: {
+              icon: validatedFormValues.relation.field.icon,
+              label: validatedFormValues.relation.field.label,
+            },
+            objectMetadataId: validatedFormValues.relation.objectMetadataId,
+          },
+        });
+
+        const relationObjectMetadataItem = findObjectMetadataItemById(
+          validatedFormValues.relation.objectMetadataId,
+        );
+
+        objectViews.forEach(async (view) => {
+          await createOneViewField?.({
+            view: view.id,
+            fieldMetadataId:
+              validatedFormValues.relation.type === 'MANY_TO_ONE'
+                ? createdRelation.data?.createOneRelation.toFieldMetadataId
+                : createdRelation.data?.createOneRelation.fromFieldMetadataId,
+            position: activeObjectMetadataItem.fields.length,
+            isVisible: true,
+            size: 100,
+          });
+        });
+        relationObjectViews.forEach(async (view) => {
+          await createOneViewField?.({
+            view: view.id,
+            fieldMetadataId:
+              validatedFormValues.relation.type === 'MANY_TO_ONE'
+                ? createdRelation.data?.createOneRelation.fromFieldMetadataId
+                : createdRelation.data?.createOneRelation.toFieldMetadataId,
+            position: relationObjectMetadataItem?.fields.length,
+            isVisible: true,
+            size: 100,
+          });
+        });
+      } else {
+        await createMetadataField({
+          description: validatedFormValues.description,
+          icon: validatedFormValues.icon,
+          label: validatedFormValues.label,
+          objectMetadataId: activeObjectMetadataItem.id,
+          type: validatedFormValues.type,
+        });
+      }
+
+      navigate(`/settings/objects/${objectSlug}`);
+    } catch (error) {
+      enqueueSnackBar((error as Error).message, {
+        variant: 'error',
       });
-    });
-    navigate(`/settings/objects/${objectSlug}`);
+    }
   };
+
+  const excludedFieldTypes = [
+    FieldMetadataType.Currency,
+    FieldMetadataType.Email,
+    FieldMetadataType.Enum,
+    FieldMetadataType.Numeric,
+    FieldMetadataType.FullName,
+    FieldMetadataType.Link,
+    FieldMetadataType.Phone,
+    FieldMetadataType.Probability,
+    FieldMetadataType.Uuid,
+  ];
+
+  if (!isRelationFieldTypeEnabled) {
+    excludedFieldTypes.push(FieldMetadataType.Relation);
+  }
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -110,24 +222,21 @@ export const SettingsObjectNewFieldStep2 = () => {
           iconKey={formValues.icon}
           name={formValues.label}
           description={formValues.description}
-          onChange={(values) =>
-            setFormValues((previousValues) => ({
-              ...previousValues,
-              ...values,
-            }))
-          }
+          onChange={handleFormChange}
         />
         <SettingsObjectFieldTypeSelectSection
-          fieldIconKey={formValues.icon}
-          fieldLabel={formValues.label || 'Employees'}
-          fieldType={formValues.type}
-          isObjectCustom={activeObjectMetadataItem.isCustom}
-          objectIconKey={activeObjectMetadataItem.icon}
-          objectLabelPlural={activeObjectMetadataItem.labelPlural}
-          objectNamePlural={activeObjectMetadataItem.namePlural}
-          onChange={(type) =>
-            setFormValues((previousValues) => ({ ...previousValues, type }))
-          }
+          excludedFieldTypes={excludedFieldTypes}
+          fieldMetadata={{
+            icon: formValues.icon,
+            label: formValues.label || 'Employees',
+          }}
+          objectMetadataId={activeObjectMetadataItem.id}
+          onChange={handleFormChange}
+          values={{
+            type: formValues.type,
+            relation: formValues.relation,
+            select: formValues.select,
+          }}
         />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

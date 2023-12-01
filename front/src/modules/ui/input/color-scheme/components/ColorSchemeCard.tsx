@@ -8,28 +8,26 @@ import {
 } from 'framer-motion';
 
 import { Checkmark } from '@/ui/display/checkmark/components/Checkmark';
-import DarkNoise from '@/ui/theme/assets/dark-noise.jpg';
-import LightNoise from '@/ui/theme/assets/light-noise.png';
-import { ColorScheme } from '~/generated/graphql';
+import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
 const StyledColorSchemeBackground = styled.div<
   Pick<ColorSchemeCardProps, 'variant'>
 >`
   align-items: flex-end;
-  background: ${({ variant }) => {
+  background: ${({ variant, theme }) => {
     switch (variant) {
-      case 'dark':
-        return `url(${DarkNoise.toString()});`;
-      case 'light':
+      case 'Dark':
+        return theme.grayScale.gray75;
+      case 'Light':
       default:
-        return `url(${LightNoise.toString()});`;
+        return theme.grayScale.gray15;
     }
   }};
   border: ${({ variant, theme }) => {
     switch (variant) {
-      case 'dark':
+      case 'Dark':
         return `1px solid ${theme.grayScale.gray70};`;
-      case 'light':
+      case 'Light':
       default:
         return `1px solid ${theme.grayScale.gray20};`;
     }
@@ -51,18 +49,18 @@ const StyledColorSchemeContent = styled(motion.div)<
 >`
   background: ${({ theme, variant }) => {
     switch (variant) {
-      case 'dark':
+      case 'Dark':
         return theme.grayScale.gray75;
-      case 'light':
+      case 'Light':
         return theme.grayScale.gray0;
     }
   }};
 
   border-left: ${({ variant, theme }) => {
     switch (variant) {
-      case 'dark':
+      case 'Dark':
         return `1px solid ${theme.grayScale.gray60};`;
-      case 'light':
+      case 'Light':
       default:
         return `1px solid ${theme.grayScale.gray20};`;
     }
@@ -70,9 +68,9 @@ const StyledColorSchemeContent = styled(motion.div)<
   border-radius: ${({ theme }) => theme.border.radius.md} 0px 0px 0px;
   border-top: ${({ variant, theme }) => {
     switch (variant) {
-      case 'dark':
+      case 'Dark':
         return `1px solid ${theme.grayScale.gray60};`;
-      case 'light':
+      case 'Light':
       default:
         return `1px solid ${theme.grayScale.gray20};`;
     }
@@ -80,9 +78,9 @@ const StyledColorSchemeContent = styled(motion.div)<
   box-sizing: border-box;
   color: ${({ variant, theme }) => {
     switch (variant) {
-      case 'dark':
+      case 'Dark':
         return theme.grayScale.gray30;
-      case 'light':
+      case 'Light':
       default:
         return theme.grayScale.gray60;
     }
@@ -96,7 +94,7 @@ const StyledColorSchemeContent = styled(motion.div)<
 `;
 
 export type ColorSchemeSegmentProps = {
-  variant: `${Lowercase<ColorScheme.Dark | ColorScheme.Light>}`;
+  variant: ColorScheme;
   controls: AnimationControls;
 } & React.ComponentPropsWithoutRef<'div'>;
 
@@ -119,15 +117,16 @@ const ColorSchemeSegment = ({
 
 const StyledContainer = styled.div`
   position: relative;
+  width: 120px;
 `;
 
 const StyledMixedColorSchemeSegment = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};
   cursor: pointer;
   display: flex;
-  display: flex;
   height: 80px;
   overflow: hidden;
+  position: relative;
   width: 120px;
 `;
 
@@ -139,7 +138,7 @@ const StyledCheckmarkContainer = styled(motion.div)`
 `;
 
 export type ColorSchemeCardProps = {
-  variant: `${Lowercase<ColorScheme>}`;
+  variant: ColorScheme;
   selected?: boolean;
 } & React.ComponentPropsWithoutRef<'div'>;
 
@@ -172,7 +171,7 @@ export const ColorSchemeCard = ({
     });
   };
 
-  if (variant === 'system') {
+  if (variant === 'System') {
     return (
       <StyledContainer>
         <StyledMixedColorSchemeSegment
@@ -183,12 +182,12 @@ export const ColorSchemeCard = ({
           <ColorSchemeSegment
             style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
             controls={controls}
-            variant="light"
+            variant="Light"
           />
           <ColorSchemeSegment
             style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
             controls={controls}
-            variant="dark"
+            variant="Dark"
           />
         </StyledMixedColorSchemeSegment>
         <AnimatePresence>

@@ -1,7 +1,4 @@
-export enum ActivityTargetableEntityType {
-  Person = 'Person',
-  Company = 'Company',
-}
+export type ActivityTargetableEntityType = 'Person' | 'Company' | 'Custom';
 
 export type ActivityTargetableEntity = {
   id: string;

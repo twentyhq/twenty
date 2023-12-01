@@ -1,6 +1,5 @@
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-
-import { useFilter } from '../hooks/useFilter';
+import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 
 import { MultipleFiltersDropdownFilterOnFilterChangedEffect } from './MultipleFiltersDropdownFilterOnFilterChangedEffect';
 import { ObjectFilterDropdownDateSearchInput } from './ObjectFilterDropdownDateSearchInput';
@@ -17,7 +16,7 @@ export const MultipleFiltersDropdownContent = () => {
     isObjectFilterDropdownOperandSelectUnfolded,
     filterDefinitionUsedInDropdown,
     selectedOperandInDropdown,
-  } = useFilter();
+  } = useFilterDropdown();
 
   return (
     <>
@@ -30,19 +29,19 @@ export const MultipleFiltersDropdownContent = () => {
           <>
             <ObjectFilterDropdownOperandButton />
             <DropdownMenuSeparator />
-            {filterDefinitionUsedInDropdown.type === 'TEXT' && (
-              <ObjectFilterDropdownTextSearchInput />
-            )}
-            {filterDefinitionUsedInDropdown.type === 'NUMBER' && (
-              <ObjectFilterDropdownNumberSearchInput />
-            )}
-            {filterDefinitionUsedInDropdown.type === 'DATE' && (
+            {['TEXT', 'EMAIL', 'PHONE', 'FULL_NAME', 'LINK'].includes(
+              filterDefinitionUsedInDropdown.type,
+            ) && <ObjectFilterDropdownTextSearchInput />}
+            {['NUMBER', 'CURRENCY'].includes(
+              filterDefinitionUsedInDropdown.type,
+            ) && <ObjectFilterDropdownNumberSearchInput />}
+            {filterDefinitionUsedInDropdown.type === 'DATE_TIME' && (
               <ObjectFilterDropdownDateSearchInput />
             )}
-            {filterDefinitionUsedInDropdown.type === 'ENTITY' && (
+            {filterDefinitionUsedInDropdown.type === 'RELATION' && (
               <ObjectFilterDropdownEntitySearchInput />
             )}
-            {filterDefinitionUsedInDropdown.type === 'ENTITY' && (
+            {filterDefinitionUsedInDropdown.type === 'RELATION' && (
               <ObjectFilterDropdownEntitySelect />
             )}
           </>

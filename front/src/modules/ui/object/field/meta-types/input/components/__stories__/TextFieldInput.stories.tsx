@@ -46,6 +46,7 @@ const TextFieldInputWithContext = ({
           fieldMetadataId: 'text',
           label: 'Text',
           type: 'TEXT',
+          iconName: 'IconTag',
           metadata: {
             fieldName: 'Text',
             placeHolder: 'Enter text',

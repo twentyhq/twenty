@@ -1,30 +1,39 @@
+import { useRecoilValue } from 'recoil';
+
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 import { formatObjectMetadataItemInput } from '../utils/formatObjectMetadataItemInput';
 import { getObjectSlug } from '../utils/getObjectSlug';
 
 import { useCreateOneObjectRecordMetadataItem } from './useCreateOneObjectMetadataItem';
 import { useDeleteOneObjectMetadataItem } from './useDeleteOneObjectMetadataItem';
-import { useFindManyObjectMetadataItems } from './useFindManyObjectMetadataItems';
 import { useUpdateOneObjectMetadataItem } from './useUpdateOneObjectMetadataItem';
 
 export const useObjectMetadataItemForSettings = () => {
-  const { objectMetadataItems, loading } = useFindManyObjectMetadataItems({
-    filter: {
-      isSystem: { is: false },
-    },
-  });
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const activeObjectMetadataItems = objectMetadataItems.filter(
-    ({ isActive }) => isActive,
+    ({ isActive, isSystem }) => isActive && !isSystem,
   );
   const disabledObjectMetadataItems = objectMetadataItems.filter(
-    ({ isActive }) => !isActive,
+    ({ isActive, isSystem }) => !isActive && !isSystem,
   );
 
   const findActiveObjectMetadataItemBySlug = (slug: string) =>
     activeObjectMetadataItems.find(
       (activeObjectMetadataItem) =>
         getObjectSlug(activeObjectMetadataItem) === slug,
+    );
+
+  const findObjectMetadataItemById = (id: string) =>
+    objectMetadataItems.find(
+      (objectMetadataItem) => objectMetadataItem.id === id,
+    );
+
+  const findObjectMetadataItemByNamePlural = (namePlural: string) =>
+    objectMetadataItems.find(
+      (objectMetadataItem) => objectMetadataItem.namePlural === namePlural,
     );
 
   const { createOneObjectMetadataItem } =
@@ -79,6 +88,8 @@ export const useObjectMetadataItemForSettings = () => {
     editObjectMetadataItem,
     eraseObjectMetadataItem,
     findActiveObjectMetadataItemBySlug,
-    loading,
+    findObjectMetadataItemById,
+    findObjectMetadataItemByNamePlural,
+    objectMetadataItems,
   };
 };

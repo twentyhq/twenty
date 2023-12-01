@@ -1,8 +1,8 @@
 import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
-import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
@@ -36,6 +36,8 @@ export const seedApiKeyFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
+      'defaultValue',
     ])
     .orIgnore()
     .values([
@@ -55,7 +57,8 @@ export const seedApiKeyFieldMetadata = async (
         description: undefined,
         icon: undefined,
         isNullable: false,
-        // isSystem: true,
+        isSystem: true,
+        defaultValue: { type: 'uuid' },
       },
       {
         id: SeedApiKeyFieldMetadataIds.CreatedAt,
@@ -63,7 +66,7 @@ export const seedApiKeyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
         label: 'Creation date',
         targetColumnMap: {
@@ -71,7 +74,9 @@ export const seedApiKeyFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       {
         id: SeedApiKeyFieldMetadataIds.UpdatedAt,
@@ -79,7 +84,7 @@ export const seedApiKeyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
         label: 'Update date',
         targetColumnMap: {
@@ -87,7 +92,9 @@ export const seedApiKeyFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       // Scalar fields
       {
@@ -96,7 +103,7 @@ export const seedApiKeyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'name',
         label: 'Name',
         targetColumnMap: {
@@ -105,6 +112,8 @@ export const seedApiKeyFieldMetadata = async (
         description: 'ApiKey name',
         icon: 'IconLink',
         isNullable: true,
+        isSystem: false,
+        defaultValue: { value: '' },
       },
       {
         id: SeedApiKeyFieldMetadataIds.ExpiresAt,
@@ -112,7 +121,7 @@ export const seedApiKeyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'DATE',
+        type: FieldMetadataType.DATE_TIME,
         name: 'expiresAt',
         label: 'Expiration date',
         targetColumnMap: {
@@ -121,6 +130,8 @@ export const seedApiKeyFieldMetadata = async (
         description: 'ApiKey expiration date',
         icon: 'IconCalendar',
         isNullable: false,
+        isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedApiKeyFieldMetadataIds.RevokedAt,
@@ -128,7 +139,7 @@ export const seedApiKeyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'DATE',
+        type: FieldMetadataType.DATE_TIME,
         name: 'revokedAt',
         label: 'Revocation date',
         targetColumnMap: {
@@ -137,6 +148,8 @@ export const seedApiKeyFieldMetadata = async (
         description: 'ApiKey revocation date',
         icon: 'IconCalendar',
         isNullable: true,
+        isSystem: false,
+        defaultValue: undefined,
       },
     ])
     .execute();

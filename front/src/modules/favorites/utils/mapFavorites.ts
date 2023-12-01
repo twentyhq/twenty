@@ -1,49 +1,36 @@
-import { Company, Person } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 import { assertNotNull } from '~/utils/assert';
+import { isDefined } from '~/utils/isDefined';
 
-export const mapFavorites = (
-  favorites: any,
-  recordsDict: {
-    [key: string]: {
-      firstName?: Person['firstName'];
-      lastName?: Person['lastName'];
-      avatarUrl?: Person['avatarUrl'];
-      name?: Company['name'];
-      domainName?: Company['domainName'];
-    };
-  },
-) => {
+export const mapFavorites = (favorites: any) => {
   return favorites
-    .map(({ node: favorite }: any) => {
-      const recordInformation = favorite.person
+    .map((favorite: any) => {
+      const recordInformation = isDefined(favorite?.person)
         ? {
             id: favorite.person.id,
             labelIdentifier:
-              recordsDict[favorite.person.id].firstName +
+              favorite.person.name.firstName +
               ' ' +
-              recordsDict[favorite.person.id].lastName,
-            avatarUrl: recordsDict[favorite.person.id].avatarUrl,
+              favorite.person.name.lastName,
+            avatarUrl: favorite.person.avatarUrl,
             avatarType: 'rounded',
-            link: `/object/personV2/${favorite.person.id}`,
+            link: `/object/person/${favorite.person.id}`,
           }
-        : favorite.company
+        : isDefined(favorite?.company)
         ? {
             id: favorite.company.id,
-            labelIdentifier: recordsDict[favorite.company.id].name,
-            avatarUrl: getLogoUrlFromDomainName(
-              recordsDict[favorite.company.id].domainName ?? '',
-            ),
+            labelIdentifier: favorite.company.name,
+            avatarUrl: getLogoUrlFromDomainName(favorite.company.domainName),
             avatarType: 'squared',
-            link: `/object/companyV2/${favorite.company.id}`,
+            link: `/object/company/${favorite.company.id}`,
           }
         : undefined;
 
       return {
         ...recordInformation,
         recordId: recordInformation?.id,
-        id: favorite.id,
-        position: favorite.position,
+        id: favorite?.id,
+        position: favorite?.position,
       };
     })
     .filter(assertNotNull)

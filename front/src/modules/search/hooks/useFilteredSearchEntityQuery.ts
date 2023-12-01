@@ -1,82 +1,53 @@
 import { QueryHookOptions, QueryResult } from '@apollo/client';
+import { isNonEmptyString } from '@sniptt/guards';
 
+import { mapPaginatedRecordsToRecords } from '@/object-record/utils/mapPaginatedRecordsToRecords';
 import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
-import {
-  Exact,
-  InputMaybe,
-  QueryMode,
-  Scalars,
-  SortOrder,
-} from '~/generated/graphql';
-
-type SelectStringKeys<T> = NonNullable<
-  {
-    [K in keyof T]: K extends '__typename'
-      ? never
-      : T[K] extends string | undefined | null
-      ? K
-      : never;
-  }[keyof T]
->;
-
-type ExtractEntityTypeFromQueryResponse<T> = T extends {
-  searchResults: Array<infer U>;
-}
-  ? U
-  : never;
+import { assertNotNull } from '~/utils/assert';
+import { isDefined } from '~/utils/isDefined';
 
 type SearchFilter = { fieldNames: string[]; filter: string | number };
 
-const DEFAULT_SEARCH_REQUEST_LIMIT = 10;
+export type OrderBy =
+  | 'AscNullsLast'
+  | 'DescNullsLast'
+  | 'AscNullsFirst'
+  | 'DescNullsFirst';
+
+export const DEFAULT_SEARCH_REQUEST_LIMIT = 60;
 
 // TODO: use this for all search queries, because we need selectedEntities and entitiesToSelect each time we want to search
 // Filtered entities to select are
-export const useFilteredSearchEntityQuery = <
-  EntityType extends ExtractEntityTypeFromQueryResponse<QueryResponseForExtract> & {
-    id: string;
-  },
-  EntityStringField extends SelectStringKeys<EntityType>,
-  OrderByField extends EntityStringField,
-  QueryResponseForExtract,
-  QueryResponse extends {
-    searchResults: EntityType[];
-  },
-  EntityWhereInput,
-  EntityOrderByWithRelationInput,
-  QueryVariables extends Exact<{
-    where?: InputMaybe<EntityWhereInput>;
-    limit?: InputMaybe<Scalars['Int']>;
-    orderBy?: InputMaybe<
-      Array<EntityOrderByWithRelationInput> | EntityOrderByWithRelationInput
-    >;
-  }>,
-  CustomEntityForSelect extends EntityForSelect,
->({
+
+// TODO: replace query hooks by useFindManyRecords
+export const useFilteredSearchEntityQuery = ({
   queryHook,
   orderByField,
   filters,
-  sortOrder = SortOrder.Asc,
+  sortOrder = 'AscNullsLast',
   selectedIds,
   mappingFunction,
   limit,
   excludeEntityIds = [],
+  objectNamePlural,
 }: {
   queryHook: (
-    queryOptions?: QueryHookOptions<QueryResponseForExtract, QueryVariables>,
-  ) => QueryResult<QueryResponse, QueryVariables>;
-  orderByField: OrderByField;
+    queryOptions?: QueryHookOptions<any, any>,
+  ) => QueryResult<any, any>;
+  orderByField: string;
   filters: SearchFilter[];
-  sortOrder?: SortOrder;
+  sortOrder?: OrderBy;
   selectedIds: string[];
-  mappingFunction: (entity: EntityType) => CustomEntityForSelect;
+  mappingFunction: (entity: any) => EntityForSelect | undefined;
   limit?: number;
   excludeEntityIds?: string[];
-}): EntitiesForMultipleEntitySelect<CustomEntityForSelect> => {
+  objectNamePlural: string;
+}): EntitiesForMultipleEntitySelect<EntityForSelect> => {
   const { loading: selectedEntitiesLoading, data: selectedEntitiesData } =
     queryHook({
       variables: {
-        where: {
+        filter: {
           id: {
             in: selectedIds,
           },
@@ -84,29 +55,49 @@ export const useFilteredSearchEntityQuery = <
         orderBy: {
           [orderByField]: sortOrder,
         },
-      } as QueryVariables,
+      } as any,
     });
 
-  const searchFilter = filters.map(({ fieldNames, filter }) => {
-    return {
-      OR: fieldNames.map((fieldName) => ({
-        [fieldName]: {
-          contains: `%${filter}%`,
-          mode: QueryMode.Insensitive,
-        },
-      })),
-    };
-  });
+  const searchFilter = filters
+    .map(({ fieldNames, filter }) => {
+      if (!isNonEmptyString(filter)) {
+        return undefined;
+      }
+
+      return {
+        or: fieldNames.map((fieldName) => {
+          const fieldNameParts = fieldName.split('.');
+
+          if (fieldNameParts.length > 1) {
+            // Composite field
+
+            return {
+              [fieldNameParts[0]]: {
+                [fieldNameParts[1]]: {
+                  ilike: `%${filter}%`,
+                },
+              },
+            };
+          }
+          return {
+            [fieldName]: {
+              ilike: `%${filter}%`,
+            },
+          };
+        }),
+      };
+    })
+    .filter(isDefined);
 
   const {
     loading: filteredSelectedEntitiesLoading,
     data: filteredSelectedEntitiesData,
   } = queryHook({
     variables: {
-      where: {
-        AND: [
+      filter: {
+        and: [
           {
-            AND: searchFilter,
+            and: searchFilter,
           },
           {
             id: {
@@ -118,20 +109,22 @@ export const useFilteredSearchEntityQuery = <
       orderBy: {
         [orderByField]: sortOrder,
       },
-    } as QueryVariables,
+    } as any,
   });
 
   const { loading: entitiesToSelectLoading, data: entitiesToSelectData } =
     queryHook({
       variables: {
-        where: {
-          AND: [
+        filter: {
+          and: [
             {
-              AND: searchFilter,
+              and: searchFilter,
             },
             {
-              id: {
-                notIn: [...selectedIds, ...excludeEntityIds],
+              not: {
+                id: {
+                  in: [...selectedIds, ...excludeEntityIds],
+                },
               },
             },
           ],
@@ -140,19 +133,28 @@ export const useFilteredSearchEntityQuery = <
         orderBy: {
           [orderByField]: sortOrder,
         },
-      } as QueryVariables,
+      } as any,
     });
 
   return {
-    selectedEntities: (selectedEntitiesData?.searchResults ?? []).map(
-      mappingFunction,
-    ),
-    filteredSelectedEntities: (
-      filteredSelectedEntitiesData?.searchResults ?? []
-    ).map(mappingFunction),
-    entitiesToSelect: (entitiesToSelectData?.searchResults ?? []).map(
-      mappingFunction,
-    ),
+    selectedEntities: mapPaginatedRecordsToRecords({
+      objectNamePlural: objectNamePlural,
+      pagedRecords: selectedEntitiesData,
+    })
+      .map(mappingFunction)
+      .filter(assertNotNull),
+    filteredSelectedEntities: mapPaginatedRecordsToRecords({
+      objectNamePlural: objectNamePlural,
+      pagedRecords: filteredSelectedEntitiesData,
+    })
+      .map(mappingFunction)
+      .filter(assertNotNull),
+    entitiesToSelect: mapPaginatedRecordsToRecords({
+      objectNamePlural: objectNamePlural,
+      pagedRecords: entitiesToSelectData,
+    })
+      .map(mappingFunction)
+      .filter(assertNotNull),
     loading:
       entitiesToSelectLoading ||
       filteredSelectedEntitiesLoading ||

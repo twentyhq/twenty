@@ -5,6 +5,7 @@ import { Providers } from '@/spreadsheet-import/components/Providers';
 import { MatchColumnsStep } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { mockRsiValues } from '@/spreadsheet-import/tests/mockRsiValues';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const meta: Meta<typeof MatchColumnsStep> = {
   title: 'Modules/SpreadsheetImport/MatchColumnsStep',
@@ -12,6 +13,7 @@ const meta: Meta<typeof MatchColumnsStep> = {
   parameters: {
     layout: 'fullscreen',
   },
+  decorators: [SnackBarDecorator],
 };
 
 export default meta;

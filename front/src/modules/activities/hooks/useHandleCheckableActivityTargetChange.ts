@@ -1,99 +1,75 @@
-import { getOperationName } from '@apollo/client/utilities';
-import { v4 } from 'uuid';
-
-import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
-import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
-import {
-  Activity,
-  ActivityTarget,
-  useAddActivityTargetsOnActivityMutation,
-  useRemoveActivityTargetsOnActivityMutation,
-} from '~/generated/graphql';
-
-import { GET_ACTIVITY } from '../graphql/queries/getActivity';
-import { ActivityTargetableEntityType } from '../types/ActivityTargetableEntity';
-import { ActivityTargetableEntityForSelect } from '../types/ActivityTargetableEntityForSelect';
+import { ActivityTarget } from '@/activities/types/ActivityTarget';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 
 export const useHandleCheckableActivityTargetChange = ({
-  activity,
+  activityId,
+  currentActivityTargets,
 }: {
-  activity?: Pick<Activity, 'id'> & {
-    activityTargets?: Array<
-      Pick<ActivityTarget, 'id' | 'personId' | 'companyId'>
-    > | null;
-  };
+  activityId: string;
+  currentActivityTargets: any[];
 }) => {
-  const [addActivityTargetsOnActivity] =
-    useAddActivityTargetsOnActivityMutation({
-      refetchQueries: [
-        getOperationName(GET_COMPANIES) ?? '',
-        getOperationName(GET_PEOPLE) ?? '',
-        getOperationName(GET_ACTIVITY) ?? '',
-      ],
+  const { createOneRecord: createOneActivityTarget } =
+    useCreateOneRecord<ActivityTarget>({
+      objectNameSingular: 'activityTarget',
     });
-
-  const [removeActivityTargetsOnActivity] =
-    useRemoveActivityTargetsOnActivityMutation({
-      refetchQueries: [
-        getOperationName(GET_COMPANIES) ?? '',
-        getOperationName(GET_PEOPLE) ?? '',
-        getOperationName(GET_ACTIVITY) ?? '',
-      ],
-    });
+  const { deleteOneRecord: deleteOneActivityTarget } = useDeleteOneRecord({
+    objectNameSingular: 'activityTarget',
+  });
 
   return async (
     entityValues: Record<string, boolean>,
-    entities: ActivityTargetableEntityForSelect[],
+    entitiesToSelect: any,
+    selectedEntities: any,
   ) => {
-    if (!activity) {
+    if (!activityId) {
       return;
     }
-
-    const currentEntityIds = activity.activityTargets
-      ? activity.activityTargets.map(
-          ({ personId, companyId }) => personId ?? companyId,
-        )
-      : [];
-
-    const entitiesToAdd = entities.filter(
-      ({ id }) => entityValues[id] && !currentEntityIds.includes(id),
+    const currentActivityTargetRecordIds = currentActivityTargets.map(
+      ({ companyId, personId }) => companyId ?? personId ?? '',
     );
 
-    if (entitiesToAdd.length)
-      await addActivityTargetsOnActivity({
-        variables: {
-          activityId: activity.id,
-          activityTargetInputs: entitiesToAdd.map((entity) => ({
-            id: v4(),
-            createdAt: new Date().toISOString(),
-            companyId:
-              entity.entityType === ActivityTargetableEntityType.Company
-                ? entity.id
-                : null,
-            personId:
-              entity.entityType === ActivityTargetableEntityType.Person
-                ? entity.id
-                : null,
-          })),
-        },
-      });
+    const idsToAdd = Object.entries(entityValues)
+      .filter(
+        ([recordId, value]) =>
+          value && !currentActivityTargetRecordIds.includes(recordId),
+      )
+      .map(([id, _]) => id);
 
-    const activityTargetIdsToDelete = activity.activityTargets
-      ? activity.activityTargets
-          .filter(
-            ({ personId, companyId }) =>
-              (personId ?? companyId) &&
-              !entityValues[personId ?? companyId ?? ''],
-          )
-          .map(({ id }) => id)
-      : [];
+    const idsToDelete = Object.entries(entityValues)
+      .filter(([_, value]) => !value)
+      .map(([id, _]) => id);
 
-    if (activityTargetIdsToDelete.length)
-      await removeActivityTargetsOnActivity({
-        variables: {
-          activityId: activity.id,
-          activityTargetIds: activityTargetIdsToDelete,
-        },
+    if (idsToAdd.length) {
+      idsToAdd.map((id) => {
+        const entityFromToSelect = entitiesToSelect.filter(
+          (entity: any) => entity.id === id,
+        ).length
+          ? entitiesToSelect.filter((entity: any) => entity.id === id)[0]
+          : null;
+
+        const entityFromSelected = selectedEntities.filter(
+          (entity: any) => entity.id === id,
+        ).length
+          ? selectedEntities.filter((entity: any) => entity.id === id)[0]
+          : null;
+
+        const entity = entityFromToSelect ?? entityFromSelected;
+        createOneActivityTarget?.({
+          activityId: activityId,
+          companyId: entity.record.__typename === 'Company' ? entity.id : null,
+          personId: entity.record.__typename === 'Person' ? entity.id : null,
+        });
       });
+    }
+
+    if (idsToDelete.length) {
+      idsToDelete.map((id) => {
+        const currentActivityTargetId = currentActivityTargets.filter(
+          ({ companyId, personId }) => companyId === id || personId === id,
+        )[0].id;
+        deleteOneActivityTarget?.(currentActivityTargetId);
+      });
+    }
   };
 };

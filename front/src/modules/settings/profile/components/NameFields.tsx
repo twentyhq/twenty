@@ -5,7 +5,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { logError } from '~/utils/logError';
 
@@ -34,16 +34,15 @@ export const NameFields = ({
   );
 
   const [firstName, setFirstName] = useState(
-    currentWorkspaceMember?.firstName ?? '',
+    currentWorkspaceMember?.name?.firstName ?? '',
   );
   const [lastName, setLastName] = useState(
-    currentWorkspaceMember?.lastName ?? '',
+    currentWorkspaceMember?.name?.lastName ?? '',
   );
 
-  const { updateOneObject, objectNotFoundInMetadata } =
-    useUpdateOneObjectRecord({
-      objectNameSingular: 'workspaceMemberV2',
-    });
+  const { updateOneRecord, objectMetadataItemNotFound } = useUpdateOneRecord({
+    objectNameSingular: 'workspaceMember',
+  });
 
   // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)
   const debouncedUpdate = debounce(async () => {
@@ -54,21 +53,31 @@ export const NameFields = ({
       onLastNameUpdate(lastName);
     }
     try {
+      if (!currentWorkspaceMember?.id) {
+        throw new Error('User is not logged in');
+      }
+
       if (autoSave) {
-        if (!updateOneObject || objectNotFoundInMetadata) {
-          return;
+        if (!updateOneRecord || objectMetadataItemNotFound) {
+          throw new Error('Object not found in metadata');
         }
-        await updateOneObject({
-          idToUpdate: currentWorkspaceMember?.id ?? '',
+        await updateOneRecord({
+          idToUpdate: currentWorkspaceMember?.id,
           input: {
+            name: {
+              firstName: firstName,
+              lastName: lastName,
+            },
+          },
+        });
+
+        setCurrentWorkspaceMember({
+          ...currentWorkspaceMember,
+          name: {
             firstName,
             lastName,
           },
         });
-
-        setCurrentWorkspaceMember(
-          (current) => ({ ...current, firstName, lastName } as any),
-        );
       }
     } catch (error) {
       logError(error);
@@ -81,8 +90,8 @@ export const NameFields = ({
     }
 
     if (
-      currentWorkspaceMember.firstName !== firstName ||
-      currentWorkspaceMember.lastName !== lastName
+      currentWorkspaceMember.name?.firstName !== firstName ||
+      currentWorkspaceMember.name?.lastName !== lastName
     ) {
       debouncedUpdate();
     }

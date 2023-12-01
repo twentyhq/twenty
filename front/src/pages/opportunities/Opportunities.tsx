@@ -2,46 +2,43 @@ import styled from '@emotion/styled';
 
 import { CompanyBoard } from '@/companies/board/components/CompanyBoard';
 import { CompanyBoardRecoilScopeContext } from '@/companies/states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { PipelineAddButton } from '@/pipeline/components/PipelineAddButton';
-import { usePipelineStages } from '@/pipeline/hooks/usePipelineStages';
+import { usePipelineSteps } from '@/pipeline/hooks/usePipelineSteps';
+import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { IconTargetArrow } from '@/ui/display/icon';
-import { BoardOptionsContext } from '@/ui/layout/board/contexts/BoardOptionsContext';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
+import { BoardOptionsContext } from '@/ui/object/record-board/contexts/BoardOptionsContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { useUpdatePipelineStageMutation } from '~/generated/graphql';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
 const StyledBoardContainer = styled.div`
   display: flex;
+  height: 100%;
   width: 100%;
 `;
 
 export const Opportunities = () => {
-  const { handlePipelineStageAdd, handlePipelineStageDelete } =
-    usePipelineStages();
+  const { handlePipelineStepAdd, handlePipelineStepDelete } =
+    usePipelineSteps();
 
-  const [updatePipelineStage] = useUpdatePipelineStageMutation();
+  const { updateOneRecord: updateOnePipelineStep } =
+    useUpdateOneRecord<PipelineStep>({
+      objectNameSingular: 'pipelineStep',
+    });
 
   const handleEditColumnTitle = (
     boardColumnId: string,
     newTitle: string,
     newColor: string,
   ) => {
-    updatePipelineStage({
-      variables: {
-        id: boardColumnId,
-        data: { name: newTitle, color: newColor },
-      },
-      optimisticResponse: {
-        __typename: 'Mutation',
-        updateOnePipelineStage: {
-          __typename: 'PipelineStage',
-          id: boardColumnId,
-          name: newTitle,
-          color: newColor,
-        },
+    updateOnePipelineStep?.({
+      idToUpdate: boardColumnId,
+      input: {
+        name: newTitle,
+        color: newColor,
       },
     });
   };
@@ -57,8 +54,8 @@ export const Opportunities = () => {
             <CompanyBoardRecoilScopeContext.Provider value="opportunities">
               <StyledBoardContainer>
                 <CompanyBoard
-                  onColumnAdd={handlePipelineStageAdd}
-                  onColumnDelete={handlePipelineStageDelete}
+                  onColumnAdd={handlePipelineStepAdd}
+                  onColumnDelete={handlePipelineStepDelete}
                   onEditColumnTitle={handleEditColumnTitle}
                 />
               </StyledBoardContainer>

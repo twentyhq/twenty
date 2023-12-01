@@ -1,8 +1,8 @@
 import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
-import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
@@ -14,9 +14,11 @@ export enum SeedFavoriteFieldMetadataIds {
   Position = '20202020-dd6d-4f67-94aa-22cc83eb0a2e',
 
   WorkspaceMember = '20202020-1138-4e93-bbff-917a68161abf',
+  WorkspaceMemberForeignKey = '20202020-0f4c-4b9a-9b9a-917a68161a4f',
   Person = '20202020-0876-4735-8974-ff4d51aafa07',
-  Company = '20202020-09e1-4384-ae3e-39e7956396fe',
-  CompanyV2 = '20202020-09e1-4384-ae3e-39e7956396ff',
+  PersonForeignKey = '20202020-0876-4735-9473-ff4d51aa4e7b',
+  Company = '20202020-09e1-4384-ae3e-39e7956396ff',
+  CompanyForeignKey = '20202020-09e1-4384-ae3e-45e79563d528',
 }
 
 export const seedFavoriteFieldMetadata = async (
@@ -39,6 +41,8 @@ export const seedFavoriteFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
+      'defaultValue',
     ])
     .orIgnore()
     .values([
@@ -57,8 +61,9 @@ export const seedFavoriteFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: true,
-        // isSystem: true,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'uuid' },
       },
       {
         id: SeedFavoriteFieldMetadataIds.CreatedAt,
@@ -66,7 +71,7 @@ export const seedFavoriteFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
         label: 'Creation date',
         targetColumnMap: {
@@ -74,7 +79,9 @@ export const seedFavoriteFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       {
         id: SeedFavoriteFieldMetadataIds.UpdatedAt,
@@ -82,7 +89,7 @@ export const seedFavoriteFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
         label: 'Update date',
         targetColumnMap: {
@@ -90,7 +97,9 @@ export const seedFavoriteFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       // Scalar fields
       {
@@ -99,7 +108,7 @@ export const seedFavoriteFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'NUMBER',
+        type: FieldMetadataType.NUMBER,
         name: 'position',
         label: 'Position',
         targetColumnMap: {
@@ -108,6 +117,8 @@ export const seedFavoriteFieldMetadata = async (
         description: 'Favorite position',
         icon: 'IconList',
         isNullable: false,
+        isSystem: false,
+        defaultValue: { value: 0 },
       },
 
       // Relationships
@@ -117,15 +128,31 @@ export const seedFavoriteFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'workspaceMember',
         label: 'Workspace Member',
-        targetColumnMap: {
-          value: 'workspaceMemberId',
-        },
+        targetColumnMap: {},
         description: 'Favorite workspace member',
         icon: 'IconCircleUser',
+        isNullable: true,
+        isSystem: false,
+        defaultValue: undefined,
+      },
+      {
+        id: SeedFavoriteFieldMetadataIds.WorkspaceMemberForeignKey,
+        objectMetadataId: SeedObjectMetadataIds.Favorite,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: FieldMetadataType.UUID,
+        name: 'workspaceMemberId',
+        label: 'Workspace Member ID (foreign key)',
+        targetColumnMap: {},
+        description: 'Foreign key for workspace member',
+        icon: undefined,
         isNullable: false,
+        isSystem: true,
+        defaultValue: undefined,
       },
       {
         id: SeedFavoriteFieldMetadataIds.Person,
@@ -133,7 +160,7 @@ export const seedFavoriteFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'person',
         label: 'Person',
         targetColumnMap: {
@@ -142,6 +169,24 @@ export const seedFavoriteFieldMetadata = async (
         description: 'Favorite person',
         icon: 'IconUser',
         isNullable: true,
+        isSystem: false,
+        defaultValue: undefined,
+      },
+      {
+        id: SeedFavoriteFieldMetadataIds.PersonForeignKey,
+        objectMetadataId: SeedObjectMetadataIds.Favorite,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: FieldMetadataType.UUID,
+        name: 'personId',
+        label: 'Person ID (foreign key)',
+        targetColumnMap: {},
+        description: 'Foreign key for person',
+        icon: undefined,
+        isNullable: true,
+        isSystem: true,
+        defaultValue: undefined,
       },
       {
         id: SeedFavoriteFieldMetadataIds.Company,
@@ -149,15 +194,31 @@ export const seedFavoriteFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'company',
         label: 'Company',
-        targetColumnMap: {
-          value: 'companyId',
-        },
+        targetColumnMap: {},
         description: 'Favorite company',
         icon: 'IconBuildingSkyscraper',
         isNullable: true,
+        isSystem: false,
+        defaultValue: undefined,
+      },
+      {
+        id: SeedFavoriteFieldMetadataIds.CompanyForeignKey,
+        objectMetadataId: SeedObjectMetadataIds.Favorite,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: FieldMetadataType.UUID,
+        name: 'companyId',
+        label: 'Company ID (foreign key)',
+        targetColumnMap: {},
+        description: 'Foreign key for company',
+        icon: undefined,
+        isNullable: true,
+        isSystem: true,
+        defaultValue: undefined,
       },
     ])
     .execute();

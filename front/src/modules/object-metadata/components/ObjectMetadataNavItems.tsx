@@ -1,29 +1,26 @@
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
+import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { Icon123 } from '@/ui/input/constants/icons';
 import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import NavItem from '@/ui/navigation/navbar/components/NavItem';
 
-import { useFindManyObjectMetadataItems } from '../hooks/useFindManyObjectMetadataItems';
-
 export const ObjectMetadataNavItems = () => {
-  const { objectMetadataItems } = useFindManyObjectMetadataItems({
-    filter: {
-      isSystem: { is: false },
-    },
-  });
-
+  const { activeObjectMetadataItems } = useObjectMetadataItemForSettings();
   const navigate = useNavigate();
   const { icons } = useLazyLoadIcons();
+  const currentPath = useLocation().pathname;
 
   return (
     <>
-      {objectMetadataItems.map((objectMetadataItem) => {
+      {activeObjectMetadataItems.map((objectMetadataItem) => {
+        if (objectMetadataItem.nameSingular === 'opportunity') return null;
         return (
           <NavItem
             key={objectMetadataItem.id}
             label={objectMetadataItem.labelPlural}
             to={`/objects/${objectMetadataItem.namePlural}`}
+            active={currentPath == `/objects/${objectMetadataItem.namePlural}`}
             Icon={
               objectMetadataItem.icon ? icons[objectMetadataItem.icon] : Icon123
             }

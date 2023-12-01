@@ -9,6 +9,7 @@ import {
 import { IconMinus, IconPlus } from '@/ui/display/icon';
 import { AppTooltip } from '@/ui/display/tooltip/AppTooltip';
 import { IconInfoCircle } from '@/ui/input/constants/icons';
+import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -26,6 +27,7 @@ type ViewFieldsVisibilityDropdownSectionProps = {
     field: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
   ) => void;
   title: string;
+  isVisible: boolean;
   isDraggable: boolean;
   onDragEnd?: OnDragEndResponder;
 };
@@ -34,6 +36,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
   fields,
   onVisibilityChange,
   title,
+  isVisible,
   isDraggable,
   onDragEnd,
 }: ViewFieldsVisibilityDropdownSectionProps) => {
@@ -47,6 +50,8 @@ export const ViewFieldsVisibilityDropdownSection = ({
     if (index === openToolTipIndex) setOpenToolTipIndex(undefined);
     else setOpenToolTipIndex(index);
   };
+
+  const { icons } = useLazyLoadIcons();
 
   const getIconButtons = (
     index: number,
@@ -68,7 +73,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
     if (!field.infoTooltipContent) {
       return [
         {
-          Icon: field.isVisible ? IconMinus : IconPlus,
+          Icon: isVisible ? IconMinus : IconPlus,
           onClick: () => onVisibilityChange(field),
         },
       ];
@@ -103,7 +108,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
                       itemComponent={
                         <MenuItemDraggable
                           key={field.fieldMetadataId}
-                          LeftIcon={field.Icon}
+                          LeftIcon={icons[field.iconName]}
                           iconButtons={getIconButtons(index + 1, field)}
                           isTooltipOpen={openToolTipIndex === index + 1}
                           text={field.label}
@@ -121,7 +126,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
           fields.map((field, index) => (
             <MenuItem
               key={field.fieldMetadataId}
-              LeftIcon={field.Icon}
+              LeftIcon={icons[field.iconName]}
               iconButtons={getIconButtons(index, field)}
               isTooltipOpen={openToolTipIndex === index}
               text={field.label}

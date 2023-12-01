@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useDeleteOneObjectRecord } from '@/object-record/hooks/useDeleteOneObjectRecord';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { IconSettings, IconTrash } from '@/ui/display/icon';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
@@ -34,13 +34,12 @@ export const SettingsWorkspaceMembers = () => {
     string | undefined
   >();
 
-  const { objects: workspaceMembers } =
-    useFindManyObjectRecords<WorkspaceMember>({
-      objectNamePlural: 'workspaceMembersV2',
-    });
-  const { deleteOneObject: deleteOneWorkspaceMember } =
-    useDeleteOneObjectRecord({
-      objectNamePlural: 'workspaceMembersV2',
+  const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
+    objectNamePlural: 'workspaceMembers',
+  });
+  const { deleteOneRecord: deleteOneWorkspaceMember } =
+    useDeleteOneRecord<WorkspaceMember>({
+      objectNameSingular: 'workspaceMember',
     });
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 

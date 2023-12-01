@@ -14,8 +14,11 @@ provision-postgres-docker:
 	@docker volume rm twenty_db_data || true
 	@docker compose up --build postgres -d
 
-provision-postgres-macos:
-	sh ./scripts/setup-postgres-macos.sh
+provision-postgres-macos-arm:
+	sh ./scripts/setup-postgres-macos-arm.sh
+
+provision-postgres-macos-intel:
+	sh ./scripts/setup-postgres-macos-intel.sh
 
 provision-postgres-linux:
 	sh ./scripts/setup-postgres-linux.sh
@@ -58,9 +61,6 @@ server-database-setup:
 
 server-database-migrate:
 	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:migrate"
-
-server-database-generate:
-	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:generate"
 
 server-database-seed:
 	@docker compose exec twenty-dev sh -c "cd /app/server && yarn database:seed"

@@ -1,0 +1,143 @@
+---
+title: Progress Bar
+sidebar_position: 1
+sidebar_custom_props:
+  icon: TbLoader2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import progressBarCode from '!!raw-loader!@site/src/ui/feedback/progressBarCode.js'
+import circularProgressBarCode from '!!raw-loader!@site/src/ui/feedback/circularProgressBarCode.js'
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+
+Indicates progress or countdown and moves from right to left. 
+
+<Tabs>
+
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/feedback/progress-bar/components/ProgressBar']}
+  componentCode={progressBarCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>duration</td>
+      <td>number</td>
+      <td>The total duration of the progress bar animation in milliseconds</td>
+      <td>3</td>
+    </tr>
+
+    <tr>
+      <td>delay</td>
+      <td>number</td>
+      <td>The delay in starting the progress bar animation in milliseconds</td>
+      <td>0</td>
+    </tr>
+
+    <tr>
+      <td>easing</td>
+      <td>string</td>
+      <td>Easing function for the progress bar animation</td>
+      <td>easeInOut</td>
+    </tr>
+
+    <tr>
+      <td>barHeight</td>
+      <td>number</td>
+      <td>The height of the bar in pixels</td>
+      <td>24</td>
+    </tr>
+
+    <tr>
+      <td>barColor</td>
+      <td>string</td>
+      <td>The color of the bar</td>
+      <td>gray80</td>
+    </tr>
+
+    <tr>
+      <td>autoStart</td>
+      <td>boolean</td>
+      <td>If `true`, the progress bar animation starts automatically when the component mounts</td>
+      <td>`true`</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+</Tabs>
+
+
+## Circular Progress Bar
+
+Indicates the progress of a task, often used in loading screens or areas where you want to communicate ongoing processes to the user. 
+
+<Tabs>
+
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/feedback/progress-bar/components/CircularProgressBar']}
+  componentCode={circularProgressBarCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>size</td>
+      <td>number</td>
+      <td>The size of the circular progress bar</td>
+      <td>50</td>
+    </tr>
+
+    <tr>
+      <td>barWidth</td>
+      <td>number</td>
+      <td>The width of the progress bar line</td>
+      <td>5</td>
+    </tr>
+
+    <tr>
+      <td>barColor</td>
+      <td>string</td>
+      <td>The color of the progress bar</td>
+      <td>currentColor</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>

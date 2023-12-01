@@ -27,6 +27,11 @@ const StyledTitle = styled.h3`
   margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
+const StyledPreviewContent = styled.div`
+  display: flex;
+  gap: 6px;
+`;
+
 const StyledFormContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -34,7 +39,7 @@ const StyledFormContainer = styled.div`
   border-top: 0;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-  padding: ${({ theme }) => theme.spacing(4)};
+  overflow: hidden;
 `;
 
 export const SettingsObjectFieldTypeCard = ({
@@ -46,7 +51,7 @@ export const SettingsObjectFieldTypeCard = ({
     <div className={className}>
       <StyledPreviewContainer>
         <StyledTitle>Preview</StyledTitle>
-        {preview}
+        <StyledPreviewContent>{preview}</StyledPreviewContent>
       </StyledPreviewContainer>
       {!!form && <StyledFormContainer>{form}</StyledFormContainer>}
     </div>

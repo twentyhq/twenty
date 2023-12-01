@@ -2,60 +2,123 @@ import { useApolloClient } from '@apollo/client';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
+import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
+import { useOptimisticEvict } from '@/apollo/optimistic-effect/hooks/useOptimisticEvict';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { Favorite } from '@/favorites/types/Favorite';
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { mapFavorites } from '@/favorites/utils/mapFavorites';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { favoritesState } from '../states/favoritesState';
 
-export const useFavorites = () => {
+export const useFavorites = ({
+  objectNamePlural,
+}: {
+  objectNamePlural: string | undefined;
+}) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const [favorites, setFavorites] = useRecoilState(favoritesState);
 
-  const { updateOneMutation, createOneMutation, deleteOneMutation } =
-    useFindOneObjectMetadataItem({
-      objectNameSingular: 'favoriteV2',
+  const {
+    updateOneRecordMutation: updateOneFavoriteMutation,
+    createOneRecordMutation: createOneFavoriteMutation,
+    deleteOneRecordMutation: deleteOneFavoriteMutation,
+    objectMetadataItem: favoriteObjectMetadataItem,
+  } = useObjectMetadataItem({
+    objectNamePlural: 'favorites',
+  });
+
+  const { registerOptimisticEffect, triggerOptimisticEffects } =
+    useOptimisticEffect({
+      objectNameSingular: 'favorite',
+    });
+  const { performOptimisticEvict } = useOptimisticEvict();
+
+  const { objectMetadataItem: favoriteTargetObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNamePlural,
     });
 
   const apolloClient = useApolloClient();
 
+  useFindManyRecords({
+    objectNamePlural: 'favorites',
+    onCompleted: useRecoilCallback(
+      ({ snapshot, set }) =>
+        async (data: PaginatedRecordTypeResults<Required<Favorite>>) => {
+          const favorites = snapshot.getLoadable(favoritesState).getValue();
+
+          const queriedFavorites = mapFavorites(
+            data.edges.map((edge) => edge.node),
+          );
+
+          if (!isDeeplyEqual(favorites, queriedFavorites)) {
+            set(favoritesState, queriedFavorites);
+          }
+
+          if (!favoriteObjectMetadataItem) {
+            return;
+          }
+
+          registerOptimisticEffect({
+            variables: { filter: {}, orderBy: {} },
+            definition: getRecordOptimisticEffectDefinition({
+              objectMetadataItem: favoriteObjectMetadataItem,
+            }),
+          });
+        },
+      [favoriteObjectMetadataItem, registerOptimisticEffect],
+    ),
+  });
+
   const createFavorite = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (
-        favoriteNameToCreate: string,
-        favoriteIdToCreate: string,
-        additionalData?: any,
-      ) => {
-        const favoritesStateFromSnapshot = snapshot.getLoadable(favoritesState);
-        const favorites = favoritesStateFromSnapshot.getValue();
-        if (!favoriteNameToCreate || !favoriteIdToCreate) {
+      async (favoriteTargetObjectId: string, additionalData?: any) => {
+        const favorites = snapshot.getLoadable(favoritesState).getValue();
+
+        if (!favoriteTargetObjectMetadataItem) {
           return;
         }
+        const targetObjectName = favoriteTargetObjectMetadataItem.nameSingular;
 
         const result = await apolloClient.mutate({
-          mutation: createOneMutation,
+          mutation: createOneFavoriteMutation,
           variables: {
             input: {
-              [favoriteNameToCreate]: favoriteIdToCreate,
+              [`${targetObjectName}Id`]: favoriteTargetObjectId,
               position: favorites.length + 1,
-              workspaceMember: currentWorkspaceMember?.id,
+              workspaceMemberId: currentWorkspaceMember?.id,
             },
           },
         });
 
-        const createdFavorite = result?.data?.createFavoriteV2;
+        triggerOptimisticEffects(`FavoriteEdge`, result.data[`createFavorite`]);
+
+        const createdFavorite = result?.data?.createFavorite;
 
         const newFavorite = {
           ...additionalData,
-          ...createdFavorite[favoriteNameToCreate],
+          ...createdFavorite,
         };
 
+        const newFavoritesMapped = mapFavorites([newFavorite]);
+
         if (createdFavorite) {
-          set(favoritesState, [...favorites, newFavorite]);
+          set(favoritesState, [...favorites, ...newFavoritesMapped]);
         }
       },
-    [apolloClient, createOneMutation, currentWorkspaceMember?.id],
+    [
+      apolloClient,
+      createOneFavoriteMutation,
+      currentWorkspaceMember?.id,
+      favoriteTargetObjectMetadataItem,
+      triggerOptimisticEffects,
+    ],
   );
 
   const _updateFavoritePosition = useRecoilCallback(
@@ -64,7 +127,7 @@ export const useFavorites = () => {
         const favoritesStateFromSnapshot = snapshot.getLoadable(favoritesState);
         const favorites = favoritesStateFromSnapshot.getValue();
         const result = await apolloClient.mutate({
-          mutation: updateOneMutation,
+          mutation: updateOneFavoriteMutation,
           variables: {
             input: {
               position: favoriteToUpdate?.position,
@@ -83,7 +146,7 @@ export const useFavorites = () => {
           );
         }
       },
-    [apolloClient, updateOneMutation],
+    [apolloClient, updateOneFavoriteMutation],
   );
 
   const deleteFavorite = useRecoilCallback(
@@ -96,18 +159,20 @@ export const useFavorites = () => {
         )?.id;
 
         await apolloClient.mutate({
-          mutation: deleteOneMutation,
+          mutation: deleteOneFavoriteMutation,
           variables: {
             idToDelete: idToDelete,
           },
         });
+
+        performOptimisticEvict('Favorite', 'id', idToDelete ?? '');
 
         set(
           favoritesState,
           favorites.filter((favorite: Favorite) => favorite.id !== idToDelete),
         );
       },
-    [apolloClient, deleteOneMutation],
+    [apolloClient, deleteOneFavoriteMutation, performOptimisticEvict],
   );
 
   const computeNewPosition = (destIndex: number, sourceIndex: number) => {

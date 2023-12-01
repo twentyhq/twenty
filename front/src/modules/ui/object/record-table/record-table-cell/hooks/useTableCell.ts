@@ -1,11 +1,12 @@
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
 import { useIsFieldEmpty } from '@/ui/object/field/hooks/useIsFieldEmpty';
 import { entityFieldInitialValueFamilyState } from '@/ui/object/field/states/entityFieldInitialValueFamilyState';
 import { FieldInitialValue } from '@/ui/object/field/types/FieldInitialValue';
+import { useRecordTableScopedStates } from '@/ui/object/record-table/hooks/internal/useRecordTableScopedStates';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -22,8 +23,13 @@ const DEFAULT_CELL_SCOPE: HotkeyScope = {
 };
 
 export const useTableCell = () => {
-  const { setCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
+  const { objectMetadataConfigState } = useRecordTableScopedStates();
 
+  const objectMetadataConfig = useRecoilValue(objectMetadataConfigState);
+
+  const basePathToShowPage = objectMetadataConfig?.basePathToShowPage;
+
+  const { setCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
   const setHotkeyScope = useSetHotkeyScope();
   const { setDragSelectionStartEnabled } = useDragSelect();
 
@@ -47,8 +53,8 @@ export const useTableCell = () => {
   );
 
   const openTableCell = (options?: { initialValue?: FieldInitialValue }) => {
-    if (isFirstColumnCell && !isEmpty && fieldDefinition.basePathToShowPage) {
-      navigate(`${fieldDefinition.basePathToShowPage}${entityId}`);
+    if (isFirstColumnCell && !isEmpty && basePathToShowPage) {
+      navigate(`${basePathToShowPage}${entityId}`);
       return;
     }
 

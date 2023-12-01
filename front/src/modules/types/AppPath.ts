@@ -11,15 +11,11 @@ export enum AppPath {
 
   // Onboarded
   Index = '/',
-  PeoplePage = '/people',
-  CompaniesPage = '/companies',
-  CompanyShowPage = '/companies/:companyId',
-  PersonShowPage = '/person/:personId',
   TasksPage = '/tasks',
-  OpportunitiesPage = '/opportunities',
+  OpportunitiesPage = '/objects/opportunities',
   RecordTablePage = '/objects/:objectNamePlural',
 
-  RecordShowPage = '/object/:objectNameSingular/:objectMetadataId',
+  RecordShowPage = '/object/:objectNameSingular/:objectRecordId',
 
   SettingsCatchAll = `/settings/*`,
   DevelopersCatchAll = `/developers/*`,

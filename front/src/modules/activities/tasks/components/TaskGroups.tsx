@@ -8,12 +8,12 @@ import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { activeTabIdScopedState } from '@/ui/layout/tab/states/activeTabIdScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-import { ActivityType } from '~/generated/graphql';
 
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
 
 type TaskGroupsProps = {
+  filterDropdownId?: string;
   entity?: ActivityTargetableEntity;
   showAddButton?: boolean;
 };
@@ -52,13 +52,17 @@ const StyledContainer = styled.div`
   flex-direction: column;
 `;
 
-export const TaskGroups = ({ entity, showAddButton }: TaskGroupsProps) => {
+export const TaskGroups = ({
+  filterDropdownId,
+  entity,
+  showAddButton,
+}: TaskGroupsProps) => {
   const {
     todayOrPreviousTasks,
     upcomingTasks,
     unscheduledTasks,
     completedTasks,
-  } = useTasks(entity);
+  } = useTasks({ filterDropdownId: filterDropdownId, entity });
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
@@ -66,6 +70,10 @@ export const TaskGroups = ({ entity, showAddButton }: TaskGroupsProps) => {
     activeTabIdScopedState,
     TasksRecoilScopeContext,
   );
+
+  if (entity?.type === 'Custom') {
+    return <></>;
+  }
 
   if (
     (activeTabId !== 'done' &&
@@ -84,7 +92,7 @@ export const TaskGroups = ({ entity, showAddButton }: TaskGroupsProps) => {
           variant={'secondary'}
           onClick={() =>
             openCreateActivity({
-              type: ActivityType.Task,
+              type: 'Task',
               targetableEntities: entity ? [entity] : undefined,
             })
           }

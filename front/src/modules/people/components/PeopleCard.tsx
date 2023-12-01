@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { Person } from '@/people/types/Person';
 import { IconDotsVertical, IconLinkOff, IconTrash } from '@/ui/display/icon';
 import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -11,16 +14,9 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
-import {
-  Person,
-  useDeleteManyPersonMutation,
-  useUpdateOnePersonMutation,
-} from '~/generated/graphql';
-
-import { GET_PEOPLE } from '../graphql/queries/getPeople';
 
 export type PeopleCardProps = {
-  person: Pick<Person, 'id' | 'avatarUrl' | 'displayName' | 'jobTitle'>;
+  person: Pick<Person, 'id' | 'avatarUrl' | 'name' | 'jobTitle'>;
   hasBottomBorder?: boolean;
 };
 
@@ -78,8 +74,6 @@ export const PeopleCard = ({
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
-  const [updatePerson] = useUpdateOnePersonMutation();
-  const [deletePerson] = useDeleteManyPersonMutation();
 
   const { refs, floatingStyles } = useFloating({
     strategy: 'absolute',
@@ -113,28 +107,36 @@ export const PeopleCard = ({
     setIsOptionsOpen(!isOptionsOpen);
   };
 
-  const handleDetachPerson = () => {
-    updatePerson({
+  // TODO: refactor with useObjectMetadataItem V2 with typed hooks
+  const {
+    findManyRecordsQuery,
+    updateOneRecordMutation,
+    deleteOneRecordMutation,
+  } = useObjectMetadataItem({
+    objectNameSingular: 'person',
+  });
+
+  const [updatePerson] = useMutation(updateOneRecordMutation);
+  const [deletePerson] = useMutation(deleteOneRecordMutation);
+
+  const handleDetachPerson = async () => {
+    await updatePerson({
       variables: {
-        where: {
-          id: person.id,
-        },
-        data: {
-          company: {
-            disconnect: true,
-          },
+        idToUpdate: person.id,
+        input: {
+          companyId: null,
         },
       },
-      refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
+      refetchQueries: [getOperationName(findManyRecordsQuery) ?? ''],
     });
   };
 
   const handleDeletePerson = () => {
     deletePerson({
       variables: {
-        ids: person.id,
+        idToDelete: person.id,
       },
-      refetchQueries: [getOperationName(GET_PEOPLE) ?? ''],
+      refetchQueries: [getOperationName(findManyRecordsQuery) ?? ''],
     });
   };
 
@@ -143,17 +145,19 @@ export const PeopleCard = ({
       isHovered={isHovered}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onClick={() => navigate(`/person/${person.id}`)}
+      onClick={() => navigate(`/object/person/${person.id}`)}
       hasBottomBorder={hasBottomBorder}
     >
       <Avatar
         size="lg"
         type="rounded"
-        placeholder={person.displayName}
+        placeholder={person.name.firstName + ' ' + person.name.lastName}
         avatarUrl={person.avatarUrl}
       />
       <StyledCardInfo>
-        <StyledTitle>{person.displayName}</StyledTitle>
+        <StyledTitle>
+          {person.name.firstName + ' ' + person.name.lastName}
+        </StyledTitle>
         {person.jobTitle && <StyledJobTitle>{person.jobTitle}</StyledJobTitle>}
       </StyledCardInfo>
       {isHovered && (

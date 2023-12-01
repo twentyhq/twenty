@@ -14,7 +14,7 @@ export const typeORMMetadataModuleOptions: TypeOrmModuleOptions = {
   synchronize: false,
   migrationsRun: false,
   migrationsTableName: '_typeorm_migrations',
-  migrations: [__dirname + '/migrations/*{.ts,.js}'],
+  migrations: ['dist/src/database/typeorm/metadata/migrations/*{.ts,.js}'],
 };
 export const connectionSource = new DataSource(
   typeORMMetadataModuleOptions as DataSourceOptions,

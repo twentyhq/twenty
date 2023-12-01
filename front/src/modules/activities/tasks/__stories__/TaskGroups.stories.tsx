@@ -5,10 +5,9 @@ import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { ObjectFilterDropdownScope } from '@/ui/object/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedTasks } from '~/testing/mock-data/activities';
-
-import { ActivityTargetableEntityType } from '../../types/ActivityTargetableEntity';
 
 const meta: Meta<typeof TaskGroups> = {
   title: 'Modules/Activity/TaskGroups',
@@ -21,6 +20,7 @@ const meta: Meta<typeof TaskGroups> = {
     ),
     ComponentWithRouterDecorator,
     ComponentWithRecoilScopeDecorator,
+    SnackBarDecorator,
   ],
   parameters: {
     msw: graphqlMocks,
@@ -37,7 +37,7 @@ export const WithTasks: Story = {
   args: {
     entity: {
       id: mockedTasks[0].authorId,
-      type: ActivityTargetableEntityType.Person,
+      type: 'Person',
     },
   },
 };

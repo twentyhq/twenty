@@ -9,7 +9,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 
-import { ObjectMetadataInterface } from 'src/tenant/schema-builder/interfaces/object-metadata.interface';
+import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
 
 import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
@@ -58,6 +58,12 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @Column({ default: false })
   isSystem: boolean;
 
+  @Column({ nullable: true })
+  labelIdentifierFieldMetadataId?: string;
+
+  @Column({ nullable: true })
+  imageIdentifierFieldMetadataId?: string;
+
   @Column({ nullable: false })
   workspaceId: string;
 
@@ -69,12 +75,18 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @OneToMany(
     () => RelationMetadataEntity,
     (relation: RelationMetadataEntity) => relation.fromObjectMetadata,
+    {
+      cascade: true,
+    },
   )
   fromRelations: RelationMetadataEntity[];
 
   @OneToMany(
     () => RelationMetadataEntity,
     (relation: RelationMetadataEntity) => relation.toObjectMetadata,
+    {
+      cascade: true,
+    },
   )
   toRelations: RelationMetadataEntity[];
 

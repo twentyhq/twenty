@@ -1,0 +1,9 @@
+{
+  "label": "Input",
+  "position": 3,
+  "collapsible": true,
+  "collapsed": false,
+  "customProps": {
+    "icon": "TbInputSearch"
+  }
+}

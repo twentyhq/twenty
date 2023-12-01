@@ -1,39 +1,31 @@
 import { useContext } from 'react';
 
+import { FullNameFieldInput } from '@/ui/object/field/meta-types/input/components/FullNameFieldInput';
+import { isFieldFullName } from '@/ui/object/field/types/guards/isFieldFullName';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { BooleanFieldInput } from '../meta-types/input/components/BooleanFieldInput';
-import { ChipFieldInput } from '../meta-types/input/components/ChipFieldInput';
+import { CurrencyFieldInput } from '../meta-types/input/components/CurrencyFieldInput';
 import { DateFieldInput } from '../meta-types/input/components/DateFieldInput';
-import { DoubleTextChipFieldInput } from '../meta-types/input/components/DoubleTextChipFieldInput';
-import { DoubleTextFieldInput } from '../meta-types/input/components/DoubleTextFieldInput';
 import { EmailFieldInput } from '../meta-types/input/components/EmailFieldInput';
-import { MoneyAmountV2FieldInput } from '../meta-types/input/components/MoneyAmountV2FieldInput';
-import { MoneyFieldInput } from '../meta-types/input/components/MoneyFieldInput';
+import { LinkFieldInput } from '../meta-types/input/components/LinkFieldInput';
 import { NumberFieldInput } from '../meta-types/input/components/NumberFieldInput';
 import { PhoneFieldInput } from '../meta-types/input/components/PhoneFieldInput';
-import { ProbabilityFieldInput } from '../meta-types/input/components/ProbabilityFieldInput';
+import { RatingFieldInput } from '../meta-types/input/components/RatingFieldInput';
 import { RelationFieldInput } from '../meta-types/input/components/RelationFieldInput';
 import { TextFieldInput } from '../meta-types/input/components/TextFieldInput';
-import { URLFieldInput } from '../meta-types/input/components/URLFieldInput';
-import { URLV2FieldInput } from '../meta-types/input/components/URLV2FieldInput';
 import { FieldInputEvent } from '../types/FieldInputEvent';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
-import { isFieldChip } from '../types/guards/isFieldChip';
-import { isFieldDate } from '../types/guards/isFieldDate';
-import { isFieldDoubleText } from '../types/guards/isFieldDoubleText';
-import { isFieldDoubleTextChip } from '../types/guards/isFieldDoubleTextChip';
+import { isFieldCurrency } from '../types/guards/isFieldCurrency';
+import { isFieldDateTime } from '../types/guards/isFieldDateTime';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
-import { isFieldMoney } from '../types/guards/isFieldMoney';
-import { isFieldMoneyAmountV2 } from '../types/guards/isFieldMoneyAmountV2';
+import { isFieldLink } from '../types/guards/isFieldLink';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldPhone } from '../types/guards/isFieldPhone';
-import { isFieldProbability } from '../types/guards/isFieldProbability';
+import { isFieldRating } from '../types/guards/isFieldRating';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldText } from '../types/guards/isFieldText';
-import { isFieldURL } from '../types/guards/isFieldURL';
-import { isFieldURLV2 } from '../types/guards/isFieldURLV2';
 
 type FieldInputProps = {
   onSubmit?: FieldInputEvent;
@@ -62,6 +54,14 @@ export const FieldInput = ({
         <RecoilScope>
           <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
         </RecoilScope>
+      ) : isFieldPhone(fieldDefinition) ? (
+        <PhoneFieldInput
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
+        />
       ) : isFieldText(fieldDefinition) ? (
         <TextFieldInput
           onEnter={onEnter}
@@ -78,7 +78,15 @@ export const FieldInput = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
         />
-      ) : isFieldDate(fieldDefinition) ? (
+      ) : isFieldFullName(fieldDefinition) ? (
+        <FullNameFieldInput
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
+        />
+      ) : isFieldDateTime(fieldDefinition) ? (
         <DateFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
@@ -94,32 +102,16 @@ export const FieldInput = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
         />
-      ) : isFieldURL(fieldDefinition) ? (
-        <URLFieldInput
+      ) : isFieldLink(fieldDefinition) ? (
+        <LinkFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}
           onTab={onTab}
           onShiftTab={onShiftTab}
         />
-      ) : isFieldURLV2(fieldDefinition) ? (
-        <URLV2FieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
-      ) : isFieldMoneyAmountV2(fieldDefinition) ? (
-        <MoneyAmountV2FieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
-      ) : isFieldPhone(fieldDefinition) ? (
-        <PhoneFieldInput
+      ) : isFieldCurrency(fieldDefinition) ? (
+        <CurrencyFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}
@@ -128,40 +120,8 @@ export const FieldInput = ({
         />
       ) : isFieldBoolean(fieldDefinition) ? (
         <BooleanFieldInput onSubmit={onSubmit} />
-      ) : isFieldProbability(fieldDefinition) ? (
-        <ProbabilityFieldInput onSubmit={onSubmit} />
-      ) : isFieldChip(fieldDefinition) ? (
-        <ChipFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
-      ) : isFieldDoubleTextChip(fieldDefinition) ? (
-        <DoubleTextChipFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
-      ) : isFieldDoubleText(fieldDefinition) ? (
-        <DoubleTextFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
-      ) : isFieldMoney(fieldDefinition) ? (
-        <MoneyFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
+      ) : isFieldRating(fieldDefinition) ? (
+        <RatingFieldInput onSubmit={onSubmit} />
       ) : (
         <></>
       )}

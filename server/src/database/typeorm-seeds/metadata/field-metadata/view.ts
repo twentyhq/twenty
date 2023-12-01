@@ -1,8 +1,8 @@
 import { DataSource } from 'typeorm';
 
-import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
@@ -39,6 +39,8 @@ export const seedViewFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
+      'defaultValue',
     ])
     .orIgnore()
     .values([
@@ -57,8 +59,9 @@ export const seedViewFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: true,
-        // isSystem: true,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'uuid' },
       },
       {
         id: SeedViewFieldMetadataIds.CreatedAt,
@@ -66,7 +69,7 @@ export const seedViewFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
         label: 'Creation date',
         targetColumnMap: {
@@ -74,7 +77,9 @@ export const seedViewFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       {
         id: SeedViewFieldMetadataIds.UpdatedAt,
@@ -82,7 +87,7 @@ export const seedViewFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
         label: 'Update date',
         targetColumnMap: {
@@ -90,7 +95,9 @@ export const seedViewFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       // Fields
       {
@@ -99,7 +106,7 @@ export const seedViewFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'name',
         label: 'Name',
         targetColumnMap: {
@@ -108,6 +115,8 @@ export const seedViewFieldMetadata = async (
         description: 'View name',
         icon: null,
         isNullable: false,
+        isSystem: false,
+        defaultValue: { value: '' },
       },
       {
         id: SeedViewFieldMetadataIds.ObjectMetadataId,
@@ -115,7 +124,7 @@ export const seedViewFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.UUID,
         name: 'objectMetadataId',
         label: 'Object Metadata Id',
         targetColumnMap: {
@@ -124,6 +133,8 @@ export const seedViewFieldMetadata = async (
         description: 'View target object',
         icon: null,
         isNullable: false,
+        isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedViewFieldMetadataIds.Type,
@@ -131,7 +142,7 @@ export const seedViewFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'type',
         label: 'Type',
         targetColumnMap: {
@@ -140,6 +151,8 @@ export const seedViewFieldMetadata = async (
         description: 'View type',
         icon: null,
         isNullable: false,
+        isSystem: false,
+        defaultValue: { value: 'table' },
       },
       {
         id: SeedViewFieldMetadataIds.ViewFields,
@@ -147,13 +160,15 @@ export const seedViewFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'viewFields',
         label: 'View Fields',
         targetColumnMap: {},
         description: 'View Fields',
         icon: 'IconTag',
         isNullable: true,
+        isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedViewFieldMetadataIds.ViewSorts,
@@ -161,13 +176,15 @@ export const seedViewFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'viewSorts',
         label: 'View Sorts',
         targetColumnMap: {},
         description: 'View Sorts',
         icon: 'IconArrowsSort',
         isNullable: true,
+        isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedViewFieldMetadataIds.ViewFilters,
@@ -175,13 +192,15 @@ export const seedViewFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'viewFilters',
         label: 'View Filters',
         targetColumnMap: {},
         description: 'View Filters',
         icon: 'IconFilterBolt',
         isNullable: true,
+        isSystem: false,
+        defaultValue: undefined,
       },
     ])
     .execute();

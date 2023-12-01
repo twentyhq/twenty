@@ -1,8 +1,8 @@
 import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
-import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
@@ -16,13 +16,14 @@ export enum SeedCompanyFieldMetadataIds {
   DomainName = '20202020-5e4e-4007-a630-8a2617914889',
   Address = '20202020-ad10-4117-a039-3f04b7a5f939',
   Employees = '20202020-7fbd-41ad-b64d-25a15ff62f04',
-  LinkedinUrl = '20202020-a61d-4b78-b998-3fd88b4f73a1',
+  LinkedinLink = '20202020-a61d-4b78-b998-3fd88b4f73a1',
   XUrl = '20202020-46e3-479a-b8f4-77137c74daa6',
   AnnualRecurringRevenue = '20202020-4a5a-466f-92d9-c3870d9502a9',
   IdealCustomerProfile = '20202020-9e9f-4235-98b2-c76f3e2d281e',
 
   People = '20202020-68b4-4c8e-af19-738eba2a42a5',
   AccountOwner = '20202020-0739-495d-8e70-c0807f6b2268',
+  AccountOwnerForeignKey = '20202020-0b9e-4b9e-8b0a-5b0b5b0b5b0b',
   ActivityTargets = '20202020-4a2e-4b41-8562-279963e8947e',
   Opportunities = '20202020-e3fc-46ff-b552-3e757843f06e',
   Favorites = '20202020-e7c8-4771-8cc4-ce0e8c36a3c0',
@@ -49,6 +50,8 @@ export const seedCompanyFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
+      'defaultValue',
     ])
     .orIgnore()
     .values([
@@ -67,8 +70,9 @@ export const seedCompanyFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: true,
-        // isSystem: true,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'uuid' },
       },
       {
         id: SeedCompanyFieldMetadataIds.CreatedAt,
@@ -76,7 +80,7 @@ export const seedCompanyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
         label: 'Creation date',
         targetColumnMap: {
@@ -84,7 +88,9 @@ export const seedCompanyFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
+        isNullable: false,
+        isSystem: false,
+        defaultValue: { type: 'now' },
       },
       {
         id: SeedCompanyFieldMetadataIds.UpdatedAt,
@@ -92,7 +98,7 @@ export const seedCompanyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
         label: 'Update date',
         targetColumnMap: {
@@ -100,7 +106,9 @@ export const seedCompanyFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       // Main Identifier
       {
@@ -109,7 +117,7 @@ export const seedCompanyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'name',
         label: 'Name',
         targetColumnMap: {
@@ -117,9 +125,10 @@ export const seedCompanyFieldMetadata = async (
         },
         description: 'The company name',
         icon: 'IconBuildingSkyscraper',
-        isNullable: false,
+        isNullable: true,
+        isSystem: false,
+        defaultValue: { value: '' },
       },
-
       // Scalar Fields
       {
         id: SeedCompanyFieldMetadataIds.DomainName,
@@ -127,7 +136,7 @@ export const seedCompanyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'domainName',
         label: 'Domain Name',
         targetColumnMap: {
@@ -137,6 +146,8 @@ export const seedCompanyFieldMetadata = async (
           'The company website URL. We use this url to fetch the company icon',
         icon: 'IconLink',
         isNullable: true,
+        isSystem: false,
+        defaultValue: { value: '' },
       },
       {
         id: SeedCompanyFieldMetadataIds.Address,
@@ -144,7 +155,7 @@ export const seedCompanyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'address',
         label: 'Address',
         targetColumnMap: {
@@ -153,6 +164,8 @@ export const seedCompanyFieldMetadata = async (
         description: 'The company address',
         icon: 'IconMap',
         isNullable: true,
+        isSystem: false,
+        defaultValue: { value: '' },
       },
       {
         id: SeedCompanyFieldMetadataIds.Employees,
@@ -160,7 +173,7 @@ export const seedCompanyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'NUMBER',
+        type: FieldMetadataType.NUMBER,
         name: 'employees',
         label: 'Employees',
         targetColumnMap: {
@@ -169,22 +182,27 @@ export const seedCompanyFieldMetadata = async (
         description: 'Number of employees in the company',
         icon: 'IconUsers',
         isNullable: true,
+        isSystem: false,
+        defaultValue: undefined,
       },
       {
-        id: SeedCompanyFieldMetadataIds.LinkedinUrl,
+        id: SeedCompanyFieldMetadataIds.LinkedinLink,
         objectMetadataId: SeedObjectMetadataIds.Company,
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
-        name: 'linkedinUrl',
+        type: FieldMetadataType.LINK,
+        name: 'linkedinLink',
         label: 'Linkedin',
         targetColumnMap: {
-          value: 'linkedinUrl',
+          label: 'linkedinLinkLabel',
+          url: 'linkedinLinkUrl',
         },
         description: 'The company Linkedin account',
         icon: 'IconBrandLinkedin',
         isNullable: true,
+        isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.XUrl,
@@ -192,15 +210,18 @@ export const seedCompanyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
-        name: 'xUrl',
+        type: FieldMetadataType.LINK,
+        name: 'xLink',
         label: 'X',
         targetColumnMap: {
-          value: 'xUrl',
+          label: 'xLinkLabel',
+          url: 'xLinkUrl',
         },
         description: 'The company Twitter/X account',
         icon: 'IconBrandX',
         isNullable: true,
+        isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.AnnualRecurringRevenue,
@@ -208,16 +229,19 @@ export const seedCompanyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'NUMBER',
+        type: FieldMetadataType.CURRENCY,
         name: 'annualRecurringRevenue',
         label: 'ARR',
         targetColumnMap: {
-          value: 'annualRecurringRevenue',
+          amountMicros: 'annualRecurringRevenueAmountMicros',
+          currencyCode: 'annualRecurringRevenueCurrencyCode',
         },
         description:
           'Annual Recurring Revenue: The actual or estimated annual revenue of the company',
         icon: 'IconMoneybag',
         isNullable: true,
+        isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.IdealCustomerProfile,
@@ -225,7 +249,7 @@ export const seedCompanyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'BOOLEAN',
+        type: FieldMetadataType.BOOLEAN,
         name: 'idealCustomerProfile',
         label: 'ICP',
         targetColumnMap: {
@@ -235,6 +259,8 @@ export const seedCompanyFieldMetadata = async (
           'Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you',
         icon: 'IconTarget',
         isNullable: true,
+        isSystem: false,
+        defaultValue: false,
       },
 
       // Relationships
@@ -244,13 +270,15 @@ export const seedCompanyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'people',
         label: 'People',
         targetColumnMap: {},
         description: 'People linked to the company.',
         icon: 'IconUsers',
         isNullable: true,
+        isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.AccountOwner,
@@ -258,16 +286,32 @@ export const seedCompanyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'accountOwner',
         label: 'Account Owner',
-        targetColumnMap: {
-          value: 'accountOwnerId',
-        },
+        targetColumnMap: {},
         description:
           'Your team member responsible for managing the company account',
         icon: 'IconUserCircle',
         isNullable: true,
+        isSystem: false,
+        defaultValue: undefined,
+      },
+      {
+        id: SeedCompanyFieldMetadataIds.AccountOwnerForeignKey,
+        objectMetadataId: SeedObjectMetadataIds.Company,
+        isCustom: false,
+        workspaceId: SeedWorkspaceId,
+        isActive: true,
+        type: FieldMetadataType.UUID,
+        name: 'accountOwnerId',
+        label: 'Account Owner ID (foreign key)',
+        targetColumnMap: {},
+        description: 'Foreign key for account owner',
+        icon: undefined,
+        isNullable: true,
+        isSystem: true,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.ActivityTargets,
@@ -275,13 +319,15 @@ export const seedCompanyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'activityTargets',
         label: 'Activities',
         targetColumnMap: {},
         description: 'Activities tied to the company',
         icon: 'IconCheckbox',
         isNullable: true,
+        isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.Opportunities,
@@ -289,13 +335,15 @@ export const seedCompanyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'opportunities',
         label: 'Opportunities',
         targetColumnMap: {},
         description: 'Opportunities linked to the company.',
         icon: 'IconTargetArrow',
         isNullable: true,
+        isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.Favorites,
@@ -303,13 +351,15 @@ export const seedCompanyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'favorites',
         label: 'Favorites',
         targetColumnMap: {},
         description: 'Favorites linked to the company',
         icon: 'IconHeart',
         isNullable: true,
+        isSystem: false,
+        defaultValue: undefined,
       },
       {
         id: SeedCompanyFieldMetadataIds.Attachments,
@@ -317,13 +367,15 @@ export const seedCompanyFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'attachments',
         label: 'Attachments',
         targetColumnMap: {},
         description: 'Attachments linked to the company.',
         icon: 'IconFileImport',
         isNullable: true,
+        isSystem: false,
+        defaultValue: undefined,
       },
     ])
     .execute();

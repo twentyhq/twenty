@@ -1,31 +1,19 @@
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 
 import { ObjectFilterDropdownId } from '../constants/ObjectFilterDropdownId';
-import { useFilter } from '../hooks/useFilter';
 
 export const MultipleFiltersButton = () => {
-  const {
-    setFilterDefinitionUsedInDropdown,
-    setIsObjectFilterDropdownOperandSelectUnfolded,
-    setObjectFilterDropdownSearchInput,
-    setSelectedOperandInDropdown,
-  } = useFilter();
+  const { resetFilter } = useFilterDropdown();
 
   const { isDropdownOpen, toggleDropdown } = useDropdown({
     dropdownScopeId: ObjectFilterDropdownId,
   });
 
-  const resetState = () => {
-    setIsObjectFilterDropdownOperandSelectUnfolded(false);
-    setFilterDefinitionUsedInDropdown(null);
-    setSelectedOperandInDropdown(null);
-    setObjectFilterDropdownSearchInput('');
-  };
-
   const handleClick = () => {
     toggleDropdown();
-    resetState();
+    resetFilter();
   };
 
   return (

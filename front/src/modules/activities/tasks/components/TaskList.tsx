@@ -1,13 +1,14 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { TaskForList } from '@/activities/types/TaskForList';
+import { Activity } from '@/activities/types/Activity';
+import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 
 import { TaskRow } from './TaskRow';
 
 type TaskListProps = {
   title?: string;
-  tasks: TaskForList[];
+  tasks: Omit<Activity, 'assigneeId'>[];
   button?: ReactElement | false;
 };
 
@@ -60,7 +61,7 @@ export const TaskList = ({ title, tasks, button }: TaskListProps) => (
         </StyledTitleBar>
         <StyledTaskRows>
           {tasks.map((task) => (
-            <TaskRow key={task.id} task={task} />
+            <TaskRow key={task.id} task={task as unknown as GraphQLActivity} />
           ))}
         </StyledTaskRows>
       </StyledContainer>

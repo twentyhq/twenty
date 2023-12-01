@@ -1,4 +1,4 @@
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
@@ -9,7 +9,7 @@ import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 import { Command } from '../types/Command';
 
 export const useCommandMenu = () => {
-  const [, setIsCommandMenuOpened] = useRecoilState(isCommandMenuOpenedState);
+  const setIsCommandMenuOpened = useSetRecoilState(isCommandMenuOpenedState);
   const setCommands = useSetRecoilState(commandMenuCommandsState);
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -26,6 +26,18 @@ export const useCommandMenu = () => {
     goBackToPreviousHotkeyScope();
   };
 
+  const toggleCommandMenu = useRecoilCallback(({ snapshot }) => async () => {
+    const isCommandMenuOpened = snapshot
+      .getLoadable(isCommandMenuOpenedState)
+      .getValue();
+
+    if (isCommandMenuOpened) {
+      closeCommandMenu();
+    } else {
+      openCommandMenu();
+    }
+  });
+
   const addToCommandMenu = (addCommand: Command[]) => {
     setCommands((prev) => [...prev, ...addCommand]);
   };
@@ -37,6 +49,7 @@ export const useCommandMenu = () => {
   return {
     openCommandMenu,
     closeCommandMenu,
+    toggleCommandMenu,
     addToCommandMenu,
     setToIntitialCommandMenu,
   };

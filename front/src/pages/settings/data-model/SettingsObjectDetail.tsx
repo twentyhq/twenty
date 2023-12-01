@@ -34,19 +34,15 @@ export const SettingsObjectDetail = () => {
   const navigate = useNavigate();
 
   const { objectSlug = '' } = useParams();
-  const {
-    disableObjectMetadataItem,
-    findActiveObjectMetadataItemBySlug,
-    loading,
-  } = useObjectMetadataItemForSettings();
+  const { disableObjectMetadataItem, findActiveObjectMetadataItemBySlug } =
+    useObjectMetadataItemForSettings();
 
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
 
   useEffect(() => {
-    if (loading) return;
     if (!activeObjectMetadataItem) navigate(AppPath.NotFound);
-  }, [activeObjectMetadataItem, loading, navigate]);
+  }, [activeObjectMetadataItem, navigate]);
 
   const { activateMetadataField, disableMetadataField, eraseMetadataField } =
     useFieldMetadataItem();
@@ -54,10 +50,10 @@ export const SettingsObjectDetail = () => {
   if (!activeObjectMetadataItem) return null;
 
   const activeMetadataFields = activeObjectMetadataItem.fields.filter(
-    (metadataField) => metadataField.isActive,
+    (metadataField) => metadataField.isActive && !metadataField.isSystem,
   );
   const disabledMetadataFields = activeObjectMetadataItem.fields.filter(
-    (metadataField) => !metadataField.isActive,
+    (metadataField) => !metadataField.isActive && !metadataField.isSystem,
   );
 
   const handleDisable = async () => {
@@ -98,7 +94,7 @@ export const SettingsObjectDetail = () => {
                 {activeMetadataFields.map((activeMetadataField) => (
                   <SettingsObjectFieldItemTableRow
                     key={activeMetadataField.id}
-                    fieldItem={activeMetadataField}
+                    fieldMetadataItem={activeMetadataField}
                     ActionIcon={
                       <SettingsObjectFieldActiveActionDropdown
                         isCustomField={activeMetadataField.isCustom}
@@ -120,7 +116,7 @@ export const SettingsObjectDetail = () => {
                 {disabledMetadataFields.map((disabledMetadataField) => (
                   <SettingsObjectFieldItemTableRow
                     key={disabledMetadataField.id}
-                    fieldItem={disabledMetadataField}
+                    fieldMetadataItem={disabledMetadataField}
                     ActionIcon={
                       <SettingsObjectFieldDisabledActionDropdown
                         isCustomField={disabledMetadataField.isCustom}

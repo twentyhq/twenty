@@ -1,22 +1,37 @@
 import { useEffect } from 'react';
 
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
+import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
-import { useView } from '@/views/hooks/useView';
+import { useViewBar } from '@/views/hooks/useViewBar';
 import { ViewType } from '@/views/types/ViewType';
 
-export const RecordTableEffect = () => {
-  const { scopeId: objectNamePlural, setAvailableTableColumns } =
-    useRecordTable();
+export const RecordTableEffect = ({
+  recordTableId,
+  viewBarId,
+}: {
+  recordTableId: string;
+  viewBarId: string;
+}) => {
+  const {
+    scopeId: objectNamePlural,
+    setAvailableTableColumns,
+    setOnEntityCountChange,
+    setObjectMetadataConfig,
+  } = useRecordTable({ recordTableScopeId: recordTableId });
 
   const {
-    columnDefinitions,
-    filterDefinitions,
-    sortDefinitions,
-    foundObjectMetadataItem,
-  } = useFindOneObjectMetadataItem({
+    objectMetadataItem,
+    basePathToShowPage,
+    labelIdentifierFieldMetadataId,
+  } = useObjectMetadataItem({
     objectNamePlural,
   });
+
+  const { columnDefinitions, filterDefinitions, sortDefinitions } =
+    useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const {
     setAvailableSortDefinitions,
@@ -24,20 +39,39 @@ export const RecordTableEffect = () => {
     setAvailableFieldDefinitions,
     setViewType,
     setViewObjectMetadataId,
-  } = useView();
+    setEntityCountInCurrentView,
+  } = useViewBar({ viewBarId });
 
   useEffect(() => {
-    if (!foundObjectMetadataItem) {
+    if (basePathToShowPage && labelIdentifierFieldMetadataId) {
+      setObjectMetadataConfig?.({
+        basePathToShowPage,
+        labelIdentifierFieldMetadataId,
+      });
+    }
+  }, [
+    basePathToShowPage,
+    objectMetadataItem,
+    labelIdentifierFieldMetadataId,
+    setObjectMetadataConfig,
+  ]);
+
+  useEffect(() => {
+    if (!objectMetadataItem) {
       return;
     }
-    setViewObjectMetadataId?.(foundObjectMetadataItem.id);
+    setViewObjectMetadataId?.(objectMetadataItem.id);
     setViewType?.(ViewType.Table);
 
     setAvailableSortDefinitions?.(sortDefinitions);
     setAvailableFilterDefinitions?.(filterDefinitions);
     setAvailableFieldDefinitions?.(columnDefinitions);
 
-    setAvailableTableColumns(columnDefinitions);
+    const availableTableColumns = columnDefinitions.filter(
+      filterAvailableTableColumns,
+    );
+
+    setAvailableTableColumns(availableTableColumns);
   }, [
     setViewObjectMetadataId,
     setViewType,
@@ -45,11 +79,27 @@ export const RecordTableEffect = () => {
     setAvailableSortDefinitions,
     setAvailableFilterDefinitions,
     setAvailableFieldDefinitions,
-    foundObjectMetadataItem,
+    objectMetadataItem,
     sortDefinitions,
     filterDefinitions,
     setAvailableTableColumns,
   ]);
+
+  const { setActionBarEntries, setContextMenuEntries } =
+    useRecordTableContextMenuEntries({
+      recordTableScopeId: recordTableId,
+    });
+
+  useEffect(() => {
+    setActionBarEntries?.();
+    setContextMenuEntries?.();
+  }, [setActionBarEntries, setContextMenuEntries]);
+
+  useEffect(() => {
+    setOnEntityCountChange(
+      () => (entityCount: number) => setEntityCountInCurrentView(entityCount),
+    );
+  }, [setEntityCountInCurrentView, setOnEntityCountChange]);
 
   return <></>;
 };

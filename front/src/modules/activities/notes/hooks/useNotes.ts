@@ -1,27 +1,34 @@
-import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
+import { Note } from '@/activities/types/Note';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
 import { ActivityTargetableEntity } from '../../types/ActivityTargetableEntity';
 
 export const useNotes = (entity: ActivityTargetableEntity) => {
-  const { data: notesData } = useGetActivitiesQuery({
-    variables: {
-      where: {
-        type: { equals: ActivityType.Note },
-        activityTargets: {
-          some: {
-            OR: [
-              { companyId: { equals: entity.id } },
-              { personId: { equals: entity.id } },
-            ],
-          },
-        },
-      },
+  const { records: activityTargets } = useFindManyRecords({
+    objectNamePlural: 'activityTargets',
+    filter: {
+      [entity.type === 'Company' ? 'companyId' : 'personId']: { eq: entity.id },
     },
   });
 
-  const notes = notesData?.findManyActivities;
+  const filter = {
+    id: {
+      in: activityTargets?.map((activityTarget) => activityTarget.activityId),
+    },
+    type: { eq: 'Note' },
+  };
+  const orderBy = {
+    createdAt: 'AscNullsFirst',
+  };
+
+  const { records: notes } = useFindManyRecords({
+    skip: !activityTargets?.length,
+    objectNamePlural: 'activities',
+    filter,
+    orderBy,
+  });
 
   return {
-    notes,
+    notes: notes as Note[],
   };
 };

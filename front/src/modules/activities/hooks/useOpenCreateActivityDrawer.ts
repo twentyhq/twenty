@@ -1,29 +1,29 @@
-import { getOperationName } from '@apollo/client/utilities';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { v4 } from 'uuid';
 
-import { currentUserState } from '@/auth/states/currentUserState';
+import { Activity, ActivityType } from '@/activities/types/Activity';
+import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { GET_COMPANIES } from '@/companies/graphql/queries/getCompanies';
-import { GET_PEOPLE } from '@/people/graphql/queries/getPeople';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { ActivityType, useCreateActivityMutation } from '~/generated/graphql';
 
-import { GET_ACTIVITIES } from '../graphql/queries/getActivities';
-import { GET_ACTIVITIES_BY_TARGETS } from '../graphql/queries/getActivitiesByTarget';
-import { GET_ACTIVITY } from '../graphql/queries/getActivity';
 import { activityTargetableEntityArrayState } from '../states/activityTargetableEntityArrayState';
 import { viewableActivityIdState } from '../states/viewableActivityIdState';
 import { ActivityTargetableEntity } from '../types/ActivityTargetableEntity';
-import { getRelationData } from '../utils/getRelationData';
+import { getTargetableEntitiesWithParents } from '../utils/getTargetableEntitiesWithParents';
 
 export const useOpenCreateActivityDrawer = () => {
   const { openRightDrawer } = useRightDrawer();
-  const [createActivityMutation] = useCreateActivityMutation();
-  const currentUser = useRecoilValue(currentUserState);
+  const { createOneRecord: createOneActivityTarget } =
+    useCreateOneRecord<ActivityTarget>({
+      objectNameSingular: 'activityTarget',
+    });
+  const { createOneRecord: createOneActivity } = useCreateOneRecord<Activity>({
+    objectNameSingular: 'activity',
+  });
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const setHotkeyScope = useSetHotkeyScope();
 
@@ -32,7 +32,7 @@ export const useOpenCreateActivityDrawer = () => {
   );
   const [, setViewableActivityId] = useRecoilState(viewableActivityIdState);
 
-  return ({
+  return async ({
     type,
     targetableEntities,
     assigneeId,
@@ -41,46 +41,38 @@ export const useOpenCreateActivityDrawer = () => {
     targetableEntities?: ActivityTargetableEntity[];
     assigneeId?: string;
   }) => {
-    const now = new Date().toISOString();
+    const targetableEntitiesWithRelations = targetableEntities
+      ? getTargetableEntitiesWithParents(targetableEntities)
+      : [];
 
-    return createActivityMutation({
-      variables: {
-        data: {
-          id: v4(),
-          createdAt: now,
-          updatedAt: now,
-          author: { connect: { id: currentUser?.id ?? '' } },
-          workspaceMemberAuthor: {
-            connect: { id: currentWorkspaceMember?.id ?? '' },
-          },
-          assignee: { connect: { id: assigneeId ?? currentUser?.id ?? '' } },
-          workspaceMemberAssignee: {
-            connect: { id: currentWorkspaceMember?.id ?? '' },
-          },
-          type: type,
-          activityTargets: {
-            createMany: {
-              data: targetableEntities
-                ? getRelationData(targetableEntities)
-                : [],
-              skipDuplicates: true,
-            },
-          },
-        },
-      },
-      refetchQueries: [
-        getOperationName(GET_COMPANIES) ?? '',
-        getOperationName(GET_PEOPLE) ?? '',
-        getOperationName(GET_ACTIVITY) ?? '',
-        getOperationName(GET_ACTIVITIES_BY_TARGETS) ?? '',
-        getOperationName(GET_ACTIVITIES) ?? '',
-      ],
-      onCompleted: (data) => {
-        setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-        setViewableActivityId(data.createOneActivity.id);
-        setActivityTargetableEntityArray(targetableEntities ?? []);
-        openRightDrawer(RightDrawerPages.CreateActivity);
-      },
+    const createdActivity = await createOneActivity?.({
+      authorId: currentWorkspaceMember?.id,
+      assigneeId:
+        assigneeId ?? isNonEmptyString(currentWorkspaceMember?.id)
+          ? currentWorkspaceMember?.id
+          : undefined,
+      type: type,
     });
+
+    if (!createdActivity) {
+      return;
+    }
+
+    await Promise.all(
+      targetableEntitiesWithRelations.map(async (targetableEntity) => {
+        await createOneActivityTarget?.({
+          companyId:
+            targetableEntity.type === 'Company' ? targetableEntity.id : null,
+          personId:
+            targetableEntity.type === 'Person' ? targetableEntity.id : null,
+          activityId: createdActivity.id,
+        });
+      }),
+    );
+
+    setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
+    setViewableActivityId(createdActivity.id);
+    setActivityTargetableEntityArray(targetableEntities ?? []);
+    openRightDrawer(RightDrawerPages.CreateActivity);
   };
 };

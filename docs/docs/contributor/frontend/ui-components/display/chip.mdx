@@ -1,0 +1,252 @@
+---
+title: Chip
+sidebar_position: 2
+sidebar_custom_props:
+  icon: TbLayoutList
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import chipCode from '!!raw-loader!@site/src/ui/display/chipCode.js'
+import entityChipCode from '!!raw-loader!@site/src/ui/display/entityChipCode.js'
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+
+A visual element that you can use as a clickable or non-clickable container with a label, optional left and right components, and various styling options to display labels and tags.
+
+<Tabs>
+
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/display/chip/components/Chip']}
+  componentCode={chipCode} 
+/>
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>size</td>
+      <td>`ChipSize` enum</td>
+      <td>Specifies the size of the chip. Has two options: `large` and `small`</td>
+      <td>small</td>
+    </tr>
+
+    <tr>
+      <td>disabled</td>
+      <td>boolean</td>
+      <td>Indicates whether the chip is disabled</td>
+      <td>false</td>
+    </tr>
+
+    <tr>
+      <td>clickable</td>
+      <td>boolean</td>
+      <td>Specifies whether the chip is clickable</td>
+      <td>true</td>
+    </tr>
+
+    <tr>
+      <td>label</td>
+      <td>string</td>
+      <td>Represents the text content or label inside the chip</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>maxWidth</td>
+      <td>string</td>
+      <td>Specifies the maximum width of the chip</td>
+      <td>200px</td>
+    </tr>
+
+    <tr>
+      <td>variant</td>
+      <td>`ChipVariant` enum</td>
+      <td>Specifies the visual style or variant of the chip. Has four options: `regular`, `highlighted`, `transparent`, and `rounded`</td>
+      <td>regular</td>
+    </tr>
+
+    <tr>
+      <td>accent</td>
+      <td>`ChipAccent` enum</td>
+      <td>Determines the text color or accent color of the chip. Has two options: `text-primary` and `text-secondary`</td>
+      <td>text-primary</td>
+    </tr>
+
+    <tr>
+      <td>leftComponent</td>
+      <td>`React.ReactNode`</td>
+      <td>An optional React/node component that you can place on the left side of the chip</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>rightComponent</td>
+      <td>`React.ReactNode`</td>
+      <td>An optional React/node component that you can place on the right side of the chip</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>An optional class name to apply additional custom styles to the chip</td>
+      <td></td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+</Tabs>
+
+## Examples
+
+### Transparent Disabled Chip
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/display/chip/components/Chip']}
+  componentCode={`import { Chip } from "@/ui/display/chip/components/Chip";
+
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="Transparent Disabled Chip"
+      clickable={false}
+      variant="rounded"
+      accent="text-secondary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+
+`} 
+/>
+
+<br/>
+
+### Disabled Chip with Tooltip
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/display/chip/components/Chip']}
+  componentCode={`import { Chip } from "@/ui/display/chip/components/Chip";
+  
+export const MyComponent = () => {
+  return (
+      <Chip 
+      size="large"
+      label="This is a very long label for a disabled chip that triggers a tooltip when overflowing."
+      clickable={false}
+      variant="regular"
+      accent="text-primary"
+      leftComponent
+      rightComponent
+      maxWidth="200px"
+      className
+      />    
+  );
+};
+
+`} 
+/>
+
+
+
+## Entity Chip 
+
+A Chip-like element to display information about an entity.
+
+<Tabs>
+  <TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/display/chip/components/EntityChip', '@/ui/display/icon/types/IconComponent']}
+  componentCode={entityChipCode} 
+/>
+  </TabItem >
+
+    <TabItem value="props" label="Props">
+  
+
+  <table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>linkToEntity</td>
+      <td>string</td>
+      <td>The link to the entity</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>entityId</td>
+      <td>string</td>
+      <td>The unique identifier for the entity</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>name</td>
+      <td>string</td>
+      <td>The name of the entity</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>pictureUrl</td>
+      <td>string</td>
+      <td>The URL of the entity's picture</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>avatarType</td>
+      <td>Avatar Type</td>
+      <td>The type of avatar you want to display. Has two options: `rounded` and `squared`</td>
+      <td>rounded</td>
+    </tr>
+
+    <tr>
+      <td>variant</td>
+      <td>`EntityChipVariant` enum</td>
+      <td>Variant of the entity chip you want to display. Has two options: `regular` and `transparent`</td>
+      <td>regular</td>
+    </tr>
+
+    <tr>
+      <td>LeftIcon</td>
+      <td>IconComponent</td>
+      <td>A React component representing an icon. Displayed on the left side of the chip</td>
+      <td></td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+  </TabItem>
+</Tabs>

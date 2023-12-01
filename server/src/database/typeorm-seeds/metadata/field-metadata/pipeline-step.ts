@@ -1,8 +1,8 @@
 import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
-import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
@@ -37,6 +37,8 @@ export const seedPipelineStepFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
+      'defaultValue',
     ])
     .orIgnore()
     .values([
@@ -55,8 +57,9 @@ export const seedPipelineStepFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: true,
-        // isSystem: true,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'uuid' },
       },
       {
         id: SeedPipelineStepFieldMetadataIds.CreatedAt,
@@ -64,7 +67,7 @@ export const seedPipelineStepFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
         label: 'Creation date',
         targetColumnMap: {
@@ -72,7 +75,9 @@ export const seedPipelineStepFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       {
         id: SeedPipelineStepFieldMetadataIds.UpdatedAt,
@@ -80,7 +85,7 @@ export const seedPipelineStepFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
         label: 'Update date',
         targetColumnMap: {
@@ -88,7 +93,9 @@ export const seedPipelineStepFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       // Main Identifier
       {
@@ -97,7 +104,7 @@ export const seedPipelineStepFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'name',
         label: 'Name',
         targetColumnMap: {
@@ -106,6 +113,8 @@ export const seedPipelineStepFieldMetadata = async (
         description: 'Pipeline Step name',
         icon: 'IconCurrencyDollar',
         isNullable: false,
+        isSystem: false,
+        defaultValue: { value: '' },
       },
 
       // Scalar Fields
@@ -115,7 +124,7 @@ export const seedPipelineStepFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'color',
         label: 'Color',
         targetColumnMap: {
@@ -124,6 +133,8 @@ export const seedPipelineStepFieldMetadata = async (
         description: 'Pipeline Step color',
         icon: 'IconColorSwatch',
         isNullable: false,
+        isSystem: false,
+        defaultValue: { value: '' },
       },
       {
         id: SeedPipelineStepFieldMetadataIds.Position,
@@ -131,7 +142,7 @@ export const seedPipelineStepFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'NUMBER',
+        type: FieldMetadataType.NUMBER,
         name: 'position',
         label: 'Position',
         targetColumnMap: {
@@ -140,6 +151,8 @@ export const seedPipelineStepFieldMetadata = async (
         description: 'Pipeline Step position',
         icon: 'IconHierarchy2',
         isNullable: false,
+        isSystem: false,
+        defaultValue: { value: 0 },
       },
 
       // Relationships
@@ -149,13 +162,15 @@ export const seedPipelineStepFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'RELATION',
+        type: FieldMetadataType.RELATION,
         name: 'opportunities',
         label: 'Opportunities',
         targetColumnMap: {},
         description: 'Opportunities linked to the step.',
         icon: 'IconTargetArrow',
         isNullable: true,
+        isSystem: false,
+        defaultValue: undefined,
       },
     ])
     .execute();

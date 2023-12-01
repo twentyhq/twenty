@@ -24,9 +24,10 @@ import OptionTable from '@site/src/theme/OptionTable'
 
 <OptionTable options={[
     ['PG_DATABASE_URL', 'postgres://user:pw@localhost:5432/default?connection_limit=1', 'Database connection'],
+    ['REDIS_HOST', '127.0.0.1', 'Redis connection host'],
+    ['REDIS_PORT', '6379', 'Redis connection port'],
     ['FRONT_BASE_URL', 'http://localhost:3001', 'Url to the hosted frontend'],
     ['PORT', '3000', 'Port'],
-    ['TELEMETRY_ANONYMIZATION_ENABLED', 'true', 'Anonymized telemetry is collected if not disabled'],
     ]}></OptionTable>
 
 ### Tokens
@@ -62,6 +63,12 @@ import OptionTable from '@site/src/theme/OptionTable'
     ['STORAGE_LOCAL_PATH', '.local-storage', 'data path (local storage)'],
     ]}></OptionTable>
 
+### Message Queue
+
+<OptionTable options={[
+    ['MESSAGE_QUEUE_TYPE', 'pg-boss', "Queue driver: 'pg-boss' or 'bull-mq'"],
+    ]}></OptionTable>
+
 ### Logging
 
 <OptionTable options={[
@@ -79,6 +86,11 @@ import OptionTable from '@site/src/theme/OptionTable'
     ['SUPPORT_FRONT_CHAT_ID', '<id>', 'Support chat id'],
     ]}></OptionTable>
 
+### Telemetry
+<OptionTable options={[
+    ['TELEMETRY_ENABLED', 'true', 'Change this if you want to disable telemetry'],
+    ['TELEMETRY_ANONYMIZATION_ENABLED', 'true', 'Telemetry is anonymized by default, you probably don\'t want to change this'],
+    ]}></OptionTable>
 
 ### Debug / Development
 

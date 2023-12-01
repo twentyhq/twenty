@@ -1,39 +1,39 @@
 import { useContext } from 'react';
 
-import { RelationFieldDisplay } from '@/ui/object/field/meta-types/display/components/RelationFieldDisplay';
-import { UuidFieldDisplay } from '@/ui/object/field/meta-types/display/components/UuidFieldDisplay';
-import { isFieldUuid } from '@/ui/object/field/types/guards/isFieldUuid';
-
 import { FieldContext } from '../contexts/FieldContext';
 import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisplay';
+import { CurrencyFieldDisplay } from '../meta-types/display/components/CurrencyFieldDisplay';
 import { DateFieldDisplay } from '../meta-types/display/components/DateFieldDisplay';
-import { DoubleTextChipFieldDisplay } from '../meta-types/display/components/DoubleTextChipFieldDisplay';
-import { DoubleTextFieldDisplay } from '../meta-types/display/components/DoubleTextFieldDisplay';
 import { EmailFieldDisplay } from '../meta-types/display/components/EmailFieldDisplay';
-import { MoneyAmountV2FieldDisplay } from '../meta-types/display/components/MoneyAmountV2FieldDisplay';
-import { MoneyFieldDisplay } from '../meta-types/display/components/MoneyFieldDisplay';
+import { FullNameFieldDisplay } from '../meta-types/display/components/FullNameFieldDisplay';
+import { LinkFieldDisplay } from '../meta-types/display/components/LinkFieldDisplay';
 import { NumberFieldDisplay } from '../meta-types/display/components/NumberFieldDisplay';
 import { PhoneFieldDisplay } from '../meta-types/display/components/PhoneFieldDisplay';
+import { RelationFieldDisplay } from '../meta-types/display/components/RelationFieldDisplay';
+import { SelectFieldDisplay } from '../meta-types/display/components/SelectFieldDisplay';
 import { TextFieldDisplay } from '../meta-types/display/components/TextFieldDisplay';
-import { URLFieldDisplay } from '../meta-types/display/components/URLFieldDisplay';
-import { URLV2FieldDisplay } from '../meta-types/display/components/URLV2FieldDisplay';
-import { isFieldChip } from '../types/guards/isFieldChip';
-import { isFieldDate } from '../types/guards/isFieldDate';
-import { isFieldDoubleText } from '../types/guards/isFieldDoubleText';
-import { isFieldDoubleTextChip } from '../types/guards/isFieldDoubleTextChip';
+import { UuidFieldDisplay } from '../meta-types/display/components/UuidFieldDisplay';
+import { isFieldCurrency } from '../types/guards/isFieldCurrency';
+import { isFieldDateTime } from '../types/guards/isFieldDateTime';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
-import { isFieldMoney } from '../types/guards/isFieldMoney';
-import { isFieldMoneyAmountV2 } from '../types/guards/isFieldMoneyAmountV2';
+import { isFieldFullName } from '../types/guards/isFieldFullName';
+import { isFieldLink } from '../types/guards/isFieldLink';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldPhone } from '../types/guards/isFieldPhone';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
+import { isFieldSelect } from '../types/guards/isFieldSelect';
 import { isFieldText } from '../types/guards/isFieldText';
-import { isFieldURL } from '../types/guards/isFieldURL';
-import { isFieldURLV2 } from '../types/guards/isFieldURLV2';
+import { isFieldUuid } from '../types/guards/isFieldUuid';
 
 export const FieldDisplay = () => {
-  const { fieldDefinition } = useContext(FieldContext);
+  const { fieldDefinition, isLabelIdentifier } = useContext(FieldContext);
 
+  if (
+    isLabelIdentifier &&
+    (isFieldText(fieldDefinition) || isFieldFullName(fieldDefinition))
+  ) {
+    return <ChipFieldDisplay />;
+  }
   return (
     <>
       {isFieldRelation(fieldDefinition) ? (
@@ -44,26 +44,20 @@ export const FieldDisplay = () => {
         <UuidFieldDisplay />
       ) : isFieldEmail(fieldDefinition) ? (
         <EmailFieldDisplay />
-      ) : isFieldDate(fieldDefinition) ? (
+      ) : isFieldDateTime(fieldDefinition) ? (
         <DateFieldDisplay />
       ) : isFieldNumber(fieldDefinition) ? (
         <NumberFieldDisplay />
-      ) : isFieldMoney(fieldDefinition) ? (
-        <MoneyFieldDisplay />
-      ) : isFieldURL(fieldDefinition) ? (
-        <URLFieldDisplay />
-      ) : isFieldURLV2(fieldDefinition) ? (
-        <URLV2FieldDisplay />
-      ) : isFieldMoneyAmountV2(fieldDefinition) ? (
-        <MoneyAmountV2FieldDisplay />
+      ) : isFieldLink(fieldDefinition) ? (
+        <LinkFieldDisplay />
+      ) : isFieldCurrency(fieldDefinition) ? (
+        <CurrencyFieldDisplay />
+      ) : isFieldFullName(fieldDefinition) ? (
+        <FullNameFieldDisplay />
       ) : isFieldPhone(fieldDefinition) ? (
         <PhoneFieldDisplay />
-      ) : isFieldChip(fieldDefinition) ? (
-        <ChipFieldDisplay />
-      ) : isFieldDoubleTextChip(fieldDefinition) ? (
-        <DoubleTextChipFieldDisplay />
-      ) : isFieldDoubleText(fieldDefinition) ? (
-        <DoubleTextFieldDisplay />
+      ) : isFieldSelect(fieldDefinition) ? (
+        <SelectFieldDisplay />
       ) : (
         <></>
       )}

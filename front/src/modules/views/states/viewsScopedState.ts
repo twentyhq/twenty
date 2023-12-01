@@ -1,8 +1,7 @@
 import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { GraphQLView } from '@/views/types/GraphQLView';
 
-import { View } from '../types/View';
-
-export const viewsScopedState = createScopedState<View[]>({
+export const viewsScopedState = createScopedState<GraphQLView[]>({
   key: 'viewsScopedState',
   defaultValue: [],
 });

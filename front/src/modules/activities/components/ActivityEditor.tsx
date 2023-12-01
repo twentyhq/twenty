@@ -1,29 +1,21 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { useApolloClient } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 
 import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
-import { GET_ACTIVITIES } from '@/activities/graphql/queries/getActivities';
+import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
+import { Activity } from '@/activities/types/Activity';
+import { ActivityTarget } from '@/activities/types/ActivityTarget';
+import { Comment } from '@/activities/types/Comment';
+import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
+import { useFieldContext } from '@/object-record/hooks/useFieldContext';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/ui/object/record-inline-cell/property-box/components/PropertyBox';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import {
-  Activity,
-  ActivityTarget,
-  ActivityType,
-  User,
-  useUpdateActivityMutation,
-} from '~/generated/graphql';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { debounce } from '~/utils/debounce';
-
-import { ActivityAssigneeEditableField } from '../editable-fields/components/ActivityAssigneeEditableField';
-import { ActivityEditorDateField } from '../editable-fields/components/ActivityEditorDateField';
-import { ActivityRelationEditableField } from '../editable-fields/components/ActivityRelationEditableField';
-import { ACTIVITY_UPDATE_FRAGMENT } from '../graphql/fragments/activityUpdateFragment';
-import { CommentForDrawer } from '../types/CommentForDrawer';
 
 import { ActivityTitle } from './ActivityTitle';
 
@@ -65,14 +57,13 @@ type ActivityEditorProps = {
     Activity,
     'id' | 'title' | 'body' | 'type' | 'completedAt' | 'dueAt'
   > & {
-    comments?: Array<CommentForDrawer> | null;
+    comments?: Array<Comment> | null;
   } & {
-    assignee?: Pick<
-      User,
-      'id' | 'firstName' | 'lastName' | 'displayName'
+    assignee?: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'> | null;
+  } & {
+    activityTargets?: Array<
+      Pick<ActivityTarget, 'id' | 'companyId' | 'personId'>
     > | null;
-  } & {
-    activityTargets?: Array<Pick<ActivityTarget, 'id'>> | null;
   };
   showComment?: boolean;
   autoFillTitle?: boolean;
@@ -87,68 +78,51 @@ export const ActivityEditor = ({
     useState<boolean>(false);
 
   const [title, setTitle] = useState<string | null>(activity.title ?? '');
-  const [completedAt, setCompletedAt] = useState<string | null>(
-    activity.completedAt ?? '',
-  );
+
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const [updateActivityMutation] = useUpdateActivityMutation();
-
-  const client = useApolloClient();
-  const cachedActivity = client.readFragment({
-    id: `Activity:${activity.id}`,
-    fragment: ACTIVITY_UPDATE_FRAGMENT,
+  const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<Activity>({
+    objectNameSingular: 'activity',
   });
+
+  const { FieldContextProvider: DueAtFieldContextProvider } = useFieldContext({
+    objectNameSingular: 'activity',
+    objectRecordId: activity.id,
+    fieldMetadataName: 'dueAt',
+    fieldPosition: 0,
+    forceRefetch: true,
+  });
+
+  const { FieldContextProvider: AssigneeFieldContextProvider } =
+    useFieldContext({
+      objectNameSingular: 'activity',
+      objectRecordId: activity.id,
+      fieldMetadataName: 'assignee',
+      fieldPosition: 1,
+      forceRefetch: true,
+    });
 
   const updateTitle = useCallback(
     (newTitle: string) => {
-      updateActivityMutation({
-        variables: {
-          where: {
-            id: activity.id,
-          },
-          data: {
-            title: newTitle ?? '',
-          },
+      updateOneActivity?.({
+        idToUpdate: activity.id,
+        input: {
+          title: newTitle ?? '',
         },
-        optimisticResponse: {
-          __typename: 'Mutation',
-          updateOneActivity: {
-            __typename: 'Activity',
-            ...cachedActivity,
-            title: newTitle,
-          },
-        },
-        refetchQueries: [getOperationName(GET_ACTIVITIES) ?? ''],
       });
     },
-    [activity.id, cachedActivity, updateActivityMutation],
+    [activity.id, updateOneActivity],
   );
-
   const handleActivityCompletionChange = useCallback(
     (value: boolean) => {
-      updateActivityMutation({
-        variables: {
-          where: {
-            id: activity.id,
-          },
-          data: {
-            completedAt: value ? new Date().toISOString() : null,
-          },
+      updateOneActivity?.({
+        idToUpdate: activity.id,
+        input: {
+          completedAt: value ? new Date().toISOString() : null,
         },
-        optimisticResponse: {
-          __typename: 'Mutation',
-          updateOneActivity: {
-            __typename: 'Activity',
-            ...cachedActivity,
-            completedAt: value ? new Date().toISOString() : null,
-          },
-        },
-        refetchQueries: [getOperationName(GET_ACTIVITIES) ?? ''],
+        forceRefetch: true,
       });
-      setCompletedAt(value ? new Date().toISOString() : null);
     },
-    [activity.id, cachedActivity, updateActivityMutation],
+    [activity.id, updateOneActivity],
   );
 
   const debouncedUpdateTitle = debounce(updateTitle, 200);
@@ -172,7 +146,7 @@ export const ActivityEditor = ({
           <ActivityTypeDropdown activity={activity} />
           <ActivityTitle
             title={title ?? ''}
-            completed={!!completedAt}
+            completed={!!activity.completedAt}
             type={activity.type}
             onTitleChange={(newTitle) => {
               setTitle(newTitle);
@@ -182,17 +156,21 @@ export const ActivityEditor = ({
             onCompletionChange={handleActivityCompletionChange}
           />
           <PropertyBox>
-            {activity.type === ActivityType.Task && (
-              <>
-                <RecoilScope>
-                  <ActivityEditorDateField activityId={activity.id} />
-                </RecoilScope>
-                <RecoilScope>
-                  <ActivityAssigneeEditableField activity={activity} />
-                </RecoilScope>
-              </>
-            )}
-            <ActivityRelationEditableField activity={activity} />
+            {activity.type === 'Task' &&
+              DueAtFieldContextProvider &&
+              AssigneeFieldContextProvider && (
+                <>
+                  <DueAtFieldContextProvider>
+                    <RecordInlineCell />
+                  </DueAtFieldContextProvider>
+                  <AssigneeFieldContextProvider>
+                    <RecordInlineCell />
+                  </AssigneeFieldContextProvider>
+                </>
+              )}
+            <ActivityTargetsInlineCell
+              activity={activity as unknown as GraphQLActivity}
+            />
           </PropertyBox>
         </StyledTopContainer>
         <ActivityBodyEditor
@@ -202,10 +180,7 @@ export const ActivityEditor = ({
       </StyledUpperPartContainer>
       {showComment && (
         <ActivityComments
-          activity={{
-            id: activity.id,
-            comments: activity.comments ?? [],
-          }}
+          activity={activity}
           scrollableContainerRef={containerRef}
         />
       )}

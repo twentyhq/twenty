@@ -714,7 +714,6 @@ export {
   IconBrandMercedes,
   IconBrandMessenger,
   IconBrandMeta,
-  IconBrandMicrosoftTeams,
   IconBrandMinecraft,
   IconBrandMiniprogram,
   IconBrandMixpanel,

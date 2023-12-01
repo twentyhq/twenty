@@ -1,12 +1,9 @@
-import {
-  Activity,
-  ActivityTarget,
-  ActivityType,
-  Comment,
-  Company,
-  Person,
-  User,
-} from '~/generated/graphql';
+import { Activity } from '@/activities/types/Activity';
+import { ActivityTarget } from '@/activities/types/ActivityTarget';
+import { Comment } from '@/activities/types/Comment';
+import { Company } from '@/companies/types/Company';
+import { Person } from '@/people/types/Person';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 type MockedActivity = Pick<
   Activity,
@@ -21,15 +18,9 @@ type MockedActivity = Pick<
   | 'dueAt'
   | 'completedAt'
 > & {
-  author: Pick<
-    User,
-    'id' | 'firstName' | 'lastName' | 'displayName' | 'avatarUrl'
-  >;
-  assignee: Pick<
-    User,
-    'id' | 'firstName' | 'lastName' | 'displayName' | 'avatarUrl'
-  >;
-  comments: Array<Comment>;
+  author: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'>;
+  assignee: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'>;
+  comments: Comment[];
   activityTargets: Array<
     Pick<
       ActivityTarget,
@@ -42,7 +33,7 @@ type MockedActivity = Pick<
       | 'companyId'
     > & {
       activity: Pick<Activity, 'id' | 'createdAt' | 'updatedAt'>;
-      person?: Pick<Person, 'id' | 'displayName' | 'avatarUrl'> | null;
+      person?: Pick<Person, 'id' | 'name' | 'avatarUrl'> | null;
       company?: Pick<Company, 'id' | 'name' | 'domainName'> | null;
     }
   >;
@@ -54,22 +45,24 @@ export const mockedTasks: Array<MockedActivity> = [
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     updatedAt: '2023-04-26T10:23:42.33625+00:00',
     title: 'My very first task',
-    type: ActivityType.Task,
-    body: null,
+    type: 'Task',
+    body: '',
     dueAt: '2023-04-26T10:12:42.33625+00:00',
     completedAt: null,
     author: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
-      firstName: 'Charles',
-      lastName: 'Test',
-      displayName: 'Charles Test',
+      name: {
+        firstName: 'Charles',
+        lastName: 'Test',
+      },
       avatarUrl: '',
     },
     assignee: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
-      firstName: 'Charles',
-      lastName: 'Test',
-      displayName: 'Charles Test',
+      name: {
+        firstName: 'Charles',
+        lastName: 'Test',
+      },
       avatarUrl: '',
     },
     authorId: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
@@ -85,22 +78,24 @@ export const mockedActivities: Array<MockedActivity> = [
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     updatedAt: '2023-04-26T10:23:42.33625+00:00',
     title: 'My very first note',
-    type: ActivityType.Note,
-    body: null,
+    type: 'Note',
+    body: '',
     dueAt: '2023-04-26T10:12:42.33625+00:00',
     completedAt: null,
     author: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
-      firstName: 'Charles',
-      lastName: 'Test',
-      displayName: 'Charles Test',
+      name: {
+        firstName: 'Charles',
+        lastName: 'Test',
+      },
       avatarUrl: '',
     },
     assignee: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
-      firstName: 'Charles',
-      lastName: 'Test',
-      displayName: 'Charles Test',
+      name: {
+        firstName: 'Charles',
+        lastName: 'Test',
+      },
       avatarUrl: '',
     },
     authorId: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
@@ -154,22 +149,24 @@ export const mockedActivities: Array<MockedActivity> = [
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     title: 'Another note',
-    body: null,
-    type: ActivityType.Note,
+    body: '',
+    type: 'Note',
     completedAt: null,
     dueAt: '2029-08-26T10:12:42.33625+00:00',
     author: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
-      firstName: 'Charles',
-      lastName: 'Test',
-      displayName: 'Charles Test',
+      name: {
+        firstName: 'Charles',
+        lastName: 'Test',
+      },
       avatarUrl: '',
     },
     assignee: {
       id: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
-      firstName: 'Charles',
-      lastName: 'Test',
-      displayName: 'Charles Test',
+      name: {
+        firstName: 'Charles',
+        lastName: 'Test',
+      },
       avatarUrl: '',
     },
     authorId: '374fe3a5-df1e-4119-afe0-2a62a2ba481e',
@@ -182,7 +179,10 @@ export const mockedActivities: Array<MockedActivity> = [
         personId: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b', // Alexandre
         person: {
           id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
-          displayName: 'Alexandre Test',
+          name: {
+            firstName: 'Alexandre',
+            lastName: 'Test',
+          },
           avatarUrl: '',
         },
         company: null,
@@ -204,7 +204,10 @@ export const mockedActivities: Array<MockedActivity> = [
         company: null,
         person: {
           id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
-          displayName: "Jean d'Eau",
+          name: {
+            firstName: 'Jean',
+            lastName: "d'Eau",
+          },
           avatarUrl: '',
         },
         activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',

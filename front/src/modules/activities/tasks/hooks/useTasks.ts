@@ -1,83 +1,113 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { DateTime } from 'luxon';
+import { undefined } from 'zod';
 
+import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
-import { useFilter } from '@/ui/object/object-filter-dropdown/hooks/useFilter';
-import { turnFilterIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFilterIntoWhereClause';
-import { ActivityType, useGetActivitiesQuery } from '~/generated/graphql';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 import { parseDate } from '~/utils/date-utils';
+import { isDefined } from '~/utils/isDefined';
 
-export const useTasks = (entity?: ActivityTargetableEntity) => {
-  const { selectedFilter } = useFilter();
+type UseTasksProps = {
+  filterDropdownId?: string;
+  entity?: ActivityTargetableEntity;
+};
 
-  const whereFilters = entity
-    ? {
-        activityTargets: {
-          some: {
-            OR: [
-              { companyId: { equals: entity.id } },
-              { personId: { equals: entity.id } },
-            ],
+export const useTasks = (props?: UseTasksProps) => {
+  const { filterDropdownId, entity } = props ?? {};
+
+  const { selectedFilter } = useFilterDropdown({
+    filterDropdownId: filterDropdownId,
+  });
+
+  const { records: activityTargets } = useFindManyRecords({
+    objectNamePlural: 'activityTargets',
+    filter: isDefined(entity)
+      ? {
+          [entity?.type === 'Company' ? 'companyId' : 'personId']: {
+            eq: entity?.id,
           },
-        },
-      }
-    : Object.assign({}, turnFilterIntoWhereClause(selectedFilter));
-
-  const { data: completeTasksData } = useGetActivitiesQuery({
-    variables: {
-      where: {
-        type: { equals: ActivityType.Task },
-        completedAt: { not: { equals: null } },
-        ...whereFilters,
-      },
-    },
-    skip: !entity && !selectedFilter,
+        }
+      : undefined,
   });
 
-  const { data: incompleteTaskData } = useGetActivitiesQuery({
-    variables: {
-      where: {
-        type: { equals: ActivityType.Task },
-        completedAt: { equals: null },
-        ...whereFilters,
-      },
-    },
+  const { records: completeTasksData } = useFindManyRecords({
+    objectNamePlural: 'activities',
     skip: !entity && !selectedFilter,
+    filter: {
+      completedAt: { is: 'NOT_NULL' },
+      id: isDefined(entity)
+        ? {
+            in: activityTargets?.map(
+              (activityTarget) => activityTarget.activityId,
+            ),
+          }
+        : undefined,
+      type: { eq: 'Task' },
+      assigneeId: isNonEmptyString(selectedFilter?.value)
+        ? {
+            eq: selectedFilter?.value,
+          }
+        : undefined,
+    },
+    orderBy: {
+      createdAt: 'DescNullsFirst',
+    },
   });
 
-  const todayOrPreviousTasks = incompleteTaskData?.findManyActivities.filter(
-    (task) => {
-      if (!task.dueAt) {
-        return false;
-      }
-      const dueDate = parseDate(task.dueAt).toJSDate();
-      const today = DateTime.now().endOf('day').toJSDate();
-      return dueDate <= today;
+  const { records: incompleteTaskData } = useFindManyRecords({
+    objectNamePlural: 'activities',
+    skip: !entity && !selectedFilter,
+    filter: {
+      completedAt: { is: 'NULL' },
+      id: isDefined(entity)
+        ? {
+            in: activityTargets?.map(
+              (activityTarget) => activityTarget.activityId,
+            ),
+          }
+        : undefined,
+      type: { eq: 'Task' },
+      assigneeId: isNonEmptyString(selectedFilter?.value)
+        ? {
+            eq: selectedFilter?.value,
+          }
+        : undefined,
     },
-  );
-
-  const upcomingTasks = incompleteTaskData?.findManyActivities.filter(
-    (task) => {
-      if (!task.dueAt) {
-        return false;
-      }
-      const dueDate = parseDate(task.dueAt).toJSDate();
-      const today = DateTime.now().endOf('day').toJSDate();
-      return dueDate > today;
+    orderBy: {
+      createdAt: 'DescNullsFirst',
     },
-  );
+  });
 
-  const unscheduledTasks = incompleteTaskData?.findManyActivities.filter(
-    (task) => {
-      return !task.dueAt;
-    },
-  );
+  const todayOrPreviousTasks = incompleteTaskData?.filter((task) => {
+    if (!task.dueAt) {
+      return false;
+    }
+    const dueDate = parseDate(task.dueAt).toJSDate();
+    const today = DateTime.now().endOf('day').toJSDate();
+    return dueDate <= today;
+  });
 
-  const completedTasks = completeTasksData?.findManyActivities;
+  const upcomingTasks = incompleteTaskData?.filter((task) => {
+    if (!task.dueAt) {
+      return false;
+    }
+    const dueDate = parseDate(task.dueAt).toJSDate();
+    const today = DateTime.now().endOf('day').toJSDate();
+    return dueDate > today;
+  });
+
+  const unscheduledTasks = incompleteTaskData?.filter((task) => {
+    return !task.dueAt;
+  });
+
+  const completedTasks = completeTasksData;
 
   return {
-    todayOrPreviousTasks: todayOrPreviousTasks ?? [],
-    upcomingTasks: upcomingTasks ?? [],
-    unscheduledTasks: unscheduledTasks ?? [],
-    completedTasks: completedTasks ?? [],
+    todayOrPreviousTasks: (todayOrPreviousTasks ?? []) as Activity[],
+    upcomingTasks: (upcomingTasks ?? []) as Activity[],
+    unscheduledTasks: (unscheduledTasks ?? []) as Activity[],
+    completedTasks: (completedTasks ?? []) as Activity[],
   };
 };

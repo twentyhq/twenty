@@ -2,9 +2,9 @@ import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { useFindOneObjectMetadataItem } from '@/object-metadata/hooks/useFindOneObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectRecordTable } from '@/object-record/hooks/useObjectRecordTable';
-import { isFetchingMoreObjectsFamilyState } from '@/object-record/states/isFetchingMoreObjectsFamilyState';
+import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { isDefined } from '~/utils/isDefined';
 
 import { RowIdContext } from '../contexts/RowIdContext';
@@ -22,19 +22,21 @@ export const RecordTableBody = () => {
 
   const { scopeId: objectNamePlural } = useRecordTable();
 
-  const { foundObjectMetadataItem } = useFindOneObjectMetadataItem({
-    objectNamePlural,
-  });
+  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
+    {
+      objectNamePlural,
+    },
+  );
 
   const [isFetchingMoreObjects] = useRecoilState(
-    isFetchingMoreObjectsFamilyState(foundObjectMetadataItem?.namePlural),
+    isFetchingMoreRecordsFamilyState(foundObjectMetadataItem?.namePlural),
   );
 
   const isFetchingRecordTableData = useRecoilValue(
     isFetchingRecordTableDataState,
   );
 
-  const { fetchMoreObjects } = useObjectRecordTable();
+  const { fetchMoreRecords: fetchMoreObjects } = useObjectRecordTable();
 
   useEffect(() => {
     if (lastTableRowIsVisible && isDefined(fetchMoreObjects)) {
@@ -64,7 +66,7 @@ export const RecordTableBody = () => {
       {isFetchingMoreObjects && (
         <StyledRow selected={false}>
           <td style={{ height: 50 }} colSpan={1000}>
-            Fetching more...
+            Loading more...
           </td>
         </StyledRow>
       )}

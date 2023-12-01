@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
+import { ActivityType } from '@/activities/types/Activity';
 import { selectedRowIdsSelector } from '@/ui/object/record-table/states/selectors/selectedRowIdsSelector';
-import { ActivityType } from '~/generated/graphql';
 
 import {
   ActivityTargetableEntity,

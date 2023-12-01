@@ -5,9 +5,10 @@ import { FilterType } from './FilterType';
 export type FilterDefinition = {
   fieldMetadataId: string;
   label: string;
-  Icon: IconComponent;
+  iconName: string;
   type: FilterType;
-  entitySelectComponent?: JSX.Element;
+  relationObjectMetadataNamePlural?: string;
+  relationObjectMetadataNameSingular?: string;
   selectAllLabel?: string;
   SelectAllIcon?: IconComponent;
 };

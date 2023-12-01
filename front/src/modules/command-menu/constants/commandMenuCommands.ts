@@ -10,7 +10,8 @@ import { Command, CommandType } from '../types/Command';
 
 export const commandMenuCommands: Command[] = [
   {
-    to: '/people',
+    id: 'go-to-people',
+    to: '/objects/people',
     label: 'Go to People',
     type: CommandType.Navigate,
     firstHotKey: 'G',
@@ -18,7 +19,8 @@ export const commandMenuCommands: Command[] = [
     Icon: IconUser,
   },
   {
-    to: '/companies',
+    id: 'go-to-companies',
+    to: '/objects/companies',
     label: 'Go to Companies',
     type: CommandType.Navigate,
     firstHotKey: 'G',
@@ -26,7 +28,8 @@ export const commandMenuCommands: Command[] = [
     Icon: IconBuildingSkyscraper,
   },
   {
-    to: '/opportunities',
+    id: 'go-to-activities',
+    to: '/objects/opportunities',
     label: 'Go to Opportunities',
     type: CommandType.Navigate,
     firstHotKey: 'G',
@@ -34,6 +37,7 @@ export const commandMenuCommands: Command[] = [
     Icon: IconTargetArrow,
   },
   {
+    id: 'go-to-settings',
     to: '/settings/profile',
     label: 'Go to Settings',
     type: CommandType.Navigate,
@@ -42,6 +46,7 @@ export const commandMenuCommands: Command[] = [
     Icon: IconSettings,
   },
   {
+    id: 'go-to-tasks',
     to: '/tasks',
     label: 'Go to Tasks',
     type: CommandType.Navigate,

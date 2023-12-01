@@ -25,13 +25,16 @@ const meta: Meta = {
       <FieldContext.Provider
         value={{
           entityId: '',
+          isLabelIdentifier: false,
           fieldDefinition: {
             fieldMetadataId: 'phone',
             label: 'Phone',
-            type: 'PHONE',
+            type: 'TEXT',
+            iconName: 'IconPhone',
             metadata: {
-              fieldName: 'Phone',
+              fieldName: 'phone',
               placeHolder: 'Phone',
+              objectMetadataNameSingular: 'person',
             },
           },
           hotkeyScope: 'hotkey-scope',

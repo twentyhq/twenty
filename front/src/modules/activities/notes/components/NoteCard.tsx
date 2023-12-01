@@ -2,14 +2,15 @@ import { useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { ActivityRelationEditableField } from '@/activities/editable-fields/components/ActivityRelationEditableField';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
+import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
+import { Note } from '@/activities/types/Note';
 import { IconComment } from '@/ui/display/icon';
 import {
   FieldContext,
   GenericFieldContextType,
 } from '@/ui/object/field/contexts/FieldContext';
-import { Activity, ActivityTarget, Comment } from '~/generated/graphql';
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`
   align-items: flex-start;
@@ -76,13 +77,7 @@ export const NoteCard = ({
   note,
   isSingleNote,
 }: {
-  note: Pick<
-    Activity,
-    'id' | 'title' | 'body' | 'type' | 'completedAt' | 'dueAt'
-  > & {
-    activityTargets?: Array<Pick<ActivityTarget, 'id'>> | null;
-    comments?: Array<Pick<Comment, 'id'>> | null;
-  };
+  note: Note;
   isSingleNote: boolean;
 }) => {
   const theme = useTheme();
@@ -106,7 +101,9 @@ export const NoteCard = ({
           <StyledCardContent>{body}</StyledCardContent>
         </StyledCardDetailsContainer>
         <StyledFooter>
-          <ActivityRelationEditableField activity={note} />
+          <ActivityTargetsInlineCell
+            activity={note as unknown as GraphQLActivity}
+          />
           {note.comments && note.comments.length > 0 && (
             <StyledCommentIcon>
               <IconComment size={theme.icon.size.md} />

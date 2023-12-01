@@ -1,8 +1,8 @@
 import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
-import { SeedWorkspaceId } from 'src/database/seeds/metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
@@ -35,6 +35,8 @@ export const seedWebhookFieldMetadata = async (
       'description',
       'icon',
       'isNullable',
+      'isSystem',
+      'defaultValue',
     ])
     .orIgnore()
     .values([
@@ -53,8 +55,9 @@ export const seedWebhookFieldMetadata = async (
         },
         description: undefined,
         icon: undefined,
-        isNullable: true,
-        // isSystem: true,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'uuid' },
       },
       {
         id: SeedWebhookFieldMetadataIds.CreatedAt,
@@ -62,7 +65,7 @@ export const seedWebhookFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
         label: 'Creation date',
         targetColumnMap: {
@@ -70,7 +73,9 @@ export const seedWebhookFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       {
         id: SeedWebhookFieldMetadataIds.UpdatedAt,
@@ -78,7 +83,7 @@ export const seedWebhookFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: FieldMetadataType.DATE,
+        type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
         label: 'Update date',
         targetColumnMap: {
@@ -86,7 +91,9 @@ export const seedWebhookFieldMetadata = async (
         },
         description: undefined,
         icon: 'IconCalendar',
-        isNullable: true,
+        isNullable: false,
+        isSystem: true,
+        defaultValue: { type: 'now' },
       },
       // Scalar fields
       {
@@ -95,7 +102,7 @@ export const seedWebhookFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'targetUrl',
         label: 'Target Url',
         targetColumnMap: {
@@ -104,6 +111,8 @@ export const seedWebhookFieldMetadata = async (
         description: 'Webhook target url',
         icon: 'IconLink',
         isNullable: false,
+        isSystem: false,
+        defaultValue: { value: '' },
       },
       {
         id: SeedWebhookFieldMetadataIds.Operation,
@@ -111,7 +120,7 @@ export const seedWebhookFieldMetadata = async (
         isCustom: false,
         workspaceId: SeedWorkspaceId,
         isActive: true,
-        type: 'TEXT',
+        type: FieldMetadataType.TEXT,
         name: 'operation',
         label: 'Operation',
         targetColumnMap: {
@@ -120,6 +129,8 @@ export const seedWebhookFieldMetadata = async (
         description: 'Webhook operation',
         icon: 'IconCheckbox',
         isNullable: false,
+        isSystem: false,
+        defaultValue: { value: '' },
       },
     ])
     .execute();

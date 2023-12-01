@@ -1,38 +1,31 @@
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 
+import { isFieldFullName } from '@/ui/object/field/types/guards/isFieldFullName';
+import { isFieldFullNameValue } from '@/ui/object/field/types/guards/isFieldFullNameValue';
+
 import { FieldContext } from '../contexts/FieldContext';
 import { entityFieldsFamilySelector } from '../states/selectors/entityFieldsFamilySelector';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
 import { isFieldBooleanValue } from '../types/guards/isFieldBooleanValue';
-import { isFieldChip } from '../types/guards/isFieldChip';
-import { isFieldChipValue } from '../types/guards/isFieldChipValue';
-import { isFieldDate } from '../types/guards/isFieldDate';
-import { isFieldDateValue } from '../types/guards/isFieldDateValue';
-import { isFieldDoubleText } from '../types/guards/isFieldDoubleText';
-import { isFieldDoubleTextChip } from '../types/guards/isFieldDoubleTextChip';
-import { isFieldDoubleTextChipValue } from '../types/guards/isFieldDoubleTextChipValue';
-import { isFieldDoubleTextValue } from '../types/guards/isFieldDoubleTextValue';
+import { isFieldCurrency } from '../types/guards/isFieldCurrency';
+import { isFieldCurrencyValue } from '../types/guards/isFieldCurrencyValue';
+import { isFieldDateTime } from '../types/guards/isFieldDateTime';
+import { isFieldDateTimeValue } from '../types/guards/isFieldDateTimeValue';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
 import { isFieldEmailValue } from '../types/guards/isFieldEmailValue';
-import { isFieldMoney } from '../types/guards/isFieldMoney';
-import { isFieldMoneyAmountV2 } from '../types/guards/isFieldMoneyAmountV2';
-import { isFieldMoneyAmountV2Value } from '../types/guards/isFieldMoneyAmountV2Value';
-import { isFieldMoneyValue } from '../types/guards/isFieldMoneyValue';
+import { isFieldLink } from '../types/guards/isFieldLink';
+import { isFieldLinkValue } from '../types/guards/isFieldLinkValue';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldNumberValue } from '../types/guards/isFieldNumberValue';
 import { isFieldPhone } from '../types/guards/isFieldPhone';
 import { isFieldPhoneValue } from '../types/guards/isFieldPhoneValue';
-import { isFieldProbability } from '../types/guards/isFieldProbability';
-import { isFieldProbabilityValue } from '../types/guards/isFieldProbabilityValue';
+import { isFieldRating } from '../types/guards/isFieldRating';
+import { isFieldRatingValue } from '../types/guards/isFieldRatingValue';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldRelationValue } from '../types/guards/isFieldRelationValue';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldTextValue } from '../types/guards/isFieldTextValue';
-import { isFieldURL } from '../types/guards/isFieldURL';
-import { isFieldURLV2 } from '../types/guards/isFieldURLV2';
-import { isFieldURLV2Value } from '../types/guards/isFieldURLV2Value';
-import { isFieldURLValue } from '../types/guards/isFieldURLValue';
 
 export const usePersistField = () => {
   const {
@@ -50,49 +43,36 @@ export const usePersistField = () => {
           isFieldRelation(fieldDefinition) &&
           isFieldRelationValue(valueToPersist);
 
-        const fieldIsChip =
-          isFieldChip(fieldDefinition) && isFieldChipValue(valueToPersist);
-
-        const fieldIsDoubleText =
-          isFieldDoubleText(fieldDefinition) &&
-          isFieldDoubleTextValue(valueToPersist);
-
-        const fieldIsDoubleTextChip =
-          isFieldDoubleTextChip(fieldDefinition) &&
-          isFieldDoubleTextChipValue(valueToPersist);
-
         const fieldIsText =
           isFieldText(fieldDefinition) && isFieldTextValue(valueToPersist);
 
         const fieldIsEmail =
           isFieldEmail(fieldDefinition) && isFieldEmailValue(valueToPersist);
 
-        const fieldIsDate =
-          isFieldDate(fieldDefinition) && isFieldDateValue(valueToPersist);
+        const fieldIsDateTime =
+          isFieldDateTime(fieldDefinition) &&
+          isFieldDateTimeValue(valueToPersist);
 
-        const fieldIsURL =
-          isFieldURL(fieldDefinition) && isFieldURLValue(valueToPersist);
-
-        const fieldIsURLV2 =
-          isFieldURLV2(fieldDefinition) && isFieldURLV2Value(valueToPersist);
+        const fieldIsLink =
+          isFieldLink(fieldDefinition) && isFieldLinkValue(valueToPersist);
 
         const fieldIsBoolean =
           isFieldBoolean(fieldDefinition) &&
           isFieldBooleanValue(valueToPersist);
 
         const fieldIsProbability =
-          isFieldProbability(fieldDefinition) &&
-          isFieldProbabilityValue(valueToPersist);
+          isFieldRating(fieldDefinition) && isFieldRatingValue(valueToPersist);
 
         const fieldIsNumber =
           isFieldNumber(fieldDefinition) && isFieldNumberValue(valueToPersist);
 
-        const fieldIsMoney =
-          isFieldMoney(fieldDefinition) && isFieldMoneyValue(valueToPersist);
+        const fieldIsCurrency =
+          isFieldCurrency(fieldDefinition) &&
+          isFieldCurrencyValue(valueToPersist);
 
-        const fieldIsMoneyAmountV2 =
-          isFieldMoneyAmountV2(fieldDefinition) &&
-          isFieldMoneyAmountV2Value(valueToPersist);
+        const fieldIsFullName =
+          isFieldFullName(fieldDefinition) &&
+          isFieldFullNameValue(valueToPersist);
 
         const fieldIsPhone =
           isFieldPhone(fieldDefinition) && isFieldPhoneValue(valueToPersist);
@@ -105,78 +85,29 @@ export const usePersistField = () => {
             valueToPersist,
           );
 
-          console.log({
-            fieldName,
-            valueToPersist,
-          });
-
           updateEntity?.({
             variables: {
               where: { id: entityId },
               data: {
-                [fieldName]: valueToPersist?.id,
-              },
-            },
-          });
-        } else if (fieldIsChip) {
-          const fieldName = fieldDefinition.metadata.contentFieldName;
-
-          set(
-            entityFieldsFamilySelector({ entityId, fieldName }),
-            valueToPersist,
-          );
-
-          updateEntity?.({
-            variables: {
-              where: { id: entityId },
-              data: {
-                [fieldName]: valueToPersist,
-              },
-            },
-          });
-        } else if (fieldIsDoubleText || fieldIsDoubleTextChip) {
-          set(
-            entityFieldsFamilySelector({
-              entityId,
-              fieldName: fieldDefinition.metadata.firstValueFieldName,
-            }),
-            valueToPersist.firstValue,
-          );
-
-          set(
-            entityFieldsFamilySelector({
-              entityId,
-              fieldName: fieldDefinition.metadata.secondValueFieldName,
-            }),
-            valueToPersist.secondValue,
-          );
-
-          updateEntity?.({
-            variables: {
-              where: { id: entityId },
-              data: {
-                [fieldDefinition.metadata.firstValueFieldName]:
-                  valueToPersist.firstValue,
-                [fieldDefinition.metadata.secondValueFieldName]:
-                  valueToPersist.secondValue,
+                // TODO: find a more elegant way to do this ?
+                // Maybe have a link between the RELATION field and the UUID field ?
+                [`${fieldName}Id`]: valueToPersist?.id ?? null,
               },
             },
           });
         } else if (
           fieldIsText ||
           fieldIsBoolean ||
-          fieldIsURL ||
           fieldIsEmail ||
           fieldIsProbability ||
           fieldIsNumber ||
-          fieldIsMoney ||
-          fieldIsDate ||
+          fieldIsDateTime ||
           fieldIsPhone ||
-          fieldIsURLV2 ||
-          fieldIsMoneyAmountV2
+          fieldIsLink ||
+          fieldIsCurrency ||
+          fieldIsFullName
         ) {
           const fieldName = fieldDefinition.metadata.fieldName;
-
           set(
             entityFieldsFamilySelector({ entityId, fieldName }),
             valueToPersist,
