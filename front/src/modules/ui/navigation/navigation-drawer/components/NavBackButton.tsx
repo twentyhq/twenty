@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { IconChevronLeft } from '@/ui/display/icon/index';
-import { isNavbarSwitchingSizeState } from '@/ui/layout/states/isNavbarSwitchingSizeState';
+import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 
 type NavBackButtonProps = {
   title: string;
@@ -32,24 +32,19 @@ const StyledContainer = styled.div`
 
 const NavBackButton = ({ title }: NavBackButtonProps) => {
   const navigate = useNavigate();
-  const [, setIsNavbarSwitchingSize] = useRecoilState(
-    isNavbarSwitchingSizeState,
-  );
+  const navigationMemorizedUrl = useRecoilValue(navigationMemorizedUrlState);
 
   return (
-    <>
-      <StyledContainer>
-        <StyledIconAndButtonContainer
-          onClick={() => {
-            setIsNavbarSwitchingSize(true);
-            navigate('/', { replace: true });
-          }}
-        >
-          <IconChevronLeft />
-          <span>{title}</span>
-        </StyledIconAndButtonContainer>
-      </StyledContainer>
-    </>
+    <StyledContainer>
+      <StyledIconAndButtonContainer
+        onClick={() => {
+          navigate(navigationMemorizedUrl, { replace: true });
+        }}
+      >
+        <IconChevronLeft />
+        <span>{title}</span>
+      </StyledIconAndButtonContainer>
+    </StyledContainer>
   );
 };
 

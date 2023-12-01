@@ -1,14 +1,14 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse,
 } from '@/ui/display/icon';
 import { IconButton } from '@/ui/input/button/components/IconButton';
-import { isNavbarOpenedState } from '@/ui/layout/states/isNavbarOpenedState';
+import { navigationDrawerState } from '@/ui/navigation/states/navigationDrawerState';
 
 const StyledCollapseButton = styled(motion.div)`
   align-items: center;
@@ -41,8 +41,7 @@ const NavCollapseButton = ({
   direction = 'left',
   show = true,
 }: NavCollapseButtonProps) => {
-  const [isNavbarOpened, setIsNavbarOpened] =
-    useRecoilState(isNavbarOpenedState);
+  const setNavigationDrawer = useSetRecoilState(navigationDrawerState);
 
   const iconSize = 'small';
   const theme = useTheme();
@@ -57,7 +56,11 @@ const NavCollapseButton = ({
         transition={{
           duration: theme.animation.duration.normal,
         }}
-        onClick={() => setIsNavbarOpened(!isNavbarOpened)}
+        onClick={() =>
+          setNavigationDrawer((navigationDrawer) =>
+            navigationDrawer === '' ? 'main' : '',
+          )
+        }
       >
         <IconButton
           Icon={

@@ -10,11 +10,13 @@ type MainNavbarProps = {
 };
 
 const StyledContainer = styled.div`
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   height: 100%;
   justify-content: space-between;
   margin-bottom: ${({ theme }) => theme.spacing(2.5)};
+  padding: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
 

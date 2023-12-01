@@ -1,15 +1,15 @@
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { navigationDrawerState } from '@/ui/navigation/states/navigationDrawerState';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-import { isNavbarOpenedState } from '../../../layout/states/isNavbarOpenedState';
-
 type NavItemProps = {
+  className?: string;
   label: string;
   to?: string;
   onClick?: () => void;
@@ -115,6 +115,7 @@ const StyledKeyBoardShortcut = styled.div`
 `;
 
 const NavItem = ({
+  className,
   label,
   Icon,
   to,
@@ -126,25 +127,26 @@ const NavItem = ({
   keyboard,
 }: NavItemProps) => {
   const theme = useTheme();
-  const navigate = useNavigate();
-  const [, setIsNavbarOpened] = useRecoilState(isNavbarOpenedState);
-
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
+  const setNavigationDrawer = useSetRecoilState(navigationDrawerState);
 
   const handleItemClick = () => {
     if (isMobile) {
-      setIsNavbarOpened(false);
+      setNavigationDrawer('');
     }
 
     if (onClick) {
       onClick();
-    } else if (to) {
-      navigate(to);
+      return;
     }
+
+    if (to) navigate(to);
   };
 
   return (
     <StyledItem
+      className={className}
       onClick={handleItemClick}
       active={active}
       aria-selected={active}
@@ -157,7 +159,7 @@ const NavItem = ({
       {!!count && <StyledItemCount>{count}</StyledItemCount>}
       {keyboard && (
         <StyledKeyBoardShortcut className="keyboard-shortcuts">
-          {keyboard.map((key) => key)}
+          {keyboard}
         </StyledKeyBoardShortcut>
       )}
     </StyledItem>

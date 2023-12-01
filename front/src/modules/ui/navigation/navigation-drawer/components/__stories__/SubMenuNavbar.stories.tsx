@@ -14,7 +14,7 @@ import NavTitle from '../NavTitle';
 import SubMenuNavbar from '../SubMenuNavbar';
 
 const meta: Meta<typeof SubMenuNavbar> = {
-  title: 'UI/Navigation/Navbar/SubMenuNavbar',
+  title: 'UI/Navigation/NavigationDrawer/SubMenuNavbar',
   component: SubMenuNavbar,
 };
 

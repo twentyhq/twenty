@@ -9,8 +9,14 @@ import { CatalogStory } from '~/testing/types';
 import NavItem from '../NavItem';
 
 const meta: Meta<typeof NavItem> = {
-  title: 'UI/Navigation/Navbar/NavItem',
+  title: 'UI/Navigation/NavigationDrawer/NavItem',
   component: NavItem,
+  args: {
+    label: 'Search',
+    Icon: IconSearch,
+    active: true,
+  },
+  argTypes: { Icon: { control: false } },
 };
 
 const StyledNavItemContainer = styled.div`
@@ -28,19 +34,11 @@ const ComponentDecorator: Decorator = (Story) => (
 export default meta;
 type Story = StoryObj<typeof NavItem>;
 
-export const Default: Story = {
-  args: {
-    label: 'Search',
-    Icon: IconSearch,
-    onClick: () => console.log('clicked'),
-    active: true,
-  },
-  argTypes: { Icon: { control: false }, onClick: { control: false } },
+export const Default: Story = { 
   decorators: [ComponentDecorator, ComponentWithRouterDecorator],
 };
 
 export const Catalog: CatalogStory<Story, typeof NavItem> = {
-  args: Default.args,
   decorators: [
     ComponentDecorator,
     CatalogDecorator,
@@ -75,21 +73,28 @@ export const Catalog: CatalogStory<Story, typeof NavItem> = {
   },
 };
 
-export const Soon: Story = {
+export const WithSoonPill: Story = {
+  ...Default,
   args: {
-    ...Default.args,
     active: false,
     soon: true,
   },
-  argTypes: { Icon: { control: false }, onClick: { control: false } },
-  decorators: [ComponentDecorator, ComponentWithRouterDecorator],
 };
 
-export const Count: Story = {
+export const WithCount: Story = {
+  ...Default,
   args: {
-    ...Default.args,
     count: 3,
   },
-  argTypes: { Icon: { control: false }, onClick: { control: false } },
-  decorators: [ComponentDecorator, ComponentWithRouterDecorator],
+};
+
+export const WithKeyboardKeys: Story = {
+  ...Default,
+  args: {
+    className: "hover",
+    keyboard: ['⌘', 'K'],
+  },
+  parameters: {
+    pseudo: { hover: [".hover"] },
+  }
 };

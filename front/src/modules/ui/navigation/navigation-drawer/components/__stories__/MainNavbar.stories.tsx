@@ -18,7 +18,7 @@ import NavItem from '../NavItem';
 import NavTitle from '../NavTitle';
 
 const meta: Meta<typeof MainNavbar> = {
-  title: 'UI/Navigation/Navbar/MainNavbar',
+  title: 'UI/Navigation/NavigationDrawer/MainNavbar',
   component: MainNavbar,
   decorators: [SnackBarDecorator],
 };

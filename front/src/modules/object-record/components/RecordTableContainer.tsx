@@ -89,12 +89,14 @@ export const RecordTableContainer = ({
         }}
       />
       <RecordTableEffect recordTableId={recordTableId} viewBarId={viewBarId} />
-      <RecordTable
-        recordTableId={recordTableId}
-        viewBarId={viewBarId}
-        updateRecordMutation={updateEntity}
-        createRecord={createRecord}
-      />
+      {
+        <RecordTable
+          recordTableId={recordTableId}
+          viewBarId={viewBarId}
+          updateRecordMutation={updateEntity}
+          createRecord={createRecord}
+        />
+      }
     </StyledContainer>
   );
 };
