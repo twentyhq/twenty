@@ -6,15 +6,16 @@ import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
 import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { AddObjectFilterFromDetailsButton } from '@/ui/object/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { getOperandLabelShort } from '@/ui/object/object-filter-dropdown/utils/getOperandLabel';
+import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
-import { useView } from '../hooks/useView';
 
 import SortOrFilterChip from './SortOrFilterChip';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
   rightComponent?: ReactNode;
+  filterDropdownId?: string;
 };
 
 const StyledBar = styled.div`
@@ -88,6 +89,7 @@ const StyledAddFilterContainer = styled.div`
 export const ViewBarDetails = ({
   hasFilterButton = false,
   rightComponent,
+  filterDropdownId,
 }: ViewBarDetailsProps) => {
   const {
     currentViewSortsState,
@@ -104,7 +106,7 @@ export const ViewBarDetails = ({
   const canPersistSorts = useRecoilValue(canPersistSortsSelector);
   const isViewBarExpanded = useRecoilValue(isViewBarExpandedState);
 
-  const { resetViewBar, removeViewSort, removeViewFilter } = useView();
+  const { resetViewBar, removeViewSort, removeViewFilter } = useViewBar();
 
   const canPersistView = canPersistFilters || canPersistSorts;
 
@@ -161,7 +163,9 @@ export const ViewBarDetails = ({
         </StyledChipcontainer>
         {hasFilterButton && (
           <StyledAddFilterContainer>
-            <AddObjectFilterFromDetailsButton />
+            <AddObjectFilterFromDetailsButton
+              filterDropdownId={filterDropdownId}
+            />
           </StyledAddFilterContainer>
         )}
       </StyledFilterContainer>

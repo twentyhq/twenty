@@ -1,4 +1,5 @@
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { ThemeColor } from '@/ui/theme/constants/colors';
 
 export type FieldUuidMetadata = {
   objectMetadataNameSingular?: string;
@@ -60,7 +61,7 @@ export type FieldPhoneMetadata = {
   fieldName: string;
 };
 
-export type FieldProbabilityMetadata = {
+export type FieldRatingMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
 };
@@ -80,19 +81,25 @@ export type FieldRelationMetadata = {
   relationObjectMetadataNamePlural: string;
 };
 
+export type FieldSelectMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+};
+
 export type FieldMetadata =
   | FieldBooleanMetadata
-  | FieldNumberMetadata
-  | FieldDateTimeMetadata
-  | FieldTextMetadata
-  | FieldUuidMetadata
   | FieldCurrencyMetadata
-  | FieldLinkMetadata
-  | FieldPhoneMetadata
+  | FieldDateTimeMetadata
   | FieldEmailMetadata
-  | FieldProbabilityMetadata
+  | FieldFullNameMetadata
+  | FieldLinkMetadata
+  | FieldNumberMetadata
+  | FieldPhoneMetadata
+  | FieldRatingMetadata
   | FieldRelationMetadata
-  | FieldFullNameMetadata;
+  | FieldSelectMetadata
+  | FieldTextMetadata
+  | FieldUuidMetadata;
 
 export type FieldTextValue = string;
 export type FieldUUidValue = string;
@@ -108,6 +115,7 @@ export type FieldCurrencyValue = {
   amountMicros: number | null;
 };
 export type FieldFullNameValue = { firstName: string; lastName: string };
-export type FieldProbabilityValue = number;
+export type FieldRatingValue = '1' | '2' | '3' | '4' | '5';
+export type FieldSelectValue = { color: ThemeColor; label: string };
 
 export type FieldRelationValue = EntityForSelect | null;

@@ -1,43 +1,72 @@
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
-import { Field } from '~/generated-metadata/graphql';
-import { assertNotNull } from '~/utils/assert';
+import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
+
+import { settingsFieldMetadataTypes } from '../constants/settingsFieldMetadataTypes';
+import { SettingsObjectFieldSelectFormOption } from '../types/SettingsObjectFieldSelectFormOption';
+
+import { useFieldPreviewValue } from './useFieldPreviewValue';
+import { useRelationFieldPreviewValue } from './useRelationFieldPreviewValue';
 
 export const useFieldPreview = ({
   fieldMetadata,
   objectMetadataId,
+  relationObjectMetadataId,
+  selectOptions,
 }: {
-  fieldMetadata: Partial<Pick<Field, 'icon' | 'id' | 'type'>>;
+  fieldMetadata: Pick<Field, 'icon' | 'label' | 'type'> & { id?: string };
   objectMetadataId: string;
+  relationObjectMetadataId?: string;
+  selectOptions?: SettingsObjectFieldSelectFormOption[];
 }) => {
   const { findObjectMetadataItemById } = useObjectMetadataItemForSettings();
   const objectMetadataItem = findObjectMetadataItemById(objectMetadataId);
 
-  const { objects } = useFindManyObjectRecords({
-    objectNamePlural: objectMetadataItem?.namePlural,
-    skip: !objectMetadataItem || !fieldMetadata.id,
-  });
-
   const { Icon: ObjectIcon } = useLazyLoadIcon(objectMetadataItem?.icon ?? '');
   const { Icon: FieldIcon } = useLazyLoadIcon(fieldMetadata.icon ?? '');
 
-  const [firstRecord] = objects;
   const fieldName = fieldMetadata.id
     ? objectMetadataItem?.fields.find(({ id }) => id === fieldMetadata.id)?.name
     : undefined;
-  const value =
-    fieldMetadata.type !== 'RELATION' && fieldName
-      ? firstRecord?.[fieldName]
+
+  const { value: firstRecordFieldValue } = useFieldPreviewValue({
+    fieldName: fieldName || '',
+    objectNamePlural: objectMetadataItem?.namePlural || '',
+    skip:
+      !fieldName ||
+      !objectMetadataItem ||
+      fieldMetadata.type === FieldMetadataType.Relation,
+  });
+
+  const { relationObjectMetadataItem, value: relationValue } =
+    useRelationFieldPreviewValue({
+      relationObjectMetadataId,
+      skip: fieldMetadata.type !== FieldMetadataType.Relation,
+    });
+
+  const { defaultValue } = settingsFieldMetadataTypes[fieldMetadata.type];
+
+  const defaultSelectValue = selectOptions?.[0];
+  const selectValue =
+    fieldMetadata.type === FieldMetadataType.Enum &&
+    typeof firstRecordFieldValue === 'string'
+      ? selectOptions?.find(
+          (selectOption) => selectOption.value === firstRecordFieldValue,
+        )
       : undefined;
 
   return {
-    entityId: firstRecord?.id || `${objectMetadataId}-no-records`,
+    entityId: `${objectMetadataId}-field-form`,
     FieldIcon,
     fieldName: fieldName || `${fieldMetadata.type}-new-field`,
-    hasValue: assertNotNull(value),
     ObjectIcon,
     objectMetadataItem,
-    value,
+    relationObjectMetadataItem,
+    value:
+      fieldMetadata.type === FieldMetadataType.Relation
+        ? relationValue
+        : fieldMetadata.type === FieldMetadataType.Enum
+        ? selectValue || defaultSelectValue
+        : firstRecordFieldValue || defaultValue,
   };
 };

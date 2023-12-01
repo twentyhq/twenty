@@ -126,7 +126,8 @@ You can access this using `twenty` postgres user (password: `twenty`)
 
 ```bash
 cd twenty
-make provision-postgres-macos
+make provision-postgres-macos-intel #for intel architecture
+make provision-postgres-macos-arm #for M1/M2/M3 architecture
 ```
 
 <b>Option 2:</b> If you have docker installed:
@@ -145,7 +146,7 @@ You can access this using `twenty` postgres user (password: `twenty`)
 It's better to provision your database locally:
 ```bash
 cd twenty
-bash ./infra/dev/scripts/setup-postgres-linux.sh
+make provision-postgres-linux
 ```
 This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
 You can access this using `twenty` postgres user (password: `twenty`)

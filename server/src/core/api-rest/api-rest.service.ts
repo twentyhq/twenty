@@ -270,9 +270,7 @@ export class ApiRestService {
   async getObjectMetadata(request: Request) {
     const workspaceId = this.extractWorkspaceId(request);
     const objectMetadataItems =
-      await this.objectMetadataService.getObjectMetadataFromWorkspaceId(
-        workspaceId,
-      );
+      await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
     const parsedObject = this.parseObject(request)[0];
     const [objectMetadata] = objectMetadataItems.filter(
       (object) => object.namePlural === parsedObject,

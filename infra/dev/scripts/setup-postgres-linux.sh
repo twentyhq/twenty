@@ -53,6 +53,8 @@ TARGETARCH=$(dpkg --print-architecture)
 
 # Install PostgresSQL
 echo_header $GREEN "Step [1/4]: Installing PostgreSQL..."
+sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+wget -qO- https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo tee /etc/apt/trusted.gpg.d/pgdg.asc &>/dev/null
 sudo apt update -y || handle_error "Failed to update package list."
 sudo apt install -y postgresql-$PG_MAIN_VERSION postgresql-contrib || handle_error "Failed to install PostgreSQL."su
 sudo apt install -y curl || handle_error "Failed to install curl."
@@ -73,5 +75,5 @@ fi
 
 # Run the init.sql to setup database
 echo_header $GREEN "Step [4/4]: Setting up database..."
-cp ./infra/dev/postgres/init.sql /tmp/init.sql
+cp ./postgres/init.sql /tmp/init.sql
 sudo -u postgres psql -f /tmp/init.sql || handle_error "Failed to execute init.sql script."

@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { EntityTasks } from '@/activities/tasks/components/EntityTasks';
 import { Timeline } from '@/activities/timeline/components/Timeline';
@@ -8,6 +9,7 @@ import {
   IconCheckbox,
   IconMail,
   IconNotes,
+  IconPaperclip,
   IconTimelineEvent,
 } from '@/ui/display/icon';
 import { TabList } from '@/ui/layout/tab/components/TabList';
@@ -73,6 +75,13 @@ export const ShowPageRightContainer = ({
       disabled: entity.type === 'Custom',
     },
     {
+      id: 'files',
+      title: 'Files',
+      Icon: IconPaperclip,
+      hide: !notes,
+      disabled: entity.type === 'Custom',
+    },
+    {
       id: 'emails',
       title: 'Emails',
       Icon: IconMail,
@@ -94,6 +103,7 @@ export const ShowPageRightContainer = ({
       {activeTabId === 'timeline' && <Timeline entity={entity} />}
       {activeTabId === 'tasks' && <EntityTasks entity={entity} />}
       {activeTabId === 'notes' && <Notes entity={entity} />}
+      {activeTabId === 'files' && <Attachments targetableEntity={entity} />}
     </StyledShowPageRightContainer>
   );
 };

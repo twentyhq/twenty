@@ -15,7 +15,7 @@ import { isFieldEmail } from '../../types/guards/isFieldEmail';
 import { isFieldLink } from '../../types/guards/isFieldLink';
 import { isFieldLinkValue } from '../../types/guards/isFieldLinkValue';
 import { isFieldNumber } from '../../types/guards/isFieldNumber';
-import { isFieldProbability } from '../../types/guards/isFieldProbability';
+import { isFieldRating } from '../../types/guards/isFieldRating';
 import { isFieldRelation } from '../../types/guards/isFieldRelation';
 import { isFieldRelationValue } from '../../types/guards/isFieldRelationValue';
 import { isFieldText } from '../../types/guards/isFieldText';
@@ -40,7 +40,7 @@ export const isEntityFieldEmptyFamilySelector = selectorFamily({
         isFieldText(fieldDefinition) ||
         isFieldDateTime(fieldDefinition) ||
         isFieldNumber(fieldDefinition) ||
-        isFieldProbability(fieldDefinition) ||
+        isFieldRating(fieldDefinition) ||
         isFieldEmail(fieldDefinition) ||
         isFieldBoolean(fieldDefinition)
         //|| isFieldPhone(fieldDefinition)

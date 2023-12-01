@@ -136,7 +136,7 @@ export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
         [
           errorLink,
           authLink,
-          ...(extraLinks ? extraLinks : []),
+          ...(extraLinks || []),
           isDebugMode ? logger : null,
           retryLink,
           httpLink,

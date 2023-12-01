@@ -18,7 +18,7 @@ export class ArgsFactory {
   ) {}
 
   public create(
-    { args, objectMetadata }: ArgsMetadata,
+    { args, objectMetadataId }: ArgsMetadata,
     options: WorkspaceBuildSchemaOptions,
   ): GraphQLFieldConfigArgumentMap {
     const fieldConfigMap: GraphQLFieldConfigArgumentMap = {};
@@ -65,21 +65,21 @@ export class ArgsFactory {
       // Argument is an input type
       if (arg.kind) {
         const inputType = this.typeDefinitionsStorage.getInputTypeByKey(
-          objectMetadata.id,
+          objectMetadataId,
           arg.kind,
         );
 
         if (!inputType) {
           this.logger.error(
-            `Could not find a GraphQL input type for ${objectMetadata.id}`,
+            `Could not find a GraphQL input type for ${objectMetadataId}`,
             {
-              objectMetadata,
+              objectMetadataId,
               options,
             },
           );
 
           throw new Error(
-            `Could not find a GraphQL input type for ${objectMetadata.id}`,
+            `Could not find a GraphQL input type for ${objectMetadataId}`,
           );
         }
 

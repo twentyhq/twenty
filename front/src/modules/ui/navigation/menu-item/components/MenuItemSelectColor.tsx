@@ -1,6 +1,9 @@
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 
+import {
+  ColorSample,
+  ColorSampleVariant,
+} from '@/ui/display/color/components/ColorSample';
 import { IconCheck } from '@/ui/display/icon';
 import { ThemeColor } from '@/ui/theme/constants/colors';
 
@@ -11,33 +14,37 @@ import {
 
 import { StyledMenuItemSelect } from './MenuItemSelect';
 
-const StyledColorSample = styled.div<{ colorName: ThemeColor }>`
-  background-color: ${({ theme, colorName }) =>
-    theme.tag.background[colorName]};
-  border: 1px solid ${({ theme, colorName }) => theme.color[colorName]};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  height: 12px;
-  width: 12px;
-`;
-
 type MenuItemSelectColorProps = {
   selected: boolean;
-  text: string;
   className?: string;
   onClick?: () => void;
   disabled?: boolean;
   hovered?: boolean;
   color: ThemeColor;
+  variant?: ColorSampleVariant;
+};
+
+export const colorLabels: Record<ThemeColor, string> = {
+  green: 'Green',
+  turquoise: 'Turquoise',
+  sky: 'Sky',
+  blue: 'Blue',
+  purple: 'Purple',
+  pink: 'Pink',
+  red: 'Red',
+  orange: 'Orange',
+  yellow: 'Yellow',
+  gray: 'Gray',
 };
 
 export const MenuItemSelectColor = ({
   color,
-  text,
   selected,
   className,
   onClick,
   disabled,
   hovered,
+  variant = 'default',
 }: MenuItemSelectColorProps) => {
   const theme = useTheme();
 
@@ -50,8 +57,10 @@ export const MenuItemSelectColor = ({
       hovered={hovered}
     >
       <StyledMenuItemLeftContent>
-        <StyledColorSample colorName={color} />
-        <StyledMenuItemLabel hasLeftIcon={true}>{text}</StyledMenuItemLabel>
+        <ColorSample colorName={color} variant={variant} />
+        <StyledMenuItemLabel hasLeftIcon={true}>
+          {colorLabels[color]}
+        </StyledMenuItemLabel>
       </StyledMenuItemLeftContent>
       {selected && <IconCheck size={theme.icon.size.sm} />}
     </StyledMenuItemSelect>

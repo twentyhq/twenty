@@ -9,7 +9,7 @@ import { ButtonGroup } from '@/ui/input/button/components/ButtonGroup';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useView } from '@/views/hooks/useView';
+import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 
@@ -29,7 +29,7 @@ export const UpdateViewButtonGroup = ({
   onViewEditModeChange,
 }: UpdateViewButtonGroupProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { updateCurrentView, setViewEditMode } = useView();
+  const { updateCurrentView, setViewEditMode } = useViewBar();
   const { canPersistFiltersSelector, canPersistSortsSelector } =
     useViewScopedStates();
 

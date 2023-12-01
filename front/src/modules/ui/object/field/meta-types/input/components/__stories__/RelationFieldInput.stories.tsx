@@ -3,6 +3,7 @@ import { expect, jest } from '@storybook/jest';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { userEvent, waitFor, within } from '@storybook/testing-library';
 
+import { RelationPickerScope } from '@/ui/input/components/internal/relation-picker/scopes/RelationPickerScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -43,21 +44,23 @@ const RelationFieldInputWithContext = ({
 
   return (
     <div>
-      <FieldContextProvider
-        fieldDefinition={{
-          fieldMetadataId: 'relation',
-          label: 'Relation',
-          type: 'RELATION',
-          iconName: 'IconLink',
-          metadata: {
-            fieldName: 'Relation',
-          },
-        }}
-        entityId={entityId}
-      >
-        <RelationFieldValueSetterEffect value={value} />
-        <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
-      </FieldContextProvider>
+      <RelationPickerScope relationPickerScopeId="relation-picker">
+        <FieldContextProvider
+          fieldDefinition={{
+            fieldMetadataId: 'relation',
+            label: 'Relation',
+            type: 'RELATION',
+            iconName: 'IconLink',
+            metadata: {
+              fieldName: 'Relation',
+            },
+          }}
+          entityId={entityId}
+        >
+          <RelationFieldValueSetterEffect value={value} />
+          <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
+        </FieldContextProvider>
+      </RelationPickerScope>
       <div data-testid="data-field-input-click-outside-div" />
     </div>
   );
@@ -108,6 +111,7 @@ export const Submit: Story = {
 
     expect(submitJestFn).toHaveBeenCalledTimes(0);
 
+    // FIXME: Failing because the picker is not fetching any items
     const item = await canvas.findByText('Jane Doe');
 
     userEvent.click(item);

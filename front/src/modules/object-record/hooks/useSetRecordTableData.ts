@@ -5,11 +5,11 @@ import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { isFetchingRecordTableDataState } from '@/ui/object/record-table/states/isFetchingRecordTableDataState';
 import { numberOfTableRowsState } from '@/ui/object/record-table/states/numberOfTableRowsState';
 import { tableRowIdsState } from '@/ui/object/record-table/states/tableRowIdsState';
-import { useView } from '@/views/hooks/useView';
+import { useViewBar } from '@/views/hooks/useViewBar';
 
 export const useSetRecordTableData = () => {
   const { resetTableRowSelection } = useRecordTable();
-  const { setEntityCountInCurrentView } = useView();
+  const { setEntityCountInCurrentView } = useViewBar();
 
   return useRecoilCallback(
     ({ set, snapshot }) =>

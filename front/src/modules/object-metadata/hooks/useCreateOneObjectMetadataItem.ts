@@ -6,8 +6,8 @@ import {
   CreateOneObjectMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
 
-import { CREATE_ONE_METADATA_OBJECT } from '../graphql/mutations';
-import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
+import { CREATE_ONE_OBJECT_METADATA_ITEM } from '../graphql/mutations';
+import { FIND_MANY_OBJECT_METADATA_ITEMS } from '../graphql/queries';
 
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
@@ -17,7 +17,7 @@ export const useCreateOneObjectRecordMetadataItem = () => {
   const [mutate] = useMutation<
     CreateOneObjectMetadataItemMutation,
     CreateOneObjectMetadataItemMutationVariables
-  >(CREATE_ONE_METADATA_OBJECT, {
+  >(CREATE_ONE_OBJECT_METADATA_ITEM, {
     client: apolloMetadataClient ?? ({} as ApolloClient<any>),
   });
 
@@ -33,7 +33,7 @@ export const useCreateOneObjectRecordMetadataItem = () => {
         },
       },
       awaitRefetchQueries: true,
-      refetchQueries: [getOperationName(FIND_MANY_METADATA_OBJECTS) ?? ''],
+      refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
     });
   };
 

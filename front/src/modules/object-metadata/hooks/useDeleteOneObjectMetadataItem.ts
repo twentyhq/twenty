@@ -6,8 +6,8 @@ import {
   DeleteOneObjectMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
 
-import { DELETE_ONE_METADATA_OBJECT } from '../graphql/mutations';
-import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
+import { DELETE_ONE_OBJECT_METADATA_ITEM } from '../graphql/mutations';
+import { FIND_MANY_OBJECT_METADATA_ITEMS } from '../graphql/queries';
 
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
@@ -17,7 +17,7 @@ export const useDeleteOneObjectMetadataItem = () => {
   const [mutate] = useMutation<
     DeleteOneObjectMetadataItemMutation,
     DeleteOneObjectMetadataItemMutationVariables
-  >(DELETE_ONE_METADATA_OBJECT, {
+  >(DELETE_ONE_OBJECT_METADATA_ITEM, {
     client: apolloMetadataClient ?? ({} as ApolloClient<any>),
   });
 
@@ -29,7 +29,7 @@ export const useDeleteOneObjectMetadataItem = () => {
         idToDelete,
       },
       awaitRefetchQueries: true,
-      refetchQueries: [getOperationName(FIND_MANY_METADATA_OBJECTS) ?? ''],
+      refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
     });
   };
 

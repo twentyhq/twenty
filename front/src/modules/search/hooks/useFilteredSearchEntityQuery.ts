@@ -1,7 +1,7 @@
 import { QueryHookOptions, QueryResult } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { mapPaginatedObjectsToObjects } from '@/object-record/utils/mapPaginatedObjectsToObjects';
+import { mapPaginatedRecordsToRecords } from '@/object-record/utils/mapPaginatedRecordsToRecords';
 import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { assertNotNull } from '~/utils/assert';
@@ -19,6 +19,8 @@ export const DEFAULT_SEARCH_REQUEST_LIMIT = 60;
 
 // TODO: use this for all search queries, because we need selectedEntities and entitiesToSelect each time we want to search
 // Filtered entities to select are
+
+// TODO: replace query hooks by useFindManyRecords
 export const useFilteredSearchEntityQuery = ({
   queryHook,
   orderByField,
@@ -135,21 +137,21 @@ export const useFilteredSearchEntityQuery = ({
     });
 
   return {
-    selectedEntities: mapPaginatedObjectsToObjects({
+    selectedEntities: mapPaginatedRecordsToRecords({
       objectNamePlural: objectNamePlural,
-      pagedObjects: selectedEntitiesData,
+      pagedRecords: selectedEntitiesData,
     })
       .map(mappingFunction)
       .filter(assertNotNull),
-    filteredSelectedEntities: mapPaginatedObjectsToObjects({
+    filteredSelectedEntities: mapPaginatedRecordsToRecords({
       objectNamePlural: objectNamePlural,
-      pagedObjects: filteredSelectedEntitiesData,
+      pagedRecords: filteredSelectedEntitiesData,
     })
       .map(mappingFunction)
       .filter(assertNotNull),
-    entitiesToSelect: mapPaginatedObjectsToObjects({
+    entitiesToSelect: mapPaginatedRecordsToRecords({
       objectNamePlural: objectNamePlural,
-      pagedObjects: entitiesToSelectData,
+      pagedRecords: entitiesToSelectData,
     })
       .map(mappingFunction)
       .filter(assertNotNull),
