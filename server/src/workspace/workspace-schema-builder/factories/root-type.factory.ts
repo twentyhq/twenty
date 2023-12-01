@@ -81,7 +81,7 @@ export class RootTypeFactory {
         const argsType = this.argsFactory.create(
           {
             args,
-            objectMetadata,
+            objectMetadataId: objectMetadata.id,
           },
           options,
         );

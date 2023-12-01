@@ -16,11 +16,11 @@ export class FindOneQueryFactory {
     private readonly argsStringFactory: ArgsStringFactory,
   ) {}
 
-  create<Filter extends RecordFilter = RecordFilter>(
+  async create<Filter extends RecordFilter = RecordFilter>(
     args: FindOneResolverArgs<Filter>,
     options: WorkspaceQueryBuilderOptions,
   ) {
-    const fieldsString = this.fieldsStringFactory.create(
+    const fieldsString = await this.fieldsStringFactory.create(
       options.info,
       options.fieldMetadataCollection,
     );
