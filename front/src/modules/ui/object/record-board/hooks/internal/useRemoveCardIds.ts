@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 
-import { boardCardIdsByColumnIdFamilyState } from '../states/boardCardIdsByColumnIdFamilyState';
+import { boardCardIdsByColumnIdFamilyState } from '../../states/boardCardIdsByColumnIdFamilyState';
 
 export const useRemoveCardIds = () => {
   const { boardColumnsState } = useRecordBoardScopedStates();

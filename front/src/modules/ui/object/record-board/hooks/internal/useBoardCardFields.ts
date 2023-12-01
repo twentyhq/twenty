@@ -6,9 +6,8 @@ import { BoardFieldDefinition } from '@/ui/object/record-board/types/BoardFieldD
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { boardCardFieldsFamilyState } from '../states/boardCardFieldsFamilyState';
-
-import { useBoardContext } from './useBoardContext';
+import { boardCardFieldsFamilyState } from '../../states/boardCardFieldsFamilyState';
+import { useBoardContext } from '../useBoardContext';
 
 export const useBoardCardFields = () => {
   const { BoardRecoilScopeContext, onFieldsChange } = useBoardContext();

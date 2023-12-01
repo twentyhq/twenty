@@ -1,6 +1,8 @@
 import { activeCardIdsScopedState } from '@/ui/object/record-board/states/activeCardIdsScopedState';
 import { availableBoardCardFieldsScopedState } from '@/ui/object/record-board/states/availableBoardCardFieldsScopedState';
 import { boardColumnsScopedState } from '@/ui/object/record-board/states/boardColumnsScopedState';
+import { boardFiltersScopedState } from '@/ui/object/record-board/states/boardFiltersScopedState';
+import { boardSortsScopedState } from '@/ui/object/record-board/states/boardSortsScopedState';
 import { isBoardLoadedScopedState } from '@/ui/object/record-board/states/isBoardLoadedScopedState';
 import { isCompactViewEnabledScopedState } from '@/ui/object/record-board/states/isCompactViewEnabledScopedState';
 import { savedBoardColumnsScopedState } from '@/ui/object/record-board/states/savedBoardColumnsScopedState';
@@ -46,6 +48,16 @@ export const getRecordBoardScopedStates = ({
     recordBoardScopeId,
   );
 
+  const boardFiltersState = getScopedState(
+    boardFiltersScopedState,
+    recordBoardScopeId,
+  );
+
+  const boardSortsState = getScopedState(
+    boardSortsScopedState,
+    recordBoardScopeId,
+  );
+
   // TODO: Family scoped selector
   const boardCardFieldsByKeySelector =
     boardCardFieldsByKeyScopedSelector(recordBoardScopeId);
@@ -69,6 +81,8 @@ export const getRecordBoardScopedStates = ({
     isBoardLoadedState,
     isCompactViewEnabledState,
     savedBoardColumnsState,
+    boardFiltersState,
+    boardSortsState,
     boardCardFieldsByKeySelector,
     canPersistBoardCardFieldsScopedFamilySelector,
     hiddenBoardCardFieldsSelector,

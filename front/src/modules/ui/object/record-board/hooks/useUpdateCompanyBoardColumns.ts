@@ -11,8 +11,11 @@ import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';
 
-import { companyProgressesFamilyState } from '../states/companyProgressesFamilyState';
-import { CompanyForBoard, CompanyProgressDict } from '../types/CompanyProgress';
+import { companyProgressesFamilyState } from '../../../../../companies/states/companyProgressesFamilyState';
+import {
+  CompanyForBoard,
+  CompanyProgressDict,
+} from '../../../../../companies/types/CompanyProgress';
 
 export const useUpdateCompanyBoard = () => {
   const { boardColumnsState, savedBoardColumnsState } =

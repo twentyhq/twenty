@@ -30,5 +30,5 @@ export const useCreateOpportunity = () => {
     [createOneOpportunity],
   );
 
-  return { createOpportunity };
+  return createOpportunity;
 };

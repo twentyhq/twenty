@@ -27,8 +27,8 @@ import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { isDefined } from '~/utils/isDefined';
 
-import { useUpdateCompanyBoardCardIds } from '../hooks/useUpdateCompanyBoardCardIds';
-import { useUpdateCompanyBoard } from '../hooks/useUpdateCompanyBoardColumns';
+import { useUpdateCompanyBoardCardIds } from '../../ui/object/record-board/hooks/internal/useUpdateCompanyBoardCardIds';
+import { useUpdateCompanyBoard } from '../../ui/object/record-board/hooks/internal/useUpdateCompanyBoardColumns';
 
 type HooksCompanyBoardEffectProps = {
   viewBarId: string;
