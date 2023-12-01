@@ -167,6 +167,25 @@ export class ApiRestService {
     `;
   }
 
+  computeUpdateQuery(objectMetadataItems, objectMetadataItem) {
+    return `
+      mutation Update${capitalize(
+        objectMetadataItem.nameSingular,
+      )}($id: ID!, $data: CompanyUpdateInput!) {
+        update${capitalize(
+          objectMetadataItem.nameSingular,
+        )}(id: $id, data: $data) {
+          id
+          ${objectMetadataItem.fields
+            .map((field) =>
+              this.mapFieldMetadataToGraphQLQuery(objectMetadataItems, field),
+            )
+            .join('\n')}
+        }
+      }
+    `;
+  }
+
   computeGetQuery(
     objectMetadataItems,
     objectMetadataItem,
@@ -548,6 +567,29 @@ export class ApiRestService {
         objectMetadata.objectMetadataItem,
       ),
       variables: {
+        data: request.body,
+      },
+    };
+    return await this.callGraphql(request, data);
+  }
+
+  async update(request: Request) {
+    const objectMetadata = await this.getObjectMetadata(request);
+    const id = this.parseObject(request)[1];
+    if (!id) {
+      return {
+        data: {
+          error: `update ${objectMetadata.objectMetadataItem.nameSingular} query invalid. Id missing. eg: /rest/${objectMetadata.objectMetadataItem.namePlural}/0d4389ef-ea9c-4ae8-ada1-1cddc440fb56`,
+        },
+      };
+    }
+    const data = {
+      query: this.computeUpdateQuery(
+        objectMetadata.objectMetadataItems,
+        objectMetadata.objectMetadataItem,
+      ),
+      variables: {
+        id: this.parseObject(request)[1],
         data: request.body,
       },
     };
