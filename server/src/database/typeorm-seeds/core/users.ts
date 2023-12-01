@@ -60,3 +60,18 @@ export const seedUsers = async (
     ])
     .execute();
 };
+
+export const deleteUsersByWorkspace = async (
+  workspaceDataSource: DataSource,
+  schemaName: string,
+  workspaceId: string,
+) => {
+  await workspaceDataSource
+    .createQueryBuilder()
+    .delete()
+    .from(`${schemaName}.${tableName}`)
+    .where(`"${tableName}"."defaultWorkspaceId" = :workspaceId`, {
+      workspaceId,
+    })
+    .execute();
+};

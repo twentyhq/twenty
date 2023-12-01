@@ -31,3 +31,16 @@ export const seedWorkspaces = async (
     ])
     .execute();
 };
+
+export const deleteWorkspaces = async (
+  workspaceDataSource: DataSource,
+  schemaName: string,
+  workspaceId: string,
+) => {
+  await workspaceDataSource
+    .createQueryBuilder()
+    .delete()
+    .from(`${schemaName}.${tableName}`)
+    .where(`${tableName}."id" = :id`, { id: workspaceId })
+    .execute();
+};

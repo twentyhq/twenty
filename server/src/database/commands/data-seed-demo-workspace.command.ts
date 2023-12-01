@@ -5,7 +5,7 @@ import { DataSourceService } from 'src/metadata/data-source/data-source.service'
 import { WorkspaceMigrationService } from 'src/metadata/workspace-migration/workspace-migration.service';
 import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
+import { deleteCoreSchema, seedCoreSchema } from 'src/database/typeorm-seeds/core';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
 
@@ -40,9 +40,10 @@ export class DataSeedDemoWorkspaceCommand extends CommandRunner {
       });
       await dataSource.initialize();
 
-      await seedCoreSchema(dataSource, this.workspaceId);
-
+      await deleteCoreSchema(dataSource, this.workspaceId);
       await this.workspaceManagerService.delete(this.workspaceId);
+
+      await seedCoreSchema(dataSource, this.workspaceId);
       await this.workspaceManagerService.initDemo(this.workspaceId);
     } catch (error) {
       console.error(error);
