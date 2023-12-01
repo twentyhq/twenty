@@ -295,7 +295,7 @@ export class ApiRestService {
       );
     }
     const fields = field.split('.');
-    this.checkFields(objectMetadataItem, [fields[0]], 'filter');
+    this.checkFields(objectMetadataItem, fields, 'filter');
     const fieldType = this.getFieldType(objectMetadataItem, fields[0]);
     const formattedValue = this.formatFieldValue(value, fieldType);
     return fields.reverse().reduce(
@@ -366,7 +366,14 @@ export class ApiRestService {
     for (const fieldName of fieldNames) {
       if (
         !objectMetadataItem.fields
-          .map((itemField) => itemField.name)
+          .reduce(
+            (acc, itemField) => [
+              ...acc,
+              itemField.name,
+              ...Object.keys(itemField.targetColumnMap),
+            ],
+            [],
+          )
           .includes(fieldName)
       ) {
         throw Error(
