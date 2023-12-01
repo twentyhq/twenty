@@ -3,27 +3,37 @@ import { selectorFamily } from 'recoil';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
+type ObjectMetadataItemSelector = {
+  objectName: string;
+  objectNameType: 'singular' | 'plural';
+};
+
 export const objectMetadataItemFamilySelector = selectorFamily<
   ObjectMetadataItem | null,
-  { objectNameSingular?: string; objectNamePlural?: string }
+  ObjectMetadataItemSelector
 >({
   key: 'objectMetadataItemFamilySelector',
   get:
-    ({
-      objectNameSingular,
-      objectNamePlural,
-    }: {
-      objectNameSingular?: string;
-      objectNamePlural?: string;
-    }) =>
+    ({ objectNameType, objectName }: ObjectMetadataItemSelector) =>
     ({ get }) => {
       const objectMetadataItems = get(objectMetadataItemsState);
-      return (
-        objectMetadataItems.find(
-          (objectMetadataItem) =>
-            objectMetadataItem.nameSingular === objectNameSingular ||
-            objectMetadataItem.namePlural === objectNamePlural,
-        ) ?? null
-      );
+
+      if (objectNameType === 'singular') {
+        return (
+          objectMetadataItems.find(
+            (objectMetadataItem) =>
+              objectMetadataItem.nameSingular === objectName,
+          ) ?? null
+        );
+      } else if (objectNameType === 'plural') {
+        return (
+          objectMetadataItems.find(
+            (objectMetadataItem) =>
+              objectMetadataItem.namePlural === objectName,
+          ) ?? null
+        );
+      }
+
+      return null;
     },
 });

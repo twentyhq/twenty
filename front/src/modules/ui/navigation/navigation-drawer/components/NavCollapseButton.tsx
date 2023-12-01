@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import {
   IconLayoutSidebarLeftCollapse,
@@ -41,8 +41,7 @@ const NavCollapseButton = ({
   direction = 'left',
   show = true,
 }: NavCollapseButtonProps) => {
-  const [navigationDrawer, setNavigationDrawer] =
-    useRecoilState(navigationDrawerState);
+  const setNavigationDrawer = useSetRecoilState(navigationDrawerState);
 
   const iconSize = 'small';
   const theme = useTheme();
@@ -57,7 +56,7 @@ const NavCollapseButton = ({
         transition={{
           duration: theme.animation.duration.normal,
         }}
-        onClick={() => setNavigationDrawer("")}
+        onClick={() => setNavigationDrawer('')}
       >
         <IconButton
           Icon={

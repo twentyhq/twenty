@@ -1,6 +1,6 @@
+import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ReactNode } from 'react';
 
 import { IconBrandGithub } from '@/ui/display/icon';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
@@ -8,6 +8,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import packageJson from '../../../../../../package.json';
 import { desktopNavDrawerWidths, githubLink } from '../constants';
+
 import NavBackButton from './NavBackButton';
 import NavItemsContainer from './NavItemsContainer';
 
@@ -45,13 +46,13 @@ const StyledVersionLink = styled.a`
 `;
 
 const StyledContainer = styled.div`
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   height: 100%;
   justify-content: space-between;
   padding: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(11)};
-  box-sizing: border-box;
   width: ${desktopNavDrawerWidths.menu};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {

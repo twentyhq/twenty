@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { IconHeart, IconHeartOff, IconTrash } from '@/ui/display/icon';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
@@ -38,7 +38,7 @@ export const useRecordTableContextMenuEntries = (
     recordTableScopeId: scopeId,
   });
 
-  const { objectMetadataItem } = useObjectMetadataItem({
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
   });
 
@@ -67,7 +67,7 @@ export const useRecordTableContextMenuEntries = (
   });
 
   const { deleteOneRecord } = useDeleteOneRecord({
-    objectNameSingular: objectMetadataItem?.nameSingular,
+    objectNameSingular,
   });
 
   const handleDeleteClick = useRecoilCallback(({ snapshot }) => async () => {

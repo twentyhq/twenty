@@ -1,9 +1,9 @@
 import { useLocation } from 'react-router-dom';
 
+import { ObjectMetadataNavItems } from '@/object-metadata/components/ObjectMetadataNavItems';
 import { IconTargetArrow } from '@/ui/display/icon/index';
 import NavItem from '@/ui/navigation/navigation-drawer/components/NavItem';
 import NavTitle from '@/ui/navigation/navigation-drawer/components/NavTitle';
-import { ObjectMetadataNavItems } from '@/object-metadata/components/ObjectMetadataNavItems';
 
 export const WorkspaceNavItems = () => {
   const { pathname } = useLocation();

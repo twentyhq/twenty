@@ -1,11 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useSetRecoilState } from 'recoil';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
-import { useSetRecoilState } from 'recoil';
 import { navigationDrawerState } from '@/ui/layout/states/isNavbarOpenedState';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 
 type NavItemProps = {
   className?: string;

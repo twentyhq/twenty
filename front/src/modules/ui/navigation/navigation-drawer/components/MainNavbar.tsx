@@ -10,14 +10,14 @@ type MainNavbarProps = {
 };
 
 const StyledContainer = styled.div`
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   height: 100%;
   justify-content: space-between;
   margin-bottom: ${({ theme }) => theme.spacing(2.5)};
-  width: 100%;
   padding: ${({ theme }) => theme.spacing(2)};
-  box-sizing: border-box;
+  width: 100%;
 `;
 
 const MainNavbar = ({ children }: MainNavbarProps) => {

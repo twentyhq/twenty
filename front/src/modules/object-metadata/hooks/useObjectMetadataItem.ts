@@ -1,7 +1,11 @@
 import { gql } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
 import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
@@ -26,17 +30,36 @@ export const EMPTY_MUTATION = gql`
 `;
 
 export const useObjectMetadataItem = (
-  { objectNamePlural, objectNameSingular }: ObjectMetadataItemIdentifier,
+  { objectNameSingular }: ObjectMetadataItemIdentifier,
   depth?: number,
 ) => {
-  const objectMetadataItem = useRecoilValue(
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const mockObjectMetadataItems = getObjectMetadataItemsMock();
+
+  let objectMetadataItem = useRecoilValue(
     objectMetadataItemFamilySelector({
-      objectNamePlural,
-      objectNameSingular,
+      objectName: objectNameSingular,
+      objectNameType: 'singular',
     }),
   );
 
-  const objectMetadataItemNotFound = !isDefined(objectMetadataItem);
+  let objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+
+  if (!currentWorkspace) {
+    objectMetadataItem =
+      mockObjectMetadataItems.find(
+        (objectMetadataItem) =>
+          objectMetadataItem.nameSingular === objectNameSingular,
+      ) ?? null;
+    objectMetadataItems = mockObjectMetadataItems;
+  }
+
+  if (!isDefined(objectMetadataItem)) {
+    throw new ObjectMetadataItemNotFoundError(
+      objectNameSingular,
+      objectMetadataItems,
+    );
+  }
 
   const getRecordFromCache = useGetRecordFromCache({
     objectMetadataItem,
@@ -68,17 +91,16 @@ export const useObjectMetadataItem = (
     objectMetadataItem,
   });
 
-  const labelIdentifierFieldMetadataId = objectMetadataItem?.fields.find(
+  const labelIdentifierFieldMetadataId = objectMetadataItem.fields.find(
     ({ name }) => name === 'name',
   )?.id;
 
-  const basePathToShowPage = `/object/${objectMetadataItem?.nameSingular}/`;
+  const basePathToShowPage = `/object/${objectMetadataItem.nameSingular}/`;
 
   return {
     labelIdentifierFieldMetadataId,
     basePathToShowPage,
     objectMetadataItem,
-    objectMetadataItemNotFound,
     getRecordFromCache,
     modifyRecordFromCache,
     findManyRecordsQuery,

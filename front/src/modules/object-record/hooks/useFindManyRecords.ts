@@ -2,9 +2,10 @@ import { useCallback, useMemo } from 'react';
 import { useQuery } from '@apollo/client';
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
@@ -27,13 +28,13 @@ import { mapPaginatedRecordsToRecords } from '../utils/mapPaginatedRecordsToReco
 export const useFindManyRecords = <
   RecordType extends { id: string } & Record<string, any>,
 >({
-  objectNamePlural,
+  objectNameSingular,
   filter,
   orderBy,
   limit = DEFAULT_SEARCH_REQUEST_LIMIT,
   onCompleted,
   skip,
-}: Pick<ObjectMetadataItemIdentifier, 'objectNamePlural'> & {
+}: ObjectMetadataItemIdentifier & {
   filter?: any;
   orderBy?: any;
   limit?: number;
@@ -41,7 +42,10 @@ export const useFindManyRecords = <
   skip?: boolean;
 }) => {
   const findManyQueryStateIdentifier =
-    objectNamePlural + JSON.stringify(filter) + JSON.stringify(orderBy) + limit;
+    objectNameSingular +
+    JSON.stringify(filter) +
+    JSON.stringify(orderBy) +
+    limit;
 
   const [lastCursor, setLastCursor] = useRecoilState(
     cursorFamilyState(findManyQueryStateIdentifier),
@@ -55,24 +59,21 @@ export const useFindManyRecords = <
     isFetchingMoreRecordsFamilyState(findManyQueryStateIdentifier),
   );
 
-  const {
-    objectMetadataItem,
-    objectMetadataItemNotFound,
-    findManyRecordsQuery,
-  } = useObjectMetadataItem({
-    objectNamePlural,
+  const { objectMetadataItem, findManyRecordsQuery } = useObjectMetadataItem({
+    objectNameSingular,
   });
 
   const { registerOptimisticEffect } = useOptimisticEffect({
-    objectNameSingular: objectMetadataItem?.nameSingular,
+    objectNameSingular,
   });
 
   const { enqueueSnackBar } = useSnackBar();
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const { data, loading, error, fetchMore } = useQuery<
     PaginatedRecordType<RecordType>
   >(findManyRecordsQuery, {
-    skip: skip || !objectMetadataItem || !objectNamePlural,
+    skip: skip || !objectMetadataItem || !currentWorkspace,
     variables: {
       filter: filter ?? {},
       limit: limit,
@@ -92,21 +93,24 @@ export const useFindManyRecords = <
         });
       }
 
-      if (objectNamePlural) {
-        onCompleted?.(data[objectNamePlural]);
+      onCompleted?.(data[objectMetadataItem.namePlural]);
 
-        if (objectNamePlural && data?.[objectNamePlural]) {
-          setLastCursor(data?.[objectNamePlural]?.pageInfo.endCursor);
-          setHasNextPage(data?.[objectNamePlural]?.pageInfo.hasNextPage);
-        }
+      if (data?.[objectMetadataItem.namePlural]) {
+        setLastCursor(
+          data?.[objectMetadataItem.namePlural]?.pageInfo.endCursor,
+        );
+        setHasNextPage(
+          data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage,
+        );
       }
     },
     onError: (error) => {
       logError(
-        `useFindManyObjectRecords for "${objectNamePlural}" error : ` + error,
+        `useFindManyRecords for "${objectMetadataItem.namePlural}" error : ` +
+          error,
       );
       enqueueSnackBar(
-        `Error during useFindManyObjectRecords for "${objectNamePlural}", ${error.message}`,
+        `Error during useFindManyRecords for "${objectMetadataItem.namePlural}", ${error.message}`,
         {
           variant: 'error',
         },
@@ -115,7 +119,7 @@ export const useFindManyRecords = <
   });
 
   const fetchMoreRecords = useCallback(async () => {
-    if (objectNamePlural && hasNextPage) {
+    if (hasNextPage) {
       setIsFetchingMoreObjects(true);
 
       try {
@@ -126,33 +130,38 @@ export const useFindManyRecords = <
             lastCursor: isNonEmptyString(lastCursor) ? lastCursor : undefined,
           },
           updateQuery: (prev, { fetchMoreResult }) => {
-            const previousEdges = prev?.[objectNamePlural]?.edges;
-            const nextEdges = fetchMoreResult?.[objectNamePlural]?.edges;
+            const previousEdges = prev?.[objectMetadataItem.namePlural]?.edges;
+            const nextEdges =
+              fetchMoreResult?.[objectMetadataItem.namePlural]?.edges;
 
             let newEdges: PaginatedRecordTypeEdge<RecordType>[] = [];
 
             if (isNonEmptyArray(previousEdges) && isNonEmptyArray(nextEdges)) {
               newEdges = filterUniqueRecordEdgesByCursor([
-                ...prev?.[objectNamePlural]?.edges,
-                ...fetchMoreResult?.[objectNamePlural]?.edges,
+                ...prev?.[objectMetadataItem.namePlural]?.edges,
+                ...fetchMoreResult?.[objectMetadataItem.namePlural]?.edges,
               ]);
             }
 
             return Object.assign({}, prev, {
-              [objectNamePlural]: {
+              [objectMetadataItem.namePlural]: {
                 __typename: `${capitalize(
-                  objectMetadataItem?.nameSingular ?? '',
+                  objectMetadataItem.nameSingular,
                 )}Connection`,
                 edges: newEdges,
-                pageInfo: fetchMoreResult?.[objectNamePlural].pageInfo,
+                pageInfo:
+                  fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,
               },
             } as PaginatedRecordType<RecordType>);
           },
         });
       } catch (error) {
-        logError(`fetchMoreObjects for "${objectNamePlural}" error : ` + error);
+        logError(
+          `fetchMoreObjects for "${objectMetadataItem.namePlural}" error : ` +
+            error,
+        );
         enqueueSnackBar(
-          `Error during fetchMoreObjects for "${objectNamePlural}", ${error}`,
+          `Error during fetchMoreObjects for "${objectMetadataItem.namePlural}", ${error}`,
           {
             variant: 'error',
           },
@@ -162,7 +171,6 @@ export const useFindManyRecords = <
       }
     }
   }, [
-    objectNamePlural,
     lastCursor,
     fetchMore,
     filter,
@@ -175,13 +183,11 @@ export const useFindManyRecords = <
 
   const records = useMemo(
     () =>
-      objectNamePlural
-        ? mapPaginatedRecordsToRecords({
-            pagedRecords: data,
-            objectNamePlural,
-          })
-        : [],
-    [data, objectNamePlural],
+      mapPaginatedRecordsToRecords({
+        pagedRecords: data,
+        objectNamePlural: objectMetadataItem.namePlural,
+      }),
+    [data, objectMetadataItem],
   );
 
   return {
@@ -189,7 +195,6 @@ export const useFindManyRecords = <
     records,
     loading,
     error,
-    objectMetadataItemNotFound,
     fetchMoreRecords,
   };
 };

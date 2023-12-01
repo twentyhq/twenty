@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 
@@ -5,16 +6,14 @@ import { AuthModal } from '@/auth/components/Modal';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
+import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
+import { DesktopNavigationDrawer } from '@/navigation/components/DesktopNavigationDrawer';
+import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
+import { MobileNavigationDrawer } from '@/navigation/components/MobileNavigationDrawer';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
-
 import { NavbarAnimatedContainer } from '@/ui/navigation/navigation-drawer/components/NavbarAnimatedContainer';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { DesktopNavigationDrawer } from '@/navigation/components/DesktopNavigationDrawer';
-import { MobileNavigationDrawer } from '@/navigation/components/MobileNavigationDrawer';
-
-import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
-import { ReactNode } from 'react';
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
@@ -43,8 +42,8 @@ const StyledLayout = styled.div`
 
 const StyledPageContainer = styled.div`
   display: flex;
-  flex-direction: row;
   flex: 1;
+  flex-direction: row;
 `;
 
 const StyledMainContainer = styled.div`
@@ -81,7 +80,7 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
               </AnimatePresence>
             </>
           ) : (
-            children
+            <AppErrorBoundary>{children}</AppErrorBoundary>
           )}
         </StyledMainContainer>
       </StyledPageContainer>

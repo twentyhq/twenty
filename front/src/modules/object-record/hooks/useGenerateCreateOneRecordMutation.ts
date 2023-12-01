@@ -8,7 +8,7 @@ import { capitalize } from '~/utils/string/capitalize';
 export const useGenerateCreateOneRecordMutation = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem: ObjectMetadataItem | undefined | null;
+  objectMetadataItem: ObjectMetadataItem;
 }) => {
   const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
 

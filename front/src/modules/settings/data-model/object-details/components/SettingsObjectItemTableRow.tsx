@@ -37,7 +37,7 @@ export const SettingsObjectItemTableRow = ({
   const theme = useTheme();
 
   const { records } = useFindManyRecords({
-    objectNamePlural: objectItem.namePlural,
+    objectNameSingular: objectItem.nameSingular,
   });
 
   const { Icon } = useLazyLoadIcon(objectItem.icon ?? '');

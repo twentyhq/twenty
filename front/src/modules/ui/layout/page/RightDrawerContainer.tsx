@@ -1,11 +1,10 @@
+import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
 import { RightDrawer } from '@/ui/layout/right-drawer/components/RightDrawer';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 
 import { PagePanel } from './PagePanel';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
-import { ReactNode } from 'react';
 
 type RightDrawerContainerProps = {
   children: ReactNode;
@@ -13,6 +12,7 @@ type RightDrawerContainerProps = {
 
 const StyledMainContainer = styled.div`
   background: ${({ theme }) => theme.background.noisy};
+  box-sizing: border-box;
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
@@ -20,7 +20,6 @@ const StyledMainContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(3)};
   padding-right: ${({ theme }) => theme.spacing(3)};
   width: 100%;
-  box-sizing: border-box;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     padding-left: ${({ theme }) => theme.spacing(3)};

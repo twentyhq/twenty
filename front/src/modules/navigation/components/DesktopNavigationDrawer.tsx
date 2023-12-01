@@ -1,6 +1,7 @@
 import { useCurrentUserTaskCount } from '@/activities/tasks/hooks/useCurrentUserDueTaskCount';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Favorites } from '@/favorites/components/Favorites';
+import { useIsTasksPage } from '@/navigation/hooks/useIsTasksPage';
 import { SettingsNavbar } from '@/settings/components/SettingsNavbar';
 import {
   IconBell,
@@ -8,16 +9,17 @@ import {
   IconSearch,
   IconSettings,
 } from '@/ui/display/icon/index';
-import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
 import MainNavbar from '@/ui/navigation/navigation-drawer/components/MainNavbar';
 import NavItem from '@/ui/navigation/navigation-drawer/components/NavItem';
+
+import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
+
 import { WorkspaceNavItems } from './WorkspaceNavItems';
-import { useIsTasksPage } from '@/navigation/hooks/useIsTasksPage';
 
 export const DesktopNavigationDrawer = () => {
   const { toggleCommandMenu } = useCommandMenu();
   const isSettingsPage = useIsSettingsPage();
-  const isTasksPage = useIsTasksPage()
+  const isTasksPage = useIsTasksPage();
   const { currentUserDueTaskCount } = useCurrentUserTaskCount();
 
   return isSettingsPage ? (

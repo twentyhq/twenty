@@ -7,14 +7,14 @@ const StyledIconButton = styled.div<{ isActive?: boolean }>`
   align-items: center;
   background-color: ${({ isActive, theme }) =>
     isActive ? theme.background.transparent.light : 'none'};
-  cursor: pointer;
   border-radius: ${({ theme }) => theme.spacing(1)};
-  height: ${({ theme }) => theme.spacing(10)};
-  width: ${({ theme }) => theme.spacing(10)};
-  justify-content: center;
+  cursor: pointer;
   display: flex;
+  height: ${({ theme }) => theme.spacing(10)};
+  justify-content: center;
   transition: background-color ${({ theme }) => theme.animation.duration.fast}s
     ease;
+  width: ${({ theme }) => theme.spacing(10)};
 
   &:hover {
     background-color: ${({ theme }) => theme.background.transparent.light};

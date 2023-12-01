@@ -70,7 +70,7 @@ const NavWorkspaceButton = ({
         ></StyledLogo>
         <StyledName>{currentWorkspace?.displayName ?? 'Twenty'}</StyledName>
       </StyledLogoAndNameContainer>
-      {isMobile && (
+      {!isMobile && (
         <NavCollapseButton direction="left" show={showCollapseButton} />
       )}
     </StyledContainer>

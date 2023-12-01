@@ -1,4 +1,4 @@
-import { ComponentProps, ReactNode, useCallback } from 'react';
+import { ComponentProps, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -7,8 +7,8 @@ import { IconChevronLeft } from '@/ui/display/icon/index';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { IconButton } from '@/ui/input/button/components/IconButton';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
@@ -35,9 +35,9 @@ const StyledLeftContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  width: 100%;
-  padding-left: ${({ theme }) => theme.spacing(2)};
   gap: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     padding-left: ${({ theme }) => theme.spacing(1)};
@@ -58,8 +58,8 @@ const StyledBackIconButton = styled(IconButton)`
 const StyledTopBarIconStyledTitleContainer = styled.div`
   align-items: center;
   display: flex;
-  flex-direction: row;
   flex: 1 0 100%;
+  flex-direction: row;
 `;
 
 const StyledPageActionContainer = styled.div`

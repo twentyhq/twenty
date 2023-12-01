@@ -2,6 +2,7 @@ import { useRecoilValue } from 'recoil';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { turnFiltersIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClause';
 import { turnSortsIntoOrderBy } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordTableScopedStates } from '@/ui/object/record-table/hooks/internal/useRecordTableScopedStates';
@@ -14,14 +15,18 @@ import { useFindManyRecords } from './useFindManyRecords';
 export const useObjectRecordTable = () => {
   const { scopeId: objectNamePlural, setRecordTableData } = useRecordTable();
 
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
+    objectNamePlural,
+  });
+
   const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
     {
-      objectNamePlural,
+      objectNameSingular,
     },
   );
 
   const { registerOptimisticEffect } = useOptimisticEffect({
-    objectNameSingular: foundObjectMetadataItem?.nameSingular,
+    objectNameSingular,
   });
 
   const { tableFiltersState, tableSortsState } = useRecordTableScopedStates();
@@ -39,7 +44,7 @@ export const useObjectRecordTable = () => {
   );
 
   const { records, loading, fetchMoreRecords } = useFindManyRecords({
-    objectNamePlural,
+    objectNameSingular,
     filter,
     orderBy,
     onCompleted: (data) => {

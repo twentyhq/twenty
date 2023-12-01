@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
-import { NavigationBarItem } from './NavigationBarItem';
-import { useState } from 'react';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+
+import { NavigationBarItem } from './NavigationBarItem';
 
 const StyledContainer = styled.div`
   display: flex;

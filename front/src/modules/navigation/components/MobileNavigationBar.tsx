@@ -1,18 +1,20 @@
+import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import {
   IconCheckbox,
   IconList,
   IconSearch,
   IconSettings,
 } from '@/ui/display/icon';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { navigationDrawerState } from '@/ui/layout/states/isNavbarOpenedState';
+import { NavigationBar } from '@/ui/navigation/navigation-bar/components/NavigationBar';
+
 import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
 import { useIsTasksPage } from '../hooks/useIsTasksPage';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { NavigationBar } from '@/ui/navigation/navigation-bar/components/NavigationBar';
-import { navigationDrawerState } from '@/ui/layout/states/isNavbarOpenedState';
-import { useNavigate } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 
 type NavigationBarItemName = 'main' | 'search' | 'tasks' | 'settings';
 

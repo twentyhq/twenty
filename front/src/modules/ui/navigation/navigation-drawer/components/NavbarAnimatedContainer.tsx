@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
@@ -5,9 +6,9 @@ import { useRecoilValue } from 'recoil';
 
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { navigationDrawerState } from '@/ui/layout/states/isNavbarOpenedState';
-import { desktopNavDrawerWidths } from '../constants';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { ReactNode } from 'react';
+
+import { desktopNavDrawerWidths } from '../constants';
 
 const StyledNavbarContainer = styled(motion.div)`
   align-items: end;
@@ -15,7 +16,6 @@ const StyledNavbarContainer = styled(motion.div)`
   flex-direction: column;
   flex-shrink: 0;
   overflow: hidden;
-
 `;
 
 type NavbarAnimatedContainerProps = {
