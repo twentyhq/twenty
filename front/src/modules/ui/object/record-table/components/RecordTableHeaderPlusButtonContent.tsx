@@ -6,6 +6,7 @@ import { useRecoilValue } from 'recoil';
 import { IconPlus, IconSettings } from '@/ui/display/icon';
 import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
@@ -39,23 +40,28 @@ export const RecordTableHeaderPlusButtonContent = () => {
   `;
 
   return (
-    <DropdownMenuItemsContainer>
-      {hiddenTableColumns.map((column) => (
-        <MenuItem
-          key={column.fieldMetadataId}
-          iconButtons={[
-            {
-              Icon: IconPlus,
-              onClick: () => handleAddColumn(column),
-            },
-          ]}
-          LeftIcon={icons[column.iconName]}
-          text={column.label}
-        />
-      ))}
-      <StyledMenuItemLink to="/settings/objects">
-        <MenuItem LeftIcon={IconSettings} text="Customize fields" />
-      </StyledMenuItemLink>
-    </DropdownMenuItemsContainer>
+    <>
+      <DropdownMenuItemsContainer>
+        {hiddenTableColumns.map((column) => (
+          <MenuItem
+            key={column.fieldMetadataId}
+            iconButtons={[
+              {
+                Icon: IconPlus,
+                onClick: () => handleAddColumn(column),
+              },
+            ]}
+            LeftIcon={icons[column.iconName]}
+            text={column.label}
+          />
+        ))}
+      </DropdownMenuItemsContainer>
+      <DropdownMenuSeparator />
+      <DropdownMenuItemsContainer>
+        <StyledMenuItemLink to="/settings/objects">
+          <MenuItem LeftIcon={IconSettings} text="Customize fields" />
+        </StyledMenuItemLink>
+      </DropdownMenuItemsContainer>
+    </>
   );
 };
