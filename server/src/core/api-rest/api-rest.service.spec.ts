@@ -6,6 +6,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 
 describe('ApiRestService', () => {
   let service: ApiRestService;
+  const objectMetadataItem = { fields: [{ name: 'field', type: 'NUMBER' }] };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -26,50 +27,6 @@ describe('ApiRestService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-  describe('extractDeepestFilterQuery', () => {
-    it('should extract the last encapsulated brackets', () => {
-      const filterQuery = 'and(or(field_1[eq]:1,field_2[eq]:2))';
-      const expectedResult = 'or(field_1[eq]:1,field_2[eq]:2)';
-      expect(service.extractDeepestFilterQuery(filterQuery)).toEqual(
-        expectedResult,
-      );
-    });
-    it('should extract on complex filter query', () => {
-      const filterQuery =
-        'and(field_1[lte]:1,or(field_2[eq]:2,field_3[eq]:3,and(field_4[lte]:4,field_5[gte]:5),field_6[gte]:6))';
-      const expectedResult = 'and(field_4[lte]:4,field_5[gte]:5)';
-      expect(service.extractDeepestFilterQuery(filterQuery)).toEqual(
-        expectedResult,
-      );
-    });
-  });
-  describe('computeStringFilterBlocks', () => {
-    it('should deconstruct filter query', () => {
-      const filterQuery = 'and(or(field_1[eq]:1,field_2[eq]:2),field_3[eq]:3)';
-      const expectedResult = [
-        'or(field_1[eq]:1,field_2[eq]:2)',
-        'and(field_3[eq]:3)',
-      ];
-      expect(service.computeStringFilterBlocks(filterQuery)).toEqual(
-        expectedResult,
-      );
-    });
-  });
-  describe('mergeFilterBlocks', () => {
-    it('should merge filter blocks', () => {
-      const filterBlocks = [
-        { or: [{ field_1: { eq: 1 } }, { field_2: { eq: 2 } }] },
-        { and: [{ field_3: { eq: 3 } }] },
-      ];
-      const expectedResult = {
-        and: [
-          { field_3: { eq: 3 } },
-          { or: [{ field_1: { eq: 1 } }, { field_2: { eq: 2 } }] },
-        ],
-      };
-      expect(service.mergeFilterBlocks(filterBlocks)).toEqual(expectedResult);
-    });
-  });
   describe('checkFilterQuery', () => {
     it('should check filter query', () => {
       expect(() => service.checkFilterQuery('(')).toThrow();
@@ -78,12 +35,12 @@ describe('ApiRestService', () => {
       expect(() => service.checkFilterQuery('())')).toThrow();
       expect(() =>
         service.checkFilterQuery(
-          'and(or(field_1[eq]:1,field_2[eq]:2)),field_3[eq]:3)',
+          'and(or(field[eq]:1,field[eq]:2)),field[eq]:3)',
         ),
       ).toThrow();
       expect(() =>
         service.checkFilterQuery(
-          'and(or(field_1[eq]:1,field_2[eq]:2),field_3[eq]:3)',
+          'and(or(field[eq]:1,field[eq]:2),field[eq]:3)',
         ),
       ).not.toThrow();
     });
@@ -97,6 +54,95 @@ describe('ApiRestService', () => {
       expect(service.formatFieldValue('True', 'BOOLEAN')).toEqual(true);
       expect(service.formatFieldValue('false', 'BOOLEAN')).toEqual(false);
       expect(service.formatFieldValue('1', 'TEXT')).toEqual('1');
+    });
+  });
+  describe('parseFilterQueryContent', () => {
+    it('should parse query filter test 1', () => {
+      expect(service.parseFilterQueryContent('and(field[eq]:1)')).toEqual([
+        'field[eq]:1',
+      ]);
+    });
+    it('should parse query filter test 2', () => {
+      expect(
+        service.parseFilterQueryContent('and(field[eq]:1,field[eq]:2)'),
+      ).toEqual(['field[eq]:1', 'field[eq]:2']);
+    });
+    it('should parse query filter test 3', () => {
+      expect(
+        service.parseFilterQueryContent(
+          'and(field[eq]:1,or(field[eq]:2,field[eq]:3))',
+        ),
+      ).toEqual(['field[eq]:1', 'or(field[eq]:2,field[eq]:3)']);
+    });
+    it('should parse query filter test 4', () => {
+      expect(
+        service.parseFilterQueryContent(
+          'and(field[eq]:1,or(field[eq]:2,not(field[eq]:3)),field[eq]:4,not(field[eq]:5))',
+        ),
+      ).toEqual([
+        'field[eq]:1',
+        'or(field[eq]:2,not(field[eq]:3))',
+        'field[eq]:4',
+        'not(field[eq]:5)',
+      ]);
+    });
+  });
+  describe('parseStringFilter', () => {
+    it('should parse string filter test 1', () => {
+      expect(
+        service.parseStringFilter(
+          'and(field[eq]:1,field[eq]:2)',
+          objectMetadataItem,
+        ),
+      ).toEqual({ and: [{ field: { eq: 1 } }, { field: { eq: 2 } }] });
+    });
+    it('should parse string filter test 2', () => {
+      expect(
+        service.parseStringFilter(
+          'and(field[eq]:1,or(field[eq]:2,field[eq]:3))',
+          objectMetadataItem,
+        ),
+      ).toEqual({
+        and: [
+          { field: { eq: 1 } },
+          { or: [{ field: { eq: 2 } }, { field: { eq: 3 } }] },
+        ],
+      });
+    });
+    it('should parse string filter test 3', () => {
+      expect(
+        service.parseStringFilter(
+          'and(field[eq]:1,or(field[eq]:2,field[eq]:3,and(field[eq]:6,field[eq]:7)),or(field[eq]:4,field[eq]:5))',
+          objectMetadataItem,
+        ),
+      ).toEqual({
+        and: [
+          { field: { eq: 1 } },
+          {
+            or: [
+              { field: { eq: 2 } },
+              { field: { eq: 3 } },
+              { and: [{ field: { eq: 6 } }, { field: { eq: 7 } }] },
+            ],
+          },
+          { or: [{ field: { eq: 4 } }, { field: { eq: 5 } }] },
+        ],
+      });
+    });
+    it('should handler not', () => {
+      expect(
+        service.parseStringFilter(
+          'and(field[eq]:1,not(field[eq]:2))',
+          objectMetadataItem,
+        ),
+      ).toEqual({
+        and: [
+          { field: { eq: 1 } },
+          {
+            not: { field: { eq: 2 } },
+          },
+        ],
+      });
     });
   });
 });

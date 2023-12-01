@@ -14,12 +14,22 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { capitalize } from 'src/utils/capitalize';
 
-const FILTER_COMPARATORS = ['eq', 'gt', 'gte', 'lt', 'lte'];
+enum FILTER_COMPARATORS {
+  eq = 'eq',
+  gt = 'gt',
+  gte = 'gte',
+  lt = 'lt',
+  lte = 'lte',
+}
 const ALLOWED_DEPTH_VALUES = [1, 2];
 const DEFAULT_DEPTH_VALUE = 2;
 const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
-const DEFAULT_FILTER_CONJUNCTION = 'and';
-const MAX_CONJUNCTION_ENCAPSULATION = 102;
+enum CONJUNCTIONS {
+  or = 'or',
+  and = 'and',
+  not = 'not',
+}
+const DEFAULT_FILTER_CONJUNCTION = CONJUNCTIONS.and;
 
 @Injectable()
 export class ApiRestService {
@@ -192,52 +202,6 @@ export class ApiRestService {
     return [objectMetadataItems, objectMetadata];
   }
 
-  extractDeepestFilterQuery(filterQuery) {
-    const match = filterQuery.match(/\(([^()]*)\)/);
-    if (match) {
-      const matchRegex = match[1].replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      return filterQuery.match(`(or|and|not)\\(${matchRegex}\\)`)[0];
-    }
-  }
-
-  computeStringFilterBlocks(filterQuery) {
-    const stringFilterBlocks: string[] = [];
-    let remainingFilterQuery = filterQuery;
-    let deepestFilterQuery = filterQuery;
-    let securityCount = MAX_CONJUNCTION_ENCAPSULATION; // Avoids indefinite loop if wrong filterQuery
-    while (deepestFilterQuery && securityCount > 0) {
-      deepestFilterQuery = this.extractDeepestFilterQuery(remainingFilterQuery);
-      remainingFilterQuery = remainingFilterQuery
-        .replace(deepestFilterQuery, '')
-        .replace(',,', ',')
-        .replace('(,', '(')
-        .replace(',)', ')');
-      if (deepestFilterQuery) {
-        stringFilterBlocks.push(deepestFilterQuery);
-      }
-      securityCount--;
-    }
-    if (securityCount === 0) {
-      throw Error(
-        `'filter' invalid. Maximum of ${
-          MAX_CONJUNCTION_ENCAPSULATION - 2
-        } (or|and|not) encapsulations reached`,
-      );
-    }
-    return stringFilterBlocks;
-  }
-
-  mergeFilterBlocks(filterBlocks) {
-    return filterBlocks.reduce((acc, filterBlock) => {
-      if (!acc) {
-        return filterBlock;
-      } else {
-        filterBlock[Object.keys(filterBlock)[0]].push(acc);
-        return filterBlock;
-      }
-    });
-  }
-
   addDefaultConjunctionIfMissing(filterQuery) {
     if (!(filterQuery.includes('(') && filterQuery.includes(')'))) {
       return `${DEFAULT_FILTER_CONJUNCTION}(${filterQuery})`;
@@ -261,102 +225,73 @@ export class ApiRestService {
     return;
   }
 
-  parseFilter(request, objectMetadataItem) {
-    const parsedObjectId = this.parseObject(request)[1];
-    if (parsedObjectId) {
-      return { id: { eq: parsedObjectId } };
+  parseFilterQueryContent(filterQuery) {
+    let parenthesisCounter = 0;
+    const predicates: string[] = [];
+    let currentPredicates = '';
+    for (const c of filterQuery) {
+      if (c === '(') {
+        parenthesisCounter++;
+        if (parenthesisCounter === 1) continue;
+      }
+      if (c === ')') {
+        parenthesisCounter--;
+        if (parenthesisCounter === 0) continue;
+      }
+      if (c === ',' && parenthesisCounter === 1) {
+        predicates.push(currentPredicates);
+        currentPredicates = '';
+        continue;
+      }
+      if (parenthesisCounter >= 1) currentPredicates += c;
     }
-    const rawFilterQuery = request.query.filter;
-    if (typeof rawFilterQuery !== 'string') {
-      return {};
+    if (currentPredicates.length) {
+      predicates.push(currentPredicates);
     }
-
-    this.checkFilterQuery(rawFilterQuery);
-
-    const filterQuery = this.addDefaultConjunctionIfMissing(rawFilterQuery);
-
-    //filterQuery = or(and(type[lte]:1,or(type[lte]:2,updatedAt[eq]:3)),type[lte]:4)
-    const stringFilterBlocks = this.computeStringFilterBlocks(filterQuery);
-
-    // stringFilterBlocks = [
-    //   'or(type[lte]:2,updatedAt[eq]:3)',
-    //   'and(type[lte]:1)',
-    //   'or(type[lte]:4)',
-    // ]
-    const filterBlocks = stringFilterBlocks.map((stringFilterBlock) =>
-      this.parseFilterBlock(stringFilterBlock, objectMetadataItem),
-    );
-
-    // stringFilterBlocks = [
-    //   { or: [{ type: { lte: '2' } }, { updatedAt: { eq: '3' } }] },
-    //   { and: [{ type: { lte: '1' } }] },
-    //   { or: [{ type: { lte: '4' } }] },
-    // ]
-    const result = this.mergeFilterBlocks(filterBlocks);
-
-    // result = [
-    //   { or: [
-    //     { type: { lte: '4' } },
-    //     { and: [
-    //       { type: { lte: '1' } },
-    //       { or: [
-    //         { type: { lte: '2' } },
-    //         { updatedAt: { eq: '3' }
-    //       }]
-    //     }]
-    //   }]
-    // }]
-    return result;
+    return predicates;
   }
 
-  //TODO:
-  //- support multiple conjunction on same level: and(not(field_1[eq]:1),or(field_2[eq]:2,field_3[eq]:3))
-  //- add function docstrings
-
-  parseFilterBlock(filterQuery, objectMetadataItem) {
-    // and(price[lte]:100,price[lte]:100)
+  parseStringFilter(filterQuery, objectMetadataItem) {
     const result = {};
-    const parsedFilters = filterQuery.match(/^(or|and|not)\((.+)\)$/s);
-    if (parsedFilters) {
-      const conjunctionOperator = parsedFilters[1];
-      const subFilterQuery = parsedFilters[2];
-      if (conjunctionOperator === 'not') {
-        if (subFilterQuery.split(',').length > 1) {
+    const match = filterQuery.match(
+      `^(${Object.values(CONJUNCTIONS).join('|')})((.+))$`,
+    );
+    if (match) {
+      const conjunction = match[1];
+      const subResult = this.parseFilterQueryContent(filterQuery).map((elem) =>
+        this.parseStringFilter(elem, objectMetadataItem),
+      );
+      if (conjunction === CONJUNCTIONS.not) {
+        if (subResult.length > 1) {
           throw Error(
             `'filter' invalid. 'not' conjunction should contain only 1 condition. eg: not(field[eq]:1)`,
           );
         }
-        result[conjunctionOperator] = this.parseSimpleFilter(
-          subFilterQuery,
-          objectMetadataItem,
-        );
+        result[conjunction] = subResult[0];
       } else {
-        result[conjunctionOperator] = subFilterQuery
-          .split(',')
-          .map((subQuery) =>
-            this.parseSimpleFilter(subQuery, objectMetadataItem),
-          );
+        result[conjunction] = subResult;
       }
       return result;
-    } else {
-      return this.parseSimpleFilter(filterQuery, objectMetadataItem);
     }
+    return this.parseSimpleFilter(filterQuery, objectMetadataItem);
   }
 
   parseSimpleFilter(filterString: string, objectMetadataItem) {
     // price[lte]:100
     if (
-      !filterString.match(`^(.+)\\[(${FILTER_COMPARATORS.join('|')})\\]:(.+)$`)
+      !filterString.match(
+        `^(.+)\\[(${Object.keys(FILTER_COMPARATORS).join('|')})\\]:(.+)$`,
+      )
     ) {
       throw Error(`'filter' invalid for '${filterString}'. eg: price[gte]:10`);
     }
     const [fieldAndComparator, value] = filterString.split(':');
     const [field, comparator] = fieldAndComparator.replace(']', '').split('[');
-    if (!FILTER_COMPARATORS.includes(comparator)) {
+    if (!Object.keys(FILTER_COMPARATORS).includes(comparator)) {
       throw Error(
-        `'filter' invalid for '${filterString}', comparator ${comparator} not in ${FILTER_COMPARATORS.join(
-          ',',
-        )}`,
+        `'filter' invalid for '${filterString}', comparator ${comparator} not in ${Object.keys(
+          FILTER_COMPARATORS,
+        ).join(',')}`,
       );
     }
     const fields = field.split('.');
@@ -379,6 +314,20 @@ export class ApiRestService {
       return value.toLowerCase() === 'true';
     }
     return value;
+  }
+
+  parseFilter(request, objectMetadataItem) {
+    const parsedObjectId = this.parseObject(request)[1];
+    if (parsedObjectId) {
+      return { id: { eq: parsedObjectId } };
+    }
+    const rawFilterQuery = request.query.filter;
+    if (typeof rawFilterQuery !== 'string') {
+      return {};
+    }
+    this.checkFilterQuery(rawFilterQuery);
+    const filterQuery = this.addDefaultConjunctionIfMissing(rawFilterQuery);
+    return this.parseStringFilter(filterQuery, objectMetadataItem);
   }
 
   parseOrderBy(request, objectMetadataItem) {
