@@ -9,18 +9,19 @@ import { RecordBoardScopeInternalContext } from '@/ui/object/record-board/scopes
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
 type useRecordBoardProps = {
-  recordTableScopeId?: string;
+  recordBoardScopeId?: string;
 };
 
 export const useRecordBoard = (props?: useRecordBoardProps) => {
   const scopeId = useAvailableScopeIdOrThrow(
     RecordBoardScopeInternalContext,
-    props?.recordTableScopeId,
+    props?.recordBoardScopeId,
   );
 
-  const { isBoardLoadedState, boardColumnsState } = useRecordBoardScopedStates({
-    recordBoardScopeId: scopeId,
-  });
+  const { isBoardLoadedState, boardColumnsState, onFieldsChangeState } =
+    useRecordBoardScopedStates({
+      recordBoardScopeId: scopeId,
+    });
   const setIsBoardLoaded = useSetRecoilState(isBoardLoadedState);
 
   const setBoardColumns = useSetRecoilState(boardColumnsState);
@@ -33,6 +34,8 @@ export const useRecordBoard = (props?: useRecordBoardProps) => {
   const { handleFieldVisibilityChange, handleFieldsReorder } =
     useBoardCardFieldsInternal();
 
+  const setOnFieldsChange = useSetRecoilState(onFieldsChangeState);
+
   return {
     scopeId,
     setIsBoardLoaded,
@@ -42,5 +45,6 @@ export const useRecordBoard = (props?: useRecordBoardProps) => {
     setContextMenuEntries,
     handleFieldVisibilityChange,
     handleFieldsReorder,
+    setOnFieldsChange,
   };
 };

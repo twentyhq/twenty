@@ -2,11 +2,19 @@ import { useRecoilCallback } from 'recoil';
 
 import { actionBarOpenState } from '@/ui/navigation/action-bar/states/actionBarIsOpenState';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
+import { RecordBoardScopeInternalContext } from '@/ui/object/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
+import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
 import { isCardSelectedFamilyState } from '../../states/isCardSelectedFamilyState';
 
-export const useSetCardSelectedInternal = () => {
-  const { activeCardIdsState } = useRecordBoardScopedStates();
+export const useSetCardSelectedInternal = (props: any) => {
+  const scopeId = useAvailableScopeIdOrThrow(
+    RecordBoardScopeInternalContext,
+    props?.recordBoardScopeId,
+  );
+  const { activeCardIdsState } = useRecordBoardScopedStates({
+    recordBoardScopeId: scopeId,
+  });
 
   const setCardSelected = useRecoilCallback(
     ({ set, snapshot }) =>

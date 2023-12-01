@@ -21,7 +21,7 @@ export const NewOpportunityButton = () => {
   const pipelineStepId = column?.columnDefinition.id || '';
 
   const { enqueueSnackBar } = useSnackBar();
-  const { createOpportunity } = useCreateOpportunity();
+  const createOpportunity = useCreateOpportunity();
 
   const {
     goBackToPreviousHotkeyScope,

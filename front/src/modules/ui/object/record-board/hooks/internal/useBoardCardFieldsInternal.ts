@@ -1,25 +1,25 @@
 import { useCallback } from 'react';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
+import { RecordBoardScopeInternalContext } from '@/ui/object/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
+import { onFieldsChangeScopedState } from '@/ui/object/record-board/states/onFieldsChangeScopedState';
 import { savedBoardCardFieldsFamilyState } from '@/ui/object/record-board/states/savedBoardCardFieldsFamilyState';
 import { BoardFieldDefinition } from '@/ui/object/record-board/types/BoardFieldDefinition';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
 import { boardCardFieldsFamilyState } from '../../states/boardCardFieldsFamilyState';
-import { useBoardContext } from '../useBoardContext';
 
 export const useBoardCardFieldsInternal = () => {
-  const { BoardRecoilScopeContext, onFieldsChange } = useBoardContext();
+  const scopeId = useAvailableScopeIdOrThrow(RecordBoardScopeInternalContext);
 
-  const [, setBoardCardFields] = useRecoilScopedState(
-    boardCardFieldsFamilyState,
-    BoardRecoilScopeContext,
+  const setBoardCardFields = useSetRecoilState(
+    boardCardFieldsFamilyState(scopeId),
   );
 
-  const [, setSavedBoardCardFields] = useRecoilScopedState(
-    savedBoardCardFieldsFamilyState,
-    BoardRecoilScopeContext,
+  const setSavedBoardCardFields = useSetRecoilState(
+    savedBoardCardFieldsFamilyState(scopeId),
   );
 
   const handleFieldVisibilityChange = (
@@ -34,14 +34,19 @@ export const useBoardCardFieldsInternal = () => {
     );
   };
 
-  const handleFieldsChange = useCallback(
-    async (fields: BoardFieldDefinition<FieldMetadata>[]) => {
-      setSavedBoardCardFields(fields);
-      setBoardCardFields(fields);
+  const handleFieldsChange = useRecoilCallback(
+    ({ snapshot }) =>
+      async (fields: BoardFieldDefinition<FieldMetadata>[]) => {
+        setSavedBoardCardFields(fields);
+        setBoardCardFields(fields);
 
-      await onFieldsChange?.(fields);
-    },
-    [setBoardCardFields, setSavedBoardCardFields, onFieldsChange],
+        const onFieldsChange = snapshot
+          .getLoadable(onFieldsChangeScopedState({ scopeId }))
+          .getValue();
+
+        await onFieldsChange?.(fields);
+      },
+    [scopeId, setBoardCardFields, setSavedBoardCardFields],
   );
 
   const handleFieldsReorder = useCallback(

@@ -1,21 +1,18 @@
 import styled from '@emotion/styled';
 
-import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import { mapBoardFieldDefinitionsToViewFields } from '@/companies/utils/mapBoardFieldDefinitionsToViewFields';
-import { RecordBoardActionBar } from '@/ui/object/record-board/action-bar/components/RecordBoardActionBar';
 import { BoardOptionsDropdownId } from '@/ui/object/record-board/components/constants/BoardOptionsDropdownId';
 import {
   RecordBoard,
   RecordBoardProps,
 } from '@/ui/object/record-board/components/RecordBoard';
-import { RecordBoardContextMenu } from '@/ui/object/record-board/context-menu/components/RecordBoardContextMenu';
+import { RecordBoardEffect } from '@/ui/object/record-board/components/RecordBoardEffect';
 import { RecordBoardOptionsDropdown } from '@/ui/object/record-board/options/components/RecordBoardOptionsDropdown';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
 
 import { HooksCompanyBoardEffect } from '../../components/HooksCompanyBoardEffect';
-import { CompanyBoardRecoilScopeContext } from '../../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -42,33 +39,26 @@ export const CompanyBoard = ({
 
   return (
     <StyledContainer>
-      <BoardContext.Provider
-        value={{
-          BoardRecoilScopeContext: CompanyBoardRecoilScopeContext,
-          onFieldsChange: (fields) => {
-            persistViewFields(mapBoardFieldDefinitionsToViewFields(fields));
-          },
+      <ViewBar
+        viewBarId={viewBarId}
+        optionsDropdownButton={<RecordBoardOptionsDropdown />}
+        optionsDropdownScopeId={BoardOptionsDropdownId}
+      />
+      <HooksCompanyBoardEffect viewBarId={viewBarId} />
+
+      <RecordBoardEffect
+        recordBoardId={recordBoardId}
+        onFieldsChange={(fields) => {
+          persistViewFields(mapBoardFieldDefinitionsToViewFields(fields));
         }}
-      >
-        <ViewBar
-          viewBarId={viewBarId}
-          optionsDropdownButton={<RecordBoardOptionsDropdown />}
-          optionsDropdownScopeId={BoardOptionsDropdownId}
-        />
-        <HooksCompanyBoardEffect
-          viewBarId={viewBarId}
-          recordBoardId={recordBoardId}
-        />
-        <RecordBoard
-          recordBoardId={recordBoardId}
-          boardOptions={opportunitiesBoardOptions}
-          onColumnAdd={onColumnAdd}
-          onColumnDelete={onColumnDelete}
-          onEditColumnTitle={onEditColumnTitle}
-        />
-        <RecordBoardActionBar />
-        <RecordBoardContextMenu />
-      </BoardContext.Provider>
+      />
+      <RecordBoard
+        recordBoardId={recordBoardId}
+        boardOptions={opportunitiesBoardOptions}
+        onColumnAdd={onColumnAdd}
+        onColumnDelete={onColumnDelete}
+        onEditColumnTitle={onEditColumnTitle}
+      />
     </StyledContainer>
   );
 };

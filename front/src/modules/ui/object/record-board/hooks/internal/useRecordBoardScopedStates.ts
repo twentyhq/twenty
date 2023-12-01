@@ -25,11 +25,15 @@ export const useRecordBoardScopedStates = (
     savedBoardColumnsState,
     boardFiltersState,
     boardSortsState,
+    onFieldsChangeState,
     boardCardFieldsByKeySelector,
     canPersistBoardCardFieldsScopedFamilySelector,
     hiddenBoardCardFieldsSelector,
     selectedCardIdsSelector,
     visibleBoardCardFieldsSelector,
+    savedCompaniesState,
+    savedOpportunitiesState,
+    savedPipelineStepsState,
   } = getRecordBoardScopedStates({
     recordBoardScopeId: scopeId,
   });
@@ -44,10 +48,14 @@ export const useRecordBoardScopedStates = (
     savedBoardColumnsState,
     boardFiltersState,
     boardSortsState,
+    onFieldsChangeState,
     boardCardFieldsByKeySelector,
     canPersistBoardCardFieldsScopedFamilySelector,
     hiddenBoardCardFieldsSelector,
     selectedCardIdsSelector,
     visibleBoardCardFieldsSelector,
+    savedCompaniesState,
+    savedOpportunitiesState,
+    savedPipelineStepsState,
   };
 };

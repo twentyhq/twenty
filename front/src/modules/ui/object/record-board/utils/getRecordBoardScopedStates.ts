@@ -5,7 +5,11 @@ import { boardFiltersScopedState } from '@/ui/object/record-board/states/boardFi
 import { boardSortsScopedState } from '@/ui/object/record-board/states/boardSortsScopedState';
 import { isBoardLoadedScopedState } from '@/ui/object/record-board/states/isBoardLoadedScopedState';
 import { isCompactViewEnabledScopedState } from '@/ui/object/record-board/states/isCompactViewEnabledScopedState';
+import { onFieldsChangeScopedState } from '@/ui/object/record-board/states/onFieldsChangeScopedState';
 import { savedBoardColumnsScopedState } from '@/ui/object/record-board/states/savedBoardColumnsScopedState';
+import { savedCompaniesScopedState } from '@/ui/object/record-board/states/savedCompaniesScopedState';
+import { savedOpportunitiesScopedState } from '@/ui/object/record-board/states/savedOpportunitiesScopedState';
+import { savedPipelineStepsScopedState } from '@/ui/object/record-board/states/savedPipelineStepsScopedState';
 import { boardCardFieldsByKeyScopedSelector } from '@/ui/object/record-board/states/selectors/boardCardFieldsByKeyScopedSelector';
 import { canPersistBoardCardFieldsScopedFamilySelector } from '@/ui/object/record-board/states/selectors/canPersistBoardCardFieldsScopedFamilySelector';
 import { hiddenBoardCardFieldsScopedSelector } from '@/ui/object/record-board/states/selectors/hiddenBoardCardFieldsScopedSelector';
@@ -58,6 +62,26 @@ export const getRecordBoardScopedStates = ({
     recordBoardScopeId,
   );
 
+  const savedCompaniesState = getScopedState(
+    savedCompaniesScopedState,
+    recordBoardScopeId,
+  );
+
+  const savedOpportunitiesState = getScopedState(
+    savedOpportunitiesScopedState,
+    recordBoardScopeId,
+  );
+
+  const savedPipelineStepsState = getScopedState(
+    savedPipelineStepsScopedState,
+    recordBoardScopeId,
+  );
+
+  const onFieldsChangeState = getScopedState(
+    onFieldsChangeScopedState,
+    recordBoardScopeId,
+  );
+
   // TODO: Family scoped selector
   const boardCardFieldsByKeySelector =
     boardCardFieldsByKeyScopedSelector(recordBoardScopeId);
@@ -83,10 +107,14 @@ export const getRecordBoardScopedStates = ({
     savedBoardColumnsState,
     boardFiltersState,
     boardSortsState,
+    onFieldsChangeState,
     boardCardFieldsByKeySelector,
     canPersistBoardCardFieldsScopedFamilySelector,
     hiddenBoardCardFieldsSelector,
     selectedCardIdsSelector,
     visibleBoardCardFieldsSelector,
+    savedCompaniesState,
+    savedOpportunitiesState,
+    savedPipelineStepsState,
   };
 };

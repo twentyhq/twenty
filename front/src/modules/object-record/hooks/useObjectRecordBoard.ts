@@ -1,18 +1,23 @@
-import { useRecoilValue } from 'recoil';
+import { useCallback } from 'react';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
+import { pipelineSteps } from '@/companies/__stories__/mock-data';
+import { Company } from '@/companies/types/Company';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
+import { Opportunity } from '@/pipeline/types/Opportunity';
+import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { turnFiltersIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClause';
 import { turnSortsIntoOrderBy } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
+import { useUpdateCompanyBoardCardIdsInternal } from '@/ui/object/record-board/hooks/internal/useUpdateCompanyBoardCardIdsInternal';
 import { useRecordBoard } from '@/ui/object/record-board/hooks/useRecordBoard';
-
-import { getRecordOptimisticEffectDefinition } from '../graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
 
 import { useFindManyRecords } from './useFindManyRecords';
 
 export const useObjectRecordBoard = () => {
-  const { scopeId: objectNamePlural, setRecordBoardData } = useRecordBoard();
+  const { scopeId: objectNamePlural } = useRecordBoard();
+  const updateCompanyBoardCardIds = useUpdateCompanyBoardCardIdsInternal();
 
   const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
     {
@@ -20,14 +25,27 @@ export const useObjectRecordBoard = () => {
     },
   );
 
-  const { registerOptimisticEffect } = useOptimisticEffect({
-    objectNameSingular: foundObjectMetadataItem?.nameSingular,
-  });
+  const {
+    isBoardLoadedState,
+    boardFiltersState,
+    boardSortsState,
+    savedCompaniesState,
+    savedOpportunitiesState,
+    savedPipelineStepsState,
+  } = useRecordBoardScopedStates();
 
-  const { boardFiltersState, boardSortsState } = useRecordBoardScopedStates();
+  const setIsBoardLoaded = useSetRecoilState(isBoardLoadedState);
 
   const boardFilters = useRecoilValue(boardFiltersState);
   const boardSorts = useRecoilValue(boardSortsState);
+
+  const setSavedCompanies = useSetRecoilState(savedCompaniesState);
+
+  const [savedOpportunities, setSavedOpportunities] = useRecoilState(
+    savedOpportunitiesState,
+  );
+
+  const setSavedPipelineSteps = useSetRecoilState(savedPipelineStepsState);
 
   const filter = turnFiltersIntoWhereClause(
     boardFilters,
@@ -38,29 +56,63 @@ export const useObjectRecordBoard = () => {
     foundObjectMetadataItem?.fields ?? [],
   );
 
-  const { records, loading, fetchMoreRecords } = useFindManyRecords({
-    objectNamePlural,
-    filter,
-    orderBy,
-    onCompleted: (data) => {
-      const entities = data.edges.map((edge) => edge.node) ?? [];
+  useFindManyRecords({
+    objectNamePlural: 'pipelineSteps',
+    filter: {},
+    onCompleted: useCallback(
+      (data: PaginatedRecordTypeResults<PipelineStep>) => {
+        setSavedPipelineSteps(data.edges.map((edge) => edge.node));
+      },
+      [setSavedPipelineSteps],
+    ),
+  });
 
-      setRecordBoardData(entities);
+  const {
+    records: opportunities,
+    loading,
+    fetchMoreRecords: fetchMoreOpportunities,
+  } = useFindManyRecords({
+    skip: !pipelineSteps.length,
+    objectNamePlural: 'opportunities',
+    filter: filter,
+    orderBy: orderBy,
+    onCompleted: useCallback(
+      (data: PaginatedRecordTypeResults<Opportunity>) => {
+        const pipelineProgresses: Array<Opportunity> = data.edges.map(
+          (edge) => edge.node,
+        );
 
-      if (foundObjectMetadataItem) {
-        registerOptimisticEffect({
-          variables: { orderBy, filter, limit: 60 },
-          definition: getRecordOptimisticEffectDefinition({
-            objectMetadataItem: foundObjectMetadataItem,
-          }),
-        });
-      }
+        updateCompanyBoardCardIds(pipelineProgresses);
+
+        setSavedOpportunities(pipelineProgresses);
+        setIsBoardLoaded(true);
+      },
+      [setIsBoardLoaded, setSavedOpportunities, updateCompanyBoardCardIds],
+    ),
+  });
+
+  const { fetchMoreRecords: fetchMoreCompanies } = useFindManyRecords({
+    skip: !savedOpportunities.length,
+    objectNamePlural: 'companies',
+    filter: {
+      id: {
+        in: savedOpportunities.map(
+          (opportunity) => opportunity.companyId || '',
+        ),
+      },
     },
+    onCompleted: useCallback(
+      (data: PaginatedRecordTypeResults<Company>) => {
+        setSavedCompanies(data.edges.map((edge) => edge.node));
+      },
+      [setSavedCompanies],
+    ),
   });
 
   return {
-    records,
+    opportunities,
     loading,
-    fetchMoreRecords,
+    fetchMoreOpportunities,
+    fetchMoreCompanies,
   };
 };

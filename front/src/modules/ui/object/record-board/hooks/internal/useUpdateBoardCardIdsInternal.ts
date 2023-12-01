@@ -2,12 +2,27 @@ import { DropResult } from '@hello-pangea/dnd'; // Atlassian dnd does not suppor
 import { useRecoilCallback } from 'recoil';
 
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
+import { RecordBoardScopeInternalContext } from '@/ui/object/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
+import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
 import { boardCardIdsByColumnIdFamilyState } from '../../states/boardCardIdsByColumnIdFamilyState';
 import { BoardColumnDefinition } from '../../types/BoardColumnDefinition';
 
-export const useUpdateBoardCardIdsInternal = () => {
-  const { boardColumnsState } = useRecordBoardScopedStates();
+type useUpdateBoardCardIdsInternalProps = {
+  recordBoardScopeId?: string;
+};
+
+export const useUpdateBoardCardIdsInternal = (
+  props: useUpdateBoardCardIdsInternalProps,
+) => {
+  const scopeId = useAvailableScopeIdOrThrow(
+    RecordBoardScopeInternalContext,
+    props?.recordBoardScopeId,
+  );
+
+  const { boardColumnsState } = useRecordBoardScopedStates({
+    recordBoardScopeId: scopeId,
+  });
 
   return useRecoilCallback(
     ({ snapshot, set }) =>

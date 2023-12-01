@@ -6,6 +6,9 @@ import { useRecoilValue } from 'recoil';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
+import { RecordBoardActionBar } from '@/ui/object/record-board/action-bar/components/RecordBoardActionBar';
+import { RecordBoardInternalEffect } from '@/ui/object/record-board/components/RecordBoardInternalEffect';
+import { RecordBoardContextMenu } from '@/ui/object/record-board/context-menu/components/RecordBoardContextMenu';
 import { BoardColumnContext } from '@/ui/object/record-board/contexts/BoardColumnContext';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 import { useSetCardSelectedInternal } from '@/ui/object/record-board/hooks/internal/useSetCardSelectedInternal';
@@ -74,7 +77,7 @@ export const RecordBoard = ({
     });
 
   const { unselectAllActiveCards, setCardSelected } =
-    useSetCardSelectedInternal();
+    useSetCardSelectedInternal({ recordBoardScopeId });
 
   const updatePipelineProgressStageInDB = useCallback(
     async (pipelineProgressId: string, pipelineStepId: string) => {
@@ -94,7 +97,9 @@ export const RecordBoard = ({
     callback: unselectAllActiveCards,
   });
 
-  const updateBoardCardIds = useUpdateBoardCardIdsInternal();
+  const updateBoardCardIds = useUpdateBoardCardIdsInternal({
+    recordBoardScopeId,
+  });
 
   const onDragEnd: OnDragEndResponder = useCallback(
     async (result) => {
@@ -138,6 +143,10 @@ export const RecordBoard = ({
 
   return (
     <RecordBoardScope recordBoardScopeId={recordBoardId}>
+      <RecordBoardContextMenu />
+      <RecordBoardActionBar />
+      <RecordBoardInternalEffect />
+
       <StyledWrapper>
         <StyledBoardHeader />
         <ScrollWrapper>

@@ -11,7 +11,6 @@ import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
 import { BoardCardIdContext } from '@/ui/object/record-board/contexts/BoardCardIdContext';
 import { useCurrentCardSelectedInternal } from '@/ui/object/record-board/hooks/internal/useCurrentCardSelectedInternal';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
-import { useBoardContext } from '@/ui/object/record-board/hooks/useBoardContext';
 import { isCardInCompactViewFamilyState } from '@/ui/object/record-board/states/isCardInCompactViewFamilyState';
 import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
@@ -123,8 +122,6 @@ const StyledCompactIconContainer = styled.div`
 `;
 
 export const CompanyBoardCard = () => {
-  const { BoardRecoilScopeContext } = useBoardContext();
-
   const { isCurrentCardSelected, setCurrentCardSelected } =
     useCurrentCardSelectedInternal();
   const boardCardId = useContext(BoardCardIdContext);

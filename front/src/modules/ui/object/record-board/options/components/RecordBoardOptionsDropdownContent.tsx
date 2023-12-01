@@ -1,10 +1,9 @@
-import { useCallback, useContext, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { v4 } from 'uuid';
 
-import { BoardContext } from '@/companies/states/contexts/BoardContext';
 import {
   IconBaselineDensitySmall,
   IconChevronLeft,
@@ -50,7 +49,6 @@ export const RecordBoardOptionsDropdownContent = ({
 }: RecordBoardOptionsDropdownContentProps) => {
   const { setViewEditMode, handleViewNameSubmit } = useViewBar();
   const { viewEditModeState, currentViewSelector } = useViewScopedStates();
-  const { BoardRecoilScopeContext } = useContext(BoardContext);
 
   const viewEditMode = useRecoilValue(viewEditModeState);
   const currentView = useRecoilValue(currentViewSelector);
