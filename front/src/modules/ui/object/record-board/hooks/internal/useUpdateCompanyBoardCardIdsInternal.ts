@@ -16,10 +16,11 @@ export const useUpdateCompanyBoardCardIdsInternal = () => {
 
         for (const boardColumn of boardColumns) {
           const boardCardIds = pipelineProgresses
-            .filter(
-              (pipelineProgressToFilter) =>
-                pipelineProgressToFilter.pipelineStepId === boardColumn.id,
-            )
+            .filter((pipelineProgressToFilter) => {
+              console.log(pipelineProgressToFilter.pipelineStepId);
+              console.log(boardColumn);
+              return pipelineProgressToFilter.pipelineStepId === boardColumn.id;
+            })
             .map((pipelineProgress) => pipelineProgress.id);
 
           set(boardCardIdsByColumnIdFamilyState(boardColumn.id), boardCardIds);

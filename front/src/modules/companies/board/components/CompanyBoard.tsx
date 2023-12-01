@@ -41,7 +41,9 @@ export const CompanyBoard = ({
     <StyledContainer>
       <ViewBar
         viewBarId={viewBarId}
-        optionsDropdownButton={<RecordBoardOptionsDropdown />}
+        optionsDropdownButton={
+          <RecordBoardOptionsDropdown recordBoardId={recordBoardId} />
+        }
         optionsDropdownScopeId={BoardOptionsDropdownId}
       />
       <HooksCompanyBoardEffect viewBarId={viewBarId} />

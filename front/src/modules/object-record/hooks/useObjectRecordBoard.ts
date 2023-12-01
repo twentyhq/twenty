@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { pipelineSteps } from '@/companies/__stories__/mock-data';
 import { Company } from '@/companies/types/Company';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
@@ -45,7 +44,9 @@ export const useObjectRecordBoard = () => {
     savedOpportunitiesState,
   );
 
-  const setSavedPipelineSteps = useSetRecoilState(savedPipelineStepsState);
+  const [savedPipelineSteps, setSavedPipelineSteps] = useRecoilState(
+    savedPipelineStepsState,
+  );
 
   const filter = turnFiltersIntoWhereClause(
     boardFilters,
@@ -72,7 +73,7 @@ export const useObjectRecordBoard = () => {
     loading,
     fetchMoreRecords: fetchMoreOpportunities,
   } = useFindManyRecords({
-    skip: !pipelineSteps.length,
+    skip: !savedPipelineSteps.length,
     objectNamePlural: 'opportunities',
     filter: filter,
     orderBy: orderBy,

@@ -11,8 +11,17 @@ import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-i
 
 import { boardCardFieldsFamilyState } from '../../states/boardCardFieldsFamilyState';
 
-export const useBoardCardFieldsInternal = () => {
-  const scopeId = useAvailableScopeIdOrThrow(RecordBoardScopeInternalContext);
+type useBoardCardFieldsInternalProps = {
+  recordBoardScopeId?: string;
+};
+
+export const useBoardCardFieldsInternal = (
+  props?: useBoardCardFieldsInternalProps,
+) => {
+  const scopeId = useAvailableScopeIdOrThrow(
+    RecordBoardScopeInternalContext,
+    props?.recordBoardScopeId,
+  );
 
   const setBoardCardFields = useSetRecoilState(
     boardCardFieldsFamilyState(scopeId),

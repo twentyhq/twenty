@@ -33,6 +33,7 @@ import { BoardOptionsHotkeyScope } from '../../types/BoardOptionsHotkeyScope';
 
 export type RecordBoardOptionsDropdownContentProps = {
   onStageAdd?: (boardColumn: BoardColumnDefinition) => void;
+  recordBoardId: string;
 };
 
 type BoardOptionsMenu = 'fields' | 'stage-creation' | 'stages';
@@ -46,6 +47,7 @@ type ColumnForCreate = {
 
 export const RecordBoardOptionsDropdownContent = ({
   onStageAdd,
+  recordBoardId,
 }: RecordBoardOptionsDropdownContentProps) => {
   const { setViewEditMode, handleViewNameSubmit } = useViewBar();
   const { viewEditModeState, currentViewSelector } = useViewScopedStates();
@@ -65,7 +67,7 @@ export const RecordBoardOptionsDropdownContent = ({
     isCompactViewEnabledState,
     hiddenBoardCardFieldsSelector,
     visibleBoardCardFieldsSelector,
-  } = useRecordBoardScopedStates();
+  } = useRecordBoardScopedStates({ recordBoardScopeId: recordBoardId });
 
   const [boardColumns, setBoardColumns] = useRecoilState(boardColumnsState);
   const [isCompactViewEnabled, setIsCompactViewEnabled] = useRecoilState(
@@ -104,7 +106,9 @@ export const RecordBoardOptionsDropdownContent = ({
   };
 
   const { handleFieldVisibilityChange, handleFieldsReorder } =
-    useBoardCardFieldsInternal();
+    useBoardCardFieldsInternal({
+      recordBoardScopeId: recordBoardId,
+    });
 
   const { closeDropdown } = useDropdown();
 

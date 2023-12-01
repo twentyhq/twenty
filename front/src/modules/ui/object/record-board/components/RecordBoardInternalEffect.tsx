@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { pipelineSteps } from '@/companies/__stories__/mock-data';
 import { useObjectRecordBoard } from '@/object-record/hooks/useObjectRecordBoard';
 import { useBoardActionBarEntriesInternal } from '@/ui/object/record-board/hooks/internal/useBoardActionBarEntriesInternal';
 import { useBoardContextMenuEntriesInternal } from '@/ui/object/record-board/hooks/internal/useBoardContextMenuEntriesInternal';
@@ -33,9 +32,13 @@ export const RecordBoardInternalEffect = ({}) => {
     }
   }, [fetchMoreCompanies]);
 
-  const { savedOpportunitiesState, savedCompaniesState } =
-    useRecordBoardScopedStates();
+  const {
+    savedPipelineStepsState,
+    savedOpportunitiesState,
+    savedCompaniesState,
+  } = useRecordBoardScopedStates();
 
+  const savedPipelineSteps = useRecoilValue(savedPipelineStepsState);
   const savedOpportunities = useRecoilValue(savedOpportunitiesState);
   const savedCompanies = useRecoilValue(savedCompaniesState);
 
@@ -45,7 +48,7 @@ export const RecordBoardInternalEffect = ({}) => {
       setContextMenuEntries();
 
       updateCompanyColumnsBoardInternal(
-        pipelineSteps,
+        savedPipelineSteps,
         savedOpportunities,
         savedCompanies,
       );
@@ -54,6 +57,7 @@ export const RecordBoardInternalEffect = ({}) => {
   }, [
     savedCompanies,
     savedOpportunities,
+    savedPipelineSteps,
     setActionBarEntries,
     setContextMenuEntries,
     updateCompanyColumnsBoardInternal,

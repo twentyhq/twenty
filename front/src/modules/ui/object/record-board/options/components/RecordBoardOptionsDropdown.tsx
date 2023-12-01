@@ -13,11 +13,12 @@ import {
 
 type RecordBoardOptionsDropdownProps = Pick<
   RecordBoardOptionsDropdownContentProps,
-  'onStageAdd'
+  'onStageAdd' | 'recordBoardId'
 >;
 
 export const RecordBoardOptionsDropdown = ({
   onStageAdd,
+  recordBoardId,
 }: RecordBoardOptionsDropdownProps) => {
   const { setViewEditMode } = useViewBar();
 
@@ -26,7 +27,10 @@ export const RecordBoardOptionsDropdown = ({
       <Dropdown
         clickableComponent={<RecordBoardOptionsDropdownButton />}
         dropdownComponents={
-          <RecordBoardOptionsDropdownContent onStageAdd={onStageAdd} />
+          <RecordBoardOptionsDropdownContent
+            onStageAdd={onStageAdd}
+            recordBoardId={recordBoardId}
+          />
         }
         dropdownHotkeyScope={{ scope: BoardOptionsHotkeyScope.Dropdown }}
         onClickOutside={() => setViewEditMode('none')}
