@@ -44,35 +44,35 @@ export class WorkspaceQueryBuilderFactory {
   >(
     args: FindManyResolverArgs<Filter, OrderBy>,
     options: WorkspaceQueryBuilderOptions,
-  ): string {
+  ): Promise<string> {
     return this.findManyQueryFactory.create<Filter, OrderBy>(args, options);
   }
 
   findOne<Filter extends RecordFilter = RecordFilter>(
     args: FindOneResolverArgs<Filter>,
     options: WorkspaceQueryBuilderOptions,
-  ): string {
+  ): Promise<string> {
     return this.findOneQueryFactory.create<Filter>(args, options);
   }
 
   createMany<Record extends IRecord = IRecord>(
     args: CreateManyResolverArgs<Record>,
     options: WorkspaceQueryBuilderOptions,
-  ): string {
+  ): Promise<string> {
     return this.createManyQueryFactory.create<Record>(args, options);
   }
 
   updateOne<Record extends IRecord = IRecord>(
     initialArgs: UpdateOneResolverArgs<Record>,
     options: WorkspaceQueryBuilderOptions,
-  ): string {
+  ): Promise<string> {
     return this.updateOneQueryFactory.create<Record>(initialArgs, options);
   }
 
   deleteOne(
     args: DeleteOneResolverArgs,
     options: WorkspaceQueryBuilderOptions,
-  ): string {
+  ): Promise<string> {
     return this.deleteOneQueryFactory.create(args, options);
   }
 
@@ -82,14 +82,14 @@ export class WorkspaceQueryBuilderFactory {
   >(
     args: UpdateManyResolverArgs<Record, Filter>,
     options: WorkspaceQueryBuilderOptions,
-  ): string {
+  ): Promise<string> {
     return this.updateManyQueryFactory.create(args, options);
   }
 
   deleteMany<Filter extends RecordFilter = RecordFilter>(
     args: DeleteManyResolverArgs<Filter>,
     options: WorkspaceQueryBuilderOptions,
-  ): string {
+  ): Promise<string> {
     return this.deleteManyQueryFactory.create(args, options);
   }
 }

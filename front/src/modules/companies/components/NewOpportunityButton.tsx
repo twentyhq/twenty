@@ -78,7 +78,7 @@ export const NewOpportunityButton = () => {
     orderByField: 'createdAt',
     selectedIds: [],
     mappingFunction: (record: any) => identifiersMapper?.(record, 'company'),
-    objectNamePlural: 'companies',
+    objectNameSingular: 'company',
   });
 
   return (

@@ -37,6 +37,10 @@ export const RecordShowPage = () => {
     objectRecordId: string;
   }>();
 
+  if (!objectNameSingular) {
+    throw new Error(`Object name is not defined`);
+  }
+
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -44,7 +48,7 @@ export const RecordShowPage = () => {
   const { identifiersMapper } = useRelationPicker();
 
   const { favorites, createFavorite, deleteFavorite } = useFavorites({
-    objectNamePlural: objectMetadataItem?.namePlural,
+    objectNamePlural: objectMetadataItem.namePlural,
   });
 
   const [, setEntityFields] = useRecoilState(

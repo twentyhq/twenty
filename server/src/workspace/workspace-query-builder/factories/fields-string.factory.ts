@@ -23,7 +23,7 @@ export class FieldsStringFactory {
   create(
     info: GraphQLResolveInfo,
     fieldMetadataCollection: FieldMetadataInterface[],
-  ) {
+  ): Promise<string> {
     const selectedFields: Record<string, any> = graphqlFields(info);
 
     return this.createFieldsStringRecursive(
@@ -33,12 +33,12 @@ export class FieldsStringFactory {
     );
   }
 
-  createFieldsStringRecursive(
+  async createFieldsStringRecursive(
     info: GraphQLResolveInfo,
     selectedFields: Record<string, any>,
     fieldMetadataCollection: FieldMetadataInterface[],
     accumulator = '',
-  ): string {
+  ): Promise<string> {
     const fieldMetadataMap = new Map(
       fieldMetadataCollection.map((metadata) => [metadata.name, metadata]),
     );
@@ -54,7 +54,7 @@ export class FieldsStringFactory {
 
         // If the field is a relation field, we need to create a special alias
         if (isRelationFieldMetadataType(fieldMetadata.type)) {
-          const alias = this.relationFieldAliasFactory.create(
+          const alias = await this.relationFieldAliasFactory.create(
             fieldKey,
             fieldValue,
             fieldMetadata,
@@ -80,7 +80,7 @@ export class FieldsStringFactory {
         !isEmpty(fieldValue)
       ) {
         accumulator += `${fieldKey} {\n`;
-        accumulator = this.createFieldsStringRecursive(
+        accumulator = await this.createFieldsStringRecursive(
           info,
           fieldValue,
           fieldMetadataCollection,

@@ -28,6 +28,7 @@ export const useAuth = () => {
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
+
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
 

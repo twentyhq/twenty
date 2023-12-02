@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { CommandMenuSelectableListEffect } from '@/command-menu/components/CommandMenuSelectableListEffect';
+import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Person } from '@/people/types/Person';
 import { IconNotes } from '@/ui/display/icon';
@@ -89,6 +90,7 @@ export const CommandMenu = () => {
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [search, setSearch] = useState('');
   const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
+  const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
@@ -97,6 +99,7 @@ export const CommandMenu = () => {
   useScopedHotkeys(
     'ctrl+k,meta+k',
     () => {
+      closeKeyboardShortcutMenu();
       setSearch('');
       toggleCommandMenu();
     },
@@ -108,6 +111,7 @@ export const CommandMenu = () => {
     'esc',
     () => {
       setSearch('');
+      closeKeyboardShortcutMenu();
       closeCommandMenu();
     },
     AppHotkeyScope.CommandMenu,
@@ -116,7 +120,7 @@ export const CommandMenu = () => {
 
   const { records: people } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened,
-    objectNamePlural: 'people',
+    objectNameSingular: 'person',
     filter: {
       or: [
         { name: { firstName: { ilike: `%${search}%` } } },
@@ -128,7 +132,7 @@ export const CommandMenu = () => {
 
   const { records: companies } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened,
-    objectNamePlural: 'companies',
+    objectNameSingular: 'company',
     filter: {
       name: { ilike: `%${search}%` },
     },
@@ -137,7 +141,7 @@ export const CommandMenu = () => {
 
   const { records: activities } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened,
-    objectNamePlural: 'activities',
+    objectNameSingular: 'activity',
     filter: {
       or: [
         { title: { like: `%${search}%` } },

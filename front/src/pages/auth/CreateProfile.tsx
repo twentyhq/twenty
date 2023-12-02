@@ -62,10 +62,9 @@ export const CreateProfile = () => {
     currentWorkspaceMemberState,
   );
 
-  const { updateOneRecord, objectMetadataItemNotFound } =
-    useUpdateOneRecord<WorkspaceMember>({
-      objectNameSingular: 'workspaceMember',
-    });
+  const { updateOneRecord } = useUpdateOneRecord<WorkspaceMember>({
+    objectNameSingular: 'workspaceMember',
+  });
 
   // Form
   const {
@@ -90,9 +89,6 @@ export const CreateProfile = () => {
         }
         if (!data.firstName || !data.lastName) {
           throw new Error('First name or last name is missing');
-        }
-        if (!updateOneRecord || objectMetadataItemNotFound) {
-          throw new Error('Object not found in metadata');
         }
 
         await updateOneRecord({
@@ -127,7 +123,6 @@ export const CreateProfile = () => {
       currentWorkspaceMember?.id,
       enqueueSnackBar,
       navigate,
-      objectMetadataItemNotFound,
       setCurrentWorkspaceMember,
       updateOneRecord,
     ],

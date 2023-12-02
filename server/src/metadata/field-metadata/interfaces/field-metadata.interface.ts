@@ -16,6 +16,7 @@ export interface FieldMetadataInterface<
   defaultValue?: FieldMetadataDefaultValue<T>;
   options?: FieldMetadataOptions<T>;
   objectMetadataId: string;
+  workspaceId?: string;
   description?: string;
   isNullable?: boolean;
   fromRelationMetadata?: RelationMetadataEntity;

@@ -1,8 +1,6 @@
 import { useMemo } from 'react';
 import { useQuery } from '@apollo/client';
-import { useRecoilCallback } from 'recoil';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   FieldFilter,
@@ -10,7 +8,6 @@ import {
   ObjectMetadataItemsQuery,
   ObjectMetadataItemsQueryVariables,
 } from '~/generated-metadata/graphql';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';
 
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '../graphql/queries';
@@ -50,24 +47,6 @@ export const useFindManyObjectMetadataItems = ({
         },
       );
     },
-    onCompleted: useRecoilCallback(
-      ({ snapshot, set }) =>
-        (data) => {
-          const objectMetadataItems =
-            mapPaginatedObjectMetadataItemsToObjectMetadataItems({
-              pagedObjectMetadataItems: data,
-            });
-
-          const actualObjectMetadataItems = snapshot
-            .getLoadable(objectMetadataItemsState)
-            .getValue();
-
-          if (!isDeeplyEqual(objectMetadataItems, actualObjectMetadataItems)) {
-            set(objectMetadataItemsState, objectMetadataItems);
-          }
-        },
-      [],
-    ),
   });
 
   const objectMetadataItems = useMemo(() => {
