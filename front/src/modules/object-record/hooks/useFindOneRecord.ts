@@ -11,19 +11,18 @@ export const useFindOneRecord = <
   onCompleted,
   depth,
   skip,
-}: Pick<ObjectMetadataItemIdentifier, 'objectNameSingular'> & {
+}: ObjectMetadataItemIdentifier & {
   objectRecordId: string | undefined;
   onCompleted?: (data: ObjectType) => void;
   skip?: boolean;
   depth?: number;
 }) => {
-  const { objectMetadataItem, objectMetadataItemNotFound, findOneRecordQuery } =
-    useObjectMetadataItem(
-      {
-        objectNameSingular,
-      },
-      depth,
-    );
+  const { objectMetadataItem, findOneRecordQuery } = useObjectMetadataItem(
+    {
+      objectNameSingular,
+    },
+    depth,
+  );
 
   const { data, loading, error } = useQuery<
     { [nameSingular: string]: ObjectType },
@@ -34,19 +33,17 @@ export const useFindOneRecord = <
       objectRecordId: objectRecordId ?? '',
     },
     onCompleted: (data) => {
-      if (onCompleted && objectNameSingular) {
+      if (onCompleted) {
         onCompleted(data[objectNameSingular]);
       }
     },
   });
 
-  const record =
-    objectNameSingular && data ? data[objectNameSingular] : undefined;
+  const record = data ? data[objectNameSingular] : undefined;
 
   return {
     record,
     loading,
     error,
-    objectMetadataItemNotFound,
   };
 };

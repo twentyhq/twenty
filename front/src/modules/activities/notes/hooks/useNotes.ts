@@ -5,7 +5,7 @@ import { ActivityTargetableEntity } from '../../types/ActivityTargetableEntity';
 
 export const useNotes = (entity: ActivityTargetableEntity) => {
   const { records: activityTargets } = useFindManyRecords({
-    objectNamePlural: 'activityTargets',
+    objectNameSingular: 'activityTarget',
     filter: {
       [entity.type === 'Company' ? 'companyId' : 'personId']: { eq: entity.id },
     },
@@ -23,7 +23,7 @@ export const useNotes = (entity: ActivityTargetableEntity) => {
 
   const { records: notes } = useFindManyRecords({
     skip: !activityTargets?.length,
-    objectNamePlural: 'activities',
+    objectNameSingular: 'activity',
     filter,
     orderBy,
   });

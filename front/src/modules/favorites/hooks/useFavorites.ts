@@ -8,6 +8,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { Favorite } from '@/favorites/types/Favorite';
 import { mapFavorites } from '@/favorites/utils/mapFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
@@ -18,7 +19,7 @@ import { favoritesState } from '../states/favoritesState';
 export const useFavorites = ({
   objectNamePlural,
 }: {
-  objectNamePlural: string | undefined;
+  objectNamePlural: string;
 }) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
@@ -30,7 +31,7 @@ export const useFavorites = ({
     deleteOneRecordMutation: deleteOneFavoriteMutation,
     objectMetadataItem: favoriteObjectMetadataItem,
   } = useObjectMetadataItem({
-    objectNamePlural: 'favorites',
+    objectNameSingular: 'favorite',
   });
 
   const { registerOptimisticEffect, triggerOptimisticEffects } =
@@ -39,15 +40,19 @@ export const useFavorites = ({
     });
   const { performOptimisticEvict } = useOptimisticEvict();
 
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
+    objectNamePlural,
+  });
+
   const { objectMetadataItem: favoriteTargetObjectMetadataItem } =
     useObjectMetadataItem({
-      objectNamePlural,
+      objectNameSingular,
     });
 
   const apolloClient = useApolloClient();
 
   useFindManyRecords({
-    objectNamePlural: 'favorites',
+    objectNameSingular: 'favorite',
     onCompleted: useRecoilCallback(
       ({ snapshot, set }) =>
         async (data: PaginatedRecordTypeResults<Required<Favorite>>) => {

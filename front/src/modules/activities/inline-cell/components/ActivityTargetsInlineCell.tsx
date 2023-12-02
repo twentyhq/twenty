@@ -28,7 +28,7 @@ export const ActivityTargetsInlineCell = ({
     ) ?? [];
 
   const { records: activityTargets } = useFindManyRecords<ActivityTarget>({
-    objectNamePlural: 'activityTargets',
+    objectNameSingular: 'activityTarget',
     filter: { id: { in: activityTargetIds } },
   });
 

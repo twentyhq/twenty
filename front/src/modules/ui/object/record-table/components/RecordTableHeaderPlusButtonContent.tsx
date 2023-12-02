@@ -1,9 +1,12 @@
 import { useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { IconPlus } from '@/ui/display/icon';
+import { IconPlus, IconSettings } from '@/ui/display/icon';
 import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
@@ -31,21 +34,34 @@ export const RecordTableHeaderPlusButtonContent = () => {
     [handleColumnVisibilityChange, closeDropdown],
   );
 
+  const StyledMenuItemLink = styled(Link)`
+    text-decoration: none;
+    width: 100%;
+  `;
+
   return (
-    <DropdownMenuItemsContainer>
-      {hiddenTableColumns.map((column) => (
-        <MenuItem
-          key={column.fieldMetadataId}
-          iconButtons={[
-            {
-              Icon: IconPlus,
-              onClick: () => handleAddColumn(column),
-            },
-          ]}
-          LeftIcon={icons[column.iconName]}
-          text={column.label}
-        />
-      ))}
-    </DropdownMenuItemsContainer>
+    <>
+      <DropdownMenuItemsContainer>
+        {hiddenTableColumns.map((column) => (
+          <MenuItem
+            key={column.fieldMetadataId}
+            iconButtons={[
+              {
+                Icon: IconPlus,
+                onClick: () => handleAddColumn(column),
+              },
+            ]}
+            LeftIcon={icons[column.iconName]}
+            text={column.label}
+          />
+        ))}
+      </DropdownMenuItemsContainer>
+      <DropdownMenuSeparator />
+      <DropdownMenuItemsContainer>
+        <StyledMenuItemLink to="/settings/objects">
+          <MenuItem LeftIcon={IconSettings} text="Customize fields" />
+        </StyledMenuItemLink>
+      </DropdownMenuItemsContainer>
+    </>
   );
 };

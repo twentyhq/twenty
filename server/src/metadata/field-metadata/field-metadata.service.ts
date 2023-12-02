@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { v4 as uuidV4 } from 'uuid';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 
 import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
@@ -47,8 +47,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   ): Promise<FieldMetadataEntity> {
     const objectMetadata =
       await this.objectMetadataService.findOneWithinWorkspace(
-        record.objectMetadataId,
         record.workspaceId,
+        {
+          where: {
+            id: record.objectMetadataId,
+          },
+        },
       );
 
     if (!objectMetadata) {
@@ -156,8 +160,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     const objectMetadata =
       await this.objectMetadataService.findOneWithinWorkspace(
-        existingFieldMetadata?.objectMetadataId,
         record.workspaceId,
+        {
+          where: {
+            id: existingFieldMetadata?.objectMetadataId,
+          },
+        },
       );
 
     if (!objectMetadata) {
@@ -200,11 +208,15 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   }
 
   public async findOneWithinWorkspace(
-    fieldMetadataId: string,
     workspaceId: string,
+    options: FindOneOptions<FieldMetadataEntity>,
   ) {
     return this.fieldMetadataRepository.findOne({
-      where: { id: fieldMetadataId, workspaceId },
+      ...options,
+      where: {
+        ...options.where,
+        workspaceId,
+      },
     });
   }
 

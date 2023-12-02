@@ -107,7 +107,6 @@ export const PeopleCard = ({
     setIsOptionsOpen(!isOptionsOpen);
   };
 
-  // TODO: refactor with useObjectMetadataItem V2 with typed hooks
   const {
     findManyRecordsQuery,
     updateOneRecordMutation,

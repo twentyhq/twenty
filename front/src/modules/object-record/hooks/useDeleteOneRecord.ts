@@ -8,41 +8,40 @@ import { capitalize } from '~/utils/string/capitalize';
 
 export const useDeleteOneRecord = <T>({
   objectNameSingular,
-}: Pick<ObjectMetadataItemIdentifier, 'objectNameSingular'>) => {
+}: ObjectMetadataItemIdentifier) => {
   const { performOptimisticEvict } = useOptimisticEvict();
 
-  const {
-    objectMetadataItem,
-    objectMetadataItemNotFound,
-    deleteOneRecordMutation,
-  } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const { objectMetadataItem, deleteOneRecordMutation } = useObjectMetadataItem(
+    {
+      objectNameSingular,
+    },
+  );
 
   // TODO: type this with a minimal type at least with Record<string, any>
   const [mutate] = useMutation(deleteOneRecordMutation);
 
   const deleteOneRecord = useCallback(
     async (idToDelete: string) => {
-      if (!objectMetadataItem || !objectNameSingular) {
-        return null;
-      }
-
       const deletedRecord = await mutate({
         variables: {
           idToDelete,
         },
       });
 
-      performOptimisticEvict(capitalize(objectNameSingular), 'id', idToDelete);
+      performOptimisticEvict(
+        capitalize(objectMetadataItem.nameSingular),
+        'id',
+        idToDelete,
+      );
 
-      return deletedRecord.data[`create${capitalize(objectNameSingular)}`] as T;
+      return deletedRecord.data[
+        `create${capitalize(objectMetadataItem.nameSingular)}`
+      ] as T;
     },
-    [performOptimisticEvict, objectMetadataItem, mutate, objectNameSingular],
+    [performOptimisticEvict, objectMetadataItem, mutate],
   );
 
   return {
     deleteOneRecord,
-    objectMetadataItemNotFound,
   };
 };

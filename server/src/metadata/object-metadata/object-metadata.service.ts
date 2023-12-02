@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Equal, In, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 
 import { WorkspaceMigrationService } from 'src/metadata/workspace-migration/workspace-migration.service';
@@ -21,6 +21,7 @@ import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { createCustomColumnName } from 'src/metadata/utils/create-custom-column-name.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -63,7 +64,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const createdObjectMetadata = await super.createOne({
       ...record,
       dataSourceId: lastDataSourceMetadata.id,
-      targetTableName: `_${record.nameSingular}`,
+      targetTableName: createCustomColumnName(record.nameSingular),
       isActive: true,
       isCustom: true,
       isSystem: false,
@@ -298,39 +299,39 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     return createdObjectMetadata;
   }
 
-  public async getObjectMetadataFromWorkspaceId(workspaceId: string) {
-    return this.objectMetadataRepository.find({
-      where: { workspaceId },
+  public async findOneWithinWorkspace(
+    workspaceId: string,
+    options: FindOneOptions<ObjectMetadataEntity>,
+  ): Promise<ObjectMetadataEntity | null> {
+    return this.objectMetadataRepository.findOne({
+      ...options,
+      where: {
+        ...options.where,
+        workspaceId,
+      },
       relations: [
         'fields',
         'fields.fromRelationMetadata',
-        'fields.fromRelationMetadata.fromObjectMetadata',
-        'fields.fromRelationMetadata.toObjectMetadata',
-        'fields.fromRelationMetadata.toObjectMetadata.fields',
         'fields.toRelationMetadata',
-        'fields.toRelationMetadata.fromObjectMetadata',
-        'fields.toRelationMetadata.fromObjectMetadata.fields',
-        'fields.toRelationMetadata.toObjectMetadata',
       ],
     });
   }
 
-  public async findOneWithinWorkspace(
-    objectMetadataId: string,
-    workspaceId: string,
-  ) {
-    return this.objectMetadataRepository.findOne({
-      where: { id: objectMetadataId, workspaceId },
-    });
-  }
-
   public async findManyWithinWorkspace(
-    objectMetadataIds: string[],
     workspaceId: string,
+    options?: FindManyOptions<ObjectMetadataEntity>,
   ) {
-    return this.objectMetadataRepository.findBy({
-      id: In(objectMetadataIds),
-      workspaceId: Equal(workspaceId),
+    return this.objectMetadataRepository.find({
+      ...options,
+      where: {
+        ...options?.where,
+        workspaceId,
+      },
+      relations: [
+        'fields',
+        'fields.fromRelationMetadata',
+        'fields.toRelationMetadata',
+      ],
     });
   }
 

@@ -1,6 +1,7 @@
 import { QueryHookOptions, QueryResult } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { mapPaginatedRecordsToRecords } from '@/object-record/utils/mapPaginatedRecordsToRecords';
 import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
@@ -30,7 +31,7 @@ export const useFilteredSearchEntityQuery = ({
   mappingFunction,
   limit,
   excludeEntityIds = [],
-  objectNamePlural,
+  objectNameSingular,
 }: {
   queryHook: (
     queryOptions?: QueryHookOptions<any, any>,
@@ -42,8 +43,12 @@ export const useFilteredSearchEntityQuery = ({
   mappingFunction: (entity: any) => EntityForSelect | undefined;
   limit?: number;
   excludeEntityIds?: string[];
-  objectNamePlural: string;
+  objectNameSingular: string;
 }): EntitiesForMultipleEntitySelect<EntityForSelect> => {
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
   const { loading: selectedEntitiesLoading, data: selectedEntitiesData } =
     queryHook({
       variables: {
@@ -138,19 +143,19 @@ export const useFilteredSearchEntityQuery = ({
 
   return {
     selectedEntities: mapPaginatedRecordsToRecords({
-      objectNamePlural: objectNamePlural,
+      objectNamePlural: objectMetadataItem.namePlural,
       pagedRecords: selectedEntitiesData,
     })
       .map(mappingFunction)
       .filter(assertNotNull),
     filteredSelectedEntities: mapPaginatedRecordsToRecords({
-      objectNamePlural: objectNamePlural,
+      objectNamePlural: objectMetadataItem.namePlural,
       pagedRecords: filteredSelectedEntitiesData,
     })
       .map(mappingFunction)
       .filter(assertNotNull),
     entitiesToSelect: mapPaginatedRecordsToRecords({
-      objectNamePlural: objectNamePlural,
+      objectNamePlural: objectMetadataItem.namePlural,
       pagedRecords: entitiesToSelectData,
     })
       .map(mappingFunction)

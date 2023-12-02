@@ -3,6 +3,7 @@ import { BadRequestException } from '@nestjs/common';
 import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interfaces/field-metadata-target-column-map.interface';
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { createCustomColumnName } from 'src/metadata/utils/create-custom-column-name.util';
 
 /**
  * Generate a target column map for a given type, this is used to map the field to the correct column(s) in the database.
@@ -16,7 +17,9 @@ export function generateTargetColumnMap(
   isCustomField: boolean,
   fieldName: string,
 ): FieldMetadataTargetColumnMap {
-  const columnName = isCustomField ? `_${fieldName}` : fieldName;
+  const columnName = isCustomField
+    ? createCustomColumnName(fieldName)
+    : fieldName;
 
   switch (type) {
     case FieldMetadataType.UUID:

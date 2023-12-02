@@ -155,7 +155,7 @@ export class ExtendObjectTypeDefinitionFactory {
             argsType = this.argsFactory.create(
               {
                 args,
-                objectMetadata: relationMetadata.toObjectMetadata,
+                objectMetadataId: relationMetadata.toObjectMetadataId,
               },
               options,
             );

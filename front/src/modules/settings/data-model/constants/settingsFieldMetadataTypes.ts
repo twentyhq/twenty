@@ -12,6 +12,7 @@ import {
   IconTextSize,
   IconUser,
 } from '@/ui/display/icon';
+import { IconTwentyStar } from '@/ui/display/icon/components/IconTwentyStar';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -74,9 +75,9 @@ export const settingsFieldMetadataTypes: Record<
   [FieldMetadataType.Email]: { label: 'Email', Icon: IconMail },
   [FieldMetadataType.Phone]: { label: 'Phone', Icon: IconPhone },
   [FieldMetadataType.Probability]: {
-    label: 'Probability',
-    Icon: IconNumbers,
-    defaultValue: 50,
+    label: 'Rating',
+    Icon: IconTwentyStar,
+    defaultValue: '3',
   },
   [FieldMetadataType.FullName]: { label: 'Full Name', Icon: IconUser },
 };
