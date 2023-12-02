@@ -173,4 +173,8 @@ export class EnvironmentService {
   getSentryDSN(): string | undefined {
     return this.configService.get<string>('SENTRY_DSN');
   }
+
+  getDemoWorkspaceIds(): string[] {
+    return this.configService.get<string[]>('DEMO_WORKSPACE_IDS') ?? [];
+  }
 }

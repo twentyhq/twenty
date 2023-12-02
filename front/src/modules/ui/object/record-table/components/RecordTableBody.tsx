@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { useObjectRecordTable } from '@/object-record/hooks/useObjectRecordTable';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import {
   RecordTableRow,
@@ -12,8 +11,8 @@ import {
 } from '@/ui/object/record-table/components/RecordTableRow';
 import { RowIdContext } from '@/ui/object/record-table/contexts/RowIdContext';
 import { RowIndexContext } from '@/ui/object/record-table/contexts/RowIndexContext';
+import { useRecordTableScopedStates } from '@/ui/object/record-table/hooks/internal/useRecordTableScopedStates';
 import { isFetchingRecordTableDataState } from '@/ui/object/record-table/states/isFetchingRecordTableDataState';
-import { isDefined } from '~/utils/isDefined';
 
 import { useRecordTable } from '../hooks/useRecordTable';
 import { tableRowIdsState } from '../states/tableRowIdsState';
@@ -24,6 +23,8 @@ export const RecordTableBody = () => {
   const tableRowIds = useRecoilValue(tableRowIdsState);
 
   const { scopeId: objectNamePlural } = useRecordTable();
+  const { tableLastRowVisibleState } = useRecordTableScopedStates();
+  const setTableLastRowVisible = useSetRecoilState(tableLastRowVisibleState);
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
@@ -42,17 +43,11 @@ export const RecordTableBody = () => {
   const isFetchingRecordTableData = useRecoilValue(
     isFetchingRecordTableDataState,
   );
-
-  // Todo, move this to an effect to not trigger many re-renders
-  const { fetchMoreRecords: fetchMoreObjects } = useObjectRecordTable();
+  const lastRowId = tableRowIds[tableRowIds.length - 1];
 
   useEffect(() => {
-    if (lastTableRowIsVisible && isDefined(fetchMoreObjects)) {
-      fetchMoreObjects();
-    }
-  }, [lastTableRowIsVisible, fetchMoreObjects]);
-
-  const lastRowId = tableRowIds[tableRowIds.length - 1];
+    setTableLastRowVisible(lastTableRowIsVisible);
+  }, [lastTableRowIsVisible, setTableLastRowVisible]);
 
   if (isFetchingRecordTableData) {
     return <></>;

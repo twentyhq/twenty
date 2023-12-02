@@ -3,15 +3,15 @@ import { DataSource } from 'typeorm';
 import {
   seedUsers,
   deleteUsersByWorkspace,
-} from 'src/database/typeorm-seeds/core/users';
+} from 'src/database/typeorm-seeds/core/demo/users';
 import {
   seedWorkspaces,
   deleteWorkspaces,
-} from 'src/database/typeorm-seeds/core/workspaces';
+} from 'src/database/typeorm-seeds/core/demo/workspaces';
 import {
   seedFeatureFlags,
   deleteFeatureFlags,
-} from 'src/database/typeorm-seeds/core/feature-flags';
+} from 'src/database/typeorm-seeds/core/demo/feature-flags';
 
 export const seedCoreSchema = async (
   workspaceDataSource: DataSource,
