@@ -153,4 +153,9 @@ export class EnvironmentService {
   getSentryDSN(): string | undefined {
     return this.configService.get<string>('SENTRY_DSN');
   }
+
+  getDemoWorkspaces(): string[] | undefined {
+    const demoWorkspaces = this.configService.get<string>('DEMO_WORKSPACES');
+    return demoWorkspaces ? JSON.parse(demoWorkspaces) : undefined;
+  }
 }

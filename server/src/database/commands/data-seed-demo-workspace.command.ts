@@ -19,9 +19,6 @@ import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspa
     'Seed workspace with demo data. This command is intended for development only.',
 })
 export class DataSeedDemoWorkspaceCommand extends CommandRunner {
-  // TODO: get workspaceId from
-  workspaceId = '20202020-1c25-4d02-bf25-6aeccf7e1337';
-
   constructor(
     private readonly environmentService: EnvironmentService,
     private readonly dataSourceService: DataSourceService,
@@ -42,12 +39,22 @@ export class DataSeedDemoWorkspaceCommand extends CommandRunner {
         schema: 'public',
       });
       await dataSource.initialize();
+      const demoWorkspaceIds = this.environmentService.getDemoWorkspaces();
 
-      await deleteCoreSchema(dataSource, this.workspaceId);
-      await this.workspaceManagerService.delete(this.workspaceId);
+      if (!demoWorkspaceIds) {
+        throw new Error(
+          'Could not get DEMO_WORKSPACES. Please specify in .env',
+        );
+      }
+      // DEMO_WORKSPACES is an array
+      for (const workspaceId of demoWorkspaceIds) {
+        console.log('workspaceId: ', workspaceId);
+        await deleteCoreSchema(dataSource, workspaceId);
+        await this.workspaceManagerService.delete(workspaceId);
 
-      await seedCoreSchema(dataSource, this.workspaceId);
-      await this.workspaceManagerService.initDemo(this.workspaceId);
+        await seedCoreSchema(dataSource, workspaceId);
+        await this.workspaceManagerService.initDemo(workspaceId);
+      }
     } catch (error) {
       console.error(error);
       return;
