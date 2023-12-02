@@ -18,7 +18,6 @@ export enum SeedWebhookFieldMetadataIds {
 export const seedWebhookFieldMetadata = async (
   workspaceDataSource: DataSource,
   schemaName: string,
-  workspaceId: string,
 ) => {
   await workspaceDataSource
     .createQueryBuilder()
