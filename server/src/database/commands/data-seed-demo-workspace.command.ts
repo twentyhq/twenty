@@ -8,7 +8,7 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import {
   deleteCoreSchema,
   seedCoreSchema,
-} from 'src/database/typeorm-seeds/core';
+} from 'src/database/typeorm-seeds/core/demo';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
 
@@ -46,9 +46,8 @@ export class DataSeedDemoWorkspaceCommand extends CommandRunner {
           'Could not get DEMO_WORKSPACES. Please specify in .env',
         );
       }
-      // DEMO_WORKSPACES is an array
+      // DEMO_WORKSPACES is an array, iterate over to create as many as defined in the config
       for (const workspaceId of demoWorkspaceIds) {
-        console.log('workspaceId: ', workspaceId);
         await deleteCoreSchema(dataSource, workspaceId);
         await this.workspaceManagerService.delete(workspaceId);
 
