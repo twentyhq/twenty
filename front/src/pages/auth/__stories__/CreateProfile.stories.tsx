@@ -9,6 +9,7 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
+import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
 
 import { GET_CURRENT_USER } from '../../../modules/users/graphql/queries/getCurrentUser';
@@ -36,22 +37,7 @@ const meta: Meta<PageDecoratorArgs> = {
         (req, res, ctx) => {
           return res(
             ctx.data({
-              clientConfig: {
-                signInPrefilled: true,
-                dataModelSettingsEnabled: true,
-                developersSettingsEnabled: true,
-                debugMode: false,
-                authProviders: {
-                  google: true,
-                  password: true,
-                  magicLink: false,
-                },
-                telemetry: { enabled: false, anonymizationEnabled: true },
-                support: {
-                  supportDriver: 'front',
-                  supportFrontChatId: null,
-                },
-              },
+              clientConfig: mockedClientConfig,
             }),
           );
         },

@@ -3,18 +3,18 @@ import { User, Workspace } from '~/generated/graphql';
 
 type MockedUser = Pick<
   User,
-  | '__typename'
   | 'id'
   | 'email'
   | 'firstName'
   | 'lastName'
   | 'canImpersonate'
+  | '__typename'
   | 'supportUserHash'
 > & {
   workspaceMember: WorkspaceMember;
   defaultWorkspace: Pick<
     Workspace,
-    'id' | 'displayName' | 'logo' | 'domainName' | 'inviteHash'
+    'id' | 'displayName' | 'domainName' | 'inviteHash' | 'logo'
   >;
 };
 
@@ -25,8 +25,8 @@ export const workspaceLogoUrl =
 
 export const mockedUsersData: Array<MockedUser> = [
   {
-    __typename: 'User',
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
+    __typename: 'User',
     email: 'charles@test.com',
     firstName: 'Charles',
     lastName: 'Test',
@@ -54,8 +54,8 @@ export const mockedUsersData: Array<MockedUser> = [
     },
   } as MockedUser,
   {
-    __typename: 'User',
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6c',
+    __typename: 'User',
     email: 'felix@test.com',
     firstName: 'Felix',
     lastName: 'Test',
@@ -86,8 +86,8 @@ export const mockedUsersData: Array<MockedUser> = [
 
 export const mockedOnboardingUsersData: Array<MockedUser> = [
   {
-    __typename: 'User',
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
+    __typename: 'User',
     email: 'workspace-onboarding@test.com',
     firstName: '',
     lastName: '',
@@ -115,8 +115,8 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
     },
   } as MockedUser,
   {
-    __typename: 'User',
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6c',
+    __typename: 'User',
     email: 'profile-onboarding@test.com',
     firstName: '',
     lastName: '',
