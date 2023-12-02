@@ -38,6 +38,13 @@ export const standardObjectsMetadata = {
   workspaceMember: workspaceMemberMetadata,
 };
 
+export const standardObjectsNames = Object.values(standardObjectsMetadata)
+  .map((v) => [
+    v.namePlural.trim().toLowerCase(),
+    v.nameSingular.trim().toLocaleLowerCase(),
+  ])
+  .flat();
+
 export const basicFieldsMetadata: Partial<FieldMetadataEntity>[] = [
   {
     name: 'id',

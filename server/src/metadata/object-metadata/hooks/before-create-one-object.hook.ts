@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 
 import {
   BeforeCreateOneHook,
@@ -6,6 +10,16 @@ import {
 } from '@ptc-org/nestjs-query-graphql';
 
 import { CreateObjectInput } from 'src/metadata/object-metadata/dtos/create-object.input';
+import { standardObjectsNames } from 'src/workspace/workspace-manager/standard-objects/standard-object-metadata';
+
+const OBJECT_TYPES = [
+  'featureflag',
+  'refreshtoken',
+  'userworkspacemembername',
+  'userworkspacemember',
+  'workspace',
+  ...standardObjectsNames,
+];
 
 @Injectable()
 export class BeforeCreateOneObject<T extends CreateObjectInput>
@@ -21,6 +35,14 @@ export class BeforeCreateOneObject<T extends CreateObjectInput>
       throw new UnauthorizedException();
     }
 
+    if (
+      OBJECT_TYPES.includes(instance.input.nameSingular.trim().toLowerCase()) ||
+      OBJECT_TYPES.includes(instance.input.nameSingular.trim().toLowerCase())
+    ) {
+      throw new ForbiddenException(
+        'You cannot create an object with this type.',
+      );
+    }
     instance.input.workspaceId = workspaceId;
     return instance;
   }
