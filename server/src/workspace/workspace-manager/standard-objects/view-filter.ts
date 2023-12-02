@@ -14,7 +14,7 @@ const viewFilterMetadata = {
     {
       isCustom: false,
       isActive: true,
-      type: FieldMetadataType.TEXT,
+      type: FieldMetadataType.UUID,
       name: 'fieldMetadataId',
       label: 'Field Metadata Id',
       targetColumnMap: {
@@ -23,7 +23,6 @@ const viewFilterMetadata = {
       description: 'View Filter target field',
       icon: null,
       isNullable: false,
-      defaultValue: { value: '' },
     },
     {
       isCustom: false,

@@ -3,17 +3,20 @@ import { useInView } from 'react-intersection-observer';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useObjectRecordTable } from '@/object-record/hooks/useObjectRecordTable';
-import { isFetchingMoreObjectsFamilyState } from '@/object-record/states/isFetchingMoreObjectsFamilyState';
+import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
+import {
+  RecordTableRow,
+  StyledRow,
+} from '@/ui/object/record-table/components/RecordTableRow';
+import { RowIdContext } from '@/ui/object/record-table/contexts/RowIdContext';
+import { RowIndexContext } from '@/ui/object/record-table/contexts/RowIndexContext';
+import { isFetchingRecordTableDataState } from '@/ui/object/record-table/states/isFetchingRecordTableDataState';
 import { isDefined } from '~/utils/isDefined';
 
-import { RowIdContext } from '../contexts/RowIdContext';
-import { RowIndexContext } from '../contexts/RowIndexContext';
 import { useRecordTable } from '../hooks/useRecordTable';
-import { isFetchingRecordTableDataState } from '../states/isFetchingRecordTableDataState';
 import { tableRowIdsState } from '../states/tableRowIdsState';
-
-import { RecordTableRow, StyledRow } from './RecordTableRow';
 
 export const RecordTableBody = () => {
   const { ref: lastTableRowRef, inView: lastTableRowIsVisible } = useInView();
@@ -22,21 +25,26 @@ export const RecordTableBody = () => {
 
   const { scopeId: objectNamePlural } = useRecordTable();
 
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
+    objectNamePlural,
+  });
+
   const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
     {
-      objectNamePlural,
+      objectNameSingular,
     },
   );
 
   const [isFetchingMoreObjects] = useRecoilState(
-    isFetchingMoreObjectsFamilyState(foundObjectMetadataItem?.namePlural),
+    isFetchingMoreRecordsFamilyState(foundObjectMetadataItem?.namePlural),
   );
 
   const isFetchingRecordTableData = useRecoilValue(
     isFetchingRecordTableDataState,
   );
 
-  const { fetchMoreObjects } = useObjectRecordTable();
+  // Todo, move this to an effect to not trigger many re-renders
+  const { fetchMoreRecords: fetchMoreObjects } = useObjectRecordTable();
 
   useEffect(() => {
     if (lastTableRowIsVisible && isDefined(fetchMoreObjects)) {
@@ -66,7 +74,7 @@ export const RecordTableBody = () => {
       {isFetchingMoreObjects && (
         <StyledRow selected={false}>
           <td style={{ height: 50 }} colSpan={1000}>
-            Fetching more...
+            Loading more...
           </td>
         </StyledRow>
       )}

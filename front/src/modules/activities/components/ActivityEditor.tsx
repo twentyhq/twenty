@@ -10,7 +10,7 @@ import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { Comment } from '@/activities/types/Comment';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
-import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/ui/object/record-inline-cell/property-box/components/PropertyBox';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -78,11 +78,9 @@ export const ActivityEditor = ({
     useState<boolean>(false);
 
   const [title, setTitle] = useState<string | null>(activity.title ?? '');
-  const [completedAt, setCompletedAt] = useState<string | null>(
-    activity.completedAt ?? '',
-  );
+
   const containerRef = useRef<HTMLDivElement>(null);
-  const { updateOneObject } = useUpdateOneObjectRecord<Activity>({
+  const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<Activity>({
     objectNameSingular: 'activity',
   });
 
@@ -91,6 +89,7 @@ export const ActivityEditor = ({
     objectRecordId: activity.id,
     fieldMetadataName: 'dueAt',
     fieldPosition: 0,
+    forceRefetch: true,
   });
 
   const { FieldContextProvider: AssigneeFieldContextProvider } =
@@ -99,30 +98,31 @@ export const ActivityEditor = ({
       objectRecordId: activity.id,
       fieldMetadataName: 'assignee',
       fieldPosition: 1,
+      forceRefetch: true,
     });
 
   const updateTitle = useCallback(
     (newTitle: string) => {
-      updateOneObject?.({
+      updateOneActivity?.({
         idToUpdate: activity.id,
         input: {
           title: newTitle ?? '',
         },
       });
     },
-    [activity.id, updateOneObject],
+    [activity.id, updateOneActivity],
   );
   const handleActivityCompletionChange = useCallback(
     (value: boolean) => {
-      updateOneObject?.({
+      updateOneActivity?.({
         idToUpdate: activity.id,
         input: {
           completedAt: value ? new Date().toISOString() : null,
         },
+        forceRefetch: true,
       });
-      setCompletedAt(value ? new Date().toISOString() : null);
     },
-    [activity.id, updateOneObject],
+    [activity.id, updateOneActivity],
   );
 
   const debouncedUpdateTitle = debounce(updateTitle, 200);
@@ -146,7 +146,7 @@ export const ActivityEditor = ({
           <ActivityTypeDropdown activity={activity} />
           <ActivityTitle
             title={title ?? ''}
-            completed={!!completedAt}
+            completed={!!activity.completedAt}
             type={activity.type}
             onTitleChange={(newTitle) => {
               setTitle(newTitle);

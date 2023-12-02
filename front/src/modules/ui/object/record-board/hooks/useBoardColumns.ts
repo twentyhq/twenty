@@ -1,6 +1,6 @@
 import { useRecoilState } from 'recoil';
 
-import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 
@@ -12,8 +12,8 @@ export const useBoardColumns = () => {
 
   const { handleColumnMove } = useMoveViewColumns();
 
-  const { updateOneObject: updateOnePipelineStep } =
-    useUpdateOneObjectRecord<PipelineStep>({
+  const { updateOneRecord: updateOnePipelineStep } =
+    useUpdateOneRecord<PipelineStep>({
       objectNameSingular: 'pipelineStep',
     });
 

@@ -1,13 +1,18 @@
 import { gql } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { useGenerateCreateOneObjectMutation } from '@/object-record/utils/generateCreateOneObjectMutation';
-import { useGenerateCacheFragment } from '@/object-record/utils/useGenerateCacheFragment';
-import { useGenerateDeleteOneObjectMutation } from '@/object-record/utils/useGenerateDeleteOneObjectMutation';
-import { useGenerateFindManyCustomObjectsQuery } from '@/object-record/utils/useGenerateFindManyCustomObjectsQuery';
-import { useGenerateFindOneCustomObjectQuery } from '@/object-record/utils/useGenerateFindOneCustomObjectQuery';
-import { useGenerateUpdateOneObjectMutation } from '@/object-record/utils/useGenerateUpdateOneObjectMutation';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
+import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
+import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
+import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
+import { useGenerateUpdateOneRecordMutation } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
+import { useGetRecordFromCache } from '@/object-record/hooks/useGetRecordFromCache';
+import { useModifyRecordFromCache } from '@/object-record/hooks/useModifyRecordFromCache';
+import { generateDeleteOneRecordMutation } from '@/object-record/utils/generateDeleteOneRecordMutation';
 import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
@@ -25,60 +30,83 @@ export const EMPTY_MUTATION = gql`
 `;
 
 export const useObjectMetadataItem = (
-  { objectNamePlural, objectNameSingular }: ObjectMetadataItemIdentifier,
+  { objectNameSingular }: ObjectMetadataItemIdentifier,
   depth?: number,
 ) => {
-  const objectMetadataItem = useRecoilValue(
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const mockObjectMetadataItems = getObjectMetadataItemsMock();
+
+  let objectMetadataItem = useRecoilValue(
     objectMetadataItemFamilySelector({
-      objectNamePlural,
-      objectNameSingular,
+      objectName: objectNameSingular,
+      objectNameType: 'singular',
     }),
   );
 
-  const objectNotFoundInMetadata = !isDefined(objectMetadataItem);
+  let objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const cacheFragment = useGenerateCacheFragment({
+  if (!currentWorkspace) {
+    objectMetadataItem =
+      mockObjectMetadataItems.find(
+        (objectMetadataItem) =>
+          objectMetadataItem.nameSingular === objectNameSingular,
+      ) ?? null;
+    objectMetadataItems = mockObjectMetadataItems;
+  }
+
+  if (!isDefined(objectMetadataItem)) {
+    throw new ObjectMetadataItemNotFoundError(
+      objectNameSingular,
+      objectMetadataItems,
+    );
+  }
+
+  const getRecordFromCache = useGetRecordFromCache({
     objectMetadataItem,
   });
 
-  const findManyQuery = useGenerateFindManyCustomObjectsQuery({
+  const modifyRecordFromCache = useModifyRecordFromCache({
+    objectMetadataItem,
+  });
+
+  const findManyRecordsQuery = useGenerateFindManyRecordsQuery({
     objectMetadataItem,
     depth,
   });
 
-  const findOneQuery = useGenerateFindOneCustomObjectQuery({
+  const findOneRecordQuery = useGenerateFindOneRecordQuery({
     objectMetadataItem,
     depth,
   });
 
-  const createOneMutation = useGenerateCreateOneObjectMutation({
+  const createOneRecordMutation = useGenerateCreateOneRecordMutation({
     objectMetadataItem,
   });
 
-  const updateOneMutation = useGenerateUpdateOneObjectMutation({
+  const updateOneRecordMutation = useGenerateUpdateOneRecordMutation({
     objectMetadataItem,
   });
 
-  const deleteOneMutation = useGenerateDeleteOneObjectMutation({
+  const deleteOneRecordMutation = generateDeleteOneRecordMutation({
     objectMetadataItem,
   });
 
-  const labelIdentifierFieldMetadataId = objectMetadataItem?.fields.find(
+  const labelIdentifierFieldMetadataId = objectMetadataItem.fields.find(
     ({ name }) => name === 'name',
   )?.id;
 
-  const basePathToShowPage = `/object/${objectMetadataItem?.nameSingular}/`;
+  const basePathToShowPage = `/object/${objectMetadataItem.nameSingular}/`;
 
   return {
     labelIdentifierFieldMetadataId,
     basePathToShowPage,
     objectMetadataItem,
-    objectNotFoundInMetadata,
-    cacheFragment,
-    findManyQuery,
-    findOneQuery,
-    createOneMutation,
-    updateOneMutation,
-    deleteOneMutation,
+    getRecordFromCache,
+    modifyRecordFromCache,
+    findManyRecordsQuery,
+    findOneRecordQuery,
+    createOneRecordMutation,
+    updateOneRecordMutation,
+    deleteOneRecordMutation,
   };
 };

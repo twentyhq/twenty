@@ -1,8 +1,6 @@
 import { useMemo } from 'react';
 import { useQuery } from '@apollo/client';
-import { useRecoilCallback } from 'recoil';
 
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   FieldFilter,
@@ -10,10 +8,9 @@ import {
   ObjectMetadataItemsQuery,
   ObjectMetadataItemsQueryVariables,
 } from '~/generated-metadata/graphql';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';
 
-import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
+import { FIND_MANY_OBJECT_METADATA_ITEMS } from '../graphql/queries';
 import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '../utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
 
 import { useApolloMetadataClient } from './useApolloMetadataClient';
@@ -34,7 +31,7 @@ export const useFindManyObjectMetadataItems = ({
   const { data, loading, error } = useQuery<
     ObjectMetadataItemsQuery,
     ObjectMetadataItemsQueryVariables
-  >(FIND_MANY_METADATA_OBJECTS, {
+  >(FIND_MANY_OBJECT_METADATA_ITEMS, {
     variables: {
       objectFilter,
       fieldFilter,
@@ -50,24 +47,6 @@ export const useFindManyObjectMetadataItems = ({
         },
       );
     },
-    onCompleted: useRecoilCallback(
-      ({ snapshot, set }) =>
-        (data) => {
-          const objectMetadataItems =
-            mapPaginatedObjectMetadataItemsToObjectMetadataItems({
-              pagedObjectMetadataItems: data,
-            });
-
-          const actualObjectMetadataItems = snapshot
-            .getLoadable(objectMetadataItemsState)
-            .getValue();
-
-          if (!isDeeplyEqual(objectMetadataItems, actualObjectMetadataItems)) {
-            set(objectMetadataItemsState, objectMetadataItems);
-          }
-        },
-      [],
-    ),
   });
 
   const objectMetadataItems = useMemo(() => {

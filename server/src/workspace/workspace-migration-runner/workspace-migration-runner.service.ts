@@ -16,8 +16,10 @@ import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnCreate,
   WorkspaceMigrationColumnRelation,
+  WorkspaceMigrationColumnAlter,
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceCacheVersionService } from 'src/metadata/workspace-cache-version/workspace-cache-version.service';
+import { WorkspaceMigrationEnumService } from 'src/workspace/workspace-migration-runner/services/workspace-migration-enum.service';
 
 import { customTableDefaultColumns } from './utils/custom-table-default-column.util';
 
@@ -27,6 +29,7 @@ export class WorkspaceMigrationRunnerService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    private readonly workspaceMigrationEnumService: WorkspaceMigrationEnumService,
   ) {}
 
   /**
@@ -168,6 +171,14 @@ export class WorkspaceMigrationRunnerService {
             columnMigration,
           );
           break;
+        case WorkspaceMigrationColumnActionType.ALTER:
+          await this.alterColumn(
+            queryRunner,
+            schemaName,
+            tableName,
+            columnMigration,
+          );
+          break;
         case WorkspaceMigrationColumnActionType.RELATION:
           await this.createForeignKey(
             queryRunner,
@@ -200,6 +211,7 @@ export class WorkspaceMigrationRunnerService {
       `${schemaName}.${tableName}`,
       migrationColumn.columnName,
     );
+
     if (hasColumn) {
       return;
     }
@@ -210,9 +222,44 @@ export class WorkspaceMigrationRunnerService {
         name: migrationColumn.columnName,
         type: migrationColumn.columnType,
         default: migrationColumn.defaultValue,
+        enum: migrationColumn.enum?.filter(
+          (value): value is string => typeof value === 'string',
+        ),
+        isArray: migrationColumn.isArray,
         isNullable: true,
       }),
     );
+  }
+
+  private async alterColumn(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    migrationColumn: WorkspaceMigrationColumnAlter,
+  ) {
+    const enumValues = migrationColumn.enum;
+
+    // TODO: Maybe we can do something better if we can recreate the old `TableColumn` object
+    if (enumValues) {
+      // This is returning the old enum values to avoid TypeORM droping the enum type
+      await this.workspaceMigrationEnumService.alterEnum(
+        queryRunner,
+        schemaName,
+        tableName,
+        migrationColumn,
+      );
+    } else {
+      await queryRunner.changeColumn(
+        `${schemaName}.${tableName}`,
+        migrationColumn.columnName,
+        new TableColumn({
+          name: migrationColumn.columnName,
+          type: migrationColumn.columnType,
+          default: migrationColumn.defaultValue,
+          isNullable: migrationColumn.isNullable,
+        }),
+      );
+    }
   }
 
   private async createForeignKey(

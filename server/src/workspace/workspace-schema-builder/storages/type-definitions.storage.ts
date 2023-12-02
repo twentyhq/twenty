@@ -1,8 +1,13 @@
 import { Injectable, Scope } from '@nestjs/common';
 
-import { GraphQLInputObjectType, GraphQLObjectType } from 'graphql';
+import {
+  GraphQLEnumType,
+  GraphQLInputObjectType,
+  GraphQLObjectType,
+} from 'graphql';
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { EnumTypeDefinition } from 'src/workspace/workspace-schema-builder/factories/enum-type-definition.factory';
 import {
   InputTypeDefinition,
   InputTypeDefinitionKind,
@@ -15,6 +20,7 @@ import {
 // Must be scoped on REQUEST level
 @Injectable({ scope: Scope.REQUEST })
 export class TypeDefinitionsStorage {
+  private readonly enumTypeDefinitions = new Map<string, EnumTypeDefinition>();
   private readonly objectTypeDefinitions = new Map<
     string,
     ObjectTypeDefinition
@@ -23,6 +29,10 @@ export class TypeDefinitionsStorage {
     string,
     InputTypeDefinition
   >();
+
+  addEnumTypes(enumDefs: EnumTypeDefinition[]) {
+    enumDefs.forEach((item) => this.enumTypeDefinitions.set(item.target, item));
+  }
 
   addObjectTypes(objectDefs: ObjectTypeDefinition[]) {
     objectDefs.forEach((item) =>
@@ -62,6 +72,10 @@ export class TypeDefinitionsStorage {
     return this.inputTypeDefinitions.get(
       this.generateCompositeKey(target, kind),
     )?.type;
+  }
+
+  getEnumTypeByKey(target: string): GraphQLEnumType | undefined {
+    return this.enumTypeDefinitions.get(target)?.type;
   }
 
   getAllInputTypeDefinitions(): InputTypeDefinition[] {

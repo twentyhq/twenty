@@ -50,6 +50,8 @@ export class WorkspaceManagerService {
         schemaName,
       );
 
+    await this.setWorkspaceMaxRow(workspaceId, schemaName);
+
     await this.workspaceMigrationService.insertStandardMigrations(workspaceId);
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
@@ -81,23 +83,21 @@ export class WorkspaceManagerService {
     workspaceId: string,
   ): Promise<ObjectMetadataEntity[]> {
     const createdObjectMetadata = await this.objectMetadataService.createMany(
-      Object.values(standardObjectsMetadata).map(
-        (objectMetadata: ObjectMetadataEntity) => ({
-          ...objectMetadata,
-          dataSourceId,
-          workspaceId,
-          isCustom: false,
-          isActive: true,
-          fields: [...basicFieldsMetadata, ...objectMetadata.fields].map(
-            (field) => ({
-              ...field,
-              workspaceId,
-              isCustom: false,
-              isActive: true,
-            }),
-          ),
-        }),
-      ),
+      Object.values(standardObjectsMetadata).map((objectMetadata: any) => ({
+        ...objectMetadata,
+        dataSourceId,
+        workspaceId,
+        isCustom: false,
+        isActive: true,
+        fields: [...basicFieldsMetadata, ...objectMetadata.fields].map(
+          (field) => ({
+            ...field,
+            workspaceId,
+            isCustom: false,
+            isActive: true,
+          }),
+        ),
+      })),
     );
 
     await this.relationMetadataService.createMany(
@@ -216,6 +216,23 @@ export class WorkspaceManagerService {
     await this.createStandardObjectsAndFieldsMetadata(
       dataSourceId,
       workspaceId,
+    );
+  }
+
+  /**
+   *
+   * We are updating the pg_graphql max_rows from 30 (default value) to 60
+   *
+   * @params workspaceId, schemaName
+   * @param workspaceId
+   */
+  private async setWorkspaceMaxRow(workspaceId, schemaName) {
+    const workspaceDataSource =
+      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
+        workspaceId,
+      );
+    await workspaceDataSource.query(
+      `comment on schema ${schemaName} is e'@graphql({"max_rows": 60})'`,
     );
   }
 

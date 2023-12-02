@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
 import { PageBody } from '@/ui/layout/page/PageBody';
@@ -15,7 +15,7 @@ import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';
 import { RecordTableActionBar } from '@/ui/object/record-table/action-bar/components/RecordTableActionBar';
 import { RecordTableContextMenu } from '@/ui/object/record-table/context-menu/components/RecordTableContextMenu';
 
-import { useCreateOneObjectRecord } from '../hooks/useCreateOneObjectRecord';
+import { useCreateOneRecord } from '../hooks/useCreateOneRecord';
 
 import { RecordTableContainer } from './RecordTableContainer';
 
@@ -25,18 +25,12 @@ const StyledTableContainer = styled.div`
   width: 100%;
 `;
 
-export type RecordTablePageProps = Pick<
-  ObjectMetadataItemIdentifier,
-  'objectNamePlural'
->;
-
 export const RecordTablePage = () => {
   const objectNamePlural = useParams().objectNamePlural ?? '';
 
-  const { objectNotFoundInMetadata, objectMetadataItem } =
-    useObjectMetadataItem({
-      objectNamePlural,
-    });
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
+    objectNamePlural,
+  });
 
   const onboardingStatus = useOnboardingStatus();
 
@@ -44,15 +38,15 @@ export const RecordTablePage = () => {
 
   useEffect(() => {
     if (
-      objectNotFoundInMetadata &&
+      !isNonEmptyString(objectNamePlural) &&
       onboardingStatus === OnboardingStatus.Completed
     ) {
       navigate('/');
     }
-  }, [objectNotFoundInMetadata, navigate, onboardingStatus]);
+  }, [objectNamePlural, navigate, onboardingStatus]);
 
-  const { createOneObject } = useCreateOneObjectRecord({
-    objectNameSingular: objectMetadataItem?.nameSingular,
+  const { createOneRecord: createOneObject } = useCreateOneRecord({
+    objectNameSingular,
   });
 
   const handleAddButtonClick = async () => {
@@ -67,7 +61,10 @@ export const RecordTablePage = () => {
       </PageHeader>
       <PageBody>
         <StyledTableContainer>
-          <RecordTableContainer objectNamePlural={objectNamePlural} />
+          <RecordTableContainer
+            objectNamePlural={objectNamePlural}
+            createRecord={handleAddButtonClick}
+          />
         </StyledTableContainer>
         <RecordTableActionBar />
         <RecordTableContextMenu />

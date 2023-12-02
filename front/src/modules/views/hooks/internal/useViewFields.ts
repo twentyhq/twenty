@@ -1,5 +1,4 @@
 import { useApolloClient } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 import { useRecoilCallback } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -8,11 +7,12 @@ import { getViewScopedStatesFromSnapshot } from '@/views/utils/getViewScopedStat
 import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
 
 export const useViewFields = (viewScopeId: string) => {
-  const { updateOneMutation, createOneMutation } = useObjectMetadataItem({
-    objectNameSingular: 'viewField',
-  });
+  const { updateOneRecordMutation, createOneRecordMutation } =
+    useObjectMetadataItem({
+      objectNameSingular: 'viewField',
+    });
 
-  const { findManyQuery: findManyViewsQuery } = useObjectMetadataItem({
+  const { modifyRecordFromCache } = useObjectMetadataItem({
     objectNameSingular: 'view',
   });
 
@@ -21,14 +21,23 @@ export const useViewFields = (viewScopeId: string) => {
   const persistViewFields = useRecoilCallback(
     ({ snapshot, set }) =>
       async (viewFieldsToPersist: ViewField[], viewId?: string) => {
-        const { viewObjectMetadataId, currentViewId, savedViewFieldsByKey } =
-          getViewScopedStateValuesFromSnapshot({
-            snapshot,
-            viewScopeId,
-            viewId,
-          });
+        const {
+          viewObjectMetadataId,
+          currentViewId,
+          savedViewFieldsByKey,
+          onViewFieldsChange,
+          views,
+        } = getViewScopedStateValuesFromSnapshot({
+          snapshot,
+          viewScopeId,
+          viewId,
+        });
 
-        const { isPersistingViewState } = getViewScopedStatesFromSnapshot({
+        const {
+          isPersistingViewState,
+          currentViewFieldsState,
+          savedViewFieldsState,
+        } = getViewScopedStatesFromSnapshot({
           snapshot,
           viewScopeId,
           viewId,
@@ -48,7 +57,7 @@ export const useViewFields = (viewScopeId: string) => {
           return Promise.all(
             viewFieldsToCreate.map((viewField) =>
               apolloClient.mutate({
-                mutation: createOneMutation,
+                mutation: createOneRecordMutation,
                 variables: {
                   input: {
                     fieldMetadataId: viewField.fieldMetadataId,
@@ -58,9 +67,6 @@ export const useViewFields = (viewScopeId: string) => {
                     position: viewField.position,
                   },
                 },
-                // TODO: implement optimistic response
-                refetchQueries: [getOperationName(findManyViewsQuery) ?? ''],
-                awaitRefetchQueries: true,
               }),
             ),
           );
@@ -74,7 +80,7 @@ export const useViewFields = (viewScopeId: string) => {
           return Promise.all(
             viewFieldsToUpdate.map((viewField) =>
               apolloClient.mutate({
-                mutation: updateOneMutation,
+                mutation: updateOneRecordMutation,
                 variables: {
                   idToUpdate: viewField.id,
                   input: {
@@ -83,9 +89,6 @@ export const useViewFields = (viewScopeId: string) => {
                     position: viewField.position,
                   },
                 },
-                // TODO: implement optimistic response
-                refetchQueries: [getOperationName(findManyViewsQuery) ?? ''],
-                awaitRefetchQueries: true,
               }),
             ),
           );
@@ -113,13 +116,38 @@ export const useViewFields = (viewScopeId: string) => {
         await _updateViewFields(viewFieldsToUpdate);
 
         set(isPersistingViewState, false);
+        set(currentViewFieldsState, viewFieldsToPersist);
+        set(savedViewFieldsState, viewFieldsToPersist);
+
+        const existingView = views.find((view) => view.id === viewIdToPersist);
+
+        if (!existingView) {
+          return;
+        }
+
+        modifyRecordFromCache(viewIdToPersist ?? '', {
+          viewFields: () => ({
+            edges: viewFieldsToPersist.map((viewField) => ({
+              node: viewField,
+              cursor: '',
+            })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: '',
+              endCursor: '',
+            },
+          }),
+        });
+
+        onViewFieldsChange?.(viewFieldsToPersist);
       },
     [
-      apolloClient,
-      createOneMutation,
-      updateOneMutation,
       viewScopeId,
-      findManyViewsQuery,
+      modifyRecordFromCache,
+      apolloClient,
+      createOneRecordMutation,
+      updateOneRecordMutation,
     ],
   );
 

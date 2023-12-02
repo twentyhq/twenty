@@ -1,22 +1,18 @@
 import styled from '@emotion/styled';
-import { useRecoilCallback } from 'recoil';
 
-import { useComputeDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useComputeDefinitionsFromFieldMetadata';
+import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
-import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
 import { ViewBar } from '@/views/components/ViewBar';
-import { useViewFields } from '@/views/hooks/internal/useViewFields';
-import { ViewScope } from '@/views/scopes/ViewScope';
-import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 
-import { useUpdateOneObjectRecord } from '../hooks/useUpdateOneObjectRecord';
+import { useUpdateOneRecord } from '../hooks/useUpdateOneRecord';
 
 import { RecordTableEffect } from './RecordTableEffect';
 
@@ -29,29 +25,31 @@ const StyledContainer = styled.div`
 
 export const RecordTableContainer = ({
   objectNamePlural,
+  createRecord,
 }: {
   objectNamePlural: string;
+  createRecord: () => void;
 }) => {
-  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
-    {
-      objectNamePlural,
-    },
-  );
-  const { columnDefinitions } = useComputeDefinitionsFromFieldMetadata(
-    foundObjectMetadataItem,
-  );
-
-  const { updateOneObject } = useUpdateOneObjectRecord({
-    objectNameSingular: foundObjectMetadataItem?.nameSingular,
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
+    objectNamePlural,
   });
 
-  const tableScopeId = objectNamePlural ?? '';
-  const viewScopeId = objectNamePlural ?? '';
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
-  const { persistViewFields } = useViewFields(viewScopeId);
+  const { columnDefinitions } =
+    useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
+
+  const { updateOneRecord } = useUpdateOneRecord({
+    objectNameSingular,
+  });
+
+  const recordTableId = objectNamePlural ?? '';
+  const viewBarId = objectNamePlural ?? '';
 
   const { setTableFilters, setTableSorts, setTableColumns } = useRecordTable({
-    recordTableScopeId: tableScopeId,
+    recordTableScopeId: recordTableId,
   });
 
   const updateEntity = ({
@@ -64,42 +62,41 @@ export const RecordTableContainer = ({
       };
     };
   }) => {
-    updateOneObject?.({
+    updateOneRecord?.({
       idToUpdate: variables.where.id,
       input: variables.data,
     });
   };
 
   return (
-    <ViewScope
-      viewScopeId={viewScopeId}
-      onViewFieldsChange={(viewFields) => {
-        setTableColumns(
-          mapViewFieldsToColumnDefinitions(viewFields, columnDefinitions),
-        );
-      }}
-      onViewFiltersChange={(viewFilters) => {
-        setTableFilters(mapViewFiltersToFilters(viewFilters));
-      }}
-      onViewSortsChange={(viewSorts) => {
-        setTableSorts(mapViewSortsToSorts(viewSorts));
-      }}
-    >
-      <StyledContainer>
-        <RecordTableScope
-          recordTableScopeId={tableScopeId}
-          onColumnsChange={useRecoilCallback(() => (columns) => {
-            persistViewFields(mapColumnDefinitionsToViewFields(columns));
-          })}
-        >
-          <ViewBar
-            optionsDropdownButton={<TableOptionsDropdown />}
-            optionsDropdownScopeId={TableOptionsDropdownId}
-          />
-          <RecordTableEffect />
-          <RecordTable updateEntityMutation={updateEntity} />
-        </RecordTableScope>
-      </StyledContainer>
-    </ViewScope>
+    <StyledContainer>
+      <ViewBar
+        viewBarId={viewBarId}
+        optionsDropdownButton={
+          <TableOptionsDropdown recordTableId={recordTableId} />
+        }
+        optionsDropdownScopeId={TableOptionsDropdownId}
+        onViewFieldsChange={(viewFields) => {
+          setTableColumns(
+            mapViewFieldsToColumnDefinitions(viewFields, columnDefinitions),
+          );
+        }}
+        onViewFiltersChange={(viewFilters) => {
+          setTableFilters(mapViewFiltersToFilters(viewFilters));
+        }}
+        onViewSortsChange={(viewSorts) => {
+          setTableSorts(mapViewSortsToSorts(viewSorts));
+        }}
+      />
+      <RecordTableEffect recordTableId={recordTableId} viewBarId={viewBarId} />
+      {
+        <RecordTable
+          recordTableId={recordTableId}
+          viewBarId={viewBarId}
+          updateRecordMutation={updateEntity}
+          createRecord={createRecord}
+        />
+      }
+    </StyledContainer>
   );
 };

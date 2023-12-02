@@ -5,7 +5,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { logError } from '~/utils/logError';
 
@@ -34,16 +34,15 @@ export const NameFields = ({
   );
 
   const [firstName, setFirstName] = useState(
-    currentWorkspaceMember?.name.firstName ?? '',
+    currentWorkspaceMember?.name?.firstName ?? '',
   );
   const [lastName, setLastName] = useState(
-    currentWorkspaceMember?.name.lastName ?? '',
+    currentWorkspaceMember?.name?.lastName ?? '',
   );
 
-  const { updateOneObject, objectNotFoundInMetadata } =
-    useUpdateOneObjectRecord({
-      objectNameSingular: 'workspaceMember',
-    });
+  const { updateOneRecord } = useUpdateOneRecord({
+    objectNameSingular: 'workspaceMember',
+  });
 
   // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)
   const debouncedUpdate = debounce(async () => {
@@ -59,10 +58,7 @@ export const NameFields = ({
       }
 
       if (autoSave) {
-        if (!updateOneObject || objectNotFoundInMetadata) {
-          throw new Error('Object not found in metadata');
-        }
-        await updateOneObject({
+        await updateOneRecord({
           idToUpdate: currentWorkspaceMember?.id,
           input: {
             name: {
@@ -91,8 +87,8 @@ export const NameFields = ({
     }
 
     if (
-      currentWorkspaceMember.name.firstName !== firstName ||
-      currentWorkspaceMember.name.lastName !== lastName
+      currentWorkspaceMember.name?.firstName !== firstName ||
+      currentWorkspaceMember.name?.lastName !== lastName
     ) {
       debouncedUpdate();
     }

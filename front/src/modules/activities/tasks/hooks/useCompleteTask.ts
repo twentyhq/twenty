@@ -1,26 +1,27 @@
 import { useCallback } from 'react';
 
 import { Activity } from '@/activities/types/Activity';
-import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
 type Task = Pick<Activity, 'id' | 'completedAt'>;
 
 export const useCompleteTask = (task: Task) => {
-  const { updateOneObject } = useUpdateOneObjectRecord({
+  const { updateOneRecord: updateOneActivity } = useUpdateOneRecord({
     objectNameSingular: 'activity',
   });
 
   const completeTask = useCallback(
     (value: boolean) => {
       const completedAt = value ? new Date().toISOString() : null;
-      updateOneObject?.({
+      updateOneActivity?.({
         idToUpdate: task.id,
         input: {
           completedAt,
         },
+        forceRefetch: true,
       });
     },
-    [task.id, updateOneObject],
+    [task.id, updateOneActivity],
   );
 
   return {

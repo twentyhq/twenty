@@ -15,7 +15,6 @@ export enum SeedWorkspaceMemberFieldMetadataIds {
   AvatarUrl = '20202020-7ba6-40d5-934b-17146183a212',
   Locale = '20202020-10f6-4df9-8d6f-a760b65bd800',
   ColorScheme = '20202020-83f2-4c5f-96b0-0c51ecc160e3',
-  AllowImpersonation = '20202020-bb19-44a1-8156-8866f87a5f42',
   UserId = '20202020-f2c1-4ca1-9ca5-7b9d5cc87eb0',
   AuthoredActivities = '20202020-37a0-4db4-9c9f-fd3e3f4e47fc',
   AssignedActivities = '20202020-ac05-44b9-9526-764dd5ce14e2',
@@ -178,7 +177,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         icon: 'IconColorSwatch',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: 'Light' },
       },
       {
         id: SeedWorkspaceMemberFieldMetadataIds.Locale,
@@ -196,7 +195,7 @@ export const seedWorkspaceMemberFieldMetadata = async (
         icon: 'IconLanguage',
         isNullable: false,
         isSystem: false,
-        defaultValue: { value: 'fr' },
+        defaultValue: { value: 'en' },
       },
 
       // Relationships

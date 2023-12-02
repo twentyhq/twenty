@@ -10,6 +10,9 @@ import { StorageType } from './environment/interfaces/storage.interface';
 import { LoggerModule } from './logger/logger.module';
 import { LoggerModuleOptions } from './logger/interfaces';
 import { LoggerDriver } from './environment/interfaces/logger.interface';
+import { MessageQueueModule } from './message-queue/message-queue.module';
+import { MessageQueueModuleOptions } from './message-queue/interfaces';
+import { MessageQueueType } from './environment/interfaces/message-queue.interface';
 
 /**
  * FileStorage Module factory
@@ -84,6 +87,46 @@ const loggerModuleFactory = async (
   }
 };
 
+/**
+ * MessageQueue Module factory
+ * @param environment
+ * @returns MessageQueueModuleOptions
+ */
+const messageQueueModuleFactory = async (
+  environmentService: EnvironmentService,
+): Promise<MessageQueueModuleOptions> => {
+  const type = environmentService.getMessageQueueType();
+
+  switch (type) {
+    case MessageQueueType.PgBoss: {
+      const connectionString = environmentService.getPGDatabaseUrl();
+      return {
+        type: MessageQueueType.PgBoss,
+        options: {
+          connectionString,
+        },
+      };
+    }
+    case MessageQueueType.BullMQ: {
+      const host = environmentService.getRedisHost();
+      const port = environmentService.getRedisPort();
+      return {
+        type: MessageQueueType.BullMQ,
+        options: {
+          connection: {
+            host,
+            port,
+          },
+        },
+      };
+    }
+    default:
+      throw new Error(
+        `Invalid message queue type (${type}), check your .env file`,
+      );
+  }
+};
+
 @Module({
   imports: [
     EnvironmentModule.forRoot({}),
@@ -93,6 +136,10 @@ const loggerModuleFactory = async (
     }),
     LoggerModule.forRootAsync({
       useFactory: loggerModuleFactory,
+      inject: [EnvironmentService],
+    }),
+    MessageQueueModule.forRoot({
+      useFactory: messageQueueModuleFactory,
       inject: [EnvironmentService],
     }),
   ],

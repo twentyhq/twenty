@@ -2,6 +2,7 @@ import { useRecoilValue } from 'recoil';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { turnFiltersIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClause';
 import { turnSortsIntoOrderBy } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordTableScopedStates } from '@/ui/object/record-table/hooks/internal/useRecordTableScopedStates';
@@ -9,22 +10,24 @@ import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 
 import { getRecordOptimisticEffectDefinition } from '../graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
 
-import { useFindManyObjectRecords } from './useFindManyObjectRecords';
+import { useFindManyRecords } from './useFindManyRecords';
 
 export const useObjectRecordTable = () => {
-  const { scopeId: objectNamePlural } = useRecordTable();
+  const { scopeId: objectNamePlural, setRecordTableData } = useRecordTable();
+
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
+    objectNamePlural,
+  });
 
   const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
     {
-      objectNamePlural,
+      objectNameSingular,
     },
   );
 
   const { registerOptimisticEffect } = useOptimisticEffect({
-    objectNameSingular: foundObjectMetadataItem?.nameSingular,
+    objectNameSingular,
   });
-
-  const { setRecordTableData } = useRecordTable();
 
   const { tableFiltersState, tableSortsState } = useRecordTableScopedStates();
 
@@ -40,8 +43,8 @@ export const useObjectRecordTable = () => {
     foundObjectMetadataItem?.fields ?? [],
   );
 
-  const { objects, loading, fetchMoreObjects } = useFindManyObjectRecords({
-    objectNamePlural,
+  const { records, loading, fetchMoreRecords } = useFindManyRecords({
+    objectNameSingular,
     filter,
     orderBy,
     onCompleted: (data) => {
@@ -51,7 +54,7 @@ export const useObjectRecordTable = () => {
 
       if (foundObjectMetadataItem) {
         registerOptimisticEffect({
-          variables: { orderBy, filter },
+          variables: { orderBy, filter, limit: 60 },
           definition: getRecordOptimisticEffectDefinition({
             objectMetadataItem: foundObjectMetadataItem,
           }),
@@ -61,8 +64,8 @@ export const useObjectRecordTable = () => {
   });
 
   return {
-    objects,
+    records,
     loading,
-    fetchMoreObjects,
+    fetchMoreRecords,
   };
 };

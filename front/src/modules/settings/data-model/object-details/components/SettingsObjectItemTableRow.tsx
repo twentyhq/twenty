@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -36,8 +36,8 @@ export const SettingsObjectItemTableRow = ({
 }: SettingsObjectItemTableRowProps) => {
   const theme = useTheme();
 
-  const { objects } = useFindManyObjectRecords({
-    objectNamePlural: objectItem.namePlural,
+  const { records } = useFindManyRecords({
+    objectNameSingular: objectItem.nameSingular,
   });
 
   const { Icon } = useLazyLoadIcon(objectItem.icon ?? '');
@@ -58,7 +58,7 @@ export const SettingsObjectItemTableRow = ({
       <TableCell align="right">
         {objectItem.fields.filter((field) => !field.isSystem).length}
       </TableCell>
-      <TableCell align="right">{objects.length}</TableCell>
+      <TableCell align="right">{records.length}</TableCell>
       <StyledActionTableCell>{action}</StyledActionTableCell>
     </StyledObjectTableRow>
   );

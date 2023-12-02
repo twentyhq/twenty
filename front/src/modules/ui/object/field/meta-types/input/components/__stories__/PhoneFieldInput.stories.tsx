@@ -45,11 +45,12 @@ const PhoneFieldInputWithContext = ({
         fieldDefinition={{
           fieldMetadataId: 'phone',
           label: 'Phone',
-          type: 'PHONE',
+          type: 'TEXT',
           iconName: 'IconPhone',
           metadata: {
-            fieldName: 'Phone',
+            fieldName: 'phone',
             placeHolder: 'Enter phone number',
+            objectMetadataNameSingular: 'person',
           },
         }}
         entityId={entityId}

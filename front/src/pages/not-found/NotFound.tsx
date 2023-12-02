@@ -1,10 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
+import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-
-import { CompaniesMockMode } from '../companies/CompaniesMockMode';
 
 const StyledBackDrop = styled.div`
   align-items: center;
@@ -64,7 +63,7 @@ export const NotFound = () => {
           />
         </StyledButtonContainer>
       </StyledBackDrop>
-      <CompaniesMockMode />
+      <SignInBackgroundMockPage />
     </>
   );
 };

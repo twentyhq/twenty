@@ -4,7 +4,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
-import { IconBrandGoogle } from '@/ui/display/icon';
+import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
@@ -95,12 +95,7 @@ export const SignInUpForm = () => {
         {authProviders.google && (
           <>
             <MainButton
-              Icon={() => (
-                <IconBrandGoogle
-                  size={theme.icon.size.md}
-                  stroke={theme.icon.stroke.lg}
-                />
-              )}
+              Icon={() => <IconGoogle size={theme.icon.size.lg} />}
               title="Continue with Google"
               onClick={signInWithGoogle}
               fullWidth

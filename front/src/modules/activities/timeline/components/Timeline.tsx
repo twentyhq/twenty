@@ -5,7 +5,7 @@ import { ActivityCreateButton } from '@/activities/components/ActivityCreateButt
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { TimelineItemsContainer } from './TimelineItemsContainer';
@@ -48,16 +48,16 @@ const StyledEmptyTimelineSubTitle = styled.div`
 `;
 
 export const Timeline = ({ entity }: { entity: ActivityTargetableEntity }) => {
-  const { objects: activityTargets, loading } = useFindManyObjectRecords({
-    objectNamePlural: 'activityTargets',
+  const { records: activityTargets, loading } = useFindManyRecords({
+    objectNameSingular: 'activityTarget',
     filter: {
       [entity.type === 'Company' ? 'companyId' : 'personId']: { eq: entity.id },
     },
   });
 
-  const { objects: activities } = useFindManyObjectRecords({
+  const { records: activities } = useFindManyRecords({
     skip: !activityTargets?.length,
-    objectNamePlural: 'activities',
+    objectNameSingular: 'activity',
     filter: {
       id: {
         in: activityTargets?.map((activityTarget) => activityTarget.activityId),
@@ -70,7 +70,7 @@ export const Timeline = ({ entity }: { entity: ActivityTargetableEntity }) => {
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  if (loading) {
+  if (loading || entity.type === 'Custom') {
     return <></>;
   }
 

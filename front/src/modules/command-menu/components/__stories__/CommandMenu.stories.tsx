@@ -7,6 +7,8 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
 import { IconCheckbox, IconNotes } from '@/ui/display/icon';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/testing/sleep';
 
@@ -18,15 +20,17 @@ const meta: Meta<typeof CommandMenu> = {
   title: 'Modules/CommandMenu/CommandMenu',
   component: CommandMenu,
   decorators: [
+    ObjectMetadataItemsDecorator,
     ComponentWithRouterDecorator,
     (Story) => {
-      const { addToCommandMenu, setToIntitialCommandMenu, openCommandMenu } =
+      const { addToCommandMenu, setToIntitialCommandMenu, toggleCommandMenu } =
         useCommandMenu();
 
       useEffect(() => {
         setToIntitialCommandMenu();
         addToCommandMenu([
           {
+            id: 'create-task',
             to: '',
             label: 'Create Task',
             type: CommandType.Create,
@@ -34,6 +38,7 @@ const meta: Meta<typeof CommandMenu> = {
             onCommandClick: () => console.log('create task click'),
           },
           {
+            id: 'create-note',
             to: '',
             label: 'Create Note',
             type: CommandType.Create,
@@ -41,11 +46,12 @@ const meta: Meta<typeof CommandMenu> = {
             onCommandClick: () => console.log('create note click'),
           },
         ]);
-        openCommandMenu();
-      }, [addToCommandMenu, setToIntitialCommandMenu, openCommandMenu]);
+        toggleCommandMenu();
+      }, [addToCommandMenu, setToIntitialCommandMenu, toggleCommandMenu]);
 
       return <Story />;
     },
+    SnackBarDecorator,
   ],
   parameters: {
     msw: graphqlMocks,

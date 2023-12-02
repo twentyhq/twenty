@@ -7,8 +7,8 @@ import { Comment } from '@/activities/comment/Comment';
 import { Activity } from '@/activities/types/Activity';
 import { Comment as CommentType } from '@/activities/types/Comment';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useCreateOneObjectRecord } from '@/object-record/hooks/useCreateOneObjectRecord';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import {
   AutosizeTextInput,
   AutosizeTextInputVariant,
@@ -60,14 +60,14 @@ export const ActivityComments = ({
   activity,
   scrollableContainerRef,
 }: ActivityCommentsProps) => {
-  const { createOneObject } = useCreateOneObjectRecord({
+  const { createOneRecord: createOneComment } = useCreateOneRecord({
     objectNameSingular: 'comment',
   });
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
-  const { objects: comments } = useFindManyObjectRecords({
-    objectNamePlural: 'comments',
+  const { records: comments } = useFindManyRecords({
+    objectNameSingular: 'comment',
     filter: {
       activityId: {
         eq: activity?.id ?? '',
@@ -84,7 +84,7 @@ export const ActivityComments = ({
       return;
     }
 
-    createOneObject?.({
+    createOneComment?.({
       id: v4(),
       authorId: currentWorkspaceMember?.id ?? '',
       activityId: activity?.id ?? '',

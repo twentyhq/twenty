@@ -63,7 +63,7 @@ const personMetadata = {
         url: 'xLinkUrl',
       },
       description: 'Contact’s X/Twitter account',
-      icon: 'IconUser',
+      icon: 'IconBrandX',
       isNullable: true,
     },
     {
@@ -78,6 +78,7 @@ const personMetadata = {
       description: 'Contact’s job title',
       icon: 'IconBriefcase',
       isNullable: true,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -91,6 +92,7 @@ const personMetadata = {
       description: 'Contact’s phone number',
       icon: 'IconPhone',
       isNullable: true,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -104,6 +106,7 @@ const personMetadata = {
       description: 'Contact’s city',
       icon: 'IconMap',
       isNullable: true,
+      defaultValue: { value: '' },
     },
     {
       isCustom: false,
@@ -118,6 +121,7 @@ const personMetadata = {
       icon: 'IconFileUpload',
       isNullable: true,
       isSystem: true,
+      defaultValue: { value: '' },
     },
     // Relations
     {

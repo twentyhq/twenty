@@ -1,5 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
+import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 
@@ -20,9 +21,11 @@ export const KeyboardShortcutMenu = () => {
   const isKeyboardShortcutMenuOpened = useRecoilValue(
     isKeyboardShortcutMenuOpenedState,
   );
+  const { closeCommandMenu } = useCommandMenu();
   useScopedHotkeys(
     'shift+?,meta+?',
     () => {
+      closeCommandMenu();
       toggleKeyboardShortcutMenu();
     },
     AppHotkeyScope.KeyboardShortcutMenu,
@@ -30,7 +33,7 @@ export const KeyboardShortcutMenu = () => {
   );
 
   useScopedHotkeys(
-    'Esc',
+    'esc',
     () => {
       closeKeyboardShortcutMenu();
     },

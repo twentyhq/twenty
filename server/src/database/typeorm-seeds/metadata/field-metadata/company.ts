@@ -147,7 +147,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconLink',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: '' },
       },
       {
         id: SeedCompanyFieldMetadataIds.Address,
@@ -165,7 +165,7 @@ export const seedCompanyFieldMetadata = async (
         icon: 'IconMap',
         isNullable: true,
         isSystem: false,
-        defaultValue: undefined,
+        defaultValue: { value: '' },
       },
       {
         id: SeedCompanyFieldMetadataIds.Employees,

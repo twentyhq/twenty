@@ -12,6 +12,7 @@ import {
   IconTextSize,
   IconUser,
 } from '@/ui/display/icon';
+import { IconTwentyStar } from '@/ui/display/icon/components/IconTwentyStar';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -32,6 +33,11 @@ export const settingsFieldMetadataTypes: Record<
     Icon: IconTextSize,
     defaultValue:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum magna enim, dapibus non enim in, lacinia faucibus nunc. Sed interdum ante sed felis facilisis, eget ultricies neque molestie. Mauris auctor, justo eu volutpat cursus, libero erat tempus nulla, non sodales lorem lacus a est.',
+  },
+  [FieldMetadataType.Numeric]: {
+    label: 'Numeric',
+    Icon: IconNumbers,
+    defaultValue: 2000,
   },
   [FieldMetadataType.Number]: {
     label: 'Number',
@@ -56,7 +62,6 @@ export const settingsFieldMetadataTypes: Record<
   [FieldMetadataType.Enum]: {
     label: 'Select',
     Icon: IconTag,
-    defaultValue: { color: 'green', text: 'Option 1' },
   },
   [FieldMetadataType.Currency]: {
     label: 'Currency',
@@ -70,9 +75,9 @@ export const settingsFieldMetadataTypes: Record<
   [FieldMetadataType.Email]: { label: 'Email', Icon: IconMail },
   [FieldMetadataType.Phone]: { label: 'Phone', Icon: IconPhone },
   [FieldMetadataType.Probability]: {
-    label: 'Probability',
-    Icon: IconNumbers,
-    defaultValue: 50,
+    label: 'Rating',
+    Icon: IconTwentyStar,
+    defaultValue: '3',
   },
   [FieldMetadataType.FullName]: { label: 'Full Name', Icon: IconUser },
 };

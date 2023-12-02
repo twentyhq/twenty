@@ -1,31 +1,43 @@
 import { useEffect } from 'react';
 
-import { useComputeDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useComputeDefinitionsFromFieldMetadata';
+import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
-import { useView } from '@/views/hooks/useView';
+import { useViewBar } from '@/views/hooks/useViewBar';
 import { ViewType } from '@/views/types/ViewType';
 
-export const RecordTableEffect = () => {
+export const RecordTableEffect = ({
+  recordTableId,
+  viewBarId,
+}: {
+  recordTableId: string;
+  viewBarId: string;
+}) => {
   const {
+    // Todo: do not infer objectNamePlural from recordTableId
     scopeId: objectNamePlural,
     setAvailableTableColumns,
     setOnEntityCountChange,
     setObjectMetadataConfig,
-  } = useRecordTable();
+  } = useRecordTable({ recordTableScopeId: recordTableId });
+
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
+    objectNamePlural,
+  });
 
   const {
     objectMetadataItem,
     basePathToShowPage,
     labelIdentifierFieldMetadataId,
   } = useObjectMetadataItem({
-    objectNamePlural,
+    objectNameSingular,
   });
 
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
-    useComputeDefinitionsFromFieldMetadata(objectMetadataItem);
+    useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const {
     setAvailableSortDefinitions,
@@ -34,7 +46,7 @@ export const RecordTableEffect = () => {
     setViewType,
     setViewObjectMetadataId,
     setEntityCountInCurrentView,
-  } = useView();
+  } = useViewBar({ viewBarId });
 
   useEffect(() => {
     if (basePathToShowPage && labelIdentifierFieldMetadataId) {
@@ -80,7 +92,9 @@ export const RecordTableEffect = () => {
   ]);
 
   const { setActionBarEntries, setContextMenuEntries } =
-    useRecordTableContextMenuEntries();
+    useRecordTableContextMenuEntries({
+      recordTableScopeId: recordTableId,
+    });
 
   useEffect(() => {
     setActionBarEntries?.();
