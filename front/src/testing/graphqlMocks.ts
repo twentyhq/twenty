@@ -7,6 +7,7 @@ import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queri
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { mockedActivities } from '~/testing/mock-data/activities';
 import { mockedCompaniesData } from '~/testing/mock-data/companies';
+import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockedPipelineSteps } from '~/testing/mock-data/pipeline-steps';
 
 import { mockedObjectMetadataItems } from './mock-data/metadata';
@@ -40,18 +41,7 @@ export const graphqlMocks = {
       (req, res, ctx) => {
         return res(
           ctx.data({
-            clientConfig: {
-              signInPrefilled: true,
-              dataModelSettingsEnabled: true,
-              developersSettingsEnabled: true,
-              debugMode: false,
-              authProviders: { google: true, password: true, magicLink: false },
-              telemetry: { enabled: false, anonymizationEnabled: true },
-              support: {
-                supportDriver: 'front',
-                supportFrontChatId: null,
-              },
-            },
+            clientConfig: mockedClientConfig,
           }),
         );
       },
