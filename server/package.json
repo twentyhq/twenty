@@ -26,7 +26,8 @@
     "database:setup": "npx ts-node ./scripts/setup-db.ts && yarn database:migrate",
     "database:truncate": "npx ts-node ./scripts/truncate-db.ts",
     "database:migrate": "yarn build && yarn typeorm:migrate",
-    "database:seed": "yarn build && yarn command workspace:seed",
+    "database:seed:dev": "yarn build && yarn command workspace:seed:dev",
+    "database:seed:demo": "yarn build && yarn command workspace:seed:demo",
     "database:reset": "yarn database:truncate && yarn database:init",
     "command": "node dist/src/command"
   },

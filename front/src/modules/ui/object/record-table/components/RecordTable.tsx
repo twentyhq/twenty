@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
 
+import { RecordTableBodyEffect } from '@/ui/object/record-table/components/RecordTableBodyEffect';
 import { RecordTableHeader } from '@/ui/object/record-table/components/RecordTableHeader';
 import { RecordTableInternalEffect } from '@/ui/object/record-table/components/RecordTableInternalEffect';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
@@ -108,6 +109,7 @@ export const RecordTable = ({
               <div ref={tableBodyRef}>
                 <StyledTable className="entity-table-cell">
                   <RecordTableHeader createRecord={createRecord} />
+                  <RecordTableBodyEffect />
                   <RecordTableBody />
                 </StyledTable>
                 <DragSelect

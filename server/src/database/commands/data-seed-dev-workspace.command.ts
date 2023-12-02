@@ -18,7 +18,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 
 // TODO: implement dry-run
 @Command({
-  name: 'workspace:seed',
+  name: 'workspace:seed:dev',
   description:
     'Seed workspace with initial data. This command is intended for development only.',
 })

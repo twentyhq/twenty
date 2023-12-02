@@ -2,7 +2,7 @@ import { DataSource } from 'typeorm';
 
 import { SeedObjectMetadataIds } from 'src/database/typeorm-seeds/metadata/object-metadata';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-// import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
+import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 
 const fieldMetadataTableName = 'fieldMetadata';
 
@@ -46,7 +46,7 @@ export const seedWebhookFieldMetadata = async (
         id: SeedWebhookFieldMetadataIds.Id,
         objectMetadataId: SeedObjectMetadataIds.Webhook,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.UUID,
         name: 'id',
@@ -64,7 +64,7 @@ export const seedWebhookFieldMetadata = async (
         id: SeedWebhookFieldMetadataIds.CreatedAt,
         objectMetadataId: SeedObjectMetadataIds.Webhook,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.DATE_TIME,
         name: 'createdAt',
@@ -82,7 +82,7 @@ export const seedWebhookFieldMetadata = async (
         id: SeedWebhookFieldMetadataIds.UpdatedAt,
         objectMetadataId: SeedObjectMetadataIds.Webhook,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.DATE_TIME,
         name: 'updatedAt',
@@ -101,7 +101,7 @@ export const seedWebhookFieldMetadata = async (
         id: SeedWebhookFieldMetadataIds.TargetUrl,
         objectMetadataId: SeedObjectMetadataIds.Webhook,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.TEXT,
         name: 'targetUrl',
@@ -119,7 +119,7 @@ export const seedWebhookFieldMetadata = async (
         id: SeedWebhookFieldMetadataIds.Operation,
         objectMetadataId: SeedObjectMetadataIds.Webhook,
         isCustom: false,
-        workspaceId: workspaceId,
+        workspaceId: SeedWorkspaceId,
         isActive: true,
         type: FieldMetadataType.TEXT,
         name: 'operation',

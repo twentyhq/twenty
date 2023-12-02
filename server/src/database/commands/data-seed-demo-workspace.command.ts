@@ -1,10 +1,6 @@
 import { Command, CommandRunner } from 'nest-commander';
 import { DataSource } from 'typeorm';
 
-import { DataSourceService } from 'src/metadata/data-source/data-source.service';
-import { WorkspaceMigrationService } from 'src/metadata/workspace-migration/workspace-migration.service';
-import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import {
   deleteCoreSchema,
   seedCoreSchema,
@@ -12,19 +8,14 @@ import {
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
 
-// TODO: implement dry-run
 @Command({
-  name: 'workspace:demo',
+  name: 'workspace:seed:demo',
   description:
     'Seed workspace with demo data. This command is intended for development only.',
 })
 export class DataSeedDemoWorkspaceCommand extends CommandRunner {
   constructor(
     private readonly environmentService: EnvironmentService,
-    private readonly dataSourceService: DataSourceService,
-    private readonly typeORMService: TypeORMService,
-    private readonly workspaceMigrationService: WorkspaceMigrationService,
-    private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceManagerService: WorkspaceManagerService,
   ) {
     super();
@@ -39,14 +30,13 @@ export class DataSeedDemoWorkspaceCommand extends CommandRunner {
         schema: 'public',
       });
       await dataSource.initialize();
-      const demoWorkspaceIds = this.environmentService.getDemoWorkspaces();
+      const demoWorkspaceIds = this.environmentService.getDemoWorkspaceIds();
 
-      if (!demoWorkspaceIds) {
+      if (demoWorkspaceIds.length === 0) {
         throw new Error(
-          'Could not get DEMO_WORKSPACES. Please specify in .env',
+          'Could not get DEMO_WORKSPACE_IDS. Please specify in .env',
         );
       }
-      // DEMO_WORKSPACES is an array, iterate over to create as many as defined in the config
       for (const workspaceId of demoWorkspaceIds) {
         await deleteCoreSchema(dataSource, workspaceId);
         await this.workspaceManagerService.delete(workspaceId);

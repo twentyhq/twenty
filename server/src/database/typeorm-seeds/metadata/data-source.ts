@@ -15,6 +15,7 @@ export const seedDataSource = async (
   await workspaceDataSource.query(
     `CREATE SCHEMA IF NOT EXISTS ${SeedWorkspaceSchemaName}`,
   );
+
   await workspaceDataSource
     .createQueryBuilder()
     .insert()
