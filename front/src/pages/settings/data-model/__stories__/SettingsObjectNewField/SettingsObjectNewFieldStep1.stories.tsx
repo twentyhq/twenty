@@ -28,7 +28,7 @@ export default meta;
 export type Story = StoryObj<typeof SettingsObjectNewFieldStep1>;
 
 export const Default: Story = {
-  play: async ({}) => {
+  play: async () => {
     await sleep(100);
   },
 };

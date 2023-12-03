@@ -1,13 +1,12 @@
-import { expect, jest } from '@storybook/jest';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
+import { expect, fn, userEvent, within } from '@storybook/test';
 
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { SettingsObjectDisabledMenuDropDown } from '../SettingsObjectDisabledMenuDropDown';
 
-const handleActivateMockFunction = jest.fn();
-const handleEraseMockFunction = jest.fn();
+const handleActivateMockFunction = fn();
+const handleEraseMockFunction = fn();
 
 const ClearMocksDecorator: Decorator = (Story, context) => {
   if (context.parameters.clearMocks) {

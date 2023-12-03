@@ -26,9 +26,7 @@ import '@emotion/react';
 import './index.css';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement,
-);
+const root = ReactDOM.createRoot(document.getElementById('root')!);
 
 root.render(
   <RecoilRoot>

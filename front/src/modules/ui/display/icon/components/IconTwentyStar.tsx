@@ -1,6 +1,6 @@
 import { TablerIconsProps } from '@/ui/display/icon';
 
-import { ReactComponent as IconTwentyStarRaw } from '../assets/twenty-star.svg';
+import IconTwentyStarRaw from '../assets/twenty-star.svg?react';
 
 type IconTwentyStarProps = TablerIconsProps;
 

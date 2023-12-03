@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
-import { expect, jest } from '@storybook/jest';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
-import { userEvent, waitFor, within } from '@storybook/testing-library';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
@@ -68,11 +67,11 @@ const TextFieldInputWithContext = ({
   );
 };
 
-const enterJestFn = jest.fn();
-const escapeJestfn = jest.fn();
-const clickOutsideJestFn = jest.fn();
-const tabJestFn = jest.fn();
-const shiftTabJestFn = jest.fn();
+const enterJestFn = fn();
+const escapeJestfn = fn();
+const clickOutsideJestFn = fn();
+const tabJestFn = fn();
+const shiftTabJestFn = fn();
 
 const clearMocksDecorator: Decorator = (Story, context) => {
   if (context.parameters.clearMocks) {

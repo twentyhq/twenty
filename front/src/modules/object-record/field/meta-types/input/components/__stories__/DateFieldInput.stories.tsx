@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
-import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
+import { expect, fn, userEvent, within } from '@storybook/test';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
@@ -65,9 +64,9 @@ const DateFieldInputWithContext = ({
   );
 };
 
-const escapeJestFn = jest.fn();
-const enterJestFn = jest.fn();
-const clickOutsideJestFn = jest.fn();
+const escapeJestFn = fn();
+const enterJestFn = fn();
+const clickOutsideJestFn = fn();
 
 const meta: Meta = {
   title: 'UI/Data/Field/Input/DateFieldInput',

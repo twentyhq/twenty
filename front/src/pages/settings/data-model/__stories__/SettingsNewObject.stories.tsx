@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
+import { userEvent, within } from '@storybook/test';
 
 import {
   PageDecorator,
@@ -27,7 +27,7 @@ export default meta;
 export type Story = StoryObj<typeof SettingsNewObject>;
 
 export const WithStandardSelected: Story = {
-  play: async ({}) => {
+  play: async () => {
     await sleep(100);
   },
 };

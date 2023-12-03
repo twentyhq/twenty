@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
-import { expect } from '@storybook/jest';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
-import { userEvent, waitFor, within } from '@storybook/testing-library';
+import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { PlayFunction } from '@storybook/types';
 
 import { Button } from '@/ui/input/button/components/Button';
