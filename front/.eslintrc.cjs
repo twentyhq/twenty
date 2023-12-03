@@ -87,7 +87,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
-    // 'plugin:prettier/recommended',
+    'plugin:prettier/recommended',
     'plugin:storybook/recommended',
   ],
   plugins: [
@@ -105,6 +105,7 @@ module.exports = {
     '*.config.js',
     '*.config.ts',
     'codegen*.js',
+    'public/',
     '**/generated*/*',
   ],
   overrides: [
