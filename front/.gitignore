@@ -16,6 +16,10 @@ dist-ssr
 # yarn is the recommended package manager across the project
 package-lock.json
 
+# yarn 3.x
+.pnp.*
+.yarn/*
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
