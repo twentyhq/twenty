@@ -7,18 +7,18 @@ import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { CatalogStory } from '~/testing/types';
 
-import { Tag } from '../Tag';
+import { Status } from '../Status';
 
-const meta: Meta<typeof Tag> = {
-  title: 'UI/Display/Tag/Tag',
-  component: Tag,
+const meta: Meta<typeof Status> = {
+  title: 'UI/Display/Status/Status',
+  component: Status,
   args: {
     text: 'Urgent',
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof Tag>;
+type Story = StoryObj<typeof Status>;
 
 export const Default: Story = {
   args: {
@@ -29,10 +29,10 @@ export const Default: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
-    const tag = canvas.getByRole('heading', { level: 3 });
+    const status = canvas.getByRole('heading', { level: 3 });
 
-    await userEvent.click(tag);
-    await expect(args.onClick).toHaveBeenCalled();
+    await userEvent.click(status);
+    expect(args.onClick).toHaveBeenCalled();
   },
 };
 
@@ -47,7 +47,7 @@ export const WithLongText: Story = {
   },
 };
 
-export const Catalog: CatalogStory<Story, typeof Tag> = {
+export const Catalog: CatalogStory<Story, typeof Status> = {
   argTypes: {
     color: { control: false },
   },
