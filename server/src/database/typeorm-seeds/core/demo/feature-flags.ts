@@ -2,8 +2,6 @@ import { DataSource } from 'typeorm';
 
 const tableName = 'featureFlag';
 
-// import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
-
 export const seedFeatureFlags = async (
   workspaceDataSource: DataSource,
   schemaName: string,

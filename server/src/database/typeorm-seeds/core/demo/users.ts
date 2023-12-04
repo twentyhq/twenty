@@ -4,10 +4,10 @@ import { DataSource } from 'typeorm';
 
 const tableName = 'user';
 
-export enum SeedUserIds {
-  Tim = '20202020-9e3b-46d4-a556-88b9ddc2b034',
-  Jony = '20202020-3957-4908-9c36-2929a23f8357',
-  Phil = '20202020-7169-42cf-bc47-1cfef15264b8',
+export enum DemoSeedUserIds {
+  Noah = '20202020-9e3b-46d4-a556-88b9ddc2b035',
+  Hugo = '20202020-3957-4908-9c36-2929a23f8358',
+  Julia = '20202020-7169-42cf-bc47-1cfef15264b9',
 }
 
 export const seedUsers = async (
@@ -29,29 +29,29 @@ export const seedUsers = async (
     .orIgnore()
     .values([
       {
-        id: SeedUserIds.Tim,
-        firstName: 'Tim',
-        lastName: 'Apple',
-        email: 'tim@apple.dev',
+        id: DemoSeedUserIds.Noah,
+        firstName: 'Noah',
+        lastName: 'A',
+        email: 'noah@demo.dev',
         passwordHash:
           '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
         defaultWorkspaceId: workspaceId,
       },
       {
-        id: SeedUserIds.Jony,
-        firstName: 'Jony',
-        lastName: 'Ive',
-        email: 'jony.ive@apple.dev',
+        id: DemoSeedUserIds.Hugo,
+        firstName: 'Hugo',
+        lastName: 'I',
+        email: 'hugo@demo.dev',
         passwordHash:
           '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
         defaultWorkspaceId: workspaceId,
       },
       ,
       {
-        id: SeedUserIds.Phil,
-        firstName: 'Phil',
-        lastName: 'Schiler',
-        email: 'phil.schiler@apple.dev',
+        id: DemoSeedUserIds.Julia,
+        firstName: 'Julia',
+        lastName: 'S',
+        email: 'julia.s@demo.dev',
         passwordHash:
           '$2b$10$66d.6DuQExxnrfI9rMqOg.U1XIYpagr6Lv05uoWLYbYmtK0HDIvS6', // Applecar2025
         defaultWorkspaceId: workspaceId,

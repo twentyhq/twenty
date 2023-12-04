@@ -1,4 +1,5 @@
 import { objectMetadataConfigScopedState } from '@/ui/object/record-table/states/objectMetadataConfigScopedState';
+import { tableLastRowVisibleScopedState } from '@/ui/object/record-table/states/tableLastRowVisibleScopedState';
 import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
 
 import { availableTableColumnsScopedState } from '../states/availableTableColumnsScopedState';
@@ -61,6 +62,11 @@ export const getRecordTableScopedStates = ({
     recordTableScopeId,
   );
 
+  const tableLastRowVisibleState = getScopedState(
+    tableLastRowVisibleScopedState,
+    recordTableScopeId,
+  );
+
   return {
     availableTableColumnsState,
     tableFiltersState,
@@ -72,5 +78,6 @@ export const getRecordTableScopedStates = ({
     visibleTableColumnsSelector,
     onColumnsChangeState,
     onEntityCountChangeState,
+    tableLastRowVisibleState,
   };
 };

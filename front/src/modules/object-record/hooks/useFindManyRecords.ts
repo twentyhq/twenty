@@ -142,6 +142,23 @@ export const useFindManyRecords = <
                 ...fetchMoreResult?.[objectMetadataItem.namePlural]?.edges,
               ]);
             }
+            onCompleted?.({
+              __typename: `${capitalize(
+                objectMetadataItem.nameSingular,
+              )}Connection`,
+              edges: newEdges,
+              pageInfo:
+                fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,
+            });
+
+            if (data?.[objectMetadataItem.namePlural]) {
+              setLastCursor(
+                data?.[objectMetadataItem.namePlural]?.pageInfo.endCursor,
+              );
+              setHasNextPage(
+                data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage,
+              );
+            }
 
             return Object.assign({}, prev, {
               [objectMetadataItem.namePlural]: {
@@ -171,13 +188,18 @@ export const useFindManyRecords = <
       }
     }
   }, [
-    lastCursor,
+    hasNextPage,
+    setIsFetchingMoreObjects,
     fetchMore,
     filter,
     orderBy,
-    objectMetadataItem,
-    hasNextPage,
-    setIsFetchingMoreObjects,
+    lastCursor,
+    objectMetadataItem.namePlural,
+    objectMetadataItem.nameSingular,
+    onCompleted,
+    data,
+    setLastCursor,
+    setHasNextPage,
     enqueueSnackBar,
   ]);
 

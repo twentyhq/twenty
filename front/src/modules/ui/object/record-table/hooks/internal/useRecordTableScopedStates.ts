@@ -24,6 +24,7 @@ export const useRecordTableScopedStates = (args?: {
     visibleTableColumnsSelector,
     onEntityCountChangeState,
     onColumnsChangeState,
+    tableLastRowVisibleState,
   } = getRecordTableScopedStates({
     recordTableScopeId: scopeId,
   });
@@ -40,5 +41,6 @@ export const useRecordTableScopedStates = (args?: {
     visibleTableColumnsSelector,
     onEntityCountChangeState,
     onColumnsChangeState,
+    tableLastRowVisibleState,
   };
 };

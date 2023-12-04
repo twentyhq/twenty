@@ -44,6 +44,7 @@ const StyledPageContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: row;
+  height: 100vh;
 `;
 
 const StyledMainContainer = styled.div`

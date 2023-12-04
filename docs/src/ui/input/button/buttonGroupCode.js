@@ -15,7 +15,7 @@ export const MyComponent = () => {
         accent="blue"
         soon={false}
         disabled={false}
-        focus={true}
+        focus={false}
         onClick={() => console.log("click")}
       />
       <Button
@@ -29,7 +29,7 @@ export const MyComponent = () => {
         accent="blue"
         soon={false}
         disabled={false}
-        focus={true}
+        focus={false}
         onClick={() => console.log("click")}
       />
       <Button
@@ -43,7 +43,7 @@ export const MyComponent = () => {
         accent="blue"
         soon={false}
         disabled={false}
-        focus={true}
+        focus={false}
         onClick={() => console.log("click")}
       />
     </ButtonGroup>

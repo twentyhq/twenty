@@ -18,7 +18,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 
 // TODO: implement dry-run
 @Command({
-  name: 'workspace:seed',
+  name: 'workspace:seed:dev',
   description:
     'Seed workspace with initial data. This command is intended for development only.',
 })
@@ -45,7 +45,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
       });
       await dataSource.initialize();
 
-      await seedCoreSchema(dataSource);
+      await seedCoreSchema(dataSource, this.workspaceId);
       await seedMetadataSchema(dataSource);
     } catch (error) {
       console.error(error);
