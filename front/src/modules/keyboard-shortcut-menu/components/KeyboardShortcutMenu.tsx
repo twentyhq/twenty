@@ -42,19 +42,21 @@ export const KeyboardShortcutMenu = () => {
   );
 
   return (
-    isKeyboardShortcutMenuOpened && (
-      <KeyboardMenuDialog onClose={toggleKeyboardShortcutMenu}>
-        <KeyboardMenuGroup heading="Table">
-          {keyboardShortcutsTable.map((TableShortcut) => (
-            <KeyboardMenuItem shortcut={TableShortcut} />
-          ))}
-        </KeyboardMenuGroup>
-        <KeyboardMenuGroup heading="General">
-          {keyboardShortcutsGeneral.map((GeneralShortcut) => (
-            <KeyboardMenuItem shortcut={GeneralShortcut} />
-          ))}
-        </KeyboardMenuGroup>
-      </KeyboardMenuDialog>
-    )
+    <>
+      {isKeyboardShortcutMenuOpened && (
+        <KeyboardMenuDialog onClose={toggleKeyboardShortcutMenu}>
+          <KeyboardMenuGroup heading="Table">
+            {keyboardShortcutsTable.map((TableShortcut) => (
+              <KeyboardMenuItem shortcut={TableShortcut} />
+            ))}
+          </KeyboardMenuGroup>
+          <KeyboardMenuGroup heading="General">
+            {keyboardShortcutsGeneral.map((GeneralShortcut) => (
+              <KeyboardMenuItem shortcut={GeneralShortcut} />
+            ))}
+          </KeyboardMenuGroup>
+        </KeyboardMenuDialog>
+      )}
+    </>
   );
 };

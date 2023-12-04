@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 
-import IconGoogleRaw from '../assets/google-icon.svg';
+import IconGoogleRaw from '../assets/google-icon.svg?react';
 
 interface IconGoogleProps {
   size?: number;

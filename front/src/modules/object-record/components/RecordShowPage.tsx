@@ -72,8 +72,8 @@ export const RecordShowPage = () => {
     objectMetadataItem?.nameSingular === 'company'
       ? 'Company'
       : objectMetadataItem?.nameSingular === 'person'
-      ? 'Person'
-      : 'Custom';
+        ? 'Person'
+        : 'Custom';
 
   const useUpdateOneObjectRecordMutation: () => [
     (params: any) => any,
