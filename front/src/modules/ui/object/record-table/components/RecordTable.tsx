@@ -2,9 +2,9 @@ import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
-import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { RecordTableBody } from '@/ui/object/record-table/components/RecordTableBody';
@@ -130,7 +130,6 @@ export const RecordTable = ({
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
   const tableRowIds = useRecoilValue(tableRowIdsState);
-  const openCreateActivity = useOpenCreateActivityDrawer();
 
   const {
     scopeId: objectNamePlural,
@@ -149,6 +148,14 @@ export const RecordTable = ({
       objectNameSingular,
     },
   );
+
+  const { createOneRecord: createOneObject } = useCreateOneRecord({
+    objectNameSingular,
+  });
+
+  const handleAddButtonClick = async () => {
+    await createOneObject?.({});
+  };
 
   const { persistViewFields } = useViewFields(viewBarId);
 
@@ -182,6 +189,7 @@ export const RecordTable = ({
                         Icon={IconPlus}
                         title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
                         variant={'secondary'}
+                        onClick={handleAddButtonClick}
                       />
                     </StyledTaskGroupEmptyContainer>
                   </StyledTasksContainer>
