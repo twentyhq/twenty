@@ -441,6 +441,13 @@ export class ApiRestService {
     if (fieldType === 'BOOLEAN') {
       return value.toLowerCase() === 'true';
     }
+    if (
+      (value[0] === '"' || value[0] === "'") &&
+      (value.charAt(value.length - 1) === '"' ||
+        value.charAt(value.length - 1) === "'")
+    ) {
+      return value.substring(1, value.length - 1);
+    }
     return value;
   }
 
