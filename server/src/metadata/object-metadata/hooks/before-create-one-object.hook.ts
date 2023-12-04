@@ -13,11 +13,12 @@ import { CreateObjectInput } from 'src/metadata/object-metadata/dtos/create-obje
 import { standardObjectsNames } from 'src/workspace/workspace-manager/standard-objects/standard-object-metadata';
 
 const OBJECT_TYPES = [
-  'featureflag',
-  'refreshtoken',
-  'userworkspacemembername',
-  'userworkspacemember',
-  'workspace',
+  'featureFlag',
+  'refreshToken',
+  'UserWorkspaceMemberName',
+  'UserWorkspaceMember',
+  'Workspace',
+  'User',
   ...standardObjectsNames,
 ];
 
