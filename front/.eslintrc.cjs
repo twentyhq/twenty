@@ -102,10 +102,9 @@ module.exports = {
     'mockServiceWorker.js',
     '.eslintrc.cjs',
     '*.config.cjs',
-    '*.config.js',
+    '*config.js',
     '*.config.ts',
     'codegen*.js',
-    'public/',
     '**/generated*/*',
   ],
   overrides: [
