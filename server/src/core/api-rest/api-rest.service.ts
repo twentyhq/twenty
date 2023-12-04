@@ -13,6 +13,7 @@ import {
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { capitalize } from 'src/utils/capitalize';
+import { mapFieldMetadataToGraphqlQuery } from 'src/core/api-rest/utils/map-field-metadata-to-graphql-query.utils';
 
 enum FILTER_COMPARATORS {
   eq = 'eq',
@@ -28,7 +29,6 @@ enum FILTER_COMPARATORS {
   ilike = 'ilike',
 }
 const ALLOWED_DEPTH_VALUES = [1, 2];
-const DEFAULT_DEPTH_VALUE = 2;
 const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
 enum CONJUNCTIONS {
   or = 'or',
@@ -44,108 +44,6 @@ export class ApiRestService {
     private readonly environmentService: EnvironmentService,
   ) {}
 
-  mapFieldMetadataToGraphQLQuery(
-    objectMetadataItems,
-    field,
-    maxDepthForRelations = DEFAULT_DEPTH_VALUE,
-  ): any {
-    if (maxDepthForRelations <= 0) {
-      return '';
-    }
-
-    const fieldType = field.type;
-
-    const fieldIsSimpleValue = [
-      'UUID',
-      'TEXT',
-      'PHONE',
-      'DATE_TIME',
-      'EMAIL',
-      'NUMBER',
-      'BOOLEAN',
-    ].includes(fieldType);
-
-    if (fieldIsSimpleValue) {
-      return field.name;
-    } else if (
-      fieldType === 'RELATION' &&
-      field.toRelationMetadata?.relationType === 'ONE_TO_MANY'
-    ) {
-      const relationMetadataItem = objectMetadataItems.find(
-        (objectMetadataItem) =>
-          objectMetadataItem.id ===
-          (field.toRelationMetadata as any)?.fromObjectMetadata?.id,
-      );
-
-      return `${field.name}
-    {
-      id
-      ${(relationMetadataItem?.fields ?? [])
-        .filter((field) => field.type !== 'RELATION')
-        .map((field) =>
-          this.mapFieldMetadataToGraphQLQuery(
-            objectMetadataItems,
-            field,
-            maxDepthForRelations - 1,
-          ),
-        )
-        .join('\n')}
-    }`;
-    } else if (
-      fieldType === 'RELATION' &&
-      field.fromRelationMetadata?.relationType === 'ONE_TO_MANY'
-    ) {
-      const relationMetadataItem = objectMetadataItems.find(
-        (objectMetadataItem) =>
-          objectMetadataItem.id ===
-          (field.fromRelationMetadata as any)?.toObjectMetadata?.id,
-      );
-
-      return `${field.name}
-      {
-        edges {
-          node {
-            id
-            ${(relationMetadataItem?.fields ?? [])
-              .filter((field) => field.type !== 'RELATION')
-              .map((field) =>
-                this.mapFieldMetadataToGraphQLQuery(
-                  objectMetadataItems,
-                  field,
-                  maxDepthForRelations - 1,
-                ),
-              )
-              .join('\n')}
-          }
-        }
-      }`;
-    } else if (fieldType === 'LINK') {
-      return `
-      ${field.name}
-      {
-        label
-        url
-      }
-    `;
-    } else if (fieldType === 'CURRENCY') {
-      return `
-      ${field.name}
-      {
-        amountMicros
-        currencyCode
-      }
-    `;
-    } else if (fieldType === 'FULL_NAME') {
-      return `
-      ${field.name}
-      {
-        firstName
-        lastName
-      }
-    `;
-    }
-  }
-
   computeDeleteQuery(objectMetadataItem) {
     return `
       mutation Delete${capitalize(objectMetadataItem.nameSingular)}($id: ID!) {
@@ -156,11 +54,7 @@ export class ApiRestService {
     `;
   }
 
-  computeCreateQuery(
-    objectMetadataItems,
-    objectMetadataItem,
-    depth = DEFAULT_DEPTH_VALUE,
-  ) {
+  computeCreateQuery(objectMetadataItems, objectMetadataItem, depth?) {
     return `
       mutation Create${capitalize(
         objectMetadataItem.nameSingular,
@@ -169,11 +63,7 @@ export class ApiRestService {
           id
           ${objectMetadataItem.fields
             .map((field) =>
-              this.mapFieldMetadataToGraphQLQuery(
-                objectMetadataItems,
-                field,
-                depth,
-              ),
+              mapFieldMetadataToGraphqlQuery(objectMetadataItems, field, depth),
             )
             .join('\n')}
         }
@@ -181,11 +71,7 @@ export class ApiRestService {
     `;
   }
 
-  computeUpdateQuery(
-    objectMetadataItems,
-    objectMetadataItem,
-    depth = DEFAULT_DEPTH_VALUE,
-  ) {
+  computeUpdateQuery(objectMetadataItems, objectMetadataItem, depth?) {
     return `
       mutation Update${capitalize(
         objectMetadataItem.nameSingular,
@@ -196,11 +82,7 @@ export class ApiRestService {
           id
           ${objectMetadataItem.fields
             .map((field) =>
-              this.mapFieldMetadataToGraphQLQuery(
-                objectMetadataItems,
-                field,
-                depth,
-              ),
+              mapFieldMetadataToGraphqlQuery(objectMetadataItems, field, depth),
             )
             .join('\n')}
         }
@@ -208,11 +90,7 @@ export class ApiRestService {
     `;
   }
 
-  computeFindOneQuery(
-    objectMetadataItems,
-    objectMetadataItem,
-    depth = DEFAULT_DEPTH_VALUE,
-  ) {
+  computeFindOneQuery(objectMetadataItems, objectMetadataItem, depth?) {
     return `
       query FindOne${capitalize(objectMetadataItem.nameSingular)}(
         $filter: ${capitalize(objectMetadataItem.nameSingular)}FilterInput!,
@@ -221,11 +99,7 @@ export class ApiRestService {
           id
           ${objectMetadataItem.fields
             .map((field) =>
-              this.mapFieldMetadataToGraphQLQuery(
-                objectMetadataItems,
-                field,
-                depth,
-              ),
+              mapFieldMetadataToGraphqlQuery(objectMetadataItems, field, depth),
             )
             .join('\n')}
         }
@@ -236,7 +110,7 @@ export class ApiRestService {
   computeFindManyQuery(
     objectMetadataItems,
     objectMetadataItem,
-    depth = DEFAULT_DEPTH_VALUE,
+    depth?,
   ): string {
     return `
       query FindMany${capitalize(objectMetadataItem.namePlural)}(
@@ -253,7 +127,7 @@ export class ApiRestService {
               id
               ${objectMetadataItem.fields
                 .map((field) =>
-                  this.mapFieldMetadataToGraphQLQuery(
+                  mapFieldMetadataToGraphqlQuery(
                     objectMetadataItems,
                     field,
                     depth,
@@ -607,12 +481,12 @@ export class ApiRestService {
     ];
   }
 
-  computeDepth(request): number {
+  computeDepth(request): number | undefined {
     const depth =
       typeof request.query.depth === 'string'
         ? parseInt(request.query.depth)
-        : DEFAULT_DEPTH_VALUE;
-    if (!ALLOWED_DEPTH_VALUES.includes(depth)) {
+        : undefined;
+    if (depth && !ALLOWED_DEPTH_VALUES.includes(depth)) {
       throw Error(
         `'depth=${depth}' parameter invalid. Allowed values are ${ALLOWED_DEPTH_VALUES.join(
           ', ',
