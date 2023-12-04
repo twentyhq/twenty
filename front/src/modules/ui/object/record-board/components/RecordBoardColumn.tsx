@@ -8,7 +8,6 @@ import { RecordBoardCard } from '@/ui/object/record-board/components/RecordBoard
 import { BoardCardIdContext } from '@/ui/object/record-board/contexts/BoardCardIdContext';
 import { BoardColumnDefinition } from '@/ui/object/record-board/types/BoardColumnDefinition';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { BoardColumnContext } from '../contexts/BoardColumnContext';
 import { recordBoardCardIdsByColumnIdFamilyState } from '../states/recordBoardCardIdsByColumnIdFamilyState';
@@ -200,9 +199,7 @@ export const RecordBoardColumn = ({
                     {...draggableProvided?.draggableProps}
                   >
                     <StyledNewCardButtonContainer>
-                      <RecoilScope>
-                        {recordBoardOptions.newCardComponent}
-                      </RecoilScope>
+                      {recordBoardOptions.newCardComponent}
                     </StyledNewCardButtonContainer>
                   </div>
                 )}
