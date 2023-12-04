@@ -10,12 +10,12 @@ import { turnFiltersIntoWhereClause } from '@/ui/object/object-filter-dropdown/u
 import { turnSortsIntoOrderBy } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 import { useUpdateCompanyBoardCardIdsInternal } from '@/ui/object/record-board/hooks/internal/useUpdateCompanyBoardCardIdsInternal';
-import { useRecordBoard } from '@/ui/object/record-board/hooks/useRecordBoard';
 
 import { useFindManyRecords } from './useFindManyRecords';
 
 export const useObjectRecordBoard = () => {
-  const { scopeId: objectNamePlural } = useRecordBoard();
+  //const { scopeId: objectNamePlural } = useRecordBoard();
+  const objectNamePlural = 'opportunities';
   const updateCompanyBoardCardIds = useUpdateCompanyBoardCardIdsInternal();
 
   const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
@@ -37,6 +37,9 @@ export const useObjectRecordBoard = () => {
 
   const boardFilters = useRecoilValue(boardFiltersState);
   const boardSorts = useRecoilValue(boardSortsState);
+
+  console.log('boardFilters', boardFilters);
+  console.log('boardSorts', boardSorts);
 
   const setSavedCompanies = useSetRecoilState(savedCompaniesState);
 

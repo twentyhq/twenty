@@ -6,6 +6,8 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { availableBoardCardFieldsScopedState } from '@/ui/object/record-board/states/availableBoardCardFieldsScopedState';
 import { boardCardFieldsScopedState } from '@/ui/object/record-board/states/boardCardFieldsScopedState';
+import { boardFiltersScopedState } from '@/ui/object/record-board/states/boardFiltersScopedState';
+import { boardSortsScopedState } from '@/ui/object/record-board/states/boardSortsScopedState';
 import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedStateV2';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useViewBar } from '@/views/hooks/useViewBar';
@@ -72,15 +74,28 @@ export const HooksCompanyBoardEffect = ({
     setViewType?.(ViewType.Kanban);
   }, [objectMetadataItem, setViewObjectMetadataId, setViewType]);
 
-  const { currentViewFieldsState } = useViewScopedStates({
-    viewScopeId: viewBarId,
-  });
+  const {
+    currentViewFieldsState,
+    currentViewFiltersState,
+    currentViewSortsState,
+  } = useViewScopedStates({ viewScopeId: viewBarId });
 
   const currentViewFields = useRecoilValue(currentViewFieldsState);
+  const currentViewFilters = useRecoilValue(currentViewFiltersState);
+  const currentViewSorts = useRecoilValue(currentViewSortsState);
 
   //TODO: Modify to use scopeId
   const setBoardCardFields = useSetRecoilScopedStateV2(
     boardCardFieldsScopedState,
+    'company-board',
+  );
+  const setBoardCardFilters = useSetRecoilScopedStateV2(
+    boardFiltersScopedState,
+    'company-board',
+  );
+
+  const setBoardCardSorts = useSetRecoilScopedStateV2(
+    boardSortsScopedState,
     'company-board',
   );
 
@@ -93,7 +108,20 @@ export const HooksCompanyBoardEffect = ({
         ),
       );
     }
+    console.log('currentViewFields', currentViewFields);
   }, [columnDefinitions, currentViewFields, setBoardCardFields]);
+
+  useEffect(() => {
+    if (currentViewFilters) {
+      setBoardCardFilters(currentViewFilters);
+    }
+  }, [currentViewFilters, setBoardCardFilters]);
+
+  useEffect(() => {
+    if (currentViewSorts) {
+      setBoardCardSorts(currentViewSorts);
+    }
+  }, [currentViewSorts, setBoardCardSorts]);
 
   return <></>;
 };
