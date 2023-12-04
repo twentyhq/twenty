@@ -365,8 +365,11 @@ export class ApiRestService {
     return this.parseSimpleFilter(filterQuery, objectMetadataItem);
   }
 
-  parseSimpleFilter(filterString: string, objectMetadataItem) {
-    // price[lte]:100
+  parseSimpleFilterString(filterString: string): {
+    fields: string[];
+    comparator: string;
+    value: string;
+  } {
     if (
       !filterString.match(
         `^(.+)\\[(${Object.keys(FILTER_COMPARATORS).join('|')})\\]:(.+)$`,
@@ -374,8 +377,38 @@ export class ApiRestService {
     ) {
       throw Error(`'filter' invalid for '${filterString}'. eg: price[gte]:10`);
     }
-    const [fieldAndComparator, value] = filterString.split(':');
-    const [field, comparator] = fieldAndComparator.replace(']', '').split('[');
+    let fields = '';
+    let comparator = '';
+    let value = '';
+    let previousC = '';
+    let fillFields = true;
+    let fillComparator = false;
+    let fillValue = false;
+    for (const c of filterString) {
+      if (c === '[') {
+        fillFields = false;
+      }
+      if (previousC === '[' && !comparator.length) {
+        fillComparator = true;
+      }
+      if (c === ']') {
+        fillComparator = false;
+      }
+      if (previousC === ']' && c === ':' && !value.length) {
+        fillValue = true;
+        continue;
+      }
+      if (fillFields) {
+        fields += c;
+      }
+      if (fillComparator) {
+        comparator += c;
+      }
+      if (fillValue) {
+        value += c;
+      }
+      previousC = c;
+    }
     if (!Object.keys(FILTER_COMPARATORS).includes(comparator)) {
       throw Error(
         `'filter' invalid for '${filterString}', comparator ${comparator} not in ${Object.keys(
@@ -383,7 +416,13 @@ export class ApiRestService {
         ).join(',')}`,
       );
     }
-    const fields = field.split('.');
+    return { fields: fields.split('.'), comparator, value };
+  }
+
+  parseSimpleFilter(filterString: string, objectMetadataItem) {
+    // price[lte]:100
+    const { fields, comparator, value } =
+      this.parseSimpleFilterString(filterString);
     this.checkFields(objectMetadataItem, fields, 'filter');
     const fieldType = this.getFieldType(objectMetadataItem, fields[0]);
     const formattedValue = this.formatFieldValue(value, fieldType);

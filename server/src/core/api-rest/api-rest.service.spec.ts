@@ -145,4 +145,42 @@ describe('ApiRestService', () => {
       });
     });
   });
+  describe('parseSimpleFilterString', () => {
+    it('should parse simple filter string test 1', () => {
+      expect(service.parseSimpleFilterString('price[lte]:100')).toEqual({
+        fields: ['price'],
+        comparator: 'lte',
+        value: '100',
+      });
+    });
+    it('should parse simple filter string test 2', () => {
+      expect(
+        service.parseSimpleFilterString('date[gt]:2023-12-01T14:23:23.914Z'),
+      ).toEqual({
+        fields: ['date'],
+        comparator: 'gt',
+        value: '2023-12-01T14:23:23.914Z',
+      });
+    });
+    it('should parse simple filter string test 3', () => {
+      expect(
+        service.parseSimpleFilterString('field[gt]:valStart]:[valEnd'),
+      ).toEqual({
+        fields: ['field'],
+        comparator: 'gt',
+        value: 'valStart]:[valEnd',
+      });
+    });
+    it('should parse simple filter string test 4', () => {
+      expect(
+        service.parseSimpleFilterString(
+          'person.createdAt[gt]:2023-12-01T14:23:23.914Z',
+        ),
+      ).toEqual({
+        fields: ['person', 'createdAt'],
+        comparator: 'gt',
+        value: '2023-12-01T14:23:23.914Z',
+      });
+    });
+  });
 });
