@@ -42,6 +42,7 @@ export type TableCellContainerProps = {
   maxContentWidth?: number;
   onSubmit?: () => void;
   onCancel?: () => void;
+  width?: number;
 };
 
 const DEFAULT_CELL_SCOPE: HotkeyScope = {
@@ -54,6 +55,7 @@ export const TableCellContainer = ({
   editModeContent,
   nonEditModeContent,
   editHotkeyScope,
+  width,
 }: TableCellContainerProps) => {
   const { isCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
 
@@ -114,6 +116,7 @@ export const TableCellContainer = ({
       <StyledCellBaseContainer
         onMouseEnter={handleContainerMouseEnter}
         onMouseLeave={handleContainerMouseLeave}
+        style={{ width }}
       >
         {isCurrentTableCellInEditMode ? (
           <TableCellEditMode

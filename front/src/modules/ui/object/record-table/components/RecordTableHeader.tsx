@@ -1,11 +1,13 @@
+import { useEffect, useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { IconPlus } from '@/ui/display/icon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { RecordTableHeaderCell } from '@/ui/object/record-table/components/RecordTableHeaderCell';
+import { tableColumnWidthsState } from '@/ui/object/record-table/states/tableColumnWidths';
 
 import { useRecordTableScopedStates } from '../hooks/internal/useRecordTableScopedStates';
 
@@ -59,9 +61,23 @@ export const RecordTableHeader = ({
 
   const theme = useTheme();
 
+  // eslint-disable-next-line twenty/no-state-useref
+  const headerRef = useRef<HTMLTableRowElement>(null);
+
+  const setColumnWidths = useSetRecoilState(tableColumnWidthsState);
+
+  useEffect(() => {
+    if (headerRef.current) {
+      const widths = Array.from(headerRef.current.children).map(
+        (th) => th.getBoundingClientRect().width - 1,
+      );
+      setColumnWidths(widths);
+    }
+  }, [setColumnWidths, visibleTableColumns]);
+
   return (
     <StyledTableHead data-select-disable>
-      <tr>
+      <tr ref={headerRef}>
         <th
           style={{
             width: 30,

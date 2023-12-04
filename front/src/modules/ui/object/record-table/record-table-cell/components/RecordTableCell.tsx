@@ -10,8 +10,10 @@ import { TableCellContainer } from './RecordTableCellContainer';
 
 export const TableCell = ({
   customHotkeyScope,
+  width,
 }: {
   customHotkeyScope: HotkeyScope;
+  width?: number;
 }) => {
   const { closeTableCell } = useTableCell();
 
@@ -70,6 +72,7 @@ export const TableCell = ({
         />
       }
       nonEditModeContent={<FieldDisplay />}
+      width={width}
     ></TableCellContainer>
   );
 };

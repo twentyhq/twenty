@@ -17,7 +17,13 @@ import { TableCell } from '../record-table-cell/components/RecordTableCell';
 import { useCurrentRowSelected } from '../record-table-row/hooks/useCurrentRowSelected';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
-export const RecordTableCell = ({ cellIndex }: { cellIndex: number }) => {
+export const RecordTableCell = ({
+  cellIndex,
+  width,
+}: {
+  cellIndex: number;
+  width?: number;
+}) => {
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
   const currentRowId = useContext(RowIdContext);
@@ -66,7 +72,10 @@ export const RecordTableCell = ({ cellIndex }: { cellIndex: number }) => {
                 objectMetadataConfig?.labelIdentifierFieldMetadataId,
             }}
           >
-            <TableCell customHotkeyScope={{ scope: customHotkeyScope }} />
+            <TableCell
+              customHotkeyScope={{ scope: customHotkeyScope }}
+              width={width}
+            />
           </FieldContext.Provider>
         </td>
       </ColumnIndexContext.Provider>
