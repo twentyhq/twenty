@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
 import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
@@ -24,20 +25,24 @@ const StyledContainer = styled.div`
 
 export const RecordTableContainer = ({
   objectNamePlural,
+  createRecord,
 }: {
   objectNamePlural: string;
+  createRecord: () => void;
 }) => {
-  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
-    {
-      objectNamePlural,
-    },
-  );
-  const { columnDefinitions } = useColumnDefinitionsFromFieldMetadata(
-    foundObjectMetadataItem,
-  );
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
+    objectNamePlural,
+  });
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
+  const { columnDefinitions } =
+    useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: foundObjectMetadataItem?.nameSingular,
+    objectNameSingular,
   });
 
   const recordTableId = objectNamePlural ?? '';
@@ -84,11 +89,14 @@ export const RecordTableContainer = ({
         }}
       />
       <RecordTableEffect recordTableId={recordTableId} viewBarId={viewBarId} />
-      <RecordTable
-        recordTableId={recordTableId}
-        viewBarId={viewBarId}
-        updateEntityMutation={updateEntity}
-      />
+      {
+        <RecordTable
+          recordTableId={recordTableId}
+          viewBarId={viewBarId}
+          updateRecordMutation={updateEntity}
+          createRecord={createRecord}
+        />
+      }
     </StyledContainer>
   );
 };

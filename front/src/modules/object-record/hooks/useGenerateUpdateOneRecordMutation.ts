@@ -16,7 +16,7 @@ export const getUpdateOneRecordMutationGraphQLField = ({
 export const useGenerateUpdateOneRecordMutation = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem: ObjectMetadataItem | undefined | null;
+  objectMetadataItem: ObjectMetadataItem;
 }) => {
   const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
 

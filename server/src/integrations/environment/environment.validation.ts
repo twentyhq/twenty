@@ -13,6 +13,7 @@ import {
 } from 'class-validator';
 
 import { assert } from 'src/utils/assert';
+import { CastToStringArray } from 'src/integrations/environment/decorators/cast-to-string-array.decorator';
 
 import { IsDuration } from './decorators/is-duration.decorator';
 import { StorageType } from './interfaces/storage.interface';
@@ -58,6 +59,10 @@ export class EnvironmentVariables {
   // Frontend URL
   @IsUrl({ require_tld: false })
   FRONT_BASE_URL: string;
+
+  // Server internal URL
+  @IsUrl({ require_tld: false })
+  LOCAL_SERVER_URL: string;
 
   // Json Web Token
   @IsString()
@@ -140,6 +145,10 @@ export class EnvironmentVariables {
   @CastToLogLevelArray()
   @IsOptional()
   LOG_LEVELS?: LogLevel[];
+
+  @CastToStringArray()
+  @IsOptional()
+  DEMO_WORKSPACE_IDS?: string[];
 
   @ValidateIf((env) => env.LOGGER_DRIVER === LoggerDriver.Sentry)
   @IsString()

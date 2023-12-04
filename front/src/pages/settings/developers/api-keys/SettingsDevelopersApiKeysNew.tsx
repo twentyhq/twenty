@@ -33,6 +33,7 @@ export const SettingsDevelopersApiKeysNew = () => {
   const { createOneRecord: createOneApiKey } = useCreateOneRecord<ApiKey>({
     objectNameSingular: 'apiKey',
   });
+
   const onSave = async () => {
     const expiresAt = DateTime.now()
       .plus({ days: formValues.expirationDate ?? 30 })

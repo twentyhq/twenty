@@ -16,9 +16,6 @@ export const ObjectFilterDropdownEntitySelect = () => {
   const objectMetadataNameSingular =
     filterDefinitionUsedInDropdown?.relationObjectMetadataNameSingular ?? '';
 
-  const objectMetadataNamePlural =
-    filterDefinitionUsedInDropdown?.relationObjectMetadataNamePlural ?? '';
-
   // TODO: refactor useFilteredSearchEntityQuery
   const { findManyRecordsQuery } = useObjectMetadataItem({
     objectNameSingular: objectMetadataNameSingular,
@@ -44,7 +41,7 @@ export const ObjectFilterDropdownEntitySelect = () => {
       : [],
     mappingFunction: (record: any) =>
       identifiersMapper?.(record, objectMetadataNameSingular),
-    objectNamePlural: objectMetadataNamePlural,
+    objectNameSingular: objectMetadataNameSingular,
   });
 
   if (filterDefinitionUsedInDropdown?.type !== 'RELATION') {

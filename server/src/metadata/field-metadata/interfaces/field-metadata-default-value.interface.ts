@@ -9,6 +9,11 @@ export interface FieldMetadataDefaultValueNumber {
 export interface FieldMetadataDefaultValueBoolean {
   value: boolean;
 }
+
+export interface FieldMetadataDefaultValueStringArray {
+  value: string[];
+}
+
 export interface FieldMetadataDefaultValueDateTime {
   value: Date;
 }
@@ -55,10 +60,12 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.NUMBER]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.NUMERIC]: FieldMetadataDefaultValueString;
   [FieldMetadataType.PROBABILITY]: FieldMetadataDefaultValueNumber;
-  [FieldMetadataType.ENUM]: FieldMetadataDefaultValueString;
   [FieldMetadataType.LINK]: FieldMetadataDefaultValueLink;
   [FieldMetadataType.CURRENCY]: FieldMetadataDefaultValueCurrency;
   [FieldMetadataType.FULL_NAME]: FieldMetadataDefaultValueFullName;
+  [FieldMetadataType.RATING]: FieldMetadataDefaultValueString;
+  [FieldMetadataType.SELECT]: FieldMetadataDefaultValueString;
+  [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueStringArray;
 };
 
 type DefaultValueByFieldMetadata<T extends FieldMetadataType | 'default'> = [
@@ -78,7 +85,9 @@ type FieldMetadataDefaultValueExtractNestedType<T> = T extends {
 }
   ? U
   : T extends object
-  ? T[keyof T]
+  ? { [K in keyof T]: T[K] } extends { value: infer V }
+    ? V
+    : T[keyof T]
   : never;
 
 type FieldMetadataDefaultValueExtractedTypes = {

@@ -13,7 +13,6 @@ import {
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from '~/utils/isDefined';
 
-import { leftNavbarWidth } from '../../../navigation/navbar/constants';
 import { useRightDrawer } from '../hooks/useRightDrawer';
 import { isRightDrawerExpandedState } from '../states/isRightDrawerExpandedState';
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
@@ -70,15 +69,9 @@ export const RightDrawer = () => {
 
   const isMobile = useIsMobile();
 
-  const rightDrawerWidthExpanded = `calc(100% - ${
-    leftNavbarWidth.desktop
-  } - ${theme.spacing(2)})`;
-
   const rightDrawerWidth = isRightDrawerOpen
-    ? isMobile
+    ? isMobile || isRightDrawerExpanded
       ? '100%'
-      : isRightDrawerExpanded
-      ? rightDrawerWidthExpanded
       : theme.rightDrawerWidth
     : '0';
 

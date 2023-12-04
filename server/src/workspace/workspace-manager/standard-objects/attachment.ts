@@ -90,7 +90,7 @@ const attachmentMetadata = {
       },
       description: 'Attachment activity',
       icon: 'IconNotes',
-      isNullable: false,
+      isNullable: true,
     },
     {
       isCustom: false,
@@ -103,7 +103,7 @@ const attachmentMetadata = {
       },
       description: 'Attachment person',
       icon: 'IconUser',
-      isNullable: false,
+      isNullable: true,
     },
     {
       isCustom: false,
@@ -116,7 +116,7 @@ const attachmentMetadata = {
       },
       description: 'Attachment company',
       icon: 'IconBuildingSkyscraper',
-      isNullable: false,
+      isNullable: true,
     },
   ],
 };

@@ -1,22 +1,28 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { v4 as uuidV4 } from 'uuid';
+import { FindOneOptions, Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 
 import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
 import { WorkspaceMigrationService } from 'src/metadata/workspace-migration/workspace-migration.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { CreateFieldInput } from 'src/metadata/field-metadata/dtos/create-field.input';
-import { WorkspaceMigrationTableAction } from 'src/metadata/workspace-migration/workspace-migration.entity';
+import {
+  WorkspaceMigrationColumnActionType,
+  WorkspaceMigrationTableAction,
+} from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { generateTargetColumnMap } from 'src/metadata/field-metadata/utils/generate-target-column-map.util';
-import { convertFieldMetadataToColumnActions } from 'src/metadata/field-metadata/utils/convert-field-metadata-to-column-action.util';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
+import { UpdateFieldInput } from 'src/metadata/field-metadata/dtos/update-field.input';
+import { WorkspaceMigrationFactory } from 'src/metadata/workspace-migration/workspace-migration.factory';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
@@ -27,6 +33,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
 
     private readonly objectMetadataService: ObjectMetadataService,
+    private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly dataSourceService: DataSourceService,
@@ -40,8 +47,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   ): Promise<FieldMetadataEntity> {
     const objectMetadata =
       await this.objectMetadataService.findOneWithinWorkspace(
-        record.objectMetadataId,
         record.workspaceId,
+        {
+          where: {
+            id: record.objectMetadataId,
+          },
+        },
       );
 
     if (!objectMetadata) {
@@ -63,6 +74,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     const createdFieldMetadata = await super.createOne({
       ...record,
       targetColumnMap: generateTargetColumnMap(record.type, true, record.name),
+      options: record.options
+        ? record.options.map((option) => ({
+            ...option,
+            id: uuidV4(),
+          }))
+        : undefined,
       isActive: true,
       isCustom: true,
     });
@@ -73,7 +90,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         {
           name: objectMetadata.targetTableName,
           action: 'alter',
-          columns: convertFieldMetadataToColumnActions(createdFieldMetadata),
+          columns: this.workspaceMigrationFactory.createColumnActions(
+            WorkspaceMigrationColumnActionType.CREATE,
+            createdFieldMetadata,
+          ),
         } satisfies WorkspaceMigrationTableAction,
       ],
     );
@@ -123,12 +143,80 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     return createdFieldMetadata;
   }
 
+  override async updateOne(
+    id: string,
+    record: UpdateFieldInput,
+  ): Promise<FieldMetadataEntity> {
+    const existingFieldMetadata = await this.fieldMetadataRepository.findOne({
+      where: {
+        id,
+        workspaceId: record.workspaceId,
+      },
+    });
+
+    if (!existingFieldMetadata) {
+      throw new NotFoundException('Field does not exist');
+    }
+
+    const objectMetadata =
+      await this.objectMetadataService.findOneWithinWorkspace(
+        record.workspaceId,
+        {
+          where: {
+            id: existingFieldMetadata?.objectMetadataId,
+          },
+        },
+      );
+
+    if (!objectMetadata) {
+      throw new NotFoundException('Object does not exist');
+    }
+
+    // Check if the id of the options has been provided
+    if (record.options) {
+      for (const option of record.options) {
+        if (!option.id) {
+          throw new BadRequestException('Option id is required');
+        }
+      }
+    }
+
+    const updatedFieldMetadata = await super.updateOne(id, record);
+
+    if (record.options || record.defaultValue) {
+      await this.workspaceMigrationService.createCustomMigration(
+        existingFieldMetadata.workspaceId,
+        [
+          {
+            name: objectMetadata.targetTableName,
+            action: 'alter',
+            columns: this.workspaceMigrationFactory.createColumnActions(
+              WorkspaceMigrationColumnActionType.ALTER,
+              existingFieldMetadata,
+              updatedFieldMetadata,
+            ),
+          } satisfies WorkspaceMigrationTableAction,
+        ],
+      );
+
+      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+        updatedFieldMetadata.workspaceId,
+      );
+    }
+
+    return updatedFieldMetadata;
+  }
+
   public async findOneWithinWorkspace(
-    fieldMetadataId: string,
     workspaceId: string,
+    options: FindOneOptions<FieldMetadataEntity>,
   ) {
     return this.fieldMetadataRepository.findOne({
-      where: { id: fieldMetadataId, workspaceId },
+      ...options,
+      where: {
+        ...options.where,
+        workspaceId,
+      },
     });
   }
 

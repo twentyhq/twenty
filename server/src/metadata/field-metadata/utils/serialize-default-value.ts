@@ -10,7 +10,11 @@ export const serializeDefaultValue = (
   }
 
   // Dynamic default values
-  if (typeof defaultValue === 'object' && 'type' in defaultValue) {
+  if (
+    !Array.isArray(defaultValue) &&
+    typeof defaultValue === 'object' &&
+    'type' in defaultValue
+  ) {
     switch (defaultValue.type) {
       case 'uuid':
         return 'public.uuid_generate_v4()';
@@ -36,6 +40,10 @@ export const serializeDefaultValue = (
 
   if (defaultValue instanceof Date) {
     return `'${defaultValue.toISOString()}'`;
+  }
+
+  if (Array.isArray(defaultValue)) {
+    return defaultValue;
   }
 
   if (typeof defaultValue === 'object') {

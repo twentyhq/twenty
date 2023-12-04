@@ -27,10 +27,11 @@ export class BeforeDeleteOneField implements BeforeDeleteOneHook<any> {
     }
 
     const fieldMetadata =
-      await this.fieldMetadataService.findOneWithinWorkspace(
-        instance.id.toString(),
-        workspaceId,
-      );
+      await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
+        where: {
+          id: instance.id.toString(),
+        },
+      });
 
     if (!fieldMetadata) {
       throw new BadRequestException('Field does not exist');

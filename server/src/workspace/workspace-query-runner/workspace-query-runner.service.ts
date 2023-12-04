@@ -9,9 +9,11 @@ import {
 import {
   CreateManyResolverArgs,
   CreateOneResolverArgs,
+  DeleteManyResolverArgs,
   DeleteOneResolverArgs,
   FindManyResolverArgs,
   FindOneResolverArgs,
+  UpdateManyResolverArgs,
   UpdateOneResolverArgs,
 } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -43,7 +45,10 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<Record> | undefined> {
     const { workspaceId, targetTableName } = options;
-    const query = this.workspaceQueryBuilderFactory.findMany(args, options);
+    const query = await this.workspaceQueryBuilderFactory.findMany(
+      args,
+      options,
+    );
     const result = await this.execute(query, workspaceId);
 
     return this.parseResult<IConnection<Record>>(result, targetTableName, '');
@@ -60,7 +65,10 @@ export class WorkspaceQueryRunnerService {
       throw new BadRequestException('Missing filter argument');
     }
     const { workspaceId, targetTableName } = options;
-    const query = this.workspaceQueryBuilderFactory.findOne(args, options);
+    const query = await this.workspaceQueryBuilderFactory.findOne(
+      args,
+      options,
+    );
     const result = await this.execute(query, workspaceId);
     const parsedResult = this.parseResult<IConnection<Record>>(
       result,
@@ -76,7 +84,10 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { workspaceId, targetTableName } = options;
-    const query = this.workspaceQueryBuilderFactory.createMany(args, options);
+    const query = await this.workspaceQueryBuilderFactory.createMany(
+      args,
+      options,
+    );
     const result = await this.execute(query, workspaceId);
 
     return this.parseResult<PGGraphQLMutation<Record>>(
@@ -100,9 +111,10 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { workspaceId, targetTableName } = options;
-
-    const query = this.workspaceQueryBuilderFactory.updateOne(args, options);
-
+    const query = await this.workspaceQueryBuilderFactory.updateOne(
+      args,
+      options,
+    );
     const result = await this.execute(query, workspaceId);
 
     return this.parseResult<PGGraphQLMutation<Record>>(
@@ -117,7 +129,10 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { workspaceId, targetTableName } = options;
-    const query = this.workspaceQueryBuilderFactory.deleteOne(args, options);
+    const query = await this.workspaceQueryBuilderFactory.deleteOne(
+      args,
+      options,
+    );
     const result = await this.execute(query, workspaceId);
 
     return this.parseResult<PGGraphQLMutation<Record>>(
@@ -125,6 +140,45 @@ export class WorkspaceQueryRunnerService {
       targetTableName,
       'deleteFrom',
     )?.records?.[0];
+  }
+
+  async updateMany<Record extends IRecord = IRecord>(
+    args: UpdateManyResolverArgs<Record>,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<Record[] | undefined> {
+    const { workspaceId, targetTableName } = options;
+    const query = await this.workspaceQueryBuilderFactory.updateMany(
+      args,
+      options,
+    );
+    const result = await this.execute(query, workspaceId);
+
+    return this.parseResult<PGGraphQLMutation<Record>>(
+      result,
+      targetTableName,
+      'update',
+    )?.records;
+  }
+
+  async deleteMany<
+    Record extends IRecord = IRecord,
+    Filter extends RecordFilter = RecordFilter,
+  >(
+    args: DeleteManyResolverArgs<Filter>,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<Record[] | undefined> {
+    const { workspaceId, targetTableName } = options;
+    const query = await this.workspaceQueryBuilderFactory.deleteMany(
+      args,
+      options,
+    );
+    const result = await this.execute(query, workspaceId);
+
+    return this.parseResult<PGGraphQLMutation<Record>>(
+      result,
+      targetTableName,
+      'deleteFrom',
+    )?.records;
   }
 
   private async execute(

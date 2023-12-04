@@ -22,7 +22,7 @@ export const useTasks = (props?: UseTasksProps) => {
   });
 
   const { records: activityTargets } = useFindManyRecords({
-    objectNamePlural: 'activityTargets',
+    objectNameSingular: 'activityTarget',
     filter: isDefined(entity)
       ? {
           [entity?.type === 'Company' ? 'companyId' : 'personId']: {
@@ -33,7 +33,7 @@ export const useTasks = (props?: UseTasksProps) => {
   });
 
   const { records: completeTasksData } = useFindManyRecords({
-    objectNamePlural: 'activities',
+    objectNameSingular: 'activity',
     skip: !entity && !selectedFilter,
     filter: {
       completedAt: { is: 'NOT_NULL' },
@@ -57,7 +57,7 @@ export const useTasks = (props?: UseTasksProps) => {
   });
 
   const { records: incompleteTaskData } = useFindManyRecords({
-    objectNamePlural: 'activities',
+    objectNameSingular: 'activity',
     skip: !entity && !selectedFilter,
     filter: {
       completedAt: { is: 'NULL' },

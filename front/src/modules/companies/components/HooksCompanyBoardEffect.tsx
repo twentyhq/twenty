@@ -33,7 +33,7 @@ export const HooksCompanyBoardEffect = ({
   } = useViewBar({ viewBarId });
 
   const { objectMetadataItem } = useObjectMetadataItem({
-    objectNamePlural: 'opportunities',
+    objectNameSingular: 'opportunity',
   });
 
   const { columnDefinitions, filterDefinitions, sortDefinitions } =

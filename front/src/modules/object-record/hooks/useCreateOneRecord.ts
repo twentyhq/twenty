@@ -8,42 +8,39 @@ import { capitalize } from '~/utils/string/capitalize';
 
 export const useCreateOneRecord = <T>({
   objectNameSingular,
-}: Pick<ObjectMetadataItemIdentifier, 'objectNameSingular'>) => {
+}: ObjectMetadataItemIdentifier) => {
   const { triggerOptimisticEffects } = useOptimisticEffect({
     objectNameSingular,
   });
 
-  const {
-    objectMetadataItem,
-    objectMetadataItemNotFound,
-    createOneRecordMutation,
-  } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const { objectMetadataItem, createOneRecordMutation } = useObjectMetadataItem(
+    {
+      objectNameSingular,
+    },
+  );
 
   // TODO: type this with a minimal type at least with Record<string, any>
   const [mutate] = useMutation(createOneRecordMutation);
 
   const createOneRecord = async (input: Record<string, any>) => {
-    if (!objectMetadataItem || !objectNameSingular) {
-      return null;
-    }
-
-    const createdRecord = await mutate({
+    const createdObject = await mutate({
       variables: {
         input: { ...input, id: v4() },
       },
     });
 
     triggerOptimisticEffects(
-      `${capitalize(objectNameSingular)}Edge`,
-      createdRecord.data[`create${capitalize(objectNameSingular)}`],
+      `${capitalize(objectMetadataItem.nameSingular)}Edge`,
+      createdObject.data[
+        `create${capitalize(objectMetadataItem.nameSingular)}`
+      ],
     );
-    return createdRecord.data[`create${capitalize(objectNameSingular)}`] as T;
+    return createdObject.data[
+      `create${capitalize(objectMetadataItem.nameSingular)}`
+    ] as T;
   };
 
   return {
     createOneRecord,
-    objectMetadataItemNotFound,
   };
 };

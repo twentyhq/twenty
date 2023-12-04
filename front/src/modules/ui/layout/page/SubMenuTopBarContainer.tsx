@@ -30,7 +30,7 @@ export const SubMenuTopBarContainer = ({
   return (
     <StyledContainer isMobile={isMobile}>
       {isMobile && <PageHeader title={title} Icon={Icon} />}
-      <RightDrawerContainer topMargin={16}>{children}</RightDrawerContainer>
+      <RightDrawerContainer>{children}</RightDrawerContainer>
     </StyledContainer>
   );
 };

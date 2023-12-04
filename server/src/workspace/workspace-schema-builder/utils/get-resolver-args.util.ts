@@ -36,6 +36,7 @@ export const getResolverArgs = (
         },
       };
     case 'findOne':
+    case 'deleteMany':
       return {
         filter: {
           kind: InputTypeDefinitionKind.Filter,
@@ -72,6 +73,17 @@ export const getResolverArgs = (
       return {
         id: {
           type: FieldMetadataType.UUID,
+          isNullable: false,
+        },
+      };
+    case 'updateMany':
+      return {
+        data: {
+          kind: InputTypeDefinitionKind.Update,
+          isNullable: false,
+        },
+        filter: {
+          kind: InputTypeDefinitionKind.Filter,
           isNullable: false,
         },
       };

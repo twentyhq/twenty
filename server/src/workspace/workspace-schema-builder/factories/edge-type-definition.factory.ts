@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLFieldConfigMap, GraphQLObjectType } from 'graphql';
 
 import { WorkspaceBuildSchemaOptions } from 'src/workspace/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
-import { ObjectMetadataInterface } from 'src/workspace/workspace-schema-builder/interfaces/object-metadata.interface';
+import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
 
 import { pascalCase } from 'src/utils/pascal-case';
 

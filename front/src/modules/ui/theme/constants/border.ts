@@ -5,6 +5,7 @@ const common = {
     xs: '2px',
     sm: '4px',
     md: '8px',
+    xl: '20px',
     rounded: '100%',
   },
 };

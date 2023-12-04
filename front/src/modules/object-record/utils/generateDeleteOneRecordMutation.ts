@@ -7,13 +7,13 @@ import { capitalize } from '~/utils/string/capitalize';
 export const generateDeleteOneRecordMutation = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem: ObjectMetadataItem | undefined | null;
+  objectMetadataItem: ObjectMetadataItem;
 }) => {
   if (!objectMetadataItem) {
     return EMPTY_MUTATION;
   }
 
-  const capitalizedObjectName = capitalize(objectMetadataItem?.nameSingular);
+  const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
 
   return gql`
     mutation DeleteOne${capitalizedObjectName}($idToDelete: ID!)  {

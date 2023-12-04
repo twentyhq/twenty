@@ -35,7 +35,7 @@ export const SettingsWorkspaceMembers = () => {
   >();
 
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
-    objectNamePlural: 'workspaceMembers',
+    objectNameSingular: 'workspaceMember',
   });
   const { deleteOneRecord: deleteOneWorkspaceMember } =
     useDeleteOneRecord<WorkspaceMember>({

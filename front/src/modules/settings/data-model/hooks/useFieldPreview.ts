@@ -31,7 +31,7 @@ export const useFieldPreview = ({
 
   const { value: firstRecordFieldValue } = useFieldPreviewValue({
     fieldName: fieldName || '',
-    objectNamePlural: objectMetadataItem?.namePlural || '',
+    objectNamePlural: objectMetadataItem?.namePlural ?? '',
     skip:
       !fieldName ||
       !objectMetadataItem ||

@@ -1,6 +1,6 @@
 import { GraphQLInputObjectType, GraphQLList, GraphQLNonNull } from 'graphql';
 
-import { FilterIsNullable } from 'src/workspace/workspace-schema-builder/graphql-types/input/filter-is-nullable.input-type';
+import { FilterIs } from 'src/workspace/workspace-schema-builder/graphql-types/input/filter-is.input-type';
 import { BigFloatScalarType } from 'src/workspace/workspace-schema-builder/graphql-types/scalars';
 
 export const BigFloatFilterType = new GraphQLInputObjectType({
@@ -13,6 +13,6 @@ export const BigFloatFilterType = new GraphQLInputObjectType({
     lt: { type: BigFloatScalarType },
     lte: { type: BigFloatScalarType },
     neq: { type: BigFloatScalarType },
-    is: { type: FilterIsNullable },
+    is: { type: FilterIs },
   },
 });

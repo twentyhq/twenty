@@ -91,6 +91,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
           FieldMetadataType.Enum,
           FieldMetadataType.Link,
           FieldMetadataType.Number,
+          FieldMetadataType.Probability,
           FieldMetadataType.Relation,
           FieldMetadataType.Text,
         ].includes(values.type) && (

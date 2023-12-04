@@ -26,10 +26,11 @@ export class BeforeDeleteOneRelation implements BeforeDeleteOneHook<any> {
     }
 
     const relationMetadata =
-      await this.relationMetadataService.findOneWithinWorkspace(
-        instance.id.toString(),
-        workspaceId,
-      );
+      await this.relationMetadataService.findOneWithinWorkspace(workspaceId, {
+        where: {
+          id: instance.id.toString(),
+        },
+      });
 
     if (!relationMetadata) {
       throw new BadRequestException('Relation does not exist');

@@ -8,7 +8,7 @@ export const useGenerateFindOneRecordQuery = ({
   objectMetadataItem,
   depth,
 }: {
-  objectMetadataItem: ObjectMetadataItem | null | undefined;
+  objectMetadataItem: ObjectMetadataItem;
   depth?: number;
 }) => {
   const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();

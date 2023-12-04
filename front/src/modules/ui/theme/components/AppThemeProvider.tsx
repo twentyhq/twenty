@@ -16,6 +16,7 @@ export const AppThemeProvider = ({ children }: AppThemeProviderProps) => {
 
   const computedColorScheme =
     colorScheme === 'System' ? systemColorScheme : colorScheme;
+
   const theme = computedColorScheme === 'Dark' ? darkTheme : lightTheme;
 
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
