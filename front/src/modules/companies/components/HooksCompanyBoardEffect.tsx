@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
+import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 import { availableBoardCardFieldsScopedState } from '@/ui/object/record-board/states/availableBoardCardFieldsScopedState';
 import { boardCardFieldsScopedState } from '@/ui/object/record-board/states/boardCardFieldsScopedState';
 import { boardFiltersScopedState } from '@/ui/object/record-board/states/boardFiltersScopedState';
@@ -16,10 +17,12 @@ import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewField
 
 type HooksCompanyBoardEffectProps = {
   viewBarId: string;
+  recordBoardId: string;
 };
 
 export const HooksCompanyBoardEffect = ({
   viewBarId,
+  recordBoardId,
 }: HooksCompanyBoardEffectProps) => {
   const {
     setAvailableFilterDefinitions,
@@ -27,7 +30,7 @@ export const HooksCompanyBoardEffect = ({
     setAvailableFieldDefinitions,
     setViewObjectMetadataId,
     setViewType,
-  } = useViewBar({ viewBarId: viewBarId });
+  } = useViewBar({ viewBarId });
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNamePlural: 'opportunities',
@@ -108,7 +111,6 @@ export const HooksCompanyBoardEffect = ({
         ),
       );
     }
-    console.log('currentViewFields', currentViewFields);
   }, [columnDefinitions, currentViewFields, setBoardCardFields]);
 
   useEffect(() => {
@@ -122,6 +124,18 @@ export const HooksCompanyBoardEffect = ({
       setBoardCardSorts(currentViewSorts);
     }
   }, [currentViewSorts, setBoardCardSorts]);
+
+  const { setEntityCountInCurrentView } = useViewBar({ viewBarId });
+
+  const { savedOpportunitiesState } = useRecordBoardScopedStates({
+    recordBoardScopeId: recordBoardId,
+  });
+
+  const savedOpportunities = useRecoilValue(savedOpportunitiesState);
+
+  useEffect(() => {
+    setEntityCountInCurrentView(savedOpportunities.length);
+  }, [savedOpportunities.length, setEntityCountInCurrentView]);
 
   return <></>;
 };

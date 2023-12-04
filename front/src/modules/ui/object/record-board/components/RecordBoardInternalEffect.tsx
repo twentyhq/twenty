@@ -52,7 +52,6 @@ export const RecordBoardInternalEffect = ({}) => {
         savedOpportunities,
         savedCompanies,
       );
-      //setEntityCountInCurrentView(opportunities.length);
     }
   }, [
     savedCompanies,

@@ -38,9 +38,6 @@ export const useObjectRecordBoard = () => {
   const boardFilters = useRecoilValue(boardFiltersState);
   const boardSorts = useRecoilValue(boardSortsState);
 
-  console.log('boardFilters', boardFilters);
-  console.log('boardSorts', boardSorts);
-
   const setSavedCompanies = useSetRecoilState(savedCompaniesState);
 
   const [savedOpportunities, setSavedOpportunities] = useRecoilState(
