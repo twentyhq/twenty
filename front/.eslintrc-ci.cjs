@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   overrides: [
     {
       files: ['*.stories.tsx', '*.test.ts'],
@@ -8,7 +8,7 @@ export default {
     },
   ],
   extends: [
-    './.eslintrc.js'
+    './.eslintrc.cjs'
   ],
   rules: {
     'no-console': 'error',
