@@ -49,7 +49,8 @@ export function generateTargetColumnMap(
         firstName: `${columnName}FirstName`,
         lastName: `${columnName}LastName`,
       };
-
+    case FieldMetadataType.RELATION:
+      return {};
     default:
       throw new BadRequestException(`Unknown type ${type}`);
   }

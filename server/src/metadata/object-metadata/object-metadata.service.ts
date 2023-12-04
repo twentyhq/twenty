@@ -315,6 +315,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     });
   }
 
+  public async getStandardObjectMetadataFromWorkspaceId(workspaceId: string) {
+    return this.objectMetadataRepository.find({
+      where: { workspaceId, isCustom: false },
+      relations: ['fields'],
+    });
+  }
+
   public async findOneWithinWorkspace(
     objectMetadataId: string,
     workspaceId: string,

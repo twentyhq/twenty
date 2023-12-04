@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+import diff from 'microdiff';
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
-import { FieldMetadataService } from 'src/metadata/field-metadata/field-metadata.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
 import { WorkspaceMigrationService } from 'src/metadata/workspace-migration/workspace-migration.service';
@@ -15,6 +18,10 @@ import {
   FieldMetadataEntity,
   FieldMetadataType,
 } from 'src/metadata/field-metadata/field-metadata.entity';
+import { MetadataParser } from 'src/workspace/workspace-manager/utils/metadata.parser';
+import { WebhookRecord } from 'src/workspace/workspace-manager/standard-objects/webook.record';
+import { ApiKeyRecord } from 'src/workspace/workspace-manager/standard-objects/api-key.record';
+import { ViewSortRecord } from 'src/workspace/workspace-manager/standard-objects/view-sort.record';
 
 import {
   basicFieldsMetadata,
@@ -28,9 +35,13 @@ export class WorkspaceManagerService {
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly objectMetadataService: ObjectMetadataService,
-    private readonly fieldMetadataService: FieldMetadataService,
     private readonly dataSourceService: DataSourceService,
     private readonly relationMetadataService: RelationMetadataService,
+
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(FieldMetadataEntity, 'metadata')
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
   ) {}
 
   /**
@@ -200,23 +211,193 @@ export class WorkspaceManagerService {
 
   /**
    *
-   * Reset all standard objects and fields metadata for a given workspace
+   * Sync all standard objects and fields metadata for a given workspace and data source
+   * This will update the metadata if it has changed and generate migrations based on the diff.
    *
    * @param dataSourceId
    * @param workspaceId
    */
-  public async resetStandardObjectsAndFieldsMetadata(
+  public async syncStandardObjectsAndFieldsMetadata(
     dataSourceId: string,
     workspaceId: string,
   ) {
-    await this.objectMetadataService.deleteMany({
-      workspaceId: { eq: workspaceId },
+    const standardObjects = MetadataParser.parseAllMetadata(
+      [WebhookRecord, ApiKeyRecord, ViewSortRecord],
+      workspaceId,
+      dataSourceId,
+    );
+    const objectsInDB = await this.objectMetadataRepository.find({
+      where: { workspaceId, dataSourceId, isCustom: false },
+      relations: ['fields'],
     });
 
-    await this.createStandardObjectsAndFieldsMetadata(
-      dataSourceId,
-      workspaceId,
+    // We want to convert the objects and fields to a map to be able to compare them more easily
+    const mapByName = (arr: ObjectMetadataEntity[]) => {
+      return arr.reduce((acc, curr) => {
+        acc[curr.nameSingular] = {
+          ...curr,
+          fields: curr.fields.reduce((acc, curr) => {
+            acc[curr.name] = curr;
+            return acc;
+          }, {}),
+        };
+        return acc;
+      }, {});
+    };
+
+    const objectsInDBByName = mapByName(objectsInDB);
+    const standardObjectsByName = mapByName(standardObjects);
+
+    const objectPropertiesToIgnore = [
+      'id',
+      'createdAt',
+      'updatedAt',
+      'labelIdentifierFieldMetadataId',
+      'imageIdentifierFieldMetadataId',
+    ];
+    const fieldPropertiesToIgnore = [
+      'id',
+      'createdAt',
+      'updatedAt',
+      'objectMetadataId',
+    ];
+    const defaultFieldNames = ['id', 'createdAt', 'updatedAt'];
+
+    const filterIgnoredProperties = (
+      obj: any,
+      propertiesToIgnore: string[],
+      mapFunc: (value?: any) => any = (value) => value,
+    ) => {
+      return Object.fromEntries(
+        Object.entries(obj)
+          .filter(([key]) => !propertiesToIgnore.includes(key))
+          .map(mapFunc ?? (([key, value]) => [key, value])),
+      );
+    };
+
+    const filterDefaultFields = (fields: any) => {
+      return filterIgnoredProperties(
+        fields,
+        defaultFieldNames,
+        ([key, value]) => {
+          if (value === null || typeof value !== 'object') {
+            return [key, value];
+          }
+          return [key, filterIgnoredProperties(value, fieldPropertiesToIgnore)];
+        },
+      );
+    };
+
+    const objectsToCreate: ObjectMetadataEntity[] = [];
+    const objectsToDelete = objectsInDB.filter(
+      (objectInDB) => !standardObjectsByName[objectInDB.nameSingular],
     );
+    const objectsToUpdate: Record<string, ObjectMetadataEntity> = {};
+
+    const fieldsToCreate: FieldMetadataEntity[] = [];
+    const fieldsToDelete: FieldMetadataEntity[] = [];
+    const fieldsToUpdate: Record<string, FieldMetadataEntity> = {};
+
+    for (const standardObjectName in standardObjectsByName) {
+      const standardObject = standardObjectsByName[standardObjectName];
+      const objectInDB = objectsInDBByName[standardObjectName];
+
+      if (!objectInDB) {
+        objectsToCreate.push(standardObject);
+        continue;
+      }
+
+      // Deconstruct fields and compare objects and fields independently
+      const { fields: objectInDBFields, ...objectInDBWithoutFields } =
+        objectInDB;
+      const { fields: standardObjectFields, ...standardObjectWithoutFields } =
+        standardObject;
+
+      const objectInDBFieldsWithoutDefaultFields =
+        filterDefaultFields(objectInDBFields);
+
+      const objectDiffWithoutIgnoredProperties = filterIgnoredProperties(
+        objectInDBWithoutFields,
+        objectPropertiesToIgnore,
+      );
+
+      // Compare objects
+      const objectDiff = diff(
+        objectDiffWithoutIgnoredProperties,
+        standardObjectWithoutFields,
+      );
+
+      // Compare fields
+      const fieldsDiff = diff(
+        objectInDBFieldsWithoutDefaultFields,
+        standardObjectFields,
+      );
+
+      objectDiff.forEach((diff) => {
+        // We only handle CHANGE here as REMOVE and CREATE are handled earlier.
+        if (diff.type === 'CHANGE') {
+          const property = diff.path[0];
+          objectsToUpdate[objectInDB.id] = {
+            ...objectsToUpdate[objectInDB.id],
+            [property]: diff.value,
+          };
+        }
+      });
+
+      fieldsDiff.forEach((diff) => {
+        if (diff.type === 'CREATE') {
+          const fieldName = diff.path[0];
+          const fieldMetadata = standardObjectFields[fieldName];
+          fieldsToCreate.push(fieldMetadata);
+        }
+        if (diff.type === 'CHANGE') {
+          const fieldName = diff.path[0];
+          const property = diff.path[diff.path.length - 1];
+          const fieldMetadata = objectInDBFields[fieldName];
+          fieldsToUpdate[fieldMetadata.id] = {
+            ...fieldsToUpdate[fieldMetadata.id],
+            [property]: diff.value,
+          };
+        }
+        if (diff.type === 'REMOVE') {
+          const fieldName = diff.path[0];
+          const fieldMetadata = objectInDBFields[fieldName];
+          fieldsToDelete.push(fieldMetadata);
+        }
+      });
+      // console.log(standardObjectName + ':objectDiff', objectDiff);
+      // console.log(standardObjectName + ':fieldsDiff', fieldsDiff);
+    }
+
+    // TODO: Sync relationMetadata
+    // NOTE: Relations are handled like any field during the diff, so we ignore the relationMetadata table
+    // as it depends on the 2 fieldMetadata that we will compare here. However we need to make sure the
+    // relationMetadata table is in sync with the fieldMetadata table.
+
+    // TODO: Use transactions
+    // CREATE OBJECTS
+    await this.objectMetadataRepository.save(objectsToCreate);
+    // UPDATE OBJECTS, this is not optimal as we are running n queries here.
+    for (const [key, value] of Object.entries(objectsToUpdate)) {
+      await this.objectMetadataRepository.update(key, value);
+    }
+    // DELETE OBJECTS
+    await this.objectMetadataRepository.delete(
+      objectsToDelete.map((object) => object.id),
+    );
+
+    // CREATE FIELDS
+    await this.fieldMetadataRepository.save(fieldsToCreate);
+    // UPDATE FIELDS
+    for (const [key, value] of Object.entries(fieldsToUpdate)) {
+      await this.fieldMetadataRepository.update(key, value);
+    }
+    // DELETE FIELDS
+    await this.fieldMetadataRepository.delete(
+      fieldsToDelete.map((field) => field.id),
+    );
+
+    // TODO: Create migrations based on diff from above.
   }
 
   /**

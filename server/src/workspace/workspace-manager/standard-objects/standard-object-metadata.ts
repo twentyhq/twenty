@@ -1,23 +1,22 @@
-import activityTargetMetadata from 'src/workspace/workspace-manager/standard-objects/activity-target';
-import activityMetadata from 'src/workspace/workspace-manager/standard-objects/activity';
 import apiKeyMetadata from 'src/workspace/workspace-manager/standard-objects/api-key';
-import attachmentMetadata from 'src/workspace/workspace-manager/standard-objects/attachment';
-import commentMetadata from 'src/workspace/workspace-manager/standard-objects/comment';
-import favoriteMetadata from 'src/workspace/workspace-manager/standard-objects/favorite';
-import opportunityMetadata from 'src/workspace/workspace-manager/standard-objects/opportunity';
-import personMetadata from 'src/workspace/workspace-manager/standard-objects/person';
-import viewMetadata from 'src/workspace/workspace-manager/standard-objects/view';
-import viewFieldMetadata from 'src/workspace/workspace-manager/standard-objects/view-field';
-import viewFilterMetadata from 'src/workspace/workspace-manager/standard-objects/view-filter';
-import viewSortMetadata from 'src/workspace/workspace-manager/standard-objects/view-sort';
-import webhookMetadata from 'src/workspace/workspace-manager/standard-objects/webhook';
-import pipelineStepMetadata from 'src/workspace/workspace-manager/standard-objects/pipeline-step';
-import companyMetadata from 'src/workspace/workspace-manager/standard-objects/company';
-import workspaceMemberMetadata from 'src/workspace/workspace-manager/standard-objects/workspace-member';
 import {
   FieldMetadataEntity,
   FieldMetadataType,
 } from 'src/metadata/field-metadata/field-metadata.entity';
+import activityMetadata from 'src/workspace/workspace-manager/standard-objects/activity';
+import activityTargetMetadata from 'src/workspace/workspace-manager/standard-objects/activity-target';
+import attachmentMetadata from 'src/workspace/workspace-manager/standard-objects/attachment';
+import commentMetadata from 'src/workspace/workspace-manager/standard-objects/comment';
+import companyMetadata from 'src/workspace/workspace-manager/standard-objects/company';
+import favoriteMetadata from 'src/workspace/workspace-manager/standard-objects/favorite';
+import opportunityMetadata from 'src/workspace/workspace-manager/standard-objects/opportunity';
+import personMetadata from 'src/workspace/workspace-manager/standard-objects/person';
+import pipelineStepMetadata from 'src/workspace/workspace-manager/standard-objects/pipeline-step';
+import viewMetadata from 'src/workspace/workspace-manager/standard-objects/view';
+import viewFieldMetadata from 'src/workspace/workspace-manager/standard-objects/view-field';
+import viewFilterMetadata from 'src/workspace/workspace-manager/standard-objects/view-filter';
+import viewSortMetadata from 'src/workspace/workspace-manager/standard-objects/view-sort';
+import workspaceMemberMetadata from 'src/workspace/workspace-manager/standard-objects/workspace-member';
 
 export const standardObjectsMetadata = {
   activityTarget: activityTargetMetadata,
@@ -34,7 +33,6 @@ export const standardObjectsMetadata = {
   viewFilter: viewFilterMetadata,
   viewSort: viewSortMetadata,
   view: viewMetadata,
-  webhook: webhookMetadata,
   workspaceMember: workspaceMemberMetadata,
 };
 
