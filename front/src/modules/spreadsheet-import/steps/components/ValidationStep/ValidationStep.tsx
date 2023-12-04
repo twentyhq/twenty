@@ -105,14 +105,17 @@ export const ValidationStep = <T extends string>({
       rows: typeof data,
       changedData?: RowsChangeData<(typeof data)[number]>,
     ) => {
-      const changes = changedData?.indexes.reduce((acc, index) => {
-        // when data is filtered val !== actual index in data
-        const realIndex = data.findIndex(
-          (value) => value.__index === rows[index].__index,
-        );
-        acc[realIndex] = rows[index];
-        return acc;
-      }, {} as Record<number, (typeof data)[number]>);
+      const changes = changedData?.indexes.reduce(
+        (acc, index) => {
+          // when data is filtered val !== actual index in data
+          const realIndex = data.findIndex(
+            (value) => value.__index === rows[index].__index,
+          );
+          acc[realIndex] = rows[index];
+          return acc;
+        },
+        {} as Record<number, (typeof data)[number]>,
+      );
       const newData = Object.assign([], data, changes);
       updateData(newData);
     },

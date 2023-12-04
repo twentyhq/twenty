@@ -19,7 +19,9 @@ const StyledIconButton = styled.button`
 
   outline: none;
   padding: 0;
-  transition: color 0.1s ease-in-out, background 0.1s ease-in-out;
+  transition:
+    color 0.1s ease-in-out,
+    background 0.1s ease-in-out;
 
   &:disabled {
     background: ${({ theme }) => theme.background.quaternary};

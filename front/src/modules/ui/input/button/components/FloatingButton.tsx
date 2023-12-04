@@ -40,8 +40,8 @@ const StyledButton = styled.button<
           focus ? `,0 0 0 3px ${theme.color.blue10}` : ''
         }`
       : focus
-      ? `0 0 0 3px ${theme.color.blue10}`
-      : 'none'};
+        ? `0 0 0 3px ${theme.color.blue10}`
+        : 'none'};
   color: ${({ theme, disabled, focus }) => {
     return !disabled
       ? focus

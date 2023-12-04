@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-restricted-imports
 import { useHotkeys } from 'react-hotkeys-hook';
 import {
   HotkeyCallback,

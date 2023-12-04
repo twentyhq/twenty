@@ -14,7 +14,7 @@ const parseQuery = (queryString: string) => {
   const queryObj = gql`
     ${queryString}
   `;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const { name } = queryObj.definitions[0] as any;
   return [name ? name.value : 'Generic', queryString.trim()];
 };
@@ -25,10 +25,10 @@ export const loggerLink = (getSchemaName: (operation: Operation) => string) =>
     operation.setContext({ start: Date.now() });
 
     const { variables } = operation;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     const operationType = (operation.query.definitions[0] as any).operation;
     const headers = operation.getContext().headers;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
     const [queryName, query] = parseQuery(operation.query.loc!.source.body);
 
     if (operationType === 'subscription') {
@@ -65,7 +65,6 @@ export const loggerLink = (getSchemaName: (operation: Operation) => string) =>
         getGroup(!hasError)(...titleArgs);
 
         if (errors) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           errors.forEach((err: any) => {
             logDebug(
               `%c${err.message}`,

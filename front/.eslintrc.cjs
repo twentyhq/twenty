@@ -72,10 +72,10 @@ module.exports = {
       { prefer: 'no-type-imports' },
     ],
     'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
-    'react-refresh/only-export-components': [
-      'warn',
-      { allowConstantExport: true },
-    ],
+    // 'react-refresh/only-export-components': [
+    //   'warn',
+    //   { allowConstantExport: true },
+    // ],
   },
   settings: {
     react: {

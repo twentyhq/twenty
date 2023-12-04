@@ -219,8 +219,8 @@ export const SignInUpForm = () => {
               SignInUpStep.Init
                 ? false
                 : signInUpStep === SignInUpStep.Email
-                ? !watch('email')
-                : !watch('email') || !watch('password') || isSubmitting
+                  ? !watch('email')
+                  : !watch('email') || !watch('password') || isSubmitting
             }
             fullWidth
           />

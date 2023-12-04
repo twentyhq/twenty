@@ -29,8 +29,8 @@ export const useLinkField = () => {
   const initialValue: FieldLinkValue = fieldInitialValue?.isEmpty
     ? { url: '', label: '' }
     : fieldInitialValue?.value
-    ? { url: fieldInitialValue.value, label: '' }
-    : fieldValue;
+      ? { url: fieldInitialValue.value, label: '' }
+      : fieldValue;
 
   const persistField = usePersistField();
 

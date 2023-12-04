@@ -65,4 +65,4 @@ export const getRecordOptimisticEffectDefinition = ({
     },
     isUsingFlexibleBackend: true,
     objectMetadataItem,
-  } satisfies OptimisticEffectDefinition);
+  }) satisfies OptimisticEffectDefinition;

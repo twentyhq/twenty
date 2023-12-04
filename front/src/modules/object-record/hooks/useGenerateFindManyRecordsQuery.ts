@@ -22,10 +22,10 @@ export const useGenerateFindManyRecordsQuery = ({
     query FindMany${capitalize(
       objectMetadataItem.namePlural,
     )}($filter: ${capitalize(
-    objectMetadataItem.nameSingular,
-  )}FilterInput, $orderBy: ${capitalize(
-    objectMetadataItem.nameSingular,
-  )}OrderByInput, $lastCursor: String, $limit: Float = 30) {
+      objectMetadataItem.nameSingular,
+    )}FilterInput, $orderBy: ${capitalize(
+      objectMetadataItem.nameSingular,
+    )}OrderByInput, $lastCursor: String, $limit: Float = 30) {
       ${
         objectMetadataItem.namePlural
       }(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor){

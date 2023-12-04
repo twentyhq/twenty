@@ -36,10 +36,10 @@ export const MobileNavigationBar = () => {
     : isCommandMenuOpened
     ? 'search'
     : isTasksPage
-    ? 'tasks'
-    : isSettingsPage
-    ? 'settings'
-    : 'main';
+      ? 'tasks'
+      : isSettingsPage
+        ? 'settings'
+        : 'main';
 
   const items: {
     name: NavigationBarItemName;

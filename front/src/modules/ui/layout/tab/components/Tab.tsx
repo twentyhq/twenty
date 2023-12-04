@@ -23,8 +23,8 @@ const StyledTab = styled.div<{ active?: boolean; disabled?: boolean }>`
     active
       ? theme.font.color.primary
       : disabled
-      ? theme.font.color.light
-      : theme.font.color.secondary};
+        ? theme.font.color.light
+        : theme.font.color.secondary};
   cursor: pointer;
 
   display: flex;

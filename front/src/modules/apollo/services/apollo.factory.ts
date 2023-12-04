@@ -1,4 +1,3 @@
-/* eslint-disable no-loop-func */
 import {
   ApolloClient,
   ApolloClientOptions,

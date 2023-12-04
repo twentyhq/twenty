@@ -42,10 +42,10 @@ export const FloatingIconButtonGroup = ({
         iconButtons.length === 1
           ? 'standalone'
           : index === 0
-          ? 'left'
-          : index === iconButtons.length - 1
-          ? 'right'
-          : 'middle';
+            ? 'left'
+            : index === iconButtons.length - 1
+              ? 'right'
+              : 'middle';
 
       return (
         <FloatingIconButton

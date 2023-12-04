@@ -142,8 +142,8 @@ const StyledButton = styled.button<
                     ? theme.color.blue
                     : theme.background.transparent.light
                   : focus
-                  ? theme.color.blue
-                  : 'transparent'
+                    ? theme.color.blue
+                    : 'transparent'
               };
               border-width: ${!disabled && focus ? '1px 1px !important' : 0};
               box-shadow: ${
@@ -178,8 +178,8 @@ const StyledButton = styled.button<
                     ? theme.color.blue
                     : theme.color.blue20
                   : focus
-                  ? theme.color.blue
-                  : 'transparent'
+                    ? theme.color.blue
+                    : 'transparent'
               };
               border-width: ${!disabled && focus ? '1px 1px !important' : 0};
               box-shadow: ${
@@ -210,8 +210,8 @@ const StyledButton = styled.button<
                     ? theme.color.red
                     : theme.border.color.danger
                   : focus
-                  ? theme.color.red
-                  : 'transparent'
+                    ? theme.color.red
+                    : 'transparent'
               };
               border-width: ${!disabled && focus ? '1px 1px !important' : 0};
               box-shadow: ${

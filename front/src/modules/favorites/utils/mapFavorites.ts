@@ -17,14 +17,14 @@ export const mapFavorites = (favorites: any) => {
             link: `/object/person/${favorite.person.id}`,
           }
         : isDefined(favorite?.company)
-        ? {
-            id: favorite.company.id,
-            labelIdentifier: favorite.company.name,
-            avatarUrl: getLogoUrlFromDomainName(favorite.company.domainName),
-            avatarType: 'squared',
-            link: `/object/company/${favorite.company.id}`,
-          }
-        : undefined;
+          ? {
+              id: favorite.company.id,
+              labelIdentifier: favorite.company.name,
+              avatarUrl: getLogoUrlFromDomainName(favorite.company.domainName),
+              avatarType: 'squared',
+              link: `/object/company/${favorite.company.id}`,
+            }
+          : undefined;
 
       return {
         ...recordInformation,

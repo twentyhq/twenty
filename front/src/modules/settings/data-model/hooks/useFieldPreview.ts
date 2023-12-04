@@ -67,7 +67,7 @@ export const useFieldPreview = ({
       fieldMetadata.type === FieldMetadataType.Relation
         ? relationValue
         : fieldMetadata.type === FieldMetadataType.Select
-        ? selectValue || defaultSelectValue
-        : firstRecordFieldValue || settingsFieldMetadataType?.defaultValue,
+          ? selectValue || defaultSelectValue
+          : firstRecordFieldValue || settingsFieldMetadataType?.defaultValue,
   };
 };

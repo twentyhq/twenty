@@ -109,7 +109,7 @@ export const CreateProfile = () => {
                 firstName: data.firstName,
                 lastName: data.lastName,
               },
-            } as any),
+            }) as any,
         );
 
         navigate('/');

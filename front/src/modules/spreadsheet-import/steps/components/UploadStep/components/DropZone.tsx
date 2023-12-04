@@ -44,9 +44,17 @@ const StyledContainer = styled.div`
       ${theme.font.color.primary} 20px
     );
   `};
-  background-position: 0 0, 0 0, 100% 0, 0 100%;
+  background-position:
+    0 0,
+    0 0,
+    100% 0,
+    0 100%;
   background-repeat: no-repeat;
-  background-size: 2px 100%, 100% 2px, 2px 100%, 100% 2px;
+  background-size:
+    2px 100%,
+    100% 2px,
+    2px 100%,
+    100% 2px;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   flex: 1;

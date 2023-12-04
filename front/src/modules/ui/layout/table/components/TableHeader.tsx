@@ -11,8 +11,8 @@ const StyledTableHeader = styled.div<{ align?: 'left' | 'center' | 'right' }>`
     align === 'right'
       ? 'flex-end'
       : align === 'center'
-      ? 'center'
-      : 'flex-start'};
+        ? 'center'
+        : 'flex-start'};
   padding: 0 ${({ theme }) => theme.spacing(2)};
   text-align: ${({ align }) => align ?? 'left'};
 `;

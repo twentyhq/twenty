@@ -44,8 +44,8 @@ export const useNumberField = () => {
   const initialValue = fieldInitialValue?.isEmpty
     ? null
     : !isNaN(Number(fieldInitialValue?.value))
-    ? Number(fieldInitialValue?.value)
-    : null ?? fieldValue;
+      ? Number(fieldInitialValue?.value)
+      : null ?? fieldValue;
 
   return {
     fieldDefinition,

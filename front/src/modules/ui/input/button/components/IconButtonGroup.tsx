@@ -34,8 +34,8 @@ export const IconButtonGroup = ({
         index === 0
           ? 'left'
           : index === iconButtons.length - 1
-          ? 'right'
-          : 'middle';
+            ? 'right'
+            : 'middle';
 
       return (
         <IconButton
