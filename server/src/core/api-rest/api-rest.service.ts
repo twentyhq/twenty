@@ -553,7 +553,7 @@ export class ApiRestService {
       data,
       {
         headers: {
-          authorization: request.headers.authorization,
+          Authorization: request.headers.authorization,
         },
       },
     );
