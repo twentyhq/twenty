@@ -5,7 +5,7 @@ import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/inter
 import { RecordBoardScopeInternalContext } from '@/ui/object/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
-import { isCardSelectedFamilyState } from '../../states/isCardSelectedFamilyState';
+import { isRecordBoardCardSelectedFamilyState } from '../../states/isRecordBoardCardSelectedFamilyState';
 
 export const useSetRecordBoardCardSelectedInternal = (props: any) => {
   const scopeId = useAvailableScopeIdOrThrow(
@@ -21,7 +21,7 @@ export const useSetRecordBoardCardSelectedInternal = (props: any) => {
       (cardId: string, selected: boolean) => {
         const activeCardIds = snapshot.getLoadable(activeCardIdsState).contents;
 
-        set(isCardSelectedFamilyState(cardId), selected);
+        set(isRecordBoardCardSelectedFamilyState(cardId), selected);
         set(actionBarOpenState, selected || activeCardIds.length > 0);
 
         if (selected) {
@@ -42,7 +42,7 @@ export const useSetRecordBoardCardSelectedInternal = (props: any) => {
         const activeCardIds = snapshot.getLoadable(activeCardIdsState).contents;
 
         activeCardIds.forEach((cardId: string) => {
-          set(isCardSelectedFamilyState(cardId), false);
+          set(isRecordBoardCardSelectedFamilyState(cardId), false);
         });
 
         set(activeCardIdsState, []);

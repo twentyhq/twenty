@@ -9,7 +9,6 @@ import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { RecordBoardActionBar } from '@/ui/object/record-board/action-bar/components/RecordBoardActionBar';
 import { RecordBoardInternalEffect } from '@/ui/object/record-board/components/RecordBoardInternalEffect';
 import { RecordBoardContextMenu } from '@/ui/object/record-board/context-menu/components/RecordBoardContextMenu';
-import { BoardColumnContext } from '@/ui/object/record-board/contexts/BoardColumnContext';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 import { useSetRecordBoardCardSelectedInternal } from '@/ui/object/record-board/hooks/internal/useSetRecordBoardCardSelectedInternal';
 import { useUpdateRecordBoardCardIdsInternal } from '@/ui/object/record-board/hooks/internal/useUpdateRecordBoardCardIdsInternal';
@@ -17,11 +16,9 @@ import { RecordBoardScope } from '@/ui/object/record-board/scopes/RecordBoardSco
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { logError } from '~/utils/logError';
 
-import { BoardColumnRecoilScopeContext } from '../states/recoil-scope-contexts/BoardColumnRecoilScopeContext';
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptions } from '../types/BoardOptions';
 
@@ -153,27 +150,15 @@ export const RecordBoard = ({
           <StyledBoard ref={boardRef}>
             <DragDropContext onDragEnd={onDragEnd}>
               {sortedBoardColumns.map((column) => (
-                <BoardColumnContext.Provider
+                <RecordBoardColumn
                   key={column.id}
-                  value={{
-                    id: column.id,
-                    columnDefinition: column,
-                    isFirstColumn: column.position === 0,
-                    isLastColumn:
-                      column.position === sortedBoardColumns.length - 1,
-                  }}
-                >
-                  <RecoilScope
-                    CustomRecoilScopeContext={BoardColumnRecoilScopeContext}
-                    key={column.id}
-                  >
-                    <RecordBoardColumn
-                      boardOptions={boardOptions}
-                      onDelete={onColumnDelete}
-                      onTitleEdit={onEditColumnTitle}
-                    />
-                  </RecoilScope>
-                </BoardColumnContext.Provider>
+                  recordBoardColumnId={column.id}
+                  columnDefinition={column}
+                  recordBoardColumnTotal={sortedBoardColumns.length}
+                  recordBoardOptions={boardOptions}
+                  onDelete={onColumnDelete}
+                  onTitleEdit={onEditColumnTitle}
+                />
               ))}
             </DragDropContext>
           </StyledBoard>

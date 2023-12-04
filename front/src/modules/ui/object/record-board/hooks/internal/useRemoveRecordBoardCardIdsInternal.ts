@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 
-import { boardCardIdsByColumnIdFamilyState } from '../../states/boardCardIdsByColumnIdFamilyState';
+import { recordBoardCardIdsByColumnIdFamilyState } from '../../states/recordBoardCardIdsByColumnIdFamilyState';
 
 export const useRemoveRecordBoardCardIdsInternal = () => {
   const { boardColumnsState } = useRecordBoardScopedStates();
@@ -17,10 +17,12 @@ export const useRemoveRecordBoardCardIdsInternal = () => {
 
         boardColumns.forEach((boardColumn) => {
           const columnCardIds = snapshot
-            .getLoadable(boardCardIdsByColumnIdFamilyState(boardColumn.id))
+            .getLoadable(
+              recordBoardCardIdsByColumnIdFamilyState(boardColumn.id),
+            )
             .valueOrThrow();
           set(
-            boardCardIdsByColumnIdFamilyState(boardColumn.id),
+            recordBoardCardIdsByColumnIdFamilyState(boardColumn.id),
             columnCardIds.filter((cardId) => !cardIdToRemove.includes(cardId)),
           );
         });

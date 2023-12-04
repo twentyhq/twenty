@@ -45,17 +45,18 @@ export const CompanyBoard = ({
         }
         optionsDropdownScopeId={recordBoardId}
       />
+
       <HooksCompanyBoardEffect
         viewBarId={viewBarId}
         recordBoardId={recordBoardId}
       />
-
       <RecordBoardEffect
         recordBoardId={recordBoardId}
         onFieldsChange={(fields) => {
           persistViewFields(mapBoardFieldDefinitionsToViewFields(fields));
         }}
       />
+
       <RecordBoard
         recordBoardId={recordBoardId}
         boardOptions={opportunitiesBoardOptions}

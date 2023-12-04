@@ -5,10 +5,10 @@ import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/u
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
-import { availableBoardCardFieldsScopedState } from '@/ui/object/record-board/states/availableBoardCardFieldsScopedState';
-import { boardCardFieldsScopedState } from '@/ui/object/record-board/states/boardCardFieldsScopedState';
-import { boardFiltersScopedState } from '@/ui/object/record-board/states/boardFiltersScopedState';
-import { boardSortsScopedState } from '@/ui/object/record-board/states/boardSortsScopedState';
+import { availableRecordBoardCardFieldsScopedState } from '@/ui/object/record-board/states/availableRecordBoardCardFieldsScopedState';
+import { recordBoardCardFieldsScopedState } from '@/ui/object/record-board/states/recordBoardCardFieldsScopedState';
+import { recordBoardFiltersScopedState } from '@/ui/object/record-board/states/recordBoardFiltersScopedState';
+import { recordBoardSortsScopedState } from '@/ui/object/record-board/states/recordBoardSortsScopedState';
 import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedStateV2';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useViewBar } from '@/views/hooks/useViewBar';
@@ -40,7 +40,7 @@ export const HooksCompanyBoardEffect = ({
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const setAvailableBoardCardFields = useSetRecoilScopedStateV2(
-    availableBoardCardFieldsScopedState,
+    availableRecordBoardCardFieldsScopedState,
     'company-board-view',
   );
 
@@ -89,16 +89,16 @@ export const HooksCompanyBoardEffect = ({
 
   //TODO: Modify to use scopeId
   const setBoardCardFields = useSetRecoilScopedStateV2(
-    boardCardFieldsScopedState,
+    recordBoardCardFieldsScopedState,
     'company-board',
   );
   const setBoardCardFilters = useSetRecoilScopedStateV2(
-    boardFiltersScopedState,
+    recordBoardFiltersScopedState,
     'company-board',
   );
 
   const setBoardCardSorts = useSetRecoilScopedStateV2(
-    boardSortsScopedState,
+    recordBoardSortsScopedState,
     'company-board',
   );
 

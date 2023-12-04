@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
 import { Draggable, Droppable, DroppableProvided } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
@@ -6,12 +6,13 @@ import { useRecoilValue } from 'recoil';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { RecordBoardCard } from '@/ui/object/record-board/components/RecordBoardCard';
 import { BoardCardIdContext } from '@/ui/object/record-board/contexts/BoardCardIdContext';
+import { BoardColumnDefinition } from '@/ui/object/record-board/types/BoardColumnDefinition';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { BoardColumnContext } from '../contexts/BoardColumnContext';
-import { boardCardIdsByColumnIdFamilyState } from '../states/boardCardIdsByColumnIdFamilyState';
-import { boardColumnTotalsFamilySelector } from '../states/selectors/boardColumnTotalsFamilySelector';
+import { recordBoardCardIdsByColumnIdFamilyState } from '../states/recordBoardCardIdsByColumnIdFamilyState';
+import { recordBoardColumnTotalsFamilySelector } from '../states/selectors/recordBoardColumnTotalsFamilySelector';
 import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 import { BoardOptions } from '../types/BoardOptions';
 
@@ -80,7 +81,10 @@ type BoardColumnCardsContainerProps = {
 };
 
 type RecordBoardColumnProps = {
-  boardOptions: BoardOptions;
+  recordBoardColumnId: string;
+  columnDefinition: BoardColumnDefinition;
+  recordBoardOptions: BoardOptions;
+  recordBoardColumnTotal: number;
   onDelete?: (columnId: string) => void;
   onTitleEdit: (columnId: string, title: string, color: string) => void;
 };
@@ -102,12 +106,13 @@ const BoardColumnCardsContainer = ({
 };
 
 export const RecordBoardColumn = ({
-  boardOptions,
+  recordBoardColumnId,
+  columnDefinition,
+  recordBoardOptions,
+  recordBoardColumnTotal,
   onDelete,
   onTitleEdit,
 }: RecordBoardColumnProps) => {
-  const column = useContext(BoardColumnContext);
-
   const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] =
     React.useState(false);
 
@@ -128,77 +133,84 @@ export const RecordBoardColumn = ({
     setIsBoardColumnMenuOpen(false);
   };
 
-  const boardColumnId = column?.id || '';
-
   const boardColumnTotal = useRecoilValue(
-    boardColumnTotalsFamilySelector(boardColumnId),
+    recordBoardColumnTotalsFamilySelector(recordBoardColumnId),
   );
 
   const cardIds = useRecoilValue(
-    boardCardIdsByColumnIdFamilyState(boardColumnId),
+    recordBoardCardIdsByColumnIdFamilyState(recordBoardColumnId),
   );
 
   const handleTitleEdit = (title: string, color: string) => {
-    onTitleEdit(boardColumnId, title, color);
+    onTitleEdit(recordBoardColumnId, title, color);
   };
 
-  if (!column) return <></>;
-
-  const { isFirstColumn, columnDefinition } = column;
+  const isFirstColumn = columnDefinition.position === 0;
 
   return (
-    <Droppable droppableId={column.id}>
-      {(droppableProvided) => (
-        <StyledColumn isFirstColumn={isFirstColumn}>
-          <StyledHeader>
-            <Tag
-              onClick={handleTitleClick}
-              color={columnDefinition.colorCode ?? 'gray'}
-              text={columnDefinition.title}
-            />
-            {!!boardColumnTotal && (
-              <StyledAmount>${boardColumnTotal}</StyledAmount>
-            )}
-            <StyledNumChildren>{cardIds.length}</StyledNumChildren>
-          </StyledHeader>
-          {isBoardColumnMenuOpen && (
-            <RecordBoardColumnDropdownMenu
-              onClose={handleClose}
-              onDelete={onDelete}
-              onTitleEdit={handleTitleEdit}
-              stageId={boardColumnId}
-            />
-          )}
-          <BoardColumnCardsContainer droppableProvided={droppableProvided}>
-            {cardIds.map((cardId, index) => (
-              <BoardCardIdContext.Provider value={cardId} key={cardId}>
-                <RecordBoardCard
-                  index={index}
-                  cardId={cardId}
-                  boardOptions={boardOptions}
-                />
-              </BoardCardIdContext.Provider>
-            ))}
-            <Draggable
-              draggableId={`new-${column.id}`}
-              index={cardIds.length}
-              isDragDisabled={true}
-            >
-              {(draggableProvided) => (
-                <div
-                  ref={draggableProvided?.innerRef}
-                  // eslint-disable-next-line react/jsx-props-no-spreading
-                  {...draggableProvided?.draggableProps}
-                >
-                  <StyledNewCardButtonContainer>
-                    <RecoilScope>{boardOptions.newCardComponent}</RecoilScope>
-                  </StyledNewCardButtonContainer>
-                </div>
+    <BoardColumnContext.Provider
+      value={{
+        id: recordBoardColumnId,
+        columnDefinition: columnDefinition,
+        isFirstColumn: columnDefinition.position === 0,
+        isLastColumn: columnDefinition.position === recordBoardColumnTotal - 1,
+      }}
+    >
+      <Droppable droppableId={recordBoardColumnId}>
+        {(droppableProvided) => (
+          <StyledColumn isFirstColumn={isFirstColumn}>
+            <StyledHeader>
+              <Tag
+                onClick={handleTitleClick}
+                color={columnDefinition.colorCode ?? 'gray'}
+                text={columnDefinition.title}
+              />
+              {!!boardColumnTotal && (
+                <StyledAmount>${boardColumnTotal}</StyledAmount>
               )}
-            </Draggable>
-          </BoardColumnCardsContainer>
-        </StyledColumn>
-      )}
-    </Droppable>
+              <StyledNumChildren>{cardIds.length}</StyledNumChildren>
+            </StyledHeader>
+            {isBoardColumnMenuOpen && (
+              <RecordBoardColumnDropdownMenu
+                onClose={handleClose}
+                onDelete={onDelete}
+                onTitleEdit={handleTitleEdit}
+                stageId={recordBoardColumnId}
+              />
+            )}
+            <BoardColumnCardsContainer droppableProvided={droppableProvided}>
+              {cardIds.map((cardId, index) => (
+                <BoardCardIdContext.Provider value={cardId} key={cardId}>
+                  <RecordBoardCard
+                    index={index}
+                    cardId={cardId}
+                    recordBoardOptions={recordBoardOptions}
+                  />
+                </BoardCardIdContext.Provider>
+              ))}
+              <Draggable
+                draggableId={`new-${recordBoardColumnId}`}
+                index={cardIds.length}
+                isDragDisabled={true}
+              >
+                {(draggableProvided) => (
+                  <div
+                    ref={draggableProvided?.innerRef}
+                    // eslint-disable-next-line react/jsx-props-no-spreading
+                    {...draggableProvided?.draggableProps}
+                  >
+                    <StyledNewCardButtonContainer>
+                      <RecoilScope>
+                        {recordBoardOptions.newCardComponent}
+                      </RecoilScope>
+                    </StyledNewCardButtonContainer>
+                  </div>
+                )}
+              </Draggable>
+            </BoardColumnCardsContainer>
+          </StyledColumn>
+        )}
+      </Droppable>
+    </BoardColumnContext.Provider>
   );
 };

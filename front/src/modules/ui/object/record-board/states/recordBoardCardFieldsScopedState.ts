@@ -3,9 +3,9 @@ import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScope
 
 import { BoardFieldDefinition } from '../types/BoardFieldDefinition';
 
-export const boardCardFieldsScopedState = createScopedState<
+export const recordBoardCardFieldsScopedState = createScopedState<
   BoardFieldDefinition<FieldMetadata>[]
 >({
-  key: 'boardCardFieldsScopedState',
+  key: 'recordBoardCardFieldsScopedState',
   defaultValue: [],
 });

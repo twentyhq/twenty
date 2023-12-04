@@ -2,7 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
-import { boardCardIdsByColumnIdFamilyState } from '@/ui/object/record-board/states/boardCardIdsByColumnIdFamilyState';
+import { recordBoardCardIdsByColumnIdFamilyState } from '@/ui/object/record-board/states/recordBoardCardIdsByColumnIdFamilyState';
 
 export const useUpdateCompanyBoardCardIdsInternal = () => {
   const { boardColumnsState } = useRecordBoardScopedStates();
@@ -21,7 +21,10 @@ export const useUpdateCompanyBoardCardIdsInternal = () => {
             })
             .map((pipelineProgress) => pipelineProgress.id);
 
-          set(boardCardIdsByColumnIdFamilyState(boardColumn.id), boardCardIds);
+          set(
+            recordBoardCardIdsByColumnIdFamilyState(boardColumn.id),
+            boardCardIds,
+          );
         }
       },
     [boardColumnsState],

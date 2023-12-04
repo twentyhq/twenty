@@ -2,7 +2,7 @@ import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScope
 
 import { Sort } from '../../object-sort-dropdown/types/Sort';
 
-export const boardSortsScopedState = createScopedState<Sort[]>({
-  key: 'boardSortsScopedState',
+export const recordBoardSortsScopedState = createScopedState<Sort[]>({
+  key: 'recordBoardSortsScopedState',
   defaultValue: [],
 });

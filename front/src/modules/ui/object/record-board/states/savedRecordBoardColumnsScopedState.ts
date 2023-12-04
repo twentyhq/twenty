@@ -2,9 +2,9 @@ import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScope
 
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 
-export const savedBoardColumnsScopedState = createScopedState<
+export const savedRecordBoardColumnsScopedState = createScopedState<
   BoardColumnDefinition[]
 >({
-  key: 'savedBoardColumnsScopedState',
+  key: 'savedRecordBoardColumnsScopedState',
   defaultValue: [],
 });

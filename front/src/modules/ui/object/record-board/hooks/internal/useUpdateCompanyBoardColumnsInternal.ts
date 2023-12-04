@@ -5,7 +5,7 @@ import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
-import { boardCardIdsByColumnIdFamilyState } from '@/ui/object/record-board/states/boardCardIdsByColumnIdFamilyState';
+import { recordBoardCardIdsByColumnIdFamilyState } from '@/ui/object/record-board/states/recordBoardCardIdsByColumnIdFamilyState';
 import { BoardColumnDefinition } from '@/ui/object/record-board/types/BoardColumnDefinition';
 import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -130,12 +130,14 @@ export const useUpdateCompanyBoardColumnsInternal = () => {
             .map((opportunity) => opportunity.id);
 
           const currentBoardCardIds = snapshot
-            .getLoadable(boardCardIdsByColumnIdFamilyState(boardColumn.id))
+            .getLoadable(
+              recordBoardCardIdsByColumnIdFamilyState(boardColumn.id),
+            )
             .valueOrThrow();
 
           if (!isDeeplyEqual(currentBoardCardIds, boardCardIds)) {
             set(
-              boardCardIdsByColumnIdFamilyState(boardColumn.id),
+              recordBoardCardIdsByColumnIdFamilyState(boardColumn.id),
               boardCardIds,
             );
           }

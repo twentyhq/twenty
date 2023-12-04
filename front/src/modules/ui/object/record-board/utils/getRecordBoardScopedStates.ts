@@ -1,19 +1,19 @@
-import { activeCardIdsScopedState } from '@/ui/object/record-board/states/activeCardIdsScopedState';
-import { availableBoardCardFieldsScopedState } from '@/ui/object/record-board/states/availableBoardCardFieldsScopedState';
-import { boardColumnsScopedState } from '@/ui/object/record-board/states/boardColumnsScopedState';
-import { boardFiltersScopedState } from '@/ui/object/record-board/states/boardFiltersScopedState';
-import { boardSortsScopedState } from '@/ui/object/record-board/states/boardSortsScopedState';
-import { isBoardLoadedScopedState } from '@/ui/object/record-board/states/isBoardLoadedScopedState';
+import { activeRecordBoardCardIdsScopedState } from '@/ui/object/record-board/states/activeRecordBoardCardIdsScopedState';
+import { availableRecordBoardCardFieldsScopedState } from '@/ui/object/record-board/states/availableRecordBoardCardFieldsScopedState';
 import { isCompactViewEnabledScopedState } from '@/ui/object/record-board/states/isCompactViewEnabledScopedState';
+import { isRecordBoardLoadedScopedState } from '@/ui/object/record-board/states/isRecordBoardLoadedScopedState';
 import { onFieldsChangeScopedState } from '@/ui/object/record-board/states/onFieldsChangeScopedState';
-import { savedBoardColumnsScopedState } from '@/ui/object/record-board/states/savedBoardColumnsScopedState';
-import { savedCompaniesScopedState } from '@/ui/object/record-board/states/savedCompaniesScopedState';
+import { recordBoardColumnsScopedState } from '@/ui/object/record-board/states/recordBoardColumnsScopedState';
+import { recordBoardFiltersScopedState } from '@/ui/object/record-board/states/recordBoardFiltersScopedState';
+import { recordBoardSortsScopedState } from '@/ui/object/record-board/states/recordBoardSortsScopedState';
 import { savedOpportunitiesScopedState } from '@/ui/object/record-board/states/savedOpportunitiesScopedState';
 import { savedPipelineStepsScopedState } from '@/ui/object/record-board/states/savedPipelineStepsScopedState';
-import { boardCardFieldsByKeyScopedSelector } from '@/ui/object/record-board/states/selectors/boardCardFieldsByKeyScopedSelector';
-import { hiddenBoardCardFieldsScopedSelector } from '@/ui/object/record-board/states/selectors/hiddenBoardCardFieldsScopedSelector';
-import { selectedCardIdsScopedSelector } from '@/ui/object/record-board/states/selectors/selectedCardIdsScopedSelector';
-import { visibleBoardCardFieldsScopedSelector } from '@/ui/object/record-board/states/selectors/visibleBoardCardFieldsScopedSelector';
+import { savedRecordBoardColumnsScopedState } from '@/ui/object/record-board/states/savedRecordBoardColumnsScopedState';
+import { savedRecordsScopedState } from '@/ui/object/record-board/states/savedRecordsScopedState';
+import { hiddenRecordBoardCardFieldsScopedSelector } from '@/ui/object/record-board/states/selectors/hiddenRecordBoardCardFieldsScopedSelector';
+import { recordBoardCardFieldsByKeyScopedSelector } from '@/ui/object/record-board/states/selectors/recordBoardCardFieldsByKeyScopedSelector';
+import { selectedRecordBoardCardIdsScopedSelector } from '@/ui/object/record-board/states/selectors/selectedRecordBoardCardIdsScopedSelector';
+import { visibleRecordBoardCardFieldsScopedSelector } from '@/ui/object/record-board/states/selectors/visibleRecordBoardCardFieldsScopedSelector';
 import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
 
 export const getRecordBoardScopedStates = ({
@@ -22,22 +22,22 @@ export const getRecordBoardScopedStates = ({
   recordBoardScopeId: string;
 }) => {
   const activeCardIdsState = getScopedState(
-    activeCardIdsScopedState,
+    activeRecordBoardCardIdsScopedState,
     recordBoardScopeId,
   );
 
   const availableBoardCardFieldsState = getScopedState(
-    availableBoardCardFieldsScopedState,
+    availableRecordBoardCardFieldsScopedState,
     recordBoardScopeId,
   );
 
   const boardColumnsState = getScopedState(
-    boardColumnsScopedState,
+    recordBoardColumnsScopedState,
     recordBoardScopeId,
   );
 
   const isBoardLoadedState = getScopedState(
-    isBoardLoadedScopedState,
+    isRecordBoardLoadedScopedState,
     recordBoardScopeId,
   );
 
@@ -47,22 +47,22 @@ export const getRecordBoardScopedStates = ({
   );
 
   const savedBoardColumnsState = getScopedState(
-    savedBoardColumnsScopedState,
+    savedRecordBoardColumnsScopedState,
     recordBoardScopeId,
   );
 
   const boardFiltersState = getScopedState(
-    boardFiltersScopedState,
+    recordBoardFiltersScopedState,
     recordBoardScopeId,
   );
 
   const boardSortsState = getScopedState(
-    boardSortsScopedState,
+    recordBoardSortsScopedState,
     recordBoardScopeId,
   );
 
   const savedCompaniesState = getScopedState(
-    savedCompaniesScopedState,
+    savedRecordsScopedState,
     recordBoardScopeId,
   );
 
@@ -83,19 +83,21 @@ export const getRecordBoardScopedStates = ({
 
   // TODO: Family scoped selector
   const boardCardFieldsByKeySelector =
-    boardCardFieldsByKeyScopedSelector(recordBoardScopeId);
+    recordBoardCardFieldsByKeyScopedSelector(recordBoardScopeId);
 
-  const hiddenBoardCardFieldsSelector = hiddenBoardCardFieldsScopedSelector({
+  const hiddenBoardCardFieldsSelector =
+    hiddenRecordBoardCardFieldsScopedSelector({
+      scopeId: recordBoardScopeId,
+    });
+
+  const selectedCardIdsSelector = selectedRecordBoardCardIdsScopedSelector({
     scopeId: recordBoardScopeId,
   });
 
-  const selectedCardIdsSelector = selectedCardIdsScopedSelector({
-    scopeId: recordBoardScopeId,
-  });
-
-  const visibleBoardCardFieldsSelector = visibleBoardCardFieldsScopedSelector({
-    scopeId: recordBoardScopeId,
-  });
+  const visibleBoardCardFieldsSelector =
+    visibleRecordBoardCardFieldsScopedSelector({
+      scopeId: recordBoardScopeId,
+    });
 
   return {
     activeCardIdsState,

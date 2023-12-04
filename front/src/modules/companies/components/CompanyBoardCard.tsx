@@ -11,7 +11,7 @@ import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
 import { BoardCardIdContext } from '@/ui/object/record-board/contexts/BoardCardIdContext';
 import { useCurrentRecordBoardCardSelectedInternal } from '@/ui/object/record-board/hooks/internal/useCurrentRecordBoardCardSelectedInternal';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
-import { isCardInCompactViewFamilyState } from '@/ui/object/record-board/states/isCardInCompactViewFamilyState';
+import { isRecordBoardCardInCompactViewFamilyState } from '@/ui/object/record-board/states/isRecordBoardCardInCompactViewFamilyState';
 import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
@@ -136,7 +136,7 @@ export const CompanyBoardCard = () => {
   const [isCompactViewEnabled] = useRecoilState(isCompactViewEnabledState);
 
   const [isCardInCompactView, setIsCardInCompactView] = useRecoilState(
-    isCardInCompactViewFamilyState(boardCardId ?? ''),
+    isRecordBoardCardInCompactViewFamilyState(boardCardId ?? ''),
   );
 
   const showCompactView = isCompactViewEnabled && isCardInCompactView;

@@ -3,9 +3,9 @@ import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { RecordBoardScopeInternalContext } from '@/ui/object/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
-import { boardCardFieldsScopedState } from '@/ui/object/record-board/states/boardCardFieldsScopedState';
 import { onFieldsChangeScopedState } from '@/ui/object/record-board/states/onFieldsChangeScopedState';
-import { savedBoardCardFieldsScopedState } from '@/ui/object/record-board/states/savedBoardCardFieldsScopedState';
+import { recordBoardCardFieldsScopedState } from '@/ui/object/record-board/states/recordBoardCardFieldsScopedState';
+import { savedRecordBoardCardFieldsScopedState } from '@/ui/object/record-board/states/savedRecordBoardCardFieldsScopedState';
 import { BoardFieldDefinition } from '@/ui/object/record-board/types/BoardFieldDefinition';
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
@@ -23,11 +23,11 @@ export const useRecordBoardCardFieldsInternal = (
   );
 
   const setBoardCardFields = useSetRecoilState(
-    boardCardFieldsScopedState({ scopeId }),
+    recordBoardCardFieldsScopedState({ scopeId }),
   );
 
   const setSavedBoardCardFields = useSetRecoilState(
-    savedBoardCardFieldsScopedState({ scopeId }),
+    savedRecordBoardCardFieldsScopedState({ scopeId }),
   );
 
   const handleFieldVisibilityChange = (

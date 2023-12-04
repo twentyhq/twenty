@@ -3,14 +3,14 @@ import { selectorFamily } from 'recoil';
 import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
 
 import { BoardFieldDefinition } from '../../types/BoardFieldDefinition';
-import { boardCardFieldsScopedState } from '../boardCardFieldsScopedState';
+import { recordBoardCardFieldsScopedState } from '../recordBoardCardFieldsScopedState';
 
-export const boardCardFieldsByKeyScopedSelector = selectorFamily({
-  key: 'boardCardFieldsByKeyScopedSelector',
+export const recordBoardCardFieldsByKeyScopedSelector = selectorFamily({
+  key: 'recordBoardCardFieldsByKeyScopedSelector',
   get:
     (scopeId: string) =>
     ({ get }) =>
-      get(boardCardFieldsScopedState({ scopeId })).reduce<
+      get(recordBoardCardFieldsScopedState({ scopeId })).reduce<
         Record<string, BoardFieldDefinition<FieldMetadata>>
       >((result, field) => ({ ...result, [field.fieldMetadataId]: field }), {}),
 });

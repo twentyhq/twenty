@@ -5,7 +5,7 @@ import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/inter
 import { RecordBoardScopeInternalContext } from '@/ui/object/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
-import { boardCardIdsByColumnIdFamilyState } from '../../states/boardCardIdsByColumnIdFamilyState';
+import { recordBoardCardIdsByColumnIdFamilyState } from '../../states/recordBoardCardIdsByColumnIdFamilyState';
 import { BoardColumnDefinition } from '../../types/BoardColumnDefinition';
 
 type useUpdateRecordBoardCardIdsInternalProps = {
@@ -55,14 +55,16 @@ export const useUpdateRecordBoardCardIdsInternal = (
 
         const sourceCardIds = [
           ...snapshot
-            .getLoadable(boardCardIdsByColumnIdFamilyState(sourceColumn.id))
+            .getLoadable(
+              recordBoardCardIdsByColumnIdFamilyState(sourceColumn.id),
+            )
             .valueOrThrow(),
         ];
 
         const destinationCardIds = [
           ...snapshot
             .getLoadable(
-              boardCardIdsByColumnIdFamilyState(destinationColumn.id),
+              recordBoardCardIdsByColumnIdFamilyState(destinationColumn.id),
             )
             .valueOrThrow(),
         ];
@@ -78,7 +80,7 @@ export const useUpdateRecordBoardCardIdsInternal = (
           sourceCardIds.splice(destinationIndex, 0, deletedCardId);
 
           set(
-            boardCardIdsByColumnIdFamilyState(sourceColumn.id),
+            recordBoardCardIdsByColumnIdFamilyState(sourceColumn.id),
             sourceCardIds,
           );
         } else {
@@ -87,12 +89,12 @@ export const useUpdateRecordBoardCardIdsInternal = (
           destinationCardIds.splice(destinationIndex, 0, removedCardId);
 
           set(
-            boardCardIdsByColumnIdFamilyState(sourceColumn.id),
+            recordBoardCardIdsByColumnIdFamilyState(sourceColumn.id),
             sourceCardIds,
           );
 
           set(
-            boardCardIdsByColumnIdFamilyState(destinationColumn.id),
+            recordBoardCardIdsByColumnIdFamilyState(destinationColumn.id),
             destinationCardIds,
           );
         }

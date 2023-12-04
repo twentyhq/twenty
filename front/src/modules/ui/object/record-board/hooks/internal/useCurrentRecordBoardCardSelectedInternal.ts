@@ -5,13 +5,13 @@ import { actionBarOpenState } from '@/ui/navigation/action-bar/states/actionBarI
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 
 import { BoardCardIdContext } from '../../contexts/BoardCardIdContext';
-import { isCardSelectedFamilyState } from '../../states/isCardSelectedFamilyState';
+import { isRecordBoardCardSelectedFamilyState } from '../../states/isRecordBoardCardSelectedFamilyState';
 
 export const useCurrentRecordBoardCardSelectedInternal = () => {
   const currentCardId = useContext(BoardCardIdContext);
 
   const isCurrentCardSelected = useRecoilValue(
-    isCardSelectedFamilyState(currentCardId ?? ''),
+    isRecordBoardCardSelectedFamilyState(currentCardId ?? ''),
   );
 
   const { activeCardIdsState } = useRecordBoardScopedStates();
@@ -23,7 +23,7 @@ export const useCurrentRecordBoardCardSelectedInternal = () => {
       (selected: boolean) => {
         if (!currentCardId) return;
 
-        set(isCardSelectedFamilyState(currentCardId), selected);
+        set(isRecordBoardCardSelectedFamilyState(currentCardId), selected);
         set(actionBarOpenState, selected);
 
         if (selected) {
