@@ -28,6 +28,7 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
   height: 40px;
   padding-left: ${({ theme }) => theme.spacing(2)};
+  user-select: none;
 `;
 
 export const TabList = ({ tabs, context }: TabListProps) => {
