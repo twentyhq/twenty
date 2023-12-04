@@ -27,7 +27,7 @@ const StyledTag = styled.h3<{
   background: ${({ color, theme }) => theme.tag.background[color]};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ color, theme }) => theme.tag.text[color]};
-  display: flex;
+  display: inline-flex;
   flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.md};
   font-style: normal;
