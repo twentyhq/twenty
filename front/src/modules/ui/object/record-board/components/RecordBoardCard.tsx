@@ -4,7 +4,7 @@ import { useSetRecoilState } from 'recoil';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 
-import { useCurrentCardSelectedInternal } from '../hooks/internal/useCurrentCardSelectedInternal';
+import { useCurrentRecordBoardCardSelectedInternal } from '../hooks/internal/useCurrentRecordBoardCardSelectedInternal';
 import { BoardOptions } from '../types/BoardOptions';
 
 export const RecordBoardCard = ({
@@ -19,7 +19,7 @@ export const RecordBoardCard = ({
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
 
-  const { setCurrentCardSelected } = useCurrentCardSelectedInternal();
+  const { setCurrentCardSelected } = useCurrentRecordBoardCardSelectedInternal();
 
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();

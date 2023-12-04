@@ -12,7 +12,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { BoardColumnContext } from '../contexts/BoardColumnContext';
-import { useBoardColumnsInternal } from '../hooks/internal/useBoardColumnsInternal';
+import { useBoardColumnsInternal } from '../hooks/internal/useRecordBoardColumnsInternal';
 import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 
 import { RecordBoardColumnEditTitleMenu } from './RecordBoardColumnEditTitleMenu';

@@ -11,8 +11,8 @@ import { RecordBoardInternalEffect } from '@/ui/object/record-board/components/R
 import { RecordBoardContextMenu } from '@/ui/object/record-board/context-menu/components/RecordBoardContextMenu';
 import { BoardColumnContext } from '@/ui/object/record-board/contexts/BoardColumnContext';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
-import { useSetCardSelectedInternal } from '@/ui/object/record-board/hooks/internal/useSetCardSelectedInternal';
-import { useUpdateBoardCardIdsInternal } from '@/ui/object/record-board/hooks/internal/useUpdateBoardCardIdsInternal';
+import { useSetRecordBoardCardSelectedInternal } from '@/ui/object/record-board/hooks/internal/useSetRecordBoardCardSelectedInternal';
+import { useUpdateRecordBoardCardIdsInternal } from '@/ui/object/record-board/hooks/internal/useUpdateRecordBoardCardIdsInternal';
 import { RecordBoardScope } from '@/ui/object/record-board/scopes/RecordBoardScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -77,7 +77,7 @@ export const RecordBoard = ({
     });
 
   const { unselectAllActiveCards, setCardSelected } =
-    useSetCardSelectedInternal({ recordBoardScopeId });
+    useSetRecordBoardCardSelectedInternal({ recordBoardScopeId });
 
   const updatePipelineProgressStageInDB = useCallback(
     async (pipelineProgressId: string, pipelineStepId: string) => {
@@ -97,7 +97,7 @@ export const RecordBoard = ({
     callback: unselectAllActiveCards,
   });
 
-  const updateBoardCardIds = useUpdateBoardCardIdsInternal({
+  const updateBoardCardIds = useUpdateRecordBoardCardIdsInternal({
     recordBoardScopeId,
   });
 

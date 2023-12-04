@@ -3,12 +3,12 @@ import { useSetRecoilState } from 'recoil';
 
 import { IconTrash } from '@/ui/display/icon';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
-import { useDeleteSelectedBoardCardsInternal } from '@/ui/object/record-board/hooks/internal/useDeleteSelectedBoardCardsInternal';
+import { useDeleteSelectedRecordBoardCardsInternal } from '@/ui/object/record-board/hooks/internal/useDeleteSelectedRecordBoardCardsInternal';
 
-export const useBoardActionBarEntriesInternal = () => {
+export const useRecordBoardActionBarEntriesInternal = () => {
   const setActionBarEntriesRecoil = useSetRecoilState(actionBarEntriesState);
 
-  const deleteSelectedBoardCards = useDeleteSelectedBoardCardsInternal();
+  const deleteSelectedBoardCards = useDeleteSelectedRecordBoardCardsInternal();
 
   const setActionBarEntries = useCallback(() => {
     setActionBarEntriesRecoil([

@@ -3,14 +3,14 @@ import { useSetRecoilState } from 'recoil';
 
 import { IconTrash } from '@/ui/display/icon';
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
-import { useDeleteSelectedBoardCardsInternal } from '@/ui/object/record-board/hooks/internal/useDeleteSelectedBoardCardsInternal';
+import { useDeleteSelectedRecordBoardCardsInternal } from '@/ui/object/record-board/hooks/internal/useDeleteSelectedRecordBoardCardsInternal';
 
-export const useBoardContextMenuEntriesInternal = () => {
+export const useRecordBoardContextMenuEntriesInternal = () => {
   const setContextMenuEntriesRecoil = useSetRecoilState(
     contextMenuEntriesState,
   );
 
-  const deleteSelectedBoardCards = useDeleteSelectedBoardCardsInternal();
+  const deleteSelectedBoardCards = useDeleteSelectedRecordBoardCardsInternal();
 
   const setContextMenuEntries = useCallback(() => {
     setContextMenuEntriesRecoil([

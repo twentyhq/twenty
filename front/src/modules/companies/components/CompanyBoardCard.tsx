@@ -9,7 +9,7 @@ import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
 import { BoardCardIdContext } from '@/ui/object/record-board/contexts/BoardCardIdContext';
-import { useCurrentCardSelectedInternal } from '@/ui/object/record-board/hooks/internal/useCurrentCardSelectedInternal';
+import { useCurrentRecordBoardCardSelectedInternal } from '@/ui/object/record-board/hooks/internal/useCurrentRecordBoardCardSelectedInternal';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 import { isCardInCompactViewFamilyState } from '@/ui/object/record-board/states/isCardInCompactViewFamilyState';
 import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/RecordInlineCell';
@@ -123,7 +123,7 @@ const StyledCompactIconContainer = styled.div`
 
 export const CompanyBoardCard = () => {
   const { isCurrentCardSelected, setCurrentCardSelected } =
-    useCurrentCardSelectedInternal();
+    useCurrentRecordBoardCardSelectedInternal();
   const boardCardId = useContext(BoardCardIdContext);
 
   const [companyProgress] = useRecoilState(

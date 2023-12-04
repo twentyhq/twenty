@@ -10,12 +10,12 @@ import { BoardFieldDefinition } from '@/ui/object/record-board/types/BoardFieldD
 import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
-type useBoardCardFieldsInternalProps = {
+type useRecordBoardCardFieldsInternalProps = {
   recordBoardScopeId?: string;
 };
 
-export const useBoardCardFieldsInternal = (
-  props?: useBoardCardFieldsInternalProps,
+export const useRecordBoardCardFieldsInternal = (
+  props?: useRecordBoardCardFieldsInternalProps,
 ) => {
   const scopeId = useAvailableScopeIdOrThrow(
     RecordBoardScopeInternalContext,

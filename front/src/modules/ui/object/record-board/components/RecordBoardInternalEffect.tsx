@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useObjectRecordBoard } from '@/object-record/hooks/useObjectRecordBoard';
-import { useBoardActionBarEntriesInternal } from '@/ui/object/record-board/hooks/internal/useBoardActionBarEntriesInternal';
-import { useBoardContextMenuEntriesInternal } from '@/ui/object/record-board/hooks/internal/useBoardContextMenuEntriesInternal';
+import { useRecordBoardActionBarEntriesInternal } from '@/ui/object/record-board/hooks/internal/useRecordBoardActionBarEntriesInternal';
+import { useRecordBoardContextMenuEntriesInternal } from '@/ui/object/record-board/hooks/internal/useRecordBoardContextMenuEntriesInternal';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 import { useUpdateCompanyBoardColumnsInternal } from '@/ui/object/record-board/hooks/internal/useUpdateCompanyBoardColumnsInternal';
 import { isDefined } from '~/utils/isDefined';
@@ -15,8 +15,8 @@ export type RecordBoardInternalEffectProps = {
 export const RecordBoardInternalEffect = ({}) => {
   const updateCompanyColumnsBoardInternal =
     useUpdateCompanyBoardColumnsInternal();
-  const { setActionBarEntries } = useBoardActionBarEntriesInternal();
-  const { setContextMenuEntries } = useBoardContextMenuEntriesInternal();
+  const { setActionBarEntries } = useRecordBoardActionBarEntriesInternal();
+  const { setContextMenuEntries } = useRecordBoardContextMenuEntriesInternal();
 
   const { fetchMoreOpportunities, fetchMoreCompanies } = useObjectRecordBoard();
 

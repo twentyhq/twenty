@@ -7,7 +7,7 @@ import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-i
 
 import { isCardSelectedFamilyState } from '../../states/isCardSelectedFamilyState';
 
-export const useSetCardSelectedInternal = (props: any) => {
+export const useSetRecordBoardCardSelectedInternal = (props: any) => {
   const scopeId = useAvailableScopeIdOrThrow(
     RecordBoardScopeInternalContext,
     props?.recordBoardScopeId,

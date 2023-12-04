@@ -7,7 +7,7 @@ import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/inter
 import { BoardCardIdContext } from '../../contexts/BoardCardIdContext';
 import { isCardSelectedFamilyState } from '../../states/isCardSelectedFamilyState';
 
-export const useCurrentCardSelectedInternal = () => {
+export const useCurrentRecordBoardCardSelectedInternal = () => {
   const currentCardId = useContext(BoardCardIdContext);
 
   const isCurrentCardSelected = useRecoilValue(

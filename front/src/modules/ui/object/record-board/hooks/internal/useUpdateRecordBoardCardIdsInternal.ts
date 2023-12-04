@@ -8,12 +8,12 @@ import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-i
 import { boardCardIdsByColumnIdFamilyState } from '../../states/boardCardIdsByColumnIdFamilyState';
 import { BoardColumnDefinition } from '../../types/BoardColumnDefinition';
 
-type useUpdateBoardCardIdsInternalProps = {
+type useUpdateRecordBoardCardIdsInternalProps = {
   recordBoardScopeId?: string;
 };
 
-export const useUpdateBoardCardIdsInternal = (
-  props: useUpdateBoardCardIdsInternalProps,
+export const useUpdateRecordBoardCardIdsInternal = (
+  props: useUpdateRecordBoardCardIdsInternalProps,
 ) => {
   const scopeId = useAvailableScopeIdOrThrow(
     RecordBoardScopeInternalContext,
