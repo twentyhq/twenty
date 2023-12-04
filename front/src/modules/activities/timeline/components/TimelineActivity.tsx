@@ -1,7 +1,6 @@
 import { Tooltip } from 'react-tooltip';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Activity } from '@/activities/types/Activity';
@@ -67,7 +66,7 @@ const StyledItemContainer = styled.div`
 const StyledItemTitleContainer = styled.div`
   display: flex;
   flex: 1;
-  flex-flow: row wrap;
+  flex-flow: row ${() => (useIsMobile() ? 'wrap' : 'nowrap')};
   gap: ${({ theme }) => theme.spacing(1)};
   overflow: hidden;
 `;
@@ -75,7 +74,6 @@ const StyledItemTitleContainer = styled.div`
 const StyledItemAuthorText = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  overflow: hidden;
 `;
 
 const StyledItemTitle = styled.div`
