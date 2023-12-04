@@ -7,9 +7,9 @@ import { RecordTableHeader } from '@/object-record/record-table/components/Recor
 import { RecordTableInternalEffect } from '@/object-record/record-table/components/RecordTableInternalEffect';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
-import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
@@ -149,6 +149,14 @@ export const RecordTable = ({
     },
   );
 
+  const { createOneRecord: createOneObject } = useCreateOneRecord({
+    objectNameSingular,
+  });
+
+  const handleAddButtonClick = async () => {
+    await createOneObject?.({});
+  };
+
   const { persistViewFields } = useViewFields(viewBarId);
 
   return (
@@ -181,6 +189,7 @@ export const RecordTable = ({
                         Icon={IconPlus}
                         title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
                         variant={'secondary'}
+                        onClick={handleAddButtonClick}
                       />
                     </StyledTaskGroupEmptyContainer>
                   </StyledTasksContainer>
