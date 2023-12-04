@@ -58,6 +58,17 @@ describe('ApiRestService', () => {
       expect(service.formatFieldValue('value', 'DATE_TIME')).toEqual('value');
       expect(service.formatFieldValue('"value"', 'DATE_TIME')).toEqual('value');
       expect(service.formatFieldValue("'value'", 'DATE_TIME')).toEqual('value');
+      expect(
+        service.formatFieldValue(
+          '["2023-12-01T14:23:23.914Z","2024-12-01T14:23:23.914Z"]',
+          null,
+          'in',
+        ),
+      ).toEqual(['2023-12-01T14:23:23.914Z', '2024-12-01T14:23:23.914Z']);
+      expect(service.formatFieldValue('[1,2]', 'NUMBER', 'in')).toEqual([1, 2]);
+      expect(() =>
+        service.formatFieldValue('2024-12-01T14:23:23.914Z', null, 'in'),
+      ).toThrow();
     });
   });
   describe('parseFilterQueryContent', () => {
@@ -89,6 +100,11 @@ describe('ApiRestService', () => {
         'field[eq]:4',
         'not(field[eq]:5)',
       ]);
+    });
+    it('should parse query filter test 5', () => {
+      expect(
+        service.parseFilterQueryContent('and(field[in]:[1,2],field[eq]:4)'),
+      ).toEqual(['field[in]:[1,2]', 'field[eq]:4']);
     });
   });
   describe('parseStringFilter', () => {
@@ -178,12 +194,23 @@ describe('ApiRestService', () => {
     it('should parse simple filter string test 4', () => {
       expect(
         service.parseSimpleFilterString(
-          'person.createdAt[gt]:2023-12-01T14:23:23.914Z',
+          'person.createdAt[gt]:"2023-12-01T14:23:23.914Z"',
         ),
       ).toEqual({
         fields: ['person', 'createdAt'],
         comparator: 'gt',
         value: '2023-12-01T14:23:23.914Z',
+      });
+    });
+    it('should parse simple filter string test 5', () => {
+      expect(
+        service.parseSimpleFilterString(
+          'person.createdAt[in]:["2023-12-01T14:23:23.914Z","2024-12-01T14:23:23.914Z"]',
+        ),
+      ).toEqual({
+        fields: ['person', 'createdAt'],
+        comparator: 'in',
+        value: '["2023-12-01T14:23:23.914Z","2024-12-01T14:23:23.914Z"]',
       });
     });
   });

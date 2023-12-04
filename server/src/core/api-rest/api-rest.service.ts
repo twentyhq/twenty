@@ -16,10 +16,16 @@ import { capitalize } from 'src/utils/capitalize';
 
 enum FILTER_COMPARATORS {
   eq = 'eq',
+  neq = 'neq',
+  in = 'in',
+  is = 'is',
   gt = 'gt',
   gte = 'gte',
   lt = 'lt',
   lte = 'lte',
+  startsWith = 'startsWith',
+  like = 'like',
+  ilike = 'ilike',
 }
 const ALLOWED_DEPTH_VALUES = [1, 2];
 const DEFAULT_DEPTH_VALUE = 2;
@@ -315,6 +321,7 @@ export class ApiRestService {
   }
 
   parseFilterQueryContent(filterQuery) {
+    let bracketsCounter = 0;
     let parenthesisCounter = 0;
     const predicates: string[] = [];
     let currentPredicates = '';
@@ -327,7 +334,13 @@ export class ApiRestService {
         parenthesisCounter--;
         if (parenthesisCounter === 0) continue;
       }
-      if (c === ',' && parenthesisCounter === 1) {
+      if (c === '[') {
+        bracketsCounter++;
+      }
+      if (c === ']') {
+        bracketsCounter--;
+      }
+      if (c === ',' && parenthesisCounter === 1 && bracketsCounter === 0) {
         predicates.push(currentPredicates);
         currentPredicates = '';
         continue;
@@ -425,7 +438,7 @@ export class ApiRestService {
       this.parseSimpleFilterString(filterString);
     this.checkFields(objectMetadataItem, fields, 'filter');
     const fieldType = this.getFieldType(objectMetadataItem, fields[0]);
-    const formattedValue = this.formatFieldValue(value, fieldType);
+    const formattedValue = this.formatFieldValue(value, fieldType, comparator);
     return fields.reverse().reduce(
       (acc, currentValue) => {
         return { [currentValue]: acc };
@@ -434,7 +447,21 @@ export class ApiRestService {
     );
   }
 
-  formatFieldValue(value, fieldType?) {
+  formatFieldValue(value, fieldType?, comparator?) {
+    if (comparator === 'in') {
+      if (value[0] !== '[' || value[value.length - 1] !== ']') {
+        throw Error(
+          `'filter' invalid for 'in' operator. Received '${value}' but array value expected eg: 'field[in]:[value_1,value_2]'`,
+        );
+      }
+      const stringValues = value.substring(1, value.length - 1);
+      return stringValues
+        .split(',')
+        .map((value) => this.formatFieldValue(value, fieldType));
+    }
+    if (comparator === 'is') {
+      return value;
+    }
     if (fieldType === 'NUMBER') {
       return parseInt(value);
     }
@@ -456,7 +483,9 @@ export class ApiRestService {
     if (parsedObjectId) {
       return { id: { eq: parsedObjectId } };
     }
-    const rawFilterQuery = request.query.filter;
+    const rawFilterQuery = request.query.filter
+      ?.replaceAll('%22', '"')
+      ?.replaceAll('%27', "'");
     if (typeof rawFilterQuery !== 'string') {
       return {};
     }
