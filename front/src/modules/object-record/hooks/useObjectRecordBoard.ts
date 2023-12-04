@@ -14,13 +14,12 @@ import { useUpdateCompanyBoardCardIdsInternal } from '@/ui/object/record-board/h
 import { useFindManyRecords } from './useFindManyRecords';
 
 export const useObjectRecordBoard = () => {
-  //const { scopeId: objectNamePlural } = useRecordBoard();
-  const objectNamePlural = 'opportunities';
+  const objectNameSingular = 'opportunity';
   const updateCompanyBoardCardIds = useUpdateCompanyBoardCardIdsInternal();
 
   const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
     {
-      objectNamePlural,
+      objectNameSingular,
     },
   );
 
@@ -58,7 +57,7 @@ export const useObjectRecordBoard = () => {
   );
 
   useFindManyRecords({
-    objectNamePlural: 'pipelineSteps',
+    objectNameSingular: 'pipelineStep',
     filter: {},
     onCompleted: useCallback(
       (data: PaginatedRecordTypeResults<PipelineStep>) => {
@@ -74,7 +73,7 @@ export const useObjectRecordBoard = () => {
     fetchMoreRecords: fetchMoreOpportunities,
   } = useFindManyRecords({
     skip: !savedPipelineSteps.length,
-    objectNamePlural: 'opportunities',
+    objectNameSingular: 'opportunity',
     filter: filter,
     orderBy: orderBy,
     onCompleted: useCallback(
@@ -94,7 +93,7 @@ export const useObjectRecordBoard = () => {
 
   const { fetchMoreRecords: fetchMoreCompanies } = useFindManyRecords({
     skip: !savedOpportunities.length,
-    objectNamePlural: 'companies',
+    objectNameSingular: 'company',
     filter: {
       id: {
         in: savedOpportunities.map(
