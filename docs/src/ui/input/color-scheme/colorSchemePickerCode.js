@@ -2,7 +2,7 @@ import { ColorSchemePicker } from "@/ui/input/color-scheme/components/ColorSchem
 
 export const MyComponent = () => {
   return <ColorSchemePicker
-  value
+  value="Dark"
   onChange
   />;
 };

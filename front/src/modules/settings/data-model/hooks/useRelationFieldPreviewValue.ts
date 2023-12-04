@@ -16,7 +16,7 @@ export const useRelationFieldPreviewValue = ({
     : undefined;
 
   const { records: relationObjects } = useFindManyRecords({
-    objectNameSingular: relationObjectMetadataItem?.nameSingular ?? '',
+    objectNameSingular: relationObjectMetadataItem?.nameSingular ?? 'company', // TODO fix this hack
     skip: skip || !relationObjectMetadataItem,
   });
 
