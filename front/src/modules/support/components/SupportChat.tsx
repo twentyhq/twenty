@@ -30,7 +30,7 @@ const insertScript = ({
   document.body.appendChild(script);
 };
 
-const SupportChat = () => {
+export const SupportChat = () => {
   const currentUser = useRecoilValue(currentUserState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const supportChat = useRecoilValue(supportChatState);
@@ -93,8 +93,8 @@ const SupportChat = () => {
   return isFrontChatLoaded ? (
     <StyledButtonContainer>
       <Button
-        variant={'tertiary'}
-        size={'small'}
+        variant="tertiary"
+        size="small"
         title="Support"
         Icon={IconHelpCircle}
         onClick={() => window.FrontChat?.('show')}
@@ -102,5 +102,3 @@ const SupportChat = () => {
     </StyledButtonContainer>
   ) : null;
 };
-
-export default SupportChat;

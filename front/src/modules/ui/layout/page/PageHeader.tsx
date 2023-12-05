@@ -8,8 +8,8 @@ import { IconChevronLeft } from '@/ui/display/icon/index';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { IconButton } from '@/ui/input/button/components/IconButton';
-import NavCollapseButton from '@/ui/navigation/navigation-drawer/components/NavCollapseButton';
-import { navigationDrawerState } from '@/ui/navigation/states/navigationDrawerState';
+import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
+import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
@@ -91,14 +91,14 @@ export const PageHeader = ({
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const theme = useTheme();
-  const navigationDrawer = useRecoilValue(navigationDrawerState);
+  const isNavigationDrawerOpen = useRecoilValue(isNavigationDrawerOpenState);
 
   return (
     <StyledTopBarContainer>
       <StyledLeftContainer>
-        {navigationDrawer === '' && (
+        {!isMobile && !isNavigationDrawerOpen && (
           <StyledTopBarButtonContainer>
-            <NavCollapseButton direction="right" />
+            <NavigationDrawerCollapseButton direction="right" />
           </StyledTopBarButtonContainer>
         )}
         {hasBackButton && (
