@@ -174,26 +174,8 @@ export const RecordTable = ({
                 <StyledTable className="entity-table-cell">
                   <RecordTableHeader createRecord={createRecord} />
                   <RecordTableBodyEffect />
-                  {tableRowIds.length !== 0 && <RecordTableBody />}
+                  <RecordTableBody />
                 </StyledTable>
-                {tableRowIds.length === 0 && (
-                  <StyledTasksContainer>
-                    <StyledTaskGroupEmptyContainer>
-                      <StyledEmptyTaskGroupTitle>
-                        No {foundObjectMetadataItem?.namePlural}
-                      </StyledEmptyTaskGroupTitle>
-                      <StyledEmptyTaskGroupSubTitle>
-                        Create one:
-                      </StyledEmptyTaskGroupSubTitle>
-                      <Button
-                        Icon={IconPlus}
-                        title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
-                        variant={'secondary'}
-                        onClick={handleAddButtonClick}
-                      />
-                    </StyledTaskGroupEmptyContainer>
-                  </StyledTasksContainer>
-                )}
                 <DragSelect
                   dragSelectable={tableBodyRef}
                   onDragSelectionStart={resetTableRowSelection}
@@ -201,6 +183,24 @@ export const RecordTable = ({
                 />
               </div>
               <RecordTableInternalEffect tableBodyRef={tableBodyRef} />
+              {tableRowIds.length === 0 && (
+                <StyledTasksContainer>
+                  <StyledTaskGroupEmptyContainer>
+                    <StyledEmptyTaskGroupTitle>
+                      No {foundObjectMetadataItem?.namePlural}
+                    </StyledEmptyTaskGroupTitle>
+                    <StyledEmptyTaskGroupSubTitle>
+                      Create one:
+                    </StyledEmptyTaskGroupSubTitle>
+                    <Button
+                      Icon={IconPlus}
+                      title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
+                      variant={'secondary'}
+                      onClick={handleAddButtonClick}
+                    />
+                  </StyledTaskGroupEmptyContainer>
+                </StyledTasksContainer>
+              )}
             </StyledTableContainer>
           </StyledTableWithHeader>
         </EntityUpdateMutationContext.Provider>
