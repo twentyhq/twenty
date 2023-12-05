@@ -79,7 +79,7 @@ export const SettingsObjectNewFieldStep2 = () => {
   });
 
   useFindManyRecords({
-    objectNamePlural: 'views',
+    objectNameSingular: 'view',
     filter: {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: activeObjectMetadataItem?.id },
@@ -94,7 +94,7 @@ export const SettingsObjectNewFieldStep2 = () => {
   });
 
   useFindManyRecords({
-    objectNamePlural: 'views',
+    objectNameSingular: 'view',
     skip: !formValues.relation?.objectMetadataId,
     filter: {
       type: { eq: ViewType.Table },

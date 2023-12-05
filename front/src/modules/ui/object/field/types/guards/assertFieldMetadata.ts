@@ -9,7 +9,7 @@ import {
   FieldMetadata,
   FieldNumberMetadata,
   FieldPhoneMetadata,
-  FieldProbabilityMetadata,
+  FieldRatingMetadata,
   FieldRelationMetadata,
   FieldSelectMetadata,
   FieldTextMetadata,
@@ -38,7 +38,7 @@ type AssertFieldMetadataFunction = <
     : E extends 'PHONE'
     ? FieldPhoneMetadata
     : E extends 'PROBABILITY'
-    ? FieldProbabilityMetadata
+    ? FieldRatingMetadata
     : E extends 'RELATION'
     ? FieldRelationMetadata
     : E extends 'TEXT'

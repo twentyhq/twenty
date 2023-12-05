@@ -61,7 +61,7 @@ export type FieldPhoneMetadata = {
   fieldName: string;
 };
 
-export type FieldProbabilityMetadata = {
+export type FieldRatingMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
 };
@@ -95,7 +95,7 @@ export type FieldMetadata =
   | FieldLinkMetadata
   | FieldNumberMetadata
   | FieldPhoneMetadata
-  | FieldProbabilityMetadata
+  | FieldRatingMetadata
   | FieldRelationMetadata
   | FieldSelectMetadata
   | FieldTextMetadata
@@ -115,7 +115,7 @@ export type FieldCurrencyValue = {
   amountMicros: number | null;
 };
 export type FieldFullNameValue = { firstName: string; lastName: string };
-export type FieldProbabilityValue = number;
+export type FieldRatingValue = '1' | '2' | '3' | '4' | '5';
 export type FieldSelectValue = { color: ThemeColor; label: string };
 
 export type FieldRelationValue = EntityForSelect | null;

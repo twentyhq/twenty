@@ -40,7 +40,7 @@ export const NameFields = ({
     currentWorkspaceMember?.name?.lastName ?? '',
   );
 
-  const { updateOneRecord, objectMetadataItemNotFound } = useUpdateOneRecord({
+  const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: 'workspaceMember',
   });
 
@@ -58,9 +58,6 @@ export const NameFields = ({
       }
 
       if (autoSave) {
-        if (!updateOneRecord || objectMetadataItemNotFound) {
-          throw new Error('Object not found in metadata');
-        }
         await updateOneRecord({
           idToUpdate: currentWorkspaceMember?.id,
           input: {

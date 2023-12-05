@@ -6,6 +6,7 @@ import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metad
 import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
 import { WorkspaceMigrationService } from 'src/metadata/workspace-migration/workspace-migration.service';
 import { standardObjectsPrefillData } from 'src/workspace/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
+import { demoObjectsPrefillData } from 'src/workspace/workspace-manager/demo-objects-prefill-data/demo-objects-prefill-data';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { RelationMetadataService } from 'src/metadata/relation-metadata/relation-metadata.service';
@@ -65,6 +66,44 @@ export class WorkspaceManagerService {
       );
 
     await this.prefillWorkspaceWithStandardObjects(
+      dataSourceMetadata,
+      workspaceId,
+      createdObjectMetadata,
+    );
+  }
+
+  /**
+   * InitDemo a workspace by creating a new data source and running all migrations
+   * @param workspaceId
+   * @returns Promise<void>
+   */
+  public async initDemo(workspaceId: string): Promise<void> {
+    const schemaName =
+      await this.workspaceDataSourceService.createWorkspaceDBSchema(
+        workspaceId,
+      );
+
+    const dataSourceMetadata =
+      await this.dataSourceService.createDataSourceMetadata(
+        workspaceId,
+        schemaName,
+      );
+
+    await this.setWorkspaceMaxRow(workspaceId, schemaName);
+
+    await this.workspaceMigrationService.insertStandardMigrations(workspaceId);
+
+    await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+      workspaceId,
+    );
+
+    const createdObjectMetadata =
+      await this.createStandardObjectsAndFieldsMetadata(
+        dataSourceMetadata.id,
+        workspaceId,
+      );
+
+    await this.prefillWorkspaceWithDemoObjects(
       dataSourceMetadata,
       workspaceId,
       createdObjectMetadata,
@@ -256,8 +295,34 @@ export class WorkspaceManagerService {
     if (!workspaceDataSource) {
       throw new Error('Could not connect to workspace data source');
     }
+    await standardObjectsPrefillData(
+      workspaceDataSource,
+      dataSourceMetadata.schema,
+      createdObjectMetadata,
+    );
+  }
+  /**
+   *
+   * We are prefilling a few demo objects with data to make it easier for the user to get started.
+   *
+   * @param dataSourceMetadata
+   * @param workspaceId
+   */
+  private async prefillWorkspaceWithDemoObjects(
+    dataSourceMetadata: DataSourceEntity,
+    workspaceId: string,
+    createdObjectMetadata: ObjectMetadataEntity[],
+  ) {
+    const workspaceDataSource =
+      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
+        workspaceId,
+      );
 
-    standardObjectsPrefillData(
+    if (!workspaceDataSource) {
+      throw new Error('Could not connect to workspace data source');
+    }
+
+    await demoObjectsPrefillData(
       workspaceDataSource,
       dataSourceMetadata.schema,
       createdObjectMetadata,

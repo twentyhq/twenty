@@ -12,6 +12,7 @@ import {
   useObjectMetadataItem,
 } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 
 import { optimisticEffectState } from '../states/optimisticEffectState';
 import { OptimisticEffect } from '../types/internal/OptimisticEffect';
@@ -19,10 +20,9 @@ import { OptimisticEffectDefinition } from '../types/OptimisticEffectDefinition'
 
 export const useOptimisticEffect = ({
   objectNameSingular,
-}: {
-  objectNameSingular: string | undefined;
-}) => {
+}: ObjectMetadataItemIdentifier) => {
   const apolloClient = useApolloClient();
+
   const { findManyRecordsQuery } = useObjectMetadataItem({
     objectNameSingular,
   });

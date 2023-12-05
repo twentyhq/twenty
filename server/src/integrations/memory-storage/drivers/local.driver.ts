@@ -35,7 +35,12 @@ export class LocalMemoryDriver<T> implements MemoryStorageDriver<T> {
       return null;
     }
 
-    const data = this.storage.get(compositeKey)!;
+    const data = this.storage.get(compositeKey);
+
+    if (!data) {
+      return null;
+    }
+
     const deserializeData = this.serializer.deserialize(data);
 
     return deserializeData;

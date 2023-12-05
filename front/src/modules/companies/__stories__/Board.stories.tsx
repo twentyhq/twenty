@@ -5,17 +5,12 @@ import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { CompanyBoard } from '../board/components/CompanyBoard';
-import { CompanyBoardRecoilScopeContext } from '../states/recoil-scope-contexts/CompanyBoardRecoilScopeContext';
 
 const meta: Meta<typeof CompanyBoard> = {
   title: 'Modules/Companies/Board',
   component: CompanyBoard,
   decorators: [
-    (Story) => (
-      <CompanyBoardRecoilScopeContext.Provider value="opportunities">
-        <Story />
-      </CompanyBoardRecoilScopeContext.Provider>
-    ),
+    (Story) => <Story />,
     ComponentWithRouterDecorator,
     SnackBarDecorator,
   ],

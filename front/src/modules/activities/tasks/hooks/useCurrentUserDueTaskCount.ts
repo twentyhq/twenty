@@ -9,7 +9,7 @@ export const useCurrentUserTaskCount = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { records: tasks } = useFindManyRecords({
-    objectNamePlural: 'activities',
+    objectNameSingular: 'activity',
     filter: {
       type: { eq: 'Task' },
       completedAt: { is: 'NULL' },

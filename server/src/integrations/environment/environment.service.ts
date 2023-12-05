@@ -6,6 +6,7 @@ import { AwsRegion } from './interfaces/aws-region.interface';
 import { StorageType } from './interfaces/storage.interface';
 import { SupportDriver } from './interfaces/support.interface';
 import { LoggerDriver } from './interfaces/logger.interface';
+import { MessageQueueType } from './interfaces/message-queue.interface';
 
 @Injectable()
 export class EnvironmentService {
@@ -37,8 +38,20 @@ export class EnvironmentService {
     return this.configService.get<string>('PG_DATABASE_URL')!;
   }
 
+  getRedisHost(): string {
+    return this.configService.get<string>('REDIS_HOST') ?? '127.0.0.1';
+  }
+
+  getRedisPort(): number {
+    return +(this.configService.get<string>('REDIS_PORT') ?? 6379);
+  }
+
   getFrontBaseUrl(): string {
     return this.configService.get<string>('FRONT_BASE_URL')!;
+  }
+
+  getLocalServerUrl(): string {
+    return this.configService.get<string>('LOCAL_SERVER_URL')!;
   }
 
   getAccessTokenSecret(): string {
@@ -102,6 +115,13 @@ export class EnvironmentService {
     );
   }
 
+  getMessageQueueType(): MessageQueueType {
+    return (
+      this.configService.get<MessageQueueType>('MESSAGE_QUEUE_TYPE') ??
+      MessageQueueType.PgBoss
+    );
+  }
+
   getStorageS3Region(): AwsRegion | undefined {
     return this.configService.get<AwsRegion>('STORAGE_S3_REGION');
   }
@@ -152,5 +172,9 @@ export class EnvironmentService {
 
   getSentryDSN(): string | undefined {
     return this.configService.get<string>('SENTRY_DSN');
+  }
+
+  getDemoWorkspaceIds(): string[] {
+    return this.configService.get<string[]>('DEMO_WORKSPACE_IDS') ?? [];
   }
 }

@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 const StyledSoonPill = styled.span`
   align-items: center;
   background: ${({ theme }) => theme.background.transparent.light};
-  border-radius: 50px;
+  border-radius: ${({ theme }) => theme.border.radius.pill};
   color: ${({ theme }) => theme.font.color.light};
   display: inline-block;
   font-size: ${({ theme }) => theme.font.size.xs};

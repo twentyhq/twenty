@@ -7,10 +7,9 @@ import { capitalize } from '~/utils/string/capitalize';
 
 export const useUpdateOneRecord = <T>({
   objectNameSingular,
-}: Pick<ObjectMetadataItemIdentifier, 'objectNameSingular'>) => {
+}: ObjectMetadataItemIdentifier) => {
   const {
     objectMetadataItem,
-    objectMetadataItemNotFound,
     updateOneRecordMutation,
     getRecordFromCache,
     findManyRecordsQuery,
@@ -29,10 +28,6 @@ export const useUpdateOneRecord = <T>({
     input: Record<string, any>;
     forceRefetch?: boolean;
   }) => {
-    if (!objectMetadataItem || !objectNameSingular) {
-      return null;
-    }
-
     const cachedRecord = getRecordFromCache(idToUpdate);
 
     const updatedRecord = await mutateUpdateOneRecord({
@@ -43,7 +38,7 @@ export const useUpdateOneRecord = <T>({
         },
       },
       optimisticResponse: {
-        [`update${capitalize(objectNameSingular)}`]: {
+        [`update${capitalize(objectMetadataItem.nameSingular)}`]: {
           ...(cachedRecord ?? {}),
           ...input,
         },
@@ -54,11 +49,12 @@ export const useUpdateOneRecord = <T>({
       awaitRefetchQueries: forceRefetch,
     });
 
-    return updatedRecord.data[`update${capitalize(objectNameSingular)}`] as T;
+    return updatedRecord.data[
+      `update${capitalize(objectMetadataItem.nameSingular)}`
+    ] as T;
   };
 
   return {
     updateOneRecord,
-    objectMetadataItemNotFound,
   };
 };

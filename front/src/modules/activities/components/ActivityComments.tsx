@@ -67,7 +67,7 @@ export const ActivityComments = ({
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { records: comments } = useFindManyRecords({
-    objectNamePlural: 'comments',
+    objectNameSingular: 'comment',
     filter: {
       activityId: {
         eq: activity?.id ?? '',

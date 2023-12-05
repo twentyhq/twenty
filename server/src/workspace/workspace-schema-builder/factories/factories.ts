@@ -1,3 +1,5 @@
+import { EnumTypeDefinitionFactory } from 'src/workspace/workspace-schema-builder/factories/enum-type-definition.factory';
+
 import { ArgsFactory } from './args.factory';
 import { InputTypeFactory } from './input-type.factory';
 import { InputTypeDefinitionFactory } from './input-type-definition.factory';
@@ -24,6 +26,7 @@ export const workspaceSchemaBuilderFactories = [
   InputTypeDefinitionFactory,
   OutputTypeFactory,
   ObjectTypeDefinitionFactory,
+  EnumTypeDefinitionFactory,
   RelationTypeFactory,
   ExtendObjectTypeDefinitionFactory,
   FilterTypeFactory,

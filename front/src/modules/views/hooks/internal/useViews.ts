@@ -14,6 +14,7 @@ export const useViews = (scopeId: string) => {
   } = useObjectMetadataItem({
     objectNameSingular: 'view',
   });
+
   const apolloClient = useApolloClient();
 
   const createView = useRecoilCallback(

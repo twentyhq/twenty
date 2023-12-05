@@ -13,7 +13,10 @@ export const useEntitySelectSearch = () => {
   );
 
   const [relationPickerSearchFilter, setRelationPickerSearchFilter] =
-    useRecoilScopedState(relationPickerSearchFilterScopedState);
+    useRecoilScopedState(
+      relationPickerSearchFilterScopedState,
+      RelationPickerRecoilScopeContext,
+    );
 
   const debouncedSetSearchFilter = debounce(
     setRelationPickerSearchFilter,

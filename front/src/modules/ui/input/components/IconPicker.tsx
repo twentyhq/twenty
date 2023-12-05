@@ -63,14 +63,15 @@ export const IconPicker = ({
   const { icons, isLoadingIcons: isLoading } = useLazyLoadIcons();
 
   const iconKeys = useMemo(() => {
-    const filteredIconKeys = Object.keys(icons).filter(
-      (iconKey) =>
+    const filteredIconKeys = Object.keys(icons).filter((iconKey) => {
+      return (
         iconKey !== selectedIconKey &&
         (!searchString ||
           [iconKey, convertIconKeyToLabel(iconKey)].some((label) =>
             label.toLowerCase().includes(searchString.toLowerCase()),
-          )),
-    );
+          ))
+      );
+    });
 
     return (
       selectedIconKey

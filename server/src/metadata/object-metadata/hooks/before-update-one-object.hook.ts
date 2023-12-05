@@ -39,10 +39,11 @@ export class BeforeUpdateOneObject<T extends UpdateObjectInput>
     }
 
     const objectMetadata =
-      await this.objectMetadataService.findOneWithinWorkspace(
-        instance.id.toString(),
-        workspaceId,
-      );
+      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
+        where: {
+          id: instance.id.toString(),
+        },
+      });
 
     if (!objectMetadata) {
       throw new BadRequestException('Object does not exist');

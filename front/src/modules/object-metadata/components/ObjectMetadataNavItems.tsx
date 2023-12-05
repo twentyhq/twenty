@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { Icon123 } from '@/ui/input/constants/icons';
 import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
-import NavItem from '@/ui/navigation/navbar/components/NavItem';
+import NavItem from '@/ui/navigation/navigation-drawer/components/NavItem';
 
 export const ObjectMetadataNavItems = () => {
   const { activeObjectMetadataItems } = useObjectMetadataItemForSettings();
