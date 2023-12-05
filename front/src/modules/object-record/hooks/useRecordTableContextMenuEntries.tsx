@@ -74,12 +74,11 @@ export const useRecordTableContextMenuEntries = (
       .getValue();
 
     resetTableRowSelection();
-
-    if (deleteOneRecord) {
-      for (const rowId of rowIdsToDelete) {
+    await Promise.all(
+      rowIdsToDelete.map(async (rowId) => {
         await deleteOneRecord(rowId);
-      }
-    }
+      }),
+    );
   });
 
   return {

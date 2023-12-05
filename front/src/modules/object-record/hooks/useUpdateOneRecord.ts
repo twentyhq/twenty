@@ -1,5 +1,4 @@
-import { useMutation } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
+import { useApolloClient } from '@apollo/client';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
@@ -17,7 +16,7 @@ export const useUpdateOneRecord = <T>({
     objectNameSingular,
   });
 
-  const [mutateUpdateOneRecord] = useMutation(updateOneRecordMutation);
+  const apolloClient = useApolloClient();
 
   const updateOneRecord = async ({
     idToUpdate,
@@ -30,7 +29,8 @@ export const useUpdateOneRecord = <T>({
   }) => {
     const cachedRecord = getRecordFromCache(idToUpdate);
 
-    const updatedRecord = await mutateUpdateOneRecord({
+    const updatedRecord = await apolloClient.mutate({
+      mutation: updateOneRecordMutation,
       variables: {
         idToUpdate: idToUpdate,
         input: {
@@ -43,11 +43,11 @@ export const useUpdateOneRecord = <T>({
           ...input,
         },
       },
-      refetchQueries: forceRefetch
-        ? [getOperationName(findManyRecordsQuery) ?? '']
-        : undefined,
-      awaitRefetchQueries: forceRefetch,
     });
+
+    if (!updatedRecord?.data) {
+      return null;
+    }
 
     return updatedRecord.data[
       `update${capitalize(objectMetadataItem.nameSingular)}`

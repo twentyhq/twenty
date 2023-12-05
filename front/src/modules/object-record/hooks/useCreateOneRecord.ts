@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/client';
+import { useApolloClient } from '@apollo/client';
 import { v4 } from 'uuid';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
@@ -21,7 +21,7 @@ export const useCreateOneRecord = <T>({
   );
 
   // TODO: type this with a minimal type at least with Record<string, any>
-  const [mutate] = useMutation(createOneRecordMutation);
+  const apolloClient = useApolloClient();
 
   const { generateEmptyRecord } = useGenerateEmptyRecord({
     objectMetadataItem,
@@ -35,7 +35,8 @@ export const useCreateOneRecord = <T>({
       generateEmptyRecord(recordId),
     );
 
-    const createdObject = await mutate({
+    const createdObject = await apolloClient.mutate({
+      mutation: createOneRecordMutation,
       variables: {
         input: { ...input, id: recordId },
       },
@@ -44,6 +45,10 @@ export const useCreateOneRecord = <T>({
           generateEmptyRecord(recordId),
       },
     });
+
+    if (!createdObject.data) {
+      return null;
+    }
 
     triggerOptimisticEffects(
       `${capitalize(objectMetadataItem.nameSingular)}Edge`,

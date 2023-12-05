@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useMutation } from '@apollo/client';
+import { useApolloClient } from '@apollo/client';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useOptimisticEvict } from '@/apollo/optimistic-effect/hooks/useOptimisticEvict';
@@ -21,8 +21,7 @@ export const useDeleteOneRecord = <T>({
     },
   );
 
-  // TODO: type this with a minimal type at least with Record<string, any>
-  const [mutate] = useMutation(deleteOneRecordMutation);
+  const apolloClient = useApolloClient();
 
   const deleteOneRecord = useCallback(
     async (idToDelete: string) => {
@@ -38,7 +37,8 @@ export const useDeleteOneRecord = <T>({
         idToDelete,
       );
 
-      const deletedRecord = await mutate({
+      const deletedRecord = await apolloClient.mutate({
+        mutation: deleteOneRecordMutation,
         variables: {
           idToDelete,
         },
@@ -52,7 +52,8 @@ export const useDeleteOneRecord = <T>({
       triggerOptimisticEffects,
       objectMetadataItem.nameSingular,
       performOptimisticEvict,
-      mutate,
+      apolloClient,
+      deleteOneRecordMutation,
     ],
   );
 
