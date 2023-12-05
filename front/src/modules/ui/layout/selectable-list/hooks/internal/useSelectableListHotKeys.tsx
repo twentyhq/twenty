@@ -42,42 +42,51 @@ export const useSelectableListHotKeys = (
           selectableItemIdsState,
         );
 
-        const currPosition = findPosition(selectableItemIds, selectedItemId);
+        const { row: currentRow, col: currentCol } = findPosition(
+          selectableItemIds,
+          selectedItemId,
+        );
 
         const computeNextId = (direction: Direction) => {
           if (selectableItemIds.length === 0) {
             return;
           }
 
+          const isSingleRow = selectableItemIds.length === 1;
+
           let nextRow: number;
           let nextCol: number;
 
           switch (direction) {
             case 'up':
-              nextRow = Math.max(0, currPosition.row - 1);
-              nextCol = currPosition.col;
+              nextRow = isSingleRow ? currentRow : Math.max(0, currentRow - 1);
+              nextCol = isSingleRow ? Math.max(0, currentCol - 1) : currentCol;
               break;
             case 'down':
-              nextRow = Math.min(
-                selectableItemIds.length - 1,
-                currPosition.row + 1,
-              );
-              nextCol = currPosition.col;
+              nextRow = isSingleRow
+                ? currentRow
+                : Math.min(selectableItemIds.length - 1, currentRow + 1);
+              nextCol = isSingleRow
+                ? Math.min(
+                    selectableItemIds[currentRow].length - 1,
+                    currentCol + 1,
+                  )
+                : currentCol;
               break;
             case 'left':
-              nextRow = currPosition.row;
-              nextCol = Math.max(0, currPosition.col - 1);
+              nextRow = currentRow;
+              nextCol = Math.max(0, currentCol - 1);
               break;
             case 'right':
-              nextRow = currPosition.row;
+              nextRow = currentRow;
               nextCol = Math.min(
-                selectableItemIds[currPosition.row].length - 1,
-                currPosition.col + 1,
+                selectableItemIds[currentRow].length - 1,
+                currentCol + 1,
               );
               break;
             default:
-              nextRow = currPosition.row;
-              nextCol = currPosition.col;
+              nextRow = currentRow;
+              nextCol = currentCol;
           }
 
           return selectableItemIds[nextRow][nextCol];
