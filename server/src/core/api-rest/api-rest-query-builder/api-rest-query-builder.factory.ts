@@ -38,7 +38,7 @@ export class ApiRestQueryBuilderFactory {
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
-    const parsedObject = this.parsePath(request).object;
+    const { object: parsedObject } = this.parsePath(request);
 
     const [objectMetadata] = objectMetadataItems.filter(
       (object) => object.namePlural === parsedObject,
@@ -104,7 +104,7 @@ export class ApiRestQueryBuilderFactory {
   async delete(request: Request) {
     const objectMetadata = await this.getObjectMetadata(request);
 
-    const id = this.parsePath(request).id;
+    const { id } = this.parsePath(request);
 
     if (!id) {
       throw new BadRequestException(
@@ -134,7 +134,7 @@ export class ApiRestQueryBuilderFactory {
 
     const depth = this.computeDepth(request);
 
-    const id = this.parsePath(request).id;
+    const { id } = this.parsePath(request);
 
     if (!id) {
       throw new BadRequestException(
@@ -153,7 +153,7 @@ export class ApiRestQueryBuilderFactory {
 
     const depth = this.computeDepth(request);
 
-    const id = this.parsePath(request).id;
+    const { id } = this.parsePath(request);
 
     return {
       query: id
