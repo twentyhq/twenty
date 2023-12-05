@@ -18,13 +18,13 @@ export class GetVariablesFactory {
   create(id: string | undefined, request: Request, objectMetadata) {
     if (id) {
       return { filter: { id: { eq: id } } };
-    } else {
-      return {
-        filter: this.filterInputFactory.create(request, objectMetadata),
-        orderBy: this.orderByInputFactory.create(request, objectMetadata),
-        limit: this.limitInputFactory.create(request),
-        lastCursor: this.lastCursorInputFactory.create(request),
-      };
     }
+
+    return {
+      filter: this.filterInputFactory.create(request, objectMetadata),
+      orderBy: this.orderByInputFactory.create(request, objectMetadata),
+      limit: this.limitInputFactory.create(request),
+      lastCursor: this.lastCursorInputFactory.create(request),
+    };
   }
 }
