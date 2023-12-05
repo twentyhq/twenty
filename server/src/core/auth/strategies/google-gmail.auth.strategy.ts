@@ -26,7 +26,7 @@ export class GoogleGmailStrategy extends PassportStrategy(
     super({
       clientID: environmentService.getAuthGoogleClientId(),
       clientSecret: environmentService.getAuthGoogleClientSecret(),
-      callbackURL: environmentService.getAuthGoogleCallbackUrl(),
+      callbackURL: environmentService.getAuthGoogleGmailCallbackUrl(),
       scope: [
         'email',
         'profile',
@@ -54,6 +54,7 @@ export class GoogleGmailStrategy extends PassportStrategy(
     profile: any,
     done: VerifyCallback,
   ): Promise<void> {
+    console.log('toto');
     const { name, emails, photos } = profile;
     const state =
       typeof request.query.state === 'string'

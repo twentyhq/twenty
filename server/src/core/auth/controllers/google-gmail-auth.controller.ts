@@ -6,13 +6,13 @@ import { Repository } from 'typeorm';
 
 import { GoogleRequest } from 'src/core/auth/strategies/google.auth.strategy';
 import { TokenService } from 'src/core/auth/services/token.service';
-import { GoogleOauthGuard } from 'src/core/auth/guards/google-oauth.guard';
 import { User } from 'src/core/user/user.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { AuthService } from 'src/core/auth/services/auth.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { GoogleGmailProviderEnabledGuard } from 'src/core/auth/guards/google-gmail-provider-enabled.guard';
+import { GoogleGmailOauthGuard } from 'src/core/auth/guards/google-gmail-oauth.guard';
 
 @Controller('auth/google-gmail')
 export class GoogleGmailAuthController {
@@ -27,14 +27,14 @@ export class GoogleGmailAuthController {
   ) {}
 
   @Get()
-  @UseGuards(GoogleGmailProviderEnabledGuard, GoogleOauthGuard)
+  @UseGuards(GoogleGmailProviderEnabledGuard, GoogleGmailOauthGuard)
   async googleAuth() {
     // As this method is protected by Google Auth guard, it will trigger Google SSO flow
     return;
   }
 
   @Get('redirect')
-  @UseGuards(GoogleGmailProviderEnabledGuard, GoogleOauthGuard)
+  @UseGuards(GoogleGmailProviderEnabledGuard, GoogleGmailOauthGuard)
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
     return;
   }

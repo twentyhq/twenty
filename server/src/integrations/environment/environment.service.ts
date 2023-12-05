@@ -99,6 +99,10 @@ export class EnvironmentService {
     );
   }
 
+  getAuthGoogleGmailCallbackUrl(): string | undefined {
+    return this.configService.get<string>('AUTH_GOOGLE_GMAIL_CALLBACK_URL');
+  }
+
   isAuthGoogleEnabled(): boolean {
     return this.configService.get<boolean>('AUTH_GOOGLE_ENABLED') ?? false;
   }
