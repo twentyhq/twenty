@@ -179,6 +179,16 @@ describe('FilterParserFactory', () => {
         ),
       ).toEqual(['fieldNumber[in]:[1,2]', 'fieldNumber[eq]:4']);
     });
+    it('should parse query filter with comma in value ', () => {
+      expect(
+        service.parseFilterQueryContent('and(fieldString[eq]:"val,ue")'),
+      ).toEqual(['fieldString[eq]:"val,ue"']);
+    });
+    it('should parse query filter with comma in value ', () => {
+      expect(
+        service.parseFilterQueryContent("and(fieldString[eq]:'val,ue')"),
+      ).toEqual(["fieldString[eq]:'val,ue'"]);
+    });
   });
   describe('parseSimpleFilterString', () => {
     it('should parse simple filter string test 1', () => {
@@ -304,12 +314,12 @@ describe('FilterParserFactory', () => {
     it('should parse string filter test 4', () => {
       expect(
         service.parseStringFilter(
-          'and(fieldString[gt]:"value",or(fieldNumber[is]:NOT_NULL,not(fieldString[startsWith]:"val"),and(fieldNumber[eq]:6,fieldString[ilike]:"%val%")),or(fieldNumber[eq]:4,fieldString[is]:NULL))',
+          'and(fieldString[gt]:"val,ue",or(fieldNumber[is]:NOT_NULL,not(fieldString[startsWith]:"val"),and(fieldNumber[eq]:6,fieldString[ilike]:"%val%")),or(fieldNumber[eq]:4,fieldString[is]:NULL))',
           objectMetadataItem,
         ),
       ).toEqual({
         and: [
-          { fieldString: { gt: 'value' } },
+          { fieldString: { gt: 'val,ue' } },
           {
             or: [
               { fieldNumber: { is: 'NOT_NULL' } },
