@@ -5,7 +5,6 @@ import { useObjectRecordBoard } from '@/object-record/hooks/useObjectRecordBoard
 import { useRecordBoardActionBarEntriesInternal } from '@/ui/object/record-board/hooks/internal/useRecordBoardActionBarEntriesInternal';
 import { useRecordBoardContextMenuEntriesInternal } from '@/ui/object/record-board/hooks/internal/useRecordBoardContextMenuEntriesInternal';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
-import { useUpdateCompanyBoardCardIdsInternal } from '@/ui/object/record-board/hooks/internal/useUpdateCompanyBoardCardIdsInternal';
 import { useUpdateCompanyBoardColumnsInternal } from '@/ui/object/record-board/hooks/internal/useUpdateCompanyBoardColumnsInternal';
 import { isDefined } from '~/utils/isDefined';
 
@@ -18,7 +17,6 @@ export const RecordBoardInternalEffect = ({}) => {
     useUpdateCompanyBoardColumnsInternal();
   const { setActionBarEntries } = useRecordBoardActionBarEntriesInternal();
   const { setContextMenuEntries } = useRecordBoardContextMenuEntriesInternal();
-  const updateCompanyBoardCardIds = useUpdateCompanyBoardCardIdsInternal();
 
   const {
     savedPipelineStepsState,
@@ -36,14 +34,8 @@ export const RecordBoardInternalEffect = ({}) => {
   const savedCompanies = useRecoilValue(savedCompaniesState);
 
   useEffect(() => {
-    updateCompanyBoardCardIds(opportunities);
     setSavedOpportunities(opportunities);
-  }, [
-    fetchMoreCompanies,
-    opportunities,
-    setSavedOpportunities,
-    updateCompanyBoardCardIds,
-  ]);
+  }, [opportunities, setSavedOpportunities]);
 
   useEffect(() => {
     if (isDefined(fetchMoreOpportunities)) {
