@@ -346,26 +346,34 @@ export class WorkspaceManagerService {
 
     // TODO: Use transactions
     // CREATE OBJECTS
-    await this.objectMetadataRepository.save(objectsToCreate);
-    // UPDATE OBJECTS, this is not optimal as we are running n queries here.
-    for (const [key, value] of Object.entries(objectsToUpdate)) {
-      await this.objectMetadataRepository.update(key, value);
-    }
-    // DELETE OBJECTS
-    await this.objectMetadataRepository.delete(
-      objectsToDelete.map((object) => object.id),
-    );
+    try {
+      await this.objectMetadataRepository.save(objectsToCreate);
+      // UPDATE OBJECTS, this is not optimal as we are running n queries here.
+      for (const [key, value] of Object.entries(objectsToUpdate)) {
+        await this.objectMetadataRepository.update(key, value);
+      }
+      // DELETE OBJECTS
+      if (objectsToDelete.length > 0) {
+        await this.objectMetadataRepository.delete(
+          objectsToDelete.map((object) => object.id),
+        );
+      }
 
-    // CREATE FIELDS
-    await this.fieldMetadataRepository.save(fieldsToCreate);
-    // UPDATE FIELDS
-    for (const [key, value] of Object.entries(fieldsToUpdate)) {
-      await this.fieldMetadataRepository.update(key, value);
+      // CREATE FIELDS
+      await this.fieldMetadataRepository.save(fieldsToCreate);
+      // UPDATE FIELDS
+      for (const [key, value] of Object.entries(fieldsToUpdate)) {
+        await this.fieldMetadataRepository.update(key, value);
+      }
+      // DELETE FIELDS
+      if (fieldsToDelete.length > 0) {
+        await this.fieldMetadataRepository.delete(
+          fieldsToDelete.map((field) => field.id),
+        );
+      }
+    } catch (e) {
+      console.error('Sync of standard objects failed with:', e);
     }
-    // DELETE FIELDS
-    await this.fieldMetadataRepository.delete(
-      fieldsToDelete.map((field) => field.id),
-    );
 
     // TODO: Create migrations based on diff from above.
   }
