@@ -188,6 +188,7 @@ export const SignInUpForm = () => {
                       placeholder="Password"
                       onBlur={onBlur}
                       onChange={onChange}
+                      onKeyDown={handleKeyDown}
                       error={showErrors ? error?.message : undefined}
                       fullWidth
                       disableHotkeys
