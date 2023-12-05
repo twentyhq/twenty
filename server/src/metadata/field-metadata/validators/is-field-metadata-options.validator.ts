@@ -17,15 +17,15 @@ export class IsFieldMetadataOptions {
     value: FieldMetadataOptions,
     args: ValidationArguments,
   ): Promise<boolean> {
-    const id: string | undefined = args.object['id'];
     // Try to extract type value from the object
     let type: FieldMetadataType | null = args.object['type'];
 
     if (!type) {
+      // Extract id value from the instance, should happen only when updating
+      const id: string | undefined = args.instance?.['id'];
+
       if (!id) {
-        throw new Error(
-          'IsFieldMetadataDefaultValue validator requires either id or type to be present in the object',
-        );
+        return false;
       }
 
       const fieldMetadata = await this.fieldMetadataService.findOneOrFail(id);
