@@ -21,12 +21,7 @@ import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinit
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
 import { tableRowIdsState } from '../states/tableRowIdsState';
 
-const StyledTasksContainer = styled.div`
-  display: flex;
-  height: 100%;
-`;
-
-const StyledTaskGroupEmptyContainer = styled.div`
+const StyledObjectEmptyContainer = styled.div`
   align-items: center;
   align-self: stretch;
   display: flex;
@@ -40,14 +35,14 @@ const StyledTaskGroupEmptyContainer = styled.div`
   padding-top: ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledEmptyTaskGroupTitle = styled.div`
+const StyledEmptyObjectTitle = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.xxl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   line-height: ${({ theme }) => theme.text.lineHeight.md};
 `;
 
-const StyledEmptyTaskGroupSubTitle = styled.div`
+const StyledEmptyObjectSubTitle = styled.div`
   color: ${({ theme }) => theme.font.color.extraLight};
   font-size: ${({ theme }) => theme.font.size.xxl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
@@ -184,22 +179,20 @@ export const RecordTable = ({
               </div>
               <RecordTableInternalEffect tableBodyRef={tableBodyRef} />
               {tableRowIds.length === 0 && (
-                <StyledTasksContainer>
-                  <StyledTaskGroupEmptyContainer>
-                    <StyledEmptyTaskGroupTitle>
-                      No {foundObjectMetadataItem?.namePlural}
-                    </StyledEmptyTaskGroupTitle>
-                    <StyledEmptyTaskGroupSubTitle>
-                      Create one:
-                    </StyledEmptyTaskGroupSubTitle>
-                    <Button
-                      Icon={IconPlus}
-                      title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
-                      variant={'secondary'}
-                      onClick={handleAddButtonClick}
-                    />
-                  </StyledTaskGroupEmptyContainer>
-                </StyledTasksContainer>
+                <StyledObjectEmptyContainer>
+                  <StyledEmptyObjectTitle>
+                    No {foundObjectMetadataItem?.namePlural}
+                  </StyledEmptyObjectTitle>
+                  <StyledEmptyObjectSubTitle>
+                    Create one:
+                  </StyledEmptyObjectSubTitle>
+                  <Button
+                    Icon={IconPlus}
+                    title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
+                    variant={'secondary'}
+                    onClick={handleAddButtonClick}
+                  />
+                </StyledObjectEmptyContainer>
               )}
             </StyledTableContainer>
           </StyledTableWithHeader>
