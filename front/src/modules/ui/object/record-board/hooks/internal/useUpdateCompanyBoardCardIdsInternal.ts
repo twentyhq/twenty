@@ -20,7 +20,6 @@ export const useUpdateCompanyBoardCardIdsInternal = () => {
               return pipelineProgressToFilter.pipelineStepId === boardColumn.id;
             })
             .map((pipelineProgress) => pipelineProgress.id);
-
           set(
             recordBoardCardIdsByColumnIdFamilyState(boardColumn.id),
             boardCardIds,
