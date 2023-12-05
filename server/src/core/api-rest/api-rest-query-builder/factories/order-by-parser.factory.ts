@@ -20,12 +20,16 @@ export class OrderByParserFactory {
       return {};
     }
     const orderByItems = orderByQuery.split(',');
-    const result = {};
+    let result = {};
+    let itemDirection = '';
+    let itemFieldsString = '';
     for (const orderByItem of orderByItems) {
       // orderByItem -> field_1[AscNullsFirst]
       if (orderByItem.includes('[') && orderByItem.includes(']')) {
-        const [field, direction] = orderByItem.replace(']', '').split('[');
-        // field -> field_1 ; direction -> AscNullsFirst
+        const [fieldsString, direction] = orderByItem
+          .replace(']', '')
+          .split('[');
+        // fields -> [field_1] ; direction -> AscNullsFirst
         if (!(direction in OrderByDirection)) {
           throw Error(
             `'order_by' direction '${direction}' invalid. Allowed values are '${Object.values(
@@ -35,11 +39,25 @@ export class OrderByParserFactory {
             )}'. eg: ?order_by=field_1[AscNullsFirst],field_2[DescNullsLast],field_3`,
           );
         }
-        result[field] = direction;
+        itemDirection = direction;
+        itemFieldsString = fieldsString;
       } else {
         // orderByItem -> field_3
-        result[orderByItem] = DEFAULT_ORDER_DIRECTION;
+        itemDirection = DEFAULT_ORDER_DIRECTION;
+        itemFieldsString = orderByItem;
       }
+      let fieldResult = {};
+      itemFieldsString
+        .split('.')
+        .reverse()
+        .forEach((field) => {
+          if (Object.keys(fieldResult).length) {
+            fieldResult = { [field]: fieldResult };
+          } else {
+            fieldResult[field] = itemDirection;
+          }
+        }, itemDirection);
+      result = { ...result, ...fieldResult };
     }
     checkFields(objectMetadata.objectMetadataItem, Object.keys(result));
     return <RecordOrderBy>result;

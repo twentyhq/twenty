@@ -63,7 +63,7 @@ describe('ApiRestQueryBuilderFactory', () => {
       expect(service.computeDepth(request)).toEqual(1);
     });
     it('should return default depth if missing', () => {
-      const request: any = {};
+      const request: any = { query: {} };
       expect(service.computeDepth(request)).toEqual(undefined);
     });
     it('should raise if wrong depth', () => {

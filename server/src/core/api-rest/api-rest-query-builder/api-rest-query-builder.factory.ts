@@ -71,7 +71,7 @@ export class ApiRestQueryBuilderFactory {
 
   computeDepth(request: Request) {
     const depth =
-      typeof request.query?.depth === 'string'
+      typeof request.query.depth === 'string'
         ? parseInt(request.query.depth)
         : undefined;
     if (depth !== undefined && !ALLOWED_DEPTH_VALUES.includes(depth)) {

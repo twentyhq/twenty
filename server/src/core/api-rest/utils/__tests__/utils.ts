@@ -22,5 +22,5 @@ export const fieldCurrency = {
   },
 };
 export const objectMetadataItem = {
-  fields: [fieldNumber, fieldString, fieldLink],
+  fields: [fieldNumber, fieldString, fieldLink, fieldCurrency],
 };
