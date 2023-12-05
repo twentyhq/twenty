@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-import { validateDefaultValueBasedOnType } from 'src/metadata/field-metadata/utils/validate-default-value-based-on-type.util';
+import { validateDefaultValueBasedOnType } from 'src/metadata/field-metadata/utils/validate-default-value-for-type.util';
 
 describe('validateDefaultValueBasedOnType', () => {
   it('should return true for null defaultValue', () => {

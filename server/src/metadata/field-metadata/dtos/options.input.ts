@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsOptional } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsNotEmpty } from 'class-validator';
 
 export class FieldMetadataDefaultOptions {
   @IsOptional()
@@ -8,15 +8,17 @@ export class FieldMetadataDefaultOptions {
   @IsNumber()
   position: number;
 
+  @IsNotEmpty()
   @IsString()
   label: string;
 
+  @IsNotEmpty()
   @IsString()
   value: string;
 }
 
 export class FieldMetadataComplexOptions extends FieldMetadataDefaultOptions {
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   color: string;
 }

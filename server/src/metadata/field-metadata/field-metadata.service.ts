@@ -208,6 +208,25 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     return updatedFieldMetadata;
   }
 
+  public async findOneOrFail(
+    id: string,
+    options?: FindOneOptions<FieldMetadataEntity>,
+  ) {
+    const fieldMetadata = await this.fieldMetadataRepository.findOne({
+      ...options,
+      where: {
+        ...options?.where,
+        id,
+      },
+    });
+
+    if (!fieldMetadata) {
+      throw new NotFoundException('Field does not exist');
+    }
+
+    return fieldMetadata;
+  }
+
   public async findOneWithinWorkspace(
     workspaceId: string,
     options: FindOneOptions<FieldMetadataEntity>,
