@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 
@@ -11,7 +11,7 @@ export class LimitInputFactory {
     const limit = +request.query.limit;
 
     if (isNaN(limit) || limit < 0) {
-      throw Error(
+      throw new BadRequestException(
         `limit '${request.query.limit}' is invalid. Should be an integer`,
       );
     }

@@ -142,7 +142,7 @@ export class TokenService {
   async verifyApiKeyToken(request: Request) {
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
     if (!token) {
-      throw Error('missing authentication token');
+      throw new UnauthorizedException('missing authentication token');
     }
     const payload = await this.verifyJwt(
       token,

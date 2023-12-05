@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 
@@ -55,7 +55,9 @@ export class ApiRestQueryBuilderFactory {
         hint = `Did you mean '${wrongObjectMetadata.namePlural}'?`;
       }
 
-      throw Error(`object '${parsedObject}' not found. ${hint}`);
+      throw new BadRequestException(
+        `object '${parsedObject}' not found. ${hint}`,
+      );
     }
 
     return {
@@ -68,7 +70,7 @@ export class ApiRestQueryBuilderFactory {
     const queryAction = request.path.replace('/rest/', '').split('/');
 
     if (queryAction.length > 2) {
-      throw Error(
+      throw new BadRequestException(
         `Query path '${request.path}' invalid. Valid examples: /rest/companies/id or /rest/companies`,
       );
     }
@@ -87,7 +89,7 @@ export class ApiRestQueryBuilderFactory {
     const depth = +request.query.depth;
 
     if (isNaN(depth) || !ALLOWED_DEPTH_VALUES.includes(depth)) {
-      throw Error(
+      throw new BadRequestException(
         `'depth=${
           request.query.depth
         }' parameter invalid. Allowed values are ${ALLOWED_DEPTH_VALUES.join(
@@ -105,7 +107,7 @@ export class ApiRestQueryBuilderFactory {
     const id = this.parsePath(request).id;
 
     if (!id) {
-      throw Error(
+      throw new BadRequestException(
         `delete ${objectMetadata.objectMetadataItem.nameSingular} query invalid. Id missing. eg: /rest/${objectMetadata.objectMetadataItem.namePlural}/0d4389ef-ea9c-4ae8-ada1-1cddc440fb56`,
       );
     }
@@ -135,7 +137,7 @@ export class ApiRestQueryBuilderFactory {
     const id = this.parsePath(request).id;
 
     if (!id) {
-      throw Error(
+      throw new BadRequestException(
         `update ${objectMetadata.objectMetadataItem.nameSingular} query invalid. Id missing. eg: /rest/${objectMetadata.objectMetadataItem.namePlural}/0d4389ef-ea9c-4ae8-ada1-1cddc440fb56`,
       );
     }

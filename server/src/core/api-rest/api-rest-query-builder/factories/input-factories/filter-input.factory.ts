@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 
@@ -68,7 +68,9 @@ export class FilterInputFactory {
           : `${Math.abs(diff)} open bracket${
               Math.abs(diff) > 1 ? 's are' : ' is'
             }`;
-      throw Error(`'filter' invalid. ${hint} missing in the query`);
+      throw new BadRequestException(
+        `'filter' invalid. ${hint} missing in the query`,
+      );
     }
 
     return;
@@ -128,7 +130,9 @@ export class FilterInputFactory {
     value: string;
   } {
     if (!filterString.match(`^(.+)\\[(.+)\\]:(.+)$`)) {
-      throw Error(`'filter' invalid for '${filterString}'. eg: price[gte]:10`);
+      throw new BadRequestException(
+        `'filter' invalid for '${filterString}'. eg: price[gte]:10`,
+      );
     }
     let fields = '';
     let comparator = '';
@@ -163,7 +167,7 @@ export class FilterInputFactory {
       previousC = c;
     }
     if (!Object.keys(FILTER_COMPARATORS).includes(comparator)) {
-      throw Error(
+      throw new BadRequestException(
         `'filter' invalid for '${filterString}', comparator ${comparator} not in ${Object.keys(
           FILTER_COMPARATORS,
         ).join(',')}`,
@@ -175,7 +179,7 @@ export class FilterInputFactory {
   formatFieldValue(value, fieldType?, comparator?) {
     if (comparator === 'in') {
       if (value[0] !== '[' || value[value.length - 1] !== ']') {
-        throw Error(
+        throw new BadRequestException(
           `'filter' invalid for 'in' operator. Received '${value}' but array value expected eg: 'field[in]:[value_1,value_2]'`,
         );
       }
@@ -215,7 +219,7 @@ export class FilterInputFactory {
       );
       if (conjunction === CONJUNCTIONS.not) {
         if (subResult.length > 1) {
-          throw Error(
+          throw new BadRequestException(
             `'filter' invalid. 'not' conjunction should contain only 1 condition. eg: not(field[eq]:1)`,
           );
         }

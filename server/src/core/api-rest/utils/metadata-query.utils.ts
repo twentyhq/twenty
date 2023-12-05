@@ -1,3 +1,5 @@
+import { BadRequestException } from '@nestjs/common';
+
 export const getFieldType = (objectMetadataItem, fieldName) => {
   for (const itemField of objectMetadataItem.fields) {
     if (fieldName === itemField.name) {
@@ -20,7 +22,7 @@ export const checkFields = (objectMetadataItem, fieldNames) => {
         )
         .includes(fieldName)
     ) {
-      throw Error(
+      throw new BadRequestException(
         `field '${fieldName}' does not exist in '${objectMetadataItem.targetTableName}' object`,
       );
     }

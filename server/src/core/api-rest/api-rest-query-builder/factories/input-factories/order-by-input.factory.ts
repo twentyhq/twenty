@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 
@@ -38,7 +38,7 @@ export class OrderByInputFactory {
 
         // fields -> [field_1] ; direction -> AscNullsFirst
         if (!(direction in OrderByDirection)) {
-          throw Error(
+          throw new BadRequestException(
             `'order_by' direction '${direction}' invalid. Allowed values are '${Object.values(
               OrderByDirection,
             ).join(
