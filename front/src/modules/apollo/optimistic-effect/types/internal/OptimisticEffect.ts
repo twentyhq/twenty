@@ -11,6 +11,7 @@ type OptimisticEffectWriter<T> = ({
   cache: ApolloCache<T>;
   query: DocumentNode;
   newData: T;
+  deletedRecordIds?: string[];
   variables: OperationVariables;
   objectMetadataItem?: ObjectMetadataItem;
   isUsingFlexibleBackend?: boolean;

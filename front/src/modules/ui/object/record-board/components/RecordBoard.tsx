@@ -11,7 +11,6 @@ import { RecordBoardInternalEffect } from '@/ui/object/record-board/components/R
 import { RecordBoardContextMenu } from '@/ui/object/record-board/context-menu/components/RecordBoardContextMenu';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 import { useSetRecordBoardCardSelectedInternal } from '@/ui/object/record-board/hooks/internal/useSetRecordBoardCardSelectedInternal';
-import { useUpdateRecordBoardCardIdsInternal } from '@/ui/object/record-board/hooks/internal/useUpdateRecordBoardCardIdsInternal';
 import { RecordBoardScope } from '@/ui/object/record-board/scopes/RecordBoardScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -94,21 +93,14 @@ export const RecordBoard = ({
     callback: unselectAllActiveCards,
   });
 
-  const updateBoardCardIds = useUpdateRecordBoardCardIdsInternal({
-    recordBoardScopeId,
-  });
-
   const onDragEnd: OnDragEndResponder = useCallback(
     async (result) => {
       if (!boardColumns) return;
-
-      updateBoardCardIds(result);
 
       try {
         const draggedEntityId = result.draggableId;
         const destinationColumnId = result.destination?.droppableId;
 
-        // TODO: abstract
         if (
           draggedEntityId &&
           destinationColumnId &&
@@ -123,7 +115,7 @@ export const RecordBoard = ({
         logError(e);
       }
     },
-    [boardColumns, updatePipelineProgressStageInDB, updateBoardCardIds],
+    [boardColumns, updatePipelineProgressStageInDB],
   );
 
   const sortedBoardColumns = [...boardColumns].sort((a, b) => {
