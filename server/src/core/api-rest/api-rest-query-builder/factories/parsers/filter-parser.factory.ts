@@ -34,7 +34,6 @@ export class FilterParserFactory {
     if (typeof filterQuery !== 'string') {
       return {};
     }
-    filterQuery = filterQuery.replace(/%22/g, '"').replace(/%27/, "'");
     this.checkFilterQuery(filterQuery);
     filterQuery = this.addDefaultConjunctionIfMissing(filterQuery);
     return this.parseStringFilter(
