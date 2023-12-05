@@ -15,9 +15,13 @@ import { VerifyEffect } from '~/pages/auth/VerifyEffect';
 import { ImpersonateEffect } from '~/pages/impersonate/ImpersonateEffect';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { Opportunities } from '~/pages/opportunities/Opportunities';
+import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
 import { SettingsObjectDetail } from '~/pages/settings/data-model/SettingsObjectDetail';
 import { SettingsObjectEdit } from '~/pages/settings/data-model/SettingsObjectEdit';
+import { SettingsObjectFieldEdit } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
+import { SettingsObjectNewFieldStep1 } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
+import { SettingsObjectNewFieldStep2 } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2';
 import { SettingsObjects } from '~/pages/settings/data-model/SettingsObjects';
 import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail';
 import { SettingsDevelopersApiKeys } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeys';
@@ -28,10 +32,6 @@ import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
-
-import { SettingsObjectFieldEdit } from './pages/settings/data-model/SettingsObjectFieldEdit';
-import { SettingsObjectNewFieldStep1 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
-import { SettingsObjectNewFieldStep2 } from './pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2';
 
 export const App = () => {
   const { pathname } = useLocation();
@@ -68,6 +68,10 @@ export const App = () => {
                 <Route
                   path={SettingsPath.Appearance}
                   element={<SettingsAppearance />}
+                />
+                <Route
+                  path={SettingsPath.Accounts}
+                  element={<SettingsAccounts />}
                 />
                 <Route
                   path={SettingsPath.WorkspaceMembersPage}

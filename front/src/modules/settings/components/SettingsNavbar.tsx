@@ -4,6 +4,7 @@ import { useMatch, useNavigate, useResolvedPath } from 'react-router-dom';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { AppPath } from '@/types/AppPath';
 import {
+  IconAt,
   IconColorSwatch,
   IconHierarchy2,
   IconLogout,
@@ -11,7 +12,7 @@ import {
   IconSettings,
   IconUserCircle,
   IconUsers,
-} from '@/ui/display/icon/index';
+} from '@/ui/display/icon';
 import NavItem from '@/ui/navigation/navigation-drawer/components/NavItem';
 import NavTitle from '@/ui/navigation/navigation-drawer/components/NavTitle';
 import SubMenuNavbar from '@/ui/navigation/navigation-drawer/components/SubMenuNavbar';
@@ -51,6 +52,18 @@ export const SettingsNavbar = () => {
           })
         }
       />
+      <NavItem
+        label="Accounts"
+        to="/settings/accounts"
+        Icon={IconAt}
+        active={
+          !!useMatch({
+            path: useResolvedPath('/settings/accounts').pathname,
+            end: true,
+          })
+        }
+      />
+
       <NavTitle label="Workspace" />
       <NavItem
         label="General"
@@ -74,7 +87,6 @@ export const SettingsNavbar = () => {
           })
         }
       />
-
       <NavItem
         label="Data model"
         to="/settings/objects"
@@ -86,7 +98,6 @@ export const SettingsNavbar = () => {
           })
         }
       />
-
       <NavItem
         label="Developers"
         to="/settings/developers/api-keys"
@@ -98,6 +109,7 @@ export const SettingsNavbar = () => {
           })
         }
       />
+
       <NavTitle label="Other" />
       <NavItem label="Logout" onClick={handleLogout} Icon={IconLogout} />
     </SubMenuNavbar>
