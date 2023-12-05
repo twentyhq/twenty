@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { OrderByDirection } from 'src/workspace/workspace-query-builder/interfaces/record.interface';
 
-import { OrderByParserFactory } from 'src/core/api-rest/api-rest-query-builder/factories/order-by-parser.factory';
+import { OrderByParserFactory } from 'src/core/api-rest/api-rest-query-builder/factories/parsers/order-by-parser.factory';
 import { objectMetadataItem } from 'src/core/api-rest/utils/__tests__/utils';
 
 describe('OrderByParserFactory', () => {

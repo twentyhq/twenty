@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 
-import { LastCursorParserFactory } from 'src/core/api-rest/api-rest-query-builder/factories/last-cursor-parser.factory';
-import { LimitParserFactory } from 'src/core/api-rest/api-rest-query-builder/factories/limit-parser.factory';
-import { OrderByParserFactory } from 'src/core/api-rest/api-rest-query-builder/factories/order-by-parser.factory';
-import { FilterParserFactory } from 'src/core/api-rest/api-rest-query-builder/factories/filter-parser.factory';
+import { LastCursorParserFactory } from 'src/core/api-rest/api-rest-query-builder/factories/parsers/last-cursor-parser.factory';
+import { LimitParserFactory } from 'src/core/api-rest/api-rest-query-builder/factories/parsers/limit-parser.factory';
+import { OrderByParserFactory } from 'src/core/api-rest/api-rest-query-builder/factories/parsers/order-by-parser.factory';
+import { FilterParserFactory } from 'src/core/api-rest/api-rest-query-builder/factories/parsers/filter-parser.factory';
 
 @Injectable()
 export class GetVariablesFactory {
