@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { LastCursorParserFactory } from 'src/core/api-rest/api-rest-query-builder/factories/parsers/last-cursor-parser.factory';
+import { LastCursorInputFactory } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/last-cursor-input.factory';
 
-describe('LastCursorParserFactory', () => {
-  let service: LastCursorParserFactory;
+describe('LastCursorInputFactory', () => {
+  let service: LastCursorInputFactory;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [LastCursorParserFactory],
+      providers: [LastCursorInputFactory],
     }).compile();
-    service = module.get<LastCursorParserFactory>(LastCursorParserFactory);
+    service = module.get<LastCursorInputFactory>(LastCursorInputFactory);
   });
   it('should be defined', () => {
     expect(service).toBeDefined();

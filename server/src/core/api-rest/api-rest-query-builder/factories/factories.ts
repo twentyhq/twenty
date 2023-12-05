@@ -7,10 +7,10 @@ import { DeleteVariablesFactory } from 'src/core/api-rest/api-rest-query-builder
 import { CreateVariablesFactory } from 'src/core/api-rest/api-rest-query-builder/factories/create-variables.factory';
 import { UpdateVariablesFactory } from 'src/core/api-rest/api-rest-query-builder/factories/update-variables.factory';
 import { GetVariablesFactory } from 'src/core/api-rest/api-rest-query-builder/factories/get-variables.factory';
-import { LastCursorParserFactory } from 'src/core/api-rest/api-rest-query-builder/factories/parsers/last-cursor-parser.factory';
-import { LimitParserFactory } from 'src/core/api-rest/api-rest-query-builder/factories/parsers/limit-parser.factory';
-import { OrderByParserFactory } from 'src/core/api-rest/api-rest-query-builder/factories/parsers/order-by-parser.factory';
-import { FilterParserFactory } from 'src/core/api-rest/api-rest-query-builder/factories/parsers/filter-parser.factory';
+import { LastCursorInputFactory } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/last-cursor-input.factory';
+import { LimitInputFactory } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/limit-input.factory';
+import { OrderByInputFactory } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/order-by-input.factory';
+import { FilterInputFactory } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/filter-input.factory';
 
 export const apiRestQueryBuilderFactories = [
   DeleteQueryFactory,
@@ -22,8 +22,8 @@ export const apiRestQueryBuilderFactories = [
   CreateVariablesFactory,
   UpdateVariablesFactory,
   GetVariablesFactory,
-  LastCursorParserFactory,
-  LimitParserFactory,
-  OrderByParserFactory,
-  FilterParserFactory,
+  LastCursorInputFactory,
+  LimitInputFactory,
+  OrderByInputFactory,
+  FilterInputFactory,
 ];

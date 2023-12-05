@@ -2,17 +2,17 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { OrderByDirection } from 'src/workspace/workspace-query-builder/interfaces/record.interface';
 
-import { OrderByParserFactory } from 'src/core/api-rest/api-rest-query-builder/factories/parsers/order-by-parser.factory';
+import { OrderByInputFactory } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/order-by-input.factory';
 import { objectMetadataItem } from 'src/core/api-rest/utils/__tests__/utils';
 
-describe('OrderByParserFactory', () => {
+describe('OrderByInputFactory', () => {
   const objectMetadata = { objectMetadataItem: objectMetadataItem };
-  let service: OrderByParserFactory;
+  let service: OrderByInputFactory;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [OrderByParserFactory],
+      providers: [OrderByInputFactory],
     }).compile();
-    service = module.get<OrderByParserFactory>(OrderByParserFactory);
+    service = module.get<OrderByInputFactory>(OrderByInputFactory);
   });
   it('should be defined', () => {
     expect(service).toBeDefined();

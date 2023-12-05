@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { objectMetadataItem } from 'src/core/api-rest/utils/__tests__/utils';
-import { FilterParserFactory } from 'src/core/api-rest/api-rest-query-builder/factories/parsers/filter-parser.factory';
+import { FilterInputFactory } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/filter-input.factory';
 
-describe('FilterParserFactory', () => {
+describe('FilterInputFactory', () => {
   const objectMetadata = { objectMetadataItem: objectMetadataItem };
-  let service: FilterParserFactory;
+  let service: FilterInputFactory;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [FilterParserFactory],
+      providers: [FilterInputFactory],
     }).compile();
-    service = module.get<FilterParserFactory>(FilterParserFactory);
+    service = module.get<FilterInputFactory>(FilterInputFactory);
   });
   it('should be defined', () => {
     expect(service).toBeDefined();

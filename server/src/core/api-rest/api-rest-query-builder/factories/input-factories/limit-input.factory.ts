@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 
 @Injectable()
-export class LimitParserFactory {
+export class LimitInputFactory {
   create(request: Request) {
     const limitQuery = request.query.limit;
     if (typeof limitQuery !== 'string') {

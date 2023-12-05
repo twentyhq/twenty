@@ -12,7 +12,7 @@ import { checkFields } from 'src/core/api-rest/utils/metadata-query.utils';
 const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
 
 @Injectable()
-export class OrderByParserFactory {
+export class OrderByInputFactory {
   create(request: Request, objectMetadata) {
     //?order_by=field_1[AscNullsFirst],field_2[DescNullsLast],field_3
     const orderByQuery = request.query.order_by;

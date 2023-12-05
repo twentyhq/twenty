@@ -28,7 +28,7 @@ enum CONJUNCTIONS {
 }
 
 @Injectable()
-export class FilterParserFactory {
+export class FilterInputFactory {
   create(request: Request, objectMetadata) {
     let filterQuery = request.query.filter;
     if (typeof filterQuery !== 'string') {

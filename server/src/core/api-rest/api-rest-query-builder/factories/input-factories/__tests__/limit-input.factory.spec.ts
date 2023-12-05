@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { LimitParserFactory } from 'src/core/api-rest/api-rest-query-builder/factories/parsers/limit-parser.factory';
+import { LimitInputFactory } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/limit-input.factory';
 
-describe('LimitParserFactory', () => {
-  let service: LimitParserFactory;
+describe('LimitInputFactory', () => {
+  let service: LimitInputFactory;
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [LimitParserFactory],
+      providers: [LimitInputFactory],
     }).compile();
-    service = module.get<LimitParserFactory>(LimitParserFactory);
+    service = module.get<LimitInputFactory>(LimitInputFactory);
   });
   it('should be defined', () => {
     expect(service).toBeDefined();
