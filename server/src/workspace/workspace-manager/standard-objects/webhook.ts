@@ -2,12 +2,12 @@ import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.en
 
 const webhookMetadata = {
   nameSingular: 'webhook',
-  namePlural: 'tota',
+  namePlural: 'webhooks',
   labelSingular: 'Webhook',
   labelPlural: 'Webhooks',
   targetTableName: 'webhook',
-  description: 'A webhookfopksefkope',
-  icon: 'IconRobots',
+  description: 'A webhook',
+  icon: 'IconRobot',
   isActive: true,
   isSystem: true,
   fields: [
@@ -20,7 +20,7 @@ const webhookMetadata = {
       targetColumnMap: {
         value: 'targetUrl',
       },
-      description: 'Webhook target url stuff',
+      description: 'Webhook target url',
       icon: 'IconLink',
       isNullable: false,
       defaultValue: { value: '' },

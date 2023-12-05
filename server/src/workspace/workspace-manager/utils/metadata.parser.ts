@@ -1,7 +1,12 @@
 import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
+import { BaseObjectMetadata } from 'src/workspace/workspace-manager/standard-objects/base.object-metadata';
 
 export class MetadataParser {
-  static parseMetadata(metadata, workspaceId, dataSourceId) {
+  static parseMetadata(
+    metadata: typeof BaseObjectMetadata,
+    workspaceId: string,
+    dataSourceId: string,
+  ) {
     const objectMetadata = Reflect.getMetadata('objectMetadata', metadata);
     const fieldMetadata = Reflect.getMetadata('fieldMetadata', metadata);
 
@@ -24,9 +29,13 @@ export class MetadataParser {
     return undefined;
   }
 
-  static parseAllMetadata(entities, workspaceId, dataSourceId) {
-    return entities.map((metadata) =>
-      MetadataParser.parseMetadata(metadata, workspaceId, dataSourceId),
+  static parseAllMetadata(
+    metadata: (typeof BaseObjectMetadata)[],
+    workspaceId: string,
+    dataSourceId: string,
+  ) {
+    return metadata.map((_metadata) =>
+      MetadataParser.parseMetadata(_metadata, workspaceId, dataSourceId),
     );
   }
 }

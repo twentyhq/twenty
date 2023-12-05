@@ -4,6 +4,7 @@ import {
   IsSystem,
   ObjectMetadata,
 } from 'src/workspace/workspace-manager/decorators/metadata.decorator';
+import { BaseObjectMetadata } from 'src/workspace/workspace-manager/standard-objects/base.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'webhooks',
@@ -13,7 +14,7 @@ import {
   icon: 'IconRobot',
 })
 @IsSystem()
-export class WebhookRecord {
+export class WebhookObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
     label: 'Target Url',

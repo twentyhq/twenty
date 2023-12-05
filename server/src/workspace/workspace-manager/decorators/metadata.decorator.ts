@@ -1,6 +1,8 @@
 import camelCase from 'lodash.camelcase';
 import 'reflect-metadata';
 
+import { FieldMetadataDefaultValue } from 'src/metadata/field-metadata/interfaces/field-metadata-default-value.interface';
+
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { generateTargetColumnMap } from 'src/metadata/field-metadata/utils/generate-target-column-map.util';
 
@@ -9,7 +11,7 @@ export type FieldMetadataDecorator = {
   label: string;
   description?: string | null;
   icon?: string | null;
-  defaultValue?: { value: string } | null;
+  defaultValue?: FieldMetadataDefaultValue | null;
 };
 
 export type ObjectMetadataDecorator = {
@@ -20,6 +22,8 @@ export type ObjectMetadataDecorator = {
   icon?: string | null;
 };
 
+const classSuffix = 'ObjectMetadata';
+
 export function ObjectMetadata(
   metadata: ObjectMetadataDecorator,
 ): ClassDecorator {
@@ -28,9 +32,8 @@ export function ObjectMetadata(
 
     let objectName = camelCase(target.name);
 
-    // Probably not a good idea to name the class with Record anyway.
-    if (objectName.endsWith('Record')) {
-      objectName = objectName.slice(0, -6);
+    if (objectName.endsWith(classSuffix)) {
+      objectName = objectName.slice(0, -classSuffix.length);
     }
 
     Reflect.defineMetadata(

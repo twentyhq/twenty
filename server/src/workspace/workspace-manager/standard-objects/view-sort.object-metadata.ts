@@ -5,6 +5,7 @@ import {
   IsNullable,
   IsSystem,
 } from 'src/workspace/workspace-manager/decorators/metadata.decorator';
+import { BaseObjectMetadata } from 'src/workspace/workspace-manager/standard-objects/base.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'viewSorts',
@@ -14,7 +15,7 @@ import {
   icon: 'IconArrowsSort',
 })
 @IsSystem()
-export class ViewSortRecord {
+export class ViewSortObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.UUID,
     label: 'Field Metadata Id',

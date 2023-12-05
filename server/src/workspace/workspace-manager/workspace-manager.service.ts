@@ -19,9 +19,13 @@ import {
   FieldMetadataType,
 } from 'src/metadata/field-metadata/field-metadata.entity';
 import { MetadataParser } from 'src/workspace/workspace-manager/utils/metadata.parser';
-import { WebhookRecord } from 'src/workspace/workspace-manager/standard-objects/webook.record';
-import { ApiKeyRecord } from 'src/workspace/workspace-manager/standard-objects/api-key.record';
-import { ViewSortRecord } from 'src/workspace/workspace-manager/standard-objects/view-sort.record';
+import { WebhookObjectMetadata } from 'src/workspace/workspace-manager/standard-objects/webook.object-metadata';
+import { ApiKeyObjectMetadata } from 'src/workspace/workspace-manager/standard-objects/api-key.object-metadata';
+import { ViewSortObjectMetadata } from 'src/workspace/workspace-manager/standard-objects/view-sort.object-metadata';
+import {
+  filterIgnoredProperties,
+  mapObjectMetadataByUniqueIdentifier,
+} from 'src/workspace/workspace-manager/utils/sync-metadata.util';
 
 import {
   basicFieldsMetadata,
@@ -222,7 +226,7 @@ export class WorkspaceManagerService {
     workspaceId: string,
   ) {
     const standardObjects = MetadataParser.parseAllMetadata(
-      [WebhookRecord, ApiKeyRecord, ViewSortRecord],
+      [WebhookObjectMetadata, ApiKeyObjectMetadata, ViewSortObjectMetadata],
       workspaceId,
       dataSourceId,
     );
@@ -231,62 +235,9 @@ export class WorkspaceManagerService {
       relations: ['fields'],
     });
 
-    // We want to convert the objects and fields to a map to be able to compare them more easily
-    const mapByName = (arr: ObjectMetadataEntity[]) => {
-      return arr.reduce((acc, curr) => {
-        acc[curr.nameSingular] = {
-          ...curr,
-          fields: curr.fields.reduce((acc, curr) => {
-            acc[curr.name] = curr;
-            return acc;
-          }, {}),
-        };
-        return acc;
-      }, {});
-    };
-
-    const objectsInDBByName = mapByName(objectsInDB);
-    const standardObjectsByName = mapByName(standardObjects);
-
-    const objectPropertiesToIgnore = [
-      'id',
-      'createdAt',
-      'updatedAt',
-      'labelIdentifierFieldMetadataId',
-      'imageIdentifierFieldMetadataId',
-    ];
-    const fieldPropertiesToIgnore = [
-      'id',
-      'createdAt',
-      'updatedAt',
-      'objectMetadataId',
-    ];
-    const defaultFieldNames = ['id', 'createdAt', 'updatedAt'];
-
-    const filterIgnoredProperties = (
-      obj: any,
-      propertiesToIgnore: string[],
-      mapFunc: (value?: any) => any = (value) => value,
-    ) => {
-      return Object.fromEntries(
-        Object.entries(obj)
-          .filter(([key]) => !propertiesToIgnore.includes(key))
-          .map(mapFunc ?? (([key, value]) => [key, value])),
-      );
-    };
-
-    const filterDefaultFields = (fields: any) => {
-      return filterIgnoredProperties(
-        fields,
-        defaultFieldNames,
-        ([key, value]) => {
-          if (value === null || typeof value !== 'object') {
-            return [key, value];
-          }
-          return [key, filterIgnoredProperties(value, fieldPropertiesToIgnore)];
-        },
-      );
-    };
+    const objectsInDBByName = mapObjectMetadataByUniqueIdentifier(objectsInDB);
+    const standardObjectsByName =
+      mapObjectMetadataByUniqueIdentifier(standardObjects);
 
     const objectsToCreate: ObjectMetadataEntity[] = [];
     const objectsToDelete = objectsInDB.filter(
@@ -313,12 +264,31 @@ export class WorkspaceManagerService {
       const { fields: standardObjectFields, ...standardObjectWithoutFields } =
         standardObject;
 
-      const objectInDBFieldsWithoutDefaultFields =
-        filterDefaultFields(objectInDBFields);
-
+      const objectPropertiesToIgnore = [
+        'id',
+        'createdAt',
+        'updatedAt',
+        'labelIdentifierFieldMetadataId',
+        'imageIdentifierFieldMetadataId',
+      ];
       const objectDiffWithoutIgnoredProperties = filterIgnoredProperties(
         objectInDBWithoutFields,
         objectPropertiesToIgnore,
+      );
+
+      const fieldPropertiesToIgnore = [
+        'id',
+        'createdAt',
+        'updatedAt',
+        'objectMetadataId',
+      ];
+      const objectInDBFieldsWithoutDefaultFields = Object.fromEntries(
+        Object.entries(objectInDBFields).map(([key, value]) => {
+          if (value === null || typeof value !== 'object') {
+            return [key, value];
+          }
+          return [key, filterIgnoredProperties(value, fieldPropertiesToIgnore)];
+        }),
       );
 
       // Compare objects
@@ -333,7 +303,7 @@ export class WorkspaceManagerService {
         standardObjectFields,
       );
 
-      objectDiff.forEach((diff) => {
+      for (const diff of objectDiff) {
         // We only handle CHANGE here as REMOVE and CREATE are handled earlier.
         if (diff.type === 'CHANGE') {
           const property = diff.path[0];
@@ -342,9 +312,9 @@ export class WorkspaceManagerService {
             [property]: diff.value,
           };
         }
-      });
+      }
 
-      fieldsDiff.forEach((diff) => {
+      for (const diff of fieldsDiff) {
         if (diff.type === 'CREATE') {
           const fieldName = diff.path[0];
           const fieldMetadata = standardObjectFields[fieldName];
@@ -364,15 +334,15 @@ export class WorkspaceManagerService {
           const fieldMetadata = objectInDBFields[fieldName];
           fieldsToDelete.push(fieldMetadata);
         }
-      });
+      }
       // console.log(standardObjectName + ':objectDiff', objectDiff);
       // console.log(standardObjectName + ':fieldsDiff', fieldsDiff);
     }
 
     // TODO: Sync relationMetadata
     // NOTE: Relations are handled like any field during the diff, so we ignore the relationMetadata table
-    // as it depends on the 2 fieldMetadata that we will compare here. However we need to make sure the
-    // relationMetadata table is in sync with the fieldMetadata table.
+    // during the diff as it depends on the 2 fieldMetadata that we will compare here.
+    // However we need to make sure the relationMetadata table is in sync with the fieldMetadata table.
 
     // TODO: Use transactions
     // CREATE OBJECTS
