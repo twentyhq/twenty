@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
-import { Key } from 'ts-key-enum';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -10,7 +9,9 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { arrayToChunks } from '~/utils/array/array-to-chunks';
 
 import { IconButton, IconButtonVariant } from '../button/components/IconButton';
 import { LightIconButton } from '../button/components/LightIconButton';
@@ -56,7 +57,6 @@ export const IconPicker = ({
   variant = 'secondary',
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
-  const [selectedIcon, setSelectedIcon] = useState(selectedIconKey);
 
   const { closeDropdown } = useDropdown({ dropdownScopeId });
 
@@ -80,52 +80,16 @@ export const IconPicker = ({
     ).slice(0, 25);
   }, [icons, searchString, selectedIconKey]);
 
-  const findKey: number = iconKeys.indexOf(selectedIcon as string);
-
-  const handleArrowKey = (goToIndex: number) => {
-    const newIndex = findKey + goToIndex;
-    if (newIndex >= 0 && newIndex < iconKeys.length) {
-      setSelectedIcon(iconKeys[newIndex]);
-    }
-  };
-
-  useScopedHotkeys(
-    Key.ArrowRight,
-    () => handleArrowKey(1),
-    IconPickerHotkeyScope.IconPicker,
-    [selectedIcon],
+  const iconKeys2d = useMemo(
+    () => arrayToChunks(iconKeys.slice(), 5),
+    [iconKeys],
   );
 
-  useScopedHotkeys(
-    Key.ArrowLeft,
-    () => handleArrowKey(-1),
-    IconPickerHotkeyScope.IconPicker,
-    [selectedIcon],
-  );
-  useScopedHotkeys(
-    Key.ArrowUp,
-    () => handleArrowKey(-5),
-    IconPickerHotkeyScope.IconPicker,
-    [selectedIcon],
-  );
+  const { selectedItemId } = useSelectableList({
+    selectableListId: 'icon-list',
+  });
 
-  useScopedHotkeys(
-    Key.ArrowDown,
-    () => handleArrowKey(5),
-    IconPickerHotkeyScope.IconPicker,
-    [selectedIcon],
-  );
-
-  useScopedHotkeys(
-    Key.Enter,
-    () => {
-      const iconKey = selectedIcon as string;
-      onChange({ iconKey, Icon: icons[findKey] });
-      closeDropdown();
-    },
-    IconPickerHotkeyScope.IconPicker,
-    [selectedIcon],
-  );
+  const selectedItem = selectedItemId ?? selectedIconKey;
 
   return (
     <DropdownScope dropdownScopeId={dropdownScopeId}>
@@ -134,42 +98,48 @@ export const IconPicker = ({
         clickableComponent={
           <IconButton
             disabled={disabled}
-            Icon={selectedIconKey ? icons[selectedIconKey] : IconApps}
+            Icon={selectedItem ? icons[selectedItem] : IconApps}
             variant={variant}
           />
         }
         dropdownMenuWidth={176}
         dropdownComponents={
-          <DropdownMenu width={176}>
-            <DropdownMenuSearchInput
-              placeholder="Search icon"
-              autoFocus
-              onChange={(event) => setSearchString(event.target.value)}
-            />
-            <DropdownMenuSeparator />
-            <DropdownMenuItemsContainer>
-              {isLoading ? (
-                <DropdownMenuSkeletonItem />
-              ) : (
-                <StyledMenuIconItemsContainer>
-                  {iconKeys.map((iconKey) => (
-                    <StyledLightIconButton
-                      key={iconKey}
-                      aria-label={convertIconKeyToLabel(iconKey)}
-                      isSelected={selectedIcon === iconKey}
-                      size="medium"
-                      title={iconKey}
-                      Icon={icons[iconKey]}
-                      onClick={() => {
-                        onChange({ iconKey, Icon: icons[iconKey] });
-                        closeDropdown();
-                      }}
-                    />
-                  ))}
-                </StyledMenuIconItemsContainer>
-              )}
-            </DropdownMenuItemsContainer>
-          </DropdownMenu>
+          <SelectableList
+            selectableListId="icon-list"
+            selectableItemIds={iconKeys2d}
+            hotkeyScope={IconPickerHotkeyScope.IconPicker}
+          >
+            <DropdownMenu width={176}>
+              <DropdownMenuSearchInput
+                placeholder="Search icon"
+                autoFocus
+                onChange={(event) => setSearchString(event.target.value)}
+              />
+              <DropdownMenuSeparator />
+              <DropdownMenuItemsContainer>
+                {isLoading ? (
+                  <DropdownMenuSkeletonItem />
+                ) : (
+                  <StyledMenuIconItemsContainer>
+                    {iconKeys.map((iconKey) => (
+                      <StyledLightIconButton
+                        key={iconKey}
+                        aria-label={convertIconKeyToLabel(iconKey)}
+                        isSelected={selectedItem === iconKey}
+                        size="medium"
+                        title={iconKey}
+                        Icon={icons[iconKey]}
+                        onClick={() => {
+                          onChange({ iconKey, Icon: icons[iconKey] });
+                          closeDropdown();
+                        }}
+                      />
+                    ))}
+                  </StyledMenuIconItemsContainer>
+                )}
+              </DropdownMenuItemsContainer>
+            </DropdownMenu>
+          </SelectableList>
         }
         onClickOutside={onClickOutside}
         onClose={() => {

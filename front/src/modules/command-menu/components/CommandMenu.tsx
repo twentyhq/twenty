@@ -201,7 +201,8 @@ export const CommandMenu = () => {
               />
               <SelectableList
                 selectableListId="command-menu-list"
-                selectableItemIds={selectableItemIds}
+                selectableItemIds={[selectableItemIds]}
+                hotkeyScope={AppHotkeyScope.CommandMenu}
               >
                 {!matchingCreateCommand.length &&
                   !matchingNavigateCommand.length &&

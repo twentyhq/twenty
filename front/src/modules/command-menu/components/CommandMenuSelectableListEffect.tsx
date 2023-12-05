@@ -14,7 +14,7 @@ export const CommandMenuSelectableListEffect = ({
   });
 
   useEffect(() => {
-    setSelectableItemIds(selectableItemIds);
+    setSelectableItemIds([selectableItemIds]);
   }, [selectableItemIds, setSelectableItemIds]);
 
   return <></>;
