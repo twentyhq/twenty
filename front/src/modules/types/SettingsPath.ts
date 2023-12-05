@@ -1,6 +1,7 @@
 export enum SettingsPath {
   ProfilePage = 'profile',
-  Experience = 'profile/experience',
+  Appearance = 'profile/appearance',
+  Accounts = 'accounts',
   Objects = 'objects',
   ObjectDetail = 'objects/:objectSlug',
   ObjectEdit = 'objects/:objectSlug/edit',

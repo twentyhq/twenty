@@ -4,8 +4,12 @@ import { EntityTitleDoubleTextInput } from "@/ui/input/components/EntityTitleDou
 
 export const MyComponent = () => {
 
-    const [firstValue, setFirstValue] = useState("First Value");
-    const [secondValue, setSecondValue] = useState("This is a long long test text");
+    const [firstValue, setFirstValue] = useState(
+      "First Value"
+    );
+    const [secondValue, setSecondValue] = useState(
+      "Second Value"
+    );
 
     const handleInputChange = (newFirstValue, newSecondValue) => {
       setFirstValue(newFirstValue);

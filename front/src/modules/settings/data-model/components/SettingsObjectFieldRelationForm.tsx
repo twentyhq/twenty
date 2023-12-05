@@ -11,18 +11,22 @@ import { Field } from '~/generated-metadata/graphql';
 import { relationTypes } from '../constants/relationTypes';
 import { RelationType } from '../types/RelationType';
 
-export type SettingsObjectFieldRelationFormValues = Partial<{
-  field: Partial<Pick<Field, 'icon' | 'label'>>;
+export type SettingsObjectFieldRelationFormValues = {
+  field: Pick<Field, 'icon' | 'label'>;
   objectMetadataId: string;
   type: RelationType;
-}>;
+};
 
 type SettingsObjectFieldRelationFormProps = {
   disableFieldEdition?: boolean;
   disableRelationEdition?: boolean;
-  onChange: (values: SettingsObjectFieldRelationFormValues) => void;
-  values?: SettingsObjectFieldRelationFormValues;
+  onChange: (values: Partial<SettingsObjectFieldRelationFormValues>) => void;
+  values: SettingsObjectFieldRelationFormValues;
 };
+
+const StyledContainer = styled.div`
+  padding: ${({ theme }) => theme.spacing(4)};
+`;
 
 const StyledSelectsContainer = styled.div`
   display: grid;
@@ -57,18 +61,18 @@ export const SettingsObjectFieldRelationForm = ({
     useObjectMetadataItemForSettings();
 
   const selectedObjectMetadataItem =
-    (values?.objectMetadataId
+    (values.objectMetadataId
       ? findObjectMetadataItemById(values.objectMetadataId)
       : undefined) || objectMetadataItems[0];
 
   return (
-    <div>
+    <StyledContainer>
       <StyledSelectsContainer>
         <Select
           label="Relation type"
           dropdownScopeId="relation-type-select"
           disabled={disableRelationEdition}
-          value={values?.type}
+          value={values.type}
           options={Object.entries(relationTypes).map(
             ([value, { label, Icon }]) => ({
               label,
@@ -82,7 +86,7 @@ export const SettingsObjectFieldRelationForm = ({
           label="Object destination"
           dropdownScopeId="object-destination-select"
           disabled={disableRelationEdition}
-          value={values?.objectMetadataId}
+          value={values.objectMetadataId}
           options={objectMetadataItems.map((objectMetadataItem) => ({
             label: objectMetadataItem.labelPlural,
             value: objectMetadataItem.id,
@@ -100,10 +104,10 @@ export const SettingsObjectFieldRelationForm = ({
         <IconPicker
           disabled={disableFieldEdition}
           dropdownScopeId="field-destination-icon-picker"
-          selectedIconKey={values?.field?.icon || undefined}
+          selectedIconKey={values.field.icon || undefined}
           onChange={(value) =>
             onChange({
-              field: { ...values?.field, icon: value.iconKey },
+              field: { ...values.field, icon: value.iconKey },
             })
           }
           variant="primary"
@@ -111,17 +115,17 @@ export const SettingsObjectFieldRelationForm = ({
         <TextInput
           disabled={disableFieldEdition}
           placeholder="Field name"
-          value={values?.field?.label || ''}
+          value={values.field.label}
           onChange={(value) => {
             if (!value || validateMetadataLabel(value)) {
               onChange({
-                field: { ...values?.field, label: value },
+                field: { ...values.field, label: value },
               });
             }
           }}
           fullWidth
         />
       </StyledInputsContainer>
-    </div>
+    </StyledContainer>
   );
 };

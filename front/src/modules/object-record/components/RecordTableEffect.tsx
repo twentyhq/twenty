@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 
-import { useComputeDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useComputeDefinitionsFromFieldMetadata';
+import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
@@ -16,22 +17,27 @@ export const RecordTableEffect = ({
   viewBarId: string;
 }) => {
   const {
+    // Todo: do not infer objectNamePlural from recordTableId
     scopeId: objectNamePlural,
     setAvailableTableColumns,
     setOnEntityCountChange,
     setObjectMetadataConfig,
   } = useRecordTable({ recordTableScopeId: recordTableId });
 
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
+    objectNamePlural,
+  });
+
   const {
     objectMetadataItem,
     basePathToShowPage,
     labelIdentifierFieldMetadataId,
   } = useObjectMetadataItem({
-    objectNamePlural,
+    objectNameSingular,
   });
 
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
-    useComputeDefinitionsFromFieldMetadata(objectMetadataItem);
+    useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const {
     setAvailableSortDefinitions,

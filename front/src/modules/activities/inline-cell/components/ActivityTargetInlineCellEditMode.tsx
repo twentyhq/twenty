@@ -55,13 +55,14 @@ export const ActivityTargetInlineCellEditMode = ({
     [initialPeopleIds, initialCompanyIds],
   );
 
-  const { findManyQuery: findManyPeopleQuery } = useObjectMetadataItem({
+  const { findManyRecordsQuery: findManyPeopleQuery } = useObjectMetadataItem({
     objectNameSingular: 'person',
   });
 
-  const { findManyQuery: findManyCompaniesQuery } = useObjectMetadataItem({
-    objectNameSingular: 'company',
-  });
+  const { findManyRecordsQuery: findManyCompaniesQuery } =
+    useObjectMetadataItem({
+      objectNameSingular: 'company',
+    });
 
   const useFindManyPeopleQuery = (options: any) =>
     useQuery(findManyPeopleQuery, options);
@@ -86,7 +87,7 @@ export const ActivityTargetInlineCellEditMode = ({
     orderByField: 'createdAt',
     mappingFunction: (record: any) => identifiersMapper?.(record, 'person'),
     selectedIds: initialPeopleIds,
-    objectNamePlural: 'people',
+    objectNameSingular: 'person',
     limit: 3,
   });
 
@@ -101,7 +102,7 @@ export const ActivityTargetInlineCellEditMode = ({
     orderByField: 'createdAt',
     mappingFunction: (record: any) => identifiersMapper?.(record, 'company'),
     selectedIds: initialCompanyIds,
-    objectNamePlural: 'companies',
+    objectNameSingular: 'company',
     limit: 3,
   });
 

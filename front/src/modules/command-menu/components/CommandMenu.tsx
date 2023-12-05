@@ -4,7 +4,8 @@ import { useRecoilValue } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { CommandMenuSelectableListEffect } from '@/command-menu/components/CommandMenuSelectableListEffect';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
+import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Person } from '@/people/types/Person';
 import { IconNotes } from '@/ui/display/icon';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
@@ -89,6 +90,7 @@ export const CommandMenu = () => {
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [search, setSearch] = useState('');
   const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
+  const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
@@ -97,6 +99,7 @@ export const CommandMenu = () => {
   useScopedHotkeys(
     'ctrl+k,meta+k',
     () => {
+      closeKeyboardShortcutMenu();
       setSearch('');
       toggleCommandMenu();
     },
@@ -108,15 +111,16 @@ export const CommandMenu = () => {
     'esc',
     () => {
       setSearch('');
+      closeKeyboardShortcutMenu();
       closeCommandMenu();
     },
     AppHotkeyScope.CommandMenu,
     [toggleCommandMenu, setSearch],
   );
 
-  const { objects: people } = useFindManyObjectRecords<Person>({
+  const { records: people } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened,
-    objectNamePlural: 'people',
+    objectNameSingular: 'person',
     filter: {
       or: [
         { name: { firstName: { ilike: `%${search}%` } } },
@@ -126,18 +130,18 @@ export const CommandMenu = () => {
     limit: 3,
   });
 
-  const { objects: companies } = useFindManyObjectRecords<Person>({
+  const { records: companies } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened,
-    objectNamePlural: 'companies',
+    objectNameSingular: 'company',
     filter: {
       name: { ilike: `%${search}%` },
     },
     limit: 3,
   });
 
-  const { objects: activities } = useFindManyObjectRecords<Person>({
+  const { records: activities } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened,
-    objectNamePlural: 'activities',
+    objectNameSingular: 'activity',
     filter: {
       or: [
         { title: { like: `%${search}%` } },

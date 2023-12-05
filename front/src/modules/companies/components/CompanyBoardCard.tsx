@@ -2,7 +2,7 @@ import { ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { useUpdateOneObjectRecord } from '@/object-record/hooks/useUpdateOneObjectRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { EntityChipVariant } from '@/ui/display/chip/components/EntityChip';
 import { IconEye } from '@/ui/display/icon/index';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
@@ -150,8 +150,8 @@ export const CompanyBoardCard = () => {
     BoardRecoilScopeContext,
   );
 
-  const useUpdateOneObjectMutation: () => [(params: any) => any, any] = () => {
-    const { updateOneObject } = useUpdateOneObjectRecord({
+  const useUpdateOneRecordMutation: () => [(params: any) => any, any] = () => {
+    const { updateOneRecord: updateOneOpportunity } = useUpdateOneRecord({
       objectNameSingular: 'opportunity',
     });
 
@@ -165,7 +165,7 @@ export const CompanyBoardCard = () => {
         };
       };
     }) => {
-      updateOneObject?.({
+      updateOneOpportunity?.({
         idToUpdate: variables.where.id,
         input: variables.data,
       });
@@ -247,7 +247,7 @@ export const CompanyBoardCard = () => {
                       type: viewField.type,
                       metadata: viewField.metadata,
                     },
-                    useUpdateEntityMutation: useUpdateOneObjectMutation,
+                    useUpdateEntityMutation: useUpdateOneRecordMutation,
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,
                   }}
                 >

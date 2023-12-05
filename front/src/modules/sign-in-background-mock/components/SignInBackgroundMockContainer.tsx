@@ -14,8 +14,8 @@ const StyledContainer = styled.div`
 `;
 
 export const SignInBackgroundMockContainer = () => {
-  const recordTableId = 'sign-in-background-mock-table';
-  const viewBarId = 'sign-in-background-mock-view';
+  const recordTableId = 'companies';
+  const viewBarId = 'companies-mock';
 
   return (
     <StyledContainer>
@@ -33,7 +33,8 @@ export const SignInBackgroundMockContainer = () => {
       <RecordTable
         recordTableId={recordTableId}
         viewBarId={viewBarId}
-        updateEntityMutation={() => {}}
+        createRecord={() => {}}
+        updateRecordMutation={() => {}}
       />
     </StyledContainer>
   );

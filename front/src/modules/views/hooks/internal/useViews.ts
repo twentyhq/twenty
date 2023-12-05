@@ -7,13 +7,14 @@ import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScope
 
 export const useViews = (scopeId: string) => {
   const {
-    updateOneMutation,
-    createOneMutation,
-    deleteOneMutation,
-    findManyQuery,
+    updateOneRecordMutation: updateOneMutation,
+    createOneRecordMutation: createOneMutation,
+    deleteOneRecordMutation: deleteOneMutation,
+    findManyRecordsQuery: findManyQuery,
   } = useObjectMetadataItem({
     objectNameSingular: 'view',
   });
+
   const apolloClient = useApolloClient();
 
   const createView = useRecoilCallback(

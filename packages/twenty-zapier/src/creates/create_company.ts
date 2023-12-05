@@ -104,7 +104,7 @@ export default {
       },
       {
         key: 'employees',
-        label: 'Employees (number of)',
+        label: 'Number of Employees',
         type: 'number',
         required: false,
         list: false,

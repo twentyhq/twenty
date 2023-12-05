@@ -11,8 +11,11 @@ export class DeleteOneQueryFactory {
 
   constructor(private readonly fieldsStringFactory: FieldsStringFactory) {}
 
-  create(args: DeleteOneResolverArgs, options: WorkspaceQueryBuilderOptions) {
-    const fieldsString = this.fieldsStringFactory.create(
+  async create(
+    args: DeleteOneResolverArgs,
+    options: WorkspaceQueryBuilderOptions,
+  ) {
+    const fieldsString = await this.fieldsStringFactory.create(
       options.info,
       options.fieldMetadataCollection,
     );

@@ -17,7 +17,9 @@ import { RecordTableHeaderPlusButtonContent } from './RecordTableHeaderPlusButto
 import { SelectAllCheckbox } from './SelectAllCheckbox';
 
 type RecordTableHeaderProps = {
-  tableBodyRef: React.RefObject<HTMLDivElement>;
+  createRecord: () => void;
+  isPlusButtonSticky: boolean;
+  checkTableWidth: () => void;
 };
 
 const COLUMN_MIN_WIDTH = 104;
@@ -113,7 +115,10 @@ const HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID =
 const HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID =
   'hidden-table-columns-dropdown-hotkey-scope-id';
 
-export const RecordTableHeader = ({ tableBodyRef }: RecordTableHeaderProps) => {
+export const RecordTableHeader = ({
+  isPlusButtonSticky,
+  checkTableWidth,
+}: RecordTableHeaderProps) => {
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
     resizeFieldOffsetState,
   );
@@ -149,13 +154,9 @@ export const RecordTableHeader = ({ tableBodyRef }: RecordTableHeaderProps) => {
     [setResizeFieldOffset, initialPointerPositionX],
   );
 
-  const [isPlusButtonSticky, setIsPlusButtonSticky] = useState(false);
-
   useEffect(() => {
-    const tableClientWidth = tableBodyRef.current?.clientWidth ?? 0;
-    const tableScrollWidth = tableBodyRef.current?.scrollWidth ?? 0;
-    setIsPlusButtonSticky(tableClientWidth < tableScrollWidth);
-  }, [visibleTableColumns.length, resizedFieldKey, tableBodyRef]);
+    checkTableWidth();
+  }, [visibleTableColumns.length, resizedFieldKey, checkTableWidth]);
 
   const handleResizeHandlerEnd = useRecoilCallback(
     ({ snapshot, set }) =>

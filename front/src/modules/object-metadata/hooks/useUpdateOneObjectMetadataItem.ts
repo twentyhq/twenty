@@ -6,8 +6,8 @@ import {
   UpdateOneObjectMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
 
-import { UPDATE_ONE_METADATA_OBJECT } from '../graphql/mutations';
-import { FIND_MANY_METADATA_OBJECTS } from '../graphql/queries';
+import { UPDATE_ONE_OBJECT_METADATA_ITEM } from '../graphql/mutations';
+import { FIND_MANY_OBJECT_METADATA_ITEMS } from '../graphql/queries';
 
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
@@ -18,7 +18,7 @@ export const useUpdateOneObjectMetadataItem = () => {
   const [mutate] = useMutation<
     UpdateOneObjectMetadataItemMutation,
     UpdateOneObjectMetadataItemMutationVariables
-  >(UPDATE_ONE_METADATA_OBJECT, {
+  >(UPDATE_ONE_OBJECT_METADATA_ITEM, {
     client: apolloClientMetadata ?? undefined,
   });
 
@@ -44,7 +44,7 @@ export const useUpdateOneObjectMetadataItem = () => {
         updatePayload,
       },
       awaitRefetchQueries: true,
-      refetchQueries: [getOperationName(FIND_MANY_METADATA_OBJECTS) ?? ''],
+      refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
     });
   };
 

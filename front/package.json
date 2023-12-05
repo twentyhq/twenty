@@ -1,6 +1,6 @@
 {
   "name": "twenty",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
     "@air/react-drag-to-select": "^5.0.8",
@@ -40,6 +40,7 @@
     "react-datepicker": "^4.11.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
+    "react-error-boundary": "^4.0.11",
     "react-helmet-async": "^1.3.0",
     "react-hook-form": "^7.45.1",
     "react-hotkeys-hook": "^4.4.0",
@@ -161,8 +162,8 @@
     "eslint-plugin-twenty": "file:../packages/eslint-plugin-twenty",
     "eslint-plugin-unused-imports": "^3.0.0",
     "http-server": "^14.1.1",
-    "msw": "1.2.1",
-    "msw-storybook-addon": "^1.8.0",
+    "msw": "1.3.2",
+    "msw-storybook-addon": "^1.10.0",
     "prettier": "^2.8.0",
     "react-scripts": "5.0.1",
     "storybook": "^7.0.22",

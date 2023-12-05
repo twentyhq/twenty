@@ -1,7 +1,8 @@
 import { QueryHookOptions, QueryResult } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { mapPaginatedObjectsToObjects } from '@/object-record/utils/mapPaginatedObjectsToObjects';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { mapPaginatedRecordsToRecords } from '@/object-record/utils/mapPaginatedRecordsToRecords';
 import { EntitiesForMultipleEntitySelect } from '@/ui/input/relation-picker/components/MultipleEntitySelect';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { assertNotNull } from '~/utils/assert';
@@ -19,6 +20,8 @@ export const DEFAULT_SEARCH_REQUEST_LIMIT = 60;
 
 // TODO: use this for all search queries, because we need selectedEntities and entitiesToSelect each time we want to search
 // Filtered entities to select are
+
+// TODO: replace query hooks by useFindManyRecords
 export const useFilteredSearchEntityQuery = ({
   queryHook,
   orderByField,
@@ -28,7 +31,7 @@ export const useFilteredSearchEntityQuery = ({
   mappingFunction,
   limit,
   excludeEntityIds = [],
-  objectNamePlural,
+  objectNameSingular,
 }: {
   queryHook: (
     queryOptions?: QueryHookOptions<any, any>,
@@ -40,8 +43,12 @@ export const useFilteredSearchEntityQuery = ({
   mappingFunction: (entity: any) => EntityForSelect | undefined;
   limit?: number;
   excludeEntityIds?: string[];
-  objectNamePlural: string;
+  objectNameSingular: string;
 }): EntitiesForMultipleEntitySelect<EntityForSelect> => {
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
   const { loading: selectedEntitiesLoading, data: selectedEntitiesData } =
     queryHook({
       variables: {
@@ -135,21 +142,21 @@ export const useFilteredSearchEntityQuery = ({
     });
 
   return {
-    selectedEntities: mapPaginatedObjectsToObjects({
-      objectNamePlural: objectNamePlural,
-      pagedObjects: selectedEntitiesData,
+    selectedEntities: mapPaginatedRecordsToRecords({
+      objectNamePlural: objectMetadataItem.namePlural,
+      pagedRecords: selectedEntitiesData,
     })
       .map(mappingFunction)
       .filter(assertNotNull),
-    filteredSelectedEntities: mapPaginatedObjectsToObjects({
-      objectNamePlural: objectNamePlural,
-      pagedObjects: filteredSelectedEntitiesData,
+    filteredSelectedEntities: mapPaginatedRecordsToRecords({
+      objectNamePlural: objectMetadataItem.namePlural,
+      pagedRecords: filteredSelectedEntitiesData,
     })
       .map(mappingFunction)
       .filter(assertNotNull),
-    entitiesToSelect: mapPaginatedObjectsToObjects({
-      objectNamePlural: objectNamePlural,
-      pagedObjects: entitiesToSelectData,
+    entitiesToSelect: mapPaginatedRecordsToRecords({
+      objectNamePlural: objectMetadataItem.namePlural,
+      pagedRecords: entitiesToSelectData,
     })
       .map(mappingFunction)
       .filter(assertNotNull),

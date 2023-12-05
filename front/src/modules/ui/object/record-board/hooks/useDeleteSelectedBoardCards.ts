@@ -1,7 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
-import { useDeleteOneObjectRecord } from '@/object-record/hooks/useDeleteOneObjectRecord';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 
 import { selectedCardIdsSelector } from '../states/selectors/selectedCardIdsSelector';
@@ -12,8 +12,8 @@ export const useDeleteSelectedBoardCards = () => {
   const removeCardIds = useRemoveCardIds();
   const apolloClient = useApolloClient();
 
-  const { deleteOneObject: deleteOneOpportunity } =
-    useDeleteOneObjectRecord<Opportunity>({
+  const { deleteOneRecord: deleteOneOpportunity } =
+    useDeleteOneRecord<Opportunity>({
       objectNameSingular: 'opportunity',
     });
 

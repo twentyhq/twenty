@@ -29,12 +29,13 @@ type FieldMetadataTypeMapping = {
   [FieldMetadataType.FULL_NAME]: FieldMetadataTargetColumnMapFullName;
 };
 
-type TypeByFieldMetadata<T extends FieldMetadataType | 'default'> =
-  T extends keyof FieldMetadataTypeMapping
-    ? FieldMetadataTypeMapping[T]
-    : T extends 'default'
-    ? AllFieldMetadataTypes
-    : FieldMetadataTargetColumnMapValue;
+type TypeByFieldMetadata<T extends FieldMetadataType | 'default'> = [
+  T,
+] extends [keyof FieldMetadataTypeMapping]
+  ? FieldMetadataTypeMapping[T]
+  : T extends 'default'
+  ? AllFieldMetadataTypes
+  : FieldMetadataTargetColumnMapValue;
 
 export type FieldMetadataTargetColumnMap<
   T extends FieldMetadataType | 'default' = 'default',

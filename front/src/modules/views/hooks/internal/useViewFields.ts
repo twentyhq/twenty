@@ -7,9 +7,10 @@ import { getViewScopedStatesFromSnapshot } from '@/views/utils/getViewScopedStat
 import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
 
 export const useViewFields = (viewScopeId: string) => {
-  const { updateOneMutation, createOneMutation } = useObjectMetadataItem({
-    objectNameSingular: 'viewField',
-  });
+  const { updateOneRecordMutation, createOneRecordMutation } =
+    useObjectMetadataItem({
+      objectNameSingular: 'viewField',
+    });
 
   const { modifyRecordFromCache } = useObjectMetadataItem({
     objectNameSingular: 'view',
@@ -56,7 +57,7 @@ export const useViewFields = (viewScopeId: string) => {
           return Promise.all(
             viewFieldsToCreate.map((viewField) =>
               apolloClient.mutate({
-                mutation: createOneMutation,
+                mutation: createOneRecordMutation,
                 variables: {
                   input: {
                     fieldMetadataId: viewField.fieldMetadataId,
@@ -79,7 +80,7 @@ export const useViewFields = (viewScopeId: string) => {
           return Promise.all(
             viewFieldsToUpdate.map((viewField) =>
               apolloClient.mutate({
-                mutation: updateOneMutation,
+                mutation: updateOneRecordMutation,
                 variables: {
                   idToUpdate: viewField.id,
                   input: {
@@ -145,8 +146,8 @@ export const useViewFields = (viewScopeId: string) => {
       viewScopeId,
       modifyRecordFromCache,
       apolloClient,
-      createOneMutation,
-      updateOneMutation,
+      createOneRecordMutation,
+      updateOneRecordMutation,
     ],
   );
 

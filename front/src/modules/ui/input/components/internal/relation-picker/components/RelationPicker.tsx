@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { IconForbid } from '@/ui/display/icon';
 import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
@@ -38,14 +39,22 @@ export const RelationPicker = ({
     setRelationPickerSearchFilter(initialSearchFilter ?? '');
   }, [initialSearchFilter, setRelationPickerSearchFilter]);
 
-  const { findManyQuery } = useObjectMetadataItem({
+  // TODO: refactor useFilteredSearchEntityQuery
+  const { findManyRecordsQuery } = useObjectMetadataItem({
     objectNameSingular:
       fieldDefinition.metadata.relationObjectMetadataNameSingular,
   });
 
-  const useFindManyQuery = (options: any) => useQuery(findManyQuery, options);
+  const useFindManyQuery = (options: any) =>
+    useQuery(findManyRecordsQuery, options);
 
   const { identifiersMapper, searchQuery } = useRelationPicker();
+
+  const { objectNameSingular: relationObjectNameSingular } =
+    useObjectNameSingularFromPlural({
+      objectNamePlural:
+        fieldDefinition.metadata.relationObjectMetadataNamePlural,
+    });
 
   const records = useFilteredSearchEntityQuery({
     queryHook: useFindManyQuery,
@@ -66,7 +75,7 @@ export const RelationPicker = ({
       ),
     selectedIds: recordId ? [recordId] : [],
     excludeEntityIds: excludeRecordIds,
-    objectNamePlural: fieldDefinition.metadata.relationObjectMetadataNamePlural,
+    objectNameSingular: relationObjectNameSingular,
   });
 
   const handleEntitySelected = async (selectedUser: any | null | undefined) => {

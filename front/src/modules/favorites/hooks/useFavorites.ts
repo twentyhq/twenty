@@ -8,9 +8,10 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { Favorite } from '@/favorites/types/Favorite';
 import { mapFavorites } from '@/favorites/utils/mapFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
-import { useFindManyObjectRecords } from '@/object-record/hooks/useFindManyObjectRecords';
-import { PaginatedObjectTypeResults } from '@/object-record/types/PaginatedObjectTypeResults';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { favoritesState } from '../states/favoritesState';
@@ -18,19 +19,19 @@ import { favoritesState } from '../states/favoritesState';
 export const useFavorites = ({
   objectNamePlural,
 }: {
-  objectNamePlural: string | undefined;
+  objectNamePlural: string;
 }) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const [favorites, setFavorites] = useRecoilState(favoritesState);
 
   const {
-    updateOneMutation,
-    createOneMutation,
-    deleteOneMutation,
+    updateOneRecordMutation: updateOneFavoriteMutation,
+    createOneRecordMutation: createOneFavoriteMutation,
+    deleteOneRecordMutation: deleteOneFavoriteMutation,
     objectMetadataItem: favoriteObjectMetadataItem,
   } = useObjectMetadataItem({
-    objectNamePlural: 'favorites',
+    objectNameSingular: 'favorite',
   });
 
   const { registerOptimisticEffect, triggerOptimisticEffects } =
@@ -39,18 +40,22 @@ export const useFavorites = ({
     });
   const { performOptimisticEvict } = useOptimisticEvict();
 
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
+    objectNamePlural,
+  });
+
   const { objectMetadataItem: favoriteTargetObjectMetadataItem } =
     useObjectMetadataItem({
-      objectNamePlural,
+      objectNameSingular,
     });
 
   const apolloClient = useApolloClient();
 
-  useFindManyObjectRecords({
-    objectNamePlural: 'favorites',
+  useFindManyRecords({
+    objectNameSingular: 'favorite',
     onCompleted: useRecoilCallback(
       ({ snapshot, set }) =>
-        async (data: PaginatedObjectTypeResults<Required<Favorite>>) => {
+        async (data: PaginatedRecordTypeResults<Required<Favorite>>) => {
           const favorites = snapshot.getLoadable(favoritesState).getValue();
 
           const queriedFavorites = mapFavorites(
@@ -87,7 +92,7 @@ export const useFavorites = ({
         const targetObjectName = favoriteTargetObjectMetadataItem.nameSingular;
 
         const result = await apolloClient.mutate({
-          mutation: createOneMutation,
+          mutation: createOneFavoriteMutation,
           variables: {
             input: {
               [`${targetObjectName}Id`]: favoriteTargetObjectId,
@@ -114,7 +119,7 @@ export const useFavorites = ({
       },
     [
       apolloClient,
-      createOneMutation,
+      createOneFavoriteMutation,
       currentWorkspaceMember?.id,
       favoriteTargetObjectMetadataItem,
       triggerOptimisticEffects,
@@ -127,7 +132,7 @@ export const useFavorites = ({
         const favoritesStateFromSnapshot = snapshot.getLoadable(favoritesState);
         const favorites = favoritesStateFromSnapshot.getValue();
         const result = await apolloClient.mutate({
-          mutation: updateOneMutation,
+          mutation: updateOneFavoriteMutation,
           variables: {
             input: {
               position: favoriteToUpdate?.position,
@@ -146,7 +151,7 @@ export const useFavorites = ({
           );
         }
       },
-    [apolloClient, updateOneMutation],
+    [apolloClient, updateOneFavoriteMutation],
   );
 
   const deleteFavorite = useRecoilCallback(
@@ -159,7 +164,7 @@ export const useFavorites = ({
         )?.id;
 
         await apolloClient.mutate({
-          mutation: deleteOneMutation,
+          mutation: deleteOneFavoriteMutation,
           variables: {
             idToDelete: idToDelete,
           },
@@ -172,7 +177,7 @@ export const useFavorites = ({
           favorites.filter((favorite: Favorite) => favorite.id !== idToDelete),
         );
       },
-    [apolloClient, deleteOneMutation, performOptimisticEvict],
+    [apolloClient, deleteOneFavoriteMutation, performOptimisticEvict],
   );
 
   const computeNewPosition = (destIndex: number, sourceIndex: number) => {
