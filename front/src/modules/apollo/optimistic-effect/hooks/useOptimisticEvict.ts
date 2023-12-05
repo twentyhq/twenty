@@ -10,14 +10,11 @@ export const useOptimisticEvict = () => {
   ) => {
     const serializedCache = cache.extract();
 
-    const toBeDeletedIds: string[] = [];
-
     Object.values(serializedCache)
       .filter((item) => item.__typename === typename)
       .forEach((item) => {
         if (item[fieldName] === fieldValue) {
           cache.evict({ id: cache.identify(item) });
-          toBeDeletedIds.push(item.id);
         }
       });
   };
