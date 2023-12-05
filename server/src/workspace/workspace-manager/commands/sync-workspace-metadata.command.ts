@@ -31,7 +31,7 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
       );
 
     // TODO: This solution could be improved, using a diff for example, we should not have to delete all metadata and recreate them.
-    await this.workspaceManagerService.resetStandardObjectsAndFieldsMetadata(
+    await this.workspaceManagerService.syncStandardObjectsAndFieldsMetadata(
       dataSourceMetadata.id,
       options.workspaceId,
     );
