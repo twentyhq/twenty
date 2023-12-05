@@ -16,6 +16,7 @@ import {
 import NavItem from '@/ui/navigation/navigation-drawer/components/NavItem';
 import NavTitle from '@/ui/navigation/navigation-drawer/components/NavTitle';
 import SubMenuNavbar from '@/ui/navigation/navigation-drawer/components/SubMenuNavbar';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const SettingsNavbar = () => {
   const navigate = useNavigate();
@@ -26,6 +27,12 @@ export const SettingsNavbar = () => {
     signOut();
     navigate(AppPath.SignIn);
   }, [signOut, navigate]);
+
+  const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
+  const isMessagingActive = !!useMatch({
+    path: useResolvedPath('/settings/accounts').pathname,
+    end: true,
+  });
 
   return (
     <SubMenuNavbar backButtonTitle="Settings" displayVersion={true}>
@@ -52,17 +59,15 @@ export const SettingsNavbar = () => {
           })
         }
       />
-      <NavItem
-        label="Accounts"
-        to="/settings/accounts"
-        Icon={IconAt}
-        active={
-          !!useMatch({
-            path: useResolvedPath('/settings/accounts').pathname,
-            end: true,
-          })
-        }
-      />
+
+      {isMessagingEnabled && (
+        <NavItem
+          label="Accounts"
+          to="/settings/accounts"
+          Icon={IconAt}
+          active={isMessagingActive}
+        />
+      )}
 
       <NavTitle label="Workspace" />
       <NavItem
