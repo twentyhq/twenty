@@ -5,18 +5,17 @@ import { Request } from 'express';
 @Injectable()
 export class LimitInputFactory {
   create(request: Request) {
-    const limitQuery = request.query.limit;
-
-    if (typeof limitQuery !== 'string') {
+    if (!request.query.limit) {
       return 60;
     }
+    const limit = +request.query.limit;
 
-    const limitParsed = parseInt(limitQuery);
-
-    if (!Number.isInteger(limitParsed)) {
-      throw Error(`limit '${limitQuery}' is invalid. Should be an integer`);
+    if (isNaN(limit) || limit < 0) {
+      throw Error(
+        `limit '${request.query.limit}' is invalid. Should be an integer`,
+      );
     }
 
-    return limitParsed;
+    return limit;
   }
 }

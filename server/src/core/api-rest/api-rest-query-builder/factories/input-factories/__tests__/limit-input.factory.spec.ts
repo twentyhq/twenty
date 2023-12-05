@@ -37,5 +37,13 @@ describe('LimitInputFactory', () => {
         "limit 'aaa' is invalid. Should be an integer",
       );
     });
+
+    it('should throw if limit negative', () => {
+      const request: any = { query: { limit: -1 } };
+
+      expect(() => service.create(request)).toThrow(
+        "limit '-1' is invalid. Should be an integer",
+      );
+    });
   });
 });

@@ -80,15 +80,17 @@ export class ApiRestQueryBuilderFactory {
     return { object: queryAction[0], id: queryAction[1] };
   }
 
-  computeDepth(request: Request) {
-    const depth =
-      typeof request.query.depth === 'string'
-        ? parseInt(request.query.depth)
-        : undefined;
+  computeDepth(request: Request): number | undefined {
+    if (!request.query.depth) {
+      return undefined;
+    }
+    const depth = +request.query.depth;
 
-    if (depth !== undefined && !ALLOWED_DEPTH_VALUES.includes(depth)) {
+    if (isNaN(depth) || !ALLOWED_DEPTH_VALUES.includes(depth)) {
       throw Error(
-        `'depth=${depth}' parameter invalid. Allowed values are ${ALLOWED_DEPTH_VALUES.join(
+        `'depth=${
+          request.query.depth
+        }' parameter invalid. Allowed values are ${ALLOWED_DEPTH_VALUES.join(
           ', ',
         )}`,
       );
