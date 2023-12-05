@@ -28,11 +28,11 @@ export const personPrefillData = async (
     .into(`${schemaName}.person`, [
       'nameFirstName',
       'nameLastName',
-      'city',
       'email',
-      'avatarUrl',
       'linkedinLinkUrl',
       'jobTitle',
+      'city',
+      'avatarUrl',
       'companyId',
     ])
     .orIgnore()
