@@ -21,8 +21,10 @@ const StyledOverflowingText = styled.div<{ cursorPointer: boolean }>`
 
 export const OverflowingTextWithTooltip = ({
   text,
+  className,
 }: {
   text: string | null | undefined;
+  className?: string;
 }) => {
   const textElementId = `title-id-${uuidV4()}`;
 
@@ -51,6 +53,7 @@ export const OverflowingTextWithTooltip = ({
     <>
       <StyledOverflowingText
         data-testid="tooltip"
+        className={className}
         ref={textRef}
         id={textElementId}
         cursorPointer={isTitleOverflowing}

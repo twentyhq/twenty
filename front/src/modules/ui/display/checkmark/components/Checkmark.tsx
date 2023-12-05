@@ -14,13 +14,15 @@ const StyledContainer = styled.div`
   width: 20px;
 `;
 
-export type CheckmarkProps = React.ComponentPropsWithoutRef<'div'>;
+export type CheckmarkProps = React.ComponentPropsWithoutRef<'div'> & {
+  className?: string;
+};
 
-export const Checkmark = (_props: CheckmarkProps) => {
+export const Checkmark = ({ className }: CheckmarkProps) => {
   const theme = useTheme();
 
   return (
-    <StyledContainer>
+    <StyledContainer className={className}>
       <IconCheck color={theme.grayScale.gray0} size={14} />
     </StyledContainer>
   );

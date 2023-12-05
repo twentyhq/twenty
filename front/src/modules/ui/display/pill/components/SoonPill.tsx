@@ -1,5 +1,9 @@
 import styled from '@emotion/styled';
 
+type SoonPillProps = {
+  className?: string;
+};
+
 const StyledSoonPill = styled.span`
   align-items: center;
   background: ${({ theme }) => theme.background.transparent.light};
@@ -17,4 +21,6 @@ const StyledSoonPill = styled.span`
   padding: ${({ theme }) => `0 ${theme.spacing(2)}`};
 `;
 
-export const SoonPill = () => <StyledSoonPill>Soon</StyledSoonPill>;
+export const SoonPill = ({ className }: SoonPillProps) => (
+  <StyledSoonPill className={className}>Soon</StyledSoonPill>
+);
