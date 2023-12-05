@@ -61,6 +61,21 @@ export const SignInUpForm = () => {
     workspace,
   } = useSignInUp();
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+
+      if (signInUpStep === SignInUpStep.Init) {
+        continueWithEmail();
+      } else if (signInUpStep === SignInUpStep.Email) {
+        continueWithCredentials();
+      } else if (signInUpStep === SignInUpStep.Password) {
+        setShowErrors(true);
+        handleSubmit(submitCredentials)();
+      }
+    }
+  };
+
   const buttonTitle = useMemo(() => {
     if (signInUpStep === SignInUpStep.Init) {
       return 'Continue With Email';
@@ -139,6 +154,7 @@ export const SignInUpForm = () => {
                         }
                       }}
                       error={showErrors ? error?.message : undefined}
+                      onKeyDown={handleKeyDown}
                       fullWidth
                       disableHotkeys
                     />
@@ -172,6 +188,7 @@ export const SignInUpForm = () => {
                       placeholder="Password"
                       onBlur={onBlur}
                       onChange={onChange}
+                      onKeyDown={handleKeyDown}
                       error={showErrors ? error?.message : undefined}
                       fullWidth
                       disableHotkeys
