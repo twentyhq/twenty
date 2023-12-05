@@ -36,7 +36,7 @@ export const checkFilterQuery = (filterQuery) => {
   const diff = countOpenedBrackets - countClosedBrackets;
   if (diff !== 0) {
     const hint =
-      diff > 0
+      diff < 0
         ? `${diff} open bracket${diff > 1 ? 's are' : ' is'}`
         : `${Math.abs(diff)} close bracket${
             Math.abs(diff) > 1 ? 's are' : ' is'
@@ -86,11 +86,7 @@ export const parseSimpleFilterString = (
   comparator: string;
   value: string;
 } => {
-  if (
-    !filterString.match(
-      `^(.+)\\[(${Object.keys(FILTER_COMPARATORS).join('|')})\\]:(.+)$`,
-    )
-  ) {
+  if (!filterString.match(`^(.+)\\[(.+})\\]:(.+)$`)) {
     throw Error(`'filter' invalid for '${filterString}'. eg: price[gte]:10`);
   }
   let fields = '';

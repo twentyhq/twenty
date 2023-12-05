@@ -75,5 +75,25 @@ describe('OrderByParserFactory', () => {
         fieldLink: { label: OrderByDirection.AscNullsLast },
       });
     });
+    it('should throw if direction invalid', () => {
+      const request: any = {
+        query: {
+          order_by: 'fieldString[invalid]',
+        },
+      };
+      expect(() => service.create(request, objectMetadata)).toThrow(
+        "'order_by' direction 'invalid' invalid. Allowed values are 'AscNullsFirst', 'AscNullsLast', 'DescNullsFirst', 'DescNullsLast'. eg: ?order_by=field_1[AscNullsFirst],field_2[DescNullsLast],field_3",
+      );
+    });
+    it('should throw if field invalid', () => {
+      const request: any = {
+        query: {
+          order_by: 'wrongField[DescNullsLast]',
+        },
+      };
+      expect(() => service.create(request, objectMetadata)).toThrow(
+        "field 'wrongField' does not exist in 'testingObject' object",
+      );
+    });
   });
 });

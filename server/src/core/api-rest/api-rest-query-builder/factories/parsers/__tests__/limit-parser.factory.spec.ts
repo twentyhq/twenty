@@ -24,7 +24,9 @@ describe('LimitParserFactory', () => {
     });
     it('should throw if not integer', () => {
       const request: any = { query: { limit: 'aaa' } };
-      expect(() => service.create(request)).toThrow();
+      expect(() => service.create(request)).toThrow(
+        "limit 'aaa' is invalid. Should be an integer",
+      );
     });
   });
 });
