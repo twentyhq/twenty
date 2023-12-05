@@ -1,8 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ApiRestService } from 'src/core/api-rest/api-rest.service';
-import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { TokenService } from 'src/core/auth/services/token.service';
+import { ApiRestQueryBuilderFactory } from 'src/core/api-rest/api-rest-query-builder/api-rest-query-builder.factory';
 
 describe('ApiRestService', () => {
   let service: ApiRestService;
@@ -11,11 +12,15 @@ describe('ApiRestService', () => {
       providers: [
         ApiRestService,
         {
-          provide: ObjectMetadataService,
+          provide: ApiRestQueryBuilderFactory,
           useValue: {},
         },
         {
           provide: EnvironmentService,
+          useValue: {},
+        },
+        {
+          provide: TokenService,
           useValue: {},
         },
       ],
