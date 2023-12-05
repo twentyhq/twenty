@@ -1,5 +1,4 @@
 import { OpportunityPicker } from '@/companies/components/OpportunityPicker';
-import { useCreateOpportunity } from '@/companies/hooks/useCreateOpportunity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { IconPlus } from '@/ui/display/icon/index';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -9,6 +8,7 @@ import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/Rela
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { useCreateOpportunity } from '@/ui/object/record-board/hooks/internal/useCreateOpportunity';
 import { logError } from '~/utils/logError';
 
 export const PipelineAddButton = () => {
@@ -18,7 +18,7 @@ export const PipelineAddButton = () => {
     dropdownScopeId: 'add-pipeline-progress',
   });
 
-  const { createOpportunity } = useCreateOpportunity();
+  const createOpportunity = useCreateOpportunity();
 
   const handleCompanySelected = (
     selectedCompany: EntityForSelect | null,

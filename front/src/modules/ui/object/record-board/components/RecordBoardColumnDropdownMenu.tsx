@@ -12,7 +12,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { BoardColumnContext } from '../contexts/BoardColumnContext';
-import { useBoardColumns } from '../hooks/useBoardColumns';
+import { useBoardColumnsInternal } from '../hooks/internal/useRecordBoardColumnsInternal';
 import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 
 import { RecordBoardColumnEditTitleMenu } from './RecordBoardColumnEditTitleMenu';
@@ -43,7 +43,7 @@ export const RecordBoardColumnDropdownMenu = ({
 
   const boardColumnMenuRef = useRef<HTMLDivElement>(null);
 
-  const { handleMoveBoardColumn } = useBoardColumns();
+  const { handleMoveBoardColumn } = useBoardColumnsInternal();
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,

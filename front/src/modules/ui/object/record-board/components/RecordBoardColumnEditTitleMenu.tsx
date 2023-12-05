@@ -1,17 +1,15 @@
 import { ChangeEvent, useCallback, useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
 import { IconTrash } from '@/ui/display/icon';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelectColor } from '@/ui/navigation/menu-item/components/MenuItemSelectColor';
+import { useRecordBoard } from '@/ui/object/record-board/hooks/useRecordBoard';
 import { mainColorNames, ThemeColor } from '@/ui/theme/constants/colors';
 import { textInputStyle } from '@/ui/theme/constants/effects';
 import { debounce } from '~/utils/debounce';
-
-import { boardColumnsState } from '../states/boardColumnsState';
 
 const StyledEditTitleContainer = styled.div`
   --vertical-padding: ${({ theme }) => theme.spacing(1)};
@@ -58,7 +56,9 @@ export const RecordBoardColumnEditTitleMenu = ({
   color,
 }: RecordBoardColumnEditTitleMenuProps) => {
   const [internalValue, setInternalValue] = useState(title);
-  const [, setBoardColumns] = useRecoilState(boardColumnsState);
+
+  const { setBoardColumns } = useRecordBoard();
+
   const debouncedOnUpdateTitle = debounce(
     (newTitle) => onTitleEdit(newTitle, color),
     200,
