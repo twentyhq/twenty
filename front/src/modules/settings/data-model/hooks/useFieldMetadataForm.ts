@@ -56,7 +56,7 @@ const relationSchema = fieldSchema.merge(
 
 const selectSchema = fieldSchema.merge(
   z.object({
-    type: z.literal(FieldMetadataType.Enum),
+    type: z.literal(FieldMetadataType.Select),
     select: z
       .array(
         z.object({
@@ -70,7 +70,7 @@ const selectSchema = fieldSchema.merge(
 );
 
 const {
-  Enum: _Enum,
+  Select: _Select,
   Relation: _Relation,
   ...otherFieldTypes
 } = FieldMetadataType;
@@ -165,7 +165,7 @@ export const useFieldMetadataForm = () => {
         !isDeeplyEqual(initialRelationFormValues, nextRelationFormValues),
     );
     setHasSelectFormChanged(
-      nextFieldFormValues.type === FieldMetadataType.Enum &&
+      nextFieldFormValues.type === FieldMetadataType.Select &&
         !isDeeplyEqual(initialSelectFormValues, nextSelectFormValues),
     );
   };

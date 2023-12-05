@@ -12,15 +12,15 @@ import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { UserModule } from 'src/core/user/user.module';
 import { WorkspaceManagerModule } from 'src/workspace/workspace-manager/workspace-manager.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { GoogleAuthController } from 'src/core/auth/controllers/google-auth.controller';
+import { GoogleGmailAuthController } from 'src/core/auth/controllers/google-gmail-auth.controller';
+import { VerifyAuthController } from 'src/core/auth/controllers/verify-auth.controller';
+import { TokenService } from 'src/core/auth/services/token.service';
 
 import { AuthResolver } from './auth.resolver';
 
 import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
 import { AuthService } from './services/auth.service';
-import { GoogleAuthController } from './controllers/google-auth.controller';
-import { VerifyAuthController } from './controllers/verify-auth.controller';
-import { TokenService } from './services/token.service';
-
 const jwtModule = JwtModule.registerAsync({
   useFactory: async (environmentService: EnvironmentService) => {
     return {
@@ -43,7 +43,11 @@ const jwtModule = JwtModule.registerAsync({
     TypeORMModule,
     TypeOrmModule.forFeature([Workspace, User, RefreshToken], 'core'),
   ],
-  controllers: [GoogleAuthController, VerifyAuthController],
+  controllers: [
+    GoogleAuthController,
+    GoogleGmailAuthController,
+    VerifyAuthController,
+  ],
   providers: [AuthService, TokenService, JwtAuthStrategy, AuthResolver],
   exports: [jwtModule],
 })

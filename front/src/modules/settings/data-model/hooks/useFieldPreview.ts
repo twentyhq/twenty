@@ -48,7 +48,7 @@ export const useFieldPreview = ({
 
   const defaultSelectValue = selectOptions?.[0];
   const selectValue =
-    fieldMetadata.type === FieldMetadataType.Enum &&
+    fieldMetadata.type === FieldMetadataType.Select &&
     typeof firstRecordFieldValue === 'string'
       ? selectOptions?.find(
           (selectOption) => selectOption.value === firstRecordFieldValue,
@@ -65,7 +65,7 @@ export const useFieldPreview = ({
     value:
       fieldMetadata.type === FieldMetadataType.Relation
         ? relationValue
-        : fieldMetadata.type === FieldMetadataType.Enum
+        : fieldMetadata.type === FieldMetadataType.Select
         ? selectValue || defaultSelectValue
         : firstRecordFieldValue || defaultValue,
   };

@@ -54,6 +54,7 @@ export type CreateFieldInput = {
   label: Scalars['String']['input'];
   name: Scalars['String']['input'];
   objectMetadataId: Scalars['String']['input'];
+  options?: InputMaybe<Scalars['JSON']['input']>;
   type: FieldMetadataType;
 };
 
@@ -135,6 +136,7 @@ export type FieldConnection = {
 export type FieldDeleteResponse = {
   __typename?: 'FieldDeleteResponse';
   createdAt?: Maybe<Scalars['DateTime']['output']>;
+  defaultValue?: Maybe<Scalars['JSON']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   icon?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['ID']['output']>;
@@ -144,6 +146,7 @@ export type FieldDeleteResponse = {
   isSystem?: Maybe<Scalars['Boolean']['output']>;
   label?: Maybe<Scalars['String']['output']>;
   name?: Maybe<Scalars['String']['output']>;
+  options?: Maybe<Scalars['JSON']['output']>;
   /** @deprecated Use label name instead */
   placeholder?: Maybe<Scalars['String']['output']>;
   type?: Maybe<FieldMetadataType>;
@@ -156,14 +159,16 @@ export enum FieldMetadataType {
   Currency = 'CURRENCY',
   DateTime = 'DATE_TIME',
   Email = 'EMAIL',
-  Enum = 'ENUM',
   FullName = 'FULL_NAME',
   Link = 'LINK',
+  MultiSelect = 'MULTI_SELECT',
   Number = 'NUMBER',
   Numeric = 'NUMERIC',
   Phone = 'PHONE',
   Probability = 'PROBABILITY',
+  Rating = 'RATING',
   Relation = 'RELATION',
+  Select = 'SELECT',
   Text = 'TEXT',
   Uuid = 'UUID'
 }
@@ -386,11 +391,13 @@ export type Telemetry = {
 };
 
 export type UpdateFieldInput = {
+  defaultValue?: InputMaybe<Scalars['JSON']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   icon?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
   label?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  options?: InputMaybe<Scalars['JSON']['input']>;
 };
 
 export type UpdateObjectInput = {
@@ -483,6 +490,7 @@ export type WorkspaceEdge = {
 export type Field = {
   __typename?: 'field';
   createdAt: Scalars['DateTime']['output'];
+  defaultValue?: Maybe<Scalars['JSON']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   fromRelationMetadata?: Maybe<Relation>;
   icon?: Maybe<Scalars['String']['output']>;
@@ -493,6 +501,7 @@ export type Field = {
   isSystem: Scalars['Boolean']['output'];
   label: Scalars['String']['output'];
   name: Scalars['String']['output'];
+  options?: Maybe<Scalars['JSON']['output']>;
   /** @deprecated Use label name instead */
   placeholder?: Maybe<Scalars['String']['output']>;
   toRelationMetadata?: Maybe<Relation>;

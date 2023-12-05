@@ -93,6 +93,12 @@ export class EnvironmentService {
     );
   }
 
+  isAuthGoogleGmailEnabled(): boolean {
+    return (
+      this.configService.get<boolean>('AUTH_GOOGLE_GMAIL_ENABLED') ?? false
+    );
+  }
+
   isAuthGoogleEnabled(): boolean {
     return this.configService.get<boolean>('AUTH_GOOGLE_ENABLED') ?? false;
   }

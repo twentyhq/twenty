@@ -125,6 +125,7 @@ export type FieldConnection = {
 export type FieldDeleteResponse = {
   __typename?: 'FieldDeleteResponse';
   createdAt?: Maybe<Scalars['DateTime']>;
+  defaultValue?: Maybe<Scalars['JSON']>;
   description?: Maybe<Scalars['String']>;
   icon?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
@@ -134,6 +135,7 @@ export type FieldDeleteResponse = {
   isSystem?: Maybe<Scalars['Boolean']>;
   label?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
+  options?: Maybe<Scalars['JSON']>;
   /** @deprecated Use label name instead */
   placeholder?: Maybe<Scalars['String']>;
   type?: Maybe<FieldMetadataType>;
@@ -146,14 +148,16 @@ export enum FieldMetadataType {
   Currency = 'CURRENCY',
   DateTime = 'DATE_TIME',
   Email = 'EMAIL',
-  Enum = 'ENUM',
   FullName = 'FULL_NAME',
   Link = 'LINK',
+  MultiSelect = 'MULTI_SELECT',
   Number = 'NUMBER',
   Numeric = 'NUMERIC',
   Phone = 'PHONE',
   Probability = 'PROBABILITY',
+  Rating = 'RATING',
   Relation = 'RELATION',
+  Select = 'SELECT',
   Text = 'TEXT',
   Uuid = 'UUID'
 }
@@ -531,6 +535,7 @@ export type WorkspaceInviteHashValid = {
 export type Field = {
   __typename?: 'field';
   createdAt: Scalars['DateTime'];
+  defaultValue?: Maybe<Scalars['JSON']>;
   description?: Maybe<Scalars['String']>;
   fromRelationMetadata?: Maybe<Relation>;
   icon?: Maybe<Scalars['String']>;
@@ -541,6 +546,7 @@ export type Field = {
   isSystem: Scalars['Boolean'];
   label: Scalars['String'];
   name: Scalars['String'];
+  options?: Maybe<Scalars['JSON']>;
   /** @deprecated Use label name instead */
   placeholder?: Maybe<Scalars['String']>;
   toRelationMetadata?: Maybe<Relation>;
@@ -652,7 +658,7 @@ export type ImpersonateMutationVariables = Exact<{
 }>;
 
 
-export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember: { __typename?: 'UserWorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'UserWorkspaceMemberName', firstName: string, lastName: string } }, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember: { __typename?: 'UserWorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'UserWorkspaceMemberName', firstName: string, lastName: string } }, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type RenewTokenMutationVariables = Exact<{
   refreshToken: Scalars['String'];
@@ -675,7 +681,7 @@ export type VerifyMutationVariables = Exact<{
 }>;
 
 
-export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember: { __typename?: 'UserWorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'UserWorkspaceMemberName', firstName: string, lastName: string } }, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember: { __typename?: 'UserWorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'UserWorkspaceMemberName', firstName: string, lastName: string } }, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
@@ -705,7 +711,7 @@ export type UploadImageMutationVariables = Exact<{
 
 export type UploadImageMutation = { __typename?: 'Mutation', uploadImage: string };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember: { __typename?: 'UserWorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'UserWorkspaceMemberName', firstName: string, lastName: string } }, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean } };
+export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember: { __typename?: 'UserWorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'UserWorkspaceMemberName', firstName: string, lastName: string } }, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null } };
 
 export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -791,6 +797,12 @@ export const UserQueryFragmentFragmentDoc = gql`
     domainName
     inviteHash
     allowImpersonation
+    featureFlags {
+      id
+      key
+      value
+      workspaceId
+    }
   }
 }
     `;

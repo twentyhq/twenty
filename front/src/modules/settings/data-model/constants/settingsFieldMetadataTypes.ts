@@ -59,8 +59,16 @@ export const settingsFieldMetadataTypes: Record<
     Icon: IconCalendarEvent,
     defaultValue: defaultDateValue.toISOString(),
   },
-  [FieldMetadataType.Enum]: {
+  [FieldMetadataType.Select]: {
     label: 'Select',
+    Icon: IconTag,
+  },
+  [FieldMetadataType.Rating]: {
+    label: 'Rating',
+    Icon: IconTag,
+  },
+  [FieldMetadataType.MultiSelect]: {
+    label: 'MultiSelect',
     Icon: IconTag,
   },
   [FieldMetadataType.Currency]: {
