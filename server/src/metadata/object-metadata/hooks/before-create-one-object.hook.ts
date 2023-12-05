@@ -10,17 +10,8 @@ import {
 } from '@ptc-org/nestjs-query-graphql';
 
 import { CreateObjectInput } from 'src/metadata/object-metadata/dtos/create-object.input';
-import { standardObjectsNames } from 'src/workspace/workspace-manager/standard-objects/standard-object-metadata';
 
-const OBJECT_TYPES = [
-  'featureFlag',
-  'refreshToken',
-  'UserWorkspaceMemberName',
-  'UserWorkspaceMember',
-  'Workspace',
-  'User',
-  ...standardObjectsNames,
-];
+const coreObjectNames = ['featureFlag', 'refreshToken', 'workspace', 'user'];
 
 @Injectable()
 export class BeforeCreateOneObject<T extends CreateObjectInput>
@@ -37,11 +28,11 @@ export class BeforeCreateOneObject<T extends CreateObjectInput>
     }
 
     if (
-      OBJECT_TYPES.includes(instance.input.nameSingular.trim().toLowerCase()) ||
-      OBJECT_TYPES.includes(instance.input.nameSingular.trim().toLowerCase())
+      coreObjectNames.includes(instance.input.nameSingular) ||
+      coreObjectNames.includes(instance.input.namePlural)
     ) {
       throw new ForbiddenException(
-        'You cannot create an object with this type.',
+        'You cannot create an object with this name.',
       );
     }
     instance.input.workspaceId = workspaceId;
