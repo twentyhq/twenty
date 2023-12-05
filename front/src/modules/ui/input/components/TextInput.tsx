@@ -22,7 +22,7 @@ import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
 export type TextInputComponentProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
-  'onChange'
+  'onChange' | 'onKeyDown'
 > & {
   className?: string;
   label?: string;
@@ -31,6 +31,7 @@ export type TextInputComponentProps = Omit<
   disableHotkeys?: boolean;
   error?: string;
   RightIcon?: IconComponent;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
@@ -118,6 +119,7 @@ const TextInputComponent = (
     onChange,
     onFocus,
     onBlur,
+    onKeyDown,
     fullWidth,
     error,
     required,
@@ -184,6 +186,7 @@ const TextInputComponent = (
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
             onChange?.(event.target.value);
           }}
+          onKeyDown={onKeyDown}
           {...{ autoFocus, disabled, placeholder, required, value }}
         />
         <StyledTrailingIconContainer>
