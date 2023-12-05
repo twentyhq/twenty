@@ -5,71 +5,88 @@ import { FilterInputFactory } from 'src/core/api-rest/api-rest-query-builder/fac
 
 describe('FilterInputFactory', () => {
   const objectMetadata = { objectMetadataItem: objectMetadataItem };
+
   let service: FilterInputFactory;
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [FilterInputFactory],
     }).compile();
+
     service = module.get<FilterInputFactory>(FilterInputFactory);
   });
+
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
   describe('create', () => {
     it('should return default if filter missing', () => {
       const request: any = { query: {} };
+
       expect(service.create(request, objectMetadata)).toEqual({});
     });
+
     it('should throw when wrong field provided', () => {
       const request: any = {
         query: {
           filter: 'wrongField[eq]:1',
         },
       };
+
       expect(() => service.create(request, objectMetadata)).toThrow(
         "field 'wrongField' does not exist in 'testingObject' object",
       );
     });
+
     it('should throw when wrong comparator provided', () => {
       const request: any = {
         query: {
           filter: 'fieldNumber[wrongComparator]:1',
         },
       };
+
       expect(() => service.create(request, objectMetadata)).toThrow(
         "'filter' invalid for 'fieldNumber[wrongComparator]:1', comparator wrongComparator not in eq,neq,in,is,gt,gte,lt,lte,startsWith,like,ilike",
       );
     });
+
     it('should throw when wrong filter provided', () => {
       const request: any = {
         query: {
           filter: 'fieldNumber[wrongComparator:1',
         },
       };
+
       expect(() => service.create(request, objectMetadata)).toThrow(
         "'filter' invalid for 'fieldNumber[wrongComparator:1'. eg: price[gte]:10",
       );
     });
+
     it('should throw when parenthesis are not closed', () => {
       const request: any = {
         query: {
           filter: 'and(fieldNumber[eq]:1,not(fieldNumber[neq]:1)',
         },
       };
+
       expect(() => service.create(request, objectMetadata)).toThrow(
         "'filter' invalid. 1 close bracket is missing in the query",
       );
     });
+
     it('should create filter parser properly', () => {
       const request: any = {
         query: {
           filter: 'fieldNumber[eq]:1,fieldString[eq]:"Test"',
         },
       };
+
       expect(service.create(request, objectMetadata)).toEqual({
         and: [{ fieldNumber: { eq: 1 } }, { fieldString: { eq: 'Test' } }],
       });
     });
+
     it('should create complex filter parser properly', () => {
       const request: any = {
         query: {
@@ -77,6 +94,7 @@ describe('FilterInputFactory', () => {
             'and(fieldNumber[eq]:1,fieldString[gte]:"Test",not(fieldString[ilike]:"%val%"),or(not(and(fieldString[startsWith]:"test",fieldNumber[in]:[2,4,5])),fieldCurrency.amountMicros[gt]:1))',
         },
       };
+
       expect(service.create(request, objectMetadata)).toEqual({
         and: [
           { fieldNumber: { eq: 1 } },
@@ -99,37 +117,45 @@ describe('FilterInputFactory', () => {
       });
     });
   });
+
   describe('addDefaultConjunctionIfMissing', () => {
     it('should add default conjunction if missing', () => {
       expect(service.addDefaultConjunctionIfMissing('field[eq]:1')).toEqual(
         'and(field[eq]:1)',
       );
     });
+
     it('should not add default conjunction if not missing', () => {
       expect(
         service.addDefaultConjunctionIfMissing('and(field[eq]:1)'),
       ).toEqual('and(field[eq]:1)');
     });
   });
+
   describe('checkFilterQuery', () => {
     it('should check filter query', () => {
       expect(() => service.checkFilterQuery('(')).toThrow(
         "'filter' invalid. 1 close bracket is missing in the query",
       );
+
       expect(() => service.checkFilterQuery(')')).toThrow(
         "'filter' invalid. 1 open bracket is missing in the query",
       );
+
       expect(() => service.checkFilterQuery('(()')).toThrow(
         "'filter' invalid. 1 close bracket is missing in the query",
       );
+
       expect(() => service.checkFilterQuery('()))')).toThrow(
         "'filter' invalid. 2 open brackets are missing in the query",
       );
+
       expect(() =>
         service.checkFilterQuery(
           'and(or(fieldNumber[eq]:1,fieldNumber[eq]:2)),fieldNumber[eq]:3)',
         ),
       ).toThrow("'filter' invalid. 1 open bracket is missing in the query");
+
       expect(() =>
         service.checkFilterQuery(
           'and(or(fieldNumber[eq]:1,fieldNumber[eq]:2),fieldNumber[eq]:3)',
@@ -137,12 +163,14 @@ describe('FilterInputFactory', () => {
       ).not.toThrow();
     });
   });
+
   describe('parseFilterQueryContent', () => {
     it('should parse query filter test 1', () => {
       expect(service.parseFilterQueryContent('and(fieldNumber[eq]:1)')).toEqual(
         ['fieldNumber[eq]:1'],
       );
     });
+
     it('should parse query filter test 2', () => {
       expect(
         service.parseFilterQueryContent(
@@ -150,6 +178,7 @@ describe('FilterInputFactory', () => {
         ),
       ).toEqual(['fieldNumber[eq]:1', 'fieldNumber[eq]:2']);
     });
+
     it('should parse query filter test 3', () => {
       expect(
         service.parseFilterQueryContent(
@@ -160,6 +189,7 @@ describe('FilterInputFactory', () => {
         'or(fieldNumber[eq]:2,fieldNumber[eq]:3)',
       ]);
     });
+
     it('should parse query filter test 4', () => {
       expect(
         service.parseFilterQueryContent(
@@ -172,6 +202,7 @@ describe('FilterInputFactory', () => {
         'not(fieldNumber[eq]:5)',
       ]);
     });
+
     it('should parse query filter test 5', () => {
       expect(
         service.parseFilterQueryContent(
@@ -179,17 +210,20 @@ describe('FilterInputFactory', () => {
         ),
       ).toEqual(['fieldNumber[in]:[1,2]', 'fieldNumber[eq]:4']);
     });
+
     it('should parse query filter with comma in value ', () => {
       expect(
         service.parseFilterQueryContent('and(fieldString[eq]:"val,ue")'),
       ).toEqual(['fieldString[eq]:"val,ue"']);
     });
+
     it('should parse query filter with comma in value ', () => {
       expect(
         service.parseFilterQueryContent("and(fieldString[eq]:'val,ue')"),
       ).toEqual(["fieldString[eq]:'val,ue'"]);
     });
   });
+
   describe('parseSimpleFilterString', () => {
     it('should parse simple filter string test 1', () => {
       expect(service.parseSimpleFilterString('price[lte]:100')).toEqual({
@@ -198,6 +232,7 @@ describe('FilterInputFactory', () => {
         value: '100',
       });
     });
+
     it('should parse simple filter string test 2', () => {
       expect(
         service.parseSimpleFilterString('date[gt]:2023-12-01T14:23:23.914Z'),
@@ -207,6 +242,7 @@ describe('FilterInputFactory', () => {
         value: '2023-12-01T14:23:23.914Z',
       });
     });
+
     it('should parse simple filter string test 3', () => {
       expect(
         service.parseSimpleFilterString('fieldNumber[gt]:valStart]:[valEnd'),
@@ -216,6 +252,7 @@ describe('FilterInputFactory', () => {
         value: 'valStart]:[valEnd',
       });
     });
+
     it('should parse simple filter string test 4', () => {
       expect(
         service.parseSimpleFilterString(
@@ -227,6 +264,7 @@ describe('FilterInputFactory', () => {
         value: '"2023-12-01T14:23:23.914Z"',
       });
     });
+
     it('should parse simple filter string test 5', () => {
       expect(
         service.parseSimpleFilterString(
@@ -239,19 +277,31 @@ describe('FilterInputFactory', () => {
       });
     });
   });
+
   describe('formatFieldValue', () => {
     it('should format fieldNumber value', () => {
       expect(service.formatFieldValue('1', 'NUMBER')).toEqual(1);
+
       expect(service.formatFieldValue('a', 'NUMBER')).toEqual(NaN);
+
       expect(service.formatFieldValue('true', 'BOOLEAN')).toEqual(true);
+
       expect(service.formatFieldValue('True', 'BOOLEAN')).toEqual(true);
+
       expect(service.formatFieldValue('false', 'BOOLEAN')).toEqual(false);
+
       expect(service.formatFieldValue('value', 'TEXT')).toEqual('value');
+
       expect(service.formatFieldValue('"value"', 'TEXT')).toEqual('value');
+
       expect(service.formatFieldValue("'value'", 'TEXT')).toEqual('value');
+
       expect(service.formatFieldValue('value', 'DATE_TIME')).toEqual('value');
+
       expect(service.formatFieldValue('"value"', 'DATE_TIME')).toEqual('value');
+
       expect(service.formatFieldValue("'value'", 'DATE_TIME')).toEqual('value');
+
       expect(
         service.formatFieldValue(
           '["2023-12-01T14:23:23.914Z","2024-12-01T14:23:23.914Z"]',
@@ -259,7 +309,9 @@ describe('FilterInputFactory', () => {
           'in',
         ),
       ).toEqual(['2023-12-01T14:23:23.914Z', '2024-12-01T14:23:23.914Z']);
+
       expect(service.formatFieldValue('[1,2]', 'NUMBER', 'in')).toEqual([1, 2]);
+
       expect(() =>
         service.formatFieldValue('2024-12-01T14:23:23.914Z', null, 'in'),
       ).toThrow(
@@ -267,6 +319,7 @@ describe('FilterInputFactory', () => {
       );
     });
   });
+
   describe('parseStringFilter', () => {
     it('should parse string filter test 1', () => {
       expect(
@@ -278,6 +331,7 @@ describe('FilterInputFactory', () => {
         and: [{ fieldNumber: { eq: 1 } }, { fieldNumber: { eq: 2 } }],
       });
     });
+
     it('should parse string filter test 2', () => {
       expect(
         service.parseStringFilter(
@@ -291,6 +345,7 @@ describe('FilterInputFactory', () => {
         ],
       });
     });
+
     it('should parse string filter test 3', () => {
       expect(
         service.parseStringFilter(
@@ -311,6 +366,7 @@ describe('FilterInputFactory', () => {
         ],
       });
     });
+
     it('should parse string filter test 4', () => {
       expect(
         service.parseStringFilter(
@@ -336,6 +392,7 @@ describe('FilterInputFactory', () => {
         ],
       });
     });
+
     it('should handler not', () => {
       expect(
         service.parseStringFilter(

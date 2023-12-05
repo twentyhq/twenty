@@ -16,7 +16,9 @@ describe('MetadataQueryUtils', () => {
       expect(() =>
         checkFields(objectMetadataItem, ['fieldNumber']),
       ).not.toThrow();
+
       expect(() => checkFields(objectMetadataItem, ['wrongField'])).toThrow();
+
       expect(() =>
         checkFields(objectMetadataItem, ['fieldNumber', 'wrongField']),
       ).toThrow();

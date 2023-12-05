@@ -3,16 +3,19 @@ export const fieldNumber = {
   type: 'NUMBER',
   targetColumnMap: { value: 'fieldNumber' },
 };
+
 export const fieldString = {
   name: 'fieldString',
   type: 'TEXT',
   targetColumnMap: { value: 'fieldString' },
 };
+
 export const fieldLink = {
   name: 'fieldLink',
   type: 'LINK',
   targetColumnMap: { label: 'fieldLinkLabel', url: 'fieldLinkUrl' },
 };
+
 export const fieldCurrency = {
   name: 'fieldCurrency',
   type: 'CURRENCY',
@@ -21,6 +24,7 @@ export const fieldCurrency = {
     currencyCode: 'fieldCurrencyCurrencyCode',
   },
 };
+
 export const objectMetadataItem = {
   targetTableName: 'testingObject',
   fields: [fieldNumber, fieldString, fieldLink, fieldCurrency],

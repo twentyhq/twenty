@@ -30,6 +30,7 @@ export class ApiRestService {
   async get(request: Request) {
     try {
       const data = await this.apiRestQueryBuilderFactory.get(request);
+
       return await this.callGraphql(request, data);
     } catch (err) {
       return { data: { error: `${err}` } };
@@ -39,6 +40,7 @@ export class ApiRestService {
   async delete(request: Request) {
     try {
       const data = await this.apiRestQueryBuilderFactory.delete(request);
+
       return await this.callGraphql(request, data);
     } catch (err) {
       return { data: { error: `${err}` } };
@@ -48,6 +50,7 @@ export class ApiRestService {
   async create(request: Request) {
     try {
       const data = await this.apiRestQueryBuilderFactory.create(request);
+
       return await this.callGraphql(request, data);
     } catch (err) {
       return { data: { error: `${err}` } };
@@ -57,6 +60,7 @@ export class ApiRestService {
   async update(request: Request) {
     try {
       const data = await this.apiRestQueryBuilderFactory.update(request);
+
       return await this.callGraphql(request, data);
     } catch (err) {
       return { data: { error: `${err}` } };

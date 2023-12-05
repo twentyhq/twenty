@@ -16,19 +16,26 @@ export class OrderByInputFactory {
   create(request: Request, objectMetadata) {
     //?order_by=field_1[AscNullsFirst],field_2[DescNullsLast],field_3
     const orderByQuery = request.query.order_by;
+
     if (typeof orderByQuery !== 'string') {
       return {};
     }
+
     const orderByItems = orderByQuery.split(',');
+
     let result = {};
+
     let itemDirection = '';
+
     let itemFieldsString = '';
+
     for (const orderByItem of orderByItems) {
       // orderByItem -> field_1[AscNullsFirst]
       if (orderByItem.includes('[') && orderByItem.includes(']')) {
         const [fieldsString, direction] = orderByItem
           .replace(']', '')
           .split('[');
+
         // fields -> [field_1] ; direction -> AscNullsFirst
         if (!(direction in OrderByDirection)) {
           throw Error(
@@ -39,14 +46,19 @@ export class OrderByInputFactory {
             )}'. eg: ?order_by=field_1[AscNullsFirst],field_2[DescNullsLast],field_3`,
           );
         }
+
         itemDirection = direction;
+
         itemFieldsString = fieldsString;
       } else {
         // orderByItem -> field_3
         itemDirection = DEFAULT_ORDER_DIRECTION;
+
         itemFieldsString = orderByItem;
       }
+
       let fieldResult = {};
+
       itemFieldsString
         .split('.')
         .reverse()
@@ -59,7 +71,9 @@ export class OrderByInputFactory {
         }, itemDirection);
       result = { ...result, ...fieldResult };
     }
+
     checkFields(objectMetadata.objectMetadataItem, Object.keys(result));
+
     return <RecordOrderBy>result;
   }
 }

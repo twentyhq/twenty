@@ -42,13 +42,16 @@ describe('ApiRestQueryBuilderFactory', () => {
   describe('parsePath', () => {
     it('should parse object from request path', () => {
       const request: any = { path: '/rest/companies/uuid' };
+
       expect(service.parsePath(request)).toEqual({
         object: 'companies',
         id: 'uuid',
       });
     });
+
     it('should parse object from request path', () => {
       const request: any = { path: '/rest/companies' };
+
       expect(service.parsePath(request)).toEqual({
         object: 'companies',
         id: undefined,
@@ -60,16 +63,22 @@ describe('ApiRestQueryBuilderFactory', () => {
       const request: any = {
         query: { depth: '1' },
       };
+
       expect(service.computeDepth(request)).toEqual(1);
     });
+
     it('should return default depth if missing', () => {
       const request: any = { query: {} };
+
       expect(service.computeDepth(request)).toEqual(undefined);
     });
     it('should raise if wrong depth', () => {
       const request: any = { query: { depth: '100' } };
+
       expect(() => service.computeDepth(request)).toThrow();
+
       request.query.depth = '0';
+
       expect(() => service.computeDepth(request)).toThrow();
     });
   });
