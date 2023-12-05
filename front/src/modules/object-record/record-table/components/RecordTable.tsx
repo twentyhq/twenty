@@ -2,11 +2,6 @@ import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
-import { RecordTableBodyEffect } from '@/object-record/record-table/components/RecordTableBodyEffect';
-import { RecordTableHeader } from '@/object-record/record-table/components/RecordTableHeader';
-import { RecordTableInternalEffect } from '@/object-record/record-table/components/RecordTableInternalEffect';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -18,15 +13,16 @@ import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
+import { useRecordTable } from '../hooks/useRecordTable';
+import { RecordTableScope } from '../scopes/RecordTableScope';
 import { tableRowIdsState } from '../states/tableRowIdsState';
-import { RecordTableBody } from '@/object-record/record-table/components/RecordTableBody';
 
-const StyledTasksContainer = styled.div`
-  display: flex;
-  height: 100%;
-`;
+import { RecordTableBody } from './RecordTableBody';
+import { RecordTableBodyEffect } from './RecordTableBodyEffect';
+import { RecordTableHeader } from './RecordTableHeader';
+import { RecordTableInternalEffect } from './RecordTableInternalEffect';
 
-const StyledTaskGroupEmptyContainer = styled.div`
+const StyledObjectEmptyContainer = styled.div`
   align-items: center;
   align-self: stretch;
   display: flex;
@@ -40,14 +36,14 @@ const StyledTaskGroupEmptyContainer = styled.div`
   padding-top: ${({ theme }) => theme.spacing(3)};
 `;
 
-const StyledEmptyTaskGroupTitle = styled.div`
+const StyledEmptyObjectTitle = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.xxl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   line-height: ${({ theme }) => theme.text.lineHeight.md};
 `;
 
-const StyledEmptyTaskGroupSubTitle = styled.div`
+const StyledEmptyObjectSubTitle = styled.div`
   color: ${({ theme }) => theme.font.color.extraLight};
   font-size: ${({ theme }) => theme.font.size.xxl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
@@ -184,22 +180,20 @@ export const RecordTable = ({
               </div>
               <RecordTableInternalEffect tableBodyRef={tableBodyRef} />
               {tableRowIds.length === 0 && (
-                <StyledTasksContainer>
-                  <StyledTaskGroupEmptyContainer>
-                    <StyledEmptyTaskGroupTitle>
-                      No {foundObjectMetadataItem?.namePlural}
-                    </StyledEmptyTaskGroupTitle>
-                    <StyledEmptyTaskGroupSubTitle>
-                      Create one:
-                    </StyledEmptyTaskGroupSubTitle>
-                    <Button
-                      Icon={IconPlus}
-                      title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
-                      variant={'secondary'}
-                      onClick={handleAddButtonClick}
-                    />
-                  </StyledTaskGroupEmptyContainer>
-                </StyledTasksContainer>
+                <StyledObjectEmptyContainer>
+                  <StyledEmptyObjectTitle>
+                    No {foundObjectMetadataItem?.namePlural}
+                  </StyledEmptyObjectTitle>
+                  <StyledEmptyObjectSubTitle>
+                    Create one:
+                  </StyledEmptyObjectSubTitle>
+                  <Button
+                    Icon={IconPlus}
+                    title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
+                    variant={'secondary'}
+                    onClick={handleAddButtonClick}
+                  />
+                </StyledObjectEmptyContainer>
               )}
             </StyledTableContainer>
           </StyledTableWithHeader>
