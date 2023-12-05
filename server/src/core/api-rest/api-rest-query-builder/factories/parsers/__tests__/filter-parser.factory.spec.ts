@@ -74,7 +74,7 @@ describe('FilterParserFactory', () => {
       const request: any = {
         query: {
           filter:
-            'and(fieldNumber[eq]:1,fieldString[gte]:"Test",not(fieldString[ilike]:"%val%"),or(not(fieldString[startsWith]:"test"),fieldCurrency.amountMicros[gt]:1))',
+            'and(fieldNumber[eq]:1,fieldString[gte]:"Test",not(fieldString[ilike]:"%val%"),or(not(and(fieldString[startsWith]:"test",fieldNumber[in]:[2,4,5])),fieldCurrency.amountMicros[gt]:1))',
         },
       };
       expect(service.create(request, objectMetadata)).toEqual({
@@ -84,7 +84,14 @@ describe('FilterParserFactory', () => {
           { not: { fieldString: { ilike: '%val%' } } },
           {
             or: [
-              { not: { fieldString: { startsWith: 'test' } } },
+              {
+                not: {
+                  and: [
+                    { fieldString: { startsWith: 'test' } },
+                    { fieldNumber: { in: [2, 4, 5] } },
+                  ],
+                },
+              },
               { fieldCurrency: { amountMicros: { gt: '1' } } },
             ],
           },
