@@ -60,10 +60,6 @@ export class EnvironmentVariables {
   @IsUrl({ require_tld: false })
   FRONT_BASE_URL: string;
 
-  // Server internal URL
-  @IsUrl({ require_tld: false })
-  LOCAL_SERVER_URL: string;
-
   // Json Web Token
   @IsString()
   ACCESS_TOKEN_SECRET: string;
