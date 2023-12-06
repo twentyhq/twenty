@@ -6,28 +6,33 @@ import { useRecoilValue } from 'recoil';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { BoardColumnContext } from '@/ui/object/record-board/contexts/BoardColumnContext';
-import { useSetCardSelected } from '@/ui/object/record-board/hooks/useSetCardSelected';
-import { useUpdateBoardCardIds } from '@/ui/object/record-board/hooks/useUpdateBoardCardIds';
-import { boardColumnsState } from '@/ui/object/record-board/states/boardColumnsState';
+import { RecordBoardActionBar } from '@/ui/object/record-board/action-bar/components/RecordBoardActionBar';
+import { RecordBoardInternalEffect } from '@/ui/object/record-board/components/RecordBoardInternalEffect';
+import { RecordBoardContextMenu } from '@/ui/object/record-board/context-menu/components/RecordBoardContextMenu';
+import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
+import { useSetRecordBoardCardSelectedInternal } from '@/ui/object/record-board/hooks/internal/useSetRecordBoardCardSelectedInternal';
+import { RecordBoardScope } from '@/ui/object/record-board/scopes/RecordBoardScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { logError } from '~/utils/logError';
 
-import { BoardColumnRecoilScopeContext } from '../states/recoil-scope-contexts/BoardColumnRecoilScopeContext';
 import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptions } from '../types/BoardOptions';
 
 import { RecordBoardColumn } from './RecordBoardColumn';
 
 export type RecordBoardProps = {
+  recordBoardId: string;
   boardOptions: BoardOptions;
   onColumnAdd?: (boardColumn: BoardColumnDefinition) => void;
   onColumnDelete?: (boardColumnId: string) => void;
-  onEditColumnTitle: (columnId: string, title: string, color: string) => void;
+  onEditColumnTitle: (params: {
+    columnId: string;
+    title: string;
+    color: string;
+  }) => void;
 };
 
 const StyledBoard = styled.div`
@@ -54,10 +59,16 @@ const StyledBoardHeader = styled.div`
 `;
 
 export const RecordBoard = ({
+  recordBoardId,
   boardOptions,
   onColumnDelete,
   onEditColumnTitle,
 }: RecordBoardProps) => {
+  const recordBoardScopeId = recordBoardId;
+
+  const { boardColumnsState } = useRecordBoardScopedStates({
+    recordBoardScopeId,
+  });
   const boardColumns = useRecoilValue(boardColumnsState);
 
   const { updateOneRecord: updateOneOpportunity } =
@@ -65,7 +76,8 @@ export const RecordBoard = ({
       objectNameSingular: 'opportunity',
     });
 
-  const { unselectAllActiveCards, setCardSelected } = useSetCardSelected();
+  const { unselectAllActiveCards, setCardSelected } =
+    useSetRecordBoardCardSelectedInternal({ recordBoardScopeId });
 
   const updatePipelineProgressStageInDB = useCallback(
     async (pipelineProgressId: string, pipelineStepId: string) => {
@@ -85,19 +97,14 @@ export const RecordBoard = ({
     callback: unselectAllActiveCards,
   });
 
-  const updateBoardCardIds = useUpdateBoardCardIds();
-
   const onDragEnd: OnDragEndResponder = useCallback(
     async (result) => {
       if (!boardColumns) return;
-
-      updateBoardCardIds(result);
 
       try {
         const draggedEntityId = result.draggableId;
         const destinationColumnId = result.destination?.droppableId;
 
-        // TODO: abstract
         if (
           draggedEntityId &&
           destinationColumnId &&
@@ -112,7 +119,7 @@ export const RecordBoard = ({
         logError(e);
       }
     },
-    [boardColumns, updatePipelineProgressStageInDB, updateBoardCardIds],
+    [boardColumns, updatePipelineProgressStageInDB],
   );
 
   const sortedBoardColumns = [...boardColumns].sort((a, b) => {
@@ -128,41 +135,35 @@ export const RecordBoard = ({
   );
 
   return (
-    <StyledWrapper>
-      <StyledBoardHeader />
-      <ScrollWrapper>
-        <StyledBoard ref={boardRef}>
-          <DragDropContext onDragEnd={onDragEnd}>
-            {sortedBoardColumns.map((column) => (
-              <BoardColumnContext.Provider
-                key={column.id}
-                value={{
-                  id: column.id,
-                  columnDefinition: column,
-                  isFirstColumn: column.position === 0,
-                  isLastColumn:
-                    column.position === sortedBoardColumns.length - 1,
-                }}
-              >
-                <RecoilScope
-                  CustomRecoilScopeContext={BoardColumnRecoilScopeContext}
+    <RecordBoardScope recordBoardScopeId={recordBoardId}>
+      <RecordBoardContextMenu />
+      <RecordBoardActionBar />
+      <RecordBoardInternalEffect />
+
+      <StyledWrapper>
+        <StyledBoardHeader />
+        <ScrollWrapper>
+          <StyledBoard ref={boardRef}>
+            <DragDropContext onDragEnd={onDragEnd}>
+              {sortedBoardColumns.map((column) => (
+                <RecordBoardColumn
                   key={column.id}
-                >
-                  <RecordBoardColumn
-                    boardOptions={boardOptions}
-                    onDelete={onColumnDelete}
-                    onTitleEdit={onEditColumnTitle}
-                  />
-                </RecoilScope>
-              </BoardColumnContext.Provider>
-            ))}
-          </DragDropContext>
-        </StyledBoard>
-      </ScrollWrapper>
-      <DragSelect
-        dragSelectable={boardRef}
-        onDragSelectionChange={setCardSelected}
-      />
-    </StyledWrapper>
+                  recordBoardColumnId={column.id}
+                  columnDefinition={column}
+                  recordBoardColumnTotal={sortedBoardColumns.length}
+                  recordBoardOptions={boardOptions}
+                  onDelete={onColumnDelete}
+                  onTitleEdit={onEditColumnTitle}
+                />
+              ))}
+            </DragDropContext>
+          </StyledBoard>
+        </ScrollWrapper>
+        <DragSelect
+          dragSelectable={boardRef}
+          onDragSelectionChange={setCardSelected}
+        />
+      </StyledWrapper>
+    </RecordBoardScope>
   );
 };

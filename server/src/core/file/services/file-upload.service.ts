@@ -77,6 +77,7 @@ export class FileUploadService {
     const name = `${id}${ext ? `.${ext}` : ''}`;
 
     const cropSizes = settings.storage.imageCropSizes[fileFolder];
+
     if (!cropSizes) {
       throw new Error(`No crop sizes found for ${fileFolder}`);
     }

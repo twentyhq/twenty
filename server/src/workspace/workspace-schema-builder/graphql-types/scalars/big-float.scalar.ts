@@ -15,6 +15,7 @@ export const BigFloatScalarType = new GraphQLScalarType({
     if (ast.kind === Kind.FLOAT || ast.kind === Kind.INT) {
       return String(ast.value);
     }
+
     return null;
   },
 });

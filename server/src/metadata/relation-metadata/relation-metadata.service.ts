@@ -97,6 +97,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
 
     const objectMetadataMap = objectMetadataEntries.reduce((acc, curr) => {
       acc[curr.id] = curr;
+
       return acc;
     }, {} as { [key: string]: ObjectMetadataEntity });
 
@@ -169,6 +170,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       if (fieldMetadata.type === FieldMetadataType.RELATION) {
         acc[fieldMetadata.objectMetadataId] = fieldMetadata;
       }
+
       return acc;
     }, {});
 

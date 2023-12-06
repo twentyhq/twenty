@@ -5,6 +5,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 import { config } from 'dotenv';
 config();
 const configService = new ConfigService();
+
 export const typeORMMetadataModuleOptions: TypeOrmModuleOptions = {
   url: configService.get<string>('PG_DATABASE_URL'),
   type: 'postgres',

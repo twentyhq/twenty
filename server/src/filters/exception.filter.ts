@@ -1,17 +1,54 @@
-import { Catch, UnauthorizedException } from '@nestjs/common';
-import { GqlExceptionFilter } from '@nestjs/graphql';
+import { ArgumentsHost, Catch, HttpException } from '@nestjs/common';
+import { GqlContextType, GqlExceptionFilter } from '@nestjs/graphql';
 
-import { GraphQLError } from 'graphql';
+import { TypeORMError } from 'typeorm';
+
+import {
+  AuthenticationError,
+  BaseGraphQLError,
+  ForbiddenError,
+} from 'src/filters/utils/graphql-errors.util';
+
+const graphQLPredefinedExceptions = {
+  401: AuthenticationError,
+  403: ForbiddenError,
+};
 
 @Catch()
 export class ExceptionFilter implements GqlExceptionFilter {
-  catch(exception: Error) {
-    if (exception instanceof UnauthorizedException) {
-      throw new GraphQLError('Unauthorized', {
-        extensions: {
-          code: 'UNAUTHENTICATED',
-        },
-      });
+  catch(exception: HttpException | TypeORMError, host: ArgumentsHost) {
+    if (host.getType<GqlContextType>() !== 'graphql') {
+      return null;
+    }
+
+    if (exception instanceof TypeORMError) {
+      const error = new BaseGraphQLError(
+        exception.name,
+        'INTERNAL_SERVER_ERROR',
+      );
+
+      error.stack = exception.stack;
+      error.extensions['response'] = exception.message;
+
+      return error;
+    } else if (exception instanceof HttpException) {
+      let error: BaseGraphQLError;
+
+      if (exception.getStatus() in graphQLPredefinedExceptions) {
+        error = new graphQLPredefinedExceptions[exception.getStatus()](
+          exception.message,
+        );
+      } else {
+        error = new BaseGraphQLError(
+          exception.message,
+          exception.getStatus().toString(),
+        );
+      }
+
+      error.stack = exception.stack;
+      error.extensions['response'] = exception.getResponse();
+
+      return error;
     }
 
     return exception;
