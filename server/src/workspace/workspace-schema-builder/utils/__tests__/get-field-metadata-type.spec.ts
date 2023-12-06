@@ -14,6 +14,7 @@ describe('getFieldMetadataType', () => {
 
   it('should throw an error for an unknown type', () => {
     const unknownType = 'unknownType';
+
     expect(() => getFieldMetadataType(unknownType)).toThrow(
       `Unknown type ${unknownType}`,
     );

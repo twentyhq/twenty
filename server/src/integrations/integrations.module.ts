@@ -67,6 +67,7 @@ const loggerModuleFactory = async (
   environmentService: EnvironmentService,
 ): Promise<LoggerModuleOptions> => {
   const type = environmentService.getLoggerDriver();
+
   switch (type) {
     case LoggerDriver.Console: {
       return {

@@ -283,6 +283,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       ("objectMetadataId", "type", "name")
       VALUES ('${createdObjectMetadata.id}', 'table', 'All ${createdObjectMetadata.namePlural}') RETURNING *`,
     );
+
     createdObjectMetadata.fields.map(async (field, index) => {
       if (field.name === 'id') {
         return;

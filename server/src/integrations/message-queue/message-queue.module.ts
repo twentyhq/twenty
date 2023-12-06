@@ -30,8 +30,10 @@ export class MessageQueueModule {
         provide: QUEUE_DRIVER,
         useFactory: async (...args: any[]) => {
           const config = await options.useFactory(...args);
+
           if (config.type === MessageQueueType.PgBoss) {
             const boss = new PgBossDriver(config.options);
+
             await boss.init();
 
             return boss;

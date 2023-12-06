@@ -26,6 +26,7 @@ export class ScalarsExplorerService {
 
     for (const typeName in typeMap) {
       const type = typeMap[typeName];
+
       if (isScalarType(type) && !typeName.startsWith('__')) {
         usedScalarNames.push(type.name);
       }
@@ -41,6 +42,7 @@ export class ScalarsExplorerService {
 
     for (const scalarName of usedScalarNames) {
       const scalarImplementation = this.getScalarImplementation(scalarName);
+
       if (scalarImplementation) {
         scalarResolvers[scalarName] = scalarImplementation;
       }

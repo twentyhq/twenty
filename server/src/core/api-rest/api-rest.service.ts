@@ -24,6 +24,7 @@ enum FILTER_COMPARATORS {
 const ALLOWED_DEPTH_VALUES = [1, 2];
 const DEFAULT_DEPTH_VALUE = 2;
 const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
+
 enum CONJUNCTIONS {
   or = 'or',
   and = 'and',
@@ -275,11 +276,13 @@ export class ApiRestService {
     const [objectMetadata] = objectMetadataItems.filter(
       (object) => object.namePlural === parsedObject,
     );
+
     if (!objectMetadata) {
       const [wrongObjectMetadata] = objectMetadataItems.filter(
         (object) => object.nameSingular === parsedObject,
       );
       let hint = 'eg: companies';
+
       if (wrongObjectMetadata) {
         hint = `Did you mean '${wrongObjectMetadata.namePlural}'?`;
       }
@@ -304,6 +307,7 @@ export class ApiRestService {
     const countOpenedBrackets = (filterQuery.match(/\(/g) || []).length;
     const countClosedBrackets = (filterQuery.match(/\)/g) || []).length;
     const diff = countOpenedBrackets - countClosedBrackets;
+
     if (diff !== 0) {
       const hint =
         diff > 0
@@ -311,6 +315,7 @@ export class ApiRestService {
           : `${Math.abs(diff)} close bracket${
               Math.abs(diff) > 1 ? 's are' : ' is'
             }`;
+
       throw Error(`'filter' invalid. ${hint} missing in the query`);
     }
 
@@ -321,6 +326,7 @@ export class ApiRestService {
     let parenthesisCounter = 0;
     const predicates: string[] = [];
     let currentPredicates = '';
+
     for (const c of filterQuery) {
       if (c === '(') {
         parenthesisCounter++;
@@ -349,11 +355,13 @@ export class ApiRestService {
     const match = filterQuery.match(
       `^(${Object.values(CONJUNCTIONS).join('|')})((.+))$`,
     );
+
     if (match) {
       const conjunction = match[1];
       const subResult = this.parseFilterQueryContent(filterQuery).map((elem) =>
         this.parseStringFilter(elem, objectMetadataItem),
       );
+
       if (conjunction === CONJUNCTIONS.not) {
         if (subResult.length > 1) {
           throw Error(
@@ -382,6 +390,7 @@ export class ApiRestService {
     }
     const [fieldAndComparator, value] = filterString.split(':');
     const [field, comparator] = fieldAndComparator.replace(']', '').split('[');
+
     if (!Object.keys(FILTER_COMPARATORS).includes(comparator)) {
       throw Error(
         `'filter' invalid for '${filterString}', comparator ${comparator} not in ${Object.keys(
@@ -390,6 +399,7 @@ export class ApiRestService {
       );
     }
     const fields = field.split('.');
+
     this.checkFields(objectMetadataItem, fields, 'filter');
     const fieldType = this.getFieldType(objectMetadataItem, fields[0]);
     const formattedValue = this.formatFieldValue(value, fieldType);
@@ -415,10 +425,12 @@ export class ApiRestService {
 
   parseFilter(request, objectMetadataItem) {
     const parsedObjectId = this.parseObject(request)[1];
+
     if (parsedObjectId) {
       return { id: { eq: parsedObjectId } };
     }
     const rawFilterQuery = request.query.filter;
+
     if (typeof rawFilterQuery !== 'string') {
       return {};
     }
@@ -431,15 +443,18 @@ export class ApiRestService {
   parseOrderBy(request, objectMetadataItem) {
     //?order_by=field_1[AscNullsFirst],field_2[DescNullsLast],field_3
     const orderByQuery = request.query.order_by;
+
     if (typeof orderByQuery !== 'string') {
       return {};
     }
     const orderByItems = orderByQuery.split(',');
     const result = {};
+
     for (const orderByItem of orderByItems) {
       // orderByItem -> field_1[AscNullsFirst]
       if (orderByItem.includes('[') && orderByItem.includes(']')) {
         const [field, direction] = orderByItem.replace(']', '').split('[');
+
         // field -> field_1 ; direction -> AscNullsFirst
         if (!(direction in OrderByDirection)) {
           throw Error(
@@ -492,10 +507,12 @@ export class ApiRestService {
 
   parseLimit(request) {
     const limitQuery = request.query.limit;
+
     if (typeof limitQuery !== 'string') {
       return 60;
     }
     const limitParsed = parseInt(limitQuery);
+
     if (!Number.isInteger(limitParsed)) {
       throw Error(`limit '${limitQuery}' is invalid. Should be an integer`);
     }
@@ -505,6 +522,7 @@ export class ApiRestService {
 
   parseCursor(request) {
     const cursorQuery = request.query.last_cursor;
+
     if (typeof cursorQuery !== 'string') {
       return undefined;
     }
@@ -523,6 +541,7 @@ export class ApiRestService {
 
   parseObject(request) {
     const queryAction = request.path.replace('/rest/', '').split('/');
+
     if (queryAction.length > 2) {
       throw Error(
         `Query path '${request.path}' invalid. Valid examples: /rest/companies/id or /rest/companies`,
@@ -537,6 +556,7 @@ export class ApiRestService {
 
   extractWorkspaceId(request: Request) {
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
+
     if (!token) {
       throw Error('missing authentication token');
     }
@@ -551,6 +571,7 @@ export class ApiRestService {
       typeof request.query.depth === 'string'
         ? parseInt(request.query.depth)
         : DEFAULT_DEPTH_VALUE;
+
     if (!ALLOWED_DEPTH_VALUES.includes(depth)) {
       throw Error(
         `'depth=${depth}' parameter invalid. Allowed values are ${ALLOWED_DEPTH_VALUES.join(
@@ -609,6 +630,7 @@ export class ApiRestService {
     try {
       const objectMetadata = await this.getObjectMetadata(request);
       const id = this.parseObject(request)[1];
+
       if (!id) {
         return {
           data: {
@@ -655,6 +677,7 @@ export class ApiRestService {
       const objectMetadata = await this.getObjectMetadata(request);
       const depth = this.computeDepth(request);
       const id = this.parseObject(request)[1];
+
       if (!id) {
         return {
           data: {

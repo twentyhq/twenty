@@ -48,6 +48,7 @@ export class UserResolver {
     const user = await this.userService.findById(id, {
       relations: [{ name: 'defaultWorkspace', query: {} }],
     });
+
     assert(user, 'User not found');
 
     return user;

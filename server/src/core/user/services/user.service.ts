@@ -72,6 +72,7 @@ export class UserService extends TypeOrmQueryService<User> {
     const user = await this.userRepository.findOneBy({
       id: userId,
     });
+
     assert(user, 'User not found');
 
     await this.userRepository.delete(user.id);
