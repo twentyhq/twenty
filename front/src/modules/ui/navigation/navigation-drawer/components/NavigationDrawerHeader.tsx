@@ -9,7 +9,6 @@ const StyledContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   height: 34px;
-  justify-content: space-between;
   padding: ${({ theme }) => theme.spacing(1)};
   padding-bottom: ${({ theme }) => theme.spacing(2)};
   user-select: none;
