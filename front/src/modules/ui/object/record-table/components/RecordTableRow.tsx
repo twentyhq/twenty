@@ -1,6 +1,9 @@
-import { forwardRef } from 'react';
+import { useContext } from 'react';
+import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+
+import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { ColumnContext } from '../contexts/ColumnContext';
 import { useRecordTableScopedStates } from '../hooks/internal/useRecordTableScopedStates';
@@ -18,36 +21,53 @@ type RecordTableRowProps = {
   rowId: string;
 };
 
-export const RecordTableRow = forwardRef<
-  HTMLTableRowElement,
-  RecordTableRowProps
->(({ rowId }, ref) => {
+const StyledPlaceholder = styled.td`
+  height: 30px;
+`;
+
+export const RecordTableRow = ({ rowId }: RecordTableRowProps) => {
   const { visibleTableColumnsSelector } = useRecordTableScopedStates();
 
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
 
   const { currentRowSelected } = useCurrentRowSelected();
 
+  const scrollWrapperRef = useContext(ScrollWrapperContext);
+
+  const { ref: elementRef, inView } = useInView({
+    root: scrollWrapperRef.current,
+    rootMargin: '1000px',
+  });
+
   return (
     <StyledRow
-      ref={ref}
+      ref={elementRef}
       data-testid={`row-id-${rowId}`}
       selected={currentRowSelected}
       data-selectable-id={rowId}
     >
-      <td>
-        <CheckboxCell />
-      </td>
-      {[...visibleTableColumns]
-        .sort((columnA, columnB) => columnA.position - columnB.position)
-        .map((column, columnIndex) => {
-          return (
-            <ColumnContext.Provider value={column} key={column.fieldMetadataId}>
-              <RecordTableCell cellIndex={columnIndex} />
-            </ColumnContext.Provider>
-          );
-        })}
-      <td></td>
+      {inView ? (
+        <>
+          <td>
+            <CheckboxCell />
+          </td>
+          {[...visibleTableColumns]
+            .sort((columnA, columnB) => columnA.position - columnB.position)
+            .map((column, columnIndex) => {
+              return (
+                <ColumnContext.Provider
+                  value={column}
+                  key={column.fieldMetadataId}
+                >
+                  <RecordTableCell cellIndex={columnIndex} />
+                </ColumnContext.Provider>
+              );
+            })}
+          <td></td>
+        </>
+      ) : (
+        <StyledPlaceholder />
+      )}
     </StyledRow>
   );
-});
+};

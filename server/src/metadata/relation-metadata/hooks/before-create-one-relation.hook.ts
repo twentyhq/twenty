@@ -22,6 +22,7 @@ export class BeforeCreateOneRelation<T extends CreateRelationInput>
     }
 
     instance.input.workspaceId = workspaceId;
+
     return instance;
   }
 }

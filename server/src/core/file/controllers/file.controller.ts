@@ -9,6 +9,7 @@ import { FileService } from 'src/core/file/services/file.service';
 @Controller('files')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
+
   /**
    * Serve files from local storage
    * We recommend using an s3 bucket for production

@@ -33,9 +33,11 @@ export const mapObjectMetadataByUniqueIdentifier = (
       ...curr,
       fields: curr.fields.reduce((acc, curr) => {
         acc[curr.name] = curr;
+
         return acc;
       }, {}),
     };
+
     return acc;
   }, {});
 };

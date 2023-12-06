@@ -33,6 +33,7 @@ export class FileStorageModule {
       provide: STORAGE_DRIVER,
       useFactory: async (...args: any[]) => {
         const config = await options.useFactory(...args);
+
         return config?.type === 's3'
           ? new S3Driver(config.options)
           : new LocalDriver(config.options);

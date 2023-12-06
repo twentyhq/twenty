@@ -27,6 +27,7 @@ import { seedWebhookFieldMetadata } from 'src/database/typeorm-seeds/metadata/fi
 
 export const seedMetadataSchema = async (workspaceDataSource: DataSource) => {
   const schemaName = 'metadata';
+
   await seedDataSource(workspaceDataSource, schemaName);
   await seedObjectMetadata(workspaceDataSource, schemaName);
 

@@ -25,17 +25,18 @@ export const Opportunities = () => {
       objectNameSingular: 'pipelineStep',
     });
 
-  const handleEditColumnTitle = (
-    boardColumnId: string,
-    newTitle: string,
-    newColor: string,
-  ) => {
+  const handleEditColumnTitle = ({
+    columnId,
+    title,
+    color,
+  }: {
+    columnId: string;
+    title: string;
+    color: string;
+  }) => {
     updateOnePipelineStep?.({
-      idToUpdate: boardColumnId,
-      input: {
-        name: newTitle,
-        color: newColor,
-      },
+      idToUpdate: columnId,
+      input: { name: title, color },
     });
   };
 

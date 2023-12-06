@@ -5,6 +5,7 @@ const tableName = 'opportunity';
 
 const getRandomProbability = () => {
   const firstDigit = Math.floor(Math.random() * 9) + 1;
+
   return firstDigit / 10;
 };
 
@@ -13,6 +14,7 @@ const getRandomPipelineStepId = (pipelineStepIds: { id: string }[]) =>
 
 const generateRandomAmountMicros = () => {
   const firstDigit = Math.floor(Math.random() * 9) + 1;
+
   return firstDigit * 10000000000;
 };
 

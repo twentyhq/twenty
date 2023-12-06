@@ -27,6 +27,7 @@ export class BullMQDriver implements MessageQueueDriver {
   async stop() {
     const workers = Object.values(this.workerMap);
     const queues = Object.values(this.queueMap);
+
     await Promise.all([
       ...queues.map((q) => q.close()),
       ...workers.map((w) => w.close()),
@@ -40,6 +41,7 @@ export class BullMQDriver implements MessageQueueDriver {
     const worker = new Worker(queueName, async (job) => {
       await handler(job as { data: T; id: string });
     });
+
     this.workerMap[queueName] = worker;
   }
 
