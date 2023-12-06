@@ -31,6 +31,7 @@ export class WorkspaceMigrationService {
     const insertedStandardMigrationsMapByName =
       insertedStandardMigrations.reduce((acc, migration) => {
         acc[migration.name] = migration;
+
         return acc;
       }, {});
 

@@ -4,22 +4,23 @@ import { useSetRecoilState } from 'recoil';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 
-import { useCurrentCardSelected } from '../hooks/useCurrentCardSelected';
+import { useCurrentRecordBoardCardSelectedInternal } from '../hooks/internal/useCurrentRecordBoardCardSelectedInternal';
 import { BoardOptions } from '../types/BoardOptions';
 
 export const RecordBoardCard = ({
-  boardOptions,
+  recordBoardOptions,
   cardId,
   index,
 }: {
-  boardOptions: BoardOptions;
+  recordBoardOptions: BoardOptions;
   cardId: string;
   index: number;
 }) => {
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
 
-  const { setCurrentCardSelected } = useCurrentCardSelected();
+  const { setCurrentCardSelected } =
+    useCurrentRecordBoardCardSelectedInternal();
 
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -45,7 +46,7 @@ export const RecordBoardCard = ({
           data-select-disable
           onContextMenu={handleContextMenu}
         >
-          {<boardOptions.CardComponent />}
+          {<recordBoardOptions.CardComponent />}
         </div>
       )}
     </Draggable>

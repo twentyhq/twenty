@@ -1,6 +1,5 @@
-import { ChangeEvent, useCallback, useState } from 'react';
+import { ChangeEvent, useCallback, useContext, useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
 import { IconTrash } from '@/ui/display/icon';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -11,7 +10,8 @@ import { mainColorNames, ThemeColor } from '@/ui/theme/constants/colors';
 import { textInputStyle } from '@/ui/theme/constants/effects';
 import { debounce } from '~/utils/debounce';
 
-import { boardColumnsState } from '../states/boardColumnsState';
+import { BoardColumnContext } from '../contexts/BoardColumnContext';
+import { useRecordBoard } from '../hooks/useRecordBoard';
 
 const StyledEditTitleContainer = styled.div`
   --vertical-padding: ${({ theme }) => theme.spacing(1)};
@@ -44,7 +44,6 @@ type RecordBoardColumnEditTitleMenuProps = {
   onClose: () => void;
   onDelete?: (id: string) => void;
   title: string;
-  onTitleEdit: (title: string, color: string) => void;
   color: ThemeColor;
   stageId: string;
 };
@@ -53,14 +52,16 @@ export const RecordBoardColumnEditTitleMenu = ({
   onClose,
   onDelete,
   stageId,
-  onTitleEdit,
   title,
   color,
 }: RecordBoardColumnEditTitleMenuProps) => {
   const [internalValue, setInternalValue] = useState(title);
-  const [, setBoardColumns] = useRecoilState(boardColumnsState);
+  const { onTitleEdit } = useContext(BoardColumnContext) || {};
+
+  const { setBoardColumns } = useRecordBoard();
+
   const debouncedOnUpdateTitle = debounce(
-    (newTitle) => onTitleEdit(newTitle, color),
+    (newTitle) => onTitleEdit?.({ title: newTitle, color }),
     200,
   );
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -76,7 +77,7 @@ export const RecordBoardColumnEditTitleMenu = ({
   };
 
   const handleColorChange = (newColor: ThemeColor) => {
-    onTitleEdit(title, newColor);
+    onTitleEdit?.({ title, color: newColor });
     onClose();
     setBoardColumns((previousBoardColumns) =>
       previousBoardColumns.map((column) =>

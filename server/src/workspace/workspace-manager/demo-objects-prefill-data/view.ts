@@ -35,6 +35,7 @@ export const viewPrefillData = async (
 
   const viewIdMap = createdViews.raw.reduce((acc, view) => {
     acc[view.name] = view.id;
+
     return acc;
   }, {});
 

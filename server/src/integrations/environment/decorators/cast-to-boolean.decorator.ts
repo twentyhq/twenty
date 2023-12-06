@@ -13,5 +13,6 @@ const toBoolean = (value: any) => {
   if (['false', 'off', 'no', '0'].includes(value.toLowerCase())) {
     return false;
   }
+
   return undefined;
 };

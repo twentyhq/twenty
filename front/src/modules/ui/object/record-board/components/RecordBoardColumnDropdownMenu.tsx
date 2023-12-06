@@ -12,7 +12,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 import { BoardColumnContext } from '../contexts/BoardColumnContext';
-import { useBoardColumns } from '../hooks/useBoardColumns';
+import { useBoardColumnsInternal } from '../hooks/internal/useRecordBoardColumnsInternal';
 import { BoardColumnHotkeyScope } from '../types/BoardColumnHotkeyScope';
 
 import { RecordBoardColumnEditTitleMenu } from './RecordBoardColumnEditTitleMenu';
@@ -26,7 +26,6 @@ const StyledMenuContainer = styled.div`
 type RecordBoardColumnDropdownMenuProps = {
   onClose: () => void;
   onDelete?: (id: string) => void;
-  onTitleEdit: (title: string, color: string) => void;
   stageId: string;
 };
 
@@ -35,7 +34,6 @@ type Menu = 'actions' | 'add' | 'title';
 export const RecordBoardColumnDropdownMenu = ({
   onClose,
   onDelete,
-  onTitleEdit,
   stageId,
 }: RecordBoardColumnDropdownMenuProps) => {
   const [currentMenu, setCurrentMenu] = useState('actions');
@@ -43,7 +41,7 @@ export const RecordBoardColumnDropdownMenu = ({
 
   const boardColumnMenuRef = useRef<HTMLDivElement>(null);
 
-  const { handleMoveBoardColumn } = useBoardColumns();
+  const { handleMoveBoardColumn } = useBoardColumnsInternal();
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
@@ -127,7 +125,6 @@ export const RecordBoardColumnDropdownMenu = ({
           <RecordBoardColumnEditTitleMenu
             color={columnDefinition.colorCode ?? 'gray'}
             onClose={closeMenu}
-            onTitleEdit={onTitleEdit}
             title={columnDefinition.title}
             onDelete={onDelete}
             stageId={stageId}

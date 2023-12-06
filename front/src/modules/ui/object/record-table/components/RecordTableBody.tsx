@@ -1,112 +1,92 @@
-import React, { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useVirtualizer } from '@tanstack/react-virtual';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { useObjectRecordTable } from '@/object-record/hooks/useObjectRecordTable';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
-import { useRecordTableScopedStates } from '@/ui/object/record-table/hooks/internal/useRecordTableScopedStates';
+import {
+  RecordTableRow,
+  StyledRow,
+} from '@/ui/object/record-table/components/RecordTableRow';
+import { RowIdContext } from '@/ui/object/record-table/contexts/RowIdContext';
+import { RowIndexContext } from '@/ui/object/record-table/contexts/RowIndexContext';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
+import { isFetchingRecordTableDataState } from '@/ui/object/record-table/states/isFetchingRecordTableDataState';
+import { tableRowIdsState } from '@/ui/object/record-table/states/tableRowIdsState';
+import { getRecordTableScopedStates } from '@/ui/object/record-table/utils/getRecordTableScopedStates';
 import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { isDefined } from '~/utils/isDefined';
-
-import { RowIdContext } from '../contexts/RowIdContext';
-import { RowIndexContext } from '../contexts/RowIndexContext';
-import { useRecordTable } from '../hooks/useRecordTable';
-import { isFetchingRecordTableDataState } from '../states/isFetchingRecordTableDataState';
-import { tableRowIdsState } from '../states/tableRowIdsState';
-
-import { RecordTableRow, StyledRow } from './RecordTableRow';
+import RenderIfVisible from '@/ui/utilities/virtualizer/RenderIfVisible';
 
 export const RecordTableBody = () => {
-  const { ref: lastTableRowRef, inView: lastTableRowIsVisible } = useInView();
+  const { scopeId } = useRecordTable();
+
+  const onLastRowVisible = useRecoilCallback(
+    ({ set }) =>
+      async (inView: boolean) => {
+        const { tableLastRowVisibleState } = getRecordTableScopedStates({
+          recordTableScopeId: scopeId,
+        });
+
+        set(tableLastRowVisibleState, inView);
+      },
+    [scopeId],
+  );
+
+  const { ref: lastTableRowRef } = useInView({
+    onChange: onLastRowVisible,
+  });
 
   const tableRowIds = useRecoilValue(tableRowIdsState);
 
-  const { scopeId: objectNamePlural } = useRecordTable();
-  const { tableLastRowVisibleState } = useRecordTableScopedStates();
-  const setTableLastRowVisible = useSetRecoilState(tableLastRowVisibleState);
-
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural,
-  });
-
-  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
-    {
-      objectNameSingular,
-    },
-  );
-
   const [isFetchingMoreObjects] = useRecoilState(
-    isFetchingMoreRecordsFamilyState(foundObjectMetadataItem?.namePlural),
+    isFetchingMoreRecordsFamilyState(scopeId),
   );
 
   const isFetchingRecordTableData = useRecoilValue(
     isFetchingRecordTableDataState,
   );
 
-  const { fetchMoreRecords: fetchMoreObjects } = useObjectRecordTable();
-
-  useEffect(() => {
-    if (lastTableRowIsVisible && isDefined(fetchMoreObjects)) {
-      fetchMoreObjects();
-    }
-  }, [lastTableRowIsVisible, fetchMoreObjects]);
-
-  useEffect(() => {
-    if (lastTableRowIsVisible && isDefined(fetchMoreObjects)) {
-      fetchMoreObjects();
-    }
-  }, [lastTableRowIsVisible, fetchMoreObjects]);
-
   const lastRowId = tableRowIds[tableRowIds.length - 1];
 
   const scrollWrapperRef = useContext(ScrollWrapperContext);
-
-  const rowVirtualizer = useVirtualizer({
-    count: tableRowIds.length,
-    getScrollElement: () => scrollWrapperRef.current,
-    estimateSize: () => 40,
-  });
 
   if (isFetchingRecordTableData) {
     return <></>;
   }
 
   return (
-    <tbody
-      style={{
-        height: rowVirtualizer.getTotalSize(),
-        width: '100%',
-        position: 'relative',
-      }}
-    >
-      {rowVirtualizer.getVirtualItems().map((virtualItem) => {
-        const rowId = tableRowIds[virtualItem.index];
-        return (
-          <RowIdContext.Provider value={rowId} key={virtualItem.key}>
-            <RowIndexContext.Provider value={virtualItem.index}>
+    <>
+      {tableRowIds.map((rowId, rowIndex) => (
+        <RowIdContext.Provider value={rowId} key={rowId}>
+          <RowIndexContext.Provider value={rowIndex}>
+            <RenderIfVisible
+              rootElement="tbody"
+              placeholderElement="tr"
+              defaultHeight={32}
+              initialVisible={rowIndex < 30}
+              root={scrollWrapperRef.current}
+            >
               <RecordTableRow
-                key={virtualItem.key}
-                ref={rowId === lastRowId ? lastTableRowRef : undefined}
+                key={rowId}
+                ref={
+                  rowId === lastRowId && rowIndex > 30
+                    ? lastTableRowRef
+                    : undefined
+                }
                 rowId={rowId}
-                style={{
-                  height: virtualItem.size,
-                  transform: `translateY(${virtualItem.start}px)`,
-                }}
               />
-            </RowIndexContext.Provider>
-          </RowIdContext.Provider>
-        );
-      })}
-      {isFetchingMoreObjects && (
-        <StyledRow selected={false}>
-          <td style={{ height: 50 }} colSpan={1000}>
-            Loading more...
-          </td>
-        </StyledRow>
-      )}
-    </tbody>
+            </RenderIfVisible>
+          </RowIndexContext.Provider>
+        </RowIdContext.Provider>
+      ))}
+      <tbody>
+        {isFetchingMoreObjects && (
+          <StyledRow selected={false}>
+            <td style={{ height: 50 }} colSpan={1000}>
+              Loading more...
+            </td>
+          </StyledRow>
+        )}
+      </tbody>
+    </>
   );
 };

@@ -4,6 +4,7 @@ describe('stringifyWithoutKeyQuote', () => {
   test('should stringify object correctly without quotes around keys', () => {
     const obj = { name: 'John', age: 30, isAdmin: false };
     const result = stringifyWithoutKeyQuote(obj);
+
     expect(result).toBe('{name:"John",age:30,isAdmin:false}');
   });
 
@@ -14,6 +15,7 @@ describe('stringifyWithoutKeyQuote', () => {
       address: { city: 'New York', zipCode: 10001 },
     };
     const result = stringifyWithoutKeyQuote(obj);
+
     expect(result).toBe(
       '{name:"John",age:30,address:{city:"New York",zipCode:10001}}',
     );
@@ -26,6 +28,7 @@ describe('stringifyWithoutKeyQuote', () => {
       hobbies: ['reading', 'movies', 'hiking'],
     };
     const result = stringifyWithoutKeyQuote(obj);
+
     expect(result).toBe(
       '{name:"John",age:30,hobbies:["reading","movies","hiking"]}',
     );
@@ -34,6 +37,7 @@ describe('stringifyWithoutKeyQuote', () => {
   test('should handle empty objects', () => {
     const obj = {};
     const result = stringifyWithoutKeyQuote(obj);
+
     expect(result).toBe('{}');
   });
 
@@ -41,6 +45,7 @@ describe('stringifyWithoutKeyQuote', () => {
     const num = 10;
     const str = 'Hello';
     const bool = false;
+
     expect(stringifyWithoutKeyQuote(num)).toBe('10');
     expect(stringifyWithoutKeyQuote(str)).toBe('"Hello"');
     expect(stringifyWithoutKeyQuote(bool)).toBe('false');

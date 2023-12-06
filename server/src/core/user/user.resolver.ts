@@ -30,6 +30,7 @@ const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
 
   const hmac = crypto.createHmac('sha256', key);
+
   return hmac.update(email).digest('hex');
 };
 
@@ -47,7 +48,9 @@ export class UserResolver {
     const user = await this.userService.findById(id, {
       relations: [{ name: 'defaultWorkspace', query: {} }],
     });
+
     assert(user, 'User not found');
+
     return user;
   }
 
@@ -66,6 +69,7 @@ export class UserResolver {
       return null;
     }
     const key = this.environmentService.getSupportFrontHMACKey();
+
     return getHMACKey(parent.email, key);
   }
 
