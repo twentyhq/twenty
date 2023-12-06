@@ -1,5 +1,4 @@
-import { useInView } from 'react-intersection-observer';
-import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import {
@@ -11,26 +10,9 @@ import { RowIndexContext } from '@/ui/object/record-table/contexts/RowIndexConte
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { isFetchingRecordTableDataState } from '@/ui/object/record-table/states/isFetchingRecordTableDataState';
 import { tableRowIdsState } from '@/ui/object/record-table/states/tableRowIdsState';
-import { getRecordTableScopedStates } from '@/ui/object/record-table/utils/getRecordTableScopedStates';
 
 export const RecordTableBody = () => {
   const { scopeId } = useRecordTable();
-
-  const onLastRowVisible = useRecoilCallback(
-    ({ set }) =>
-      async (inView: boolean) => {
-        const { tableLastRowVisibleState } = getRecordTableScopedStates({
-          recordTableScopeId: scopeId,
-        });
-
-        set(tableLastRowVisibleState, inView);
-      },
-    [scopeId],
-  );
-
-  const { ref: lastTableRowRef } = useInView({
-    onChange: onLastRowVisible,
-  });
 
   const tableRowIds = useRecoilValue(tableRowIdsState);
 
@@ -41,7 +23,6 @@ export const RecordTableBody = () => {
   const isFetchingRecordTableData = useRecoilValue(
     isFetchingRecordTableDataState,
   );
-  const lastRowId = tableRowIds[tableRowIds.length - 1];
 
   if (isFetchingRecordTableData) {
     return <></>;
@@ -52,15 +33,7 @@ export const RecordTableBody = () => {
       {tableRowIds.map((rowId, rowIndex) => (
         <RowIdContext.Provider value={rowId} key={rowId}>
           <RowIndexContext.Provider value={rowIndex}>
-            <RecordTableRow
-              key={rowId}
-              ref={
-                rowId === lastRowId && rowIndex > 30
-                  ? lastTableRowRef
-                  : undefined
-              }
-              rowId={rowId}
-            />
+            <RecordTableRow key={rowId} rowId={rowId} />
           </RowIndexContext.Provider>
         </RowIdContext.Provider>
       ))}

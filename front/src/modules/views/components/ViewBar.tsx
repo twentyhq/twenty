@@ -100,7 +100,7 @@ export const ViewBar = ({
             rightComponent={
               <UpdateViewButtonGroup
                 onViewEditModeChange={openOptionsDropdownButton}
-                hotkeyScope={ViewsHotkeyScope.CreateDropdown}
+                hotkeyScope={{ scope: ViewsHotkeyScope.CreateDropdown }}
               />
             }
           />
