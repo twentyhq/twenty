@@ -26,7 +26,6 @@ const StyledMenuContainer = styled.div`
 type RecordBoardColumnDropdownMenuProps = {
   onClose: () => void;
   onDelete?: (id: string) => void;
-  onTitleEdit: (title: string, color: string) => void;
   stageId: string;
 };
 
@@ -35,7 +34,6 @@ type Menu = 'actions' | 'add' | 'title';
 export const RecordBoardColumnDropdownMenu = ({
   onClose,
   onDelete,
-  onTitleEdit,
   stageId,
 }: RecordBoardColumnDropdownMenuProps) => {
   const [currentMenu, setCurrentMenu] = useState('actions');
@@ -127,7 +125,6 @@ export const RecordBoardColumnDropdownMenu = ({
           <RecordBoardColumnEditTitleMenu
             color={columnDefinition.colorCode ?? 'gray'}
             onClose={closeMenu}
-            onTitleEdit={onTitleEdit}
             title={columnDefinition.title}
             onDelete={onDelete}
             stageId={stageId}

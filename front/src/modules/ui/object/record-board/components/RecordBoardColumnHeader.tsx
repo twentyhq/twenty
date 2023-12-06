@@ -52,14 +52,12 @@ type RecordBoardColumnHeaderProps = {
   recordBoardColumnId: string;
   columnDefinition: BoardColumnDefinition;
   onDelete?: (columnId: string) => void;
-  onTitleEdit: (columnId: string, title: string, color: string) => void;
 };
 
 export const RecordBoardColumnHeader = ({
   recordBoardColumnId,
   columnDefinition,
   onDelete,
-  onTitleEdit,
 }: RecordBoardColumnHeaderProps) => {
   const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] = useState(false);
   const [isHeaderHovered, setIsHeaderHovered] = useState(false);
@@ -88,10 +86,6 @@ export const RecordBoardColumnHeader = ({
   const cardIds = useRecoilValue(
     recordBoardCardIdsByColumnIdFamilyState(recordBoardColumnId),
   );
-
-  const handleTitleEdit = (title: string, color: string) => {
-    onTitleEdit(recordBoardColumnId, title, color);
-  };
 
   return (
     <>
@@ -127,7 +121,6 @@ export const RecordBoardColumnHeader = ({
         <RecordBoardColumnDropdownMenu
           onClose={handleBoardColumnMenuClose}
           onDelete={onDelete}
-          onTitleEdit={handleTitleEdit}
           stageId={recordBoardColumnId}
         />
       )}
