@@ -33,6 +33,7 @@ export class ExceptionFilter implements GqlExceptionFilter {
       return error;
     } else if (exception instanceof HttpException) {
       let error: BaseGraphQLError;
+
       if (exception.getStatus() in graphQLPredefinedExceptions) {
         error = new graphQLPredefinedExceptions[exception.getStatus()](
           exception.message,
