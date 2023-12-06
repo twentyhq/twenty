@@ -38,21 +38,29 @@ export class ApiRestQueryBuilderFactory {
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
-    const { object: parsedObject } = parsePath(request);
+    const { id, object: parsedObject } = parsePath(request);
+
+    let objectNameKey = 'namePlural';
+    let wrongObjectNameKey = 'nameSingular';
+
+    if (id) {
+      objectNameKey = 'nameSingular';
+      wrongObjectNameKey = 'namePlural';
+    }
 
     const [objectMetadata] = objectMetadataItems.filter(
-      (object) => object.namePlural === parsedObject,
+      (object) => object[objectNameKey] === parsedObject,
     );
 
     if (!objectMetadata) {
       const [wrongObjectMetadata] = objectMetadataItems.filter(
-        (object) => object.nameSingular === parsedObject,
+        (object) => object[wrongObjectNameKey] === parsedObject,
       );
 
       let hint = 'eg: companies';
 
       if (wrongObjectMetadata) {
-        hint = `Did you mean '${wrongObjectMetadata.namePlural}'?`;
+        hint = `Did you mean '${wrongObjectMetadata[objectNameKey]}'?`;
       }
 
       throw new BadRequestException(
