@@ -10,6 +10,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 
 export const ViewBarEffect = () => {
+  console.log('ViewBarEffect');
   const {
     loadView,
     changeViewInUrl,

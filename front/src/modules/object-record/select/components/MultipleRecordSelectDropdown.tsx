@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import { RecordToSelect } from '@/object-record/select/types/RecordToSelect';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
@@ -6,6 +8,7 @@ import { Avatar } from '@/users/components/Avatar';
 
 export const MultipleRecordSelectDropdown = ({
   recordsToSelect,
+  loadingRecords,
   filteredSelectedRecords,
   onChange,
   searchFilter,
@@ -18,6 +21,7 @@ export const MultipleRecordSelectDropdown = ({
     changedRecordToSelect: RecordToSelect,
     newSelectedValue: boolean,
   ) => void;
+  loadingRecords: boolean;
 }) => {
   const handleRecordSelectChange = (
     recordToSelect: RecordToSelect,
@@ -32,10 +36,19 @@ export const MultipleRecordSelectDropdown = ({
     );
   };
 
-  const recordsInDropdown = [
+  const [recordsInDropdown, setRecordInDropdown] = useState([
     ...(filteredSelectedRecords ?? []),
     ...(recordsToSelect ?? []),
-  ];
+  ]);
+
+  useEffect(() => {
+    if (!loadingRecords) {
+      setRecordInDropdown([
+        ...(filteredSelectedRecords ?? []),
+        ...(recordsToSelect ?? []),
+      ]);
+    }
+  }, [recordsToSelect, filteredSelectedRecords, loadingRecords]);
 
   const showNoResult =
     recordsToSelect?.length === 0 &&

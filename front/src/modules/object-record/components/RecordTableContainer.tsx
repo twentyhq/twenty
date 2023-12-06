@@ -29,6 +29,7 @@ export const RecordTableContainer = ({
   objectNamePlural: string;
   createRecord: () => void;
 }) => {
+  console.log('RecordTableContainer');
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
   });

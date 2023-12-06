@@ -88,6 +88,7 @@ export const RecordTable = ({
   recordTableId,
   viewBarId,
 }: RecordTableProps) => {
+  console.log('RecordTable');
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
   const { resetTableRowSelection, setRowSelectedState } = useRecordTable({

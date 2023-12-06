@@ -21,6 +21,9 @@ export const useSetRecordTableData = ({
   return useRecoilCallback(
     ({ set, snapshot }) =>
       <T extends { id: string }>(newEntityArray: T[]) => {
+        console.log('useSetRecordTableData', {
+          newEntityArray,
+        });
         for (const entity of newEntityArray) {
           const currentEntity = snapshot
             .getLoadable(entityFieldsFamilyState(entity.id))

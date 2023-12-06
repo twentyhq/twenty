@@ -19,7 +19,7 @@ export const RecordSelect = ({
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-  const { loading, filteredSelectedRecords, recordsToSelect, selectedRecords } =
+  const { filteredSelectedRecords, recordsToSelect, selectedRecords } =
     useRecordSearchQuery({
       searchFilterText,
       selectedIds: selectedIds,

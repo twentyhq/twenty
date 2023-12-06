@@ -1,4 +1,5 @@
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { ObjectFilterDropdownEntitySearchInput } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownEntitySearchInput';
 import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 
 import { MultipleFiltersDropdownFilterOnFilterChangedEffect } from './MultipleFiltersDropdownFilterOnFilterChangedEffect';
@@ -38,7 +39,11 @@ export const MultipleFiltersDropdownContent = () => {
               <ObjectFilterDropdownDateSearchInput />
             )}
             {filterDefinitionUsedInDropdown.type === 'RELATION' && (
-              <ObjectFilterDropdownEntitySelect />
+              <>
+                <ObjectFilterDropdownEntitySearchInput />
+                <DropdownMenuSeparator />
+                <ObjectFilterDropdownEntitySelect />
+              </>
             )}
           </>
         )

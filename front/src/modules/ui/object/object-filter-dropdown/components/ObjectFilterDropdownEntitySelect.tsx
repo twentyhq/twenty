@@ -8,7 +8,6 @@ export const ObjectFilterDropdownEntitySelect = () => {
     filterDefinitionUsedInDropdown,
     objectFilterDropdownSearchInput,
     selectedOperandInDropdown,
-    objectFilterDropdownSelectedEntityId,
     setObjectFilterDropdownSelectedRecordIds,
     objectFilterDropdownSelectedRecordIds,
     selectFilter,
@@ -29,27 +28,41 @@ export const ObjectFilterDropdownEntitySelect = () => {
     recordToSelect: RecordToSelect,
     newSelectedValue: boolean,
   ) => {
-    setObjectFilterDropdownSelectedRecordIds((prevSelectedIds) => {
-      if (newSelectedValue) {
-        return [...prevSelectedIds, recordToSelect.id];
-      }
+    const newSelectedRecordIds = newSelectedValue
+      ? [...objectFilterDropdownSelectedRecordIds, recordToSelect.id]
+      : objectFilterDropdownSelectedRecordIds.filter(
+          (id) => id !== recordToSelect.id,
+        );
 
-      return prevSelectedIds.filter((id) => id !== recordToSelect.id);
-    });
+    setObjectFilterDropdownSelectedRecordIds(newSelectedRecordIds);
 
-    const selectedIdsDisplayName = recordsToSelect
-      .filter((record) => record.isSelected)
-      .map((record) => record.name)
-      .join(', ');
+    const selectedRecordNames = [
+      ...recordsToSelect,
+      ...selectedRecords,
+      ...filteredSelectedRecords,
+    ]
+      .filter(
+        (record, index, self) =>
+          self.findIndex((r) => r.id === record.id) === index,
+      )
+      .filter((record) => newSelectedRecordIds.includes(record.id))
+      .map((record) => record.name);
 
-    // Set filter
+    const filterDisplayValue =
+      selectedRecordNames.length > 3
+        ? `${selectedRecordNames.length} companies`
+        : selectedRecordNames.join(', ');
+
     if (filterDefinitionUsedInDropdown && selectedOperandInDropdown) {
       selectFilter({
         definition: filterDefinitionUsedInDropdown,
         operand: selectedOperandInDropdown,
-        displayValue: selectedIdsDisplayName,
+        displayValue: filterDisplayValue,
         fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
-        value: JSON.stringify(objectFilterDropdownSelectedRecordIds),
+        value:
+          newSelectedRecordIds.length > 0
+            ? JSON.stringify(newSelectedRecordIds)
+            : '',
       });
     }
   };
@@ -61,6 +74,7 @@ export const ObjectFilterDropdownEntitySelect = () => {
       selectedRecords={selectedRecords}
       onChange={handleMultipleRecordSelectChange}
       searchFilter={objectFilterDropdownSearchInput}
+      loadingRecords={loading}
     />
   );
 };
