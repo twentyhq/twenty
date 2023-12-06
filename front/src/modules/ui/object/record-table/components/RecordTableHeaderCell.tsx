@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
@@ -76,9 +76,11 @@ const StyledHeaderIcon = styled.div`
 export const RecordTableHeaderCell = ({
   column,
   createRecord,
+  checkTableWidth,
 }: {
   column: ColumnDefinition<FieldMetadata>;
   createRecord: () => void;
+  checkTableWidth: () => void;
 }) => {
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
     resizeFieldOffsetState,
@@ -155,6 +157,10 @@ export const RecordTableHeaderCell = ({
     onMouseMove: handleResizeHandlerMove,
     onMouseUp: handleResizeHandlerEnd,
   });
+
+  useEffect(() => {
+    checkTableWidth();
+  }, [visibleTableColumns.length, resizedFieldKey, checkTableWidth]);
 
   return (
     <StyledColumnHeaderCell

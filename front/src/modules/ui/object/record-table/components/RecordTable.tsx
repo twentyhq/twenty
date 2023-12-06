@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
 
@@ -95,14 +95,6 @@ export const RecordTable = ({
   });
   const { persistViewFields } = useViewFields(viewBarId);
 
-  const [isPlusButtonSticky, setIsPlusButtonSticky] = useState(false);
-
-  const checkTableWidth = () => {
-    const tableClientWidth = tableBodyRef.current?.clientWidth ?? 0;
-    const tableScrollWidth = tableBodyRef.current?.scrollWidth ?? 0;
-    setIsPlusButtonSticky(tableClientWidth < tableScrollWidth);
-  };
-
   return (
     <RecordTableScope
       recordTableScopeId={recordTableId}
@@ -118,8 +110,7 @@ export const RecordTable = ({
                 <StyledTable className="entity-table-cell">
                   <RecordTableHeader
                     createRecord={createRecord}
-                    isPlusButtonSticky={isPlusButtonSticky}
-                    checkTableWidth={checkTableWidth}
+                    tableBodyRef={tableBodyRef}
                   />
                   <RecordTableBodyEffect />
                   <RecordTableBody />
