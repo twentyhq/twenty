@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -12,6 +13,7 @@ import { Person } from '@/people/types/Person';
 import { IconNotes } from '@/ui/display/icon';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -97,6 +99,11 @@ export const CommandMenu = () => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
   };
+
+  const { selectedItemId } = useSelectableList({
+    selectableListId: 'command-menu-list',
+  });
+  const navigate = useNavigate();
 
   useScopedHotkeys(
     'ctrl+k,meta+k',
@@ -186,6 +193,38 @@ export const CommandMenu = () => {
     .concat(people.map((person) => person.id))
     .concat(companies.map((company) => company.id))
     .concat(activities.map((activity) => activity.id));
+
+  useScopedHotkeys(
+    'Enter',
+    () => {
+      closeKeyboardShortcutMenu();
+      const otherCommands = [
+        ...people.map((person) => ({
+          id: person.id,
+          to: `object/person/${person.id}`,
+        })),
+        ...companies.map((company) => ({
+          id: company.id,
+          to: `object/company/${company.id}`,
+        })),
+        ...activities.map((activity) => ({
+          id: activity.id,
+          to: `object/activity/${activity.id}`,
+        })),
+      ] as Command[];
+
+      const selectedCommand = [...commandMenuCommands, ...otherCommands].find(
+        (cmd) => cmd.id === selectedItemId,
+      );
+
+      selectedCommand?.onCommandClick?.();
+      if (selectedCommand?.to) navigate(selectedCommand.to);
+
+      toggleCommandMenu();
+    },
+    AppHotkeyScope.CommandMenu,
+    [toggleCommandMenu, setSearch],
+  );
 
   return (
     isCommandMenuOpened && (

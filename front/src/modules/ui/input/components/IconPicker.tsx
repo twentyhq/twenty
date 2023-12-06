@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
+import { Key } from 'ts-key-enum';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -11,6 +12,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { arrayToChunks } from '~/utils/array/array-to-chunks';
 
 import { IconButton, IconButtonVariant } from '../button/components/IconButton';
@@ -90,6 +92,21 @@ export const IconPicker = ({
   });
 
   const selectedItem = selectedItemId ?? selectedIconKey;
+
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      if (selectedItem) {
+        const itemIndex = iconKeys.indexOf(selectedItem);
+
+        if (itemIndex === -1)
+          onChange({ iconKey: selectedItem, Icon: icons[itemIndex] });
+        closeDropdown();
+      }
+    },
+    IconPickerHotkeyScope.IconPicker,
+    [selectedItem],
+  );
 
   return (
     <DropdownScope dropdownScopeId={dropdownScopeId}>
