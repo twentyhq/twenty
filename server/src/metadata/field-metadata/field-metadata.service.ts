@@ -159,6 +159,15 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw new NotFoundException('Field does not exist');
     }
 
+    if (existingFieldMetadata.isCustom === false) {
+      // We can only update the isActive field for standard fields
+      record = {
+        id: record.id,
+        isActive: record.isActive,
+        workspaceId: record.workspaceId,
+      };
+    }
+
     const objectMetadata =
       await this.objectMetadataService.findOneWithinWorkspace(
         record.workspaceId,
@@ -206,6 +215,25 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     return updatedFieldMetadata;
+  }
+
+  public async findOneOrFail(
+    id: string,
+    options?: FindOneOptions<FieldMetadataEntity>,
+  ) {
+    const fieldMetadata = await this.fieldMetadataRepository.findOne({
+      ...options,
+      where: {
+        ...options?.where,
+        id,
+      },
+    });
+
+    if (!fieldMetadata) {
+      throw new NotFoundException('Field does not exist');
+    }
+
+    return fieldMetadata;
   }
 
   public async findOneWithinWorkspace(
