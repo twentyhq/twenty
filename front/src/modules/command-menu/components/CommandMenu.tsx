@@ -3,7 +3,9 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { Activity } from '@/activities/types/Activity';
 import { CommandMenuSelectableListEffect } from '@/command-menu/components/CommandMenuSelectableListEffect';
+import { Company } from '@/companies/types/Company';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Person } from '@/people/types/Person';
@@ -130,7 +132,7 @@ export const CommandMenu = () => {
     limit: 3,
   });
 
-  const { records: companies } = useFindManyRecords<Person>({
+  const { records: companies } = useFindManyRecords<Company>({
     skip: !isCommandMenuOpened,
     objectNameSingular: 'company',
     filter: {
@@ -139,7 +141,7 @@ export const CommandMenu = () => {
     limit: 3,
   });
 
-  const { records: activities } = useFindManyRecords<Person>({
+  const { records: activities } = useFindManyRecords<Activity>({
     skip: !isCommandMenuOpened,
     objectNameSingular: 'activity',
     filter: {

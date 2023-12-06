@@ -1,9 +1,6 @@
-import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import {
   RecordTableRow,
@@ -11,43 +8,40 @@ import {
 } from '@/ui/object/record-table/components/RecordTableRow';
 import { RowIdContext } from '@/ui/object/record-table/contexts/RowIdContext';
 import { RowIndexContext } from '@/ui/object/record-table/contexts/RowIndexContext';
-import { useRecordTableScopedStates } from '@/ui/object/record-table/hooks/internal/useRecordTableScopedStates';
+import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { isFetchingRecordTableDataState } from '@/ui/object/record-table/states/isFetchingRecordTableDataState';
-
-import { useRecordTable } from '../hooks/useRecordTable';
-import { tableRowIdsState } from '../states/tableRowIdsState';
+import { tableRowIdsState } from '@/ui/object/record-table/states/tableRowIdsState';
+import { getRecordTableScopedStates } from '@/ui/object/record-table/utils/getRecordTableScopedStates';
 
 export const RecordTableBody = () => {
-  const { ref: lastTableRowRef, inView: lastTableRowIsVisible } = useInView();
+  const { scopeId } = useRecordTable();
+
+  const onLastRowVisible = useRecoilCallback(
+    ({ set }) =>
+      async (inView: boolean) => {
+        const { tableLastRowVisibleState } = getRecordTableScopedStates({
+          recordTableScopeId: scopeId,
+        });
+
+        set(tableLastRowVisibleState, inView);
+      },
+    [scopeId],
+  );
+
+  const { ref: lastTableRowRef } = useInView({
+    onChange: onLastRowVisible,
+  });
 
   const tableRowIds = useRecoilValue(tableRowIdsState);
 
-  const { scopeId: objectNamePlural } = useRecordTable();
-  const { tableLastRowVisibleState } = useRecordTableScopedStates();
-  const setTableLastRowVisible = useSetRecoilState(tableLastRowVisibleState);
-
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural,
-  });
-
-  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
-    {
-      objectNameSingular,
-    },
-  );
-
   const [isFetchingMoreObjects] = useRecoilState(
-    isFetchingMoreRecordsFamilyState(foundObjectMetadataItem?.namePlural),
+    isFetchingMoreRecordsFamilyState(scopeId),
   );
 
   const isFetchingRecordTableData = useRecoilValue(
     isFetchingRecordTableDataState,
   );
   const lastRowId = tableRowIds[tableRowIds.length - 1];
-
-  useEffect(() => {
-    setTableLastRowVisible(lastTableRowIsVisible);
-  }, [lastTableRowIsVisible, setTableLastRowVisible]);
 
   if (isFetchingRecordTableData) {
     return <></>;
@@ -60,7 +54,11 @@ export const RecordTableBody = () => {
           <RowIndexContext.Provider value={rowIndex}>
             <RecordTableRow
               key={rowId}
-              ref={rowId === lastRowId ? lastTableRowRef : undefined}
+              ref={
+                rowId === lastRowId && rowIndex > 30
+                  ? lastTableRowRef
+                  : undefined
+              }
               rowId={rowId}
             />
           </RowIndexContext.Provider>
