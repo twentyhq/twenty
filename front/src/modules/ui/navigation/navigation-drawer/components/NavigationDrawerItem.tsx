@@ -4,11 +4,11 @@ import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { navigationDrawerState } from '@/ui/navigation/states/navigationDrawerState';
+import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-type NavItemProps = {
+type NavigationDrawerItemProps = {
   className?: string;
   label: string;
   to?: string;
@@ -49,20 +49,24 @@ const StyledItem = styled.div<StyledItemProps>`
   display: flex;
   font-family: 'Inter';
   font-size: ${({ theme }) => theme.font.size.md};
+  gap: ${({ theme }) => theme.spacing(2)};
   margin-bottom: calc(${({ theme }) => theme.spacing(1)} / 2);
   padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(1)};
   padding-right: ${({ theme }) => theme.spacing(1)};
   padding-top: ${({ theme }) => theme.spacing(1)};
   pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
+
   :hover {
     background: ${({ theme }) => theme.background.transparent.light};
     color: ${(props) =>
       props.danger ? props.theme.color.red : props.theme.font.color.primary};
   }
+
   :hover .keyboard-shortcuts {
     visibility: visible;
   }
+
   user-select: none;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
@@ -72,7 +76,6 @@ const StyledItem = styled.div<StyledItemProps>`
 
 const StyledItemLabel = styled.div`
   display: flex;
-  margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledSoonPill = styled.div`
@@ -114,7 +117,7 @@ const StyledKeyBoardShortcut = styled.div`
   visibility: hidden;
 `;
 
-const NavItem = ({
+export const NavigationDrawerItem = ({
   className,
   label,
   Icon,
@@ -125,15 +128,17 @@ const NavItem = ({
   soon,
   count,
   keyboard,
-}: NavItemProps) => {
+}: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
-  const setNavigationDrawer = useSetRecoilState(navigationDrawerState);
+  const setIsNavigationDrawerOpen = useSetRecoilState(
+    isNavigationDrawerOpenState,
+  );
 
   const handleItemClick = () => {
     if (isMobile) {
-      setNavigationDrawer('');
+      setIsNavigationDrawerOpen(false);
     }
 
     if (onClick) {
@@ -165,5 +170,3 @@ const NavItem = ({
     </StyledItem>
   );
 };
-
-export default NavItem;

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-type NavTitleProps = {
+type NavigationDrawerSectionTitleProps = {
   label: string;
 };
 
@@ -15,8 +15,6 @@ const StyledTitle = styled.div`
   text-transform: uppercase;
 `;
 
-const NavTitle = ({ label }: NavTitleProps) => (
-  <StyledTitle>{label}</StyledTitle>
-);
-
-export default NavTitle;
+export const NavigationDrawerSectionTitle = ({
+  label,
+}: NavigationDrawerSectionTitleProps) => <StyledTitle>{label}</StyledTitle>;

@@ -13,14 +13,12 @@ import {
   IconUserCircle,
   IconUsers,
 } from '@/ui/display/icon';
-import NavItem from '@/ui/navigation/navigation-drawer/components/NavItem';
-import NavTitle from '@/ui/navigation/navigation-drawer/components/NavTitle';
-import SubMenuNavbar from '@/ui/navigation/navigation-drawer/components/SubMenuNavbar';
+import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
-export const SettingsNavbar = () => {
+export const SettingsNavigationDrawerItems = () => {
   const navigate = useNavigate();
-
   const { signOut } = useAuth();
 
   const handleLogout = useCallback(() => {
@@ -35,9 +33,9 @@ export const SettingsNavbar = () => {
   });
 
   return (
-    <SubMenuNavbar backButtonTitle="Settings" displayVersion={true}>
-      <NavTitle label="User" />
-      <NavItem
+    <>
+      <NavigationDrawerSectionTitle label="User" />
+      <NavigationDrawerItem
         label="Profile"
         to="/settings/profile"
         Icon={IconUserCircle}
@@ -48,7 +46,7 @@ export const SettingsNavbar = () => {
           })
         }
       />
-      <NavItem
+      <NavigationDrawerItem
         label="Appearance"
         to="/settings/profile/appearance"
         Icon={IconColorSwatch}
@@ -59,9 +57,8 @@ export const SettingsNavbar = () => {
           })
         }
       />
-
       {isMessagingEnabled && (
-        <NavItem
+        <NavigationDrawerItem
           label="Accounts"
           to="/settings/accounts"
           Icon={IconAt}
@@ -69,8 +66,8 @@ export const SettingsNavbar = () => {
         />
       )}
 
-      <NavTitle label="Workspace" />
-      <NavItem
+      <NavigationDrawerSectionTitle label="Workspace" />
+      <NavigationDrawerItem
         label="General"
         to="/settings/workspace"
         Icon={IconSettings}
@@ -81,7 +78,7 @@ export const SettingsNavbar = () => {
           })
         }
       />
-      <NavItem
+      <NavigationDrawerItem
         label="Members"
         to="/settings/workspace-members"
         Icon={IconUsers}
@@ -92,7 +89,7 @@ export const SettingsNavbar = () => {
           })
         }
       />
-      <NavItem
+      <NavigationDrawerItem
         label="Data model"
         to="/settings/objects"
         Icon={IconHierarchy2}
@@ -103,7 +100,7 @@ export const SettingsNavbar = () => {
           })
         }
       />
-      <NavItem
+      <NavigationDrawerItem
         label="Developers"
         to="/settings/developers/api-keys"
         Icon={IconRobot}
@@ -115,8 +112,12 @@ export const SettingsNavbar = () => {
         }
       />
 
-      <NavTitle label="Other" />
-      <NavItem label="Logout" onClick={handleLogout} Icon={IconLogout} />
-    </SubMenuNavbar>
+      <NavigationDrawerSectionTitle label="Other" />
+      <NavigationDrawerItem
+        label="Logout"
+        onClick={handleLogout}
+        Icon={IconLogout}
+      />
+    </>
   );
 };

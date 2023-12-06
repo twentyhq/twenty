@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { IconChevronLeft } from '@/ui/display/icon/index';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 
-type NavBackButtonProps = {
+type NavigationDrawerBackButtonProps = {
   title: string;
 };
 
@@ -30,7 +30,9 @@ const StyledContainer = styled.div`
   justify-content: space-between;
 `;
 
-const NavBackButton = ({ title }: NavBackButtonProps) => {
+export const NavigationDrawerBackButton = ({
+  title,
+}: NavigationDrawerBackButtonProps) => {
   const navigate = useNavigate();
   const navigationMemorizedUrl = useRecoilValue(navigationMemorizedUrlState);
 
@@ -47,5 +49,3 @@ const NavBackButton = ({ title }: NavBackButtonProps) => {
     </StyledContainer>
   );
 };
-
-export default NavBackButton;
