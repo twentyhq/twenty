@@ -6,7 +6,7 @@ import { TokenService } from 'src/core/auth/services/token.service';
 import { ApiRestQueryBuilderFactory } from 'src/core/api-rest/api-rest-query-builder/api-rest-query-builder.factory';
 
 describe('ApiRestService', () => {
-  let service;
+  let service: ApiRestService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
