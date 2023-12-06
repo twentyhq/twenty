@@ -18,6 +18,30 @@ export const addConnectedAccount: WorkspaceMigrationTableAction[] = [
         action: WorkspaceMigrationColumnActionType.CREATE,
         defaultValue: "''",
       },
+      {
+        columnName: 'accessToken',
+        columnType: 'varchar',
+        action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
+      },
+      {
+        columnName: 'refreshToken',
+        columnType: 'varchar',
+        action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
+      },
+      {
+        columnName: 'externalScopes',
+        columnType: 'varchar',
+        action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: "''",
+      },
+      {
+        columnName: 'hasEmailScope',
+        columnType: 'boolean',
+        action: WorkspaceMigrationColumnActionType.CREATE,
+        defaultValue: 'false',
+      }
     ],
   },
 ];
