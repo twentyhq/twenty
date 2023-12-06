@@ -14,7 +14,7 @@ import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metad
 import { TokenService } from 'src/core/auth/services/token.service';
 
 describe('ApiRestQueryBuilderFactory', () => {
-  let service: ApiRestQueryBuilderFactory;
+  let service;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

@@ -1,13 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-
-type FieldValue =
-  | string
-  | boolean
-  | number
-  | FieldValue[]
-  | { [key: string]: FieldValue };
+import { FieldValue } from 'src/core/api-rest/types/api-rest-field-value.type';
 
 export const formatFieldValue = (
   value: string,

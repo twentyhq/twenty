@@ -4,7 +4,7 @@ import { Request } from 'express';
 
 @Injectable()
 export class LimitInputFactory {
-  create(request: Request) {
+  create(request: Request): number {
     if (!request.query.limit) {
       return 60;
     }

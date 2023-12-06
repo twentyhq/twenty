@@ -15,6 +15,8 @@ import { UpdateVariablesFactory } from 'src/core/api-rest/api-rest-query-builder
 import { GetVariablesFactory } from 'src/core/api-rest/api-rest-query-builder/factories/get-variables.factory';
 import { parsePath } from 'src/core/api-rest/api-rest-query-builder/utils/parse-path.utils';
 import { computeDepth } from 'src/core/api-rest/api-rest-query-builder/utils/compute-depth.utils';
+import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
+import { ApiRestQuery } from 'src/core/api-rest/types/api-rest-query.type';
 
 @Injectable()
 export class ApiRestQueryBuilderFactory {
@@ -32,7 +34,10 @@ export class ApiRestQueryBuilderFactory {
     private readonly tokenService: TokenService,
   ) {}
 
-  async getObjectMetadata(request: Request) {
+  async getObjectMetadata(request: Request): Promise<{
+    objectMetadataItems: ObjectMetadataEntity[];
+    objectMetadataItem: ObjectMetadataEntity;
+  }> {
     const workspaceId = await this.tokenService.verifyApiKeyToken(request);
 
     const objectMetadataItems =
@@ -74,7 +79,7 @@ export class ApiRestQueryBuilderFactory {
     };
   }
 
-  async delete(request: Request) {
+  async delete(request: Request): Promise<ApiRestQuery> {
     const objectMetadata = await this.getObjectMetadata(request);
 
     const { id } = parsePath(request);
@@ -91,7 +96,7 @@ export class ApiRestQueryBuilderFactory {
     };
   }
 
-  async create(request) {
+  async create(request): Promise<ApiRestQuery> {
     const objectMetadata = await this.getObjectMetadata(request);
 
     const depth = computeDepth(request);
@@ -102,7 +107,7 @@ export class ApiRestQueryBuilderFactory {
     };
   }
 
-  async update(request) {
+  async update(request): Promise<ApiRestQuery> {
     const objectMetadata = await this.getObjectMetadata(request);
 
     const depth = computeDepth(request);
@@ -121,7 +126,7 @@ export class ApiRestQueryBuilderFactory {
     };
   }
 
-  async get(request) {
+  async get(request): Promise<ApiRestQuery> {
     const objectMetadata = await this.getObjectMetadata(request);
 
     const depth = computeDepth(request);

@@ -4,7 +4,7 @@ import { capitalize } from 'src/utils/capitalize';
 
 @Injectable()
 export class DeleteQueryFactory {
-  create(objectMetadataItem) {
+  create(objectMetadataItem): string {
     return `
       mutation Delete${capitalize(objectMetadataItem.nameSingular)}($id: ID!) {
         delete${capitalize(objectMetadataItem.nameSingular)}(id: $id) {

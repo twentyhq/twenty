@@ -13,7 +13,7 @@ const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
 
 @Injectable()
 export class OrderByInputFactory {
-  create(request: Request, objectMetadata) {
+  create(request: Request, objectMetadata): RecordOrderBy {
     //?order_by=field_1[AscNullsFirst],field_2[DescNullsLast],field_3
     const orderByQuery = request.query.order_by;
 
@@ -74,6 +74,6 @@ export class OrderByInputFactory {
 
     checkFields(objectMetadata.objectMetadataItem, Object.keys(result));
 
-    return <RecordOrderBy>result;
+    return result;
   }
 }

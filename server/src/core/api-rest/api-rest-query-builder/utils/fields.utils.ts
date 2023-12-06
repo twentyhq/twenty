@@ -1,6 +1,11 @@
 import { BadRequestException } from '@nestjs/common';
 
-export const getFieldType = (objectMetadataItem, fieldName) => {
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+
+export const getFieldType = (
+  objectMetadataItem,
+  fieldName,
+): FieldMetadataType | undefined => {
   for (const itemField of objectMetadataItem.fields) {
     if (fieldName === itemField.name) {
       return itemField.type;
@@ -8,7 +13,7 @@ export const getFieldType = (objectMetadataItem, fieldName) => {
   }
 };
 
-export const checkFields = (objectMetadataItem, fieldNames) => {
+export const checkFields = (objectMetadataItem, fieldNames): void => {
   for (const fieldName of fieldNames) {
     if (
       !objectMetadataItem.fields

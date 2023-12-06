@@ -5,7 +5,7 @@ import { mapFieldMetadataToGraphqlQuery } from 'src/core/api-rest/api-rest-query
 
 @Injectable()
 export class CreateQueryFactory {
-  create(objectMetadata, depth: number | undefined) {
+  create(objectMetadata, depth?: number): string {
     return `
       mutation Create${capitalize(
         objectMetadata.objectMetadataItem.nameSingular,

@@ -7,7 +7,7 @@ export const mapFieldMetadataToGraphqlQuery = (
   objectMetadataItems,
   field,
   maxDepthForRelations = DEFAULT_DEPTH_VALUE,
-): any => {
+): string | undefined => {
   if (maxDepthForRelations <= 0) {
     return '';
   }

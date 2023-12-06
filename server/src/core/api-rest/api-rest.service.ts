@@ -6,6 +6,8 @@ import { Request } from 'express';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { ApiRestQueryBuilderFactory } from 'src/core/api-rest/api-rest-query-builder/api-rest-query-builder.factory';
 import { TokenService } from 'src/core/auth/services/token.service';
+import { ApiRestResponse } from 'src/core/api-rest/types/api-rest-response.type';
+import { ApiRestQuery } from 'src/core/api-rest/types/api-rest-query.type';
 
 @Injectable()
 export class ApiRestService {
@@ -15,7 +17,10 @@ export class ApiRestService {
     private readonly apiRestQueryBuilderFactory: ApiRestQueryBuilderFactory,
   ) {}
 
-  async callGraphql(request: Request, data) {
+  async callGraphql(
+    request: Request,
+    data: ApiRestQuery,
+  ): Promise<ApiRestResponse> {
     return await axios.post(
       `${request.protocol}://${request.get('host')}/graphql`,
       data,
@@ -27,7 +32,7 @@ export class ApiRestService {
     );
   }
 
-  async get(request: Request) {
+  async get(request: Request): Promise<ApiRestResponse> {
     try {
       const data = await this.apiRestQueryBuilderFactory.get(request);
 
@@ -37,7 +42,7 @@ export class ApiRestService {
     }
   }
 
-  async delete(request: Request) {
+  async delete(request: Request): Promise<ApiRestResponse> {
     try {
       const data = await this.apiRestQueryBuilderFactory.delete(request);
 
@@ -47,7 +52,7 @@ export class ApiRestService {
     }
   }
 
-  async create(request: Request) {
+  async create(request: Request): Promise<ApiRestResponse> {
     try {
       const data = await this.apiRestQueryBuilderFactory.create(request);
 
@@ -57,7 +62,7 @@ export class ApiRestService {
     }
   }
 
-  async update(request: Request) {
+  async update(request: Request): Promise<ApiRestResponse> {
     try {
       const data = await this.apiRestQueryBuilderFactory.update(request);
 

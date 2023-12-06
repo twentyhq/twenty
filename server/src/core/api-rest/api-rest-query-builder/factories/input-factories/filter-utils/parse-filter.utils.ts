@@ -7,6 +7,7 @@ import {
   getFieldType,
 } from 'src/core/api-rest/api-rest-query-builder/utils/fields.utils';
 import { formatFieldValue } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/filter-utils/format-field-values.utils';
+import { FieldValue } from 'src/core/api-rest/types/api-rest-field-value.type';
 
 enum Conjunctions {
   or = 'or',
@@ -14,7 +15,10 @@ enum Conjunctions {
   not = 'not',
 }
 
-export const parseFilter = (filterQuery: string, objectMetadataItem) => {
+export const parseFilter = (
+  filterQuery: string,
+  objectMetadataItem,
+): Record<string, FieldValue> => {
   const result = {};
   const match = filterQuery.match(
     `^(${Object.values(Conjunctions).join('|')})((.+))$`,

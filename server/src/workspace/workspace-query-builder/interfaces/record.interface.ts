@@ -17,5 +17,5 @@ export enum OrderByDirection {
 }
 
 export type RecordOrderBy = {
-  [Property in keyof Record]: OrderByDirection;
+  [Property in keyof Record]?: OrderByDirection;
 };

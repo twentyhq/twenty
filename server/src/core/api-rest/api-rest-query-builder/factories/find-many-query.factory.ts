@@ -5,7 +5,7 @@ import { mapFieldMetadataToGraphqlQuery } from 'src/core/api-rest/api-rest-query
 
 @Injectable()
 export class FindManyQueryFactory {
-  create(objectMetadata, depth: number | undefined) {
+  create(objectMetadata, depth?: number): string {
     return `
       query FindMany${capitalize(objectMetadata.objectMetadataItem.namePlural)}(
         $filter: ${capitalize(
