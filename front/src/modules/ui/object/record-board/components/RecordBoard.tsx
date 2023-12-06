@@ -28,7 +28,11 @@ export type RecordBoardProps = {
   boardOptions: BoardOptions;
   onColumnAdd?: (boardColumn: BoardColumnDefinition) => void;
   onColumnDelete?: (boardColumnId: string) => void;
-  onEditColumnTitle: (columnId: string, title: string, color: string) => void;
+  onEditColumnTitle: (params: {
+    columnId: string;
+    title: string;
+    color: string;
+  }) => void;
 };
 
 const StyledBoard = styled.div`

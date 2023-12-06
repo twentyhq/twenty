@@ -51,7 +51,11 @@ type RecordBoardColumnProps = {
   recordBoardOptions: BoardOptions;
   recordBoardColumnTotal: number;
   onDelete?: (columnId: string) => void;
-  onTitleEdit: (columnId: string, title: string, color: string) => void;
+  onTitleEdit: (params: {
+    columnId: string;
+    title: string;
+    color: string;
+  }) => void;
 };
 
 const BoardColumnCardsContainer = ({
@@ -82,10 +86,6 @@ export const RecordBoardColumn = ({
     recordBoardCardIdsByColumnIdFamilyState(recordBoardColumnId),
   );
 
-  const handleTitleEdit = (title: string, color: string) => {
-    onTitleEdit(recordBoardColumnId, title, color);
-  };
-
   const isFirstColumn = columnDefinition.position === 0;
 
   return (
@@ -95,6 +95,8 @@ export const RecordBoardColumn = ({
         columnDefinition: columnDefinition,
         isFirstColumn: columnDefinition.position === 0,
         isLastColumn: columnDefinition.position === recordBoardColumnTotal - 1,
+        onTitleEdit: ({ title, color }) =>
+          onTitleEdit({ columnId: recordBoardColumnId, title, color }),
       }}
     >
       <Droppable droppableId={recordBoardColumnId}>
@@ -104,7 +106,6 @@ export const RecordBoardColumn = ({
               recordBoardColumnId={recordBoardColumnId}
               columnDefinition={columnDefinition}
               onDelete={onDelete}
-              onTitleEdit={handleTitleEdit}
             />
             <BoardColumnCardsContainer droppableProvided={droppableProvided}>
               {cardIds.map((cardId, index) => (
