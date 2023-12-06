@@ -7,7 +7,7 @@ import {
   RecordOrderBy,
 } from 'src/workspace/workspace-query-builder/interfaces/record.interface';
 
-import { checkFields } from 'src/core/api-rest/utils/metadata-query.utils';
+import { checkFields } from 'src/core/api-rest/api-rest-query-builder/utils/fields.utils';
 
 const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
 

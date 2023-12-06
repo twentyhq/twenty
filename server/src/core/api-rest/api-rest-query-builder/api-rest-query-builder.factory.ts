@@ -13,8 +13,8 @@ import { DeleteVariablesFactory } from 'src/core/api-rest/api-rest-query-builder
 import { CreateVariablesFactory } from 'src/core/api-rest/api-rest-query-builder/factories/create-variables.factory';
 import { UpdateVariablesFactory } from 'src/core/api-rest/api-rest-query-builder/factories/update-variables.factory';
 import { GetVariablesFactory } from 'src/core/api-rest/api-rest-query-builder/factories/get-variables.factory';
-
-const ALLOWED_DEPTH_VALUES = [1, 2];
+import { parsePath } from 'src/core/api-rest/api-rest-query-builder/utils/parse-path.utils';
+import { computeDepth } from 'src/core/api-rest/api-rest-query-builder/utils/compute-depth.utils';
 
 @Injectable()
 export class ApiRestQueryBuilderFactory {
@@ -38,7 +38,7 @@ export class ApiRestQueryBuilderFactory {
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
 
-    const { object: parsedObject } = this.parsePath(request);
+    const { object: parsedObject } = parsePath(request);
 
     const [objectMetadata] = objectMetadataItems.filter(
       (object) => object.namePlural === parsedObject,
@@ -66,45 +66,10 @@ export class ApiRestQueryBuilderFactory {
     };
   }
 
-  parsePath(request: Request): { object: string; id?: string } {
-    const queryAction = request.path.replace('/rest/', '').split('/');
-
-    if (queryAction.length > 2) {
-      throw new BadRequestException(
-        `Query path '${request.path}' invalid. Valid examples: /rest/companies/id or /rest/companies`,
-      );
-    }
-
-    if (queryAction.length === 1) {
-      return { object: queryAction[0] };
-    }
-
-    return { object: queryAction[0], id: queryAction[1] };
-  }
-
-  computeDepth(request: Request): number | undefined {
-    if (!request.query.depth) {
-      return undefined;
-    }
-    const depth = +request.query.depth;
-
-    if (isNaN(depth) || !ALLOWED_DEPTH_VALUES.includes(depth)) {
-      throw new BadRequestException(
-        `'depth=${
-          request.query.depth
-        }' parameter invalid. Allowed values are ${ALLOWED_DEPTH_VALUES.join(
-          ', ',
-        )}`,
-      );
-    }
-
-    return depth;
-  }
-
   async delete(request: Request) {
     const objectMetadata = await this.getObjectMetadata(request);
 
-    const { id } = this.parsePath(request);
+    const { id } = parsePath(request);
 
     if (!id) {
       throw new BadRequestException(
@@ -121,7 +86,7 @@ export class ApiRestQueryBuilderFactory {
   async create(request) {
     const objectMetadata = await this.getObjectMetadata(request);
 
-    const depth = this.computeDepth(request);
+    const depth = computeDepth(request);
 
     return {
       query: this.createQueryFactory.create(objectMetadata, depth),
@@ -132,9 +97,9 @@ export class ApiRestQueryBuilderFactory {
   async update(request) {
     const objectMetadata = await this.getObjectMetadata(request);
 
-    const depth = this.computeDepth(request);
+    const depth = computeDepth(request);
 
-    const { id } = this.parsePath(request);
+    const { id } = parsePath(request);
 
     if (!id) {
       throw new BadRequestException(
@@ -151,9 +116,9 @@ export class ApiRestQueryBuilderFactory {
   async get(request) {
     const objectMetadata = await this.getObjectMetadata(request);
 
-    const depth = this.computeDepth(request);
+    const depth = computeDepth(request);
 
-    const { id } = this.parsePath(request);
+    const { id } = parsePath(request);
 
     return {
       query: id

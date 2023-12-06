@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { capitalize } from 'src/utils/capitalize';
-import { mapFieldMetadataToGraphqlQuery } from 'src/core/api-rest/utils/map-field-metadata-to-graphql-query.utils';
+import { mapFieldMetadataToGraphqlQuery } from 'src/core/api-rest/api-rest-query-builder/utils/map-field-metadata-to-graphql-query.utils';
 
 @Injectable()
 export class UpdateQueryFactory {

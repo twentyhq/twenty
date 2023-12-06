@@ -1,11 +1,11 @@
 import {
   checkFields,
   getFieldType,
-} from 'src/core/api-rest/utils/metadata-query.utils';
-import { objectMetadataItem } from 'src/core/api-rest/utils/__tests__/utils';
+} from 'src/core/api-rest/api-rest-query-builder/utils/fields.utils';
+import { objectMetadataItem } from 'src/core/api-rest/api-rest-query-builder/utils/__tests__/utils';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
-describe('MetadataQueryUtils', () => {
+describe('FieldUtils', () => {
   describe('getFieldType', () => {
     it('should get field type', () => {
       expect(getFieldType(objectMetadataItem, 'fieldNumber')).toEqual(
