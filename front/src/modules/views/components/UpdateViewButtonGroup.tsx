@@ -39,8 +39,6 @@ export const UpdateViewButtonGroup = ({
 
   const canPersistView = canPersistFilters || canPersistSorts;
 
-  const handleArrowDownButtonClick = useCallback(() => {}, []);
-
   const handleCreateViewButtonClick = useCallback(() => {
     setViewEditMode('create');
     onViewEditModeChange?.();
@@ -62,11 +60,7 @@ export const UpdateViewButtonGroup = ({
           <StyledContainer>
             <ButtonGroup size="small" accent="blue">
               <Button title="Update view" onClick={handleViewSubmit} />
-              <Button
-                size="small"
-                Icon={IconChevronDown}
-                onClick={handleArrowDownButtonClick}
-              />
+              <Button size="small" Icon={IconChevronDown} />
             </ButtonGroup>
           </StyledContainer>
         }

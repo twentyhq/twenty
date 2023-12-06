@@ -43,12 +43,14 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         logging: true,
         schema: 'public',
       });
+
       await dataSource.initialize();
 
       await seedCoreSchema(dataSource, this.workspaceId);
       await seedMetadataSchema(dataSource);
     } catch (error) {
       console.error(error);
+
       return;
     }
 

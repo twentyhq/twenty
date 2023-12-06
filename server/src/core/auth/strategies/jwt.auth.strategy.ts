@@ -41,6 +41,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     const workspace = await this.workspaceRepository.findOneBy({
       id: payload.workspaceId ?? payload.sub,
     });
+
     if (!workspace) {
       throw new UnauthorizedException();
     }
@@ -66,6 +67,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     }
 
     let user;
+
     if (payload.workspaceId) {
       user = await this.userRepository.findOneBy({
         id: payload.sub,

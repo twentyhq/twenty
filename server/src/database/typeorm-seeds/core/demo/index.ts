@@ -18,6 +18,7 @@ export const seedCoreSchema = async (
   workspaceId: string,
 ) => {
   const schemaName = 'core';
+
   await seedWorkspaces(workspaceDataSource, schemaName, workspaceId);
   await seedUsers(workspaceDataSource, schemaName, workspaceId);
   await seedFeatureFlags(workspaceDataSource, schemaName, workspaceId);
@@ -28,6 +29,7 @@ export const deleteCoreSchema = async (
   workspaceId: string,
 ) => {
   const schemaName = 'core';
+
   await deleteUsersByWorkspace(workspaceDataSource, schemaName, workspaceId);
   await deleteFeatureFlags(workspaceDataSource, schemaName, workspaceId);
   // deleteWorkspaces should be last

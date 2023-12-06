@@ -1,9 +1,9 @@
+import { useContext } from 'react';
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import { tableRowIdsState } from '@/ui/object/record-table/states/tableRowIdsState';
-import { getRecordTableScopedStates } from '@/ui/object/record-table/utils/getRecordTableScopedStates';
+import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { ColumnContext } from '../contexts/ColumnContext';
 import { useRecordTableScopedStates } from '../hooks/internal/useRecordTableScopedStates';
@@ -21,52 +21,53 @@ type RecordTableRowProps = {
   rowId: string;
 };
 
+const StyledPlaceholder = styled.td`
+  height: 30px;
+`;
+
 export const RecordTableRow = ({ rowId }: RecordTableRowProps) => {
-  const { visibleTableColumnsSelector, scopeId } = useRecordTableScopedStates();
-
-  const onLastRowVisible = useRecoilCallback(
-    ({ set }) =>
-      async (inView: boolean) => {
-        const { tableLastRowVisibleState } = getRecordTableScopedStates({
-          recordTableScopeId: scopeId,
-        });
-
-        set(tableLastRowVisibleState, inView);
-      },
-    [scopeId],
-  );
-
-  const tableRowIds = useRecoilValue(tableRowIdsState);
-  const lastRowId = tableRowIds[tableRowIds.length - 1];
-
-  const { ref: lastTableRowRef } = useInView({
-    onChange: onLastRowVisible,
-  });
+  const { visibleTableColumnsSelector } = useRecordTableScopedStates();
 
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
 
   const { currentRowSelected } = useCurrentRowSelected();
 
+  const scrollWrapperRef = useContext(ScrollWrapperContext);
+
+  const { ref: elementRef, inView } = useInView({
+    root: scrollWrapperRef.current,
+    rootMargin: '1000px',
+  });
+
   return (
     <StyledRow
-      ref={rowId === lastRowId ? lastTableRowRef : undefined}
+      ref={elementRef}
       data-testid={`row-id-${rowId}`}
       selected={currentRowSelected}
       data-selectable-id={rowId}
     >
-      <td>
-        <CheckboxCell />
-      </td>
-      {[...visibleTableColumns]
-        .sort((columnA, columnB) => columnA.position - columnB.position)
-        .map((column, columnIndex) => {
-          return (
-            <ColumnContext.Provider value={column} key={column.fieldMetadataId}>
-              <RecordTableCell cellIndex={columnIndex} />
-            </ColumnContext.Provider>
-          );
-        })}
-      <td></td>
+      {inView ? (
+        <>
+          <td>
+            <CheckboxCell />
+          </td>
+          {[...visibleTableColumns]
+            .sort((columnA, columnB) => columnA.position - columnB.position)
+            .map((column, columnIndex) => {
+              return (
+                <ColumnContext.Provider
+                  value={column}
+                  key={column.fieldMetadataId}
+                >
+                  <RecordTableCell cellIndex={columnIndex} />
+                </ColumnContext.Provider>
+              );
+            })}
+          <td></td>
+        </>
+      ) : (
+        <StyledPlaceholder />
+      )}
     </StyledRow>
   );
 };

@@ -29,6 +29,7 @@ export class DataSeedDemoWorkspaceCommand extends CommandRunner {
         logging: true,
         schema: 'public',
       });
+
       await dataSource.initialize();
       const demoWorkspaceIds = this.environmentService.getDemoWorkspaceIds();
 
@@ -46,6 +47,7 @@ export class DataSeedDemoWorkspaceCommand extends CommandRunner {
       }
     } catch (error) {
       console.error(error);
+
       return;
     }
   }
