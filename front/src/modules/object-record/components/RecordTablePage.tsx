@@ -54,7 +54,12 @@ export const RecordTablePage = () => {
 
   return (
     <PageContainer>
-      <PageHeader title="Objects" Icon={IconBuildingSkyscraper}>
+      <PageHeader
+        title={
+          objectNamePlural.charAt(0).toUpperCase() + objectNamePlural.slice(1)
+        }
+        Icon={IconBuildingSkyscraper}
+      >
         <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
         <PageAddButton onClick={handleAddButtonClick} />
       </PageHeader>
