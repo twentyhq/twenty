@@ -9,7 +9,7 @@ import { mockedUserJWT } from '../src/testing/mock-data/jwt';
 import { lightTheme, darkTheme } from '../src/modules/ui/theme/constants/theme';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-initialize();
+initialize({ onUnhandledRequest: 'bypass' });
 
 const preview: Preview = {
   decorators: [
