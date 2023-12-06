@@ -1,4 +1,4 @@
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
@@ -21,11 +21,12 @@ export const useObjectRecordTable = () => {
       objectNameSingular,
     },
   );
-
-  const { tableFiltersState, tableSortsState } = useRecordTableScopedStates();
+  const { tableFiltersState, tableSortsState, tableLastRowVisibleState } =
+    useRecordTableScopedStates();
 
   const tableFilters = useRecoilValue(tableFiltersState);
   const tableSorts = useRecoilValue(tableSortsState);
+  const setLastRowVisible = useSetRecoilState(tableLastRowVisibleState);
 
   const filter = turnFiltersIntoWhereClause(
     tableFilters,
@@ -36,16 +37,21 @@ export const useObjectRecordTable = () => {
     foundObjectMetadataItem?.fields ?? [],
   );
 
-  const { records, loading, fetchMoreRecords } = useFindManyRecords({
-    objectNameSingular,
-    filter,
-    orderBy,
-  });
+  const { records, loading, fetchMoreRecords, queryStateIdentifier } =
+    useFindManyRecords({
+      objectNameSingular,
+      filter,
+      orderBy,
+      onCompleted: () => {
+        setLastRowVisible(false);
+      },
+    });
 
   return {
     records,
     loading,
     fetchMoreRecords,
+    queryStateIdentifier,
     setRecordTableData,
   };
 };

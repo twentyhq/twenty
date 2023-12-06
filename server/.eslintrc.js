@@ -79,8 +79,8 @@ module.exports = {
     "@typescript-eslint/consistent-type-imports": ["error", { "prefer": "no-type-imports" }],
     "@stylistic/linebreak-style": ["error", "unix"],
     "@stylistic/lines-between-class-members": ["error", { "enforce": [
-      { blankLine: "always", prev: "method", next: "method" }
-    ]}],
+        { blankLine: "always", prev: "method", next: "method" }
+      ]}],
     "@stylistic/padding-line-between-statements": [
       "error",
       { blankLine: "always", prev: "*", next: "return" },

@@ -13,6 +13,8 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { TokenExpiredError } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
+import { Request } from 'express';
+import { ExtractJwt } from 'passport-jwt';
 
 import { JwtPayload } from 'src/core/auth/strategies/jwt.auth.strategy';
 import { assert } from 'src/utils/assert';
@@ -140,6 +142,20 @@ export class TokenService {
     });
 
     return { token };
+  }
+
+  async verifyApiKeyToken(request: Request) {
+    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
+
+    if (!token) {
+      throw new UnauthorizedException('missing authentication token');
+    }
+    const payload = await this.verifyJwt(
+      token,
+      this.environmentService.getAccessTokenSecret(),
+    );
+
+    return payload.workspaceId;
   }
 
   async verifyLoginToken(loginToken: string): Promise<string> {

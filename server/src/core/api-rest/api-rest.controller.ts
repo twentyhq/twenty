@@ -1,38 +1,39 @@
-import { Controller, Delete, Get, Post, Put, Req } from '@nestjs/common';
+import { Controller, Delete, Get, Post, Put, Req, Res } from '@nestjs/common';
 
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
 import { ApiRestService } from 'src/core/api-rest/api-rest.service';
+import { ApiRestResponse } from 'src/core/api-rest/types/api-rest-response.type';
+
+const handleResult = (res: Response, result: ApiRestResponse) => {
+  if (result.data.error) {
+    res.status(400).send(result.data);
+  } else {
+    res.send(result.data);
+  }
+};
 
 @Controller('rest/*')
 export class ApiRestController {
   constructor(private readonly apiRestService: ApiRestService) {}
 
   @Get()
-  async handleApiGet(@Req() request: Request): Promise<object> {
-    const result = await this.apiRestService.get(request);
-
-    return result.data;
+  async handleApiGet(@Req() request: Request, @Res() res: Response) {
+    handleResult(res, await this.apiRestService.get(request));
   }
 
   @Delete()
-  async handleApiDelete(@Req() request: Request): Promise<object> {
-    const result = await this.apiRestService.delete(request);
-
-    return result.data;
+  async handleApiDelete(@Req() request: Request, @Res() res: Response) {
+    handleResult(res, await this.apiRestService.delete(request));
   }
 
   @Post()
-  async handleApiPost(@Req() request: Request): Promise<object> {
-    const result = await this.apiRestService.create(request);
-
-    return result.data;
+  async handleApiPost(@Req() request: Request, @Res() res: Response) {
+    handleResult(res, await this.apiRestService.create(request));
   }
 
   @Put()
-  async handleApiPut(@Req() request: Request): Promise<object> {
-    const result = await this.apiRestService.update(request);
-
-    return result.data;
+  async handleApiPut(@Req() request: Request, @Res() res: Response) {
+    handleResult(res, await this.apiRestService.update(request));
   }
 }
