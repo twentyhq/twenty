@@ -60,6 +60,7 @@ export {
   IconList,
   IconLogout,
   IconMail,
+  IconMailCog,
   IconMap,
   IconMinus,
   IconMoneybag,

@@ -277,6 +277,10 @@ const StyledButton = styled.button<
   }
 `;
 
+const StyledSoonPill = styled(SoonPill)`
+  margin-left: auto;
+`;
+
 export const Button = ({
   className,
   Icon,
@@ -307,7 +311,7 @@ export const Button = ({
     >
       {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
-      {soon && <SoonPill />}
+      {soon && <StyledSoonPill />}
     </StyledButton>
   );
 };

@@ -37,6 +37,10 @@ const StyledIconCheck = styled(IconCheck)`
   margin-left: auto;
 `;
 
+const StyledSoonPill = styled(SoonPill)`
+  margin-left: auto;
+`;
+
 type SettingsObjectTypeCardProps = {
   prefixIcon?: React.ReactNode;
   title: string;
@@ -68,7 +72,7 @@ export const SettingsObjectTypeCard = ({
     >
       {prefixIcon}
       <StyledTag color={color} text={title} />
-      {soon && <SoonPill />}
+      {soon && <StyledSoonPill />}
       {!disabled && selected && <StyledIconCheck size={theme.icon.size.md} />}
     </StyledObjectTypeCard>
   );
