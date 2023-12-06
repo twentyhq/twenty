@@ -3,7 +3,6 @@ import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useF
 
 import { MultipleFiltersDropdownFilterOnFilterChangedEffect } from './MultipleFiltersDropdownFilterOnFilterChangedEffect';
 import { ObjectFilterDropdownDateSearchInput } from './ObjectFilterDropdownDateSearchInput';
-import { ObjectFilterDropdownEntitySearchInput } from './ObjectFilterDropdownEntitySearchInput';
 import { ObjectFilterDropdownEntitySelect } from './ObjectFilterDropdownEntitySelect';
 import { ObjectFilterDropdownFilterSelect } from './ObjectFilterDropdownFilterSelect';
 import { ObjectFilterDropdownNumberSearchInput } from './ObjectFilterDropdownNumberSearchInput';
@@ -37,9 +36,6 @@ export const MultipleFiltersDropdownContent = () => {
             ) && <ObjectFilterDropdownNumberSearchInput />}
             {filterDefinitionUsedInDropdown.type === 'DATE_TIME' && (
               <ObjectFilterDropdownDateSearchInput />
-            )}
-            {filterDefinitionUsedInDropdown.type === 'RELATION' && (
-              <ObjectFilterDropdownEntitySearchInput />
             )}
             {filterDefinitionUsedInDropdown.type === 'RELATION' && (
               <ObjectFilterDropdownEntitySelect />

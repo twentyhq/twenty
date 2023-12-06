@@ -25,6 +25,8 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     setObjectFilterDropdownSearchInput,
     objectFilterDropdownSelectedEntityId,
     setObjectFilterDropdownSelectedEntityId,
+    objectFilterDropdownSelectedRecordIds,
+    setObjectFilterDropdownSelectedRecordIds,
     isObjectFilterDropdownOperandSelectUnfolded,
     setIsObjectFilterDropdownOperandSelectUnfolded,
     isObjectFilterDropdownUnfolded,
@@ -48,6 +50,7 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
   const resetFilter = useCallback(() => {
     setObjectFilterDropdownSearchInput('');
     setObjectFilterDropdownSelectedEntityId(null);
+    setObjectFilterDropdownSelectedRecordIds([]);
     setSelectedFilter(undefined);
     setFilterDefinitionUsedInDropdown(null);
     setSelectedOperandInDropdown(null);
@@ -55,6 +58,7 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     setFilterDefinitionUsedInDropdown,
     setObjectFilterDropdownSearchInput,
     setObjectFilterDropdownSelectedEntityId,
+    setObjectFilterDropdownSelectedRecordIds,
     setSelectedFilter,
     setSelectedOperandInDropdown,
   ]);
@@ -69,6 +73,8 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     setObjectFilterDropdownSearchInput,
     objectFilterDropdownSelectedEntityId,
     setObjectFilterDropdownSelectedEntityId,
+    objectFilterDropdownSelectedRecordIds,
+    setObjectFilterDropdownSelectedRecordIds,
     isObjectFilterDropdownOperandSelectUnfolded,
     setIsObjectFilterDropdownOperandSelectUnfolded,
     isObjectFilterDropdownUnfolded,

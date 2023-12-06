@@ -1,58 +1,66 @@
-import { useQuery } from '@apollo/client';
-
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
-import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
-import { ObjectFilterDropdownEntitySearchSelect } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownEntitySearchSelect';
+import { MultipleRecordSelectDropdown } from '@/object-record/select/components/MultipleRecordSelectDropdown';
+import { useRecordSearchQuery } from '@/object-record/select/hooks/useRecordSearchQuery';
+import { RecordToSelect } from '@/object-record/select/types/RecordToSelect';
 import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 
 export const ObjectFilterDropdownEntitySelect = () => {
   const {
     filterDefinitionUsedInDropdown,
     objectFilterDropdownSearchInput,
+    selectedOperandInDropdown,
     objectFilterDropdownSelectedEntityId,
+    setObjectFilterDropdownSelectedRecordIds,
+    objectFilterDropdownSelectedRecordIds,
+    selectFilter,
   } = useFilterDropdown();
 
-  const objectMetadataNameSingular =
+  const objectNameSingular =
     filterDefinitionUsedInDropdown?.relationObjectMetadataNameSingular ?? '';
 
-  // TODO: refactor useFilteredSearchEntityQuery
-  const { findManyRecordsQuery } = useObjectMetadataItem({
-    objectNameSingular: objectMetadataNameSingular,
-  });
+  const { loading, filteredSelectedRecords, recordsToSelect, selectedRecords } =
+    useRecordSearchQuery({
+      searchFilterText: objectFilterDropdownSearchInput,
+      selectedIds: objectFilterDropdownSelectedRecordIds,
+      objectNameSingular,
+      limit: 10,
+    });
 
-  const useFindManyQuery = (options: any) =>
-    useQuery(findManyRecordsQuery, options);
+  const handleMultipleRecordSelectChange = (
+    recordToSelect: RecordToSelect,
+    newSelectedValue: boolean,
+  ) => {
+    setObjectFilterDropdownSelectedRecordIds((prevSelectedIds) => {
+      if (newSelectedValue) {
+        return [...prevSelectedIds, recordToSelect.id];
+      }
 
-  const { identifiersMapper, searchQuery } = useRelationPicker();
+      return prevSelectedIds.filter((id) => id !== recordToSelect.id);
+    });
 
-  const filteredSearchEntityResults = useFilteredSearchEntityQuery({
-    queryHook: useFindManyQuery,
-    filters: [
-      {
-        fieldNames:
-          searchQuery?.computeFilterFields?.(objectMetadataNameSingular) ?? [],
-        filter: objectFilterDropdownSearchInput,
-      },
-    ],
-    orderByField: 'createdAt',
-    selectedIds: objectFilterDropdownSelectedEntityId
-      ? [objectFilterDropdownSelectedEntityId]
-      : [],
-    mappingFunction: (record: any) =>
-      identifiersMapper?.(record, objectMetadataNameSingular),
-    objectNameSingular: objectMetadataNameSingular,
-  });
+    const selectedIdsDisplayName = recordsToSelect
+      .filter((record) => record.isSelected)
+      .map((record) => record.name)
+      .join(', ');
 
-  if (filterDefinitionUsedInDropdown?.type !== 'RELATION') {
-    return null;
-  }
+    // Set filter
+    if (filterDefinitionUsedInDropdown && selectedOperandInDropdown) {
+      selectFilter({
+        definition: filterDefinitionUsedInDropdown,
+        operand: selectedOperandInDropdown,
+        displayValue: selectedIdsDisplayName,
+        fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
+        value: JSON.stringify(objectFilterDropdownSelectedRecordIds),
+      });
+    }
+  };
 
   return (
-    <>
-      <ObjectFilterDropdownEntitySearchSelect
-        entitiesForSelect={filteredSearchEntityResults}
-      />
-    </>
+    <MultipleRecordSelectDropdown
+      recordsToSelect={recordsToSelect}
+      filteredSelectedRecords={filteredSelectedRecords}
+      selectedRecords={selectedRecords}
+      onChange={handleMultipleRecordSelectChange}
+      searchFilter={objectFilterDropdownSearchInput}
+    />
   );
 };
