@@ -197,6 +197,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           if (fieldMetadata.type === FieldMetadataType.RELATION) {
             acc[fieldMetadata.objectMetadataId] = fieldMetadata;
           }
+
           return acc;
         },
         {},

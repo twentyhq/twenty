@@ -21,6 +21,7 @@ export class BeforeCreateOneField<T extends CreateFieldInput>
     }
 
     instance.input.workspaceId = workspaceId;
+
     return instance;
   }
 }

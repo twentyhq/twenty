@@ -33,8 +33,10 @@ export class MessageQueueModule {
           if (config.type === MessageQueueType.PgBoss) {
             const boss = new PgBossDriver(config.options);
             await boss.init();
+
             return boss;
           }
+
           return new BullMQDriver(config.options);
         },
         inject: options.inject || [],

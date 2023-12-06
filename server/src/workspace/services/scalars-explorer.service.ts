@@ -11,6 +11,7 @@ export class ScalarsExplorerService {
   constructor() {
     this.scalarImplementations = scalars.reduce((acc, scalar) => {
       acc[scalar.name] = scalar;
+
       return acc;
     }, {});
   }

@@ -28,6 +28,7 @@ export class WorkspaceResolver {
   async currentWorkspace(@AuthWorkspace() { id }: Workspace) {
     const workspace = await this.workspaceService.findById(id);
     assert(workspace, 'User not found');
+
     return workspace;
   }
 

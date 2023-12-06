@@ -285,6 +285,7 @@ export class ApiRestService {
       }
       throw Error(`object '${parsedObject}' not found. ${hint}`);
     }
+
     return {
       objectMetadataItems,
       objectMetadataItem: objectMetadata,
@@ -295,6 +296,7 @@ export class ApiRestService {
     if (!(filterQuery.includes('(') && filterQuery.includes(')'))) {
       return `${DEFAULT_FILTER_CONJUNCTION}(${filterQuery})`;
     }
+
     return filterQuery;
   }
 
@@ -311,6 +313,7 @@ export class ApiRestService {
             }`;
       throw Error(`'filter' invalid. ${hint} missing in the query`);
     }
+
     return;
   }
 
@@ -337,6 +340,7 @@ export class ApiRestService {
     if (currentPredicates.length) {
       predicates.push(currentPredicates);
     }
+
     return predicates;
   }
 
@@ -360,8 +364,10 @@ export class ApiRestService {
       } else {
         result[conjunction] = subResult;
       }
+
       return result;
     }
+
     return this.parseSimpleFilter(filterQuery, objectMetadataItem);
   }
 
@@ -387,6 +393,7 @@ export class ApiRestService {
     this.checkFields(objectMetadataItem, fields, 'filter');
     const fieldType = this.getFieldType(objectMetadataItem, fields[0]);
     const formattedValue = this.formatFieldValue(value, fieldType);
+
     return fields.reverse().reduce(
       (acc, currentValue) => {
         return { [currentValue]: acc };
@@ -402,6 +409,7 @@ export class ApiRestService {
     if (fieldType === 'BOOLEAN') {
       return value.toLowerCase() === 'true';
     }
+
     return value;
   }
 
@@ -416,6 +424,7 @@ export class ApiRestService {
     }
     this.checkFilterQuery(rawFilterQuery);
     const filterQuery = this.addDefaultConjunctionIfMissing(rawFilterQuery);
+
     return this.parseStringFilter(filterQuery, objectMetadataItem);
   }
 
@@ -448,6 +457,7 @@ export class ApiRestService {
       }
     }
     this.checkFields(objectMetadataItem, Object.keys(result), 'order_by');
+
     return <RecordOrderBy>result;
   }
 
@@ -489,6 +499,7 @@ export class ApiRestService {
     if (!Number.isInteger(limitParsed)) {
       throw Error(`limit '${limitQuery}' is invalid. Should be an integer`);
     }
+
     return limitParsed;
   }
 
@@ -497,6 +508,7 @@ export class ApiRestService {
     if (typeof cursorQuery !== 'string') {
       return undefined;
     }
+
     return cursorQuery;
   }
 
@@ -519,6 +531,7 @@ export class ApiRestService {
     if (queryAction.length === 1) {
       return [queryAction[0], undefined];
     }
+
     return queryAction;
   }
 
@@ -527,6 +540,7 @@ export class ApiRestService {
     if (!token) {
       throw Error('missing authentication token');
     }
+
     return verify(token, this.environmentService.getAccessTokenSecret())[
       'workspaceId'
     ];
@@ -544,6 +558,7 @@ export class ApiRestService {
         )}`,
       );
     }
+
     return depth;
   }
 
@@ -583,6 +598,7 @@ export class ApiRestService {
               objectMetadata.objectMetadataItem,
             ),
       };
+
       return await this.callGraphql(request, data);
     } catch (err) {
       return { data: { error: `${err}` } };
@@ -606,6 +622,7 @@ export class ApiRestService {
           id: this.parseObject(request)[1],
         },
       };
+
       return await this.callGraphql(request, data);
     } catch (err) {
       return { data: { error: `${err}` } };
@@ -626,6 +643,7 @@ export class ApiRestService {
           data: request.body,
         },
       };
+
       return await this.callGraphql(request, data);
     } catch (err) {
       return { data: { error: `${err}` } };
@@ -655,6 +673,7 @@ export class ApiRestService {
           data: request.body,
         },
       };
+
       return await this.callGraphql(request, data);
     } catch (err) {
       return { data: { error: `${err}` } };

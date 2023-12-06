@@ -49,6 +49,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
       await seedMetadataSchema(dataSource);
     } catch (error) {
       console.error(error);
+
       return;
     }
 

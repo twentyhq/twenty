@@ -14,6 +14,7 @@ export class GoogleProviderEnabledGuard implements CanActivate {
     }
 
     new GoogleStrategy(this.environmentService);
+
     return true;
   }
 }

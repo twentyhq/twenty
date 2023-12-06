@@ -18,9 +18,11 @@ export const demoObjectsPrefillData = async (
       id: object.id,
       fields: object.fields.reduce((acc, field) => {
         acc[field.name] = field.id;
+
         return acc;
       }, {}),
     };
+
     return acc;
   }, {});
 

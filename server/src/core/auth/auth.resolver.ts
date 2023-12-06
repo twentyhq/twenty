@@ -47,6 +47,7 @@ export class AuthResolver {
     const { exists } = await this.authService.checkUserExists(
       checkUserExistsInput.email,
     );
+
     return { exists };
   }
 

@@ -11,11 +11,13 @@ export class OptionalJwtAuthGuard extends AuthGuard(['jwt']) {
 
   getRequest(context: ExecutionContext) {
     const request = getRequest(context);
+
     return request;
   }
 
   handleRequest(err, user, info) {
     if (err || info) return null;
+
     return user;
   }
 }

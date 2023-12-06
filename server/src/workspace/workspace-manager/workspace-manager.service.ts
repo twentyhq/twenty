@@ -182,6 +182,7 @@ export class WorkspaceManagerService {
     const createdObjectMetadataByNameSingular = createdObjectMetadata.reduce(
       (acc, curr) => {
         acc[curr.nameSingular] = curr;
+
         return acc;
       },
       {},
@@ -326,6 +327,7 @@ export class WorkspaceManagerService {
           if (value === null || typeof value !== 'object') {
             return [key, value];
           }
+
           return [key, filterIgnoredProperties(value, fieldPropertiesToIgnore)];
         }),
       );

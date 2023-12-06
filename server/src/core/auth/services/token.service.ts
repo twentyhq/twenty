@@ -134,6 +134,7 @@ export class TokenService {
       expiresIn,
       jwtid: apiKeyId,
     });
+
     return { token };
   }
 

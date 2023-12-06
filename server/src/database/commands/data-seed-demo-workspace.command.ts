@@ -46,6 +46,7 @@ export class DataSeedDemoWorkspaceCommand extends CommandRunner {
       }
     } catch (error) {
       console.error(error);
+
       return;
     }
   }
