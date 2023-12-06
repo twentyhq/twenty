@@ -25,7 +25,13 @@ export const parseFilter = (
   );
 
   if (match) {
-    const conjunction = match[1];
+    const conjunction = match?.[1];
+
+    if (!conjunction) {
+      throw new BadRequestException(
+        'Error while matching filter query. Conjunction not found',
+      );
+    }
     const subResult = parseFilterContent(filterQuery).map((elem) =>
       parseFilter(elem, objectMetadataItem),
     );
