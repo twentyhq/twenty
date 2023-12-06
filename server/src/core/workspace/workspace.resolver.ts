@@ -27,7 +27,9 @@ export class WorkspaceResolver {
   @Query(() => Workspace)
   async currentWorkspace(@AuthWorkspace() { id }: Workspace) {
     const workspace = await this.workspaceService.findById(id);
+
     assert(workspace, 'User not found');
+
     return workspace;
   }
 

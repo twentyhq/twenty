@@ -16,11 +16,13 @@ export class BeforeCreateOneField<T extends CreateFieldInput>
     context: any,
   ): Promise<CreateOneInputType<T>> {
     const workspaceId = context?.req?.user?.workspace?.id;
+
     if (!workspaceId) {
       throw new UnauthorizedException();
     }
 
     instance.input.workspaceId = workspaceId;
+
     return instance;
   }
 }

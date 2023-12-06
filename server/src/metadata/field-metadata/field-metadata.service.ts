@@ -129,6 +129,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         if (position > acc) {
           return position;
         }
+
         return acc;
       }, -1);
 

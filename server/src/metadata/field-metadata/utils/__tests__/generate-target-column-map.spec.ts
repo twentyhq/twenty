@@ -10,6 +10,7 @@ describe('generateTargetColumnMap', () => {
       false,
       'name',
     );
+
     expect(textMap).toEqual({ value: 'name' });
 
     const linkMap = generateTargetColumnMap(
@@ -17,6 +18,7 @@ describe('generateTargetColumnMap', () => {
       false,
       'website',
     );
+
     expect(linkMap).toEqual({ label: 'websiteLabel', url: 'websiteUrl' });
 
     const currencyMap = generateTargetColumnMap(
@@ -24,6 +26,7 @@ describe('generateTargetColumnMap', () => {
       true,
       'price',
     );
+
     expect(currencyMap).toEqual({
       amountMicros: '_priceAmountMicros',
       currencyCode: '_priceCurrencyCode',

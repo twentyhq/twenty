@@ -7,6 +7,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 describe('ApiRestService', () => {
   let service: ApiRestService;
   const objectMetadataItem = { fields: [{ name: 'field', type: 'NUMBER' }] };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [

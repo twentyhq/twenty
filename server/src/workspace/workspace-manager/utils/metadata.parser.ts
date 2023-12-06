@@ -12,6 +12,7 @@ export class MetadataParser {
 
     if (objectMetadata) {
       const fields = Object.values(fieldMetadata);
+
       return {
         ...objectMetadata,
         workspaceId,
