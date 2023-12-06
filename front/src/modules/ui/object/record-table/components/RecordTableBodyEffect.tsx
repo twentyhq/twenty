@@ -1,28 +1,40 @@
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useObjectRecordTable } from '@/object-record/hooks/useObjectRecordTable';
+import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { useRecordTableScopedStates } from '@/ui/object/record-table/hooks/internal/useRecordTableScopedStates';
-import { isDefined } from '~/utils/isDefined';
 
 export const RecordTableBodyEffect = () => {
   const {
     fetchMoreRecords: fetchMoreObjects,
     records,
     setRecordTableData,
+    queryStateIdentifier,
   } = useObjectRecordTable();
   const { tableLastRowVisibleState } = useRecordTableScopedStates();
-  const tableLastRowVisible = useRecoilValue(tableLastRowVisibleState);
+  const [tableLastRowVisible, setTableLastRowVisible] = useRecoilState(
+    tableLastRowVisibleState,
+  );
+
+  const isFetchingMoreObjects = useRecoilValue(
+    isFetchingMoreRecordsFamilyState(queryStateIdentifier),
+  );
 
   useEffect(() => {
     setRecordTableData(records);
   }, [records, setRecordTableData]);
 
   useEffect(() => {
-    if (tableLastRowVisible && isDefined(fetchMoreObjects)) {
+    if (tableLastRowVisible && !isFetchingMoreObjects) {
       fetchMoreObjects();
     }
-  }, [fetchMoreObjects, tableLastRowVisible]);
+  }, [
+    fetchMoreObjects,
+    isFetchingMoreObjects,
+    setTableLastRowVisible,
+    tableLastRowVisible,
+  ]);
 
   return <></>;
 };

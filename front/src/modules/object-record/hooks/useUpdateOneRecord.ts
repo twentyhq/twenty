@@ -7,21 +7,16 @@ import { capitalize } from '~/utils/string/capitalize';
 export const useUpdateOneRecord = <T>({
   objectNameSingular,
 }: ObjectMetadataItemIdentifier) => {
-  const {
-    objectMetadataItem,
-    updateOneRecordMutation,
-    getRecordFromCache,
-    findManyRecordsQuery,
-  } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const { objectMetadataItem, updateOneRecordMutation, getRecordFromCache } =
+    useObjectMetadataItem({
+      objectNameSingular,
+    });
 
   const apolloClient = useApolloClient();
 
   const updateOneRecord = async ({
     idToUpdate,
     input,
-    forceRefetch,
   }: {
     idToUpdate: string;
     input: Record<string, any>;
