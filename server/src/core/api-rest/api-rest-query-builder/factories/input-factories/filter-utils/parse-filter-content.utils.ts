@@ -1,37 +1,42 @@
 export const parseFilterContent = (filterQuery: string): string[] => {
-  let bracketsCounter = 0;
-  let doubleQuoteClosed = true;
-  let singleQuoteClosed = true;
+  let isWithinBrackets = false;
+  let isWithinDoubleQuotes = false;
+  let isWithinSingleQuotes = false;
   let parenthesisCounter = 0;
   const predicates: string[] = [];
   let currentPredicates = '';
 
   for (const c of filterQuery) {
-    if (c === ')') parenthesisCounter--;
+    let shouldPersistCharacter = parenthesisCounter >= 1;
 
-    if (c === '[') bracketsCounter++;
+    if (c === '(') {
+      parenthesisCounter++;
+    }
 
-    if (c === ']') bracketsCounter--;
+    if (c === ')') {
+      parenthesisCounter--;
+      shouldPersistCharacter = parenthesisCounter >= 1;
+    }
 
-    if (c === '"') doubleQuoteClosed = !doubleQuoteClosed;
+    if (['[', ']'].includes(c)) isWithinBrackets = !isWithinBrackets;
 
-    if (c === "'") singleQuoteClosed = !singleQuoteClosed;
+    if (c === '"') isWithinDoubleQuotes = !isWithinDoubleQuotes;
+
+    if (c === "'") isWithinSingleQuotes = !isWithinSingleQuotes;
 
     if (
       c === ',' &&
       parenthesisCounter === 1 &&
-      bracketsCounter === 0 &&
-      doubleQuoteClosed &&
-      singleQuoteClosed
+      !isWithinBrackets &&
+      !isWithinDoubleQuotes &&
+      !isWithinSingleQuotes
     ) {
       predicates.push(currentPredicates);
       currentPredicates = '';
-      continue;
+      shouldPersistCharacter = false;
     }
 
-    if (parenthesisCounter >= 1) currentPredicates += c;
-
-    if (c === '(') parenthesisCounter++;
+    if (shouldPersistCharacter) currentPredicates += c;
   }
 
   predicates.push(currentPredicates);
