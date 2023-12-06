@@ -15,6 +15,7 @@ import { TokenService } from 'src/core/auth/services/token.service';
 
 describe('ApiRestQueryBuilderFactory', () => {
   let service: ApiRestQueryBuilderFactory;
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -32,6 +33,7 @@ describe('ApiRestQueryBuilderFactory', () => {
         { provide: TokenService, useValue: {} },
       ],
     }).compile();
+
     service = module.get<ApiRestQueryBuilderFactory>(
       ApiRestQueryBuilderFactory,
     );

@@ -12,6 +12,7 @@ export const checkFilterQuery = (filterQuery: string): void => {
         : `${Math.abs(diff)} open bracket${
             Math.abs(diff) > 1 ? 's are' : ' is'
           }`;
+
     throw new BadRequestException(
       `'filter' invalid. ${hint} missing in the query`,
     );

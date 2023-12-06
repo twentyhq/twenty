@@ -37,6 +37,7 @@ export const parseBaseFilter = (
   let fillFields = true;
   let fillComparator = false;
   let fillValue = false;
+
   for (const c of baseFilter) {
     if (c === '[') {
       fillFields = false;
@@ -69,5 +70,6 @@ export const parseBaseFilter = (
       ).join(',')}`,
     );
   }
+
   return { fields: fields.split('.'), comparator, value };
 };

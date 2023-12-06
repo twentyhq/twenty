@@ -10,21 +10,25 @@ class TestClass {
 describe('CastToPositiveNumber Decorator', () => {
   it('should cast number to number', () => {
     const transformedClass = plainToClass(TestClass, { numberProperty: 123 });
+
     expect(transformedClass.numberProperty).toBe(123);
   });
 
   it('should cast string to number', () => {
     const transformedClass = plainToClass(TestClass, { numberProperty: '123' });
+
     expect(transformedClass.numberProperty).toBe(123);
   });
 
   it('should cast null to undefined', () => {
     const transformedClass = plainToClass(TestClass, { numberProperty: null });
+
     expect(transformedClass.numberProperty).toBe(undefined);
   });
 
   it('should cast negative number to undefined', () => {
     const transformedClass = plainToClass(TestClass, { numberProperty: -12 });
+
     expect(transformedClass.numberProperty).toBe(undefined);
   });
 
@@ -32,6 +36,7 @@ describe('CastToPositiveNumber Decorator', () => {
     const transformedClass = plainToClass(TestClass, {
       numberProperty: undefined,
     });
+
     expect(transformedClass.numberProperty).toBe(undefined);
   });
 
@@ -39,6 +44,7 @@ describe('CastToPositiveNumber Decorator', () => {
     const transformedClass = plainToClass(TestClass, {
       numberProperty: 'toto',
     });
+
     expect(transformedClass.numberProperty).toBe(undefined);
   });
 
@@ -46,6 +52,7 @@ describe('CastToPositiveNumber Decorator', () => {
     const transformedClass = plainToClass(TestClass, {
       numberProperty: '-123',
     });
+
     expect(transformedClass.numberProperty).toBe(undefined);
   });
 });

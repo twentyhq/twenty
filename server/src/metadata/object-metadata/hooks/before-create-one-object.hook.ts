@@ -22,6 +22,7 @@ export class BeforeCreateOneObject<T extends CreateObjectInput>
     }
 
     instance.input.workspaceId = workspaceId;
+
     return instance;
   }
 }

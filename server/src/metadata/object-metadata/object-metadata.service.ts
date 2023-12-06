@@ -197,6 +197,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           if (fieldMetadata.type === FieldMetadataType.RELATION) {
             acc[fieldMetadata.objectMetadataId] = fieldMetadata;
           }
+
           return acc;
         },
         {},
@@ -282,6 +283,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       ("objectMetadataId", "type", "name")
       VALUES ('${createdObjectMetadata.id}', 'table', 'All ${createdObjectMetadata.namePlural}') RETURNING *`,
     );
+
     createdObjectMetadata.fields.map(async (field, index) => {
       if (field.name === 'id') {
         return;

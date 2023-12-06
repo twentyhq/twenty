@@ -19,11 +19,13 @@ export const parseFilter = (filterQuery: string, objectMetadataItem) => {
   const match = filterQuery.match(
     `^(${Object.values(Conjunctions).join('|')})((.+))$`,
   );
+
   if (match) {
     const conjunction = match[1];
     const subResult = parseFilterContent(filterQuery).map((elem) =>
       parseFilter(elem, objectMetadataItem),
     );
+
     if (conjunction === Conjunctions.not) {
       if (subResult.length > 1) {
         throw new BadRequestException(
@@ -34,12 +36,15 @@ export const parseFilter = (filterQuery: string, objectMetadataItem) => {
     } else {
       result[conjunction] = subResult;
     }
+
     return result;
   }
   const { fields, comparator, value } = parseBaseFilter(filterQuery);
+
   checkFields(objectMetadataItem, fields);
   const fieldType = getFieldType(objectMetadataItem, fields[0]);
   const formattedValue = formatFieldValue(value, fieldType, comparator);
+
   return fields.reverse().reduce(
     (acc, currentValue) => {
       return { [currentValue]: acc };

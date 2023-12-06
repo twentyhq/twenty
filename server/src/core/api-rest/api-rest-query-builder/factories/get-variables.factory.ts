@@ -15,6 +15,7 @@ export class GetVariablesFactory {
     private readonly orderByInputFactory: OrderByInputFactory,
     private readonly filterInputFactory: FilterInputFactory,
   ) {}
+
   create(id: string | undefined, request: Request, objectMetadata) {
     if (id) {
       return { filter: { id: { eq: id } } };

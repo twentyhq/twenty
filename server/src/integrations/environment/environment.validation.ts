@@ -155,6 +155,7 @@ export const validate = (config: Record<string, unknown>) => {
   const validatedConfig = plainToClass(EnvironmentVariables, config);
 
   const errors = validateSync(validatedConfig);
+
   assert(!errors.length, errors.toString());
 
   return validatedConfig;

@@ -21,6 +21,7 @@ export const formatFieldValue = (
       );
     }
     const stringValues = value.substring(1, value.length - 1);
+
     return stringValues
       .split(',')
       .map((value) => formatFieldValue(value, fieldType));
@@ -41,5 +42,6 @@ export const formatFieldValue = (
   ) {
     return value.substring(1, value.length - 1);
   }
+
   return value;
 };

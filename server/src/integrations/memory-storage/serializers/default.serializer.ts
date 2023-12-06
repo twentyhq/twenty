@@ -7,6 +7,7 @@ export class MemoryStorageDefaultSerializer<T>
     if (typeof item !== 'string') {
       throw new Error('DefaultSerializer can only serialize strings');
     }
+
     return item;
   }
 

@@ -7,6 +7,7 @@ import { ApiRestQueryBuilderFactory } from 'src/core/api-rest/api-rest-query-bui
 
 describe('ApiRestService', () => {
   let service: ApiRestService;
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
