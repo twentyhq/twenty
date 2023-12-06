@@ -14,20 +14,17 @@ const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
 @Injectable()
 export class OrderByInputFactory {
   create(request: Request, objectMetadata): RecordOrderBy {
-    //?order_by=field_1[AscNullsFirst],field_2[DescNullsLast],field_3
     const orderByQuery = request.query.order_by;
 
     if (typeof orderByQuery !== 'string') {
       return {};
     }
 
+    //orderByQuery = field_1[AscNullsFirst],field_2[DescNullsLast],field_3
     const orderByItems = orderByQuery.split(',');
-
     let result = {};
-
     let itemDirection = '';
-
-    let itemFieldsString = '';
+    let itemFields = '';
 
     for (const orderByItem of orderByItems) {
       // orderByItem -> field_1[AscNullsFirst]
@@ -48,18 +45,16 @@ export class OrderByInputFactory {
         }
 
         itemDirection = direction;
-
-        itemFieldsString = fieldsString;
+        itemFields = fieldsString;
       } else {
         // orderByItem -> field_3
         itemDirection = DEFAULT_ORDER_DIRECTION;
-
-        itemFieldsString = orderByItem;
+        itemFields = orderByItem;
       }
 
       let fieldResult = {};
 
-      itemFieldsString
+      itemFields
         .split('.')
         .reverse()
         .forEach((field) => {
@@ -69,6 +64,7 @@ export class OrderByInputFactory {
             fieldResult[field] = itemDirection;
           }
         }, itemDirection);
+
       result = { ...result, ...fieldResult };
     }
 
