@@ -8,7 +8,7 @@ import {
 } from 'src/core/api-rest/utils/metadata-query.utils';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
-enum FILTER_COMPARATORS {
+enum FilterComparators {
   eq = 'eq',
   neq = 'neq',
   in = 'in',
@@ -20,9 +20,13 @@ enum FILTER_COMPARATORS {
   startsWith = 'startsWith',
   like = 'like',
   ilike = 'ilike',
+
+  // Not handled rigth now
+  // regex = 'regex',
+  // iregex = 'iregex',
 }
 
-enum CONJUNCTIONS {
+enum Conjunctions {
   or = 'or',
   and = 'and',
   not = 'not',
@@ -167,10 +171,10 @@ export class FilterInputFactory {
       }
       previousC = c;
     }
-    if (!Object.keys(FILTER_COMPARATORS).includes(comparator)) {
+    if (!Object.keys(FilterComparators).includes(comparator)) {
       throw new BadRequestException(
         `'filter' invalid for '${filterString}', comparator ${comparator} not in ${Object.keys(
-          FILTER_COMPARATORS,
+          FilterComparators,
         ).join(',')}`,
       );
     }
@@ -211,14 +215,14 @@ export class FilterInputFactory {
   parseStringFilter(filterQuery, objectMetadataItem) {
     const result = {};
     const match = filterQuery.match(
-      `^(${Object.values(CONJUNCTIONS).join('|')})((.+))$`,
+      `^(${Object.values(Conjunctions).join('|')})((.+))$`,
     );
     if (match) {
       const conjunction = match[1];
       const subResult = this.parseFilterQueryContent(filterQuery).map((elem) =>
         this.parseStringFilter(elem, objectMetadataItem),
       );
-      if (conjunction === CONJUNCTIONS.not) {
+      if (conjunction === Conjunctions.not) {
         if (subResult.length > 1) {
           throw new BadRequestException(
             `'filter' invalid. 'not' conjunction should contain only 1 condition. eg: not(field[eq]:1)`,
