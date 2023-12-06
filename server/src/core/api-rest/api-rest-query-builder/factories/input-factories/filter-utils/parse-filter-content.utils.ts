@@ -25,9 +25,7 @@ export const parseFilterContent = (filterQuery: string): string[] => {
       singleQuoteClosed
     ) {
       predicates.push(currentPredicates);
-
       currentPredicates = '';
-
       continue;
     }
 
