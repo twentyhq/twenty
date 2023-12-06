@@ -89,10 +89,12 @@ export class AuthService {
     const existingUser = await this.userRepository.findOneBy({
       email: email,
     });
+
     assert(!existingUser, 'This user already exists', ForbiddenException);
 
     if (password) {
       const isPasswordValid = PASSWORD_REGEX.test(password);
+
       assert(isPasswordValid, 'Password too weak', BadRequestException);
     }
 
@@ -115,6 +117,7 @@ export class AuthService {
         domainName: '',
         inviteHash: v4(),
       });
+
       workspace = await this.workspaceRepository.save(workspaceToCreate);
       await this.workspaceManagerService.init(workspace.id);
     }

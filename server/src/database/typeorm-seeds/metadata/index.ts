@@ -23,9 +23,11 @@ import { seedPipelineStepRelationMetadata } from 'src/database/typeorm-seeds/met
 import { seedPersonRelationMetadata } from 'src/database/typeorm-seeds/metadata/relation-metadata/person';
 import { seedWorkspaceMemberRelationMetadata } from 'src/database/typeorm-seeds/metadata/relation-metadata/workspace-member';
 import { seedDataSource } from 'src/database/typeorm-seeds/metadata/data-source';
+import { seedWebhookFieldMetadata } from 'src/database/typeorm-seeds/metadata/field-metadata/webhook';
 
 export const seedMetadataSchema = async (workspaceDataSource: DataSource) => {
   const schemaName = 'metadata';
+
   await seedDataSource(workspaceDataSource, schemaName);
   await seedObjectMetadata(workspaceDataSource, schemaName);
 
@@ -33,6 +35,7 @@ export const seedMetadataSchema = async (workspaceDataSource: DataSource) => {
   await seedActivityFieldMetadata(workspaceDataSource, schemaName);
   await seedApiKeyFieldMetadata(workspaceDataSource, schemaName);
   await seedAttachmentFieldMetadata(workspaceDataSource, schemaName);
+  await seedWebhookFieldMetadata(workspaceDataSource, schemaName);
   await seedCommentFieldMetadata(workspaceDataSource, schemaName);
   await seedCompanyFieldMetadata(workspaceDataSource, schemaName);
   await seedFavoriteFieldMetadata(workspaceDataSource, schemaName);

@@ -38,6 +38,7 @@ const bootstrap = async () => {
     }),
   );
   const loggerService = app.get(LoggerService);
+
   app.useLogger(loggerService);
   app.useLogger(app.get(EnvironmentService).getLogLevels());
 

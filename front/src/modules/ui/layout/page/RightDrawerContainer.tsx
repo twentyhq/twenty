@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
-import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/PageHeader';
 import { RightDrawer } from '@/ui/layout/right-drawer/components/RightDrawer';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 
@@ -15,12 +14,11 @@ const StyledMainContainer = styled.div`
   background: ${({ theme }) => theme.background.noisy};
   box-sizing: border-box;
   display: flex;
+  flex: 1 1 auto;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
-  height: calc(
-    100% - ${({ theme }) => theme.spacing(5)} - ${PAGE_BAR_MIN_HEIGHT}px
-  );
-  padding-bottom: ${({ theme }) => theme.spacing(3)};
+  min-height: 0;
+  padding-bottom: ${({ theme }) => theme.spacing(4)};
   padding-right: ${({ theme }) => theme.spacing(3)};
   width: 100%;
 

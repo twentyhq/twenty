@@ -12,7 +12,6 @@ import { ContextMenuEntry } from '@/ui/navigation/context-menu/types/ContextMenu
 import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { RecordTableScopeInternalContext } from '@/ui/object/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { selectedRowIdsSelector } from '@/ui/object/record-table/states/selectors/selectedRowIdsSelector';
-import { tableRowIdsState } from '@/ui/object/record-table/states/tableRowIdsState';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
 type useRecordTableContextMenuEntriesProps = {
@@ -31,7 +30,6 @@ export const useRecordTableContextMenuEntries = (
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
   const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState);
 
-  const setTableRowIds = useSetRecoilState(tableRowIdsState);
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
   const { scopeId: objectNamePlural, resetTableRowSelection } = useRecordTable({
@@ -76,16 +74,11 @@ export const useRecordTableContextMenuEntries = (
       .getValue();
 
     resetTableRowSelection();
-
-    if (deleteOneRecord) {
-      for (const rowId of rowIdsToDelete) {
+    await Promise.all(
+      rowIdsToDelete.map(async (rowId) => {
         await deleteOneRecord(rowId);
-      }
-
-      setTableRowIds((tableRowIds) =>
-        tableRowIds.filter((id) => !rowIdsToDelete.includes(id)),
-      );
-    }
+      }),
+    );
   });
 
   return {

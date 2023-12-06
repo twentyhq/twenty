@@ -40,6 +40,7 @@ describe('serializeDefaultValue', () => {
 
   it('should handle Date static default value', () => {
     const date = new Date('2023-01-01');
+
     expect(serializeDefaultValue(date)).toBe(`'${date.toISOString()}'`);
   });
 });

@@ -97,6 +97,13 @@ export const CreateWorkspace = () => {
     [enqueueSnackBar, navigate, setCurrentWorkspace, updateWorkspace],
   );
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleSubmit(onSubmit)();
+    }
+  };
+
   useScopedHotkeys(
     'enter',
     () => {
@@ -141,6 +148,7 @@ export const CreateWorkspace = () => {
                 onBlur={onBlur}
                 onChange={onChange}
                 error={error?.message}
+                onKeyDown={handleKeyDown}
                 fullWidth
                 disableHotkeys
               />
