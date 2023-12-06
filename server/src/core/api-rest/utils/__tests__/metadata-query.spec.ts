@@ -3,11 +3,14 @@ import {
   getFieldType,
 } from 'src/core/api-rest/utils/metadata-query.utils';
 import { objectMetadataItem } from 'src/core/api-rest/utils/__tests__/utils';
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 describe('MetadataQueryUtils', () => {
   describe('getFieldType', () => {
     it('should get field type', () => {
-      expect(getFieldType(objectMetadataItem, 'fieldNumber')).toEqual('NUMBER');
+      expect(getFieldType(objectMetadataItem, 'fieldNumber')).toEqual(
+        FieldMetadataType.NUMBER,
+      );
     });
   });
 

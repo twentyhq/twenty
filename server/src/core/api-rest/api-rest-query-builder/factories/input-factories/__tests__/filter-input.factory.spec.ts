@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { objectMetadataItem } from 'src/core/api-rest/utils/__tests__/utils';
 import { FilterInputFactory } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/filter-input.factory';
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 describe('FilterInputFactory', () => {
   const objectMetadata = { objectMetadataItem: objectMetadataItem };
@@ -280,27 +281,49 @@ describe('FilterInputFactory', () => {
 
   describe('formatFieldValue', () => {
     it('should format fieldNumber value', () => {
-      expect(service.formatFieldValue('1', 'NUMBER')).toEqual(1);
+      expect(service.formatFieldValue('1', FieldMetadataType.NUMBER)).toEqual(
+        1,
+      );
 
-      expect(service.formatFieldValue('a', 'NUMBER')).toEqual(NaN);
+      expect(service.formatFieldValue('a', FieldMetadataType.NUMBER)).toEqual(
+        NaN,
+      );
 
-      expect(service.formatFieldValue('true', 'BOOLEAN')).toEqual(true);
+      expect(
+        service.formatFieldValue('true', FieldMetadataType.BOOLEAN),
+      ).toEqual(true);
 
-      expect(service.formatFieldValue('True', 'BOOLEAN')).toEqual(true);
+      expect(
+        service.formatFieldValue('True', FieldMetadataType.BOOLEAN),
+      ).toEqual(true);
 
-      expect(service.formatFieldValue('false', 'BOOLEAN')).toEqual(false);
+      expect(
+        service.formatFieldValue('false', FieldMetadataType.BOOLEAN),
+      ).toEqual(false);
 
-      expect(service.formatFieldValue('value', 'TEXT')).toEqual('value');
+      expect(service.formatFieldValue('value', FieldMetadataType.TEXT)).toEqual(
+        'value',
+      );
 
-      expect(service.formatFieldValue('"value"', 'TEXT')).toEqual('value');
+      expect(
+        service.formatFieldValue('"value"', FieldMetadataType.TEXT),
+      ).toEqual('value');
 
-      expect(service.formatFieldValue("'value'", 'TEXT')).toEqual('value');
+      expect(
+        service.formatFieldValue("'value'", FieldMetadataType.TEXT),
+      ).toEqual('value');
 
-      expect(service.formatFieldValue('value', 'DATE_TIME')).toEqual('value');
+      expect(
+        service.formatFieldValue('value', FieldMetadataType.DATE_TIME),
+      ).toEqual('value');
 
-      expect(service.formatFieldValue('"value"', 'DATE_TIME')).toEqual('value');
+      expect(
+        service.formatFieldValue('"value"', FieldMetadataType.DATE_TIME),
+      ).toEqual('value');
 
-      expect(service.formatFieldValue("'value'", 'DATE_TIME')).toEqual('value');
+      expect(
+        service.formatFieldValue("'value'", FieldMetadataType.DATE_TIME),
+      ).toEqual('value');
 
       expect(
         service.formatFieldValue(
@@ -310,7 +333,9 @@ describe('FilterInputFactory', () => {
         ),
       ).toEqual(['2023-12-01T14:23:23.914Z', '2024-12-01T14:23:23.914Z']);
 
-      expect(service.formatFieldValue('[1,2]', 'NUMBER', 'in')).toEqual([1, 2]);
+      expect(
+        service.formatFieldValue('[1,2]', FieldMetadataType.NUMBER, 'in'),
+      ).toEqual([1, 2]);
 
       expect(() =>
         service.formatFieldValue('2024-12-01T14:23:23.914Z', null, 'in'),

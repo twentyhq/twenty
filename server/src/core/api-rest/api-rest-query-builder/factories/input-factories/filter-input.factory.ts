@@ -6,6 +6,7 @@ import {
   checkFields,
   getFieldType,
 } from 'src/core/api-rest/utils/metadata-query.utils';
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 enum FILTER_COMPARATORS {
   eq = 'eq',
@@ -191,10 +192,10 @@ export class FilterInputFactory {
     if (comparator === 'is') {
       return value;
     }
-    if (fieldType === 'NUMBER') {
+    if (fieldType === FieldMetadataType.NUMBER) {
       return parseInt(value);
     }
-    if (fieldType === 'BOOLEAN') {
+    if (fieldType === FieldMetadataType.BOOLEAN) {
       return value.toLowerCase() === 'true';
     }
     if (

@@ -1,3 +1,6 @@
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
+
 const DEFAULT_DEPTH_VALUE = 2;
 
 export const mapFieldMetadataToGraphqlQuery = (
@@ -12,20 +15,20 @@ export const mapFieldMetadataToGraphqlQuery = (
   const fieldType = field.type;
 
   const fieldIsSimpleValue = [
-    'UUID',
-    'TEXT',
-    'PHONE',
-    'DATE_TIME',
-    'EMAIL',
-    'NUMBER',
-    'BOOLEAN',
+    FieldMetadataType.UUID,
+    FieldMetadataType.TEXT,
+    FieldMetadataType.PHONE,
+    FieldMetadataType.DATE_TIME,
+    FieldMetadataType.EMAIL,
+    FieldMetadataType.NUMBER,
+    FieldMetadataType.BOOLEAN,
   ].includes(fieldType);
 
   if (fieldIsSimpleValue) {
     return field.name;
   } else if (
-    fieldType === 'RELATION' &&
-    field.toRelationMetadata?.relationType === 'ONE_TO_MANY'
+    fieldType === FieldMetadataType.RELATION &&
+    field.toRelationMetadata?.relationType === RelationMetadataType.ONE_TO_MANY
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
@@ -37,7 +40,7 @@ export const mapFieldMetadataToGraphqlQuery = (
     {
       id
       ${(relationMetadataItem?.fields ?? [])
-        .filter((field) => field.type !== 'RELATION')
+        .filter((field) => field.type !== FieldMetadataType.RELATION)
         .map((field) =>
           mapFieldMetadataToGraphqlQuery(
             objectMetadataItems,
@@ -48,8 +51,9 @@ export const mapFieldMetadataToGraphqlQuery = (
         .join('\n')}
     }`;
   } else if (
-    fieldType === 'RELATION' &&
-    field.fromRelationMetadata?.relationType === 'ONE_TO_MANY'
+    fieldType === FieldMetadataType.RELATION &&
+    field.fromRelationMetadata?.relationType ===
+      RelationMetadataType.ONE_TO_MANY
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
@@ -63,7 +67,7 @@ export const mapFieldMetadataToGraphqlQuery = (
           node {
             id
             ${(relationMetadataItem?.fields ?? [])
-              .filter((field) => field.type !== 'RELATION')
+              .filter((field) => field.type !== FieldMetadataType.RELATION)
               .map((field) =>
                 mapFieldMetadataToGraphqlQuery(
                   objectMetadataItems,
@@ -75,7 +79,7 @@ export const mapFieldMetadataToGraphqlQuery = (
           }
         }
       }`;
-  } else if (fieldType === 'LINK') {
+  } else if (fieldType === FieldMetadataType.LINK) {
     return `
       ${field.name}
       {
@@ -83,7 +87,7 @@ export const mapFieldMetadataToGraphqlQuery = (
         url
       }
     `;
-  } else if (fieldType === 'CURRENCY') {
+  } else if (fieldType === FieldMetadataType.CURRENCY) {
     return `
       ${field.name}
       {
@@ -91,7 +95,7 @@ export const mapFieldMetadataToGraphqlQuery = (
         currencyCode
       }
     `;
-  } else if (fieldType === 'FULL_NAME') {
+  } else if (fieldType === FieldMetadataType.FULL_NAME) {
     return `
       ${field.name}
       {

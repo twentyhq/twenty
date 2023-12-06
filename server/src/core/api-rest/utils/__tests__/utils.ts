@@ -1,24 +1,26 @@
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+
 export const fieldNumber = {
   name: 'fieldNumber',
-  type: 'NUMBER',
+  type: FieldMetadataType.NUMBER,
   targetColumnMap: { value: 'fieldNumber' },
 };
 
 export const fieldString = {
   name: 'fieldString',
-  type: 'TEXT',
+  type: FieldMetadataType.TEXT,
   targetColumnMap: { value: 'fieldString' },
 };
 
 export const fieldLink = {
   name: 'fieldLink',
-  type: 'LINK',
+  type: FieldMetadataType.LINK,
   targetColumnMap: { label: 'fieldLinkLabel', url: 'fieldLinkUrl' },
 };
 
 export const fieldCurrency = {
   name: 'fieldCurrency',
-  type: 'CURRENCY',
+  type: FieldMetadataType.CURRENCY,
   targetColumnMap: {
     amountMicros: 'fieldCurrencyAmountMicros',
     currencyCode: 'fieldCurrencyCurrencyCode',
