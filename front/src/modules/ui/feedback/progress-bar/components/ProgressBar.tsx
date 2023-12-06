@@ -16,6 +16,12 @@ export type ProgressBarProps = {
   barHeight?: number;
   barColor?: string;
   autoStart?: boolean;
+  className?: string;
+};
+
+export type StyledBarProps = {
+  barHeight?: number;
+  className?: string;
 };
 
 export type ProgressBarControls = AnimationControls & {
@@ -23,7 +29,7 @@ export type ProgressBarControls = AnimationControls & {
   pause: () => Promise<any>;
 };
 
-const StyledBar = styled.div<Pick<ProgressBarProps, 'barHeight'>>`
+const StyledBar = styled.div<StyledBarProps>`
   height: ${({ barHeight }) => barHeight}px;
   overflow: hidden;
   width: 100%;
@@ -43,6 +49,7 @@ export const ProgressBar = forwardRef<ProgressBarControls, ProgressBarProps>(
       barHeight = 24,
       barColor,
       autoStart = true,
+      className,
     },
     ref,
   ) => {
@@ -86,7 +93,7 @@ export const ProgressBar = forwardRef<ProgressBarControls, ProgressBarProps>(
     }, [controls, delay, duration, easing, autoStart, start]);
 
     return (
-      <StyledBar barHeight={barHeight}>
+      <StyledBar className={className} barHeight={barHeight}>
         <StyledBarFilling
           style={{
             originX: 0,

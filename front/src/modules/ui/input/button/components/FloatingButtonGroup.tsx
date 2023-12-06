@@ -13,13 +13,15 @@ const StyledFloatingButtonGroupContainer = styled.div`
 
 export type FloatingButtonGroupProps = Pick<FloatingButtonProps, 'size'> & {
   children: React.ReactElement[];
+  className?: string;
 };
 
 export const FloatingButtonGroup = ({
   children,
   size,
+  className,
 }: FloatingButtonGroupProps) => (
-  <StyledFloatingButtonGroupContainer>
+  <StyledFloatingButtonGroupContainer className={className}>
     {React.Children.map(children, (child, index) => {
       let position: FloatingButtonPosition;
 

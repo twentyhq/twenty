@@ -13,6 +13,7 @@ export type EntityTitleDoubleTextInputProps = {
   firstValuePlaceholder: string;
   secondValuePlaceholder: string;
   onChange: (firstValue: string, secondValue: string) => void;
+  className?: string;
 };
 
 const StyledDoubleTextContainer = styled.div`
@@ -41,6 +42,7 @@ export const EntityTitleDoubleTextInput = ({
   firstValuePlaceholder,
   secondValuePlaceholder,
   onChange,
+  className,
 }: EntityTitleDoubleTextInputProps) => {
   const {
     goBackToPreviousHotkeyScope,
@@ -54,7 +56,7 @@ export const EntityTitleDoubleTextInput = ({
   };
 
   return (
-    <StyledDoubleTextContainer>
+    <StyledDoubleTextContainer className={className}>
       <ComputeNodeDimensions node={firstValue || firstValuePlaceholder}>
         {(nodeDimensions) => (
           <StyledTextInput
