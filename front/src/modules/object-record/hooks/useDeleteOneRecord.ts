@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
-import { useMutation } from '@apollo/client';
+import { useApolloClient } from '@apollo/client';
 
+import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useOptimisticEvict } from '@/apollo/optimistic-effect/hooks/useOptimisticEvict';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
@@ -10,6 +11,9 @@ export const useDeleteOneRecord = <T>({
   objectNameSingular,
 }: ObjectMetadataItemIdentifier) => {
   const { performOptimisticEvict } = useOptimisticEvict();
+  const { triggerOptimisticEffects } = useOptimisticEffect({
+    objectNameSingular,
+  });
 
   const { objectMetadataItem, deleteOneRecordMutation } = useObjectMetadataItem(
     {
@@ -17,16 +21,15 @@ export const useDeleteOneRecord = <T>({
     },
   );
 
-  // TODO: type this with a minimal type at least with Record<string, any>
-  const [mutate] = useMutation(deleteOneRecordMutation);
+  const apolloClient = useApolloClient();
 
   const deleteOneRecord = useCallback(
     async (idToDelete: string) => {
-      const deletedRecord = await mutate({
-        variables: {
-          idToDelete,
-        },
-      });
+      triggerOptimisticEffects(
+        `${capitalize(objectMetadataItem.nameSingular)}Edge`,
+        undefined,
+        [idToDelete],
+      );
 
       performOptimisticEvict(
         capitalize(objectMetadataItem.nameSingular),
@@ -34,11 +37,24 @@ export const useDeleteOneRecord = <T>({
         idToDelete,
       );
 
+      const deletedRecord = await apolloClient.mutate({
+        mutation: deleteOneRecordMutation,
+        variables: {
+          idToDelete,
+        },
+      });
+
       return deletedRecord.data[
         `create${capitalize(objectMetadataItem.nameSingular)}`
       ] as T;
     },
-    [performOptimisticEvict, objectMetadataItem, mutate],
+    [
+      triggerOptimisticEffects,
+      objectMetadataItem.nameSingular,
+      performOptimisticEvict,
+      apolloClient,
+      deleteOneRecordMutation,
+    ],
   );
 
   return {

@@ -49,12 +49,14 @@ export const useOptimisticEffect = ({
         const optimisticEffectWriter = ({
           cache,
           newData,
+          deletedRecordIds,
           query,
           variables,
           objectMetadataItem,
         }: {
           cache: ApolloCache<unknown>;
           newData: unknown;
+          deletedRecordIds?: string[];
           variables: OperationVariables;
           query: DocumentNode;
           isUsingFlexibleBackend?: boolean;
@@ -79,6 +81,7 @@ export const useOptimisticEffect = ({
                     objectMetadataItem.namePlural
                   ],
                   newData,
+                  deletedRecordIds,
                   variables,
                 }),
               },
@@ -116,7 +119,7 @@ export const useOptimisticEffect = ({
 
   const triggerOptimisticEffects = useRecoilCallback(
     ({ snapshot }) =>
-      (typename: string, newData: unknown) => {
+      (typename: string, newData: unknown, deletedRecordIds?: string[]) => {
         const optimisticEffects = snapshot
           .getLoadable(optimisticEffectState)
           .getValue();
@@ -135,6 +138,7 @@ export const useOptimisticEffect = ({
               cache: apolloClient.cache,
               query: optimisticEffect.query ?? ({} as DocumentNode),
               newData: formattedNewData,
+              deletedRecordIds,
               variables: optimisticEffect.variables,
               isUsingFlexibleBackend: optimisticEffect.isUsingFlexibleBackend,
               objectMetadataItem: optimisticEffect.objectMetadataItem,

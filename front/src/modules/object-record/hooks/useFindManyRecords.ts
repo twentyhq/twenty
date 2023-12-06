@@ -214,7 +214,7 @@ export const useFindManyRecords = <
 
   return {
     objectMetadataItem,
-    records,
+    records: records as RecordType[],
     loading,
     error,
     fetchMoreRecords,

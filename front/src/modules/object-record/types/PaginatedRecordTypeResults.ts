@@ -3,6 +3,7 @@ export type PaginatedRecordTypeEdge<
 > = {
   node: RecordType;
   cursor: string;
+  __typename?: string;
 };
 
 export type PaginatedRecordTypeResults<

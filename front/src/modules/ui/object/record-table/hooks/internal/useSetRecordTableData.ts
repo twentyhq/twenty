@@ -1,6 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { isFetchingRecordTableDataState } from '../../states/isFetchingRecordTableDataState';
 import { numberOfTableRowsState } from '../../states/numberOfTableRowsState';
@@ -29,16 +30,13 @@ export const useSetRecordTableData = ({
             set(entityFieldsFamilyState(entity.id), entity);
           }
         }
+        const currentRowIds = snapshot.getLoadable(tableRowIdsState).getValue();
 
         const entityIds = newEntityArray.map((entity) => entity.id);
 
-        set(tableRowIdsState, (currentRowIds) => {
-          if (JSON.stringify(currentRowIds) !== JSON.stringify(entityIds)) {
-            return entityIds;
-          }
-
-          return currentRowIds;
-        });
+        if (!isDeeplyEqual(currentRowIds, entityIds)) {
+          set(tableRowIdsState, entityIds);
+        }
 
         resetTableRowSelection();
 

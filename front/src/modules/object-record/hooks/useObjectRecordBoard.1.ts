@@ -37,9 +37,7 @@ export const useObjectRecordBoard = () => {
 
   const setSavedCompanies = useSetRecoilState(savedCompaniesState);
 
-  const [savedOpportunities, setSavedOpportunities] = useRecoilState(
-    savedOpportunitiesState,
-  );
+  const [savedOpportunities] = useRecoilState(savedOpportunitiesState);
 
   const [savedPipelineSteps, setSavedPipelineSteps] = useRecoilState(
     savedPipelineStepsState,
