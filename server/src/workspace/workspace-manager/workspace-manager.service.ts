@@ -462,6 +462,7 @@ export class WorkspaceManagerService {
       createdObjectMetadata,
     );
   }
+
   /**
    *
    * We are prefilling a few demo objects with data to make it easier for the user to get started.

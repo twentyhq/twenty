@@ -11,6 +11,7 @@ import { ObjectTypeName, RootTypeFactory } from './root-type.factory';
 @Injectable()
 export class MutationTypeFactory {
   constructor(private readonly rootTypeFactory: RootTypeFactory) {}
+
   create(
     objectMetadataCollection: ObjectMetadataInterface[],
     workspaceResolverMethodNames: WorkspaceResolverBuilderMutationMethodNames[],

@@ -9,6 +9,7 @@ import { ArgsAliasFactory } from './args-alias.factory';
 @Injectable()
 export class ArgsStringFactory {
   constructor(private readonly argsAliasFactory: ArgsAliasFactory) {}
+
   create(
     initialArgs: Record<string, any> | undefined,
     fieldMetadataCollection: FieldMetadataInterface[],
