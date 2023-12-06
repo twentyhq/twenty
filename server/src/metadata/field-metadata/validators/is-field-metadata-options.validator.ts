@@ -37,6 +37,6 @@ export class IsFieldMetadataOptions {
   }
 
   defaultMessage(): string {
-    return 'FieldMetadataDefaultValue is not valid';
+    return 'FieldMetadataOptions is not valid';
   }
 }
