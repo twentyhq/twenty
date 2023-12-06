@@ -33,36 +33,28 @@ export const parseBaseFilter = (
   let fields = '';
   let comparator = '';
   let value = '';
-  let previousC = '';
   let fillFields = true;
   let fillComparator = false;
   let fillValue = false;
 
+  // baseFilter = field_1.subfield[in]:["2023-00-00 OO:OO:OO","2024-00-00 OO:OO:OO"]
   for (const c of baseFilter) {
-    if (c === '[') {
+    if (fillValue) value += c;
+
+    if (c === ']' && !fillValue) fillComparator = false;
+    if (c === ':' && !fillComparator) fillValue = true;
+
+    if (fillComparator) comparator += c;
+
+    if (c === '[' && fillFields) {
       fillFields = false;
-    }
-    if (previousC === '[' && !comparator.length) {
       fillComparator = true;
     }
-    if (c === ']') {
-      fillComparator = false;
-    }
-    if (previousC === ']' && c === ':' && !value.length) {
-      fillValue = true;
-      continue;
-    }
-    if (fillFields) {
-      fields += c;
-    }
-    if (fillComparator) {
-      comparator += c;
-    }
-    if (fillValue) {
-      value += c;
-    }
-    previousC = c;
+
+    if (fillFields) fields += c;
   }
+  // field = field_1.subfield ; comparator = in ; value = ["2023-00-00 OO:OO:OO","2024-00-00 OO:OO:OO"]
+
   if (!Object.keys(FilterComparators).includes(comparator)) {
     throw new BadRequestException(
       `'filter' invalid for '${baseFilter}', comparator ${comparator} not in ${Object.keys(
