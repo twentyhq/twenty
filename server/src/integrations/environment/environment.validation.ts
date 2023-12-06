@@ -14,6 +14,8 @@ import {
 
 import { assert } from 'src/utils/assert';
 import { CastToStringArray } from 'src/integrations/environment/decorators/cast-to-string-array.decorator';
+import { ExceptionCapturerDriver } from 'src/integrations/exception-capturer/interfaces';
+import { LoggerDriver } from 'src/integrations/logger/interfaces';
 
 import { IsDuration } from './decorators/is-duration.decorator';
 import { StorageType } from './interfaces/storage.interface';
@@ -22,7 +24,6 @@ import { IsAWSRegion } from './decorators/is-aws-region.decorator';
 import { CastToBoolean } from './decorators/cast-to-boolean.decorator';
 import { SupportDriver } from './interfaces/support.interface';
 import { CastToPositiveNumber } from './decorators/cast-to-positive-number.decorator';
-import { LoggerDriver } from './interfaces/logger.interface';
 import { CastToLogLevelArray } from './decorators/cast-to-log-level-array.decorator';
 
 export class EnvironmentVariables {
@@ -143,6 +144,10 @@ export class EnvironmentVariables {
   @IsOptional()
   LOGGER_DRIVER?: LoggerDriver;
 
+  @IsEnum(ExceptionCapturerDriver)
+  @IsOptional()
+  EXCEPTION_CAPTURER_DRIVER?: ExceptionCapturerDriver;
+
   @CastToLogLevelArray()
   @IsOptional()
   LOG_LEVELS?: LogLevel[];
@@ -151,7 +156,9 @@ export class EnvironmentVariables {
   @IsOptional()
   DEMO_WORKSPACE_IDS?: string[];
 
-  @ValidateIf((env) => env.LOGGER_DRIVER === LoggerDriver.Sentry)
+  @ValidateIf(
+    (env) => env.EXCEPTION_CAPTURER_DRIVER === ExceptionCapturerDriver.Sentry,
+  )
   @IsString()
   SENTRY_DSN?: string;
 }

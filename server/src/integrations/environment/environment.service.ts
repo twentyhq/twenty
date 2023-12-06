@@ -2,10 +2,11 @@
 import { Injectable, LogLevel } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+import { LoggerDriver } from 'src/integrations/logger/interfaces';
+
 import { AwsRegion } from './interfaces/aws-region.interface';
 import { StorageType } from './interfaces/storage.interface';
 import { SupportDriver } from './interfaces/support.interface';
-import { LoggerDriver } from './interfaces/logger.interface';
 import { MessageQueueType } from './interfaces/message-queue.interface';
 
 @Injectable()

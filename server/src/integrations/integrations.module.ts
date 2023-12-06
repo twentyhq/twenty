@@ -2,14 +2,16 @@ import { Module } from '@nestjs/common';
 
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 
+import { ExceptionCapturerModule } from 'src/integrations/exception-capturer/exception-catpurer.module';
+import { exceptionCapturerModuleFactory } from 'src/integrations/exception-capturer/exception-capturer.factory';
+
 import { EnvironmentModule } from './environment/environment.module';
 import { EnvironmentService } from './environment/environment.service';
 import { FileStorageModule } from './file-storage/file-storage.module';
 import { FileStorageModuleOptions } from './file-storage/interfaces';
 import { StorageType } from './environment/interfaces/storage.interface';
 import { LoggerModule } from './logger/logger.module';
-import { LoggerModuleOptions } from './logger/interfaces';
-import { LoggerDriver } from './environment/interfaces/logger.interface';
+import { LoggerDriver, LoggerModuleOptions } from './logger/interfaces';
 import { MessageQueueModule } from './message-queue/message-queue.module';
 import { MessageQueueModuleOptions } from './message-queue/interfaces';
 import { MessageQueueType } from './environment/interfaces/message-queue.interface';
@@ -72,15 +74,6 @@ const loggerModuleFactory = async (
     case LoggerDriver.Console: {
       return {
         type: LoggerDriver.Console,
-        options: null,
-      };
-    }
-    case LoggerDriver.Sentry: {
-      return {
-        type: LoggerDriver.Sentry,
-        options: {
-          sentryDNS: environmentService.getSentryDSN() ?? '',
-        },
       };
     }
     default:
@@ -143,6 +136,10 @@ const messageQueueModuleFactory = async (
     }),
     MessageQueueModule.forRoot({
       useFactory: messageQueueModuleFactory,
+      inject: [EnvironmentService],
+    }),
+    ExceptionCapturerModule.forRootAsync({
+      useFactory: exceptionCapturerModuleFactory,
       inject: [EnvironmentService],
     }),
   ],
