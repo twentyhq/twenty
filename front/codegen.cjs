@@ -1,5 +1,5 @@
-export default {
-  schema: import.meta.env.REACT_APP_SERVER_BASE_URL + "/graphql",
+module.exports = {
+  schema: process.env.REACT_APP_SERVER_BASE_URL + "/graphql",
   documents: ['!./src/modules/object-metadata/**', '!./src/modules/object-record/**', './src/modules/**/*.tsx', './src/modules/**/*.ts'],
   overwrite: true,
   generates: {

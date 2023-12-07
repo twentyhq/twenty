@@ -100,12 +100,12 @@ module.exports = {
   ],
   ignorePatterns: [
     'mockServiceWorker.js',
+    '**/generated*/*',
     '.eslintrc.cjs',
     '*.config.cjs',
-    '*config.js',
     '*.config.ts',
-    'codegen*.js',
-    '**/generated*/*',
+    '*config.js',
+    'codegen*',
   ],
   overrides: [
     {
