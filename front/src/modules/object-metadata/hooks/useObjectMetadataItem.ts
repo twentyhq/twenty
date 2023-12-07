@@ -6,6 +6,7 @@ import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/Object
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
+import { useGenerateCreateManyRecordMutation } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
 import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
 import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
@@ -122,6 +123,10 @@ export const useObjectMetadataItem = (
     objectMetadataItem,
   });
 
+  const createManyRecordsMutation = useGenerateCreateManyRecordMutation({
+    objectMetadataItem,
+  });
+
   const updateOneRecordMutation = useGenerateUpdateOneRecordMutation({
     objectMetadataItem,
   });
@@ -147,6 +152,7 @@ export const useObjectMetadataItem = (
     createOneRecordMutation,
     updateOneRecordMutation,
     deleteOneRecordMutation,
+    createManyRecordsMutation,
     mapToObjectRecordIdentifier,
   };
 };

@@ -8,6 +8,8 @@ import { RecordTable } from '@/object-record/record-table/components/RecordTable
 import { TableOptionsDropdownId } from '@/object-record/record-table/constants/TableOptionsDropdownId';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { TableOptionsDropdown } from '@/object-record/record-table/options/components/TableOptionsDropdown';
+import { useSpreadsheetPersonImport } from '@/people/hooks/useSpreadsheetPersonImport';
+import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 import { ViewBar } from '@/views/components/ViewBar';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
@@ -44,6 +46,8 @@ export const RecordTableContainer = ({
     objectNameSingular,
   });
 
+  const { openPersonSpreadsheetImport } = useSpreadsheetPersonImport();
+
   const recordTableId = objectNamePlural ?? '';
   const viewBarId = objectNamePlural ?? '';
 
@@ -67,35 +71,47 @@ export const RecordTableContainer = ({
     });
   };
 
+  const handleImport = () => {
+    openPersonSpreadsheetImport();
+  };
+
   return (
-    <StyledContainer>
-      <ViewBar
-        viewBarId={viewBarId}
-        optionsDropdownButton={
-          <TableOptionsDropdown recordTableId={recordTableId} />
-        }
-        optionsDropdownScopeId={TableOptionsDropdownId}
-        onViewFieldsChange={(viewFields) => {
-          setTableColumns(
-            mapViewFieldsToColumnDefinitions(viewFields, columnDefinitions),
-          );
-        }}
-        onViewFiltersChange={(viewFilters) => {
-          setTableFilters(mapViewFiltersToFilters(viewFilters));
-        }}
-        onViewSortsChange={(viewSorts) => {
-          setTableSorts(mapViewSortsToSorts(viewSorts));
-        }}
-      />
-      <RecordTableEffect recordTableId={recordTableId} viewBarId={viewBarId} />
-      {
-        <RecordTable
+    <SpreadsheetImportProvider>
+      <StyledContainer>
+        <ViewBar
+          viewBarId={viewBarId}
+          optionsDropdownButton={
+            <TableOptionsDropdown
+              recordTableId={recordTableId}
+              onImport={handleImport}
+            />
+          }
+          optionsDropdownScopeId={TableOptionsDropdownId}
+          onViewFieldsChange={(viewFields) => {
+            setTableColumns(
+              mapViewFieldsToColumnDefinitions(viewFields, columnDefinitions),
+            );
+          }}
+          onViewFiltersChange={(viewFilters) => {
+            setTableFilters(mapViewFiltersToFilters(viewFilters));
+          }}
+          onViewSortsChange={(viewSorts) => {
+            setTableSorts(mapViewSortsToSorts(viewSorts));
+          }}
+        />
+        <RecordTableEffect
           recordTableId={recordTableId}
           viewBarId={viewBarId}
-          updateRecordMutation={updateEntity}
-          createRecord={createRecord}
         />
-      }
-    </StyledContainer>
+        {
+          <RecordTable
+            recordTableId={recordTableId}
+            viewBarId={viewBarId}
+            updateRecordMutation={updateEntity}
+            createRecord={createRecord}
+          />
+        }
+      </StyledContainer>
+    </SpreadsheetImportProvider>
   );
 };

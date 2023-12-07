@@ -76,6 +76,7 @@ export const ViewBar = ({
           />
         }
         displayBottomBorder={false}
+        // The menu component
         rightComponent={
           <>
             <ObjectFilterDropdownButton
