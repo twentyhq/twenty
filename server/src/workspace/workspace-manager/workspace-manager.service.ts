@@ -182,6 +182,7 @@ export class WorkspaceManagerService {
     const createdObjectMetadataByNameSingular = createdObjectMetadata.reduce(
       (acc, curr) => {
         acc[curr.nameSingular] = curr;
+
         return acc;
       },
       {},
@@ -326,6 +327,7 @@ export class WorkspaceManagerService {
           if (value === null || typeof value !== 'object') {
             return [key, value];
           }
+
           return [key, filterIgnoredProperties(value, fieldPropertiesToIgnore)];
         }),
       );
@@ -346,6 +348,7 @@ export class WorkspaceManagerService {
         // We only handle CHANGE here as REMOVE and CREATE are handled earlier.
         if (diff.type === 'CHANGE') {
           const property = diff.path[0];
+
           objectsToUpdate[objectInDB.id] = {
             ...objectsToUpdate[objectInDB.id],
             [property]: diff.value,
@@ -357,12 +360,14 @@ export class WorkspaceManagerService {
         if (diff.type === 'CREATE') {
           const fieldName = diff.path[0];
           const fieldMetadata = standardObjectFields[fieldName];
+
           fieldsToCreate.push(fieldMetadata);
         }
         if (diff.type === 'CHANGE') {
           const fieldName = diff.path[0];
           const property = diff.path[diff.path.length - 1];
           const fieldMetadata = objectInDBFields[fieldName];
+
           fieldsToUpdate[fieldMetadata.id] = {
             ...fieldsToUpdate[fieldMetadata.id],
             [property]: diff.value,
@@ -371,6 +376,7 @@ export class WorkspaceManagerService {
         if (diff.type === 'REMOVE') {
           const fieldName = diff.path[0];
           const fieldMetadata = objectInDBFields[fieldName];
+
           fieldsToDelete.push(fieldMetadata);
         }
       }
@@ -429,6 +435,7 @@ export class WorkspaceManagerService {
       await this.workspaceDataSourceService.connectToWorkspaceDataSource(
         workspaceId,
       );
+
     await workspaceDataSource.query(
       `comment on schema ${schemaName} is e'@graphql({"max_rows": 60})'`,
     );
@@ -460,6 +467,7 @@ export class WorkspaceManagerService {
       createdObjectMetadata,
     );
   }
+
   /**
    *
    * We are prefilling a few demo objects with data to make it easier for the user to get started.

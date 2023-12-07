@@ -10,6 +10,7 @@ export class IsDurationConstraint implements ValidatorConstraintInterface {
   validate(duration: string) {
     const regex =
       /^-?[0-9]+(.[0-9]+)?(m(illiseconds?)?|s(econds?)?|h((ou)?rs?)?|d(ays?)?|w(eeks?)?|M(onths?)?|y(ears?)?)?$/;
+
     return regex.test(duration); // Returns true if duration matches regex
   }
 }

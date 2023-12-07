@@ -5,7 +5,7 @@ module.exports = {
     tsconfigRootDir : __dirname, 
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin', 'import', 'unused-imports'],
+  plugins: ['@typescript-eslint/eslint-plugin', 'import', 'unused-imports', '@stylistic'],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
@@ -77,5 +77,16 @@ module.exports = {
     'import/no-duplicates': ["error", {"considerQueryString": true}],
     'unused-imports/no-unused-imports': 'warn',
     "@typescript-eslint/consistent-type-imports": ["error", { "prefer": "no-type-imports" }],
+    "@stylistic/linebreak-style": ["error", "unix"],
+    "@stylistic/lines-between-class-members": ["error", { "enforce": [
+      { blankLine: "always", prev: "method", next: "method" }
+    ]}],
+    "@stylistic/padding-line-between-statements": [
+      "error",
+      { blankLine: "always", prev: "*", next: "return" },
+      { blankLine: "always", prev: ["const", "let", "var"], next: "*"},
+      { blankLine: "any", prev: ["const", "let", "var"], next: ["const", "let", "var"] },
+      { blankLine: "always", prev: "*", next: ["interface", "type"] }
+    ]
   },
 };

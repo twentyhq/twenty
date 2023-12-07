@@ -9,13 +9,11 @@ import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { turnFiltersIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClause';
 import { turnSortsIntoOrderBy } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
-import { useUpdateCompanyBoardCardIdsInternal } from '@/ui/object/record-board/hooks/internal/useUpdateCompanyBoardCardIdsInternal';
 
 import { useFindManyRecords } from './useFindManyRecords';
 
 export const useObjectRecordBoard = () => {
   const objectNameSingular = 'opportunity';
-  const updateCompanyBoardCardIds = useUpdateCompanyBoardCardIdsInternal();
 
   const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
     {
@@ -71,24 +69,14 @@ export const useObjectRecordBoard = () => {
     records: opportunities,
     loading,
     fetchMoreRecords: fetchMoreOpportunities,
-  } = useFindManyRecords({
+  } = useFindManyRecords<Opportunity>({
     skip: !savedPipelineSteps.length,
     objectNameSingular: 'opportunity',
     filter: filter,
     orderBy: orderBy,
-    onCompleted: useCallback(
-      (data: PaginatedRecordTypeResults<Opportunity>) => {
-        const pipelineProgresses: Array<Opportunity> = data.edges.map(
-          (edge) => edge.node,
-        );
-
-        updateCompanyBoardCardIds(pipelineProgresses);
-
-        setSavedOpportunities(pipelineProgresses);
-        setIsBoardLoaded(true);
-      },
-      [setIsBoardLoaded, setSavedOpportunities, updateCompanyBoardCardIds],
-    ),
+    onCompleted: useCallback(() => {
+      setIsBoardLoaded(true);
+    }, [setIsBoardLoaded]),
   });
 
   const { fetchMoreRecords: fetchMoreCompanies } = useFindManyRecords({

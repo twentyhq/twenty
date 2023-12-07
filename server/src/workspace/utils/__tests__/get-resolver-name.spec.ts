@@ -23,6 +23,7 @@ describe('getResolverName', () => {
 
   it('should throw an error for an unknown resolver type', () => {
     const unknownType = 'unknownType';
+
     expect(() =>
       getResolverName(
         metadata,

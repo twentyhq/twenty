@@ -69,6 +69,7 @@ import { ExceptionFilter } from './filters/exception.filter';
           );
 
           const contextId = ContextIdFactory.create();
+
           AppModule.moduleRef.registerRequestByContextId(request, contextId);
 
           // Get the SchemaGenerationService from the AppModule

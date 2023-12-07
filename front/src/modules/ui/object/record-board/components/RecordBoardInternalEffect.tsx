@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { useObjectRecordBoard } from '@/object-record/hooks/useObjectRecordBoard';
+import { useObjectRecordBoard } from '@/object-record/hooks/useObjectRecordBoard.1';
 import { useRecordBoardActionBarEntriesInternal } from '@/ui/object/record-board/hooks/internal/useRecordBoardActionBarEntriesInternal';
 import { useRecordBoardContextMenuEntriesInternal } from '@/ui/object/record-board/hooks/internal/useRecordBoardContextMenuEntriesInternal';
 import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
@@ -18,7 +18,24 @@ export const RecordBoardInternalEffect = ({}) => {
   const { setActionBarEntries } = useRecordBoardActionBarEntriesInternal();
   const { setContextMenuEntries } = useRecordBoardContextMenuEntriesInternal();
 
-  const { fetchMoreOpportunities, fetchMoreCompanies } = useObjectRecordBoard();
+  const {
+    savedPipelineStepsState,
+    savedOpportunitiesState,
+    savedCompaniesState,
+  } = useRecordBoardScopedStates();
+
+  const { fetchMoreOpportunities, fetchMoreCompanies, opportunities } =
+    useObjectRecordBoard();
+
+  const [savedOpportunities, setSavedOpportunities] = useRecoilState(
+    savedOpportunitiesState,
+  );
+  const savedPipelineSteps = useRecoilValue(savedPipelineStepsState);
+  const savedCompanies = useRecoilValue(savedCompaniesState);
+
+  useEffect(() => {
+    setSavedOpportunities(opportunities);
+  }, [opportunities, setSavedOpportunities]);
 
   useEffect(() => {
     if (isDefined(fetchMoreOpportunities)) {
@@ -31,16 +48,6 @@ export const RecordBoardInternalEffect = ({}) => {
       fetchMoreCompanies();
     }
   }, [fetchMoreCompanies]);
-
-  const {
-    savedPipelineStepsState,
-    savedOpportunitiesState,
-    savedCompaniesState,
-  } = useRecordBoardScopedStates();
-
-  const savedPipelineSteps = useRecoilValue(savedPipelineStepsState);
-  const savedOpportunities = useRecoilValue(savedOpportunitiesState);
-  const savedCompanies = useRecoilValue(savedCompaniesState);
 
   useEffect(() => {
     if (savedOpportunities && savedCompanies) {

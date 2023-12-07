@@ -63,6 +63,7 @@ const parseValueNode = (
     case Kind.OBJECT:
       return valueNode.fields.reduce((obj, field) => {
         obj[field.name.value] = parseValueNode(field.value, variables);
+
         return obj;
       }, {});
     default:

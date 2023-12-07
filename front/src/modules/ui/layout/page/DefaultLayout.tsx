@@ -8,11 +8,9 @@ import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
-import { DesktopNavigationDrawer } from '@/navigation/components/DesktopNavigationDrawer';
+import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
-import { MobileNavigationDrawer } from '@/navigation/components/MobileNavigationDrawer';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
-import { NavbarAnimatedContainer } from '@/ui/navigation/navigation-drawer/components/NavbarAnimatedContainer';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 const StyledLayout = styled.div`
@@ -42,15 +40,18 @@ const StyledLayout = styled.div`
 
 const StyledPageContainer = styled.div`
   display: flex;
-  flex: 1;
+  flex: 1 1 auto;
   flex-direction: row;
-  height: 100vh;
+  min-height: 0;
+`;
+
+const StyledAppNavigationDrawer = styled(AppNavigationDrawer)`
+  flex-shrink: 0;
 `;
 
 const StyledMainContainer = styled.div`
   display: flex;
   flex: 0 1 100%;
-  flex-direction: row;
   overflow: hidden;
 `;
 
@@ -61,14 +62,13 @@ type DefaultLayoutProps = {
 export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
   const onboardingStatus = useOnboardingStatus();
   const isMobile = useIsMobile();
+
   return (
     <StyledLayout>
       <CommandMenu />
       <KeyboardShortcutMenu />
       <StyledPageContainer>
-        <NavbarAnimatedContainer>
-          {isMobile ? <MobileNavigationDrawer /> : <DesktopNavigationDrawer />}
-        </NavbarAnimatedContainer>
+        <StyledAppNavigationDrawer />
         <StyledMainContainer>
           {onboardingStatus &&
           onboardingStatus !== OnboardingStatus.Completed ? (

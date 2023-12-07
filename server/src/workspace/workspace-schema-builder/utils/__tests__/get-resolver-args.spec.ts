@@ -48,6 +48,7 @@ describe('getResolverArgs', () => {
   // Test for an unknown resolver type
   it('should throw an error for an unknown resolver type', () => {
     const unknownType = 'unknownType';
+
     expect(() =>
       getResolverArgs(unknownType as WorkspaceResolverBuilderMethodNames),
     ).toThrow(`Unknown resolver type: ${unknownType}`);

@@ -94,11 +94,13 @@ export class WorkspaceMigrationFactory {
     action: WorkspaceMigrationColumnActionType.CREATE,
     fieldMetadata: FieldMetadataInterface,
   ): WorkspaceMigrationColumnAction[];
+
   createColumnActions(
     action: WorkspaceMigrationColumnActionType.ALTER,
     previousFieldMetadata: FieldMetadataInterface,
     nextFieldMetadata: FieldMetadataInterface,
   ): WorkspaceMigrationColumnAction[];
+
   createColumnActions(
     action:
       | WorkspaceMigrationColumnActionType.CREATE
