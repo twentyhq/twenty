@@ -25,11 +25,11 @@
     "storybook:docs:build": "STORYBOOK_SCOPE=ui-docs yarn storybook:build",
     "storybook:test": "test-storybook",
     "storybook:test-slow": "test-storybook --maxWorkers=3",
-    "storybook:coverage": "test-storybook --coverage --maxWorkers=3 && npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook --check-coverage",
+    "storybook:coverage": "yarn storybook:test-slow --coverage && npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook --check-coverage",
     "storybook:modules:coverage": "STORYBOOK_SCOPE=modules yarn storybook:coverage",
     "storybook:pages:coverage": "STORYBOOK_SCOPE=pages yarn storybook:coverage",
-    "graphql:data:generate": "dotenv cross-var graphql-codegen -- --config codegen.js",
-    "graphql:metadata:generate": "dotenv cross-var graphql-codegen -- --config codegen-metadata.js",
+    "graphql:data:generate": "dotenv cross-var graphql-codegen -- --config codegen.cjs",
+    "graphql:metadata:generate": "dotenv cross-var graphql-codegen -- --config codegen-metadata.cjs",
     "chromatic": "dotenv cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
     "install": "yarn eslint-plugin:setup"
   },
@@ -153,7 +153,6 @@
     "storybook-addon-pseudo-states": "^2.1.2",
     "typescript": "^5.2.2",
     "vite": "^5.0.0",
-    "vite-plugin-environment": "^1.1.3",
     "vite-plugin-svgr": "^4.2.0"
   },
   "engines": {
