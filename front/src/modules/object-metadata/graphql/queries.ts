@@ -58,6 +58,8 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
                   }
                   fromFieldMetadataId
                 }
+                defaultValue
+                options
               }
             }
             pageInfo {
