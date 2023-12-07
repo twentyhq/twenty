@@ -5,7 +5,7 @@ import { ObjectMetadataItemsLoadEffect } from '@/object-metadata/components/Obje
 import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { RelationPickerScope } from '@/ui/input/components/internal/relation-picker/scopes/RelationPickerScope';
+import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 
 export const ObjectMetadataItemsProvider = ({
   children,

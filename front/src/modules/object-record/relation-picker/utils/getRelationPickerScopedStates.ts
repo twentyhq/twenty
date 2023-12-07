@@ -1,5 +1,5 @@
-import { identifiersMapperScopedState } from '@/ui/input/components/internal/relation-picker/states/identifiersMapperScopedState';
-import { searchQueryScopedState } from '@/ui/input/components/internal/relation-picker/states/searchQueryScopedState';
+import { identifiersMapperScopedState } from '@/object-record/relation-picker/states/identifiersMapperScopedState';
+import { searchQueryScopedState } from '@/object-record/relation-picker/states/searchQueryScopedState';
 import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
 
 export const getRelationPickerScopedStates = ({

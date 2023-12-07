@@ -3,10 +3,10 @@ import { useQuery } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { currentPipelineStepsState } from '@/pipeline/states/currentPipelineStepsState';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { IconChevronDown } from '@/ui/display/icon';
-import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
 import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
 import { useEntitySelectSearch } from '@/ui/input/relation-picker/hooks/useEntitySelectSearch';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';

@@ -1,5 +1,5 @@
+import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { EntityChip } from '@/ui/display/chip/components/EntityChip';
-import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
 
 import { useRelationField } from '../../hooks/useRelationField';
 

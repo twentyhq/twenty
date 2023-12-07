@@ -3,7 +3,7 @@ import { expect, jest } from '@storybook/jest';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { userEvent, waitFor, within } from '@storybook/testing-library';
 
-import { RelationPickerScope } from '@/ui/input/components/internal/relation-picker/scopes/RelationPickerScope';
+import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';

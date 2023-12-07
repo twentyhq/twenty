@@ -1,4 +1,4 @@
-import { getRelationPickerScopedStates } from '@/ui/input/components/internal/relation-picker/utils/getRelationPickerScopedStates';
+import { getRelationPickerScopedStates } from '@/object-record/relation-picker/utils/getRelationPickerScopedStates';
 import { RecordTableScopeInternalContext } from '@/ui/object/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 

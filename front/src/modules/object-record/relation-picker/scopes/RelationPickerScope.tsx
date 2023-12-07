@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { RelationPickerScopeInternalContext } from '@/ui/input/components/internal/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
+import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
 
 type RelationPickerScopeProps = {
   children: ReactNode;

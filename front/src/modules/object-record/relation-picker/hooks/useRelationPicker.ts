@@ -1,7 +1,7 @@
 import { useRecoilState } from 'recoil';
 
-import { useRelationPickerScopedStates } from '@/ui/input/components/internal/relation-picker/hooks/internal/useRelationPickerScopedStates';
-import { RelationPickerScopeInternalContext } from '@/ui/input/components/internal/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
+import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
+import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
 type useRelationPickeProps = {

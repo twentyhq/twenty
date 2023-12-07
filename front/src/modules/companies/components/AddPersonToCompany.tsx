@@ -6,9 +6,9 @@ import { flip, offset, useFloating } from '@floating-ui/react';
 import { v4 } from 'uuid';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { RelationPicker } from '@/object-record/relation-picker/components/RelationPicker';
 import { IconPlus } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-import { RelationPicker } from '@/ui/input/components/internal/relation-picker/components/RelationPicker';
 import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { DoubleTextInput } from '@/ui/object/field/meta-types/input/components/internal/DoubleTextInput';

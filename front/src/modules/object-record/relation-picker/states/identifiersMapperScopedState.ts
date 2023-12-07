@@ -1,4 +1,4 @@
-import { IdentifiersMapper } from '@/ui/input/components/internal/relation-picker/types/IdentifiersMapper';
+import { IdentifiersMapper } from '@/object-record/relation-picker/types/IdentifiersMapper';
 import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
 
 export const identifiersMapperScopedState =
