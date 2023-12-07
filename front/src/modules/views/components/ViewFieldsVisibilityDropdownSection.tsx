@@ -6,6 +6,8 @@ import {
   ResponderProvided,
 } from '@hello-pangea/dnd';
 
+import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
+import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { IconMinus, IconPlus } from '@/ui/display/icon';
 import { AppTooltip } from '@/ui/display/tooltip/AppTooltip';
 import { IconInfoCircle } from '@/ui/input/constants/icons';
@@ -16,8 +18,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemDraggable } from '@/ui/navigation/menu-item/components/MenuItemDraggable';
-import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
-import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 

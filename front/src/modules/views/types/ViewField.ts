@@ -1,6 +1,6 @@
-import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
-import { BoardFieldDefinition } from '@/ui/object/record-board/types/BoardFieldDefinition';
-import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
+import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
+import { BoardFieldDefinition } from '@/object-record/record-board/types/BoardFieldDefinition';
+import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
 export type ViewField = {
   id: string;

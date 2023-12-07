@@ -1,5 +1,5 @@
-import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
-import { BoardFieldDefinition } from '@/ui/object/record-board/types/BoardFieldDefinition';
+import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
+import { BoardFieldDefinition } from '@/object-record/record-board/types/BoardFieldDefinition';
 import { ViewField } from '@/views/types/ViewField';
 
 export const mapBoardFieldDefinitionsToViewFields = (

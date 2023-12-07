@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 
+import { RecordTable } from '@/object-record/record-table/components/RecordTable';
+import { TableOptionsDropdownId } from '@/object-record/record-table/constants/TableOptionsDropdownId';
+import { TableOptionsDropdown } from '@/object-record/record-table/options/components/TableOptionsDropdown';
 import { SignInBackgroundMockContainerEffect } from '@/sign-in-background-mock/components/SignInBackgroundMockContainerEffect';
-import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
-import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
-import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
 import { ViewBar } from '@/views/components/ViewBar';
 
 const StyledContainer = styled.div`

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
+import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 import { tasksFilterDefinitions } from './tasks-filter-definitions';

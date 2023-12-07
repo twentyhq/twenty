@@ -1,6 +1,6 @@
 import { CompanyBoardCard } from '@/companies/components/CompanyBoardCard';
 import { NewOpportunityButton } from '@/companies/components/NewOpportunityButton';
-import { BoardOptions } from '@/ui/object/record-board/types/BoardOptions';
+import { BoardOptions } from '@/object-record/record-board/types/BoardOptions';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 export const opportunitiesBoardOptions: BoardOptions = {

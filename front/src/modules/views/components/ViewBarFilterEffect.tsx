@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
-import { Filter } from '@/ui/object/object-filter-dropdown/types/Filter';
+import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 
 type ViewBarFilterEffectProps = {

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
-import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
-import { IdentifiersMapper } from '@/ui/input/components/internal/relation-picker/types/IdentifiersMapper';
+import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
+import { IdentifiersMapper } from '@/object-record/relation-picker/types/IdentifiersMapper';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 export const ObjectMetadataItemsRelationPickerEffect = () => {

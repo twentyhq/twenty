@@ -1,6 +1,6 @@
-import { FilterDefinition } from '@/ui/object/object-filter-dropdown/types/FilterDefinition';
-import { SortDefinition } from '@/ui/object/object-sort-dropdown/types/SortDefinition';
-import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
+import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
+import { SortDefinition } from '@/object-record/object-sort-dropdown/types/SortDefinition';
+import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
 export const signInBackgroundMockColumnDefinitions = [
   {
