@@ -94,26 +94,41 @@ export const turnFiltersIntoWhereClause = (
             );
         }
       case 'RELATION':
-        switch (filter.operand) {
-          case ViewFilterOperand.Is:
-            whereClause.push({
-              [correspondingField.name + 'Id']: {
-                eq: filter.value,
-              },
-            });
-            return;
-          case ViewFilterOperand.IsNot:
-            whereClause.push({
-              [correspondingField.name + 'Id']: {
-                neq: filter.value,
-              },
-            });
-            return;
-          default:
-            throw new Error(
-              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
-            );
+        try {
+          JSON.parse(filter.value);
+        } catch (e) {
+          throw new Error(
+            `Cannot parse filter value for RELATION filter : "${filter.value}"`,
+          );
         }
+
+        const parsedRecordIds = JSON.parse(filter.value) as string[];
+
+        if (parsedRecordIds.length > 0) {
+          switch (filter.operand) {
+            case ViewFilterOperand.Is:
+              whereClause.push({
+                [correspondingField.name + 'Id']: {
+                  in: parsedRecordIds,
+                },
+              });
+              return;
+            case ViewFilterOperand.IsNot:
+              whereClause.push({
+                not: {
+                  [correspondingField.name + 'Id']: {
+                    in: parsedRecordIds,
+                  },
+                },
+              });
+              return;
+            default:
+              throw new Error(
+                `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+              );
+          }
+        }
+        break;
       case 'CURRENCY':
         switch (filter.operand) {
           case ViewFilterOperand.GreaterThan:

@@ -11,6 +11,7 @@ export const RecordTableBodyEffect = () => {
     records,
     setRecordTableData,
     queryStateIdentifier,
+    loading,
   } = useObjectRecordTable();
   const { tableLastRowVisibleState } = useRecordTableScopedStates();
   const [tableLastRowVisible, setTableLastRowVisible] = useRecoilState(
@@ -22,8 +23,10 @@ export const RecordTableBodyEffect = () => {
   );
 
   useEffect(() => {
-    setRecordTableData(records);
-  }, [records, setRecordTableData]);
+    if (!loading) {
+      setRecordTableData(records);
+    }
+  }, [records, setRecordTableData, loading]);
 
   useEffect(() => {
     if (tableLastRowVisible && !isFetchingMoreObjects) {
