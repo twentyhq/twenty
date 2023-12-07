@@ -41,7 +41,7 @@ export const addConnectedAccount: WorkspaceMigrationTableAction[] = [
         columnType: 'boolean',
         action: WorkspaceMigrationColumnActionType.CREATE,
         defaultValue: 'false',
-      }
+      },
     ],
   },
 ];
