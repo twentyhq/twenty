@@ -97,7 +97,9 @@ export const turnFiltersIntoWhereClause = (
         try {
           JSON.parse(filter.value);
         } catch (e) {
-          throw new Error(`Cannot parse filter value ${filter.value}`);
+          throw new Error(
+            `Cannot parse filter value for RELATION filter : "${filter.value}"`,
+          );
         }
 
         const parsedRecordIds = JSON.parse(filter.value) as string[];

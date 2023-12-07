@@ -1,6 +1,6 @@
 import { MultipleRecordSelectDropdown } from '@/object-record/select/components/MultipleRecordSelectDropdown';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
-import { SelectableRecord } from '@/object-record/select/types/RecordToSelect';
+import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
 import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 
 export const EMPTY_FILTER_VALUE = '';

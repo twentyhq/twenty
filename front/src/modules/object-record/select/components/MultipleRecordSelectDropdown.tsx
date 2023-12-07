@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { SelectableRecord } from '@/object-record/select/types/RecordToSelect';
+import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';

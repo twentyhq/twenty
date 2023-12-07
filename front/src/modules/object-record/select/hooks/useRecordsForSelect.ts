@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { SelectableRecord } from '@/object-record/select/types/RecordToSelect';
+import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
 import { getObjectFilterFields } from '@/object-record/select/utils/getObjectFilterFields';
 import { getObjectOrderByField } from '@/object-record/select/utils/getObjectOrderByField';
 import { isDefined } from '~/utils/isDefined';
