@@ -15,7 +15,6 @@ export class WorkspaceManagerService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
-    private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly dataSourceService: DataSourceService,
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
