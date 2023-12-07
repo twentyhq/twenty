@@ -1,9 +1,11 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import {
   ObjectMetadata,
   IsSystem,
   IsNullable,
   FieldMetadata,
+  RelationMetadata,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 
@@ -15,7 +17,7 @@ import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standa
   icon: 'IconCheckbox',
 })
 @IsSystem()
-export class ActivitydObjectMetadata extends BaseObjectMetadata {
+export class ActivityObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
     label: 'Title',
@@ -76,6 +78,10 @@ export class ActivitydObjectMetadata extends BaseObjectMetadata {
     description: 'Activity targets',
     icon: 'IconCheckbox',
   })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'activityTarget',
+  })
   activityTargets: object[];
 
   @FieldMetadata({
@@ -84,6 +90,10 @@ export class ActivitydObjectMetadata extends BaseObjectMetadata {
     description: 'Activity attachments',
     icon: 'IconFileImport',
   })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'attachment',
+  })
   attachments: object[];
 
   @FieldMetadata({
@@ -91,6 +101,10 @@ export class ActivitydObjectMetadata extends BaseObjectMetadata {
     label: 'Comments',
     description: 'Activity comments',
     icon: 'IconComment',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'comment',
   })
   comments: object[];
 

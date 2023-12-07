@@ -18,6 +18,7 @@ import { MetadataParser } from 'src/workspace/workspace-sync-metadata/utils/meta
 import {
   mapObjectMetadataByUniqueIdentifier,
   filterIgnoredProperties,
+  convertStringifiedFieldsToJSON,
 } from 'src/workspace/workspace-sync-metadata/utils/sync-metadata.util';
 import { standardObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects';
 import {
@@ -180,16 +181,17 @@ export class WorkspaceSyncMetadataService {
             };
           }
         }
-
-        console.log(standardObjectName + ':objectDiff', objectDiff);
-        console.log(standardObjectName + ':fieldsDiff', fieldsDiff);
       }
 
       // CREATE OBJECTS
       await this.objectMetadataRepository.save(
         objectsToCreate.map((object) => ({
           ...object,
-          fields: Object.values(object.fields),
+          isActive: true,
+          fields: Object.values(object.fields).map((field) => ({
+            ...convertStringifiedFieldsToJSON(field),
+            isActive: true,
+          })),
         })),
       );
       // UPDATE OBJECTS, this is not optimal as we are running n queries here.
@@ -204,10 +206,15 @@ export class WorkspaceSyncMetadataService {
       }
 
       // CREATE FIELDS
-      await this.fieldMetadataRepository.save(fieldsToCreate);
+      await this.fieldMetadataRepository.save(
+        fieldsToCreate.map((field) => convertStringifiedFieldsToJSON(field)),
+      );
       // UPDATE FIELDS
       for (const [key, value] of Object.entries(fieldsToUpdate)) {
-        await this.fieldMetadataRepository.update(key, value);
+        await this.fieldMetadataRepository.update(
+          key,
+          convertStringifiedFieldsToJSON(value),
+        );
       }
       // DELETE FIELDS
       // TODO: handle relation fields deletion. We need to delete the relation metadata first due to the DB constraint.

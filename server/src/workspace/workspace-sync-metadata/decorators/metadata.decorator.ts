@@ -118,7 +118,7 @@ export function FieldMetadata(
                 },
                 joinColumn,
                 isNullable,
-                isSystem,
+                true,
               ),
             }
           : {}),
@@ -147,6 +147,7 @@ function generateFieldMetadata(
     isNullable,
     isSystem,
     isCustom: false,
+    options: null, // TODO: handle options + stringify for the diff.
     description: metadata.description ?? null,
     icon: metadata.icon ?? null,
     defaultValue: defaultValue ? JSON.stringify(defaultValue) : null,

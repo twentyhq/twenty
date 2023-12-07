@@ -53,3 +53,22 @@ export const sortRelationMetadataByUniqueIdentifier = (a, b) => {
 
   return fromA.localeCompare(fromB) || toA.localeCompare(toB);
 };
+
+export const convertStringifiedFieldsToJSON = (fieldMetadata) => {
+  if (fieldMetadata.targetColumnMap) {
+    fieldMetadata.targetColumnMap = JSON.parse(
+      fieldMetadata.targetColumnMap as unknown as string,
+    );
+  }
+  if (fieldMetadata.defaultValue) {
+    fieldMetadata.defaultValue = JSON.parse(
+      fieldMetadata.defaultValue as unknown as string,
+    );
+  }
+  if (fieldMetadata.options) {
+    fieldMetadata.options = JSON.parse(
+      fieldMetadata.options as unknown as string,
+    );
+  }
+  return fieldMetadata;
+};

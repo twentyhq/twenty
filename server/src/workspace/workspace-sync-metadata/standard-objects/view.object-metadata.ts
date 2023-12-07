@@ -4,7 +4,6 @@ import {
   ObjectMetadata,
   IsSystem,
   FieldMetadata,
-  IsNullable,
   RelationMetadata,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
@@ -54,7 +53,6 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'viewField',
   })
-  @IsNullable()
   viewFields: object[];
 
   @FieldMetadata({
@@ -67,7 +65,6 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'viewFilter',
   })
-  @IsNullable()
   viewFilters: object[];
 
   @FieldMetadata({
@@ -80,19 +77,5 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'viewSort',
   })
-  @IsNullable()
   viewSorts: object[];
-
-  @FieldMetadata({
-    type: FieldMetadataType.RELATION,
-    label: 'View Sorts',
-    description: 'View Sorts',
-    icon: 'IconArrowsSort',
-  })
-  @RelationMetadata({
-    type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'activityd',
-  })
-  @IsNullable()
-  activities: object[];
 }

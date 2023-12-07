@@ -15,6 +15,7 @@ import {
   FieldMetadataEntity,
   FieldMetadataType,
 } from 'src/metadata/field-metadata/field-metadata.entity';
+import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync.metadata.service';
 
 import {
   basicFieldsMetadata,
@@ -30,6 +31,7 @@ export class WorkspaceManagerService {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly dataSourceService: DataSourceService,
     private readonly relationMetadataService: RelationMetadataService,
+    private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
   ) {}
 
   /**
@@ -57,16 +59,20 @@ export class WorkspaceManagerService {
       workspaceId,
     );
 
-    const createdObjectMetadata =
-      await this.createStandardObjectsAndFieldsMetadata(
-        dataSourceMetadata.id,
-        workspaceId,
-      );
+    // const createdObjectMetadata =
+    //   await this.createStandardObjectsAndFieldsMetadata(
+    //     dataSourceMetadata.id,
+    //     workspaceId,
+    //   );
+
+    await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
+      dataSourceMetadata.id,
+      workspaceId,
+    );
 
     await this.prefillWorkspaceWithStandardObjects(
       dataSourceMetadata,
       workspaceId,
-      createdObjectMetadata,
     );
   }
 
@@ -264,7 +270,6 @@ export class WorkspaceManagerService {
   private async prefillWorkspaceWithStandardObjects(
     dataSourceMetadata: DataSourceEntity,
     workspaceId: string,
-    createdObjectMetadata: ObjectMetadataEntity[],
   ) {
     const workspaceDataSource =
       await this.workspaceDataSourceService.connectToWorkspaceDataSource(
@@ -274,6 +279,10 @@ export class WorkspaceManagerService {
     if (!workspaceDataSource) {
       throw new Error('Could not connect to workspace data source');
     }
+
+    const createdObjectMetadata =
+      await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
+
     await standardObjectsPrefillData(
       workspaceDataSource,
       dataSourceMetadata.schema,

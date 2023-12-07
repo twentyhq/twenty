@@ -24,7 +24,7 @@ export class MetadataParser {
           ...field,
           workspaceId,
           isSystem: objectMetadata.isSystem || field.isSystem,
-          defaultValue: field.defaultValue || null, // TODO: use default default value based on field type
+          defaultValue: field.defaultValue || null,
           options: field.options || null,
         })),
       };

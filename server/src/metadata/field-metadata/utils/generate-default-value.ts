@@ -12,6 +12,11 @@ export function generateDefaultValue(
       return {
         value: '',
       };
+    case FieldMetadataType.FULL_NAME:
+      return {
+        firstName: '',
+        lastName: '',
+      };
     default:
       return null;
   }

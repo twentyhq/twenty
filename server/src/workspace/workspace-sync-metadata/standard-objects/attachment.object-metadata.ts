@@ -15,7 +15,7 @@ import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standa
   icon: 'IconFileImport',
 })
 @IsSystem()
-export class AttachmentpyObjectMetadata extends BaseObjectMetadata {
+export class AttachmentObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
     label: 'Name',
