@@ -1,5 +1,6 @@
+import { EmailDisplay } from '@/ui/field/display/components/EmailDisplay';
+
 import { useEmailField } from '../../hooks/useEmailField';
-import { EmailDisplay } from '../content-display/components/EmailDisplay';
 
 export const EmailFieldDisplay = () => {
   const { fieldValue } = useEmailField();

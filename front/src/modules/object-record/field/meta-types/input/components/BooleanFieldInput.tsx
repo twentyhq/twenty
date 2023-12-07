@@ -1,4 +1,4 @@
-import { BooleanInput } from '@/object-record/field/meta-types/input/components/internal/BooleanInput';
+import { BooleanInput } from '@/ui/field/input/components/BooleanInput';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useBooleanField } from '../../hooks/useBooleanField';

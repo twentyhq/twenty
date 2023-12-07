@@ -1,8 +1,8 @@
-import { PhoneInput } from '@/object-record/field/meta-types/input/components/internal/PhoneInput';
+import { PhoneInput } from '@/ui/field/input/components/PhoneInput';
 
+import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { usePhoneField } from '../../hooks/usePhoneField';
 
-import { FieldInputOverlay } from './internal/FieldInputOverlay';
 import { FieldInputEvent } from './DateFieldInput';
 
 export type PhoneFieldInputProps = {
