@@ -136,7 +136,7 @@ export class WorkspaceMigrationFactory {
     }
 
     // If it's a composite field type, we need to create a column action for each of the fields
-    if (isCompositeFieldMetadataType(nextFieldMetadata.type)) {
+    if (isCompositeFieldMetadataType(alteredFieldMetadata.type)) {
       const fieldMetadataSplitterFunction = this.compositeDefinitions.get(
         alteredFieldMetadata.type,
       );
@@ -155,7 +155,7 @@ export class WorkspaceMigrationFactory {
       }
 
       const fieldMetadataCollection =
-        fieldMetadataSplitterFunction(nextFieldMetadata);
+        fieldMetadataSplitterFunction(alteredFieldMetadata);
 
       return fieldMetadataCollection.map((fieldMetadata) =>
         this.createColumnAction(action, fieldMetadata, fieldMetadata),
