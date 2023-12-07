@@ -88,7 +88,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
           FieldMetadataType.Boolean,
           FieldMetadataType.Currency,
           FieldMetadataType.DateTime,
-          FieldMetadataType.Enum,
+          FieldMetadataType.MultiSelect,
           FieldMetadataType.Link,
           FieldMetadataType.Number,
           FieldMetadataType.Probability,
@@ -151,7 +151,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
                     })
                   }
                 />
-              ) : values.type === FieldMetadataType.Enum ? (
+              ) : values.type === FieldMetadataType.MultiSelect ? (
                 <SettingsObjectFieldSelectForm
                   values={selectFormConfig}
                   onChange={(nextValues) => onChange({ select: nextValues })}

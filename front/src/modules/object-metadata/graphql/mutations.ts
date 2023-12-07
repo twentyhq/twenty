@@ -15,20 +15,21 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
       isActive
       createdAt
       updatedAt
+      labelIdentifierFieldMetadataId
+      imageIdentifierFieldMetadataId
     }
   }
 `;
 
 export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
-  mutation CreateOneFieldMetadataItem($input: CreateOneFieldInput!) {
-    createOneField(input: $input) {
+  mutation CreateOneFieldMetadataItem($input: CreateFieldInput!) {
+    createOneField(input: { field: $input }) {
       id
       type
       name
       label
       description
       icon
-      placeholder
       isCustom
       isActive
       isNullable
@@ -65,7 +66,6 @@ export const UPDATE_ONE_FIELD_METADATA_ITEM = gql`
       label
       description
       icon
-      placeholder
       isCustom
       isActive
       isNullable
@@ -93,6 +93,8 @@ export const UPDATE_ONE_OBJECT_METADATA_ITEM = gql`
       isActive
       createdAt
       updatedAt
+      labelIdentifierFieldMetadataId
+      imageIdentifierFieldMetadataId
     }
   }
 `;
@@ -112,6 +114,8 @@ export const DELETE_ONE_OBJECT_METADATA_ITEM = gql`
       isActive
       createdAt
       updatedAt
+      labelIdentifierFieldMetadataId
+      imageIdentifierFieldMetadataId
     }
   }
 `;
@@ -125,7 +129,6 @@ export const DELETE_ONE_FIELD_METADATA_ITEM = gql`
       label
       description
       icon
-      placeholder
       isCustom
       isActive
       isNullable

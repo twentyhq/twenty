@@ -2,10 +2,10 @@ import { ApolloClient, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
 import { FieldType } from '@/object-record/field/types/FieldType';
-import { FieldMetadataType } from '~/generated/graphql';
 import {
   CreateOneFieldMetadataItemMutation,
   CreateOneFieldMetadataItemMutationVariables,
+  FieldMetadataType,
 } from '~/generated-metadata/graphql';
 
 import { CREATE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
@@ -14,7 +14,7 @@ import { FIND_MANY_OBJECT_METADATA_ITEMS } from '../graphql/queries';
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 type CreateOneFieldMetadataItemArgs = Omit<
-  CreateOneFieldMetadataItemMutationVariables['input']['field'],
+  CreateOneFieldMetadataItemMutationVariables['input'],
   'type'
 > & {
   type: FieldType;
@@ -36,10 +36,8 @@ export const useCreateOneFieldMetadataItem = () => {
     return await mutate({
       variables: {
         input: {
-          field: {
-            ...input,
-            type: input.type as FieldMetadataType, // Todo improve typing once we have aligned backend and frontend
-          },
+          ...input,
+          type: input.type as FieldMetadataType, // Todo improve typing once we have aligned backend and frontend
         },
       },
       awaitRefetchQueries: true,

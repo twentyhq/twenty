@@ -97,7 +97,9 @@ export const SettingsObjectDetail = () => {
                     fieldMetadataItem={activeMetadataField}
                     ActionIcon={
                       <SettingsObjectFieldActiveActionDropdown
-                        isCustomField={activeMetadataField.isCustom}
+                        isCustomField={
+                          activeMetadataField.isCustom ?? undefined
+                        }
                         scopeKey={activeMetadataField.id}
                         onEdit={() =>
                           navigate(`./${getFieldSlug(activeMetadataField)}`)
@@ -119,7 +121,9 @@ export const SettingsObjectDetail = () => {
                     fieldMetadataItem={disabledMetadataField}
                     ActionIcon={
                       <SettingsObjectFieldDisabledActionDropdown
-                        isCustomField={disabledMetadataField.isCustom}
+                        isCustomField={
+                          disabledMetadataField.isCustom ?? undefined
+                        }
                         scopeKey={disabledMetadataField.id}
                         onActivate={() =>
                           activateMetadataField(disabledMetadataField)
