@@ -83,10 +83,10 @@ export const Catalog: CatalogStory<Story, typeof NavigationDrawerItem> = {
             adornmentName === 'Soon Pill'
               ? { soon: true }
               : adornmentName === 'Count'
-              ? { count: 3 }
-              : adornmentName === 'Keyboard Keys'
-              ? { keyboard: ['⌘', 'K'] }
-              : {},
+                ? { count: 3 }
+                : adornmentName === 'Keyboard Keys'
+                  ? { keyboard: ['⌘', 'K'] }
+                  : {},
         },
       ],
     },
