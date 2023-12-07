@@ -60,7 +60,7 @@ export class EnvironmentVariables {
   @IsUrl({ require_tld: false })
   FRONT_BASE_URL: string;
 
-  // Frontend URL
+  // Server URL
   @IsUrl({ require_tld: false })
   @IsOptional()
   SERVER_URL: string;
