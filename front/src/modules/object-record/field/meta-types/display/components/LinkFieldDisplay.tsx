@@ -1,5 +1,6 @@
+import { LinkDisplay } from '@/ui/field/display/components/LinkDisplay';
+
 import { useLinkField } from '../../hooks/useLinkField';
-import { LinkDisplay } from '../content-display/components/LinkDisplay';
 
 export const LinkFieldDisplay = () => {
   const { fieldValue } = useLinkField();

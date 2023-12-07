@@ -1,4 +1,4 @@
-import { PhoneDisplay } from '@/object-record/field/meta-types/display/content-display/components/PhoneDisplay';
+import { PhoneDisplay } from '@/ui/field/display/components/PhoneDisplay';
 
 import { usePhoneField } from '../../hooks/usePhoneField';
 

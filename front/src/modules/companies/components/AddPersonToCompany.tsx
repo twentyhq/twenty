@@ -6,12 +6,12 @@ import { flip, offset, useFloating } from '@floating-ui/react';
 import { v4 } from 'uuid';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { DoubleTextInput } from '@/object-record/field/meta-types/input/components/internal/DoubleTextInput';
 import { FieldDoubleText } from '@/object-record/field/types/FieldDoubleText';
 import { RelationPicker } from '@/object-record/relation-picker/components/RelationPicker';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { IconPlus } from '@/ui/display/icon';
+import { DoubleTextInput } from '@/ui/field/input/components/DoubleTextInput';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';

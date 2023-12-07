@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 
 import { CountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/CountryPickerDropdownButton';
 
-import { useRegisterInputEvents } from '../../hooks/useRegisterInputEvents';
+import { useRegisterInputEvents } from '../../../../object-record/field/meta-types/input/hooks/useRegisterInputEvents';
 
 import 'react-phone-number-input/style.css';
 

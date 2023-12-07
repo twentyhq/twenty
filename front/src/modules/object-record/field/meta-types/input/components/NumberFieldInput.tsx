@@ -1,8 +1,7 @@
-import { TextInput } from '@/object-record/field/meta-types/input/components/internal/TextInput';
+import { TextInput } from '@/ui/field/input/components/TextInput';
 
+import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { useNumberField } from '../../hooks/useNumberField';
-
-import { FieldInputOverlay } from './internal/FieldInputOverlay';
 
 export type FieldInputEvent = (persist: () => void) => void;
 

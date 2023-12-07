@@ -1,4 +1,4 @@
-import { RatingInput } from '@/object-record/field/meta-types/input/components/internal/RatingInput';
+import { RatingInput } from '@/ui/field/input/components/RatingInput';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useRatingField } from '../../hooks/useRatingField';

@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { textInputStyle } from '@/ui/theme/constants/effects';
 
-import { useRegisterInputEvents } from '../../hooks/useRegisterInputEvents';
+import { useRegisterInputEvents } from '../../../../object-record/field/meta-types/input/hooks/useRegisterInputEvents';
 
 export const StyledInput = styled.input`
   margin: 0;
