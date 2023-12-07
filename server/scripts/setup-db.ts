@@ -28,6 +28,11 @@ connectionSource
     );
 
     await performQuery(
+      'CREATE EXTENSION IF NOT EXISTS "postgres_fdw"',
+      'create extension "postgres_fdw"',
+    );
+
+    await performQuery(
       `COMMENT ON SCHEMA "core" IS '@graphql({"inflect_names": true})';`,
       'inflect names for graphql',
     );
