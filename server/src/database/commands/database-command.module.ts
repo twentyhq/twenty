@@ -11,6 +11,7 @@ import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-wo
 import { DataSeedDemoWorkspaceCommand } from 'src/database/commands/data-seed-demo-workspace.command';
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 import { WorkspaceSyncMetadataModule } from 'src/workspace/workspace-sync-metadata/worksapce-sync-metadata.module';
+import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { WorkspaceSyncMetadataModule } from 'src/workspace/workspace-sync-metada
     WorkspaceModule,
     WorkspaceDataSourceModule,
     WorkspaceSyncMetadataModule,
+    ObjectMetadataModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,
