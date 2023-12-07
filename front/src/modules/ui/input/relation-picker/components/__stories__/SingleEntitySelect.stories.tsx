@@ -11,7 +11,7 @@ import { sleep } from '~/testing/sleep';
 
 import { relationPickerSearchFilterScopedState } from '../../states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '../../types/EntityForSelect';
-import { SingleEntitySelect } from '../SingleEntitySelect';
+import { SingleEntitySelect } from '../../../../../object-record/relation-picker/components/SingleEntitySelect';
 
 const entities = mockedPeopleData.map<EntityForSelect>((person) => ({
   id: person.id,
