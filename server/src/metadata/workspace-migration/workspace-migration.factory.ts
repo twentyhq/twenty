@@ -12,9 +12,13 @@ import {
   WorkspaceMigrationColumnActionType,
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { isCompositeFieldMetadataType } from 'src/metadata/field-metadata/utils/is-composite-field-metadata-type.util';
-import { linkObjectDefinition } from 'src/metadata/field-metadata/composite-types/link.composite-type';
-import { currencyObjectDefinition } from 'src/metadata/field-metadata/composite-types/currency.composite-type';
-import { fullNameObjectDefinition } from 'src/metadata/field-metadata/composite-types/full-name.composite-type';
+import { fullNameFields } from 'src/metadata/field-metadata/composite-types/full-name.composite-type';
+import { currencyFields } from 'src/metadata/field-metadata/composite-types/currency.composite-type';
+import { linkFields } from 'src/metadata/field-metadata/composite-types/link.composite-type';
+
+type CompositeFieldSplitterFunction = (
+  fieldMetadata: FieldMetadataInterface,
+) => FieldMetadataInterface[];
 
 @Injectable()
 export class WorkspaceMigrationFactory {
@@ -26,7 +30,10 @@ export class WorkspaceMigrationFactory {
       options?: WorkspaceColumnActionOptions;
     }
   >;
-  private compositeDefinitions = new Map<string, FieldMetadataInterface[]>();
+  private compositeDefinitions = new Map<
+    string,
+    CompositeFieldSplitterFunction
+  >();
 
   constructor(
     private readonly basicColumnActionFactory: BasicColumnActionFactory,
@@ -83,11 +90,13 @@ export class WorkspaceMigrationFactory {
       ],
     ]);
 
-    this.compositeDefinitions = new Map<string, FieldMetadataInterface[]>([
-      [FieldMetadataType.LINK, linkObjectDefinition.fields],
-      [FieldMetadataType.CURRENCY, currencyObjectDefinition.fields],
-      [FieldMetadataType.FULL_NAME, fullNameObjectDefinition.fields],
-    ]);
+    this.compositeDefinitions = new Map<string, CompositeFieldSplitterFunction>(
+      [
+        [FieldMetadataType.LINK, linkFields],
+        [FieldMetadataType.CURRENCY, currencyFields],
+        [FieldMetadataType.FULL_NAME, fullNameFields],
+      ],
+    );
   }
 
   createColumnActions(
@@ -128,11 +137,11 @@ export class WorkspaceMigrationFactory {
 
     // If it's a composite field type, we need to create a column action for each of the fields
     if (isCompositeFieldMetadataType(alteredFieldMetadata.type)) {
-      const fieldMetadataCollection = this.compositeDefinitions.get(
+      const fieldMetadataSplitterFunction = this.compositeDefinitions.get(
         alteredFieldMetadata.type,
       );
 
-      if (!fieldMetadataCollection) {
+      if (!fieldMetadataSplitterFunction) {
         this.logger.error(
           `No composite definition found for type ${alteredFieldMetadata.type}`,
           {
@@ -144,6 +153,9 @@ export class WorkspaceMigrationFactory {
           `No composite definition found for type ${alteredFieldMetadata.type}`,
         );
       }
+
+      const fieldMetadataCollection =
+        fieldMetadataSplitterFunction(alteredFieldMetadata);
 
       return fieldMetadataCollection.map((fieldMetadata) =>
         this.createColumnAction(action, fieldMetadata, fieldMetadata),
