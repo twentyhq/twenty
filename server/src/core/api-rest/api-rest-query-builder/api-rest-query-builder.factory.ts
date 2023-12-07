@@ -17,6 +17,7 @@ import { parsePath } from 'src/core/api-rest/api-rest-query-builder/utils/parse-
 import { computeDepth } from 'src/core/api-rest/api-rest-query-builder/utils/compute-depth.utils';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { ApiRestQuery } from 'src/core/api-rest/types/api-rest-query.type';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 @Injectable()
 export class ApiRestQueryBuilderFactory {
@@ -32,6 +33,7 @@ export class ApiRestQueryBuilderFactory {
     private readonly getVariablesFactory: GetVariablesFactory,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly tokenService: TokenService,
+    private readonly environmentService: EnvironmentService,
   ) {}
 
   async getObjectMetadata(request: Request): Promise<{
@@ -42,6 +44,12 @@ export class ApiRestQueryBuilderFactory {
 
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
+
+    if (!objectMetadataItems.length) {
+      throw new BadRequestException(
+        `No object was found for the workspace associated with this API key. You may generate a new one here ${this.environmentService.getFrontBaseUrl()}/settings/developers/api-keys`,
+      );
+    }
 
     const { id, object: parsedObject } = parsePath(request);
 
