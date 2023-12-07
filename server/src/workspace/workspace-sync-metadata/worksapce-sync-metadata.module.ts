@@ -6,11 +6,13 @@ import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metada
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { WorkspaceMigrationEntity } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationModule } from 'src/metadata/workspace-migration/workspace-migration.module';
+import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync.metadata.service';
 
 @Module({
   imports: [
     WorkspaceMigrationModule,
+    WorkspaceMigrationRunnerModule,
     TypeOrmModule.forFeature(
       [
         FieldMetadataEntity,

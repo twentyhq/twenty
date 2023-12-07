@@ -27,11 +27,13 @@ import {
   WorkspaceMigrationTableAction,
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationFactory } from 'src/metadata/workspace-migration/workspace-migration.factory';
+import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
 
 @Injectable()
 export class WorkspaceSyncMetadataService {
   constructor(
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
+    private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
 
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
@@ -179,8 +181,8 @@ export class WorkspaceSyncMetadataService {
           }
         }
 
-        // console.log(standardObjectName + ':objectDiff', objectDiff);
-        // console.log(standardObjectName + ':fieldsDiff', fieldsDiff);
+        console.log(standardObjectName + ':objectDiff', objectDiff);
+        console.log(standardObjectName + ':fieldsDiff', fieldsDiff);
       }
 
       // CREATE OBJECTS
@@ -208,12 +210,13 @@ export class WorkspaceSyncMetadataService {
         await this.fieldMetadataRepository.update(key, value);
       }
       // DELETE FIELDS
-      if (fieldsToDelete.length > 0) {
+      // TODO: handle relation fields deletion. We need to delete the relation metadata first due to the DB constraint.
+      const fieldsToDeleteWithoutRelationType = fieldsToDelete.filter(
+        (field) => field.type !== FieldMetadataType.RELATION,
+      );
+      if (fieldsToDeleteWithoutRelationType.length > 0) {
         await this.fieldMetadataRepository.delete(
-          fieldsToDelete
-            // TODO: handle relation fields deletion. We need to delete the relation metadata first due to the DB constraint.
-            .filter((field) => field.type !== FieldMetadataType.RELATION)
-            .map((field) => field.id),
+          fieldsToDeleteWithoutRelationType.map((field) => field.id),
         );
       }
 
@@ -228,6 +231,11 @@ export class WorkspaceSyncMetadataService {
       // We run syncRelationMetadata after everything to ensure that all objects and fields are
       // in the DB before creating relations.
       await this.syncRelationMetadata(workspaceId, dataSourceId);
+
+      // Execute migrations
+      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+        workspaceId,
+      );
     } catch (error) {
       console.error('Sync of standard objects failed with:', error);
     }
