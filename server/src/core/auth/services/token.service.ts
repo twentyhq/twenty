@@ -112,7 +112,10 @@ export class TokenService {
     };
   }
 
-  async generateShortTermToken(workspaceMemberId: string): Promise<AuthToken> {
+  async generateShortTermToken(
+    workspaceMemberId: string,
+    workspaceId: string,
+  ): Promise<AuthToken> {
     const secret = this.environmentService.getLoginTokenSecret();
     const expiresIn = this.environmentService.getShortTermTokenExpiresIn();
 
@@ -120,6 +123,7 @@ export class TokenService {
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
     const jwtPayload = {
       sub: workspaceMemberId,
+      workspaceId,
     };
 
     return {
@@ -167,6 +171,20 @@ export class TokenService {
     const payload = await this.verifyJwt(loginToken, loginTokenSecret);
 
     return payload.sub;
+  }
+
+  async verifyShortTermToken(shortTermToken: string): Promise<{
+    workspaceMemberId: string;
+    workspaceId: string;
+  }> {
+    const shortTermTokenSecret = this.environmentService.getLoginTokenSecret();
+
+    const payload = await this.verifyJwt(shortTermToken, shortTermTokenSecret);
+
+    return {
+      workspaceMemberId: payload.sub,
+      workspaceId: payload.workspaceId,
+    };
   }
 
   async verifyRefreshToken(refreshToken: string) {

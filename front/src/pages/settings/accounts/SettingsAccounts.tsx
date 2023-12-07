@@ -15,8 +15,10 @@ export const SettingsAccounts = () => {
 
     const shortTermToken = await generateShortTermToken();
 
-    console.log('shortTermToken', shortTermToken);
-    //window.location.href = `${authServerUrl}/google-gmail` || '';
+    const token =
+      shortTermToken.data?.generateShortTermToken.shortTermToken.token;
+
+    window.location.href = `${authServerUrl}/google-gmail?shortTermToken=${token}`;
   }, [generateShortTermToken]);
 
   return (

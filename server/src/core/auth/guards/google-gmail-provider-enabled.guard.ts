@@ -8,12 +8,14 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 @Injectable()
 export class GoogleGmailProviderEnabledGuard implements CanActivate {
   constructor(private readonly environmentService: EnvironmentService) {}
+
   canActivate(): boolean | Promise<boolean> | Observable<boolean> {
     if (!this.environmentService.isAuthGoogleGmailEnabled()) {
       throw new NotFoundException('Gmail auth is not enabled');
     }
 
     new GoogleGmailStrategy(this.environmentService);
+
     return true;
   }
 }

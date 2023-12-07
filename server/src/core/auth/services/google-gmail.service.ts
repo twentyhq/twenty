@@ -14,24 +14,17 @@ export class GoogleGmailService {
   async saveConnectedAccount(
     saveConnectedAccountInput: SaveConnectedAccountInput,
   ) {
-    console.log('saveConnectedAccountInput', saveConnectedAccountInput);
-    const { accountOwner, type, accessToken, refreshToken } =
+    const { workspaceMemberId, workspaceId, type, accessToken, refreshToken } =
       saveConnectedAccountInput;
 
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        accountOwner.defaultWorkspace.id,
+        workspaceId,
       );
 
     const workspaceDataSource = await this.typeORMService.connectToDataSource(
       dataSourceMetadata,
     );
-
-    // const workspaceMembers = await workspaceDataSource?.query(
-    //   `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId" = '${user.id}'`,
-    // );
-
-    console.log('workspaceDataSource', workspaceDataSource);
 
     // Update connected account
     await workspaceDataSource?.query(

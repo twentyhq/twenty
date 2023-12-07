@@ -93,18 +93,13 @@ export class AuthResolver {
   async generateShortTermToken(
     @AuthUser() user: User,
   ): Promise<ShortTermToken | void> {
-    console.log(user);
+    const workspaceMember = await this.userService.loadWorkspaceMember(user);
+    const shortTermToken = await this.tokenService.generateShortTermToken(
+      workspaceMember.id,
+      user.defaultWorkspace.id,
+    );
 
-    try {
-      const workspaceMember = await this.userService.loadWorkspaceMember(user);
-      const shortTermToken = await this.tokenService.generateLoginToken(
-        workspaceMember.id,
-      );
-
-      return { shortTermToken };
-    } catch (error) {
-      console.log(error);
-    }
+    return { shortTermToken };
   }
 
   @Mutation(() => Verify)

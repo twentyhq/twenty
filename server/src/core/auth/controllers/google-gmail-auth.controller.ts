@@ -2,12 +2,10 @@ import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 
 import { Response } from 'express';
 
-import { User } from 'src/core/user/user.entity';
 import { GoogleGmailProviderEnabledGuard } from 'src/core/auth/guards/google-gmail-provider-enabled.guard';
 import { GoogleGmailOauthGuard } from 'src/core/auth/guards/google-gmail-oauth.guard';
 import { GoogleGmailRequest } from 'src/core/auth/strategies/google-gmail.auth.strategy';
 import { GoogleGmailService } from 'src/core/auth/services/google-gmail.service';
-import { AuthUser } from 'src/decorators/auth-user.decorator';
 import { TokenService } from 'src/core/auth/services/token.service';
 
 @Controller('auth/google-gmail')
@@ -16,17 +14,6 @@ export class GoogleGmailAuthController {
     private readonly googleGmailService: GoogleGmailService,
     private readonly tokenService: TokenService,
   ) {}
-
-  // @Get('generate-short-term-token')
-  // @UseGuards(JwtAuthGuard)
-  // async getShortTermToken(@AuthUser() user: User) {
-  //   console.log(user);
-  //   const token = await this.tokenService.generateShortTermToken(
-  //     user.workspaceMember.id,
-  //   );
-
-  //   return token;
-  // }
 
   @Get()
   @UseGuards(GoogleGmailProviderEnabledGuard, GoogleGmailOauthGuard)
@@ -40,24 +27,21 @@ export class GoogleGmailAuthController {
   async googleAuthGetAccessToken(
     @Req() req: GoogleGmailRequest,
     @Res() res: Response,
-    @AuthUser() user: User,
   ) {
-    console.log('toto');
-
     const { user: gmailUser } = req;
 
-    const { accessToken, refreshToken } = gmailUser;
+    const { accessToken, refreshToken, shortTermToken } = gmailUser;
 
-    console.log('toto1');
+    const { workspaceMemberId, workspaceId } =
+      await this.tokenService.verifyShortTermToken(shortTermToken);
 
     this.googleGmailService.saveConnectedAccount({
-      accountOwner: user,
+      workspaceMemberId: workspaceMemberId,
+      workspaceId: workspaceId,
       type: 'gmail',
       accessToken,
       refreshToken,
     });
-
-    console.log('toto2');
 
     return res.redirect('http://localhost:3001');
   }

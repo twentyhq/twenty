@@ -2,12 +2,17 @@ import { ArgsType, Field } from '@nestjs/graphql';
 
 import { IsNotEmpty, IsString } from 'class-validator';
 
-import { User } from 'src/core/user/user.entity';
-
 @ArgsType()
 export class SaveConnectedAccountInput {
-  @Field(() => User)
-  accountOwner: User;
+  @Field(() => String)
+  @IsNotEmpty()
+  @IsString()
+  workspaceMemberId: string;
+
+  @Field(() => String)
+  @IsNotEmpty()
+  @IsString()
+  workspaceId: string;
 
   @Field(() => String)
   @IsNotEmpty()

@@ -5,7 +5,6 @@ import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { Request } from 'express';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { GoogleRequest } from 'src/core/auth/strategies/google.auth.strategy';
 
 export type GoogleGmailRequest = Request & {
   user: {
@@ -16,6 +15,7 @@ export type GoogleGmailRequest = Request & {
     workspaceInviteHash?: string;
     accessToken: string;
     refreshToken: string;
+    shortTermToken: string;
   };
 };
 
@@ -43,19 +43,27 @@ export class GoogleGmailStrategy extends PassportStrategy(
       ...options,
       accessType: 'offline',
       prompt: 'consent',
+      state: JSON.stringify({
+        shortTermToken: req.params.shortTermToken,
+      }),
     };
 
     return super.authenticate(req, options);
   }
 
   async validate(
-    request: GoogleRequest,
+    request: GoogleGmailRequest,
     accessToken: string,
     refreshToken: string,
     profile: any,
     done: VerifyCallback,
   ): Promise<void> {
     const { name, emails, photos } = profile;
+
+    const state =
+      typeof request.query.state === 'string'
+        ? JSON.parse(request.query.state)
+        : undefined;
 
     const user: GoogleGmailRequest['user'] = {
       email: emails[0].value,
@@ -64,6 +72,7 @@ export class GoogleGmailStrategy extends PassportStrategy(
       picture: photos?.[0]?.value,
       accessToken,
       refreshToken,
+      shortTermToken: state.shortTermToken,
     };
 
     done(null, user);
