@@ -6,6 +6,7 @@ import { Tag } from '@/ui/display/tag/components/Tag';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
+import { Card } from '@/ui/layout/card/components/Card';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -22,11 +23,8 @@ type SettingsAboutSectionProps = {
   onEdit: () => void;
 };
 
-const StyledCard = styled.div`
+const StyledCard = styled(Card)`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.secondary};
-  border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};

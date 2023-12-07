@@ -3,7 +3,7 @@ import { produce } from 'immer';
 import { useRecoilCallback } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { Sort } from '@/ui/object/object-sort-dropdown/types/Sort';
+import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { savedViewSortsScopedFamilyState } from '@/views/states/savedViewSortsScopedFamilyState';
 import { ViewSort } from '@/views/types/ViewSort';
 import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';

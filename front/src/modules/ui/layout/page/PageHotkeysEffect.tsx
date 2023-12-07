@@ -1,4 +1,4 @@
-import { TableHotkeyScope } from '@/ui/object/record-table/types/TableHotkeyScope';
+import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 type PageHotkeysEffectProps = {
