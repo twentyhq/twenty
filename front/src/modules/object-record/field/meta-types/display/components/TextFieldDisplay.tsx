@@ -1,4 +1,4 @@
-import { TextDisplay } from '@/object-record/field/meta-types/display/content-display/components/TextDisplay';
+import { TextDisplay } from '@/ui/field/components/TextDisplay';
 
 import { useTextField } from '../../hooks/useTextField';
 
