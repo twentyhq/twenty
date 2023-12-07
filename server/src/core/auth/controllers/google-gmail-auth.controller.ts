@@ -39,8 +39,6 @@ export class GoogleGmailAuthController {
     @Req() req: GoogleGmailRequest,
     @Res() res: Response,
   ) {
-    console.log('googleAuthGetAccessToken');
-    console.log('req', req);
     const { user } = req;
 
     const { accessToken, refreshToken } = user;

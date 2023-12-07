@@ -29,8 +29,6 @@ export class GoogleGmailStrategy extends PassportStrategy(
       clientID: environmentService.getAuthGoogleClientId(),
       clientSecret: environmentService.getAuthGoogleClientSecret(),
       callbackURL: environmentService.getAuthGoogleGmailCallbackUrl(),
-      accessType: 'offline',
-      prompt: 'consent',
       scope: [
         'email',
         'profile',
@@ -41,11 +39,11 @@ export class GoogleGmailStrategy extends PassportStrategy(
   }
 
   authenticate(req: any, options: any) {
+    console.log('req.query', req.query);
     options = {
       ...options,
-      state: JSON.stringify({
-        workspaceInviteHash: req.params.workspaceInviteHash,
-      }),
+      accessType: 'offline',
+      prompt: 'consent',
     };
 
     return super.authenticate(req, options);
@@ -59,17 +57,12 @@ export class GoogleGmailStrategy extends PassportStrategy(
     done: VerifyCallback,
   ): Promise<void> {
     const { name, emails, photos } = profile;
-    const state =
-      typeof request.query.state === 'string'
-        ? JSON.parse(request.query.state)
-        : undefined;
 
     const user: GoogleGmailRequest['user'] = {
       email: emails[0].value,
       firstName: name.givenName,
       lastName: name.familyName,
       picture: photos?.[0]?.value,
-      workspaceInviteHash: state.workspaceInviteHash,
       accessToken,
       refreshToken,
     };
