@@ -23,21 +23,21 @@ export class ColumnActionAbstractFactory<
     action:
       | WorkspaceMigrationColumnActionType.CREATE
       | WorkspaceMigrationColumnActionType.ALTER,
-    previousFieldMetadata: FieldMetadataInterface<T> | undefined,
-    nextFieldMetadata: FieldMetadataInterface<T>,
+    currentFieldMetadata: FieldMetadataInterface<T> | undefined,
+    alteredFieldMetadata: FieldMetadataInterface<T>,
     options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnAction {
     switch (action) {
       case WorkspaceMigrationColumnActionType.CREATE:
-        return this.handleCreateAction(nextFieldMetadata, options);
+        return this.handleCreateAction(alteredFieldMetadata, options);
       case WorkspaceMigrationColumnActionType.ALTER: {
-        if (!previousFieldMetadata) {
-          throw new Error('Previous field metadata is required for alter');
+        if (!currentFieldMetadata) {
+          throw new Error('current field metadata is required for alter');
         }
 
         return this.handleAlterAction(
-          previousFieldMetadata,
-          nextFieldMetadata,
+          currentFieldMetadata,
+          alteredFieldMetadata,
           options,
         );
       }
@@ -57,8 +57,8 @@ export class ColumnActionAbstractFactory<
   }
 
   protected handleAlterAction(
-    _previousFieldMetadata: FieldMetadataInterface<T>,
-    _nextFieldMetadata: FieldMetadataInterface<T>,
+    _currentFieldMetadata: FieldMetadataInterface<T>,
+    _alteredFieldMetadata: FieldMetadataInterface<T>,
     _options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnAlter {
     throw new Error('handleAlterAction method not implemented.');
