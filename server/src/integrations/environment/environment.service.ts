@@ -82,6 +82,12 @@ export class EnvironmentService {
     return this.configService.get<string>('LOGIN_TOKEN_EXPIRES_IN') ?? '15m';
   }
 
+  getShortTermTokenExpiresIn(): string {
+    return (
+      this.configService.get<string>('SHORT_TERM_TOKEN_EXPIRES_IN') ?? '5m'
+    );
+  }
+
   getApiTokenExpiresIn(): string {
     return this.configService.get<string>('API_TOKEN_EXPIRES_IN') ?? '1000y';
   }

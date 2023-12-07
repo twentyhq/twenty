@@ -15,6 +15,8 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { User } from 'src/core/user/user.entity';
 import { ApiKeyTokenInput } from 'src/core/auth/dto/api-key-token.input';
+import { ShortTermToken } from 'src/core/auth/dto/short-term-token.entity';
+import { UserService } from 'src/core/user/services/user.service';
 
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { TokenService } from './services/token.service';
@@ -38,6 +40,7 @@ export class AuthResolver {
     private readonly workspaceRepository: Repository<Workspace>,
     private authService: AuthService,
     private tokenService: TokenService,
+    private userService: UserService,
   ) {}
 
   @Query(() => UserExists)
@@ -83,6 +86,25 @@ export class AuthResolver {
     const loginToken = await this.tokenService.generateLoginToken(user.email);
 
     return { loginToken };
+  }
+
+  @Mutation(() => ShortTermToken)
+  @UseGuards(JwtAuthGuard)
+  async generateShortTermToken(
+    @AuthUser() user: User,
+  ): Promise<ShortTermToken | void> {
+    console.log(user);
+
+    try {
+      const workspaceMember = await this.userService.loadWorkspaceMember(user);
+      const shortTermToken = await this.tokenService.generateLoginToken(
+        workspaceMember.id,
+      );
+
+      return { shortTermToken };
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   @Mutation(() => Verify)

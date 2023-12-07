@@ -112,6 +112,25 @@ export class TokenService {
     };
   }
 
+  async generateShortTermToken(workspaceMemberId: string): Promise<AuthToken> {
+    const secret = this.environmentService.getLoginTokenSecret();
+    const expiresIn = this.environmentService.getShortTermTokenExpiresIn();
+
+    assert(expiresIn, '', InternalServerErrorException);
+    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
+    const jwtPayload = {
+      sub: workspaceMemberId,
+    };
+
+    return {
+      token: this.jwtService.sign(jwtPayload, {
+        secret,
+        expiresIn,
+      }),
+      expiresAt,
+    };
+  }
+
   async generateApiKeyToken(
     workspaceId: string,
     apiKeyId?: string,

@@ -5,13 +5,19 @@ import { IconSettings } from '@/ui/display/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { REACT_APP_SERVER_AUTH_URL } from '~/config';
+import { useGenerateShortTermTokenMutation } from '~/generated/graphql';
 
 export const SettingsAccounts = () => {
-  const handleGmailLogin = useCallback(() => {
+  const [generateShortTermToken] = useGenerateShortTermTokenMutation();
+
+  const handleGmailLogin = useCallback(async () => {
     const authServerUrl = REACT_APP_SERVER_AUTH_URL;
-    console.log('authServerUrl', authServerUrl);
-    window.location.href = `${authServerUrl}/google-gmail` || '';
-  }, []);
+
+    const shortTermToken = await generateShortTermToken();
+
+    console.log('shortTermToken', shortTermToken);
+    //window.location.href = `${authServerUrl}/google-gmail` || '';
+  }, [generateShortTermToken]);
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">

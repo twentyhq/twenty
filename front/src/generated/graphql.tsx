@@ -68,6 +68,26 @@ export type ClientConfig = {
   telemetry: Telemetry;
 };
 
+export type CreateFieldInput = {
+  defaultValue?: InputMaybe<Scalars['JSON']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  isActive?: InputMaybe<Scalars['Boolean']>;
+  isCustom?: InputMaybe<Scalars['Boolean']>;
+  isNullable?: InputMaybe<Scalars['Boolean']>;
+  isSystem?: InputMaybe<Scalars['Boolean']>;
+  label: Scalars['String'];
+  name: Scalars['String'];
+  objectMetadataId: Scalars['String'];
+  options?: InputMaybe<Scalars['JSON']>;
+  type: FieldMetadataType;
+};
+
+export type CreateOneFieldMetadataInput = {
+  /** The record to create */
+  field: CreateFieldInput;
+};
+
 export type CreateOneRefreshTokenInput = {
   /** The record to create */
   refreshToken: CreateRefreshTokenInput;
@@ -136,8 +156,6 @@ export type FieldDeleteResponse = {
   label?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   options?: Maybe<Scalars['JSON']>;
-  /** @deprecated Use label name instead */
-  placeholder?: Maybe<Scalars['String']>;
   type?: Maybe<FieldMetadataType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
@@ -205,6 +223,7 @@ export type Mutation = {
   deleteOneRelation: RelationDeleteResponse;
   deleteUser: User;
   generateApiKeyToken: ApiKeyToken;
+  generateShortTermToken: ShortTermToken;
   impersonate: Verify;
   renewToken: AuthTokens;
   signUp: LoginToken;
@@ -228,6 +247,11 @@ export type MutationChallengeArgs = {
 export type MutationCreateEventArgs = {
   data: Scalars['JSON'];
   type: Scalars['String'];
+};
+
+
+export type MutationCreateOneFieldArgs = {
+  input: CreateOneFieldMetadataInput;
 };
 
 
@@ -256,6 +280,11 @@ export type MutationSignUpArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationUpdateOneFieldArgs = {
+  input: UpdateOneFieldMetadataInput;
 };
 
 
@@ -415,6 +444,11 @@ export enum RelationMetadataType {
   OneToOne = 'ONE_TO_ONE'
 }
 
+export type ShortTermToken = {
+  __typename?: 'ShortTermToken';
+  shortTermToken: AuthToken;
+};
+
 /** Sort Directions */
 export enum SortDirection {
   Asc = 'ASC',
@@ -437,6 +471,26 @@ export type Telemetry = {
   __typename?: 'Telemetry';
   anonymizationEnabled: Scalars['Boolean'];
   enabled: Scalars['Boolean'];
+};
+
+export type UpdateFieldInput = {
+  defaultValue?: InputMaybe<Scalars['JSON']>;
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  isActive?: InputMaybe<Scalars['Boolean']>;
+  isCustom?: InputMaybe<Scalars['Boolean']>;
+  isNullable?: InputMaybe<Scalars['Boolean']>;
+  isSystem?: InputMaybe<Scalars['Boolean']>;
+  label?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']>;
+  options?: InputMaybe<Scalars['JSON']>;
+};
+
+export type UpdateOneFieldMetadataInput = {
+  /** The id of the record to update */
+  id: Scalars['ID'];
+  /** The record to update */
+  update: UpdateFieldInput;
 };
 
 export type UpdateWorkspaceInput = {
@@ -540,15 +594,13 @@ export type Field = {
   fromRelationMetadata?: Maybe<Relation>;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
-  isActive: Scalars['Boolean'];
-  isCustom: Scalars['Boolean'];
-  isNullable: Scalars['Boolean'];
-  isSystem: Scalars['Boolean'];
+  isActive?: Maybe<Scalars['Boolean']>;
+  isCustom?: Maybe<Scalars['Boolean']>;
+  isNullable?: Maybe<Scalars['Boolean']>;
+  isSystem?: Maybe<Scalars['Boolean']>;
   label: Scalars['String'];
   name: Scalars['String'];
   options?: Maybe<Scalars['JSON']>;
-  /** @deprecated Use label name instead */
-  placeholder?: Maybe<Scalars['String']>;
   toRelationMetadata?: Maybe<Relation>;
   type: FieldMetadataType;
   updatedAt: Scalars['DateTime'];
@@ -652,6 +704,11 @@ export type GenerateApiKeyTokenMutationVariables = Exact<{
 
 
 export type GenerateApiKeyTokenMutation = { __typename?: 'Mutation', generateApiKeyToken: { __typename?: 'ApiKeyToken', token: string } };
+
+export type GenerateShortTermTokenMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GenerateShortTermTokenMutation = { __typename?: 'Mutation', generateShortTermToken: { __typename?: 'ShortTermToken', shortTermToken: { __typename?: 'AuthToken', token: string } } };
 
 export type ImpersonateMutationVariables = Exact<{
   userId: Scalars['String'];
@@ -910,6 +967,40 @@ export function useGenerateApiKeyTokenMutation(baseOptions?: Apollo.MutationHook
 export type GenerateApiKeyTokenMutationHookResult = ReturnType<typeof useGenerateApiKeyTokenMutation>;
 export type GenerateApiKeyTokenMutationResult = Apollo.MutationResult<GenerateApiKeyTokenMutation>;
 export type GenerateApiKeyTokenMutationOptions = Apollo.BaseMutationOptions<GenerateApiKeyTokenMutation, GenerateApiKeyTokenMutationVariables>;
+export const GenerateShortTermTokenDocument = gql`
+    mutation generateShortTermToken {
+  generateShortTermToken {
+    shortTermToken {
+      token
+    }
+  }
+}
+    `;
+export type GenerateShortTermTokenMutationFn = Apollo.MutationFunction<GenerateShortTermTokenMutation, GenerateShortTermTokenMutationVariables>;
+
+/**
+ * __useGenerateShortTermTokenMutation__
+ *
+ * To run a mutation, you first call `useGenerateShortTermTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGenerateShortTermTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [generateShortTermTokenMutation, { data, loading, error }] = useGenerateShortTermTokenMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGenerateShortTermTokenMutation(baseOptions?: Apollo.MutationHookOptions<GenerateShortTermTokenMutation, GenerateShortTermTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GenerateShortTermTokenMutation, GenerateShortTermTokenMutationVariables>(GenerateShortTermTokenDocument, options);
+      }
+export type GenerateShortTermTokenMutationHookResult = ReturnType<typeof useGenerateShortTermTokenMutation>;
+export type GenerateShortTermTokenMutationResult = Apollo.MutationResult<GenerateShortTermTokenMutation>;
+export type GenerateShortTermTokenMutationOptions = Apollo.BaseMutationOptions<GenerateShortTermTokenMutation, GenerateShortTermTokenMutationVariables>;
 export const ImpersonateDocument = gql`
     mutation Impersonate($userId: String!) {
   impersonate(userId: $userId) {

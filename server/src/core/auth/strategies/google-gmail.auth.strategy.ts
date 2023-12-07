@@ -39,7 +39,6 @@ export class GoogleGmailStrategy extends PassportStrategy(
   }
 
   authenticate(req: any, options: any) {
-    console.log('req.query', req.query);
     options = {
       ...options,
       accessType: 'offline',
