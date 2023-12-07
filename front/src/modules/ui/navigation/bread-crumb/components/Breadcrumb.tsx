@@ -14,7 +14,6 @@ const StyledWrapper = styled.nav`
   font-size: ${({ theme }) => theme.font.size.lg};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   gap: ${({ theme }) => theme.spacing(2)};
-  height: ${({ theme }) => theme.spacing(6)};
   line-height: ${({ theme }) => theme.text.lineHeight.md};
 `;
 

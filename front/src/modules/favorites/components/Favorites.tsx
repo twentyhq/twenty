@@ -3,14 +3,13 @@ import styled from '@emotion/styled';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { Avatar } from '@/users/components/Avatar';
 
 import { useFavorites } from '../hooks/useFavorites';
 
-const StyledContainer = styled.div`
-  display: flex;
-  flex-direction: column;
+const StyledContainer = styled(NavigationDrawerSection)`
   overflow-x: auto;
   width: 100%;
 `;
