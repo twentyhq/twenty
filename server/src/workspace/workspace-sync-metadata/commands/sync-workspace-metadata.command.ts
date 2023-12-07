@@ -1,7 +1,7 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
-import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
+import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync.metadata.service';
 
 // TODO: implement dry-run
 interface RunWorkspaceMigrationsOptions {
@@ -14,7 +14,7 @@ interface RunWorkspaceMigrationsOptions {
 })
 export class SyncWorkspaceMetadataCommand extends CommandRunner {
   constructor(
-    private readonly workspaceManagerService: WorkspaceManagerService,
+    private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
     private readonly dataSourceService: DataSourceService,
   ) {
     super();
@@ -29,9 +29,7 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         options.workspaceId,
       );
-
-    // TODO: This solution could be improved, using a diff for example, we should not have to delete all metadata and recreate them.
-    await this.workspaceManagerService.syncStandardObjectsAndFieldsMetadata(
+    await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
       dataSourceMetadata.id,
       options.workspaceId,
     );

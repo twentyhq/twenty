@@ -2,7 +2,7 @@ import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.en
 import {
   FieldMetadata,
   IsSystem,
-} from 'src/workspace/workspace-manager/decorators/metadata.decorator';
+} from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 
 export abstract class BaseObjectMetadata {
   @FieldMetadata({

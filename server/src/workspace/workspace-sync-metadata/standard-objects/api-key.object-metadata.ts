@@ -1,17 +1,17 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import {
+  ObjectMetadata,
   FieldMetadata,
   IsNullable,
   IsSystem,
-  ObjectMetadata,
-} from 'src/workspace/workspace-manager/decorators/metadata.decorator';
-import { BaseObjectMetadata } from 'src/workspace/workspace-manager/standard-objects/base.object-metadata';
+} from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
+import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'apiKeys',
   labelSingular: 'Api Key',
   labelPlural: 'Api Keys',
-  description: 'A api key',
+  description: 'An api key',
   icon: 'IconRobot',
 })
 @IsSystem()

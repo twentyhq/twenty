@@ -11,9 +11,12 @@ import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metada
 export const filterIgnoredProperties = (
   obj: any,
   propertiesToIgnore: string[],
+  mapFunction?: (value: any) => any,
 ) => {
   return Object.fromEntries(
-    Object.entries(obj).filter(([key]) => !propertiesToIgnore.includes(key)),
+    Object.entries(obj)
+      .filter(([key]) => !propertiesToIgnore.includes(key))
+      .map(([key, value]) => [key, mapFunction ? mapFunction(value) : value]),
   );
 };
 
@@ -40,4 +43,13 @@ export const mapObjectMetadataByUniqueIdentifier = (
 
     return acc;
   }, {});
+};
+
+export const sortRelationMetadataByUniqueIdentifier = (a, b) => {
+  const keyA = Object.keys(a)[0];
+  const keyB = Object.keys(b)[0];
+  const [fromA, toA] = keyA.split(':');
+  const [fromB, toB] = keyB.split(':');
+
+  return fromA.localeCompare(fromB) || toA.localeCompare(toB);
 };

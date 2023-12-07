@@ -4,8 +4,8 @@ import {
   FieldMetadata,
   IsNullable,
   IsSystem,
-} from 'src/workspace/workspace-manager/decorators/metadata.decorator';
-import { BaseObjectMetadata } from 'src/workspace/workspace-manager/standard-objects/base.object-metadata';
+} from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
+import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'viewSorts',
@@ -20,17 +20,26 @@ export class ViewSortObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.UUID,
     label: 'Field Metadata Id',
     description: 'View Sort target field',
-    icon: null,
+    icon: 'IconTag',
   })
   fieldMetadataId: string;
 
-  // TODO: We could create a relation decorator but let's keep it simple for now.
+  @FieldMetadata({
+    type: FieldMetadataType.TEXT,
+    label: 'Direction',
+    description: 'View Sort direction',
+    icon: null,
+    defaultValue: { value: 'asc' },
+  })
+  direction: string;
+
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
     label: 'View',
     description: 'View Sort related view',
     icon: 'IconLayoutCollage',
+    joinColumn: 'viewId',
   })
   @IsNullable()
-  view?: object;
+  view: string;
 }
