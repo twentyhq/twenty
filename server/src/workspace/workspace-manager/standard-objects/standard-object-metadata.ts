@@ -17,6 +17,7 @@ import viewFieldMetadata from 'src/workspace/workspace-manager/standard-objects/
 import viewFilterMetadata from 'src/workspace/workspace-manager/standard-objects/view-filter';
 import viewSortMetadata from 'src/workspace/workspace-manager/standard-objects/view-sort';
 import workspaceMemberMetadata from 'src/workspace/workspace-manager/standard-objects/workspace-member';
+import connectedAccountMetadata from 'src/workspace/workspace-manager/standard-objects/connected-account';
 
 export const standardObjectsMetadata = {
   activityTarget: activityTargetMetadata,
@@ -25,6 +26,7 @@ export const standardObjectsMetadata = {
   attachment: attachmentMetadata,
   comment: commentMetadata,
   company: companyMetadata,
+  connectedAccount: connectedAccountMetadata,
   favorite: favoriteMetadata,
   opportunity: opportunityMetadata,
   person: personMetadata,
