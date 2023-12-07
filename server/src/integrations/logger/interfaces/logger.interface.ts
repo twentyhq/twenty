@@ -1,9 +1,9 @@
-export enum LoggerDriver {
+export enum LoggerDriverType {
   Console = 'console',
 }
 
 export interface ConsoleDriverFactoryOptions {
-  type: LoggerDriver.Console;
+  type: LoggerDriverType.Console;
 }
 
 export type LoggerModuleOptions = ConsoleDriverFactoryOptions;

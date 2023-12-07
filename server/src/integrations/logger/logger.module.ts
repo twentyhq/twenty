@@ -1,6 +1,6 @@
 import { DynamicModule, Global, ConsoleLogger, Module } from '@nestjs/common';
 
-import { LoggerDriver } from 'src/integrations/logger/interfaces';
+import { LoggerDriverType } from 'src/integrations/logger/interfaces';
 
 import { LoggerService } from './logger.service';
 import { LOGGER_DRIVER } from './logger.constants';
@@ -20,7 +20,9 @@ export class LoggerModule extends ConfigurableModuleClass {
     const provider = {
       provide: LOGGER_DRIVER,
       useValue:
-        options.type === LoggerDriver.Console ? new ConsoleLogger() : undefined,
+        options.type === LoggerDriverType.Console
+          ? new ConsoleLogger()
+          : undefined,
     };
     const dynamicModule = super.forRoot(options);
 
@@ -40,7 +42,7 @@ export class LoggerModule extends ConfigurableModuleClass {
           return null;
         }
 
-        return config?.type === LoggerDriver.Console
+        return config?.type === LoggerDriverType.Console
           ? new ConsoleLogger()
           : undefined;
       },

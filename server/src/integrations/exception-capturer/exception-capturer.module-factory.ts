@@ -1,3 +1,5 @@
+import { HttpAdapterHost } from '@nestjs/core';
+
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { OPTIONS_TYPE } from 'src/integrations/exception-capturer/exception-capturer.module-definition';
 import { ExceptionCapturerDriver } from 'src/integrations/exception-capturer/interfaces';
@@ -9,10 +11,11 @@ import { ExceptionCapturerDriver } from 'src/integrations/exception-capturer/int
  */
 export const exceptionCapturerModuleFactory = async (
   environmentService: EnvironmentService,
+  adapterHost: HttpAdapterHost,
 ): Promise<typeof OPTIONS_TYPE> => {
-  const type = environmentService.getLoggerDriver();
+  const driverType = environmentService.getExceptionCapturerDriverType();
 
-  switch (type) {
+  switch (driverType) {
     case ExceptionCapturerDriver.Console: {
       return {
         type: ExceptionCapturerDriver.Console,
@@ -22,13 +25,15 @@ export const exceptionCapturerModuleFactory = async (
       return {
         type: ExceptionCapturerDriver.Sentry,
         options: {
-          sentryDNS: environmentService.getSentryDSN() ?? '',
+          dns: environmentService.getSentryDSN() ?? '',
+          serverInstance: adapterHost.httpAdapter.getInstance(),
+          debug: environmentService.isDebugMode(),
         },
       };
     }
     default:
       throw new Error(
-        `Invalid exception capturer type (${type}), check your .env file`,
+        `Invalid exception capturer driver type (${driverType}), check your .env file`,
       );
   }
 };

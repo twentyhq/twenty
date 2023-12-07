@@ -8,4 +8,10 @@ export class ExceptionCapturerConsoleDriver
     console.error(exception);
     console.groupEnd();
   }
+
+  captureMessage(message: string): void {
+    console.group('Message Captured');
+    console.info(message);
+    console.groupEnd();
+  }
 }

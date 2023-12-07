@@ -1,17 +1,20 @@
 import { FactoryProvider, ModuleMetadata } from '@nestjs/common';
 
-import { MessageQueueType } from 'src/integrations/environment/interfaces/message-queue.interface';
-
 import { BullMQDriverOptions } from 'src/integrations/message-queue/drivers/bullmq.driver';
 import { PgBossDriverOptions } from 'src/integrations/message-queue/drivers/pg-boss.driver';
 
+export enum MessageQueueDriverType {
+  PgBoss = 'pg-boss',
+  BullMQ = 'bull-mq',
+}
+
 export interface PgBossDriverFactoryOptions {
-  type: MessageQueueType.PgBoss;
+  type: MessageQueueDriverType.PgBoss;
   options: PgBossDriverOptions;
 }
 
 export interface BullMQDriverFactoryOptions {
-  type: MessageQueueType.BullMQ;
+  type: MessageQueueDriverType.BullMQ;
   options: BullMQDriverOptions;
 }
 

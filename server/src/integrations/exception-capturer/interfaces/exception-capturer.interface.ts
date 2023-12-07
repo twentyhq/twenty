@@ -1,3 +1,5 @@
+import { Router } from 'express';
+
 export enum ExceptionCapturerDriver {
   Sentry = 'sentry',
   Console = 'console',
@@ -6,7 +8,9 @@ export enum ExceptionCapturerDriver {
 export interface ExceptionCapturerSentryDriverFactoryOptions {
   type: ExceptionCapturerDriver.Sentry;
   options: {
-    sentryDNS: string;
+    dns: string;
+    serverInstance: Router;
+    debug?: boolean;
   };
 }
 
