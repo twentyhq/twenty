@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
-import { Filter } from '@/ui/object/object-filter-dropdown/types/Filter';
+import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 
 type ViewBarFilterEffectProps = {
@@ -14,13 +14,19 @@ export const ViewBarFilterEffect = ({
   filterDropdownId,
   onFilterSelect,
 }: ViewBarFilterEffectProps) => {
-  const { availableFilterDefinitionsState } = useViewScopedStates();
+  const { availableFilterDefinitionsState, currentViewFiltersState } =
+    useViewScopedStates();
 
   const availableFilterDefinitions = useRecoilValue(
     availableFilterDefinitionsState,
   );
-  const { setAvailableFilterDefinitions, setOnFilterSelect } =
-    useFilterDropdown({ filterDropdownId: filterDropdownId });
+  const {
+    setAvailableFilterDefinitions,
+    setOnFilterSelect,
+    filterDefinitionUsedInDropdown,
+    setObjectFilterDropdownSelectedRecordIds,
+    isObjectFilterDropdownUnfolded,
+  } = useFilterDropdown({ filterDropdownId: filterDropdownId });
 
   useEffect(() => {
     if (availableFilterDefinitions) {
@@ -35,6 +41,29 @@ export const ViewBarFilterEffect = ({
     onFilterSelect,
     setAvailableFilterDefinitions,
     setOnFilterSelect,
+  ]);
+
+  const currentViewFilters = useRecoilValue(currentViewFiltersState);
+
+  useEffect(() => {
+    if (filterDefinitionUsedInDropdown?.type === 'RELATION') {
+      const viewFilterUsedInDropdown = currentViewFilters.find(
+        (filter) =>
+          filter.fieldMetadataId ===
+          filterDefinitionUsedInDropdown.fieldMetadataId,
+      );
+
+      const viewFilterSelectedRecordIds = JSON.parse(
+        viewFilterUsedInDropdown?.value ?? '[]',
+      );
+
+      setObjectFilterDropdownSelectedRecordIds(viewFilterSelectedRecordIds);
+    }
+  }, [
+    filterDefinitionUsedInDropdown,
+    currentViewFilters,
+    setObjectFilterDropdownSelectedRecordIds,
+    isObjectFilterDropdownUnfolded,
   ]);
 
   return <></>;

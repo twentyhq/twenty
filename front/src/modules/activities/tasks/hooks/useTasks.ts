@@ -5,7 +5,7 @@ import { undefined } from 'zod';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
+import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { parseDate } from '~/utils/date-utils';
 import { isDefined } from '~/utils/isDefined';
 

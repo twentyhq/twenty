@@ -3,16 +3,15 @@ import styled from '@emotion/styled';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { RecordTable } from '@/ui/object/record-table/components/RecordTable';
-import { TableOptionsDropdownId } from '@/ui/object/record-table/constants/TableOptionsDropdownId';
-import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
-import { TableOptionsDropdown } from '@/ui/object/record-table/options/components/TableOptionsDropdown';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { RecordTable } from '@/object-record/record-table/components/RecordTable';
+import { TableOptionsDropdownId } from '@/object-record/record-table/constants/TableOptionsDropdownId';
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { TableOptionsDropdown } from '@/object-record/record-table/options/components/TableOptionsDropdown';
 import { ViewBar } from '@/views/components/ViewBar';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
-
-import { useUpdateOneRecord } from '../hooks/useUpdateOneRecord';
 
 import { RecordTableEffect } from './RecordTableEffect';
 

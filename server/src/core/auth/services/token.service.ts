@@ -13,6 +13,8 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { TokenExpiredError } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
+import { Request } from 'express';
+import { ExtractJwt } from 'passport-jwt';
 
 import { JwtPayload } from 'src/core/auth/strategies/jwt.auth.strategy';
 import { assert } from 'src/utils/assert';
@@ -34,6 +36,7 @@ export class TokenService {
 
   async generateAccessToken(userId: string): Promise<AuthToken> {
     const expiresIn = this.environmentService.getAccessTokenExpiresIn();
+
     assert(expiresIn, '', InternalServerErrorException);
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
@@ -64,6 +67,7 @@ export class TokenService {
   async generateRefreshToken(userId: string): Promise<AuthToken> {
     const secret = this.environmentService.getRefreshTokenSecret();
     const expiresIn = this.environmentService.getRefreshTokenExpiresIn();
+
     assert(expiresIn, '', InternalServerErrorException);
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
@@ -94,6 +98,7 @@ export class TokenService {
   async generateLoginToken(email: string): Promise<AuthToken> {
     const secret = this.environmentService.getLoginTokenSecret();
     const expiresIn = this.environmentService.getLoginTokenExpiresIn();
+
     assert(expiresIn, '', InternalServerErrorException);
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
     const jwtPayload = {
@@ -122,6 +127,7 @@ export class TokenService {
     };
     const secret = this.environmentService.getAccessTokenSecret();
     let expiresIn: string | number;
+
     if (expiresAt) {
       expiresIn = Math.floor(
         (new Date(expiresAt).getTime() - new Date().getTime()) / 1000,
@@ -134,7 +140,22 @@ export class TokenService {
       expiresIn,
       jwtid: apiKeyId,
     });
+
     return { token };
+  }
+
+  async verifyApiKeyToken(request: Request) {
+    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
+
+    if (!token) {
+      throw new UnauthorizedException('missing authentication token');
+    }
+    const payload = await this.verifyJwt(
+      token,
+      this.environmentService.getAccessTokenSecret(),
+    );
+
+    return payload.workspaceId;
   }
 
   async verifyLoginToken(loginToken: string): Promise<string> {

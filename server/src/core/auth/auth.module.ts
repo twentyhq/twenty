@@ -45,6 +45,6 @@ const jwtModule = JwtModule.registerAsync({
   ],
   controllers: [GoogleAuthController, VerifyAuthController],
   providers: [AuthService, TokenService, JwtAuthStrategy, AuthResolver],
-  exports: [jwtModule],
+  exports: [jwtModule, TokenService],
 })
 export class AuthModule {}

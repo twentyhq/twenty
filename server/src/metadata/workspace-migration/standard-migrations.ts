@@ -23,6 +23,7 @@ import { addViewTable } from './migrations/1697618011-addViewTable';
 import { addViewFieldTable } from './migrations/1697618012-addViewFieldTable';
 import { addViewFilterTable } from './migrations/1697618013-addViewFilterTable';
 import { addViewSortTable } from './migrations/1697618014-addViewSortTable';
+import { addConnectedAccount } from 'src/metadata/workspace-migration/migrations/1697618035-addConnectedAccount';
 
 // TODO: read the folder and return all migrations
 export const standardMigrations = {
@@ -51,4 +52,5 @@ export const standardMigrations = {
   '1697618032-addActivityTargetRelations': addActivityTargetRelations,
   '1697618033-addActivityRelations': addActivityRelations,
   '1697618034-addCommentRelations': addCommentRelations,
+  '1697618035-addConnectedAccount': addConnectedAccount,
 };

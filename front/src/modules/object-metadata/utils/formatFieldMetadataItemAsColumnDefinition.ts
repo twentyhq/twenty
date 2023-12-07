@@ -1,7 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { parseFieldRelationType } from '@/object-metadata/utils/parseFieldRelationType';
-import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
-import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
+import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
+import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 

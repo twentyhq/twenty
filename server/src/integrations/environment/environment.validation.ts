@@ -60,9 +60,10 @@ export class EnvironmentVariables {
   @IsUrl({ require_tld: false })
   FRONT_BASE_URL: string;
 
-  // Server internal URL
+  // Server URL
   @IsUrl({ require_tld: false })
-  LOCAL_SERVER_URL: string;
+  @IsOptional()
+  SERVER_URL: string;
 
   // Json Web Token
   @IsString()
@@ -159,6 +160,7 @@ export const validate = (config: Record<string, unknown>) => {
   const validatedConfig = plainToClass(EnvironmentVariables, config);
 
   const errors = validateSync(validatedConfig);
+
   assert(!errors.length, errors.toString());
 
   return validatedConfig;

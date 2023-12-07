@@ -13,12 +13,14 @@ import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metada
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { IsFieldMetadataDefaultValue } from 'src/metadata/field-metadata/validators/is-field-metadata-default-value.validator';
+import { FieldMetadataResolver } from 'src/metadata/field-metadata/field-metadata.resolver';
+import { FieldMetadataDTO } from 'src/metadata/field-metadata/dtos/field-metadata.dto';
 
 import { FieldMetadataService } from './field-metadata.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
 
 import { CreateFieldInput } from './dtos/create-field.input';
-import { FieldMetadataDTO } from './dtos/field-metadata.dto';
 import { UpdateFieldInput } from './dtos/update-field.input';
 
 @Module({
@@ -32,7 +34,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
         DataSourceModule,
         TypeORMModule,
       ],
-      services: [FieldMetadataService],
+      services: [IsFieldMetadataDefaultValue, FieldMetadataService],
       resolvers: [
         {
           EntityClass: FieldMetadataEntity,
@@ -46,9 +48,13 @@ import { UpdateFieldInput } from './dtos/update-field.input';
             defaultSort: [{ field: 'id', direction: SortDirection.DESC }],
           },
           create: {
+            // Manually created because of the async validation
+            one: { disabled: true },
             many: { disabled: true },
           },
           update: {
+            // Manually created because of the async validation
+            one: { disabled: true },
             many: { disabled: true },
           },
           delete: { many: { disabled: true } },
@@ -57,7 +63,11 @@ import { UpdateFieldInput } from './dtos/update-field.input';
       ],
     }),
   ],
-  providers: [FieldMetadataService],
+  providers: [
+    IsFieldMetadataDefaultValue,
+    FieldMetadataService,
+    FieldMetadataResolver,
+  ],
   exports: [FieldMetadataService],
 })
 export class FieldMetadataModule {}

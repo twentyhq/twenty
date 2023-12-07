@@ -1,22 +1,16 @@
+import {
+  FieldMetadataDefaultValueBoolean,
+  FieldMetadataDefaultValueCurrency,
+  FieldMetadataDefaultValueDateTime,
+  FieldMetadataDefaultValueFullName,
+  FieldMetadataDefaultValueLink,
+  FieldMetadataDefaultValueNumber,
+  FieldMetadataDefaultValueString,
+  FieldMetadataDefaultValueStringArray,
+  FieldMetadataDynamicDefaultValueNow,
+  FieldMetadataDynamicDefaultValueUuid,
+} from 'src/metadata/field-metadata/dtos/default-value.input';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-
-export interface FieldMetadataDefaultValueString {
-  value: string;
-}
-export interface FieldMetadataDefaultValueNumber {
-  value: number;
-}
-export interface FieldMetadataDefaultValueBoolean {
-  value: boolean;
-}
-
-export interface FieldMetadataDefaultValueStringArray {
-  value: string[];
-}
-
-export interface FieldMetadataDefaultValueDateTime {
-  value: Date;
-}
 
 type FieldMetadataScalarDefaultValue =
   | FieldMetadataDefaultValueString
@@ -25,23 +19,8 @@ type FieldMetadataScalarDefaultValue =
   | FieldMetadataDefaultValueDateTime;
 
 export type FieldMetadataDynamicDefaultValue =
-  | { type: 'uuid' }
-  | { type: 'now' };
-
-interface FieldMetadataDefaultValueLink {
-  label: string;
-  url: string;
-}
-
-interface FieldMetadataDefaultValueCurrency {
-  amountMicros: number;
-  currencyCode: string;
-}
-
-interface FieldMetadataDefaultValueFullName {
-  firstName: string;
-  lastName: string;
-}
+  | FieldMetadataDynamicDefaultValueUuid
+  | FieldMetadataDynamicDefaultValueNow;
 
 type AllFieldMetadataDefaultValueTypes =
   | FieldMetadataScalarDefaultValue
@@ -51,11 +30,15 @@ type AllFieldMetadataDefaultValueTypes =
   | FieldMetadataDefaultValueFullName;
 
 type FieldMetadataDefaultValueMapping = {
-  [FieldMetadataType.UUID]: FieldMetadataDefaultValueString;
+  [FieldMetadataType.UUID]:
+    | FieldMetadataDefaultValueString
+    | FieldMetadataDynamicDefaultValueUuid;
   [FieldMetadataType.TEXT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.PHONE]: FieldMetadataDefaultValueString;
   [FieldMetadataType.EMAIL]: FieldMetadataDefaultValueString;
-  [FieldMetadataType.DATE_TIME]: FieldMetadataDefaultValueDateTime;
+  [FieldMetadataType.DATE_TIME]:
+    | FieldMetadataDefaultValueDateTime
+    | FieldMetadataDynamicDefaultValueNow;
   [FieldMetadataType.BOOLEAN]: FieldMetadataDefaultValueBoolean;
   [FieldMetadataType.NUMBER]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.NUMERIC]: FieldMetadataDefaultValueString;

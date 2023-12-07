@@ -3,13 +3,13 @@ import { useQuery } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { SingleEntitySelectBase } from '@/object-record/relation-picker/components/SingleEntitySelectBase';
+import { useEntitySelectSearch } from '@/object-record/relation-picker/hooks/useEntitySelectSearch';
+import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
+import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { currentPipelineStepsState } from '@/pipeline/states/currentPipelineStepsState';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { IconChevronDown } from '@/ui/display/icon';
-import { useRelationPicker } from '@/ui/input/components/internal/relation-picker/hooks/useRelationPicker';
-import { SingleEntitySelectBase } from '@/ui/input/relation-picker/components/SingleEntitySelectBase';
-import { useEntitySelectSearch } from '@/ui/input/relation-picker/hooks/useEntitySelectSearch';
-import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';

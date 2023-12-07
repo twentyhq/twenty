@@ -1,6 +1,6 @@
-import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
-import { isFieldRelation } from '@/ui/object/field/types/guards/isFieldRelation';
-import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
+import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
+import { isFieldRelation } from '@/object-record/field/types/guards/isFieldRelation';
+import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
 export const filterAvailableTableColumns = (
   columnDefinition: ColumnDefinition<FieldMetadata>,
