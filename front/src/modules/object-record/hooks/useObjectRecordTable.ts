@@ -10,7 +10,6 @@ import { useRecordTable } from '@/ui/object/record-table/hooks/useRecordTable';
 import { useFindManyRecords } from './useFindManyRecords';
 
 export const useObjectRecordTable = () => {
-  console.log('useObjectRecordTable');
   const { scopeId: objectNamePlural, setRecordTableData } = useRecordTable();
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
@@ -28,10 +27,6 @@ export const useObjectRecordTable = () => {
   const tableFilters = useRecoilValue(tableFiltersState);
   const tableSorts = useRecoilValue(tableSortsState);
   const setLastRowVisible = useSetRecoilState(tableLastRowVisibleState);
-
-  console.log({
-    tableFilters,
-  });
 
   const filter = turnFiltersIntoWhereClause(
     tableFilters,

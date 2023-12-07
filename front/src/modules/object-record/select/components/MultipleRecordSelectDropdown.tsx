@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { RecordToSelect } from '@/object-record/select/types/RecordToSelect';
+import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
@@ -53,7 +54,8 @@ export const MultipleRecordSelectDropdown = ({
   const showNoResult =
     recordsToSelect?.length === 0 &&
     searchFilter !== '' &&
-    filteredSelectedRecords?.length === 0;
+    filteredSelectedRecords?.length === 0 &&
+    !loadingRecords;
 
   return (
     <DropdownMenuItemsContainer hasMaxHeight>
@@ -77,6 +79,7 @@ export const MultipleRecordSelectDropdown = ({
         />
       ))}
       {showNoResult && <MenuItem text="No result" />}
+      {loadingRecords && <DropdownMenuSkeletonItem />}
     </DropdownMenuItemsContainer>
   );
 };

@@ -13,7 +13,7 @@ import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
 import { GenericEntityFilterChip } from './GenericEntityFilterChip';
 import { ObjectFilterDropdownEntitySearchInput } from './ObjectFilterDropdownEntitySearchInput';
-import { ObjectFilterDropdownEntitySelect } from './ObjectFilterDropdownEntitySelect';
+import { ObjectFilterDropdownRecordSelect } from './ObjectFilterDropdownEntitySelect';
 
 export const SingleEntityObjectFilterDropdownButton = ({
   hotkeyScope,
@@ -66,7 +66,7 @@ export const SingleEntityObjectFilterDropdownButton = ({
         dropdownComponents={
           <>
             <ObjectFilterDropdownEntitySearchInput />
-            <ObjectFilterDropdownEntitySelect />
+            <ObjectFilterDropdownRecordSelect />
           </>
         }
       />

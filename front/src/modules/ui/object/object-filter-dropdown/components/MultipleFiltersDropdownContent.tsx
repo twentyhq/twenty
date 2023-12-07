@@ -4,7 +4,7 @@ import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useF
 
 import { MultipleFiltersDropdownFilterOnFilterChangedEffect } from './MultipleFiltersDropdownFilterOnFilterChangedEffect';
 import { ObjectFilterDropdownDateSearchInput } from './ObjectFilterDropdownDateSearchInput';
-import { ObjectFilterDropdownEntitySelect } from './ObjectFilterDropdownEntitySelect';
+import { ObjectFilterDropdownRecordSelect } from './ObjectFilterDropdownEntitySelect';
 import { ObjectFilterDropdownFilterSelect } from './ObjectFilterDropdownFilterSelect';
 import { ObjectFilterDropdownNumberSearchInput } from './ObjectFilterDropdownNumberSearchInput';
 import { ObjectFilterDropdownOperandButton } from './ObjectFilterDropdownOperandButton';
@@ -42,7 +42,7 @@ export const MultipleFiltersDropdownContent = () => {
               <>
                 <ObjectFilterDropdownEntitySearchInput />
                 <DropdownMenuSeparator />
-                <ObjectFilterDropdownEntitySelect />
+                <ObjectFilterDropdownRecordSelect />
               </>
             )}
           </>

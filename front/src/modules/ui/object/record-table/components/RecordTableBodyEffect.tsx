@@ -6,7 +6,6 @@ import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetch
 import { useRecordTableScopedStates } from '@/ui/object/record-table/hooks/internal/useRecordTableScopedStates';
 
 export const RecordTableBodyEffect = () => {
-  console.log('RecordTableBodyEffect');
   const {
     fetchMoreRecords: fetchMoreObjects,
     records,
@@ -24,7 +23,6 @@ export const RecordTableBodyEffect = () => {
   );
 
   useEffect(() => {
-    console.log('RecordTableBodyEffect useEffect', { records, loading });
     if (!loading) {
       setRecordTableData(records);
     }

@@ -57,11 +57,6 @@ export const ViewBarFilterEffect = ({
         viewFilterUsedInDropdown?.value ?? '[]',
       );
 
-      console.log({
-        viewFilterUsedInDropdown,
-        viewFilterSelectedRecordIds,
-      });
-
       setObjectFilterDropdownSelectedRecordIds(viewFilterSelectedRecordIds);
     }
   }, [

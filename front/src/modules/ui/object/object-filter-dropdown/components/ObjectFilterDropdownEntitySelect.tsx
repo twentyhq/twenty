@@ -3,7 +3,10 @@ import { useRecordSearchQuery } from '@/object-record/select/hooks/useRecordSear
 import { RecordToSelect } from '@/object-record/select/types/RecordToSelect';
 import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 
-export const ObjectFilterDropdownEntitySelect = () => {
+export const EMPTY_FILTER_VALUE = '';
+export const MAX_RECORDS_TO_DISPLAY = 3;
+
+export const ObjectFilterDropdownRecordSelect = () => {
   const {
     filterDefinitionUsedInDropdown,
     objectFilterDropdownSearchInput,
@@ -49,20 +52,22 @@ export const ObjectFilterDropdownEntitySelect = () => {
       .map((record) => record.name);
 
     const filterDisplayValue =
-      selectedRecordNames.length > 3
+      selectedRecordNames.length > MAX_RECORDS_TO_DISPLAY
         ? `${selectedRecordNames.length} companies`
         : selectedRecordNames.join(', ');
 
     if (filterDefinitionUsedInDropdown && selectedOperandInDropdown) {
+      const newFilterValue =
+        newSelectedRecordIds.length > 0
+          ? JSON.stringify(newSelectedRecordIds)
+          : EMPTY_FILTER_VALUE;
+
       selectFilter({
         definition: filterDefinitionUsedInDropdown,
         operand: selectedOperandInDropdown,
         displayValue: filterDisplayValue,
         fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
-        value:
-          newSelectedRecordIds.length > 0
-            ? JSON.stringify(newSelectedRecordIds)
-            : '',
+        value: newFilterValue,
       });
     }
   };
