@@ -4,7 +4,6 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
@@ -15,7 +14,7 @@ import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinit
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useRecordTable } from '../hooks/useRecordTable';
 import { RecordTableScope } from '../scopes/RecordTableScope';
-import { tableRowIdsState } from '../states/tableRowIdsState';
+import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
 
 import { RecordTableBody } from './RecordTableBody';
 import { RecordTableBodyEffect } from './RecordTableBodyEffect';
@@ -125,7 +124,7 @@ export const RecordTable = ({
 }: RecordTableProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const tableRowIds = useRecoilValue(tableRowIdsState);
+  const numberOfTableRows = useRecoilValue(numberOfTableRowsState);
 
   const {
     scopeId: objectNamePlural,
@@ -144,14 +143,6 @@ export const RecordTable = ({
       objectNameSingular,
     },
   );
-
-  const { createOneRecord: createOneObject } = useCreateOneRecord({
-    objectNameSingular,
-  });
-
-  const handleAddButtonClick = async () => {
-    await createOneObject?.({});
-  };
 
   const { persistViewFields } = useViewFields(viewBarId);
 
@@ -179,7 +170,7 @@ export const RecordTable = ({
                 />
               </div>
               <RecordTableInternalEffect tableBodyRef={tableBodyRef} />
-              {tableRowIds.length === 0 && (
+              {numberOfTableRows === 0 && (
                 <StyledObjectEmptyContainer>
                   <StyledEmptyObjectTitle>
                     No {foundObjectMetadataItem?.namePlural}
@@ -191,7 +182,7 @@ export const RecordTable = ({
                     Icon={IconPlus}
                     title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
                     variant={'secondary'}
-                    onClick={handleAddButtonClick}
+                    onClick={createRecord}
                   />
                 </StyledObjectEmptyContainer>
               )}
