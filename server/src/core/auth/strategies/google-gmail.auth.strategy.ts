@@ -14,6 +14,8 @@ export type GoogleGmailRequest = Request & {
     email: string;
     picture: string | null;
     workspaceInviteHash?: string;
+    accessToken: string;
+    refreshToken: string;
   };
 };
 
@@ -28,7 +30,7 @@ export class GoogleGmailStrategy extends PassportStrategy(
       clientSecret: environmentService.getAuthGoogleClientSecret(),
       callbackURL: environmentService.getAuthGoogleGmailCallbackUrl(),
       accessType: 'offline',
-      //prompt: 'consent',
+      prompt: 'consent',
       scope: [
         'email',
         'profile',
@@ -62,13 +64,16 @@ export class GoogleGmailStrategy extends PassportStrategy(
         ? JSON.parse(request.query.state)
         : undefined;
 
-    const user: GoogleRequest['user'] = {
+    const user: GoogleGmailRequest['user'] = {
       email: emails[0].value,
       firstName: name.givenName,
       lastName: name.familyName,
       picture: photos?.[0]?.value,
       workspaceInviteHash: state.workspaceInviteHash,
+      accessToken,
+      refreshToken,
     };
+
     done(null, user);
   }
 }
