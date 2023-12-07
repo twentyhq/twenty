@@ -14,7 +14,6 @@ import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standa
   description: 'An opportunity',
   icon: 'IconTargetArrow',
 })
-@IsSystem()
 export class OpportunityObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.CURRENCY,

@@ -22,7 +22,6 @@ export abstract class BaseObjectMetadata {
     icon: 'IconCalendar',
     defaultValue: { type: 'now' },
   })
-  @IsSystem()
   createdAt: Date;
 
   @FieldMetadata({
