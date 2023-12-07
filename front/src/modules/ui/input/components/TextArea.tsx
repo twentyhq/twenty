@@ -14,6 +14,7 @@ export type TextAreaProps = {
   onChange?: (value: string) => void;
   placeholder?: string;
   value?: string;
+  className?: string;
 };
 
 const StyledTextArea = styled(TextareaAutosize)`
@@ -51,6 +52,7 @@ export const TextArea = ({
   placeholder,
   minRows = 1,
   value = '',
+  className,
   onChange,
 }: TextAreaProps) => {
   const computedMinRows = Math.min(minRows, MAX_ROWS);
@@ -78,6 +80,7 @@ export const TextArea = ({
       onFocus={handleFocus}
       onBlur={handleBlur}
       disabled={disabled}
+      className={className}
     />
   );
 };

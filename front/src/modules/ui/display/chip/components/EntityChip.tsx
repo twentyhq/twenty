@@ -16,6 +16,7 @@ export type EntityChipProps = {
   avatarType?: AvatarType;
   variant?: EntityChipVariant;
   LeftIcon?: IconComponent;
+  className?: string;
 };
 
 export enum EntityChipVariant {
@@ -31,6 +32,7 @@ export const EntityChip = ({
   avatarType = 'rounded',
   variant = EntityChipVariant.Regular,
   LeftIcon,
+  className,
 }: EntityChipProps) => {
   const navigate = useNavigate();
 
@@ -69,6 +71,7 @@ export const EntityChip = ({
       }
       clickable={!!linkToEntity}
       onClick={handleLinkClick}
+      className={className}
     />
   ) : (
     <></>

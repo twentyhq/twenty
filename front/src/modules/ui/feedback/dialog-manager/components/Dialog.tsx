@@ -69,6 +69,7 @@ export type DialogProps = React.ComponentPropsWithoutRef<typeof motion.div> & {
   buttons?: DialogButtonOptions[];
   allowDismiss?: boolean;
   children?: React.ReactNode;
+  className?: string;
   onClose?: () => void;
 };
 
@@ -78,6 +79,7 @@ export const Dialog = ({
   buttons = [],
   allowDismiss = true,
   children,
+  className,
   onClose,
   id,
 }: DialogProps) => {
@@ -133,6 +135,7 @@ export const Dialog = ({
           closeSnackbar();
         }
       }}
+      className={className}
     >
       <StyledDialogContainer
         variants={containerVariants}
