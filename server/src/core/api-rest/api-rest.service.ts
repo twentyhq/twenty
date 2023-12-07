@@ -25,11 +25,20 @@ export class ApiRestService {
       this.environmentService.getServerUrl() ||
       `${request.protocol}://${request.get('host')}`;
 
-    return await axios.post(`${baseUrl}/graphql`, data, {
-      headers: {
-        Authorization: request.headers.authorization,
-      },
-    });
+    try {
+      return await axios.post(`${baseUrl}/graphql`, data, {
+        headers: {
+          Authorization: request.headers.authorization,
+        },
+      });
+    } catch (err) {
+      return {
+        data: {
+          error: `AxiosError: please double check your query and your API key (to generate a new one, see here: ${this.environmentService.getFrontBaseUrl()}/settings/developers/api-keys)`,
+          status: 400,
+        },
+      };
+    }
   }
 
   async get(request: Request): Promise<ApiRestResponse> {
@@ -38,7 +47,7 @@ export class ApiRestService {
 
       return await this.callGraphql(request, data);
     } catch (err) {
-      return { data: { error: `${err}`, status: err.response.status } };
+      return { data: { error: err, status: err.status } };
     }
   }
 
@@ -48,7 +57,7 @@ export class ApiRestService {
 
       return await this.callGraphql(request, data);
     } catch (err) {
-      return { data: { error: `${err}` } };
+      return { data: { error: err, status: err.status } };
     }
   }
 
@@ -58,7 +67,7 @@ export class ApiRestService {
 
       return await this.callGraphql(request, data);
     } catch (err) {
-      return { data: { error: `${err}` } };
+      return { data: { error: err, status: err.status } };
     }
   }
 
@@ -68,7 +77,7 @@ export class ApiRestService {
 
       return await this.callGraphql(request, data);
     } catch (err) {
-      return { data: { error: `${err}` } };
+      return { data: { error: err, status: err.status } };
     }
   }
 }

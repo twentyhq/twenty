@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 
 import { Request } from 'express';
 
@@ -40,7 +44,15 @@ export class ApiRestQueryBuilderFactory {
     objectMetadataItems: ObjectMetadataEntity[];
     objectMetadataItem: ObjectMetadataEntity;
   }> {
-    const workspaceId = await this.tokenService.verifyApiKeyToken(request);
+    let workspaceId;
+
+    try {
+      workspaceId = await this.tokenService.verifyApiKeyToken(request);
+    } catch (err) {
+      throw new UnauthorizedException(
+        `Invalid API key. Double check your API key or generate a new one here ${this.environmentService.getFrontBaseUrl()}/settings/developers/api-keys`,
+      );
+    }
 
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspaceId);
