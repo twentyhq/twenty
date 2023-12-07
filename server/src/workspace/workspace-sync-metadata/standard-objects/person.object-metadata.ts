@@ -5,6 +5,7 @@ import {
   FieldMetadata,
   IsNullable,
   RelationMetadata,
+  IsSystem,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 
@@ -85,6 +86,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     description: 'Contact’s avatar',
     icon: 'IconFileUpload',
   })
+  @IsSystem()
   @IsNullable()
   avatarUrl: string;
 

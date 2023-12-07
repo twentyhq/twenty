@@ -3,21 +3,19 @@ import { FieldMetadataInterface } from 'src/metadata/field-metadata/interfaces/f
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
-export const fullNameObjectDefinition = {
-  id: FieldMetadataType.FULL_NAME.toString(),
-  nameSingular: 'fullName',
-  namePlural: 'fullName',
-  labelSingular: 'FullName',
-  labelPlural: 'FullName',
-  targetTableName: '',
-  fields: [
+export const fullNameFields = (
+  fieldMetadata?: FieldMetadataInterface,
+): FieldMetadataInterface[] => {
+  return [
     {
       id: 'firstName',
       type: FieldMetadataType.TEXT,
       objectMetadataId: FieldMetadataType.FULL_NAME.toString(),
       name: 'firstName',
       label: 'First Name',
-      targetColumnMap: { value: 'firstName' },
+      targetColumnMap: {
+        value: fieldMetadata ? `${fieldMetadata.name}FirstName` : 'firstName',
+      },
       isNullable: true,
     } satisfies FieldMetadataInterface,
     {
@@ -26,10 +24,22 @@ export const fullNameObjectDefinition = {
       objectMetadataId: FieldMetadataType.FULL_NAME.toString(),
       name: 'lastName',
       label: 'Last Name',
-      targetColumnMap: { value: 'lastName' },
+      targetColumnMap: {
+        value: fieldMetadata ? `${fieldMetadata.name}LastName` : 'lastName',
+      },
       isNullable: true,
     } satisfies FieldMetadataInterface,
-  ],
+  ];
+};
+
+export const fullNameObjectDefinition = {
+  id: FieldMetadataType.FULL_NAME.toString(),
+  nameSingular: 'fullName',
+  namePlural: 'fullName',
+  labelSingular: 'FullName',
+  labelPlural: 'FullName',
+  targetTableName: '',
+  fields: fullNameFields(),
   fromRelations: [],
   toRelations: [],
 } satisfies ObjectMetadataInterface;
