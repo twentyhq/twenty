@@ -6,10 +6,10 @@ import { userEvent, within } from '@storybook/testing-library';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+import { FieldRatingValue } from '../../../../types/FieldMetadata';
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useRatingField } from '../../../hooks/useRatingField';
 import { RatingFieldInput, RatingFieldInputProps } from '../RatingFieldInput';
-import { FieldRatingValue } from '../../../../types/FieldMetadata';
 
 const RatingFieldValueSetterEffect = ({
   value,

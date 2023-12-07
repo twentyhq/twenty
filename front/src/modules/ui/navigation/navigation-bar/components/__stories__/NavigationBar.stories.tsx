@@ -1,15 +1,15 @@
 import { Meta, StoryObj } from '@storybook/react';
 
+import {
+  IconCheckbox,
+  IconList,
+  IconSearch,
+  IconSettings,
+} from '@/ui/display/icon';
+import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 import { NavigationBar } from '../NavigationBar';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
-import {
-  IconList,
-  IconSearch,
-  IconCheckbox,
-  IconSettings,
-} from '@/ui/display/icon';
 
 const meta: Meta<typeof NavigationBar> = {
   title: 'UI/Navigation/NavigationBar/NavigationBar',

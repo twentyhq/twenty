@@ -63,4 +63,3 @@ export const castAsPositiveIntegerOrNull = (
 
   return null;
 };
-
