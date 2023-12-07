@@ -47,7 +47,9 @@ export const PageChangeEffect = () => {
     } else {
       return;
     }
+  }, [location, previousLocation]);
 
+  useEffect(() => {
     const isMachinOngoingUserCreationRoute =
       isMatchingLocation(AppPath.SignUp) ||
       isMatchingLocation(AppPath.SignIn) ||
@@ -108,7 +110,16 @@ export const PageChangeEffect = () => {
         },
       });
     }
+  }, [
+    enqueueSnackBar,
+    isMatchingLocation,
+    location.pathname,
+    navigate,
+    onboardingStatus,
+    workspaceFromInviteHashQuery,
+  ]);
 
+  useEffect(() => {
     switch (true) {
       case isMatchingLocation(AppPath.RecordTablePage): {
         setHotkeyScope(TableHotkeyScope.Table, {
@@ -177,7 +188,9 @@ export const PageChangeEffect = () => {
         break;
       }
     }
+  }, [isMatchingLocation, setHotkeyScope]);
 
+  useEffect(() => {
     setToIntitialCommandMenu();
 
     addToCommandMenu([
@@ -190,7 +203,9 @@ export const PageChangeEffect = () => {
         onCommandClick: () => openCreateActivity({ type: 'Task' }),
       },
     ]);
+  }, [addToCommandMenu, setToIntitialCommandMenu, openCreateActivity]);
 
+  useEffect(() => {
     setTimeout(() => {
       eventTracker('pageview', {
         location: {
@@ -198,20 +213,7 @@ export const PageChangeEffect = () => {
         },
       });
     }, 500);
-  }, [
-    onboardingStatus,
-    navigate,
-    isMatchingLocation,
-    setHotkeyScope,
-    location,
-    previousLocation,
-    eventTracker,
-    workspaceFromInviteHashQuery,
-    enqueueSnackBar,
-    addToCommandMenu,
-    openCreateActivity,
-    setToIntitialCommandMenu,
-  ]);
+  }, [eventTracker, location.pathname]);
 
   return <></>;
 };
