@@ -7,7 +7,7 @@ import { ApiRestResponse } from 'src/core/api-rest/types/api-rest-response.type'
 
 const handleResult = (res: Response, result: ApiRestResponse) => {
   if (result.data.error) {
-    res.status(400).send(result.data);
+    res.status(result.data.status || 400).send({ error: result.data.error });
   } else {
     res.send(result.data);
   }

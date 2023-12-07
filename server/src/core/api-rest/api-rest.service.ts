@@ -38,7 +38,7 @@ export class ApiRestService {
 
       return await this.callGraphql(request, data);
     } catch (err) {
-      return { data: { error: `${err}` } };
+      return { data: { error: `${err}`, status: err.response.status } };
     }
   }
 
