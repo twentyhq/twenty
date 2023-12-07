@@ -327,6 +327,8 @@ export class WorkspaceSyncMetadataService {
     fieldsToCreate: FieldMetadataEntity[],
     fieldsToDelete: FieldMetadataEntity[],
   ) {
+    const migrationsToSave: Partial<WorkspaceMigrationEntity>[] = [];
+    
     if (objectsToCreate.length > 0) {
       objectsToCreate.map((object) => {
         const migrations = [
@@ -349,13 +351,15 @@ export class WorkspaceSyncMetadataService {
             ),
         ];
 
-        this.workspaceMigrationRepository.save({
+        migrationsToSave.push({
           workspaceId: object.workspaceId,
           isCustom: false,
           migrations,
         });
       });
     }
+
+    await this.workspaceMigrationRepository.save(migrationsToSave);
 
     // TODO: handle delete migrations
   }
@@ -365,6 +369,8 @@ export class WorkspaceSyncMetadataService {
     relationsToDelete: RelationMetadataEntity[],
     objectsInDB: ObjectMetadataEntity[],
   ) {
+    const relationsMigrationsToSave: Partial<WorkspaceMigrationEntity>[] = [];
+
     if (relationsToCreate.length > 0) {
       relationsToCreate.map((relation) => {
         const toObjectMetadata = objectsInDB.find(
@@ -414,13 +420,15 @@ export class WorkspaceSyncMetadataService {
           } satisfies WorkspaceMigrationTableAction,
         ];
 
-        this.workspaceMigrationRepository.save({
+        relationsMigrationsToSave.push({
           workspaceId: relation.workspaceId,
           isCustom: false,
           migrations,
         });
       });
     }
+
+    await this.workspaceMigrationRepository.save(relationsMigrationsToSave);
 
     // TODO: handle delete migrations
   }

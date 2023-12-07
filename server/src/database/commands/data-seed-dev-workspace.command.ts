@@ -15,6 +15,8 @@ import { seedWorkspaceMember } from 'src/database/typeorm-seeds/workspace/worksp
 import { seedPeople } from 'src/database/typeorm-seeds/workspace/people';
 import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync.metadata.service';
+import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 
 // TODO: implement dry-run
 @Command({
@@ -26,28 +28,30 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
   workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
   constructor(
-    private readonly environmentService: EnvironmentService,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
-    private readonly workspaceMigrationService: WorkspaceMigrationService,
-    private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
+    private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {
     super();
   }
 
   async run(): Promise<void> {
     try {
-      const dataSource = new DataSource({
-        url: this.environmentService.getPGDatabaseUrl(),
-        type: 'postgres',
-        logging: true,
-        schema: 'public',
-      });
+      const schemaName = await this.workspaceDataSourceService.createWorkspaceDBSchema(
+        this.workspaceId,
+      );
 
-      await dataSource.initialize();
+    const dataSourceMetadata =
+      await this.dataSourceService.createDataSourceMetadata(
+        this.workspaceId,
+        schemaName,
+      );
 
-      await seedCoreSchema(dataSource, this.workspaceId);
-      await seedMetadataSchema(dataSource);
+      await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
+        dataSourceMetadata.id,
+        this.workspaceId,
+      );
     } catch (error) {
       console.error(error);
 
@@ -68,13 +72,6 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     }
 
     try {
-      await this.workspaceMigrationService.insertStandardMigrations(
-        this.workspaceId,
-      );
-      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-        this.workspaceId,
-      );
-
       await seedCompanies(workspaceDataSource, dataSourceMetadata.schema);
       await seedPeople(workspaceDataSource, dataSourceMetadata.schema);
       await seedPipelineStep(workspaceDataSource, dataSourceMetadata.schema);

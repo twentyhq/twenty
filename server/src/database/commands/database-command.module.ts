@@ -9,15 +9,17 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { WorkspaceModule } from 'src/core/workspace/workspace.module';
 import { DataSeedWorkspaceCommand } from 'src/database/commands/data-seed-dev-workspace.command';
 import { DataSeedDemoWorkspaceCommand } from 'src/database/commands/data-seed-demo-workspace.command';
+import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
+import { WorkspaceSyncMetadataModule } from 'src/workspace/workspace-sync-metadata/worksapce-sync-metadata.module';
 
 @Module({
   imports: [
     WorkspaceManagerModule,
     DataSourceModule,
     TypeORMModule,
-    WorkspaceMigrationModule,
-    WorkspaceMigrationRunnerModule,
     WorkspaceModule,
+    WorkspaceDataSourceModule,
+    WorkspaceSyncMetadataModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,
