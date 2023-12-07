@@ -97,51 +97,51 @@ export class WorkspaceMigrationFactory {
 
   createColumnActions(
     action: WorkspaceMigrationColumnActionType.ALTER,
-    previousFieldMetadata: FieldMetadataInterface,
-    nextFieldMetadata: FieldMetadataInterface,
+    currentFieldMetadata: FieldMetadataInterface,
+    alteredFieldMetadata: FieldMetadataInterface,
   ): WorkspaceMigrationColumnAction[];
 
   createColumnActions(
     action:
       | WorkspaceMigrationColumnActionType.CREATE
       | WorkspaceMigrationColumnActionType.ALTER,
-    fieldMetadataOrPreviousFieldMetadata: FieldMetadataInterface,
-    undefinedOrnextFieldMetadata?: FieldMetadataInterface,
+    fieldMetadataOrCurrentFieldMetadata: FieldMetadataInterface,
+    undefinedOrAlteredFieldMetadata?: FieldMetadataInterface,
   ): WorkspaceMigrationColumnAction[] {
-    const previousFieldMetadata =
+    const currentFieldMetadata =
       action === WorkspaceMigrationColumnActionType.ALTER
-        ? fieldMetadataOrPreviousFieldMetadata
+        ? fieldMetadataOrCurrentFieldMetadata
         : undefined;
-    const nextFieldMetadata =
+    const alteredFieldMetadata =
       action === WorkspaceMigrationColumnActionType.CREATE
-        ? fieldMetadataOrPreviousFieldMetadata
-        : undefinedOrnextFieldMetadata;
+        ? fieldMetadataOrCurrentFieldMetadata
+        : undefinedOrAlteredFieldMetadata;
 
-    if (!nextFieldMetadata) {
+    if (!alteredFieldMetadata) {
       this.logger.error(
         `No field metadata provided for action ${action}`,
-        fieldMetadataOrPreviousFieldMetadata,
+        undefinedOrAlteredFieldMetadata,
       );
 
       throw new Error(`No field metadata provided for action ${action}`);
     }
 
     // If it's a composite field type, we need to create a column action for each of the fields
-    if (isCompositeFieldMetadataType(nextFieldMetadata.type)) {
+    if (isCompositeFieldMetadataType(alteredFieldMetadata.type)) {
       const fieldMetadataCollection = this.compositeDefinitions.get(
-        nextFieldMetadata.type,
+        alteredFieldMetadata.type,
       );
 
       if (!fieldMetadataCollection) {
         this.logger.error(
-          `No composite definition found for type ${nextFieldMetadata.type}`,
+          `No composite definition found for type ${alteredFieldMetadata.type}`,
           {
-            nextFieldMetadata,
+            alteredFieldMetadata,
           },
         );
 
         throw new Error(
-          `No composite definition found for type ${nextFieldMetadata.type}`,
+          `No composite definition found for type ${alteredFieldMetadata.type}`,
         );
       }
 
@@ -153,8 +153,8 @@ export class WorkspaceMigrationFactory {
     // Otherwise, we create a single column action
     const columnAction = this.createColumnAction(
       action,
-      previousFieldMetadata,
-      nextFieldMetadata,
+      currentFieldMetadata,
+      alteredFieldMetadata,
     );
 
     return [columnAction];
@@ -164,24 +164,27 @@ export class WorkspaceMigrationFactory {
     action:
       | WorkspaceMigrationColumnActionType.CREATE
       | WorkspaceMigrationColumnActionType.ALTER,
-    previousFieldMetadata: FieldMetadataInterface | undefined,
-    nextFieldMetadata: FieldMetadataInterface,
+    currentFieldMetadata: FieldMetadataInterface | undefined,
+    alteredFieldMetadata: FieldMetadataInterface,
   ): WorkspaceMigrationColumnAction {
     const { factory, options } =
-      this.factoriesMap.get(nextFieldMetadata.type) ?? {};
+      this.factoriesMap.get(alteredFieldMetadata.type) ?? {};
 
     if (!factory) {
-      this.logger.error(`No factory found for type ${nextFieldMetadata.type}`, {
-        nextFieldMetadata,
-      });
+      this.logger.error(
+        `No factory found for type ${alteredFieldMetadata.type}`,
+        {
+          alteredFieldMetadata,
+        },
+      );
 
-      throw new Error(`No factory found for type ${nextFieldMetadata.type}`);
+      throw new Error(`No factory found for type ${alteredFieldMetadata.type}`);
     }
 
     return factory.create(
       action,
-      previousFieldMetadata,
-      nextFieldMetadata,
+      currentFieldMetadata,
+      alteredFieldMetadata,
       options,
     );
   }

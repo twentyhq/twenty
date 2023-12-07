@@ -47,21 +47,31 @@ export class BasicColumnActionFactory extends ColumnActionAbstractFactory<BasicF
   }
 
   protected handleAlterAction(
-    previousFieldMetadata: FieldMetadataInterface<BasicFieldMetadataType>,
-    nextFieldMetadata: FieldMetadataInterface<BasicFieldMetadataType>,
+    currentFieldMetadata: FieldMetadataInterface<BasicFieldMetadataType>,
+    alteredFieldMetadata: FieldMetadataInterface<BasicFieldMetadataType>,
     options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnAlter {
     const defaultValue =
-      this.getDefaultValue(nextFieldMetadata.defaultValue) ??
+      this.getDefaultValue(alteredFieldMetadata.defaultValue) ??
       options?.defaultValue;
     const serializedDefaultValue = serializeDefaultValue(defaultValue);
 
     return {
       action: WorkspaceMigrationColumnActionType.ALTER,
-      columnName: nextFieldMetadata.targetColumnMap.value,
-      columnType: fieldMetadataTypeToColumnType(nextFieldMetadata.type),
-      isNullable: nextFieldMetadata.isNullable,
-      defaultValue: serializedDefaultValue,
+      currentColumnDefinition: {
+        columnName: currentFieldMetadata.targetColumnMap.value,
+        columnType: fieldMetadataTypeToColumnType(currentFieldMetadata.type),
+        isNullable: currentFieldMetadata.isNullable,
+        defaultValue: serializeDefaultValue(
+          this.getDefaultValue(currentFieldMetadata.defaultValue),
+        ),
+      },
+      alteredColumnDefinition: {
+        columnName: alteredFieldMetadata.targetColumnMap.value,
+        columnType: fieldMetadataTypeToColumnType(alteredFieldMetadata.type),
+        isNullable: alteredFieldMetadata.isNullable,
+        defaultValue: serializedDefaultValue,
+      },
     };
   }
 
