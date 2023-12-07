@@ -11,7 +11,7 @@ import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
 
-import { EntityForSelect } from '../../../ui/input/relation-picker/types/EntityForSelect';
+import { EntityForSelect } from '../types/EntityForSelect';
 
 export type EntitiesForMultipleEntitySelect<
   CustomEntityForSelect extends EntityForSelect,

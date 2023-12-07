@@ -1,10 +1,10 @@
 import { OpportunityPicker } from '@/companies/components/OpportunityPicker';
+import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { IconPlus } from '@/ui/display/icon/index';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { IconButton } from '@/ui/input/button/components/IconButton';
-import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
-import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';

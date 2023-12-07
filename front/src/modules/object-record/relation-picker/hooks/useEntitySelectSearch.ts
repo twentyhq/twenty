@@ -1,10 +1,9 @@
 import debounce from 'lodash.debounce';
 
+import { RelationPickerRecoilScopeContext } from '@/object-record/relation-picker/states/recoil-scope-contexts/RelationPickerRecoilScopeContext';
+import { relationPickerPreselectedIdScopedState } from '@/object-record/relation-picker/states/relationPickerPreselectedIdScopedState';
+import { relationPickerSearchFilterScopedState } from '@/object-record/relation-picker/states/relationPickerSearchFilterScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-
-import { RelationPickerRecoilScopeContext } from '../states/recoil-scope-contexts/RelationPickerRecoilScopeContext';
-import { relationPickerPreselectedIdScopedState } from '../states/relationPickerPreselectedIdScopedState';
-import { relationPickerSearchFilterScopedState } from '../states/relationPickerSearchFilterScopedState';
 
 export const useEntitySelectSearch = () => {
   const [, setRelationPickerPreselectedId] = useRecoilScopedState(

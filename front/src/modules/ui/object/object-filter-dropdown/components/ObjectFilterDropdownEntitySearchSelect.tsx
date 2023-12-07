@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/components/MultipleEntitySelect';
 import { SingleEntitySelectBase } from '@/object-record/relation-picker/components/SingleEntitySelectBase';
-import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
+import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';

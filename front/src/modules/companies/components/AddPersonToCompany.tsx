@@ -7,10 +7,10 @@ import { v4 } from 'uuid';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RelationPicker } from '@/object-record/relation-picker/components/RelationPicker';
+import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { IconPlus } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
-import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 import { DoubleTextInput } from '@/ui/object/field/meta-types/input/components/internal/DoubleTextInput';
 import { FieldDoubleText } from '@/ui/object/field/types/FieldDoubleText';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';

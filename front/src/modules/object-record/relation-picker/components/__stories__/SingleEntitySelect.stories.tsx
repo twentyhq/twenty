@@ -9,8 +9,8 @@ import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/Componen
 import { mockedPeopleData } from '~/testing/mock-data/people';
 import { sleep } from '~/testing/sleep';
 
-import { relationPickerSearchFilterScopedState } from '../../../../ui/input/relation-picker/states/relationPickerSearchFilterScopedState';
-import { EntityForSelect } from '../../../../ui/input/relation-picker/types/EntityForSelect';
+import { relationPickerSearchFilterScopedState } from '../../states/relationPickerSearchFilterScopedState';
+import { EntityForSelect } from '../../types/EntityForSelect';
 import { SingleEntitySelect } from '../SingleEntitySelect';
 
 const entities = mockedPeopleData.map<EntityForSelect>((person) => ({

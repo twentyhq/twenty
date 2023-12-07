@@ -15,13 +15,10 @@ import { assertNotNull } from '~/utils/assert';
 
 import { CreateNewButton } from '../../../ui/input/relation-picker/components/CreateNewButton';
 import { DropdownMenuSkeletonItem } from '../../../ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
-import {
-  CreateButtonId,
-  EmptyButtonId,
-} from '../../../ui/input/relation-picker/constants';
-import { useEntitySelectScroll } from '../../../ui/input/relation-picker/hooks/useEntitySelectScroll';
-import { EntityForSelect } from '../../../ui/input/relation-picker/types/EntityForSelect';
-import { RelationPickerHotkeyScope } from '../../../ui/input/relation-picker/types/RelationPickerHotkeyScope';
+import { CreateButtonId, EmptyButtonId } from '../constants';
+import { useEntitySelectScroll } from '../hooks/useEntitySelectScroll';
+import { EntityForSelect } from '../types/EntityForSelect';
+import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
 export type SingleEntitySelectBaseProps<
   CustomEntityForSelect extends EntityForSelect,

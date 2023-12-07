@@ -3,8 +3,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/components/MultipleEntitySelect';
+import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { mapPaginatedRecordsToRecords } from '@/object-record/utils/mapPaginatedRecordsToRecords';
-import { EntityForSelect } from '@/ui/input/relation-picker/types/EntityForSelect';
 import { assertNotNull } from '~/utils/assert';
 import { isDefined } from '~/utils/isDefined';
 

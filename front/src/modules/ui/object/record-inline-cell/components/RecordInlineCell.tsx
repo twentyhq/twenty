@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
+import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
-import { RelationPickerHotkeyScope } from '@/ui/input/relation-picker/types/RelationPickerHotkeyScope';
 
 import { FieldDisplay } from '../../field/components/FieldDisplay';
 import { FieldInput } from '../../field/components/FieldInput';

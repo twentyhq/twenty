@@ -6,8 +6,8 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
-import { useEntitySelectSearch } from '../../../ui/input/relation-picker/hooks/useEntitySelectSearch';
-import { EntityForSelect } from '../../../ui/input/relation-picker/types/EntityForSelect';
+import { useEntitySelectSearch } from '../hooks/useEntitySelectSearch';
+import { EntityForSelect } from '../types/EntityForSelect';
 
 import {
   SingleEntitySelectBase,
