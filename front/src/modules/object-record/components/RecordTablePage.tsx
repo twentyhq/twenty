@@ -5,9 +5,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
+import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { IconBuildingSkyscraper } from '@/ui/display/icon';
+import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
@@ -35,6 +36,11 @@ export const RecordTablePage = () => {
 
   const navigate = useNavigate();
 
+  const { icons } = useLazyLoadIcons();
+
+  const { findObjectMetadataItemByNamePlural } =
+    useObjectMetadataItemForSettings();
+
   useEffect(() => {
     if (
       !isNonEmptyString(objectNamePlural) &&
@@ -54,7 +60,17 @@ export const RecordTablePage = () => {
 
   return (
     <PageContainer>
-      <PageHeader title="Objects" Icon={IconBuildingSkyscraper}>
+      <PageHeader
+        title={
+          objectNamePlural.charAt(0).toUpperCase() + objectNamePlural.slice(1)
+        }
+        Icon={
+          icons[
+            findObjectMetadataItemByNamePlural(objectNamePlural)!.icon ??
+              'Icon123'
+          ]
+        }
+      >
         <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
         <PageAddButton onClick={handleAddButtonClick} />
       </PageHeader>
