@@ -1,4 +1,4 @@
-import { PhoneDisplay } from '@/ui/field/components/PhoneDisplay';
+import { PhoneDisplay } from '@/ui/field/display/components/PhoneDisplay';
 
 import { usePhoneField } from '../../hooks/usePhoneField';
 

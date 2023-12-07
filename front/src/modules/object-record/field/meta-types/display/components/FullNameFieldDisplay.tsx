@@ -1,5 +1,5 @@
 import { useFullNameField } from '@/object-record/field/meta-types/hooks/useFullNameField';
-import { TextDisplay } from '@/ui/field/components/TextDisplay';
+import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
 
 export const FullNameFieldDisplay = () => {
   const { fieldValue } = useFullNameField();

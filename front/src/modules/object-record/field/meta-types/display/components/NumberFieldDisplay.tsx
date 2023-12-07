@@ -1,4 +1,4 @@
-import { NumberDisplay } from '@/ui/field/components/NumberDisplay';
+import { NumberDisplay } from '@/ui/field/display/components/NumberDisplay';
 
 import { useNumberField } from '../../hooks/useNumberField';
 

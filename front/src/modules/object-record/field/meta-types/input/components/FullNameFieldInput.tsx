@@ -1,10 +1,10 @@
 import { useFullNameField } from '@/object-record/field/meta-types/hooks/useFullNameField';
-import { DoubleTextInput } from '@/object-record/field/meta-types/input/components/internal/DoubleTextInput';
 import { FieldDoubleText } from '@/object-record/field/types/FieldDoubleText';
+import { DoubleTextInput } from '@/ui/field/input/components/DoubleTextInput';
 
+import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { usePersistField } from '../../../hooks/usePersistField';
 
-import { FieldInputOverlay } from './internal/FieldInputOverlay';
 import { FieldInputEvent } from './DateFieldInput';
 
 export type FullNameFieldInputProps = {

@@ -1,4 +1,4 @@
-import { TextDisplay } from '@/ui/field/components/TextDisplay';
+import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
 
 import { useTextField } from '../../hooks/useTextField';
 

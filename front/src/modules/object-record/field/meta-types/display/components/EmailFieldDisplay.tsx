@@ -1,4 +1,4 @@
-import { EmailDisplay } from '@/ui/field/components/EmailDisplay';
+import { EmailDisplay } from '@/ui/field/display/components/EmailDisplay';
 
 import { useEmailField } from '../../hooks/useEmailField';
 
