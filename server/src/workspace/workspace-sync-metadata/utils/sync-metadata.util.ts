@@ -45,15 +45,6 @@ export const mapObjectMetadataByUniqueIdentifier = (
   }, {});
 };
 
-export const sortRelationMetadataByUniqueIdentifier = (a, b) => {
-  const keyA = Object.keys(a)[0];
-  const keyB = Object.keys(b)[0];
-  const [fromA, toA] = keyA.split(':');
-  const [fromB, toB] = keyB.split(':');
-
-  return fromA.localeCompare(fromB) || toA.localeCompare(toB);
-};
-
 export const convertStringifiedFieldsToJSON = (fieldMetadata) => {
   if (fieldMetadata.targetColumnMap) {
     fieldMetadata.targetColumnMap = JSON.parse(

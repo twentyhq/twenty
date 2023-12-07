@@ -323,9 +323,9 @@ export class WorkspaceSyncMetadataService {
 
   private async generateMigrationsFromSync(
     objectsToCreate: ObjectMetadataEntity[],
-    objectsToDelete: ObjectMetadataEntity[],
-    fieldsToCreate: FieldMetadataEntity[],
-    fieldsToDelete: FieldMetadataEntity[],
+    _objectsToDelete: ObjectMetadataEntity[],
+    _fieldsToCreate: FieldMetadataEntity[],
+    _fieldsToDelete: FieldMetadataEntity[],
   ) {
     const migrationsToSave: Partial<WorkspaceMigrationEntity>[] = [];
     
@@ -366,7 +366,7 @@ export class WorkspaceSyncMetadataService {
 
   private async generateRelationMigrationsFromSync(
     relationsToCreate: RelationMetadataEntity[],
-    relationsToDelete: RelationMetadataEntity[],
+    _relationsToDelete: RelationMetadataEntity[],
     objectsInDB: ObjectMetadataEntity[],
   ) {
     const relationsMigrationsToSave: Partial<WorkspaceMigrationEntity>[] = [];
