@@ -51,29 +51,21 @@ export class ApiRestQueryBuilderFactory {
       );
     }
 
-    const { id, object: parsedObject } = parsePath(request);
-
-    let objectNameKey = 'namePlural';
-    let wrongObjectNameKey = 'nameSingular';
-
-    if (id) {
-      objectNameKey = 'nameSingular';
-      wrongObjectNameKey = 'namePlural';
-    }
+    const { object: parsedObject } = parsePath(request);
 
     const [objectMetadata] = objectMetadataItems.filter(
-      (object) => object[objectNameKey] === parsedObject,
+      (object) => object.namePlural === parsedObject,
     );
 
     if (!objectMetadata) {
       const [wrongObjectMetadata] = objectMetadataItems.filter(
-        (object) => object[wrongObjectNameKey] === parsedObject,
+        (object) => object.nameSingular === parsedObject,
       );
 
       let hint = 'eg: companies';
 
       if (wrongObjectMetadata) {
-        hint = `Did you mean '${wrongObjectMetadata[objectNameKey]}'?`;
+        hint = `Did you mean '${wrongObjectMetadata.namePlural}'?`;
       }
 
       throw new BadRequestException(
