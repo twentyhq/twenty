@@ -1,6 +1,6 @@
 import { AvatarType } from '@/users/components/Avatar';
 
-export type RecordToSelect = {
+export type SelectableRecord = {
   id: string;
   name: string;
   avatarUrl?: string;

@@ -12,8 +12,8 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
 import { GenericEntityFilterChip } from './GenericEntityFilterChip';
-import { ObjectFilterDropdownEntitySearchInput } from './ObjectFilterDropdownEntitySearchInput';
-import { ObjectFilterDropdownRecordSelect } from './ObjectFilterDropdownEntitySelect';
+import { ObjectFilterDropdownRecordSearchInput } from './ObjectFilterDropdownEntitySearchInput';
+import { ObjectFilterDropdownRecordSelect } from './ObjectFilterDropdownRecordSelect';
 
 export const SingleEntityObjectFilterDropdownButton = ({
   hotkeyScope,
@@ -65,7 +65,7 @@ export const SingleEntityObjectFilterDropdownButton = ({
         }
         dropdownComponents={
           <>
-            <ObjectFilterDropdownEntitySearchInput />
+            <ObjectFilterDropdownRecordSearchInput />
             <ObjectFilterDropdownRecordSelect />
           </>
         }

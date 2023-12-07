@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { RecordToSelect } from '@/object-record/select/types/RecordToSelect';
+import { SelectableRecord } from '@/object-record/select/types/RecordToSelect';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
@@ -14,18 +14,18 @@ export const MultipleRecordSelectDropdown = ({
   onChange,
   searchFilter,
 }: {
-  recordsToSelect: RecordToSelect[];
-  filteredSelectedRecords: RecordToSelect[];
-  selectedRecords: RecordToSelect[];
+  recordsToSelect: SelectableRecord[];
+  filteredSelectedRecords: SelectableRecord[];
+  selectedRecords: SelectableRecord[];
   searchFilter: string;
   onChange: (
-    changedRecordToSelect: RecordToSelect,
+    changedRecordToSelect: SelectableRecord,
     newSelectedValue: boolean,
   ) => void;
   loadingRecords: boolean;
 }) => {
   const handleRecordSelectChange = (
-    recordToSelect: RecordToSelect,
+    recordToSelect: SelectableRecord,
     newSelectedValue: boolean,
   ) => {
     onChange(

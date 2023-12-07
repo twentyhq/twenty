@@ -1,6 +1,6 @@
 import { MultipleRecordSelectDropdown } from '@/object-record/select/components/MultipleRecordSelectDropdown';
-import { useRecordSearchQuery } from '@/object-record/select/hooks/useRecordSearchQuery';
-import { RecordToSelect } from '@/object-record/select/types/RecordToSelect';
+import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
+import { SelectableRecord } from '@/object-record/select/types/RecordToSelect';
 import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
 
 export const EMPTY_FILTER_VALUE = '';
@@ -20,7 +20,7 @@ export const ObjectFilterDropdownRecordSelect = () => {
     filterDefinitionUsedInDropdown?.relationObjectMetadataNameSingular ?? '';
 
   const { loading, filteredSelectedRecords, recordsToSelect, selectedRecords } =
-    useRecordSearchQuery({
+    useRecordsForSelect({
       searchFilterText: objectFilterDropdownSearchInput,
       selectedIds: objectFilterDropdownSelectedRecordIds,
       objectNameSingular,
@@ -28,7 +28,7 @@ export const ObjectFilterDropdownRecordSelect = () => {
     });
 
   const handleMultipleRecordSelectChange = (
-    recordToSelect: RecordToSelect,
+    recordToSelect: SelectableRecord,
     newSelectedValue: boolean,
   ) => {
     const newSelectedRecordIds = newSelectedValue

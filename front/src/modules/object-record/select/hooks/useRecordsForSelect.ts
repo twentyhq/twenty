@@ -2,12 +2,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { RecordToSelect } from '@/object-record/select/types/RecordToSelect';
+import { SelectableRecord } from '@/object-record/select/types/RecordToSelect';
 import { getObjectFilterFields } from '@/object-record/select/utils/getObjectFilterFields';
 import { getObjectOrderByField } from '@/object-record/select/utils/getObjectOrderByField';
 import { isDefined } from '~/utils/isDefined';
-
-type SearchFilter = { fieldNames: string[]; filter: string | number };
 
 export type OrderBy =
   | 'AscNullsLast'
@@ -17,11 +15,7 @@ export type OrderBy =
 
 export const DEFAULT_SEARCH_REQUEST_LIMIT = 60;
 
-// TODO: use this for all search queries, because we need selectedEntities and entitiesToSelect each time we want to search
-// Filtered entities to select are
-
-// TODO: replace query hooks by useFindManyRecords
-export const useRecordSearchQuery = ({
+export const useRecordsForSelect = ({
   searchFilterText,
   sortOrder = 'AscNullsLast',
   selectedIds,
@@ -144,19 +138,19 @@ export const useRecordSearchQuery = ({
       .map((record) => ({
         ...record,
         isSelected: true,
-      })) as RecordToSelect[],
+      })) as SelectableRecord[],
     filteredSelectedRecords: filteredSelectedRecordsData
       .map(mapToObjectRecordIdentifier)
       .map((record) => ({
         ...record,
         isSelected: true,
-      })) as RecordToSelect[],
+      })) as SelectableRecord[],
     recordsToSelect: recordsToSelectData
       .map(mapToObjectRecordIdentifier)
       .map((record) => ({
         ...record,
         isSelected: false,
-      })) as RecordToSelect[],
+      })) as SelectableRecord[],
     loading:
       recordsToSelectLoading ||
       filteredSelectedRecordsLoading ||
