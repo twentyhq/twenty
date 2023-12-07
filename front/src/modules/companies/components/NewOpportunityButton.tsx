@@ -2,15 +2,15 @@ import { useCallback, useContext, useState } from 'react';
 import { useQuery } from '@apollo/client';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { NewButton } from '@/object-record/record-board/components/NewButton';
+import { BoardColumnContext } from '@/object-record/record-board/contexts/BoardColumnContext';
+import { useCreateOpportunity } from '@/object-record/record-board/hooks/internal/useCreateOpportunity';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { relationPickerSearchFilterScopedState } from '@/object-record/relation-picker/states/relationPickerSearchFilterScopedState';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { NewButton } from '@/ui/object/record-board/components/NewButton';
-import { BoardColumnContext } from '@/ui/object/record-board/contexts/BoardColumnContext';
-import { useCreateOpportunity } from '@/ui/object/record-board/hooks/internal/useCreateOpportunity';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 

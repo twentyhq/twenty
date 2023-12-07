@@ -1,7 +1,7 @@
 import { ChangeEvent } from 'react';
 import styled from '@emotion/styled';
 
-import { StyledInput } from '@/ui/object/field/meta-types/input/components/internal/TextInput';
+import { StyledInput } from '@/object-record/field/meta-types/input/components/internal/TextInput';
 import { ComputeNodeDimensions } from '@/ui/utilities/dimensions/components/ComputeNodeDimensions';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 

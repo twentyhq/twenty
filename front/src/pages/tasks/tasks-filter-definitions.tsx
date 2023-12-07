@@ -1,6 +1,6 @@
 import { Activity } from '@/activities/types/Activity';
+import { FilterDefinitionByEntity } from '@/object-record/object-filter-dropdown/types/FilterDefinitionByEntity';
 import { IconUserCircle } from '@/ui/display/icon';
-import { FilterDefinitionByEntity } from '@/ui/object/object-filter-dropdown/types/FilterDefinitionByEntity';
 
 export const tasksFilterDefinitions: FilterDefinitionByEntity<Activity>[] = [
   {

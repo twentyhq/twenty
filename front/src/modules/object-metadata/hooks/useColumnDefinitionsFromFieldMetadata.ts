@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { FieldMetadata } from '@/ui/object/field/types/FieldMetadata';
-import { ColumnDefinition } from '@/ui/object/record-table/types/ColumnDefinition';
+import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
+import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { Nullable } from '~/types/Nullable';
 
 import { formatFieldMetadataItemAsColumnDefinition } from '../utils/formatFieldMetadataItemAsColumnDefinition';

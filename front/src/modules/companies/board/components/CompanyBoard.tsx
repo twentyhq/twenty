@@ -4,9 +4,9 @@ import { mapBoardFieldDefinitionsToViewFields } from '@/companies/utils/mapBoard
 import {
   RecordBoard,
   RecordBoardProps,
-} from '@/ui/object/record-board/components/RecordBoard';
-import { RecordBoardEffect } from '@/ui/object/record-board/components/RecordBoardEffect';
-import { RecordBoardOptionsDropdown } from '@/ui/object/record-board/options/components/RecordBoardOptionsDropdown';
+} from '@/object-record/record-board/components/RecordBoard';
+import { RecordBoardEffect } from '@/object-record/record-board/components/RecordBoardEffect';
+import { RecordBoardOptionsDropdown } from '@/object-record/record-board/options/components/RecordBoardOptionsDropdown';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';

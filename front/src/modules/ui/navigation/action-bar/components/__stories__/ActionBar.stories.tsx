@@ -2,7 +2,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 import { useSetRecoilState } from 'recoil';
 
-import { RecordTableScope } from '@/ui/object/record-table/scopes/RecordTableScope';
+import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { actionBarOpenState } from '../../states/actionBarIsOpenState';

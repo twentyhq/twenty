@@ -235,5 +235,4 @@ export const ValidationStep = <T extends string>({
       <ContinueButton onContinue={onContinue} title="Confirm" />
     </>
   );
-
 };

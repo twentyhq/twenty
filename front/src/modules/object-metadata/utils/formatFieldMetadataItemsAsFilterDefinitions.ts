@@ -1,4 +1,4 @@
-import { FilterDefinition } from '@/ui/object/object-filter-dropdown/types/FilterDefinition';
+import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';

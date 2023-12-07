@@ -3,14 +3,14 @@ import { useQuery } from '@apollo/client';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { FieldDefinition } from '@/object-record/field/types/FieldDefinition';
+import { FieldRelationMetadata } from '@/object-record/field/types/FieldMetadata';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { relationPickerSearchFilterScopedState } from '@/object-record/relation-picker/states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { IconForbid } from '@/ui/display/icon';
-import { FieldDefinition } from '@/ui/object/field/types/FieldDefinition';
-import { FieldRelationMetadata } from '@/ui/object/field/types/FieldMetadata';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 export type RelationPickerProps = {

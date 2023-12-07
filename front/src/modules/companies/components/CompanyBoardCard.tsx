@@ -2,18 +2,18 @@ import { ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { FieldContext } from '@/object-record/field/contexts/FieldContext';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { BoardCardIdContext } from '@/object-record/record-board/contexts/BoardCardIdContext';
+import { useCurrentRecordBoardCardSelectedInternal } from '@/object-record/record-board/hooks/internal/useCurrentRecordBoardCardSelectedInternal';
+import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
+import { isRecordBoardCardInCompactViewFamilyState } from '@/object-record/record-board/states/isRecordBoardCardInCompactViewFamilyState';
+import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
+import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { EntityChipVariant } from '@/ui/display/chip/components/EntityChip';
 import { IconEye } from '@/ui/display/icon/index';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
-import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
-import { BoardCardIdContext } from '@/ui/object/record-board/contexts/BoardCardIdContext';
-import { useCurrentRecordBoardCardSelectedInternal } from '@/ui/object/record-board/hooks/internal/useCurrentRecordBoardCardSelectedInternal';
-import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
-import { isRecordBoardCardInCompactViewFamilyState } from '@/ui/object/record-board/states/isRecordBoardCardInCompactViewFamilyState';
-import { RecordInlineCell } from '@/ui/object/record-inline-cell/components/RecordInlineCell';
-import { InlineCellHotkeyScope } from '@/ui/object/record-inline-cell/types/InlineCellHotkeyScope';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 import { getLogoUrlFromDomainName } from '~/utils';
 
