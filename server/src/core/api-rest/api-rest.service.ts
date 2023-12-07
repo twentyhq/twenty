@@ -21,15 +21,15 @@ export class ApiRestService {
     request: Request,
     data: ApiRestQuery,
   ): Promise<ApiRestResponse> {
-    return await axios.post(
-      `${request.protocol}://${request.get('host')}/graphql`,
-      data,
-      {
-        headers: {
-          Authorization: request.headers.authorization,
-        },
+    const baseUrl =
+      this.environmentService.getServerUrl() ||
+      `${request.protocol}://${request.get('host')}`;
+
+    return await axios.post(`${baseUrl}/graphql`, data, {
+      headers: {
+        Authorization: request.headers.authorization,
       },
-    );
+    });
   }
 
   async get(request: Request): Promise<ApiRestResponse> {
