@@ -12,6 +12,7 @@ import { UpdateVariablesFactory } from 'src/core/api-rest/api-rest-query-builder
 import { GetVariablesFactory } from 'src/core/api-rest/api-rest-query-builder/factories/get-variables.factory';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { TokenService } from 'src/core/auth/services/token.service';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 describe('ApiRestQueryBuilderFactory', () => {
   let service: ApiRestQueryBuilderFactory;
@@ -31,6 +32,7 @@ describe('ApiRestQueryBuilderFactory', () => {
         { provide: GetVariablesFactory, useValue: {} },
         { provide: ObjectMetadataService, useValue: {} },
         { provide: TokenService, useValue: {} },
+        { provide: EnvironmentService, useValue: {} },
       ],
     }).compile();
 

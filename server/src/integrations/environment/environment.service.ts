@@ -50,6 +50,10 @@ export class EnvironmentService {
     return this.configService.get<string>('FRONT_BASE_URL')!;
   }
 
+  getServerUrl(): string {
+    return this.configService.get<string>('SERVER_URL')!;
+  }
+
   getAccessTokenSecret(): string {
     return this.configService.get<string>('ACCESS_TOKEN_SECRET')!;
   }

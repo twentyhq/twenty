@@ -60,6 +60,11 @@ export class EnvironmentVariables {
   @IsUrl({ require_tld: false })
   FRONT_BASE_URL: string;
 
+  // Frontend URL
+  @IsUrl({ require_tld: false })
+  @IsOptional()
+  SERVER_URL: string;
+
   // Json Web Token
   @IsString()
   ACCESS_TOKEN_SECRET: string;
