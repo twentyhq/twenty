@@ -6,15 +6,13 @@ import { mapFieldMetadataToGraphqlQuery } from 'src/core/api-rest/api-rest-query
 @Injectable()
 export class FindOneQueryFactory {
   create(objectMetadata, depth?: number): string {
+    const objectNameSingular = objectMetadata.objectMetadataItem.nameSingular;
+
     return `
-      query FindOne${capitalize(
-        objectMetadata.objectMetadataItem.nameSingular,
-      )}(
-        $filter: ${capitalize(
-          objectMetadata.objectMetadataItem.nameSingular,
-        )}FilterInput!,
+      query FindOne${capitalize(objectNameSingular)}(
+        $filter: ${capitalize(objectNameSingular)}FilterInput!,
         ) {
-        ${objectMetadata.objectMetadataItem.nameSingular}(filter: $filter) {
+        ${objectNameSingular}(filter: $filter) {
           id
           ${objectMetadata.objectMetadataItem.fields
             .map((field) =>

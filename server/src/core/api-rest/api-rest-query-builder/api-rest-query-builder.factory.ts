@@ -47,7 +47,9 @@ export class ApiRestQueryBuilderFactory {
     let workspaceId;
 
     try {
-      workspaceId = await this.tokenService.verifyApiKeyToken(request);
+      const workspace = await this.tokenService.validateToken(request);
+
+      workspaceId = workspace.id;
     } catch (err) {
       throw new UnauthorizedException(
         `Invalid API key. Double check your API key or generate a new one here ${this.environmentService.getFrontBaseUrl()}/settings/developers/api-keys`,

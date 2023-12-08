@@ -16,7 +16,10 @@ import { Repository } from 'typeorm';
 import { Request } from 'express';
 import { ExtractJwt } from 'passport-jwt';
 
-import { JwtPayload } from 'src/core/auth/strategies/jwt.auth.strategy';
+import {
+  JwtAuthStrategy,
+  JwtPayload,
+} from 'src/core/auth/strategies/jwt.auth.strategy';
 import { assert } from 'src/utils/assert';
 import { ApiKeyToken, AuthToken } from 'src/core/auth/dto/token.entity';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
@@ -27,6 +30,7 @@ import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
 export class TokenService {
   constructor(
     private readonly jwtService: JwtService,
+    private readonly jwtStrategy: JwtAuthStrategy,
     private readonly environmentService: EnvironmentService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
@@ -167,18 +171,22 @@ export class TokenService {
     return { token };
   }
 
-  async verifyApiKeyToken(request: Request) {
+  async validateToken(request: Request) {
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
 
     if (!token) {
       throw new UnauthorizedException('missing authentication token');
     }
-    const payload = await this.verifyJwt(
+    const decoded = await this.verifyJwt(
       token,
       this.environmentService.getAccessTokenSecret(),
     );
 
-    return payload.workspaceId;
+    const { workspace } = await this.jwtStrategy.validate(
+      decoded as JwtPayload,
+    );
+
+    return workspace;
   }
 
   async verifyLoginToken(loginToken: string): Promise<string> {
