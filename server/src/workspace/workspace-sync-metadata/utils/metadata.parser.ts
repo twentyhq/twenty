@@ -34,12 +34,12 @@ export class MetadataParser {
   }
 
   static parseAllMetadata(
-    metadata: (typeof BaseObjectMetadata)[],
+    metadataCollection: (typeof BaseObjectMetadata)[],
     workspaceId: string,
     dataSourceId: string,
   ) {
-    return metadata.map((_metadata) =>
-      MetadataParser.parseMetadata(_metadata, workspaceId, dataSourceId),
+    return metadataCollection.map((metadata) =>
+      MetadataParser.parseMetadata(metadata, workspaceId, dataSourceId),
     );
   }
 
@@ -61,6 +61,7 @@ export class MetadataParser {
         `Object ${relation.fromObjectNameSingular} not found in DB 
         for relation defined in class ${objectMetadata.nameSingular}`,
       );
+
       const toObjectMetadata =
         objectMetadataFromDB[relation.toObjectNameSingular];
       assert(
@@ -68,6 +69,7 @@ export class MetadataParser {
         `Object ${relation.toObjectNameSingular} not found in DB
         for relation defined in class ${objectMetadata.nameSingular}`,
       );
+
       const fromFieldMetadata =
         fromObjectMetadata?.fields[relation.fromFieldMetadataName];
       assert(
@@ -75,6 +77,7 @@ export class MetadataParser {
         `Field ${relation.fromFieldMetadataName} not found in object ${relation.fromObjectNameSingular}
         for relation defined in class ${objectMetadata.nameSingular}`,
       );
+
       const toFieldMetadata =
         toObjectMetadata?.fields[relation.toFieldMetadataName];
       assert(
@@ -82,6 +85,7 @@ export class MetadataParser {
         `Field ${relation.toFieldMetadataName} not found in object ${relation.toObjectNameSingular}
         for relation defined in class ${objectMetadata.nameSingular}`,
       );
+
       return {
         relationType: relation.type,
         fromObjectMetadataId: fromObjectMetadata?.id,
@@ -94,13 +98,13 @@ export class MetadataParser {
   }
 
   static parseAllRelations(
-    metadata: (typeof BaseObjectMetadata)[],
+    metadataCollection: (typeof BaseObjectMetadata)[],
     workspaceId: string,
     objectMetadataFromDB: Record<string, ObjectMetadataEntity>,
   ) {
-    return metadata.flatMap((_metadata) =>
+    return metadataCollection.flatMap((metadata) =>
       MetadataParser.parseRelationMetadata(
-        _metadata,
+        metadata,
         workspaceId,
         objectMetadataFromDB,
       ),

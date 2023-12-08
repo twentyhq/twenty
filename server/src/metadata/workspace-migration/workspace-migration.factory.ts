@@ -16,7 +16,7 @@ import { fullNameFields } from 'src/metadata/field-metadata/composite-types/full
 import { currencyFields } from 'src/metadata/field-metadata/composite-types/currency.composite-type';
 import { linkFields } from 'src/metadata/field-metadata/composite-types/link.composite-type';
 
-type CompositeFieldSplitterFunction = (
+type CompositeFieldsDefinitionFunction = (
   fieldMetadata: FieldMetadataInterface,
 ) => FieldMetadataInterface[];
 
@@ -32,7 +32,7 @@ export class WorkspaceMigrationFactory {
   >;
   private compositeDefinitions = new Map<
     string,
-    CompositeFieldSplitterFunction
+    CompositeFieldsDefinitionFunction
   >();
 
   constructor(
@@ -90,7 +90,7 @@ export class WorkspaceMigrationFactory {
       ],
     ]);
 
-    this.compositeDefinitions = new Map<string, CompositeFieldSplitterFunction>(
+    this.compositeDefinitions = new Map<string, CompositeFieldsDefinitionFunction>(
       [
         [FieldMetadataType.LINK, linkFields],
         [FieldMetadataType.CURRENCY, currencyFields],

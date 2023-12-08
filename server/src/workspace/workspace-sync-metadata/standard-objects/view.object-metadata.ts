@@ -7,6 +7,9 @@ import {
   RelationMetadata,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { ViewFieldObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/view-field.object-metadata';
+import { ViewFilterObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/view-filter.object-metadata';
+import { ViewSortObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/view-sort.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'views',
@@ -53,7 +56,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'viewField',
   })
-  viewFields: object[];
+  viewFields: ViewFieldObjectMetadata[];
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -65,7 +68,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'viewFilter',
   })
-  viewFilters: object[];
+  viewFilters: ViewFilterObjectMetadata[];
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -77,5 +80,5 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'viewSort',
   })
-  viewSorts: object[];
+  viewSorts: ViewSortObjectMetadata[];
 }
