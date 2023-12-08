@@ -148,7 +148,7 @@ export const SettingsObjectFieldPreview = ({
         >
           {fieldMetadata.type === FieldMetadataType.Boolean ? (
             <BooleanFieldInput readonly />
-          ) : fieldMetadata.type === FieldMetadataType.Probability ? (
+          ) : fieldMetadata.type === FieldMetadataType.Rating ? (
             <RatingFieldInput readonly />
           ) : (
             <FieldDisplay />

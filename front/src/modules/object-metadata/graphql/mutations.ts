@@ -20,7 +20,7 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
 `;
 
 export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
-  mutation CreateOneFieldMetadataItem($input: CreateOneFieldInput!) {
+  mutation CreateOneFieldMetadataItem($input: CreateOneFieldMetadataInput!) {
     createOneField(input: $input) {
       id
       type
@@ -28,12 +28,13 @@ export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
       label
       description
       icon
-      placeholder
       isCustom
       isActive
       isNullable
       createdAt
       updatedAt
+      defaultValue
+      options
     }
   }
 `;
@@ -65,7 +66,6 @@ export const UPDATE_ONE_FIELD_METADATA_ITEM = gql`
       label
       description
       icon
-      placeholder
       isCustom
       isActive
       isNullable
@@ -125,7 +125,6 @@ export const DELETE_ONE_FIELD_METADATA_ITEM = gql`
       label
       description
       icon
-      placeholder
       isCustom
       isActive
       isNullable

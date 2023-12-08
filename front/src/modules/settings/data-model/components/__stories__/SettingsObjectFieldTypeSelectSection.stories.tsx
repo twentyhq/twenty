@@ -108,7 +108,7 @@ export const WithSelectForm: Story = {
     fieldMetadata: { label: 'Industry', icon: 'IconBuildingFactory2' },
     values: {
       ...fieldMetadataFormDefaultValues,
-      type: FieldMetadataType.Enum,
+      type: FieldMetadataType.Select,
       select: [
         {
           color: 'pink',

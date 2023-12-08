@@ -125,6 +125,7 @@ export type FieldConnection = {
 export type FieldDeleteResponse = {
   __typename?: 'FieldDeleteResponse';
   createdAt?: Maybe<Scalars['DateTime']>;
+  defaultValue?: Maybe<Scalars['JSON']>;
   description?: Maybe<Scalars['String']>;
   icon?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
@@ -134,8 +135,7 @@ export type FieldDeleteResponse = {
   isSystem?: Maybe<Scalars['Boolean']>;
   label?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
-  /** @deprecated Use label name instead */
-  placeholder?: Maybe<Scalars['String']>;
+  options?: Maybe<Scalars['JSON']>;
   type?: Maybe<FieldMetadataType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
@@ -146,14 +146,16 @@ export enum FieldMetadataType {
   Currency = 'CURRENCY',
   DateTime = 'DATE_TIME',
   Email = 'EMAIL',
-  Enum = 'ENUM',
   FullName = 'FULL_NAME',
   Link = 'LINK',
+  MultiSelect = 'MULTI_SELECT',
   Number = 'NUMBER',
   Numeric = 'NUMERIC',
   Phone = 'PHONE',
   Probability = 'PROBABILITY',
+  Rating = 'RATING',
   Relation = 'RELATION',
+  Select = 'SELECT',
   Text = 'TEXT',
   Uuid = 'UUID'
 }
@@ -191,20 +193,15 @@ export type Mutation = {
   __typename?: 'Mutation';
   challenge: LoginToken;
   createEvent: Analytics;
-  createOneField: Field;
   createOneObject: Object;
   createOneRefreshToken: RefreshToken;
-  createOneRelation: Relation;
   deleteCurrentWorkspace: Workspace;
-  deleteOneField: FieldDeleteResponse;
   deleteOneObject: ObjectDeleteResponse;
-  deleteOneRelation: RelationDeleteResponse;
   deleteUser: User;
   generateApiKeyToken: ApiKeyToken;
   impersonate: Verify;
   renewToken: AuthTokens;
   signUp: LoginToken;
-  updateOneField: Field;
   updateOneObject: Object;
   updateWorkspace: Workspace;
   uploadFile: Scalars['String'];
@@ -342,13 +339,9 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
-  field: Field;
-  fields: FieldConnection;
   findWorkspaceFromInviteHash: Workspace;
   object: Object;
   objects: ObjectConnection;
-  relation: Relation;
-  relations: RelationConnection;
 };
 
 
@@ -531,18 +524,18 @@ export type WorkspaceInviteHashValid = {
 export type Field = {
   __typename?: 'field';
   createdAt: Scalars['DateTime'];
+  defaultValue?: Maybe<Scalars['JSON']>;
   description?: Maybe<Scalars['String']>;
   fromRelationMetadata?: Maybe<Relation>;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
-  isActive: Scalars['Boolean'];
-  isCustom: Scalars['Boolean'];
-  isNullable: Scalars['Boolean'];
-  isSystem: Scalars['Boolean'];
+  isActive?: Maybe<Scalars['Boolean']>;
+  isCustom?: Maybe<Scalars['Boolean']>;
+  isNullable?: Maybe<Scalars['Boolean']>;
+  isSystem?: Maybe<Scalars['Boolean']>;
   label: Scalars['String'];
   name: Scalars['String'];
-  /** @deprecated Use label name instead */
-  placeholder?: Maybe<Scalars['String']>;
+  options?: Maybe<Scalars['JSON']>;
   toRelationMetadata?: Maybe<Relation>;
   type: FieldMetadataType;
   updatedAt: Scalars['DateTime'];
