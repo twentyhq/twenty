@@ -66,7 +66,7 @@ export const settingsFieldMetadataTypes: Partial<
     Icon: IconTag,
   },
   [FieldMetadataType.MultiSelect]: {
-    label: 'Multi-Select',
+    label: 'MultiSelect',
     Icon: IconTag,
   },
   [FieldMetadataType.Currency]: {

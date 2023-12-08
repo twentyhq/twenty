@@ -168,7 +168,7 @@ export const SettingsObjectNewFieldStep2 = () => {
         await createMetadataField({
           description: validatedFormValues.description,
           icon: validatedFormValues.icon,
-          label: validatedFormValues.label,
+          label: validatedFormValues.label ?? '',
           objectMetadataId: activeObjectMetadataItem.id,
           type: validatedFormValues.type,
           options:

@@ -84,6 +84,12 @@ export class EnvironmentService {
     return this.configService.get<string>('LOGIN_TOKEN_EXPIRES_IN') ?? '15m';
   }
 
+  getTransientTokenExpiresIn(): string {
+    return (
+      this.configService.get<string>('SHORT_TERM_TOKEN_EXPIRES_IN') ?? '5m'
+    );
+  }
+
   getApiTokenExpiresIn(): string {
     return this.configService.get<string>('API_TOKEN_EXPIRES_IN') ?? '1000y';
   }
@@ -92,6 +98,19 @@ export class EnvironmentService {
     return (
       this.configService.get<string>('FRONT_AUTH_CALLBACK_URL') ??
       this.getFrontBaseUrl() + '/verify'
+    );
+  }
+
+  isMessagingProviderGmailEnabled(): boolean {
+    return (
+      this.configService.get<boolean>('MESSAGING_PROVIDER_GMAIL_ENABLED') ??
+      false
+    );
+  }
+
+  getMessagingProviderGmailCallbackUrl(): string | undefined {
+    return this.configService.get<string>(
+      'MESSAGING_PROVIDER_GMAIL_CALLBACK_URL',
     );
   }
 

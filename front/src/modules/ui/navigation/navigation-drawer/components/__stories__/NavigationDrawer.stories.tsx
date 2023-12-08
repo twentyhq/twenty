@@ -23,9 +23,9 @@ import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 import { NavigationDrawer } from '../NavigationDrawer';
 import { NavigationDrawerItem } from '../NavigationDrawerItem';
-import { NavigationDrawerSectionTitle } from '../NavigationDrawerSectionTitle';
-import { NavigationDrawerSection } from '../NavigationDrawerSection';
 import { NavigationDrawerItemGroup } from '../NavigationDrawerItemGroup';
+import { NavigationDrawerSection } from '../NavigationDrawerSection';
+import { NavigationDrawerSectionTitle } from '../NavigationDrawerSectionTitle';
 
 const meta: Meta<typeof NavigationDrawer> = {
   title: 'UI/Navigation/NavigationDrawer/NavigationDrawer',
