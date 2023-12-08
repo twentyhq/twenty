@@ -84,14 +84,18 @@ export const NoteCard = ({
   const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
 
-  const body = JSON.parse(note.body ?? '[]')
-    .map((x: any) =>
-      Array.isArray(x.content)
-        ? x.content?.map((content: any) => content?.text).join(' ')
-        : x.content?.text,
-    )
-    .filter((x: string) => x)
-    .join('\n');
+  const noteBody = JSON.parse(note.body ?? '[]');
+
+  const body = noteBody.length
+    ? noteBody
+        .map((x: any) =>
+          Array.isArray(x.content)
+            ? x.content?.map((content: any) => content?.text).join(' ')
+            : x.content?.text,
+        )
+        .filter((x: string) => x)
+        .join('\n')
+    : '';
 
   const fieldContext = useMemo(
     () => ({ recoilScopeId: note?.id ?? '' }),
