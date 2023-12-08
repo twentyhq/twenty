@@ -26,7 +26,6 @@ export class GoogleGmailService {
       dataSourceMetadata,
     );
 
-    // Update connected account
     await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."connectedAccount" ("type", "accessToken", "refreshToken") VALUES ('${type}', '${accessToken}', '${refreshToken}')`,
     );
