@@ -1,3 +1,4 @@
+import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { IconArrowUpRight } from '@/ui/display/icon';
@@ -15,6 +16,8 @@ export type CommandMenuItemProps = {
   Icon?: IconComponent;
   firstHotKey?: string;
   secondHotKey?: string;
+  enterClicked?: boolean;
+  resetEnterClicked?: () => void;
 };
 
 export const CommandMenuItem = ({
@@ -25,6 +28,8 @@ export const CommandMenuItem = ({
   Icon,
   firstHotKey,
   secondHotKey,
+  enterClicked,
+  resetEnterClicked,
 }: CommandMenuItemProps) => {
   const navigate = useNavigate();
   const { toggleCommandMenu } = useCommandMenu();
@@ -35,7 +40,7 @@ export const CommandMenuItem = ({
 
   const { isSelectedItemId } = useSelectableList({ itemId: id });
 
-  const onItemClick = () => {
+  const onItemClick = useCallback(() => {
     toggleCommandMenu();
 
     if (onClick) {
@@ -46,7 +51,14 @@ export const CommandMenuItem = ({
       navigate(to);
       return;
     }
-  };
+  }, [navigate, onClick, to, toggleCommandMenu]);
+
+  useEffect(() => {
+    if (enterClicked && isSelectedItemId) {
+      onItemClick();
+      resetEnterClicked?.();
+    }
+  }, [enterClicked, isSelectedItemId, onItemClick, resetEnterClicked]);
 
   return (
     <MenuItemCommand
