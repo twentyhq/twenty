@@ -168,7 +168,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
 
     const createdFieldMap = createdFields.reduce((acc, fieldMetadata) => {
       if (fieldMetadata.type === FieldMetadataType.RELATION) {
-        acc[fieldMetadata.objectMetadataId] = fieldMetadata;
+        acc[fieldMetadata.name] = fieldMetadata;
       }
 
       return acc;
@@ -176,8 +176,8 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
 
     const createdRelationMetadata = await super.createOne({
       ...record,
-      fromFieldMetadataId: createdFieldMap[record.fromObjectMetadataId].id,
-      toFieldMetadataId: createdFieldMap[record.toObjectMetadataId].id,
+      fromFieldMetadataId: createdFieldMap[record.fromName].id,
+      toFieldMetadataId: createdFieldMap[record.toName].id,
     });
 
     await this.workspaceMigrationService.createCustomMigration(
