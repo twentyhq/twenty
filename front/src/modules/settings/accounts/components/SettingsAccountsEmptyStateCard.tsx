@@ -1,8 +1,11 @@
+import { useCallback } from 'react';
 import styled from '@emotion/styled';
 
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import { Button } from '@/ui/input/button/components/Button';
 import { Card } from '@/ui/layout/card/components/Card';
+import { REACT_APP_SERVER_AUTH_URL } from '~/config';
+import { useGenerateTransientTokenMutation } from '~/generated/graphql';
 
 const StyledCard = styled(Card)`
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -27,15 +30,30 @@ const StyledBody = styled.div`
   padding: ${({ theme }) => theme.spacing(4)};
 `;
 
-export const SettingsAccountsEmptyStateCard = () => (
-  <StyledCard>
-    <StyledHeader>No connected account</StyledHeader>
-    <StyledBody>
-      <Button
-        Icon={IconGoogle}
-        title="Connect with Google"
-        variant="secondary"
-      />
-    </StyledBody>
-  </StyledCard>
-);
+export const SettingsAccountsEmptyStateCard = () => {
+  const [generateTransientToken] = useGenerateTransientTokenMutation();
+
+  const handleGmailLogin = useCallback(async () => {
+    const authServerUrl = REACT_APP_SERVER_AUTH_URL;
+
+    const transientToken = await generateTransientToken();
+
+    const token =
+      transientToken.data?.generateTransientToken.transientToken.token;
+
+    window.location.href = `${authServerUrl}/google-gmail?transientToken=${token}`;
+  }, [generateTransientToken]);
+  return (
+    <StyledCard>
+      <StyledHeader>No connected account</StyledHeader>
+      <StyledBody>
+        <Button
+          Icon={IconGoogle}
+          title="Connect with Google"
+          variant="secondary"
+          onClick={handleGmailLogin}
+        />
+      </StyledBody>
+    </StyledCard>
+  );
+};
