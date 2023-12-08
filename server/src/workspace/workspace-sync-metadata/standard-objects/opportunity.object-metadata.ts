@@ -1,3 +1,4 @@
+import { CurrencyMetadata } from 'src/metadata/field-metadata/composite-types/currency.composite-type';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import {
   ObjectMetadata,
@@ -6,6 +7,9 @@ import {
   IsNullable,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
+import { PersonObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/person.object-metadata';
+import { PipelineStepObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/pipeline-step.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'opportunities',
@@ -22,7 +26,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     icon: 'IconCurrencyDollar',
   })
   @IsNullable()
-  amount: string;
+  amount: CurrencyMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
@@ -31,7 +35,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     icon: 'IconCalendarEvent',
   })
   @IsNullable()
-  closeDate: string;
+  closeDate: Date;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
@@ -52,7 +56,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'pipelineStepId',
   })
   @IsNullable()
-  pipelineStep: string;
+  pipelineStep: PipelineStepObjectMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -62,7 +66,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'pointOfContactId',
   })
   @IsNullable()
-  pointOfContact: string;
+  pointOfContact: PersonObjectMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -71,7 +75,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUser',
     joinColumn: 'personId',
   })
-  person: string;
+  person: PersonObjectMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -81,5 +85,5 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'companyId',
   })
   @IsNullable()
-  company: string;
+  company: CompanyObjectMetadata;
 }

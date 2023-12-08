@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
+import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
@@ -12,9 +13,7 @@ import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerate
 import { useGenerateUpdateOneRecordMutation } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
 import { useGetRecordFromCache } from '@/object-record/hooks/useGetRecordFromCache';
 import { useModifyRecordFromCache } from '@/object-record/hooks/useModifyRecordFromCache';
-import { ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 import { generateDeleteOneRecordMutation } from '@/object-record/utils/generateDeleteOneRecordMutation';
-import { getLogoUrlFromDomainName } from '~/utils';
 import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
@@ -63,42 +62,9 @@ export const useObjectMetadataItem = (
     );
   }
 
-  const mapToObjectRecordIdentifier = (record: any): ObjectRecordIdentifier => {
-    if (objectNameSingular === 'company') {
-      return {
-        id: record.id,
-        name: record.name,
-        avatarUrl: getLogoUrlFromDomainName(record.domainName ?? ''),
-        avatarType: 'squared',
-      };
-    }
-
-    if (['workspaceMember', 'person'].includes(objectNameSingular)) {
-      return {
-        id: record.id,
-        name:
-          (record.name?.firstName ?? '') + ' ' + (record.name?.lastName ?? ''),
-        avatarUrl: record.avatarUrl,
-        avatarType: 'rounded',
-      };
-    }
-
-    if (['opportunity'].includes(objectNameSingular)) {
-      return {
-        id: record.id,
-        name: record?.company?.name,
-        avatarUrl: record.avatarUrl,
-        avatarType: 'rounded',
-      };
-    }
-
-    return {
-      id: record.id,
-      name: record.name,
-      avatarUrl: record.avatarUrl,
-      avatarType: 'rounded',
-    };
-  };
+  const mapToObjectRecordIdentifier = useMapToObjectRecordIdentifier({
+    objectMetadataItem,
+  });
 
   const getRecordFromCache = useGetRecordFromCache({
     objectMetadataItem,

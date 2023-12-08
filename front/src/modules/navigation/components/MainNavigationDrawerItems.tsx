@@ -13,6 +13,7 @@ import {
   IconTargetArrow,
 } from '@/ui/display/icon';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -33,7 +34,7 @@ export const MainNavigationDrawerItems = () => {
   return (
     <>
       {!isMobile && (
-        <>
+        <NavigationDrawerSection>
           <NavigationDrawerItem
             label="Search"
             Icon={IconSearch}
@@ -61,19 +62,21 @@ export const MainNavigationDrawerItems = () => {
             Icon={IconCheckbox}
             count={currentUserDueTaskCount}
           />
-        </>
+        </NavigationDrawerSection>
       )}
 
       <Favorites />
 
-      <NavigationDrawerSectionTitle label="Workspace" />
-      <ObjectMetadataNavItems />
-      <NavigationDrawerItem
-        label="Opportunities"
-        to="/objects/opportunities"
-        active={location.pathname === '/objects/opportunities'}
-        Icon={IconTargetArrow}
-      />
+      <NavigationDrawerSection>
+        <NavigationDrawerSectionTitle label="Workspace" />
+        <ObjectMetadataNavItems />
+        <NavigationDrawerItem
+          label="Opportunities"
+          to="/objects/opportunities"
+          active={location.pathname === '/objects/opportunities'}
+          Icon={IconTargetArrow}
+        />
+      </NavigationDrawerSection>
     </>
   );
 };

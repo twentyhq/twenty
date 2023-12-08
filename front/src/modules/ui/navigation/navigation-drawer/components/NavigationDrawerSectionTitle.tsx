@@ -9,9 +9,8 @@ const StyledTitle = styled.div`
   display: flex;
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-top: ${({ theme }) => theme.spacing(8)};
+  padding: ${({ theme }) => theme.spacing(1)};
+  padding-top: 0;
   text-transform: uppercase;
 `;
 

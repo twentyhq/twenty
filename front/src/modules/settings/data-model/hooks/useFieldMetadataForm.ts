@@ -61,6 +61,7 @@ const selectSchema = fieldSchema.merge(
       .array(
         z.object({
           color: themeColorSchema,
+          id: z.string().optional(),
           isDefault: z.boolean().optional(),
           label: z.string().min(1),
         }),
@@ -75,13 +76,15 @@ const {
   ...otherFieldTypes
 } = FieldMetadataType;
 
+type OtherFieldType = Exclude<
+  FieldMetadataType,
+  FieldMetadataType.Relation | FieldMetadataType.Select
+>;
+
 const otherFieldTypesSchema = fieldSchema.merge(
   z.object({
     type: z.enum(
-      Object.values(otherFieldTypes) as [
-        Exclude<FieldMetadataType, FieldMetadataType.Relation>,
-        ...Exclude<FieldMetadataType, FieldMetadataType.Relation>[],
-      ],
+      Object.values(otherFieldTypes) as [OtherFieldType, ...OtherFieldType[]],
     ),
   }),
 );
@@ -177,6 +180,7 @@ export const useFieldMetadataForm = () => {
     hasFormChanged:
       hasFieldFormChanged || hasRelationFormChanged || hasSelectFormChanged,
     hasRelationFormChanged,
+    hasSelectFormChanged,
     initForm,
     isInitialized,
     isValid: validationResult.success,

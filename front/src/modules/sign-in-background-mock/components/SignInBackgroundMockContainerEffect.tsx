@@ -5,7 +5,6 @@ import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObje
 import { useRecordTableContextMenuEntries } from '@/object-record/hooks/useRecordTableContextMenuEntries';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
-import { signInBackgroundMockCompanies } from '@/sign-in-background-mock/constants/signInBackgroundMockCompanies';
 import {
   signInBackgroundMockColumnDefinitions,
   signInBackgroundMockFilterDefinitions,
@@ -66,7 +65,6 @@ export const SignInBackgroundMockContainerEffect = ({
     );
 
     setAvailableTableColumns(availableTableColumns);
-    setRecordTableData(signInBackgroundMockCompanies);
 
     setTableColumns(
       mapViewFieldsToColumnDefinitions(

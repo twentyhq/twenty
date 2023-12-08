@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { SettingsAccountsConnectedAccountsSection } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsSection';
 import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/SettingsAccountsSettingsSection';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { IconSettings } from '@/ui/display/icon';
@@ -27,6 +28,7 @@ export const SettingsAccounts = () => {
       <SettingsPageContainer>
         <Breadcrumb links={[{ children: 'Accounts' }]} />
         <button onClick={handleGmailLogin}>Accounts</button>
+        <SettingsAccountsConnectedAccountsSection />
         <SettingsAccountsSettingsSection />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

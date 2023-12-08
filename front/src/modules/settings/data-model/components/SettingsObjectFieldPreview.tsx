@@ -7,8 +7,7 @@ import { FieldContext } from '@/object-record/field/contexts/FieldContext';
 import { BooleanFieldInput } from '@/object-record/field/meta-types/input/components/BooleanFieldInput';
 import { RatingFieldInput } from '@/object-record/field/meta-types/input/components/RatingFieldInput';
 import { Tag } from '@/ui/display/tag/components/Tag';
-import { Field } from '~/generated/graphql';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { SettingsObjectFieldPreviewValueEffect } from '../components/SettingsObjectFieldPreviewValueEffect';
 import { useFieldPreview } from '../hooks/useFieldPreview';
@@ -148,7 +147,7 @@ export const SettingsObjectFieldPreview = ({
         >
           {fieldMetadata.type === FieldMetadataType.Boolean ? (
             <BooleanFieldInput readonly />
-          ) : fieldMetadata.type === FieldMetadataType.Probability ? (
+          ) : fieldMetadata.type === FieldMetadataType.Rating ? (
             <RatingFieldInput readonly />
           ) : (
             <FieldDisplay />

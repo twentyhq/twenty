@@ -91,7 +91,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
           FieldMetadataType.Select,
           FieldMetadataType.Link,
           FieldMetadataType.Number,
-          FieldMetadataType.Probability,
+          FieldMetadataType.Rating,
           FieldMetadataType.Relation,
           FieldMetadataType.Text,
         ].includes(values.type) && (

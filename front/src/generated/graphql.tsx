@@ -68,26 +68,6 @@ export type ClientConfig = {
   telemetry: Telemetry;
 };
 
-export type CreateFieldInput = {
-  defaultValue?: InputMaybe<Scalars['JSON']>;
-  description?: InputMaybe<Scalars['String']>;
-  icon?: InputMaybe<Scalars['String']>;
-  isActive?: InputMaybe<Scalars['Boolean']>;
-  isCustom?: InputMaybe<Scalars['Boolean']>;
-  isNullable?: InputMaybe<Scalars['Boolean']>;
-  isSystem?: InputMaybe<Scalars['Boolean']>;
-  label: Scalars['String'];
-  name: Scalars['String'];
-  objectMetadataId: Scalars['String'];
-  options?: InputMaybe<Scalars['JSON']>;
-  type: FieldMetadataType;
-};
-
-export type CreateOneFieldMetadataInput = {
-  /** The record to create */
-  field: CreateFieldInput;
-};
-
 export type CreateOneRefreshTokenInput = {
   /** The record to create */
   refreshToken: CreateRefreshTokenInput;
@@ -213,21 +193,16 @@ export type Mutation = {
   __typename?: 'Mutation';
   challenge: LoginToken;
   createEvent: Analytics;
-  createOneField: Field;
   createOneObject: Object;
   createOneRefreshToken: RefreshToken;
-  createOneRelation: Relation;
   deleteCurrentWorkspace: Workspace;
-  deleteOneField: FieldDeleteResponse;
   deleteOneObject: ObjectDeleteResponse;
-  deleteOneRelation: RelationDeleteResponse;
   deleteUser: User;
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientToken;
   impersonate: Verify;
   renewToken: AuthTokens;
   signUp: LoginToken;
-  updateOneField: Field;
   updateOneObject: Object;
   updateWorkspace: Workspace;
   uploadFile: Scalars['String'];
@@ -247,11 +222,6 @@ export type MutationChallengeArgs = {
 export type MutationCreateEventArgs = {
   data: Scalars['JSON'];
   type: Scalars['String'];
-};
-
-
-export type MutationCreateOneFieldArgs = {
-  input: CreateOneFieldMetadataInput;
 };
 
 
@@ -280,11 +250,6 @@ export type MutationSignUpArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
-};
-
-
-export type MutationUpdateOneFieldArgs = {
-  input: UpdateOneFieldMetadataInput;
 };
 
 
@@ -336,9 +301,11 @@ export type ObjectDeleteResponse = {
   description?: Maybe<Scalars['String']>;
   icon?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
+  imageIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
   isActive?: Maybe<Scalars['Boolean']>;
   isCustom?: Maybe<Scalars['Boolean']>;
   isSystem?: Maybe<Scalars['Boolean']>;
+  labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
   labelPlural?: Maybe<Scalars['String']>;
   labelSingular?: Maybe<Scalars['String']>;
   namePlural?: Maybe<Scalars['String']>;
@@ -375,13 +342,9 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
-  field: Field;
-  fields: FieldConnection;
   findWorkspaceFromInviteHash: Workspace;
   object: Object;
   objects: ObjectConnection;
-  relation: Relation;
-  relations: RelationConnection;
 };
 
 
@@ -471,26 +434,6 @@ export type Telemetry = {
 export type TransientToken = {
   __typename?: 'TransientToken';
   transientToken: AuthToken;
-};
-
-export type UpdateFieldInput = {
-  defaultValue?: InputMaybe<Scalars['JSON']>;
-  description?: InputMaybe<Scalars['String']>;
-  icon?: InputMaybe<Scalars['String']>;
-  isActive?: InputMaybe<Scalars['Boolean']>;
-  isCustom?: InputMaybe<Scalars['Boolean']>;
-  isNullable?: InputMaybe<Scalars['Boolean']>;
-  isSystem?: InputMaybe<Scalars['Boolean']>;
-  label?: InputMaybe<Scalars['String']>;
-  name?: InputMaybe<Scalars['String']>;
-  options?: InputMaybe<Scalars['JSON']>;
-};
-
-export type UpdateOneFieldMetadataInput = {
-  /** The id of the record to update */
-  id: Scalars['ID'];
-  /** The record to update */
-  update: UpdateFieldInput;
 };
 
 export type UpdateWorkspaceInput = {
@@ -631,9 +574,11 @@ export type Object = {
   fields: ObjectFieldsConnection;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  imageIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
   isActive: Scalars['Boolean'];
   isCustom: Scalars['Boolean'];
   isSystem: Scalars['Boolean'];
+  labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
   labelPlural: Scalars['String'];
   labelSingular: Scalars['String'];
   namePlural: Scalars['String'];
