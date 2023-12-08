@@ -28,7 +28,7 @@ export class GoogleGmailStrategy extends PassportStrategy(
     super({
       clientID: environmentService.getAuthGoogleClientId(),
       clientSecret: environmentService.getAuthGoogleClientSecret(),
-      callbackURL: environmentService.getAuthGoogleGmailCallbackUrl(),
+      callbackURL: environmentService.getMessagingProviderGmailCallbackUrl(),
       scope: [
         'email',
         'profile',

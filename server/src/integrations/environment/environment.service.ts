@@ -99,14 +99,17 @@ export class EnvironmentService {
     );
   }
 
-  isAuthGoogleGmailEnabled(): boolean {
+  isMessagingProviderGmailEnabled(): boolean {
     return (
-      this.configService.get<boolean>('AUTH_GOOGLE_GMAIL_ENABLED') ?? false
+      this.configService.get<boolean>('MESSAGING_PROVIDER_GMAIL_ENABLED') ??
+      false
     );
   }
 
-  getAuthGoogleGmailCallbackUrl(): string | undefined {
-    return this.configService.get<string>('AUTH_GOOGLE_GMAIL_CALLBACK_URL');
+  getMessagingProviderGmailCallbackUrl(): string | undefined {
+    return this.configService.get<string>(
+      'MESSAGING_PROVIDER_GMAIL_CALLBACK_URL',
+    );
   }
 
   isAuthGoogleEnabled(): boolean {

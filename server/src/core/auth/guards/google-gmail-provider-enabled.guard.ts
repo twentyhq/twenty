@@ -10,7 +10,7 @@ export class GoogleGmailProviderEnabledGuard implements CanActivate {
   constructor(private readonly environmentService: EnvironmentService) {}
 
   canActivate(): boolean | Promise<boolean> | Observable<boolean> {
-    if (!this.environmentService.isAuthGoogleGmailEnabled()) {
+    if (!this.environmentService.isMessagingProviderGmailEnabled()) {
       throw new NotFoundException('Gmail auth is not enabled');
     }
 
