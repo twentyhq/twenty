@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { SaveConnectedAccountInput } from 'src/core/workspace/dtos/save-connected-account';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { SaveConnectedAccountInput } from 'src/core/auth/dto/save-connected-account';
 
 @Injectable()
 export class GoogleGmailService {
@@ -14,7 +14,7 @@ export class GoogleGmailService {
   async saveConnectedAccount(
     saveConnectedAccountInput: SaveConnectedAccountInput,
   ) {
-    const { workspaceMemberId, workspaceId, type, accessToken, refreshToken } =
+    const { workspaceId, type, accessToken, refreshToken } =
       saveConnectedAccountInput;
 
     const dataSourceMetadata =
