@@ -90,6 +90,7 @@ type ImageInputProps = Omit<React.ComponentProps<'div'>, 'children'> & {
   isUploading?: boolean;
   errorMessage?: string | null;
   disabled?: boolean;
+  className?: string;
 };
 
 export const ImageInput = ({
@@ -100,6 +101,7 @@ export const ImageInput = ({
   isUploading = false,
   errorMessage,
   disabled = false,
+  className,
 }: ImageInputProps) => {
   const theme = useTheme();
   const hiddenFileInput = React.useRef<HTMLInputElement>(null);
@@ -108,7 +110,7 @@ export const ImageInput = ({
   };
 
   return (
-    <StyledContainer>
+    <StyledContainer className={className}>
       <StyledPicture
         withPicture={!!picture}
         disabled={disabled}

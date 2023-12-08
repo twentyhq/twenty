@@ -106,10 +106,14 @@ export const MainButton = ({
   type,
   onClick,
   disabled,
+  className,
 }: MainButtonProps) => {
   const theme = useTheme();
   return (
-    <StyledButton {...{ disabled, fullWidth, onClick, type, variant }}>
+    <StyledButton
+      className={className}
+      {...{ disabled, fullWidth, onClick, type, variant }}
+    >
       {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
     </StyledButton>

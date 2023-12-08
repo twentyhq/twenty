@@ -1,9 +1,9 @@
-import { TextInput } from '@/object-record/field/meta-types/input/components/internal/TextInput';
+import { TextInput } from '@/ui/field/input/components/TextInput';
 
+import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useTextField } from '../../hooks/useTextField';
 
-import { FieldInputOverlay } from './internal/FieldInputOverlay';
 import { FieldInputEvent } from './DateFieldInput';
 
 export type TextFieldInputProps = {

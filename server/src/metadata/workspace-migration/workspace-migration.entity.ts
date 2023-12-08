@@ -13,24 +13,24 @@ export enum WorkspaceMigrationColumnActionType {
 
 export type WorkspaceMigrationEnum = string | { from: string; to: string };
 
-export type WorkspaceMigrationColumnCreate = {
-  action: WorkspaceMigrationColumnActionType.CREATE;
+export interface WorkspaceMigrationColumnDefinition {
   columnName: string;
   columnType: string;
   enum?: WorkspaceMigrationEnum[];
   isArray?: boolean;
   isNullable?: boolean;
   defaultValue?: any;
-};
+}
+
+export interface WorkspaceMigrationColumnCreate
+  extends WorkspaceMigrationColumnDefinition {
+  action: WorkspaceMigrationColumnActionType.CREATE;
+}
 
 export type WorkspaceMigrationColumnAlter = {
   action: WorkspaceMigrationColumnActionType.ALTER;
-  columnName: string;
-  columnType: string;
-  enum?: WorkspaceMigrationEnum[];
-  isArray?: boolean;
-  isNullable?: boolean;
-  defaultValue?: any;
+  currentColumnDefinition: WorkspaceMigrationColumnDefinition;
+  alteredColumnDefinition: WorkspaceMigrationColumnDefinition;
 };
 
 export type WorkspaceMigrationColumnRelation = {

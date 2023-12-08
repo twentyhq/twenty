@@ -37,11 +37,12 @@ export const RoundedIconButton = ({
   Icon,
   onClick,
   disabled,
+  className,
 }: RoundedIconButtonProps) => {
   const theme = useTheme();
 
   return (
-    <StyledIconButton {...{ disabled, onClick }}>
+    <StyledIconButton className={className} {...{ disabled, onClick }}>
       {<Icon size={theme.icon.size.md} />}
     </StyledIconButton>
   );

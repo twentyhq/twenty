@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import { typeORMCoreModuleOptions } from 'src/database/typeorm/core/core.datasource';
+import { EnvironmentModule } from 'src/integrations/environment/environment.module';
 
 import { TypeORMService } from './typeorm.service';
 
@@ -27,6 +28,7 @@ const coreTypeORMFactory = async (): Promise<TypeOrmModuleOptions> => ({
       useFactory: coreTypeORMFactory,
       name: 'core',
     }),
+    EnvironmentModule,
   ],
   providers: [TypeORMService],
   exports: [TypeORMService],

@@ -99,6 +99,7 @@ export interface SnackBarProps extends React.ComponentPropsWithoutRef<'div'> {
   duration?: number;
   variant?: SnackbarVariant;
   children?: React.ReactNode;
+  className?: string;
   onClose?: () => void;
 }
 
@@ -113,6 +114,7 @@ export const SnackBar = ({
   onClose,
   id,
   title,
+  className,
 }: SnackBarProps) => {
   const theme = useTheme();
 
@@ -157,6 +159,7 @@ export const SnackBar = ({
 
   return (
     <StyledMotionContainer
+      className={className}
       aria-live={role === 'alert' ? 'assertive' : 'polite'}
       {...{ id, onMouseEnter, onMouseLeave, role, title, variant }}
     >

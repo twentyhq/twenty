@@ -27,14 +27,16 @@ const StyledLabel = styled.span`
 
 export type ColorSchemePickerProps = {
   value: ColorScheme;
+  className?: string;
   onChange: (value: ColorScheme) => void;
 };
 
 export const ColorSchemePicker = ({
   value,
   onChange,
+  className,
 }: ColorSchemePickerProps) => (
-  <StyledContainer>
+  <StyledContainer className={className}>
     <StyledCardContainer>
       <ColorSchemeCard
         onClick={() => onChange('Light')}
