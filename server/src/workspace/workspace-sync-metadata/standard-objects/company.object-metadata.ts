@@ -107,6 +107,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'person',
   })
+  @IsNullable()
   people: PersonObjectMetadata[];
 
   @FieldMetadata({
@@ -130,6 +131,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'activityTarget',
   })
+  @IsNullable()
   activityTargets: ActivityTargetObjectMetadata[];
 
   @FieldMetadata({
@@ -142,6 +144,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'opportunity',
   })
+  @IsNullable()
   opportunities: OpportunityObjectMetadata[];
 
   @FieldMetadata({
@@ -154,6 +157,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'favorite',
   })
+  @IsNullable()
   favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
@@ -166,5 +170,6 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'attachment',
   })
+  @IsNullable()
   attachments: AttachmentObjectMetadata[];
 }

@@ -117,6 +117,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     objectName: 'opportunity',
     inverseSideFieldName: 'pointOfContact',
   })
+  @IsNullable()
   pointOfContactForOpportunities: OpportunityObjectMetadata[];
 
   @FieldMetadata({
@@ -129,6 +130,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'activityTarget',
   })
+  @IsNullable()
   activityTargets: ActivityTargetObjectMetadata[];
 
   @FieldMetadata({
@@ -141,6 +143,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'opportunity',
   })
+  @IsNullable()
   opportunities: OpportunityObjectMetadata[];
 
   @FieldMetadata({
@@ -153,6 +156,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'favorite',
   })
+  @IsNullable()
   favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
@@ -165,5 +169,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'attachment',
   })
+  @IsNullable()
   attachments: AttachmentObjectMetadata[];
 }
