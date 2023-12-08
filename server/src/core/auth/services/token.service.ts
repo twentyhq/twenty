@@ -112,12 +112,12 @@ export class TokenService {
     };
   }
 
-  async generateShortTermToken(
+  async generateTransientToken(
     workspaceMemberId: string,
     workspaceId: string,
   ): Promise<AuthToken> {
     const secret = this.environmentService.getLoginTokenSecret();
-    const expiresIn = this.environmentService.getShortTermTokenExpiresIn();
+    const expiresIn = this.environmentService.getTransientTokenExpiresIn();
 
     assert(expiresIn, '', InternalServerErrorException);
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
@@ -173,13 +173,13 @@ export class TokenService {
     return payload.sub;
   }
 
-  async verifyShortTermToken(shortTermToken: string): Promise<{
+  async verifyTransientToken(transientToken: string): Promise<{
     workspaceMemberId: string;
     workspaceId: string;
   }> {
-    const shortTermTokenSecret = this.environmentService.getLoginTokenSecret();
+    const transientTokenSecret = this.environmentService.getLoginTokenSecret();
 
-    const payload = await this.verifyJwt(shortTermToken, shortTermTokenSecret);
+    const payload = await this.verifyJwt(transientToken, transientTokenSecret);
 
     return {
       workspaceMemberId: payload.sub,

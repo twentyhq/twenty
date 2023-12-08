@@ -12,10 +12,10 @@ export class GoogleGmailOauthGuard extends AuthGuard('google-gmail') {
   async canActivate(context: ExecutionContext) {
     try {
       const request = context.switchToHttp().getRequest();
-      const shortTermToken = request.query.shortTermToken;
+      const transientToken = request.query.transientToken;
 
-      if (shortTermToken && typeof shortTermToken === 'string') {
-        request.params.shortTermToken = shortTermToken;
+      if (transientToken && typeof transientToken === 'string') {
+        request.params.transientToken = transientToken;
       }
       const activate = (await super.canActivate(context)) as boolean;
 

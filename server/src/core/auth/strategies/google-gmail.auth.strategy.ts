@@ -15,7 +15,7 @@ export type GoogleGmailRequest = Request & {
     workspaceInviteHash?: string;
     accessToken: string;
     refreshToken: string;
-    shortTermToken: string;
+    transientToken: string;
   };
 };
 
@@ -44,7 +44,7 @@ export class GoogleGmailStrategy extends PassportStrategy(
       accessType: 'offline',
       prompt: 'consent',
       state: JSON.stringify({
-        shortTermToken: req.params.shortTermToken,
+        transientToken: req.params.transientToken,
       }),
     };
 
@@ -72,7 +72,7 @@ export class GoogleGmailStrategy extends PassportStrategy(
       picture: photos?.[0]?.value,
       accessToken,
       refreshToken,
-      shortTermToken: state.shortTermToken,
+      transientToken: state.transientToken,
     };
 
     done(null, user);

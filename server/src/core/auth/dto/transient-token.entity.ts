@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { AuthToken } from './token.entity';
 
 @ObjectType()
-export class ShortTermToken {
+export class TransientToken {
   @Field(() => AuthToken)
-  shortTermToken: AuthToken;
+  transientToken: AuthToken;
 }

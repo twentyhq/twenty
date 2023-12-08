@@ -15,7 +15,7 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { User } from 'src/core/user/user.entity';
 import { ApiKeyTokenInput } from 'src/core/auth/dto/api-key-token.input';
-import { ShortTermToken } from 'src/core/auth/dto/short-term-token.entity';
+import { TransientToken } from 'src/core/auth/dto/transient-token.entity';
 import { UserService } from 'src/core/user/services/user.service';
 
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
@@ -88,18 +88,18 @@ export class AuthResolver {
     return { loginToken };
   }
 
-  @Mutation(() => ShortTermToken)
+  @Mutation(() => TransientToken)
   @UseGuards(JwtAuthGuard)
-  async generateShortTermToken(
+  async generateTransientToken(
     @AuthUser() user: User,
-  ): Promise<ShortTermToken | void> {
+  ): Promise<TransientToken | void> {
     const workspaceMember = await this.userService.loadWorkspaceMember(user);
-    const shortTermToken = await this.tokenService.generateShortTermToken(
+    const transientToken = await this.tokenService.generateTransientToken(
       workspaceMember.id,
       user.defaultWorkspace.id,
     );
 
-    return { shortTermToken };
+    return { transientToken };
   }
 
   @Mutation(() => Verify)

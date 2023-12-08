@@ -223,7 +223,7 @@ export type Mutation = {
   deleteOneRelation: RelationDeleteResponse;
   deleteUser: User;
   generateApiKeyToken: ApiKeyToken;
-  generateShortTermToken: ShortTermToken;
+  generateTransientToken: TransientToken;
   impersonate: Verify;
   renewToken: AuthTokens;
   signUp: LoginToken;
@@ -444,11 +444,6 @@ export enum RelationMetadataType {
   OneToOne = 'ONE_TO_ONE'
 }
 
-export type ShortTermToken = {
-  __typename?: 'ShortTermToken';
-  shortTermToken: AuthToken;
-};
-
 /** Sort Directions */
 export enum SortDirection {
   Asc = 'ASC',
@@ -471,6 +466,11 @@ export type Telemetry = {
   __typename?: 'Telemetry';
   anonymizationEnabled: Scalars['Boolean'];
   enabled: Scalars['Boolean'];
+};
+
+export type TransientToken = {
+  __typename?: 'TransientToken';
+  transientToken: AuthToken;
 };
 
 export type UpdateFieldInput = {
@@ -705,10 +705,10 @@ export type GenerateApiKeyTokenMutationVariables = Exact<{
 
 export type GenerateApiKeyTokenMutation = { __typename?: 'Mutation', generateApiKeyToken: { __typename?: 'ApiKeyToken', token: string } };
 
-export type GenerateShortTermTokenMutationVariables = Exact<{ [key: string]: never; }>;
+export type GenerateTransientTokenMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GenerateShortTermTokenMutation = { __typename?: 'Mutation', generateShortTermToken: { __typename?: 'ShortTermToken', shortTermToken: { __typename?: 'AuthToken', token: string } } };
+export type GenerateTransientTokenMutation = { __typename?: 'Mutation', generateTransientToken: { __typename?: 'TransientToken', transientToken: { __typename?: 'AuthToken', token: string } } };
 
 export type ImpersonateMutationVariables = Exact<{
   userId: Scalars['String'];
@@ -967,40 +967,40 @@ export function useGenerateApiKeyTokenMutation(baseOptions?: Apollo.MutationHook
 export type GenerateApiKeyTokenMutationHookResult = ReturnType<typeof useGenerateApiKeyTokenMutation>;
 export type GenerateApiKeyTokenMutationResult = Apollo.MutationResult<GenerateApiKeyTokenMutation>;
 export type GenerateApiKeyTokenMutationOptions = Apollo.BaseMutationOptions<GenerateApiKeyTokenMutation, GenerateApiKeyTokenMutationVariables>;
-export const GenerateShortTermTokenDocument = gql`
-    mutation generateShortTermToken {
-  generateShortTermToken {
-    shortTermToken {
+export const GenerateTransientTokenDocument = gql`
+    mutation generateTransientToken {
+  generateTransientToken {
+    transientToken {
       token
     }
   }
 }
     `;
-export type GenerateShortTermTokenMutationFn = Apollo.MutationFunction<GenerateShortTermTokenMutation, GenerateShortTermTokenMutationVariables>;
+export type GenerateTransientTokenMutationFn = Apollo.MutationFunction<GenerateTransientTokenMutation, GenerateTransientTokenMutationVariables>;
 
 /**
- * __useGenerateShortTermTokenMutation__
+ * __useGenerateTransientTokenMutation__
  *
- * To run a mutation, you first call `useGenerateShortTermTokenMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useGenerateShortTermTokenMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useGenerateTransientTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGenerateTransientTokenMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [generateShortTermTokenMutation, { data, loading, error }] = useGenerateShortTermTokenMutation({
+ * const [generateTransientTokenMutation, { data, loading, error }] = useGenerateTransientTokenMutation({
  *   variables: {
  *   },
  * });
  */
-export function useGenerateShortTermTokenMutation(baseOptions?: Apollo.MutationHookOptions<GenerateShortTermTokenMutation, GenerateShortTermTokenMutationVariables>) {
+export function useGenerateTransientTokenMutation(baseOptions?: Apollo.MutationHookOptions<GenerateTransientTokenMutation, GenerateTransientTokenMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<GenerateShortTermTokenMutation, GenerateShortTermTokenMutationVariables>(GenerateShortTermTokenDocument, options);
+        return Apollo.useMutation<GenerateTransientTokenMutation, GenerateTransientTokenMutationVariables>(GenerateTransientTokenDocument, options);
       }
-export type GenerateShortTermTokenMutationHookResult = ReturnType<typeof useGenerateShortTermTokenMutation>;
-export type GenerateShortTermTokenMutationResult = Apollo.MutationResult<GenerateShortTermTokenMutation>;
-export type GenerateShortTermTokenMutationOptions = Apollo.BaseMutationOptions<GenerateShortTermTokenMutation, GenerateShortTermTokenMutationVariables>;
+export type GenerateTransientTokenMutationHookResult = ReturnType<typeof useGenerateTransientTokenMutation>;
+export type GenerateTransientTokenMutationResult = Apollo.MutationResult<GenerateTransientTokenMutation>;
+export type GenerateTransientTokenMutationOptions = Apollo.BaseMutationOptions<GenerateTransientTokenMutation, GenerateTransientTokenMutationVariables>;
 export const ImpersonateDocument = gql`
     mutation Impersonate($userId: String!) {
   impersonate(userId: $userId) {

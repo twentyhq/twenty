@@ -30,10 +30,10 @@ export class GoogleGmailAuthController {
   ) {
     const { user: gmailUser } = req;
 
-    const { accessToken, refreshToken, shortTermToken } = gmailUser;
+    const { accessToken, refreshToken, transientToken } = gmailUser;
 
     const { workspaceMemberId, workspaceId } =
-      await this.tokenService.verifyShortTermToken(shortTermToken);
+      await this.tokenService.verifyTransientToken(transientToken);
 
     this.googleGmailService.saveConnectedAccount({
       workspaceMemberId: workspaceMemberId,
