@@ -22,8 +22,8 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
 `;
 
 export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
-  mutation CreateOneFieldMetadataItem($input: CreateFieldInput!) {
-    createOneField(input: { field: $input }) {
+  mutation CreateOneFieldMetadataItem($input: CreateOneFieldMetadataInput!) {
+    createOneField(input: $input) {
       id
       type
       name
@@ -35,6 +35,8 @@ export const CREATE_ONE_FIELD_METADATA_ITEM = gql`
       isNullable
       createdAt
       updatedAt
+      defaultValue
+      options
     }
   }
 `;

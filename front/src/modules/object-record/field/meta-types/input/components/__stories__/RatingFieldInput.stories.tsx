@@ -46,7 +46,7 @@ const RatingFieldInputWithContext = ({
       fieldDefinition={{
         fieldMetadataId: 'rating',
         label: 'Rating',
-        type: FieldMetadataType.Probability,
+        type: FieldMetadataType.Rating,
         iconName: 'Icon123',
         metadata: {
           fieldName: 'Rating',

@@ -95,7 +95,7 @@ export const Rating: Story = {
     fieldMetadata: {
       icon: 'IconHandClick',
       label: 'Engagement',
-      type: FieldMetadataType.Probability,
+      type: FieldMetadataType.Rating,
     },
   },
 };

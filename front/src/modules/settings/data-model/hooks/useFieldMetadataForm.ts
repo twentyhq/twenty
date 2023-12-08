@@ -56,11 +56,12 @@ const relationSchema = fieldSchema.merge(
 
 const selectSchema = fieldSchema.merge(
   z.object({
-    type: z.literal(FieldMetadataType.MultiSelect),
+    type: z.literal(FieldMetadataType.Select),
     select: z
       .array(
         z.object({
           color: themeColorSchema,
+          id: z.string().optional(),
           isDefault: z.boolean().optional(),
           label: z.string().min(1),
         }),
@@ -70,18 +71,20 @@ const selectSchema = fieldSchema.merge(
 );
 
 const {
-  MultiSelect: _Enum,
+  Select: _Select,
   Relation: _Relation,
   ...otherFieldTypes
 } = FieldMetadataType;
 
+type OtherFieldType = Exclude<
+  FieldMetadataType,
+  FieldMetadataType.Relation | FieldMetadataType.Select
+>;
+
 const otherFieldTypesSchema = fieldSchema.merge(
   z.object({
     type: z.enum(
-      Object.values(otherFieldTypes) as [
-        Exclude<FieldMetadataType, FieldMetadataType.Relation>,
-        ...Exclude<FieldMetadataType, FieldMetadataType.Relation>[],
-      ],
+      Object.values(otherFieldTypes) as [OtherFieldType, ...OtherFieldType[]],
     ),
   }),
 );
@@ -165,7 +168,7 @@ export const useFieldMetadataForm = () => {
         !isDeeplyEqual(initialRelationFormValues, nextRelationFormValues),
     );
     setHasSelectFormChanged(
-      nextFieldFormValues.type === FieldMetadataType.MultiSelect &&
+      nextFieldFormValues.type === FieldMetadataType.Select &&
         !isDeeplyEqual(initialSelectFormValues, nextSelectFormValues),
     );
   };
@@ -177,6 +180,7 @@ export const useFieldMetadataForm = () => {
     hasFormChanged:
       hasFieldFormChanged || hasRelationFormChanged || hasSelectFormChanged,
     hasRelationFormChanged,
+    hasSelectFormChanged,
     initForm,
     isInitialized,
     isValid: validationResult.success,

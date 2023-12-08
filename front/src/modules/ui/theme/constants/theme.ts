@@ -35,7 +35,8 @@ const common = {
     },
   },
   spacingMultiplicator: 4,
-  spacing: (multiplicator: number) => `${multiplicator * 4}px`,
+  spacing: (...args: number[]) =>
+    args.map((multiplicator) => `${multiplicator * 4}px`).join(' '),
   betweenSiblingsGap: `2px`,
   table: {
     horizontalCellMargin: '8px',

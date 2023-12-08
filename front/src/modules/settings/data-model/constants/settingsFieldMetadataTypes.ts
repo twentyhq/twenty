@@ -61,8 +61,12 @@ export const settingsFieldMetadataTypes: Partial<
     Icon: IconCalendarEvent,
     defaultValue: defaultDateValue.toISOString(),
   },
-  [FieldMetadataType.MultiSelect]: {
+  [FieldMetadataType.Select]: {
     label: 'Select',
+    Icon: IconTag,
+  },
+  [FieldMetadataType.MultiSelect]: {
+    label: 'Multi-Select',
     Icon: IconTag,
   },
   [FieldMetadataType.Currency]: {
@@ -77,6 +81,11 @@ export const settingsFieldMetadataTypes: Partial<
   [FieldMetadataType.Email]: { label: 'Email', Icon: IconMail },
   [FieldMetadataType.Phone]: { label: 'Phone', Icon: IconPhone },
   [FieldMetadataType.Probability]: {
+    label: 'Rating',
+    Icon: IconTwentyStar,
+    defaultValue: '3',
+  },
+  [FieldMetadataType.Rating]: {
     label: 'Rating',
     Icon: IconTwentyStar,
     defaultValue: '3',

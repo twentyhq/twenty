@@ -11,6 +11,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 type NavigationDrawerItemProps = {
   className?: string;
   label: string;
+  level?: 1 | 2;
   to?: string;
   onClick?: () => void;
   Icon: IconComponent;
@@ -24,6 +25,7 @@ type NavigationDrawerItemProps = {
 type StyledItemProps = {
   active?: boolean;
   danger?: boolean;
+  level: 1 | 2;
   soon?: boolean;
 };
 
@@ -50,7 +52,7 @@ const StyledItem = styled.div<StyledItemProps>`
   font-family: 'Inter';
   font-size: ${({ theme }) => theme.font.size.md};
   gap: ${({ theme }) => theme.spacing(2)};
-  margin-bottom: calc(${({ theme }) => theme.spacing(1)} / 2);
+  margin-left: ${({ level, theme }) => theme.spacing((level - 1) * 4)};
   padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(1)};
   padding-right: ${({ theme }) => theme.spacing(1)};
@@ -86,7 +88,6 @@ const StyledSoonPill = styled.div`
   font-size: ${({ theme }) => theme.font.size.xs};
   height: 16px;
   justify-content: center;
-  margin-left: auto;
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
@@ -120,6 +121,7 @@ const StyledKeyBoardShortcut = styled.div`
 export const NavigationDrawerItem = ({
   className,
   label,
+  level = 1,
   Icon,
   to,
   onClick,
@@ -152,6 +154,7 @@ export const NavigationDrawerItem = ({
   return (
     <StyledItem
       className={className}
+      level={level}
       onClick={handleItemClick}
       active={active}
       aria-selected={active}

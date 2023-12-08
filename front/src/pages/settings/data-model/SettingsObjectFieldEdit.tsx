@@ -53,6 +53,7 @@ export const SettingsObjectFieldEdit = () => {
     hasFieldFormChanged,
     hasFormChanged,
     hasRelationFormChanged,
+    hasSelectFormChanged,
     initForm,
     isInitialized,
     isValid,
@@ -64,6 +65,14 @@ export const SettingsObjectFieldEdit = () => {
       navigate(AppPath.NotFound);
       return;
     }
+
+    const selectOptions = activeMetadataField.options?.map((option) => ({
+      ...option,
+      isDefault: activeMetadataField.defaultValue === option.value,
+    }));
+    selectOptions?.sort(
+      (optionA, optionB) => optionA.position - optionB.position,
+    );
 
     initForm({
       icon: activeMetadataField.icon ?? undefined,
@@ -78,6 +87,7 @@ export const SettingsObjectFieldEdit = () => {
         objectMetadataId: relationObjectMetadataItem?.id || '',
         type: relationType || RelationMetadataType.OneToMany,
       },
+      ...(selectOptions?.length ? { select: selectOptions } : {}),
     });
   }, [
     activeMetadataField,
@@ -111,12 +121,16 @@ export const SettingsObjectFieldEdit = () => {
         });
       }
 
-      if (hasFieldFormChanged) {
+      if (hasFieldFormChanged || hasSelectFormChanged) {
         await editMetadataField({
           description: validatedFormValues.description,
           icon: validatedFormValues.icon,
           id: activeMetadataField.id,
           label: validatedFormValues.label,
+          options:
+            validatedFormValues.type === FieldMetadataType.Select
+              ? validatedFormValues.select
+              : undefined,
         });
       }
 

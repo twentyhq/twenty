@@ -1,8 +1,11 @@
+import { v4 } from 'uuid';
+
 import { FieldType } from '@/object-record/field/types/FieldType';
 import { Field } from '~/generated/graphql';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
+import { FieldMetadataOption } from '../types/FieldMetadataOption';
 import { formatFieldMetadataItemInput } from '../utils/formatFieldMetadataItemInput';
 
 import { useCreateOneFieldMetadataItem } from './useCreateOneFieldMetadataItem';
@@ -17,6 +20,7 @@ export const useFieldMetadataItem = () => {
   const createMetadataField = (
     input: Pick<Field, 'label' | 'icon' | 'description'> & {
       objectMetadataId: string;
+      options?: Omit<FieldMetadataOption, 'id'>[];
       type: FieldMetadataType;
     },
   ) =>
@@ -27,11 +31,20 @@ export const useFieldMetadataItem = () => {
     });
 
   const editMetadataField = (
-    input: Pick<Field, 'id' | 'label' | 'icon' | 'description'>,
+    input: Pick<Field, 'id' | 'label' | 'icon' | 'description'> & {
+      options?: FieldMetadataOption[];
+    },
   ) =>
     updateOneFieldMetadataItem({
       fieldMetadataIdToUpdate: input.id,
-      updatePayload: formatFieldMetadataItemInput(input),
+      updatePayload: formatFieldMetadataItemInput({
+        ...input,
+        // In Edit mode, all options need an id,
+        // so we generate an id for newly created options.
+        options: input.options?.map((option) =>
+          option.id ? option : { ...option, id: v4() },
+        ),
+      }),
     });
 
   const activateMetadataField = (metadataField: FieldMetadataItem) =>
