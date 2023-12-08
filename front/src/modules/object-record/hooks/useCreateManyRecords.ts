@@ -1,6 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 import { v4 } from 'uuid';
 
+import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { useGenerateEmptyRecord } from '@/object-record/hooks/useGenerateEmptyRecord';
@@ -9,6 +10,10 @@ import { capitalize } from '~/utils/string/capitalize';
 export const useCreateManyRecords = <T>({
   objectNameSingular,
 }: ObjectMetadataItemIdentifier) => {
+  const { triggerOptimisticEffects } = useOptimisticEffect({
+    objectNameSingular,
+  });
+
   const { objectMetadataItem, createManyRecordsMutation } =
     useObjectMetadataItem({
       objectNameSingular,
@@ -26,6 +31,13 @@ export const useCreateManyRecords = <T>({
       id: (record.id as string) ?? v4(),
     }));
 
+    withIds.forEach((record) => {
+      triggerOptimisticEffects(
+        `${capitalize(objectMetadataItem.nameSingular)}Edge`,
+        generateEmptyRecord(record.id),
+      );
+    });
+
     const createdObjects = await apolloClient.mutate({
       mutation: createManyRecordsMutation,
       variables: {
@@ -42,7 +54,19 @@ export const useCreateManyRecords = <T>({
       return null;
     }
 
-    return createdObjects.data[`create${objectMetadataItem.namePlural}`] as T[];
+    const createdRecords =
+      (createdObjects.data[
+        `create${capitalize(objectMetadataItem.namePlural)}`
+      ] as T[]) ?? [];
+
+    createdRecords.forEach((record) => {
+      triggerOptimisticEffects(
+        `${capitalize(objectMetadataItem.nameSingular)}Edge`,
+        record,
+      );
+    });
+
+    return createdRecords;
   };
 
   return { createManyRecords };
