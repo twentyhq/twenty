@@ -24,8 +24,6 @@ export class OpenApiService {
       throw new BadRequestException(`No object found`);
     }
 
-    console.log(objectMetadataItems);
-
     return {
       openapi: '3.0.3',
       info: {
@@ -41,6 +39,28 @@ export class OpenApiService {
         },
         version: '0.2.0',
       },
+      /* Testing purposes
+      servers: [
+        {
+          url: 'http://localhost:3000/rest',
+        },
+      ],*/
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT',
+            description:
+              'Enter the token with the `Bearer: ` prefix, e.g. "Bearer abcde12345".',
+          },
+        },
+      },
+      security: [
+        {
+          bearerAuth: [],
+        },
+      ],
       externalDocs: {
         description: 'Find out more about Twenty',
         url: 'http://twenty.com',
