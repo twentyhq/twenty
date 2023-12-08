@@ -1,3 +1,4 @@
+import { SettingsAccountsConnectedAccountsSection } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsSection';
 import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/SettingsAccountsSettingsSection';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { IconSettings } from '@/ui/display/icon';
@@ -8,6 +9,7 @@ export const SettingsAccounts = () => (
   <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
     <SettingsPageContainer>
       <Breadcrumb links={[{ children: 'Accounts' }]} />
+      <SettingsAccountsConnectedAccountsSection />
       <SettingsAccountsSettingsSection />
     </SettingsPageContainer>
   </SubMenuTopBarContainer>
