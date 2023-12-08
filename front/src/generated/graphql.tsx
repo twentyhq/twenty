@@ -300,9 +300,11 @@ export type ObjectDeleteResponse = {
   description?: Maybe<Scalars['String']>;
   icon?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['ID']>;
+  imageIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
   isActive?: Maybe<Scalars['Boolean']>;
   isCustom?: Maybe<Scalars['Boolean']>;
   isSystem?: Maybe<Scalars['Boolean']>;
+  labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
   labelPlural?: Maybe<Scalars['String']>;
   labelSingular?: Maybe<Scalars['String']>;
   namePlural?: Maybe<Scalars['String']>;
@@ -566,9 +568,11 @@ export type Object = {
   fields: ObjectFieldsConnection;
   icon?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  imageIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
   isActive: Scalars['Boolean'];
   isCustom: Scalars['Boolean'];
   isSystem: Scalars['Boolean'];
+  labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
   labelPlural: Scalars['String'];
   labelSingular: Scalars['String'];
   namePlural: Scalars['String'];

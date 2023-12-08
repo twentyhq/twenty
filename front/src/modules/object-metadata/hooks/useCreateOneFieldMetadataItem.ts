@@ -14,7 +14,7 @@ import { FIND_MANY_OBJECT_METADATA_ITEMS } from '../graphql/queries';
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 type CreateOneFieldMetadataItemArgs = Omit<
-  CreateOneFieldMetadataItemMutationVariables['input'],
+  CreateOneFieldMetadataItemMutationVariables['input']['field'],
   'type'
 > & {
   type: FieldType;
@@ -36,8 +36,10 @@ export const useCreateOneFieldMetadataItem = () => {
     return await mutate({
       variables: {
         input: {
-          ...input,
-          type: input.type as FieldMetadataType, // Todo improve typing once we have aligned backend and frontend
+          field: {
+            ...input,
+            type: input.type as FieldMetadataType, // Todo improve typing once we have aligned backend and frontend
+          },
         },
       },
       awaitRefetchQueries: true,

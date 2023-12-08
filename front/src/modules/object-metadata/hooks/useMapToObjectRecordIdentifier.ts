@@ -58,13 +58,6 @@ export const useMapToObjectRecordIdentifier = ({
         ? getLogoUrlFromDomainName(imageIdentifierFieldValue ?? '')
         : imageIdentifierFieldValue ?? null;
 
-    console.log({
-      id: record.id,
-      name: labelIdentifierFieldValue,
-      avatarUrl,
-      avatarType,
-    });
-
     return {
       id: record.id,
       name: labelIdentifierFieldValue,
