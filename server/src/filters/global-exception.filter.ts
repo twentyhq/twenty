@@ -1,17 +1,17 @@
 import { ArgumentsHost, Catch, Injectable } from '@nestjs/common';
 import { GqlExceptionFilter } from '@nestjs/graphql';
 
-import { ExceptionCapturerService } from 'src/integrations/exception-capturer/exception-capturer.service';
+import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 
 @Catch()
 @Injectable()
 export class GlobalExceptionFilter implements GqlExceptionFilter {
   constructor(
-    private readonly exceptionCapturerService: ExceptionCapturerService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   catch(exception: unknown, host: ArgumentsHost) {
-    this.exceptionCapturerService.captureException(exception);
+    this.exceptionHandlerService.captureException(exception);
 
     return exception;
   }

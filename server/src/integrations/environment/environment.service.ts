@@ -3,7 +3,7 @@ import { Injectable, LogLevel } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { LoggerDriverType } from 'src/integrations/logger/interfaces';
-import { ExceptionCapturerDriver } from 'src/integrations/exception-capturer/interfaces';
+import { ExceptionHandlerDriver } from 'src/integrations/exception-handler/interfaces';
 import { StorageDriverType } from 'src/integrations/file-storage/interfaces';
 import { MessageQueueDriverType } from 'src/integrations/message-queue/interfaces';
 
@@ -164,11 +164,11 @@ export class EnvironmentService {
     );
   }
 
-  getExceptionCapturerDriverType(): ExceptionCapturerDriver {
+  getExceptionHandlerDriverType(): ExceptionHandlerDriver {
     return (
-      this.configService.get<ExceptionCapturerDriver>(
-        'EXCEPTION_CAPTURER_DRIVER',
-      ) ?? ExceptionCapturerDriver.Console
+      this.configService.get<ExceptionHandlerDriver>(
+        'EXCEPTION_HANDLER_DRIVER',
+      ) ?? ExceptionHandlerDriver.Console
     );
   }
 

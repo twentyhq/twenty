@@ -14,7 +14,7 @@ import {
 
 import { assert } from 'src/utils/assert';
 import { CastToStringArray } from 'src/integrations/environment/decorators/cast-to-string-array.decorator';
-import { ExceptionCapturerDriver } from 'src/integrations/exception-capturer/interfaces';
+import { ExceptionHandlerDriver } from 'src/integrations/exception-handler/interfaces';
 import { StorageDriverType } from 'src/integrations/file-storage/interfaces';
 import { LoggerDriverType } from 'src/integrations/logger/interfaces';
 
@@ -144,9 +144,9 @@ export class EnvironmentVariables {
   @IsOptional()
   LOGGER_DRIVER?: LoggerDriverType;
 
-  @IsEnum(ExceptionCapturerDriver)
+  @IsEnum(ExceptionHandlerDriver)
   @IsOptional()
-  EXCEPTION_CAPTURER_DRIVER?: ExceptionCapturerDriver;
+  EXCEPTION_HANDLER_DRIVER?: ExceptionHandlerDriver;
 
   @CastToLogLevelArray()
   @IsOptional()
@@ -157,7 +157,7 @@ export class EnvironmentVariables {
   DEMO_WORKSPACE_IDS?: string[];
 
   @ValidateIf(
-    (env) => env.EXCEPTION_CAPTURER_DRIVER === ExceptionCapturerDriver.Sentry,
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
   )
   @IsString()
   SENTRY_DSN?: string;

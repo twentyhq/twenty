@@ -2,14 +2,14 @@ import * as Sentry from '@sentry/node';
 import { ProfilingIntegration } from '@sentry/profiling-node';
 
 import {
-  ExceptionCapturerDriverInterface,
-  ExceptionCapturerSentryDriverFactoryOptions,
-} from 'src/integrations/exception-capturer/interfaces';
+  ExceptionHandlerDriverInterface,
+  ExceptionHandlerSentryDriverFactoryOptions,
+} from 'src/integrations/exception-handler/interfaces';
 
-export class ExceptionCapturerSentryDriver
-  implements ExceptionCapturerDriverInterface
+export class ExceptionHandlerSentryDriver
+  implements ExceptionHandlerDriverInterface
 {
-  constructor(options: ExceptionCapturerSentryDriverFactoryOptions['options']) {
+  constructor(options: ExceptionHandlerSentryDriverFactoryOptions['options']) {
     Sentry.init({
       dsn: options.dns,
       integrations: [

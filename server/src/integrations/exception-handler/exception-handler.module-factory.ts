@@ -1,29 +1,29 @@
 import { HttpAdapterHost } from '@nestjs/core';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { OPTIONS_TYPE } from 'src/integrations/exception-capturer/exception-capturer.module-definition';
-import { ExceptionCapturerDriver } from 'src/integrations/exception-capturer/interfaces';
+import { OPTIONS_TYPE } from 'src/integrations/exception-handler/exception-handler.module-definition';
+import { ExceptionHandlerDriver } from 'src/integrations/exception-handler/interfaces';
 
 /**
- * ExceptionCapturer Module factory
+ * ExceptionHandler Module factory
  * @param environment
- * @returns ExceptionCapturerModuleOptions
+ * @returns ExceptionHandlerModuleOptions
  */
-export const exceptionCapturerModuleFactory = async (
+export const exceptionHandlerModuleFactory = async (
   environmentService: EnvironmentService,
   adapterHost: HttpAdapterHost,
 ): Promise<typeof OPTIONS_TYPE> => {
-  const driverType = environmentService.getExceptionCapturerDriverType();
+  const driverType = environmentService.getExceptionHandlerDriverType();
 
   switch (driverType) {
-    case ExceptionCapturerDriver.Console: {
+    case ExceptionHandlerDriver.Console: {
       return {
-        type: ExceptionCapturerDriver.Console,
+        type: ExceptionHandlerDriver.Console,
       };
     }
-    case ExceptionCapturerDriver.Sentry: {
+    case ExceptionHandlerDriver.Sentry: {
       return {
-        type: ExceptionCapturerDriver.Sentry,
+        type: ExceptionHandlerDriver.Sentry,
         options: {
           dns: environmentService.getSentryDSN() ?? '',
           serverInstance: adapterHost.httpAdapter.getInstance(),

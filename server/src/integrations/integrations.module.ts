@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 
-import { ExceptionCapturerModule } from 'src/integrations/exception-capturer/exception-catpurer.module';
-import { exceptionCapturerModuleFactory } from 'src/integrations/exception-capturer/exception-capturer.module-factory';
+import { ExceptionHandlerModule } from 'src/integrations/exception-handler/exception-handler.module';
+import { exceptionHandlerModuleFactory } from 'src/integrations/exception-handler/exception-handler.module-factory';
 import { fileStorageModuleFactory } from 'src/integrations/file-storage/file-storage.module-factory';
 import { loggerModuleFactory } from 'src/integrations/logger/logger.module-factory';
 import { messageQueueModuleFactory } from 'src/integrations/message-queue/message-queue.module-factory';
@@ -28,8 +28,8 @@ import { MessageQueueModule } from './message-queue/message-queue.module';
       useFactory: messageQueueModuleFactory,
       inject: [EnvironmentService],
     }),
-    ExceptionCapturerModule.forRootAsync({
-      useFactory: exceptionCapturerModuleFactory,
+    ExceptionHandlerModule.forRootAsync({
+      useFactory: exceptionHandlerModuleFactory,
       inject: [EnvironmentService, HttpAdapterHost],
     }),
   ],

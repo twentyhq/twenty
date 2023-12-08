@@ -1,7 +1,7 @@
-import { ExceptionCapturerDriverInterface } from 'src/integrations/exception-capturer/interfaces';
+import { ExceptionHandlerDriverInterface } from 'src/integrations/exception-handler/interfaces';
 
-export class ExceptionCapturerConsoleDriver
-  implements ExceptionCapturerDriverInterface
+export class ExceptionHandlerConsoleDriver
+  implements ExceptionHandlerDriverInterface
 {
   captureException(exception: unknown) {
     console.group('Exception Captured');
