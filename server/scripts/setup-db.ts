@@ -1,6 +1,6 @@
 import console from 'console';
 
-import { connectionSource, performQuery } from './utils';
+import { camelToSnakeCase, connectionSource, performQuery } from './utils';
 
 connectionSource
   .initialize()
@@ -18,7 +18,7 @@ connectionSource
       'create schema "core"',
     );
     await performQuery(
-      'CREATE EXTENSION IF NOT EXISTS pg_graphql',
+      'CREATE EXTENSION IF NOT EXISTS "pg_graphql"',
       'create extension pg_graphql',
     );
 
@@ -26,6 +26,39 @@ connectionSource
       'CREATE EXTENSION IF NOT EXISTS "uuid-ossp"',
       'create extension "uuid-ossp"',
     );
+
+    await performQuery(
+      'CREATE EXTENSION IF NOT EXISTS "postgres_fdw"',
+      'create extension "postgres_fdw"',
+    );
+
+    await performQuery(
+      'CREATE EXTENSION IF NOT EXISTS "wrappers"',
+      'create extension "wrappers"',
+    );
+
+    const supabaseWrappers = [
+      'airtable',
+      'bigQuery',
+      'clickHouse',
+      'firebase',
+      'logflare',
+      's3',
+      'stripe',
+    ]; // See https://supabase.github.io/wrappers/
+
+    for (const wrapper of supabaseWrappers) {
+      await performQuery(
+        `
+          CREATE FOREIGN DATA WRAPPER "${wrapper.toLowerCase()}_fdw"
+          HANDLER "${camelToSnakeCase(wrapper)}_fdw_handler"
+          VALIDATOR "${camelToSnakeCase(wrapper)}_fdw_validator";
+          `,
+        `create ${wrapper} "wrappers"`,
+        true,
+        true,
+      );
+    }
 
     await performQuery(
       `COMMENT ON SCHEMA "core" IS '@graphql({"inflect_names": true})';`,
