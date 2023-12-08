@@ -3,9 +3,9 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, ContextIdFactory, ModuleRef } from '@nestjs/core';
 
+import { GraphQLError, GraphQLSchema } from 'graphql';
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 import GraphQLJSON from 'graphql-type-json';
-import { GraphQLError } from 'graphql';
 import { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken';
 
 import { WorkspaceFactory } from 'src/workspace/workspace.factory';
@@ -13,6 +13,7 @@ import { TypeOrmExceptionFilter } from 'src/filters/typeorm-exception.filter';
 import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
 import { GlobalExceptionFilter } from 'src/filters/global-exception.filter';
 import { TokenService } from 'src/core/auth/services/token.service';
+import { Workspace } from 'src/core/workspace/workspace.entity';
 
 import { AppService } from './app.service';
 
@@ -38,7 +39,13 @@ import { WorkspaceModule } from './workspace/workspace.module';
             strict: false,
           });
 
-          const workspace = await tokenService.validateToken(request.req);
+          let workspace: Workspace;
+
+          try {
+            workspace = await tokenService.validateToken(request.req);
+          } catch (err) {
+            return new GraphQLSchema({});
+          }
 
           const contextId = ContextIdFactory.create();
 

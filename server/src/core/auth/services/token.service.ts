@@ -11,7 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
-import { TokenExpiredError } from 'jsonwebtoken';
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
 import { Request } from 'express';
 import { ExtractJwt } from 'passport-jwt';
@@ -25,6 +25,7 @@ import { ApiKeyToken, AuthToken } from 'src/core/auth/dto/token.entity';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { User } from 'src/core/user/user.entity';
 import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
+import { Workspace } from 'src/core/workspace/workspace.entity';
 
 @Injectable()
 export class TokenService {
@@ -171,7 +172,7 @@ export class TokenService {
     return { token };
   }
 
-  async validateToken(request: Request) {
+  async validateToken(request: Request): Promise<Workspace> {
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
 
     if (!token) {
@@ -298,6 +299,8 @@ export class TokenService {
     } catch (error) {
       if (error instanceof TokenExpiredError) {
         throw new UnauthorizedException('Token has expired.');
+      } else if (error instanceof JsonWebTokenError) {
+        throw new UnauthorizedException('Token invalid.');
       } else {
         throw new UnprocessableEntityException();
       }

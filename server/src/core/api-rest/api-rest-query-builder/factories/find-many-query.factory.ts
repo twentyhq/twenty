@@ -9,7 +9,7 @@ export class FindManyQueryFactory {
     const objectNameSingular = capitalize(
       objectMetadata.objectMetadataItem.nameSingular,
     );
-    const objectNamePlural = objectMetadata.objectMetadataItem.nameSingular;
+    const objectNamePlural = objectMetadata.objectMetadataItem.namePlural;
 
     return `
       query FindMany${capitalize(objectNamePlural)}(
