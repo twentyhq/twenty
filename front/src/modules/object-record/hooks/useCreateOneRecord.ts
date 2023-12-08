@@ -32,7 +32,7 @@ export const useCreateOneRecord = <T>({
 
     triggerOptimisticEffects(
       `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-      generateEmptyRecord(recordId),
+      generateEmptyRecord({ id: recordId, ...input }),
     );
 
     const createdObject = await apolloClient.mutate({
@@ -42,7 +42,7 @@ export const useCreateOneRecord = <T>({
       },
       optimisticResponse: {
         [`create${capitalize(objectMetadataItem.nameSingular)}`]:
-          generateEmptyRecord(recordId),
+          generateEmptyRecord({ id: recordId, ...input }),
       },
     });
 
