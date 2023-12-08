@@ -6,13 +6,13 @@ import { mapFieldMetadataToGraphqlQuery } from 'src/core/api-rest/api-rest-query
 @Injectable()
 export class UpdateQueryFactory {
   create(objectMetadata, depth?: number): string {
+    const objectNameSingular = objectMetadata.objectMetadataItem.nameSingular;
+
     return `
       mutation Update${capitalize(
-        objectMetadata.objectMetadataItem.nameSingular,
-      )}($id: ID!, $data: CompanyUpdateInput!) {
-        update${capitalize(
-          objectMetadata.objectMetadataItem.nameSingular,
-        )}(id: $id, data: $data) {
+        objectNameSingular,
+      )}($id: ID!, $data: ${capitalize(objectNameSingular)}UpdateInput!) {
+        update${capitalize(objectNameSingular)}(id: $id, data: $data) {
           id
           ${objectMetadata.objectMetadataItem.fields
             .map((field) =>

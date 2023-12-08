@@ -5,6 +5,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
 import { User } from 'src/core/user/user.entity';
+import { JwtAuthStrategy } from 'src/core/auth/strategies/jwt.auth.strategy';
 
 import { TokenService } from './token.service';
 
@@ -17,6 +18,10 @@ describe('TokenService', () => {
         TokenService,
         {
           provide: JwtService,
+          useValue: {},
+        },
+        {
+          provide: JwtAuthStrategy,
           useValue: {},
         },
         {
