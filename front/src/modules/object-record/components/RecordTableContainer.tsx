@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCompanyImport';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
@@ -47,6 +48,7 @@ export const RecordTableContainer = ({
   });
 
   const { openPersonSpreadsheetImport } = useSpreadsheetPersonImport();
+  const { openCompanySpreadsheetImport } = useSpreadsheetCompanyImport();
 
   const recordTableId = objectNamePlural ?? '';
   const viewBarId = objectNamePlural ?? '';
@@ -72,12 +74,16 @@ export const RecordTableContainer = ({
   };
 
   const handleImport = () => {
-    openPersonSpreadsheetImport();
+    const openImport =
+      recordTableId === 'companies'
+        ? openCompanySpreadsheetImport
+        : openPersonSpreadsheetImport;
+    openImport();
   };
 
   return (
-    <SpreadsheetImportProvider>
-      <StyledContainer>
+    <StyledContainer>
+      <SpreadsheetImportProvider>
         <ViewBar
           viewBarId={viewBarId}
           optionsDropdownButton={
@@ -99,19 +105,16 @@ export const RecordTableContainer = ({
             setTableSorts(mapViewSortsToSorts(viewSorts));
           }}
         />
-        <RecordTableEffect
+      </SpreadsheetImportProvider>
+      <RecordTableEffect recordTableId={recordTableId} viewBarId={viewBarId} />
+      {
+        <RecordTable
           recordTableId={recordTableId}
           viewBarId={viewBarId}
+          updateRecordMutation={updateEntity}
+          createRecord={createRecord}
         />
-        {
-          <RecordTable
-            recordTableId={recordTableId}
-            viewBarId={viewBarId}
-            updateRecordMutation={updateEntity}
-            createRecord={createRecord}
-          />
-        }
-      </StyledContainer>
-    </SpreadsheetImportProvider>
+      }
+    </StyledContainer>
   );
 };
