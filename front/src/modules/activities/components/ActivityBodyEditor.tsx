@@ -52,7 +52,7 @@ export const ActivityBodyEditor = ({
       isNonEmptyString(activity.body) && activity.body !== '{}'
         ? JSON.parse(activity.body)
         : undefined,
-    editorDOMAttributes: { class: 'editor' },
+    domAttributes: { editor: { class: 'editor' } },
     onEditorContentChange: (editor) => {
       debounceOnChange(JSON.stringify(editor.topLevelBlocks) ?? '');
     },
