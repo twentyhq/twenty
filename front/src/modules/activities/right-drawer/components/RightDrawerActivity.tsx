@@ -4,8 +4,8 @@ import { useRecoilState } from 'recoil';
 
 import { ActivityEditor } from '@/activities/components/ActivityEditor';
 import { Activity } from '@/activities/types/Activity';
+import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { entityFieldsFamilyState } from '@/ui/object/field/states/entityFieldsFamilyState';
 
 import '@blocknote/core/style.css';
 

@@ -11,10 +11,11 @@ import {
 } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { NavigationBar } from '@/ui/navigation/navigation-bar/components/NavigationBar';
-import { navigationDrawerState } from '@/ui/navigation/states/navigationDrawerState';
+import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 
 import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
 import { useIsTasksPage } from '../hooks/useIsTasksPage';
+import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
 
 type NavigationBarItemName = 'main' | 'search' | 'tasks' | 'settings';
 
@@ -24,11 +25,15 @@ export const MobileNavigationBar = () => {
   const isTasksPage = useIsTasksPage();
   const isSettingsPage = useIsSettingsPage();
   const navigate = useNavigate();
-  const [navigationDrawer, setNavigationDrawer] = useRecoilState(
-    navigationDrawerState,
+  const [isNavigationDrawerOpen, setIsNavigationDrawerOpen] = useRecoilState(
+    isNavigationDrawerOpenState,
   );
+  const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
+    useRecoilState(currentMobileNavigationDrawerState);
 
-  const initialActiveItemName: NavigationBarItemName = isCommandMenuOpened
+  const activeItemName = isNavigationDrawerOpen
+    ? currentMobileNavigationDrawer
+    : isCommandMenuOpened
     ? 'search'
     : isTasksPage
     ? 'tasks'
@@ -46,14 +51,17 @@ export const MobileNavigationBar = () => {
       Icon: IconList,
       onClick: () => {
         closeCommandMenu();
-        setNavigationDrawer(navigationDrawer === 'main' ? '' : 'main');
+        setIsNavigationDrawerOpen(
+          (previousIsOpen) => activeItemName !== 'main' || !previousIsOpen,
+        );
+        setCurrentMobileNavigationDrawer('main');
       },
     },
     {
       name: 'search',
       Icon: IconSearch,
       onClick: () => {
-        setNavigationDrawer('');
+        setIsNavigationDrawerOpen(false);
         toggleCommandMenu();
       },
     },
@@ -62,7 +70,7 @@ export const MobileNavigationBar = () => {
       Icon: IconCheckbox,
       onClick: () => {
         closeCommandMenu();
-        setNavigationDrawer('');
+        setIsNavigationDrawerOpen(false);
         navigate('/tasks');
       },
     },
@@ -71,15 +79,13 @@ export const MobileNavigationBar = () => {
       Icon: IconSettings,
       onClick: () => {
         closeCommandMenu();
-        setNavigationDrawer(navigationDrawer === 'settings' ? '' : 'settings');
+        setIsNavigationDrawerOpen(
+          (previousIsOpen) => activeItemName !== 'settings' || !previousIsOpen,
+        );
+        setCurrentMobileNavigationDrawer('settings');
       },
     },
   ];
 
-  return (
-    <NavigationBar
-      activeItemName={navigationDrawer || initialActiveItemName}
-      items={items}
-    />
-  );
+  return <NavigationBar activeItemName={activeItemName} items={items} />;
 };

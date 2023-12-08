@@ -1,7 +1,7 @@
 import { ChangeEvent } from 'react';
 import styled from '@emotion/styled';
 
-import { StyledInput } from '@/ui/object/field/meta-types/input/components/internal/TextInput';
+import { StyledInput } from '@/ui/field/input/components/TextInput';
 import { ComputeNodeDimensions } from '@/ui/utilities/dimensions/components/ComputeNodeDimensions';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
@@ -13,6 +13,7 @@ export type EntityTitleDoubleTextInputProps = {
   firstValuePlaceholder: string;
   secondValuePlaceholder: string;
   onChange: (firstValue: string, secondValue: string) => void;
+  className?: string;
 };
 
 const StyledDoubleTextContainer = styled.div`
@@ -41,6 +42,7 @@ export const EntityTitleDoubleTextInput = ({
   firstValuePlaceholder,
   secondValuePlaceholder,
   onChange,
+  className,
 }: EntityTitleDoubleTextInputProps) => {
   const {
     goBackToPreviousHotkeyScope,
@@ -54,7 +56,7 @@ export const EntityTitleDoubleTextInput = ({
   };
 
   return (
-    <StyledDoubleTextContainer>
+    <StyledDoubleTextContainer className={className}>
       <ComputeNodeDimensions node={firstValue || firstValuePlaceholder}>
         {(nodeDimensions) => (
           <StyledTextInput

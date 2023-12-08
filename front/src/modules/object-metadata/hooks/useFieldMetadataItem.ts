@@ -1,4 +1,4 @@
-import { FieldType } from '@/ui/object/field/types/FieldType';
+import { FieldType } from '@/object-record/field/types/FieldType';
 import { Field } from '~/generated/graphql';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 

@@ -4,6 +4,7 @@ type H2TitleProps = {
   title: string;
   description?: string;
   addornment?: React.ReactNode;
+  className?: string;
 };
 
 const StyledContainer = styled.div`
@@ -33,8 +34,13 @@ const StyledDescription = styled.h3`
   margin-top: ${({ theme }) => theme.spacing(3)};
 `;
 
-export const H2Title = ({ title, description, addornment }: H2TitleProps) => (
-  <StyledContainer>
+export const H2Title = ({
+  title,
+  description,
+  addornment,
+  className,
+}: H2TitleProps) => (
+  <StyledContainer className={className}>
     <StyledTitleContainer>
       <StyledTitle>{title}</StyledTitle>
       {addornment}

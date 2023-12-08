@@ -19,6 +19,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
   async deleteWorkspace(id: string) {
     const workspace = await this.workspaceRepository.findOneBy({ id });
+
     assert(workspace, 'Workspace not found');
 
     await this.workspaceManagerService.delete(id);

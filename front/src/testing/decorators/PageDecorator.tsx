@@ -3,8 +3,8 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Decorator } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
+import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
-import { RelationPickerScope } from '@/ui/input/components/internal/relation-picker/scopes/RelationPickerScope';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
 import { DefaultLayout } from '~/modules/ui/layout/page/DefaultLayout';
 import { UserProvider } from '~/modules/users/components/UserProvider';

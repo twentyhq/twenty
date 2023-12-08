@@ -12,6 +12,7 @@ export class PgBossDriver implements MessageQueueDriver {
   constructor(options: PgBossDriverOptions) {
     this.pgBoss = new PgBoss(options);
   }
+
   async stop() {
     await this.pgBoss.stop();
   }

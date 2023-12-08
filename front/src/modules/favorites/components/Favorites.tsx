@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
-import NavItem from '@/ui/navigation/navigation-drawer/components/NavItem';
-import NavTitle from '@/ui/navigation/navigation-drawer/components/NavTitle';
+import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { Avatar } from '@/users/components/Avatar';
 
 import { useFavorites } from '../hooks/useFavorites';
@@ -24,7 +24,7 @@ export const Favorites = () => {
 
   return (
     <StyledContainer>
-      <NavTitle label="Favorites" />
+      <NavigationDrawerSectionTitle label="Favorites" />
       <DraggableList
         onDragEnd={handleReorderFavorite}
         draggableItems={
@@ -45,7 +45,7 @@ export const Favorites = () => {
                   draggableId={id}
                   index={index}
                   itemComponent={
-                    <NavItem
+                    <NavigationDrawerItem
                       key={id}
                       label={labelIdentifier}
                       Icon={() => (

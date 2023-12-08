@@ -28,6 +28,7 @@ type CheckboxProps = {
   variant?: CheckboxVariant;
   size?: CheckboxSize;
   shape?: CheckboxShape;
+  className?: string;
 };
 
 const StyledInputContainer = styled.div`
@@ -117,6 +118,7 @@ export const Checkbox = ({
   variant = CheckboxVariant.Primary,
   size = CheckboxSize.Small,
   shape = CheckboxShape.Squared,
+  className,
 }: CheckboxProps) => {
   const [isInternalChecked, setIsInternalChecked] =
     React.useState<boolean>(false);
@@ -134,7 +136,7 @@ export const Checkbox = ({
   const checkboxId = 'checkbox' + v4();
 
   return (
-    <StyledInputContainer>
+    <StyledInputContainer className={className}>
       <StyledInput
         autoComplete="off"
         type="checkbox"

@@ -31,6 +31,7 @@ type IconPickerProps = {
   onClose?: () => void;
   onOpen?: () => void;
   variant?: IconButtonVariant;
+  className?: string;
 };
 
 const StyledMenuIconItemsContainer = styled.div`
@@ -57,6 +58,7 @@ export const IconPicker = ({
   onClose,
   onOpen,
   variant = 'secondary',
+  className,
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
 
@@ -110,61 +112,63 @@ export const IconPicker = ({
 
   return (
     <DropdownScope dropdownScopeId={dropdownScopeId}>
-      <Dropdown
-        dropdownHotkeyScope={{ scope: IconPickerHotkeyScope.IconPicker }}
-        clickableComponent={
-          <IconButton
-            disabled={disabled}
-            Icon={selectedItem ? icons[selectedItem] : IconApps}
-            variant={variant}
-          />
-        }
-        dropdownMenuWidth={176}
-        dropdownComponents={
-          <SelectableList
-            selectableListId="icon-list"
-            selectableItemIds={iconKeys2d}
-            hotkeyScope={IconPickerHotkeyScope.IconPicker}
-          >
-            <DropdownMenu width={176}>
-              <DropdownMenuSearchInput
-                placeholder="Search icon"
-                autoFocus
-                onChange={(event) => setSearchString(event.target.value)}
-              />
-              <DropdownMenuSeparator />
-              <DropdownMenuItemsContainer>
-                {isLoading ? (
-                  <DropdownMenuSkeletonItem />
-                ) : (
-                  <StyledMenuIconItemsContainer>
-                    {iconKeys.map((iconKey) => (
-                      <StyledLightIconButton
-                        key={iconKey}
-                        aria-label={convertIconKeyToLabel(iconKey)}
-                        isSelected={selectedItem === iconKey}
-                        size="medium"
-                        title={iconKey}
-                        Icon={icons[iconKey]}
-                        onClick={() => {
-                          onChange({ iconKey, Icon: icons[iconKey] });
-                          closeDropdown();
-                        }}
-                      />
-                    ))}
-                  </StyledMenuIconItemsContainer>
-                )}
-              </DropdownMenuItemsContainer>
-            </DropdownMenu>
-          </SelectableList>
-        }
-        onClickOutside={onClickOutside}
-        onClose={() => {
-          onClose?.();
-          setSearchString('');
-        }}
-        onOpen={onOpen}
-      />
+      <div className={className}>
+        <Dropdown
+          dropdownHotkeyScope={{ scope: IconPickerHotkeyScope.IconPicker }}
+          clickableComponent={
+            <IconButton
+              disabled={disabled}
+              Icon={selectedItem ? icons[selectedItem] : IconApps}
+              variant={variant}
+            />
+          }
+          dropdownMenuWidth={176}
+          dropdownComponents={
+            <SelectableList
+              selectableListId="icon-list"
+              selectableItemIds={iconKeys2d}
+              hotkeyScope={IconPickerHotkeyScope.IconPicker}
+            >
+              <DropdownMenu width={176}>
+                <DropdownMenuSearchInput
+                  placeholder="Search icon"
+                  autoFocus
+                  onChange={(event) => setSearchString(event.target.value)}
+                />
+                <DropdownMenuSeparator />
+                <DropdownMenuItemsContainer>
+                  {isLoading ? (
+                    <DropdownMenuSkeletonItem />
+                  ) : (
+                    <StyledMenuIconItemsContainer>
+                      {iconKeys.map((iconKey) => (
+                        <StyledLightIconButton
+                          key={iconKey}
+                          aria-label={convertIconKeyToLabel(iconKey)}
+                          isSelected={selectedItem === iconKey}
+                          size="medium"
+                          title={iconKey}
+                          Icon={icons[iconKey]}
+                          onClick={() => {
+                            onChange({ iconKey, Icon: icons[iconKey] });
+                            closeDropdown();
+                          }}
+                        />
+                      ))}
+                    </StyledMenuIconItemsContainer>
+                  )}
+                </DropdownMenuItemsContainer>
+              </DropdownMenu>
+            </SelectableList>
+          }
+          onClickOutside={onClickOutside}
+          onClose={() => {
+            onClose?.();
+            setSearchString('');
+          }}
+          onOpen={onOpen}
+        />
+      </div>
     </DropdownScope>
   );
 };

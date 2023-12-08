@@ -36,6 +36,7 @@ export type ToggleProps = {
   onChange?: (value: boolean) => void;
   color?: string;
   toggleSize?: ToggleSize;
+  className?: string;
 };
 
 export const Toggle = ({
@@ -43,6 +44,7 @@ export const Toggle = ({
   onChange,
   color,
   toggleSize = 'medium',
+  className,
 }: ToggleProps) => {
   const [isOn, setIsOn] = useState(value ?? false);
 
@@ -72,6 +74,7 @@ export const Toggle = ({
       isOn={isOn}
       color={color}
       toggleSize={toggleSize}
+      className={className}
     >
       <StyledCircle
         animate={isOn ? 'on' : 'off'}

@@ -1,4 +1,4 @@
-import { Sort } from '@/ui/object/object-sort-dropdown/types/Sort';
+import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 
 import { ViewSort } from '../types/ViewSort';
 

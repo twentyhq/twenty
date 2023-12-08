@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { FieldType } from '@/ui/object/field/types/FieldType';
+import { FieldType } from '@/object-record/field/types/FieldType';
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 

@@ -1,4 +1,4 @@
-import { SortDefinition } from '@/ui/object/object-sort-dropdown/types/SortDefinition';
+import { SortDefinition } from '@/object-record/object-sort-dropdown/types/SortDefinition';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';

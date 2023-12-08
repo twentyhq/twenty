@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { useSortDropdown } from '@/ui/object/object-sort-dropdown/hooks/useSortDropdown';
-import { Sort } from '@/ui/object/object-sort-dropdown/types/Sort';
+import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
+import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 
 type ViewBarSortEffectProps = {

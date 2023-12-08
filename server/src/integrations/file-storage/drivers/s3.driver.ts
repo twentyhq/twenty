@@ -76,7 +76,6 @@ export class S3Driver implements StorageDriver {
 
       return true;
     } catch (error) {
-      console.log(error);
       if (error instanceof NotFound) {
         return false;
       }

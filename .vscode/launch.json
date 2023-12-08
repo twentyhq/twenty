@@ -1,0 +1,21 @@
+{
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Server Debug",
+      "runtimeExecutable": "yarn",
+      "cwd": "${workspaceFolder}/server",
+      "runtimeArgs": [
+        "start:debug",
+        "--",
+        "--inspect-brk"
+      ],
+      "console": "integratedTerminal",
+      "restart": true,
+      "protocol": "auto",
+      "port": 9229,
+      "autoAttachChildProcesses": true
+    }
+  ]
+}

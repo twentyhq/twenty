@@ -2,11 +2,11 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { parseFieldType } from '@/object-metadata/utils/parseFieldType';
+import { FieldDisplay } from '@/object-record/field/components/FieldDisplay';
+import { FieldContext } from '@/object-record/field/contexts/FieldContext';
+import { BooleanFieldInput } from '@/object-record/field/meta-types/input/components/BooleanFieldInput';
+import { RatingFieldInput } from '@/object-record/field/meta-types/input/components/RatingFieldInput';
 import { Tag } from '@/ui/display/tag/components/Tag';
-import { FieldDisplay } from '@/ui/object/field/components/FieldDisplay';
-import { FieldContext } from '@/ui/object/field/contexts/FieldContext';
-import { BooleanFieldInput } from '@/ui/object/field/meta-types/input/components/BooleanFieldInput';
-import { RatingFieldInput } from '@/ui/object/field/meta-types/input/components/RatingFieldInput';
 import { Field } from '~/generated/graphql';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 

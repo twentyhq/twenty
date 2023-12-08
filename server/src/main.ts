@@ -4,6 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
 import { graphqlUploadExpress } from 'graphql-upload';
 import bytes from 'bytes';
+import { useContainer } from 'class-validator';
 
 import { AppModule } from './app.module';
 
@@ -19,8 +20,15 @@ const bootstrap = async () => {
       : ['error', 'warn', 'log'],
   });
 
+  // Apply class-validator container so that we can use injection in validators
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+
   // Apply validation pipes globally
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+    }),
+  );
 
   app.use(bodyParser.json({ limit: settings.storage.maxFileSize }));
   app.use(
@@ -38,6 +46,7 @@ const bootstrap = async () => {
     }),
   );
   const loggerService = app.get(LoggerService);
+
   app.useLogger(loggerService);
   app.useLogger(app.get(EnvironmentService).getLogLevels());
 

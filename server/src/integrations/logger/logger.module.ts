@@ -32,6 +32,7 @@ export class LoggerModule {
       provide: LOGGER_DRIVER,
       useFactory: async (...args: any[]) => {
         const config = await options.useFactory(...args);
+
         return config?.type === LoggerDriver.Console
           ? new ConsoleLogger()
           : new SentryDriver(config.options);

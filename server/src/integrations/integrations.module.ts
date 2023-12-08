@@ -67,6 +67,7 @@ const loggerModuleFactory = async (
   environmentService: EnvironmentService,
 ): Promise<LoggerModuleOptions> => {
   const type = environmentService.getLoggerDriver();
+
   switch (type) {
     case LoggerDriver.Console: {
       return {
@@ -100,6 +101,7 @@ const messageQueueModuleFactory = async (
   switch (type) {
     case MessageQueueType.PgBoss: {
       const connectionString = environmentService.getPGDatabaseUrl();
+
       return {
         type: MessageQueueType.PgBoss,
         options: {
@@ -110,6 +112,7 @@ const messageQueueModuleFactory = async (
     case MessageQueueType.BullMQ: {
       const host = environmentService.getRedisHost();
       const port = environmentService.getRedisPort();
+
       return {
         type: MessageQueueType.BullMQ,
         options: {

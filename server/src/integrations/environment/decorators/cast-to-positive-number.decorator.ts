@@ -10,5 +10,6 @@ const toNumber = (value: any) => {
   if (typeof value === 'string') {
     return isNaN(+value) ? undefined : toNumber(+value);
   }
+
   return undefined;
 };
