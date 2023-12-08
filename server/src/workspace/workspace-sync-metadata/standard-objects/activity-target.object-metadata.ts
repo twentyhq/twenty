@@ -5,7 +5,10 @@ import {
   IsSystem,
   IsNullable,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
+import { ActivityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity.object-metadata';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
+import { PersonObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/person.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'activityTargets',
@@ -23,7 +26,7 @@ export class ActivityTargetObjectMetadata extends BaseObjectMetadata {
     icon: 'IconNotes',
     joinColumn: 'activityId',
   })
-  activity: object;
+  activity: ActivityObjectMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -33,7 +36,7 @@ export class ActivityTargetObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'personId',
   })
   @IsNullable()
-  person: object;
+  person: PersonObjectMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -43,5 +46,5 @@ export class ActivityTargetObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'companyId',
   })
   @IsNullable()
-  company: object;
+  company: CompanyObjectMetadata;
 }

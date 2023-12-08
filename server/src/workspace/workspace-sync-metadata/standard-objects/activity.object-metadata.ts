@@ -7,7 +7,11 @@ import {
   FieldMetadata,
   RelationMetadata,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
+import { ActivityTargetObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity-target.object-metadata';
+import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/attachment.object-metadata';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { CommentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/comment.object-metadata';
+import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'activities',
@@ -82,7 +86,8 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'activityTarget',
   })
-  activityTargets: object[];
+  @IsNullable()
+  activityTargets: ActivityTargetObjectMetadata[];
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -94,7 +99,8 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'attachment',
   })
-  attachments: object[];
+  @IsNullable()
+  attachments: AttachmentObjectMetadata[];
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -106,7 +112,8 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'comment',
   })
-  comments: object[];
+  @IsNullable()
+  comments: CommentObjectMetadata[];
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -115,7 +122,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUserCircle',
     joinColumn: 'authorId',
   })
-  author: object;
+  author: WorkspaceMemberObjectMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -124,5 +131,5 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUserCircle',
     joinColumn: 'assigneeId',
   })
-  assignee: object;
+  assignee: WorkspaceMemberObjectMetadata;
 }

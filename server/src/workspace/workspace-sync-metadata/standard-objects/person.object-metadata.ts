@@ -1,3 +1,5 @@
+import { FullNameMetadata } from 'src/metadata/field-metadata/composite-types/full-name.composite-type';
+import { LinkMetadata } from 'src/metadata/field-metadata/composite-types/link.composite-type';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import {
@@ -7,7 +9,12 @@ import {
   RelationMetadata,
   IsSystem,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
+import { ActivityTargetObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity-target.object-metadata';
+import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/attachment.object-metadata';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
+import { FavoriteObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/favorite.object-metadata';
+import { OpportunityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/opportunity.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'people',
@@ -24,7 +31,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUser',
   })
   @IsNullable()
-  name: string;
+  name: FullNameMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.EMAIL,
@@ -42,7 +49,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     icon: 'IconBrandLinkedin',
   })
   @IsNullable()
-  linkedinLink: string;
+  linkedinLink: LinkMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.LINK,
@@ -51,7 +58,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     icon: 'IconBrandX',
   })
   @IsNullable()
-  xLink: string;
+  xLink: LinkMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
@@ -99,7 +106,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'companyId',
   })
   @IsNullable()
-  company: string;
+  company: CompanyObjectMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -112,7 +119,8 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     objectName: 'opportunity',
     inverseSideFieldName: 'pointOfContact',
   })
-  pointOfContactForOpportunities: object[];
+  @IsNullable()
+  pointOfContactForOpportunities: OpportunityObjectMetadata[];
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -124,7 +132,8 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'activityTarget',
   })
-  activityTargets: object[];
+  @IsNullable()
+  activityTargets: ActivityTargetObjectMetadata[];
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -136,7 +145,8 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'opportunity',
   })
-  opportunities: object[];
+  @IsNullable()
+  opportunities: OpportunityObjectMetadata[];
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -148,7 +158,8 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'favorite',
   })
-  favorites: object[];
+  @IsNullable()
+  favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -160,5 +171,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'attachment',
   })
-  attachments: object[];
+  @IsNullable()
+  attachments: AttachmentObjectMetadata[];
 }

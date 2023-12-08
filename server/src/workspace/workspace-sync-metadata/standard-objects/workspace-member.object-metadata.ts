@@ -1,3 +1,4 @@
+import { FullNameMetadata } from 'src/metadata/field-metadata/composite-types/full-name.composite-type';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import {
@@ -7,7 +8,12 @@ import {
   IsNullable,
   RelationMetadata,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
+import { ActivityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity.object-metadata';
+import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/attachment.object-metadata';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { CommentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/comment.object-metadata';
+import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
+import { FavoriteObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/favorite.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'workspaceMembers',
@@ -24,7 +30,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     description: 'Workspace member name',
     icon: 'IconCircleUser',
   })
-  name: string;
+  name: FullNameMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
@@ -49,9 +55,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     label: 'Avatar Url',
     description: 'Workspace member avatar',
     icon: 'IconFileUpload',
-    defaultValue: { value: '' },
   })
-  @IsNullable()
   avatarUrl: string;
 
   @FieldMetadata({
@@ -74,7 +78,8 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'activity',
     inverseSideFieldName: 'author',
   })
-  authoredActivities: object[];
+  @IsNullable()
+  authoredActivities: ActivityObjectMetadata[];
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -87,7 +92,8 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'activity',
     inverseSideFieldName: 'assignee',
   })
-  assignedActivities: object[];
+  @IsNullable()
+  assignedActivities: ActivityObjectMetadata[];
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -99,7 +105,8 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'favorite',
   })
-  favorites: object[];
+  @IsNullable()
+  favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -112,7 +119,8 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'company',
     inverseSideFieldName: 'accountOwner',
   })
-  accountOwnerForCompanies: object[];
+  @IsNullable()
+  accountOwnerForCompanies: CompanyObjectMetadata[];
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -125,7 +133,8 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'attachment',
     inverseSideFieldName: 'author',
   })
-  authoredAttachments: object[];
+  @IsNullable()
+  authoredAttachments: AttachmentObjectMetadata[];
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -138,5 +147,6 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'comment',
     inverseSideFieldName: 'author',
   })
-  authoredComments: object[];
+  @IsNullable()
+  authoredComments: CommentObjectMetadata[];
 }

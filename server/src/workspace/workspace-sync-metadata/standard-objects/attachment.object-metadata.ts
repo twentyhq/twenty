@@ -5,7 +5,11 @@ import {
   FieldMetadata,
   IsNullable,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
+import { ActivityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity.object-metadata';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
+import { PersonObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/person.object-metadata';
+import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'attachments',
@@ -47,7 +51,7 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
     icon: 'IconCircleUser',
     joinColumn: 'authorId',
   })
-  author: string;
+  author: WorkspaceMemberObjectMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -56,7 +60,7 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
     icon: 'IconNotes',
     joinColumn: 'activityId',
   })
-  activity: string;
+  activity: ActivityObjectMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -66,7 +70,7 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'personId',
   })
   @IsNullable()
-  person: string;
+  person: PersonObjectMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -76,5 +80,5 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'companyId',
   })
   @IsNullable()
-  company: string;
+  company: CompanyObjectMetadata;
 }

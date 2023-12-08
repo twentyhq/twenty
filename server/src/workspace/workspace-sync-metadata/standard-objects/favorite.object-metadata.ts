@@ -5,6 +5,9 @@ import {
   FieldMetadata,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
+import { PersonObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/person.object-metadata';
+import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'favorites',
@@ -32,7 +35,7 @@ export class FavoriteObjectMetadata extends BaseObjectMetadata {
     icon: 'IconCircleUser',
     joinColumn: 'workspaceMemberId',
   })
-  workspaceMember: object;
+  workspaceMember: WorkspaceMemberObjectMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -41,7 +44,7 @@ export class FavoriteObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUser',
     joinColumn: 'personId',
   })
-  person: object;
+  person: PersonObjectMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -50,5 +53,5 @@ export class FavoriteObjectMetadata extends BaseObjectMetadata {
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
   })
-  company: object;
+  company: CompanyObjectMetadata;
 }
