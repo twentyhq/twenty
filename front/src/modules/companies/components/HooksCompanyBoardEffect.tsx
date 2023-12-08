@@ -3,12 +3,12 @@ import { useRecoilValue } from 'recoil';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
+import { availableRecordBoardCardFieldsScopedState } from '@/object-record/record-board/states/availableRecordBoardCardFieldsScopedState';
+import { recordBoardCardFieldsScopedState } from '@/object-record/record-board/states/recordBoardCardFieldsScopedState';
+import { recordBoardFiltersScopedState } from '@/object-record/record-board/states/recordBoardFiltersScopedState';
+import { recordBoardSortsScopedState } from '@/object-record/record-board/states/recordBoardSortsScopedState';
 import { filterAvailableTableColumns } from '@/object-record/utils/filterAvailableTableColumns';
-import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
-import { availableRecordBoardCardFieldsScopedState } from '@/ui/object/record-board/states/availableRecordBoardCardFieldsScopedState';
-import { recordBoardCardFieldsScopedState } from '@/ui/object/record-board/states/recordBoardCardFieldsScopedState';
-import { recordBoardFiltersScopedState } from '@/ui/object/record-board/states/recordBoardFiltersScopedState';
-import { recordBoardSortsScopedState } from '@/ui/object/record-board/states/recordBoardSortsScopedState';
 import { useSetRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useSetRecoilScopedStateV2';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useViewBar } from '@/views/hooks/useViewBar';

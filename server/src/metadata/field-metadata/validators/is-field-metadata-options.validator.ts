@@ -5,7 +5,10 @@ import { ValidationArguments, ValidatorConstraint } from 'class-validator';
 import { FieldMetadataOptions } from 'src/metadata/field-metadata/interfaces/field-metadata-options.interface';
 
 import { FieldMetadataService } from 'src/metadata/field-metadata/field-metadata.service';
-import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import {
+  FieldMetadataEntity,
+  FieldMetadataType,
+} from 'src/metadata/field-metadata/field-metadata.entity';
 import { validateOptionsForType } from 'src/metadata/field-metadata/utils/validate-options-for-type.util';
 
 @Injectable()
@@ -28,7 +31,13 @@ export class IsFieldMetadataOptions {
         return false;
       }
 
-      const fieldMetadata = await this.fieldMetadataService.findOneOrFail(id);
+      let fieldMetadata: FieldMetadataEntity;
+
+      try {
+        fieldMetadata = await this.fieldMetadataService.findOneOrFail(id);
+      } catch {
+        return false;
+      }
 
       type = fieldMetadata.type;
     }

@@ -3,21 +3,21 @@ import { FieldMetadataInterface } from 'src/metadata/field-metadata/interfaces/f
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
-export const currencyObjectDefinition = {
-  id: FieldMetadataType.CURRENCY.toString(),
-  nameSingular: 'currency',
-  namePlural: 'currency',
-  labelSingular: 'Currency',
-  labelPlural: 'Currency',
-  targetTableName: '',
-  fields: [
+export const currencyFields = (
+  fieldMetadata?: FieldMetadataInterface,
+): FieldMetadataInterface[] => {
+  return [
     {
       id: 'amountMicros',
       type: FieldMetadataType.NUMERIC,
       objectMetadataId: FieldMetadataType.CURRENCY.toString(),
       name: 'amountMicros',
       label: 'AmountMicros',
-      targetColumnMap: { value: 'amountMicros' },
+      targetColumnMap: {
+        value: fieldMetadata
+          ? `${fieldMetadata.name}AmountMicros`
+          : 'amountMicros',
+      },
       isNullable: true,
     } satisfies FieldMetadataInterface,
     {
@@ -26,10 +26,24 @@ export const currencyObjectDefinition = {
       objectMetadataId: FieldMetadataType.CURRENCY.toString(),
       name: 'currencyCode',
       label: 'Currency Code',
-      targetColumnMap: { value: 'currencyCode' },
+      targetColumnMap: {
+        value: fieldMetadata
+          ? `${fieldMetadata.name}CurrencyCode`
+          : 'currencyCode',
+      },
       isNullable: true,
     } satisfies FieldMetadataInterface,
-  ],
+  ];
+};
+
+export const currencyObjectDefinition = {
+  id: FieldMetadataType.CURRENCY.toString(),
+  nameSingular: 'currency',
+  namePlural: 'currency',
+  labelSingular: 'Currency',
+  labelPlural: 'Currency',
+  targetTableName: '',
+  fields: currencyFields(),
   fromRelations: [],
   toRelations: [],
 } satisfies ObjectMetadataInterface;

@@ -96,17 +96,20 @@ const StyledColorSchemeContent = styled(motion.div)<
 export type ColorSchemeSegmentProps = {
   variant: ColorScheme;
   controls: AnimationControls;
+  className?: string;
 } & React.ComponentPropsWithoutRef<'div'>;
 
 const ColorSchemeSegment = ({
   variant,
   controls,
   style,
+  className,
   onClick,
   onMouseEnter,
   onMouseLeave,
 }: ColorSchemeSegmentProps) => (
   <StyledColorSchemeBackground
+    className={className}
     {...{ variant, style, onClick, onMouseEnter, onMouseLeave }}
   >
     <StyledColorSchemeContent animate={controls} variant={variant}>

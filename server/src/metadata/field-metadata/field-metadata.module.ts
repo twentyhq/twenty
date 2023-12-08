@@ -16,6 +16,7 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { IsFieldMetadataDefaultValue } from 'src/metadata/field-metadata/validators/is-field-metadata-default-value.validator';
 import { FieldMetadataResolver } from 'src/metadata/field-metadata/field-metadata.resolver';
 import { FieldMetadataDTO } from 'src/metadata/field-metadata/dtos/field-metadata.dto';
+import { IsFieldMetadataOptions } from 'src/metadata/field-metadata/validators/is-field-metadata-options.validator';
 
 import { FieldMetadataService } from './field-metadata.service';
 import { FieldMetadataEntity } from './field-metadata.entity';
@@ -65,6 +66,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
   ],
   providers: [
     IsFieldMetadataDefaultValue,
+    IsFieldMetadataOptions,
     FieldMetadataService,
     FieldMetadataResolver,
   ],

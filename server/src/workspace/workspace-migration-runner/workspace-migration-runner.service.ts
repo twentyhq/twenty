@@ -237,7 +237,7 @@ export class WorkspaceMigrationRunnerService {
     tableName: string,
     migrationColumn: WorkspaceMigrationColumnAlter,
   ) {
-    const enumValues = migrationColumn.enum;
+    const enumValues = migrationColumn.alteredColumnDefinition.enum;
 
     // TODO: Maybe we can do something better if we can recreate the old `TableColumn` object
     if (enumValues) {
@@ -248,18 +248,32 @@ export class WorkspaceMigrationRunnerService {
         tableName,
         migrationColumn,
       );
-    } else {
-      await queryRunner.changeColumn(
-        `${schemaName}.${tableName}`,
-        migrationColumn.columnName,
-        new TableColumn({
-          name: migrationColumn.columnName,
-          type: migrationColumn.columnType,
-          default: migrationColumn.defaultValue,
-          isNullable: migrationColumn.isNullable,
-        }),
-      );
     }
+
+    await queryRunner.changeColumn(
+      `${schemaName}.${tableName}`,
+      new TableColumn({
+        name: migrationColumn.currentColumnDefinition.columnName,
+        type: migrationColumn.currentColumnDefinition.columnType,
+        default: migrationColumn.currentColumnDefinition.defaultValue,
+        enum: migrationColumn.currentColumnDefinition.enum?.filter(
+          (value): value is string => typeof value === 'string',
+        ),
+        isArray: migrationColumn.currentColumnDefinition.isArray,
+        isNullable: migrationColumn.currentColumnDefinition.isNullable,
+      }),
+      new TableColumn({
+        name: migrationColumn.alteredColumnDefinition.columnName,
+        type: migrationColumn.alteredColumnDefinition.columnType,
+        default: migrationColumn.alteredColumnDefinition.defaultValue,
+        enum: migrationColumn.currentColumnDefinition.enum?.filter(
+          (value): value is string => typeof value === 'string',
+        ),
+        isArray: migrationColumn.alteredColumnDefinition.isArray,
+        isNullable: migrationColumn.alteredColumnDefinition.isNullable,
+      }),
+    );
+    // }
   }
 
   private async createForeignKey(

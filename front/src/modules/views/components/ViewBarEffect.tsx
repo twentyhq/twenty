@@ -1,20 +1,16 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
-import { getViewScopedStatesFromSnapshot } from '../utils/getViewScopedStatesFromSnapshot';
 
 export const ViewBarEffect = () => {
   const {
-    scopeId: viewScopeId,
     loadView,
     changeViewInUrl,
     loadViewFields,
@@ -25,57 +21,61 @@ export const ViewBarEffect = () => {
   const [searchParams] = useSearchParams();
   const currentViewIdFromUrl = searchParams.get('view');
 
-  const { viewTypeState, viewObjectMetadataIdState } = useViewScopedStates();
+  const {
+    viewTypeState,
+    viewObjectMetadataIdState,
+    viewsState,
+    currentViewIdState,
+  } = useViewScopedStates();
 
+  const [views, setViews] = useRecoilState(viewsState);
   const viewType = useRecoilValue(viewTypeState);
   const viewObjectMetadataId = useRecoilValue(viewObjectMetadataIdState);
+  const setCurrentViewId = useSetRecoilState(currentViewIdState);
 
-  useFindManyRecords({
+  const { records: newViews } = useFindManyRecords<GraphQLView>({
     skip: !viewObjectMetadataId,
     objectNameSingular: 'view',
     filter: {
       type: { eq: viewType },
       objectMetadataId: { eq: viewObjectMetadataId },
     },
-    onCompleted: useRecoilCallback(
-      ({ snapshot, set }) =>
-        async (data: PaginatedRecordTypeResults<GraphQLView>) => {
-          const nextViews = data.edges.map(({ node }) => node);
-
-          const { viewsState, currentViewIdState } =
-            getViewScopedStatesFromSnapshot({
-              snapshot,
-              viewScopeId,
-            });
-
-          const views = getSnapshotValue(snapshot, viewsState);
-
-          if (!isDeeplyEqual(views, nextViews)) {
-            set(viewsState, nextViews);
-          }
-
-          const currentView =
-            data.edges
-              .map((view) => view.node)
-              .find((view) => view.id === currentViewIdFromUrl) ??
-            data.edges[0]?.node ??
-            null;
-
-          if (!currentView) return;
-
-          set(currentViewIdState, currentView.id);
-
-          if (currentView?.viewFields) {
-            loadViewFields(currentView.viewFields, currentView.id);
-            loadViewFilters(currentView.viewFilters, currentView.id);
-            loadViewSorts(currentView.viewSorts, currentView.id);
-          }
-
-          if (!nextViews.length) return;
-          if (!currentViewIdFromUrl) return changeViewInUrl(nextViews[0].id);
-        },
-    ),
   });
+
+  useEffect(() => {
+    if (!newViews.length) return;
+
+    if (!isDeeplyEqual(views, newViews)) {
+      setViews(newViews);
+    }
+
+    const currentView =
+      newViews.find((view) => view.id === currentViewIdFromUrl) ??
+      newViews[0] ??
+      null;
+
+    if (!currentView) return;
+
+    setCurrentViewId(currentView.id);
+
+    if (currentView?.viewFields) {
+      loadViewFields(currentView.viewFields, currentView.id);
+      loadViewFilters(currentView.viewFilters, currentView.id);
+      loadViewSorts(currentView.viewSorts, currentView.id);
+    }
+
+    if (!currentViewIdFromUrl) return changeViewInUrl(currentView.id);
+  }, [
+    changeViewInUrl,
+    currentViewIdFromUrl,
+    loadViewFields,
+    loadViewFilters,
+    loadViewSorts,
+    newViews,
+    setCurrentViewId,
+    setViews,
+    views,
+  ]);
 
   useEffect(() => {
     if (!currentViewIdFromUrl) return;

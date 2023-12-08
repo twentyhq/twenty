@@ -26,6 +26,7 @@ type IconPickerProps = {
   onClose?: () => void;
   onOpen?: () => void;
   variant?: IconButtonVariant;
+  className?: string;
 };
 
 const StyledMenuIconItemsContainer = styled.div`
@@ -52,6 +53,7 @@ export const IconPicker = ({
   onClose,
   onOpen,
   variant = 'secondary',
+  className,
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
 
@@ -79,55 +81,57 @@ export const IconPicker = ({
 
   return (
     <DropdownScope dropdownScopeId={dropdownScopeId}>
-      <Dropdown
-        dropdownHotkeyScope={{ scope: IconPickerHotkeyScope.IconPicker }}
-        clickableComponent={
-          <IconButton
-            disabled={disabled}
-            Icon={selectedIconKey ? icons[selectedIconKey] : IconApps}
-            variant={variant}
-          />
-        }
-        dropdownMenuWidth={176}
-        dropdownComponents={
-          <DropdownMenu width={176}>
-            <DropdownMenuSearchInput
-              placeholder="Search icon"
-              autoFocus
-              onChange={(event) => setSearchString(event.target.value)}
+      <div className={className}>
+        <Dropdown
+          dropdownHotkeyScope={{ scope: IconPickerHotkeyScope.IconPicker }}
+          clickableComponent={
+            <IconButton
+              disabled={disabled}
+              Icon={selectedIconKey ? icons[selectedIconKey] : IconApps}
+              variant={variant}
             />
-            <DropdownMenuSeparator />
-            <DropdownMenuItemsContainer>
-              {isLoading ? (
-                <DropdownMenuSkeletonItem />
-              ) : (
-                <StyledMenuIconItemsContainer>
-                  {iconKeys.map((iconKey) => (
-                    <StyledLightIconButton
-                      key={iconKey}
-                      aria-label={convertIconKeyToLabel(iconKey)}
-                      isSelected={selectedIconKey === iconKey}
-                      size="medium"
-                      title={iconKey}
-                      Icon={icons[iconKey]}
-                      onClick={() => {
-                        onChange({ iconKey, Icon: icons[iconKey] });
-                        closeDropdown();
-                      }}
-                    />
-                  ))}
-                </StyledMenuIconItemsContainer>
-              )}
-            </DropdownMenuItemsContainer>
-          </DropdownMenu>
-        }
-        onClickOutside={onClickOutside}
-        onClose={() => {
-          onClose?.();
-          setSearchString('');
-        }}
-        onOpen={onOpen}
-      />
+          }
+          dropdownMenuWidth={176}
+          dropdownComponents={
+            <DropdownMenu width={176}>
+              <DropdownMenuSearchInput
+                placeholder="Search icon"
+                autoFocus
+                onChange={(event) => setSearchString(event.target.value)}
+              />
+              <DropdownMenuSeparator />
+              <DropdownMenuItemsContainer>
+                {isLoading ? (
+                  <DropdownMenuSkeletonItem />
+                ) : (
+                  <StyledMenuIconItemsContainer>
+                    {iconKeys.map((iconKey) => (
+                      <StyledLightIconButton
+                        key={iconKey}
+                        aria-label={convertIconKeyToLabel(iconKey)}
+                        isSelected={selectedIconKey === iconKey}
+                        size="medium"
+                        title={iconKey}
+                        Icon={icons[iconKey]}
+                        onClick={() => {
+                          onChange({ iconKey, Icon: icons[iconKey] });
+                          closeDropdown();
+                        }}
+                      />
+                    ))}
+                  </StyledMenuIconItemsContainer>
+                )}
+              </DropdownMenuItemsContainer>
+            </DropdownMenu>
+          }
+          onClickOutside={onClickOutside}
+          onClose={() => {
+            onClose?.();
+            setSearchString('');
+          }}
+          onOpen={onOpen}
+        />
+      </div>
     </DropdownScope>
   );
 };

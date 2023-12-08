@@ -11,7 +11,7 @@ import {
 
 export const optionsValidatorsMap = {
   [FieldMetadataType.RATING]: [FieldMetadataDefaultOptions],
-  [FieldMetadataType.SELECT]: [FieldMetadataDefaultOptions],
+  [FieldMetadataType.SELECT]: [FieldMetadataComplexOptions],
   [FieldMetadataType.MULTI_SELECT]: [FieldMetadataComplexOptions],
 };
 
@@ -31,12 +31,18 @@ export const validateOptionsForType = (
 
   const isValid = options.every((option) => {
     return validators.some((validator) => {
-      const optionsInstance = plainToInstance<any, FieldMetadataDefaultOptions>(
-        validator,
-        option,
-      );
+      const optionsInstance = plainToInstance<
+        any,
+        FieldMetadataDefaultOptions | FieldMetadataComplexOptions
+      >(validator, option);
 
-      return validateSync(optionsInstance).length === 0;
+      return (
+        validateSync(optionsInstance, {
+          whitelist: true,
+          forbidNonWhitelisted: true,
+          forbidUnknownValues: true,
+        }).length === 0
+      );
     });
   });
 

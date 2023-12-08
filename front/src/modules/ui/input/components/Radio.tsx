@@ -118,6 +118,7 @@ export const Radio = ({
   size = RadioSize.Small,
   labelPosition = LabelPosition.Right,
   disabled = false,
+  className,
 }: RadioProps) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange?.(event);
@@ -125,7 +126,7 @@ export const Radio = ({
   };
 
   return (
-    <StyledContainer labelPosition={labelPosition}>
+    <StyledContainer className={className} labelPosition={labelPosition}>
       <StyledRadioInput
         type="radio"
         id="input-radio"

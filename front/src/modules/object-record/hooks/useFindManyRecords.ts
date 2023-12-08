@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useQuery } from '@apollo/client';
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -55,7 +55,7 @@ export const useFindManyRecords = <
     hasNextPageFamilyState(findManyQueryStateIdentifier),
   );
 
-  const [, setIsFetchingMoreObjects] = useRecoilState(
+  const setIsFetchingMoreObjects = useSetRecoilState(
     isFetchingMoreRecordsFamilyState(findManyQueryStateIdentifier),
   );
 
@@ -142,6 +142,18 @@ export const useFindManyRecords = <
                 ...fetchMoreResult?.[objectMetadataItem.namePlural]?.edges,
               ]);
             }
+
+            if (data?.[objectMetadataItem.namePlural]) {
+              setLastCursor(
+                fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo
+                  .endCursor,
+              );
+              setHasNextPage(
+                fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo
+                  .hasNextPage,
+              );
+            }
+
             onCompleted?.({
               __typename: `${capitalize(
                 objectMetadataItem.nameSingular,
@@ -150,15 +162,6 @@ export const useFindManyRecords = <
               pageInfo:
                 fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,
             });
-
-            if (data?.[objectMetadataItem.namePlural]) {
-              setLastCursor(
-                data?.[objectMetadataItem.namePlural]?.pageInfo.endCursor,
-              );
-              setHasNextPage(
-                data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage,
-              );
-            }
 
             return Object.assign({}, prev, {
               [objectMetadataItem.namePlural]: {
@@ -218,5 +221,6 @@ export const useFindManyRecords = <
     loading,
     error,
     fetchMoreRecords,
+    queryStateIdentifier: findManyQueryStateIdentifier,
   };
 };

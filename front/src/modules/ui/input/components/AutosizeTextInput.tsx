@@ -26,6 +26,7 @@ type AutosizeTextInputProps = {
   variant?: AutosizeTextInputVariant;
   buttonTitle?: string;
   value?: string;
+  className?: string;
 };
 
 const StyledContainer = styled.div`
@@ -117,6 +118,7 @@ export const AutosizeTextInput = ({
   variant = AutosizeTextInputVariant.Default,
   buttonTitle,
   value = '',
+  className,
 }: AutosizeTextInputProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const [isHidden, setIsHidden] = useState(
@@ -183,7 +185,7 @@ export const AutosizeTextInput = ({
 
   return (
     <>
-      <StyledContainer>
+      <StyledContainer className={className}>
         <StyledInputContainer>
           {!isHidden && (
             <StyledTextArea

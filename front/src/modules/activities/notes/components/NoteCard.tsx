@@ -6,11 +6,11 @@ import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRi
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { Note } from '@/activities/types/Note';
-import { IconComment } from '@/ui/display/icon';
 import {
   FieldContext,
   GenericFieldContextType,
-} from '@/ui/object/field/contexts/FieldContext';
+} from '@/object-record/field/contexts/FieldContext';
+import { IconComment } from '@/ui/display/icon';
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`
   align-items: flex-start;

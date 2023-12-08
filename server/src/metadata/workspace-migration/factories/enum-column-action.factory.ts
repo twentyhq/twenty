@@ -45,24 +45,24 @@ export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFie
   }
 
   protected handleAlterAction(
-    previousFieldMetadata: FieldMetadataInterface<EnumFieldMetadataType>,
-    nextFieldMetadata: FieldMetadataInterface<EnumFieldMetadataType>,
+    currentFieldMetadata: FieldMetadataInterface<EnumFieldMetadataType>,
+    alteredFieldMetadata: FieldMetadataInterface<EnumFieldMetadataType>,
     options: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnAlter {
     const defaultValue =
-      nextFieldMetadata.defaultValue?.value ?? options?.defaultValue;
+      alteredFieldMetadata.defaultValue?.value ?? options?.defaultValue;
     const serializedDefaultValue = serializeDefaultValue(defaultValue);
-    const enumOptions = nextFieldMetadata.options
+    const enumOptions = alteredFieldMetadata.options
       ? [
-          ...nextFieldMetadata.options.map((option) => {
-            const previousOption = previousFieldMetadata.options?.find(
-              (previousOption) => previousOption.id === option.id,
+          ...alteredFieldMetadata.options.map((option) => {
+            const currentOption = currentFieldMetadata.options?.find(
+              (currentOption) => currentOption.id === option.id,
             );
 
             // The id is the same, but the value is different, so we need to alter the enum
-            if (previousOption && previousOption.value !== option.value) {
+            if (currentOption && currentOption.value !== option.value) {
               return {
-                from: previousOption.value,
+                from: currentOption.value,
                 to: option.value,
               };
             }
@@ -74,12 +74,26 @@ export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFie
 
     return {
       action: WorkspaceMigrationColumnActionType.ALTER,
-      columnName: nextFieldMetadata.targetColumnMap.value,
-      columnType: fieldMetadataTypeToColumnType(nextFieldMetadata.type),
-      enum: enumOptions,
-      isArray: nextFieldMetadata.type === FieldMetadataType.MULTI_SELECT,
-      isNullable: nextFieldMetadata.isNullable,
-      defaultValue: serializedDefaultValue,
+      currentColumnDefinition: {
+        columnName: currentFieldMetadata.targetColumnMap.value,
+        columnType: fieldMetadataTypeToColumnType(currentFieldMetadata.type),
+        enum: currentFieldMetadata.options
+          ? [...currentFieldMetadata.options.map((option) => option.value)]
+          : undefined,
+        isArray: currentFieldMetadata.type === FieldMetadataType.MULTI_SELECT,
+        isNullable: currentFieldMetadata.isNullable,
+        defaultValue: serializeDefaultValue(
+          currentFieldMetadata.defaultValue?.value,
+        ),
+      },
+      alteredColumnDefinition: {
+        columnName: alteredFieldMetadata.targetColumnMap.value,
+        columnType: fieldMetadataTypeToColumnType(alteredFieldMetadata.type),
+        enum: enumOptions,
+        isArray: alteredFieldMetadata.type === FieldMetadataType.MULTI_SELECT,
+        isNullable: alteredFieldMetadata.isNullable,
+        defaultValue: serializedDefaultValue,
+      },
     };
   }
 }

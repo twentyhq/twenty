@@ -3,12 +3,12 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { Company } from '@/companies/types/Company';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { turnFiltersIntoWhereClause } from '@/object-record/object-filter-dropdown/utils/turnFiltersIntoWhereClause';
+import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
+import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
 import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
-import { turnFiltersIntoWhereClause } from '@/ui/object/object-filter-dropdown/utils/turnFiltersIntoWhereClause';
-import { turnSortsIntoOrderBy } from '@/ui/object/object-sort-dropdown/utils/turnSortsIntoOrderBy';
-import { useRecordBoardScopedStates } from '@/ui/object/record-board/hooks/internal/useRecordBoardScopedStates';
 
 import { useFindManyRecords } from './useFindManyRecords';
 
@@ -37,9 +37,7 @@ export const useObjectRecordBoard = () => {
 
   const setSavedCompanies = useSetRecoilState(savedCompaniesState);
 
-  const [savedOpportunities, setSavedOpportunities] = useRecoilState(
-    savedOpportunitiesState,
-  );
+  const [savedOpportunities] = useRecoilState(savedOpportunitiesState);
 
   const [savedPipelineSteps, setSavedPipelineSteps] = useRecoilState(
     savedPipelineStepsState,

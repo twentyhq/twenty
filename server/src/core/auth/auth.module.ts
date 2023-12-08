@@ -56,6 +56,6 @@ const jwtModule = JwtModule.registerAsync({
     AuthResolver,
     GoogleGmailService,
   ],
-  exports: [jwtModule],
+  exports: [jwtModule, TokenService],
 })
 export class AuthModule {}

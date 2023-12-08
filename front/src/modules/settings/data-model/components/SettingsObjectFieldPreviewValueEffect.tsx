@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { entityFieldsFamilySelector } from '@/ui/object/field/states/selectors/entityFieldsFamilySelector';
+import { entityFieldsFamilySelector } from '@/object-record/field/states/selectors/entityFieldsFamilySelector';
 
 type SettingsObjectFieldPreviewValueEffectProps = {
   entityId: string;

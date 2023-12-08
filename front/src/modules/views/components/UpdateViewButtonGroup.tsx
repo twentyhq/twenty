@@ -1,14 +1,16 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { Key } from 'ts-key-enum';
 
 import { IconChevronDown, IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { ButtonGroup } from '@/ui/input/button/components/ButtonGroup';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { UpdateViewDropdownId } from '@/views/constants/UpdateViewDropdownId';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
@@ -20,7 +22,7 @@ const StyledContainer = styled.div`
 `;
 
 export type UpdateViewButtonGroupProps = {
-  hotkeyScope: string;
+  hotkeyScope: HotkeyScope;
   onViewEditModeChange?: () => void;
 };
 
@@ -28,7 +30,6 @@ export const UpdateViewButtonGroup = ({
   hotkeyScope,
   onViewEditModeChange,
 }: UpdateViewButtonGroupProps) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { updateCurrentView, setViewEditMode } = useViewBar();
   const { canPersistFiltersSelector, canPersistSortsSelector } =
     useViewScopedStates();
@@ -38,53 +39,43 @@ export const UpdateViewButtonGroup = ({
 
   const canPersistView = canPersistFilters || canPersistSorts;
 
-  const handleArrowDownButtonClick = useCallback(() => {
-    setIsDropdownOpen((previousIsOpen) => !previousIsOpen);
-  }, []);
-
   const handleCreateViewButtonClick = useCallback(() => {
     setViewEditMode('create');
     onViewEditModeChange?.();
-    setIsDropdownOpen(false);
   }, [setViewEditMode, onViewEditModeChange]);
-
-  const handleDropdownClose = useCallback(() => {
-    setIsDropdownOpen(false);
-  }, []);
 
   const handleViewSubmit = async () => {
     await updateCurrentView?.();
   };
 
-  useScopedHotkeys(
-    [Key.Enter, Key.Escape],
-    handleDropdownClose,
-    hotkeyScope,
-    [],
-  );
-
-  if (!canPersistView) return null;
+  if (!canPersistView) {
+    return <></>;
+  }
 
   return (
-    <StyledContainer>
-      <ButtonGroup size="small" accent="blue">
-        <Button title="Update view" onClick={handleViewSubmit} />
-        <Button
-          size="small"
-          Icon={IconChevronDown}
-          onClick={handleArrowDownButtonClick}
-        />
-      </ButtonGroup>
-
-      {isDropdownOpen && (
-        <DropdownMenuItemsContainer>
-          <MenuItem
-            onClick={handleCreateViewButtonClick}
-            LeftIcon={IconPlus}
-            text="Create view"
-          />
-        </DropdownMenuItemsContainer>
-      )}
-    </StyledContainer>
+    <DropdownScope dropdownScopeId={UpdateViewDropdownId}>
+      <Dropdown
+        dropdownHotkeyScope={hotkeyScope}
+        clickableComponent={
+          <StyledContainer>
+            <ButtonGroup size="small" accent="blue">
+              <Button title="Update view" onClick={handleViewSubmit} />
+              <Button size="small" Icon={IconChevronDown} />
+            </ButtonGroup>
+          </StyledContainer>
+        }
+        dropdownComponents={
+          <>
+            <DropdownMenuItemsContainer>
+              <MenuItem
+                onClick={handleCreateViewButtonClick}
+                LeftIcon={IconPlus}
+                text="Create view"
+              />
+            </DropdownMenuItemsContainer>
+          </>
+        }
+      />
+    </DropdownScope>
   );
 };

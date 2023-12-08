@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -36,18 +37,19 @@ export const useSnackBar = () => {
             queue: [...prev.queue, newValue] as SnackBarOptions[],
           };
         }),
+    [scopeId],
   );
 
-  const enqueueSnackBar = (
-    message: string,
-    options?: Omit<SnackBarOptions, 'message' | 'id'>,
-  ) => {
-    setSnackBarQueue({
-      id: uuidv4(),
-      message,
-      ...options,
-    });
-  };
+  const enqueueSnackBar = useCallback(
+    (message: string, options?: Omit<SnackBarOptions, 'message' | 'id'>) => {
+      setSnackBarQueue({
+        id: uuidv4(),
+        message,
+        ...options,
+      });
+    },
+    [setSnackBarQueue],
+  );
 
   return { handleSnackBarClose, enqueueSnackBar };
 };
