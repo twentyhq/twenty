@@ -19,7 +19,7 @@ export const useNotes = (entity: ActivityTargetableEntity) => {
   };
   const orderBy = {
     createdAt: 'AscNullsFirst',
-  };
+  } as any; // TODO: finish typing
 
   const { records: notes } = useFindManyRecords({
     skip: !activityTargets?.length,

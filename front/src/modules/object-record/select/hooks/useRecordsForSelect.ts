@@ -4,7 +4,6 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
 import { getObjectFilterFields } from '@/object-record/select/utils/getObjectFilterFields';
-import { getObjectOrderByField } from '@/object-record/select/utils/getObjectOrderByField';
 import { isDefined } from '~/utils/isDefined';
 
 export type OrderBy =
@@ -30,9 +29,10 @@ export const useRecordsForSelect = ({
   excludeEntityIds?: string[];
   objectNameSingular: string;
 }) => {
-  const { mapToObjectRecordIdentifier } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const { mapToObjectRecordIdentifier, getObjectOrderByField } =
+    useObjectMetadataItem({
+      objectNameSingular,
+    });
 
   const filters = [
     {
@@ -41,7 +41,7 @@ export const useRecordsForSelect = ({
     },
   ];
 
-  const orderByField = getObjectOrderByField(objectNameSingular);
+  const orderByField = getObjectOrderByField(sortOrder);
 
   const { loading: selectedRecordsLoading, records: selectedRecordsData } =
     useFindManyRecords({
@@ -50,9 +50,7 @@ export const useRecordsForSelect = ({
           in: selectedIds,
         },
       },
-      orderBy: {
-        [orderByField]: sortOrder,
-      },
+      orderBy: orderByField,
       objectNameSingular,
     });
 
@@ -103,9 +101,7 @@ export const useRecordsForSelect = ({
         },
       ],
     },
-    orderBy: {
-      [orderByField]: sortOrder,
-    },
+    orderBy: orderByField,
     objectNameSingular,
   });
 
@@ -126,9 +122,7 @@ export const useRecordsForSelect = ({
         ],
       },
       limit: limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,
-      orderBy: {
-        [orderByField]: sortOrder,
-      },
+      orderBy: orderByField,
       objectNameSingular,
     });
 
