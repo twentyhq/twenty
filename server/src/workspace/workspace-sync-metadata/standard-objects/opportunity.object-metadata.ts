@@ -1,3 +1,4 @@
+import { CurrencyMetadata } from 'src/metadata/field-metadata/composite-types/currency.composite-type';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import {
   ObjectMetadata,
@@ -25,7 +26,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     icon: 'IconCurrencyDollar',
   })
   @IsNullable()
-  amount: object;
+  amount: CurrencyMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,

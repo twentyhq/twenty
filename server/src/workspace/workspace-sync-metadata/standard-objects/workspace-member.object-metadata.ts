@@ -1,3 +1,4 @@
+import { FullNameMetadata } from 'src/metadata/field-metadata/composite-types/full-name.composite-type';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import {
@@ -29,7 +30,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     description: 'Workspace member name',
     icon: 'IconCircleUser',
   })
-  name: object;
+  name: FullNameMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,

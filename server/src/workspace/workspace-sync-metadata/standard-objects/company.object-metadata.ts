@@ -1,3 +1,5 @@
+import { CurrencyMetadata } from 'src/metadata/field-metadata/composite-types/currency.composite-type';
+import { LinkMetadata } from 'src/metadata/field-metadata/composite-types/link.composite-type';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import {
@@ -65,7 +67,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     icon: 'IconBrandLinkedin',
   })
   @IsNullable()
-  linkedinLink: object;
+  linkedinLink: LinkMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.LINK,
@@ -74,7 +76,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     icon: 'IconBrandX',
   })
   @IsNullable()
-  xLink: object;
+  xLink: LinkMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.CURRENCY,
@@ -84,7 +86,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     icon: 'IconMoneybag',
   })
   @IsNullable()
-  annualRecurringRevenue: object;
+  annualRecurringRevenue: CurrencyMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.BOOLEAN,

@@ -1,3 +1,5 @@
+import { FullNameMetadata } from 'src/metadata/field-metadata/composite-types/full-name.composite-type';
+import { LinkMetadata } from 'src/metadata/field-metadata/composite-types/link.composite-type';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import {
@@ -29,7 +31,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUser',
   })
   @IsNullable()
-  name: object;
+  name: FullNameMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.EMAIL,
@@ -47,7 +49,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     icon: 'IconBrandLinkedin',
   })
   @IsNullable()
-  linkedinLink: object;
+  linkedinLink: LinkMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.LINK,
@@ -56,7 +58,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     icon: 'IconBrandX',
   })
   @IsNullable()
-  xLink: object;
+  xLink: LinkMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
