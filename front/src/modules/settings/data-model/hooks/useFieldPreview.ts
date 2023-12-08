@@ -44,7 +44,8 @@ export const useFieldPreview = ({
       skip: fieldMetadata.type !== FieldMetadataType.Relation,
     });
 
-  const { defaultValue } = settingsFieldMetadataTypes[fieldMetadata.type];
+  const settingsFieldMetadataType =
+    settingsFieldMetadataTypes[fieldMetadata.type];
 
   const defaultSelectValue = selectOptions?.[0];
   const selectValue =
@@ -67,6 +68,6 @@ export const useFieldPreview = ({
         ? relationValue
         : fieldMetadata.type === FieldMetadataType.Select
         ? selectValue || defaultSelectValue
-        : firstRecordFieldValue || defaultValue,
+        : firstRecordFieldValue || settingsFieldMetadataType?.defaultValue,
   };
 };

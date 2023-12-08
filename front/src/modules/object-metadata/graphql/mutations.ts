@@ -15,6 +15,8 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
       isActive
       createdAt
       updatedAt
+      labelIdentifierFieldMetadataId
+      imageIdentifierFieldMetadataId
     }
   }
 `;
@@ -93,6 +95,8 @@ export const UPDATE_ONE_OBJECT_METADATA_ITEM = gql`
       isActive
       createdAt
       updatedAt
+      labelIdentifierFieldMetadataId
+      imageIdentifierFieldMetadataId
     }
   }
 `;
@@ -112,6 +116,8 @@ export const DELETE_ONE_OBJECT_METADATA_ITEM = gql`
       isActive
       createdAt
       updatedAt
+      labelIdentifierFieldMetadataId
+      imageIdentifierFieldMetadataId
     }
   }
 `;
