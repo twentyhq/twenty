@@ -3,6 +3,7 @@ import {
   ObjectMetadata,
   IsSystem,
   FieldMetadata,
+  IsNullable,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { ActivityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity.object-metadata';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
