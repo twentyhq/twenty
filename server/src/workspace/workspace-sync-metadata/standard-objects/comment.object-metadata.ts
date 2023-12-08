@@ -43,6 +43,5 @@ export class CommentObjectMetadata extends BaseObjectMetadata {
     icon: 'IconNotes',
     joinColumn: 'activityId',
   })
-  @IsNullable()
   activity: ActivityObjectMetadata;
 }

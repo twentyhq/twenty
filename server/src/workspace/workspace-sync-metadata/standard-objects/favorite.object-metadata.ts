@@ -36,7 +36,6 @@ export class FavoriteObjectMetadata extends BaseObjectMetadata {
     icon: 'IconCircleUser',
     joinColumn: 'workspaceMemberId',
   })
-  @IsNullable()
   workspaceMember: WorkspaceMemberObjectMetadata;
 
   @FieldMetadata({
