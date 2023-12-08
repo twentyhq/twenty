@@ -1,11 +1,10 @@
 import { DynamicModule, Global } from '@nestjs/common';
 
-import { MemoryStorageType } from 'src/integrations/environment/interfaces/memory-storage.interface';
-
 import { MemoryStorageDefaultSerializer } from 'src/integrations/memory-storage/serializers/default.serializer';
 import { createMemoryStorageInjectionToken } from 'src/integrations/memory-storage/memory-storage.util';
 
 import {
+  MemoryStorageDriverType,
   MemoryStorageModuleAsyncOptions,
   MemoryStorageModuleOptions,
 } from './interfaces';
@@ -59,7 +58,7 @@ export class MemoryStorageModule {
 
   private static createStorageDriver(options: MemoryStorageModuleOptions) {
     switch (options.type) {
-      case MemoryStorageType.Local:
+      case MemoryStorageDriverType.Local:
         return new LocalMemoryDriver(
           options.identifier,
           options.options,

@@ -16,7 +16,7 @@ type SubMenuTopBarContainerProps = {
 const StyledContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex-direction: column;
-  padding-top: ${({ theme, isMobile }) => (!isMobile ? theme.spacing(4) : 0)};
+  padding-top: ${({ theme, isMobile }) => (!isMobile ? theme.spacing(3) : 0)};
   width: 100%;
 `;
 

@@ -2,6 +2,8 @@ import { DataSource } from 'typeorm';
 
 import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
 import { SeedDataSourceId } from 'src/database/typeorm-seeds/metadata/data-source';
+import { SeedCompanyFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/company';
+import { SeedPersonFieldMetadataIds } from 'src/database/typeorm-seeds/metadata/field-metadata/person';
 
 const tableName = 'objectMetadata';
 
@@ -44,6 +46,8 @@ export const seedObjectMetadata = async (
       'workspaceId',
       'isActive',
       'isSystem',
+      'labelIdentifierFieldMetadataId',
+      'imageIdentifierFieldMetadataId',
     ])
     .orIgnore()
     .values([
@@ -60,6 +64,8 @@ export const seedObjectMetadata = async (
         workspaceId: SeedWorkspaceId,
         isActive: true,
         isSystem: false,
+        labelIdentifierFieldMetadataId: SeedCompanyFieldMetadataIds.Name,
+        imageIdentifierFieldMetadataId: SeedCompanyFieldMetadataIds.DomainName,
       },
       {
         id: SeedObjectMetadataIds.Person,
@@ -74,7 +80,31 @@ export const seedObjectMetadata = async (
         workspaceId: SeedWorkspaceId,
         isActive: true,
         isSystem: false,
+        labelIdentifierFieldMetadataId: SeedPersonFieldMetadataIds.Email,
+        imageIdentifierFieldMetadataId: SeedPersonFieldMetadataIds.AvatarUrl,
       },
+    ])
+    .execute();
+
+  await workspaceDataSource
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${tableName}`, [
+      'id',
+      'nameSingular',
+      'namePlural',
+      'labelSingular',
+      'labelPlural',
+      'targetTableName',
+      'description',
+      'icon',
+      'dataSourceId',
+      'workspaceId',
+      'isActive',
+      'isSystem',
+    ])
+    .orIgnore()
+    .values([
       {
         id: SeedObjectMetadataIds.Opportunity,
         nameSingular: 'opportunity',

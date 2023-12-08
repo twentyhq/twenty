@@ -142,7 +142,7 @@ export const SettingsObjectNewFieldStep2 = () => {
 
         objectViews.forEach(async (view) => {
           await createOneViewField?.({
-            view: view.id,
+            viewId: view.id,
             fieldMetadataId:
               validatedFormValues.relation.type === 'MANY_TO_ONE'
                 ? createdRelation.data?.createOneRelation.toFieldMetadataId
@@ -154,7 +154,7 @@ export const SettingsObjectNewFieldStep2 = () => {
         });
         relationObjectViews.forEach(async (view) => {
           await createOneViewField?.({
-            view: view.id,
+            viewId: view.id,
             fieldMetadataId:
               validatedFormValues.relation.type === 'MANY_TO_ONE'
                 ? createdRelation.data?.createOneRelation.fromFieldMetadataId
@@ -168,9 +168,13 @@ export const SettingsObjectNewFieldStep2 = () => {
         await createMetadataField({
           description: validatedFormValues.description,
           icon: validatedFormValues.icon,
-          label: validatedFormValues.label,
+          label: validatedFormValues.label ?? '',
           objectMetadataId: activeObjectMetadataItem.id,
           type: validatedFormValues.type,
+          options:
+            validatedFormValues.type === FieldMetadataType.Select
+              ? validatedFormValues.select
+              : undefined,
         });
       }
 
@@ -185,12 +189,14 @@ export const SettingsObjectNewFieldStep2 = () => {
   const excludedFieldTypes = [
     FieldMetadataType.Currency,
     FieldMetadataType.Email,
-    FieldMetadataType.Enum,
-    FieldMetadataType.Numeric,
     FieldMetadataType.FullName,
     FieldMetadataType.Link,
+    FieldMetadataType.MultiSelect,
+    FieldMetadataType.Numeric,
     FieldMetadataType.Phone,
     FieldMetadataType.Probability,
+    FieldMetadataType.Rating,
+    FieldMetadataType.Select,
     FieldMetadataType.Uuid,
   ];
 

@@ -8,9 +8,8 @@ const StyledContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
-  height: 34px;
+  height: ${({ theme }) => theme.spacing(6)};
   padding: ${({ theme }) => theme.spacing(1)};
-  padding-bottom: ${({ theme }) => theme.spacing(2)};
   user-select: none;
 `;
 

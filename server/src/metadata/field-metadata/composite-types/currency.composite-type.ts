@@ -47,3 +47,8 @@ export const currencyObjectDefinition = {
   fromRelations: [],
   toRelations: [],
 } satisfies ObjectMetadataInterface;
+
+export type CurrencyMetadata = {
+  amountMicros: number;
+  currencyCode: string;
+}

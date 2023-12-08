@@ -82,6 +82,9 @@ export const useOpenCreateActivityDrawer = () => {
       setActivityTargetableEntityArray,
       setHotkeyScope,
       setViewableActivityId,
+      createOneActivity,
+      createOneActivityTarget,
+      currentWorkspaceMember,
     ],
   );
 };

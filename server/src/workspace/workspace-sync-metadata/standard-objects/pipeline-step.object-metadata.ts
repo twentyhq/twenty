@@ -8,6 +8,7 @@ import {
   RelationMetadata,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { OpportunityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/opportunity.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'pipelineSteps',
@@ -58,5 +59,5 @@ export class PipelineStepObjectMetadata extends BaseObjectMetadata {
     objectName: 'opportunity',
   })
   @IsNullable()
-  opportunities: object[];
+  opportunities: OpportunityObjectMetadata[];
 }

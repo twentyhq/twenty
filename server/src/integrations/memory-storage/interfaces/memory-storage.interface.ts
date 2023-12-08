@@ -1,12 +1,15 @@
 import { FactoryProvider, ModuleMetadata } from '@nestjs/common';
 
-import { MemoryStorageType } from 'src/integrations/environment/interfaces/memory-storage.interface';
 import { MemoryStorageSerializer } from 'src/integrations/memory-storage/serializers/interfaces/memory-storage-serializer.interface';
 
 import { LocalMemoryDriverOptions } from 'src/integrations/memory-storage/drivers/local.driver';
 
+export enum MemoryStorageDriverType {
+  Local = 'local',
+}
+
 export interface LocalMemoryDriverFactoryOptions {
-  type: MemoryStorageType.Local;
+  type: MemoryStorageDriverType.Local;
   options: LocalMemoryDriverOptions;
 }
 

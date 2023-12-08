@@ -29,7 +29,7 @@ type AssertFieldMetadataFunction = <
     ? FieldDateTimeMetadata
     : E extends 'EMAIL'
     ? FieldEmailMetadata
-    : E extends 'ENUM'
+    : E extends 'SELECT'
     ? FieldSelectMetadata
     : E extends 'LINK'
     ? FieldLinkMetadata
@@ -37,7 +37,7 @@ type AssertFieldMetadataFunction = <
     ? FieldNumberMetadata
     : E extends 'PHONE'
     ? FieldPhoneMetadata
-    : E extends 'PROBABILITY'
+    : E extends 'RATING'
     ? FieldRatingMetadata
     : E extends 'RELATION'
     ? FieldRelationMetadata

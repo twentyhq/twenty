@@ -18,8 +18,7 @@ const StyledMainContainer = styled.div`
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
   min-height: 0;
-  padding-bottom: ${({ theme }) => theme.spacing(4)};
-  padding-right: ${({ theme }) => theme.spacing(3)};
+  padding: ${({ theme }) => theme.spacing(0, 3)};
   width: 100%;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
