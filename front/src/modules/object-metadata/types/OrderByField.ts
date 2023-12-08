@@ -1,4 +1,4 @@
-import { OrderBy } from '@/search/hooks/useFilteredSearchEntityQuery';
+import { OrderBy } from '@/object-metadata/types/OrderBy';
 
 export type OrderByField = {
   [fieldName: string]: OrderBy | { [subFieldName: string]: OrderBy };

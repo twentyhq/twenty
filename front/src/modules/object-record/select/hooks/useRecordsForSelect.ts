@@ -1,16 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { OrderBy } from '@/object-metadata/types/OrderBy';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
 import { getObjectFilterFields } from '@/object-record/select/utils/getObjectFilterFields';
 import { isDefined } from '~/utils/isDefined';
-
-export type OrderBy =
-  | 'AscNullsLast'
-  | 'DescNullsLast'
-  | 'AscNullsFirst'
-  | 'DescNullsFirst';
 
 export const DEFAULT_SEARCH_REQUEST_LIMIT = 60;
 

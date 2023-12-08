@@ -1,7 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { OrderBy } from '@/object-metadata/types/OrderBy';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { getObjectOrderByField } from '@/object-metadata/utils/getObjectOrderByField';
-import { OrderBy } from '@/object-record/select/hooks/useRecordsForSelect';
 
 export const useGetObjectOrderByField = ({
   objectMetadataItem,
