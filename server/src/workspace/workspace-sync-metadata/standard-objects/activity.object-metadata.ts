@@ -131,5 +131,6 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUserCircle',
     joinColumn: 'assigneeId',
   })
+  @IsNullable()
   assignee: WorkspaceMemberObjectMetadata;
 }

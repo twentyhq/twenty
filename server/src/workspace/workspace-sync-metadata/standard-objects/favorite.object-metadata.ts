@@ -3,6 +3,7 @@ import {
   ObjectMetadata,
   IsSystem,
   FieldMetadata,
+  IsNullable,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
@@ -44,6 +45,7 @@ export class FavoriteObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUser',
     joinColumn: 'personId',
   })
+  @IsNullable()
   person: PersonObjectMetadata;
 
   @FieldMetadata({
@@ -53,5 +55,6 @@ export class FavoriteObjectMetadata extends BaseObjectMetadata {
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
   })
+  @IsNullable()
   company: CompanyObjectMetadata;
 }

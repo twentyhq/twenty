@@ -2,6 +2,7 @@ import { QueryHookOptions, QueryResult } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { OrderBy } from '@/object-metadata/types/OrderBy';
 import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/components/MultipleEntitySelect';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { mapPaginatedRecordsToRecords } from '@/object-record/utils/mapPaginatedRecordsToRecords';
@@ -9,12 +10,6 @@ import { assertNotNull } from '~/utils/assert';
 import { isDefined } from '~/utils/isDefined';
 
 type SearchFilter = { fieldNames: string[]; filter: string | number };
-
-export type OrderBy =
-  | 'AscNullsLast'
-  | 'DescNullsLast'
-  | 'AscNullsFirst'
-  | 'DescNullsFirst';
 
 export const DEFAULT_SEARCH_REQUEST_LIMIT = 60;
 

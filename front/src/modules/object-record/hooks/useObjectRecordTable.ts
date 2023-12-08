@@ -35,10 +35,12 @@ export const useObjectRecordTable = () => {
     tableFilters,
     foundObjectMetadataItem?.fields ?? [],
   );
+
+  // TODO: finish typing
   const orderBy = turnSortsIntoOrderBy(
     tableSorts,
     foundObjectMetadataItem?.fields ?? [],
-  );
+  ) as any;
 
   const { records, loading, fetchMoreRecords, queryStateIdentifier } =
     useFindManyRecords({
