@@ -13,7 +13,7 @@ export class OpenApiController {
     try {
       const data = await this.openApiService.generateSchema(request);
 
-      res.send({ data });
+      res.send(data);
     } catch (err) {
       res.status(err.response.statusCode).send(err);
     }
