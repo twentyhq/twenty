@@ -15,18 +15,25 @@ export const useSelectableList = (props?: UseSelectableListProps) => {
     props?.selectableListId,
   );
 
-  const { selectableItemIdsState, isSelectedItemIdSelector } =
-    useSelectableListScopedStates({
-      selectableListScopeId: scopeId,
-      itemId: props?.itemId,
-    });
+  const {
+    selectableItemIdsState,
+    isSelectedItemIdSelector,
+    selectableListOnEnterState,
+  } = useSelectableListScopedStates({
+    selectableListScopeId: scopeId,
+    itemId: props?.itemId,
+  });
 
   const setSelectableItemIds = useSetRecoilState(selectableItemIdsState);
+  const setSelectableListOnEnter = useSetRecoilState(
+    selectableListOnEnterState,
+  );
   const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector);
 
   return {
     setSelectableItemIds,
     isSelectedItemId,
+    setSelectableListOnEnter,
     selectableListId: scopeId,
     isSelectedItemIdSelector,
   };

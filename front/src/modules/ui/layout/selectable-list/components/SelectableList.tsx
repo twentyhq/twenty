@@ -11,6 +11,7 @@ type SelectableListProps = {
   selectableItemIds: string[][];
   onSelect?: (selected: string) => void;
   hotkeyScope: string;
+  onEnter?: (itemId: string) => void;
 };
 
 const StyledSelectableItemsContainer = styled.div`
@@ -22,12 +23,17 @@ export const SelectableList = ({
   selectableListId,
   hotkeyScope,
   selectableItemIds,
+  onEnter,
 }: SelectableListProps) => {
   useSelectableListHotKeys(selectableListId, hotkeyScope);
 
-  const { setSelectableItemIds } = useSelectableList({
+  const { setSelectableItemIds, setSelectableListOnEnter } = useSelectableList({
     selectableListId,
   });
+
+  useEffect(() => {
+    setSelectableListOnEnter(() => onEnter);
+  }, [onEnter, setSelectableListOnEnter]);
 
   useEffect(() => {
     setSelectableItemIds(selectableItemIds);

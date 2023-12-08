@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
-import { Key } from 'ts-key-enum';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -12,7 +11,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { arrayToChunks } from '~/utils/array/array-to-chunks';
 
 import { IconButton, IconButtonVariant } from '../button/components/IconButton';
@@ -49,6 +48,34 @@ const StyledLightIconButton = styled(LightIconButton)<{ isSelected?: boolean }>`
 const convertIconKeyToLabel = (iconKey: string) =>
   iconKey.replace(/[A-Z]/g, (letter) => ` ${letter}`).trim();
 
+type IconPickerIconProps = {
+  iconKey: string;
+  onClick: () => void;
+  selectedIconKey?: string;
+  Icon: IconComponent;
+};
+
+const IconPickerIcon = ({
+  iconKey,
+  onClick,
+  selectedIconKey,
+  Icon,
+}: IconPickerIconProps) => {
+  const { isSelectedItemId } = useSelectableList({ itemId: iconKey });
+
+  return (
+    <StyledLightIconButton
+      key={iconKey}
+      aria-label={convertIconKeyToLabel(iconKey)}
+      size="medium"
+      title={iconKey}
+      isSelected={iconKey === selectedIconKey || isSelectedItemId}
+      Icon={Icon}
+      onClick={onClick}
+    />
+  );
+};
+
 export const IconPicker = ({
   disabled,
   dropdownScopeId = 'icon-picker',
@@ -61,6 +88,10 @@ export const IconPicker = ({
   className,
 }: IconPickerProps) => {
   const [searchString, setSearchString] = useState('');
+  const {
+    goBackToPreviousHotkeyScope,
+    setHotkeyScopeAndMemorizePreviousScope,
+  } = usePreviousHotkeyScope();
 
   const { closeDropdown } = useDropdown({ dropdownScopeId });
 
@@ -89,27 +120,6 @@ export const IconPicker = ({
     [iconKeys],
   );
 
-  const { selectedItemId } = useSelectableList({
-    selectableListId: 'icon-list',
-  });
-
-  const selectedItem = selectedItemId ?? selectedIconKey;
-
-  useScopedHotkeys(
-    Key.Enter,
-    () => {
-      if (selectedItem) {
-        const itemIndex = iconKeys.indexOf(selectedItem);
-
-        if (itemIndex === -1)
-          onChange({ iconKey: selectedItem, Icon: icons[itemIndex] });
-        closeDropdown();
-      }
-    },
-    IconPickerHotkeyScope.IconPicker,
-    [selectedItem],
-  );
-
   return (
     <DropdownScope dropdownScopeId={dropdownScopeId}>
       <div className={className}>
@@ -118,7 +128,7 @@ export const IconPicker = ({
           clickableComponent={
             <IconButton
               disabled={disabled}
-              Icon={selectedItem ? icons[selectedItem] : IconApps}
+              Icon={selectedIconKey ? icons[selectedIconKey] : IconApps}
               variant={variant}
             />
           }
@@ -128,6 +138,10 @@ export const IconPicker = ({
               selectableListId="icon-list"
               selectableItemIds={iconKeys2d}
               hotkeyScope={IconPickerHotkeyScope.IconPicker}
+              onEnter={(iconKey) => {
+                onChange({ iconKey, Icon: icons[iconKey] });
+                closeDropdown();
+              }}
             >
               <DropdownMenu width={176}>
                 <DropdownMenuSearchInput
@@ -136,28 +150,35 @@ export const IconPicker = ({
                   onChange={(event) => setSearchString(event.target.value)}
                 />
                 <DropdownMenuSeparator />
-                <DropdownMenuItemsContainer>
-                  {isLoading ? (
-                    <DropdownMenuSkeletonItem />
-                  ) : (
-                    <StyledMenuIconItemsContainer>
-                      {iconKeys.map((iconKey) => (
-                        <StyledLightIconButton
-                          key={iconKey}
-                          aria-label={convertIconKeyToLabel(iconKey)}
-                          isSelected={selectedItem === iconKey}
-                          size="medium"
-                          title={iconKey}
-                          Icon={icons[iconKey]}
-                          onClick={() => {
-                            onChange({ iconKey, Icon: icons[iconKey] });
-                            closeDropdown();
-                          }}
-                        />
-                      ))}
-                    </StyledMenuIconItemsContainer>
-                  )}
-                </DropdownMenuItemsContainer>
+                <div
+                  onMouseEnter={() => {
+                    setHotkeyScopeAndMemorizePreviousScope(
+                      IconPickerHotkeyScope.IconPicker,
+                    );
+                  }}
+                  onMouseLeave={goBackToPreviousHotkeyScope}
+                >
+                  <DropdownMenuItemsContainer>
+                    {isLoading ? (
+                      <DropdownMenuSkeletonItem />
+                    ) : (
+                      <StyledMenuIconItemsContainer>
+                        {iconKeys.map((iconKey) => (
+                          <IconPickerIcon
+                            key={iconKey}
+                            iconKey={iconKey}
+                            onClick={() => {
+                              onChange({ iconKey, Icon: icons[iconKey] });
+                              closeDropdown();
+                            }}
+                            selectedIconKey={selectedIconKey}
+                            Icon={icons[iconKey]}
+                          />
+                        ))}
+                      </StyledMenuIconItemsContainer>
+                    )}
+                  </DropdownMenuItemsContainer>
+                </div>
               </DropdownMenu>
             </SelectableList>
           }

@@ -1,6 +1,3 @@
-import { useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-
 import { IconArrowUpRight } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -28,11 +25,8 @@ export const CommandMenuItem = ({
   Icon,
   firstHotKey,
   secondHotKey,
-  enterClicked,
-  resetEnterClicked,
 }: CommandMenuItemProps) => {
-  const navigate = useNavigate();
-  const { toggleCommandMenu } = useCommandMenu();
+  const { onItemClick } = useCommandMenu();
 
   if (to && !Icon) {
     Icon = IconArrowUpRight;
@@ -40,33 +34,13 @@ export const CommandMenuItem = ({
 
   const { isSelectedItemId } = useSelectableList({ itemId: id });
 
-  const onItemClick = useCallback(() => {
-    toggleCommandMenu();
-
-    if (onClick) {
-      onClick();
-      return;
-    }
-    if (to) {
-      navigate(to);
-      return;
-    }
-  }, [navigate, onClick, to, toggleCommandMenu]);
-
-  useEffect(() => {
-    if (enterClicked && isSelectedItemId) {
-      onItemClick();
-      resetEnterClicked?.();
-    }
-  }, [enterClicked, isSelectedItemId, onItemClick, resetEnterClicked]);
-
   return (
     <MenuItemCommand
       LeftIcon={Icon}
       text={label}
       firstHotKey={firstHotKey}
       secondHotKey={secondHotKey}
-      onClick={onItemClick}
+      onClick={() => onItemClick(onClick, to)}
       isSelected={isSelectedItemId}
     />
   );

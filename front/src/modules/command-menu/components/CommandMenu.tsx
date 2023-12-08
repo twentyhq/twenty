@@ -85,7 +85,7 @@ export const StyledEmpty = styled.div`
 `;
 
 export const CommandMenu = () => {
-  const { toggleCommandMenu, closeCommandMenu } = useCommandMenu();
+  const { toggleCommandMenu, onItemClick } = useCommandMenu();
 
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
@@ -108,26 +108,6 @@ export const CommandMenu = () => {
     },
     AppHotkeyScope.CommandMenu,
     [toggleCommandMenu, setSearch],
-  );
-
-  useScopedHotkeys(
-    'esc',
-    () => {
-      setSearch('');
-      closeKeyboardShortcutMenu();
-      closeCommandMenu();
-    },
-    AppHotkeyScope.CommandMenu,
-    [toggleCommandMenu, setSearch],
-  );
-
-  useScopedHotkeys(
-    'Enter',
-    () => {
-      setEnterClicked(true);
-    },
-    AppHotkeyScope.CommandMenu,
-    [],
   );
 
   const { records: people } = useFindManyRecords<Person>({
@@ -212,6 +192,9 @@ export const CommandMenu = () => {
                 selectableListId="command-menu-list"
                 selectableItemIds={[selectableItemIds]}
                 hotkeyScope={AppHotkeyScope.CommandMenu}
+                onEnter={(itemId) => {
+                  console.log(itemId);
+                }}
               >
                 {!matchingCreateCommand.length &&
                   !matchingNavigateCommand.length &&
@@ -232,8 +215,6 @@ export const CommandMenu = () => {
                         onClick={cmd.onCommandClick}
                         firstHotKey={cmd.firstHotKey}
                         secondHotKey={cmd.secondHotKey}
-                        enterClicked={enterClicked}
-                        resetEnterClicked={() => setEnterClicked(false)}
                       />
                     </SelectableItem>
                   ))}
@@ -250,8 +231,6 @@ export const CommandMenu = () => {
                         onClick={cmd.onCommandClick}
                         firstHotKey={cmd.firstHotKey}
                         secondHotKey={cmd.secondHotKey}
-                        enterClicked={enterClicked}
-                        resetEnterClicked={() => setEnterClicked(false)}
                       />
                     </SelectableItem>
                   ))}

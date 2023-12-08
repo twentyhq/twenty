@@ -127,5 +127,34 @@ export const useSelectableListHotKeys = (
     [],
   );
 
+  useScopedHotkeys(
+    Key.Enter,
+    useRecoilCallback(
+      ({ snapshot }) =>
+        () => {
+          const { selectedItemIdState, selectableListOnEnterState } =
+            getSelectableListScopedStates({
+              selectableListScopeId: scopeId,
+            });
+          const selectedItemId = getSnapshotValue(
+            snapshot,
+            selectedItemIdState,
+          );
+
+          const onEnter = getSnapshotValue(
+            snapshot,
+            selectableListOnEnterState,
+          );
+
+          if (selectedItemId) {
+            onEnter?.(selectedItemId);
+          }
+        },
+      [scopeId],
+    ),
+    hotkeyScope,
+    [],
+  );
+
   return <></>;
 };
