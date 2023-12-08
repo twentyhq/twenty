@@ -26,7 +26,6 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     label: 'Name',
     description: 'View name',
     icon: null,
-    defaultValue: { value: '' },
   })
   name: string;
 
@@ -36,6 +35,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     description: 'View target object',
     icon: null,
   })
+  @IsNullable()
   objectMetadataId: string;
 
   @FieldMetadata({
@@ -57,7 +57,6 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'viewField',
   })
-  @IsNullable()
   viewFields: ViewFieldObjectMetadata[];
 
   @FieldMetadata({
@@ -70,7 +69,6 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'viewFilter',
   })
-  @IsNullable()
   viewFilters: ViewFilterObjectMetadata[];
 
   @FieldMetadata({
@@ -83,6 +81,5 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'viewSort',
   })
-  @IsNullable()
   viewSorts: ViewSortObjectMetadata[];
 }

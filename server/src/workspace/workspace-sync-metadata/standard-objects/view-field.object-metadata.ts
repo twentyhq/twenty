@@ -23,6 +23,7 @@ export class ViewFieldObjectMetadata extends BaseObjectMetadata {
     description: 'View Field target field',
     icon: 'IconTag',
   })
+  @IsNullable()
   fieldMetadataId: string;
 
   @FieldMetadata({
@@ -59,6 +60,5 @@ export class ViewFieldObjectMetadata extends BaseObjectMetadata {
     icon: 'IconLayoutCollage',
     joinColumn: 'viewId',
   })
-  @IsNullable()
   view?: ViewObjectMetadata;
 }

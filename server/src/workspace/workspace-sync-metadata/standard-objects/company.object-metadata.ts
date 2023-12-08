@@ -39,7 +39,6 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
       'The company website URL. We use this url to fetch the company icon',
     icon: 'IconLink',
   })
-  @IsNullable()
   domainName?: string;
 
   @FieldMetadata({
@@ -48,7 +47,6 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     description: 'The company address',
     icon: 'IconMap',
   })
-  @IsNullable()
   address: string;
 
   @FieldMetadata({
@@ -109,7 +107,6 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'person',
   })
-  @IsNullable()
   people: PersonObjectMetadata[];
 
   @FieldMetadata({
@@ -120,7 +117,6 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUserCircle',
     joinColumn: 'accountOwnerId',
   })
-  @IsNullable()
   accountOwner: WorkspaceMemberObjectMetadata;
 
   @FieldMetadata({
@@ -133,7 +129,6 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'activityTarget',
   })
-  @IsNullable()
   activityTargets: ActivityTargetObjectMetadata[];
 
   @FieldMetadata({
@@ -146,7 +141,6 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'opportunity',
   })
-  @IsNullable()
   opportunities: OpportunityObjectMetadata[];
 
   @FieldMetadata({
@@ -159,7 +153,6 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'favorite',
   })
-  @IsNullable()
   favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
@@ -172,6 +165,5 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'attachment',
   })
-  @IsNullable()
   attachments: AttachmentObjectMetadata[];
 }

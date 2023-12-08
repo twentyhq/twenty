@@ -30,7 +30,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     description: 'Contact’s name',
     icon: 'IconUser',
   })
-  @IsNullable()
   name: FullNameMetadata;
 
   @FieldMetadata({
@@ -39,7 +38,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     description: 'Contact’s Email',
     icon: 'IconMail',
   })
-  @IsNullable()
   email: string;
 
   @FieldMetadata({
@@ -66,7 +64,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     description: 'Contact’s job title',
     icon: 'IconBriefcase',
   })
-  @IsNullable()
   jobTitle: string;
 
   @FieldMetadata({
@@ -75,7 +72,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     description: 'Contact’s phone number',
     icon: 'IconPhone',
   })
-  @IsNullable()
   phone: string;
 
   @FieldMetadata({
@@ -84,7 +80,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     description: 'Contact’s city',
     icon: 'IconMap',
   })
-  @IsNullable()
   city: string;
 
   @FieldMetadata({
@@ -94,7 +89,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     icon: 'IconFileUpload',
   })
   @IsSystem()
-  @IsNullable()
   avatarUrl: string;
 
   // Relations
@@ -105,7 +99,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
   })
-  @IsNullable()
   company: CompanyObjectMetadata;
 
   @FieldMetadata({
@@ -119,7 +112,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     objectName: 'opportunity',
     inverseSideFieldName: 'pointOfContact',
   })
-  @IsNullable()
   pointOfContactForOpportunities: OpportunityObjectMetadata[];
 
   @FieldMetadata({
@@ -132,7 +124,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'activityTarget',
   })
-  @IsNullable()
   activityTargets: ActivityTargetObjectMetadata[];
 
   @FieldMetadata({
@@ -145,7 +136,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'opportunity',
   })
-  @IsNullable()
   opportunities: OpportunityObjectMetadata[];
 
   @FieldMetadata({
@@ -158,7 +148,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'favorite',
   })
-  @IsNullable()
   favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
@@ -171,6 +160,5 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'attachment',
   })
-  @IsNullable()
   attachments: AttachmentObjectMetadata[];
 }

@@ -144,7 +144,7 @@ function generateFieldMetadata<T extends FieldMetadataType>(
     name: fieldKey,
     ...metadata,
     targetColumnMap: targetColumnMap,
-    isNullable,
+    isNullable: isNullable || !defaultValue,
     isSystem,
     isCustom: false,
     options: null, // TODO: handle options + stringify for the diff.

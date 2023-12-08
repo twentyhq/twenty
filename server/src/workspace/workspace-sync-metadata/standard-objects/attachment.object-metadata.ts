@@ -69,7 +69,6 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUser',
     joinColumn: 'personId',
   })
-  @IsNullable()
   person: PersonObjectMetadata;
 
   @FieldMetadata({
@@ -79,6 +78,5 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
   })
-  @IsNullable()
   company: CompanyObjectMetadata;
 }

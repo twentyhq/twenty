@@ -35,7 +35,6 @@ export class ActivityTargetObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUser',
     joinColumn: 'personId',
   })
-  @IsNullable()
   person: PersonObjectMetadata;
 
   @FieldMetadata({
@@ -45,6 +44,5 @@ export class ActivityTargetObjectMetadata extends BaseObjectMetadata {
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
   })
-  @IsNullable()
   company: CompanyObjectMetadata;
 }

@@ -23,6 +23,7 @@ export class ViewFilterObjectMetadata extends BaseObjectMetadata {
     description: 'View Filter target field',
     icon: null,
   })
+  @IsNullable()
   fieldMetadataId: string;
 
   @FieldMetadata({
@@ -39,7 +40,6 @@ export class ViewFilterObjectMetadata extends BaseObjectMetadata {
     label: 'Value',
     description: 'View Filter value',
     icon: null,
-    defaultValue: { value: '' },
   })
   value: string;
 
@@ -48,7 +48,6 @@ export class ViewFilterObjectMetadata extends BaseObjectMetadata {
     label: 'Display Value',
     description: 'View Filter Display Value',
     icon: null,
-    defaultValue: { value: '' },
   })
   displayValue: string;
 
@@ -59,6 +58,5 @@ export class ViewFilterObjectMetadata extends BaseObjectMetadata {
     icon: 'IconLayoutCollage',
     joinColumn: 'viewId',
   })
-  @IsNullable()
   view: ViewObjectMetadata;
 }

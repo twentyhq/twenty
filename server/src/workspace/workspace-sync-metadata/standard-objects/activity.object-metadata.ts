@@ -28,7 +28,6 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     description: 'Activity title',
     icon: 'IconNotes',
   })
-  @IsNullable()
   title: string;
 
   @FieldMetadata({
@@ -37,7 +36,6 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     description: 'Activity body',
     icon: 'IconList',
   })
-  @IsNullable()
   body: string;
 
   @FieldMetadata({
@@ -86,7 +84,6 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'activityTarget',
   })
-  @IsNullable()
   activityTargets: ActivityTargetObjectMetadata[];
 
   @FieldMetadata({
@@ -99,7 +96,6 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'attachment',
   })
-  @IsNullable()
   attachments: AttachmentObjectMetadata[];
 
   @FieldMetadata({
@@ -112,7 +108,6 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'comment',
   })
-  @IsNullable()
   comments: CommentObjectMetadata[];
 
   @FieldMetadata({

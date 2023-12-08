@@ -44,7 +44,6 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     icon: 'IconProgressCheck',
     defaultValue: { value: '0' },
   })
-  @IsNullable()
   probability: string;
 
   // Relations
@@ -55,7 +54,6 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     icon: 'IconKanban',
     joinColumn: 'pipelineStepId',
   })
-  @IsNullable()
   pipelineStep: PipelineStepObjectMetadata;
 
   @FieldMetadata({
@@ -65,7 +63,6 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUser',
     joinColumn: 'pointOfContactId',
   })
-  @IsNullable()
   pointOfContact: PersonObjectMetadata;
 
   @FieldMetadata({
@@ -84,6 +81,5 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
   })
-  @IsNullable()
   company: CompanyObjectMetadata;
 }

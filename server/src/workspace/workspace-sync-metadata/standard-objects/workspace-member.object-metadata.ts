@@ -78,7 +78,6 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'activity',
     inverseSideFieldName: 'author',
   })
-  @IsNullable()
   authoredActivities: ActivityObjectMetadata[];
 
   @FieldMetadata({
@@ -92,7 +91,6 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'activity',
     inverseSideFieldName: 'assignee',
   })
-  @IsNullable()
   assignedActivities: ActivityObjectMetadata[];
 
   @FieldMetadata({
@@ -105,7 +103,6 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'favorite',
   })
-  @IsNullable()
   favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
@@ -119,7 +116,6 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'company',
     inverseSideFieldName: 'accountOwner',
   })
-  @IsNullable()
   accountOwnerForCompanies: CompanyObjectMetadata[];
 
   @FieldMetadata({
@@ -133,7 +129,6 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'attachment',
     inverseSideFieldName: 'author',
   })
-  @IsNullable()
   authoredAttachments: AttachmentObjectMetadata[];
 
   @FieldMetadata({
@@ -147,6 +142,5 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'comment',
     inverseSideFieldName: 'author',
   })
-  @IsNullable()
   authoredComments: CommentObjectMetadata[];
 }
