@@ -144,7 +144,7 @@ function generateFieldMetadata<T extends FieldMetadataType>(
     name: fieldKey,
     ...metadata,
     targetColumnMap: targetColumnMap,
-    isNullable,
+    isNullable: metadata.type === FieldMetadataType.RELATION ? true : isNullable,
     isSystem,
     isCustom: false,
     options: null, // TODO: handle options + stringify for the diff.

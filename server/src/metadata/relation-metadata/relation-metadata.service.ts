@@ -137,11 +137,11 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         description: record.toDescription,
         icon: record.toIcon,
         isCustom: true,
-        targetColumnMap: isToCustom
-          ? {
-              value: createCustomColumnName(record.toName),
-            }
-          : {},
+        targetColumnMap: {
+          value: isToCustom
+            ? createCustomColumnName(record.toName)
+            : record.toName,
+        },
         isActive: true,
         type: FieldMetadataType.RELATION,
         objectMetadataId: record.toObjectMetadataId,
@@ -151,7 +151,9 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       {
         name: baseColumnName,
         label: `${record.toLabel} Foreign Key`,
-        description: `${record.toDescription} Foreign Key`,
+        description: record.toDescription
+          ? `${record.toDescription} Foreign Key`
+          : undefined,
         icon: undefined,
         isCustom: true,
         targetColumnMap: {
