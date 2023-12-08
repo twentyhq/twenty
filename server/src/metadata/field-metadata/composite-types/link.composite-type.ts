@@ -43,3 +43,8 @@ export const linkObjectDefinition = {
   fromRelations: [],
   toRelations: [],
 } satisfies ObjectMetadataInterface;
+
+export type LinkMetadata = {
+  label: string;
+  url: string;
+}

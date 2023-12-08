@@ -8,14 +8,14 @@ import { generateTargetColumnMap } from 'src/metadata/field-metadata/utils/gener
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { generateDefaultValue } from 'src/metadata/field-metadata/utils/generate-default-value';
 
-export type FieldMetadataDecorator = {
-  type: FieldMetadataType;
+export interface FieldMetadataDecorator<T extends FieldMetadataType> {
+  type: T;
   label: string;
   description?: string | null;
   icon?: string | null;
-  defaultValue?: FieldMetadataDefaultValue | null;
+  defaultValue?: FieldMetadataDefaultValue<T> | null;
   joinColumn?: string;
-};
+}
 
 export type ObjectMetadataDecorator = {
   namePlural: string;
@@ -82,8 +82,8 @@ export function IsSystem() {
   };
 }
 
-export function FieldMetadata(
-  metadata: FieldMetadataDecorator,
+export function FieldMetadata<T extends FieldMetadataType>(
+  metadata: FieldMetadataDecorator<T>,
 ): PropertyDecorator {
   return (target: object, fieldKey: string) => {
     const existingFieldMetadata =
@@ -100,7 +100,7 @@ export function FieldMetadata(
       'fieldMetadata',
       {
         ...existingFieldMetadata,
-        [fieldKey]: generateFieldMetadata(
+        [fieldKey]: generateFieldMetadata<T>(
           fieldMetadata,
           fieldKey,
           isNullable,
@@ -108,7 +108,7 @@ export function FieldMetadata(
         ),
         ...(joinColumn && fieldMetadata.type === FieldMetadataType.RELATION
           ? {
-              [joinColumn]: generateFieldMetadata(
+              [joinColumn]: generateFieldMetadata<FieldMetadataType.UUID>(
                 {
                   ...fieldMetadata,
                   type: FieldMetadataType.UUID,
@@ -128,8 +128,8 @@ export function FieldMetadata(
   };
 }
 
-function generateFieldMetadata(
-  metadata: FieldMetadataDecorator,
+function generateFieldMetadata<T extends FieldMetadataType>(
+  metadata: FieldMetadataDecorator<T>,
   fieldKey: string,
   isNullable: boolean,
   isSystem: boolean,

@@ -37,5 +37,6 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = () => {
           targetableEntities: activityTargetableEntityArray,
         });
       },
+    [openCreateActivityDrawer],
   );
 };

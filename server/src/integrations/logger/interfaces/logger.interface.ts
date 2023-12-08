@@ -1,17 +1,9 @@
-import { LoggerDriver } from 'src/integrations/environment/interfaces/logger.interface';
-
-export interface SentryDriverFactoryOptions {
-  type: LoggerDriver.Sentry;
-  options: {
-    sentryDNS: string;
-  };
+export enum LoggerDriverType {
+  Console = 'console',
 }
 
 export interface ConsoleDriverFactoryOptions {
-  type: LoggerDriver.Console;
-  options: null;
+  type: LoggerDriverType.Console;
 }
 
-export type LoggerModuleOptions =
-  | SentryDriverFactoryOptions
-  | ConsoleDriverFactoryOptions;
+export type LoggerModuleOptions = ConsoleDriverFactoryOptions;

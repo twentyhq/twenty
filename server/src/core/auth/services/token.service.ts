@@ -114,6 +114,29 @@ export class TokenService {
     };
   }
 
+  async generateTransientToken(
+    workspaceMemberId: string,
+    workspaceId: string,
+  ): Promise<AuthToken> {
+    const secret = this.environmentService.getLoginTokenSecret();
+    const expiresIn = this.environmentService.getTransientTokenExpiresIn();
+
+    assert(expiresIn, '', InternalServerErrorException);
+    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
+    const jwtPayload = {
+      sub: workspaceMemberId,
+      workspaceId,
+    };
+
+    return {
+      token: this.jwtService.sign(jwtPayload, {
+        secret,
+        expiresIn,
+      }),
+      expiresAt,
+    };
+  }
+
   async generateApiKeyToken(
     workspaceId: string,
     apiKeyId?: string,
@@ -164,6 +187,20 @@ export class TokenService {
     const payload = await this.verifyJwt(loginToken, loginTokenSecret);
 
     return payload.sub;
+  }
+
+  async verifyTransientToken(transientToken: string): Promise<{
+    workspaceMemberId: string;
+    workspaceId: string;
+  }> {
+    const transientTokenSecret = this.environmentService.getLoginTokenSecret();
+
+    const payload = await this.verifyJwt(transientToken, transientTokenSecret);
+
+    return {
+      workspaceMemberId: payload.sub,
+      workspaceId: payload.workspaceId,
+    };
   }
 
   async verifyRefreshToken(refreshToken: string) {

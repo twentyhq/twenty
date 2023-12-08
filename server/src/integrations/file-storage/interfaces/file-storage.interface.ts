@@ -1,17 +1,20 @@
 import { FactoryProvider, ModuleMetadata } from '@nestjs/common';
 
-import { StorageType } from 'src/integrations/environment/interfaces/storage.interface';
-
 import { S3DriverOptions } from 'src/integrations/file-storage/drivers/s3.driver';
 import { LocalDriverOptions } from 'src/integrations/file-storage/drivers/local.driver';
 
+export enum StorageDriverType {
+  S3 = 's3',
+  Local = 'local',
+}
+
 export interface S3DriverFactoryOptions {
-  type: StorageType.S3;
+  type: StorageDriverType.S3;
   options: S3DriverOptions;
 }
 
 export interface LocalDriverFactoryOptions {
-  type: StorageType.Local;
+  type: StorageDriverType.Local;
   options: LocalDriverOptions;
 }
 

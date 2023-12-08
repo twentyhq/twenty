@@ -43,3 +43,8 @@ export const fullNameObjectDefinition = {
   fromRelations: [],
   toRelations: [],
 } satisfies ObjectMetadataInterface;
+
+export type FullNameMetadata = {
+  firstName: string;
+  lastName: string;
+}

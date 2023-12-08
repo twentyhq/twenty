@@ -31,16 +31,16 @@ const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(10)};
+  gap: ${({ theme }) => theme.spacing(8)};
   height: 100%;
   min-width: ${desktopNavDrawerWidths.menu};
-  padding: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(4)};
+  padding: ${({ theme }) => theme.spacing(3, 2, 4)};
 
   ${({ isSubMenu, theme }) =>
     isSubMenu
       ? css`
-          padding-top: ${theme.spacing(11)};
+          padding-right: ${theme.spacing(8)};
+          padding-top: 41px;
         `
       : ''}
 
@@ -52,6 +52,7 @@ const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
 const StyledItemsContainer = styled.div`
   display: flex;
   flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(8)};
   margin-bottom: auto;
 `;
 

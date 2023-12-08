@@ -1,20 +1,54 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
-import { RecordTableBodyEffect } from '@/object-record/record-table/components/RecordTableBodyEffect';
-import { RecordTableHeader } from '@/object-record/record-table/components/RecordTableHeader';
-import { RecordTableInternalEffect } from '@/object-record/record-table/components/RecordTableInternalEffect';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { IconPlus } from '@/ui/display/icon';
+import { Button } from '@/ui/input/button/components/Button';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
 import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
+import { useRecordTable } from '../hooks/useRecordTable';
+import { RecordTableScope } from '../scopes/RecordTableScope';
+import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
 
 import { RecordTableBody } from './RecordTableBody';
+import { RecordTableBodyEffect } from './RecordTableBodyEffect';
+import { RecordTableHeader } from './RecordTableHeader';
+import { RecordTableInternalEffect } from './RecordTableInternalEffect';
+
+const StyledObjectEmptyContainer = styled.div`
+  align-items: center;
+  align-self: stretch;
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+  justify-content: center;
+  padding-bottom: ${({ theme }) => theme.spacing(16)};
+  padding-left: ${({ theme }) => theme.spacing(4)};
+  padding-right: ${({ theme }) => theme.spacing(4)};
+  padding-top: ${({ theme }) => theme.spacing(3)};
+`;
+
+const StyledEmptyObjectTitle = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-size: ${({ theme }) => theme.font.size.xxl};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  line-height: ${({ theme }) => theme.text.lineHeight.md};
+`;
+
+const StyledEmptyObjectSubTitle = styled.div`
+  color: ${({ theme }) => theme.font.color.extraLight};
+  font-size: ${({ theme }) => theme.font.size.xxl};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  line-height: ${({ theme }) => theme.text.lineHeight.md};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
 
 const StyledTable = styled.table`
   border-collapse: collapse;
@@ -90,9 +124,26 @@ export const RecordTable = ({
 }: RecordTableProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const { resetTableRowSelection, setRowSelectedState } = useRecordTable({
+  const numberOfTableRows = useRecoilValue(numberOfTableRowsState);
+
+  const {
+    scopeId: objectNamePlural,
+    resetTableRowSelection,
+    setRowSelectedState,
+  } = useRecordTable({
     recordTableScopeId: recordTableId,
   });
+
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
+    objectNamePlural,
+  });
+
+  const { objectMetadataItem: foundObjectMetadataItem } = useObjectMetadataItem(
+    {
+      objectNameSingular,
+    },
+  );
+
   const { persistViewFields } = useViewFields(viewBarId);
 
   return (
@@ -119,6 +170,22 @@ export const RecordTable = ({
                 />
               </div>
               <RecordTableInternalEffect tableBodyRef={tableBodyRef} />
+              {numberOfTableRows === 0 && (
+                <StyledObjectEmptyContainer>
+                  <StyledEmptyObjectTitle>
+                    No {foundObjectMetadataItem?.namePlural}
+                  </StyledEmptyObjectTitle>
+                  <StyledEmptyObjectSubTitle>
+                    Create one:
+                  </StyledEmptyObjectSubTitle>
+                  <Button
+                    Icon={IconPlus}
+                    title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
+                    variant={'secondary'}
+                    onClick={createRecord}
+                  />
+                </StyledObjectEmptyContainer>
+              )}
             </StyledTableContainer>
           </StyledTableWithHeader>
         </EntityUpdateMutationContext.Provider>

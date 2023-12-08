@@ -14,15 +14,16 @@ import {
 
 import { assert } from 'src/utils/assert';
 import { CastToStringArray } from 'src/integrations/environment/decorators/cast-to-string-array.decorator';
+import { ExceptionHandlerDriver } from 'src/integrations/exception-handler/interfaces';
+import { StorageDriverType } from 'src/integrations/file-storage/interfaces';
+import { LoggerDriverType } from 'src/integrations/logger/interfaces';
 
 import { IsDuration } from './decorators/is-duration.decorator';
-import { StorageType } from './interfaces/storage.interface';
 import { AwsRegion } from './interfaces/aws-region.interface';
 import { IsAWSRegion } from './decorators/is-aws-region.decorator';
 import { CastToBoolean } from './decorators/cast-to-boolean.decorator';
 import { SupportDriver } from './interfaces/support.interface';
 import { CastToPositiveNumber } from './decorators/cast-to-positive-number.decorator';
-import { LoggerDriver } from './interfaces/logger.interface';
 import { CastToLogLevelArray } from './decorators/cast-to-log-level-array.decorator';
 
 export class EnvironmentVariables {
@@ -110,20 +111,20 @@ export class EnvironmentVariables {
   AUTH_GOOGLE_CALLBACK_URL?: string;
 
   // Storage
-  @IsEnum(StorageType)
+  @IsEnum(StorageDriverType)
   @IsOptional()
-  STORAGE_TYPE?: StorageType;
+  STORAGE_TYPE?: StorageDriverType;
 
-  @ValidateIf((env) => env.STORAGE_TYPE === StorageType.S3)
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
   @IsAWSRegion()
   STORAGE_S3_REGION?: AwsRegion;
 
-  @ValidateIf((env) => env.STORAGE_TYPE === StorageType.S3)
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S3)
   @IsString()
   STORAGE_S3_NAME?: string;
 
   @IsString()
-  @ValidateIf((env) => env.STORAGE_TYPE === StorageType.Local)
+  @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.Local)
   STORAGE_LOCAL_PATH?: string;
 
   // Support
@@ -139,9 +140,13 @@ export class EnvironmentVariables {
   @IsString()
   SUPPORT_FRONT_HMAC_KEY?: string;
 
-  @IsEnum(LoggerDriver)
+  @IsEnum(LoggerDriverType)
   @IsOptional()
-  LOGGER_DRIVER?: LoggerDriver;
+  LOGGER_DRIVER?: LoggerDriverType;
+
+  @IsEnum(ExceptionHandlerDriver)
+  @IsOptional()
+  EXCEPTION_HANDLER_DRIVER?: ExceptionHandlerDriver;
 
   @CastToLogLevelArray()
   @IsOptional()
@@ -151,7 +156,9 @@ export class EnvironmentVariables {
   @IsOptional()
   DEMO_WORKSPACE_IDS?: string[];
 
-  @ValidateIf((env) => env.LOGGER_DRIVER === LoggerDriver.Sentry)
+  @ValidateIf(
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
+  )
   @IsString()
   SENTRY_DSN?: string;
 }

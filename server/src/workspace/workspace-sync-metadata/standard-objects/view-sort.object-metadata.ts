@@ -6,6 +6,7 @@ import {
   IsSystem,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { ViewObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/view.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'viewSorts',
@@ -41,5 +42,5 @@ export class ViewSortObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'viewId',
   })
   @IsNullable()
-  view: string;
+  view: ViewObjectMetadata;
 }
