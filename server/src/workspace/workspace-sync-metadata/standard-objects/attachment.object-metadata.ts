@@ -60,6 +60,7 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
     icon: 'IconNotes',
     joinColumn: 'activityId',
   })
+  @IsNullable()
   activity: ActivityObjectMetadata;
 
   @FieldMetadata({

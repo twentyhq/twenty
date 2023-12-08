@@ -26,6 +26,7 @@ export class ActivityTargetObjectMetadata extends BaseObjectMetadata {
     icon: 'IconNotes',
     joinColumn: 'activityId',
   })
+  @IsNullable()
   activity: ActivityObjectMetadata;
 
   @FieldMetadata({
