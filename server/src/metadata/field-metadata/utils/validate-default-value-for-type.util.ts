@@ -57,7 +57,13 @@ export const validateDefaultValueForType = (
       FieldMetadataDefaultValue
     >(validator, defaultValue);
 
-    return validateSync(defaultValueInstance).length === 0;
+    return (
+      validateSync(defaultValueInstance, {
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        forbidUnknownValues: true,
+      }).length === 0
+    );
   });
 
   return isValid;

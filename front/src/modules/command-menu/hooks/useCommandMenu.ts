@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
@@ -38,9 +39,12 @@ export const useCommandMenu = () => {
     }
   });
 
-  const addToCommandMenu = (addCommand: Command[]) => {
-    setCommands((prev) => [...prev, ...addCommand]);
-  };
+  const addToCommandMenu = useCallback(
+    (addCommand: Command[]) => {
+      setCommands((prev) => [...prev, ...addCommand]);
+    },
+    [setCommands],
+  );
 
   const setToIntitialCommandMenu = () => {
     setCommands(commandMenuCommands);

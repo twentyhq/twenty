@@ -10,6 +10,9 @@ import { ExtractJwt } from 'passport-jwt';
 import { TokenExpiredError, JsonWebTokenError, verify } from 'jsonwebtoken';
 
 import { WorkspaceFactory } from 'src/workspace/workspace.factory';
+import { TypeOrmExceptionFilter } from 'src/filters/typeorm-exception.filter';
+import { HttpExceptionFilter } from 'src/filters/http-exception.filter';
+import { GlobalExceptionFilter } from 'src/filters/global-exception.filter';
 
 import { AppService } from './app.service';
 
@@ -22,7 +25,6 @@ import {
   JwtAuthStrategy,
   JwtPayload,
 } from './core/auth/strategies/jwt.auth.strategy';
-import { ExceptionFilter } from './filters/exception.filter';
 
 @Module({
   imports: [
@@ -111,9 +113,20 @@ import { ExceptionFilter } from './filters/exception.filter';
   ],
   providers: [
     AppService,
+    // Exceptions filters must be ordered from the least specific to the most specific
+    // If TypeOrmExceptionFilter handle something, HttpExceptionFilter will not handle it
+    // GlobalExceptionFilter will handle the rest of the exceptions
     {
       provide: APP_FILTER,
-      useClass: ExceptionFilter,
+      useClass: GlobalExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: TypeOrmExceptionFilter,
     },
   ],
 })

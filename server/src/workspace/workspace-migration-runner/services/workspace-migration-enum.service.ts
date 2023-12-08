@@ -12,10 +12,11 @@ export class WorkspaceMigrationEnumService {
     tableName: string,
     migrationColumn: WorkspaceMigrationColumnAlter,
   ) {
-    const oldEnumTypeName = `${tableName}_${migrationColumn.columnName}_enum`;
-    const newEnumTypeName = `${tableName}_${migrationColumn.columnName}_enum_new`;
+    const columnDefinition = migrationColumn.alteredColumnDefinition;
+    const oldEnumTypeName = `${tableName}_${columnDefinition.columnName}_enum`;
+    const newEnumTypeName = `${tableName}_${columnDefinition.columnName}_enum_new`;
     const enumValues =
-      migrationColumn.enum?.map((enumValue) => {
+      columnDefinition.enum?.map((enumValue) => {
         if (typeof enumValue === 'string') {
           return enumValue;
         }
@@ -23,8 +24,8 @@ export class WorkspaceMigrationEnumService {
         return enumValue.to;
       }) ?? [];
 
-    if (!migrationColumn.isNullable && !migrationColumn.defaultValue) {
-      migrationColumn.defaultValue = migrationColumn.enum?.[0];
+    if (!columnDefinition.isNullable && !columnDefinition.defaultValue) {
+      columnDefinition.defaultValue = columnDefinition.enum?.[0];
     }
 
     // Create new enum type with new values
@@ -38,7 +39,7 @@ export class WorkspaceMigrationEnumService {
     // Temporarily change column type to text
     await queryRunner.query(`
       ALTER TABLE "${schemaName}"."${tableName}"
-      ALTER COLUMN "${migrationColumn.columnName}" TYPE TEXT
+      ALTER COLUMN "${columnDefinition.columnName}" TYPE TEXT
     `);
 
     // Migrate existing values to new values
@@ -63,7 +64,7 @@ export class WorkspaceMigrationEnumService {
       queryRunner,
       schemaName,
       tableName,
-      migrationColumn.columnName,
+      columnDefinition.columnName,
       newEnumTypeName,
     );
 
@@ -100,20 +101,21 @@ export class WorkspaceMigrationEnumService {
     tableName: string,
     migrationColumn: WorkspaceMigrationColumnAlter,
   ) {
-    if (!migrationColumn.enum) {
+    const columnDefinition = migrationColumn.alteredColumnDefinition;
+
+    if (!columnDefinition.enum) {
       return;
     }
 
-    for (const enumValue of migrationColumn.enum) {
+    for (const enumValue of columnDefinition.enum) {
       // Skip string values
       if (typeof enumValue === 'string') {
         continue;
       }
-
       await queryRunner.query(`
         UPDATE "${schemaName}"."${tableName}"
-        SET "${migrationColumn.columnName}" = '${enumValue.to}'
-        WHERE "${migrationColumn.columnName}" = '${enumValue.from}'
+        SET "${columnDefinition.columnName}" = '${enumValue.to}'
+        WHERE "${columnDefinition.columnName}" = '${enumValue.from}'
       `);
     }
   }
@@ -125,23 +127,25 @@ export class WorkspaceMigrationEnumService {
     migrationColumn: WorkspaceMigrationColumnAlter,
     enumValues: string[],
   ) {
+    const columnDefinition = migrationColumn.alteredColumnDefinition;
+
     // Set missing values to null or default value
     let defaultValue = 'NULL';
 
-    if (migrationColumn.defaultValue) {
-      if (Array.isArray(migrationColumn.defaultValue)) {
-        defaultValue = `ARRAY[${migrationColumn.defaultValue
+    if (columnDefinition.defaultValue) {
+      if (Array.isArray(columnDefinition.defaultValue)) {
+        defaultValue = `ARRAY[${columnDefinition.defaultValue
           .map((e) => `'${e}'`)
           .join(', ')}]`;
       } else {
-        defaultValue = `'${migrationColumn.defaultValue}'`;
+        defaultValue = `'${columnDefinition.defaultValue}'`;
       }
     }
 
     await queryRunner.query(`
       UPDATE "${schemaName}"."${tableName}"
-      SET "${migrationColumn.columnName}" = ${defaultValue}
-      WHERE "${migrationColumn.columnName}" NOT IN (${enumValues
+      SET "${columnDefinition.columnName}" = ${defaultValue}
+      WHERE "${columnDefinition.columnName}" NOT IN (${enumValues
       .map((e) => `'${e}'`)
       .join(', ')})
     `);

@@ -12,9 +12,13 @@ import {
   WorkspaceMigrationColumnActionType,
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { isCompositeFieldMetadataType } from 'src/metadata/field-metadata/utils/is-composite-field-metadata-type.util';
-import { linkObjectDefinition } from 'src/metadata/field-metadata/composite-types/link.composite-type';
-import { currencyObjectDefinition } from 'src/metadata/field-metadata/composite-types/currency.composite-type';
-import { fullNameObjectDefinition } from 'src/metadata/field-metadata/composite-types/full-name.composite-type';
+import { fullNameFields } from 'src/metadata/field-metadata/composite-types/full-name.composite-type';
+import { currencyFields } from 'src/metadata/field-metadata/composite-types/currency.composite-type';
+import { linkFields } from 'src/metadata/field-metadata/composite-types/link.composite-type';
+
+type CompositeFieldSplitterFunction = (
+  fieldMetadata: FieldMetadataInterface,
+) => FieldMetadataInterface[];
 
 @Injectable()
 export class WorkspaceMigrationFactory {
@@ -26,7 +30,10 @@ export class WorkspaceMigrationFactory {
       options?: WorkspaceColumnActionOptions;
     }
   >;
-  private compositeDefinitions = new Map<string, FieldMetadataInterface[]>();
+  private compositeDefinitions = new Map<
+    string,
+    CompositeFieldSplitterFunction
+  >();
 
   constructor(
     private readonly basicColumnActionFactory: BasicColumnActionFactory,
@@ -83,11 +90,13 @@ export class WorkspaceMigrationFactory {
       ],
     ]);
 
-    this.compositeDefinitions = new Map<string, FieldMetadataInterface[]>([
-      [FieldMetadataType.LINK, linkObjectDefinition.fields],
-      [FieldMetadataType.CURRENCY, currencyObjectDefinition.fields],
-      [FieldMetadataType.FULL_NAME, fullNameObjectDefinition.fields],
-    ]);
+    this.compositeDefinitions = new Map<string, CompositeFieldSplitterFunction>(
+      [
+        [FieldMetadataType.LINK, linkFields],
+        [FieldMetadataType.CURRENCY, currencyFields],
+        [FieldMetadataType.FULL_NAME, fullNameFields],
+      ],
+    );
   }
 
   createColumnActions(
@@ -97,53 +106,56 @@ export class WorkspaceMigrationFactory {
 
   createColumnActions(
     action: WorkspaceMigrationColumnActionType.ALTER,
-    previousFieldMetadata: FieldMetadataInterface,
-    nextFieldMetadata: FieldMetadataInterface,
+    currentFieldMetadata: FieldMetadataInterface,
+    alteredFieldMetadata: FieldMetadataInterface,
   ): WorkspaceMigrationColumnAction[];
 
   createColumnActions(
     action:
       | WorkspaceMigrationColumnActionType.CREATE
       | WorkspaceMigrationColumnActionType.ALTER,
-    fieldMetadataOrPreviousFieldMetadata: FieldMetadataInterface,
-    undefinedOrnextFieldMetadata?: FieldMetadataInterface,
+    fieldMetadataOrCurrentFieldMetadata: FieldMetadataInterface,
+    undefinedOrAlteredFieldMetadata?: FieldMetadataInterface,
   ): WorkspaceMigrationColumnAction[] {
-    const previousFieldMetadata =
+    const currentFieldMetadata =
       action === WorkspaceMigrationColumnActionType.ALTER
-        ? fieldMetadataOrPreviousFieldMetadata
+        ? fieldMetadataOrCurrentFieldMetadata
         : undefined;
-    const nextFieldMetadata =
+    const alteredFieldMetadata =
       action === WorkspaceMigrationColumnActionType.CREATE
-        ? fieldMetadataOrPreviousFieldMetadata
-        : undefinedOrnextFieldMetadata;
+        ? fieldMetadataOrCurrentFieldMetadata
+        : undefinedOrAlteredFieldMetadata;
 
-    if (!nextFieldMetadata) {
+    if (!alteredFieldMetadata) {
       this.logger.error(
         `No field metadata provided for action ${action}`,
-        fieldMetadataOrPreviousFieldMetadata,
+        undefinedOrAlteredFieldMetadata,
       );
 
       throw new Error(`No field metadata provided for action ${action}`);
     }
 
     // If it's a composite field type, we need to create a column action for each of the fields
-    if (isCompositeFieldMetadataType(nextFieldMetadata.type)) {
-      const fieldMetadataCollection = this.compositeDefinitions.get(
-        nextFieldMetadata.type,
+    if (isCompositeFieldMetadataType(alteredFieldMetadata.type)) {
+      const fieldMetadataSplitterFunction = this.compositeDefinitions.get(
+        alteredFieldMetadata.type,
       );
 
-      if (!fieldMetadataCollection) {
+      if (!fieldMetadataSplitterFunction) {
         this.logger.error(
-          `No composite definition found for type ${nextFieldMetadata.type}`,
+          `No composite definition found for type ${alteredFieldMetadata.type}`,
           {
-            nextFieldMetadata,
+            alteredFieldMetadata,
           },
         );
 
         throw new Error(
-          `No composite definition found for type ${nextFieldMetadata.type}`,
+          `No composite definition found for type ${alteredFieldMetadata.type}`,
         );
       }
+
+      const fieldMetadataCollection =
+        fieldMetadataSplitterFunction(alteredFieldMetadata);
 
       return fieldMetadataCollection.map((fieldMetadata) =>
         this.createColumnAction(action, fieldMetadata, fieldMetadata),
@@ -153,8 +165,8 @@ export class WorkspaceMigrationFactory {
     // Otherwise, we create a single column action
     const columnAction = this.createColumnAction(
       action,
-      previousFieldMetadata,
-      nextFieldMetadata,
+      currentFieldMetadata,
+      alteredFieldMetadata,
     );
 
     return [columnAction];
@@ -164,24 +176,27 @@ export class WorkspaceMigrationFactory {
     action:
       | WorkspaceMigrationColumnActionType.CREATE
       | WorkspaceMigrationColumnActionType.ALTER,
-    previousFieldMetadata: FieldMetadataInterface | undefined,
-    nextFieldMetadata: FieldMetadataInterface,
+    currentFieldMetadata: FieldMetadataInterface | undefined,
+    alteredFieldMetadata: FieldMetadataInterface,
   ): WorkspaceMigrationColumnAction {
     const { factory, options } =
-      this.factoriesMap.get(nextFieldMetadata.type) ?? {};
+      this.factoriesMap.get(alteredFieldMetadata.type) ?? {};
 
     if (!factory) {
-      this.logger.error(`No factory found for type ${nextFieldMetadata.type}`, {
-        nextFieldMetadata,
-      });
+      this.logger.error(
+        `No factory found for type ${alteredFieldMetadata.type}`,
+        {
+          alteredFieldMetadata,
+        },
+      );
 
-      throw new Error(`No factory found for type ${nextFieldMetadata.type}`);
+      throw new Error(`No factory found for type ${alteredFieldMetadata.type}`);
     }
 
     return factory.create(
       action,
-      previousFieldMetadata,
-      nextFieldMetadata,
+      currentFieldMetadata,
+      alteredFieldMetadata,
       options,
     );
   }

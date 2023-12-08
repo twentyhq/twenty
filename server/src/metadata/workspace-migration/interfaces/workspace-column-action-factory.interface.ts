@@ -14,8 +14,8 @@ export interface WorkspaceColumnActionFactory<
     action:
       | WorkspaceMigrationColumnActionType.CREATE
       | WorkspaceMigrationColumnActionType.ALTER,
-    previousFieldMetadata: FieldMetadataInterface<T> | undefined,
-    nextFieldMetadata: FieldMetadataInterface<T>,
+    currentFieldMetadata: FieldMetadataInterface<T> | undefined,
+    alteredFieldMetadata: FieldMetadataInterface<T>,
     options?: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnAction;
 }
