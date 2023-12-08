@@ -28,14 +28,14 @@ RUN apt update && apt install curl -y
 # Install precompiled pg_graphql extensions
 RUN curl -L "https://github.com/supabase/pg_graphql/releases/download/v${PG_GRAPHQL_VERSION}/pg_graphql-v${PG_GRAPHQL_VERSION}-pg${PG_MAIN_VERSION}-${TARGETARCH}-linux-gnu.deb" -o pg_graphql.deb
 RUN dpkg --install pg_graphql.deb
-RUN cp /usr/share/postgresql/${PG_GRAPHQL_VERSION}/extension/pg_graphql* /opt/bitnami/postgresql/share/extension/
-RUN cp /usr/lib/postgresql/${PG_GRAPHQL_VERSION}/lib/pg_graphql* /opt/bitnami/postgresql/lib/
+RUN cp /usr/share/postgresql/${PG_MAIN_VERSION}/extension/pg_graphql* /opt/bitnami/postgresql/share/extension/
+RUN cp /usr/lib/postgresql/${PG_MAIN_VERSION}/lib/pg_graphql* /opt/bitnami/postgresql/lib/
 
 # Install precompiled supabase wrappers extensions
 RUN curl -L "https://github.com/supabase/wrappers/releases/download/v${WRAPPERS_VERSION}/wrappers-v${WRAPPERS_VERSION}-pg${PG_MAIN_VERSION}-${TARGETARCH}-linux-gnu.deb" -o wrappers.deb
 RUN dpkg --install wrappers.deb
-RUN cp /usr/share/postgresql/${PG_GRAPHQL_VERSION}/extension/wrappers* /opt/bitnami/postgresql/share/extension/
-RUN cp /usr/lib/postgresql/${PG_GRAPHQL_VERSION}/lib/wrappers* /opt/bitnami/postgresql/lib/
+RUN cp /usr/share/postgresql/${PG_MAIN_VERSION}/extension/wrappers* /opt/bitnami/postgresql/share/extension/
+RUN cp /usr/lib/postgresql/${PG_MAIN_VERSION}/lib/wrappers* /opt/bitnami/postgresql/lib/
 
 COPY ./infra/build/postgres/init.sql /docker-entrypoint-initdb.d/
 
