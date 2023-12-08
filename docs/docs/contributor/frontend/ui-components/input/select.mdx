@@ -1,0 +1,85 @@
+---
+title: Select
+sidebar_position: 8
+sidebar_custom_props:
+  icon: TbSelect
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import selectCode from '!!raw-loader!@site/src/ui/input/components/selectCode.js'
+
+Allows users to pick a value from a list of predefined options. 
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/input/components/Select', '@/ui/display/icon/types/IconComponent']}
+  componentCode={selectCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+
+   <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>Optional CSS class for additional styling</td>
+    </tr>
+
+    <tr>
+      <td>disabled</td>
+      <td>boolean</td>
+      <td>When set to `true`, disables user interaction with the component</td>
+    </tr>
+
+    <tr>
+      <td>dropdownScopeId</td>
+      <td>string</td>
+      <td>Required prop that uniquely identifies the dropdown scope</td>
+    </tr>
+
+    <tr>
+      <td>label</td>
+      <td>string</td>
+      <td>The label to describe the purpose of the `Select` component</td>
+    </tr>
+
+    <tr>
+      <td>onChange</td>
+      <td>function</td>
+      <td>The function called when the selected values change</td>
+    </tr>
+
+    <tr>
+      <td>options</td>
+      <td>array</td>
+      <td>Represents the options available for the `Selected` component. It's an array of objects where each object has a `value` (the unique identifier), `label` (the unique identifier), and an optional `Icon`</td>
+    </tr>
+
+    <tr>
+      <td>value</td>
+      <td>string</td>
+      <td>Represents the currently selected value. It should match one of the `value` properties in the `options` array</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>
