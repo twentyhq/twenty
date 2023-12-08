@@ -52,6 +52,7 @@
     "@ptc-org/nestjs-query-graphql": "4.2.0",
     "@ptc-org/nestjs-query-typeorm": "4.2.1-alpha.2",
     "@sentry/node": "^7.66.0",
+    "@sentry/profiling-node": "^1.2.6",
     "@sentry/tracing": "^7.66.0",
     "@types/lodash.camelcase": "^4.3.7",
     "@types/lodash.merge": "^4.6.7",

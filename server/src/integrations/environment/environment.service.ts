@@ -2,11 +2,13 @@
 import { Injectable, LogLevel } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+import { LoggerDriverType } from 'src/integrations/logger/interfaces';
+import { ExceptionHandlerDriver } from 'src/integrations/exception-handler/interfaces';
+import { StorageDriverType } from 'src/integrations/file-storage/interfaces';
+import { MessageQueueDriverType } from 'src/integrations/message-queue/interfaces';
+
 import { AwsRegion } from './interfaces/aws-region.interface';
-import { StorageType } from './interfaces/storage.interface';
 import { SupportDriver } from './interfaces/support.interface';
-import { LoggerDriver } from './interfaces/logger.interface';
-import { MessageQueueType } from './interfaces/message-queue.interface';
 
 @Injectable()
 export class EnvironmentService {
@@ -109,16 +111,17 @@ export class EnvironmentService {
     return this.configService.get<string>('AUTH_GOOGLE_CALLBACK_URL');
   }
 
-  getStorageType(): StorageType {
+  getStorageDriverType(): StorageDriverType {
     return (
-      this.configService.get<StorageType>('STORAGE_TYPE') ?? StorageType.Local
+      this.configService.get<StorageDriverType>('STORAGE_TYPE') ??
+      StorageDriverType.Local
     );
   }
 
-  getMessageQueueType(): MessageQueueType {
+  getMessageQueueDriverType(): MessageQueueDriverType {
     return (
-      this.configService.get<MessageQueueType>('MESSAGE_QUEUE_TYPE') ??
-      MessageQueueType.PgBoss
+      this.configService.get<MessageQueueDriverType>('MESSAGE_QUEUE_TYPE') ??
+      MessageQueueDriverType.PgBoss
     );
   }
 
@@ -154,9 +157,18 @@ export class EnvironmentService {
     return this.configService.get<string>('SUPPORT_FRONT_HMAC_KEY');
   }
 
-  getLoggerDriver(): string {
+  getLoggerDriverType(): LoggerDriverType {
     return (
-      this.configService.get<string>('LOGGER_DRIVER') ?? LoggerDriver.Console
+      this.configService.get<LoggerDriverType>('LOGGER_DRIVER') ??
+      LoggerDriverType.Console
+    );
+  }
+
+  getExceptionHandlerDriverType(): ExceptionHandlerDriver {
+    return (
+      this.configService.get<ExceptionHandlerDriver>(
+        'EXCEPTION_HANDLER_DRIVER',
+      ) ?? ExceptionHandlerDriver.Console
     );
   }
 
