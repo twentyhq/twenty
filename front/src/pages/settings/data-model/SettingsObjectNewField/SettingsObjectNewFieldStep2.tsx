@@ -142,7 +142,7 @@ export const SettingsObjectNewFieldStep2 = () => {
 
         objectViews.forEach(async (view) => {
           await createOneViewField?.({
-            view: view.id,
+            viewId: view.id,
             fieldMetadataId:
               validatedFormValues.relation.type === 'MANY_TO_ONE'
                 ? createdRelation.data?.createOneRelation.toFieldMetadataId
@@ -154,7 +154,7 @@ export const SettingsObjectNewFieldStep2 = () => {
         });
         relationObjectViews.forEach(async (view) => {
           await createOneViewField?.({
-            view: view.id,
+            viewId: view.id,
             fieldMetadataId:
               validatedFormValues.relation.type === 'MANY_TO_ONE'
                 ? createdRelation.data?.createOneRelation.fromFieldMetadataId
