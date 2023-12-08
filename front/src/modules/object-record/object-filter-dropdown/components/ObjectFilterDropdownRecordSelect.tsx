@@ -31,6 +31,10 @@ export const ObjectFilterDropdownRecordSelect = () => {
     recordToSelect: SelectableRecord,
     newSelectedValue: boolean,
   ) => {
+    if (loading) {
+      return;
+    }
+
     const newSelectedRecordIds = newSelectedValue
       ? [...objectFilterDropdownSelectedRecordIds, recordToSelect.id]
       : objectFilterDropdownSelectedRecordIds.filter(
