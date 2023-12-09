@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { BlockNoteEditor } from '@blocknote/core';
-import { useBlockNote } from '@blocknote/react';
+import { getDefaultReactSlashMenuItems, useBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import debounce from 'lodash.debounce';
@@ -8,6 +8,7 @@ import debounce from 'lodash.debounce';
 import { Activity } from '@/activities/types/Activity';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const StyledBlockNoteStyledContainer = styled.div`
   width: 100%;
@@ -48,15 +49,23 @@ export const ActivityBodyEditor = ({
     return debounce(onInternalChange, 200);
   }, [updateOneRecord, activity.id]);
 
+  let slashMenuItems = [...getDefaultReactSlashMenuItems()];
+  const imagesActivated = useIsFeatureEnabled('IS_NOTE_CREATE_IMAGES_ENABLED');
+
+  if (!imagesActivated) {
+    slashMenuItems = slashMenuItems.filter((x) => x.name != 'Image');
+  }
+
   const editor: BlockNoteEditor | null = useBlockNote({
     initialContent:
       isNonEmptyString(activity.body) && activity.body !== '{}'
         ? JSON.parse(activity.body)
         : undefined,
-    editorDOMAttributes: { class: 'editor' },
+    domAttributes: { editor: { class: 'editor' } },
     onEditorContentChange: (editor) => {
       debounceOnChange(JSON.stringify(editor.topLevelBlocks) ?? '');
     },
+    slashMenuItems,
   });
 
   return (
