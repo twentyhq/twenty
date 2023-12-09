@@ -11,22 +11,27 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
-import { TokenExpiredError } from 'jsonwebtoken';
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
 import { Request } from 'express';
 import { ExtractJwt } from 'passport-jwt';
 
-import { JwtPayload } from 'src/core/auth/strategies/jwt.auth.strategy';
+import {
+  JwtAuthStrategy,
+  JwtPayload,
+} from 'src/core/auth/strategies/jwt.auth.strategy';
 import { assert } from 'src/utils/assert';
 import { ApiKeyToken, AuthToken } from 'src/core/auth/dto/token.entity';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { User } from 'src/core/user/user.entity';
 import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
+import { Workspace } from 'src/core/workspace/workspace.entity';
 
 @Injectable()
 export class TokenService {
   constructor(
     private readonly jwtService: JwtService,
+    private readonly jwtStrategy: JwtAuthStrategy,
     private readonly environmentService: EnvironmentService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
@@ -114,6 +119,29 @@ export class TokenService {
     };
   }
 
+  async generateTransientToken(
+    workspaceMemberId: string,
+    workspaceId: string,
+  ): Promise<AuthToken> {
+    const secret = this.environmentService.getLoginTokenSecret();
+    const expiresIn = this.environmentService.getTransientTokenExpiresIn();
+
+    assert(expiresIn, '', InternalServerErrorException);
+    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
+    const jwtPayload = {
+      sub: workspaceMemberId,
+      workspaceId,
+    };
+
+    return {
+      token: this.jwtService.sign(jwtPayload, {
+        secret,
+        expiresIn,
+      }),
+      expiresAt,
+    };
+  }
+
   async generateApiKeyToken(
     workspaceId: string,
     apiKeyId?: string,
@@ -144,18 +172,22 @@ export class TokenService {
     return { token };
   }
 
-  async verifyApiKeyToken(request: Request) {
+  async validateToken(request: Request): Promise<Workspace> {
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
 
     if (!token) {
       throw new UnauthorizedException('missing authentication token');
     }
-    const payload = await this.verifyJwt(
+    const decoded = await this.verifyJwt(
       token,
       this.environmentService.getAccessTokenSecret(),
     );
 
-    return payload.workspaceId;
+    const { workspace } = await this.jwtStrategy.validate(
+      decoded as JwtPayload,
+    );
+
+    return workspace;
   }
 
   async verifyLoginToken(loginToken: string): Promise<string> {
@@ -164,6 +196,20 @@ export class TokenService {
     const payload = await this.verifyJwt(loginToken, loginTokenSecret);
 
     return payload.sub;
+  }
+
+  async verifyTransientToken(transientToken: string): Promise<{
+    workspaceMemberId: string;
+    workspaceId: string;
+  }> {
+    const transientTokenSecret = this.environmentService.getLoginTokenSecret();
+
+    const payload = await this.verifyJwt(transientToken, transientTokenSecret);
+
+    return {
+      workspaceMemberId: payload.sub,
+      workspaceId: payload.workspaceId,
+    };
   }
 
   async verifyRefreshToken(refreshToken: string) {
@@ -253,6 +299,8 @@ export class TokenService {
     } catch (error) {
       if (error instanceof TokenExpiredError) {
         throw new UnauthorizedException('Token has expired.');
+      } else if (error instanceof JsonWebTokenError) {
+        throw new UnauthorizedException('Token invalid.');
       } else {
         throw new UnprocessableEntityException();
       }

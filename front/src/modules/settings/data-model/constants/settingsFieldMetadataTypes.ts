@@ -19,9 +19,11 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 const defaultDateValue = new Date();
 defaultDateValue.setFullYear(defaultDateValue.getFullYear() + 2);
 
-export const settingsFieldMetadataTypes: Record<
-  FieldMetadataType,
-  { label: string; Icon: IconComponent; defaultValue?: unknown }
+export const settingsFieldMetadataTypes: Partial<
+  Record<
+    FieldMetadataType,
+    { label: string; Icon: IconComponent; defaultValue?: unknown }
+  >
 > = {
   [FieldMetadataType.Uuid]: {
     label: 'Unique ID',
@@ -59,8 +61,12 @@ export const settingsFieldMetadataTypes: Record<
     Icon: IconCalendarEvent,
     defaultValue: defaultDateValue.toISOString(),
   },
-  [FieldMetadataType.Enum]: {
+  [FieldMetadataType.Select]: {
     label: 'Select',
+    Icon: IconTag,
+  },
+  [FieldMetadataType.MultiSelect]: {
+    label: 'MultiSelect',
     Icon: IconTag,
   },
   [FieldMetadataType.Currency]: {
@@ -75,6 +81,11 @@ export const settingsFieldMetadataTypes: Record<
   [FieldMetadataType.Email]: { label: 'Email', Icon: IconMail },
   [FieldMetadataType.Phone]: { label: 'Phone', Icon: IconPhone },
   [FieldMetadataType.Probability]: {
+    label: 'Rating',
+    Icon: IconTwentyStar,
+    defaultValue: '3',
+  },
+  [FieldMetadataType.Rating]: {
     label: 'Rating',
     Icon: IconTwentyStar,
     defaultValue: '3',

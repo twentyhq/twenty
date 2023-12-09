@@ -24,6 +24,7 @@ export const useOpenCreateActivityDrawer = () => {
     });
   const { createOneRecord: createOneActivity } = useCreateOneRecord<Activity>({
     objectNameSingular: 'activity',
+    refetchFindManyQuery: true,
   });
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const setHotkeyScope = useSetHotkeyScope();
@@ -82,6 +83,9 @@ export const useOpenCreateActivityDrawer = () => {
       setActivityTargetableEntityArray,
       setHotkeyScope,
       setViewableActivityId,
+      createOneActivity,
+      createOneActivityTarget,
+      currentWorkspaceMember,
     ],
   );
 };

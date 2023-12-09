@@ -13,6 +13,7 @@ export const ActivityActionBar = ({ activityId }: ActivityActionBarProps) => {
   const [, setIsRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
   const { deleteOneRecord: deleteOneActivity } = useDeleteOneRecord({
     objectNameSingular: 'activity',
+    refetchFindManyQuery: true,
   });
 
   const deleteActivity = () => {

@@ -60,7 +60,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
 
       assert(
-        apiKey.length === 1 && !apiKey[0].revokedAt,
+        apiKey.length === 1 && !apiKey?.[0].revokedAt,
         'This API Key is revoked',
         ForbiddenException,
       );
@@ -69,8 +69,9 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     let user;
 
     if (payload.workspaceId) {
-      user = await this.userRepository.findOneBy({
-        id: payload.sub,
+      user = await this.userRepository.findOne({
+        where: { id: payload.sub },
+        relations: ['defaultWorkspace'],
       });
       if (!user) {
         throw new UnauthorizedException();

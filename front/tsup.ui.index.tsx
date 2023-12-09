@@ -40,3 +40,7 @@ export * from './src/modules/ui/input/components/ImageInput'
 export * from './src/modules/ui/input/components/Radio'
 export * from './src/modules/ui/input/components/RadioGroup'
 export * from './src/modules/ui/input/button/components/Button';
+export * from './src/modules/ui/input/components/Select'
+export * from './src/modules/ui/input/components/TextArea'
+export * from './src/modules/ui/input/components/TextInput'
+export * from './src/modules/ui/input/components/Toggle'

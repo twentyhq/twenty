@@ -137,11 +137,11 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         description: record.toDescription,
         icon: record.toIcon,
         isCustom: true,
-        targetColumnMap: isToCustom
-          ? {
-              value: createCustomColumnName(record.toName),
-            }
-          : {},
+        targetColumnMap: {
+          value: isToCustom
+            ? createCustomColumnName(record.toName)
+            : record.toName,
+        },
         isActive: true,
         type: FieldMetadataType.RELATION,
         objectMetadataId: record.toObjectMetadataId,
@@ -151,7 +151,9 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       {
         name: baseColumnName,
         label: `${record.toLabel} Foreign Key`,
-        description: `${record.toDescription} Foreign Key`,
+        description: record.toDescription
+          ? `${record.toDescription} Foreign Key`
+          : undefined,
         icon: undefined,
         isCustom: true,
         targetColumnMap: {
@@ -168,7 +170,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
 
     const createdFieldMap = createdFields.reduce((acc, fieldMetadata) => {
       if (fieldMetadata.type === FieldMetadataType.RELATION) {
-        acc[fieldMetadata.objectMetadataId] = fieldMetadata;
+        acc[fieldMetadata.name] = fieldMetadata;
       }
 
       return acc;
@@ -176,8 +178,8 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
 
     const createdRelationMetadata = await super.createOne({
       ...record,
-      fromFieldMetadataId: createdFieldMap[record.fromObjectMetadataId].id,
-      toFieldMetadataId: createdFieldMap[record.toObjectMetadataId].id,
+      fromFieldMetadataId: createdFieldMap[record.fromName].id,
+      toFieldMetadataId: createdFieldMap[record.toName].id,
     });
 
     await this.workspaceMigrationService.createCustomMigration(

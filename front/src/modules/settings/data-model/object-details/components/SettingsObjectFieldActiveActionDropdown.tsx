@@ -13,7 +13,7 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsObjectFieldActiveActionDropdownProps = {
-  isCustomField: boolean;
+  isCustomField?: boolean;
   onDisable: () => void;
   onEdit: () => void;
   scopeKey: string;

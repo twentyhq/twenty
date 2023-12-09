@@ -25,6 +25,12 @@ export const USER_QUERY_FRAGMENT = gql`
       domainName
       inviteHash
       allowImpersonation
+      featureFlags {
+        id
+        key
+        value
+        workspaceId
+      }
     }
   }
 `;

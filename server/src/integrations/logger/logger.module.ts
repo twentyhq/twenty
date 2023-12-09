@@ -1,50 +1,58 @@
-import { DynamicModule, Global, ConsoleLogger } from '@nestjs/common';
+import { DynamicModule, Global, ConsoleLogger, Module } from '@nestjs/common';
 
-import { LoggerDriver } from 'src/integrations/environment/interfaces/logger.interface';
+import { LoggerDriverType } from 'src/integrations/logger/interfaces';
 
 import { LoggerService } from './logger.service';
-import { LoggerModuleOptions } from './interfaces';
 import { LOGGER_DRIVER } from './logger.constants';
-import { LoggerModuleAsyncOptions } from './logger.module-definition';
-
-import { SentryDriver } from './drivers/sentry.driver';
+import {
+  ASYNC_OPTIONS_TYPE,
+  ConfigurableModuleClass,
+  OPTIONS_TYPE,
+} from './logger.module-definition';
 
 @Global()
-export class LoggerModule {
-  static forRoot(options: LoggerModuleOptions): DynamicModule {
+@Module({
+  providers: [LoggerService],
+  exports: [LoggerService],
+})
+export class LoggerModule extends ConfigurableModuleClass {
+  static forRoot(options: typeof OPTIONS_TYPE): DynamicModule {
     const provider = {
       provide: LOGGER_DRIVER,
       useValue:
-        options.type === LoggerDriver.Console
+        options.type === LoggerDriverType.Console
           ? new ConsoleLogger()
-          : new SentryDriver(options.options),
+          : undefined,
     };
+    const dynamicModule = super.forRoot(options);
 
     return {
-      module: LoggerModule,
-      providers: [LoggerService, provider],
-      exports: [LoggerService],
+      ...dynamicModule,
+      providers: [...(dynamicModule.providers ?? []), provider],
     };
   }
 
-  static forRootAsync(options: LoggerModuleAsyncOptions): DynamicModule {
+  static forRootAsync(options: typeof ASYNC_OPTIONS_TYPE): DynamicModule {
     const provider = {
       provide: LOGGER_DRIVER,
       useFactory: async (...args: any[]) => {
-        const config = await options.useFactory(...args);
+        const config = await options?.useFactory?.(...args);
 
-        return config?.type === LoggerDriver.Console
+        if (!config) {
+          return null;
+        }
+
+        return config?.type === LoggerDriverType.Console
           ? new ConsoleLogger()
-          : new SentryDriver(config.options);
+          : undefined;
       },
       inject: options.inject || [],
     };
+    const dynamicModule = super.forRootAsync(options);
 
     return {
-      module: LoggerModule,
-      imports: options.imports || [],
-      providers: [LoggerService, provider],
-      exports: [LoggerService],
+      ...dynamicModule,
+      providers: [...(dynamicModule.providers ?? []), provider],
     };
   }
 }

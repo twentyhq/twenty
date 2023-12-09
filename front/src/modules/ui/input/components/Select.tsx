@@ -29,7 +29,7 @@ const StyledControlContainer = styled.div<{ disabled?: boolean }>`
   color: ${({ disabled, theme }) =>
     disabled ? theme.font.color.tertiary : theme.font.color.primary};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-  display: flex;
+  display: inline-flex;
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme }) => theme.spacing(8)};
   justify-content: space-between;

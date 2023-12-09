@@ -131,6 +131,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             isNullable: true,
             isActive: true,
             isCustom: false,
+            isSystem: true,
             workspaceId: record.workspaceId,
             defaultValue: { type: 'now' },
           },
@@ -168,7 +169,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.RELATION,
           name: record.nameSingular,
           label: record.labelSingular,
-          targetColumnMap: {},
+          targetColumnMap: {
+            value: `${createdObjectMetadata.targetTableName}Id`,
+          },
           description: `ActivityTarget ${record.labelSingular}`,
           icon: 'IconBuildingSkyscraper',
           isNullable: true,

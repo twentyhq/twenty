@@ -1,9 +1,11 @@
 import { DynamicModule, Global } from '@nestjs/common';
 
 import { MessageQueueDriver } from 'src/integrations/message-queue/drivers/interfaces/message-queue-driver.interface';
-import { MessageQueueType } from 'src/integrations/environment/interfaces/message-queue.interface';
 
-import { MessageQueueModuleAsyncOptions } from 'src/integrations/message-queue/interfaces';
+import {
+  MessageQueueDriverType,
+  MessageQueueModuleAsyncOptions,
+} from 'src/integrations/message-queue/interfaces';
 import {
   QUEUE_DRIVER,
   MessageQueues,
@@ -31,7 +33,7 @@ export class MessageQueueModule {
         useFactory: async (...args: any[]) => {
           const config = await options.useFactory(...args);
 
-          if (config.type === MessageQueueType.PgBoss) {
+          if (config.type === MessageQueueDriverType.PgBoss) {
             const boss = new PgBossDriver(config.options);
 
             await boss.init();

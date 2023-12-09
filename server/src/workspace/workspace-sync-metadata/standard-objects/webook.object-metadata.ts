@@ -20,7 +20,6 @@ export class WebhookObjectMetadata extends BaseObjectMetadata {
     label: 'Target Url',
     description: 'Webhook target url',
     icon: 'IconLink',
-    defaultValue: { value: '' },
   })
   targetUrl: string;
 
@@ -29,7 +28,6 @@ export class WebhookObjectMetadata extends BaseObjectMetadata {
     label: 'Operation',
     description: 'Webhook operation',
     icon: 'IconCheckbox',
-    defaultValue: { value: '' },
   })
   operation: string;
 }

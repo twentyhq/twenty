@@ -3,8 +3,11 @@ import {
   ObjectMetadata,
   IsSystem,
   FieldMetadata,
+  IsNullable,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
+import { ActivityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity.object-metadata';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'comments',
@@ -31,7 +34,7 @@ export class CommentObjectMetadata extends BaseObjectMetadata {
     icon: 'IconCircleUser',
     joinColumn: 'authorId',
   })
-  author: string;
+  author: WorkspaceMemberObjectMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
@@ -40,5 +43,5 @@ export class CommentObjectMetadata extends BaseObjectMetadata {
     icon: 'IconNotes',
     joinColumn: 'activityId',
   })
-  activity: string;
+  activity: ActivityObjectMetadata;
 }

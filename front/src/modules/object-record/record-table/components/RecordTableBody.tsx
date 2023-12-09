@@ -20,7 +20,7 @@ export const RecordTableBody = () => {
 
   return (
     <>
-      {tableRowIds.slice().map((rowId, rowIndex) => (
+      {tableRowIds.map((rowId, rowIndex) => (
         <RowIdContext.Provider value={rowId} key={rowId}>
           <RowIndexContext.Provider value={rowIndex}>
             <RecordTableRow key={rowId} rowId={rowId} />

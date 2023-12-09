@@ -5,13 +5,17 @@ export const useGenerateEmptyRecord = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const generateEmptyRecord = (id: string) => {
+  // Todo fix typing once we generate the return base on Metadata
+  const generateEmptyRecord = <T>(input: Partial<T> & { id: string }) => {
+    // Todo replace this by runtime typing
+    const validatedInput = input as { id: string } & { [key: string]: any };
+
     if (objectMetadataItem.nameSingular === 'company') {
       return {
-        id,
+        id: validatedInput.id,
         domainName: '',
         accountOwnerId: null,
-        createdAt: '2023-12-05T16:04:42.261Z',
+        createdAt: new Date().toISOString(),
         address: '',
         people: [
           {
@@ -38,7 +42,7 @@ export const useGenerateEmptyRecord = ({
           currencyCode: null,
           __typename: 'Currency',
         },
-        updatedAt: '2023-12-05T16:04:42.261Z',
+        updatedAt: new Date().toISOString(),
         employees: null,
         accountOwner: null,
         name: '',
@@ -56,12 +60,12 @@ export const useGenerateEmptyRecord = ({
           __typename: 'OpportunityConnection',
         },
         __typename: 'Company',
-      };
+      } as T;
     }
 
     if (objectMetadataItem.nameSingular === 'person') {
       return {
-        id,
+        id: validatedInput.id,
         activityTargets: {
           edges: [],
           __typename: 'ActivityTargetConnection',
@@ -98,8 +102,8 @@ export const useGenerateEmptyRecord = ({
           __typename: 'FullName',
         },
         avatarUrl: '',
-        updatedAt: '2023-12-05T16:45:11.840Z',
-        createdAt: '2023-12-05T16:45:11.840Z',
+        updatedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
         city: '',
         linkedinLink: {
           label: '',
@@ -107,25 +111,16 @@ export const useGenerateEmptyRecord = ({
           __typename: 'Link',
         },
         __typename: 'Person',
-      };
+      } as T;
     }
 
     if (objectMetadataItem.nameSingular === 'opportunity') {
       return {
-        id,
-        pipelineStepId: '30b14887-d592-427d-bd97-6e670158db02',
+        id: validatedInput.id,
+        pipelineStepId: validatedInput.pipelineStepId,
         closeDate: null,
-        companyId: '04b2e9f5-0713-40a5-8216-82802401d33e',
-        updatedAt: '2023-12-05T16:46:27.621Z',
-        pipelineStep: {
-          id: '30b14887-d592-427d-bd97-6e670158db02',
-          position: 2,
-          name: 'Meeting',
-          updatedAt: '2023-12-05T11:29:21.485Z',
-          createdAt: '2023-12-05T11:29:21.485Z',
-          color: 'sky',
-          __typename: 'PipelineStep',
-        },
+        updatedAt: new Date().toISOString(),
+        pipelineStep: null,
         probability: '0',
         pointOfContactId: null,
         personId: null,
@@ -134,41 +129,38 @@ export const useGenerateEmptyRecord = ({
           currencyCode: null,
           __typename: 'Currency',
         },
-        createdAt: '2023-12-05T16:46:27.621Z',
+        createdAt: new Date().toISOString(),
         pointOfContact: null,
         person: null,
-        company: {
-          id: '04b2e9f5-0713-40a5-8216-82802401d33e',
-          domainName: 'qonto.com',
-          accountOwnerId: null,
-          createdAt: '2023-12-05T11:29:21.484Z',
-          address: '',
-          xLink: {
-            label: '',
-            url: '',
-            __typename: 'Link',
-          },
-          idealCustomerProfile: null,
-          annualRecurringRevenue: {
-            amountMicros: null,
-            currencyCode: null,
-            __typename: 'Currency',
-          },
-          updatedAt: '2023-12-05T11:29:21.484Z',
-          employees: null,
-          name: 'Qonto',
-          linkedinLink: {
-            label: '',
-            url: '',
-            __typename: 'Link',
-          },
-          __typename: 'Company',
-        },
+        company: null,
+        companyId: validatedInput.companyId,
         __typename: 'Opportunity',
-      };
+      } as T;
     }
 
-    return {};
+    if (objectMetadataItem.nameSingular === 'opportunity') {
+      return {
+        id: validatedInput.id,
+        pipelineStepId: validatedInput.pipelineStepId,
+        closeDate: null,
+        updatedAt: new Date().toISOString(),
+        pipelineStep: null,
+        probability: '0',
+        pointOfContactId: null,
+        personId: null,
+        amount: {
+          amountMicros: null,
+          currencyCode: null,
+          __typename: 'Currency',
+        },
+        createdAt: new Date().toISOString(),
+        pointOfContact: null,
+        person: null,
+        company: null,
+        companyId: validatedInput.companyId,
+        __typename: 'Opportunity',
+      } as T;
+    }
   };
 
   return {

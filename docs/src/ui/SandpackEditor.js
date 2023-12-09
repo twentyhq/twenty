@@ -93,6 +93,8 @@ return (<ThemeProvider theme={lightTheme}>
           "deep-equal": "latest",
           "lodash.debounce": "latest",
           "react-loading-skeleton": "latest",
+          "zod": "latest",
+          
         },
       }}
     >

@@ -23,6 +23,11 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: 'IS_NOTE_CREATE_IMAGES_ENABLED',
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };

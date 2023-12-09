@@ -8,7 +8,7 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsObjectFieldDisabledActionDropdownProps = {
-  isCustomField: boolean;
+  isCustomField?: boolean;
   onActivate: () => void;
   onErase: () => void;
   scopeKey: string;

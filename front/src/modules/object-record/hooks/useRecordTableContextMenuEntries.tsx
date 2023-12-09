@@ -68,18 +68,22 @@ export const useRecordTableContextMenuEntries = (
     objectNameSingular,
   });
 
-  const handleDeleteClick = useRecoilCallback(({ snapshot }) => async () => {
-    const rowIdsToDelete = snapshot
-      .getLoadable(selectedRowIdsSelector)
-      .getValue();
+  const handleDeleteClick = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const rowIdsToDelete = snapshot
+          .getLoadable(selectedRowIdsSelector)
+          .getValue();
 
-    resetTableRowSelection();
-    await Promise.all(
-      rowIdsToDelete.map(async (rowId) => {
-        await deleteOneRecord(rowId);
-      }),
-    );
-  });
+        resetTableRowSelection();
+        await Promise.all(
+          rowIdsToDelete.map(async (rowId) => {
+            await deleteOneRecord(rowId);
+          }),
+        );
+      },
+    [deleteOneRecord, resetTableRowSelection],
+  );
 
   return {
     setContextMenuEntries: useCallback(() => {

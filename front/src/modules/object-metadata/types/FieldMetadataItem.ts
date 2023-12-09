@@ -1,8 +1,9 @@
+import { ThemeColor } from '@/ui/theme/constants/colors';
 import { Field, Relation } from '~/generated-metadata/graphql';
 
 export type FieldMetadataItem = Omit<
   Field,
-  'fromRelationMetadata' | 'toRelationMetadata'
+  'fromRelationMetadata' | 'toRelationMetadata' | 'defaultValue' | 'options'
 > & {
   fromRelationMetadata?:
     | (Pick<Relation, 'id' | 'toFieldMetadataId' | 'relationType'> & {
@@ -20,4 +21,12 @@ export type FieldMetadataItem = Omit<
         >;
       })
     | null;
+  defaultValue?: string;
+  options?: {
+    color: ThemeColor;
+    id: string;
+    label: string;
+    position: number;
+    value: string;
+  }[];
 };

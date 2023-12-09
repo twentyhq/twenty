@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { MemoryStorageType } from 'src/integrations/environment/interfaces/memory-storage.interface';
-
+import { MemoryStorageDriverType } from 'src/integrations/memory-storage/interfaces';
 import { MemoryStorageModule } from 'src/integrations/memory-storage/memory-storage.module';
 import { MemoryStorageJsonSerializer } from 'src/integrations/memory-storage/serializers/json.serializer';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
@@ -15,24 +14,24 @@ import { WorkspaceSchemaStorageService } from 'src/workspace/workspace-schema-st
     WorkspaceCacheVersionModule,
     MemoryStorageModule.forRoot({
       identifier: 'objectMetadataCollection',
-      type: MemoryStorageType.Local,
+      type: MemoryStorageDriverType.Local,
       options: {},
       serializer: new MemoryStorageJsonSerializer<ObjectMetadataEntity[]>(),
     }),
     MemoryStorageModule.forRoot({
       identifier: 'typeDefs',
-      type: MemoryStorageType.Local,
+      type: MemoryStorageDriverType.Local,
       options: {},
     }),
     MemoryStorageModule.forRoot({
       identifier: 'usedScalarNames',
-      type: MemoryStorageType.Local,
+      type: MemoryStorageDriverType.Local,
       options: {},
       serializer: new MemoryStorageJsonSerializer<string[]>(),
     }),
     MemoryStorageModule.forRoot({
       identifier: 'cacheVersion',
-      type: MemoryStorageType.Local,
+      type: MemoryStorageDriverType.Local,
       options: {},
     }),
   ],

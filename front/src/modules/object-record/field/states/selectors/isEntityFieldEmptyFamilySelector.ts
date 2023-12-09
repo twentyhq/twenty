@@ -2,6 +2,7 @@ import { selectorFamily } from 'recoil';
 
 import { isFieldFullName } from '@/object-record/field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/field/types/guards/isFieldFullNameValue';
+import { isFieldSelect } from '@/object-record/field/types/guards/isFieldSelect';
 import { isFieldUuid } from '@/object-record/field/types/guards/isFieldUuid';
 import { assertNotNull } from '~/utils/assert';
 
@@ -42,7 +43,8 @@ export const isEntityFieldEmptyFamilySelector = selectorFamily({
         isFieldNumber(fieldDefinition) ||
         isFieldRating(fieldDefinition) ||
         isFieldEmail(fieldDefinition) ||
-        isFieldBoolean(fieldDefinition)
+        isFieldBoolean(fieldDefinition) ||
+        isFieldSelect(fieldDefinition)
         //|| isFieldPhone(fieldDefinition)
       ) {
         const fieldValue = get(entityFieldsFamilyState(entityId))?.[

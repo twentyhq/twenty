@@ -1,8 +1,6 @@
-import { atomFamily } from 'recoil';
+import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
 
-export const relationPickerSearchFilterScopedState = atomFamily<string, string>(
-  {
-    key: 'relationPickerSearchFilterScopedState',
-    default: '',
-  },
-);
+export const relationPickerSearchFilterScopedState = createScopedState<string>({
+  key: 'relationPickerSearchFilterScopedState',
+  defaultValue: '',
+});
