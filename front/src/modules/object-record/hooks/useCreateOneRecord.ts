@@ -50,7 +50,7 @@ export const useCreateOneRecord = <T>({
     const createdObject = await apolloClient.mutate({
       mutation: createOneRecordMutation,
       variables: {
-        input: { ...input, id: recordId },
+        input: { id: recordId, ...input },
       },
       optimisticResponse: {
         [`create${capitalize(objectMetadataItem.nameSingular)}`]:
