@@ -117,6 +117,7 @@
     "@types/lodash.camelcase": "^4.3.7",
     "@types/lodash.debounce": "^4.0.7",
     "@types/lodash.kebabcase": "^4.1.7",
+    "@types/lodash.snakecase": "^4.1.9",
     "@types/luxon": "^3.3.0",
     "@types/node": "^20.10.0",
     "@types/react": "^18.2.39",

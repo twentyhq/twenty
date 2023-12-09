@@ -7,14 +7,26 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-**/**/.env
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+storybook-static
+build-storybook.log
+
+# production
+/build
 dist
 dist-ssr
-*.local
 
-# yarn is the recommended package manager across the project
-package-lock.json
+# env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Editor directories and files
 .vscode/*
