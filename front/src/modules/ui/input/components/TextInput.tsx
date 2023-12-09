@@ -35,7 +35,7 @@ export type TextInputComponentProps = Omit<
 };
 
 const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
 `;
