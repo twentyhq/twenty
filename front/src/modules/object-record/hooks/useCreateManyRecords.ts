@@ -34,7 +34,7 @@ export const useCreateManyRecords = <T>({
     withIds.forEach((record) => {
       triggerOptimisticEffects(
         `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-        generateEmptyRecord(record.id),
+        generateEmptyRecord({ id: record.id }),
       );
     });
 
@@ -45,7 +45,7 @@ export const useCreateManyRecords = <T>({
       },
       optimisticResponse: {
         [`create${capitalize(objectMetadataItem.namePlural)}`]: withIds.map(
-          (record) => generateEmptyRecord(record.id),
+          (record) => generateEmptyRecord({ id: record.id }),
         ),
       },
     });
