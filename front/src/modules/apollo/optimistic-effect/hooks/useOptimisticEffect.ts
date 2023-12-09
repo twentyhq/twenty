@@ -146,6 +146,7 @@ export const useOptimisticEffect = ({
           }
         }
       },
+    [apolloClient.cache],
   );
 
   return {

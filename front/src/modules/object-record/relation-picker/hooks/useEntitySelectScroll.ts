@@ -1,12 +1,10 @@
 import scrollIntoView from 'scroll-into-view';
 import { Key } from 'ts-key-enum';
 
+import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 import { CreateButtonId } from '../constants';
-import { RelationPickerRecoilScopeContext } from '../states/recoil-scope-contexts/RelationPickerRecoilScopeContext';
-import { relationPickerPreselectedIdScopedState } from '../states/relationPickerPreselectedIdScopedState';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 import { getPreselectedIdIndex } from '../utils/getPreselectedIdIndex';
 
@@ -17,15 +15,12 @@ export const useEntitySelectScroll = ({
   selectableOptionIds: string[];
   containerRef: React.RefObject<HTMLDivElement>;
 }) => {
-  const [relationPickerPreselectedId, setRelationPickerPreselectedId] =
-    useRecoilScopedState(
-      relationPickerPreselectedIdScopedState,
-      RelationPickerRecoilScopeContext,
-    );
+  const { relationPickerPreselectedId, setRelationPickerPreselectedId } =
+    useRelationPicker();
 
   const preselectedIdIndex = getPreselectedIdIndex(
     selectableOptionIds,
-    relationPickerPreselectedId,
+    relationPickerPreselectedId ?? '',
   );
 
   const resetScroll = () => {

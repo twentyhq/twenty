@@ -1,25 +1,30 @@
 import { useCallback } from 'react';
 import { useApolloClient } from '@apollo/client';
+import { getOperationName } from '@apollo/client/utilities';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useOptimisticEvict } from '@/apollo/optimistic-effect/hooks/useOptimisticEvict';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { capitalize } from '~/utils/string/capitalize';
+
+type useDeleteOneRecordProps = {
+  objectNameSingular: string;
+  refetchFindManyQuery?: boolean;
+};
 
 export const useDeleteOneRecord = <T>({
   objectNameSingular,
-}: ObjectMetadataItemIdentifier) => {
+  refetchFindManyQuery = false,
+}: useDeleteOneRecordProps) => {
   const { performOptimisticEvict } = useOptimisticEvict();
   const { triggerOptimisticEffects } = useOptimisticEffect({
     objectNameSingular,
   });
 
-  const { objectMetadataItem, deleteOneRecordMutation } = useObjectMetadataItem(
-    {
+  const { objectMetadataItem, deleteOneRecordMutation, findManyRecordsQuery } =
+    useObjectMetadataItem({
       objectNameSingular,
-    },
-  );
+    });
 
   const apolloClient = useApolloClient();
 
@@ -42,6 +47,9 @@ export const useDeleteOneRecord = <T>({
         variables: {
           idToDelete,
         },
+        refetchQueries: refetchFindManyQuery
+          ? [getOperationName(findManyRecordsQuery) ?? '']
+          : [],
       });
 
       return deletedRecord.data[
@@ -54,6 +62,8 @@ export const useDeleteOneRecord = <T>({
       performOptimisticEvict,
       apolloClient,
       deleteOneRecordMutation,
+      refetchFindManyQuery,
+      findManyRecordsQuery,
     ],
   );
 

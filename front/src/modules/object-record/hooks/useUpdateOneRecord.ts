@@ -1,16 +1,26 @@
 import { useApolloClient } from '@apollo/client';
+import { getOperationName } from '@apollo/client/utilities';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { capitalize } from '~/utils/string/capitalize';
+
+type useUpdateOneRecordProps = {
+  objectNameSingular: string;
+  refetchFindManyQuery?: boolean;
+};
 
 export const useUpdateOneRecord = <T>({
   objectNameSingular,
-}: ObjectMetadataItemIdentifier) => {
-  const { objectMetadataItem, updateOneRecordMutation, getRecordFromCache } =
-    useObjectMetadataItem({
-      objectNameSingular,
-    });
+  refetchFindManyQuery = false,
+}: useUpdateOneRecordProps) => {
+  const {
+    objectMetadataItem,
+    updateOneRecordMutation,
+    getRecordFromCache,
+    findManyRecordsQuery,
+  } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
   const apolloClient = useApolloClient();
 
@@ -38,6 +48,9 @@ export const useUpdateOneRecord = <T>({
           ...input,
         },
       },
+      refetchQueries: refetchFindManyQuery
+        ? [getOperationName(findManyRecordsQuery) ?? '']
+        : [],
     });
 
     if (!updatedRecord?.data) {
