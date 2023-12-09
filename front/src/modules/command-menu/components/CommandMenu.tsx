@@ -85,15 +85,13 @@ export const StyledEmpty = styled.div`
 `;
 
 export const CommandMenu = () => {
-  const { toggleCommandMenu, onItemClick } = useCommandMenu();
+  const { toggleCommandMenu } = useCommandMenu();
 
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [search, setSearch] = useState('');
   const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
-
-  const [enterClicked, setEnterClicked] = useState(false);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
@@ -255,8 +253,6 @@ export const CommandMenu = () => {
                             }
                           />
                         )}
-                        enterClicked={enterClicked}
-                        resetEnterClicked={() => setEnterClicked(false)}
                       />
                     </SelectableItem>
                   ))}
@@ -278,8 +274,6 @@ export const CommandMenu = () => {
                             )}
                           />
                         )}
-                        enterClicked={enterClicked}
-                        resetEnterClicked={() => setEnterClicked(false)}
                       />
                     </SelectableItem>
                   ))}
@@ -293,8 +287,6 @@ export const CommandMenu = () => {
                         key={activity.id}
                         label={activity.title ?? ''}
                         onClick={() => openActivityRightDrawer(activity.id)}
-                        enterClicked={enterClicked}
-                        resetEnterClicked={() => setEnterClicked(false)}
                       />
                     </SelectableItem>
                   ))}

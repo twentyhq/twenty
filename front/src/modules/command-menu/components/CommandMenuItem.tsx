@@ -13,8 +13,6 @@ export type CommandMenuItemProps = {
   Icon?: IconComponent;
   firstHotKey?: string;
   secondHotKey?: string;
-  enterClicked?: boolean;
-  resetEnterClicked?: () => void;
 };
 
 export const CommandMenuItem = ({
