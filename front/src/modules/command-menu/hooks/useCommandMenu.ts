@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
@@ -10,6 +11,7 @@ import { isCommandMenuOpenedState } from '../states/isCommandMenuOpenedState';
 import { Command } from '../types/Command';
 
 export const useCommandMenu = () => {
+  const navigate = useNavigate();
   const setIsCommandMenuOpened = useSetRecoilState(isCommandMenuOpenedState);
   const setCommands = useSetRecoilState(commandMenuCommandsState);
   const {
@@ -50,11 +52,28 @@ export const useCommandMenu = () => {
     setCommands(commandMenuCommands);
   };
 
+  const onItemClick = useCallback(
+    (onClick?: () => void, to?: string) => {
+      toggleCommandMenu();
+
+      if (onClick) {
+        onClick();
+        return;
+      }
+      if (to) {
+        navigate(to);
+        return;
+      }
+    },
+    [navigate, toggleCommandMenu],
+  );
+
   return {
     openCommandMenu,
     closeCommandMenu,
     toggleCommandMenu,
     addToCommandMenu,
+    onItemClick,
     setToIntitialCommandMenu,
   };
 };

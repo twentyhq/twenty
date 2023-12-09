@@ -1,4 +1,5 @@
 import { selectableItemIdsScopedState } from '@/ui/layout/selectable-list/states/selectableItemIdsScopedState';
+import { selectableListOnEnterScopedState } from '@/ui/layout/selectable-list/states/selectableListOnEnterScopedState';
 import { selectedItemIdScopedState } from '@/ui/layout/selectable-list/states/selectedItemIdScopedState';
 import { isSelectedItemIdScopedFamilySelector } from '@/ui/layout/selectable-list/states/selectors/isSelectedItemIdScopedFamilySelector';
 import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
@@ -27,9 +28,15 @@ export const getSelectableListScopedStates = ({
     selectableListScopeId,
   );
 
+  const selectableListOnEnterState = getScopedState(
+    selectableListOnEnterScopedState,
+    selectableListScopeId,
+  );
+
   return {
     isSelectedItemIdSelector,
     selectableItemIdsState,
     selectedItemIdState,
+    selectableListOnEnterState,
   };
 };

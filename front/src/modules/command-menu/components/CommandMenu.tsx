@@ -4,7 +4,6 @@ import { useRecoilValue } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Activity } from '@/activities/types/Activity';
-import { CommandMenuSelectableListEffect } from '@/command-menu/components/CommandMenuSelectableListEffect';
 import { Company } from '@/companies/types/Company';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -86,7 +85,7 @@ export const StyledEmpty = styled.div`
 `;
 
 export const CommandMenu = () => {
-  const { toggleCommandMenu, closeCommandMenu } = useCommandMenu();
+  const { toggleCommandMenu } = useCommandMenu();
 
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
@@ -104,17 +103,6 @@ export const CommandMenu = () => {
       closeKeyboardShortcutMenu();
       setSearch('');
       toggleCommandMenu();
-    },
-    AppHotkeyScope.CommandMenu,
-    [toggleCommandMenu, setSearch],
-  );
-
-  useScopedHotkeys(
-    'esc',
-    () => {
-      setSearch('');
-      closeKeyboardShortcutMenu();
-      closeCommandMenu();
     },
     AppHotkeyScope.CommandMenu,
     [toggleCommandMenu, setSearch],
@@ -198,12 +186,13 @@ export const CommandMenu = () => {
         <StyledList>
           <ScrollWrapper>
             <StyledInnerList>
-              <CommandMenuSelectableListEffect
-                selectableItemIds={selectableItemIds}
-              />
               <SelectableList
                 selectableListId="command-menu-list"
-                selectableItemIds={selectableItemIds}
+                selectableItemIds={[selectableItemIds]}
+                hotkeyScope={AppHotkeyScope.CommandMenu}
+                onEnter={(itemId) => {
+                  console.log(itemId);
+                }}
               >
                 {!matchingCreateCommand.length &&
                   !matchingNavigateCommand.length &&
