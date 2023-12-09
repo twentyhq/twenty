@@ -8,6 +8,7 @@ type Task = Pick<Activity, 'id' | 'completedAt'>;
 export const useCompleteTask = (task: Task) => {
   const { updateOneRecord: updateOneActivity } = useUpdateOneRecord({
     objectNameSingular: 'activity',
+    refetchFindManyQuery: true,
   });
 
   const completeTask = useCallback(

@@ -5,7 +5,6 @@ import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCre
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -74,10 +73,6 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   const [objectViews, setObjectViews] = useState<View[]>([]);
   const [relationObjectViews, setRelationObjectViews] = useState<View[]>([]);
-
-  const { createOneRecord: createOneViewField } = useCreateOneRecord({
-    objectNameSingular: 'viewField',
-  });
 
   const { modifyRecordFromCache: modifyViewFromCache } = useObjectMetadataItem({
     objectNameSingular: 'view',
