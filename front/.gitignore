@@ -9,6 +9,7 @@ lerna-debug.log*
 
 # dependencies
 /node_modules
+/coverage*
 /.pnp
 .pnp.js
 

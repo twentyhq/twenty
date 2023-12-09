@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     // base: ,
-		envPrefix: 'REACT_APP_',
+    envPrefix: 'REACT_APP_',
     build: {
       outDir: 'build',
     },      

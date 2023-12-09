@@ -157,7 +157,8 @@
     "vite-plugin-svgr": "^4.2.0"
   },
   "engines": {
-    "node": "^18.16.0"
+    "node": "^18.16.0",
+    "npm": "please-use-yarn"
   },
   "browserslist": {
     "production": [
@@ -173,5 +174,6 @@
   },
   "msw": {
     "workerDirectory": "public"
-  }
+  },
+  "packageManager": "yarn@1.22.19+sha256.732620bac8b1690d507274f025f3c6cfdc3627a84d9642e38a07452cc00e0f2e"
 }
