@@ -89,7 +89,11 @@ export const RecordTableContainer = ({
           optionsDropdownButton={
             <TableOptionsDropdown
               recordTableId={recordTableId}
-              onImport={handleImport}
+              onImport={
+                ['companies', 'people'].includes(recordTableId)
+                  ? handleImport
+                  : undefined
+              }
             />
           }
           optionsDropdownScopeId={TableOptionsDropdownId}
