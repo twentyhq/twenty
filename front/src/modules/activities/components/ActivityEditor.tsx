@@ -82,6 +82,7 @@ export const ActivityEditor = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<Activity>({
     objectNameSingular: 'activity',
+    refetchFindManyQuery: true,
   });
 
   const { FieldContextProvider: DueAtFieldContextProvider } = useFieldContext({
@@ -128,7 +129,8 @@ export const ActivityEditor = ({
   const debouncedUpdateTitle = debounce(updateTitle, 200);
 
   const updateTitleFromBody = (body: string) => {
-    const parsedTitle = JSON.parse(body)[0]?.content[0]?.text;
+    const blockBody = JSON.parse(body);
+    const parsedTitle = blockBody[0]?.content?.[0]?.text;
     if (!hasUserManuallySetTitle && autoFillTitle) {
       setTitle(parsedTitle);
       debouncedUpdateTitle(parsedTitle);

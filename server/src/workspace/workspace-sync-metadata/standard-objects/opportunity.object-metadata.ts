@@ -75,6 +75,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUser',
     joinColumn: 'personId',
   })
+  @IsNullable()
   person: PersonObjectMetadata;
 
   @FieldMetadata({

@@ -60,7 +60,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
 
       assert(
-        apiKey.length === 1 && !apiKey[0].revokedAt,
+        apiKey.length === 1 && !apiKey?.[0].revokedAt,
         'This API Key is revoked',
         ForbiddenException,
       );

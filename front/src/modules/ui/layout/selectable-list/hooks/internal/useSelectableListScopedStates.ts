@@ -20,6 +20,7 @@ export const useSelectableListScopedStates = (
     selectedItemIdState,
     selectableItemIdsState,
     isSelectedItemIdSelector,
+    selectableListOnEnterState,
   } = getSelectableListScopedStates({
     selectableListScopeId: scopeId,
     itemId: itemId,
@@ -30,5 +31,6 @@ export const useSelectableListScopedStates = (
     isSelectedItemIdSelector,
     selectableItemIdsState,
     selectedItemIdState,
+    selectableListOnEnterState,
   };
 };

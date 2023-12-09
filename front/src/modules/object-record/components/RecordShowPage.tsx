@@ -68,6 +68,13 @@ export const RecordShowPage = () => {
     objectNameSingular,
   });
 
+  const objectMetadataType =
+    objectMetadataItem?.nameSingular === 'company'
+      ? 'Company'
+      : objectMetadataItem?.nameSingular === 'person'
+      ? 'Person'
+      : 'Custom';
+
   const useUpdateOneObjectRecordMutation: () => [
     (params: any) => any,
     any,
@@ -171,22 +178,21 @@ export const RecordShowPage = () => {
         hasBackButton
         Icon={IconBuildingSkyscraper}
       >
-        <PageFavoriteButton
-          isFavorite={isFavorite}
-          onClick={handleFavoriteButtonClick}
-        />
-        <ShowPageAddButton
-          key="add"
-          entity={{
-            id: record.id,
-            type:
-              objectMetadataItem?.nameSingular === 'company'
-                ? 'Company'
-                : objectMetadataItem?.nameSingular === 'person'
-                ? 'Person'
-                : 'Custom',
-          }}
-        />
+        {objectMetadataType !== 'Custom' && (
+          <>
+            <PageFavoriteButton
+              isFavorite={isFavorite}
+              onClick={handleFavoriteButtonClick}
+            />
+            <ShowPageAddButton
+              key="add"
+              entity={{
+                id: record.id,
+                type: objectMetadataType,
+              }}
+            />
+          </>
+        )}
       </PageHeader>
       <PageBody>
         <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>

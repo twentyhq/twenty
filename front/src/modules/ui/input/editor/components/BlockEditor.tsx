@@ -1,5 +1,6 @@
 import { BlockNoteEditor } from '@blocknote/core';
 import { BlockNoteView } from '@blocknote/react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 interface BlockEditorProps {
@@ -18,13 +19,14 @@ const StyledEditor = styled.div`
     color: ${({ theme }) => theme.font.color.tertiary};
     font-style: normal !important;
   }
-  .tippy-box:has(.mantine-Toolbar-root) {
-    transform: translateX(-13%);
-  }
 `;
 
-export const BlockEditor = ({ editor }: BlockEditorProps) => (
-  <StyledEditor>
-    <BlockNoteView editor={editor} />
-  </StyledEditor>
-);
+export const BlockEditor = ({ editor }: BlockEditorProps) => {
+  const theme = useTheme();
+  const blockNoteTheme = theme.name == 'light' ? 'light' : 'dark';
+  return (
+    <StyledEditor>
+      <BlockNoteView editor={editor} theme={blockNoteTheme} />
+    </StyledEditor>
+  );
+};

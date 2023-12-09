@@ -1,7 +1,7 @@
 export { ThemeProvider } from '@emotion/react';
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import * as React$1 from 'react';
-import React__default, { ReactNode, MouseEvent, FunctionComponent, ComponentProps } from 'react';
+import React__default, { ReactNode, MouseEvent, FunctionComponent, ComponentProps, InputHTMLAttributes } from 'react';
 import { motion, AnimationControls } from 'framer-motion';
 import { TablerIconsProps } from '@tabler/icons-react';
 import { PlacesType, PositionStrategy } from 'react-tooltip';
@@ -40,6 +40,8 @@ declare const lightTheme: {
             xs: string;
             sm: string;
             md: string;
+            xl: string;
+            pill: string;
             rounded: string;
         };
         color: {
@@ -367,9 +369,6 @@ declare const mainColors: {
 };
 type ThemeColor = keyof typeof mainColors;
 
-declare const tagColors: string[];
-type TagColor = (typeof tagColors)[number];
-declare const castToTagColor: (color: string) => TagColor;
 type TagProps = {
     className?: string;
     color: ThemeColor;
@@ -671,9 +670,63 @@ type RadioGroupProps = React__default.PropsWithChildren & {
 };
 declare const RadioGroup: ({ value, onChange, onValueChange, children, }: RadioGroupProps) => react_jsx_runtime.JSX.Element;
 
+type SelectProps<Value extends string | number | null> = {
+    className?: string;
+    disabled?: boolean;
+    dropdownScopeId: string;
+    label?: string;
+    onChange?: (value: Value) => void;
+    options: {
+        value: Value;
+        label: string;
+        Icon?: IconComponent;
+    }[];
+    value?: Value;
+};
+declare const Select: <Value extends string | number | null>({ className, disabled, dropdownScopeId, label, onChange, options, value, }: SelectProps<Value>) => react_jsx_runtime.JSX.Element;
+
+type TextAreaProps = {
+    disabled?: boolean;
+    minRows?: number;
+    onChange?: (value: string) => void;
+    placeholder?: string;
+    value?: string;
+};
+declare const TextArea: ({ disabled, placeholder, minRows, value, onChange, }: TextAreaProps) => react_jsx_runtime.JSX.Element;
+
+type TextInputComponentProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'onKeyDown'> & {
+    className?: string;
+    label?: string;
+    onChange?: (text: string) => void;
+    fullWidth?: boolean;
+    disableHotkeys?: boolean;
+    error?: string;
+    RightIcon?: IconComponent;
+    onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+};
+declare const TextInput: React$1.ForwardRefExoticComponent<Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "onKeyDown"> & {
+    className?: string | undefined;
+    label?: string | undefined;
+    onChange?: ((text: string) => void) | undefined;
+    fullWidth?: boolean | undefined;
+    disableHotkeys?: boolean | undefined;
+    error?: string | undefined;
+    RightIcon?: IconComponent | undefined;
+    onKeyDown?: ((event: React.KeyboardEvent<HTMLInputElement>) => void) | undefined;
+} & React$1.RefAttributes<HTMLInputElement>>;
+
+type ToggleSize = 'small' | 'medium';
+type ToggleProps = {
+    value?: boolean;
+    onChange?: (value: boolean) => void;
+    color?: string;
+    toggleSize?: ToggleSize;
+};
+declare const Toggle: ({ value, onChange, color, toggleSize, }: ToggleProps) => react_jsx_runtime.JSX.Element;
+
 declare module '@emotion/react' {
     interface Theme extends ThemeType {
     }
 }
 
-export { AnimatedCheckmark, AnimatedCheckmarkProps, AppTooltip, AppTooltipProps, AutosizeTextInput, AutosizeTextInputVariant, Button, ButtonAccent, ButtonGroup, ButtonGroupProps, ButtonPosition, ButtonProps, ButtonSize, ButtonVariant, Checkbox, CheckboxShape, CheckboxSize, CheckboxVariant, Checkmark, CheckmarkProps, Chip, ChipAccent, ChipSize, ChipVariant, CircularProgressBar, ColorSchemeCard, ColorSchemeCardProps, ColorSchemePicker, ColorSchemePickerProps, ColorSchemeSegmentProps, EntityChip, EntityChipProps, EntityChipVariant, EntityTitleDoubleTextInput, EntityTitleDoubleTextInputProps, FloatingButton, FloatingButtonGroup, FloatingButtonGroupProps, FloatingButtonPosition, FloatingButtonProps, FloatingButtonSize, FloatingIconButton, FloatingIconButtonGroup, FloatingIconButtonGroupProps, FloatingIconButtonPosition, FloatingIconButtonProps, FloatingIconButtonSize, IconAddressBook, IconPicker, ImageInput, LabelPosition, LightButton, LightButtonAccent, LightButtonProps, LightIconButton, LightIconButtonAccent, LightIconButtonProps, LightIconButtonSize, MainButton, OverflowingTextWithTooltip, ProgressBar, ProgressBarControls, ProgressBarProps, Radio, RadioGroup, RadioProps, RadioSize, RoundedIconButton, SoonPill, Tag, TagColor, TagProps, TooltipPosition, castToTagColor, darkTheme, lightTheme };
+export { AnimatedCheckmark, AnimatedCheckmarkProps, AppTooltip, AppTooltipProps, AutosizeTextInput, AutosizeTextInputVariant, Button, ButtonAccent, ButtonGroup, ButtonGroupProps, ButtonPosition, ButtonProps, ButtonSize, ButtonVariant, Checkbox, CheckboxShape, CheckboxSize, CheckboxVariant, Checkmark, CheckmarkProps, Chip, ChipAccent, ChipSize, ChipVariant, CircularProgressBar, ColorSchemeCard, ColorSchemeCardProps, ColorSchemePicker, ColorSchemePickerProps, ColorSchemeSegmentProps, EntityChip, EntityChipProps, EntityChipVariant, EntityTitleDoubleTextInput, EntityTitleDoubleTextInputProps, FloatingButton, FloatingButtonGroup, FloatingButtonGroupProps, FloatingButtonPosition, FloatingButtonProps, FloatingButtonSize, FloatingIconButton, FloatingIconButtonGroup, FloatingIconButtonGroupProps, FloatingIconButtonPosition, FloatingIconButtonProps, FloatingIconButtonSize, IconAddressBook, IconPicker, ImageInput, LabelPosition, LightButton, LightButtonAccent, LightButtonProps, LightIconButton, LightIconButtonAccent, LightIconButtonProps, LightIconButtonSize, MainButton, OverflowingTextWithTooltip, ProgressBar, ProgressBarControls, ProgressBarProps, Radio, RadioGroup, RadioProps, RadioSize, RoundedIconButton, Select, SelectProps, SoonPill, Tag, TextArea, TextAreaProps, TextInput, TextInputComponentProps, Toggle, ToggleProps, ToggleSize, TooltipPosition, darkTheme, lightTheme };

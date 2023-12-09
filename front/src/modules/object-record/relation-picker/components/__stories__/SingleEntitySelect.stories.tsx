@@ -2,14 +2,13 @@ import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 
+import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { IconUserCircle } from '@/ui/display/icon';
-import { useRecoilScopedValue } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedValue';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { mockedPeopleData } from '~/testing/mock-data/people';
 import { sleep } from '~/testing/sleep';
 
-import { relationPickerSearchFilterScopedState } from '../../states/relationPickerSearchFilterScopedState';
 import { EntityForSelect } from '../../types/EntityForSelect';
 import { SingleEntitySelect } from '../SingleEntitySelect';
 
@@ -44,9 +43,7 @@ const meta: Meta<typeof SingleEntitySelect> = {
     width,
   }) => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const relationPickerSearchFilter = useRecoilScopedValue(
-      relationPickerSearchFilterScopedState,
-    );
+    const { relationPickerSearchFilter } = useRelationPicker();
 
     return (
       <SingleEntitySelect

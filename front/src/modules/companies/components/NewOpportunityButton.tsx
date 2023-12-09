@@ -7,12 +7,10 @@ import { BoardColumnContext } from '@/object-record/record-board/contexts/BoardC
 import { useCreateOpportunity } from '@/object-record/record-board/hooks/internal/useCreateOpportunity';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
-import { relationPickerSearchFilterScopedState } from '@/object-record/relation-picker/states/relationPickerSearchFilterScopedState';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
 export const NewOpportunityButton = () => {
   const [isCreatingCard, setIsCreatingCard] = useState(false);
@@ -55,9 +53,7 @@ export const NewOpportunityButton = () => {
     setIsCreatingCard(false);
   };
 
-  const [relationPickerSearchFilter] = useRecoilScopedState(
-    relationPickerSearchFilterScopedState,
-  );
+  const { relationPickerSearchFilter } = useRelationPicker();
 
   // TODO: refactor useFilteredSearchEntityQuery
   const { findManyRecordsQuery } = useObjectMetadataItem({
