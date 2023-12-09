@@ -9,7 +9,6 @@ export const useGenerateEmptyRecord = ({
   const generateEmptyRecord = <T>(input: Partial<T> & { id: string }) => {
     // Todo replace this by runtime typing
     const validatedInput = input as { id: string } & { [key: string]: any };
-    console.log(input);
 
     if (objectMetadataItem.nameSingular === 'company') {
       return {
@@ -139,7 +138,29 @@ export const useGenerateEmptyRecord = ({
       } as T;
     }
 
-    return {} as T;
+    if (objectMetadataItem.nameSingular === 'opportunity') {
+      return {
+        id: validatedInput.id,
+        pipelineStepId: validatedInput.pipelineStepId,
+        closeDate: null,
+        updatedAt: new Date().toISOString(),
+        pipelineStep: null,
+        probability: '0',
+        pointOfContactId: null,
+        personId: null,
+        amount: {
+          amountMicros: null,
+          currencyCode: null,
+          __typename: 'Currency',
+        },
+        createdAt: new Date().toISOString(),
+        pointOfContact: null,
+        person: null,
+        company: null,
+        companyId: validatedInput.companyId,
+        __typename: 'Opportunity',
+      } as T;
+    }
   };
 
   return {

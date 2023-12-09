@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -78,6 +79,10 @@ export const SettingsObjectNewFieldStep2 = () => {
     objectNameSingular: 'viewField',
   });
 
+  const { modifyRecordFromCache: modifyViewFromCache } = useObjectMetadataItem({
+    objectNameSingular: 'view',
+  });
+
   useFindManyRecords({
     objectNameSingular: 'view',
     filter: {
@@ -141,7 +146,7 @@ export const SettingsObjectNewFieldStep2 = () => {
         );
 
         objectViews.forEach(async (view) => {
-          await createOneViewField?.({
+          const viewFieldToCreate = {
             viewId: view.id,
             fieldMetadataId:
               validatedFormValues.relation.type === 'MANY_TO_ONE'
@@ -150,10 +155,25 @@ export const SettingsObjectNewFieldStep2 = () => {
             position: activeObjectMetadataItem.fields.length,
             isVisible: true,
             size: 100,
+          };
+
+          modifyViewFromCache(view.id, {
+            // Todo fix typing
+            viewFields: (viewFields: any) => {
+              return {
+                edges: viewFields.edges.concat({ node: viewFieldToCreate }),
+                pageInfo: {
+                  hasNextPage: false,
+                  hasPreviousPage: false,
+                  startCursor: '',
+                  endCursor: '',
+                },
+              };
+            },
           });
         });
         relationObjectViews.forEach(async (view) => {
-          await createOneViewField?.({
+          const viewFieldToCreate = {
             viewId: view.id,
             fieldMetadataId:
               validatedFormValues.relation.type === 'MANY_TO_ONE'
@@ -162,10 +182,24 @@ export const SettingsObjectNewFieldStep2 = () => {
             position: relationObjectMetadataItem?.fields.length,
             isVisible: true,
             size: 100,
+          };
+          modifyViewFromCache(view.id, {
+            // Todo fix typing
+            viewFields: (viewFields: any) => {
+              return {
+                edges: viewFields.edges.concat({ node: viewFieldToCreate }),
+                pageInfo: {
+                  hasNextPage: false,
+                  hasPreviousPage: false,
+                  startCursor: '',
+                  endCursor: '',
+                },
+              };
+            },
           });
         });
       } else {
-        await createMetadataField({
+        const createdMetadataField = await createMetadataField({
           description: validatedFormValues.description,
           icon: validatedFormValues.icon,
           label: validatedFormValues.label ?? '',
@@ -175,6 +209,31 @@ export const SettingsObjectNewFieldStep2 = () => {
             validatedFormValues.type === FieldMetadataType.Select
               ? validatedFormValues.select
               : undefined,
+        });
+
+        objectViews.forEach(async (view) => {
+          const viewFieldToCreate = {
+            viewId: view.id,
+            fieldMetadataId: createdMetadataField.data?.createOneField.id,
+            position: activeObjectMetadataItem.fields.length,
+            isVisible: true,
+            size: 100,
+          };
+
+          modifyViewFromCache(view.id, {
+            // Todo fix typing
+            viewFields: (viewFields: any) => {
+              return {
+                edges: viewFields.edges.concat({ node: viewFieldToCreate }),
+                pageInfo: {
+                  hasNextPage: false,
+                  hasPreviousPage: false,
+                  startCursor: '',
+                  endCursor: '',
+                },
+              };
+            },
+          });
         });
       }
 

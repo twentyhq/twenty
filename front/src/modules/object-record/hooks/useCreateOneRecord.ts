@@ -30,10 +30,17 @@ export const useCreateOneRecord = <T>({
   const createOneRecord = async (input: Record<string, any>) => {
     const recordId = v4();
 
-    triggerOptimisticEffects(
-      `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-      generateEmptyRecord({ id: recordId, ...input }),
-    );
+    const generatedEmptyRecord = generateEmptyRecord({
+      id: recordId,
+      ...input,
+    });
+
+    if (generatedEmptyRecord) {
+      triggerOptimisticEffects(
+        `${capitalize(objectMetadataItem.nameSingular)}Edge`,
+        generatedEmptyRecord,
+      );
+    }
 
     const createdObject = await apolloClient.mutate({
       mutation: createOneRecordMutation,
