@@ -190,9 +190,7 @@ export const CommandMenu = () => {
                 selectableListId="command-menu-list"
                 selectableItemIds={[selectableItemIds]}
                 hotkeyScope={AppHotkeyScope.CommandMenu}
-                onEnter={(itemId) => {
-                  console.log(itemId);
-                }}
+                onEnter={(_itemId) => {}}
               >
                 {!matchingCreateCommand.length &&
                   !matchingNavigateCommand.length &&
