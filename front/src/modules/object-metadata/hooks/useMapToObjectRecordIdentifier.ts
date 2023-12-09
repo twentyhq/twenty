@@ -1,6 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 export const useMapToObjectRecordIdentifier = ({
@@ -10,17 +11,6 @@ export const useMapToObjectRecordIdentifier = ({
 }) => {
   return (record: any): ObjectRecordIdentifier => {
     switch (objectMetadataItem.nameSingular) {
-      case CoreObjectNameSingular.WorkspaceMember:
-      case CoreObjectNameSingular.Person:
-        return {
-          id: record.id,
-          name:
-            (record.name?.firstName ?? '') +
-            ' ' +
-            (record.name?.lastName ?? ''),
-          avatarUrl: record.avatarUrl,
-          avatarType: 'rounded',
-        };
       case CoreObjectNameSingular.Opportunity:
         return {
           id: record.id,
@@ -36,9 +26,20 @@ export const useMapToObjectRecordIdentifier = ({
         field.name === 'name',
     );
 
-    const labelIdentifierFieldValue = labelIdentifierFieldMetadata
-      ? record[labelIdentifierFieldMetadata.name]
-      : null;
+    let labelIdentifierFieldValue = '';
+
+    switch (labelIdentifierFieldMetadata?.type) {
+      case FieldMetadataType.FullName: {
+        labelIdentifierFieldValue = `${record.name?.firstName ?? ''} ${
+          record.name?.lastName ?? ''
+        }`;
+        break;
+      }
+      default:
+        labelIdentifierFieldValue = labelIdentifierFieldMetadata
+          ? record[labelIdentifierFieldMetadata.name]
+          : '';
+    }
 
     const imageIdentifierFieldMetadata = objectMetadataItem.fields.find(
       (field) => field.id === objectMetadataItem.imageIdentifierFieldMetadataId,

@@ -6,18 +6,19 @@ import { mapFieldMetadataToGraphqlQuery } from 'src/core/api-rest/api-rest-query
 @Injectable()
 export class FindManyQueryFactory {
   create(objectMetadata, depth?: number): string {
+    const objectNameSingular = capitalize(
+      objectMetadata.objectMetadataItem.nameSingular,
+    );
+    const objectNamePlural = objectMetadata.objectMetadataItem.namePlural;
+
     return `
-      query FindMany${capitalize(objectMetadata.objectMetadataItem.namePlural)}(
-        $filter: ${capitalize(
-          objectMetadata.objectMetadataItem.nameSingular,
-        )}FilterInput,
-        $orderBy: ${capitalize(
-          objectMetadata.objectMetadataItem.nameSingular,
-        )}OrderByInput,
+      query FindMany${capitalize(objectNamePlural)}(
+        $filter: ${objectNameSingular}FilterInput,
+        $orderBy: ${objectNameSingular}OrderByInput,
         $lastCursor: String,
         $limit: Float = 60
         ) {
-        ${objectMetadata.objectMetadataItem.namePlural}(
+        ${objectNamePlural}(
         filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor
         ) {
           edges {

@@ -1,9 +1,8 @@
-import { atomFamily } from 'recoil';
+import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
 
-export const relationPickerPreselectedIdScopedState = atomFamily<
-  string,
-  string
+export const relationPickerPreselectedIdScopedState = createScopedState<
+  string | undefined
 >({
   key: 'relationPickerPreselectedIdScopedState',
-  default: (param) => param,
+  defaultValue: undefined,
 });

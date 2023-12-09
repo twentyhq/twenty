@@ -12,17 +12,20 @@ export const useRelationPickerScopedStates = (args?: {
     relationPickerScopedId,
   );
 
-  const { identifiersMapperState } = getRelationPickerScopedStates({
-    relationPickerScopeId: scopeId,
-  });
-
-  const { searchQueryState } = getRelationPickerScopedStates({
+  const {
+    identifiersMapperState,
+    relationPickerSearchFilterState,
+    relationPickerPreselectedIdState,
+    searchQueryState,
+  } = getRelationPickerScopedStates({
     relationPickerScopeId: scopeId,
   });
 
   return {
     scopeId,
     identifiersMapperState,
+    relationPickerSearchFilterState,
+    relationPickerPreselectedIdState,
     searchQueryState,
   };
 };

@@ -71,7 +71,7 @@ export const useObjectRecordBoard = () => {
     skip: !savedPipelineSteps.length,
     objectNameSingular: 'opportunity',
     filter: filter,
-    orderBy: orderBy,
+    orderBy: orderBy as any, // TODO: finish typing
     onCompleted: useCallback(() => {
       setIsBoardLoaded(true);
     }, [setIsBoardLoaded]),
