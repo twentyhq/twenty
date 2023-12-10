@@ -1,0 +1,30 @@
+---
+title: Troubleshooting
+sidebar_position: 5
+description: Common problems & their solutions.
+sidebar_custom_props:
+  icon: TbExclamationCircle
+---
+
+
+## CR line breaks found [Windows]
+
+This is due to the line break characters of Windows and the git configuration. Try running:
+```
+git config --global core.autocrlf false
+```
+
+Then delete the repository and clone it again.
+
+## Extra yarn files 
+
+If you have extra files created by yarn  (`yarn.lock`, `.yarnrc.yml`, `.yarn`), you may have a yarn version issue.
+Try installing [yarn classic](https://classic.yarnpkg.com/lang/en/)!
+
+## Missing metadata schema
+
+During Twenty installation, you need to provision your postgres database with the right schemas, extensions, and users.
+This documentation includes [different ways](/contributor/local-setup/yarn-setup#step-2-set-up-postgresql-database) to set up your postgres instance.
+
+If you're successful in running this provisioning, you should have `default` and `metadata` schemas in your database.
+If you don't, make sure you don't have more than one postgres instance running on your computer.

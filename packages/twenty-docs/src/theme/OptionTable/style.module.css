@@ -1,0 +1,87 @@
+.container {
+  mask-image: linear-gradient(
+    to right,
+    transparent 0.8em,
+    white 1.5em,
+    white calc(100% - 1.5em),
+    transparent calc(100% - 0.8em)
+  );
+
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+}
+
+.container::-webkit-scrollbar {
+  appearance: none;
+}
+
+.optionsTable {
+  width: 100%;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  border-collapse: collapse;
+  display: inline-table;
+}
+
+.tableHeader {
+  background: transparent;
+}
+
+.tableHeaderRow {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  border-bottom-width: 1px;
+  text-align: left;
+  border-top: none;
+}
+
+.tableHeaderCell {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-weight: 600;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+
+.tableBody {
+  color: var(--ifm-color-content);
+  vertical-align: baseline;
+}
+
+.tableRow {
+  border-bottom-width: 1px;
+  border-left: none;
+  border-right: none;
+  border-color: var(--ifm-color-content);
+}
+
+.tableOptionCell {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-family: Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  line-height: 1.5rem;
+  white-space: pre;
+  color: var(--ifm-color-primary-light);
+  border-right: none;
+  border-left: none;
+}
+
+.tableDescriptionCell {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  border-right: none;
+  border-left: none;
+}

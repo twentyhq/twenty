@@ -1,0 +1,41 @@
+diff --git a/node_modules/@nestjs/graphql/dist/schema-builder/graphql-schema.factory.js b/node_modules/@nestjs/graphql/dist/schema-builder/graphql-schema.factory.js
+index 787bcbc..1c825bd 100644
+--- a/node_modules/@nestjs/graphql/dist/schema-builder/graphql-schema.factory.js
++++ b/node_modules/@nestjs/graphql/dist/schema-builder/graphql-schema.factory.js
+@@ -32,6 +32,7 @@ let GraphQLSchemaFactory = exports.GraphQLSchemaFactory = GraphQLSchemaFactory_1
+         else {
+             options = scalarsOrOptions;
+         }
++        this.typeDefinitionsGenerator.clearTypeDefinitionStorage();
+         lazy_metadata_storage_1.LazyMetadataStorage.load(resolvers);
+         type_metadata_storage_1.TypeMetadataStorage.compile(options.orphanedTypes);
+         this.typeDefinitionsGenerator.generate(options);
+diff --git a/node_modules/@nestjs/graphql/dist/schema-builder/storages/type-definitions.storage.js b/node_modules/@nestjs/graphql/dist/schema-builder/storages/type-definitions.storage.js
+index d100444..158c592 100644
+--- a/node_modules/@nestjs/graphql/dist/schema-builder/storages/type-definitions.storage.js
++++ b/node_modules/@nestjs/graphql/dist/schema-builder/storages/type-definitions.storage.js
+@@ -81,6 +81,10 @@ let TypeDefinitionsStorage = exports.TypeDefinitionsStorage = class TypeDefiniti
+         }
+         return;
+     }
++    clear() {
++        this.inputTypeDefinitionsLinks = null;
++        this.outputTypeDefinitionsLinks = null;
++    }
+ };
+ exports.TypeDefinitionsStorage = TypeDefinitionsStorage = tslib_1.__decorate([
+     (0, common_1.Injectable)()
+diff --git a/node_modules/@nestjs/graphql/dist/schema-builder/type-definitions.generator.js b/node_modules/@nestjs/graphql/dist/schema-builder/type-definitions.generator.js
+index eb6bcfd..4fbc1ae 100644
+--- a/node_modules/@nestjs/graphql/dist/schema-builder/type-definitions.generator.js
++++ b/node_modules/@nestjs/graphql/dist/schema-builder/type-definitions.generator.js
+@@ -26,6 +26,9 @@ let TypeDefinitionsGenerator = exports.TypeDefinitionsGenerator = class TypeDefi
+         this.generateObjectTypeDefs(options);
+         this.generateInputTypeDefs(options);
+     }
++    clearTypeDefinitionStorage() {
++        this.typeDefinitionsStorage.clear();
++    }
+     generateInputTypeDefs(options) {
+         const metadata = type_metadata_storage_1.TypeMetadataStorage.getInputTypesMetadata();
+         const inputTypeDefs = metadata.map((metadata) => this.inputTypeDefinitionFactory.create(metadata, options));
