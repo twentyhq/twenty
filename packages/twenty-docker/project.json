@@ -1,8 +1,0 @@
-{
-  "root": "packages/twenty-docker",
-  "targets": {
-    "build-dev": {
-      "command": "make -C packages/twenty-docker build-dev"
-    }
-  }
-}

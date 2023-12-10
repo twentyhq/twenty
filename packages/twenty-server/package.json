@@ -147,5 +147,10 @@
   },
   "resolutions": {
     "graphql": "16.8.0"
+  },
+  "engines": {
+    "node": "^18.16.0",
+    "npm": "please-use-yarn",
+    "yarn": "^4.0.2"
   }
 }

@@ -1,4 +1,4 @@
-build-dev:
+dev-build:
 	@docker compose -f dev/docker-compose.yml down 
 	rm -rf ../twenty-front/node_modules
 	rm -rf ../twenty-server/node_modules
@@ -8,26 +8,23 @@ build-dev:
 	@docker volume rm twenty_node_modules_docs > /dev/null 2>&1 || true
 	@docker compose -f dev/docker-compose.yml build
 
-up:
-	@docker compose up -d
+dev-up:
+	@docker compose -f dev/docker-compose.yml up -d
 
-down:
-	@docker compose down -v
+dev-down:
+	@docker compose -f dev/docker-compose.yml down -v
 
-sh:
-	@docker compose exec twenty-dev sh
+dev-sh:
+	@docker compose -f dev/docker-compose.yml exec twenty-dev sh
 
-provision-postgres-docker:
+dev-front-start:
+	@docker compose -f dev/docker-compose.yml exec twenty-dev sh -c "cd /app/packages/twenty-front && npm run start"
+
+dev-server-start:
+	@docker compose -f dev/docker-compose.yml exec twenty-dev sh -c "cd /app/packages/twenty-server && npm run start:dev"
+
+dev-build-postgres:
 	@docker stop twenty_postgres || true
 	@docker rm twenty_postgres || true
 	@docker volume rm twenty_db_data || true
 	@docker compose up --build postgres -d
-
-provision-postgres-macos-arm:
-	sh ./scripts/setup-postgres-macos-arm.sh
-
-provision-postgres-macos-intel:
-	sh ./scripts/setup-postgres-macos-intel.sh
-
-provision-postgres-linux:
-	sh ./scripts/setup-postgres-linux.sh

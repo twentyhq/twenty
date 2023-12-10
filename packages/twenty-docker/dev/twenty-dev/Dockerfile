@@ -1,15 +1,17 @@
 FROM node:18.16-bullseye as twenty-dev
 
-COPY /../../packages/twenty-eslint-plugin /app/packages/twenty-eslint-plugin
-
 WORKDIR /app
-
 COPY ../../../../package.json .
 COPY ../../../../yarn.lock .
-COPY ../../packages/twenty-server/patches ./packages/twenty-server/patches
-RUN yarn
-RUN npx playwright install-deps 
+COPY ../../../../.yarnrc.yml .
+COPY ../../../packages/twenty-front/package.json /app/packages/twenty-front/package.json
+COPY ../../../packages/twenty-server/package.json /app/packages/twenty-server/package.json
+COPY ../../../packages/twenty-eslint-plugin/package.json /app/packages/twenty-eslint-plugin/package.json
 
-WORKDIR /app
+RUN corepack enable
+RUN yarn set version 4.0.2
+RUN yarn
+
+RUN npx playwright install-deps 
 
 CMD ["tail", "-f", "/dev/null"]
