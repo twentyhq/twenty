@@ -1,3 +1,4 @@
+// @ts-expect-error // Todo: remove usage of react-data-grid
 import { Column } from 'react-data-grid';
 import { createPortal } from 'react-dom';
 import styled from '@emotion/styled';
@@ -48,7 +49,7 @@ export const generateColumns = <T extends string>(fields: Fields<T>) =>
             )}
         </StyledHeaderContainer>
       ),
-      formatter: ({ row }) => (
+      formatter: ({ row }: any) => (
         <StyledDefaultContainer>{row[column.key]}</StyledDefaultContainer>
       ),
     }),

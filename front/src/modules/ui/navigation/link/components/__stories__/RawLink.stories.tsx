@@ -1,6 +1,5 @@
-import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
+import { expect, fn, userEvent, within } from '@storybook/test';
 
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
@@ -19,7 +18,7 @@ const meta: Meta<typeof RawLink> = {
 
 export default meta;
 type Story = StoryObj<typeof RawLink>;
-const clickJestFn = jest.fn();
+const clickJestFn = fn();
 
 export const Default: Story = {
   args: {

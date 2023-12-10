@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { useMemo } from 'react';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { useRecoilState } from 'recoil';

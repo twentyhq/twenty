@@ -41,8 +41,8 @@ const StyledContainer = styled.div<Partial<ChipProps>>`
     variant === ChipVariant.Highlighted
       ? theme.background.transparent.light
       : variant === ChipVariant.Rounded
-      ? theme.background.transparent.lighter
-      : 'transparent'};
+        ? theme.background.transparent.lighter
+        : 'transparent'};
   border-color: ${({ theme, variant }) =>
     variant === ChipVariant.Rounded ? theme.border.color.medium : 'none'};
   border-radius: ${({ theme, variant }) =>
@@ -56,14 +56,14 @@ const StyledContainer = styled.div<Partial<ChipProps>>`
     disabled
       ? theme.font.color.light
       : accent === ChipAccent.TextPrimary
-      ? theme.font.color.primary
-      : theme.font.color.secondary};
+        ? theme.font.color.primary
+        : theme.font.color.secondary};
   cursor: ${({ clickable, disabled, variant }) =>
     disabled || variant === ChipVariant.Transparent
       ? 'inherit'
       : clickable
-      ? 'pointer'
-      : 'inherit'};
+        ? 'pointer'
+        : 'inherit'};
   display: inline-flex;
   font-weight: ${({ theme, accent }) =>
     accent === ChipAccent.TextSecondary ? theme.font.weight.medium : 'inherit'};
@@ -85,8 +85,8 @@ const StyledContainer = styled.div<Partial<ChipProps>>`
           (variant === ChipVariant.Highlighted
             ? theme.background.transparent.medium
             : variant === ChipVariant.Regular
-            ? theme.background.transparent.light
-            : 'transparent') +
+              ? theme.background.transparent.light
+              : 'transparent') +
           ';'
         );
       }
@@ -100,8 +100,8 @@ const StyledContainer = styled.div<Partial<ChipProps>>`
           (variant === ChipVariant.Highlighted
             ? theme.background.transparent.strong
             : variant === ChipVariant.Regular
-            ? theme.background.transparent.medium
-            : 'transparent') +
+              ? theme.background.transparent.medium
+              : 'transparent') +
           ';'
         );
       }

@@ -14,8 +14,8 @@ const StyledTableCell = styled.div<TableCellProps>`
     align === 'right'
       ? 'flex-end'
       : align === 'center'
-      ? 'center'
-      : 'flex-start'};
+        ? 'center'
+        : 'flex-start'};
   padding: 0 ${({ theme }) => theme.spacing(2)};
   text-align: ${({ align }) => align ?? 'left'};
 `;

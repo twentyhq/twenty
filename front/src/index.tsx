@@ -26,9 +26,7 @@ import '@emotion/react';
 import './index.css';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement,
-);
+const root = ReactDOM.createRoot(document.getElementById('root')!);
 
 root.render(
   <RecoilRoot>
@@ -68,6 +66,5 @@ root.render(
 );
 
 declare module '@emotion/react' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
   export interface Theme extends ThemeType {}
 }

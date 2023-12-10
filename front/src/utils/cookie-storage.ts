@@ -1,4 +1,4 @@
-import Cookies, { CookieAttributes } from 'js-cookie';
+import Cookies from 'js-cookie';
 
 class CookieStorage {
   private keys: Set<string> = new Set();
@@ -7,7 +7,11 @@ class CookieStorage {
     return Cookies.get(key);
   }
 
-  setItem(key: string, value: string, attributes?: CookieAttributes): void {
+  setItem(
+    key: string,
+    value: string,
+    attributes?: Cookies.CookieAttributes,
+  ): void {
     this.keys.add(key);
     Cookies.set(key, value, attributes);
   }

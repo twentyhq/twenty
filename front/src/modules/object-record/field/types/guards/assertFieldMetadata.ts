@@ -22,30 +22,32 @@ type AssertFieldMetadataFunction = <
   T extends E extends 'BOOLEAN'
     ? FieldBooleanMetadata
     : E extends 'CURRENCY'
-    ? FieldCurrencyMetadata
-    : E extends 'FULL_NAME'
-    ? FieldFullNameMetadata
-    : E extends 'DATE_TIME'
-    ? FieldDateTimeMetadata
-    : E extends 'EMAIL'
-    ? FieldEmailMetadata
-    : E extends 'SELECT'
-    ? FieldSelectMetadata
-    : E extends 'LINK'
-    ? FieldLinkMetadata
-    : E extends 'NUMBER'
-    ? FieldNumberMetadata
-    : E extends 'PHONE'
-    ? FieldPhoneMetadata
-    : E extends 'RATING'
-    ? FieldRatingMetadata
-    : E extends 'RELATION'
-    ? FieldRelationMetadata
-    : E extends 'TEXT'
-    ? FieldTextMetadata
-    : E extends 'UUID'
-    ? FieldUuidMetadata
-    : never,
+      ? FieldCurrencyMetadata
+      : E extends 'FULL_NAME'
+        ? FieldFullNameMetadata
+        : E extends 'DATE_TIME'
+          ? FieldDateTimeMetadata
+          : E extends 'EMAIL'
+            ? FieldEmailMetadata
+            : E extends 'SELECT'
+              ? FieldSelectMetadata
+              : E extends 'RATING'
+                ? FieldRatingMetadata
+                : E extends 'LINK'
+                  ? FieldLinkMetadata
+                  : E extends 'NUMBER'
+                    ? FieldNumberMetadata
+                    : E extends 'PHONE'
+                      ? FieldPhoneMetadata
+                      : E extends 'PROBABILITY'
+                        ? FieldRatingMetadata
+                        : E extends 'RELATION'
+                          ? FieldRelationMetadata
+                          : E extends 'TEXT'
+                            ? FieldTextMetadata
+                            : E extends 'UUID'
+                              ? FieldUuidMetadata
+                              : never,
 >(
   fieldType: E,
   fieldTypeGuard: (

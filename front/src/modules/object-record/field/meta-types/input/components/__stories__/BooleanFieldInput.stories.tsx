@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
-import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
+import { expect, fn, userEvent, within } from '@storybook/test';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useBooleanField } from '../../../hooks/useBooleanField';
@@ -61,7 +60,7 @@ export default meta;
 
 type Story = StoryObj<typeof BooleanFieldInputWithContext>;
 
-const submitJestFn = jest.fn();
+const submitJestFn = fn();
 
 export const Default: Story = {};
 

@@ -1,6 +1,5 @@
-import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
+import { expect, fn, userEvent, within } from '@storybook/test';
 
 import { mainColorNames, ThemeColor } from '@/ui/theme/constants/colors';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
@@ -23,7 +22,7 @@ type Story = StoryObj<typeof Status>;
 export const Default: Story = {
   args: {
     color: 'red',
-    onClick: jest.fn(),
+    onClick: fn(),
   },
   decorators: [ComponentDecorator],
   play: async ({ canvasElement, args }) => {

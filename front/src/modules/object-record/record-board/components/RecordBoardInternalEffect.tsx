@@ -12,7 +12,7 @@ export type RecordBoardInternalEffectProps = {
   onFieldsChange: (fields: any) => void;
 };
 
-export const RecordBoardInternalEffect = ({}) => {
+export const RecordBoardInternalEffect = () => {
   const updateCompanyColumnsBoardInternal =
     useUpdateCompanyBoardColumnsInternal();
   const { setActionBarEntries } = useRecordBoardActionBarEntriesInternal();

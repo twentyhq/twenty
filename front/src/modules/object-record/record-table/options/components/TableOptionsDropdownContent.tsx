@@ -109,8 +109,8 @@ export const TableOptionsDropdownContent = ({
               viewEditMode === 'create'
                 ? 'New view'
                 : viewEditMode === 'edit'
-                ? 'View name'
-                : ''
+                  ? 'View name'
+                  : ''
             }
             defaultValue={viewEditMode === 'create' ? '' : currentView?.name}
           />

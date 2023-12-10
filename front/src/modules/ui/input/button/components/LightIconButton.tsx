@@ -38,14 +38,14 @@ const StyledButton = styled.button<
         return active || focus
           ? theme.color.blue
           : !disabled
-          ? theme.font.color.secondary
-          : theme.font.color.extraLight;
+            ? theme.font.color.secondary
+            : theme.font.color.extraLight;
       case 'tertiary':
         return active || focus
           ? theme.color.blue
           : !disabled
-          ? theme.font.color.tertiary
-          : theme.font.color.extraLight;
+            ? theme.font.color.tertiary
+            : theme.font.color.extraLight;
     }
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};

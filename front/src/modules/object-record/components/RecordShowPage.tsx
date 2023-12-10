@@ -72,8 +72,8 @@ export const RecordShowPage = () => {
     objectMetadataItem?.nameSingular === 'company'
       ? 'Company'
       : objectMetadataItem?.nameSingular === 'person'
-      ? 'Person'
-      : 'Custom';
+        ? 'Person'
+        : 'Custom';
 
   const useUpdateOneObjectRecordMutation: () => [
     (params: any) => any,
@@ -117,14 +117,14 @@ export const RecordShowPage = () => {
               recordId: record.id,
             }
           : objectNameSingular === 'company'
-          ? {
-              labelIdentifier: record.name,
-              avatarUrl: getLogoUrlFromDomainName(record.domainName ?? ''),
-              avatarType: 'squared',
-              link: `/object/companyV2/${record.id}`,
-              recordId: record.id,
-            }
-          : {};
+            ? {
+                labelIdentifier: record.name,
+                avatarUrl: getLogoUrlFromDomainName(record.domainName ?? ''),
+                avatarType: 'squared',
+                link: `/object/companyV2/${record.id}`,
+                recordId: record.id,
+              }
+            : {};
       createFavorite(record.id, additionalData);
     }
   };
@@ -256,8 +256,8 @@ export const RecordShowPage = () => {
                   objectMetadataItem?.nameSingular === 'company'
                     ? 'Company'
                     : objectMetadataItem?.nameSingular === 'person'
-                    ? 'Person'
-                    : 'Custom',
+                      ? 'Person'
+                      : 'Custom',
               }}
               timeline
               tasks

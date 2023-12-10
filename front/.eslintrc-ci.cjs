@@ -8,7 +8,7 @@ module.exports = {
     },
   ],
   extends: [
-    './.eslintrc.js'
+    './.eslintrc.cjs'
   ],
   rules: {
     'no-console': 'error',

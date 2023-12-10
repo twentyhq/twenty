@@ -20,20 +20,21 @@ export const SelectHeaderTable = ({
 
   return (
     <Table
-      rowKeyGetter={(row) => data.indexOf(row)}
+      // Todo: remove usage of react-data-grid
+      rowKeyGetter={(row: any) => data.indexOf(row)}
       rows={data}
       columns={columns}
       selectedRows={selectedRows}
-      onSelectedRowsChange={(newRows) => {
+      onSelectedRowsChange={(newRows: any) => {
         // allow selecting only one row
-        newRows.forEach((value) => {
+        newRows.forEach((value: any) => {
           if (!selectedRows.has(value as number)) {
             setSelectedRows(new Set([value as number]));
             return;
           }
         });
       }}
-      onRowClick={(row) => {
+      onRowClick={(row: any) => {
         setSelectedRows(new Set([data.indexOf(row)]));
       }}
       headerRowHeight={0}

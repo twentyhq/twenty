@@ -1,13 +1,12 @@
-import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
+import { expect, fn, userEvent, within } from '@storybook/test';
 
 import { IconBrandGoogle } from '@/ui/display/icon';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { MainButton } from '../MainButton';
 
-const clickJestFn = jest.fn();
+const clickJestFn = fn();
 
 const meta: Meta<typeof MainButton> = {
   title: 'UI/Input/Button/MainButton',

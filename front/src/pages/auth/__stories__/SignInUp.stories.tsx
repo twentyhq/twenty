@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { fireEvent, within } from '@storybook/testing-library';
+import { fireEvent, within } from '@storybook/test';
 
 import { AppPath } from '@/types/AppPath';
 import {

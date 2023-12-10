@@ -161,8 +161,8 @@ export const RecordBoardOptionsDropdownContent = ({
               viewEditMode === 'create'
                 ? 'New view'
                 : viewEditMode === 'edit'
-                ? 'View name'
-                : ''
+                  ? 'View name'
+                  : ''
             }
             defaultValue={viewEditMode === 'create' ? '' : currentView?.name}
           />

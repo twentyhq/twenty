@@ -1,6 +1,5 @@
-import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
+import { expect, userEvent, within } from '@storybook/test';
 
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { IconUserCircle } from '@/ui/display/icon';

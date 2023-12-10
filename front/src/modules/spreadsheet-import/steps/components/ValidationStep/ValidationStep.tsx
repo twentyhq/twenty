@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+// @ts-expect-error Todo: remove usage of react-data-grid
 import { RowsChangeData } from 'react-data-grid';
 import styled from '@emotion/styled';
 
@@ -105,14 +106,18 @@ export const ValidationStep = <T extends string>({
       rows: typeof data,
       changedData?: RowsChangeData<(typeof data)[number]>,
     ) => {
-      const changes = changedData?.indexes.reduce((acc, index) => {
-        // when data is filtered val !== actual index in data
-        const realIndex = data.findIndex(
-          (value) => value.__index === rows[index].__index,
-        );
-        acc[realIndex] = rows[index];
-        return acc;
-      }, {} as Record<number, (typeof data)[number]>);
+      const changes = changedData?.indexes.reduce(
+        // Todo: remove usage of react-data-grid
+        (acc: any, index: any) => {
+          // when data is filtered val !== actual index in data
+          const realIndex = data.findIndex(
+            (value) => value.__index === rows[index].__index,
+          );
+          acc[realIndex] = rows[index];
+          return acc;
+        },
+        {} as Record<number, (typeof data)[number]>,
+      );
       const newData = Object.assign([], data, changes);
       updateData(newData);
     },

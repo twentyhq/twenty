@@ -1,5 +1,5 @@
-import { jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
+import { fn } from '@storybook/test';
 
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
@@ -18,7 +18,7 @@ const meta: Meta<typeof ContactLink> = {
 
 export default meta;
 type Story = StoryObj<typeof ContactLink>;
-const clickJestFn = jest.fn();
+const clickJestFn = fn();
 
 export const Email: Story = {
   args: {

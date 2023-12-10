@@ -26,10 +26,10 @@ const pagesCoverage = {
   ]
 };
 
-
-
 const storybookStoriesFolders = process.env.STORYBOOK_SCOPE;
 
-module.exports = storybookStoriesFolders === 'pages' ?
-  pagesCoverage : storybookStoriesFolders === 'modules' ? modulesCoverage
-  : globalCoverage;
+module.exports = storybookStoriesFolders === 'pages' 
+  ? pagesCoverage 
+  : storybookStoriesFolders === 'modules' 
+    ? modulesCoverage
+    : globalCoverage;

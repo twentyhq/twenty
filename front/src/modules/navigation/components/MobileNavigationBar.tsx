@@ -34,12 +34,12 @@ export const MobileNavigationBar = () => {
   const activeItemName = isNavigationDrawerOpen
     ? currentMobileNavigationDrawer
     : isCommandMenuOpened
-    ? 'search'
-    : isTasksPage
-    ? 'tasks'
-    : isSettingsPage
-    ? 'settings'
-    : 'main';
+      ? 'search'
+      : isTasksPage
+        ? 'tasks'
+        : isSettingsPage
+          ? 'settings'
+          : 'main';
 
   const items: {
     name: NavigationBarItemName;

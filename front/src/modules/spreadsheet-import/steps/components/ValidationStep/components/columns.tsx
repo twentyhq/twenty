@@ -1,3 +1,4 @@
+// @ts-expect-error // Todo: remove usage of react-data-grid
 import { Column, useRowSelection } from 'react-data-grid';
 import { createPortal } from 'react-dom';
 import styled from '@emotion/styled';
@@ -71,7 +72,7 @@ export const generateColumns = <T extends string>(
     resizable: false,
     sortable: false,
     frozen: true,
-    formatter: (props) => {
+    formatter: (props: any) => {
       // eslint-disable-next-line  react-hooks/rules-of-hooks
       const [isRowSelected, onRowSelectionChange] = useRowSelection();
 
@@ -116,7 +117,8 @@ export const generateColumns = <T extends string>(
         </StyledHeaderContainer>
       ),
       editable: column.fieldType.type !== 'checkbox',
-      editor: ({ row, onRowChange, onClose }) => {
+      // Todo: remove usage of react-data-grid
+      editor: ({ row, onRowChange, onClose }: any) => {
         const columnKey = column.key as keyof (Data<T> & Meta);
         let component;
 
@@ -162,7 +164,8 @@ export const generateColumns = <T extends string>(
       editorOptions: {
         editOnClick: true,
       },
-      formatter: ({ row, onRowChange }) => {
+      // Todo: remove usage of react-data-grid
+      formatter: ({ row, onRowChange }: { row: any; onRowChange: any }) => {
         const columnKey = column.key as keyof (Data<T> & Meta);
         let component;
 

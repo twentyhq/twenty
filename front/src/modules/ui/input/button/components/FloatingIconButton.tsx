@@ -33,9 +33,7 @@ const StyledButton = styled.button<
   align-items: center;
   backdrop-filter: ${({ applyBlur }) => (applyBlur ? 'blur(20px)' : 'none')};
   background: ${({ theme, isActive }) =>
-    !!isActive
-      ? theme.background.transparent.medium
-      : theme.background.primary};
+    isActive ? theme.background.transparent.medium : theme.background.primary};
   border: ${({ focus, theme }) =>
     focus ? `1px solid ${theme.color.blue}` : 'transparent'};
   border-radius: ${({ position, theme }) => {
@@ -56,8 +54,8 @@ const StyledButton = styled.button<
           theme.background.transparent.medium
         }${focus ? `,0 0 0 3px ${theme.color.blue10}` : ''}`
       : focus
-      ? `0 0 0 3px ${theme.color.blue10}`
-      : 'none'};
+        ? `0 0 0 3px ${theme.color.blue10}`
+        : 'none'};
   box-sizing: border-box;
   color: ${({ theme, disabled, focus }) => {
     return !disabled

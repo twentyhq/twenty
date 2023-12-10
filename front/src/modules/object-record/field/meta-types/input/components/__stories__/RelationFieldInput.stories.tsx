@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
-import { expect, jest } from '@storybook/jest';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
-import { userEvent, waitFor, within } from '@storybook/testing-library';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
@@ -66,8 +65,8 @@ const RelationFieldInputWithContext = ({
   );
 };
 
-const submitJestFn = jest.fn();
-const cancelJestFn = jest.fn();
+const submitJestFn = fn();
+const cancelJestFn = fn();
 
 const clearMocksDecorator: Decorator = (Story, context) => {
   if (context.parameters.clearMocks) {

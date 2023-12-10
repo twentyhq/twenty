@@ -18,8 +18,8 @@ export const allRowsSelectedStatusSelector = selector<AllRowsSelectedStatus>({
       numberOfSelectedRows === 0
         ? 'none'
         : numberOfRows === numberOfSelectedRows
-        ? 'all'
-        : 'some';
+          ? 'all'
+          : 'some';
 
     return allRowsSelectedStatus;
   },

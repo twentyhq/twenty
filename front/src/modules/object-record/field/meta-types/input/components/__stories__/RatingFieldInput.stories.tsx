@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
-import { expect, jest } from '@storybook/jest';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/testing-library';
+import { expect, fn, userEvent, within } from '@storybook/test';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -60,7 +59,7 @@ const RatingFieldInputWithContext = ({
   );
 };
 
-const submitJestFn = jest.fn();
+const submitJestFn = fn();
 
 const clearMocksDecorator: Decorator = (Story, context) => {
   if (context.parameters.clearMocks) {

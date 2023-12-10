@@ -121,4 +121,4 @@ export const Step = ({
   );
 };
 
-Step.displayName = 'StepBar/Step';
+Step.displayName = 'StepBar';

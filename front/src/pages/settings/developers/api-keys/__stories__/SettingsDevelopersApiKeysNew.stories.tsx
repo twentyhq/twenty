@@ -23,7 +23,7 @@ export default meta;
 export type Story = StoryObj<typeof SettingsDevelopersApiKeysNew>;
 
 export const Default: Story = {
-  play: async ({}) => {
+  play: async () => {
     await sleep(100);
   },
 };

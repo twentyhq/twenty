@@ -27,7 +27,7 @@ export default meta;
 export type Story = StoryObj<typeof SettingsObjectEdit>;
 
 export const StandardObject: Story = {
-  play: async ({}) => {
+  play: async () => {
     await sleep(100);
   },
 };
