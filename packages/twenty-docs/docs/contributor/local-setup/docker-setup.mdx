@@ -77,7 +77,7 @@ This installation method will also provision a PostgreSQL container.
 
 
 ```bash
-yarn nx run twenty-docker:build-dev
+make -C packages/twenty-docker dev-build
 ```
 
 ## Step 4: Migrate & seed
@@ -86,12 +86,12 @@ Before running the project, you need to initialize the database by running the m
 
 Start the containers:
 ```bash
-make up
+make -C packages/twenty-docker dev-up
 ```
 
 Setup database, run migrations, and seed:
 ```bash
-make server-database-init
+make -C packages/twenty-docker dev-server-database-init
 ```
 
 ## Step 5: Start Twenty
@@ -99,11 +99,11 @@ make server-database-init
 Run the project with the following commands from the `root` folder:
 
 ```bash
-make server-start
+make -C packages/twenty-docker dev-server-start
 ```
 
 ```bash
-make front-start
+make -C packages/twenty-docker dev-front-start
 ```
 
 You should now have:
@@ -118,9 +118,9 @@ Sign in using a seeded demo account `tim@apple.dev` (password: `Applecar2025`) t
 If you don't want to use the `make` command and work directly from the container, you can also ssh directly into the container:
 
 ```bash
-make sh
+make -C packages/twenty-docker dev-sh
 ```
-Then run commands through yarn:
+Then run commands through yarn and nx:
 ```bash
 yarn nx run twenty-server:database:init
 ```

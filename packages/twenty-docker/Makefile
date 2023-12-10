@@ -18,10 +18,13 @@ dev-sh:
 	@docker compose -f dev/docker-compose.yml exec twenty-dev sh
 
 dev-front-start:
-	@docker compose -f dev/docker-compose.yml exec twenty-dev sh -c "cd /app/packages/twenty-front && npm run start"
+	@docker compose -f dev/docker-compose.yml exec twenty-dev sh -c "cd /app/packages/twenty-front && yarn run start"
 
 dev-server-start:
-	@docker compose -f dev/docker-compose.yml exec twenty-dev sh -c "cd /app/packages/twenty-server && npm run start:dev"
+	@docker compose -f dev/docker-compose.yml exec twenty-dev sh -c "yarn nx run twenty-server:start:dev"
+
+dev-server-database-init:
+	@docker compose -f dev/docker-compose.yml exec twenty-dev sh -c "yarn nx run twenty-server:database:init"
 
 dev-build-postgres:
 	@docker stop twenty_postgres || true

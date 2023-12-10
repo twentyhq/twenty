@@ -12,4 +12,4 @@ RUN yarn
 
 WORKDIR /app/packages/twenty-docs
 
-CMD ["yarn", "start"]
+CMD ["tail", "-f", "/dev/null"]
