@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY ../../../../package.json .
 COPY ../../../../yarn.lock .
-RUN yarn workspace package/twenty-docs
+RUN yarn
 
 CMD ["yarn", "start"]

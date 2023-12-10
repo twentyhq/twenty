@@ -10,7 +10,7 @@
   "license": "AGPL-3.0",
   "workspaces": {
     "packages": [
-      "packages/eslint-plugin-twenty",
+      "packages/twenty-eslint-plugin",
       "packages/twenty-front",
       "packages/twenty-docs",
       "packages/twenty-server"

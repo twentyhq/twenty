@@ -25,12 +25,12 @@ jobs:
           path: front/node_modules
           key: front-node_modules-${{hashFiles('front/yarn.lock')}}
           restore-keys: front-node_modules-
-      - name: Cache eslint-plugin-twenty node modules
+      - name: Cache twenty-eslint-plugin node modules
         uses: actions/cache@v3
         with:
-          path: packages/eslint-plugin-twenty/node_modules
-          key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
-          restore-keys: eslint-plugin-twenty-node_modules-
+          path: packages/twenty-eslint-plugin/node_modules
+          key: twenty-eslint-plugin-node_modules-${{hashFiles('packages/twenty-eslint-plugin/yarn.lock')}}
+          restore-keys: twenty-eslint-plugin-node_modules-
       - name: Front / Install Dependencies
         run: cd front && yarn
   front-pages-sb-test:
@@ -58,12 +58,12 @@ jobs:
           path: front/node_modules
           key: front-node_modules-${{hashFiles('front/yarn.lock')}}
           restore-keys: front-node_modules-
-      - name: Cache eslint-plugin-twenty node modules
+      - name: Cache twenty-eslint-plugin node modules
         uses: actions/cache@v3
         with:
-          path: packages/eslint-plugin-twenty/node_modules
-          key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
-          restore-keys: eslint-plugin-twenty-node_modules-
+          path: packages/twenty-eslint-plugin/node_modules
+          key: twenty-eslint-plugin-node_modules-${{hashFiles('packages/twenty-eslint-plugin/yarn.lock')}}
+          restore-keys: twenty-eslint-plugin-node_modules-
       - name: Install dependencies
         run: yarn
       - name: Install Playwright
@@ -100,12 +100,12 @@ jobs:
           path: front/node_modules
           key: front-node_modules-${{hashFiles('front/yarn.lock')}}
           restore-keys: front-node_modules-
-      - name: Cache eslint-plugin-twenty node modules
+      - name: Cache twenty-eslint-plugin node modules
         uses: actions/cache@v3
         with:
-          path: packages/eslint-plugin-twenty/node_modules
-          key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
-          restore-keys: eslint-plugin-twenty-node_modules-
+          path: packages/twenty-eslint-plugin/node_modules
+          key: twenty-eslint-plugin-node_modules-${{hashFiles('packages/twenty-eslint-plugin/yarn.lock')}}
+          restore-keys: twenty-eslint-plugin-node_modules-
       - name: Install Playwright
         run: cd front && npx playwright install
       - name: Build Storybook
@@ -136,12 +136,12 @@ jobs:
           path: front/node_modules
           key: front-node_modules-${{hashFiles('front/yarn.lock')}}
           restore-keys: front-node_modules-
-      - name: Cache eslint-plugin-twenty node modules
+      - name: Cache twenty-eslint-plugin node modules
         uses: actions/cache@v3
         with:
-          path: packages/eslint-plugin-twenty/node_modules
-          key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
-          restore-keys: eslint-plugin-twenty-node_modules-
+          path: packages/twenty-eslint-plugin/node_modules
+          key: twenty-eslint-plugin-node_modules-${{hashFiles('packages/twenty-eslint-plugin/yarn.lock')}}
+          restore-keys: twenty-eslint-plugin-node_modules-
       - name: Front / Install Dependencies
         run: cd front && yarn
       - name: Front / Run linter
@@ -167,11 +167,11 @@ jobs:
           path: front/node_modules
           key: front-node_modules-${{hashFiles('front/yarn.lock')}}
           restore-keys: front-node_modules-
-      - name: Cache eslint-plugin-twenty node modules
+      - name: Cache twenty-eslint-plugin node modules
         uses: actions/cache@v3
         with:
-          path: packages/eslint-plugin-twenty/node_modules
-          key: eslint-plugin-twenty-node_modules-${{hashFiles('packages/eslint-plugin-twenty/yarn.lock')}}
-          restore-keys: eslint-plugin-twenty-node_modules-
+          path: packages/twenty-eslint-plugin/node_modules
+          key: twenty-eslint-plugin-node_modules-${{hashFiles('packages/twenty-eslint-plugin/yarn.lock')}}
+          restore-keys: twenty-eslint-plugin-node_modules-
       - name: Front / Run jest
         run: cd front && yarn test

@@ -18863,16 +18863,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-twenty@file:../eslint-plugin-twenty::locator=twenty-front%40workspace%3Apackages%2Ftwenty-front":
+"twenty-eslint-plugin@file:../twenty-eslint-plugin::locator=twenty-front%40workspace%3Apackages%2Ftwenty-front":
   version: 1.0.3
-  resolution: "eslint-plugin-twenty@file:../eslint-plugin-twenty#../eslint-plugin-twenty::hash=964e23&locator=twenty-front%40workspace%3Apackages%2Ftwenty-front"
+  resolution: "twenty-eslint-plugin@file:../twenty-eslint-plugin#../twenty-eslint-plugin::hash=964e23&locator=twenty-front%40workspace%3Apackages%2Ftwenty-front"
   checksum: 0eba60f500b8e33680d1330a431180b76123e4be6516ad3f66a66d35481a7c152f4444e2ccffbdee2198997a5779dc8e49ddbeffa5cfeb0b52c2d497dc9517e4
   languageName: node
   linkType: hard
 
-"eslint-plugin-twenty@workspace:packages/eslint-plugin-twenty":
+"twenty-eslint-plugin@workspace:packages/twenty-eslint-plugin":
   version: 0.0.0-use.local
-  resolution: "eslint-plugin-twenty@workspace:packages/eslint-plugin-twenty"
+  resolution: "twenty-eslint-plugin@workspace:packages/twenty-eslint-plugin"
   dependencies:
     "@types/jest": "npm:^29.5.4"
     "@typescript-eslint/eslint-plugin": "npm:^6.7.0"
@@ -33936,7 +33936,7 @@ __metadata:
     eslint-plugin-react-refresh: "npm:^0.4.4"
     eslint-plugin-simple-import-sort: "npm:^10.0.0"
     eslint-plugin-storybook: "npm:^0.6.15"
-    eslint-plugin-twenty: "file:../eslint-plugin-twenty"
+    twenty-eslint-plugin: "file:../twenty-eslint-plugin"
     eslint-plugin-unused-imports: "npm:^3.0.0"
     framer-motion: "npm:^10.12.17"
     graphql: "npm:^16.6.0"
