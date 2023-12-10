@@ -1,12 +1,12 @@
 FROM node:18.16-bullseye as twenty-dev
 
-COPY /../../packages /app/packages
+COPY /../../packages/eslint-plugin-twenty /app/packages/eslint-plugin-twenty
 
-WORKDIR /app/front
+WORKDIR /app
 
-COPY ../../front/package.json .
-COPY ../../front/yarn.lock .
-RUN yarn install
+COPY ../../../../package.json .
+COPY ../../../../yarn.lock .
+RUN yarn
 RUN npx playwright install-deps 
 
 WORKDIR /app/server

@@ -75,14 +75,9 @@ PG_DATABASE_URL=postgres://twenty:twenty@postgres:5432/default?connection_limit=
 The project includes an environment containerized with Docker and orchestrated with `docker-compose`.
 This installation method will also provision a PostgreSQL container.
 
-:::info
-
-The configuration for the build is in the `infra/dev` folder, but you can run `make` commands directly from the root folder.
-
-:::
 
 ```bash
-make build
+yarn nx run twenty-docker:build-dev
 ```
 
 ## Step 4: Migrate & seed

@@ -1,11 +1,9 @@
-FROM node:18.16-bullseye as docs
+FROM node:18.16-bullseye as twenty-docs
 
-WORKDIR /app/docs
+WORKDIR /app
 
-COPY ../../docs/package.json .
-COPY ../../docs/yarn.lock .
-RUN yarn
-
-COPY ../../docs .
+COPY ../../../../package.json .
+COPY ../../../../yarn.lock .
+RUN yarn workspace package/twenty-docs
 
 CMD ["yarn", "start"]
