@@ -1,3 +1,4 @@
+// @ts-expect-error // Todo: remove usage of react-data-grid
 import DataGrid, { DataGridProps } from 'react-data-grid';
 import styled from '@emotion/styled';
 

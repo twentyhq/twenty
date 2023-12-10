@@ -29,23 +29,25 @@ type AssertFieldMetadataFunction = <
           ? FieldDateTimeMetadata
           : E extends 'EMAIL'
             ? FieldEmailMetadata
-            : E extends 'ENUM'
+            : E extends 'SELECT'
               ? FieldSelectMetadata
-              : E extends 'LINK'
-                ? FieldLinkMetadata
-                : E extends 'NUMBER'
-                  ? FieldNumberMetadata
-                  : E extends 'PHONE'
-                    ? FieldPhoneMetadata
-                    : E extends 'PROBABILITY'
-                      ? FieldRatingMetadata
-                      : E extends 'RELATION'
-                        ? FieldRelationMetadata
-                        : E extends 'TEXT'
-                          ? FieldTextMetadata
-                          : E extends 'UUID'
-                            ? FieldUuidMetadata
-                            : never,
+              : E extends 'RATING'
+                ? FieldRatingMetadata
+                : E extends 'LINK'
+                  ? FieldLinkMetadata
+                  : E extends 'NUMBER'
+                    ? FieldNumberMetadata
+                    : E extends 'PHONE'
+                      ? FieldPhoneMetadata
+                      : E extends 'PROBABILITY'
+                        ? FieldRatingMetadata
+                        : E extends 'RELATION'
+                          ? FieldRelationMetadata
+                          : E extends 'TEXT'
+                            ? FieldTextMetadata
+                            : E extends 'UUID'
+                              ? FieldUuidMetadata
+                              : never,
 >(
   fieldType: E,
   fieldTypeGuard: (

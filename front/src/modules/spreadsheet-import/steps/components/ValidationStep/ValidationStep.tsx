@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
+// @ts-expect-error Todo: remove usage of react-data-grid
 import { RowsChangeData } from 'react-data-grid';
 import styled from '@emotion/styled';
 
@@ -106,7 +107,8 @@ export const ValidationStep = <T extends string>({
       changedData?: RowsChangeData<(typeof data)[number]>,
     ) => {
       const changes = changedData?.indexes.reduce(
-        (acc, index) => {
+        // Todo: remove usage of react-data-grid
+        (acc: any, index: any) => {
           // when data is filtered val !== actual index in data
           const realIndex = data.findIndex(
             (value) => value.__index === rows[index].__index,

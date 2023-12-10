@@ -1,3 +1,4 @@
+// @ts-expect-error // Todo: remove usage of react-data-grid
 import { Column, FormatterProps, useRowSelection } from 'react-data-grid';
 
 import { RawData } from '@/spreadsheet-import/types';
