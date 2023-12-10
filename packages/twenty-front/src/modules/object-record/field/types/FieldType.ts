@@ -1,0 +1,18 @@
+export type FieldType =
+  | 'BOOLEAN'
+  | 'CHIP'
+  | 'CURRENCY'
+  | 'DATE_TIME'
+  | 'DOUBLE_TEXT_CHIP'
+  | 'DOUBLE_TEXT'
+  | 'EMAIL'
+  | 'FULL_NAME'
+  | 'LINK'
+  | 'NUMBER'
+  | 'PHONE'
+  | 'RATING'
+  | 'RELATION'
+  | 'SELECT'
+  | 'TEXT'
+  | 'URL'
+  | 'UUID';

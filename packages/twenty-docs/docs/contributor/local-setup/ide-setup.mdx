@@ -1,0 +1,54 @@
+---
+title: IDE Setup
+sidebar_position: 4
+description: Get the best developer UX with VSCode
+sidebar_custom_props:
+  icon: TbBrandVscode
+---
+
+This section will help you set up your IDE for the project. If you haven't set up your development environment, please refer to the [local setup](/contributor/local-setup) section.
+
+
+## Visual Studio Code
+
+You can use any IDE you prefer, but Visual Studio Code is the choice of the core team, and has lots of extensions and settings to share with you.
+
+
+### Step 1: Installation
+
+You can download Visual Studio Code from [here](https://code.visualstudio.com/download). Depending on your operating system, you can download the appropriate version.
+
+### Step 2: Open Project
+
+Once you install Visual Studio Code, you can open the project by clicking on `File > Open Folder` and selecting `twenty` project root folder.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/img/contributor/ide-project-open.png" alt="Visual Studio Code: Open Twenty project" width="90%" />
+</div>
+
+### Step 3: Extensions 
+
+You can use the recommended extensions for the project. You will find them in `.vscode/extensions.json` file. VSCode should prompt you to install the recommended extensions when you open the project.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/img/contributor/ide-extensions.png" alt="Visual Studio Code: Install recommended extensions" width="90%" />
+</div>
+
+
+### Step 4: (Docker only) Run VSCode in container
+
+If you are using a [Docker setup](/contributor/local-setup/docker-setup), you will need to run VSCode in the container. You can do that by opening the project, clicking on the `Remote Explorer` icon on the left sidebar and then clicking on `Attach in New window` on `dev-twenty-dev` container.
+
+<div style={{textAlign: 'center'}}>
+    <img src="/img/contributor/ide-start-dev-container.png" alt="Visual Studio Code: Open in container" width="90%" />
+</div>
+
+<br />
+VSCode will open a new window and you will be able to use it as you would typically do. The only difference is that you will be running VSCode inside the container and you will have access to all the tools and dependencies installed in the container.
+
+<br /><br />
+If you stop your containers, you will need to restart them before opening the project in VSCode again.
+
+## You are all set
+
+You are all set to start contributing to the project. If you have any questions, feel free to reach out to the team on [Discord](https://twenty.com/discord).

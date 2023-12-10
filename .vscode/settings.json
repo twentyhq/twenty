@@ -44,5 +44,9 @@
       "source.fixAll.eslint": "explicit",
       "source.addMissingImports": "always"
     }
+  },
+  "search.exclude": {
+    "**/.yarn": true,
+    "**/.pnp.*": true
   }
 }

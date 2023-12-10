@@ -11,6 +11,7 @@
     "graphql.vscode-graphql-syntax",
     "graphql.vscode-graphql",
     "figma.figma-vscode-extension",
-    "xyc.vscode-mdx-preview"
+    "xyc.vscode-mdx-preview",
+    "arcanis.vscode-zipfs"
   ]
 }
