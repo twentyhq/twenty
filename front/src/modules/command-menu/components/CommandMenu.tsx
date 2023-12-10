@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Activity } from '@/activities/types/Activity';
@@ -85,12 +85,14 @@ export const StyledEmpty = styled.div`
 `;
 
 export const CommandMenu = () => {
-  const { toggleCommandMenu } = useCommandMenu();
+  const { toggleCommandMenu, onItemClick } = useCommandMenu();
 
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [search, setSearch] = useState('');
-  const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
+  const [commandMenuCommands, setCommandMenuCommands] = useRecoilState(
+    commandMenuCommandsState,
+  );
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,6 +120,17 @@ export const CommandMenu = () => {
       ],
     },
     limit: 3,
+    onCompleted: (data) => {
+      const commands: Command[] = data.edges.map(({ node: person }) => ({
+        id: person.id,
+        label: `${person.name.firstName} ${person.name.lastName}`,
+        to: `object/person/${person.id}`,
+        type: CommandType.Other,
+      }));
+      setCommandMenuCommands((prevCommands) => {
+        return prevCommands.concat(commands);
+      });
+    },
   });
 
   const { records: companies } = useFindManyRecords<Company>({
@@ -127,6 +140,17 @@ export const CommandMenu = () => {
       name: { ilike: `%${search}%` },
     },
     limit: 3,
+    onCompleted: (data) => {
+      const commands: Command[] = data.edges.map(({ node: company }) => ({
+        id: company.id,
+        label: company.name,
+        to: `object/company/${company.id}`,
+        type: CommandType.Other,
+      }));
+      setCommandMenuCommands((prevCommands) => {
+        return prevCommands.concat(commands);
+      });
+    },
   });
 
   const { records: activities } = useFindManyRecords<Activity>({
@@ -139,6 +163,18 @@ export const CommandMenu = () => {
       ],
     },
     limit: 3,
+    onCompleted: (data) => {
+      const commands: Command[] = data.edges.map(({ node: activity }) => ({
+        id: activity.id,
+        label: activity.title ?? '',
+        type: CommandType.Other,
+        to: '',
+        onCommandClick: () => openActivityRightDrawer(activity.id),
+      }));
+      setCommandMenuCommands((prevCommands) => {
+        return prevCommands.concat(commands);
+      });
+    },
   });
 
   const checkInShortcuts = (cmd: Command, search: string) => {
@@ -191,7 +227,16 @@ export const CommandMenu = () => {
                   selectableListId="command-menu-list"
                   selectableItemIds={[selectableItemIds]}
                   hotkeyScope={AppHotkeyScope.CommandMenu}
-                  onEnter={(_itemId) => {}}
+                  onEnter={(itemId) => {
+                    const command = commandMenuCommands.find(
+                      (cmd) => cmd.id === itemId,
+                    );
+  
+                    if (command) {
+                      const { to, onCommandClick } = command;
+                      onItemClick(onCommandClick, to);
+                    }
+                  }}
                 >
                   {!matchingCreateCommand.length &&
                     !matchingNavigateCommand.length &&
