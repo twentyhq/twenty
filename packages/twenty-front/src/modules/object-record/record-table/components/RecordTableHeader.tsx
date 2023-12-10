@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
@@ -7,6 +7,7 @@ import { RecordTableHeaderCell } from '@/object-record/record-table/components/R
 import { IconPlus } from '@/ui/display/icon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { useRecordTableScopedStates } from '../hooks/internal/useRecordTableScopedStates';
 
@@ -17,10 +18,10 @@ const StyledTableHead = styled.thead`
   cursor: pointer;
 `;
 
-const StyledPlusIconHeaderCell = styled.th<{ isSticky: boolean }>`
+const StyledPlusIconHeaderCell = styled.th<{ isTableWiderThanScreen: boolean }>`
   ${({ theme }) => {
     return `
-  &:hover > div {
+  &:hover {
     background: ${theme.background.transparent.light};
   };
   padding-left: ${theme.spacing(3)};
@@ -29,15 +30,14 @@ const StyledPlusIconHeaderCell = styled.th<{ isSticky: boolean }>`
   border-bottom: none !important;
   border-left: none !important;
   min-width: 32px;
-  ${({ isSticky, theme }) =>
-    isSticky
-      ? `position: sticky;
+  ${({ isTableWiderThanScreen, theme }) =>
+    isTableWiderThanScreen &&
+    `position: relative;
     right: 0;
     width: 32px;
     border-right: none !important;
     background-color: ${theme.background.primary};
-    `
-      : `position: relative;`};
+    `};
   z-index: 1;
 `;
 
@@ -57,21 +57,16 @@ const HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID =
 
 export const RecordTableHeader = ({
   createRecord,
-  tableBodyRef,
 }: {
-  tableBodyRef: React.RefObject<HTMLDivElement>;
   createRecord: () => void;
 }) => {
   const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
     useRecordTableScopedStates();
 
-  const [isPlusButtonSticky, setIsPlusButtonSticky] = useState(false);
-
-  const checkTableWidth = () => {
-    const tableClientWidth = tableBodyRef.current?.clientWidth ?? 0;
-    const tableScrollWidth = tableBodyRef.current?.scrollWidth ?? 0;
-    setIsPlusButtonSticky(tableClientWidth < tableScrollWidth);
-  };
+  const scrollWrapper = useContext(ScrollWrapperContext);
+  const isTableWiderThanScreen =
+    (scrollWrapper.current?.clientWidth ?? 0) <
+    (scrollWrapper.current?.scrollWidth ?? 0);
 
   const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector);
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
@@ -95,11 +90,12 @@ export const RecordTableHeader = ({
             key={column.fieldMetadataId}
             column={column}
             createRecord={createRecord}
-            checkTableWidth={checkTableWidth}
           />
         ))}
         {hiddenTableColumns.length > 0 && (
-          <StyledPlusIconHeaderCell isSticky={isPlusButtonSticky}>
+          <StyledPlusIconHeaderCell
+            isTableWiderThanScreen={isTableWiderThanScreen}
+          >
             <DropdownScope
               dropdownScopeId={HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID}
             >

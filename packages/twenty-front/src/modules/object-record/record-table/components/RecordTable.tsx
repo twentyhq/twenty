@@ -159,10 +159,7 @@ export const RecordTable = ({
             <StyledTableContainer>
               <div ref={tableBodyRef}>
                 <StyledTable className="entity-table-cell">
-                  <RecordTableHeader
-                    createRecord={createRecord}
-                    tableBodyRef={tableBodyRef}
-                  />
+                  <RecordTableHeader createRecord={createRecord} />
                   <RecordTableBodyEffect />
                   <RecordTableBody />
                 </StyledTable>
