@@ -1,6 +1,0 @@
-{
-  "rewrites": [
-    { "source": "!static/**", "destination": "/index.html" }
-  ],
-  "directoryListing": false
-}

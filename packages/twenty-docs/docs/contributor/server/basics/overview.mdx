@@ -1,0 +1,35 @@
+---
+title: Overview
+sidebar_position: 0
+sidebar_custom_props:
+  icon: TbEyeglass
+---
+
+Twenty primarily uses NestJS for the backend. 
+
+Prisma was the first choice as the ORM with a lot of auto-generated code under the hood. But to offer users flexibility and allow them to create custom fields and custom objects, something more low-level than Prisma made more sense to have more fine-grained control. This is why the project now uses TypeORM. 
+
+Here's what the tech stack now looks like. 
+
+## Tech Stack
+
+**Core**
+- [NestJS](https://nestjs.com/)
+- [TypeORM](https://typeorm.io/)
+- [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**Database**
+- [Postgres](https://www.postgresql.org/)
+
+**Third-party integrations**
+- [Sentry](https://sentry.io/welcome/) for tracking bugs
+
+**Testing**
+- [Jest](https://jestjs.io/)
+
+**Tooling**
+- [Yarn](https://yarnpkg.com/)
+- [ESLint](https://eslint.org/)
+
+**Development**
+- [AWS EKS](https://aws.amazon.com/eks/) 

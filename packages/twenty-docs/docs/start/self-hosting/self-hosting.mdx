@@ -1,0 +1,32 @@
+---
+title: Self-Hosting
+sidebar_position: 1
+sidebar_custom_props:
+  icon: TbServer
+---
+Right now, Docker containers are the only hosting option available, with more simple options to self-host Twenty coming soon. 
+Feel free to open issues on [GitHub](https://github.com/twentyhq/twenty/issues/new) if you want support for a specific cloud provider.
+
+## Production docker containers
+
+Prebuilt images for both front and back-end can be found on [docker hub](https://hub.docker.com/r/twentycrm/).
+
+For correct operation your will need to set [environment variables](enviroment-variables), a example configuration can be found [here](https://github.com/twentyhq/twenty/blob/main/server/.env.example).
+
+
+## Render
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/twentyhq/twenty)
+
+
+## AWS Elastic Beanstalk (Coming soon)
+
+A joint Docker image - containing both the frontend and server - that you can deploy using [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) is in the works. 
+
+
+<!--
+
+## Railway 
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/YWGqza?referralCode=3CLObs)
+
+-->
