@@ -23,8 +23,13 @@ In this document, you'll learn how to install the project using yarn. You should
 Before you can install and use Twenty, make sure you install the following on your computer:
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 - [Node v18](https://nodejs.org/en/download) 
-- [yarn v1](https://classic.yarnpkg.com/lang/en/docs/install/) 
+- [yarn v4](https://yarnpkg.com/getting-started/install).
 - [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+:::info Note
+Yarn is now shipped with Node.js nowadays, so you don't need to install it separately.
+You should only have to run `corepack enable` to enable Yarn if you haven't done it yet.
+:::
 
 </TabItem>
 
@@ -53,7 +58,7 @@ git config --global user.email "youremail@domain.com"
 ```bash
 sudo apt-get install curl
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
-curl -o- -L https://yarnpkg.com/install.sh | bash
+corepack enable
 ```
 Close and reopen your terminal to start using nvm. 
 
@@ -94,8 +99,16 @@ git clone https://github.com/twentyhq/twenty.git
 </TabItem>
 </Tabs>
 
+## Step 2: Place yourself at the root of the project
 
-## Step 2: Set up PostgreSQL Database
+```bash
+cd twenty
+```
+
+All commands in the following steps should be run from the root of the project.
+
+
+## Step 3: Set up PostgreSQL Database
 You need to have a PostgreSQL instance available to be able to use Twenty.
 You need to provision this database with a `twenty` user (password: `twenty`), a `default` database and a `test` database.
 
@@ -105,7 +118,6 @@ You need to provision this database with a `twenty` user (password: `twenty`), a
 <br /><br />
 
 ```bash
-cd twenty
 make provision-postgres-linux
 ```
 
@@ -113,7 +125,6 @@ make provision-postgres-linux
 <br /><br />
 
 ```bash
-cd twenty
 make provision-postgres-docker
 ```
 This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
@@ -125,7 +136,6 @@ You can access this using `twenty` postgres user (password: `twenty`)
 <br /><br />
 
 ```bash
-cd twenty
 make provision-postgres-macos-intel #for intel architecture
 make provision-postgres-macos-arm #for M1/M2/M3 architecture
 ```
@@ -134,7 +144,6 @@ make provision-postgres-macos-arm #for M1/M2/M3 architecture
 <br /><br />
 
 ```bash
-cd twenty
 make provision-postgres-docker
 ```
 This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
@@ -145,7 +154,6 @@ You can access this using `twenty` postgres user (password: `twenty`)
 
 It's better to provision your database locally:
 ```bash
-cd twenty
 make provision-postgres-linux
 ```
 This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
@@ -160,57 +168,42 @@ Twenty requires you to set some environment variables. Locally, you should set t
 
 To do so, make copies of the `.env.example` files in `/front` and `/server`:
 ```bash
-cp ./front/.env.example ./front/.env
-cp ./server/.env.example ./server/.env
+cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
+cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
-## Step 4: Server setup
+## Step 4: Installing dependencies
 
 :::info
 
-Use `nvm` to install the correct `node` version. The `server/.nvmrc` ensures all contributors use the same version.
+Use `nvm` to install the correct `node` version. The `.nvmrc` ensures all contributors use the same version.
 
 :::
 
 To build Twenty server and seed some data into your database, run the following commands:
 ```bash
-cd server
 nvm install #recommended
 nvm use #recommended 
+corepack enable #to enable yarn if you haven't done it yet
+yarn set version stable #to set the yarn version to yarn version 4
+
 yarn
-yarn database:init
-yarn start:dev
+```
+
+## Step 5: Running the project
+
+Setup your database with the following command:
+```bash
+yarn nx run twenty-server:database:init
+```
+
+Start the server and the frontend:
+```bash
+yarn nx run twenty-server:database:init
+yarn nx run twenty-server:start:dev
+yarn nx run twenty-front:dev
 ```
 
 Twenty's server will be up and running at [http://localhost:3000/graphql](http://localhost:3000/graphql).
-
-## Step 5: Frontend setup
-
-:::info
-
-For the frontend setup, too, it's better to use `nvm` to install the right node version. 
-
-:::
-
-To set up the frontend, run the following commands in another terminal:
-
-```bash
-cd front
-nvm install #recommended
-nvm use #recommended 
-yarn
-yarn start
-```
-
 Twenty's frontend will be running at [http://localhost:3001](http://localhost:3001). Just login using the seeded demo account: `tim@apple.dev` to start using Twenty.
 
-# Troubleshouting
-
-## Error: Failed to execute init.sql script.
-
-```bash
-cp: ./infra/dev/postgres/init.sql: No such file or directory
-psql: error: /tmp/init.sql: No such file or directory
-```
-
-If you get this error it means you are not launching the local database init script from the repo's root folder. Make sure you're in `twenty/` and not in `twenty/infra/dev/scripts`.

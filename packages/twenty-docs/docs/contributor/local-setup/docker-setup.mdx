@@ -57,13 +57,13 @@ You need to set some environment variables before you can work on the project. L
 
 ```bash
 cd twenty
-cp ./front/.env.example ./front/.env
-cp ./server/.env.example ./server/.env 
+cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
+cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 The default values should work out of the box, except for the postgres URL, which requires a small modification.
 
-Open `./server/.env` and change to the following:
+Open `./packages/twenty-server/.env` and change to the following:
 
 ```bash
 PG_DATABASE_URL=postgres://twenty:twenty@postgres:5432/default?connection_limit=1
@@ -127,8 +127,7 @@ make sh
 ```
 Then run commands through yarn:
 ```bash
-cd server
-yarn database:init
+yarn nx run twenty-server:database:init
 ```
 
 
