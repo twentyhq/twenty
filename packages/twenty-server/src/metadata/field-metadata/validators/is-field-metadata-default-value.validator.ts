@@ -31,7 +31,6 @@ export class IsFieldMetadataDefaultValue
 
     if (!type) {
       // Extract id value from the instance, should happen only when updating
-      // @ts-expect-error Todo: Fix typing error
       const id: string | undefined = args.instance?.['id'];
 
       if (!id) {
