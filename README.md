@@ -2,7 +2,7 @@
 <br>
 <p align="center">
   <a href="https://www.twenty.com">
-    <img src="./docs/static/img/logo-square-dark.svg" width="100px" alt="Twenty logo" />
+    <img src="./packages/twenty-docs/static/img/logo-square-dark.svg" width="100px" alt="Twenty logo" />
   </a>
 </p>
 
@@ -16,9 +16,9 @@
 <p align="center">
   <a href="https://www.twenty.com">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/preview-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/preview-light.png">
-      <img src="./docs/static/img/preview-light.png" alt="Companies view" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/preview-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/preview-light.png">
+      <img src="./packages/twenty-docs/static/img/preview-light.png" alt="Companies view" />
     </picture>
   </a>
 </p>
@@ -67,9 +67,9 @@ Below are the features we have implemented to date:
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/visualise-customer-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/visualise-customer-light.png">
-      <img src="./docs/static/img/visualise-customer-light.png" alt="Companies view" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/visualise-customer-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/visualise-customer-light.png">
+      <img src="./packages/twenty-docs/static/img/visualise-customer-light.png" alt="Companies view" />
     </picture>
 </p>
 
@@ -77,9 +77,9 @@ Below are the features we have implemented to date:
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/follow-your-deals-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/follow-your-deals-light.png">
-      <img src="./docs/static/img/follow-your-deals-light.png" alt="Companies view" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/follow-your-deals-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/follow-your-deals-light.png">
+      <img src="./packages/twenty-docs/static/img/follow-your-deals-light.png" alt="Companies view" />
     </picture>
 </p>
 
@@ -87,9 +87,9 @@ Below are the features we have implemented to date:
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/rich-notes-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/rich-notes-light.png">
-      <img src="./docs/static/img/rich-notes-light.png" alt="Companies view" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/rich-notes-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/rich-notes-light.png">
+      <img src="./packages/twenty-docs/static/img/rich-notes-light.png" alt="Companies view" />
     </picture>
 </p>
 
@@ -97,9 +97,9 @@ Below are the features we have implemented to date:
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/create-tasks-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/create-tasks-light.png">
-      <img src="./docs/static/img/create-tasks-light.png" alt="Companies view" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/create-tasks-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/create-tasks-light.png">
+      <img src="./packages/twenty-docs/static/img/create-tasks-light.png" alt="Companies view" />
     </picture>
 </p>
 
@@ -108,9 +108,9 @@ Below are the features we have implemented to date:
 
 <p align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/shortcut-navigation-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/docs/static/img/shortcut-navigation-light.png">
-      <img src="./docs/static/img/shortcut-navigation-light.png" alt="Companies view" />
+      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/shortcut-navigation-dark.png">
+      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docs/static/img/shortcut-navigation-light.png">
+      <img src="./packages/twenty-docs/static/img/shortcut-navigation-light.png" alt="Companies view" />
     </picture>
 </p>
 
