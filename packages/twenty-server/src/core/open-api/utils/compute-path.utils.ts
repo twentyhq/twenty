@@ -134,6 +134,74 @@ export const computeLastCursorParameters = (item: ObjectMetadataEntity) => {
   };
 };
 
+export const getResponses = (item: ObjectMetadataEntity) => {
+  return {
+    '200': {
+      description: 'Successful operation',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              data: {
+                type: 'object',
+                properties: {
+                  [item.namePlural]: {
+                    type: 'object',
+                    properties: {
+                      edges: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            node: {
+                              type: 'object',
+                              properties: computeNodeProperties(item),
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            example: {
+              data: {
+                [item.namePlural]: {
+                  edges: [
+                    {
+                      node: computeNodeExample(item),
+                    },
+                  ],
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    '400': getErrorResponses('Invalid request'),
+    '401': getErrorResponses('Unauthorized'),
+  };
+};
+
+const getErrorResponses = (description: string) => {
+  return {
+    description,
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            error: { type: 'string' },
+          },
+        },
+      },
+    },
+  };
+};
+
 export const computePath = (item: ObjectMetadataEntity) => {
   return {
     get: {
@@ -148,53 +216,7 @@ export const computePath = (item: ObjectMetadataEntity) => {
         computeDepthParameters(item),
         computeLastCursorParameters(item),
       ],
-      responses: {
-        '200': {
-          description: 'successful operation',
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  data: {
-                    type: 'object',
-                    properties: {
-                      [item.namePlural]: {
-                        type: 'object',
-                        properties: {
-                          edges: {
-                            type: 'array',
-                            items: {
-                              type: 'object',
-                              properties: {
-                                node: {
-                                  type: 'object',
-                                  properties: computeNodeProperties(item),
-                                },
-                              },
-                            },
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-                example: {
-                  data: {
-                    [item.namePlural]: {
-                      edges: [
-                        {
-                          node: computeNodeExample(item),
-                        },
-                      ],
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
+      responses: getResponses(item),
     },
   };
 };
