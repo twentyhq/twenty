@@ -1,124 +1,125 @@
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
 
-import { Filter } from '../types/Filter';
-import { DateFilter, FloatFilter, FullNameFilter, RequestFilter, StringFilter, URLFilter } from '@/object-record/object-filter-dropdown/types/FilterRequest';
+import { Filter } from '../object-filter-dropdown/types/Filter';
+import { CurrencyFilter, DateFilter, FloatFilter, FullNameFilter, ObjectRecordFilter, StringFilter, URLFilter } from '@/object-record/types/ObjectRecordFilter';
 
-export type FilterToTurnIntoWhereClause = Omit<Filter, 'definition'> & {
+export type RawUIFilter = Omit<Filter, 'definition'> & {
   definition: {
     type: Filter['definition']['type'];
   };
 };
 
-export const turnFiltersIntoWhereClause = (
-  filters: FilterToTurnIntoWhereClause[],
+export const turnFiltersIntoObjectRecordFilters = (
+  rawUIFilters: RawUIFilter[],
   fields: Pick<Field, 'id' | 'name'>[],
-): RequestFilter => {
-  const requestFilters: RequestFilter[] = [];
+): ObjectRecordFilter => {
+  const objectRecordFilters: ObjectRecordFilter[] = [];
 
-  for(const filter of filters) {
+  for(const rawUIFilter of rawUIFilters) {
     const correspondingField = fields.find(
-      (field) => field.id === filter.fieldMetadataId,
+      (field) => field.id === rawUIFilter.fieldMetadataId,
     );
+    
     if (!correspondingField) {
       throw new Error(
-        `Could not find field ${filter.fieldMetadataId} in metadata object`,
+        `Could not find field ${rawUIFilter.fieldMetadataId} in metadata object`,
       );
     }
 
-    switch (filter.definition.type) {
+    switch (rawUIFilter.definition.type) {
       case 'EMAIL':
       case 'PHONE':
       case 'TEXT':
-        switch (filter.operand) {
+        switch (rawUIFilter.operand) {
           case ViewFilterOperand.Contains:
-            requestFilters.push({
+            objectRecordFilters.push({
               [correspondingField.name]: {
-                ilike: `%${filter.value}%`,
+                ilike: `%${rawUIFilter.value}%`,
               } as StringFilter,
             });
             break
           case ViewFilterOperand.DoesNotContain:
-            requestFilters.push({
+            objectRecordFilters.push({
               not: {
                 [correspondingField.name]: {
-                  ilike: `%${filter.value}%`,
+                  ilike: `%${rawUIFilter.value}%`,
                 } as StringFilter,
               },
             });
            break
           default:
             throw new Error(
-              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
             );
         }
         break;
       case 'DATE_TIME':
-        switch (filter.operand) {
+        switch (rawUIFilter.operand) {
           case ViewFilterOperand.GreaterThan:
-            requestFilters.push({
+            objectRecordFilters.push({
               [correspondingField.name]: {
-                gte: filter.value,
+                gte: rawUIFilter.value,
               } as DateFilter,
             });
             break;
           case ViewFilterOperand.LessThan:
-            requestFilters.push({
+            objectRecordFilters.push({
               [correspondingField.name]: {
-                lte: filter.value,
+                lte: rawUIFilter.value,
               } as DateFilter,
             });
             break;
           default:
             throw new Error(
-              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
             );
         }
         break;
       case 'NUMBER':
-        switch (filter.operand) {
+        switch (rawUIFilter.operand) {
           case ViewFilterOperand.GreaterThan:
-            requestFilters.push({
+            objectRecordFilters.push({
               [correspondingField.name]: {
-                gte: parseFloat(filter.value),
+                gte: parseFloat(rawUIFilter.value),
               } as FloatFilter,
             });
             break;
           case ViewFilterOperand.LessThan:
-            requestFilters.push({
+            objectRecordFilters.push({
               [correspondingField.name]: {
-                lte: parseFloat(filter.value),
+                lte: parseFloat(rawUIFilter.value),
               } as FloatFilter,
             });
             break;
           default:
             throw new Error(
-              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
             );
         }
         break;
       case 'RELATION':
         try {
-          JSON.parse(filter.value);
+          JSON.parse(rawUIFilter.value);
         } catch (e) {
           throw new Error(
-            `Cannot parse filter value for RELATION filter : "${filter.value}"`,
+            `Cannot parse filter value for RELATION filter : "${rawUIFilter.value}"`,
           );
         }
 
-        const parsedRecordIds = JSON.parse(filter.value) as string[];
+        const parsedRecordIds = JSON.parse(rawUIFilter.value) as string[];
 
         if (parsedRecordIds.length > 0) {
-          switch (filter.operand) {
+          switch (rawUIFilter.operand) {
             case ViewFilterOperand.Is:
-              requestFilters.push({
+              objectRecordFilters.push({
                 [correspondingField.name + 'Id']: {
                   in: parsedRecordIds,
                 } as StringFilter,
               });
               break;
             case ViewFilterOperand.IsNot:
-              requestFilters.push({
+              objectRecordFilters.push({
                 not: {
                   [correspondingField.name + 'Id']: {
                     in: parsedRecordIds,
@@ -128,50 +129,50 @@ export const turnFiltersIntoWhereClause = (
               break;
             default:
               throw new Error(
-                `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+                `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
               );
           }
         }
         break;
       case 'CURRENCY':
-        switch (filter.operand) {
+        switch (rawUIFilter.operand) {
           case ViewFilterOperand.GreaterThan:
-            requestFilters.push({
+            objectRecordFilters.push({
               [correspondingField.name]: {
-                amountMicros: { gte: parseFloat(filter.value) * 1000000 },
-              },
+                amountMicros: { gte: parseFloat(rawUIFilter.value) * 1000000 },
+              } as CurrencyFilter,
             });
             break;
           case ViewFilterOperand.LessThan:
-            requestFilters.push({
+            objectRecordFilters.push({
               [correspondingField.name]: {
-                amountMicros: { lte: parseFloat(filter.value) * 1000000 },
-              },
+                amountMicros: { lte: parseFloat(rawUIFilter.value) * 1000000 },
+              } as CurrencyFilter,
             });
             break;
           default:
             throw new Error(
-              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
             );
         }
         break;
       case 'LINK':
-        switch (filter.operand) {
+        switch (rawUIFilter.operand) {
           case ViewFilterOperand.Contains:
-            requestFilters.push({
+            objectRecordFilters.push({
               [correspondingField.name]: {
                 url: {
-                  ilike: `%${filter.value}%`,
+                  ilike: `%${rawUIFilter.value}%`,
                 },
               } as URLFilter,
             });
             break;
           case ViewFilterOperand.DoesNotContain:
-            requestFilters.push({
+            objectRecordFilters.push({
               not: {
                 [correspondingField.name]: {
                   url: {
-                    ilike: `%${filter.value}%`,
+                    ilike: `%${rawUIFilter.value}%`,
                   },
                 } as URLFilter,
               },
@@ -179,26 +180,26 @@ export const turnFiltersIntoWhereClause = (
             break;
           default:
             throw new Error(
-              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
             );
         }
         break;
       case 'FULL_NAME':
-        switch (filter.operand) {
+        switch (rawUIFilter.operand) {
           case ViewFilterOperand.Contains:
-            requestFilters.push({
+            objectRecordFilters.push({
               or: [
                 {
                   [correspondingField.name]: {
                     firstName: {
-                      ilike: `%${filter.value}%`,
+                      ilike: `%${rawUIFilter.value}%`,
                     },
                   } as FullNameFilter,
                 },
                 {
                   [correspondingField.name]: {
                     lastName: {
-                      ilike: `%${filter.value}%`,
+                      ilike: `%${rawUIFilter.value}%`,
                     },
                   } as FullNameFilter,
                 },
@@ -206,13 +207,13 @@ export const turnFiltersIntoWhereClause = (
             });
             break;
           case ViewFilterOperand.DoesNotContain:
-            requestFilters.push({
+            objectRecordFilters.push({
               and: [
                 {
                   not: {
                     [correspondingField.name]: {
                       firstName: {
-                        ilike: `%${filter.value}%`,
+                        ilike: `%${rawUIFilter.value}%`,
                       },
                     } as FullNameFilter,
                   },
@@ -221,7 +222,7 @@ export const turnFiltersIntoWhereClause = (
                   not: {
                     [correspondingField.name]: {
                       lastName: {
-                        ilike: `%${filter.value}%`,
+                        ilike: `%${rawUIFilter.value}%`,
                       },
                     } as FullNameFilter,
                   },
@@ -231,7 +232,7 @@ export const turnFiltersIntoWhereClause = (
             break;
           default:
             throw new Error(
-              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
             );
         }
         break;
@@ -240,5 +241,5 @@ export const turnFiltersIntoWhereClause = (
     }
   }
 
-  return { and: requestFilters };
+  return { and: objectRecordFilters };
 };

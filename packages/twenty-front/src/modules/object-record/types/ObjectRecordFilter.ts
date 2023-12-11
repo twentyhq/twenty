@@ -61,12 +61,12 @@ export type FullNameFilter = {
   lastName?: StringFilter;
 };
 
-export type LeafRequestFilter = UUIDFilter | StringFilter | FloatFilter | DateFilter | CurrencyFilter | URLFilter | FullNameFilter
+export type LeafFilter = UUIDFilter | StringFilter | FloatFilter | DateFilter | CurrencyFilter | URLFilter | FullNameFilter
 
-export type RequestFilter = {
-  and?: RequestFilter[];
-  or?: RequestFilter[];
-  not?: RequestFilter;
+export type ObjectRecordFilter = {
+  and?: ObjectRecordFilter[];
+  or?: ObjectRecordFilter[];
+  not?: ObjectRecordFilter;
 } | {
-  [fieldName: string]: LeafRequestFilter
+  [fieldName: string]: LeafFilter
 }
