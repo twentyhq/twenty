@@ -57,16 +57,16 @@ You need to set some environment variables before you can work on the project. L
 
 ```bash
 cd twenty
-cp ./front/.env.example ./front/.env
-cp ./server/.env.example ./server/.env 
+cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
+cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 The default values should work out of the box, except for the postgres URL, which requires a small modification.
 
-Open `./server/.env` and change to the following:
+Open `./packages/twenty-server/.env` and change to the following:
 
 ```bash
-PG_DATABASE_URL=postgres://twenty:twenty@postgres:5432/default?connection_limit=1
+PG_DATABASE_URL=postgres://twenty:twenty@postgres:5432/default
 ```
 
 
@@ -75,14 +75,9 @@ PG_DATABASE_URL=postgres://twenty:twenty@postgres:5432/default?connection_limit=
 The project includes an environment containerized with Docker and orchestrated with `docker-compose`.
 This installation method will also provision a PostgreSQL container.
 
-:::info
-
-The configuration for the build is in the `infra/dev` folder, but you can run `make` commands directly from the root folder.
-
-:::
 
 ```bash
-make build
+make docker-dev-build
 ```
 
 ## Step 4: Migrate & seed
@@ -91,12 +86,13 @@ Before running the project, you need to initialize the database by running the m
 
 Start the containers:
 ```bash
-make up
+make docker-dev-up
 ```
 
 Setup database, run migrations, and seed:
 ```bash
-make server-database-init
+make docker-dev-sh
+yarn nx database:init twenty-server
 ```
 
 ## Step 5: Start Twenty
@@ -104,11 +100,13 @@ make server-database-init
 Run the project with the following commands from the `root` folder:
 
 ```bash
-make server-start
+make docker-dev-sh
+yarn nx start:dev twenty-server
 ```
 
 ```bash
-make front-start
+make docker-dev-sh
+yarn nx start twenty-front
 ```
 
 You should now have:
@@ -117,19 +115,6 @@ You should now have:
 - **Postgres** available on [http://localhost:5432](http://localhost:5432) and containing database named `default`
 
 Sign in using a seeded demo account `tim@apple.dev` (password: `Applecar2025`) to start using Twenty.
-
-### Optional
-
-If you don't want to use the `make` command and work directly from the container, you can also ssh directly into the container:
-
-```bash
-make sh
-```
-Then run commands through yarn:
-```bash
-cd server
-yarn database:init
-```
 
 
 ### Troubleshooting
