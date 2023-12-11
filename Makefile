@@ -1,2 +1,2 @@
 %:
-	$(MAKE) -C infra/dev $*
+	$(MAKE) -C packages/twenty-dev $*
