@@ -43,14 +43,14 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   }
 
   override async createOne(
-    record: CreateFieldInput,
+    fieldMetadataInput: CreateFieldInput,
   ): Promise<FieldMetadataEntity> {
     const objectMetadata =
       await this.objectMetadataService.findOneWithinWorkspace(
-        record.workspaceId,
+        fieldMetadataInput.workspaceId,
         {
           where: {
-            id: record.objectMetadataId,
+            id: fieldMetadataInput.objectMetadataId,
           },
         },
       );
@@ -61,9 +61,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     const fieldAlreadyExists = await this.fieldMetadataRepository.findOne({
       where: {
-        name: record.name,
-        objectMetadataId: record.objectMetadataId,
-        workspaceId: record.workspaceId,
+        name: fieldMetadataInput.name,
+        objectMetadataId: fieldMetadataInput.objectMetadataId,
+        workspaceId: fieldMetadataInput.workspaceId,
       },
     });
 
@@ -72,10 +72,14 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     const createdFieldMetadata = await super.createOne({
-      ...record,
-      targetColumnMap: generateTargetColumnMap(record.type, true, record.name),
-      options: record.options
-        ? record.options.map((option) => ({
+      ...fieldMetadataInput,
+      targetColumnMap: generateTargetColumnMap(
+        fieldMetadataInput.type,
+        true,
+        fieldMetadataInput.name,
+      ),
+      options: fieldMetadataInput.options
+        ? fieldMetadataInput.options.map((option) => ({
             ...option,
             id: uuidV4(),
           }))
@@ -85,7 +89,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     });
 
     await this.workspaceMigrationService.createCustomMigration(
-      record.workspaceId,
+      fieldMetadataInput.workspaceId,
       [
         {
           name: objectMetadata.targetTableName,
@@ -99,13 +103,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     );
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-      record.workspaceId,
+      fieldMetadataInput.workspaceId,
     );
 
     // TODO: Move viewField creation to a cdc scheduler
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        record.workspaceId,
+        fieldMetadataInput.workspaceId,
       );
 
     const workspaceDataSource = await this.typeORMService.connectToDataSource(
@@ -146,12 +150,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
   override async updateOne(
     id: string,
-    record: UpdateFieldInput,
+    fieldMetadataInput: UpdateFieldInput,
   ): Promise<FieldMetadataEntity> {
     const existingFieldMetadata = await this.fieldMetadataRepository.findOne({
       where: {
         id,
-        workspaceId: record.workspaceId,
+        workspaceId: fieldMetadataInput.workspaceId,
       },
     });
 
@@ -161,16 +165,16 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     if (existingFieldMetadata.isCustom === false) {
       // We can only update the isActive field for standard fields
-      record = {
-        id: record.id,
-        isActive: record.isActive,
-        workspaceId: record.workspaceId,
+      fieldMetadataInput = {
+        id: fieldMetadataInput.id,
+        isActive: fieldMetadataInput.isActive,
+        workspaceId: fieldMetadataInput.workspaceId,
       };
     }
 
     const objectMetadata =
       await this.objectMetadataService.findOneWithinWorkspace(
-        record.workspaceId,
+        fieldMetadataInput.workspaceId,
         {
           where: {
             id: existingFieldMetadata?.objectMetadataId,
@@ -183,17 +187,17 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     // Check if the id of the options has been provided
-    if (record.options) {
-      for (const option of record.options) {
+    if (fieldMetadataInput.options) {
+      for (const option of fieldMetadataInput.options) {
         if (!option.id) {
           throw new BadRequestException('Option id is required');
         }
       }
     }
 
-    const updatedFieldMetadata = await super.updateOne(id, record);
+    const updatedFieldMetadata = await super.updateOne(id, fieldMetadataInput);
 
-    if (record.options || record.defaultValue) {
+    if (fieldMetadataInput.options || fieldMetadataInput.defaultValue) {
       await this.workspaceMigrationService.createCustomMigration(
         existingFieldMetadata.workspaceId,
         [
