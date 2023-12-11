@@ -30,4 +30,4 @@ dev-build-postgres:
 	@docker stop twenty_postgres || true
 	@docker rm twenty_postgres || true
 	@docker volume rm twenty_db_data || true
-	@docker compose up --build postgres -d
+	@docker compose -f dev/docker-compose.yml up --build postgres -d
