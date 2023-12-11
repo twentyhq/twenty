@@ -7,9 +7,12 @@ import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metad
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { baseSchema } from 'src/core/open-api/utils/base-schema.utils';
 import {
-  computePath,
+  computeManyResultPath,
   computeSingleResultPath,
-} from 'src/core/open-api/utils/compute-path.utils';
+} from 'src/core/open-api/utils/path.utils';
+import { capitalize } from 'src/utils/capitalize';
+import { getErrorResponses } from 'src/core/open-api/utils/get-error-responses.utils';
+import { computeSchemaComponents } from 'src/core/open-api/utils/components.utils';
 
 @Injectable()
 export class OpenApiService {
@@ -32,11 +35,25 @@ export class OpenApiService {
     const schema = baseSchema(this.environmentService.getFrontBaseUrl());
 
     schema.paths = objectMetadataItems.reduce((paths, item) => {
-      paths[`/rest/${item.namePlural}`] = computePath(item);
+      paths[`/rest/${item.namePlural}`] = computeManyResultPath(item);
       paths[`/rest/${item.namePlural}/{id}`] = computeSingleResultPath(item);
 
       return paths;
     }, {});
+
+    schema.components.schemas = objectMetadataItems.reduce((schemas, item) => {
+      schemas[capitalize(item.nameSingular)] = {
+        type: 'object',
+        properties: computeSchemaComponents(item),
+      };
+
+      return schemas;
+    }, {});
+
+    schema.components['responses'] = {
+      '400': getErrorResponses('Invalid request'),
+      '401': getErrorResponses('Unauthorized'),
+    };
 
     return schema;
   }

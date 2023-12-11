@@ -1,4 +1,5 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 
 export const fieldNumber = {
   name: 'fieldNumber',
@@ -27,7 +28,7 @@ export const fieldCurrency = {
   },
 };
 
-export const objectMetadataItem = {
+export const objectMetadataItem: DeepPartial<ObjectMetadataEntity> = {
   targetTableName: 'testingObject',
   nameSingular: 'objectName',
   namePlural: 'objectsName',
