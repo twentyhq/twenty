@@ -36,21 +36,59 @@ type StringFilter = {
   is?: IsFilter;
 };
 
+type FloatFilter = {
+  eq?: number;
+  gt?: number;
+  gte?: number;
+  in?: number[];
+  lt?: number;
+  lte?: number;
+  neq?: number;
+  is?: IsFilter;
+};
+
+
+type DateFilter = {
+  eq?: string;
+  gt?: string;
+  gte?: string;
+  in?: string[];
+  lt?: string;
+  lte?: string;
+  neq?: string;
+  is?: IsFilter;
+};
+
+type CurrencyFilter = {
+  amountMicros?: FloatFilter;
+};
+
+type URLFilter = {
+  url?: StringFilter;
+};
+
+type FullNameFilter = {
+  firstName?: StringFilter;
+  lastName?: StringFilter;
+};
+
+type LeafRequestFilter = UUIDFilter | StringFilter | FloatFilter | DateFilter | CurrencyFilter | URLFilter | FullNameFilter
+
 type RequestFilter = {
   and?: RequestFilter[];
   or?: RequestFilter[];
   not?: RequestFilter;
-} & {
-  [fieldName: string]: UUIDFilter | StringFilter;
-};
+} | {
+  [fieldName: string]: LeafRequestFilter
+}
 
 export const turnFiltersIntoWhereClause = (
   filters: FilterToTurnIntoWhereClause[],
   fields: Pick<Field, 'id' | 'name'>[],
 ): RequestFilter => {
-  const whereClause: RequestFilter[] = [];
+  const requestFilters: RequestFilter[] = [];
 
-  filters.forEach((filter) => {
+  for(const filter of filters) {
     const correspondingField = fields.find(
       (field) => field.id === filter.fieldMetadataId,
     );
@@ -66,68 +104,71 @@ export const turnFiltersIntoWhereClause = (
       case 'TEXT':
         switch (filter.operand) {
           case ViewFilterOperand.Contains:
-            whereClause.push({
+            requestFilters.push({
               [correspondingField.name]: {
                 ilike: `%${filter.value}%`,
-              },
+              } as StringFilter,
             });
-            return;
+            break
           case ViewFilterOperand.DoesNotContain:
-            whereClause.push({
+            requestFilters.push({
               not: {
                 [correspondingField.name]: {
                   ilike: `%${filter.value}%`,
-                },
+                } as StringFilter,
               },
             });
-            return;
+           break
           default:
             throw new Error(
               `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
             );
         }
+        break;
       case 'DATE_TIME':
         switch (filter.operand) {
           case ViewFilterOperand.GreaterThan:
-            whereClause.push({
+            requestFilters.push({
               [correspondingField.name]: {
                 gte: filter.value,
-              },
+              } as DateFilter,
             });
-            return;
+            break;
           case ViewFilterOperand.LessThan:
-            whereClause.push({
+            requestFilters.push({
               [correspondingField.name]: {
                 lte: filter.value,
-              },
+              } as DateFilter,
             });
-            return;
+            break;
           default:
             throw new Error(
               `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
             );
         }
+        break;
       case 'NUMBER':
         switch (filter.operand) {
           case ViewFilterOperand.GreaterThan:
-            whereClause.push({
+            requestFilters.push({
               [correspondingField.name]: {
                 gte: parseFloat(filter.value),
-              },
+              } as FloatFilter,
             });
-            return;
+            break;
           case ViewFilterOperand.LessThan:
-            whereClause.push({
+            requestFilters.push({
               [correspondingField.name]: {
                 lte: parseFloat(filter.value),
-              },
+              } as FloatFilter,
             });
-            return;
+            break;
           default:
             throw new Error(
               `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
             );
         }
+        break;
       case 'RELATION':
         try {
           JSON.parse(filter.value);
@@ -142,21 +183,21 @@ export const turnFiltersIntoWhereClause = (
         if (parsedRecordIds.length > 0) {
           switch (filter.operand) {
             case ViewFilterOperand.Is:
-              whereClause.push({
+              requestFilters.push({
                 [correspondingField.name + 'Id']: {
                   in: parsedRecordIds,
-                },
+                } as StringFilter,
               });
-              return;
+              break;
             case ViewFilterOperand.IsNot:
-              whereClause.push({
+              requestFilters.push({
                 not: {
                   [correspondingField.name + 'Id']: {
                     in: parsedRecordIds,
-                  },
+                  } as StringFilter,
                 },
               });
-              return;
+              break;
             default:
               throw new Error(
                 `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
@@ -167,75 +208,77 @@ export const turnFiltersIntoWhereClause = (
       case 'CURRENCY':
         switch (filter.operand) {
           case ViewFilterOperand.GreaterThan:
-            whereClause.push({
+            requestFilters.push({
               [correspondingField.name]: {
                 amountMicros: { gte: parseFloat(filter.value) * 1000000 },
               },
             });
-            return;
+            break;
           case ViewFilterOperand.LessThan:
-            whereClause.push({
+            requestFilters.push({
               [correspondingField.name]: {
                 amountMicros: { lte: parseFloat(filter.value) * 1000000 },
               },
             });
-            return;
+            break;
           default:
             throw new Error(
               `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
             );
         }
+        break;
       case 'LINK':
         switch (filter.operand) {
           case ViewFilterOperand.Contains:
-            whereClause.push({
+            requestFilters.push({
               [correspondingField.name]: {
                 url: {
                   ilike: `%${filter.value}%`,
                 },
-              },
+              } as URLFilter,
             });
-            return;
+            break;
           case ViewFilterOperand.DoesNotContain:
-            whereClause.push({
+            requestFilters.push({
               not: {
                 [correspondingField.name]: {
                   url: {
                     ilike: `%${filter.value}%`,
                   },
-                },
+                } as URLFilter,
               },
             });
-            return;
+            break;
           default:
             throw new Error(
               `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
             );
         }
+        break;
       case 'FULL_NAME':
         switch (filter.operand) {
           case ViewFilterOperand.Contains:
-            whereClause.push({
+            requestFilters.push({
               or: [
                 {
                   [correspondingField.name]: {
                     firstName: {
                       ilike: `%${filter.value}%`,
                     },
-                  },
+                  } as FullNameFilter,
                 },
                 {
                   [correspondingField.name]: {
-                    firstName: {
+                    lastName: {
                       ilike: `%${filter.value}%`,
                     },
-                  },
+                  } as FullNameFilter,
                 },
               ],
             });
-            return;
+            break;
           case ViewFilterOperand.DoesNotContain:
-            whereClause.push({
+            requestFilters.push({
               and: [
                 {
                   not: {
@@ -243,7 +286,7 @@ export const turnFiltersIntoWhereClause = (
                       firstName: {
                         ilike: `%${filter.value}%`,
                       },
-                    },
+                    } as FullNameFilter,
                   },
                 },
                 {
@@ -252,21 +295,22 @@ export const turnFiltersIntoWhereClause = (
                       lastName: {
                         ilike: `%${filter.value}%`,
                       },
-                    },
+                    } as FullNameFilter,
                   },
                 },
               ],
             });
-            return;
+            break;
           default:
             throw new Error(
               `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
             );
         }
+        break;
       default:
         throw new Error('Unknown filter type');
     }
-  });
+  }
 
-  return { and: whereClause };
+  return { and: requestFilters };
 };
