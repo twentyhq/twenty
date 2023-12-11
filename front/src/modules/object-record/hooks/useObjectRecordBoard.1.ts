@@ -47,6 +47,7 @@ export const useObjectRecordBoard = () => {
     boardFilters,
     foundObjectMetadataItem?.fields ?? [],
   );
+
   const orderBy = turnSortsIntoOrderBy(
     boardSorts,
     foundObjectMetadataItem?.fields ?? [],
@@ -70,8 +71,8 @@ export const useObjectRecordBoard = () => {
   } = useFindManyRecords<Opportunity>({
     skip: !savedPipelineSteps.length,
     objectNameSingular: 'opportunity',
-    filter: filter,
-    orderBy: orderBy as any, // TODO: finish typing
+    filter,
+    orderBy,
     onCompleted: useCallback(() => {
       setIsBoardLoaded(true);
     }, [setIsBoardLoaded]),

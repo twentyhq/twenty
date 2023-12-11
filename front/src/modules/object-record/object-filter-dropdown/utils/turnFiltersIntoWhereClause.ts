@@ -9,11 +9,46 @@ type FilterToTurnIntoWhereClause = Omit<Filter, 'definition'> & {
   };
 };
 
+type UUIDFilterValue = string;
+
+type IsFilter = 'NULL' | 'NOT_NULL';
+
+type UUIDFilter = {
+  eq?: UUIDFilterValue;
+  in?: UUIDFilterValue[];
+  neq?: UUIDFilterValue;
+  is?: IsFilter;
+};
+
+type StringFilter = {
+  eq?: string;
+  gt?: string;
+  gte?: string;
+  in?: string[];
+  lt?: string;
+  lte?: string;
+  neq?: string;
+  startsWith?: string;
+  like?: string;
+  ilike?: string;
+  regex?: string;
+  iregex?: string;
+  is?: IsFilter;
+};
+
+type RequestFilter = {
+  and?: RequestFilter[];
+  or?: RequestFilter[];
+  not?: RequestFilter;
+} & {
+  [fieldName: string]: UUIDFilter | StringFilter;
+};
+
 export const turnFiltersIntoWhereClause = (
   filters: FilterToTurnIntoWhereClause[],
   fields: Pick<Field, 'id' | 'name'>[],
-) => {
-  const whereClause: any[] = [];
+): RequestFilter => {
+  const whereClause: RequestFilter[] = [];
 
   filters.forEach((filter) => {
     const correspondingField = fields.find(
