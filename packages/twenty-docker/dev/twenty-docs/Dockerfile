@@ -7,6 +7,7 @@ COPY ../../../../yarn.lock .
 COPY ../../../../.yarnrc.yml .
 COPY ../../../packages/twenty-docs/package.json /app/packages/twenty-docs/package.json
 
+RUN corepack enable
 RUN yarn set version 4.0.2
 RUN yarn
 
