@@ -99,8 +99,7 @@
     "sharp": "^0.32.1",
     "type-fest": "^3.12.0",
     "typeorm": "^0.3.17",
-    "uuid": "^9.0.0",
-    "yarn": "^1.22.19"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
