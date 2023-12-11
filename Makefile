@@ -1,2 +1,0 @@
-%:
-	$(MAKE) -C infra/dev $*

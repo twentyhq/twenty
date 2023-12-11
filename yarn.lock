@@ -5718,6 +5718,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch::locator=twenty-server%40workspace%3Apackages%2Ftwenty-server":
+  version: 2.1.0
+  resolution: "@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@npm%3A2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch::version=2.1.0&hash=25fc63&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
+  peerDependencies:
+    "@nestjs/common": ^10.0.0
+    "@nestjs/core": ^10.0.0
+    "@nestjs/graphql": ^12.0.0
+    graphql: ^15.0.0 || ^16.0.0
+    graphql-yoga: ^4.0.4
+  checksum: 333501a04f79ef158cd92e240abecf1056ea12e8f63345758d6f79bbd88d923846fac44940765ae48a1b05d108107e3ba1539eea1092802c5bdf74bf166ea16a
+  languageName: node
+  linkType: hard
+
 "@graphql-yoga/subscription@npm:^4.0.0":
   version: 4.0.0
   resolution: "@graphql-yoga/subscription@npm:4.0.0"
@@ -6902,6 +6915,46 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nestjs/graphql@patch:@nestjs/graphql@12.0.8#./patches/@nestjs+graphql+12.0.8.patch::locator=twenty-server%40workspace%3Apackages%2Ftwenty-server":
+  version: 12.0.8
+  resolution: "@nestjs/graphql@patch:@nestjs/graphql@npm%3A12.0.8#./patches/@nestjs+graphql+12.0.8.patch::version=12.0.8&hash=daa690&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
+  dependencies:
+    "@graphql-tools/merge": "npm:9.0.0"
+    "@graphql-tools/schema": "npm:10.0.0"
+    "@graphql-tools/utils": "npm:10.0.1"
+    "@nestjs/mapped-types": "npm:2.0.2"
+    chokidar: "npm:3.5.3"
+    fast-glob: "npm:3.2.12"
+    graphql-tag: "npm:2.12.6"
+    graphql-ws: "npm:5.14.0"
+    lodash: "npm:4.17.21"
+    normalize-path: "npm:3.0.0"
+    subscriptions-transport-ws: "npm:0.11.0"
+    tslib: "npm:2.6.0"
+    uuid: "npm:9.0.0"
+    ws: "npm:8.13.0"
+  peerDependencies:
+    "@apollo/subgraph": ^2.0.0
+    "@nestjs/common": ^9.3.8 || ^10.0.0
+    "@nestjs/core": ^9.3.8 || ^10.0.0
+    class-transformer: "*"
+    class-validator: "*"
+    graphql: ^16.6.0
+    reflect-metadata: ^0.1.13
+    ts-morph: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    "@apollo/subgraph":
+      optional: true
+    class-transformer:
+      optional: true
+    class-validator:
+      optional: true
+    ts-morph:
+      optional: true
+  checksum: e53b804e87e65c78e0e231a7033e135a8346d44ee110a8e2f270b026bd47fda41525b598a301b5ca84537b3c8e37fa92462be353e611751a5b433aadb1f6f290
+  languageName: node
+  linkType: hard
+
 "@nestjs/jwt@npm:^10.0.3":
   version: 10.2.0
   resolution: "@nestjs/jwt@npm:10.2.0"
@@ -7612,6 +7665,34 @@ __metadata:
     graphql-subscriptions: ^2.0.0
     ts-morph: ^19.0.0
   checksum: 8a5c5da602e68ff4875f19a19baa2b15bdefc9c5b467d3a55898fbbe411744762fcd42cf078e2ebc5cd53f1a12e67c7fbd698b3696ce1bb85e41dc9d0da72441
+  languageName: node
+  linkType: hard
+
+"@ptc-org/nestjs-query-graphql@patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch::locator=twenty-server%40workspace%3Apackages%2Ftwenty-server":
+  version: 4.2.0
+  resolution: "@ptc-org/nestjs-query-graphql@patch:@ptc-org/nestjs-query-graphql@npm%3A4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch::version=4.2.0&hash=2d5c00&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
+  dependencies:
+    "@ptc-org/nestjs-query-core": "npm:4.2.0"
+    dataloader: "npm:^2.2.2"
+    graphql-fields: "npm:^2.0.3"
+    lodash.merge: "npm:4.6.2"
+    lodash.omit: "npm:^4.5.0"
+    lower-case-first: "npm:^2.0.2"
+    pluralize: "npm:^8.0.0"
+    reflect-metadata: "npm:0.1.13"
+    tslib: "npm:^2.6.2"
+    upper-case-first: "npm:^2.0.2"
+  peerDependencies:
+    "@apollo/gateway": ^0.44.1 || ^0.46.0 || ^0.48.0 || ^0.49.0 || ^0.50.0 || ^2.0.0
+    "@nestjs/common": ^9.0.0 || ^10.0.0
+    "@nestjs/core": ^9.0.0 || ^10.0.0
+    "@nestjs/graphql": ^11.0.0 || ^12.0.0
+    class-transformer: ^0.5
+    class-validator: ^0.14.0
+    graphql: ^16.0.0
+    graphql-subscriptions: ^2.0.0
+    ts-morph: ^19.0.0
+  checksum: e22941524df13a20a67176aac42d27f6ac7860c72a4189eca91846d493f3da63b7d3ea71f2979bfb38de5e159fc6ac70d898fce20ef443e235f3b9202073441a
   languageName: node
   linkType: hard
 
@@ -16106,6 +16187,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"class-validator@patch:class-validator@^0.14.0#./patches/class-validator+0.14.0.patch::locator=twenty-server%40workspace%3Apackages%2Ftwenty-server":
+  version: 0.14.0
+  resolution: "class-validator@patch:class-validator@npm%3A0.14.0#./patches/class-validator+0.14.0.patch::version=0.14.0&hash=053904&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
+  dependencies:
+    "@types/validator": "npm:^13.7.10"
+    libphonenumber-js: "npm:^1.10.14"
+    validator: "npm:^13.7.0"
+  checksum: d996aa04abefb737f07ec3f389f74c7ee6f3ec7f0ab13a8244f1bdc777cef827f3b2297789b4814b24440cf8fa936f5af0beee21f84b9ae413c7568b4c8e7407
+  languageName: node
+  linkType: hard
+
 "classnames@npm:^2.2.6, classnames@npm:^2.3.0, classnames@npm:^2.3.1":
   version: 2.3.2
   resolution: "classnames@npm:2.3.2"
@@ -18862,39 +18954,6 @@ __metadata:
   checksum: c61f5f2af72b614c30e8b36644672cfa25ca28e963e5e6cfab438f0cb287a6270f875a2dd8cd600a04c9864b9c549e269d95ea8da88c412e2b868fcd6a3605a4
   languageName: node
   linkType: hard
-
-"eslint-plugin-twenty@file:../eslint-plugin-twenty::locator=twenty-front%40workspace%3Apackages%2Ftwenty-front":
-  version: 1.0.3
-  resolution: "eslint-plugin-twenty@file:../eslint-plugin-twenty#../eslint-plugin-twenty::hash=105f90&locator=twenty-front%40workspace%3Apackages%2Ftwenty-front"
-  checksum: 63f3201afa92b79c2d5db2a3aed1a1c5897793ef9e845f4a2f4ae9126007fece2fd6795d840b3f776e8da70fface644215d3640bf2ca22d3e145e36119ccf7bd
-  languageName: node
-  linkType: hard
-
-"eslint-plugin-twenty@workspace:packages/eslint-plugin-twenty":
-  version: 0.0.0-use.local
-  resolution: "eslint-plugin-twenty@workspace:packages/eslint-plugin-twenty"
-  dependencies:
-    "@types/jest": "npm:^29.5.4"
-    "@typescript-eslint/eslint-plugin": "npm:^6.7.0"
-    "@typescript-eslint/parser": "npm:^6.7.0"
-    "@typescript-eslint/rule-tester": "npm:^6.7.0"
-    "@typescript-eslint/utils": "npm:^6.7.0"
-    eslint: "npm:^8.49.0"
-    eslint-config-prettier: "npm:^9.0.0"
-    eslint-config-standard-with-typescript: "npm:^39.0.0"
-    eslint-plugin-import: "npm:^2.28.1"
-    eslint-plugin-prefer-arrow: "npm:^1.2.3"
-    eslint-plugin-prettier: "npm:^5.0.0"
-    eslint-plugin-simple-import-sort: "npm:^10.0.0"
-    eslint-plugin-unused-imports: "npm:^3.0.0"
-    jest: "npm:^28.1.3"
-    postcss: "npm:^8.4.29"
-    prettier: "npm:^3.0.3"
-    ts-jest: "npm:^29.1.1"
-    ts-node: "npm:^10.9.1"
-    typescript: "npm:^5.2.2"
-  languageName: unknown
-  linkType: soft
 
 "eslint-plugin-unused-imports@npm:^3.0.0":
   version: 3.0.0
@@ -29159,13 +29218,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postinstall-postinstall@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "postinstall-postinstall@npm:2.1.0"
-  checksum: 70488447292c712afa7806126824d6fe93362392cbe261ae60166d9119a350713e0dbf4deb2ca91637c1037bc030ed1de78d61d9041bf2504513070f1caacdfd
-  languageName: node
-  linkType: hard
-
 "prebuild-install@npm:^7.1.1":
   version: 7.1.1
   resolution: "prebuild-install@npm:7.1.1"
@@ -33863,6 +33915,39 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"twenty-eslint-plugin@file:../twenty-eslint-plugin::locator=twenty-front%40workspace%3Apackages%2Ftwenty-front":
+  version: 1.0.3
+  resolution: "twenty-eslint-plugin@file:../twenty-eslint-plugin#../twenty-eslint-plugin::hash=e1455f&locator=twenty-front%40workspace%3Apackages%2Ftwenty-front"
+  checksum: 95746bedcf1aa2e5937c75501e4a6d9bcecbfd208e60c6688727fde46ce2ce74824ff5d688b4be5061163487f96d6f4d4c37381e9f36fbc4929273eb04852b54
+  languageName: node
+  linkType: hard
+
+"twenty-eslint-plugin@workspace:packages/twenty-eslint-plugin":
+  version: 0.0.0-use.local
+  resolution: "twenty-eslint-plugin@workspace:packages/twenty-eslint-plugin"
+  dependencies:
+    "@types/jest": "npm:^29.5.4"
+    "@typescript-eslint/eslint-plugin": "npm:^6.7.0"
+    "@typescript-eslint/parser": "npm:^6.7.0"
+    "@typescript-eslint/rule-tester": "npm:^6.7.0"
+    "@typescript-eslint/utils": "npm:^6.7.0"
+    eslint: "npm:^8.49.0"
+    eslint-config-prettier: "npm:^9.0.0"
+    eslint-config-standard-with-typescript: "npm:^39.0.0"
+    eslint-plugin-import: "npm:^2.28.1"
+    eslint-plugin-prefer-arrow: "npm:^1.2.3"
+    eslint-plugin-prettier: "npm:^5.0.0"
+    eslint-plugin-simple-import-sort: "npm:^10.0.0"
+    eslint-plugin-unused-imports: "npm:^3.0.0"
+    jest: "npm:^28.1.3"
+    postcss: "npm:^8.4.29"
+    prettier: "npm:^3.0.3"
+    ts-jest: "npm:^29.1.1"
+    ts-node: "npm:^10.9.1"
+    typescript: "npm:^5.2.2"
+  languageName: unknown
+  linkType: soft
+
 "twenty-front@workspace:packages/twenty-front":
   version: 0.0.0-use.local
   resolution: "twenty-front@workspace:packages/twenty-front"
@@ -33936,7 +34021,6 @@ __metadata:
     eslint-plugin-react-refresh: "npm:^0.4.4"
     eslint-plugin-simple-import-sort: "npm:^10.0.0"
     eslint-plugin-storybook: "npm:^0.6.15"
-    eslint-plugin-twenty: "file:../eslint-plugin-twenty"
     eslint-plugin-unused-imports: "npm:^3.0.0"
     framer-motion: "npm:^10.12.17"
     graphql: "npm:^16.6.0"
@@ -33978,6 +34062,7 @@ __metadata:
     storybook-addon-cookie: "npm:^3.1.0"
     storybook-addon-pseudo-states: "npm:^2.1.2"
     ts-key-enum: "npm:^2.0.12"
+    twenty-eslint-plugin: "file:../twenty-eslint-plugin"
     type-fest: "npm:^4.1.0"
     typescript: "npm:^5.2.2"
     uuid: "npm:^9.0.0"
@@ -33998,13 +34083,13 @@ __metadata:
     "@aws-sdk/credential-providers": "npm:^3.363.0"
     "@google-cloud/local-auth": "npm:2.1.0"
     "@graphql-tools/schema": "npm:^10.0.0"
-    "@graphql-yoga/nestjs": "npm:2.1.0"
+    "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch"
     "@nestjs/apollo": "npm:^11.0.5"
     "@nestjs/cli": "npm:^9.0.0"
     "@nestjs/common": "npm:^9.0.0"
     "@nestjs/config": "npm:^2.3.2"
     "@nestjs/core": "npm:^9.0.0"
-    "@nestjs/graphql": "npm:12.0.8"
+    "@nestjs/graphql": "patch:@nestjs/graphql@12.0.8#./patches/@nestjs+graphql+12.0.8.patch"
     "@nestjs/jwt": "npm:^10.0.3"
     "@nestjs/passport": "npm:^9.0.3"
     "@nestjs/platform-express": "npm:^9.0.0"
@@ -34014,7 +34099,7 @@ __metadata:
     "@nestjs/testing": "npm:^9.0.0"
     "@nestjs/typeorm": "npm:^10.0.0"
     "@ptc-org/nestjs-query-core": "npm:^4.2.0"
-    "@ptc-org/nestjs-query-graphql": "npm:4.2.0"
+    "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
     "@ptc-org/nestjs-query-typeorm": "npm:4.2.1-alpha.2"
     "@sentry/node": "npm:^7.66.0"
     "@sentry/profiling-node": "npm:^1.2.6"
@@ -34050,7 +34135,7 @@ __metadata:
     bullmq: "npm:^4.14.0"
     bytes: "npm:^3.1.2"
     class-transformer: "npm:^0.5.1"
-    class-validator: "npm:^0.14.0"
+    class-validator: "patch:class-validator@^0.14.0#./patches/class-validator+0.14.0.patch"
     dataloader: "npm:^2.2.2"
     date-fns: "npm:^2.30.0"
     eslint: "npm:^8.0.1"
@@ -34084,10 +34169,8 @@ __metadata:
     passport-google-oauth20: "npm:^2.0.0"
     passport-jwt: "npm:^4.0.1"
     passport-local: "npm:^1.0.0"
-    patch-package: "npm:^8.0.0"
     pg: "npm:^8.11.3"
     pg-boss: "npm:^9.0.3"
-    postinstall-postinstall: "npm:^2.1.0"
     prettier: "npm:^2.3.2"
     rimraf: "npm:^3.0.2"
     rxjs: "npm:^7.2.0"
@@ -34111,6 +34194,7 @@ __metadata:
   resolution: "twenty@workspace:."
   dependencies:
     nx: "npm:17.2.0"
+    patch-package: "npm:^8.0.0"
     typescript: "npm:^5.3.3"
   languageName: unknown
   linkType: soft

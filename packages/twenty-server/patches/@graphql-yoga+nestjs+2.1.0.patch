@@ -1,7 +1,7 @@
-diff --git a/node_modules/@graphql-yoga/nestjs/dist/cjs/index.js b/node_modules/@graphql-yoga/nestjs/dist/cjs/index.js
+diff --git a/dist/cjs/index.js b/dist/cjs/index.js
 index 1684394..8a92c3c 100644
---- a/node_modules/@graphql-yoga/nestjs/dist/cjs/index.js
-+++ b/node_modules/@graphql-yoga/nestjs/dist/cjs/index.js
+--- a/dist/cjs/index.js
++++ b/dist/cjs/index.js
 @@ -5,6 +5,7 @@ const tslib_1 = require("tslib");
  const graphql_1 = require("graphql");
  const graphql_yoga_1 = require("graphql-yoga");
@@ -69,10 +69,10 @@ index 1684394..8a92c3c 100644
              graphqlEndpoint: options.path,
              // disable logging by default
              // however, if `true` use fastify logger
-diff --git a/node_modules/@graphql-yoga/nestjs/dist/esm/index.js b/node_modules/@graphql-yoga/nestjs/dist/esm/index.js
+diff --git a/dist/esm/index.js b/dist/esm/index.js
 index 7068c51..8ba5d2a 100644
---- a/node_modules/@graphql-yoga/nestjs/dist/esm/index.js
-+++ b/node_modules/@graphql-yoga/nestjs/dist/esm/index.js
+--- a/dist/esm/index.js
++++ b/dist/esm/index.js
 @@ -2,6 +2,7 @@ import { __decorate } from "tslib";
  import { printSchema } from 'graphql';
  import { createYoga, filter, pipe } from 'graphql-yoga';
@@ -140,10 +140,10 @@ index 7068c51..8ba5d2a 100644
              graphqlEndpoint: options.path,
              // disable logging by default
              // however, if `true` use fastify logger
-diff --git a/node_modules/@graphql-yoga/nestjs/dist/typings/index.d.cts b/node_modules/@graphql-yoga/nestjs/dist/typings/index.d.cts
+diff --git a/dist/typings/index.d.cts b/dist/typings/index.d.cts
 index 2c6a965..fd86dac 100644
---- a/node_modules/@graphql-yoga/nestjs/dist/typings/index.d.cts
-+++ b/node_modules/@graphql-yoga/nestjs/dist/typings/index.d.cts
+--- a/dist/typings/index.d.cts
++++ b/dist/typings/index.d.cts
 @@ -1,7 +1,8 @@
  import type { Express, Request as ExpressRequest, Response as ExpressResponse } from 'express';
  import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
@@ -178,10 +178,10 @@ index 2c6a965..fd86dac 100644
          preStartHook?: (app: FastifyInstance) => void;
      }): void;
      subscriptionWithFilter<TPayload, TVariables, TContext>(instanceRef: unknown, filterFn: (payload: TPayload, variables: TVariables, context: TContext) => boolean | Promise<boolean>, createSubscribeContext: Function): (args_0: TPayload, args_1: TVariables, args_2: TContext) => Promise<import("graphql-yoga").Repeater<TPayload, void, unknown>>;
-diff --git a/node_modules/@graphql-yoga/nestjs/dist/typings/index.d.ts b/node_modules/@graphql-yoga/nestjs/dist/typings/index.d.ts
+diff --git a/dist/typings/index.d.ts b/dist/typings/index.d.ts
 index 2c6a965..fd86dac 100644
---- a/node_modules/@graphql-yoga/nestjs/dist/typings/index.d.ts
-+++ b/node_modules/@graphql-yoga/nestjs/dist/typings/index.d.ts
+--- a/dist/typings/index.d.ts
++++ b/dist/typings/index.d.ts
 @@ -1,7 +1,8 @@
  import type { Express, Request as ExpressRequest, Response as ExpressResponse } from 'express';
  import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
@@ -216,10 +216,10 @@ index 2c6a965..fd86dac 100644
          preStartHook?: (app: FastifyInstance) => void;
      }): void;
      subscriptionWithFilter<TPayload, TVariables, TContext>(instanceRef: unknown, filterFn: (payload: TPayload, variables: TVariables, context: TContext) => boolean | Promise<boolean>, createSubscribeContext: Function): (args_0: TPayload, args_1: TVariables, args_2: TContext) => Promise<import("graphql-yoga").Repeater<TPayload, void, unknown>>;
-diff --git a/node_modules/@graphql-yoga/nestjs/src/index.ts b/node_modules/@graphql-yoga/nestjs/src/index.ts
+diff --git a/src/index.ts b/src/index.ts
 index ce142f6..cda4117 100644
---- a/node_modules/@graphql-yoga/nestjs/src/index.ts
-+++ b/node_modules/@graphql-yoga/nestjs/src/index.ts
+--- a/src/index.ts
++++ b/src/index.ts
 @@ -1,9 +1,10 @@
  import type { Express, Request as ExpressRequest, Response as ExpressResponse } from 'express';
  import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';

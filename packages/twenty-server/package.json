@@ -6,7 +6,6 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "postinstall": "patch-package",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -37,12 +36,12 @@
     "@aws-sdk/credential-providers": "^3.363.0",
     "@google-cloud/local-auth": "2.1.0",
     "@graphql-tools/schema": "^10.0.0",
-    "@graphql-yoga/nestjs": "2.1.0",
+    "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch",
     "@nestjs/apollo": "^11.0.5",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.2",
     "@nestjs/core": "^9.0.0",
-    "@nestjs/graphql": "12.0.8",
+    "@nestjs/graphql": "patch:@nestjs/graphql@12.0.8#./patches/@nestjs+graphql+12.0.8.patch",
     "@nestjs/jwt": "^10.0.3",
     "@nestjs/passport": "^9.0.3",
     "@nestjs/platform-express": "^9.0.0",
@@ -50,7 +49,7 @@
     "@nestjs/terminus": "^9.2.2",
     "@nestjs/typeorm": "^10.0.0",
     "@ptc-org/nestjs-query-core": "^4.2.0",
-    "@ptc-org/nestjs-query-graphql": "4.2.0",
+    "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch",
     "@ptc-org/nestjs-query-typeorm": "4.2.1-alpha.2",
     "@sentry/node": "^7.66.0",
     "@sentry/profiling-node": "^1.2.6",
@@ -65,7 +64,7 @@
     "bullmq": "^4.14.0",
     "bytes": "^3.1.2",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.0",
+    "class-validator": "patch:class-validator@^0.14.0#./patches/class-validator+0.14.0.patch",
     "dataloader": "^2.2.2",
     "date-fns": "^2.30.0",
     "file-type": "16.5.4",
@@ -93,10 +92,8 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
-    "patch-package": "^8.0.0",
     "pg": "^8.11.3",
     "pg-boss": "^9.0.3",
-    "postinstall-postinstall": "^2.1.0",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "sharp": "^0.32.1",
@@ -147,5 +144,10 @@
   },
   "resolutions": {
     "graphql": "16.8.0"
+  },
+  "engines": {
+    "node": "^18.16.0",
+    "npm": "please-use-yarn",
+    "yarn": "^4.0.2"
   }
 }
