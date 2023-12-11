@@ -14,6 +14,8 @@ RUN yarn
 COPY ../../../packages/twenty-docs /app/packages/twenty-docs
 RUN yarn nx build twenty-docs
 
+WORKDIR /app/packages/twenty-docs
+
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="This image provides a consistent and reproducible environment for the documentation."
 
