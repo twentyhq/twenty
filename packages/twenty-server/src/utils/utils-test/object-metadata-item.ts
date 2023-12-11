@@ -29,5 +29,7 @@ export const fieldCurrency = {
 
 export const objectMetadataItem = {
   targetTableName: 'testingObject',
+  nameSingular: 'objectName',
+  namePlural: 'objectsName',
   fields: [fieldNumber, fieldString, fieldLink, fieldCurrency],
 };

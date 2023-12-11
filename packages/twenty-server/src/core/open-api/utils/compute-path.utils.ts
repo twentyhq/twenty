@@ -1,3 +1,5 @@
+import { OrderByDirection } from 'src/workspace/workspace-query-builder/interfaces/record.interface';
+
 import { capitalize } from 'src/utils/capitalize';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
@@ -62,27 +64,89 @@ export const computeNodeExample = (item: ObjectMetadataEntity) => {
   }, {});
 };
 
+export const computeLimitParameters = (item: ObjectMetadataEntity) => {
+  return {
+    name: 'limit',
+    in: 'query',
+    description: `Integer value to limit the number of \`${item.namePlural}\` returned`,
+    required: false,
+    schema: {
+      type: 'integer',
+      minimum: 0,
+      maximum: 60,
+      default: 60,
+    },
+  };
+};
+
+export const computeOrderByParameters = (item: ObjectMetadataEntity) => {
+  return {
+    name: 'order_by',
+    in: 'query',
+    description: `A combination of fields and directions to sort \`${
+      item.namePlural
+    }\` returned. Should have the following shape: \`field_name_1[DIRECTION_1],field_name_2[DIRECTION_2],...\` Available directions are \`${Object.values(
+      OrderByDirection,
+    ).join('`, `')}\`. eg: GET /rest/companies?order_by=name[${
+      OrderByDirection.AscNullsFirst
+    }],createdAt[${OrderByDirection.DescNullsLast}]`,
+    required: false,
+    schema: {
+      type: 'string',
+    },
+  };
+};
+
+export const computeDepthParameters = (item: ObjectMetadataEntity) => {
+  return {
+    name: 'depth',
+    in: 'query',
+    description: `Integer value to limit the depth of related objects of \`${item.namePlural}\` returned`,
+    required: false,
+    schema: {
+      type: 'integer',
+      enum: [1, 2],
+    },
+  };
+};
+
+export const computeFilterParameters = (item: ObjectMetadataEntity) => {
+  return {
+    name: 'filter',
+    in: 'query',
+    description: `A combination of fields, filter operations and values to filter \`${item.namePlural}\` returned`,
+    required: false,
+    schema: {
+      type: 'string',
+    },
+  };
+};
+
+export const computeLastCursorParameters = (item: ObjectMetadataEntity) => {
+  return {
+    name: 'last_cursor',
+    in: 'query',
+    description: `Used to return \`${item.namePlural}\` starting from a specific cursor`,
+    required: false,
+    schema: {
+      type: 'string',
+    },
+  };
+};
+
 export const computePath = (item: ObjectMetadataEntity) => {
   return {
     get: {
       tags: [item.namePlural],
       summary: `Find Many ${item.namePlural}`,
-      description: `order_by, filter, limit or last_cursor can be provided to request your ${item.namePlural}`,
+      description: `\`order_by\`, \`filter\`, \`limit\`, \`depth\` or \`last_cursor\` can be provided to request your \`${item.namePlural}\``,
       operationId: `findManyCompanies${capitalize(item.namePlural)}`,
       parameters: [
-        {
-          name: 'limit',
-          in: 'query',
-          description: `Integer value to limit the number of ${item.namePlural} returned`,
-          required: false,
-          schema: {
-            type: 'integer',
-            format: 'int64',
-            minimum: 0,
-            maximum: 60,
-            default: 60,
-          },
-        },
+        computeOrderByParameters(item),
+        computeFilterParameters(item),
+        computeLimitParameters(item),
+        computeDepthParameters(item),
+        computeLastCursorParameters(item),
       ],
       responses: {
         '200': {
