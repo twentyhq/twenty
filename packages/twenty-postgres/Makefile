@@ -1,8 +1,14 @@
-provision-postgres-macos-arm:
-	sh ./scripts/setup-postgres-macos-arm.sh
+provision-on-macos-arm:
+	sh ./provision/setup-postgres-macos-arm.sh
 
-provision-postgres-macos-intel:
-	sh ./scripts/setup-postgres-macos-intel.sh
+provision-on-macos-intel:
+	sh ./provision/setup-postgres-macos-intel.sh
 
-provision-postgres-linux:
-	sh ./scripts/setup-postgres-linux.sh
+provision-on-linux:
+	sh ./provision/setup-postgres-linux.sh
+
+build-pg_graphql-macos-arm:
+	sh ./build/pg_graphql/build-pg_graphql-macos-arm.sh
+
+build-pg_graphql-macos-intel:
+	sh ./build/pg_graphql/build-pg_graphql-macos-intel.sh

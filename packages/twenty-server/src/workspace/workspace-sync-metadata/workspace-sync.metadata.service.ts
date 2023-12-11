@@ -240,6 +240,7 @@ export class WorkspaceSyncMetadataService {
         objectsToDelete,
         fieldsToCreate,
         fieldsToDelete,
+        objectsInDB,
       );
 
       // We run syncRelationMetadata after everything to ensure that all objects and fields are
@@ -335,8 +336,9 @@ export class WorkspaceSyncMetadataService {
   private async generateMigrationsFromSync(
     objectsToCreate: ObjectMetadataEntity[],
     _objectsToDelete: ObjectMetadataEntity[],
-    _fieldsToCreate: FieldMetadataEntity[],
-    _fieldsToDelete: FieldMetadataEntity[],
+    fieldsToCreate: FieldMetadataEntity[],
+    fieldsToDelete: FieldMetadataEntity[],
+    objectsInDB: ObjectMetadataEntity[],
   ) {
     const migrationsToSave: Partial<WorkspaceMigrationEntity>[] = [];
 
@@ -364,6 +366,59 @@ export class WorkspaceSyncMetadataService {
 
         migrationsToSave.push({
           workspaceId: object.workspaceId,
+          isCustom: false,
+          migrations,
+        });
+      });
+    }
+
+    // TODO: handle object delete migrations.
+    // Note: we need to delete the relation first due to the DB constraint.
+
+    const objectsInDbById = objectsInDB.reduce((result, currentObject) => {
+      result[currentObject.id] = currentObject;
+
+      return result;
+    }, {});
+
+    if (fieldsToCreate.length > 0) {
+      fieldsToCreate.map((field) => {
+        const migrations = [
+          {
+            name: objectsInDbById[field.objectMetadataId].targetTableName,
+            action: 'alter',
+            columns: this.workspaceMigrationFactory.createColumnActions(
+              WorkspaceMigrationColumnActionType.CREATE,
+              field,
+            ),
+          } satisfies WorkspaceMigrationTableAction,
+        ];
+
+        migrationsToSave.push({
+          workspaceId: field.workspaceId,
+          isCustom: false,
+          migrations,
+        });
+      });
+    }
+
+    if (fieldsToDelete.length > 0) {
+      fieldsToDelete.map((field) => {
+        const migrations = [
+          {
+            name: objectsInDbById[field.objectMetadataId].targetTableName,
+            action: 'alter',
+            columns: [
+              {
+                action: WorkspaceMigrationColumnActionType.DROP,
+                columnName: field.name,
+              },
+            ],
+          } satisfies WorkspaceMigrationTableAction,
+        ];
+
+        migrationsToSave.push({
+          workspaceId: field.workspaceId,
           isCustom: false,
           migrations,
         });
