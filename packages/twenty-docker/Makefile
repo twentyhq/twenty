@@ -17,7 +17,7 @@ dev-down:
 dev-sh:
 	@docker compose -f dev/docker-compose.yml exec twenty-dev sh
 
-dev-postgres build:
+dev-postgres-build:
 	@docker stop twenty_postgres || true
 	@docker rm twenty_postgres || true
 	@docker volume rm twenty_db_data || true

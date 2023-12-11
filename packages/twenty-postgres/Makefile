@@ -1,8 +1,8 @@
-provision-postgres-macos-arm:
+provision-on-macos-arm:
 	sh ./scripts/setup-postgres-macos-arm.sh
 
-provision-postgres-macos-intel:
+provision-on-macos-intel:
 	sh ./scripts/setup-postgres-macos-intel.sh
 
-provision-postgres-linux:
+provision-on-linux:
 	sh ./scripts/setup-postgres-linux.sh

@@ -10,5 +10,14 @@ docker-dev-down:
 docker-dev-sh:
 	make -C packages/twenty-docker dev-sh
 
-docker-dev-postgres-build:
+postgres-provision-on-docker:
 	make -C packages/twenty-docker dev-postgres-build
+
+postgres-provision-on-macos-arm:
+	make -C packages/twenty-postgres provision-on-macos-arm
+
+postgres-provision-on-macos-intel:
+	make -C packages/twenty-postgres provision-on-macos-intel
+
+postgres-provision-on-linux:
+	make -C packages/twenty-postgres provision-on-linux
