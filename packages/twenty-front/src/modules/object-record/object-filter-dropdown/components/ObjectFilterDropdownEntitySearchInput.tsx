@@ -7,8 +7,6 @@ type ObjectFilterDropdownRecordSearchInputProps = {
   filterDropdownId?: string;
 };
 
-// ObjectFilterDropdownEntitySearchInput
-
 export const ObjectFilterDropdownRecordSearchInput = ({
   filterDropdownId,
 }: ObjectFilterDropdownRecordSearchInputProps) => {

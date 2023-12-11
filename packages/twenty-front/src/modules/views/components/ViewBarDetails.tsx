@@ -128,15 +128,13 @@ export const ViewBarDetails = ({
         <StyledChipcontainer>
           {currentViewSorts?.map((sort) => {
             return (
-              <>
-                <EditObjectSort
-                  sortDropdownId={sortDropdownId}
-                  key={sort.fieldMetadataId}
-                  fieldMetadataId={sort.fieldMetadataId}
-                  label={sort.definition.label}
-                  direction={sort.direction}
-                />
-              </>
+              <EditObjectSort
+                sortDropdownId={sortDropdownId}
+                key={sort.fieldMetadataId}
+                fieldMetadataId={sort.fieldMetadataId}
+                label={sort.definition.label}
+                direction={sort.direction}
+              />
             );
           })}
           {!!currentViewSorts?.length && !!currentViewFilters?.length && (
@@ -145,7 +143,10 @@ export const ViewBarDetails = ({
             </StyledSeperatorContainer>
           )}
           {currentViewFilters?.map((filter) => (
-            <ObjectFilterDropdownScope filterScopeId={filter.fieldMetadataId}>
+            <ObjectFilterDropdownScope
+              filterScopeId={filter.fieldMetadataId}
+              key={filter.fieldMetadataId}
+            >
               <EditObjectFilter
                 key={filter.fieldMetadataId}
                 fieldMetadataId={filter.fieldMetadataId}
