@@ -43,6 +43,6 @@ export class GoogleGmailAuthController {
       refreshToken,
     });
 
-    return res.redirect('http://localhost:3001');
+    return res.redirect('http://localhost:3001/settings/accounts');
   }
 }

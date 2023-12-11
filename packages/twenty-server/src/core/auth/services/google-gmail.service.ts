@@ -14,7 +14,7 @@ export class GoogleGmailService {
   async saveConnectedAccount(
     saveConnectedAccountInput: SaveConnectedAccountInput,
   ) {
-    const { workspaceId, type, accessToken, refreshToken } =
+    const { workspaceId, type, accessToken, refreshToken, workspaceMemberId } =
       saveConnectedAccountInput;
 
     const dataSourceMetadata =
@@ -27,7 +27,7 @@ export class GoogleGmailService {
     );
 
     await workspaceDataSource?.query(
-      `INSERT INTO ${dataSourceMetadata.schema}."connectedAccount" ("type", "accessToken", "refreshToken") VALUES ('${type}', '${accessToken}', '${refreshToken}')`,
+      `INSERT INTO ${dataSourceMetadata.schema}."connectedAccount" ("type", "accessToken", "refreshToken", "accountOwnerId") VALUES ('${type}', '${accessToken}', '${refreshToken}', '${workspaceMemberId}')`,
     );
 
     return;
