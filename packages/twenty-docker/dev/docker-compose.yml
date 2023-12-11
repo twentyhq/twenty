@@ -11,7 +11,7 @@ services:
     volumes:
       - ../../../packages/twenty-front:/app/packages/twenty-front
       - ../../../packages/twenty-server:/app/packages/twenty-server
-      - ../../../packages/twenty-eslint-plugin:/app/packages/twenty-eslint-plugin
+      - ../../../packages/eslint-plugin-twenty:/app/packages/eslint-plugin-twenty
       - twenty_dev_node_modules_root:/app/node_modules
       - twenty_dev_node_modules_yarn:/app/.yarn
       - twenty_dev_node_modules_front:/app/packages/twenty-front/node_modules
