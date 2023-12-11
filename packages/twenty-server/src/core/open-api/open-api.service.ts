@@ -6,7 +6,10 @@ import { TokenService } from 'src/core/auth/services/token.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { baseSchema } from 'src/core/open-api/utils/base-schema.utils';
-import { computePath } from 'src/core/open-api/utils/compute-path.utils';
+import {
+  computePath,
+  computeSingleResultPath,
+} from 'src/core/open-api/utils/compute-path.utils';
 
 @Injectable()
 export class OpenApiService {
@@ -30,6 +33,7 @@ export class OpenApiService {
 
     schema.paths = objectMetadataItems.reduce((paths, item) => {
       paths[`/rest/${item.namePlural}`] = computePath(item);
+      paths[`/rest/${item.namePlural}/{id}`] = computeSingleResultPath(item);
 
       return paths;
     }, {});

@@ -2,6 +2,7 @@ import { objectMetadataItem } from 'src/utils/utils-test/object-metadata-item';
 import {
   computeDepthParameters,
   computeFilterParameters,
+  computeIdPathParameter,
   computeLastCursorParameters,
   computeLimitParameters,
   computeNodeExample,
@@ -125,6 +126,20 @@ describe('computePathUtils', () => {
           required: false,
           schema: {
             type: 'string',
+          },
+        });
+      });
+    });
+    describe('computeIdPathParameter', () => {
+      it('should compute id path param', () => {
+        expect(computeIdPathParameter(item as ObjectMetadataEntity)).toEqual({
+          name: 'id',
+          in: 'path',
+          description: 'ObjectName id',
+          required: true,
+          schema: {
+            type: 'string',
+            format: 'uuid',
           },
         });
       });

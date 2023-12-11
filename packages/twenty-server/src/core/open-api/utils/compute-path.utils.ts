@@ -146,6 +146,19 @@ export const computeLastCursorParameters = (item: ObjectMetadataEntity) => {
   };
 };
 
+export const computeIdPathParameter = (item: ObjectMetadataEntity) => {
+  return {
+    name: 'id',
+    in: 'path',
+    description: `${capitalize(item.nameSingular)} id`,
+    required: true,
+    schema: {
+      type: 'string',
+      format: 'uuid',
+    },
+  };
+};
+
 export const getResponses = (item: ObjectMetadataEntity) => {
   return {
     '200': {
@@ -229,6 +242,52 @@ export const computePath = (item: ObjectMetadataEntity) => {
         computeLastCursorParameters(item),
       ],
       responses: getResponses(item),
+    },
+  };
+};
+
+export const getSingleResultResponse = (item: ObjectMetadataEntity) => {
+  return {
+    '200': {
+      description: 'Successful operation',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              data: {
+                type: 'object',
+                properties: {
+                  [item.nameSingular]: {
+                    type: 'object',
+                    properties: computeNodeProperties(item),
+                  },
+                },
+              },
+            },
+            example: {
+              data: {
+                [item.nameSingular]: computeNodeExample(item),
+              },
+            },
+          },
+        },
+      },
+    },
+    '400': getErrorResponses('Invalid request'),
+    '401': getErrorResponses('Unauthorized'),
+  };
+};
+
+export const computeSingleResultPath = (item: ObjectMetadataEntity) => {
+  return {
+    get: {
+      tags: [item.namePlural],
+      summary: `Find One ${item.nameSingular}`,
+      description: `\`depth\` can be provided to request your \`${item.nameSingular}\``,
+      operationId: `findOneCompany${capitalize(item.nameSingular)}`,
+      parameters: [computeIdPathParameter(item), computeDepthParameters(item)],
+      responses: getSingleResultResponse(item),
     },
   };
 };
