@@ -1,2 +1,2 @@
 %:
-	$(MAKE) -C packages/twenty-dev $*
+	$(MAKE) -C packages/twenty-docker/dev $*
