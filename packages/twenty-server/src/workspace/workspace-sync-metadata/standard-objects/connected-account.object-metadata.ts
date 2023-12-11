@@ -18,6 +18,14 @@ import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-meta
 export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
+    label: 'email',
+    description: 'The account email',
+    icon: 'IconMail',
+  })
+  email: string;
+
+  @FieldMetadata({
+    type: FieldMetadataType.TEXT,
     label: 'type',
     description: 'The account type',
     icon: 'IconSettings',

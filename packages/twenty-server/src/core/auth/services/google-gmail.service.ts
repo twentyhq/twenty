@@ -14,8 +14,14 @@ export class GoogleGmailService {
   async saveConnectedAccount(
     saveConnectedAccountInput: SaveConnectedAccountInput,
   ) {
-    const { workspaceId, type, accessToken, refreshToken, workspaceMemberId } =
-      saveConnectedAccountInput;
+    const {
+      email,
+      workspaceId,
+      type,
+      accessToken,
+      refreshToken,
+      workspaceMemberId,
+    } = saveConnectedAccountInput;
 
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
@@ -26,9 +32,20 @@ export class GoogleGmailService {
       dataSourceMetadata,
     );
 
-    await workspaceDataSource?.query(
-      `INSERT INTO ${dataSourceMetadata.schema}."connectedAccount" ("type", "accessToken", "refreshToken", "accountOwnerId") VALUES ('${type}', '${accessToken}', '${refreshToken}', '${workspaceMemberId}')`,
+    const connectedAccount = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "email" = '${email}' AND "type" = '${type}'`,
     );
+
+    if (connectedAccount.length > 0) {
+      // throw new ConflictException(
+      //   'This account is already connected to your workspace.',
+      // );
+      console.log('This account is already connected to your workspace.');
+    } else {
+      await workspaceDataSource?.query(
+        `INSERT INTO ${dataSourceMetadata.schema}."connectedAccount" ("email", "type", "accessToken", "refreshToken", "accountOwnerId") VALUES ('${email}', '${type}', '${accessToken}', '${refreshToken}', '${workspaceMemberId}')`,
+      );
+    }
 
     return;
   }
