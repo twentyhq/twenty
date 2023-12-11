@@ -1,0 +1,52 @@
+version: "3.9"
+services:
+  twenty-dev:
+    build: 
+      context: ../../..
+      dockerfile: ./packages/twenty-docker/dev/twenty-dev/Dockerfile
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+      - "6006:6006"
+    volumes:
+      - ../../../packages/twenty-front:/app/packages/twenty-front
+      - ../../../packages/twenty-server:/app/packages/twenty-server
+      - ../../../packages/eslint-plugin-twenty:/app/packages/eslint-plugin-twenty
+      - twenty_dev_node_modules_root:/app/node_modules
+      - twenty_dev_node_modules_yarn:/app/.yarn
+      - twenty_dev_node_modules_front:/app/packages/twenty-front/node_modules
+      - twenty_dev_node_modules_server:/app/packages/twenty-server/node_modules
+    depends_on:
+      - postgres
+  twenty-docs:
+    build:
+      context: ../../..
+      dockerfile: ./packages/twenty-docker/dev/twenty-docs/Dockerfile
+    ports:
+      - "5001:5001"
+    volumes:
+      - ../../../packages/twenty-docs:/app/packages/twenty-docs
+      - twenty_docs_node_modules_root:/app/node_modules
+      - twenty_docs_node_modules_yarn:/app/.yarn
+      - twenty_docs_node_modules_docs:/app/packages/twenty-docs/node_modules
+  postgres:
+    container_name: twenty_postgres
+    build: ./postgres
+    volumes:
+    - twenty_db_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=twenty
+      - POSTGRES_PASSWORD=twenty
+      - POSTGRES_DB=default
+    ports:
+      - "5432:5432"
+volumes:
+  twenty_db_data:
+    name: twenty_db_data
+  twenty_dev_node_modules_root:
+  twenty_dev_node_modules_yarn:
+  twenty_dev_node_modules_front:
+  twenty_dev_node_modules_server:
+  twenty_docs_node_modules_root:
+  twenty_docs_node_modules_yarn:
+  twenty_docs_node_modules_docs:

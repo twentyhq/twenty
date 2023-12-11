@@ -1,0 +1,322 @@
+---
+title: Text
+sidebar_position: 3
+sidebar_custom_props:
+  icon: TbTextSize
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import textInputCode from '!!raw-loader!@site/src/ui/input/components/textInputCode.js'
+import autosizeTextInputCode from '!!raw-loader!@site/src/ui/input/components/autosizeTextInputCode.js'
+import entityTitleDoubleTextInputCode from '!!raw-loader!@site/src/ui/input/components/entityTitleDoubleTextInputCode.js'
+import textAreaCode from '!!raw-loader!@site/src/ui/input/components/textAreaCode.js'
+
+## Text Input
+
+Allows users to enter and edit text. 
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/input/components/TextInput']}
+  componentCode={textInputCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>Optional name for additional styling</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>label</td>
+      <td>string</td>
+      <td>Represents the label for the input</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>onChange</td>
+      <td>function</td>
+      <td>The function called when the input value changes</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>fullWidth</td>
+      <td>boolean</td>
+      <td>Indicates whether the input should take up 100% of the width</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>disableHotkeys</td>
+      <td>boolean</td>
+      <td>Indicates whether hotkeys are enabled for the input</td>
+      <td>`false`</td>
+    </tr>
+
+    <tr>
+      <td>error</td>
+      <td>string</td>
+      <td>Represents the error message to be displayed. When provided, it also adds an icon error on the right side of the input</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>onKeyDown</td>
+      <td>function</td>
+      <td>Called when a key is pressed down while the input field is focused. Receives a `React.KeyboardEvent` as an argument</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>RightIcon</td>
+      <td>IconComponent</td>
+      <td>An optional icon component displayed on the right side of the input</td>
+      <td></td>
+    </tr>
+
+  </tbody>
+</table>
+
+The component also accepts other HTML input element props.
+ 
+</TabItem>
+
+</Tabs>
+
+
+## Autosize Text Input 
+
+Text input component that automatically adjusts its height based on the content.
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/input/components/AutosizeTextInput']}
+  componentCode={autosizeTextInputCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>onValidate</td>
+      <td>function</td>
+      <td>The callback function you want to trigger when the user validates the input</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>minRows</td>
+      <td>number</td>
+      <td>The minimum number of rows for the text area</td>
+      <td>1</td>
+    </tr>
+
+    <tr>
+      <td>placeholder</td>
+      <td>string</td>
+      <td>The placeholder text you want to display when the text area is empty</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>onFocus</td>
+      <td>function</td>
+      <td>The callback function you want to trigger when the text area gains focus</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>variant</td>
+      <td>string</td>
+      <td>The variant of the input. Options include: `default`, `icon`, and `button`</td>
+      <td>default</td>
+    </tr>
+
+    <tr>
+      <td>buttonTitle</td>
+      <td>string</td>
+      <td>The title for the button (only applicable for the button variant)</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>value</td>
+      <td>string</td>
+      <td>The initial value for the text area</td>
+      <td>Empty string</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>
+
+
+## Entity Title Double Text Input 
+
+Displays a pair of text inputs side by side, allowing the user to edit two related values simultaneously.
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/input/components/EntityTitleDoubleTextInput']}
+  componentCode={entityTitleDoubleTextInputCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>firstValue</td>
+      <td>string</td>
+      <td>The value for the first text input</td>
+    </tr>
+
+    <tr>
+      <td>secondValue</td>
+      <td>string</td>
+      <td>The value for the second text input</td>
+    </tr>
+
+    <tr>
+      <td>firstValuePlaceholder</td>
+      <td>string</td>
+      <td>Placeholder text for the first text input, displayed when the input is empty</td>
+    </tr>
+
+    <tr>
+      <td>secondValuePlaceholder</td>
+      <td>string</td>
+      <td>Placeholder text for the second text input, displayed when the input is empty</td>
+    </tr>
+
+    <tr>
+      <td>onChange</td>
+      <td>function</td>
+      <td>The callback function you want to trigger when the text input changes</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+</Tabs>
+
+## Text Area
+
+Allows you to create multi-line text inputs. 
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/input/components/TextArea']}
+  componentCode={textAreaCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>disabled</td>
+      <td>boolean</td>
+      <td>Indicates whether the text area is disabled</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>minRows</td>
+      <td>number</td>
+      <td>Minimum number of visible rows for the text area. </td>
+      <td>1</td>
+    </tr>
+
+    <tr>
+      <td>onChange</td>
+      <td>function</td>
+      <td>Callback function triggered when the text area content changes</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>placeholder</td>
+      <td>string</td>
+      <td>Placeholder text displayed when the text area is empty</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>value</td>
+      <td>string</td>
+      <td>The current value of the text area</td>
+      <td>Empty string</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>

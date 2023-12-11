@@ -1,0 +1,159 @@
+import {
+  ApolloClient,
+  ApolloClientOptions,
+  ApolloLink,
+  fromPromise,
+  ServerError,
+  ServerParseError,
+} from '@apollo/client';
+import { GraphQLErrors } from '@apollo/client/errors';
+import { setContext } from '@apollo/client/link/context';
+import { onError } from '@apollo/client/link/error';
+import { RetryLink } from '@apollo/client/link/retry';
+import { createUploadLink } from 'apollo-upload-client';
+
+import { renewToken } from '@/auth/services/AuthService';
+import { AuthTokenPair } from '~/generated/graphql';
+import { assertNotNull } from '~/utils/assert';
+import { logDebug } from '~/utils/logDebug';
+
+import { ApolloManager } from '../types/apolloManager.interface';
+import { loggerLink } from '../utils';
+
+const logger = loggerLink(() => 'Twenty');
+
+export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
+  onError?: (err: GraphQLErrors | undefined) => void;
+  onNetworkError?: (err: Error | ServerParseError | ServerError) => void;
+  onTokenPairChange?: (tokenPair: AuthTokenPair) => void;
+  onUnauthenticatedError?: () => void;
+  initialTokenPair: AuthTokenPair | null;
+  extraLinks?: ApolloLink[];
+  isDebugMode?: boolean;
+}
+
+export class ApolloFactory<TCacheShape> implements ApolloManager<TCacheShape> {
+  private client: ApolloClient<TCacheShape>;
+  private tokenPair: AuthTokenPair | null = null;
+
+  constructor(opts: Options<TCacheShape>) {
+    const {
+      uri,
+      onError: onErrorCb,
+      onNetworkError,
+      onTokenPairChange,
+      onUnauthenticatedError,
+      initialTokenPair,
+      extraLinks,
+      isDebugMode,
+      ...options
+    } = opts;
+
+    this.tokenPair = initialTokenPair;
+
+    const buildApolloLink = (): ApolloLink => {
+      const httpLink = createUploadLink({
+        uri,
+      });
+
+      const authLink = setContext(async (_, { headers }) => {
+        return {
+          headers: {
+            ...headers,
+            authorization: this.tokenPair?.accessToken.token
+              ? `Bearer ${this.tokenPair?.accessToken.token}`
+              : '',
+          },
+        };
+      });
+
+      const retryLink = new RetryLink({
+        delay: {
+          initial: 3000,
+        },
+        attempts: {
+          max: 2,
+          retryIf: (error) => !!error,
+        },
+      });
+      const errorLink = onError(
+        ({ graphQLErrors, networkError, forward, operation }) => {
+          if (graphQLErrors) {
+            onErrorCb?.(graphQLErrors);
+
+            for (const graphQLError of graphQLErrors) {
+              if (graphQLError.message === 'Unauthorized') {
+                return fromPromise(
+                  renewToken(uri, this.tokenPair)
+                    .then((tokens) => {
+                      onTokenPairChange?.(tokens);
+                    })
+                    .catch(() => {
+                      onUnauthenticatedError?.();
+                    }),
+                ).flatMap(() => forward(operation));
+              }
+
+              switch (graphQLError?.extensions?.code) {
+                case 'UNAUTHENTICATED': {
+                  return fromPromise(
+                    renewToken(uri, this.tokenPair)
+                      .then((tokens) => {
+                        onTokenPairChange?.(tokens);
+                      })
+                      .catch(() => {
+                        onUnauthenticatedError?.();
+                      }),
+                  ).flatMap(() => forward(operation));
+                }
+                default:
+                  if (isDebugMode) {
+                    logDebug(
+                      `[GraphQL error]: Message: ${
+                        graphQLError.message
+                      }, Location: ${
+                        graphQLError.locations
+                          ? JSON.stringify(graphQLError.locations)
+                          : graphQLError.locations
+                      }, Path: ${graphQLError.path}`,
+                    );
+                  }
+              }
+            }
+          }
+
+          if (networkError) {
+            if (isDebugMode) {
+              logDebug(`[Network error]: ${networkError}`);
+            }
+            onNetworkError?.(networkError);
+          }
+        },
+      );
+
+      return ApolloLink.from(
+        [
+          errorLink,
+          authLink,
+          ...(extraLinks || []),
+          isDebugMode ? logger : null,
+          retryLink,
+          httpLink,
+        ].filter(assertNotNull),
+      );
+    };
+
+    this.client = new ApolloClient({
+      ...options,
+      link: buildApolloLink(),
+    });
+  }
+
+  updateTokenPair(tokenPair: AuthTokenPair | null) {
+    this.tokenPair = tokenPair;
+  }
+
+  getClient() {
+    return this.client;
+  }
+}

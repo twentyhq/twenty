@@ -145,7 +145,7 @@ jobs:
       - name: Front / Install Dependencies
         run: cd front && yarn
       - name: Front / Run linter
-        run: cd front && yarn lint --config .eslintrc-ci.js
+        run: cd front && yarn lint --config .eslintrc-ci.cjs
   front-jest:
     needs: front-yarn-install
     runs-on: ubuntu-latest

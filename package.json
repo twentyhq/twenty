@@ -1,0 +1,26 @@
+{
+  "name": "twenty",
+  "version": "0.2.1",
+  "packageManager": "yarn@4.0.2",
+  "engines": {
+    "node": "^18.16.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "license": "AGPL-3.0",
+  "workspaces": {
+    "packages": [
+      "packages/eslint-plugin-twenty",
+      "packages/twenty-front",
+      "packages/twenty-docs",
+      "packages/twenty-server"
+    ]
+  },
+  "devDependencies": {
+    "nx": "17.2.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "patch-package": "^8.0.0"
+  }
+}

@@ -1,6 +1,18 @@
 **/**/.env
 .DS_Store
 .idea/workspace.xml
-node_modules/
+**/**/node_modules/
+
 # yarn is the recommended package manager across the project
-.package-lock.json
+**/**/.package-lock.json
+
+.nx/installation
+.nx/cache
+
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
