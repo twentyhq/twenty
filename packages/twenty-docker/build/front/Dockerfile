@@ -14,19 +14,19 @@ COPY ./packages/eslint-plugin-twenty /app/packages/eslint-plugin-twenty
 COPY ./packages/twenty-front /app/packages/twenty-front
 
 RUN yarn
-CMD ["tail", "-f", "/dev/null"]
-# RUN yarn nx build twenty-front
+RUN yarn nx build twenty-front
 
-# COPY ./packages/twenty-docker/build/front/serve.json ./build
+COPY ./packages/twenty-docker/build/front/serve.json ./build
 
-# FROM node:18.16.0-alpine as front
+FROM node:18.16.0-alpine as front
 
-# WORKDIR /app/packages/twenty-front
+WORKDIR /app/packages/twenty-front
 
-# COPY --from=build /app/build ./build
-# COPY ./packages/twenty-front/scripts/inject-runtime-env.sh /app/packages/twenty-front/scripts/inject-runtime-env.sh
+COPY --from=build /app/packages/twenty-front/build ./build
+COPY ./packages/twenty-front/scripts/inject-runtime-env.sh /app/packages/twenty-front/scripts/inject-runtime-env.sh
+RUN yarn global add serve
 
-# LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
-# LABEL org.opencontainers.image.description="This image provides a consistent and reproducible environment for the frontend."
+LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
+LABEL org.opencontainers.image.description="This image provides a consistent and reproducible environment for the frontend."
 
-# CMD ["/bin/sh", "-c", "/app/front/scripts/inject-runtime-env.sh && yarn dlx serve build"]
+CMD ["/bin/sh", "-c", "./scripts/inject-runtime-env.sh && serve build"]
