@@ -45,12 +45,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
         {hiddenTableColumns.map((column) => (
           <MenuItem
             key={column.fieldMetadataId}
-            iconButtons={[
-              {
-                Icon: IconPlus,
-                onClick: () => handleAddColumn(column),
-              },
-            ]}
+            onClick={() => handleAddColumn(column)}
             LeftIcon={icons[column.iconName]}
             text={column.label}
           />
