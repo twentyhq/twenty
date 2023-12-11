@@ -22,7 +22,7 @@ export class SaveConnectedAccountInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
-  type: string;
+  provider: string;
 
   @Field(() => String)
   @IsNotEmpty()

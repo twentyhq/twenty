@@ -17,7 +17,7 @@ export class GoogleGmailService {
     const {
       email,
       workspaceId,
-      type,
+      provider,
       accessToken,
       refreshToken,
       workspaceMemberId,
@@ -33,17 +33,16 @@ export class GoogleGmailService {
     );
 
     const connectedAccount = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "email" = '${email}' AND "type" = '${type}'`,
+      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "email" = $1 AND "provider" = $2 AND "accountOwnerId" = $3`,
+      [email, provider, workspaceMemberId],
     );
 
     if (connectedAccount.length > 0) {
-      // throw new ConflictException(
-      //   'This account is already connected to your workspace.',
-      // );
       console.log('This account is already connected to your workspace.');
     } else {
       await workspaceDataSource?.query(
-        `INSERT INTO ${dataSourceMetadata.schema}."connectedAccount" ("email", "type", "accessToken", "refreshToken", "accountOwnerId") VALUES ('${email}', '${type}', '${accessToken}', '${refreshToken}', '${workspaceMemberId}')`,
+        `INSERT INTO ${dataSourceMetadata.schema}."connectedAccount" ("email", "provider", "accessToken", "refreshToken", "accountOwnerId") VALUES ($1, $2, $3, $4, $5)`,
+        [email, provider, accessToken, refreshToken, workspaceMemberId],
       );
     }
 

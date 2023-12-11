@@ -39,7 +39,7 @@ export class GoogleGmailAuthController {
       email,
       workspaceMemberId: workspaceMemberId,
       workspaceId: workspaceId,
-      type: 'gmail',
+      provider: 'gmail',
       accessToken,
       refreshToken,
     });

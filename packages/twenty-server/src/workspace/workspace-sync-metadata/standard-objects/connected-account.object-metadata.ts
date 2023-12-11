@@ -26,11 +26,11 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'type',
-    description: 'The account type',
+    label: 'provider',
+    description: 'The account provider',
     icon: 'IconSettings',
   })
-  type: string;
+  provider: string;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
