@@ -4,14 +4,14 @@ WORKDIR /app
 
 ARG SHOULD_INDEX_DOC
 
-COPY ../../../../package.json .
-COPY ../../../../yarn.lock .
-COPY ../../../../.yarnrc.yml .
-COPY ../../../../.yarn/releases /app/.yarn/releases
-COPY ../../../packages/twenty-docs/package.json /app/packages/twenty-docs/package.json
+COPY ./package.json .
+COPY ./yarn.lock .
+COPY ./.yarnrc.yml .
+COPY ./.yarn/releases /app/.yarn/releases
+COPY ./packages/twenty-docs/package.json /app/packages/twenty-docs/package.json
 RUN yarn 
 
-COPY ../../../packages/twenty-docs /app/packages/twenty-docs
+COPY ./packages/twenty-docs /app/packages/twenty-docs
 RUN yarn nx build twenty-docs
 
 WORKDIR /app/packages/twenty-docs
