@@ -90,6 +90,7 @@ export class WorkspaceSyncMetadataService {
         const objectInDB = objectsInDBByName[standardObjectName];
 
         if (!objectInDB) {
+          console.log(standardObject);
           objectsToCreate.push(standardObject);
           continue;
         }
@@ -125,6 +126,7 @@ export class WorkspaceSyncMetadataService {
             if (value === null || typeof value !== 'object') {
               return [key, value];
             }
+
             return [
               key,
               filterIgnoredProperties(
@@ -134,6 +136,7 @@ export class WorkspaceSyncMetadataService {
                   if (property !== null && typeof property === 'object') {
                     return JSON.stringify(property);
                   }
+
                   return property;
                 },
               ),
@@ -157,6 +160,7 @@ export class WorkspaceSyncMetadataService {
           // We only handle CHANGE here as REMOVE and CREATE are handled earlier.
           if (diff.type === 'CHANGE') {
             const property = diff.path[0];
+
             objectsToUpdate[objectInDB.id] = {
               ...objectsToUpdate[objectInDB.id],
               [property]: diff.value,
@@ -166,6 +170,7 @@ export class WorkspaceSyncMetadataService {
 
         for (const diff of fieldsDiff) {
           const fieldName = diff.path[0];
+
           if (diff.type === 'CREATE')
             fieldsToCreate.push({
               ...standardObjectFields[fieldName],
@@ -175,6 +180,7 @@ export class WorkspaceSyncMetadataService {
             fieldsToDelete.push(objectInDBFields[fieldName]);
           if (diff.type === 'CHANGE') {
             const property = diff.path[diff.path.length - 1];
+
             fieldsToUpdate[objectInDBFields[fieldName].id] = {
               ...fieldsToUpdate[objectInDBFields[fieldName].id],
               [property]: diff.value,
@@ -221,6 +227,7 @@ export class WorkspaceSyncMetadataService {
       const fieldsToDeleteWithoutRelationType = fieldsToDelete.filter(
         (field) => field.type !== FieldMetadataType.RELATION,
       );
+
       if (fieldsToDeleteWithoutRelationType.length > 0) {
         await this.fieldMetadataRepository.delete(
           fieldsToDeleteWithoutRelationType.map((field) => field.id),
@@ -263,7 +270,9 @@ export class WorkspaceSyncMetadataService {
       objectsInDBByName,
     ).reduce((result, currentObject) => {
       const key = `${currentObject.fromObjectMetadataId}->${currentObject.fromFieldMetadataId}`;
+
       result[key] = currentObject;
+
       return result;
     }, {});
 
@@ -279,7 +288,9 @@ export class WorkspaceSyncMetadataService {
       )
       .reduce((result, currentObject) => {
         const key = `${currentObject.fromObjectMetadataId}->${currentObject.fromFieldMetadataId}`;
+
         result[key] = currentObject;
+
         return result;
       }, {});
 
@@ -328,7 +339,7 @@ export class WorkspaceSyncMetadataService {
     _fieldsToDelete: FieldMetadataEntity[],
   ) {
     const migrationsToSave: Partial<WorkspaceMigrationEntity>[] = [];
-    
+
     if (objectsToCreate.length > 0) {
       objectsToCreate.map((object) => {
         const migrations = [
