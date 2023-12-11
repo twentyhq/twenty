@@ -3,6 +3,8 @@ import { OrderByDirection } from 'src/workspace/workspace-query-builder/interfac
 import { capitalize } from 'src/utils/capitalize';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
+import { FilterComparators } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/filter-utils/parse-base-filter.utils';
+import { Conjunctions } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/filter-utils/parse-filter.utils';
 
 export const computeNodeProperties = (
   item: ObjectMetadataEntity,
@@ -114,7 +116,17 @@ export const computeFilterParameters = (item: ObjectMetadataEntity) => {
   return {
     name: 'filter',
     in: 'query',
-    description: `A combination of fields, filter operations and values to filter \`${item.namePlural}\` returned`,
+    description: `A combination of fields, filter operations and values to filter \`${
+      item.namePlural
+    }\` returned. Should have the following shape: \`field_1[COMPARATOR]:value_1,field_2[COMPARATOR]:value_2,...\` Available comparators are \`${Object.values(
+      FilterComparators,
+    ).join(
+      '`, `',
+    )}\`. eg: GET /rest/companies?filter=name[eq]:"Airbnb".\n\nYou can create more complex filters using conjunctions \`${Object.values(
+      Conjunctions,
+    ).join(
+      '`, `',
+    )}\`. eg: GET /rest/companies?filter=or(name[eq]:"Airbnb",employees[gt]:1,not(name[is]:NULL),not(and(createdAt[lte]:"2022-01-01T00:00:00.000Z",idealCustomerProfile[eq]:true)))`,
     required: false,
     schema: {
       type: 'string',
