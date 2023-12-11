@@ -6,7 +6,13 @@ import { SelectableRecord } from '@/object-record/select/types/SelectableRecord'
 export const EMPTY_FILTER_VALUE = '';
 export const MAX_RECORDS_TO_DISPLAY = 3;
 
-export const ObjectFilterDropdownRecordSelect = () => {
+type ObjectFilterDropdownRecordSelectProps = {
+  filterDropdownId?: string;
+};
+
+export const ObjectFilterDropdownRecordSelect = ({
+  filterDropdownId,
+}: ObjectFilterDropdownRecordSelectProps) => {
   const {
     filterDefinitionUsedInDropdown,
     objectFilterDropdownSearchInput,
@@ -14,7 +20,7 @@ export const ObjectFilterDropdownRecordSelect = () => {
     setObjectFilterDropdownSelectedRecordIds,
     objectFilterDropdownSelectedRecordIds,
     selectFilter,
-  } = useFilterDropdown();
+  } = useFilterDropdown({ filterDropdownId });
 
   const objectNameSingular =
     filterDefinitionUsedInDropdown?.relationObjectMetadataNameSingular ?? '';

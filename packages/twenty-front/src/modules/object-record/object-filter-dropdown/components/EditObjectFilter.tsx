@@ -1,22 +1,22 @@
+import { MultipleFiltersDropdownFilterOnFilterChangedEffect } from '@/object-record/object-filter-dropdown/components/MultipleFiltersDropdownFilterOnFilterChangedEffect';
+import { ObjectFilterDropdownDateSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownDateSearchInput';
+import { ObjectFilterDropdownNumberSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownNumberSearchInput';
+import { ObjectFilterDropdownOperandButton } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownOperandButton';
+import { ObjectFilterDropdownOperandSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownOperandSelect';
+import { ObjectFilterDropdownRecordSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
+import { ObjectFilterDropdownTextSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextSearchInput';
+import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { MultipleFiltersDropdownFilterOnFilterChangedEffect } from '@/ui/object/object-filter-dropdown/components/MultipleFiltersDropdownFilterOnFilterChangedEffect';
-import { ObjectFilterDropdownDateSearchInput } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownDateSearchInput';
-import { ObjectFilterDropdownNumberSearchInput } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownNumberSearchInput';
-import { ObjectFilterDropdownOperandButton } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownOperandButton';
-import { ObjectFilterDropdownOperandSelect } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownOperandSelect';
-import { ObjectFilterDropdownTextSearchInput } from '@/ui/object/object-filter-dropdown/components/ObjectFilterDropdownTextSearchInput';
-import { useFilterDropdown } from '@/ui/object/object-filter-dropdown/hooks/useFilterDropdown';
-import { FilterDefinition } from '@/ui/object/object-filter-dropdown/types/FilterDefinition';
 import SortOrFilterChip from '@/views/components/SortOrFilterChip';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
-import { ObjectFilterDropdownEntitySearchInput } from './ObjectFilterDropdownEntitySearchInput';
-import { ObjectFilterDropdownEntitySelect } from './ObjectFilterDropdownEntitySelect';
+import { ObjectFilterDropdownRecordSearchInput } from './ObjectFilterDropdownEntitySearchInput';
 
 export const EditObjectFilter = ({
   fieldMetadataId,
@@ -111,14 +111,15 @@ export const EditObjectFilter = ({
                 />
               )}
               {availableFilter?.type === 'RELATION' && (
-                <ObjectFilterDropdownEntitySearchInput
-                  filterDropdownId={filterDropdownId}
-                />
-              )}
-              {availableFilter?.type === 'RELATION' && (
-                <ObjectFilterDropdownEntitySelect
-                  filterDropdownId={filterDropdownId}
-                />
+                <>
+                  <ObjectFilterDropdownRecordSearchInput
+                    filterDropdownId={filterDropdownId}
+                  />
+                  <DropdownMenuSeparator />
+                  <ObjectFilterDropdownRecordSelect
+                    filterDropdownId={filterDropdownId}
+                  />
+                </>
               )}
             </>
           )

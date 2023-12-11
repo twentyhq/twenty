@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react';
 
+import { ObjectSortDropdown } from '@/object-record/object-sort-dropdown/components/ObjectSortDropdown';
 import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
 import { ObjectSortDropdownScope } from '@/object-record/object-sort-dropdown/scopes/ObjectSortDropdownScope';
 import { LightButton } from '@/ui/input/button/components/LightButton';
@@ -8,7 +9,6 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { ObjectSortDropdownId } from '../constants/ObjectSortDropdownId';
 import { SortDirection } from '../types/SortDirection';
-import { ObjectSortDropdown } from '@/object-record/object-sort-dropdown/components/ObjectSortDropdown';
 
 export type ObjectSortDropdownButtonProps = {
   sortDropdownId: string;

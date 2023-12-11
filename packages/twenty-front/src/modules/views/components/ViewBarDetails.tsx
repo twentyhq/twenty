@@ -2,16 +2,13 @@ import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { getOperandLabelShort } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
-import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
-import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
+import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
+import { EditObjectFilter } from '@/object-record/object-filter-dropdown/components/EditObjectFilter';
+import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
+import { EditObjectSort } from '@/object-record/object-sort-dropdown/components/EditObjectSort';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
-import { EditObjectSort } from '@/object-record/object-sort-dropdown/components/EditObjectSort';
-import { EditObjectFilter } from '@/object-record/object-filter-dropdown/components/EditObjectFilter';
-import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
-import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;

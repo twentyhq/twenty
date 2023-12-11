@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from 'react';
 
+import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
 import { IconChevronDown } from '@/ui/display/icon';
 import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -9,7 +10,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { useSortDropdown } from '@/ui/object/object-sort-dropdown/hooks/useSortDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { SortDefinition } from '../types/SortDefinition';
