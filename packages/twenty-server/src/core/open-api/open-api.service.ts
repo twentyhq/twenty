@@ -26,7 +26,7 @@ export class OpenApiService {
       throw new BadRequestException(`No object found`);
     }
 
-    const schema = baseSchema;
+    const schema = baseSchema(this.environmentService.getFrontBaseUrl());
 
     schema.paths = objectMetadataItems.reduce((paths, item) => {
       paths[`/rest/${item.namePlural}`] = computePath(item);
