@@ -5718,6 +5718,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch::locator=twenty-server%40workspace%3Apackages%2Ftwenty-server":
+  version: 2.1.0
+  resolution: "@graphql-yoga/nestjs@patch:@graphql-yoga/nestjs@npm%3A2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch::version=2.1.0&hash=25fc63&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
+  peerDependencies:
+    "@nestjs/common": ^10.0.0
+    "@nestjs/core": ^10.0.0
+    "@nestjs/graphql": ^12.0.0
+    graphql: ^15.0.0 || ^16.0.0
+    graphql-yoga: ^4.0.4
+  checksum: 333501a04f79ef158cd92e240abecf1056ea12e8f63345758d6f79bbd88d923846fac44940765ae48a1b05d108107e3ba1539eea1092802c5bdf74bf166ea16a
+  languageName: node
+  linkType: hard
+
 "@graphql-yoga/subscription@npm:^4.0.0":
   version: 4.0.0
   resolution: "@graphql-yoga/subscription@npm:4.0.0"
@@ -6902,6 +6915,46 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nestjs/graphql@patch:@nestjs/graphql@12.0.8#./patches/@nestjs+graphql+12.0.8.patch::locator=twenty-server%40workspace%3Apackages%2Ftwenty-server":
+  version: 12.0.8
+  resolution: "@nestjs/graphql@patch:@nestjs/graphql@npm%3A12.0.8#./patches/@nestjs+graphql+12.0.8.patch::version=12.0.8&hash=daa690&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
+  dependencies:
+    "@graphql-tools/merge": "npm:9.0.0"
+    "@graphql-tools/schema": "npm:10.0.0"
+    "@graphql-tools/utils": "npm:10.0.1"
+    "@nestjs/mapped-types": "npm:2.0.2"
+    chokidar: "npm:3.5.3"
+    fast-glob: "npm:3.2.12"
+    graphql-tag: "npm:2.12.6"
+    graphql-ws: "npm:5.14.0"
+    lodash: "npm:4.17.21"
+    normalize-path: "npm:3.0.0"
+    subscriptions-transport-ws: "npm:0.11.0"
+    tslib: "npm:2.6.0"
+    uuid: "npm:9.0.0"
+    ws: "npm:8.13.0"
+  peerDependencies:
+    "@apollo/subgraph": ^2.0.0
+    "@nestjs/common": ^9.3.8 || ^10.0.0
+    "@nestjs/core": ^9.3.8 || ^10.0.0
+    class-transformer: "*"
+    class-validator: "*"
+    graphql: ^16.6.0
+    reflect-metadata: ^0.1.13
+    ts-morph: ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    "@apollo/subgraph":
+      optional: true
+    class-transformer:
+      optional: true
+    class-validator:
+      optional: true
+    ts-morph:
+      optional: true
+  checksum: e53b804e87e65c78e0e231a7033e135a8346d44ee110a8e2f270b026bd47fda41525b598a301b5ca84537b3c8e37fa92462be353e611751a5b433aadb1f6f290
+  languageName: node
+  linkType: hard
+
 "@nestjs/jwt@npm:^10.0.3":
   version: 10.2.0
   resolution: "@nestjs/jwt@npm:10.2.0"
@@ -7612,6 +7665,34 @@ __metadata:
     graphql-subscriptions: ^2.0.0
     ts-morph: ^19.0.0
   checksum: 8a5c5da602e68ff4875f19a19baa2b15bdefc9c5b467d3a55898fbbe411744762fcd42cf078e2ebc5cd53f1a12e67c7fbd698b3696ce1bb85e41dc9d0da72441
+  languageName: node
+  linkType: hard
+
+"@ptc-org/nestjs-query-graphql@patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch::locator=twenty-server%40workspace%3Apackages%2Ftwenty-server":
+  version: 4.2.0
+  resolution: "@ptc-org/nestjs-query-graphql@patch:@ptc-org/nestjs-query-graphql@npm%3A4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch::version=4.2.0&hash=2d5c00&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
+  dependencies:
+    "@ptc-org/nestjs-query-core": "npm:4.2.0"
+    dataloader: "npm:^2.2.2"
+    graphql-fields: "npm:^2.0.3"
+    lodash.merge: "npm:4.6.2"
+    lodash.omit: "npm:^4.5.0"
+    lower-case-first: "npm:^2.0.2"
+    pluralize: "npm:^8.0.0"
+    reflect-metadata: "npm:0.1.13"
+    tslib: "npm:^2.6.2"
+    upper-case-first: "npm:^2.0.2"
+  peerDependencies:
+    "@apollo/gateway": ^0.44.1 || ^0.46.0 || ^0.48.0 || ^0.49.0 || ^0.50.0 || ^2.0.0
+    "@nestjs/common": ^9.0.0 || ^10.0.0
+    "@nestjs/core": ^9.0.0 || ^10.0.0
+    "@nestjs/graphql": ^11.0.0 || ^12.0.0
+    class-transformer: ^0.5
+    class-validator: ^0.14.0
+    graphql: ^16.0.0
+    graphql-subscriptions: ^2.0.0
+    ts-morph: ^19.0.0
+  checksum: e22941524df13a20a67176aac42d27f6ac7860c72a4189eca91846d493f3da63b7d3ea71f2979bfb38de5e159fc6ac70d898fce20ef443e235f3b9202073441a
   languageName: node
   linkType: hard
 
@@ -8657,93 +8738,93 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/rollup-android-arm-eabi@npm:4.7.0":
-  version: 4.7.0
-  resolution: "@rollup/rollup-android-arm-eabi@npm:4.7.0"
+"@rollup/rollup-android-arm-eabi@npm:4.8.0":
+  version: 4.8.0
+  resolution: "@rollup/rollup-android-arm-eabi@npm:4.8.0"
   conditions: os=android & cpu=arm
   languageName: node
   linkType: hard
 
-"@rollup/rollup-android-arm64@npm:4.7.0":
-  version: 4.7.0
-  resolution: "@rollup/rollup-android-arm64@npm:4.7.0"
+"@rollup/rollup-android-arm64@npm:4.8.0":
+  version: 4.8.0
+  resolution: "@rollup/rollup-android-arm64@npm:4.8.0"
   conditions: os=android & cpu=arm64
   languageName: node
   linkType: hard
 
-"@rollup/rollup-darwin-arm64@npm:4.7.0":
-  version: 4.7.0
-  resolution: "@rollup/rollup-darwin-arm64@npm:4.7.0"
+"@rollup/rollup-darwin-arm64@npm:4.8.0":
+  version: 4.8.0
+  resolution: "@rollup/rollup-darwin-arm64@npm:4.8.0"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@rollup/rollup-darwin-x64@npm:4.7.0":
-  version: 4.7.0
-  resolution: "@rollup/rollup-darwin-x64@npm:4.7.0"
+"@rollup/rollup-darwin-x64@npm:4.8.0":
+  version: 4.8.0
+  resolution: "@rollup/rollup-darwin-x64@npm:4.8.0"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-arm-gnueabihf@npm:4.7.0":
-  version: 4.7.0
-  resolution: "@rollup/rollup-linux-arm-gnueabihf@npm:4.7.0"
+"@rollup/rollup-linux-arm-gnueabihf@npm:4.8.0":
+  version: 4.8.0
+  resolution: "@rollup/rollup-linux-arm-gnueabihf@npm:4.8.0"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-arm64-gnu@npm:4.7.0":
-  version: 4.7.0
-  resolution: "@rollup/rollup-linux-arm64-gnu@npm:4.7.0"
+"@rollup/rollup-linux-arm64-gnu@npm:4.8.0":
+  version: 4.8.0
+  resolution: "@rollup/rollup-linux-arm64-gnu@npm:4.8.0"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-arm64-musl@npm:4.7.0":
-  version: 4.7.0
-  resolution: "@rollup/rollup-linux-arm64-musl@npm:4.7.0"
+"@rollup/rollup-linux-arm64-musl@npm:4.8.0":
+  version: 4.8.0
+  resolution: "@rollup/rollup-linux-arm64-musl@npm:4.8.0"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-riscv64-gnu@npm:4.7.0":
-  version: 4.7.0
-  resolution: "@rollup/rollup-linux-riscv64-gnu@npm:4.7.0"
+"@rollup/rollup-linux-riscv64-gnu@npm:4.8.0":
+  version: 4.8.0
+  resolution: "@rollup/rollup-linux-riscv64-gnu@npm:4.8.0"
   conditions: os=linux & cpu=riscv64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-x64-gnu@npm:4.7.0":
-  version: 4.7.0
-  resolution: "@rollup/rollup-linux-x64-gnu@npm:4.7.0"
+"@rollup/rollup-linux-x64-gnu@npm:4.8.0":
+  version: 4.8.0
+  resolution: "@rollup/rollup-linux-x64-gnu@npm:4.8.0"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@rollup/rollup-linux-x64-musl@npm:4.7.0":
-  version: 4.7.0
-  resolution: "@rollup/rollup-linux-x64-musl@npm:4.7.0"
+"@rollup/rollup-linux-x64-musl@npm:4.8.0":
+  version: 4.8.0
+  resolution: "@rollup/rollup-linux-x64-musl@npm:4.8.0"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@rollup/rollup-win32-arm64-msvc@npm:4.7.0":
-  version: 4.7.0
-  resolution: "@rollup/rollup-win32-arm64-msvc@npm:4.7.0"
+"@rollup/rollup-win32-arm64-msvc@npm:4.8.0":
+  version: 4.8.0
+  resolution: "@rollup/rollup-win32-arm64-msvc@npm:4.8.0"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@rollup/rollup-win32-ia32-msvc@npm:4.7.0":
-  version: 4.7.0
-  resolution: "@rollup/rollup-win32-ia32-msvc@npm:4.7.0"
+"@rollup/rollup-win32-ia32-msvc@npm:4.8.0":
+  version: 4.8.0
+  resolution: "@rollup/rollup-win32-ia32-msvc@npm:4.8.0"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"@rollup/rollup-win32-x64-msvc@npm:4.7.0":
-  version: 4.7.0
-  resolution: "@rollup/rollup-win32-x64-msvc@npm:4.7.0"
+"@rollup/rollup-win32-x64-msvc@npm:4.8.0":
+  version: 4.8.0
+  resolution: "@rollup/rollup-win32-x64-msvc@npm:4.8.0"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -10845,21 +10926,21 @@ __metadata:
   linkType: hard
 
 "@tabler/icons-react@npm:^2.30.0":
-  version: 2.43.0
-  resolution: "@tabler/icons-react@npm:2.43.0"
+  version: 2.44.0
+  resolution: "@tabler/icons-react@npm:2.44.0"
   dependencies:
-    "@tabler/icons": "npm:2.43.0"
+    "@tabler/icons": "npm:2.44.0"
     prop-types: "npm:^15.7.2"
   peerDependencies:
     react: ^16.5.1 || ^17.0.0 || ^18.0.0
-  checksum: d13687df68a2d5b926bb904e1868b8f3a55edc39402cae621fc3e00f85534da8747e4c07aac8eacccf36aa8955f1d98ff124449821e8a421842417d0df48ceda
+  checksum: 92c755b6e57c46b8b7832fc5557057b3f84985d1069f028a8fa0e92c2e99d7b9adb682f0bf5d07b2d49e97ad3677439c109a254025527b83d5fc96d9a05dba1f
   languageName: node
   linkType: hard
 
-"@tabler/icons@npm:2.43.0":
-  version: 2.43.0
-  resolution: "@tabler/icons@npm:2.43.0"
-  checksum: 141f354aed8b230f37fc423c4c2d9038385acd9f7b7e8b975e4afab620538668806d1a976cb72c2bac16ba7210fa7faa7d22b229f376a96a3ee6c1c3ecf885fd
+"@tabler/icons@npm:2.44.0":
+  version: 2.44.0
+  resolution: "@tabler/icons@npm:2.44.0"
+  checksum: 42d069a355b66af5a749aa68db149297778f582511b95b3d2bf70902e9e1c3f7e0977791378359bcbb04e39af582d2b7a270932531eb832accfd2f8fda0e7d72
   languageName: node
   linkType: hard
 
@@ -16106,6 +16187,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"class-validator@patch:class-validator@^0.14.0#./patches/class-validator+0.14.0.patch::locator=twenty-server%40workspace%3Apackages%2Ftwenty-server":
+  version: 0.14.0
+  resolution: "class-validator@patch:class-validator@npm%3A0.14.0#./patches/class-validator+0.14.0.patch::version=0.14.0&hash=053904&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
+  dependencies:
+    "@types/validator": "npm:^13.7.10"
+    libphonenumber-js: "npm:^1.10.14"
+    validator: "npm:^13.7.0"
+  checksum: d996aa04abefb737f07ec3f389f74c7ee6f3ec7f0ab13a8244f1bdc777cef827f3b2297789b4814b24440cf8fa936f5af0beee21f84b9ae413c7568b4c8e7407
+  languageName: node
+  linkType: hard
+
 "classnames@npm:^2.2.6, classnames@npm:^2.3.0, classnames@npm:^2.3.1":
   version: 2.3.2
   resolution: "classnames@npm:2.3.2"
@@ -18865,8 +18957,8 @@ __metadata:
 
 "eslint-plugin-twenty@file:../eslint-plugin-twenty::locator=twenty-front%40workspace%3Apackages%2Ftwenty-front":
   version: 1.0.3
-  resolution: "eslint-plugin-twenty@file:../eslint-plugin-twenty#../eslint-plugin-twenty::hash=105f90&locator=twenty-front%40workspace%3Apackages%2Ftwenty-front"
-  checksum: 63f3201afa92b79c2d5db2a3aed1a1c5897793ef9e845f4a2f4ae9126007fece2fd6795d840b3f776e8da70fface644215d3640bf2ca22d3e145e36119ccf7bd
+  resolution: "eslint-plugin-twenty@file:../eslint-plugin-twenty#../eslint-plugin-twenty::hash=8c2438&locator=twenty-front%40workspace%3Apackages%2Ftwenty-front"
+  checksum: f8fcae09e4d1434abf95a36a716f54772b42c84a3638fbcf53df745045bf336cf32016c02880ad3bc738fe1e1a4d68d7fe98917ec4fce7d4bf1a37ae39530ec2
   languageName: node
   linkType: hard
 
@@ -20539,11 +20631,11 @@ __metadata:
   linkType: hard
 
 "globals@npm:^13.19.0":
-  version: 13.23.0
-  resolution: "globals@npm:13.23.0"
+  version: 13.24.0
+  resolution: "globals@npm:13.24.0"
   dependencies:
     type-fest: "npm:^0.20.2"
-  checksum: fc05e184b3be59bffa2580f28551a12a758c3a18df4be91444202982c76f13f52821ad54ffaf7d3f2a4d2498fdf54aeaca8d4540fd9e860a9edb09d34ef4c507
+  checksum: d3c11aeea898eb83d5ec7a99508600fbe8f83d2cf00cbb77f873dbf2bcb39428eff1b538e4915c993d8a3b3473fa71eeebfe22c9bb3a3003d1e26b1f2c8a42cd
   languageName: node
   linkType: hard
 
@@ -29159,13 +29251,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postinstall-postinstall@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "postinstall-postinstall@npm:2.1.0"
-  checksum: 70488447292c712afa7806126824d6fe93362392cbe261ae60166d9119a350713e0dbf4deb2ca91637c1037bc030ed1de78d61d9041bf2504513070f1caacdfd
-  languageName: node
-  linkType: hard
-
 "prebuild-install@npm:^7.1.1":
   version: 7.1.1
   resolution: "prebuild-install@npm:7.1.1"
@@ -31406,22 +31491,22 @@ __metadata:
   linkType: hard
 
 "rollup@npm:^4.2.0":
-  version: 4.7.0
-  resolution: "rollup@npm:4.7.0"
+  version: 4.8.0
+  resolution: "rollup@npm:4.8.0"
   dependencies:
-    "@rollup/rollup-android-arm-eabi": "npm:4.7.0"
-    "@rollup/rollup-android-arm64": "npm:4.7.0"
-    "@rollup/rollup-darwin-arm64": "npm:4.7.0"
-    "@rollup/rollup-darwin-x64": "npm:4.7.0"
-    "@rollup/rollup-linux-arm-gnueabihf": "npm:4.7.0"
-    "@rollup/rollup-linux-arm64-gnu": "npm:4.7.0"
-    "@rollup/rollup-linux-arm64-musl": "npm:4.7.0"
-    "@rollup/rollup-linux-riscv64-gnu": "npm:4.7.0"
-    "@rollup/rollup-linux-x64-gnu": "npm:4.7.0"
-    "@rollup/rollup-linux-x64-musl": "npm:4.7.0"
-    "@rollup/rollup-win32-arm64-msvc": "npm:4.7.0"
-    "@rollup/rollup-win32-ia32-msvc": "npm:4.7.0"
-    "@rollup/rollup-win32-x64-msvc": "npm:4.7.0"
+    "@rollup/rollup-android-arm-eabi": "npm:4.8.0"
+    "@rollup/rollup-android-arm64": "npm:4.8.0"
+    "@rollup/rollup-darwin-arm64": "npm:4.8.0"
+    "@rollup/rollup-darwin-x64": "npm:4.8.0"
+    "@rollup/rollup-linux-arm-gnueabihf": "npm:4.8.0"
+    "@rollup/rollup-linux-arm64-gnu": "npm:4.8.0"
+    "@rollup/rollup-linux-arm64-musl": "npm:4.8.0"
+    "@rollup/rollup-linux-riscv64-gnu": "npm:4.8.0"
+    "@rollup/rollup-linux-x64-gnu": "npm:4.8.0"
+    "@rollup/rollup-linux-x64-musl": "npm:4.8.0"
+    "@rollup/rollup-win32-arm64-msvc": "npm:4.8.0"
+    "@rollup/rollup-win32-ia32-msvc": "npm:4.8.0"
+    "@rollup/rollup-win32-x64-msvc": "npm:4.8.0"
     fsevents: "npm:~2.3.2"
   dependenciesMeta:
     "@rollup/rollup-android-arm-eabi":
@@ -31454,7 +31539,7 @@ __metadata:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: 1226252168e701aa50d8e71fc42f0561f16388b83f224fdf48aea20784143a668c897c5a8f80dc15f684fab4ece689f9d99ac3e3deab02d6b9d5dd1637b38428
+  checksum: 271628f7078199797b175fab8951e698740fb94a5a851b4f8828a353af8d1b4cf3b0bacb443468f38c9d4ce68ca16de1853b0246a7feaae2db3efb2fb746f8db
   languageName: node
   linkType: hard
 
@@ -33998,13 +34083,13 @@ __metadata:
     "@aws-sdk/credential-providers": "npm:^3.363.0"
     "@google-cloud/local-auth": "npm:2.1.0"
     "@graphql-tools/schema": "npm:^10.0.0"
-    "@graphql-yoga/nestjs": "npm:2.1.0"
+    "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch"
     "@nestjs/apollo": "npm:^11.0.5"
     "@nestjs/cli": "npm:^9.0.0"
     "@nestjs/common": "npm:^9.0.0"
     "@nestjs/config": "npm:^2.3.2"
     "@nestjs/core": "npm:^9.0.0"
-    "@nestjs/graphql": "npm:12.0.8"
+    "@nestjs/graphql": "patch:@nestjs/graphql@12.0.8#./patches/@nestjs+graphql+12.0.8.patch"
     "@nestjs/jwt": "npm:^10.0.3"
     "@nestjs/passport": "npm:^9.0.3"
     "@nestjs/platform-express": "npm:^9.0.0"
@@ -34014,7 +34099,7 @@ __metadata:
     "@nestjs/testing": "npm:^9.0.0"
     "@nestjs/typeorm": "npm:^10.0.0"
     "@ptc-org/nestjs-query-core": "npm:^4.2.0"
-    "@ptc-org/nestjs-query-graphql": "npm:4.2.0"
+    "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
     "@ptc-org/nestjs-query-typeorm": "npm:4.2.1-alpha.2"
     "@sentry/node": "npm:^7.66.0"
     "@sentry/profiling-node": "npm:^1.2.6"
@@ -34050,7 +34135,7 @@ __metadata:
     bullmq: "npm:^4.14.0"
     bytes: "npm:^3.1.2"
     class-transformer: "npm:^0.5.1"
-    class-validator: "npm:^0.14.0"
+    class-validator: "patch:class-validator@^0.14.0#./patches/class-validator+0.14.0.patch"
     dataloader: "npm:^2.2.2"
     date-fns: "npm:^2.30.0"
     eslint: "npm:^8.0.1"
@@ -34084,10 +34169,8 @@ __metadata:
     passport-google-oauth20: "npm:^2.0.0"
     passport-jwt: "npm:^4.0.1"
     passport-local: "npm:^1.0.0"
-    patch-package: "npm:^8.0.0"
     pg: "npm:^8.11.3"
     pg-boss: "npm:^9.0.3"
-    postinstall-postinstall: "npm:^2.1.0"
     prettier: "npm:^2.3.2"
     rimraf: "npm:^3.0.2"
     rxjs: "npm:^7.2.0"
@@ -34102,7 +34185,6 @@ __metadata:
     typeorm: "npm:^0.3.17"
     typescript: "npm:^4.9.4"
     uuid: "npm:^9.0.0"
-    yarn: "npm:^1.22.19"
   languageName: unknown
   linkType: soft
 
@@ -34111,6 +34193,7 @@ __metadata:
   resolution: "twenty@workspace:."
   dependencies:
     nx: "npm:17.2.0"
+    patch-package: "npm:^8.0.0"
     typescript: "npm:^5.3.3"
   languageName: unknown
   linkType: soft
@@ -36242,16 +36325,6 @@ __metadata:
     y18n: "npm:^5.0.5"
     yargs-parser: "npm:^21.1.1"
   checksum: ccd7e723e61ad5965fffbb791366db689572b80cca80e0f96aad968dfff4156cd7cd1ad18607afe1046d8241e6fb2d6c08bf7fa7bfb5eaec818735d8feac8f05
-  languageName: node
-  linkType: hard
-
-"yarn@npm:^1.22.19":
-  version: 1.22.21
-  resolution: "yarn@npm:1.22.21"
-  bin:
-    yarn: bin/yarn.js
-    yarnpkg: bin/yarn.js
-  checksum: 0fcb99d0db16c3e7962b2dab81d9e3d997a8d99f9d841360cd68bfc15b61f4a58ae3d5aec043b92c5598af721e7a1b33c0c57317c6c92a137e76664d21908e2e
   languageName: node
   linkType: hard
 

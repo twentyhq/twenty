@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "dev:clean": "yarn dev --force",
+    "start": "vite --host",
+    "start:clean": "yarn start --force",
     "build": "tsc && vite build && yarn build:inject-runtime-env",
     "build:inject-runtime-env": "./scripts/inject-runtime-env.sh",
     "preview": "vite preview",
@@ -157,7 +157,8 @@
   },
   "engines": {
     "node": "^18.16.0",
-    "npm": "please-use-yarn"
+    "npm": "please-use-yarn",
+    "yarn": "^4.0.2"
   },
   "browserslist": {
     "production": [
