@@ -187,6 +187,12 @@ export class WorkspaceMigrationRunnerService {
             columnMigration,
           );
           break;
+        case WorkspaceMigrationColumnActionType.DROP:
+          await queryRunner.dropColumn(
+            `${schemaName}.${tableName}`,
+            columnMigration.columnName,
+          );
+          break;
         default:
           throw new Error(`Migration column action not supported`);
       }
