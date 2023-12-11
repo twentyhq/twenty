@@ -25,6 +25,7 @@ import {
   PaginatedRecordTypeResults,
 } from '../types/PaginatedRecordTypeResults';
 import { mapPaginatedRecordsToRecords } from '../utils/mapPaginatedRecordsToRecords';
+import { RequestFilter } from '@/object-record/object-filter-dropdown/types/FilterRequest';
 
 export const useFindManyRecords = <
   RecordType extends { id: string } & Record<string, any>,
@@ -36,7 +37,7 @@ export const useFindManyRecords = <
   onCompleted,
   skip,
 }: ObjectMetadataItemIdentifier & {
-  filter?: any;
+  filter?: RequestFilter;
   orderBy?: OrderByField;
   limit?: number;
   onCompleted?: (data: PaginatedRecordTypeResults<RecordType>) => void;

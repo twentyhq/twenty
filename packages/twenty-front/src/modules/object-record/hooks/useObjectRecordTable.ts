@@ -31,7 +31,7 @@ export const useObjectRecordTable = () => {
   const tableSorts = useRecoilValue(tableSortsState);
   const setLastRowVisible = useSetRecoilState(tableLastRowVisibleState);
 
-  const filter = turnFiltersIntoWhereClause(
+  const requestFilters = turnFiltersIntoWhereClause(
     tableFilters,
     foundObjectMetadataItem?.fields ?? [],
   );
@@ -39,12 +39,12 @@ export const useObjectRecordTable = () => {
   const orderBy = turnSortsIntoOrderBy(
     tableSorts,
     foundObjectMetadataItem?.fields ?? [],
-  ) as any;
+  );
 
   const { records, loading, fetchMoreRecords, queryStateIdentifier } =
     useFindManyRecords({
       objectNameSingular,
-      filter,
+      filter: requestFilters,
       orderBy,
       onCompleted: () => {
         setLastRowVisible(false);

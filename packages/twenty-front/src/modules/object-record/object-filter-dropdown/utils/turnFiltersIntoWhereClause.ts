@@ -2,85 +2,13 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
 
 import { Filter } from '../types/Filter';
+import { DateFilter, FloatFilter, FullNameFilter, RequestFilter, StringFilter, URLFilter } from '@/object-record/object-filter-dropdown/types/FilterRequest';
 
-type FilterToTurnIntoWhereClause = Omit<Filter, 'definition'> & {
+export type FilterToTurnIntoWhereClause = Omit<Filter, 'definition'> & {
   definition: {
     type: Filter['definition']['type'];
   };
 };
-
-type UUIDFilterValue = string;
-
-type IsFilter = 'NULL' | 'NOT_NULL';
-
-type UUIDFilter = {
-  eq?: UUIDFilterValue;
-  in?: UUIDFilterValue[];
-  neq?: UUIDFilterValue;
-  is?: IsFilter;
-};
-
-type StringFilter = {
-  eq?: string;
-  gt?: string;
-  gte?: string;
-  in?: string[];
-  lt?: string;
-  lte?: string;
-  neq?: string;
-  startsWith?: string;
-  like?: string;
-  ilike?: string;
-  regex?: string;
-  iregex?: string;
-  is?: IsFilter;
-};
-
-type FloatFilter = {
-  eq?: number;
-  gt?: number;
-  gte?: number;
-  in?: number[];
-  lt?: number;
-  lte?: number;
-  neq?: number;
-  is?: IsFilter;
-};
-
-
-type DateFilter = {
-  eq?: string;
-  gt?: string;
-  gte?: string;
-  in?: string[];
-  lt?: string;
-  lte?: string;
-  neq?: string;
-  is?: IsFilter;
-};
-
-type CurrencyFilter = {
-  amountMicros?: FloatFilter;
-};
-
-type URLFilter = {
-  url?: StringFilter;
-};
-
-type FullNameFilter = {
-  firstName?: StringFilter;
-  lastName?: StringFilter;
-};
-
-type LeafRequestFilter = UUIDFilter | StringFilter | FloatFilter | DateFilter | CurrencyFilter | URLFilter | FullNameFilter
-
-type RequestFilter = {
-  and?: RequestFilter[];
-  or?: RequestFilter[];
-  not?: RequestFilter;
-} | {
-  [fieldName: string]: LeafRequestFilter
-}
 
 export const turnFiltersIntoWhereClause = (
   filters: FilterToTurnIntoWhereClause[],
