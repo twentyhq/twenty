@@ -8,7 +8,6 @@ import {
   computeNodeExample,
   computeNodeProperties,
   computeOrderByParameters,
-  getResponses,
 } from 'src/core/open-api/utils/compute-path.utils';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 
@@ -142,115 +141,6 @@ describe('computePathUtils', () => {
             format: 'uuid',
           },
         });
-      });
-    });
-  });
-  describe('getResponses', () => {
-    it('should compute responses', () => {
-      expect(getResponses(item as ObjectMetadataEntity)).toEqual({
-        '200': {
-          description: 'Successful operation',
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  data: {
-                    type: 'object',
-                    properties: {
-                      objectsName: {
-                        type: 'object',
-                        properties: {
-                          edges: {
-                            type: 'array',
-                            items: {
-                              type: 'object',
-                              properties: {
-                                node: {
-                                  type: 'object',
-                                  properties: {
-                                    fieldNumber: {
-                                      type: 'number',
-                                      items: {},
-                                    },
-                                    fieldString: {
-                                      type: 'string',
-                                      items: {},
-                                    },
-                                    fieldLink: {
-                                      type: 'string',
-                                      items: {},
-                                    },
-                                    fieldCurrency: {
-                                      type: 'string',
-                                      items: {},
-                                    },
-                                  },
-                                },
-                              },
-                            },
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-                example: {
-                  data: {
-                    objectsName: {
-                      edges: [
-                        {
-                          node: {
-                            fieldNumber: 'fieldNumber',
-                            fieldString: 'fieldString',
-                            fieldLink: {
-                              label: 'fieldLinkLabel',
-                              url: 'fieldLinkUrl',
-                            },
-                            fieldCurrency: {
-                              amountMicros: 'fieldCurrencyAmountMicros',
-                              currencyCode: 'fieldCurrencyCurrencyCode',
-                            },
-                          },
-                        },
-                      ],
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-        '400': {
-          description: 'Invalid request',
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  error: {
-                    type: 'string',
-                  },
-                },
-              },
-            },
-          },
-        },
-        '401': {
-          description: 'Unauthorized',
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  error: {
-                    type: 'string',
-                  },
-                },
-              },
-            },
-          },
-        },
       });
     });
   });

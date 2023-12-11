@@ -159,30 +159,28 @@ export const computeIdPathParameter = (item: ObjectMetadataEntity) => {
   };
 };
 
-export const getResponses = (item: ObjectMetadataEntity) => {
+const getManyResultResponse200 = (item: ObjectMetadataEntity) => {
   return {
-    '200': {
-      description: 'Successful operation',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              data: {
-                type: 'object',
-                properties: {
-                  [item.namePlural]: {
-                    type: 'object',
-                    properties: {
-                      edges: {
-                        type: 'array',
-                        items: {
-                          type: 'object',
-                          properties: {
-                            node: {
-                              type: 'object',
-                              properties: computeNodeProperties(item),
-                            },
+    description: 'Successful operation',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            data: {
+              type: 'object',
+              properties: {
+                [item.namePlural]: {
+                  type: 'object',
+                  properties: {
+                    edges: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          node: {
+                            type: 'object',
+                            properties: computeNodeProperties(item),
                           },
                         },
                       },
@@ -191,23 +189,21 @@ export const getResponses = (item: ObjectMetadataEntity) => {
                 },
               },
             },
-            example: {
-              data: {
-                [item.namePlural]: {
-                  edges: [
-                    {
-                      node: computeNodeExample(item),
-                    },
-                  ],
-                },
+          },
+          example: {
+            data: {
+              [item.namePlural]: {
+                edges: [
+                  {
+                    node: computeNodeExample(item),
+                  },
+                ],
               },
             },
           },
         },
       },
     },
-    '400': getErrorResponses('Invalid request'),
-    '401': getErrorResponses('Unauthorized'),
   };
 };
 
@@ -241,41 +237,75 @@ export const computePath = (item: ObjectMetadataEntity) => {
         computeDepthParameters(item),
         computeLastCursorParameters(item),
       ],
-      responses: getResponses(item),
+      responses: {
+        '200': getManyResultResponse200(item),
+        '400': getErrorResponses('Invalid request'),
+        '401': getErrorResponses('Unauthorized'),
+      },
     },
   };
 };
 
-export const getSingleResultResponse = (item: ObjectMetadataEntity) => {
+const getSingleResultResponse200 = (item: ObjectMetadataEntity) => {
   return {
-    '200': {
-      description: 'Successful operation',
-      content: {
-        'application/json': {
-          schema: {
-            type: 'object',
-            properties: {
-              data: {
-                type: 'object',
-                properties: {
-                  [item.nameSingular]: {
-                    type: 'object',
-                    properties: computeNodeProperties(item),
-                  },
+    description: 'Successful operation',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            data: {
+              type: 'object',
+              properties: {
+                [item.nameSingular]: {
+                  type: 'object',
+                  properties: computeNodeProperties(item),
                 },
               },
             },
-            example: {
-              data: {
-                [item.nameSingular]: computeNodeExample(item),
-              },
+          },
+          example: {
+            data: {
+              [item.nameSingular]: computeNodeExample(item),
             },
           },
         },
       },
     },
-    '400': getErrorResponses('Invalid request'),
-    '401': getErrorResponses('Unauthorized'),
+  };
+};
+
+const getDeleteResponse200 = (item) => {
+  return {
+    description: 'Successful operation',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            data: {
+              type: 'object',
+              properties: {
+                [item.nameSingular]: {
+                  type: 'object',
+                  properties: {
+                    id: {
+                      type: 'string',
+                      format: 'uuid',
+                    },
+                  },
+                },
+              },
+            },
+          },
+          example: {
+            data: {
+              [item.nameSingular]: { id: 'id' },
+            },
+          },
+        },
+      },
+    },
   };
 };
 
@@ -287,7 +317,22 @@ export const computeSingleResultPath = (item: ObjectMetadataEntity) => {
       description: `\`depth\` can be provided to request your \`${item.nameSingular}\``,
       operationId: `findOneCompany${capitalize(item.nameSingular)}`,
       parameters: [computeIdPathParameter(item), computeDepthParameters(item)],
-      responses: getSingleResultResponse(item),
+      responses: {
+        '200': getSingleResultResponse200(item),
+        '400': getErrorResponses('Invalid request'),
+        '401': getErrorResponses('Unauthorized'),
+      },
+    },
+    delete: {
+      tags: [item.namePlural],
+      summary: `Delete One ${item.nameSingular}`,
+      operationId: `deleteOneCompany${capitalize(item.nameSingular)}`,
+      parameters: [computeIdPathParameter(item)],
+      responses: {
+        '200': getDeleteResponse200(item),
+        '400': getErrorResponses('Invalid request'),
+        '401': getErrorResponses('Unauthorized'),
+      },
     },
   };
 };
