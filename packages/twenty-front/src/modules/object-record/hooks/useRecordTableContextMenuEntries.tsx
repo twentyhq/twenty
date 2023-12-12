@@ -5,10 +5,16 @@ import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useEnrichOneRecord } from '@/object-record/hooks/useEnrichOneRecord';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { selectedRowIdsSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsSelector';
-import { IconHeart, IconHeartOff, IconTrash } from '@/ui/display/icon';
+import {
+  IconHeart,
+  IconHeartOff,
+  IconTrash,
+  IconWand,
+} from '@/ui/display/icon';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
 import { ContextMenuEntry } from '@/ui/navigation/context-menu/types/ContextMenuEntry';
@@ -68,6 +74,10 @@ export const useRecordTableContextMenuEntries = (
     objectNameSingular,
   });
 
+  const { enrichOneRecord } = useEnrichOneRecord({
+    objectNameSingular,
+  });
+
   const handleDeleteClick = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
@@ -83,6 +93,23 @@ export const useRecordTableContextMenuEntries = (
         );
       },
     [deleteOneRecord, resetTableRowSelection],
+  );
+
+  const handleEnrichClick = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const rowIdsToEnrich = snapshot
+          .getLoadable(selectedRowIdsSelector)
+          .getValue();
+
+        resetTableRowSelection();
+        await Promise.all(
+          rowIdsToEnrich.map(async (rowId) => {
+            await enrichOneRecord(rowId);
+          }),
+        );
+      },
+    [enrichOneRecord, resetTableRowSelection],
   );
 
   return {
@@ -127,6 +154,7 @@ export const useRecordTableContextMenuEntries = (
       selectedRowIds,
       favorites,
       handleDeleteClick,
+      handleEnrichClick,
       handleFavoriteButtonClick,
       setContextMenuEntries,
     ]),
@@ -143,6 +171,11 @@ export const useRecordTableContextMenuEntries = (
         //   Icon: IconNotes,
         //   onClick: () => {},
         // },
+        {
+          label: 'Enrich',
+          Icon: IconWand,
+          onClick: () => handleEnrichClick(),
+        },
         {
           label: 'Delete',
           Icon: IconTrash,

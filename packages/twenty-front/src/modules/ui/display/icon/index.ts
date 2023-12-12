@@ -90,5 +90,6 @@ export {
   IconUser,
   IconUserCircle,
   IconUsers,
+  IconWand,
   IconX,
 } from '@tabler/icons-react';

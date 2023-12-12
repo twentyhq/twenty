@@ -16,6 +16,7 @@ import { useGenerateUpdateOneRecordMutation } from '@/object-record/hooks/useGen
 import { useGetRecordFromCache } from '@/object-record/hooks/useGetRecordFromCache';
 import { useModifyRecordFromCache } from '@/object-record/hooks/useModifyRecordFromCache';
 import { generateDeleteOneRecordMutation } from '@/object-record/utils/generateDeleteOneRecordMutation';
+import { generateEnrichOneRecordMutation } from '@/object-record/utils/generateEnrichOneRecordMutation';
 import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
@@ -106,6 +107,10 @@ export const useObjectMetadataItem = (
     objectMetadataItem,
   });
 
+  const enrichOneRecordMutation = generateEnrichOneRecordMutation({
+    objectMetadataItem,
+  });
+
   const labelIdentifierFieldMetadataId = objectMetadataItem.fields.find(
     ({ name }) => name === 'name',
   )?.id;
@@ -123,6 +128,7 @@ export const useObjectMetadataItem = (
     createOneRecordMutation,
     updateOneRecordMutation,
     deleteOneRecordMutation,
+    enrichOneRecordMutation,
     createManyRecordsMutation,
     mapToObjectRecordIdentifier,
     getObjectOrderByField,
