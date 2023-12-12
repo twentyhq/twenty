@@ -19,6 +19,9 @@ import { CreateButtonId, EmptyButtonId } from '../constants';
 import { useEntitySelectScroll } from '../hooks/useEntitySelectScroll';
 import { EntityForSelect } from '../types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 
 export type SingleEntitySelectBaseProps<
   CustomEntityForSelect extends EntityForSelect,
@@ -100,6 +103,8 @@ export const SingleEntitySelectBase = <
     [onCancel],
   );
 
+  const selectableItemIds = entitiesInDropdown.map((entity) => entity.id);
+
   return (
     <div ref={containerRef}>
       <DropdownMenuItemsContainer hasMaxHeight>
@@ -130,23 +135,32 @@ export const SingleEntitySelectBase = <
               />
             )}
             {entitiesInDropdown?.map((entity) => (
+              <SelectableList
+              selectableListId="single-entity-select-base-list"
+              selectableItemIds={[selectableItemIds]}
+              hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+              onEnter={(_itemId) => {}}
+              >
+              <SelectableItem itemId={entity.id} key={entity.id}>
               <MenuItemSelectAvatar
                 key={entity.id}
                 testId="menu-item"
-                selected={selectedEntity?.id === entity.id}
                 onClick={() => onEntitySelected(entity)}
                 text={entity.name}
-                hovered={preselectedOptionId === entity.id}
+                selected={selectedEntity?.id === entity.id}
+                hovered={useSelectableList({selectableListId:'single-entity-select-base-list' ,itemId: entity.id}).isSelectedItemId}
                 avatar={
                   <Avatar
-                    avatarUrl={entity.avatarUrl}
-                    colorId={entity.id}
-                    placeholder={entity.name}
-                    size="md"
-                    type={entity.avatarType ?? 'rounded'}
+                  avatarUrl={entity.avatarUrl}
+                  colorId={entity.id}
+                  placeholder={entity.name}
+                  size="md"
+                  type={entity.avatarType ?? 'rounded'}
                   />
                 }
-              />
+                />
+                </SelectableItem>
+                </SelectableList>
             ))}
           </>
         )}
