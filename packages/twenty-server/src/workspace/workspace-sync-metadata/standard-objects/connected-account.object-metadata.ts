@@ -22,11 +22,11 @@ import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-meta
 export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'email',
-    description: 'The account email',
+    label: 'handle',
+    description: 'The account handle (email, username, phone number, etc.)',
     icon: 'IconMail',
   })
-  email: string;
+  handle: string;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,

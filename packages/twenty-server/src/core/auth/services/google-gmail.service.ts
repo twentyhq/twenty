@@ -33,7 +33,7 @@ export class GoogleGmailService {
     );
 
     const connectedAccount = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "email" = $1 AND "provider" = $2 AND "accountOwnerId" = $3`,
+      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "handle" = $1 AND "provider" = $2 AND "accountOwnerId" = $3`,
       [email, provider, workspaceMemberId],
     );
 
@@ -44,7 +44,7 @@ export class GoogleGmailService {
     }
 
     await workspaceDataSource?.query(
-      `INSERT INTO ${dataSourceMetadata.schema}."connectedAccount" ("email", "provider", "accessToken", "refreshToken", "accountOwnerId") VALUES ($1, $2, $3, $4, $5)`,
+      `INSERT INTO ${dataSourceMetadata.schema}."connectedAccount" ("handle", "provider", "accessToken", "refreshToken", "accountOwnerId") VALUES ($1, $2, $3, $4, $5)`,
       [email, provider, accessToken, refreshToken, workspaceMemberId],
     );
 
