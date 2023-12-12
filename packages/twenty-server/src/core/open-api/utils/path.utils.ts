@@ -100,7 +100,7 @@ export const computeSingleResultPath = (
 export const computeOpenApiPath = (): OpenAPIV3.PathItemObject => {
   return {
     get: {
-      tags: ['others'],
+      tags: ['General'],
       summary: 'Get Open Api Schema',
       operationId: 'GetOpenApiSchema',
       responses: {

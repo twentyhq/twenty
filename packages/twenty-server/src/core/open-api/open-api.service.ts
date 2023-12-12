@@ -45,7 +45,7 @@ export class OpenApiService {
       paths[`/rest/${item.namePlural}/{id}`] = computeSingleResultPath(item);
 
       return paths;
-    }, {} as OpenAPIV3.PathsObject);
+    }, schema.paths as OpenAPIV3.PathsObject);
 
     schema.tags = computeSchemaTags(objectMetadataItems);
 

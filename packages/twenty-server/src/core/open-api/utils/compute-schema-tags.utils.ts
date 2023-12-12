@@ -6,14 +6,14 @@ import { capitalize } from 'src/utils/capitalize';
 export const computeSchemaTags = (
   items: ObjectMetadataEntity[],
 ): OpenAPIV3.TagObject[] => {
-  const results = items.map((item) => {
-    return {
+  const results = [{ name: 'General', description: 'General requests' }];
+
+  items.forEach((item) => {
+    results.push({
       name: item.namePlural,
       description: `Object \`${capitalize(item.namePlural)}\``,
-    };
+    });
   });
-
-  results.push({ name: 'Others', description: 'Other routes' });
 
   return results;
 };
