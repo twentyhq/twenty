@@ -8,6 +8,7 @@ import {
   RelationMetadata,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { MessageChannelObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel.object-metadata';
 import { MessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message.object-metadata';
 
 @ObjectMetadata({
@@ -39,6 +40,16 @@ export class MessageThreadObjectMetadata extends BaseObjectMetadata {
   subject: string;
 
   @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Message Channel Id',
+    description: 'Message Channel Id',
+    icon: 'IconHash',
+    joinColumn: 'messageChannelId',
+  })
+  @IsNullable()
+  messageChannel: MessageChannelObjectMetadata;
+
+  @FieldMetadata({
     // This will be a type select later: default, subject, share_everything
     type: FieldMetadataType.TEXT,
     label: 'Visibility',
@@ -53,7 +64,7 @@ export class MessageThreadObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.RELATION,
     label: 'Messages',
     description: 'Messages from the thread.',
-    icon: 'IconFileImport',
+    icon: 'IconMessage',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,

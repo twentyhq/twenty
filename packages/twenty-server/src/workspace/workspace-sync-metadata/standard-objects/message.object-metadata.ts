@@ -6,6 +6,7 @@ import {
   IsNullable,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-thread.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'message',
@@ -34,7 +35,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'messageThreadId',
   })
   @IsNullable()
-  messageThread: string;
+  messageThread: MessageThreadObjectMetadata;
 
   @FieldMetadata({
     // will be a select later: incoming, outgoing
