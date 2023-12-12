@@ -8,7 +8,6 @@ import {
   IsNullable,
   RelationMetadata,
   IsSystem,
-  Gate,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { ActivityTargetObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity-target.object-metadata';
 import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/attachment.object-metadata';
@@ -161,9 +160,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     objectName: 'favorite',
   })
   @IsNullable()
-  @Gate({
-    featureFlag: 'IS_MESSAGING_ENABLED',
-  })
   favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({

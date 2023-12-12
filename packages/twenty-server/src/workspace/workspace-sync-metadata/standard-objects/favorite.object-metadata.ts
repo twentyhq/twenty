@@ -4,7 +4,6 @@ import {
   IsSystem,
   FieldMetadata,
   IsNullable,
-  Gate,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
@@ -17,9 +16,6 @@ import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-meta
   labelPlural: 'Favorites',
   description: 'A favorite',
   icon: 'IconHeart',
-})
-@Gate({
-  featureFlag: 'IS_MESSAGING_ENABLED',
 })
 @IsSystem()
 export class FavoriteObjectMetadata extends BaseObjectMetadata {
