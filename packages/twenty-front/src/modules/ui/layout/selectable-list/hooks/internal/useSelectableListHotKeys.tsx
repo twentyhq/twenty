@@ -93,7 +93,7 @@ export const useSelectableListHotKeys = (
 
         const nextId = computeNextId(direction);
 
-        if(selectedItemId && selectedItemId!==nextId)
+        if(!selectedItemId || (selectedItemId && selectedItemId!==nextId))
         {
           if (nextId) {
             const { isSelectedItemIdSelector } = getSelectableListScopedStates({
