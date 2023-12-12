@@ -1,17 +1,17 @@
+import { OpenAPIV3 } from 'openapi-types';
+
 import { OrderByDirection } from 'src/workspace/workspace-query-builder/interfaces/record.interface';
 
-import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { FilterComparators } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/filter-utils/parse-base-filter.utils';
 import { Conjunctions } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/filter-utils/parse-filter.utils';
-import { capitalize } from 'src/utils/capitalize';
 import { DEFAULT_ORDER_DIRECTION } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/order-by-input.factory';
 import { DEFAULT_CONJUNCTION } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/filter-utils/add-default-conjunction.utils';
 
-export const computeLimitParameters = (item: ObjectMetadataEntity) => {
+export const computeLimitParameters = (): OpenAPIV3.ParameterObject => {
   return {
     name: 'limit',
     in: 'query',
-    description: `Integer value to limit the number of **${item.namePlural}** returned`,
+    description: 'Limits the number of objects returned.',
     required: false,
     schema: {
       type: 'integer',
@@ -22,13 +22,11 @@ export const computeLimitParameters = (item: ObjectMetadataEntity) => {
   };
 };
 
-export const computeOrderByParameters = (item: ObjectMetadataEntity) => {
+export const computeOrderByParameters = (): OpenAPIV3.ParameterObject => {
   return {
     name: 'order_by',
     in: 'query',
-    description: `A combination of fields and directions to sort **${
-      item.namePlural
-    }** returned.  
+    description: `Sorts objects returned.  
     Should have the following shape: **field_name_1,field_name_2[DIRECTION_2],...**  
     Available directions are **${Object.values(OrderByDirection).join(
       '**, **',
@@ -40,22 +38,22 @@ export const computeOrderByParameters = (item: ObjectMetadataEntity) => {
     },
     examples: {
       simple: {
-        value: `name,createdAt`,
+        value: `createdAt`,
         summary: 'A simple order_by param',
       },
       complex: {
-        value: `name[${OrderByDirection.AscNullsFirst}],createdAt[${OrderByDirection.DescNullsLast}]`,
+        value: `id[${OrderByDirection.AscNullsFirst}],createdAt[${OrderByDirection.DescNullsLast}]`,
         summary: 'A more complex order_by param',
       },
     },
   };
 };
 
-export const computeDepthParameters = (item: ObjectMetadataEntity) => {
+export const computeDepthParameters = (): OpenAPIV3.ParameterObject => {
   return {
     name: 'depth',
     in: 'query',
-    description: `Integer value to limit the depth of related objects of **${item.namePlural}** returned`,
+    description: 'Limits the depth objects returned.',
     required: false,
     schema: {
       type: 'integer',
@@ -64,13 +62,11 @@ export const computeDepthParameters = (item: ObjectMetadataEntity) => {
   };
 };
 
-export const computeFilterParameters = (item: ObjectMetadataEntity) => {
+export const computeFilterParameters = (): OpenAPIV3.ParameterObject => {
   return {
     name: 'filter',
     in: 'query',
-    description: `A combination of fields, filter operations and values to filter **${
-      item.namePlural
-    }** returned.  
+    description: `Filters objects returned.  
     Should have the following shape: **field_1[COMPARATOR]:value_1,field_2[COMPARATOR]:value_2,...**  
     Available comparators are **${Object.values(FilterComparators).join(
       '**, **',
@@ -78,7 +74,7 @@ export const computeFilterParameters = (item: ObjectMetadataEntity) => {
     You can create more complex filters using conjunctions **${Object.values(
       Conjunctions,
     ).join('**, **')}**.  
-    Default conjunction is **${DEFAULT_CONJUNCTION}**.  
+    Default root conjunction is **${DEFAULT_CONJUNCTION}**.  
     To filter **null** values use **field[is]:NULL** or **field[is]:NOT_NULL**  
     To filter using **boolean** values use **field[eq]:true** or **field[eq]:false**`,
     required: false,
@@ -87,22 +83,23 @@ export const computeFilterParameters = (item: ObjectMetadataEntity) => {
     },
     examples: {
       simple: {
-        value: `name[eq]:"Airbnb"`,
+        value: 'createdAt[gte]:"2023-01-01"',
         description: 'A simple filter param',
       },
       complex: {
-        value: `or(name[eq]:"Airbnb",employees[gt]:1,not(name[is]:NULL),not(and(createdAt[lte]:"2022-01-01T00:00:00.000Z",idealCustomerProfile[eq]:true)))`,
+        value:
+          'or(createdAt[gte]:"2024-01-01",createdAt[lte]:"2023-01-01",not(id[is]:NULL))',
         description: 'A more complex filter param',
       },
     },
   };
 };
 
-export const computeLastCursorParameters = (item: ObjectMetadataEntity) => {
+export const computeLastCursorParameters = (): OpenAPIV3.ParameterObject => {
   return {
     name: 'last_cursor',
     in: 'query',
-    description: `Used to return **${item.namePlural}** starting from a specific cursor`,
+    description: 'Returns objects starting from a specific cursor.',
     required: false,
     schema: {
       type: 'string',
@@ -110,11 +107,11 @@ export const computeLastCursorParameters = (item: ObjectMetadataEntity) => {
   };
 };
 
-export const computeIdPathParameter = (item: ObjectMetadataEntity) => {
+export const computeIdPathParameter = (): OpenAPIV3.ParameterObject => {
   return {
     name: 'id',
     in: 'path',
-    description: `${capitalize(item.nameSingular)} id`,
+    description: 'Object id.',
     required: true,
     schema: {
       type: 'string',

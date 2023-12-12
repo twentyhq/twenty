@@ -12,7 +12,10 @@ import {
   computeSingleResultPath,
 } from 'src/core/open-api/utils/path.utils';
 import { getErrorResponses } from 'src/core/open-api/utils/get-error-responses.utils';
-import { computeSchemaComponents } from 'src/core/open-api/utils/components.utils';
+import {
+  computeParameterComponents,
+  computeSchemaComponents,
+} from 'src/core/open-api/utils/components.utils';
 import { computeSchemaTags } from 'src/core/open-api/utils/compute-schema-tags.utils';
 
 @Injectable()
@@ -52,6 +55,7 @@ export class OpenApiService {
     schema.components = {
       ...schema.components, // components.securitySchemes is defined in base Schema
       schemas: computeSchemaComponents(objectMetadataItems),
+      parameters: computeParameterComponents(),
       responses: {
         '400': getErrorResponses('Invalid request'),
         '401': getErrorResponses('Unauthorized'),

@@ -3,6 +3,14 @@ import { OpenAPIV3 } from 'openapi-types';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { capitalize } from 'src/utils/capitalize';
+import {
+  computeDepthParameters,
+  computeFilterParameters,
+  computeIdPathParameter,
+  computeLastCursorParameters,
+  computeLimitParameters,
+  computeOrderByParameters,
+} from 'src/core/open-api/utils/parameters.utils';
 
 type Property = OpenAPIV3.SchemaObject;
 
@@ -115,4 +123,18 @@ export const computeSchemaComponents = (
 
     return schemas;
   }, {} as Record<string, OpenAPIV3.SchemaObject>);
+};
+
+export const computeParameterComponents = (): Record<
+  string,
+  OpenAPIV3.ParameterObject
+> => {
+  return {
+    idPath: computeIdPathParameter(),
+    lastCursor: computeLastCursorParameters(),
+    filter: computeFilterParameters(),
+    depth: computeDepthParameters(),
+    orderBy: computeOrderByParameters(),
+    limit: computeLimitParameters(),
+  };
 };
