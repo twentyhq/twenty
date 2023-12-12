@@ -36,7 +36,7 @@ export class GoogleGmailAuthController {
       await this.tokenService.verifyTransientToken(transientToken);
 
     this.googleGmailService.saveConnectedAccount({
-      email,
+      handle: email,
       workspaceMemberId: workspaceMemberId,
       workspaceId: workspaceId,
       provider: 'gmail',

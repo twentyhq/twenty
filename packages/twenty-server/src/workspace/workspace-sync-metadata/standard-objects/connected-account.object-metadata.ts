@@ -1,10 +1,14 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import {
   ObjectMetadata,
   IsSystem,
   FieldMetadata,
+  IsNullable,
+  RelationMetadata,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { MessageChannelObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
 @ObjectMetadata({
@@ -18,11 +22,11 @@ import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-meta
 export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'email',
-    description: 'The account email',
+    label: 'handle',
+    description: 'The account handle (email, username, phone number, etc.)',
     icon: 'IconMail',
   })
-  email: string;
+  handle: string;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
@@ -34,7 +38,7 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'accessToken',
+    label: 'Access Token',
     description: 'Messaging provider access token',
     icon: 'IconKey',
   })
@@ -42,7 +46,7 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'refreshToken',
+    label: 'Refresh Token',
     description: 'Messaging provider refresh token',
     icon: 'IconKey',
   })
@@ -56,4 +60,17 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'accountOwnerId',
   })
   accountOwner: WorkspaceMemberObjectMetadata;
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Message Channel',
+    description: 'Message Channel',
+    icon: 'IconMessage',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'messageChannel',
+  })
+  @IsNullable()
+  messageChannels: MessageChannelObjectMetadata[];
 }
