@@ -16,6 +16,8 @@ cp ./macos/arm/${PG_MAIN_VERSION}/pg_graphql/${PG_GRAPHQL_VERSION}/pg_graphql.co
 cp ./macos/arm/${PG_MAIN_VERSION}/pg_graphql/${PG_GRAPHQL_VERSION}/pg_graphql.so \
     /usr/local/opt/postgresql@${PG_MAIN_VERSION}/lib/postgresql
 
+export PATH="/usr/local/opt/postgresql@${PG_MAIN_VERSION}/bin:$PATH"
+
 echo  "Step [3/4]: Starting PostgreSQL service..."
 brew services restart postgresql@15
 
