@@ -1,9 +1,14 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 @ArgsType()
 export class SaveConnectedAccountInput {
+  @Field(() => String)
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
@@ -17,7 +22,7 @@ export class SaveConnectedAccountInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
-  type: string;
+  provider: string;
 
   @Field(() => String)
   @IsNotEmpty()
