@@ -1,11 +1,14 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import {
   ObjectMetadata,
   IsSystem,
   FieldMetadata,
   IsNullable,
+  RelationMetadata,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { MessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'messageThreads',
@@ -45,4 +48,17 @@ export class MessageThreadObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   visibility: string;
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Messages',
+    description: 'Messages from the thread.',
+    icon: 'IconFileImport',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'message',
+  })
+  @IsNullable()
+  messages: MessageObjectMetadata[];
 }
