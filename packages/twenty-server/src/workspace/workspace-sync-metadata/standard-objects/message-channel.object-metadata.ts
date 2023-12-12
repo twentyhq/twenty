@@ -61,7 +61,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.RELATION,
     label: 'Message Threads',
     description: 'Threads from the channel.',
-    icon: 'IconFileImport',
+    icon: 'IconMessage',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
