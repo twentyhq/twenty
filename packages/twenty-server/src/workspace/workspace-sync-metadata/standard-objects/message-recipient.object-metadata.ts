@@ -4,6 +4,7 @@ import {
   IsSystem,
   FieldMetadata,
   IsNullable,
+  Gate,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { MessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message.object-metadata';
@@ -16,6 +17,9 @@ import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-meta
   labelPlural: 'Message Recipients',
   description: 'Message Recipients',
   icon: 'IconUserCircle',
+})
+@Gate({
+  featureFlag: 'IS_MESSAGING_ENABLED',
 })
 @IsSystem()
 export class MessageRecipientObjectMetadata extends BaseObjectMetadata {

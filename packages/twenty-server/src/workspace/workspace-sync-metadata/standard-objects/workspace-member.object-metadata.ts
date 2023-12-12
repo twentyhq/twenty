@@ -7,6 +7,7 @@ import {
   FieldMetadata,
   IsNullable,
   RelationMetadata,
+  Gate,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { ActivityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity.object-metadata';
 import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/attachment.object-metadata';
@@ -163,6 +164,9 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'connectedAccount',
     inverseSideFieldName: 'accountOwner',
   })
+  @Gate({
+    featureFlag: 'IS_MESSAGING_ENABLED',
+  })
   @IsNullable()
   connectedAccounts: ConnectedAccountObjectMetadata[];
 
@@ -176,6 +180,9 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     objectName: 'messageRecipient',
     inverseSideFieldName: 'workspaceMember',
+  })
+  @Gate({
+    featureFlag: 'IS_MESSAGING_ENABLED',
   })
   @IsNullable()
   messageRecipients: MessageRecipientObjectMetadata[];
