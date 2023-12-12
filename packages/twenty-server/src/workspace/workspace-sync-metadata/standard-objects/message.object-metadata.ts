@@ -20,21 +20,21 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     // will be an array
     type: FieldMetadataType.TEXT,
-    label: 'External Ids',
-    description: 'Message ids from the messaging provider',
+    label: 'External Id',
+    description: 'Message id from the messaging provider',
     icon: 'IconHash',
   })
   @IsNullable()
-  externalIds: string;
+  externalId: string;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Header mail Id',
-    description: 'Mail id from the mail header',
+    label: 'Header message Id',
+    description: 'Message id from the message header',
     icon: 'IconHash',
   })
   @IsNullable()
-  headerMailId: string;
+  headerMessageId: string;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
