@@ -33,6 +33,20 @@ export const getManyResultResponse200 = (item: ObjectMetadataEntity) => {
               },
             },
           },
+          example: {
+            data: {
+              properties: {
+                [item.namePlural]: {
+                  edges: [
+                    {
+                      node: `${capitalize(item.nameSingular)}Object`,
+                    },
+                    '...',
+                  ],
+                },
+              },
+            },
+          },
         },
       },
     },
