@@ -1,5 +1,5 @@
 {
-  "name": "twenty-eslint-plugin",
+  "name": "eslint-plugin-twenty",
   "version": "1.0.3",
   "description": "",
   "main": "dist/index.js",

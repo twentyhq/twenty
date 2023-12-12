@@ -118,14 +118,14 @@ You need to provision this database with a `twenty` user (password: `twenty`), a
 <br /><br />
 
 ```bash
-make provision-postgres-linux
+make postgres-provision-on-linux
 ```
 
 <b>Option 2:</b> If you have docker installed:
 <br /><br />
 
 ```bash
-make provision-postgres-docker
+make postgres-provision-on-docker
 ```
 This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
 You can access this using `twenty` postgres user (password: `twenty`)
@@ -136,15 +136,15 @@ You can access this using `twenty` postgres user (password: `twenty`)
 <br /><br />
 
 ```bash
-make provision-postgres-macos-intel #for intel architecture
-make provision-postgres-macos-arm #for M1/M2/M3 architecture
+make postgres-provision-on-macos-intel #for intel architecture
+make postgres-provision-on-macos-arm #for M1/M2/M3 architecture
 ```
 
 <b>Option 2:</b> If you have docker installed:
 <br /><br />
 
 ```bash
-make provision-postgres-docker
+make postgres-provision-on-docker
 ```
 This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
 You can access this using `twenty` postgres user (password: `twenty`)
@@ -183,9 +183,7 @@ Use `nvm` to install the correct `node` version. The `.nvmrc` ensures all contri
 To build Twenty server and seed some data into your database, run the following commands:
 ```bash
 nvm install #recommended
-nvm use #recommended 
-corepack enable #to enable yarn if you haven't done it yet
-yarn set version stable #to set the yarn version to yarn version 4
+nvm use #recommended
 
 yarn
 ```
@@ -194,14 +192,13 @@ yarn
 
 Setup your database with the following command:
 ```bash
-yarn nx run twenty-server:database:init
+yarn nx database:init twenty-server
 ```
 
 Start the server and the frontend:
 ```bash
-yarn nx run twenty-server:database:init
-yarn nx run twenty-server:start:dev
-yarn nx run twenty-front:dev
+yarn nx start:dev twenty-server
+yarn nx start twenty-front
 ```
 
 Twenty's server will be up and running at [http://localhost:3000/graphql](http://localhost:3000/graphql).

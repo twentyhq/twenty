@@ -66,7 +66,7 @@ The default values should work out of the box, except for the postgres URL, whic
 Open `./packages/twenty-server/.env` and change to the following:
 
 ```bash
-PG_DATABASE_URL=postgres://twenty:twenty@postgres:5432/default?connection_limit=1
+PG_DATABASE_URL=postgres://twenty:twenty@postgres:5432/default
 ```
 
 
@@ -77,7 +77,7 @@ This installation method will also provision a PostgreSQL container.
 
 
 ```bash
-make -C packages/twenty-docker dev-build
+make docker-dev-build
 ```
 
 ## Step 4: Migrate & seed
@@ -86,12 +86,13 @@ Before running the project, you need to initialize the database by running the m
 
 Start the containers:
 ```bash
-make -C packages/twenty-docker dev-up
+make docker-dev-up
 ```
 
 Setup database, run migrations, and seed:
 ```bash
-make -C packages/twenty-docker dev-server-database-init
+make docker-dev-sh
+yarn nx database:init twenty-server
 ```
 
 ## Step 5: Start Twenty
@@ -99,11 +100,13 @@ make -C packages/twenty-docker dev-server-database-init
 Run the project with the following commands from the `root` folder:
 
 ```bash
-make -C packages/twenty-docker dev-server-start
+make docker-dev-sh
+yarn nx start:dev twenty-server
 ```
 
 ```bash
-make -C packages/twenty-docker dev-front-start
+make docker-dev-sh
+yarn nx start twenty-front
 ```
 
 You should now have:
@@ -112,18 +115,6 @@ You should now have:
 - **Postgres** available on [http://localhost:5432](http://localhost:5432) and containing database named `default`
 
 Sign in using a seeded demo account `tim@apple.dev` (password: `Applecar2025`) to start using Twenty.
-
-### Optional
-
-If you don't want to use the `make` command and work directly from the container, you can also ssh directly into the container:
-
-```bash
-make -C packages/twenty-docker dev-sh
-```
-Then run commands through yarn and nx:
-```bash
-yarn nx run twenty-server:database:init
-```
 
 
 ### Troubleshooting
