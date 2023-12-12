@@ -71,6 +71,7 @@ export const SettingsObjectFieldRelationForm = ({
         <Select
           label="Relation type"
           dropdownScopeId="relation-type-select"
+          fullWidth
           disabled={disableRelationEdition}
           value={values.type}
           options={Object.entries(relationTypes).map(
@@ -85,6 +86,7 @@ export const SettingsObjectFieldRelationForm = ({
         <Select
           label="Object destination"
           dropdownScopeId="object-destination-select"
+          fullWidth
           disabled={disableRelationEdition}
           value={values.objectMetadataId}
           options={objectMetadataItems.map((objectMetadataItem) => ({
