@@ -15,7 +15,7 @@ import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standa
   icon: 'IconMessage',
 })
 @IsSystem()
-export class FavoriteObjectMetadata extends BaseObjectMetadata {
+export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
     label: 'Visibility',
