@@ -140,8 +140,9 @@ export const useFindManyRecords = <
 
             if (isNonEmptyArray(previousEdges) && isNonEmptyArray(nextEdges)) {
               newEdges = filterUniqueRecordEdgesByCursor([
-                ...prev?.[objectMetadataItem.namePlural]?.edges,
-                ...fetchMoreResult?.[objectMetadataItem.namePlural]?.edges,
+                ...(prev?.[objectMetadataItem.namePlural]?.edges || {}),
+                ...(fetchMoreResult?.[objectMetadataItem.namePlural]?.edges ||
+                  {}),
               ]);
             }
 

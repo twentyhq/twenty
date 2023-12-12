@@ -5,6 +5,7 @@ import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 
 const StyledStatus = styled.h3<{
   color: ThemeColor;
+  weight: 'regular' | 'medium';
 }>`
   align-items: center;
   background: ${({ color, theme }) => theme.tag.background[color]};
@@ -13,7 +14,7 @@ const StyledStatus = styled.h3<{
   display: inline-flex;
   font-size: ${({ theme }) => theme.font.size.md};
   font-style: normal;
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  font-weight: ${({ theme, weight }) => theme.font.weight[weight]};
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme }) => theme.spacing(5)};
   margin: 0;
@@ -42,13 +43,21 @@ type StatusProps = {
   color: ThemeColor;
   text: string;
   onClick?: () => void;
+  weight?: 'regular' | 'medium';
 };
 
-export const Status = ({ className, color, text, onClick }: StatusProps) => (
+export const Status = ({
+  className,
+  color,
+  text,
+  onClick,
+  weight = 'regular',
+}: StatusProps) => (
   <StyledStatus
     className={className}
     color={themeColorSchema.catch('gray').parse(color)}
     onClick={onClick}
+    weight={weight}
   >
     <StyledContent>{text}</StyledContent>
   </StyledStatus>
