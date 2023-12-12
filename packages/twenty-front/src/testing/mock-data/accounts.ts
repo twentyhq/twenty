@@ -1,4 +1,4 @@
-import { Account } from '@/accounts/interface/Account';
+import { Account } from '@/accounts/types/Account';
 
 export const mockedAccounts: Account[] = [
   { email: 'thomas@twenty.com', uuid: '0794b782-f52e-48c3-977e-b0f57f90de24' },
