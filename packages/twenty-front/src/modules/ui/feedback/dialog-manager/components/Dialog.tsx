@@ -153,6 +153,7 @@ export const Dialog = ({
             }}
             fullWidth={true}
             variant={variant ?? 'secondary'}
+            title={key}
             {...{ accent, key, role }}
           />
         ))}
