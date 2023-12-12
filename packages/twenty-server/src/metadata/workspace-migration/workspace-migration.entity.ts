@@ -9,6 +9,7 @@ export enum WorkspaceMigrationColumnActionType {
   CREATE = 'CREATE',
   ALTER = 'ALTER',
   RELATION = 'RELATION',
+  DROP = 'DROP',
 }
 
 export type WorkspaceMigrationEnum = string | { from: string; to: string };
@@ -41,12 +42,18 @@ export type WorkspaceMigrationColumnRelation = {
   isUnique?: boolean;
 };
 
+export type WorkspaceMigrationColumnDrop = {
+  action: WorkspaceMigrationColumnActionType.DROP;
+  columnName: string;
+};
+
 export type WorkspaceMigrationColumnAction = {
   action: WorkspaceMigrationColumnActionType;
 } & (
   | WorkspaceMigrationColumnCreate
   | WorkspaceMigrationColumnAlter
   | WorkspaceMigrationColumnRelation
+  | WorkspaceMigrationColumnDrop
 );
 
 export type WorkspaceMigrationTableAction = {
