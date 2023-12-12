@@ -28,6 +28,15 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   externalIds: string;
 
   @FieldMetadata({
+    type: FieldMetadataType.TEXT,
+    label: 'Header mail Id',
+    description: 'Mail id from the mail header',
+    icon: 'IconHash',
+  })
+  @IsNullable()
+  headerMailId: string;
+
+  @FieldMetadata({
     type: FieldMetadataType.RELATION,
     label: 'Message Thread Id',
     description: 'Message Thread Id',
