@@ -6,6 +6,7 @@ import {
   FieldMetadata,
   IsNullable,
   RelationMetadata,
+  Gate,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel.object-metadata';
@@ -17,6 +18,9 @@ import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-meta
   labelPlural: 'Connected Accounts',
   description: 'A connected account',
   icon: 'IconAt',
+})
+@Gate({
+  featureFlag: 'IS_MESSAGING_ENABLED',
 })
 @IsSystem()
 export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {

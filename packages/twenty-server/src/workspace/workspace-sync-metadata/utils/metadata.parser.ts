@@ -20,27 +20,13 @@ export class MetadataParser {
       );
     }
 
-    const objectFeatureFlagValue =
-      objectMetadata.gate?.featureFlag &&
-      workspaceFeatureFlagsMap[objectMetadata.gate.featureFlag];
-
-    if (
-      objectMetadata.gate?.featureFlag !== undefined &&
-      !objectFeatureFlagValue
-    ) {
+    if (isGatedAndNotEnabled(objectMetadata, workspaceFeatureFlagsMap)) {
       return undefined;
     }
 
-    const fields = Object.values(fieldMetadata).filter((field: any) => {
-      const fieldFeatureFlagValue =
-        field.gate?.featureFlag &&
-        workspaceFeatureFlagsMap[field.gate.featureFlag];
-
-      if (field.gate?.featureFlag !== undefined && !fieldFeatureFlagValue)
-        return false;
-
-      return true;
-    });
+    const fields = Object.values(fieldMetadata).filter(
+      (field: any) => !isGatedAndNotEnabled(field, workspaceFeatureFlagsMap),
+    );
 
     return {
       ...objectMetadata,
@@ -87,53 +73,20 @@ export class MetadataParser {
 
     if (!relationMetadata) return [];
 
-<<<<<<< HEAD
-    return relationMetadata.map((relation) => {
-      const fromObjectMetadata =
-        objectMetadataFromDB[relation.fromObjectNameSingular];
-
-      assert(
-        fromObjectMetadata,
-        `Object ${relation.fromObjectNameSingular} not found in DB 
-        for relation defined in class ${objectMetadata.nameSingular}`,
+    if (!objectMetadata) {
+      throw new Error(
+        `Object metadata decorator not found, can\'t parse ${metadata.name}`,
       );
+    }
 
-      const toObjectMetadata =
-        objectMetadataFromDB[relation.toObjectNameSingular];
+    if (isGatedAndNotEnabled(objectMetadata, workspaceFeatureFlagsMap)) {
+      return [];
+    }
 
-      assert(
-        toObjectMetadata,
-        `Object ${relation.toObjectNameSingular} not found in DB
-        for relation defined in class ${objectMetadata.nameSingular}`,
-      );
-
-      const fromFieldMetadata =
-        fromObjectMetadata?.fields[relation.fromFieldMetadataName];
-
-      assert(
-        fromFieldMetadata,
-        `Field ${relation.fromFieldMetadataName} not found in object ${relation.fromObjectNameSingular}
-        for relation defined in class ${objectMetadata.nameSingular}`,
-      );
-
-      const toFieldMetadata =
-        toObjectMetadata?.fields[relation.toFieldMetadataName];
-
-      assert(
-        toFieldMetadata,
-        `Field ${relation.toFieldMetadataName} not found in object ${relation.toObjectNameSingular}
-=======
     return relationMetadata
-      .filter((relation: any) => {
-        const fieldFeatureFlagValue =
-          relation.gate?.featureFlag &&
-          workspaceFeatureFlagsMap[relation.gate.featureFlag];
-
-        if (relation.gate?.featureFlag !== undefined && !fieldFeatureFlagValue)
-          return false;
-
-        return true;
-      })
+      .filter(
+        (relation) => !isGatedAndNotEnabled(relation, workspaceFeatureFlagsMap),
+      )
       .map((relation) => {
         const fromObjectMetadata =
           objectMetadataFromDB[relation.fromObjectNameSingular];
@@ -141,8 +94,7 @@ export class MetadataParser {
         assert(
           fromObjectMetadata,
           `Object ${relation.fromObjectNameSingular} not found in DB 
->>>>>>> 7c8b8fae (Add featureFlag gateDecorator for sync-metadata)
-        for relation defined in class ${objectMetadata.nameSingular}`,
+        for from relation defined in class ${objectMetadata.nameSingular}`,
         );
 
         const toObjectMetadata =
@@ -151,7 +103,7 @@ export class MetadataParser {
         assert(
           toObjectMetadata,
           `Object ${relation.toObjectNameSingular} not found in DB
-        for relation defined in class ${objectMetadata.nameSingular}`,
+        for to relation defined in class ${objectMetadata.nameSingular}`,
         );
 
         const fromFieldMetadata =
@@ -160,7 +112,7 @@ export class MetadataParser {
         assert(
           fromFieldMetadata,
           `Field ${relation.fromFieldMetadataName} not found in object ${relation.fromObjectNameSingular}
-        for relation defined in class ${objectMetadata.nameSingular}`,
+        for from relation defined in class ${objectMetadata.nameSingular}`,
         );
 
         const toFieldMetadata =
@@ -169,7 +121,7 @@ export class MetadataParser {
         assert(
           toFieldMetadata,
           `Field ${relation.toFieldMetadataName} not found in object ${relation.toObjectNameSingular}
-        for relation defined in class ${objectMetadata.nameSingular}`,
+        for to relation defined in class ${objectMetadata.nameSingular}`,
         );
 
         return {
@@ -198,4 +150,15 @@ export class MetadataParser {
       ),
     );
   }
+}
+
+function isGatedAndNotEnabled(
+  metadata,
+  workspaceFeatureFlagsMap: Record<string, boolean>,
+): boolean {
+  const featureFlagValue =
+    metadata.gate?.featureFlag &&
+    workspaceFeatureFlagsMap[metadata.gate.featureFlag];
+
+  return metadata.gate?.featureFlag !== undefined && !featureFlagValue;
 }
