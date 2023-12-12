@@ -16,6 +16,7 @@ import { ImpersonateEffect } from '~/pages/impersonate/ImpersonateEffect';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
+import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
 import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccountsEmails';
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
 import { SettingsObjectDetail } from '~/pages/settings/data-model/SettingsObjectDetail';
@@ -73,6 +74,10 @@ export const App = () => {
                 <Route
                   path={SettingsPath.Accounts}
                   element={<SettingsAccounts />}
+                />
+                <Route
+                  path={SettingsPath.NewAccount}
+                  element={<SettingsNewAccount />}
                 />
                 <Route
                   path={SettingsPath.AccountsEmails}
