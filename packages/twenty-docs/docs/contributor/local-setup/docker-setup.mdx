@@ -92,6 +92,7 @@ make docker-dev-up
 Setup database, run migrations, and seed:
 ```bash
 make docker-dev-sh
+yarn
 yarn nx database:init twenty-server
 ```
 
@@ -104,6 +105,7 @@ make docker-dev-sh
 yarn nx start:dev twenty-server
 ```
 
+and in a separate terminal:
 ```bash
 make docker-dev-sh
 yarn nx start twenty-front

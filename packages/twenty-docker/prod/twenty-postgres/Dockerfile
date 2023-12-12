@@ -38,8 +38,8 @@ RUN dpkg --install wrappers.deb
 RUN cp /usr/share/postgresql/${PG_MAIN_VERSION}/extension/wrappers* /opt/bitnami/postgresql/share/extension/
 RUN cp /usr/lib/postgresql/${PG_MAIN_VERSION}/lib/wrappers* /opt/bitnami/postgresql/lib/
 
-COPY ./infra/build/postgres/init.sql /docker-entrypoint-initdb.d/
+COPY ./packages/twenty-docker/prod/twenty-postgres/init.sql /docker-entrypoint-initdb.d/
 
 USER 1001
-ENTRYPOINT [ "/opt/bitnami/scripts/postgresql/entrypoint.sh" ]
-CMD [ "/opt/bitnami/scripts/postgresql/run.sh" ]
+ENTRYPOINT ["/opt/bitnami/scripts/postgresql/entrypoint.sh"]
+CMD ["/opt/bitnami/scripts/postgresql/run.sh"]
