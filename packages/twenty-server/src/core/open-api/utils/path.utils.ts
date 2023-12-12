@@ -13,6 +13,7 @@ import {
   getManyResultResponse200,
   getSingleResultResponse200,
 } from 'src/core/open-api/utils/responses.utils';
+import { requestBody } from 'src/core/open-api/utils/request-body.utils';
 
 export const computeManyResultPath = (item: ObjectMetadataEntity) => {
   return {
@@ -30,6 +31,18 @@ export const computeManyResultPath = (item: ObjectMetadataEntity) => {
       ],
       responses: {
         '200': getManyResultResponse200(item),
+        '400': { $ref: '#/components/responses/400' },
+        '401': { $ref: '#/components/responses/401' },
+      },
+    },
+    post: {
+      tags: [item.namePlural],
+      summary: `Create One ${item.nameSingular}`,
+      operationId: `createOne${capitalize(item.nameSingular)}`,
+      parameters: [computeDepthParameters(item)],
+      requestBody: requestBody(item),
+      responses: {
+        '200': getSingleResultResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
