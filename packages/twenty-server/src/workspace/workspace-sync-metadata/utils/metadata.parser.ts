@@ -25,7 +25,7 @@ export class MetadataParser {
     }
 
     const fields = Object.values(fieldMetadata).filter(
-      (field: any) => !isGatedAndNotEnabled(field, workspaceFeatureFlagsMap),
+      (field) => !isGatedAndNotEnabled(field, workspaceFeatureFlagsMap),
     );
 
     return {
@@ -94,7 +94,7 @@ export class MetadataParser {
         assert(
           fromObjectMetadata,
           `Object ${relation.fromObjectNameSingular} not found in DB 
-        for from relation defined in class ${objectMetadata.nameSingular}`,
+        for fromRelation defined in class ${objectMetadata.nameSingular}`,
         );
 
         const toObjectMetadata =
@@ -103,7 +103,7 @@ export class MetadataParser {
         assert(
           toObjectMetadata,
           `Object ${relation.toObjectNameSingular} not found in DB
-        for to relation defined in class ${objectMetadata.nameSingular}`,
+        for toRelation defined in class ${objectMetadata.nameSingular}`,
         );
 
         const fromFieldMetadata =
@@ -112,7 +112,7 @@ export class MetadataParser {
         assert(
           fromFieldMetadata,
           `Field ${relation.fromFieldMetadataName} not found in object ${relation.fromObjectNameSingular}
-        for from relation defined in class ${objectMetadata.nameSingular}`,
+        for fromRelation defined in class ${objectMetadata.nameSingular}`,
         );
 
         const toFieldMetadata =
@@ -121,7 +121,7 @@ export class MetadataParser {
         assert(
           toFieldMetadata,
           `Field ${relation.toFieldMetadataName} not found in object ${relation.toObjectNameSingular}
-        for to relation defined in class ${objectMetadata.nameSingular}`,
+        for toRelation defined in class ${objectMetadata.nameSingular}`,
         );
 
         return {

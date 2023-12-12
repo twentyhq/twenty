@@ -181,6 +181,9 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     objectName: 'messageRecipient',
     inverseSideFieldName: 'workspaceMember',
   })
+  @Gate({
+    featureFlag: 'IS_MESSAGING_ENABLED',
+  })
   @IsNullable()
   messageRecipients: MessageRecipientObjectMetadata[];
 }
