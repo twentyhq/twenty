@@ -1,7 +1,8 @@
+import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
 type H1TitleProps = {
-  title: string;
+  title: ReactNode;
   fontColor?: H1TitleFontColor;
   className?: string;
 };

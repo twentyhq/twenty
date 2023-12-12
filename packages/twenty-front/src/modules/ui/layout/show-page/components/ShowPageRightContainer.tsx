@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { Emails } from '@/activities/emails/components/Emails';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { EntityTasks } from '@/activities/tasks/components/EntityTasks';
@@ -86,7 +87,7 @@ export const ShowPageRightContainer = ({
       title: 'Emails',
       Icon: IconMail,
       hide: !emails,
-      disabled: true,
+      disabled: entity.type === 'Custom',
     },
   ];
 
@@ -104,6 +105,7 @@ export const ShowPageRightContainer = ({
       {activeTabId === 'tasks' && <EntityTasks entity={entity} />}
       {activeTabId === 'notes' && <Notes entity={entity} />}
       {activeTabId === 'files' && <Attachments targetableEntity={entity} />}
+      {activeTabId === 'emails' && <Emails />}
     </StyledShowPageRightContainer>
   );
 };
