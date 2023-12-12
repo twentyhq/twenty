@@ -15,6 +15,7 @@ import { CommentObjectMetadata } from 'src/workspace/workspace-sync-metadata/sta
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
 import { FavoriteObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/favorite.object-metadata';
+import { MessageRecipientObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-recipient.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'workspaceMembers',
@@ -164,4 +165,18 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   connectedAccounts: ConnectedAccountObjectMetadata[];
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Message Recipients',
+    description: 'Message Recipients',
+    icon: 'IconUserCircle',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'messageRecipient',
+    inverseSideFieldName: 'workspaceMember',
+  })
+  @IsNullable()
+  messageRecipients: MessageRecipientObjectMetadata[];
 }
