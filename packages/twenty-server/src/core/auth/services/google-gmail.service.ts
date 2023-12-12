@@ -14,8 +14,14 @@ export class GoogleGmailService {
   async saveConnectedAccount(
     saveConnectedAccountInput: SaveConnectedAccountInput,
   ) {
-    const { workspaceId, type, accessToken, refreshToken } =
-      saveConnectedAccountInput;
+    const {
+      email,
+      workspaceId,
+      provider,
+      accessToken,
+      refreshToken,
+      workspaceMemberId,
+    } = saveConnectedAccountInput;
 
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
@@ -26,8 +32,20 @@ export class GoogleGmailService {
       dataSourceMetadata,
     );
 
+    const connectedAccount = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "email" = $1 AND "provider" = $2 AND "accountOwnerId" = $3`,
+      [email, provider, workspaceMemberId],
+    );
+
+    if (connectedAccount.length > 0) {
+      console.log('This account is already connected to your workspace.');
+
+      return;
+    }
+
     await workspaceDataSource?.query(
-      `INSERT INTO ${dataSourceMetadata.schema}."connectedAccount" ("type", "accessToken", "refreshToken") VALUES ('${type}', '${accessToken}', '${refreshToken}')`,
+      `INSERT INTO ${dataSourceMetadata.schema}."connectedAccount" ("email", "provider", "accessToken", "refreshToken", "accountOwnerId") VALUES ($1, $2, $3, $4, $5)`,
+      [email, provider, accessToken, refreshToken, workspaceMemberId],
     );
 
     return;

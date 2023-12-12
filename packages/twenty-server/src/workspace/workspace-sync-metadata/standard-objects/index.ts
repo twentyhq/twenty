@@ -4,6 +4,7 @@ import { ApiKeyObjectMetadata } from 'src/workspace/workspace-sync-metadata/stan
 import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/attachment.object-metadata';
 import { CommentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/comment.object-metadata';
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
+import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
 import { FavoriteObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/favorite.object-metadata';
 import { OpportunityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/opportunity.object-metadata';
 import { PersonObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/person.object-metadata';
@@ -22,6 +23,7 @@ export const standardObjectMetadata = [
   AttachmentObjectMetadata,
   CommentObjectMetadata,
   CompanyObjectMetadata,
+  ConnectedAccountObjectMetadata,
   FavoriteObjectMetadata,
   OpportunityObjectMetadata,
   PersonObjectMetadata,

@@ -28,21 +28,22 @@ export class GoogleGmailAuthController {
     @Req() req: GoogleGmailRequest,
     @Res() res: Response,
   ) {
-    const { user: gmailUser } = req;
+    const { user } = req;
 
-    const { accessToken, refreshToken, transientToken } = gmailUser;
+    const { email, accessToken, refreshToken, transientToken } = user;
 
     const { workspaceMemberId, workspaceId } =
       await this.tokenService.verifyTransientToken(transientToken);
 
     this.googleGmailService.saveConnectedAccount({
+      email,
       workspaceMemberId: workspaceMemberId,
       workspaceId: workspaceId,
-      type: 'gmail',
+      provider: 'gmail',
       accessToken,
       refreshToken,
     });
 
-    return res.redirect('http://localhost:3001');
+    return res.redirect('http://localhost:3001/settings/accounts');
   }
 }
