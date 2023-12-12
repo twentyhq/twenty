@@ -3,7 +3,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { turnFiltersIntoWhereClause } from '@/object-record/object-filter-dropdown/utils/turnFiltersIntoWhereClause';
+import { turnFiltersIntoObjectRecordFilters } from '@/object-record/utils/turnFiltersIntoWhereClause';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
@@ -31,21 +31,20 @@ export const useObjectRecordTable = () => {
   const tableSorts = useRecoilValue(tableSortsState);
   const setLastRowVisible = useSetRecoilState(tableLastRowVisibleState);
 
-  const filter = turnFiltersIntoWhereClause(
+  const requestFilters = turnFiltersIntoObjectRecordFilters(
     tableFilters,
     foundObjectMetadataItem?.fields ?? [],
   );
 
-  // TODO: finish typing
   const orderBy = turnSortsIntoOrderBy(
     tableSorts,
     foundObjectMetadataItem?.fields ?? [],
-  ) as any;
+  );
 
   const { records, loading, fetchMoreRecords, queryStateIdentifier } =
     useFindManyRecords({
       objectNameSingular,
-      filter,
+      filter: requestFilters,
       orderBy,
       onCompleted: () => {
         setLastRowVisible(false);
