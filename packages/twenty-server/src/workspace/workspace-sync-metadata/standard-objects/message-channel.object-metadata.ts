@@ -17,7 +17,7 @@ import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standa
 @IsSystem()
 export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.SELECT,
     label: 'Visibility',
     description: 'Visibility',
     icon: 'IconEyeglass',
