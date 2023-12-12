@@ -1,4 +1,4 @@
-FROM node:18.16.0-alpine as build
+FROM node:18.16.0-alpine as twenty-front-build
 
 ARG REACT_APP_SERVER_BASE_URL
 ARG REACT_APP_SERVER_AUTH_URL
@@ -16,13 +16,13 @@ COPY ./packages/twenty-front /app/packages/twenty-front
 RUN yarn
 RUN yarn nx build twenty-front
 
-COPY ./packages/twenty-docker/build/front/serve.json ./build
+COPY ./packages/twenty-docker/prod/twenty-front/serve.json ./build
 
-FROM node:18.16.0-alpine as front
+FROM node:18.16.0-alpine as twenty-front
 
 WORKDIR /app/packages/twenty-front
 
-COPY --from=build /app/packages/twenty-front/build ./build
+COPY --from=twenty-front-build /app/packages/twenty-front/build ./build
 COPY ./packages/twenty-front/scripts/inject-runtime-env.sh /app/packages/twenty-front/scripts/inject-runtime-env.sh
 RUN yarn global add serve
 

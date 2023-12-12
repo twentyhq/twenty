@@ -10,8 +10,6 @@ COPY ./packages/twenty-server/package.json /app/packages/twenty-server/package.j
 COPY ./packages/twenty-server/patches /app/packages/twenty-server/patches
 COPY ./packages/eslint-plugin-twenty/package.json /app/packages/eslint-plugin-twenty/package.json
 
-RUN yarn
-
 RUN npx playwright install-deps 
 
 CMD ["tail", "-f", "/dev/null"]

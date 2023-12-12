@@ -1,11 +1,13 @@
 dev-build:
-	@docker compose -f dev/docker-compose.yml down 
+	@docker compose -f dev/docker-compose.yml down
 	rm -rf ../twenty-front/node_modules
 	rm -rf ../twenty-server/node_modules
 	rm -rf ../twenty-docs/node_modules
-	@docker volume rm twenty_node_modules_front > /dev/null 2>&1 || true
-	@docker volume rm twenty_node_modules_server > /dev/null 2>&1 || true
-	@docker volume rm twenty_node_modules_docs > /dev/null 2>&1 || true
+	@docker volume rm twenty_dev_node_modules_front > /dev/null 2>&1 || true
+	@docker volume rm twenty_dev_node_modules_server > /dev/null 2>&1 || true
+	@docker volume rm twenty_dev_node_modules_docs > /dev/null 2>&1 || true
+	@docker volume rm twenty_dev_node_modules_root > /dev/null 2>&1 || true
+	@docker volume rm twenty_dev_node_modules_yarn > /dev/null 2>&1 || true
 	@docker compose -f dev/docker-compose.yml build
 
 dev-up:
@@ -22,3 +24,59 @@ dev-postgres-build:
 	@docker rm twenty_postgres || true
 	@docker volume rm twenty_db_data || true
 	@docker compose -f dev/docker-compose.yml up --build postgres -d
+
+prod-docs-build:
+	@cd ../.. && docker build -f ./packages/twenty-docker/prod/twenty-docs/Dockerfile --tag twenty-docs . && cd -
+
+prod-docs-run:
+	@docker run -p 3000:3000 twenty-docs
+
+prod-front-build:
+	@cd ../.. && docker build -f ./packages/twenty-docker/prod/twenty-front/Dockerfile --tag twenty-front . && cd -
+
+prod-front-run:
+	@docker run -p 3000:3000 twenty-front
+
+prod-server-build:
+	@cd ../.. && docker build -f ./packages/twenty-docker/prod/twenty-server/Dockerfile --tag twenty-server . && cd -
+
+prod-server-run:
+	@docker run -p 3000:3000 twenty-server
+
+prod-postgres-build:
+	@cd ../.. && docker build -f ./packages/twenty-docker/prod/twenty-postgres/Dockerfile --tag twenty-postgres . && cd -
+
+prod-postgres-run:
+	@docker run -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres twenty-postgres
+
+release-front:
+	@cd ../.. && docker buildx build \
+		--push \
+		--no-cache \
+		--platform linux/amd64,linux/arm64 \
+		-f ./packages/twenty-docker/prod/twenty-front/Dockerfile -t twentycrm/twenty-front:$(version) -t twentycrm/twenty-front:latest . \
+		&& cd -
+
+release-server:
+	@cd ../.. && docker buildx build \
+		--push \
+		--no-cache \
+		--platform linux/amd64,linux/arm64 \
+		-f ./packages/twenty-docker/prod/twenty-server/Dockerfile -t twentycrm/twenty-server:$(version) -t twentycrm/twenty-server:latest . \
+		&& cd -
+
+release-docs:
+	@cd ../.. && docker buildx build \
+		--push \
+		--no-cache \
+		--platform linux/amd64,linux/arm64 \
+		-f ./packages/twenty-docker/prod/twenty-docs/Dockerfile -t twentycrm/twenty-docs:$(version) -t twentycrm/twenty-docs:latest . \
+		&& cd -
+
+release-postgres:
+	@cd ../.. && docker buildx build \
+		--push \
+		--no-cache \
+		--platform linux/amd64,linux/arm64 \
+		-f ./packages/twenty-docker/prod/twenty-postgres/Dockerfile -t twentycrm/twenty-postgres:$(version) -t twentycrm/twenty-postgres:latest . \
+		&& cd -

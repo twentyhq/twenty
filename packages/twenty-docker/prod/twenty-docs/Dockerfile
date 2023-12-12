@@ -1,4 +1,4 @@
-FROM node:18.16.0-alpine as docs
+FROM node:18.16.0-alpine as twenty-docs-build
 
 WORKDIR /app
 
@@ -14,9 +14,17 @@ RUN yarn
 COPY ./packages/twenty-docs /app/packages/twenty-docs
 RUN yarn nx build twenty-docs
 
+CMD ["tail", "-f", "/dev/null"]
+
+FROM node:18.16.0-alpine as twenty-docs
+
 WORKDIR /app/packages/twenty-docs
+
+COPY --from=twenty-docs-build /app/packages/twenty-docs/build ./build
+
+RUN yarn global add serve
 
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="This image provides a consistent and reproducible environment for the documentation."
 
-CMD ["yarn", "dlx", "serve", "-s", "./build"]
+CMD ["serve", "-s", "./build"]
