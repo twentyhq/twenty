@@ -28,11 +28,11 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Address',
-    description: 'Address',
+    label: 'Handle',
+    description: 'Handle',
     icon: 'IconAt',
   })
-  address: string;
+  handle: string;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
