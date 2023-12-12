@@ -23,12 +23,12 @@ export class MessageThreadObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     // will be an array
     type: FieldMetadataType.TEXT,
-    label: 'External Ids',
-    description: 'Thread ids from the messaging provider',
+    label: 'External Id',
+    description: 'Thread id from the messaging provider',
     icon: 'IconMessage',
   })
   @IsNullable()
-  externalIds: string;
+  externalId: string;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
