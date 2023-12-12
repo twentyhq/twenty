@@ -8,6 +8,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { baseSchema } from 'src/core/open-api/utils/base-schema.utils';
 import {
   computeManyResultPath,
+  computeOpenApiPath,
   computeSingleResultPath,
 } from 'src/core/open-api/utils/path.utils';
 import { capitalize } from 'src/utils/capitalize';
@@ -38,6 +39,7 @@ export class OpenApiService {
     schema.paths = objectMetadataItems.reduce((paths, item) => {
       paths[`/rest/${item.namePlural}`] = computeManyResultPath(item);
       paths[`/rest/${item.namePlural}/{id}`] = computeSingleResultPath(item);
+      paths['/open-api'] = computeOpenApiPath();
 
       return paths;
     }, {});

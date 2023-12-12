@@ -10,6 +10,7 @@ import { capitalize } from 'src/utils/capitalize';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import {
   getDeleteResponse200,
+  getJsonResponse,
   getManyResultResponse200,
   getSingleResultSuccessResponse,
 } from 'src/core/open-api/utils/responses.utils';
@@ -83,6 +84,21 @@ export const computeSingleResultPath = (item: ObjectMetadataEntity) => {
       requestBody: getRequestBody(item),
       responses: {
         '200': getSingleResultSuccessResponse(item),
+        '400': { $ref: '#/components/responses/400' },
+        '401': { $ref: '#/components/responses/401' },
+      },
+    },
+  };
+};
+
+export const computeOpenApiPath = () => {
+  return {
+    get: {
+      tags: ['others'],
+      summary: 'Get Open Api Schema',
+      operationId: 'GetOpenApiSchema',
+      responses: {
+        '200': getJsonResponse(),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },

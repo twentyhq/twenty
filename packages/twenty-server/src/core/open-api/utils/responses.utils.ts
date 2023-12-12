@@ -90,3 +90,16 @@ export const getDeleteResponse200 = (item) => {
     },
   };
 };
+
+export const getJsonResponse = () => {
+  return {
+    description: 'Successful operation',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+        },
+      },
+    },
+  };
+};
