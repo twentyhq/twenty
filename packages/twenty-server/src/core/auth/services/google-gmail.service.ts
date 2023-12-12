@@ -39,12 +39,14 @@ export class GoogleGmailService {
 
     if (connectedAccount.length > 0) {
       console.log('This account is already connected to your workspace.');
-    } else {
-      await workspaceDataSource?.query(
-        `INSERT INTO ${dataSourceMetadata.schema}."connectedAccount" ("email", "provider", "accessToken", "refreshToken", "accountOwnerId") VALUES ($1, $2, $3, $4, $5)`,
-        [email, provider, accessToken, refreshToken, workspaceMemberId],
-      );
+
+      return;
     }
+
+    await workspaceDataSource?.query(
+      `INSERT INTO ${dataSourceMetadata.schema}."connectedAccount" ("email", "provider", "accessToken", "refreshToken", "accountOwnerId") VALUES ($1, $2, $3, $4, $5)`,
+      [email, provider, accessToken, refreshToken, workspaceMemberId],
+    );
 
     return;
   }

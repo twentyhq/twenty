@@ -90,7 +90,6 @@ export class WorkspaceSyncMetadataService {
         const objectInDB = objectsInDBByName[standardObjectName];
 
         if (!objectInDB) {
-          console.log(standardObject);
           objectsToCreate.push(standardObject);
           continue;
         }
