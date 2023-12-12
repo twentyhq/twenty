@@ -56,6 +56,7 @@ export class MetadataParser {
     return relationMetadata.map((relation) => {
       const fromObjectMetadata =
         objectMetadataFromDB[relation.fromObjectNameSingular];
+
       assert(
         fromObjectMetadata,
         `Object ${relation.fromObjectNameSingular} not found in DB 
@@ -64,6 +65,7 @@ export class MetadataParser {
 
       const toObjectMetadata =
         objectMetadataFromDB[relation.toObjectNameSingular];
+
       assert(
         toObjectMetadata,
         `Object ${relation.toObjectNameSingular} not found in DB
@@ -72,6 +74,7 @@ export class MetadataParser {
 
       const fromFieldMetadata =
         fromObjectMetadata?.fields[relation.fromFieldMetadataName];
+
       assert(
         fromFieldMetadata,
         `Field ${relation.fromFieldMetadataName} not found in object ${relation.fromObjectNameSingular}
@@ -80,6 +83,7 @@ export class MetadataParser {
 
       const toFieldMetadata =
         toObjectMetadata?.fields[relation.toFieldMetadataName];
+
       assert(
         toFieldMetadata,
         `Field ${relation.toFieldMetadataName} not found in object ${relation.toObjectNameSingular}

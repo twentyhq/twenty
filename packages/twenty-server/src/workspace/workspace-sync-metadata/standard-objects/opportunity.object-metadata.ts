@@ -2,7 +2,6 @@ import { CurrencyMetadata } from 'src/metadata/field-metadata/composite-types/cu
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import {
   ObjectMetadata,
-  IsSystem,
   FieldMetadata,
   IsNullable,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
