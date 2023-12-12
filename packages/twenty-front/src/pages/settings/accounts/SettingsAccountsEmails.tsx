@@ -1,3 +1,4 @@
+import { SettingsAccountsEmailsSyncSection } from '@/settings/accounts/components/SettingsAccountsEmailsSyncSection';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { IconSettings } from '@/ui/display/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -12,6 +13,7 @@ export const SettingsAccountsEmails = () => (
           { children: 'Emails' },
         ]}
       />
+      <SettingsAccountsEmailsSyncSection />
     </SettingsPageContainer>
   </SubMenuTopBarContainer>
 );
