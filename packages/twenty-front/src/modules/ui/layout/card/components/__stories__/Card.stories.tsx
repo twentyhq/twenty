@@ -11,8 +11,8 @@ const meta: Meta<typeof Card> = {
   title: 'UI/Layout/Card/Card',
   component: Card,
   decorators: [ComponentDecorator],
-  render: (args) => (
-    <Card {...args}>
+  render: () => (
+    <Card>
       <CardHeader>Lorem ipsum</CardHeader>
       <CardContent>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec id massa

@@ -1,8 +1,16 @@
+import {
+  CurrencyFilter,
+  DateFilter,
+  FloatFilter,
+  FullNameFilter,
+  ObjectRecordFilter,
+  StringFilter,
+  URLFilter,
+} from '@/object-record/types/ObjectRecordFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
 
 import { Filter } from '../object-filter-dropdown/types/Filter';
-import { CurrencyFilter, DateFilter, FloatFilter, FullNameFilter, ObjectRecordFilter, StringFilter, URLFilter } from '@/object-record/types/ObjectRecordFilter';
 
 export type RawUIFilter = Omit<Filter, 'definition'> & {
   definition: {
@@ -16,11 +24,11 @@ export const turnFiltersIntoObjectRecordFilters = (
 ): ObjectRecordFilter => {
   const objectRecordFilters: ObjectRecordFilter[] = [];
 
-  for(const rawUIFilter of rawUIFilters) {
+  for (const rawUIFilter of rawUIFilters) {
     const correspondingField = fields.find(
       (field) => field.id === rawUIFilter.fieldMetadataId,
     );
-    
+
     if (!correspondingField) {
       throw new Error(
         `Could not find field ${rawUIFilter.fieldMetadataId} in metadata object`,
@@ -38,7 +46,7 @@ export const turnFiltersIntoObjectRecordFilters = (
                 ilike: `%${rawUIFilter.value}%`,
               } as StringFilter,
             });
-            break
+            break;
           case ViewFilterOperand.DoesNotContain:
             objectRecordFilters.push({
               not: {
@@ -47,7 +55,7 @@ export const turnFiltersIntoObjectRecordFilters = (
                 } as StringFilter,
               },
             });
-           break
+            break;
           default:
             throw new Error(
               `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
@@ -107,6 +115,7 @@ export const turnFiltersIntoObjectRecordFilters = (
           );
         }
 
+        // eslint-disable-next-line no-case-declarations
         const parsedRecordIds = JSON.parse(rawUIFilter.value) as string[];
 
         if (parsedRecordIds.length > 0) {

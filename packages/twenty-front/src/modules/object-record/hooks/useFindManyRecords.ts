@@ -10,6 +10,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
+import { ObjectRecordFilter } from '@/object-record/types/ObjectRecordFilter';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -25,7 +26,6 @@ import {
   PaginatedRecordTypeResults,
 } from '../types/PaginatedRecordTypeResults';
 import { mapPaginatedRecordsToRecords } from '../utils/mapPaginatedRecordsToRecords';
-import { ObjectRecordFilter } from '@/object-record/types/ObjectRecordFilter';
 
 export const useFindManyRecords = <
   RecordType extends { id: string } & Record<string, any>,
@@ -140,7 +140,9 @@ export const useFindManyRecords = <
 
             if (isNonEmptyArray(previousEdges) && isNonEmptyArray(nextEdges)) {
               newEdges = filterUniqueRecordEdgesByCursor([
+                // eslint-disable-next-line no-unsafe-optional-chaining
                 ...prev?.[objectMetadataItem.namePlural]?.edges,
+                // eslint-disable-next-line no-unsafe-optional-chaining
                 ...fetchMoreResult?.[objectMetadataItem.namePlural]?.edges,
               ]);
             }
