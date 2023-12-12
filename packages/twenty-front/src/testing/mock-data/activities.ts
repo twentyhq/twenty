@@ -1,3 +1,4 @@
+import { Email } from '@/activities/emails/types/email';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { Comment } from '@/activities/types/Comment';
@@ -220,5 +221,26 @@ export const mockedActivities: Array<MockedActivity> = [
       },
     ],
     __typename: 'Activity',
+  },
+];
+
+export const mockedEmails: Email[] = [
+  {
+    body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim nisi eu tellus dapibus, egestas placerat risus placerat. Praesent eget arcu consectetur, efficitur felis.',
+    numberOfEmailsInThread: 4,
+    read: false,
+    receivedAt: new Date('11/04/2023'),
+    senderName: 'Steve Anahi',
+    senderPictureUrl: '',
+    subject: 'Partnerships',
+  },
+  {
+    body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras dignissim nisi eu tellus dapibus, egestas placerat risus placerat. Praesent eget arcu consectetur, efficitur felis.',
+    numberOfEmailsInThread: 3,
+    read: true,
+    receivedAt: new Date('11/04/2023'),
+    senderName: 'Alexandre Prot',
+    senderPictureUrl: '',
+    subject: 'Next step',
   },
 ];
