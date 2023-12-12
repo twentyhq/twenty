@@ -17,7 +17,7 @@ import { ViewFieldObjectMetadata } from 'src/workspace/workspace-sync-metadata/s
 import { ViewFilterObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/view-filter.object-metadata';
 import { ViewSortObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/view-sort.object-metadata';
 import { ViewObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/view.object-metadata';
-import { WebhookObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/webook.object-metadata';
+import { WebhookObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/webhook.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
 export const standardObjectMetadata = [
