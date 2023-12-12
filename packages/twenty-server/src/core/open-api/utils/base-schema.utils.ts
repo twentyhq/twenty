@@ -40,11 +40,5 @@ export const baseSchema = (frontBaseUrl: string): { [key: string]: any } => {
       description: 'Find out more about Twenty',
       url: 'https://twenty.com',
     },
-    tags: [
-      {
-        name: 'companies',
-        description: 'Everything about your Companies',
-      },
-    ],
   };
 };

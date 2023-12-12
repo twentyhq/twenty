@@ -13,6 +13,7 @@ import {
 import { capitalize } from 'src/utils/capitalize';
 import { getErrorResponses } from 'src/core/open-api/utils/get-error-responses.utils';
 import { computeSchemaComponents } from 'src/core/open-api/utils/components.utils';
+import { computeSchemaTags } from 'src/core/open-api/utils/compute-schema-tags.utils';
 
 @Injectable()
 export class OpenApiService {
@@ -40,6 +41,8 @@ export class OpenApiService {
 
       return paths;
     }, {});
+
+    schema.tags = computeSchemaTags(objectMetadataItems);
 
     schema.components.schemas = objectMetadataItems.reduce((schemas, item) => {
       schemas[capitalize(item.nameSingular)] = {

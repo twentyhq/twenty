@@ -20,7 +20,7 @@ export const computeManyResultPath = (item: ObjectMetadataEntity) => {
       tags: [item.namePlural],
       summary: `Find Many ${item.namePlural}`,
       description: `**order_by**, **filter**, **limit**, **depth** or **last_cursor** can be provided to request your **${item.namePlural}**`,
-      operationId: `findManyCompanies${capitalize(item.namePlural)}`,
+      operationId: `findMany${capitalize(item.namePlural)}`,
       parameters: [
         computeOrderByParameters(item),
         computeFilterParameters(item),
