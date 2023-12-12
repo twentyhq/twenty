@@ -7,6 +7,7 @@ import { MenuItemAccent } from '../../types/MenuItemAccent';
 
 export type MenuItemBaseProps = {
   accent?: MenuItemAccent;
+  isKeySelected?: boolean;
 };
 
 export const StyledMenuItemBase = styled.li<MenuItemBaseProps>`
@@ -29,6 +30,9 @@ export const StyledMenuItemBase = styled.li<MenuItemBaseProps>`
 
   justify-content: space-between;
   padding: var(--vertical-padding) var(--horizontal-padding);
+
+  background: ${({ isKeySelected, theme }) =>
+  isKeySelected ? theme.background.transparent.light : theme.background.primary};
 
   ${hoverBackground};
 

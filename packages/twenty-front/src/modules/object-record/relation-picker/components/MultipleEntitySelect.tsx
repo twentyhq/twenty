@@ -12,6 +12,11 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { Avatar } from '@/users/components/Avatar';
 
 import { EntityForSelect } from '../types/EntityForSelect';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
+import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 
 export type EntitiesForMultipleEntitySelect<
   CustomEntityForSelect extends EntityForSelect,
@@ -71,6 +76,8 @@ export const MultipleEntitySelect = <
     },
   });
 
+  const selectableItemIds = entitiesInDropdown.map((entity) =>  entity.id);
+
   return (
     <DropdownMenu ref={containerRef} data-select-disable>
       <DropdownMenuSearchInput
@@ -80,25 +87,35 @@ export const MultipleEntitySelect = <
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
+      <SelectableList
+                  selectableListId="multiple-entity-select-list"
+                  selectableItemIds={[selectableItemIds]}
+                  hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+                  onEnter={(_itemId) => {}}
+                >
         {entitiesInDropdown?.map((entity) => (
+                      <SelectableItem itemId={entity.id} key={entity.id}>
           <MenuItemMultiSelectAvatar
-            key={entity.id}
-            selected={value[entity.id]}
-            onSelectChange={(newCheckedValue) =>
-              onChange({ ...value, [entity.id]: newCheckedValue })
-            }
-            avatar={
-              <Avatar
-                avatarUrl={entity.avatarUrl}
-                colorId={entity.id}
-                placeholder={entity.name}
-                size="md"
-                type={entity.avatarType ?? 'rounded'}
-              />
-            }
-            text={entity.name}
+          key={entity.id}
+          isKeySelected={useSelectableList({selectableListId:'multiple-entity-select-list' ,itemId: entity.id}).isSelectedItemId}
+          selected={value[entity.id]}
+          onSelectChange={(newCheckedValue) =>
+            onChange({ ...value, [entity.id]: newCheckedValue })
+          }
+          avatar={
+            <Avatar
+            avatarUrl={entity.avatarUrl}
+            colorId={entity.id}
+            placeholder={entity.name}
+            size="md"
+            type={entity.avatarType ?? 'rounded'}
+            />
+          }
+          text={entity.name}
           />
-        ))}
+          </SelectableItem>
+            ))}
+            </SelectableList>
         {entitiesInDropdown?.length === 0 && <MenuItem text="No result" />}
       </DropdownMenuItemsContainer>
     </DropdownMenu>
