@@ -15,13 +15,17 @@ export type SelectProps<Value extends string | number | null> = {
   className?: string;
   disabled?: boolean;
   dropdownScopeId: string;
+  fullWidth?: boolean;
   label?: string;
   onChange?: (value: Value) => void;
   options: { value: Value; label: string; Icon?: IconComponent }[];
   value?: Value;
 };
 
-const StyledControlContainer = styled.div<{ disabled?: boolean }>`
+const StyledControlContainer = styled.div<{
+  disabled?: boolean;
+  fullWidth?: boolean;
+}>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -29,7 +33,7 @@ const StyledControlContainer = styled.div<{ disabled?: boolean }>`
   color: ${({ disabled, theme }) =>
     disabled ? theme.font.color.tertiary : theme.font.color.primary};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-  display: inline-flex;
+  display: ${({ fullWidth }) => (fullWidth ? 'flex' : 'inline-flex')};
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme }) => theme.spacing(8)};
   justify-content: space-between;
@@ -60,6 +64,7 @@ export const Select = <Value extends string | number | null>({
   className,
   disabled,
   dropdownScopeId,
+  fullWidth,
   label,
   onChange,
   options,
@@ -72,7 +77,7 @@ export const Select = <Value extends string | number | null>({
   const { closeDropdown } = useDropdown({ dropdownScopeId });
 
   const selectControl = (
-    <StyledControlContainer disabled={disabled}>
+    <StyledControlContainer disabled={disabled} fullWidth={fullWidth}>
       <StyledControlLabel>
         {!!selectedOption?.Icon && (
           <selectedOption.Icon

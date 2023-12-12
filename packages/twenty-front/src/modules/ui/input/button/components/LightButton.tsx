@@ -1,13 +1,14 @@
-import React, { MouseEvent, useMemo } from 'react';
+import { MouseEvent } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { TablerIconsProps } from '@/ui/display/icon';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
 export type LightButtonAccent = 'secondary' | 'tertiary';
 
 export type LightButtonProps = {
   className?: string;
-  icon?: React.ReactNode;
+  Icon?: IconComponent;
   title?: string;
   accent?: LightButtonAccent;
   active?: boolean;
@@ -76,7 +77,7 @@ const StyledButton = styled.button<
 
 export const LightButton = ({
   className,
-  icon: initialIcon,
+  Icon,
   title,
   active = false,
   accent = 'secondary',
@@ -84,15 +85,7 @@ export const LightButton = ({
   focus = false,
   onClick,
 }: LightButtonProps) => {
-  const icon = useMemo(() => {
-    if (!initialIcon || !React.isValidElement(initialIcon)) {
-      return null;
-    }
-
-    return React.cloneElement<TablerIconsProps>(initialIcon as any, {
-      size: 14,
-    });
-  }, [initialIcon]);
+  const theme = useTheme();
 
   return (
     <StyledButton
@@ -103,7 +96,7 @@ export const LightButton = ({
       className={className}
       active={active}
     >
-      {icon}
+      {!!Icon && <Icon size={theme.icon.size.sm} />}
       {title}
     </StyledButton>
   );

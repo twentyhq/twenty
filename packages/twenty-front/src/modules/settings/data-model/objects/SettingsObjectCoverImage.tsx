@@ -4,16 +4,16 @@ import styled from '@emotion/styled';
 
 import { IconX } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { Card } from '@/ui/layout/card/components/Card';
 import { AnimatedFadeOut } from '@/ui/utilities/animation/components/AnimatedFadeOut';
 import { cookieStorage } from '~/utils/cookie-storage';
 
 import CoverImage from '../assets/cover.png';
 
-const StyledCoverImageContainer = styled.div`
+const StyledCoverImageContainer = styled(Card)`
   align-items: center;
   background-image: url(${CoverImage.toString()});
   background-size: cover;
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-sizing: border-box;
   display: flex;
