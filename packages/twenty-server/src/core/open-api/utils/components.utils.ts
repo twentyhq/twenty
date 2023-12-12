@@ -68,6 +68,13 @@ export const computeSchemaComponents = (
 
   if (requiredFields?.length) {
     result['required'] = requiredFields;
+    result['example'] = requiredFields.reduce((example, requiredField) => {
+      example[requiredField] = '';
+
+      return example;
+    }, {});
+  } else {
+    result['example'] = {};
   }
 
   return result;

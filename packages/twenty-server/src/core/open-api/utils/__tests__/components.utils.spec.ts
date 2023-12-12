@@ -9,6 +9,7 @@ describe('computeSchemaComponents', () => {
     ).toEqual({
       type: 'object',
       required: ['fieldNumber'],
+      example: { fieldNumber: '' },
       properties: {
         fieldCurrency: {
           properties: {
