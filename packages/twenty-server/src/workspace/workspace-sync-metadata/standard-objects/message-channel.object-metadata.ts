@@ -6,6 +6,7 @@ import {
   IsNullable,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'messageChannels',
@@ -41,7 +42,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUserCircle',
     joinColumn: 'connectedAccountId',
   })
-  connectedAccount: string;
+  connectedAccount: ConnectedAccountObjectMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
