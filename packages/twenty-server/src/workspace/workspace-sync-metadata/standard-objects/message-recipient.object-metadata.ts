@@ -6,6 +6,7 @@ import {
   IsNullable,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { MessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message.object-metadata';
 import { PersonObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
@@ -22,10 +23,9 @@ export class MessageRecipientObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.RELATION,
     label: 'Message',
     description: 'Message',
-    icon: 'IconUser',
+    icon: 'IconMessage',
     joinColumn: 'messageId',
   })
-  @IsNullable()
   message: MessageObjectMetadata;
 
   @FieldMetadata({
@@ -36,7 +36,6 @@ export class MessageRecipientObjectMetadata extends BaseObjectMetadata {
     icon: 'IconAt',
     defaultValue: { value: 'from' },
   })
-  @IsNullable()
   role: string;
 
   @FieldMetadata({
@@ -45,7 +44,6 @@ export class MessageRecipientObjectMetadata extends BaseObjectMetadata {
     description: 'Handle',
     icon: 'IconAt',
   })
-  @IsNullable()
   handle: string;
 
   @FieldMetadata({
