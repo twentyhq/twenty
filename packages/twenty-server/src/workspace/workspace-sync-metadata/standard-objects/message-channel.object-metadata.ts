@@ -1,12 +1,15 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import {
   ObjectMetadata,
   IsSystem,
   FieldMetadata,
   IsNullable,
+  RelationMetadata,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
+import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-thread.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'messageChannels',
@@ -45,6 +48,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   connectedAccount: ConnectedAccountObjectMetadata;
 
   @FieldMetadata({
+    // This will be a type select later : email, sms, chat
     type: FieldMetadataType.TEXT,
     label: 'Type',
     description: 'Type',
@@ -52,4 +56,17 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   type: string;
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Message Threads',
+    description: 'Threads from the channel.',
+    icon: 'IconMessage',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'messageThread',
+  })
+  @IsNullable()
+  messageThreads: MessageThreadObjectMetadata[];
 }
