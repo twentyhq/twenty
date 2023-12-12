@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
+import { OpenAPIV3 } from 'openapi-types';
 
 import { TokenService } from 'src/core/auth/services/token.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
@@ -8,7 +9,6 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { baseSchema } from 'src/core/open-api/utils/base-schema.utils';
 import {
   computeManyResultPath,
-  computeOpenApiPath,
   computeSingleResultPath,
 } from 'src/core/open-api/utils/path.utils';
 import { getErrorResponses } from 'src/core/open-api/utils/get-error-responses.utils';
@@ -23,10 +23,8 @@ export class OpenApiService {
     private readonly environmentService: EnvironmentService,
   ) {}
 
-  async generateSchema(request: Request) {
+  async generateSchema(request: Request): Promise<OpenAPIV3.Document> {
     const schema = baseSchema(this.environmentService.getFrontBaseUrl());
-
-    schema.paths = { '/open-api': computeOpenApiPath() };
 
     let objectMetadataItems;
 
@@ -47,11 +45,12 @@ export class OpenApiService {
       paths[`/rest/${item.namePlural}/{id}`] = computeSingleResultPath(item);
 
       return paths;
-    }, {});
+    }, {} as OpenAPIV3.PathsObject);
 
     schema.tags = computeSchemaTags(objectMetadataItems);
 
     schema.components = {
+      ...schema.components, // components.securitySchemes is defined in base Schema
       schemas: computeSchemaComponents(objectMetadataItems),
       responses: {
         '400': getErrorResponses('Invalid request'),

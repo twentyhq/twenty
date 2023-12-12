@@ -1,36 +1,20 @@
+import { OpenAPIV3 } from 'openapi-types';
+
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { capitalize } from 'src/utils/capitalize';
 
-type Property = {
-  type: string;
-  properties: Record<string, { type: string }>;
-  items?: {
-    type: string;
-    properties: { node: { type: string } };
-  };
+type Property = OpenAPIV3.SchemaObject;
+
+type Properties = {
+  [name: string]: Property;
 };
-
-type Properties = Record<string, Property>;
-
-type Example = Record<string, string>;
-
-type Required = string[];
-
-type Schema = {
-  type: string;
-  example: Example;
-  required?: Required;
-  properties: Properties;
-};
-
-type SchemaComponents = Record<string, Schema>;
 
 const getSchemaComponentsProperties = (
   item: ObjectMetadataEntity,
 ): Properties => {
   return item.fields.reduce((node, field) => {
-    const itemProperty = {} as Property;
+    let itemProperty = {} as Property;
 
     switch (field.type) {
       case FieldMetadataType.UUID:
@@ -50,12 +34,14 @@ const getSchemaComponentsProperties = (
         itemProperty.type = 'boolean';
         break;
       case FieldMetadataType.RELATION:
-        itemProperty.type = 'array';
-        itemProperty.items = {
-          type: 'object',
-          properties: {
-            node: {
-              type: 'object',
+        itemProperty = {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              node: {
+                type: 'object',
+              },
             },
           },
         };
@@ -63,15 +49,17 @@ const getSchemaComponentsProperties = (
       case FieldMetadataType.LINK:
       case FieldMetadataType.CURRENCY:
       case FieldMetadataType.FULL_NAME:
-        itemProperty.type = 'object';
-        itemProperty.properties = Object.keys(field.targetColumnMap).reduce(
-          (properties, key) => {
-            properties[key] = { type: 'string' };
+        itemProperty = {
+          type: 'object',
+          properties: Object.keys(field.targetColumnMap).reduce(
+            (properties, key) => {
+              properties[key] = { type: 'string' };
 
-            return properties;
-          },
-          {} as Record<string, { type: string }>,
-        );
+              return properties;
+            },
+            {} as Properties,
+          ),
+        };
         break;
       default:
         itemProperty.type = 'string';
@@ -84,7 +72,7 @@ const getSchemaComponentsProperties = (
   }, {} as Properties);
 };
 
-const getRequiredFields = (item: ObjectMetadataEntity): Required => {
+const getRequiredFields = (item: ObjectMetadataEntity): string[] => {
   return item.fields.reduce((required, field) => {
     if (!field.isNullable && field.defaultValue === null) {
       required.push(field.name);
@@ -93,15 +81,17 @@ const getRequiredFields = (item: ObjectMetadataEntity): Required => {
     }
 
     return required;
-  }, [] as Required);
+  }, [] as string[]);
 };
 
-const computeSchemaComponent = (item: ObjectMetadataEntity): Schema => {
+const computeSchemaComponent = (
+  item: ObjectMetadataEntity,
+): OpenAPIV3.SchemaObject => {
   const result = {
     type: 'object',
     properties: getSchemaComponentsProperties(item),
     example: {},
-  } as Schema;
+  } as OpenAPIV3.SchemaObject;
 
   const requiredFields = getRequiredFields(item);
 
@@ -111,7 +101,7 @@ const computeSchemaComponent = (item: ObjectMetadataEntity): Schema => {
       example[requiredField] = '';
 
       return example;
-    }, {} as Example);
+    }, {} as Record<string, string>);
   }
 
   return result;
@@ -119,10 +109,10 @@ const computeSchemaComponent = (item: ObjectMetadataEntity): Schema => {
 
 export const computeSchemaComponents = (
   objectMetadataItems: ObjectMetadataEntity[],
-): SchemaComponents => {
+): Record<string, OpenAPIV3.SchemaObject> => {
   return objectMetadataItems.reduce((schemas, item) => {
     schemas[capitalize(item.nameSingular)] = computeSchemaComponent(item);
 
     return schemas;
-  }, {});
+  }, {} as Record<string, OpenAPIV3.SchemaObject>);
 };

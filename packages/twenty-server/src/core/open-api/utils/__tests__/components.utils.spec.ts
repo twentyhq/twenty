@@ -5,31 +5,33 @@ import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metada
 describe('computeSchemaComponents', () => {
   it('should compute schema components', () => {
     expect(
-      computeSchemaComponents(objectMetadataItem as ObjectMetadataEntity),
+      computeSchemaComponents([objectMetadataItem] as ObjectMetadataEntity[]),
     ).toEqual({
-      type: 'object',
-      required: ['fieldNumber'],
-      example: { fieldNumber: '' },
-      properties: {
-        fieldCurrency: {
-          properties: {
-            amountMicros: { type: 'string' },
-            currencyCode: { type: 'string' },
+      ObjectName: {
+        type: 'object',
+        required: ['fieldNumber'],
+        example: { fieldNumber: '' },
+        properties: {
+          fieldCurrency: {
+            properties: {
+              amountMicros: { type: 'string' },
+              currencyCode: { type: 'string' },
+            },
+            type: 'object',
           },
-          type: 'object',
-        },
-        fieldLink: {
-          properties: {
-            label: { type: 'string' },
-            url: { type: 'string' },
+          fieldLink: {
+            properties: {
+              label: { type: 'string' },
+              url: { type: 'string' },
+            },
+            type: 'object',
           },
-          type: 'object',
-        },
-        fieldNumber: {
-          type: 'number',
-        },
-        fieldString: {
-          type: 'string',
+          fieldNumber: {
+            type: 'number',
+          },
+          fieldString: {
+            type: 'string',
+          },
         },
       },
     });

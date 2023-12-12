@@ -1,3 +1,5 @@
+import { OpenAPIV3 } from 'openapi-types';
+
 import {
   computeDepthParameters,
   computeFilterParameters,
@@ -16,7 +18,9 @@ import {
 } from 'src/core/open-api/utils/responses.utils';
 import { getRequestBody } from 'src/core/open-api/utils/request-body.utils';
 
-export const computeManyResultPath = (item: ObjectMetadataEntity) => {
+export const computeManyResultPath = (
+  item: ObjectMetadataEntity,
+): OpenAPIV3.PathItemObject => {
   return {
     get: {
       tags: [item.namePlural],
@@ -48,10 +52,12 @@ export const computeManyResultPath = (item: ObjectMetadataEntity) => {
         '401': { $ref: '#/components/responses/401' },
       },
     },
-  };
+  } as OpenAPIV3.PathItemObject;
 };
 
-export const computeSingleResultPath = (item: ObjectMetadataEntity) => {
+export const computeSingleResultPath = (
+  item: ObjectMetadataEntity,
+): OpenAPIV3.PathItemObject => {
   return {
     get: {
       tags: [item.namePlural],
@@ -88,10 +94,10 @@ export const computeSingleResultPath = (item: ObjectMetadataEntity) => {
         '401': { $ref: '#/components/responses/401' },
       },
     },
-  };
+  } as OpenAPIV3.PathItemObject;
 };
 
-export const computeOpenApiPath = () => {
+export const computeOpenApiPath = (): OpenAPIV3.PathItemObject => {
   return {
     get: {
       tags: ['others'],
@@ -101,5 +107,5 @@ export const computeOpenApiPath = () => {
         '200': getJsonResponse(),
       },
     },
-  };
+  } as OpenAPIV3.PathItemObject;
 };

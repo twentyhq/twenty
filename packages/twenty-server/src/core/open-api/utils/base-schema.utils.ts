@@ -1,4 +1,8 @@
-export const baseSchema = (frontBaseUrl: string): { [key: string]: any } => {
+import { OpenAPIV3 } from 'openapi-types';
+
+import { computeOpenApiPath } from 'src/core/open-api/utils/path.utils';
+
+export const baseSchema = (frontBaseUrl: string): OpenAPIV3.Document => {
   return {
     openapi: '3.0.3',
     info: {
@@ -53,5 +57,6 @@ export const baseSchema = (frontBaseUrl: string): { [key: string]: any } => {
       description: 'Find out more about **Twenty**',
       url: 'https://twenty.com',
     },
+    paths: { '/open-api': computeOpenApiPath() },
   };
 };

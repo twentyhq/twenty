@@ -1,4 +1,8 @@
-export const getErrorResponses = (description: string) => {
+import { OpenAPIV3 } from 'openapi-types';
+
+export const getErrorResponses = (
+  description: string,
+): OpenAPIV3.ResponseObject => {
   return {
     description,
     content: {
