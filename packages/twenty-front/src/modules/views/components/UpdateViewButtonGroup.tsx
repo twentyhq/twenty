@@ -19,6 +19,8 @@ const StyledContainer = styled.div`
   display: inline-flex;
   margin-right: ${({ theme }) => theme.spacing(2)};
   position: relative;
+  background: ${({ theme }) => theme.color.blue};
+  border-radius: ${({ theme }) => theme.border.radius.md};
 `;
 
 export type UpdateViewButtonGroupProps = {
@@ -53,29 +55,29 @@ export const UpdateViewButtonGroup = ({
   }
 
   return (
+          <StyledContainer>
+            <ButtonGroup size="small" accent="blue">
+              <Button title="Update view" onClick={handleViewSubmit} />
     <DropdownScope dropdownScopeId={UpdateViewDropdownId}>
       <Dropdown
         dropdownHotkeyScope={hotkeyScope}
         clickableComponent={
-          <StyledContainer>
-            <ButtonGroup size="small" accent="blue">
-              <Button title="Update view" onClick={handleViewSubmit} />
-              <Button size="small" Icon={IconChevronDown} />
-            </ButtonGroup>
-          </StyledContainer>
-        }
-        dropdownComponents={
-          <>
+              <Button size="small" accent="blue" Icon={IconChevronDown} />
+            }
+            dropdownComponents={
+              <>
             <DropdownMenuItemsContainer>
               <MenuItem
                 onClick={handleCreateViewButtonClick}
                 LeftIcon={IconPlus}
                 text="Create view"
-              />
+                />
             </DropdownMenuItemsContainer>
           </>
         }
-      />
-    </DropdownScope>
+        />
+        </DropdownScope>
+        </ButtonGroup>
+      </StyledContainer>
   );
 };
