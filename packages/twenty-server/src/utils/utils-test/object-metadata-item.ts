@@ -4,24 +4,32 @@ import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metada
 export const fieldNumber = {
   name: 'fieldNumber',
   type: FieldMetadataType.NUMBER,
+  isNullable: false,
+  defaultValue: null,
   targetColumnMap: { value: 'fieldNumber' },
 };
 
 export const fieldString = {
   name: 'fieldString',
   type: FieldMetadataType.TEXT,
+  isNullable: true,
+  defaultValue: null,
   targetColumnMap: { value: 'fieldString' },
 };
 
 export const fieldLink = {
   name: 'fieldLink',
   type: FieldMetadataType.LINK,
+  isNullable: false,
+  defaultValue: { label: '', url: '' },
   targetColumnMap: { label: 'fieldLinkLabel', url: 'fieldLinkUrl' },
 };
 
 export const fieldCurrency = {
   name: 'fieldCurrency',
   type: FieldMetadataType.CURRENCY,
+  isNullable: true,
+  defaultValue: null,
   targetColumnMap: {
     amountMicros: 'fieldCurrencyAmountMicros',
     currencyCode: 'fieldCurrencyCurrencyCode',

@@ -2,12 +2,14 @@ import { computeSchemaComponents } from 'src/core/open-api/utils/components.util
 import { objectMetadataItem } from 'src/utils/utils-test/object-metadata-item';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 
-describe('components', () => {
-  describe('computeSchemaComponents', () => {
-    it('should compute schema components', () => {
-      expect(
-        computeSchemaComponents(objectMetadataItem as ObjectMetadataEntity),
-      ).toEqual({
+describe('computeSchemaComponents', () => {
+  it('should compute schema components', () => {
+    expect(
+      computeSchemaComponents(objectMetadataItem as ObjectMetadataEntity),
+    ).toEqual({
+      type: 'object',
+      required: ['fieldNumber'],
+      properties: {
         fieldCurrency: {
           properties: {
             amountMicros: { type: 'string' },
@@ -28,7 +30,7 @@ describe('components', () => {
         fieldString: {
           type: 'string',
         },
-      });
+      },
     });
   });
 });

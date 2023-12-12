@@ -45,10 +45,7 @@ export class OpenApiService {
     schema.tags = computeSchemaTags(objectMetadataItems);
 
     schema.components.schemas = objectMetadataItems.reduce((schemas, item) => {
-      schemas[capitalize(item.nameSingular)] = {
-        type: 'object',
-        properties: computeSchemaComponents(item),
-      };
+      schemas[capitalize(item.nameSingular)] = computeSchemaComponents(item);
 
       return schemas;
     }, {});
