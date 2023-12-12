@@ -1,0 +1,54 @@
+{
+  "folders": [
+    {
+      "name": "ROOT",
+      "path": "../"
+    },
+    {
+      "name": "packages/eslint-plugin-twenty",
+      "path": "../packages/eslint-plugin-twenty"
+    },
+    {
+      "name": "packages/twenty-docker",
+      "path": "../packages/twenty-docker"
+    },
+    {
+      "name": "packages/twenty-docs",
+      "path": "../packages/twenty-docs"
+    },
+    {
+      "name": "packages/twenty-front",
+      "path": "../packages/twenty-front"
+    },
+    {
+      "name": "packages/twenty-postgres",
+      "path": "../packages/twenty-postgres"
+    },
+    {
+      "name": "packages/twenty-server",
+      "path": "../packages/twenty-server"
+    },
+    {
+      "name": "packages/twenty-utils",
+      "path": "../packages/twenty-utils"
+    },
+    {
+      "name": "packages/twenty-zapier",
+      "path": "../packages/twenty-zapier"
+    },
+  ],
+  "settings": {
+    "files.exclude": {
+      "packages/": true
+    },
+    "jest.autoEnable": false,
+    "jest.disabledWorkspaceFolders": [
+      "ROOT",
+      "packages/twenty-zapier",
+      "packages/twenty-docker",
+      "packages/twenty-docs",
+      "packages/twenty-utils",
+      "packages/twenty-postgres"
+    ]
+  }
+}
