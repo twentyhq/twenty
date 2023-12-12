@@ -10,12 +10,8 @@ export class OpenApiController {
 
   @Get()
   async generateOpenApiSchema(@Req() request: Request, @Res() res: Response) {
-    try {
-      const data = await this.openApiService.generateSchema(request);
+    const data = await this.openApiService.generateSchema(request);
 
-      res.send(data);
-    } catch (err) {
-      res.status(err.response.statusCode).send(err);
-    }
+    res.send(data);
   }
 }

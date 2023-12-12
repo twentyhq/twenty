@@ -99,8 +99,6 @@ export const computeOpenApiPath = () => {
       operationId: 'GetOpenApiSchema',
       responses: {
         '200': getJsonResponse(),
-        '400': { $ref: '#/components/responses/400' },
-        '401': { $ref: '#/components/responses/401' },
       },
     },
   };

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 
@@ -25,21 +25,27 @@ export class OpenApiService {
   ) {}
 
   async generateSchema(request: Request) {
-    const workspace = await this.tokenService.validateToken(request);
-
-    const objectMetadataItems =
-      await this.objectMetadataService.findManyWithinWorkspace(workspace.id);
-
-    if (!objectMetadataItems.length) {
-      throw new BadRequestException(`No object found`);
-    }
-
     const schema = baseSchema(this.environmentService.getFrontBaseUrl());
 
+    schema.paths = { '/open-api': computeOpenApiPath() };
+
+    let objectMetadataItems;
+
+    try {
+      const workspace = await this.tokenService.validateToken(request);
+
+      objectMetadataItems =
+        await this.objectMetadataService.findManyWithinWorkspace(workspace.id);
+    } catch (err) {
+      return schema;
+    }
+
+    if (!objectMetadataItems.length) {
+      return schema;
+    }
     schema.paths = objectMetadataItems.reduce((paths, item) => {
       paths[`/rest/${item.namePlural}`] = computeManyResultPath(item);
       paths[`/rest/${item.namePlural}/{id}`] = computeSingleResultPath(item);
-      paths['/open-api'] = computeOpenApiPath();
 
       return paths;
     }, {});
@@ -52,7 +58,7 @@ export class OpenApiService {
       return schemas;
     }, {});
 
-    schema.components['responses'] = {
+    schema.components.responses = {
       '400': getErrorResponses('Invalid request'),
       '401': getErrorResponses('Unauthorized'),
     };
