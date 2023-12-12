@@ -43,7 +43,7 @@ export const computeSingleResultPath = (item: ObjectMetadataEntity) => {
       tags: [item.namePlural],
       summary: `Find One ${item.nameSingular}`,
       description: `**depth** can be provided to request your **${item.nameSingular}**`,
-      operationId: `findOneCompany${capitalize(item.nameSingular)}`,
+      operationId: `findOne${capitalize(item.nameSingular)}`,
       parameters: [computeIdPathParameter(item), computeDepthParameters(item)],
       responses: {
         '200': getSingleResultResponse200(item),
@@ -54,7 +54,7 @@ export const computeSingleResultPath = (item: ObjectMetadataEntity) => {
     delete: {
       tags: [item.namePlural],
       summary: `Delete One ${item.nameSingular}`,
-      operationId: `deleteOneCompany${capitalize(item.nameSingular)}`,
+      operationId: `deleteOne${capitalize(item.nameSingular)}`,
       parameters: [computeIdPathParameter(item)],
       responses: {
         '200': getDeleteResponse200(item),
