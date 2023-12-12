@@ -3,7 +3,7 @@ export const baseSchema = (frontBaseUrl: string): { [key: string]: any } => {
     openapi: '3.0.3',
     info: {
       title: 'Twenty Api',
-      description: `This is a twenty REST/API playground based on the OpenAPI 3.0 specification.\n\nTo use the Playground, please log to your twenty account and generate an API key here: here: ${frontBaseUrl}/settings/developers/api-keys`,
+      description: `This is a twenty REST/API playground based on the OpenAPI 3.0 specification.\n\nTo use the Playground, please log to your twenty account and generate an API key here: ${frontBaseUrl}/settings/developers/api-keys`,
       termsOfService: 'https://github.com/twentyhq/twenty?tab=coc-ov-file',
       contact: {
         email: 'felix@twenty.com',
@@ -18,6 +18,19 @@ export const baseSchema = (frontBaseUrl: string): { [key: string]: any } => {
     servers: [
       {
         url: 'http://localhost:3000',
+        description: 'Local Development',
+      },
+      {
+        url: 'https://api-main.twenty.com/',
+        description: 'Staging Development',
+      },
+      {
+        url: 'https://api.twenty.com/',
+        description: 'Production Development',
+      },
+      {
+        url: '/',
+        description: 'Current Host',
       },
     ],
     components: {
