@@ -11,7 +11,7 @@ import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metada
 import {
   getDeleteResponse200,
   getManyResultResponse200,
-  getSingleResultResponse200,
+  getSingleResultSuccessResponse,
 } from 'src/core/open-api/utils/responses.utils';
 import { getRequestBody } from 'src/core/open-api/utils/request-body.utils';
 
@@ -42,7 +42,7 @@ export const computeManyResultPath = (item: ObjectMetadataEntity) => {
       parameters: [computeDepthParameters(item)],
       requestBody: getRequestBody(item),
       responses: {
-        '200': getSingleResultResponse200(item),
+        '201': getSingleResultSuccessResponse(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
@@ -59,7 +59,7 @@ export const computeSingleResultPath = (item: ObjectMetadataEntity) => {
       operationId: `findOne${capitalize(item.nameSingular)}`,
       parameters: [computeIdPathParameter(item), computeDepthParameters(item)],
       responses: {
-        '200': getSingleResultResponse200(item),
+        '200': getSingleResultSuccessResponse(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
@@ -82,7 +82,7 @@ export const computeSingleResultPath = (item: ObjectMetadataEntity) => {
       parameters: [computeIdPathParameter(item), computeDepthParameters(item)],
       requestBody: getRequestBody(item),
       responses: {
-        '200': getSingleResultResponse200(item),
+        '200': getSingleResultSuccessResponse(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },

@@ -39,7 +39,7 @@ export const getManyResultResponse200 = (item: ObjectMetadataEntity) => {
   };
 };
 
-export const getSingleResultResponse200 = (item: ObjectMetadataEntity) => {
+export const getSingleResultSuccessResponse = (item: ObjectMetadataEntity) => {
   return {
     description: 'Successful operation',
     content: {
