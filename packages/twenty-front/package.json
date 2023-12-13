@@ -30,8 +30,7 @@
     "storybook:pages:coverage": "STORYBOOK_SCOPE=pages yarn storybook:coverage",
     "graphql:data:generate": "dotenv cross-var graphql-codegen -- --config codegen.cjs",
     "graphql:metadata:generate": "dotenv cross-var graphql-codegen -- --config codegen-metadata.cjs",
-    "chromatic": "dotenv cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
-    "install": "yarn nx build eslint-plugin-twenty && yarn up eslint-plugin-twenty@file:../eslint-plugin-twenty"
+    "chromatic": "dotenv cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN"
   },
   "dependencies": {
     "@air/react-drag-to-select": "^5.0.8",
