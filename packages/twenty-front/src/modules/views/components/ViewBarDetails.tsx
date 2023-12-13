@@ -3,19 +3,26 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
-import { getOperandLabelShort } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
 import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
 import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 
-import SortOrFilterChip from './SortOrFilterChip';
+import { SortOrFilterChip } from './SortOrFilterChip';
+import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
+import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
+import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { useViewFilters } from '@/views/hooks/internal/useViewFilters';
+import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
+import { EditableSortChip } from '@/views/components/EditableSortChip';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
   rightComponent?: ReactNode;
   filterDropdownId?: string;
+  viewBarId: string;
 };
 
 const StyledBar = styled.div`
@@ -90,6 +97,7 @@ export const ViewBarDetails = ({
   hasFilterButton = false,
   rightComponent,
   filterDropdownId,
+  viewBarId
 }: ViewBarDetailsProps) => {
   const {
     currentViewSortsState,
@@ -98,7 +106,6 @@ export const ViewBarDetails = ({
     canPersistSortsSelector,
     isViewBarExpandedState,
   } = useViewScopedStates();
-  const { icons } = useLazyLoadIcons();
 
   const currentViewSorts = useRecoilValue(currentViewSortsState);
   const currentViewFilters = useRecoilValue(currentViewFiltersState);
@@ -106,13 +113,17 @@ export const ViewBarDetails = ({
   const canPersistSorts = useRecoilValue(canPersistSortsSelector);
   const isViewBarExpanded = useRecoilValue(isViewBarExpandedState);
 
-  const { resetViewBar, removeViewSort, removeViewFilter } = useViewBar();
+  const { resetViewBar } = useViewBar();
 
   const canPersistView = canPersistFilters || canPersistSorts;
 
   const handleCancelClick = () => {
     resetViewBar();
   };
+
+  const { upsertViewFilter } = useViewBar({
+    viewBarId: viewBarId,
+  });
 
   const shouldExpandViewBar =
     canPersistView ||
@@ -129,14 +140,8 @@ export const ViewBarDetails = ({
         <StyledChipcontainer>
           {currentViewSorts?.map((sort) => {
             return (
-              <SortOrFilterChip
-                key={sort.fieldMetadataId}
-                testId={sort.fieldMetadataId}
-                labelValue={sort.definition.label}
-                Icon={sort.direction === 'desc' ? IconArrowDown : IconArrowUp}
-                isSort
-                onRemove={() => removeViewSort(sort.fieldMetadataId)}
-              />
+              <EditableSortChip viewSort={sort} />
+              
             );
           })}
           {!!currentViewSorts?.length && !!currentViewFilters?.length && (
@@ -144,20 +149,19 @@ export const ViewBarDetails = ({
               <StyledSeperator />
             </StyledSeperatorContainer>
           )}
-          {currentViewFilters?.map((filter) => {
+          {currentViewFilters?.map((viewFilter) => {
             return (
-              <SortOrFilterChip
-                key={filter.fieldMetadataId}
-                testId={filter.fieldMetadataId}
-                labelKey={filter.definition.label}
-                labelValue={`${getOperandLabelShort(filter.operand)} ${
-                  filter.displayValue
-                }`}
-                Icon={icons[filter.definition.iconName]}
-                onRemove={() => {
-                  removeViewFilter(filter.fieldMetadataId);
-                }}
-              />
+              <ObjectFilterDropdownScope filterScopeId={viewFilter.fieldMetadataId}>
+                <DropdownScope dropdownScopeId={viewFilter.fieldMetadataId}>
+                  <ViewBarFilterEffect
+                    filterDropdownId={viewFilter.fieldMetadataId}
+                    onFilterSelect={upsertViewFilter}
+                  />
+                  <EditableFilterDropdownButton viewFilter={viewFilter} hotkeyScope={{
+                    scope: FiltersHotkeyScope.ObjectFilterDropdownButton,
+                  }} viewFilterDropdownId={viewFilter.fieldMetadataId} /> 
+                </DropdownScope>
+              </ObjectFilterDropdownScope>
             );
           })}
         </StyledChipcontainer>
