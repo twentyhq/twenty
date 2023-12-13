@@ -5,6 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Avatar, AvatarType } from '@/users/components/Avatar';
+import { EllipsisDisplay } from '../../../field/display/components/EllipsisDisplay';
 
 import { Chip, ChipVariant } from './Chip';
 
@@ -71,6 +72,7 @@ export const EntityChip = ({
       }
       clickable={!!linkToEntity}
       onClick={handleLinkClick}
+      rightComponent={<EllipsisDisplay />}
       className={className}
     />
   ) : (
