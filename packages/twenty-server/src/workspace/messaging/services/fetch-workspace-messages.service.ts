@@ -21,6 +21,13 @@ export class FetchWorkspaceMessagesService {
     );
   }
 
+  async fetchWorkspaceMessages(workspaceId: string): Promise<any> {
+    return await this.fetchWorkspaceMemberMessages(
+      workspaceId,
+      '20202020-0687-4c41-b707-ed1bfca972a7',
+    );
+  }
+
   async fetchWorkspaceMemberThreads(
     workspaceId: string,
     workspaceMemberId: string,
@@ -47,20 +54,78 @@ export class FetchWorkspaceMessagesService {
       userId: 'me',
     });
 
-    const threadData = threads.data.threads;
+    const threadsData = threads.data.threads;
 
-    if (!threadData) {
+    if (!threadsData) {
       return;
     }
 
     await this.saveMessageThreads(
-      threadData,
+      threadsData,
       dataSourceMetadata,
       workspaceDataSource,
       connectedAccount[0].id,
     );
 
     return threads;
+  }
+
+  async fetchWorkspaceMemberMessages(
+    workspaceId: string,
+    workspaceMemberId: string,
+  ): Promise<any> {
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        workspaceId,
+      );
+
+    const workspaceDataSource = await this.typeORMService.connectToDataSource(
+      dataSourceMetadata,
+    );
+
+    const connectedAccount = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail' AND "accountOwnerId" = $1`,
+      [workspaceMemberId],
+    );
+
+    const refreshToken = connectedAccount[0].refreshToken;
+
+    const gmail = await this.getGmailClient(refreshToken);
+
+    const messages = await gmail.users.messages.list({
+      userId: 'me',
+    });
+
+    const messagesData = messages.data.messages;
+
+    if (!messagesData) {
+      return;
+    }
+    // TODO: fetch batch request !!!
+    for (const message of messagesData) {
+      if (!message.id) {
+        continue;
+      }
+      const messageData = await gmail.users.messages.get({
+        userId: 'me',
+        id: message.id,
+      });
+
+      console.log('messageData', messageData.data.snippet);
+    }
+
+    // if (!messagesData) {
+    //   return;
+    // }
+
+    // await this.saveMessages(
+    //   messagesData,
+    //   dataSourceMetadata,
+    //   workspaceDataSource,
+    //   connectedAccount[0].id,
+    // );
+
+    return messages;
   }
 
   async getGmailClient(refreshToken) {
@@ -102,4 +167,23 @@ export class FetchWorkspaceMessagesService {
       );
     }
   }
+
+  //   async saveMessages(
+  //     threads,
+  //     dataSourceMetadata,
+  //     workspaceDataSource,
+  //     connectedAccountId,
+  //   ) {
+  //     const messageChannel = await workspaceDataSource?.query(
+  //       `SELECT * FROM ${dataSourceMetadata.schema}."messageChannel" WHERE "connectedAccountId" = $1`,
+  //       [connectedAccountId],
+  //     );
+
+  //     for (const thread of threads) {
+  //       await workspaceDataSource?.query(
+  //         `INSERT INTO ${dataSourceMetadata.schema}."message" ("externalId", "subject", "messageChannelId", "visibility") VALUES ($1, $2, $3, $4)`,
+  //         [thread.id, thread.snippet, messageChannel[0].id, 'default'],
+  //       );
+  //     }
+  //   }
 }

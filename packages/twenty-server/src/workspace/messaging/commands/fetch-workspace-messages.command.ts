@@ -22,12 +22,14 @@ export class FetchWorkspaceMessagesCommand extends CommandRunner {
     options: FetchWorkspaceMessagesOptions,
   ): Promise<void> {
     console.log('fetching messages for workspace', options.workspaceId);
-    const threads =
-      await this.fetchWorkspaceMessagesService.fetchWorkspaceThreads(
-        options.workspaceId,
-      );
 
-    console.log(threads.data.threads);
+    await this.fetchWorkspaceMessagesService.fetchWorkspaceThreads(
+      options.workspaceId,
+    );
+
+    await this.fetchWorkspaceMessagesService.fetchWorkspaceMessages(
+      options.workspaceId,
+    );
 
     return;
   }
