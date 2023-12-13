@@ -28,14 +28,15 @@ export class ApiRestService {
     try {
       return await axios.post(`${baseUrl}/graphql`, data, {
         headers: {
+          'Content-Type': 'application/json',
           Authorization: request.headers.authorization,
         },
       });
     } catch (err) {
       return {
         data: {
-          error: `AxiosError: please double check your query and your API key (to generate a new one, see here: ${this.environmentService.getFrontBaseUrl()}/settings/developers/api-keys)`,
-          status: 400,
+          error: `${err}. Please check your query.`,
+          status: err.response.status,
         },
       };
     }

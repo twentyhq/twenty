@@ -36,7 +36,6 @@ export type FloatFilter = {
   is?: IsFilter;
 };
 
-
 export type DateFilter = {
   eq?: string;
   gt?: string;
@@ -61,12 +60,21 @@ export type FullNameFilter = {
   lastName?: StringFilter;
 };
 
-export type LeafFilter = UUIDFilter | StringFilter | FloatFilter | DateFilter | CurrencyFilter | URLFilter | FullNameFilter
+export type LeafFilter =
+  | UUIDFilter
+  | StringFilter
+  | FloatFilter
+  | DateFilter
+  | CurrencyFilter
+  | URLFilter
+  | FullNameFilter;
 
-export type ObjectRecordFilter = {
-  and?: ObjectRecordFilter[];
-  or?: ObjectRecordFilter[];
-  not?: ObjectRecordFilter;
-} | {
-  [fieldName: string]: LeafFilter
-}
+export type ObjectRecordFilter =
+  | {
+      and?: ObjectRecordFilter[];
+      or?: ObjectRecordFilter[];
+      not?: ObjectRecordFilter;
+    }
+  | {
+      [fieldName: string]: LeafFilter;
+    };

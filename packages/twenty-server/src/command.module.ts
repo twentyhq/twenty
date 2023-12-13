@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { DatabaseCommandModule } from 'src/database/commands/database-command.module';
+import { FetchWorkspaceMessagesCommand } from 'src/workspace/messaging/commands/fetch-workspace-messages.command';
 
 import { AppModule } from './app.module';
 
@@ -13,6 +14,7 @@ import { WorkspaceMigrationRunnerCommandsModule } from './workspace/workspace-mi
     WorkspaceMigrationRunnerCommandsModule,
     WorkspaceSyncMetadataCommandsModule,
     DatabaseCommandModule,
+    FetchWorkspaceMessagesCommand,
   ],
 })
 export class CommandModule {}
