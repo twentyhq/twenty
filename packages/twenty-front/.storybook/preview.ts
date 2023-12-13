@@ -8,7 +8,6 @@ import { mockedUserJWT } from '../src/testing/mock-data/jwt';
 
 import { lightTheme, darkTheme } from '../src/modules/ui/theme/constants/theme';
 import 'react-loading-skeleton/dist/skeleton.css';
-import { url } from 'inspector';
 
 initialize({
   onUnhandledRequest: async (request: Request) => {
