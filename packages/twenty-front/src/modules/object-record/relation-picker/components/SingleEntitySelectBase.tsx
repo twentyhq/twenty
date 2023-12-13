@@ -6,6 +6,9 @@ import { IconPlus } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
 import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemSelectAvatar';
@@ -19,9 +22,6 @@ import { CreateButtonId, EmptyButtonId } from '../constants';
 import { useEntitySelectScroll } from '../hooks/useEntitySelectScroll';
 import { EntityForSelect } from '../types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 
 export type SingleEntitySelectBaseProps<
   CustomEntityForSelect extends EntityForSelect,
@@ -136,31 +136,36 @@ export const SingleEntitySelectBase = <
             )}
             {entitiesInDropdown?.map((entity) => (
               <SelectableList
-              selectableListId="single-entity-select-base-list"
-              selectableItemIds={[selectableItemIds]}
-              hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
-              onEnter={(_itemId) => {}}
+                selectableListId="single-entity-select-base-list"
+                selectableItemIds={[selectableItemIds]}
+                hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+                onEnter={(_itemId) => {}}
               >
-              <SelectableItem itemId={entity.id} key={entity.id}>
-              <MenuItemSelectAvatar
-                key={entity.id}
-                testId="menu-item"
-                onClick={() => onEntitySelected(entity)}
-                text={entity.name}
-                selected={selectedEntity?.id === entity.id}
-                hovered={useSelectableList({selectableListId:'single-entity-select-base-list' ,itemId: entity.id}).isSelectedItemId}
-                avatar={
-                  <Avatar
-                  avatarUrl={entity.avatarUrl}
-                  colorId={entity.id}
-                  placeholder={entity.name}
-                  size="md"
-                  type={entity.avatarType ?? 'rounded'}
+                <SelectableItem itemId={entity.id} key={entity.id}>
+                  <MenuItemSelectAvatar
+                    key={entity.id}
+                    testId="menu-item"
+                    onClick={() => onEntitySelected(entity)}
+                    text={entity.name}
+                    selected={selectedEntity?.id === entity.id}
+                    hovered={
+                      useSelectableList({
+                        selectableListId: 'single-entity-select-base-list',
+                        itemId: entity.id,
+                      }).isSelectedItemId
+                    }
+                    avatar={
+                      <Avatar
+                        avatarUrl={entity.avatarUrl}
+                        colorId={entity.id}
+                        placeholder={entity.name}
+                        size="md"
+                        type={entity.avatarType ?? 'rounded'}
+                      />
+                    }
                   />
-                }
-                />
                 </SelectableItem>
-                </SelectableList>
+              </SelectableList>
             ))}
           </>
         )}

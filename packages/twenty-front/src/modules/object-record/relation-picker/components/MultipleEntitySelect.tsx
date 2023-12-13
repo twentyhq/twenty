@@ -2,21 +2,20 @@ import { useRef } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import debounce from 'lodash.debounce';
 
+import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
 
 import { EntityForSelect } from '../types/EntityForSelect';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 
 export type EntitiesForMultipleEntitySelect<
   CustomEntityForSelect extends EntityForSelect,
@@ -76,7 +75,7 @@ export const MultipleEntitySelect = <
     },
   });
 
-  const selectableItemIds = entitiesInDropdown.map((entity) =>  entity.id);
+  const selectableItemIds = entitiesInDropdown.map((entity) => entity.id);
 
   return (
     <DropdownMenu ref={containerRef} data-select-disable>
@@ -87,35 +86,40 @@ export const MultipleEntitySelect = <
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
-      <SelectableList
-                  selectableListId="multiple-entity-select-list"
-                  selectableItemIds={[selectableItemIds]}
-                  hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
-                  onEnter={(_itemId) => {}}
-                >
-        {entitiesInDropdown?.map((entity) => (
-                      <SelectableItem itemId={entity.id} key={entity.id}>
-          <MenuItemMultiSelectAvatar
-          key={entity.id}
-          isKeySelected={useSelectableList({selectableListId:'multiple-entity-select-list' ,itemId: entity.id}).isSelectedItemId}
-          selected={value[entity.id]}
-          onSelectChange={(newCheckedValue) =>
-            onChange({ ...value, [entity.id]: newCheckedValue })
-          }
-          avatar={
-            <Avatar
-            avatarUrl={entity.avatarUrl}
-            colorId={entity.id}
-            placeholder={entity.name}
-            size="md"
-            type={entity.avatarType ?? 'rounded'}
-            />
-          }
-          text={entity.name}
-          />
-          </SelectableItem>
-            ))}
-            </SelectableList>
+        <SelectableList
+          selectableListId="multiple-entity-select-list"
+          selectableItemIds={[selectableItemIds]}
+          hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+          onEnter={(_itemId) => {}}
+        >
+          {entitiesInDropdown?.map((entity) => (
+            <SelectableItem itemId={entity.id} key={entity.id}>
+              <MenuItemMultiSelectAvatar
+                key={entity.id}
+                isKeySelected={
+                  useSelectableList({
+                    selectableListId: 'multiple-entity-select-list',
+                    itemId: entity.id,
+                  }).isSelectedItemId
+                }
+                selected={value[entity.id]}
+                onSelectChange={(newCheckedValue) =>
+                  onChange({ ...value, [entity.id]: newCheckedValue })
+                }
+                avatar={
+                  <Avatar
+                    avatarUrl={entity.avatarUrl}
+                    colorId={entity.id}
+                    placeholder={entity.name}
+                    size="md"
+                    type={entity.avatarType ?? 'rounded'}
+                  />
+                }
+                text={entity.name}
+              />
+            </SelectableItem>
+          ))}
+        </SelectableList>
         {entitiesInDropdown?.length === 0 && <MenuItem text="No result" />}
       </DropdownMenuItemsContainer>
     </DropdownMenu>

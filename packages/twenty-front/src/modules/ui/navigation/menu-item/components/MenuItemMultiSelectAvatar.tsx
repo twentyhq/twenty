@@ -38,7 +38,11 @@ export const MenuItemMultiSelectAvatar = ({
   };
 
   return (
-    <StyledMenuItemBase className={className} onClick={handleOnClick} isKeySelected={isKeySelected}>
+    <StyledMenuItemBase
+      className={className}
+      onClick={handleOnClick}
+      isKeySelected={isKeySelected}
+    >
       <StyledLeftContentWithCheckboxContainer>
         <Checkbox checked={selected} />
         <StyledMenuItemLeftContent>

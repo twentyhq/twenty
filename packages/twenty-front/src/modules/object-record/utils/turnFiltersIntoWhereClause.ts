@@ -115,7 +115,6 @@ export const turnFiltersIntoObjectRecordFilters = (
           );
         }
 
-        // eslint-disable-next-line no-case-declarations
         const parsedRecordIds = JSON.parse(rawUIFilter.value) as string[];
 
         if (parsedRecordIds.length > 0) {

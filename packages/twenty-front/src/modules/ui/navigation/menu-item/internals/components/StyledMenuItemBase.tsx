@@ -16,8 +16,13 @@ export const StyledMenuItemBase = styled.li<MenuItemBaseProps>`
 
   align-items: center;
 
+  background: ${({ isKeySelected, theme }) =>
+    isKeySelected
+      ? theme.background.transparent.light
+      : theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   cursor: pointer;
+
   display: flex;
 
   flex-direction: row;
@@ -27,12 +32,9 @@ export const StyledMenuItemBase = styled.li<MenuItemBaseProps>`
   gap: ${({ theme }) => theme.spacing(2)};
 
   height: calc(32px - 2 * var(--vertical-padding));
-
   justify-content: space-between;
-  padding: var(--vertical-padding) var(--horizontal-padding);
 
-  background: ${({ isKeySelected, theme }) =>
-  isKeySelected ? theme.background.transparent.light : theme.background.primary};
+  padding: var(--vertical-padding) var(--horizontal-padding);
 
   ${hoverBackground};
 

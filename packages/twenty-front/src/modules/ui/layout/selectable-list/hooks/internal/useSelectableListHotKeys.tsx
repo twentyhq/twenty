@@ -93,8 +93,7 @@ export const useSelectableListHotKeys = (
 
         const nextId = computeNextId(direction);
 
-        if(!selectedItemId || (selectedItemId && selectedItemId!==nextId))
-        {
+        if (!selectedItemId || (selectedItemId && selectedItemId !== nextId)) {
           if (nextId) {
             const { isSelectedItemIdSelector } = getSelectableListScopedStates({
               selectableListScopeId: scopeId,
@@ -103,7 +102,7 @@ export const useSelectableListHotKeys = (
             set(isSelectedItemIdSelector, true);
             set(selectedItemIdState, nextId);
           }
-  
+
           if (selectedItemId) {
             const { isSelectedItemIdSelector } = getSelectableListScopedStates({
               selectableListScopeId: scopeId,
