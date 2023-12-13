@@ -60,9 +60,8 @@ export class WorkspaceFactory {
     }
 
     // Get typeDefs from cache
-    let typeDefs = await this.workspaceSchemaStorageService.getTypeDefs(
-      workspaceId,
-    );
+    let typeDefs =
+      await this.workspaceSchemaStorageService.getTypeDefs(workspaceId);
     let usedScalarNames =
       await this.workspaceSchemaStorageService.getUsedScalarNames(workspaceId);
 

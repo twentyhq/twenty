@@ -3,10 +3,10 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { Company } from '@/companies/types/Company';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { turnFiltersIntoWhereClause } from '@/object-record/object-filter-dropdown/utils/turnFiltersIntoWhereClause';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
 import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
+import { turnFiltersIntoObjectRecordFilters } from '@/object-record/utils/turnFiltersIntoWhereClause';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 
@@ -43,7 +43,7 @@ export const useObjectRecordBoard = () => {
     savedPipelineStepsState,
   );
 
-  const filter = turnFiltersIntoWhereClause(
+  const filter = turnFiltersIntoObjectRecordFilters(
     boardFilters,
     foundObjectMetadataItem?.fields ?? [],
   );
@@ -70,8 +70,8 @@ export const useObjectRecordBoard = () => {
   } = useFindManyRecords<Opportunity>({
     skip: !savedPipelineSteps.length,
     objectNameSingular: 'opportunity',
-    filter: filter,
-    orderBy: orderBy as any, // TODO: finish typing
+    filter,
+    orderBy,
     onCompleted: useCallback(() => {
       setIsBoardLoaded(true);
     }, [setIsBoardLoaded]),

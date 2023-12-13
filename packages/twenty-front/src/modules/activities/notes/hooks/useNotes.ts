@@ -1,4 +1,5 @@
 import { Note } from '@/activities/types/Note';
+import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
 import { ActivityTargetableEntity } from '../../types/ActivityTargetableEntity';
@@ -19,7 +20,7 @@ export const useNotes = (entity: ActivityTargetableEntity) => {
   };
   const orderBy = {
     createdAt: 'AscNullsFirst',
-  } as any; // TODO: finish typing
+  } as OrderByField;
 
   const { records: notes } = useFindManyRecords({
     skip: !activityTargets?.length,
