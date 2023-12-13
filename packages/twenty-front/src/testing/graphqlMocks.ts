@@ -4,13 +4,11 @@ import { graphql, HttpResponse } from 'msw';
 import { CREATE_EVENT } from '@/analytics/graphql/queries/createEvent';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { mockedActivities } from '~/testing/mock-data/activities';
 
 import { mockedCompaniesData } from './mock-data/companies';
 import { mockedObjectMetadataItems } from './mock-data/metadata';
 import { mockedPeopleData } from './mock-data/people';
-import { mockedUsersData } from './mock-data/users';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 import { mockedViewsData } from './mock-data/views';
 
@@ -20,13 +18,13 @@ const metadataGraphql = graphql.link(
 
 export const graphqlMocks = {
   handlers: [
-    graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
-      return HttpResponse.json({
-        data: {
-          currentUser: mockedUsersData[0],
-        },
-      });
-    }),
+    // graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
+    //   return HttpResponse.json({
+    //     data: {
+    //       currentUser: mockedUsersData[0],
+    //     },
+    //   });
+    // }),
     graphql.mutation(getOperationName(CREATE_EVENT) ?? '', () => {
       return HttpResponse.json({
         data: {

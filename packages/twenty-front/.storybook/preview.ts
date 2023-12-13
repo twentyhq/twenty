@@ -8,22 +8,22 @@ import { mockedUserJWT } from '../src/testing/mock-data/jwt';
 
 import { lightTheme, darkTheme } from '../src/modules/ui/theme/constants/theme';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { url } from 'inspector';
 
-initialize({ onUnhandledRequest:  ({ method, url }) => {
-  if (url.endsWith('.ts') || url.endsWith('.tsx') || url.endsWith('.js') || url.endsWith('.jsx')) {
-    return;
-  }
+initialize({
+  onUnhandledRequest: async (request: Request) => {
+    const fileExtensionsToIgnore = /\.(ts|tsx|js|jsx|svg|css|png)(\?v=[a-zA-Z0-9]+)?/;
 
-  if (url.endsWith('.svg')) {
-    return;
-  }
+    if (fileExtensionsToIgnore.test(request.url)) {
+      return;
+    }
 
-  if (url.endsWith('.css')) {
-    return;
-  }
-  
-  console.warn(`Unhandled ${method} request to ${url}. This request should be mocked with MSW`);
-},});
+    const requestBody = await request.json();
+    console.warn(`Unhandled ${request.method} request to ${request.url} 
+      with payload ${JSON.stringify(requestBody)}\n
+      This request should be mocked with MSW`);
+  },
+});
 
 const preview: Preview = {
   decorators: [
