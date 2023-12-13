@@ -11,12 +11,18 @@ import { ObjectFilterDropdownOperandSelect } from './ObjectFilterDropdownOperand
 import { ObjectFilterDropdownRecordSelect } from './ObjectFilterDropdownRecordSelect';
 import { ObjectFilterDropdownTextSearchInput } from './ObjectFilterDropdownTextSearchInput';
 
-export const MultipleFiltersDropdownContent = () => {
+type MultipleFiltersDropdownContentProps = {
+  filterDropdownId?: string;
+};
+
+export const MultipleFiltersDropdownContent = ({
+  filterDropdownId,
+}: MultipleFiltersDropdownContentProps) => {
   const {
     isObjectFilterDropdownOperandSelectUnfolded,
     filterDefinitionUsedInDropdown,
     selectedOperandInDropdown,
-  } = useFilterDropdown();
+  } = useFilterDropdown({ filterDropdownId });
 
   return (
     <>

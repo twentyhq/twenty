@@ -56,6 +56,7 @@ export const Dropdown = ({
     useDropdown();
 
   const offsetMiddlewares = [];
+
   if (dropdownOffset.x) {
     offsetMiddlewares.push(offset({ crossAxis: dropdownOffset.x }));
   }

@@ -9,7 +9,7 @@ import {
 import { formatFieldValue } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/filter-utils/format-field-values.utils';
 import { FieldValue } from 'src/core/api-rest/types/api-rest-field-value.type';
 
-enum Conjunctions {
+export enum Conjunctions {
   or = 'or',
   and = 'and',
   not = 'not',
