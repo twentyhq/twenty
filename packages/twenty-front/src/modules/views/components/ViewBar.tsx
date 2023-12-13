@@ -97,6 +97,7 @@ export const ViewBar = ({
           <ViewBarDetails
             filterDropdownId={filterDropdownId}
             hasFilterButton
+            viewBarId={viewBarId}
             rightComponent={
               <UpdateViewButtonGroup
                 onViewEditModeChange={openOptionsDropdownButton}
