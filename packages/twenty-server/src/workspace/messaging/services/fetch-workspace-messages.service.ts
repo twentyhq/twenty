@@ -25,11 +25,6 @@ export class FetchWorkspaceMessagesService {
     workspaceId: string,
     workspaceMemberId: string,
   ): Promise<any> {
-    const gmailClientId = this.environmentService.getAuthGoogleClientId();
-
-    const gmailClientSecret =
-      this.environmentService.getAuthGoogleClientSecret();
-
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
@@ -44,25 +39,9 @@ export class FetchWorkspaceMessagesService {
       [workspaceMemberId],
     );
 
-    const accessToken = connectedAccount[0].accessToken;
     const refreshToken = connectedAccount[0].refreshToken;
 
-    const oAuth2Client = new google.auth.OAuth2(
-      gmailClientId,
-      gmailClientSecret,
-      'http://localhost:3000/auth/google-gmail',
-    );
-
-    oAuth2Client.setCredentials({
-      access_token: accessToken,
-      refresh_token: refreshToken,
-      scope: 'https://www.googleapis.com/auth/gmail.readonly',
-    });
-
-    const gmail = google.gmail({
-      version: 'v1',
-      auth: oAuth2Client,
-    });
+    const gmail = await this.getGmailClient(refreshToken);
 
     const threads = await gmail.users.threads.list({
       userId: 'me',
@@ -74,18 +53,53 @@ export class FetchWorkspaceMessagesService {
       return;
     }
 
-    const messageChannel = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."messageChannel" WHERE "connectedAccountId" = $1`,
-      [connectedAccount[0].id],
+    await this.saveMessageThreads(
+      threadData,
+      dataSourceMetadata,
+      workspaceDataSource,
+      connectedAccount[0].id,
     );
 
-    for (const thread of threadData) {
+    return threads;
+  }
+
+  async getGmailClient(refreshToken) {
+    const gmailClientId = this.environmentService.getAuthGoogleClientId();
+
+    const gmailClientSecret =
+      this.environmentService.getAuthGoogleClientSecret();
+
+    const oAuth2Client = new google.auth.OAuth2(
+      gmailClientId,
+      gmailClientSecret,
+    );
+
+    oAuth2Client.setCredentials({
+      refresh_token: refreshToken,
+    });
+
+    return google.gmail({
+      version: 'v1',
+      auth: oAuth2Client,
+    });
+  }
+
+  async saveMessageThreads(
+    threads,
+    dataSourceMetadata,
+    workspaceDataSource,
+    connectedAccountId,
+  ) {
+    const messageChannel = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."messageChannel" WHERE "connectedAccountId" = $1`,
+      [connectedAccountId],
+    );
+
+    for (const thread of threads) {
       await workspaceDataSource?.query(
         `INSERT INTO ${dataSourceMetadata.schema}."messageThread" ("externalId", "subject", "messageChannelId", "visibility") VALUES ($1, $2, $3, $4)`,
         [thread.id, thread.snippet, messageChannel[0].id, 'default'],
       );
     }
-
-    return threads;
   }
 }
