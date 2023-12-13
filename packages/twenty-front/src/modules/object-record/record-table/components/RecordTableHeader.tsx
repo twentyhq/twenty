@@ -27,7 +27,6 @@ const StyledPlusIconHeaderCell = styled.th<{ isTableWiderThanScreen: boolean }>`
   padding-left: ${theme.spacing(3)};
   `;
   }};
-  border-bottom: none !important;
   border-left: none !important;
   min-width: 32px;
   ${({ isTableWiderThanScreen, theme }) =>
