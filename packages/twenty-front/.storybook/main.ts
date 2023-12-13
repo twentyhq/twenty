@@ -1,9 +1,4 @@
-import { ThemeProvider } from '@emotion/react';
-import { withThemeFromJSXProvider } from '@storybook/addon-themes';
-import { ReactRenderer } from '@storybook/react';
 import type { StorybookConfig } from '@storybook/react-vite';
-import { lightTheme, darkTheme } from '../src/modules/ui/theme/constants/theme';
-import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 
 const computeStoriesGlob = () => {
   if (process.env.STORYBOOK_SCOPE === 'pages') {
