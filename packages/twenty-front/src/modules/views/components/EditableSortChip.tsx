@@ -1,5 +1,4 @@
 import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
-import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { ViewSort } from '@/views/types/ViewSort';
@@ -9,7 +8,6 @@ type EditableSortChipProps = {
 };
 
 export const EditableSortChip = ({ viewSort }: EditableSortChipProps) => {
-  const { icons } = useLazyLoadIcons();
   const { removeViewSort, upsertViewSort } = useViewBar();
 
   const handleRemoveClick = () => {
