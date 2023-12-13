@@ -9,7 +9,7 @@ import {
 
 import { checkFields } from 'src/core/api-rest/api-rest-query-builder/utils/fields.utils';
 
-const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
+export const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
 
 @Injectable()
 export class OrderByInputFactory {

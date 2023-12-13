@@ -1,11 +1,15 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import {
   ObjectMetadata,
   IsSystem,
   FieldMetadata,
   IsNullable,
+  RelationMetadata,
+  Gate,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { MessageRecipientObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-recipient.object-metadata';
 import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-thread.object-metadata';
 
 @ObjectMetadata({
@@ -14,6 +18,9 @@ import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metada
   labelPlural: 'Messages',
   description: 'Message',
   icon: 'IconMessage',
+})
+@Gate({
+  featureFlag: 'IS_MESSAGING_ENABLED',
 })
 @IsSystem()
 export class MessageObjectMetadata extends BaseObjectMetadata {
@@ -73,4 +80,18 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   body: string;
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Message Recipients',
+    description: 'Message Recipients',
+    icon: 'IconUserCircle',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'messageRecipient',
+    inverseSideFieldName: 'message',
+  })
+  @IsNullable()
+  messageRecipients: MessageRecipientObjectMetadata[];
 }
