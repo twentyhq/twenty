@@ -21,6 +21,7 @@ import { DropdownMenu } from './DropdownMenu';
 import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
 
 type DropdownProps = {
+  className?: string;
   clickableComponent?: JSX.Element | JSX.Element[];
   dropdownComponents: JSX.Element | JSX.Element[];
   hotkey?: {
@@ -37,6 +38,7 @@ type DropdownProps = {
 };
 
 export const Dropdown = ({
+  className,
   clickableComponent,
   dropdownComponents,
   dropdownMenuWidth,
@@ -97,7 +99,7 @@ export const Dropdown = ({
   );
 
   return (
-    <div ref={containerRef}>
+    <div ref={containerRef} className={className}>
       {clickableComponent && (
         <div ref={refs.setReference} onClick={toggleDropdown}>
           {clickableComponent}

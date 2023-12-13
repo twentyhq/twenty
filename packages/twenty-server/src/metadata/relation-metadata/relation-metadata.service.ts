@@ -64,9 +64,11 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
   }
 
   override async createOne(
-    record: CreateRelationInput,
+    relationMetadataInput: CreateRelationInput,
   ): Promise<RelationMetadataEntity> {
-    if (record.relationType === RelationMetadataType.MANY_TO_MANY) {
+    if (
+      relationMetadataInput.relationType === RelationMetadataType.MANY_TO_MANY
+    ) {
       throw new BadRequestException(
         'Many to many relations are not supported yet',
       );
@@ -87,10 +89,13 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
 
     const objectMetadataEntries =
       await this.objectMetadataService.findManyWithinWorkspace(
-        record.workspaceId,
+        relationMetadataInput.workspaceId,
         {
           where: {
-            id: In([record.fromObjectMetadataId, record.toObjectMetadataId]),
+            id: In([
+              relationMetadataInput.fromObjectMetadataId,
+              relationMetadataInput.toObjectMetadataId,
+            ]),
           },
         },
       );
@@ -102,16 +107,18 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     }, {} as { [key: string]: ObjectMetadataEntity });
 
     if (
-      objectMetadataMap[record.fromObjectMetadataId] === undefined ||
-      objectMetadataMap[record.toObjectMetadataId] === undefined
+      objectMetadataMap[relationMetadataInput.fromObjectMetadataId] ===
+        undefined ||
+      objectMetadataMap[relationMetadataInput.toObjectMetadataId] === undefined
     ) {
       throw new NotFoundException(
         'Can\t find an existing object matching fromObjectMetadataId or toObjectMetadataId',
       );
     }
 
-    const baseColumnName = `${camelCase(record.toName)}Id`;
-    const isToCustom = objectMetadataMap[record.toObjectMetadataId].isCustom;
+    const baseColumnName = `${camelCase(relationMetadataInput.toName)}Id`;
+    const isToCustom =
+      objectMetadataMap[relationMetadataInput.toObjectMetadataId].isCustom;
     const foreignKeyColumnName = isToCustom
       ? createCustomColumnName(baseColumnName)
       : baseColumnName;
@@ -119,40 +126,40 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     const createdFields = await this.fieldMetadataService.createMany([
       // FROM
       {
-        name: record.fromName,
-        label: record.fromLabel,
-        description: record.fromDescription,
-        icon: record.fromIcon,
+        name: relationMetadataInput.fromName,
+        label: relationMetadataInput.fromLabel,
+        description: relationMetadataInput.fromDescription,
+        icon: relationMetadataInput.fromIcon,
         isCustom: true,
         targetColumnMap: {},
         isActive: true,
         type: FieldMetadataType.RELATION,
-        objectMetadataId: record.fromObjectMetadataId,
-        workspaceId: record.workspaceId,
+        objectMetadataId: relationMetadataInput.fromObjectMetadataId,
+        workspaceId: relationMetadataInput.workspaceId,
       },
       // TO
       {
-        name: record.toName,
-        label: record.toLabel,
-        description: record.toDescription,
-        icon: record.toIcon,
+        name: relationMetadataInput.toName,
+        label: relationMetadataInput.toLabel,
+        description: relationMetadataInput.toDescription,
+        icon: relationMetadataInput.toIcon,
         isCustom: true,
         targetColumnMap: {
           value: isToCustom
-            ? createCustomColumnName(record.toName)
-            : record.toName,
+            ? createCustomColumnName(relationMetadataInput.toName)
+            : relationMetadataInput.toName,
         },
         isActive: true,
         type: FieldMetadataType.RELATION,
-        objectMetadataId: record.toObjectMetadataId,
-        workspaceId: record.workspaceId,
+        objectMetadataId: relationMetadataInput.toObjectMetadataId,
+        workspaceId: relationMetadataInput.workspaceId,
       },
       // FOREIGN KEY
       {
         name: baseColumnName,
-        label: `${record.toLabel} Foreign Key`,
-        description: record.toDescription
-          ? `${record.toDescription} Foreign Key`
+        label: `${relationMetadataInput.toLabel} Foreign Key`,
+        description: relationMetadataInput.toDescription
+          ? `${relationMetadataInput.toDescription} Foreign Key`
           : undefined,
         icon: undefined,
         isCustom: true,
@@ -163,8 +170,8 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         // Should not be visible on the front side
         isSystem: true,
         type: FieldMetadataType.UUID,
-        objectMetadataId: record.toObjectMetadataId,
-        workspaceId: record.workspaceId,
+        objectMetadataId: relationMetadataInput.toObjectMetadataId,
+        workspaceId: relationMetadataInput.workspaceId,
       },
     ]);
 
@@ -177,17 +184,18 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     }, {});
 
     const createdRelationMetadata = await super.createOne({
-      ...record,
-      fromFieldMetadataId: createdFieldMap[record.fromName].id,
-      toFieldMetadataId: createdFieldMap[record.toName].id,
+      ...relationMetadataInput,
+      fromFieldMetadataId: createdFieldMap[relationMetadataInput.fromName].id,
+      toFieldMetadataId: createdFieldMap[relationMetadataInput.toName].id,
     });
 
     await this.workspaceMigrationService.createCustomMigration(
-      record.workspaceId,
+      relationMetadataInput.workspaceId,
       [
         // Create the column
         {
-          name: objectMetadataMap[record.toObjectMetadataId].targetTableName,
+          name: objectMetadataMap[relationMetadataInput.toObjectMetadataId]
+            .targetTableName,
           action: 'alter',
           columns: [
             {
@@ -199,16 +207,20 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         },
         // Create the foreignKey
         {
-          name: objectMetadataMap[record.toObjectMetadataId].targetTableName,
+          name: objectMetadataMap[relationMetadataInput.toObjectMetadataId]
+            .targetTableName,
           action: 'alter',
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.RELATION,
               columnName: foreignKeyColumnName,
               referencedTableName:
-                objectMetadataMap[record.fromObjectMetadataId].targetTableName,
+                objectMetadataMap[relationMetadataInput.fromObjectMetadataId]
+                  .targetTableName,
               referencedTableColumnName: 'id',
-              isUnique: record.relationType === RelationMetadataType.ONE_TO_ONE,
+              isUnique:
+                relationMetadataInput.relationType ===
+                RelationMetadataType.ONE_TO_ONE,
             },
           ],
         },
@@ -216,7 +228,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     );
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-      record.workspaceId,
+      relationMetadataInput.workspaceId,
     );
 
     return createdRelationMetadata;

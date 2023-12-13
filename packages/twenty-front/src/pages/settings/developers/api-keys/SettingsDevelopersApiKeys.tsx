@@ -42,11 +42,9 @@ export const SettingsDevelopersApiKeys = () => {
 
   const [apiKeys, setApiKeys] = useState<Array<ApiFieldItem>>([]);
 
-  const filter = { revokedAt: { is: 'NULL' } };
-
   useFindManyRecords({
     objectNameSingular: 'apiKey',
-    filter,
+    filter: { revokedAt: { is: 'NULL' } },
     orderBy: {},
     onCompleted: (data) => {
       setApiKeys(

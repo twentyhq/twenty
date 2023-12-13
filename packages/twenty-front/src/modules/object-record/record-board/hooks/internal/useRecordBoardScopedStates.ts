@@ -2,12 +2,12 @@ import { RecordBoardScopeInternalContext } from '@/object-record/record-board/sc
 import { getRecordBoardScopedStates } from '@/object-record/record-board/utils/getRecordBoardScopedStates';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
-type useRecordBoardScopedStates = {
+type useRecordBoardScopedStatesProps = {
   recordBoardScopeId?: string;
 };
 
 export const useRecordBoardScopedStates = (
-  args?: useRecordBoardScopedStates,
+  args?: useRecordBoardScopedStatesProps,
 ) => {
   const { recordBoardScopeId } = args ?? {};
 

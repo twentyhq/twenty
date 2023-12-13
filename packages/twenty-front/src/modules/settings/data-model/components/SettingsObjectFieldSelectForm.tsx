@@ -3,7 +3,9 @@ import { DropResult } from '@hello-pangea/dnd';
 import { v4 } from 'uuid';
 
 import { IconPlus } from '@/ui/display/icon';
-import { Button } from '@/ui/input/button/components/Button';
+import { LightButton } from '@/ui/input/button/components/LightButton';
+import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { CardFooter } from '@/ui/layout/card/components/CardFooter';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { mainColorNames, ThemeColor } from '@/ui/theme/constants/colors';
@@ -20,8 +22,7 @@ type SettingsObjectFieldSelectFormProps = {
   values: SettingsObjectFieldSelectFormValues;
 };
 
-const StyledContainer = styled.div`
-  padding: ${({ theme }) => theme.spacing(4)};
+const StyledContainer = styled(CardContent)`
   padding-bottom: ${({ theme }) => theme.spacing(3.5)};
 `;
 
@@ -35,13 +36,14 @@ const StyledLabel = styled.span`
   text-transform: uppercase;
 `;
 
-const StyledButton = styled(Button)`
-  border-bottom: 0;
-  border-left: 0;
-  border-radius: 0;
-  border-right: 0;
+const StyledFooter = styled(CardFooter)`
+  background-color: ${({ theme }) => theme.background.secondary};
+  padding: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledButton = styled(LightButton)`
   justify-content: center;
-  text-align: center;
+  width: 100%;
 `;
 
 const getNextColor = (currentColor: ThemeColor) => {
@@ -117,21 +119,22 @@ export const SettingsObjectFieldSelectForm = ({
           }
         />
       </StyledContainer>
-      <StyledButton
-        title="Add option"
-        fullWidth
-        Icon={IconPlus}
-        onClick={() =>
-          onChange([
-            ...values,
-            {
-              color: getNextColor(values[values.length - 1].color),
-              label: `Option ${values.length + 1}`,
-              value: v4(),
-            },
-          ])
-        }
-      />
+      <StyledFooter>
+        <StyledButton
+          title="Add option"
+          Icon={IconPlus}
+          onClick={() =>
+            onChange([
+              ...values,
+              {
+                color: getNextColor(values[values.length - 1].color),
+                label: `Option ${values.length + 1}`,
+                value: v4(),
+              },
+            ])
+          }
+        />
+      </StyledFooter>
     </>
   );
 };

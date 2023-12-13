@@ -77,6 +77,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
         description="The field's type and values."
       />
       <Select
+        fullWidth
         disabled={!!fieldMetadata?.id}
         dropdownScopeId="object-field-type-select"
         value={values?.type}

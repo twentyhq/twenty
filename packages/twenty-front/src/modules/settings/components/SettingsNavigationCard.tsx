@@ -6,6 +6,7 @@ import { IconChevronRight } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { SoonPill } from '@/ui/display/pill/components/SoonPill';
 import { Card } from '@/ui/layout/card/components/Card';
+import { CardContent } from '@/ui/layout/card/components/CardContent';
 
 type SettingsNavigationCardProps = {
   children: ReactNode;
@@ -23,11 +24,13 @@ const StyledCard = styled(Card)<{
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: ${({ disabled, onClick }) =>
     disabled ? 'not-allowed' : onClick ? 'pointer' : 'default'};
+`;
+
+const StyledCardContent = styled(CardContent)`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(2)};
-  padding-bottom: ${({ theme }) => theme.spacing(4)};
-  padding-top: ${({ theme }) => theme.spacing(4)};
+  padding: ${({ theme }) => theme.spacing(4, 3)};
 `;
 
 const StyledHeader = styled.div`
@@ -65,15 +68,17 @@ export const SettingsNavigationCard = ({
 
   return (
     <StyledCard disabled={disabled} onClick={onClick}>
-      <StyledHeader>
-        <Icon size={theme.icon.size.lg} stroke={theme.icon.stroke.sm} />
-        <StyledTitle>
-          {title}
-          {hasSoonPill && <SoonPill />}
-        </StyledTitle>
-        <StyledIconChevronRight size={theme.icon.size.sm} />
-      </StyledHeader>
-      <StyledDescription>{children}</StyledDescription>
+      <StyledCardContent>
+        <StyledHeader>
+          <Icon size={theme.icon.size.lg} stroke={theme.icon.stroke.sm} />
+          <StyledTitle>
+            {title}
+            {hasSoonPill && <SoonPill />}
+          </StyledTitle>
+          <StyledIconChevronRight size={theme.icon.size.sm} />
+        </StyledHeader>
+        <StyledDescription>{children}</StyledDescription>
+      </StyledCardContent>
     </StyledCard>
   );
 };

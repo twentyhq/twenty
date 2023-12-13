@@ -7,6 +7,11 @@ export class SaveConnectedAccountInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
+  handle: string;
+
+  @Field(() => String)
+  @IsNotEmpty()
+  @IsString()
   workspaceMemberId: string;
 
   @Field(() => String)
@@ -17,7 +22,7 @@ export class SaveConnectedAccountInput {
   @Field(() => String)
   @IsNotEmpty()
   @IsString()
-  type: string;
+  provider: string;
 
   @Field(() => String)
   @IsNotEmpty()
