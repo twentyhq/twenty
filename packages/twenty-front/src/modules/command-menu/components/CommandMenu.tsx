@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
@@ -90,9 +90,7 @@ export const CommandMenu = () => {
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [search, setSearch] = useState('');
-  const [commandMenuCommands, setCommandMenuCommands] = useRecoilState(
-    commandMenuCommandsState,
-  );
+  const [commandMenuCommands] = useRecoilState(commandMenuCommandsState);
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,17 +118,6 @@ export const CommandMenu = () => {
       ],
     },
     limit: 3,
-    onCompleted: (data) => {
-      const commands: Command[] = data.edges.map(({ node: person }) => ({
-        id: person.id,
-        label: `${person.name.firstName} ${person.name.lastName}`,
-        to: `object/person/${person.id}`,
-        type: CommandType.Other,
-      }));
-      setCommandMenuCommands((prevCommands) => {
-        return prevCommands.concat(commands);
-      });
-    },
   });
 
   const { records: companies } = useFindManyRecords<Company>({
@@ -140,17 +127,6 @@ export const CommandMenu = () => {
       name: { ilike: `%${search}%` },
     },
     limit: 3,
-    onCompleted: (data) => {
-      const commands: Command[] = data.edges.map(({ node: company }) => ({
-        id: company.id,
-        label: company.name,
-        to: `object/company/${company.id}`,
-        type: CommandType.Other,
-      }));
-      setCommandMenuCommands((prevCommands) => {
-        return prevCommands.concat(commands);
-      });
-    },
   });
 
   const { records: activities } = useFindManyRecords<Activity>({
@@ -163,19 +139,46 @@ export const CommandMenu = () => {
       ],
     },
     limit: 3,
-    onCompleted: (data) => {
-      const commands: Command[] = data.edges.map(({ node: activity }) => ({
-        id: activity.id,
-        label: activity.title ?? '',
-        type: CommandType.Other,
-        to: '',
-        onCommandClick: () => openActivityRightDrawer(activity.id),
-      }));
-      setCommandMenuCommands((prevCommands) => {
-        return prevCommands.concat(commands);
-      });
-    },
   });
+
+  const peopleCommands = useMemo(
+    () =>
+      people.map(({ id, name: { firstName, lastName } }) => ({
+        id,
+        label: `${firstName} ${lastName}`,
+        to: `object/person/${id}`,
+      })),
+    [people],
+  );
+
+  const companyCommands = useMemo(
+    () =>
+      companies.map(({ id, name }) => ({
+        id,
+        label: name ?? '',
+        to: `object/company/${id}`,
+      })),
+    [companies],
+  );
+
+  const activityCommands = useMemo(
+    () =>
+      activities.map(({ id, title }) => ({
+        id,
+        label: title ?? '',
+        to: '',
+        onCommandClick: () => openActivityRightDrawer(id),
+      })),
+    [activities, openActivityRightDrawer],
+  );
+
+  const otherCommands = useMemo(() => {
+    return [
+      ...peopleCommands,
+      ...companyCommands,
+      ...activityCommands,
+    ] as Command[];
+  }, [peopleCommands, companyCommands, activityCommands]);
 
   const checkInShortcuts = (cmd: Command, search: string) => {
     return (cmd.firstHotKey + (cmd.secondHotKey ?? ''))
@@ -228,10 +231,11 @@ export const CommandMenu = () => {
                   selectableItemIds={[selectableItemIds]}
                   hotkeyScope={AppHotkeyScope.CommandMenu}
                   onEnter={(itemId) => {
-                    const command = commandMenuCommands.find(
-                      (cmd) => cmd.id === itemId,
-                    );
-  
+                    const command = [
+                      ...commandMenuCommands,
+                      ...otherCommands,
+                    ].find((cmd) => cmd.id === itemId);
+
                     if (command) {
                       const { to, onCommandClick } = command;
                       onItemClick(onCommandClick, to);
