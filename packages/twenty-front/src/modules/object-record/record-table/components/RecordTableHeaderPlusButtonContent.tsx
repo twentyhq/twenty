@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { IconPlus, IconSettings } from '@/ui/display/icon';
+import { IconSettings } from '@/ui/display/icon';
 import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';

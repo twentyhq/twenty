@@ -15,7 +15,9 @@ type MultipleFiltersDropdownContentProps = {
   filterDropdownId?: string;
 };
 
-export const MultipleFiltersDropdownContent = ({ filterDropdownId }: MultipleFiltersDropdownContentProps) => {
+export const MultipleFiltersDropdownContent = ({
+  filterDropdownId,
+}: MultipleFiltersDropdownContentProps) => {
   const {
     isObjectFilterDropdownOperandSelectUnfolded,
     filterDefinitionUsedInDropdown,

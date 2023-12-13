@@ -3,20 +3,15 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
-import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
-import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
+import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
+import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
+import { EditableSortChip } from '@/views/components/EditableSortChip';
+import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
-
-import { SortOrFilterChip } from './SortOrFilterChip';
-import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
-import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
-import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { useViewFilters } from '@/views/hooks/internal/useViewFilters';
-import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
-import { EditableSortChip } from '@/views/components/EditableSortChip';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
@@ -97,7 +92,7 @@ export const ViewBarDetails = ({
   hasFilterButton = false,
   rightComponent,
   filterDropdownId,
-  viewBarId
+  viewBarId,
 }: ViewBarDetailsProps) => {
   const {
     currentViewSortsState,
@@ -139,10 +134,7 @@ export const ViewBarDetails = ({
       <StyledFilterContainer>
         <StyledChipcontainer>
           {currentViewSorts?.map((sort) => {
-            return (
-              <EditableSortChip viewSort={sort} />
-              
-            );
+            return <EditableSortChip viewSort={sort} />;
           })}
           {!!currentViewSorts?.length && !!currentViewFilters?.length && (
             <StyledSeperatorContainer>
@@ -151,15 +143,21 @@ export const ViewBarDetails = ({
           )}
           {currentViewFilters?.map((viewFilter) => {
             return (
-              <ObjectFilterDropdownScope filterScopeId={viewFilter.fieldMetadataId}>
+              <ObjectFilterDropdownScope
+                filterScopeId={viewFilter.fieldMetadataId}
+              >
                 <DropdownScope dropdownScopeId={viewFilter.fieldMetadataId}>
                   <ViewBarFilterEffect
                     filterDropdownId={viewFilter.fieldMetadataId}
                     onFilterSelect={upsertViewFilter}
                   />
-                  <EditableFilterDropdownButton viewFilter={viewFilter} hotkeyScope={{
-                    scope: FiltersHotkeyScope.ObjectFilterDropdownButton,
-                  }} viewFilterDropdownId={viewFilter.fieldMetadataId} /> 
+                  <EditableFilterDropdownButton
+                    viewFilter={viewFilter}
+                    hotkeyScope={{
+                      scope: FiltersHotkeyScope.ObjectFilterDropdownButton,
+                    }}
+                    viewFilterDropdownId={viewFilter.fieldMetadataId}
+                  />
                 </DropdownScope>
               </ObjectFilterDropdownScope>
             );

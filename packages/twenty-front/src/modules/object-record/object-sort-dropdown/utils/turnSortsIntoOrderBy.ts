@@ -25,7 +25,7 @@ export const turnSortsIntoOrderBy = (
       [fields[0].name]: 'DescNullsFirst',
     };
   }
-  
+
   sorts.forEach((sort) => {
     const correspondingField = fields.find(
       (field) => field.id === sort.fieldMetadataId,

@@ -4,8 +4,6 @@ import styled from '@emotion/styled';
 import { IconX } from '@/ui/display/icon/index';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
-
-
 type StyledChipProps = {
   isSort?: boolean;
 };
@@ -16,6 +14,7 @@ const StyledChip = styled.div<StyledChipProps>`
   border: 1px solid ${({ theme }) => theme.accent.tertiary};
   border-radius: 4px;
   color: ${({ theme }) => theme.color.blue};
+  cursor: pointer;
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
@@ -23,7 +22,6 @@ const StyledChip = styled.div<StyledChipProps>`
   font-weight: ${({ isSort }) => (isSort ? 'bold' : 'normal')};
   padding: ${({ theme }) => theme.spacing(1) + ' ' + theme.spacing(2)};
   user-select: none;
-  cursor: pointer;
 `;
 
 const StyledIcon = styled.div`
@@ -67,14 +65,14 @@ export const SortOrFilterChip = ({
   onRemove,
   isSort,
   testId,
-  onClick
+  onClick,
 }: SortOrFilterChipProps) => {
   const theme = useTheme();
 
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onRemove();
-  }
+  };
 
   return (
     <StyledChip isSort={isSort} onClick={onClick}>
@@ -85,7 +83,10 @@ export const SortOrFilterChip = ({
       )}
       {labelKey && <StyledLabelKey>{labelKey}</StyledLabelKey>}
       {labelValue}
-      <StyledDelete onClick={handleDeleteClick} data-testid={'remove-icon-' + testId}>
+      <StyledDelete
+        onClick={handleDeleteClick}
+        data-testid={'remove-icon-' + testId}
+      >
         <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
       </StyledDelete>
     </StyledChip>
