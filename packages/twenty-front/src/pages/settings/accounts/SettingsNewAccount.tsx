@@ -8,16 +8,14 @@ export const SettingsNewAccount = () => {
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
-        <SettingsHeaderContainer>
-          <Breadcrumb
-            links={[
-              { children: 'Accounts', href: '/settings/accounts' },
-              {
-                children: `New`,
-              },
-            ]}
-          />
-        </SettingsHeaderContainer>
+        <Breadcrumb
+          links={[
+            { children: 'Accounts', href: '/settings/accounts' },
+            {
+              children: `New`,
+            },
+          ]}
+        />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
