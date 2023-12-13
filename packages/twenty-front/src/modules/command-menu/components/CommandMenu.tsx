@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -85,7 +85,7 @@ export const StyledEmpty = styled.div`
 `;
 
 export const CommandMenu = () => {
-  const { toggleCommandMenu } = useCommandMenu();
+  const { toggleCommandMenu, onItemClick } = useCommandMenu();
 
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
@@ -141,6 +141,45 @@ export const CommandMenu = () => {
     limit: 3,
   });
 
+  const peopleCommands = useMemo(
+    () =>
+      people.map(({ id, name: { firstName, lastName } }) => ({
+        id,
+        label: `${firstName} ${lastName}`,
+        to: `object/person/${id}`,
+      })),
+    [people],
+  );
+
+  const companyCommands = useMemo(
+    () =>
+      companies.map(({ id, name }) => ({
+        id,
+        label: name ?? '',
+        to: `object/company/${id}`,
+      })),
+    [companies],
+  );
+
+  const activityCommands = useMemo(
+    () =>
+      activities.map(({ id, title }) => ({
+        id,
+        label: title ?? '',
+        to: '',
+        onCommandClick: () => openActivityRightDrawer(id),
+      })),
+    [activities, openActivityRightDrawer],
+  );
+
+  const otherCommands = useMemo(() => {
+    return [
+      ...peopleCommands,
+      ...companyCommands,
+      ...activityCommands,
+    ] as Command[];
+  }, [peopleCommands, companyCommands, activityCommands]);
+
   const checkInShortcuts = (cmd: Command, search: string) => {
     return (cmd.firstHotKey + (cmd.secondHotKey ?? ''))
       .toLowerCase()
@@ -191,7 +230,17 @@ export const CommandMenu = () => {
                   selectableListId="command-menu-list"
                   selectableItemIds={[selectableItemIds]}
                   hotkeyScope={AppHotkeyScope.CommandMenu}
-                  onEnter={(_itemId) => {}}
+                  onEnter={(itemId) => {
+                    const command = [
+                      ...commandMenuCommands,
+                      ...otherCommands,
+                    ].find((cmd) => cmd.id === itemId);
+
+                    if (command) {
+                      const { to, onCommandClick } = command;
+                      onItemClick(onCommandClick, to);
+                    }
+                  }}
                 >
                   {!matchingCreateCommand.length &&
                     !matchingNavigateCommand.length &&

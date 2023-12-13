@@ -1,5 +1,5 @@
 import { SandpackProvider, SandpackLayout, SandpackCodeEditor, SandpackPreview } from "@codesandbox/sandpack-react";
-import uiModule from "!!raw-loader!@site/src/ui/generated/index.js";
+import uiModule from "!!raw-loader!@site/src/ui/generated/index.cjs";
 import uiComponentsCSS from '!!raw-loader!@site/src/ui/uiComponents.css'
 
 export const SandpackEditor = ({ availableComponentPaths, componentCode}) => {

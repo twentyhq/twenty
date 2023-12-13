@@ -23,7 +23,7 @@ In this document, you'll learn how to install the project using yarn. You should
 Before you can install and use Twenty, make sure you install the following on your computer:
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 - [Node v18](https://nodejs.org/en/download) 
-- [yarn v4](https://yarnpkg.com/getting-started/install).
+- [yarn v4](https://yarnpkg.com/getting-started/install)
 - [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
 
 :::info Note
@@ -115,17 +115,15 @@ You need to provision this database with a `twenty` user (password: `twenty`), a
 <Tabs>
 <TabItem value="linux" label="Linux" default>
 <b>Option 1:</b> To provision your database locally:
-<br /><br />
-
+<br />
 ```bash
-make postgres-provision-on-linux
+make postgres-on-linux
 ```
 
 <b>Option 2:</b> If you have docker installed:
-<br /><br />
-
+<br />
 ```bash
-make postgres-provision-on-docker
+make postgres--on-docker
 ```
 This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
 You can access this using `twenty` postgres user (password: `twenty`)
@@ -133,18 +131,16 @@ You can access this using `twenty` postgres user (password: `twenty`)
   <TabItem value="mac-os" label="Mac OS" default>
 
 <b>Option 1:</b> To provision your database locally:
-<br /><br />
-
+<br />
 ```bash
-make postgres-provision-on-macos-intel #for intel architecture
-make postgres-provision-on-macos-arm #for M1/M2/M3 architecture
+make postgres-on-macos-intel #for intel architecture
+make postgres-on-macos-arm #for M1/M2/M3 architecture
 ```
 
 <b>Option 2:</b> If you have docker installed:
-<br /><br />
-
+<br />
 ```bash
-make postgres-provision-on-docker
+make postgres-on-docker
 ```
 This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
 You can access this using `twenty` postgres user (password: `twenty`)
@@ -154,7 +150,7 @@ You can access this using `twenty` postgres user (password: `twenty`)
 
 It's better to provision your database locally:
 ```bash
-make provision-postgres-linux
+make postgres-on-linux
 ```
 This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
 You can access this using `twenty` postgres user (password: `twenty`)

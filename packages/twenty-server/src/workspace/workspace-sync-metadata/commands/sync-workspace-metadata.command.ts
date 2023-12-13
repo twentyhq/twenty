@@ -29,6 +29,7 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         options.workspaceId,
       );
+
     await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
       dataSourceMetadata.id,
       options.workspaceId,

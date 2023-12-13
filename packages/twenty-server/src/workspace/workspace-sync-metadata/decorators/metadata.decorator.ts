@@ -31,6 +31,10 @@ export type RelationMetadataDecorator = {
   inverseSideFieldName?: string;
 };
 
+export type GateDecorator = {
+  featureFlag: string;
+};
+
 function convertClassNameToObjectMetadataName(name: string): string {
   const classSuffix = 'ObjectMetadata';
   let objectName = camelCase(name);
@@ -48,6 +52,8 @@ export function ObjectMetadata(
   return (target) => {
     const isSystem = Reflect.getMetadata('isSystem', target) || false;
 
+    const gate = Reflect.getMetadata('gate', target) || undefined;
+
     const objectName = convertClassNameToObjectMetadataName(target.name);
 
     Reflect.defineMetadata(
@@ -55,6 +61,7 @@ export function ObjectMetadata(
       {
         nameSingular: objectName,
         ...metadata,
+        gate,
         targetTableName: objectName,
         isSystem,
         isCustom: false,
@@ -82,6 +89,16 @@ export function IsSystem() {
   };
 }
 
+export function Gate(metadata: GateDecorator) {
+  return function (target: object, fieldKey?: string) {
+    if (fieldKey) {
+      Reflect.defineMetadata('gate', metadata, target, fieldKey);
+    } else {
+      Reflect.defineMetadata('gate', metadata, target);
+    }
+  };
+}
+
 export function FieldMetadata<T extends FieldMetadataType>(
   metadata: FieldMetadataDecorator<T>,
 ): PropertyDecorator {
@@ -94,6 +111,8 @@ export function FieldMetadata<T extends FieldMetadataType>(
 
     const isSystem = Reflect.getMetadata('isSystem', target, fieldKey) || false;
 
+    const gate = Reflect.getMetadata('gate', target, fieldKey) || undefined;
+
     const { joinColumn, ...fieldMetadata } = metadata;
 
     Reflect.defineMetadata(
@@ -105,6 +124,7 @@ export function FieldMetadata<T extends FieldMetadataType>(
           fieldKey,
           isNullable,
           isSystem,
+          gate,
         ),
         ...(joinColumn && fieldMetadata.type === FieldMetadataType.RELATION
           ? {
@@ -119,6 +139,7 @@ export function FieldMetadata<T extends FieldMetadataType>(
                 joinColumn,
                 isNullable,
                 true,
+                gate,
               ),
             }
           : {}),
@@ -133,6 +154,7 @@ function generateFieldMetadata<T extends FieldMetadataType>(
   fieldKey: string,
   isNullable: boolean,
   isSystem: boolean,
+  gate: GateDecorator | undefined = undefined,
 ) {
   const targetColumnMap = JSON.stringify(
     generateTargetColumnMap(metadata.type, false, fieldKey),
@@ -152,6 +174,7 @@ function generateFieldMetadata<T extends FieldMetadataType>(
     description: metadata.description ?? null,
     icon: metadata.icon ?? null,
     defaultValue: defaultValue ? JSON.stringify(defaultValue) : null,
+    gate,
   };
 }
 
@@ -161,6 +184,8 @@ export function RelationMetadata(
   return (target: object, fieldKey: string) => {
     const existingRelationMetadata =
       Reflect.getMetadata('relationMetadata', target.constructor) || [];
+
+    const gate = Reflect.getMetadata('gate', target, fieldKey) || undefined;
 
     const objectName = convertClassNameToObjectMetadataName(
       target.constructor.name,
@@ -176,6 +201,7 @@ export function RelationMetadata(
           toObjectNameSingular: metadata.objectName,
           fromFieldMetadataName: fieldKey,
           toFieldMetadataName: metadata.inverseSideFieldName ?? objectName,
+          gate,
         },
       ],
       target.constructor,
