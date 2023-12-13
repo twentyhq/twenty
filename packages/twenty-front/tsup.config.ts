@@ -9,7 +9,7 @@ export default defineConfig([
     verbose: true,
     dts: true,
     clean: true,
-    outDir: "../docs/src/ui/generated",
+    outDir: "../twenty-docs/src/ui/generated",
     esbuildPlugins: [svgr({ template })],
   },
 ]);
