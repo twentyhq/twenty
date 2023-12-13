@@ -106,7 +106,7 @@ export const turnFiltersIntoObjectRecordFilters = (
             );
         }
         break;
-      case 'RELATION':
+      case 'RELATION': {
         try {
           JSON.parse(rawUIFilter.value);
         } catch (e) {
@@ -143,6 +143,7 @@ export const turnFiltersIntoObjectRecordFilters = (
           }
         }
         break;
+      }
       case 'CURRENCY':
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.GreaterThan:

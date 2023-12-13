@@ -24,7 +24,7 @@ RUN set -eux; \
          ;; \
     esac;
 
-RUN apt update && apt install curl -y
+RUN apt update && apt install build-essential git curl default-libmysqlclient-dev -y
 
 # Install precompiled pg_graphql extensions
 RUN curl -L "https://github.com/supabase/pg_graphql/releases/download/v${PG_GRAPHQL_VERSION}/pg_graphql-v${PG_GRAPHQL_VERSION}-pg${PG_MAIN_VERSION}-${TARGETARCH}-linux-gnu.deb" -o pg_graphql.deb
@@ -37,6 +37,13 @@ RUN curl -L "https://github.com/supabase/wrappers/releases/download/v${WRAPPERS_
 RUN dpkg --install wrappers.deb
 RUN cp /usr/share/postgresql/${PG_MAIN_VERSION}/extension/wrappers* /opt/bitnami/postgresql/share/extension/
 RUN cp /usr/lib/postgresql/${PG_MAIN_VERSION}/lib/wrappers* /opt/bitnami/postgresql/lib/
+
+RUN export PATH=/usr/local/pgsql/bin/:$PATH
+RUN export PATH=/usr/local/mysql/bin/:$PATH
+RUN git clone https://github.com/EnterpriseDB/mysql_fdw.git
+WORKDIR mysql_fdw
+RUN make USE_PGXS=1
+RUN make USE_PGXS=1 install
 
 COPY ./packages/twenty-docker/prod/twenty-postgres/init.sql /docker-entrypoint-initdb.d/
 
