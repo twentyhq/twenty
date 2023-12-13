@@ -1,7 +1,7 @@
 import { ThemeProvider } from '@emotion/react';
 import { Preview, ReactRenderer } from '@storybook/react';
 import { withThemeFromJSXProvider } from "@storybook/addon-themes";
-import { initialize, mswLoader } from 'msw-storybook-addon';
+import { initialize, mswLoader, mswDecorator } from 'msw-storybook-addon';
 
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 import { mockedUserJWT } from '../src/testing/mock-data/jwt';
@@ -22,6 +22,7 @@ const preview: Preview = {
       Provider: ThemeProvider,
     }),
     RootDecorator,
+    mswDecorator,
   ],
   parameters: {
     actions: { argTypesRegex: '^on[A-Z].*' },
