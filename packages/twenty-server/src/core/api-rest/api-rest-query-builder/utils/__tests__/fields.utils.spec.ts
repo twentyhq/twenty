@@ -1,8 +1,8 @@
+import { objectMetadataItem } from 'src/utils/utils-test/object-metadata-item';
 import {
   checkFields,
   getFieldType,
 } from 'src/core/api-rest/api-rest-query-builder/utils/fields.utils';
-import { objectMetadataItem } from 'src/core/api-rest/api-rest-query-builder/utils/__tests__/utils';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 describe('FieldUtils', () => {
