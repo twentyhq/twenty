@@ -16,11 +16,11 @@ import { useViewBar } from '@/views/hooks/useViewBar';
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
 
 const StyledContainer = styled.div`
+  background: ${({ theme }) => theme.color.blue};
+  border-radius: ${({ theme }) => theme.border.radius.md};
   display: inline-flex;
   margin-right: ${({ theme }) => theme.spacing(2)};
   position: relative;
-  background: ${({ theme }) => theme.color.blue};
-  border-radius: ${({ theme }) => theme.border.radius.md};
 `;
 
 export type UpdateViewButtonGroupProps = {
@@ -55,29 +55,29 @@ export const UpdateViewButtonGroup = ({
   }
 
   return (
-          <StyledContainer>
-            <ButtonGroup size="small" accent="blue">
-              <Button title="Update view" onClick={handleViewSubmit} />
-    <DropdownScope dropdownScopeId={UpdateViewDropdownId}>
-      <Dropdown
-        dropdownHotkeyScope={hotkeyScope}
-        clickableComponent={
+    <StyledContainer>
+      <ButtonGroup size="small" accent="blue">
+        <Button title="Update view" onClick={handleViewSubmit} />
+        <DropdownScope dropdownScopeId={UpdateViewDropdownId}>
+          <Dropdown
+            dropdownHotkeyScope={hotkeyScope}
+            clickableComponent={
               <Button size="small" accent="blue" Icon={IconChevronDown} />
             }
             dropdownComponents={
               <>
-            <DropdownMenuItemsContainer>
-              <MenuItem
-                onClick={handleCreateViewButtonClick}
-                LeftIcon={IconPlus}
-                text="Create view"
-                />
-            </DropdownMenuItemsContainer>
-          </>
-        }
-        />
+                <DropdownMenuItemsContainer>
+                  <MenuItem
+                    onClick={handleCreateViewButtonClick}
+                    LeftIcon={IconPlus}
+                    text="Create view"
+                  />
+                </DropdownMenuItemsContainer>
+              </>
+            }
+          />
         </DropdownScope>
-        </ButtonGroup>
-      </StyledContainer>
+      </ButtonGroup>
+    </StyledContainer>
   );
 };
