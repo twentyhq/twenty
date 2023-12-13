@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useRef } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import debounce from 'lodash.debounce';
@@ -90,7 +91,13 @@ export const MultipleEntitySelect = <
           selectableListId="multiple-entity-select-list"
           selectableItemIds={[selectableItemIds]}
           hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
-          onEnter={(_itemId) => {}}
+          onEnter={(_itemId) => {
+            if (_itemId in value === false || value[_itemId] === false) {
+              onChange({ ...value, [_itemId]: true });
+            } else {
+              onChange({ ...value, [_itemId]: false });
+            }
+          }}
         >
           {entitiesInDropdown?.map((entity) => (
             <SelectableItem itemId={entity.id} key={entity.id}>
