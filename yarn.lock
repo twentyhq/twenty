@@ -18957,8 +18957,8 @@ __metadata:
 
 "eslint-plugin-twenty@file:../eslint-plugin-twenty::locator=twenty-front%40workspace%3Apackages%2Ftwenty-front":
   version: 1.0.3
-  resolution: "eslint-plugin-twenty@file:../eslint-plugin-twenty#../eslint-plugin-twenty::hash=755c0c&locator=twenty-front%40workspace%3Apackages%2Ftwenty-front"
-  checksum: 3687c4e0fc2b8bc991e9b5a3e9bffdf120cce6ca3f04a6abba5bd831ea178eb18eec20288c75a460d54b766e5d1b678ba5c1d528f721e33dc18fe0bffed15b68
+  resolution: "eslint-plugin-twenty@file:../eslint-plugin-twenty#../eslint-plugin-twenty::hash=8c2438&locator=twenty-front%40workspace%3Apackages%2Ftwenty-front"
+  checksum: f8fcae09e4d1434abf95a36a716f54772b42c84a3638fbcf53df745045bf336cf32016c02880ad3bc738fe1e1a4d68d7fe98917ec4fce7d4bf1a37ae39530ec2
   languageName: node
   linkType: hard
 
@@ -20333,6 +20333,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"gaxios@npm:^6.0.0, gaxios@npm:^6.1.1":
+  version: 6.1.1
+  resolution: "gaxios@npm:6.1.1"
+  dependencies:
+    extend: "npm:^3.0.2"
+    https-proxy-agent: "npm:^7.0.1"
+    is-stream: "npm:^2.0.0"
+    node-fetch: "npm:^2.6.9"
+  checksum: 3c54094a7b45a20fe4d5e88f3a3284ea7ba9639ffbe33b4eb500578a4269cfaa6ba93b773ea4c292d9fc15f413347cd37db6a1daf7360e13e895c1201c788585
+  languageName: node
+  linkType: hard
+
 "gcp-metadata@npm:^5.3.0":
   version: 5.3.0
   resolution: "gcp-metadata@npm:5.3.0"
@@ -20340,6 +20352,16 @@ __metadata:
     gaxios: "npm:^5.0.0"
     json-bigint: "npm:^1.0.0"
   checksum: c0570f8ed821429444d6d9d46279831aa1b68092bd5f394928dd816c39904721f8a80ed463fcbeb607a469b1917fe24dad0e66dc4a94388620c9172a54fb5a5f
+  languageName: node
+  linkType: hard
+
+"gcp-metadata@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "gcp-metadata@npm:6.1.0"
+  dependencies:
+    gaxios: "npm:^6.0.0"
+    json-bigint: "npm:^1.0.0"
+  checksum: 0f84f8c0b974e79d0da0f3063023486e53d7982ce86c4b5871e4ee3b1fc4e7f76fcc05f6342aa0ded5023f1a499c21ab97743a498b31f3aa299905226d1f66ab
   languageName: node
   linkType: hard
 
@@ -20706,6 +20728,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"google-auth-library@npm:^9.4.1":
+  version: 9.4.1
+  resolution: "google-auth-library@npm:9.4.1"
+  dependencies:
+    base64-js: "npm:^1.3.0"
+    ecdsa-sig-formatter: "npm:^1.0.11"
+    gaxios: "npm:^6.1.1"
+    gcp-metadata: "npm:^6.1.0"
+    gtoken: "npm:^7.0.0"
+    jws: "npm:^4.0.0"
+  checksum: c1c8778aa717b5d85ab881106635b43a9f19dbcde6633b41183abd39933c2e5aad930fdc43f776c883cf3b9b3c1dac6efdca504d0ad6847228785eed042e4f6c
+  languageName: node
+  linkType: hard
+
 "google-p12-pem@npm:^4.0.0":
   version: 4.0.1
   resolution: "google-p12-pem@npm:4.0.1"
@@ -20982,6 +21018,16 @@ __metadata:
     google-p12-pem: "npm:^4.0.0"
     jws: "npm:^4.0.0"
   checksum: d660fbb8ad00a9f5b6eb426090593cb2a07d63dc22a11b0cf155d43779b6078f804e3467e37deb9a1c078ae34e683070279dc5a1577c50e0e3166a6a6748d98e
+  languageName: node
+  linkType: hard
+
+"gtoken@npm:^7.0.0":
+  version: 7.0.1
+  resolution: "gtoken@npm:7.0.1"
+  dependencies:
+    gaxios: "npm:^6.0.0"
+    jws: "npm:^4.0.0"
+  checksum: 549d46bf34756b3ce526bdc9c147b7226890398afcf81e3a7f21ef373be0ccf6341f73f461b66861d7a921820bd858c812733373aa3979ba56d3130669bc0fd9
   languageName: node
   linkType: hard
 
@@ -34144,6 +34190,7 @@ __metadata:
     eslint-plugin-prettier: "npm:^4.0.0"
     eslint-plugin-unused-imports: "npm:^3.0.0"
     file-type: "npm:16.5.4"
+    google-auth-library: "npm:^9.4.1"
     googleapis: "npm:105"
     graphql: "npm:16.8.0"
     graphql-fields: "npm:^2.0.3"

@@ -1,5 +1,7 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 
+import { FetchWorkspaceMessagesService } from 'src/workspace/messaging/services/fetch-workspace-messages.service';
+
 interface FetchWorkspaceMessagesOptions {
   workspaceId: string;
 }
@@ -9,11 +11,23 @@ interface FetchWorkspaceMessagesOptions {
   description: 'Fetch messages of all workspaceMembers in a workspace.',
 })
 export class FetchWorkspaceMessagesCommand extends CommandRunner {
+  constructor(
+    private readonly fetchWorkspaceMessagesService: FetchWorkspaceMessagesService,
+  ) {
+    super();
+  }
+
   async run(
     _passedParam: string[],
     options: FetchWorkspaceMessagesOptions,
   ): Promise<void> {
     console.log('fetching messages for workspace', options.workspaceId);
+    const threads =
+      await this.fetchWorkspaceMessagesService.fetchWorkspaceThreads(
+        options.workspaceId,
+      );
+
+    console.log(threads.data.threads);
 
     return;
   }

@@ -68,6 +68,7 @@
     "dataloader": "^2.2.2",
     "date-fns": "^2.30.0",
     "file-type": "16.5.4",
+    "google-auth-library": "^9.4.1",
     "googleapis": "105",
     "graphql": "16.8.0",
     "graphql-fields": "^2.0.3",
