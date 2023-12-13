@@ -51,6 +51,10 @@ export interface DeleteOneResolverArgs {
   id: string;
 }
 
+export interface EnrichOneResolverArgs {
+  id: string;
+}
+
 export interface DeleteManyResolverArgs<Filter = any> {
   filter: Filter;
 }

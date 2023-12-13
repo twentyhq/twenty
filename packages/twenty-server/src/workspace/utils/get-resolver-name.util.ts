@@ -21,6 +21,8 @@ export const getResolverName = (
       return `update${pascalCase(objectMetadata.nameSingular)}`;
     case 'deleteOne':
       return `delete${pascalCase(objectMetadata.nameSingular)}`;
+    case 'enrichOne':
+      return `enrich${pascalCase(objectMetadata.nameSingular)}`;
     case 'updateMany':
       return `update${pascalCase(objectMetadata.namePlural)}`;
     case 'deleteMany':

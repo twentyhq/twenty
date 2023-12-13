@@ -1,5 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 
+import axios from 'axios';
+
 import { IConnection } from 'src/utils/pagination/interfaces/connection.interface';
 import {
   Record as IRecord,
@@ -139,6 +141,87 @@ export class WorkspaceQueryRunnerService {
       result,
       targetTableName,
       'deleteFrom',
+    )?.records?.[0];
+  }
+
+  async enrichOne<Record extends IRecord = IRecord>(
+    args: DeleteOneResolverArgs,
+    options: WorkspaceQueryRunnerOptions,
+  ): Promise<Record | undefined> {
+    console.log('abc');
+
+    const argsFind = {
+      filter: { id: { eq: args.id } },
+    } as FindOneResolverArgs;
+
+    const { workspaceId, targetTableName } = options;
+
+    const findQuery = await this.workspaceQueryBuilderFactory.findOne(
+      argsFind,
+      options,
+    );
+
+    const findResult = await this.execute(findQuery, workspaceId);
+
+    const parsedfindResult = this.parseResult<IConnection<Record>>(
+      findResult,
+      targetTableName,
+      '',
+    );
+
+    const objectToEnrich = parsedfindResult?.edges?.[0]?.node;
+
+    console.log(objectToEnrich);
+
+    switch (targetTableName) {
+      case 'company': {
+        return await this.enrichCompany(objectToEnrich, options);
+      }
+      case 'person': {
+        //return this.enrichPerson(objectToEnrich, options);
+      }
+      default: {
+        return objectToEnrich;
+      }
+    }
+  }
+
+  async enrichCompany<Record extends IRecord = IRecord>(
+    company: Record,
+    options: WorkspaceQueryRunnerOptions,
+  ) {
+    const { workspaceId, targetTableName } = options;
+
+    const enrichedCompany = await axios.get(
+      `https://companies.twenty.com/${company.domainName}`,
+      {
+        headers: {},
+      },
+    );
+
+    console.log(enrichedCompany.data.size);
+
+    const argsUpdate = {
+      id: company.id,
+      data: {
+        id: company.id,
+        createdAt: company.createdAt,
+        updatedAt: new Date().toISOString(),
+        linkedinLinkUrl: `https://linkedin.com/` + enrichedCompany.data.handle,
+      },
+    };
+
+    const query = await this.workspaceQueryBuilderFactory.updateOne(
+      argsUpdate,
+      options,
+    );
+
+    const result = await this.execute(query, workspaceId);
+
+    return this.parseResult<PGGraphQLMutation<Record>>(
+      result,
+      targetTableName,
+      'update',
     )?.records?.[0];
   }
 

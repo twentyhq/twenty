@@ -19,6 +19,7 @@ import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionB
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
 import { ContextMenuEntry } from '@/ui/navigation/context-menu/types/ContextMenuEntry';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 type useRecordTableContextMenuEntriesProps = {
   recordTableScopeId?: string;
@@ -112,6 +113,10 @@ export const useRecordTableContextMenuEntries = (
     [enrichOneRecord, resetTableRowSelection],
   );
 
+  const dataEnrichmentEnabled = useIsFeatureEnabled(
+    'IS_DATA_ENRICHMENT_ENABLED',
+  );
+
   return {
     setContextMenuEntries: useCallback(() => {
       const selectedRowId =
@@ -154,7 +159,6 @@ export const useRecordTableContextMenuEntries = (
       selectedRowIds,
       favorites,
       handleDeleteClick,
-      handleEnrichClick,
       handleFavoriteButtonClick,
       setContextMenuEntries,
     ]),
@@ -171,11 +175,15 @@ export const useRecordTableContextMenuEntries = (
         //   Icon: IconNotes,
         //   onClick: () => {},
         // },
-        {
-          label: 'Enrich',
-          Icon: IconWand,
-          onClick: () => handleEnrichClick(),
-        },
+        ...(dataEnrichmentEnabled
+          ? []
+          : [
+              {
+                label: 'Enrich',
+                Icon: IconWand,
+                onClick: () => handleEnrichClick(),
+              },
+            ]),
         {
           label: 'Delete',
           Icon: IconTrash,

@@ -18957,8 +18957,8 @@ __metadata:
 
 "eslint-plugin-twenty@file:../eslint-plugin-twenty::locator=twenty-front%40workspace%3Apackages%2Ftwenty-front":
   version: 1.0.3
-  resolution: "eslint-plugin-twenty@file:../eslint-plugin-twenty#../eslint-plugin-twenty::hash=8c2438&locator=twenty-front%40workspace%3Apackages%2Ftwenty-front"
-  checksum: f8fcae09e4d1434abf95a36a716f54772b42c84a3638fbcf53df745045bf336cf32016c02880ad3bc738fe1e1a4d68d7fe98917ec4fce7d4bf1a37ae39530ec2
+  resolution: "eslint-plugin-twenty@file:../eslint-plugin-twenty#../eslint-plugin-twenty::hash=d98487&locator=twenty-front%40workspace%3Apackages%2Ftwenty-front"
+  checksum: a9272ef6f3f115c061192ae50f9ff468a876cf1325082f0fa95a3c7ddfa9591e58b4a5c3b3cdef85e7439bd9c6e5c943762cdd67647a12ca2110586ab29a80bb
   languageName: node
   linkType: hard
 

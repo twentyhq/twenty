@@ -10,13 +10,13 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { useGenerateCreateManyRecordMutation } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
 import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
+import { useGenerateEnrichOneRecordMutation } from '@/object-record/hooks/useGenerateEnrichOneRecordMutation';
 import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
 import { useGenerateUpdateOneRecordMutation } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
 import { useGetRecordFromCache } from '@/object-record/hooks/useGetRecordFromCache';
 import { useModifyRecordFromCache } from '@/object-record/hooks/useModifyRecordFromCache';
 import { generateDeleteOneRecordMutation } from '@/object-record/utils/generateDeleteOneRecordMutation';
-import { generateEnrichOneRecordMutation } from '@/object-record/utils/generateEnrichOneRecordMutation';
 import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
@@ -107,7 +107,7 @@ export const useObjectMetadataItem = (
     objectMetadataItem,
   });
 
-  const enrichOneRecordMutation = generateEnrichOneRecordMutation({
+  const enrichOneRecordMutation = useGenerateEnrichOneRecordMutation({
     objectMetadataItem,
   });
 
