@@ -68,6 +68,24 @@ export class FetchWorkspaceMessagesService {
       userId: 'me',
     });
 
+    const threadData = threads.data.threads;
+
+    if (!threadData) {
+      return;
+    }
+
+    const messageChannel = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."messageChannel" WHERE "connectedAccountId" = $1`,
+      [connectedAccount[0].id],
+    );
+
+    for (const thread of threadData) {
+      await workspaceDataSource?.query(
+        `INSERT INTO ${dataSourceMetadata.schema}."messageThread" ("externalId", "subject", "messageChannelId", "visibility") VALUES ($1, $2, $3, $4)`,
+        [thread.id, thread.snippet, messageChannel[0].id, 'default'],
+      );
+    }
+
     return threads;
   }
 }
