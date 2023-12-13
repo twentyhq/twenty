@@ -8,8 +8,6 @@ import {
   computeLimitParameters,
   computeOrderByParameters,
 } from 'src/core/open-api/utils/parameters.utils';
-import { objectMetadataItem } from 'src/utils/utils-test/object-metadata-item';
-import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { DEFAULT_ORDER_DIRECTION } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/order-by-input.factory';
 import { FilterComparators } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/filter-utils/parse-base-filter.utils';
 import { Conjunctions } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/filter-utils/parse-filter.utils';
@@ -18,13 +16,10 @@ import { DEFAULT_CONJUNCTION } from 'src/core/api-rest/api-rest-query-builder/fa
 describe('computeParameters', () => {
   describe('computeLimit', () => {
     it('should compute limit', () => {
-      expect(
-        computeLimitParameters(objectMetadataItem as ObjectMetadataEntity),
-      ).toEqual({
+      expect(computeLimitParameters()).toEqual({
         name: 'limit',
         in: 'query',
-        description:
-          'Integer value to limit the number of **objectsName** returned',
+        description: 'Limits the number of objects returned.',
         required: false,
         schema: {
           type: 'integer',
@@ -37,12 +32,10 @@ describe('computeParameters', () => {
   });
   describe('computeOrderBy', () => {
     it('should compute order by', () => {
-      expect(
-        computeOrderByParameters(objectMetadataItem as ObjectMetadataEntity),
-      ).toEqual({
+      expect(computeOrderByParameters()).toEqual({
         name: 'order_by',
         in: 'query',
-        description: `A combination of fields and directions to sort **objectsName** returned.  
+        description: `Sorts objects returned.  
     Should have the following shape: **field_name_1,field_name_2[DIRECTION_2],...**  
     Available directions are **${Object.values(OrderByDirection).join(
       '**, **',
@@ -54,11 +47,11 @@ describe('computeParameters', () => {
         },
         examples: {
           simple: {
-            value: `name,createdAt`,
+            value: 'createdAt',
             summary: 'A simple order_by param',
           },
           complex: {
-            value: `name[${OrderByDirection.AscNullsFirst}],createdAt[${OrderByDirection.DescNullsLast}]`,
+            value: `id[${OrderByDirection.AscNullsFirst}],createdAt[${OrderByDirection.DescNullsLast}]`,
             summary: 'A more complex order_by param',
           },
         },
@@ -67,13 +60,10 @@ describe('computeParameters', () => {
   });
   describe('computeDepth', () => {
     it('should compute depth', () => {
-      expect(
-        computeDepthParameters(objectMetadataItem as ObjectMetadataEntity),
-      ).toEqual({
+      expect(computeDepthParameters()).toEqual({
         name: 'depth',
         in: 'query',
-        description:
-          'Integer value to limit the depth of related objects of **objectsName** returned',
+        description: 'Limits the depth objects returned.',
         required: false,
         schema: {
           type: 'integer',
@@ -84,12 +74,10 @@ describe('computeParameters', () => {
   });
   describe('computeFilter', () => {
     it('should compute filters', () => {
-      expect(
-        computeFilterParameters(objectMetadataItem as ObjectMetadataEntity),
-      ).toEqual({
+      expect(computeFilterParameters()).toEqual({
         name: 'filter',
         in: 'query',
-        description: `A combination of fields, filter operations and values to filter **objectsName** returned.  
+        description: `Filters objects returned.  
     Should have the following shape: **field_1[COMPARATOR]:value_1,field_2[COMPARATOR]:value_2,...**  
     Available comparators are **${Object.values(FilterComparators).join(
       '**, **',
@@ -97,7 +85,7 @@ describe('computeParameters', () => {
     You can create more complex filters using conjunctions **${Object.values(
       Conjunctions,
     ).join('**, **')}**.  
-    Default conjunction is **${DEFAULT_CONJUNCTION}**.  
+    Default root conjunction is **${DEFAULT_CONJUNCTION}**.  
     To filter **null** values use **field[is]:NULL** or **field[is]:NOT_NULL**  
     To filter using **boolean** values use **field[eq]:true** or **field[eq]:false**`,
         required: false,
@@ -106,11 +94,12 @@ describe('computeParameters', () => {
         },
         examples: {
           simple: {
-            value: `name[eq]:"Airbnb"`,
+            value: 'createdAt[gte]:"2023-01-01"',
             description: 'A simple filter param',
           },
           complex: {
-            value: `or(name[eq]:"Airbnb",employees[gt]:1,not(name[is]:NULL),not(and(createdAt[lte]:"2022-01-01T00:00:00.000Z",idealCustomerProfile[eq]:true)))`,
+            value:
+              'or(createdAt[gte]:"2024-01-01",createdAt[lte]:"2023-01-01",not(id[is]:NULL))',
             description: 'A more complex filter param',
           },
         },
@@ -119,13 +108,10 @@ describe('computeParameters', () => {
   });
   describe('computeLastCursor', () => {
     it('should compute last cursor', () => {
-      expect(
-        computeLastCursorParameters(objectMetadataItem as ObjectMetadataEntity),
-      ).toEqual({
+      expect(computeLastCursorParameters()).toEqual({
         name: 'last_cursor',
         in: 'query',
-        description:
-          'Used to return **objectsName** starting from a specific cursor',
+        description: 'Returns objects starting from a specific cursor.',
         required: false,
         schema: {
           type: 'string',
@@ -135,12 +121,10 @@ describe('computeParameters', () => {
   });
   describe('computeIdPathParameter', () => {
     it('should compute id path param', () => {
-      expect(
-        computeIdPathParameter(objectMetadataItem as ObjectMetadataEntity),
-      ).toEqual({
+      expect(computeIdPathParameter()).toEqual({
         name: 'id',
         in: 'path',
-        description: 'ObjectName id',
+        description: 'Object id.',
         required: true,
         schema: {
           type: 'string',
