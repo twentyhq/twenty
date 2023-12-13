@@ -70,9 +70,8 @@ export const EntityChip = ({
           />
         )
       }
-      clickable={!!linkToEntity}
+      clickable={linkToEntity ? true : false}
       onClick={handleLinkClick}
-      rightComponent={<EllipsisDisplay />}
       className={className}
     />
   ) : (

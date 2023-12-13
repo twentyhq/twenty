@@ -2,6 +2,8 @@ import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { FieldContext } from '../../contexts/FieldContext';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+
 import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
@@ -11,7 +13,7 @@ import { isFieldRelation } from '../../types/guards/isFieldRelation';
 export const useRelationField = () => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
-  assertFieldMetadata('RELATION', isFieldRelation, fieldDefinition);
+  assertFieldMetadata(FieldMetadataType.Relation, isFieldRelation, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
