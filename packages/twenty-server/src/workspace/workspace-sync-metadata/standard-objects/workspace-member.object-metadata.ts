@@ -7,13 +7,16 @@ import {
   FieldMetadata,
   IsNullable,
   RelationMetadata,
+  Gate,
 } from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
 import { ActivityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity.object-metadata';
 import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/attachment.object-metadata';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { CommentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/comment.object-metadata';
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
+import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
 import { FavoriteObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/favorite.object-metadata';
+import { MessageRecipientObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-recipient.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'workspaceMembers',
@@ -149,4 +152,38 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   authoredComments: CommentObjectMetadata[];
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Connected accounts',
+    description: 'Connected accounts',
+    icon: 'IconAt',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'connectedAccount',
+    inverseSideFieldName: 'accountOwner',
+  })
+  @Gate({
+    featureFlag: 'IS_MESSAGING_ENABLED',
+  })
+  @IsNullable()
+  connectedAccounts: ConnectedAccountObjectMetadata[];
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Message Recipients',
+    description: 'Message Recipients',
+    icon: 'IconUserCircle',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'messageRecipient',
+    inverseSideFieldName: 'workspaceMember',
+  })
+  @Gate({
+    featureFlag: 'IS_MESSAGING_ENABLED',
+  })
+  @IsNullable()
+  messageRecipients: MessageRecipientObjectMetadata[];
 }

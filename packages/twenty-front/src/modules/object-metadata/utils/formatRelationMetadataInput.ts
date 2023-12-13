@@ -33,24 +33,26 @@ export const formatRelationMetadataInput = (
     : input.connect;
 
   const {
-    description,
+    description: fromDescription,
     icon: fromIcon,
     label: fromLabel,
     name: fromName,
   } = formatFieldMetadataItemInput(fromField);
   const {
+    description: toDescription,
     icon: toIcon,
     label: toLabel,
     name: toName,
   } = formatFieldMetadataItemInput(toField);
 
   return {
-    description,
+    fromDescription,
     fromIcon,
     fromLabel,
     fromName,
     fromObjectMetadataId,
     relationType,
+    toDescription,
     toIcon,
     toLabel,
     toName,

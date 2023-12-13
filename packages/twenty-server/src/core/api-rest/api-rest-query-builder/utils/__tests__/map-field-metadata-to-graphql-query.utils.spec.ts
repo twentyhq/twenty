@@ -1,11 +1,11 @@
-import { mapFieldMetadataToGraphqlQuery } from 'src/core/api-rest/api-rest-query-builder/utils/map-field-metadata-to-graphql-query.utils';
 import {
   fieldCurrency,
   fieldLink,
   fieldNumber,
   fieldString,
   objectMetadataItem,
-} from 'src/core/api-rest/api-rest-query-builder/utils/__tests__/utils';
+} from 'src/utils/utils-test/object-metadata-item';
+import { mapFieldMetadataToGraphqlQuery } from 'src/core/api-rest/api-rest-query-builder/utils/map-field-metadata-to-graphql-query.utils';
 
 describe('mapFieldMetadataToGraphqlQuery', () => {
   it('should map properly', () => {

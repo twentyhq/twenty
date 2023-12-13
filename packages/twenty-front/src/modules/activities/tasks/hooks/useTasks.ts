@@ -1,6 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { DateTime } from 'luxon';
-import { undefined } from 'zod';
 
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
@@ -37,19 +36,19 @@ export const useTasks = (props?: UseTasksProps) => {
     skip: !entity && !selectedFilter,
     filter: {
       completedAt: { is: 'NOT_NULL' },
-      id: isDefined(entity)
-        ? {
-            in: activityTargets?.map(
-              (activityTarget) => activityTarget.activityId,
-            ),
-          }
-        : undefined,
+      ...(isDefined(entity) && {
+        id: {
+          in: activityTargets?.map(
+            (activityTarget) => activityTarget.activityId,
+          ),
+        },
+      }),
       type: { eq: 'Task' },
-      assigneeId: isNonEmptyString(selectedFilter?.value)
-        ? {
-            eq: selectedFilter?.value,
-          }
-        : undefined,
+      ...(isNonEmptyString(selectedFilter?.value) && {
+        assigneeId: {
+          eq: selectedFilter?.value,
+        },
+      }),
     },
     orderBy: {
       createdAt: 'DescNullsFirst',
@@ -61,19 +60,19 @@ export const useTasks = (props?: UseTasksProps) => {
     skip: !entity && !selectedFilter,
     filter: {
       completedAt: { is: 'NULL' },
-      id: isDefined(entity)
-        ? {
-            in: activityTargets?.map(
-              (activityTarget) => activityTarget.activityId,
-            ),
-          }
-        : undefined,
+      ...(isDefined(entity) && {
+        id: {
+          in: activityTargets?.map(
+            (activityTarget) => activityTarget.activityId,
+          ),
+        },
+      }),
       type: { eq: 'Task' },
-      assigneeId: isNonEmptyString(selectedFilter?.value)
-        ? {
-            eq: selectedFilter?.value,
-          }
-        : undefined,
+      ...(isNonEmptyString(selectedFilter?.value) && {
+        assigneeId: {
+          eq: selectedFilter?.value,
+        },
+      }),
     },
     orderBy: {
       createdAt: 'DescNullsFirst',

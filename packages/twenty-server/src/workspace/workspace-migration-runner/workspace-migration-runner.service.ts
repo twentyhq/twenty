@@ -232,7 +232,7 @@ export class WorkspaceMigrationRunnerService {
           (value): value is string => typeof value === 'string',
         ),
         isArray: migrationColumn.isArray,
-        isNullable: true,
+        isNullable: migrationColumn.isNullable,
       }),
     );
   }

@@ -1,4 +1,4 @@
-import { objectMetadataItem } from 'src/core/api-rest/api-rest-query-builder/utils/__tests__/utils';
+import { objectMetadataItem } from 'src/utils/utils-test/object-metadata-item';
 import { parseFilter } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/filter-utils/parse-filter.utils';
 
 describe('parseFilter', () => {

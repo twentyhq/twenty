@@ -10,6 +10,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
+import { ObjectRecordFilter } from '@/object-record/types/ObjectRecordFilter';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -36,7 +37,7 @@ export const useFindManyRecords = <
   onCompleted,
   skip,
 }: ObjectMetadataItemIdentifier & {
-  filter?: any;
+  filter?: ObjectRecordFilter;
   orderBy?: OrderByField;
   limit?: number;
   onCompleted?: (data: PaginatedRecordTypeResults<RecordType>) => void;
@@ -139,8 +140,9 @@ export const useFindManyRecords = <
 
             if (isNonEmptyArray(previousEdges) && isNonEmptyArray(nextEdges)) {
               newEdges = filterUniqueRecordEdgesByCursor([
-                ...prev?.[objectMetadataItem.namePlural]?.edges,
-                ...fetchMoreResult?.[objectMetadataItem.namePlural]?.edges,
+                ...(prev?.[objectMetadataItem.namePlural]?.edges ?? []),
+                ...(fetchMoreResult?.[objectMetadataItem.namePlural]?.edges ??
+                  []),
               ]);
             }
 

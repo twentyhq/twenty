@@ -7,6 +7,7 @@ import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { Card } from '@/ui/layout/card/components/Card';
+import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -23,7 +24,7 @@ type SettingsAboutSectionProps = {
   onEdit: () => void;
 };
 
-const StyledCard = styled(Card)`
+const StyledCardContent = styled(CardContent)`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
@@ -69,43 +70,45 @@ export const SettingsAboutSection = ({
   return (
     <Section>
       <H2Title title="About" description="Manage your object" />
-      <StyledCard>
-        <StyledName>
-          {!!Icon && <Icon size={theme.icon.size.md} />}
-          {name}
-        </StyledName>
-        {isCustom ? (
-          <StyledTag color="orange" text="Custom" />
-        ) : (
-          <StyledTag color="blue" text="Standard" />
-        )}
-        <DropdownScope dropdownScopeId={dropdownScopeId}>
-          <Dropdown
-            clickableComponent={
-              <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
-            }
-            dropdownComponents={
-              <DropdownMenu width="160px">
-                <DropdownMenuItemsContainer>
-                  <MenuItem
-                    text="Edit"
-                    LeftIcon={IconPencil}
-                    onClick={handleEdit}
-                  />
-                  <MenuItem
-                    text="Disable"
-                    LeftIcon={IconArchive}
-                    onClick={handleDisable}
-                  />
-                </DropdownMenuItemsContainer>
-              </DropdownMenu>
-            }
-            dropdownHotkeyScope={{
-              scope: dropdownScopeId,
-            }}
-          />
-        </DropdownScope>
-      </StyledCard>
+      <Card>
+        <StyledCardContent>
+          <StyledName>
+            {!!Icon && <Icon size={theme.icon.size.md} />}
+            {name}
+          </StyledName>
+          {isCustom ? (
+            <StyledTag color="orange" text="Custom" />
+          ) : (
+            <StyledTag color="blue" text="Standard" />
+          )}
+          <DropdownScope dropdownScopeId={dropdownScopeId}>
+            <Dropdown
+              clickableComponent={
+                <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+              }
+              dropdownComponents={
+                <DropdownMenu width="160px">
+                  <DropdownMenuItemsContainer>
+                    <MenuItem
+                      text="Edit"
+                      LeftIcon={IconPencil}
+                      onClick={handleEdit}
+                    />
+                    <MenuItem
+                      text="Disable"
+                      LeftIcon={IconArchive}
+                      onClick={handleDisable}
+                    />
+                  </DropdownMenuItemsContainer>
+                </DropdownMenu>
+              }
+              dropdownHotkeyScope={{
+                scope: dropdownScopeId,
+              }}
+            />
+          </DropdownScope>
+        </StyledCardContent>
+      </Card>
     </Section>
   );
 };

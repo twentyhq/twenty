@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { OrderByDirection } from 'src/workspace/workspace-query-builder/interfaces/record.interface';
 
+import { objectMetadataItem } from 'src/utils/utils-test/object-metadata-item';
 import { OrderByInputFactory } from 'src/core/api-rest/api-rest-query-builder/factories/input-factories/order-by-input.factory';
-import { objectMetadataItem } from 'src/core/api-rest/api-rest-query-builder/utils/__tests__/utils';
 
 describe('OrderByInputFactory', () => {
   const objectMetadata = { objectMetadataItem: objectMetadataItem };

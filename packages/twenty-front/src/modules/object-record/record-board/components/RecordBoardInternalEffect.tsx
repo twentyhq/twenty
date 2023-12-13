@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { useObjectRecordBoard } from '@/object-record/hooks/useObjectRecordBoard.1';
+import { useObjectRecordBoard } from '@/object-record/hooks/useObjectRecordBoard';
 import { useRecordBoardActionBarEntriesInternal } from '@/object-record/record-board/hooks/internal/useRecordBoardActionBarEntriesInternal';
 import { useRecordBoardContextMenuEntriesInternal } from '@/object-record/record-board/hooks/internal/useRecordBoardContextMenuEntriesInternal';
 import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
