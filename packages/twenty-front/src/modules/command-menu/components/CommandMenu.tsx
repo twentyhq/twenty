@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Activity } from '@/activities/types/Activity';
@@ -90,7 +90,7 @@ export const CommandMenu = () => {
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
   const [search, setSearch] = useState('');
-  const [commandMenuCommands] = useRecoilState(commandMenuCommandsState);
+  const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
