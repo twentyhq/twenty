@@ -46,8 +46,6 @@ export const Tasks = () => {
 
   const filterDropdownId = 'tasks-assignee-filter';
 
-  const result = fetch('http://localhost/user').then((res) => res.json());
-
   return (
     <PageContainer>
       <RecoilScope CustomRecoilScopeContext={TasksRecoilScopeContext}>
