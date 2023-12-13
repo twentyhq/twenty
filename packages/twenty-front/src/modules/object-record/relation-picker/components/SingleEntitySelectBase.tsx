@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useRef } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
@@ -67,7 +68,7 @@ export const SingleEntitySelectBase = <
       assertNotNull(entity) && isNonEmptyString(entity.name),
   );
 
-  const { preselectedOptionId, resetScroll } = useEntitySelectScroll({
+  const { preselectedOptionId } = useEntitySelectScroll({
     selectableOptionIds: [
       EmptyButtonId,
       ...entitiesInDropdown.map((item) => item.id),
@@ -75,24 +76,6 @@ export const SingleEntitySelectBase = <
     ],
     containerRef,
   });
-
-  useScopedHotkeys(
-    Key.Enter,
-    () => {
-      if (showCreateButton && preselectedOptionId === CreateButtonId) {
-        onCreate?.();
-      } else {
-        const entity = entitiesInDropdown.findIndex(
-          (entity) => entity.id === preselectedOptionId,
-        );
-        onEntitySelected(entitiesInDropdown[entity]);
-      }
-
-      resetScroll();
-    },
-    RelationPickerHotkeyScope.RelationPicker,
-    [entitiesInDropdown, preselectedOptionId, onEntitySelected],
-  );
 
   useScopedHotkeys(
     Key.Escape,
@@ -139,7 +122,19 @@ export const SingleEntitySelectBase = <
                 selectableListId="single-entity-select-base-list"
                 selectableItemIds={[selectableItemIds]}
                 hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
-                onEnter={(_itemId) => {}}
+                onEnter={(_itemId) => {
+                  if (
+                    showCreateButton &&
+                    preselectedOptionId === CreateButtonId
+                  ) {
+                    onCreate?.();
+                  } else {
+                    const entity = entitiesInDropdown.findIndex(
+                      (entity) => entity.id === _itemId,
+                    );
+                    onEntitySelected(entitiesInDropdown[entity]);
+                  }
+                }}
               >
                 <SelectableItem itemId={entity.id} key={entity.id}>
                   <MenuItemSelectAvatar
