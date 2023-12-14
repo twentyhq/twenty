@@ -39,7 +39,7 @@ export class PgBossDriver implements MessageQueueDriver {
     await this.pgBoss.send(
       `${queueName}.${jobName}`,
       data as object,
-      options ? options : {},
+      options ?? {},
     );
   }
 }

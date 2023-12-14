@@ -20,6 +20,7 @@ export class MessagingProducer {
       data,
       {
         id: singletonKey,
+        retryLimit: 2,
       },
     );
   }
