@@ -3,6 +3,7 @@ import { DeepPartial } from 'react-hook-form';
 import { v4 } from 'uuid';
 import { z } from 'zod';
 
+import { CurrencyCode } from '@/object-record/field/types/CurrencyCode';
 import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 import {
   FieldMetadataType,
@@ -16,15 +17,13 @@ type FormValues = {
   description?: string;
   icon: string;
   label: string;
-  type: FieldMetadataType;
-  relation: SettingsObjectFieldTypeSelectSectionFormValues['relation'];
-  select: SettingsObjectFieldTypeSelectSectionFormValues['select'];
-};
+} & SettingsObjectFieldTypeSelectSectionFormValues;
 
 export const fieldMetadataFormDefaultValues: FormValues = {
   icon: 'IconUsers',
   label: '',
   type: FieldMetadataType.Text,
+  currency: { currencyCode: CurrencyCode.USD },
   relation: {
     type: RelationMetadataType.OneToMany,
     objectMetadataId: '',
@@ -38,6 +37,15 @@ const fieldSchema = z.object({
   icon: z.string().startsWith('Icon'),
   label: z.string().min(1),
 });
+
+const currencySchema = fieldSchema.merge(
+  z.object({
+    type: z.literal(FieldMetadataType.Currency),
+    currency: z.object({
+      currencyCode: z.nativeEnum(CurrencyCode),
+    }),
+  }),
+);
 
 const relationSchema = fieldSchema.merge(
   z.object({
@@ -71,14 +79,17 @@ const selectSchema = fieldSchema.merge(
 );
 
 const {
-  Select: _Select,
+  Currency: _Currency,
   Relation: _Relation,
+  Select: _Select,
   ...otherFieldTypes
 } = FieldMetadataType;
 
 type OtherFieldType = Exclude<
   FieldMetadataType,
-  FieldMetadataType.Relation | FieldMetadataType.Select
+  | FieldMetadataType.Currency
+  | FieldMetadataType.Relation
+  | FieldMetadataType.Select
 >;
 
 const otherFieldTypesSchema = fieldSchema.merge(
@@ -90,6 +101,7 @@ const otherFieldTypesSchema = fieldSchema.merge(
 );
 
 const schema = z.discriminatedUnion('type', [
+  currencySchema,
   relationSchema,
   selectSchema,
   otherFieldTypesSchema,
@@ -107,6 +119,7 @@ export const useFieldMetadataForm = () => {
     fieldMetadataFormDefaultValues,
   );
   const [hasFieldFormChanged, setHasFieldFormChanged] = useState(false);
+  const [hasCurrencyFormChanged, setHasCurrencyFormChanged] = useState(false);
   const [hasRelationFormChanged, setHasRelationFormChanged] = useState(false);
   const [hasSelectFormChanged, setHasSelectFormChanged] = useState(false);
   const [validationResult, setValidationResult] = useState(
@@ -119,6 +132,7 @@ export const useFieldMetadataForm = () => {
   ): FormValues => ({
     ...previousValues,
     ...nextValues,
+    currency: { ...previousValues.currency, ...nextValues.currency },
     relation: {
       ...previousValues.relation,
       ...nextValues.relation,
@@ -150,11 +164,13 @@ export const useFieldMetadataForm = () => {
     setValidationResult(schema.safeParse(nextFormValues));
 
     const {
+      currency: initialCurrencyFormValues,
       relation: initialRelationFormValues,
       select: initialSelectFormValues,
       ...initialFieldFormValues
     } = initialFormValues;
     const {
+      currency: nextCurrencyFormValues,
       relation: nextRelationFormValues,
       select: nextSelectFormValues,
       ...nextFieldFormValues
@@ -162,6 +178,10 @@ export const useFieldMetadataForm = () => {
 
     setHasFieldFormChanged(
       !isDeeplyEqual(initialFieldFormValues, nextFieldFormValues),
+    );
+    setHasCurrencyFormChanged(
+      nextFieldFormValues.type === FieldMetadataType.Currency &&
+        !isDeeplyEqual(initialCurrencyFormValues, nextCurrencyFormValues),
     );
     setHasRelationFormChanged(
       nextFieldFormValues.type === FieldMetadataType.Relation &&
@@ -178,7 +198,10 @@ export const useFieldMetadataForm = () => {
     handleFormChange,
     hasFieldFormChanged,
     hasFormChanged:
-      hasFieldFormChanged || hasRelationFormChanged || hasSelectFormChanged,
+      hasFieldFormChanged ||
+      hasCurrencyFormChanged ||
+      hasRelationFormChanged ||
+      hasSelectFormChanged,
     hasRelationFormChanged,
     hasSelectFormChanged,
     initForm,
