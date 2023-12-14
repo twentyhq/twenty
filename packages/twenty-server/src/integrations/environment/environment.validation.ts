@@ -41,6 +41,15 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
+  IS_BILLING_ENABLED?: boolean;
+
+  @IsOptional()
+  @IsString()
+  BILLING_URL?: string;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
   TELEMETRY_ENABLED?: boolean;
 
   @CastToBoolean()

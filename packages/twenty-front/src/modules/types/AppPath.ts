@@ -8,6 +8,7 @@ export enum AppPath {
   // Onboarding
   CreateWorkspace = '/create/workspace',
   CreateProfile = '/create/profile',
+  PlanRequired = '/plan-required',
 
   // Onboarded
   Index = '/',

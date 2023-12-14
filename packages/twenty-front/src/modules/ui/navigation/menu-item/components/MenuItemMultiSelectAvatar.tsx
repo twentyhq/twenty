@@ -19,7 +19,7 @@ const StyledLeftContentWithCheckboxContainer = styled.div`
 type MenuItemMultiSelectAvatarProps = {
   avatar?: ReactNode;
   selected: boolean;
-  isKeySelected: boolean;
+  isKeySelected?: boolean;
   text: string;
   className?: string;
   onSelectChange?: (selected: boolean) => void;
