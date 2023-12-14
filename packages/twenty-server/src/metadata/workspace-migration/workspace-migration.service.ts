@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { IsNull, Repository } from 'typeorm';
+
+import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 
 import { standardMigrations } from './standard-migrations';
 import {
@@ -14,6 +16,8 @@ export class WorkspaceMigrationService {
   constructor(
     @InjectRepository(WorkspaceMigrationEntity, 'metadata')
     private readonly workspaceMigrationRepository: Repository<WorkspaceMigrationEntity>,
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
   /**
@@ -28,12 +32,26 @@ export class WorkspaceMigrationService {
         where: { workspaceId, isCustom: false },
       });
 
-    const insertedStandardMigrationsMapByName =
-      insertedStandardMigrations.reduce((acc, migration) => {
-        acc[migration.name] = migration;
+    const objectMetadataEntities = await this.objectMetadataRepository.find({
+      where: { workspaceId, isCustom: false },
+      relations: ['fields'],
+    });
+
+    const objectMetadataEntitiesMapByName = objectMetadataEntities.reduce(
+      (acc, objectMetadata) => {
+        acc[objectMetadata.nameSingular] = objectMetadata;
 
         return acc;
-      }, {});
+      },
+      {} as Record<string, ObjectMetadataEntity>,
+    );
+
+    const insertedStandardMigrationsMapByName =
+      insertedStandardMigrations.reduce((acc, workspaceMigration) => {
+        acc[workspaceMigration.name] = workspaceMigration;
+
+        return acc;
+      }, {} as Record<string, WorkspaceMigrationEntity>);
 
     const standardMigrationsListThatNeedToBeInserted = Object.entries(
       standardMigrations,
@@ -41,12 +59,31 @@ export class WorkspaceMigrationService {
       .filter(([name]) => !insertedStandardMigrationsMapByName[name])
       .map(([name, migrations]) => ({ name, migrations }));
 
-    const standardMigrationsThatNeedToBeInserted =
-      standardMigrationsListThatNeedToBeInserted.map((migration) => ({
-        ...migration,
+    const standardMigrationsThatNeedToBeInserted: Omit<
+      WorkspaceMigrationEntity,
+      'id' | 'createdAt'
+    >[] = standardMigrationsListThatNeedToBeInserted.map(
+      (workspaceMigration) => ({
+        name: workspaceMigration.name,
+        migrations: workspaceMigration.migrations.map((migration) => {
+          const objectMetadata =
+            objectMetadataEntitiesMapByName?.[migration.name];
+
+          if (!objectMetadata) {
+            throw new InternalServerErrorException(
+              `Object metadata ${migration.name} not found`,
+            );
+          }
+
+          return {
+            ...migration,
+            schemaName: objectMetadata.dataSource.schema,
+          };
+        }),
         workspaceId,
         isCustom: false,
-      }));
+      }),
+    );
 
     await this.workspaceMigrationRepository.save(
       standardMigrationsThatNeedToBeInserted,

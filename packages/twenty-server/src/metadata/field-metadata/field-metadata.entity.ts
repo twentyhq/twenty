@@ -72,28 +72,28 @@ export class FieldMetadataEntity<
   targetColumnMap: FieldMetadataTargetColumnMap<T>;
 
   @Column({ nullable: true, type: 'jsonb' })
-  defaultValue: FieldMetadataDefaultValue<T>;
+  defaultValue?: FieldMetadataDefaultValue<T>;
 
   @Column({ nullable: true, type: 'text' })
-  description: string;
+  description?: string;
 
   @Column({ nullable: true })
-  icon: string;
+  icon?: string;
 
   @Column('jsonb', { nullable: true })
-  options: FieldMetadataOptions<T>;
+  options?: FieldMetadataOptions<T>;
 
   @Column({ default: false })
-  isCustom: boolean;
+  isCustom?: boolean;
 
   @Column({ default: false })
-  isActive: boolean;
+  isActive?: boolean;
 
   @Column({ default: false })
-  isSystem: boolean;
+  isSystem?: boolean;
 
   @Column({ nullable: true, default: true })
-  isNullable: boolean;
+  isNullable?: boolean;
 
   @Column({ nullable: false })
   workspaceId: string;

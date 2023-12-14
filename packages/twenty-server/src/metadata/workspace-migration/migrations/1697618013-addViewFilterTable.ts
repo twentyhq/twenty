@@ -1,9 +1,8 @@
-import {
-  WorkspaceMigrationColumnActionType,
-  WorkspaceMigrationTableAction,
-} from 'src/metadata/workspace-migration/workspace-migration.entity';
+import { StandardWorkspaceMigrationTableAction } from 'src/metadata/workspace-migration/interfaces/standard-workspace-migration-table-action.interface';
 
-export const addViewFilterTable: WorkspaceMigrationTableAction[] = [
+import { WorkspaceMigrationColumnActionType } from 'src/metadata/workspace-migration/workspace-migration.entity';
+
+export const addViewFilterTable: StandardWorkspaceMigrationTableAction[] = [
   {
     name: 'viewFilter',
     action: 'create',

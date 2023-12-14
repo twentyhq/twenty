@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { WorkspaceMigrationEntity } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationModule } from 'src/metadata/workspace-migration/workspace-migration.module';
 import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.module';
+import { ReflectiveMetadataFactory } from 'src/workspace/workspace-sync-metadata/reflective-metadata.factory';
 import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync.metadata.service';
 
 @Module({
@@ -19,11 +21,12 @@ import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metad
         ObjectMetadataEntity,
         RelationMetadataEntity,
         WorkspaceMigrationEntity,
+        DataSourceEntity,
       ],
       'metadata',
     ),
   ],
+  providers: [WorkspaceSyncMetadataService, ReflectiveMetadataFactory],
   exports: [WorkspaceSyncMetadataService],
-  providers: [WorkspaceSyncMetadataService],
 })
 export class WorkspaceSyncMetadataModule {}

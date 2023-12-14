@@ -22,6 +22,11 @@ export class DataSourceService {
       return dataSource;
     }
 
+    await this.dataSourceMetadataRepository.save({
+      workspaceId,
+      schema: 'core',
+    });
+
     return this.dataSourceMetadataRepository.save({
       workspaceId,
       schema: workspaceSchema,

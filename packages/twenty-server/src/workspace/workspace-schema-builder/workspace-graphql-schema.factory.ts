@@ -34,12 +34,12 @@ export class WorkspaceGraphQLSchemaFactory {
     // Generate schema
     const schema = new GraphQLSchema({
       query: this.queryTypeFactory.create(
-        objectMetadataCollection,
+        objectMetadataCollection.filter((item) => item.nameSingular !== 'user'),
         [...workspaceResolverBuilderMethods.queries],
         options,
       ),
       mutation: this.mutationTypeFactory.create(
-        objectMetadataCollection,
+        objectMetadataCollection.filter((item) => item.nameSingular !== 'user'),
         [...workspaceResolverBuilderMethods.mutations],
         options,
       ),

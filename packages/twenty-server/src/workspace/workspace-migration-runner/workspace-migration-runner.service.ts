@@ -63,13 +63,11 @@ export class WorkspaceMigrationRunnerService {
       }, []);
 
     const queryRunner = workspaceDataSource?.createQueryRunner();
-    const schemaName =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     // Loop over each migration and create or update the table
     // TODO: Should be done in a transaction
     for (const migration of flattenedPendingMigrations) {
-      await this.handleTableChanges(queryRunner, schemaName, migration);
+      await this.handleTableChanges(queryRunner, migration);
     }
 
     // Update appliedAt date for each migration
@@ -98,17 +96,20 @@ export class WorkspaceMigrationRunnerService {
    */
   private async handleTableChanges(
     queryRunner: QueryRunner,
-    schemaName: string,
     tableMigration: WorkspaceMigrationTableAction,
   ) {
     switch (tableMigration.action) {
       case 'create':
-        await this.createTable(queryRunner, schemaName, tableMigration.name);
+        await this.createTable(
+          queryRunner,
+          tableMigration.schemaName,
+          tableMigration.name,
+        );
         break;
       case 'alter':
         await this.handleColumnChanges(
           queryRunner,
-          schemaName,
+          tableMigration.schemaName,
           tableMigration.name,
           tableMigration?.columns,
         );
@@ -180,7 +181,7 @@ export class WorkspaceMigrationRunnerService {
           );
           break;
         case WorkspaceMigrationColumnActionType.RELATION:
-          await this.createForeignKey(
+          await this.createRelation(
             queryRunner,
             schemaName,
             tableName,
@@ -282,31 +283,55 @@ export class WorkspaceMigrationRunnerService {
     // }
   }
 
-  private async createForeignKey(
+  private async createRelation(
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
     migrationColumn: WorkspaceMigrationColumnRelation,
   ) {
-    await queryRunner.createForeignKey(
-      `${schemaName}.${tableName}`,
-      new TableForeignKey({
-        columnNames: [migrationColumn.columnName],
-        referencedColumnNames: [migrationColumn.referencedTableColumnName],
-        referencedTableName: migrationColumn.referencedTableName,
-        onDelete: 'CASCADE',
-      }),
-    );
-
-    // Create unique constraint if for one to one relation
-    if (migrationColumn.isUnique) {
-      await queryRunner.createUniqueConstraint(
+    if (
+      !migrationColumn.referencedSchema ||
+      migrationColumn.referencedSchema === schemaName
+    ) {
+      // We can only create a foreign key if the tables are on the same schema
+      await queryRunner.createForeignKey(
         `${schemaName}.${tableName}`,
-        new TableUnique({
-          name: `UNIQUE_${tableName}_${migrationColumn.columnName}`,
+        new TableForeignKey({
           columnNames: [migrationColumn.columnName],
+          referencedColumnNames: [migrationColumn.referencedTableColumnName],
+          referencedSchema: migrationColumn.referencedSchema,
+          referencedTableName: migrationColumn.referencedTableName,
+          onDelete: 'CASCADE',
         }),
       );
+
+      // Create unique constraint if for one to one relation
+      if (migrationColumn.isUnique) {
+        await queryRunner.createUniqueConstraint(
+          `${schemaName}.${tableName}`,
+          new TableUnique({
+            name: `UNIQUE_${tableName}_${migrationColumn.columnName}`,
+            columnNames: [migrationColumn.columnName],
+          }),
+        );
+      }
+    } else {
+      await queryRunner.query(`
+        COMMENT ON TABLE "${migrationColumn.referencedSchema}"."${migrationColumn.referencedTableName}" is e'@graphql({"primary_key_columns": ["id"]})';
+      `);
+      await queryRunner.query(`
+        COMMENT ON TABLE "${schemaName}"."${tableName}" is e'
+          @graphql({
+              "foreign_keys": [
+                {
+                  "local_columns": ["${migrationColumn.columnName}"],
+                  "foreign_schema": "${migrationColumn.referencedSchema}",
+                  "foreign_table": "${migrationColumn.referencedTableName}",
+                  "foreign_columns": ["${migrationColumn.referencedTableColumnName}"]
+                }
+              ]
+          })';
+      `);
     }
   }
 }

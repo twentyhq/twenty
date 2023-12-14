@@ -1,13 +1,12 @@
 import { FullNameMetadata } from 'src/metadata/field-metadata/composite-types/full-name.composite-type';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
-import {
-  ObjectMetadata,
-  IsSystem,
-  FieldMetadata,
-  IsNullable,
-  RelationMetadata,
-} from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
+import { UserObjectMetadata } from 'src/workspace/workspace-sync-metadata/core-objects/user.object-metadata';
+import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
+import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
+import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
+import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
+import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorators/relation-metadata.decorator';
 import { ActivityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity.object-metadata';
 import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/attachment.object-metadata';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
@@ -58,13 +57,13 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   avatarUrl: string;
 
-  @FieldMetadata({
-    type: FieldMetadataType.UUID,
-    label: 'User Id',
-    description: 'Associated User Id',
-    icon: 'IconCircleUsers',
-  })
-  userId: string;
+  // @FieldMetadata({
+  //   type: FieldMetadataType.UUID,
+  //   label: 'User Id',
+  //   description: 'Associated User Id',
+  //   icon: 'IconCircleUsers',
+  // })
+  // userId: string;
 
   // Relations
   @FieldMetadata({
@@ -149,4 +148,12 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   authoredComments: CommentObjectMetadata[];
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'User',
+    description: 'Related user',
+    joinColumn: 'userId',
+  })
+  user: UserObjectMetadata;
 }

@@ -1,9 +1,8 @@
-import {
-  WorkspaceMigrationColumnActionType,
-  WorkspaceMigrationTableAction,
-} from 'src/metadata/workspace-migration/workspace-migration.entity';
+import { StandardWorkspaceMigrationTableAction } from 'src/metadata/workspace-migration/interfaces/standard-workspace-migration-table-action.interface';
 
-export const addPipelineStepTable: WorkspaceMigrationTableAction[] = [
+import { WorkspaceMigrationColumnActionType } from 'src/metadata/workspace-migration/workspace-migration.entity';
+
+export const addPipelineStepTable: StandardWorkspaceMigrationTableAction[] = [
   {
     name: 'pipelineStep',
     action: 'create',

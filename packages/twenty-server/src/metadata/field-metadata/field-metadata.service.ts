@@ -90,6 +90,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         {
           name: objectMetadata.targetTableName,
           action: 'alter',
+          schemaName: objectMetadata.dataSource.schema,
           columns: this.workspaceMigrationFactory.createColumnActions(
             WorkspaceMigrationColumnActionType.CREATE,
             createdFieldMetadata,
@@ -200,6 +201,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           {
             name: objectMetadata.targetTableName,
             action: 'alter',
+            schemaName: objectMetadata.dataSource.schema,
             columns: this.workspaceMigrationFactory.createColumnActions(
               WorkspaceMigrationColumnActionType.ALTER,
               existingFieldMetadata,

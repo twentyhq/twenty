@@ -44,19 +44,19 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   description: string;
 
   @Column({ nullable: true })
-  icon: string;
+  icon?: string;
 
   @Column({ nullable: false })
   targetTableName: string;
 
   @Column({ default: false })
-  isCustom: boolean;
+  isCustom?: boolean;
 
   @Column({ default: false })
-  isActive: boolean;
+  isActive?: boolean;
 
   @Column({ default: false })
-  isSystem: boolean;
+  isSystem?: boolean;
 
   @Column({ nullable: true })
   labelIdentifierFieldMetadataId?: string;
