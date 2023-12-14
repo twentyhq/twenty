@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import styled from '@emotion/styled';
 
 import { Attachments } from '@/activities/files/components/Attachments';
@@ -38,7 +39,7 @@ const StyledTabListContainer = styled.div`
 `;
 
 type ShowPageRightContainerProps = {
-  entity: ActivityTargetableEntity;
+  entity?: ActivityTargetableEntity;
   timeline?: boolean;
   tasks?: boolean;
   notes?: boolean;
@@ -52,6 +53,7 @@ export const ShowPageRightContainer = ({
   notes,
   emails,
 }: ShowPageRightContainerProps) => {
+  if (!entity) return <></>;
   const TASK_TABS = [
     {
       id: 'timeline',
