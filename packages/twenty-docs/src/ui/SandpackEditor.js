@@ -94,6 +94,8 @@ return (<ThemeProvider theme={lightTheme}>
           "lodash.debounce": "latest",
           "react-loading-skeleton": "latest",
           "zod": "latest",
+          "@blocknote/react": 'latest',
+          'react-responsive': 'latest'
           
         },
       }}

@@ -2,12 +2,14 @@
 title: Block Editor
 sidebar_position: 11
 sidebar_custom_props:
-  icon: TbSquareRoundedPlusFilled
+  icon: TbTemplate
 ---
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import { SandpackEditor} from '@site/src/ui/SandpackEditor'
 import blockEditorCode from '!!raw-loader!@site/src/ui/input/blockEditorCode.js'
+
+Uses a block-based rich text editor from [BlockNote](https://www.blocknotejs.org/) to allow users to edit and view blocks of content. 
 
 <Tabs>
 <TabItem value="usage" label="Usage" default>
@@ -26,93 +28,14 @@ import blockEditorCode from '!!raw-loader!@site/src/ui/input/blockEditorCode.js'
       <th>Props</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Default</th>
     </tr>
   </thead>
 
   <tbody>
     <tr>
-      <td>className</td>
-      <td>string</td>
-      <td>Optional class name for additional styling</td>
-      <td></td>
-    </tr>
-
-    <tr>
-      <td>Icon</td>
-      <td>`React.ComponentType`</td>
-      <td>An optional icon component that's displayed within the button</td>
-      <td></td>
-    </tr>
-
-    <tr>
-      <td>title</td>
-      <td>string</td>
-      <td>The text content of the button</td>
-      <td></td>
-    </tr>
-
-    <tr>
-      <td>fullWidth</td>
-      <td>boolean</td>
-      <td>Defines whether the button should span the whole width of its container</td>
-      <td>`false`</td>
-    </tr>
-
-    <tr>
-      <td>variant</td>
-      <td>string</td>
-      <td>The visual style variant of the button. Options include `primary`, `secondary`, and `tertiary`</td>
-      <td>primary</td>
-    </tr>
-
-    <tr>
-      <td>size</td>
-      <td>string</td>
-      <td>The size of the button. Has two options: `small` and `medium`</td>
-      <td>medium</td>
-    </tr>
-
-    <tr>
-      <td>position</td>
-      <td>string</td>
-      <td>The position of the button in relation to its siblings. Options include: `standalone`, `left`, `right`, and `middle`</td>
-      <td>standalone</td>
-    </tr>
-
-    <tr>
-      <td>accent</td>
-      <td>string</td>
-      <td>The accent color of the button. Options include: `default`, `blue`, and `danger`</td>
-      <td>default</td>
-    </tr>
-
-    <tr>
-      <td>soon</td>
-      <td>boolean</td>
-      <td>Indicates if the button is marked as "soon" (such as for upcoming features)</td>
-      <td>`false`</td>
-    </tr>
-
-    <tr>
-      <td>disabled</td>
-      <td>boolean</td>
-      <td>Specifies whether button is disabled or not</td>
-      <td>`false`</td>
-    </tr>
-
-    <tr>
-      <td>focus</td>
-      <td>boolean</td>
-      <td>Determines if the button has focus</td>
-      <td>`false`</td>
-    </tr>
-
-    <tr>
-      <td>onClick</td>
-      <td>function</td>
-      <td>A callback function that triggers when the user clicks on the button</td>
-      <td></td>
+      <td>editor</td>
+      <td>`BlockNoteEditor`</td>
+      <td>The block editor instance or configuration</td>
     </tr>
 
   </tbody>
