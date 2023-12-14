@@ -1,7 +1,6 @@
 import { createGraphiQLFetcher } from "@graphiql/toolkit";
 import { GraphiQL } from "graphiql";
 import React from "react";
-import ReactDOM from "react-dom";
 import Layout from "@theme/Layout";
 import BrowserOnly from "@docusaurus/BrowserOnly";
 
