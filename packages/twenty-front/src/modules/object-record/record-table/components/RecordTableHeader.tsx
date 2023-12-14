@@ -59,7 +59,10 @@ export const RecordTableHeader = ({
 }: {
   createRecord: () => void;
 }) => {
-  const { visibleTableColumnsSelector } = useRecordTableScopedStates();
+  const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
+    useRecordTableScopedStates();
+
+  const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector);
 
   const scrollWrapper = useContext(ScrollWrapperContext);
   const isTableWiderThanScreen =
@@ -92,22 +95,24 @@ export const RecordTableHeader = ({
         <StyledPlusIconHeaderCell
           isTableWiderThanScreen={isTableWiderThanScreen}
         >
-          <DropdownScope
-            dropdownScopeId={HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID}
-          >
-            <Dropdown
-              clickableComponent={
-                <StyledPlusIconContainer>
-                  <IconPlus size={theme.icon.size.md} />
-                </StyledPlusIconContainer>
-              }
-              dropdownComponents={<RecordTableHeaderPlusButtonContent />}
-              dropdownPlacement="bottom-start"
-              dropdownHotkeyScope={{
-                scope: HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID,
-              }}
-            />
-          </DropdownScope>
+          {hiddenTableColumns.length > 0 && (
+            <DropdownScope
+              dropdownScopeId={HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID}
+            >
+              <Dropdown
+                clickableComponent={
+                  <StyledPlusIconContainer>
+                    <IconPlus size={theme.icon.size.md} />
+                  </StyledPlusIconContainer>
+                }
+                dropdownComponents={<RecordTableHeaderPlusButtonContent />}
+                dropdownPlacement="bottom-start"
+                dropdownHotkeyScope={{
+                  scope: HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID,
+                }}
+              />
+            </DropdownScope>
+          )}
         </StyledPlusIconHeaderCell>
       </tr>
     </StyledTableHead>
