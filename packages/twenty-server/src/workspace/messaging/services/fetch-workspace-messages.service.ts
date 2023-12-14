@@ -104,18 +104,6 @@ export class FetchWorkspaceMessagesService {
     if (!messagesData) {
       return;
     }
-    // TODO: fetch batch request !!!
-    // for (const message of messagesData) {
-    //   if (!message.id) {
-    //     continue;
-    //   }
-    //   const messageData = await gmail.users.messages.get({
-    //     userId: 'me',
-    //     id: message.id,
-    //   });
-
-    //   console.log('messageData', messageData.data.snippet);
-    // }
 
     const messageQueries = messagesData.map((message) => ({
       uri: '/gmail/v1/users/me/messages/' + message.id,
@@ -127,24 +115,11 @@ export class FetchWorkspaceMessagesService {
       2,
     );
 
-    console.log('messagesResponse', messagesResponse);
-
-    const data = messagesResponse[0].payload.parts[0].body.data;
-
-    // console.log('data', data);
-
-    // console.log('data', atob(data.replace(/-/g, '+').replace(/_/g, '/')));
-
-    // if (!messagesData) {
-    //   return;
-    // }
-
-    // await this.saveMessages(
-    //   messagesData,
-    //   dataSourceMetadata,
-    //   workspaceDataSource,
-    //   connectedAccount[0].id,
-    // );
+    await this.saveMessages(
+      messagesResponse,
+      dataSourceMetadata,
+      workspaceDataSource,
+    );
 
     return messages;
   }
@@ -189,22 +164,26 @@ export class FetchWorkspaceMessagesService {
     }
   }
 
-  //   async saveMessages(
-  //     threads,
-  //     dataSourceMetadata,
-  //     workspaceDataSource,
-  //     connectedAccountId,
-  //   ) {
-  //     const messageChannel = await workspaceDataSource?.query(
-  //       `SELECT * FROM ${dataSourceMetadata.schema}."messageChannel" WHERE "connectedAccountId" = $1`,
-  //       [connectedAccountId],
-  //     );
+  async saveMessages(messages, dataSourceMetadata, workspaceDataSource) {
+    for (const message of messages) {
+      const {
+        externalId,
+        headerMessageId,
+        subject,
+        messageThreadId,
+        from,
+        body,
+      } = message;
 
-  //     for (const thread of threads) {
-  //       await workspaceDataSource?.query(
-  //         `INSERT INTO ${dataSourceMetadata.schema}."message" ("externalId", "subject", "messageChannelId", "visibility") VALUES ($1, $2, $3, $4)`,
-  //         [thread.id, thread.snippet, messageChannel[0].id, 'default'],
-  //       );
-  //     }
-  //   }
+      const messageThread = await workspaceDataSource?.query(
+        `SELECT * FROM ${dataSourceMetadata.schema}."messageThread" WHERE "externalId" = $1`,
+        [messageThreadId],
+      );
+
+      await workspaceDataSource?.query(
+        `INSERT INTO ${dataSourceMetadata.schema}."message" ("externalId", "headerMessageId", "subject", "messageThreadId", "direction", "body") VALUES ($1, $2, $3, $4, $5, $6)`,
+        [externalId, headerMessageId, subject, messageThread[0].id, from, body],
+      );
+    }
+  }
 }

@@ -30,7 +30,9 @@ export class FetchBatchMessagesService {
       },
     );
 
-    return this.parseBatch(response);
+    console.log('response', response);
+
+    return this.formatBatchResponse(response);
   }
 
   createBatchBody(messageQueries, boundary: string): string {
@@ -66,9 +68,6 @@ export class FetchBatchMessagesService {
 
     const responseLines = responseCollection.data.split('--' + boundary);
 
-    // remove --batch_8vTxk_nJYHdcjCb88OGrftDiX-Qz98Uj--
-    //responseLines.pop();
-
     responseLines.forEach(function (response) {
       const startJson = response.indexOf('{');
       const endJson = response.lastIndexOf('}');
@@ -97,5 +96,29 @@ export class FetchBatchMessagesService {
     const boundary = components.find((o) => o.startsWith('boundary='));
 
     return boundary.replace('boundary=', '').trim('; ');
+  }
+
+  formatBatchResponse(response) {
+    const parsedResponse = this.parseBatch(response);
+
+    return parsedResponse.map((item) => {
+      const { id, threadId, payload } = item;
+
+      const headers = payload.headers;
+
+      const bodyBase64 = payload.parts[0].body.data;
+
+      const body = atob(bodyBase64.replace(/-/g, '+').replace(/_/g, '/'));
+
+      return {
+        externalId: id,
+        headerMessageId: headers.find((header) => header.name === 'Message-ID')
+          .value,
+        subject: headers.find((header) => header.name === 'Subject').value,
+        messageThreadId: threadId,
+        from: headers.find((header) => header.name === 'From').value,
+        body,
+      };
+    });
   }
 }
