@@ -121,11 +121,17 @@ export class FetchWorkspaceMessagesService {
       uri: '/gmail/v1/users/me/messages/' + message.id,
     }));
 
-    await this.fetchBatchMessagesService.fetchBatch(
+    const messagesResponse = await this.fetchBatchMessagesService.fetchBatch(
       messageQueries,
       accessToken,
       1,
     );
+
+    const data = messagesResponse[0].payload.parts[0].body.data;
+
+    console.log('data', data);
+
+    console.log('data', atob(data.replace(/-/g, '+').replace(/_/g, '/')));
 
     // if (!messagesData) {
     //   return;

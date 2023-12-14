@@ -2,13 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import axios, { AxiosInstance } from 'axios';
 
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
-
 @Injectable()
 export class FetchBatchMessagesService {
   private readonly httpService: AxiosInstance;
 
-  constructor(private readonly environmentService: EnvironmentService) {
+  constructor() {
     this.httpService = axios.create({
       baseURL: 'https://www.googleapis.com/batch/gmail/v1',
     });
