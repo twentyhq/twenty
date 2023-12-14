@@ -2,6 +2,7 @@ import { Inject, Injectable, OnModuleDestroy } from '@nestjs/common';
 
 import { QueueJobOptions } from 'src/integrations/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueueDriver } from 'src/integrations/message-queue/drivers/interfaces/message-queue-driver.interface';
+import { MessageQueueJobData } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import {
   MessageQueues,
@@ -25,11 +26,15 @@ export class MessageQueueService implements OnModuleDestroy {
     }
   }
 
-  add<T>(jobName: string, data: T, options?: QueueJobOptions): Promise<void> {
+  add<T extends MessageQueueJobData>(
+    jobName: string,
+    data: T,
+    options?: QueueJobOptions,
+  ): Promise<void> {
     return this.driver.add(this.queueName, jobName, data, options);
   }
 
-  work<T>(
+  work<T extends MessageQueueJobData>(
     handler: ({ data, id }: { data: T; id: string }) => Promise<void> | void,
   ) {
     return this.driver.work(this.queueName, handler);
