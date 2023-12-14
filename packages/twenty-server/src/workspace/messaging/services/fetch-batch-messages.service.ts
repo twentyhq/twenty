@@ -32,9 +32,7 @@ export class FetchBatchMessagesService {
       },
     );
 
-    const text = await response.data;
-
-    console.log('text', text);
+    return this.parseBatch(response);
   }
 
   createBatchBody(messageQueries, boundary: string): string {
@@ -59,5 +57,44 @@ export class FetchBatchMessagesService {
     });
 
     return batchBody.concat(['--', boundary, '--']).join('');
+  }
+
+  parseBatch(responseCollection) {
+    const items: any = [];
+
+    const boundary = this.getBatchSeparator(responseCollection);
+
+    const responseLines = responseCollection.data.split('--' + boundary);
+
+    responseLines.forEach(function (response) {
+      const startJson = response.indexOf('{');
+      const endJson = response.lastIndexOf('}');
+
+      if (startJson < 0 || endJson < 0) {
+        return;
+      }
+
+      const responseJson = response.substr(startJson, endJson - startJson + 1);
+
+      const item = JSON.parse(responseJson);
+
+      items.push(item);
+    });
+
+    return items;
+  }
+
+  getBatchSeparator(response) {
+    const headers = response.headers;
+
+    if (!headers['content-type']) return '';
+
+    const components = headers['content-type'].split('; ');
+
+    const boundary = components.find((o) => o.startsWith('boundary='));
+
+    boundary.replace('boundary=', '').trim('; ');
+
+    return boundary;
   }
 }
