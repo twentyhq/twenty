@@ -4,8 +4,8 @@ import styled from '@emotion/styled';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { Tag } from '@/ui/display/tag/components/Tag';
-import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
@@ -40,7 +40,8 @@ export const SettingsObjectItemTableRow = ({
     objectNameSingular: objectItem.nameSingular,
   });
 
-  const { Icon } = useLazyLoadIcon(objectItem.icon ?? '');
+  const { getIcon } = useIcons();
+  const Icon = getIcon(objectItem.icon);
 
   return (
     <StyledObjectTableRow key={objectItem.namePlural} onClick={onClick}>
