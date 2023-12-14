@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useRef } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
@@ -16,8 +15,6 @@ import { assertNotNull } from '~/utils/assert';
 
 import { CreateNewButton } from '../../../ui/input/relation-picker/components/CreateNewButton';
 import { DropdownMenuSkeletonItem } from '../../../ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
-import { CreateButtonId, EmptyButtonId } from '../constants';
-import { useEntitySelectScroll } from '../hooks/useEntitySelectScroll';
 import { EntityForSelect } from '../types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
@@ -61,15 +58,6 @@ export const SingleEntitySelectBase = ({
       assertNotNull(entity) && isNonEmptyString(entity.name),
   );
 
-  const { preselectedOptionId } = useEntitySelectScroll({
-    selectableOptionIds: [
-      EmptyButtonId,
-      ...entitiesInDropdown.map((item) => item.id),
-      ...(showCreateButton ? [CreateButtonId] : []),
-    ],
-    containerRef,
-  });
-
   useScopedHotkeys(
     Key.Escape,
     () => {
@@ -83,75 +71,72 @@ export const SingleEntitySelectBase = ({
 
   return (
     <div ref={containerRef}>
-      <DropdownMenuItemsContainer hasMaxHeight>
-        {loading ? (
-          <DropdownMenuSkeletonItem />
-        ) : entitiesInDropdown.length === 0 && !isAllEntitySelectShown ? (
-          <MenuItem text="No result" />
-        ) : (
-          <>
-            {isAllEntitySelectShown &&
-              selectAllLabel &&
-              onAllEntitySelected && (
+      <SelectableList
+        selectableListId="single-entity-select-base-list"
+        selectableItemIdArray={selectableItemIds}
+        hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+        onEnter={(_itemId) => {
+          if (showCreateButton) {
+            onCreate?.();
+          } else {
+            const entity = entitiesInDropdown.findIndex(
+              (entity) => entity.id === _itemId,
+            );
+            onEntitySelected(entitiesInDropdown[entity]);
+          }
+        }}
+      >
+        <DropdownMenuItemsContainer hasMaxHeight>
+          {loading ? (
+            <DropdownMenuSkeletonItem />
+          ) : entitiesInDropdown.length === 0 && !isAllEntitySelectShown ? (
+            <MenuItem text="No result" />
+          ) : (
+            <>
+              {isAllEntitySelectShown &&
+                selectAllLabel &&
+                onAllEntitySelected && (
+                  <MenuItemSelect
+                    key="select-all"
+                    onClick={() => onAllEntitySelected()}
+                    LeftIcon={SelectAllIcon}
+                    text={selectAllLabel}
+                    selected={!!isAllEntitySelected}
+                  />
+                )}
+              {emptyLabel && (
                 <MenuItemSelect
-                  onClick={() => onAllEntitySelected()}
-                  LeftIcon={SelectAllIcon}
-                  text={selectAllLabel}
-                  hovered={preselectedOptionId === EmptyButtonId}
-                  selected={!!isAllEntitySelected}
+                  key="select-none"
+                  onClick={() => onEntitySelected()}
+                  LeftIcon={EmptyIcon}
+                  text={emptyLabel}
+                  selected={!selectedEntity}
                 />
               )}
-            {emptyLabel && (
-              <MenuItemSelect
-                onClick={() => onEntitySelected()}
-                LeftIcon={EmptyIcon}
-                text={emptyLabel}
-                hovered={preselectedOptionId === EmptyButtonId}
-                selected={!selectedEntity}
-              />
-            )}
-            {entitiesInDropdown?.map((entity) => (
-              <SelectableList
-                selectableListId="single-entity-select-base-list"
-                selectableItemIds={[selectableItemIds]}
-                hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
-                onEnter={(_itemId) => {
-                  if (
-                    showCreateButton &&
-                    preselectedOptionId === CreateButtonId
-                  ) {
-                    onCreate?.();
-                  } else {
-                    const entity = entitiesInDropdown.findIndex(
-                      (entity) => entity.id === _itemId,
-                    );
-                    onEntitySelected(entitiesInDropdown[entity]);
-                  }
-                }}
-              >
+              {entitiesInDropdown?.map((entity) => (
                 <SelectableMenuItemSelect
+                  key={entity.id}
                   entity={entity}
                   onEntitySelected={onEntitySelected}
                   selectedEntity={selectedEntity}
                 />
-              </SelectableList>
-            ))}
+              ))}
+            </>
+          )}
+        </DropdownMenuItemsContainer>
+        {showCreateButton && (
+          <>
+            <DropdownMenuItemsContainer hasMaxHeight>
+              <DropdownMenuSeparator />
+              <CreateNewButton
+                onClick={onCreate}
+                LeftIcon={IconPlus}
+                text="Add New"
+              />
+            </DropdownMenuItemsContainer>
           </>
         )}
-      </DropdownMenuItemsContainer>
-      {showCreateButton && (
-        <>
-          <DropdownMenuItemsContainer hasMaxHeight>
-            <DropdownMenuSeparator />
-            <CreateNewButton
-              onClick={onCreate}
-              LeftIcon={IconPlus}
-              text="Add New"
-              hovered={preselectedOptionId === CreateButtonId}
-            />
-          </DropdownMenuItemsContainer>
-        </>
-      )}
+      </SelectableList>
     </div>
   );
 };

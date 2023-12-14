@@ -1,3 +1,5 @@
+import styled from '@emotion/styled';
+
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -10,6 +12,10 @@ type SelectableMenuItemSelectProps = {
   selectedEntity?: EntityForSelect;
 };
 
+const StyledSelectableItem = styled(SelectableItem)`
+  width: 100%;
+`;
+
 export const SelectableMenuItemSelect = ({
   entity,
   onEntitySelected,
@@ -21,7 +27,7 @@ export const SelectableMenuItemSelect = ({
   });
 
   return (
-    <SelectableItem itemId={entity.id} key={entity.id}>
+    <StyledSelectableItem itemId={entity.id} key={entity.id}>
       <MenuItemSelectAvatar
         key={entity.id}
         testId="menu-item"
@@ -39,6 +45,6 @@ export const SelectableMenuItemSelect = ({
           />
         }
       />
-    </SelectableItem>
+    </StyledSelectableItem>
   );
 };
