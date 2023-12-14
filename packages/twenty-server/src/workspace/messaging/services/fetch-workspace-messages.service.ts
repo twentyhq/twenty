@@ -5,6 +5,7 @@ import { google } from 'googleapis';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
+import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetch-batch-messages.service';
 
 @Injectable()
 export class FetchWorkspaceMessagesService {
@@ -12,6 +13,7 @@ export class FetchWorkspaceMessagesService {
     private readonly environmentService: EnvironmentService,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
+    private readonly fetchBatchMessagesService: FetchBatchMessagesService,
   ) {}
 
   async fetchWorkspaceThreads(workspaceId: string): Promise<any> {
@@ -116,9 +118,15 @@ export class FetchWorkspaceMessagesService {
     //   console.log('messageData', messageData.data.snippet);
     // }
 
-    const messageQueries = messagesData.map((message) => {
-      uri: '/gmail/v1/users/me/messages/' + message.id;
-    });
+    const messageQueries = messagesData.map((message) => ({
+      uri: '/gmail/v1/users/me/messages/' + message.id,
+    }));
+
+    await this.fetchBatchMessagesService.fetchBatch(
+      messageQueries,
+      refreshToken,
+      10,
+    );
 
     // if (!messagesData) {
     //   return;
