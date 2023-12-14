@@ -1,0 +1,24 @@
+.form {
+    text-align: center;
+    width: 100%;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.link {
+    color: #212a3b;
+    text-decoration: none;
+    position: relative;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.input {
+    padding: 4px;
+    margin: 4px;
+    box-sizing: border-box;
+    background-color: #f3f3f3;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}

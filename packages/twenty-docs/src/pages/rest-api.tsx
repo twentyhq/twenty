@@ -3,22 +3,30 @@ import BrowserOnly from "@docusaurus/BrowserOnly";
 import React, { useEffect, useState } from "react";
 import { API } from '@stoplight/elements';
 import '@stoplight/elements/styles.min.css';
+import './graphql.css'
 
 interface TokenFormPropsI {
-  onSubmit: (event: React.MouseEvent<HTMLButtonElement>, token: string) => void
+  onSubmit: (token: string) => void
 }
 
 const TokenForm = ({onSubmit}: TokenFormPropsI)=> {
-  const [token, setToken] = useState('')
   const updateToken = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setToken(event.target.value)
+    event.preventDefault()
+    onSubmit(event.target.value)
   }
 
   return (
     <div>
-      <form>
-        <input type='text' value={token} onChange={updateToken}/>
-        <button type='submit' onClick={(event) => onSubmit(event, token)}>Load Schema</button>
+      <form className="form">
+        <label>
+          To load all your API endpoints, <a className='link' href='https://app.twenty.com/settings/developers/api-keys'>generate an API key</a> and paste it here:
+        </label>
+        <input
+          className="input"
+          type='text'
+          placeholder='123'
+          onChange={updateToken}
+        />
       </form>
     </div>
     )
@@ -34,9 +42,7 @@ const RestApiComponent = () => {
     ).then((res)=> res.json())
   }
 
-  const submitToken = async (event, token) => {
-    event.preventDefault()
-
+  const submitToken = async (token) => {
     const json = await getJson(token)
 
     setOpenApiJson(json)
