@@ -12,6 +12,36 @@ export class FetchBatchMessagesService {
     });
   }
 
+  async fetchAllByBatches(messageQueries, accessToken: string): Promise<any> {
+    const batchLimit = Math.min(messageQueries.length, 50);
+
+    let messages = [];
+
+    let batchOffset = 0;
+
+    console.log('messageQueries', messageQueries);
+
+    while (batchOffset < messageQueries.length) {
+      const queries = messageQueries.slice(batchOffset);
+
+      if (queries.length === 0) {
+        break;
+      }
+
+      const batchResponse = await this.fetchBatch(
+        queries,
+        accessToken,
+        batchLimit,
+      );
+
+      messages = messages.concat(batchResponse);
+
+      batchOffset += batchLimit;
+    }
+
+    return messages;
+  }
+
   async fetchBatch(
     messageQueries,
     accessToken: string,
@@ -64,8 +94,6 @@ export class FetchBatchMessagesService {
 
     const boundary = this.getBatchSeparator(responseCollection);
 
-    console.log('boundary', boundary);
-
     const responseLines = responseCollection.data.split('--' + boundary);
 
     responseLines.forEach(function (response) {
@@ -107,6 +135,10 @@ export class FetchBatchMessagesService {
       const headers = payload.headers;
 
       const bodyBase64 = payload.parts[0].body.data;
+
+      if (!bodyBase64) {
+        return;
+      }
 
       const body = atob(bodyBase64.replace(/-/g, '+').replace(/_/g, '/'));
 

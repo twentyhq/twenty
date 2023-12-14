@@ -109,11 +109,11 @@ export class FetchWorkspaceMessagesService {
       uri: '/gmail/v1/users/me/messages/' + message.id,
     }));
 
-    const messagesResponse = await this.fetchBatchMessagesService.fetchBatch(
-      messageQueries,
-      accessToken,
-      2,
-    );
+    const messagesResponse =
+      await this.fetchBatchMessagesService.fetchAllByBatches(
+        messageQueries,
+        accessToken,
+      );
 
     await this.saveMessages(
       messagesResponse,
