@@ -2,7 +2,7 @@ import PgBoss from 'pg-boss';
 
 import { QueueJobOptions } from 'src/integrations/message-queue/drivers/interfaces/job-options.interface';
 
-import { MessageQueues } from 'src/integrations/message-queue/message-queue.constants';
+import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 
 import { MessageQueueDriver } from './interfaces/message-queue-driver.interface';
 
@@ -31,7 +31,7 @@ export class PgBossDriver implements MessageQueueDriver {
   }
 
   async add<T>(
-    queueName: MessageQueues,
+    queueName: MessageQueue,
     jobName: string,
     data: T,
     options?: QueueJobOptions,

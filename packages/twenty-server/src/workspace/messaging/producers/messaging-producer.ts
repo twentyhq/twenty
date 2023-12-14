@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { MessageQueues } from 'src/integrations/message-queue/message-queue.constants';
+import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import {
   FetchMessagesJob,
@@ -10,7 +10,7 @@ import {
 @Injectable()
 export class MessagingProducer {
   constructor(
-    @Inject(MessageQueues.messagingQueue)
+    @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 

@@ -5,7 +5,7 @@ import { MessageQueueDriver } from 'src/integrations/message-queue/drivers/inter
 import { MessageQueueJobData } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import {
-  MessageQueues,
+  MessageQueue,
   QUEUE_DRIVER,
 } from 'src/integrations/message-queue/message-queue.constants';
 
@@ -13,7 +13,7 @@ import {
 export class MessageQueueService implements OnModuleDestroy {
   constructor(
     @Inject(QUEUE_DRIVER) protected driver: MessageQueueDriver,
-    protected queueName: MessageQueues,
+    protected queueName: MessageQueue,
   ) {
     if (typeof this.driver.register === 'function') {
       this.driver.register(queueName);
