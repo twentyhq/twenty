@@ -62,7 +62,12 @@ export class FetchBatchMessagesService {
 
     const boundary = this.getBatchSeparator(responseCollection);
 
+    console.log('boundary', boundary);
+
     const responseLines = responseCollection.data.split('--' + boundary);
+
+    // remove --batch_8vTxk_nJYHdcjCb88OGrftDiX-Qz98Uj--
+    //responseLines.pop();
 
     responseLines.forEach(function (response) {
       const startJson = response.indexOf('{');
@@ -91,8 +96,6 @@ export class FetchBatchMessagesService {
 
     const boundary = components.find((o) => o.startsWith('boundary='));
 
-    boundary.replace('boundary=', '').trim('; ');
-
-    return boundary;
+    return boundary.replace('boundary=', '').trim('; ');
   }
 }

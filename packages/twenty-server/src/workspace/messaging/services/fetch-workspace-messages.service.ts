@@ -124,14 +124,16 @@ export class FetchWorkspaceMessagesService {
     const messagesResponse = await this.fetchBatchMessagesService.fetchBatch(
       messageQueries,
       accessToken,
-      1,
+      2,
     );
+
+    console.log('messagesResponse', messagesResponse);
 
     const data = messagesResponse[0].payload.parts[0].body.data;
 
-    console.log('data', data);
+    // console.log('data', data);
 
-    console.log('data', atob(data.replace(/-/g, '+').replace(/_/g, '/')));
+    // console.log('data', atob(data.replace(/-/g, '+').replace(/_/g, '/')));
 
     // if (!messagesData) {
     //   return;
