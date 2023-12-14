@@ -15,9 +15,7 @@ const GraphiQLComponent = () => {
     window.localStorage.setItem("graphiql:theme", "light");
   }
 
-  const fetcher = createGraphiQLFetcher({
-    url: "https://api.twenty.com/graphql",
-  });
+  const fetcher = createGraphiQLFetcher({url: "http://localhost:3000/graphql"});
   return (
     <div className="fullHeightPlayground">
       <GraphiQL fetcher={fetcher} />;

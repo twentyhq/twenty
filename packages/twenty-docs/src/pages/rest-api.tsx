@@ -4,41 +4,59 @@ import React, { useEffect, useState } from "react";
 import { API } from '@stoplight/elements';
 import '@stoplight/elements/styles.min.css';
 
-const RestApiComponent = () => {
+interface TokenFormPropsI {
+  onSubmit: (event: React.MouseEvent<HTMLButtonElement>, token: string) => void
+}
+
+const TokenForm = ({onSubmit}: TokenFormPropsI)=> {
   const [token, setToken] = useState('')
-  const [openApiJson, setOpenApiJson] = useState({})
   const updateToken = (event: React.ChangeEvent<HTMLInputElement>) => {
     setToken(event.target.value)
   }
-  const submitToken = async (e) => {
-    e.preventDefault();
-    const json = await fetch(
+
+  return (
+    <div>
+      <form>
+        <input type='text' value={token} onChange={updateToken}/>
+        <button type='submit' onClick={(event) => onSubmit(event, token)}>Load Schema</button>
+      </form>
+    </div>
+    )
+}
+
+const RestApiComponent = () => {
+  const [openApiJson, setOpenApiJson] = useState({})
+
+  const getJson = async (token: string ) => {
+    return await fetch(
       "http://localhost:3000/open-api",
       {headers: {Authorization: `Bearer ${token}`}}
     ).then((res)=> res.json())
+  }
+
+  const submitToken = async (event, token) => {
+    event.preventDefault()
+
+    const json = await getJson(token)
+
     setOpenApiJson(json)
   }
   useEffect(()=> {
      (async ()=> {
-      const initialJson = await fetch(
-        "http://localhost:3000/open-api",
-      ).then((res)=> res.json())
-     setOpenApiJson(initialJson)
+       const initialJson = await getJson('')
+
+       setOpenApiJson(initialJson)
     })()
   },[])
+
   return (
-    <div className="App">
-      <div>
-        <form>
-          <input type='text' value={token} onChange={updateToken}/>
-          <button type='submit' onClick={submitToken}>Load Schema</button>
-        </form>
-      </div>
+    <>
+      <TokenForm onSubmit={submitToken} />
       <API
         apiDescriptionDocument={JSON.stringify(openApiJson)}
         router="hash"
       />
-    </div>
+    </>
   )
 }
 
