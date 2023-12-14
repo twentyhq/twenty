@@ -16,8 +16,7 @@ export const useSelectableListHotKeys = (
     selectedItemId?: string | null,
   ) => {
     if (!selectedItemId) {
-      // If nothing is selected, return the default position
-      return { row: 0, col: 0 };
+      return { row: 0, col: -1 };
     }
 
     for (let row = 0; row < selectableItemIds.length; row++) {
@@ -94,21 +93,23 @@ export const useSelectableListHotKeys = (
 
         const nextId = computeNextId(direction);
 
-        if (nextId) {
-          const { isSelectedItemIdSelector } = getSelectableListScopedStates({
-            selectableListScopeId: scopeId,
-            itemId: nextId,
-          });
-          set(isSelectedItemIdSelector, true);
-          set(selectedItemIdState, nextId);
-        }
+        if (!selectedItemId || (selectedItemId && selectedItemId !== nextId)) {
+          if (nextId) {
+            const { isSelectedItemIdSelector } = getSelectableListScopedStates({
+              selectableListScopeId: scopeId,
+              itemId: nextId,
+            });
+            set(isSelectedItemIdSelector, true);
+            set(selectedItemIdState, nextId);
+          }
 
-        if (selectedItemId) {
-          const { isSelectedItemIdSelector } = getSelectableListScopedStates({
-            selectableListScopeId: scopeId,
-            itemId: selectedItemId,
-          });
-          set(isSelectedItemIdSelector, false);
+          if (selectedItemId) {
+            const { isSelectedItemIdSelector } = getSelectableListScopedStates({
+              selectableListScopeId: scopeId,
+              itemId: selectedItemId,
+            });
+            set(isSelectedItemIdSelector, false);
+          }
         }
       },
     [scopeId],

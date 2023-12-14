@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { useRef } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
@@ -6,6 +7,9 @@ import { IconPlus } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
 import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemSelectAvatar';
@@ -64,7 +68,7 @@ export const SingleEntitySelectBase = <
       assertNotNull(entity) && isNonEmptyString(entity.name),
   );
 
-  const { preselectedOptionId, resetScroll } = useEntitySelectScroll({
+  const { preselectedOptionId } = useEntitySelectScroll({
     selectableOptionIds: [
       EmptyButtonId,
       ...entitiesInDropdown.map((item) => item.id),
@@ -74,24 +78,6 @@ export const SingleEntitySelectBase = <
   });
 
   useScopedHotkeys(
-    Key.Enter,
-    () => {
-      if (showCreateButton && preselectedOptionId === CreateButtonId) {
-        onCreate?.();
-      } else {
-        const entity = entitiesInDropdown.findIndex(
-          (entity) => entity.id === preselectedOptionId,
-        );
-        onEntitySelected(entitiesInDropdown[entity]);
-      }
-
-      resetScroll();
-    },
-    RelationPickerHotkeyScope.RelationPicker,
-    [entitiesInDropdown, preselectedOptionId, onEntitySelected],
-  );
-
-  useScopedHotkeys(
     Key.Escape,
     () => {
       onCancel?.();
@@ -99,6 +85,8 @@ export const SingleEntitySelectBase = <
     RelationPickerHotkeyScope.RelationPicker,
     [onCancel],
   );
+
+  const selectableItemIds = entitiesInDropdown.map((entity) => entity.id);
 
   return (
     <div ref={containerRef}>
@@ -130,23 +118,49 @@ export const SingleEntitySelectBase = <
               />
             )}
             {entitiesInDropdown?.map((entity) => (
-              <MenuItemSelectAvatar
-                key={entity.id}
-                testId="menu-item"
-                selected={selectedEntity?.id === entity.id}
-                onClick={() => onEntitySelected(entity)}
-                text={entity.name}
-                hovered={preselectedOptionId === entity.id}
-                avatar={
-                  <Avatar
-                    avatarUrl={entity.avatarUrl}
-                    colorId={entity.id}
-                    placeholder={entity.name}
-                    size="md"
-                    type={entity.avatarType ?? 'rounded'}
+              <SelectableList
+                selectableListId="single-entity-select-base-list"
+                selectableItemIds={[selectableItemIds]}
+                hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+                onEnter={(_itemId) => {
+                  if (
+                    showCreateButton &&
+                    preselectedOptionId === CreateButtonId
+                  ) {
+                    onCreate?.();
+                  } else {
+                    const entity = entitiesInDropdown.findIndex(
+                      (entity) => entity.id === _itemId,
+                    );
+                    onEntitySelected(entitiesInDropdown[entity]);
+                  }
+                }}
+              >
+                <SelectableItem itemId={entity.id} key={entity.id}>
+                  <MenuItemSelectAvatar
+                    key={entity.id}
+                    testId="menu-item"
+                    onClick={() => onEntitySelected(entity)}
+                    text={entity.name}
+                    selected={selectedEntity?.id === entity.id}
+                    hovered={
+                      useSelectableList({
+                        selectableListId: 'single-entity-select-base-list',
+                        itemId: entity.id,
+                      }).isSelectedItemId
+                    }
+                    avatar={
+                      <Avatar
+                        avatarUrl={entity.avatarUrl}
+                        colorId={entity.id}
+                        placeholder={entity.name}
+                        size="md"
+                        type={entity.avatarType ?? 'rounded'}
+                      />
+                    }
                   />
-                }
-              />
+                </SelectableItem>
+              </SelectableList>
             ))}
           </>
         )}
