@@ -90,6 +90,7 @@ export class FetchWorkspaceMessagesService {
       [workspaceMemberId],
     );
 
+    const accessToken = connectedAccount[0].accessToken;
     const refreshToken = connectedAccount[0].refreshToken;
 
     const gmail = await this.getGmailClient(refreshToken);
@@ -99,8 +100,6 @@ export class FetchWorkspaceMessagesService {
     });
 
     const messagesData = messages.data.messages;
-
-    console.log('messagesData', messages);
 
     if (!messagesData) {
       return;
@@ -124,8 +123,8 @@ export class FetchWorkspaceMessagesService {
 
     await this.fetchBatchMessagesService.fetchBatch(
       messageQueries,
-      refreshToken,
-      10,
+      accessToken,
+      1,
     );
 
     // if (!messagesData) {

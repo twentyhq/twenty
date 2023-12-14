@@ -1,43 +1,48 @@
 import { Injectable } from '@nestjs/common';
 
+import axios, { AxiosInstance } from 'axios';
+
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
+
 @Injectable()
 export class FetchBatchMessagesService {
-  gmailBatchEndpoint = 'https://www.googleapis.com/batch/gmail/v1';
+  private readonly httpService: AxiosInstance;
 
-  async fetchBatch(messageQueries, refreshToken, batchLimit): Promise<any> {
+  constructor(private readonly environmentService: EnvironmentService) {
+    this.httpService = axios.create({
+      baseURL: 'https://www.googleapis.com/batch/gmail/v1',
+    });
+  }
+
+  async fetchBatch(
+    messageQueries,
+    accessToken: string,
+    batchLimit: number,
+  ): Promise<any> {
     const limitedMessageQueries = messageQueries.slice(0, batchLimit);
 
-    const res = await fetch(`${this.gmailBatchEndpoint}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'multipart/mixed; boundary=batch_gmail_messages',
-        Authorization: 'Bearer ' + refreshToken,
+    const response = await this.httpService.post(
+      '/',
+      this.createBatchBody(limitedMessageQueries, 'batch_gmail_messages'),
+      {
+        headers: {
+          'Content-Type': 'multipart/mixed; boundary=batch_gmail_messages',
+          Authorization: 'Bearer ' + accessToken,
+        },
       },
-      body: this.createBatchBody(limitedMessageQueries, 'batch_gmail_messages'),
-    });
+    );
 
-    console.log('batch', res);
+    const text = await response.data;
+
+    console.log('text', text);
   }
 
   createBatchBody(messageQueries, boundary: string): string {
     let batchBody: string[] = [];
 
     messageQueries.forEach(function (call) {
-      console.log('call', call);
       const method = 'GET';
       const uri = call.uri;
-
-      let body = '\r\n';
-
-      if (call.body) {
-        body = [
-          'Content-Type: application/json',
-          '\r\n\r\n',
-
-          JSON.stringify(call.body),
-          '\r\n',
-        ].join('');
-      }
 
       batchBody = batchBody.concat([
         '--',
@@ -49,6 +54,7 @@ export class FetchBatchMessagesService {
         method,
         ' ',
         uri,
+        '\r\n\r\n',
       ]);
     });
 
