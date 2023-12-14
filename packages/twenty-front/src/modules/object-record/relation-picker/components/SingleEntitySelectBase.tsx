@@ -75,12 +75,12 @@ export const SingleEntitySelectBase = ({
         selectableListId="single-entity-select-base-list"
         selectableItemIdArray={selectableItemIds}
         hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
-        onEnter={(_itemId) => {
+        onEnter={(itemId) => {
           if (showCreateButton) {
             onCreate?.();
           } else {
             const entity = entitiesInDropdown.findIndex(
-              (entity) => entity.id === _itemId,
+              (entity) => entity.id === itemId,
             );
             onEntitySelected(entitiesInDropdown[entity]);
           }
