@@ -19,10 +19,10 @@ const StyledButtonContainer = styled.div`
 
 export const PlanRequired = () => {
   const onboardingStatus = useOnboardingStatus();
-  const { billingUrl } = useRecoilValue(billingState);
+  const billing = useRecoilValue(billingState);
 
   const handleButtonClick = () => {
-    billingUrl && window.location.replace(billingUrl);
+    billing?.billingUrl && window.location.replace(billing.billingUrl);
   };
 
   useScopedHotkeys('enter', handleButtonClick, PageHotkeyScope.PlanRequired, [

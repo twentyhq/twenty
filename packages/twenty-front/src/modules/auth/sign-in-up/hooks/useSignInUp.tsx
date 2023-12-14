@@ -49,7 +49,7 @@ export const useSignInUp = () => {
 
   const [authProviders] = useRecoilState(authProvidersState);
   const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
-  const { isBillingEnabled } = useRecoilValue(billingState);
+  const billing = useRecoilValue(billingState);
 
   const workspaceInviteHash = useParams().workspaceInviteHash;
   const [signInUpStep, setSignInUpStep] = useState<SignInUpStep>(
@@ -137,7 +137,7 @@ export const useSignInUp = () => {
               );
 
         if (
-          isBillingEnabled &&
+          billing?.isBillingEnabled &&
           currentWorkspace.subscriptionStatus !== 'active'
         ) {
           navigate('/plan-required');
@@ -161,7 +161,7 @@ export const useSignInUp = () => {
       signInWithCredentials,
       signUpWithCredentials,
       workspaceInviteHash,
-      isBillingEnabled,
+      billing?.isBillingEnabled,
       navigate,
       enqueueSnackBar,
     ],

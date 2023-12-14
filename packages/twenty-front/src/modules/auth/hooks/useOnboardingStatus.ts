@@ -11,7 +11,7 @@ import {
 } from '../utils/getOnboardingStatus';
 
 export const useOnboardingStatus = (): OnboardingStatus | undefined => {
-  const { isBillingEnabled } = useRecoilValue(billingState);
+  const billing = useRecoilValue(billingState);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const isLoggedIn = useIsLogged();
@@ -20,6 +20,6 @@ export const useOnboardingStatus = (): OnboardingStatus | undefined => {
     isLoggedIn,
     currentWorkspaceMember,
     currentWorkspace,
-    isBillingEnabled,
+    isBillingEnabled: billing?.isBillingEnabled,
   });
 };

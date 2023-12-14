@@ -2,7 +2,7 @@ import { atom } from 'recoil';
 
 import { Billing } from '~/generated/graphql';
 
-export const billingState = atom<Billing>({
+export const billingState = atom<Billing | null>({
   key: 'billingState',
-  default: { isBillingEnabled: false, billingUrl: '' },
+  default: null,
 });
