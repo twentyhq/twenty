@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
+import { Logo } from '@/auth/components/Logo';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
@@ -8,6 +9,7 @@ import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { billingState } from '@/client-config/states/billingState';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { MainButton } from '@/ui/input/button/components/MainButton';
+import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 const StyledButtonContainer = styled.div`
@@ -33,6 +35,9 @@ export const PlanRequired = () => {
 
   return (
     <>
+      <AnimatedEaseIn>
+        <Logo />
+      </AnimatedEaseIn>
       <Title>Plan required</Title>
       <SubTitle>
         Please select a subscription plan before proceeding to sign in.
