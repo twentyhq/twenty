@@ -19,7 +19,7 @@ export const StyledMenuItemBase = styled.li<MenuItemBaseProps>`
   background: ${({ isKeySelected, theme }) =>
     isKeySelected
       ? theme.background.transparent.light
-      : theme.background.primary};
+      : theme.background.secondary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   cursor: pointer;
 

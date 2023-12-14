@@ -89,7 +89,7 @@ export const MultipleEntitySelect = <
       <DropdownMenuItemsContainer hasMaxHeight>
         <SelectableList
           selectableListId="multiple-entity-select-list"
-          selectableItemIds={[selectableItemIds]}
+          selectableItemIdArray={selectableItemIds}
           hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
           onEnter={(_itemId) => {
             if (_itemId in value === false || value[_itemId] === false) {
