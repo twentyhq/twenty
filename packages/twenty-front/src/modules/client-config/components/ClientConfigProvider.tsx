@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { billingState } from '@/client-config/states/billingState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
@@ -16,6 +17,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
 
   const setIsSignInPrefilled = useSetRecoilState(isSignInPrefilledState);
 
+  const setBilling = useSetRecoilState(billingState);
   const setTelemetry = useSetRecoilState(telemetryState);
   const setSupportChat = useSetRecoilState(supportChatState);
 
@@ -31,6 +33,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
       setIsDebugMode(data?.clientConfig.debugMode);
       setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
 
+      setBilling(data?.clientConfig.billing);
       setTelemetry(data?.clientConfig.telemetry);
       setSupportChat(data?.clientConfig.support);
     }
@@ -41,6 +44,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
     setIsSignInPrefilled,
     setTelemetry,
     setSupportChat,
+    setBilling,
   ]);
 
   return loading ? <></> : <>{children}</>;

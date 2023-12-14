@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
-import { Account } from '@/accounts/types/account';
+import { Account } from '@/accounts/types/Account';
 import { IconChevronRight } from '@/ui/display/icon';
 import { IconGmail } from '@/ui/display/icon/components/IconGmail';
 import { Status } from '@/ui/display/status/components/Status';

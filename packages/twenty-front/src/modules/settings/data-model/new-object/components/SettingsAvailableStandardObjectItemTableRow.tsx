@@ -2,8 +2,8 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { Checkbox } from '@/ui/input/components/Checkbox';
-import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
@@ -41,7 +41,8 @@ export const SettingsAvailableStandardObjectItemTableRow = ({
 }: SettingsAvailableStandardObjectItemTableRowProps) => {
   const theme = useTheme();
 
-  const { Icon } = useLazyLoadIcon(objectItem.icon ?? '');
+  const { getIcon } = useIcons();
+  const Icon = getIcon(objectItem.icon);
 
   return (
     <StyledAvailableStandardObjectTableRow

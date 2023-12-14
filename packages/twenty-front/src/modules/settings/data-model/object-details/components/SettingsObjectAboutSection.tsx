@@ -2,10 +2,10 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconArchive, IconDotsVertical, IconPencil } from '@/ui/display/icon';
+import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -53,7 +53,8 @@ export const SettingsAboutSection = ({
   onEdit,
 }: SettingsAboutSectionProps) => {
   const theme = useTheme();
-  const { Icon } = useLazyLoadIcon(iconKey);
+  const { getIcon } = useIcons();
+  const Icon = getIcon(iconKey);
 
   const { closeDropdown } = useDropdown({ dropdownScopeId });
 

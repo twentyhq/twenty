@@ -6,26 +6,31 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
+import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { CreateWorkspace } from '../CreateWorkspace';
+import { PlanRequired } from '../PlanRequired';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Auth/CreateWorkspace',
-  component: CreateWorkspace,
+  title: 'Pages/Auth/PlanRequired',
+  component: PlanRequired,
   decorators: [PageDecorator],
-  args: { routePath: AppPath.CreateWorkspace },
+  args: { routePath: AppPath.PlanRequired },
   parameters: {
-    msw: [],
+    msw: graphqlMocks,
+    cookie: {
+      tokenPair: '{}',
+    },
   },
 };
 
 export default meta;
 
-export type Story = StoryObj<typeof CreateWorkspace>;
+export type Story = StoryObj<typeof PlanRequired>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('Create your workspace');
+
+    await canvas.findByRole('button', { name: 'Get started' });
   },
 };

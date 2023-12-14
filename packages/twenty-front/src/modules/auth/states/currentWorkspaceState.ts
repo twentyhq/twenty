@@ -10,6 +10,7 @@ export type CurrentWorkspace = Pick<
   | 'displayName'
   | 'allowImpersonation'
   | 'featureFlags'
+  | 'subscriptionStatus'
 >;
 
 export const currentWorkspaceState = atom<CurrentWorkspace | null>({

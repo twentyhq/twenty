@@ -22,6 +22,15 @@ class Telemetry {
 }
 
 @ObjectType()
+class Billing {
+  @Field(() => Boolean)
+  isBillingEnabled: boolean;
+
+  @Field(() => String)
+  billingUrl: string;
+}
+
+@ObjectType()
 class Support {
   @Field(() => String)
   supportDriver: string;
@@ -37,6 +46,9 @@ export class ClientConfig {
 
   @Field(() => Telemetry, { nullable: false })
   telemetry: Telemetry;
+
+  @Field(() => Billing, { nullable: false })
+  billing: Billing;
 
   @Field(() => Boolean)
   signInPrefilled: boolean;
