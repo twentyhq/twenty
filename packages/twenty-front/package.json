@@ -8,6 +8,7 @@
     "start:clean": "yarn start --force",
     "build": "tsc && vite build && yarn build:inject-runtime-env",
     "build:inject-runtime-env": "sh ./scripts/inject-runtime-env.sh",
+    "tsc": "tsc --watch",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "fmt:fix": "prettier --cache --write \"src/**/*.ts\" \"src/**/*.tsx\"",
