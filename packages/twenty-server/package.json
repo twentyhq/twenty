@@ -28,7 +28,8 @@
     "database:seed:dev": "yarn build && yarn command workspace:seed:dev",
     "database:seed:demo": "yarn build && yarn command workspace:seed:demo",
     "database:reset": "yarn database:truncate && yarn database:init",
-    "command": "node dist/src/command"
+    "command": "node dist/src/command",
+    "queue:work": "node dist/src/queue-worker"
   },
   "dependencies": {
     "@apollo/server": "^4.7.3",
