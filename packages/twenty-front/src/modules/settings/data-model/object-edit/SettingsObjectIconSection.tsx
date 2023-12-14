@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 
+import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { IconPicker } from '@/ui/input/components/IconPicker';
-import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
 import { Section } from '@/ui/layout/section/components/Section';
 
 import ArrowRight from '../assets/ArrowRight.svg';
@@ -36,7 +36,8 @@ export const SettingsObjectIconSection = ({
   label,
   onChange,
 }: SettingsObjectIconSectionProps) => {
-  const { Icon } = useLazyLoadIcon(iconKey);
+  const { getIcon } = useIcons();
+  const Icon = getIcon(iconKey);
 
   return (
     <Section>

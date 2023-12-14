@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
-import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
+import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 
 import { FieldDisplay } from '../../field/components/FieldDisplay';
 import { FieldInput } from '../../field/components/FieldInput';
@@ -59,7 +59,7 @@ export const RecordInlineCell = () => {
     closeInlineCell();
   };
 
-  const { icons } = useLazyLoadIcons();
+  const { getIcon } = useIcons();
 
   return (
     <RecordInlineCellContainer
@@ -71,7 +71,7 @@ export const RecordInlineCell = () => {
             }
           : undefined
       }
-      IconLabel={icons[fieldDefinition.iconName]}
+      IconLabel={getIcon(fieldDefinition.iconName)}
       editModeContent={
         <FieldInput
           onEnter={handleEnter}

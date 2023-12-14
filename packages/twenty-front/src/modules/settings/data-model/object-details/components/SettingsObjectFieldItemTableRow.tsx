@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { useRelationMetadata } from '@/object-metadata/hooks/useRelationMetadata';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
-import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
+import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
@@ -39,7 +39,8 @@ export const SettingsObjectFieldItemTableRow = ({
   fieldMetadataItem: fieldMetadataItem,
 }: SettingsObjectFieldItemTableRowProps) => {
   const theme = useTheme();
-  const { Icon } = useLazyLoadIcon(fieldMetadataItem.icon ?? '');
+  const { getIcon } = useIcons();
+  const Icon = getIcon(fieldMetadataItem.icon);
   const navigate = useNavigate();
 
   // TODO: parse with zod and merge types with FieldType (create a subset of FieldType for example)

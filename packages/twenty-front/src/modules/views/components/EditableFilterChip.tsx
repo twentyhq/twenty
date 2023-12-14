@@ -1,5 +1,5 @@
 import { getOperandLabelShort } from '@/object-record/object-filter-dropdown/utils/getOperandLabel';
-import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
+import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { ViewFilter } from '@/views/types/ViewFilter';
 
@@ -12,7 +12,7 @@ export const EditableFilterChip = ({
   viewFilter,
   onRemove,
 }: EditableFilterChipProps) => {
-  const { icons } = useLazyLoadIcons();
+  const { getIcon } = useIcons();
   return (
     <SortOrFilterChip
       key={viewFilter.fieldMetadataId}
@@ -21,7 +21,7 @@ export const EditableFilterChip = ({
       labelValue={`${getOperandLabelShort(viewFilter.operand)} ${
         viewFilter.displayValue
       }`}
-      Icon={icons[viewFilter.definition.iconName]}
+      Icon={getIcon(viewFilter.definition.iconName)}
       onRemove={onRemove}
     />
   );

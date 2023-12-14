@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 
+import { IconApps } from '@/ui/display/icon';
+import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -16,9 +18,6 @@ import { arrayToChunks } from '~/utils/array/array-to-chunks';
 
 import { IconButton, IconButtonVariant } from '../button/components/IconButton';
 import { LightIconButton } from '../button/components/LightIconButton';
-import { IconApps } from '../constants/icons';
-import { useLazyLoadIcons } from '../hooks/useLazyLoadIcons';
-import { DropdownMenuSkeletonItem } from '../relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
 
 type IconPickerProps = {
@@ -95,7 +94,8 @@ export const IconPicker = ({
 
   const { closeDropdown } = useDropdown({ dropdownScopeId });
 
-  const { icons, isLoadingIcons: isLoading } = useLazyLoadIcons();
+  const { getIcons, getIcon } = useIcons();
+  const { icons } = getIcons();
 
   const iconKeys = useMemo(() => {
     const filteredIconKeys = Object.keys(icons).filter((iconKey) => {
@@ -128,7 +128,7 @@ export const IconPicker = ({
           clickableComponent={
             <IconButton
               disabled={disabled}
-              Icon={selectedIconKey ? icons[selectedIconKey] : IconApps}
+              Icon={selectedIconKey ? getIcon(selectedIconKey) : IconApps}
               variant={variant}
             />
           }
@@ -139,7 +139,7 @@ export const IconPicker = ({
               selectableItemIds={iconKeys2d}
               hotkeyScope={IconPickerHotkeyScope.IconPicker}
               onEnter={(iconKey) => {
-                onChange({ iconKey, Icon: icons[iconKey] });
+                onChange({ iconKey, Icon: getIcon(iconKey) });
                 closeDropdown();
               }}
             >
@@ -159,24 +159,20 @@ export const IconPicker = ({
                   onMouseLeave={goBackToPreviousHotkeyScope}
                 >
                   <DropdownMenuItemsContainer>
-                    {isLoading ? (
-                      <DropdownMenuSkeletonItem />
-                    ) : (
-                      <StyledMenuIconItemsContainer>
-                        {iconKeys.map((iconKey) => (
-                          <IconPickerIcon
-                            key={iconKey}
-                            iconKey={iconKey}
-                            onClick={() => {
-                              onChange({ iconKey, Icon: icons[iconKey] });
-                              closeDropdown();
-                            }}
-                            selectedIconKey={selectedIconKey}
-                            Icon={icons[iconKey]}
-                          />
-                        ))}
-                      </StyledMenuIconItemsContainer>
-                    )}
+                    <StyledMenuIconItemsContainer>
+                      {iconKeys.map((iconKey) => (
+                        <IconPickerIcon
+                          key={iconKey}
+                          iconKey={iconKey}
+                          onClick={() => {
+                            onChange({ iconKey, Icon: getIcon(iconKey) });
+                            closeDropdown();
+                          }}
+                          selectedIconKey={selectedIconKey}
+                          Icon={getIcon(iconKey)}
+                        />
+                      ))}
+                    </StyledMenuIconItemsContainer>
                   </DropdownMenuItemsContainer>
                 </div>
               </DropdownMenu>
