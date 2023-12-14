@@ -1,21 +1,14 @@
-import { useNavigate } from 'react-router-dom';
+import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { Account } from '@/accounts/types/Account';
-import { IconDotsVertical, IconMail, IconTrash } from '@/ui/display/icon';
-import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { Account } from '@/accounts/types/account';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 const StyledRow = styled(CardContent)`
   align-items: center;
+  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
   display: flex;
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -24,65 +17,28 @@ const StyledRow = styled(CardContent)`
   padding-left: ${({ theme }) => theme.spacing(4)};
 `;
 
-const StyledDropdown = styled(Dropdown)`
-  margin-left: auto;
-`;
-
 type SettingsAccountRowProps = {
   account: Account;
   divider?: boolean;
-  onRemove?: (uuid: string) => void;
+  LeftIcon: IconComponent;
+  onClick?: () => void;
+  rightComponent: ReactNode;
 };
 
 export const SettingsAccountRow = ({
   account,
   divider,
-  onRemove,
+  LeftIcon,
+  onClick,
+  rightComponent,
 }: SettingsAccountRowProps) => {
-  const dropdownScopeId = `settings-account-row-${account.uuid}`;
-
   const theme = useTheme();
-  const navigate = useNavigate();
-  const { closeDropdown } = useDropdown({ dropdownScopeId });
 
   return (
-    <StyledRow divider={divider}>
-      <IconGoogle size={theme.icon.size.sm} />
+    <StyledRow onClick={onClick} divider={divider}>
+      <LeftIcon size={theme.icon.size.sm} />
       {account.email}
-      <DropdownScope dropdownScopeId={dropdownScopeId}>
-        <StyledDropdown
-          dropdownPlacement="right-start"
-          dropdownHotkeyScope={{ scope: dropdownScopeId }}
-          clickableComponent={
-            <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
-          }
-          dropdownComponents={
-            <DropdownMenu>
-              <DropdownMenuItemsContainer>
-                <MenuItem
-                  LeftIcon={IconMail}
-                  text="Emails settings"
-                  onClick={() => {
-                    navigate(`/settings/accounts/emails/${account.uuid}`);
-                    closeDropdown();
-                  }}
-                />
-                {!!onRemove && (
-                  <MenuItem
-                    accent="danger"
-                    LeftIcon={IconTrash}
-                    text="Remove account"
-                    onClick={() => {
-                      onRemove(account.uuid);
-                      closeDropdown();
-                    }}
-                  />
-                )}
-              </DropdownMenuItemsContainer>
-            </DropdownMenu>
-          }
-        />
-      </DropdownScope>
+      {rightComponent}
     </StyledRow>
   );
 };

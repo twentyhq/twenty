@@ -2,8 +2,10 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { Account } from '@/accounts/types/Account';
+import { Account } from '@/accounts/types/account';
+import { SettingsAccountsRowDropdownMenu } from '@/settings/accounts/components/SettingsAccountsRowDropdownMenu';
 import { IconAt, IconPlus } from '@/ui/display/icon';
+import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardFooter } from '@/ui/layout/card/components/CardFooter';
@@ -24,6 +26,10 @@ const StyledIconButton = styled(LightIconButton)`
   margin-left: auto;
 `;
 
+const StyledDropdown = styled(SettingsAccountsRowDropdownMenu)`
+  margin-left: auto;
+`;
+
 type SettingsAccountsCardProps = {
   accounts: Account[];
   onAccountRemove?: (uuid: string) => void;
@@ -41,9 +47,12 @@ export const SettingsAccountsCard = ({
       {accounts.map((account, index) => (
         <SettingsAccountRow
           key={account.uuid}
+          LeftIcon={IconGoogle}
           account={account}
+          rightComponent={
+            <StyledDropdown account={account} onRemove={onAccountRemove} />
+          }
           divider={index < accounts.length - 1}
-          onRemove={onAccountRemove}
         />
       ))}
       <StyledFooter>
