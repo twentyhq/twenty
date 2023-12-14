@@ -98,21 +98,27 @@ export class FetchWorkspaceMessagesService {
 
     const messagesData = messages.data.messages;
 
+    console.log('messagesData', messages);
+
     if (!messagesData) {
       return;
     }
     // TODO: fetch batch request !!!
-    for (const message of messagesData) {
-      if (!message.id) {
-        continue;
-      }
-      const messageData = await gmail.users.messages.get({
-        userId: 'me',
-        id: message.id,
-      });
+    // for (const message of messagesData) {
+    //   if (!message.id) {
+    //     continue;
+    //   }
+    //   const messageData = await gmail.users.messages.get({
+    //     userId: 'me',
+    //     id: message.id,
+    //   });
 
-      console.log('messageData', messageData.data.snippet);
-    }
+    //   console.log('messageData', messageData.data.snippet);
+    // }
+
+    const messageQueries = messagesData.map((message) => {
+      uri: '/gmail/v1/users/me/messages/' + message.id;
+    });
 
     // if (!messagesData) {
     //   return;
