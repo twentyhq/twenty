@@ -1,8 +1,7 @@
 import { atom } from 'recoil';
 
+import { IconApps } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-
-import { IconApps } from '../constants/icons';
 
 type IconPickerState = {
   Icon: IconComponent;
