@@ -1,4 +1,3 @@
-import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { IconSettings } from '@/ui/display/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -11,9 +10,7 @@ export const SettingsNewAccount = () => {
         <Breadcrumb
           links={[
             { children: 'Accounts', href: '/settings/accounts' },
-            {
-              children: `New`,
-            },
+            { children: `New` },
           ]}
         />
       </SettingsPageContainer>

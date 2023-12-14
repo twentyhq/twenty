@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
 
+import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
 import {
   PageDecorator,
   PageDecoratorArgs,
