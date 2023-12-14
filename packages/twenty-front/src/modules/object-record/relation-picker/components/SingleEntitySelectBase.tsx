@@ -3,18 +3,15 @@ import { useRef } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
 
+import { SelectableMenuItemSelect } from '@/object-record/relation-picker/components/SelectableMenuItemSelect';
 import { IconPlus } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
-import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemSelectAvatar';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { Avatar } from '@/users/components/Avatar';
 import { assertNotNull } from '~/utils/assert';
 
 import { CreateNewButton } from '../../../ui/input/relation-picker/components/CreateNewButton';
@@ -24,16 +21,14 @@ import { useEntitySelectScroll } from '../hooks/useEntitySelectScroll';
 import { EntityForSelect } from '../types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
-export type SingleEntitySelectBaseProps<
-  CustomEntityForSelect extends EntityForSelect,
-> = {
+export type SingleEntitySelectBaseProps = {
   EmptyIcon?: IconComponent;
   emptyLabel?: string;
-  entitiesToSelect: CustomEntityForSelect[];
+  entitiesToSelect: EntityForSelect[];
   loading?: boolean;
   onCancel?: () => void;
-  onEntitySelected: (entity?: CustomEntityForSelect) => void;
-  selectedEntity?: CustomEntityForSelect;
+  onEntitySelected: (entity?: EntityForSelect) => void;
+  selectedEntity?: EntityForSelect;
   onCreate?: () => void;
   showCreateButton?: boolean;
   SelectAllIcon?: IconComponent;
@@ -43,9 +38,7 @@ export type SingleEntitySelectBaseProps<
   onAllEntitySelected?: () => void;
 };
 
-export const SingleEntitySelectBase = <
-  CustomEntityForSelect extends EntityForSelect,
->({
+export const SingleEntitySelectBase = ({
   EmptyIcon,
   emptyLabel,
   entitiesToSelect,
@@ -60,11 +53,11 @@ export const SingleEntitySelectBase = <
   isAllEntitySelected,
   isAllEntitySelectShown,
   onAllEntitySelected,
-}: SingleEntitySelectBaseProps<CustomEntityForSelect>) => {
+}: SingleEntitySelectBaseProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const entitiesInDropdown = [selectedEntity, ...entitiesToSelect].filter(
-    (entity): entity is CustomEntityForSelect =>
+    (entity): entity is EntityForSelect =>
       assertNotNull(entity) && isNonEmptyString(entity.name),
   );
 
@@ -136,30 +129,11 @@ export const SingleEntitySelectBase = <
                   }
                 }}
               >
-                <SelectableItem itemId={entity.id} key={entity.id}>
-                  <MenuItemSelectAvatar
-                    key={entity.id}
-                    testId="menu-item"
-                    onClick={() => onEntitySelected(entity)}
-                    text={entity.name}
-                    selected={selectedEntity?.id === entity.id}
-                    hovered={
-                      useSelectableList({
-                        selectableListId: 'single-entity-select-base-list',
-                        itemId: entity.id,
-                      }).isSelectedItemId
-                    }
-                    avatar={
-                      <Avatar
-                        avatarUrl={entity.avatarUrl}
-                        colorId={entity.id}
-                        placeholder={entity.name}
-                        size="md"
-                        type={entity.avatarType ?? 'rounded'}
-                      />
-                    }
-                  />
-                </SelectableItem>
+                <SelectableMenuItemSelect
+                  entity={entity}
+                  onEntitySelected={onEntitySelected}
+                  selectedEntity={selectedEntity}
+                />
               </SelectableList>
             ))}
           </>
