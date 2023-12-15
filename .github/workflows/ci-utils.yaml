@@ -1,8 +1,5 @@
 name: CI Utils
 on:
-  push:
-    branches:
-      - main
   # it's usually not recommended to use pull_request_target
   # but we consider it's safe here if we keep the same steps
   # see: https://securitylab.github.com/research/github-actions-preventing-pwn-requests/ 
