@@ -23,8 +23,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path: packages/twenty-front/node_modules
-          key: front-node_modules-${{hashFiles('front/yarn.lock')}}
+          key: front-node_modules-${{hashFiles('yarn.lock')}}
           restore-keys: front-node_modules-
+      - name: Cache root node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: root-node_modules-${{hashFiles('yarn.lock')}}
+          restore-keys: root-node_modules-
       - name: Front / Install Dependencies
         run: yarn
   front-pages-sb-test:
@@ -50,10 +56,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path: packages/twenty-front/node_modules
-          key: front-node_modules-${{hashFiles('front/yarn.lock')}}
+          key: front-node_modules-${{hashFiles('yarn.lock')}}
           restore-keys: front-node_modules-
-      - name: Install dependencies
-        run: yarn
+      - name: Cache root node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: root-node_modules-${{hashFiles('yarn.lock')}}
+          restore-keys: root-node_modules-
       - name: Install Playwright
         run: cd packages/twenty-front && npx playwright install
       - name: Build Storybook
@@ -86,8 +96,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path: packages/twenty-front/node_modules
-          key: front-node_modules-${{hashFiles('front/yarn.lock')}}
+          key: front-node_modules-${{hashFiles('yarn.lock')}}
           restore-keys: front-node_modules-
+      - name: Cache root node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: root-node_modules-${{hashFiles('yarn.lock')}}
+          restore-keys: root-node_modules-
       - name: Install Playwright
         run: cd packages/twenty-front && npx playwright install
       - name: Build Storybook
@@ -116,10 +132,14 @@ jobs:
         uses: actions/cache@v3
         with:
           path: packages/twenty-front/node_modules
-          key: front-node_modules-${{hashFiles('front/yarn.lock')}}
+          key: front-node_modules-${{hashFiles('yarn.lock')}}
           restore-keys: front-node_modules-
-      - name: Front / Install Dependencies
-        run: yarn
+      - name: Cache root node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: root-node_modules-${{hashFiles('yarn.lock')}}
+          restore-keys: root-node_modules-
       - name: Front / Run linter
         run: yarn nx lint --config .eslintrc-ci.cjs twenty-front
   front-jest:
@@ -141,7 +161,13 @@ jobs:
         uses: actions/cache@v3
         with:
           path: packages/twenty-front/node_modules
-          key: front-node_modules-${{hashFiles('front/yarn.lock')}}
+          key: front-node_modules-${{hashFiles('yarn.lock')}}
           restore-keys: front-node_modules-
+      - name: Cache root node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: root-node_modules-${{hashFiles('yarn.lock')}}
+          restore-keys: root-node_modules-
       - name: Front / Run jest
         run: yarn nx test twenty-front
