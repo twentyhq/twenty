@@ -2,7 +2,7 @@ import Layout from "@theme/Layout";
 import BrowserOnly from "@docusaurus/BrowserOnly";
 import React, { useEffect, useState } from "react";
 import { API } from '@stoplight/elements';
-import spotlightTheme from  '!css-loader!@stoplight/elements/styles.min.css';
+import spotlightTheme from '!css-loader!@stoplight/elements/styles.min.css';
 import './rest-api.css'
 import { parseJson } from "nx/src/utils/json";
 import { TbLoader2 } from "react-icons/tb";
