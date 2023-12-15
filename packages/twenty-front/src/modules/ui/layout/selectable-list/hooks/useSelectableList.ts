@@ -42,10 +42,8 @@ export const useSelectableList = (props?: UseSelectableListProps) => {
     isSelectedItemIdSelector,
   );
 
-  const resetSelectableListStates = () => {
+  const resetSelectedItem = () => {
     resetSelectedItemIdState();
-    resetSelectableItemIdState();
-    resetSelectableListOnEnterState();
     resetIsSelectedItemIdSelector();
   };
 
@@ -58,7 +56,7 @@ export const useSelectableList = (props?: UseSelectableListProps) => {
     resetSelectedItemIdState,
     resetSelectableItemIdState,
     resetSelectableListOnEnterState,
-    resetSelectableListStates,
+    resetSelectedItem,
     resetIsSelectedItemIdSelector,
   };
 };

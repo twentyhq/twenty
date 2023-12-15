@@ -15,7 +15,7 @@ export const useCommandMenu = () => {
   const navigate = useNavigate();
   const setIsCommandMenuOpened = useSetRecoilState(isCommandMenuOpenedState);
   const setCommands = useSetRecoilState(commandMenuCommandsState);
-  const { resetSelectableListStates } = useSelectableList({
+  const { resetSelectedItem } = useSelectableList({
     selectableListId: 'command-menu-list',
   });
   const {
@@ -30,7 +30,7 @@ export const useCommandMenu = () => {
 
   const closeCommandMenu = () => {
     setIsCommandMenuOpened(false);
-    resetSelectableListStates();
+    resetSelectedItem();
     goBackToPreviousHotkeyScope();
   };
 
