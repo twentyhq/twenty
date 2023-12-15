@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: twenty-postgres
+        image: twentycrm/twenty-postgres
         env:
           POSTGRES_HOST: postgres
           POSTGRES_PASSWORD: postgres
