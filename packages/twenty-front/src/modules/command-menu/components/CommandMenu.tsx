@@ -29,7 +29,7 @@ import { CommandMenuItem } from './CommandMenuItem';
 export const StyledDialog = styled.div`
   background: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
+  box-shadow: ${({ theme }) => theme.boxShadow.superHeavy};
   font-family: ${({ theme }) => theme.font.family};
   left: 50%;
   max-width: 640px;
