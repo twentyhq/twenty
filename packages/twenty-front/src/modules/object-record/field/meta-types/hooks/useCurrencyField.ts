@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
+import { CurrencyCode } from '@/object-record/field/types/CurrencyCode';
 import { FieldInitialValue } from '@/object-record/field/types/FieldInitialValue';
 import { canBeCastAsIntegerOrNull } from '~/utils/cast-as-integer-or-null';
 import {
@@ -22,17 +23,17 @@ const initializeValue = (
   fieldValue: FieldCurrencyValue,
 ) => {
   if (fieldInitialValue?.isEmpty) {
-    return { amount: null, currencyCode: 'USD' };
+    return { amount: null, currencyCode: CurrencyCode.USD };
   }
   if (!isNaN(Number(fieldInitialValue?.value))) {
     return {
       amount: Number(fieldInitialValue?.value),
-      currencyCode: 'USD',
+      currencyCode: CurrencyCode.USD,
     };
   }
 
   if (!fieldValue) {
-    return { amount: null, currencyCode: 'USD' };
+    return { amount: null, currencyCode: CurrencyCode.USD };
   }
 
   return {
@@ -73,7 +74,7 @@ export const useCurrencyField = () => {
       amountMicros: isNaN(amount)
         ? null
         : convertCurrencyToCurrencyMicros(amount),
-      currencyCode: currencyCode,
+      currencyCode,
     };
 
     if (!isFieldCurrencyValue(newCurrencyValue)) {

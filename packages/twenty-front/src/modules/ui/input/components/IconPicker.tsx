@@ -138,7 +138,7 @@ export const IconPicker = ({
           dropdownComponents={
             <SelectableList
               selectableListId="icon-list"
-              selectableItemIds={iconKeys2d}
+              selectableItemIdMatrix={iconKeys2d}
               hotkeyScope={IconPickerHotkeyScope.IconPicker}
               onEnter={(iconKey) => {
                 onChange({ iconKey, Icon: getIcon(iconKey) });

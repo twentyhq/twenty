@@ -1,1 +1,2 @@
-export const formatNumber = (value: number): string => value.toLocaleString();
+export const formatNumber = (value: number): string =>
+  value.toLocaleString('en-US');

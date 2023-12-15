@@ -21,7 +21,7 @@ export type FieldMetadataItem = Omit<
         >;
       })
     | null;
-  defaultValue?: string;
+  defaultValue?: unknown;
   options?: {
     color: ThemeColor;
     id: string;
