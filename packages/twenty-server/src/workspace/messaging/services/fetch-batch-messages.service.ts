@@ -57,8 +57,6 @@ export class FetchBatchMessagesService {
       },
     );
 
-    console.log('response', response);
-
     return this.formatBatchResponse(response);
   }
 
