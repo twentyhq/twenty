@@ -33,6 +33,7 @@ export class FetchWorkspaceMessagesService {
   async fetchWorkspaceMemberThreads(
     workspaceId: string,
     workspaceMemberId: string,
+    maxResults = 500,
   ): Promise<any> {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
@@ -54,6 +55,7 @@ export class FetchWorkspaceMessagesService {
 
     const threads = await gmail.users.threads.list({
       userId: 'me',
+      maxResults,
     });
 
     const threadsData = threads.data.threads;
@@ -168,7 +170,6 @@ export class FetchWorkspaceMessagesService {
 
   async saveMessages(messages, dataSourceMetadata, workspaceDataSource) {
     for (const message of messages) {
-      console.log('message', message);
       const {
         externalId,
         headerMessageId,
@@ -185,7 +186,14 @@ export class FetchWorkspaceMessagesService {
 
       await workspaceDataSource?.query(
         `INSERT INTO ${dataSourceMetadata.schema}."message" ("externalId", "headerMessageId", "subject", "messageThreadId", "direction", "body") VALUES ($1, $2, $3, $4, $5, $6)`,
-        [externalId, headerMessageId, subject, messageThread[0].id, from, body],
+        [
+          externalId,
+          headerMessageId,
+          subject,
+          messageThread[0]?.id,
+          from,
+          body,
+        ],
       );
     }
   }
