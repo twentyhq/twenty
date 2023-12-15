@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
@@ -56,14 +55,11 @@ export const RecordShowPage = () => {
     entityFieldsFamilyState(objectRecordId ?? ''),
   );
 
-  const [fetching, setFetching] = useState(true);
-
-  const { record } = useFindOneRecord({
+  const { record, loading } = useFindOneRecord({
     objectRecordId,
     objectNameSingular,
     onCompleted: (data) => {
       setEntityFields(data);
-      setFetching(false);
     },
   });
 
@@ -201,7 +197,7 @@ export const RecordShowPage = () => {
       <PageBody>
         <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>
           <ShowPageContainer>
-            {fetching === false ? (
+            {loading === false ? (
               <>
                 <ShowPageLeftContainer>
                   <ShowPageSummaryCard
