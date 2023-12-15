@@ -21,4 +21,9 @@
     background-color: #f3f3f3;
     border: 1px solid #ddd;
     border-radius: 4px;
+
+}
+
+.invalid {
+    border: 1px solid red;
 }
