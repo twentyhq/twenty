@@ -1,9 +1,10 @@
 import { z } from 'zod';
 
+import { CurrencyCode } from '../CurrencyCode';
 import { FieldCurrencyValue } from '../FieldMetadata';
 
 const currencySchema = z.object({
-  currencyCode: z.string().nullable(),
+  currencyCode: z.nativeEnum(CurrencyCode).nullable(),
   amountMicros: z.number().nullable(),
 });
 

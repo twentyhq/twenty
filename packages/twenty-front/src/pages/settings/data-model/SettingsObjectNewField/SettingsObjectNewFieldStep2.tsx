@@ -195,6 +195,13 @@ export const SettingsObjectNewFieldStep2 = () => {
         });
       } else {
         const createdMetadataField = await createMetadataField({
+          defaultValue:
+            validatedFormValues.type === FieldMetadataType.Currency
+              ? {
+                  amountMicros: null,
+                  currencyCode: validatedFormValues.currency.currencyCode,
+                }
+              : undefined,
           description: validatedFormValues.description,
           icon: validatedFormValues.icon,
           label: validatedFormValues.label ?? '',
@@ -294,6 +301,7 @@ export const SettingsObjectNewFieldStep2 = () => {
           onChange={handleFormChange}
           values={{
             type: formValues.type,
+            currency: formValues.currency,
             relation: formValues.relation,
             select: formValues.select,
           }}
