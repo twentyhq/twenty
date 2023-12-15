@@ -19167,10 +19167,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-twenty@file:../eslint-plugin-twenty::locator=twenty-front%40workspace%3Apackages%2Ftwenty-front":
+"eslint-plugin-twenty@file:../eslint-plugin-twenty/eslint-plugin-twenty.tgz::locator=twenty-front%40workspace%3Apackages%2Ftwenty-front":
   version: 1.0.3
-  resolution: "eslint-plugin-twenty@file:../eslint-plugin-twenty#../eslint-plugin-twenty::hash=1e4d37&locator=twenty-front%40workspace%3Apackages%2Ftwenty-front"
-  checksum: 8d9085c852371f3cd641baca9865f85f3dbea8e4886fee4ab62ff5d6e040c7674b6997fe352c6416fecbd5ef426d912932f27c0c1e680c021e61c9497b2a767e
+  resolution: "eslint-plugin-twenty@file:../eslint-plugin-twenty/eslint-plugin-twenty.tgz#../eslint-plugin-twenty/eslint-plugin-twenty.tgz::hash=1add3c&locator=twenty-front%40workspace%3Apackages%2Ftwenty-front"
+  checksum: 076143fcbe1667fbd10b410920fc2d7ddbf33a807077459561f7a7697e658d6769e8cb61a536bee96c8504decd0841d380a3ad5794a5628b502b38f5e4bd2421
   languageName: node
   linkType: hard
 
@@ -34518,7 +34518,7 @@ __metadata:
     eslint-plugin-react-refresh: "npm:^0.4.4"
     eslint-plugin-simple-import-sort: "npm:^10.0.0"
     eslint-plugin-storybook: "npm:^0.6.15"
-    eslint-plugin-twenty: "file:../eslint-plugin-twenty"
+    eslint-plugin-twenty: "file:../eslint-plugin-twenty/eslint-plugin-twenty.tgz"
     eslint-plugin-unused-imports: "npm:^3.0.0"
     framer-motion: "npm:^10.12.17"
     graphql: "npm:^16.6.0"
