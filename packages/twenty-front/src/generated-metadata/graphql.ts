@@ -41,6 +41,12 @@ export type AuthTokenPair = {
   refreshToken: AuthToken;
 };
 
+export type Billing = {
+  __typename?: 'Billing';
+  billingUrl: Scalars['String']['output'];
+  isBillingEnabled: Scalars['Boolean']['output'];
+};
+
 export type BooleanFieldComparison = {
   is?: InputMaybe<Scalars['Boolean']['input']>;
   isNot?: InputMaybe<Scalars['Boolean']['input']>;
@@ -484,6 +490,7 @@ export type Workspace = {
   id: Scalars['ID']['output'];
   inviteHash?: Maybe<Scalars['String']['output']>;
   logo?: Maybe<Scalars['String']['output']>;
+  subscriptionStatus: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 

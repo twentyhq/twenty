@@ -35,7 +35,7 @@ prod-front-build:
 	@cd ../.. && docker build -f ./packages/twenty-docker/prod/twenty-front/Dockerfile --tag twenty-front . && cd -
 
 prod-front-run:
-	@docker run -d -p 3000:3000 --name twenty-front twenty-front
+	@docker run -d -p 3001:3000 --name twenty-front twenty-front
 
 prod-server-build:
 	@cd ../.. && docker build -f ./packages/twenty-docker/prod/twenty-server/Dockerfile --tag twenty-server . && cd -

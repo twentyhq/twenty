@@ -51,4 +51,4 @@ export const currencyObjectDefinition = {
 export type CurrencyMetadata = {
   amountMicros: number;
   currencyCode: string;
-}
+};

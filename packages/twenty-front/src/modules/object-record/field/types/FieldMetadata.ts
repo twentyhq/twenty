@@ -1,6 +1,8 @@
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { ThemeColor } from '@/ui/theme/constants/colors';
 
+import { CurrencyCode } from './CurrencyCode';
+
 export type FieldUuidMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
@@ -111,7 +113,7 @@ export type FieldPhoneValue = string;
 export type FieldEmailValue = string;
 export type FieldLinkValue = { url: string; label: string };
 export type FieldCurrencyValue = {
-  currencyCode: string;
+  currencyCode: CurrencyCode;
   amountMicros: number | null;
 };
 export type FieldFullNameValue = { firstName: string; lastName: string };

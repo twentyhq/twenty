@@ -22,6 +22,14 @@ export class EnvironmentService {
     return this.configService.get<boolean>('SIGN_IN_PREFILLED') ?? false;
   }
 
+  isBillingEnabled() {
+    return this.configService.get<boolean>('IS_BILLING_ENABLED') ?? false;
+  }
+
+  getBillingUrl() {
+    return this.configService.get<string>('BILLING_PLAN_REQUIRED_LINK') ?? '';
+  }
+
   isTelemetryEnabled(): boolean {
     return this.configService.get<boolean>('TELEMETRY_ENABLED') ?? true;
   }

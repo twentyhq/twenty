@@ -9,6 +9,10 @@ import { relationTypes } from '../constants/relationTypes';
 import { settingsFieldMetadataTypes } from '../constants/settingsFieldMetadataTypes';
 
 import {
+  SettingsObjectFieldCurrencyForm,
+  SettingsObjectFieldCurrencyFormValues,
+} from './SettingsObjectFieldCurrencyForm';
+import {
   SettingsObjectFieldPreview,
   SettingsObjectFieldPreviewProps,
 } from './SettingsObjectFieldPreview';
@@ -24,11 +28,13 @@ import { SettingsObjectFieldTypeCard } from './SettingsObjectFieldTypeCard';
 
 export type SettingsObjectFieldTypeSelectSectionFormValues = {
   type: FieldMetadataType;
+  currency: SettingsObjectFieldCurrencyFormValues;
   relation: SettingsObjectFieldRelationFormValues;
   select: SettingsObjectFieldSelectFormValues;
 };
 
 type SettingsObjectFieldTypeSelectSectionProps = {
+  disableCurrencyForm?: boolean;
   excludedFieldTypes?: FieldMetadataType[];
   fieldMetadata: Pick<Field, 'icon' | 'label'> & { id?: string };
   onChange: (
@@ -53,6 +59,7 @@ const StyledRelationImage = styled.img<{ flip?: boolean }>`
 `;
 
 export const SettingsObjectFieldTypeSelectSection = ({
+  disableCurrencyForm,
   excludedFieldTypes,
   fieldMetadata,
   objectMetadataId,
@@ -60,6 +67,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
   relationFieldMetadata,
   values,
 }: SettingsObjectFieldTypeSelectSectionProps) => {
+  const currencyFormConfig = values.currency;
   const relationFormConfig = values.relation;
   const selectFormConfig = values.select;
 
@@ -139,7 +147,17 @@ export const SettingsObjectFieldTypeSelectSection = ({
               </>
             }
             form={
-              values.type === FieldMetadataType.Relation ? (
+              values.type === FieldMetadataType.Currency ? (
+                <SettingsObjectFieldCurrencyForm
+                  disabled={disableCurrencyForm}
+                  values={currencyFormConfig}
+                  onChange={(nextValues) =>
+                    onChange({
+                      currency: { ...currencyFormConfig, ...nextValues },
+                    })
+                  }
+                />
+              ) : values.type === FieldMetadataType.Relation ? (
                 <SettingsObjectFieldRelationForm
                   disableFieldEdition={
                     relationFieldMetadata && !relationFieldMetadata.isCustom

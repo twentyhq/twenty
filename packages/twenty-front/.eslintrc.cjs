@@ -106,6 +106,7 @@ module.exports = {
     '*.config.ts',
     '*config.js',
     'codegen*',
+    'tsup.ui.index.tsx'
   ],
   overrides: [
     {

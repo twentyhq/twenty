@@ -1,28 +1,26 @@
 import { ReactNode, useEffect } from 'react';
-import styled from '@emotion/styled';
 
 import { useSelectableListHotKeys } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListHotKeys';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { SelectableListScope } from '@/ui/layout/selectable-list/scopes/SelectableListScope';
+import { arrayToChunks } from '~/utils/array/array-to-chunks';
 
 type SelectableListProps = {
   children: ReactNode;
   selectableListId: string;
-  selectableItemIds: string[][];
+  selectableItemIdArray?: string[];
+  selectableItemIdMatrix?: string[][];
   onSelect?: (selected: string) => void;
   hotkeyScope: string;
   onEnter?: (itemId: string) => void;
 };
 
-const StyledSelectableItemsContainer = styled.div`
-  width: 100%;
-`;
-
 export const SelectableList = ({
   children,
   selectableListId,
   hotkeyScope,
-  selectableItemIds,
+  selectableItemIdArray,
+  selectableItemIdMatrix,
   onEnter,
 }: SelectableListProps) => {
   useSelectableListHotKeys(selectableListId, hotkeyScope);
@@ -36,14 +34,24 @@ export const SelectableList = ({
   }, [onEnter, setSelectableListOnEnter]);
 
   useEffect(() => {
-    setSelectableItemIds(selectableItemIds);
-  }, [selectableItemIds, setSelectableItemIds]);
+    if (!selectableItemIdArray && !selectableItemIdMatrix) {
+      throw new Error(
+        'Either selectableItemIdArray or selectableItemIdsMatrix must be provided',
+      );
+    }
+
+    if (selectableItemIdMatrix) {
+      setSelectableItemIds(selectableItemIdMatrix);
+    }
+
+    if (selectableItemIdArray) {
+      setSelectableItemIds(arrayToChunks(selectableItemIdArray, 1));
+    }
+  }, [selectableItemIdArray, selectableItemIdMatrix, setSelectableItemIds]);
 
   return (
     <SelectableListScope selectableListScopeId={selectableListId}>
-      <StyledSelectableItemsContainer>
-        {children}
-      </StyledSelectableItemsContainer>
+      {children}
     </SelectableListScope>
   );
 };

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { v4 } from 'uuid';
+
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { SaveConnectedAccountInput } from 'src/core/auth/dto/save-connected-account';
@@ -43,10 +45,26 @@ export class GoogleGmailService {
       return;
     }
 
-    await workspaceDataSource?.query(
-      `INSERT INTO ${dataSourceMetadata.schema}."connectedAccount" ("handle", "provider", "accessToken", "refreshToken", "accountOwnerId") VALUES ($1, $2, $3, $4, $5)`,
-      [handle, provider, accessToken, refreshToken, workspaceMemberId],
-    );
+    const connectedAccountId = v4();
+
+    await workspaceDataSource?.transaction(async (manager) => {
+      await manager.query(
+        `INSERT INTO ${dataSourceMetadata.schema}."connectedAccount" ("id", "handle", "provider", "accessToken", "refreshToken", "accountOwnerId") VALUES ($1, $2, $3, $4, $5, $6)`,
+        [
+          connectedAccountId,
+          handle,
+          provider,
+          accessToken,
+          refreshToken,
+          workspaceMemberId,
+        ],
+      );
+
+      await manager.query(
+        `INSERT INTO ${dataSourceMetadata.schema}."messageChannel" ("visibility", "handle", "connectedAccountId", "type") VALUES ($1, $2, $3, $4)`,
+        ['share_everything', handle, connectedAccountId, 'gmail'],
+      );
+    });
 
     return;
   }
