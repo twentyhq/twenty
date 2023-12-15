@@ -30,7 +30,6 @@ const TokenForm = ({onSubmit, isTokenValid, token, isLoading}: TokenFormProps)=>
 
   return !isTokenValid && (
     <div>
-      <link rel="stylesheet" type="text/css" href='' />
       <div className='container'>
       <form className="form">
         <label>
