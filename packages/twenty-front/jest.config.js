@@ -10,8 +10,30 @@ export default {
     '@testing/(.+)': "<rootDir>/src/testing/$1",
   },
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
-  // collectCoverage: true,
-  // collectCoverageFrom: ['<rootDir>/src/**/*.{ts,tsx}'],
-  // coveragePathIgnorePatterns: ['(tests/.*.mock).(jsx?|tsx?)$', '(.*).d.ts$'],
+  coverageThreshold: {
+    global: {
+      statements: 10,
+      lines: 10,
+      functions: 10,
+    },
+  },
+  collectCoverage: true,
+  collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
+  coveragePathIgnorePatterns: [
+    'states/.+State.ts$',
+    'contexts/.+Context.ts',
+    'testing/*',
+    'tests/*',
+    'config/*',
+    'graphql/queries/*',
+    'graphql/mutations/*',
+    'graphql/fragments/*',
+    'types/*',
+    'constants/*',
+    'generated-metadata/*',
+    'generated/*',
+    '__stories__/*',
+
+  ],
   // coverageDirectory: '<rootDir>/coverage/',
 }

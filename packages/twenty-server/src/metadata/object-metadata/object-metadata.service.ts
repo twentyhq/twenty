@@ -48,23 +48,26 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   }
 
   override async createOne(
-    record: CreateObjectInput,
+    objectMetadataInput: CreateObjectInput,
   ): Promise<ObjectMetadataEntity> {
     const lastDataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        record.workspaceId,
+        objectMetadataInput.workspaceId,
       );
 
-    if (record.nameSingular.toLowerCase() === record.namePlural.toLowerCase()) {
+    if (
+      objectMetadataInput.nameSingular.toLowerCase() ===
+      objectMetadataInput.namePlural.toLowerCase()
+    ) {
       throw new Error(
         'The singular and plural name cannot be the same for an object',
       );
     }
 
     const createdObjectMetadata = await super.createOne({
-      ...record,
+      ...objectMetadataInput,
       dataSourceId: lastDataSourceMetadata.id,
-      targetTableName: createCustomColumnName(record.nameSingular),
+      targetTableName: createCustomColumnName(objectMetadataInput.nameSingular),
       isActive: true,
       isCustom: true,
       isSystem: false,
@@ -86,7 +89,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             isActive: true,
             isCustom: false,
             isSystem: true,
-            workspaceId: record.workspaceId,
+            workspaceId: objectMetadataInput.workspaceId,
             defaultValue: { type: 'uuid' },
           },
           {
@@ -101,7 +104,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             isNullable: true,
             isActive: true,
             isCustom: false,
-            workspaceId: record.workspaceId,
+            workspaceId: objectMetadataInput.workspaceId,
             defaultValue: { value: 'Untitled' },
           },
           {
@@ -116,7 +119,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             isNullable: true,
             isActive: true,
             isCustom: false,
-            workspaceId: record.workspaceId,
+            workspaceId: objectMetadataInput.workspaceId,
             defaultValue: { type: 'now' },
           },
           {
@@ -132,7 +135,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             isActive: true,
             isCustom: false,
             isSystem: true,
-            workspaceId: record.workspaceId,
+            workspaceId: objectMetadataInput.workspaceId,
             defaultValue: { type: 'now' },
           },
         ],
@@ -141,7 +144,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const activityTargetObjectMetadata =
       await this.objectMetadataRepository.findOneByOrFail({
         nameSingular: 'activityTarget',
-        workspaceId: record.workspaceId,
+        workspaceId: objectMetadataInput.workspaceId,
       });
 
     const activityTargetRelationFieldMetadata =
@@ -149,44 +152,44 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         // FROM
         {
           objectMetadataId: createdObjectMetadata.id,
-          workspaceId: record.workspaceId,
+          workspaceId: objectMetadataInput.workspaceId,
           isCustom: true,
           isActive: true,
           type: FieldMetadataType.RELATION,
           name: 'activityTargets',
           label: 'Activities',
           targetColumnMap: {},
-          description: `Activities tied to the ${record.labelSingular}`,
+          description: `Activities tied to the ${objectMetadataInput.labelSingular}`,
           icon: 'IconCheckbox',
           isNullable: true,
         },
         // TO
         {
           objectMetadataId: activityTargetObjectMetadata.id,
-          workspaceId: record.workspaceId,
+          workspaceId: objectMetadataInput.workspaceId,
           isCustom: true,
           isActive: true,
           type: FieldMetadataType.RELATION,
-          name: record.nameSingular,
-          label: record.labelSingular,
+          name: objectMetadataInput.nameSingular,
+          label: objectMetadataInput.labelSingular,
           targetColumnMap: {
             value: `${createdObjectMetadata.targetTableName}Id`,
           },
-          description: `ActivityTarget ${record.labelSingular}`,
+          description: `ActivityTarget ${objectMetadataInput.labelSingular}`,
           icon: 'IconBuildingSkyscraper',
           isNullable: true,
         },
         // Foreign key
         {
           objectMetadataId: activityTargetObjectMetadata.id,
-          workspaceId: record.workspaceId,
+          workspaceId: objectMetadataInput.workspaceId,
           isCustom: true,
           isActive: true,
           type: FieldMetadataType.UUID,
           name: `${createdObjectMetadata.targetTableName}Id`,
-          label: `${record.labelSingular} ID (foreign key)`,
+          label: `${objectMetadataInput.labelSingular} ID (foreign key)`,
           targetColumnMap: {},
-          description: `ActivityTarget ${record.labelSingular} id foreign key`,
+          description: `ActivityTarget ${objectMetadataInput.labelSingular} id foreign key`,
           icon: undefined,
           isNullable: true,
           isSystem: true,
@@ -208,7 +211,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     await this.relationMetadataRepository.save([
       {
-        workspaceId: record.workspaceId,
+        workspaceId: objectMetadataInput.workspaceId,
         relationType: RelationMetadataType.ONE_TO_MANY,
         fromObjectMetadataId: createdObjectMetadata.id,
         toObjectMetadataId: activityTargetObjectMetadata.id,

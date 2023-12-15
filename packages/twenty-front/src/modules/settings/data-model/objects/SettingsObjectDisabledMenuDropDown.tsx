@@ -1,6 +1,5 @@
-import { IconDotsVertical } from '@/ui/display/icon';
+import { IconArchiveOff, IconDotsVertical } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-import { IconArchiveOff } from '@/ui/input/constants/icons';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';

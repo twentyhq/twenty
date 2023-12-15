@@ -56,7 +56,7 @@ export const useMapToObjectRecordIdentifier = ({
 
     const avatarUrl =
       objectMetadataItem.nameSingular === CoreObjectNameSingular.Company
-        ? getLogoUrlFromDomainName(imageIdentifierFieldValue ?? '')
+        ? getLogoUrlFromDomainName(record['domainName'] ?? '')
         : imageIdentifierFieldValue ?? null;
 
     return {

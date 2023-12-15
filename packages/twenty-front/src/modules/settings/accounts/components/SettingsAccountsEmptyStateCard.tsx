@@ -4,30 +4,20 @@ import styled from '@emotion/styled';
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import { Button } from '@/ui/input/button/components/Button';
 import { Card } from '@/ui/layout/card/components/Card';
+import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { CardHeader } from '@/ui/layout/card/components/CardHeader';
 import { REACT_APP_SERVER_AUTH_URL } from '~/config';
 import { useGenerateTransientTokenMutation } from '~/generated/graphql';
 
-const StyledCard = styled(Card)`
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  overflow: hidden;
-  padding: 0;
-`;
-
-const StyledHeader = styled.div`
+const StyledHeader = styled(CardHeader)`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.primary};
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
   height: ${({ theme }) => theme.spacing(6)};
-  padding: ${({ theme }) => theme.spacing(2, 4)};
 `;
 
-const StyledBody = styled.div`
+const StyledBody = styled(CardContent)`
   display: flex;
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(4)};
 `;
 
 export const SettingsAccountsEmptyStateCard = () => {
@@ -43,8 +33,9 @@ export const SettingsAccountsEmptyStateCard = () => {
 
     window.location.href = `${authServerUrl}/google-gmail?transientToken=${token}`;
   }, [generateTransientToken]);
+
   return (
-    <StyledCard>
+    <Card>
       <StyledHeader>No connected account</StyledHeader>
       <StyledBody>
         <Button
@@ -54,6 +45,6 @@ export const SettingsAccountsEmptyStateCard = () => {
           onClick={handleGmailLogin}
         />
       </StyledBody>
-    </StyledCard>
+    </Card>
   );
 };

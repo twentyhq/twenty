@@ -1,3 +1,5 @@
+import { GateDecoratorParams } from 'src/workspace/workspace-sync-metadata/interfaces/gate-decorator.interface';
+
 export interface ObjectMetadataDecoratorParams {
   namePlural: string;
   labelSingular: string;
@@ -12,4 +14,5 @@ export interface ReflectObjectMetadata extends ObjectMetadataDecoratorParams {
   targetTableName: string;
   isSystem: boolean;
   isCustom: boolean;
+  gate?: GateDecoratorParams;
 }

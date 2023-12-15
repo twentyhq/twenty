@@ -7,6 +7,10 @@ export const GET_CLIENT_CONFIG = gql`
         google
         password
       }
+      billing {
+        isBillingEnabled
+        billingUrl
+      }
       signInPrefilled
       debugMode
       telemetry {

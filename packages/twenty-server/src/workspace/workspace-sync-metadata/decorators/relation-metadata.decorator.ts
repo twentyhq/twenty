@@ -11,7 +11,7 @@ export function RelationMetadata(
   return (target: object, fieldKey: string) => {
     const existingRelationMetadata =
       TypedReflect.getMetadata('relationMetadata', target.constructor) ?? [];
-
+    const gate = TypedReflect.getMetadata('gate', target, fieldKey);
     const objectName = convertClassNameToObjectMetadataName(
       target.constructor.name,
     );
@@ -26,6 +26,7 @@ export function RelationMetadata(
           toObjectNameSingular: params.objectName,
           fromFieldMetadataName: fieldKey,
           toFieldMetadataName: params.inverseSideFieldName ?? objectName,
+          gate,
         },
       ],
       target.constructor,

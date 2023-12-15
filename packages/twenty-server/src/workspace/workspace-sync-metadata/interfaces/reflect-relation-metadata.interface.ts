@@ -1,3 +1,5 @@
+import { GateDecoratorParams } from 'src/workspace/workspace-sync-metadata/interfaces/gate-decorator.interface';
+
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 
 export interface RelationMetadataDecoratorParams {
@@ -12,4 +14,5 @@ export interface ReflectRelationMetadata {
   toObjectNameSingular: string;
   fromFieldMetadataName: string;
   toFieldMetadataName: string;
+  gate?: GateDecoratorParams;
 }

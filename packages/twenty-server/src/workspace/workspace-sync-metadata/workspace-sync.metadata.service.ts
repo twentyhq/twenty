@@ -22,9 +22,9 @@ import {
   RelationMetadataType,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import {
-  mapObjectMetadataByUniqueIdentifier,
   filterIgnoredProperties,
   convertStringifiedFieldsToJSON,
+  mapObjectMetadataByUniqueIdentifier,
 } from 'src/workspace/workspace-sync-metadata/utils/sync-metadata.util';
 import { standardObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects';
 import {
@@ -37,6 +37,7 @@ import { WorkspaceMigrationFactory } from 'src/metadata/workspace-migration/work
 import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
 import { coreObjectMetadata } from 'src/workspace/workspace-sync-metadata/core-objects';
 import { ReflectiveMetadataFactory } from 'src/workspace/workspace-sync-metadata/reflective-metadata.factory';
+import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class WorkspaceSyncMetadataService {
@@ -53,6 +54,8 @@ export class WorkspaceSyncMetadataService {
     private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
     @InjectRepository(WorkspaceMigrationEntity, 'metadata')
     private readonly workspaceMigrationRepository: Repository<WorkspaceMigrationEntity>,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   /**
@@ -67,14 +70,28 @@ export class WorkspaceSyncMetadataService {
     dataSourceId: string,
     workspaceId: string,
   ) {
-    const standardObjects =
-      await this.reflectiveMetadataFactory.createObjectMetadataCollection(
-        [...standardObjectMetadata, ...coreObjectMetadata],
-        workspaceId,
-        dataSourceId,
+    try {
+      const workspaceFeatureFlags = await this.featureFlagRepository.find({
+        where: { workspaceId },
+      });
+
+      const workspaceFeatureFlagsMap = workspaceFeatureFlags.reduce(
+        (result, currentFeatureFlag) => {
+          result[currentFeatureFlag.key] = currentFeatureFlag.value;
+
+          return result;
+        },
+        {},
       );
 
-    try {
+      const standardObjects =
+        await this.reflectiveMetadataFactory.createObjectMetadataCollection(
+          [...standardObjectMetadata, ...coreObjectMetadata],
+          workspaceId,
+          dataSourceId,
+          workspaceFeatureFlagsMap,
+        );
+
       const objectsInDB = await this.objectMetadataRepository.find({
         where: { workspaceId, isCustom: false },
         relations: ['dataSource', 'fields'],
@@ -267,7 +284,11 @@ export class WorkspaceSyncMetadataService {
 
       // We run syncRelationMetadata after everything to ensure that all objects and fields are
       // in the DB before creating relations.
-      await this.syncRelationMetadata(workspaceId, dataSourceId);
+      await this.syncRelationMetadata(
+        workspaceId,
+        dataSourceId,
+        workspaceFeatureFlagsMap,
+      );
 
       // Execute migrations
       await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
@@ -281,6 +302,7 @@ export class WorkspaceSyncMetadataService {
   private async syncRelationMetadata(
     workspaceId: string,
     dataSourceId: string,
+    workspaceFeatureFlagsMap: Record<string, boolean>,
   ) {
     const objectsInDB = await this.objectMetadataRepository.find({
       where: { workspaceId, isCustom: false },
@@ -290,19 +312,13 @@ export class WorkspaceSyncMetadataService {
       ObjectMetadataEntity,
       FieldMetadataEntity
     >(objectsInDB);
-    const standardRelations = this.reflectiveMetadataFactory
-      .createRelationMetadataCollection(
+    const standardRelations =
+      this.reflectiveMetadataFactory.createRelationMetadataCollection(
         [...standardObjectMetadata, ...coreObjectMetadata],
         workspaceId,
         objectsInDBByName,
-      )
-      .reduce((result, currentObject) => {
-        const key = `${currentObject.fromObjectMetadataId}->${currentObject.fromFieldMetadataId}`;
-
-        result[key] = currentObject;
-
-        return result;
-      }, {});
+        workspaceFeatureFlagsMap,
+      );
 
     // TODO: filter out custom relations once isCustom has been added to relationMetadata table
     const relationsInDB = await this.relationMetadataRepository.find({

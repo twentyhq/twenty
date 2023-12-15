@@ -1,4 +1,5 @@
 import { FieldMetadataDefaultValue } from 'src/metadata/field-metadata/interfaces/field-metadata-default-value.interface';
+import { GateDecoratorParams } from 'src/workspace/workspace-sync-metadata/interfaces/gate-decorator.interface';
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
@@ -26,5 +27,6 @@ export interface ReflectFieldMetadata {
     isCustom: boolean;
     description?: string;
     defaultValue: string | null;
+    gate?: GateDecoratorParams;
   };
 }
