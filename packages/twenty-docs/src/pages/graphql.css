@@ -1,9 +1,13 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+}
+
 .form {
     text-align: center;
-    width: 100%;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 50px;
 }
 
 .link {
@@ -16,7 +20,9 @@
 
 .input {
     padding: 4px;
-    margin: 4px;
+    margin: 20px 0 5px 0;
+    max-width: 460px;
+    width: 100%;
     box-sizing: border-box;
     background-color: #f3f3f3;
     border: 1px solid #ddd;
@@ -26,4 +32,10 @@
 
 .invalid {
     border: 1px solid red;
+}
+
+.token-invalid {
+    color: red;
+    font-size: 12px;
+    text-align: left;
 }
