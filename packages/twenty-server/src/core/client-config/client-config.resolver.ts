@@ -21,6 +21,10 @@ export class ClientConfigResolver {
         anonymizationEnabled:
           this.environmentService.isTelemetryAnonymizationEnabled(),
       },
+      billing: {
+        isBillingEnabled: this.environmentService.isBillingEnabled(),
+        billingUrl: this.environmentService.getBillingUrl(),
+      },
       signInPrefilled: this.environmentService.isSignInPrefilled(),
       debugMode: this.environmentService.isDebugMode(),
       support: {

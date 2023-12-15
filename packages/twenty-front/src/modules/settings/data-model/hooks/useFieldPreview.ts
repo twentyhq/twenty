@@ -1,5 +1,5 @@
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
-import { useLazyLoadIcon } from '@/ui/input/hooks/useLazyLoadIcon';
+import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { settingsFieldMetadataTypes } from '../constants/settingsFieldMetadataTypes';
@@ -22,8 +22,9 @@ export const useFieldPreview = ({
   const { findObjectMetadataItemById } = useObjectMetadataItemForSettings();
   const objectMetadataItem = findObjectMetadataItemById(objectMetadataId);
 
-  const { Icon: ObjectIcon } = useLazyLoadIcon(objectMetadataItem?.icon ?? '');
-  const { Icon: FieldIcon } = useLazyLoadIcon(fieldMetadata.icon ?? '');
+  const { getIcon } = useIcons();
+  const ObjectIcon = getIcon(objectMetadataItem?.icon);
+  const FieldIcon = getIcon(fieldMetadata.icon);
 
   const fieldName = fieldMetadata.id
     ? objectMetadataItem?.fields.find(({ id }) => id === fieldMetadata.id)?.name

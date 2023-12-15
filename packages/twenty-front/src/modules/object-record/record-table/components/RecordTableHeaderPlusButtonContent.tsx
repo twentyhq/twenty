@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { IconSettings } from '@/ui/display/icon';
-import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
+import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -22,8 +22,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
 
   const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector);
 
-  const { icons } = useLazyLoadIcons();
-
+  const { getIcon } = useIcons();
   const { handleColumnVisibilityChange } = useTableColumns();
 
   const handleAddColumn = useCallback(
@@ -46,7 +45,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
           <MenuItem
             key={column.fieldMetadataId}
             onClick={() => handleAddColumn(column)}
-            LeftIcon={icons[column.iconName]}
+            LeftIcon={getIcon(column.iconName)}
             text={column.label}
           />
         ))}

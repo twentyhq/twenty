@@ -6,6 +6,7 @@ import { RecordTableHeaderCell } from '@/object-record/record-table/components/R
 import { IconPlus } from '@/ui/display/icon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScrollWrapperScopedRef';
 
 import { useRecordTableScopedStates } from '../hooks/internal/useRecordTableScopedStates';
 
@@ -16,7 +17,7 @@ const StyledTableHead = styled.thead`
   cursor: pointer;
 `;
 
-const StyledPlusIconHeaderCell = styled.th`
+const StyledPlusIconHeaderCell = styled.th<{ isTableWiderThanScreen: boolean }>`
   ${({ theme }) => {
     return `
   &:hover {
@@ -25,10 +26,16 @@ const StyledPlusIconHeaderCell = styled.th`
   padding-left: ${theme.spacing(3)};
   `;
   }};
-  border-bottom: none !important;
   border-left: none !important;
   min-width: 32px;
-  position: relative;
+  ${({ isTableWiderThanScreen, theme }) =>
+    isTableWiderThanScreen &&
+    `position: relative;
+    right: 0;
+    width: 32px;
+    border-right: none !important;
+    background-color: ${theme.background.primary};
+    `};
   z-index: 1;
 `;
 
@@ -55,6 +62,12 @@ export const RecordTableHeader = ({
     useRecordTableScopedStates();
 
   const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector);
+
+  const scrollWrapper = useScrollWrapperScopedRef();
+  const isTableWiderThanScreen =
+    (scrollWrapper.current?.clientWidth ?? 0) <
+    (scrollWrapper.current?.scrollWidth ?? 0);
+
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
 
   const theme = useTheme();
@@ -78,8 +91,10 @@ export const RecordTableHeader = ({
             createRecord={createRecord}
           />
         ))}
-        {hiddenTableColumns.length > 0 && (
-          <StyledPlusIconHeaderCell>
+        <StyledPlusIconHeaderCell
+          isTableWiderThanScreen={isTableWiderThanScreen}
+        >
+          {hiddenTableColumns.length > 0 && (
             <DropdownScope
               dropdownScopeId={HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID}
             >
@@ -96,8 +111,8 @@ export const RecordTableHeader = ({
                 }}
               />
             </DropdownScope>
-          </StyledPlusIconHeaderCell>
-        )}
+          )}
+        </StyledPlusIconHeaderCell>
       </tr>
     </StyledTableHead>
   );

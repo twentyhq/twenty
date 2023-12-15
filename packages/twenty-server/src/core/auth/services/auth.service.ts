@@ -116,6 +116,7 @@ export class AuthService {
         displayName: '',
         domainName: '',
         inviteHash: v4(),
+        subscriptionStatus: 'incomplete',
       });
 
       workspace = await this.workspaceRepository.save(workspaceToCreate);

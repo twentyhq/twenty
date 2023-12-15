@@ -84,7 +84,7 @@ export const NoteCard = ({
   const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
 
-  const noteBody = JSON.parse(note.body ?? '[]');
+  const noteBody = note.body ? JSON.parse(note.body) : [];
 
   const body = noteBody.length
     ? noteBody

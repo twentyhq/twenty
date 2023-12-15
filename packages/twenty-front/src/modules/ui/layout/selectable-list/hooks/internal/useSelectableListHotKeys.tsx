@@ -16,8 +16,7 @@ export const useSelectableListHotKeys = (
     selectedItemId?: string | null,
   ) => {
     if (!selectedItemId) {
-      // If nothing is selected, return the default position
-      return { row: 0, col: 0 };
+      return;
     }
 
     for (let row = 0; row < selectableItemIds.length; row++) {
@@ -26,7 +25,6 @@ export const useSelectableListHotKeys = (
         return { row, col };
       }
     }
-    return { row: 0, col: 0 };
   };
 
   const handleSelect = useRecoilCallback(
@@ -42,12 +40,15 @@ export const useSelectableListHotKeys = (
           selectableItemIdsState,
         );
 
-        const { row: currentRow, col: currentCol } = findPosition(
-          selectableItemIds,
-          selectedItemId,
-        );
+        const currentPosition = findPosition(selectableItemIds, selectedItemId);
 
         const computeNextId = (direction: Direction) => {
+          if (!selectedItemId || !currentPosition) {
+            return selectableItemIds[0][0];
+          }
+
+          const { row: currentRow, col: currentCol } = currentPosition;
+
           if (selectableItemIds.length === 0) {
             return;
           }
@@ -94,21 +95,23 @@ export const useSelectableListHotKeys = (
 
         const nextId = computeNextId(direction);
 
-        if (nextId) {
-          const { isSelectedItemIdSelector } = getSelectableListScopedStates({
-            selectableListScopeId: scopeId,
-            itemId: nextId,
-          });
-          set(isSelectedItemIdSelector, true);
-          set(selectedItemIdState, nextId);
-        }
+        if (selectedItemId !== nextId) {
+          if (nextId) {
+            const { isSelectedItemIdSelector } = getSelectableListScopedStates({
+              selectableListScopeId: scopeId,
+              itemId: nextId,
+            });
+            set(isSelectedItemIdSelector, true);
+            set(selectedItemIdState, nextId);
+          }
 
-        if (selectedItemId) {
-          const { isSelectedItemIdSelector } = getSelectableListScopedStates({
-            selectableListScopeId: scopeId,
-            itemId: selectedItemId,
-          });
-          set(isSelectedItemIdSelector, false);
+          if (selectedItemId) {
+            const { isSelectedItemIdSelector } = getSelectableListScopedStates({
+              selectableListScopeId: scopeId,
+              itemId: selectedItemId,
+            });
+            set(isSelectedItemIdSelector, false);
+          }
         }
       },
     [scopeId],
