@@ -8,7 +8,7 @@ import {
 } from 'src/integrations/message-queue/interfaces';
 import {
   QUEUE_DRIVER,
-  MessageQueues,
+  MessageQueue,
 } from 'src/integrations/message-queue/message-queue.constants';
 import { PgBossDriver } from 'src/integrations/message-queue/drivers/pg-boss.driver';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
@@ -18,16 +18,13 @@ import { BullMQDriver } from 'src/integrations/message-queue/drivers/bullmq.driv
 export class MessageQueueModule {
   static forRoot(options: MessageQueueModuleAsyncOptions): DynamicModule {
     const providers = [
-      {
-        provide: MessageQueues.taskAssignedQueue,
+      ...Object.values(MessageQueue).map((queue) => ({
+        provide: queue,
         useFactory: (driver: MessageQueueDriver) => {
-          return new MessageQueueService(
-            driver,
-            MessageQueues.taskAssignedQueue,
-          );
+          return new MessageQueueService(driver, queue);
         },
         inject: [QUEUE_DRIVER],
-      },
+      })),
       {
         provide: QUEUE_DRIVER,
         useFactory: async (...args: any[]) => {
@@ -51,7 +48,7 @@ export class MessageQueueModule {
       module: MessageQueueModule,
       imports: options.imports || [],
       providers,
-      exports: [MessageQueues.taskAssignedQueue],
+      exports: [MessageQueue.taskAssignedQueue, MessageQueue.messagingQueue],
     };
   }
 }

@@ -1,4 +1,4 @@
-import {  ThemeType } from './src/modules/ui/theme/constants/theme';
+import { ThemeType } from './src/modules/ui/theme/constants/theme';
 
 export {ThemeProvider} from '@emotion/react';
 

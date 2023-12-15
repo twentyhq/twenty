@@ -77,6 +77,8 @@ export const CreateWorkspace = () => {
         setCurrentWorkspace({
           id: result.data?.updateWorkspace?.id ?? '',
           displayName: data.name,
+          subscriptionStatus:
+            result.data?.updateWorkspace?.subscriptionStatus ?? 'incomplete',
           allowImpersonation:
             result.data?.updateWorkspace?.allowImpersonation ?? false,
         });

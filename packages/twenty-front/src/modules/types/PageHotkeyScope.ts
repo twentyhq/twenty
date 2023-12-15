@@ -3,6 +3,7 @@ export enum PageHotkeyScope {
   CreateWokspace = 'create-workspace',
   SignInUp = 'sign-in-up',
   CreateProfile = 'create-profile',
+  PlanRequired = 'plan-required',
   ShowPage = 'show-page',
   PersonShowPage = 'person-show-page',
   CompanyShowPage = 'company-show-page',

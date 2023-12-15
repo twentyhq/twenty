@@ -2,25 +2,25 @@ import { Queue, QueueOptions, Worker } from 'bullmq';
 
 import { QueueJobOptions } from 'src/integrations/message-queue/drivers/interfaces/job-options.interface';
 
-import { MessageQueues } from 'src/integrations/message-queue/message-queue.constants';
+import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 
 import { MessageQueueDriver } from './interfaces/message-queue-driver.interface';
 
 export type BullMQDriverOptions = QueueOptions;
 
 export class BullMQDriver implements MessageQueueDriver {
-  private queueMap: Record<MessageQueues, Queue> = {} as Record<
-    MessageQueues,
+  private queueMap: Record<MessageQueue, Queue> = {} as Record<
+    MessageQueue,
     Queue
   >;
-  private workerMap: Record<MessageQueues, Worker> = {} as Record<
-    MessageQueues,
+  private workerMap: Record<MessageQueue, Worker> = {} as Record<
+    MessageQueue,
     Worker
   >;
 
   constructor(private options: BullMQDriverOptions) {}
 
-  register(queueName: MessageQueues): void {
+  register(queueName: MessageQueue): void {
     this.queueMap[queueName] = new Queue(queueName, this.options);
   }
 
@@ -35,7 +35,7 @@ export class BullMQDriver implements MessageQueueDriver {
   }
 
   async work<T>(
-    queueName: MessageQueues,
+    queueName: MessageQueue,
     handler: ({ data, id }: { data: T; id: string }) => Promise<void>,
   ) {
     const worker = new Worker(queueName, async (job) => {
@@ -46,7 +46,8 @@ export class BullMQDriver implements MessageQueueDriver {
   }
 
   async add<T>(
-    queueName: MessageQueues,
+    queueName: MessageQueue,
+    jobName: string,
     data: T,
     options?: QueueJobOptions,
   ): Promise<void> {
@@ -55,7 +56,8 @@ export class BullMQDriver implements MessageQueueDriver {
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
       );
     }
-    await this.queueMap[queueName].add(options?.id || '', data, {
+    await this.queueMap[queueName].add(jobName, data, {
+      jobId: options?.id,
       priority: options?.priority,
     });
   }

@@ -1,14 +1,8 @@
-import { JSX, ReactNode } from 'react';
 import styled from '@emotion/styled';
-
-type SubTitleProps = {
-  children: ReactNode;
-};
 
 const StyledSubTitle = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
+  text-align: center;
 `;
 
-export const SubTitle = ({ children }: SubTitleProps): JSX.Element => (
-  <StyledSubTitle>{children}</StyledSubTitle>
-);
+export { StyledSubTitle as SubTitle };
