@@ -18,9 +18,9 @@ jobs:
         with:
           node-version: "18"
       - name: Docs / Install Dependencies
-        run: cd docs && yarn
+        run: yarn
       - name: Docs / Build Documentation
-        run: cd docs && yarn build
+        run: yarn nx build twenty-docs
   vale:
     name: runner / vale
     runs-on: ubuntu-latest
@@ -30,7 +30,7 @@ jobs:
         with:
           files: ${{ steps.directories.outputs.LIST }}
           fail_on_error: true
-          vale_flags: "--minAlertLevel=error --config=docs/.vale.ini"
+          vale_flags: "--minAlertLevel=error --config=packages/twenty-docs/.vale.ini"
           reporter: github-pr-check
           token: ${{ github.token }}
           filter_mode: nofilter
