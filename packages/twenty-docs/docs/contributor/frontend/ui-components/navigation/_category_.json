@@ -1,0 +1,9 @@
+{
+  "label": "Navigation",
+  "position": 4,
+  "collapsible": true,
+  "collapsed": false,
+  "customProps": {
+    "icon": "TbNavigation"
+  }
+}

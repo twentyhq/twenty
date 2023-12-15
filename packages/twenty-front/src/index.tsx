@@ -11,6 +11,7 @@ import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
 import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
+import { IconsProvider } from '@/ui/display/icon/components/IconsProvider';
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
@@ -34,31 +35,33 @@ root.render(
       <RecoilDebugObserverEffect />
       <BrowserRouter>
         <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-          <ApolloProvider>
-            <HelmetProvider>
-              <ClientConfigProvider>
-                <UserProvider>
-                  <ApolloMetadataClientProvider>
-                    <ObjectMetadataItemsProvider>
-                      <AppThemeProvider>
-                        <SnackBarProvider>
-                          <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                            <DialogManager>
-                              <StrictMode>
-                                <PromiseRejectionEffect />
-                                <App />
-                              </StrictMode>
-                            </DialogManager>
-                          </DialogManagerScope>
-                        </SnackBarProvider>
-                      </AppThemeProvider>
-                      <PageChangeEffect />
-                    </ObjectMetadataItemsProvider>
-                  </ApolloMetadataClientProvider>
-                </UserProvider>
-              </ClientConfigProvider>
-            </HelmetProvider>
-          </ApolloProvider>
+          <IconsProvider>
+            <ApolloProvider>
+              <HelmetProvider>
+                <ClientConfigProvider>
+                  <UserProvider>
+                    <ApolloMetadataClientProvider>
+                      <ObjectMetadataItemsProvider>
+                        <AppThemeProvider>
+                          <SnackBarProvider>
+                            <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                              <DialogManager>
+                                <StrictMode>
+                                  <PromiseRejectionEffect />
+                                  <App />
+                                </StrictMode>
+                              </DialogManager>
+                            </DialogManagerScope>
+                          </SnackBarProvider>
+                        </AppThemeProvider>
+                        <PageChangeEffect />
+                      </ObjectMetadataItemsProvider>
+                    </ApolloMetadataClientProvider>
+                  </UserProvider>
+                </ClientConfigProvider>
+              </HelmetProvider>
+            </ApolloProvider>
+          </IconsProvider>
         </SnackBarProviderScope>
       </BrowserRouter>
     </AppErrorBoundary>

@@ -61,5 +61,6 @@ export const convertStringifiedFieldsToJSON = (fieldMetadata) => {
       fieldMetadata.options as unknown as string,
     );
   }
+
   return fieldMetadata;
 };

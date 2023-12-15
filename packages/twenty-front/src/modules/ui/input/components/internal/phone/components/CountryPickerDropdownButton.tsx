@@ -6,8 +6,7 @@ import { hasFlag } from 'country-flag-icons';
 import * as Flags from 'country-flag-icons/react/3x2';
 import { CountryCallingCode } from 'libphonenumber-js';
 
-import { IconChevronDown } from '@/ui/display/icon';
-import { IconWorld } from '@/ui/input/constants/icons';
+import { IconChevronDown, IconWorld } from '@/ui/display/icon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';

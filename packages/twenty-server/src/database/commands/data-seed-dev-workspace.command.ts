@@ -50,21 +50,21 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
 
       await dataSource.destroy();
 
-      const schemaName = await this.workspaceDataSourceService.createWorkspaceDBSchema(
-        this.workspaceId,
-      );
+      const schemaName =
+        await this.workspaceDataSourceService.createWorkspaceDBSchema(
+          this.workspaceId,
+        );
 
-    const dataSourceMetadata =
-      await this.dataSourceService.createDataSourceMetadata(
-        this.workspaceId,
-        schemaName,
-      );
+      const dataSourceMetadata =
+        await this.dataSourceService.createDataSourceMetadata(
+          this.workspaceId,
+          schemaName,
+        );
 
       await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
         dataSourceMetadata.id,
         this.workspaceId,
       );
-
     } catch (error) {
       console.error(error);
 
@@ -85,27 +85,33 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
     }
 
     try {
-      const objectMetadata = await this.objectMetadataService.findManyWithinWorkspace(this.workspaceId);
+      const objectMetadata =
+        await this.objectMetadataService.findManyWithinWorkspace(
+          this.workspaceId,
+        );
       const objectMetadataMap = objectMetadata.reduce((acc, object) => {
         acc[object.nameSingular] = {
           id: object.id,
           fields: object.fields.reduce((acc, field) => {
             acc[field.name] = field.id;
-    
+
             return acc;
           }, {}),
         };
-    
+
         return acc;
       }, {});
-
 
       await seedCompanies(workspaceDataSource, dataSourceMetadata.schema);
       await seedPeople(workspaceDataSource, dataSourceMetadata.schema);
       await seedPipelineStep(workspaceDataSource, dataSourceMetadata.schema);
       await seedOpportunity(workspaceDataSource, dataSourceMetadata.schema);
 
-      await seedViews(workspaceDataSource, dataSourceMetadata.schema, objectMetadataMap);
+      await seedViews(
+        workspaceDataSource,
+        dataSourceMetadata.schema,
+        objectMetadataMap,
+      );
       await seedWorkspaceMember(workspaceDataSource, dataSourceMetadata.schema);
     } catch (error) {
       console.error(error);

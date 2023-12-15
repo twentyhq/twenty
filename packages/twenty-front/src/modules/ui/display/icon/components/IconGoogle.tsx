@@ -1,12 +1,12 @@
 import { useTheme } from '@emotion/react';
 
-import IconGoogleRaw from '../assets/google-icon.svg?react';
+import IconGoogleRaw from '../assets/google.svg?react';
 
 interface IconGoogleProps {
   size?: number;
 }
 
-export const IconGoogle = (props: IconGoogleProps): JSX.Element => {
+export const IconGoogle = (props: IconGoogleProps) => {
   const theme = useTheme();
   const size = props.size ?? theme.icon.size.lg;
 
