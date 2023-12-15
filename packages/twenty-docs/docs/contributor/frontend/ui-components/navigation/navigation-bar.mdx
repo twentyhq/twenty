@@ -1,0 +1,53 @@
+---
+title: Navigation Bar
+sidebar_position: 4
+sidebar_custom_props:
+  icon: TbRectangle
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import navBarCode from '!!raw-loader!@site/src/ui/navigation/navBarCode.js'
+
+Renders a navigation bar that contains multiple `NavigationBarItem` components.
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/navigation/navigation-bar/components/NavigationBar']}
+  componentCode={navBarCode} 
+/>
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>activeItemName</td>
+      <td>string</td>
+      <td>The name of the currently active navigation item</td>
+    </tr>
+
+    <tr>
+      <td>items</td>
+      <td>array</td>
+      <td>An array of objects representing each navigation item. Each object contains the `name` of the item, the `Icon` component to display, and an `onClick` function to be called when the item is clicked</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>

@@ -25,7 +25,7 @@ import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metada
 @IsSystem()
 export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    // This will be a type select later
+    // This will be a type select later: metadata, subject, share_everything
     type: FieldMetadataType.TEXT,
     label: 'Visibility',
     description: 'Visibility',

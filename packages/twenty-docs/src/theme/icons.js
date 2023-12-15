@@ -62,4 +62,11 @@ export {
   TbSelect,
   TbToggleRight,
   TbTextPlus,
+  TbLink,
+  TbNavigation,
+  TbMenu,
+  TbSquareChevronsRight,
+  TbTemplate,
+  TbRectangle,
+  TbCircleCheckFilled,
 } from "react-icons/tb";

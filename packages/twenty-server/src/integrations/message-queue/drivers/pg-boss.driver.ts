@@ -2,6 +2,8 @@ import PgBoss from 'pg-boss';
 
 import { QueueJobOptions } from 'src/integrations/message-queue/drivers/interfaces/job-options.interface';
 
+import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
+
 import { MessageQueueDriver } from './interfaces/message-queue-driver.interface';
 
 export type PgBossDriverOptions = PgBoss.ConstructorOptions;
@@ -25,14 +27,19 @@ export class PgBossDriver implements MessageQueueDriver {
     queueName: string,
     handler: ({ data, id }: { data: T; id: string }) => Promise<void>,
   ) {
-    return this.pgBoss.work(queueName, handler);
+    return this.pgBoss.work(`${queueName}.*`, handler);
   }
 
   async add<T>(
-    queueName: string,
+    queueName: MessageQueue,
+    jobName: string,
     data: T,
     options?: QueueJobOptions,
   ): Promise<void> {
-    await this.pgBoss.send(queueName, data as object, options ? options : {});
+    await this.pgBoss.send(
+      `${queueName}.${jobName}`,
+      data as object,
+      options ?? {},
+    );
   }
 }

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useRef } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import debounce from 'lodash.debounce';
@@ -10,7 +9,6 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -89,7 +87,7 @@ export const MultipleEntitySelect = <
       <DropdownMenuItemsContainer hasMaxHeight>
         <SelectableList
           selectableListId="multiple-entity-select-list"
-          selectableItemIds={[selectableItemIds]}
+          selectableItemIdArray={selectableItemIds}
           hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
           onEnter={(_itemId) => {
             if (_itemId in value === false || value[_itemId] === false) {
@@ -103,12 +101,6 @@ export const MultipleEntitySelect = <
             <SelectableItem itemId={entity.id} key={entity.id}>
               <MenuItemMultiSelectAvatar
                 key={entity.id}
-                isKeySelected={
-                  useSelectableList({
-                    selectableListId: 'multiple-entity-select-list',
-                    itemId: entity.id,
-                  }).isSelectedItemId
-                }
                 selected={value[entity.id]}
                 onSelectChange={(newCheckedValue) =>
                   onChange({ ...value, [entity.id]: newCheckedValue })

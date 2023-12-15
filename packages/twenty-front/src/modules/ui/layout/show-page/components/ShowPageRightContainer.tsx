@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import styled from '@emotion/styled';
 
+import { Emails } from '@/activities/emails/components/Emails';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { EntityTasks } from '@/activities/tasks/components/EntityTasks';
@@ -17,6 +18,7 @@ import { TabList } from '@/ui/layout/tab/components/TabList';
 import { activeTabIdScopedState } from '@/ui/layout/tab/states/activeTabIdScopedState';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 import { ShowPageRecoilScopeContext } from '../../states/ShowPageRecoilScopeContext';
 
@@ -53,7 +55,11 @@ export const ShowPageRightContainer = ({
   notes,
   emails,
 }: ShowPageRightContainerProps) => {
+  
   if (!entity) return <></>;
+
+  const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
+
   const TASK_TABS = [
     {
       id: 'timeline',
@@ -88,7 +94,7 @@ export const ShowPageRightContainer = ({
       title: 'Emails',
       Icon: IconMail,
       hide: !emails,
-      disabled: true,
+      disabled: !isMessagingEnabled || entity.type === 'Custom',
     },
   ];
 
@@ -106,6 +112,7 @@ export const ShowPageRightContainer = ({
       {activeTabId === 'tasks' && <EntityTasks entity={entity} />}
       {activeTabId === 'notes' && <Notes entity={entity} />}
       {activeTabId === 'files' && <Attachments targetableEntity={entity} />}
+      {activeTabId === 'emails' && <Emails />}
     </StyledShowPageRightContainer>
   );
 };
