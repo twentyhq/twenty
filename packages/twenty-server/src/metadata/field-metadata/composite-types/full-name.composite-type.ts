@@ -47,4 +47,4 @@ export const fullNameObjectDefinition = {
 export type FullNameMetadata = {
   firstName: string;
   lastName: string;
-}
+};

@@ -9,11 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres
+        image: twenty-postgres
         env:
           POSTGRES_HOST: postgres
-          POSTGRES_PASSWORD: twenty
-          POSTGRES_USER: twenty
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
           POSTGRES_DB: test
           POSTGRES_PORT: 5432
         ports:
@@ -34,10 +34,10 @@ jobs:
         with:
           node-version: "18"
       - name: Server / Install Dependencies
-        run: cd server && yarn install
+        run: yarn
       - name: Server / Run linter
-        run: cd server && yarn lint
+        run: yarn nx lint twenty-server
       - name: Server / Run jest tests
-        run: cd server && yarn test
+        run: yarn nx test twenty-server
       - name: Server / Run e2e tests
-        run: cd server && yarn test:e2e
+        run: yarn nx test:e2e twenty-server
