@@ -844,11 +844,12 @@ declare const MenuItemMultiSelect: ({ LeftIcon, text, selected, className, onSel
 type MenuItemMultiSelectAvatarProps = {
     avatar?: ReactNode;
     selected: boolean;
+    isKeySelected?: boolean;
     text: string;
     className?: string;
     onSelectChange?: (selected: boolean) => void;
 };
-declare const MenuItemMultiSelectAvatar: ({ avatar, text, selected, className, onSelectChange, }: MenuItemMultiSelectAvatarProps) => react_jsx_runtime.JSX.Element;
+declare const MenuItemMultiSelectAvatar: ({ avatar, text, selected, className, isKeySelected, onSelectChange, }: MenuItemMultiSelectAvatarProps) => react_jsx_runtime.JSX.Element;
 
 type MenuItemNavigateProps = {
     LeftIcon?: IconComponent;
@@ -860,6 +861,7 @@ declare const MenuItemNavigate: ({ LeftIcon, text, className, onClick, }: MenuIt
 
 type MenuItemBaseProps = {
     accent?: MenuItemAccent;
+    isKeySelected?: boolean;
 };
 
 declare const StyledMenuItemSelect: _emotion_styled.StyledComponent<{
