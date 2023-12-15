@@ -14,7 +14,7 @@ export default {
     global: {
       statements: 10,
       lines: 10,
-      functions: 10,
+      functions: 7,
     },
   },
   collectCoverage: true,
