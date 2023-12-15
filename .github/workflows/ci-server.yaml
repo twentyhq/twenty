@@ -11,11 +11,8 @@ jobs:
       postgres:
         image: twentycrm/twenty-postgres
         env:
-          POSTGRES_HOST: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
-          POSTGRES_DB: test
-          POSTGRES_PORT: 5432
         ports:
           - 5432:5432
         options: >-
