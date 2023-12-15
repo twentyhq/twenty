@@ -3,6 +3,7 @@ import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.en
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { UserObjectMetadata } from 'src/workspace/workspace-sync-metadata/core-objects/user.object-metadata';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
+import { Gate } from 'src/workspace/workspace-sync-metadata/decorators/gate.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
