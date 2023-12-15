@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: "18"
       - name: Utils / Install Dependencies
-        run: cd packages/twenty-utils && yarn
+        run: yarn
       - name: Utils / Run Danger.js
         run: cd packages/twenty-utils && yarn danger ci --use-github-checks --failOnErrors
         env:

@@ -37,6 +37,11 @@ connectionSource
       'create extension "wrappers"',
     );
 
+    await performQuery(
+      'CREATE EXTENSION IF NOT EXISTS "mysql_fdw"',
+      'create extension "mysql_fdw"',
+    );
+
     const supabaseWrappers = [
       'airtable',
       'bigQuery',

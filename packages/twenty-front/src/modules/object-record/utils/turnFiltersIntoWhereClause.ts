@@ -106,7 +106,7 @@ export const turnFiltersIntoObjectRecordFilters = (
             );
         }
         break;
-      case 'RELATION':
+      case 'RELATION': {
         try {
           JSON.parse(rawUIFilter.value);
         } catch (e) {
@@ -115,7 +115,6 @@ export const turnFiltersIntoObjectRecordFilters = (
           );
         }
 
-        // eslint-disable-next-line no-case-declarations
         const parsedRecordIds = JSON.parse(rawUIFilter.value) as string[];
 
         if (parsedRecordIds.length > 0) {
@@ -143,6 +142,7 @@ export const turnFiltersIntoObjectRecordFilters = (
           }
         }
         break;
+      }
       case 'CURRENCY':
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.GreaterThan:

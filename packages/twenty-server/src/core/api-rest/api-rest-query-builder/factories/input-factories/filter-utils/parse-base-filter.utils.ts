@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 
-enum FilterComparators {
+export enum FilterComparators {
   eq = 'eq',
   neq = 'neq',
   in = 'in',

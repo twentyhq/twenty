@@ -1,3 +1,4 @@
+import { CurrencyCode } from '@/object-record/field/types/CurrencyCode';
 import {
   IconCalendarEvent,
   IconCheck,
@@ -72,7 +73,7 @@ export const settingsFieldMetadataTypes: Partial<
   [FieldMetadataType.Currency]: {
     label: 'Currency',
     Icon: IconCoins,
-    defaultValue: { amountMicros: 2000000000, currencyCode: 'USD' },
+    defaultValue: { amountMicros: 2000000000, currencyCode: CurrencyCode.USD },
   },
   [FieldMetadataType.Relation]: {
     label: 'Relation',

@@ -13,7 +13,9 @@
       "packages/eslint-plugin-twenty",
       "packages/twenty-front",
       "packages/twenty-docs",
-      "packages/twenty-server"
+      "packages/twenty-server",
+      "packages/twenty-utils",
+      "packages/twenty-zapier"
     ]
   },
   "devDependencies": {

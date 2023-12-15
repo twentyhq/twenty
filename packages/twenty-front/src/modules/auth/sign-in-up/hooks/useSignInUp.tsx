@@ -6,6 +6,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { z } from 'zod';
 
 import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { billingState } from '@/client-config/states/billingState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
@@ -45,8 +46,11 @@ export const useSignInUp = () => {
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
   const isMatchingLocation = useIsMatchingLocation();
+
   const [authProviders] = useRecoilState(authProvidersState);
   const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
+  const billing = useRecoilValue(billingState);
+
   const workspaceInviteHash = useParams().workspaceInviteHash;
   const [signInUpStep, setSignInUpStep] = useState<SignInUpStep>(
     SignInUpStep.Init,
@@ -119,27 +123,33 @@ export const useSignInUp = () => {
         if (!data.email || !data.password) {
           throw new Error('Email and password are required');
         }
-        let currentWorkspace;
 
-        if (signInUpMode === SignInUpMode.SignIn) {
-          const { workspace } = await signInWithCredentials(
-            data.email.toLowerCase(),
-            data.password,
-          );
-          currentWorkspace = workspace;
-        } else {
-          const { workspace } = await signUpWithCredentials(
-            data.email.toLowerCase(),
-            data.password,
-            workspaceInviteHash,
-          );
-          currentWorkspace = workspace;
+        const { workspace: currentWorkspace } =
+          signInUpMode === SignInUpMode.SignIn
+            ? await signInWithCredentials(
+                data.email.toLowerCase(),
+                data.password,
+              )
+            : await signUpWithCredentials(
+                data.email.toLowerCase(),
+                data.password,
+                workspaceInviteHash,
+              );
+
+        if (
+          billing?.isBillingEnabled &&
+          currentWorkspace.subscriptionStatus !== 'active'
+        ) {
+          navigate('/plan-required');
+          return;
         }
-        if (currentWorkspace?.displayName) {
+
+        if (currentWorkspace.displayName) {
           navigate('/');
-        } else {
-          navigate('/create/workspace');
+          return;
         }
+
+        navigate('/create/workspace');
       } catch (err: any) {
         enqueueSnackBar(err?.message, {
           variant: 'error',
@@ -151,6 +161,7 @@ export const useSignInUp = () => {
       signInWithCredentials,
       signUpWithCredentials,
       workspaceInviteHash,
+      billing?.isBillingEnabled,
       navigate,
       enqueueSnackBar,
     ],

@@ -1,5 +1,5 @@
+import { IconDeviceFloppy } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
-import { IconDeviceFloppy } from '@/ui/input/constants/icons';
 
 type SaveButtonProps = {
   onSave?: () => void;
