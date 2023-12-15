@@ -90,13 +90,14 @@ export class WorkspaceMigrationFactory {
       ],
     ]);
 
-    this.compositeDefinitions = new Map<string, CompositeFieldsDefinitionFunction>(
-      [
-        [FieldMetadataType.LINK, linkFields],
-        [FieldMetadataType.CURRENCY, currencyFields],
-        [FieldMetadataType.FULL_NAME, fullNameFields],
-      ],
-    );
+    this.compositeDefinitions = new Map<
+      string,
+      CompositeFieldsDefinitionFunction
+    >([
+      [FieldMetadataType.LINK, linkFields],
+      [FieldMetadataType.CURRENCY, currencyFields],
+      [FieldMetadataType.FULL_NAME, fullNameFields],
+    ]);
   }
 
   createColumnActions(
