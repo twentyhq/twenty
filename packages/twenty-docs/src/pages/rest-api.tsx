@@ -1,6 +1,7 @@
 import Layout from "@theme/Layout";
 import BrowserOnly from "@docusaurus/BrowserOnly";
 import React, { useEffect, useState } from "react";
+import ReactDOM from "react-dom";
 import { API } from '@stoplight/elements';
 import '@stoplight/elements/styles.min.css';
 import './rest-api.css'
