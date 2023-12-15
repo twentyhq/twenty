@@ -4,7 +4,11 @@ import {
   H1Title,
   H1TitleFontColor,
 } from '@/ui/display/typography/components/H1Title';
+import { Card } from '@/ui/layout/card/components/Card';
 import { Section } from '@/ui/layout/section/components/Section';
+import { mockedEmails as emails } from '~/testing/mock-data/activities';
+
+import { EmailPreview } from './EmailPreview';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -28,11 +32,16 @@ export const Emails = () => (
       <StyledH1Title
         title={
           <>
-            Inbox <StyledEmailCount>2</StyledEmailCount>
+            Inbox <StyledEmailCount>{emails.length}</StyledEmailCount>
           </>
         }
         fontColor={H1TitleFontColor.Primary}
       />
+      <Card>
+        {emails.map((email, index) => (
+          <EmailPreview divider={index < emails.length - 1} email={email} />
+        ))}
+      </Card>
     </Section>
   </StyledContainer>
 );
