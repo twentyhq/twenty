@@ -21,20 +21,8 @@ export const baseSchema = (frontBaseUrl: string): OpenAPIV3.Document => {
     // Testing purposes
     servers: [
       {
-        url: 'http://localhost:3000',
-        description: 'Local Development',
-      },
-      {
-        url: 'https://api-main.twenty.com/',
-        description: 'Staging Development',
-      },
-      {
         url: 'https://api.twenty.com/',
         description: 'Production Development',
-      },
-      {
-        url: '/',
-        description: 'Current Host',
       },
     ],
     components: {

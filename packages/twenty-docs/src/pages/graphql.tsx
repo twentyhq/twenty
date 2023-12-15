@@ -1,7 +1,6 @@
 import { createGraphiQLFetcher } from "@graphiql/toolkit";
 import { GraphiQL } from "graphiql";
 import React from "react";
-import ReactDOM from "react-dom";
 import Layout from "@theme/Layout";
 import BrowserOnly from "@docusaurus/BrowserOnly";
 
@@ -16,9 +15,7 @@ const GraphiQLComponent = () => {
     window.localStorage.setItem("graphiql:theme", "light");
   }
 
-  const fetcher = createGraphiQLFetcher({
-    url: "https://api.twenty.com/graphql",
-  });
+  const fetcher = createGraphiQLFetcher({url: "https://api.twenty.com/graphql"});
   return (
     <div className="fullHeightPlayground">
       <GraphiQL fetcher={fetcher} />;
