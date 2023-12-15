@@ -32,12 +32,6 @@ export const useSelectableList = (props?: UseSelectableListProps) => {
   const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector);
 
   const resetSelectedItemIdState = useResetRecoilState(selectedItemIdState);
-  const resetSelectableItemIdState = useResetRecoilState(
-    selectableItemIdsState,
-  );
-  const resetSelectableListOnEnterState = useResetRecoilState(
-    selectableListOnEnterState,
-  );
   const resetIsSelectedItemIdSelector = useResetRecoilState(
     isSelectedItemIdSelector,
   );
@@ -53,10 +47,6 @@ export const useSelectableList = (props?: UseSelectableListProps) => {
     setSelectableListOnEnter,
     selectableListId: scopeId,
     isSelectedItemIdSelector,
-    resetSelectedItemIdState,
-    resetSelectableItemIdState,
-    resetSelectableListOnEnterState,
     resetSelectedItem,
-    resetIsSelectedItemIdSelector,
   };
 };
