@@ -8,7 +8,6 @@ on:
   # see: https://securitylab.github.com/research/github-actions-preventing-pwn-requests/ 
   # and: https://github.com/facebook/react-native/pull/34370/files
   pull_request_target:
-  pull_request:
 permissions:
   actions: write
   checks: write
