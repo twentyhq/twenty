@@ -3,18 +3,18 @@ import BrowserOnly from "@docusaurus/BrowserOnly";
 import React, { useEffect, useState } from "react";
 import { API } from '@stoplight/elements';
 import '@stoplight/elements/styles.min.css';
-import './graphql.css'
+import './rest-api.css'
 import { parseJson } from "nx/src/utils/json";
 import { TbLoader2 } from "react-icons/tb";
 
-interface TokenFormPropsI {
+type TokenFormProps = {
   onSubmit: (token: string) => void,
-  isTokenValid: boolean | undefined,
+  isTokenValid: boolean,
   isLoading: boolean,
   token: string,
 }
 
-const TokenForm = ({onSubmit, isTokenValid, token, isLoading}: TokenFormPropsI)=> {
+const TokenForm = ({onSubmit, isTokenValid, token, isLoading}: TokenFormProps)=> {
   const updateToken = (event: React.ChangeEvent<HTMLInputElement>) => {
     localStorage.setItem('TryIt_securitySchemeValues', JSON.stringify({bearerAuth: event.target.value}))
     onSubmit(event.target.value)
@@ -25,14 +25,14 @@ const TokenForm = ({onSubmit, isTokenValid, token, isLoading}: TokenFormPropsI)=
       <div className='container'>
       <form className="form">
         <label>
-          To load all your API endpoints, <a className='link' href='https://app.twenty.com/settings/developers/api-keys'>generate an API key</a> and paste it here:
+          To load your REST API schema, <a className='link' href='https://app.twenty.com/settings/developers/api-keys'>generate an API key</a> and paste it here:
         </label>
         <p>
           <input
             className={(token && !isLoading) ? "input invalid" : "input"}
             type='text'
             disabled={isLoading}
-            placeholder='123'
+            placeholder='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMD...'
             defaultValue={token}
             onChange={updateToken}
           />
@@ -49,22 +49,16 @@ const TokenForm = ({onSubmit, isTokenValid, token, isLoading}: TokenFormPropsI)=
 
 const RestApiComponent = () => {
   const [openApiJson, setOpenApiJson] = useState({})
-  const [isTokenValid, setIsTokenValid] = useState<TokenFormPropsI['isTokenValid']>(undefined)
+  const [isTokenValid, setIsTokenValid] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const storedToken = parseJson(localStorage.getItem('TryIt_securitySchemeValues'))?.bearerAuth ?? ''
 
-  const validateToken = (openApiJson) => {
-    if(openApiJson.tags) {
-      setIsTokenValid(true)
-    } else {
-      setIsTokenValid(false)
-    }
-  }
+  const validateToken = (openApiJson) => setIsTokenValid(!!openApiJson.tags)
 
   const getJson = async (token: string ) => {
     setIsLoading(true)
     return await fetch(
-      "http://localhost:3000/open-api",
+      "https://api.twenty.com/open-api",
       {headers: {Authorization: `Bearer ${token}`}}
     )
       .then((res)=> res.json())
@@ -77,7 +71,7 @@ const RestApiComponent = () => {
   }
 
   const submitToken = async (token) => {
-    if(isLoading) return
+    if (isLoading) return
     const json = await getJson(token)
     setOpenApiJson(json)
   }
