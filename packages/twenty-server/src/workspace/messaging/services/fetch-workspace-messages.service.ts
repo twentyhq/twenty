@@ -75,6 +75,7 @@ export class FetchWorkspaceMessagesService {
   async fetchWorkspaceMemberMessages(
     workspaceId: string,
     workspaceMemberId: string,
+    maxResults = 500,
   ): Promise<any> {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
@@ -97,6 +98,7 @@ export class FetchWorkspaceMessagesService {
 
     const messages = await gmail.users.messages.list({
       userId: 'me',
+      maxResults,
     });
 
     const messagesData = messages.data.messages;
@@ -166,6 +168,7 @@ export class FetchWorkspaceMessagesService {
 
   async saveMessages(messages, dataSourceMetadata, workspaceDataSource) {
     for (const message of messages) {
+      console.log('message', message);
       const {
         externalId,
         headerMessageId,

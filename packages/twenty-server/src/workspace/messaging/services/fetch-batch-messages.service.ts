@@ -13,24 +13,17 @@ export class FetchBatchMessagesService {
   }
 
   async fetchAllByBatches(messageQueries, accessToken: string): Promise<any> {
-    const batchLimit = Math.min(messageQueries.length, 50);
+    const batchLimit = 100;
 
     let messages = [];
 
     let batchOffset = 0;
 
-    console.log('messageQueries', messageQueries);
-
     while (batchOffset < messageQueries.length) {
-      const queries = messageQueries.slice(batchOffset);
-
-      if (queries.length === 0) {
-        break;
-      }
-
       const batchResponse = await this.fetchBatch(
-        queries,
+        messageQueries,
         accessToken,
+        batchOffset,
         batchLimit,
       );
 
@@ -45,9 +38,13 @@ export class FetchBatchMessagesService {
   async fetchBatch(
     messageQueries,
     accessToken: string,
+    batchOffset: number,
     batchLimit: number,
   ): Promise<any> {
-    const limitedMessageQueries = messageQueries.slice(0, batchLimit);
+    const limitedMessageQueries = messageQueries.slice(
+      batchOffset,
+      batchOffset + batchLimit,
+    );
 
     const response = await this.httpService.post(
       '/',
@@ -129,28 +126,37 @@ export class FetchBatchMessagesService {
   formatBatchResponse(response) {
     const parsedResponse = this.parseBatch(response);
 
-    return parsedResponse.map((item) => {
-      const { id, threadId, payload } = item;
+    return parsedResponse
+      .map((item) => {
+        const { id, threadId, payload } = item;
 
-      const headers = payload.headers;
+        const headers = payload?.headers;
 
-      const bodyBase64 = payload.parts[0].body.data;
+        const parts = payload?.parts;
 
-      if (!bodyBase64) {
-        return;
-      }
+        if (!parts) {
+          return;
+        }
 
-      const body = atob(bodyBase64.replace(/-/g, '+').replace(/_/g, '/'));
+        const bodyBase64 = parts[0]?.body?.data;
 
-      return {
-        externalId: id,
-        headerMessageId: headers.find((header) => header.name === 'Message-ID')
-          .value,
-        subject: headers.find((header) => header.name === 'Subject').value,
-        messageThreadId: threadId,
-        from: headers.find((header) => header.name === 'From').value,
-        body,
-      };
-    });
+        if (!bodyBase64) {
+          return;
+        }
+
+        const body = atob(bodyBase64.replace(/-/g, '+').replace(/_/g, '/'));
+
+        return {
+          externalId: id,
+          headerMessageId: headers?.find(
+            (header) => header.name === 'Message-ID',
+          )?.value,
+          subject: headers?.find((header) => header.name === 'Subject')?.value,
+          messageThreadId: threadId,
+          from: headers?.find((header) => header.name === 'From')?.value,
+          body,
+        };
+      })
+      .filter((item) => item);
   }
 }
