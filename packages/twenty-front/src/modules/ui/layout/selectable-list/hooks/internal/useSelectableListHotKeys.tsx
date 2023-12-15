@@ -16,7 +16,7 @@ export const useSelectableListHotKeys = (
     selectedItemId?: string | null,
   ) => {
     if (!selectedItemId) {
-      return { row: 0, col: -1 };
+      return;
     }
 
     for (let row = 0; row < selectableItemIds.length; row++) {
@@ -25,7 +25,6 @@ export const useSelectableListHotKeys = (
         return { row, col };
       }
     }
-    return { row: 0, col: 0 };
   };
 
   const handleSelect = useRecoilCallback(
@@ -41,12 +40,15 @@ export const useSelectableListHotKeys = (
           selectableItemIdsState,
         );
 
-        const { row: currentRow, col: currentCol } = findPosition(
-          selectableItemIds,
-          selectedItemId,
-        );
+        const currentPosition = findPosition(selectableItemIds, selectedItemId);
 
         const computeNextId = (direction: Direction) => {
+          if (!selectedItemId || !currentPosition) {
+            return selectableItemIds[0][0];
+          }
+
+          const { row: currentRow, col: currentCol } = currentPosition;
+
           if (selectableItemIds.length === 0) {
             return;
           }
@@ -93,7 +95,7 @@ export const useSelectableListHotKeys = (
 
         const nextId = computeNextId(direction);
 
-        if (!selectedItemId || (selectedItemId && selectedItemId !== nextId)) {
+        if (selectedItemId !== nextId) {
           if (nextId) {
             const { isSelectedItemIdSelector } = getSelectableListScopedStates({
               selectableListScopeId: scopeId,

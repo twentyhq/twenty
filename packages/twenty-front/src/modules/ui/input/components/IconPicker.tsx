@@ -95,18 +95,20 @@ export const IconPicker = ({
   const { closeDropdown } = useDropdown({ dropdownScopeId });
 
   const { getIcons, getIcon } = useIcons();
-  const { icons } = getIcons();
+  const icons = getIcons();
 
   const iconKeys = useMemo(() => {
-    const filteredIconKeys = Object.keys(icons).filter((iconKey) => {
-      return (
-        iconKey !== selectedIconKey &&
-        (!searchString ||
-          [iconKey, convertIconKeyToLabel(iconKey)].some((label) =>
-            label.toLowerCase().includes(searchString.toLowerCase()),
-          ))
-      );
-    });
+    const filteredIconKeys = icons
+      ? Object.keys(icons).filter((iconKey) => {
+          return (
+            iconKey !== selectedIconKey &&
+            (!searchString ||
+              [iconKey, convertIconKeyToLabel(iconKey)].some((label) =>
+                label.toLowerCase().includes(searchString.toLowerCase()),
+              ))
+          );
+        })
+      : [];
 
     return (
       selectedIconKey
@@ -136,7 +138,7 @@ export const IconPicker = ({
           dropdownComponents={
             <SelectableList
               selectableListId="icon-list"
-              selectableItemIds={iconKeys2d}
+              selectableItemIdMatrix={iconKeys2d}
               hotkeyScope={IconPickerHotkeyScope.IconPicker}
               onEnter={(iconKey) => {
                 onChange({ iconKey, Icon: getIcon(iconKey) });
