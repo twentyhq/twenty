@@ -2,7 +2,7 @@ import Layout from "@theme/Layout";
 import BrowserOnly from "@docusaurus/BrowserOnly";
 import React, { useEffect, useState } from "react";
 import { API } from '@stoplight/elements';
-import '@stoplight/elements/styles.min.css';
+import spotlightTheme from  '!css-loader!@stoplight/elements/styles.min.css';
 import './rest-api.css'
 import { parseJson } from "nx/src/utils/json";
 import { TbLoader2 } from "react-icons/tb";
@@ -20,8 +20,17 @@ const TokenForm = ({onSubmit, isTokenValid, token, isLoading}: TokenFormProps)=>
     onSubmit(event.target.value)
   }
 
+  useEffect(() => {
+    const styleElement = document.createElement('style');
+    styleElement.innerHTML = spotlightTheme.toString();
+    document.head.append(styleElement);
+
+    return () => styleElement.remove();
+  }, []);
+
   return !isTokenValid && (
     <div>
+      <link rel="stylesheet" type="text/css" href='' />
       <div className='container'>
       <form className="form">
         <label>
