@@ -11,7 +11,7 @@
 }
 
 .link {
-    color: #212a3b;
+    color: #16233f;
     text-decoration: none;
     position: relative;
     font-weight: bold;
@@ -38,4 +38,30 @@
     color: red;
     font-size: 12px;
     text-align: left;
+}
+
+.not-visible {
+    visibility: hidden;
+}
+
+.loader {
+    color: #16233f;
+    font-size: 2rem;
+    animation: animate 2s infinite;
+}
+
+@keyframes animate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(720deg);
+    }
+}
+
+.loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
 }

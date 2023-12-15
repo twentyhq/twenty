@@ -5,14 +5,16 @@ import { API } from '@stoplight/elements';
 import '@stoplight/elements/styles.min.css';
 import './graphql.css'
 import { parseJson } from "nx/src/utils/json";
+import { TbLoader2 } from "react-icons/tb";
 
 interface TokenFormPropsI {
   onSubmit: (token: string) => void,
   isTokenValid: boolean | undefined,
+  isLoading: boolean,
   token: string,
 }
 
-const TokenForm = ({onSubmit, isTokenValid, token}: TokenFormPropsI)=> {
+const TokenForm = ({onSubmit, isTokenValid, token, isLoading}: TokenFormPropsI)=> {
   const updateToken = (event: React.ChangeEvent<HTMLInputElement>) => {
     localStorage.setItem('TryIt_securitySchemeValues', JSON.stringify({bearerAuth: event.target.value}))
     onSubmit(event.target.value)
@@ -27,13 +29,17 @@ const TokenForm = ({onSubmit, isTokenValid, token}: TokenFormPropsI)=> {
         </label>
         <p>
           <input
-            className={token ? "input invalid" : "input"}
+            className={(token && !isLoading) ? "input invalid" : "input"}
             type='text'
+            disabled={isLoading}
             placeholder='123'
-            value={token}
+            defaultValue={token}
             onChange={updateToken}
           />
-          <p className={`token-invalid`} style={{visibility: !token ? 'hidden' : 'visible'}} >Token invalid</p>
+          <p className={`token-invalid ${(!token || isLoading )&& 'not-visible'}`}>Token invalid</p>
+          <div className='loader-container'>
+            <TbLoader2 className={`loader ${!isLoading && 'not-visible'}`} />
+          </div>
         </p>
       </form>
       </div>
@@ -44,6 +50,7 @@ const TokenForm = ({onSubmit, isTokenValid, token}: TokenFormPropsI)=> {
 const RestApiComponent = () => {
   const [openApiJson, setOpenApiJson] = useState({})
   const [isTokenValid, setIsTokenValid] = useState<TokenFormPropsI['isTokenValid']>(undefined)
+  const [isLoading, setIsLoading] = useState(false)
   const storedToken = parseJson(localStorage.getItem('TryIt_securitySchemeValues'))?.bearerAuth ?? ''
 
   const validateToken = (openApiJson) => {
@@ -55,16 +62,22 @@ const RestApiComponent = () => {
   }
 
   const getJson = async (token: string ) => {
+    setIsLoading(true)
     return await fetch(
       "http://localhost:3000/open-api",
       {headers: {Authorization: `Bearer ${token}`}}
-    ).then((res)=> res.json()).then((result)=> {
-      validateToken(result)
-      return result
-    })
+    )
+      .then((res)=> res.json())
+      .then((result)=> {
+        validateToken(result)
+        setIsLoading(false)
+        return result
+      })
+      .catch(() => setIsLoading(false))
   }
 
   const submitToken = async (token) => {
+    if(isLoading) return
     const json = await getJson(token)
     setOpenApiJson(json)
   }
@@ -77,7 +90,12 @@ const RestApiComponent = () => {
 
   return isTokenValid !== undefined && (
     <>
-      <TokenForm onSubmit={submitToken} isTokenValid={isTokenValid} token={storedToken} />
+      <TokenForm
+        onSubmit={submitToken}
+        isTokenValid={isTokenValid}
+        isLoading={isLoading}
+        token={storedToken}
+      />
       {
         isTokenValid && (
         <API
