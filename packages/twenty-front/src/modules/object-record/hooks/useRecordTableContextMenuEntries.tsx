@@ -176,14 +176,14 @@ export const useRecordTableContextMenuEntries = (
         //   onClick: () => {},
         // },
         ...(dataEnrichmentEnabled
-          ? []
-          : [
+          ? [
               {
                 label: 'Enrich',
                 Icon: IconWand,
                 onClick: () => handleEnrichClick(),
               },
-            ]),
+            ]
+          : []),
         {
           label: 'Delete',
           Icon: IconTrash,
