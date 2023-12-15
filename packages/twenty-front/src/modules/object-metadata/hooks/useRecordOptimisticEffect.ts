@@ -1,5 +1,9 @@
+import { useEffect } from 'react';
+
+import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
+import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
 import { ObjectRecordFilter } from '@/object-record/types/ObjectRecordFilter';
 
 export const useRecordOptimisticEffect = ({
@@ -12,4 +16,21 @@ export const useRecordOptimisticEffect = ({
   filter?: ObjectRecordFilter;
   orderBy?: OrderByField;
   limit?: number;
-}) => {};
+}) => {
+  const { registerOptimisticEffect } = useOptimisticEffect({
+    objectNameSingular: objectMetadataItem.nameSingular,
+  });
+
+  useEffect(() => {
+    registerOptimisticEffect({
+      definition: getRecordOptimisticEffectDefinition({
+        objectMetadataItem,
+      }),
+      variables: {
+        filter,
+        orderBy,
+        limit,
+      },
+    });
+  }, [registerOptimisticEffect, filter, orderBy, limit, objectMetadataItem]);
+};

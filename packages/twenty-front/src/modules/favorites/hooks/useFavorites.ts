@@ -9,7 +9,6 @@ import { Favorite } from '@/favorites/types/Favorite';
 import { mapFavorites } from '@/favorites/utils/mapFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -65,19 +64,8 @@ export const useFavorites = ({
           if (!isDeeplyEqual(favorites, queriedFavorites)) {
             set(favoritesState, queriedFavorites);
           }
-
-          if (!favoriteObjectMetadataItem) {
-            return;
-          }
-
-          registerOptimisticEffect({
-            variables: { filter: {}, orderBy: {} },
-            definition: getRecordOptimisticEffectDefinition({
-              objectMetadataItem: favoriteObjectMetadataItem,
-            }),
-          });
         },
-      [favoriteObjectMetadataItem, registerOptimisticEffect],
+      [],
     ),
   });
 

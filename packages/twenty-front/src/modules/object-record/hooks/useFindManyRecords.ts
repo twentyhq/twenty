@@ -60,14 +60,9 @@ export const useFindManyRecords = <
     isFetchingMoreRecordsFamilyState(findManyQueryStateIdentifier),
   );
 
-  const { objectMetadataItem, findManyRecordsQuery, registerOptimisticEffect } =
-    useObjectMetadataItem({
-      objectNameSingular,
-    });
-
-  // const { registerOptimisticEffect } = useOptimisticEffect({
-  //   objectNameSingular,
-  // });
+  const { objectMetadataItem, findManyRecordsQuery } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
   useRecordOptimisticEffect({
     objectMetadataItem,
@@ -89,19 +84,6 @@ export const useFindManyRecords = <
       orderBy: orderBy ?? {},
     },
     onCompleted: (data) => {
-      // if (objectMetadataItem) {
-      //   registerOptimisticEffect({
-      //     variables: {
-      //       filter: filter ?? {},
-      //       orderBy: orderBy ?? {},
-      //       limit: limit,
-      //     },
-      //     definition: getRecordOptimisticEffectDefinition({
-      //       objectMetadataItem,
-      //     }),
-      //   });
-      // }
-
       onCompleted?.(data[objectMetadataItem.namePlural]);
 
       if (data?.[objectMetadataItem.namePlural]) {
