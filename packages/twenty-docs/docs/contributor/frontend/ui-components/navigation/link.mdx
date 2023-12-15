@@ -1,0 +1,237 @@
+---
+title: Links
+sidebar_position: 2
+sidebar_custom_props:
+  icon: TbLink
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import contactLinkCode from '!!raw-loader!@site/src/ui/navigation/link/contactLinkCode.js'
+import rawLinkCode from '!!raw-loader!@site/src/ui/navigation/link/rawLinkCode.js'
+import roundedLinkCode from '!!raw-loader!@site/src/ui/navigation/link/roundedLinkCode.js'
+import socialLinkCode from '!!raw-loader!@site/src/ui/navigation/link/socialLinkCode.js'
+
+
+## Contact Link
+
+A stylized link component for displaying contact information.
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/navigation/link/components/ContactLink']}
+  componentCode={contactLinkCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>Optional name for additional styling</td>
+    </tr>
+
+    <tr>
+      <td>href</td>
+      <td>string</td>
+      <td>The target URL or path for the link</td>
+    </tr>
+
+    <tr>
+      <td>onClick</td>
+      <td>function</td>
+      <td>Callback function to be triggered when the link is clicked</td>
+    </tr>
+
+    <tr>
+      <td>children</td>
+      <td>`React.ReactNode`</td>
+      <td>The content to be displayed inside the link</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>
+
+## Raw Link
+
+A stylized link component for displaying links. 
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/navigation/link/components/RawLink']}
+  componentCode={rawLinkCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>Optional name for additional styling</td>
+    </tr>
+
+    <tr>
+      <td>href</td>
+      <td>string</td>
+      <td>The target URL or path for the link</td>
+    </tr>
+
+    <tr>
+      <td>onClick</td>
+      <td>function</td>
+      <td>Callback function to be triggered when the link is clicked</td>
+    </tr>
+
+    <tr>
+      <td>children</td>
+      <td>`React.ReactNode`</td>
+      <td>The content to be displayed inside the link</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>
+
+## Rounded Link
+
+A rounded-styled link with a Chip component for links.
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/navigation/link/components/RoundedLink']}
+  componentCode={roundedLinkCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>href</td>
+      <td>string</td>
+      <td>The target URL or path for the link</td>
+    </tr>
+
+    <tr>
+      <td>children</td>
+      <td>`React.ReactNode`</td>
+      <td>The content to be displayed inside the link</td>
+    </tr>
+
+    <tr>
+      <td>onClick</td>
+      <td>function</td>
+      <td>Callback function to be triggered when the link is clicked</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>
+
+## Social Link
+
+Stylized social links, with support for various social link types, such as URLs, LinkedIn, and X (or Twitter).  
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/navigation/link/components/SocialLink']}
+  componentCode={socialLinkCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>href</td>
+      <td>string</td>
+      <td>The target URL or path for the link</td>
+    </tr>
+
+    <tr>
+      <td>children</td>
+      <td>`React.ReactNode`</td>
+      <td>The content to be displayed inside the link</td>
+    </tr>
+
+    <tr>
+      <td>type</td>
+      <td>string</td>
+      <td>The type of social links. Options include: `url`, `LinkedIn`, and `Twitter`</td>
+    </tr>
+
+    <tr>
+      <td>onClick</td>
+      <td>function</td>
+      <td>Callback function to be triggered when the link is clicked</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>

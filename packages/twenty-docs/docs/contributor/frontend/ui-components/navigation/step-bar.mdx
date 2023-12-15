@@ -1,0 +1,47 @@
+---
+title: Step Bar
+sidebar_position: 5
+sidebar_custom_props:
+  icon: TbCircleCheckFilled
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import stepBarCode from '!!raw-loader!@site/src/ui/navigation/stepBarCode.js'
+
+Displays progress through a sequence of numbered steps by highlighting the active step. It renders a container with steps, each represented by the `Step` component.
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/navigation/step-bar/components/StepBar']}
+  componentCode={stepBarCode} 
+/>
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>activeStep</td>
+      <td>number</td>
+      <td>The index of the currently active step. This determines which step should be visually highlighted</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>

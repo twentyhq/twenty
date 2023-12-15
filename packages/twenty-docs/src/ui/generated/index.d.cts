@@ -1,10 +1,13 @@
+import * as _emotion_react from '@emotion/react';
 export { ThemeProvider } from '@emotion/react';
 import * as react_jsx_runtime from 'react/jsx-runtime';
-import * as React$1 from 'react';
-import React__default, { ReactNode, MouseEvent, FunctionComponent, ComponentProps, InputHTMLAttributes } from 'react';
+import * as react from 'react';
+import react__default, { ReactNode, MouseEvent, FunctionComponent, ComponentProps, InputHTMLAttributes } from 'react';
 import { motion, AnimationControls } from 'framer-motion';
 import { TablerIconsProps } from '@tabler/icons-react';
 import { PlacesType, PositionStrategy } from 'react-tooltip';
+import { BlockNoteEditor } from '@blocknote/core';
+import * as _emotion_styled from '@emotion/styled';
 
 declare const lightTheme: {
     accent: {
@@ -286,7 +289,7 @@ declare const lightTheme: {
 type ThemeType = typeof lightTheme;
 declare const darkTheme: ThemeType;
 
-type CheckmarkProps = React__default.ComponentPropsWithoutRef<'div'> & {
+type CheckmarkProps = react__default.ComponentPropsWithoutRef<'div'> & {
     className?: string;
 };
 declare const Checkmark: ({ className }: CheckmarkProps) => react_jsx_runtime.JSX.Element;
@@ -424,7 +427,7 @@ type ProgressBarControls = AnimationControls & {
     start: () => Promise<any>;
     pause: () => Promise<any>;
 };
-declare const ProgressBar: React$1.ForwardRefExoticComponent<ProgressBarProps & React$1.RefAttributes<ProgressBarControls>>;
+declare const ProgressBar: react.ForwardRefExoticComponent<ProgressBarProps & react.RefAttributes<ProgressBarControls>>;
 
 interface CircularProgressBarProps {
     size?: number;
@@ -449,7 +452,7 @@ type ButtonProps = {
     soon?: boolean;
     disabled?: boolean;
     focus?: boolean;
-    onClick?: (event: React__default.MouseEvent<HTMLButtonElement>) => void;
+    onClick?: (event: react__default.MouseEvent<HTMLButtonElement>) => void;
 };
 declare const Button: ({ className, Icon, title, fullWidth, variant, size, accent, position, soon, disabled, focus, onClick, }: ButtonProps) => react_jsx_runtime.JSX.Element;
 
@@ -475,7 +478,7 @@ type FloatingButtonProps = {
 declare const FloatingButton: ({ className, Icon, title, size, applyBlur, applyShadow, disabled, focus, }: FloatingButtonProps) => react_jsx_runtime.JSX.Element;
 
 type FloatingButtonGroupProps = Pick<FloatingButtonProps, 'size'> & {
-    children: React__default.ReactElement[];
+    children: react__default.ReactElement[];
     className?: string;
 };
 declare const FloatingButtonGroup: ({ children, size, className, }: FloatingButtonGroupProps) => react_jsx_runtime.JSX.Element;
@@ -491,7 +494,7 @@ type FloatingIconButtonProps = {
     applyBlur?: boolean;
     disabled?: boolean;
     focus?: boolean;
-    onClick?: (event: React__default.MouseEvent<HTMLButtonElement>) => void;
+    onClick?: (event: react__default.MouseEvent<HTMLButtonElement>) => void;
     isActive?: boolean;
 };
 declare const FloatingIconButton: ({ className, Icon, size, position, applyShadow, applyBlur, disabled, focus, onClick, isActive, }: FloatingIconButtonProps) => react_jsx_runtime.JSX.Element;
@@ -540,7 +543,7 @@ type Props = {
     fullWidth?: boolean;
     variant?: Variant;
     soon?: boolean;
-} & React__default.ComponentProps<'button'>;
+} & react__default.ComponentProps<'button'>;
 type MainButtonProps = Props & {
     Icon?: IconComponent;
 };
@@ -557,11 +560,11 @@ type ColorSchemeSegmentProps = {
     variant: ColorScheme;
     controls: AnimationControls;
     className?: string;
-} & React__default.ComponentPropsWithoutRef<'div'>;
+} & react__default.ComponentPropsWithoutRef<'div'>;
 type ColorSchemeCardProps = {
     variant: ColorScheme;
     selected?: boolean;
-} & React__default.ComponentPropsWithoutRef<'div'>;
+} & react__default.ComponentPropsWithoutRef<'div'>;
 declare const ColorSchemeCard: ({ variant, selected, onClick, }: ColorSchemeCardProps) => react_jsx_runtime.JSX.Element;
 
 type ColorSchemePickerProps = {
@@ -604,7 +607,7 @@ declare enum CheckboxSize {
 type CheckboxProps = {
     checked: boolean;
     indeterminate?: boolean;
-    onChange?: (event: React$1.ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (event: react.ChangeEvent<HTMLInputElement>) => void;
     onCheckedChange?: (value: boolean) => void;
     variant?: CheckboxVariant;
     size?: CheckboxSize;
@@ -641,7 +644,7 @@ type IconPickerProps = {
 };
 declare const IconPicker: ({ disabled, dropdownScopeId, onChange, selectedIconKey, onClickOutside, onClose, onOpen, variant, className, }: IconPickerProps) => react_jsx_runtime.JSX.Element;
 
-type ImageInputProps = Omit<React__default.ComponentProps<'div'>, 'children'> & {
+type ImageInputProps = Omit<react__default.ComponentProps<'div'>, 'children'> & {
     picture: string | null | undefined;
     onUpload?: (file: File) => void;
     onRemove?: () => void;
@@ -662,11 +665,11 @@ declare enum LabelPosition {
     Right = "right"
 }
 type RadioProps = {
-    style?: React$1.CSSProperties;
+    style?: react.CSSProperties;
     className?: string;
     checked?: boolean;
     value?: string;
-    onChange?: (event: React$1.ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (event: react.ChangeEvent<HTMLInputElement>) => void;
     onCheckedChange?: (checked: boolean) => void;
     size?: RadioSize;
     disabled?: boolean;
@@ -675,17 +678,17 @@ type RadioProps = {
 declare const Radio: {
     ({ checked, value, onChange, onCheckedChange, size, labelPosition, disabled, className, }: RadioProps): react_jsx_runtime.JSX.Element;
     Group: ({ value, onChange, onValueChange, children, }: {
-        children?: React$1.ReactNode;
+        children?: react.ReactNode;
     } & {
         value?: string | undefined;
-        onChange?: ((event: React$1.ChangeEvent<HTMLInputElement>) => void) | undefined;
+        onChange?: ((event: react.ChangeEvent<HTMLInputElement>) => void) | undefined;
         onValueChange?: ((value: string) => void) | undefined;
     }) => react_jsx_runtime.JSX.Element;
 };
 
-type RadioGroupProps = React__default.PropsWithChildren & {
+type RadioGroupProps = react__default.PropsWithChildren & {
     value?: string;
-    onChange?: (event: React__default.ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (event: react__default.ChangeEvent<HTMLInputElement>) => void;
     onValueChange?: (value: string) => void;
 };
 declare const RadioGroup: ({ value, onChange, onValueChange, children, }: RadioGroupProps) => react_jsx_runtime.JSX.Element;
@@ -726,7 +729,7 @@ type TextInputComponentProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'onCh
     RightIcon?: IconComponent;
     onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 };
-declare const TextInput: React$1.ForwardRefExoticComponent<Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "onKeyDown"> & {
+declare const TextInput: react.ForwardRefExoticComponent<Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "onKeyDown"> & {
     className?: string | undefined;
     label?: string | undefined;
     onChange?: ((text: string) => void) | undefined;
@@ -735,7 +738,7 @@ declare const TextInput: React$1.ForwardRefExoticComponent<Omit<InputHTMLAttribu
     error?: string | undefined;
     RightIcon?: IconComponent | undefined;
     onKeyDown?: ((event: React.KeyboardEvent<HTMLInputElement>) => void) | undefined;
-} & React$1.RefAttributes<HTMLInputElement>>;
+} & react.RefAttributes<HTMLInputElement>>;
 
 type ToggleSize = 'small' | 'medium';
 type ToggleProps = {
@@ -747,9 +750,215 @@ type ToggleProps = {
 };
 declare const Toggle: ({ value, onChange, color, toggleSize, className, }: ToggleProps) => react_jsx_runtime.JSX.Element;
 
+interface BlockEditorProps {
+    editor: BlockNoteEditor;
+}
+declare const BlockEditor: ({ editor }: BlockEditorProps) => react_jsx_runtime.JSX.Element;
+
+type ContactLinkProps = {
+    className?: string;
+    href: string;
+    children?: react.ReactNode;
+    onClick?: (event: react.MouseEvent<HTMLElement>) => void;
+};
+declare const ContactLink: ({ className, href, children, onClick, }: ContactLinkProps) => react_jsx_runtime.JSX.Element;
+
+type RawLinkProps = {
+    className?: string;
+    href: string;
+    children?: react.ReactNode;
+    onClick?: (event: react.MouseEvent<HTMLElement>) => void;
+};
+declare const RawLink: ({ className, href, children, onClick, }: RawLinkProps) => react_jsx_runtime.JSX.Element;
+
+type RoundedLinkProps = {
+    href: string;
+    children?: react.ReactNode;
+    onClick?: (event: react.MouseEvent<HTMLElement>) => void;
+};
+declare const RoundedLink: ({ children, href, onClick }: RoundedLinkProps) => react_jsx_runtime.JSX.Element;
+
+declare enum LinkType {
+    Url = "url",
+    LinkedIn = "linkedin",
+    Twitter = "twitter"
+}
+type SocialLinkProps = {
+    href: string;
+    children?: react.ReactNode;
+    type?: LinkType;
+    onClick?: (event: react.MouseEvent<HTMLElement>) => void;
+};
+declare const SocialLink: ({ children, href, onClick, type, }: SocialLinkProps) => react_jsx_runtime.JSX.Element;
+
+type MenuItemAccent = 'default' | 'danger' | 'placeholder';
+
+type MenuItemIconButton = {
+    Icon: IconComponent;
+    onClick?: (event: MouseEvent<any>) => void;
+};
+type MenuItemProps = {
+    LeftIcon?: IconComponent | null;
+    accent?: MenuItemAccent;
+    text: string;
+    iconButtons?: MenuItemIconButton[];
+    isTooltipOpen?: boolean;
+    className?: string;
+    testId?: string;
+    onClick?: (event: MouseEvent<HTMLLIElement>) => void;
+};
+declare const MenuItem: ({ LeftIcon, accent, text, iconButtons, isTooltipOpen, className, testId, onClick, }: MenuItemProps) => react_jsx_runtime.JSX.Element;
+
+type MenuItemCommandProps = {
+    LeftIcon?: IconComponent;
+    text: string;
+    firstHotKey?: string;
+    secondHotKey?: string;
+    className?: string;
+    isSelected?: boolean;
+    onClick?: () => void;
+};
+declare const MenuItemCommand: ({ LeftIcon, text, firstHotKey, secondHotKey, className, isSelected, onClick, }: MenuItemCommandProps) => react_jsx_runtime.JSX.Element;
+
+type MenuItemDraggableProps = {
+    LeftIcon: IconComponent | undefined;
+    accent?: MenuItemAccent;
+    iconButtons?: MenuItemIconButton[];
+    isTooltipOpen?: boolean;
+    onClick?: () => void;
+    text: string;
+    isDragDisabled?: boolean;
+    className?: string;
+};
+declare const MenuItemDraggable: ({ LeftIcon, accent, iconButtons, isTooltipOpen, onClick, text, isDragDisabled, className, }: MenuItemDraggableProps) => react_jsx_runtime.JSX.Element;
+
+type MenuItemMultiSelectProps = {
+    LeftIcon?: IconComponent;
+    selected: boolean;
+    text: string;
+    className: string;
+    onSelectChange?: (selected: boolean) => void;
+};
+declare const MenuItemMultiSelect: ({ LeftIcon, text, selected, className, onSelectChange, }: MenuItemMultiSelectProps) => react_jsx_runtime.JSX.Element;
+
+type MenuItemMultiSelectAvatarProps = {
+    avatar?: ReactNode;
+    selected: boolean;
+    text: string;
+    className?: string;
+    onSelectChange?: (selected: boolean) => void;
+};
+declare const MenuItemMultiSelectAvatar: ({ avatar, text, selected, className, onSelectChange, }: MenuItemMultiSelectAvatarProps) => react_jsx_runtime.JSX.Element;
+
+type MenuItemNavigateProps = {
+    LeftIcon?: IconComponent;
+    text: string;
+    onClick?: () => void;
+    className?: string;
+};
+declare const MenuItemNavigate: ({ LeftIcon, text, className, onClick, }: MenuItemNavigateProps) => react_jsx_runtime.JSX.Element;
+
+type MenuItemBaseProps = {
+    accent?: MenuItemAccent;
+};
+
+declare const StyledMenuItemSelect: _emotion_styled.StyledComponent<{
+    theme?: _emotion_react.Theme | undefined;
+    as?: react.ElementType<any> | undefined;
+} & MenuItemBaseProps & react.ClassAttributes<HTMLLIElement> & react.LiHTMLAttributes<HTMLLIElement> & {
+    theme?: _emotion_react.Theme | undefined;
+} & {
+    selected: boolean;
+    disabled?: boolean | undefined;
+    hovered?: boolean | undefined;
+}, {}, {}>;
+type MenuItemSelectProps = {
+    LeftIcon: IconComponent | null | undefined;
+    selected: boolean;
+    text: string;
+    className?: string;
+    onClick?: () => void;
+    disabled?: boolean;
+    hovered?: boolean;
+};
+declare const MenuItemSelect: ({ LeftIcon, text, selected, className, onClick, disabled, hovered, }: MenuItemSelectProps) => react_jsx_runtime.JSX.Element;
+
+type MenuItemSelectAvatarProps = {
+    avatar: ReactNode;
+    selected: boolean;
+    text: string;
+    className?: string;
+    onClick?: () => void;
+    disabled?: boolean;
+    hovered?: boolean;
+    testId?: string;
+};
+declare const MenuItemSelectAvatar: ({ avatar, text, selected, className, onClick, disabled, hovered, testId, }: MenuItemSelectAvatarProps) => react_jsx_runtime.JSX.Element;
+
+type ColorSampleVariant = 'default' | 'pipeline';
+
+type MenuItemSelectColorProps = {
+    selected: boolean;
+    className?: string;
+    onClick?: () => void;
+    disabled?: boolean;
+    hovered?: boolean;
+    color: ThemeColor;
+    variant?: ColorSampleVariant;
+};
+declare const colorLabels: Record<ThemeColor, string>;
+declare const MenuItemSelectColor: ({ color, selected, className, onClick, disabled, hovered, variant, }: MenuItemSelectColorProps) => react_jsx_runtime.JSX.Element;
+
+type MenuItemToggleProps = {
+    LeftIcon?: IconComponent;
+    toggled: boolean;
+    text: string;
+    className?: string;
+    onToggleChange?: (toggled: boolean) => void;
+    toggleSize?: ToggleSize;
+};
+declare const MenuItemToggle: ({ LeftIcon, text, toggled, className, onToggleChange, toggleSize, }: MenuItemToggleProps) => react_jsx_runtime.JSX.Element;
+
+type BreadcrumbProps = {
+    className?: string;
+    links: {
+        children: string;
+        href?: string;
+    }[];
+};
+declare const Breadcrumb: ({ className, links }: BreadcrumbProps) => react_jsx_runtime.JSX.Element;
+
+type NavigationBarProps = {
+    activeItemName: string;
+    items: {
+        name: string;
+        Icon: IconComponent;
+        onClick: () => void;
+    }[];
+};
+declare const NavigationBar: ({ activeItemName, items, }: NavigationBarProps) => react_jsx_runtime.JSX.Element;
+
+type StepProps = React.PropsWithChildren & React.ComponentProps<'div'> & {
+    isActive?: boolean;
+    isLast?: boolean;
+    index?: number;
+    label: string;
+};
+
+type StepBarProps = react__default.PropsWithChildren & react__default.ComponentProps<'div'> & {
+    activeStep: number;
+};
+declare const StepBar: {
+    ({ activeStep, children }: StepBarProps): react_jsx_runtime.JSX.Element;
+    Step: {
+        ({ isActive, isLast, index, label, children, }: StepProps): react_jsx_runtime.JSX.Element;
+        displayName: string;
+    };
+};
+
 declare module '@emotion/react' {
     interface Theme extends ThemeType {
     }
 }
 
-export { AnimatedCheckmark, type AnimatedCheckmarkProps, AppTooltip, type AppTooltipProps, AutosizeTextInput, AutosizeTextInputVariant, Button, type ButtonAccent, ButtonGroup, type ButtonGroupProps, type ButtonPosition, type ButtonProps, type ButtonSize, type ButtonVariant, Checkbox, CheckboxShape, CheckboxSize, CheckboxVariant, Checkmark, type CheckmarkProps, Chip, ChipAccent, ChipSize, ChipVariant, CircularProgressBar, ColorSchemeCard, type ColorSchemeCardProps, ColorSchemePicker, type ColorSchemePickerProps, type ColorSchemeSegmentProps, EntityChip, type EntityChipProps, EntityChipVariant, EntityTitleDoubleTextInput, type EntityTitleDoubleTextInputProps, FloatingButton, FloatingButtonGroup, type FloatingButtonGroupProps, type FloatingButtonPosition, type FloatingButtonProps, type FloatingButtonSize, FloatingIconButton, FloatingIconButtonGroup, type FloatingIconButtonGroupProps, type FloatingIconButtonPosition, type FloatingIconButtonProps, type FloatingIconButtonSize, IconAddressBook, IconPicker, ImageInput, LabelPosition, LightButton, type LightButtonAccent, type LightButtonProps, LightIconButton, type LightIconButtonAccent, type LightIconButtonProps, type LightIconButtonSize, MainButton, OverflowingTextWithTooltip, ProgressBar, type ProgressBarControls, type ProgressBarProps, Radio, RadioGroup, type RadioProps, RadioSize, RoundedIconButton, Select, type SelectProps, SoonPill, type StyledBarProps, Tag, TextArea, type TextAreaProps, TextInput, type TextInputComponentProps, Toggle, type ToggleProps, type ToggleSize, TooltipPosition, darkTheme, lightTheme };
+export { AnimatedCheckmark, type AnimatedCheckmarkProps, AppTooltip, type AppTooltipProps, AutosizeTextInput, AutosizeTextInputVariant, BlockEditor, Breadcrumb, Button, type ButtonAccent, ButtonGroup, type ButtonGroupProps, type ButtonPosition, type ButtonProps, type ButtonSize, type ButtonVariant, Checkbox, CheckboxShape, CheckboxSize, CheckboxVariant, Checkmark, type CheckmarkProps, Chip, ChipAccent, ChipSize, ChipVariant, CircularProgressBar, ColorSchemeCard, type ColorSchemeCardProps, ColorSchemePicker, type ColorSchemePickerProps, type ColorSchemeSegmentProps, ContactLink, EntityChip, type EntityChipProps, EntityChipVariant, EntityTitleDoubleTextInput, type EntityTitleDoubleTextInputProps, FloatingButton, FloatingButtonGroup, type FloatingButtonGroupProps, type FloatingButtonPosition, type FloatingButtonProps, type FloatingButtonSize, FloatingIconButton, FloatingIconButtonGroup, type FloatingIconButtonGroupProps, type FloatingIconButtonPosition, type FloatingIconButtonProps, type FloatingIconButtonSize, IconAddressBook, IconPicker, ImageInput, LabelPosition, LightButton, type LightButtonAccent, type LightButtonProps, LightIconButton, type LightIconButtonAccent, type LightIconButtonProps, type LightIconButtonSize, LinkType, MainButton, MenuItem, MenuItemCommand, type MenuItemCommandProps, MenuItemDraggable, type MenuItemDraggableProps, type MenuItemIconButton, MenuItemMultiSelect, MenuItemMultiSelectAvatar, MenuItemNavigate, type MenuItemNavigateProps, type MenuItemProps, MenuItemSelect, MenuItemSelectAvatar, MenuItemSelectColor, MenuItemToggle, NavigationBar, OverflowingTextWithTooltip, ProgressBar, type ProgressBarControls, type ProgressBarProps, Radio, RadioGroup, type RadioProps, RadioSize, RawLink, RoundedIconButton, RoundedLink, Select, type SelectProps, SocialLink, SoonPill, StepBar, type StepBarProps, type StyledBarProps, StyledMenuItemSelect, Tag, TextArea, type TextAreaProps, TextInput, type TextInputComponentProps, Toggle, type ToggleProps, type ToggleSize, TooltipPosition, colorLabels, darkTheme, lightTheme };
