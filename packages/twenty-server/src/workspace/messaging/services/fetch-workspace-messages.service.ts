@@ -191,7 +191,7 @@ export class FetchWorkspaceMessagesService {
           headerMessageId,
           subject,
           messageThread[0]?.id,
-          from,
+          'incoming',
           body,
         ],
       );
