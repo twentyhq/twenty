@@ -6,7 +6,7 @@ import { formatToHumanReadableDate } from '~/utils';
 
 import { Email } from '../types/email';
 
-const StyledContainer = styled(CardContent)`
+const StyledCardContent = styled(CardContent)`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
@@ -69,7 +69,7 @@ type EmailPreviewProps = {
 };
 
 export const EmailPreview = ({ divider, email }: EmailPreviewProps) => (
-  <StyledContainer divider={divider}>
+  <StyledCardContent divider={divider}>
     <StyledHeading unread={!email.read}>
       <StyledAvatar
         avatarUrl={email.senderPictureUrl}
@@ -84,5 +84,5 @@ export const EmailPreview = ({ divider, email }: EmailPreviewProps) => (
     <StyledReceivedAt>
       {formatToHumanReadableDate(email.receivedAt)}
     </StyledReceivedAt>
-  </StyledContainer>
+  </StyledCardContent>
 );
