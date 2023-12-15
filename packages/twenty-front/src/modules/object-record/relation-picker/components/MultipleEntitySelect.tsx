@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useRef } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import debounce from 'lodash.debounce';
