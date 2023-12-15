@@ -1,8 +1,5 @@
 name: CI Utils
 on:
-  push:
-    branches:
-      - main
   # it's usually not recommended to use pull_request_target
   # but we consider it's safe here if we keep the same steps
   # see: https://securitylab.github.com/research/github-actions-preventing-pwn-requests/ 
@@ -29,7 +26,7 @@ jobs:
         with:
           node-version: "18"
       - name: Utils / Install Dependencies
-        run: cd packages/twenty-utils && yarn
+        run: yarn
       - name: Utils / Run Danger.js
         run: cd packages/twenty-utils && yarn danger ci --use-github-checks --failOnErrors
         env:

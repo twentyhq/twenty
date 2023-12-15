@@ -1,0 +1,768 @@
+---
+title: Menu Item
+sidebar_position: 3
+sidebar_custom_props:
+  icon: TbMenu
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import menuItemCode from '!!raw-loader!@site/src/ui/navigation/menu-item/menuItemCode.js'
+import menuItemCommandCode from '!!raw-loader!@site/src/ui/navigation/menu-item/menuItemCommandCode.js'
+import menuItemDraggableCode from '!!raw-loader!@site/src/ui/navigation/menu-item/menuItemDraggableCode.js'
+import menuItemMultiSelectAvatarCode from '!!raw-loader!@site/src/ui/navigation/menu-item/menuItemMultiSelectAvatarCode.js'
+import menuItemMultiSelectCode from '!!raw-loader!@site/src/ui/navigation/menu-item/menuItemMultiSelectCode.js'
+import menuItemNavigateCode from '!!raw-loader!@site/src/ui/navigation/menu-item/menuItemNavigateCode.js'
+import menuItemSelectAvatarCode from '!!raw-loader!@site/src/ui/navigation/menu-item/menuItemSelectAvatarCode.js'
+import menuItemSelectCode from '!!raw-loader!@site/src/ui/navigation/menu-item/menuItemSelectCode.js'
+import menuItemSelectColorCode from '!!raw-loader!@site/src/ui/navigation/menu-item/menuItemSelectColorCode.js'
+import menuItemToggleCode from '!!raw-loader!@site/src/ui/navigation/menu-item/menuItemToggleCode.js'
+
+A versatile menu item designed to be used in a menu or navigation list. 
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/navigation/menu-item/components/MenuItem']}
+  componentCode={menuItemCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>LeftIcon</td>
+      <td>IconComponent</td>
+      <td>An optional left icon displayed before the text in the menu item</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>accent</td>
+      <td>string</td>
+      <td>Specifies the accent color of the menu item. Options include: `default`, `danger`, and `placeholder`</td>
+      <td>default</td>
+    </tr>
+
+    <tr>
+      <td>text</td>
+      <td>string</td>
+      <td>The text content of the menu item</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>iconButtons</td>
+      <td>array</td>
+      <td>An array of objects representing additional icon buttons associated with the menu item</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>isTooltipOpen</td>
+      <td>boolean</td>
+      <td>Controls the visibility of the tooltip associated with the menu item</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>testId</td>
+      <td>string</td>
+      <td>The data-testid attribute for testing purposes</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>onClick</td>
+      <td>function</td>
+      <td>Callback function triggered when the menu item is clicked</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>Optional name for additional styling</td>
+      <td></td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>
+
+## Variants 
+
+The different variants of the menu item component include the following: 
+
+### Command 
+
+A command-style menu item within a menu to indicate keyboard shortcuts.
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/navigation/menu-item/components/MenuItemCommand']}
+  componentCode={menuItemCommandCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>LeftIcon</td>
+      <td>IconComponent</td>
+      <td>An optional left icon displayed before the text in the menu item</td>
+    </tr>
+
+    <tr>
+      <td>text</td>
+      <td>string</td>
+      <td>The text content of the menu item</td>
+    </tr>
+
+    <tr>
+      <td>firstHotKey</td>
+      <td>string</td>
+      <td>The first keyboard shortcut associated with the command</td>
+    </tr>
+
+    <tr>
+      <td>secondHotKey</td>
+      <td>string</td>
+      <td>The second keyboard shortcut associated with the command</td>
+    </tr>
+
+    <tr>
+      <td>isSelected</td>
+      <td>boolean</td>
+      <td>Indicates whether the menu item is selected or highlighted</td>
+    </tr>
+
+    <tr>
+      <td>onClick</td>
+      <td>function</td>
+      <td>Callback function triggered when the menu item is clicked</td>
+    </tr>
+
+    <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>Optional name for additional styling</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>
+
+### Draggable 
+
+A draggable menu item component designed to be used in a menu or list where items can be dragged, and additional actions can be performed through icon buttons.
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/navigation/menu-item/components/MenuItemDraggable']}
+  componentCode={menuItemDraggableCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>LeftIcon</td>
+      <td>IconComponent</td>
+      <td>An optional left icon displayed before the text in the menu item</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>accent</td>
+      <td>string</td>
+      <td>The accent color of the menu item. It can either be `default`, `placeholder`, and `danger`</td>
+      <td>default</td>
+    </tr>
+
+    <tr>
+      <td>iconButtons</td>
+      <td>array</td>
+      <td>An array of objects representing additional icon buttons associated with the menu item</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>isTooltipOpen</td>
+      <td>boolean</td>
+      <td>Controls the visibility of the tooltip associated with the menu item</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>onClick</td>
+      <td>function</td>
+      <td>Callback function to be triggered when the link is clicked</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>text</td>
+      <td>string</td>
+      <td>The text content of the menu item</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>isDragDisabled</td>
+      <td>boolean</td>
+      <td>Indicates whether dragging is disabled</td>
+      <td>`false`</td>
+    </tr> 
+
+    <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>Optional name for additional styling</td>
+      <td></td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>
+
+### Multi Select
+
+Provides a way to implement multi-select functionality with an associated checkbox.
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/navigation/menu-item/components/MenuItemMultiSelect']}
+  componentCode={menuItemMultiSelectCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>LeftIcon</td>
+      <td>IconComponent</td>
+      <td>An optional left icon displayed before the text in the menu item</td>
+    </tr>
+
+    <tr>
+      <td>text</td>
+      <td>string</td>
+      <td>The text content of the menu item</td>
+    </tr>
+
+    <tr>
+      <td>selected</td>
+      <td>boolean</td>
+      <td>Indicates whether the menu item is selected (checked)</td>
+    </tr>
+
+    <tr>
+      <td>onSelectChange</td>
+      <td>function</td>
+      <td>Callback function triggered when the checkbox state changes</td>
+    </tr>
+
+    <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>Optional name for additional styling</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>
+
+### Multi Select Avatar 
+
+A multi-select menu item with an avatar, a checkbox for selection, and textual content.
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar']}
+  componentCode={menuItemMultiSelectAvatarCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>avatar</td>
+      <td>`ReactNode`</td>
+      <td>The avatar or icon to be displayed on the left side of the menu item</td>
+    </tr>
+
+    <tr>
+      <td>text</td>
+      <td>string</td>
+      <td>The text content of the menu item</td>
+    </tr>
+
+    <tr>
+      <td>selected</td>
+      <td>boolean</td>
+      <td>Indicates whether the menu item is selected (checked)</td>
+    </tr>
+
+    <tr>
+      <td>onSelectChange</td>
+      <td>function</td>
+      <td>Callback function triggered when the checkbox state changes</td>
+    </tr>
+
+    <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>Optional name for additional styling</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>
+
+### Navigate 
+
+A menu item featuring an optional left icon, textual content, and a right-chevron icon.
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/navigation/menu-item/components/MenuItemNavigate']}
+  componentCode={menuItemNavigateCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>LeftIcon</td>
+      <td>IconComponent</td>
+      <td>An optional left icon displayed before the text in the menu item</td>
+    </tr>
+
+    <tr>
+      <td>text</td>
+      <td>string</td>
+      <td>The text content of the menu item</td>
+    </tr>
+
+    <tr>
+      <td>onClick</td>
+      <td>function</td>
+      <td>Callback function to be triggered when the menu item is clicked</td>
+    </tr>
+
+    <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>Optional name for additional styling</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>
+
+### Select 
+
+A selectable menu item, featuring optional left content (icon and text) and an indicator (check icon) for the selected state.
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/navigation/menu-item/components/MenuItemSelect']}
+  componentCode={menuItemSelectCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>LeftIcon</td>
+      <td>IconComponent</td>
+      <td>An optional left icon displayed before the text in the menu item</td>
+    </tr>
+
+    <tr>
+      <td>text</td>
+      <td>string</td>
+      <td>The text content of the menu item</td>
+    </tr>
+
+    <tr>
+      <td>selected</td>
+      <td>boolean</td>
+      <td>Indicates whether the menu item is selected (checked)</td>
+    </tr>
+
+    <tr>
+      <td>disabled</td>
+      <td>boolean</td>
+      <td>Indicates whether the menu item is disabled</td>
+    </tr>
+
+    <tr>
+      <td>hovered</td>
+      <td>boolean</td>
+      <td>Indicates whether the menu item is currently being hovered over</td>
+    </tr>
+
+    <tr>
+      <td>onClick</td>
+      <td>function</td>
+      <td>Callback function to be triggered when the menu item is clicked</td>
+    </tr>
+
+    <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>Optional name for additional styling</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>
+
+### Select Avatar 
+
+A selectable menu item with an avatar, featuring optional left content (avatar and text) and an indicator (check icon) for the selected state.
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/navigation/menu-item/components/MenuItemSelectAvatar']}
+  componentCode={menuItemSelectAvatarCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>avatar</td>
+      <td>`ReactNode`</td>
+      <td>The avatar or icon to be displayed on the left side of the menu item</td>
+    </tr>
+
+    <tr>
+      <td>text</td>
+      <td>string</td>
+      <td>The text content of the menu item</td>
+    </tr>
+
+    <tr>
+      <td>selected</td>
+      <td>boolean</td>
+      <td>Indicates whether the menu item is selected (checked)</td>
+    </tr>
+
+    <tr>
+      <td>disabled</td>
+      <td>boolean</td>
+      <td>Indicates whether the menu item is disabled</td>
+    </tr>
+
+    <tr>
+      <td>hovered</td>
+      <td>boolean</td>
+      <td>Indicates whether the menu item is currently being hovered over</td>
+    </tr>
+
+    <tr>
+      <td>testId</td>
+      <td>string</td>
+      <td>The data-testid attribute for testing purposes</td>
+    </tr>
+
+    <tr>
+      <td>onClick</td>
+      <td>function</td>
+      <td>Callback function to be triggered when the menu item is clicked</td>
+    </tr>
+
+    <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>Optional name for additional styling</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>
+
+### Select Color 
+
+A selectable menu item with a color sample for scenarios where you want users to choose a color from a menu.
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/navigation/menu-item/components/MenuItemSelectColor']}
+  componentCode={menuItemSelectColorCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>color</td>
+      <td>string</td>
+      <td>The theme color to be displayed as a sample in the menu item. Options include: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, and `gray`</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>selected</td>
+      <td>boolean</td>
+      <td>Indicates whether the menu item is selected (checked)</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>disabled</td>
+      <td>boolean</td>
+      <td>Indicates whether the menu item is disabled</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>hovered</td>
+      <td>boolean</td>
+      <td>Indicates whether the menu item is currently being hovered over</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>variant</td>
+      <td>string</td>
+      <td>The variant of the color sample. It can either be `default` or `pipeline`</td>
+      <td>default</td>
+    </tr>
+
+    <tr>
+      <td>onClick</td>
+      <td>function</td>
+      <td>Callback function to be triggered when the menu item is clicked</td>
+      <td></td>
+    </tr>
+
+    <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>Optional name for additional styling</td>
+      <td></td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>
+
+### Toggle 
+
+A menu item with an associated toggle switch to allow users to enable or disable a specific feature
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/navigation/menu-item/components/MenuItemToggle']}
+  componentCode={menuItemToggleCode} 
+/>
+
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>LeftIcon</td>
+      <td>IconComponent</td>
+      <td>An optional left icon displayed before the text in the menu item</td>
+    </tr>
+
+    <tr>
+      <td>text</td>
+      <td>string</td>
+      <td>The text content of the menu item</td>
+    </tr>
+
+    <tr>
+      <td>toggled</td>
+      <td>boolean</td>
+      <td>Indicates whether the toggle switch is in the "on" or "off" state</td>
+    </tr>
+
+    <tr>
+      <td>onToggleChange</td>
+      <td>function</td>
+      <td>Callback function triggered when the toggle switch state changes</td>
+    </tr>
+
+    <tr>
+      <td>toggleSize</td>
+      <td>string</td>
+      <td>The size of the toggle switch. It can be either 'small' or 'medium'</td>
+    </tr>
+
+    <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>Optional name for additional styling</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>

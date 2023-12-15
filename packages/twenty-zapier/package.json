@@ -1,5 +1,5 @@
 {
-  "name": "twenty",
+  "name": "twenty-zapier",
   "version": "1.0.0",
   "description": "Effortlessly sync Twenty with 3000+ apps. Automate tasks, boost productivity, and supercharge your customer relationships!",
   "main": "src/index.ts",
@@ -18,9 +18,9 @@
     "npm": ">=5.6.0"
   },
   "dependencies": {
+    "dotenv-cli": "^7.2.1",
     "prettier": "^3.0.3",
-    "zapier-platform-core": "15.4.1",
-    "dotenv-cli": "^7.2.1"
+    "zapier-platform-core": "15.4.1"
   },
   "devDependencies": {
     "@types/jest": "^29.5.5",

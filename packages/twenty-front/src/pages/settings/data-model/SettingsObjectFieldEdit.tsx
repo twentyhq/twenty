@@ -8,6 +8,7 @@ import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsObjectFieldCurrencyFormValues } from '@/settings/data-model/components/SettingsObjectFieldCurrencyForm';
 import { SettingsObjectFieldFormSection } from '@/settings/data-model/components/SettingsObjectFieldFormSection';
 import { SettingsObjectFieldTypeSelectSection } from '@/settings/data-model/components/SettingsObjectFieldTypeSelectSection';
 import { useFieldMetadataForm } from '@/settings/data-model/hooks/useFieldMetadataForm';
@@ -66,9 +67,16 @@ export const SettingsObjectFieldEdit = () => {
       return;
     }
 
+    const { defaultValue } = activeMetadataField;
+
+    const currencyDefaultValue =
+      activeMetadataField.type === FieldMetadataType.Currency
+        ? (defaultValue as SettingsObjectFieldCurrencyFormValues | undefined)
+        : undefined;
+
     const selectOptions = activeMetadataField.options?.map((option) => ({
       ...option,
-      isDefault: activeMetadataField.defaultValue === option.value,
+      isDefault: defaultValue === option.value,
     }));
     selectOptions?.sort(
       (optionA, optionB) => optionA.position - optionB.position,
@@ -79,6 +87,7 @@ export const SettingsObjectFieldEdit = () => {
       label: activeMetadataField.label,
       description: activeMetadataField.description ?? undefined,
       type: activeMetadataField.type,
+      ...(currencyDefaultValue ? { currency: currencyDefaultValue } : {}),
       relation: {
         field: {
           icon: relationFieldMetadataItem?.icon,
@@ -178,6 +187,7 @@ export const SettingsObjectFieldEdit = () => {
           onChange={handleFormChange}
         />
         <SettingsObjectFieldTypeSelectSection
+          disableCurrencyForm
           fieldMetadata={{
             icon: formValues.icon,
             label: formValues.label || 'Employees',
@@ -188,6 +198,7 @@ export const SettingsObjectFieldEdit = () => {
           relationFieldMetadata={relationFieldMetadataItem}
           values={{
             type: formValues.type,
+            currency: formValues.currency,
             relation: formValues.relation,
             select: formValues.select,
           }}

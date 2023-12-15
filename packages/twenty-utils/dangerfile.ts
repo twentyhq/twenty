@@ -6,8 +6,8 @@ function getMdSection(category: string, message: string) {
 }
 
 // Check if package.json was changed, but not yarn.lock
-const packageChanged = danger.git.modified_files.includes("package.json");
-const lockfileChanged = danger.git.modified_files.includes("yarn.lock");
+const packageChanged = danger.git.modified_files.find(x=>x.includes("package.json"));
+const lockfileChanged = danger.git.modified_files.find(x=>x.includes("yarn.lock"));
 if (packageChanged && !lockfileChanged) {
   const message = "Changes were made to package.json, but not to yarn.lock";
   const idea = "Perhaps you need to run `yarn install`?";
@@ -16,8 +16,8 @@ if (packageChanged && !lockfileChanged) {
 
 // Check if .env.example was changed, but not enviroment variable documentation
 const envChanged =
-  danger.git.modified_files.includes(".env.example") ||
-  danger.git.modified_files.includes("environment.service.ts");
+  danger.git.modified_files.find(x=>x.includes(".env.example")) ||
+  danger.git.modified_files.find(x=>x.includes("environment.service.ts"));
 const envDocsChanged = danger.git.modified_files.includes(
   "enviroment-variables.mdx"
 );

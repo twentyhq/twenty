@@ -18,6 +18,7 @@ import { NotFound } from '~/pages/not-found/NotFound';
 import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccountsEmails';
+import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
 import { SettingsObjectDetail } from '~/pages/settings/data-model/SettingsObjectDetail';
 import { SettingsObjectEdit } from '~/pages/settings/data-model/SettingsObjectEdit';
@@ -75,6 +76,10 @@ export const App = () => {
                 <Route
                   path={SettingsPath.Accounts}
                   element={<SettingsAccounts />}
+                />
+                <Route
+                  path={SettingsPath.NewAccount}
+                  element={<SettingsNewAccount />}
                 />
                 <Route
                   path={SettingsPath.AccountsEmails}
