@@ -2,10 +2,10 @@ import styled from '@emotion/styled';
 
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { validateMetadataLabel } from '@/object-metadata/utils/validateMetadataLabel';
+import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
 import { Field } from '~/generated-metadata/graphql';
 
 import { relationTypes } from '../constants/relationTypes';
@@ -56,7 +56,7 @@ export const SettingsObjectFieldRelationForm = ({
   onChange,
   values,
 }: SettingsObjectFieldRelationFormProps) => {
-  const { icons } = useLazyLoadIcons();
+  const { getIcon } = useIcons();
   const { objectMetadataItems, findObjectMetadataItemById } =
     useObjectMetadataItemForSettings();
 
@@ -92,9 +92,7 @@ export const SettingsObjectFieldRelationForm = ({
           options={objectMetadataItems.map((objectMetadataItem) => ({
             label: objectMetadataItem.labelPlural,
             value: objectMetadataItem.id,
-            Icon: objectMetadataItem.icon
-              ? icons[objectMetadataItem.icon]
-              : undefined,
+            Icon: getIcon(objectMetadataItem.icon),
           }))}
           onChange={(value) => onChange({ objectMetadataId: value })}
         />

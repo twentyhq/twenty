@@ -1,4 +1,4 @@
-import { Account } from '@/accounts/types/account';
+import { Account } from '@/accounts/types/Account';
 
 export const mockedAccounts: Account[] = [
   {

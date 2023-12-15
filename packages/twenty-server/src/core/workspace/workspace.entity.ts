@@ -58,4 +58,8 @@ export class Workspace {
 
   @OneToMany(() => FeatureFlagEntity, (featureFlag) => featureFlag.workspace)
   featureFlags: FeatureFlagEntity[];
+
+  @Field()
+  @Column({ default: 'incomplete' })
+  subscriptionStatus: 'incomplete' | 'active' | 'canceled';
 }

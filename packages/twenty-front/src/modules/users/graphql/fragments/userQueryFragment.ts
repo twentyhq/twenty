@@ -25,6 +25,7 @@ export const USER_QUERY_FRAGMENT = gql`
       domainName
       inviteHash
       allowImpersonation
+      subscriptionStatus
       featureFlags {
         id
         key

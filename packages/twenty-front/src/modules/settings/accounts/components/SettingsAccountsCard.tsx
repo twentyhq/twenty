@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { Account } from '@/accounts/types/account';
+import { Account } from '@/accounts/types/Account';
 import { SettingsAccountsRowDropdownMenu } from '@/settings/accounts/components/SettingsAccountsRowDropdownMenu';
 import { IconAt, IconPlus } from '@/ui/display/icon';
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';

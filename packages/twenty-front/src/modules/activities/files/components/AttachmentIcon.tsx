@@ -5,7 +5,6 @@ import {
   Attachment,
   AttachmentType,
 } from '@/activities/files/types/Attachment';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import {
   IconFile,
   IconFileText,
@@ -15,7 +14,8 @@ import {
   IconPresentation,
   IconTable,
   IconVideo,
-} from '@/ui/input/constants/icons';
+} from '@/ui/display/icon';
+import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
 const StyledIconContainer = styled.div<{ background: string }>`
   align-items: center;
