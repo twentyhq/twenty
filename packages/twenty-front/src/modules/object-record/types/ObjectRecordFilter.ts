@@ -69,12 +69,10 @@ export type LeafFilter =
   | URLFilter
   | FullNameFilter;
 
-export type ObjectRecordFilter =
-  | {
-      and?: ObjectRecordFilter[];
-      or?: ObjectRecordFilter[];
-      not?: ObjectRecordFilter;
-    }
-  | {
-      [fieldName: string]: LeafFilter;
-    };
+export type ObjectRecordFilter = {
+  and?: ObjectRecordFilter[];
+  or?: ObjectRecordFilter[];
+  not?: ObjectRecordFilter;
+} & {
+  [fieldName: string]: LeafFilter | ObjectRecordFilter | ObjectRecordFilter[];
+};

@@ -41,10 +41,10 @@ export const useCreateOneRecord = <T>({
     });
 
     if (generatedEmptyRecord) {
-      triggerOptimisticEffects(
-        `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-        generatedEmptyRecord,
-      );
+      triggerOptimisticEffects({
+        typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
+        newData: generatedEmptyRecord,
+      });
     }
 
     const createdObject = await apolloClient.mutate({
@@ -65,12 +65,13 @@ export const useCreateOneRecord = <T>({
       return null;
     }
 
-    triggerOptimisticEffects(
-      `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-      createdObject.data[
-        `create${capitalize(objectMetadataItem.nameSingular)}`
-      ],
-    );
+    triggerOptimisticEffects({
+      typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
+      newData:
+        createdObject.data[
+          `create${capitalize(objectMetadataItem.nameSingular)}`
+        ],
+    });
 
     return createdObject.data[
       `create${capitalize(objectMetadataItem.nameSingular)}`

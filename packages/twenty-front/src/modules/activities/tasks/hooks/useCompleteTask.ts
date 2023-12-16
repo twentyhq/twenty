@@ -1,28 +1,34 @@
 import { useCallback } from 'react';
 
 import { Activity } from '@/activities/types/Activity';
+import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
 type Task = Pick<Activity, 'id' | 'completedAt'>;
 
 export const useCompleteTask = (task: Task) => {
-  const { updateOneRecord: updateOneActivity } = useUpdateOneRecord({
+  const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<Activity>({
     objectNameSingular: 'activity',
-    refetchFindManyQuery: true,
+    // refetchFindManyQuery: true,
+  });
+
+  const { triggerOptimisticEffects } = useOptimisticEffect({
+    objectNameSingular: 'activity',
   });
 
   const completeTask = useCallback(
-    (value: boolean) => {
+    async (value: boolean) => {
       const completedAt = value ? new Date().toISOString() : null;
-      updateOneActivity?.({
+      const data = await updateOneActivity?.({
         idToUpdate: task.id,
         input: {
           completedAt,
         },
-        forceRefetch: true,
+        // forceRefetch: true,
       });
+      triggerOptimisticEffects({ typename: 'ActivityEdge', updatedData: data });
     },
-    [task.id, updateOneActivity],
+    [task.id, updateOneActivity, triggerOptimisticEffects],
   );
 
   return {

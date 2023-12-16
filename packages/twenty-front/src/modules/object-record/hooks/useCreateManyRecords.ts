@@ -32,10 +32,10 @@ export const useCreateManyRecords = <T>({
     }));
 
     withIds.forEach((record) => {
-      triggerOptimisticEffects(
-        `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-        generateEmptyRecord({ id: record.id }),
-      );
+      triggerOptimisticEffects({
+        typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
+        newData: generateEmptyRecord({ id: record.id }),
+      });
     });
 
     const createdObjects = await apolloClient.mutate({
@@ -60,10 +60,10 @@ export const useCreateManyRecords = <T>({
       ] as T[]) ?? [];
 
     createdRecords.forEach((record) => {
-      triggerOptimisticEffects(
-        `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-        record,
-      );
+      triggerOptimisticEffects({
+        typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
+        newData: record,
+      });
     });
 
     return createdRecords;
