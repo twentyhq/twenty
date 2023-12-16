@@ -9,7 +9,7 @@ export const SettingsNewAccountSection = () => {
         title="New account"
         description="Connect a new account to your workspace"
       />
-      <SettingsAccountsEmptyStateCard />
+      <SettingsAccountsEmptyStateCard label="Connect a Google account" />
     </Section>
   );
 };
