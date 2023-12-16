@@ -1,0 +1,53 @@
+---
+title: Breadcrumb
+sidebar_position: 1
+sidebar_custom_props:
+  icon: TbSquareChevronsRight
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import breadcrumbCode from '!!raw-loader!@site/src/ui/navigation/breadcrumbCode.js'
+
+Renders a breadcrumb navigation bar.
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/navigation/bread-crumb/components/Breadcrumb']}
+  componentCode={breadcrumbCode} 
+/>
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>className</td>
+      <td>string</td>
+      <td>Optional class name for additional styling</td>
+    </tr>
+
+    <tr>
+      <td>links</td>
+      <td>array</td>
+      <td>An array of objects, each representing a breadcrumb link. Each object has a `children` property (the text content of the link) and an optional `href` property (the URL to navigate to when the link is clicked)</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>

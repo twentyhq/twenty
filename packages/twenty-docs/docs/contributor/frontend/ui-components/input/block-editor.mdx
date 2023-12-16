@@ -1,0 +1,46 @@
+---
+title: Block Editor
+sidebar_position: 11
+sidebar_custom_props:
+  icon: TbTemplate
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { SandpackEditor} from '@site/src/ui/SandpackEditor'
+import blockEditorCode from '!!raw-loader!@site/src/ui/input/blockEditorCode.js'
+
+Uses a block-based rich text editor from [BlockNote](https://www.blocknotejs.org/) to allow users to edit and view blocks of content. 
+
+<Tabs>
+<TabItem value="usage" label="Usage" default>
+
+<SandpackEditor
+  availableComponentPaths={['@/ui/input/editor/components/BlockEditor']}
+  componentCode={blockEditorCode} 
+/>
+</TabItem>
+
+<TabItem value="props" label="Props">
+
+<table>
+  <thead>
+    <tr>
+      <th>Props</th>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>editor</td>
+      <td>`BlockNoteEditor`</td>
+      <td>The block editor instance or configuration</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</TabItem>
+
+</Tabs>

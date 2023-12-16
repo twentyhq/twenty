@@ -12,6 +12,7 @@ export type AvatarSize = 'xl' | 'lg' | 'md' | 'sm' | 'xs';
 
 export type AvatarProps = {
   avatarUrl: string | null | undefined;
+  className?: string;
   size?: AvatarSize;
   placeholder: string | undefined;
   colorId?: string;
@@ -90,6 +91,7 @@ const StyledAvatar = styled.div<AvatarProps & { colorId: string }>`
 
 export const Avatar = ({
   avatarUrl,
+  className,
   size = 'md',
   placeholder,
   colorId = placeholder,
@@ -113,6 +115,7 @@ export const Avatar = ({
 
   return (
     <StyledAvatar
+      className={className}
       avatarUrl={getImageAbsoluteURIOrBase64(avatarUrl)}
       placeholder={placeholder}
       size={size}
