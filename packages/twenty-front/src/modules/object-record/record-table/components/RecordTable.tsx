@@ -170,22 +170,6 @@ export const RecordTable = ({
                 />
               </div>
               <RecordTableInternalEffect tableBodyRef={tableBodyRef} />
-              {numberOfTableRows === 0 && (
-                <StyledObjectEmptyContainer>
-                  <StyledEmptyObjectTitle>
-                    No {foundObjectMetadataItem?.namePlural}
-                  </StyledEmptyObjectTitle>
-                  <StyledEmptyObjectSubTitle>
-                    Create one:
-                  </StyledEmptyObjectSubTitle>
-                  <Button
-                    Icon={IconPlus}
-                    title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
-                    variant={'secondary'}
-                    onClick={createRecord}
-                  />
-                </StyledObjectEmptyContainer>
-              )}
             </StyledTableContainer>
           </StyledTableWithHeader>
         </EntityUpdateMutationContext.Provider>
