@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { useApolloClient } from '@apollo/client';
 import {
-  snapshot_UNSTABLE,
   useGotoRecoilSnapshot,
   useRecoilState,
   useSetRecoilState,
@@ -126,13 +125,23 @@ export const useAuth = () => {
   );
 
   const handleSignOut = useCallback(() => {
-    goToRecoilSnapshot(snapshot_UNSTABLE());
     setTokenPair(null);
     setCurrentUser(null);
+    setCurrentWorkspaceMember(null);
+    setCurrentWorkspace(null);
+    setIsVerifyPendingState(false);
+
     client.clearStore().then(() => {
       sessionStorage.clear();
     });
-  }, [goToRecoilSnapshot, setTokenPair, setCurrentUser, client]);
+  }, [
+    setTokenPair, 
+    setCurrentUser, 
+    setCurrentWorkspaceMember, 
+    setCurrentWorkspace, 
+    setIsVerifyPendingState, 
+    client
+  ]);
 
   const handleCredentialsSignUp = useCallback(
     async (email: string, password: string, workspaceInviteHash?: string) => {
