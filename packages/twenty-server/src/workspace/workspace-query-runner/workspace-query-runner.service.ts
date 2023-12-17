@@ -1,8 +1,5 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 
-import axios from 'axios';
-import { uuid4 } from '@sentry/utils';
-
 import { IConnection } from 'src/utils/pagination/interfaces/connection.interface';
 import {
   Record as IRecord,
@@ -23,9 +20,6 @@ import {
 import { WorkspaceQueryBuilderFactory } from 'src/workspace/workspace-query-builder/workspace-query-builder.factory';
 import { parseResult } from 'src/workspace/workspace-query-runner/utils/parse-result.util';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
-import { stringifyWithoutKeyQuote } from 'src/workspace/workspace-query-builder/utils/stringify-without-key-quote.util';
-import { FieldsStringFactory } from 'src/workspace/workspace-query-builder/factories/fields-string.factory';
-import { isWorkEmail } from 'src/utils/is-work-email';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-optionts.interface';
 import {
@@ -40,7 +34,6 @@ export class WorkspaceQueryRunnerService {
   constructor(
     private readonly workspaceQueryBuilderFactory: WorkspaceQueryBuilderFactory,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly fieldsStringFactory: FieldsStringFactory,
   ) {}
 
   async findMany<
@@ -188,150 +181,7 @@ export class WorkspaceQueryRunnerService {
     )?.records;
   }
 
-  // TODO: most of the logic should be move to a separate service
-  async executeQuickActionOnOne<Record extends IRecord = IRecord>(
-    args: DeleteOneResolverArgs,
-    options: WorkspaceQueryRunnerOptions,
-  ): Promise<Record | undefined> {
-    const argsFind = {
-      filter: { id: { eq: args.id } },
-    } as FindOneResolverArgs;
-
-    const { workspaceId, targetTableName } = options;
-
-    const findQuery = await this.workspaceQueryBuilderFactory.findOne(
-      argsFind,
-      options,
-    );
-
-    const findResult = await this.execute(findQuery, workspaceId);
-
-    const parsedfindResult = this.parseResult<IConnection<Record>>(
-      findResult,
-      targetTableName,
-      '',
-    );
-
-    const objectToExecuteQuickActionOn = parsedfindResult?.edges?.[0]?.node;
-
-    switch (targetTableName) {
-      case 'company': {
-        return await this.executeQuickActionOnCompany(
-          objectToExecuteQuickActionOn,
-          options,
-        );
-      }
-      case 'person': {
-        return this.executeQuickActionOnPerson(
-          objectToExecuteQuickActionOn,
-          options,
-        );
-      }
-      default: {
-        return objectToExecuteQuickActionOn;
-      }
-    }
-  }
-
-  async executeQuickActionOnPerson<Record extends IRecord = IRecord>(
-    person: Record,
-    options: WorkspaceQueryRunnerOptions,
-  ) {
-    const { workspaceId, targetTableName } = options;
-
-    if (!person.companyId && person.email && isWorkEmail(person.email)) {
-      const companyDomainName = person.email.split('@')[1];
-      const companyNameSmallCase = companyDomainName.split('.')[0];
-      const newCompanyId = uuid4();
-
-      const queryCreateCompany = `
-      mutation {
-        insertIntocompanyCollection(objects: ${stringifyWithoutKeyQuote([
-          {
-            id: newCompanyId,
-            name:
-              companyNameSmallCase.charAt(0).toUpperCase() +
-              companyNameSmallCase.slice(1),
-            domainName: companyDomainName,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          },
-        ])}) {
-          affectedCount
-          records {
-            id
-          }
-        }
-      }
-    `;
-
-      await this.execute(queryCreateCompany, workspaceId);
-
-      const fieldsString = await this.fieldsStringFactory.create(
-        options.info,
-        options.fieldMetadataCollection,
-      );
-
-      const query = `mutation {
-        updatepersonCollection(set: ${stringifyWithoutKeyQuote({
-          companyId: newCompanyId,
-        })}, filter: { id: { eq: "${person.id}" } }) {
-          affectedCount
-          records {
-            ${fieldsString}
-          }
-        }
-      }
-    `;
-
-      const personAfterUpdate = await this.execute(query, workspaceId);
-
-      return this.parseResult<PGGraphQLMutation<Record>>(
-        personAfterUpdate,
-        targetTableName,
-        'update',
-      )?.records?.[0];
-    }
-
-    return person;
-  }
-
-  async executeQuickActionOnCompany<Record extends IRecord = IRecord>(
-    company: Record,
-    options: WorkspaceQueryRunnerOptions,
-  ) {
-    const { workspaceId, targetTableName } = options;
-
-    const executeQuickActionOnedCompany = await axios.get(
-      `https://companies.twenty.com/${company.domainName}`,
-    );
-
-    const argsUpdate = {
-      id: company.id,
-      data: {
-        id: company.id,
-        createdAt: company.createdAt,
-        updatedAt: new Date().toISOString(),
-        linkedinLinkUrl:
-          `https://linkedin.com/` + executeQuickActionOnedCompany.data.handle,
-      },
-    };
-
-    const query = await this.workspaceQueryBuilderFactory.updateOne(
-      argsUpdate,
-      options,
-    );
-
-    const result = await this.execute(query, workspaceId);
-
-    return this.parseResult<PGGraphQLMutation<Record>>(
-      result,
-      targetTableName,
-      'update',
-    )?.records?.[0];
-  }
-
-  private async execute(
+  async execute(
     query: string,
     workspaceId: string,
   ): Promise<PGGraphQLResult | undefined> {
@@ -365,7 +215,7 @@ export class WorkspaceQueryRunnerService {
     const errors = graphqlResult?.[0]?.resolve?.errors;
 
     if (Array.isArray(errors) && errors.length > 0) {
-      console.error('GraphQL errors', errors);
+      console.error(`GraphQL errors on ${command}${targetTableName}`, errors);
     }
 
     if (!result) {
@@ -373,5 +223,16 @@ export class WorkspaceQueryRunnerService {
     }
 
     return parseResult(result);
+  }
+
+  async executeAndParse<Result>(
+    query: string,
+    targetTableName: string,
+    command: string,
+    workspaceId: string,
+  ): Promise<Result | undefined> {
+    const result = await this.execute(query, workspaceId);
+
+    return this.parseResult(result, targetTableName, command);
   }
 }

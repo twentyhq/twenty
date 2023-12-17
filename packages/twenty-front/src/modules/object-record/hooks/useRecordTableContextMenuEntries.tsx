@@ -114,7 +114,7 @@ export const useRecordTableContextMenuEntries = (
   );
 
   const dataExecuteQuickActionOnmentEnabled = useIsFeatureEnabled(
-    'IS_DATA_ENRICHMENT_ENABLED',
+    'IS_QUICK_ACTIONS_ENABLED',
   );
 
   return {
