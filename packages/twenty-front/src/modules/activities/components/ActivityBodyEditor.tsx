@@ -9,11 +9,7 @@ import { Activity } from '@/activities/types/Activity';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import {
-  FileFolder,
-  useUploadFileMutation,
-  useUploadImageMutation,
-} from '~/generated/graphql';
+import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 
 const StyledBlockNoteStyledContainer = styled.div`
   width: 100%;
