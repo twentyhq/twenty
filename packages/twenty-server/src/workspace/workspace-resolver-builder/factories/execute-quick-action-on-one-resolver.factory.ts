@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import {
   Resolver,
-  EnrichOneResolverArgs,
+  ExecuteQuickActionOnOneResolverArgs,
 } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { WorkspaceSchemaBuilderContext } from 'src/workspace/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 import { WorkspaceResolverBuilderFactoryInterface } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
@@ -10,10 +10,10 @@ import { WorkspaceResolverBuilderFactoryInterface } from 'src/workspace/workspac
 import { WorkspaceQueryRunnerService } from 'src/workspace/workspace-query-runner/workspace-query-runner.service';
 
 @Injectable()
-export class EnrichOneResolverFactory
+export class ExecuteQuickActionOnOneResolverFactory
   implements WorkspaceResolverBuilderFactoryInterface
 {
-  public static methodName = 'enrichOne' as const;
+  public static methodName = 'executeQuickActionOnOne' as const;
 
   constructor(
     private readonly workspaceQueryRunnerService: WorkspaceQueryRunnerService,
@@ -21,11 +21,11 @@ export class EnrichOneResolverFactory
 
   create(
     context: WorkspaceSchemaBuilderContext,
-  ): Resolver<EnrichOneResolverArgs> {
+  ): Resolver<ExecuteQuickActionOnOneResolverArgs> {
     const internalContext = context;
 
     return (_source, args, context, info) => {
-      return this.workspaceQueryRunnerService.enrichOne(args, {
+      return this.workspaceQueryRunnerService.executeQuickActionOnOne(args, {
         targetTableName: internalContext.targetTableName,
         workspaceId: internalContext.workspaceId,
         info,

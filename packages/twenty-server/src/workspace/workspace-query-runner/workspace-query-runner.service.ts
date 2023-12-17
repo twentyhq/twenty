@@ -189,7 +189,7 @@ export class WorkspaceQueryRunnerService {
   }
 
   // TODO: most of the logic should be move to a separate service
-  async enrichOne<Record extends IRecord = IRecord>(
+  async executeQuickActionOnOne<Record extends IRecord = IRecord>(
     args: DeleteOneResolverArgs,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
@@ -212,22 +212,28 @@ export class WorkspaceQueryRunnerService {
       '',
     );
 
-    const objectToEnrich = parsedfindResult?.edges?.[0]?.node;
+    const objectToExecuteQuickActionOn = parsedfindResult?.edges?.[0]?.node;
 
     switch (targetTableName) {
       case 'company': {
-        return await this.enrichCompany(objectToEnrich, options);
+        return await this.executeQuickActionOnCompany(
+          objectToExecuteQuickActionOn,
+          options,
+        );
       }
       case 'person': {
-        return this.enrichPerson(objectToEnrich, options);
+        return this.executeQuickActionOnPerson(
+          objectToExecuteQuickActionOn,
+          options,
+        );
       }
       default: {
-        return objectToEnrich;
+        return objectToExecuteQuickActionOn;
       }
     }
   }
 
-  async enrichPerson<Record extends IRecord = IRecord>(
+  async executeQuickActionOnPerson<Record extends IRecord = IRecord>(
     person: Record,
     options: WorkspaceQueryRunnerOptions,
   ) {
@@ -290,13 +296,13 @@ export class WorkspaceQueryRunnerService {
     return person;
   }
 
-  async enrichCompany<Record extends IRecord = IRecord>(
+  async executeQuickActionOnCompany<Record extends IRecord = IRecord>(
     company: Record,
     options: WorkspaceQueryRunnerOptions,
   ) {
     const { workspaceId, targetTableName } = options;
 
-    const enrichedCompany = await axios.get(
+    const executeQuickActionOnedCompany = await axios.get(
       `https://companies.twenty.com/${company.domainName}`,
     );
 
@@ -306,7 +312,8 @@ export class WorkspaceQueryRunnerService {
         id: company.id,
         createdAt: company.createdAt,
         updatedAt: new Date().toISOString(),
-        linkedinLinkUrl: `https://linkedin.com/` + enrichedCompany.data.handle,
+        linkedinLinkUrl:
+          `https://linkedin.com/` + executeQuickActionOnedCompany.data.handle,
       },
     };
 

@@ -7,7 +7,7 @@ import { CreateOneResolverFactory } from './create-one-resolver.factory';
 import { UpdateOneResolverFactory } from './update-one-resolver.factory';
 import { DeleteOneResolverFactory } from './delete-one-resolver.factory';
 import { DeleteManyResolverFactory } from './delete-many-resolver.factory';
-import { EnrichOneResolverFactory } from './enrich-one-resolver.factory';
+import { ExecuteQuickActionOnOneResolverFactory } from './execute-quick-action-on-one-resolver.factory';
 
 export const workspaceResolverBuilderFactories = [
   FindManyResolverFactory,
@@ -16,7 +16,7 @@ export const workspaceResolverBuilderFactories = [
   CreateOneResolverFactory,
   UpdateOneResolverFactory,
   DeleteOneResolverFactory,
-  EnrichOneResolverFactory,
+  ExecuteQuickActionOnOneResolverFactory,
   UpdateManyResolverFactory,
   DeleteManyResolverFactory,
 ];
@@ -31,7 +31,7 @@ export const workspaceResolverBuilderMethodNames = {
     CreateOneResolverFactory.methodName,
     UpdateOneResolverFactory.methodName,
     DeleteOneResolverFactory.methodName,
-    EnrichOneResolverFactory.methodName,
+    ExecuteQuickActionOnOneResolverFactory.methodName,
     UpdateManyResolverFactory.methodName,
     DeleteManyResolverFactory.methodName,
   ],

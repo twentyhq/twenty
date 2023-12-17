@@ -51,7 +51,7 @@ export interface DeleteOneResolverArgs {
   id: string;
 }
 
-export interface EnrichOneResolverArgs {
+export interface ExecuteQuickActionOnOneResolverArgs {
   id: string;
 }
 

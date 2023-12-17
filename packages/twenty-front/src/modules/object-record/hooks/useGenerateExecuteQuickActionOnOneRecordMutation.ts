@@ -5,15 +5,15 @@ import { EMPTY_MUTATION } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const getEnrichOneRecordMutationGraphQLField = ({
+export const getExecuteQuickActionOnOneRecordMutationGraphQLField = ({
   objectNameSingular,
 }: {
   objectNameSingular: string;
 }) => {
-  return `enrich${capitalize(objectNameSingular)}`;
+  return `executeQuickActionOn${capitalize(objectNameSingular)}`;
 };
 
-export const useGenerateEnrichOneRecordMutation = ({
+export const useGenerateExecuteQuickActionOnOneRecordMutation = ({
   objectMetadataItem,
 }: {
   objectMetadataItem: ObjectMetadataItem;
@@ -26,14 +26,14 @@ export const useGenerateEnrichOneRecordMutation = ({
 
   const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
 
-  const graphQLFieldForEnrichOneRecordMutation =
-    getEnrichOneRecordMutationGraphQLField({
+  const graphQLFieldForExecuteQuickActionOnOneRecordMutation =
+    getExecuteQuickActionOnOneRecordMutationGraphQLField({
       objectNameSingular: objectMetadataItem.nameSingular,
     });
 
   return gql`
-    mutation EnrichOne${capitalizedObjectName}($idToEnrich: ID!)  {
-       ${graphQLFieldForEnrichOneRecordMutation}(id: $idToEnrich) {
+    mutation ExecuteQuickActionOnOne${capitalizedObjectName}($idToExecuteQuickActionOn: ID!)  {
+       ${graphQLFieldForExecuteQuickActionOnOneRecordMutation}(id: $idToExecuteQuickActionOn) {
         id
         ${objectMetadataItem.fields
           .map((field) => mapFieldMetadataToGraphQLQuery(field))

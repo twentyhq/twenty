@@ -34,7 +34,7 @@ describe('getResolverArgs', () => {
     deleteOne: {
       id: { type: FieldMetadataType.UUID, isNullable: false },
     },
-    enrichOne: {
+    executeQuickActionOnOne: {
       id: { type: FieldMetadataType.UUID, isNullable: false },
     },
   };

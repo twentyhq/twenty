@@ -5,7 +5,7 @@ import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
-import { useEnrichOneRecord } from '@/object-record/hooks/useEnrichOneRecord';
+import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { selectedRowIdsSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsSelector';
@@ -75,7 +75,7 @@ export const useRecordTableContextMenuEntries = (
     objectNameSingular,
   });
 
-  const { enrichOneRecord } = useEnrichOneRecord({
+  const { executeQuickActionOnOneRecord } = useExecuteQuickActionOnOneRecord({
     objectNameSingular,
   });
 
@@ -96,24 +96,24 @@ export const useRecordTableContextMenuEntries = (
     [deleteOneRecord, resetTableRowSelection],
   );
 
-  const handleEnrichClick = useRecoilCallback(
+  const handleExecuteQuickActionOnClick = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        const rowIdsToEnrich = snapshot
+        const rowIdsToExecuteQuickActionOn = snapshot
           .getLoadable(selectedRowIdsSelector)
           .getValue();
 
         resetTableRowSelection();
         await Promise.all(
-          rowIdsToEnrich.map(async (rowId) => {
-            await enrichOneRecord(rowId);
+          rowIdsToExecuteQuickActionOn.map(async (rowId) => {
+            await executeQuickActionOnOneRecord(rowId);
           }),
         );
       },
-    [enrichOneRecord, resetTableRowSelection],
+    [executeQuickActionOnOneRecord, resetTableRowSelection],
   );
 
-  const dataEnrichmentEnabled = useIsFeatureEnabled(
+  const dataExecuteQuickActionOnmentEnabled = useIsFeatureEnabled(
     'IS_DATA_ENRICHMENT_ENABLED',
   );
 
@@ -175,12 +175,12 @@ export const useRecordTableContextMenuEntries = (
         //   Icon: IconNotes,
         //   onClick: () => {},
         // },
-        ...(dataEnrichmentEnabled
+        ...(dataExecuteQuickActionOnmentEnabled
           ? [
               {
-                label: 'Enrich',
+                label: 'Quick Action',
                 Icon: IconWand,
-                onClick: () => handleEnrichClick(),
+                onClick: () => handleExecuteQuickActionOnClick(),
               },
             ]
           : []),

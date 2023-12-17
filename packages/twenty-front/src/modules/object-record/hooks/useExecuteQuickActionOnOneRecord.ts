@@ -5,43 +5,43 @@ import { getOperationName } from '@apollo/client/utilities';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { capitalize } from '~/utils/string/capitalize';
 
-type useEnrichOneRecordProps = {
+type useExecuteQuickActionOnOneRecordProps = {
   objectNameSingular: string;
 };
 
-export const useEnrichOneRecord = <T>({
+export const useExecuteQuickActionOnOneRecord = <T>({
   objectNameSingular,
-}: useEnrichOneRecordProps) => {
-  const { objectMetadataItem, enrichOneRecordMutation, findManyRecordsQuery } =
+}: useExecuteQuickActionOnOneRecordProps) => {
+  const { objectMetadataItem, executeQuickActionOnOneRecordMutation, findManyRecordsQuery } =
     useObjectMetadataItem({
       objectNameSingular,
     });
 
   const apolloClient = useApolloClient();
 
-  const enrichOneRecord = useCallback(
-    async (idToEnrich: string) => {
-      const enrichdRecord = await apolloClient.mutate({
-        mutation: enrichOneRecordMutation,
+  const executeQuickActionOnOneRecord = useCallback(
+    async (idToExecuteQuickActionOn: string) => {
+      const executeQuickActionOndRecord = await apolloClient.mutate({
+        mutation: executeQuickActionOnOneRecordMutation,
         variables: {
-          idToEnrich,
+          idToExecuteQuickActionOn,
         },
         refetchQueries: [getOperationName(findManyRecordsQuery) ?? ''],
       });
 
-      return enrichdRecord.data[
+      return executeQuickActionOndRecord.data[
         `create${capitalize(objectMetadataItem.nameSingular)}`
       ] as T;
     },
     [
       objectMetadataItem.nameSingular,
       apolloClient,
-      enrichOneRecordMutation,
+      executeQuickActionOnOneRecordMutation,
       findManyRecordsQuery,
     ],
   );
 
   return {
-    enrichOneRecord,
+    executeQuickActionOnOneRecord,
   };
 };

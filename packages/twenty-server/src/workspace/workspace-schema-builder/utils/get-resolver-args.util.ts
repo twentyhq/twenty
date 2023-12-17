@@ -76,7 +76,7 @@ export const getResolverArgs = (
           isNullable: false,
         },
       };
-    case 'enrichOne':
+    case 'executeQuickActionOnOne':
       return {
         id: {
           type: FieldMetadataType.UUID,
