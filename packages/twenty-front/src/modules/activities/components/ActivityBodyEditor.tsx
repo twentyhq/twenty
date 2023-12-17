@@ -9,6 +9,11 @@ import { Activity } from '@/activities/types/Activity';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import {
+  FileFolder,
+  useUploadFileMutation,
+  useUploadImageMutation,
+} from '~/generated/graphql';
 
 const StyledBlockNoteStyledContainer = styled.div`
   width: 100%;
@@ -56,6 +61,28 @@ export const ActivityBodyEditor = ({
     slashMenuItems = slashMenuItems.filter((x) => x.name != 'Image');
   }
 
+  const [uploadFile] = useUploadFileMutation();
+
+  const handleUploadAttachment = async (file: File): Promise<string> => {
+    if (!file) {
+      return '';
+    }
+    const result = await uploadFile({
+      variables: {
+        file,
+        fileFolder: FileFolder.Attachment,
+      },
+    });
+    if (!result?.data?.uploadFile) {
+      throw new Error("Couldn't upload Image");
+    }
+    const imageUrl =
+      process.env.REACT_APP_SERVER_BASE_URL +
+      '/files/' +
+      result?.data?.uploadFile;
+    return imageUrl;
+  };
+
   const editor: BlockNoteEditor | null = useBlockNote({
     initialContent:
       isNonEmptyString(activity.body) && activity.body !== '{}'
@@ -66,6 +93,7 @@ export const ActivityBodyEditor = ({
       debounceOnChange(JSON.stringify(editor.topLevelBlocks) ?? '');
     },
     slashMenuItems,
+    uploadFile: imagesActivated ? handleUploadAttachment : undefined,
   });
 
   return (
