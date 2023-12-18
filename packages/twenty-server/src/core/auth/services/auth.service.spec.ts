@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { HttpService } from '@nestjs/axios';
 
 import { UserService } from 'src/core/user/services/user.service';
 import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
@@ -31,6 +32,10 @@ describe('AuthService', () => {
         },
         {
           provide: FileUploadService,
+          useValue: {},
+        },
+        {
+          provide: HttpService,
           useValue: {},
         },
         {
