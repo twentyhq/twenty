@@ -8,13 +8,6 @@ import "graphiql/graphiql.css";
 
 // Docusaurus does SSR for custom pages but we need to load GraphiQL in the browser
 const GraphiQLComponent = () => {
-  if (
-    !window.localStorage.getItem("graphiql:theme") &&
-    window.localStorage.getItem("theme") != "dark"
-  ) {
-    window.localStorage.setItem("graphiql:theme", "light");
-  }
-
   const fetcher = createGraphiQLFetcher({url: "https://api.twenty.com/graphql"});
   return (
     <div className="fullHeightPlayground">
