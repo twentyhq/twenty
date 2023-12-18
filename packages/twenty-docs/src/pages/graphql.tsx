@@ -1,28 +1,39 @@
 import { createGraphiQLFetcher } from "@graphiql/toolkit";
 import { GraphiQL } from "graphiql";
-import React from "react";
+import React, { useState } from "react";
+import "graphiql/graphiql.css";
 import Layout from "@theme/Layout";
 import BrowserOnly from "@docusaurus/BrowserOnly";
+import Playground from "../components/playground";
 
-import "graphiql/graphiql.css";
 
-// Docusaurus does SSR for custom pages but we need to load GraphiQL in the browser
-const GraphiQLComponent = () => {
-  const fetcher = createGraphiQLFetcher({url: "https://api.twenty.com/graphql"});
-  return (
+const graphQL = () => {
+  const [token , setToken] = useState()
+
+  const fetcher = createGraphiQLFetcher({
+    url: "https://api.twenty.com/graphql",
+    headers: {Authorization: `Bearer ${token}`},
+  });
+
+  const children = (
     <div className="fullHeightPlayground">
       <GraphiQL fetcher={fetcher} />;
     </div>
-  );
-};
+  )
 
-const graphQL = () => (
-  <Layout
-    title="GraphQL Playground"
-    description="GraphQL Playground for Twenty"
-  >
-    <BrowserOnly>{() => <GraphiQLComponent />}</BrowserOnly>
-  </Layout>
-);
+  return (
+    <Layout
+      title="GraphQL Playground"
+      description="GraphQL Playground for Twenty"
+    >
+      <BrowserOnly>{
+        () => <Playground
+          children={children}
+          setToken={setToken}
+        />
+      }</BrowserOnly>
+    </Layout>
+  )
+};
 
 export default graphQL;
