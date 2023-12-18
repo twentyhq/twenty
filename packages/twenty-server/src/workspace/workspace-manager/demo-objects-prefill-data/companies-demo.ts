@@ -527,7 +527,7 @@ export const companiesDemo = [
     linkedinLinkUrl: 'https://linkedin.com/company/epicor-software-corp',
   },
   {
-    name: 'Hexagon Asset Lifecycle QuickActions',
+    name: 'Hexagon Asset Lifecycle Intelligence',
     domainName: 'hexagonppm.com',
     address: 'Madison',
     employees: 5262,

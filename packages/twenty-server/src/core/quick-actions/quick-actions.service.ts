@@ -87,16 +87,16 @@ export class QuickActionsService {
 
       await this.workspaceQueryRunnunerService.execute(
         `mutation {
-        updatepersonCollection(set: ${stringifyWithoutKeyQuote({
-          companyId: relatedCompanyId,
-        })}, filter: { id: { eq: "${person.id}" } }) {
-          affectedCount
-          records {
-            id
+          updatepersonCollection(set: ${stringifyWithoutKeyQuote({
+            companyId: relatedCompanyId,
+          })}, filter: { id: { eq: "${person.id}" } }) {
+            affectedCount
+            records {
+              id
+            }
           }
         }
-      }
-    `,
+      `,
         workspaceId,
       );
     }
@@ -114,7 +114,7 @@ export class QuickActionsService {
             }
           }
         }
-      }
+     }
     `;
 
     const company = (
@@ -132,16 +132,15 @@ export class QuickActionsService {
 
     await this.workspaceQueryRunnunerService.execute(
       `mutation {
-      updatecompanyCollection(set: ${stringifyWithoutKeyQuote(
-        enrichedData,
-      )}, filter: { id: { eq: "${id}" } }) {
-        affectedCount
-        records {
-          id
-        }
-      }
-    }
-  `,
+        updatecompanyCollection(set: ${stringifyWithoutKeyQuote(
+          enrichedData,
+        )}, filter: { id: { eq: "${id}" } }) {
+            affectedCount
+            records {
+              id
+            }
+          }
+      }`,
       workspaceId,
     );
   }
