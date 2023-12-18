@@ -71,17 +71,17 @@ const TokenForm = (
       <form className="form">
         <label>
           To load your playground schema, <a className='link' href='https://app.twenty.com/settings/developers/api-keys'>generate an API key</a> and paste it here:
-      </label>
-      <p>
-        <input
-          className={(token && !isLoading) ? "input invalid" : "input"}
-        type='text'
-        disabled={isLoading}
-        placeholder='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMD...'
-        defaultValue={token}
-        onChange={updateToken}
-        />
-        <p className={`token-invalid ${(!token || isLoading )&& 'not-visible'}`}>Token invalid</p>
+        </label>
+        <p>
+          <input
+            className={(token && !isLoading) ? "input invalid" : "input"}
+            type='text'
+            disabled={isLoading}
+            placeholder='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMD...'
+            defaultValue={token}
+            onChange={updateToken}
+          />
+          <span className={`token-invalid ${(!token || isLoading )&& 'not-visible'}`}>Token invalid</span>
           <div className='loader-container'>
             <TbLoader2 className={`loader ${!isLoading && 'not-visible'}`} />
           </div>
