@@ -4,6 +4,7 @@ export enum SettingsPath {
   Accounts = 'accounts',
   NewAccount = 'accounts/new',
   AccountsEmails = 'accounts/emails',
+  AccountsEmailsInboxSettings = 'accounts/emails/:accountUuid',
   Objects = 'objects',
   ObjectDetail = 'objects/:objectSlug',
   ObjectEdit = 'objects/:objectSlug/edit',
