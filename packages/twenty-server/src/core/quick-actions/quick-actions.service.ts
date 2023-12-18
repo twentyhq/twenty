@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
 import { v4 as uuidv4 } from 'uuid';
-import axios from 'axios';
 
 import { Record as IRecord } from 'src/workspace/workspace-query-builder/interfaces/record.interface';
 
 import { isWorkEmail } from 'src/utils/is-work-email';
 import { stringifyWithoutKeyQuote } from 'src/workspace/workspace-query-builder/utils/stringify-without-key-quote.util';
 import { WorkspaceQueryRunnerService } from 'src/workspace/workspace-query-runner/workspace-query-runner.service';
+import { IntelligenceService } from 'src/core/quick-actions/intelligence.service';
 
 @Injectable()
 export class QuickActionsService {
   constructor(
     private readonly workspaceQueryRunnunerService: WorkspaceQueryRunnerService,
+    private readonly intelligenceService: IntelligenceService,
   ) {}
 
   async createCompanyFromPerson(id: string, workspaceId: string) {
@@ -125,25 +126,15 @@ export class QuickActionsService {
       )) as IRecord
     ).edges?.[0]?.node;
 
-    const enrichedData = await axios.get(
-      `https://companies.twenty.com/${company.domainName}`,
-      {
-        validateStatus: function () {
-          // This ensures the promise is always resolved, preventing axios from throwing an error
-          return true;
-        },
-      },
+    const enrichedData = await this.intelligenceService.enrichCompany(
+      company.domainName,
     );
-
-    if (enrichedData.status !== 200) {
-      return;
-    }
 
     await this.workspaceQueryRunnunerService.execute(
       `mutation {
-      updatecompanyCollection(set: ${stringifyWithoutKeyQuote({
-        linkedinLinkUrl: `https://linkedin.com/` + enrichedData.data.handle,
-      })}, filter: { id: { eq: "${id}" } }) {
+      updatecompanyCollection(set: ${stringifyWithoutKeyQuote(
+        enrichedData,
+      )}, filter: { id: { eq: "${id}" } }) {
         affectedCount
         records {
           id

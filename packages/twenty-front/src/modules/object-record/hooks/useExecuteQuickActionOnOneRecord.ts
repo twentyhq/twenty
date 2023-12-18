@@ -12,10 +12,13 @@ type useExecuteQuickActionOnOneRecordProps = {
 export const useExecuteQuickActionOnOneRecord = <T>({
   objectNameSingular,
 }: useExecuteQuickActionOnOneRecordProps) => {
-  const { objectMetadataItem, executeQuickActionOnOneRecordMutation, findManyRecordsQuery } =
-    useObjectMetadataItem({
-      objectNameSingular,
-    });
+  const {
+    objectMetadataItem,
+    executeQuickActionOnOneRecordMutation,
+    findManyRecordsQuery,
+  } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
   const apolloClient = useApolloClient();
 

@@ -216,4 +216,8 @@ export class EnvironmentService {
   getDemoWorkspaceIds(): string[] {
     return this.configService.get<string[]>('DEMO_WORKSPACE_IDS') ?? [];
   }
+
+  getOpenRouterApiKey(): string | undefined {
+    return this.configService.get<string>('OPENROUTER_API_KEY');
+  }
 }
