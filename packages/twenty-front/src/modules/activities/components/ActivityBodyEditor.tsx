@@ -39,7 +39,6 @@ export const ActivityBodyEditor = ({
 
   const debounceOnChange = useMemo(() => {
     const onInternalChange = (activityBody: string) => {
-      console.log(activityBody);
       setBody(activityBody);
       updateOneRecord?.({
         idToUpdate: activity.id,
