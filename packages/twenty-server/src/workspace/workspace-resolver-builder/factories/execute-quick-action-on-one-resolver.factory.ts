@@ -59,6 +59,9 @@ export class ExecuteQuickActionOnOneResolverFactory
         );
         break;
       }
+      default:
+        // TODO: different quick actions per object on frontend
+        break;
     }
 
     return this.workspaceQueryRunnerService.findOne(

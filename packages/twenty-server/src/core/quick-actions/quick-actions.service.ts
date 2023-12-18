@@ -18,7 +18,7 @@ export class QuickActionsService {
   ) {}
 
   async createCompanyFromPerson(id: string, workspaceId: string) {
-    const person = (
+    const personRequest =
       (await this.workspaceQueryRunnunerService.executeAndParse(
         `query {
         personCollection(filter: {id: {eq: "${id}"}}) {
@@ -35,11 +35,11 @@ export class QuickActionsService {
         'person',
         '',
         workspaceId,
-      )) as IRecord
-    ).edges?.[0]?.node;
+      )) as IRecord;
+    const person = personRequest.edges?.[0]?.node;
 
     if (!person.companyId && person.email && isWorkEmail(person.email)) {
-      const companyDomainName = person.email.split('@')[1].toLowerCase();
+      const companyDomainName = person.email.split('@')?.[1].toLowerCase();
       const companyName = capitalize(companyDomainName.split('.')[0]);
       let relatedCompanyId = uuidv4();
 
@@ -116,14 +116,14 @@ export class QuickActionsService {
      }
     `;
 
-    const company = (
+    const companyRequest =
       (await this.workspaceQueryRunnunerService.executeAndParse(
         companyQuery,
         'company',
         '',
         workspaceId,
-      )) as IRecord
-    ).edges?.[0]?.node;
+      )) as IRecord;
+    const company = companyRequest.edges?.[0]?.node;
 
     const enrichedData = await this.intelligenceService.enrichCompany(
       company.domainName,

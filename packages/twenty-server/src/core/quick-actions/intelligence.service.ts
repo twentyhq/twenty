@@ -29,8 +29,7 @@ export class IntelligenceService {
   }
 
   async completeWithAi(content: string) {
-    fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
+    return axios.post('https://openrouter.ai/api/v1/chat/completions', {
       headers: {
         Authorization: `Bearer ${this.environmentService.getOpenRouterApiKey()}`,
         'HTTP-Referer': `https://twenty.com`,
