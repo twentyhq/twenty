@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { google } from 'googleapis';
+import { v4 } from 'uuid';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
@@ -169,13 +170,23 @@ export class FetchWorkspaceMessagesService {
   }
 
   async saveMessages(messages, dataSourceMetadata, workspaceDataSource) {
+    const i = 0;
+
     for (const message of messages) {
       const {
         externalId,
         headerMessageId,
         subject,
         messageThreadId,
-        from,
+        fromDisplayName,
+        fromEmail,
+        toDisplayName,
+        toEmail,
+        ccDisplayName,
+        ccEmail,
+        bccDisplayName,
+        bccEmail,
+        date,
         body,
       } = message;
 
@@ -184,9 +195,12 @@ export class FetchWorkspaceMessagesService {
         [messageThreadId],
       );
 
+      const messageId = v4();
+
       await workspaceDataSource?.query(
-        `INSERT INTO ${dataSourceMetadata.schema}."message" ("externalId", "headerMessageId", "subject", "messageThreadId", "direction", "body") VALUES ($1, $2, $3, $4, $5, $6)`,
+        `INSERT INTO ${dataSourceMetadata.schema}."message" ("id", "externalId", "headerMessageId", "subject", "messageThreadId", "direction", "body") VALUES ($1, $2, $3, $4, $5, $6, $7)`,
         [
+          messageId,
           externalId,
           headerMessageId,
           subject,
@@ -194,6 +208,11 @@ export class FetchWorkspaceMessagesService {
           'incoming',
           body,
         ],
+      );
+
+      await workspaceDataSource?.query(
+        `INSERT INTO ${dataSourceMetadata.schema}."messageRecipient" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
+        [messageId, 'from', '', '', null, null],
       );
     }
   }

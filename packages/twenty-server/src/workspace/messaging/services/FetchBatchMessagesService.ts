@@ -192,12 +192,15 @@ export class FetchBatchMessagesService {
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
 
-      const isPlain = part.mimeType === 'text/plain';
-      const isHtml = part.mimeType === 'text/html';
-      const isMultiPart = part.mimeType === 'multipart/alternative';
-      const isAttachment = part.body.attachmentId != undefined;
+      if (part.mimeType === 'multipart/alternative') {
+        return this.processParts(part.parts);
+      }
+
+      if (part.mimeType === 'text/plain') return part.body.data;
     }
 
-    return [];
+    if (part.mimeType === 'text/html') {
+      return part.body.data;
+    }
   }
 }
