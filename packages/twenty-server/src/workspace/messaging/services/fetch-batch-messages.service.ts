@@ -131,34 +131,31 @@ export class FetchBatchMessagesService {
 
       const parts = payload?.parts;
 
-      if (!parts) {
-        return;
+      let content: string[] = [];
+
+      if (parts) {
+        content = this.processParts(parts);
+      } else {
+        content = [
+          atob(payload?.body?.data.replace(/-/g, '+').replace(/_/g, '/')),
+        ];
       }
 
-      const bodyBase64 = parts[0]?.body?.data;
-
-      if (!bodyBase64) {
-        return;
-      }
-
-      const body = atob(bodyBase64.replace(/-/g, '+').replace(/_/g, '/'));
-
-      //"displayName < email >"
       const from = headers?.find((header) => header.name === 'From')?.value;
 
-      const { displayName: fromDisplayName, email: fromEmail } =
+      const { displayNames: fromDisplayNames, emails: fromEmails } =
         this.formatDisplayNamesAndEmails(from);
 
       const to = headers?.find((header) => header.name === 'To')?.value;
-      const { displayName: toDisplayName, email: toEmail } =
+      const { displayNames: toDisplayNames, emails: toEmails } =
         this.formatDisplayNamesAndEmails(to);
 
       const cc = headers?.find((header) => header.name === 'Cc')?.value;
-      const { displayName: ccDisplayName, email: ccEmail } =
+      const { displayNames: ccDisplayNames, emails: ccEmails } =
         this.formatDisplayNamesAndEmails(cc);
 
       const bcc = headers?.find((header) => header.name === 'Bcc')?.value;
-      const { displayName: bccDisplayName, email: bccEmail } =
+      const { displayNames: bccDisplayNames, emails: bccEmails } =
         this.formatDisplayNamesAndEmails(bcc);
 
       return {
@@ -167,37 +164,73 @@ export class FetchBatchMessagesService {
           ?.value,
         subject: headers?.find((header) => header.name === 'Subject')?.value,
         messageThreadId: threadId,
-        fromDisplayName,
-        fromEmail,
-        toDisplayName,
-        toEmail,
-        ccDisplayName,
-        ccEmail,
-        bccDisplayName,
-        bccEmail,
+        fromDisplayNames,
+        fromEmails,
+        toDisplayNames,
+        toEmails,
+        ccDisplayNames,
+        ccEmails,
+        bccDisplayNames,
+        bccEmails,
         date: internalDate,
-        body,
+        body: content[0],
       };
     });
   }
 
-  formatDisplayNamesAndEmails(displayNameAndEmail) {
-    const displayName = displayNameAndEmail?.split('<')[0]?.trim();
-    const email = displayNameAndEmail?.split('<')[1]?.split('>')[0]?.trim();
+  formatDisplayNamesAndEmails(displayNamesAndEmails) {
+    const displayNamesString = displayNamesAndEmails?.split('<')[0]?.trim();
+    const emailsString = displayNamesAndEmails
+      ?.split('<')[1]
+      ?.split('>')[0]
+      ?.trim();
 
-    return { displayName, email };
+    const displayNames = displayNamesString?.split(',').map((displayName) => {
+      return displayName.trim();
+    });
+
+    const emails = emailsString?.split(',').map((email) => {
+      return email.trim();
+    });
+
+    return { displayNames, emails };
   }
 
   processParts(parts) {
+    // we get only the plain text for now
+    const content: any = [];
+
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
 
       const isPlain = part.mimeType === 'text/plain';
-      const isHtml = part.mimeType === 'text/html';
+      //const isHtml = part.mimeType === 'text/html';
       const isMultiPart = part.mimeType === 'multipart/alternative';
-      const isAttachment = part.body.attachmentId != undefined;
+      //const isAttachment = part.body.attachmentId != undefined;
+
+      if (isPlain) {
+        content.push(
+          atob(part.body.data.replace(/-/g, '+').replace(/_/g, '/')),
+        );
+      }
+
+      if (isMultiPart) {
+        content.push(...this.processParts(part.parts));
+      }
+
+      // if (isPlain || isHtml) {
+      //   content.push(
+      //     atob(part.body.data.replace(/-/g, '+').replace(/_/g, '/')),
+      //   );
+      // }
+      // if (isMultiPart) {
+      //   content.push(...this.processParts(part.parts));
+      // }
+      // if (isAttachment) {
+      //   content.push(part.body.attachmentId);
+      // }
     }
 
-    return [];
+    return content;
   }
 }

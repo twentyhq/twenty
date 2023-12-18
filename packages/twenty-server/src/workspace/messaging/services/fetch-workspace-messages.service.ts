@@ -170,25 +170,25 @@ export class FetchWorkspaceMessagesService {
   }
 
   async saveMessages(messages, dataSourceMetadata, workspaceDataSource) {
-    const i = 0;
-
     for (const message of messages) {
       const {
         externalId,
         headerMessageId,
         subject,
         messageThreadId,
-        fromDisplayName,
-        fromEmail,
-        toDisplayName,
-        toEmail,
-        ccDisplayName,
-        ccEmail,
-        bccDisplayName,
-        bccEmail,
-        date,
+        fromDisplayNames,
+        fromEmails,
+        toDisplayNames,
+        toEmails,
+        ccDisplayNames,
+        ccEmails,
+        bccDisplayNames,
+        bccEmails,
         body,
       } = message;
+
+      console.log('toDisplayNames', toDisplayNames);
+      console.log('toEmails', toEmails);
 
       const messageThread = await workspaceDataSource?.query(
         `SELECT * FROM ${dataSourceMetadata.schema}."messageThread" WHERE "externalId" = $1`,
