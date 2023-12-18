@@ -102,8 +102,12 @@ export const SettingsObjectDetail = () => {
                         onEdit={() =>
                           navigate(`./${getFieldSlug(activeMetadataField)}`)
                         }
-                        onDisable={() =>
-                          disableMetadataField(activeMetadataField)
+                        onDisable={
+                          activeMetadataField.id ===
+                            activeObjectMetadataItem.labelIdentifierFieldMetadataId ||
+                          activeMetadataField.name === 'name'
+                            ? undefined
+                            : () => disableMetadataField(activeMetadataField)
                         }
                       />
                     }

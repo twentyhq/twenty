@@ -5,6 +5,7 @@ import { CompanyTeam } from '@/companies/components/CompanyTeam';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { parseFieldType } from '@/object-metadata/utils/parseFieldType';
 import { FieldContext } from '@/object-record/field/contexts/FieldContext';
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
@@ -25,7 +26,11 @@ import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSu
 import { ShowPageRecoilScopeContext } from '@/ui/layout/states/ShowPageRecoilScopeContext';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { FileFolder, useUploadImageMutation } from '~/generated/graphql';
+import {
+  FieldMetadataType,
+  FileFolder,
+  useUploadImageMutation,
+} from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 import { useFindOneRecord } from '../hooks/useFindOneRecord';
@@ -41,9 +46,10 @@ export const RecordShowPage = () => {
     throw new Error(`Object name is not defined`);
   }
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const { objectMetadataItem, labelIdentifierFieldMetadataId } =
+    useObjectMetadataItem({
+      objectNameSingular,
+    });
 
   const { identifiersMapper } = useRelationPicker();
 
@@ -170,6 +176,10 @@ export const RecordShowPage = () => {
     });
   };
 
+  const labelIdentifierFieldMetadata = objectMetadataItem.fields.find(
+    (field) => field.id === labelIdentifierFieldMetadataId,
+  );
+
   return (
     <PageContainer>
       <PageTitle title={pageName} />
@@ -201,9 +211,33 @@ export const RecordShowPage = () => {
               <ShowPageSummaryCard
                 id={record.id}
                 logoOrAvatar={recordIdentifiers?.avatarUrl}
-                title={recordIdentifiers?.name ?? 'No name'}
+                avatarPlaceholder={recordIdentifiers?.name ?? ''}
                 date={record.createdAt ?? ''}
-                renderTitleEditComponent={() => <></>}
+                title={
+                  <FieldContext.Provider
+                    value={{
+                      entityId: record.id,
+                      recoilScopeId: record.id + labelIdentifierFieldMetadataId,
+                      isLabelIdentifier: false,
+                      fieldDefinition: {
+                        type: parseFieldType(
+                          labelIdentifierFieldMetadata?.type ||
+                            FieldMetadataType.Text,
+                        ),
+                        iconName: '',
+                        fieldMetadataId: labelIdentifierFieldMetadataId || '',
+                        label: labelIdentifierFieldMetadata?.label || '',
+                        metadata: {
+                          fieldName: labelIdentifierFieldMetadata?.name || '',
+                        },
+                      },
+                      useUpdateEntityMutation: useUpdateOneObjectRecordMutation,
+                      hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                    }}
+                  >
+                    <RecordInlineCell />
+                  </FieldContext.Provider>
+                }
                 avatarType={recordIdentifiers?.avatarType ?? 'rounded'}
                 onUploadPicture={
                   objectNameSingular === 'person' ? onUploadPicture : undefined
@@ -212,12 +246,15 @@ export const RecordShowPage = () => {
               <PropertyBox extraPadding={true}>
                 {objectMetadataItem &&
                   [...objectMetadataItem.fields]
-                    .sort((a, b) =>
-                      a.name === 'name' ? -1 : a.name.localeCompare(b.name),
+                    .sort((fieldMetadataItemA, fieldMetadataItemB) =>
+                      fieldMetadataItemA.name.localeCompare(
+                        fieldMetadataItemB.name,
+                      ),
                     )
                     .filter(filterAvailableFieldMetadataItem)
-                    .map((metadataField, index) => {
-                      return (
+                    .map((metadataField, index) =>
+                      metadataField.id ===
+                      labelIdentifierFieldMetadataId ? null : (
                         <FieldContext.Provider
                           key={record.id + metadataField.id}
                           value={{
@@ -237,8 +274,8 @@ export const RecordShowPage = () => {
                         >
                           <RecordInlineCell />
                         </FieldContext.Provider>
-                      );
-                    })}
+                      ),
+                    )}
               </PropertyBox>
               {objectNameSingular === 'company' ? (
                 <>

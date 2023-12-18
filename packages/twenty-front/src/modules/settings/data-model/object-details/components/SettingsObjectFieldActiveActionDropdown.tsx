@@ -14,7 +14,7 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsObjectFieldActiveActionDropdownProps = {
   isCustomField?: boolean;
-  onDisable: () => void;
+  onDisable?: () => void;
   onEdit: () => void;
   scopeKey: string;
 };
@@ -35,7 +35,7 @@ export const SettingsObjectFieldActiveActionDropdown = ({
   };
 
   const handleDisable = () => {
-    onDisable();
+    onDisable?.();
     closeDropdown();
   };
 
@@ -53,11 +53,13 @@ export const SettingsObjectFieldActiveActionDropdown = ({
                 LeftIcon={isCustomField ? IconPencil : IconEye}
                 onClick={handleEdit}
               />
-              <MenuItem
-                text="Disable"
-                LeftIcon={IconArchive}
-                onClick={handleDisable}
-              />
+              {!!onDisable && (
+                <MenuItem
+                  text="Disable"
+                  LeftIcon={IconArchive}
+                  onClick={handleDisable}
+                />
+              )}
             </DropdownMenuItemsContainer>
           </DropdownMenu>
         }
