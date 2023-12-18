@@ -8,6 +8,7 @@ import { isWorkEmail } from 'src/utils/is-work-email';
 import { stringifyWithoutKeyQuote } from 'src/workspace/workspace-query-builder/utils/stringify-without-key-quote.util';
 import { WorkspaceQueryRunnerService } from 'src/workspace/workspace-query-runner/workspace-query-runner.service';
 import { IntelligenceService } from 'src/core/quick-actions/intelligence.service';
+import { capitalize } from 'src/utils/capitalize';
 
 @Injectable()
 export class QuickActionsService {
@@ -38,8 +39,8 @@ export class QuickActionsService {
     ).edges?.[0]?.node;
 
     if (!person.companyId && person.email && isWorkEmail(person.email)) {
-      const companyDomainName = person.email.split('@')[1];
-      const companyNameSmallCase = companyDomainName.split('.')[0];
+      const companyDomainName = person.email.split('@')[1].toLowerCase();
+      const companyName = capitalize(companyDomainName.split('.')[0]);
       let relatedCompanyId = uuidv4();
 
       const existingCompany =
@@ -67,9 +68,7 @@ export class QuickActionsService {
           insertIntocompanyCollection(objects: ${stringifyWithoutKeyQuote([
             {
               id: relatedCompanyId,
-              name:
-                companyNameSmallCase.charAt(0).toUpperCase() +
-                companyNameSmallCase.slice(1),
+              name: companyName,
               domainName: companyDomainName,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),

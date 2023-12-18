@@ -50,12 +50,14 @@ export class ExecuteQuickActionOnOneResolverFactory
           args.id,
           options.workspaceId,
         );
+        break;
       }
       case 'person': {
         await this.quickActionsService.createCompanyFromPerson(
           args.id,
           options.workspaceId,
         );
+        break;
       }
     }
 
