@@ -9,6 +9,7 @@ import { Activity } from '@/activities/types/Activity';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 
 const StyledBlockNoteStyledContainer = styled.div`
@@ -38,6 +39,7 @@ export const ActivityBodyEditor = ({
 
   const debounceOnChange = useMemo(() => {
     const onInternalChange = (activityBody: string) => {
+      console.log(activityBody);
       setBody(activityBody);
       updateOneRecord?.({
         idToUpdate: activity.id,
@@ -73,9 +75,7 @@ export const ActivityBodyEditor = ({
       throw new Error("Couldn't upload Image");
     }
     const imageUrl =
-      process.env.REACT_APP_SERVER_BASE_URL +
-      '/files/' +
-      result?.data?.uploadFile;
+      REACT_APP_SERVER_BASE_URL + '/files/' + result?.data?.uploadFile;
     return imageUrl;
   };
 
