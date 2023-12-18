@@ -230,7 +230,7 @@ export class WorkspaceQueryRunnerService {
     targetTableName: string,
     command: string,
     workspaceId: string,
-  ): Promise<Result | undefined> {
+  ): Promise<Result> {
     const result = await this.execute(query, workspaceId);
 
     return this.parseResult(result, targetTableName, command);

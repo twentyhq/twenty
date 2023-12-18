@@ -19,7 +19,7 @@ export class QuickActionsService {
 
   async createCompanyFromPerson(id: string, workspaceId: string) {
     const personRequest =
-      (await this.workspaceQueryRunnunerService.executeAndParse(
+      await this.workspaceQueryRunnunerService.executeAndParse<IRecord>(
         `query {
         personCollection(filter: {id: {eq: "${id}"}}) {
               edges {
@@ -35,7 +35,7 @@ export class QuickActionsService {
         'person',
         '',
         workspaceId,
-      )) as IRecord;
+      );
     const person = personRequest.edges?.[0]?.node;
 
     if (!person) {
@@ -48,7 +48,7 @@ export class QuickActionsService {
       let relatedCompanyId = uuidv4();
 
       const existingCompany =
-        (await this.workspaceQueryRunnunerService.executeAndParse(
+        await this.workspaceQueryRunnunerService.executeAndParse<IRecord>(
           `query {companyCollection(filter: {domainName: {eq: "${companyDomainName}"}}) {
                 edges {
                   node {
@@ -61,7 +61,7 @@ export class QuickActionsService {
           'company',
           '',
           workspaceId,
-        )) as IRecord;
+        );
 
       if (existingCompany.edges?.length) {
         relatedCompanyId = existingCompany.edges[0].node.id;
@@ -121,12 +121,12 @@ export class QuickActionsService {
     `;
 
     const companyRequest =
-      (await this.workspaceQueryRunnunerService.executeAndParse(
+      await this.workspaceQueryRunnunerService.executeAndParse<IRecord>(
         companyQuery,
         'company',
         '',
         workspaceId,
-      )) as IRecord;
+      );
     const company = companyRequest.edges?.[0]?.node;
 
     if (!company) {

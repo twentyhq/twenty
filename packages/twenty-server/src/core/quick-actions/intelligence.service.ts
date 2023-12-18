@@ -1,6 +1,5 @@
+import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-
-import axios from 'axios';
 
 import { CompanyInteface } from 'src/core/quick-actions/interfaces/company.interface';
 
@@ -8,10 +7,13 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 
 @Injectable()
 export class IntelligenceService {
-  constructor(private readonly environmentService: EnvironmentService) {}
+  constructor(
+    private readonly environmentService: EnvironmentService,
+    private readonly httpService: HttpService,
+  ) {}
 
   async enrichCompany(domainName: string): Promise<CompanyInteface> {
-    const enrichedCompany = await axios.get(
+    const enrichedCompany = await this.httpService.axiosRef.get(
       `https://companies.twenty.com/${domainName}`,
       {
         validateStatus: function () {
@@ -31,17 +33,20 @@ export class IntelligenceService {
   }
 
   async completeWithAi(content: string) {
-    return axios.post('https://openrouter.ai/api/v1/chat/completions', {
-      headers: {
-        Authorization: `Bearer ${this.environmentService.getOpenRouterApiKey()}`,
-        'HTTP-Referer': `https://twenty.com`,
-        'X-Title': `Twenty CRM`,
-        'Content-Type': 'application/json',
+    return this.httpService.axiosRef.post(
+      'https://openrouter.ai/api/v1/chat/completions',
+      {
+        headers: {
+          Authorization: `Bearer ${this.environmentService.getOpenRouterApiKey()}`,
+          'HTTP-Referer': `https://twenty.com`,
+          'X-Title': `Twenty CRM`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'mistralai/mixtral-8x7b-instruct',
+          messages: [{ role: 'user', content: content }],
+        }),
       },
-      body: JSON.stringify({
-        model: 'mistralai/mixtral-8x7b-instruct',
-        messages: [{ role: 'user', content: content }],
-      }),
-    });
+    );
   }
 }

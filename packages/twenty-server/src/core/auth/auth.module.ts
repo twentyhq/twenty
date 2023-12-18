@@ -2,6 +2,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule } from '@nestjs/axios';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { FileModule } from 'src/core/file/file.module';
@@ -43,6 +44,7 @@ const jwtModule = JwtModule.registerAsync({
     WorkspaceManagerModule,
     TypeORMModule,
     TypeOrmModule.forFeature([Workspace, User, RefreshToken], 'core'),
+    HttpModule,
   ],
   controllers: [
     GoogleAuthController,
