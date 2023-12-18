@@ -1,9 +1,9 @@
 import Layout from "@theme/Layout";
 import BrowserOnly from "@docusaurus/BrowserOnly";
 import React, { useEffect, useState } from "react";
-import Playground from "../components/playground";
 import spotlightTheme from '!css-loader!@stoplight/elements/styles.min.css';
 import { API } from "@stoplight/elements";
+import Playground from "../components/playground";
 
 
 const restApi = () => {
