@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { MultipleFiltersDropdownContent } from '@/object-record/object-filter-dropdown/components/MultipleFiltersDropdownContent';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
@@ -61,6 +61,13 @@ export const EditableFilterDropdownButton = ({
     removeViewFilter(viewFilter.fieldMetadataId);
   };
 
+  const handleDropdownClickOutside = useCallback(() => {
+    const { value, fieldMetadataId } = viewFilter;
+    if (!value) {
+      removeViewFilter(fieldMetadataId);
+    }
+  }, [viewFilter, removeViewFilter]);
+
   return (
     <Dropdown
       clickableComponent={
@@ -74,6 +81,7 @@ export const EditableFilterDropdownButton = ({
       dropdownHotkeyScope={hotkeyScope}
       dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"
+      onClickOutside={handleDropdownClickOutside}
     />
   );
 };

@@ -115,15 +115,13 @@ You need to provision this database with a `twenty` user (password: `twenty`), a
 <Tabs>
 <TabItem value="linux" label="Linux" default>
 <b>Option 1:</b> To provision your database locally:
-<br />
 ```bash
 make postgres-on-linux
 ```
 
 <b>Option 2:</b> If you have docker installed:
-<br />
 ```bash
-make postgres--on-docker
+make postgres-on-docker
 ```
 This will create a Docker container, exposing a PostgresSQL instance at [http://localhost:5432](http://localhost:5432).
 You can access this using `twenty` postgres user (password: `twenty`)
@@ -131,14 +129,12 @@ You can access this using `twenty` postgres user (password: `twenty`)
   <TabItem value="mac-os" label="Mac OS" default>
 
 <b>Option 1:</b> To provision your database locally:
-<br />
 ```bash
 make postgres-on-macos-intel #for intel architecture
 make postgres-on-macos-arm #for M1/M2/M3 architecture
 ```
 
 <b>Option 2:</b> If you have docker installed:
-<br />
 ```bash
 make postgres-on-docker
 ```

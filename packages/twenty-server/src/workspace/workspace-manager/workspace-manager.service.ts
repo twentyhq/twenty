@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
-import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
 import { WorkspaceMigrationService } from 'src/metadata/workspace-migration/workspace-migration.service';
 import { standardObjectsPrefillData } from 'src/workspace/workspace-manager/standard-objects-prefill-data/standard-objects-prefill-data';
 import { demoObjectsPrefillData } from 'src/workspace/workspace-manager/demo-objects-prefill-data/demo-objects-prefill-data';

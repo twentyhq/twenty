@@ -47,4 +47,4 @@ export const linkObjectDefinition = {
 export type LinkMetadata = {
   label: string;
   url: string;
-}
+};

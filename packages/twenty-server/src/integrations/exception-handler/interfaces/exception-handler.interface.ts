@@ -9,7 +9,7 @@ export interface ExceptionHandlerSentryDriverFactoryOptions {
   type: ExceptionHandlerDriver.Sentry;
   options: {
     dns: string;
-    serverInstance: Router;
+    serverInstance?: Router;
     debug?: boolean;
   };
 }

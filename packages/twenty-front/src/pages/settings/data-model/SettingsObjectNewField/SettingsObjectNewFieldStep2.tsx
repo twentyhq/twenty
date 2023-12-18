@@ -42,6 +42,14 @@ export const SettingsObjectNewFieldStep2 = () => {
     'IS_RELATION_FIELD_TYPE_ENABLED',
   );
 
+  const isSelectFieldTypeEnabled = useIsFeatureEnabled(
+    'IS_SELECT_FIELD_TYPE_ENABLED',
+  );
+
+  const isRatingFieldTypeEnabled = useIsFeatureEnabled(
+    'IS_RATING_FIELD_TYPE_ENABLED',
+  );
+
   const {
     formValues,
     handleFormChange,
@@ -195,6 +203,13 @@ export const SettingsObjectNewFieldStep2 = () => {
         });
       } else {
         const createdMetadataField = await createMetadataField({
+          defaultValue:
+            validatedFormValues.type === FieldMetadataType.Currency
+              ? {
+                  amountMicros: null,
+                  currencyCode: validatedFormValues.currency.currencyCode,
+                }
+              : undefined,
           description: validatedFormValues.description,
           icon: validatedFormValues.icon,
           label: validatedFormValues.label ?? '',
@@ -249,13 +264,19 @@ export const SettingsObjectNewFieldStep2 = () => {
     FieldMetadataType.Numeric,
     FieldMetadataType.Phone,
     FieldMetadataType.Probability,
-    FieldMetadataType.Rating,
-    FieldMetadataType.Select,
     FieldMetadataType.Uuid,
   ];
 
   if (!isRelationFieldTypeEnabled) {
     excludedFieldTypes.push(FieldMetadataType.Relation);
+  }
+
+  if (!isSelectFieldTypeEnabled) {
+    excludedFieldTypes.push(FieldMetadataType.Select);
+  }
+
+  if (!isRatingFieldTypeEnabled) {
+    excludedFieldTypes.push(FieldMetadataType.Rating);
   }
 
   return (
@@ -294,6 +315,7 @@ export const SettingsObjectNewFieldStep2 = () => {
           onChange={handleFormChange}
           values={{
             type: formValues.type,
+            currency: formValues.currency,
             relation: formValues.relation,
             select: formValues.select,
           }}

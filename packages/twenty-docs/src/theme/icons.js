@@ -65,4 +65,11 @@ export {
   TbTargetArrow,
   TbNote,
   TbInfoCircle,
+  TbLink,
+  TbNavigation,
+  TbMenu,
+  TbSquareChevronsRight,
+  TbTemplate,
+  TbRectangle,
+  TbCircleCheckFilled,
 } from "react-icons/tb";
