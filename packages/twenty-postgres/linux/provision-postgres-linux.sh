@@ -75,5 +75,5 @@ fi
 
 # Run the init.sql to setup database
 echo_header $GREEN "Step [4/4]: Setting up database..."
-cp ./postgres/init.sql /tmp/init.sql
+cp ./init.sql /tmp/init.sql
 sudo -u postgres psql -f /tmp/init.sql || handle_error "Failed to execute init.sql script."
