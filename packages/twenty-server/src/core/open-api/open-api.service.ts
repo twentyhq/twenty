@@ -5,7 +5,6 @@ import { OpenAPIV3 } from 'openapi-types';
 
 import { TokenService } from 'src/core/auth/services/token.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { baseSchema } from 'src/core/open-api/utils/base-schema.utils';
 import {
   computeManyResultPath,
@@ -23,11 +22,10 @@ export class OpenApiService {
   constructor(
     private readonly tokenService: TokenService,
     private readonly objectMetadataService: ObjectMetadataService,
-    private readonly environmentService: EnvironmentService,
   ) {}
 
   async generateSchema(request: Request): Promise<OpenAPIV3.Document> {
-    const schema = baseSchema(this.environmentService.getFrontBaseUrl());
+    const schema = baseSchema();
 
     let objectMetadataItems;
 
