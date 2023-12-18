@@ -62,4 +62,7 @@ export {
   TbSelect,
   TbToggleRight,
   TbTextPlus,
+  TbTargetArrow,
+  TbNote,
+  TbInfoCircle,
 } from "react-icons/tb";
