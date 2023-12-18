@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Colors
 RED=31
@@ -6,7 +6,7 @@ GREEN=32
 BLUE=34
 
 # Function to display colored output
-function echo_header {
+echo_header () {
     COLOR=$1
     MESSAGE=$2
     echo -e "\e[${COLOR}m\n=======================================================\e[0m"
@@ -15,7 +15,7 @@ function echo_header {
 }
 
 # Function to handle errors
-function handle_error {
+handle_error () {
     echo_header $RED "Error: $1"
     exit 1
 }
