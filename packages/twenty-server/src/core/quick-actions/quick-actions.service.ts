@@ -38,6 +38,10 @@ export class QuickActionsService {
       )) as IRecord;
     const person = personRequest.edges?.[0]?.node;
 
+    if (!person) {
+      return;
+    }
+
     if (!person.companyId && person.email && isWorkEmail(person.email)) {
       const companyDomainName = person.email.split('@')?.[1].toLowerCase();
       const companyName = capitalize(companyDomainName.split('.')[0]);
@@ -124,6 +128,10 @@ export class QuickActionsService {
         workspaceId,
       )) as IRecord;
     const company = companyRequest.edges?.[0]?.node;
+
+    if (!company) {
+      return;
+    }
 
     const enrichedData = await this.intelligenceService.enrichCompany(
       company.domainName,
