@@ -2,13 +2,15 @@ import { Injectable } from '@nestjs/common';
 
 import axios from 'axios';
 
+import { CompanyInteface } from 'src/core/quick-actions/interfaces/company.interface';
+
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 @Injectable()
 export class IntelligenceService {
   constructor(private readonly environmentService: EnvironmentService) {}
 
-  async enrichCompany(domainName: string): Promise<any> {
+  async enrichCompany(domainName: string): Promise<CompanyInteface> {
     const enrichedCompany = await axios.get(
       `https://companies.twenty.com/${domainName}`,
       {
