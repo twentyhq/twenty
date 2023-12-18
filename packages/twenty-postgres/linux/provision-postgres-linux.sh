@@ -9,9 +9,9 @@ BLUE=34
 echo_header () {
     COLOR=$1
     MESSAGE=$2
-    echo -e "\e[${COLOR}m\n=======================================================\e[0m"
-    echo -e "\e[${COLOR}m${MESSAGE}\e[0m"
-    echo -e "\e[${COLOR}m=======================================================\e[0m"
+    echo "\e[${COLOR}m\n=======================================================\e[0m"
+    echo "\e[${COLOR}m${MESSAGE}\e[0m"
+    echo "\e[${COLOR}m=======================================================\e[0m"
 }
 
 # Function to handle errors
