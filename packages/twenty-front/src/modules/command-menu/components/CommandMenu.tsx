@@ -27,7 +27,7 @@ import { CommandGroup } from './CommandGroup';
 import { CommandMenuItem } from './CommandMenuItem';
 
 export const StyledDialog = styled.div`
-  background: ${({ theme }) => theme.background.primary};
+  background: ${({ theme }) => theme.background.secondary};
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) => theme.boxShadow.superHeavy};
   font-family: ${({ theme }) => theme.font.family};

@@ -3,8 +3,7 @@ import styled from '@emotion/styled';
 
 const StyledGroup = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.background.transparent};
-  color: ${({ theme }) => theme.font.color.light};
+  color: ${({ theme }) => theme.color.gray50};
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   padding-bottom: ${({ theme }) => theme.spacing(2)};
