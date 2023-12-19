@@ -13,6 +13,11 @@ import {
 import { PgBossDriver } from 'src/integrations/message-queue/drivers/pg-boss.driver';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { BullMQDriver } from 'src/integrations/message-queue/drivers/bullmq.driver';
+import { FetchMessagesJob } from 'src/workspace/messaging/jobs/fetch-messages.job';
+import { SyncDriver } from 'src/integrations/message-queue/drivers/sync.driver';
+import { ModuleRef } from '@nestjs/core';
+import { AppModule } from 'src/app.module';
+import { JobsModule } from 'src/integrations/message-queue/jobs.module';
 
 @Global()
 export class MessageQueueModule {
@@ -30,15 +35,18 @@ export class MessageQueueModule {
         useFactory: async (...args: any[]) => {
           const config = await options.useFactory(...args);
 
-          if (config.type === MessageQueueDriverType.PgBoss) {
-            const boss = new PgBossDriver(config.options);
+          switch (config.type) {
+            case MessageQueueDriverType.PgBoss:
+              const boss = new PgBossDriver(config.options);
+              await boss.init();
+              return boss;
 
-            await boss.init();
+            case MessageQueueDriverType.BullMQ:
+              return new BullMQDriver(config.options);
 
-            return boss;
+            default:
+              return new SyncDriver(JobsModule.moduleRef);
           }
-
-          return new BullMQDriver(config.options);
         },
         inject: options.inject || [],
       },
@@ -46,7 +54,7 @@ export class MessageQueueModule {
 
     return {
       module: MessageQueueModule,
-      imports: options.imports || [],
+      imports: [JobsModule, ...(options.imports || [])],
       providers,
       exports: [MessageQueue.taskAssignedQueue, MessageQueue.messagingQueue],
     };
