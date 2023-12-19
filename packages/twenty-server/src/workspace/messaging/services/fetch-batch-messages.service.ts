@@ -152,7 +152,7 @@ export class FetchBatchMessagesService {
           headerMessageId: messageId,
           subject: subject,
           messageThreadId: threadId,
-          date: internalDate,
+          internalDate,
           from,
           to,
           cc,
