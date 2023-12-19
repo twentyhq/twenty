@@ -4,7 +4,7 @@ import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimis
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
-import { ObjectRecordFilter } from '@/object-record/types/ObjectRecordFilter';
+import { ObjectRecordFilter } from '@/object-record/record-filter/types/ObjectRecordFilter';
 
 export const useRecordOptimisticEffect = ({
   objectMetadataItem,

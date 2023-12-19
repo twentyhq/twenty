@@ -2,10 +2,7 @@ import { produce } from 'immer';
 
 import { OptimisticEffectDefinition } from '@/apollo/optimistic-effect/types/OptimisticEffectDefinition';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import {
-  DateFilter,
-  ObjectRecordFilter,
-} from '@/object-record/types/ObjectRecordFilter';
+import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
 import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
 import { isDefined } from '~/utils/isDefined';
@@ -31,13 +28,6 @@ export const getRecordOptimisticEffectDefinition = ({
       deletedRecordIds?: string[];
       variables: ObjectRecordQueryVariables;
     }) => {
-      console.log('inside resolver', {
-        currentData,
-        updatedData,
-        newData,
-        deletedRecordIds,
-        variables,
-      });
       const newRecordPaginatedCacheField = produce<
         PaginatedRecordTypeResults<any>
       >(currentData as PaginatedRecordTypeResults<any>, (draft) => {
@@ -80,56 +70,34 @@ export const getRecordOptimisticEffectDefinition = ({
         }
 
         if (updatedData) {
-          if (isDefined(variables.filter)) {
-            // TODO: the function should be isRecordMatchingFilter
-            console.log('variables.filter', variables.filter);
-
-            const isRecordMatchingFilter = (
-              record: any,
-              filter: ObjectRecordFilter,
-            ) => {
-              if (filter['completedAt']) {
-                if ((filter['completedAt'] as DateFilter).is === 'NULL') {
-                  return record.completedAt === null;
-                }
-                if ((filter['completedAt'] as DateFilter).is === 'NOT_NULL') {
-                  return record.completedAt !== null;
-                }
-              }
-
-              return false;
-            };
-
-            console.log('isRecordMatchingFilter', {
-              updatedData,
-              variables,
-              isRecordMatchingFilter: isRecordMatchingFilter(
-                updatedData,
-                variables.filter,
-              ),
+          const updatedRecordIsOutOfQueryFilter =
+            isDefined(variables.filter) &&
+            !isRecordMatchingFilter({
+              record: updatedData,
+              filter: variables.filter,
+              objectMetadataItem,
             });
 
-            if (!isRecordMatchingFilter(updatedData, variables.filter)) {
-              draft.edges = draft.edges.filter(
-                (edge) => edge.node.id !== updatedData.id,
-              );
-            } else {
-              const foundUpdatedRecordInCacheQuery = draft.edges.find(
-                (edge) => edge.node.id === updatedData.id,
-              );
+          if (updatedRecordIsOutOfQueryFilter) {
+            draft.edges = draft.edges.filter(
+              (edge) => edge.node.id !== updatedData.id,
+            );
+          } else {
+            const foundUpdatedRecordInCacheQuery = draft.edges.find(
+              (edge) => edge.node.id === updatedData.id,
+            );
 
-              if (foundUpdatedRecordInCacheQuery) {
-                foundUpdatedRecordInCacheQuery.node = updatedData;
-              } else {
-                // TODO: add ordering logic
-                draft.edges.push({
-                  node: updatedData,
-                  cursor: '',
-                  __typename: `${capitalize(
-                    objectMetadataItem.nameSingular,
-                  )}Edge`,
-                });
-              }
+            if (foundUpdatedRecordInCacheQuery) {
+              foundUpdatedRecordInCacheQuery.node = updatedData;
+            } else {
+              // TODO: add order by
+              draft.edges.push({
+                node: updatedData,
+                cursor: '',
+                __typename: `${capitalize(
+                  objectMetadataItem.nameSingular,
+                )}Edge`,
+              });
             }
           }
         }

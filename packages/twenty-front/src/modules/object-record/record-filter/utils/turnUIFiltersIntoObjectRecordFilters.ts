@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import {
   CurrencyFilter,
   DateFilter,
@@ -6,11 +8,12 @@ import {
   ObjectRecordFilter,
   StringFilter,
   URLFilter,
-} from '@/object-record/types/ObjectRecordFilter';
+  UUIDFilter,
+} from '@/object-record/record-filter/types/ObjectRecordFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
 
-import { Filter } from '../object-filter-dropdown/types/Filter';
+import { Filter } from '../../object-filter-dropdown/types/Filter';
 
 export type RawUIFilter = Omit<Filter, 'definition'> & {
   definition: {
@@ -18,7 +21,7 @@ export type RawUIFilter = Omit<Filter, 'definition'> & {
   };
 };
 
-export const turnFiltersIntoObjectRecordFilters = (
+export const turnUIFiltersIntoObjectRecordFilters = (
   rawUIFilters: RawUIFilter[],
   fields: Pick<Field, 'id' | 'name'>[],
 ): ObjectRecordFilter => {
@@ -107,6 +110,10 @@ export const turnFiltersIntoObjectRecordFilters = (
         }
         break;
       case 'RELATION': {
+        if (!isNonEmptyString(rawUIFilter.value)) {
+          break;
+        }
+
         try {
           JSON.parse(rawUIFilter.value);
         } catch (e) {
@@ -123,7 +130,7 @@ export const turnFiltersIntoObjectRecordFilters = (
               objectRecordFilters.push({
                 [correspondingField.name + 'Id']: {
                   in: parsedRecordIds,
-                } as StringFilter,
+                } as UUIDFilter,
               });
               break;
             case ViewFilterOperand.IsNot:
@@ -131,7 +138,7 @@ export const turnFiltersIntoObjectRecordFilters = (
                 not: {
                   [correspondingField.name + 'Id']: {
                     in: parsedRecordIds,
-                  } as StringFilter,
+                  } as UUIDFilter,
                 },
               });
               break;
