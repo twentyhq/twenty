@@ -38,6 +38,11 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: 'IS_STANDARD_CORE_RELATIONSHIPS_ENABLED',
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };
