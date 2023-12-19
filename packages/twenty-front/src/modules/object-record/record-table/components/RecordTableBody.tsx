@@ -4,14 +4,14 @@ import { RecordTableBodyFetchMoreLoader } from '@/object-record/record-table/com
 import { RecordTableRow } from '@/object-record/record-table/components/RecordTableRow';
 import { RowIdContext } from '@/object-record/record-table/contexts/RowIdContext';
 import { RowIndexContext } from '@/object-record/record-table/contexts/RowIndexContext';
-import { isFetchingRecordTableDataState } from '@/object-record/record-table/states/isFetchingRecordTableDataState';
+import { isRecordTableFetchingMoreDataState } from '@/object-record/record-table/states/isRecordTableFetchingMoreDataState';
 import { tableRowIdsState } from '@/object-record/record-table/states/tableRowIdsState';
 
 export const RecordTableBody = () => {
   const tableRowIds = useRecoilValue(tableRowIdsState);
 
   const isFetchingRecordTableData = useRecoilValue(
-    isFetchingRecordTableDataState,
+    isRecordTableFetchingMoreDataState,
   );
 
   if (isFetchingRecordTableData) {

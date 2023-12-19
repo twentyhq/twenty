@@ -20,6 +20,7 @@ import { RecordTableBody } from './RecordTableBody';
 import { RecordTableBodyEffect } from './RecordTableBodyEffect';
 import { RecordTableHeader } from './RecordTableHeader';
 import { RecordTableInternalEffect } from './RecordTableInternalEffect';
+import { isRecordTableInitialLoadingState } from '@/object-record/record-table/states/isRecordTableInitialLoadingState';
 
 const StyledObjectEmptyContainer = styled.div`
   align-items: center;
@@ -126,6 +127,8 @@ export const RecordTable = ({
 
   const numberOfTableRows = useRecoilValue(numberOfTableRowsState);
 
+  const isInitialLoading = useRecoilValue(isRecordTableInitialLoadingState);
+
   const {
     scopeId: objectNamePlural,
     resetTableRowSelection,
@@ -170,6 +173,22 @@ export const RecordTable = ({
                 />
               </div>
               <RecordTableInternalEffect tableBodyRef={tableBodyRef} />
+              {!isInitialLoading && numberOfTableRows === 0 && (
+                <StyledObjectEmptyContainer>
+                  <StyledEmptyObjectTitle>
+                    No {foundObjectMetadataItem?.namePlural}
+                  </StyledEmptyObjectTitle>
+                  <StyledEmptyObjectSubTitle>
+                    Create one:
+                  </StyledEmptyObjectSubTitle>
+                  <Button
+                    Icon={IconPlus}
+                    title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
+                    variant={'secondary'}
+                    onClick={createRecord}
+                  />
+                </StyledObjectEmptyContainer>
+              )}
             </StyledTableContainer>
           </StyledTableWithHeader>
         </EntityUpdateMutationContext.Provider>

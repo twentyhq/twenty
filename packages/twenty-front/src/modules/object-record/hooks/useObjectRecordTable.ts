@@ -10,6 +10,7 @@ import { turnFiltersIntoObjectRecordFilters } from '@/object-record/utils/turnFi
 import { signInBackgroundMockCompanies } from '@/sign-in-background-mock/constants/signInBackgroundMockCompanies';
 
 import { useFindManyRecords } from './useFindManyRecords';
+import { isRecordTableInitialLoadingState } from '@/object-record/record-table/states/isRecordTableInitialLoadingState';
 
 export const useObjectRecordTable = () => {
   const { scopeId: objectNamePlural, setRecordTableData } = useRecordTable();
@@ -41,6 +42,8 @@ export const useObjectRecordTable = () => {
     foundObjectMetadataItem?.fields ?? [],
   );
 
+  const setIsRecordTableInitialLoading = useSetRecoilState(isRecordTableInitialLoadingState);
+
   const { records, loading, fetchMoreRecords, queryStateIdentifier } =
     useFindManyRecords({
       objectNameSingular,
@@ -48,6 +51,7 @@ export const useObjectRecordTable = () => {
       orderBy,
       onCompleted: () => {
         setLastRowVisible(false);
+        setIsRecordTableInitialLoading(false);
       },
     });
 

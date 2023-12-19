@@ -4,7 +4,7 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { useObjectRecordTable } from '@/object-record/hooks/useObjectRecordTable';
 import { StyledRow } from '@/object-record/record-table/components/RecordTableRow';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { isFetchingRecordTableDataState } from '@/object-record/record-table/states/isFetchingRecordTableDataState';
+import { isRecordTableFetchingMoreDataState } from '@/object-record/record-table/states/isRecordTableFetchingMoreDataState';
 import { getRecordTableScopedStates } from '@/object-record/record-table/utils/getRecordTableScopedStates';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 
@@ -17,7 +17,7 @@ export const RecordTableBodyFetchMoreLoader = () => {
   );
 
   const isFetchingRecordTableData = useRecoilValue(
-    isFetchingRecordTableDataState,
+    isRecordTableFetchingMoreDataState,
   );
 
   const onLastRowVisible = useRecoilCallback(
