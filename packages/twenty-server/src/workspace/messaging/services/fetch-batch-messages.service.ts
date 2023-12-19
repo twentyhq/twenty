@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import axios, { AxiosInstance } from 'axios';
+import { simpleParser } from 'mailparser';
 
 @Injectable()
 export class FetchBatchMessagesService {
@@ -57,7 +58,7 @@ export class FetchBatchMessagesService {
       },
     );
 
-    return this.formatBatchResponse(response);
+    return await this.formatBatchResponse(response);
   }
 
   createBatchBody(messageQueries, boundary: string): string {
@@ -121,116 +122,35 @@ export class FetchBatchMessagesService {
     return boundary.replace('boundary=', '').trim('; ');
   }
 
-  formatBatchResponse(response) {
+  async formatBatchResponse(response) {
     const parsedResponse = this.parseBatch(response);
 
-    return parsedResponse.map((item) => {
-      const { id, threadId, payload, internalDate } = item;
+    return await parsedResponse.map(async (item) => {
+      const { id, threadId, payload, internalDate, raw } = item;
 
-      const headers = payload?.headers;
+      const message = atob(raw.replace(/-/g, '+').replace(/_/g, '/'));
 
-      const parts = payload?.parts;
+      console.log(message);
 
-      let content: string[] = [];
+      const parsed = await simpleParser(message);
 
-      if (parts) {
-        content = this.processParts(parts);
-      } else {
-        content = [
-          atob(payload?.body?.data.replace(/-/g, '+').replace(/_/g, '/')),
-        ];
-      }
-
-      const from = headers?.find((header) => header.name === 'From')?.value;
-
-      const { displayNames: fromDisplayNames, emails: fromEmails } =
-        this.formatDisplayNamesAndEmails(from);
-
-      const to = headers?.find((header) => header.name === 'To')?.value;
-      const { displayNames: toDisplayNames, emails: toEmails } =
-        this.formatDisplayNamesAndEmails(to);
-
-      const cc = headers?.find((header) => header.name === 'Cc')?.value;
-      const { displayNames: ccDisplayNames, emails: ccEmails } =
-        this.formatDisplayNamesAndEmails(cc);
-
-      const bcc = headers?.find((header) => header.name === 'Bcc')?.value;
-      const { displayNames: bccDisplayNames, emails: bccEmails } =
-        this.formatDisplayNamesAndEmails(bcc);
+      const { subject, messageId, from, to, cc, bcc, text, html, attachments } =
+        parsed;
 
       return {
         externalId: id,
-        headerMessageId: headers?.find((header) => header.name === 'Message-ID')
-          ?.value,
-        subject: headers?.find((header) => header.name === 'Subject')?.value,
+        headerMessageId: messageId,
+        subject: subject,
         messageThreadId: threadId,
-        fromDisplayNames,
-        fromEmails,
-        toDisplayNames,
-        toEmails,
-        ccDisplayNames,
-        ccEmails,
-        bccDisplayNames,
-        bccEmails,
         date: internalDate,
-        body: content[0],
+        from,
+        to,
+        cc,
+        bcc,
+        text,
+        html,
+        attachments,
       };
     });
-  }
-
-  formatDisplayNamesAndEmails(displayNamesAndEmails) {
-    const displayNamesString = displayNamesAndEmails?.split('<')[0]?.trim();
-    const emailsString = displayNamesAndEmails
-      ?.split('<')[1]
-      ?.split('>')[0]
-      ?.trim();
-
-    const displayNames = displayNamesString?.split(',').map((displayName) => {
-      return displayName.trim();
-    });
-
-    const emails = emailsString?.split(',').map((email) => {
-      return email.trim();
-    });
-
-    return { displayNames, emails };
-  }
-
-  processParts(parts) {
-    // we get only the plain text for now
-    const content: any = [];
-
-    for (let i = 0; i < parts.length; i++) {
-      const part = parts[i];
-
-      const isPlain = part.mimeType === 'text/plain';
-      //const isHtml = part.mimeType === 'text/html';
-      const isMultiPart = part.mimeType === 'multipart/alternative';
-      //const isAttachment = part.body.attachmentId != undefined;
-
-      if (isPlain) {
-        content.push(
-          atob(part.body.data.replace(/-/g, '+').replace(/_/g, '/')),
-        );
-      }
-
-      if (isMultiPart) {
-        content.push(...this.processParts(part.parts));
-      }
-
-      // if (isPlain || isHtml) {
-      //   content.push(
-      //     atob(part.body.data.replace(/-/g, '+').replace(/_/g, '/')),
-      //   );
-      // }
-      // if (isMultiPart) {
-      //   content.push(...this.processParts(part.parts));
-      // }
-      // if (isAttachment) {
-      //   content.push(part.body.attachmentId);
-      // }
-    }
-
-    return content;
   }
 }

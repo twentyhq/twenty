@@ -111,7 +111,7 @@ export class FetchWorkspaceMessagesService {
     }
 
     const messageQueries = messagesData.map((message) => ({
-      uri: '/gmail/v1/users/me/messages/' + message.id,
+      uri: '/gmail/v1/users/me/messages/' + message.id + '?format=RAW',
     }));
 
     const messagesResponse =
@@ -176,19 +176,15 @@ export class FetchWorkspaceMessagesService {
         headerMessageId,
         subject,
         messageThreadId,
-        fromDisplayNames,
-        fromEmails,
-        toDisplayNames,
-        toEmails,
-        ccDisplayNames,
-        ccEmails,
-        bccDisplayNames,
-        bccEmails,
-        body,
+        date,
+        from,
+        to,
+        cc,
+        bcc,
+        text,
+        html,
+        attachments,
       } = message;
-
-      console.log('toDisplayNames', toDisplayNames);
-      console.log('toEmails', toEmails);
 
       const messageThread = await workspaceDataSource?.query(
         `SELECT * FROM ${dataSourceMetadata.schema}."messageThread" WHERE "externalId" = $1`,
@@ -206,13 +202,13 @@ export class FetchWorkspaceMessagesService {
           subject,
           messageThread[0]?.id,
           'incoming',
-          body,
+          text,
         ],
       );
 
       await workspaceDataSource?.query(
         `INSERT INTO ${dataSourceMetadata.schema}."messageRecipient" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
-        [messageId, 'from', '', '', null, null],
+        [messageId, 'from', from.value.address, from.value.name, null, null],
       );
     }
   }
