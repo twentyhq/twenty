@@ -15,6 +15,12 @@ export const messageQueueModuleFactory = async (
   const driverType = environmentService.getMessageQueueDriverType();
 
   switch (driverType) {
+    case MessageQueueDriverType.Sync: {
+      return {
+        type: MessageQueueDriverType.Sync,
+        options: {},
+      };
+    }
     case MessageQueueDriverType.PgBoss: {
       const connectionString = environmentService.getPGDatabaseUrl();
 
