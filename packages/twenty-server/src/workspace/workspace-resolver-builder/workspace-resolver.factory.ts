@@ -7,6 +7,7 @@ import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/
 import { getResolverName } from 'src/workspace/utils/get-resolver-name.util';
 import { UpdateManyResolverFactory } from 'src/workspace/workspace-resolver-builder/factories/update-many-resolver.factory';
 import { DeleteManyResolverFactory } from 'src/workspace/workspace-resolver-builder/factories/delete-many-resolver.factory';
+import { ExecuteQuickActionOnOneResolverFactory } from 'src/workspace/workspace-resolver-builder/factories/execute-quick-action-on-one-resolver.factory';
 
 import { FindManyResolverFactory } from './factories/find-many-resolver.factory';
 import { FindOneResolverFactory } from './factories/find-one-resolver.factory';
@@ -31,6 +32,7 @@ export class WorkspaceResolverFactory {
     private readonly createOneResolverFactory: CreateOneResolverFactory,
     private readonly updateOneResolverFactory: UpdateOneResolverFactory,
     private readonly deleteOneResolverFactory: DeleteOneResolverFactory,
+    private readonly executeQuickActionOnOneResolverFactory: ExecuteQuickActionOnOneResolverFactory,
     private readonly updateManyResolverFactory: UpdateManyResolverFactory,
     private readonly deleteManyResolverFactory: DeleteManyResolverFactory,
   ) {}
@@ -50,6 +52,7 @@ export class WorkspaceResolverFactory {
       ['createOne', this.createOneResolverFactory],
       ['updateOne', this.updateOneResolverFactory],
       ['deleteOne', this.deleteOneResolverFactory],
+      ['executeQuickActionOnOne', this.executeQuickActionOnOneResolverFactory],
       ['updateMany', this.updateManyResolverFactory],
       ['deleteMany', this.deleteManyResolverFactory],
     ]);

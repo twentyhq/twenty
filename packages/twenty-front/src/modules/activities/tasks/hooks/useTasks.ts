@@ -46,7 +46,7 @@ export const useTasks = (props?: UseTasksProps) => {
       type: { eq: 'Task' },
       ...(isNonEmptyString(selectedFilter?.value) && {
         assigneeId: {
-          eq: selectedFilter?.value,
+          in: JSON.parse(selectedFilter?.value),
         },
       }),
     },
@@ -70,7 +70,7 @@ export const useTasks = (props?: UseTasksProps) => {
       type: { eq: 'Task' },
       ...(isNonEmptyString(selectedFilter?.value) && {
         assigneeId: {
-          eq: selectedFilter?.value,
+          in: JSON.parse(selectedFilter?.value),
         },
       }),
     },

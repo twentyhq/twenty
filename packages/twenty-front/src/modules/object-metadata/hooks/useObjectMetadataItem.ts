@@ -10,6 +10,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { useGenerateCreateManyRecordMutation } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
 import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
+import { useGenerateExecuteQuickActionOnOneRecordMutation } from '@/object-record/hooks/useGenerateExecuteQuickActionOnOneRecordMutation';
 import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
 import { useGenerateUpdateOneRecordMutation } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
@@ -106,6 +107,11 @@ export const useObjectMetadataItem = (
     objectMetadataItem,
   });
 
+  const executeQuickActionOnOneRecordMutation =
+    useGenerateExecuteQuickActionOnOneRecordMutation({
+      objectMetadataItem,
+    });
+
   const labelIdentifierFieldMetadataId = objectMetadataItem.fields.find(
     ({ name }) => name === 'name',
   )?.id;
@@ -123,6 +129,7 @@ export const useObjectMetadataItem = (
     createOneRecordMutation,
     updateOneRecordMutation,
     deleteOneRecordMutation,
+    executeQuickActionOnOneRecordMutation,
     createManyRecordsMutation,
     mapToObjectRecordIdentifier,
     getObjectOrderByField,
