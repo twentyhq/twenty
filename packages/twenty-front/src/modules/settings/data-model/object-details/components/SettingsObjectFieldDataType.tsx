@@ -35,7 +35,7 @@ const StyledDataType = styled.div<{ value: FieldMetadataType }>`
   ${({ theme, value }) =>
     value === FieldMetadataType.Relation
       ? css`
-          border-color: ${theme.color.purple20};
+          border-color: ${theme.tag.background.purple};
           color: ${theme.color.purple};
         `
       : ''}

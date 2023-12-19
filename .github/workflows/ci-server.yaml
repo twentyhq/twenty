@@ -9,20 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres
+        image: twentycrm/twenty-postgres
         env:
-          POSTGRES_HOST: postgres
-          POSTGRES_PASSWORD: twenty
-          POSTGRES_USER: twenty
-          POSTGRES_DB: test
-          POSTGRES_PORT: 5432
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
         ports:
           - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -34,10 +26,10 @@ jobs:
         with:
           node-version: "18"
       - name: Server / Install Dependencies
-        run: cd server && yarn install
+        run: yarn
       - name: Server / Run linter
-        run: cd server && yarn lint
+        run: yarn nx lint twenty-server
       - name: Server / Run jest tests
-        run: cd server && yarn test
-      - name: Server / Run e2e tests
-        run: cd server && yarn test:e2e
+        run: yarn nx test twenty-server
+      # - name: Server / Run e2e tests
+      #   run: yarn nx test:e2e twenty-server

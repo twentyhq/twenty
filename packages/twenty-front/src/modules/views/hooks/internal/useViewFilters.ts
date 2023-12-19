@@ -209,11 +209,6 @@ export const useViewFilters = (viewScopeId: string) => {
               return filtersDraft;
             }
 
-            if (filterToUpsert.value === '') {
-              filtersDraft.splice(existingFilterIndex, 1);
-              return filtersDraft;
-            }
-
             filtersDraft[existingFilterIndex] = {
               ...filterToUpsert,
               id: existingSavedFilterId,

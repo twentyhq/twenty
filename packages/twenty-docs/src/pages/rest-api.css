@@ -1,0 +1,67 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+}
+
+.form {
+    text-align: center;
+    padding: 50px;
+}
+
+.link {
+    color: #16233f;
+    text-decoration: none;
+    position: relative;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.input {
+    padding: 4px;
+    margin: 20px 0 5px 0;
+    max-width: 460px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #f3f3f3;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+
+}
+
+.invalid {
+    border: 1px solid red;
+}
+
+.token-invalid {
+    color: red;
+    font-size: 12px;
+    text-align: left;
+}
+
+.not-visible {
+    visibility: hidden;
+}
+
+.loader {
+    color: #16233f;
+    font-size: 2rem;
+    animation: animate 2s infinite;
+}
+
+@keyframes animate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(720deg);
+    }
+}
+
+.loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+}

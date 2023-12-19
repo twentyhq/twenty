@@ -42,6 +42,14 @@ export const SettingsObjectNewFieldStep2 = () => {
     'IS_RELATION_FIELD_TYPE_ENABLED',
   );
 
+  const isSelectFieldTypeEnabled = useIsFeatureEnabled(
+    'IS_SELECT_FIELD_TYPE_ENABLED',
+  );
+
+  const isRatingFieldTypeEnabled = useIsFeatureEnabled(
+    'IS_RATING_FIELD_TYPE_ENABLED',
+  );
+
   const {
     formValues,
     handleFormChange,
@@ -256,13 +264,19 @@ export const SettingsObjectNewFieldStep2 = () => {
     FieldMetadataType.Numeric,
     FieldMetadataType.Phone,
     FieldMetadataType.Probability,
-    FieldMetadataType.Rating,
-    FieldMetadataType.Select,
     FieldMetadataType.Uuid,
   ];
 
   if (!isRelationFieldTypeEnabled) {
     excludedFieldTypes.push(FieldMetadataType.Relation);
+  }
+
+  if (!isSelectFieldTypeEnabled) {
+    excludedFieldTypes.push(FieldMetadataType.Select);
+  }
+
+  if (!isRatingFieldTypeEnabled) {
+    excludedFieldTypes.push(FieldMetadataType.Rating);
   }
 
   return (

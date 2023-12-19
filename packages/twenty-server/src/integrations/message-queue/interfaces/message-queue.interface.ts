@@ -6,6 +6,7 @@ import { PgBossDriverOptions } from 'src/integrations/message-queue/drivers/pg-b
 export enum MessageQueueDriverType {
   PgBoss = 'pg-boss',
   BullMQ = 'bull-mq',
+  Sync = 'sync',
 }
 
 export interface PgBossDriverFactoryOptions {
@@ -18,9 +19,15 @@ export interface BullMQDriverFactoryOptions {
   options: BullMQDriverOptions;
 }
 
+export interface SyncDriverFactoryOptions {
+  type: MessageQueueDriverType.Sync;
+  options: Record<string, any>;
+}
+
 export type MessageQueueModuleOptions =
   | PgBossDriverFactoryOptions
-  | BullMQDriverFactoryOptions;
+  | BullMQDriverFactoryOptions
+  | SyncDriverFactoryOptions;
 
 export type MessageQueueModuleAsyncOptions = {
   useFactory: (
