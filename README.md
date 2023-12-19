@@ -7,9 +7,9 @@
 </p>
 
 <h2 align="center" >A Modern Open Source CRM </h3>
-<p align="center">CRM flexibility, tailored to your unique business needs</p>
+<p align="center">Tailored to your unique business needs</p>
 
-<p align="center">🌐 <a href="https://twenty.com">Website</a> · 📚 <a href="https://docs.twenty.com">Documentation</a> · 💻 <a href="https://app.twenty.com/">Demo</a> · 💬 <a href="https://discord.gg/cx5n4Jzs57">Discord</a> · ✏️ <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty">Figma</a><p>
+<p align="center"><a href="https://twenty.com">🌐 Website</a> · <a href="https://docs.twenty.com">📚 Documentation</a> ·  <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-docs/static/img/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="./packages/twenty-docs/static/img/figma-icon.png"  width="12" height="12"/>  Figma</a><p>
 <br />
 
 
@@ -24,38 +24,42 @@
 </p>
 <br>
 
-We’ve spent thousands of hours grappling with traditional CRMs/platforms like Pipedrive and Salesforce to align them with our business needs, only to end up frustrated—customizations are complex and the closed ecosystems of these platforms can feel restrictive.
+We’ve spent thousands of hours grappling with traditional CRMs like Pipedrive and Salesforce to align them with our business needs, only to end up frustrated — customizations are complex and the closed ecosystems of these platforms can feel restrictive.
 
-We felt the need for a CRM solution that empowers rather than constrains, which inspired us to create Twenty. We’re building the next-generation open-source CRM that offers you the flexibility to shape it according to your business objectives and meet your team’s unique needs. We’ve packed Twenty with powerful features to give you full control and help you win more deals. 
-
-
-Explore [Twenty CRM](https://app.twenty.com/).
+We felt the need for a CRM platform that empowers rather than constrains. We believe the next great CRM will come from the open source community. And we’ve packed Twenty with powerful features to give you full control and help you win more deals. 
 
 <br>
+
+# Demo 
+Go to <a href="https://app.twenty.com/">app.twenty.com</a> and login with the following credentials:
+```
+email: noah@demo.dev
+password: Applecar2025
+```
+
+See also:  
+🚀 [Self-hosting](https://docs.twenty.com/start/self-hosting/)  
+🖥️ [Local Setup](https://docs.twenty.com/contributor/local-setup)  
 
 # Why Choose Twenty?
-We understand that the CRM landscape is vast. So why should you choose us?
+We understand that the CRM landscape is vast. So why should you chose us?
 
-⛓️ **Full control, Full Freedom:** With Twenty, you aren’t just a CRM user; you’re also a co-creator. Join us in shaping the future of CRM through open source collaboration. Break free from vendor lock-in and limitations. 
+⛓️ **Full control, Full Freedom:** Contribute, self-host, fork. Break free from vendor lock-in and join us in shaping the open future of CRM.
 
-📊 **Data, Your Way:** Your data should serve your business, not hinder it. Twenty allows you to harness the full potential of your data, securely and on your own terms.
+📊 **Data, Your Way:** The days when the role of CRM platforms was to shift manual data entries to a database are over. Now, the data is already there. CRM 2.0 should be built around your data, allowing you to access and visualize any existing sources, not forcing you to retrofit your data into predefined objects on a remote cloud.
 
-🎨 **Effortlessly Intuitive:** We’ve made sure that Twenty’s design isn’t just beautiful, but also functional.
- It’s a CRM that your team will love to use.  
+🎨 **Effortlessly Intuitive:** We set out to create something that we ourselves would always enjoy using. The main application draws inspiration from Notion, a tool known for its user-friendly interface and customization capabilities.
 <br>
 
-# Our Commitment 
-
-Twenty is incorporated as a Public Benefits Company, which means we’re legally bound to consider the broader impact of our decisions on all stakeholders. We strive to build software that creates value for a wider ecosystem, not just our company. Our success is intertwined with the success of our users, contributors, and the open source community at large. 
 
 <br>
 
 # What You Can Do With Twenty
 We're currently in the development phase of Twenty's alpha version.  
 
-Don't hesitate to flag a specific need by creating an issue.   
+Please feel free to flag any specific need you have need by creating an issue.   
 
-Below are the features we have implemented to date:
+Below are some features we have implemented to date:
 
 + [Add, filter, sort, edit and track customers](#add-filter-sort-edit-and-track-customers)
 + [Create one or several opportunities for each company](#create-one-or-several-opportunities-for-each-company)
@@ -120,25 +124,18 @@ Below are the features we have implemented to date:
 
 Here’s what you can look forward to:
 
-⏳ **Frequent updates:** We’re shipping fast! Expect regular updates and new features that enhance your CRM experience.
+⏳ **Frequent updates:** We’re shipping fast! Expect regular updates and new features that enhance your experience.
 
-🔗 **Extensibility:** We’re putting the power in your hands. Soon, you’ll have the tools to extend and customize your CRM to precisely fit your business needs. No more reliance on external consultants; you’re in control.
+🔗 **Extensibility:** We’re putting the power in your hands. Soon, you’ll have the tools to extend and customize Twenty with plugins and more.
 
 <br>
 
-# Join the Movement
+# Join the Community
 
 - Star the repo
 - Join [discussions](https://github.com/twentyhq/twenty/discussions) and track [issues](https://github.com/twentyhq/twenty/issues) 
 - Follow us on [Twitter](https://twitter.com/twentycrm) or [LinkedIn](https://www.linkedin.com/company/twenty/) 
-- Join our [Discord](https://twenty.com/discord)
+- Join our [Discord](https://discord.gg/cx5n4Jzs57)
 - [Contributions](https://github.com/twentyhq/twenty/contribute) are, of course, most welcome! 
 
-<br>
-
-# Get Started
-
-Dive into Twenty today and experience the power of open-source CRM on your own terms.
-
-🚀 [Get Started with Twenty](https://docs.twenty.com/contributor/local-setup). 
 

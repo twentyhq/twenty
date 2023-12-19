@@ -8,40 +8,45 @@ import {
 } from 'src/integrations/message-queue/interfaces';
 import {
   QUEUE_DRIVER,
-  MessageQueues,
+  MessageQueue,
 } from 'src/integrations/message-queue/message-queue.constants';
 import { PgBossDriver } from 'src/integrations/message-queue/drivers/pg-boss.driver';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { BullMQDriver } from 'src/integrations/message-queue/drivers/bullmq.driver';
+import { FetchMessagesJob } from 'src/workspace/messaging/jobs/fetch-messages.job';
+import { SyncDriver } from 'src/integrations/message-queue/drivers/sync.driver';
+import { ModuleRef } from '@nestjs/core';
+import { AppModule } from 'src/app.module';
+import { JobsModule } from 'src/integrations/message-queue/jobs.module';
 
 @Global()
 export class MessageQueueModule {
   static forRoot(options: MessageQueueModuleAsyncOptions): DynamicModule {
     const providers = [
-      {
-        provide: MessageQueues.taskAssignedQueue,
+      ...Object.values(MessageQueue).map((queue) => ({
+        provide: queue,
         useFactory: (driver: MessageQueueDriver) => {
-          return new MessageQueueService(
-            driver,
-            MessageQueues.taskAssignedQueue,
-          );
+          return new MessageQueueService(driver, queue);
         },
         inject: [QUEUE_DRIVER],
-      },
+      })),
       {
         provide: QUEUE_DRIVER,
         useFactory: async (...args: any[]) => {
           const config = await options.useFactory(...args);
 
-          if (config.type === MessageQueueDriverType.PgBoss) {
-            const boss = new PgBossDriver(config.options);
+          switch (config.type) {
+            case MessageQueueDriverType.PgBoss:
+              const boss = new PgBossDriver(config.options);
+              await boss.init();
+              return boss;
 
-            await boss.init();
+            case MessageQueueDriverType.BullMQ:
+              return new BullMQDriver(config.options);
 
-            return boss;
+            default:
+              return new SyncDriver(JobsModule.moduleRef);
           }
-
-          return new BullMQDriver(config.options);
         },
         inject: options.inject || [],
       },
@@ -49,9 +54,9 @@ export class MessageQueueModule {
 
     return {
       module: MessageQueueModule,
-      imports: options.imports || [],
+      imports: [JobsModule, ...(options.imports || [])],
       providers,
-      exports: [MessageQueues.taskAssignedQueue],
+      exports: [MessageQueue.taskAssignedQueue, MessageQueue.messagingQueue],
     };
   }
 }

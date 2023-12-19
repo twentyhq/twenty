@@ -7,21 +7,18 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { isDefined } from '~/utils/isDefined';
 
 import { useEntitySelectSearch } from '../hooks/useEntitySelectSearch';
-import { EntityForSelect } from '../types/EntityForSelect';
 
 import {
   SingleEntitySelectBase,
   SingleEntitySelectBaseProps,
 } from './SingleEntitySelectBase';
 
-export type SingleEntitySelectProps<
-  CustomEntityForSelect extends EntityForSelect,
-> = {
+export type SingleEntitySelectProps = {
   disableBackgroundBlur?: boolean;
   onCreate?: () => void;
   width?: number;
 } & Pick<
-  SingleEntitySelectBaseProps<CustomEntityForSelect>,
+  SingleEntitySelectBaseProps,
   | 'EmptyIcon'
   | 'emptyLabel'
   | 'entitiesToSelect'
@@ -31,9 +28,7 @@ export type SingleEntitySelectProps<
   | 'selectedEntity'
 >;
 
-export const SingleEntitySelect = <
-  CustomEntityForSelect extends EntityForSelect,
->({
+export const SingleEntitySelect = ({
   EmptyIcon,
   disableBackgroundBlur = false,
   emptyLabel,
@@ -44,7 +39,7 @@ export const SingleEntitySelect = <
   onEntitySelected,
   selectedEntity,
   width = 200,
-}: SingleEntitySelectProps<CustomEntityForSelect>) => {
+}: SingleEntitySelectProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { searchFilter, handleSearchFilterChange } = useEntitySelectSearch();

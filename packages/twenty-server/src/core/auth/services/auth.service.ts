@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { HttpService } from '@nestjs/axios';
 
 import FileType from 'file-type';
 import { Repository } from 'typeorm';
@@ -48,6 +49,7 @@ export class AuthService {
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    private readonly httpService: HttpService,
   ) {}
 
   async challenge(challengeInput: ChallengeInput) {
@@ -116,6 +118,7 @@ export class AuthService {
         displayName: '',
         domainName: '',
         inviteHash: v4(),
+        subscriptionStatus: 'incomplete',
       });
 
       workspace = await this.workspaceRepository.save(workspaceToCreate);
@@ -134,7 +137,10 @@ export class AuthService {
     let imagePath: string | undefined = undefined;
 
     if (picture) {
-      const buffer = await getImageBufferFromUrl(picture);
+      const buffer = await getImageBufferFromUrl(
+        picture,
+        this.httpService.axiosRef,
+      );
 
       const type = await FileType.fromBuffer(buffer);
 

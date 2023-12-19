@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { Account } from '@/accounts/types/account';
+import { Account } from '@/accounts/types/Account';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 

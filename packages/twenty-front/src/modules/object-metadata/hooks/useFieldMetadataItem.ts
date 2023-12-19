@@ -19,6 +19,7 @@ export const useFieldMetadataItem = () => {
 
   const createMetadataField = (
     input: Pick<Field, 'label' | 'icon' | 'description'> & {
+      defaultValue?: unknown;
       objectMetadataId: string;
       options?: Omit<FieldMetadataOption, 'id'>[];
       type: FieldMetadataType;
@@ -26,6 +27,7 @@ export const useFieldMetadataItem = () => {
   ) =>
     createOneFieldMetadataItem({
       ...formatFieldMetadataItemInput(input),
+      defaultValue: input.defaultValue,
       objectMetadataId: input.objectMetadataId,
       type: input.type as FieldType,
     });

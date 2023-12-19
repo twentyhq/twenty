@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { HttpService } from '@nestjs/axios';
 
 import { ApiRestService } from 'src/core/api-rest/api-rest.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
@@ -22,6 +23,10 @@ describe('ApiRestService', () => {
         },
         {
           provide: TokenService,
+          useValue: {},
+        },
+        {
+          provide: HttpService,
           useValue: {},
         },
       ],

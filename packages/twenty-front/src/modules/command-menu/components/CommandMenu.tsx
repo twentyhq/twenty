@@ -228,7 +228,7 @@ export const CommandMenu = () => {
               <StyledInnerList>
                 <SelectableList
                   selectableListId="command-menu-list"
-                  selectableItemIds={[selectableItemIds]}
+                  selectableItemIdArray={selectableItemIds}
                   hotkeyScope={AppHotkeyScope.CommandMenu}
                   onEnter={(itemId) => {
                     const command = [

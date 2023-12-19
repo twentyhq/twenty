@@ -10,7 +10,7 @@ import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObje
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { RecordTableActionBar } from '@/object-record/record-table/action-bar/components/RecordTableActionBar';
 import { RecordTableContextMenu } from '@/object-record/record-table/context-menu/components/RecordTableContextMenu';
-import { useLazyLoadIcons } from '@/ui/input/hooks/useLazyLoadIcons';
+import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
@@ -36,10 +36,13 @@ export const RecordTablePage = () => {
 
   const navigate = useNavigate();
 
-  const { icons } = useLazyLoadIcons();
-
   const { findObjectMetadataItemByNamePlural } =
     useObjectMetadataItemForSettings();
+
+  const { getIcon } = useIcons();
+  const Icon = getIcon(
+    findObjectMetadataItemByNamePlural(objectNamePlural)?.icon,
+  );
 
   useEffect(() => {
     if (
@@ -64,12 +67,7 @@ export const RecordTablePage = () => {
         title={
           objectNamePlural.charAt(0).toUpperCase() + objectNamePlural.slice(1)
         }
-        Icon={
-          icons[
-            findObjectMetadataItemByNamePlural(objectNamePlural)!.icon ??
-              'Icon123'
-          ]
-        }
+        Icon={Icon}
       >
         <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
         <PageAddButton onClick={handleAddButtonClick} />

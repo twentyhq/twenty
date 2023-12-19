@@ -76,6 +76,13 @@ export const getResolverArgs = (
           isNullable: false,
         },
       };
+    case 'executeQuickActionOnOne':
+      return {
+        id: {
+          type: FieldMetadataType.UUID,
+          isNullable: false,
+        },
+      };
     case 'updateMany':
       return {
         data: {

@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-
-import axios, { AxiosInstance } from 'axios';
+import { HttpService } from '@nestjs/axios';
 
 import { anonymize } from 'src/utils/anonymize';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
@@ -11,13 +10,10 @@ import { CreateAnalyticsInput } from './dto/create-analytics.input';
 
 @Injectable()
 export class AnalyticsService {
-  private readonly httpService: AxiosInstance;
-
-  constructor(private readonly environmentService: EnvironmentService) {
-    this.httpService = axios.create({
-      baseURL: 'https://t.twenty.com/api/v1/s2s',
-    });
-  }
+  constructor(
+    private readonly environmentService: EnvironmentService,
+    private readonly httpService: HttpService,
+  ) {}
 
   async create(
     createEventInput: CreateAnalyticsInput,

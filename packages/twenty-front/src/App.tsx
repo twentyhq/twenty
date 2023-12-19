@@ -10,6 +10,7 @@ import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
+import { PlanRequired } from '~/pages/auth/PlanRequired';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { VerifyEffect } from '~/pages/auth/VerifyEffect';
 import { ImpersonateEffect } from '~/pages/impersonate/ImpersonateEffect';
@@ -17,6 +18,7 @@ import { NotFound } from '~/pages/not-found/NotFound';
 import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccountsEmails';
+import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
 import { SettingsObjectDetail } from '~/pages/settings/data-model/SettingsObjectDetail';
 import { SettingsObjectEdit } from '~/pages/settings/data-model/SettingsObjectEdit';
@@ -50,6 +52,7 @@ export const App = () => {
           <Route path={AppPath.Invite} element={<SignInUp />} />
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
+          <Route path={AppPath.PlanRequired} element={<PlanRequired />} />
           <Route path="/" element={<Navigate to="/objects/companies" />} />
           <Route path={AppPath.TasksPage} element={<Tasks />} />
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
@@ -73,6 +76,10 @@ export const App = () => {
                 <Route
                   path={SettingsPath.Accounts}
                   element={<SettingsAccounts />}
+                />
+                <Route
+                  path={SettingsPath.NewAccount}
+                  element={<SettingsNewAccount />}
                 />
                 <Route
                   path={SettingsPath.AccountsEmails}
