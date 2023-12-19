@@ -47,8 +47,12 @@ export class GraphQLConfigService
 
           return await this.createSchema(context, workspace);
         } catch (error) {
-          // Catch all errors and send them to exception handler
-          this.catchExceptions(error);
+          // Filter the exception
+          this.filterException(error);
+
+          // Send the unfiltered error to Sentry
+          this.exceptionHandlerService.captureException(error);
+
           throw error;
         }
       },
@@ -81,7 +85,7 @@ export class GraphQLConfigService
     return await workspaceFactory.createGraphQLSchema(workspace.id);
   }
 
-  private catchExceptions(error: unknown) {
+  private filterException(error: unknown) {
     if (error instanceof JsonWebTokenError) {
       //mockedUserJWT
       throw new GraphQLError('Unauthenticated', {
