@@ -115,7 +115,7 @@ jobs:
       #       "yarn storybook:modules:coverage"
   front-lint:
     needs: front-yarn-install
-    runs-on: ci-4-cores
+    runs-on: ubuntu-latest
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
     steps:
@@ -143,7 +143,7 @@ jobs:
       - name: Front / Run linter
         run: yarn nx lint:ci twenty-front
       - name: Front / Run Typescript Check
-        run: yarn nx tsc twenty-front
+        run: yarn nx tsc:ci twenty-front
   front-jest:
     needs: front-yarn-install
     runs-on: ubuntu-latest
