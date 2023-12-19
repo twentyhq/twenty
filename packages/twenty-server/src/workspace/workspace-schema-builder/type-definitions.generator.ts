@@ -91,16 +91,16 @@ export class TypeDefinitionsGenerator {
         .map((object) => object.nameSingular)
         .join(', ')}]`,
     );
-    const test = dynamicObjectMetadataCollection.filter(
-      (item) => item.nameSingular !== 'user',
-    );
 
     // Generate dynamic objects
     this.generateEnumTypeDefs(dynamicObjectMetadataCollection, options);
     this.generateObjectTypeDefs(dynamicObjectMetadataCollection, options);
-    this.generatePaginationTypeDefs(test, options);
+    this.generatePaginationTypeDefs(dynamicObjectMetadataCollection, options);
     this.generateInputTypeDefs(dynamicObjectMetadataCollection, options);
-    this.generateExtendedObjectTypeDefs(test, options);
+    this.generateExtendedObjectTypeDefs(
+      dynamicObjectMetadataCollection,
+      options,
+    );
   }
 
   private generateObjectTypeDefs(
