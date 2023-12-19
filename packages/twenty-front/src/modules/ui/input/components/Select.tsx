@@ -93,10 +93,10 @@ export const Select = <Value extends string | number | null>({
   );
 
   return disabled ? (
-    <>
+    <div>
       {!!label && <StyledLabel>{label}</StyledLabel>}
       {selectControl}
-    </>
+    </div>
   ) : (
     <DropdownScope dropdownScopeId={dropdownScopeId}>
       <div className={className}>
