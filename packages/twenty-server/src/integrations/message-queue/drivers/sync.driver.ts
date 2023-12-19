@@ -8,10 +8,10 @@ import { getJobClassName } from "src/integrations/message-queue/utils/get-job-cl
 import { QueueWorkerModule } from "src/queue-worker.module";
 
 export class SyncDriver implements MessageQueueDriver {
-  constructor(private readonly moduleRef: ModuleRef) {}
+  constructor(private readonly jobsModuleRef: ModuleRef) {}
   async add<T extends MessageQueueJobData>(_queueName: MessageQueue, jobName: string, data: T, _options?: QueueJobOptions | undefined): Promise<void> {
     const jobClassName = getJobClassName(jobName);
-    const job: MessageQueueJob<MessageQueueJobData> = this.moduleRef.get(jobClassName, { strict: true });
+    const job: MessageQueueJob<MessageQueueJobData> = this.jobsModuleRef.get(jobClassName, { strict: true });
 
     return await job.handle(data);
   }
