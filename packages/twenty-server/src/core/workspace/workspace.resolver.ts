@@ -11,6 +11,7 @@ import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { assert } from 'src/utils/assert';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { UpdateWorkspaceInput } from 'src/core/workspace/dtos/update-workspace-input';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 import { Workspace } from './workspace.entity';
 
@@ -22,6 +23,7 @@ export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,
     private readonly fileUploadService: FileUploadService,
+    private readonly environmentService: EnvironmentService,
   ) {}
 
   @Query(() => Workspace)
@@ -67,6 +69,13 @@ export class WorkspaceResolver {
 
   @Mutation(() => Workspace)
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
+    const demoWorkspaceIds = this.environmentService.getDemoWorkspaceIds();
+
+    // Check if the id is in the list of demo workspaceIds
+    if (demoWorkspaceIds.includes(id)) {
+      throw new Error('Cannot delete a demo workspace.');
+    }
+
     return this.workspaceService.deleteWorkspace(id);
   }
 }
