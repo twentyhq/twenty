@@ -1,7 +1,6 @@
 import { FullNameMetadata } from 'src/metadata/field-metadata/composite-types/full-name.composite-type';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
-import { UserObjectMetadata } from 'src/workspace/workspace-sync-metadata/core-objects/user.object-metadata';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { Gate } from 'src/workspace/workspace-sync-metadata/decorators/gate.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
@@ -152,16 +151,16 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   @IsNullable()
   authoredComments: CommentObjectMetadata[];
 
-  @FieldMetadata({
-    type: FieldMetadataType.RELATION,
-    label: 'User',
-    description: 'Related user',
-    joinColumn: 'userId',
-  })
-  @Gate({
-    featureFlag: 'IS_STANDARD_CORE_RELATIONSHIPS_ENABLED',
-  })
-  user: UserObjectMetadata;
+  // @FieldMetadata({
+  //   type: FieldMetadataType.RELATION,
+  //   label: 'User',
+  //   description: 'Related user',
+  //   joinColumn: 'userId',
+  // })
+  // @Gate({
+  //   featureFlag: 'IS_STANDARD_CORE_RELATIONSHIPS_ENABLED',
+  // })
+  // user: UserObjectMetadata;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
