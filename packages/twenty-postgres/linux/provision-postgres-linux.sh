@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Colors
 RED=31
@@ -6,16 +6,16 @@ GREEN=32
 BLUE=34
 
 # Function to display colored output
-function echo_header {
+echo_header () {
     COLOR=$1
     MESSAGE=$2
-    echo -e "\e[${COLOR}m\n=======================================================\e[0m"
-    echo -e "\e[${COLOR}m${MESSAGE}\e[0m"
-    echo -e "\e[${COLOR}m=======================================================\e[0m"
+    echo "\e[${COLOR}m\n=======================================================\e[0m"
+    echo "\e[${COLOR}m${MESSAGE}\e[0m"
+    echo "\e[${COLOR}m=======================================================\e[0m"
 }
 
 # Function to handle errors
-function handle_error {
+handle_error () {
     echo_header $RED "Error: $1"
     exit 1
 }
@@ -75,5 +75,5 @@ fi
 
 # Run the init.sql to setup database
 echo_header $GREEN "Step [4/4]: Setting up database..."
-cp ./postgres/init.sql /tmp/init.sql
+cp ./init.sql /tmp/init.sql
 sudo -u postgres psql -f /tmp/init.sql || handle_error "Failed to execute init.sql script."

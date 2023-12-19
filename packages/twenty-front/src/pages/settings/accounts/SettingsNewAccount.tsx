@@ -1,4 +1,4 @@
-import { SettingsAccountsEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsEmptyStateCard';
+import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { IconSettings } from '@/ui/display/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -14,7 +14,7 @@ export const SettingsNewAccount = () => {
             { children: `New` },
           ]}
         />
-        <SettingsAccountsEmptyStateCard />
+        <SettingsNewAccountSection />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

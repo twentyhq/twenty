@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
 
-import axios from 'axios';
 import { Request } from 'express';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
@@ -15,6 +15,7 @@ export class ApiRestService {
     private readonly tokenService: TokenService,
     private readonly environmentService: EnvironmentService,
     private readonly apiRestQueryBuilderFactory: ApiRestQueryBuilderFactory,
+    private readonly httpService: HttpService,
   ) {}
 
   async callGraphql(
@@ -26,7 +27,7 @@ export class ApiRestService {
       `${request.protocol}://${request.get('host')}`;
 
     try {
-      return await axios.post(`${baseUrl}/graphql`, data, {
+      return await this.httpService.axiosRef.post(`${baseUrl}/graphql`, data, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: request.headers.authorization,

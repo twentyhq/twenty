@@ -15,6 +15,7 @@ describe('getResolverName', () => {
     ['createOne', 'createEntity'],
     ['updateOne', 'updateEntity'],
     ['deleteOne', 'deleteEntity'],
+    ['executeQuickActionOnOne', 'executeQuickActionOnEntity'],
   ])('should return correct name for %s resolver', (type, expectedResult) => {
     expect(
       getResolverName(metadata, type as WorkspaceResolverBuilderMethodNames),

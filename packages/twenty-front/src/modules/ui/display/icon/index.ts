@@ -107,6 +107,7 @@ export {
   IconUserCircle,
   IconUsers,
   IconVideo,
+  IconWand,
   IconWorld,
   IconX,
 } from '@tabler/icons-react';

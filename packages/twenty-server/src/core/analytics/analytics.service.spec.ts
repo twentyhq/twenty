@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { HttpService } from '@nestjs/axios';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
@@ -13,6 +14,10 @@ describe('AnalyticsService', () => {
         AnalyticsService,
         {
           provide: EnvironmentService,
+          useValue: {},
+        },
+        {
+          provide: HttpService,
           useValue: {},
         },
       ],
