@@ -68,8 +68,6 @@ export class GraphQLConfigService
     // Create a new contextId for each request
     const contextId = ContextIdFactory.create();
 
-    FILTER_CATCH_EXCEPTIONS;
-
     // Register the request in the contextId
     this.moduleRef.registerRequestByContextId(context.req, contextId);
 
