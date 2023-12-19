@@ -1,20 +1,12 @@
 import Layout from '@theme/Layout';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import React, { useEffect, useState } from 'react';
-import spotlightTheme from '!css-loader!@stoplight/elements/styles.min.css';
 import { API } from '@stoplight/elements';
 import Playground from '../components/playground';
+import spotlightTheme from '!css-loader!@stoplight/elements/styles.min.css';
 
 
-const restApi = () => {
-  const [openApiJson, setOpenApiJson] = useState({})
-
-  const RestApi = (
-    <API
-      apiDescriptionDocument={JSON.stringify(openApiJson)}
-      router="hash"
-    />
-  )
+const RestApiComponent = ({openApiJson}) => {
 
   // We load spotlightTheme style using useEffect as it breaks remaining docs style
   useEffect(() => {
@@ -26,13 +18,26 @@ const restApi = () => {
   }, []);
 
   return (
+    <API
+      apiDescriptionDocument={JSON.stringify(openApiJson)}
+      router="hash"
+    />
+  )
+}
+
+const restApi = () => {
+  const [openApiJson, setOpenApiJson] = useState({})
+
+  const children = <RestApiComponent openApiJson={openApiJson} />
+
+  return (
     <Layout
       title="REST API Playground"
       description="REST API Playground for Twenty"
     >
       <BrowserOnly>{
         () => <Playground
-          children={RestApi}
+          children={children}
           setOpenApiJson={setOpenApiJson}
         />
       }</BrowserOnly>

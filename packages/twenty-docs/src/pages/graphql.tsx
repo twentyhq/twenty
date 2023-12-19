@@ -5,12 +5,21 @@ import Layout from '@theme/Layout';
 import BrowserOnly from '@docusaurus/BrowserOnly';
 import { useTheme, Theme } from '@graphiql/react';
 import Playground from '../components/playground';
-import 'graphiql/graphiql.css';
+import graphiqlCss from '!css-loader!graphiql/graphiql.css';
 
 
 // Docusaurus does SSR for custom pages, but we need to load GraphiQL in the browser
 const GraphQlComponent = ({token}) => {
   const fetcher = createGraphiQLFetcher({ url: "https://api.twenty.com/graphql" });
+
+  // We load graphiql style using useEffect as it breaks remaining docs style
+  useEffect(()=> {
+    const styleElement = document.createElement('style')
+    styleElement.innerHTML = graphiqlCss.toString()
+    document.head.append(styleElement)
+
+    return ()=> styleElement.remove();
+  }, [])
 
   return (
     <div className="fullHeightPlayground">
