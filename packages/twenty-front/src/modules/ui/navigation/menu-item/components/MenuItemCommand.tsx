@@ -31,7 +31,9 @@ const StyledMenuItemCommandContainer = styled.div<{ isSelected?: boolean }>`
   --vertical-padding: ${({ theme }) => theme.spacing(2)};
   align-items: center;
   background: ${({ isSelected, theme }) =>
-    isSelected ? theme.background.transparent.light : theme.background.primary};
+    isSelected
+      ? theme.background.transparent.light
+      : theme.background.secondary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.secondary};
   cursor: pointer;
