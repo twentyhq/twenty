@@ -16,7 +16,7 @@ type Story = StoryObj<typeof Radio>;
 
 export const Default: Story = {
   args: {
-    value: 'Radio',
+    label: 'Radio',
     checked: false,
     disabled: false,
     size: RadioSize.Small,
@@ -26,10 +26,9 @@ export const Default: Story = {
 
 export const Catalog: CatalogStory<Story, typeof Radio> = {
   args: {
-    value: 'Radio',
+    label: 'Radio',
   },
   argTypes: {
-    value: { control: false },
     size: { control: false },
   },
   parameters: {
