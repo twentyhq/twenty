@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import TokenForm, { TokenFormProps } from "../components/token-form";
+import React, { useState } from 'react';
+import TokenForm, { TokenFormProps } from '../components/token-form';
+
 const Playground = (
   {
     children,

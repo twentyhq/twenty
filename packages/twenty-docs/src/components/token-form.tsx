@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { parseJson } from "nx/src/utils/json";
+import React, { useEffect, useState } from 'react';
+import { parseJson } from 'nx/src/utils/json';
 import tokenForm from '!css-loader!./token-form.css';
-import { TbLoader2 } from "react-icons/tb";
+import { TbLoader2 } from 'react-icons/tb';
 
 export type TokenFormProps = {
   setOpenApiJson?: (json: object) => void,
@@ -22,7 +22,10 @@ const TokenForm = (
   const token = parseJson(localStorage.getItem('TryIt_securitySchemeValues'))?.bearerAuth ?? ''
 
   const updateToken = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    localStorage.setItem('TryIt_securitySchemeValues', JSON.stringify({bearerAuth: event.target.value}))
+    localStorage.setItem(
+      'TryIt_securitySchemeValues',
+      JSON.stringify({bearerAuth: event.target.value}),
+    )
     await submitToken(event.target.value)
   }
 
@@ -30,14 +33,16 @@ const TokenForm = (
 
   const getJson = async (token: string ) => {
     setIsLoading(true)
+
     return await fetch(
-      "https://api.twenty.com/open-api",
+      'https://api.twenty.com/open-api',
       {headers: {Authorization: `Bearer ${token}`}}
     )
       .then((res)=> res.json())
       .then((result)=> {
         validateToken(result)
         setIsLoading(false)
+
         return result
       })
       .catch(() => setIsLoading(false))
@@ -45,8 +50,11 @@ const TokenForm = (
 
   const submitToken = async (token) => {
     if (isLoading) return
+
     const json = await getJson(token)
+
     setToken && setToken(token)
+
     setOpenApiJson && setOpenApiJson(json)
   }
 
@@ -74,7 +82,7 @@ const TokenForm = (
           </label>
           <p>
             <input
-              className={(token && !isLoading) ? "input invalid" : "input"}
+              className={(token && !isLoading) ? 'input invalid' : 'input'}
               type='text'
               disabled={isLoading}
               placeholder='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMD...'

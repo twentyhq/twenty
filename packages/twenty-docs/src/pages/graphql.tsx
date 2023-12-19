@@ -1,11 +1,11 @@
-import { createGraphiQLFetcher } from "@graphiql/toolkit";
-import { GraphiQL } from "graphiql";
-import React, { useEffect, useState } from "react";
-import Layout from "@theme/Layout";
-import BrowserOnly from "@docusaurus/BrowserOnly";
-import { useTheme, Theme } from "@graphiql/react";
-import Playground from "../components/playground";
-import "graphiql/graphiql.css";
+import { createGraphiQLFetcher } from '@graphiql/toolkit';
+import { GraphiQL } from 'graphiql';
+import React, { useEffect, useState } from 'react';
+import Layout from '@theme/Layout';
+import BrowserOnly from '@docusaurus/BrowserOnly';
+import { useTheme, Theme } from '@graphiql/react';
+import Playground from '../components/playground';
+import 'graphiql/graphiql.css';
 
 
 // Docusaurus does SSR for custom pages, but we need to load GraphiQL in the browser
