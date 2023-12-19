@@ -40,7 +40,7 @@ export class RelationMetadataEntity implements RelationMetadataInterface {
   @Column({ nullable: false, type: 'uuid' })
   toFieldMetadataId: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
   @ManyToOne(
