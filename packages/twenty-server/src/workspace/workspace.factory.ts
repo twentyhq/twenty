@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import fs from 'fs/promises';
-
 import { GraphQLSchema, printSchema } from 'graphql';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { gql } from 'graphql-tag';
@@ -97,8 +95,6 @@ export class WorkspaceFactory {
     );
     const scalarsResolvers =
       this.scalarsExplorerService.getScalarResolvers(usedScalarNames);
-
-    fs.writeFile('schema.graphql', typeDefs);
 
     const executableSchema = makeExecutableSchema({
       typeDefs: gql`
