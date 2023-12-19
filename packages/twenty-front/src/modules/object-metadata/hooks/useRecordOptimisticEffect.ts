@@ -17,9 +17,10 @@ export const useRecordOptimisticEffect = ({
   orderBy?: OrderByField;
   limit?: number;
 }) => {
-  const { registerOptimisticEffect } = useOptimisticEffect({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
+  const { registerOptimisticEffect, unregisterOptimisticEffect } =
+    useOptimisticEffect({
+      objectNameSingular: objectMetadataItem.nameSingular,
+    });
 
   useEffect(() => {
     registerOptimisticEffect({
@@ -32,5 +33,25 @@ export const useRecordOptimisticEffect = ({
         limit,
       },
     });
-  }, [registerOptimisticEffect, filter, orderBy, limit, objectMetadataItem]);
+
+    return () => {
+      unregisterOptimisticEffect({
+        definition: getRecordOptimisticEffectDefinition({
+          objectMetadataItem,
+        }),
+        variables: {
+          filter,
+          orderBy,
+          limit,
+        },
+      });
+    };
+  }, [
+    registerOptimisticEffect,
+    filter,
+    orderBy,
+    limit,
+    objectMetadataItem,
+    unregisterOptimisticEffect,
+  ]);
 };

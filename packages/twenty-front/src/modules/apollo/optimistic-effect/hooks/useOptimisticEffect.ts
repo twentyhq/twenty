@@ -2,6 +2,7 @@ import { ApolloCache, DocumentNode, useApolloClient } from '@apollo/client';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 
+import { computeOptimisticEffectKey } from '@/apollo/optimistic-effect/utils/computeOptimisticEffectKey';
 import {
   EMPTY_QUERY,
   useObjectMetadataItem,
@@ -22,6 +23,30 @@ export const useOptimisticEffect = ({
   const { findManyRecordsQuery } = useObjectMetadataItem({
     objectNameSingular,
   });
+
+  const unregisterOptimisticEffect = useRecoilCallback(
+    ({ snapshot, set }) =>
+      ({
+        variables,
+        definition,
+      }: {
+        variables: ObjectRecordQueryVariables;
+        definition: OptimisticEffectDefinition;
+      }) => {
+        const optimisticEffects = snapshot
+          .getLoadable(optimisticEffectState)
+          .getValue();
+
+        const computedKey = computeOptimisticEffectKey({
+          variables,
+          definition,
+        });
+
+        const { [computedKey]: _, ...rest } = optimisticEffects;
+
+        set(optimisticEffectState, rest);
+      },
+  );
 
   const registerOptimisticEffect = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -98,10 +123,10 @@ export const useOptimisticEffect = ({
           }
         };
 
-        const computedKey =
-          (definition.objectMetadataItem?.namePlural ?? definition.typename) +
-          '-' +
-          JSON.stringify(variables);
+        const computedKey = computeOptimisticEffectKey({
+          variables,
+          definition,
+        });
 
         const optimisticEffect = {
           key: computedKey,
@@ -171,5 +196,6 @@ export const useOptimisticEffect = ({
   return {
     registerOptimisticEffect,
     triggerOptimisticEffects,
+    unregisterOptimisticEffect,
   };
 };
