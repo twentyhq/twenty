@@ -124,6 +124,7 @@ export class FetchWorkspaceMessagesService {
       messagesResponse,
       dataSourceMetadata,
       workspaceDataSource,
+      workspaceMemberId,
     );
 
     return messages;
@@ -169,7 +170,12 @@ export class FetchWorkspaceMessagesService {
     }
   }
 
-  async saveMessages(messages, dataSourceMetadata, workspaceDataSource) {
+  async saveMessages(
+    messages,
+    dataSourceMetadata,
+    workspaceDataSource,
+    workspaceMemberId,
+  ) {
     for (const message of messages) {
       const {
         externalId,
@@ -178,12 +184,7 @@ export class FetchWorkspaceMessagesService {
         messageThreadId,
         date,
         from,
-        to,
-        cc,
-        bcc,
         text,
-        html,
-        attachments,
       } = message;
 
       const messageThread = await workspaceDataSource?.query(
@@ -192,31 +193,35 @@ export class FetchWorkspaceMessagesService {
       );
 
       const messageId = v4();
+      const handle = from?.value[0]?.address;
+      const displayName = from?.value[0]?.name;
 
-      await workspaceDataSource?.query(
-        `INSERT INTO ${dataSourceMetadata.schema}."message" ("id", "externalId", "headerMessageId", "subject", "messageThreadId", "direction", "body") VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-        [
-          messageId,
-          externalId,
-          headerMessageId,
-          subject,
-          messageThread[0]?.id,
-          'incoming',
-          text,
-        ],
+      const person = await workspaceDataSource?.query(
+        `SELECT * FROM ${dataSourceMetadata.schema}."person" WHERE "email" = $1`,
+        [handle],
       );
 
-      await workspaceDataSource?.query(
-        `INSERT INTO ${dataSourceMetadata.schema}."messageRecipient" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
-        [
-          messageId,
-          'from',
-          from?.value[0]?.address,
-          from?.value[0]?.name,
-          null,
-          null,
-        ],
-      );
+      const personId = person[0]?.id;
+
+      await workspaceDataSource?.transaction(async (manager) => {
+        await manager.query(
+          `INSERT INTO ${dataSourceMetadata.schema}."message" ("id", "externalId", "headerMessageId", "subject", "messageThreadId", "direction", "body") VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+          [
+            messageId,
+            externalId,
+            headerMessageId,
+            subject,
+            messageThread[0]?.id,
+            'incoming',
+            text,
+          ],
+        );
+
+        await manager.query(
+          `INSERT INTO ${dataSourceMetadata.schema}."messageRecipient" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
+          [messageId, 'from', handle, displayName, personId, workspaceMemberId],
+        );
+      });
     }
   }
 }
