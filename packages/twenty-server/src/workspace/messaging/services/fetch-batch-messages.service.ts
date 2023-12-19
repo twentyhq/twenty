@@ -58,7 +58,9 @@ export class FetchBatchMessagesService {
       },
     );
 
-    return await this.formatBatchResponse(response);
+    const formattedResponse = await this.formatBatchResponse(response);
+
+    return formattedResponse;
   }
 
   createBatchBody(messageQueries, boundary: string): string {
@@ -125,32 +127,41 @@ export class FetchBatchMessagesService {
   async formatBatchResponse(response) {
     const parsedResponse = this.parseBatch(response);
 
-    return await parsedResponse.map(async (item) => {
-      const { id, threadId, payload, internalDate, raw } = item;
+    return Promise.all(
+      parsedResponse.map(async (item) => {
+        const { id, threadId, internalDate, raw } = item;
 
-      const message = atob(raw.replace(/-/g, '+').replace(/_/g, '/'));
+        const message = atob(raw?.replace(/-/g, '+').replace(/_/g, '/'));
 
-      console.log(message);
+        const parsed = await simpleParser(message);
 
-      const parsed = await simpleParser(message);
+        const {
+          subject,
+          messageId,
+          from,
+          to,
+          cc,
+          bcc,
+          text,
+          html,
+          attachments,
+        } = parsed;
 
-      const { subject, messageId, from, to, cc, bcc, text, html, attachments } =
-        parsed;
-
-      return {
-        externalId: id,
-        headerMessageId: messageId,
-        subject: subject,
-        messageThreadId: threadId,
-        date: internalDate,
-        from,
-        to,
-        cc,
-        bcc,
-        text,
-        html,
-        attachments,
-      };
-    });
+        return {
+          externalId: id,
+          headerMessageId: messageId,
+          subject: subject,
+          messageThreadId: threadId,
+          date: internalDate,
+          from,
+          to,
+          cc,
+          bcc,
+          text,
+          html,
+          attachments,
+        };
+      }),
+    );
   }
 }

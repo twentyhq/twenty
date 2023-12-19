@@ -208,7 +208,14 @@ export class FetchWorkspaceMessagesService {
 
       await workspaceDataSource?.query(
         `INSERT INTO ${dataSourceMetadata.schema}."messageRecipient" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
-        [messageId, 'from', from.value.address, from.value.name, null, null],
+        [
+          messageId,
+          'from',
+          from?.value[0]?.address,
+          from?.value[0]?.name,
+          null,
+          null,
+        ],
       );
     }
   }
