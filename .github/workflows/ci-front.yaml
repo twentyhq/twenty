@@ -142,6 +142,8 @@ jobs:
           restore-keys: root-node_modules-
       - name: Front / Run linter
         run: yarn nx lint:ci twenty-front
+      - name: Front / Run Typescript Check
+        run: yarn nx tsc:ci twenty-front
   front-jest:
     needs: front-yarn-install
     runs-on: ubuntu-latest
