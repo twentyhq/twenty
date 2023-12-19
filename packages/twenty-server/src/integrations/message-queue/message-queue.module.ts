@@ -13,10 +13,7 @@ import {
 import { PgBossDriver } from 'src/integrations/message-queue/drivers/pg-boss.driver';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { BullMQDriver } from 'src/integrations/message-queue/drivers/bullmq.driver';
-import { FetchMessagesJob } from 'src/workspace/messaging/jobs/fetch-messages.job';
 import { SyncDriver } from 'src/integrations/message-queue/drivers/sync.driver';
-import { ModuleRef } from '@nestjs/core';
-import { AppModule } from 'src/app.module';
 import { JobsModule } from 'src/integrations/message-queue/jobs.module';
 
 @Global()
@@ -38,7 +35,9 @@ export class MessageQueueModule {
           switch (config.type) {
             case MessageQueueDriverType.PgBoss:
               const boss = new PgBossDriver(config.options);
+
               await boss.init();
+
               return boss;
 
             case MessageQueueDriverType.BullMQ:
