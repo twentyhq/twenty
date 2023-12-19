@@ -84,7 +84,7 @@ const TokenForm = (
             <input
               className={(token && !isLoading) ? 'input invalid' : 'input'}
               type='text'
-              disabled={isLoading}
+              readOnly={isLoading}
               placeholder='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMD...'
               defaultValue={token}
               onChange={updateToken}
