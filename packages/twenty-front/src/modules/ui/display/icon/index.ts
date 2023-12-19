@@ -88,6 +88,7 @@ export {
   IconPlus,
   IconPresentation,
   IconProgressCheck,
+  IconRefresh,
   IconRelationManyToMany,
   IconRelationOneToMany,
   IconRelationOneToOne,
