@@ -60,13 +60,13 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   avatarUrl: string;
 
-  // @FieldMetadata({
-  //   type: FieldMetadataType.UUID,
-  //   label: 'User Id',
-  //   description: 'Associated User Id',
-  //   icon: 'IconCircleUsers',
-  // })
-  // userId: string;
+  @FieldMetadata({
+    type: FieldMetadataType.UUID,
+    label: 'User Id',
+    description: 'Associated User Id',
+    icon: 'IconCircleUsers',
+  })
+  userId: string;
 
   // Relations
   @FieldMetadata({
@@ -157,6 +157,9 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     label: 'User',
     description: 'Related user',
     joinColumn: 'userId',
+  })
+  @Gate({
+    featureFlag: 'IS_STANDARD_CORE_RELATIONSHIPS_ENABLED',
   })
   user: UserObjectMetadata;
 
