@@ -59,14 +59,6 @@ export const useOptimisticEffect = ({
           query?: DocumentNode;
           objectMetadataItem?: ObjectMetadataItem;
         }) => {
-          console.log({
-            cache,
-            newData,
-            deletedRecordIds,
-            query,
-            variables,
-            objectMetadataItem,
-          });
           if (objectMetadataItem) {
             const existingData = cache.readQuery({
               query: findManyRecordsQuery,
@@ -120,8 +112,6 @@ export const useOptimisticEffect = ({
           objectMetadataItem: definition.objectMetadataItem,
         } satisfies OptimisticEffect<T>;
 
-        console.log('register', { optimisticEffect, optimisticEffects });
-
         set(optimisticEffectState, {
           ...optimisticEffects,
           [optimisticEffect.key]: optimisticEffect,
@@ -143,12 +133,6 @@ export const useOptimisticEffect = ({
         updatedData?: unknown;
         deletedRecordIds?: string[];
       }) => {
-        console.log('trigger', {
-          typename,
-          newData,
-          deletedRecordIds,
-          updatedData,
-        });
         const optimisticEffects = snapshot
           .getLoadable(optimisticEffectState)
           .getValue();
@@ -167,15 +151,6 @@ export const useOptimisticEffect = ({
                 return { ...data, __typename: typename };
               })
             : updatedData;
-
-          console.log({
-            optimisticEffect,
-            optimisticEffects,
-            formattedNewData,
-            formattedUpdatedData,
-            newData,
-            typename,
-          });
 
           if (optimisticEffect.typename === typename) {
             optimisticEffect.writer({

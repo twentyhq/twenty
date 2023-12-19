@@ -36,6 +36,48 @@ describe('isRecordMatchingFilter', () => {
         ).toBe(true);
       });
     });
+
+    it('matches any record with an empty and filter', () => {
+      const filter = { and: [] };
+
+      mockedCompaniesData.forEach((company) => {
+        expect(
+          isRecordMatchingFilter({
+            record: company,
+            filter,
+            objectMetadataItem: mockObjectMetadataItem,
+          }),
+        ).toBe(true);
+      });
+    });
+
+    it('matches any record with an empty or filter', () => {
+      const filter = { or: [] };
+
+      mockedCompaniesData.forEach((company) => {
+        expect(
+          isRecordMatchingFilter({
+            record: company,
+            filter,
+            objectMetadataItem: mockObjectMetadataItem,
+          }),
+        ).toBe(true);
+      });
+    });
+
+    it('matches any record with an empty not filter', () => {
+      const filter = { not: {} };
+
+      mockedCompaniesData.forEach((company) => {
+        expect(
+          isRecordMatchingFilter({
+            record: company,
+            filter,
+            objectMetadataItem: mockObjectMetadataItem,
+          }),
+        ).toBe(true);
+      });
+    });
   });
 
   describe('Simple Filters', () => {

@@ -1,5 +1,3 @@
-import { isNonEmptyArray } from '@sniptt/guards';
-
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   AndObjectRecordFilter,
@@ -45,7 +43,12 @@ export const isRecordMatchingFilter = ({
     if (filterKey === 'and') {
       const filterValue = (filter as AndObjectRecordFilter).and;
 
-      if (!isNonEmptyArray(filterValue)) {
+      if (!Array.isArray(filterValue)) {
+        continue;
+      }
+
+      if (filterValue.length === 0) {
+        currentLevelFilterMatches.push(true);
         continue;
       }
 
@@ -61,7 +64,12 @@ export const isRecordMatchingFilter = ({
     } else if (filterKey === 'or') {
       const filterValue = (filter as OrObjectRecordFilter).or;
 
-      if (isNonEmptyArray(filterValue)) {
+      if (Array.isArray(filterValue)) {
+        if (filterValue.length === 0) {
+          currentLevelFilterMatches.push(true);
+          continue;
+        }
+
         const recordIsMatchingOrFilters = filterValue.some((orFilter) =>
           isRecordMatchingFilter({
             record,
@@ -88,6 +96,11 @@ export const isRecordMatchingFilter = ({
 
       if (!isDefined(filterValue)) {
         throw new Error('Unexpected value for "not" filter : ' + filterValue);
+      }
+
+      if (isEmptyObject(filterValue)) {
+        currentLevelFilterMatches.push(true);
+        continue;
       }
 
       const recordIsMatchingNotFilters = !isRecordMatchingFilter({
