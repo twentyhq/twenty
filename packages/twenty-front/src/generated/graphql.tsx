@@ -352,6 +352,7 @@ export type Query = {
   findWorkspaceFromInviteHash: Workspace;
   object: Object;
   objects: ObjectConnection;
+  timelineMessage: TimelineMessage;
 };
 
 
@@ -436,6 +437,17 @@ export type Telemetry = {
   __typename?: 'Telemetry';
   anonymizationEnabled: Scalars['Boolean'];
   enabled: Scalars['Boolean'];
+};
+
+export type TimelineMessage = {
+  __typename?: 'TimelineMessage';
+  body?: Maybe<Scalars['String']>;
+  numberOfEmailsInThread?: Maybe<Scalars['Float']>;
+  read?: Maybe<Scalars['Boolean']>;
+  receivedAt?: Maybe<Scalars['DateTime']>;
+  senderName?: Maybe<Scalars['String']>;
+  senderPictureUrl?: Maybe<Scalars['String']>;
+  subject?: Maybe<Scalars['String']>;
 };
 
 export type TransientToken = {
