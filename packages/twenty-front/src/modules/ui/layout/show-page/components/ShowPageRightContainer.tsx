@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import styled from '@emotion/styled';
 
 import { Emails } from '@/activities/emails/components/Emails';
@@ -55,11 +54,13 @@ export const ShowPageRightContainer = ({
   notes,
   emails,
 }: ShowPageRightContainerProps) => {
-  
-  if (!entity) return <></>;
-
   const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
+  const [activeTabId] = useRecoilScopedState(
+    activeTabIdScopedState,
+    ShowPageRecoilScopeContext,
+  );
 
+  if (!entity) return <></>;
   const TASK_TABS = [
     {
       id: 'timeline',
@@ -97,11 +98,6 @@ export const ShowPageRightContainer = ({
       disabled: !isMessagingEnabled || entity.type === 'Custom',
     },
   ];
-
-  const [activeTabId] = useRecoilScopedState(
-    activeTabIdScopedState,
-    ShowPageRecoilScopeContext,
-  );
 
   return (
     <StyledShowPageRightContainer>

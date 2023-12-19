@@ -197,7 +197,7 @@ export const RecordShowPage = () => {
       <PageBody>
         <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>
           <ShowPageContainer>
-            {loading === false ? (
+            {!loading ? (
               <>
                 <ShowPageLeftContainer>
                   <ShowPageSummaryCard
@@ -271,7 +271,10 @@ export const RecordShowPage = () => {
               </>
             ) : (
               <>
-                <ShowPageLeftContainer />
+                <ShowPageLeftContainer>
+                  <div></div>
+                  <div></div>
+                </ShowPageLeftContainer>
                 <ShowPageRightContainer />
               </>
             )}
