@@ -6,6 +6,7 @@ import {
   BaseGraphQLError,
   ForbiddenError,
 } from 'src/filters/utils/graphql-errors.util';
+import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 
 const graphQLPredefinedExceptions = {
   401: AuthenticationError,
@@ -16,14 +17,28 @@ const graphQLPredefinedExceptions = {
 export class HttpExceptionFilter
   implements GqlExceptionFilter<HttpException, BaseGraphQLError | null>
 {
+  constructor(
+    private readonly exceptionHandlerService: ExceptionHandlerService,
+  ) {}
+
   catch(exception: HttpException, host: ArgumentsHost) {
     if (host.getType<GqlContextType>() !== 'graphql') {
       return null;
     }
 
+    return this.catchException(exception);
+  }
+
+  catchException(exception: HttpException) {
+    const status = exception.getStatus();
     let error: BaseGraphQLError;
 
-    if (exception.getStatus() in graphQLPredefinedExceptions) {
+    // Capture all 5xx errors and send them to exception handler
+    if (status >= 500) {
+      this.exceptionHandlerService.captureException(exception);
+    }
+
+    if (status in graphQLPredefinedExceptions) {
       error = new graphQLPredefinedExceptions[exception.getStatus()](
         exception.message,
       );

@@ -11,6 +11,10 @@ export class GlobalExceptionFilter implements GqlExceptionFilter {
   ) {}
 
   catch(exception: unknown) {
+    return this.catchException(exception);
+  }
+
+  catchException(exception: unknown) {
     this.exceptionHandlerService.captureException(exception);
 
     return exception;
