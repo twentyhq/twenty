@@ -8,7 +8,7 @@ const Playground = (
   }: Partial<React.PropsWithChildren | TokenFormProps>
 ) => {
   const [isTokenValid, setIsTokenValid] = useState(false)
-  return isTokenValid !== undefined && (
+  return (
     <>
       <TokenForm
         setOpenApiJson={setOpenApiJson}
