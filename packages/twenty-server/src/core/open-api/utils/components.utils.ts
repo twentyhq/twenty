@@ -42,17 +42,16 @@ const getSchemaComponentsProperties = (
         itemProperty.type = 'boolean';
         break;
       case FieldMetadataType.RELATION:
-        itemProperty = {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              node: {
-                type: 'object',
-              },
+        if (field.fromRelationMetadata?.toObjectMetadata.nameSingular) {
+          itemProperty = {
+            type: 'array',
+            items: {
+              $ref: `#/components/schemas/${capitalize(
+                field.fromRelationMetadata?.toObjectMetadata.nameSingular || '',
+              )}`,
             },
-          },
-        };
+          };
+        }
         break;
       case FieldMetadataType.LINK:
       case FieldMetadataType.CURRENCY:
@@ -74,7 +73,9 @@ const getSchemaComponentsProperties = (
         break;
     }
 
-    node[field.name] = itemProperty;
+    if (Object.keys(itemProperty).length) {
+      node[field.name] = itemProperty;
+    }
 
     return node;
   }, {} as Properties);
