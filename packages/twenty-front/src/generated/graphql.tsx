@@ -352,7 +352,7 @@ export type Query = {
   findWorkspaceFromInviteHash: Workspace;
   object: Object;
   objects: ObjectConnection;
-  timelineMessage: TimelineMessage;
+  timelineMessage: Array<TimelineMessage>;
 };
 
 
@@ -368,6 +368,11 @@ export type QueryCheckWorkspaceInviteHashIsValidArgs = {
 
 export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String'];
+};
+
+
+export type QueryTimelineMessageArgs = {
+  personId: Scalars['String'];
 };
 
 export type RefreshToken = {
@@ -442,10 +447,10 @@ export type Telemetry = {
 export type TimelineMessage = {
   __typename?: 'TimelineMessage';
   body?: Maybe<Scalars['String']>;
-  numberOfEmailsInThread?: Maybe<Scalars['Float']>;
-  read?: Maybe<Scalars['Boolean']>;
-  receivedAt?: Maybe<Scalars['DateTime']>;
-  senderName?: Maybe<Scalars['String']>;
+  numberOfMessagesInThread: Scalars['Float'];
+  read: Scalars['Boolean'];
+  receivedAt: Scalars['DateTime'];
+  senderName: Scalars['String'];
   senderPictureUrl?: Maybe<Scalars['String']>;
   subject?: Maybe<Scalars['String']>;
 };
@@ -642,6 +647,13 @@ export type RelationEdge = {
   node: Relation;
 };
 
+export type EmailQueryQueryVariables = Exact<{
+  personId: Scalars['String'];
+}>;
+
+
+export type EmailQueryQuery = { __typename?: 'Query', timelineMessage: Array<{ __typename?: 'TimelineMessage', body?: string | null, numberOfMessagesInThread: number, read: boolean, receivedAt: string, senderName: string, senderPictureUrl?: string | null, subject?: string | null }> };
+
 export type CreateEventMutationVariables = Exact<{
   type: Scalars['String'];
   data: Scalars['JSON'];
@@ -829,6 +841,47 @@ export const UserQueryFragmentFragmentDoc = gql`
   }
 }
     `;
+export const EmailQueryDocument = gql`
+    query EmailQuery($personId: String!) {
+  timelineMessage(personId: $personId) {
+    body
+    numberOfMessagesInThread
+    read
+    receivedAt
+    senderName
+    senderPictureUrl
+    subject
+  }
+}
+    `;
+
+/**
+ * __useEmailQueryQuery__
+ *
+ * To run a query within a React component, call `useEmailQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useEmailQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useEmailQueryQuery({
+ *   variables: {
+ *      personId: // value for 'personId'
+ *   },
+ * });
+ */
+export function useEmailQueryQuery(baseOptions: Apollo.QueryHookOptions<EmailQueryQuery, EmailQueryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<EmailQueryQuery, EmailQueryQueryVariables>(EmailQueryDocument, options);
+      }
+export function useEmailQueryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EmailQueryQuery, EmailQueryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<EmailQueryQuery, EmailQueryQueryVariables>(EmailQueryDocument, options);
+        }
+export type EmailQueryQueryHookResult = ReturnType<typeof useEmailQueryQuery>;
+export type EmailQueryLazyQueryHookResult = ReturnType<typeof useEmailQueryLazyQuery>;
+export type EmailQueryQueryResult = Apollo.QueryResult<EmailQueryQuery, EmailQueryQueryVariables>;
 export const CreateEventDocument = gql`
     mutation CreateEvent($type: String!, $data: JSON!) {
   createEvent(type: $type, data: $data) {

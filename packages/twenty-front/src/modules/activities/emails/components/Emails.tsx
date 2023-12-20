@@ -33,7 +33,7 @@ export const Emails = ({ entity }: { entity: ActivityTargetableEntity }) => {
     query EmailQuery($personId: String!) {
       timelineMessage(personId: $personId) {
         body
-        numberOfEmailsInThread
+        numberOfMessagesInThread
         read
         receivedAt
         senderName
@@ -53,6 +53,9 @@ export const Emails = ({ entity }: { entity: ActivityTargetableEntity }) => {
 
   const timelineMessages: TimelineMessage[] = messages.data.timelineMessage;
 
+  // This hard limit is just for the POC, we will implement pagination later
+  const firstTenMessages = timelineMessages.slice(0, 10);
+
   return (
     <StyledContainer>
       <Section>
@@ -66,10 +69,10 @@ export const Emails = ({ entity }: { entity: ActivityTargetableEntity }) => {
           fontColor={H1TitleFontColor.Primary}
         />
         <Card>
-          {timelineMessages.map((message: any, index: any) => (
+          {firstTenMessages.map((message: any, index: any) => (
             <EmailPreview
               key={index}
-              divider={index < timelineMessages.length - 1}
+              divider={index < firstTenMessages.length - 1}
               email={message}
             />
           ))}

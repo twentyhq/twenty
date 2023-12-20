@@ -2,9 +2,8 @@ import styled from '@emotion/styled';
 
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Avatar } from '@/users/components/Avatar';
+import { TimelineMessage } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils';
-
-import { Email } from '../types/email';
 
 const StyledCardContent = styled(CardContent)`
   align-items: center;
@@ -22,6 +21,7 @@ const StyledHeading = styled.div<{ unread: boolean }>`
   font-weight: ${({ theme, unread }) =>
     unread ? theme.font.weight.medium : theme.font.weight.regular};
   gap: ${({ theme }) => theme.spacing(1)};
+  overflow: hidden;
   width: 160px;
 
   :before {
@@ -37,6 +37,11 @@ const StyledHeading = styled.div<{ unread: boolean }>`
 
 const StyledAvatar = styled(Avatar)`
   margin: ${({ theme }) => theme.spacing(0, 1)};
+`;
+
+const StyledSenderName = styled.span`
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledThreadCount = styled.span`
@@ -73,7 +78,7 @@ const StyledReceivedAt = styled.div`
 
 type EmailPreviewProps = {
   divider?: boolean;
-  email: Email;
+  email: TimelineMessage;
 };
 
 export const EmailPreview = ({ divider, email }: EmailPreviewProps) => (
@@ -84,8 +89,8 @@ export const EmailPreview = ({ divider, email }: EmailPreviewProps) => (
         placeholder={email.senderName}
         type="rounded"
       />
-      {email.senderName}{' '}
-      <StyledThreadCount>{email.numberOfEmailsInThread}</StyledThreadCount>
+      <StyledSenderName>{email.senderName}</StyledSenderName>
+      <StyledThreadCount>{email.numberOfMessagesInThread}</StyledThreadCount>
     </StyledHeading>
 
     <StyledSubjectAndBody>

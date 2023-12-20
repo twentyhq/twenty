@@ -12,21 +12,21 @@ import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 @Entity({ name: 'timelineMessage', schema: 'core' })
 @ObjectType('TimelineMessage')
 class TimelineMessage {
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Field()
+  @Column()
   read: boolean;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Field()
+  @Column()
   senderName: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
   senderPictureUrl: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  numberOfEmailsInThread: number;
+  @Field()
+  @Column()
+  numberOfMessagesInThread: number;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
@@ -36,8 +36,8 @@ class TimelineMessage {
   @Column({ nullable: true })
   body: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Field()
+  @Column()
   receivedAt: Date;
 }
 
