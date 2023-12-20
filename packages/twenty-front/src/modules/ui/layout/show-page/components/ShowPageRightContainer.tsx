@@ -108,7 +108,7 @@ export const ShowPageRightContainer = ({
       {activeTabId === 'tasks' && <EntityTasks entity={entity} />}
       {activeTabId === 'notes' && <Notes entity={entity} />}
       {activeTabId === 'files' && <Attachments targetableEntity={entity} />}
-      {activeTabId === 'emails' && <Emails />}
+      {activeTabId === 'emails' && <Emails entity={entity} />}
     </StyledShowPageRightContainer>
   );
 };

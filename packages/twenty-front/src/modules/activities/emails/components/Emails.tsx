@@ -1,6 +1,7 @@
 import { gql, useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
 
+import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import {
   H1Title,
   H1TitleFontColor,
@@ -26,10 +27,10 @@ const StyledEmailCount = styled.span`
   color: ${({ theme }) => theme.font.color.light};
 `;
 
-export const Emails = () => {
+export const Emails = ({ entity }: { entity: ActivityTargetableEntity }) => {
   const emailQuery = gql`
-    query EmailQuery {
-      timelineMessage(personId: "1") {
+    query EmailQuery($personId: String!) {
+      timelineMessage(personId: $personId) {
         body
         numberOfEmailsInThread
         read
@@ -41,13 +42,15 @@ export const Emails = () => {
     }
   `;
 
-  const messages = useQuery(emailQuery);
+  const messages = useQuery(emailQuery, {
+    variables: { personId: entity.id },
+  });
 
   if (messages.loading) {
     return <div>Loading...</div>;
   }
 
-  console.log(messages.data);
+  console.log(messages);
 
   const timelineMessages = messages.data.timelineMessage;
 
@@ -66,6 +69,7 @@ export const Emails = () => {
         <Card>
           {timelineMessages.map((message: any, index: any) => (
             <EmailPreview
+              key={index}
               divider={index < timelineMessages.length - 1}
               email={message}
             />
