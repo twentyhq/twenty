@@ -116,8 +116,8 @@ export const mockedActivities: Array<MockedActivity> = [
       },
       {
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb301',
-        createdAt: '2023-04-26T10:12:42.33625+00:00',
-        updatedAt: '2023-04-26T10:23:42.33625+00:00',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
         personId: null,
         companyId: 'b396e6b9-dc5c-4643-bcff-61b6cf7523ae',
         company: {
@@ -129,8 +129,8 @@ export const mockedActivities: Array<MockedActivity> = [
         activityId: 'b396e6b9-dc5c-4643-bcff-61b6cf7523ae',
         activity: {
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb231',
-          createdAt: '2023-04-26T10:12:42.33625+00:00',
-          updatedAt: '2023-04-26T10:23:42.33625+00:00',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
         },
         __typename: 'ActivityTarget',
       },
@@ -139,8 +139,8 @@ export const mockedActivities: Array<MockedActivity> = [
   },
   {
     id: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
-    createdAt: '2023-04-26T10:12:42.33625+00:00',
-    updatedAt: '2023-04-26T10:23:42.33625+00:00',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
     reminderAt: null,
     title: 'Another note',
     body: '',
@@ -181,8 +181,8 @@ export const mockedActivities: Array<MockedActivity> = [
       },
       {
         id: '89bb825c-171e-4bcc-9cf7-43448d6fb279t',
-        createdAt: '2023-04-26T10:12:42.33625+00:00',
-        updatedAt: '2023-04-26T10:23:42.33625+00:00',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
         personId: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d', // Jean d'Eau
         companyId: null,
         company: null,
@@ -197,8 +197,8 @@ export const mockedActivities: Array<MockedActivity> = [
         activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
         activity: {
           id: '89bb825c-171e-4bcc-9cf7-43448d6fb278a',
-          createdAt: '2023-04-26T10:12:42.33625+00:00',
-          updatedAt: '2023-04-26T10:23:42.33625+00:00',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
         },
         __typename: 'ActivityTarget',
       },
