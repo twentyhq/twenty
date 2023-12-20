@@ -28,15 +28,13 @@ export const useFavorites = ({
     updateOneRecordMutation: updateOneFavoriteMutation,
     createOneRecordMutation: createOneFavoriteMutation,
     deleteOneRecordMutation: deleteOneFavoriteMutation,
-    objectMetadataItem: favoriteObjectMetadataItem,
   } = useObjectMetadataItem({
     objectNameSingular: 'favorite',
   });
 
-  const { registerOptimisticEffect, triggerOptimisticEffects } =
-    useOptimisticEffect({
-      objectNameSingular: 'favorite',
-    });
+  const { triggerOptimisticEffects } = useOptimisticEffect({
+    objectNameSingular: 'favorite',
+  });
   const { performOptimisticEvict } = useOptimisticEvict();
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({

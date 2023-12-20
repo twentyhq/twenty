@@ -7,6 +7,7 @@ import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils
 import { turnUIFiltersIntoObjectRecordFilters } from '@/object-record/record-filter/utils/turnUIFiltersIntoObjectRecordFilters';
 import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { isRecordTableInitialLoadingState } from '@/object-record/record-table/states/isRecordTableInitialLoadingState';
 import { signInBackgroundMockCompanies } from '@/sign-in-background-mock/constants/signInBackgroundMockCompanies';
 
 import { useFindManyRecords } from './useFindManyRecords';
@@ -41,6 +42,10 @@ export const useObjectRecordTable = () => {
     foundObjectMetadataItem?.fields ?? [],
   );
 
+  const setIsRecordTableInitialLoading = useSetRecoilState(
+    isRecordTableInitialLoadingState,
+  );
+
   const { records, loading, fetchMoreRecords, queryStateIdentifier } =
     useFindManyRecords({
       objectNameSingular,
@@ -48,6 +53,7 @@ export const useObjectRecordTable = () => {
       orderBy,
       onCompleted: () => {
         setLastRowVisible(false);
+        setIsRecordTableInitialLoading(false);
       },
     });
 

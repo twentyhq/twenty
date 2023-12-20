@@ -5,14 +5,21 @@ import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { selectedRowIdsSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsSelector';
-import { IconHeart, IconHeartOff, IconTrash } from '@/ui/display/icon';
+import {
+  IconHeart,
+  IconHeartOff,
+  IconTrash,
+  IconWand,
+} from '@/ui/display/icon';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
 import { ContextMenuEntry } from '@/ui/navigation/context-menu/types/ContextMenuEntry';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 type useRecordTableContextMenuEntriesProps = {
   recordTableScopeId?: string;
@@ -68,6 +75,10 @@ export const useRecordTableContextMenuEntries = (
     objectNameSingular,
   });
 
+  const { executeQuickActionOnOneRecord } = useExecuteQuickActionOnOneRecord({
+    objectNameSingular,
+  });
+
   const handleDeleteClick = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
@@ -83,6 +94,27 @@ export const useRecordTableContextMenuEntries = (
         );
       },
     [deleteOneRecord, resetTableRowSelection],
+  );
+
+  const handleExecuteQuickActionOnClick = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const rowIdsToExecuteQuickActionOn = snapshot
+          .getLoadable(selectedRowIdsSelector)
+          .getValue();
+
+        resetTableRowSelection();
+        await Promise.all(
+          rowIdsToExecuteQuickActionOn.map(async (rowId) => {
+            await executeQuickActionOnOneRecord(rowId);
+          }),
+        );
+      },
+    [executeQuickActionOnOneRecord, resetTableRowSelection],
+  );
+
+  const dataExecuteQuickActionOnmentEnabled = useIsFeatureEnabled(
+    'IS_QUICK_ACTIONS_ENABLED',
   );
 
   return {
@@ -143,6 +175,15 @@ export const useRecordTableContextMenuEntries = (
         //   Icon: IconNotes,
         //   onClick: () => {},
         // },
+        ...(dataExecuteQuickActionOnmentEnabled
+          ? [
+              {
+                label: 'Quick Action',
+                Icon: IconWand,
+                onClick: () => handleExecuteQuickActionOnClick(),
+              },
+            ]
+          : []),
         {
           label: 'Delete',
           Icon: IconTrash,

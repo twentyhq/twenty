@@ -26,7 +26,7 @@ export const TasksEffect = ({ filterDropdownId }: TasksEffectProps) => {
     if (currentWorkspaceMember) {
       setSelectedFilter({
         fieldMetadataId: 'assigneeId',
-        value: currentWorkspaceMember.id,
+        value: JSON.stringify(currentWorkspaceMember.id),
         operand: ViewFilterOperand.Is,
         displayValue:
           currentWorkspaceMember.name?.firstName +

@@ -181,7 +181,7 @@ export class WorkspaceQueryRunnerService {
     )?.records;
   }
 
-  private async execute(
+  async execute(
     query: string,
     workspaceId: string,
   ): Promise<PGGraphQLResult | undefined> {
@@ -215,7 +215,7 @@ export class WorkspaceQueryRunnerService {
     const errors = graphqlResult?.[0]?.resolve?.errors;
 
     if (Array.isArray(errors) && errors.length > 0) {
-      console.error('GraphQL errors', errors);
+      console.error(`GraphQL errors on ${command}${targetTableName}`, errors);
     }
 
     if (!result) {
@@ -223,5 +223,16 @@ export class WorkspaceQueryRunnerService {
     }
 
     return parseResult(result);
+  }
+
+  async executeAndParse<Result>(
+    query: string,
+    targetTableName: string,
+    command: string,
+    workspaceId: string,
+  ): Promise<Result> {
+    const result = await this.execute(query, workspaceId);
+
+    return this.parseResult(result, targetTableName, command);
   }
 }

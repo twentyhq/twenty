@@ -1,6 +1,6 @@
 import { color } from './colors';
 
-export const tagLight: { [key: string]: { [key: string]: string } } = {
+export const tagLight = {
   text: {
     green: color.green60,
     turquoise: color.turquoise60,

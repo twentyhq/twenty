@@ -33,7 +33,7 @@ export const mapFieldMetadataToGraphqlQuery = (
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
         objectMetadataItem.id ===
-        (field.toRelationMetadata as any)?.fromObjectMetadata?.id,
+        (field.toRelationMetadata as any)?.fromObjectMetadataId,
     );
 
     return `${field.name}
@@ -58,7 +58,7 @@ export const mapFieldMetadataToGraphqlQuery = (
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
         objectMetadataItem.id ===
-        (field.fromRelationMetadata as any)?.toObjectMetadata?.id,
+        (field.fromRelationMetadata as any)?.toObjectMetadataId,
     );
 
     return `${field.name}

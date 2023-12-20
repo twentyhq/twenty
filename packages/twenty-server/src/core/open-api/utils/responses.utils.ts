@@ -13,21 +13,11 @@ export const getManyResultResponse200 = (item: ObjectMetadataEntity) => {
               type: 'object',
               properties: {
                 [item.namePlural]: {
-                  type: 'object',
-                  properties: {
-                    edges: {
-                      type: 'array',
-                      items: {
-                        type: 'object',
-                        properties: {
-                          node: {
-                            $ref: `#/components/schemas/${capitalize(
-                              item.nameSingular,
-                            )}`,
-                          },
-                        },
-                      },
-                    },
+                  type: 'array',
+                  items: {
+                    $ref: `#/components/schemas/${capitalize(
+                      item.nameSingular,
+                    )}`,
                   },
                 },
               },
@@ -35,16 +25,10 @@ export const getManyResultResponse200 = (item: ObjectMetadataEntity) => {
           },
           example: {
             data: {
-              properties: {
-                [item.namePlural]: {
-                  edges: [
-                    {
-                      node: `${capitalize(item.nameSingular)}Object`,
-                    },
-                    '...',
-                  ],
-                },
-              },
+              [item.namePlural]: [
+                `${capitalize(item.nameSingular)}Object`,
+                '...',
+              ],
             },
           },
         },
