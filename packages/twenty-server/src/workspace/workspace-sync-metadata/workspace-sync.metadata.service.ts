@@ -222,7 +222,7 @@ export class WorkspaceSyncMetadataService {
       }
 
       // CREATE OBJECTS
-      const objectMetadataCollection = await this.objectMetadataRepository.save(
+      const createdObjectMetadataCollection = await this.objectMetadataRepository.save(
         objectsToCreate.map((object) => ({
           ...object,
           isActive: true,
