@@ -7,7 +7,7 @@ import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMeta
 import { useGenerateEmptyRecord } from '@/object-record/hooks/useGenerateEmptyRecord';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const useCreateManyRecords = <T>({
+export const useCreateManyRecords = <T extends Record<string, unknown>>({
   objectNameSingular,
 }: ObjectMetadataItemIdentifier) => {
   const { triggerOptimisticEffects } = useOptimisticEffect({
@@ -32,10 +32,17 @@ export const useCreateManyRecords = <T>({
     }));
 
     withIds.forEach((record) => {
-      triggerOptimisticEffects(
-        `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-        generateEmptyRecord({ id: record.id }),
-      );
+      const emptyRecord: Record<string, unknown> | undefined =
+        generateEmptyRecord({
+          id: record.id,
+        });
+
+      if (emptyRecord) {
+        triggerOptimisticEffects({
+          typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
+          createdRecords: [emptyRecord],
+        });
+      }
     });
 
     const createdObjects = await apolloClient.mutate({
@@ -59,11 +66,9 @@ export const useCreateManyRecords = <T>({
         `create${capitalize(objectMetadataItem.namePlural)}`
       ] as T[]) ?? [];
 
-    createdRecords.forEach((record) => {
-      triggerOptimisticEffects(
-        `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-        record,
-      );
+    triggerOptimisticEffects({
+      typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
+      createdRecords,
     });
 
     return createdRecords;

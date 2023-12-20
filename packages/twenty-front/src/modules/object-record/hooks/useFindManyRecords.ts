@@ -4,13 +4,12 @@ import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useRecordOptimisticEffect } from '@/object-metadata/hooks/useRecordOptimisticEffect';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
-import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
-import { ObjectRecordFilter } from '@/object-record/types/ObjectRecordFilter';
+import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -37,7 +36,7 @@ export const useFindManyRecords = <
   onCompleted,
   skip,
 }: ObjectMetadataItemIdentifier & {
-  filter?: ObjectRecordFilter;
+  filter?: ObjectRecordQueryFilter;
   orderBy?: OrderByField;
   limit?: number;
   onCompleted?: (data: PaginatedRecordTypeResults<RecordType>) => void;
@@ -65,8 +64,11 @@ export const useFindManyRecords = <
     objectNameSingular,
   });
 
-  const { registerOptimisticEffect } = useOptimisticEffect({
-    objectNameSingular,
+  useRecordOptimisticEffect({
+    objectMetadataItem,
+    filter,
+    orderBy,
+    limit,
   });
 
   const { enqueueSnackBar } = useSnackBar();
@@ -82,19 +84,6 @@ export const useFindManyRecords = <
       orderBy: orderBy ?? {},
     },
     onCompleted: (data) => {
-      if (objectMetadataItem) {
-        registerOptimisticEffect({
-          variables: {
-            filter: filter ?? {},
-            orderBy: orderBy ?? {},
-            limit: limit,
-          },
-          definition: getRecordOptimisticEffectDefinition({
-            objectMetadataItem,
-          }),
-        });
-      }
-
       onCompleted?.(data[objectMetadataItem.namePlural]);
 
       if (data?.[objectMetadataItem.namePlural]) {

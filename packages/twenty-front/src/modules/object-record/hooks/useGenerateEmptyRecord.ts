@@ -164,6 +164,6 @@ export const useGenerateEmptyRecord = ({
   };
 
   return {
-    generateEmptyRecord: generateEmptyRecord,
+    generateEmptyRecord,
   };
 };

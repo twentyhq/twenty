@@ -9,6 +9,11 @@ export type UUIDFilter = {
   is?: IsFilter;
 };
 
+export type BooleanFilter = {
+  eq?: boolean;
+  is?: IsFilter;
+};
+
 export type StringFilter = {
   eq?: string;
   gt?: string;
@@ -36,6 +41,11 @@ export type FloatFilter = {
   is?: IsFilter;
 };
 
+/**
+ * Always use a DateFilter in the variables of a query, and never directly in the query.
+ *
+ * Because pg_graphql only works with ISO strings if it is passed to variables.
+ */
 export type DateFilter = {
   eq?: string;
   gt?: string;
@@ -53,6 +63,7 @@ export type CurrencyFilter = {
 
 export type URLFilter = {
   url?: StringFilter;
+  label?: StringFilter;
 };
 
 export type FullNameFilter = {
@@ -67,14 +78,27 @@ export type LeafFilter =
   | DateFilter
   | CurrencyFilter
   | URLFilter
-  | FullNameFilter;
+  | FullNameFilter
+  | BooleanFilter;
 
-export type ObjectRecordFilter =
-  | {
-      and?: ObjectRecordFilter[];
-      or?: ObjectRecordFilter[];
-      not?: ObjectRecordFilter;
-    }
-  | {
-      [fieldName: string]: LeafFilter;
-    };
+export type AndObjectRecordFilter = {
+  and?: ObjectRecordQueryFilter[];
+};
+
+export type OrObjectRecordFilter = {
+  or?: ObjectRecordQueryFilter[] | ObjectRecordQueryFilter;
+};
+
+export type NotObjectRecordFilter = {
+  not?: ObjectRecordQueryFilter;
+};
+
+export type LeafObjectRecordFilter = {
+  [fieldName: string]: LeafFilter;
+};
+
+export type ObjectRecordQueryFilter =
+  | LeafObjectRecordFilter
+  | AndObjectRecordFilter
+  | OrObjectRecordFilter
+  | NotObjectRecordFilter;

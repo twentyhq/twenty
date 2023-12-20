@@ -1,6 +1,6 @@
 import { useApolloClient } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 
+import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -11,14 +11,13 @@ type useUpdateOneRecordProps = {
 
 export const useUpdateOneRecord = <T>({
   objectNameSingular,
-  refetchFindManyQuery = false,
 }: useUpdateOneRecordProps) => {
-  const {
-    objectMetadataItem,
-    updateOneRecordMutation,
-    getRecordFromCache,
-    findManyRecordsQuery,
-  } = useObjectMetadataItem({
+  const { objectMetadataItem, updateOneRecordMutation, getRecordFromCache } =
+    useObjectMetadataItem({
+      objectNameSingular,
+    });
+
+  const { triggerOptimisticEffects } = useOptimisticEffect({
     objectNameSingular,
   });
 
@@ -34,6 +33,16 @@ export const useUpdateOneRecord = <T>({
   }) => {
     const cachedRecord = getRecordFromCache(idToUpdate);
 
+    triggerOptimisticEffects({
+      typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
+      updatedRecords: [
+        {
+          ...(cachedRecord ?? {}),
+          ...input,
+        },
+      ],
+    });
+
     const updatedRecord = await apolloClient.mutate({
       mutation: updateOneRecordMutation,
       variables: {
@@ -48,18 +57,17 @@ export const useUpdateOneRecord = <T>({
           ...input,
         },
       },
-      refetchQueries: refetchFindManyQuery
-        ? [getOperationName(findManyRecordsQuery) ?? '']
-        : [],
     });
 
     if (!updatedRecord?.data) {
       return null;
     }
 
-    return updatedRecord.data[
+    const updatedData = updatedRecord.data[
       `update${capitalize(objectMetadataItem.nameSingular)}`
     ] as T;
+
+    return updatedData;
   };
 
   return {
