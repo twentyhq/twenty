@@ -1,3 +1,4 @@
+import { CursorScalarType } from './cursor.scalar';
 import { BigFloatScalarType } from './big-float.scalar';
 import { BigIntScalarType } from './big-int.scalar';
 import { DateScalarType } from './date.scalar';
@@ -20,5 +21,5 @@ export const scalars = [
   DateTimeScalarType,
   TimeScalarType,
   UUIDScalarType,
-  // CursorScalarType,
+  CursorScalarType,
 ];
