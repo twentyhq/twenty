@@ -38,7 +38,15 @@ const StyledRadioInput = styled(motion.input)<RadioInputProps>`
   appearance: none;
   background-color: transparent;
   border: 1px solid ${({ theme }) => theme.font.color.secondary};
-  border-radius: 50%;
+  border-radius: ${({ theme }) => theme.border.radius.rounded};
+  height: ${({ 'radio-size': radioSize }) =>
+    radioSize === RadioSize.Large ? '18px' : '16px'};
+  margin: 0;
+  margin-left: 3px;
+  position: relative;
+  width: ${({ 'radio-size': radioSize }) =>
+    radioSize === RadioSize.Large ? '18px' : '16px'};
+
   :hover {
     background-color: ${({ theme, checked }) => {
       if (!checked) {
@@ -53,6 +61,7 @@ const StyledRadioInput = styled(motion.input)<RadioInputProps>`
         return rgba(theme.color.blue, 0.12);
       }};
   }
+
   &:checked {
     background-color: ${({ theme }) => theme.color.blue};
     border: none;
@@ -70,15 +79,11 @@ const StyledRadioInput = styled(motion.input)<RadioInputProps>`
         radioSize === RadioSize.Large ? '8px' : '6px'};
     }
   }
+
   &:disabled {
     cursor: not-allowed;
     opacity: 0.12;
   }
-  height: ${({ 'radio-size': radioSize }) =>
-    radioSize === RadioSize.Large ? '18px' : '16px'};
-  position: relative;
-  width: ${({ 'radio-size': radioSize }) =>
-    radioSize === RadioSize.Large ? '18px' : '16px'};
 `;
 
 type LabelProps = {
@@ -99,26 +104,28 @@ const StyledLabel = styled.label<LabelProps>`
 `;
 
 export type RadioProps = {
-  style?: React.CSSProperties;
-  className?: string;
   checked?: boolean;
-  value?: string;
+  className?: string;
+  disabled?: boolean;
+  label?: string;
+  labelPosition?: LabelPosition;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onCheckedChange?: (checked: boolean) => void;
   size?: RadioSize;
-  disabled?: boolean;
-  labelPosition?: LabelPosition;
+  style?: React.CSSProperties;
+  value?: string;
 };
 
 export const Radio = ({
   checked,
-  value,
+  className,
+  disabled = false,
+  label,
+  labelPosition = LabelPosition.Right,
   onChange,
   onCheckedChange,
   size = RadioSize.Small,
-  labelPosition = LabelPosition.Right,
-  disabled = false,
-  className,
+  value,
 }: RadioProps) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange?.(event);
@@ -133,7 +140,7 @@ export const Radio = ({
         name="input-radio"
         data-testid="input-radio"
         checked={checked}
-        value={value}
+        value={value || label}
         radio-size={size}
         disabled={disabled}
         onChange={handleChange}
@@ -141,13 +148,13 @@ export const Radio = ({
         animate={{ scale: checked ? 1.05 : 0.95 }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       />
-      {value && (
+      {label && (
         <StyledLabel
           htmlFor="input-radio"
           labelPosition={labelPosition}
           disabled={disabled}
         >
-          {value}
+          {label}
         </StyledLabel>
       )}
     </StyledContainer>

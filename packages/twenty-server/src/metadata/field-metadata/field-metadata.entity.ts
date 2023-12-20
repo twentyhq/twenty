@@ -95,7 +95,7 @@ export class FieldMetadataEntity<
   @Column({ nullable: true, default: true })
   isNullable: boolean;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
   @OneToOne(
