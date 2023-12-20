@@ -46,7 +46,7 @@ export const RecordShowPage = () => {
     throw new Error(`Object name is not defined`);
   }
 
-  const { objectMetadataItem, labelIdentifierFieldMetadataId } =
+  const { objectMetadataItem, labelIdentifierFieldMetadata } =
     useObjectMetadataItem({
       objectNameSingular,
     });
@@ -177,9 +177,15 @@ export const RecordShowPage = () => {
     });
   };
 
-  const labelIdentifierFieldMetadata = objectMetadataItem.fields.find(
-    (field) => field.id === labelIdentifierFieldMetadataId,
-  );
+  const fieldMetadataItemsToShow = [...objectMetadataItem.fields]
+    .sort((fieldMetadataItemA, fieldMetadataItemB) =>
+      fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
+    )
+    .filter(isFieldMetadataItemAvailable)
+    .filter(
+      (fieldMetadataItem) =>
+        fieldMetadataItem.id !== labelIdentifierFieldMetadata?.id,
+    );
 
   return (
     <PageContainer>
@@ -221,7 +227,7 @@ export const RecordShowPage = () => {
                         value={{
                           entityId: record.id,
                           recoilScopeId:
-                            record.id + labelIdentifierFieldMetadataId,
+                            record.id + labelIdentifierFieldMetadata?.id,
                           isLabelIdentifier: false,
                           fieldDefinition: {
                             type: parseFieldType(
@@ -230,7 +236,7 @@ export const RecordShowPage = () => {
                             ),
                             iconName: '',
                             fieldMetadataId:
-                              labelIdentifierFieldMetadataId || '',
+                              labelIdentifierFieldMetadata?.id ?? '',
                             label: labelIdentifierFieldMetadata?.label || '',
                             metadata: {
                               fieldName:
@@ -253,38 +259,29 @@ export const RecordShowPage = () => {
                     }
                   />
                   <PropertyBox extraPadding={true}>
-                    {objectMetadataItem &&
-                      [...objectMetadataItem.fields]
-                        .sort((fieldMetadataItemA, fieldMetadataItemB) =>
-                          fieldMetadataItemA.name.localeCompare(
-                            fieldMetadataItemB.name,
-                          ),
-                        )
-                        .filter(isFieldMetadataItemAvailable)
-                        .map((metadataField, index) =>
-                          metadataField.id ===
-                          labelIdentifierFieldMetadataId ? null : (
-                            <FieldContext.Provider
-                              key={record.id + metadataField.id}
-                              value={{
-                                entityId: record.id,
-                                recoilScopeId: record.id + metadataField.id,
-                                isLabelIdentifier: false,
-                                fieldDefinition:
-                                  formatFieldMetadataItemAsColumnDefinition({
-                                    field: metadataField,
-                                    position: index,
-                                    objectMetadataItem,
-                                  }),
-                                useUpdateEntityMutation:
-                                  useUpdateOneObjectRecordMutation,
-                                hotkeyScope: InlineCellHotkeyScope.InlineCell,
-                              }}
-                            >
-                              <RecordInlineCell />
-                            </FieldContext.Provider>
-                          ),
-                        )}
+                    {fieldMetadataItemsToShow.map(
+                      (fieldMetadataItem, index) => (
+                        <FieldContext.Provider
+                          key={record.id + fieldMetadataItem.id}
+                          value={{
+                            entityId: record.id,
+                            recoilScopeId: record.id + fieldMetadataItem.id,
+                            isLabelIdentifier: false,
+                            fieldDefinition:
+                              formatFieldMetadataItemAsColumnDefinition({
+                                field: fieldMetadataItem,
+                                position: index,
+                                objectMetadataItem,
+                              }),
+                            useUpdateEntityMutation:
+                              useUpdateOneObjectRecordMutation,
+                            hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                          }}
+                        >
+                          <RecordInlineCell />
+                        </FieldContext.Provider>
+                      ),
+                    )}
                   </PropertyBox>
                   {objectNameSingular === 'company' ? (
                     <>

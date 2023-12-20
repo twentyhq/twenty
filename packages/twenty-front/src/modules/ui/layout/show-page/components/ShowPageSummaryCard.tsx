@@ -110,7 +110,6 @@ export const ShowPageSummaryCard = ({
           type="file"
         />
       </StyledAvatarWrapper>
-
       <StyledInfoContainer>
         <StyledTitle>{title}</StyledTitle>
         <StyledDate id={dateElementId}>Added {beautifiedCreatedAt}</StyledDate>

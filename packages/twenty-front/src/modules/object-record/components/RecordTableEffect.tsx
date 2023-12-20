@@ -31,7 +31,7 @@ export const RecordTableEffect = ({
   const {
     objectMetadataItem,
     basePathToShowPage,
-    labelIdentifierFieldMetadataId,
+    labelIdentifierFieldMetadata,
   } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -49,16 +49,16 @@ export const RecordTableEffect = ({
   } = useViewBar({ viewBarId });
 
   useEffect(() => {
-    if (basePathToShowPage && labelIdentifierFieldMetadataId) {
+    if (basePathToShowPage && labelIdentifierFieldMetadata) {
       setObjectMetadataConfig?.({
         basePathToShowPage,
-        labelIdentifierFieldMetadataId,
+        labelIdentifierFieldMetadataId: labelIdentifierFieldMetadata.id,
       });
     }
   }, [
     basePathToShowPage,
     objectMetadataItem,
-    labelIdentifierFieldMetadataId,
+    labelIdentifierFieldMetadata,
     setObjectMetadataConfig,
   ]);
 
