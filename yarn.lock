@@ -15190,7 +15190,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zapier/secret-scrubber@npm:^1.0.7":
+"@zapier/secret-scrubber@npm:^1.0.8":
   version: 1.0.8
   resolution: "@zapier/secret-scrubber@npm:1.0.8"
   dependencies:
@@ -41285,7 +41285,7 @@ __metadata:
     rimraf: "npm:^5.0.5"
     typescript: "npm:^5.2.2"
     zapier-platform-cli: "npm:^15.4.1"
-    zapier-platform-core: "npm:15.4.1"
+    zapier-platform-core: "npm:15.5.1"
   languageName: unknown
   linkType: soft
 
@@ -44005,12 +44005,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zapier-platform-core@npm:15.4.1":
-  version: 15.4.1
-  resolution: "zapier-platform-core@npm:15.4.1"
+"zapier-platform-core@npm:15.5.1":
+  version: 15.5.1
+  resolution: "zapier-platform-core@npm:15.5.1"
   dependencies:
     "@types/node": "npm:^20.3.1"
-    "@zapier/secret-scrubber": "npm:^1.0.7"
+    "@zapier/secret-scrubber": "npm:^1.0.8"
     bluebird: "npm:3.7.2"
     content-disposition: "npm:0.5.4"
     dotenv: "npm:12.0.4 "
@@ -44021,21 +44021,21 @@ __metadata:
     node-fetch: "npm:2.6.7"
     oauth-sign: "npm:0.9.0"
     semver: "npm:7.5.2"
-    zapier-platform-schema: "npm:15.4.1"
+    zapier-platform-schema: "npm:15.5.1"
   dependenciesMeta:
     "@types/node":
       optional: true
-  checksum: 84ab2e0c65a436c9617f386219b82aac33d534f1af8104684f7037025cb916dd9e035ef18d82fe4c63039b9af95ea976b6d4561a123dea79dd20011252996ba8
+  checksum: af61f412fa8b4ce58a701d9bacd1600d2af59cb7eb80bc7206c7077cd5aa2cc69c4837e98b26872a3e43848d68ea2356521316ef74aadc35fb56f009352bc9b4
   languageName: node
   linkType: hard
 
-"zapier-platform-schema@npm:15.4.1":
-  version: 15.4.1
-  resolution: "zapier-platform-schema@npm:15.4.1"
+"zapier-platform-schema@npm:15.5.1":
+  version: 15.5.1
+  resolution: "zapier-platform-schema@npm:15.5.1"
   dependencies:
     jsonschema: "npm:1.2.2"
     lodash: "npm:4.17.21"
-  checksum: a7b9de082aceeac345e4d03b740dd66f5131b7ab10a289e3db4e2548764c90495818fd6af366a6092c3c8d379533509482a6fcd88283381d424bfbda236e58b8
+  checksum: d08435d8221f7d6dbcb02a7a507bd63dbb9f2b9ee1d868da8d53e71e7fdc91426932957c2ff2afd8fc471749c17cf10a8d651e25f682af4c3fd0f11f5d76b5fd
   languageName: node
   linkType: hard
 
