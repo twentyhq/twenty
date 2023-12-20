@@ -67,27 +67,31 @@ export class TimelineMessagingResolver {
     const messageThreads = await workspaceDataSource?.query(
       `
       SELECT 
-      message_thread.*,
-      message_count,
-      last_message_subject,
-      last_message_body,
-      last_message_date
-      FROM (
-          SELECT 
-              mt.*,
-              COUNT(m."id") OVER (PARTITION BY mt."id") AS message_count,
-              FIRST_VALUE(m."subject") OVER (PARTITION BY mt."id" ORDER BY m."createdAt" DESC) AS last_message_subject,
-              FIRST_VALUE(m."body") OVER (PARTITION BY mt."id" ORDER BY m."createdAt" DESC) AS last_message_body,
-              FIRST_VALUE(m."createdAt") OVER (PARTITION BY mt."id" ORDER BY m."createdAt" DESC) AS last_message_date
-          FROM 
-              ${dataSourceMetadata.schema}."messageThread" mt
-          LEFT JOIN 
-              ${dataSourceMetadata.schema}."message" m ON mt."id" = m."messageThreadId"
-          LEFT JOIN 
-              ${dataSourceMetadata.schema}."messageRecipient" mr ON m."id" = mr."messageId"
-          WHERE 
-              mr."personId" = $1
-      ) AS message_thread;
+    message_thread.*,
+    message_count,
+    last_message_subject,
+    last_message_body,
+    last_message_date,
+    last_message_recipient_handle,
+    last_message_recipient_displayName
+FROM (
+    SELECT 
+        mt.*,
+        COUNT(m."id") OVER (PARTITION BY mt."id") AS message_count,
+        FIRST_VALUE(m."subject") OVER (PARTITION BY mt."id" ORDER BY m."createdAt" DESC) AS last_message_subject,
+        FIRST_VALUE(m."body") OVER (PARTITION BY mt."id" ORDER BY m."createdAt" DESC) AS last_message_body,
+        FIRST_VALUE(m."createdAt") OVER (PARTITION BY mt."id" ORDER BY m."createdAt" DESC) AS last_message_date,
+        FIRST_VALUE(mr."handle") OVER (PARTITION BY mt."id" ORDER BY m."createdAt" DESC) AS last_message_recipient_handle,
+        FIRST_VALUE(mr."displayName") OVER (PARTITION BY mt."id" ORDER BY m."createdAt" DESC) AS last_message_recipient_displayName
+    FROM 
+        ${dataSourceMetadata.schema}."messageThread" mt
+    LEFT JOIN 
+        ${dataSourceMetadata.schema}."message" m ON mt."id" = m."messageThreadId"
+    LEFT JOIN 
+        ${dataSourceMetadata.schema}."messageRecipient" mr ON m."id" = mr."messageId"
+    WHERE 
+        mr."personId" = $1
+) AS message_thread;
       `,
       [personId],
     );
@@ -97,7 +101,7 @@ export class TimelineMessagingResolver {
     const formattedMessageThreads = messageThreads.map((messageThread) => {
       return {
         read: true,
-        senderName: '',
+        senderName: messageThread.last_message_recipient_handle,
         senderPictureUrl: '',
         numberOfMessagesInThread: messageThread.message_count,
         subject: messageThread.last_message_subject,
