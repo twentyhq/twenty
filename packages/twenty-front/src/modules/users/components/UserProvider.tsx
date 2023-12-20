@@ -4,10 +4,7 @@ import { useSetRecoilState } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import {
-  ColorScheme,
-  WorkspaceMember,
-} from '@/workspace-member/types/WorkspaceMember';
+import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { useGetCurrentUserQuery } from '~/generated/graphql';
 
 export const UserProvider = ({ children }: React.PropsWithChildren) => {
@@ -32,7 +29,7 @@ export const UserProvider = ({ children }: React.PropsWithChildren) => {
       setCurrentWorkspaceMember({
         ...workspaceMember,
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
-      } as WorkspaceMember);
+      });
     }
   }, [
     setCurrentUser,

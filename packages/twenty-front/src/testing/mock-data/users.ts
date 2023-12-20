@@ -28,7 +28,7 @@ export const mockDefaultWorkspace: Workspace = {
   inviteHash: 'twenty.com-invite-hash',
   logo: workspaceLogoUrl,
   allowImpersonation: true,
-  subscriptionStatus: 'incomplete',
+  subscriptionStatus: 'active',
   featureFlags: [
     {
       id: '0eada9a3-ccf4-4fcc-b25c-0c5d746e0fac',

@@ -6,7 +6,7 @@ import { RelationPickerScope } from '@/object-record/relation-picker/scopes/Rela
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
-import { TestingObjectMetadataProvider } from '~/testing/decorators/PageDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
   mockedCompaniesMetadata,
@@ -20,13 +20,12 @@ const meta: Meta<typeof SettingsObjectFieldPreview> = {
   component: SettingsObjectFieldPreview,
   decorators: [
     ComponentDecorator,
+    ObjectMetadataItemsDecorator,
     (Story) => (
       <RecoilRoot>
         <RelationPickerScope relationPickerScopeId="relation-picker">
           <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-            <TestingObjectMetadataProvider>
-              <Story />
-            </TestingObjectMetadataProvider>
+            <Story />
           </SnackBarProviderScope>
         </RelationPickerScope>
       </RecoilRoot>

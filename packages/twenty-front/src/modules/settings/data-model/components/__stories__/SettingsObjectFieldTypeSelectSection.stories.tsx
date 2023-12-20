@@ -9,7 +9,7 @@ import {
   RelationMetadataType,
 } from '~/generated-metadata/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
-import { TestingObjectMetadataProvider } from '~/testing/decorators/PageDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
   mockedCompaniesMetadata,
@@ -32,12 +32,11 @@ const meta: Meta<typeof SettingsObjectFieldTypeSelectSection> = {
   component: SettingsObjectFieldTypeSelectSection,
   decorators: [
     ComponentDecorator,
+    ObjectMetadataItemsDecorator,
     (Story) => (
       <RelationPickerScope relationPickerScopeId="relation-picker">
         <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-          <TestingObjectMetadataProvider>
-            <Story />
-          </TestingObjectMetadataProvider>
+          <Story />
         </SnackBarProviderScope>
       </RelationPickerScope>
     ),

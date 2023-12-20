@@ -20,7 +20,7 @@ export const mockedClientConfig = {
     __typename: 'Support',
   },
   billing: {
-    isBillingEnabled: false,
+    isBillingEnabled: true,
     billingUrl: '',
     __typename: 'Billing',
   },

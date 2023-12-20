@@ -10,10 +10,7 @@ import {
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
-import {
-  ColorScheme,
-  WorkspaceMember,
-} from '@/workspace-member/types/WorkspaceMember';
+import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { REACT_APP_SERVER_AUTH_URL } from '~/config';
 import {
   useChallengeMutation,
@@ -90,7 +87,7 @@ export const useAuth = () => {
       };
       const workspace = user.defaultWorkspace ?? null;
       setCurrentUser(user);
-      setCurrentWorkspaceMember(workspaceMember as WorkspaceMember);
+      setCurrentWorkspaceMember(workspaceMember);
       setCurrentWorkspace(workspace);
       return {
         user,

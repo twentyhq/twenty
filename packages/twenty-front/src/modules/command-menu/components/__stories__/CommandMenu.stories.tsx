@@ -9,7 +9,7 @@ import { CommandType } from '@/command-menu/types/Command';
 import { IconCheckbox, IconNotes } from '@/ui/display/icon';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
-import { TestingObjectMetadataProvider } from '~/testing/decorators/PageDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockDefaultWorkspace } from '~/testing/mock-data/users';
 import { sleep } from '~/testing/sleep';
@@ -22,6 +22,7 @@ const meta: Meta<typeof CommandMenu> = {
   title: 'Modules/CommandMenu/CommandMenu',
   component: CommandMenu,
   decorators: [
+    ObjectMetadataItemsDecorator,
     (Story) => {
       const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
       const { addToCommandMenu, setToIntitialCommandMenu, toggleCommandMenu } =
@@ -57,9 +58,7 @@ const meta: Meta<typeof CommandMenu> = {
     (Story) => (
       <RecoilRoot>
         <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-          <TestingObjectMetadataProvider>
-            <Story />
-          </TestingObjectMetadataProvider>
+          <Story />
         </SnackBarProviderScope>
       </RecoilRoot>
     ),
@@ -124,7 +123,6 @@ export const AtleastMatchingOnePerson: Story = {
 export const NotMatchingAnything: Story = {
   play: async () => {
     const canvas = within(document.body);
-    console.log({ canvas });
     const searchInput = await canvas.findByPlaceholderText('Search');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'asdasdasd');
