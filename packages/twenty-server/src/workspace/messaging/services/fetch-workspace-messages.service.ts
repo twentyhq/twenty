@@ -89,13 +89,17 @@ export class FetchWorkspaceMessagesService {
       dataSourceMetadata,
     );
 
-    const connectedAccount = await workspaceDataSource?.query(
+    const connectedAccounts = await workspaceDataSource?.query(
       `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail' AND "accountOwnerId" = $1`,
       [workspaceMemberId],
     );
 
-    const accessToken = connectedAccount[0].accessToken;
-    const refreshToken = connectedAccount[0].refreshToken;
+    if (!connectedAccounts.length) {
+      throw new Error('No connected accounts found');
+    }
+
+    const accessToken = connectedAccounts[0].accessToken;
+    const refreshToken = connectedAccounts[0].refreshToken;
 
     const gmail = await this.getGmailClient(refreshToken);
 
