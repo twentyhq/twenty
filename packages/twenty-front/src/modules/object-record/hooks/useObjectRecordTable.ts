@@ -6,11 +6,11 @@ import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObje
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { isRecordTableInitialLoadingState } from '@/object-record/record-table/states/isRecordTableInitialLoadingState';
 import { turnFiltersIntoObjectRecordFilters } from '@/object-record/utils/turnFiltersIntoWhereClause';
 import { signInBackgroundMockCompanies } from '@/sign-in-background-mock/constants/signInBackgroundMockCompanies';
 
 import { useFindManyRecords } from './useFindManyRecords';
-import { isRecordTableInitialLoadingState } from '@/object-record/record-table/states/isRecordTableInitialLoadingState';
 
 export const useObjectRecordTable = () => {
   const { scopeId: objectNamePlural, setRecordTableData } = useRecordTable();
@@ -42,7 +42,9 @@ export const useObjectRecordTable = () => {
     foundObjectMetadataItem?.fields ?? [],
   );
 
-  const setIsRecordTableInitialLoading = useSetRecoilState(isRecordTableInitialLoadingState);
+  const setIsRecordTableInitialLoading = useSetRecoilState(
+    isRecordTableInitialLoadingState,
+  );
 
   const { records, loading, fetchMoreRecords, queryStateIdentifier } =
     useFindManyRecords({

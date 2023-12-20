@@ -4,6 +4,7 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { isRecordTableInitialLoadingState } from '@/object-record/record-table/states/isRecordTableInitialLoadingState';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
@@ -20,7 +21,6 @@ import { RecordTableBody } from './RecordTableBody';
 import { RecordTableBodyEffect } from './RecordTableBodyEffect';
 import { RecordTableHeader } from './RecordTableHeader';
 import { RecordTableInternalEffect } from './RecordTableInternalEffect';
-import { isRecordTableInitialLoadingState } from '@/object-record/record-table/states/isRecordTableInitialLoadingState';
 
 const StyledObjectEmptyContainer = styled.div`
   align-items: center;
@@ -127,7 +127,9 @@ export const RecordTable = ({
 
   const numberOfTableRows = useRecoilValue(numberOfTableRowsState);
 
-  const isInitialLoading = useRecoilValue(isRecordTableInitialLoadingState);
+  const isRecordTableInitialLoading = useRecoilValue(
+    isRecordTableInitialLoadingState,
+  );
 
   const {
     scopeId: objectNamePlural,
@@ -173,7 +175,7 @@ export const RecordTable = ({
                 />
               </div>
               <RecordTableInternalEffect tableBodyRef={tableBodyRef} />
-              {!isInitialLoading && numberOfTableRows === 0 && (
+              {!isRecordTableInitialLoading && numberOfTableRows === 0 && (
                 <StyledObjectEmptyContainer>
                   <StyledEmptyObjectTitle>
                     No {foundObjectMetadataItem?.namePlural}
