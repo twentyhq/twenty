@@ -5,27 +5,26 @@ import { CREATE_EVENT } from '@/analytics/graphql/queries/createEvent';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { mockedActivities } from '~/testing/mock-data/activities';
 import { mockedCompaniesData } from '~/testing/mock-data/companies';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockedPipelineSteps } from '~/testing/mock-data/pipeline-steps';
-import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
+import { mockedUsersData } from '~/testing/mock-data/users';
 
 import { mockedObjectMetadataItems } from './mock-data/metadata';
 import { mockedPeopleData } from './mock-data/people';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 import { mockedViewsData } from './mock-data/views';
 
-const metadataGraphql = graphql.link(
-  `${process.env.REACT_APP_SERVER_BASE_URL}/metadata`,
-);
+const metadataGraphql = graphql.link(`${REACT_APP_SERVER_BASE_URL}/metadata`);
 
 export const graphqlMocks = {
   handlers: [
     graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
       return HttpResponse.json({
         data: {
-          currentUser: mockedOnboardingUsersData[0],
+          currentUser: mockedUsersData[0],
         },
       });
     }),

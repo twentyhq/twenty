@@ -1,12 +1,16 @@
+import { getOperationName } from '@apollo/client/utilities';
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
+import { graphql, HttpResponse } from 'msw';
 
 import { AppPath } from '@/types/AppPath';
+import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
 
 import { CreateProfile } from '../CreateProfile';
 
@@ -16,7 +20,18 @@ const meta: Meta<PageDecoratorArgs> = {
   decorators: [PageDecorator],
   args: { routePath: AppPath.CreateProfile },
   parameters: {
-    msw: graphqlMocks,
+    msw: {
+      handlers: [
+        graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
+          return HttpResponse.json({
+            data: {
+              currentUser: mockedOnboardingUsersData[0],
+            },
+          });
+        }),
+        graphqlMocks.handlers,
+      ],
+    },
   },
 };
 
