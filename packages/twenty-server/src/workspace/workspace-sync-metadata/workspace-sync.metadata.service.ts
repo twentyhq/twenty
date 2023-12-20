@@ -222,17 +222,20 @@ export class WorkspaceSyncMetadataService {
       }
 
       // CREATE OBJECTS
-      const createdObjectMetadataCollection = await this.objectMetadataRepository.save(
-        objectsToCreate.map((object) => ({
-          ...object,
-          isActive: true,
-          fields: Object.values(object.fields).map((field) => ({
-            ...convertStringifiedFieldsToJSON(field),
+      const createdObjectMetadataCollection =
+        await this.objectMetadataRepository.save(
+          objectsToCreate.map((object) => ({
+            ...object,
             isActive: true,
+            fields: Object.values(object.fields).map((field) => ({
+              ...convertStringifiedFieldsToJSON(field),
+              isActive: true,
+            })),
           })),
-        })),
+        );
+      const identifiers = createdObjectMetadataCollection.map(
+        (object) => object.id,
       );
-      const identifiers = objectMetadataCollection.map((object) => object.id);
       const createdObjects = await this.objectMetadataRepository.find({
         where: { id: In(identifiers) },
         relations: ['dataSource', 'fields'],
