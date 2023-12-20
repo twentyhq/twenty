@@ -8,6 +8,7 @@ import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { mockedActivities } from '~/testing/mock-data/activities';
 import { mockedCompaniesData } from '~/testing/mock-data/companies';
 import { mockedClientConfig } from '~/testing/mock-data/config';
+import { mockedPipelineSteps } from '~/testing/mock-data/pipeline-steps';
 import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
 
 import { mockedObjectMetadataItems } from './mock-data/metadata';
@@ -24,7 +25,7 @@ export const graphqlMocks = {
     graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
       return HttpResponse.json({
         data: {
-          currentUser: mockedOnboardingUsersData[1],
+          currentUser: mockedOnboardingUsersData[0],
         },
       });
     }),
@@ -104,7 +105,29 @@ export const graphqlMocks = {
         data: {
           companies: {
             edges: mockedCompaniesData.map((company) => ({
-              node: company,
+              node: {
+                ...company,
+                favorites: {
+                  edges: [],
+                  __typename: 'FavoriteConnection',
+                },
+                attachments: {
+                  edges: [],
+                  __typename: 'AttachmentConnection',
+                },
+                people: {
+                  edges: [],
+                  __typename: 'PersonConnection',
+                },
+                opportunities: {
+                  edges: [],
+                  __typename: 'OpportunityConnection',
+                },
+                activityTargets: {
+                  edges: [],
+                  __typename: 'ActivityTargetConnection',
+                },
+              },
               cursor: null,
             })),
             pageInfo: {
@@ -139,10 +162,71 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           activities: {
-            edges: mockedActivities.map((activities) => ({
-              node: activities,
+            edges: mockedActivities.map(({ activityTargets, ...rest }) => ({
+              node: {
+                ...rest,
+                activityTargets: {
+                  edges: activityTargets.map((t) => ({ node: t })),
+                },
+                attachments: {
+                  edges: [],
+                },
+              },
               cursor: null,
             })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+        },
+      });
+    }),
+    graphql.query('FindManyFavorites', () => {
+      return HttpResponse.json({
+        data: {
+          favorites: {
+            edges: [],
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+        },
+      });
+    }),
+    graphql.query('FindManyPipelineSteps', () => {
+      return HttpResponse.json({
+        data: {
+          pipelineSteps: {
+            edges: mockedPipelineSteps.map((step) => ({
+              node: {
+                ...step,
+                opportunities: {
+                  edges: [],
+                },
+              },
+              cursor: null,
+            })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+        },
+      });
+    }),
+    graphql.query('FindManyOpportunities', () => {
+      return HttpResponse.json({
+        data: {
+          opportunities: {
+            edges: [],
             pageInfo: {
               hasNextPage: false,
               hasPreviousPage: false,

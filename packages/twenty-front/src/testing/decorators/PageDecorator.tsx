@@ -50,6 +50,8 @@ const ObjectMetadata = ({ children }: { children: JSX.Element }) => {
     }
   }, [newObjectMetadataItems, objectMetadataItems, setObjectMetadataItems]);
 
+  // Errors will be thrown if the children are rendered before the object metadata items are loaded.
+  // This will prevent the test from running.
   return objectMetadataItems.length < 1 ? <></> : children;
 };
 

@@ -1,4 +1,3 @@
-import { loadDevMessages, loadErrorMessages } from '@apollo/client/dev';
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 
@@ -10,10 +9,6 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { CreateProfile } from '../CreateProfile';
-
-// Adds messages only in a dev environment
-loadDevMessages();
-loadErrorMessages();
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/CreateProfile',
