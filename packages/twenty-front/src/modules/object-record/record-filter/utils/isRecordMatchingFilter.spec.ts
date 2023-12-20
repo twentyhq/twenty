@@ -1,4 +1,4 @@
-import { ObjectRecordFilter } from '@/object-record/record-filter/types/ObjectRecordFilter';
+import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { mockedCompaniesData } from '~/testing/mock-data/companies';
 import { mockObjectMetadataItem } from '~/testing/mock-data/objectMetadataItems';
 
@@ -161,7 +161,7 @@ describe('isRecordMatchingFilter', () => {
 
   describe('Complex And/Or/Not Nesting', () => {
     it('matches record with a combination of and + or filters', () => {
-      const filter: ObjectRecordFilter = {
+      const filter: ObjectRecordQueryFilter = {
         and: [
           { domainName: { eq: 'airbnb.com' } },
           {
@@ -191,7 +191,7 @@ describe('isRecordMatchingFilter', () => {
     });
 
     it('matches record with nested not filter', () => {
-      const filter: ObjectRecordFilter = {
+      const filter: ObjectRecordQueryFilter = {
         not: {
           and: [
             { name: { eq: 'Airbnb' } },
@@ -218,7 +218,7 @@ describe('isRecordMatchingFilter', () => {
     });
 
     it('matches record with deep nesting of and, or, and not filters', () => {
-      const filter: ObjectRecordFilter = {
+      const filter: ObjectRecordQueryFilter = {
         and: [
           { domainName: { eq: 'apple.com' } },
           {
@@ -245,7 +245,7 @@ describe('isRecordMatchingFilter', () => {
     });
 
     it('matches record with and filter at root level', () => {
-      const filter: ObjectRecordFilter = {
+      const filter: ObjectRecordQueryFilter = {
         and: [
           { name: { eq: 'Facebook' } },
           { idealCustomerProfile: { eq: true } },
@@ -270,7 +270,7 @@ describe('isRecordMatchingFilter', () => {
     });
 
     it('matches record with or filter at root level including a not condition', () => {
-      const filter: ObjectRecordFilter = {
+      const filter: ObjectRecordQueryFilter = {
         or: [{ name: { eq: 'Sequoia' } }, { not: { employees: { eq: 1 } } }],
       };
 
@@ -295,7 +295,7 @@ describe('isRecordMatchingFilter', () => {
   describe('Implicit And Conditions', () => {
     it('matches record with implicit and of multiple operators within the same field', () => {
       const filter = {
-        employees: { gt: 10, lt: 100000 }, // Assuming employees is a number
+        employees: { gt: 10, lt: 100000 },
         name: { eq: 'Airbnb' },
       };
 

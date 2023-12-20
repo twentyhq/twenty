@@ -5,7 +5,7 @@ import { Company } from '@/companies/types/Company';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
-import { turnUIFiltersIntoObjectRecordFilters } from '@/object-record/record-filter/utils/turnUIFiltersIntoObjectRecordFilters';
+import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
 import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
@@ -43,7 +43,7 @@ export const useObjectRecordBoard = () => {
     savedPipelineStepsState,
   );
 
-  const filter = turnUIFiltersIntoObjectRecordFilters(
+  const filter = turnObjectDropdownFilterIntoQueryFilter(
     boardFilters,
     foundObjectMetadataItem?.fields ?? [],
   );

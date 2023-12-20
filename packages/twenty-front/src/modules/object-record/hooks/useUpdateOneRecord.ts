@@ -35,10 +35,12 @@ export const useUpdateOneRecord = <T>({
 
     triggerOptimisticEffects({
       typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-      updatedData: {
-        ...(cachedRecord ?? {}),
-        ...input,
-      },
+      updatedRecords: [
+        {
+          ...(cachedRecord ?? {}),
+          ...input,
+        },
+      ],
     });
 
     const updatedRecord = await apolloClient.mutate({

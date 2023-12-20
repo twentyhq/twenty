@@ -1,4 +1,4 @@
-import { BooleanFilter } from '@/object-record/record-filter/types/ObjectRecordFilter';
+import { BooleanFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 
 export const isMatchingBooleanFilter = ({
   booleanFilter,
@@ -7,21 +7,17 @@ export const isMatchingBooleanFilter = ({
   booleanFilter: BooleanFilter;
   value: boolean;
 }) => {
-  switch (true) {
-    case booleanFilter.eq !== undefined: {
-      return value === booleanFilter.eq;
+  if (booleanFilter.eq !== undefined) {
+    return value === booleanFilter.eq;
+  } else if (booleanFilter.is !== undefined) {
+    if (booleanFilter.is === 'NULL') {
+      return value === null;
+    } else {
+      return value !== null;
     }
-    case booleanFilter.is !== undefined: {
-      if (booleanFilter.is === 'NULL') {
-        return value === null;
-      } else {
-        return value !== null;
-      }
-    }
-    default: {
-      throw new Error(
-        `Unexpected value for string filter : ${JSON.stringify(booleanFilter)}`,
-      );
-    }
+  } else {
+    throw new Error(
+      `Unexpected value for string filter : ${JSON.stringify(booleanFilter)}`,
+    );
   }
 };

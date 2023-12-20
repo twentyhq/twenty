@@ -90,7 +90,7 @@ export const useFavorites = ({
 
         triggerOptimisticEffects({
           typename: `FavoriteEdge`,
-          newData: result.data[`createFavorite`],
+          createdRecords: [result.data[`createFavorite`]],
         });
 
         const createdFavorite = result?.data?.createFavorite;

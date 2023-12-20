@@ -3,29 +3,28 @@ import { ApolloCache, DocumentNode } from '@apollo/client';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
 
-type OptimisticEffectWriter<T> = ({
+export type OptimisticEffectWriter = ({
   cache,
   query,
-  newData,
-  updatedData,
+  createdRecords,
+  updatedRecords,
+  deletedRecordIds,
   variables,
+  objectMetadataItem,
 }: {
-  cache: ApolloCache<T>;
+  cache: ApolloCache<any>;
   query?: DocumentNode;
-  newData?: T;
-  updatedData?: T;
+  createdRecords?: Record<string, unknown>[];
+  updatedRecords?: Record<string, unknown>[];
   deletedRecordIds?: string[];
   variables: ObjectRecordQueryVariables;
-  objectMetadataItem?: ObjectMetadataItem;
-  isUsingFlexibleBackend?: boolean;
+  objectMetadataItem: ObjectMetadataItem;
 }) => void;
 
-export type OptimisticEffect<T> = {
-  key: string;
+export type OptimisticEffect = {
   query?: DocumentNode;
   typename: string;
   variables: ObjectRecordQueryVariables;
-  writer: OptimisticEffectWriter<T>;
-  objectMetadataItem?: ObjectMetadataItem;
-  isUsingFlexibleBackend?: boolean;
+  writer: OptimisticEffectWriter;
+  objectMetadataItem: ObjectMetadataItem;
 };

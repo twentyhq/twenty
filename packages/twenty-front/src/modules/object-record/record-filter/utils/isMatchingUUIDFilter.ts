@@ -1,7 +1,7 @@
 import {
   UUIDFilter,
   UUIDFilterValue,
-} from '@/object-record/record-filter/types/ObjectRecordFilter';
+} from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 
 export const isMatchingUUIDFilter = ({
   uuidFilter,

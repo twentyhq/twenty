@@ -1,8 +1,8 @@
 import { OrderByField } from '@/object-metadata/types/OrderByField';
-import { ObjectRecordFilter } from '@/object-record/record-filter/types/ObjectRecordFilter';
+import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 
 export type ObjectRecordQueryVariables = {
-  filter?: ObjectRecordFilter;
+  filter?: ObjectRecordQueryFilter;
   orderBy?: OrderByField;
   limit?: number;
 };

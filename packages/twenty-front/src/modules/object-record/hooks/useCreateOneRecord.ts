@@ -34,7 +34,7 @@ export const useCreateOneRecord = <T>({
   const createOneRecord = async (input: Record<string, any>) => {
     const recordId = v4();
 
-    const generatedEmptyRecord = generateEmptyRecord({
+    const generatedEmptyRecord = generateEmptyRecord<Record<string, unknown>>({
       id: recordId,
       ...input,
     });
@@ -42,7 +42,7 @@ export const useCreateOneRecord = <T>({
     if (generatedEmptyRecord) {
       triggerOptimisticEffects({
         typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-        newData: generatedEmptyRecord,
+        createdRecords: [generatedEmptyRecord],
       });
     }
 

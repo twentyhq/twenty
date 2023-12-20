@@ -82,22 +82,22 @@ export type LeafFilter =
   | BooleanFilter;
 
 export type AndObjectRecordFilter = {
-  and?: ObjectRecordFilter[];
+  and?: ObjectRecordQueryFilter[];
 };
 
 export type OrObjectRecordFilter = {
-  or?: ObjectRecordFilter[] | ObjectRecordFilter;
+  or?: ObjectRecordQueryFilter[] | ObjectRecordQueryFilter;
 };
 
 export type NotObjectRecordFilter = {
-  not?: ObjectRecordFilter;
+  not?: ObjectRecordQueryFilter;
 };
 
 export type LeafObjectRecordFilter = {
   [fieldName: string]: LeafFilter;
 };
 
-export type ObjectRecordFilter =
+export type ObjectRecordQueryFilter =
   | LeafObjectRecordFilter
   | AndObjectRecordFilter
   | OrObjectRecordFilter

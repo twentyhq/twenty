@@ -9,7 +9,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useRecordOptimisticEffect } from '@/object-metadata/hooks/useRecordOptimisticEffect';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
-import { ObjectRecordFilter } from '@/object-record/record-filter/types/ObjectRecordFilter';
+import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -36,7 +36,7 @@ export const useFindManyRecords = <
   onCompleted,
   skip,
 }: ObjectMetadataItemIdentifier & {
-  filter?: ObjectRecordFilter;
+  filter?: ObjectRecordQueryFilter;
   orderBy?: OrderByField;
   limit?: number;
   onCompleted?: (data: PaginatedRecordTypeResults<RecordType>) => void;

@@ -1,3 +1,5 @@
+import { isObject } from '@sniptt/guards';
+
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
   AndObjectRecordFilter,
@@ -7,19 +9,18 @@ import {
   FullNameFilter,
   LeafObjectRecordFilter,
   NotObjectRecordFilter,
-  ObjectRecordFilter,
+  ObjectRecordQueryFilter,
   OrObjectRecordFilter,
   StringFilter,
   URLFilter,
   UUIDFilter,
-} from '@/object-record/record-filter/types/ObjectRecordFilter';
+} from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { isMatchingBooleanFilter } from '@/object-record/record-filter/utils/isMatchingBooleanFilter';
 import { isMatchingDateFilter } from '@/object-record/record-filter/utils/isMatchingDateFilter';
 import { isMatchingFloatFilter } from '@/object-record/record-filter/utils/isMatchingFloatFilter';
 import { isMatchingStringFilter } from '@/object-record/record-filter/utils/isMatchingStringFilter';
 import { isMatchingUUIDFilter } from '@/object-record/record-filter/utils/isMatchingUUIDFilter';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isAnObject } from '~/utils/isAnObject';
 import { isDefined } from '~/utils/isDefined';
 import { isEmptyObject } from '~/utils/isEmptyObject';
 
@@ -29,7 +30,7 @@ export const isRecordMatchingFilter = ({
   objectMetadataItem,
 }: {
   record: any;
-  filter: ObjectRecordFilter;
+  filter: ObjectRecordQueryFilter;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   if (Object.keys(filter).length === 0) {
@@ -44,7 +45,9 @@ export const isRecordMatchingFilter = ({
       const filterValue = (filter as AndObjectRecordFilter).and;
 
       if (!Array.isArray(filterValue)) {
-        continue;
+        throw new Error(
+          'Unexpected value for "and" filter : ' + JSON.stringify(filterValue),
+        );
       }
 
       if (filterValue.length === 0) {
@@ -79,8 +82,8 @@ export const isRecordMatchingFilter = ({
         );
 
         currentLevelFilterMatches.push(recordIsMatchingOrFilters);
-      } else if (isAnObject(filterValue)) {
-        // pg_graphql considers "or" with an object as an "and"
+      } else if (isObject(filterValue)) {
+        // The API considers "or" with an object as an "and"
         const recordIsMatchingOrFilters = isRecordMatchingFilter({
           record,
           filter: filterValue,

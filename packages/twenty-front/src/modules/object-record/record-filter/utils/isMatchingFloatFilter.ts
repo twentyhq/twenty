@@ -1,4 +1,4 @@
-import { FloatFilter } from '@/object-record/record-filter/types/ObjectRecordFilter';
+import { FloatFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 
 export const isMatchingFloatFilter = ({
   floatFilter,

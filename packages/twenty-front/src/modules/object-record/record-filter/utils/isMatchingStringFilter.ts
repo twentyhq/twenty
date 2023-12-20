@@ -1,4 +1,4 @@
-import { StringFilter } from '@/object-record/record-filter/types/ObjectRecordFilter';
+import { StringFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 
 export const isMatchingStringFilter = ({
   stringFilter,

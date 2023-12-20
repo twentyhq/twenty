@@ -5,27 +5,27 @@ import {
   DateFilter,
   FloatFilter,
   FullNameFilter,
-  ObjectRecordFilter,
+  ObjectRecordQueryFilter,
   StringFilter,
   URLFilter,
   UUIDFilter,
-} from '@/object-record/record-filter/types/ObjectRecordFilter';
+} from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
 
 import { Filter } from '../../object-filter-dropdown/types/Filter';
 
-export type RawUIFilter = Omit<Filter, 'definition'> & {
+export type ObjectDropdownFilter = Omit<Filter, 'definition'> & {
   definition: {
     type: Filter['definition']['type'];
   };
 };
 
-export const turnUIFiltersIntoObjectRecordFilters = (
-  rawUIFilters: RawUIFilter[],
+export const turnObjectDropdownFilterIntoQueryFilter = (
+  rawUIFilters: ObjectDropdownFilter[],
   fields: Pick<Field, 'id' | 'name'>[],
-): ObjectRecordFilter => {
-  const objectRecordFilters: ObjectRecordFilter[] = [];
+): ObjectRecordQueryFilter => {
+  const objectRecordFilters: ObjectRecordQueryFilter[] = [];
 
   for (const rawUIFilter of rawUIFilters) {
     const correspondingField = fields.find(

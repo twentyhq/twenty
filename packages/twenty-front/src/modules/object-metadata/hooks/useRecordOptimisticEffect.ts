@@ -4,7 +4,7 @@ import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimis
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
-import { ObjectRecordFilter } from '@/object-record/record-filter/types/ObjectRecordFilter';
+import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 
 export const useRecordOptimisticEffect = ({
   objectMetadataItem,
@@ -13,7 +13,7 @@ export const useRecordOptimisticEffect = ({
   limit,
 }: {
   objectMetadataItem: ObjectMetadataItem;
-  filter?: ObjectRecordFilter;
+  filter?: ObjectRecordQueryFilter;
   orderBy?: OrderByField;
   limit?: number;
 }) => {

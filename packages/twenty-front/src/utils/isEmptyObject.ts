@@ -1,5 +1,5 @@
+import { isObject } from '@sniptt/guards';
+
 export const isEmptyObject = (obj: any): obj is object => {
-  return (
-    typeof obj === 'object' && obj !== null && Object.keys(obj).length === 0
-  );
+  return isObject(obj) && Object.keys(obj).length === 0;
 };

@@ -4,7 +4,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
-import { turnUIFiltersIntoObjectRecordFilters } from '@/object-record/record-filter/utils/turnUIFiltersIntoObjectRecordFilters';
+import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
 import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { isRecordTableInitialLoadingState } from '@/object-record/record-table/states/isRecordTableInitialLoadingState';
@@ -32,7 +32,7 @@ export const useObjectRecordTable = () => {
   const tableSorts = useRecoilValue(tableSortsState);
   const setLastRowVisible = useSetRecoilState(tableLastRowVisibleState);
 
-  const requestFilters = turnUIFiltersIntoObjectRecordFilters(
+  const requestFilters = turnObjectDropdownFilterIntoQueryFilter(
     tableFilters,
     foundObjectMetadataItem?.fields ?? [],
   );
