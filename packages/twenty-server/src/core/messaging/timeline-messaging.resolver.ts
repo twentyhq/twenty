@@ -67,7 +67,7 @@ export class TimelineMessagingResolver {
     const messageThreads = await workspaceDataSource?.query(
       `
       SELECT 
-    message_thread.*,
+    subquery.*,
     message_count,
     last_message_subject,
     last_message_body,
@@ -78,11 +78,12 @@ FROM (
     SELECT 
         mt.*,
         COUNT(m."id") OVER (PARTITION BY mt."id") AS message_count,
-        FIRST_VALUE(m."subject") OVER (PARTITION BY mt."id" ORDER BY m."createdAt" DESC) AS last_message_subject,
-        FIRST_VALUE(m."body") OVER (PARTITION BY mt."id" ORDER BY m."createdAt" DESC) AS last_message_body,
-        FIRST_VALUE(m."createdAt") OVER (PARTITION BY mt."id" ORDER BY m."createdAt" DESC) AS last_message_date,
-        FIRST_VALUE(mr."handle") OVER (PARTITION BY mt."id" ORDER BY m."createdAt" DESC) AS last_message_recipient_handle,
-        FIRST_VALUE(mr."displayName") OVER (PARTITION BY mt."id" ORDER BY m."createdAt" DESC) AS last_message_recipient_displayName
+        FIRST_VALUE(m."subject") OVER (PARTITION BY mt."id" ORDER BY m."date" DESC) AS last_message_subject,
+        FIRST_VALUE(m."body") OVER (PARTITION BY mt."id" ORDER BY m."date" DESC) AS last_message_body,
+        FIRST_VALUE(m."date") OVER (PARTITION BY mt."id" ORDER BY m."date" DESC) AS last_message_date,
+        FIRST_VALUE(mr."handle") OVER (PARTITION BY mt."id" ORDER BY m."date" DESC) AS last_message_recipient_handle,
+        FIRST_VALUE(mr."displayName") OVER (PARTITION BY mt."id" ORDER BY m."date" DESC) AS last_message_recipient_displayName,
+        ROW_NUMBER() OVER (PARTITION BY mt."id" ORDER BY m."date" DESC) AS rn
     FROM 
         ${dataSourceMetadata.schema}."messageThread" mt
     LEFT JOIN 
@@ -91,8 +92,12 @@ FROM (
         ${dataSourceMetadata.schema}."messageRecipient" mr ON m."id" = mr."messageId"
     WHERE 
         mr."personId" = $1
-) AS message_thread;
-      `,
+) AS subquery
+WHERE 
+    subquery.rn = 1
+ORDER BY 
+    subquery.last_message_date DESC;
+`,
       [personId],
     );
 
