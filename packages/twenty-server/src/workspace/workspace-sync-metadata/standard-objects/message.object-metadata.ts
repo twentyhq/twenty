@@ -82,6 +82,15 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   body: string;
 
   @FieldMetadata({
+    type: FieldMetadataType.DATE_TIME,
+    label: 'Date',
+    description: 'Date',
+    icon: 'IconCalendar',
+  })
+  @IsNullable()
+  date: string;
+
+  @FieldMetadata({
     type: FieldMetadataType.RELATION,
     label: 'Message Recipients',
     description: 'Message Recipients',
