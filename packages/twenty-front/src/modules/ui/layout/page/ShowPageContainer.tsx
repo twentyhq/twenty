@@ -25,7 +25,7 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
 `;
 
 export type ShowPageContainerProps = {
-  children: ReactElement[];
+  children: ReactElement[] | ReactElement;
 };
 
 export const ShowPageContainer = ({ children }: ShowPageContainerProps) => {
