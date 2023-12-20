@@ -129,12 +129,10 @@ export const RecordShowPage = () => {
     }
   };
 
-  if (!record) return <></>;
-
   const pageName =
     objectNameSingular === 'person'
-      ? record.name.firstName + ' ' + record.name.lastName
-      : record.name;
+      ? record?.name.firstName + ' ' + record?.name.lastName
+      : record?.name;
 
   const recordIdentifiers = identifiersMapper?.(
     record,
@@ -161,9 +159,12 @@ export const RecordShowPage = () => {
     if (!updateOneRecord) {
       return;
     }
+    if (!record) {
+      return;
+    }
 
     await updateOneRecord({
-      idToUpdate: record?.id,
+      idToUpdate: record.id,
       input: {
         avatarUrl,
       },
@@ -178,7 +179,7 @@ export const RecordShowPage = () => {
         hasBackButton
         Icon={IconBuildingSkyscraper}
       >
-        {objectMetadataType !== 'Custom' && (
+        {record && objectMetadataType !== 'Custom' && (
           <>
             <PageFavoriteButton
               isFavorite={isFavorite}
@@ -197,9 +198,9 @@ export const RecordShowPage = () => {
       <PageBody>
         <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>
           <ShowPageContainer>
-            {!loading ? (
-              <>
-                <ShowPageLeftContainer>
+            <ShowPageLeftContainer>
+              {!loading && record ? (
+                <>
                   <ShowPageSummaryCard
                     id={record.id}
                     logoOrAvatar={recordIdentifiers?.avatarUrl}
@@ -251,33 +252,27 @@ export const RecordShowPage = () => {
                   ) : (
                     <></>
                   )}
-                </ShowPageLeftContainer>
-                <ShowPageRightContainer
-                  entity={{
-                    id: record.id,
-                    // TODO: refacto
-                    type:
-                      objectMetadataItem?.nameSingular === 'company'
-                        ? 'Company'
-                        : objectMetadataItem?.nameSingular === 'person'
-                          ? 'Person'
-                          : 'Custom',
-                  }}
-                  timeline
-                  tasks
-                  notes
-                  emails
-                />
-              </>
-            ) : (
-              <>
-                <ShowPageLeftContainer>
-                  <div></div>
-                  <div></div>
-                </ShowPageLeftContainer>
-                <ShowPageRightContainer />
-              </>
-            )}
+                </>
+              ) : (
+                <></>
+              )}
+            </ShowPageLeftContainer>
+            <ShowPageRightContainer
+              entity={{
+                id: record?.id || '',
+                // TODO: refacto
+                type:
+                  objectMetadataItem?.nameSingular === 'company'
+                    ? 'Company'
+                    : objectMetadataItem?.nameSingular === 'person'
+                      ? 'Person'
+                      : 'Custom',
+              }}
+              timeline
+              tasks
+              notes
+              emails
+            />
           </ShowPageContainer>
         </RecoilScope>
       </PageBody>
