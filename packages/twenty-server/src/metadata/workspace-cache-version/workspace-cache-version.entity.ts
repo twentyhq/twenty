@@ -11,7 +11,7 @@ export class WorkspaceCacheVersionEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: false, type: 'uuid' })
   workspaceId: string;
 
   @Column()

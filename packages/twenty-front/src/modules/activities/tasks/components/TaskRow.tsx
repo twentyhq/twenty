@@ -1,11 +1,11 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
 
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
+import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { IconCalendar, IconComment } from '@/ui/display/icon';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
@@ -72,8 +72,7 @@ export const TaskRow = ({
   const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
 
-  const body = JSON.parse(isNonEmptyString(task.body) ? task.body : '{}')[0]
-    ?.content[0]?.text;
+  const body = getActivitySummary(task.body);
   const { completeTask } = useCompleteTask(task);
 
   const activityTargetIds =
