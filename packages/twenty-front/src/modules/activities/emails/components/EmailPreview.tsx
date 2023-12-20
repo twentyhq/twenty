@@ -43,15 +43,21 @@ const StyledThreadCount = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-const StyledSubject = styled.div<{ unread: boolean }>`
+const StyledSubject = styled.span<{ unread: boolean }>`
   color: ${({ theme, unread }) =>
     unread ? theme.font.color.primary : theme.font.color.secondary};
 `;
 
-const StyledBody = styled.div`
+const StyledBody = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
   flex: 1 0 0;
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const StyledSubjectAndBody = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -79,8 +85,11 @@ export const EmailPreview = ({ divider, email }: EmailPreviewProps) => (
       {email.senderName}{' '}
       <StyledThreadCount>{email.numberOfEmailsInThread}</StyledThreadCount>
     </StyledHeading>
-    <StyledSubject unread={!email.read}>{email.subject}</StyledSubject>
-    <StyledBody>{email.body}</StyledBody>
+
+    <StyledSubjectAndBody>
+      <StyledSubject unread={!email.read}>{email.subject}</StyledSubject>
+      <StyledBody>Test {email.body}</StyledBody>
+    </StyledSubjectAndBody>
     <StyledReceivedAt>
       {formatToHumanReadableDate(email.receivedAt)}
     </StyledReceivedAt>

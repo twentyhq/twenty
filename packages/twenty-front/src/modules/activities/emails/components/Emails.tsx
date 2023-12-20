@@ -8,6 +8,7 @@ import {
 } from '@/ui/display/typography/components/H1Title';
 import { Card } from '@/ui/layout/card/components/Card';
 import { Section } from '@/ui/layout/section/components/Section';
+import { TimelineMessage } from '~/generated/graphql';
 
 import { EmailPreview } from './EmailPreview';
 
@@ -47,12 +48,10 @@ export const Emails = ({ entity }: { entity: ActivityTargetableEntity }) => {
   });
 
   if (messages.loading) {
-    return <div>Loading...</div>;
+    return;
   }
 
-  console.log(messages);
-
-  const timelineMessages = messages.data.timelineMessage;
+  const timelineMessages: TimelineMessage[] = messages.data.timelineMessage;
 
   return (
     <StyledContainer>
