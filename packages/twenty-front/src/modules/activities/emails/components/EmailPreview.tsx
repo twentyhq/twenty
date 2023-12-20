@@ -46,11 +46,11 @@ const StyledThreadCount = styled.span`
 const StyledSubject = styled.span<{ unread: boolean }>`
   color: ${({ theme, unread }) =>
     unread ? theme.font.color.primary : theme.font.color.secondary};
+  white-space: nowrap;
 `;
 
 const StyledBody = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
-  flex: 1 0 0;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -58,9 +58,11 @@ const StyledBody = styled.span`
 `;
 
 const StyledSubjectAndBody = styled.div`
+  display: flex;
+  flex: 1;
+  gap: ${({ theme }) => theme.spacing(2)};
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const StyledReceivedAt = styled.div`
