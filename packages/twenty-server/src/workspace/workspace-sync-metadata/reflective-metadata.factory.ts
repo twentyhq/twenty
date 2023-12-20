@@ -133,7 +133,7 @@ export class ReflectiveMetadataFactory {
         assert(
           fromObjectMetadata,
           `Object ${relation.fromObjectNameSingular} not found in DB 
-        for relation defined in class ${objectMetadata.nameSingular}`,
+        for relation FROM defined in class ${objectMetadata.nameSingular}`,
         );
 
         const toObjectMetadata =
