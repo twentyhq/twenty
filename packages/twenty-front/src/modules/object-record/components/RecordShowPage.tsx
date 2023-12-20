@@ -11,7 +11,7 @@ import { RecordInlineCell } from '@/object-record/record-inline-cell/components/
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
-import { filterAvailableFieldMetadataItem } from '@/object-record/utils/filterAvailableFieldMetadataItem';
+import { isFieldMetadataItemAvailable } from '@/object-record/utils/isFieldMetadataItemAvailable';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
@@ -215,7 +215,7 @@ export const RecordShowPage = () => {
                     .sort((a, b) =>
                       a.name === 'name' ? -1 : a.name.localeCompare(b.name),
                     )
-                    .filter(filterAvailableFieldMetadataItem)
+                    .filter(isFieldMetadataItemAvailable)
                     .map((metadataField, index) => {
                       return (
                         <FieldContext.Provider

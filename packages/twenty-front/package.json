@@ -9,6 +9,7 @@
     "build": "tsc && vite build && yarn build:inject-runtime-env",
     "build:inject-runtime-env": "sh ./scripts/inject-runtime-env.sh",
     "tsc": "tsc --watch",
+    "tsc:ci": "tsc",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:ci": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --config .eslintrc-ci.cjs",

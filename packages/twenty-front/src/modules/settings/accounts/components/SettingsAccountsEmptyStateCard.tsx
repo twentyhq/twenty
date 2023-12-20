@@ -20,7 +20,13 @@ const StyledBody = styled(CardContent)`
   justify-content: center;
 `;
 
-export const SettingsAccountsEmptyStateCard = () => {
+type SettingsAccountsEmptyStateCardProps = {
+  label?: string;
+};
+
+export const SettingsAccountsEmptyStateCard = ({
+  label,
+}: SettingsAccountsEmptyStateCardProps) => {
   const [generateTransientToken] = useGenerateTransientTokenMutation();
 
   const handleGmailLogin = useCallback(async () => {
@@ -36,7 +42,7 @@ export const SettingsAccountsEmptyStateCard = () => {
 
   return (
     <Card>
-      <StyledHeader>No connected account</StyledHeader>
+      <StyledHeader>{label || 'No connected account'}</StyledHeader>
       <StyledBody>
         <Button
           Icon={IconGoogle}
