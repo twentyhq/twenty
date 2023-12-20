@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef } from 'react';
+import { ChangeEvent, ReactNode, useRef } from 'react';
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 import { v4 as uuidV4 } from 'uuid';
@@ -9,16 +9,14 @@ import {
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
 
-import { OverflowingTextWithTooltip } from '../../../display/tooltip/OverflowingTextWithTooltip';
-
 type ShowPageSummaryCardProps = {
+  avatarPlaceholder: string;
+  avatarType: AvatarType;
+  date: string;
   id?: string;
   logoOrAvatar?: string;
-  title: string;
-  date: string;
-  renderTitleEditComponent?: () => JSX.Element;
   onUploadPicture?: (file: File) => void;
-  avatarType: AvatarType;
+  title: ReactNode;
 };
 
 const StyledShowPageSummaryCard = styled.div`
@@ -47,7 +45,6 @@ const StyledDate = styled.div`
 const StyledTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
-  flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   justify-content: center;
@@ -74,13 +71,13 @@ const StyledFileInput = styled.input`
 `;
 
 export const ShowPageSummaryCard = ({
+  avatarPlaceholder,
+  avatarType,
+  date,
   id,
   logoOrAvatar,
-  title,
-  date,
-  avatarType,
-  renderTitleEditComponent,
   onUploadPicture,
+  title,
 }: ShowPageSummaryCardProps) => {
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
@@ -104,7 +101,7 @@ export const ShowPageSummaryCard = ({
           onClick={onUploadPicture ? handleAvatarClick : undefined}
           size="xl"
           colorId={id}
-          placeholder={title}
+          placeholder={avatarPlaceholder}
           type={avatarType}
         />
         <StyledFileInput
@@ -113,15 +110,8 @@ export const ShowPageSummaryCard = ({
           type="file"
         />
       </StyledAvatarWrapper>
-
       <StyledInfoContainer>
-        <StyledTitle>
-          {renderTitleEditComponent ? (
-            renderTitleEditComponent()
-          ) : (
-            <OverflowingTextWithTooltip text={title} />
-          )}
-        </StyledTitle>
+        <StyledTitle>{title}</StyledTitle>
         <StyledDate id={dateElementId}>Added {beautifiedCreatedAt}</StyledDate>
         <StyledTooltip
           anchorSelect={`#${dateElementId}`}
