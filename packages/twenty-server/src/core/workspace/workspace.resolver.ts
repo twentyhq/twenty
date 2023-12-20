@@ -73,7 +73,7 @@ export class WorkspaceResolver {
 
     // Check if the id is in the list of demo workspaceIds
     if (demoWorkspaceIds.includes(id)) {
-      throw new ForbiddenException('Cannot delete a demo workspace.');
+      throw new ForbiddenException('Demo workspaces cannot be deleted.');
     }
 
     return this.workspaceService.deleteWorkspace(id);
