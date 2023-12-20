@@ -4,21 +4,8 @@ import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 import { mockedUsersData } from './users';
 
-type MockedCompany = Pick<
-  Company,
-  | 'id'
-  | 'name'
-  | 'domainName'
-  | 'createdAt'
-  | 'address'
-  | 'employees'
-  | 'linkedinUrl'
-  | 'xUrl'
-  | 'annualRecurringRevenue'
-  | 'idealCustomerProfile'
-  | 'accountOwnerId'
-> & {
-  accountOwner: Pick<WorkspaceMember, 'id' | 'avatarUrl' | 'name'> | null;
+type MockedCompany = Omit<Company, 'deletedAt'> & {
+  accountOwner: WorkspaceMember | null;
   Favorite: Pick<Favorite, 'id'> | null;
 };
 
@@ -28,13 +15,14 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     domainName: 'airbnb.com',
     name: 'Airbnb',
     createdAt: '2023-04-26T10:08:54.724515+00:00',
+    updatedAt: '2023-04-26T10:23:42.33625+00:00',
     address: '17 rue de clignancourt',
     employees: 12,
-    linkedinUrl: {
+    linkedinLink: {
       url: 'https://www.linkedin.com/company/airbnb/',
       label: 'https://www.linkedin.com/company/airbnb/',
     },
-    xUrl: {
+    xLink: {
       url: 'https://twitter.com/airbnb',
       label: 'https://twitter.com/airbnb',
     },
@@ -49,6 +37,11 @@ export const mockedCompaniesData: Array<MockedCompany> = [
       },
       avatarUrl: null,
       id: mockedUsersData[0].id,
+      locale: 'en',
+      colorScheme: 'Light',
+      updatedAt: '2023-04-26T10:23:42.33625+00:00',
+      createdAt: '2023-04-26T10:23:42.33625+00:00',
+      userId: mockedUsersData[0].id,
     },
   },
   {
@@ -56,14 +49,15 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     domainName: 'aircall.io',
     name: 'Aircall',
     createdAt: '2023-04-26T10:12:42.33625+00:00',
+    updatedAt: '2023-04-26T10:23:42.33625+00:00',
     address: '',
     employees: 1,
     accountOwnerId: null,
-    linkedinUrl: {
+    linkedinLink: {
       url: 'https://www.linkedin.com/company/aircall/',
       label: 'https://www.linkedin.com/company/aircall/',
     },
-    xUrl: {
+    xLink: {
       url: 'https://twitter.com/aircall',
       label: 'https://twitter.com/aircall',
     },
@@ -77,13 +71,14 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     domainName: 'algolia.com',
     name: 'Algolia',
     createdAt: '2023-04-26T10:10:32.530184+00:00',
+    updatedAt: '2023-04-26T10:23:42.33625+00:00',
     address: '',
     employees: 1,
-    linkedinUrl: {
+    linkedinLink: {
       url: 'https://www.linkedin.com/company/algolia/',
       label: 'https://www.linkedin.com/company/algolia/',
     },
-    xUrl: {
+    xLink: {
       url: 'https://twitter.com/algolia',
       label: 'https://twitter.com/algolia',
     },
@@ -98,13 +93,14 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     domainName: 'apple.com',
     name: 'Apple',
     createdAt: '2023-03-21T06:30:25.39474+00:00',
+    updatedAt: '2023-04-26T10:23:42.33625+00:00',
     address: '',
     employees: 10,
-    linkedinUrl: {
+    linkedinLink: {
       url: 'https://www.linkedin.com/company/apple/',
       label: 'https://www.linkedin.com/company/apple/',
     },
-    xUrl: {
+    xLink: {
       url: 'https://twitter.com/apple',
       label: 'https://twitter.com/apple',
     },
@@ -119,13 +115,14 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     domainName: 'qonto.com',
     name: 'Qonto',
     createdAt: '2023-04-26T10:13:29.712485+00:00',
+    updatedAt: '2023-04-26T10:23:42.33625+00:00',
     address: '10 rue de la Paix',
     employees: 1,
-    linkedinUrl: {
+    linkedinLink: {
       url: 'https://www.linkedin.com/company/qonto/',
       label: 'https://www.linkedin.com/company/qonto/',
     },
-    xUrl: {
+    xLink: {
       url: 'https://twitter.com/qonto',
       label: 'https://twitter.com/qonto',
     },
@@ -140,13 +137,14 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     domainName: 'facebook.com',
     name: 'Facebook',
     createdAt: '2023-04-26T10:09:25.656555+00:00',
+    updatedAt: '2023-04-26T10:23:42.33625+00:00',
     address: '',
     employees: 1,
-    linkedinUrl: {
+    linkedinLink: {
       url: 'https://www.linkedin.com/company/facebook/',
       label: 'https://www.linkedin.com/company/facebook/',
     },
-    xUrl: {
+    xLink: {
       url: 'https://twitter.com/facebook',
       label: 'https://twitter.com/facebook',
     },
@@ -161,13 +159,14 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     domainName: 'sequoia.com',
     name: 'Sequoia',
     createdAt: '2023-04-26T10:09:25.656555+00:00',
+    updatedAt: '2023-04-26T10:23:42.33625+00:00',
     address: '',
     employees: 1,
-    linkedinUrl: {
+    linkedinLink: {
       url: 'https://www.linkedin.com/company/sequoia/',
       label: 'https://www.linkedin.com/company/sequoia/',
     },
-    xUrl: {
+    xLink: {
       url: 'https://twitter.com/sequoia',
       label: 'https://twitter.com/sequoia',
     },
@@ -187,10 +186,11 @@ export const mockedEmptyCompanyData = {
   accountOwner: null,
   annualRecurringRevenue: null,
   createdAt: null,
+  updatedAt: null,
   employees: null,
   idealCustomerProfile: null,
-  linkedinUrl: null,
-  xUrl: null,
+  linkedinLink: null,
+  xLink: null,
   _activityCount: null,
   __typename: 'Company',
 };

@@ -17,7 +17,10 @@ export const getOnboardingStatus = ({
   isBillingEnabled,
 }: {
   isLoggedIn: boolean;
-  currentWorkspaceMember: WorkspaceMember | null;
+  currentWorkspaceMember: Omit<
+    WorkspaceMember,
+    'createdAt' | 'updatedAt' | 'userId'
+  > | null;
   currentWorkspace: CurrentWorkspace | null;
   isBillingEnabled?: boolean;
 }) => {

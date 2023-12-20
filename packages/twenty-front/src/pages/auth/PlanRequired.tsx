@@ -4,8 +4,6 @@ import { useRecoilValue } from 'recoil';
 import { Logo } from '@/auth/components/Logo';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
-import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { billingState } from '@/client-config/states/billingState';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { MainButton } from '@/ui/input/button/components/MainButton';
@@ -18,7 +16,6 @@ const StyledButtonContainer = styled.div`
 `;
 
 export const PlanRequired = () => {
-  const onboardingStatus = useOnboardingStatus();
   const billing = useRecoilValue(billingState);
 
   const handleButtonClick = () => {
@@ -28,10 +25,6 @@ export const PlanRequired = () => {
   useScopedHotkeys('enter', handleButtonClick, PageHotkeyScope.PlanRequired, [
     handleButtonClick,
   ]);
-
-  if (onboardingStatus === OnboardingStatus.Completed) {
-    return null;
-  }
 
   return (
     <>
