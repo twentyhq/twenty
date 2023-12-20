@@ -40,7 +40,7 @@ const StyledTabListContainer = styled.div`
 `;
 
 type ShowPageRightContainerProps = {
-  entity: ActivityTargetableEntity;
+  entity?: ActivityTargetableEntity;
   timeline?: boolean;
   tasks?: boolean;
   notes?: boolean;
@@ -55,7 +55,12 @@ export const ShowPageRightContainer = ({
   emails,
 }: ShowPageRightContainerProps) => {
   const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
+  const [activeTabId] = useRecoilScopedState(
+    activeTabIdScopedState,
+    ShowPageRecoilScopeContext,
+  );
 
+  if (!entity) return <></>;
   const TASK_TABS = [
     {
       id: 'timeline',
@@ -93,11 +98,6 @@ export const ShowPageRightContainer = ({
       disabled: !isMessagingEnabled || entity.type === 'Custom',
     },
   ];
-
-  const [activeTabId] = useRecoilScopedState(
-    activeTabIdScopedState,
-    ShowPageRecoilScopeContext,
-  );
 
   return (
     <StyledShowPageRightContainer>

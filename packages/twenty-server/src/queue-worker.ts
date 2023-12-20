@@ -4,8 +4,8 @@ import {
   MessageQueueJob,
   MessageQueueJobData,
 } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
-import { JobsModule } from 'src/integrations/message-queue/jobs.module';
 
+import { JobsModule } from 'src/integrations/message-queue/jobs.module';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { getJobClassName } from 'src/integrations/message-queue/utils/get-job-class-name.util';
@@ -28,4 +28,3 @@ async function bootstrap() {
   }
 }
 bootstrap();
-

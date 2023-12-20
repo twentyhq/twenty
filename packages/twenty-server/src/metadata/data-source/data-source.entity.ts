@@ -37,7 +37,7 @@ export class DataSourceEntity {
   })
   objects: ObjectMetadataEntity[];
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
   @CreateDateColumn()

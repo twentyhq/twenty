@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import axios, { AxiosInstance } from 'axios';
+import { simpleParser } from 'mailparser';
 
 @Injectable()
 export class FetchBatchMessagesService {
@@ -57,7 +58,9 @@ export class FetchBatchMessagesService {
       },
     );
 
-    return this.formatBatchResponse(response);
+    const formattedResponse = await this.formatBatchResponse(response);
+
+    return formattedResponse;
   }
 
   createBatchBody(messageQueries, boundary: string): string {
@@ -121,40 +124,44 @@ export class FetchBatchMessagesService {
     return boundary.replace('boundary=', '').trim('; ');
   }
 
-  formatBatchResponse(response) {
+  async formatBatchResponse(response) {
     const parsedResponse = this.parseBatch(response);
 
-    return parsedResponse
-      .map((item) => {
-        const { id, threadId, payload } = item;
+    return Promise.all(
+      parsedResponse.map(async (item) => {
+        const { id, threadId, internalDate, raw } = item;
 
-        const headers = payload?.headers;
+        const message = atob(raw?.replace(/-/g, '+').replace(/_/g, '/'));
 
-        const parts = payload?.parts;
+        const parsed = await simpleParser(message);
 
-        if (!parts) {
-          return;
-        }
-
-        const bodyBase64 = parts[0]?.body?.data;
-
-        if (!bodyBase64) {
-          return;
-        }
-
-        const body = atob(bodyBase64.replace(/-/g, '+').replace(/_/g, '/'));
+        const {
+          subject,
+          messageId,
+          from,
+          to,
+          cc,
+          bcc,
+          text,
+          html,
+          attachments,
+        } = parsed;
 
         return {
           externalId: id,
-          headerMessageId: headers?.find(
-            (header) => header.name === 'Message-ID',
-          )?.value,
-          subject: headers?.find((header) => header.name === 'Subject')?.value,
+          headerMessageId: messageId,
+          subject: subject,
           messageThreadId: threadId,
-          from: headers?.find((header) => header.name === 'From')?.value,
-          body,
+          internalDate,
+          from,
+          to,
+          cc,
+          bcc,
+          text,
+          html,
+          attachments,
         };
-      })
-      .filter((item) => item);
+      }),
+    );
   }
 }
