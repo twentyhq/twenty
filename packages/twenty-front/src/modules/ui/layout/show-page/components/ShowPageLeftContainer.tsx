@@ -38,7 +38,7 @@ const StyledIntermediateContainer = styled.div`
 `;
 
 export type ShowPageLeftContainerProps = {
-  children: ReactElement[];
+  children: ReactElement;
 };
 
 export const ShowPageLeftContainer = ({
