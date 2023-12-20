@@ -12,6 +12,7 @@ import {
 } from '@/object-record/field/contexts/FieldContext';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { IconCalendar } from '@/ui/display/icon';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { formatToHumanReadableDate } from '~/utils';
 
 const StyledRow = styled.div`
@@ -75,11 +76,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
         <StyledLeftContent>
           <AttachmentIcon attachment={attachment} />
           <StyledLink
-            href={
-              process.env.REACT_APP_SERVER_BASE_URL +
-              '/files/' +
-              attachment.fullPath
-            }
+            href={REACT_APP_SERVER_BASE_URL + '/files/' + attachment.fullPath}
             target="__blank"
           >
             {attachment.name}

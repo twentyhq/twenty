@@ -5,6 +5,7 @@ import { CompanyTeam } from '@/companies/components/CompanyTeam';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { parseFieldType } from '@/object-metadata/utils/parseFieldType';
 import { FieldContext } from '@/object-record/field/contexts/FieldContext';
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
@@ -25,7 +26,11 @@ import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSu
 import { ShowPageRecoilScopeContext } from '@/ui/layout/states/ShowPageRecoilScopeContext';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { FileFolder, useUploadImageMutation } from '~/generated/graphql';
+import {
+  FieldMetadataType,
+  FileFolder,
+  useUploadImageMutation,
+} from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 import { useFindOneRecord } from '../hooks/useFindOneRecord';
@@ -41,9 +46,10 @@ export const RecordShowPage = () => {
     throw new Error(`Object name is not defined`);
   }
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const { objectMetadataItem, labelIdentifierFieldMetadata } =
+    useObjectMetadataItem({
+      objectNameSingular,
+    });
 
   const { identifiersMapper } = useRelationPicker();
 
@@ -171,6 +177,16 @@ export const RecordShowPage = () => {
     });
   };
 
+  const fieldMetadataItemsToShow = [...objectMetadataItem.fields]
+    .sort((fieldMetadataItemA, fieldMetadataItemB) =>
+      fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
+    )
+    .filter(isFieldMetadataItemAvailable)
+    .filter(
+      (fieldMetadataItem) =>
+        fieldMetadataItem.id !== labelIdentifierFieldMetadata?.id,
+    );
+
   return (
     <PageContainer>
       <PageTitle title={pageName} />
@@ -204,9 +220,37 @@ export const RecordShowPage = () => {
                   <ShowPageSummaryCard
                     id={record.id}
                     logoOrAvatar={recordIdentifiers?.avatarUrl}
-                    title={recordIdentifiers?.name ?? 'No name'}
+                    avatarPlaceholder={recordIdentifiers?.name ?? ''}
                     date={record.createdAt ?? ''}
-                    renderTitleEditComponent={() => <></>}
+                    title={
+                      <FieldContext.Provider
+                        value={{
+                          entityId: record.id,
+                          recoilScopeId:
+                            record.id + labelIdentifierFieldMetadata?.id,
+                          isLabelIdentifier: false,
+                          fieldDefinition: {
+                            type: parseFieldType(
+                              labelIdentifierFieldMetadata?.type ||
+                                FieldMetadataType.Text,
+                            ),
+                            iconName: '',
+                            fieldMetadataId:
+                              labelIdentifierFieldMetadata?.id ?? '',
+                            label: labelIdentifierFieldMetadata?.label || '',
+                            metadata: {
+                              fieldName:
+                                labelIdentifierFieldMetadata?.name || '',
+                            },
+                          },
+                          useUpdateEntityMutation:
+                            useUpdateOneObjectRecordMutation,
+                          hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                        }}
+                      >
+                        <RecordInlineCell />
+                      </FieldContext.Provider>
+                    }
                     avatarType={recordIdentifiers?.avatarType ?? 'rounded'}
                     onUploadPicture={
                       objectNameSingular === 'person'
@@ -215,35 +259,29 @@ export const RecordShowPage = () => {
                     }
                   />
                   <PropertyBox extraPadding={true}>
-                    {objectMetadataItem &&
-                      [...objectMetadataItem.fields]
-                        .sort((a, b) =>
-                          a.name === 'name' ? -1 : a.name.localeCompare(b.name),
-                        )
-                        .filter(isFieldMetadataItemAvailable)
-                        .map((metadataField, index) => {
-                          return (
-                            <FieldContext.Provider
-                              key={record.id + metadataField.id}
-                              value={{
-                                entityId: record.id,
-                                recoilScopeId: record.id + metadataField.id,
-                                isLabelIdentifier: false,
-                                fieldDefinition:
-                                  formatFieldMetadataItemAsColumnDefinition({
-                                    field: metadataField,
-                                    position: index,
-                                    objectMetadataItem,
-                                  }),
-                                useUpdateEntityMutation:
-                                  useUpdateOneObjectRecordMutation,
-                                hotkeyScope: InlineCellHotkeyScope.InlineCell,
-                              }}
-                            >
-                              <RecordInlineCell />
-                            </FieldContext.Provider>
-                          );
-                        })}
+                    {fieldMetadataItemsToShow.map(
+                      (fieldMetadataItem, index) => (
+                        <FieldContext.Provider
+                          key={record.id + fieldMetadataItem.id}
+                          value={{
+                            entityId: record.id,
+                            recoilScopeId: record.id + fieldMetadataItem.id,
+                            isLabelIdentifier: false,
+                            fieldDefinition:
+                              formatFieldMetadataItemAsColumnDefinition({
+                                field: fieldMetadataItem,
+                                position: index,
+                                objectMetadataItem,
+                              }),
+                            useUpdateEntityMutation:
+                              useUpdateOneObjectRecordMutation,
+                            hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                          }}
+                        >
+                          <RecordInlineCell />
+                        </FieldContext.Provider>
+                      ),
+                    )}
                   </PropertyBox>
                   {objectNameSingular === 'company' ? (
                     <>

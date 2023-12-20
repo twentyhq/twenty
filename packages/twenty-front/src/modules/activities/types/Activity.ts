@@ -10,6 +10,7 @@ export type Activity = {
   createdAt: string;
   updatedAt: string;
   completedAt: string | null;
+  reminderAt: string | null;
   dueAt: string | null;
   activityTargets: ActivityTarget[];
   type: ActivityType;

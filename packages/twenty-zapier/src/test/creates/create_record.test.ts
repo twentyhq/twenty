@@ -1,13 +1,14 @@
 import App from '../../index';
-import { Bundle, createAppTester, tools, ZObject } from 'zapier-platform-core';
-import getBundle from '../../utils/getBundle';
-import requestDb from '../../utils/requestDb';
+import getBundle from "../../utils/getBundle";
+import { Bundle, createAppTester, tools, ZObject } from "zapier-platform-core";
+import requestDb from "../../utils/requestDb";
 const appTester = createAppTester(App);
 tools.env.inject;
 
-describe('creates.create_company', () => {
-  test('should run', async () => {
+describe('creates.create_record', () => {
+  test('should run to create a Company Record', async () => {
     const bundle = getBundle({
+      nameSingular: 'Company',
       name: 'Company Name',
       address: 'Company Address',
       domainName: 'Company Domain Name',
@@ -18,7 +19,7 @@ describe('creates.create_company', () => {
       employees: 25,
     });
     const result = await appTester(
-      App.creates.create_company.operation.perform,
+      App.creates.create_record.operation.perform,
       bundle,
     );
     expect(result).toBeDefined();
@@ -35,26 +36,30 @@ describe('creates.create_company', () => {
     expect(checkDbResult.data.company.annualRecurringRevenue.amountMicros).toEqual(
       100000000000,
     );
-  });
-  test('should run with not required params', async () => {
-    const bundle = getBundle({});
+  })
+  test('should run to create a Person Record', async () => {
+    const bundle = getBundle({
+      nameSingular: 'Person',
+      name: {firstName: 'John', lastName: 'Doe'},
+      email: 'johndoe@gmail.com',
+      phone: '+33610203040',
+      city: 'Paris',
+    });
     const result = await appTester(
-      App.creates.create_company.operation.perform,
+      App.creates.create_record.operation.perform,
       bundle,
     );
     expect(result).toBeDefined();
-    expect(result.data?.createCompany?.id).toBeDefined();
+    expect(result.data?.createPerson?.id).toBeDefined();
     const checkDbResult = await appTester(
       (z: ZObject, bundle: Bundle) =>
         requestDb(
           z,
           bundle,
-          `query findCompany {company(filter: {id: {eq: "${result.data.createCompany.id}"}}){id annualRecurringRevenue{amountMicros currencyCode}}}`,
+          `query findPerson {person(filter: {id: {eq: "${result.data.createPerson.id}"}}){phone}}`,
         ),
       bundle,
     );
-    expect(checkDbResult.data.company.annualRecurringRevenue.amountMicros).toEqual(
-      null,
-    );
-  });
-});
+    expect(checkDbResult.data.person.phone).toEqual('+33610203040');
+  })
+})

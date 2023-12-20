@@ -112,14 +112,14 @@ export const useObjectMetadataItem = (
       objectMetadataItem,
     });
 
-  const labelIdentifierFieldMetadataId = objectMetadataItem.fields.find(
+  const labelIdentifierFieldMetadata = objectMetadataItem.fields.find(
     ({ name }) => name === 'name',
-  )?.id;
+  );
 
   const basePathToShowPage = `/object/${objectMetadataItem.nameSingular}/`;
 
   return {
-    labelIdentifierFieldMetadataId,
+    labelIdentifierFieldMetadata,
     basePathToShowPage,
     objectMetadataItem,
     getRecordFromCache,

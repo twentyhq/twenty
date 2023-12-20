@@ -45,7 +45,7 @@ const StyledAttachmentContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  disply: flex;
+  display: flex;
   flex-flow: column nowrap;
   justify-content: center;
   width: 100%;

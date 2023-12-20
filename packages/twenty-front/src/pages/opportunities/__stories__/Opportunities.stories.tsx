@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
 
+import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
 import { AppPath } from '@/types/AppPath';
 import {
   PageDecorator,
@@ -13,7 +14,17 @@ import { Opportunities } from '../Opportunities';
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Opportunities/Default',
   component: Opportunities,
-  decorators: [PageDecorator],
+  decorators: [
+    (Story) => {
+      return (
+        <>
+          <ObjectMetadataItemsRelationPickerEffect />
+          <Story />
+        </>
+      );
+    },
+    PageDecorator,
+  ],
   args: { routePath: AppPath.OpportunitiesPage },
   parameters: {
     msw: graphqlMocks,

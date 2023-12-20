@@ -9,4 +9,7 @@ export type WorkspaceMember = {
   avatarUrl?: string | null;
   locale: string;
   colorScheme?: ColorScheme;
+  createdAt: string;
+  updatedAt: string;
+  userId: string;
 };

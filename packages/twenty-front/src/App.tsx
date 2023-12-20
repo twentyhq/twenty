@@ -18,6 +18,7 @@ import { NotFound } from '~/pages/not-found/NotFound';
 import { Opportunities } from '~/pages/opportunities/Opportunities';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccountsEmails';
+import { SettingsAccountsEmailsInboxSettings } from '~/pages/settings/accounts/SettingsAccountsEmailsInboxSettings';
 import { SettingsNewAccount } from '~/pages/settings/accounts/SettingsNewAccount';
 import { SettingsNewObject } from '~/pages/settings/data-model/SettingsNewObject';
 import { SettingsObjectDetail } from '~/pages/settings/data-model/SettingsObjectDetail';
@@ -84,6 +85,10 @@ export const App = () => {
                 <Route
                   path={SettingsPath.AccountsEmails}
                   element={<SettingsAccountsEmails />}
+                />
+                <Route
+                  path={SettingsPath.AccountsEmailsInboxSettings}
+                  element={<SettingsAccountsEmailsInboxSettings />}
                 />
                 <Route
                   path={SettingsPath.WorkspaceMembersPage}
