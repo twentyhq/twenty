@@ -4,7 +4,7 @@ import handleQueryParams from "../utils/handleQueryParams";
 import { capitalize } from "../utils/capitalize";
 import { computeInputFields } from "../utils/computeInputFields";
 
-const objectInputFields = async (z: ZObject, bundle: Bundle) => {
+const recordInputFields = async (z: ZObject, bundle: Bundle) => {
   const schema = await requestSchema(z, bundle)
   const infos = schema.components.schemas[bundle.inputData.nameSingular]
 
@@ -27,22 +27,22 @@ const perform = async (z: ZObject, bundle: Bundle) => {
 
 export default {
   display: {
-    description: 'Creates a new Object in Twenty',
+    description: 'Creates a new Record in Twenty',
     hidden: false,
-    label: 'Create New Object',
+    label: 'Create New Record',
   },
-  key: 'create_object',
-  noun: 'Object',
+  key: 'create_record',
+  noun: 'Record',
   operation: {
     inputFields: [
       {
         key: 'nameSingular',
         required: true,
-        label: 'Singular Name of the Object to create',
-        dynamic: 'find_objects.nameSingular.nameSingular',
+        label: 'Name of the Record to create',
+        dynamic: 'find_objects.nameSingular',
         altersDynamicFields: true,
       },
-      objectInputFields
+      recordInputFields
     ],
     sample: {
       id: '179ed459-79cf-41d9-ab85-96397fa8e936',

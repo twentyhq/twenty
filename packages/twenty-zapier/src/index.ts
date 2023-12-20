@@ -1,6 +1,6 @@
 const { version } = require('../package.json');
 import { version as platformVersion } from 'zapier-platform-core';
-import createObject from './creates/create_object';
+import createRecord from './creates/create_record';
 import findObjects from './triggers/find_objects'
 import authentication from './authentication';
 import 'dotenv/config';
@@ -13,6 +13,6 @@ export default {
     [findObjects.key]: findObjects,
   },
   creates: {
-    [createObject.key]: createObject,
+    [createRecord.key]: createRecord,
   },
 };

@@ -5,8 +5,8 @@ import requestDb from "../../utils/requestDb";
 const appTester = createAppTester(App);
 tools.env.inject;
 
-describe('creates.create_object', () => {
-  test('should run to create a Company', async () => {
+describe('creates.create_record', () => {
+  test('should run to create a Company Record', async () => {
     const bundle = getBundle({
       nameSingular: 'Company',
       name: 'Company Name',
@@ -19,7 +19,7 @@ describe('creates.create_object', () => {
       employees: 25,
     });
     const result = await appTester(
-      App.creates.create_object.operation.perform,
+      App.creates.create_record.operation.perform,
       bundle,
     );
     expect(result).toBeDefined();
@@ -37,7 +37,7 @@ describe('creates.create_object', () => {
       100000000000,
     );
   })
-  test('should run to create a Person', async () => {
+  test('should run to create a Person Record', async () => {
     const bundle = getBundle({
       nameSingular: 'Person',
       name: {firstName: 'John', lastName: 'Doe'},
@@ -46,7 +46,7 @@ describe('creates.create_object', () => {
       city: 'Paris',
     });
     const result = await appTester(
-      App.creates.create_object.operation.perform,
+      App.creates.create_record.operation.perform,
       bundle,
     );
     expect(result).toBeDefined();
