@@ -6,7 +6,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 
 import { GraphQLConfigService } from 'src/graphql-config.service';
-import { exceptionFilters } from 'src/filters';
+import { GlobalExceptionFilter } from 'src/filters/global-exception.filter';
 
 import { AppService } from './app.service';
 
@@ -32,10 +32,10 @@ import { WorkspaceModule } from './workspace/workspace.module';
   ],
   providers: [
     AppService,
-    ...exceptionFilters.map((filter) => ({
+    {
       provide: APP_FILTER,
-      useClass: filter,
-    })),
+      useValue: GlobalExceptionFilter,
+    },
   ],
 })
 export class AppModule {}
