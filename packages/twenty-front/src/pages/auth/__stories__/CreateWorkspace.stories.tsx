@@ -1,4 +1,4 @@
-import { Meta, Story, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { useSetRecoilState } from 'recoil';
 

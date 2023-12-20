@@ -1,14 +1,17 @@
 import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
+import { RecoilRoot, useSetRecoilState } from 'recoil';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
 import { IconCheckbox, IconNotes } from '@/ui/display/icon';
+import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
-import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { TestingObjectMetadataProvider } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockDefaultWorkspace } from '~/testing/mock-data/users';
 import { sleep } from '~/testing/sleep';
 
 import { CommandMenu } from '../CommandMenu';
@@ -19,11 +22,12 @@ const meta: Meta<typeof CommandMenu> = {
   title: 'Modules/CommandMenu/CommandMenu',
   component: CommandMenu,
   decorators: [
-    ObjectMetadataItemsDecorator,
-    ComponentWithRouterDecorator,
     (Story) => {
+      const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
       const { addToCommandMenu, setToIntitialCommandMenu, toggleCommandMenu } =
         useCommandMenu();
+
+      setCurrentWorkspace(mockDefaultWorkspace);
 
       useEffect(() => {
         setToIntitialCommandMenu();
@@ -50,7 +54,16 @@ const meta: Meta<typeof CommandMenu> = {
 
       return <Story />;
     },
-    SnackBarDecorator,
+    (Story) => (
+      <RecoilRoot>
+        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+          <TestingObjectMetadataProvider>
+            <Story />
+          </TestingObjectMetadataProvider>
+        </SnackBarProviderScope>
+      </RecoilRoot>
+    ),
+    ComponentWithRouterDecorator,
   ],
   parameters: {
     msw: graphqlMocks,
@@ -111,6 +124,7 @@ export const AtleastMatchingOnePerson: Story = {
 export const NotMatchingAnything: Story = {
   play: async () => {
     const canvas = within(document.body);
+    console.log({ canvas });
     const searchInput = await canvas.findByPlaceholderText('Search');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'asdasdasd');
