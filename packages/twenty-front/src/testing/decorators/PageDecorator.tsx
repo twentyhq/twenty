@@ -36,7 +36,11 @@ const computeLocation = (routePath: string, routeParams: RouteParams) => {
   };
 };
 
-const ObjectMetadata = ({ children }: { children: JSX.Element }) => {
+export const TestingObjectMetadataProvider = ({
+  children,
+}: {
+  children: JSX.Element;
+}) => {
   const { objectMetadataItems: newObjectMetadataItems } =
     useFindManyObjectMetadataItems();
 
@@ -73,13 +77,13 @@ export const PageDecorator: Decorator<{
                 <HelmetProvider>
                   <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
                     <RelationPickerScope relationPickerScopeId="relation-picker">
-                      <ObjectMetadata>
+                      <TestingObjectMetadataProvider>
                         <DefaultLayout>
                           <Routes>
                             <Route path={args.routePath} element={<Story />} />
                           </Routes>
                         </DefaultLayout>
-                      </ObjectMetadata>
+                      </TestingObjectMetadataProvider>
                     </RelationPickerScope>
                   </SnackBarProviderScope>
                 </HelmetProvider>
