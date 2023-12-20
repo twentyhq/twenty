@@ -1,5 +1,5 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import { ForbiddenException, UseGuards } from '@nestjs/common';
 
 import { FileUpload, GraphQLUpload } from 'graphql-upload';
 
@@ -73,7 +73,7 @@ export class WorkspaceResolver {
 
     // Check if the id is in the list of demo workspaceIds
     if (demoWorkspaceIds.includes(id)) {
-      throw new Error('Cannot delete a demo workspace.');
+      throw new ForbiddenException('Cannot delete a demo workspace.');
     }
 
     return this.workspaceService.deleteWorkspace(id);
