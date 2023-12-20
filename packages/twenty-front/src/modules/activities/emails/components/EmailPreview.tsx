@@ -40,8 +40,8 @@ const StyledAvatar = styled(Avatar)`
 `;
 
 const StyledSenderName = styled.span`
+  overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const StyledThreadCount = styled.span`
@@ -95,7 +95,7 @@ export const EmailPreview = ({ divider, email }: EmailPreviewProps) => (
 
     <StyledSubjectAndBody>
       <StyledSubject unread={!email.read}>{email.subject}</StyledSubject>
-      <StyledBody>Test {email.body}</StyledBody>
+      <StyledBody>{email.body}</StyledBody>
     </StyledSubjectAndBody>
     <StyledReceivedAt>
       {formatToHumanReadableDate(email.receivedAt)}
