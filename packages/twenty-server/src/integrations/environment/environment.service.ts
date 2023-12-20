@@ -148,7 +148,7 @@ export class EnvironmentService {
   getMessageQueueDriverType(): MessageQueueDriverType {
     return (
       this.configService.get<MessageQueueDriverType>('MESSAGE_QUEUE_TYPE') ??
-      MessageQueueDriverType.PgBoss
+      MessageQueueDriverType.Sync
     );
   }
 

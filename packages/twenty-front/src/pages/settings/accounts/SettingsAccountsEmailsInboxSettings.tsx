@@ -20,9 +20,9 @@ export const SettingsAccountsEmailsInboxSettings = () => {
     if (!account) navigate(AppPath.NotFound);
   }, [account, navigate]);
 
-  if (!account) return null;
-
   const handleToggle = (_value: boolean) => {};
+
+  if (!account) return <></>;
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">

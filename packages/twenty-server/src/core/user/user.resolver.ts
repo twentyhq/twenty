@@ -6,7 +6,7 @@ import {
   ResolveField,
   Mutation,
 } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import { ForbiddenException, UseGuards } from '@nestjs/common';
 
 import crypto from 'crypto';
 
@@ -98,7 +98,20 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  async deleteUser(@AuthUser() { id: userId }: User) {
+  async deleteUser(@AuthUser() { id: userId, defaultWorkspace }: User) {
+    // Get the list of demo workspace IDs
+    const demoWorkspaceIds = this.environmentService.getDemoWorkspaceIds();
+
+    const currentUserWorkspaceId = defaultWorkspace.id;
+
+    // Check if the user's default workspace ID is in the list of demo workspace IDs
+    if (demoWorkspaceIds.includes(currentUserWorkspaceId)) {
+      throw new ForbiddenException(
+        'Deletion of users with a default demo workspace is not allowed.',
+      );
+    }
+
+    // Proceed with user deletion
     return this.userService.deleteUser(userId);
   }
 }

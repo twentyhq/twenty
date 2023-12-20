@@ -64,7 +64,7 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @Column({ nullable: true })
   imageIdentifierFieldMetadataId?: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
   @OneToMany(() => FieldMetadataEntity, (field) => field.object, {

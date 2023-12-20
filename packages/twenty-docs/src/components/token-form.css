@@ -18,8 +18,12 @@
     transition: color 0.3s ease;
 }
 
+[data-theme='dark'] .link {
+    color: #a3c0f8;
+}
+
 .input {
-    padding: 4px;
+    padding: 6px;
     margin: 20px 0 5px 0;
     max-width: 460px;
     width: 100%;
@@ -27,17 +31,19 @@
     background-color: #f3f3f3;
     border: 1px solid #ddd;
     border-radius: 4px;
+}
 
+[data-theme='dark'] .input {
+    background-color: #16233f;
 }
 
 .invalid {
-    border: 1px solid red;
+    border: 1px solid #f83e3e;
 }
 
 .token-invalid {
-    color: red;
+    color: #f83e3e;
     font-size: 12px;
-    text-align: left;
 }
 
 .not-visible {
@@ -48,6 +54,10 @@
     color: #16233f;
     font-size: 2rem;
     animation: animate 2s infinite;
+}
+
+[data-theme='dark'] .loader {
+    color: #a3c0f8;
 }
 
 @keyframes animate {
