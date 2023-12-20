@@ -78,12 +78,6 @@ export const getRecordOptimisticEffectDefinition = ({
               objectMetadataItem,
             });
 
-          console.log({
-            updatedRecordIsOutOfQueryFilter,
-            updatedData,
-            variables,
-          });
-
           if (updatedRecordIsOutOfQueryFilter) {
             draft.edges = draft.edges.filter(
               (edge) => edge.node.id !== updatedData.id,
