@@ -54,7 +54,7 @@ export class ReflectiveMetadataFactory {
 
       if (!dataSource) {
         throw new InternalServerErrorException(
-          'Data source not found for object metadata',
+          `Data source not found for object metadata objectMetadata.nameSingular`,
         );
       }
 
