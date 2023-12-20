@@ -29,29 +29,54 @@ const StyledEmailCount = styled.span`
 `;
 
 export const Emails = ({ entity }: { entity: ActivityTargetableEntity }) => {
-  const emailQuery = gql`
-    query EmailQuery($personId: String!) {
-      timelineMessage(personId: $personId) {
-        body
-        numberOfMessagesInThread
-        read
-        receivedAt
-        senderName
-        senderPictureUrl
-        subject
-      }
-    }
-  `;
+  const emailQuery =
+    entity.type === 'Person'
+      ? gql`
+          query GetTimelineMessagesFromPersonId($personId: String!) {
+            getTimelineMessagesFromPersonId(personId: $personId) {
+              body
+              numberOfMessagesInThread
+              read
+              receivedAt
+              senderName
+              senderPictureUrl
+              subject
+            }
+          }
+        `
+      : gql`
+          query GetTimelineMessagesFromCompanyId($companyId: String!) {
+            getTimelineMessagesFromCompanyId(companyId: $companyId) {
+              body
+              numberOfMessagesInThread
+              read
+              receivedAt
+              senderName
+              senderPictureUrl
+              subject
+            }
+          }
+        `;
+
+  const variables =
+    entity.type === 'Person'
+      ? { personId: entity.id }
+      : { companyId: entity.id };
 
   const messages = useQuery(emailQuery, {
-    variables: { personId: entity.id },
+    variables: variables,
   });
 
   if (messages.loading) {
     return;
   }
 
-  const timelineMessages: TimelineMessage[] = messages.data.timelineMessage;
+  const timelineMessages: TimelineMessage[] =
+    messages.data[
+      entity.type === 'Person'
+        ? 'getTimelineMessagesFromPersonId'
+        : 'getTimelineMessagesFromCompanyId'
+    ];
 
   return (
     <StyledContainer>

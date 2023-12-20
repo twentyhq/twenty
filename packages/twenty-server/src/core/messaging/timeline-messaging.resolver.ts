@@ -48,7 +48,7 @@ export class TimelineMessagingResolver {
   ) {}
 
   @Query(() => [TimelineMessage])
-  async timelineMessage(
+  async getTimelineMessagesFromPersonId(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('personId') personId: string,
   ) {
@@ -56,6 +56,20 @@ export class TimelineMessagingResolver {
       await this.timelineMessagingService.getMessagesFromPersonIds(
         workspaceId,
         [personId],
+      );
+
+    return timelineMessages;
+  }
+
+  @Query(() => [TimelineMessage])
+  async getTimelineMessagesFromCompanyId(
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @Args('companyId') companyId: string,
+  ) {
+    const timelineMessages =
+      await this.timelineMessagingService.getMessagesFromCompanyId(
+        workspaceId,
+        companyId,
       );
 
     return timelineMessages;

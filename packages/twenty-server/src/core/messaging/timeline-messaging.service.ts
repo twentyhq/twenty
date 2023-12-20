@@ -73,4 +73,36 @@ export class TimelineMessagingService {
 
     return formattedMessageThreads;
   }
+
+  async getMessagesFromCompanyId(workspaceId: string, companyId: string) {
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        workspaceId,
+      );
+
+    const workspaceDataSource = await this.typeORMService.connectToDataSource(
+      dataSourceMetadata,
+    );
+
+    const personIds = await workspaceDataSource?.query(
+      `
+        SELECT 
+            p."id"
+        FROM
+            ${dataSourceMetadata.schema}."person" p
+        WHERE
+            p."companyId" = $1
+        `,
+      [companyId],
+    );
+
+    const formattedPersonIds = personIds.map((personId) => personId.id);
+
+    const messageThreads = await this.getMessagesFromPersonIds(
+      workspaceId,
+      formattedPersonIds,
+    );
+
+    return messageThreads;
+  }
 }
