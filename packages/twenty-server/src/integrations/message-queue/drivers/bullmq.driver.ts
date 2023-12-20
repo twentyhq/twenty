@@ -38,9 +38,13 @@ export class BullMQDriver implements MessageQueueDriver {
     queueName: MessageQueue,
     handler: ({ data, id }: { data: T; id: string }) => Promise<void>,
   ) {
-    const worker = new Worker(queueName, async (job) => {
-      await handler(job as { data: T; id: string });
-    });
+    const worker = new Worker(
+      queueName,
+      async (job) => {
+        await handler(job as { data: T; id: string });
+      },
+      this.options,
+    );
 
     this.workerMap[queueName] = worker;
   }

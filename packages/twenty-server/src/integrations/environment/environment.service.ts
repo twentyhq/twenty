@@ -148,7 +148,7 @@ export class EnvironmentService {
   getMessageQueueDriverType(): MessageQueueDriverType {
     return (
       this.configService.get<MessageQueueDriverType>('MESSAGE_QUEUE_TYPE') ??
-      MessageQueueDriverType.PgBoss
+      MessageQueueDriverType.Sync
     );
   }
 
@@ -210,10 +210,14 @@ export class EnvironmentService {
   }
 
   getSentryDSN(): string | undefined {
-    return this.configService.get<string>('SENTRY_DSN');
+    return this.configService.get<string | undefined>('SENTRY_DSN');
   }
 
   getDemoWorkspaceIds(): string[] {
     return this.configService.get<string[]>('DEMO_WORKSPACE_IDS') ?? [];
+  }
+
+  getOpenRouterApiKey(): string | undefined {
+    return this.configService.get<string | undefined>('OPENROUTER_API_KEY');
   }
 }

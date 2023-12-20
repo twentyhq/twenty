@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 
@@ -14,6 +15,9 @@ export const useCommandMenu = () => {
   const navigate = useNavigate();
   const setIsCommandMenuOpened = useSetRecoilState(isCommandMenuOpenedState);
   const setCommands = useSetRecoilState(commandMenuCommandsState);
+  const { resetSelectedItem } = useSelectableList({
+    selectableListId: 'command-menu-list',
+  });
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
@@ -26,6 +30,7 @@ export const useCommandMenu = () => {
 
   const closeCommandMenu = () => {
     setIsCommandMenuOpened(false);
+    resetSelectedItem();
     goBackToPreviousHotkeyScope();
   };
 

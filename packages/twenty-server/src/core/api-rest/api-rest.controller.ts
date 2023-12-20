@@ -3,17 +3,7 @@ import { Controller, Delete, Get, Post, Put, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 
 import { ApiRestService } from 'src/core/api-rest/api-rest.service';
-import { ApiRestResponse } from 'src/core/api-rest/types/api-rest-response.type';
-
-const handleResult = (res: Response, result: ApiRestResponse) => {
-  if (result.data.error) {
-    res
-      .status(result.data.status || 400)
-      .send({ error: `${result.data.error}` });
-  } else {
-    res.send(result.data);
-  }
-};
+import { handleResult } from 'src/core/api-rest/api-rest.controller.utils';
 
 @Controller('rest/*')
 export class ApiRestController {

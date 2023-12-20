@@ -8,11 +8,15 @@ import { Card } from '@/ui/layout/card/components/Card';
 import { AnimatedFadeOut } from '@/ui/utilities/animation/components/AnimatedFadeOut';
 import { cookieStorage } from '~/utils/cookie-storage';
 
-import CoverImage from '../assets/cover.png';
+import DarkCoverImage from '../assets/cover-dark.png';
+import LightCoverImage from '../assets/cover-light.png';
 
 const StyledCoverImageContainer = styled(Card)`
   align-items: center;
-  background-image: url(${CoverImage.toString()});
+  background-image: ${({ theme }) =>
+    theme.name === 'light'
+      ? `url('${LightCoverImage.toString()}')`
+      : `url('${DarkCoverImage.toString()}')`};
   background-size: cover;
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-sizing: border-box;

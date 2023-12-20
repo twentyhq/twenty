@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { google } from 'googleapis';
+import { v4 } from 'uuid';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
@@ -110,7 +111,7 @@ export class FetchWorkspaceMessagesService {
     }
 
     const messageQueries = messagesData.map((message) => ({
-      uri: '/gmail/v1/users/me/messages/' + message.id,
+      uri: '/gmail/v1/users/me/messages/' + message.id + '?format=RAW',
     }));
 
     const messagesResponse =
@@ -123,6 +124,7 @@ export class FetchWorkspaceMessagesService {
       messagesResponse,
       dataSourceMetadata,
       workspaceDataSource,
+      workspaceMemberId,
     );
 
     return messages;
@@ -168,33 +170,61 @@ export class FetchWorkspaceMessagesService {
     }
   }
 
-  async saveMessages(messages, dataSourceMetadata, workspaceDataSource) {
+  async saveMessages(
+    messages,
+    dataSourceMetadata,
+    workspaceDataSource,
+    workspaceMemberId,
+  ) {
     for (const message of messages) {
       const {
         externalId,
         headerMessageId,
         subject,
         messageThreadId,
+        internalDate,
         from,
-        body,
+        text,
       } = message;
+
+      const date = new Date(parseInt(internalDate));
 
       const messageThread = await workspaceDataSource?.query(
         `SELECT * FROM ${dataSourceMetadata.schema}."messageThread" WHERE "externalId" = $1`,
         [messageThreadId],
       );
 
-      await workspaceDataSource?.query(
-        `INSERT INTO ${dataSourceMetadata.schema}."message" ("externalId", "headerMessageId", "subject", "messageThreadId", "direction", "body") VALUES ($1, $2, $3, $4, $5, $6)`,
-        [
-          externalId,
-          headerMessageId,
-          subject,
-          messageThread[0]?.id,
-          'incoming',
-          body,
-        ],
+      const messageId = v4();
+      const handle = from?.value[0]?.address;
+      const displayName = from?.value[0]?.name;
+
+      const person = await workspaceDataSource?.query(
+        `SELECT * FROM ${dataSourceMetadata.schema}."person" WHERE "email" = $1`,
+        [handle],
       );
+
+      const personId = person[0]?.id;
+
+      await workspaceDataSource?.transaction(async (manager) => {
+        await manager.query(
+          `INSERT INTO ${dataSourceMetadata.schema}."message" ("id", "externalId", "headerMessageId", "subject", "date", "messageThreadId", "direction", "body") VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+          [
+            messageId,
+            externalId,
+            headerMessageId,
+            subject,
+            date,
+            messageThread[0]?.id,
+            'incoming',
+            text,
+          ],
+        );
+
+        await manager.query(
+          `INSERT INTO ${dataSourceMetadata.schema}."messageRecipient" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
+          [messageId, 'from', handle, displayName, personId, workspaceMemberId],
+        );
+      });
     }
   }
 }

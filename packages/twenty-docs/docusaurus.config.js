@@ -33,6 +33,7 @@ const config = {
     defaultLocale: "en",
     locales: ["en"],
   },
+  plugins: ['docusaurus-node-polyfills'],
   presets: [
     [
       "classic",

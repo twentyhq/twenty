@@ -80,8 +80,14 @@ import OptionTable from '@site/src/theme/OptionTable'
     ['SENTRY_DSN', 'https://xxx@xxx.ingest.sentry.io/xxx', 'The sentry logging endpoint used if sentry logging driver is selected'],
     ]}></OptionTable>
 
-### Support
 
+### Data enrichment and AI
+<OptionTable options={[
+    ['OPENROUTER_API_KEY', '', "The API key for openrouter.ai, an abstraction layer over models from Mistral, OpenAI and more"]
+    ]}></OptionTable>
+
+
+### Support Chat
 
 <OptionTable options={[
     ['SUPPORT_DRIVER', 'front', "Support driver ('front' or 'none')"],
