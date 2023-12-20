@@ -6,6 +6,7 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
+import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { CreateWorkspace } from '../CreateWorkspace';
 
@@ -15,7 +16,7 @@ const meta: Meta<PageDecoratorArgs> = {
   decorators: [PageDecorator],
   args: { routePath: AppPath.CreateWorkspace },
   parameters: {
-    msw: [],
+    msw: graphqlMocks,
   },
 };
 

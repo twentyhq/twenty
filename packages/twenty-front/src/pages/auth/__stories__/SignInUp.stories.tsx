@@ -17,9 +17,6 @@ const meta: Meta<PageDecoratorArgs> = {
   args: { routePath: AppPath.SignIn },
   parameters: {
     msw: graphqlMocks,
-    cookie: {
-      tokenPair: '{}',
-    },
   },
 };
 

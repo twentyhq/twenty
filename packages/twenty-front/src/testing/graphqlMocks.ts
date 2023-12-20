@@ -4,9 +4,12 @@ import { graphql, HttpResponse } from 'msw';
 import { CREATE_EVENT } from '@/analytics/graphql/queries/createEvent';
 import { GET_CLIENT_CONFIG } from '@/client-config/graphql/queries/getClientConfig';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
+import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { mockedActivities } from '~/testing/mock-data/activities';
+import { mockedCompaniesData } from '~/testing/mock-data/companies';
+import { mockedClientConfig } from '~/testing/mock-data/config';
+import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
 
-import { mockedCompaniesData } from './mock-data/companies';
 import { mockedObjectMetadataItems } from './mock-data/metadata';
 import { mockedPeopleData } from './mock-data/people';
 import { mockedViewFieldsData } from './mock-data/view-fields';
@@ -18,13 +21,13 @@ const metadataGraphql = graphql.link(
 
 export const graphqlMocks = {
   handlers: [
-    // graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
-    //   return HttpResponse.json({
-    //     data: {
-    //       currentUser: mockedUsersData[0],
-    //     },
-    //   });
-    // }),
+    graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
+      return HttpResponse.json({
+        data: {
+          currentUser: mockedOnboardingUsersData[1],
+        },
+      });
+    }),
     graphql.mutation(getOperationName(CREATE_EVENT) ?? '', () => {
       return HttpResponse.json({
         data: {
@@ -35,18 +38,7 @@ export const graphqlMocks = {
     graphql.query(getOperationName(GET_CLIENT_CONFIG) ?? '', () => {
       return HttpResponse.json({
         data: {
-          clientConfig: {
-            signInPrefilled: true,
-            dataModelSettingsEnabled: true,
-            developersSettingsEnabled: true,
-            debugMode: false,
-            authProviders: { google: true, password: true, magicLink: false },
-            telemetry: { enabled: false, anonymizationEnabled: true },
-            support: {
-              supportDriver: 'front',
-              supportFrontChatId: null,
-            },
-          },
+          clientConfig: mockedClientConfig,
         },
       });
     }),
