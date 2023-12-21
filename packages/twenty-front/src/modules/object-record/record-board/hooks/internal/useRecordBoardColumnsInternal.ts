@@ -26,7 +26,7 @@ export const useBoardColumnsInternal = () => {
         (stage) =>
           updateOnePipelineStep?.({
             idToUpdate: stage.id,
-            newRecord: {
+            updateOneRecordInput: {
               position: stage.position,
             },
           }),

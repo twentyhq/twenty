@@ -157,7 +157,7 @@ export const CompanyBoardCard = () => {
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
       updateOneOpportunity?.({
         idToUpdate: variables.where.id as string,
-        newRecord: variables.newRecord,
+        updateOneRecordInput: variables.updateOneRecordInput,
       });
     };
 

@@ -83,7 +83,7 @@ export const RecordBoard = ({
     async (pipelineProgressId: string, pipelineStepId: string) => {
       await updateOneOpportunity?.({
         idToUpdate: pipelineProgressId,
-        newRecord: {
+        updateOneRecordInput: {
           pipelineStepId: pipelineStepId,
         },
       });

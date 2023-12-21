@@ -90,7 +90,7 @@ export const RecordShowPage = () => {
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
       updateOneRecord?.({
         idToUpdate: variables.where.id as string,
-        newRecord: variables.newRecord,
+        updateOneRecordInput: variables.updateOneRecordInput,
       });
     };
 
@@ -164,7 +164,7 @@ export const RecordShowPage = () => {
 
     await updateOneRecord({
       idToUpdate: record.id,
-      newRecord: {
+      updateOneRecordInput: {
         avatarUrl,
       },
     });

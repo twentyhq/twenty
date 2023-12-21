@@ -33,7 +33,7 @@ export const useToggleEditOnlyInput = () => {
           updateRecord?.({
             variables: {
               where: { id: entityId },
-              newRecord: {
+              updateOneRecordInput: {
                 [fieldName]: valueToPersist,
               },
             },

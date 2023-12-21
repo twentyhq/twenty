@@ -6,8 +6,7 @@ import { FieldMetadata } from '../types/FieldMetadata';
 export type RecordUpdateHookParams = {
   variables: {
     where: Record<string, unknown>;
-    newRecord: Record<string, unknown>;
-    optimisticRecord?: Record<string, unknown>;
+    updateOneRecordInput: Record<string, unknown>;
   };
 };
 

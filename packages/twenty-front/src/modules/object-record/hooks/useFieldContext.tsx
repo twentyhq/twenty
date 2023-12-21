@@ -37,8 +37,7 @@ export const useFieldContext = ({
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
       updateOneRecord?.({
         idToUpdate: variables.where.id as string,
-        newRecord: variables.newRecord,
-        optimisticRecord: variables.optimisticRecord,
+        updateOneRecordInput: variables.updateOneRecordInput,
       });
     };
 

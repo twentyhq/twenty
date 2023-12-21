@@ -104,7 +104,7 @@ export const ActivityEditor = ({
     (newTitle: string) => {
       updateOneActivity?.({
         idToUpdate: activity.id,
-        newRecord: {
+        updateOneRecordInput: {
           title: newTitle ?? '',
         },
       });
@@ -115,7 +115,7 @@ export const ActivityEditor = ({
     (value: boolean) => {
       updateOneActivity?.({
         idToUpdate: activity.id,
-        newRecord: {
+        updateOneRecordInput: {
           completedAt: value ? new Date().toISOString() : null,
         },
       });

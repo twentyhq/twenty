@@ -88,10 +88,7 @@ export const usePersistField = () => {
           updateRecord?.({
             variables: {
               where: { id: entityId },
-              newRecord: {
-                [`${fieldName}Id`]: valueToPersist?.id ?? null,
-              },
-              optimisticRecord: {
+              updateOneRecordInput: {
                 [`${fieldName}Id`]: valueToPersist?.id ?? null,
                 [`${fieldName}`]: valueToPersist ?? null,
               },
@@ -118,7 +115,7 @@ export const usePersistField = () => {
           updateRecord?.({
             variables: {
               where: { id: entityId },
-              newRecord: {
+              updateOneRecordInput: {
                 [fieldName]: valueToPersist,
               },
             },
