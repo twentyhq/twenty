@@ -202,6 +202,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
               action: WorkspaceMigrationColumnActionType.CREATE,
               columnName: foreignKeyColumnName,
               columnType: 'uuid',
+              isNullable: true,
             },
           ],
         },
