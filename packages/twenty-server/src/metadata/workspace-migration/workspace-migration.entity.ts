@@ -39,7 +39,6 @@ export type WorkspaceMigrationColumnRelation = {
   columnName: string;
   referencedTableName: string;
   referencedTableColumnName: string;
-  referencedSchema?: string;
   isUnique?: boolean;
 };
 
@@ -60,7 +59,6 @@ export type WorkspaceMigrationColumnAction = {
 export type WorkspaceMigrationTableAction = {
   name: string;
   action: 'create' | 'alter';
-  schemaName: string;
   columns?: WorkspaceMigrationColumnAction[];
 };
 

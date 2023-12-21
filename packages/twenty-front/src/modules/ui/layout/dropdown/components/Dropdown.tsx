@@ -102,7 +102,11 @@ export const Dropdown = ({
   return (
     <div ref={containerRef} className={className}>
       {clickableComponent && (
-        <div ref={refs.setReference} onClick={toggleDropdown}>
+        <div
+          ref={refs.setReference}
+          onClick={toggleDropdown}
+          className={className}
+        >
           {clickableComponent}
         </div>
       )}

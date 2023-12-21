@@ -230,13 +230,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           name: createdObjectMetadata.targetTableName,
           action: 'create',
-          schemaName: createdObjectMetadata.dataSource.schema,
         } satisfies WorkspaceMigrationTableAction,
         // Add activity target relation
         {
           name: activityTargetObjectMetadata.targetTableName,
           action: 'alter',
-          schemaName: activityTargetObjectMetadata.dataSource.schema,
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE,
@@ -249,7 +247,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           name: activityTargetObjectMetadata.targetTableName,
           action: 'alter',
-          schemaName: activityTargetObjectMetadata.dataSource.schema,
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.RELATION,
@@ -263,7 +260,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           name: createdObjectMetadata.targetTableName,
           action: 'alter',
-          schemaName: createdObjectMetadata.dataSource.schema,
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE,

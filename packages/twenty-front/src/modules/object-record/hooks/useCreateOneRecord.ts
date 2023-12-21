@@ -8,7 +8,6 @@ import { capitalize } from '~/utils/string/capitalize';
 
 type useCreateOneRecordProps = {
   objectNameSingular: string;
-  refetchFindManyQuery?: boolean;
 };
 
 export const useCreateOneRecord = <T>({
@@ -36,6 +35,7 @@ export const useCreateOneRecord = <T>({
 
     const generatedEmptyRecord = generateEmptyRecord<Record<string, unknown>>({
       id: recordId,
+      createdAt: new Date().toISOString(),
       ...input,
     });
 
@@ -53,7 +53,7 @@ export const useCreateOneRecord = <T>({
       },
       optimisticResponse: {
         [`create${capitalize(objectMetadataItem.nameSingular)}`]:
-          generateEmptyRecord({ id: recordId, ...input }),
+          generatedEmptyRecord,
       },
     });
 

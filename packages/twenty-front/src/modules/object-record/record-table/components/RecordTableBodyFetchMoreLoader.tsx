@@ -30,11 +30,15 @@ export const RecordTableBodyFetchMoreLoader = () => {
     onChange: onLastRowVisible,
   });
 
-  return isFetchingMoreObjects ? (
-    <StyledRow ref={tbodyRef} selected={false}>
-      <td style={{ height: 50 }} colSpan={1000}>
-        Loading more...
-      </td>
-    </StyledRow>
-  ) : null;
+  return (
+    <tbody ref={tbodyRef}>
+      {isFetchingMoreObjects ? (
+        <StyledRow selected={false}>
+          <td style={{ height: 50 }} colSpan={1000}>
+            Loading more...
+          </td>
+        </StyledRow>
+      ) : null}
+    </tbody>
+  );
 };

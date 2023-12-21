@@ -79,9 +79,9 @@ export const SettingsAboutSection = ({
             {name}
           </StyledName>
           {isCustom ? (
-            <StyledTag color="orange" text="Custom" />
+            <StyledTag color="orange" text="Custom" weight="medium" />
           ) : (
-            <StyledTag color="blue" text="Standard" />
+            <StyledTag color="blue" text="Standard" weight="medium" />
           )}
           <DropdownScope dropdownScopeId={dropdownScopeId}>
             <Dropdown

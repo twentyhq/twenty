@@ -7,7 +7,6 @@ import { capitalize } from '~/utils/string/capitalize';
 
 type useUpdateOneRecordProps = {
   objectNameSingular: string;
-  refetchFindManyQuery?: boolean;
 };
 
 export const useUpdateOneRecord = <T>({

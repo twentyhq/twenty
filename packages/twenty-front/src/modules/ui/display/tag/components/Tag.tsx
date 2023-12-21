@@ -5,6 +5,7 @@ import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 
 const StyledTag = styled.h3<{
   color: ThemeColor;
+  weight: TagWeight;
 }>`
   align-items: center;
   background: ${({ color, theme }) => theme.tag.background[color]};
@@ -13,7 +14,10 @@ const StyledTag = styled.h3<{
   display: inline-flex;
   font-size: ${({ theme }) => theme.font.size.md};
   font-style: normal;
-  font-weight: ${({ theme }) => theme.font.weight.regular};
+  font-weight: ${({ theme, weight }) =>
+    weight === 'regular'
+      ? theme.font.weight.regular
+      : theme.font.weight.medium};
   height: ${({ theme }) => theme.spacing(5)};
   margin: 0;
   overflow: hidden;
@@ -26,18 +30,28 @@ const StyledContent = styled.span`
   white-space: nowrap;
 `;
 
+type TagWeight = 'regular' | 'medium';
+
 type TagProps = {
   className?: string;
   color: ThemeColor;
   text: string;
   onClick?: () => void;
+  weight?: TagWeight;
 };
 
-export const Tag = ({ className, color, text, onClick }: TagProps) => (
+export const Tag = ({
+  className,
+  color,
+  text,
+  onClick,
+  weight = 'regular',
+}: TagProps) => (
   <StyledTag
     className={className}
     color={themeColorSchema.catch('gray').parse(color)}
     onClick={onClick}
+    weight={weight}
   >
     <StyledContent>{text}</StyledContent>
   </StyledTag>

@@ -393,7 +393,6 @@ export class WorkspaceSyncMetadataService {
           {
             name: object.targetTableName,
             action: 'create',
-            schemaName: object.dataSource.schema,
           } satisfies WorkspaceMigrationTableAction,
           ...Object.values(object.fields)
             .filter((field) => field.type !== FieldMetadataType.RELATION)
@@ -402,7 +401,6 @@ export class WorkspaceSyncMetadataService {
                 ({
                   name: object.targetTableName,
                   action: 'alter',
-                  schemaName: object.dataSource.schema,
                   columns: this.workspaceMigrationFactory.createColumnActions(
                     WorkspaceMigrationColumnActionType.CREATE,
                     field,
@@ -434,8 +432,6 @@ export class WorkspaceSyncMetadataService {
           {
             name: objectsInDbById[field.objectMetadataId].targetTableName,
             action: 'alter',
-            schemaName:
-              objectsInDbById[field.objectMetadataId].dataSource.schema,
             columns: this.workspaceMigrationFactory.createColumnActions(
               WorkspaceMigrationColumnActionType.CREATE,
               field,
@@ -457,8 +453,6 @@ export class WorkspaceSyncMetadataService {
           {
             name: objectsInDbById[field.objectMetadataId].targetTableName,
             action: 'alter',
-            schemaName:
-              objectsInDbById[field.objectMetadataId].dataSource.schema,
             columns: [
               {
                 action: WorkspaceMigrationColumnActionType.DROP,
@@ -524,13 +518,11 @@ export class WorkspaceSyncMetadataService {
           {
             name: toObjectMetadata.targetTableName,
             action: 'alter',
-            schemaName: toObjectMetadata.dataSource.schema,
             columns: [
               {
                 action: WorkspaceMigrationColumnActionType.RELATION,
                 columnName: `${camelCase(toFieldMetadata.name)}Id`,
                 referencedTableName: fromObjectMetadata.targetTableName,
-                referencedSchema: fromObjectMetadata.dataSource.schema,
                 referencedTableColumnName: 'id',
                 isUnique:
                   relation.relationType === RelationMetadataType.ONE_TO_ONE,
