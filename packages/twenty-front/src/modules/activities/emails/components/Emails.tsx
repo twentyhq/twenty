@@ -69,7 +69,7 @@ export const Emails = ({ entity }: { entity: ActivityTargetableEntity }) => {
           fontColor={H1TitleFontColor.Primary}
         />
         <Card>
-          {timelineMessages.map((message: any, index: any) => (
+          {timelineMessages.map((message: TimelineMessage, index: number) => (
             <EmailPreview
               key={index}
               divider={index < timelineMessages.length - 1}
