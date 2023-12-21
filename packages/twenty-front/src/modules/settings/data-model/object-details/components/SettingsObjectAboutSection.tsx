@@ -34,6 +34,7 @@ const StyledCardContent = styled(CardContent)`
 const StyledName = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   gap: ${({ theme }) => theme.spacing(2)};
   margin-right: auto;
 `;
