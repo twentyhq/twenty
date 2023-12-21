@@ -88,6 +88,7 @@ export {
   IconPlus,
   IconPresentation,
   IconProgressCheck,
+  IconRefresh,
   IconRelationManyToMany,
   IconRelationOneToMany,
   IconRelationOneToOne,
@@ -107,6 +108,7 @@ export {
   IconUserCircle,
   IconUsers,
   IconVideo,
+  IconWand,
   IconWorld,
   IconX,
 } from '@tabler/icons-react';

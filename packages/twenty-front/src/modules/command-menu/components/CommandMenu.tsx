@@ -27,9 +27,10 @@ import { CommandGroup } from './CommandGroup';
 import { CommandMenuItem } from './CommandMenuItem';
 
 export const StyledDialog = styled.div`
-  background: ${({ theme }) => theme.background.primary};
+  background: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
+  box-shadow: ${({ theme }) => theme.boxShadow.superHeavy};
   font-family: ${({ theme }) => theme.font.family};
   left: 50%;
   max-width: 640px;
@@ -44,9 +45,9 @@ export const StyledDialog = styled.div`
 `;
 
 export const StyledInput = styled.input`
-  background: ${({ theme }) => theme.background.primary};
+  background: ${({ theme }) => theme.background.secondary};
   border: none;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: 0;
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.lg};

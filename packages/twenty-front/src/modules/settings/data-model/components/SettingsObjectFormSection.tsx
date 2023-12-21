@@ -2,17 +2,20 @@ import styled from '@emotion/styled';
 
 import { validateMetadataLabel } from '@/object-metadata/utils/validateMetadataLabel';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Section } from '@/ui/layout/section/components/Section';
 
 type SettingsObjectFormSectionProps = {
   disabled?: boolean;
+  icon?: string;
   singularName?: string;
   pluralName?: string;
   description?: string;
   onChange?: (
     formValues: Partial<{
+      icon: string;
       labelSingular: string;
       labelPlural: string;
       description: string;
@@ -27,8 +30,22 @@ const StyledInputsContainer = styled.div`
   width: 100%;
 `;
 
+const StyledLabel = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
+  font-size: ${({ theme }) => theme.font.size.xs};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  text-transform: uppercase;
+`;
+
+const StyledInputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 export const SettingsObjectFormSection = ({
   disabled,
+  icon = 'IconPigMoney',
   singularName = '',
   pluralName = '',
   description = '',
@@ -36,10 +53,20 @@ export const SettingsObjectFormSection = ({
 }: SettingsObjectFormSectionProps) => (
   <Section>
     <H2Title
-      title="Name and description"
+      title="About"
       description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
     />
     <StyledInputsContainer>
+      <StyledInputContainer>
+        <StyledLabel>Icon</StyledLabel>
+        <IconPicker
+          disabled={disabled}
+          selectedIconKey={icon}
+          onChange={(icon) => {
+            onChange?.({ icon: icon.iconKey });
+          }}
+        />
+      </StyledInputContainer>
       <TextInput
         label="Singular"
         placeholder="Investor"

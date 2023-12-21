@@ -1,21 +1,20 @@
-import {
-  ApolloCache,
-  DocumentNode,
-  OperationVariables,
-  useApolloClient,
-} from '@apollo/client';
+import { useApolloClient } from '@apollo/client';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 
+import { computeOptimisticEffectKey } from '@/apollo/optimistic-effect/utils/computeOptimisticEffectKey';
 import {
   EMPTY_QUERY,
   useObjectMetadataItem,
 } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
+import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
 
 import { optimisticEffectState } from '../states/optimisticEffectState';
-import { OptimisticEffect } from '../types/internal/OptimisticEffect';
+import {
+  OptimisticEffect,
+  OptimisticEffectWriter,
+} from '../types/internal/OptimisticEffect';
 import { OptimisticEffectDefinition } from '../types/OptimisticEffectDefinition';
 
 export const useOptimisticEffect = ({
@@ -23,17 +22,41 @@ export const useOptimisticEffect = ({
 }: ObjectMetadataItemIdentifier) => {
   const apolloClient = useApolloClient();
 
-  const { findManyRecordsQuery } = useObjectMetadataItem({
+  const { findManyRecordsQuery, objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 
-  const registerOptimisticEffect = useRecoilCallback(
+  const unregisterOptimisticEffect = useRecoilCallback(
     ({ snapshot, set }) =>
-      <T>({
+      ({
         variables,
         definition,
       }: {
-        variables: OperationVariables;
+        variables: ObjectRecordQueryVariables;
+        definition: OptimisticEffectDefinition;
+      }) => {
+        const optimisticEffects = snapshot
+          .getLoadable(optimisticEffectState)
+          .getValue();
+
+        const computedKey = computeOptimisticEffectKey({
+          variables,
+          definition,
+        });
+
+        const { [computedKey]: _, ...rest } = optimisticEffects;
+
+        set(optimisticEffectState, rest);
+      },
+  );
+
+  const registerOptimisticEffect = useRecoilCallback(
+    ({ snapshot, set }) =>
+      ({
+        variables,
+        definition,
+      }: {
+        variables: ObjectRecordQueryVariables;
         definition: OptimisticEffectDefinition;
       }) => {
         if (findManyRecordsQuery === EMPTY_QUERY) {
@@ -46,21 +69,14 @@ export const useOptimisticEffect = ({
           .getLoadable(optimisticEffectState)
           .getValue();
 
-        const optimisticEffectWriter = ({
+        const optimisticEffectWriter: OptimisticEffectWriter = ({
           cache,
-          newData,
+          createdRecords,
+          updatedRecords,
           deletedRecordIds,
           query,
           variables,
           objectMetadataItem,
-        }: {
-          cache: ApolloCache<unknown>;
-          newData: unknown;
-          deletedRecordIds?: string[];
-          variables: OperationVariables;
-          query: DocumentNode;
-          isUsingFlexibleBackend?: boolean;
-          objectMetadataItem?: ObjectMetadataItem;
         }) => {
           if (objectMetadataItem) {
             const existingData = cache.readQuery({
@@ -77,10 +93,11 @@ export const useOptimisticEffect = ({
               variables,
               data: {
                 [objectMetadataItem.namePlural]: definition.resolver({
-                  currentData: (existingData as any)?.[
+                  currentCacheData: (existingData as any)?.[
                     objectMetadataItem.namePlural
                   ],
-                  newData,
+                  updatedRecords,
+                  createdRecords,
                   deletedRecordIds,
                   variables,
                 }),
@@ -91,7 +108,7 @@ export const useOptimisticEffect = ({
           }
 
           const existingData = cache.readQuery({
-            query,
+            query: query ?? findManyRecordsQuery,
             variables,
           });
 
@@ -100,26 +117,40 @@ export const useOptimisticEffect = ({
           }
         };
 
+        const computedKey = computeOptimisticEffectKey({
+          variables,
+          definition,
+        });
+
         const optimisticEffect = {
-          key: definition.key,
           variables,
           typename: definition.typename,
           query: definition.query,
           writer: optimisticEffectWriter,
-          objectMetadataItem: definition.objectMetadataItem,
-          isUsingFlexibleBackend: definition.isUsingFlexibleBackend,
-        } satisfies OptimisticEffect<T>;
+          objectMetadataItem,
+        } satisfies OptimisticEffect;
 
         set(optimisticEffectState, {
           ...optimisticEffects,
-          [definition.key]: optimisticEffect,
+          [computedKey]: optimisticEffect,
         });
       },
+    [findManyRecordsQuery, objectNameSingular, objectMetadataItem],
   );
 
   const triggerOptimisticEffects = useRecoilCallback(
     ({ snapshot }) =>
-      (typename: string, newData: unknown, deletedRecordIds?: string[]) => {
+      ({
+        typename,
+        createdRecords,
+        updatedRecords,
+        deletedRecordIds,
+      }: {
+        typename: string;
+        createdRecords?: Record<string, unknown>[];
+        updatedRecords?: Record<string, unknown>[];
+        deletedRecordIds?: string[];
+      }) => {
         const optimisticEffects = snapshot
           .getLoadable(optimisticEffectState)
           .getValue();
@@ -127,20 +158,26 @@ export const useOptimisticEffect = ({
         for (const optimisticEffect of Object.values(optimisticEffects)) {
           // We need to update the typename when createObject type differs from listObject types
           // It is the case for apiKey, where the creation route returns an ApiKeyToken type
-          const formattedNewData = isNonEmptyArray(newData)
-            ? newData.map((data: any) => {
+          const formattedCreatedRecords = isNonEmptyArray(createdRecords)
+            ? createdRecords.map((data: any) => {
                 return { ...data, __typename: typename };
               })
-            : newData;
+            : [];
+
+          const formattedUpdatedRecords = isNonEmptyArray(updatedRecords)
+            ? updatedRecords.map((data: any) => {
+                return { ...data, __typename: typename };
+              })
+            : [];
 
           if (optimisticEffect.typename === typename) {
             optimisticEffect.writer({
               cache: apolloClient.cache,
-              query: optimisticEffect.query ?? ({} as DocumentNode),
-              newData: formattedNewData,
+              query: optimisticEffect.query,
+              createdRecords: formattedCreatedRecords,
+              updatedRecords: formattedUpdatedRecords,
               deletedRecordIds,
               variables: optimisticEffect.variables,
-              isUsingFlexibleBackend: optimisticEffect.isUsingFlexibleBackend,
               objectMetadataItem: optimisticEffect.objectMetadataItem,
             });
           }
@@ -152,5 +189,6 @@ export const useOptimisticEffect = ({
   return {
     registerOptimisticEffect,
     triggerOptimisticEffects,
+    unregisterOptimisticEffect,
   };
 };

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { Emails } from '@/activities/emails/components/Emails';
+import { Threads } from '@/activities/emails/components/Threads';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { EntityTasks } from '@/activities/tasks/components/EntityTasks';
@@ -40,7 +40,7 @@ const StyledTabListContainer = styled.div`
 `;
 
 type ShowPageRightContainerProps = {
-  entity: ActivityTargetableEntity;
+  entity?: ActivityTargetableEntity;
   timeline?: boolean;
   tasks?: boolean;
   notes?: boolean;
@@ -55,7 +55,12 @@ export const ShowPageRightContainer = ({
   emails,
 }: ShowPageRightContainerProps) => {
   const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
+  const [activeTabId] = useRecoilScopedState(
+    activeTabIdScopedState,
+    ShowPageRecoilScopeContext,
+  );
 
+  if (!entity) return <></>;
   const TASK_TABS = [
     {
       id: 'timeline',
@@ -94,11 +99,6 @@ export const ShowPageRightContainer = ({
     },
   ];
 
-  const [activeTabId] = useRecoilScopedState(
-    activeTabIdScopedState,
-    ShowPageRecoilScopeContext,
-  );
-
   return (
     <StyledShowPageRightContainer>
       <StyledTabListContainer>
@@ -108,7 +108,7 @@ export const ShowPageRightContainer = ({
       {activeTabId === 'tasks' && <EntityTasks entity={entity} />}
       {activeTabId === 'notes' && <Notes entity={entity} />}
       {activeTabId === 'files' && <Attachments targetableEntity={entity} />}
-      {activeTabId === 'emails' && <Emails />}
+      {activeTabId === 'emails' && <Threads entity={entity} />}
     </StyledShowPageRightContainer>
   );
 };

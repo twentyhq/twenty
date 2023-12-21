@@ -1,6 +1,6 @@
 import { Snapshot } from 'recoil';
 
-import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
+import { getScopedStateDeprecated } from '@/ui/utilities/recoil-scope/utils/getScopedStateDeprecated';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { UNDEFINED_FAMILY_ITEM_ID } from '../constants';
@@ -19,7 +19,7 @@ export const getViewScopedStateValuesFromSnapshot = ({
 }) => {
   const currentViewId = getSnapshotValue(
     snapshot,
-    getScopedState(currentViewIdScopedState, viewScopeId),
+    getScopedStateDeprecated(currentViewIdScopedState, viewScopeId),
   );
 
   const familyItemId = viewId ?? currentViewId ?? UNDEFINED_FAMILY_ITEM_ID;

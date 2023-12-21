@@ -6,6 +6,7 @@ import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRi
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { Note } from '@/activities/types/Note';
+import { getActivityPreview } from '@/activities/utils/getActivityPreview';
 import {
   FieldContext,
   GenericFieldContextType,
@@ -83,19 +84,7 @@ export const NoteCard = ({
 }) => {
   const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
-
-  const noteBody = note.body ? JSON.parse(note.body) : [];
-
-  const body = noteBody.length
-    ? noteBody
-        .map((x: any) =>
-          Array.isArray(x.content)
-            ? x.content?.map((content: any) => content?.text).join(' ')
-            : x.content?.text,
-        )
-        .filter((x: string) => x)
-        .join('\n')
-    : '';
+  const body = getActivityPreview(note.body);
 
   const fieldContext = useMemo(
     () => ({ recoilScopeId: note?.id ?? '' }),

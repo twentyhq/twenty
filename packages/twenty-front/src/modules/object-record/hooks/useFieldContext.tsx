@@ -2,7 +2,11 @@ import { ReactNode } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
-import { FieldContext } from '@/object-record/field/contexts/FieldContext';
+import {
+  FieldContext,
+  RecordUpdateHook,
+  RecordUpdateHookParams,
+} from '@/object-record/field/contexts/FieldContext';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 
@@ -11,13 +15,11 @@ export const useFieldContext = ({
   fieldMetadataName,
   objectRecordId,
   fieldPosition,
-  forceRefetch,
 }: {
   objectNameSingular: string;
   objectRecordId: string;
   fieldMetadataName: string;
   fieldPosition: number;
-  forceRefetch?: boolean;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -27,25 +29,15 @@ export const useFieldContext = ({
     (field) => field.name === fieldMetadataName,
   );
 
-  const useUpdateOneObjectMutation: () => [(params: any) => any, any] = () => {
+  const useUpdateOneObjectMutation: RecordUpdateHook = () => {
     const { updateOneRecord } = useUpdateOneRecord({
       objectNameSingular,
     });
 
-    const updateEntity = ({
-      variables,
-    }: {
-      variables: {
-        where: { id: string };
-        data: {
-          [fieldName: string]: any;
-        };
-      };
-    }) => {
+    const updateEntity = ({ variables }: RecordUpdateHookParams) => {
       updateOneRecord?.({
-        idToUpdate: variables.where.id,
-        input: variables.data,
-        forceRefetch,
+        idToUpdate: variables.where.id as string,
+        updateOneRecordInput: variables.updateOneRecordInput,
       });
     };
 
@@ -66,7 +58,7 @@ export const useFieldContext = ({
                 position: fieldPosition,
                 objectMetadataItem,
               }),
-              useUpdateEntityMutation: useUpdateOneObjectMutation,
+              useUpdateRecord: useUpdateOneObjectMutation,
               hotkeyScope: InlineCellHotkeyScope.InlineCell,
             }}
           >

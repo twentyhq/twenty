@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
@@ -53,9 +54,11 @@ export const ViewBarFilterEffect = ({
           filterDefinitionUsedInDropdown.fieldMetadataId,
       );
 
-      const viewFilterSelectedRecordIds = JSON.parse(
-        viewFilterUsedInDropdown?.value ?? '[]',
-      );
+      const viewFilterSelectedRecordIds = isNonEmptyString(
+        viewFilterUsedInDropdown?.value,
+      )
+        ? JSON.parse(viewFilterUsedInDropdown.value)
+        : [];
 
       setObjectFilterDropdownSelectedRecordIds(viewFilterSelectedRecordIds);
     }

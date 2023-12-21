@@ -2,29 +2,29 @@ import { identifiersMapperScopedState } from '@/object-record/relation-picker/st
 import { relationPickerPreselectedIdScopedState } from '@/object-record/relation-picker/states/relationPickerPreselectedIdScopedState';
 import { relationPickerSearchFilterScopedState } from '@/object-record/relation-picker/states/relationPickerSearchFilterScopedState';
 import { searchQueryScopedState } from '@/object-record/relation-picker/states/searchQueryScopedState';
-import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
+import { getScopedStateDeprecated } from '@/ui/utilities/recoil-scope/utils/getScopedStateDeprecated';
 
 export const getRelationPickerScopedStates = ({
   relationPickerScopeId,
 }: {
   relationPickerScopeId: string;
 }) => {
-  const identifiersMapperState = getScopedState(
+  const identifiersMapperState = getScopedStateDeprecated(
     identifiersMapperScopedState,
     relationPickerScopeId,
   );
 
-  const searchQueryState = getScopedState(
+  const searchQueryState = getScopedStateDeprecated(
     searchQueryScopedState,
     relationPickerScopeId,
   );
 
-  const relationPickerPreselectedIdState = getScopedState(
+  const relationPickerPreselectedIdState = getScopedStateDeprecated(
     relationPickerPreselectedIdScopedState,
     relationPickerScopeId,
   );
 
-  const relationPickerSearchFilterState = getScopedState(
+  const relationPickerSearchFilterState = getScopedStateDeprecated(
     relationPickerSearchFilterScopedState,
     relationPickerScopeId,
   );

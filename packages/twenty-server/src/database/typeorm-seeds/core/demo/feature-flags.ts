@@ -18,6 +18,16 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: 'IS_SELECT_FIELD_TYPE_ENABLED',
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: 'IS_RATING_FIELD_TYPE_ENABLED',
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };

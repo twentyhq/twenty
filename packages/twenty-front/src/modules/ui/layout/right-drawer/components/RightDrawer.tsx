@@ -23,6 +23,7 @@ import { RightDrawerRouter } from './RightDrawerRouter';
 
 const StyledContainer = styled(motion.div)`
   background: ${({ theme }) => theme.background.primary};
+  border-left: 1px solid ${({ theme }) => theme.border.color.medium};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
   height: 100%;
   overflow-x: hidden;

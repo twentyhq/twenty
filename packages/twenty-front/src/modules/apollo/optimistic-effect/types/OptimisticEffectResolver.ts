@@ -1,13 +1,15 @@
 import { OperationVariables } from '@apollo/client';
 
 export type OptimisticEffectResolver = ({
-  currentData,
-  newData,
+  currentCacheData,
+  createdRecords,
+  updatedRecords,
   deletedRecordIds,
   variables,
 }: {
-  currentData: any; //TODO: Change when decommissioning v1
-  newData: any; //TODO:   Change when decommissioning v1
+  currentCacheData: any; //TODO: Change when decommissioning v1
+  createdRecords?: Record<string, unknown>[];
+  updatedRecords?: Record<string, unknown>[];
   deletedRecordIds?: string[];
   variables: OperationVariables;
 }) => void;

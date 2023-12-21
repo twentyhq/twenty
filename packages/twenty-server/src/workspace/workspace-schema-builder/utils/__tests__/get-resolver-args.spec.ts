@@ -34,6 +34,9 @@ describe('getResolverArgs', () => {
     deleteOne: {
       id: { type: FieldMetadataType.UUID, isNullable: false },
     },
+    executeQuickActionOnOne: {
+      id: { type: FieldMetadataType.UUID, isNullable: false },
+    },
   };
 
   // Test each resolver type

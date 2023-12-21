@@ -48,7 +48,7 @@ export const SettingsObjects = () => {
           <StyledH1Title title="Objects" />
           <Button
             Icon={IconPlus}
-            title="New object"
+            title="Add object"
             accent="blue"
             size="small"
             onClick={() => navigate('/settings/objects/new')}

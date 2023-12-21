@@ -1,5 +1,20 @@
 import { Bundle, HttpRequestOptions, ZObject } from 'zapier-platform-core';
 
+export const requestSchema = async (z: ZObject, bundle: Bundle) => {
+  const options = {
+      url: `${process.env.SERVER_BASE_URL}/open-api`,
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Bearer ${bundle.authData.apiKey}`,
+        },
+  } satisfies HttpRequestOptions;
+
+    return z.request(options)
+      .then((response) => response.json)
+}
+
 const requestDb = async (z: ZObject, bundle: Bundle, query: string) => {
   const options = {
     url: `${process.env.SERVER_BASE_URL}/graphql`,

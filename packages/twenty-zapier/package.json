@@ -20,7 +20,7 @@
   "dependencies": {
     "dotenv-cli": "^7.2.1",
     "prettier": "^3.0.3",
-    "zapier-platform-core": "15.4.1"
+    "zapier-platform-core": "15.5.1"
   },
   "devDependencies": {
     "@types/jest": "^29.5.5",

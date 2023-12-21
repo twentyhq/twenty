@@ -7,8 +7,8 @@ export type Company = {
   domainName: string;
   address: string;
   accountOwnerId: string | null;
-  linkedinUrl: { url: string; label: string };
-  xUrl: { url: string; label: string };
+  linkedinLink: { url: string; label: string };
+  xLink: { url: string; label: string };
   annualRecurringRevenue: { amountMicros: number | null; currencyCode: string };
   employees: number | null;
   idealCustomerProfile: boolean;

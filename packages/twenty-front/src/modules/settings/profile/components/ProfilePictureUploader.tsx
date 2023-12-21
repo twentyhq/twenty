@@ -57,7 +57,7 @@ export const ProfilePictureUploader = () => {
 
       await updateOneRecord({
         idToUpdate: currentWorkspaceMember?.id,
-        input: {
+        updateOneRecordInput: {
           avatarUrl,
         },
       });
@@ -84,7 +84,7 @@ export const ProfilePictureUploader = () => {
 
     await updateOneRecord({
       idToUpdate: currentWorkspaceMember?.id,
-      input: {
+      updateOneRecordInput: {
         avatarUrl: null,
       },
     });

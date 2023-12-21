@@ -68,11 +68,11 @@ jobs:
         run: cd packages/twenty-front && npx playwright install
       - name: Build Storybook
         run: yarn nx storybook:pages:build --quiet twenty-front
-      # - name: Run storybook tests
-      #   run: |
-      #     cd packages/twenty-front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
-      #       "npx http-server storybook-static --silent --port 6006" \
-      #       "yarn storybook:pages:coverage"
+      - name: Run storybook tests
+        run: |
+          cd packages/twenty-front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
+            "npx http-server storybook-static --silent --port 6006" \
+            "yarn storybook:pages:coverage"
   front-modules-sb-test:
     needs: front-yarn-install
     runs-on: ci-4-cores
@@ -142,6 +142,8 @@ jobs:
           restore-keys: root-node_modules-
       - name: Front / Run linter
         run: yarn nx lint:ci twenty-front
+      - name: Front / Run Typescript Check
+        run: yarn nx tsc:ci twenty-front
   front-jest:
     needs: front-yarn-install
     runs-on: ubuntu-latest
