@@ -10,7 +10,7 @@ export const RecordTableBody = () => {
   const tableRowIds = useRecoilValue(tableRowIdsState);
 
   return (
-    <>
+    <tbody>
       {tableRowIds.map((rowId, rowIndex) => (
         <RowIdContext.Provider value={rowId} key={rowId}>
           <RowIndexContext.Provider value={rowIndex}>
@@ -19,6 +19,6 @@ export const RecordTableBody = () => {
         </RowIdContext.Provider>
       ))}
       <RecordTableBodyFetchMoreLoader />
-    </>
+    </tbody>
   );
 };
