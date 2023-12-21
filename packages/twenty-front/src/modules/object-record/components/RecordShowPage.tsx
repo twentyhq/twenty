@@ -6,7 +6,11 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { parseFieldType } from '@/object-metadata/utils/parseFieldType';
-import { FieldContext } from '@/object-record/field/contexts/FieldContext';
+import {
+  FieldContext,
+  RecordUpdateHook,
+  RecordUpdateHookParams,
+} from '@/object-record/field/contexts/FieldContext';
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
@@ -82,23 +86,11 @@ export const RecordShowPage = () => {
         ? 'Person'
         : 'Custom';
 
-  const useUpdateOneObjectRecordMutation: () => [
-    (params: any) => any,
-    any,
-  ] = () => {
-    const updateEntity = ({
-      variables,
-    }: {
-      variables: {
-        where: { id: string };
-        data: {
-          [fieldName: string]: any;
-        };
-      };
-    }) => {
+  const useUpdateOneObjectRecordMutation: RecordUpdateHook = () => {
+    const updateEntity = ({ variables }: RecordUpdateHookParams) => {
       updateOneRecord?.({
-        idToUpdate: variables.where.id,
-        input: variables.data,
+        idToUpdate: variables.where.id as string,
+        updateOneRecordInput: variables.updateOneRecordInput,
       });
     };
 
@@ -172,7 +164,7 @@ export const RecordShowPage = () => {
 
     await updateOneRecord({
       idToUpdate: record.id,
-      input: {
+      updateOneRecordInput: {
         avatarUrl,
       },
     });
@@ -249,8 +241,7 @@ export const RecordShowPage = () => {
                                 labelIdentifierFieldMetadata?.name || '',
                             },
                           },
-                          useUpdateEntityMutation:
-                            useUpdateOneObjectRecordMutation,
+                          useUpdateRecord: useUpdateOneObjectRecordMutation,
                           hotkeyScope: InlineCellHotkeyScope.InlineCell,
                         }}
                       >
@@ -279,8 +270,7 @@ export const RecordShowPage = () => {
                                 position: index,
                                 objectMetadataItem,
                               }),
-                            useUpdateEntityMutation:
-                              useUpdateOneObjectRecordMutation,
+                            useUpdateRecord: useUpdateOneObjectRecordMutation,
                             hotkeyScope: InlineCellHotkeyScope.InlineCell,
                           }}
                         >

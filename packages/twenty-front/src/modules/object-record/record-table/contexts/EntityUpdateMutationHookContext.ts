@@ -1,5 +1,7 @@
 import { createContext } from 'react';
 
-export const EntityUpdateMutationContext = createContext<(params: any) => void>(
-  {} as any,
-);
+import { RecordUpdateHookParams } from '@/object-record/field/contexts/FieldContext';
+
+export const RecordUpdateContext = createContext<
+  (params: RecordUpdateHookParams) => void
+>({} as any);

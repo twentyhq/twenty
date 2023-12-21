@@ -44,22 +44,6 @@ export const RelationFieldInput = ({
         onCancel={onCancel}
         initialSearchFilter={initialSearchValue}
       />
-      {/* {fieldDefinition.metadata.fieldName === 'person' ? (
-        <PeoplePicker
-          personId={initialValue?.id ?? ''}
-          companyId={initialValue?.companyId ?? ''}
-          onSubmit={handleSubmit}
-          onCancel={onCancel}
-          initialSearchFilter={initialSearchValue}
-        />
-      ) : fieldDefinition.metadata.fieldName === 'company' ? (
-        <CompanyPicker
-          companyId={initialValue?.id ?? ''}
-          onSubmit={handleSubmit}
-          onCancel={onCancel}
-          initialSearchFilter={initialSearchValue}
-        />
-      ) : null} */}
     </StyledRelationPickerContainer>
   );
 };
