@@ -1,8 +1,11 @@
 import { useCallback } from 'react';
 import { useApolloClient } from '@apollo/client';
 import {
+  snapshot_UNSTABLE,
   useGotoRecoilSnapshot,
+  useRecoilCallback,
   useRecoilState,
+  useRecoilValue,
   useSetRecoilState,
 } from 'recoil';
 
@@ -20,6 +23,13 @@ import {
 
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
+import { iconsState } from '@/ui/display/icon/states/iconsState';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { billingState } from '@/client-config/states/billingState';
+import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
+import { supportChatState } from '@/client-config/states/supportChatState';
+import { telemetryState } from '@/client-config/states/telemetryState';
+import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 
 export const useAuth = () => {
   const [, setTokenPair] = useRecoilState(tokenPairState);
@@ -124,22 +134,32 @@ export const useAuth = () => {
     [handleChallenge, handleVerify, setIsVerifyPendingState],
   );
 
-  const handleSignOut = useCallback(() => {
-    setTokenPair(null);
-    setCurrentUser(null);
-    setCurrentWorkspaceMember(null);
-    setCurrentWorkspace(null);
-    setIsVerifyPendingState(false);
+  const handleSignOut = useRecoilCallback(({ snapshot }) => async () => {
+    const emptySnapshot = snapshot_UNSTABLE()
+    const iconsValue = snapshot.getLoadable(iconsState).getValue() 
+    const authProvidersValue = snapshot.getLoadable(authProvidersState).getValue();
+    // const billing = useRecoilValue(billingState);
+    // const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
+    // const supportChat = useRecoilValue(supportChatState);
+    // const telemetry = useRecoilValue(telemetryState)
+    // const isDebugMode = useRecoilValue(isDebugModeState);
 
-    client.clearStore().then(() => {
-      sessionStorage.clear();
+    const initialSnapshot = emptySnapshot.map(({ set }) => {
+      set(iconsState, iconsValue);
+      set(authProvidersState, authProvidersValue);
+      // set(billingState, billing);
+      // set(isSignInPrefilledState, isSignInPrefilled);
+      // set(supportChatState, supportChat);
+      // set(telemetryState, telemetry);
+      // set(isDebugModeState, isDebugMode);
     });
+
+    goToRecoilSnapshot(initialSnapshot)
+
+    await client.clearStore();
+    sessionStorage.clear();
+
   }, [
-    setTokenPair, 
-    setCurrentUser, 
-    setCurrentWorkspaceMember, 
-    setCurrentWorkspace, 
-    setIsVerifyPendingState, 
     client
   ]);
 
