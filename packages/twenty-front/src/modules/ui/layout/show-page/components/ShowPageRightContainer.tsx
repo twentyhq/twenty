@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { Emails } from '@/activities/emails/components/Threads';
+import { Threads } from '@/activities/emails/components/Threads';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { EntityTasks } from '@/activities/tasks/components/EntityTasks';
@@ -108,7 +108,7 @@ export const ShowPageRightContainer = ({
       {activeTabId === 'tasks' && <EntityTasks entity={entity} />}
       {activeTabId === 'notes' && <Notes entity={entity} />}
       {activeTabId === 'files' && <Attachments targetableEntity={entity} />}
-      {activeTabId === 'emails' && <Emails entity={entity} />}
+      {activeTabId === 'emails' && <Threads entity={entity} />}
     </StyledShowPageRightContainer>
   );
 };
