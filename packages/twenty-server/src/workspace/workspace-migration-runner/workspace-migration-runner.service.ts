@@ -280,7 +280,6 @@ export class WorkspaceMigrationRunnerService {
         isNullable: migrationColumn.alteredColumnDefinition.isNullable,
       }),
     );
-    // }
   }
 
   private async createRelation(
