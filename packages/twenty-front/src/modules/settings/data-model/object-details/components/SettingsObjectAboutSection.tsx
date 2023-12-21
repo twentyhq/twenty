@@ -36,6 +36,7 @@ const StyledName = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   margin-right: auto;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
 const StyledTag = styled(Tag)`
