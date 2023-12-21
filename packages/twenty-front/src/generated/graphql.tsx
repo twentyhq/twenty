@@ -60,6 +60,11 @@ export type Billing = {
   isBillingEnabled: Scalars['Boolean'];
 };
 
+export type Sentry = {
+  __typename?: 'Sentry';
+  dsnKey: Scalars['String'];
+}
+
 export type BooleanFieldComparison = {
   is?: InputMaybe<Scalars['Boolean']>;
   isNot?: InputMaybe<Scalars['Boolean']>;
@@ -1164,6 +1169,9 @@ export const GetClientConfigDocument = gql`
     support {
       supportDriver
       supportFrontChatId
+    }
+    sentry {
+      dsnKey
     }
   }
 }
