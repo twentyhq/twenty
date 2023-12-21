@@ -19,7 +19,7 @@ export class FetchBatchMessagesService {
   async fetchAllByBatches(
     messageQueries: MessageQuery[],
     accessToken: string,
-  ): Promise<any> {
+  ): Promise<MessageFromGmail[]> {
     const batchLimit = 100;
 
     let batchOffset = 0;
@@ -93,22 +93,20 @@ export class FetchBatchMessagesService {
     return batchBody.concat(['--', boundary, '--']).join('');
   }
 
-  parseBatch(responseCollection: AxiosResponse<any, any>) {
+  parseBatch(responseCollection: AxiosResponse<any, any>): any[] {
     const responseItems: any = [];
 
     const boundary = this.getBatchSeparator(responseCollection);
 
-    const responseLines = responseCollection.data.split('--' + boundary);
+    const responseLines: string[] = responseCollection.data.split(
+      '--' + boundary,
+    );
 
     responseLines.forEach(function (response) {
       const startJson = response.indexOf('{');
       const endJson = response.lastIndexOf('}');
 
-      if (startJson < 0 || endJson < 0) {
-        return;
-      }
-
-      const responseJson = response.substr(startJson, endJson - startJson + 1);
+      const responseJson = response.substring(startJson, endJson + 1);
 
       const item = JSON.parse(responseJson);
 
@@ -118,7 +116,7 @@ export class FetchBatchMessagesService {
     return responseItems;
   }
 
-  getBatchSeparator(response: AxiosResponse<any, any>) {
+  getBatchSeparator(response: AxiosResponse<any, any>): string {
     const headers = response.headers;
 
     const contentType: string = headers['content-type'];
@@ -129,7 +127,7 @@ export class FetchBatchMessagesService {
 
     const boundary = components.find((o) => o.startsWith('boundary='));
 
-    return boundary?.replace('boundary=', '').trim();
+    return boundary?.replace('boundary=', '').trim() || '';
   }
 
   async formatBatchResponse(
