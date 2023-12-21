@@ -1,28 +1,31 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import {
   CurrencyFilter,
   DateFilter,
   FloatFilter,
   FullNameFilter,
-  ObjectRecordFilter,
+  ObjectRecordQueryFilter,
   StringFilter,
   URLFilter,
-} from '@/object-record/types/ObjectRecordFilter';
+  UUIDFilter,
+} from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
 
-import { Filter } from '../object-filter-dropdown/types/Filter';
+import { Filter } from '../../object-filter-dropdown/types/Filter';
 
-export type RawUIFilter = Omit<Filter, 'definition'> & {
+export type ObjectDropdownFilter = Omit<Filter, 'definition'> & {
   definition: {
     type: Filter['definition']['type'];
   };
 };
 
-export const turnFiltersIntoObjectRecordFilters = (
-  rawUIFilters: RawUIFilter[],
+export const turnObjectDropdownFilterIntoQueryFilter = (
+  rawUIFilters: ObjectDropdownFilter[],
   fields: Pick<Field, 'id' | 'name'>[],
-): ObjectRecordFilter => {
-  const objectRecordFilters: ObjectRecordFilter[] = [];
+): ObjectRecordQueryFilter => {
+  const objectRecordFilters: ObjectRecordQueryFilter[] = [];
 
   for (const rawUIFilter of rawUIFilters) {
     const correspondingField = fields.find(
@@ -107,6 +110,10 @@ export const turnFiltersIntoObjectRecordFilters = (
         }
         break;
       case 'RELATION': {
+        if (!isNonEmptyString(rawUIFilter.value)) {
+          break;
+        }
+
         try {
           JSON.parse(rawUIFilter.value);
         } catch (e) {
@@ -123,7 +130,7 @@ export const turnFiltersIntoObjectRecordFilters = (
               objectRecordFilters.push({
                 [correspondingField.name + 'Id']: {
                   in: parsedRecordIds,
-                } as StringFilter,
+                } as UUIDFilter,
               });
               break;
             case ViewFilterOperand.IsNot:
@@ -131,7 +138,7 @@ export const turnFiltersIntoObjectRecordFilters = (
                 not: {
                   [correspondingField.name + 'Id']: {
                     in: parsedRecordIds,
-                  } as StringFilter,
+                  } as UUIDFilter,
                 },
               });
               break;

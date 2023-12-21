@@ -6,20 +6,18 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 type Task = Pick<Activity, 'id' | 'completedAt'>;
 
 export const useCompleteTask = (task: Task) => {
-  const { updateOneRecord: updateOneActivity } = useUpdateOneRecord({
+  const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<Activity>({
     objectNameSingular: 'activity',
-    refetchFindManyQuery: true,
   });
 
   const completeTask = useCallback(
-    (value: boolean) => {
+    async (value: boolean) => {
       const completedAt = value ? new Date().toISOString() : null;
-      updateOneActivity?.({
+      await updateOneActivity?.({
         idToUpdate: task.id,
         input: {
           completedAt,
         },
-        forceRefetch: true,
       });
     },
     [task.id, updateOneActivity],

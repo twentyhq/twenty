@@ -30,11 +30,10 @@ export const useDeleteOneRecord = <T>({
 
   const deleteOneRecord = useCallback(
     async (idToDelete: string) => {
-      triggerOptimisticEffects(
-        `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-        undefined,
-        [idToDelete],
-      );
+      triggerOptimisticEffects({
+        typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
+        deletedRecordIds: [idToDelete],
+      });
 
       performOptimisticEvict(
         capitalize(objectMetadataItem.nameSingular),

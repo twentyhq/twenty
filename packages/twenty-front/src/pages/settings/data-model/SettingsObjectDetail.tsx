@@ -4,7 +4,9 @@ import styled from '@emotion/styled';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
+import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsAboutSection } from '@/settings/data-model/object-details/components/SettingsObjectAboutSection';
 import { SettingsObjectFieldActiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldActiveActionDropdown';
@@ -56,9 +58,15 @@ export const SettingsObjectDetail = () => {
     (metadataField) => !metadataField.isActive && !metadataField.isSystem,
   );
 
-  const handleDisable = async () => {
+  const handleDisableObject = async () => {
     await disableObjectMetadataItem(activeObjectMetadataItem);
     navigate('/settings/objects');
+  };
+
+  const handleDisableField = async (
+    activeFieldMetadatItem: FieldMetadataItem,
+  ) => {
+    disableMetadataField(activeFieldMetadatItem);
   };
 
   return (
@@ -74,7 +82,7 @@ export const SettingsObjectDetail = () => {
           iconKey={activeObjectMetadataItem.icon ?? undefined}
           name={activeObjectMetadataItem.labelPlural || ''}
           isCustom={activeObjectMetadataItem.isCustom}
-          onDisable={handleDisable}
+          onDisable={handleDisableObject}
           onEdit={() => navigate('./edit')}
         />
         <Section>
@@ -102,8 +110,13 @@ export const SettingsObjectDetail = () => {
                         onEdit={() =>
                           navigate(`./${getFieldSlug(activeMetadataField)}`)
                         }
-                        onDisable={() =>
-                          disableMetadataField(activeMetadataField)
+                        onDisable={
+                          isLabelIdentifierField({
+                            fieldMetadataItem: activeMetadataField,
+                            objectMetadataItem: activeObjectMetadataItem,
+                          })
+                            ? undefined
+                            : () => handleDisableField(activeMetadataField)
                         }
                       />
                     }

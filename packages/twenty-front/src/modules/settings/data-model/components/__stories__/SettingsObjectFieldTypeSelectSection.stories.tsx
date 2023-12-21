@@ -2,13 +2,14 @@ import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
 
-import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
+import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import {
   FieldMetadataType,
   RelationMetadataType,
 } from '~/generated-metadata/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
   mockedCompaniesMetadata,
@@ -31,12 +32,13 @@ const meta: Meta<typeof SettingsObjectFieldTypeSelectSection> = {
   component: SettingsObjectFieldTypeSelectSection,
   decorators: [
     ComponentDecorator,
+    ObjectMetadataItemsDecorator,
     (Story) => (
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-        <ObjectMetadataItemsProvider>
+      <RelationPickerScope relationPickerScopeId="relation-picker">
+        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
           <Story />
-        </ObjectMetadataItemsProvider>
-      </SnackBarProviderScope>
+        </SnackBarProviderScope>
+      </RelationPickerScope>
     ),
   ],
   args: {

@@ -1,6 +1,6 @@
 import { RecoilScopedSelector } from '../types/RecoilScopedSelector';
 
-export const getScopedSelector = <StateType>(
+export const getScopedSelectorDeprecated = <StateType>(
   recoilScopedState: RecoilScopedSelector<StateType>,
   scopeId: string,
 ) => {

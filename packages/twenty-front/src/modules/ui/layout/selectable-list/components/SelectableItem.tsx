@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { useSelectableListScopedStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListScopedStates';
+import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 
 export type SelectableItemProps = {
   itemId: string;
@@ -14,11 +14,9 @@ export const SelectableItem = ({
   children,
   className,
 }: SelectableItemProps) => {
-  const { isSelectedItemIdSelector } = useSelectableListScopedStates({
-    itemId: itemId,
-  });
+  const { isSelectedItemIdFamilyState } = useSelectableList();
 
-  const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector);
+  const isSelectedItemId = useRecoilValue(isSelectedItemIdFamilyState(itemId));
 
   const scrollRef = useRef<HTMLDivElement>(null);
 

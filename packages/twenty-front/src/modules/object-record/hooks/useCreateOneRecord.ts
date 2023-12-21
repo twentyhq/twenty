@@ -1,5 +1,4 @@
 import { useApolloClient } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 import { v4 } from 'uuid';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
@@ -14,16 +13,16 @@ type useCreateOneRecordProps = {
 
 export const useCreateOneRecord = <T>({
   objectNameSingular,
-  refetchFindManyQuery = false,
 }: useCreateOneRecordProps) => {
   const { triggerOptimisticEffects } = useOptimisticEffect({
     objectNameSingular,
   });
 
-  const { objectMetadataItem, createOneRecordMutation, findManyRecordsQuery } =
-    useObjectMetadataItem({
+  const { objectMetadataItem, createOneRecordMutation } = useObjectMetadataItem(
+    {
       objectNameSingular,
-    });
+    },
+  );
 
   // TODO: type this with a minimal type at least with Record<string, any>
   const apolloClient = useApolloClient();
@@ -35,16 +34,16 @@ export const useCreateOneRecord = <T>({
   const createOneRecord = async (input: Record<string, any>) => {
     const recordId = v4();
 
-    const generatedEmptyRecord = generateEmptyRecord({
+    const generatedEmptyRecord = generateEmptyRecord<Record<string, unknown>>({
       id: recordId,
       ...input,
     });
 
     if (generatedEmptyRecord) {
-      triggerOptimisticEffects(
-        `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-        generatedEmptyRecord,
-      );
+      triggerOptimisticEffects({
+        typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
+        createdRecords: [generatedEmptyRecord],
+      });
     }
 
     const createdObject = await apolloClient.mutate({
@@ -56,21 +55,11 @@ export const useCreateOneRecord = <T>({
         [`create${capitalize(objectMetadataItem.nameSingular)}`]:
           generateEmptyRecord({ id: recordId, ...input }),
       },
-      refetchQueries: refetchFindManyQuery
-        ? [getOperationName(findManyRecordsQuery) ?? '']
-        : [],
     });
 
     if (!createdObject.data) {
       return null;
     }
-
-    triggerOptimisticEffects(
-      `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-      createdObject.data[
-        `create${capitalize(objectMetadataItem.nameSingular)}`
-      ],
-    );
 
     return createdObject.data[
       `create${capitalize(objectMetadataItem.nameSingular)}`

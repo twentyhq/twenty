@@ -1,15 +1,16 @@
 import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
+import { RecoilRoot } from 'recoil';
 
-import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
+import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
   mockedCompaniesMetadata,
   mockedPeopleMetadata,
-  mockedWorkspacesMetadata,
 } from '~/testing/mock-data/metadata';
 
 import { SettingsObjectFieldPreview } from '../SettingsObjectFieldPreview';
@@ -19,18 +20,21 @@ const meta: Meta<typeof SettingsObjectFieldPreview> = {
   component: SettingsObjectFieldPreview,
   decorators: [
     ComponentDecorator,
+    ObjectMetadataItemsDecorator,
     (Story) => (
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-        <ObjectMetadataItemsProvider>
-          <Story />
-        </ObjectMetadataItemsProvider>
-      </SnackBarProviderScope>
+      <RecoilRoot>
+        <RelationPickerScope relationPickerScopeId="relation-picker">
+          <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+            <Story />
+          </SnackBarProviderScope>
+        </RelationPickerScope>
+      </RecoilRoot>
     ),
   ],
   args: {
     fieldMetadata: mockedCompaniesMetadata.node.fields.edges.find(
       ({ node }) => node.type === FieldMetadataType.Text,
-    )?.node,
+    )?.node as Field,
     objectMetadataId: mockedCompaniesMetadata.node.id,
   },
   parameters: {
@@ -119,9 +123,9 @@ export const Relation: Story = {
 
 export const CustomObject: Story = {
   args: {
-    fieldMetadata: mockedWorkspacesMetadata.node.fields.edges.find(
-      ({ node }) => node.type === FieldMetadataType.Text,
+    fieldMetadata: mockedCompaniesMetadata.node.fields.edges.find(
+      ({ node }) => node.isCustom,
     )?.node as Field,
-    objectMetadataId: mockedWorkspacesMetadata.node.id,
+    objectMetadataId: mockedCompaniesMetadata.node.id,
   },
 };

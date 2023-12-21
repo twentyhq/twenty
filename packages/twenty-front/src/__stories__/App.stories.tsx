@@ -3,9 +3,10 @@ import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
+import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
+import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { UserProvider } from '@/users/components/UserProvider';
 import { App } from '~/App';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
@@ -13,14 +14,17 @@ const meta: Meta<typeof App> = {
   title: 'App/App',
   component: App,
   decorators: [
-    SnackBarDecorator,
     (Story) => (
       <ClientConfigProvider>
         <UserProvider>
           <MemoryRouter>
             <FullHeightStorybookLayout>
               <HelmetProvider>
-                <Story />
+                <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+                  <ObjectMetadataItemsProvider>
+                    <Story />
+                  </ObjectMetadataItemsProvider>
+                </SnackBarProviderScope>
               </HelmetProvider>
             </FullHeightStorybookLayout>
           </MemoryRouter>

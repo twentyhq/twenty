@@ -36,7 +36,6 @@ const StyledLabelAndIconContainer = styled.div`
 
 const StyledValueContainer = styled.div`
   display: flex;
-  max-width: calc(100% - ${({ theme }) => theme.spacing(4)});
 `;
 
 const StyledLabel = styled.div<
@@ -70,8 +69,6 @@ const StyledInlineCellBaseContainer = styled.div`
 
   position: relative;
   user-select: none;
-
-  width: 100%;
 `;
 
 type RecordInlineCellContainerProps = {
@@ -129,16 +126,18 @@ export const RecordInlineCellContainer = ({
       onMouseEnter={handleContainerMouseEnter}
       onMouseLeave={handleContainerMouseLeave}
     >
-      <StyledLabelAndIconContainer>
-        {IconLabel && (
-          <StyledIconContainer>
-            <IconLabel stroke={theme.icon.stroke.sm} />
-          </StyledIconContainer>
-        )}
-        {label && (
-          <StyledLabel labelFixedWidth={labelFixedWidth}>{label}</StyledLabel>
-        )}
-      </StyledLabelAndIconContainer>
+      {(!!IconLabel || !!label) && (
+        <StyledLabelAndIconContainer>
+          {IconLabel && (
+            <StyledIconContainer>
+              <IconLabel stroke={theme.icon.stroke.sm} />
+            </StyledIconContainer>
+          )}
+          {label && (
+            <StyledLabel labelFixedWidth={labelFixedWidth}>{label}</StyledLabel>
+          )}
+        </StyledLabelAndIconContainer>
+      )}
       <StyledValueContainer>
         {isInlineCellInEditMode ? (
           <RecordInlineCellEditMode>{editModeContent}</RecordInlineCellEditMode>

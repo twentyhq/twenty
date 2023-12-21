@@ -9,7 +9,6 @@ import { Favorite } from '@/favorites/types/Favorite';
 import { mapFavorites } from '@/favorites/utils/mapFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { getRecordOptimisticEffectDefinition } from '@/object-record/graphql/optimistic-effect-definition/getRecordOptimisticEffectDefinition';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -29,15 +28,13 @@ export const useFavorites = ({
     updateOneRecordMutation: updateOneFavoriteMutation,
     createOneRecordMutation: createOneFavoriteMutation,
     deleteOneRecordMutation: deleteOneFavoriteMutation,
-    objectMetadataItem: favoriteObjectMetadataItem,
   } = useObjectMetadataItem({
     objectNameSingular: 'favorite',
   });
 
-  const { registerOptimisticEffect, triggerOptimisticEffects } =
-    useOptimisticEffect({
-      objectNameSingular: 'favorite',
-    });
+  const { triggerOptimisticEffects } = useOptimisticEffect({
+    objectNameSingular: 'favorite',
+  });
   const { performOptimisticEvict } = useOptimisticEvict();
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
@@ -65,19 +62,8 @@ export const useFavorites = ({
           if (!isDeeplyEqual(favorites, queriedFavorites)) {
             set(favoritesState, queriedFavorites);
           }
-
-          if (!favoriteObjectMetadataItem) {
-            return;
-          }
-
-          registerOptimisticEffect({
-            variables: { filter: {}, orderBy: {} },
-            definition: getRecordOptimisticEffectDefinition({
-              objectMetadataItem: favoriteObjectMetadataItem,
-            }),
-          });
         },
-      [favoriteObjectMetadataItem, registerOptimisticEffect],
+      [],
     ),
   });
 
@@ -102,7 +88,10 @@ export const useFavorites = ({
           },
         });
 
-        triggerOptimisticEffects(`FavoriteEdge`, result.data[`createFavorite`]);
+        triggerOptimisticEffects({
+          typename: `FavoriteEdge`,
+          createdRecords: [result.data[`createFavorite`]],
+        });
 
         const createdFavorite = result?.data?.createFavorite;
 
