@@ -106,6 +106,8 @@ export class FetchBatchMessagesService {
       const startJson = response.indexOf('{');
       const endJson = response.lastIndexOf('}');
 
+      if (startJson < 0 || endJson < 0) return;
+
       const responseJson = response.substring(startJson, endJson + 1);
 
       const item = JSON.parse(responseJson);
