@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import { google } from 'googleapis';
+import { gmail_v1, google } from 'googleapis';
 import { v4 } from 'uuid';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetch-batch-messages.service';
+import { MessageFromGmail } from 'src/workspace/messaging/types/messageFromGmail';
+import { MessageQuery } from 'src/workspace/messaging/types/messageQuery';
 
 @Injectable()
 export class FetchWorkspaceMessagesService {
@@ -96,9 +98,9 @@ export class FetchWorkspaceMessagesService {
     const accessToken = connectedAccounts[0].accessToken;
     const refreshToken = connectedAccounts[0].refreshToken;
 
-    const gmail = await this.getGmailClient(refreshToken);
+    const gmailClient = await this.getGmailClient(refreshToken);
 
-    const messages = await gmail.users.messages.list({
+    const messages = await gmailClient.users.messages.list({
       userId: 'me',
       maxResults,
     });
@@ -109,7 +111,7 @@ export class FetchWorkspaceMessagesService {
       return;
     }
 
-    const messageQueries = messagesData.map((message) => ({
+    const messageQueries: MessageQuery[] = messagesData.map((message) => ({
       uri: '/gmail/v1/users/me/messages/' + message.id + '?format=RAW',
     }));
 
@@ -127,7 +129,7 @@ export class FetchWorkspaceMessagesService {
     );
   }
 
-  async getGmailClient(refreshToken) {
+  async getGmailClient(refreshToken: string): Promise<gmail_v1.Gmail> {
     const gmailClientId = this.environmentService.getAuthGoogleClientId();
 
     const gmailClientSecret =
@@ -142,22 +144,28 @@ export class FetchWorkspaceMessagesService {
       refresh_token: refreshToken,
     });
 
-    return google.gmail({
+    const gmailClient = google.gmail({
       version: 'v1',
       auth: oAuth2Client,
     });
+
+    return gmailClient;
   }
 
   async saveMessageThreads(
-    threads,
+    threads: gmail_v1.Schema$Thread[],
     dataSourceMetadata,
     workspaceDataSource,
-    connectedAccountId,
+    connectedAccountId: string,
   ) {
     const messageChannel = await workspaceDataSource?.query(
       `SELECT * FROM ${dataSourceMetadata.schema}."messageChannel" WHERE "connectedAccountId" = $1`,
       [connectedAccountId],
     );
+
+    if (!messageChannel.length) {
+      throw new Error('No message channel found');
+    }
 
     for (const thread of threads) {
       await workspaceDataSource?.query(
@@ -168,10 +176,10 @@ export class FetchWorkspaceMessagesService {
   }
 
   async saveMessages(
-    messages,
+    messages: MessageFromGmail[],
     dataSourceMetadata,
     workspaceDataSource,
-    workspaceMemberId,
+    workspaceMemberId: string,
   ) {
     for (const message of messages) {
       const {

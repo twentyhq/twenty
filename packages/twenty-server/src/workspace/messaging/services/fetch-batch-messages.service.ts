@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { simpleParser } from 'mailparser';
+
+import { MessageFromGmail } from 'src/workspace/messaging/types/messageFromGmail';
+import { MessageQuery } from 'src/workspace/messaging/types/messageQuery';
 
 @Injectable()
 export class FetchBatchMessagesService {
@@ -37,7 +40,7 @@ export class FetchBatchMessagesService {
   }
 
   async fetchBatch(
-    messageQueries,
+    messageQueries: MessageQuery[],
     accessToken: string,
     batchOffset: number,
     batchLimit: number,
@@ -87,8 +90,8 @@ export class FetchBatchMessagesService {
     return batchBody.concat(['--', boundary, '--']).join('');
   }
 
-  parseBatch(responseCollection) {
-    const items: any = [];
+  parseBatch(responseCollection: AxiosResponse<any, any>) {
+    const responseItems: any = [];
 
     const boundary = this.getBatchSeparator(responseCollection);
 
@@ -106,13 +109,13 @@ export class FetchBatchMessagesService {
 
       const item = JSON.parse(responseJson);
 
-      items.push(item);
+      responseItems.push(item);
     });
 
-    return items;
+    return responseItems;
   }
 
-  getBatchSeparator(response) {
+  getBatchSeparator(response: AxiosResponse<any, any>) {
     const headers = response.headers;
 
     if (!headers['content-type']) return '';
@@ -124,7 +127,9 @@ export class FetchBatchMessagesService {
     return boundary.replace('boundary=', '').trim('; ');
   }
 
-  async formatBatchResponse(response) {
+  async formatBatchResponse(
+    response: AxiosResponse<any, any>,
+  ): Promise<MessageFromGmail[]> {
     const parsedResponse = this.parseBatch(response);
 
     return Promise.all(
@@ -147,20 +152,22 @@ export class FetchBatchMessagesService {
           attachments,
         } = parsed;
 
-        return {
+        const messageFromGmail: MessageFromGmail = {
           externalId: id,
-          headerMessageId: messageId,
-          subject: subject,
+          headerMessageId: messageId || '',
+          subject: subject || '',
           messageThreadId: threadId,
           internalDate,
           from,
           to,
           cc,
           bcc,
-          text,
-          html,
+          text: text || '',
+          html: html || '',
           attachments,
         };
+
+        return messageFromGmail;
       }),
     );
   }
