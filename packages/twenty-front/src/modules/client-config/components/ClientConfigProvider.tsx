@@ -22,7 +22,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   const setTelemetry = useSetRecoilState(telemetryState);
   const setSupportChat = useSetRecoilState(supportChatState);
 
-  const setSentry= useSetRecoilState(sentryState);
+  const setSentry = useSetRecoilState(sentryState);
 
   const { data, loading } = useGetClientConfigQuery();
 
@@ -42,7 +42,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
 
       setSentry({
         dsnKey: data?.clientConfig?.sentry?.dsnKey,
-      })
+      });
     }
   }, [
     data,
