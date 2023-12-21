@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { IconApps } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
@@ -60,7 +61,9 @@ const IconPickerIcon = ({
   selectedIconKey,
   Icon,
 }: IconPickerIconProps) => {
-  const { isSelectedItemId } = useSelectableList({ itemId: iconKey });
+  const { isSelectedItemIdFamilyState } = useSelectableList();
+
+  const isSelectedItemId = useRecoilValue(isSelectedItemIdFamilyState(iconKey));
 
   return (
     <StyledLightIconButton

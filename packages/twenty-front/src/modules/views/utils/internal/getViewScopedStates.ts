@@ -1,5 +1,5 @@
 import { getScopedFamilyStateDeprecated } from '@/ui/utilities/recoil-scope/utils/getScopedFamilyStateDeprecated';
-import { getScopedSelector } from '@/ui/utilities/recoil-scope/utils/getScopedSelector';
+import { getScopedSelectorDeprecated } from '@/ui/utilities/recoil-scope/utils/getScopedSelectorDeprecated';
 import { getScopedStateDeprecated } from '@/ui/utilities/recoil-scope/utils/getScopedStateDeprecated';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import { isPersistingViewScopedState } from '@/views/states/isPersistingViewScopedState';
@@ -169,7 +169,7 @@ export const getViewScopedStates = ({
     viewScopeId,
   );
 
-  const currentViewSelector = getScopedSelector(
+  const currentViewSelector = getScopedSelectorDeprecated(
     currentViewScopedSelector,
     viewScopeId,
   );

@@ -25,9 +25,8 @@ export const SelectableList = ({
 }: SelectableListProps) => {
   useSelectableListHotKeys(selectableListId, hotkeyScope);
 
-  const { setSelectableItemIds, setSelectableListOnEnter } = useSelectableList({
-    selectableListId,
-  });
+  const { setSelectableItemIds, setSelectableListOnEnter } =
+    useSelectableList(selectableListId);
 
   useEffect(() => {
     setSelectableListOnEnter(() => onEnter);
