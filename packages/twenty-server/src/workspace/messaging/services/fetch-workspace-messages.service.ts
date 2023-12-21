@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { gmail_v1, google } from 'googleapis';
 import { v4 } from 'uuid';
+import { DataSource } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
@@ -9,6 +10,7 @@ import { DataSourceService } from 'src/metadata/data-source/data-source.service'
 import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetch-batch-messages.service';
 import { MessageFromGmail } from 'src/workspace/messaging/types/messageFromGmail';
 import { MessageQuery } from 'src/workspace/messaging/types/messageQuery';
+import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 
 @Injectable()
 export class FetchWorkspaceMessagesService {
@@ -43,6 +45,10 @@ export class FetchWorkspaceMessagesService {
     const workspaceDataSource = await this.typeORMService.connectToDataSource(
       dataSourceMetadata,
     );
+
+    if (!workspaceDataSource) {
+      throw new Error('No workspace data source found');
+    }
 
     const connectedAccount = await workspaceDataSource?.query(
       `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail' AND "accountOwnerId" = $1`,
@@ -85,6 +91,10 @@ export class FetchWorkspaceMessagesService {
     const workspaceDataSource = await this.typeORMService.connectToDataSource(
       dataSourceMetadata,
     );
+
+    if (!workspaceDataSource) {
+      throw new Error('No workspace data source found');
+    }
 
     const connectedAccounts = await workspaceDataSource?.query(
       `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail' AND "accountOwnerId" = $1`,
@@ -154,8 +164,8 @@ export class FetchWorkspaceMessagesService {
 
   async saveMessageThreads(
     threads: gmail_v1.Schema$Thread[],
-    dataSourceMetadata,
-    workspaceDataSource,
+    dataSourceMetadata: DataSourceEntity,
+    workspaceDataSource: DataSource,
     connectedAccountId: string,
   ) {
     const messageChannel = await workspaceDataSource?.query(
@@ -177,8 +187,8 @@ export class FetchWorkspaceMessagesService {
 
   async saveMessages(
     messages: MessageFromGmail[],
-    dataSourceMetadata,
-    workspaceDataSource,
+    dataSourceMetadata: DataSourceEntity,
+    workspaceDataSource: DataSource,
     workspaceMemberId: string,
   ) {
     for (const message of messages) {
