@@ -105,7 +105,7 @@ export const SettingsObjectFieldPreview = ({
             {!!ObjectIcon && (
               <ObjectIcon
                 size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.sm}
+                stroke={theme.icon.stroke.md}
               />
             )}
             {objectMetadataItem?.labelPlural}
