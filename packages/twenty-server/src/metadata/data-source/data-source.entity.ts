@@ -17,7 +17,7 @@ export class DataSourceEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   label: string;
 
   @Column({ nullable: true })
