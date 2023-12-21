@@ -142,7 +142,7 @@ export class ReflectiveMetadataFactory {
         assert(
           toObjectMetadata,
           `Object ${relation.toObjectNameSingular} not found in DB
-        for relation defined in class ${objectMetadata.nameSingular}`,
+        for relation TO defined in class ${objectMetadata.nameSingular}`,
         );
 
         const fromFieldMetadata =
@@ -151,7 +151,7 @@ export class ReflectiveMetadataFactory {
         assert(
           fromFieldMetadata,
           `Field ${relation.fromFieldMetadataName} not found in object ${relation.fromObjectNameSingular}
-        for relation defined in class ${objectMetadata.nameSingular}`,
+        for relation FROM defined in class ${objectMetadata.nameSingular}`,
         );
 
         const toFieldMetadata =
@@ -160,7 +160,7 @@ export class ReflectiveMetadataFactory {
         assert(
           toFieldMetadata,
           `Field ${relation.toFieldMetadataName} not found in object ${relation.toObjectNameSingular}
-        for relation defined in class ${objectMetadata.nameSingular}`,
+        for relation TO defined in class ${objectMetadata.nameSingular}`,
         );
 
         return {
