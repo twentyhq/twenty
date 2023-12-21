@@ -49,9 +49,9 @@ export class FetchWorkspaceMessagesService {
 
     const refreshToken = connectedAccount[0].refreshToken;
 
-    const gmail = await this.getGmailClient(refreshToken);
+    const gmailClient = await this.getGmailClient(refreshToken);
 
-    const threads = await gmail.users.threads.list({
+    const threads = await gmailClient.users.threads.list({
       userId: 'me',
       maxResults,
     });
