@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
@@ -29,7 +29,7 @@ export class ReflectiveMetadataFactory {
     const objectMetadata = TypedReflect.getMetadata('objectMetadata', metadata);
     const fieldMetadata =
       TypedReflect.getMetadata('fieldMetadata', metadata) ?? {};
-    let dataSourceId = defaultDataSourceId;
+    const dataSourceId = defaultDataSourceId;
 
     if (!objectMetadata) {
       throw new Error(
@@ -44,24 +44,6 @@ export class ReflectiveMetadataFactory {
     const fields = Object.values(fieldMetadata).filter(
       (field) => !isGatedAndNotEnabled(field, workspaceFeatureFlagsMap),
     );
-
-    if (objectMetadata?.dataSourceSchema) {
-      const dataSource = await this.dataSourceRepository.findOne({
-        where: {
-          schema: objectMetadata.dataSourceSchema,
-        },
-      });
-
-      if (!dataSource) {
-        throw new InternalServerErrorException(
-          `Data source not found for object metadata objectMetadata.nameSingular`,
-        );
-      }
-
-      dataSourceId = dataSource.id;
-
-      delete objectMetadata.dataSourceSchema;
-    }
 
     return {
       ...objectMetadata,

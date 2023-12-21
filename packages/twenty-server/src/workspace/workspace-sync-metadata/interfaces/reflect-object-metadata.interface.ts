@@ -6,7 +6,6 @@ export interface ObjectMetadataDecoratorParams {
   labelPlural: string;
   description?: string;
   icon?: string;
-  dataSourceSchema?: string;
 }
 
 export interface ReflectObjectMetadata extends ObjectMetadataDecoratorParams {
