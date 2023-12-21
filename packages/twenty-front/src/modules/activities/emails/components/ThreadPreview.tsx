@@ -2,9 +2,8 @@ import styled from '@emotion/styled';
 
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Avatar } from '@/users/components/Avatar';
+import { TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils';
-
-import { Email } from '../types/email';
 
 const StyledCardContent = styled(CardContent)`
   align-items: center;
@@ -22,6 +21,7 @@ const StyledHeading = styled.div<{ unread: boolean }>`
   font-weight: ${({ theme, unread }) =>
     unread ? theme.font.weight.medium : theme.font.weight.regular};
   gap: ${({ theme }) => theme.spacing(1)};
+  overflow: hidden;
   width: 160px;
 
   :before {
@@ -39,22 +39,35 @@ const StyledAvatar = styled(Avatar)`
   margin: ${({ theme }) => theme.spacing(0, 1)};
 `;
 
+const StyledSenderName = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
 const StyledThreadCount = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-const StyledSubject = styled.div<{ unread: boolean }>`
+const StyledSubject = styled.span<{ unread: boolean }>`
   color: ${({ theme, unread }) =>
     unread ? theme.font.color.primary : theme.font.color.secondary};
+  white-space: nowrap;
 `;
 
-const StyledBody = styled.div`
+const StyledBody = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
-  flex: 1 0 0;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const StyledSubjectAndBody = styled.div`
+  display: flex;
+  flex: 1;
+  gap: ${({ theme }) => theme.spacing(2)};
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const StyledReceivedAt = styled.div`
@@ -63,26 +76,29 @@ const StyledReceivedAt = styled.div`
   padding: ${({ theme }) => theme.spacing(0, 1)};
 `;
 
-type EmailPreviewProps = {
+type ThreadPreviewProps = {
   divider?: boolean;
-  email: Email;
+  thread: TimelineThread;
 };
 
-export const EmailPreview = ({ divider, email }: EmailPreviewProps) => (
+export const ThreadPreview = ({ divider, thread }: ThreadPreviewProps) => (
   <StyledCardContent divider={divider}>
-    <StyledHeading unread={!email.read}>
+    <StyledHeading unread={!thread.read}>
       <StyledAvatar
-        avatarUrl={email.senderPictureUrl}
-        placeholder={email.senderName}
+        avatarUrl={thread.senderPictureUrl}
+        placeholder={thread.senderName}
         type="rounded"
       />
-      {email.senderName}{' '}
-      <StyledThreadCount>{email.numberOfEmailsInThread}</StyledThreadCount>
+      <StyledSenderName>{thread.senderName}</StyledSenderName>
+      <StyledThreadCount>{thread.numberOfMessagesInThread}</StyledThreadCount>
     </StyledHeading>
-    <StyledSubject unread={!email.read}>{email.subject}</StyledSubject>
-    <StyledBody>{email.body}</StyledBody>
+
+    <StyledSubjectAndBody>
+      <StyledSubject unread={!thread.read}>{thread.subject}</StyledSubject>
+      <StyledBody>{thread.body}</StyledBody>
+    </StyledSubjectAndBody>
     <StyledReceivedAt>
-      {formatToHumanReadableDate(email.receivedAt)}
+      {formatToHumanReadableDate(thread.receivedAt)}
     </StyledReceivedAt>
   </StyledCardContent>
 );
