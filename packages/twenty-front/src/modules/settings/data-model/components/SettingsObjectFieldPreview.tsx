@@ -23,7 +23,6 @@ export type SettingsObjectFieldPreviewProps = {
   relationObjectMetadataId?: string;
   selectOptions?: SettingsObjectFieldSelectFormValues;
   shrink?: boolean;
-  // namePlural?: string;
 };
 
 const StyledCard = styled(Card)`
