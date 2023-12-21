@@ -103,7 +103,6 @@ export const Empty: Story = {
     });
 
     userEvent.click(button);
-
     await waitFor(async () => {
       const fakeMenu = await canvas.findByTestId('dropdown-content');
       expect(fakeMenu).toBeInTheDocument();

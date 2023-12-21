@@ -35,7 +35,6 @@ export type SettingsObjectFieldTypeSelectSectionFormValues = {
 
 type SettingsObjectFieldTypeSelectSectionProps = {
   disableCurrencyForm?: boolean;
-  namePlural?: string;
   excludedFieldTypes?: FieldMetadataType[];
   fieldMetadata: Pick<Field, 'icon' | 'label'> & { id?: string };
   onChange: (
@@ -67,7 +66,6 @@ export const SettingsObjectFieldTypeSelectSection = ({
   onChange,
   relationFieldMetadata,
   values,
-  namePlural,
 }: SettingsObjectFieldTypeSelectSectionProps) => {
   const currencyFormConfig = values.currency;
   const relationFormConfig = values.relation;
@@ -120,7 +118,6 @@ export const SettingsObjectFieldTypeSelectSection = ({
                     relationFormConfig?.objectMetadataId
                   }
                   selectOptions={selectFormConfig}
-                  namePlural={namePlural}
                 />
                 {values.type === FieldMetadataType.Relation &&
                   !!relationFormConfig?.type &&
@@ -144,7 +141,6 @@ export const SettingsObjectFieldTypeSelectSection = ({
                         shrink
                         objectMetadataId={relationFormConfig.objectMetadataId}
                         relationObjectMetadataId={objectMetadataId}
-                        namePlural={namePlural}
                       />
                     </>
                   )}

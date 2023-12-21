@@ -3669,23 +3669,6 @@ export const getObjectMetadataItemsMock = () => {
         },
       ],
     },
-    {
-      __typename: 'object',
-      id: '20202020-ddee-40de-9c9b-5f82a3503360',
-      dataSourceId: '20202020-7f63-47a9-b1b3-6c7290ca9fb1',
-      nameSingular: 'workspace',
-      namePlural: 'workspaces',
-      labelSingular: 'Workspace',
-      labelPlural: 'Workspaces',
-      description: 'A workspace',
-      icon: 'IconRobot',
-      isCustom: false,
-      isActive: true,
-      isSystem: true,
-      createdAt: '2023-11-30T11:13:15.206Z',
-      updatedAt: '2023-11-30T11:13:15.206Z',
-      fields: [],
-    },
   ];
 
   // Todo fix typing here (the backend is not in sync with the frontend)

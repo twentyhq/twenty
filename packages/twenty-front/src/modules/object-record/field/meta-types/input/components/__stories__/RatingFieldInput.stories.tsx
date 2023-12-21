@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, within } from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { sleep } from '~/testing/sleep';
 
 import { FieldRatingValue } from '../../../../types/FieldMetadata';
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
@@ -100,10 +99,11 @@ export const Submit: Story = {
     const input = canvas.getByRole('slider', { name: 'Rating' });
     const firstStar = input.firstElementChild;
 
-    if (firstStar) userEvent.click(firstStar);
-
-    await sleep(1000);
-
-    expect(submitJestFn).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      if (firstStar) {
+        userEvent.click(firstStar);
+        expect(submitJestFn).toHaveBeenCalledTimes(1);
+      }
+    });
   },
 };

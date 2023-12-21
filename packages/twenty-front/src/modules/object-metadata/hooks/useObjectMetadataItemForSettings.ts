@@ -13,6 +13,8 @@ import { useUpdateOneObjectMetadataItem } from './useUpdateOneObjectMetadataItem
 export const useObjectMetadataItemForSettings = () => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
+  console.log({ objectMetadataItems });
+
   const activeObjectMetadataItems = objectMetadataItems.filter(
     ({ isActive, isSystem }) => isActive && !isSystem,
   );

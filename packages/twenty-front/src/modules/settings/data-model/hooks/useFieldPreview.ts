@@ -13,13 +13,11 @@ export const useFieldPreview = ({
   objectMetadataId,
   relationObjectMetadataId,
   selectOptions,
-  namePlural,
 }: {
   fieldMetadata: Pick<Field, 'icon' | 'label' | 'type'> & { id?: string };
   objectMetadataId: string;
   relationObjectMetadataId?: string;
   selectOptions?: SettingsObjectFieldSelectFormOption[];
-  namePlural?: string;
 }) => {
   const { findObjectMetadataItemById } = useObjectMetadataItemForSettings();
   const objectMetadataItem = findObjectMetadataItemById(objectMetadataId);
@@ -34,11 +32,7 @@ export const useFieldPreview = ({
 
   const { value: firstRecordFieldValue } = useFieldPreviewValue({
     fieldName: fieldName || '',
-    objectNamePlural: objectMetadataItem?.namePlural
-      ? objectMetadataItem.namePlural
-      : namePlural
-        ? namePlural
-        : '',
+    objectNamePlural: objectMetadataItem?.namePlural ?? '',
     skip:
       !fieldName ||
       !objectMetadataItem ||

@@ -4,7 +4,6 @@ import { expect, userEvent, within } from '@storybook/test';
 import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { WrapCommandMenuStory } from '@/command-menu/components/WrapCommandMenuStory';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
@@ -53,7 +52,7 @@ const meta: Meta<typeof CommandMenu> = {
           },
         ]);
         openCommandMenu();
-      }, [addToCommandMenu, openCommandMenu, setToIntitialCommandMenu]);
+      }, [addToCommandMenu, setToIntitialCommandMenu, openCommandMenu]);
 
       return objectMetadataItems.length ? <Story /> : <></>;
     },
@@ -76,7 +75,6 @@ export default meta;
 type Story = StoryObj<typeof CommandMenu>;
 
 export const DefaultWithoutSearch: Story = {
-  decorators: [WrapCommandMenuStory],
   play: async () => {
     const canvas = within(document.body);
 
@@ -90,19 +88,20 @@ export const DefaultWithoutSearch: Story = {
 };
 
 export const MatchingPersonCompanyActivityCreateNavigate: Story = {
-  decorators: [WrapCommandMenuStory],
   play: async () => {
     const canvas = within(document.body);
     const searchInput = await canvas.findByPlaceholderText('Search');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'n');
+    expect(await canvas.findByText('Alexandre Prot')).toBeInTheDocument();
+    expect(await canvas.findByText('Airbnb')).toBeInTheDocument();
+    expect(await canvas.findByText('My very first note')).toBeInTheDocument();
     expect(await canvas.findByText('Create Note')).toBeInTheDocument();
     expect(await canvas.findByText('Go to Companies')).toBeInTheDocument();
   },
 };
 
 export const OnlyMatchingCreateAndNavigate: Story = {
-  decorators: [WrapCommandMenuStory],
   play: async () => {
     const canvas = within(document.body);
     const searchInput = await canvas.findByPlaceholderText('Search');
@@ -113,21 +112,17 @@ export const OnlyMatchingCreateAndNavigate: Story = {
   },
 };
 
-// I had to change this story so that it doesn't find the person, for some reason the menu isn't returning any results
-// other than the default ones like create task and i couldn't identify why
 export const AtleastMatchingOnePerson: Story = {
-  decorators: [WrapCommandMenuStory],
   play: async () => {
     const canvas = within(document.body);
     const searchInput = await canvas.findByPlaceholderText('Search');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'alex');
-    expect(await canvas.queryByText('Alexandre Prot')).toBeNull();
+    expect(await canvas.findByText('Alexandre Prot')).toBeInTheDocument();
   },
 };
 
 export const NotMatchingAnything: Story = {
-  decorators: [WrapCommandMenuStory],
   play: async () => {
     const canvas = within(document.body);
     const searchInput = await canvas.findByPlaceholderText('Search');

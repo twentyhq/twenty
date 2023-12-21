@@ -1,7 +1,9 @@
 import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
+import { useRecoilValue } from 'recoil';
 
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import {
@@ -31,6 +33,11 @@ const meta: Meta<typeof SettingsObjectFieldTypeSelectSection> = {
   title: 'Modules/Settings/DataModel/SettingsObjectFieldTypeSelectSection',
   component: SettingsObjectFieldTypeSelectSection,
   decorators: [
+    (Story) => {
+      // wait for metadata
+      const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+      return objectMetadataItems.length ? <Story /> : <></>;
+    },
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     (Story) => (
@@ -45,7 +52,6 @@ const meta: Meta<typeof SettingsObjectFieldTypeSelectSection> = {
     fieldMetadata: fieldMetadataWithoutId,
     objectMetadataId: mockedCompaniesMetadata.node.id,
     values: fieldMetadataFormDefaultValues,
-    namePlural: mockedCompaniesMetadata.node.namePlural,
   },
   parameters: {
     container: { width: 512 },
