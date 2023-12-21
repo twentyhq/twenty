@@ -240,6 +240,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               action: WorkspaceMigrationColumnActionType.CREATE,
               columnName: `${createdObjectMetadata.targetTableName}Id`,
               columnType: 'uuid',
+              isNullable: true,
             } satisfies WorkspaceMigrationColumnCreate,
           ],
         },
