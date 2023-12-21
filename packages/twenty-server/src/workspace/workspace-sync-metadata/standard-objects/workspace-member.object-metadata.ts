@@ -151,17 +151,6 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   @IsNullable()
   authoredComments: CommentObjectMetadata[];
 
-  // @FieldMetadata({
-  //   type: FieldMetadataType.RELATION,
-  //   label: 'User',
-  //   description: 'Related user',
-  //   joinColumn: 'userId',
-  // })
-  // @Gate({
-  //   featureFlag: 'IS_STANDARD_CORE_RELATIONSHIPS_ENABLED',
-  // })
-  // user: UserObjectMetadata;
-
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
     label: 'Connected accounts',

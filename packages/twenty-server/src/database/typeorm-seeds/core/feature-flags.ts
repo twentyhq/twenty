@@ -38,12 +38,6 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: true,
       },
-      // This feature is a work in progress and can break stuff
-      // {
-      //   key: 'IS_STANDARD_CORE_RELATIONSHIPS_ENABLED',
-      //   workspaceId: workspaceId,
-      //   value: true,
-      // },
     ])
     .execute();
 };
