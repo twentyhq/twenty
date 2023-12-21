@@ -10,15 +10,17 @@ export const RecordTableBody = () => {
   const tableRowIds = useRecoilValue(tableRowIdsState);
 
   return (
-    <tbody>
-      {tableRowIds.map((rowId, rowIndex) => (
-        <RowIdContext.Provider value={rowId} key={rowId}>
-          <RowIndexContext.Provider value={rowIndex}>
-            <RecordTableRow key={rowId} rowId={rowId} />
-          </RowIndexContext.Provider>
-        </RowIdContext.Provider>
-      ))}
+    <>
+      <tbody>
+        {tableRowIds.map((rowId, rowIndex) => (
+          <RowIdContext.Provider value={rowId} key={rowId}>
+            <RowIndexContext.Provider value={rowIndex}>
+              <RecordTableRow key={rowId} rowId={rowId} />
+            </RowIndexContext.Provider>
+          </RowIdContext.Provider>
+        ))}
+      </tbody>
       <RecordTableBodyFetchMoreLoader />
-    </tbody>
+    </>
   );
 };

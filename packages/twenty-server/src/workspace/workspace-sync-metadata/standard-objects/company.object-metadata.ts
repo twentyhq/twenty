@@ -92,8 +92,8 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     description:
       'Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you',
     icon: 'IconTarget',
+    defaultValue: { value: false },
   })
-  @IsNullable()
   idealCustomerProfile: boolean;
 
   // Relations
