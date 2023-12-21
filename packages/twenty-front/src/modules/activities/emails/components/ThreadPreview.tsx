@@ -76,29 +76,29 @@ const StyledReceivedAt = styled.div`
   padding: ${({ theme }) => theme.spacing(0, 1)};
 `;
 
-type EmailPreviewProps = {
+type ThreadPreviewProps = {
   divider?: boolean;
-  email: TimelineThread;
+  thread: TimelineThread;
 };
 
-export const EmailPreview = ({ divider, email }: EmailPreviewProps) => (
+export const ThreadPreview = ({ divider, thread }: ThreadPreviewProps) => (
   <StyledCardContent divider={divider}>
-    <StyledHeading unread={!email.read}>
+    <StyledHeading unread={!thread.read}>
       <StyledAvatar
-        avatarUrl={email.senderPictureUrl}
-        placeholder={email.senderName}
+        avatarUrl={thread.senderPictureUrl}
+        placeholder={thread.senderName}
         type="rounded"
       />
-      <StyledSenderName>{email.senderName}</StyledSenderName>
-      <StyledThreadCount>{email.numberOfMessagesInThread}</StyledThreadCount>
+      <StyledSenderName>{thread.senderName}</StyledSenderName>
+      <StyledThreadCount>{thread.numberOfMessagesInThread}</StyledThreadCount>
     </StyledHeading>
 
     <StyledSubjectAndBody>
-      <StyledSubject unread={!email.read}>{email.subject}</StyledSubject>
-      <StyledBody>{email.body}</StyledBody>
+      <StyledSubject unread={!thread.read}>{thread.subject}</StyledSubject>
+      <StyledBody>{thread.body}</StyledBody>
     </StyledSubjectAndBody>
     <StyledReceivedAt>
-      {formatToHumanReadableDate(email.receivedAt)}
+      {formatToHumanReadableDate(thread.receivedAt)}
     </StyledReceivedAt>
   </StyledCardContent>
 );

@@ -19,20 +19,20 @@ class TimelineThread {
   @Column()
   senderName: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Field()
+  @Column()
   senderPictureUrl: string;
 
   @Field()
   @Column()
   numberOfMessagesInThread: number;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Field()
+  @Column()
   subject: string;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Field()
+  @Column()
   body: string;
 
   @Field()

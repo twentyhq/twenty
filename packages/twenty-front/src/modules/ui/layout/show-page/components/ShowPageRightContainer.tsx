@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { Emails } from '@/activities/emails/components/Emails';
+import { Emails } from '@/activities/emails/components/Threads';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { EntityTasks } from '@/activities/tasks/components/EntityTasks';

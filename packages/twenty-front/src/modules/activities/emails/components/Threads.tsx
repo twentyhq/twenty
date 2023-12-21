@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
 
+import { ThreadPreview } from '@/activities/emails/components/ThreadPreview';
 import { getTimelineThreadsFromCompanyId } from '@/activities/emails/queries/getTimelineThreadsFromCompanyId';
 import { getTimelineThreadsFromPersonId } from '@/activities/emails/queries/getTimelineThreadsFromPersonId';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
@@ -11,8 +12,6 @@ import {
 import { Card } from '@/ui/layout/card/components/Card';
 import { Section } from '@/ui/layout/section/components/Section';
 import { TimelineThread } from '~/generated/graphql';
-
-import { EmailPreview } from './EmailPreview';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -30,27 +29,27 @@ const StyledEmailCount = styled.span`
   color: ${({ theme }) => theme.font.color.light};
 `;
 
-export const Emails = ({ entity }: { entity: ActivityTargetableEntity }) => {
-  const emailQuery =
+export const Threads = ({ entity }: { entity: ActivityTargetableEntity }) => {
+  const threadQuery =
     entity.type === 'Person'
       ? getTimelineThreadsFromPersonId
       : getTimelineThreadsFromCompanyId;
 
-  const variables =
+  const threadQueryVariables =
     entity.type === 'Person'
       ? { personId: entity.id }
       : { companyId: entity.id };
 
-  const messages = useQuery(emailQuery, {
-    variables: variables,
+  const threads = useQuery(threadQuery, {
+    variables: threadQueryVariables,
   });
 
-  if (messages.loading) {
+  if (threads.loading) {
     return;
   }
 
   const timelineThreads: TimelineThread[] =
-    messages.data[
+    threads.data[
       entity.type === 'Person'
         ? 'getTimelineThreadsFromPersonId'
         : 'getTimelineThreadsFromCompanyId'
@@ -69,11 +68,11 @@ export const Emails = ({ entity }: { entity: ActivityTargetableEntity }) => {
           fontColor={H1TitleFontColor.Primary}
         />
         <Card>
-          {timelineThreads.map((message: TimelineThread, index: number) => (
-            <EmailPreview
+          {timelineThreads.map((thread: TimelineThread, index: number) => (
+            <ThreadPreview
               key={index}
               divider={index < timelineThreads.length - 1}
-              email={message}
+              thread={thread}
             />
           ))}
         </Card>
