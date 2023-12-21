@@ -26,6 +26,7 @@ import '@emotion/react';
 
 import './index.css';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { ExceptionHandlerProvider } from '@/error-handler/components/ExceptionHandlerProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 
@@ -36,6 +37,7 @@ root.render(
       <BrowserRouter>
         <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
           <IconsProvider>
+            <ExceptionHandlerProvider>
             <ApolloProvider>
               <HelmetProvider>
                 <ClientConfigProvider>
@@ -61,6 +63,7 @@ root.render(
                 </ClientConfigProvider>
               </HelmetProvider>
             </ApolloProvider>
+            </ExceptionHandlerProvider>
           </IconsProvider>
         </SnackBarProviderScope>
       </BrowserRouter>

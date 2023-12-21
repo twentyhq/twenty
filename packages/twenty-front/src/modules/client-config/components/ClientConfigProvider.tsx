@@ -7,6 +7,7 @@ import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { telemetryState } from '@/client-config/states/telemetryState';
+import { sentryState } from '@/error-handler/states/sentryState';
 import { useGetClientConfigQuery } from '~/generated/graphql';
 
 export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
@@ -20,6 +21,8 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   const setBilling = useSetRecoilState(billingState);
   const setTelemetry = useSetRecoilState(telemetryState);
   const setSupportChat = useSetRecoilState(supportChatState);
+
+  const setSentry= useSetRecoilState(sentryState);
 
   const { data, loading } = useGetClientConfigQuery();
 
@@ -36,6 +39,10 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
       setBilling(data?.clientConfig.billing);
       setTelemetry(data?.clientConfig.telemetry);
       setSupportChat(data?.clientConfig.support);
+
+      setSentry({
+        dsnKey: data?.clientConfig?.sentry?.dsnKey,
+      })
     }
   }, [
     data,
@@ -45,6 +52,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
     setTelemetry,
     setSupportChat,
     setBilling,
+    setSentry,
   ]);
 
   return loading ? <></> : <>{children}</>;
