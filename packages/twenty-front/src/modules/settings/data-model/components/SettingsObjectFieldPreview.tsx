@@ -23,6 +23,7 @@ export type SettingsObjectFieldPreviewProps = {
   relationObjectMetadataId?: string;
   selectOptions?: SettingsObjectFieldSelectFormValues;
   shrink?: boolean;
+  namePlural?: string;
 };
 
 const StyledCard = styled(Card)`
@@ -79,6 +80,7 @@ export const SettingsObjectFieldPreview = ({
   relationObjectMetadataId,
   selectOptions,
   shrink,
+  namePlural,
 }: SettingsObjectFieldPreviewProps) => {
   const theme = useTheme();
 
@@ -95,6 +97,7 @@ export const SettingsObjectFieldPreview = ({
     objectMetadataId,
     relationObjectMetadataId,
     selectOptions,
+    namePlural,
   });
 
   return (

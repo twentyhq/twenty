@@ -9,11 +9,7 @@ import { CompanyBoard } from '../board/components/CompanyBoard';
 const meta: Meta<typeof CompanyBoard> = {
   title: 'Modules/Companies/Board',
   component: CompanyBoard,
-  decorators: [
-    (Story) => <Story />,
-    ComponentWithRouterDecorator,
-    SnackBarDecorator,
-  ],
+  decorators: [ComponentWithRouterDecorator, SnackBarDecorator],
   parameters: {
     msw: graphqlMocks,
   },

@@ -45,6 +45,7 @@ const meta: Meta<typeof SettingsObjectFieldTypeSelectSection> = {
     fieldMetadata: fieldMetadataWithoutId,
     objectMetadataId: mockedCompaniesMetadata.node.id,
     values: fieldMetadataFormDefaultValues,
+    namePlural: mockedCompaniesMetadata.node.namePlural,
   },
   parameters: {
     container: { width: 512 },
@@ -67,8 +68,14 @@ export const WithOpenSelect: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    const inputField = await canvas.findByText('Text');
+
+    await userEvent.click(inputField);
+
     const input = await canvas.findByText('Unique ID');
     await userEvent.click(input);
+
+    await userEvent.click(inputField);
 
     const selectLabel = canvas.getByText('Number');
 

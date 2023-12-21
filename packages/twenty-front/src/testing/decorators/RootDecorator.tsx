@@ -6,7 +6,6 @@ import { ApolloMetadataClientProvider } from '@/object-metadata/components/Apoll
 
 import { InitializeHotkeyStorybookHookEffect } from '../InitializeHotkeyStorybookHook';
 import { mockedClient } from '../mockedClient';
-
 export const RootDecorator: Decorator = (Story) => (
   <RecoilRoot>
     <ApolloProvider client={mockedClient}>

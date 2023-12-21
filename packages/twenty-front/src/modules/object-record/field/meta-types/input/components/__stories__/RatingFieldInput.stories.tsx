@@ -4,6 +4,7 @@ import { expect, fn, userEvent, within } from '@storybook/test';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { sleep } from '~/testing/sleep';
 
 import { FieldRatingValue } from '../../../../types/FieldMetadata';
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
@@ -100,6 +101,8 @@ export const Submit: Story = {
     const firstStar = input.firstElementChild;
 
     if (firstStar) userEvent.click(firstStar);
+
+    await sleep(1000);
 
     expect(submitJestFn).toHaveBeenCalledTimes(1);
   },

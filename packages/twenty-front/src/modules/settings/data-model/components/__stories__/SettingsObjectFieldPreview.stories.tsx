@@ -36,6 +36,7 @@ const meta: Meta<typeof SettingsObjectFieldPreview> = {
       ({ node }) => node.type === FieldMetadataType.Text,
     )?.node as Field,
     objectMetadataId: mockedCompaniesMetadata.node.id,
+    namePlural: mockedCompaniesMetadata.node.namePlural,
   },
   parameters: {
     msw: graphqlMocks,
