@@ -200,9 +200,6 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
           name: objectMetadataMap[relationMetadataInput.toObjectMetadataId]
             .targetTableName,
           action: 'alter',
-          schemaName:
-            objectMetadataMap[relationMetadataInput.toObjectMetadataId]
-              .dataSource.schema,
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE,
@@ -217,9 +214,6 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
           name: objectMetadataMap[relationMetadataInput.toObjectMetadataId]
             .targetTableName,
           action: 'alter',
-          schemaName:
-            objectMetadataMap[relationMetadataInput.toObjectMetadataId]
-              .dataSource.schema,
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.RELATION,

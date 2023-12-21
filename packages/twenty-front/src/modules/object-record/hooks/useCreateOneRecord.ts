@@ -13,6 +13,7 @@ type useCreateOneRecordProps = {
 
 export const useCreateOneRecord = <T>({
   objectNameSingular,
+  refetchFindManyQuery,
 }: useCreateOneRecordProps) => {
   const { triggerOptimisticEffects } = useOptimisticEffect({
     objectNameSingular,
@@ -36,6 +37,7 @@ export const useCreateOneRecord = <T>({
 
     const generatedEmptyRecord = generateEmptyRecord<Record<string, unknown>>({
       id: recordId,
+      createdAt: new Date().toISOString(),
       ...input,
     });
 
@@ -53,8 +55,9 @@ export const useCreateOneRecord = <T>({
       },
       optimisticResponse: {
         [`create${capitalize(objectMetadataItem.nameSingular)}`]:
-          generateEmptyRecord({ id: recordId, ...input }),
+          generatedEmptyRecord,
       },
+      refetchQueries: refetchFindManyQuery ? ['findMany'] : undefined,
     });
 
     if (!createdObject.data) {
