@@ -2,6 +2,10 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { SettingsAccountsInboxSettingsSynchronizationSection } from '@/settings/accounts/components/SettingsAccountsInboxSettingsSynchronizationSection';
+import {
+  InboxSettingsVisibilityValue,
+  SettingsAccountsInboxSettingsVisibilitySection,
+} from '@/settings/accounts/components/SettingsAccountsInboxSettingsVisibilitySection';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { AppPath } from '@/types/AppPath';
 import { IconSettings } from '@/ui/display/icon';
@@ -20,9 +24,11 @@ export const SettingsAccountsEmailsInboxSettings = () => {
     if (!account) navigate(AppPath.NotFound);
   }, [account, navigate]);
 
-  const handleToggle = (_value: boolean) => {};
+  if (!account) return null;
 
-  if (!account) return <></>;
+  const handleSynchronizationToggle = (_value: boolean) => {};
+
+  const handleVisibilityChange = (_value: InboxSettingsVisibilityValue) => {};
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -36,7 +42,11 @@ export const SettingsAccountsEmailsInboxSettings = () => {
         />
         <SettingsAccountsInboxSettingsSynchronizationSection
           account={account}
-          onToggle={handleToggle}
+          onToggle={handleSynchronizationToggle}
+        />
+        <SettingsAccountsInboxSettingsVisibilitySection
+          value={account.visibility}
+          onChange={handleVisibilityChange}
         />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
