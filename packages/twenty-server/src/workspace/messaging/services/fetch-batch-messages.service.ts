@@ -69,7 +69,7 @@ export class FetchBatchMessagesService {
     return formattedResponse;
   }
 
-  createBatchBody(messageQueries, boundary: string): string {
+  createBatchBody(messageQueries: MessageQuery[], boundary: string): string {
     let batchBody: string[] = [];
 
     messageQueries.forEach(function (call) {
@@ -121,13 +121,15 @@ export class FetchBatchMessagesService {
   getBatchSeparator(response: AxiosResponse<any, any>) {
     const headers = response.headers;
 
-    if (!headers['content-type']) return '';
+    const contentType: string = headers['content-type'];
 
-    const components = headers['content-type'].split('; ');
+    if (!contentType) return '';
+
+    const components = contentType.split('; ');
 
     const boundary = components.find((o) => o.startsWith('boundary='));
 
-    return boundary.replace('boundary=', '').trim('; ');
+    return boundary?.replace('boundary=', '').trim();
   }
 
   async formatBatchResponse(
