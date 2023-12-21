@@ -28,13 +28,13 @@ export class FetchWorkspaceMessagesCommand extends CommandRunner {
       options.workspaceId,
     );
 
-    await this.fetchWorkspaceMessagesService.fetchWorkspaceThreads(
-      options.workspaceId,
-    );
+    // await this.fetchWorkspaceMessagesService.fetchWorkspaceThreads(
+    //   options.workspaceId,
+    // );
 
-    await this.fetchWorkspaceMessagesService.fetchWorkspaceMessages(
-      options.workspaceId,
-    );
+    // await this.fetchWorkspaceMessagesService.fetchWorkspaceMessages(
+    //   options.workspaceId,
+    // );
 
     return;
   }

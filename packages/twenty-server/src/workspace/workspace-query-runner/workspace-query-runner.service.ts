@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 
 import { IConnection } from 'src/utils/pagination/interfaces/connection.interface';
 import {
@@ -219,7 +224,9 @@ export class WorkspaceQueryRunnerService {
     }
 
     if (!result) {
-      throw new BadRequestException('Malformed result from GraphQL query');
+      throw new InternalServerErrorException(
+        'Malformed result from GraphQL query',
+      );
     }
 
     return parseResult(result);
