@@ -49,7 +49,7 @@ export const httpExceptionHandler = (
     );
   } else {
     error = new BaseGraphQLError(
-      exception.message,
+      'Internal Server Error',
       exception.getStatus().toString(),
     );
   }
