@@ -16,12 +16,15 @@ export class FetchBatchMessagesService {
     });
   }
 
-  async fetchAllByBatches(messageQueries, accessToken: string): Promise<any> {
+  async fetchAllByBatches(
+    messageQueries: MessageQuery[],
+    accessToken: string,
+  ): Promise<any> {
     const batchLimit = 100;
 
-    let messages = [];
-
     let batchOffset = 0;
+
+    let messages: MessageFromGmail[] = [];
 
     while (batchOffset < messageQueries.length) {
       const batchResponse = await this.fetchBatch(
@@ -44,7 +47,7 @@ export class FetchBatchMessagesService {
     accessToken: string,
     batchOffset: number,
     batchLimit: number,
-  ): Promise<any> {
+  ): Promise<MessageFromGmail[]> {
     const limitedMessageQueries = messageQueries.slice(
       batchOffset,
       batchOffset + batchLimit,
