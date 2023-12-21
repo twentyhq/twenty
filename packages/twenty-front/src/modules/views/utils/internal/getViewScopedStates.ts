@@ -1,6 +1,6 @@
-import { getScopedFamilyState } from '@/ui/utilities/recoil-scope/utils/getScopedFamilyState';
-import { getScopedSelector } from '@/ui/utilities/recoil-scope/utils/getScopedSelector';
-import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
+import { getScopedFamilyStateDeprecated } from '@/ui/utilities/recoil-scope/utils/getScopedFamilyStateDeprecated';
+import { getScopedSelectorDeprecated } from '@/ui/utilities/recoil-scope/utils/getScopedSelectorDeprecated';
+import { getScopedStateDeprecated } from '@/ui/utilities/recoil-scope/utils/getScopedStateDeprecated';
 import { currentViewIdScopedState } from '@/views/states/currentViewIdScopedState';
 import { isPersistingViewScopedState } from '@/views/states/isPersistingViewScopedState';
 import { currentViewScopedSelector } from '@/views/states/selectors/currentViewScopedSelector';
@@ -36,43 +36,46 @@ export const getViewScopedStates = ({
   viewScopeId: string;
   viewId: string;
 }) => {
-  const viewEditModeState = getScopedState(
+  const viewEditModeState = getScopedStateDeprecated(
     viewEditModeScopedState,
     viewScopeId,
   );
 
-  const viewsState = getScopedState(viewsScopedState, viewScopeId);
+  const viewsState = getScopedStateDeprecated(viewsScopedState, viewScopeId);
 
-  const viewObjectMetadataIdState = getScopedState(
+  const viewObjectMetadataIdState = getScopedStateDeprecated(
     viewObjectMetadataIdScopeState,
     viewScopeId,
   );
 
-  const viewTypeState = getScopedState(viewTypeScopedState, viewScopeId);
+  const viewTypeState = getScopedStateDeprecated(
+    viewTypeScopedState,
+    viewScopeId,
+  );
 
-  const entityCountInCurrentViewState = getScopedState(
+  const entityCountInCurrentViewState = getScopedStateDeprecated(
     entityCountInCurrentViewScopedState,
     viewScopeId,
   );
 
-  const isViewBarExpandedState = getScopedState(
+  const isViewBarExpandedState = getScopedStateDeprecated(
     isViewBarExpandedScopedState,
     viewScopeId,
   );
 
-  const isPersistingViewState = getScopedState(
+  const isPersistingViewState = getScopedStateDeprecated(
     isPersistingViewScopedState,
     viewScopeId,
   );
 
   // ViewSorts
-  const currentViewSortsState = getScopedFamilyState(
+  const currentViewSortsState = getScopedFamilyStateDeprecated(
     currentViewSortsScopedFamilyState,
     viewScopeId,
     viewId,
   );
 
-  const savedViewSortsState = getScopedFamilyState(
+  const savedViewSortsState = getScopedFamilyStateDeprecated(
     savedViewSortsScopedFamilyState,
     viewScopeId,
     viewId,
@@ -83,7 +86,7 @@ export const getViewScopedStates = ({
     viewId: viewId,
   });
 
-  const availableSortDefinitionsState = getScopedState(
+  const availableSortDefinitionsState = getScopedStateDeprecated(
     availableSortDefinitionsScopedState,
     viewScopeId,
   );
@@ -94,13 +97,13 @@ export const getViewScopedStates = ({
   });
 
   // ViewFilters
-  const currentViewFiltersState = getScopedFamilyState(
+  const currentViewFiltersState = getScopedFamilyStateDeprecated(
     currentViewFiltersScopedFamilyState,
     viewScopeId,
     viewId,
   );
 
-  const savedViewFiltersState = getScopedFamilyState(
+  const savedViewFiltersState = getScopedFamilyStateDeprecated(
     savedViewFiltersScopedFamilyState,
     viewScopeId,
     viewId,
@@ -112,7 +115,7 @@ export const getViewScopedStates = ({
       viewId: viewId,
     });
 
-  const availableFilterDefinitionsState = getScopedState(
+  const availableFilterDefinitionsState = getScopedStateDeprecated(
     availableFilterDefinitionsScopedState,
     viewScopeId,
   );
@@ -123,18 +126,18 @@ export const getViewScopedStates = ({
   });
 
   // ViewFields
-  const availableFieldDefinitionsState = getScopedState(
+  const availableFieldDefinitionsState = getScopedStateDeprecated(
     availableFieldDefinitionsScopedState,
     viewScopeId,
   );
 
-  const currentViewFieldsState = getScopedFamilyState(
+  const currentViewFieldsState = getScopedFamilyStateDeprecated(
     currentViewFieldsScopedFamilyState,
     viewScopeId,
     viewId,
   );
 
-  const savedViewFieldsState = getScopedFamilyState(
+  const savedViewFieldsState = getScopedFamilyStateDeprecated(
     savedViewFieldsScopedFamilyState,
     viewScopeId,
     viewId,
@@ -146,27 +149,27 @@ export const getViewScopedStates = ({
   });
 
   // ViewChangeHandlers
-  const onViewSortsChangeState = getScopedState(
+  const onViewSortsChangeState = getScopedStateDeprecated(
     onViewSortsChangeScopedState,
     viewScopeId,
   );
 
-  const onViewFiltersChangeState = getScopedState(
+  const onViewFiltersChangeState = getScopedStateDeprecated(
     onViewFiltersChangeScopedState,
     viewScopeId,
   );
 
-  const onViewFieldsChangeState = getScopedState(
+  const onViewFieldsChangeState = getScopedStateDeprecated(
     onViewFieldsChangeScopedState,
     viewScopeId,
   );
 
-  const currentViewIdState = getScopedState(
+  const currentViewIdState = getScopedStateDeprecated(
     currentViewIdScopedState,
     viewScopeId,
   );
 
-  const currentViewSelector = getScopedSelector(
+  const currentViewSelector = getScopedSelectorDeprecated(
     currentViewScopedSelector,
     viewScopeId,
   );

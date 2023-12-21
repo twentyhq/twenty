@@ -1,6 +1,6 @@
 import { objectMetadataConfigScopedState } from '@/object-record/record-table/states/objectMetadataConfigScopedState';
 import { tableLastRowVisibleScopedState } from '@/object-record/record-table/states/tableLastRowVisibleScopedState';
-import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
+import { getScopedStateDeprecated } from '@/ui/utilities/recoil-scope/utils/getScopedStateDeprecated';
 
 import { availableTableColumnsScopedState } from '../states/availableTableColumnsScopedState';
 import { onColumnsChangeScopedState } from '../states/onColumnsChangeScopedState';
@@ -17,27 +17,27 @@ export const getRecordTableScopedStates = ({
 }: {
   recordTableScopeId: string;
 }) => {
-  const availableTableColumnsState = getScopedState(
+  const availableTableColumnsState = getScopedStateDeprecated(
     availableTableColumnsScopedState,
     recordTableScopeId,
   );
 
-  const tableFiltersState = getScopedState(
+  const tableFiltersState = getScopedStateDeprecated(
     tableFiltersScopedState,
     recordTableScopeId,
   );
 
-  const tableSortsState = getScopedState(
+  const tableSortsState = getScopedStateDeprecated(
     tableSortsScopedState,
     recordTableScopeId,
   );
 
-  const tableColumnsState = getScopedState(
+  const tableColumnsState = getScopedStateDeprecated(
     tableColumnsScopedState,
     recordTableScopeId,
   );
 
-  const objectMetadataConfigState = getScopedState(
+  const objectMetadataConfigState = getScopedStateDeprecated(
     objectMetadataConfigScopedState,
     recordTableScopeId,
   );
@@ -51,17 +51,17 @@ export const getRecordTableScopedStates = ({
   const visibleTableColumnsSelector =
     visibleTableColumnsScopedSelector(recordTableScopeId);
 
-  const onColumnsChangeState = getScopedState(
+  const onColumnsChangeState = getScopedStateDeprecated(
     onColumnsChangeScopedState,
     recordTableScopeId,
   );
 
-  const onEntityCountChangeState = getScopedState(
+  const onEntityCountChangeState = getScopedStateDeprecated(
     onEntityCountChangeScopedState,
     recordTableScopeId,
   );
 
-  const tableLastRowVisibleState = getScopedState(
+  const tableLastRowVisibleState = getScopedStateDeprecated(
     tableLastRowVisibleScopedState,
     recordTableScopeId,
   );

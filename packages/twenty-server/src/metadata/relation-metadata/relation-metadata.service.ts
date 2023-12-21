@@ -133,6 +133,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         isCustom: true,
         targetColumnMap: {},
         isActive: true,
+        isNullable: true,
         type: FieldMetadataType.RELATION,
         objectMetadataId: relationMetadataInput.fromObjectMetadataId,
         workspaceId: relationMetadataInput.workspaceId,
@@ -150,6 +151,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
             : relationMetadataInput.toName,
         },
         isActive: true,
+        isNullable: true,
         type: FieldMetadataType.RELATION,
         objectMetadataId: relationMetadataInput.toObjectMetadataId,
         workspaceId: relationMetadataInput.workspaceId,
@@ -167,6 +169,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
           value: foreignKeyColumnName,
         },
         isActive: true,
+        isNullable: true,
         // Should not be visible on the front side
         isSystem: true,
         type: FieldMetadataType.UUID,
@@ -197,11 +200,15 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
           name: objectMetadataMap[relationMetadataInput.toObjectMetadataId]
             .targetTableName,
           action: 'alter',
+          schemaName:
+            objectMetadataMap[relationMetadataInput.toObjectMetadataId]
+              .dataSource.schema,
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE,
               columnName: foreignKeyColumnName,
               columnType: 'uuid',
+              isNullable: true,
             },
           ],
         },
@@ -210,6 +217,9 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
           name: objectMetadataMap[relationMetadataInput.toObjectMetadataId]
             .targetTableName,
           action: 'alter',
+          schemaName:
+            objectMetadataMap[relationMetadataInput.toObjectMetadataId]
+              .dataSource.schema,
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.RELATION,

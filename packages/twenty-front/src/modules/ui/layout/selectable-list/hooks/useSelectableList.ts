@@ -1,52 +1,48 @@
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
 
-import { useSelectableListScopedStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListScopedStates';
-import { SelectableListScopeInternalContext } from '@/ui/layout/selectable-list/scopes/scope-internal-context/SelectableListScopeInternalContext';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { useSelectableListScopedState } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListScopedState';
+import { getSelectableListScopeInjectors } from '@/ui/layout/selectable-list/utils/internal/getSelectableListScopeInjectors';
 
-type UseSelectableListProps = {
-  selectableListId?: string;
-  itemId?: string;
-};
-
-export const useSelectableList = (props?: UseSelectableListProps) => {
-  const scopeId = useAvailableScopeIdOrThrow(
-    SelectableListScopeInternalContext,
-    props?.selectableListId,
-  );
-
+export const useSelectableList = (selectableListScopeId?: string) => {
   const {
-    selectableItemIdsState,
-    isSelectedItemIdSelector,
-    selectableListOnEnterState,
-    selectedItemIdState,
-  } = useSelectableListScopedStates({
-    selectableListScopeId: scopeId,
-    itemId: props?.itemId,
+    getSelectableListScopedState,
+    getSelectableListScopedFamilyState,
+    scopeId,
+  } = useSelectableListScopedState({
+    selectableListScopeId,
   });
 
-  const setSelectableItemIds = useSetRecoilState(selectableItemIdsState);
-  const setSelectableListOnEnter = useSetRecoilState(
-    selectableListOnEnterState,
-  );
-  const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector);
+  const {
+    selectedItemIdScopeInjector,
+    selectableItemIdsScopeInjector,
+    selectableListOnEnterScopeInjector,
+    isSelectedItemIdFamilyScopeInjector,
+  } = getSelectableListScopeInjectors();
 
-  const resetSelectedItemIdState = useResetRecoilState(selectedItemIdState);
-  const resetIsSelectedItemIdSelector = useResetRecoilState(
-    isSelectedItemIdSelector,
+  const setSelectableItemIds = useSetRecoilState(
+    getSelectableListScopedState(selectableItemIdsScopeInjector),
+  );
+  const setSelectableListOnEnter = useSetRecoilState(
+    getSelectableListScopedState(selectableListOnEnterScopeInjector),
+  );
+  const isSelectedItemIdFamilyState = getSelectableListScopedFamilyState(
+    isSelectedItemIdFamilyScopeInjector,
+  );
+
+  const resetSelectedItemIdState = useResetRecoilState(
+    getSelectableListScopedState(selectedItemIdScopeInjector),
   );
 
   const resetSelectedItem = () => {
     resetSelectedItemIdState();
-    resetIsSelectedItemIdSelector();
   };
 
   return {
-    setSelectableItemIds,
-    isSelectedItemId,
-    setSelectableListOnEnter,
     selectableListId: scopeId,
-    isSelectedItemIdSelector,
+
+    setSelectableItemIds,
+    isSelectedItemIdFamilyState,
+    setSelectableListOnEnter,
     resetSelectedItem,
   };
 };

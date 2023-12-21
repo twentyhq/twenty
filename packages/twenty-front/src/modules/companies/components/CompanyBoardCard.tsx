@@ -2,7 +2,11 @@ import { ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { FieldContext } from '@/object-record/field/contexts/FieldContext';
+import {
+  FieldContext,
+  RecordUpdateHook,
+  RecordUpdateHookParams,
+} from '@/object-record/field/contexts/FieldContext';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { BoardCardIdContext } from '@/object-record/record-board/contexts/BoardCardIdContext';
 import { useCurrentRecordBoardCardSelectedInternal } from '@/object-record/record-board/hooks/internal/useCurrentRecordBoardCardSelectedInternal';
@@ -145,24 +149,15 @@ export const CompanyBoardCard = () => {
 
   const visibleBoardCardFields = useRecoilValue(visibleBoardCardFieldsSelector);
 
-  const useUpdateOneRecordMutation: () => [(params: any) => any, any] = () => {
+  const useUpdateOneRecordMutation: RecordUpdateHook = () => {
     const { updateOneRecord: updateOneOpportunity } = useUpdateOneRecord({
       objectNameSingular: 'opportunity',
     });
 
-    const updateEntity = ({
-      variables,
-    }: {
-      variables: {
-        where: { id: string };
-        data: {
-          [fieldName: string]: any;
-        };
-      };
-    }) => {
+    const updateEntity = ({ variables }: RecordUpdateHookParams) => {
       updateOneOpportunity?.({
-        idToUpdate: variables.where.id,
-        input: variables.data,
+        idToUpdate: variables.where.id as string,
+        updateOneRecordInput: variables.updateOneRecordInput,
       });
     };
 
@@ -242,7 +237,7 @@ export const CompanyBoardCard = () => {
                       type: viewField.type,
                       metadata: viewField.metadata,
                     },
-                    useUpdateEntityMutation: useUpdateOneRecordMutation,
+                    useUpdateRecord: useUpdateOneRecordMutation,
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,
                   }}
                 >

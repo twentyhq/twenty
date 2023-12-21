@@ -89,11 +89,13 @@ export const SettingsObjectFieldRelationForm = ({
           fullWidth
           disabled={disableRelationEdition}
           value={values.objectMetadataId}
-          options={objectMetadataItems.map((objectMetadataItem) => ({
-            label: objectMetadataItem.labelPlural,
-            value: objectMetadataItem.id,
-            Icon: getIcon(objectMetadataItem.icon),
-          }))}
+          options={objectMetadataItems
+            .filter((objectMetadataItem) => !objectMetadataItem.isSystem)
+            .map((objectMetadataItem) => ({
+              label: objectMetadataItem.labelPlural,
+              value: objectMetadataItem.id,
+              Icon: getIcon(objectMetadataItem.icon),
+            }))}
           onChange={(value) => onChange({ objectMetadataId: value })}
         />
       </StyledSelectsContainer>

@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
@@ -21,10 +22,13 @@ export const SelectableMenuItemSelect = ({
   onEntitySelected,
   selectedEntity,
 }: SelectableMenuItemSelectProps) => {
-  const { isSelectedItemId } = useSelectableList({
-    selectableListId: 'single-entity-select-base-list',
-    itemId: entity.id,
-  });
+  const { isSelectedItemIdFamilyState } = useSelectableList(
+    'single-entity-select-base-list',
+  );
+
+  const isSelectedItemId = useRecoilValue(
+    isSelectedItemIdFamilyState(entity.id),
+  );
 
   return (
     <StyledSelectableItem itemId={entity.id} key={entity.id}>

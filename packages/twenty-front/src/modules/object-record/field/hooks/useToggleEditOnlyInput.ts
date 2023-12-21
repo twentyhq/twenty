@@ -9,10 +9,10 @@ export const useToggleEditOnlyInput = () => {
   const {
     entityId,
     fieldDefinition,
-    useUpdateEntityMutation = () => [],
+    useUpdateRecord = () => [],
   } = useContext(FieldContext);
 
-  const [updateEntity] = useUpdateEntityMutation();
+  const [updateRecord] = useUpdateRecord();
 
   const toggleField = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -30,10 +30,10 @@ export const useToggleEditOnlyInput = () => {
             valueToPersist,
           );
 
-          updateEntity?.({
+          updateRecord?.({
             variables: {
               where: { id: entityId },
-              data: {
+              updateOneRecordInput: {
                 [fieldName]: valueToPersist,
               },
             },
@@ -44,7 +44,7 @@ export const useToggleEditOnlyInput = () => {
           );
         }
       },
-    [entityId, fieldDefinition, updateEntity],
+    [entityId, fieldDefinition, updateRecord],
   );
 
   return toggleField;

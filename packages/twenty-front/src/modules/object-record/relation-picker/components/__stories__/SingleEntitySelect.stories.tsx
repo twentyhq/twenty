@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 
-import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { IconUserCircle } from '@/ui/display/icon';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
@@ -41,8 +40,9 @@ const meta: Meta<typeof SingleEntitySelect> = {
     selectedEntity,
     width,
   }) => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const { relationPickerSearchFilter } = useRelationPicker();
+    const filteredEntities = entities.filter(
+      (entity) => entity.id !== selectedEntity?.id,
+    );
 
     return (
       <SingleEntitySelect
@@ -57,11 +57,7 @@ const meta: Meta<typeof SingleEntitySelect> = {
           selectedEntity,
           width,
         }}
-        entitiesToSelect={entities.filter(
-          (entity) =>
-            entity.id !== selectedEntity?.id &&
-            entity.name.includes(relationPickerSearchFilter),
-        )}
+        entitiesToSelect={filteredEntities}
       />
     );
   },

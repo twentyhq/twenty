@@ -38,7 +38,7 @@ const meta: Meta = {
             },
           },
           hotkeyScope: 'hotkey-scope',
-          useUpdateEntityMutation: () => [() => undefined, undefined],
+          useUpdateRecord: () => [() => undefined, {}],
         }}
       >
         <MemoryRouter>

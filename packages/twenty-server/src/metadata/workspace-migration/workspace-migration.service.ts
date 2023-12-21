@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { IsNull, Repository } from 'typeorm';
 
-import { standardMigrations } from './standard-migrations';
 import {
   WorkspaceMigrationEntity,
   WorkspaceMigrationTableAction,
@@ -15,43 +14,6 @@ export class WorkspaceMigrationService {
     @InjectRepository(WorkspaceMigrationEntity, 'metadata')
     private readonly workspaceMigrationRepository: Repository<WorkspaceMigrationEntity>,
   ) {}
-
-  /**
-   * Insert all standard migrations that have not been inserted yet
-   *
-   * @param workspaceId
-   */
-  public async insertStandardMigrations(workspaceId: string): Promise<void> {
-    // TODO: we actually don't need to fetch all of them, to improve later so it scales well.
-    const insertedStandardMigrations =
-      await this.workspaceMigrationRepository.find({
-        where: { workspaceId, isCustom: false },
-      });
-
-    const insertedStandardMigrationsMapByName =
-      insertedStandardMigrations.reduce((acc, migration) => {
-        acc[migration.name] = migration;
-
-        return acc;
-      }, {});
-
-    const standardMigrationsListThatNeedToBeInserted = Object.entries(
-      standardMigrations,
-    )
-      .filter(([name]) => !insertedStandardMigrationsMapByName[name])
-      .map(([name, migrations]) => ({ name, migrations }));
-
-    const standardMigrationsThatNeedToBeInserted =
-      standardMigrationsListThatNeedToBeInserted.map((migration) => ({
-        ...migration,
-        workspaceId,
-        isCustom: false,
-      }));
-
-    await this.workspaceMigrationRepository.save(
-      standardMigrationsThatNeedToBeInserted,
-    );
-  }
 
   /**
    * Get all pending migrations for a given workspaceId

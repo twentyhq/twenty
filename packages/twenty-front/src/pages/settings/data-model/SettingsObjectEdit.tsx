@@ -7,7 +7,6 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFormSection } from '@/settings/data-model/components/SettingsObjectFormSection';
-import { SettingsObjectIconSection } from '@/settings/data-model/object-edit/SettingsObjectIconSection';
 import { AppPath } from '@/types/AppPath';
 import { IconArchive, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -113,19 +112,9 @@ export const SettingsObjectEdit = () => {
             />
           )}
         </SettingsHeaderContainer>
-        <SettingsObjectIconSection
-          disabled={!activeObjectMetadataItem.isCustom}
-          iconKey={formValues.icon}
-          label={formValues.labelPlural}
-          onChange={({ iconKey }) =>
-            setFormValues((previousFormValues) => ({
-              ...previousFormValues,
-              icon: iconKey,
-            }))
-          }
-        />
         <SettingsObjectFormSection
           disabled={!activeObjectMetadataItem.isCustom}
+          icon={formValues.icon}
           singularName={formValues.labelSingular}
           pluralName={formValues.labelPlural}
           description={formValues.description}

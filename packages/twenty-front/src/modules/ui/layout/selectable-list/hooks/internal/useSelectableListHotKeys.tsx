@@ -1,9 +1,9 @@
 import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { getSelectableListScopedStates } from '@/ui/layout/selectable-list/utils/internal/getSelectableListScopedStates';
+import { useSelectableListScopedState } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListScopedState';
+import { getSelectableListScopeInjectors } from '@/ui/layout/selectable-list/utils/internal/getSelectableListScopeInjectors';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 type Direction = 'up' | 'down' | 'left' | 'right';
 
@@ -27,17 +27,28 @@ export const useSelectableListHotKeys = (
     }
   };
 
+  const { getSelectableListScopedSnapshotValue } = useSelectableListScopedState(
+    {
+      selectableListScopeId: scopeId,
+    },
+  );
+
   const handleSelect = useRecoilCallback(
     ({ snapshot, set }) =>
       (direction: Direction) => {
-        const { selectedItemIdState, selectableItemIdsState } =
-          getSelectableListScopedStates({
-            selectableListScopeId: scopeId,
-          });
-        const selectedItemId = getSnapshotValue(snapshot, selectedItemIdState);
-        const selectableItemIds = getSnapshotValue(
+        const {
+          selectedItemIdScopeInjector,
+          selectableItemIdsScopeInjector,
+          isSelectedItemIdFamilyScopeInjector,
+        } = getSelectableListScopeInjectors();
+
+        const selectedItemId = getSelectableListScopedSnapshotValue(
           snapshot,
-          selectableItemIdsState,
+          selectedItemIdScopeInjector,
+        );
+        const selectableItemIds = getSelectableListScopedSnapshotValue(
+          snapshot,
+          selectableItemIdsScopeInjector,
         );
 
         const currentPosition = findPosition(selectableItemIds, selectedItemId);
@@ -97,24 +108,19 @@ export const useSelectableListHotKeys = (
 
         if (selectedItemId !== nextId) {
           if (nextId) {
-            const { isSelectedItemIdSelector } = getSelectableListScopedStates({
-              selectableListScopeId: scopeId,
-              itemId: nextId,
-            });
-            set(isSelectedItemIdSelector, true);
-            set(selectedItemIdState, nextId);
+            set(isSelectedItemIdFamilyScopeInjector(scopeId, nextId), true);
+            set(selectedItemIdScopeInjector(scopeId), nextId);
           }
 
           if (selectedItemId) {
-            const { isSelectedItemIdSelector } = getSelectableListScopedStates({
-              selectableListScopeId: scopeId,
-              itemId: selectedItemId,
-            });
-            set(isSelectedItemIdSelector, false);
+            set(
+              isSelectedItemIdFamilyScopeInjector(scopeId, selectedItemId),
+              false,
+            );
           }
         }
       },
-    [scopeId],
+    [getSelectableListScopedSnapshotValue, scopeId],
   );
 
   useScopedHotkeys(Key.ArrowUp, () => handleSelect('up'), hotkeyScope, []);
@@ -135,25 +141,25 @@ export const useSelectableListHotKeys = (
     useRecoilCallback(
       ({ snapshot }) =>
         () => {
-          const { selectedItemIdState, selectableListOnEnterState } =
-            getSelectableListScopedStates({
-              selectableListScopeId: scopeId,
-            });
-          const selectedItemId = getSnapshotValue(
+          const {
+            selectedItemIdScopeInjector,
+            selectableListOnEnterScopeInjector,
+          } = getSelectableListScopeInjectors();
+          const selectedItemId = getSelectableListScopedSnapshotValue(
             snapshot,
-            selectedItemIdState,
+            selectedItemIdScopeInjector,
           );
 
-          const onEnter = getSnapshotValue(
+          const onEnter = getSelectableListScopedSnapshotValue(
             snapshot,
-            selectableListOnEnterState,
+            selectableListOnEnterScopeInjector,
           );
 
           if (selectedItemId) {
             onEnter?.(selectedItemId);
           }
         },
-      [scopeId],
+      [getSelectableListScopedSnapshotValue],
     ),
     hotkeyScope,
     [],

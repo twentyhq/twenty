@@ -31,10 +31,10 @@ export const usePersistField = () => {
   const {
     entityId,
     fieldDefinition,
-    useUpdateEntityMutation = () => [],
+    useUpdateRecord = () => [],
   } = useContext(FieldContext);
 
-  const [updateEntity] = useUpdateEntityMutation();
+  const [updateRecord] = useUpdateRecord();
 
   const persistField = useRecoilCallback(
     ({ set }) =>
@@ -85,13 +85,12 @@ export const usePersistField = () => {
             valueToPersist,
           );
 
-          updateEntity?.({
+          updateRecord?.({
             variables: {
               where: { id: entityId },
-              data: {
-                // TODO: find a more elegant way to do this ?
-                // Maybe have a link between the RELATION field and the UUID field ?
+              updateOneRecordInput: {
                 [`${fieldName}Id`]: valueToPersist?.id ?? null,
+                [`${fieldName}`]: valueToPersist ?? null,
               },
             },
           });
@@ -113,10 +112,10 @@ export const usePersistField = () => {
             valueToPersist,
           );
 
-          updateEntity?.({
+          updateRecord?.({
             variables: {
               where: { id: entityId },
-              data: {
+              updateOneRecordInput: {
                 [fieldName]: valueToPersist,
               },
             },
@@ -131,7 +130,7 @@ export const usePersistField = () => {
           );
         }
       },
-    [entityId, fieldDefinition, updateEntity],
+    [entityId, fieldDefinition, updateRecord],
   );
 
   return persistField;
