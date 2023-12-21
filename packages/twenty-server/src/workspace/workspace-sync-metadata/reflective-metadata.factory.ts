@@ -23,13 +23,13 @@ export class ReflectiveMetadataFactory {
   async createObjectMetadata(
     metadata: typeof BaseObjectMetadata,
     workspaceId: string,
-    initialDataSourceId: string,
+    defaultDataSourceId: string,
     workspaceFeatureFlagsMap: Record<string, boolean>,
   ): Promise<PartialObjectMetadata | undefined> {
     const objectMetadata = TypedReflect.getMetadata('objectMetadata', metadata);
     const fieldMetadata =
       TypedReflect.getMetadata('fieldMetadata', metadata) ?? {};
-    let dataSourceId = initialDataSourceId;
+    let dataSourceId = defaultDataSourceId;
 
     if (!objectMetadata) {
       throw new Error(
