@@ -35,7 +35,6 @@ import {
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationFactory } from 'src/metadata/workspace-migration/workspace-migration.factory';
 import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
-import { coreObjectMetadata } from 'src/workspace/workspace-sync-metadata/core-objects';
 import { ReflectiveMetadataFactory } from 'src/workspace/workspace-sync-metadata/reflective-metadata.factory';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 
@@ -86,7 +85,7 @@ export class WorkspaceSyncMetadataService {
 
       const standardObjects =
         await this.reflectiveMetadataFactory.createObjectMetadataCollection(
-          [...standardObjectMetadata, ...coreObjectMetadata],
+          standardObjectMetadata,
           workspaceId,
           dataSourceId,
           workspaceFeatureFlagsMap,
@@ -317,7 +316,7 @@ export class WorkspaceSyncMetadataService {
     >(objectsInDB);
     const standardRelations =
       this.reflectiveMetadataFactory.createRelationMetadataCollection(
-        [...standardObjectMetadata, ...coreObjectMetadata],
+        standardObjectMetadata,
         workspaceId,
         objectsInDBByName,
         workspaceFeatureFlagsMap,
