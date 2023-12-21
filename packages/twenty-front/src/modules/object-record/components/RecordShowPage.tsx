@@ -58,8 +58,8 @@ export const RecordShowPage = () => {
 
   const { identifiersMapper } = useRelationPicker();
 
-  const { favorites, createFavorite, deleteFavorite } = useFavorites({
-    objectNamePlural: objectMetadataItem.namePlural,
+  const { favorites, createFavorite } = useFavorites({
+    targetObjectNameSingular: objectMetadataItem.nameSingular,
   });
 
   const [, setEntityFields] = useRecoilState(
@@ -103,7 +103,7 @@ export const RecordShowPage = () => {
 
   const handleFavoriteButtonClick = async () => {
     if (!objectNameSingular || !record) return;
-    if (isFavorite) deleteFavorite(record?.id);
+    // if (isFavorite) deleteFavorite(record?.id);
     else {
       const additionalData =
         objectNameSingular === 'person'
@@ -124,7 +124,8 @@ export const RecordShowPage = () => {
                 recordId: record.id,
               }
             : {};
-      createFavorite(record.id, additionalData);
+
+      createFavorite(record.id);
     }
   };
 

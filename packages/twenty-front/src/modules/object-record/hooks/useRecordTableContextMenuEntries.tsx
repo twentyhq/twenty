@@ -47,8 +47,8 @@ export const useRecordTableContextMenuEntries = (
     objectNamePlural,
   });
 
-  const { createFavorite, deleteFavorite, favorites } = useFavorites({
-    objectNamePlural,
+  const { createFavorite, favorites } = useFavorites({
+    targetObjectNameSingular: objectNameSingular,
   });
 
   const handleFavoriteButtonClick = useRecoilCallback(({ snapshot }) => () => {
@@ -65,7 +65,7 @@ export const useRecordTableContextMenuEntries = (
     resetTableRowSelection();
 
     if (isFavorite) {
-      deleteFavorite(selectedRowId);
+      // deleteFavorite(selectedRowId);
     } else {
       createFavorite(selectedRowId);
     }

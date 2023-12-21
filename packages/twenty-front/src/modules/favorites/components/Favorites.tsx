@@ -16,7 +16,7 @@ const StyledContainer = styled(NavigationDrawerSection)`
 
 export const Favorites = () => {
   const { favorites, handleReorderFavorite } = useFavorites({
-    objectNamePlural: 'companies',
+    targetObjectNameSingular: 'company',
   });
 
   if (!favorites || favorites.length === 0) return <></>;
