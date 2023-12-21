@@ -96,6 +96,10 @@ export class TimelineMessagingService {
       [companyId],
     );
 
+    if (!personIds) {
+      return [];
+    }
+
     const formattedPersonIds = personIds.map((personId) => personId.id);
 
     const messageThreads = await this.getMessagesFromPersonIds(
