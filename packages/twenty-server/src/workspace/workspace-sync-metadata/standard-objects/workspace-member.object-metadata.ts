@@ -60,6 +60,14 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   avatarUrl: string;
 
   @FieldMetadata({
+    type: FieldMetadataType.TEXT,
+    label: 'User Email',
+    description: 'Related user email address',
+    icon: 'IconMail',
+  })
+  userEmail: string;
+
+  @FieldMetadata({
     type: FieldMetadataType.UUID,
     label: 'User Id',
     description: 'Associated User Id',
