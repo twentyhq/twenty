@@ -1,25 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
-
-import { Repository } from 'typeorm';
 
 import { PartialObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 import { MappedObjectMetadataEntity } from 'src/workspace/workspace-sync-metadata/interfaces/mapped-metadata.interface';
 
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { TypedReflect } from 'src/utils/typed-reflect';
-import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { isGatedAndNotEnabled } from 'src/workspace/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
 
 @Injectable()
 export class ReflectiveMetadataFactory {
-  constructor(
-    @InjectRepository(DataSourceEntity, 'metadata')
-    private readonly dataSourceRepository: Repository<DataSourceEntity>,
-  ) {}
-
   async createObjectMetadata(
     metadata: typeof BaseObjectMetadata,
     workspaceId: string,
@@ -29,7 +20,6 @@ export class ReflectiveMetadataFactory {
     const objectMetadata = TypedReflect.getMetadata('objectMetadata', metadata);
     const fieldMetadata =
       TypedReflect.getMetadata('fieldMetadata', metadata) ?? {};
-    const dataSourceId = defaultDataSourceId;
 
     if (!objectMetadata) {
       throw new Error(
@@ -48,7 +38,7 @@ export class ReflectiveMetadataFactory {
     return {
       ...objectMetadata,
       workspaceId,
-      dataSourceId,
+      dataSourceId: defaultDataSourceId,
       fields: fields.map((field) => ({
         ...field,
         workspaceId,
