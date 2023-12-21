@@ -6,14 +6,12 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { CompanyBoard } from '../board/components/CompanyBoard';
 
+const DoNotRenderEffect = () => <></>;
+
 const meta: Meta<typeof CompanyBoard> = {
   title: 'Modules/Companies/Board',
-  component: CompanyBoard,
-  decorators: [
-    (Story) => <Story />,
-    ComponentWithRouterDecorator,
-    SnackBarDecorator,
-  ],
+  component: DoNotRenderEffect,
+  decorators: [ComponentWithRouterDecorator, SnackBarDecorator],
   parameters: {
     msw: graphqlMocks,
   },
@@ -22,4 +20,5 @@ const meta: Meta<typeof CompanyBoard> = {
 export default meta;
 type Story = StoryObj<typeof CompanyBoard>;
 
+// FIXME: CompanyBoard is re-rendering so much and exceeding the maximum update depth for some reason.
 export const OneColumnBoard: Story = {};

@@ -2,9 +2,11 @@ import { useEffect } from 'react';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 
+import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
@@ -43,24 +45,28 @@ const RelationFieldInputWithContext = ({
 
   return (
     <div>
-      <RelationPickerScope relationPickerScopeId="relation-picker">
-        <FieldContextProvider
-          fieldDefinition={{
-            fieldMetadataId: 'relation',
-            label: 'Relation',
-            type: 'RELATION',
-            iconName: 'IconLink',
-            metadata: {
-              fieldName: 'Relation',
-            },
-          }}
-          entityId={entityId}
-        >
-          <RelationFieldValueSetterEffect value={value} />
-          <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
-        </FieldContextProvider>
-      </RelationPickerScope>
-      <div data-testid="data-field-input-click-outside-div" />
+      <ObjectMetadataItemsProvider>
+        <RelationPickerScope relationPickerScopeId="relation-picker">
+          <FieldContextProvider
+            fieldDefinition={{
+              fieldMetadataId: 'relation',
+              label: 'Relation',
+              type: 'RELATION',
+              iconName: 'IconLink',
+              metadata: {
+                fieldName: 'Relation',
+                relationObjectMetadataNamePlural: 'workspaceMembers',
+                relationObjectMetadataNameSingular: 'workspaceMember',
+              },
+            }}
+            entityId={entityId}
+          >
+            <RelationFieldValueSetterEffect value={value} />
+            <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
+          </FieldContextProvider>
+        </RelationPickerScope>
+        <div data-testid="data-field-input-click-outside-div" />
+      </ObjectMetadataItemsProvider>
     </div>
   );
 };
@@ -88,7 +94,7 @@ const meta: Meta = {
     onSubmit: { control: false },
     onCancel: { control: false },
   },
-  decorators: [clearMocksDecorator],
+  decorators: [SnackBarDecorator, clearMocksDecorator],
   parameters: {
     clearMocks: true,
     msw: graphqlMocks,
@@ -110,12 +116,12 @@ export const Submit: Story = {
 
     expect(submitJestFn).toHaveBeenCalledTimes(0);
 
-    // FIXME: Failing because the picker is not fetching any items
-    const item = await canvas.findByText('Jane Doe');
+    const item = await canvas.findByText('John Wick');
 
-    userEvent.click(item);
-
-    expect(submitJestFn).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      userEvent.click(item);
+      expect(submitJestFn).toHaveBeenCalledTimes(1);
+    });
   },
 };
 

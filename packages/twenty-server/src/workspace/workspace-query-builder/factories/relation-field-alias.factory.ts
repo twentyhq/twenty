@@ -104,12 +104,12 @@ export class RelationFieldAliasFactory {
         );
 
       return `
-      ${fieldKey}: ${referencedObjectMetadata.targetTableName}Collection${
+        ${fieldKey}: ${referencedObjectMetadata.targetTableName}Collection${
         argsString ? `(${argsString})` : ''
       } {
-        ${fieldsString}
-      }
-    `;
+          ${fieldsString}
+        }
+      `;
     }
     let relationAlias = fieldMetadata.isCustom
       ? `${fieldKey}: ${fieldMetadata.targetColumnMap.value}`

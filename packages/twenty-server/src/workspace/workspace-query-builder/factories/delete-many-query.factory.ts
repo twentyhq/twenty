@@ -24,7 +24,7 @@ export class DeleteManyQueryFactory {
       mutation {
         deleteFrom${
           options.targetTableName
-        }Collection(filter: ${stringifyWithoutKeyQuote(args.filter)}) {
+        }Collection(filter: ${stringifyWithoutKeyQuote(args.filter)}, atMost: 30) {
           affectedCount
           records {
             ${fieldsString}

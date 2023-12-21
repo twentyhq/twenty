@@ -4,7 +4,7 @@ import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/componen
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 const meta: Meta<typeof SettingsApiKeysFieldItemTableRow> = {
-  title: 'Pages/Settings/Developers/ApiKeys/SettingsApiKeysFieldItemTableRow',
+  title: 'Modules/Settings/Developers/ApiKeys/SettingsApiKeysFieldItemTableRow',
   component: SettingsApiKeysFieldItemTableRow,
   decorators: [ComponentDecorator],
   args: {

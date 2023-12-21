@@ -10,6 +10,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { useGenerateCreateManyRecordMutation } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
 import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
+import { useGenerateDeleteManyRecordMutation } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
 import { useGenerateExecuteQuickActionOnOneRecordMutation } from '@/object-record/hooks/useGenerateExecuteQuickActionOnOneRecordMutation';
 import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
@@ -107,6 +108,10 @@ export const useObjectMetadataItem = (
     objectMetadataItem,
   });
 
+  const deleteManyRecordsMutation = useGenerateDeleteManyRecordMutation({
+    objectMetadataItem,
+  });
+
   const executeQuickActionOnOneRecordMutation =
     useGenerateExecuteQuickActionOnOneRecordMutation({
       objectMetadataItem,
@@ -131,6 +136,7 @@ export const useObjectMetadataItem = (
     deleteOneRecordMutation,
     executeQuickActionOnOneRecordMutation,
     createManyRecordsMutation,
+    deleteManyRecordsMutation,
     mapToObjectRecordIdentifier,
     getObjectOrderByField,
   };

@@ -2,10 +2,22 @@ import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/
 import { FieldMetadataInterface } from 'src/metadata/field-metadata/interfaces/field-metadata.interface';
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { generateTargetColumnMap } from 'src/metadata/field-metadata/utils/generate-target-column-map.util';
 
 export const fullNameFields = (
   fieldMetadata?: FieldMetadataInterface,
 ): FieldMetadataInterface[] => {
+  const targetColumnMap = fieldMetadata
+    ? generateTargetColumnMap(
+        fieldMetadata.type,
+        fieldMetadata.isCustom ?? false,
+        fieldMetadata.name,
+      )
+    : {
+        firstName: 'firstName',
+        lastName: 'lastName',
+      };
+
   return [
     {
       id: 'firstName',
@@ -14,7 +26,7 @@ export const fullNameFields = (
       name: 'firstName',
       label: 'First Name',
       targetColumnMap: {
-        value: fieldMetadata ? `${fieldMetadata.name}FirstName` : 'firstName',
+        value: targetColumnMap.firstName,
       },
       isNullable: true,
     } satisfies FieldMetadataInterface,
@@ -25,7 +37,7 @@ export const fullNameFields = (
       name: 'lastName',
       label: 'Last Name',
       targetColumnMap: {
-        value: fieldMetadata ? `${fieldMetadata.name}LastName` : 'lastName',
+        value: targetColumnMap.lastName,
       },
       isNullable: true,
     } satisfies FieldMetadataInterface,

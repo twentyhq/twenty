@@ -4,7 +4,7 @@ import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
@@ -71,7 +71,7 @@ export const useRecordTableContextMenuEntries = (
     }
   });
 
-  const { deleteOneRecord } = useDeleteOneRecord({
+  const { deleteManyRecords } = useDeleteManyRecords({
     objectNameSingular,
   });
 
@@ -87,13 +87,9 @@ export const useRecordTableContextMenuEntries = (
           .getValue();
 
         resetTableRowSelection();
-        await Promise.all(
-          rowIdsToDelete.map(async (rowId) => {
-            await deleteOneRecord(rowId);
-          }),
-        );
+        await deleteManyRecords(rowIdsToDelete);
       },
-    [deleteOneRecord, resetTableRowSelection],
+    [deleteManyRecords, resetTableRowSelection],
   );
 
   const handleExecuteQuickActionOnClick = useRecoilCallback(

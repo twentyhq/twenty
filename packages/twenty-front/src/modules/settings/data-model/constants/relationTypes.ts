@@ -1,4 +1,4 @@
-import { IconRelationOneToMany, IconRelationOneToOne } from '@/ui/display/icon';
+import { IconLayersLinked, IconRelationOneToOne } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { RelationMetadataType } from '~/generated-metadata/graphql';
 
@@ -17,7 +17,7 @@ export const relationTypes: Record<
 > = {
   [RelationMetadataType.OneToMany]: {
     label: 'Has many',
-    Icon: IconRelationOneToMany,
+    Icon: IconLayersLinked,
     imageSrc: OneToManySvg,
   },
   [RelationMetadataType.OneToOne]: {
@@ -27,7 +27,7 @@ export const relationTypes: Record<
   },
   MANY_TO_ONE: {
     label: 'Belongs to one',
-    Icon: IconRelationOneToMany,
+    Icon: IconLayersLinked,
     imageSrc: OneToManySvg,
     isImageFlipped: true,
   },
