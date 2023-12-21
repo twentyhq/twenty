@@ -2,6 +2,7 @@ import { useApolloClient } from '@apollo/client';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { capitalize } from '~/utils/string/capitalize';
 
 type useUpdateOneRecordProps = {
@@ -25,37 +26,46 @@ export const useUpdateOneRecord = <T>({
 
   const updateOneRecord = async ({
     idToUpdate,
-    input,
+    updateOneRecordInput,
   }: {
     idToUpdate: string;
-    input: Record<string, any>;
-    forceRefetch?: boolean;
+    updateOneRecordInput: Record<string, unknown>;
   }) => {
     const cachedRecord = getRecordFromCache(idToUpdate);
 
+    const optimisticallyUpdatedRecord: Record<string, any> = {
+      ...(cachedRecord ?? {}),
+      ...updateOneRecordInput,
+    };
+
+    const sanitizedUpdateOneRecordInput = Object.fromEntries(
+      Object.keys(updateOneRecordInput)
+        .filter((fieldName) => {
+          const fieldDefinition = objectMetadataItem.fields.find(
+            (field) => field.name === fieldName,
+          );
+
+          return fieldDefinition?.type !== FieldMetadataType.Relation;
+        })
+        .map((fieldName) => [fieldName, updateOneRecordInput[fieldName]]),
+    );
+
     triggerOptimisticEffects({
       typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-      updatedRecords: [
-        {
-          ...(cachedRecord ?? {}),
-          ...input,
-        },
-      ],
+      updatedRecords: [optimisticallyUpdatedRecord],
     });
 
     const updatedRecord = await apolloClient.mutate({
       mutation: updateOneRecordMutation,
       variables: {
-        idToUpdate: idToUpdate,
+        idToUpdate,
         input: {
-          ...input,
+          ...sanitizedUpdateOneRecordInput,
         },
       },
       optimisticResponse: {
-        [`update${capitalize(objectMetadataItem.nameSingular)}`]: {
-          ...(cachedRecord ?? {}),
-          ...input,
-        },
+        [`update${capitalize(objectMetadataItem.nameSingular)}`]:
+          optimisticallyUpdatedRecord,
       },
     });
 

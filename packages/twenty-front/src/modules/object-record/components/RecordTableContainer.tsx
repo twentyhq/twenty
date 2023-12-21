@@ -4,6 +4,7 @@ import { useSpreadsheetCompanyImport } from '@/companies/hooks/useSpreadsheetCom
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { RecordUpdateHookParams } from '@/object-record/field/contexts/FieldContext';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordTable } from '@/object-record/record-table/components/RecordTable';
 import { TableOptionsDropdownId } from '@/object-record/record-table/constants/TableOptionsDropdownId';
@@ -57,19 +58,10 @@ export const RecordTableContainer = ({
     recordTableScopeId: recordTableId,
   });
 
-  const updateEntity = ({
-    variables,
-  }: {
-    variables: {
-      where: { id: string };
-      data: {
-        [fieldName: string]: any;
-      };
-    };
-  }) => {
+  const updateEntity = ({ variables }: RecordUpdateHookParams) => {
     updateOneRecord?.({
-      idToUpdate: variables.where.id,
-      input: variables.data,
+      idToUpdate: variables.where.id as string,
+      updateOneRecordInput: variables.updateOneRecordInput,
     });
   };
 
@@ -111,14 +103,12 @@ export const RecordTableContainer = ({
         />
       </SpreadsheetImportProvider>
       <RecordTableEffect recordTableId={recordTableId} viewBarId={viewBarId} />
-      {
-        <RecordTable
-          recordTableId={recordTableId}
-          viewBarId={viewBarId}
-          updateRecordMutation={updateEntity}
-          createRecord={createRecord}
-        />
-      }
+      <RecordTable
+        recordTableId={recordTableId}
+        viewBarId={viewBarId}
+        updateRecordMutation={updateEntity}
+        createRecord={createRecord}
+      />
     </StyledContainer>
   );
 };

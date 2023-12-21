@@ -65,7 +65,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
   const deleteIntegration = async (redirect = true) => {
     await updateApiKey?.({
       idToUpdate: apiKeyId,
-      input: { revokedAt: DateTime.now().toString() },
+      updateOneRecordInput: { revokedAt: DateTime.now().toString() },
     });
     performOptimisticEvict('ApiKey', 'id', apiKeyId);
     if (redirect) {

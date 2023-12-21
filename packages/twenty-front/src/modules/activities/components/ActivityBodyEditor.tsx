@@ -42,7 +42,7 @@ export const ActivityBodyEditor = ({
       setBody(activityBody);
       updateOneRecord?.({
         idToUpdate: activity.id,
-        input: {
+        updateOneRecordInput: {
           body: activityBody,
         },
       });

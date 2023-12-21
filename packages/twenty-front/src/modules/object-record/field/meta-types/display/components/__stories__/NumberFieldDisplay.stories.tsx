@@ -37,7 +37,7 @@ const meta: Meta = {
             },
           },
           hotkeyScope: 'hotkey-scope',
-          useUpdateEntityMutation: () => [() => undefined, undefined],
+          useUpdateRecord: () => [() => undefined, {}],
         }}
       >
         <NumberFieldValueSetterEffect value={args.value} />
