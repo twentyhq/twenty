@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Avatar } from '@/users/components/Avatar';
-import { TimelineMessage } from '~/generated/graphql';
+import { TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils';
 
 const StyledCardContent = styled(CardContent)`
@@ -78,7 +78,7 @@ const StyledReceivedAt = styled.div`
 
 type EmailPreviewProps = {
   divider?: boolean;
-  email: TimelineMessage;
+  email: TimelineThread;
 };
 
 export const EmailPreview = ({ divider, email }: EmailPreviewProps) => (

@@ -350,8 +350,8 @@ export type Query = {
   currentUser: User;
   currentWorkspace: Workspace;
   findWorkspaceFromInviteHash: Workspace;
-  getTimelineMessagesFromCompanyId: Array<TimelineMessage>;
-  getTimelineMessagesFromPersonId: Array<TimelineMessage>;
+  getTimelineThreadsFromCompanyId: Array<TimelineThread>;
+  getTimelineThreadsFromPersonId: Array<TimelineThread>;
   object: Object;
   objects: ObjectConnection;
 };
@@ -372,12 +372,12 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 };
 
 
-export type QueryGetTimelineMessagesFromCompanyIdArgs = {
+export type QueryGetTimelineThreadsFromCompanyIdArgs = {
   companyId: Scalars['String'];
 };
 
 
-export type QueryGetTimelineMessagesFromPersonIdArgs = {
+export type QueryGetTimelineThreadsFromPersonIdArgs = {
   personId: Scalars['String'];
 };
 
@@ -450,8 +450,8 @@ export type Telemetry = {
   enabled: Scalars['Boolean'];
 };
 
-export type TimelineMessage = {
-  __typename?: 'TimelineMessage';
+export type TimelineThread = {
+  __typename?: 'TimelineThread';
   body?: Maybe<Scalars['String']>;
   numberOfMessagesInThread: Scalars['Float'];
   read: Scalars['Boolean'];
@@ -653,19 +653,19 @@ export type RelationEdge = {
   node: Relation;
 };
 
-export type GetTimelineMessagesFromPersonIdQueryVariables = Exact<{
-  personId: Scalars['String'];
-}>;
-
-
-export type GetTimelineMessagesFromPersonIdQuery = { __typename?: 'Query', getTimelineMessagesFromPersonId: Array<{ __typename?: 'TimelineMessage', body?: string | null, numberOfMessagesInThread: number, read: boolean, receivedAt: string, senderName: string, senderPictureUrl?: string | null, subject?: string | null }> };
-
-export type GetTimelineMessagesFromCompanyIdQueryVariables = Exact<{
+export type GetTimelineThreadsFromCompanyIdQueryVariables = Exact<{
   companyId: Scalars['String'];
 }>;
 
 
-export type GetTimelineMessagesFromCompanyIdQuery = { __typename?: 'Query', getTimelineMessagesFromCompanyId: Array<{ __typename?: 'TimelineMessage', body?: string | null, numberOfMessagesInThread: number, read: boolean, receivedAt: string, senderName: string, senderPictureUrl?: string | null, subject?: string | null }> };
+export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: Array<{ __typename?: 'TimelineThread', body?: string | null, numberOfMessagesInThread: number, read: boolean, receivedAt: string, senderName: string, senderPictureUrl?: string | null, subject?: string | null }> };
+
+export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
+  personId: Scalars['String'];
+}>;
+
+
+export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: Array<{ __typename?: 'TimelineThread', body?: string | null, numberOfMessagesInThread: number, read: boolean, receivedAt: string, senderName: string, senderPictureUrl?: string | null, subject?: string | null }> };
 
 export type CreateEventMutationVariables = Exact<{
   type: Scalars['String'];
@@ -854,9 +854,9 @@ export const UserQueryFragmentFragmentDoc = gql`
   }
 }
     `;
-export const GetTimelineMessagesFromPersonIdDocument = gql`
-    query GetTimelineMessagesFromPersonId($personId: String!) {
-  getTimelineMessagesFromPersonId(personId: $personId) {
+export const GetTimelineThreadsFromCompanyIdDocument = gql`
+    query GetTimelineThreadsFromCompanyId($companyId: String!) {
+  getTimelineThreadsFromCompanyId(companyId: $companyId) {
     body
     numberOfMessagesInThread
     read
@@ -869,73 +869,73 @@ export const GetTimelineMessagesFromPersonIdDocument = gql`
     `;
 
 /**
- * __useGetTimelineMessagesFromPersonIdQuery__
+ * __useGetTimelineThreadsFromCompanyIdQuery__
  *
- * To run a query within a React component, call `useGetTimelineMessagesFromPersonIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetTimelineMessagesFromPersonIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetTimelineThreadsFromCompanyIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTimelineThreadsFromCompanyIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetTimelineMessagesFromPersonIdQuery({
- *   variables: {
- *      personId: // value for 'personId'
- *   },
- * });
- */
-export function useGetTimelineMessagesFromPersonIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineMessagesFromPersonIdQuery, GetTimelineMessagesFromPersonIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTimelineMessagesFromPersonIdQuery, GetTimelineMessagesFromPersonIdQueryVariables>(GetTimelineMessagesFromPersonIdDocument, options);
-      }
-export function useGetTimelineMessagesFromPersonIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineMessagesFromPersonIdQuery, GetTimelineMessagesFromPersonIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTimelineMessagesFromPersonIdQuery, GetTimelineMessagesFromPersonIdQueryVariables>(GetTimelineMessagesFromPersonIdDocument, options);
-        }
-export type GetTimelineMessagesFromPersonIdQueryHookResult = ReturnType<typeof useGetTimelineMessagesFromPersonIdQuery>;
-export type GetTimelineMessagesFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineMessagesFromPersonIdLazyQuery>;
-export type GetTimelineMessagesFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineMessagesFromPersonIdQuery, GetTimelineMessagesFromPersonIdQueryVariables>;
-export const GetTimelineMessagesFromCompanyIdDocument = gql`
-    query GetTimelineMessagesFromCompanyId($companyId: String!) {
-  getTimelineMessagesFromCompanyId(companyId: $companyId) {
-    body
-    numberOfMessagesInThread
-    read
-    receivedAt
-    senderName
-    senderPictureUrl
-    subject
-  }
-}
-    `;
-
-/**
- * __useGetTimelineMessagesFromCompanyIdQuery__
- *
- * To run a query within a React component, call `useGetTimelineMessagesFromCompanyIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetTimelineMessagesFromCompanyIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetTimelineMessagesFromCompanyIdQuery({
+ * const { data, loading, error } = useGetTimelineThreadsFromCompanyIdQuery({
  *   variables: {
  *      companyId: // value for 'companyId'
  *   },
  * });
  */
-export function useGetTimelineMessagesFromCompanyIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineMessagesFromCompanyIdQuery, GetTimelineMessagesFromCompanyIdQueryVariables>) {
+export function useGetTimelineThreadsFromCompanyIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTimelineMessagesFromCompanyIdQuery, GetTimelineMessagesFromCompanyIdQueryVariables>(GetTimelineMessagesFromCompanyIdDocument, options);
+        return Apollo.useQuery<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>(GetTimelineThreadsFromCompanyIdDocument, options);
       }
-export function useGetTimelineMessagesFromCompanyIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineMessagesFromCompanyIdQuery, GetTimelineMessagesFromCompanyIdQueryVariables>) {
+export function useGetTimelineThreadsFromCompanyIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTimelineMessagesFromCompanyIdQuery, GetTimelineMessagesFromCompanyIdQueryVariables>(GetTimelineMessagesFromCompanyIdDocument, options);
+          return Apollo.useLazyQuery<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>(GetTimelineThreadsFromCompanyIdDocument, options);
         }
-export type GetTimelineMessagesFromCompanyIdQueryHookResult = ReturnType<typeof useGetTimelineMessagesFromCompanyIdQuery>;
-export type GetTimelineMessagesFromCompanyIdLazyQueryHookResult = ReturnType<typeof useGetTimelineMessagesFromCompanyIdLazyQuery>;
-export type GetTimelineMessagesFromCompanyIdQueryResult = Apollo.QueryResult<GetTimelineMessagesFromCompanyIdQuery, GetTimelineMessagesFromCompanyIdQueryVariables>;
+export type GetTimelineThreadsFromCompanyIdQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromCompanyIdQuery>;
+export type GetTimelineThreadsFromCompanyIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromCompanyIdLazyQuery>;
+export type GetTimelineThreadsFromCompanyIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>;
+export const GetTimelineThreadsFromPersonIdDocument = gql`
+    query GetTimelineThreadsFromPersonId($personId: String!) {
+  getTimelineThreadsFromPersonId(personId: $personId) {
+    body
+    numberOfMessagesInThread
+    read
+    receivedAt
+    senderName
+    senderPictureUrl
+    subject
+  }
+}
+    `;
+
+/**
+ * __useGetTimelineThreadsFromPersonIdQuery__
+ *
+ * To run a query within a React component, call `useGetTimelineThreadsFromPersonIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTimelineThreadsFromPersonIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTimelineThreadsFromPersonIdQuery({
+ *   variables: {
+ *      personId: // value for 'personId'
+ *   },
+ * });
+ */
+export function useGetTimelineThreadsFromPersonIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>(GetTimelineThreadsFromPersonIdDocument, options);
+      }
+export function useGetTimelineThreadsFromPersonIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>(GetTimelineThreadsFromPersonIdDocument, options);
+        }
+export type GetTimelineThreadsFromPersonIdQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdQuery>;
+export type GetTimelineThreadsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdLazyQuery>;
+export type GetTimelineThreadsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>;
 export const CreateEventDocument = gql`
     mutation CreateEvent($type: String!, $data: JSON!) {
   createEvent(type: $type, data: $data) {

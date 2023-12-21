@@ -8,9 +8,9 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { TimelineMessagingService } from 'src/core/messaging/timeline-messaging.service';
 
-@Entity({ name: 'timelineMessage', schema: 'core' })
-@ObjectType('TimelineMessage')
-class TimelineMessage {
+@Entity({ name: 'timelineThread', schema: 'core' })
+@ObjectType('TimelineThread')
+class TimelineThread {
   @Field()
   @Column()
   read: boolean;
@@ -41,37 +41,37 @@ class TimelineMessage {
 }
 
 @UseGuards(JwtAuthGuard)
-@Resolver(() => [TimelineMessage])
+@Resolver(() => [TimelineThread])
 export class TimelineMessagingResolver {
   constructor(
     private readonly timelineMessagingService: TimelineMessagingService,
   ) {}
 
-  @Query(() => [TimelineMessage])
-  async getTimelineMessagesFromPersonId(
+  @Query(() => [TimelineThread])
+  async getTimelineThreadsFromPersonId(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('personId') personId: string,
   ) {
-    const timelineMessages =
+    const timelineThreads =
       await this.timelineMessagingService.getMessagesFromPersonIds(
         workspaceId,
         [personId],
       );
 
-    return timelineMessages;
+    return timelineThreads;
   }
 
-  @Query(() => [TimelineMessage])
-  async getTimelineMessagesFromCompanyId(
+  @Query(() => [TimelineThread])
+  async getTimelineThreadsFromCompanyId(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('companyId') companyId: string,
   ) {
-    const timelineMessages =
+    const timelineThreads =
       await this.timelineMessagingService.getMessagesFromCompanyId(
         workspaceId,
         companyId,
       );
 
-    return timelineMessages;
+    return timelineThreads;
   }
 }

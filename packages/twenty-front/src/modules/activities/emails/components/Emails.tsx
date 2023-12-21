@@ -1,8 +1,8 @@
 import { useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
 
-import { getTimelineMessagesFromCompanyId } from '@/activities/emails/queries/getTimelineMessagesFromCompanyId';
-import { getTimelineMessagesFromPersonId } from '@/activities/emails/queries/getTimelineMessagesFromPersonId';
+import { getTimelineThreadsFromCompanyId } from '@/activities/emails/queries/getTimelineThreadsFromCompanyId';
+import { getTimelineThreadsFromPersonId } from '@/activities/emails/queries/getTimelineThreadsFromPersonId';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import {
   H1Title,
@@ -10,7 +10,7 @@ import {
 } from '@/ui/display/typography/components/H1Title';
 import { Card } from '@/ui/layout/card/components/Card';
 import { Section } from '@/ui/layout/section/components/Section';
-import { TimelineMessage } from '~/generated/graphql';
+import { TimelineThread } from '~/generated/graphql';
 
 import { EmailPreview } from './EmailPreview';
 
@@ -33,8 +33,8 @@ const StyledEmailCount = styled.span`
 export const Emails = ({ entity }: { entity: ActivityTargetableEntity }) => {
   const emailQuery =
     entity.type === 'Person'
-      ? getTimelineMessagesFromPersonId
-      : getTimelineMessagesFromCompanyId;
+      ? getTimelineThreadsFromPersonId
+      : getTimelineThreadsFromCompanyId;
 
   const variables =
     entity.type === 'Person'
@@ -49,11 +49,11 @@ export const Emails = ({ entity }: { entity: ActivityTargetableEntity }) => {
     return;
   }
 
-  const timelineMessages: TimelineMessage[] =
+  const timelineThreads: TimelineThread[] =
     messages.data[
       entity.type === 'Person'
-        ? 'getTimelineMessagesFromPersonId'
-        : 'getTimelineMessagesFromCompanyId'
+        ? 'getTimelineThreadsFromPersonId'
+        : 'getTimelineThreadsFromCompanyId'
     ];
 
   return (
@@ -63,16 +63,16 @@ export const Emails = ({ entity }: { entity: ActivityTargetableEntity }) => {
           title={
             <>
               Inbox{' '}
-              <StyledEmailCount>{timelineMessages.length}</StyledEmailCount>
+              <StyledEmailCount>{timelineThreads.length}</StyledEmailCount>
             </>
           }
           fontColor={H1TitleFontColor.Primary}
         />
         <Card>
-          {timelineMessages.map((message: TimelineMessage, index: number) => (
+          {timelineThreads.map((message: TimelineThread, index: number) => (
             <EmailPreview
               key={index}
-              divider={index < timelineMessages.length - 1}
+              divider={index < timelineThreads.length - 1}
               email={message}
             />
           ))}
