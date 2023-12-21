@@ -28,7 +28,6 @@ export const ActivityBodyEditor = ({
   const [body, setBody] = useState<string | null>(null);
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: 'activity',
-    refetchFindManyQuery: true,
   });
 
   useEffect(() => {
