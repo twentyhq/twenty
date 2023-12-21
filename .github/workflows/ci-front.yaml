@@ -108,12 +108,12 @@ jobs:
         run: cd packages/twenty-front && npx playwright install
       - name: Build Storybook
         run: yarn nx storybook:modules:build --quiet twenty-front
-      # - name: Run storybook tests
-      #   run: |
-      #     cd packages/twenty-front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
-      #       "npx http-server storybook-static --silent --port 6006" \
-      #       "yarn storybook:modules:coverage"
-  front-lint:
+      - name: Run storybook tests
+        run: |
+          cd packages/twenty-front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
+            "npx http-server storybook-static --silent --port 6006" \
+            "yarn storybook:modules:coverage"
+  front-lint-tsc:
     needs: front-yarn-install
     runs-on: ubuntu-latest
     env:
