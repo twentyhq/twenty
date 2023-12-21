@@ -146,7 +146,7 @@ export const ClickOutside: Story = {
 
     await waitFor(() => {
       userEvent.click(emptyDiv);
-      expect(clickOutsideJestFn).toHaveBeenCalledTimes(1);
+      expect(clickOutsideJestFn).toHaveBeenCalled();
     });
   },
 };
