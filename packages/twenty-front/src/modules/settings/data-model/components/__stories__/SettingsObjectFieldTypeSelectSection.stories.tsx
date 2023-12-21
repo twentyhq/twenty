@@ -1,7 +1,9 @@
 import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
+import { useRecoilValue } from 'recoil';
 
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import {
@@ -31,6 +33,11 @@ const meta: Meta<typeof SettingsObjectFieldTypeSelectSection> = {
   title: 'Modules/Settings/DataModel/SettingsObjectFieldTypeSelectSection',
   component: SettingsObjectFieldTypeSelectSection,
   decorators: [
+    (Story) => {
+      // wait for metadata
+      const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+      return objectMetadataItems.length ? <Story /> : <></>;
+    },
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     (Story) => (
@@ -67,8 +74,14 @@ export const WithOpenSelect: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    const inputField = await canvas.findByText('Text');
+
+    await userEvent.click(inputField);
+
     const input = await canvas.findByText('Unique ID');
     await userEvent.click(input);
+
+    await userEvent.click(inputField);
 
     const selectLabel = canvas.getByText('Number');
 
