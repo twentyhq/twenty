@@ -21,6 +21,9 @@ export const GET_CLIENT_CONFIG = gql`
         supportDriver
         supportFrontChatId
       }
+      sentry {
+        dsn
+      }
     }
   }
 `;

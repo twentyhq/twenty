@@ -40,6 +40,12 @@ class Support {
 }
 
 @ObjectType()
+class Sentry {
+  @Field(() => String)
+  dsn: string | undefined;
+}
+
+@ObjectType()
 export class ClientConfig {
   @Field(() => AuthProviders, { nullable: false })
   authProviders: AuthProviders;
@@ -58,4 +64,7 @@ export class ClientConfig {
 
   @Field(() => Support)
   support: Support;
+
+  @Field(() => Sentry)
+  sentry: Sentry;
 }

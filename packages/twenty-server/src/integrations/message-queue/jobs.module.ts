@@ -1,6 +1,7 @@
-import { Module } from "@nestjs/common";
-import { ModuleRef } from "@nestjs/core";
-import { FetchMessagesJob } from "src/workspace/messaging/jobs/fetch-messages.job";
+import { Module } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
+
+import { FetchMessagesJob } from 'src/workspace/messaging/jobs/fetch-messages.job';
 
 @Module({
   providers: [
