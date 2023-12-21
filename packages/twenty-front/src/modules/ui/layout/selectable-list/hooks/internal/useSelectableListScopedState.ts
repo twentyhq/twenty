@@ -17,7 +17,6 @@ export const useSelectableListScopedState = ({
   const {
     getScopedState,
     getScopedFamilyState,
-
     getScopedSnapshotValue,
     getScopedFamilySnapshotValue,
   } = useScopedState(scopeId);
