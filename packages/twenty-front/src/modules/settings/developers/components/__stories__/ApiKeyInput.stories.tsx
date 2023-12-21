@@ -5,7 +5,7 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const meta: Meta<typeof ApiKeyInput> = {
-  title: 'Pages/Settings/Developers/ApiKeys/ApiKeyInput',
+  title: 'Modules/Settings/Developers/ApiKeys/ApiKeyInput',
   component: ApiKeyInput,
   decorators: [ComponentDecorator, SnackBarDecorator],
   args: {
