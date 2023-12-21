@@ -62,7 +62,12 @@ export class WorkspaceQueryRunnerService {
 
       return this.parseResult<IConnection<Record>>(result, targetTableName, '');
     } catch (exception) {
-      globalExceptionHandler(exception, this.exceptionHandlerService);
+      const error = globalExceptionHandler(
+        exception,
+        this.exceptionHandlerService,
+      );
+
+      return Promise.reject(error);
     }
   }
 
@@ -91,7 +96,12 @@ export class WorkspaceQueryRunnerService {
 
       return parsedResult?.edges?.[0]?.node;
     } catch (exception) {
-      globalExceptionHandler(exception, this.exceptionHandlerService);
+      const error = globalExceptionHandler(
+        exception,
+        this.exceptionHandlerService,
+      );
+
+      return Promise.reject(error);
     }
   }
 
@@ -113,7 +123,12 @@ export class WorkspaceQueryRunnerService {
         'insertInto',
       )?.records;
     } catch (exception) {
-      globalExceptionHandler(exception, this.exceptionHandlerService);
+      const error = globalExceptionHandler(
+        exception,
+        this.exceptionHandlerService,
+      );
+
+      return Promise.reject(error);
     }
   }
 
@@ -121,13 +136,9 @@ export class WorkspaceQueryRunnerService {
     args: CreateOneResolverArgs<Record>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
-    try {
-      const records = await this.createMany({ data: [args.data] }, options);
+    const records = await this.createMany({ data: [args.data] }, options);
 
-      return records?.[0];
-    } catch (exception) {
-      globalExceptionHandler(exception, this.exceptionHandlerService);
-    }
+    return records?.[0];
   }
 
   async updateOne<Record extends IRecord = IRecord>(
@@ -148,7 +159,12 @@ export class WorkspaceQueryRunnerService {
         'update',
       )?.records?.[0];
     } catch (exception) {
-      globalExceptionHandler(exception, this.exceptionHandlerService);
+      const error = globalExceptionHandler(
+        exception,
+        this.exceptionHandlerService,
+      );
+
+      return Promise.reject(error);
     }
   }
 
@@ -170,7 +186,12 @@ export class WorkspaceQueryRunnerService {
         'deleteFrom',
       )?.records?.[0];
     } catch (exception) {
-      globalExceptionHandler(exception, this.exceptionHandlerService);
+      const error = globalExceptionHandler(
+        exception,
+        this.exceptionHandlerService,
+      );
+
+      return Promise.reject(error);
     }
   }
 
@@ -192,7 +213,12 @@ export class WorkspaceQueryRunnerService {
         'update',
       )?.records;
     } catch (exception) {
-      globalExceptionHandler(exception, this.exceptionHandlerService);
+      const error = globalExceptionHandler(
+        exception,
+        this.exceptionHandlerService,
+      );
+
+      return Promise.reject(error);
     }
   }
 
@@ -217,7 +243,12 @@ export class WorkspaceQueryRunnerService {
         'deleteFrom',
       )?.records;
     } catch (exception) {
-      globalExceptionHandler(exception, this.exceptionHandlerService);
+      const error = globalExceptionHandler(
+        exception,
+        this.exceptionHandlerService,
+      );
+
+      return Promise.reject(error);
     }
   }
 
