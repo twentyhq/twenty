@@ -1,6 +1,8 @@
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import styled from '@emotion/styled';
 
+import { getTimelineMessagesFromCompanyId } from '@/activities/emails/queries/getTimelineMessagesFromCompanyId';
+import { getTimelineMessagesFromPersonId } from '@/activities/emails/queries/getTimelineMessagesFromPersonId';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
 import {
   H1Title,
@@ -31,32 +33,8 @@ const StyledEmailCount = styled.span`
 export const Emails = ({ entity }: { entity: ActivityTargetableEntity }) => {
   const emailQuery =
     entity.type === 'Person'
-      ? gql`
-          query GetTimelineMessagesFromPersonId($personId: String!) {
-            getTimelineMessagesFromPersonId(personId: $personId) {
-              body
-              numberOfMessagesInThread
-              read
-              receivedAt
-              senderName
-              senderPictureUrl
-              subject
-            }
-          }
-        `
-      : gql`
-          query GetTimelineMessagesFromCompanyId($companyId: String!) {
-            getTimelineMessagesFromCompanyId(companyId: $companyId) {
-              body
-              numberOfMessagesInThread
-              read
-              receivedAt
-              senderName
-              senderPictureUrl
-              subject
-            }
-          }
-        `;
+      ? getTimelineMessagesFromPersonId
+      : getTimelineMessagesFromCompanyId;
 
   const variables =
     entity.type === 'Person'
