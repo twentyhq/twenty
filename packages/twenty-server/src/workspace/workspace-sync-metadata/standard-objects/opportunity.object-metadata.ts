@@ -1,10 +1,8 @@
 import { CurrencyMetadata } from 'src/metadata/field-metadata/composite-types/currency.composite-type';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-import {
-  ObjectMetadata,
-  FieldMetadata,
-  IsNullable,
-} from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
+import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
+import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
+import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
 import { PersonObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/person.object-metadata';

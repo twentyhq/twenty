@@ -22,7 +22,7 @@ import { FileUploadService } from 'src/core/file/services/file-upload.service';
 import { assert } from 'src/utils/assert';
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { User } from 'src/core/user/user.entity';
-import { UserWorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
+import { WorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
 
 import { UserService } from './services/user.service';
 
@@ -54,10 +54,10 @@ export class UserResolver {
     return user;
   }
 
-  @ResolveField(() => UserWorkspaceMember, {
+  @ResolveField(() => WorkspaceMember, {
     nullable: false,
   })
-  async workspaceMember(@Parent() user: User): Promise<UserWorkspaceMember> {
+  async workspaceMember(@Parent() user: User): Promise<WorkspaceMember> {
     return this.userService.loadWorkspaceMember(user);
   }
 

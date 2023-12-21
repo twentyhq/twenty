@@ -8,6 +8,7 @@ import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-
 import { WorkspaceMigrationEntity } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationModule } from 'src/metadata/workspace-migration/workspace-migration.module';
 import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.module';
+import { ReflectiveMetadataFactory } from 'src/workspace/workspace-sync-metadata/reflective-metadata.factory';
 import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync.metadata.service';
 
 @Module({
@@ -25,7 +26,7 @@ import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metad
     ),
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
   ],
+  providers: [WorkspaceSyncMetadataService, ReflectiveMetadataFactory],
   exports: [WorkspaceSyncMetadataService],
-  providers: [WorkspaceSyncMetadataService],
 })
 export class WorkspaceSyncMetadataModule {}

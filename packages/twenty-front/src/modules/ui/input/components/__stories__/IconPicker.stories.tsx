@@ -43,6 +43,7 @@ export const WithOpenAndSelectedIcon: Story = {
 };
 
 export const WithSearch: Story = {
+  args: { selectedIconKey: 'IconBuildingSkyscraper' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -65,6 +66,7 @@ export const WithSearch: Story = {
 };
 
 export const WithSearchAndClose: Story = {
+  args: { selectedIconKey: 'IconBuildingSkyscraper' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

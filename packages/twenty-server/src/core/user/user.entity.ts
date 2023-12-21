@@ -13,7 +13,7 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
-import { UserWorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
+import { WorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
 
 @Entity({ name: 'user', schema: 'core' })
 @ObjectType('User')
@@ -73,6 +73,6 @@ export class User {
   })
   refreshTokens: RefreshToken[];
 
-  @Field(() => UserWorkspaceMember, { nullable: false })
-  workspaceMember: UserWorkspaceMember;
+  @Field(() => WorkspaceMember, { nullable: false })
+  workspaceMember: WorkspaceMember;
 }
