@@ -18,19 +18,12 @@ export const getSelectableListScopedStates = ({
     itemId: itemId ?? UNDEFINED_SELECTABLE_ITEM_ID,
   });
 
-  const selectedItemIdState = getScopedState(
-    selectedItemIdScopedState,
-    selectableListScopeId,
-  );
+  const selectedItemIdState = getScopedState(selectedItemIdScopedState);
 
-  const selectableItemIdsState = getScopedState(
-    selectableItemIdsScopedState,
-    selectableListScopeId,
-  );
+  const selectableItemIdsState = getScopedState(selectableItemIdsScopedState);
 
   const selectableListOnEnterState = getScopedState(
     selectableListOnEnterScopedState,
-    selectableListScopeId,
   );
 
   return {

@@ -1,7 +1,7 @@
 import { useRecoilState } from 'recoil';
 
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
+import { getScopedStateDeprecated } from '@/ui/utilities/recoil-scope/utils/getScopedStateDeprecated';
 
 import { UNDEFINED_FAMILY_ITEM_ID } from '../../constants';
 import { ViewScopeInternalContext } from '../../scopes/scope-internal-context/ViewScopeInternalContext';
@@ -18,7 +18,7 @@ export const useViewScopedStates = (args?: { viewScopeId?: string }) => {
 
   // View
   const [currentViewId] = useRecoilState(
-    getScopedState(currentViewIdScopedState, scopeId),
+    getScopedStateDeprecated(currentViewIdScopedState, scopeId),
   );
 
   const viewId = currentViewId ?? UNDEFINED_FAMILY_ITEM_ID;

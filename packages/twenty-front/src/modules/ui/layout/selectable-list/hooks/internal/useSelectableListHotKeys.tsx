@@ -34,10 +34,13 @@ export const useSelectableListHotKeys = (
           getSelectableListScopedStates({
             selectableListScopeId: scopeId,
           });
-        const selectedItemId = getSnapshotValue(snapshot, selectedItemIdState);
+        const selectedItemId = getSnapshotValue(
+          snapshot,
+          selectedItemIdState(scopeId),
+        );
         const selectableItemIds = getSnapshotValue(
           snapshot,
-          selectableItemIdsState,
+          selectableItemIdsState(scopeId),
         );
 
         const currentPosition = findPosition(selectableItemIds, selectedItemId);
@@ -102,7 +105,7 @@ export const useSelectableListHotKeys = (
               itemId: nextId,
             });
             set(isSelectedItemIdSelector, true);
-            set(selectedItemIdState, nextId);
+            set(selectedItemIdState(scopeId), nextId);
           }
 
           if (selectedItemId) {
@@ -141,12 +144,12 @@ export const useSelectableListHotKeys = (
             });
           const selectedItemId = getSnapshotValue(
             snapshot,
-            selectedItemIdState,
+            selectedItemIdState(scopeId),
           );
 
           const onEnter = getSnapshotValue(
             snapshot,
-            selectableListOnEnterState,
+            selectableListOnEnterState(scopeId),
           );
 
           if (selectedItemId) {

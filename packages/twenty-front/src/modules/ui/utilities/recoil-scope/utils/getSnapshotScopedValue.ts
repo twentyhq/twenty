@@ -2,12 +2,14 @@ import { Snapshot } from 'recoil';
 
 import { RecoilScopedState } from '../types/RecoilScopedState';
 
-import { getScopedState } from './getScopedState';
+import { getScopedStateDeprecated } from './getScopedStateDeprecated';
 
 export const getSnapshotScopedValue = <StateType>(
   snapshot: Snapshot,
   scopedState: RecoilScopedState<StateType>,
   scopeId: string,
 ) => {
-  return snapshot.getLoadable(getScopedState(scopedState, scopeId)).getValue();
+  return snapshot
+    .getLoadable(getScopedStateDeprecated(scopedState, scopeId))
+    .getValue();
 };
