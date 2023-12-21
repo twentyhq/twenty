@@ -32,9 +32,6 @@ export class DataSourceEntity {
   @Column({ default: false })
   isRemote: boolean;
 
-  // @Column({ default: false })
-  // isSystem: boolean;
-
   @OneToMany(() => ObjectMetadataEntity, (object) => object.dataSource, {
     cascade: true,
   })

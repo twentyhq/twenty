@@ -288,49 +288,26 @@ export class WorkspaceMigrationRunnerService {
     tableName: string,
     migrationColumn: WorkspaceMigrationColumnRelation,
   ) {
-    if (
-      !migrationColumn.referencedSchema ||
-      migrationColumn.referencedSchema === schemaName
-    ) {
-      // We can only create a foreign key if the tables are on the same schema
-      await queryRunner.createForeignKey(
+    await queryRunner.createForeignKey(
+      `${schemaName}.${tableName}`,
+      new TableForeignKey({
+        columnNames: [migrationColumn.columnName],
+        referencedColumnNames: [migrationColumn.referencedTableColumnName],
+        referencedSchema: migrationColumn.referencedSchema,
+        referencedTableName: migrationColumn.referencedTableName,
+        onDelete: 'CASCADE',
+      }),
+    );
+
+    // Create unique constraint if for one to one relation
+    if (migrationColumn.isUnique) {
+      await queryRunner.createUniqueConstraint(
         `${schemaName}.${tableName}`,
-        new TableForeignKey({
+        new TableUnique({
+          name: `UNIQUE_${tableName}_${migrationColumn.columnName}`,
           columnNames: [migrationColumn.columnName],
-          referencedColumnNames: [migrationColumn.referencedTableColumnName],
-          referencedSchema: migrationColumn.referencedSchema,
-          referencedTableName: migrationColumn.referencedTableName,
-          onDelete: 'CASCADE',
         }),
       );
-
-      // Create unique constraint if for one to one relation
-      if (migrationColumn.isUnique) {
-        await queryRunner.createUniqueConstraint(
-          `${schemaName}.${tableName}`,
-          new TableUnique({
-            name: `UNIQUE_${tableName}_${migrationColumn.columnName}`,
-            columnNames: [migrationColumn.columnName],
-          }),
-        );
-      }
-    } else {
-      await queryRunner.query(`
-        COMMENT ON TABLE "${migrationColumn.referencedSchema}"."${migrationColumn.referencedTableName}" is e'@graphql({"primary_key_columns": ["id"]})';
-      `);
-      await queryRunner.query(`
-        COMMENT ON TABLE "${schemaName}"."${tableName}" is e'
-          @graphql({
-              "foreign_keys": [
-                {
-                  "local_columns": ["${migrationColumn.columnName}"],
-                  "foreign_schema": "${migrationColumn.referencedSchema}",
-                  "foreign_table": "${migrationColumn.referencedTableName}",
-                  "foreign_columns": ["${migrationColumn.referencedTableColumnName}"]
-                }
-              ]
-          })';
-      `);
     }
   }
 }
