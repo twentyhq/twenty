@@ -17,15 +17,12 @@ export class FetchWorkspaceMessagesService {
     private readonly fetchBatchMessagesService: FetchBatchMessagesService,
   ) {}
 
-  async fetchWorkspaceThreads(workspaceId: string): Promise<any> {
-    return await this.fetchWorkspaceMemberThreads(
+  async fetchWorkspaceMessages(workspaceId: string): Promise<any> {
+    await this.fetchWorkspaceMemberThreads(
       workspaceId,
       '20202020-0687-4c41-b707-ed1bfca972a7',
     );
-  }
-
-  async fetchWorkspaceMessages(workspaceId: string): Promise<any> {
-    return await this.fetchWorkspaceMemberMessages(
+    await this.fetchWorkspaceMemberMessages(
       workspaceId,
       '20202020-0687-4c41-b707-ed1bfca972a7',
     );
@@ -71,8 +68,6 @@ export class FetchWorkspaceMessagesService {
       workspaceDataSource,
       connectedAccount[0].id,
     );
-
-    return threads;
   }
 
   async fetchWorkspaceMemberMessages(
@@ -130,8 +125,6 @@ export class FetchWorkspaceMessagesService {
       workspaceDataSource,
       workspaceMemberId,
     );
-
-    return messages;
   }
 
   async getGmailClient(refreshToken) {
