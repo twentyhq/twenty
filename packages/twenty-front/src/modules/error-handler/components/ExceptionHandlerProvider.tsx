@@ -2,19 +2,19 @@ import { useEffect, useState } from 'react';
 import * as Sentry from '@sentry/react';
 import { useRecoilValue } from 'recoil';
 
-import { sentryState } from '@/error-handler/states/sentryState';
+import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 export const ExceptionHandlerProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
-  const sentry = useRecoilValue(sentryState);
+  const sentryConfig = useRecoilValue(sentryConfigState);
   const [isSentryInitialized, setIsSentryInitialized] = useState(false);
 
   useEffect(() => {
-    if (sentry?.dsnKey && !isSentryInitialized) {
+    if (sentryConfig?.dsn && !isSentryInitialized) {
       Sentry.init({
-        dsn: sentry?.dsnKey,
+        dsn: sentryConfig?.dsn,
         integrations: [
           new Sentry.BrowserTracing({
             tracePropagationTargets: [
@@ -31,7 +31,7 @@ export const ExceptionHandlerProvider: React.FC<React.PropsWithChildren> = ({
 
       setIsSentryInitialized(true);
     }
-  }, [sentry, isSentryInitialized]);
+  }, [sentryConfig, isSentryInitialized]);
 
   return <>{children}</>;
 };

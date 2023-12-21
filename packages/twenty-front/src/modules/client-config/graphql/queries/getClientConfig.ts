@@ -22,7 +22,7 @@ export const GET_CLIENT_CONFIG = gql`
         supportFrontChatId
       }
       sentry {
-        dsnKey
+        dsn
       }
     }
   }

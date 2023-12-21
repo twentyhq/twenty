@@ -32,7 +32,7 @@ export class ClientConfigResolver {
         supportFrontChatId: this.environmentService.getSupportFrontChatId(),
       },
       sentry: {
-        dsnKey: this.environmentService.getSentryDSN(),
+        dsn: this.environmentService.getSentryDSN(),
       },
     };
 

@@ -42,7 +42,7 @@ class Support {
 @ObjectType()
 class Sentry {
   @Field(() => String)
-  dsnKey: string | undefined;
+  dsn: string | undefined;
 }
 
 @ObjectType()

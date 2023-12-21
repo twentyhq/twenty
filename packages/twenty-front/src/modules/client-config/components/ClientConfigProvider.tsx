@@ -7,7 +7,7 @@ import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { telemetryState } from '@/client-config/states/telemetryState';
-import { sentryState } from '@/error-handler/states/sentryState';
+import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { useGetClientConfigQuery } from '~/generated/graphql';
 
 export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
@@ -22,7 +22,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   const setTelemetry = useSetRecoilState(telemetryState);
   const setSupportChat = useSetRecoilState(supportChatState);
 
-  const setSentry = useSetRecoilState(sentryState);
+  const setSentryConfig = useSetRecoilState(sentryConfigState);
 
   const { data, loading } = useGetClientConfigQuery();
 
@@ -40,8 +40,8 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
       setTelemetry(data?.clientConfig.telemetry);
       setSupportChat(data?.clientConfig.support);
 
-      setSentry({
-        dsnKey: data?.clientConfig?.sentry?.dsnKey,
+      setSentryConfig({
+        dsn: data?.clientConfig?.sentry?.dsn,
       });
     }
   }, [
@@ -52,7 +52,7 @@ export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
     setTelemetry,
     setSupportChat,
     setBilling,
-    setSentry,
+    setSentryConfig,
   ]);
 
   return loading ? <></> : <>{children}</>;
