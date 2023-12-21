@@ -14,69 +14,69 @@ import { hiddenRecordBoardCardFieldsScopedSelector } from '@/object-record/recor
 import { recordBoardCardFieldsByKeyScopedSelector } from '@/object-record/record-board/states/selectors/recordBoardCardFieldsByKeyScopedSelector';
 import { selectedRecordBoardCardIdsScopedSelector } from '@/object-record/record-board/states/selectors/selectedRecordBoardCardIdsScopedSelector';
 import { visibleRecordBoardCardFieldsScopedSelector } from '@/object-record/record-board/states/selectors/visibleRecordBoardCardFieldsScopedSelector';
-import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
+import { getScopedStateDeprecated } from '@/ui/utilities/recoil-scope/utils/getScopedStateDeprecated';
 
 export const getRecordBoardScopedStates = ({
   recordBoardScopeId,
 }: {
   recordBoardScopeId: string;
 }) => {
-  const activeCardIdsState = getScopedState(
+  const activeCardIdsState = getScopedStateDeprecated(
     activeRecordBoardCardIdsScopedState,
     recordBoardScopeId,
   );
 
-  const availableBoardCardFieldsState = getScopedState(
+  const availableBoardCardFieldsState = getScopedStateDeprecated(
     availableRecordBoardCardFieldsScopedState,
     recordBoardScopeId,
   );
 
-  const boardColumnsState = getScopedState(
+  const boardColumnsState = getScopedStateDeprecated(
     recordBoardColumnsScopedState,
     recordBoardScopeId,
   );
 
-  const isBoardLoadedState = getScopedState(
+  const isBoardLoadedState = getScopedStateDeprecated(
     isRecordBoardLoadedScopedState,
     recordBoardScopeId,
   );
 
-  const isCompactViewEnabledState = getScopedState(
+  const isCompactViewEnabledState = getScopedStateDeprecated(
     isCompactViewEnabledScopedState,
     recordBoardScopeId,
   );
 
-  const savedBoardColumnsState = getScopedState(
+  const savedBoardColumnsState = getScopedStateDeprecated(
     savedRecordBoardColumnsScopedState,
     recordBoardScopeId,
   );
 
-  const boardFiltersState = getScopedState(
+  const boardFiltersState = getScopedStateDeprecated(
     recordBoardFiltersScopedState,
     recordBoardScopeId,
   );
 
-  const boardSortsState = getScopedState(
+  const boardSortsState = getScopedStateDeprecated(
     recordBoardSortsScopedState,
     recordBoardScopeId,
   );
 
-  const savedCompaniesState = getScopedState(
+  const savedCompaniesState = getScopedStateDeprecated(
     savedRecordsScopedState,
     recordBoardScopeId,
   );
 
-  const savedOpportunitiesState = getScopedState(
+  const savedOpportunitiesState = getScopedStateDeprecated(
     savedOpportunitiesScopedState,
     recordBoardScopeId,
   );
 
-  const savedPipelineStepsState = getScopedState(
+  const savedPipelineStepsState = getScopedStateDeprecated(
     savedPipelineStepsScopedState,
     recordBoardScopeId,
   );
 
-  const onFieldsChangeState = getScopedState(
+  const onFieldsChangeState = getScopedStateDeprecated(
     onFieldsChangeScopedState,
     recordBoardScopeId,
   );

@@ -1,3 +1,5 @@
+import { useRecoilValue } from 'recoil';
+
 import { IconArrowUpRight } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -30,7 +32,8 @@ export const CommandMenuItem = ({
     Icon = IconArrowUpRight;
   }
 
-  const { isSelectedItemId } = useSelectableList({ itemId: id });
+  const { isSelectedItemIdFamilyState } = useSelectableList();
+  const isSelectedItemId = useRecoilValue(isSelectedItemIdFamilyState(id));
 
   return (
     <MenuItemCommand

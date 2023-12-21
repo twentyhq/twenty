@@ -6,7 +6,7 @@ import { onColumnsChangeScopedState } from '@/object-record/record-table/states/
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { getScopedState } from '@/ui/utilities/recoil-scope/utils/getScopedState';
+import { getScopedStateDeprecated } from '@/ui/utilities/recoil-scope/utils/getScopedStateDeprecated';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { FieldMetadata } from '../../field/types/FieldMetadata';
@@ -63,7 +63,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   const onColumnsChange = useRecoilCallback(
     ({ snapshot }) =>
       (columns: ColumnDefinition<FieldMetadata>[]) => {
-        const onColumnsChangeState = getScopedState(
+        const onColumnsChangeState = getScopedStateDeprecated(
           onColumnsChangeScopedState,
           scopeId,
         );
@@ -80,7 +80,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   const onEntityCountChange = useRecoilCallback(
     ({ snapshot }) =>
       (count: number) => {
-        const onEntityCountChangeState = getScopedState(
+        const onEntityCountChangeState = getScopedStateDeprecated(
           onEntityCountChangeScopedState,
           scopeId,
         );
