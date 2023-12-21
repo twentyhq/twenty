@@ -1,4 +1,5 @@
 import { useApolloClient } from '@apollo/client';
+import { getOperationName } from '@apollo/client/utilities';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -12,11 +13,16 @@ type useUpdateOneRecordProps = {
 
 export const useUpdateOneRecord = <T>({
   objectNameSingular,
+  refetchFindManyQuery,
 }: useUpdateOneRecordProps) => {
-  const { objectMetadataItem, updateOneRecordMutation, getRecordFromCache } =
-    useObjectMetadataItem({
-      objectNameSingular,
-    });
+  const {
+    objectMetadataItem,
+    updateOneRecordMutation,
+    getRecordFromCache,
+    findManyRecordsQuery,
+  } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
   const { triggerOptimisticEffects } = useOptimisticEffect({
     objectNameSingular,
@@ -67,6 +73,9 @@ export const useUpdateOneRecord = <T>({
         [`update${capitalize(objectMetadataItem.nameSingular)}`]:
           optimisticallyUpdatedRecord,
       },
+      refetchQueries: refetchFindManyQuery
+        ? [getOperationName(findManyRecordsQuery) ?? '']
+        : [],
     });
 
     if (!updatedRecord?.data) {

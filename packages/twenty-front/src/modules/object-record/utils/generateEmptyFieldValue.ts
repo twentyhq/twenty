@@ -14,12 +14,14 @@ export const generateEmptyFieldValue = (
       return {
         label: '',
         url: '',
+        __typename: 'Link',
       };
     }
     case FieldMetadataType.FullName: {
       return {
         firstName: '',
         lastName: '',
+        __typename: 'FullName',
       };
     }
     case FieldMetadataType.DateTime: {

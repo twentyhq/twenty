@@ -10,7 +10,6 @@ import {
   IconCheckbox,
   IconSearch,
   IconSettings,
-  IconTargetArrow,
 } from '@/ui/display/icon';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
@@ -70,12 +69,6 @@ export const MainNavigationDrawerItems = () => {
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Workspace" />
         <ObjectMetadataNavItems />
-        <NavigationDrawerItem
-          label="Opportunities"
-          to="/objects/opportunities"
-          active={location.pathname === '/objects/opportunities'}
-          Icon={IconTargetArrow}
-        />
       </NavigationDrawerSection>
     </>
   );

@@ -43,13 +43,11 @@ export const ColumnHead = ({ column }: ColumnHeadProps) => {
   const Icon = getIcon(column.iconName);
 
   return (
-    <>
-      <StyledTitle>
-        <StyledIcon>
-          <Icon size={theme.icon.size.md} />
-        </StyledIcon>
-        <StyledText>{column.label}</StyledText>
-      </StyledTitle>
-    </>
+    <StyledTitle>
+      <StyledIcon>
+        <Icon size={theme.icon.size.md} />
+      </StyledIcon>
+      <StyledText>{column.label}</StyledText>
+    </StyledTitle>
   );
 };
