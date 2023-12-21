@@ -452,13 +452,13 @@ export type Telemetry = {
 
 export type TimelineThread = {
   __typename?: 'TimelineThread';
-  body?: Maybe<Scalars['String']>;
+  body: Scalars['String'];
   numberOfMessagesInThread: Scalars['Float'];
   read: Scalars['Boolean'];
   receivedAt: Scalars['DateTime'];
   senderName: Scalars['String'];
-  senderPictureUrl?: Maybe<Scalars['String']>;
-  subject?: Maybe<Scalars['String']>;
+  senderPictureUrl: Scalars['String'];
+  subject: Scalars['String'];
 };
 
 export type TransientToken = {
@@ -658,14 +658,14 @@ export type GetTimelineThreadsFromCompanyIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: Array<{ __typename?: 'TimelineThread', body?: string | null, numberOfMessagesInThread: number, read: boolean, receivedAt: string, senderName: string, senderPictureUrl?: string | null, subject?: string | null }> };
+export type GetTimelineThreadsFromCompanyIdQuery = { __typename?: 'Query', getTimelineThreadsFromCompanyId: Array<{ __typename?: 'TimelineThread', body: string, numberOfMessagesInThread: number, read: boolean, receivedAt: string, senderName: string, senderPictureUrl: string, subject: string }> };
 
 export type GetTimelineThreadsFromPersonIdQueryVariables = Exact<{
   personId: Scalars['String'];
 }>;
 
 
-export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: Array<{ __typename?: 'TimelineThread', body?: string | null, numberOfMessagesInThread: number, read: boolean, receivedAt: string, senderName: string, senderPictureUrl?: string | null, subject?: string | null }> };
+export type GetTimelineThreadsFromPersonIdQuery = { __typename?: 'Query', getTimelineThreadsFromPersonId: Array<{ __typename?: 'TimelineThread', body: string, numberOfMessagesInThread: number, read: boolean, receivedAt: string, senderName: string, senderPictureUrl: string, subject: string }> };
 
 export type CreateEventMutationVariables = Exact<{
   type: Scalars['String'];
