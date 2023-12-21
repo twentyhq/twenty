@@ -21,6 +21,7 @@ import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { ShowPageContainer } from '@/ui/layout/page/ShowPageContainer';
 import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
+import { ShowPageMoreButton } from '@/ui/layout/show-page/components/ShowPageMoreButton';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { ShowPageRecoilScopeContext } from '@/ui/layout/states/ShowPageRecoilScopeContext';
@@ -207,6 +208,11 @@ export const RecordShowPage = () => {
                 id: record.id,
                 type: objectMetadataType,
               }}
+            />
+            <ShowPageMoreButton
+              key="more"
+              recordId={record.id}
+              objectNameSingular={objectNameSingular}
             />
           </>
         )}
