@@ -3,10 +3,26 @@ import { createContext } from 'react';
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldMetadata } from '../types/FieldMetadata';
 
+export type RecordUpdateHookParams = {
+  variables: {
+    where: Record<string, unknown>;
+    newRecord: Record<string, unknown>;
+    optimisticRecord?: Record<string, unknown>;
+  };
+};
+
+export type RecordUpdateHookReturn = {
+  loading?: boolean;
+};
+
+export type RecordUpdateHook = () => [
+  (params: RecordUpdateHookParams) => void,
+  RecordUpdateHookReturn,
+];
+
 export type GenericFieldContextType = {
   fieldDefinition: FieldDefinition<FieldMetadata>;
-  // TODO: add better typing for mutation web-hook
-  useUpdateEntityMutation?: () => [(params: any) => void, any];
+  useUpdateRecord?: RecordUpdateHook;
   entityId: string;
   recoilScopeId?: string;
   hotkeyScope: string;

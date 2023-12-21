@@ -11,7 +11,7 @@ import { FieldContext } from '../../field/contexts/FieldContext';
 import { isFieldRelation } from '../../field/types/guards/isFieldRelation';
 import { ColumnContext } from '../contexts/ColumnContext';
 import { ColumnIndexContext } from '../contexts/ColumnIndexContext';
-import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
+import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 import { RowIdContext } from '../contexts/RowIdContext';
 import { TableCell } from '../record-table-cell/components/RecordTableCell';
 import { useCurrentRowSelected } from '../record-table-row/hooks/useCurrentRowSelected';
@@ -39,7 +39,7 @@ export const RecordTableCell = ({ cellIndex }: { cellIndex: number }) => {
 
   const columnDefinition = useContext(ColumnContext);
 
-  const updateEntityMutation = useContext(EntityUpdateMutationContext);
+  const updateRecord = useContext(RecordUpdateContext);
 
   if (!columnDefinition || !currentRowId) {
     return null;
@@ -58,7 +58,7 @@ export const RecordTableCell = ({ cellIndex }: { cellIndex: number }) => {
               recoilScopeId: currentRowId + columnDefinition.label,
               entityId: currentRowId,
               fieldDefinition: columnDefinition,
-              useUpdateEntityMutation: () => [updateEntityMutation, {}],
+              useUpdateRecord: () => [updateRecord, {}],
               hotkeyScope: customHotkeyScope,
               basePathToShowPage: objectMetadataConfig?.basePathToShowPage,
               isLabelIdentifier:

@@ -93,7 +93,7 @@ export const CreateProfile = () => {
 
         await updateOneRecord({
           idToUpdate: currentWorkspaceMember?.id,
-          input: {
+          newRecord: {
             name: {
               firstName: data.firstName,
               lastName: data.lastName,

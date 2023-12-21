@@ -12,7 +12,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
-import { EntityUpdateMutationContext } from '../contexts/EntityUpdateMutationHookContext';
+import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useRecordTable } from '../hooks/useRecordTable';
 import { RecordTableScope } from '../scopes/RecordTableScope';
 import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
@@ -159,7 +159,7 @@ export const RecordTable = ({
       })}
     >
       <ScrollWrapper>
-        <EntityUpdateMutationContext.Provider value={updateRecordMutation}>
+        <RecordUpdateContext.Provider value={updateRecordMutation}>
           <StyledTableWithHeader>
             <StyledTableContainer>
               <div ref={tableBodyRef}>
@@ -193,7 +193,7 @@ export const RecordTable = ({
               )}
             </StyledTableContainer>
           </StyledTableWithHeader>
-        </EntityUpdateMutationContext.Provider>
+        </RecordUpdateContext.Provider>
       </ScrollWrapper>
     </RecordTableScope>
   );

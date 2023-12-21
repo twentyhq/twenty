@@ -25,37 +25,36 @@ export const useUpdateOneRecord = <T>({
 
   const updateOneRecord = async ({
     idToUpdate,
-    input,
+    newRecord,
+    optimisticRecord,
   }: {
     idToUpdate: string;
-    input: Record<string, any>;
-    forceRefetch?: boolean;
+    newRecord: Record<string, unknown>;
+    optimisticRecord?: Record<string, unknown>;
   }) => {
     const cachedRecord = getRecordFromCache(idToUpdate);
 
+    const optimisticallyUpdatedRecord = {
+      ...(cachedRecord ?? {}),
+      ...(optimisticRecord ?? newRecord),
+    };
+
     triggerOptimisticEffects({
       typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-      updatedRecords: [
-        {
-          ...(cachedRecord ?? {}),
-          ...input,
-        },
-      ],
+      updatedRecords: [optimisticallyUpdatedRecord],
     });
 
     const updatedRecord = await apolloClient.mutate({
       mutation: updateOneRecordMutation,
       variables: {
-        idToUpdate: idToUpdate,
+        idToUpdate,
         input: {
-          ...input,
+          ...newRecord,
         },
       },
       optimisticResponse: {
-        [`update${capitalize(objectMetadataItem.nameSingular)}`]: {
-          ...(cachedRecord ?? {}),
-          ...input,
-        },
+        [`update${capitalize(objectMetadataItem.nameSingular)}`]:
+          optimisticallyUpdatedRecord,
       },
     });
 

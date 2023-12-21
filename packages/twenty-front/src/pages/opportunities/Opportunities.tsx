@@ -36,7 +36,7 @@ export const Opportunities = () => {
   }) => {
     updateOnePipelineStep?.({
       idToUpdate: columnId,
-      input: { name: title, color },
+      newRecord: { name: title, color },
     });
   };
 

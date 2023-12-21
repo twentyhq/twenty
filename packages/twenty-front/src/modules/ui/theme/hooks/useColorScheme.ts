@@ -32,7 +32,7 @@ export const useColorScheme = () => {
       });
       await updateOneWorkspaceMember?.({
         idToUpdate: currentWorkspaceMember?.id,
-        input: {
+        newRecord: {
           colorScheme: value,
         },
       });
