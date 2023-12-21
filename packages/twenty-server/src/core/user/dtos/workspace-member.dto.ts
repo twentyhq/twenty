@@ -2,8 +2,8 @@ import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
-@ObjectType('UserWorkspaceMemberName')
-export class UserWorkspaceMemberName {
+@ObjectType('FullName')
+export class FullName {
   @Field({ nullable: false })
   firstName: string;
 
@@ -11,13 +11,13 @@ export class UserWorkspaceMemberName {
   lastName: string;
 }
 
-@ObjectType('UserWorkspaceMember')
-export class UserWorkspaceMember {
+@ObjectType('WorkspaceMember')
+export class WorkspaceMember {
   @IDField(() => ID)
   id: string;
 
-  @Field(() => UserWorkspaceMemberName)
-  name: UserWorkspaceMemberName;
+  @Field(() => FullName)
+  name: FullName;
 
   @Field({ nullable: false })
   colorScheme: string;

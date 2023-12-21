@@ -63,13 +63,11 @@ export class WorkspaceMigrationRunnerService {
       }, []);
 
     const queryRunner = workspaceDataSource?.createQueryRunner();
-    const schemaName =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     // Loop over each migration and create or update the table
     // TODO: Should be done in a transaction
     for (const migration of flattenedPendingMigrations) {
-      await this.handleTableChanges(queryRunner, schemaName, migration);
+      await this.handleTableChanges(queryRunner, migration);
     }
 
     // Update appliedAt date for each migration
@@ -98,17 +96,20 @@ export class WorkspaceMigrationRunnerService {
    */
   private async handleTableChanges(
     queryRunner: QueryRunner,
-    schemaName: string,
     tableMigration: WorkspaceMigrationTableAction,
   ) {
     switch (tableMigration.action) {
       case 'create':
-        await this.createTable(queryRunner, schemaName, tableMigration.name);
+        await this.createTable(
+          queryRunner,
+          tableMigration.schemaName,
+          tableMigration.name,
+        );
         break;
       case 'alter':
         await this.handleColumnChanges(
           queryRunner,
-          schemaName,
+          tableMigration.schemaName,
           tableMigration.name,
           tableMigration?.columns,
         );
@@ -180,7 +181,7 @@ export class WorkspaceMigrationRunnerService {
           );
           break;
         case WorkspaceMigrationColumnActionType.RELATION:
-          await this.createForeignKey(
+          await this.createRelation(
             queryRunner,
             schemaName,
             tableName,
@@ -279,10 +280,9 @@ export class WorkspaceMigrationRunnerService {
         isNullable: migrationColumn.alteredColumnDefinition.isNullable,
       }),
     );
-    // }
   }
 
-  private async createForeignKey(
+  private async createRelation(
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
@@ -293,6 +293,7 @@ export class WorkspaceMigrationRunnerService {
       new TableForeignKey({
         columnNames: [migrationColumn.columnName],
         referencedColumnNames: [migrationColumn.referencedTableColumnName],
+        referencedSchema: migrationColumn.referencedSchema,
         referencedTableName: migrationColumn.referencedTableName,
         onDelete: 'CASCADE',
       }),

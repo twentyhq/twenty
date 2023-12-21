@@ -1,9 +1,7 @@
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
-import {
-  ObjectMetadata,
-  IsSystem,
-  FieldMetadata,
-} from 'src/workspace/workspace-sync-metadata/decorators/metadata.decorator';
+import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
+import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-system.decorator';
+import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { ActivityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity.object-metadata';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';

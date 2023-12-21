@@ -10,12 +10,15 @@ import {
 
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 
-type DataSourceType = DataSourceOptions['type'];
+export type DataSourceType = DataSourceOptions['type'];
 
 @Entity('dataSource')
 export class DataSourceEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ nullable: true })
+  label: string;
 
   @Column({ nullable: true })
   url: string;
@@ -25,9 +28,6 @@ export class DataSourceEntity {
 
   @Column({ type: 'enum', enum: ['postgres'], default: 'postgres' })
   type: DataSourceType;
-
-  @Column({ nullable: true, name: 'label' })
-  label: string;
 
   @Column({ default: false })
   isRemote: boolean;
