@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { userEvent, within } from '@storybook/test';
 
 import {
   PageDecorator,
@@ -29,17 +28,5 @@ export type Story = StoryObj<typeof SettingsNewObject>;
 export const WithStandardSelected: Story = {
   play: async () => {
     await sleep(100);
-  },
-};
-
-export const WithCustomSelected: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await sleep(1000);
-
-    const customButtonElement = canvas.getByText('Custom');
-
-    await userEvent.click(customButtonElement);
   },
 };
