@@ -60,7 +60,7 @@ export const NameFields = ({
       if (autoSave) {
         await updateOneRecord({
           idToUpdate: currentWorkspaceMember?.id,
-          input: {
+          updateOneRecordInput: {
             name: {
               firstName: firstName,
               lastName: lastName,

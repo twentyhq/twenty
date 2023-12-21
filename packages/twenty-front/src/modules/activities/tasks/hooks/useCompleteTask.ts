@@ -15,7 +15,7 @@ export const useCompleteTask = (task: Task) => {
       const completedAt = value ? new Date().toISOString() : null;
       await updateOneActivity?.({
         idToUpdate: task.id,
-        input: {
+        updateOneRecordInput: {
           completedAt,
         },
       });

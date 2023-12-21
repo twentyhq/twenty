@@ -22,7 +22,7 @@ export const FieldContextProvider = ({
         recoilScopeId: '1',
         hotkeyScope: 'hotkey-scope',
         fieldDefinition,
-        useUpdateEntityMutation: () => [() => undefined, {}],
+        useUpdateRecord: () => [() => undefined, {}],
       }}
     >
       {children}

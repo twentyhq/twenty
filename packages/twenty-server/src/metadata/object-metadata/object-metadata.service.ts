@@ -230,22 +230,26 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           name: createdObjectMetadata.targetTableName,
           action: 'create',
+          schemaName: createdObjectMetadata.dataSource.schema,
         } satisfies WorkspaceMigrationTableAction,
         // Add activity target relation
         {
           name: activityTargetObjectMetadata.targetTableName,
           action: 'alter',
+          schemaName: activityTargetObjectMetadata.dataSource.schema,
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE,
               columnName: `${createdObjectMetadata.targetTableName}Id`,
               columnType: 'uuid',
+              isNullable: true,
             } satisfies WorkspaceMigrationColumnCreate,
           ],
         },
         {
           name: activityTargetObjectMetadata.targetTableName,
           action: 'alter',
+          schemaName: activityTargetObjectMetadata.dataSource.schema,
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.RELATION,
@@ -259,6 +263,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           name: createdObjectMetadata.targetTableName,
           action: 'alter',
+          schemaName: createdObjectMetadata.dataSource.schema,
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE,
@@ -312,16 +317,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     options: FindOneOptions<ObjectMetadataEntity>,
   ): Promise<ObjectMetadataEntity | null> {
     return this.objectMetadataRepository.findOne({
-      ...options,
-      where: {
-        ...options.where,
-        workspaceId,
-      },
       relations: [
         'fields',
         'fields.fromRelationMetadata',
         'fields.toRelationMetadata',
       ],
+      ...options,
+      where: {
+        ...options.where,
+        workspaceId,
+      },
     });
   }
 
@@ -330,17 +335,17 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     options?: FindManyOptions<ObjectMetadataEntity>,
   ) {
     return this.objectMetadataRepository.find({
-      ...options,
-      where: {
-        ...options?.where,
-        workspaceId,
-      },
       relations: [
         'fields',
         'fields.fromRelationMetadata',
         'fields.toRelationMetadata',
         'fields.fromRelationMetadata.toObjectMetadata',
       ],
+      ...options,
+      where: {
+        ...options?.where,
+        workspaceId,
+      },
     });
   }
 
