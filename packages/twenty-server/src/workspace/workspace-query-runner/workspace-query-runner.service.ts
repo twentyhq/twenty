@@ -225,7 +225,7 @@ export class WorkspaceQueryRunnerService {
 
     if (!result) {
       throw new InternalServerErrorException(
-        'Malformed result from GraphQL query',
+        `GraphQL errors on ${command}${targetTableName}: ${errors}`,
       );
     }
 
