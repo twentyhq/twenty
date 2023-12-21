@@ -60,11 +60,6 @@ export type Billing = {
   isBillingEnabled: Scalars['Boolean'];
 };
 
-export type Sentry = {
-  __typename?: 'Sentry';
-  dsnKey: Scalars['String'];
-}
-
 export type BooleanFieldComparison = {
   is?: InputMaybe<Scalars['Boolean']>;
   isNot?: InputMaybe<Scalars['Boolean']>;
@@ -75,6 +70,7 @@ export type ClientConfig = {
   authProviders: AuthProviders;
   billing: Billing;
   debugMode: Scalars['Boolean'];
+  sentry: Sentry;
   signInPrefilled: Scalars['Boolean'];
   support: Support;
   telemetry: Telemetry;
@@ -431,6 +427,11 @@ export enum RelationMetadataType {
   OneToOne = 'ONE_TO_ONE'
 }
 
+export type Sentry = {
+  __typename?: 'Sentry';
+  dsnKey: Scalars['String'];
+};
+
 /** Sort Directions */
 export enum SortDirection {
   Asc = 'ASC',
@@ -745,7 +746,7 @@ export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl: string }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl: string }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsnKey: string } } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
