@@ -5,13 +5,19 @@ import {
   useGotoRecoilSnapshot,
   useRecoilCallback,
   useRecoilState,
-  useRecoilValue,
   useSetRecoilState,
 } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { billingState } from '@/client-config/states/billingState';
+import { isDebugModeState } from '@/client-config/states/isDebugModeState';
+import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
+import { supportChatState } from '@/client-config/states/supportChatState';
+import { telemetryState } from '@/client-config/states/telemetryState';
+import { iconsState } from '@/ui/display/icon/states/iconsState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { REACT_APP_SERVER_AUTH_URL } from '~/config';
 import {
@@ -23,13 +29,6 @@ import {
 
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
-import { iconsState } from '@/ui/display/icon/states/iconsState';
-import { authProvidersState } from '@/client-config/states/authProvidersState';
-import { billingState } from '@/client-config/states/billingState';
-import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
-import { supportChatState } from '@/client-config/states/supportChatState';
-import { telemetryState } from '@/client-config/states/telemetryState';
-import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 
 export const useAuth = () => {
   const [, setTokenPair] = useRecoilState(tokenPairState);
@@ -165,7 +164,7 @@ export const useAuth = () => {
         await client.clearStore();
         sessionStorage.clear();
       },
-    [client],
+    [client, goToRecoilSnapshot],
   );
 
   const handleCredentialsSignUp = useCallback(
