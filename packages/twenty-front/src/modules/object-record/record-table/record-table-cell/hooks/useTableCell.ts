@@ -1,12 +1,14 @@
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { FieldContext } from '@/object-record/field/contexts/FieldContext';
 import { useIsFieldEmpty } from '@/object-record/field/hooks/useIsFieldEmpty';
 import { entityFieldInitialValueFamilyState } from '@/object-record/field/states/entityFieldInitialValueFamilyState';
 import { FieldInitialValue } from '@/object-record/field/types/FieldInitialValue';
+import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { tableRowIdsState } from '@/object-record/record-table/states/tableRowIdsState';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -45,12 +47,19 @@ export const useTableCell = () => {
 
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
+  const deleteOneRecord = useContext(EntityDeleteContext);
+
   const [, setFieldInitialValue] = useRecoilState(
     entityFieldInitialValueFamilyState({
       entityId,
       fieldMetadataId: fieldDefinition.fieldMetadataId,
     }),
   );
+
+  const handleRowDeletion = useRecoilCallback(({ snapshot }) => async () => {
+    const tableRowIds = snapshot.getLoadable(tableRowIdsState).getValue();
+    await deleteOneRecord(tableRowIds[0]);
+  });
 
   const openTableCell = (options?: { initialValue?: FieldInitialValue }) => {
     if (isFirstColumnCell && !isEmpty && basePathToShowPage) {
@@ -75,7 +84,10 @@ export const useTableCell = () => {
     }
   };
 
-  const closeTableCell = () => {
+  const closeTableCell = async () => {
+    if (isFirstColumnCell && isEmpty) {
+      handleRowDeletion();
+    }
     setDragSelectionStartEnabled(true);
     closeCurrentTableCellInEditMode();
     setFieldInitialValue(undefined);

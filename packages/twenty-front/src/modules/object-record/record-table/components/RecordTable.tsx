@@ -4,6 +4,7 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { isRecordTableInitialLoadingState } from '@/object-record/record-table/states/isRecordTableInitialLoadingState';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
@@ -12,6 +13,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
+import { EntityDeleteContext } from '../contexts/EntityDeleteHookContext';
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useRecordTable } from '../hooks/useRecordTable';
 import { RecordTableScope } from '../scopes/RecordTableScope';
@@ -151,6 +153,8 @@ export const RecordTable = ({
 
   const { persistViewFields } = useViewFields(viewBarId);
 
+  const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
+
   return (
     <RecordTableScope
       recordTableScopeId={recordTableId}
@@ -160,39 +164,41 @@ export const RecordTable = ({
     >
       <ScrollWrapper>
         <RecordUpdateContext.Provider value={updateRecordMutation}>
-          <StyledTableWithHeader>
-            <StyledTableContainer>
-              <div ref={tableBodyRef}>
-                <StyledTable className="entity-table-cell">
-                  <RecordTableHeader createRecord={createRecord} />
-                  <RecordTableBodyEffect />
-                  <RecordTableBody />
-                </StyledTable>
-                <DragSelect
-                  dragSelectable={tableBodyRef}
-                  onDragSelectionStart={resetTableRowSelection}
-                  onDragSelectionChange={setRowSelectedState}
-                />
-              </div>
-              <RecordTableInternalEffect tableBodyRef={tableBodyRef} />
-              {!isRecordTableInitialLoading && numberOfTableRows === 0 && (
-                <StyledObjectEmptyContainer>
-                  <StyledEmptyObjectTitle>
-                    No {foundObjectMetadataItem?.namePlural}
-                  </StyledEmptyObjectTitle>
-                  <StyledEmptyObjectSubTitle>
-                    Create one:
-                  </StyledEmptyObjectSubTitle>
-                  <Button
-                    Icon={IconPlus}
-                    title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
-                    variant={'secondary'}
-                    onClick={createRecord}
+          <EntityDeleteContext.Provider value={deleteOneRecord}>
+            <StyledTableWithHeader>
+              <StyledTableContainer>
+                <div ref={tableBodyRef}>
+                  <StyledTable className="entity-table-cell">
+                    <RecordTableHeader createRecord={createRecord} />
+                    <RecordTableBodyEffect />
+                    <RecordTableBody />
+                  </StyledTable>
+                  <DragSelect
+                    dragSelectable={tableBodyRef}
+                    onDragSelectionStart={resetTableRowSelection}
+                    onDragSelectionChange={setRowSelectedState}
                   />
-                </StyledObjectEmptyContainer>
-              )}
-            </StyledTableContainer>
-          </StyledTableWithHeader>
+                </div>
+                <RecordTableInternalEffect tableBodyRef={tableBodyRef} />
+                {!isRecordTableInitialLoading && numberOfTableRows === 0 && (
+                  <StyledObjectEmptyContainer>
+                    <StyledEmptyObjectTitle>
+                      No {foundObjectMetadataItem?.namePlural}
+                    </StyledEmptyObjectTitle>
+                    <StyledEmptyObjectSubTitle>
+                      Create one:
+                    </StyledEmptyObjectSubTitle>
+                    <Button
+                      Icon={IconPlus}
+                      title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
+                      variant={'secondary'}
+                      onClick={createRecord}
+                    />
+                  </StyledObjectEmptyContainer>
+                )}
+              </StyledTableContainer>
+            </StyledTableWithHeader>
+          </EntityDeleteContext.Provider>
         </RecordUpdateContext.Provider>
       </ScrollWrapper>
     </RecordTableScope>
