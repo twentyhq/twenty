@@ -21,7 +21,7 @@ export class FetchWorkspaceMessagesService {
     private readonly fetchBatchMessagesService: FetchBatchMessagesService,
   ) {}
 
-  async fetchWorkspaceMessages(workspaceId: string): Promise<any> {
+  async fetchWorkspaceMessages(workspaceId: string): Promise<void> {
     await this.fetchWorkspaceMemberThreads(
       workspaceId,
       '20202020-0687-4c41-b707-ed1bfca972a7',
@@ -36,7 +36,7 @@ export class FetchWorkspaceMessagesService {
     workspaceId: string,
     workspaceMemberId: string,
     maxResults = 500,
-  ): Promise<any> {
+  ): Promise<void> {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
@@ -82,7 +82,7 @@ export class FetchWorkspaceMessagesService {
     workspaceId: string,
     workspaceMemberId: string,
     maxResults = 500,
-  ): Promise<any> {
+  ): Promise<void> {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
