@@ -10,6 +10,7 @@ import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObje
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { RecordTableActionBar } from '@/object-record/record-table/action-bar/components/RecordTableActionBar';
 import { RecordTableContextMenu } from '@/object-record/record-table/context-menu/components/RecordTableContextMenu';
+import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
 import { PageBody } from '@/ui/layout/page/PageBody';
@@ -44,6 +45,8 @@ export const RecordTablePage = () => {
     findObjectMetadataItemByNamePlural(objectNamePlural)?.icon,
   );
 
+  const { setSelectedTableCellEditMode } = useSelectedTableCellEditMode();
+
   useEffect(() => {
     if (
       !isNonEmptyString(objectNamePlural) &&
@@ -59,6 +62,7 @@ export const RecordTablePage = () => {
 
   const handleAddButtonClick = async () => {
     await createOneObject?.({});
+    setSelectedTableCellEditMode(0, 0);
   };
 
   return (
