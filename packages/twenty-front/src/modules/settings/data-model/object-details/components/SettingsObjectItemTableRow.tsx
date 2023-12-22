@@ -46,7 +46,9 @@ export const SettingsObjectItemTableRow = ({
   return (
     <StyledObjectTableRow key={objectItem.namePlural} onClick={onClick}>
       <StyledNameTableCell>
-        {!!Icon && <Icon size={theme.icon.size.md} />}
+        {!!Icon && (
+          <Icon size={theme.icon.size.md} color={theme.font.color.primary} />
+        )}
         {objectItem.labelPlural}
       </StyledNameTableCell>
       <TableCell>
