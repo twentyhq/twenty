@@ -4,6 +4,7 @@ import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
@@ -47,9 +48,7 @@ export const useRecordTableContextMenuEntries = (
     objectNamePlural,
   });
 
-  const { createFavorite, favorites } = useFavorites({
-    targetObjectNameSingular: objectNameSingular,
-  });
+  const { createFavorite, favorites, deleteFavorite } = useFavorites();
 
   const handleFavoriteButtonClick = useRecoilCallback(({ snapshot }) => () => {
     const selectedRowIds = snapshot
@@ -58,16 +57,22 @@ export const useRecordTableContextMenuEntries = (
 
     const selectedRowId = selectedRowIds.length === 1 ? selectedRowIds[0] : '';
 
-    const isFavorite =
-      !!selectedRowId &&
-      !!favorites?.find((favorite) => favorite.recordId === selectedRowId);
+    const selectedRecord = snapshot
+      .getLoadable(entityFieldsFamilyState(selectedRowId))
+      .getValue();
+
+    const foundFavorite = favorites?.find(
+      (favorite) => favorite.recordId === selectedRowId,
+    );
+
+    const isFavorite = !!selectedRowId && !!foundFavorite;
 
     resetTableRowSelection();
 
     if (isFavorite) {
-      // deleteFavorite(selectedRowId);
-    } else {
-      createFavorite(selectedRowId);
+      deleteFavorite(foundFavorite.id);
+    } else if (selectedRecord) {
+      createFavorite(selectedRecord, objectNameSingular);
     }
   });
 

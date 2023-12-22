@@ -90,7 +90,7 @@ export const useFavorites = () => {
   ]);
 
   const createFavorite = (
-    targetObject: Record<string, any> & { id: string },
+    targetObject: Record<string, any>,
     targetObjectNameSingular: string,
   ) => {
     createOneFavorite({
