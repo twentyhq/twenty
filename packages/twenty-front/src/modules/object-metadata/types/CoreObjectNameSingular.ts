@@ -3,4 +3,5 @@ export enum CoreObjectNameSingular {
   Person = 'person',
   WorkspaceMember = 'workspaceMember',
   Opportunity = 'opportunity',
+  Favorite = 'favorite',
 }

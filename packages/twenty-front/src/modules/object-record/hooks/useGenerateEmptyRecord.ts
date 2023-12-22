@@ -1,3 +1,4 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export const useGenerateEmptyRecord = ({
@@ -161,6 +162,24 @@ export const useGenerateEmptyRecord = ({
         __typename: 'Opportunity',
       } as T;
     }
+
+    if (objectMetadataItem.nameSingular === CoreObjectNameSingular.Favorite) {
+      return {
+        id: validatedInput.id,
+        company: validatedInput.company ?? null,
+        position: validatedInput.position,
+        person: validatedInput.person ?? null,
+        companyId: validatedInput.companyId ?? null,
+        updatedAt: '2023-12-22T19:32:43.913Z',
+        personId: validatedInput.personId ?? null,
+        workspaceMemberId: null,
+        createdAt: '2023-12-22T19:32:43.913Z',
+        workspaceMember: null,
+        __typename: 'Favorite',
+      } as T;
+    }
+
+    return validatedInput;
   };
 
   return {
