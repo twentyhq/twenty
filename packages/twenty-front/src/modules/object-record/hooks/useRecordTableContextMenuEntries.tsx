@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
@@ -22,7 +23,6 @@ import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/con
 import { ContextMenuEntry } from '@/ui/navigation/context-menu/types/ContextMenuEntry';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
 
 type useRecordTableContextMenuEntriesProps = {
   recordTableScopeId?: string;
@@ -123,7 +123,8 @@ export const useRecordTableContextMenuEntries = (
     'IS_QUICK_ACTIONS_ENABLED',
   );
 
-  const openCreateActivityDrawer = useOpenCreateActivityDrawerForSelectedRowIds();
+  const openCreateActivityDrawer =
+    useOpenCreateActivityDrawerForSelectedRowIds();
 
   return {
     setContextMenuEntries: useCallback(() => {
