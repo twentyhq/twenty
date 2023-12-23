@@ -24,6 +24,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
   height: 100%;
   overflow: auto;
+  padding-left: ${({ theme }) => theme.table.horizontalCellPadding};
 `;
 
 export const RecordTableContainer = ({
