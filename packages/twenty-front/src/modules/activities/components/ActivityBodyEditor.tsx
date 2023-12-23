@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { BlockNoteEditor } from '@blocknote/core';
-import { getDefaultReactSlashMenuItems, useBlockNote } from '@blocknote/react';
+import { useBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import debounce from 'lodash.debounce';
@@ -11,6 +11,9 @@ import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
+
+import { getSlashMenu } from '../blocks/slashMenu';
+import { blockSpecs } from '../blocks/spec';
 
 const StyledBlockNoteStyledContainer = styled.div`
   width: 100%;
@@ -50,12 +53,8 @@ export const ActivityBodyEditor = ({
     return debounce(onInternalChange, 200);
   }, [updateOneRecord, activity.id]);
 
-  let slashMenuItems = [...getDefaultReactSlashMenuItems()];
   const imagesActivated = useIsFeatureEnabled('IS_NOTE_CREATE_IMAGES_ENABLED');
-
-  if (!imagesActivated) {
-    slashMenuItems = slashMenuItems.filter((x) => x.name != 'Image');
-  }
+  const slashMenuItems = getSlashMenu(imagesActivated);
 
   const [uploadFile] = useUploadFileMutation();
 
@@ -87,6 +86,7 @@ export const ActivityBodyEditor = ({
       debounceOnChange(JSON.stringify(editor.topLevelBlocks) ?? '');
     },
     slashMenuItems,
+    blockSpecs: blockSpecs,
     uploadFile: imagesActivated ? handleUploadAttachment : undefined,
   });
 
