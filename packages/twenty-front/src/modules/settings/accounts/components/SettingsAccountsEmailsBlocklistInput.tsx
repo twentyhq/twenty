@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import styled from '@emotion/styled';
+
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useState } from 'react';
 
 const StyledContainer = styled.div`
   display: flex;

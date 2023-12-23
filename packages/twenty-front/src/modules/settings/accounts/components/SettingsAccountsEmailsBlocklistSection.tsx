@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
-import { mockedBlockedEmailList } from '~/testing/mock-data/accounts';
-import { Section } from '@/ui/layout/section/components/Section';
+import { v4 } from 'uuid';
+
 import { SettingsAccountsEmailsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistInput';
 import { SettingsAccountsEmailsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistTable';
-import { v4 } from 'uuid';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { Section } from '@/ui/layout/section/components/Section';
+import { mockedBlockedEmailList } from '~/testing/mock-data/accounts';
 
 export const SettingsAccountsEmailsBlocklistSection = () => {
   const [blockedEmailList, setBlockedEmailList] = useState(
