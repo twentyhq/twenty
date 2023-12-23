@@ -79,8 +79,10 @@ export const useSignInUp = () => {
   });
 
   useEffect(() => {
-    form.setValue('email', 'tim@apple.dev');
-    form.setValue('password', 'Applecar2025');
+    if (isSignInPrefilled) {
+      form.setValue('email', 'tim@apple.dev');
+      form.setValue('password', 'Applecar2025');
+    }
   }, [form, isSignInPrefilled]);
 
   const {
