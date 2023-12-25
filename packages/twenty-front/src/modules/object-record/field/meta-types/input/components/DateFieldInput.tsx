@@ -25,7 +25,7 @@ export const DateFieldInput = ({
 
   const persistDate = (newDate: Nullable<Date>) => {
     if (!newDate) {
-      persistField('');
+      persistField(null);
     } else {
       const newDateISO = newDate?.toISOString();
 

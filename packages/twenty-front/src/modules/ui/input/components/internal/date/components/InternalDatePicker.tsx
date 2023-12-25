@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDatePicker from 'react-datepicker';
 import styled from '@emotion/styled';
 
+import { IconCalendarX } from '@/ui/display/icon';
 import { overlayBackground } from '@/ui/theme/constants/effects';
 
 import 'react-datepicker/dist/react-datepicker.css';
@@ -220,9 +221,32 @@ const StyledContainer = styled.div`
   }
 `;
 
+const StyledButtonContainer = styled.div`
+  align-items: center;
+  align-self: stretch;
+  display: flex;
+  gap: 8px;
+  height: 32px;
+  padding: 0px var(--Spacing-4px, 4px);
+`;
+
+const StyledButton = styled.button`
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  color: gray;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+  & .icon {
+    height: 16px;
+    width: 16px;
+  }
+`;
+
 export type InternalDatePickerProps = {
-  date: Date;
-  onMouseSelect?: (date: Date) => void;
+  date: Date | null;
+  onMouseSelect?: (date: Date | null) => void;
   onChange?: (date: Date) => void;
 };
 
@@ -230,24 +254,37 @@ export const InternalDatePicker = ({
   date,
   onChange,
   onMouseSelect,
-}: InternalDatePickerProps) => (
-  <StyledContainer>
-    <ReactDatePicker
-      open={true}
-      selected={date}
-      showMonthDropdown
-      showYearDropdown
-      onChange={() => {
-        // We need to use onSelect here but onChange is almost redundant with onSelect but is required
-      }}
-      customInput={<></>}
-      onSelect={(date: Date, event) => {
-        if (event?.type === 'click') {
-          onMouseSelect?.(date);
-        } else {
-          onChange?.(date);
-        }
-      }}
-    />
-  </StyledContainer>
-);
+}: InternalDatePickerProps) => {
+  const handelClear = () => {
+    onMouseSelect?.(null);
+  };
+
+  return (
+    <StyledContainer>
+      <ReactDatePicker
+        open={true}
+        selected={date}
+        showMonthDropdown
+        showYearDropdown
+        onChange={() => {
+          // We need to use onSelect here but onChange is almost redundant with onSelect but is require
+        }}
+        customInput={<></>}
+        onSelect={(date: Date, event) => {
+          if (event?.type === 'click') {
+            onMouseSelect?.(date);
+          } else {
+            onChange?.(date);
+          }
+        }}
+      >
+        <StyledButtonContainer>
+          <StyledButton onClick={handelClear}>
+            <IconCalendarX className="icon" />
+            Clear
+          </StyledButton>
+        </StyledButtonContainer>
+      </ReactDatePicker>
+    </StyledContainer>
+  );
+};
