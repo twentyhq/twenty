@@ -1,4 +1,4 @@
-const getSize = size => {
+const getSize = (size: string) => {
     switch(size) {
         case 'S':
             return '14px';

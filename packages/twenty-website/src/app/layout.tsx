@@ -15,6 +15,7 @@ const gabarito = Gabarito({
   weight: ['400', '500'],
   subsets: ['latin'],
   display: 'swap',
+  adjustFontFallback: false
 })
 
 

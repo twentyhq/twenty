@@ -15,8 +15,8 @@ interface Release {
   
 
   const Home = async () => {
-    const res = await fetch(`${process.env.BASE_URL}/api/github`);
-    const data: Release[] = await res.json();
+    const response = await fetch('https://api.github.com/repos/twentyhq/twenty/releases');
+    const data: Release[] = await response.json();
   
     const releases = await Promise.all(
       data.map(async (release) => {
