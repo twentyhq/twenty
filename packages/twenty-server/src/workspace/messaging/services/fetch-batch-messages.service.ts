@@ -142,7 +142,7 @@ export class FetchBatchMessagesService {
     const formattedResponse = Promise.all(
       parsedResponse.map(async (item) => {
         if (item.error) {
-          console.log(item.error);
+          console.log('Error', item.error);
 
           return;
         }
@@ -151,36 +151,40 @@ export class FetchBatchMessagesService {
 
         const message = atob(raw?.replace(/-/g, '+').replace(/_/g, '/'));
 
-        const parsed = await simpleParser(message);
+        try {
+          const parsed = await simpleParser(message);
 
-        const {
-          subject,
-          messageId,
-          from,
-          to,
-          cc,
-          bcc,
-          text,
-          html,
-          attachments,
-        } = parsed;
+          const {
+            subject,
+            messageId,
+            from,
+            to,
+            cc,
+            bcc,
+            text,
+            html,
+            attachments,
+          } = parsed;
 
-        const messageFromGmail: MessageFromGmail = {
-          externalId: id,
-          headerMessageId: messageId || '',
-          subject: subject || '',
-          messageThreadId: threadId,
-          internalDate,
-          from,
-          to,
-          cc,
-          bcc,
-          text: text || '',
-          html: html || '',
-          attachments,
-        };
+          const messageFromGmail: MessageFromGmail = {
+            externalId: id,
+            headerMessageId: messageId || '',
+            subject: subject || '',
+            messageThreadId: threadId,
+            internalDate,
+            from,
+            to,
+            cc,
+            bcc,
+            text: text || '',
+            html: html || '',
+            attachments,
+          };
 
-        return messageFromGmail;
+          return messageFromGmail;
+        } catch (error) {
+          console.log('Error', error);
+        }
       }),
     );
 
