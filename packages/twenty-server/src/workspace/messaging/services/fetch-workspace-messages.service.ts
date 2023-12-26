@@ -8,7 +8,7 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetch-batch-messages.service';
-import { MessageFromGmail } from 'src/workspace/messaging/types/messageFromGmail';
+import { GmailMessage } from 'src/workspace/messaging/types/gmailMessage';
 import { MessageQuery } from 'src/workspace/messaging/types/messageQuery';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 
@@ -50,12 +50,20 @@ export class FetchWorkspaceMessagesService {
       throw new Error('No workspace data source found');
     }
 
-    const connectedAccount = await workspaceDataSource?.query(
+    const connectedAccounts = await workspaceDataSource?.query(
       `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail' AND "accountOwnerId" = $1`,
       [workspaceMemberId],
     );
 
-    const refreshToken = connectedAccount[0].refreshToken;
+    if (!connectedAccounts || connectedAccounts.length === 0) {
+      throw new Error('No connected account found');
+    }
+
+    const refreshToken = connectedAccounts[0]?.refreshToken;
+
+    if (!refreshToken) {
+      throw new Error('No refresh token found');
+    }
 
     const gmailClient = await this.getGmailClient(refreshToken);
 
@@ -74,7 +82,7 @@ export class FetchWorkspaceMessagesService {
       threadsData,
       dataSourceMetadata,
       workspaceDataSource,
-      connectedAccount[0].id,
+      connectedAccounts[0].id,
     );
   }
 
@@ -101,12 +109,12 @@ export class FetchWorkspaceMessagesService {
       [workspaceMemberId],
     );
 
-    if (!connectedAccounts.length) {
-      throw new Error('No connected accounts found');
+    if (!connectedAccounts || connectedAccounts.length === 0) {
+      throw new Error('No connected account found');
     }
 
-    const accessToken = connectedAccounts[0].accessToken;
-    const refreshToken = connectedAccounts[0].refreshToken;
+    const accessToken = connectedAccounts[0]?.accessToken;
+    const refreshToken = connectedAccounts[0]?.refreshToken;
 
     if (!accessToken || !refreshToken) {
       throw new Error('No access token or refresh token found');
@@ -190,7 +198,7 @@ export class FetchWorkspaceMessagesService {
   }
 
   async saveMessages(
-    messages: MessageFromGmail[],
+    messages: GmailMessage[],
     dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
     workspaceMemberId: string,

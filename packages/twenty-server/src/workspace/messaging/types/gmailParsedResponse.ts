@@ -1,4 +1,4 @@
-export type ParsedResponseFromGmail = {
+export type GmailParsedResponse = {
   id: string;
   threadId: string;
   labelIds: string[];

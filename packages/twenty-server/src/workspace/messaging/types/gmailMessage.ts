@@ -1,6 +1,6 @@
 import { AddressObject, Attachment } from 'mailparser';
 
-export type MessageFromGmail = {
+export type GmailMessage = {
   externalId: string;
   headerMessageId: string;
   subject: string;

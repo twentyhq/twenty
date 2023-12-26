@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { simpleParser } from 'mailparser';
 
-import { MessageFromGmail } from 'src/workspace/messaging/types/messageFromGmail';
+import { GmailMessage } from 'src/workspace/messaging/types/gmailMessage';
 import { MessageQuery } from 'src/workspace/messaging/types/messageQuery';
-import { ParsedResponseFromGmail } from 'src/workspace/messaging/types/parsedResponseFromGmail';
+import { GmailParsedResponse } from 'src/workspace/messaging/types/gmailParsedResponse';
 
 @Injectable()
 export class FetchBatchMessagesService {
@@ -20,12 +20,12 @@ export class FetchBatchMessagesService {
   async fetchAllByBatches(
     messageQueries: MessageQuery[],
     accessToken: string,
-  ): Promise<MessageFromGmail[]> {
+  ): Promise<GmailMessage[]> {
     const batchLimit = 100;
 
     let batchOffset = 0;
 
-    let messages: MessageFromGmail[] = [];
+    let messages: GmailMessage[] = [];
 
     while (batchOffset < messageQueries.length) {
       const batchResponse = await this.fetchBatch(
@@ -48,7 +48,7 @@ export class FetchBatchMessagesService {
     accessToken: string,
     batchOffset: number,
     batchLimit: number,
-  ): Promise<MessageFromGmail[]> {
+  ): Promise<GmailMessage[]> {
     const limitedMessageQueries = messageQueries.slice(
       batchOffset,
       batchOffset + batchLimit,
@@ -96,8 +96,8 @@ export class FetchBatchMessagesService {
 
   parseBatch(
     responseCollection: AxiosResponse<any, any>,
-  ): ParsedResponseFromGmail[] {
-    const responseItems: ParsedResponseFromGmail[] = [];
+  ): GmailParsedResponse[] {
+    const responseItems: GmailParsedResponse[] = [];
 
     const boundary = this.getBatchSeparator(responseCollection);
 
@@ -137,7 +137,7 @@ export class FetchBatchMessagesService {
 
   async formatBatchResponse(
     response: AxiosResponse<any, any>,
-  ): Promise<MessageFromGmail[]> {
+  ): Promise<GmailMessage[]> {
     const parsedResponses = this.parseBatch(response);
 
     console.log('parsedResponse', parsedResponses);
@@ -169,7 +169,7 @@ export class FetchBatchMessagesService {
             attachments,
           } = parsed;
 
-          const messageFromGmail: MessageFromGmail = {
+          const messageFromGmail: GmailMessage = {
             externalId: id,
             headerMessageId: messageId || '',
             subject: subject || '',
@@ -193,7 +193,7 @@ export class FetchBatchMessagesService {
 
     const filteredResponse = (await formattedResponse).filter(
       (item) => item,
-    ) as MessageFromGmail[];
+    ) as GmailMessage[];
 
     return filteredResponse;
   }
