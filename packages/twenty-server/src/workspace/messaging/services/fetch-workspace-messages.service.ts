@@ -178,7 +178,7 @@ export class FetchWorkspaceMessagesService {
     );
 
     if (!messageChannel.length) {
-      throw new Error('No message channel found');
+      throw new Error('No message channel found for this connected account');
     }
 
     for (const thread of threads) {

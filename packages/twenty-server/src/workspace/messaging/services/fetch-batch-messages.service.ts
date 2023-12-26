@@ -130,7 +130,7 @@ export class FetchBatchMessagesService {
 
     const components = contentType.split('; ');
 
-    const boundary = components.find((o) => o.startsWith('boundary='));
+    const boundary = components.find((item) => item.startsWith('boundary='));
 
     return boundary?.replace('boundary=', '').trim() || '';
   }
