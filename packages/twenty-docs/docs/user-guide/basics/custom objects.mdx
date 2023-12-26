@@ -5,6 +5,8 @@ sidebar_custom_props:
   icon: TbAugmentedReality
 ---
 
+import ThemedImage from '@theme/ThemedImage';
+
 Objects are structures that allow you to store data (records, attributes, and values) specific to an organization. Twenty provides both standard and custom objects.
 
 Standard objects are in-built objects with a set of attributes available for all users. All workspaces come with three standard objects by default: People, Companies, and Opportunities. Standard objects have standard fields that are also available for all Twenty users, like Account Owner and URL.
@@ -19,13 +21,12 @@ To create a new custom object:
 2. Under Workspace, go to Data model. Here you'll be able to see an overview of all your existing Standard and Custom objects (both active and disabled).
 <br/>
 
-<div style={{textAlign: 'center'}}>
-    <img src="/img/user-guide/view-all-objects.png" alt="View all objects" />
-</div>
+
+<ThemedImage sources={{light: "/img/user-guide/view-all-objects-light.png", dark:"/img/user-guide/view-all-objects-dark.png"}} style={{width:'100%', maxWidth:'800px'}}/>
 
 <br/>
 
-3. Click on `+ New object` at the top, then choose Custom as the object type. Enter the name (both singular and plural) and description for your custom object and hit Save (at the top right). Using Listing as an example of custom object, the singular would be "listing" and the plural would be "listings" along with a description like "Listings that hosts created to showcase their property." 
+3. Click on `+ New object` at the top, then choose Custom as the object type. Enter the name (both singular and plural), choose an icon, and add a description for your custom object and hit Save (at the top right). Using Listing as an example of custom object, the singular would be "listing" and the plural would be "listings" along with a description like "Listings that hosts created to showcase their property." 
 
 <br/>
 
@@ -35,7 +36,7 @@ To create a new custom object:
 
 <br/>
 
-4. Once you create your custom object, you'll be able to manage it. You can edit the name and description, view the different fields, and add more fields.
+4. Once you create your custom object, you'll be able to manage it. You can edit the name, icon and description, view the different fields, and add more fields.
 
 <div style={{textAlign: 'center'}}>
     <img src="/img/user-guide/manage-custom-object.png" alt="Create custom object" />
