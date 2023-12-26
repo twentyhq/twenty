@@ -2,11 +2,19 @@ import { useEffect, useState } from 'react';
 import * as Sentry from '@sentry/react';
 import { useRecoilValue } from 'recoil';
 
+import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 export const SentryInitEffect = () => {
   const sentryConfig = useRecoilValue(sentryConfigState);
+
+  const currentUser = useRecoilValue(currentUserState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
   const [isSentryInitialized, setIsSentryInitialized] = useState(false);
 
   useEffect(() => {
@@ -29,6 +37,23 @@ export const SentryInitEffect = () => {
 
       setIsSentryInitialized(true);
     }
-  }, [sentryConfig, isSentryInitialized]);
+
+    if (currentUser) {
+      Sentry.setUser({
+        email: currentUser?.email,
+        id: currentUser?.id,
+        workspaceId: currentWorkspace?.id,
+        workspaceMemberId: currentWorkspaceMember?.id,
+      });
+    } else {
+      Sentry.setUser(null);
+    }
+  }, [
+    sentryConfig,
+    isSentryInitialized,
+    currentUser,
+    currentWorkspace,
+    currentWorkspaceMember,
+  ]);
   return <></>;
 };

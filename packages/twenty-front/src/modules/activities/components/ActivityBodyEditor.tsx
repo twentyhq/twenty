@@ -83,12 +83,49 @@ export const ActivityBodyEditor = ({
         ? JSON.parse(activity.body)
         : undefined,
     domAttributes: { editor: { class: 'editor' } },
-    onEditorContentChange: (editor) => {
+    onEditorContentChange: (editor: BlockNoteEditor) => {
       debounceOnChange(JSON.stringify(editor.topLevelBlocks) ?? '');
     },
     slashMenuItems,
     uploadFile: imagesActivated ? handleUploadAttachment : undefined,
+    onEditorReady: (editor: BlockNoteEditor) => {
+      editor.domElement.addEventListener('paste', handleImagePaste);
+    },
   });
+
+  const handleImagePaste = async (event: ClipboardEvent) => {
+    const clipboardItems = event.clipboardData?.items;
+
+    if (clipboardItems) {
+      for (let i = 0; i < clipboardItems.length; i++) {
+        if (
+          clipboardItems[i].kind === 'file' &&
+          clipboardItems[i].type.match('^image/')
+        ) {
+          const pastedFile = clipboardItems[i].getAsFile();
+          if (!pastedFile) {
+            return;
+          }
+
+          const imageUrl = await handleUploadAttachment(pastedFile);
+          if (imageUrl) {
+            editor?.insertBlocks(
+              [
+                {
+                  type: 'image',
+                  props: {
+                    url: imageUrl,
+                  },
+                },
+              ],
+              editor?.getTextCursorPosition().block,
+              'after',
+            );
+          }
+        }
+      }
+    }
+  };
 
   return (
     <StyledBlockNoteStyledContainer>

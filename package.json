@@ -15,7 +15,8 @@
       "packages/twenty-docs",
       "packages/twenty-server",
       "packages/twenty-utils",
-      "packages/twenty-zapier"
+      "packages/twenty-zapier",
+      "packages/twenty-website"
     ]
   },
   "devDependencies": {
