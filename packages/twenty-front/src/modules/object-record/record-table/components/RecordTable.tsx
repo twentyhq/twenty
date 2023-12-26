@@ -71,7 +71,7 @@ const StyledTable = styled.table`
     position: sticky;
     top: 0;
     background-color: ${({ theme }) => theme.background.primary};
-    z-index: 1; /* add this line */
+    z-index: 1; 
 
     :last-child {
       border-right-color: transparent;
