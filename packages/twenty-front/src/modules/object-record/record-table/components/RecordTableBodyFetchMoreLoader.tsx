@@ -32,13 +32,13 @@ export const RecordTableBodyFetchMoreLoader = () => {
 
   return (
     <tbody ref={tbodyRef}>
-      {isFetchingMoreObjects && (
+      {isFetchingMoreObjects ? (
         <StyledRow selected={false}>
           <td style={{ height: 50 }} colSpan={1000}>
             Loading more...
           </td>
         </StyledRow>
-      )}
+      ) : null}
     </tbody>
   );
 };

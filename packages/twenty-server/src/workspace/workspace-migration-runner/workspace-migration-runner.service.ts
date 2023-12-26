@@ -180,7 +180,7 @@ export class WorkspaceMigrationRunnerService {
           );
           break;
         case WorkspaceMigrationColumnActionType.RELATION:
-          await this.createForeignKey(
+          await this.createRelation(
             queryRunner,
             schemaName,
             tableName,
@@ -279,10 +279,9 @@ export class WorkspaceMigrationRunnerService {
         isNullable: migrationColumn.alteredColumnDefinition.isNullable,
       }),
     );
-    // }
   }
 
-  private async createForeignKey(
+  private async createRelation(
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,

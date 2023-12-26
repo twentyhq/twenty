@@ -58,7 +58,9 @@ export const RecordBoardColumnEditTitleMenu = ({
   const [internalValue, setInternalValue] = useState(title);
   const { onTitleEdit } = useContext(BoardColumnContext) || {};
 
-  const { setBoardColumns } = useRecordBoard();
+  const { setBoardColumns } = useRecordBoard({
+    recordBoardScopeId: 'company-board',
+  });
 
   const debouncedOnUpdateTitle = debounce(
     (newTitle) => onTitleEdit?.({ title: newTitle, color }),

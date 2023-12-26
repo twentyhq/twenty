@@ -1,6 +1,6 @@
 {
   "name": "twenty-front",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -47,6 +47,7 @@
     "@floating-ui/react": "^0.24.3",
     "@hello-pangea/dnd": "^16.2.0",
     "@hookform/resolvers": "^3.1.1",
+    "@sentry/react": "^7.88.0",
     "@sniptt/guards": "^0.2.0",
     "@swc/core": "^1.3.100",
     "@swc/jest": "^0.2.29",

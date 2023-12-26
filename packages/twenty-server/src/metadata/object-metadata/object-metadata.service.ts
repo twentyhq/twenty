@@ -313,16 +313,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     options: FindOneOptions<ObjectMetadataEntity>,
   ): Promise<ObjectMetadataEntity | null> {
     return this.objectMetadataRepository.findOne({
-      ...options,
-      where: {
-        ...options.where,
-        workspaceId,
-      },
       relations: [
         'fields',
         'fields.fromRelationMetadata',
         'fields.toRelationMetadata',
       ],
+      ...options,
+      where: {
+        ...options.where,
+        workspaceId,
+      },
     });
   }
 
@@ -331,17 +331,17 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     options?: FindManyOptions<ObjectMetadataEntity>,
   ) {
     return this.objectMetadataRepository.find({
-      ...options,
-      where: {
-        ...options?.where,
-        workspaceId,
-      },
       relations: [
         'fields',
         'fields.fromRelationMetadata',
         'fields.toRelationMetadata',
         'fields.fromRelationMetadata.toObjectMetadata',
       ],
+      ...options,
+      where: {
+        ...options?.where,
+        workspaceId,
+      },
     });
   }
 

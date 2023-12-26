@@ -3,6 +3,7 @@ import { useApolloClient } from '@apollo/client';
 import {
   snapshot_UNSTABLE,
   useGotoRecoilSnapshot,
+  useRecoilCallback,
   useRecoilState,
   useSetRecoilState,
 } from 'recoil';
@@ -10,6 +11,13 @@ import {
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { billingState } from '@/client-config/states/billingState';
+import { isDebugModeState } from '@/client-config/states/isDebugModeState';
+import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
+import { supportChatState } from '@/client-config/states/supportChatState';
+import { telemetryState } from '@/client-config/states/telemetryState';
+import { iconsState } from '@/ui/display/icon/states/iconsState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { REACT_APP_SERVER_AUTH_URL } from '~/config';
 import {
@@ -125,14 +133,39 @@ export const useAuth = () => {
     [handleChallenge, handleVerify, setIsVerifyPendingState],
   );
 
-  const handleSignOut = useCallback(() => {
-    goToRecoilSnapshot(snapshot_UNSTABLE());
-    setTokenPair(null);
-    setCurrentUser(null);
-    client.clearStore().then(() => {
-      sessionStorage.clear();
-    });
-  }, [goToRecoilSnapshot, setTokenPair, setCurrentUser, client]);
+  const handleSignOut = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const emptySnapshot = snapshot_UNSTABLE();
+        const iconsValue = snapshot.getLoadable(iconsState).getValue();
+        const authProvidersValue = snapshot
+          .getLoadable(authProvidersState)
+          .getValue();
+        const billing = snapshot.getLoadable(billingState).getValue();
+        const isSignInPrefilled = snapshot
+          .getLoadable(isSignInPrefilledState)
+          .getValue();
+        const supportChat = snapshot.getLoadable(supportChatState).getValue();
+        const telemetry = snapshot.getLoadable(telemetryState).getValue();
+        const isDebugMode = snapshot.getLoadable(isDebugModeState).getValue();
+
+        const initialSnapshot = emptySnapshot.map(({ set }) => {
+          set(iconsState, iconsValue);
+          set(authProvidersState, authProvidersValue);
+          set(billingState, billing);
+          set(isSignInPrefilledState, isSignInPrefilled);
+          set(supportChatState, supportChat);
+          set(telemetryState, telemetry);
+          set(isDebugModeState, isDebugMode);
+        });
+
+        goToRecoilSnapshot(initialSnapshot);
+
+        await client.clearStore();
+        sessionStorage.clear();
+      },
+    [client, goToRecoilSnapshot],
+  );
 
   const handleCredentialsSignUp = useCallback(
     async (email: string, password: string, workspaceInviteHash?: string) => {

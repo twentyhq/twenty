@@ -2,17 +2,20 @@ import { useCallback } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { selectedRowIdsSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsSelector';
 import {
+  IconCheckbox,
   IconHeart,
   IconHeartOff,
+  IconNotes,
   IconTrash,
   IconWand,
 } from '@/ui/display/icon';
@@ -50,6 +53,13 @@ export const useRecordTableContextMenuEntries = (
 
   const { createFavorite, favorites, deleteFavorite } = useFavorites();
 
+  const objectMetadataType =
+    objectNameSingular === 'company'
+      ? 'Company'
+      : objectNameSingular === 'person'
+        ? 'Person'
+        : 'Custom';
+
   const handleFavoriteButtonClick = useRecoilCallback(({ snapshot }) => () => {
     const selectedRowIds = snapshot
       .getLoadable(selectedRowIdsSelector)
@@ -76,7 +86,7 @@ export const useRecordTableContextMenuEntries = (
     }
   });
 
-  const { deleteOneRecord } = useDeleteOneRecord({
+  const { deleteManyRecords } = useDeleteManyRecords({
     objectNameSingular,
   });
 
@@ -92,13 +102,9 @@ export const useRecordTableContextMenuEntries = (
           .getValue();
 
         resetTableRowSelection();
-        await Promise.all(
-          rowIdsToDelete.map(async (rowId) => {
-            await deleteOneRecord(rowId);
-          }),
-        );
+        await deleteManyRecords(rowIdsToDelete);
       },
-    [deleteOneRecord, resetTableRowSelection],
+    [deleteManyRecords, resetTableRowSelection],
   );
 
   const handleExecuteQuickActionOnClick = useRecoilCallback(
@@ -121,6 +127,9 @@ export const useRecordTableContextMenuEntries = (
   const dataExecuteQuickActionOnmentEnabled = useIsFeatureEnabled(
     'IS_QUICK_ACTIONS_ENABLED',
   );
+
+  const openCreateActivityDrawer =
+    useOpenCreateActivityDrawerForSelectedRowIds();
 
   return {
     setContextMenuEntries: useCallback(() => {
@@ -170,16 +179,20 @@ export const useRecordTableContextMenuEntries = (
 
     setActionBarEntries: useRecoilCallback(() => () => {
       setActionBarEntriesState([
-        // {
-        //   label: 'Task',
-        //   Icon: IconCheckbox,
-        //   onClick: () => {},
-        // },
-        // {
-        //   label: 'Note',
-        //   Icon: IconNotes,
-        //   onClick: () => {},
-        // },
+        {
+          label: 'Task',
+          Icon: IconCheckbox,
+          onClick: () => {
+            openCreateActivityDrawer('Task', objectMetadataType);
+          },
+        },
+        {
+          label: 'Note',
+          Icon: IconNotes,
+          onClick: () => {
+            openCreateActivityDrawer('Note', objectMetadataType);
+          },
+        },
         ...(dataExecuteQuickActionOnmentEnabled
           ? [
               {

@@ -2,8 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import diff from 'microdiff';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import camelCase from 'lodash.camelcase';
+
+import { PartialFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
+import { PartialObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
+import {
+  MappedFieldMetadataEntity,
+  MappedObjectMetadata,
+} from 'src/workspace/workspace-sync-metadata/interfaces/mapped-metadata.interface';
 
 import {
   FieldMetadataEntity,
@@ -14,7 +21,6 @@ import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
-import { MetadataParser } from 'src/workspace/workspace-sync-metadata/utils/metadata.parser';
 import {
   filterIgnoredProperties,
   convertStringifiedFieldsToJSON,
@@ -29,6 +35,7 @@ import {
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationFactory } from 'src/metadata/workspace-migration/workspace-migration.factory';
 import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
+import { ReflectiveMetadataFactory } from 'src/workspace/workspace-sync-metadata/reflective-metadata.factory';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 
 @Injectable()
@@ -36,6 +43,7 @@ export class WorkspaceSyncMetadataService {
   constructor(
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
+    private readonly reflectiveMetadataFactory: ReflectiveMetadataFactory,
 
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
@@ -75,32 +83,37 @@ export class WorkspaceSyncMetadataService {
         {},
       );
 
-      const standardObjects = MetadataParser.parseAllMetadata(
-        standardObjectMetadata,
-        workspaceId,
-        dataSourceId,
-        workspaceFeatureFlagsMap,
-      );
+      const standardObjects =
+        await this.reflectiveMetadataFactory.createObjectMetadataCollection(
+          standardObjectMetadata,
+          workspaceId,
+          dataSourceId,
+          workspaceFeatureFlagsMap,
+        );
 
       const objectsInDB = await this.objectMetadataRepository.find({
-        where: { workspaceId, dataSourceId, isCustom: false },
-        relations: ['fields'],
+        where: { workspaceId, isCustom: false },
+        relations: ['dataSource', 'fields'],
       });
 
-      const objectsInDBByName =
-        mapObjectMetadataByUniqueIdentifier(objectsInDB);
-      const standardObjectsByName =
-        mapObjectMetadataByUniqueIdentifier(standardObjects);
+      const objectsInDBByName = mapObjectMetadataByUniqueIdentifier<
+        ObjectMetadataEntity,
+        FieldMetadataEntity
+      >(objectsInDB);
+      const standardObjectsByName = mapObjectMetadataByUniqueIdentifier<
+        PartialObjectMetadata,
+        PartialFieldMetadata
+      >(standardObjects);
 
-      const objectsToCreate: ObjectMetadataEntity[] = [];
+      const objectsToCreate: MappedObjectMetadata[] = [];
       const objectsToDelete = objectsInDB.filter(
         (objectInDB) => !standardObjectsByName[objectInDB.nameSingular],
       );
       const objectsToUpdate: Record<string, ObjectMetadataEntity> = {};
 
-      const fieldsToCreate: FieldMetadataEntity[] = [];
+      const fieldsToCreate: PartialFieldMetadata[] = [];
       const fieldsToDelete: FieldMetadataEntity[] = [];
-      const fieldsToUpdate: Record<string, FieldMetadataEntity> = {};
+      const fieldsToUpdate: Record<string, MappedFieldMetadataEntity> = {};
 
       for (const standardObjectName in standardObjectsByName) {
         const standardObject = standardObjectsByName[standardObjectName];
@@ -187,13 +200,15 @@ export class WorkspaceSyncMetadataService {
         for (const diff of fieldsDiff) {
           const fieldName = diff.path[0];
 
-          if (diff.type === 'CREATE')
+          if (diff.type === 'CREATE') {
             fieldsToCreate.push({
               ...standardObjectFields[fieldName],
               objectMetadataId: objectInDB.id,
             });
-          if (diff.type === 'REMOVE' && diff.path.length === 1)
+          }
+          if (diff.type === 'REMOVE' && diff.path.length === 1) {
             fieldsToDelete.push(objectInDBFields[fieldName]);
+          }
           if (diff.type === 'CHANGE') {
             const property = diff.path[diff.path.length - 1];
 
@@ -206,16 +221,25 @@ export class WorkspaceSyncMetadataService {
       }
 
       // CREATE OBJECTS
-      await this.objectMetadataRepository.save(
-        objectsToCreate.map((object) => ({
-          ...object,
-          isActive: true,
-          fields: Object.values(object.fields).map((field) => ({
-            ...convertStringifiedFieldsToJSON(field),
+      const createdObjectMetadataCollection =
+        await this.objectMetadataRepository.save(
+          objectsToCreate.map((object) => ({
+            ...object,
             isActive: true,
+            fields: Object.values(object.fields).map((field) => ({
+              ...convertStringifiedFieldsToJSON(field),
+              isActive: true,
+            })),
           })),
-        })),
+        );
+      const identifiers = createdObjectMetadataCollection.map(
+        (object) => object.id,
       );
+      const createdObjects = await this.objectMetadataRepository.find({
+        where: { id: In(identifiers) },
+        relations: ['dataSource', 'fields'],
+      });
+
       // UPDATE OBJECTS, this is not optimal as we are running n queries here.
       for (const [key, value] of Object.entries(objectsToUpdate)) {
         await this.objectMetadataRepository.update(key, value);
@@ -228,9 +252,10 @@ export class WorkspaceSyncMetadataService {
       }
 
       // CREATE FIELDS
-      await this.fieldMetadataRepository.save(
+      const createdFields = await this.fieldMetadataRepository.save(
         fieldsToCreate.map((field) => convertStringifiedFieldsToJSON(field)),
       );
+
       // UPDATE FIELDS
       for (const [key, value] of Object.entries(fieldsToUpdate)) {
         await this.fieldMetadataRepository.update(
@@ -252,9 +277,9 @@ export class WorkspaceSyncMetadataService {
 
       // Generate migrations
       await this.generateMigrationsFromSync(
-        objectsToCreate,
+        createdObjects,
         objectsToDelete,
-        fieldsToCreate,
+        createdFields,
         fieldsToDelete,
         objectsInDB,
       );
@@ -282,16 +307,20 @@ export class WorkspaceSyncMetadataService {
     workspaceFeatureFlagsMap: Record<string, boolean>,
   ) {
     const objectsInDB = await this.objectMetadataRepository.find({
-      where: { workspaceId, dataSourceId, isCustom: false },
-      relations: ['fields'],
+      where: { workspaceId, isCustom: false },
+      relations: ['dataSource', 'fields'],
     });
-    const objectsInDBByName = mapObjectMetadataByUniqueIdentifier(objectsInDB);
-    const standardRelations = MetadataParser.parseAllRelations(
-      standardObjectMetadata,
-      workspaceId,
-      objectsInDBByName,
-      workspaceFeatureFlagsMap,
-    );
+    const objectsInDBByName = mapObjectMetadataByUniqueIdentifier<
+      ObjectMetadataEntity,
+      FieldMetadataEntity
+    >(objectsInDB);
+    const standardRelations =
+      this.reflectiveMetadataFactory.createRelationMetadataCollection(
+        standardObjectMetadata,
+        workspaceId,
+        objectsInDBByName,
+        workspaceFeatureFlagsMap,
+      );
 
     // TODO: filter out custom relations once isCustom has been added to relationMetadata table
     const relationsInDB = await this.relationMetadataRepository.find({
@@ -395,7 +424,7 @@ export class WorkspaceSyncMetadataService {
       result[currentObject.id] = currentObject;
 
       return result;
-    }, {});
+    }, {} as Record<string, ObjectMetadataEntity>);
 
     if (fieldsToCreate.length > 0) {
       fieldsToCreate.map((field) => {

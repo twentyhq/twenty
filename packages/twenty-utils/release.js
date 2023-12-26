@@ -12,8 +12,8 @@ if (!semver.valid(version)) {
   process.exit(1);
 }
 
-const FrontPackageJson = path.join(__dirname, "../../front/package.json");
-const ServerPackageJson = path.join(__dirname, "../../server/package.json");
+const FrontPackageJson = path.join(__dirname, "../twenty-front/package.json");
+const ServerPackageJson = path.join(__dirname, "../twenty-server/package.json");
 
 // Update package.json
 for (let file of [FrontPackageJson, ServerPackageJson]) {

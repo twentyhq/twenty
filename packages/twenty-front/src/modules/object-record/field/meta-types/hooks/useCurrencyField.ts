@@ -38,7 +38,7 @@ const initializeValue = (
 
   return {
     amount: convertCurrencyMicrosToCurrency(fieldValue.amountMicros),
-    currencyCode: fieldValue.currencyCode,
+    currencyCode: CurrencyCode.USD,
   };
 };
 

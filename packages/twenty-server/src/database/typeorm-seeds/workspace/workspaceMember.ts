@@ -23,6 +23,7 @@ export const seedWorkspaceMember = async (
       'nameLastName',
       'locale',
       'colorScheme',
+      'userEmail',
       'userId',
     ])
     .orIgnore()
@@ -33,6 +34,7 @@ export const seedWorkspaceMember = async (
         nameLastName: 'Apple',
         locale: 'en',
         colorScheme: 'Light',
+        userEmail: 'tim@apple.dev',
         userId: SeedUserIds.Tim,
       },
       {
@@ -41,6 +43,7 @@ export const seedWorkspaceMember = async (
         nameLastName: 'Ive',
         locale: 'en',
         colorScheme: 'Light',
+        userEmail: 'jony.ive@apple.dev',
         userId: SeedUserIds.Jony,
       },
       {
@@ -49,6 +52,7 @@ export const seedWorkspaceMember = async (
         nameLastName: 'Shiler',
         locale: 'en',
         colorScheme: 'Light',
+        userEmail: 'phil.schiler@apple.dev',
         userId: SeedUserIds.Phil,
       },
     ])

@@ -64,6 +64,7 @@ export {
   IconInfoCircle,
   IconKey,
   IconLanguage,
+  IconLayersLinked,
   IconLayoutKanban,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse,

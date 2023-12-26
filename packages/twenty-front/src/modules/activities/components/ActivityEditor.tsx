@@ -82,7 +82,6 @@ export const ActivityEditor = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<Activity>({
     objectNameSingular: 'activity',
-    refetchFindManyQuery: true,
   });
 
   const { FieldContextProvider: DueAtFieldContextProvider } = useFieldContext({

@@ -20,11 +20,11 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = () => {
         entityType: ActivityTargetableEntityType,
         relatedEntities?: ActivityTargetableEntity[],
       ) => {
-        const selectedRowIds = Object.keys(
-          snapshot.getLoadable(selectedRowIdsSelector).getValue(),
-        );
+        const selectedRowIds = snapshot
+          .getLoadable(selectedRowIdsSelector)
+          .getValue();
         let activityTargetableEntityArray: ActivityTargetableEntity[] =
-          selectedRowIds.map((id) => ({
+          selectedRowIds.map((id: string) => ({
             type: entityType,
             id,
           }));
