@@ -68,6 +68,10 @@ const StyledTable = styled.table`
     color: ${({ theme }) => theme.font.color.tertiary};
     padding: 0;
     text-align: left;
+    position: sticky;
+    top: 0;
+    background-color: ${({ theme }) => theme.background.primary};
+    z-index: 1; /* add this line */
 
     :last-child {
       border-right-color: transparent;
