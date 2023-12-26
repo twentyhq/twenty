@@ -23,7 +23,7 @@ export const useSelectableListScopedState = ({
 
   return {
     scopeId,
-    getSelectableListScopedState: getScopedState,
+    injectStateWithSelectableListScopeId: getScopedState,
     getSelectableListScopedFamilyState: getScopedFamilyState,
     getSelectableListScopedSnapshotValue: getScopedSnapshotValue,
     getSelectableListScopedFamilySnapshotValue: getScopedFamilySnapshotValue,

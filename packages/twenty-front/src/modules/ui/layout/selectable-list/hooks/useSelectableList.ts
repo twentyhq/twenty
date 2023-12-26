@@ -3,13 +3,13 @@ import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import { useSelectableListScopedState } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListScopedState';
 import { getSelectableListScopeInjectors } from '@/ui/layout/selectable-list/utils/internal/getSelectableListScopeInjectors';
 
-export const useSelectableList = (selectableListScopeId?: string) => {
+export const useSelectableList = (selectableListId?: string) => {
   const {
-    getSelectableListScopedState,
+    injectStateWithSelectableListScopeId,
     getSelectableListScopedFamilyState,
     scopeId,
   } = useSelectableListScopedState({
-    selectableListScopeId,
+    selectableListScopeId: selectableListId,
   });
 
   const {
@@ -20,17 +20,17 @@ export const useSelectableList = (selectableListScopeId?: string) => {
   } = getSelectableListScopeInjectors();
 
   const setSelectableItemIds = useSetRecoilState(
-    getSelectableListScopedState(selectableItemIdsScopeInjector),
+    injectStateWithSelectableListScopeId(selectableItemIdsScopeInjector),
   );
   const setSelectableListOnEnter = useSetRecoilState(
-    getSelectableListScopedState(selectableListOnEnterScopeInjector),
+    injectStateWithSelectableListScopeId(selectableListOnEnterScopeInjector),
   );
   const isSelectedItemIdFamilyState = getSelectableListScopedFamilyState(
     isSelectedItemIdFamilyScopeInjector,
   );
 
   const resetSelectedItemIdState = useResetRecoilState(
-    getSelectableListScopedState(selectedItemIdScopeInjector),
+    injectStateWithSelectableListScopeId(selectedItemIdScopeInjector),
   );
 
   const resetSelectedItem = () => {
