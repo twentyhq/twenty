@@ -24,8 +24,9 @@ export const useSelectableListScopedState = ({
   return {
     scopeId,
     injectStateWithSelectableListScopeId: getScopedState,
-    getSelectableListScopedFamilyState: getScopedFamilyState,
-    getSelectableListScopedSnapshotValue: getScopedSnapshotValue,
-    getSelectableListScopedFamilySnapshotValue: getScopedFamilySnapshotValue,
+    injectFamilyStateWithSelectableListScopeId: getScopedFamilyState,
+    injectSnapshotValueWithSelectableListScopeId: getScopedSnapshotValue,
+    injectFamilySnapshotValueWithSelectableListScopeId:
+      getScopedFamilySnapshotValue,
   };
 };

@@ -6,7 +6,7 @@ import { getSelectableListScopeInjectors } from '@/ui/layout/selectable-list/uti
 export const useSelectableList = (selectableListId?: string) => {
   const {
     injectStateWithSelectableListScopeId,
-    getSelectableListScopedFamilyState,
+    injectFamilyStateWithSelectableListScopeId,
     scopeId,
   } = useSelectableListScopedState({
     selectableListScopeId: selectableListId,
@@ -25,9 +25,10 @@ export const useSelectableList = (selectableListId?: string) => {
   const setSelectableListOnEnter = useSetRecoilState(
     injectStateWithSelectableListScopeId(selectableListOnEnterScopeInjector),
   );
-  const isSelectedItemIdFamilyState = getSelectableListScopedFamilyState(
-    isSelectedItemIdFamilyScopeInjector,
-  );
+  const isSelectedItemIdFamilyState =
+    injectFamilyStateWithSelectableListScopeId(
+      isSelectedItemIdFamilyScopeInjector,
+    );
 
   const resetSelectedItemIdState = useResetRecoilState(
     injectStateWithSelectableListScopeId(selectedItemIdScopeInjector),
