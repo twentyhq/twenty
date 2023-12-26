@@ -5,6 +5,7 @@ import { simpleParser } from 'mailparser';
 
 import { MessageFromGmail } from 'src/workspace/messaging/types/messageFromGmail';
 import { MessageQuery } from 'src/workspace/messaging/types/messageQuery';
+import { ParsedResponseFromGmail } from 'src/workspace/messaging/types/parsedResponseFromGmail';
 
 @Injectable()
 export class FetchBatchMessagesService {
@@ -93,8 +94,10 @@ export class FetchBatchMessagesService {
     return batchBody.concat(['--', boundary, '--']).join('');
   }
 
-  parseBatch(responseCollection: AxiosResponse<any, any>): any[] {
-    const responseItems: any = [];
+  parseBatch(
+    responseCollection: AxiosResponse<any, any>,
+  ): ParsedResponseFromGmail[] {
+    const responseItems: ParsedResponseFromGmail[] = [];
 
     const boundary = this.getBatchSeparator(responseCollection);
 
@@ -135,12 +138,12 @@ export class FetchBatchMessagesService {
   async formatBatchResponse(
     response: AxiosResponse<any, any>,
   ): Promise<MessageFromGmail[]> {
-    const parsedResponse = this.parseBatch(response);
+    const parsedResponses = this.parseBatch(response);
 
-    console.log('parsedResponse', parsedResponse);
+    console.log('parsedResponse', parsedResponses);
 
     const formattedResponse = Promise.all(
-      parsedResponse.map(async (item) => {
+      parsedResponses.map(async (item) => {
         if (item.error) {
           console.log('Error', item.error);
 
