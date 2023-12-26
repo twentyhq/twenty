@@ -137,8 +137,16 @@ export class FetchBatchMessagesService {
   ): Promise<MessageFromGmail[]> {
     const parsedResponse = this.parseBatch(response);
 
-    return Promise.all(
+    console.log('parsedResponse', parsedResponse);
+
+    const formattedResponse = Promise.all(
       parsedResponse.map(async (item) => {
+        if (item.error) {
+          console.log(item.error);
+
+          return;
+        }
+
         const { id, threadId, internalDate, raw } = item;
 
         const message = atob(raw?.replace(/-/g, '+').replace(/_/g, '/'));
@@ -175,5 +183,11 @@ export class FetchBatchMessagesService {
         return messageFromGmail;
       }),
     );
+
+    const filteredResponse = (await formattedResponse).filter(
+      (item) => item,
+    ) as MessageFromGmail[];
+
+    return filteredResponse;
   }
 }

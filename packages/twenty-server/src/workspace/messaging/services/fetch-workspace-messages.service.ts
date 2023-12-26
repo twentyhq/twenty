@@ -108,6 +108,10 @@ export class FetchWorkspaceMessagesService {
     const accessToken = connectedAccounts[0].accessToken;
     const refreshToken = connectedAccounts[0].refreshToken;
 
+    if (!accessToken || !refreshToken) {
+      throw new Error('No access token or refresh token found');
+    }
+
     const gmailClient = await this.getGmailClient(refreshToken);
 
     const messages = await gmailClient.users.messages.list({
@@ -117,7 +121,7 @@ export class FetchWorkspaceMessagesService {
 
     const messagesData = messages.data.messages;
 
-    if (!messagesData) {
+    if (!messagesData || messagesData?.length === 0) {
       return;
     }
 
