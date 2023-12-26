@@ -102,6 +102,9 @@ export const useSignInUp = () => {
   }, [setSignInUpStep, setSignInUpMode, isMatchingLocation]);
 
   const continueWithCredentials = useCallback(() => {
+    if (!form.getValues('email')) {
+      return;
+    }
     checkUserExistsQuery({
       variables: {
         email: form.getValues('email').toLowerCase(),
