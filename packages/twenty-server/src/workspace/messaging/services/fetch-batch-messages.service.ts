@@ -140,8 +140,6 @@ export class FetchBatchMessagesService {
   ): Promise<GmailMessage[]> {
     const parsedResponses = this.parseBatch(response);
 
-    console.log('parsedResponse', parsedResponses);
-
     const formattedResponse = Promise.all(
       parsedResponses.map(async (item) => {
         if (item.error) {
