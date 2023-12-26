@@ -1,6 +1,6 @@
 import { useRecoilState } from 'recoil';
 
-import { useDropdownScopedStates } from '@/ui/layout/dropdown/hooks/useDropdownScopedStates';
+import { useDropdownScopedStates } from '@/ui/layout/dropdown/hooks/internal/useDropdownScopedStates';
 import { getDropdownScopeInjectors } from '@/ui/layout/dropdown/utils/internal/getDropdownScopeInjectors';
 
 export const useDropdown = (dropdownId?: string) => {
