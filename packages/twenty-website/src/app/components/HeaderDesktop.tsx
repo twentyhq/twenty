@@ -22,14 +22,18 @@ const Nav = styled.nav`
     overflow: visible;
     padding: 12px 16px 12px 16px;
     position: relative;
-    border-color: rgba(20, 20, 20, 0.08);
     transform-origin: 50% 50% 0px;
-    border-bottom: 1px solid var(--Borders-Light, #F1F1F1);
+    border-bottom: 1px solid rgba(20, 20, 20, 0.08);
+
+    @media(max-width: 809px) {
+        display: none;
+    }
 `;
 
 const LinkList = styled.div`
     display:flex;
     flex-direction: row;
+    gap: 2px;
     `;
 
 const ListItem = styled.a`
@@ -78,8 +82,7 @@ const StyledButton = styled.div`
 const CallToActionContainer = styled.div`
     display: flex;
     align-items: center;
-    gap: 16px;
-
+    gap: 8px;
     a {
       text-decoration: none;
     }
@@ -89,6 +92,7 @@ const LinkNextToCTA = styled.a`
     display: flex;
     align-items: center;
     color: rgb(71, 71, 71);
+    padding: 0px 16px 0px 16px;
     span {
         text-decoration: underline;
     }`;
@@ -112,7 +116,7 @@ const ExternalArrow = () => {
 
 }
 
-export const HeaderNav = () => {
+export const HeaderDesktop = () => {
 
     const isTwentyDev = false;
 
@@ -124,8 +128,8 @@ export const HeaderNav = () => {
         <LinkList>
             <ListItem href="/pricing">Pricing</ListItem>
             <ListItem href="/story">Story</ListItem>
-            <ListItem href="http://docs.twenty.com">Docs <ExternalArrow /></ListItem>
-            <ListItem href="http://docs.twenty.com"><GithubIcon color='rgb(71,71,71)' /> 5.7k <ExternalArrow /></ListItem>
+            <ListItem href="https://docs.twenty.com">Docs <ExternalArrow /></ListItem>
+            <ListItem href="https://github.com/twentyhq/twenty"><GithubIcon color='rgb(71,71,71)' /> 5.7k <ExternalArrow /></ListItem>
         </LinkList>
         <CallToAction />
     </Nav>;

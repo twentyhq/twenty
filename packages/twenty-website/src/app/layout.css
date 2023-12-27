@@ -1,0 +1,19 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+    font-smooth: antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    word-wrap: break-word;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
