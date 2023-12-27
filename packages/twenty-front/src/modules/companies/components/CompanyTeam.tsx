@@ -8,6 +8,7 @@ import { mapPaginatedRecordsToRecords } from '@/object-record/utils/mapPaginated
 import { PeopleCard } from '@/people/components/PeopleCard';
 
 import { AddPersonToCompany } from './AddPersonToCompany';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export type CompanyTeamProps = {
   company: Pick<Company, 'id'>;
@@ -48,7 +49,7 @@ const StyledTitle = styled.div`
 
 export const CompanyTeam = ({ company }: { company: any }) => {
   const { findManyRecordsQuery } = useObjectMetadataItem({
-    objectNameSingular: 'person',
+    objectNameSingular: CoreObjectNameSingular.Person,
   });
 
   const { data } = useQuery(findManyRecordsQuery, {

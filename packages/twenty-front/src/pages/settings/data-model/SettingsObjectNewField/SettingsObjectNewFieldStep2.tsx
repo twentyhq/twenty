@@ -22,6 +22,7 @@ import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
@@ -83,11 +84,11 @@ export const SettingsObjectNewFieldStep2 = () => {
   const [relationObjectViews, setRelationObjectViews] = useState<View[]>([]);
 
   const { modifyRecordFromCache: modifyViewFromCache } = useObjectMetadataItem({
-    objectNameSingular: 'view',
+    objectNameSingular: CoreObjectNameSingular.View,
   });
 
   useFindManyRecords({
-    objectNameSingular: 'view',
+    objectNameSingular: CoreObjectNameSingular.View,
     filter: {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: activeObjectMetadataItem?.id },
@@ -102,7 +103,7 @@ export const SettingsObjectNewFieldStep2 = () => {
   });
 
   useFindManyRecords({
-    objectNameSingular: 'view',
+    objectNameSingular: CoreObjectNameSingular.View,
     skip: !formValues.relation?.objectMetadataId,
     filter: {
       type: { eq: ViewType.Table },

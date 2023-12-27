@@ -13,6 +13,7 @@ import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
 import { useCompleteTask } from '../hooks/useCompleteTask';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -81,7 +82,7 @@ export const TaskRow = ({
     ) ?? [];
 
   const { records: activityTargets } = useFindManyRecords<ActivityTarget>({
-    objectNameSingular: 'activityTarget',
+    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     filter: { id: { in: activityTargetIds } },
   });
 

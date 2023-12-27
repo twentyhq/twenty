@@ -20,6 +20,7 @@ import { debounce } from '~/utils/debounce';
 import { ActivityTitle } from './ActivityTitle';
 
 import '@blocknote/core/style.css';
+import { CoreObjectNameSingular, CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -81,11 +82,11 @@ export const ActivityEditor = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<Activity>({
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
   });
 
   const { FieldContextProvider: DueAtFieldContextProvider } = useFieldContext({
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
     objectRecordId: activity.id,
     fieldMetadataName: 'dueAt',
     fieldPosition: 0,
@@ -93,7 +94,7 @@ export const ActivityEditor = ({
 
   const { FieldContextProvider: AssigneeFieldContextProvider } =
     useFieldContext({
-      objectNameSingular: 'activity',
+      objectNameSingular: CoreObjectNameSingular.Activity,
       objectRecordId: activity.id,
       fieldMetadataName: 'assignee',
       fieldPosition: 1,

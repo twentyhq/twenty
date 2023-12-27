@@ -8,6 +8,7 @@ import { GraphQLView } from '@/views/types/GraphQLView';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const ViewBarEffect = () => {
   const {
@@ -35,7 +36,7 @@ export const ViewBarEffect = () => {
 
   const { records: newViews } = useFindManyRecords<GraphQLView>({
     skip: !viewObjectMetadataId,
-    objectNameSingular: 'view',
+    objectNameSingular: CoreObjectNameSingular.View,
     filter: {
       type: { eq: viewType },
       objectMetadataId: { eq: viewObjectMetadataId },

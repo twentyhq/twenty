@@ -5,15 +5,16 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { ViewField } from '@/views/types/ViewField';
 import { getViewScopedStatesFromSnapshot } from '@/views/utils/getViewScopedStatesFromSnapshot';
 import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const useViewFields = (viewScopeId: string) => {
   const { updateOneRecordMutation, createOneRecordMutation } =
     useObjectMetadataItem({
-      objectNameSingular: 'viewField',
+      objectNameSingular: CoreObjectNameSingular.ViewField,
     });
 
   const { modifyRecordFromCache } = useObjectMetadataItem({
-    objectNameSingular: 'view',
+    objectNameSingular: CoreObjectNameSingular.View,
   });
 
   const apolloClient = useApolloClient();

@@ -17,6 +17,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export type OpportunityPickerProps = {
   companyId: string | null;
@@ -37,7 +38,7 @@ export const OpportunityPicker = ({
 
   // TODO: refactor useFilteredSearchEntityQuery
   const { findManyRecordsQuery: findManyCompanies } = useObjectMetadataItem({
-    objectNameSingular: 'company',
+    objectNameSingular: CoreObjectNameSingular.Company,
   });
   const useFindManyQuery = (options: any) =>
     useQuery(findManyCompanies, options);
@@ -54,7 +55,7 @@ export const OpportunityPicker = ({
     orderByField: 'createdAt',
     selectedIds: [],
     mappingFunction: (record: any) => identifiersMapper?.(record, 'company'),
-    objectNameSingular: 'company',
+    objectNameSingular: CoreObjectNameSingular.Company,
   });
 
   const [isProgressSelectionUnfolded, setIsProgressSelectionUnfolded] =

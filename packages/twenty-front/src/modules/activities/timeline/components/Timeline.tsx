@@ -9,6 +9,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { TimelineItemsContainer } from './TimelineItemsContainer';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledMainContainer = styled.div`
   align-items: flex-start;
@@ -49,7 +50,7 @@ const StyledEmptyTimelineSubTitle = styled.div`
 
 export const Timeline = ({ entity }: { entity: ActivityTargetableEntity }) => {
   const { records: activityTargets, loading } = useFindManyRecords({
-    objectNameSingular: 'activityTarget',
+    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     filter: {
       [entity.type === 'Company' ? 'companyId' : 'personId']: { eq: entity.id },
     },
@@ -57,7 +58,7 @@ export const Timeline = ({ entity }: { entity: ActivityTargetableEntity }) => {
 
   const { records: activities } = useFindManyRecords({
     skip: !activityTargets?.length,
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
     filter: {
       id: {
         in: activityTargets?.map((activityTarget) => activityTarget.activityId),

@@ -4,6 +4,7 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { IconTrash } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 type ActivityActionBarProps = {
   activityId: string;
@@ -12,7 +13,7 @@ type ActivityActionBarProps = {
 export const ActivityActionBar = ({ activityId }: ActivityActionBarProps) => {
   const [, setIsRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
   const { deleteOneRecord: deleteOneActivity } = useDeleteOneRecord({
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
     refetchFindManyQuery: true,
   });
 
