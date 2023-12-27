@@ -1,7 +1,7 @@
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
-import { getRecordTableScopedStates } from '../../utils/getRecordTableScopedStates';
+import { getRecordTableScopeInjector } from '../../utils/getRecordTableScopeInjector';
 
 export const useRecordTableScopedStates = (args?: {
   customRecordTableScopeId?: string;
@@ -25,7 +25,7 @@ export const useRecordTableScopedStates = (args?: {
     onEntityCountChangeState,
     onColumnsChangeState,
     tableLastRowVisibleState,
-  } = getRecordTableScopedStates({
+  } = getRecordTableScopeInjector({
     recordTableScopeId: scopeId,
   });
 
