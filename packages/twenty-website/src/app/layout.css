@@ -17,3 +17,10 @@ body {
     flex-direction: column;
     align-items: center;
 }
+
+a {
+    color: rgb(129, 129, 129);
+    &:hover {
+        color: #000;
+    }
+}

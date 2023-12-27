@@ -1,3 +1,4 @@
+import { ContentContainer } from '@/app/components/ContentContainer';
 import { getPosts, Directory, FileContent } from '@/app/user-guide/get-posts';
 import Link from 'next/link';
 
@@ -7,7 +8,7 @@ const DirectoryItem = ({ name, item }: { name: string, item: Directory | FileCon
     // If the item is a file, we render a link.
     return (
       <div key={name}>
-        <Link href={`/${name.replace(/\.mdx$/, '')}`}>
+        <Link href={`/user-guide/${item.itemInfo.path}`}>
           {item.itemInfo.title}
         </Link>
       </div>
@@ -33,7 +34,7 @@ export default async function BlogHome() {
     const posts = await getPosts();
 
 
-    return <div>
+    return <ContentContainer>
     <h1>User Guide</h1>
     <div>
     {Object.entries(posts).map(([name, item]) => {
@@ -42,5 +43,5 @@ export default async function BlogHome() {
       }
     })}
   </div>
-  </div>;
+  </ContentContainer>;
 }
