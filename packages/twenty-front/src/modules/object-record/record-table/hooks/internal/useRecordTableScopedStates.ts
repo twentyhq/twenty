@@ -1,46 +1,26 @@
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { useScopedState } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useScopedState';
 
-import { getRecordTableScopeInjector } from '../../utils/getRecordTableScopeInjector';
-
-export const useRecordTableScopedStates = (args?: {
-  customRecordTableScopeId?: string;
-}) => {
-  const { customRecordTableScopeId } = args ?? {};
-
+export const useRecordTableScopedStates = (recordTableId?: string) => {
   const scopeId = useAvailableScopeIdOrThrow(
     RecordTableScopeInternalContext,
-    customRecordTableScopeId,
+    recordTableId,
   );
 
   const {
-    availableTableColumnsState,
-    tableFiltersState,
-    tableSortsState,
-    tableColumnsState,
-    objectMetadataConfigState,
-    tableColumnsByKeySelector,
-    hiddenTableColumnsSelector,
-    visibleTableColumnsSelector,
-    onEntityCountChangeState,
-    onColumnsChangeState,
-    tableLastRowVisibleState,
-  } = getRecordTableScopeInjector({
-    recordTableScopeId: scopeId,
-  });
+    getScopedState,
+    getScopedFamilyState,
+    getScopedSnapshotValue,
+    getScopedFamilySnapshotValue,
+  } = useScopedState(scopeId);
 
   return {
     scopeId,
-    availableTableColumnsState,
-    tableFiltersState,
-    tableSortsState,
-    tableColumnsState,
-    objectMetadataConfigState,
-    tableColumnsByKeySelector,
-    hiddenTableColumnsSelector,
-    visibleTableColumnsSelector,
-    onEntityCountChangeState,
-    onColumnsChangeState,
-    tableLastRowVisibleState,
+    injectStateWithRecordTableScopeId: getScopedState,
+    injectFamilyStateWithRecordTableScopeId: getScopedFamilyState,
+    injectSnapshotValueWithRecordTableScopeId: getScopedSnapshotValue,
+    injectFamilySnapshotValueWithRecordTableScopeId:
+      getScopedFamilySnapshotValue,
   };
 };
