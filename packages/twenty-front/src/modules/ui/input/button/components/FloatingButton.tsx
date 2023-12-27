@@ -32,16 +32,15 @@ const StyledButton = styled.button<
   border: ${({ focus, theme }) =>
     focus ? `1px solid ${theme.color.blue}` : 'none'};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: ${({ theme, applyShadow, focus }) =>
-    applyShadow
-      ? `0px 2px 4px 0px ${
-          theme.background.transparent.light
-        }, 0px 0px 4px 0px ${theme.background.transparent.medium}${
-          focus ? `,0 0 0 3px ${theme.color.blue10}` : ''
-        }`
-      : focus
-        ? `0 0 0 3px ${theme.color.blue10}`
-        : 'none'};
+  box-shadow: ${({ theme, applyShadow, focus }) => {
+    const defaultShadow = `0px 2px 4px 0px ${theme.background.transparent.light}, 0px 0px 4px 0px ${theme.background.transparent.medium}`;
+    const focusShadow = `0 0 0 3px ${theme.color.blue10}`;
+
+    if (!applyShadow && !focus) return 'none';
+    if (!applyShadow) return focusShadow;
+    return `${defaultShadow}${focus ? `, ${focusShadow}` : ''}`;
+  }};
+
   color: ${({ theme, disabled, focus }) => {
     return !disabled
       ? focus
@@ -57,6 +56,7 @@ const StyledButton = styled.button<
   font-weight: ${({ theme }) => theme.font.weight.regular};
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
+  margin: 3px;
   padding: ${({ theme }) => {
     return `0 ${theme.spacing(2)}`;
   }};
@@ -88,16 +88,18 @@ export const FloatingButton = ({
   applyShadow = true,
   disabled = false,
   focus = false,
+  position = 'standalone',
 }: FloatingButtonProps) => {
   const theme = useTheme();
   return (
     <StyledButton
-      disabled={disabled}
-      focus={focus && !disabled}
-      size={size}
       applyBlur={applyBlur}
       applyShadow={applyShadow}
       className={className}
+      disabled={disabled}
+      focus={focus && !disabled}
+      position={position}
+      size={size}
     >
       {Icon && <Icon size={theme.icon.size.sm} />}
       {title}

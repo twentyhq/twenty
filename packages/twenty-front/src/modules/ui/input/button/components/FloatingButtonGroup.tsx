@@ -5,6 +5,14 @@ import { FloatingButtonPosition, FloatingButtonProps } from './FloatingButton';
 
 const StyledFloatingButtonGroupContainer = styled.div`
   backdrop-filter: blur(20px);
+  background: ${({ theme }) => `linear-gradient(
+    to right,
+    ${theme.background.transparent.light}, 
+    ${theme.background.transparent.medium}, 
+    ${theme.background.primary} 100%, 
+    ${theme.background.transparent.medium},
+    ${theme.background.transparent.light}
+  )`};
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) =>
     `0px 2px 4px 0px ${theme.background.transparent.light}, 0px 0px 4px 0px ${theme.background.transparent.medium}`};
