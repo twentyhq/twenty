@@ -51,6 +51,10 @@ export const generateEmptyFieldValue = (
 
     case FieldMetadataType.MultiSelect:
     case FieldMetadataType.Select: {
+      return [];
+    }
+
+    default: {
       throw new Error('Not implemented yet');
     }
   }
