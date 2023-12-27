@@ -31,7 +31,7 @@ export const SettingsAccountsEmailsBlocklistInput = ({
     <StyledContainer>
       <StyledLinkContainer>
         <TextInput
-          placeholder="eddy@gmail.com"
+          placeholder="eddy@gmail.com, @apple.com"
           value={formValues.email}
           onChange={(value) => {
             setFormValues((prevState) => ({

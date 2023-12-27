@@ -6,6 +6,7 @@ import { SettingsAccountsEmailsBlocklistTable } from '@/settings/accounts/compon
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Section } from '@/ui/layout/section/components/Section';
 import { mockedBlockedEmailList } from '~/testing/mock-data/accounts';
+import { formatDate } from '~/utils/date-utils';
 
 export const SettingsAccountsEmailsBlocklistSection = () => {
   const [blockedEmailList, setBlockedEmailList] = useState(
@@ -20,7 +21,11 @@ export const SettingsAccountsEmailsBlocklistSection = () => {
   const updateBlockedEmailList = (email: string) =>
     setBlockedEmailList((prevState) => [
       ...prevState,
-      { id: v4(), email: email, blocked_at: '21/12/2023' },
+      {
+        id: v4(),
+        email: email,
+        blocked_at: formatDate(new Date(), 'dd/LL/yyyy'),
+      },
     ]);
   return (
     <Section>
