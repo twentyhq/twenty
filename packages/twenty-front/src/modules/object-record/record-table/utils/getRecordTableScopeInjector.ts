@@ -1,4 +1,7 @@
+import { numberOfTableRowsScopedState } from '@/object-record/record-table/states/numberOfTableRowsScopedState';
 import { objectMetadataConfigScopedState } from '@/object-record/record-table/states/objectMetadataConfigScopedState';
+import { numberOfTableColumnsScopedSelector } from '@/object-record/record-table/states/selectors/numberOfTableColumnsScopedSelector';
+import { softFocusPositionScopedState } from '@/object-record/record-table/states/softFocusPositionScopedState';
 import { tableLastRowVisibleScopedState } from '@/object-record/record-table/states/tableLastRowVisibleScopedState';
 import { getScopeInjector } from '@/ui/utilities/recoil-scope/utils/getScopeInjector';
 import { getSelectorScopeInjector } from '@/ui/utilities/recoil-scope/utils/getSelectorScopeInjector';
@@ -52,6 +55,18 @@ export const getRecordTableScopeInjector = () => {
     tableLastRowVisibleScopedState,
   );
 
+  const softFocusPositionScopeInjector = getScopeInjector(
+    softFocusPositionScopedState,
+  );
+
+  const numberOfTableRowsScopeInjector = getScopeInjector(
+    numberOfTableRowsScopedState,
+  );
+
+  const numberOfTableColumnsScopeInjector = getSelectorScopeInjector(
+    numberOfTableColumnsScopedSelector,
+  );
+
   return {
     availableTableColumnsScopeInjector,
     tableFiltersScopeInjector,
@@ -64,5 +79,8 @@ export const getRecordTableScopeInjector = () => {
     onColumnsChangeScopeInjector,
     onEntityCountScopeInjector,
     tableLastRowVisibleScopeInjector,
+    softFocusPositionScopeInjector,
+    numberOfTableRowsScopeInjector,
+    numberOfTableColumnsScopeInjector,
   };
 };
