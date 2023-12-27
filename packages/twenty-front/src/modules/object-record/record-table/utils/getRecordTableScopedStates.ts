@@ -4,7 +4,7 @@ import { getScopedStateDeprecated } from '@/ui/utilities/recoil-scope/utils/getS
 
 import { availableTableColumnsScopedState } from '../states/availableTableColumnsScopedState';
 import { onColumnsChangeScopedState } from '../states/onColumnsChangeScopedState';
-import { onEntityCountChangeScopedState } from '../states/onEntityCountChange';
+import { onEntityCountChangeScopedState } from '../states/onEntityCountChangeScopedState';
 import { hiddenTableColumnsScopedSelector } from '../states/selectors/hiddenTableColumnsScopedSelector';
 import { tableColumnsByKeyScopedSelector } from '../states/selectors/tableColumnsByKeyScopedSelector';
 import { visibleTableColumnsScopedSelector } from '../states/selectors/visibleTableColumnsScopedSelector';

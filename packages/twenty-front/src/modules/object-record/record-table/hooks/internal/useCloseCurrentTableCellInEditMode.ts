@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { currentTableCellInEditModePositionState } from '../../states/currentTableCellInEditModePositionState';
-import { isTableCellInEditModeFamilyState } from '../../states/isTableCellInEditModeFamilyState';
+import { isTableCellInEditModeScopedFamilyState } from '../../states/isTableCellInEditModeScopedFamilyState';
 
 export const useCloseCurrentTableCellInEditMode = () =>
   useRecoilCallback(({ set, snapshot }) => {
@@ -11,7 +11,9 @@ export const useCloseCurrentTableCellInEditMode = () =>
         .valueOrThrow();
 
       set(
-        isTableCellInEditModeFamilyState(currentTableCellInEditModePosition),
+        isTableCellInEditModeScopedFamilyState(
+          currentTableCellInEditModePosition,
+        ),
         false,
       );
     };

@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { currentTableCellInEditModePositionState } from '../../states/currentTableCellInEditModePositionState';
-import { isTableCellInEditModeFamilyState } from '../../states/isTableCellInEditModeFamilyState';
+import { isTableCellInEditModeScopedFamilyState } from '../../states/isTableCellInEditModeScopedFamilyState';
 import { TableCellPosition } from '../../types/TableCellPosition';
 
 export const useMoveEditModeToTableCellPosition = () =>
@@ -12,12 +12,14 @@ export const useMoveEditModeToTableCellPosition = () =>
         .valueOrThrow();
 
       set(
-        isTableCellInEditModeFamilyState(currentTableCellInEditModePosition),
+        isTableCellInEditModeScopedFamilyState(
+          currentTableCellInEditModePosition,
+        ),
         false,
       );
 
       set(currentTableCellInEditModePositionState, newPosition);
 
-      set(isTableCellInEditModeFamilyState(newPosition), true);
+      set(isTableCellInEditModeScopedFamilyState(newPosition), true);
     };
   }, []);

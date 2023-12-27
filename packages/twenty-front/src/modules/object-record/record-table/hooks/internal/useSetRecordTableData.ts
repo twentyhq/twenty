@@ -2,10 +2,10 @@ import { useRecoilCallback } from 'recoil';
 
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
-import { numberOfTableRowsState } from '@/object-record/record-table/states/numberOfTableRowsState';
+import { numberOfTableRowsScopedState } from '@/object-record/record-table/states/numberOfTableRowsScopedState';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-import { tableRowIdsState } from '../../states/tableRowIdsState';
+import { tableRowIdsScopedState } from '../../states/tableRowIdsScopedState';
 
 type useSetRecordTableDataProps = {
   onEntityCountChange: (entityCount: number) => void;
@@ -28,17 +28,19 @@ export const useSetRecordTableData = ({
             set(entityFieldsFamilyState(entity.id), entity);
           }
         }
-        const currentRowIds = snapshot.getLoadable(tableRowIdsState).getValue();
+        const currentRowIds = snapshot
+          .getLoadable(tableRowIdsScopedState)
+          .getValue();
 
         const entityIds = newEntityArray.map((entity) => entity.id);
 
         if (!isDeeplyEqual(currentRowIds, entityIds)) {
-          set(tableRowIdsState, entityIds);
+          set(tableRowIdsScopedState, entityIds);
         }
 
         resetTableRowSelection();
 
-        set(numberOfTableRowsState, entityIds.length);
+        set(numberOfTableRowsScopedState, entityIds.length);
         onEntityCountChange(entityIds.length);
       },
     [onEntityCountChange, resetTableRowSelection],

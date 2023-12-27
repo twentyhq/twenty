@@ -2,7 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { isRowSelectedFamilyState } from '../../record-table-row/states/isRowSelectedFamilyState';
 import { allRowsSelectedStatusSelector } from '../../states/selectors/allRowsSelectedStatusSelector';
-import { tableRowIdsState } from '../../states/tableRowIdsState';
+import { tableRowIdsScopedState } from '../../states/tableRowIdsScopedState';
 
 export const useSelectAllRows = () => {
   const selectAllRows = useRecoilCallback(
@@ -13,7 +13,7 @@ export const useSelectAllRows = () => {
           .valueOrThrow();
 
         const tableRowIds = snapshot
-          .getLoadable(tableRowIdsState)
+          .getLoadable(tableRowIdsScopedState)
           .valueOrThrow();
 
         if (

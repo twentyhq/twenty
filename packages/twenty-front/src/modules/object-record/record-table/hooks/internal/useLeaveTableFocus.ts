@@ -2,7 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 
-import { isSoftFocusActiveState } from '../../states/isSoftFocusActiveState';
+import { isSoftFocusActiveScopedState } from '../../states/isSoftFocusActiveScopedState';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useCloseCurrentTableCellInEditMode } from './useCloseCurrentTableCellInEditMode';
@@ -16,7 +16,7 @@ export const useLeaveTableFocus = () => {
     ({ snapshot }) =>
       () => {
         const isSoftFocusActive = snapshot
-          .getLoadable(isSoftFocusActiveState)
+          .getLoadable(isSoftFocusActiveScopedState)
           .valueOrThrow();
 
         const currentHotkeyScope = snapshot

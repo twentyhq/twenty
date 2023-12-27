@@ -4,10 +4,10 @@ import { RecordTableBodyFetchMoreLoader } from '@/object-record/record-table/com
 import { RecordTableRow } from '@/object-record/record-table/components/RecordTableRow';
 import { RowIdContext } from '@/object-record/record-table/contexts/RowIdContext';
 import { RowIndexContext } from '@/object-record/record-table/contexts/RowIndexContext';
-import { tableRowIdsState } from '@/object-record/record-table/states/tableRowIdsState';
+import { tableRowIdsScopedState } from '@/object-record/record-table/states/tableRowIdsScopedState';
 
 export const RecordTableBody = () => {
-  const tableRowIds = useRecoilValue(tableRowIdsState);
+  const tableRowIds = useRecoilValue(tableRowIdsScopedState);
 
   return (
     <>

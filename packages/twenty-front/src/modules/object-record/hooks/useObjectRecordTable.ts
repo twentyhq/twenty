@@ -7,7 +7,7 @@ import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils
 import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
 import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { isRecordTableInitialLoadingState } from '@/object-record/record-table/states/isRecordTableInitialLoadingState';
+import { isRecordTableInitialLoadingScopedState } from '@/object-record/record-table/states/isRecordTableInitialLoadingScopedState';
 import { signInBackgroundMockCompanies } from '@/sign-in-background-mock/constants/signInBackgroundMockCompanies';
 
 import { useFindManyRecords } from './useFindManyRecords';
@@ -43,7 +43,7 @@ export const useObjectRecordTable = () => {
   );
 
   const setIsRecordTableInitialLoading = useSetRecoilState(
-    isRecordTableInitialLoadingState,
+    isRecordTableInitialLoadingScopedState,
   );
 
   const { records, loading, fetchMoreRecords, queryStateIdentifier } =

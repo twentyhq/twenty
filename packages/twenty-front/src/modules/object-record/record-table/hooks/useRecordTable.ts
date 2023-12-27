@@ -10,10 +10,10 @@ import { getScopedStateDeprecated } from '@/ui/utilities/recoil-scope/utils/getS
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { FieldMetadata } from '../../field/types/FieldMetadata';
-import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
-import { onEntityCountChangeScopedState } from '../states/onEntityCountChange';
+import { numberOfTableRowsScopedState } from '../states/numberOfTableRowsScopedState';
+import { onEntityCountChangeScopedState } from '../states/onEntityCountChangeScopedState';
 import { numberOfTableColumnsScopedSelector } from '../states/selectors/numberOfTableColumnsScopedSelector';
-import { softFocusPositionState } from '../states/softFocusPositionState';
+import { softFocusPositionScopedState } from '../states/softFocusPositionScopedState';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
@@ -110,7 +110,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     ({ snapshot }) =>
       () => {
         const softFocusPosition = snapshot
-          .getLoadable(softFocusPositionState)
+          .getLoadable(softFocusPositionScopedState)
           .valueOrThrow();
 
         let newRowNumber = softFocusPosition.row - 1;
@@ -131,11 +131,11 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     ({ snapshot }) =>
       () => {
         const softFocusPosition = snapshot
-          .getLoadable(softFocusPositionState)
+          .getLoadable(softFocusPositionScopedState)
           .valueOrThrow();
 
         const numberOfTableRows = snapshot
-          .getLoadable(numberOfTableRowsState)
+          .getLoadable(numberOfTableRowsScopedState)
           .valueOrThrow();
 
         let newRowNumber = softFocusPosition.row + 1;
@@ -156,7 +156,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     ({ snapshot }) =>
       () => {
         const softFocusPosition = snapshot
-          .getLoadable(softFocusPositionState)
+          .getLoadable(softFocusPositionScopedState)
           .valueOrThrow();
 
         const numberOfTableColumns = snapshot
@@ -164,7 +164,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
           .valueOrThrow();
 
         const numberOfTableRows = snapshot
-          .getLoadable(numberOfTableRowsState)
+          .getLoadable(numberOfTableRowsScopedState)
           .valueOrThrow();
 
         const currentColumnNumber = softFocusPosition.column;
@@ -204,7 +204,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     ({ snapshot }) =>
       () => {
         const softFocusPosition = snapshot
-          .getLoadable(softFocusPositionState)
+          .getLoadable(softFocusPositionScopedState)
           .valueOrThrow();
 
         const numberOfTableColumns = snapshot

@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
 import { useSetSoftFocusPosition } from '../../hooks/internal/useSetSoftFocusPosition';
-import { isSoftFocusActiveState } from '../../states/isSoftFocusActiveState';
+import { isSoftFocusActiveScopedState } from '../../states/isSoftFocusActiveScopedState';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useCurrentTableCellPosition } from './useCurrentCellPosition';
@@ -20,7 +20,7 @@ export const useSetSoftFocusOnCurrentTableCell = () => {
       () => {
         setSoftFocusPosition(currentTableCellPosition);
 
-        set(isSoftFocusActiveState, true);
+        set(isSoftFocusActiveScopedState, true);
 
         setHotkeyScope(TableHotkeyScope.TableSoftFocus);
       },

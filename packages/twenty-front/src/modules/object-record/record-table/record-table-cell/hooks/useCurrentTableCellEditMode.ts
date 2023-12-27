@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { useMoveEditModeToTableCellPosition } from '../../hooks/internal/useMoveEditModeToCellPosition';
-import { isTableCellInEditModeFamilyState } from '../../states/isTableCellInEditModeFamilyState';
+import { isTableCellInEditModeScopedFamilyState } from '../../states/isTableCellInEditModeScopedFamilyState';
 
 import { useCurrentTableCellPosition } from './useCurrentCellPosition';
 
@@ -12,7 +12,7 @@ export const useCurrentTableCellEditMode = () => {
   const currentTableCellPosition = useCurrentTableCellPosition();
 
   const [isCurrentTableCellInEditMode] = useRecoilState(
-    isTableCellInEditModeFamilyState(currentTableCellPosition),
+    isTableCellInEditModeScopedFamilyState(currentTableCellPosition),
   );
 
   const setCurrentTableCellInEditMode = useCallback(() => {

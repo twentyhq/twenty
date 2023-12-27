@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 
 import { currentTableCellInEditModePositionState } from '../../states/currentTableCellInEditModePositionState';
-import { isTableCellInEditModeFamilyState } from '../../states/isTableCellInEditModeFamilyState';
+import { isTableCellInEditModeScopedFamilyState } from '../../states/isTableCellInEditModeScopedFamilyState';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useSetSoftFocusOnCurrentTableCell } from './useSetSoftFocusOnCurrentTableCell';
@@ -19,7 +19,9 @@ export const useMoveSoftFocusToCurrentCellOnHover = () => {
           .valueOrThrow();
 
         const isSomeCellInEditMode = snapshot.getLoadable(
-          isTableCellInEditModeFamilyState(currentTableCellInEditModePosition),
+          isTableCellInEditModeScopedFamilyState(
+            currentTableCellInEditModePosition,
+          ),
         );
 
         const currentHotkeyScope = snapshot

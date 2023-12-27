@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { isSoftFocusOnTableCellFamilyState } from '../../states/isSoftFocusOnTableCellFamilyState';
+import { isSoftFocusOnTableCellScopedFamilyState } from '../../states/isSoftFocusOnTableCellScopedFamilyState';
 
 import { useCurrentTableCellPosition } from './useCurrentCellPosition';
 
@@ -8,7 +8,7 @@ export const useIsSoftFocusOnCurrentTableCell = () => {
   const currentTableCellPosition = useCurrentTableCellPosition();
 
   const isSoftFocusOnTableCell = useRecoilValue(
-    isSoftFocusOnTableCellFamilyState(currentTableCellPosition),
+    isSoftFocusOnTableCellScopedFamilyState(currentTableCellPosition),
   );
 
   return isSoftFocusOnTableCell;

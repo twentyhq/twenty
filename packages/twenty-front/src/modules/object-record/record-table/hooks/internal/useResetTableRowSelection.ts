@@ -1,14 +1,14 @@
 import { useRecoilCallback } from 'recoil';
 
 import { isRowSelectedFamilyState } from '../../record-table-row/states/isRowSelectedFamilyState';
-import { tableRowIdsState } from '../../states/tableRowIdsState';
+import { tableRowIdsScopedState } from '../../states/tableRowIdsScopedState';
 
 export const useResetTableRowSelection = () =>
   useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
         const tableRowIds = snapshot
-          .getLoadable(tableRowIdsState)
+          .getLoadable(tableRowIdsScopedState)
           .valueOrThrow();
 
         for (const rowId of tableRowIds) {

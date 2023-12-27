@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { currentTableCellInEditModePositionState } from '../../states/currentTableCellInEditModePositionState';
-import { isTableCellInEditModeFamilyState } from '../../states/isTableCellInEditModeFamilyState';
+import { isTableCellInEditModeScopedFamilyState } from '../../states/isTableCellInEditModeScopedFamilyState';
 
 export const useGetIsSomeCellInEditMode = () => {
   return useRecoilCallback(
@@ -13,7 +13,7 @@ export const useGetIsSomeCellInEditMode = () => {
 
         const isSomeCellInEditMode = snapshot
           .getLoadable(
-            isTableCellInEditModeFamilyState(
+            isTableCellInEditModeScopedFamilyState(
               currentTableCellInEditModePosition,
             ),
           )

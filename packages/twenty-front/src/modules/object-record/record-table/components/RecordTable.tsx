@@ -4,7 +4,7 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { isRecordTableInitialLoadingState } from '@/object-record/record-table/states/isRecordTableInitialLoadingState';
+import { isRecordTableInitialLoadingScopedState } from '@/object-record/record-table/states/isRecordTableInitialLoadingScopedState';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
@@ -15,7 +15,7 @@ import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinit
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useRecordTable } from '../hooks/useRecordTable';
 import { RecordTableScope } from '../scopes/RecordTableScope';
-import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
+import { numberOfTableRowsScopedState } from '../states/numberOfTableRowsScopedState';
 
 import { RecordTableBody } from './RecordTableBody';
 import { RecordTableBodyEffect } from './RecordTableBodyEffect';
@@ -125,10 +125,10 @@ export const RecordTable = ({
 }: RecordTableProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const numberOfTableRows = useRecoilValue(numberOfTableRowsState);
+  const numberOfTableRows = useRecoilValue(numberOfTableRowsScopedState);
 
   const isRecordTableInitialLoading = useRecoilValue(
-    isRecordTableInitialLoadingState,
+    isRecordTableInitialLoadingScopedState,
   );
 
   const {

@@ -5,7 +5,7 @@ import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
 import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
-import { resizeFieldOffsetState } from '@/object-record/record-table/states/resizeFieldOffsetState';
+import { resizeFieldOffsetScopedState } from '@/object-record/record-table/states/resizeFieldOffsetScopedState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { IconPlus } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
@@ -81,7 +81,7 @@ export const RecordTableHeaderCell = ({
   createRecord: () => void;
 }) => {
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
-    resizeFieldOffsetState,
+    resizeFieldOffsetScopedState,
   );
 
   const {
@@ -127,12 +127,12 @@ export const RecordTableHeaderCell = ({
         const nextWidth = Math.round(
           Math.max(
             tableColumnsByKey[resizedFieldKey].size +
-              snapshot.getLoadable(resizeFieldOffsetState).valueOrThrow(),
+              snapshot.getLoadable(resizeFieldOffsetScopedState).valueOrThrow(),
             COLUMN_MIN_WIDTH,
           ),
         );
 
-        set(resizeFieldOffsetState, 0);
+        set(resizeFieldOffsetScopedState, 0);
         setInitialPointerPositionX(null);
         setResizedFieldKey(null);
 
