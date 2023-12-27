@@ -22,7 +22,6 @@ export interface Directory {
 
 const basePath = '/src/content/user-guide';
 
-
 async function getFiles(filePath: string, position: number = 0): Promise<Directory> {
   const entries = fs.readdirSync(filePath, { withFileTypes: true });
 

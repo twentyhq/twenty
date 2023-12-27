@@ -8,7 +8,7 @@ const Link = styled.a`
     border-radius: 8px;
     height: 40px;
     width: 40px;
-    background-image: url("images/core/logo.svg");
+    background-image: url("/images/core/logo.svg");
     opacity: 1;`;
 
 export const Logo = () => {
