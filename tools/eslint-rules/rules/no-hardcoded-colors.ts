@@ -1,8 +1,24 @@
-import { ESLintUtils, TSESTree } from "@typescript-eslint/utils";
+import { ESLintUtils, TSESTree } from '@typescript-eslint/utils';
 
-const createRule = ESLintUtils.RuleCreator(() => `https://docs.twenty.com`);
+// NOTE: The rule will be available in ESLint configs as "@nx/workspace-no-hardcoded-colors"
+export const RULE_NAME = 'no-hardcoded-colors';
 
-const noHardcodedColorsRule = createRule({
+export const rule = ESLintUtils.RuleCreator(() => __filename)({
+  name: RULE_NAME,
+  meta: {
+    docs: {
+      description:
+        'Do not use hardcoded RGBA or Hex colors. Please use a color from the theme file.',
+    },
+    messages: {
+      hardcodedColor:
+        'Hardcoded color {{ color }} found. Please use a color from the theme file.',
+    },
+    type: 'suggestion',
+    schema: [],
+    fixable: 'code',
+  },
+  defaultOptions: [],
   create: (context) => {
     const testHardcodedColor = (
       literal: TSESTree.Literal | TSESTree.TemplateLiteral,
@@ -11,12 +27,12 @@ const noHardcodedColorsRule = createRule({
 
       if (
         literal.type === TSESTree.AST_NODE_TYPES.Literal &&
-        typeof literal.value === "string"
+        typeof literal.value === 'string'
       ) {
         if (colorRegex.test(literal.value)) {
           context.report({
             node: literal,
-            messageId: "hardcodedColor",
+            messageId: 'hardcodedColor',
             data: {
               color: literal.value,
             },
@@ -28,7 +44,7 @@ const noHardcodedColorsRule = createRule({
         if (colorRegex.test(firstStringValue)) {
           context.report({
             node: literal,
-            messageId: "hardcodedColor",
+            messageId: 'hardcodedColor',
             data: {
               color: firstStringValue,
             },
@@ -42,23 +58,4 @@ const noHardcodedColorsRule = createRule({
       TemplateLiteral: testHardcodedColor,
     };
   },
-  name: "no-hardcoded-colors",
-  meta: {
-    docs: {
-      description:
-        "Do not use hardcoded RGBA or Hex colors. Please use a color from the theme file.",
-    },
-    messages: {
-      hardcodedColor:
-        "Hardcoded color {{ color }} found. Please use a color from the theme file.",
-    },
-    type: "suggestion",
-    schema: [],
-    fixable: "code",
-  },
-  defaultOptions: [],
 });
-
-module.exports = noHardcodedColorsRule;
-
-export default noHardcodedColorsRule;

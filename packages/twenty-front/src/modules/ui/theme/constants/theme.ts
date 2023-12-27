@@ -1,4 +1,4 @@
-/* eslint-disable twenty/no-hardcoded-colors */
+/* eslint-disable @nx/workspace-no-hardcoded-colors */
 import { accentDark, accentLight } from './accent';
 import { animation } from './animation';
 import { backgroundDark, backgroundLight } from './background';

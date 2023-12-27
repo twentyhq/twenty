@@ -2,30 +2,49 @@ import {
   AST_NODE_TYPES,
   ESLintUtils,
   TSESTree,
-} from "@typescript-eslint/utils";
+} from '@typescript-eslint/utils';
+import { isIdentifier } from '@typescript-eslint/utils/ast-utils';
 
-const createRule = ESLintUtils.RuleCreator(() => `https://docs.twenty.com`);
+// NOTE: The rule will be available in ESLint configs as "@nx/workspace-matching-state-variable"
+export const RULE_NAME = 'matching-state-variable';
 
-const matchingStateVariableRule = createRule({
+export const rule = ESLintUtils.RuleCreator(() => __filename)({
+  name: RULE_NAME,
+  meta: {
+    type: 'problem',
+    docs: {
+      description:
+        'Ensure recoil value and setter are named after their atom name',
+      recommended: 'recommended',
+    },
+    fixable: 'code',
+    schema: [],
+    messages: {
+      invalidVariableName:
+        "Invalid usage of {{ hookName }}: the variable should be named '{{ expectedName }}' but found '{{ actualName }}'.",
+      invalidSetterName:
+        "Invalid usage of {{ hookName }}: Expected setter '{{ expectedName }}' but found '{{ actualName }}'.",
+    },
+  },
+  defaultOptions: [],
   create: (context) => {
     return {
       VariableDeclarator: (node: TSESTree.VariableDeclarator) => {
         if (
           node?.init?.type === AST_NODE_TYPES.CallExpression &&
-          node.init.callee.type === AST_NODE_TYPES.Identifier &&
+          isIdentifier(node.init.callee) &&
           [
-            "useRecoilState",
-            "useRecoilScopedState",
-            "useRecoilFamilyState",
-            "useRecoilScopedFamilyState",
-            "useRecoilValue",
-            "useRecoilScopedValue",
+            'useRecoilState',
+            'useRecoilScopedState',
+            'useRecoilFamilyState',
+            'useRecoilScopedFamilyState',
+            'useRecoilValue',
+            'useRecoilScopedValue',
           ].includes(node.init.callee.name)
         ) {
-          const stateNameBase =
-            node.init.arguments?.[0]?.type === AST_NODE_TYPES.Identifier
-              ? node.init.arguments[0].name
-              : undefined;
+          const stateNameBase = isIdentifier(node.init.arguments[0])
+            ? node.init.arguments[0].name
+            : undefined;
 
           if (!stateNameBase) {
             return;
@@ -33,15 +52,16 @@ const matchingStateVariableRule = createRule({
 
           const expectedVariableNameBase = stateNameBase.replace(
             /(State|FamilyState|Selector|ScopedState|ScopedFamilyState|ScopedSelector)$/,
-            "",
+            '',
           );
 
-          if (node.id.type === AST_NODE_TYPES.Identifier) {
+          if (isIdentifier(node.id)) {
             const actualVariableName = node.id.name;
+
             if (actualVariableName !== expectedVariableNameBase) {
               context.report({
                 node,
-                messageId: "invalidVariableName",
+                messageId: 'invalidVariableName',
                 data: {
                   actualName: actualVariableName,
                   expectedName: expectedVariableNameBase,
@@ -53,6 +73,7 @@ const matchingStateVariableRule = createRule({
                 },
               });
             }
+
             return;
           }
 
@@ -61,13 +82,14 @@ const matchingStateVariableRule = createRule({
               node.id.elements?.[0]?.type === AST_NODE_TYPES.Identifier
                 ? node.id.elements[0].name
                 : undefined;
+
             if (
               actualVariableName &&
               actualVariableName !== expectedVariableNameBase
             ) {
               context.report({
                 node,
-                messageId: "invalidVariableName",
+                messageId: 'invalidVariableName',
                 data: {
                   actual: actualVariableName,
                   expected: expectedVariableNameBase,
@@ -85,7 +107,7 @@ const matchingStateVariableRule = createRule({
               });
             }
 
-            if (node.id.elements?.[1]?.type === AST_NODE_TYPES.Identifier) {
+            if (isIdentifier(node.id.elements[1])) {
               const actualSetterName = node.id.elements[1].name;
               const expectedSetterName = `set${expectedVariableNameBase
                 .charAt(0)
@@ -94,7 +116,7 @@ const matchingStateVariableRule = createRule({
               if (actualSetterName !== expectedSetterName) {
                 context.report({
                   node,
-                  messageId: "invalidSetterName",
+                  messageId: 'invalidSetterName',
                   data: {
                     hookName: stateNameBase,
                     actualName: actualSetterName,
@@ -117,26 +139,4 @@ const matchingStateVariableRule = createRule({
       },
     };
   },
-  name: "recoil-hook-naming",
-  meta: {
-    type: "problem",
-    docs: {
-      description:
-        "Ensure recoil value and setter are named after their atom name",
-      recommended: "recommended",
-    },
-    fixable: "code",
-    schema: [],
-    messages: {
-      invalidVariableName:
-        "Invalid usage of {{ hookName }}: the variable should be named '{{ expectedName }}' but found '{{ actualName }}'.",
-      invalidSetterName:
-        "Invalid usage of {{ hookName }}: Expected setter '{{ expectedName }}' but found '{{ actualName }}'.",
-    },
-  },
-  defaultOptions: [],
 });
-
-module.exports = matchingStateVariableRule;
-
-export default matchingStateVariableRule;
