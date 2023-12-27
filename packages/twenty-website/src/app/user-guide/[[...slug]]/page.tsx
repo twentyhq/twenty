@@ -1,15 +1,32 @@
 import { ContentContainer } from '@/app/components/ContentContainer';
 import { getPosts, Directory, FileContent, getPost } from '@/app/user-guide/get-posts';
 import Link from 'next/link';
+import * as TablerIcons from '@tabler/icons-react';
+import { FunctionComponent } from 'react';
 
+
+function loadIcon(iconName?: string) {
+  const name = iconName ? iconName : 'IconCategory';
+
+  try {
+    const icon = TablerIcons[name as keyof typeof TablerIcons] as FunctionComponent;
+    return icon as TablerIcons.Icon;
+  } catch (error) {
+    console.error('Icon not found:', iconName);
+    return null;
+  }
+}
 
 const DirectoryItem = ({ name, item }: { name: string, item: Directory | FileContent }) => {
 
   if ('content' in item) {
     // If the item is a file, we render a link.
+    const Icon = loadIcon(item.itemInfo.icon);
+  
     return (
       <div key={name}>
-        <Link style={{textDecoration: 'none', color: '#333'}} href={item.itemInfo.path != 'user-guide/home' ? `/user-guide/${item.itemInfo.path}` : '/user-guide'}>
+        <Link style={{textDecoration: 'none', color: '#333', display: 'flex', alignItems: 'center', gap: '8px'}} href={item.itemInfo.path != 'user-guide/home' ? `/user-guide/${item.itemInfo.path}` : '/user-guide'}>
+          { Icon ? <Icon size={12} /> : '' }
           {item.itemInfo.title}
         </Link>
       </div>

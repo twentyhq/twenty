@@ -18,6 +18,10 @@ body {
     align-items: center;
 }
 
+.warning {
+    color: rgb(94, 30, 4);
+}
+
 a {
     color: rgb(129, 129, 129);
     &:hover {

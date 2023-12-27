@@ -8,6 +8,7 @@ interface ItemInfo {
   position?: number;
   path: string;
   type: 'file' | 'directory';
+  icon?: string;
 }
 
 export interface FileContent {
