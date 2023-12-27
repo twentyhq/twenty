@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { Checkbox } from '@/ui/input/components/Checkbox';
 
 import { useRecordTable } from '../hooks/useRecordTable';
-import { allRowsSelectedStatusSelector } from '../states/selectors/allRowsSelectedStatusSelector';
+import { allRowsSelectedStatusSelector } from '../states/selectors/allRowsSelectedStatusScopedSelector';
 
 const StyledContainer = styled.div`
   align-items: center;

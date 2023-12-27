@@ -8,7 +8,7 @@ import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords
 import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
-import { selectedRowIdsSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsSelector';
+import { selectedRowIdsScopedSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsScopedSelector';
 import {
   IconHeart,
   IconHeartOff,
@@ -37,7 +37,7 @@ export const useRecordTableContextMenuEntries = (
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
   const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState);
 
-  const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
+  const selectedRowIds = useRecoilValue(selectedRowIdsScopedSelector);
 
   const { scopeId: objectNamePlural, resetTableRowSelection } = useRecordTable({
     recordTableScopeId: scopeId,
@@ -53,7 +53,7 @@ export const useRecordTableContextMenuEntries = (
 
   const handleFavoriteButtonClick = useRecoilCallback(({ snapshot }) => () => {
     const selectedRowIds = snapshot
-      .getLoadable(selectedRowIdsSelector)
+      .getLoadable(selectedRowIdsScopedSelector)
       .getValue();
 
     const selectedRowId = selectedRowIds.length === 1 ? selectedRowIds[0] : '';
@@ -83,7 +83,7 @@ export const useRecordTableContextMenuEntries = (
     ({ snapshot }) =>
       async () => {
         const rowIdsToDelete = snapshot
-          .getLoadable(selectedRowIdsSelector)
+          .getLoadable(selectedRowIdsScopedSelector)
           .getValue();
 
         resetTableRowSelection();
@@ -96,7 +96,7 @@ export const useRecordTableContextMenuEntries = (
     ({ snapshot }) =>
       async () => {
         const rowIdsToExecuteQuickActionOn = snapshot
-          .getLoadable(selectedRowIdsSelector)
+          .getLoadable(selectedRowIdsScopedSelector)
           .getValue();
 
         resetTableRowSelection();

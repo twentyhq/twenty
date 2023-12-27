@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { ActivityType } from '@/activities/types/Activity';
-import { selectedRowIdsSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsSelector';
+import { selectedRowIdsScopedSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsScopedSelector';
 
 import {
   ActivityTargetableEntity,
@@ -21,7 +21,7 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = () => {
         relatedEntities?: ActivityTargetableEntity[],
       ) => {
         const selectedRowIds = Object.keys(
-          snapshot.getLoadable(selectedRowIdsSelector).getValue(),
+          snapshot.getLoadable(selectedRowIdsScopedSelector).getValue(),
         );
         let activityTargetableEntityArray: ActivityTargetableEntity[] =
           selectedRowIds.map((id) => ({

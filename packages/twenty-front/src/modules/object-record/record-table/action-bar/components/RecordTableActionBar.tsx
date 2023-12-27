@@ -3,10 +3,10 @@ import { useRecoilValue } from 'recoil';
 
 import { ActionBar } from '@/ui/navigation/action-bar/components/ActionBar';
 
-import { selectedRowIdsSelector } from '../../states/selectors/selectedRowIdsSelector';
+import { selectedRowIdsScopedSelector } from '../../states/selectors/selectedRowIdsScopedSelector';
 
 export const RecordTableActionBar = () => {
-  const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
+  const selectedRowIds = useRecoilValue(selectedRowIdsScopedSelector);
 
   return <ActionBar selectedIds={selectedRowIds} />;
 };
