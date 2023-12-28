@@ -16,7 +16,7 @@ export const useDisableSoftFocus = (recordTableScopeId: string) => {
     injectFamilyStateWithRecordTableScopeId,
   } = useRecordTableScopedStates(recordTableScopeId);
 
-  useRecoilCallback(
+  return useRecoilCallback(
     ({ set, snapshot }) => {
       return () => {
         const currentPosition = injectSnapshotValueWithRecordTableScopeId(

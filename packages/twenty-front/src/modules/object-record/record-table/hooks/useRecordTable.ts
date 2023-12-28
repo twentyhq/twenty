@@ -296,7 +296,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   );
 
   const useMapKeyboardToSoftFocus = () => {
-    const disableSoftFocus = useDisableSoftFocus();
+    const disableSoftFocus = useDisableSoftFocus(scopeId);
     const setHotkeyScope = useSetHotkeyScope();
 
     useScopedHotkeys(
@@ -342,7 +342,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
           goto: true,
           keyboardShortcutMenu: true,
         });
-        disableSoftFocus();
+        disableSoftFocus(scopeId);
       },
       TableHotkeyScope.TableSoftFocus,
       [disableSoftFocus],
