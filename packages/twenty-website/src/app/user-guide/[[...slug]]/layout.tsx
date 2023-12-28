@@ -111,7 +111,9 @@ export default async function UserGuideHome({
             }
           })}
         </div>
-        <div style={{ padding: '24px' }}>{children}</div>
+        <div style={{ paddingLeft: '24px', paddingRight: '200px' }}>
+          {children}
+        </div>
       </div>
     </ContentContainer>
   );

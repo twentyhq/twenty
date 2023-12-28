@@ -30,11 +30,17 @@ const DeveloperDocsLayout = ({ children }: { children: React.ReactNode }) => {
           <h4 style={{ textTransform: 'uppercase', color: '#B3B3B3' }}>
             Resources
           </h4>
-          <a style={{ textDecoration: 'none', color: '#333' }} href="/">
+          <a
+            style={{ textDecoration: 'none', color: '#333' }}
+            href="/developers/graphql"
+          >
             GraphQL API
           </a>{' '}
           <br />
-          <a style={{ textDecoration: 'none', color: '#333' }} href="/">
+          <a
+            style={{ textDecoration: 'none', color: '#333' }}
+            href="/developers/rest"
+          >
             Rest API
           </a>{' '}
           <br />
@@ -58,7 +64,9 @@ const DeveloperDocsLayout = ({ children }: { children: React.ReactNode }) => {
           </a>{' '}
           <br />
         </div>
-        <div style={{ padding: '24px' }}>{children}</div>
+        <div style={{ padding: '24px', minHeight: '80vh', width: '100%' }}>
+          {children}
+        </div>
       </div>
     </ContentContainer>
   );

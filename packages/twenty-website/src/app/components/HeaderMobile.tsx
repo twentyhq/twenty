@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { Logo } from './Logo';
 import { IBM_Plex_Mono } from 'next/font/google';
 import { GithubIcon } from './Icons';
+import { useState } from 'react';
 
 const IBMPlexMono = IBM_Plex_Mono({
   weight: '500',
@@ -136,6 +137,24 @@ const HamburgerContainer = styled.div`
     width: 44px;
     opacity: 0;
   }
+
+  #line1 {
+    transition: transform 0.5s;
+    transition-timing-function: ease-in-out;
+  }
+
+  #line2 {
+    transition: transform 0.5s;
+    transition-timing-function: ease-in-out;
+  }
+
+  #menu-input:checked ~ #line1 {
+    transform: rotate(45deg) translate(7px);
+  }
+
+  #menu-input:checked ~ #line2 {
+    transform: rotate(-45deg) translate(7px);
+  }
 `;
 
 const HamburgerLine1 = styled.div`
@@ -159,29 +178,43 @@ const HamburgerLine2 = styled.div`
 `;
 
 const NavOpen = styled.div`
-  display: none;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const MobileMenu = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 `;
 
 export const HeaderMobile = () => {
   const isTwentyDev = false;
 
-  return (
-    <Nav>
-      <LogoContainer>
-        <Logo />
-        {isTwentyDev && (
-          <LogoAddon className={IBMPlexMono.className}>
-            for Developers
-          </LogoAddon>
-        )}
-      </LogoContainer>
-      <HamburgerContainer>
-        <input type="checkbox" />
-        <HamburgerLine1 />
-        <HamburgerLine2 />
-      </HamburgerContainer>
+  const [menuOpen, setMenuOpen] = useState(false);
 
-      <NavOpen>
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  return (
+    <MobileMenu>
+      <Nav>
+        <LogoContainer>
+          <Logo />
+          {isTwentyDev && (
+            <LogoAddon className={IBMPlexMono.className}>
+              for Developers
+            </LogoAddon>
+          )}
+        </LogoContainer>
+        <HamburgerContainer>
+          <input type="checkbox" id="menu-input" onChange={toggleMenu} />
+          <HamburgerLine1 id="line1" />
+          <HamburgerLine2 id="line2" />
+        </HamburgerContainer>
+      </Nav>
+      <NavOpen style={{ display: menuOpen ? 'flex' : 'none' }}>
         <LinkList>
           <ListItem href="/pricing">Pricing</ListItem>
           <ListItem href="/story">Story</ListItem>
@@ -194,6 +227,6 @@ export const HeaderMobile = () => {
         </LinkList>
         <CallToAction />
       </NavOpen>
-    </Nav>
+    </MobileMenu>
   );
 };

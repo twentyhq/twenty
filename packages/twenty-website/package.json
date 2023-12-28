@@ -13,6 +13,7 @@
     "@emotion/styled": "^11.11.0",
     "@jsdevtools/rehype-toc": "^3.0.2",
     "@tabler/icons-react": "^2.44.0",
+    "graphiql": "^3.0.10",
     "next": "14.0.4",
     "next-mdx-remote": "^4.4.1",
     "react": "^18",

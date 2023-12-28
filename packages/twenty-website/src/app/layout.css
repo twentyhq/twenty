@@ -28,3 +28,10 @@ a {
         color: #000;
     }
 }
+
+nav.toc {
+  width: 200px;
+  position: fixed;
+  top: 100px;
+  right: 0;
+}
