@@ -1,5 +1,4 @@
 import { ContentContainer } from '@/app/components/ContentContainer';
-import { ExternalArrow } from '@/app/components/ExternalArrow';
 
 const DeveloperDocsLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -37,7 +36,7 @@ const DeveloperDocsLayout = ({ children }: { children: React.ReactNode }) => {
           <br />
           <a
             style={{ textDecoration: 'none', color: '#333' }}
-            href="/developers/graphql"
+            href="/developers/docs/graphql"
           >
             GraphQL API
           </a>{' '}

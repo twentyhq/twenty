@@ -12,6 +12,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@jsdevtools/rehype-toc": "^3.0.2",
+    "@stoplight/elements": "^7.16.2",
     "@tabler/icons-react": "^2.44.0",
     "graphiql": "^3.0.10",
     "next": "14.0.4",
