@@ -1,14 +1,27 @@
 import { useContext } from 'react';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
+
+import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 
 import { RowIdContext } from '../../contexts/RowIdContext';
-import { isRowSelectedScopedFamilyState } from '../states/isRowSelectedScopedFamilyState';
 
-export const useCurrentRowSelected = () => {
+export const useCurrentRowSelected = (recordTableScopeId: string) => {
   const currentRowId = useContext(RowIdContext);
 
-  const [isRowSelected] = useRecoilState(
-    isRowSelectedScopedFamilyState(currentRowId ?? ''),
+  const { isRowSelectedScopeInjector } = getRecordTableScopeInjector();
+
+  const {
+    injectFamilyStateWithRecordTableScopeId,
+    injectFamilySnapshotValueWithRecordTableScopeId,
+  } = useRecordTableScopedStates(recordTableScopeId);
+
+  const isRowSelectedFamilyState = injectFamilyStateWithRecordTableScopeId(
+    isRowSelectedScopeInjector,
+  );
+
+  const isRowSelected = useRecoilValue(
+    isRowSelectedFamilyState(currentRowId ?? ''),
   );
 
   const setCurrentRowSelected = useRecoilCallback(
@@ -16,17 +29,23 @@ export const useCurrentRowSelected = () => {
       (newSelectedState: boolean) => {
         if (!currentRowId) return;
 
-        const isRowSelected = snapshot
-          .getLoadable(isRowSelectedScopedFamilyState(currentRowId))
-          .valueOrThrow();
+        const isRowSelected = injectFamilySnapshotValueWithRecordTableScopeId(
+          snapshot,
+          isRowSelectedScopeInjector,
+        )(currentRowId);
 
         if (newSelectedState && !isRowSelected) {
-          set(isRowSelectedScopedFamilyState(currentRowId), true);
+          set(isRowSelectedFamilyState(currentRowId), true);
         } else if (!newSelectedState && isRowSelected) {
-          set(isRowSelectedScopedFamilyState(currentRowId), false);
+          set(isRowSelectedFamilyState(currentRowId), false);
         }
       },
-    [currentRowId],
+    [
+      currentRowId,
+      injectFamilySnapshotValueWithRecordTableScopeId,
+      isRowSelectedFamilyState,
+      isRowSelectedScopeInjector,
+    ],
   );
 
   return {

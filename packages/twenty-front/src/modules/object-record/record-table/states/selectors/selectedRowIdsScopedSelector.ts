@@ -11,7 +11,13 @@ export const selectedRowIdsScopedSelector = createScopedSelector<string[]>({
       const rowIds = get(tableRowIdsScopedState({ scopeId }));
 
       return rowIds.filter(
-        (rowId) => get(isRowSelectedScopedFamilyState(rowId)) === true,
+        (rowId) =>
+          get(
+            isRowSelectedScopedFamilyState({
+              scopeId,
+              familyKey: rowId,
+            }),
+          ) === true,
       );
     },
 });
