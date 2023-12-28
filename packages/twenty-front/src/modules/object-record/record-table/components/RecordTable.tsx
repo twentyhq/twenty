@@ -4,7 +4,8 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { isRecordTableInitialLoadingScopedState } from '@/object-record/record-table/states/isRecordTableInitialLoadingScopedState';
+import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
@@ -15,7 +16,6 @@ import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinit
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useRecordTable } from '../hooks/useRecordTable';
 import { RecordTableScope } from '../scopes/RecordTableScope';
-import { numberOfTableRowsScopedState } from '../states/numberOfTableRowsScopedState';
 
 import { RecordTableBody } from './RecordTableBody';
 import { RecordTableBodyEffect } from './RecordTableBodyEffect';
@@ -125,12 +125,6 @@ export const RecordTable = ({
 }: RecordTableProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const numberOfTableRows = useRecoilValue(numberOfTableRowsScopedState);
-
-  const isRecordTableInitialLoading = useRecoilValue(
-    isRecordTableInitialLoadingScopedState,
-  );
-
   const {
     scopeId: objectNamePlural,
     resetTableRowSelection,
@@ -138,6 +132,30 @@ export const RecordTable = ({
   } = useRecordTable({
     recordTableScopeId: recordTableId,
   });
+
+  const {
+    numberOfTableRowsScopeInjector,
+    isRecordTableInitialLoadingScopeInjector,
+  } = getRecordTableScopeInjector();
+
+  const {
+    injectStateWithRecordTableScopeId,
+    injectSelectorWithRecordTableScopeId,
+  } = useRecordTableScopedStates(recordTableId);
+
+  const numberOfTableRowsSelector = injectSelectorWithRecordTableScopeId(
+    numberOfTableRowsScopeInjector,
+  );
+
+  const numberOfTableRows = useRecoilValue(numberOfTableRowsSelector);
+
+  const isRecordTableInitialLoadingState = injectStateWithRecordTableScopeId(
+    isRecordTableInitialLoadingScopeInjector,
+  );
+
+  const isRecordTableInitialLoading = useRecoilValue(
+    isRecordTableInitialLoadingState,
+  );
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,

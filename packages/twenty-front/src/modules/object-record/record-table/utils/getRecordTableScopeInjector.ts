@@ -1,5 +1,6 @@
 import { isRowSelectedScopedFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedScopedFamilyState';
 import { currentTableCellInEditModePositionState } from '@/object-record/record-table/states/currentTableCellInEditModePositionState';
+import { isRecordTableInitialLoadingScopedState } from '@/object-record/record-table/states/isRecordTableInitialLoadingScopedState';
 import { isSoftFocusActiveScopedState } from '@/object-record/record-table/states/isSoftFocusActiveScopedState';
 import { isSoftFocusOnTableCellScopedFamilyState } from '@/object-record/record-table/states/isSoftFocusOnTableCellScopedFamilyState';
 import { isTableCellInEditModeScopedFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeScopedFamilyState';
@@ -7,6 +8,7 @@ import { numberOfTableRowsScopedState } from '@/object-record/record-table/state
 import { objectMetadataConfigScopedState } from '@/object-record/record-table/states/objectMetadataConfigScopedState';
 import { allRowsSelectedStatusScopedSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusScopedSelector';
 import { numberOfTableColumnsScopedSelector } from '@/object-record/record-table/states/selectors/numberOfTableColumnsScopedSelector';
+import { selectedRowIdsScopedSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsScopedSelector';
 import { softFocusPositionScopedState } from '@/object-record/record-table/states/softFocusPositionScopedState';
 import { tableLastRowVisibleScopedState } from '@/object-record/record-table/states/tableLastRowVisibleScopedState';
 import { tableRowIdsScopedState } from '@/object-record/record-table/states/tableRowIdsScopedState';
@@ -101,6 +103,14 @@ export const getRecordTableScopeInjector = () => {
     allRowsSelectedStatusScopedSelector,
   );
 
+  const selectedRowIdsScopeInjector = getSelectorScopeInjector(
+    selectedRowIdsScopedSelector,
+  );
+
+  const isRecordTableInitialLoadingScopeInjector = getScopeInjector(
+    isRecordTableInitialLoadingScopedState,
+  );
+
   return {
     availableTableColumnsScopeInjector,
     tableFiltersScopeInjector,
@@ -123,5 +133,7 @@ export const getRecordTableScopeInjector = () => {
     tableRowIdsScopeInjector,
     isRowSelectedScopeInjector,
     allRowsSelectedStatusScopeInjector,
+    selectedRowIdsScopeInjector,
+    isRecordTableInitialLoadingScopeInjector,
   };
 };

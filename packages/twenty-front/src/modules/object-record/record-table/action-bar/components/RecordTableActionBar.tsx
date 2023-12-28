@@ -1,12 +1,24 @@
-import React from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { ActionBar } from '@/ui/navigation/action-bar/components/ActionBar';
 
-import { selectedRowIdsScopedSelector } from '../../states/selectors/selectedRowIdsScopedSelector';
+export const RecordTableActionBar = ({
+  recordTableId,
+}: {
+  recordTableId: string;
+}) => {
+  const { selectedRowIdsScopeInjector } = getRecordTableScopeInjector();
 
-export const RecordTableActionBar = () => {
-  const selectedRowIds = useRecoilValue(selectedRowIdsScopedSelector);
+  const { injectSelectorWithRecordTableScopeId } =
+    useRecordTableScopedStates(recordTableId);
+
+  const selectedRowIdsSelector = injectSelectorWithRecordTableScopeId(
+    selectedRowIdsScopeInjector,
+  );
+
+  const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
   return <ActionBar selectedIds={selectedRowIds} />;
 };
