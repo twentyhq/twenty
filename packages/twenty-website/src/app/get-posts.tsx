@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import { ReactElement } from 'react';
-import  gfm  from 'remark-gfm';
+import gfm from 'remark-gfm';
 import rehypeToc from '@jsdevtools/rehype-toc';
 import rehypeSlug from 'rehype-slug';
 
@@ -24,9 +24,11 @@ export interface Directory {
   itemInfo: ItemInfo;
 }
 
-const basePath = '/src/content/user-guide';
-
-async function getFiles(filePath: string, position: number = 0): Promise<Directory> {
+async function getFiles(
+  filePath: string,
+  basePath: string,
+  position: number = 0,
+): Promise<Directory> {
   const entries = fs.readdirSync(filePath, { withFileTypes: true });
 
   const urlpath = path.toString().split(basePath);
@@ -43,31 +45,52 @@ async function getFiles(filePath: string, position: number = 0): Promise<Directo
 
   for (const entry of entries) {
     if (entry.isDirectory()) {
-      directory[entry.name] = await getFiles(path.join(filePath, entry.name), position++);
+      directory[entry.name] = await getFiles(
+        path.join(filePath, entry.name),
+        basePath,
+        position++,
+      );
     } else if (entry.isFile() && path.extname(entry.name) === '.mdx') {
-      const { content, frontmatter } = await compileMDXFile(path.join(filePath, entry.name));
-      directory[entry.name] = { content, itemInfo: {...frontmatter, type: 'file', path: pathName + "/" +  entry.name.replace(/\.mdx$/, '')} };
+      const { content, frontmatter } = await compileMDXFile(
+        path.join(filePath, entry.name),
+      );
+      directory[entry.name] = {
+        content,
+        itemInfo: {
+          ...frontmatter,
+          type: 'file',
+          path: pathName + '/' + entry.name.replace(/\.mdx$/, ''),
+        },
+      };
     }
   }
 
   return directory;
 }
 
-async function parseFrontMatterAndCategory(directory: Directory, dirPath: string): Promise<Directory> {
+async function parseFrontMatterAndCategory(
+  directory: Directory,
+  dirPath: string,
+): Promise<Directory> {
   const parsedDirectory: Directory = {
     itemInfo: directory.itemInfo,
   };
 
   for (const entry in directory) {
     if (entry !== 'itemInfo' && directory[entry] instanceof Object) {
-      parsedDirectory[entry] = await parseFrontMatterAndCategory(directory[entry] as Directory, path.join(dirPath, entry));
+      parsedDirectory[entry] = await parseFrontMatterAndCategory(
+        directory[entry] as Directory,
+        path.join(dirPath, entry),
+      );
     }
   }
 
   const categoryPath = path.join(dirPath, '_category_.json');
 
   if (fs.existsSync(categoryPath)) {
-    const categoryJson: ItemInfo = JSON.parse(fs.readFileSync(categoryPath, 'utf8'));
+    const categoryJson: ItemInfo = JSON.parse(
+      fs.readFileSync(categoryPath, 'utf8'),
+    );
     parsedDirectory.itemInfo = categoryJson;
   }
 
@@ -75,35 +98,32 @@ async function parseFrontMatterAndCategory(directory: Directory, dirPath: string
 }
 
 export async function compileMDXFile(filePath: string, addToc: boolean = true) {
-
   const fileContent = fs.readFileSync(filePath, 'utf8');
 
-  const compiled = await compileMDX<{ title: string, position?: number }>({
+  const compiled = await compileMDX<{ title: string; position?: number }>({
     source: fileContent,
     options: {
       parseFrontmatter: true,
       mdxOptions: {
-        remarkPlugins: [
-            gfm,
-        ],
-        rehypePlugins: [
-          rehypeSlug,
-          rehypeToc
-        ]
-      }
-    }});
+        remarkPlugins: [gfm],
+        rehypePlugins: [rehypeSlug, ...(addToc ? [rehypeToc] : [])],
+      },
+    },
+  });
 
-    return compiled;
+  return compiled;
 }
 
-
-export async function getPosts(): Promise<Directory> {
+export async function getPosts(basePath: string): Promise<Directory> {
   const postsDirectory = path.join(process.cwd(), basePath);
-  const directory = await getFiles(postsDirectory);
+  const directory = await getFiles(postsDirectory, basePath);
   return parseFrontMatterAndCategory(directory, postsDirectory);
 }
 
-export async function getPost(slug: string[]): Promise<FileContent | null> {
+export async function getPost(
+  slug: string[],
+  basePath: string,
+): Promise<FileContent | null> {
   const postsDirectory = path.join(process.cwd(), basePath);
   const modifiedSlug = slug.join('/');
   const filePath = path.join(postsDirectory, `${modifiedSlug}.mdx`);
@@ -114,6 +134,8 @@ export async function getPost(slug: string[]): Promise<FileContent | null> {
 
   const { content, frontmatter } = await compileMDXFile(filePath);
 
-
-  return { content, itemInfo: {...frontmatter, type: 'file', path: modifiedSlug }};
+  return {
+    content,
+    itemInfo: { ...frontmatter, type: 'file', path: modifiedSlug },
+  };
 }

@@ -1,11 +1,21 @@
-import { getPost } from '@/app/user-guide/get-posts';
+import { getPost } from '@/app/get-posts';
 
-export default async function UserGuideHome({ params }: { params: { slug: string[] } }) {
+export default async function UserGuideHome({
+  params,
+}: {
+  params: { slug: string[] };
+}) {
+  const basePath = '/src/content/user-guide';
 
-    const mainPost = await getPost(params.slug && params.slug.length ? params.slug : ['home']);
+  const mainPost = await getPost(
+    params.slug && params.slug.length ? params.slug : ['home'],
+    basePath,
+  );
 
-    return <div>
+  return (
+    <div>
       <h2>{mainPost?.itemInfo.title}</h2>
       <div>{mainPost?.content}</div>
-  </div>;
+    </div>
+  );
 }
