@@ -1,9 +1,11 @@
 import { currentTableCellInEditModePositionState } from '@/object-record/record-table/states/currentTableCellInEditModePositionState';
+import { isTableCellInEditModeScopedFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeScopedFamilyState';
 import { numberOfTableRowsScopedState } from '@/object-record/record-table/states/numberOfTableRowsScopedState';
 import { objectMetadataConfigScopedState } from '@/object-record/record-table/states/objectMetadataConfigScopedState';
 import { numberOfTableColumnsScopedSelector } from '@/object-record/record-table/states/selectors/numberOfTableColumnsScopedSelector';
 import { softFocusPositionScopedState } from '@/object-record/record-table/states/softFocusPositionScopedState';
 import { tableLastRowVisibleScopedState } from '@/object-record/record-table/states/tableLastRowVisibleScopedState';
+import { getFamilyScopeInjector } from '@/ui/utilities/recoil-scope/utils/getFamilyScopeInjector';
 import { getScopeInjector } from '@/ui/utilities/recoil-scope/utils/getScopeInjector';
 import { getSelectorScopeInjector } from '@/ui/utilities/recoil-scope/utils/getSelectorScopeInjector';
 
@@ -72,6 +74,10 @@ export const getRecordTableScopeInjector = () => {
     currentTableCellInEditModePositionState,
   );
 
+  const isTableCellInEditModeScopeinjector = getFamilyScopeInjector(
+    isTableCellInEditModeScopedFamilyState,
+  );
+
   return {
     availableTableColumnsScopeInjector,
     tableFiltersScopeInjector,
@@ -88,5 +94,6 @@ export const getRecordTableScopeInjector = () => {
     numberOfTableRowsScopeInjector,
     numberOfTableColumnsScopeInjector,
     currentTableCellInEditModePositionScopeInjector,
+    isTableCellInEditModeScopeinjector,
   };
 };

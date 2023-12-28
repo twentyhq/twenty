@@ -3,16 +3,18 @@ import { useRecoilCallback } from 'recoil';
 import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
 import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 
-import { isTableCellInEditModeScopedFamilyState } from '../../states/isTableCellInEditModeScopedFamilyState';
-
 export const useCloseCurrentTableCellInEditMode = (
   recordTableScopeId: string,
 ) => {
-  const { currentTableCellInEditModePositionScopeInjector } =
-    getRecordTableScopeInjector();
+  const {
+    currentTableCellInEditModePositionScopeInjector,
+    isTableCellInEditModeScopeinjector,
+  } = getRecordTableScopeInjector();
 
-  const { injectSnapshotValueWithRecordTableScopeId } =
-    useRecordTableScopedStates(recordTableScopeId);
+  const {
+    injectSnapshotValueWithRecordTableScopeId,
+    injectFamilyStateWithRecordTableScopeId,
+  } = useRecordTableScopedStates(recordTableScopeId);
 
   return useRecoilCallback(
     ({ set, snapshot }) => {
@@ -23,19 +25,18 @@ export const useCloseCurrentTableCellInEditMode = (
             currentTableCellInEditModePositionScopeInjector,
           );
 
-        set(
-          isTableCellInEditModeScopedFamilyState({
-            scopeId: recordTableScopeId,
-            familyKey: currentTableCellInEditModePosition,
-          }),
-          false,
+        const isTableCellInEditMode = injectFamilyStateWithRecordTableScopeId(
+          isTableCellInEditModeScopeinjector,
         );
+
+        set(isTableCellInEditMode(currentTableCellInEditModePosition), false);
       };
     },
     [
       currentTableCellInEditModePositionScopeInjector,
+      injectFamilyStateWithRecordTableScopeId,
       injectSnapshotValueWithRecordTableScopeId,
-      recordTableScopeId,
+      isTableCellInEditModeScopeinjector,
     ],
   );
 };
