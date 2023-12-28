@@ -1,4 +1,5 @@
 import { ContentContainer } from '@/app/components/ContentContainer';
+import { ExternalArrow } from '@/app/components/ExternalArrow';
 
 const DeveloperDocsLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -30,6 +31,10 @@ const DeveloperDocsLayout = ({ children }: { children: React.ReactNode }) => {
           <h4 style={{ textTransform: 'uppercase', color: '#B3B3B3' }}>
             Resources
           </h4>
+          <a style={{ textDecoration: 'none', color: '#333' }} href="/">
+            Contributors Guide
+          </a>{' '}
+          <br />
           <a
             style={{ textDecoration: 'none', color: '#333' }}
             href="/developers/graphql"
@@ -38,29 +43,13 @@ const DeveloperDocsLayout = ({ children }: { children: React.ReactNode }) => {
           </a>{' '}
           <br />
           <a
-            style={{ textDecoration: 'none', color: '#333' }}
+            style={{ textDecoration: 'none', color: '#333', display: 'flex' }}
             href="/developers/rest"
           >
             Rest API
-          </a>{' '}
-          <br />
+          </a>
           <a style={{ textDecoration: 'none', color: '#333' }} href="/">
             Twenty UI
-          </a>{' '}
-          <br /> <br />
-          <h4 style={{ textTransform: 'uppercase', color: '#B3B3B3' }}>
-            Contribute
-          </h4>
-          <a style={{ textDecoration: 'none', color: '#333' }} href="/">
-            Guidelines
-          </a>{' '}
-          <br />
-          <a style={{ textDecoration: 'none', color: '#333' }} href="/">
-            Frontend
-          </a>{' '}
-          <br />
-          <a style={{ textDecoration: 'none', color: '#333' }} href="/">
-            Backend
           </a>{' '}
           <br />
         </div>
