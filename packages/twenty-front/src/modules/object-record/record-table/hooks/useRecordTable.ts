@@ -62,7 +62,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   } = getRecordTableScopeInjector();
 
   const setAvailableTableColumns = useSetRecoilState(
-    injectStateWithRecordTableScopeId(tableColumnsScopeInjector),
+    injectStateWithRecordTableScopeId(availableTableColumnsScopeInjector),
   );
 
   const setOnEntityCountChange = useSetRecoilState(
