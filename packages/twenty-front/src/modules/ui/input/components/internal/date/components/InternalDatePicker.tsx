@@ -3,8 +3,8 @@ import ReactDatePicker from 'react-datepicker';
 import styled from '@emotion/styled';
 
 import { IconCalendarX } from '@/ui/display/icon';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { overlayBackground } from '@/ui/theme/constants/effects';
-import { icon } from '@/ui/theme/constants/icon';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -231,18 +231,15 @@ const StyledButtonContainer = styled.div`
   align-self: stretch;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
-  height: 32px;
   padding-left: ${({ theme }) => theme.spacing(2)};
-`;
 
-const StyledButton = styled.button`
-  align-items: center;
-  background-color: transparent;
-  border: none;
-  color: ${({ theme }) => theme.font.color.secondary};
-  cursor: pointer;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  & .menu-item {
+    height: ${({ theme }) => theme.spacing(8)};
+    margin-bottom: ${({ theme }) => theme.spacing(1)};
+    margin-top: ${({ theme }) => theme.spacing(1)};
+    padding: 0 ${({ theme }) => theme.spacing(2)};
+    width: fit-content;
+  }
 `;
 
 export type InternalDatePickerProps = {
@@ -285,10 +282,12 @@ export const InternalDatePicker = ({
       </div>
       {clearable && (
         <StyledButtonContainer>
-          <StyledButton onClick={handleClear}>
-            <IconCalendarX className="icon" size={icon.size.md} />
-            Clear
-          </StyledButton>
+          <MenuItem
+            text="Clear"
+            LeftIcon={IconCalendarX}
+            onClick={handleClear}
+            className="menu-item"
+          />
         </StyledButtonContainer>
       )}
     </StyledContainer>
