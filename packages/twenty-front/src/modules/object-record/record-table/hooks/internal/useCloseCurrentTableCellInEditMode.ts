@@ -8,7 +8,7 @@ export const useCloseCurrentTableCellInEditMode = (
 ) => {
   const {
     currentTableCellInEditModePositionScopeInjector,
-    isTableCellInEditModeScopeinjector,
+    isTableCellInEditModeScopeInjector,
   } = getRecordTableScopeInjector();
 
   const {
@@ -26,7 +26,7 @@ export const useCloseCurrentTableCellInEditMode = (
           );
 
         const isTableCellInEditMode = injectFamilyStateWithRecordTableScopeId(
-          isTableCellInEditModeScopeinjector,
+          isTableCellInEditModeScopeInjector,
         );
 
         set(isTableCellInEditMode(currentTableCellInEditModePosition), false);
@@ -36,7 +36,7 @@ export const useCloseCurrentTableCellInEditMode = (
       currentTableCellInEditModePositionScopeInjector,
       injectFamilyStateWithRecordTableScopeId,
       injectSnapshotValueWithRecordTableScopeId,
-      isTableCellInEditModeScopeinjector,
+      isTableCellInEditModeScopeInjector,
     ],
   );
 };

@@ -76,7 +76,7 @@ export const getRecordTableScopeInjector = () => {
     currentTableCellInEditModePositionState,
   );
 
-  const isTableCellInEditModeScopeinjector = getFamilyScopeInjector(
+  const isTableCellInEditModeScopeInjector = getFamilyScopeInjector(
     isTableCellInEditModeScopedFamilyState,
   );
 
@@ -104,7 +104,7 @@ export const getRecordTableScopeInjector = () => {
     numberOfTableRowsScopeInjector,
     numberOfTableColumnsScopeInjector,
     currentTableCellInEditModePositionScopeInjector,
-    isTableCellInEditModeScopeinjector,
+    isTableCellInEditModeScopeInjector,
     isSoftFocusActiveScopeInjector,
     isSoftFocusOnTableCellScopeInjector,
   };
