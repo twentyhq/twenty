@@ -14,6 +14,7 @@
     "@jsdevtools/rehype-toc": "^3.0.2",
     "@stoplight/elements": "^7.16.2",
     "@tabler/icons-react": "^2.44.0",
+    "better-sqlite3": "^9.2.2",
     "graphiql": "^3.0.10",
     "next": "14.0.4",
     "next-mdx-remote": "^4.4.1",
@@ -24,6 +25,7 @@
     "remark-gfm": "^3.0.1"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.8",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
