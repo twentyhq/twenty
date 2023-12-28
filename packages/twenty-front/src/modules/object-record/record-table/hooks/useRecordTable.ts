@@ -2,7 +2,6 @@ import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
-import { onColumnsChangeScopedState } from '@/object-record/record-table/states/onColumnsChangeScopedState';
 import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
@@ -51,6 +50,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     softFocusPositionScopeInjector,
     numberOfTableRowsScopeInjector,
     numberOfTableColumnsScopeInjector,
+    onColumnsChangeScopeInjector,
   } = getRecordTableScopeInjector();
 
   const setAvailableTableColumns = useSetRecoilState(
@@ -75,21 +75,21 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     injectStateWithRecordTableScopeId(tableColumnsScopeInjector),
   );
 
+  const setOnColumnsChange = useSetRecoilState(
+    injectStateWithRecordTableScopeId(onColumnsChangeScopeInjector),
+  );
+
   const onColumnsChange = useRecoilCallback(
     ({ snapshot }) =>
       (columns: ColumnDefinition<FieldMetadata>[]) => {
-        const onColumnsChangeState = getScopedStateDeprecated(
-          onColumnsChangeScopedState,
-          scopeId,
-        );
-        const onColumnsChange = getSnapshotValue(
+        const onColumnsChange = injectSnapshotValueWithRecordTableScopeId(
           snapshot,
-          onColumnsChangeState,
+          onColumnsChangeScopeInjector,
         );
 
         onColumnsChange?.(columns);
       },
-    [scopeId],
+    [injectSnapshotValueWithRecordTableScopeId, onColumnsChangeScopeInjector],
   );
 
   const onEntityCountChange = useRecoilCallback(
@@ -366,5 +366,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     moveUp,
     useMapKeyboardToSoftFocus,
     selectAllRows,
+    setOnColumnsChange,
   };
 };
