@@ -119,7 +119,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const setRecordTableData = useSetRecordTableData({ onEntityCountChange });
 
-  const leaveTableFocus = useLeaveTableFocus();
+  const leaveTableFocus = useLeaveTableFocus(scopeId);
 
   const setRowSelectedState = useSetRowSelectedState();
 
