@@ -342,7 +342,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
           goto: true,
           keyboardShortcutMenu: true,
         });
-        disableSoftFocus(scopeId);
+        disableSoftFocus();
       },
       TableHotkeyScope.TableSoftFocus,
       [disableSoftFocus],
