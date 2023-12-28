@@ -1,7 +1,9 @@
 import styled from '@emotion/styled';
 
+import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { CompanyChip } from '@/companies/components/CompanyChip';
 import { PersonChip } from '@/people/components/PersonChip';
+import { EntityChip } from '@/ui/display/chip/components/EntityChip';
 import { getLogoUrlFromDomainName } from '~/utils';
 
 const StyledContainer = styled.div`
@@ -11,35 +13,53 @@ const StyledContainer = styled.div`
 `;
 
 // TODO: fix edges pagination formatting on n+N
-export const ActivityTargetChips = ({ targets }: { targets?: any }) => {
-  if (!targets) {
-    return null;
-  }
+export const ActivityTargetChips = ({
+  activityTargets,
+}: {
+  activityTargets?: ActivityTarget[];
+}) => {
+  console.log({
+    activityTargets,
+  });
 
   return (
     <StyledContainer>
-      {targets?.map(({ company, person }: any) => {
-        if (company) {
+      {activityTargets?.map((activityTarget) => {
+        if (activityTarget.company) {
           return (
             <CompanyChip
-              key={company.id}
-              id={company.id}
-              name={company.name}
-              avatarUrl={getLogoUrlFromDomainName(company.domainName)}
+              key={activityTarget.company.id}
+              id={activityTarget.company.id}
+              name={activityTarget.company.name}
+              avatarUrl={getLogoUrlFromDomainName(
+                activityTarget.company.domainName,
+              )}
             />
           );
-        }
-        if (person) {
+        } else if (activityTarget.person) {
           return (
             <PersonChip
-              key={person.id}
-              id={person.id}
-              name={person.name.firstName + ' ' + person.name.lastName}
-              avatarUrl={person.avatarUrl ?? undefined}
+              key={activityTarget.person.id}
+              id={activityTarget.person.id}
+              name={
+                activityTarget.person.name.firstName +
+                ' ' +
+                activityTarget.person.name.lastName
+              }
+              avatarUrl={activityTarget.person.avatarUrl ?? undefined}
+            />
+          );
+        } else {
+          console.log({
+            activityTarget,
+          });
+          return (
+            <EntityChip
+              entityId={activityTarget.id}
+              name={activityTarget.name}
             />
           );
         }
-        return <></>;
       })}
     </StyledContainer>
   );

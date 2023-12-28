@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { useTasks } from '@/activities/tasks/hooks/useTasks';
-import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { activeTabIdScopedState } from '@/ui/layout/tab/states/activeTabIdScopedState';
@@ -11,12 +11,6 @@ import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoi
 
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
-
-type TaskGroupsProps = {
-  filterDropdownId?: string;
-  entity?: ActivityTargetableEntity;
-  showAddButton?: boolean;
-};
 
 const StyledTaskGroupEmptyContainer = styled.div`
   align-items: center;
@@ -52,9 +46,15 @@ const StyledContainer = styled.div`
   flex-direction: column;
 `;
 
+type TaskGroupsProps = {
+  filterDropdownId?: string;
+  targetableObjects?: ActivityTargetableObject[];
+  showAddButton?: boolean;
+};
+
 export const TaskGroups = ({
   filterDropdownId,
-  entity,
+  targetableObjects,
   showAddButton,
 }: TaskGroupsProps) => {
   const {
@@ -62,7 +62,10 @@ export const TaskGroups = ({
     upcomingTasks,
     unscheduledTasks,
     completedTasks,
-  } = useTasks({ filterDropdownId: filterDropdownId, entity });
+  } = useTasks({
+    filterDropdownId: filterDropdownId,
+    targetableObjects: targetableObjects ?? [],
+  });
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
@@ -70,10 +73,6 @@ export const TaskGroups = ({
     activeTabIdScopedState,
     TasksRecoilScopeContext,
   );
-
-  if (entity?.type === 'Custom') {
-    return <></>;
-  }
 
   if (
     (activeTabId !== 'done' &&
@@ -93,7 +92,7 @@ export const TaskGroups = ({
           onClick={() =>
             openCreateActivity({
               type: 'Task',
-              targetableEntities: entity ? [entity] : undefined,
+              targetableObjects,
             })
           }
         />
@@ -107,7 +106,9 @@ export const TaskGroups = ({
         <TaskList
           tasks={completedTasks ?? []}
           button={
-            showAddButton && <AddTaskButton activityTargetEntity={entity} />
+            showAddButton && (
+              <AddTaskButton activityTargetableObjects={targetableObjects} />
+            )
           }
         />
       ) : (
@@ -116,7 +117,9 @@ export const TaskGroups = ({
             title="Today"
             tasks={todayOrPreviousTasks ?? []}
             button={
-              showAddButton && <AddTaskButton activityTargetEntity={entity} />
+              showAddButton && (
+                <AddTaskButton activityTargetableObjects={targetableObjects} />
+              )
             }
           />
           <TaskList
@@ -125,7 +128,7 @@ export const TaskGroups = ({
             button={
               showAddButton &&
               !todayOrPreviousTasks?.length && (
-                <AddTaskButton activityTargetEntity={entity} />
+                <AddTaskButton activityTargetableObjects={targetableObjects} />
               )
             }
           />
@@ -136,7 +139,7 @@ export const TaskGroups = ({
               showAddButton &&
               !todayOrPreviousTasks?.length &&
               !upcomingTasks?.length && (
-                <AddTaskButton activityTargetEntity={entity} />
+                <AddTaskButton activityTargetableObjects={targetableObjects} />
               )
             }
           />

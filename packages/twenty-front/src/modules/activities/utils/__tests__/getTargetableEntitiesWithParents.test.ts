@@ -1,40 +1,41 @@
-import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
-import { getTargetableEntitiesWithParents } from '@/activities/utils/getTargetableEntitiesWithParents';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { flattenTargetableObjectsAndTheirRelatedTargetableObjects } from '@/activities/utils/flattenTargetableObjectsAndTheirRelatedTargetableObjects';
 
 describe('getTargetableEntitiesWithParents', () => {
   it('should return the correct value', () => {
-    const entities: ActivityTargetableEntity[] = [
+    const entities: ActivityTargetableObject[] = [
       {
         id: '1',
-        type: 'Person',
-        relatedEntities: [
+        targetObjectNameSingular: 'person',
+        relatedTargetableObjects: [
           {
             id: '2',
-            type: 'Company',
+            targetObjectNameSingular: 'company',
           },
         ],
       },
       {
         id: '4',
-        type: 'Company',
+        targetObjectNameSingular: 'person',
       },
       {
         id: '3',
-        type: 'Custom',
-        relatedEntities: [
+        targetObjectNameSingular: 'car',
+        relatedTargetableObjects: [
           {
             id: '6',
-            type: 'Person',
+            targetObjectNameSingular: 'person',
           },
           {
             id: '5',
-            type: 'Company',
+            targetObjectNameSingular: 'company',
           },
         ],
       },
     ];
 
-    const res = getTargetableEntitiesWithParents(entities);
+    const res =
+      flattenTargetableObjectsAndTheirRelatedTargetableObjects(entities);
 
     expect(res).toHaveLength(6);
     expect(res[0].id).toBe('1');

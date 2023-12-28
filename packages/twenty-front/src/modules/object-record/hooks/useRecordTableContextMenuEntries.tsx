@@ -50,13 +50,6 @@ export const useRecordTableContextMenuEntries = (
     objectNamePlural,
   });
 
-  const objectMetadataType =
-    objectNameSingular === 'company'
-      ? 'Company'
-      : objectNameSingular === 'person'
-        ? 'Person'
-        : 'Custom';
-
   const { createFavorite, deleteFavorite, favorites } = useFavorites({
     objectNamePlural,
   });
@@ -178,14 +171,14 @@ export const useRecordTableContextMenuEntries = (
           label: 'Task',
           Icon: IconCheckbox,
           onClick: () => {
-            openCreateActivityDrawer('Task', objectMetadataType);
+            openCreateActivityDrawer('Task', objectNameSingular);
           },
         },
         {
           label: 'Note',
           Icon: IconNotes,
           onClick: () => {
-            openCreateActivityDrawer('Note', objectMetadataType);
+            openCreateActivityDrawer('Note', objectNameSingular);
           },
         },
         ...(dataExecuteQuickActionOnmentEnabled

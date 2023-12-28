@@ -4,6 +4,7 @@ import { Person } from '@/people/types/Person';
 
 export type ActivityTarget = {
   id: string;
+  targetObjectNameSingular: string;
   createdAt: string;
   updatedAt: string;
   companyId: string | null;

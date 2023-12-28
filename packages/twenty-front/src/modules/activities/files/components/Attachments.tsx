@@ -1,13 +1,15 @@
 import { ChangeEvent, useRef } from 'react';
 import styled from '@emotion/styled';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { AttachmentList } from '@/activities/files/components/AttachmentList';
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
 import { Attachment } from '@/activities/files/types/Attachment';
 import { getFileType } from '@/activities/files/utils/getFileType';
-import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
@@ -55,19 +57,19 @@ const StyledFileInput = styled.input`
 `;
 
 export const Attachments = ({
-  targetableEntity,
+  targetableObject,
 }: {
-  targetableEntity: ActivityTargetableEntity;
+  targetableObject: ActivityTargetableObject;
 }) => {
   const inputFileRef = useRef<HTMLInputElement>(null);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const { attachments } = useAttachments(targetableEntity);
+  const { attachments } = useAttachments(targetableObject);
 
   const [uploadFile] = useUploadFileMutation();
 
   const { createOneRecord: createOneAttachment } =
     useCreateOneRecord<Attachment>({
-      objectNameSingular: 'attachment',
+      objectNameSingular: CoreObjectNameSingular.Attachment,
     });
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -100,13 +102,11 @@ export const Attachments = ({
       name: file.name,
       fullPath: attachmentUrl,
       type: getFileType(file.name),
-      companyId:
-        targetableEntity.type == 'Company' ? targetableEntity.id : null,
-      personId: targetableEntity.type == 'Person' ? targetableEntity.id : null,
+      [`${targetableObject.targetObjectNameSingular}`]: targetableObject.id,
     });
   };
 
-  if (attachments?.length === 0 && targetableEntity.type !== 'Custom') {
+  if (!isNonEmptyArray(attachments)) {
     return (
       <StyledTaskGroupEmptyContainer>
         <StyledFileInput

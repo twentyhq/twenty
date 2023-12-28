@@ -3,9 +3,9 @@ import styled from '@emotion/styled';
 import { Threads } from '@/activities/emails/components/Threads';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
-import { EntityTasks } from '@/activities/tasks/components/EntityTasks';
+import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { Timeline } from '@/activities/timeline/components/Timeline';
-import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import {
   IconCheckbox,
   IconMail,
@@ -40,7 +40,7 @@ const StyledTabListContainer = styled.div`
 `;
 
 type ShowPageRightContainerProps = {
-  entity?: ActivityTargetableEntity;
+  targetableObject?: ActivityTargetableObject;
   timeline?: boolean;
   tasks?: boolean;
   notes?: boolean;
@@ -48,7 +48,7 @@ type ShowPageRightContainerProps = {
 };
 
 export const ShowPageRightContainer = ({
-  entity,
+  targetableObject,
   timeline,
   tasks,
   notes,
@@ -60,42 +60,39 @@ export const ShowPageRightContainer = ({
     ShowPageRecoilScopeContext,
   );
 
-  if (!entity) return <></>;
+  if (!targetableObject) return <></>;
+
   const TASK_TABS = [
     {
       id: 'timeline',
       title: 'Timeline',
       Icon: IconTimelineEvent,
       hide: !timeline,
-      disabled: entity.type === 'Custom',
     },
     {
       id: 'tasks',
       title: 'Tasks',
       Icon: IconCheckbox,
       hide: !tasks,
-      disabled: entity.type === 'Custom',
     },
     {
       id: 'notes',
       title: 'Notes',
       Icon: IconNotes,
       hide: !notes,
-      disabled: entity.type === 'Custom',
     },
     {
       id: 'files',
       title: 'Files',
       Icon: IconPaperclip,
       hide: !notes,
-      disabled: entity.type === 'Custom',
     },
     {
       id: 'emails',
       title: 'Emails',
       Icon: IconMail,
       hide: !emails,
-      disabled: !isMessagingEnabled || entity.type === 'Custom',
+      disabled: !isMessagingEnabled,
     },
   ];
 
@@ -104,11 +101,17 @@ export const ShowPageRightContainer = ({
       <StyledTabListContainer>
         <TabList context={ShowPageRecoilScopeContext} tabs={TASK_TABS} />
       </StyledTabListContainer>
-      {activeTabId === 'timeline' && <Timeline entity={entity} />}
-      {activeTabId === 'tasks' && <EntityTasks entity={entity} />}
-      {activeTabId === 'notes' && <Notes entity={entity} />}
-      {activeTabId === 'files' && <Attachments targetableEntity={entity} />}
-      {activeTabId === 'emails' && <Threads entity={entity} />}
+      {activeTabId === 'timeline' && (
+        <Timeline targetableObject={targetableObject} />
+      )}
+      {activeTabId === 'tasks' && (
+        <ObjectTasks targetableObject={targetableObject} />
+      )}
+      {activeTabId === 'notes' && <Notes targetableObject={targetableObject} />}
+      {activeTabId === 'files' && (
+        <Attachments targetableObject={targetableObject} />
+      )}
+      {activeTabId === 'emails' && <Threads entity={targetableObject} />}
     </StyledShowPageRightContainer>
   );
 };

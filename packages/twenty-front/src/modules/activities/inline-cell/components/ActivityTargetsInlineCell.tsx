@@ -2,6 +2,7 @@ import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips
 import { ActivityTargetInlineCellEditMode } from '@/activities/inline-cell/components/ActivityTargetInlineCellEditMode';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { RecordInlineCellContainer } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
 import { FieldRecoilScopeContext } from '@/object-record/record-inline-cell/states/recoil-scope-contexts/FieldRecoilScopeContext';
@@ -28,8 +29,14 @@ export const ActivityTargetsInlineCell = ({
     ) ?? [];
 
   const { records: activityTargets } = useFindManyRecords<ActivityTarget>({
-    objectNameSingular: 'activityTarget',
+    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     filter: { id: { in: activityTargetIds } },
+  });
+
+  console.log({
+    activity,
+    activityTargets,
+    activityTargetIds,
   });
 
   return (
@@ -47,7 +54,9 @@ export const ActivityTargetsInlineCell = ({
           />
         }
         label="Relations"
-        displayModeContent={<ActivityTargetChips targets={activityTargets} />}
+        displayModeContent={
+          <ActivityTargetChips activityTargets={activityTargets} />
+        }
         isDisplayModeContentEmpty={
           activity?.activityTargets?.edges?.length === 0
         }

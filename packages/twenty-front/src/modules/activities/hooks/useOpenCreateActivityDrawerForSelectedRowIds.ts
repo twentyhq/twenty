@@ -3,10 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { ActivityType } from '@/activities/types/Activity';
 import { selectedRowIdsSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsSelector';
 
-import {
-  ActivityTargetableEntity,
-  ActivityTargetableEntityType,
-} from '../types/ActivityTargetableEntity';
+import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
 import { useOpenCreateActivityDrawer } from './useOpenCreateActivityDrawer';
 
@@ -17,24 +14,28 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = () => {
     ({ snapshot }) =>
       (
         type: ActivityType,
-        entityType: ActivityTargetableEntityType,
-        relatedEntities?: ActivityTargetableEntity[],
+        objectNameSingular: string,
+        relatedEntities?: ActivityTargetableObject[],
       ) => {
         const selectedRowIds = snapshot
           .getLoadable(selectedRowIdsSelector)
           .getValue();
-        let activityTargetableEntityArray: ActivityTargetableEntity[] =
+
+        let activityTargetableEntityArray: ActivityTargetableObject[] =
           selectedRowIds.map((id: string) => ({
-            type: entityType,
+            type: 'Custom',
+            targetObjectNameSingular: objectNameSingular,
             id,
           }));
+
         if (relatedEntities) {
           activityTargetableEntityArray =
             activityTargetableEntityArray.concat(relatedEntities);
         }
+
         openCreateActivityDrawer({
           type,
-          targetableEntities: activityTargetableEntityArray,
+          targetableObjects: activityTargetableEntityArray,
         });
       },
     [openCreateActivityDrawer],

@@ -4,7 +4,9 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { Activity, ActivityType } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
+import { getTargetableObjectFilterFieldName } from '@/activities/utils/getTargetObjectFilterFieldName';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
@@ -13,17 +15,17 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 
 import { activityTargetableEntityArrayState } from '../states/activityTargetableEntityArrayState';
 import { viewableActivityIdState } from '../states/viewableActivityIdState';
-import { ActivityTargetableEntity } from '../types/ActivityTargetableEntity';
-import { getTargetableEntitiesWithParents } from '../utils/getTargetableEntitiesWithParents';
+import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
+import { flattenTargetableObjectsAndTheirRelatedTargetableObjects } from '../utils/flattenTargetableObjectsAndTheirRelatedTargetableObjects';
 
 export const useOpenCreateActivityDrawer = () => {
   const { openRightDrawer } = useRightDrawer();
   const { createOneRecord: createOneActivityTarget } =
     useCreateOneRecord<ActivityTarget>({
-      objectNameSingular: 'activityTarget',
+      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     });
   const { createOneRecord: createOneActivity } = useCreateOneRecord<Activity>({
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
   });
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const setHotkeyScope = useSetHotkeyScope();
@@ -36,15 +38,17 @@ export const useOpenCreateActivityDrawer = () => {
   return useCallback(
     async ({
       type,
-      targetableEntities,
+      targetableObjects,
       assigneeId,
     }: {
       type: ActivityType;
-      targetableEntities?: ActivityTargetableEntity[];
+      targetableObjects?: ActivityTargetableObject[];
       assigneeId?: string;
     }) => {
-      const targetableEntitiesWithRelations = targetableEntities
-        ? getTargetableEntitiesWithParents(targetableEntities)
+      const flattenedTargetableObjects = targetableObjects
+        ? flattenTargetableObjectsAndTheirRelatedTargetableObjects(
+            targetableObjects,
+          )
         : [];
 
       const createdActivity = await createOneActivity?.({
@@ -61,12 +65,13 @@ export const useOpenCreateActivityDrawer = () => {
       }
 
       await Promise.all(
-        targetableEntitiesWithRelations.map(async (targetableEntity) => {
-          await createOneActivityTarget?.({
-            companyId:
-              targetableEntity.type === 'Company' ? targetableEntity.id : null,
-            personId:
-              targetableEntity.type === 'Person' ? targetableEntity.id : null,
+        flattenedTargetableObjects.map((targetableObject) => {
+          const targetableObjectFieldName = getTargetableObjectFilterFieldName({
+            targetableObject,
+          });
+
+          return createOneActivityTarget?.({
+            [targetableObjectFieldName]: targetableObject.id,
             activityId: createdActivity.id,
           });
         }),
@@ -74,7 +79,7 @@ export const useOpenCreateActivityDrawer = () => {
 
       setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
       setViewableActivityId(createdActivity.id);
-      setActivityTargetableEntityArray(targetableEntities ?? []);
+      setActivityTargetableEntityArray(targetableObjects ?? []);
       openRightDrawer(RightDrawerPages.CreateActivity);
     },
     [

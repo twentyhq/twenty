@@ -114,7 +114,7 @@ export const TaskRow = ({
         )}
       </StyledTaskBody>
       <StyledFieldsContainer>
-        <ActivityTargetChips targets={activityTargets} />
+        <ActivityTargetChips activityTargets={activityTargets} />
         <StyledDueDate
           isPast={
             !!task.dueAt && hasDatePassed(task.dueAt) && !task.completedAt
