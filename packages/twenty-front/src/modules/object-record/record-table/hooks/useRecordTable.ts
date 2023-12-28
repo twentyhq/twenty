@@ -344,7 +344,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     );
   };
 
-  const { selectAllRows } = useSelectAllRows();
+  const { selectAllRows } = useSelectAllRows(scopeId);
 
   return {
     scopeId,
