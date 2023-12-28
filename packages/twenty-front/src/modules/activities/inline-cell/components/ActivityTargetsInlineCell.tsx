@@ -1,9 +1,8 @@
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
+import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { ActivityTargetInlineCellEditMode } from '@/activities/inline-cell/components/ActivityTargetInlineCellEditMode';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { RecordInlineCellContainer } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
 import { FieldRecoilScopeContext } from '@/object-record/record-inline-cell/states/recoil-scope-contexts/FieldRecoilScopeContext';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
@@ -28,14 +27,13 @@ export const ActivityTargetsInlineCell = ({
       (activityTarget) => activityTarget.node.id,
     ) ?? [];
 
-  const { records: activityTargets } = useFindManyRecords<ActivityTarget>({
-    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-    filter: { id: { in: activityTargetIds } },
+  const { activityTargetObjectRecords } = useActivityTargetObjectRecords({
+    activityTargetIds,
   });
 
   console.log({
     activity,
-    activityTargets,
+    activityTargetObjectRecords,
     activityTargetIds,
   });
 
@@ -50,12 +48,14 @@ export const ActivityTargetsInlineCell = ({
         editModeContent={
           <ActivityTargetInlineCellEditMode
             activityId={activity?.id ?? ''}
-            activityTargets={activityTargets as any}
+            activityTargetObjectRecords={activityTargetObjectRecords as any}
           />
         }
         label="Relations"
         displayModeContent={
-          <ActivityTargetChips activityTargets={activityTargets} />
+          <ActivityTargetChips
+            activityTargetObjectRecords={activityTargetObjectRecords}
+          />
         }
         isDisplayModeContentEmpty={
           activity?.activityTargets?.edges?.length === 0

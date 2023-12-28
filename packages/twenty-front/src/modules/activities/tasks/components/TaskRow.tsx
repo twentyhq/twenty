@@ -2,11 +2,10 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
+import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
-import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { IconCalendar, IconComment } from '@/ui/display/icon';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
@@ -80,9 +79,8 @@ export const TaskRow = ({
       (activityTarget) => activityTarget.node.id,
     ) ?? [];
 
-  const { records: activityTargets } = useFindManyRecords<ActivityTarget>({
-    objectNameSingular: 'activityTarget',
-    filter: { id: { in: activityTargetIds } },
+  const { activityTargetObjectRecords } = useActivityTargetObjectRecords({
+    activityTargetIds,
   });
 
   return (
@@ -114,7 +112,9 @@ export const TaskRow = ({
         )}
       </StyledTaskBody>
       <StyledFieldsContainer>
-        <ActivityTargetChips activityTargets={activityTargets} />
+        <ActivityTargetChips
+          activityTargetObjectRecords={activityTargetObjectRecords}
+        />
         <StyledDueDate
           isPast={
             !!task.dueAt && hasDatePassed(task.dueAt) && !task.completedAt

@@ -49,6 +49,11 @@ export class RelationFieldAliasFactory {
     const relationMetadata =
       fieldMetadata.fromRelationMetadata ?? fieldMetadata.toRelationMetadata;
 
+    console.log(
+      'inside createRelationAlias, relationMetadata: ',
+      relationMetadata,
+    );
+
     if (!relationMetadata) {
       throw new Error(
         `Relation metadata not found for field ${fieldMetadata.name}`,
@@ -111,8 +116,9 @@ export class RelationFieldAliasFactory {
         }
       `;
     }
+
     let relationAlias = fieldMetadata.isCustom
-      ? `${fieldKey}: ${fieldMetadata.targetColumnMap.value}`
+      ? `${fieldKey}: ${referencedObjectMetadata.targetTableName}`
       : fieldKey;
 
     // For one to one relations, pg_graphql use the targetTableName on the side that is not storing the foreign key
@@ -129,6 +135,14 @@ export class RelationFieldAliasFactory {
         fieldValue,
         referencedObjectMetadata.fields ?? [],
       );
+
+    console.log({
+      fieldsString,
+      relationAlias,
+      info,
+      fieldValue,
+      referencedObjectMetadata,
+    });
 
     // Otherwise it means it's a relation destination is of kind ONE
     return `

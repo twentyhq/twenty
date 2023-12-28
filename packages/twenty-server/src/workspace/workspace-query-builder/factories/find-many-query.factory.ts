@@ -35,6 +35,10 @@ export class FindManyQueryFactory {
       options.fieldMetadataCollection,
     );
 
+    console.log({
+      fieldsString,
+    });
+
     return `
       query {
         ${options.targetTableName}Collection${
