@@ -122,7 +122,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const upsertRecordTableItem = useUpsertRecordTableItem();
 
-  const setSoftFocusPosition = useSetSoftFocusPosition();
+  const setSoftFocusPosition = useSetSoftFocusPosition(scopeId);
 
   const moveUp = useRecoilCallback(
     ({ snapshot }) =>
