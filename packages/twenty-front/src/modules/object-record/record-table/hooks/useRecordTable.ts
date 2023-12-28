@@ -12,7 +12,6 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 
 import { FieldMetadata } from '../../field/types/FieldMetadata';
 import { onEntityCountChangeScopedState } from '../states/onEntityCountChangeScopedState';
-import { numberOfTableColumnsScopedSelector } from '../states/selectors/numberOfTableColumnsScopedSelector';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
@@ -38,8 +37,10 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const {
     injectStateWithRecordTableScopeId,
+    injectSelectorWithRecordTableScopeId,
     injectFamilyStateWithRecordTableScopeId,
     injectSnapshotValueWithRecordTableScopeId,
+    injectSelectorSnapshotValueWithRecordTableScopeId,
     injectFamilySnapshotValueWithRecordTableScopeId,
   } = useRecordTableScopedStates(scopeId);
 
@@ -194,10 +195,11 @@ export const useRecordTable = (props?: useRecordTableProps) => {
           softFocusPositionScopeInjector,
         );
 
-        // TODO: create a way to inject a selector with a scope id
-        const numberOfTableColumns = snapshot
-          .getLoadable(numberOfTableColumnsScopedSelector({ scopeId }))
-          .getValue();
+        const numberOfTableColumns =
+          injectSelectorSnapshotValueWithRecordTableScopeId(
+            snapshot,
+            numberOfTableColumnsScopeInjector,
+          );
 
         const numberOfTableRows = injectSnapshotValueWithRecordTableScopeId(
           snapshot,
@@ -234,9 +236,10 @@ export const useRecordTable = (props?: useRecordTableProps) => {
         }
       },
     [
+      injectSelectorSnapshotValueWithRecordTableScopeId,
       injectSnapshotValueWithRecordTableScopeId,
+      numberOfTableColumnsScopeInjector,
       numberOfTableRowsScopeInjector,
-      scopeId,
       setSoftFocusPosition,
       softFocusPositionScopeInjector,
     ],
@@ -250,9 +253,11 @@ export const useRecordTable = (props?: useRecordTableProps) => {
           softFocusPositionScopeInjector,
         );
 
-        const numberOfTableColumns = snapshot
-          .getLoadable(numberOfTableColumnsScopedSelector({ scopeId }))
-          .valueOrThrow();
+        const numberOfTableColumns =
+          injectSelectorSnapshotValueWithRecordTableScopeId(
+            snapshot,
+            numberOfTableColumnsScopeInjector,
+          );
 
         const currentColumnNumber = softFocusPosition.column;
         const currentRowNumber = softFocusPosition.row;
@@ -282,8 +287,9 @@ export const useRecordTable = (props?: useRecordTableProps) => {
         }
       },
     [
+      injectSelectorSnapshotValueWithRecordTableScopeId,
       injectSnapshotValueWithRecordTableScopeId,
-      scopeId,
+      numberOfTableColumnsScopeInjector,
       setSoftFocusPosition,
       softFocusPositionScopeInjector,
     ],

@@ -10,15 +10,20 @@ export const useRecordTableScopedStates = (recordTableId?: string) => {
 
   const {
     getScopedState,
+    getScopedSelector,
     getScopedFamilyState,
     getScopedSnapshotValue,
+    getScopedSelectorSnapshotValue,
     getScopedFamilySnapshotValue,
   } = useScopedState(scopeId);
 
   return {
     scopeId,
     injectStateWithRecordTableScopeId: getScopedState,
+    injectSelectorWithRecordTableScopeId: getScopedSelector,
     injectFamilyStateWithRecordTableScopeId: getScopedFamilyState,
+    injectSelectorSnapshotValueWithRecordTableScopeId:
+      getScopedSelectorSnapshotValue,
     injectSnapshotValueWithRecordTableScopeId: getScopedSnapshotValue,
     injectFamilySnapshotValueWithRecordTableScopeId:
       getScopedFamilySnapshotValue,
