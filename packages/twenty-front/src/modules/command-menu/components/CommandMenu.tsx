@@ -63,10 +63,10 @@ export const StyledInput = styled.input`
 `;
 
 const StyledCancelText = styled.span`
-  color: gray;
-  font-size: 12px;
-  margin-right: 8px;
-  margin-top: 4px;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  margin-right: 12px;
+  margin-top: 6px;
   position: absolute;
   right: 0;
   top: 0;
@@ -122,7 +122,7 @@ export const CommandMenu = () => {
   );
 
   useScopedHotkeys(
-    'esc,Esc,Escape,escape',
+    'esc',
     () => {
       closeCommandMenu();
     },
