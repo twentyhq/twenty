@@ -220,6 +220,7 @@ export const CommandMenu = () => {
       {isCommandMenuOpened && (
         <StyledDialog>
           <StyledInput
+            autoFocus
             value={search}
             placeholder="Search"
             onChange={handleSearchChange}
