@@ -3,6 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { flip, offset, useFloating } from '@floating-ui/react';
 
+import { useDateTimeField } from '@/object-record/field/meta-types/hooks/useDateTimeField';
 import { DateDisplay } from '@/ui/field/display/components/DateDisplay';
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { Nullable } from '~/types/Nullable';
@@ -79,6 +80,8 @@ export const DateInput = ({
     hotkeyScope,
   });
 
+  const { clearable } = useDateTimeField();
+
   return (
     <div ref={wrapperRef}>
       <div ref={refs.setReference}>
@@ -91,9 +94,10 @@ export const DateInput = ({
           <InternalDatePicker
             date={internalValue ?? new Date()}
             onChange={handleChange}
-            onMouseSelect={(newDate: Date) => {
+            onMouseSelect={(newDate: Date | null) => {
               onEnter(newDate);
             }}
+            clearable={clearable ? clearable : false}
           />
         </StyledCalendarContainer>
       </div>

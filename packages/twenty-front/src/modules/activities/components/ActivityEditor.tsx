@@ -89,6 +89,7 @@ export const ActivityEditor = ({
     objectRecordId: activity.id,
     fieldMetadataName: 'dueAt',
     fieldPosition: 0,
+    clearable: true,
   });
 
   const { FieldContextProvider: AssigneeFieldContextProvider } =
@@ -97,6 +98,7 @@ export const ActivityEditor = ({
       objectRecordId: activity.id,
       fieldMetadataName: 'assignee',
       fieldPosition: 1,
+      clearable: true,
     });
 
   const updateTitle = useCallback(

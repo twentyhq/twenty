@@ -7,7 +7,8 @@ import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldDateTime } from '../../types/guards/isFieldDateTime';
 
 export const useDateTimeField = () => {
-  const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { entityId, fieldDefinition, hotkeyScope, clearable } =
+    useContext(FieldContext);
 
   assertFieldMetadata('DATE_TIME', isFieldDateTime, fieldDefinition);
 
@@ -25,5 +26,6 @@ export const useDateTimeField = () => {
     fieldValue,
     setFieldValue,
     hotkeyScope,
+    clearable,
   };
 };

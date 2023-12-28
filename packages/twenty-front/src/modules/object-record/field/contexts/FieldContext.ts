@@ -27,6 +27,7 @@ export type GenericFieldContextType = {
   hotkeyScope: string;
   isLabelIdentifier: boolean;
   basePathToShowPage?: string;
+  clearable?: boolean;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(

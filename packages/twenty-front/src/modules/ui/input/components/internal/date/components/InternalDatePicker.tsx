@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 
 import { IconCalendarX } from '@/ui/display/icon';
 import { overlayBackground } from '@/ui/theme/constants/effects';
+import { icon } from '@/ui/theme/constants/icon';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -219,72 +220,83 @@ const StyledContainer = styled.div`
   & .react-datepicker__day:hover {
     color: ${({ theme }) => theme.font.color.tertiary};
   }
+
+  & .clearable {
+    border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  }
 `;
 
 const StyledButtonContainer = styled.div`
   align-items: center;
   align-self: stretch;
   display: flex;
-  gap: 8px;
+  gap: ${({ theme }) => theme.spacing(2)};
   height: 32px;
-  padding: 0px var(--Spacing-4px, 4px);
+  padding-left: ${({ theme }) => theme.spacing(2)};
+
+  & .divider {
+    background-color: red;
+    height: 1px;
+    width: 100%;
+  }
 `;
 
 const StyledButton = styled.button`
   align-items: center;
   background-color: transparent;
   border: none;
-  color: gray;
+  color: ${({ theme }) => theme.font.color.secondary};
   cursor: pointer;
   display: flex;
-  gap: 8px;
-  & .icon {
-    height: 16px;
-    width: 16px;
-  }
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 export type InternalDatePickerProps = {
   date: Date | null;
   onMouseSelect?: (date: Date | null) => void;
   onChange?: (date: Date) => void;
+  clearable: boolean;
 };
 
 export const InternalDatePicker = ({
   date,
   onChange,
   onMouseSelect,
+  clearable = true,
 }: InternalDatePickerProps) => {
-  const handelClear = () => {
+  const handleClear = () => {
     onMouseSelect?.(null);
   };
 
   return (
     <StyledContainer>
-      <ReactDatePicker
-        open={true}
-        selected={date}
-        showMonthDropdown
-        showYearDropdown
-        onChange={() => {
-          // We need to use onSelect here but onChange is almost redundant with onSelect but is require
-        }}
-        customInput={<></>}
-        onSelect={(date: Date, event) => {
-          if (event?.type === 'click') {
-            onMouseSelect?.(date);
-          } else {
-            onChange?.(date);
-          }
-        }}
-      >
+      <div className={clearable ? 'clearable ' : ''}>
+        <ReactDatePicker
+          open={true}
+          selected={date}
+          showMonthDropdown
+          showYearDropdown
+          onChange={() => {
+            // We need to use onSelect here but onChange is almost redundant with onSelect but is require
+          }}
+          customInput={<></>}
+          onSelect={(date: Date, event) => {
+            if (event?.type === 'click') {
+              onMouseSelect?.(date);
+            } else {
+              onChange?.(date);
+            }
+          }}
+        ></ReactDatePicker>
+      </div>
+      {clearable && (
         <StyledButtonContainer>
-          <StyledButton onClick={handelClear}>
-            <IconCalendarX className="icon" />
+          <StyledButton onClick={handleClear}>
+            <IconCalendarX className="icon" size={icon.size.md} />
             Clear
           </StyledButton>
         </StyledButtonContainer>
-      </ReactDatePicker>
+      )}
     </StyledContainer>
   );
 };
