@@ -1,4 +1,6 @@
 import { currentTableCellInEditModePositionState } from '@/object-record/record-table/states/currentTableCellInEditModePositionState';
+import { isSoftFocusActiveScopedState } from '@/object-record/record-table/states/isSoftFocusActiveScopedState';
+import { isSoftFocusOnTableCellScopedFamilyState } from '@/object-record/record-table/states/isSoftFocusOnTableCellScopedFamilyState';
 import { isTableCellInEditModeScopedFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeScopedFamilyState';
 import { numberOfTableRowsScopedState } from '@/object-record/record-table/states/numberOfTableRowsScopedState';
 import { objectMetadataConfigScopedState } from '@/object-record/record-table/states/objectMetadataConfigScopedState';
@@ -78,6 +80,14 @@ export const getRecordTableScopeInjector = () => {
     isTableCellInEditModeScopedFamilyState,
   );
 
+  const isSoftFocusActiveScopeInjector = getScopeInjector(
+    isSoftFocusActiveScopedState,
+  );
+
+  const isSoftFocusOnTableCellScopeInjector = getFamilyScopeInjector(
+    isSoftFocusOnTableCellScopedFamilyState,
+  );
+
   return {
     availableTableColumnsScopeInjector,
     tableFiltersScopeInjector,
@@ -95,5 +105,7 @@ export const getRecordTableScopeInjector = () => {
     numberOfTableColumnsScopeInjector,
     currentTableCellInEditModePositionScopeInjector,
     isTableCellInEditModeScopeinjector,
+    isSoftFocusActiveScopeInjector,
+    isSoftFocusOnTableCellScopeInjector,
   };
 };
