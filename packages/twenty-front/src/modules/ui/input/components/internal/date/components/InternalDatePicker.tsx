@@ -233,12 +233,6 @@ const StyledButtonContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
   height: 32px;
   padding-left: ${({ theme }) => theme.spacing(2)};
-
-  & .divider {
-    background-color: red;
-    height: 1px;
-    width: 100%;
-  }
 `;
 
 const StyledButton = styled.button`
