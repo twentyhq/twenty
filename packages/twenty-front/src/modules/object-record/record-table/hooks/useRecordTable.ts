@@ -37,11 +37,8 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const {
     injectStateWithRecordTableScopeId,
-    injectSelectorWithRecordTableScopeId,
-    injectFamilyStateWithRecordTableScopeId,
     injectSnapshotValueWithRecordTableScopeId,
     injectSelectorSnapshotValueWithRecordTableScopeId,
-    injectFamilySnapshotValueWithRecordTableScopeId,
   } = useRecordTableScopedStates(scopeId);
 
   const {
@@ -50,12 +47,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     tableSortsScopeInjector,
     tableColumnsScopeInjector,
     objectMetadataConfigScopeInjector,
-    tableColumnsByKeyScopeInjector,
-    hiddenTableColumnsScopeInjector,
-    visibleTableColumnsScopeInjector,
-    onColumnsChangeScopeInjector,
     onEntityCountScopeInjector,
-    tableLastRowVisibleScopeInjector,
     softFocusPositionScopeInjector,
     numberOfTableRowsScopeInjector,
     numberOfTableColumnsScopeInjector,
@@ -117,13 +109,16 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     [scopeId],
   );
 
-  const setRecordTableData = useSetRecordTableData({ onEntityCountChange });
+  const setRecordTableData = useSetRecordTableData({
+    recordTableScopeId: scopeId,
+    onEntityCountChange,
+  });
 
   const leaveTableFocus = useLeaveTableFocus(scopeId);
 
-  const setRowSelectedState = useSetRowSelectedState();
+  const setRowSelectedState = useSetRowSelectedState(scopeId);
 
-  const resetTableRowSelection = useResetTableRowSelection();
+  const resetTableRowSelection = useResetTableRowSelection(scopeId);
 
   const upsertRecordTableItem = useUpsertRecordTableItem();
 

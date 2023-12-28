@@ -1,12 +1,15 @@
+import { isRowSelectedScopedFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedScopedFamilyState';
 import { currentTableCellInEditModePositionState } from '@/object-record/record-table/states/currentTableCellInEditModePositionState';
 import { isSoftFocusActiveScopedState } from '@/object-record/record-table/states/isSoftFocusActiveScopedState';
 import { isSoftFocusOnTableCellScopedFamilyState } from '@/object-record/record-table/states/isSoftFocusOnTableCellScopedFamilyState';
 import { isTableCellInEditModeScopedFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeScopedFamilyState';
 import { numberOfTableRowsScopedState } from '@/object-record/record-table/states/numberOfTableRowsScopedState';
 import { objectMetadataConfigScopedState } from '@/object-record/record-table/states/objectMetadataConfigScopedState';
+import { allRowsSelectedStatusScopedSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusScopedSelector';
 import { numberOfTableColumnsScopedSelector } from '@/object-record/record-table/states/selectors/numberOfTableColumnsScopedSelector';
 import { softFocusPositionScopedState } from '@/object-record/record-table/states/softFocusPositionScopedState';
 import { tableLastRowVisibleScopedState } from '@/object-record/record-table/states/tableLastRowVisibleScopedState';
+import { tableRowIdsScopedState } from '@/object-record/record-table/states/tableRowIdsScopedState';
 import { getFamilyScopeInjector } from '@/ui/utilities/recoil-scope/utils/getFamilyScopeInjector';
 import { getScopeInjector } from '@/ui/utilities/recoil-scope/utils/getScopeInjector';
 import { getSelectorScopeInjector } from '@/ui/utilities/recoil-scope/utils/getSelectorScopeInjector';
@@ -88,6 +91,16 @@ export const getRecordTableScopeInjector = () => {
     isSoftFocusOnTableCellScopedFamilyState,
   );
 
+  const tableRowIdsScopeInjector = getScopeInjector(tableRowIdsScopedState);
+
+  const isRowSelectedScopeInjector = getFamilyScopeInjector(
+    isRowSelectedScopedFamilyState,
+  );
+
+  const allRowsSelectedStatusScopeInjector = getSelectorScopeInjector(
+    allRowsSelectedStatusScopedSelector,
+  );
+
   return {
     availableTableColumnsScopeInjector,
     tableFiltersScopeInjector,
@@ -107,5 +120,8 @@ export const getRecordTableScopeInjector = () => {
     isTableCellInEditModeScopeInjector,
     isSoftFocusActiveScopeInjector,
     isSoftFocusOnTableCellScopeInjector,
+    tableRowIdsScopeInjector,
+    isRowSelectedScopeInjector,
+    allRowsSelectedStatusScopeInjector,
   };
 };

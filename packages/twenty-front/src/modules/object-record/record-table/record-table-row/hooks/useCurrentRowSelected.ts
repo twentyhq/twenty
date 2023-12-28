@@ -2,13 +2,13 @@ import { useContext } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { RowIdContext } from '../../contexts/RowIdContext';
-import { isRowSelectedFamilyState } from '../states/isRowSelectedFamilyState';
+import { isRowSelectedScopedFamilyState } from '../states/isRowSelectedScopedFamilyState';
 
 export const useCurrentRowSelected = () => {
   const currentRowId = useContext(RowIdContext);
 
   const [isRowSelected] = useRecoilState(
-    isRowSelectedFamilyState(currentRowId ?? ''),
+    isRowSelectedScopedFamilyState(currentRowId ?? ''),
   );
 
   const setCurrentRowSelected = useRecoilCallback(
@@ -17,13 +17,13 @@ export const useCurrentRowSelected = () => {
         if (!currentRowId) return;
 
         const isRowSelected = snapshot
-          .getLoadable(isRowSelectedFamilyState(currentRowId))
+          .getLoadable(isRowSelectedScopedFamilyState(currentRowId))
           .valueOrThrow();
 
         if (newSelectedState && !isRowSelected) {
-          set(isRowSelectedFamilyState(currentRowId), true);
+          set(isRowSelectedScopedFamilyState(currentRowId), true);
         } else if (!newSelectedState && isRowSelected) {
-          set(isRowSelectedFamilyState(currentRowId), false);
+          set(isRowSelectedScopedFamilyState(currentRowId), false);
         }
       },
     [currentRowId],

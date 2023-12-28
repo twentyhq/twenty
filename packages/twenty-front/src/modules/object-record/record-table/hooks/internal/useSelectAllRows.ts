@@ -1,20 +1,37 @@
 import { useRecoilCallback } from 'recoil';
 
-import { isRowSelectedFamilyState } from '../../record-table-row/states/isRowSelectedFamilyState';
-import { allRowsSelectedStatusScopedSelector } from '../../states/selectors/allRowsSelectedStatusScopedSelector';
-import { tableRowIdsScopedState } from '../../states/tableRowIdsScopedState';
+import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 
-export const useSelectAllRows = () => {
+export const useSelectAllRows = (recordTableScopeId: string) => {
+  const {
+    allRowsSelectedStatusScopeInjector,
+    tableRowIdsScopeInjector,
+    isRowSelectedScopeInjector,
+  } = getRecordTableScopeInjector();
+
+  const {
+    injectSnapshotValueWithRecordTableScopeId,
+    injectSelectorSnapshotValueWithRecordTableScopeId,
+    injectFamilyStateWithRecordTableScopeId,
+  } = useRecordTableScopedStates(recordTableScopeId);
+
   const selectAllRows = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
-        const allRowsSelectedStatus = snapshot
-          .getLoadable(allRowsSelectedStatusScopedSelector)
-          .valueOrThrow();
+        const allRowsSelectedStatus =
+          injectSelectorSnapshotValueWithRecordTableScopeId(
+            snapshot,
+            allRowsSelectedStatusScopeInjector,
+          );
 
-        const tableRowIds = snapshot
-          .getLoadable(tableRowIdsScopedState)
-          .valueOrThrow();
+        const tableRowIds = injectSnapshotValueWithRecordTableScopeId(
+          snapshot,
+          tableRowIdsScopeInjector,
+        );
+
+        const isRowSelectedFamilyState =
+          injectFamilyStateWithRecordTableScopeId(isRowSelectedScopeInjector);
 
         if (
           allRowsSelectedStatus === 'none' ||
@@ -29,7 +46,14 @@ export const useSelectAllRows = () => {
           }
         }
       },
-    [],
+    [
+      allRowsSelectedStatusScopeInjector,
+      injectFamilyStateWithRecordTableScopeId,
+      injectSelectorSnapshotValueWithRecordTableScopeId,
+      injectSnapshotValueWithRecordTableScopeId,
+      isRowSelectedScopeInjector,
+      tableRowIdsScopeInjector,
+    ],
   );
 
   return {
