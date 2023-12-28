@@ -2,6 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import { ReactElement } from 'react';
+import  gfm  from 'remark-gfm';
+import rehypeToc from '@jsdevtools/rehype-toc';
+import rehypeSlug from 'rehype-slug';
 
 interface ItemInfo {
   title: string;
@@ -28,7 +31,6 @@ async function getFiles(filePath: string, position: number = 0): Promise<Directo
 
   const urlpath = path.toString().split(basePath);
   const pathName = urlpath.length > 1 ? urlpath[1] : path.basename(filePath);
-  console.log(pathName);
 
   const directory: Directory = {
     itemInfo: {
@@ -43,8 +45,7 @@ async function getFiles(filePath: string, position: number = 0): Promise<Directo
     if (entry.isDirectory()) {
       directory[entry.name] = await getFiles(path.join(filePath, entry.name), position++);
     } else if (entry.isFile() && path.extname(entry.name) === '.mdx') {
-      const fileContent = fs.readFileSync(path.join(filePath, entry.name), 'utf8');
-      const { content, frontmatter } = await compileMDX<{ title: string, position?: number }>({ source: fileContent, options: { parseFrontmatter: true } });
+      const { content, frontmatter } = await compileMDXFile(path.join(filePath, entry.name));
       directory[entry.name] = { content, itemInfo: {...frontmatter, type: 'file', path: pathName + "/" +  entry.name.replace(/\.mdx$/, '')} };
     }
   }
@@ -73,6 +74,29 @@ async function parseFrontMatterAndCategory(directory: Directory, dirPath: string
   return parsedDirectory;
 }
 
+export async function compileMDXFile(filePath: string, addToc: boolean = true) {
+
+  const fileContent = fs.readFileSync(filePath, 'utf8');
+
+  const compiled = await compileMDX<{ title: string, position?: number }>({
+    source: fileContent,
+    options: {
+      parseFrontmatter: true,
+      mdxOptions: {
+        remarkPlugins: [
+            gfm,
+        ],
+        rehypePlugins: [
+          rehypeSlug,
+          rehypeToc
+        ]
+      }
+    }});
+
+    return compiled;
+}
+
+
 export async function getPosts(): Promise<Directory> {
   const postsDirectory = path.join(process.cwd(), basePath);
   const directory = await getFiles(postsDirectory);
@@ -84,14 +108,12 @@ export async function getPost(slug: string[]): Promise<FileContent | null> {
   const modifiedSlug = slug.join('/');
   const filePath = path.join(postsDirectory, `${modifiedSlug}.mdx`);
 
-  console.log(filePath);
-
   if (!fs.existsSync(filePath)) {
     return null;
   }
 
-  const fileContent = fs.readFileSync(filePath, 'utf8');
-  const { content, frontmatter } = await compileMDX<{ title: string, position?: number }>({ source: fileContent, options: { parseFrontmatter: true } });
-  
+  const { content, frontmatter } = await compileMDXFile(filePath);
+
+
   return { content, itemInfo: {...frontmatter, type: 'file', path: modifiedSlug }};
 }

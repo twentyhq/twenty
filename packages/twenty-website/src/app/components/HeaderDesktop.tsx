@@ -3,7 +3,8 @@
 import styled from '@emotion/styled'
 import { Logo } from './Logo';
 import { IBM_Plex_Mono } from 'next/font/google';
-import { GithubIcon } from './Icons';
+import { DiscordIcon, GithubIcon, GithubIcon2, LinkedInIcon, XIcon } from './Icons';
+import { usePathname } from 'next/navigation'
 
 const IBMPlexMono = IBM_Plex_Mono({
     weight: '500',
@@ -98,13 +99,30 @@ const LinkNextToCTA = styled.a`
     }`;
 
 const CallToAction = () => {
+    const path = usePathname();
+    const isTwentyDev = path.includes('developers');
+
     return <CallToActionContainer>
-        <LinkNextToCTA href="https://github.com/twentyhq/twenty">Sign in</LinkNextToCTA>
-        <a href="#">
+        {isTwentyDev ? 
+        <>
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent:'space-between', gap:'10px'}}>
+            <a href="https://x.com/twentycrm" target="_blank">
+                <XIcon size='M'/>
+            </a>
+            <a href="https://github.com/twentyhq/twenty" target="_blank">
+                <GithubIcon2 size='M'/>
+            </a>
+            <a href="https://discord.gg/UfGNZJfAG6" target="_blank">
+                <DiscordIcon size='M' />
+            </a>
+        </div>
+        </>
+        : <><LinkNextToCTA href="https://github.com/twentyhq/twenty">Sign in</LinkNextToCTA>
+        <a href="https://twenty.com/stripe-redirection">
             <StyledButton>
             Get Started
             </StyledButton>
-        </a>
+        </a></>}
     </CallToActionContainer>;
 };
 
@@ -117,20 +135,25 @@ const ExternalArrow = () => {
 }
 
 export const HeaderDesktop = () => {
-
-    const isTwentyDev = false;
+    const path = usePathname();
+    const isTwentyDev = path.includes('developers');
 
     return <Nav>
         <LogoContainer>
             <Logo />
             {isTwentyDev && <LogoAddon className={IBMPlexMono.className}>for Developers</LogoAddon>}
         </LogoContainer>
-        <LinkList>
+        {isTwentyDev ? <LinkList>
+            <ListItem href="/developers/docs">Docs</ListItem>
+            <ListItem href="/developers/contributors">Contributors</ListItem>
+            <ListItem href="/">Cloud <ExternalArrow /></ListItem>
+        </LinkList> : <LinkList>
             <ListItem href="/pricing">Pricing</ListItem>
             <ListItem href="/story">Story</ListItem>
             <ListItem href="https://docs.twenty.com">Docs <ExternalArrow /></ListItem>
             <ListItem href="https://github.com/twentyhq/twenty"><GithubIcon color='rgb(71,71,71)' /> 5.7k <ExternalArrow /></ListItem>
-        </LinkList>
+        </LinkList> 
+        }
         <CallToAction />
     </Nav>;
 };

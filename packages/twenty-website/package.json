@@ -11,11 +11,13 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@jsdevtools/rehype-toc": "^3.0.2",
     "@tabler/icons-react": "^2.44.0",
     "next": "14.0.4",
     "next-mdx-remote": "^4.4.1",
     "react": "^18",
     "react-dom": "^18",
+    "rehype-slug": "^6.0.0",
     "remark-behead": "^3.1.0",
     "remark-gfm": "^3.0.1"
   },

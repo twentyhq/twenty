@@ -3,7 +3,7 @@
 import styled from '@emotion/styled'
 import { Logo } from './Logo';
 import { DiscordIcon, GithubIcon2, LinkedInIcon, XIcon } from "./Icons";
-
+import { usePathname } from 'next/navigation'
 
 const FooterContainer = styled.div`
     padding: 64px 96px 64px 96px;
@@ -52,6 +52,13 @@ const RightSideFooterColumnTitle = styled.div`
 
 
 export const FooterDesktop = () => {
+
+    const path = usePathname();
+    const isTwentyDev = path.includes('developers');
+
+    if(isTwentyDev) return;
+
+    
     return <FooterContainer>
         <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent:'space-between'}}>
             <LeftSideFooter>
