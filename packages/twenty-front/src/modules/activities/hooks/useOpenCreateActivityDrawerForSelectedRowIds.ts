@@ -11,13 +11,15 @@ import {
 
 import { useOpenCreateActivityDrawer } from './useOpenCreateActivityDrawer';
 
-export const useOpenCreateActivityDrawerForSelectedRowIds = () => {
+export const useOpenCreateActivityDrawerForSelectedRowIds = (
+  recordTableScopeId: string,
+) => {
   const openCreateActivityDrawer = useOpenCreateActivityDrawer();
 
   const { selectedRowIdsScopeInjector } = getRecordTableScopeInjector();
 
   const { injectSelectorSnapshotValueWithRecordTableScopeId } =
-    useRecordTableScopedStates();
+    useRecordTableScopedStates(recordTableScopeId);
 
   return useRecoilCallback(
     ({ snapshot }) =>

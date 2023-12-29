@@ -54,9 +54,11 @@ export const useRecordTableContextMenuEntries = (
 
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
-  const { scopeId: objectNamePlural, resetTableRowSelection } = useRecordTable({
+  const { resetTableRowSelection } = useRecordTable({
     recordTableScopeId: scopeId,
   });
+
+  const objectNamePlural = scopeId;
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
@@ -151,7 +153,7 @@ export const useRecordTableContextMenuEntries = (
   );
 
   const openCreateActivityDrawer =
-    useOpenCreateActivityDrawerForSelectedRowIds();
+    useOpenCreateActivityDrawerForSelectedRowIds(scopeId);
 
   return {
     setContextMenuEntries: useCallback(() => {
