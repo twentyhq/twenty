@@ -12,6 +12,7 @@ export type DateFieldInputProps = {
   onEscape?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
+  clearable?: boolean;
 };
 
 export const DateFieldInput = ({
@@ -19,7 +20,7 @@ export const DateFieldInput = ({
   onEscape,
   onClickOutside,
 }: DateFieldInputProps) => {
-  const { fieldValue, hotkeyScope } = useDateTimeField();
+  const { fieldValue, hotkeyScope, clearable } = useDateTimeField();
 
   const persistField = usePersistField();
 
@@ -57,6 +58,7 @@ export const DateFieldInput = ({
       onEnter={handleEnter}
       onEscape={handleEscape}
       value={dateValue}
+      clearable={clearable}
     />
   );
 };

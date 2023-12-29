@@ -3,7 +3,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { flip, offset, useFloating } from '@floating-ui/react';
 
-import { useDateTimeField } from '@/object-record/field/meta-types/hooks/useDateTimeField';
 import { DateDisplay } from '@/ui/field/display/components/DateDisplay';
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { Nullable } from '~/types/Nullable';
@@ -38,6 +37,7 @@ export type DateInputProps = {
     newDate: Nullable<Date>,
   ) => void;
   hotkeyScope: string;
+  clearable?: boolean;
 };
 
 export const DateInput = ({
@@ -46,6 +46,7 @@ export const DateInput = ({
   onEnter,
   onEscape,
   onClickOutside,
+  clearable,
 }: DateInputProps) => {
   const theme = useTheme();
 
@@ -79,8 +80,6 @@ export const DateInput = ({
     onClickOutside,
     hotkeyScope,
   });
-
-  const { clearable } = useDateTimeField();
 
   return (
     <div ref={wrapperRef}>
