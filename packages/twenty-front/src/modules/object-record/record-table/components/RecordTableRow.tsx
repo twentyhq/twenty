@@ -3,6 +3,7 @@ import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
+import { RecordTableCellContainer } from '@/object-record/record-table/components/RecordTableCellContainer';
 import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
@@ -11,7 +12,6 @@ import { useRecordTableScopedStates } from '../hooks/internal/useRecordTableScop
 import { useCurrentRowSelected } from '../record-table-row/hooks/useCurrentRowSelected';
 
 import { CheckboxCell } from './CheckboxCell';
-import { RecordTableCell } from './RecordTableCell';
 
 export const StyledRow = styled.tr<{ selected: boolean }>`
   background: ${(props) =>
@@ -66,7 +66,7 @@ export const RecordTableRow = ({ rowId }: RecordTableRowProps) => {
                   value={column}
                   key={column.fieldMetadataId}
                 >
-                  <RecordTableCell cellIndex={columnIndex} />
+                  <RecordTableCellContainer cellIndex={columnIndex} />
                 </ColumnContext.Provider>
               );
             })}

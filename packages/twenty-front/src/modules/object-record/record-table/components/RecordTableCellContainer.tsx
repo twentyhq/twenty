@@ -14,11 +14,15 @@ import { ColumnContext } from '../contexts/ColumnContext';
 import { ColumnIndexContext } from '../contexts/ColumnIndexContext';
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 import { RowIdContext } from '../contexts/RowIdContext';
-import { TableCell } from '../record-table-cell/components/RecordTableCell';
+import { RecordTableCell } from '../record-table-cell/components/RecordTableCell';
 import { useCurrentRowSelected } from '../record-table-row/hooks/useCurrentRowSelected';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
-export const RecordTableCell = ({ cellIndex }: { cellIndex: number }) => {
+export const RecordTableCellContainer = ({
+  cellIndex,
+}: {
+  cellIndex: number;
+}) => {
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
   const currentRowId = useContext(RowIdContext);
@@ -71,7 +75,7 @@ export const RecordTableCell = ({ cellIndex }: { cellIndex: number }) => {
                 objectMetadataConfig?.labelIdentifierFieldMetadataId,
             }}
           >
-            <TableCell customHotkeyScope={{ scope: customHotkeyScope }} />
+            <RecordTableCell customHotkeyScope={{ scope: customHotkeyScope }} />
           </FieldContext.Provider>
         </td>
       </ColumnIndexContext.Provider>

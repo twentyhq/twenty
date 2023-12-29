@@ -17,10 +17,10 @@ import { useMoveSoftFocusToCurrentCellOnHover } from '../hooks/useMoveSoftFocusT
 import { useSetSoftFocusOnCurrentTableCell } from '../hooks/useSetSoftFocusOnCurrentTableCell';
 import { useTableCell } from '../hooks/useTableCell';
 
-import { TableCellButton } from './RecordTableCellButton';
-import { TableCellDisplayMode } from './RecordTableCellDisplayMode';
-import { TableCellEditMode } from './RecordTableCellEditMode';
-import { TableCellSoftFocusMode } from './RecordTableCellSoftFocusMode';
+import { RecordTableCellButton } from './RecordTableCellButton';
+import { RecordTableCellDisplayMode } from './RecordTableCellDisplayMode';
+import { RecordTableCellEditMode } from './RecordTableCellEditMode';
+import { RecordTableCellSoftFocusMode } from './RecordTableCellSoftFocusMode';
 
 const StyledCellBaseContainer = styled.div`
   align-items: center;
@@ -116,29 +116,29 @@ export const TableCellContainer = ({
         onMouseLeave={handleContainerMouseLeave}
       >
         {isCurrentTableCellInEditMode ? (
-          <TableCellEditMode
+          <RecordTableCellEditMode
             editModeHorizontalAlign={editModeHorizontalAlign}
             editModeVerticalPosition={editModeVerticalPosition}
           >
             {editModeContent}
-          </TableCellEditMode>
+          </RecordTableCellEditMode>
         ) : hasSoftFocus ? (
           <>
             {showButton && (
-              <TableCellButton onClick={handleButtonClick} Icon={buttonIcon} />
+              <RecordTableCellButton onClick={handleButtonClick} Icon={buttonIcon} />
             )}
-            <TableCellSoftFocusMode>
+            <RecordTableCellSoftFocusMode>
               {editModeContentOnly ? editModeContent : nonEditModeContent}
-            </TableCellSoftFocusMode>
+            </RecordTableCellSoftFocusMode>
           </>
         ) : (
           <>
             {showButton && (
-              <TableCellButton onClick={handleButtonClick} Icon={buttonIcon} />
+              <RecordTableCellButton onClick={handleButtonClick} Icon={buttonIcon} />
             )}
-            <TableCellDisplayMode>
+            <RecordTableCellDisplayMode>
               {editModeContentOnly ? editModeContent : nonEditModeContent}
-            </TableCellDisplayMode>
+            </RecordTableCellDisplayMode>
           </>
         )}
       </StyledCellBaseContainer>
