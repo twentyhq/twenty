@@ -1,7 +1,8 @@
 import { useRecoilCallback } from 'recoil';
 
 import { ActivityType } from '@/activities/types/Activity';
-import { selectedRowIdsScopedSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsScopedSelector';
+import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 
 import {
   ActivityTargetableEntity,
@@ -13,6 +14,11 @@ import { useOpenCreateActivityDrawer } from './useOpenCreateActivityDrawer';
 export const useOpenCreateActivityDrawerForSelectedRowIds = () => {
   const openCreateActivityDrawer = useOpenCreateActivityDrawer();
 
+  const { selectedRowIdsScopeInjector } = getRecordTableScopeInjector();
+
+  const { injectSelectorSnapshotValueWithRecordTableScopeId } =
+    useRecordTableScopedStates();
+
   return useRecoilCallback(
     ({ snapshot }) =>
       (
@@ -20,11 +26,14 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = () => {
         entityType: ActivityTargetableEntityType,
         relatedEntities?: ActivityTargetableEntity[],
       ) => {
-        const selectedRowIds = Object.keys(
-          snapshot.getLoadable(selectedRowIdsScopedSelector).getValue(),
-        );
+        const selectedRowIds =
+          injectSelectorSnapshotValueWithRecordTableScopeId(
+            snapshot,
+            selectedRowIdsScopeInjector,
+          );
+
         let activityTargetableEntityArray: ActivityTargetableEntity[] =
-          selectedRowIds.map((id) => ({
+          selectedRowIds.map((id: string) => ({
             type: entityType,
             id,
           }));
@@ -37,6 +46,10 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = () => {
           targetableEntities: activityTargetableEntityArray,
         });
       },
-    [openCreateActivityDrawer],
+    [
+      injectSelectorSnapshotValueWithRecordTableScopeId,
+      openCreateActivityDrawer,
+      selectedRowIdsScopeInjector,
+    ],
   );
 };

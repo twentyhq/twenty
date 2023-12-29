@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
@@ -11,8 +12,10 @@ import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTabl
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import {
+  IconCheckbox,
   IconHeart,
   IconHeartOff,
+  IconNotes,
   IconTrash,
   IconWand,
 } from '@/ui/display/icon';
@@ -58,6 +61,13 @@ export const useRecordTableContextMenuEntries = (
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
   });
+
+  const objectMetadataType =
+    objectNameSingular === 'company'
+      ? 'Company'
+      : objectNameSingular === 'person'
+        ? 'Person'
+        : 'Custom';
 
   const { createFavorite, deleteFavorite, favorites } = useFavorites({
     objectNamePlural,
@@ -140,6 +150,9 @@ export const useRecordTableContextMenuEntries = (
     'IS_QUICK_ACTIONS_ENABLED',
   );
 
+  const openCreateActivityDrawer =
+    useOpenCreateActivityDrawerForSelectedRowIds();
+
   return {
     setContextMenuEntries: useCallback(() => {
       const selectedRowId =
@@ -188,16 +201,20 @@ export const useRecordTableContextMenuEntries = (
 
     setActionBarEntries: useRecoilCallback(() => () => {
       setActionBarEntriesState([
-        // {
-        //   label: 'Task',
-        //   Icon: IconCheckbox,
-        //   onClick: () => {},
-        // },
-        // {
-        //   label: 'Note',
-        //   Icon: IconNotes,
-        //   onClick: () => {},
-        // },
+        {
+          label: 'Task',
+          Icon: IconCheckbox,
+          onClick: () => {
+            openCreateActivityDrawer('Task', objectMetadataType);
+          },
+        },
+        {
+          label: 'Note',
+          Icon: IconNotes,
+          onClick: () => {
+            openCreateActivityDrawer('Note', objectMetadataType);
+          },
+        },
         ...(dataExecuteQuickActionOnmentEnabled
           ? [
               {
