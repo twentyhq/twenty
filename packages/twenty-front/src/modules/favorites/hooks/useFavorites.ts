@@ -6,6 +6,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { Favorite } from '@/favorites/types/Favorite';
 import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/hooks/useGetObjectRecordIdentifierByNameSingular';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { isStandardObject } from '@/object-metadata/utils/isStandardObject';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -54,7 +55,12 @@ export const useFavorites = () => {
   const favoritesSorted = useMemo(() => {
     return favorites
       .map((favorite) => {
-        for (const relationField of favoriteRelationFields) {
+        const nonSystemRelationFields = favoriteRelationFields.filter(
+          (relationField) =>
+            !relationField.isSystem || isStandardObject(relationField.name),
+        );
+
+        for (const relationField of nonSystemRelationFields) {
           if (isDefined(favorite[relationField.name])) {
             const relationObject = favorite[relationField.name];
 
