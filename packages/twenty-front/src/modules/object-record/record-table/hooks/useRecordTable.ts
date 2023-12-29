@@ -51,6 +51,8 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     numberOfTableRowsScopeInjector,
     numberOfTableColumnsScopeInjector,
     onColumnsChangeScopeInjector,
+    isRecordTableInitialLoadingScopeInjector,
+    tableLastRowVisibleScopeInjector,
   } = getRecordTableScopeInjector();
 
   const setAvailableTableColumns = useSetRecoilState(
@@ -77,6 +79,14 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const setOnColumnsChange = useSetRecoilState(
     injectStateWithRecordTableScopeId(onColumnsChangeScopeInjector),
+  );
+
+  const setIsRecordTableInitialLoading = useSetRecoilState(
+    injectStateWithRecordTableScopeId(isRecordTableInitialLoadingScopeInjector),
+  );
+
+  const setRecordTableLastRowVisible = useSetRecoilState(
+    injectStateWithRecordTableScopeId(tableLastRowVisibleScopeInjector),
   );
 
   const onColumnsChange = useRecoilCallback(
@@ -367,5 +377,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     useMapKeyboardToSoftFocus,
     selectAllRows,
     setOnColumnsChange,
+    setIsRecordTableInitialLoading,
+    setRecordTableLastRowVisible,
   };
 };
