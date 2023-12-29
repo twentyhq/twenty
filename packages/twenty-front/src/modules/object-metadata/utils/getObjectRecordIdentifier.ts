@@ -14,15 +14,14 @@ export const getObjectRecordIdentifier = ({
   const basePathToShowPage = `/object/${objectMetadataItem.nameSingular}/`;
   const linkToShowPage = `${basePathToShowPage}${record.id}`;
 
-  switch (objectMetadataItem.nameSingular) {
-    case CoreObjectNameSingular.Opportunity:
-      return {
-        id: record.id,
-        name: record?.company?.name,
-        avatarUrl: record.avatarUrl,
-        avatarType: 'rounded',
-        linkToShowPage,
-      };
+  if (objectMetadataItem.nameSingular === CoreObjectNameSingular.Opportunity) {
+    return {
+      id: record.id,
+      name: record?.company?.name,
+      avatarUrl: record.avatarUrl,
+      avatarType: 'rounded',
+      linkToShowPage,
+    };
   }
 
   const labelIdentifierFieldMetadata = objectMetadataItem.fields.find(

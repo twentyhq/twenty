@@ -9,14 +9,12 @@ export const sanitizeRecordInput = ({
   recordInput: Record<string, unknown>;
 }) => {
   return Object.fromEntries(
-    Object.keys(recordInput)
-      .filter((fieldName) => {
-        const fieldDefinition = objectMetadataItem.fields.find(
-          (field) => field.name === fieldName,
-        );
+    Object.entries(recordInput).filter(([fieldName]) => {
+      const fieldDefinition = objectMetadataItem.fields.find(
+        (field) => field.name === fieldName,
+      );
 
-        return fieldDefinition?.type !== FieldMetadataType.Relation;
-      })
-      .map((fieldName) => [fieldName, recordInput[fieldName]]),
+      return fieldDefinition?.type !== FieldMetadataType.Relation;
+    }),
   );
 };
