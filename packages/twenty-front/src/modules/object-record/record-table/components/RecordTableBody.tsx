@@ -4,10 +4,22 @@ import { RecordTableBodyFetchMoreLoader } from '@/object-record/record-table/com
 import { RecordTableRow } from '@/object-record/record-table/components/RecordTableRow';
 import { RowIdContext } from '@/object-record/record-table/contexts/RowIdContext';
 import { RowIndexContext } from '@/object-record/record-table/contexts/RowIndexContext';
-import { tableRowIdsScopedState } from '@/object-record/record-table/states/tableRowIdsScopedState';
+import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 
 export const RecordTableBody = () => {
-  const tableRowIds = useRecoilValue(tableRowIdsScopedState);
+  const { scopeId: recordTableScopeId } = useRecordTable();
+  const { tableRowIdsScopeInjector } = getRecordTableScopeInjector();
+
+  const { injectStateWithRecordTableScopeId } =
+    useRecordTableScopedStates(recordTableScopeId);
+
+  const tableRowIdsState = injectStateWithRecordTableScopeId(
+    tableRowIdsScopeInjector,
+  );
+
+  const tableRowIds = useRecoilValue(tableRowIdsState);
 
   return (
     <>
