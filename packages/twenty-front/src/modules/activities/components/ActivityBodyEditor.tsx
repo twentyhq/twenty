@@ -14,6 +14,7 @@ import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 
 import { getSlashMenu } from '../blocks/slashMenu';
 import { blockSpecs } from '../blocks/spec';
+import { getFileType } from '../files/utils/getFileType';
 
 const StyledBlockNoteStyledContainer = styled.div`
   width: 100%;
@@ -76,7 +77,7 @@ export const ActivityBodyEditor = ({
     return imageUrl;
   };
 
-  const editor: BlockNoteEditor | null = useBlockNote({
+  const editor: BlockNoteEditor<typeof blockSpecs> | null = useBlockNote({
     initialContent:
       isNonEmptyString(activity.body) && activity.body !== '{}'
         ? JSON.parse(activity.body)
@@ -98,23 +99,41 @@ export const ActivityBodyEditor = ({
 
     if (clipboardItems) {
       for (let i = 0; i < clipboardItems.length; i++) {
-        if (
-          clipboardItems[i].kind === 'file' &&
-          clipboardItems[i].type.match('^image/')
-        ) {
+        if (clipboardItems[i].kind === 'file') {
+          const isImage = clipboardItems[i].type.match('^image/');
           const pastedFile = clipboardItems[i].getAsFile();
           if (!pastedFile) {
             return;
           }
 
-          const imageUrl = await handleUploadAttachment(pastedFile);
-          if (imageUrl) {
+          const attachmentUrl = await handleUploadAttachment(pastedFile);
+
+          if (!attachmentUrl) {
+            return;
+          }
+
+          if (isImage) {
             editor?.insertBlocks(
               [
                 {
                   type: 'image',
                   props: {
-                    url: imageUrl,
+                    url: attachmentUrl,
+                  },
+                },
+              ],
+              editor?.getTextCursorPosition().block,
+              'after',
+            );
+          } else {
+            editor?.insertBlocks(
+              [
+                {
+                  type: 'file',
+                  props: {
+                    url: attachmentUrl,
+                    fileType: getFileType(pastedFile.name),
+                    name: pastedFile.name,
                   },
                 },
               ],
