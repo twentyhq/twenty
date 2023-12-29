@@ -4,6 +4,7 @@ import { useRecoilCallback } from 'recoil';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const useViews = (scopeId: string) => {
   const {
@@ -12,7 +13,7 @@ export const useViews = (scopeId: string) => {
     deleteOneRecordMutation: deleteOneMutation,
     findManyRecordsQuery: findManyQuery,
   } = useObjectMetadataItem({
-    objectNameSingular: 'view',
+    objectNameSingular: CoreObjectNameSingular.View,
   });
 
   const apolloClient = useApolloClient();

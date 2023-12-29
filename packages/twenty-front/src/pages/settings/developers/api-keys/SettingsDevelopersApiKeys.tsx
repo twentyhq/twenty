@@ -15,6 +15,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledContainer = styled.div`
   height: fit-content;
@@ -43,7 +44,7 @@ export const SettingsDevelopersApiKeys = () => {
   const [apiKeys, setApiKeys] = useState<Array<ApiFieldItem>>([]);
 
   useFindManyRecords({
-    objectNameSingular: 'apiKey',
+    objectNameSingular: CoreObjectNameSingular.ApiKey,
     filter: { revokedAt: { is: 'NULL' } },
     orderBy: {},
     onCompleted: (data) => {

@@ -1,4 +1,4 @@
-import { isString } from '@sniptt/guards';
+import { isNull, isString } from '@sniptt/guards';
 
 import { FieldDateTimeValue } from '../FieldMetadata';
 
@@ -6,4 +6,5 @@ import { FieldDateTimeValue } from '../FieldMetadata';
 export const isFieldDateTimeValue = (
   fieldValue: unknown,
 ): fieldValue is FieldDateTimeValue =>
-  isString(fieldValue) && !isNaN(Date.parse(fieldValue));
+  (isString(fieldValue) && !isNaN(Date.parse(fieldValue))) ||
+  isNull(fieldValue);

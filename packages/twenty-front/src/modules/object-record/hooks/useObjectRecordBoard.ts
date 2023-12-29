@@ -11,6 +11,7 @@ import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 
 import { useFindManyRecords } from './useFindManyRecords';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const useObjectRecordBoard = () => {
   const objectNameSingular = 'opportunity';
@@ -53,7 +54,7 @@ export const useObjectRecordBoard = () => {
   );
 
   useFindManyRecords({
-    objectNameSingular: 'pipelineStep',
+    objectNameSingular: CoreObjectNameSingular.PipelineStep,
     filter: {},
     onCompleted: useCallback(
       (data: PaginatedRecordTypeResults<PipelineStep>) => {
@@ -69,7 +70,7 @@ export const useObjectRecordBoard = () => {
     fetchMoreRecords: fetchMoreOpportunities,
   } = useFindManyRecords<Opportunity>({
     skip: !savedPipelineSteps.length,
-    objectNameSingular: 'opportunity',
+    objectNameSingular: CoreObjectNameSingular.Opportunity,
     filter,
     orderBy,
     onCompleted: useCallback(() => {
@@ -79,7 +80,7 @@ export const useObjectRecordBoard = () => {
 
   const { fetchMoreRecords: fetchMoreCompanies } = useFindManyRecords({
     skip: !savedOpportunities.length,
-    objectNameSingular: 'company',
+    objectNameSingular: CoreObjectNameSingular.Company,
     filter: {
       id: {
         in: savedOpportunities.map(

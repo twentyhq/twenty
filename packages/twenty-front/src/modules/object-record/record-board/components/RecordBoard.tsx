@@ -22,6 +22,7 @@ import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptions } from '../types/BoardOptions';
 
 import { RecordBoardColumn } from './RecordBoardColumn';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export type RecordBoardProps = {
   recordBoardId: string;
@@ -73,7 +74,7 @@ export const RecordBoard = ({
 
   const { updateOneRecord: updateOneOpportunity } =
     useUpdateOneRecord<Opportunity>({
-      objectNameSingular: 'opportunity',
+      objectNameSingular: CoreObjectNameSingular.Opportunity,
     });
 
   const { unselectAllActiveCards, setCardSelected } =

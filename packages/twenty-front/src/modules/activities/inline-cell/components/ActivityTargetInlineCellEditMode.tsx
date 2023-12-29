@@ -11,6 +11,7 @@ import { MultipleEntitySelect } from '@/object-record/relation-picker/components
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { assertNotNull } from '~/utils/assert';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 type ActivityTargetInlineCellEditModeProps = {
   activityId: string;
@@ -56,12 +57,12 @@ export const ActivityTargetInlineCellEditMode = ({
   );
 
   const { findManyRecordsQuery: findManyPeopleQuery } = useObjectMetadataItem({
-    objectNameSingular: 'person',
+    objectNameSingular: CoreObjectNameSingular.Person,
   });
 
   const { findManyRecordsQuery: findManyCompaniesQuery } =
     useObjectMetadataItem({
-      objectNameSingular: 'company',
+      objectNameSingular: CoreObjectNameSingular.Company,
     });
 
   const useFindManyPeopleQuery = (options: any) =>
@@ -87,7 +88,7 @@ export const ActivityTargetInlineCellEditMode = ({
     orderByField: 'createdAt',
     mappingFunction: (record: any) => identifiersMapper?.(record, 'person'),
     selectedIds: initialPeopleIds,
-    objectNameSingular: 'person',
+    objectNameSingular: CoreObjectNameSingular.Person,
     limit: 3,
   });
 
@@ -102,7 +103,7 @@ export const ActivityTargetInlineCellEditMode = ({
     orderByField: 'createdAt',
     mappingFunction: (record: any) => identifiersMapper?.(record, 'company'),
     selectedIds: initialCompanyIds,
-    objectNameSingular: 'company',
+    objectNameSingular: CoreObjectNameSingular.Company,
     limit: 3,
   });
 

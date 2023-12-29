@@ -12,6 +12,7 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledTaskGroupEmptyContainer = styled.div`
   align-items: center;
@@ -67,7 +68,7 @@ export const Attachments = ({
 
   const { createOneRecord: createOneAttachment } =
     useCreateOneRecord<Attachment>({
-      objectNameSingular: 'attachment',
+      objectNameSingular: CoreObjectNameSingular.Attachment,
     });
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {

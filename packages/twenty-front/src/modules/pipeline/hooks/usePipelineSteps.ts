@@ -5,16 +5,17 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { BoardColumnDefinition } from '@/object-record/record-board/types/BoardColumnDefinition';
 import { currentPipelineState } from '@/pipeline/states/currentPipelineState';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const usePipelineSteps = () => {
   const { createOneRecord: createOnePipelineStep } =
     useCreateOneRecord<PipelineStep>({
-      objectNameSingular: 'pipelineStep',
+      objectNameSingular: CoreObjectNameSingular.PipelineStep,
     });
 
   const { deleteOneRecord: deleteOnePipelineStep } =
     useDeleteOneRecord<PipelineStep>({
-      objectNameSingular: 'pipelineStep',
+      objectNameSingular: CoreObjectNameSingular.PipelineStep,
     });
 
   const handlePipelineStepAdd = useRecoilCallback(

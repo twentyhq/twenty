@@ -6,6 +6,7 @@ import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 
 import { BoardColumnDefinition } from '../../types/BoardColumnDefinition';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const useBoardColumnsInternal = () => {
   const { boardColumnsState } = useRecordBoardScopedStates();
@@ -15,7 +16,7 @@ export const useBoardColumnsInternal = () => {
 
   const { updateOneRecord: updateOnePipelineStep } =
     useUpdateOneRecord<PipelineStep>({
-      objectNameSingular: 'pipelineStep',
+      objectNameSingular: CoreObjectNameSingular.PipelineStep,
     });
 
   const updatedPipelineSteps = (stages: BoardColumnDefinition[]) => {

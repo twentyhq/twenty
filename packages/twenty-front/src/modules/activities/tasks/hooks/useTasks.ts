@@ -7,6 +7,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { parseDate } from '~/utils/date-utils';
 import { isDefined } from '~/utils/isDefined';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 type UseTasksProps = {
   filterDropdownId?: string;
@@ -21,7 +22,7 @@ export const useTasks = (props?: UseTasksProps) => {
   });
 
   const { records: activityTargets } = useFindManyRecords({
-    objectNameSingular: 'activityTarget',
+    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     filter: isDefined(entity)
       ? {
           [entity?.type === 'Company' ? 'companyId' : 'personId']: {
@@ -32,7 +33,7 @@ export const useTasks = (props?: UseTasksProps) => {
   });
 
   const { records: completeTasksData } = useFindManyRecords({
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
     skip: !entity && !selectedFilter,
     filter: {
       completedAt: { is: 'NOT_NULL' },
@@ -56,7 +57,7 @@ export const useTasks = (props?: UseTasksProps) => {
   });
 
   const { records: incompleteTaskData } = useFindManyRecords({
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
     skip: !entity && !selectedFilter,
     filter: {
       completedAt: { is: 'NULL' },

@@ -26,6 +26,7 @@ import { Command, CommandType } from '../types/Command';
 
 import { CommandGroup } from './CommandGroup';
 import { CommandMenuItem } from './CommandMenuItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const StyledDialog = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -132,7 +133,7 @@ export const CommandMenu = () => {
 
   const { records: people } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened,
-    objectNameSingular: 'person',
+    objectNameSingular: CoreObjectNameSingular.Person,
     filter: {
       or: [
         { name: { firstName: { ilike: `%${search}%` } } },
@@ -144,7 +145,7 @@ export const CommandMenu = () => {
 
   const { records: companies } = useFindManyRecords<Company>({
     skip: !isCommandMenuOpened,
-    objectNameSingular: 'company',
+    objectNameSingular: CoreObjectNameSingular.Company,
     filter: {
       name: { ilike: `%${search}%` },
     },
@@ -153,7 +154,7 @@ export const CommandMenu = () => {
 
   const { records: activities } = useFindManyRecords<Activity>({
     skip: !isCommandMenuOpened,
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
     filter: {
       or: [
         { title: { like: `%${search}%` } },
