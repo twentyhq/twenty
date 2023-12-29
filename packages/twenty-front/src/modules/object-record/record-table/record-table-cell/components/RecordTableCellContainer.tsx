@@ -125,7 +125,10 @@ export const TableCellContainer = ({
         ) : hasSoftFocus ? (
           <>
             {showButton && (
-              <RecordTableCellButton onClick={handleButtonClick} Icon={buttonIcon} />
+              <RecordTableCellButton
+                onClick={handleButtonClick}
+                Icon={buttonIcon}
+              />
             )}
             <RecordTableCellSoftFocusMode>
               {editModeContentOnly ? editModeContent : nonEditModeContent}
@@ -134,7 +137,10 @@ export const TableCellContainer = ({
         ) : (
           <>
             {showButton && (
-              <RecordTableCellButton onClick={handleButtonClick} Icon={buttonIcon} />
+              <RecordTableCellButton
+                onClick={handleButtonClick}
+                Icon={buttonIcon}
+              />
             )}
             <RecordTableCellDisplayMode>
               {editModeContentOnly ? editModeContent : nonEditModeContent}
