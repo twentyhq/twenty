@@ -246,7 +246,7 @@ export type InternalDatePickerProps = {
   date: Date | null;
   onMouseSelect?: (date: Date | null) => void;
   onChange?: (date: Date) => void;
-  clearable: boolean;
+  clearable?: boolean;
 };
 
 export const InternalDatePicker = ({
