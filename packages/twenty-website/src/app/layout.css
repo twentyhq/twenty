@@ -18,9 +18,20 @@ body {
     align-items: center;
 }
 
+.warning {
+    color: rgb(94, 30, 4);
+}
+
 a {
     color: rgb(129, 129, 129);
     &:hover {
         color: #000;
     }
+}
+
+nav.toc {
+  width: 200px;
+  position: fixed;
+  top: 100px;
+  right: 0;
 }
