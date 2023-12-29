@@ -2,7 +2,7 @@
 
 import styled from '@emotion/styled'
 import { Logo } from './Logo';
-import { DiscordIcon, GithubIcon, LinkedInIcon, XIcon } from "./Icons";
+import { DiscordIcon, GithubIcon2, LinkedInIcon, XIcon } from "./Icons";
 
 
 const FooterContainer = styled.div`
@@ -11,6 +11,9 @@ const FooterContainer = styled.div`
     flex-direction: column;
     color: rgb(129, 129, 129);
     gap: 32px;
+    @media(max-width: 809px) {
+        display: none;
+    }
 `;
 
 const LeftSideFooter = styled.div`
@@ -21,7 +24,9 @@ const LeftSideFooter = styled.div`
 
 const RightSideFooter = styled.div`
     display: flex;
-    justify-content: space-between;`;
+    justify-content: space-between;
+    gap: 48px;
+    height: 146px;`;
 
 const RightSideFooterColumn = styled.div`
     width: 160px;
@@ -46,7 +51,7 @@ const RightSideFooterColumnTitle = styled.div`
 
 
 
-export const FooterNav = () => {
+export const FooterDesktop = () => {
     return <FooterContainer>
         <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent:'space-between'}}>
             <LeftSideFooter>
@@ -58,8 +63,8 @@ export const FooterNav = () => {
             <RightSideFooter>
             <RightSideFooterColumn>
                 <RightSideFooterColumnTitle>Company</RightSideFooterColumnTitle>
-                <RightSideFooterLink href='/'>Pricing</RightSideFooterLink>
-                <RightSideFooterLink href='/'>Story</RightSideFooterLink>
+                <RightSideFooterLink href='/pricing'>Pricing</RightSideFooterLink>
+                <RightSideFooterLink href='/story'>Story</RightSideFooterLink>
             </RightSideFooterColumn>
             <RightSideFooterColumn>
                 <RightSideFooterColumnTitle>Resources</RightSideFooterColumnTitle>
@@ -91,7 +96,7 @@ export const FooterNav = () => {
                     <XIcon size='M'/>
                 </a>
                 <a href="https://github.com/twentyhq/twenty" target="_blank">
-                    <GithubIcon size='M'/>
+                    <GithubIcon2 size='M'/>
                 </a>
                 <a href="https://www.linkedin.com/company/twenty" target="_blank">
                     <LinkedInIcon size='M'/>
