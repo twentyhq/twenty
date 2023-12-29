@@ -10,9 +10,6 @@ export type DateFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
-  onTab?: FieldInputEvent;
-  onShiftTab?: FieldInputEvent;
-  clearable?: boolean;
 };
 
 export const DateFieldInput = ({
