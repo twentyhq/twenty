@@ -16,6 +16,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
@@ -35,11 +36,11 @@ export const SettingsWorkspaceMembers = () => {
   >();
 
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
-    objectNameSingular: 'workspaceMember',
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
   const { deleteOneRecord: deleteOneWorkspaceMember } =
     useDeleteOneRecord<WorkspaceMember>({
-      objectNameSingular: 'workspaceMember',
+      objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
     });
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 

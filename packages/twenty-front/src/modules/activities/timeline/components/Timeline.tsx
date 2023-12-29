@@ -6,6 +6,7 @@ import { useActivityTargets } from '@/activities/hooks/useActivityTargets';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
@@ -57,7 +58,7 @@ export const Timeline = ({
 
   const { records: activities } = useFindManyRecords({
     skip: !activityTargets?.length,
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
     filter: {
       id: {
         in: activityTargets?.map((activityTarget) => activityTarget.activityId),

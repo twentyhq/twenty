@@ -24,6 +24,7 @@ import { getLogoUrlFromDomainName } from '~/utils';
 import { companyProgressesFamilyState } from '../states/companyProgressesFamilyState';
 
 import { CompanyChip } from './CompanyChip';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -151,7 +152,7 @@ export const CompanyBoardCard = () => {
 
   const useUpdateOneRecordMutation: RecordUpdateHook = () => {
     const { updateOneRecord: updateOneOpportunity } = useUpdateOneRecord({
-      objectNameSingular: 'opportunity',
+      objectNameSingular: CoreObjectNameSingular.Opportunity,
     });
 
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {

@@ -1,4 +1,5 @@
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 
@@ -11,10 +12,10 @@ export const useHandleCheckableActivityTargetChange = ({
 }) => {
   const { createOneRecord: createOneActivityTarget } =
     useCreateOneRecord<ActivityTarget>({
-      objectNameSingular: 'activityTarget',
+      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     });
   const { deleteOneRecord: deleteOneActivityTarget } = useDeleteOneRecord({
-    objectNameSingular: 'activityTarget',
+    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
   });
 
   return async (

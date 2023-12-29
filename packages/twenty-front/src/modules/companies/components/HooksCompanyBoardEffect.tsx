@@ -14,6 +14,7 @@ import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates'
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewFieldsToBoardFieldDefinitions';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 type HooksCompanyBoardEffectProps = {
   viewBarId: string;
@@ -33,7 +34,7 @@ export const HooksCompanyBoardEffect = ({
   } = useViewBar({ viewBarId });
 
   const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: 'opportunity',
+    objectNameSingular: CoreObjectNameSingular.Opportunity,
   });
 
   const { columnDefinitions, filterDefinitions, sortDefinitions } =

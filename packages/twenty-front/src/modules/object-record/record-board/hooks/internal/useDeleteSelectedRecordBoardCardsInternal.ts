@@ -6,6 +6,7 @@ import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/i
 import { Opportunity } from '@/pipeline/types/Opportunity';
 
 import { useRemoveRecordBoardCardIdsInternal } from './useRemoveRecordBoardCardIdsInternal';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const useDeleteSelectedRecordBoardCardsInternal = () => {
   const removeCardIds = useRemoveRecordBoardCardIdsInternal();
@@ -13,7 +14,7 @@ export const useDeleteSelectedRecordBoardCardsInternal = () => {
 
   const { deleteManyRecords: deleteManyOpportunities } =
     useDeleteManyRecords<Opportunity>({
-      objectNameSingular: 'opportunity',
+      objectNameSingular: CoreObjectNameSingular.Opportunity,
     });
 
   const { selectedCardIdsSelector } = useRecordBoardScopedStates();

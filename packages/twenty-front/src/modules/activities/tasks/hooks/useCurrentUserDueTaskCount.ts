@@ -5,6 +5,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { parseDate } from '~/utils/date-utils';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const useCurrentUserTaskCount = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);

@@ -14,6 +14,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export type PeopleCardProps = {
   person: Pick<Person, 'id' | 'avatarUrl' | 'name' | 'jobTitle'>;
@@ -112,7 +113,7 @@ export const PeopleCard = ({
     updateOneRecordMutation,
     deleteOneRecordMutation,
   } = useObjectMetadataItem({
-    objectNameSingular: 'person',
+    objectNameSingular: CoreObjectNameSingular.Person,
   });
 
   const [updatePerson] = useMutation(updateOneRecordMutation);

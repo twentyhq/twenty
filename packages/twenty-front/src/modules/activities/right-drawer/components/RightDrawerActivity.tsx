@@ -8,6 +8,7 @@ import { entityFieldsFamilyState } from '@/object-record/field/states/entityFiel
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 
 import '@blocknote/core/style.css';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -35,7 +36,7 @@ export const RightDrawerActivity = ({
   );
 
   const { record: activity } = useFindOneRecord({
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
     objectRecordId: activityId,
     skip: !activityId,
     onCompleted: (activity: Activity) => {

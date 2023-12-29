@@ -11,6 +11,7 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const NewOpportunityButton = () => {
   const [isCreatingCard, setIsCreatingCard] = useState(false);
@@ -57,7 +58,7 @@ export const NewOpportunityButton = () => {
 
   // TODO: refactor useFilteredSearchEntityQuery
   const { findManyRecordsQuery } = useObjectMetadataItem({
-    objectNameSingular: 'company',
+    objectNameSingular: CoreObjectNameSingular.Company,
   });
   const useFindManyQuery = (options: any) =>
     useQuery(findManyRecordsQuery, options);
@@ -74,7 +75,7 @@ export const NewOpportunityButton = () => {
     orderByField: 'createdAt',
     selectedIds: [],
     mappingFunction: (record: any) => identifiersMapper?.(record, 'company'),
-    objectNameSingular: 'company',
+    objectNameSingular: CoreObjectNameSingular.Company,
   });
 
   return (

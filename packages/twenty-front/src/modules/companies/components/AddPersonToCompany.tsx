@@ -16,6 +16,7 @@ import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledContainer = styled.div`
   position: static;
@@ -73,7 +74,7 @@ export const AddPersonToCompany = ({
     updateOneRecordMutation,
     createOneRecordMutation,
   } = useObjectMetadataItem({
-    objectNameSingular: 'person',
+    objectNameSingular: CoreObjectNameSingular.Person,
   });
 
   const [updatePerson] = useMutation(updateOneRecordMutation);
