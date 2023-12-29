@@ -249,7 +249,7 @@ export async function GET() {
 
 	const assignableUsers = await fetchAssignableUsers();
 	const prs = await fetchData(lastPRCursor) as Array<PullRequestNode>;
-	const issues = await fetchData(lastIssueCursor) as Array<IssueNode>;
+	const issues = await fetchData(lastIssueCursor, true) as Array<IssueNode>;
   
 	const insertPR = db.prepare('INSERT INTO pullRequests (id, title, body, createdAt, updatedAt, closedAt, mergedAt, authorId) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING');
 	const insertIssue = db.prepare('INSERT INTO issues (id, title, body, createdAt, updatedAt, closedAt, authorId) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING');
