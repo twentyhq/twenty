@@ -4,22 +4,27 @@ import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsByNameSingularMapSelector } from '@/object-metadata/states/objectMetadataItemsByNameSingularMapSelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getObjectOrderByField } from '@/object-metadata/utils/getObjectOrderByField';
 import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
+import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+import {
+  MultiObjectRecordQueryResult,
+  useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray,
+} from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
+import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 
-type SearchFilter = { fieldNames: string[]; filter: string | number };
-
-export const DEFAULT_SEARCH_REQUEST_LIMIT = 60;
-
-// TODO: use this for all search queries, because we need selectedEntities and entitiesToSelect each time we want to search
-// Filtered entities to select are
+export const DEFAULT_SEARCH_REQUEST_LIMIT = 5;
 
 export type ObjectRecordForSelect = {
-  objectNameSingular: string;
+  objectMetadataItem: ObjectMetadataItem;
   record: ObjectRecord;
+  recordIdentifier: ObjectRecordIdentifier;
 };
 
 export type SelectedObjectRecordId = {
@@ -29,6 +34,9 @@ export type SelectedObjectRecordId = {
 
 export type MultiObjectSearch = {
   selectedObjectRecords: ObjectRecordForSelect[];
+  filteredSelectedObjectRecords: ObjectRecordForSelect[];
+  objectRecordsToSelect: ObjectRecordForSelect[];
+  loading: boolean;
 };
 
 export const useMultiObjectSearch = ({
@@ -65,10 +73,7 @@ export const useMultiObjectSearch = ({
 
         if (!isDefined(objectMetadataItem)) return null;
 
-        const orderByField = getObjectOrderByField(
-          objectMetadataItem,
-          'AscNullsLast',
-        );
+        const orderByField = getObjectOrderByField(objectMetadataItem);
 
         return [
           `orderBy${capitalize(nameSingular)}`,
@@ -79,6 +84,73 @@ export const useMultiObjectSearch = ({
       })
       .filter(isDefined),
   );
+
+  const limitPerMetadataItem = Object.fromEntries(
+    nonSystemObjectMetadataItems
+      .map(({ nameSingular }) => {
+        const objectMetadataItem =
+          objectMetadataItemsByNameSingularMap.get(nameSingular);
+
+        if (!isDefined(objectMetadataItem)) return null;
+
+        return [
+          `limit${capitalize(nameSingular)}`,
+          limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,
+        ];
+      })
+      .filter(isDefined),
+  );
+
+  const searchFilterPerMetadataItemNameSingular =
+    Object.fromEntries<ObjectRecordQueryFilter>(
+      nonSystemObjectMetadataItems
+        .map(({ nameSingular }) => {
+          const objectMetadataItem =
+            objectMetadataItemsByNameSingularMap.get(nameSingular);
+
+          if (!isDefined(objectMetadataItem)) return null;
+
+          const labelIdentifierFieldMetadataItem =
+            getLabelIdentifierFieldMetadataItem(objectMetadataItem);
+
+          let searchFilter: ObjectRecordQueryFilter = {};
+
+          if (labelIdentifierFieldMetadataItem) {
+            switch (labelIdentifierFieldMetadataItem.type) {
+              case FieldMetadataType.FullName: {
+                searchFilter = {
+                  or: [
+                    {
+                      [labelIdentifierFieldMetadataItem.name]: {
+                        firstName: {
+                          ilike: `%${searchFilterValue}%`,
+                        },
+                      },
+                    },
+                    {
+                      [labelIdentifierFieldMetadataItem.name]: {
+                        lastName: {
+                          ilike: `%${searchFilterValue}%`,
+                        },
+                      },
+                    },
+                  ],
+                };
+                break;
+              }
+              default:
+                searchFilter = {
+                  [labelIdentifierFieldMetadataItem.name]: {
+                    ilike: `%${searchFilterValue}%`,
+                  },
+                };
+            }
+          }
+
+          return [nameSingular, searchFilter] as const;
+        })
+        .filter(isDefined),
+    );
 
   const selectedIdFilterPerMetadataItem = Object.fromEntries(
     nonSystemObjectMetadataItems
@@ -108,113 +180,151 @@ export const useMultiObjectSearch = ({
       .filter(isDefined),
   );
 
-  const { loading: selectedEntitiesLoading, data: selectedObjectRecords } =
-    useQuery(multiSelectQuery, {
-      variables: {
-        ...selectedIdFilterPerMetadataItem,
-        ...orderByFieldPerMetadataItem,
-      },
+  const {
+    loading: selectedEntitiesLoading,
+    data: selectedObjectRecordsQueryResult,
+  } = useQuery<MultiObjectRecordQueryResult>(multiSelectQuery, {
+    variables: {
+      ...selectedIdFilterPerMetadataItem,
+      ...orderByFieldPerMetadataItem,
+      ...limitPerMetadataItem,
+    },
+  });
+
+  const { objectRecordForSelectArray: selectedObjectRecords } =
+    useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray({
+      multiObjectRecordsQueryResult: selectedObjectRecordsQueryResult,
     });
 
   console.log({
     selectedObjectRecords,
   });
 
-  // const searchFilter = filters
-  //   .map(({ fieldNames, filter }) => {
-  //     if (!isNonEmptyString(filter)) {
-  //       return undefined;
-  //     }
+  const selectedAndMatchesSearchFilterTextFilterPerMetadataItem =
+    Object.fromEntries(
+      nonSystemObjectMetadataItems
+        .map(({ nameSingular }) => {
+          const objectMetadataItem =
+            objectMetadataItemsByNameSingularMap.get(nameSingular);
 
-  //     return {
-  //       or: fieldNames.map((fieldName) => {
-  //         const fieldNameParts = fieldName.split('.');
+          if (!isDefined(objectMetadataItem)) return null;
 
-  //         if (fieldNameParts.length > 1) {
-  //           // Composite field
+          const selectedIds = selectedObjectRecordIds
+            .filter(
+              ({ objectNameSingular }) => objectNameSingular === nameSingular,
+            )
+            .map(({ id }) => id);
 
-  //           return {
-  //             [fieldNameParts[0]]: {
-  //               [fieldNameParts[1]]: {
-  //                 ilike: `%${filter}%`,
-  //               },
-  //             },
-  //           };
-  //         }
-  //         return {
-  //           [fieldName]: {
-  //             ilike: `%${filter}%`,
-  //           },
-  //         };
-  //       }),
-  //     };
-  //   })
-  //   .filter(isDefined);
+          if (!isNonEmptyArray(selectedIds)) return null;
 
-  // const {
-  //   loading: filteredSelectedEntitiesLoading,
-  //   data: filteredSelectedEntitiesData,
-  // } = queryHook({
-  //   variables: {
-  //     filter: {
-  //       and: [
-  //         {
-  //           and: searchFilter,
-  //         },
-  //         {
-  //           id: {
-  //             in: selectedIds,
-  //           },
-  //         },
-  //       ],
-  //     },
-  //     orderBy: {
-  //       [orderByField]: sortOrder,
-  //     },
-  //   } as any,
-  // });
+          const searchFilter =
+            searchFilterPerMetadataItemNameSingular[nameSingular] ?? {};
 
-  // const { loading: entitiesToSelectLoading, data: entitiesToSelectData } =
-  //   queryHook({
-  //     variables: {
-  //       filter: {
-  //         and: [
-  //           {
-  //             and: searchFilter,
-  //           },
-  //           {
-  //             not: {
-  //               id: {
-  //                 in: [...selectedIds, ...excludeEntityIds],
-  //               },
-  //             },
-  //           },
-  //         ],
-  //       },
-  //       limit: limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,
-  //       orderBy: {
-  //         [orderByField]: sortOrder,
-  //       },
-  //     } as any,
-  //   });
+          return [
+            `filter${capitalize(nameSingular)}`,
+            {
+              and: [
+                {
+                  ...searchFilter,
+                },
+                {
+                  id: {
+                    in: selectedIds,
+                  },
+                },
+              ],
+            },
+          ];
+        })
+        .filter(isDefined),
+    );
+
+  const {
+    loading: filteredSelectedObjectRecordsLoading,
+    data: filteredSelectedObjectRecordsQueryResult,
+  } = useQuery<MultiObjectRecordQueryResult>(multiSelectQuery, {
+    variables: {
+      ...selectedAndMatchesSearchFilterTextFilterPerMetadataItem,
+      ...orderByFieldPerMetadataItem,
+      ...limitPerMetadataItem,
+    },
+  });
+
+  const { objectRecordForSelectArray: filteredSelectedObjectRecords } =
+    useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray({
+      multiObjectRecordsQueryResult: filteredSelectedObjectRecordsQueryResult,
+    });
+
+  const objectRecordsToSelectAndMatchesSearchFilterTextFilterPerMetadataItem =
+    Object.fromEntries(
+      nonSystemObjectMetadataItems
+        .map(({ nameSingular }) => {
+          const objectMetadataItem =
+            objectMetadataItemsByNameSingularMap.get(nameSingular);
+
+          if (!isDefined(objectMetadataItem)) return null;
+
+          const selectedIds = selectedObjectRecordIds
+            .filter(
+              ({ objectNameSingular }) => objectNameSingular === nameSingular,
+            )
+            .map(({ id }) => id);
+
+          const excludedIds = excludedObjectRecordIds
+            .filter(
+              ({ objectNameSingular }) => objectNameSingular === nameSingular,
+            )
+            .map(({ id }) => id);
+
+          if (!isNonEmptyArray(selectedIds)) return null;
+
+          const searchFilter =
+            searchFilterPerMetadataItemNameSingular[nameSingular] ?? {};
+
+          return [
+            `filter${capitalize(nameSingular)}`,
+            {
+              and: [
+                {
+                  ...searchFilter,
+                },
+                {
+                  not: {
+                    id: {
+                      in: [...selectedIds, ...excludedIds],
+                    },
+                  },
+                },
+              ],
+            },
+          ];
+        })
+        .filter(isDefined),
+    );
+
+  const {
+    loading: objectRecordsToSelectLoading,
+    data: objectRecordsToSelectQueryResult,
+  } = useQuery<MultiObjectRecordQueryResult>(multiSelectQuery, {
+    variables: {
+      ...objectRecordsToSelectAndMatchesSearchFilterTextFilterPerMetadataItem,
+      ...orderByFieldPerMetadataItem,
+      ...limitPerMetadataItem,
+    },
+  });
+
+  const { objectRecordForSelectArray: objectRecordsToSelect } =
+    useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray({
+      multiObjectRecordsQueryResult: objectRecordsToSelectQueryResult,
+    });
 
   return {
     selectedObjectRecords,
-    // filteredSelectedEntities: mapPaginatedRecordsToRecords({
-    //   objectNamePlural: objectMetadataItem.namePlural,
-    //   pagedRecords: filteredSelectedEntitiesData,
-    // })
-    //   .map(mappingFunction)
-    //   .filter(assertNotNull),
-    // entitiesToSelect: mapPaginatedRecordsToRecords({
-    //   objectNamePlural: objectMetadataItem.namePlural,
-    //   pagedRecords: entitiesToSelectData,
-    // })
-    //   .map(mappingFunction)
-    //   .filter(assertNotNull),
-    // loading:
-    //   entitiesToSelectLoading ||
-    //   filteredSelectedEntitiesLoading ||
-    //   selectedEntitiesLoading,
+    filteredSelectedObjectRecords,
+    objectRecordsToSelect,
+    loading:
+      filteredSelectedObjectRecordsLoading ||
+      selectedEntitiesLoading ||
+      objectRecordsToSelectLoading,
   };
 };

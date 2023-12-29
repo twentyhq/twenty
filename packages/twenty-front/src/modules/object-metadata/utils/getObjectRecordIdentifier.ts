@@ -1,6 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -23,15 +24,12 @@ export const getObjectRecordIdentifier = ({
       };
   }
 
-  const labelIdentifierFieldMetadata = objectMetadataItem.fields.find(
-    (field) =>
-      field.id === objectMetadataItem.labelIdentifierFieldMetadataId ||
-      field.name === 'name',
-  );
+  const labelIdentifierFieldMetadataItem =
+    getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
   let labelIdentifierFieldValue = '';
 
-  switch (labelIdentifierFieldMetadata?.type) {
+  switch (labelIdentifierFieldMetadataItem?.type) {
     case FieldMetadataType.FullName: {
       labelIdentifierFieldValue = `${record.name?.firstName ?? ''} ${
         record.name?.lastName ?? ''
@@ -39,8 +37,8 @@ export const getObjectRecordIdentifier = ({
       break;
     }
     default:
-      labelIdentifierFieldValue = labelIdentifierFieldMetadata
-        ? record[labelIdentifierFieldMetadata.name]
+      labelIdentifierFieldValue = labelIdentifierFieldMetadataItem
+        ? record[labelIdentifierFieldMetadataItem.name]
         : '';
   }
 

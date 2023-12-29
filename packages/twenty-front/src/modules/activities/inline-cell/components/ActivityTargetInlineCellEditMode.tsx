@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useHandleCheckableActivityTargetChange } from '@/activities/hooks/useHandleCheckableActivityTargetChange';
 import { ActivityTargetObjectRecord } from '@/activities/types/ActivityTargetObject';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
-import { MultipleEntitySelect } from '@/object-record/relation-picker/components/MultipleEntitySelect';
+import { MultipleObjectRecordSelect } from '@/object-record/relation-picker/components/MultipleObjectRecordSelect';
 import { useMultiObjectSearch } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 
 const StyledSelectContainer = styled.div`
@@ -117,7 +117,12 @@ export const ActivityTargetInlineCellEditMode = ({
   //   companies.entitiesToSelect,
   // ]);
 
-  const { selectedObjectRecords } = useMultiObjectSearch({
+  const {
+    selectedObjectRecords,
+    filteredSelectedObjectRecords,
+    loading,
+    objectRecordsToSelect,
+  } = useMultiObjectSearch({
     searchFilterValue: searchFilter,
     selectedObjectRecordIds: activityTargetObjectRecords.map(
       (activityTarget) => ({
@@ -128,6 +133,12 @@ export const ActivityTargetInlineCellEditMode = ({
     ),
     excludedObjectRecordIds: [],
     limit: 3,
+  });
+
+  console.log({
+    selectedObjectRecords,
+    filteredSelectedObjectRecords,
+    objectRecordsToSelect,
   });
 
   const handleCheckItemsChange = useHandleCheckableActivityTargetChange({
@@ -151,12 +162,12 @@ export const ActivityTargetInlineCellEditMode = ({
 
   return (
     <StyledSelectContainer>
-      <MultipleEntitySelect
-        entities={{
-          entitiesToSelect: [],
-          filteredSelectedEntities: [],
-          selectedEntities: [],
-          loading: false,
+      <MultipleObjectRecordSelect
+        multipleObjectRecords={{
+          objectRecordsToSelect,
+          filteredSelectedObjectRecords,
+          selectedObjectRecords,
+          loading,
         }}
         onChange={() => {
           //

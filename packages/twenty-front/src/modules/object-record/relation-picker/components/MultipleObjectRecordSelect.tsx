@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import debounce from 'lodash.debounce';
 
+import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -14,28 +15,22 @@ import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
 
-import { EntityForSelect } from '../types/EntityForSelect';
-
-export type EntitiesForMultipleEntitySelect<
-  CustomEntityForSelect extends EntityForSelect,
-> = {
-  selectedEntities: CustomEntityForSelect[];
-  filteredSelectedEntities: CustomEntityForSelect[];
-  entitiesToSelect: CustomEntityForSelect[];
+export type EntitiesForMultipleObjectRecordSelect = {
+  selectedObjectRecords: ObjectRecordForSelect[];
+  filteredSelectedObjectRecords: ObjectRecordForSelect[];
+  objectRecordsToSelect: ObjectRecordForSelect[];
   loading: boolean;
 };
 
-export const MultipleObjectRecordSelect = <
-  CustomEntityForSelect extends EntityForSelect,
->({
-  entities,
+export const MultipleObjectRecordSelect = ({
+  multipleObjectRecords,
   onChange,
   onSubmit,
   onSearchFilterChange,
   searchFilter,
   value,
 }: {
-  entities: EntitiesForMultipleEntitySelect<CustomEntityForSelect>;
+  multipleObjectRecords: EntitiesForMultipleObjectRecordSelect;
   searchFilter: string;
   onSearchFilterChange: (newSearchFilter: string) => void;
   onChange: (value: Record<string, boolean>) => void;
@@ -53,13 +48,17 @@ export const MultipleObjectRecordSelect = <
   };
 
   let entitiesInDropdown = [
-    ...(entities.filteredSelectedEntities ?? []),
-    ...(entities.entitiesToSelect ?? []),
+    ...(multipleObjectRecords.filteredSelectedObjectRecords ?? []),
+    ...(multipleObjectRecords.objectRecordsToSelect ?? []),
   ];
 
   entitiesInDropdown = entitiesInDropdown.filter((entity) =>
-    isNonEmptyString(entity.name),
+    isNonEmptyString(entity.recordIdentifier.id),
   );
+
+  console.log({
+    entitiesInDropdown,
+  });
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -74,7 +73,9 @@ export const MultipleObjectRecordSelect = <
     },
   });
 
-  const selectableItemIds = entitiesInDropdown.map((entity) => entity.id);
+  const selectableItemIds = entitiesInDropdown.map(
+    (entity) => entity.recordIdentifier.id,
+  );
 
   return (
     <DropdownMenu ref={containerRef} data-select-disable>
@@ -98,23 +99,23 @@ export const MultipleObjectRecordSelect = <
           }}
         >
           {entitiesInDropdown?.map((entity) => (
-            <SelectableItem itemId={entity.id} key={entity.id}>
+            <SelectableItem itemId={entity.record.id} key={entity.record.id}>
               <MenuItemMultiSelectAvatar
-                key={entity.id}
-                selected={value[entity.id]}
+                key={entity.record.id}
+                selected={value[entity.record.id]}
                 onSelectChange={(newCheckedValue) =>
-                  onChange({ ...value, [entity.id]: newCheckedValue })
+                  onChange({ ...value, [entity.record.id]: newCheckedValue })
                 }
                 avatar={
                   <Avatar
-                    avatarUrl={entity.avatarUrl}
-                    colorId={entity.id}
-                    placeholder={entity.name}
+                    avatarUrl={entity.recordIdentifier.avatarUrl}
+                    colorId={entity.record.id}
+                    placeholder={entity.recordIdentifier.name}
                     size="md"
-                    type={entity.avatarType ?? 'rounded'}
+                    type={entity.recordIdentifier.avatarType ?? 'rounded'}
                   />
                 }
-                text={entity.name}
+                text={entity.recordIdentifier.name}
               />
             </SelectableItem>
           ))}
