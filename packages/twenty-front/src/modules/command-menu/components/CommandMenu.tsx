@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -13,6 +13,7 @@ import { SelectableItem } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { Avatar } from '@/users/components/Avatar';
@@ -61,6 +62,16 @@ export const StyledInput = styled.input`
   }
 `;
 
+const StyledCancelText = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  margin-right: 12px;
+  margin-top: 6px;
+  position: absolute;
+  right: 0;
+  top: 0;
+`;
+
 export const StyledList = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   height: 400px;
@@ -86,7 +97,8 @@ export const StyledEmpty = styled.div`
 `;
 
 export const CommandMenu = () => {
-  const { toggleCommandMenu, onItemClick } = useCommandMenu();
+  const { toggleCommandMenu, onItemClick, closeCommandMenu } = useCommandMenu();
+  const commandMenuRef = useRef<HTMLDivElement>(null);
 
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
@@ -107,6 +119,15 @@ export const CommandMenu = () => {
     },
     AppHotkeyScope.CommandMenu,
     [toggleCommandMenu, setSearch],
+  );
+
+  useScopedHotkeys(
+    'esc',
+    () => {
+      closeCommandMenu();
+    },
+    AppHotkeyScope.CommandMenuOpen,
+    [closeCommandMenu],
   );
 
   const { records: people } = useFindManyRecords<Person>({
@@ -208,6 +229,11 @@ export const CommandMenu = () => {
         : true) && cmd.type === CommandType.Create,
   );
 
+  useListenClickOutside({
+    refs: [commandMenuRef],
+    callback: closeCommandMenu,
+  });
+
   const selectableItemIds = matchingCreateCommand
     .map((cmd) => cmd.id)
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
@@ -218,12 +244,13 @@ export const CommandMenu = () => {
   return (
     <>
       {isCommandMenuOpened && (
-        <StyledDialog>
+        <StyledDialog ref={commandMenuRef}>
           <StyledInput
             value={search}
             placeholder="Search"
             onChange={handleSearchChange}
           />
+          <StyledCancelText>Esc to cancel</StyledCancelText>
           <StyledList>
             <ScrollWrapper>
               <StyledInnerList>
