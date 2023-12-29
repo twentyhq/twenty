@@ -1,35 +1,38 @@
 import Image from 'next/image';
+import Database from 'better-sqlite3';
+import AvatarGrid from '@/app/components/AvatarGrid';
 
 interface Contributor {
   login: string;
-  avatar_url: string;
-  contributions: number;
+  avatarUrl: string;
+  pullRequestCount: number;
 }
 
 const Contributors = async () => {
-  const res = await fetch(
-    'https://api.github.com/repos/twentyhq/twenty/contributors',
-  );
-  const contributors = await res.json();
+
+
+  const db = new Database('db.sqlite', { readonly: true });
+
+  const contributors  = db.prepare(`SELECT 
+          u.login,
+          u.avatarUrl, 
+          COUNT(pr.id) AS pullRequestCount
+        FROM 
+          users u
+        JOIN 
+          pullRequests pr ON u.id = pr.authorId
+        GROUP BY 
+          u.id
+        ORDER BY 
+          pullRequestCount DESC;
+        `).all() as Contributor[];
+  
+  db.close();
 
   return (
     <div>
       <h1>Top Contributors</h1>
-      <ul>
-        {contributors.map((contributor: Contributor, index: number) => (
-          <li key={index}>
-            <Image
-              src={contributor.avatar_url}
-              alt={contributor.login}
-              width="50"
-              height="50"
-            />
-            <p>
-              {contributor.login} (Contributions: {contributor.contributions})
-            </p>
-          </li>
-        ))}
-      </ul>
+      <AvatarGrid users={contributors} />
     </div>
   );
 };

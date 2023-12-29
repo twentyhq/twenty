@@ -13845,6 +13845,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/better-sqlite3@npm:^7.6.8":
+  version: 7.6.8
+  resolution: "@types/better-sqlite3@npm:7.6.8"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: e9fd1893af20afe0d5fc42eca8733b5a7629482e53236322227251f54e170c5788a33be02eb3706adc022782f91f445741166a8424286c376d17ed0aa833aa25
+  languageName: node
+  linkType: hard
+
 "@types/body-parser@npm:*":
   version: 1.19.5
   resolution: "@types/body-parser@npm:1.19.5"
@@ -18410,6 +18419,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"better-sqlite3@npm:^9.2.2":
+  version: 9.2.2
+  resolution: "better-sqlite3@npm:9.2.2"
+  dependencies:
+    bindings: "npm:^1.5.0"
+    node-gyp: "npm:latest"
+    prebuild-install: "npm:^7.1.1"
+  checksum: b4bfe142ba4544a0cc76b2ca03d89bce1acf3fe8a86a1ba317a4049b26bf8fed70fb413f6317d2e5abeb97e31b177accb6d09619fdc0531e891cee112e2aade1
+  languageName: node
+  linkType: hard
+
 "big-integer@npm:^1.6.16, big-integer@npm:^1.6.44":
   version: 1.6.52
   resolution: "big-integer@npm:1.6.52"
@@ -18456,6 +18476,15 @@ __metadata:
   version: 4.19.0
   resolution: "binaryextensions@npm:4.19.0"
   checksum: 2906937e352569b29a80a1e0ad6bf03290a093b3ac65e1c3a8cb4363511d463a21d09844361ecc3a557d9ea997012a45c0826742e8a5eccfbe40180bc100a4fb
+  languageName: node
+  linkType: hard
+
+"bindings@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "bindings@npm:1.5.0"
+  dependencies:
+    file-uri-to-path: "npm:1.0.0"
+  checksum: 3dab2491b4bb24124252a91e656803eac24292473e56554e35bbfe3cc1875332cfa77600c3bac7564049dc95075bf6fcc63a4609920ff2d64d0fe405fcf0d4ba
   languageName: node
   linkType: hard
 
@@ -24221,6 +24250,13 @@ __metadata:
   version: 3.9.0
   resolution: "file-type@npm:3.9.0"
   checksum: 7ae074b350c2300807a99d428600a8ee6b2ace901400898706a20ddc2c43c9abb7e05177ff55ed67a2fd26dfa9b91857b21ec9c0ab3202b9cabebc7e65900240
+  languageName: node
+  linkType: hard
+
+"file-uri-to-path@npm:1.0.0":
+  version: 1.0.0
+  resolution: "file-uri-to-path@npm:1.0.0"
+  checksum: 3b545e3a341d322d368e880e1c204ef55f1d45cdea65f7efc6c6ce9e0c4d22d802d5629320eb779d006fe59624ac17b0e848d83cc5af7cd101f206cb704f5519
   languageName: node
   linkType: hard
 
@@ -42872,10 +42908,12 @@ __metadata:
     "@jsdevtools/rehype-toc": "npm:^3.0.2"
     "@stoplight/elements": "npm:^7.16.2"
     "@tabler/icons-react": "npm:^2.44.0"
+    "@types/better-sqlite3": "npm:^7.6.8"
     "@types/node": "npm:^20"
     "@types/react": "npm:^18"
     "@types/react-dom": "npm:^18"
     "@typescript-eslint/eslint-plugin": "npm:^6.16.0"
+    better-sqlite3: "npm:^9.2.2"
     eslint: "npm:^8"
     eslint-config-next: "npm:14.0.4"
     eslint-config-prettier: "npm:^9.1.0"
