@@ -60,7 +60,9 @@ export const SettingsObjectFieldItemTableRow = ({
   return (
     <StyledObjectFieldTableRow>
       <StyledNameTableCell>
-        {!!Icon && <Icon size={theme.icon.size.md} />}
+        {!!Icon && (
+          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+        )}
         {fieldMetadataItem.label}
       </StyledNameTableCell>
       <TableCell>

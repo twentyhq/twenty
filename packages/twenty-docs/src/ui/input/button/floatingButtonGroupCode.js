@@ -25,7 +25,6 @@ export const MyComponent = () => {
         applyShadow={true}
         applyBlur={true}
         disabled={false}
-        focus={true}
       />
     </FloatingButtonGroup>
   );

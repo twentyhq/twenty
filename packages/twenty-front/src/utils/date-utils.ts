@@ -33,7 +33,10 @@ export const parseDate = (dateToParse: Date | string | number) => {
 const isSameDay = (a: DateTime, b: DateTime): boolean =>
   a.hasSame(b, 'day') && a.hasSame(b, 'month') && a.hasSame(b, 'year');
 
-const formatDate = (dateToFormat: Date | string | number, format: string) => {
+export const formatDate = (
+  dateToFormat: Date | string | number,
+  format: string,
+) => {
   try {
     const parsedDate = parseDate(dateToFormat);
     return parsedDate.toFormat(format);

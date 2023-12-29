@@ -76,11 +76,6 @@ const config = {
             position: "left",
           },
           {
-            to: "/user-guide",
-            label: "User Guide",
-            position: "right",
-          },
-          {
             to: "https://github.com/twentyhq/twenty/releases",
             label: "Releases",
             position: "right",
