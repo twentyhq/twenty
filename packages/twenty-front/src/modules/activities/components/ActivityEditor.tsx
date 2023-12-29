@@ -9,6 +9,7 @@ import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { Comment } from '@/activities/types/Comment';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
@@ -20,7 +21,6 @@ import { debounce } from '~/utils/debounce';
 import { ActivityTitle } from './ActivityTitle';
 
 import '@blocknote/core/style.css';
-import { CoreObjectNameSingular, CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
