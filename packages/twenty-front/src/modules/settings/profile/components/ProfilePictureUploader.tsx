@@ -6,6 +6,7 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 import { useUploadProfilePictureMutation } from '~/generated/graphql';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const ProfilePictureUploader = () => {
   const [uploadPicture, { loading: isUploading }] =
@@ -20,7 +21,7 @@ export const ProfilePictureUploader = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: 'workspaceMember',
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
 
   const handleUpload = async (file: File) => {

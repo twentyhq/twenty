@@ -1,4 +1,5 @@
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
 export const useRelationFieldPreviewValue = ({
@@ -16,7 +17,7 @@ export const useRelationFieldPreviewValue = ({
     : undefined;
 
   const { records: relationObjects } = useFindManyRecords({
-    objectNameSingular: relationObjectMetadataItem?.nameSingular ?? 'company', // TODO fix this hack
+    objectNameSingular: relationObjectMetadataItem?.nameSingular ?? CoreObjectNameSingular.Company, // TODO fix this hack
     skip: skip || !relationObjectMetadataItem,
   });
 

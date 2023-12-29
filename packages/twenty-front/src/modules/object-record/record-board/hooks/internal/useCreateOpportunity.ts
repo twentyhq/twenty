@@ -4,11 +4,12 @@ import { v4 } from 'uuid';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordBoardCardIdsByColumnIdFamilyState } from '@/object-record/record-board/states/recordBoardCardIdsByColumnIdFamilyState';
 import { Opportunity } from '@/pipeline/types/Opportunity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const useCreateOpportunity = () => {
   const { createOneRecord: createOneOpportunity } =
     useCreateOneRecord<Opportunity>({
-      objectNameSingular: 'opportunity',
+      objectNameSingular: CoreObjectNameSingular.Opportunity,
     });
 
   const createOpportunity = useRecoilCallback(

@@ -7,6 +7,7 @@ import { SpreadsheetOptions } from '@/spreadsheet-import/types';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { fieldsForPerson } from '../utils/fieldsForPerson';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export type FieldPersonMapping = (typeof fieldsForPerson)[number]['key'];
 
@@ -15,7 +16,7 @@ export const useSpreadsheetPersonImport = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const { createManyRecords: createManyPeople } = useCreateManyRecords<Person>({
-    objectNameSingular: 'person',
+    objectNameSingular: CoreObjectNameSingular.Person,
   });
 
   const openPersonSpreadsheetImport = (

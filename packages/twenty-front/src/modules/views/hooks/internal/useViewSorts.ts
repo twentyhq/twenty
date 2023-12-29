@@ -9,6 +9,7 @@ import { ViewSort } from '@/views/types/ViewSort';
 import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
 
 import { useViewScopedStates } from './useViewScopedStates';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const useViewSorts = (viewScopeId: string) => {
   const {
@@ -16,11 +17,11 @@ export const useViewSorts = (viewScopeId: string) => {
     createOneRecordMutation,
     deleteOneRecordMutation,
   } = useObjectMetadataItem({
-    objectNameSingular: 'viewSort',
+    objectNameSingular: CoreObjectNameSingular.ViewSort,
   });
 
   const { modifyRecordFromCache } = useObjectMetadataItem({
-    objectNameSingular: 'view',
+    objectNameSingular: CoreObjectNameSingular.View,
   });
   const apolloClient = useApolloClient();
 

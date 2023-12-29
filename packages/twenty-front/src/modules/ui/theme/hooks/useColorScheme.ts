@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const useColorScheme = () => {
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
@@ -11,7 +12,7 @@ export const useColorScheme = () => {
   );
 
   const { updateOneRecord: updateOneWorkspaceMember } = useUpdateOneRecord({
-    objectNameSingular: 'workspaceMember',
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
 
   const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';

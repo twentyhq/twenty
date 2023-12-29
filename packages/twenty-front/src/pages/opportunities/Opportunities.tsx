@@ -9,6 +9,7 @@ import { IconTargetArrow } from '@/ui/display/icon';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledBoardContainer = styled.div`
   display: flex;
@@ -22,7 +23,7 @@ export const Opportunities = () => {
 
   const { updateOneRecord: updateOnePipelineStep } =
     useUpdateOneRecord<PipelineStep>({
-      objectNameSingular: 'pipelineStep',
+      objectNameSingular: CoreObjectNameSingular.PipelineStep,
     });
 
   const handleEditColumnTitle = ({

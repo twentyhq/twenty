@@ -9,6 +9,7 @@ import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { Comment } from '@/activities/types/Comment';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
@@ -81,11 +82,11 @@ export const ActivityEditor = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { updateOneRecord: updateOneActivity } = useUpdateOneRecord<Activity>({
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
   });
 
   const { FieldContextProvider: DueAtFieldContextProvider } = useFieldContext({
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
     objectRecordId: activity.id,
     fieldMetadataName: 'dueAt',
     fieldPosition: 0,
@@ -93,7 +94,7 @@ export const ActivityEditor = ({
 
   const { FieldContextProvider: AssigneeFieldContextProvider } =
     useFieldContext({
-      objectNameSingular: 'activity',
+      objectNameSingular: CoreObjectNameSingular.Activity,
       objectRecordId: activity.id,
       fieldMetadataName: 'assignee',
       fieldPosition: 1,

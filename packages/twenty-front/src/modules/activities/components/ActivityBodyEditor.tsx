@@ -11,6 +11,7 @@ import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledBlockNoteStyledContainer = styled.div`
   width: 100%;
@@ -27,7 +28,7 @@ export const ActivityBodyEditor = ({
 }: ActivityBodyEditorProps) => {
   const [body, setBody] = useState<string | null>(null);
   const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
   });
 
   useEffect(() => {

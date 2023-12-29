@@ -14,6 +14,7 @@ import {
   AutosizeTextInputVariant,
 } from '@/ui/input/components/AutosizeTextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledThreadItemListContainer = styled.div`
   align-items: flex-start;
@@ -61,13 +62,13 @@ export const ActivityComments = ({
   scrollableContainerRef,
 }: ActivityCommentsProps) => {
   const { createOneRecord: createOneComment } = useCreateOneRecord({
-    objectNameSingular: 'comment',
+    objectNameSingular: CoreObjectNameSingular.Comment,
   });
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { records: comments } = useFindManyRecords({
-    objectNameSingular: 'comment',
+    objectNameSingular: CoreObjectNameSingular.Comment,
     filter: {
       activityId: {
         eq: activity?.id ?? '',

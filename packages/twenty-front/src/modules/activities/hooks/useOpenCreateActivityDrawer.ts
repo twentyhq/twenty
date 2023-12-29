@@ -15,15 +15,16 @@ import { activityTargetableEntityArrayState } from '../states/activityTargetable
 import { viewableActivityIdState } from '../states/viewableActivityIdState';
 import { ActivityTargetableEntity } from '../types/ActivityTargetableEntity';
 import { getTargetableEntitiesWithParents } from '../utils/getTargetableEntitiesWithParents';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const useOpenCreateActivityDrawer = () => {
   const { openRightDrawer } = useRightDrawer();
   const { createOneRecord: createOneActivityTarget } =
     useCreateOneRecord<ActivityTarget>({
-      objectNameSingular: 'activityTarget',
+      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     });
   const { createOneRecord: createOneActivity } = useCreateOneRecord<Activity>({
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
   });
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const setHotkeyScope = useSetHotkeyScope();

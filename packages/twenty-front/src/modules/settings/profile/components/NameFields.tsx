@@ -8,6 +8,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { logError } from '~/utils/logError';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledComboInputContainer = styled.div`
   display: flex;
@@ -41,7 +42,7 @@ export const NameFields = ({
   );
 
   const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: 'workspaceMember',
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
 
   // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)

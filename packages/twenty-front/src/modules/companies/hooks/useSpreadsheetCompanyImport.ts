@@ -5,6 +5,7 @@ import { SpreadsheetOptions } from '@/spreadsheet-import/types';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { fieldsForCompany } from '../utils/fieldsForCompany';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export type FieldCompanyMapping = (typeof fieldsForCompany)[number]['key'];
 
@@ -14,7 +15,7 @@ export const useSpreadsheetCompanyImport = () => {
 
   const { createManyRecords: createManyCompanies } =
     useCreateManyRecords<Company>({
-      objectNameSingular: 'company',
+      objectNameSingular: CoreObjectNameSingular.Company,
     });
 
   const openCompanySpreadsheetImport = (

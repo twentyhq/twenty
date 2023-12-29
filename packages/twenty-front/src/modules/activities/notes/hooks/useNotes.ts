@@ -3,10 +3,11 @@ import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
 import { ActivityTargetableEntity } from '../../types/ActivityTargetableEntity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const useNotes = (entity: ActivityTargetableEntity) => {
   const { records: activityTargets } = useFindManyRecords({
-    objectNameSingular: 'activityTarget',
+    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     filter: {
       [entity.type === 'Company' ? 'companyId' : 'personId']: { eq: entity.id },
     },
@@ -24,7 +25,7 @@ export const useNotes = (entity: ActivityTargetableEntity) => {
 
   const { records: notes } = useFindManyRecords({
     skip: !activityTargets?.length,
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
     filter,
     orderBy,
   });

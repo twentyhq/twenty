@@ -24,6 +24,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledInfo = styled.span`
   color: ${({ theme }) => theme.font.color.light};
@@ -51,14 +52,14 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const { createOneRecord: createOneApiKey } = useCreateOneRecord<ApiKey>({
-    objectNameSingular: 'apiKey',
+    objectNameSingular: CoreObjectNameSingular.ApiKey,
   });
   const { updateOneRecord: updateApiKey } = useUpdateOneRecord<ApiKey>({
-    objectNameSingular: 'apiKey',
+    objectNameSingular: CoreObjectNameSingular.ApiKey,
   });
 
   const { record: apiKeyData } = useFindOneRecord({
-    objectNameSingular: 'apiKey',
+    objectNameSingular: CoreObjectNameSingular.ApiKey,
     objectRecordId: apiKeyId,
   });
 
