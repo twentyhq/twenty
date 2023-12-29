@@ -246,6 +246,7 @@ export const CommandMenu = () => {
       {isCommandMenuOpened && (
         <StyledDialog ref={commandMenuRef}>
           <StyledInput
+            autoFocus
             value={search}
             placeholder="Search"
             onChange={handleSearchChange}
