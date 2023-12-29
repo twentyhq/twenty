@@ -3,6 +3,7 @@ import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { ColumnContext } from '../contexts/ColumnContext';
@@ -26,7 +27,13 @@ const StyledPlaceholder = styled.td`
 `;
 
 export const RecordTableRow = ({ rowId }: RecordTableRowProps) => {
-  const { visibleTableColumnsSelector } = useRecordTableScopedStates();
+  const { visibleTableColumnsScopeInjector } = getRecordTableScopeInjector();
+
+  const { injectSelectorWithRecordTableScopeId } = useRecordTableScopedStates();
+
+  const visibleTableColumnsSelector = injectSelectorWithRecordTableScopeId(
+    visibleTableColumnsScopeInjector,
+  );
 
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
 

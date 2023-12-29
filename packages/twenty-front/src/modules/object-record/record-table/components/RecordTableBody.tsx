@@ -5,15 +5,12 @@ import { RecordTableRow } from '@/object-record/record-table/components/RecordTa
 import { RowIdContext } from '@/object-record/record-table/contexts/RowIdContext';
 import { RowIndexContext } from '@/object-record/record-table/contexts/RowIndexContext';
 import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 
 export const RecordTableBody = () => {
-  const { scopeId: recordTableScopeId } = useRecordTable();
   const { tableRowIdsScopeInjector } = getRecordTableScopeInjector();
 
-  const { injectStateWithRecordTableScopeId } =
-    useRecordTableScopedStates(recordTableScopeId);
+  const { injectStateWithRecordTableScopeId } = useRecordTableScopedStates();
 
   const tableRowIdsState = injectStateWithRecordTableScopeId(
     tableRowIdsScopeInjector,

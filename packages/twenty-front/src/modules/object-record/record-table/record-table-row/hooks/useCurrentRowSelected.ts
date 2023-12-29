@@ -6,7 +6,7 @@ import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/
 
 import { RowIdContext } from '../../contexts/RowIdContext';
 
-export const useCurrentRowSelected = (recordTableScopeId: string) => {
+export const useCurrentRowSelected = () => {
   const currentRowId = useContext(RowIdContext);
 
   const { isRowSelectedScopeInjector } = getRecordTableScopeInjector();
@@ -14,7 +14,7 @@ export const useCurrentRowSelected = (recordTableScopeId: string) => {
   const {
     injectFamilyStateWithRecordTableScopeId,
     injectFamilySnapshotValueWithRecordTableScopeId,
-  } = useRecordTableScopedStates(recordTableScopeId);
+  } = useRecordTableScopedStates();
 
   const isRowSelectedFamilyState = injectFamilyStateWithRecordTableScopeId(
     isRowSelectedScopeInjector,

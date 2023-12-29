@@ -4,7 +4,6 @@ import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
 import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
@@ -81,8 +80,6 @@ export const RecordTableHeaderCell = ({
   column: ColumnDefinition<FieldMetadata>;
   createRecord: () => void;
 }) => {
-  const { scopeId: recordTableScopeId } = useRecordTable();
-
   const {
     resizeFieldOffsetScopeInjector,
     tableColumnsScopeInjector,
@@ -94,7 +91,7 @@ export const RecordTableHeaderCell = ({
     injectStateWithRecordTableScopeId,
     injectSelectorWithRecordTableScopeId,
     injectSnapshotValueWithRecordTableScopeId,
-  } = useRecordTableScopedStates(recordTableScopeId);
+  } = useRecordTableScopedStates();
 
   const resizeFieldOffsetState = injectStateWithRecordTableScopeId(
     resizeFieldOffsetScopeInjector,
