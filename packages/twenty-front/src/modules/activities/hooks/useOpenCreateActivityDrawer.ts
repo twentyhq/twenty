@@ -24,7 +24,7 @@ export const useOpenCreateActivityDrawer = () => {
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     });
   const { createOneRecord: createOneActivity } = useCreateOneRecord<Activity>({
-    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+    objectNameSingular: CoreObjectNameSingular.Activity,
   });
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const setHotkeyScope = useSetHotkeyScope();
