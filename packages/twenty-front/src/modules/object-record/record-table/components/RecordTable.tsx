@@ -4,13 +4,13 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { ObjectsTable } from '@/object-record/record-table/components/ObjectsTable';
 import { ScrollLeftEdge } from '@/object-record/record-table/components/ScrollLeftEdge';
 import { isRecordTableInitialLoadingState } from '@/object-record/record-table/states/isRecordTableInitialLoadingState';
-import { isTabelScrolledState } from '@/object-record/record-table/states/isTableScrolledState';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
-import { rgba } from '@/ui/theme/constants/colors';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
+import { ObjectsTableWrapper } from '@/ui/utilities/objects-table/components/ObjectsTableWrapper';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
@@ -20,14 +20,7 @@ import { useRecordTable } from '../hooks/useRecordTable';
 import { RecordTableScope } from '../scopes/RecordTableScope';
 import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
 
-import { RecordTableBody } from './RecordTableBody';
-import { RecordTableBodyEffect } from './RecordTableBodyEffect';
-import { RecordTableHeader } from './RecordTableHeader';
 import { RecordTableInternalEffect } from './RecordTableInternalEffect';
-
-type StyledTableProps = {
-  isTableScrolled: boolean;
-};
 
 const StyledObjectEmptyContainer = styled.div`
   align-items: center;
@@ -56,82 +49,6 @@ const StyledEmptyObjectSubTitle = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   line-height: ${({ theme }) => theme.text.lineHeight.md};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledTable = styled.table<StyledTableProps>`
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  border-spacing: 0;
-  margin-right: ${({ theme }) => theme.table.horizontalCellMargin};
-  table-layout: fixed;
-
-  width: calc(100% - ${({ theme }) => theme.table.horizontalCellMargin} * 2);
-
-  th {
-    border-block: 1px solid ${({ theme }) => theme.border.color.light};
-    color: ${({ theme }) => theme.font.color.tertiary};
-    padding: 0;
-    text-align: left;
-
-    :last-child {
-      border-right-color: transparent;
-    }
-    :first-of-type {
-      border-left-color: transparent;
-      border-right-color: transparent;
-    }
-  }
-
-  td {
-    border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-    color: ${({ theme }) => theme.font.color.primary};
-    padding: 0;
-
-    text-align: left;
-
-    :last-child {
-      border-right-color: transparent;
-    }
-    :first-of-type {
-      border-left-color: transparent;
-      border-right-color: transparent;
-    }
-  }
-
-  th,
-  td {
-    background-color: ${({ theme }) => theme.background.primary};
-    border-right: 1px solid ${({ theme }) => theme.border.color.light};
-  }
-
-  thead th:nth-of-type(-n + 2),
-  tbody td:nth-of-type(-n + 2) {
-    position: sticky;
-    z-index: 2;
-    border-right: none;
-  }
-
-  thead th:nth-of-type(1),
-  tbody td:nth-of-type(1) {
-    left: 0;
-  }
-
-  thead th:nth-of-type(2),
-  tbody td:nth-of-type(2) {
-    left: calc(${({ theme }) => theme.table.checkboxColumnWidth} - 2px);
-    box-shadow: ${({ theme, isTableScrolled }) =>
-      isTableScrolled
-        ? `2px 0px 4px 0px ${
-            theme.name === 'dark'
-              ? rgba(theme.grayScale.gray60, 0.8)
-              : rgba(theme.grayScale.gray100, 0.04)
-          }`
-        : 'none'};
-  }
-
-  thead th:nth-of-type(3),
-  tbody td:nth-of-type(3) {
-    border-left: 1px solid ${({ theme }) => theme.border.color.light};
-  }
 `;
 
 const StyledTableWithHeader = styled.div`
@@ -169,8 +86,6 @@ export const RecordTable = ({
     isRecordTableInitialLoadingState,
   );
 
-  const isTabelScrolled = useRecoilValue(isTabelScrolledState);
-
   const {
     scopeId: objectNamePlural,
     resetTableRowSelection,
@@ -199,45 +114,40 @@ export const RecordTable = ({
       })}
     >
       <ScrollWrapper>
-        <ScrollLeftEdge />
-        <RecordUpdateContext.Provider value={updateRecordMutation}>
-          <StyledTableWithHeader>
-            <StyledTableContainer>
-              <div ref={tableBodyRef}>
-                <StyledTable
-                  className="entity-table-cell"
-                  isTableScrolled={isTabelScrolled}
-                >
-                  <RecordTableHeader createRecord={createRecord} />
-                  <RecordTableBodyEffect />
-                  <RecordTableBody />
-                </StyledTable>
-                <DragSelect
-                  dragSelectable={tableBodyRef}
-                  onDragSelectionStart={resetTableRowSelection}
-                  onDragSelectionChange={setRowSelectedState}
-                />
-              </div>
-              <RecordTableInternalEffect tableBodyRef={tableBodyRef} />
-              {!isRecordTableInitialLoading && numberOfTableRows === 0 && (
-                <StyledObjectEmptyContainer>
-                  <StyledEmptyObjectTitle>
-                    No {foundObjectMetadataItem?.namePlural}
-                  </StyledEmptyObjectTitle>
-                  <StyledEmptyObjectSubTitle>
-                    Create one:
-                  </StyledEmptyObjectSubTitle>
-                  <Button
-                    Icon={IconPlus}
-                    title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
-                    variant={'secondary'}
-                    onClick={createRecord}
+        <ObjectsTableWrapper>
+          <ScrollLeftEdge />
+          <RecordUpdateContext.Provider value={updateRecordMutation}>
+            <StyledTableWithHeader>
+              <StyledTableContainer>
+                <div ref={tableBodyRef}>
+                  <ObjectsTable createRecord={createRecord} />
+                  <DragSelect
+                    dragSelectable={tableBodyRef}
+                    onDragSelectionStart={resetTableRowSelection}
+                    onDragSelectionChange={setRowSelectedState}
                   />
-                </StyledObjectEmptyContainer>
-              )}
-            </StyledTableContainer>
-          </StyledTableWithHeader>
-        </RecordUpdateContext.Provider>
+                </div>
+                <RecordTableInternalEffect tableBodyRef={tableBodyRef} />
+                {!isRecordTableInitialLoading && numberOfTableRows === 0 && (
+                  <StyledObjectEmptyContainer>
+                    <StyledEmptyObjectTitle>
+                      No {foundObjectMetadataItem?.namePlural}
+                    </StyledEmptyObjectTitle>
+                    <StyledEmptyObjectSubTitle>
+                      Create one:
+                    </StyledEmptyObjectSubTitle>
+                    <Button
+                      Icon={IconPlus}
+                      title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
+                      variant={'secondary'}
+                      onClick={createRecord}
+                    />
+                  </StyledObjectEmptyContainer>
+                )}
+              </StyledTableContainer>
+            </StyledTableWithHeader>
+          </RecordUpdateContext.Provider>
+        </ObjectsTableWrapper>
       </ScrollWrapper>
     </RecordTableScope>
   );
