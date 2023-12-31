@@ -25,6 +25,7 @@ export type NavigationDrawerProps = {
 const StyledAnimatedContainer = styled(motion.div)`
   display: flex;
   justify-content: end;
+  overflow-y: auto;
 `;
 
 const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
