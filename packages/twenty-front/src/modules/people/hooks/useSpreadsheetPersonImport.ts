@@ -1,5 +1,6 @@
 import { v4 } from 'uuid';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { Person } from '@/people/types/Person';
 import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
@@ -7,7 +8,6 @@ import { SpreadsheetOptions } from '@/spreadsheet-import/types';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 import { fieldsForPerson } from '../utils/fieldsForPerson';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export type FieldPersonMapping = (typeof fieldsForPerson)[number]['key'];
 

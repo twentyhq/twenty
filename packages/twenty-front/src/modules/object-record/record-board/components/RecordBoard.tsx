@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useRecoilValue } from 'recoil';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordBoardActionBar } from '@/object-record/record-board/action-bar/components/RecordBoardActionBar';
 import { RecordBoardInternalEffect } from '@/object-record/record-board/components/RecordBoardInternalEffect';
@@ -22,7 +23,6 @@ import { BoardColumnDefinition } from '../types/BoardColumnDefinition';
 import { BoardOptions } from '../types/BoardOptions';
 
 import { RecordBoardColumn } from './RecordBoardColumn';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export type RecordBoardProps = {
   recordBoardId: string;

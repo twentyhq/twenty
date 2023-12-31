@@ -2,6 +2,7 @@ import { ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
   FieldContext,
   RecordUpdateHook,
@@ -24,7 +25,6 @@ import { getLogoUrlFromDomainName } from '~/utils';
 import { companyProgressesFamilyState } from '../states/companyProgressesFamilyState';
 
 import { CompanyChip } from './CompanyChip';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>

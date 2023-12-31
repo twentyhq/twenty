@@ -6,6 +6,7 @@ import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRi
 import { Activity } from '@/activities/types/Activity';
 import { Company } from '@/companies/types/Company';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Person } from '@/people/types/Person';
 import { IconNotes } from '@/ui/display/icon';
@@ -26,7 +27,6 @@ import { Command, CommandType } from '../types/Command';
 
 import { CommandGroup } from './CommandGroup';
 import { CommandMenuItem } from './CommandMenuItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const StyledDialog = styled.div`
   background: ${({ theme }) => theme.background.secondary};

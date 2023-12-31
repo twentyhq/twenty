@@ -3,13 +3,13 @@ import { produce } from 'immer';
 import { useRecoilCallback } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { savedViewSortsScopedFamilyState } from '@/views/states/savedViewSortsScopedFamilyState';
 import { ViewSort } from '@/views/types/ViewSort';
 import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
 
 import { useViewScopedStates } from './useViewScopedStates';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const useViewSorts = (viewScopeId: string) => {
   const {

@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { Person } from '@/people/types/Person';
 import { IconDotsVertical, IconLinkOff, IconTrash } from '@/ui/display/icon';
 import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
@@ -14,7 +15,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export type PeopleCardProps = {
   person: Pick<Person, 'id' | 'avatarUrl' | 'name' | 'jobTitle'>;

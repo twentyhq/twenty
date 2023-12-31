@@ -4,11 +4,11 @@ import { isNonEmptyArray } from '@sniptt/guards';
 
 import { Company } from '@/companies/types/Company';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { mapPaginatedRecordsToRecords } from '@/object-record/utils/mapPaginatedRecordsToRecords';
 import { PeopleCard } from '@/people/components/PeopleCard';
 
 import { AddPersonToCompany } from './AddPersonToCompany';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export type CompanyTeamProps = {
   company: Pick<Company, 'id'>;

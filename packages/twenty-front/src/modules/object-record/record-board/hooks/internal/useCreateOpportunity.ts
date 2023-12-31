@@ -1,10 +1,10 @@
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordBoardCardIdsByColumnIdFamilyState } from '@/object-record/record-board/states/recordBoardCardIdsByColumnIdFamilyState';
 import { Opportunity } from '@/pipeline/types/Opportunity';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const useCreateOpportunity = () => {
   const { createOneRecord: createOneOpportunity } =
