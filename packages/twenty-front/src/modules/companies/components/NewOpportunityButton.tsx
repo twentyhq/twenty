@@ -2,6 +2,7 @@ import { useCallback, useContext, useState } from 'react';
 import { useQuery } from '@apollo/client';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { NewButton } from '@/object-record/record-board/components/NewButton';
 import { BoardColumnContext } from '@/object-record/record-board/contexts/BoardColumnContext';
 import { useCreateOpportunity } from '@/object-record/record-board/hooks/internal/useCreateOpportunity';
@@ -11,7 +12,6 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const NewOpportunityButton = () => {
   const [isCreatingCard, setIsCreatingCard] = useState(false);

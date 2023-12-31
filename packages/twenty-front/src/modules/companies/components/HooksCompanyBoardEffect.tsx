@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
 import { availableRecordBoardCardFieldsScopedState } from '@/object-record/record-board/states/availableRecordBoardCardFieldsScopedState';
 import { recordBoardCardFieldsScopedState } from '@/object-record/record-board/states/recordBoardCardFieldsScopedState';
@@ -14,7 +15,6 @@ import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates'
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewFieldsToBoardFieldDefinitions';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 type HooksCompanyBoardEffectProps = {
   viewBarId: string;

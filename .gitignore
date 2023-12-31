@@ -17,3 +17,6 @@
 !.yarn/sdks
 !.yarn/versions
 .vercel
+
+# yarn.lock should be managed at the root level only (nx monorepo)
+**/yarn.lock

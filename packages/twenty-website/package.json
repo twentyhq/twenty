@@ -12,6 +12,8 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@jsdevtools/rehype-toc": "^3.0.2",
+    "@nivo/calendar": "^0.84.0",
+    "@nivo/core": "^0.84.0",
     "@stoplight/elements": "^7.16.2",
     "@tabler/icons-react": "^2.44.0",
     "better-sqlite3": "^9.2.2",
