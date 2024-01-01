@@ -42,7 +42,7 @@ See also:
 🖥️ [Local Setup](https://docs.twenty.com/contributor/local-setup)  
 
 # Why Choose Twenty?
-We understand that the CRM landscape is vast. So why should you chose us?
+We understand that the CRM landscape is vast. So why should you choose us?
 
 ⛓️ **Full control, Full Freedom:** Contribute, self-host, fork. Break free from vendor lock-in and join us in shaping the open future of CRM.
 
