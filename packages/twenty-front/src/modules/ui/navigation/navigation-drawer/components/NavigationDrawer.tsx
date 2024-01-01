@@ -25,7 +25,6 @@ export type NavigationDrawerProps = {
 const StyledAnimatedContainer = styled(motion.div)`
   display: flex;
   justify-content: end;
-  overflow-y: auto;
 `;
 
 const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
@@ -35,6 +34,7 @@ const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
   gap: ${({ theme }) => theme.spacing(8)};
   height: 100%;
   min-width: ${desktopNavDrawerWidths.menu};
+  overflow-y: auto;
   padding: ${({ theme }) => theme.spacing(3, 2, 4)};
 
   ${({ isSubMenu, theme }) =>
