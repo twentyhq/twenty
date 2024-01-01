@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { SettingsAccountsInboxSettingsContactAutoCreateSection } from '@/settings/accounts/components/SettingsAccountsInboxSettingsContactAutoCreationSection';
 import { SettingsAccountsInboxSettingsSynchronizationSection } from '@/settings/accounts/components/SettingsAccountsInboxSettingsSynchronizationSection';
 import {
   InboxSettingsVisibilityValue,
@@ -28,6 +29,8 @@ export const SettingsAccountsEmailsInboxSettings = () => {
 
   const handleSynchronizationToggle = (_value: boolean) => {};
 
+  const handleContactAutoCreationToggle = (_value: boolean) => {};
+
   const handleVisibilityChange = (_value: InboxSettingsVisibilityValue) => {};
 
   return (
@@ -47,6 +50,10 @@ export const SettingsAccountsEmailsInboxSettings = () => {
         <SettingsAccountsInboxSettingsVisibilitySection
           value={account.visibility}
           onChange={handleVisibilityChange}
+        />
+        <SettingsAccountsInboxSettingsContactAutoCreateSection
+          account={account}
+          onToggle={handleContactAutoCreationToggle}
         />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
