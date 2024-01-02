@@ -6,6 +6,7 @@ import { useHandleCheckableActivityTargetChange } from '@/activities/hooks/useHa
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/activities/utils/flatMapAndSortEntityForSelectArrayByName';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { MultipleEntitySelect } from '@/object-record/relation-picker/components/MultipleEntitySelect';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
@@ -56,12 +57,12 @@ export const ActivityTargetInlineCellEditMode = ({
   );
 
   const { findManyRecordsQuery: findManyPeopleQuery } = useObjectMetadataItem({
-    objectNameSingular: 'person',
+    objectNameSingular: CoreObjectNameSingular.Person,
   });
 
   const { findManyRecordsQuery: findManyCompaniesQuery } =
     useObjectMetadataItem({
-      objectNameSingular: 'company',
+      objectNameSingular: CoreObjectNameSingular.Company,
     });
 
   const useFindManyPeopleQuery = (options: any) =>
@@ -87,7 +88,7 @@ export const ActivityTargetInlineCellEditMode = ({
     orderByField: 'createdAt',
     mappingFunction: (record: any) => identifiersMapper?.(record, 'person'),
     selectedIds: initialPeopleIds,
-    objectNameSingular: 'person',
+    objectNameSingular: CoreObjectNameSingular.Person,
     limit: 3,
   });
 
@@ -102,7 +103,7 @@ export const ActivityTargetInlineCellEditMode = ({
     orderByField: 'createdAt',
     mappingFunction: (record: any) => identifiersMapper?.(record, 'company'),
     selectedIds: initialCompanyIds,
-    objectNameSingular: 'company',
+    objectNameSingular: CoreObjectNameSingular.Company,
     limit: 3,
   });
 

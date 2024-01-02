@@ -9,6 +9,7 @@ import { Favorite } from '@/favorites/types/Favorite';
 import { mapFavorites } from '@/favorites/utils/mapFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -29,11 +30,11 @@ export const useFavorites = ({
     createOneRecordMutation: createOneFavoriteMutation,
     deleteOneRecordMutation: deleteOneFavoriteMutation,
   } = useObjectMetadataItem({
-    objectNameSingular: 'favorite',
+    objectNameSingular: CoreObjectNameSingular.Favorite,
   });
 
   const { triggerOptimisticEffects } = useOptimisticEffect({
-    objectNameSingular: 'favorite',
+    objectNameSingular: CoreObjectNameSingular.Favorite,
   });
   const { performOptimisticEvict } = useOptimisticEvict();
 
@@ -49,7 +50,7 @@ export const useFavorites = ({
   const apolloClient = useApolloClient();
 
   useFindManyRecords({
-    objectNameSingular: 'favorite',
+    objectNameSingular: CoreObjectNameSingular.Favorite,
     onCompleted: useRecoilCallback(
       ({ snapshot, set }) =>
         async (data: PaginatedRecordTypeResults<Required<Favorite>>) => {

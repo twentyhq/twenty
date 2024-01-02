@@ -15,11 +15,13 @@ export const useFieldContext = ({
   fieldMetadataName,
   objectRecordId,
   fieldPosition,
+  clearable,
 }: {
   objectNameSingular: string;
   objectRecordId: string;
   fieldMetadataName: string;
   fieldPosition: number;
+  clearable?: boolean;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -60,6 +62,7 @@ export const useFieldContext = ({
               }),
               useUpdateRecord: useUpdateOneObjectMutation,
               hotkeyScope: InlineCellHotkeyScope.InlineCell,
+              clearable,
             }}
           >
             {children}

@@ -6,6 +6,7 @@ import { AttachmentDropdown } from '@/activities/files/components/AttachmentDrop
 import { AttachmentIcon } from '@/activities/files/components/AttachmentIcon';
 import { Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
   FieldContext,
   GenericFieldContextType,
@@ -63,7 +64,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
 
   const { deleteOneRecord: deleteOneAttachment } =
     useDeleteOneRecord<Attachment>({
-      objectNameSingular: 'attachment',
+      objectNameSingular: CoreObjectNameSingular.Attachment,
     });
 
   const handleDelete = () => {

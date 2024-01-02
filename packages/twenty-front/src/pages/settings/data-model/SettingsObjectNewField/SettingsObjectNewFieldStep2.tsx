@@ -5,6 +5,7 @@ import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCre
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -83,11 +84,11 @@ export const SettingsObjectNewFieldStep2 = () => {
   const [relationObjectViews, setRelationObjectViews] = useState<View[]>([]);
 
   const { modifyRecordFromCache: modifyViewFromCache } = useObjectMetadataItem({
-    objectNameSingular: 'view',
+    objectNameSingular: CoreObjectNameSingular.View,
   });
 
   useFindManyRecords({
-    objectNameSingular: 'view',
+    objectNameSingular: CoreObjectNameSingular.View,
     filter: {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: activeObjectMetadataItem?.id },
@@ -102,7 +103,7 @@ export const SettingsObjectNewFieldStep2 = () => {
   });
 
   useFindManyRecords({
-    objectNameSingular: 'view',
+    objectNameSingular: CoreObjectNameSingular.View,
     skip: !formValues.relation?.objectMetadataId,
     filter: {
       type: { eq: ViewType.Table },

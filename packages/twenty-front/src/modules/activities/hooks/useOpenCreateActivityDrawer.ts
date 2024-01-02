@@ -5,6 +5,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { Activity, ActivityType } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
@@ -20,10 +21,10 @@ export const useOpenCreateActivityDrawer = () => {
   const { openRightDrawer } = useRightDrawer();
   const { createOneRecord: createOneActivityTarget } =
     useCreateOneRecord<ActivityTarget>({
-      objectNameSingular: 'activityTarget',
+      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     });
   const { createOneRecord: createOneActivity } = useCreateOneRecord<Activity>({
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
   });
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const setHotkeyScope = useSetHotkeyScope();

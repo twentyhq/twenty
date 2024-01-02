@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { CompanyBoard } from '@/companies/board/components/CompanyBoard';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { PipelineAddButton } from '@/pipeline/components/PipelineAddButton';
 import { usePipelineSteps } from '@/pipeline/hooks/usePipelineSteps';
@@ -22,7 +23,7 @@ export const Opportunities = () => {
 
   const { updateOneRecord: updateOnePipelineStep } =
     useUpdateOneRecord<PipelineStep>({
-      objectNameSingular: 'pipelineStep',
+      objectNameSingular: CoreObjectNameSingular.PipelineStep,
     });
 
   const handleEditColumnTitle = ({

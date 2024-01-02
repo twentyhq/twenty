@@ -24,6 +24,7 @@ export {
   IconBuildingSkyscraper,
   IconCalendar,
   IconCalendarEvent,
+  IconCalendarX,
   IconCheck,
   IconCheckbox,
   IconChevronDown,

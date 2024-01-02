@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil';
 
 import { ActivityEditor } from '@/activities/components/ActivityEditor';
 import { Activity } from '@/activities/types/Activity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 
@@ -35,7 +36,7 @@ export const RightDrawerActivity = ({
   );
 
   const { record: activity } = useFindOneRecord({
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
     objectRecordId: activityId,
     skip: !activityId,
     onCompleted: (activity: Activity) => {

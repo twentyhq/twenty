@@ -5,6 +5,7 @@ import { ActivityCreateButton } from '@/activities/components/ActivityCreateButt
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
@@ -49,7 +50,7 @@ const StyledEmptyTimelineSubTitle = styled.div`
 
 export const Timeline = ({ entity }: { entity: ActivityTargetableEntity }) => {
   const { records: activityTargets, loading } = useFindManyRecords({
-    objectNameSingular: 'activityTarget',
+    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     filter: {
       [entity.type === 'Company' ? 'companyId' : 'personId']: { eq: entity.id },
     },
@@ -57,7 +58,7 @@ export const Timeline = ({ entity }: { entity: ActivityTargetableEntity }) => {
 
   const { records: activities } = useFindManyRecords({
     skip: !activityTargets?.length,
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
     filter: {
       id: {
         in: activityTargets?.map((activityTarget) => activityTarget.activityId),

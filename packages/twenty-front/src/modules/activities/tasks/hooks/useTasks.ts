@@ -3,6 +3,7 @@ import { DateTime } from 'luxon';
 
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { parseDate } from '~/utils/date-utils';
@@ -21,7 +22,7 @@ export const useTasks = (props?: UseTasksProps) => {
   });
 
   const { records: activityTargets } = useFindManyRecords({
-    objectNameSingular: 'activityTarget',
+    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     filter: isDefined(entity)
       ? {
           [entity?.type === 'Company' ? 'companyId' : 'personId']: {
@@ -32,7 +33,7 @@ export const useTasks = (props?: UseTasksProps) => {
   });
 
   const { records: completeTasksData } = useFindManyRecords({
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
     skip: !entity && !selectedFilter,
     filter: {
       completedAt: { is: 'NOT_NULL' },
@@ -56,7 +57,7 @@ export const useTasks = (props?: UseTasksProps) => {
   });
 
   const { records: incompleteTaskData } = useFindManyRecords({
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
     skip: !entity && !selectedFilter,
     filter: {
       completedAt: { is: 'NULL' },

@@ -1,5 +1,6 @@
 import { useRecoilState } from 'recoil';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
@@ -15,7 +16,7 @@ export const useBoardColumnsInternal = () => {
 
   const { updateOneRecord: updateOnePipelineStep } =
     useUpdateOneRecord<PipelineStep>({
-      objectNameSingular: 'pipelineStep',
+      objectNameSingular: CoreObjectNameSingular.PipelineStep,
     });
 
   const updatedPipelineSteps = (stages: BoardColumnDefinition[]) => {
