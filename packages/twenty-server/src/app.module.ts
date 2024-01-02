@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
 
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 import { GraphQLConfigService } from 'src/graphql-config.service';
 import { GlobalExceptionFilter } from 'src/filters/global-exception.filter';
@@ -24,6 +25,12 @@ import { WorkspaceModule } from './workspace/workspace.module';
       driver: YogaDriver,
       imports: [CoreModule],
       useClass: GraphQLConfigService,
+    }),
+    MailerModule.forRoot({
+      transport: {
+        host: 'localhost',
+        port: 2525,
+      },
     }),
     HealthModule,
     IntegrationsModule,
