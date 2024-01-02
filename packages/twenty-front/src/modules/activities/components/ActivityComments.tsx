@@ -7,6 +7,7 @@ import { Comment } from '@/activities/comment/Comment';
 import { Activity } from '@/activities/types/Activity';
 import { Comment as CommentType } from '@/activities/types/Comment';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import {
@@ -14,7 +15,6 @@ import {
   AutosizeTextInputVariant,
 } from '@/ui/input/components/AutosizeTextInput';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledThreadItemListContainer = styled.div`
   align-items: flex-start;

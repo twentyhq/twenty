@@ -26,12 +26,12 @@ const Contributors = async () => {
         ORDER BY 
           pullRequestCount DESC;
         `).all() as Contributor[];
+        
   
   db.close();
 
   return (
     <div>
-      <h1>Top Contributors</h1>
       <AvatarGrid users={contributors} />
     </div>
   );

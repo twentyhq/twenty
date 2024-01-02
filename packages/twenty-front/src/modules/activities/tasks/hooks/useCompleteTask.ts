@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 
 import { Activity } from '@/activities/types/Activity';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 
 type Task = Pick<Activity, 'id' | 'completedAt'>;
 

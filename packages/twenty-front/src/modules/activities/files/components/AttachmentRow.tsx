@@ -6,6 +6,7 @@ import { AttachmentDropdown } from '@/activities/files/components/AttachmentDrop
 import { AttachmentIcon } from '@/activities/files/components/AttachmentIcon';
 import { Attachment } from '@/activities/files/types/Attachment';
 import { downloadFile } from '@/activities/files/utils/downloadFile';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
   FieldContext,
   GenericFieldContextType,
@@ -14,7 +15,6 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { IconCalendar } from '@/ui/display/icon';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { formatToHumanReadableDate } from '~/utils';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledRow = styled.div`
   align-items: center;

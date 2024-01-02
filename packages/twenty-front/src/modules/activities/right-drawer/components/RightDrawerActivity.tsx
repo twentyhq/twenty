@@ -4,11 +4,11 @@ import { useRecoilState } from 'recoil';
 
 import { ActivityEditor } from '@/activities/components/ActivityEditor';
 import { Activity } from '@/activities/types/Activity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 
 import '@blocknote/core/style.css';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;

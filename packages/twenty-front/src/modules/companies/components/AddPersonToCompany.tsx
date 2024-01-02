@@ -6,6 +6,7 @@ import { flip, offset, useFloating } from '@floating-ui/react';
 import { v4 } from 'uuid';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldDoubleText } from '@/object-record/field/types/FieldDoubleText';
 import { RelationPicker } from '@/object-record/relation-picker/components/RelationPicker';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
@@ -16,7 +17,6 @@ import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledContainer = styled.div`
   position: static;
