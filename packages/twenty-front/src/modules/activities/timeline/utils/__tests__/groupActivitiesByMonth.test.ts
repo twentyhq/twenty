@@ -13,8 +13,8 @@ describe('groupActivitiesByMonth', () => {
     expect(grouped[0].items).toHaveLength(1);
     expect(grouped[1].items).toHaveLength(1);
 
-    expect(grouped[0].year).toBe(2023);
-    expect(grouped[1].year).toBe(2023);
+    expect(grouped[0].year).toBe(2024);
+    expect(grouped[1].year).toBe(2024);
 
     expect(grouped[0].month).toBe(11);
     expect(grouped[1].month).toBe(3);
