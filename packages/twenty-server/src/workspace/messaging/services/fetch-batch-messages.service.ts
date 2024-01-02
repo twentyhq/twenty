@@ -4,7 +4,7 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { simpleParser } from 'mailparser';
 
 import { GmailMessage } from 'src/workspace/messaging/types/gmailMessage';
-import { MessageOrThreadQuery } from 'src/workspace/messaging/types/messageQuery';
+import { MessageOrThreadQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
 import { GmailParsedResponse } from 'src/workspace/messaging/types/gmailParsedResponse';
 
 @Injectable()
@@ -32,6 +32,19 @@ export class FetchBatchMessagesService {
     );
 
     return formattedResponses;
+  }
+
+  async fetchAllThreads(
+    queries: MessageOrThreadQuery[],
+    accessToken: string,
+  ): Promise<any> {
+    const batchResponses = await this.fetchAllByBatches(
+      queries,
+      accessToken,
+      'batch_gmail_threads',
+    );
+
+    console.log('batchResponses', batchResponses);
   }
 
   async fetchAllByBatches(

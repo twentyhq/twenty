@@ -9,7 +9,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetch-batch-messages.service';
 import { GmailMessage } from 'src/workspace/messaging/types/gmailMessage';
-import { MessageOrThreadQuery } from 'src/workspace/messaging/types/messageQuery';
+import { MessageOrThreadQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 
 @Injectable()
