@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { RecordTable } from '@/object-record/record-table/components/RecordTable';
+import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { TableOptionsDropdownId } from '@/object-record/record-table/constants/TableOptionsDropdownId';
 import { TableOptionsDropdown } from '@/object-record/record-table/options/components/TableOptionsDropdown';
 import { SignInBackgroundMockContainerEffect } from '@/sign-in-background-mock/components/SignInBackgroundMockContainerEffect';
@@ -30,7 +30,7 @@ export const SignInBackgroundMockContainer = () => {
         recordTableId={recordTableId}
         viewId={viewBarId}
       />
-      <RecordTable
+      <RecordTableWithWrappers
         recordTableId={recordTableId}
         viewBarId={viewBarId}
         createRecord={() => {}}

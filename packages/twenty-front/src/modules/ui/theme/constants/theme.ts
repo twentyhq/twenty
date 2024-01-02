@@ -41,6 +41,7 @@ const common = {
   table: {
     horizontalCellMargin: '8px',
     checkboxColumnWidth: '32px',
+    horizontalCellPadding: '8px',
   },
   rightDrawerWidth: '500px',
   clickableElementBackgroundTransition: 'background 0.1s ease',
