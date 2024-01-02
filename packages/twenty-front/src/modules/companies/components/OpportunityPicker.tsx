@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { SingleEntitySelectBase } from '@/object-record/relation-picker/components/SingleEntitySelectBase';
 import { useEntitySelectSearch } from '@/object-record/relation-picker/hooks/useEntitySelectSearch';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
@@ -17,7 +18,6 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export type OpportunityPickerProps = {
   companyId: string | null;

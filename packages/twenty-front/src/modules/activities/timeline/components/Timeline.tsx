@@ -5,11 +5,11 @@ import { ActivityCreateButton } from '@/activities/components/ActivityCreateButt
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { TimelineItemsContainer } from './TimelineItemsContainer';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledMainContainer = styled.div`
   align-items: flex-start;

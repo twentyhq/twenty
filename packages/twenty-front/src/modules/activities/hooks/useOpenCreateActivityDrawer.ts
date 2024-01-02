@@ -5,6 +5,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { Activity, ActivityType } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
@@ -15,7 +16,6 @@ import { activityTargetableEntityArrayState } from '../states/activityTargetable
 import { viewableActivityIdState } from '../states/viewableActivityIdState';
 import { ActivityTargetableEntity } from '../types/ActivityTargetableEntity';
 import { getTargetableEntitiesWithParents } from '../utils/getTargetableEntitiesWithParents';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const useOpenCreateActivityDrawer = () => {
   const { openRightDrawer } = useRightDrawer();

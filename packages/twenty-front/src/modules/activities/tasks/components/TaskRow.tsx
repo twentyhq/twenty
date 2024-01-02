@@ -6,6 +6,7 @@ import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRi
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { IconCalendar, IconComment } from '@/ui/display/icon';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
@@ -13,7 +14,6 @@ import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
 import { useCompleteTask } from '../hooks/useCompleteTask';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledContainer = styled.div`
   align-items: center;

@@ -1,12 +1,12 @@
 import { useRecoilState } from 'recoil';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 
 import { BoardColumnDefinition } from '../../types/BoardColumnDefinition';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const useBoardColumnsInternal = () => {
   const { boardColumnsState } = useRecordBoardScopedStates();

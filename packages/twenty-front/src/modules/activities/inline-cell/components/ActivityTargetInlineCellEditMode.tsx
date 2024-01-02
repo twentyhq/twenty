@@ -6,12 +6,12 @@ import { useHandleCheckableActivityTargetChange } from '@/activities/hooks/useHa
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { flatMapAndSortEntityForSelectArrayOfArrayByName } from '@/activities/utils/flatMapAndSortEntityForSelectArrayByName';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { MultipleEntitySelect } from '@/object-record/relation-picker/components/MultipleEntitySelect';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { assertNotNull } from '~/utils/assert';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 type ActivityTargetInlineCellEditModeProps = {
   activityId: string;

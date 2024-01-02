@@ -2,10 +2,10 @@ import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ViewField } from '@/views/types/ViewField';
 import { getViewScopedStatesFromSnapshot } from '@/views/utils/getViewScopedStatesFromSnapshot';
 import { getViewScopedStateValuesFromSnapshot } from '@/views/utils/getViewScopedStateValuesFromSnapshot';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 export const useViewFields = (viewScopeId: string) => {
   const { updateOneRecordMutation, createOneRecordMutation } =

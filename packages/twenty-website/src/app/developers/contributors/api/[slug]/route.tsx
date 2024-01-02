@@ -7,7 +7,7 @@ export async function GET(
     { params }: { params: { slug: string } }) {
     const db = new Database('db.sqlite', { readonly: true });
 
-    if(params.slug !== 'users' && params.slug !== 'labels' && params.slug !== 'pullRequests') {
+    if(params.slug !== 'users' && params.slug !== 'labels' && params.slug !== 'pullRequests' && params.slug !== 'issues') {
         return Response.json({ error: 'Invalid table name' }, { status: 400 });
     }
 

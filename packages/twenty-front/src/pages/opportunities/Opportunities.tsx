@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { CompanyBoard } from '@/companies/board/components/CompanyBoard';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { PipelineAddButton } from '@/pipeline/components/PipelineAddButton';
 import { usePipelineSteps } from '@/pipeline/hooks/usePipelineSteps';
@@ -9,7 +10,6 @@ import { IconTargetArrow } from '@/ui/display/icon';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
 const StyledBoardContainer = styled.div`
   display: flex;
