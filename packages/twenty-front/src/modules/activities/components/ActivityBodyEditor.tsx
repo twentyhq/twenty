@@ -88,7 +88,7 @@ export const ActivityBodyEditor = ({
     },
     slashMenuItems,
     blockSpecs: blockSpecs,
-    uploadFile: imagesActivated ? handleUploadAttachment : undefined,
+    uploadFile: handleUploadAttachment,
     onEditorReady: (editor: BlockNoteEditor) => {
       editor.domElement.addEventListener('paste', handleImagePaste);
     },
