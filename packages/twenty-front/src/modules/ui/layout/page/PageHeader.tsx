@@ -54,14 +54,23 @@ const StyledTitleContainer = styled.div`
   max-width: 50%;
 `;
 
-const StyledBackIconButton = styled(IconButton)`
+const StyledButtonDiv = styled.div`
+  align-items: center;
+  display: flex;
+  height: 24px;
+  justify-content: center;
   margin-right: ${({ theme }) => theme.spacing(1)};
+  width: 24px;
+`;
+const StyledBackIconButton = styled(IconButton)`
+  height: 24px;
+  width: 24px;
 `;
 
 const StyledTopBarIconStyledTitleContainer = styled.div`
   align-items: center;
   display: flex;
-  flex: 1 0 100%;
+  flex: 1 0 auto;
   flex-direction: row;
 `;
 
@@ -102,12 +111,14 @@ export const PageHeader = ({
           </StyledTopBarButtonContainer>
         )}
         {hasBackButton && (
-          <StyledBackIconButton
-            Icon={IconChevronLeft}
-            size={isMobile ? 'small' : 'medium'}
-            onClick={() => navigate(-1)}
-            variant="tertiary"
-          />
+          <StyledButtonDiv>
+            <StyledBackIconButton
+              Icon={IconChevronLeft}
+              size={isMobile ? 'small' : 'medium'}
+              onClick={() => navigate(-1)}
+              variant="tertiary"
+            />
+          </StyledButtonDiv>
         )}
         <StyledTopBarIconStyledTitleContainer>
           {Icon && <Icon size={theme.icon.size.md} />}
