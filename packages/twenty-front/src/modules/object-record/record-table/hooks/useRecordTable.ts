@@ -379,5 +379,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setOnColumnsChange,
     setIsRecordTableInitialLoading,
     setRecordTableLastRowVisible,
+    setSoftFocusPosition,
   };
 };

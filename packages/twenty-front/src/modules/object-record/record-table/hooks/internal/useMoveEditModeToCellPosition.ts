@@ -19,7 +19,7 @@ export const useMoveEditModeToTableCellPosition = (
     injectFamilyStateWithRecordTableScopeId,
   } = useRecordTableScopedStates(recordTableScopeId);
 
-  useRecoilCallback(
+  return useRecoilCallback(
     ({ set, snapshot }) => {
       return (newPosition: TableCellPosition) => {
         const currentTableCellInEditModePosition =

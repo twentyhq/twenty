@@ -2,9 +2,9 @@ import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScope
 
 import { TableCellPosition } from '../types/TableCellPosition';
 
-export const currentTableCellInEditModePositionState =
+export const currentTableCellInEditModePositionScopedState =
   createScopedState<TableCellPosition>({
-    key: 'currentTableCellInEditModePositionState',
+    key: 'currentTableCellInEditModePositionScopedState',
     defaultValue: {
       row: 0,
       column: 1,

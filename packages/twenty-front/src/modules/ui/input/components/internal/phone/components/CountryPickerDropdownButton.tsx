@@ -75,9 +75,7 @@ export const CountryPickerDropdownButton = ({
 
   const [selectedCountry, setSelectedCountry] = useState<Country>();
 
-  const { isDropdownOpen, closeDropdown } = useDropdown({
-    dropdownScopeId: 'country-picker',
-  });
+  const { isDropdownOpen, closeDropdown } = useDropdown('country-picker');
 
   const handleChange = (countryCode: string) => {
     onChange(countryCode);

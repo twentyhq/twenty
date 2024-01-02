@@ -1,5 +1,5 @@
 import { isRowSelectedScopedFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedScopedFamilyState';
-import { currentTableCellInEditModePositionState } from '@/object-record/record-table/states/currentTableCellInEditModePositionState';
+import { currentTableCellInEditModePositionScopedState } from '@/object-record/record-table/states/currentTableCellInEditModePositionScopedState';
 import { isRecordTableInitialLoadingScopedState } from '@/object-record/record-table/states/isRecordTableInitialLoadingScopedState';
 import { isSoftFocusActiveScopedState } from '@/object-record/record-table/states/isSoftFocusActiveScopedState';
 import { isSoftFocusOnTableCellScopedFamilyState } from '@/object-record/record-table/states/isSoftFocusOnTableCellScopedFamilyState';
@@ -79,7 +79,7 @@ export const getRecordTableScopeInjector = () => {
   );
 
   const currentTableCellInEditModePositionScopeInjector = getScopeInjector(
-    currentTableCellInEditModePositionState,
+    currentTableCellInEditModePositionScopedState,
   );
 
   const isTableCellInEditModeScopeInjector = getFamilyScopeInjector(

@@ -1,15 +1,24 @@
 import { useRecoilCallback } from 'recoil';
 
+import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
-import { useSetSoftFocusPosition } from '../../hooks/internal/useSetSoftFocusPosition';
-import { isSoftFocusActiveScopedState } from '../../states/isSoftFocusActiveScopedState';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useCurrentTableCellPosition } from './useCurrentCellPosition';
 
 export const useSetSoftFocusOnCurrentTableCell = () => {
-  const setSoftFocusPosition = useSetSoftFocusPosition();
+  const { setSoftFocusPosition } = useRecordTable();
+
+  const { isSoftFocusActiveScopeInjector } = getRecordTableScopeInjector();
+
+  const { injectStateWithRecordTableScopeId } = useRecordTableScopedStates();
+
+  const isSoftFocusActiveState = injectStateWithRecordTableScopeId(
+    isSoftFocusActiveScopeInjector,
+  );
 
   const currentTableCellPosition = useCurrentTableCellPosition();
 
@@ -20,10 +29,15 @@ export const useSetSoftFocusOnCurrentTableCell = () => {
       () => {
         setSoftFocusPosition(currentTableCellPosition);
 
-        set(isSoftFocusActiveScopedState, true);
+        set(isSoftFocusActiveState, true);
 
         setHotkeyScope(TableHotkeyScope.TableSoftFocus);
       },
-    [setHotkeyScope, currentTableCellPosition, setSoftFocusPosition],
+    [
+      setSoftFocusPosition,
+      currentTableCellPosition,
+      isSoftFocusActiveState,
+      setHotkeyScope,
+    ],
   );
 };
