@@ -11,7 +11,6 @@ services:
     volumes:
       - ../../..:/app
       - twenty_dev_node_modules_root:/app/node_modules
-      - twenty_dev_node_modules_yarn:/app/.yarn
       - twenty_dev_node_modules_docs:/app/packages/twenty-docs/node_modules
       - twenty_dev_node_modules_eslint:/app/packages/eslint-plugin-twenty/node_modules
       - twenty_dev_node_modules_front:/app/packages/twenty-front/node_modules
@@ -35,7 +34,6 @@ volumes:
   twenty_db_data:
     name: twenty_db_data
   twenty_dev_node_modules_root:
-  twenty_dev_node_modules_yarn:
   twenty_dev_node_modules_docs:
   twenty_dev_node_modules_eslint:
   twenty_dev_node_modules_front:
