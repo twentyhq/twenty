@@ -36,9 +36,9 @@ export class UpdateManyQueryFactory {
     );
 
     const argsData = {
-      ...computedArgs.data, 
-      updatedAt: new Date().toISOString()
-    }
+      ...computedArgs.data,
+      updatedAt: new Date().toISOString(),
+    };
 
     return `
     mutation {
