@@ -26,10 +26,10 @@ export class FetchWorkspaceMessagesService {
       workspaceId,
       '20202020-0687-4c41-b707-ed1bfca972a7',
     );
-    await this.fetchWorkspaceMemberMessages(
-      workspaceId,
-      '20202020-0687-4c41-b707-ed1bfca972a7',
-    );
+    // await this.fetchWorkspaceMemberMessages(
+    //   workspaceId,
+    //   '20202020-0687-4c41-b707-ed1bfca972a7',
+    // );
   }
 
   async fetchWorkspaceMemberThreads(
@@ -59,6 +59,7 @@ export class FetchWorkspaceMessagesService {
       throw new Error('No connected account found');
     }
 
+    const accessToken = connectedAccounts[0]?.accessToken;
     const refreshToken = connectedAccounts[0]?.refreshToken;
 
     if (!refreshToken) {
@@ -74,7 +75,7 @@ export class FetchWorkspaceMessagesService {
 
     const threadsData = threads.data.threads;
 
-    if (!threadsData) {
+    if (!threadsData || threadsData?.length === 0) {
       return;
     }
 
@@ -83,6 +84,15 @@ export class FetchWorkspaceMessagesService {
       dataSourceMetadata,
       workspaceDataSource,
       connectedAccounts[0].id,
+    );
+
+    const threadQueries: MessageOrThreadQuery[] = threadsData.map((thread) => ({
+      uri: '/gmail/v1/users/me/threads/' + thread.id + '?format=minimal',
+    }));
+
+    await this.fetchBatchMessagesService.fetchAllThreads(
+      threadQueries,
+      accessToken,
     );
   }
 
