@@ -43,10 +43,10 @@ prod-server-run:
 	@docker run -d -p 3000:3000 --name twenty-server twenty-server
 
 prod-postgres-build:
-	@cd ../.. && docker build -f ./packages/twenty-docker/prod/twenty-postgres/Dockerfile --tag twenty-postgres . && cd -
+	@cd ../.. && docker build -f ./packages/twenty-docker/prod/twenty-postgres/Dockerfile --platform linux/amd64 --tag twenty-postgres . && cd -
 
 prod-postgres-run:
-	@docker run -d -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres --name twenty-postgres twenty-postgres
+	@docker run -d -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres --platform linux/amd64 twenty-postgres
 
 release-front:
 	@cd ../.. && docker buildx build \

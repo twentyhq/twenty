@@ -98,7 +98,6 @@ for patch_file in "/patches/pg_graphql/"*.patch; do
     patch -p1 < "$patch_file"
 done
 
-cargo pgrx install --release --pg-config /usr/lib/postgresql/$PG_MAIN_VERSION/bin/pg_config
 cargo pgrx install --release --pg-config /opt/bitnami/postgresql/bin/pg_config
 
 
