@@ -29,17 +29,24 @@ const StyledButton = styled.button<
   backdrop-filter: ${({ applyBlur }) => (applyBlur ? 'blur(20px)' : 'none')};
   background: ${({ theme }) => theme.background.primary};
 
-  border: ${({ focus, theme }) =>
-    focus ? `1px solid ${theme.color.blue}` : 'none'};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: ${({ theme, applyShadow, focus }) => {
-    const defaultShadow = `0px 2px 4px 0px ${theme.background.transparent.light}, 0px 0px 4px 0px ${theme.background.transparent.medium}`;
-    const focusShadow = `0 0 0 3px ${theme.color.blue10}`;
-
-    if (!applyShadow && !focus) return 'none';
-    if (!applyShadow) return focusShadow;
-    return `${defaultShadow}${focus ? `, ${focusShadow}` : ''}`;
+  border: ${({ theme }) => `1px solid ${theme.color.blue}`};
+  border-radius: ${({ theme, position }) => {
+    switch (position) {
+      case 'left':
+        return `${theme.border.radius.sm} 0 0 ${theme.border.radius.sm}`;
+      case 'middle':
+        return '0';
+      case 'right':
+        return `0 ${theme.border.radius.sm} ${theme.border.radius.sm} 0`;
+      default:
+        return theme.border.radius.sm;
+    }
   }};
+  border-right: ${({ position }) => (position !== 'right' ? 'none' : '')};
+  box-shadow: ${({ applyShadow, position, theme }) =>
+    applyShadow && position !== 'middle'
+      ? `0 2px 4px ${theme.background.transparent.light}`
+      : 'none'};
 
   color: ${({ theme, disabled, focus }) => {
     return !disabled
@@ -56,7 +63,7 @@ const StyledButton = styled.button<
   font-weight: ${({ theme }) => theme.font.weight.regular};
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
-  margin: 3px;
+  margin: 0;
   padding: ${({ theme }) => {
     return `0 ${theme.spacing(2)}`;
   }};
