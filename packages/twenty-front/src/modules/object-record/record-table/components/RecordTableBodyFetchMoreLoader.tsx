@@ -41,7 +41,9 @@ export const RecordTableBodyFetchMoreLoader = () => {
     <tbody ref={tbodyRef}>
       {isFetchingMoreObjects ? (
         <StyledRow selected={false}>
-          <StyledTransparentBox />
+          <td>
+            <StyledTransparentBox />
+          </td>
           <td
             style={{
               color: grayScale.gray40,
