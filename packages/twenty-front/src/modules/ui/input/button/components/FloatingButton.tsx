@@ -29,7 +29,20 @@ const StyledButton = styled.button<
   backdrop-filter: ${({ applyBlur }) => (applyBlur ? 'blur(20px)' : 'none')};
   background: ${({ theme }) => theme.background.primary};
 
-  border: ${({ theme }) => `1px solid ${theme.color.blue}`};
+  border: ${({ theme, disabled, focus }) => {
+    let borderColor;
+
+    if (disabled) {
+      borderColor = theme.font.color.extraLight;
+    } else if (!focus) {
+      borderColor = theme.font.color.light;
+    } else {
+      borderColor = theme.color.blue;
+    }
+
+    return `1px solid ${borderColor}`;
+  }};
+
   border-radius: ${({ theme, position }) => {
     switch (position) {
       case 'left':
