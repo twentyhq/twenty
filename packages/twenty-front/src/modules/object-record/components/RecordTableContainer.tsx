@@ -6,7 +6,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { RecordUpdateHookParams } from '@/object-record/field/contexts/FieldContext';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { RecordTable } from '@/object-record/record-table/components/RecordTable';
+import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { TableOptionsDropdownId } from '@/object-record/record-table/constants/TableOptionsDropdownId';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { TableOptionsDropdown } from '@/object-record/record-table/options/components/TableOptionsDropdown';
@@ -104,7 +104,7 @@ export const RecordTableContainer = ({
         />
       </SpreadsheetImportProvider>
       <RecordTableEffect recordTableId={recordTableId} viewBarId={viewBarId} />
-      <RecordTable
+      <RecordTableWithWrappers
         recordTableId={recordTableId}
         viewBarId={viewBarId}
         updateRecordMutation={updateEntity}
