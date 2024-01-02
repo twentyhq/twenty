@@ -28,8 +28,19 @@ import { WorkspaceModule } from './workspace/workspace.module';
     }),
     MailerModule.forRoot({
       transport: {
-        host: 'localhost',
-        port: 2525,
+        name: 'logger',
+        version: '0.1.0',
+        send: (mail, callback) => {
+          const info =
+            `Sent email to: ${mail.data.to}\n` +
+            `From: ${mail.data.from}\n` +
+            `Subject: ${mail.data.subject}\n` +
+            `Content Text: ${mail.data.text}\n` +
+            `Content HTML: ${mail.data.html}`;
+
+          console.log(info);
+          callback(null, true);
+        },
       },
     }),
     HealthModule,
