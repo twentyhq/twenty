@@ -86,10 +86,19 @@ const gabarito = Gabarito({
   adjustFontFallback: false,
 });
 
+const Icon = styled.img`
+  height: 24px;
+  width: 24px;
+`;
+
+// remove the protocol from the url
+const removeProtocol = (url: string) => url.replace(/(^\w+:|^)\/\//, '');
+
 export const CardContainer = ({ data }: { data: OssData }) => {
   return (
     <Container>
       <div>
+        <Icon src={`https://favicon.twenty.com/${removeProtocol(data.href)}`} />
         <Title>{data.name}</Title>
         <Description>{data.description}</Description>
       </div>
