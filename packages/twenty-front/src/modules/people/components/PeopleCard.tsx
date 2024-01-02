@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { Person } from '@/people/types/Person';
 import { IconDotsVertical, IconLinkOff, IconTrash } from '@/ui/display/icon';
 import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
@@ -112,7 +113,7 @@ export const PeopleCard = ({
     updateOneRecordMutation,
     deleteOneRecordMutation,
   } = useObjectMetadataItem({
-    objectNameSingular: 'person',
+    objectNameSingular: CoreObjectNameSingular.Person,
   });
 
   const [updatePerson] = useMutation(updateOneRecordMutation);

@@ -21,6 +21,7 @@ interface PullRequestNode {
   id: string;
   title: string;
   body: string;
+  url: string;
   createdAt: string;
   updatedAt: string;
   closedAt: string;
@@ -35,6 +36,7 @@ interface IssueNode {
   id: string;
   title: string;
   body: string;
+  url: string;
   createdAt: string;
   updatedAt: string;
   closedAt: string;
@@ -90,6 +92,7 @@ async function fetchData(cursor: string | null = null, isIssues: boolean = false
             id
             title
             body
+			url
             createdAt
             updatedAt
             closedAt
@@ -119,6 +122,7 @@ async function fetchData(cursor: string | null = null, isIssues: boolean = false
             id
             title
             body
+			url
             createdAt
             updatedAt
             closedAt
@@ -178,6 +182,7 @@ const initDb = () => {
       id TEXT PRIMARY KEY,
       title TEXT,
       body TEXT,
+	  url TEXT,
       createdAt TEXT,
       updatedAt TEXT,
       closedAt TEXT,
@@ -192,7 +197,8 @@ const initDb = () => {
       id TEXT PRIMARY KEY,
       title TEXT,
       body TEXT,
-      createdAt TEXT,
+      url TEXT,
+	  createdAt TEXT,
       updatedAt TEXT,
       closedAt TEXT,
       authorId TEXT,
@@ -249,10 +255,10 @@ export async function GET() {
 
 	const assignableUsers = await fetchAssignableUsers();
 	const prs = await fetchData(lastPRCursor) as Array<PullRequestNode>;
-	const issues = await fetchData(lastIssueCursor) as Array<IssueNode>;
+	const issues = await fetchData(lastIssueCursor, true) as Array<IssueNode>;
   
-	const insertPR = db.prepare('INSERT INTO pullRequests (id, title, body, createdAt, updatedAt, closedAt, mergedAt, authorId) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING');
-	const insertIssue = db.prepare('INSERT INTO issues (id, title, body, createdAt, updatedAt, closedAt, authorId) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING');
+	const insertPR = db.prepare('INSERT INTO pullRequests (id, title, body, url, createdAt, updatedAt, closedAt, mergedAt, authorId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING');
+	const insertIssue = db.prepare('INSERT INTO issues (id, title, body, url, createdAt, updatedAt, closedAt, authorId) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING');
 	const insertUser = db.prepare('INSERT INTO users (id, login, avatarUrl, url, isEmployee) VALUES (?, ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING');
 	const insertLabel = db.prepare('INSERT INTO labels (id, name, color, description) VALUES (?, ?, ?, ?) ON CONFLICT(id) DO NOTHING');
 	const insertPullRequestLabel = db.prepare('INSERT INTO pullRequestLabels (pullRequestId, labelId) VALUES (?, ?)');
@@ -262,7 +268,7 @@ export async function GET() {
 		console.log(pr);
 		if(pr.author == null) { continue; }
 		insertUser.run(pr.author.resourcePath, pr.author.login, pr.author.avatarUrl, pr.author.url, assignableUsers.has(pr.author.login) ? 1 : 0);
-		insertPR.run(pr.id, pr.title, pr.body, pr.createdAt, pr.updatedAt, pr.closedAt, pr.mergedAt, pr.author.resourcePath);
+		insertPR.run(pr.id, pr.title, pr.body, pr.url, pr.createdAt, pr.updatedAt, pr.closedAt, pr.mergedAt, pr.author.resourcePath);
 
 		for (const label of pr.labels.nodes) {
 			insertLabel.run(label.id, label.name, label.color, label.description);
@@ -274,7 +280,7 @@ export async function GET() {
 		if(issue.author == null) { continue; }
 		insertUser.run(issue.author.resourcePath, issue.author.login, issue.author.avatarUrl, issue.author.url, assignableUsers.has(issue.author.login) ? 1 : 0);
 
-		insertIssue.run(issue.id, issue.title, issue.body, issue.createdAt, issue.updatedAt, issue.closedAt, issue.author.resourcePath);
+		insertIssue.run(issue.id, issue.title, issue.body, issue.url, issue.createdAt, issue.updatedAt, issue.closedAt, issue.author.resourcePath);
 
 		for (const label of issue.labels.nodes) {
 			insertLabel.run(label.id, label.name, label.color, label.description);

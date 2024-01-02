@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useViewBar } from '@/views/hooks/useViewBar';
 import { GraphQLView } from '@/views/types/GraphQLView';
@@ -35,7 +36,7 @@ export const ViewBarEffect = () => {
 
   const { records: newViews } = useFindManyRecords<GraphQLView>({
     skip: !viewObjectMetadataId,
-    objectNameSingular: 'view',
+    objectNameSingular: CoreObjectNameSingular.View,
     filter: {
       type: { eq: viewType },
       objectMetadataId: { eq: viewObjectMetadataId },

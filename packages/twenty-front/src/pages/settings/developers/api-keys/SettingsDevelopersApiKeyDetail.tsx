@@ -5,6 +5,7 @@ import { DateTime } from 'luxon';
 import { useRecoilState } from 'recoil';
 
 import { useOptimisticEvict } from '@/apollo/optimistic-effect/hooks/useOptimisticEvict';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -51,14 +52,14 @@ export const SettingsDevelopersApiKeyDetail = () => {
 
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const { createOneRecord: createOneApiKey } = useCreateOneRecord<ApiKey>({
-    objectNameSingular: 'apiKey',
+    objectNameSingular: CoreObjectNameSingular.ApiKey,
   });
   const { updateOneRecord: updateApiKey } = useUpdateOneRecord<ApiKey>({
-    objectNameSingular: 'apiKey',
+    objectNameSingular: CoreObjectNameSingular.ApiKey,
   });
 
   const { record: apiKeyData } = useFindOneRecord({
-    objectNameSingular: 'apiKey',
+    objectNameSingular: CoreObjectNameSingular.ApiKey,
     objectRecordId: apiKeyId,
   });
 

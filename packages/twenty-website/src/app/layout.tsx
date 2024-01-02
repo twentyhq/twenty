@@ -7,8 +7,8 @@ import { HeaderMobile } from '@/app/components/HeaderMobile';
 import './layout.css';
 
 export const metadata: Metadata = {
-  title: 'Twenty.dev',
-  description: 'Twenty for Developer',
+  title: 'Twenty.com',
+  description: 'Open Source CRM',
   icons: '/images/core/logo.svg',
 };
 

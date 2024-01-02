@@ -2,6 +2,7 @@ import { useCallback, useContext, useState } from 'react';
 import { useQuery } from '@apollo/client';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { NewButton } from '@/object-record/record-board/components/NewButton';
 import { BoardColumnContext } from '@/object-record/record-board/contexts/BoardColumnContext';
 import { useCreateOpportunity } from '@/object-record/record-board/hooks/internal/useCreateOpportunity';
@@ -57,7 +58,7 @@ export const NewOpportunityButton = () => {
 
   // TODO: refactor useFilteredSearchEntityQuery
   const { findManyRecordsQuery } = useObjectMetadataItem({
-    objectNameSingular: 'company',
+    objectNameSingular: CoreObjectNameSingular.Company,
   });
   const useFindManyQuery = (options: any) =>
     useQuery(findManyRecordsQuery, options);
@@ -74,7 +75,7 @@ export const NewOpportunityButton = () => {
     orderByField: 'createdAt',
     selectedIds: [],
     mappingFunction: (record: any) => identifiersMapper?.(record, 'company'),
-    objectNameSingular: 'company',
+    objectNameSingular: CoreObjectNameSingular.Company,
   });
 
   return (

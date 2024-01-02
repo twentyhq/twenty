@@ -3,6 +3,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { Company } from '@/companies/types/Company';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
 import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
@@ -53,7 +54,7 @@ export const useObjectRecordBoard = () => {
   );
 
   useFindManyRecords({
-    objectNameSingular: 'pipelineStep',
+    objectNameSingular: CoreObjectNameSingular.PipelineStep,
     filter: {},
     onCompleted: useCallback(
       (data: PaginatedRecordTypeResults<PipelineStep>) => {
@@ -69,7 +70,7 @@ export const useObjectRecordBoard = () => {
     fetchMoreRecords: fetchMoreOpportunities,
   } = useFindManyRecords<Opportunity>({
     skip: !savedPipelineSteps.length,
-    objectNameSingular: 'opportunity',
+    objectNameSingular: CoreObjectNameSingular.Opportunity,
     filter,
     orderBy,
     onCompleted: useCallback(() => {
@@ -79,7 +80,7 @@ export const useObjectRecordBoard = () => {
 
   const { fetchMoreRecords: fetchMoreCompanies } = useFindManyRecords({
     skip: !savedOpportunities.length,
-    objectNameSingular: 'company',
+    objectNameSingular: CoreObjectNameSingular.Company,
     filter: {
       id: {
         in: savedOpportunities.map(

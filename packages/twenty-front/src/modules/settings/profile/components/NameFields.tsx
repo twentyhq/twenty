@@ -5,6 +5,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { logError } from '~/utils/logError';
@@ -41,7 +42,7 @@ export const NameFields = ({
   );
 
   const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: 'workspaceMember',
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
 
   // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)

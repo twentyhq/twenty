@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -35,11 +36,11 @@ export const SettingsWorkspaceMembers = () => {
   >();
 
   const { records: workspaceMembers } = useFindManyRecords<WorkspaceMember>({
-    objectNameSingular: 'workspaceMember',
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
   const { deleteOneRecord: deleteOneWorkspaceMember } =
     useDeleteOneRecord<WorkspaceMember>({
-      objectNameSingular: 'workspaceMember',
+      objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
     });
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 

@@ -1,6 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
 import { Opportunity } from '@/pipeline/types/Opportunity';
@@ -13,7 +14,7 @@ export const useDeleteSelectedRecordBoardCardsInternal = () => {
 
   const { deleteManyRecords: deleteManyOpportunities } =
     useDeleteManyRecords<Opportunity>({
-      objectNameSingular: 'opportunity',
+      objectNameSingular: CoreObjectNameSingular.Opportunity,
     });
 
   const { selectedCardIdsSelector } = useRecordBoardScopedStates();
