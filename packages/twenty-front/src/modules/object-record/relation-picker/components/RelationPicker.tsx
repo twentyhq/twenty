@@ -1,15 +1,24 @@
-import { useEffect } from 'react';
-import { useQuery } from '@apollo/client';
+import { useContext, useEffect, useState } from 'react';
+import { useMutation, useQuery } from '@apollo/client';
+import { getOperationName } from '@apollo/client/utilities';
+import { useRecoilState } from 'recoil';
+import { v4 } from 'uuid';
 
+import { StyledInputContainer } from '@/companies/components/AddPersonToCompany';
+import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { FieldDefinition } from '@/object-record/field/types/FieldDefinition';
+import { FieldDoubleText } from '@/object-record/field/types/FieldDoubleText';
 import { FieldRelationMetadata } from '@/object-record/field/types/FieldMetadata';
+import { BoardCardIdContext } from '@/object-record/record-board/contexts/BoardCardIdContext';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { IconForbid } from '@/ui/display/icon';
+import { DoubleTextInput } from '@/ui/field/input/components/DoubleTextInput';
 
 export type RelationPickerProps = {
   recordId?: string;
@@ -32,6 +41,7 @@ export const RelationPicker = ({
 }: RelationPickerProps) => {
   const { relationPickerSearchFilter, setRelationPickerSearchFilter } =
     useRelationPicker();
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     setRelationPickerSearchFilter(initialSearchFilter ?? '');
@@ -42,6 +52,45 @@ export const RelationPicker = ({
     objectNameSingular:
       fieldDefinition.metadata.relationObjectMetadataNameSingular,
   });
+
+  const handleEscape = () => setShowDropdown(false);
+
+  const boardCardId = useContext(BoardCardIdContext);
+
+  const [companyProgress] = useRecoilState(
+    companyProgressesFamilyState(boardCardId ?? ''),
+  );
+
+  const { company } = companyProgress ?? {};
+
+  const { createOneRecordMutation } = useObjectMetadataItem({
+    objectNameSingular: 'person',
+  });
+
+  const [createPerson] = useMutation(createOneRecordMutation);
+
+  const handleCreatePerson = async ({
+    firstValue,
+    secondValue,
+  }: FieldDoubleText) => {
+    if (!firstValue && !secondValue) return;
+    const newPersonId = v4();
+
+    await createPerson({
+      variables: {
+        input: {
+          companyId: company?.id,
+          id: newPersonId,
+          name: {
+            firstName: firstValue,
+            lastName: secondValue,
+          },
+        },
+      },
+      refetchQueries: [getOperationName(findManyRecordsQuery) ?? ''],
+    });
+    setShowDropdown(false);
+  };
 
   const useFindManyQuery = (options: any) =>
     useQuery(findManyRecordsQuery, options);
@@ -76,20 +125,51 @@ export const RelationPicker = ({
     objectNameSingular: relationObjectNameSingular,
   });
 
+  const filteredEntitiesToSelect = records.entitiesToSelect.filter((entity) => {
+    return entity.record.companyId === company?.id;
+  });
+
   const handleEntitySelected = async (selectedUser: any | null | undefined) => {
     onSubmit(selectedUser ?? null);
   };
 
+  const [initialEntities, setInitialEntities] = useState<EntityForSelect[]>([]);
+
+  useEffect(() => {
+    if (records.entitiesToSelect?.length > 0 && initialEntities.length === 0) {
+      setInitialEntities(records.entitiesToSelect);
+    }
+  }, [initialEntities.length, records.entitiesToSelect]);
+
   return (
-    <SingleEntitySelect
-      EmptyIcon={IconForbid}
-      emptyLabel={'No ' + fieldDefinition.label}
-      entitiesToSelect={records.entitiesToSelect}
-      loading={records.loading}
-      onCancel={onCancel}
-      onEntitySelected={handleEntitySelected}
-      selectedEntity={records.selectedEntities[0]}
-      width={width}
-    />
+    <>
+      <SingleEntitySelect
+        EmptyIcon={IconForbid}
+        emptyLabel={'No ' + fieldDefinition.label}
+        entitiesToSelect={filteredEntitiesToSelect}
+        loading={records.loading}
+        onCancel={onCancel}
+        onEntitySelected={handleEntitySelected}
+        selectedEntity={records.selectedEntities[0]}
+        width={width}
+        onCreate={() => setShowDropdown(true)}
+        initialEntities={initialEntities}
+        currentCompany={company?.id}
+      />
+      {showDropdown && (
+        <StyledInputContainer>
+          <DoubleTextInput
+            firstValue=""
+            secondValue=""
+            firstValuePlaceholder="First Name"
+            secondValuePlaceholder="Last Name"
+            onClickOutside={handleEscape}
+            onEnter={handleCreatePerson}
+            onEscape={handleEscape}
+            hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+          />
+        </StyledInputContainer>
+      )}
+    </>
   );
 };

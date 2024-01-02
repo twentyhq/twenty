@@ -40,7 +40,8 @@ export const useScopedHotkeys = (
           setPendingHotkey(null);
         },
         scope,
-        preventDefault: !!options.preventDefault,
+        preventDefault:
+          keyboardEvent.key === 'Enter' ? false : !!options.preventDefault,
       });
     },
     {

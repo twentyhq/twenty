@@ -22,7 +22,7 @@ const StyledContainer = styled.div`
   position: static;
 `;
 
-const StyledInputContainer = styled.div`
+export const StyledInputContainer = styled.div`
   background-color: transparent;
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
   display: flex;
