@@ -28,7 +28,7 @@ const StyledColumnHeaderCell = styled.th<{
   ${({ theme }) => {
     return `
     &:hover {
-      background: ${theme.background.transparent.light};
+      background: ${theme.background.quaternary};
     };
     `;
   }};
