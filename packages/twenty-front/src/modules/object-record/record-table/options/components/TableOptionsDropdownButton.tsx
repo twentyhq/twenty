@@ -3,9 +3,9 @@ import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/Styl
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 export const TableOptionsDropdownButton = () => {
-  const { isDropdownOpen, toggleDropdown } = useDropdown({
-    dropdownScopeId: TableOptionsDropdownId,
-  });
+  const { isDropdownOpen, toggleDropdown } = useDropdown(
+    TableOptionsDropdownId,
+  );
 
   return (
     <StyledHeaderDropdownButton

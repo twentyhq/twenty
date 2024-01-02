@@ -1,6 +1,7 @@
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { useGetIsSomeCellInEditMode } from '@/object-record/record-table/hooks/internal/useGetIsSomeCellInEditMode';
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -356,6 +357,8 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const { selectAllRows } = useSelectAllRows(scopeId);
 
+  const getIsSomeCellInEditMode = useGetIsSomeCellInEditMode(scopeId);
+
   return {
     scopeId,
     onColumnsChange,
@@ -380,5 +383,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setIsRecordTableInitialLoading,
     setRecordTableLastRowVisible,
     setSoftFocusPosition,
+    getIsSomeCellInEditMode,
   };
 };
