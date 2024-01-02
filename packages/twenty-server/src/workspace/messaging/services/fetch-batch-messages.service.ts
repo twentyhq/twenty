@@ -4,7 +4,7 @@ import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { simpleParser } from 'mailparser';
 
 import { GmailMessage } from 'src/workspace/messaging/types/gmailMessage';
-import { MessageQuery } from 'src/workspace/messaging/types/messageQuery';
+import { MessageOrThreadQuery } from 'src/workspace/messaging/types/messageQuery';
 import { GmailParsedResponse } from 'src/workspace/messaging/types/gmailParsedResponse';
 
 @Injectable()
@@ -17,60 +17,78 @@ export class FetchBatchMessagesService {
     });
   }
 
-  async fetchAllByBatches(
-    messageQueries: MessageQuery[],
+  async fetchAllMessages(
+    queries: MessageOrThreadQuery[],
     accessToken: string,
   ): Promise<GmailMessage[]> {
+    const batchResponses = await this.fetchAllByBatches(
+      queries,
+      accessToken,
+      'batch_gmail_messages',
+    );
+
+    const formattedResponses = await this.formatBatchResponsesAsGmailMessages(
+      batchResponses,
+    );
+
+    return formattedResponses;
+  }
+
+  async fetchAllByBatches(
+    queries: MessageOrThreadQuery[],
+    accessToken: string,
+    boundary: string,
+  ): Promise<AxiosResponse<any, any>[]> {
     const batchLimit = 100;
 
     let batchOffset = 0;
 
-    let messages: GmailMessage[] = [];
+    let batchResponses: AxiosResponse<any, any>[] = [];
 
-    while (batchOffset < messageQueries.length) {
+    while (batchOffset < queries.length) {
       const batchResponse = await this.fetchBatch(
-        messageQueries,
+        queries,
         accessToken,
         batchOffset,
         batchLimit,
+        boundary,
       );
 
-      messages = messages.concat(batchResponse);
+      batchResponses = batchResponses.concat(batchResponse);
 
       batchOffset += batchLimit;
     }
 
-    return messages;
+    return batchResponses;
   }
 
   async fetchBatch(
-    messageQueries: MessageQuery[],
+    queries: MessageOrThreadQuery[],
     accessToken: string,
     batchOffset: number,
     batchLimit: number,
-  ): Promise<GmailMessage[]> {
-    const limitedMessageQueries = messageQueries.slice(
-      batchOffset,
-      batchOffset + batchLimit,
-    );
+    boundary: string,
+  ): Promise<AxiosResponse<any, any>> {
+    const limitedQueries = queries.slice(batchOffset, batchOffset + batchLimit);
 
     const response = await this.httpService.post(
       '/',
-      this.createBatchBody(limitedMessageQueries, 'batch_gmail_messages'),
+      this.createBatchBody(limitedQueries, boundary),
       {
         headers: {
-          'Content-Type': 'multipart/mixed; boundary=batch_gmail_messages',
+          'Content-Type': 'multipart/mixed; boundary=' + boundary,
           Authorization: 'Bearer ' + accessToken,
         },
       },
     );
 
-    const formattedResponse = await this.formatBatchResponse(response);
-
-    return formattedResponse;
+    return response;
   }
 
-  createBatchBody(messageQueries: MessageQuery[], boundary: string): string {
+  createBatchBody(
+    messageQueries: MessageOrThreadQuery[],
+    boundary: string,
+  ): string {
     let batchBody: string[] = [];
 
     messageQueries.forEach(function (call) {
@@ -135,7 +153,7 @@ export class FetchBatchMessagesService {
     return boundary?.replace('boundary=', '').trim() || '';
   }
 
-  async formatBatchResponse(
+  async formatBatchResponseAsGmailMessage(
     response: AxiosResponse<any, any>,
   ): Promise<GmailMessage[]> {
     const parsedResponses = this.parseBatch(response);
@@ -194,5 +212,21 @@ export class FetchBatchMessagesService {
     ) as GmailMessage[];
 
     return filteredResponse;
+  }
+
+  async formatBatchResponsesAsGmailMessages(
+    batchResponses: AxiosResponse<any, any>[],
+  ): Promise<GmailMessage[]> {
+    const formattedResponses = await Promise.all(
+      batchResponses.map(async (response) => {
+        const formattedResponse = await this.formatBatchResponseAsGmailMessage(
+          response,
+        );
+
+        return formattedResponse;
+      }),
+    );
+
+    return formattedResponses.flat();
   }
 }

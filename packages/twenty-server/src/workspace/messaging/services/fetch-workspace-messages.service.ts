@@ -9,7 +9,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetch-batch-messages.service';
 import { GmailMessage } from 'src/workspace/messaging/types/gmailMessage';
-import { MessageQuery } from 'src/workspace/messaging/types/messageQuery';
+import { MessageOrThreadQuery } from 'src/workspace/messaging/types/messageQuery';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 
 @Injectable()
@@ -133,12 +133,14 @@ export class FetchWorkspaceMessagesService {
       return;
     }
 
-    const messageQueries: MessageQuery[] = messagesData.map((message) => ({
-      uri: '/gmail/v1/users/me/messages/' + message.id + '?format=RAW',
-    }));
+    const messageQueries: MessageOrThreadQuery[] = messagesData.map(
+      (message) => ({
+        uri: '/gmail/v1/users/me/messages/' + message.id + '?format=RAW',
+      }),
+    );
 
     const messagesResponse =
-      await this.fetchBatchMessagesService.fetchAllByBatches(
+      await this.fetchBatchMessagesService.fetchAllMessages(
         messageQueries,
         accessToken,
       );

@@ -1,3 +1,3 @@
-export type MessageQuery = {
+export type MessageOrThreadQuery = {
   uri: string;
 };
