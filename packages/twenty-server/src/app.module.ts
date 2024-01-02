@@ -8,6 +8,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 
 import { GraphQLConfigService } from 'src/graphql-config.service';
 import { GlobalExceptionFilter } from 'src/filters/global-exception.filter';
+import { getTransport } from 'src/core/email/utils/get-transport';
 
 import { AppService } from './app.service';
 
@@ -27,21 +28,7 @@ import { WorkspaceModule } from './workspace/workspace.module';
       useClass: GraphQLConfigService,
     }),
     MailerModule.forRoot({
-      transport: {
-        name: 'logger',
-        version: '0.1.0',
-        send: (mail, callback) => {
-          const info =
-            `Sent email to: ${mail.data.to}\n` +
-            `From: ${mail.data.from}\n` +
-            `Subject: ${mail.data.subject}\n` +
-            `Content Text: ${mail.data.text}\n` +
-            `Content HTML: ${mail.data.html}`;
-
-          console.log(info);
-          callback(null, true);
-        },
-      },
+      transport: getTransport(),
     }),
     HealthModule,
     IntegrationsModule,
