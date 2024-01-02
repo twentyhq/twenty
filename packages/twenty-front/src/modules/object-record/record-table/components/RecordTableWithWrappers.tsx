@@ -85,7 +85,8 @@ export const RecordTableWithWrappers = ({
     isRecordTableInitialLoadingScopeInjector,
   } = getRecordTableScopeInjector();
 
-  const { injectStateWithRecordTableScopeId } = useRecordTableScopedStates();
+  const { injectStateWithRecordTableScopeId } =
+    useRecordTableScopedStates(recordTableId);
 
   const numberOfTableRowsState = injectStateWithRecordTableScopeId(
     numberOfTableRowsScopeInjector,
