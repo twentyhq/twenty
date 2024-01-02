@@ -92,9 +92,13 @@ export class FetchWorkspaceMessagesService {
         accessToken,
       );
 
-    const messageQueries: MessageOrThreadQuery[] = threadsWithMessageIds.map(
-      (thread) => ({
-        uri: '/gmail/v1/users/me/messages/' + thread.id + '?format=RAW',
+    const messageIds = threadsWithMessageIds
+      .map((thread) => thread.messageIds)
+      .flat();
+
+    const messageQueries: MessageOrThreadQuery[] = messageIds.map(
+      (messageId) => ({
+        uri: '/gmail/v1/users/me/messages/' + messageId + '?format=RAW',
       }),
     );
 

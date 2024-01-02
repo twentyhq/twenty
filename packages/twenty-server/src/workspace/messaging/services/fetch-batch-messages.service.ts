@@ -39,7 +39,7 @@ export class FetchBatchMessagesService {
   async fetchAllThreads(
     queries: MessageOrThreadQuery[],
     accessToken: string,
-  ): Promise<any> {
+  ): Promise<GmailThread[]> {
     const batchResponses = await this.fetchAllByBatches(
       queries,
       accessToken,
