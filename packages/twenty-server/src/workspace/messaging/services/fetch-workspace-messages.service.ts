@@ -26,10 +26,6 @@ export class FetchWorkspaceMessagesService {
       workspaceId,
       '20202020-0687-4c41-b707-ed1bfca972a7',
     );
-    // await this.fetchWorkspaceMemberMessages(
-    //   workspaceId,
-    //   '20202020-0687-4c41-b707-ed1bfca972a7',
-    // );
   }
 
   async fetchWorkspaceMemberThreads(
@@ -90,62 +86,15 @@ export class FetchWorkspaceMessagesService {
       uri: '/gmail/v1/users/me/threads/' + thread.id + '?format=minimal',
     }));
 
-    await this.fetchBatchMessagesService.fetchAllThreads(
-      threadQueries,
-      accessToken,
-    );
-  }
-
-  async fetchWorkspaceMemberMessages(
-    workspaceId: string,
-    workspaceMemberId: string,
-    maxResults = 500,
-  ): Promise<void> {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        workspaceId,
+    const threadsWithMessageIds =
+      await this.fetchBatchMessagesService.fetchAllThreads(
+        threadQueries,
+        accessToken,
       );
 
-    const workspaceDataSource = await this.typeORMService.connectToDataSource(
-      dataSourceMetadata,
-    );
-
-    if (!workspaceDataSource) {
-      throw new Error('No workspace data source found');
-    }
-
-    const connectedAccounts = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail' AND "accountOwnerId" = $1`,
-      [workspaceMemberId],
-    );
-
-    if (!connectedAccounts || connectedAccounts.length === 0) {
-      throw new Error('No connected account found');
-    }
-
-    const accessToken = connectedAccounts[0]?.accessToken;
-    const refreshToken = connectedAccounts[0]?.refreshToken;
-
-    if (!accessToken || !refreshToken) {
-      throw new Error('No access token or refresh token found');
-    }
-
-    const gmailClient = await this.getGmailClient(refreshToken);
-
-    const messages = await gmailClient.users.messages.list({
-      userId: 'me',
-      maxResults,
-    });
-
-    const messagesData = messages.data.messages;
-
-    if (!messagesData || messagesData?.length === 0) {
-      return;
-    }
-
-    const messageQueries: MessageOrThreadQuery[] = messagesData.map(
-      (message) => ({
-        uri: '/gmail/v1/users/me/messages/' + message.id + '?format=RAW',
+    const messageQueries: MessageOrThreadQuery[] = threadsWithMessageIds.map(
+      (thread) => ({
+        uri: '/gmail/v1/users/me/messages/' + thread.id + '?format=RAW',
       }),
     );
 

@@ -29,11 +29,11 @@ export class FetchBatchMessagesService {
       'batch_gmail_messages',
     );
 
-    const formattedResponses = await this.formatBatchResponsesAsGmailMessages(
+    const messages = await this.formatBatchResponsesAsGmailMessages(
       batchResponses,
     );
 
-    return formattedResponses;
+    return messages;
   }
 
   async fetchAllThreads(
@@ -46,7 +46,11 @@ export class FetchBatchMessagesService {
       'batch_gmail_threads',
     );
 
-    console.log('batchResponses', batchResponses);
+    const threads = await this.formatBatchResponsesAsGmailThreads(
+      batchResponses,
+    );
+
+    return threads;
   }
 
   async fetchAllByBatches(
