@@ -46,7 +46,7 @@ services:
   name: twenty_postgres
   runtime: image
   image:
-    url: twentycrm/twenty-postgres
+    url: twentycrm/twenty-postgres:latest
   autoDeploy: false
   disk:
     name: data
