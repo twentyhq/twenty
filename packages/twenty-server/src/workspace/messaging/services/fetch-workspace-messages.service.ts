@@ -9,7 +9,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetch-batch-messages.service';
 import { GmailMessage } from 'src/workspace/messaging/types/gmailMessage';
-import { MessageQuery } from 'src/workspace/messaging/types/messageQuery';
+import { MessageOrThreadQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 
 @Injectable()
@@ -23,10 +23,6 @@ export class FetchWorkspaceMessagesService {
 
   async fetchWorkspaceMessages(workspaceId: string): Promise<void> {
     await this.fetchWorkspaceMemberThreads(
-      workspaceId,
-      '20202020-0687-4c41-b707-ed1bfca972a7',
-    );
-    await this.fetchWorkspaceMemberMessages(
       workspaceId,
       '20202020-0687-4c41-b707-ed1bfca972a7',
     );
@@ -59,6 +55,7 @@ export class FetchWorkspaceMessagesService {
       throw new Error('No connected account found');
     }
 
+    const accessToken = connectedAccounts[0]?.accessToken;
     const refreshToken = connectedAccounts[0]?.refreshToken;
 
     if (!refreshToken) {
@@ -74,7 +71,7 @@ export class FetchWorkspaceMessagesService {
 
     const threadsData = threads.data.threads;
 
-    if (!threadsData) {
+    if (!threadsData || threadsData?.length === 0) {
       return;
     }
 
@@ -84,61 +81,29 @@ export class FetchWorkspaceMessagesService {
       workspaceDataSource,
       connectedAccounts[0].id,
     );
-  }
 
-  async fetchWorkspaceMemberMessages(
-    workspaceId: string,
-    workspaceMemberId: string,
-    maxResults = 500,
-  ): Promise<void> {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        workspaceId,
-      );
-
-    const workspaceDataSource = await this.typeORMService.connectToDataSource(
-      dataSourceMetadata,
-    );
-
-    if (!workspaceDataSource) {
-      throw new Error('No workspace data source found');
-    }
-
-    const connectedAccounts = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail' AND "accountOwnerId" = $1`,
-      [workspaceMemberId],
-    );
-
-    if (!connectedAccounts || connectedAccounts.length === 0) {
-      throw new Error('No connected account found');
-    }
-
-    const accessToken = connectedAccounts[0]?.accessToken;
-    const refreshToken = connectedAccounts[0]?.refreshToken;
-
-    if (!accessToken || !refreshToken) {
-      throw new Error('No access token or refresh token found');
-    }
-
-    const gmailClient = await this.getGmailClient(refreshToken);
-
-    const messages = await gmailClient.users.messages.list({
-      userId: 'me',
-      maxResults,
-    });
-
-    const messagesData = messages.data.messages;
-
-    if (!messagesData || messagesData?.length === 0) {
-      return;
-    }
-
-    const messageQueries: MessageQuery[] = messagesData.map((message) => ({
-      uri: '/gmail/v1/users/me/messages/' + message.id + '?format=RAW',
+    const threadQueries: MessageOrThreadQuery[] = threadsData.map((thread) => ({
+      uri: '/gmail/v1/users/me/threads/' + thread.id + '?format=minimal',
     }));
 
+    const threadsWithMessageIds =
+      await this.fetchBatchMessagesService.fetchAllThreads(
+        threadQueries,
+        accessToken,
+      );
+
+    const messageIds = threadsWithMessageIds
+      .map((thread) => thread.messageIds)
+      .flat();
+
+    const messageQueries: MessageOrThreadQuery[] = messageIds.map(
+      (messageId) => ({
+        uri: '/gmail/v1/users/me/messages/' + messageId + '?format=RAW',
+      }),
+    );
+
     const messagesResponse =
-      await this.fetchBatchMessagesService.fetchAllByBatches(
+      await this.fetchBatchMessagesService.fetchAllMessages(
         messageQueries,
         accessToken,
       );
