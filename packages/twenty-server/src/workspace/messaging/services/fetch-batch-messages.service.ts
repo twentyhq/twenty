@@ -160,8 +160,8 @@ export class FetchBatchMessagesService {
     return responseItems;
   }
 
-  getBatchSeparator(response: AxiosResponse<any, any>): string {
-    const headers = response.headers;
+  getBatchSeparator(responseCollection: AxiosResponse<any, any>): string {
+    const headers = responseCollection.headers;
 
     const contentType: string = headers['content-type'];
 
@@ -175,10 +175,10 @@ export class FetchBatchMessagesService {
   }
 
   async formatBatchResponseAsGmailMessage(
-    response: AxiosResponse<any, any>,
+    responseCollection: AxiosResponse<any, any>,
   ): Promise<GmailMessage[]> {
     const parsedResponses = this.parseBatch(
-      response,
+      responseCollection,
     ) as GmailMessageParsedResponse[];
 
     const formattedResponse = Promise.all(
@@ -254,10 +254,10 @@ export class FetchBatchMessagesService {
   }
 
   async formatBatchResponseAsGmailThread(
-    response: AxiosResponse<any, any>,
+    responseCollection: AxiosResponse<any, any>,
   ): Promise<GmailThread[]> {
     const parsedResponses = this.parseBatch(
-      response,
+      responseCollection,
     ) as GmailThreadParsedResponse[];
 
     const formattedResponse = Promise.all(
