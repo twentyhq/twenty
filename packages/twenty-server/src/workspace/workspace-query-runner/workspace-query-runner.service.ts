@@ -28,10 +28,10 @@ import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/w
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import {
-  CallWebhookJob,
-  CallWebhookJobData,
-  CallWebhookJobOperation,
-} from 'src/workspace/workspace-query-runner/jobs/call-webhook.job';
+  CallWebhookJobsJob,
+  CallWebhookJobsJobData,
+  CallWebhookJobsJobOperation,
+} from 'src/workspace/workspace-query-runner/jobs/call-webhook-jobs.job';
 import { parseResult } from 'src/workspace/workspace-query-runner/utils/parse-result.util';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 import { globalExceptionHandler } from 'src/filters/utils/global-exception-handler.util';
@@ -135,7 +135,7 @@ export class WorkspaceQueryRunnerService {
 
       await this.triggerWebhooks<Record>(
         parsedResults,
-        CallWebhookJobOperation.create,
+        CallWebhookJobsJobOperation.create,
         options,
       );
 
@@ -158,7 +158,7 @@ export class WorkspaceQueryRunnerService {
 
     await this.triggerWebhooks<Record>(
       results,
-      CallWebhookJobOperation.create,
+      CallWebhookJobsJobOperation.create,
       options,
     );
 
@@ -185,7 +185,7 @@ export class WorkspaceQueryRunnerService {
 
       await this.triggerWebhooks<Record>(
         parsedResults,
-        CallWebhookJobOperation.update,
+        CallWebhookJobsJobOperation.update,
         options,
       );
 
@@ -220,7 +220,7 @@ export class WorkspaceQueryRunnerService {
 
       await this.triggerWebhooks<Record>(
         parsedResults,
-        CallWebhookJobOperation.delete,
+        CallWebhookJobsJobOperation.delete,
         options,
       );
 
@@ -255,7 +255,7 @@ export class WorkspaceQueryRunnerService {
 
       await this.triggerWebhooks<Record>(
         parsedResults,
-        CallWebhookJobOperation.update,
+        CallWebhookJobsJobOperation.update,
         options,
       );
 
@@ -293,7 +293,7 @@ export class WorkspaceQueryRunnerService {
 
       await this.triggerWebhooks<Record>(
         parsedResults,
-        CallWebhookJobOperation.delete,
+        CallWebhookJobsJobOperation.delete,
         options,
       );
 
@@ -365,22 +365,22 @@ export class WorkspaceQueryRunnerService {
 
   async triggerWebhooks<Record>(
     jobsData: Record[] | undefined,
-    operation: CallWebhookJobOperation,
+    operation: CallWebhookJobsJobOperation,
     options: WorkspaceQueryRunnerOptions,
   ) {
     if (!Array.isArray(jobsData)) {
       return;
     }
     jobsData.forEach((jobData) => {
-      this.messageQueueService.add<CallWebhookJobData>(
-        CallWebhookJob.name,
+      this.messageQueueService.add<CallWebhookJobsJobData>(
+        CallWebhookJobsJob.name,
         {
           recordData: jobData,
           workspaceId: options.workspaceId,
           operation,
           objectNameSingular: options.targetTableName,
         },
-        { retryLimit: 2 },
+        { retryLimit: 3 },
       );
     });
   }
