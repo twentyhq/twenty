@@ -29,19 +29,24 @@ const StyledButton = styled.button<
   backdrop-filter: ${({ applyBlur }) => (applyBlur ? 'blur(20px)' : 'none')};
   background: ${({ theme }) => theme.background.primary};
 
-  border: ${({ theme, disabled, focus }) => {
-    let borderColor;
-
-    if (disabled) {
-      borderColor = theme.font.color.extraLight;
-    } else if (!focus) {
-      borderColor = theme.font.color.light;
-    } else {
-      borderColor = theme.color.blue;
-    }
-
-    return `1px solid ${borderColor}`;
+  margin: 0;
+  padding: ${({ theme }) => {
+    return `0 ${theme.spacing(2)}`;
   }};
+
+  ${({ theme, focus }) => `
+  border: 1px solid ${
+    focus ? theme.color.blue : theme.background.transparent.medium
+  };
+  ${
+    focus
+      ? `
+    z-index: 1;
+    margin-right: -1px;
+  `
+      : ''
+  }
+`};
 
   border-radius: ${({ theme, position }) => {
     switch (position) {
@@ -55,18 +60,20 @@ const StyledButton = styled.button<
         return theme.border.radius.sm;
     }
   }};
-  border-right: ${({ position }) => (position !== 'right' ? 'none' : '')};
-  box-shadow: ${({ applyShadow, position, theme }) =>
-    applyShadow && position !== 'middle'
-      ? `0 2px 4px ${theme.background.transparent.light}`
-      : 'none'};
+  border-right: ${({ position, focus }) =>
+    position !== 'right' && !focus ? 'none' : ''};
 
-  color: ${({ theme, disabled, focus }) => {
-    return !disabled
-      ? focus
-        ? theme.color.blue
-        : theme.font.color.secondary
-      : theme.font.color.extraLight;
+  box-shadow: ${({ theme, applyShadow, focus }) =>
+    applyShadow
+      ? `0px 2px 4px ${theme.background.transparent.light}, 0px 0px 4px ${
+          theme.background.transparent.medium
+        }${focus ? `,0 0 0 3px ${theme.color.blue10}` : ''}`
+      : focus
+        ? `0 0 0 3px ${theme.color.blue10}`
+        : 'none'};
+
+  color: ${({ theme, disabled }) => {
+    return !disabled ? theme.font.color.secondary : theme.font.color.extraLight;
   }};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
@@ -76,10 +83,6 @@ const StyledButton = styled.button<
   font-weight: ${({ theme }) => theme.font.weight.regular};
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
-  margin: 0;
-  padding: ${({ theme }) => {
-    return `0 ${theme.spacing(2)}`;
-  }};
   transition: background 0.1s ease;
 
   white-space: nowrap;
@@ -87,6 +90,7 @@ const StyledButton = styled.button<
   &:hover {
     background: ${({ theme, disabled }) =>
       !disabled ? theme.background.transparent.lighter : 'transparent'};
+    border-color: ${({ theme }) => theme.background.transparent.light};
   }
 
   &:active {
