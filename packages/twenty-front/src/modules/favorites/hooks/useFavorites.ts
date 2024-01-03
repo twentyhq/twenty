@@ -6,7 +6,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { Favorite } from '@/favorites/types/Favorite';
 import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/hooks/useGetObjectRecordIdentifierByNameSingular';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { isStandardObject } from '@/object-metadata/utils/isStandardObject';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -40,11 +39,12 @@ export const useFavorites = () => {
     objectNameSingular: favoriteObjectNameSingular,
   });
 
-  const favoriteRelationFields = useMemo(
+  const favoriteRelationFieldMetadataItems = useMemo(
     () =>
       favoriteObjectMetadataItem.fields.filter(
         (fieldMetadataItem) =>
-          fieldMetadataItem.type === FieldMetadataType.Relation,
+          fieldMetadataItem.type === FieldMetadataType.Relation &&
+          fieldMetadataItem.name !== 'workspaceMember',
       ),
     [favoriteObjectMetadataItem.fields],
   );
@@ -55,12 +55,7 @@ export const useFavorites = () => {
   const favoritesSorted = useMemo(() => {
     return favorites
       .map((favorite) => {
-        const nonSystemRelationFields = favoriteRelationFields.filter(
-          (relationField) =>
-            !relationField.isSystem || isStandardObject(relationField.name),
-        );
-
-        for (const relationField of nonSystemRelationFields) {
+        for (const relationField of favoriteRelationFieldMetadataItems) {
           if (isDefined(favorite[relationField.name])) {
             const relationObject = favorite[relationField.name];
 
@@ -90,8 +85,8 @@ export const useFavorites = () => {
       })
       .toSorted((a, b) => a.position - b.position);
   }, [
+    favoriteRelationFieldMetadataItems,
     favorites,
-    favoriteRelationFields,
     getObjectRecordIdentifierByNameSingular,
   ]);
 

@@ -5,11 +5,7 @@ export const isStandardObject = (objectNameSingular: string) => {
     StandardObjectNameSingular.Company,
     StandardObjectNameSingular.Person,
     StandardObjectNameSingular.Opportunity,
-  ];
+  ] as string[];
 
-  if (standardObjectNames.includes(objectNameSingular as any)) {
-    return true;
-  }
-
-  return false;
+  return standardObjectNames.includes(objectNameSingular);
 };
