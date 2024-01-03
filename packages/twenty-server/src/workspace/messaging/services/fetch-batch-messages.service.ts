@@ -177,22 +177,24 @@ export class FetchBatchMessagesService {
   async formatBatchResponseAsGmailMessage(
     response: AxiosResponse<any, any>,
   ): Promise<GmailMessage[]> {
-    const parsedResponses = this.parseBatch(response);
+    const parsedResponses = this.parseBatch(
+      response,
+    ) as GmailMessageParsedResponse[];
 
     const formattedResponse = Promise.all(
-      parsedResponses.map(async (item) => {
-        if (item.error) {
-          console.log('Error', item.error);
+      parsedResponses.map(async (message: GmailMessageParsedResponse) => {
+        if (message.error) {
+          console.log('Error', message.error);
 
           return;
         }
 
-        const { id, threadId, internalDate, raw } = item;
+        const { id, threadId, internalDate, raw } = message;
 
-        const message = atob(raw?.replace(/-/g, '+').replace(/_/g, '/'));
+        const body = atob(raw?.replace(/-/g, '+').replace(/_/g, '/'));
 
         try {
-          const parsed = await simpleParser(message);
+          const parsed = await simpleParser(body);
 
           const {
             subject,
@@ -229,7 +231,7 @@ export class FetchBatchMessagesService {
     );
 
     const filteredResponse = (await formattedResponse).filter(
-      (item) => item,
+      (message) => message,
     ) as GmailMessage[];
 
     return filteredResponse;
@@ -254,10 +256,12 @@ export class FetchBatchMessagesService {
   async formatBatchResponseAsGmailThread(
     response: AxiosResponse<any, any>,
   ): Promise<GmailThread[]> {
-    const parsedResponses = this.parseBatch(response);
+    const parsedResponses = this.parseBatch(
+      response,
+    ) as GmailThreadParsedResponse[];
 
     const formattedResponse = Promise.all(
-      parsedResponses.map(async (thread) => {
+      parsedResponses.map(async (thread: GmailThreadParsedResponse) => {
         if (thread.error) {
           console.log('Error', thread.error);
 
