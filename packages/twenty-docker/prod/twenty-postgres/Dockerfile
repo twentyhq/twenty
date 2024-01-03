@@ -27,10 +27,12 @@ RUN set -eux; \
 RUN apt update && apt install build-essential git curl default-libmysqlclient-dev -y
 
 # Install precompiled pg_graphql extensions
-RUN curl -L "https://github.com/supabase/pg_graphql/releases/download/v${PG_GRAPHQL_VERSION}/pg_graphql-v${PG_GRAPHQL_VERSION}-pg${PG_MAIN_VERSION}-${TARGETARCH}-linux-gnu.deb" -o pg_graphql.deb
-RUN dpkg --install pg_graphql.deb
-RUN cp /usr/share/postgresql/${PG_MAIN_VERSION}/extension/pg_graphql* /opt/bitnami/postgresql/share/extension/
-RUN cp /usr/lib/postgresql/${PG_MAIN_VERSION}/lib/pg_graphql* /opt/bitnami/postgresql/lib/
+COPY ./packages/twenty-postgres/linux/${TARGETARCH}/${PG_MAIN_VERSION}/pg_graphql/${PG_GRAPHQL_VERSION}/pg_graphql--${PG_GRAPHQL_VERSION}.sql \
+    /opt/bitnami/postgresql/share/extension/
+COPY ./packages/twenty-postgres/linux/${TARGETARCH}/${PG_MAIN_VERSION}/pg_graphql/${PG_GRAPHQL_VERSION}/pg_graphql.control \
+    /opt/bitnami/postgresql/share/extension/
+COPY ./packages/twenty-postgres/linux/${TARGETARCH}/${PG_MAIN_VERSION}/pg_graphql/${PG_GRAPHQL_VERSION}/pg_graphql.so \
+    /opt/bitnami/postgresql/lib/
 
 # Install precompiled supabase wrappers extensions
 RUN curl -L "https://github.com/supabase/wrappers/releases/download/v${WRAPPERS_VERSION}/wrappers-v${WRAPPERS_VERSION}-pg${PG_MAIN_VERSION}-${TARGETARCH}-linux-gnu.deb" -o wrappers.deb
