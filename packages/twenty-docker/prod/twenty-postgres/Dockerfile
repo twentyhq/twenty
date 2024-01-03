@@ -24,7 +24,7 @@ RUN set -eux; \
          ;; \
     esac;
 
-RUN apt update && apt install build-essential git curl default-libmysqlclient-dev libc6 -y
+RUN apt update && apt install build-essential git curl default-libmysqlclient-dev -y
 
 # Install precompiled pg_graphql extensions
 COPY ./packages/twenty-postgres/linux/${TARGETARCH}/${PG_MAIN_VERSION}/pg_graphql/${PG_GRAPHQL_VERSION}/pg_graphql--${PG_GRAPHQL_VERSION}.sql \
@@ -49,5 +49,6 @@ RUN make USE_PGXS=1 install
 
 COPY ./packages/twenty-docker/prod/twenty-postgres/init.sql /docker-entrypoint-initdb.d/
 
+USER 1001
 ENTRYPOINT ["/opt/bitnami/scripts/postgresql/entrypoint.sh"]
 CMD ["/opt/bitnami/scripts/postgresql/run.sh"]
