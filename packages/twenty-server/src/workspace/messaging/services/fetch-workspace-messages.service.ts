@@ -225,4 +225,37 @@ export class FetchWorkspaceMessagesService {
       });
     }
   }
+
+  async getAllSavedMessagesIds(
+    workspaceId: string,
+    workspaceMemberId: string,
+  ): Promise<string[]> {
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        workspaceId,
+      );
+
+    const workspaceDataSource = await this.typeORMService.connectToDataSource(
+      dataSourceMetadata,
+    );
+
+    if (!workspaceDataSource) {
+      throw new Error('No workspace data source found');
+    }
+
+    const connectedAccounts = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail' AND "accountOwnerId" = $1`,
+      [workspaceMemberId],
+    );
+
+    if (!connectedAccounts || connectedAccounts.length === 0) {
+      throw new Error('No connected account found');
+    }
+
+    const messages = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."message"`,
+    );
+
+    return messages.map((message) => message.id);
+  }
 }
