@@ -54,8 +54,8 @@ services:
     sizeGB: 10
   envVars:
   - key: POSTGRES_USER
-    value: twenty
+    value: postgres
   - key: POSTGRES_PASSWORD
-    value: twenty
+    value: postgres
   - key: POSTGRES_DB
     value: default
