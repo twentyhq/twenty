@@ -29,9 +29,7 @@ export const EditableFilterDropdownButton = ({
     filterDropdownId: viewFilterDropdownId,
   });
 
-  const { closeDropdown } = useDropdown({
-    dropdownScopeId: viewFilterDropdownId,
-  });
+  const { closeDropdown } = useDropdown(viewFilterDropdownId);
 
   const { removeViewFilter } = useViewBar();
 

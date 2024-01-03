@@ -72,14 +72,17 @@ export class EnumTypeDefinitionFactory {
     return new GraphQLEnumType({
       name: `${pascalCase(objectName)}${pascalCase(fieldMetadata.name)}Enum`,
       description: fieldMetadata.description,
-      values: enumOptions.reduce((acc, enumOption) => {
-        acc[enumOption.value] = {
-          value: enumOption.value,
-          description: enumOption.label,
-        };
+      values: enumOptions.reduce(
+        (acc, enumOption) => {
+          acc[enumOption.value] = {
+            value: enumOption.value,
+            description: enumOption.label,
+          };
 
-        return acc;
-      }, {} as { [key: string]: { value: string; description: string } }),
+          return acc;
+        },
+        {} as { [key: string]: { value: string; description: string } },
+      ),
     });
   }
 }

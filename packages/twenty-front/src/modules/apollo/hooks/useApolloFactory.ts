@@ -13,7 +13,7 @@ import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 import { ApolloFactory } from '../services/apollo.factory';
 
 export const useApolloFactory = () => {
-  // eslint-disable-next-line twenty/no-state-useref
+  // eslint-disable-next-line @nx/workspace-no-state-useref
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
   const [isDebugMode] = useRecoilState(isDebugModeState);
 

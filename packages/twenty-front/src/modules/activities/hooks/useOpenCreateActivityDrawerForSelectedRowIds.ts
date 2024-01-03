@@ -1,7 +1,8 @@
 import { useRecoilCallback } from 'recoil';
 
 import { ActivityType } from '@/activities/types/Activity';
-import { selectedRowIdsSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsSelector';
+import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 
 import {
   ActivityTargetableEntity,
@@ -10,8 +11,15 @@ import {
 
 import { useOpenCreateActivityDrawer } from './useOpenCreateActivityDrawer';
 
-export const useOpenCreateActivityDrawerForSelectedRowIds = () => {
+export const useOpenCreateActivityDrawerForSelectedRowIds = (
+  recordTableScopeId: string,
+) => {
   const openCreateActivityDrawer = useOpenCreateActivityDrawer();
+
+  const { selectedRowIdsScopeInjector } = getRecordTableScopeInjector();
+
+  const { injectSelectorSnapshotValueWithRecordTableScopeId } =
+    useRecordTableScopedStates(recordTableScopeId);
 
   return useRecoilCallback(
     ({ snapshot }) =>
@@ -20,9 +28,12 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = () => {
         entityType: ActivityTargetableEntityType,
         relatedEntities?: ActivityTargetableEntity[],
       ) => {
-        const selectedRowIds = snapshot
-          .getLoadable(selectedRowIdsSelector)
-          .getValue();
+        const selectedRowIds =
+          injectSelectorSnapshotValueWithRecordTableScopeId(
+            snapshot,
+            selectedRowIdsScopeInjector,
+          );
+
         let activityTargetableEntityArray: ActivityTargetableEntity[] =
           selectedRowIds.map((id: string) => ({
             type: entityType,
@@ -37,6 +48,10 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = () => {
           targetableEntities: activityTargetableEntityArray,
         });
       },
-    [openCreateActivityDrawer],
+    [
+      injectSelectorSnapshotValueWithRecordTableScopeId,
+      openCreateActivityDrawer,
+      selectedRowIdsScopeInjector,
+    ],
   );
 };

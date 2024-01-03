@@ -87,7 +87,7 @@ export const SettingsObjectNewFieldStep1 = () => {
           metadataField.isActive ===
           activeObjectMetadataItem.fields[index].isActive
         ) {
-          return;
+          return undefined;
         }
 
         return metadataField.isActive

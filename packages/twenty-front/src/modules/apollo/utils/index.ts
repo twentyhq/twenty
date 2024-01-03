@@ -68,7 +68,7 @@ export const loggerLink = (getSchemaName: (operation: Operation) => string) =>
           errors.forEach((err: any) => {
             logDebug(
               `%c${err.message}`,
-              // eslint-disable-next-line twenty/no-hardcoded-colors
+              // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
               'color: #F51818; font-weight: lighter',
             );
           });

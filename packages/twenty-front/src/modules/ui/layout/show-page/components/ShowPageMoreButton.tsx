@@ -26,13 +26,11 @@ export const ShowPageMoreButton = ({
   recordId: string;
   objectNameSingular: string;
 }) => {
-  const { closeDropdown, toggleDropdown } = useDropdown({
-    dropdownScopeId: 'more-show-page',
-  });
+  const { closeDropdown, toggleDropdown } = useDropdown('more-show-page');
   const navigationMemorizedUrl = useRecoilValue(navigationMemorizedUrlState);
   const navigate = useNavigate();
 
-  const { deleteOneRecord: deleteOneRecord } = useDeleteOneRecord({
+  const { deleteOneRecord } = useDeleteOneRecord({
     objectNameSingular,
   });
 

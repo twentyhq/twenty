@@ -2,7 +2,9 @@
   "targetDefaults": {
     "build": {
       "cache": true,
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "lint": {
       "cache": true
@@ -12,12 +14,30 @@
     },
     "e2e": {
       "cache": true
+    },
+    "@nx/jest:jest": {
+      "cache": true,
+      "inputs": [
+        "default",
+        "^default",
+        "{workspaceRoot}/jest.preset.js"
+      ],
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
     }
   },
   "installation": {
-    "version": "17.2.0"
+    "version": "17.2.7"
   },
   "affected": {
     "defaultBase": "main"
   }
 }
+

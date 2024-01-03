@@ -38,8 +38,8 @@ export class FindManyQueryFactory {
     return `
       query {
         ${options.targetTableName}Collection${
-      argsString ? `(${argsString})` : ''
-    } {
+          argsString ? `(${argsString})` : ''
+        } {
           ${fieldsString}
         }
       }
