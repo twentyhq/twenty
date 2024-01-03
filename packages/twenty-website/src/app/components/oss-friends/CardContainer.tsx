@@ -21,13 +21,21 @@ const Container = styled.div`
   padding: 32px;
   border-radius: 8px;
   cursor: pointer;
+  transition: 200ms;
+
+  &:hover {
+    -webkit-box-shadow: -3px 3px 2px 0px rgba(0, 0, 0, 1);
+    -moz-box-shadow: -3px 3px 2px 0px rgba(0, 0, 0, 1);
+    box-shadow: -3px 3px 2px 0px rgba(0, 0, 0, 1);
+  }
+
   @media (max-width: 1200px) {
     width: 400px;
     height: 360px;
   }
 
   @media (max-width: 810px) {
-    width: 670px;
+    width: 95%;
     height: 360px;
   }
 `;
@@ -87,6 +95,7 @@ const gabarito = Gabarito({
 });
 
 const Icon = styled.img`
+  position: absolute;
   height: 24px;
   width: 24px;
 `;

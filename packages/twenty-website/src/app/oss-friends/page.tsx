@@ -1,3 +1,4 @@
+import { Background } from '@/app/components/oss-friends/Background';
 import {
   CardContainer,
   OssData,
@@ -11,20 +12,25 @@ export default async function OssFriends() {
   const listJson = await ossList.json();
 
   return (
-    <ContentContainer>
-      <Header />
-      <div
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '32px',
-          justifyContent: 'center',
-        }}
-      >
-        {listJson.data.map((data: OssData, index: number) => (
-          <CardContainer key={index} data={data} />
-        ))}
-      </div>
-    </ContentContainer>
+    <>
+      <Background />
+      <ContentContainer>
+        <Header />
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '32px',
+            justifyContent: 'center',
+            maxWidth: '1000px',
+            margin: '0 auto',
+          }}
+        >
+          {listJson.data.map((data: OssData, index: number) => (
+            <CardContainer key={index} data={data} />
+          ))}
+        </div>
+      </ContentContainer>
+    </>
   );
 }
