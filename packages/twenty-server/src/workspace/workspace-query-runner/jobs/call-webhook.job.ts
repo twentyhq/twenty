@@ -7,7 +7,7 @@ import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/w
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 
-export enum WebhookOperation {
+export enum CallWebhookJobOperation {
   create = 'create',
   update = 'update',
   delete = 'delete',
@@ -17,7 +17,7 @@ export type CallWebhookJobData = {
   workspaceId: string;
   objectNameSingular: string;
   recordData: any;
-  operation: WebhookOperation;
+  operation: CallWebhookJobOperation;
 };
 
 @Injectable()

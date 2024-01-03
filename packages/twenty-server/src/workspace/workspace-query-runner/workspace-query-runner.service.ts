@@ -30,7 +30,7 @@ import { MessageQueue } from 'src/integrations/message-queue/message-queue.const
 import {
   CallWebhookJob,
   CallWebhookJobData,
-  WebhookOperation,
+  CallWebhookJobOperation,
 } from 'src/workspace/workspace-query-runner/jobs/call-webhook.job';
 import { parseResult } from 'src/workspace/workspace-query-runner/utils/parse-result.util';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
@@ -135,7 +135,7 @@ export class WorkspaceQueryRunnerService {
 
       await this.addJobsToQueue<Record[] | undefined>(
         parsedResults,
-        WebhookOperation.create,
+        CallWebhookJobOperation.create,
         options,
       );
 
@@ -158,7 +158,7 @@ export class WorkspaceQueryRunnerService {
 
     await this.addJobsToQueue<Record[] | undefined>(
       results,
-      WebhookOperation.create,
+      CallWebhookJobOperation.create,
       options,
     );
 
@@ -185,7 +185,7 @@ export class WorkspaceQueryRunnerService {
 
       await this.addJobsToQueue<Record[] | undefined>(
         parsedResults,
-        WebhookOperation.update,
+        CallWebhookJobOperation.update,
         options,
       );
 
@@ -220,7 +220,7 @@ export class WorkspaceQueryRunnerService {
 
       await this.addJobsToQueue<Record[] | undefined>(
         parsedResults,
-        WebhookOperation.delete,
+        CallWebhookJobOperation.delete,
         options,
       );
 
@@ -255,7 +255,7 @@ export class WorkspaceQueryRunnerService {
 
       await this.addJobsToQueue<Record[] | undefined>(
         parsedResults,
-        WebhookOperation.update,
+        CallWebhookJobOperation.update,
         options,
       );
 
@@ -293,7 +293,7 @@ export class WorkspaceQueryRunnerService {
 
       await this.addJobsToQueue<Record[] | undefined>(
         parsedResults,
-        WebhookOperation.delete,
+        CallWebhookJobOperation.delete,
         options,
       );
 
@@ -365,7 +365,7 @@ export class WorkspaceQueryRunnerService {
 
   async addJobsToQueue<JobsData>(
     jobsData: JobsData,
-    operation: WebhookOperation,
+    operation: CallWebhookJobOperation,
     options: WorkspaceQueryRunnerOptions,
   ) {
     if (!Array.isArray(jobsData)) {
