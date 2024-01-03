@@ -39,7 +39,7 @@ const StyledLeftContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
   width: 100%;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
@@ -52,19 +52,6 @@ const StyledTitleContainer = styled.div`
   font-size: ${({ theme }) => theme.font.size.md};
   margin-left: ${({ theme }) => theme.spacing(1)};
   max-width: 50%;
-`;
-
-const StyledButtonDiv = styled.div`
-  align-items: center;
-  display: flex;
-  height: 24px;
-  justify-content: center;
-  margin-right: ${({ theme }) => theme.spacing(1)};
-  width: 24px;
-`;
-const StyledBackIconButton = styled(IconButton)`
-  height: 24px;
-  width: 24px;
 `;
 
 const StyledTopBarIconStyledTitleContainer = styled.div`
@@ -111,14 +98,12 @@ export const PageHeader = ({
           </StyledTopBarButtonContainer>
         )}
         {hasBackButton && (
-          <StyledButtonDiv>
-            <StyledBackIconButton
-              Icon={IconChevronLeft}
-              size={isMobile ? 'small' : 'medium'}
-              onClick={() => navigate(-1)}
-              variant="tertiary"
-            />
-          </StyledButtonDiv>
+          <IconButton
+            Icon={IconChevronLeft}
+            size="small"
+            onClick={() => navigate(-1)}
+            variant="tertiary"
+          />
         )}
         <StyledTopBarIconStyledTitleContainer>
           {Icon && <Icon size={theme.icon.size.md} />}
