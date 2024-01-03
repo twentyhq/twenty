@@ -2,7 +2,7 @@ services:
 - type: web
   name: front
   env: docker
-  dockerfilePath: ./infra/prod/front/Dockerfile
+  dockerfilePath: ./packages/twenty-docker/prod/twenty-front/Dockerfile
   autoDeploy: false
   envVars:
     - key: REACT_APP_SERVER_BASE_URL
@@ -13,7 +13,7 @@ services:
 - type: web
   name: server
   env: docker
-  dockerfilePath: ./infra/prod/server/Dockerfile
+  dockerfilePath: ./packages/twenty-docker/prod/twenty-server/Dockerfile
   dockerCommand: "sh -c ./scripts/render-run.sh"
   autoDeploy: false
   envVars:
@@ -45,7 +45,7 @@ services:
 - type: pserv
   name: twenty_postgres
   env: docker
-  dockerfilePath: ./infra/prod/postgres/Dockerfile
+  dockerfilePath: ./packages/twenty-docker/prod/twenty-postgres/Dockerfile
   autoDeploy: false
   disk:
     name: data
