@@ -3,22 +3,22 @@
 import styled from '@emotion/styled';
 
 const BackgroundContainer = styled.div`
-    position: absolute;
-    top: 100%;
-    left: -50px;
-    width: 200%;
-    height: 200%;
-    background-image: url(https://framerusercontent.com/images/nqEmdwe7yDXNsOZovuxG5zvj2E.png);
-    background-size: auto 20px;
-    background-repeat: repeat;
-    transform-origin: center center;
-    z-index: -2;
+  position: absolute;
+  top: 100%;
+  left: 0px;
+  width: 100%;
+  height: 200%;
+  background-image: url(https://framerusercontent.com/images/nqEmdwe7yDXNsOZovuxG5zvj2E.png);
+  background-size: auto 20px;
+  background-repeat: repeat;
+  transform-origin: center center;
+  z-index: -2;
   }
 `;
 
 const Gradient = styled.div`
   position: absolute;
-  width: 200%;
+  width: 100%;
   height: 200%;
   top: 100%;
   left: 0;
