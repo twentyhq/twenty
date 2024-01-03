@@ -12,7 +12,7 @@ export const useGenerateEmptyRecord = ({
     // Todo replace this by runtime typing
     const validatedInput = input as T;
 
-    const emptyRecord = {} as ObjectRecord;
+    const emptyRecord = {} as any;
 
     for (const fieldMetadataItem of objectMetadataItem.fields) {
       emptyRecord[fieldMetadataItem.name] =
@@ -20,7 +20,7 @@ export const useGenerateEmptyRecord = ({
         generateEmptyFieldValue(fieldMetadataItem);
     }
 
-    return emptyRecord;
+    return emptyRecord as T;
   };
 
   return {
