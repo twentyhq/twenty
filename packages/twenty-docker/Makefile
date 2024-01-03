@@ -1,13 +1,12 @@
 dev-build:
 	@docker compose -f dev/docker-compose.yml down
-	rm -rf ../twenty-front/node_modules
-	rm -rf ../twenty-server/node_modules
-	rm -rf ../twenty-docs/node_modules
+	@docker volume rm twenty_dev_node_modules_root > /dev/null 2>&1 || true
+	@docker volume rm twenty_dev_node_modules_docs > /dev/null 2>&1 || true
+	@docker volume rm twenty_dev_node_modules_eslint > /dev/null 2>&1 || true
 	@docker volume rm twenty_dev_node_modules_front > /dev/null 2>&1 || true
 	@docker volume rm twenty_dev_node_modules_server > /dev/null 2>&1 || true
-	@docker volume rm twenty_dev_node_modules_docs > /dev/null 2>&1 || true
-	@docker volume rm twenty_dev_node_modules_root > /dev/null 2>&1 || true
-	@docker volume rm twenty_dev_node_modules_yarn > /dev/null 2>&1 || true
+	@docker volume rm twenty_dev_node_modules_website > /dev/null 2>&1 || true
+	@docker volume rm twenty_dev_node_modules_zapier > /dev/null 2>&1 || true
 	@docker compose -f dev/docker-compose.yml build
 
 dev-up:

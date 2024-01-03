@@ -62,16 +62,16 @@ export const useCreateManyRecords = <T extends ObjectRecord>({
     }
 
     const createdRecords =
-      (createdObjects.data[
+      createdObjects.data[
         `create${capitalize(objectMetadataItem.namePlural)}`
-      ] as T[]) ?? [];
+      ] ?? [];
 
     triggerOptimisticEffects({
       typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
       createdRecords,
     });
 
-    return createdRecords;
+    return createdRecords as T[];
   };
 
   return { createManyRecords };
