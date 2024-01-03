@@ -42,13 +42,11 @@ export const TableOptionsDropdownContent = ({
 
   const viewEditInputRef = useRef<HTMLInputElement>(null);
 
-  // const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
-  //   useRecordTableScopedStates({ customRecordTableScopeId: recordTableId });
-
   const { hiddenTableColumnsScopeInjector, visibleTableColumnsScopeInjector } =
     getRecordTableScopeInjector();
 
-  const { injectSelectorWithRecordTableScopeId } = useRecordTableScopedStates();
+  const { injectSelectorWithRecordTableScopeId } =
+    useRecordTableScopedStates(recordTableId);
 
   const hiddenTableColumnsSelector = injectSelectorWithRecordTableScopeId(
     hiddenTableColumnsScopeInjector,

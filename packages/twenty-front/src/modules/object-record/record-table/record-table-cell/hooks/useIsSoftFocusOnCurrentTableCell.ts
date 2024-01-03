@@ -8,13 +8,13 @@ import { useCurrentTableCellPosition } from './useCurrentCellPosition';
 export const useIsSoftFocusOnCurrentTableCell = () => {
   const currentTableCellPosition = useCurrentTableCellPosition();
 
-  const { isSoftFocusActiveScopeInjector } = getRecordTableScopeInjector();
+  const { isSoftFocusOnTableCellScopeInjector } = getRecordTableScopeInjector();
 
   const { injectFamilyStateWithRecordTableScopeId } =
     useRecordTableScopedStates();
 
   const isSoftFocusActiveFamilyState = injectFamilyStateWithRecordTableScopeId(
-    isSoftFocusActiveScopeInjector,
+    isSoftFocusOnTableCellScopeInjector,
   );
 
   const isSoftFocusOnTableCell = useRecoilValue(

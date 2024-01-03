@@ -2,6 +2,7 @@ import { useRecoilState } from 'recoil';
 
 import { useDropdownScopedStates } from '@/ui/layout/dropdown/hooks/internal/useDropdownScopedStates';
 import { getDropdownScopeInjectors } from '@/ui/layout/dropdown/utils/internal/getDropdownScopeInjectors';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
 export const useDropdown = (dropdownId?: string) => {
   const { injectStateWithDropdownScopeId, scopeId } = useDropdownScopedStates({
@@ -13,6 +14,11 @@ export const useDropdown = (dropdownId?: string) => {
     dropdownWidthScopeInjector,
     isDropdownOpenScopeInjector,
   } = getDropdownScopeInjectors();
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
 
   const [dropdownHotkeyScope, setDropdownHotkeyScope] = useRecoilState(
     injectStateWithDropdownScopeId(dropdownHotkeyScopeScopeInjector),
@@ -27,11 +33,18 @@ export const useDropdown = (dropdownId?: string) => {
   );
 
   const closeDropdown = () => {
+    goBackToPreviousHotkeyScope();
     setIsDropdownOpen(false);
   };
 
   const openDropdown = () => {
     setIsDropdownOpen(true);
+    if (dropdownHotkeyScope) {
+      setHotkeyScopeAndMemorizePreviousScope(
+        dropdownHotkeyScope.scope,
+        dropdownHotkeyScope.customScopes,
+      );
+    }
   };
 
   const toggleDropdown = () => {
