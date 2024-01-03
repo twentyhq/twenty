@@ -53,9 +53,10 @@ export class CallWebhookJobsJob
       await this.workspaceDataSourceService.connectToWorkspaceDataSource(
         data.workspaceId,
       );
+    const operationName = `${data.operation}.${objectMetadataItem.namePlural}`;
     const webhooks: { id: string; targetUrl: string }[] =
       await workspaceDataSource?.query(
-        `SELECT * FROM ${dataSourceMetadata.schema}."webhook" WHERE operation='${data.operation}.${objectMetadataItem.namePlural}'`,
+        `SELECT * FROM ${dataSourceMetadata.schema}."webhook" WHERE operation='${operationName}'`,
       );
 
     webhooks.forEach((webhook) => {
@@ -70,9 +71,9 @@ export class CallWebhookJobsJob
     });
 
     this.logger.log(
-      `CallWebhookJobsJob called on webhooks ids ["${webhooks
+      `CallWebhookJobsJob on operation '${operationName}' called on webhooks ids [\n"${webhooks
         .map((webhook) => webhook.id)
-        .join('", "')}"] with data: ${data}`,
+        .join('",\n"')}"\n]`,
     );
   }
 }

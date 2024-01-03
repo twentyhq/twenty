@@ -24,7 +24,9 @@ export class CallWebhookJob implements MessageQueueJob<CallWebhookJobData> {
       });
 
     this.logger.log(
-      `CallWebhookJob called on targetUrl '${data.targetUrl}' with data: ${data}`,
+      `CallWebhookJob called on targetUrl '${
+        data.targetUrl
+      }' with data: ${JSON.stringify(data.recordData)}`,
     );
   }
 }
