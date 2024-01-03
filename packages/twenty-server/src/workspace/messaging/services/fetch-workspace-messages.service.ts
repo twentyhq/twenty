@@ -11,6 +11,7 @@ import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetc
 import { GmailMessage } from 'src/workspace/messaging/types/gmailMessage';
 import { MessageOrThreadQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
+import { RefreshAccessTokenService } from 'src/workspace/messaging/services/refresh-access-token.service';
 
 @Injectable()
 export class FetchWorkspaceMessagesService {
@@ -19,9 +20,14 @@ export class FetchWorkspaceMessagesService {
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly fetchBatchMessagesService: FetchBatchMessagesService,
+    private readonly refreshAccessTokenService: RefreshAccessTokenService,
   ) {}
 
   async fetchWorkspaceMessages(workspaceId: string): Promise<void> {
+    await this.refreshAccessTokenService.refreshAndSaveAccessToken(
+      workspaceId,
+      '20202020-0687-4c41-b707-ed1bfca972a7',
+    );
     await this.fetchWorkspaceMemberThreads(
       workspaceId,
       '20202020-0687-4c41-b707-ed1bfca972a7',

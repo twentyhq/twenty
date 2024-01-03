@@ -55,6 +55,7 @@ export class RefreshAccessTokenService {
   }
 
   async refreshAccessToken(refreshToken: string): Promise<string> {
+    console.log('refreshing access token');
     const response = await axios.post(
       'https://oauth2.googleapis.com/token',
       {
