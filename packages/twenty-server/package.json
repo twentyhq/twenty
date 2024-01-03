@@ -23,6 +23,7 @@
     "typeorm:migrate": "yarn typeorm migration:run -d ./src/database/typeorm/metadata/metadata.datasource.ts && yarn typeorm migration:run -d ./src/database/typeorm/core/core.datasource.ts",
     "database:init": "yarn database:setup && yarn database:seed:dev",
     "database:setup": "npx ts-node ./scripts/setup-db.ts && yarn database:migrate",
+    "database:setup:prod": "npx ts-node ./scripts/setup-db.ts && yarn typeorm:migrate",
     "database:truncate": "npx ts-node ./scripts/truncate-db.ts",
     "database:migrate": "yarn build && yarn typeorm:migrate",
     "database:seed:dev": "yarn build && yarn command workspace:seed:dev",

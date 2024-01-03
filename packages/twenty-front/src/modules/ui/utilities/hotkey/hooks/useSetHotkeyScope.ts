@@ -15,6 +15,7 @@ const isCustomScopesEqual = (
 ) => {
   return (
     customScopesA?.commandMenu === customScopesB?.commandMenu &&
+    customScopesA?.commandMenuOpen === customScopesB?.commandMenuOpen &&
     customScopesA?.goto === customScopesB?.goto &&
     customScopesA?.keyboardShortcutMenu === customScopesB?.keyboardShortcutMenu
   );
@@ -54,6 +55,7 @@ export const useSetHotkeyScope = () =>
           scope: hotkeyScopeToSet,
           customScopes: {
             commandMenu: customScopes?.commandMenu ?? true,
+            commandMenuOpen: customScopes?.commandMenuOpen ?? true,
             goto: customScopes?.goto ?? false,
             keyboardShortcutMenu: customScopes?.keyboardShortcutMenu ?? false,
           },

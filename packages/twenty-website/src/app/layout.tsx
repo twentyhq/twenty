@@ -1,43 +1,41 @@
-import type { Metadata } from 'next'
-import { Gabarito } from 'next/font/google'
-import EmotionRootStyleRegistry from './emotion-root-style-registry'
-import styled from '@emotion/styled'
-import { HeaderNav } from './components/HeaderNav'
-import { FooterNav } from './components/FooterNav'
+import type { Metadata } from 'next';
+import { Gabarito } from 'next/font/google';
+import EmotionRootStyleRegistry from './emotion-root-style-registry';
+import { HeaderDesktop } from './components/HeaderDesktop';
+import { FooterDesktop } from './components/FooterDesktop';
+import { HeaderMobile } from '@/app/components/HeaderMobile';
+import './layout.css';
 
 export const metadata: Metadata = {
-  title: 'Twenty.dev',
-  description: 'Twenty for Developer',
-  icons: '/favicon.ico',
-}
+  title: 'Twenty.com',
+  description: 'Open Source CRM',
+  icons: '/images/core/logo.svg',
+};
 
 const gabarito = Gabarito({
   weight: ['400', '500'],
   subsets: ['latin'],
   display: 'swap',
-})
-
+  adjustFontFallback: false,
+});
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en" className={gabarito.className}>
-      <body style={{
-              margin: 0,
-              WebkitFontSmoothing: "antialiased",
-              MozOsxFontSmoothing: "grayscale"
-      }}>
-      <EmotionRootStyleRegistry>
-        <HeaderNav />
-        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-          {children}
-        </div>
-        <FooterNav />
+      <body>
+        <EmotionRootStyleRegistry>
+          <HeaderDesktop />
+          <div className="container">
+            <HeaderMobile />
+            {children}
+          </div>
+          <FooterDesktop />
         </EmotionRootStyleRegistry>
       </body>
     </html>
-  )
+  );
 }

@@ -6,6 +6,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import debounce from 'lodash.debounce';
 
 import { Activity } from '@/activities/types/Activity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -27,7 +28,7 @@ export const ActivityBodyEditor = ({
 }: ActivityBodyEditorProps) => {
   const [body, setBody] = useState<string | null>(null);
   const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
   });
 
   useEffect(() => {

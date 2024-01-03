@@ -48,10 +48,11 @@ EOF
 echo_header $BLUE "                    DATABASE SETUP"
 
 PG_MAIN_VERSION=15
-PG_GRAPHQL_VERSION=1.3.0
-CARGO_PGRX_VERSION=0.9.8
+PG_GRAPHQL_VERSION=1.4.2
+CARGO_PGRX_VERSION=0.10.2
 
 current_directory=$(pwd)
+script_directory="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
 # Install PostgresSQL
 echo_header $GREEN "Step [1/4]: Installing PostgreSQL..."
@@ -85,9 +86,17 @@ unzip pg_graphql-$PG_GRAPHQL_VERSION.zip
 [[ ":$PATH:" != *":/opt/homebrew/opt/postgresql@$PG_MAIN_VERSION/bin:"* ]] && PATH="/opt/homebrew/opt/postgresql@$PG_MAIN_VERSION/bin:${PATH}"
 
 cd "pg_graphql-$PG_GRAPHQL_VERSION"
+
+# Apply patches to pg_graphql files
+echo "Applying patches to pg_graphql files..."
+for patch_file in "$script_directory/../../patches/pg_graphql/"*.patch; do
+    echo "Applying patch: $patch_file"
+    patch -p1 < "$patch_file"
+done
+
 cargo pgrx install --release --pg-config /opt/homebrew/opt/postgresql@$PG_MAIN_VERSION/bin/pg_config
 
-# # Clean up the temporary directory
+# Clean up the temporary directory
 echo "Cleaning up..."
 cd "$current_directory"
 rm -rf "$temp_dir"

@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { SingleEntitySelectBase } from '@/object-record/relation-picker/components/SingleEntitySelectBase';
 import { useEntitySelectSearch } from '@/object-record/relation-picker/hooks/useEntitySelectSearch';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
@@ -37,7 +38,7 @@ export const OpportunityPicker = ({
 
   // TODO: refactor useFilteredSearchEntityQuery
   const { findManyRecordsQuery: findManyCompanies } = useObjectMetadataItem({
-    objectNameSingular: 'company',
+    objectNameSingular: CoreObjectNameSingular.Company,
   });
   const useFindManyQuery = (options: any) =>
     useQuery(findManyCompanies, options);
@@ -54,7 +55,7 @@ export const OpportunityPicker = ({
     orderByField: 'createdAt',
     selectedIds: [],
     mappingFunction: (record: any) => identifiersMapper?.(record, 'company'),
-    objectNameSingular: 'company',
+    objectNameSingular: CoreObjectNameSingular.Company,
   });
 
   const [isProgressSelectionUnfolded, setIsProgressSelectionUnfolded] =

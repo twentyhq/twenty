@@ -1,7 +1,7 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-const StyledEditableCellEditModeContainer = styled.div<TableCellEditModeProps>`
+const StyledEditableCellEditModeContainer = styled.div<RecordTableCellEditModeProps>`
   align-items: center;
   display: flex;
   min-width: 200px;
@@ -9,7 +9,7 @@ const StyledEditableCellEditModeContainer = styled.div<TableCellEditModeProps>`
   z-index: 1;
 `;
 
-export type TableCellEditModeProps = {
+export type RecordTableCellEditModeProps = {
   children: ReactElement;
   transparent?: boolean;
   maxContentWidth?: number;
@@ -18,11 +18,11 @@ export type TableCellEditModeProps = {
   initialValue?: string;
 };
 
-export const TableCellEditMode = ({
+export const RecordTableCellEditMode = ({
   editModeHorizontalAlign,
   editModeVerticalPosition,
   children,
-}: TableCellEditModeProps) => (
+}: RecordTableCellEditModeProps) => (
   <StyledEditableCellEditModeContainer
     data-testid="editable-cell-edit-mode-container"
     editModeHorizontalAlign={editModeHorizontalAlign}

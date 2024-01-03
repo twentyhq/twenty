@@ -4,6 +4,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 
 import { Company } from '@/companies/types/Company';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { mapPaginatedRecordsToRecords } from '@/object-record/utils/mapPaginatedRecordsToRecords';
 import { PeopleCard } from '@/people/components/PeopleCard';
 
@@ -48,7 +49,7 @@ const StyledTitle = styled.div`
 
 export const CompanyTeam = ({ company }: { company: any }) => {
   const { findManyRecordsQuery } = useObjectMetadataItem({
-    objectNameSingular: 'person',
+    objectNameSingular: CoreObjectNameSingular.Person,
   });
 
   const { data } = useQuery(findManyRecordsQuery, {

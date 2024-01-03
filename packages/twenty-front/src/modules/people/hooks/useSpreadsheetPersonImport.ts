@@ -1,5 +1,6 @@
 import { v4 } from 'uuid';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { Person } from '@/people/types/Person';
 import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
@@ -15,7 +16,7 @@ export const useSpreadsheetPersonImport = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const { createManyRecords: createManyPeople } = useCreateManyRecords<Person>({
-    objectNameSingular: 'person',
+    objectNameSingular: CoreObjectNameSingular.Person,
   });
 
   const openPersonSpreadsheetImport = (

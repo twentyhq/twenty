@@ -6,6 +6,7 @@ import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRi
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { IconCalendar, IconComment } from '@/ui/display/icon';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
@@ -81,7 +82,7 @@ export const TaskRow = ({
     ) ?? [];
 
   const { records: activityTargets } = useFindManyRecords<ActivityTarget>({
-    objectNameSingular: 'activityTarget',
+    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     filter: { id: { in: activityTargetIds } },
   });
 

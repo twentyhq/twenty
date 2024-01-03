@@ -74,7 +74,7 @@ export const Select = <Value extends string | number | null>({
   const selectedOption =
     options.find(({ value: key }) => key === value) || options[0];
 
-  const { closeDropdown } = useDropdown({ dropdownScopeId });
+  const { closeDropdown } = useDropdown(dropdownScopeId);
 
   const selectControl = (
     <StyledControlContainer disabled={disabled} fullWidth={fullWidth}>

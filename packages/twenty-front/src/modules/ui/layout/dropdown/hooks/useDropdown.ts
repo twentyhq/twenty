@@ -1,44 +1,44 @@
+import { useRecoilState } from 'recoil';
+
+import { useDropdownScopedStates } from '@/ui/layout/dropdown/hooks/internal/useDropdownScopedStates';
+import { getDropdownScopeInjectors } from '@/ui/layout/dropdown/utils/internal/getDropdownScopeInjectors';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
-import { DropdownScopeInternalContext } from '../scopes/scope-internal-context/DropdownScopeInternalContext';
+export const useDropdown = (dropdownId?: string) => {
+  const { injectStateWithDropdownScopeId, scopeId } = useDropdownScopedStates({
+    dropdownScopeId: dropdownId,
+  });
 
-import { useDropdownStates } from './useDropdownStates';
+  const {
+    dropdownHotkeyScopeScopeInjector,
+    dropdownWidthScopeInjector,
+    isDropdownOpenScopeInjector,
+  } = getDropdownScopeInjectors();
 
-type UseDropdownProps = {
-  dropdownScopeId?: string;
-};
-
-export const useDropdown = (props?: UseDropdownProps) => {
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const scopeId = useAvailableScopeIdOrThrow(
-    DropdownScopeInternalContext,
-    props?.dropdownScopeId,
+  const [dropdownHotkeyScope, setDropdownHotkeyScope] = useRecoilState(
+    injectStateWithDropdownScopeId(dropdownHotkeyScopeScopeInjector),
   );
 
-  const {
-    dropdownHotkeyScope,
-    setDropdownHotkeyScope,
-    isDropdownOpen,
-    setIsDropdownOpen,
-    dropdownWidth,
-    setDropdownWidth,
-  } = useDropdownStates({
-    scopeId,
-  });
+  const [dropdownWidth, setDropdownWidth] = useRecoilState(
+    injectStateWithDropdownScopeId(dropdownWidthScopeInjector),
+  );
 
-  const closeDropdownButton = () => {
+  const [isDropdownOpen, setIsDropdownOpen] = useRecoilState(
+    injectStateWithDropdownScopeId(isDropdownOpenScopeInjector),
+  );
+
+  const closeDropdown = () => {
     goBackToPreviousHotkeyScope();
     setIsDropdownOpen(false);
   };
 
-  const openDropdownButton = () => {
+  const openDropdown = () => {
     setIsDropdownOpen(true);
-
     if (dropdownHotkeyScope) {
       setHotkeyScopeAndMemorizePreviousScope(
         dropdownHotkeyScope.scope,
@@ -47,20 +47,20 @@ export const useDropdown = (props?: UseDropdownProps) => {
     }
   };
 
-  const toggleDropdownButton = () => {
+  const toggleDropdown = () => {
     if (isDropdownOpen) {
-      closeDropdownButton();
+      closeDropdown();
     } else {
-      openDropdownButton();
+      openDropdown();
     }
   };
 
   return {
     scopeId,
     isDropdownOpen: isDropdownOpen,
-    closeDropdown: closeDropdownButton,
-    toggleDropdown: toggleDropdownButton,
-    openDropdown: openDropdownButton,
+    closeDropdown,
+    toggleDropdown,
+    openDropdown,
     dropdownHotkeyScope,
     setDropdownHotkeyScope,
     dropdownWidth,

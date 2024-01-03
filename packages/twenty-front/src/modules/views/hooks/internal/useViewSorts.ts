@@ -3,6 +3,7 @@ import { produce } from 'immer';
 import { useRecoilCallback } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { savedViewSortsScopedFamilyState } from '@/views/states/savedViewSortsScopedFamilyState';
 import { ViewSort } from '@/views/types/ViewSort';
@@ -16,11 +17,11 @@ export const useViewSorts = (viewScopeId: string) => {
     createOneRecordMutation,
     deleteOneRecordMutation,
   } = useObjectMetadataItem({
-    objectNameSingular: 'viewSort',
+    objectNameSingular: CoreObjectNameSingular.ViewSort,
   });
 
   const { modifyRecordFromCache } = useObjectMetadataItem({
-    objectNameSingular: 'view',
+    objectNameSingular: CoreObjectNameSingular.View,
   });
   const apolloClient = useApolloClient();
 

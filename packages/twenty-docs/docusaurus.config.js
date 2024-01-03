@@ -44,7 +44,7 @@ const config = {
           sidebarPath: require.resolve("./sidebars.js"),
           sidebarCollapsible: false,
           routeBasePath: "/",
-          editUrl: "https://github.com/twentyhq/twenty/edit/main/docs/",
+          editUrl: "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs"
         },
         blog: false,
         theme: {
@@ -74,11 +74,6 @@ const config = {
           {
             type: "search",
             position: "left",
-          },
-          {
-            to: "/user-guide",
-            label: "User Guide",
-            position: "right",
           },
           {
             to: "https://github.com/twentyhq/twenty/releases",

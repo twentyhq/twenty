@@ -1,4 +1,5 @@
 import { Company } from '@/companies/types/Company';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
 import { SpreadsheetOptions } from '@/spreadsheet-import/types';
@@ -14,7 +15,7 @@ export const useSpreadsheetCompanyImport = () => {
 
   const { createManyRecords: createManyCompanies } =
     useCreateManyRecords<Company>({
-      objectNameSingular: 'company',
+      objectNameSingular: CoreObjectNameSingular.Company,
     });
 
   const openCompanySpreadsheetImport = (

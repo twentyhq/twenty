@@ -1,26 +1,45 @@
 import { useRecoilCallback } from 'recoil';
 
-import { currentTableCellInEditModePositionState } from '../../states/currentTableCellInEditModePositionState';
-import { isTableCellInEditModeFamilyState } from '../../states/isTableCellInEditModeFamilyState';
+import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 
-export const useGetIsSomeCellInEditMode = () => {
+export const useGetIsSomeCellInEditMode = (recordTableScopeId: string) => {
+  const {
+    currentTableCellInEditModePositionScopeInjector,
+    isTableCellInEditModeScopeInjector,
+  } = getRecordTableScopeInjector();
+
+  const {
+    injectSnapshotValueWithRecordTableScopeId,
+    injectFamilySnapshotValueWithRecordTableScopeId,
+  } = useRecordTableScopedStates(recordTableScopeId);
+
   return useRecoilCallback(
     ({ snapshot }) =>
       () => {
-        const currentTableCellInEditModePosition = snapshot
-          .getLoadable(currentTableCellInEditModePositionState)
-          .valueOrThrow();
+        const currentTableCellInEditModePosition =
+          injectSnapshotValueWithRecordTableScopeId(
+            snapshot,
+            currentTableCellInEditModePositionScopeInjector,
+          );
 
-        const isSomeCellInEditMode = snapshot
-          .getLoadable(
-            isTableCellInEditModeFamilyState(
-              currentTableCellInEditModePosition,
-            ),
-          )
-          .valueOrThrow();
+        const isSomeCellInEditModeFamilyState =
+          injectFamilySnapshotValueWithRecordTableScopeId(
+            snapshot,
+            isTableCellInEditModeScopeInjector,
+          );
+
+        const isSomeCellInEditMode = isSomeCellInEditModeFamilyState(
+          currentTableCellInEditModePosition,
+        );
 
         return isSomeCellInEditMode;
       },
-    [],
+    [
+      currentTableCellInEditModePositionScopeInjector,
+      injectFamilySnapshotValueWithRecordTableScopeId,
+      injectSnapshotValueWithRecordTableScopeId,
+      isTableCellInEditModeScopeInjector,
+    ],
   );
 };

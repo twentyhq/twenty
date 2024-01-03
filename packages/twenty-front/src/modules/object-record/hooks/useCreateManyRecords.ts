@@ -7,7 +7,9 @@ import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMeta
 import { useGenerateEmptyRecord } from '@/object-record/hooks/useGenerateEmptyRecord';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const useCreateManyRecords = <T extends Record<string, unknown>>({
+export const useCreateManyRecords = <
+  T extends Record<string, unknown> & { id: string },
+>({
   objectNameSingular,
 }: ObjectMetadataItemIdentifier) => {
   const { triggerOptimisticEffects } = useOptimisticEffect({
@@ -62,16 +64,16 @@ export const useCreateManyRecords = <T extends Record<string, unknown>>({
     }
 
     const createdRecords =
-      (createdObjects.data[
+      createdObjects.data[
         `create${capitalize(objectMetadataItem.namePlural)}`
-      ] as T[]) ?? [];
+      ] ?? [];
 
     triggerOptimisticEffects({
       typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
       createdRecords,
     });
 
-    return createdRecords;
+    return createdRecords as T[];
   };
 
   return { createManyRecords };

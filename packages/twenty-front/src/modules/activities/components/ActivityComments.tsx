@@ -7,6 +7,7 @@ import { Comment } from '@/activities/comment/Comment';
 import { Activity } from '@/activities/types/Activity';
 import { Comment as CommentType } from '@/activities/types/Comment';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import {
@@ -61,13 +62,13 @@ export const ActivityComments = ({
   scrollableContainerRef,
 }: ActivityCommentsProps) => {
   const { createOneRecord: createOneComment } = useCreateOneRecord({
-    objectNameSingular: 'comment',
+    objectNameSingular: CoreObjectNameSingular.Comment,
   });
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const { records: comments } = useFindManyRecords({
-    objectNameSingular: 'comment',
+    objectNameSingular: CoreObjectNameSingular.Comment,
     filter: {
       activityId: {
         eq: activity?.id ?? '',
