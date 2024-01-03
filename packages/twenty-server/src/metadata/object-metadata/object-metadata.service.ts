@@ -326,6 +326,24 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     });
   }
 
+  public async findOneOrFailWithinWorkspace(
+    workspaceId: string,
+    options: FindOneOptions<ObjectMetadataEntity>,
+  ): Promise<ObjectMetadataEntity> {
+    return this.objectMetadataRepository.findOneOrFail({
+      relations: [
+        'fields',
+        'fields.fromRelationMetadata',
+        'fields.toRelationMetadata',
+      ],
+      ...options,
+      where: {
+        ...options.where,
+        workspaceId,
+      },
+    });
+  }
+
   public async findManyWithinWorkspace(
     workspaceId: string,
     options?: FindManyOptions<ObjectMetadataEntity>,

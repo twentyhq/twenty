@@ -22,7 +22,7 @@ export const SettingsObjectDisabledMenuDropDown = ({
 }: SettingsObjectDisabledMenuDropDownProps) => {
   const dropdownScopeId = `${scopeKey}-settings-object-disabled-menu-dropdown`;
 
-  const { closeDropdown } = useDropdown({ dropdownScopeId });
+  const { closeDropdown } = useDropdown(dropdownScopeId);
 
   const handleActivate = () => {
     onActivate();

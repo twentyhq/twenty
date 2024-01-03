@@ -18,7 +18,8 @@ export const useGenerateEmptyRecord = ({
         validatedInput[fieldMetadataItem.name] ??
         generateEmptyFieldValue(fieldMetadataItem);
     }
-    return emptyRecord as T;
+
+    return emptyRecord;
   };
 
   return {

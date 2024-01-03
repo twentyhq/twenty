@@ -9,13 +9,13 @@ import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritin
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useTableCell } from '../hooks/useTableCell';
 
-import { TableCellDisplayContainer } from './RecordTableCellDisplayContainer';
+import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 
-type TableCellSoftFocusModeProps = PropsWithChildren<unknown>;
+type RecordTableCellSoftFocusModeProps = PropsWithChildren<unknown>;
 
-export const TableCellSoftFocusMode = ({
+export const RecordTableCellSoftFocusMode = ({
   children,
-}: TableCellSoftFocusModeProps) => {
+}: RecordTableCellSoftFocusModeProps) => {
   const { openTableCell } = useTableCell();
 
   const isFieldInputOnly = useIsFieldInputOnly();
@@ -95,12 +95,12 @@ export const TableCellSoftFocusMode = ({
   };
 
   return (
-    <TableCellDisplayContainer
+    <RecordTableCellDisplayContainer
       onClick={handleClick}
       softFocus
       scrollRef={scrollRef}
     >
       {children}
-    </TableCellDisplayContainer>
+    </RecordTableCellDisplayContainer>
   );
 };
