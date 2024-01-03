@@ -52,6 +52,7 @@ module.exports = {
     'react/display-name': 'off',
     'react/jsx-uses-react': 'off',
     'react/react-in-jsx-scope': 'off',
+    'react/jsx-no-useless-fragment': 'off',
     'react/jsx-props-no-spreading': [
       'error',
       {

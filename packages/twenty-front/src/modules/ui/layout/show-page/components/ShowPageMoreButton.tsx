@@ -30,7 +30,7 @@ export const ShowPageMoreButton = ({
   const navigationMemorizedUrl = useRecoilValue(navigationMemorizedUrlState);
   const navigate = useNavigate();
 
-  const { deleteOneRecord: deleteOneRecord } = useDeleteOneRecord({
+  const { deleteOneRecord } = useDeleteOneRecord({
     objectNameSingular,
   });
 
