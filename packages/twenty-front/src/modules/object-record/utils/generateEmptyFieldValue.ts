@@ -49,12 +49,21 @@ export const generateEmptyFieldValue = (
       };
     }
 
-    case FieldMetadataType.MultiSelect:
-    case FieldMetadataType.Select: {
-      return [];
-    }
-
+   // Handling MultiSelect and Select in the default case
     default: {
+      if (
+        fieldMetadataItem.type === FieldMetadataType.MultiSelect ||
+        fieldMetadataItem.type === FieldMetadataType.Select
+      ) {
+        const defaultSelectValue = {
+          color: 'DEFAULT_COLOR', // Replace with the actual default color
+          label: '',
+          __typename: 'FieldSelectValue',
+        };
+        return fieldMetadataItem.type === FieldMetadataType.Select
+          ? defaultSelectValue
+          : null;
+      }
       throw new Error('Not implemented yet');
     }
   }
