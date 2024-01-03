@@ -30,8 +30,8 @@ export class CallWebhookJob implements MessageQueueJob<CallWebhookJobData> {
   ) {}
 
   async handle(data: CallWebhookJobData): Promise<void> {
-    const objectMetadata =
-      await this.objectMetadataService.findManyWithinWorkspace(
+    const objectMetadataItem =
+      await this.objectMetadataService.findOneOrFailWithinWorkspace(
         data.workspaceId,
         { where: { nameSingular: data.objectNameSingular } },
       );
@@ -43,9 +43,8 @@ export class CallWebhookJob implements MessageQueueJob<CallWebhookJobData> {
       await this.workspaceDataSourceService.connectToWorkspaceDataSource(
         data.workspaceId,
       );
-    const namePlural = objectMetadata?.[0].namePlural;
     const webhooks: { targetUrl: string }[] = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."webhook" WHERE operation='${data.operation}.${namePlural}'`,
+      `SELECT * FROM ${dataSourceMetadata.schema}."webhook" WHERE operation='${data.operation}.${objectMetadataItem.namePlural}'`,
     );
 
     webhooks.forEach((webhook) => {
