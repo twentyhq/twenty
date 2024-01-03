@@ -9,12 +9,15 @@ const StyledEditButtonContainer = styled(motion.div)`
   right: 5px;
 `;
 
-type TableCellButtonProps = {
+type RecordTableCellButtonProps = {
   onClick?: () => void;
   Icon: IconComponent;
 };
 
-export const TableCellButton = ({ onClick, Icon }: TableCellButtonProps) => (
+export const RecordTableCellButton = ({
+  onClick,
+  Icon,
+}: RecordTableCellButtonProps) => (
   <StyledEditButtonContainer
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}

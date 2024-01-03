@@ -55,7 +55,11 @@ export class MessageQueueModule {
       module: MessageQueueModule,
       imports: [JobsModule, ...(options.imports || [])],
       providers,
-      exports: [MessageQueue.taskAssignedQueue, MessageQueue.messagingQueue],
+      exports: [
+        MessageQueue.taskAssignedQueue,
+        MessageQueue.messagingQueue,
+        MessageQueue.webhookQueue,
+      ],
     };
   }
 }

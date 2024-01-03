@@ -20,7 +20,7 @@ export const AttachmentDropdown = ({
 }: AttachmentDropdownProps) => {
   const dropdownScopeId = `${scopeKey}-settings-field-active-action-dropdown`;
 
-  const { closeDropdown } = useDropdown({ dropdownScopeId });
+  const { closeDropdown } = useDropdown(dropdownScopeId);
 
   const handleDownload = () => {
     onDownload();
