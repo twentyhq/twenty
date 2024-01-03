@@ -7,7 +7,8 @@ import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObje
 import { RecordTable } from '@/object-record/record-table/components/RecordTable';
 import { RecordTableFirstColumnScrollObserver } from '@/object-record/record-table/components/RecordTableFirstColumnScrollObserver';
 import { RecordTableRefContextWrapper } from '@/object-record/record-table/components/RecordTableRefContext';
-import { isRecordTableInitialLoadingState } from '@/object-record/record-table/states/isRecordTableInitialLoadingState';
+import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
@@ -18,7 +19,6 @@ import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinit
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useRecordTable } from '../hooks/useRecordTable';
 import { RecordTableScope } from '../scopes/RecordTableScope';
-import { numberOfTableRowsState } from '../states/numberOfTableRowsState';
 
 import { RecordTableInternalEffect } from './RecordTableInternalEffect';
 
@@ -79,6 +79,22 @@ export const RecordTableWithWrappers = ({
   viewBarId,
 }: RecordTableWithWrappersProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
+
+  const {
+    numberOfTableRowsScopeInjector,
+    isRecordTableInitialLoadingScopeInjector,
+  } = getRecordTableScopeInjector();
+
+  const { injectStateWithRecordTableScopeId } =
+    useRecordTableScopedStates(recordTableId);
+
+  const numberOfTableRowsState = injectStateWithRecordTableScopeId(
+    numberOfTableRowsScopeInjector,
+  );
+
+  const isRecordTableInitialLoadingState = injectStateWithRecordTableScopeId(
+    isRecordTableInitialLoadingScopeInjector,
+  );
 
   const numberOfTableRows = useRecoilValue(numberOfTableRowsState);
 

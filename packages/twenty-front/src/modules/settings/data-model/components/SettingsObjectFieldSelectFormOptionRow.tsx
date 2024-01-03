@@ -68,12 +68,12 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
     return { color: `${baseScopeId}-color`, actions: `${baseScopeId}-actions` };
   }, []);
 
-  const { closeDropdown: closeColorDropdown } = useDropdown({
-    dropdownScopeId: dropdownScopeIds.color,
-  });
-  const { closeDropdown: closeActionsDropdown } = useDropdown({
-    dropdownScopeId: dropdownScopeIds.actions,
-  });
+  const { closeDropdown: closeColorDropdown } = useDropdown(
+    dropdownScopeIds.color,
+  );
+  const { closeDropdown: closeActionsDropdown } = useDropdown(
+    dropdownScopeIds.actions,
+  );
 
   return (
     <StyledRow className={className}>

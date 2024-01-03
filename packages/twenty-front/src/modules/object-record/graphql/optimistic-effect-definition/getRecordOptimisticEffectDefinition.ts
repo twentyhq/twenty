@@ -61,7 +61,7 @@ export const getRecordOptimisticEffectDefinition = ({
         }
       }
 
-      if (deletedRecordIds) {
+      if (isNonEmptyArray(deletedRecordIds)) {
         draft.edges = draft.edges.filter(
           (edge) => !deletedRecordIds.includes(edge.node.id),
         );

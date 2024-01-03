@@ -57,7 +57,7 @@ export const SettingsAboutSection = ({
   const { getIcon } = useIcons();
   const Icon = getIcon(iconKey);
 
-  const { closeDropdown } = useDropdown({ dropdownScopeId });
+  const { closeDropdown } = useDropdown(dropdownScopeId);
 
   const handleEdit = () => {
     onEdit();
