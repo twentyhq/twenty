@@ -41,8 +41,8 @@ export class UpdateOneQueryFactory {
         update${
           options.targetTableName
         }Collection(set: ${stringifyWithoutKeyQuote(
-      argsData,
-    )}, filter: { id: { eq: "${computedArgs.id}" } }) {
+          argsData,
+        )}, filter: { id: { eq: "${computedArgs.id}" } }) {
           affectedCount
           records {
             ${fieldsString}
