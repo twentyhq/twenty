@@ -5,6 +5,7 @@ import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { useOpenCreateActivityDrawerForSelectedRowIds } from '@/activities/hooks/useOpenCreateActivityDrawerForSelectedRowIds';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
 import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
@@ -64,16 +65,14 @@ export const useRecordTableContextMenuEntries = (
     objectNamePlural,
   });
 
+  const { createFavorite, favorites, deleteFavorite } = useFavorites();
+
   const objectMetadataType =
     objectNameSingular === 'company'
       ? 'Company'
       : objectNameSingular === 'person'
         ? 'Person'
         : 'Custom';
-
-  const { createFavorite, deleteFavorite, favorites } = useFavorites({
-    objectNamePlural,
-  });
 
   const handleFavoriteButtonClick = useRecoilCallback(({ snapshot }) => () => {
     const selectedRowIds = injectSelectorSnapshotValueWithRecordTableScopeId(
@@ -83,16 +82,22 @@ export const useRecordTableContextMenuEntries = (
 
     const selectedRowId = selectedRowIds.length === 1 ? selectedRowIds[0] : '';
 
-    const isFavorite =
-      !!selectedRowId &&
-      !!favorites?.find((favorite) => favorite.recordId === selectedRowId);
+    const selectedRecord = snapshot
+      .getLoadable(entityFieldsFamilyState(selectedRowId))
+      .getValue();
+
+    const foundFavorite = favorites?.find(
+      (favorite) => favorite.recordId === selectedRowId,
+    );
+
+    const isFavorite = !!selectedRowId && !!foundFavorite;
 
     resetTableRowSelection();
 
     if (isFavorite) {
-      deleteFavorite(selectedRowId);
-    } else {
-      createFavorite(selectedRowId);
+      deleteFavorite(foundFavorite.id);
+    } else if (selectedRecord) {
+      createFavorite(selectedRecord, objectNameSingular);
     }
   });
 
