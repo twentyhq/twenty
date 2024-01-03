@@ -15,18 +15,17 @@ export class CallWebhookJob implements MessageQueueJob<CallWebhookJobData> {
   constructor(private readonly httpService: HttpService) {}
 
   async handle(data: CallWebhookJobData): Promise<void> {
-    this.httpService.axiosRef
-      .post(data.targetUrl, data.recordData)
-      .catch((err) => {
-        throw new Error(
-          `Error calling webhook on targetUrl '${data.targetUrl}' with data '${data.recordData}': ${err}`,
-        );
-      });
-
-    this.logger.log(
-      `CallWebhookJob called on targetUrl '${
-        data.targetUrl
-      }' with data: ${JSON.stringify(data.recordData)}`,
-    );
+    try {
+      await this.httpService.axiosRef.post(data.targetUrl, data.recordData);
+      this.logger.log(
+        `CallWebhookJob successfully called on targetUrl '${
+          data.targetUrl
+        }' with data: ${JSON.stringify(data.recordData)}`,
+      );
+    } catch (err) {
+      throw new Error(
+        `Error calling webhook on targetUrl '${data.targetUrl}': ${err}`,
+      );
+    }
   }
 }
