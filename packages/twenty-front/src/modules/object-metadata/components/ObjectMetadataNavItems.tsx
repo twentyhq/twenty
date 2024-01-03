@@ -44,7 +44,7 @@ export const ObjectMetadataNavItems = () => {
           key={objectMetadataItem.id}
           label={objectMetadataItem.labelPlural}
           to={`/objects/${objectMetadataItem.namePlural}`}
-          active={currentPath == `/objects/${objectMetadataItem.namePlural}`}
+          active={currentPath === `/objects/${objectMetadataItem.namePlural}`}
           Icon={getIcon(objectMetadataItem.icon)}
           onClick={() => {
             navigate(`/objects/${objectMetadataItem.namePlural}`);

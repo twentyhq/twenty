@@ -1,19 +1,17 @@
-import { RuleTester } from "@typescript-eslint/rule-tester";
+import { TSESLint } from '@typescript-eslint/utils';
 
-import effectComponentsRule from "../rules/effect-components";
+import { rule, RULE_NAME } from '../rules/effect-components';
 
-const ruleTester = new RuleTester({
-  parser: "@typescript-eslint/parser",
+const ruleTester = new TSESLint.RuleTester({
+  parser: require.resolve('@typescript-eslint/parser'),
   parserOptions: {
-    project: "./tsconfig.json",
-    tsconfigRootDir: __dirname,
     ecmaFeatures: {
       jsx: true,
     },
   },
 });
 
-ruleTester.run("effect-components", effectComponentsRule, {
+ruleTester.run(RULE_NAME, rule, {
   valid: [
     {
       code: `const TestComponentEffect = () => <></>;`,
@@ -64,20 +62,20 @@ ruleTester.run("effect-components", effectComponentsRule, {
   ],
   invalid: [
     {
-      code: "const TestComponent = () => <></>;",
-      output: "const TestComponentEffect = () => <></>;",
+      code: 'const TestComponent = () => <></>;',
+      output: 'const TestComponentEffect = () => <></>;',
       errors: [
         {
-          messageId: "effectSuffix",
+          messageId: 'addEffectSuffix',
         },
       ],
     },
     {
-      code: "const TestComponentEffect = () => <><div></div></>;",
-      output: "const TestComponent = () => <><div></div></>;",
+      code: 'const TestComponentEffect = () => <><div></div></>;',
+      output: 'const TestComponent = () => <><div></div></>;',
       errors: [
         {
-          messageId: "noEffectSuffix",
+          messageId: 'removeEffectSuffix',
         },
       ],
     },

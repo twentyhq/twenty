@@ -25,9 +25,8 @@ export class UserService extends TypeOrmQueryService<User> {
         user.defaultWorkspace.id,
       );
 
-    const workspaceDataSource = await this.typeORMService.connectToDataSource(
-      dataSourceMetadata,
-    );
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
     const workspaceMembers = await workspaceDataSource?.query(
       `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId" = '${user.id}'`,
@@ -55,9 +54,8 @@ export class UserService extends TypeOrmQueryService<User> {
         user.defaultWorkspace.id,
       );
 
-    const workspaceDataSource = await this.typeORMService.connectToDataSource(
-      dataSourceMetadata,
-    );
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
     await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."workspaceMember"
