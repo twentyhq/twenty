@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
@@ -13,17 +14,25 @@ import { ColumnContext } from '../contexts/ColumnContext';
 import { ColumnIndexContext } from '../contexts/ColumnIndexContext';
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 import { RowIdContext } from '../contexts/RowIdContext';
-import { TableCell } from '../record-table-cell/components/RecordTableCell';
+import { RecordTableCell } from '../record-table-cell/components/RecordTableCell';
 import { useCurrentRowSelected } from '../record-table-row/hooks/useCurrentRowSelected';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
-export const RecordTableCell = ({ cellIndex }: { cellIndex: number }) => {
+export const RecordTableCellContainer = ({
+  cellIndex,
+}: {
+  cellIndex: number;
+}) => {
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
   const currentRowId = useContext(RowIdContext);
-  const { objectMetadataConfigState } = useRecordTableScopedStates();
+  const { objectMetadataConfigScopeInjector } = getRecordTableScopeInjector();
 
-  const objectMetadataConfig = useRecoilValue(objectMetadataConfigState);
+  const { injectStateWithRecordTableScopeId } = useRecordTableScopedStates();
+
+  const objectMetadataConfig = useRecoilValue(
+    injectStateWithRecordTableScopeId(objectMetadataConfigScopeInjector),
+  );
 
   const { setCurrentRowSelected } = useCurrentRowSelected();
 
@@ -66,7 +75,7 @@ export const RecordTableCell = ({ cellIndex }: { cellIndex: number }) => {
                 objectMetadataConfig?.labelIdentifierFieldMetadataId,
             }}
           >
-            <TableCell customHotkeyScope={{ scope: customHotkeyScope }} />
+            <RecordTableCell customHotkeyScope={{ scope: customHotkeyScope }} />
           </FieldContext.Provider>
         </td>
       </ColumnIndexContext.Provider>

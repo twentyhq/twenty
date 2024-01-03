@@ -1,18 +1,42 @@
 import { useRecoilCallback } from 'recoil';
 
-import { currentTableCellInEditModePositionState } from '../../states/currentTableCellInEditModePositionState';
-import { isTableCellInEditModeFamilyState } from '../../states/isTableCellInEditModeFamilyState';
+import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 
-export const useCloseCurrentTableCellInEditMode = () =>
-  useRecoilCallback(({ set, snapshot }) => {
-    return async () => {
-      const currentTableCellInEditModePosition = snapshot
-        .getLoadable(currentTableCellInEditModePositionState)
-        .valueOrThrow();
+export const useCloseCurrentTableCellInEditMode = (
+  recordTableScopeId: string,
+) => {
+  const {
+    currentTableCellInEditModePositionScopeInjector,
+    isTableCellInEditModeScopeInjector,
+  } = getRecordTableScopeInjector();
 
-      set(
-        isTableCellInEditModeFamilyState(currentTableCellInEditModePosition),
-        false,
-      );
-    };
-  }, []);
+  const {
+    injectSnapshotValueWithRecordTableScopeId,
+    injectFamilyStateWithRecordTableScopeId,
+  } = useRecordTableScopedStates(recordTableScopeId);
+
+  return useRecoilCallback(
+    ({ set, snapshot }) => {
+      return async () => {
+        const currentTableCellInEditModePosition =
+          injectSnapshotValueWithRecordTableScopeId(
+            snapshot,
+            currentTableCellInEditModePositionScopeInjector,
+          );
+
+        const isTableCellInEditMode = injectFamilyStateWithRecordTableScopeId(
+          isTableCellInEditModeScopeInjector,
+        );
+
+        set(isTableCellInEditMode(currentTableCellInEditModePosition), false);
+      };
+    },
+    [
+      currentTableCellInEditModePositionScopeInjector,
+      injectFamilyStateWithRecordTableScopeId,
+      injectSnapshotValueWithRecordTableScopeId,
+      isTableCellInEditModeScopeInjector,
+    ],
+  );
+};

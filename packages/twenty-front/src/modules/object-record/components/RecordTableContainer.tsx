@@ -28,9 +28,11 @@ const StyledContainer = styled.div`
 `;
 
 export const RecordTableContainer = ({
+  recordTableId,
   objectNamePlural,
   createRecord,
 }: {
+  recordTableId: string;
   objectNamePlural: string;
   createRecord: () => void;
 }) => {
@@ -52,7 +54,6 @@ export const RecordTableContainer = ({
   const { openPersonSpreadsheetImport } = useSpreadsheetPersonImport();
   const { openCompanySpreadsheetImport } = useSpreadsheetCompanyImport();
 
-  const recordTableId = objectNamePlural ?? '';
   const viewBarId = objectNamePlural ?? '';
 
   const { setTableFilters, setTableSorts, setTableColumns } = useRecordTable({
