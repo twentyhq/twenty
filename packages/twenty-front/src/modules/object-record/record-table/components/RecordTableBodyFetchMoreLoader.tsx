@@ -32,30 +32,25 @@ export const RecordTableBodyFetchMoreLoader = () => {
     onChange: onLastRowVisible,
   });
 
-  const StyledTransparentBox = styled.div`
+  const StyledText = styled.div`
+    align-items: center;
+    box-shadow: none;
+    color: ${grayScale.gray40};
+    display: flex;
     height: 32px;
-    width: 32px;
+    padding-left: 40px;
   `;
 
   return (
-    <tbody ref={tbodyRef}>
-      {isFetchingMoreObjects ? (
-        <StyledRow selected={false}>
-          <td>
-            <StyledTransparentBox />
+    isFetchingMoreObjects && (
+      <StyledRow selected={false}>
+        <>
+          <td colSpan={7}>
+            <StyledText>Loading more...</StyledText>
           </td>
-          <td
-            style={{
-              color: grayScale.gray40,
-              height: 32,
-              paddingLeft: 8,
-            }}
-            colSpan={1000}
-          >
-            Loading more...
-          </td>
-        </StyledRow>
-      ) : null}
-    </tbody>
+          <td colSpan={7} />
+        </>
+      </StyledRow>
+    )
   );
 };

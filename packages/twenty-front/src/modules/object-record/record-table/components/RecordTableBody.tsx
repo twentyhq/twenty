@@ -19,8 +19,8 @@ export const RecordTableBody = () => {
             </RowIndexContext.Provider>
           </RowIdContext.Provider>
         ))}
+        <RecordTableBodyFetchMoreLoader />
       </tbody>
-      <RecordTableBodyFetchMoreLoader />
     </>
   );
 };
