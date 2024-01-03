@@ -1,8 +1,8 @@
 services:
 - type: web
   name: front
-  env: docker
-  dockerfilePath: ./infra/prod/front/Dockerfile
+  runtime: docker
+  dockerfilePath: ./packages/twenty-docker/prod/twenty-front/Dockerfile
   autoDeploy: false
   envVars:
     - key: REACT_APP_SERVER_BASE_URL
@@ -12,8 +12,8 @@ services:
         envVarKey: RENDER_EXTERNAL_URL
 - type: web
   name: server
-  env: docker
-  dockerfilePath: ./infra/prod/server/Dockerfile
+  runtime: docker
+  dockerfilePath: ./packages/twenty-docker/prod/twenty-server/Dockerfile
   dockerCommand: "sh -c ./scripts/render-run.sh"
   autoDeploy: false
   envVars:
@@ -44,8 +44,9 @@ services:
     sizeGB: 5
 - type: pserv
   name: twenty_postgres
-  env: docker
-  dockerfilePath: ./infra/prod/postgres/Dockerfile
+  runtime: image
+  image:
+    url: twentycrm/twenty-postgres:latest
   autoDeploy: false
   disk:
     name: data
@@ -53,8 +54,8 @@ services:
     sizeGB: 10
   envVars:
   - key: POSTGRES_USER
-    value: twenty
+    value: postgres
   - key: POSTGRES_PASSWORD
-    value: twenty
+    value: postgres
   - key: POSTGRES_DB
     value: default
