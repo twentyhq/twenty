@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
@@ -22,6 +22,7 @@ export type CallWebhookJobData = {
 
 @Injectable()
 export class CallWebhookJob implements MessageQueueJob<CallWebhookJobData> {
+  private readonly logger = new Logger(CallWebhookJob.name);
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly objectMetadataService: ObjectMetadataService,
@@ -51,10 +52,10 @@ export class CallWebhookJob implements MessageQueueJob<CallWebhookJobData> {
       this.httpService.axiosRef
         .post(webhook.targetUrl, data.recordData)
         .catch((err) =>
-          console.log(`Error on webhook '${webhook.targetUrl}': ${err}`),
+          this.logger.error(`Error on webhook '${webhook.targetUrl}': ${err}`),
         );
     });
 
-    console.log('CallWebhookJob called with data:', data);
+    this.logger.log(`CallWebhookJob called with data: ${data}`);
   }
 }
