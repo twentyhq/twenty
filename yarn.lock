@@ -15007,6 +15007,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^20.10.6":
+  version: 20.10.6
+  resolution: "@types/node@npm:20.10.6"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 6692ccfa8552ef60c4069fda3c8de726c23e8d403cdf788e3c7efa769987e80fbda5f02723dd857f9de7df24a5fa40b3ed4580ec3c5cbac04eba44cf7b2ab1dc
+  languageName: node
+  linkType: hard
+
 "@types/normalize-package-data@npm:^2.4.0":
   version: 2.4.4
   resolution: "@types/normalize-package-data@npm:2.4.4"
@@ -42534,6 +42543,7 @@ __metadata:
     "@types/express": "npm:^4.17.13"
     "@types/graphql-fields": "npm:^1.3.6"
     "@types/graphql-upload": "npm:^8.0.12"
+    "@types/jest": "npm:^29.5.11"
     "@types/lodash.camelcase": "npm:^4.3.7"
     "@types/lodash.isempty": "npm:^4.4.7"
     "@types/lodash.isequal": "npm:^4.5.7"
@@ -42544,6 +42554,7 @@ __metadata:
     "@types/lodash.upperfirst": "npm:^4.3.7"
     "@types/mailparser": "npm:^3.4.4"
     "@types/ms": "npm:^0.7.31"
+    "@types/node": "npm:^20.10.6"
     "@types/passport-google-oauth20": "npm:^2.0.11"
     "@types/passport-jwt": "npm:^3.0.8"
     "@types/supertest": "npm:^2.0.11"
