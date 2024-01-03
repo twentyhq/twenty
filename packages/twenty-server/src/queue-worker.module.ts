@@ -7,7 +7,6 @@ import { loggerModuleFactory } from 'src/integrations/logger/logger.module-facto
 import { JobsModule } from 'src/integrations/message-queue/jobs.module';
 import { MessageQueueModule } from 'src/integrations/message-queue/message-queue.module';
 import { messageQueueModuleFactory } from 'src/integrations/message-queue/message-queue.module-factory';
-import { FetchMessagesJob } from 'src/workspace/messaging/jobs/fetch-messages.job';
 
 @Module({
   imports: [
