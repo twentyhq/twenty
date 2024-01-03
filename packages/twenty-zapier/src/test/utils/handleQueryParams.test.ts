@@ -7,15 +7,15 @@ describe('utils.handleQueryParams', () => {
     const expectedResult = '';
     expect(result).toEqual(expectedResult);
   });
-  test('should format', async () => {
+  test('should format', () => {
     const inputData = {
       name: 'Company Name',
       address: 'Company Address',
       domainName: 'Company Domain Name',
       linkedinUrl__url: '/linkedin_url',
-      linkedinUrl__label: "Test linkedinUrl",
+      linkedinUrl__label: 'Test linkedinUrl',
       xUrl__url: '/x_url',
-      xUrl__label: "Test xUrl",
+      xUrl__label: 'Test xUrl',
       annualRecurringRevenue: 100000,
       idealCustomerProfile: true,
       employees: 25,

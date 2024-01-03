@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -24,6 +25,13 @@ import {
 
 import { WorkspaceQueryBuilderFactory } from 'src/workspace/workspace-query-builder/workspace-query-builder.factory';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
+import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
+import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
+import {
+  CallWebhookJobsJob,
+  CallWebhookJobsJobData,
+  CallWebhookJobsJobOperation,
+} from 'src/workspace/workspace-query-runner/jobs/call-webhook-jobs.job';
 import { parseResult } from 'src/workspace/workspace-query-runner/utils/parse-result.util';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 import { globalExceptionHandler } from 'src/filters/utils/global-exception-handler.util';
@@ -41,6 +49,8 @@ export class WorkspaceQueryRunnerService {
   constructor(
     private readonly workspaceQueryBuilderFactory: WorkspaceQueryBuilderFactory,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    @Inject(MessageQueue.webhookQueue)
+    private readonly messageQueueService: MessageQueueService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
@@ -117,11 +127,19 @@ export class WorkspaceQueryRunnerService {
       );
       const result = await this.execute(query, workspaceId);
 
-      return this.parseResult<PGGraphQLMutation<Record>>(
+      const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
         result,
         targetTableName,
         'insertInto',
       )?.records;
+
+      await this.triggerWebhooks<Record>(
+        parsedResults,
+        CallWebhookJobsJobOperation.create,
+        options,
+      );
+
+      return parsedResults;
     } catch (exception) {
       const error = globalExceptionHandler(
         exception,
@@ -136,9 +154,15 @@ export class WorkspaceQueryRunnerService {
     args: CreateOneResolverArgs<Record>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
-    const records = await this.createMany({ data: [args.data] }, options);
+    const results = await this.createMany({ data: [args.data] }, options);
 
-    return records?.[0];
+    await this.triggerWebhooks<Record>(
+      results,
+      CallWebhookJobsJobOperation.create,
+      options,
+    );
+
+    return results?.[0];
   }
 
   async updateOne<Record extends IRecord = IRecord>(
@@ -153,11 +177,19 @@ export class WorkspaceQueryRunnerService {
       );
       const result = await this.execute(query, workspaceId);
 
-      return this.parseResult<PGGraphQLMutation<Record>>(
+      const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
         result,
         targetTableName,
         'update',
-      )?.records?.[0];
+      )?.records;
+
+      await this.triggerWebhooks<Record>(
+        parsedResults,
+        CallWebhookJobsJobOperation.update,
+        options,
+      );
+
+      return parsedResults?.[0];
     } catch (exception) {
       const error = globalExceptionHandler(
         exception,
@@ -180,11 +212,19 @@ export class WorkspaceQueryRunnerService {
       );
       const result = await this.execute(query, workspaceId);
 
-      return this.parseResult<PGGraphQLMutation<Record>>(
+      const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
         result,
         targetTableName,
         'deleteFrom',
-      )?.records?.[0];
+      )?.records;
+
+      await this.triggerWebhooks<Record>(
+        parsedResults,
+        CallWebhookJobsJobOperation.delete,
+        options,
+      );
+
+      return parsedResults?.[0];
     } catch (exception) {
       const error = globalExceptionHandler(
         exception,
@@ -207,11 +247,19 @@ export class WorkspaceQueryRunnerService {
       );
       const result = await this.execute(query, workspaceId);
 
-      return this.parseResult<PGGraphQLMutation<Record>>(
+      const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
         result,
         targetTableName,
         'update',
       )?.records;
+
+      await this.triggerWebhooks<Record>(
+        parsedResults,
+        CallWebhookJobsJobOperation.update,
+        options,
+      );
+
+      return parsedResults;
     } catch (exception) {
       const error = globalExceptionHandler(
         exception,
@@ -237,11 +285,19 @@ export class WorkspaceQueryRunnerService {
       );
       const result = await this.execute(query, workspaceId);
 
-      return this.parseResult<PGGraphQLMutation<Record>>(
+      const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
         result,
         targetTableName,
         'deleteFrom',
       )?.records;
+
+      await this.triggerWebhooks<Record>(
+        parsedResults,
+        CallWebhookJobsJobOperation.delete,
+        options,
+      );
+
+      return parsedResults;
     } catch (exception) {
       const error = globalExceptionHandler(
         exception,
@@ -305,5 +361,27 @@ export class WorkspaceQueryRunnerService {
     const result = await this.execute(query, workspaceId);
 
     return this.parseResult(result, targetTableName, command);
+  }
+
+  async triggerWebhooks<Record>(
+    jobsData: Record[] | undefined,
+    operation: CallWebhookJobsJobOperation,
+    options: WorkspaceQueryRunnerOptions,
+  ) {
+    if (!Array.isArray(jobsData)) {
+      return;
+    }
+    jobsData.forEach((jobData) => {
+      this.messageQueueService.add<CallWebhookJobsJobData>(
+        CallWebhookJobsJob.name,
+        {
+          recordData: jobData,
+          workspaceId: options.workspaceId,
+          operation,
+          objectNameSingular: options.targetTableName,
+        },
+        { retryLimit: 3 },
+      );
+    });
   }
 }
