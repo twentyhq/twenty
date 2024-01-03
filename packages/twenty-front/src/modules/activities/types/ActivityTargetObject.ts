@@ -5,4 +5,5 @@ export type ActivityTargetObjectRecord = {
   targetObjectMetadataItem: ObjectMetadataItem;
   activityTargetRecord: ObjectRecord;
   targetObjectRecord: ObjectRecord;
+  targetObjectNameSingular: string;
 };

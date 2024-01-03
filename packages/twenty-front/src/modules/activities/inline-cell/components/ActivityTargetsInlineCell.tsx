@@ -22,19 +22,8 @@ type ActivityTargetsInlineCellProps = {
 export const ActivityTargetsInlineCell = ({
   activity,
 }: ActivityTargetsInlineCellProps) => {
-  const activityTargetIds =
-    activity?.activityTargets?.edges?.map(
-      (activityTarget) => activityTarget.node.id,
-    ) ?? [];
-
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords({
-    activityTargetIds,
-  });
-
-  console.log({
-    activity,
-    activityTargetObjectRecords,
-    activityTargetIds,
+    activityId: activity?.id ?? '',
   });
 
   return (

@@ -74,13 +74,8 @@ export const TaskRow = ({
   const body = getActivitySummary(task.body);
   const { completeTask } = useCompleteTask(task);
 
-  const activityTargetIds =
-    task?.activityTargets?.edges?.map(
-      (activityTarget) => activityTarget.node.id,
-    ) ?? [];
-
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords({
-    activityTargetIds,
+    activityId: task.id,
   });
 
   return (

@@ -71,10 +71,11 @@ export const StyledMenuItemBase = styled.li<MenuItemBaseProps>`
 export const StyledMenuItemLabel = styled.div<{ hasLeftIcon: boolean }>`
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.regular};
+
   overflow: hidden;
   padding-left: ${({ theme, hasLeftIcon }) =>
     hasLeftIcon ? '' : theme.spacing(1)};
-  text-overflow: ellipsis;
+
   white-space: nowrap;
 `;
 

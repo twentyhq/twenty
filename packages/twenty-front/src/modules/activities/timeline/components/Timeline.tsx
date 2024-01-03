@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { ActivityCreateButton } from '@/activities/components/ActivityCreateButton';
 import { useActivityTargets } from '@/activities/hooks/useActivityTargets';
@@ -56,12 +57,18 @@ export const Timeline = ({
 }) => {
   const { activityTargets } = useActivityTargets({ targetableObject });
 
+  console.log({
+    activityTargets,
+  });
+
   const { records: activities } = useFindManyRecords({
     skip: !activityTargets?.length,
     objectNameSingular: CoreObjectNameSingular.Activity,
     filter: {
       id: {
-        in: activityTargets?.map((activityTarget) => activityTarget.activityId),
+        in: activityTargets
+          ?.map((activityTarget) => activityTarget.activityId)
+          .filter(isNonEmptyString),
       },
     },
     orderBy: {

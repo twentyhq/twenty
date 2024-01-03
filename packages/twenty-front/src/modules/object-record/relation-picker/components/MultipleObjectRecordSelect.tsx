@@ -1,8 +1,13 @@
-import { useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import debounce from 'lodash.debounce';
+import { v4 } from 'uuid';
 
-import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
+import {
+  ObjectRecordForSelect,
+  SelectedObjectRecordId,
+  useMultiObjectSearch,
+} from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -16,65 +21,109 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { Avatar } from '@/users/components/Avatar';
 
 export type EntitiesForMultipleObjectRecordSelect = {
-  selectedObjectRecords: ObjectRecordForSelect[];
   filteredSelectedObjectRecords: ObjectRecordForSelect[];
   objectRecordsToSelect: ObjectRecordForSelect[];
   loading: boolean;
 };
 
 export const MultipleObjectRecordSelect = ({
-  multipleObjectRecords,
   onChange,
   onSubmit,
-  onSearchFilterChange,
-  searchFilter,
-  value,
+  selectedObjectRecordIds,
 }: {
-  multipleObjectRecords: EntitiesForMultipleObjectRecordSelect;
-  searchFilter: string;
-  onSearchFilterChange: (newSearchFilter: string) => void;
-  onChange: (value: Record<string, boolean>) => void;
-  onCancel?: () => void;
-  onSubmit?: () => void;
-  value: Record<string, boolean>;
+  onChange?: (
+    changedRecordForSelect: ObjectRecordForSelect,
+    newSelectedValue: boolean,
+  ) => void;
+  onCancel?: (objectRecordsForSelect: ObjectRecordForSelect[]) => void;
+  onSubmit?: (objectRecordsForSelect: ObjectRecordForSelect[]) => void;
+  selectedObjectRecordIds: SelectedObjectRecordId[];
 }) => {
-  const debouncedSetSearchFilter = debounce(onSearchFilterChange, 100, {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const [searchFilter, setSearchFilter] = useState<string>('');
+
+  const { filteredSelectedObjectRecords, loading, objectRecordsToSelect } =
+    useMultiObjectSearch({
+      searchFilterValue: searchFilter,
+      selectedObjectRecordIds,
+      excludedObjectRecordIds: [],
+      limit: 10,
+    });
+
+  const selectedObjectRecordsForSelect = useMemo(
+    () =>
+      filteredSelectedObjectRecords.filter((selectedObjectRecord) =>
+        selectedObjectRecordIds.some(
+          (selectedObjectRecordId) =>
+            selectedObjectRecordId.id ===
+            selectedObjectRecord.recordIdentifier.id,
+        ),
+      ),
+    [filteredSelectedObjectRecords, selectedObjectRecordIds],
+  );
+
+  const [internalSelectedRecords, setInternalSelectedRecords] = useState<
+    ObjectRecordForSelect[]
+  >([]);
+
+  useEffect(() => {
+    if (!loading) {
+      setInternalSelectedRecords(selectedObjectRecordsForSelect);
+    }
+  }, [selectedObjectRecordsForSelect, loading]);
+
+  const debouncedSetSearchFilter = debounce(setSearchFilter, 100, {
     leading: true,
   });
 
   const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     debouncedSetSearchFilter(event.currentTarget.value);
-    onSearchFilterChange(event.currentTarget.value);
   };
 
-  let entitiesInDropdown = [
-    ...(multipleObjectRecords.filteredSelectedObjectRecords ?? []),
-    ...(multipleObjectRecords.objectRecordsToSelect ?? []),
-  ];
+  const handleSelectChange = (
+    changedRecordForSelect: ObjectRecordForSelect,
+    newSelectedValue: boolean,
+  ) => {
+    console.log('handleSelectChange', {
+      changedRecordForSelect,
+      newSelectedValue,
+      internalSelectedRecords,
+    });
 
-  entitiesInDropdown = entitiesInDropdown.filter((entity) =>
-    isNonEmptyString(entity.recordIdentifier.id),
+    const newSelectedRecords = newSelectedValue
+      ? [...internalSelectedRecords, changedRecordForSelect]
+      : internalSelectedRecords.filter(
+          (selectedRecord) =>
+            selectedRecord.record.id !== changedRecordForSelect.record.id,
+        );
+
+    setInternalSelectedRecords(newSelectedRecords);
+  };
+
+  const entitiesInDropdown = useMemo(
+    () =>
+      [
+        ...(filteredSelectedObjectRecords ?? []),
+        ...(objectRecordsToSelect ?? []),
+      ].filter((entity) => isNonEmptyString(entity.recordIdentifier.id)),
+    [filteredSelectedObjectRecords, objectRecordsToSelect],
   );
-
-  console.log({
-    entitiesInDropdown,
-  });
-
-  const containerRef = useRef<HTMLDivElement>(null);
 
   useListenClickOutside({
     refs: [containerRef],
     callback: (event) => {
+      console.log('useListenClickOutside', { event });
       event.stopImmediatePropagation();
       event.stopPropagation();
       event.preventDefault();
 
-      onSubmit?.();
+      onSubmit?.(internalSelectedRecords);
     },
   });
 
   const selectableItemIds = entitiesInDropdown.map(
-    (entity) => entity.recordIdentifier.id,
+    (entity) => entity.record.id,
   );
 
   return (
@@ -86,41 +135,73 @@ export const MultipleObjectRecordSelect = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
-        <SelectableList
-          selectableListId="multiple-entity-select-list"
-          selectableItemIdArray={selectableItemIds}
-          hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
-          onEnter={(_itemId) => {
-            if (_itemId in value === false || value[_itemId] === false) {
-              onChange({ ...value, [_itemId]: true });
-            } else {
-              onChange({ ...value, [_itemId]: false });
-            }
-          }}
-        >
-          {entitiesInDropdown?.map((entity) => (
-            <SelectableItem itemId={entity.record.id} key={entity.record.id}>
-              <MenuItemMultiSelectAvatar
-                key={entity.record.id}
-                selected={value[entity.record.id]}
-                onSelectChange={(newCheckedValue) =>
-                  onChange({ ...value, [entity.record.id]: newCheckedValue })
+        {loading ? (
+          <MenuItem text="Loading..." />
+        ) : (
+          <>
+            <SelectableList
+              selectableListId="multiple-entity-select-list"
+              selectableItemIdArray={selectableItemIds}
+              hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+              onEnter={(recordId) => {
+                console.log('onEnter', { recordId });
+                const recordIsSelected = internalSelectedRecords?.some(
+                  (selectedRecord) => selectedRecord.record.id === recordId,
+                );
+
+                const correspondingRecordForSelect = entitiesInDropdown?.find(
+                  (entity) => entity.record.id === recordId,
+                );
+
+                if (correspondingRecordForSelect) {
+                  handleSelectChange(
+                    correspondingRecordForSelect,
+                    !recordIsSelected,
+                  );
                 }
-                avatar={
-                  <Avatar
-                    avatarUrl={entity.recordIdentifier.avatarUrl}
-                    colorId={entity.record.id}
-                    placeholder={entity.recordIdentifier.name}
-                    size="md"
-                    type={entity.recordIdentifier.avatarType ?? 'rounded'}
+              }}
+            >
+              {entitiesInDropdown?.map((objectRecordForSelect) => (
+                <SelectableItem
+                  itemId={objectRecordForSelect.record.id}
+                  key={objectRecordForSelect.record.id + v4()}
+                >
+                  <MenuItemMultiSelectAvatar
+                    selected={internalSelectedRecords?.some(
+                      (selectedRecord) => {
+                        return (
+                          selectedRecord.record.id ===
+                          objectRecordForSelect.record.id
+                        );
+                      },
+                    )}
+                    onSelectChange={(newCheckedValue) =>
+                      handleSelectChange(objectRecordForSelect, newCheckedValue)
+                    }
+                    avatar={
+                      <Avatar
+                        avatarUrl={
+                          objectRecordForSelect.recordIdentifier.avatarUrl
+                        }
+                        colorId={objectRecordForSelect.record.id}
+                        placeholder={
+                          objectRecordForSelect.recordIdentifier.name
+                        }
+                        size="md"
+                        type={
+                          objectRecordForSelect.recordIdentifier.avatarType ??
+                          'rounded'
+                        }
+                      />
+                    }
+                    text={objectRecordForSelect.recordIdentifier.name}
                   />
-                }
-                text={entity.recordIdentifier.name}
-              />
-            </SelectableItem>
-          ))}
-        </SelectableList>
-        {entitiesInDropdown?.length === 0 && <MenuItem text="No result" />}
+                </SelectableItem>
+              ))}
+            </SelectableList>
+            {entitiesInDropdown?.length === 0 && <MenuItem text="No result" />}
+          </>
+        )}
       </DropdownMenuItemsContainer>
     </DropdownMenu>
   );

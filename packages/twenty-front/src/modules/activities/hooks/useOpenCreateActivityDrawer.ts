@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { Activity, ActivityType } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
-import { getTargetableObjectFilterFieldName } from '@/activities/utils/getTargetObjectFilterFieldName';
+import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -66,8 +66,8 @@ export const useOpenCreateActivityDrawer = () => {
 
       await Promise.all(
         flattenedTargetableObjects.map((targetableObject) => {
-          const targetableObjectFieldName = getTargetableObjectFilterFieldName({
-            targetableObject,
+          const targetableObjectFieldName = getActivityTargetObjectFieldIdName({
+            nameSingular: targetableObject.targetObjectNameSingular,
           });
 
           return createOneActivityTarget?.({

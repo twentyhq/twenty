@@ -1,11 +1,15 @@
-import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
+import { v4 } from 'uuid';
 
-import { useHandleCheckableActivityTargetChange } from '@/activities/hooks/useHandleCheckableActivityTargetChange';
+import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetObjectRecord } from '@/activities/types/ActivityTargetObject';
+import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
+import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { MultipleObjectRecordSelect } from '@/object-record/relation-picker/components/MultipleObjectRecordSelect';
-import { useMultiObjectSearch } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
+import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 
 const StyledSelectContainer = styled.div`
   left: 0px;
@@ -22,139 +26,73 @@ export const ActivityTargetInlineCellEditMode = ({
   activityId,
   activityTargetObjectRecords,
 }: ActivityTargetInlineCellEditModeProps) => {
-  const [searchFilter, setSearchFilter] = useState('');
+  const selectedObjectRecordIds = activityTargetObjectRecords.map(
+    (activityTarget) => ({
+      objectNameSingular: activityTarget.targetObjectNameSingular,
+      id: activityTarget.targetObjectRecord.id,
+    }),
+  );
 
-  // const initialPeopleIds = useMemo(
-  //   () =>
-  //     activityTargets
-  //       ?.filter(({ personId }) => personId !== null)
-  //       .map(({ personId }) => personId)
-  //       .filter(assertNotNull) ?? [],
-  //   [activityTargets],
-  // );
+  const { createManyRecords: createManyActivityTargets } =
+    useCreateManyRecords<ActivityTarget>({
+      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+    });
 
-  // const initialCompanyIds = useMemo(
-  //   () =>
-  //     activityTargets
-  //       ?.filter(({ companyId }) => companyId !== null)
-  //       .map(({ companyId }) => companyId)
-  //       .filter(assertNotNull) ?? [],
-  //   [activityTargets],
-  // );
+  const { deleteManyRecords: deleteManyActivityTargets } = useDeleteManyRecords(
+    {
+      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+    },
+  );
 
-  // const initialSelectedEntityIds = useMemo(
-  //   () =>
-  //     [...initialPeopleIds, ...initialCompanyIds].reduce<
-  //       Record<string, boolean>
-  //     >((result, entityId) => ({ ...result, [entityId]: true }), {}),
-  //   [initialPeopleIds, initialCompanyIds],
-  // );
-
-  // const { findManyRecordsQuery: findManyPeopleQuery } = useObjectMetadataItem({
-  //   objectNameSingular: 'person',
-  // });
-
-  // const { findManyRecordsQuery: findManyCompaniesQuery } =
-  //   useObjectMetadataItem({
-  //     objectNameSingular: 'company',
-  //   });
-
-  // const useFindManyPeopleQuery = (options: any) =>
-  //   useQuery(findManyPeopleQuery, options);
-
-  // const useFindManyCompaniesQuery = (options: any) =>
-  //   useQuery(findManyCompaniesQuery, options);
-
-  // const [selectedEntityIds, setSelectedEntityIds] = useState<
-  //   Record<string, boolean>
-  // >(initialSelectedEntityIds);
-
-  // const { identifiersMapper, searchQuery } = useRelationPicker();
-
-  // const people = useFilteredSearchEntityQuery({
-  //   queryHook: useFindManyPeopleQuery,
-  //   filters: [
-  //     {
-  //       fieldNames: searchQuery?.computeFilterFields?.('person') ?? [],
-  //       filter: searchFilter,
-  //     },
-  //   ],
-  //   orderByField: 'createdAt',
-  //   mappingFunction: (record: any) => identifiersMapper?.(record, 'person'),
-  //   selectedIds: initialPeopleIds,
-  //   objectNameSingular: 'person',
-  //   limit: 3,
-  // });
-
-  // const companies = useFilteredSearchEntityQuery({
-  //   queryHook: useFindManyCompaniesQuery,
-  //   filters: [
-  //     {
-  //       fieldNames: searchQuery?.computeFilterFields?.('company') ?? [],
-  //       filter: searchFilter,
-  //     },
-  //   ],
-  //   orderByField: 'createdAt',
-  //   mappingFunction: (record: any) => identifiersMapper?.(record, 'company'),
-  //   selectedIds: initialCompanyIds,
-  //   objectNameSingular: 'company',
-  //   limit: 3,
-  // });
-
-  // const selectedEntities = flatMapAndSortEntityForSelectArrayOfArrayByName([
-  //   people.selectedEntities,
-  //   companies.selectedEntities,
-  // ]);
-
-  // const filteredSelectedEntities =
-  //   flatMapAndSortEntityForSelectArrayOfArrayByName([
-  //     people.filteredSelectedEntities,
-  //     companies.filteredSelectedEntities,
-  //   ]);
-
-  // const entitiesToSelect = flatMapAndSortEntityForSelectArrayOfArrayByName([
-  //   people.entitiesToSelect,
-  //   companies.entitiesToSelect,
-  // ]);
-
-  const {
-    selectedObjectRecords,
-    filteredSelectedObjectRecords,
-    loading,
-    objectRecordsToSelect,
-  } = useMultiObjectSearch({
-    searchFilterValue: searchFilter,
-    selectedObjectRecordIds: activityTargetObjectRecords.map(
-      (activityTarget) => ({
-        objectNameSingular:
-          activityTarget.targetObjectMetadataItem.nameSingular,
-        id: activityTarget.targetObjectRecord.id,
-      }),
-    ),
-    excludedObjectRecordIds: [],
-    limit: 3,
-  });
-
-  console.log({
-    selectedObjectRecords,
-    filteredSelectedObjectRecords,
-    objectRecordsToSelect,
-  });
-
-  const handleCheckItemsChange = useHandleCheckableActivityTargetChange({
-    activityId,
-    currentActivityTargets: [],
-  });
   const { closeInlineCell: closeEditableField } = useInlineCell();
 
-  const handleSubmit = useCallback(() => {
-    // handleCheckItemsChange(
-    //   selectedEntityIds,
-    //   entitiesToSelect,
-    //   selectedEntities,
-    // );
+  const handleSubmit = async (selectedRecords: ObjectRecordForSelect[]) => {
+    const activityTargetRecordsToDelete = activityTargetObjectRecords.filter(
+      (activityTargetObjectRecord) =>
+        !selectedRecords.some(
+          (selectedRecord) =>
+            selectedRecord.recordIdentifier.id ===
+            activityTargetObjectRecord.targetObjectRecord.id,
+        ),
+    );
+
+    const activityTargetRecordsToCreate = selectedRecords.filter(
+      (selectedRecord) =>
+        !activityTargetObjectRecords.some(
+          (activityTargetObjectRecord) =>
+            activityTargetObjectRecord.targetObjectRecord.id ===
+            selectedRecord.recordIdentifier.id,
+        ),
+    );
+
+    if (activityTargetRecordsToCreate.length > 0) {
+      await createManyActivityTargets(
+        activityTargetRecordsToCreate.map(
+          (selectedRecord) =>
+            ({
+              id: v4(),
+              activityId,
+              [getActivityTargetObjectFieldIdName({
+                nameSingular: selectedRecord.objectMetadataItem.nameSingular,
+              })]: selectedRecord.recordIdentifier.id,
+            }) as Partial<ActivityTarget>,
+        ),
+      );
+    }
+
+    if (activityTargetRecordsToDelete.length > 0) {
+      await deleteManyActivityTargets(
+        activityTargetRecordsToDelete.map(
+          (activityTargetObjectRecord) =>
+            activityTargetObjectRecord.activityTargetRecord.id,
+        ),
+      );
+    }
+
+    // Manual trigger of activity optimistic update
+
     closeEditableField();
-  }, [closeEditableField]);
+  };
 
   const handleCancel = () => {
     closeEditableField();
@@ -163,18 +101,7 @@ export const ActivityTargetInlineCellEditMode = ({
   return (
     <StyledSelectContainer>
       <MultipleObjectRecordSelect
-        multipleObjectRecords={{
-          objectRecordsToSelect,
-          filteredSelectedObjectRecords,
-          selectedObjectRecords,
-          loading,
-        }}
-        onChange={() => {
-          //
-        }}
-        onSearchFilterChange={setSearchFilter}
-        searchFilter={searchFilter}
-        value={{}}
+        selectedObjectRecordIds={selectedObjectRecordIds}
         onCancel={handleCancel}
         onSubmit={handleSubmit}
       />

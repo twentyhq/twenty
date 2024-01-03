@@ -1,9 +1,9 @@
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { DateTime } from 'luxon';
 
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { getTargetableObjectFilterFieldName } from '@/activities/utils/getTargetObjectFilterFieldName';
+import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
@@ -26,13 +26,15 @@ export const useTasks = ({
   const targetableObjectsFilter =
     targetableObjects.reduce<LeafObjectRecordFilter>(
       (aggregateFilter, targetableObject) => {
-        const targetableObjectFieldName = getTargetableObjectFilterFieldName({
-          targetableObject,
+        const targetableObjectFieldName = getActivityTargetObjectFieldIdName({
+          nameSingular: targetableObject.targetObjectNameSingular,
         });
 
-        aggregateFilter[targetableObjectFieldName] = {
-          eq: targetableObject.id,
-        };
+        if (isNonEmptyString(targetableObject.id)) {
+          aggregateFilter[targetableObjectFieldName] = {
+            eq: targetableObject.id,
+          };
+        }
 
         return aggregateFilter;
       },

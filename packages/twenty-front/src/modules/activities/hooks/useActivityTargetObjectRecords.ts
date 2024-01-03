@@ -9,17 +9,17 @@ import { Nullable } from '~/types/Nullable';
 import { isDefined } from '~/utils/isDefined';
 
 export const useActivityTargetObjectRecords = ({
-  activityTargetIds,
+  activityId,
 }: {
-  activityTargetIds: string[];
+  activityId: string;
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const { records: activityTargets } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     filter: {
-      id: {
-        in: activityTargetIds,
+      activityId: {
+        eq: activityId,
       },
     },
   });
@@ -29,7 +29,8 @@ export const useActivityTargetObjectRecords = ({
       .map<Nullable<ActivityTargetObjectRecord>>((activityTarget) => {
         const correspondingObjectMetadataItem = objectMetadataItems.find(
           (objectMetadataItem) =>
-            isDefined(activityTarget[objectMetadataItem.nameSingular]),
+            isDefined(activityTarget[objectMetadataItem.nameSingular]) &&
+            !objectMetadataItem.isSystem,
         );
 
         if (!correspondingObjectMetadataItem) {
@@ -41,6 +42,8 @@ export const useActivityTargetObjectRecords = ({
           targetObjectRecord:
             activityTarget[correspondingObjectMetadataItem.nameSingular],
           targetObjectMetadataItem: correspondingObjectMetadataItem,
+          targetObjectNameSingular:
+            correspondingObjectMetadataItem.nameSingular,
         };
       })
       .filter(isDefined);

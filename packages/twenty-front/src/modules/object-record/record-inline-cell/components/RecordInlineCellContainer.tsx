@@ -111,6 +111,7 @@ export const RecordInlineCellContainer = ({
   const { isInlineCellInEditMode, openInlineCell } = useInlineCell();
 
   const handleDisplayModeClick = () => {
+    console.log('handleDisplayModeClick', { editModeContentOnly });
     if (!editModeContentOnly) {
       openInlineCell(customEditHotkeyScope);
     }

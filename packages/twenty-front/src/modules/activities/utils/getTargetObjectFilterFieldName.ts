@@ -1,19 +1,15 @@
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 
-export const getTargetableObjectFilterFieldName = ({
-  targetableObject,
+export const getActivityTargetObjectFieldIdName = ({
+  nameSingular,
 }: {
-  targetableObject: ActivityTargetableObject;
+  nameSingular: string;
 }) => {
   const isCoreObject =
-    targetableObject.targetObjectNameSingular ===
-      CoreObjectNameSingular.Company ||
-    targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person;
+    nameSingular === CoreObjectNameSingular.Company ||
+    nameSingular === CoreObjectNameSingular.Person;
 
-  const targetableObjectFieldName = `${!isCoreObject ? '_' : ''}${
-    targetableObject.targetObjectNameSingular
-  }Id`;
+  const objectFieldIdName = `${!isCoreObject ? '_' : ''}${nameSingular}Id`;
 
-  return targetableObjectFieldName;
+  return objectFieldIdName;
 };
