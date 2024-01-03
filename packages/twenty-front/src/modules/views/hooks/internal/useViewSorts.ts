@@ -183,6 +183,7 @@ export const useViewSorts = (viewScopeId: string) => {
           savedViewSortsByKey[sortToUpsert.fieldMetadataId]?.id;
 
         set(currentViewSortsState, (sorts) => {
+          console.log({ sorts, sortToUpsert });
           const newViewSorts = produce(sorts, (sortsDraft) => {
             const existingSortIndex = sortsDraft.findIndex(
               (sort) => sort.fieldMetadataId === sortToUpsert.fieldMetadataId,
