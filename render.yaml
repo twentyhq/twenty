@@ -19,7 +19,7 @@ services:
     url: twentycrm/twenty-server:latest
   dockerCommand: "sh -c ./scripts/render-run.sh"
   autoDeploy: false
-  plan: free
+  plan: standard
   envVars:
     - key: FRONT_BASE_URL
       fromService:
@@ -48,7 +48,7 @@ services:
     sizeGB: 5
 - type: pserv
   name: twenty_postgres
-  plan: standard
+  plan: starter
   runtime: image
   image:
     url: twentycrm/twenty-postgres:latest
