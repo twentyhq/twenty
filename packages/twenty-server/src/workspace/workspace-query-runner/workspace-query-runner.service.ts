@@ -133,7 +133,7 @@ export class WorkspaceQueryRunnerService {
         'insertInto',
       )?.records;
 
-      await this.addJobsToQueue<Record[] | undefined>(
+      await this.triggerWebhooks<Record>(
         parsedResults,
         CallWebhookJobOperation.create,
         options,
@@ -156,7 +156,7 @@ export class WorkspaceQueryRunnerService {
   ): Promise<Record | undefined> {
     const results = await this.createMany({ data: [args.data] }, options);
 
-    await this.addJobsToQueue<Record[] | undefined>(
+    await this.triggerWebhooks<Record>(
       results,
       CallWebhookJobOperation.create,
       options,
@@ -183,7 +183,7 @@ export class WorkspaceQueryRunnerService {
         'update',
       )?.records;
 
-      await this.addJobsToQueue<Record[] | undefined>(
+      await this.triggerWebhooks<Record>(
         parsedResults,
         CallWebhookJobOperation.update,
         options,
@@ -218,7 +218,7 @@ export class WorkspaceQueryRunnerService {
         'deleteFrom',
       )?.records;
 
-      await this.addJobsToQueue<Record[] | undefined>(
+      await this.triggerWebhooks<Record>(
         parsedResults,
         CallWebhookJobOperation.delete,
         options,
@@ -253,7 +253,7 @@ export class WorkspaceQueryRunnerService {
         'update',
       )?.records;
 
-      await this.addJobsToQueue<Record[] | undefined>(
+      await this.triggerWebhooks<Record>(
         parsedResults,
         CallWebhookJobOperation.update,
         options,
@@ -291,7 +291,7 @@ export class WorkspaceQueryRunnerService {
         'deleteFrom',
       )?.records;
 
-      await this.addJobsToQueue<Record[] | undefined>(
+      await this.triggerWebhooks<Record>(
         parsedResults,
         CallWebhookJobOperation.delete,
         options,
@@ -363,8 +363,8 @@ export class WorkspaceQueryRunnerService {
     return this.parseResult(result, targetTableName, command);
   }
 
-  async addJobsToQueue<JobsData>(
-    jobsData: JobsData,
+  async triggerWebhooks<Record>(
+    jobsData: Record[] | undefined,
     operation: CallWebhookJobOperation,
     options: WorkspaceQueryRunnerOptions,
   ) {
