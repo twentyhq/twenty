@@ -1,4 +1,4 @@
-import type { StorybookConfig } from '@storybook/react-vite';
+import { StorybookConfig } from '@storybook/react-vite';
 
 const computeStoriesGlob = () => {
   if (process.env.STORYBOOK_SCOPE === 'pages') {
@@ -6,19 +6,22 @@ const computeStoriesGlob = () => {
       '../src/pages/**/*.stories.@(js|jsx|ts|tsx)',
       '../src/__stories__/*.stories.@(js|jsx|ts|tsx)',
       '../src/pages/**/*.docs.mdx',
-      '../src/__stories__/*.docs.mdx'
-    ]
+      '../src/__stories__/*.docs.mdx',
+    ];
   }
 
   if (process.env.STORYBOOK_SCOPE === 'modules') {
-    return ['../src/modules/**/*.stories.@(js|jsx|ts|tsx)', '../src/modules/**/*.docs.mdx']
+    return [
+      '../src/modules/**/*.stories.@(js|jsx|ts|tsx)',
+      '../src/modules/**/*.docs.mdx',
+    ];
   }
 
   if (process.env.STORYBOOK_SCOPE === 'ui-docs') {
-      return ['../src/modules/ui/**/*.docs.mdx'];
+    return ['../src/modules/ui/**/*.docs.mdx'];
   }
 
-  return ['../src/**/*.docs.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)']
+  return ['../src/**/*.docs.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'];
 };
 
 const config: StorybookConfig = {

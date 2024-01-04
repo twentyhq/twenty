@@ -91,6 +91,10 @@ export const StyledMenuItemLeftContent = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
   min-width: 0;
   width: 100%;
+
+  & > svg {
+    flex-shrink: 0;
+  }
 `;
 
 export const StyledMenuItemRightContent = styled.div`
@@ -114,6 +118,7 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
     & .hoverable-buttons {
       opacity: 1;
       pointer-events: auto;
+      position: static;
     }
   }
 `;

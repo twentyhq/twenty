@@ -62,7 +62,7 @@ export const NoteList = ({ title, notes, button }: NoteListProps) => (
             <NoteCard
               key={note.id}
               note={note}
-              isSingleNote={notes.length == 1}
+              isSingleNote={notes.length === 1}
             />
           ))}
         </StyledNoteContainer>

@@ -67,10 +67,6 @@ export const useSetHotkeyScope = () =>
           scopesToSet.push(AppHotkeyScope.CommandMenu);
         }
 
-        if (newHotkeyScope.customScopes?.commandMenuOpen) {
-          scopesToSet.push(AppHotkeyScope.CommandMenuOpen);
-        }
-
         if (newHotkeyScope?.customScopes?.goto) {
           scopesToSet.push(AppHotkeyScope.Goto);
         }

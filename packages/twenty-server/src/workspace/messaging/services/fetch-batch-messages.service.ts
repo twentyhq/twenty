@@ -29,9 +29,8 @@ export class FetchBatchMessagesService {
       'batch_gmail_messages',
     );
 
-    const messages = await this.formatBatchResponsesAsGmailMessages(
-      batchResponses,
-    );
+    const messages =
+      await this.formatBatchResponsesAsGmailMessages(batchResponses);
 
     return messages;
   }
@@ -46,9 +45,8 @@ export class FetchBatchMessagesService {
       'batch_gmail_threads',
     );
 
-    const threads = await this.formatBatchResponsesAsGmailThreads(
-      batchResponses,
-    );
+    const threads =
+      await this.formatBatchResponsesAsGmailThreads(batchResponses);
 
     return threads;
   }
@@ -242,9 +240,8 @@ export class FetchBatchMessagesService {
   ): Promise<GmailMessage[]> {
     const formattedResponses = await Promise.all(
       batchResponses.map(async (response) => {
-        const formattedResponse = await this.formatBatchResponseAsGmailMessage(
-          response,
-        );
+        const formattedResponse =
+          await this.formatBatchResponseAsGmailMessage(response);
 
         return formattedResponse;
       }),
@@ -292,9 +289,8 @@ export class FetchBatchMessagesService {
   ): Promise<GmailThread[]> {
     const formattedResponses = await Promise.all(
       batchResponses.map(async (response) => {
-        const formattedResponse = await this.formatBatchResponseAsGmailThread(
-          response,
-        );
+        const formattedResponse =
+          await this.formatBatchResponseAsGmailThread(response);
 
         return formattedResponse;
       }),

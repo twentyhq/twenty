@@ -23,9 +23,10 @@ export const useSelectableListScopedState = ({
 
   return {
     scopeId,
-    getSelectableListScopedState: getScopedState,
-    getSelectableListScopedFamilyState: getScopedFamilyState,
-    getSelectableListScopedSnapshotValue: getScopedSnapshotValue,
-    getSelectableListScopedFamilySnapshotValue: getScopedFamilySnapshotValue,
+    injectStateWithSelectableListScopeId: getScopedState,
+    injectFamilyStateWithSelectableListScopeId: getScopedFamilyState,
+    injectSnapshotValueWithSelectableListScopeId: getScopedSnapshotValue,
+    injectFamilySnapshotValueWithSelectableListScopeId:
+      getScopedFamilySnapshotValue,
   };
 };

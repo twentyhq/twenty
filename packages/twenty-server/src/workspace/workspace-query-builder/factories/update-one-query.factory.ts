@@ -31,13 +31,18 @@ export class UpdateOneQueryFactory {
       options.fieldMetadataCollection,
     );
 
+    const argsData = {
+      ...computedArgs.data,
+      updatedAt: new Date().toISOString(),
+    };
+
     return `
       mutation {
         update${
           options.targetTableName
         }Collection(set: ${stringifyWithoutKeyQuote(
-      computedArgs.data,
-    )}, filter: { id: { eq: "${computedArgs.id}" } }) {
+          argsData,
+        )}, filter: { id: { eq: "${computedArgs.id}" } }) {
           affectedCount
           records {
             ${fieldsString}

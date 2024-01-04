@@ -8,9 +8,10 @@ import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObje
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
+import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
-import { selectedRowIdsSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsSelector';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import {
   IconCheckbox,
   IconHeart,
@@ -41,11 +42,24 @@ export const useRecordTableContextMenuEntries = (
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
   const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState);
 
+  const { selectedRowIdsScopeInjector } = getRecordTableScopeInjector();
+
+  const {
+    injectSelectorWithRecordTableScopeId,
+    injectSelectorSnapshotValueWithRecordTableScopeId,
+  } = useRecordTableScopedStates(scopeId);
+
+  const selectedRowIdsSelector = injectSelectorWithRecordTableScopeId(
+    selectedRowIdsScopeInjector,
+  );
+
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
-  const { scopeId: objectNamePlural, resetTableRowSelection } = useRecordTable({
+  const { resetTableRowSelection } = useRecordTable({
     recordTableScopeId: scopeId,
   });
+
+  const objectNamePlural = scopeId;
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
@@ -61,9 +75,10 @@ export const useRecordTableContextMenuEntries = (
         : 'Custom';
 
   const handleFavoriteButtonClick = useRecoilCallback(({ snapshot }) => () => {
-    const selectedRowIds = snapshot
-      .getLoadable(selectedRowIdsSelector)
-      .getValue();
+    const selectedRowIds = injectSelectorSnapshotValueWithRecordTableScopeId(
+      snapshot,
+      selectedRowIdsScopeInjector,
+    );
 
     const selectedRowId = selectedRowIds.length === 1 ? selectedRowIds[0] : '';
 
@@ -97,22 +112,31 @@ export const useRecordTableContextMenuEntries = (
   const handleDeleteClick = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        const rowIdsToDelete = snapshot
-          .getLoadable(selectedRowIdsSelector)
-          .getValue();
+        const rowIdsToDelete =
+          injectSelectorSnapshotValueWithRecordTableScopeId(
+            snapshot,
+            selectedRowIdsScopeInjector,
+          );
 
         resetTableRowSelection();
         await deleteManyRecords(rowIdsToDelete);
       },
-    [deleteManyRecords, resetTableRowSelection],
+    [
+      deleteManyRecords,
+      injectSelectorSnapshotValueWithRecordTableScopeId,
+      resetTableRowSelection,
+      selectedRowIdsScopeInjector,
+    ],
   );
 
   const handleExecuteQuickActionOnClick = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        const rowIdsToExecuteQuickActionOn = snapshot
-          .getLoadable(selectedRowIdsSelector)
-          .getValue();
+        const rowIdsToExecuteQuickActionOn =
+          injectSelectorSnapshotValueWithRecordTableScopeId(
+            snapshot,
+            selectedRowIdsScopeInjector,
+          );
 
         resetTableRowSelection();
         await Promise.all(
@@ -121,7 +145,12 @@ export const useRecordTableContextMenuEntries = (
           }),
         );
       },
-    [executeQuickActionOnOneRecord, resetTableRowSelection],
+    [
+      executeQuickActionOnOneRecord,
+      injectSelectorSnapshotValueWithRecordTableScopeId,
+      resetTableRowSelection,
+      selectedRowIdsScopeInjector,
+    ],
   );
 
   const dataExecuteQuickActionOnmentEnabled = useIsFeatureEnabled(
@@ -129,7 +158,7 @@ export const useRecordTableContextMenuEntries = (
   );
 
   const openCreateActivityDrawer =
-    useOpenCreateActivityDrawerForSelectedRowIds();
+    useOpenCreateActivityDrawerForSelectedRowIds(scopeId);
 
   return {
     setContextMenuEntries: useCallback(() => {

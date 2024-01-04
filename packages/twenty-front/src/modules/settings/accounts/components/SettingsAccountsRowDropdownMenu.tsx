@@ -24,7 +24,7 @@ export const SettingsAccountsRowDropdownMenu = ({
   const dropdownScopeId = `settings-account-row-${account.uuid}`;
 
   const navigate = useNavigate();
-  const { closeDropdown } = useDropdown({ dropdownScopeId });
+  const { closeDropdown } = useDropdown(dropdownScopeId);
 
   return (
     <DropdownScope dropdownScopeId={dropdownScopeId}>
