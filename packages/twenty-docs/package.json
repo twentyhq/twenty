@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "nx": "NX_DEFAULT_PROJECT=twenty-docs node ../../node_modules/nx/bin/nx.js",
     "docusaurus": "docusaurus",
     "start": "docusaurus start --host 0.0.0.0 --port 5001",
     "build": "docusaurus build",

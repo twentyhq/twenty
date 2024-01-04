@@ -3,6 +3,7 @@
   "version": "0.2.2",
   "private": true,
   "scripts": {
+    "nx": "NX_DEFAULT_PROJECT=twenty-website node ../../node_modules/nx/bin/nx.js",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -14,6 +15,7 @@
     "@jsdevtools/rehype-toc": "^3.0.2",
     "@nivo/calendar": "^0.84.0",
     "@nivo/core": "^0.84.0",
+    "@octokit/graphql": "^7.0.2",
     "@stoplight/elements": "^7.16.2",
     "@tabler/icons-react": "^2.44.0",
     "better-sqlite3": "^9.2.2",

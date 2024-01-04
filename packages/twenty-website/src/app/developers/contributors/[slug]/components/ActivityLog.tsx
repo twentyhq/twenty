@@ -1,9 +1,11 @@
-'use client'
+'use client';
 
-import { ResponsiveTimeRange } from '@nivo/calendar'
+import { ResponsiveTimeRange } from '@nivo/calendar';
 
-export const ActivityLog = ({ data }: { data: { value: number, day: string }[] }) => {
-    return  <ResponsiveTimeRange
-                data={data}
-            />;
-}
+export const ActivityLog = ({
+  data,
+}: {
+  data: { value: number; day: string }[];
+}) => {
+  return <ResponsiveTimeRange data={data} />;
+};
