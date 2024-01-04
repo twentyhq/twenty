@@ -24,6 +24,10 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
-    "nx": "^17.2.8"
+    "nx": "^17.2.8",
+    "@nx/eslint": "17.2.7",
+    "@nx/eslint-plugin": "17.2.7",
+    "@nx/jest": "17.2.7",
+    "@nx/js": "17.2.7"
   }
 }
