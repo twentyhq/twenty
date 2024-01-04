@@ -36,7 +36,7 @@ const StyledIconTableCell = styled(TableCell)`
 
 export const SettingsObjectFieldItemTableRow = ({
   ActionIcon,
-  fieldMetadataItem: fieldMetadataItem,
+  fieldMetadataItem,
 }: SettingsObjectFieldItemTableRowProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();

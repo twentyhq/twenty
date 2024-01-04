@@ -23,7 +23,7 @@ const StyledEditor = styled.div`
 
 export const BlockEditor = ({ editor }: BlockEditorProps) => {
   const theme = useTheme();
-  const blockNoteTheme = theme.name == 'light' ? 'light' : 'dark';
+  const blockNoteTheme = theme.name === 'light' ? 'light' : 'dark';
   return (
     <StyledEditor>
       <BlockNoteView editor={editor} theme={blockNoteTheme} />

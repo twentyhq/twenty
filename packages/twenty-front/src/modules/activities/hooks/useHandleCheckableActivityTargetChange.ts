@@ -42,7 +42,7 @@ export const useHandleCheckableActivityTargetChange = ({
       .map(([id, _]) => id);
 
     if (idsToAdd.length) {
-      idsToAdd.map((id) => {
+      idsToAdd.forEach((id) => {
         const entityFromToSelect = entitiesToSelect.filter(
           (entity: any) => entity.id === id,
         ).length
@@ -65,7 +65,7 @@ export const useHandleCheckableActivityTargetChange = ({
     }
 
     if (idsToDelete.length) {
-      idsToDelete.map((id) => {
+      idsToDelete.forEach((id) => {
         const currentActivityTargetId = currentActivityTargets.filter(
           ({ companyId, personId }) => companyId === id || personId === id,
         )[0].id;

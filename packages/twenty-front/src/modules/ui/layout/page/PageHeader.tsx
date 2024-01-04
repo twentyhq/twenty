@@ -39,7 +39,7 @@ const StyledLeftContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
   width: 100%;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
@@ -54,14 +54,10 @@ const StyledTitleContainer = styled.div`
   max-width: 50%;
 `;
 
-const StyledBackIconButton = styled(IconButton)`
-  margin-right: ${({ theme }) => theme.spacing(1)};
-`;
-
 const StyledTopBarIconStyledTitleContainer = styled.div`
   align-items: center;
   display: flex;
-  flex: 1 0 100%;
+  flex: 1 0 auto;
   flex-direction: row;
 `;
 
@@ -102,9 +98,9 @@ export const PageHeader = ({
           </StyledTopBarButtonContainer>
         )}
         {hasBackButton && (
-          <StyledBackIconButton
+          <IconButton
             Icon={IconChevronLeft}
-            size={isMobile ? 'small' : 'medium'}
+            size="small"
             onClick={() => navigate(-1)}
             variant="tertiary"
           />

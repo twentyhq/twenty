@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 export const usePausableTimeout = (callback: () => void, delay: number) => {
-  // eslint-disable-next-line twenty/no-state-useref
+  // eslint-disable-next-line @nx/workspace-no-state-useref
   const savedCallback = useRef<() => void>(callback);
-  // eslint-disable-next-line twenty/no-state-useref
+  // eslint-disable-next-line @nx/workspace-no-state-useref
   const remainingTime = useRef<number>(delay);
-  // eslint-disable-next-line twenty/no-state-useref
+  // eslint-disable-next-line @nx/workspace-no-state-useref
   const startTime = useRef<number>(Date.now());
-  // eslint-disable-next-line twenty/no-state-useref
+  // eslint-disable-next-line @nx/workspace-no-state-useref
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const tick = () => {

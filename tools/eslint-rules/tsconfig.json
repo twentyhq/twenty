@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "moduleResolution": "node16",
+    "module": "node16"
+  },
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lint.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
+}

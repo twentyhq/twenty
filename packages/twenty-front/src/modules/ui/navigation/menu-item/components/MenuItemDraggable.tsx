@@ -1,5 +1,5 @@
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { FloatingIconButtonGroup } from '@/ui/input/button/components/FloatingIconButtonGroup';
+import { LightIconButtonGroup } from '@/ui/input/button/components/LightIconButtonGroup';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import { StyledHoverableMenuItemBase } from '../internals/components/StyledMenuItemBase';
@@ -42,7 +42,7 @@ export const MenuItemDraggable = ({
         showGrip={!isDragDisabled}
       />
       {showIconButtons && (
-        <FloatingIconButtonGroup
+        <LightIconButtonGroup
           className="hoverable-buttons"
           iconButtons={iconButtons}
         />

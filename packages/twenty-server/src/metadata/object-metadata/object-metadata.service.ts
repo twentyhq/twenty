@@ -281,9 +281,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         createdObjectMetadata.workspaceId,
       );
 
-    const workspaceDataSource = await this.typeORMService.connectToDataSource(
-      dataSourceMetadata,
-    );
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
     const view = await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."view"
@@ -300,8 +299,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         `INSERT INTO ${dataSourceMetadata.schema}."viewField"
       ("fieldMetadataId", "position", "isVisible", "size", "viewId")
       VALUES ('${field.id}', '${index - 1}', true, 180, '${
-          view[0].id
-        }') RETURNING *`,
+        view[0].id
+      }') RETURNING *`,
       );
     });
 
