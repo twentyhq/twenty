@@ -22,5 +22,8 @@
   "dependencies": {
     "patch-package": "^8.0.0",
     "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "nx": "^17.2.8"
   }
 }
