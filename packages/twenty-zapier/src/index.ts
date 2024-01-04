@@ -1,10 +1,14 @@
+import { version as platformVersion } from 'zapier-platform-core';
+
+import 'dotenv/config';
+
+const { version } = require('../package.json');
+
+import createRecord, { createRecordKey } from './creates/create_record';
+import updateRecord, { updateRecordKey } from './creates/update_record';
 import findObjectNamesPlural, {
   findObjectNamesPluralKey,
 } from './triggers/find_object_names_plural';
-
-const { version } = require('../package.json');
-import { version as platformVersion } from 'zapier-platform-core';
-import createRecord, { createRecordKey } from './creates/create_record';
 import findObjectNamesSingular, {
   findObjectNamesSingularKey,
 } from './triggers/find_object_names_singular';
@@ -18,7 +22,6 @@ import triggerRecordUpdated, {
   triggerRecordUpdatedKey,
 } from './triggers/trigger_record_updated';
 import authentication from './authentication';
-import 'dotenv/config';
 
 export default {
   version,
@@ -33,5 +36,6 @@ export default {
   },
   creates: {
     [createRecordKey]: createRecord,
+    [updateRecordKey]: updateRecord,
   },
 };
