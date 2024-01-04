@@ -116,11 +116,6 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
     },
   });
 
-  console.log({
-    toSelectAndMatchesSearchFilterObjectRecordsQueryResult,
-    objectRecordsToSelectAndMatchesSearchFilterTextFilterPerMetadataItem,
-  });
-
   const {
     objectRecordForSelectArray: toSelectAndMatchesSearchFilterObjectRecords,
   } = useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray({

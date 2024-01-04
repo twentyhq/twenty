@@ -57,10 +57,6 @@ export const Timeline = ({
 }) => {
   const { activityTargets } = useActivityTargets({ targetableObject });
 
-  console.log({
-    activityTargets,
-  });
-
   const { records: activities } = useFindManyRecords({
     skip: !activityTargets?.length,
     objectNameSingular: CoreObjectNameSingular.Activity,

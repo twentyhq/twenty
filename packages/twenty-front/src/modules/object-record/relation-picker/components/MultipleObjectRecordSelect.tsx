@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import debounce from 'lodash.debounce';
 import { v4 } from 'uuid';
@@ -19,6 +20,11 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { Avatar } from '@/users/components/Avatar';
+
+export const StyledSelectableItem = styled(SelectableItem)`
+  height: 100%;
+  width: 100%;
+`;
 
 export type EntitiesForMultipleObjectRecordSelect = {
   filteredSelectedObjectRecords: ObjectRecordForSelect[];
@@ -160,7 +166,7 @@ export const MultipleObjectRecordSelect = ({
               }}
             >
               {entitiesInDropdown?.map((objectRecordForSelect) => (
-                <SelectableItem
+                <StyledSelectableItem
                   itemId={objectRecordForSelect.record.id}
                   key={objectRecordForSelect.record.id + v4()}
                 >
@@ -194,7 +200,7 @@ export const MultipleObjectRecordSelect = ({
                     }
                     text={objectRecordForSelect.recordIdentifier.name}
                   />
-                </SelectableItem>
+                </StyledSelectableItem>
               ))}
             </SelectableList>
             {entitiesInDropdown?.length === 0 && <MenuItem text="No result" />}

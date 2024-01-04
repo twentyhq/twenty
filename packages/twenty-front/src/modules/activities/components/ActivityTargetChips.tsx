@@ -14,10 +14,6 @@ export const ActivityTargetChips = ({
 }: {
   activityTargetObjectRecords: ActivityTargetObjectRecord[];
 }) => {
-  console.log({
-    activityTargetObjectRecords,
-  });
-
   return (
     <StyledContainer>
       {activityTargetObjectRecords?.map((activityTargetObjectRecord) => (

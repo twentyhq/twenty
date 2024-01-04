@@ -1,13 +1,7 @@
 import { ReactNode, useEffect, useRef } from 'react';
-import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-
-const StyledSelectableItem = styled.div`
-  height: 100%;
-  width: 100%;
-`;
 
 export type SelectableItemProps = {
   itemId: string;
@@ -33,8 +27,8 @@ export const SelectableItem = ({
   }, [isSelectedItemId]);
 
   return (
-    <StyledSelectableItem className={className} ref={scrollRef}>
+    <div className={className} ref={scrollRef}>
       {children}
-    </StyledSelectableItem>
+    </div>
   );
 };

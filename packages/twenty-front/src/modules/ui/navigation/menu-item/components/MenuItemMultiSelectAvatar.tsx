@@ -36,7 +36,6 @@ export const MenuItemMultiSelectAvatar = ({
   onSelectChange,
 }: MenuItemMultiSelectAvatarProps) => {
   const handleOnClick = () => {
-    console.log('handleOnClick', { selected });
     onSelectChange?.(!selected);
   };
 

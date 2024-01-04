@@ -38,12 +38,6 @@ export const useMultiObjectSearchSelectedItemsQuery = ({
           )
           .map(({ id }) => id);
 
-        console.log({
-          selectedObjectRecordIds,
-          selectedIds,
-          nameSingular,
-        });
-
         if (!isNonEmptyArray(selectedIds)) return null;
 
         return [
@@ -86,12 +80,6 @@ export const useMultiObjectSearchSelectedItemsQuery = ({
     useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray({
       multiObjectRecordsQueryResult: selectedObjectRecordsQueryResult,
     });
-
-  console.log({
-    selectedObjectRecords,
-    selectedObjectRecordsLoading,
-    selectedObjectRecordsQueryResult,
-  });
 
   return {
     selectedObjectRecordsLoading,

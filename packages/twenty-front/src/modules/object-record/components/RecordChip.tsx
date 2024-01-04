@@ -16,11 +16,6 @@ export const RecordChip = ({ objectNameSingular, record }: RecordChipProps) => {
 
   const objectRecordIdentifier = mapToObjectRecordIdentifier(record);
 
-  console.log({
-    objectRecordIdentifier,
-    record,
-  });
-
   return (
     <EntityChip
       entityId={record.id}

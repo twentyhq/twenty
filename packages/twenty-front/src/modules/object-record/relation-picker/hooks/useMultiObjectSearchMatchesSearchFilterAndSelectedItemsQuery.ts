@@ -106,14 +106,6 @@ export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
       selectedAndMatchesSearchFilterObjectRecordsQueryResult,
   });
 
-  console.log({
-    selectedObjectRecords: selectedAndMatchesSearchFilterObjectRecords,
-    selectedObjectRecordsLoading:
-      selectedAndMatchesSearchFilterObjectRecordsLoading,
-    selectedObjectRecordsQueryResult:
-      selectedAndMatchesSearchFilterObjectRecordsQueryResult,
-  });
-
   return {
     selectedAndMatchesSearchFilterObjectRecordsLoading,
     selectedAndMatchesSearchFilterObjectRecords,
