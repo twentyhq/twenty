@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { parseJson } from 'nx/src/utils/json';
 import { TbLoader2 } from 'react-icons/tb';
 import styled from '@emotion/styled';
+import { parseJson } from 'nx/src/utils/json';
 
 export type TokenFormProps = {
   setOpenApiJson?: (json: object) => void;
