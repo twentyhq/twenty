@@ -1,19 +1,28 @@
-import { useState } from 'react';
-
+import { Account } from '@/accounts/types/Account';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Section } from '@/ui/layout/section/components/Section';
-import { mockedAccounts } from '~/testing/mock-data/accounts';
 
 import { SettingsAccountsCard } from './SettingsAccountsCard';
 import { SettingsAccountsEmptyStateCard } from './SettingsAccountsEmptyStateCard';
 
 export const SettingsAccountsConnectedAccountsSection = () => {
-  const [accounts, setAccounts] = useState(mockedAccounts);
+  const accounts = useFindManyRecords<Account>({
+    objectNameSingular: 'connectedAccount',
+    filter: {
+      accountOwnerId: {
+        eq: '20202020-0687-4c41-b707-ed1bfca972a7',
+      },
+    },
+  }).records;
 
-  const handleAccountRemove = (uuid: string) =>
-    setAccounts((previousAccounts) =>
-      previousAccounts.filter((account) => account.uuid !== uuid),
-    );
+  const { deleteOneRecord } = useDeleteOneRecord({
+    objectNameSingular: 'connectedAccount',
+  });
+
+  const handleAccountRemove = (idToRemove: string) =>
+    deleteOneRecord(idToRemove);
 
   return (
     <Section>
@@ -21,7 +30,7 @@ export const SettingsAccountsConnectedAccountsSection = () => {
         title="Connected accounts"
         description="Manage your internet accounts."
       />
-      {accounts.length ? (
+      {accounts?.length ? (
         <SettingsAccountsCard
           accounts={accounts}
           onAccountRemove={handleAccountRemove}
