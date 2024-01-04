@@ -1,8 +1,12 @@
+import { Logger } from '@nestjs/common';
+
 import { SendMailOptions } from 'nodemailer';
 
 import { EmailDriver } from 'src/integrations/email/drivers/interfaces/email-driver.interface';
 
 export class LoggerDriver implements EmailDriver {
+  private readonly logger = new Logger(LoggerDriver.name);
+
   async send(sendMailOptions: SendMailOptions): Promise<void> {
     const info =
       `Sent email to: ${sendMailOptions.to}\n` +
@@ -11,6 +15,6 @@ export class LoggerDriver implements EmailDriver {
       `Content Text: ${sendMailOptions.text}\n` +
       `Content HTML: ${sendMailOptions.html}`;
 
-    console.log(info);
+    this.logger.log(info);
   }
 }
