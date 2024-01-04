@@ -89,12 +89,6 @@ export const MultipleObjectRecordSelect = ({
     changedRecordForSelect: ObjectRecordForSelect,
     newSelectedValue: boolean,
   ) => {
-    console.log('handleSelectChange', {
-      changedRecordForSelect,
-      newSelectedValue,
-      internalSelectedRecords,
-    });
-
     const newSelectedRecords = newSelectedValue
       ? [...internalSelectedRecords, changedRecordForSelect]
       : internalSelectedRecords.filter(
@@ -103,6 +97,8 @@ export const MultipleObjectRecordSelect = ({
         );
 
     setInternalSelectedRecords(newSelectedRecords);
+
+    onChange?.(changedRecordForSelect, newSelectedValue);
   };
 
   const entitiesInDropdown = useMemo(
@@ -117,7 +113,6 @@ export const MultipleObjectRecordSelect = ({
   useListenClickOutside({
     refs: [containerRef],
     callback: (event) => {
-      console.log('useListenClickOutside', { event });
       event.stopImmediatePropagation();
       event.stopPropagation();
       event.preventDefault();
@@ -148,7 +143,6 @@ export const MultipleObjectRecordSelect = ({
               selectableItemIdArray={selectableItemIds}
               hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
               onEnter={(recordId) => {
-                console.log('onEnter', { recordId });
                 const recordIsSelected = internalSelectedRecords?.some(
                   (selectedRecord) => selectedRecord.record.id === recordId,
                 );
