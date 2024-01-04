@@ -1,4 +1,7 @@
+import { useRecoilValue } from 'recoil';
+
 import { Account } from '@/accounts/types/Account';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -8,11 +11,13 @@ import { SettingsAccountsCard } from './SettingsAccountsCard';
 import { SettingsAccountsEmptyStateCard } from './SettingsAccountsEmptyStateCard';
 
 export const SettingsAccountsConnectedAccountsSection = () => {
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
   const accounts = useFindManyRecords<Account>({
     objectNameSingular: 'connectedAccount',
     filter: {
       accountOwnerId: {
-        eq: '20202020-0687-4c41-b707-ed1bfca972a7',
+        eq: currentWorkspaceMember?.id,
       },
     },
   }).records;
