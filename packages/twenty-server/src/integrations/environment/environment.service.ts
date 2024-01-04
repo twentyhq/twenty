@@ -2,6 +2,8 @@
 import { Injectable, LogLevel } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
+import { EmailDriverType } from 'src/integrations/email/interfaces/email.interface';
+
 import { LoggerDriverType } from 'src/integrations/logger/interfaces';
 import { ExceptionHandlerDriver } from 'src/integrations/exception-handler/interfaces';
 import { StorageDriverType } from 'src/integrations/file-storage/interfaces';
@@ -168,6 +170,29 @@ export class EnvironmentService {
     return (
       this.configService.get<string>('STORAGE_LOCAL_PATH') ?? '.local-storage'
     );
+  }
+
+  getEmailDriverType(): EmailDriverType {
+    return (
+      this.configService.get<EmailDriverType>('EMAIL_TYPE') ??
+      EmailDriverType.Logger
+    );
+  }
+
+  getEmailHost(): string | undefined {
+    return this.configService.get<string>('EMAIL_SMTP_HOST');
+  }
+
+  getEmailPort(): number | undefined {
+    return this.configService.get<number>('EMAIL_SMTP_PORT');
+  }
+
+  getEmailUser(): string | undefined {
+    return this.configService.get<string>('EMAIL_SMTP_USER');
+  }
+
+  getEmailPassword(): string | undefined {
+    return this.configService.get<string>('EMAIL_SMTP_PASSWORD');
   }
 
   getSupportDriver(): string {

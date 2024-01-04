@@ -8,7 +8,6 @@ import { ApiRestModule } from 'src/core/api-rest/api-rest.module';
 import { FeatureFlagModule } from 'src/core/feature-flag/feature-flag.module';
 import { OpenApiModule } from 'src/core/open-api/open-api.module';
 import { TimelineMessagingModule } from 'src/core/messaging/timeline-messaging.module';
-import { EmailModule } from 'src/core/email/email.module';
 
 import { AnalyticsModule } from './analytics/analytics.module';
 import { FileModule } from './file/file.module';
@@ -27,7 +26,6 @@ import { ClientConfigModule } from './client-config/client-config.module';
     OpenApiModule,
     FeatureFlagModule,
     TimelineMessagingModule,
-    EmailModule,
   ],
   exports: [
     AuthModule,

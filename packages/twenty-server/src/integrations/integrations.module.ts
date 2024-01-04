@@ -6,6 +6,8 @@ import { exceptionHandlerModuleFactory } from 'src/integrations/exception-handle
 import { fileStorageModuleFactory } from 'src/integrations/file-storage/file-storage.module-factory';
 import { loggerModuleFactory } from 'src/integrations/logger/logger.module-factory';
 import { messageQueueModuleFactory } from 'src/integrations/message-queue/message-queue.module-factory';
+import { emailModuleFactory } from 'src/integrations/email/email.module-factory';
+import { EmailModule } from 'src/integrations/email/email.module';
 
 import { EnvironmentModule } from './environment/environment.module';
 import { EnvironmentService } from './environment/environment.service';
@@ -31,6 +33,10 @@ import { MessageQueueModule } from './message-queue/message-queue.module';
     ExceptionHandlerModule.forRootAsync({
       useFactory: exceptionHandlerModuleFactory,
       inject: [EnvironmentService, HttpAdapterHost],
+    }),
+    EmailModule.forRoot({
+      useFactory: emailModuleFactory,
+      inject: [EnvironmentService],
     }),
   ],
   exports: [],
