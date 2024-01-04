@@ -11911,7 +11911,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-essentials@npm:^7.6.3":
+"@storybook/addon-essentials@npm:^7.6.7":
   version: 7.6.7
   resolution: "@storybook/addon-essentials@npm:7.6.7"
   dependencies:
@@ -11945,7 +11945,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-interactions@npm:^7.6.3":
+"@storybook/addon-interactions@npm:^7.6.7":
   version: 7.6.7
   resolution: "@storybook/addon-interactions@npm:7.6.7"
   dependencies:
@@ -11958,7 +11958,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-links@npm:^7.6.3":
+"@storybook/addon-links@npm:^7.6.7":
   version: 7.6.7
   resolution: "@storybook/addon-links@npm:7.6.7"
   dependencies:
@@ -11984,7 +11984,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-onboarding@npm:^1.0.9":
+"@storybook/addon-onboarding@npm:^1.0.10":
   version: 1.0.10
   resolution: "@storybook/addon-onboarding@npm:1.0.10"
   dependencies:
@@ -12007,7 +12007,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-themes@npm:^7.6.3":
+"@storybook/addon-themes@npm:^7.6.7":
   version: 7.6.7
   resolution: "@storybook/addon-themes@npm:7.6.7"
   dependencies:
@@ -40127,7 +40127,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook-addon-cookie@npm:^3.1.0":
+"storybook-addon-cookie@npm:^3.2.0":
   version: 3.2.0
   resolution: "storybook-addon-cookie@npm:3.2.0"
   peerDependencies:
@@ -41823,11 +41823,11 @@ __metadata:
     "@sniptt/guards": "npm:^0.2.0"
     "@storybook/addon-actions": "npm:^7.6.3"
     "@storybook/addon-coverage": "npm:^1.0.0"
-    "@storybook/addon-essentials": "npm:^7.6.3"
-    "@storybook/addon-interactions": "npm:^7.6.3"
-    "@storybook/addon-links": "npm:^7.6.3"
-    "@storybook/addon-onboarding": "npm:^1.0.9"
-    "@storybook/addon-themes": "npm:^7.6.3"
+    "@storybook/addon-essentials": "npm:^7.6.7"
+    "@storybook/addon-interactions": "npm:^7.6.7"
+    "@storybook/addon-links": "npm:^7.6.7"
+    "@storybook/addon-onboarding": "npm:^1.0.10"
+    "@storybook/addon-themes": "npm:^7.6.7"
     "@storybook/blocks": "npm:^7.6.3"
     "@storybook/react": "npm:^7.6.3"
     "@storybook/react-vite": "npm:^7.6.3"
@@ -41918,7 +41918,7 @@ __metadata:
     recoil: "npm:^0.7.7"
     scroll-into-view: "npm:^1.16.2"
     storybook: "npm:^7.6.3"
-    storybook-addon-cookie: "npm:^3.1.0"
+    storybook-addon-cookie: "npm:^3.2.0"
     storybook-addon-pseudo-states: "npm:^2.1.2"
     ts-jest: "npm:^29.1.1"
     ts-key-enum: "npm:^2.0.12"
