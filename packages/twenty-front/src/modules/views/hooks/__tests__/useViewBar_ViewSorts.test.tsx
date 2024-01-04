@@ -42,8 +42,6 @@ export const viewSort: ViewSort = {
   definition: sortDefinition,
 };
 
-const currentViewId = '23f5dceb-3482-4e3a-9bb4-2f52f2556be9';
-
 describe('View Sorts', () => {
   const currentViewId = 'ac8807fd-0065-436d-bdf6-94333d75af6e';
 
