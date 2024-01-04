@@ -27,11 +27,10 @@ export const useSelectableListHotKeys = (
     }
   };
 
-  const { getSelectableListScopedSnapshotValue } = useSelectableListScopedState(
-    {
+  const { injectSnapshotValueWithSelectableListScopeId } =
+    useSelectableListScopedState({
       selectableListScopeId: scopeId,
-    },
-  );
+    });
 
   const handleSelect = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -42,11 +41,11 @@ export const useSelectableListHotKeys = (
           isSelectedItemIdFamilyScopeInjector,
         } = getSelectableListScopeInjectors();
 
-        const selectedItemId = getSelectableListScopedSnapshotValue(
+        const selectedItemId = injectSnapshotValueWithSelectableListScopeId(
           snapshot,
           selectedItemIdScopeInjector,
         );
-        const selectableItemIds = getSelectableListScopedSnapshotValue(
+        const selectableItemIds = injectSnapshotValueWithSelectableListScopeId(
           snapshot,
           selectableItemIdsScopeInjector,
         );
@@ -120,7 +119,7 @@ export const useSelectableListHotKeys = (
           }
         }
       },
-    [getSelectableListScopedSnapshotValue, scopeId],
+    [injectSnapshotValueWithSelectableListScopeId, scopeId],
   );
 
   useScopedHotkeys(Key.ArrowUp, () => handleSelect('up'), hotkeyScope, []);
@@ -145,12 +144,12 @@ export const useSelectableListHotKeys = (
             selectedItemIdScopeInjector,
             selectableListOnEnterScopeInjector,
           } = getSelectableListScopeInjectors();
-          const selectedItemId = getSelectableListScopedSnapshotValue(
+          const selectedItemId = injectSnapshotValueWithSelectableListScopeId(
             snapshot,
             selectedItemIdScopeInjector,
           );
 
-          const onEnter = getSelectableListScopedSnapshotValue(
+          const onEnter = injectSnapshotValueWithSelectableListScopeId(
             snapshot,
             selectableListOnEnterScopeInjector,
           );
@@ -159,7 +158,7 @@ export const useSelectableListHotKeys = (
             onEnter?.(selectedItemId);
           }
         },
-      [getSelectableListScopedSnapshotValue],
+      [injectSnapshotValueWithSelectableListScopeId],
     ),
     hotkeyScope,
     [],

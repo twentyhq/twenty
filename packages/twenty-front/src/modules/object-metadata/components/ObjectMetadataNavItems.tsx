@@ -17,16 +17,16 @@ export const ObjectMetadataNavItems = () => {
           .filter((item) =>
             ['person', 'company', 'opportunity'].includes(item.nameSingular),
           )
-          .sort((objectMetadataItemA, _) => {
-            if (objectMetadataItemA.nameSingular === 'person') {
-              return -1;
+          .sort((objectMetadataItemA, objectMetadataItemB) => {
+            const order = ['person', 'company', 'opportunity'];
+            const indexA = order.indexOf(objectMetadataItemA.nameSingular);
+            const indexB = order.indexOf(objectMetadataItemB.nameSingular);
+            if (indexA === -1 || indexB === -1) {
+              return objectMetadataItemA.nameSingular.localeCompare(
+                objectMetadataItemB.nameSingular,
+              );
             }
-
-            if (objectMetadataItemA.nameSingular === 'opportunity') {
-              return 1;
-            }
-
-            return 0;
+            return indexA - indexB;
           }),
         ...activeObjectMetadataItems
           .filter(
@@ -44,7 +44,7 @@ export const ObjectMetadataNavItems = () => {
           key={objectMetadataItem.id}
           label={objectMetadataItem.labelPlural}
           to={`/objects/${objectMetadataItem.namePlural}`}
-          active={currentPath == `/objects/${objectMetadataItem.namePlural}`}
+          active={currentPath === `/objects/${objectMetadataItem.namePlural}`}
           Icon={getIcon(objectMetadataItem.icon)}
           onClick={() => {
             navigate(`/objects/${objectMetadataItem.namePlural}`);

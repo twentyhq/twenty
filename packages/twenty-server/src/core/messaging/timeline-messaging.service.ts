@@ -16,9 +16,8 @@ export class TimelineMessagingService {
         workspaceId,
       );
 
-    const workspaceDataSource = await this.typeORMService.connectToDataSource(
-      dataSourceMetadata,
-    );
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
     // 10 first threads This hard limit is just for the POC, we will implement pagination later
     const messageThreads = await workspaceDataSource?.query(
@@ -80,9 +79,8 @@ export class TimelineMessagingService {
         workspaceId,
       );
 
-    const workspaceDataSource = await this.typeORMService.connectToDataSource(
-      dataSourceMetadata,
-    );
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
     const personIds = await workspaceDataSource?.query(
       `

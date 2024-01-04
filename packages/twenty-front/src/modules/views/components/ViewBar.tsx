@@ -39,9 +39,9 @@ export const ViewBar = ({
   onViewFiltersChange,
   onViewSortsChange,
 }: ViewBarProps) => {
-  const { openDropdown: openOptionsDropdownButton } = useDropdown({
-    dropdownScopeId: optionsDropdownScopeId,
-  });
+  const { openDropdown: openOptionsDropdownButton } = useDropdown(
+    optionsDropdownScopeId,
+  );
   const { upsertViewSort, upsertViewFilter } = useViewBar({
     viewBarId: viewBarId,
   });

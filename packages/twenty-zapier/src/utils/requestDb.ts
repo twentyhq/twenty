@@ -2,18 +2,17 @@ import { Bundle, HttpRequestOptions, ZObject } from 'zapier-platform-core';
 
 export const requestSchema = async (z: ZObject, bundle: Bundle) => {
   const options = {
-      url: `${process.env.SERVER_BASE_URL}/open-api`,
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-          Accept: 'application/json',
-          Authorization: `Bearer ${bundle.authData.apiKey}`,
-        },
+    url: `${process.env.SERVER_BASE_URL}/open-api`,
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      Authorization: `Bearer ${bundle.authData.apiKey}`,
+    },
   } satisfies HttpRequestOptions;
 
-    return z.request(options)
-      .then((response) => response.json)
-}
+  return z.request(options).then((response) => response.json);
+};
 
 const requestDb = async (z: ZObject, bundle: Bundle, query: string) => {
   const options = {
@@ -37,7 +36,7 @@ const requestDb = async (z: ZObject, bundle: Bundle, query: string) => {
         throw new z.errors.Error(
           `query: ${query}, error: ${JSON.stringify(results.errors)}`,
           'ApiError',
-          response.status
+          response.status,
         );
       }
       response.throwForStatus();
@@ -47,8 +46,31 @@ const requestDb = async (z: ZObject, bundle: Bundle, query: string) => {
       throw new z.errors.Error(
         `query: ${query}, error: ${err.message}`,
         'Error',
-        err.status
+        err.status,
       );
+    });
+};
+
+export const requestDbViaRestApi = (
+  z: ZObject,
+  bundle: Bundle,
+  objectNamePlural: string,
+) => {
+  const options = {
+    url: `${process.env.SERVER_BASE_URL}/rest/${objectNamePlural}?limit:3`,
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      Authorization: `Bearer ${bundle.authData.apiKey}`,
+    },
+  } satisfies HttpRequestOptions;
+
+  return z
+    .request(options)
+    .then((response) => response.json.data[objectNamePlural])
+    .catch((err) => {
+      throw new z.errors.Error(`Error: ${err.message}`, 'Error', err.status);
     });
 };
 

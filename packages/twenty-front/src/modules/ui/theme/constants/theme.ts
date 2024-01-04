@@ -1,4 +1,4 @@
-/* eslint-disable twenty/no-hardcoded-colors */
+/* eslint-disable @nx/workspace-no-hardcoded-colors */
 import { accentDark, accentLight } from './accent';
 import { animation } from './animation';
 import { backgroundDark, backgroundLight } from './background';
@@ -41,6 +41,7 @@ const common = {
   table: {
     horizontalCellMargin: '8px',
     checkboxColumnWidth: '32px',
+    horizontalCellPadding: '8px',
   },
   rightDrawerWidth: '500px',
   clickableElementBackgroundTransition: 'background 0.1s ease',

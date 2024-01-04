@@ -102,8 +102,8 @@ export const Attachments = ({
       fullPath: attachmentUrl,
       type: getFileType(file.name),
       companyId:
-        targetableEntity.type == 'Company' ? targetableEntity.id : null,
-      personId: targetableEntity.type == 'Person' ? targetableEntity.id : null,
+        targetableEntity.type === 'Company' ? targetableEntity.id : null,
+      personId: targetableEntity.type === 'Person' ? targetableEntity.id : null,
     });
   };
 

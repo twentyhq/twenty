@@ -3,9 +3,9 @@ import { useIsFieldInputOnly } from '@/object-record/field/hooks/useIsFieldInput
 import { useSetSoftFocusOnCurrentTableCell } from '../hooks/useSetSoftFocusOnCurrentTableCell';
 import { useTableCell } from '../hooks/useTableCell';
 
-import { TableCellDisplayContainer } from './RecordTableCellDisplayContainer';
+import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 
-export const TableCellDisplayMode = ({
+export const RecordTableCellDisplayMode = ({
   children,
 }: React.PropsWithChildren<unknown>) => {
   const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentTableCell();
@@ -23,8 +23,8 @@ export const TableCellDisplayMode = ({
   };
 
   return (
-    <TableCellDisplayContainer onClick={handleClick}>
+    <RecordTableCellDisplayContainer onClick={handleClick}>
       {children}
-    </TableCellDisplayContainer>
+    </RecordTableCellDisplayContainer>
   );
 };

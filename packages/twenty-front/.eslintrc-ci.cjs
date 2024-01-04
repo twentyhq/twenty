@@ -1,16 +1,14 @@
 module.exports = {
-  overrides: [
-    {
-      files: ['*.stories.tsx', '*.test.ts'],
-      rules: {
-        'no-console': 'off',
-      }
-    },
-  ],
-  extends: [
-    './.eslintrc.cjs'
-  ],
+  extends: ['./.eslintrc.cjs'],
   rules: {
     'no-console': 'error',
-  }
+  },
+  overrides: [
+    {
+      files: ['.storybook/**/*', '**/*.stories.tsx', '**/*.test.ts'],
+      rules: {
+        'no-console': 'off',
+      },
+    },
+  ],
 };

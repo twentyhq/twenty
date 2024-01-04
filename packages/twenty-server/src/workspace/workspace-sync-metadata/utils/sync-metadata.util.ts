@@ -36,18 +36,24 @@ export const mapObjectMetadataByUniqueIdentifier = <
 >(
   arr: T[],
 ): Record<string, Omit<T, 'fields'> & { fields: Record<string, U> }> => {
-  return arr.reduce((acc, curr) => {
-    acc[curr.nameSingular] = {
-      ...curr,
-      fields: curr.fields.reduce((acc, curr) => {
-        acc[curr.name] = curr;
+  return arr.reduce(
+    (acc, curr) => {
+      acc[curr.nameSingular] = {
+        ...curr,
+        fields: curr.fields.reduce(
+          (acc, curr) => {
+            acc[curr.name] = curr;
 
-        return acc;
-      }, {} as Record<string, U>),
-    };
+            return acc;
+          },
+          {} as Record<string, U>,
+        ),
+      };
 
-    return acc;
-  }, {} as Record<string, Omit<T, 'fields'> & { fields: Record<string, U> }>);
+      return acc;
+    },
+    {} as Record<string, Omit<T, 'fields'> & { fields: Record<string, U> }>,
+  );
 };
 
 export const convertStringifiedFieldsToJSON = <

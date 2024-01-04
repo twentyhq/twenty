@@ -32,8 +32,8 @@ export class FindOneQueryFactory {
     return `
       query {
         ${options.targetTableName}Collection${
-      argsString ? `(${argsString})` : ''
-    } {
+          argsString ? `(${argsString})` : ''
+        } {
           edges {
             node {
               ${fieldsString}

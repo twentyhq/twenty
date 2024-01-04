@@ -55,7 +55,7 @@ export const ActivityBodyEditor = ({
   const imagesActivated = useIsFeatureEnabled('IS_NOTE_CREATE_IMAGES_ENABLED');
 
   if (!imagesActivated) {
-    slashMenuItems = slashMenuItems.filter((x) => x.name != 'Image');
+    slashMenuItems = slashMenuItems.filter((x) => x.name !== 'Image');
   }
 
   const [uploadFile] = useUploadFileMutation();

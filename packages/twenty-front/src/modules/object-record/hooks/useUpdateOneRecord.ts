@@ -2,7 +2,7 @@ import { useApolloClient } from '@apollo/client';
 
 import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { capitalize } from '~/utils/string/capitalize';
 
 type useUpdateOneRecordProps = {
@@ -37,17 +37,10 @@ export const useUpdateOneRecord = <T>({
       ...updateOneRecordInput,
     };
 
-    const sanitizedUpdateOneRecordInput = Object.fromEntries(
-      Object.keys(updateOneRecordInput)
-        .filter((fieldName) => {
-          const fieldDefinition = objectMetadataItem.fields.find(
-            (field) => field.name === fieldName,
-          );
-
-          return fieldDefinition?.type !== FieldMetadataType.Relation;
-        })
-        .map((fieldName) => [fieldName, updateOneRecordInput[fieldName]]),
-    );
+    const sanitizedUpdateOneRecordInput = sanitizeRecordInput({
+      objectMetadataItem,
+      recordInput: updateOneRecordInput,
+    });
 
     triggerOptimisticEffects({
       typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
