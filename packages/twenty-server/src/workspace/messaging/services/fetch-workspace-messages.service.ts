@@ -39,30 +39,14 @@ export class FetchWorkspaceMessagesService {
     workspaceMemberId: string,
     maxResults = 500,
   ): Promise<void> {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+    const { workspaceDataSource, dataSourceMetadata, connectedAccount } =
+      await this.getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
         workspaceId,
+        workspaceMemberId,
       );
 
-    const workspaceDataSource = await this.typeORMService.connectToDataSource(
-      dataSourceMetadata,
-    );
-
-    if (!workspaceDataSource) {
-      throw new Error('No workspace data source found');
-    }
-
-    const connectedAccounts = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail' AND "accountOwnerId" = $1`,
-      [workspaceMemberId],
-    );
-
-    if (!connectedAccounts || connectedAccounts.length === 0) {
-      throw new Error('No connected account found');
-    }
-
-    const accessToken = connectedAccounts[0]?.accessToken;
-    const refreshToken = connectedAccounts[0]?.refreshToken;
+    const accessToken = connectedAccount.accessToken;
+    const refreshToken = connectedAccount.refreshToken;
 
     if (!refreshToken) {
       throw new Error('No refresh token found');
@@ -85,7 +69,7 @@ export class FetchWorkspaceMessagesService {
       threadsData,
       dataSourceMetadata,
       workspaceDataSource,
-      connectedAccounts[0].id,
+      connectedAccount.id,
     );
 
     const threadQueries: MessageOrThreadQuery[] = threadsData.map((thread) => ({
@@ -102,7 +86,18 @@ export class FetchWorkspaceMessagesService {
       .map((thread) => thread.messageIds)
       .flat();
 
-    const messageQueries: MessageOrThreadQuery[] = messageIds.map(
+    const messageIdsAlreadySaved =
+      await this.getAllSavedMessagesIdsForWorkspaceMemberId(
+        dataSourceMetadata,
+        workspaceDataSource,
+        connectedAccount.id,
+      );
+
+    const messageIdsToSave = messageIds.filter(
+      (messageId) => !messageIdsAlreadySaved.includes(messageId),
+    );
+
+    const messageQueries: MessageOrThreadQuery[] = messageIdsToSave.map(
       (messageId) => ({
         uri: '/gmail/v1/users/me/messages/' + messageId + '?format=RAW',
       }),
@@ -226,10 +221,27 @@ export class FetchWorkspaceMessagesService {
     }
   }
 
-  async getAllSavedMessagesIds(
+  async getAllSavedMessagesIdsForWorkspaceMemberId(
+    dataSourceMetadata: DataSourceEntity,
+    workspaceDataSource: DataSource,
+    connectedAccountId: string,
+  ): Promise<string[]> {
+    const messages = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."message" WHERE "messageThreadId" IN (SELECT "id" FROM ${dataSourceMetadata.schema}."messageThread" WHERE "messageChannelId" IN (SELECT "id" FROM ${dataSourceMetadata.schema}."messageChannel" WHERE "connectedAccountId" = $1))`,
+      [connectedAccountId],
+    );
+
+    return messages.map((message) => message.id);
+  }
+
+  async getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
     workspaceId: string,
     workspaceMemberId: string,
-  ): Promise<string[]> {
+  ): Promise<{
+    dataSourceMetadata: DataSourceEntity;
+    workspaceDataSource: DataSource;
+    connectedAccount: any;
+  }> {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
@@ -252,10 +264,10 @@ export class FetchWorkspaceMessagesService {
       throw new Error('No connected account found');
     }
 
-    const messages = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."message"`,
-    );
-
-    return messages.map((message) => message.id);
+    return {
+      dataSourceMetadata,
+      workspaceDataSource,
+      connectedAccount: connectedAccounts[0],
+    };
   }
 }
