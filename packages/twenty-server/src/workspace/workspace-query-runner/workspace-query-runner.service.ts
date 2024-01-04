@@ -156,12 +156,6 @@ export class WorkspaceQueryRunnerService {
   ): Promise<Record | undefined> {
     const results = await this.createMany({ data: [args.data] }, options);
 
-    await this.triggerWebhooks<Record>(
-      results,
-      CallWebhookJobsJobOperation.create,
-      options,
-    );
-
     return results?.[0];
   }
 
