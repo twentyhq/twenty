@@ -34,7 +34,6 @@ const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
   gap: ${({ theme }) => theme.spacing(8)};
   height: 100%;
   min-width: ${desktopNavDrawerWidths.menu};
-  overflow-y: auto;
   padding: ${({ theme }) => theme.spacing(3, 2, 4)};
 
   ${({ isSubMenu, theme }) =>
@@ -55,6 +54,7 @@ const StyledItemsContainer = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(8)};
   margin-bottom: auto;
+  overflow-y: auto;
 `;
 
 export const NavigationDrawer = ({
