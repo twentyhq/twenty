@@ -65,8 +65,8 @@ export class FetchWorkspaceMessagesService {
       return;
     }
 
-    const savedThreadIds =
-      await this.getAllSavedMessageThreadsIdsForConnectedAccount(
+    const { savedMessageIds, savedThreadIds } =
+      await this.getAllSavedMessagesIdsAndMessageThreadsIdsForConnectedAccount(
         dataSourceMetadata,
         workspaceDataSource,
         connectedAccount.id,
@@ -97,15 +97,8 @@ export class FetchWorkspaceMessagesService {
       .map((thread) => thread.messageIds)
       .flat();
 
-    const messageIdsAlreadySaved =
-      await this.getAllSavedMessagesIdsForConnectedAccount(
-        dataSourceMetadata,
-        workspaceDataSource,
-        connectedAccount.id,
-      );
-
     const messageIdsToSave = messageIds.filter(
-      (messageId) => !messageIdsAlreadySaved.includes(messageId),
+      (messageId) => !savedMessageIds.includes(messageId),
     );
 
     const messageQueries: MessageOrThreadQuery[] = messageIdsToSave.map(
@@ -232,37 +225,31 @@ export class FetchWorkspaceMessagesService {
     }
   }
 
-  async getAllSavedMessagesIdsForConnectedAccount(
+  async getAllSavedMessagesIdsAndMessageThreadsIdsForConnectedAccount(
     dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
     connectedAccountId: string,
-  ): Promise<string[]> {
-    const messageIds: { externalId: string }[] =
+  ): Promise<{
+    savedMessageIds: string[];
+    savedThreadIds: string[];
+  }> {
+    const messageIds: { messageId: string; messageThreadId: string }[] =
       await workspaceDataSource?.query(
-        `SELECT message."externalId" FROM ${dataSourceMetadata.schema}."message" message
-      LEFT JOIN ${dataSourceMetadata.schema}."messageThread" ON message."messageThreadId" = ${dataSourceMetadata.schema}."messageThread"."id"
-      LEFT JOIN ${dataSourceMetadata.schema}."messageChannel" ON ${dataSourceMetadata.schema}."messageThread"."messageChannelId" = ${dataSourceMetadata.schema}."messageChannel"."id"
-      WHERE ${dataSourceMetadata.schema}."messageChannel"."connectedAccountId" = $1`,
-        [connectedAccountId],
-      );
-
-    return messageIds.map((message) => message.externalId);
-  }
-
-  async getAllSavedMessageThreadsIdsForConnectedAccount(
-    dataSourceMetadata: DataSourceEntity,
-    workspaceDataSource: DataSource,
-    connectedAccountId: string,
-  ): Promise<string[]> {
-    const threadIds: { externalId: string }[] =
-      await workspaceDataSource?.query(
-        `SELECT "messageThread"."externalId" FROM ${dataSourceMetadata.schema}."messageThread" "messageThread"
+        `SELECT message."externalId" AS "messageId",
+      "messageThread"."externalId" AS "messageThreadId"
+      FROM ${dataSourceMetadata.schema}."message" message
+      LEFT JOIN ${dataSourceMetadata.schema}."messageThread" "messageThread" ON message."messageThreadId" = "messageThread"."id" 
       LEFT JOIN ${dataSourceMetadata.schema}."messageChannel" ON "messageThread"."messageChannelId" = ${dataSourceMetadata.schema}."messageChannel"."id"
       WHERE ${dataSourceMetadata.schema}."messageChannel"."connectedAccountId" = $1`,
         [connectedAccountId],
       );
 
-    return threadIds.map((thread) => thread.externalId);
+    return {
+      savedMessageIds: messageIds.map((message) => message.messageId),
+      savedThreadIds: [
+        ...new Set(messageIds.map((message) => message.messageThreadId)),
+      ],
+    };
   }
 
   async getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
