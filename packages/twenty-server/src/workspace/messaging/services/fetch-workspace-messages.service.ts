@@ -237,17 +237,16 @@ export class FetchWorkspaceMessagesService {
     workspaceDataSource: DataSource,
     connectedAccountId: string,
   ): Promise<string[]> {
-    const messageIds: string[] = await workspaceDataSource?.query(
-      `SELECT id FROM ${dataSourceMetadata.schema}."message"
-      LEFT JOIN ${dataSourceMetadata.schema}."messageThread" ON ${dataSourceMetadata.schema}."message"."messageThreadId" = ${dataSourceMetadata.schema}."messageThread"."id"
+    const messageIds: { externalId: string }[] =
+      await workspaceDataSource?.query(
+        `SELECT message."externalId" FROM ${dataSourceMetadata.schema}."message" message
+      LEFT JOIN ${dataSourceMetadata.schema}."messageThread" ON message."messageThreadId" = ${dataSourceMetadata.schema}."messageThread"."id"
       LEFT JOIN ${dataSourceMetadata.schema}."messageChannel" ON ${dataSourceMetadata.schema}."messageThread"."messageChannelId" = ${dataSourceMetadata.schema}."messageChannel"."id"
       WHERE ${dataSourceMetadata.schema}."messageChannel"."connectedAccountId" = $1`,
-      [connectedAccountId],
-    );
+        [connectedAccountId],
+      );
 
-    console.log(messageIds);
-
-    return messageIds;
+    return messageIds.map((message) => message.externalId);
   }
 
   async getAllSavedMessageThreadsIdsForConnectedAccount(
@@ -255,16 +254,15 @@ export class FetchWorkspaceMessagesService {
     workspaceDataSource: DataSource,
     connectedAccountId: string,
   ): Promise<string[]> {
-    const threadIds: string[] = await workspaceDataSource?.query(
-      `SELECT id FROM ${dataSourceMetadata.schema}."messageThread"
-      LEFT JOIN ${dataSourceMetadata.schema}."messageChannel" ON ${dataSourceMetadata.schema}."messageThread"."messageChannelId" = ${dataSourceMetadata.schema}."messageChannel"."id"
+    const threadIds: { externalId: string }[] =
+      await workspaceDataSource?.query(
+        `SELECT "messageThread"."externalId" FROM ${dataSourceMetadata.schema}."messageThread" "messageThread"
+      LEFT JOIN ${dataSourceMetadata.schema}."messageChannel" ON "messageThread"."messageChannelId" = ${dataSourceMetadata.schema}."messageChannel"."id"
       WHERE ${dataSourceMetadata.schema}."messageChannel"."connectedAccountId" = $1`,
-      [connectedAccountId],
-    );
+        [connectedAccountId],
+      );
 
-    console.log(threadIds);
-
-    return threadIds;
+    return threadIds.map((thread) => thread.externalId);
   }
 
   async getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
