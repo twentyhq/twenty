@@ -22,7 +22,7 @@ export const RecordChip = ({ objectNameSingular, record }: RecordChipProps) => {
       name={objectRecordIdentifier.name}
       avatarType={objectRecordIdentifier.avatarType}
       avatarUrl={objectRecordIdentifier.avatarUrl ?? undefined}
-      linkToEntity={objectRecordIdentifier.linkToEntity}
+      linkToEntity={objectRecordIdentifier.linkToShowPage}
     />
   );
 };
