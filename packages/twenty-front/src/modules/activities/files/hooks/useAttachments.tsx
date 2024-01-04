@@ -6,14 +6,14 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
 // do we need to test this?
 export const useAttachments = (targetableObject: ActivityTargetableObject) => {
-  const targetableObjectFilterFieldName = getActivityTargetObjectFieldIdName({
+  const targetableObjectFieldIdName = getActivityTargetObjectFieldIdName({
     nameSingular: targetableObject.targetObjectNameSingular,
   });
 
   const { records: attachments } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.Attachment,
     filter: {
-      [targetableObjectFilterFieldName]: {
+      [targetableObjectFieldIdName]: {
         eq: targetableObject.id,
       },
     },

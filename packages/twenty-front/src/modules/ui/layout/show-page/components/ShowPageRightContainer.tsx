@@ -6,6 +6,7 @@ import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { Timeline } from '@/activities/timeline/components/Timeline';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { isStandardObject } from '@/object-metadata/utils/isStandardObject';
 import {
   IconCheckbox,
   IconMail,
@@ -62,6 +63,10 @@ export const ShowPageRightContainer = ({
 
   if (!targetableObject) return <></>;
 
+  const targetableObjectIsStandardObject = isStandardObject(
+    targetableObject.targetObjectNameSingular,
+  );
+
   const TASK_TABS = [
     {
       id: 'timeline',
@@ -86,13 +91,14 @@ export const ShowPageRightContainer = ({
       title: 'Files',
       Icon: IconPaperclip,
       hide: !notes,
+      disabled: !targetableObjectIsStandardObject,
     },
     {
       id: 'emails',
       title: 'Emails',
       Icon: IconMail,
       hide: !emails,
-      disabled: !isMessagingEnabled,
+      disabled: !isMessagingEnabled || !targetableObjectIsStandardObject,
     },
   ];
 
