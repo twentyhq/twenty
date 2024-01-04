@@ -12,9 +12,7 @@ type AddObjectFilterFromDetailsButtonProps = {
 export const AddObjectFilterFromDetailsButton = ({
   filterDropdownId,
 }: AddObjectFilterFromDetailsButtonProps) => {
-  const { toggleDropdown } = useDropdown({
-    dropdownScopeId: ObjectFilterDropdownId,
-  });
+  const { toggleDropdown } = useDropdown(ObjectFilterDropdownId);
 
   const { resetFilter } = useFilterDropdown({
     filterDropdownId: filterDropdownId,

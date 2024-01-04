@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
+
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 
 import { FieldMetadata } from '../../field/types/FieldMetadata';
-import { useRecordTableScopedStates } from '../hooks/internal/useRecordTableScopedStates';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
 type RecordTableScopeInitEffectProps = {
@@ -13,9 +13,7 @@ type RecordTableScopeInitEffectProps = {
 export const RecordTableScopeInitEffect = ({
   onColumnsChange,
 }: RecordTableScopeInitEffectProps) => {
-  const { onColumnsChangeState } = useRecordTableScopedStates();
-
-  const setOnColumnsChange = useSetRecoilState(onColumnsChangeState);
+  const { setOnColumnsChange } = useRecordTable();
 
   useEffect(() => {
     setOnColumnsChange(() => onColumnsChange);

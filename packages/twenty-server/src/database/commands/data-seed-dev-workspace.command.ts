@@ -76,9 +76,8 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         this.workspaceId,
       );
 
-    const workspaceDataSource = await this.typeORMService.connectToDataSource(
-      dataSourceMetadata,
-    );
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
     if (!workspaceDataSource) {
       throw new Error('Could not connect to workspace data source');

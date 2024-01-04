@@ -6,7 +6,7 @@ COPY ./package.json .
 COPY ./yarn.lock .
 COPY ./.yarnrc.yml .
 COPY ./.yarn/releases /app/.yarn/releases
-COPY ./packages/eslint-plugin-twenty /app/packages/eslint-plugin-twenty
+COPY ./tools/eslint-rules /app/tools/eslint-rules
 COPY ./packages/twenty-server /app/packages/twenty-server
 RUN yarn
 

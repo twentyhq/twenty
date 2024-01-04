@@ -1,25 +1,35 @@
 import { useRecoilCallback } from 'recoil';
 
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
+import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
-import { numberOfTableRowsState } from '@/object-record/record-table/states/numberOfTableRowsState';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-import { tableRowIdsState } from '../../states/tableRowIdsState';
-
 type useSetRecordTableDataProps = {
+  recordTableScopeId: string;
   onEntityCountChange: (entityCount: number) => void;
 };
 
 export const useSetRecordTableData = ({
+  recordTableScopeId,
   onEntityCountChange,
 }: useSetRecordTableDataProps) => {
-  const resetTableRowSelection = useResetTableRowSelection();
+  const resetTableRowSelection = useResetTableRowSelection(recordTableScopeId);
+
+  const { tableRowIdsScopeInjector, numberOfTableRowsScopeInjector } =
+    getRecordTableScopeInjector();
+
+  const {
+    injectStateWithRecordTableScopeId,
+    injectSnapshotValueWithRecordTableScopeId,
+  } = useRecordTableScopedStates(recordTableScopeId);
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
       <T extends { id: string }>(newEntityArray: T[]) => {
         for (const entity of newEntityArray) {
+          // TODO: refactor with scoped state later
           const currentEntity = snapshot
             .getLoadable(entityFieldsFamilyState(entity.id))
             .valueOrThrow();
@@ -28,9 +38,16 @@ export const useSetRecordTableData = ({
             set(entityFieldsFamilyState(entity.id), entity);
           }
         }
-        const currentRowIds = snapshot.getLoadable(tableRowIdsState).getValue();
+        const currentRowIds = injectSnapshotValueWithRecordTableScopeId(
+          snapshot,
+          tableRowIdsScopeInjector,
+        );
 
         const entityIds = newEntityArray.map((entity) => entity.id);
+
+        const tableRowIdsState = injectStateWithRecordTableScopeId(
+          tableRowIdsScopeInjector,
+        );
 
         if (!isDeeplyEqual(currentRowIds, entityIds)) {
           set(tableRowIdsState, entityIds);
@@ -38,9 +55,20 @@ export const useSetRecordTableData = ({
 
         resetTableRowSelection();
 
+        const numberOfTableRowsState = injectStateWithRecordTableScopeId(
+          numberOfTableRowsScopeInjector,
+        );
+
         set(numberOfTableRowsState, entityIds.length);
         onEntityCountChange(entityIds.length);
       },
-    [onEntityCountChange, resetTableRowSelection],
+    [
+      injectSnapshotValueWithRecordTableScopeId,
+      injectStateWithRecordTableScopeId,
+      numberOfTableRowsScopeInjector,
+      onEntityCountChange,
+      resetTableRowSelection,
+      tableRowIdsScopeInjector,
+    ],
   );
 };

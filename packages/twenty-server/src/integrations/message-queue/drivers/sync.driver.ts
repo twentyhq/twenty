@@ -1,6 +1,5 @@
 import { ModuleRef } from '@nestjs/core';
 
-import { QueueJobOptions } from 'src/integrations/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueueDriver } from 'src/integrations/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
   MessageQueueJob,
@@ -17,7 +16,6 @@ export class SyncDriver implements MessageQueueDriver {
     _queueName: MessageQueue,
     jobName: string,
     data: T,
-    _options?: QueueJobOptions | undefined,
   ): Promise<void> {
     const jobClassName = getJobClassName(jobName);
     const job: MessageQueueJob<MessageQueueJobData> = this.jobsModuleRef.get(
@@ -28,10 +26,7 @@ export class SyncDriver implements MessageQueueDriver {
     return await job.handle(data);
   }
 
-  work<T>(
-    queueName: MessageQueue,
-    handler: ({ data, id }: { data: T; id: string }) => void | Promise<void>,
-  ) {
+  work() {
     return;
   }
 }

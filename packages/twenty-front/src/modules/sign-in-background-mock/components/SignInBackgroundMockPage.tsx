@@ -27,8 +27,8 @@ export const SignInBackgroundMockPage = () => {
         <StyledTableContainer>
           <SignInBackgroundMockContainer />
         </StyledTableContainer>
-        <RecordTableActionBar />
-        <RecordTableContextMenu />
+        <RecordTableActionBar recordTableId="mock" />
+        <RecordTableContextMenu recordTableId="mock" />
       </PageBody>
     </PageContainer>
   );

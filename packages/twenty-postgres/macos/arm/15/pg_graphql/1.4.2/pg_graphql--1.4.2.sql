@@ -16,6 +16,60 @@ CREATE  FUNCTION graphql."_internal_resolve"(
 LANGUAGE c /* Rust */
 AS 'MODULE_PATHNAME', 'resolve_wrapper';
 
+-- src/lib.rs:19
+-- Is updated every time the schema changes
+create sequence if not exists graphql.seq_schema_version as int cycle;
+
+create or replace function graphql.increment_schema_version()
+    returns event_trigger
+    security definer
+    language plpgsql
+as $$
+begin
+    perform nextval('graphql.seq_schema_version');
+end;
+$$;
+
+create or replace function graphql.get_schema_version()
+    returns int
+    security definer
+    language sql
+as $$
+    select last_value from graphql.seq_schema_version;
+$$;
+
+-- On DDL event, increment the schema version number
+create event trigger graphql_watch_ddl
+    on ddl_command_end
+    execute procedure graphql.increment_schema_version();
+
+create event trigger graphql_watch_drop
+    on sql_drop
+    execute procedure graphql.increment_schema_version();
+
+
+-- src/lib.rs:20
+create function graphql.comment_directive(comment_ text)
+    returns jsonb
+    language sql
+    immutable
+as $$
+    /*
+    comment on column public.account.name is '@graphql.name: myField'
+    */
+    select
+        coalesce(
+            (
+                regexp_match(
+                    comment_,
+                    '@graphql\((.+?)\)'
+                )
+            )[1]::jsonb,
+            jsonb_build_object()
+        )
+$$;
+
+
 -- src/lib.rs:22
 -- requires:
 --   resolve
@@ -50,28 +104,6 @@ end;
 $$;
 
 
--- src/lib.rs:20
-create function graphql.comment_directive(comment_ text)
-    returns jsonb
-    language sql
-    immutable
-as $$
-    /*
-    comment on column public.account.name is '@graphql.name: myField'
-    */
-    select
-        coalesce(
-            (
-                regexp_match(
-                    comment_,
-                    '@graphql\((.+?)\)'
-                )
-            )[1]::jsonb,
-            jsonb_build_object()
-        )
-$$;
-
-
 -- src/lib.rs:21
 create or replace function graphql.exception(message text)
     returns text
@@ -81,36 +113,4 @@ begin
     raise exception using errcode='22000', message=message;
 end;
 $$;
-
-
--- src/lib.rs:19
--- Is updated every time the schema changes
-create sequence if not exists graphql.seq_schema_version as int cycle;
-
-create or replace function graphql.increment_schema_version()
-    returns event_trigger
-    security definer
-    language plpgsql
-as $$
-begin
-    perform nextval('graphql.seq_schema_version');
-end;
-$$;
-
-create or replace function graphql.get_schema_version()
-    returns int
-    security definer
-    language sql
-as $$
-    select last_value from graphql.seq_schema_version;
-$$;
-
--- On DDL event, increment the schema version number
-create event trigger graphql_watch_ddl
-    on ddl_command_end
-    execute procedure graphql.increment_schema_version();
-
-create event trigger graphql_watch_drop
-    on sql_drop
-    execute procedure graphql.increment_schema_version();
 

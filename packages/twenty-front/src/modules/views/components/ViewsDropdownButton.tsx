@@ -84,13 +84,11 @@ export const ViewsDropdownButton = ({
   const {
     isDropdownOpen: isViewsDropdownOpen,
     closeDropdown: closeViewsDropdown,
-  } = useDropdown({
-    dropdownScopeId: ViewsDropdownId,
-  });
+  } = useDropdown(ViewsDropdownId);
 
-  const { openDropdown: openOptionsDropdown } = useDropdown({
-    dropdownScopeId: optionsDropdownScopeId,
-  });
+  const { openDropdown: openOptionsDropdown } = useDropdown(
+    optionsDropdownScopeId,
+  );
 
   const handleViewSelect = useRecoilCallback(
     () => async (viewId: string) => {

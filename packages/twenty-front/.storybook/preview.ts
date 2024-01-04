@@ -1,17 +1,18 @@
 import { ThemeProvider } from '@emotion/react';
+import { withThemeFromJSXProvider } from '@storybook/addon-themes';
 import { Preview, ReactRenderer } from '@storybook/react';
-import { withThemeFromJSXProvider } from "@storybook/addon-themes";
 import { initialize, mswDecorator } from 'msw-storybook-addon';
 
+import { darkTheme, lightTheme } from '../src/modules/ui/theme/constants/theme';
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 import { mockedUserJWT } from '../src/testing/mock-data/jwt';
 
-import { lightTheme, darkTheme } from '../src/modules/ui/theme/constants/theme';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 initialize({
   onUnhandledRequest: async (request: Request) => {
-    const fileExtensionsToIgnore = /\.(ts|tsx|js|jsx|svg|css|png)(\?v=[a-zA-Z0-9]+)?/;
+    const fileExtensionsToIgnore =
+      /\.(ts|tsx|js|jsx|svg|css|png)(\?v=[a-zA-Z0-9]+)?/;
 
     if (fileExtensionsToIgnore.test(request.url)) {
       return;

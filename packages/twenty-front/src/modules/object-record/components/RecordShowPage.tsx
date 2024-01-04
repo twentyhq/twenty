@@ -36,7 +36,7 @@ import {
   FileFolder,
   useUploadImageMutation,
 } from '~/generated/graphql';
-import { getLogoUrlFromDomainName } from '~/utils';
+import { isDefined } from '~/utils/isDefined';
 
 import { useFindOneRecord } from '../hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '../hooks/useUpdateOneRecord';
@@ -58,9 +58,7 @@ export const RecordShowPage = () => {
 
   const { identifiersMapper } = useRelationPicker();
 
-  const { favorites, createFavorite, deleteFavorite } = useFavorites({
-    objectNamePlural: objectMetadataItem.namePlural,
-  });
+  const { favorites, createFavorite, deleteFavorite } = useFavorites();
 
   const [, setEntityFields] = useRecoilState(
     entityFieldsFamilyState(objectRecordId ?? ''),
@@ -97,34 +95,19 @@ export const RecordShowPage = () => {
     return [updateEntity, { loading: false }];
   };
 
-  const isFavorite = objectNameSingular
-    ? favorites.some((favorite) => favorite.recordId === record?.id)
-    : false;
+  const correspondingFavorite = favorites.find(
+    (favorite) => favorite.recordId === objectRecordId,
+  );
+
+  const isFavorite = isDefined(correspondingFavorite);
 
   const handleFavoriteButtonClick = async () => {
     if (!objectNameSingular || !record) return;
-    if (isFavorite) deleteFavorite(record?.id);
-    else {
-      const additionalData =
-        objectNameSingular === 'person'
-          ? {
-              labelIdentifier:
-                record.name.firstName + ' ' + record.name.lastName,
-              avatarUrl: record.avatarUrl,
-              avatarType: 'rounded',
-              link: `/object/personV2/${record.id}`,
-              recordId: record.id,
-            }
-          : objectNameSingular === 'company'
-            ? {
-                labelIdentifier: record.name,
-                avatarUrl: getLogoUrlFromDomainName(record.domainName ?? ''),
-                avatarType: 'squared',
-                link: `/object/companyV2/${record.id}`,
-                recordId: record.id,
-              }
-            : {};
-      createFavorite(record.id, additionalData);
+
+    if (isFavorite && record) {
+      deleteFavorite(correspondingFavorite.id);
+    } else {
+      createFavorite(record, objectNameSingular);
     }
   };
 
