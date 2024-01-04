@@ -14,6 +14,7 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
+import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
 
 const StyledTaskGroupEmptyContainer = styled.div`
   align-items: center;
@@ -93,17 +94,20 @@ export const Attachments = ({
     if (!attachmentUrl) {
       return;
     }
-    if (!createOneAttachment) {
-      return;
-    }
 
-    await createOneAttachment({
+    const targetableObjectFieldIdName = getActivityTargetObjectFieldIdName({
+      nameSingular: targetableObject.targetObjectNameSingular,
+    });
+
+    const attachmentToCreate = {
       authorId: currentWorkspaceMember?.id,
       name: file.name,
       fullPath: attachmentUrl,
       type: getFileType(file.name),
-      [`${targetableObject.targetObjectNameSingular}`]: targetableObject.id,
-    });
+      [targetableObjectFieldIdName]: targetableObject.id,
+    }
+
+    await createOneAttachment(attachmentToCreate);
   };
 
   if (!isNonEmptyArray(attachments)) {
