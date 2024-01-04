@@ -8,7 +8,7 @@ import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { SortDefinition } from '@/object-record/object-sort-dropdown/types/SortDefinition';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useViewBar } from '@/views/hooks/useViewBar';
-import { ViewScopeInternalContext } from '@/views/scopes/scope-internal-context/ViewScopeInternalContext';
+import { ViewScope } from '@/views/scopes/ViewScope';
 import { ViewSort } from '@/views/types/ViewSort';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -18,13 +18,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
   >
     <MockedProvider addTypename={false}>
       <RecoilRoot>
-        <ViewScopeInternalContext.Provider
-          value={{
-            scopeId: 'viewScopeId',
-          }}
-        >
-          {children}
-        </ViewScopeInternalContext.Provider>
+        <ViewScope viewScopeId="viewScopeId">{children}</ViewScope>
       </RecoilRoot>
     </MockedProvider>
   </MemoryRouter>

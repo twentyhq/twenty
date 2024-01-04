@@ -10,7 +10,7 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { getScopedFamilyStateDeprecated } from '@/ui/utilities/recoil-scope/utils/getScopedFamilyStateDeprecated';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useViewBar } from '@/views/hooks/useViewBar';
-import { ViewScopeInternalContext } from '@/views/scopes/scope-internal-context/ViewScopeInternalContext';
+import { ViewScope } from '@/views/scopes/ViewScope';
 import { currentViewFieldsScopedFamilyState } from '@/views/states/currentViewFieldsScopedFamilyState';
 import { ViewField } from '@/views/types/ViewField';
 
@@ -20,23 +20,28 @@ jest.mock('@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery', () => {
   };
 });
 
-const fieldsToPersist = [
-  {
-    fieldMetadataId: 'id',
-    label: 'label',
-    iconName: 'icon',
-    type: 'UUID',
-    isVisible: true,
-    size: 1,
-    position: 1,
-    metadata: {
-      positon: 0,
-      size: 2,
-      objectMetadataNameSingular: 'view',
-      fieldName: 'view',
-    },
+const fieldMetadataId = '12ecdf87-506f-44a7-98c6-393e5f05b225';
+
+const fieldDefinition: ColumnDefinition<FieldMetadata> = {
+  size: 1,
+  position: 1,
+  fieldMetadataId,
+  label: 'label',
+  iconName: 'icon',
+  type: 'TEXT',
+  metadata: {
+    placeHolder: 'placeHolder',
+    fieldName: 'fieldName',
   },
-] as unknown as ViewField[];
+};
+const viewField: ViewField = {
+  id: '88930a16-685f-493b-a96b-91ca55666bba',
+  fieldMetadataId,
+  position: 1,
+  isVisible: true,
+  size: 1,
+  definition: fieldDefinition,
+};
 
 const viewBarId = 'viewBarTestId';
 
@@ -54,7 +59,7 @@ const mocks = [
       `,
       variables: {
         input: {
-          fieldMetadataId: 'id',
+          fieldMetadataId,
           viewId: currentViewId,
           isVisible: true,
           size: 1,
@@ -75,13 +80,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
   >
     <MockedProvider mocks={mocks} addTypename={false}>
       <RecoilRoot>
-        <ViewScopeInternalContext.Provider
-          value={{
-            scopeId: 'viewScopeId',
-          }}
-        >
-          {children}
-        </ViewScopeInternalContext.Provider>
+        <ViewScope viewScopeId="viewScopeId">{children}</ViewScope>
       </RecoilRoot>
     </MockedProvider>
   </MemoryRouter>
@@ -111,11 +110,11 @@ describe('useViewBar > viewFields', () => {
     await act(async () => {
       result.current.viewBar.setCurrentViewId(currentViewId);
       result.current.viewBar.setViewObjectMetadataId('newId');
-      result.current.viewBar.persistViewFields(fieldsToPersist);
+      result.current.viewBar.persistViewFields([viewField]);
     });
 
     await waitFor(() =>
-      expect(result.current.currentFields).toBe(fieldsToPersist),
+      expect(result.current.currentFields).toEqual([viewField]),
     );
   });
 
@@ -128,7 +127,7 @@ describe('useViewBar > viewFields', () => {
     await act(async () => {
       result.current.setCurrentViewId(currentViewId);
       result.current.setViewObjectMetadataId('newId');
-      await result.current.persistViewFields(fieldsToPersist);
+      await result.current.persistViewFields([viewField]);
     });
 
     const persistViewFieldsMutation = mocks[0];
@@ -139,26 +138,6 @@ describe('useViewBar > viewFields', () => {
   });
 
   it('should load view fields', async () => {
-    const fieldDefinition: ColumnDefinition<FieldMetadata> = {
-      size: 100,
-      position: 1,
-      fieldMetadataId: '12ecdf87-506f-44a7-98c6-393e5f05b225',
-      label: 'label',
-      iconName: 'icon',
-      type: 'TEXT',
-      metadata: {
-        placeHolder: 'placeHolder',
-        fieldName: 'fieldName',
-      },
-    };
-    const viewField: ViewField = {
-      id: '88930a16-685f-493b-a96b-91ca55666bba',
-      fieldMetadataId: '12ecdf87-506f-44a7-98c6-393e5f05b225',
-      position: 1,
-      isVisible: true,
-      size: 100,
-      definition: fieldDefinition,
-    };
     const currentViewId = 'ac8807fd-0065-436d-bdf6-94333d75af6e';
 
     const { result } = renderHook(() => {

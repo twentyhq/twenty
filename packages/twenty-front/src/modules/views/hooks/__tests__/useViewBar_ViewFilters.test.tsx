@@ -8,7 +8,7 @@ import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useViewBar } from '@/views/hooks/useViewBar';
-import { ViewScopeInternalContext } from '@/views/scopes/scope-internal-context/ViewScopeInternalContext';
+import { ViewScope } from '@/views/scopes/ViewScope';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
@@ -19,13 +19,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
   >
     <MockedProvider addTypename={false}>
       <RecoilRoot>
-        <ViewScopeInternalContext.Provider
-          value={{
-            scopeId: 'viewScopeId',
-          }}
-        >
-          {children}
-        </ViewScopeInternalContext.Provider>
+        <ViewScope viewScopeId="viewScopeId">{children}</ViewScope>
       </RecoilRoot>
     </MockedProvider>
   </MemoryRouter>
