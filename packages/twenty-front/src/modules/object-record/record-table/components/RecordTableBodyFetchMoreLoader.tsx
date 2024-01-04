@@ -38,19 +38,22 @@ export const RecordTableBodyFetchMoreLoader = () => {
     color: ${grayScale.gray40};
     display: flex;
     height: 32px;
-    padding-left: 40px;
+    margin-left: ${({ theme }) => theme.spacing(8)};
+    padding-left: ${({ theme }) => theme.spacing(2)};
   `;
 
   return (
-    isFetchingMoreObjects && (
-      <StyledRow selected={false}>
-        <>
-          <td colSpan={7}>
-            <StyledText>Loading more...</StyledText>
-          </td>
-          <td colSpan={7} />
-        </>
-      </StyledRow>
-    )
+    <tbody ref={tbodyRef}>
+      {isFetchingMoreObjects && (
+        <StyledRow selected={false}>
+          <>
+            <td colSpan={7}>
+              <StyledText>Loading more...</StyledText>
+            </td>
+            <td colSpan={7} />
+          </>
+        </StyledRow>
+      )}
+    </tbody>
   );
 };
