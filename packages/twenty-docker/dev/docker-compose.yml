@@ -12,7 +12,6 @@ services:
       - ../../..:/app
       - twenty_dev_node_modules_root:/app/node_modules
       - twenty_dev_node_modules_docs:/app/packages/twenty-docs/node_modules
-      - twenty_dev_node_modules_eslint:/app/packages/eslint-plugin-twenty/node_modules
       - twenty_dev_node_modules_front:/app/packages/twenty-front/node_modules
       - twenty_dev_node_modules_server:/app/packages/twenty-server/node_modules
       - twenty_dev_node_modules_website:/app/packages/twenty-website/node_modules

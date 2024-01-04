@@ -106,11 +106,14 @@ const computeSchemaComponent = (
 
   if (requiredFields?.length) {
     result.required = requiredFields;
-    result.example = requiredFields.reduce((example, requiredField) => {
-      example[requiredField] = '';
+    result.example = requiredFields.reduce(
+      (example, requiredField) => {
+        example[requiredField] = '';
 
-      return example;
-    }, {} as Record<string, string>);
+        return example;
+      },
+      {} as Record<string, string>,
+    );
   }
 
   return result;
@@ -119,11 +122,14 @@ const computeSchemaComponent = (
 export const computeSchemaComponents = (
   objectMetadataItems: ObjectMetadataEntity[],
 ): Record<string, OpenAPIV3.SchemaObject> => {
-  return objectMetadataItems.reduce((schemas, item) => {
-    schemas[capitalize(item.nameSingular)] = computeSchemaComponent(item);
+  return objectMetadataItems.reduce(
+    (schemas, item) => {
+      schemas[capitalize(item.nameSingular)] = computeSchemaComponent(item);
 
-    return schemas;
-  }, {} as Record<string, OpenAPIV3.SchemaObject>);
+      return schemas;
+    },
+    {} as Record<string, OpenAPIV3.SchemaObject>,
+  );
 };
 
 export const computeParameterComponents = (): Record<

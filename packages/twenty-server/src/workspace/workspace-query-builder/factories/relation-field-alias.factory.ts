@@ -105,8 +105,8 @@ export class RelationFieldAliasFactory {
 
       return `
         ${fieldKey}: ${referencedObjectMetadata.targetTableName}Collection${
-        argsString ? `(${argsString})` : ''
-      } {
+          argsString ? `(${argsString})` : ''
+        } {
           ${fieldsString}
         }
       `;

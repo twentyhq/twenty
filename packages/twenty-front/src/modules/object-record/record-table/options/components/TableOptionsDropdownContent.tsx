@@ -3,6 +3,8 @@ import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/display/icon';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
@@ -15,7 +17,6 @@ import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFiel
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
-import { useRecordTableScopedStates } from '../../hooks/internal/useRecordTableScopedStates';
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
 
@@ -41,8 +42,19 @@ export const TableOptionsDropdownContent = ({
 
   const viewEditInputRef = useRef<HTMLInputElement>(null);
 
-  const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
-    useRecordTableScopedStates({ customRecordTableScopeId: recordTableId });
+  const { hiddenTableColumnsScopeInjector, visibleTableColumnsScopeInjector } =
+    getRecordTableScopeInjector();
+
+  const { injectSelectorWithRecordTableScopeId } =
+    useRecordTableScopedStates(recordTableId);
+
+  const hiddenTableColumnsSelector = injectSelectorWithRecordTableScopeId(
+    hiddenTableColumnsScopeInjector,
+  );
+
+  const visibleTableColumnsSelector = injectSelectorWithRecordTableScopeId(
+    visibleTableColumnsScopeInjector,
+  );
 
   const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector);
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);

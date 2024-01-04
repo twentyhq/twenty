@@ -1,56 +1,26 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const path = require('path');
+
 module.exports = {
-  parser: '@typescript-eslint/parser',
-  root: true,
-  env: {
-    browser: true,
-    node: true,
-    jest: true,
-  },
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
+  extends: [
+    'plugin:@nx/react',
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+    'plugin:storybook/recommended',
+    '../../.eslintrc.js',
+  ],
+  plugins: ['react-hooks', 'react-refresh'],
+  ignorePatterns: [
+    '!**/*',
+    'node_modules',
+    'mockServiceWorker.js',
+    '**/generated*/*',
+    '*config.*',
+    '**/*config.js',
+    'codegen*',
+    'tsup.ui.index.tsx',
+  ],
   rules: {
-    '@typescript-eslint/interface-name-prefix': 'off',
-    '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/explicit-module-boundary-types': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
-    '@typescript-eslint/no-unused-vars': 'off',
-    'simple-import-sort/imports': 'error',
-    'simple-import-sort/exports': 'error',
-    'twenty/effect-components': 'error',
-    'twenty/no-hardcoded-colors': 'error',
-    'twenty/matching-state-variable': 'error',
-    'twenty/component-props-naming': 'error',
-    'twenty/sort-css-properties-alphabetically': 'error',
-    'twenty/styled-components-prefixed-with-styled': 'error',
-    'twenty/no-state-useref': 'error',
-    'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
-    'no-unused-vars': 'off',
-    'react/jsx-props-no-spreading': [
-      'error',
-      {
-        explicitSpread: 'ignore',
-      },
-    ],
-    'react-hooks/exhaustive-deps': [
-      'warn',
-      {
-        additionalHooks: 'useRecoilCallback',
-      },
-    ],
-    'unused-imports/no-unused-imports': 'warn',
-    'unused-imports/no-unused-vars': [
-      'warn',
-      {
-        vars: 'all',
-        varsIgnorePattern: '^_',
-        args: 'after-used',
-        argsIgnorePattern: '^_',
-      },
-    ],
     'no-restricted-imports': [
       'error',
       {
@@ -67,86 +37,57 @@ module.exports = {
         ],
       },
     ],
-    '@typescript-eslint/consistent-type-imports': [
+
+    '@nx/workspace-effect-components': 'error',
+    '@nx/workspace-no-hardcoded-colors': 'error',
+    '@nx/workspace-matching-state-variable': 'error',
+    '@nx/workspace-sort-css-properties-alphabetically': 'error',
+    '@nx/workspace-styled-components-prefixed-with-styled': 'error',
+    '@nx/workspace-no-state-useref': 'error',
+    '@nx/workspace-component-props-naming': 'error',
+
+    'react/no-unescaped-entities': 'off',
+    'react/prop-types': 'off',
+    'react/jsx-key': 'off',
+    'react/display-name': 'off',
+    'react/jsx-uses-react': 'off',
+    'react/react-in-jsx-scope': 'off',
+    'react/jsx-no-useless-fragment': 'off',
+    'react/jsx-props-no-spreading': [
       'error',
-      { prefer: 'no-type-imports' },
+      {
+        explicitSpread: 'ignore',
+      },
     ],
-    'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
-    // 'react-refresh/only-export-components': [
-    //   'warn',
-    //   { allowConstantExport: true },
-    // ],
+
+    'react-hooks/exhaustive-deps': [
+      'warn',
+      {
+        additionalHooks: 'useRecoilCallback',
+      },
+    ],
   },
-  settings: {
-    react: {
-      version: 'detect',
-    },
-  },
-  extends: [
-    'plugin:@typescript-eslint/recommended',
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:react-hooks/recommended',
-    'plugin:prettier/recommended',
-    'plugin:storybook/recommended',
-  ],
-  plugins: [
-    '@typescript-eslint/eslint-plugin',
-    'simple-import-sort',
-    'unused-imports',
-    'prefer-arrow',
-    'twenty',
-    'react-refresh',
-  ],
-  ignorePatterns: [
-    'mockServiceWorker.js',
-    '**/generated*/*',
-    '.eslintrc.cjs',
-    '*.config.cjs',
-    '*.config.ts',
-    '*config.js',
-    'codegen*',
-    'tsup.ui.index.tsx'
-  ],
   overrides: [
     {
-      files: ['*.stories.tsx', '*.test.ts'],
+      files: ['*.ts', '*.tsx', '*.js', '*.jsx'],
+      parserOptions: {
+        project: ['packages/twenty-front/tsconfig.*?.json'],
+      },
+      rules: {},
+    },
+    {
+      files: ['.storybook/main.@(js|cjs|mjs|ts)'],
       rules: {
-        'no-console': 'off',
+        'storybook/no-uninstalled-addons': [
+          'error',
+          { packageJsonLocation: path.resolve('../../package.json') },
+        ],
       },
     },
     {
-      files: ['*.js', '*.jsx', '*.ts', '*.tsx'],
+      files: ['.storybook/**/*', '**/*.stories.tsx', '**/*.test.@(ts|tsx)'],
       rules: {
-        'react/no-unescaped-entities': 'off',
-        'react/prop-types': 'off',
-        'react/jsx-key': 'off',
-        'react/display-name': 'off',
-        'react/jsx-uses-react': 'off',
-        'react/react-in-jsx-scope': 'off',
-        'no-control-regex': 0,
-        'no-undef': 'off',
-        'simple-import-sort/imports': [
-          'error',
-          {
-            groups: [
-              ['^react', '^@?\\w'],
-              ['^(@|~)(/.*|$)'],
-              ['^\\u0000'],
-              ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
-              ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
-              ['^.+\\.?(css)$'],
-            ],
-          },
-        ],
-        'prefer-arrow/prefer-arrow-functions': [
-          'error',
-          {
-            disallowPrototype: true,
-            singleReturnOnly: false,
-            classPropertiesAllowed: false,
-          },
-        ],
+        'no-console': 'off',
       },
     },
   ],

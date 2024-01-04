@@ -20,7 +20,7 @@ export const SettingsObjectFieldDisabledActionDropdown = ({
 }: SettingsObjectFieldDisabledActionDropdownProps) => {
   const dropdownScopeId = `${scopeKey}-settings-field-disabled-action-dropdown`;
 
-  const { closeDropdown } = useDropdown({ dropdownScopeId });
+  const { closeDropdown } = useDropdown(dropdownScopeId);
 
   const handleActivate = () => {
     onActivate();

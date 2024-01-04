@@ -405,7 +405,7 @@ export class WorkspaceSyncMetadataService {
                     WorkspaceMigrationColumnActionType.CREATE,
                     field,
                   ),
-                } satisfies WorkspaceMigrationTableAction),
+                }) satisfies WorkspaceMigrationTableAction,
             ),
         ];
 
@@ -420,11 +420,14 @@ export class WorkspaceSyncMetadataService {
     // TODO: handle object delete migrations.
     // Note: we need to delete the relation first due to the DB constraint.
 
-    const objectsInDbById = objectsInDB.reduce((result, currentObject) => {
-      result[currentObject.id] = currentObject;
+    const objectsInDbById = objectsInDB.reduce(
+      (result, currentObject) => {
+        result[currentObject.id] = currentObject;
 
-      return result;
-    }, {} as Record<string, ObjectMetadataEntity>);
+        return result;
+      },
+      {} as Record<string, ObjectMetadataEntity>,
+    );
 
     if (fieldsToCreate.length > 0) {
       fieldsToCreate.map((field) => {
