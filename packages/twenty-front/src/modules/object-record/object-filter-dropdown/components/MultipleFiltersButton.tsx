@@ -7,9 +7,9 @@ import { ObjectFilterDropdownId } from '../constants/ObjectFilterDropdownId';
 export const MultipleFiltersButton = () => {
   const { resetFilter } = useFilterDropdown();
 
-  const { isDropdownOpen, toggleDropdown } = useDropdown({
-    dropdownScopeId: ObjectFilterDropdownId,
-  });
+  const { isDropdownOpen, toggleDropdown } = useDropdown(
+    ObjectFilterDropdownId,
+  );
 
   const handleClick = () => {
     toggleDropdown();

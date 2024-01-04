@@ -95,7 +95,7 @@ export const IconPicker = ({
     setHotkeyScopeAndMemorizePreviousScope,
   } = usePreviousHotkeyScope();
 
-  const { closeDropdown } = useDropdown({ dropdownScopeId });
+  const { closeDropdown } = useDropdown(dropdownScopeId);
 
   const { getIcons, getIcon } = useIcons();
   const icons = getIcons();

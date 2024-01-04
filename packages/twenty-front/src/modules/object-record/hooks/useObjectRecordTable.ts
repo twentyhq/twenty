@@ -7,13 +7,17 @@ import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils
 import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
 import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { isRecordTableInitialLoadingState } from '@/object-record/record-table/states/isRecordTableInitialLoadingState';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { signInBackgroundMockCompanies } from '@/sign-in-background-mock/constants/signInBackgroundMockCompanies';
 
 import { useFindManyRecords } from './useFindManyRecords';
 
 export const useObjectRecordTable = () => {
-  const { scopeId: objectNamePlural, setRecordTableData } = useRecordTable();
+  const {
+    scopeId: objectNamePlural,
+    setRecordTableData,
+    setIsRecordTableInitialLoading,
+  } = useRecordTable();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
@@ -25,8 +29,26 @@ export const useObjectRecordTable = () => {
       objectNameSingular,
     },
   );
-  const { tableFiltersState, tableSortsState, tableLastRowVisibleState } =
-    useRecordTableScopedStates();
+
+  const {
+    tableFiltersScopeInjector,
+    tableSortsScopeInjector,
+    tableLastRowVisibleScopeInjector,
+  } = getRecordTableScopeInjector();
+
+  const { injectStateWithRecordTableScopeId } = useRecordTableScopedStates();
+
+  const tableFiltersState = injectStateWithRecordTableScopeId(
+    tableFiltersScopeInjector,
+  );
+
+  const tableSortsState = injectStateWithRecordTableScopeId(
+    tableSortsScopeInjector,
+  );
+
+  const tableLastRowVisibleState = injectStateWithRecordTableScopeId(
+    tableLastRowVisibleScopeInjector,
+  );
 
   const tableFilters = useRecoilValue(tableFiltersState);
   const tableSorts = useRecoilValue(tableSortsState);
@@ -40,10 +62,6 @@ export const useObjectRecordTable = () => {
   const orderBy = turnSortsIntoOrderBy(
     tableSorts,
     foundObjectMetadataItem?.fields ?? [],
-  );
-
-  const setIsRecordTableInitialLoading = useSetRecoilState(
-    isRecordTableInitialLoadingState,
   );
 
   const { records, loading, fetchMoreRecords, queryStateIdentifier } =

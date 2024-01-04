@@ -1,9 +1,9 @@
 import { useRecoilCallback } from 'recoil';
 
+import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 
-import { currentTableCellInEditModePositionState } from '../../states/currentTableCellInEditModePositionState';
-import { isTableCellInEditModeFamilyState } from '../../states/isTableCellInEditModeFamilyState';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useSetSoftFocusOnCurrentTableCell } from './useSetSoftFocusOnCurrentTableCell';
@@ -11,12 +11,27 @@ import { useSetSoftFocusOnCurrentTableCell } from './useSetSoftFocusOnCurrentTab
 export const useMoveSoftFocusToCurrentCellOnHover = () => {
   const setSoftFocusOnCurrentTableCell = useSetSoftFocusOnCurrentTableCell();
 
+  const {
+    currentTableCellInEditModePositionScopeInjector,
+    isTableCellInEditModeScopeInjector,
+  } = getRecordTableScopeInjector();
+
+  const {
+    injectSnapshotValueWithRecordTableScopeId,
+    injectFamilyStateWithRecordTableScopeId,
+  } = useRecordTableScopedStates();
+
+  const isTableCellInEditModeFamilyState =
+    injectFamilyStateWithRecordTableScopeId(isTableCellInEditModeScopeInjector);
+
   return useRecoilCallback(
     ({ snapshot }) =>
       () => {
-        const currentTableCellInEditModePosition = snapshot
-          .getLoadable(currentTableCellInEditModePositionState)
-          .valueOrThrow();
+        const currentTableCellInEditModePosition =
+          injectSnapshotValueWithRecordTableScopeId(
+            snapshot,
+            currentTableCellInEditModePositionScopeInjector,
+          );
 
         const isSomeCellInEditMode = snapshot.getLoadable(
           isTableCellInEditModeFamilyState(currentTableCellInEditModePosition),
@@ -38,6 +53,11 @@ export const useMoveSoftFocusToCurrentCellOnHover = () => {
           setSoftFocusOnCurrentTableCell();
         }
       },
-    [setSoftFocusOnCurrentTableCell],
+    [
+      currentTableCellInEditModePositionScopeInjector,
+      injectSnapshotValueWithRecordTableScopeId,
+      isTableCellInEditModeFamilyState,
+      setSoftFocusOnCurrentTableCell,
+    ],
   );
 };

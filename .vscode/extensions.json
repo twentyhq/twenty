@@ -1,17 +1,19 @@
 {
   "recommendations": [
-    "ms-vscode-remote.remote-containers",
-    "styled-components.vscode-styled-components",
+    "arcanis.vscode-zipfs",
     "dbaeumer.vscode-eslint",
-    "unifiedjs.vscode-mdx",
-    "ms-vscode.makefile-tools",
     "esbenp.prettier-vscode",
-    "GraphQL.vscode-graphql",
-    "yoavbls.pretty-ts-errors",
-    "graphql.vscode-graphql-syntax",
-    "graphql.vscode-graphql",
     "figma.figma-vscode-extension",
+    "firsttris.vscode-jest-runner",
+    "graphql.vscode-graphql-syntax",
+    "GraphQL.vscode-graphql",
+    "graphql.vscode-graphql",
+    "ms-vscode-remote.remote-containers",
+    "ms-vscode.makefile-tools",
+    "nrwl.angular-console",
+    "styled-components.vscode-styled-components",
+    "unifiedjs.vscode-mdx",
     "xyc.vscode-mdx-preview",
-    "arcanis.vscode-zipfs"
+    "yoavbls.pretty-ts-errors"
   ]
 }

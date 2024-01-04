@@ -23,7 +23,7 @@ export const useCommandMenu = () => {
 
   const openCommandMenu = () => {
     setIsCommandMenuOpened(true);
-    setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenu);
+    setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
   };
 
   const closeCommandMenu = () => {

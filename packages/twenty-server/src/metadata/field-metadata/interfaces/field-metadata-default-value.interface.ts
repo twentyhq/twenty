@@ -56,8 +56,8 @@ type DefaultValueByFieldMetadata<T extends FieldMetadataType | 'default'> = [
 ] extends [keyof FieldMetadataDefaultValueMapping]
   ? FieldMetadataDefaultValueMapping[T] | null
   : T extends 'default'
-  ? AllFieldMetadataDefaultValueTypes | null
-  : never;
+    ? AllFieldMetadataDefaultValueTypes | null
+    : never;
 
 export type FieldMetadataDefaultValue<
   T extends FieldMetadataType | 'default' = 'default',
@@ -68,10 +68,10 @@ type FieldMetadataDefaultValueExtractNestedType<T> = T extends {
 }
   ? U
   : T extends object
-  ? { [K in keyof T]: T[K] } extends { value: infer V }
-    ? V
-    : T[keyof T]
-  : never;
+    ? { [K in keyof T]: T[K] } extends { value: infer V }
+      ? V
+      : T[keyof T]
+    : never;
 
 type FieldMetadataDefaultValueExtractedTypes = {
   [K in keyof FieldMetadataDefaultValueMapping]: FieldMetadataDefaultValueExtractNestedType<

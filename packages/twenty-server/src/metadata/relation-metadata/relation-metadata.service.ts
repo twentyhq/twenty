@@ -100,11 +100,14 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         },
       );
 
-    const objectMetadataMap = objectMetadataEntries.reduce((acc, curr) => {
-      acc[curr.id] = curr;
+    const objectMetadataMap = objectMetadataEntries.reduce(
+      (acc, curr) => {
+        acc[curr.id] = curr;
 
-      return acc;
-    }, {} as { [key: string]: ObjectMetadataEntity });
+        return acc;
+      },
+      {} as { [key: string]: ObjectMetadataEntity },
+    );
 
     if (
       objectMetadataMap[relationMetadataInput.fromObjectMetadataId] ===
