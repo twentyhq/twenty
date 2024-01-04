@@ -27,12 +27,6 @@ export class FieldsStringFactory {
     // @ts-expect-error Todo: Fix typing error
     const selectedFields: Record<string, any> = graphqlFields(info);
 
-    console.log(
-      JSON.stringify({
-        selectedFields,
-      }),
-    );
-
     return this.createFieldsStringRecursive(
       info,
       selectedFields,
@@ -78,12 +72,6 @@ export class FieldsStringFactory {
       }
 
       fieldAlias ??= fieldKey;
-
-      console.log({
-        fieldAlias,
-        fieldKey,
-        fieldValue,
-      });
 
       // Recurse if value is a nested object, otherwise append field or alias
       if (

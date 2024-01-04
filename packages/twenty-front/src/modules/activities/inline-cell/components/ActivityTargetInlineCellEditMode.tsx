@@ -67,16 +67,13 @@ export const ActivityTargetInlineCellEditMode = ({
 
     if (activityTargetRecordsToCreate.length > 0) {
       await createManyActivityTargets(
-        activityTargetRecordsToCreate.map(
-          (selectedRecord) =>
-            ({
-              id: v4(),
-              activityId,
-              [getActivityTargetObjectFieldIdName({
-                nameSingular: selectedRecord.objectMetadataItem.nameSingular,
-              })]: selectedRecord.recordIdentifier.id,
-            }) as Partial<ActivityTarget>,
-        ),
+        activityTargetRecordsToCreate.map((selectedRecord) => ({
+          id: v4(),
+          activityId,
+          [getActivityTargetObjectFieldIdName({
+            nameSingular: selectedRecord.objectMetadataItem.nameSingular,
+          })]: selectedRecord.recordIdentifier.id,
+        })),
       );
     }
 
@@ -88,8 +85,6 @@ export const ActivityTargetInlineCellEditMode = ({
         ),
       );
     }
-
-    // Manual trigger of activity optimistic update
 
     closeEditableField();
   };

@@ -7,6 +7,7 @@ import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
@@ -20,8 +21,8 @@ import { flattenTargetableObjectsAndTheirRelatedTargetableObjects } from '../uti
 
 export const useOpenCreateActivityDrawer = () => {
   const { openRightDrawer } = useRightDrawer();
-  const { createOneRecord: createOneActivityTarget } =
-    useCreateOneRecord<ActivityTarget>({
+  const { createManyRecords: createManyActivityTargets } =
+    useCreateManyRecords<ActivityTarget>({
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     });
   const { createOneRecord: createOneActivity } = useCreateOneRecord<Activity>({
@@ -64,18 +65,21 @@ export const useOpenCreateActivityDrawer = () => {
         return;
       }
 
-      await Promise.all(
-        flattenedTargetableObjects.map((targetableObject) => {
-          const targetableObjectFieldName = getActivityTargetObjectFieldIdName({
-            nameSingular: targetableObject.targetObjectNameSingular,
-          });
+      const activityTargetsToCreate = flattenedTargetableObjects.map(
+        (targetableObject) => {
+          const targetableObjectFieldIdName =
+            getActivityTargetObjectFieldIdName({
+              nameSingular: targetableObject.targetObjectNameSingular,
+            });
 
-          return createOneActivityTarget?.({
-            [targetableObjectFieldName]: targetableObject.id,
+          return {
+            [targetableObjectFieldIdName]: targetableObject.id,
             activityId: createdActivity.id,
-          });
-        }),
+          };
+        },
       );
+
+      await createManyActivityTargets(activityTargetsToCreate);
 
       setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
       setViewableActivityId(createdActivity.id);
@@ -88,7 +92,7 @@ export const useOpenCreateActivityDrawer = () => {
       setHotkeyScope,
       setViewableActivityId,
       createOneActivity,
-      createOneActivityTarget,
+      createManyActivityTargets,
       currentWorkspaceMember,
     ],
   );

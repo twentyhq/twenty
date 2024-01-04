@@ -49,11 +49,6 @@ export class RelationFieldAliasFactory {
     const relationMetadata =
       fieldMetadata.fromRelationMetadata ?? fieldMetadata.toRelationMetadata;
 
-    console.log(
-      'inside createRelationAlias, relationMetadata: ',
-      relationMetadata,
-    );
-
     if (!relationMetadata) {
       throw new Error(
         `Relation metadata not found for field ${fieldMetadata.name}`,
@@ -135,14 +130,6 @@ export class RelationFieldAliasFactory {
         fieldValue,
         referencedObjectMetadata.fields ?? [],
       );
-
-    console.log({
-      fieldsString,
-      relationAlias,
-      info,
-      fieldValue,
-      referencedObjectMetadata,
-    });
 
     // Otherwise it means it's a relation destination is of kind ONE
     return `

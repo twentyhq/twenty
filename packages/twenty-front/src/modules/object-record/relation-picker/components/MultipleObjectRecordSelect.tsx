@@ -43,24 +43,28 @@ export const MultipleObjectRecordSelect = ({
 
   const [searchFilter, setSearchFilter] = useState<string>('');
 
-  const { filteredSelectedObjectRecords, loading, objectRecordsToSelect } =
-    useMultiObjectSearch({
-      searchFilterValue: searchFilter,
-      selectedObjectRecordIds,
-      excludedObjectRecordIds: [],
-      limit: 10,
-    });
+  const {
+    filteredSelectedObjectRecords,
+    loading,
+    objectRecordsToSelect,
+    selectedObjectRecords,
+  } = useMultiObjectSearch({
+    searchFilterValue: searchFilter,
+    selectedObjectRecordIds,
+    excludedObjectRecordIds: [],
+    limit: 10,
+  });
 
   const selectedObjectRecordsForSelect = useMemo(
     () =>
-      filteredSelectedObjectRecords.filter((selectedObjectRecord) =>
+      selectedObjectRecords.filter((selectedObjectRecord) =>
         selectedObjectRecordIds.some(
           (selectedObjectRecordId) =>
             selectedObjectRecordId.id ===
             selectedObjectRecord.recordIdentifier.id,
         ),
       ),
-    [filteredSelectedObjectRecords, selectedObjectRecordIds],
+    [selectedObjectRecords, selectedObjectRecordIds],
   );
 
   const [internalSelectedRecords, setInternalSelectedRecords] = useState<
