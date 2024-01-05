@@ -115,6 +115,7 @@
     "pg-boss": "^9.0.3",
     "prettier": "^3.0.3",
     "prism-react-renderer": "^2.1.0",
+    "qs": "^6.11.2",
     "react": "^18.2.0",
     "react-data-grid": "7.0.0-beta.13",
     "react-datepicker": "^4.11.0",

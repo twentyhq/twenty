@@ -38,7 +38,7 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
     return [...acc, formatFieldMetadataItemAsFilterDefinition({ field })];
   }, [] as FilterDefinition[]);
 
-const formatFieldMetadataItemAsFilterDefinition = ({
+export const formatFieldMetadataItemAsFilterDefinition = ({
   field,
 }: {
   field: ObjectMetadataItem['fields'][0];

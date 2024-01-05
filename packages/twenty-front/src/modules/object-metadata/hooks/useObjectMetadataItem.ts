@@ -88,7 +88,8 @@ export const useObjectMetadataItem = (
     depth,
   });
 
-  const findOneRecordQuery = useGenerateFindOneRecordQuery({
+  const generateFindOneRecordQuery = useGenerateFindOneRecordQuery();
+  const findOneRecordQuery = generateFindOneRecordQuery({
     objectMetadataItem,
     depth,
   });

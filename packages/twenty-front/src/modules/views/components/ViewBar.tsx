@@ -1,10 +1,12 @@
 import { ReactNode } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { ObjectFilterDropdownButton } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownButton';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { ObjectSortDropdownButton } from '@/object-record/object-sort-dropdown/components/ObjectSortDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { TopBar } from '@/ui/layout/top-bar/TopBar';
+import { FilterQueryParamsEffect } from '@/views/components/FilterQueryParamsEffect';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { ViewBarSortEffect } from '@/views/components/ViewBarSortEffect';
 import { useViewBar } from '@/views/hooks/useViewBar';
@@ -45,6 +47,7 @@ export const ViewBar = ({
   const { upsertViewSort, upsertViewFilter } = useViewBar({
     viewBarId: viewBarId,
   });
+  const { objectNamePlural } = useParams();
 
   const filterDropdownId = 'view-filter';
   const sortDropdownId = 'view-sort';
@@ -65,6 +68,7 @@ export const ViewBar = ({
         sortDropdownId={sortDropdownId}
         onSortSelect={upsertViewSort}
       />
+      {!!objectNamePlural && <FilterQueryParamsEffect />}
 
       <TopBar
         className={className}
