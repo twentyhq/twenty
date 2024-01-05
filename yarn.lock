@@ -36831,7 +36831,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-hotkeys-hook@npm:^4.4.0":
+"react-hotkeys-hook@npm:^4.4.3":
   version: 4.4.3
   resolution: "react-hotkeys-hook@npm:4.4.3"
   peerDependencies:
@@ -41686,7 +41686,7 @@ __metadata:
     react-error-boundary: "npm:^4.0.11"
     react-helmet-async: "npm:^1.3.0"
     react-hook-form: "npm:^7.45.1"
-    react-hotkeys-hook: "npm:^4.4.0"
+    react-hotkeys-hook: "npm:^4.4.3"
     react-icons: "npm:^4.12.0"
     react-intersection-observer: "npm:^9.5.2"
     react-loading-skeleton: "npm:^3.3.1"
