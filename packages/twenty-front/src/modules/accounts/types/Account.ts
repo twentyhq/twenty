@@ -3,6 +3,7 @@ import { InboxSettingsVisibilityValue } from '@/settings/accounts/components/Set
 export type Account = {
   id: string;
   handle: string;
+  isContactAutoCreationEnabled?: boolean;
   isSynced?: boolean;
   visibility: InboxSettingsVisibilityValue;
 };
