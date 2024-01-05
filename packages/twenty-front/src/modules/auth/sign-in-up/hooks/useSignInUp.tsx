@@ -107,7 +107,7 @@ export const useSignInUp = () => {
     }
     checkUserExistsQuery({
       variables: {
-        email: form.getValues('email').toLowerCase(),
+        email: form.getValues('email').toLowerCase().trim(),
       },
       onCompleted: (data) => {
         if (data?.checkUserExists.exists) {
@@ -130,11 +130,11 @@ export const useSignInUp = () => {
         const { workspace: currentWorkspace } =
           signInUpMode === SignInUpMode.SignIn
             ? await signInWithCredentials(
-                data.email.toLowerCase(),
+                data.email.toLowerCase().trim(),
                 data.password,
               )
             : await signUpWithCredentials(
-                data.email.toLowerCase(),
+                data.email.toLowerCase().trim(),
                 data.password,
                 workspaceInviteHash,
               );
