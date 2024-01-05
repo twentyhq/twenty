@@ -14422,6 +14422,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/nodemailer@npm:^6.4.14":
+  version: 6.4.14
+  resolution: "@types/nodemailer@npm:6.4.14"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: b5958843576cde76dc532aa7b726182fef8b466fa9fcaf1aa03f89f02e896bec4e28b593ffa1a289a46bd0b7fdf34da0640ab7ef8f0811948016f58f77e16307
+  languageName: node
+  linkType: hard
+
 "@types/normalize-package-data@npm:^2.4.0":
   version: 2.4.4
   resolution: "@types/normalize-package-data@npm:2.4.4"
@@ -33184,7 +33193,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemailer@npm:6.9.8":
+"nodemailer@npm:6.9.8, nodemailer@npm:^6.9.8":
   version: 6.9.8
   resolution: "nodemailer@npm:6.9.8"
   checksum: 9332587975240ac648e1295b1df15e339fcace3f7fab8af0382e7f2dd10e48296344dfa698d58f1667f220f7fe13c779d55d39144c9cd9ed6f5f559714183c75
@@ -41568,6 +41577,7 @@ __metadata:
     "@types/mailparser": "npm:^3.4.4"
     "@types/ms": "npm:^0.7.31"
     "@types/node": "npm:^20.10.6"
+    "@types/nodemailer": "npm:^6.4.14"
     "@types/passport-google-oauth20": "npm:^2.0.11"
     "@types/passport-jwt": "npm:^3.0.8"
     "@types/react": "npm:^18.2.39"
@@ -41655,6 +41665,7 @@ __metadata:
     nest-commander: "npm:^3.12.0"
     next: "npm:14.0.4"
     next-mdx-remote: "npm:^4.4.1"
+    nodemailer: "npm:^6.9.8"
     nx: "npm:^17.2.8"
     openapi-types: "npm:^12.1.3"
     passport: "npm:^0.6.0"
