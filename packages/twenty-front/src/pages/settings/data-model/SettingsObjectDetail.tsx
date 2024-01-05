@@ -51,12 +51,27 @@ export const SettingsObjectDetail = () => {
 
   if (!activeObjectMetadataItem) return null;
 
-  const activeMetadataFields = activeObjectMetadataItem.fields.filter(
-    (metadataField) => metadataField.isActive && !metadataField.isSystem,
-  );
-  const disabledMetadataFields = activeObjectMetadataItem.fields.filter(
-    (metadataField) => !metadataField.isActive && !metadataField.isSystem,
-  );
+  const sortFields = (a: FieldMetadataItem, b: FieldMetadataItem) => {
+    const customCompare = a.isCustom === b.isCustom ? 0 : a.isCustom ? 1 : -1;
+    if (customCompare !== 0) return customCompare;
+    const dateA = a.createdAt ? new Date(a.createdAt) : null;
+    const dateB = b.createdAt ? new Date(b.createdAt) : null;
+    if (!dateA && !dateB) return 0;
+    if (!dateA) return 1;
+    if (!dateB) return -1;
+    return dateA.getTime() - dateB.getTime();
+  };
+
+  const activeMetadataFields = activeObjectMetadataItem.fields
+    .filter(
+      (metadataField) => metadataField.isActive && !metadataField.isSystem,
+    )
+    .sort(sortFields);
+  const disabledMetadataFields = activeObjectMetadataItem.fields
+    .filter(
+      (metadataField) => !metadataField.isActive && !metadataField.isSystem,
+    )
+    .sort(sortFields);
 
   const handleDisableObject = async () => {
     await disableObjectMetadataItem(activeObjectMetadataItem);
