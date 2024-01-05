@@ -1,7 +1,7 @@
 import { SearchQuery } from '@/object-record/relation-picker/types/SearchQuery';
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const searchQueryScopedState = createScopedState<SearchQuery | null>({
+export const searchQueryScopedState = createStateScopeMap<SearchQuery | null>({
   key: 'searchQueryScopedState',
   defaultValue: null,
 });

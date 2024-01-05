@@ -1,16 +1,18 @@
+import { isNonEmptyArray } from '@sniptt/guards';
+
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 
 export const AddTaskButton = ({
-  activityTargetEntity,
+  activityTargetableObjects,
 }: {
-  activityTargetEntity?: ActivityTargetableEntity;
+  activityTargetableObjects?: ActivityTargetableObject[];
 }) => {
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  if (!activityTargetEntity) {
+  if (!isNonEmptyArray(activityTargetableObjects)) {
     return <></>;
   }
 
@@ -23,7 +25,7 @@ export const AddTaskButton = ({
       onClick={() =>
         openCreateActivity({
           type: 'Task',
-          targetableEntities: [activityTargetEntity],
+          targetableObjects: activityTargetableObjects,
         })
       }
     ></Button>

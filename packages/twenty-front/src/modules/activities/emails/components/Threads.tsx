@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { ThreadPreview } from '@/activities/emails/components/ThreadPreview';
 import { getTimelineThreadsFromCompanyId } from '@/activities/emails/queries/getTimelineThreadsFromCompanyId';
 import { getTimelineThreadsFromPersonId } from '@/activities/emails/queries/getTimelineThreadsFromPersonId';
-import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import {
   H1Title,
   H1TitleFontColor,
@@ -29,14 +29,14 @@ const StyledEmailCount = styled.span`
   color: ${({ theme }) => theme.font.color.light};
 `;
 
-export const Threads = ({ entity }: { entity: ActivityTargetableEntity }) => {
+export const Threads = ({ entity }: { entity: ActivityTargetableObject }) => {
   const threadQuery =
-    entity.type === 'Person'
+    entity.targetObjectNameSingular === 'person'
       ? getTimelineThreadsFromPersonId
       : getTimelineThreadsFromCompanyId;
 
   const threadQueryVariables =
-    entity.type === 'Person'
+    entity.targetObjectNameSingular === 'person'
       ? { personId: entity.id }
       : { companyId: entity.id };
 
@@ -50,7 +50,7 @@ export const Threads = ({ entity }: { entity: ActivityTargetableEntity }) => {
 
   const timelineThreads: TimelineThread[] =
     threads.data[
-      entity.type === 'Person'
+      entity.targetObjectNameSingular === 'Person'
         ? 'getTimelineThreadsFromPersonId'
         : 'getTimelineThreadsFromCompanyId'
     ];

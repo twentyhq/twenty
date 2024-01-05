@@ -97,6 +97,7 @@ export {
   IconRepeat,
   IconRobot,
   IconSearch,
+  IconSend,
   IconSettings,
   IconTable,
   IconTag,

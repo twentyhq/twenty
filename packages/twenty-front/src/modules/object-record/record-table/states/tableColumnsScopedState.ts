@@ -1,9 +1,9 @@
 import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
-export const tableColumnsScopedState = createScopedState<
+export const tableColumnsScopedState = createStateScopeMap<
   ColumnDefinition<FieldMetadata>[]
 >({
   key: 'tableColumnsScopedState',

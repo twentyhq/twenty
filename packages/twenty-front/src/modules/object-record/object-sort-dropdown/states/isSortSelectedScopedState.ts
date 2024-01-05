@@ -1,6 +1,6 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const isSortSelectedScopedState = createScopedState<boolean>({
+export const isSortSelectedScopedState = createStateScopeMap<boolean>({
   key: 'isSortSelectedScopedState',
   defaultValue: false,
 });

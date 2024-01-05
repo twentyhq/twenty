@@ -1,6 +1,8 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const activeRecordBoardCardIdsScopedState = createScopedState<string[]>({
+export const activeRecordBoardCardIdsScopedState = createStateScopeMap<
+  string[]
+>({
   key: 'activeRecordBoardCardIdsScopedState',
   defaultValue: [],
 });

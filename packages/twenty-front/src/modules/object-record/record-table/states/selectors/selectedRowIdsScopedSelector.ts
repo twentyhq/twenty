@@ -1,9 +1,9 @@
-import { createScopedSelector } from '@/ui/utilities/recoil-scope/utils/createScopedSelector';
+import { createSelectorScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorScopeMap';
 
 import { isRowSelectedScopedFamilyState } from '../../record-table-row/states/isRowSelectedScopedFamilyState';
 import { tableRowIdsScopedState } from '../tableRowIdsScopedState';
 
-export const selectedRowIdsScopedSelector = createScopedSelector<string[]>({
+export const selectedRowIdsScopedSelector = createSelectorScopeMap<string[]>({
   key: 'selectedRowIdsScopedSelector',
   get:
     ({ scopeId }) =>

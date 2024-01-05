@@ -33,13 +33,17 @@ export const useMoveSoftFocusToCurrentCellOnHover = () => {
             currentTableCellInEditModePositionScopeInjector,
           );
 
-        const isSomeCellInEditMode = snapshot.getLoadable(
-          isTableCellInEditModeFamilyState(currentTableCellInEditModePosition),
-        );
+        const isSomeCellInEditMode = snapshot
+          .getLoadable(
+            isTableCellInEditModeFamilyState(
+              currentTableCellInEditModePosition,
+            ),
+          )
+          .getValue();
 
         const currentHotkeyScope = snapshot
           .getLoadable(currentHotkeyScopeState)
-          .valueOrThrow();
+          .getValue();
 
         if (
           currentHotkeyScope.scope !== TableHotkeyScope.TableSoftFocus &&
@@ -49,7 +53,7 @@ export const useMoveSoftFocusToCurrentCellOnHover = () => {
           return;
         }
 
-        if (!isSomeCellInEditMode.contents) {
+        if (!isSomeCellInEditMode) {
           setSoftFocusOnCurrentTableCell();
         }
       },

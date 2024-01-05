@@ -1,6 +1,6 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const tableLastRowVisibleScopedState = createScopedState<boolean>({
+export const tableLastRowVisibleScopedState = createStateScopeMap<boolean>({
   key: 'tableLastRowVisibleScopedState',
   defaultValue: false,
 });

@@ -1,4 +1,4 @@
-FROM node:18.16-bullseye as twenty-dev
+FROM node:18.17.1-bullseye as twenty-dev
 
 WORKDIR /app
 

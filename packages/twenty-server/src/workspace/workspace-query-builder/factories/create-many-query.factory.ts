@@ -38,11 +38,11 @@ export class CreateManyQueryFactory {
         insertInto${
           options.targetTableName
         }Collection(objects: ${stringifyWithoutKeyQuote(
-      computedArgs.data.map((datum) => ({
-        id: uuidv4(),
-        ...datum,
-      })),
-    )}) {
+          computedArgs.data.map((datum) => ({
+            id: uuidv4(),
+            ...datum,
+          })),
+        )}) {
           affectedCount
           records {
             ${fieldsString}

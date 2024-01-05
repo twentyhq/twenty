@@ -1,12 +1,13 @@
+import { Bundle, createAppTester, tools, ZObject } from 'zapier-platform-core';
+
+import { createRecordKey } from '../../creates/create_record';
 import App from '../../index';
 import getBundle from '../../utils/getBundle';
-import { Bundle, createAppTester, tools, ZObject } from 'zapier-platform-core';
 import requestDb from '../../utils/requestDb';
-import { createRecordKey } from '../../creates/create_record';
 const appTester = createAppTester(App);
 tools.env.inject();
 
-describe('creates.[createRecordKey]', () => {
+describe('creates.create_company', () => {
   test('should run to create a Company Record', async () => {
     const bundle = getBundle({
       nameSingular: 'Company',

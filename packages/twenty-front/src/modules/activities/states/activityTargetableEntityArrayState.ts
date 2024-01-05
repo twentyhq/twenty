@@ -1,9 +1,9 @@
 import { atom } from 'recoil';
 
-import { ActivityTargetableEntity } from '../types/ActivityTargetableEntity';
+import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
 export const activityTargetableEntityArrayState = atom<
-  ActivityTargetableEntity[]
+  ActivityTargetableObject[]
 >({
   key: 'activities/targetable-entity-array',
   default: [],

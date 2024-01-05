@@ -75,12 +75,13 @@ export type FieldDefinitionRelationType =
   | 'TO_ONE_OBJECT';
 
 export type FieldRelationMetadata = {
-  objectMetadataNameSingular?: string;
   fieldName: string;
-  useEditButton?: boolean;
-  relationType?: FieldDefinitionRelationType;
-  relationObjectMetadataNameSingular: string;
+  objectMetadataNameSingular?: string;
+  relationFieldMetadataId: string;
   relationObjectMetadataNamePlural: string;
+  relationObjectMetadataNameSingular: string;
+  relationType?: FieldDefinitionRelationType;
+  useEditButton?: boolean;
 };
 
 export type FieldSelectMetadata = {

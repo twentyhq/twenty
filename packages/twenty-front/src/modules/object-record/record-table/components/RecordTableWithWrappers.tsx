@@ -4,9 +4,11 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { RecordTable } from '@/object-record/record-table/components/RecordTable';
 import { RecordTableFirstColumnScrollObserver } from '@/object-record/record-table/components/RecordTableFirstColumnScrollObserver';
 import { RecordTableRefContextWrapper } from '@/object-record/record-table/components/RecordTableRefContext';
+import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
 import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { IconPlus } from '@/ui/display/icon';
@@ -122,6 +124,8 @@ export const RecordTableWithWrappers = ({
 
   const { persistViewFields } = useViewFields(viewBarId);
 
+  const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
+
   return (
     <RecordTableScope
       recordTableScopeId={recordTableId}
@@ -129,42 +133,44 @@ export const RecordTableWithWrappers = ({
         persistViewFields(mapColumnDefinitionsToViewFields(columns));
       })}
     >
-      <ScrollWrapper>
-        <RecordTableRefContextWrapper>
-          <RecordTableFirstColumnScrollObserver />
-          <RecordUpdateContext.Provider value={updateRecordMutation}>
-            <StyledTableWithHeader>
-              <StyledTableContainer>
-                <div ref={tableBodyRef}>
-                  <RecordTable createRecord={createRecord} />
-                  <DragSelect
-                    dragSelectable={tableBodyRef}
-                    onDragSelectionStart={resetTableRowSelection}
-                    onDragSelectionChange={setRowSelectedState}
-                  />
-                </div>
-                <RecordTableInternalEffect tableBodyRef={tableBodyRef} />
-                {!isRecordTableInitialLoading && numberOfTableRows === 0 && (
-                  <StyledObjectEmptyContainer>
-                    <StyledEmptyObjectTitle>
-                      No {foundObjectMetadataItem?.namePlural}
-                    </StyledEmptyObjectTitle>
-                    <StyledEmptyObjectSubTitle>
-                      Create one:
-                    </StyledEmptyObjectSubTitle>
-                    <Button
-                      Icon={IconPlus}
-                      title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
-                      variant={'secondary'}
-                      onClick={createRecord}
+      <EntityDeleteContext.Provider value={deleteOneRecord}>
+        <ScrollWrapper>
+          <RecordTableRefContextWrapper>
+            <RecordTableFirstColumnScrollObserver />
+            <RecordUpdateContext.Provider value={updateRecordMutation}>
+              <StyledTableWithHeader>
+                <StyledTableContainer>
+                  <div ref={tableBodyRef}>
+                    <RecordTable createRecord={createRecord} />
+                    <DragSelect
+                      dragSelectable={tableBodyRef}
+                      onDragSelectionStart={resetTableRowSelection}
+                      onDragSelectionChange={setRowSelectedState}
                     />
-                  </StyledObjectEmptyContainer>
-                )}
-              </StyledTableContainer>
-            </StyledTableWithHeader>
-          </RecordUpdateContext.Provider>
-        </RecordTableRefContextWrapper>
-      </ScrollWrapper>
+                  </div>
+                  <RecordTableInternalEffect tableBodyRef={tableBodyRef} />
+                  {!isRecordTableInitialLoading && numberOfTableRows === 0 && (
+                    <StyledObjectEmptyContainer>
+                      <StyledEmptyObjectTitle>
+                        No {foundObjectMetadataItem?.namePlural}
+                      </StyledEmptyObjectTitle>
+                      <StyledEmptyObjectSubTitle>
+                        Create one:
+                      </StyledEmptyObjectSubTitle>
+                      <Button
+                        Icon={IconPlus}
+                        title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
+                        variant={'secondary'}
+                        onClick={createRecord}
+                      />
+                    </StyledObjectEmptyContainer>
+                  )}
+                </StyledTableContainer>
+              </StyledTableWithHeader>
+            </RecordUpdateContext.Provider>
+          </RecordTableRefContextWrapper>
+        </ScrollWrapper>
+      </EntityDeleteContext.Provider>
     </RecordTableScope>
   );
 };

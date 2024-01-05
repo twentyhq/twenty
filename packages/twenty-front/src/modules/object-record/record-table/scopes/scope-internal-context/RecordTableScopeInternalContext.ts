@@ -1,10 +1,10 @@
 import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
-import { ScopedStateKey } from '@/ui/utilities/recoil-scope/scopes-internal/types/ScopedStateKey';
+import { StateScopeMapKey } from '@/ui/utilities/recoil-scope/scopes-internal/types/StateScopeMapKey';
 import { createScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/utils/createScopeInternalContext';
 
 import { ColumnDefinition } from '../../types/ColumnDefinition';
 
-type RecordTableScopeInternalContextProps = ScopedStateKey & {
+type RecordTableScopeInternalContextProps = StateScopeMapKey & {
   onColumnsChange: (columns: ColumnDefinition<FieldMetadata>[]) => void;
 };
 

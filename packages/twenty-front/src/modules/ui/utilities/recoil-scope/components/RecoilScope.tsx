@@ -18,7 +18,7 @@ export const RecoilScope = ({
   scopeId?: string;
   CustomRecoilScopeContext?: RecoilScopeContextType;
 }) => {
-  // eslint-disable-next-line twenty/no-state-useref
+  // eslint-disable-next-line @nx/workspace-no-state-useref
   const currentScopeId = useRef(scopeId ?? v4());
 
   return CustomRecoilScopeContext ? (

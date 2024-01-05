@@ -17,7 +17,12 @@ export const formatFieldMetadataItemAsColumnDefinition = ({
   objectMetadataItem: ObjectMetadataItem;
 }): ColumnDefinition<FieldMetadata> => {
   const relationObjectMetadataItem =
-    field.toRelationMetadata?.fromObjectMetadata;
+    field.toRelationMetadata?.fromObjectMetadata ||
+    field.fromRelationMetadata?.toObjectMetadata;
+
+  const relationFieldMetadataId =
+    field.toRelationMetadata?.fromFieldMetadataId ||
+    field.fromRelationMetadata?.toFieldMetadataId;
 
   return {
     position,
@@ -29,6 +34,7 @@ export const formatFieldMetadataItemAsColumnDefinition = ({
       fieldName: field.name,
       placeHolder: field.label,
       relationType: parseFieldRelationType(field),
+      relationFieldMetadataId,
       relationObjectMetadataNameSingular:
         relationObjectMetadataItem?.nameSingular ?? '',
       relationObjectMetadataNamePlural:

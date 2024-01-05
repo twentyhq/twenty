@@ -1,9 +1,9 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
 import { FilterDefinition } from '../types/FilterDefinition';
 
 export const filterDefinitionUsedInDropdownScopedState =
-  createScopedState<FilterDefinition | null>({
+  createStateScopeMap<FilterDefinition | null>({
     key: 'filterDefinitionUsedInDropdownScopedState',
     defaultValue: null,
   });

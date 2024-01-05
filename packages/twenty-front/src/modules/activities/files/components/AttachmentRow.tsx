@@ -75,7 +75,7 @@ export const AttachmentRow = ({ attachment }: { attachment: Attachment }) => {
     <FieldContext.Provider value={fieldContext as GenericFieldContextType}>
       <StyledRow>
         <StyledLeftContent>
-          <AttachmentIcon attachment={attachment} />
+          <AttachmentIcon attachmentType={attachment.type} />
           <StyledLink
             href={REACT_APP_SERVER_BASE_URL + '/files/' + attachment.fullPath}
             target="__blank"

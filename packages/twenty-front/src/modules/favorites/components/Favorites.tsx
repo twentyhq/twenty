@@ -10,7 +10,6 @@ import { Avatar } from '@/users/components/Avatar';
 import { useFavorites } from '../hooks/useFavorites';
 
 const StyledContainer = styled(NavigationDrawerSection)`
-  overflow-x: auto;
   width: 100%;
 `;
 

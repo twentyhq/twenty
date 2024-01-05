@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { Nullable } from '~/types/Nullable';
 import { stringToHslColor } from '~/utils/string-to-hsl';
 
 import { getImageAbsoluteURIOrBase64 } from '../utils/getProfilePictureAbsoluteURI';
@@ -16,7 +17,7 @@ export type AvatarProps = {
   size?: AvatarSize;
   placeholder: string | undefined;
   colorId?: string;
-  type?: AvatarType;
+  type?: Nullable<AvatarType>;
   onClick?: () => void;
 };
 

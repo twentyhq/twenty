@@ -1,6 +1,6 @@
 import { RecoilState, SerializableParam } from 'recoil';
 
-import { ScopedFamilyStateKey } from '../scopes-internal/types/ScopedFamilyStateKey';
+import { FamilyStateScopeMapKey } from '../scopes-internal/types/FamilyStateScopeMapKey';
 
 export type FamilyScopeInjector<
   StateType,
@@ -12,7 +12,7 @@ export const getFamilyScopeInjector = <
   FamilyKey extends SerializableParam,
 >(
   scopedFamilyState: (
-    scopedFamilyKey: ScopedFamilyStateKey<FamilyKey>,
+    scopedFamilyKey: FamilyStateScopeMapKey<FamilyKey>,
   ) => RecoilState<StateType>,
 ) => {
   return (scopeId: string, familyKey: FamilyKey) =>

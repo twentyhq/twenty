@@ -1,7 +1,9 @@
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const savedPipelineStepsScopedState = createScopedState<PipelineStep[]>({
+export const savedPipelineStepsScopedState = createStateScopeMap<
+  PipelineStep[]
+>({
   key: 'savedPipelineStepsScopedState',
   defaultValue: [],
 });

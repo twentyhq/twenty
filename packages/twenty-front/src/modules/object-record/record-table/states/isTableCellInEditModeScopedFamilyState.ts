@@ -1,8 +1,8 @@
-import { createScopedFamilyState } from '@/ui/utilities/recoil-scope/utils/createScopedFamilyState';
+import { createFamilyStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createFamilyStateScopeMap';
 
 import { TableCellPosition } from '../types/TableCellPosition';
 
-export const isTableCellInEditModeScopedFamilyState = createScopedFamilyState<
+export const isTableCellInEditModeScopedFamilyState = createFamilyStateScopeMap<
   boolean,
   TableCellPosition
 >({

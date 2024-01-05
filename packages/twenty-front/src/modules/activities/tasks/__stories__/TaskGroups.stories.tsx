@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
@@ -35,9 +36,11 @@ export const Empty: Story = {};
 
 export const WithTasks: Story = {
   args: {
-    entity: {
-      id: mockedTasks[0].authorId,
-      type: 'Person',
-    },
+    targetableObjects: [
+      {
+        id: mockedTasks[0].authorId,
+        targetObjectNameSingular: 'person',
+      },
+    ] as ActivityTargetableObject[],
   },
 };
