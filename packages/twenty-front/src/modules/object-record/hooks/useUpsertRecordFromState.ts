@@ -4,8 +4,8 @@ import { entityFieldsFamilyState } from '@/object-record/field/states/entityFiel
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 // TODO: refactor with scoped state later
-export const useUpsertRecordTableItem = () => {
-  return useRecoilCallback(
+export const useUpsertRecordFromState = () =>
+  useRecoilCallback(
     ({ set, snapshot }) =>
       <T extends { id: string }>(entity: T) => {
         const currentEntity = snapshot
@@ -18,4 +18,3 @@ export const useUpsertRecordTableItem = () => {
       },
     [],
   );
-};

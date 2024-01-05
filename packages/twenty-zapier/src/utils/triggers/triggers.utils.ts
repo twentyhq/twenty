@@ -1,6 +1,7 @@
 import { Bundle, ZObject } from 'zapier-platform-core';
-import requestDb, { requestDbViaRestApi } from '../utils/requestDb';
-import handleQueryParams from '../utils/handleQueryParams';
+
+import handleQueryParams from '../../utils/handleQueryParams';
+import requestDb, { requestDbViaRestApi } from '../../utils/requestDb';
 
 export enum Operation {
   create = 'create',

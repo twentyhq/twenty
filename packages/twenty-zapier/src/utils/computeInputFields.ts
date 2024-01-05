@@ -12,7 +12,10 @@ type Infos = {
   required: string[];
 };
 
-export const computeInputFields = (infos: Infos): object[] => {
+export const computeInputFields = (
+  infos: Infos,
+  idRequired = false,
+): object[] => {
   const result = [];
 
   for (const fieldName of Object.keys(infos.properties)) {
@@ -38,17 +41,21 @@ export const computeInputFields = (infos: Infos): object[] => {
           result.push(field);
         }
         break;
-      default:
+      default: {
         const field = {
           key: fieldName,
           label: labelling(fieldName),
           type: infos.properties[fieldName].type,
           required: false,
         };
-        if (infos.required?.includes(fieldName)) {
+        if (
+          (idRequired && fieldName === 'id') ||
+          (!idRequired && infos.required?.includes(fieldName))
+        ) {
           field.required = true;
         }
         result.push(field);
+      }
     }
   }
 
