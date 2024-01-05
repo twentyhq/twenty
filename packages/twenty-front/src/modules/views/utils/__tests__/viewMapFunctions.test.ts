@@ -73,81 +73,119 @@ describe('mapViewFiltersToFilters', () => {
 
 describe('mapViewFieldsToColumnDefinitions', () => {
   it('should map visible ViewFields to ColumnDefinitions and filter out missing fieldMetadata', () => {
-    const viewFields = [
+    const viewFields: ViewField[] = [
       {
         id: '1',
         fieldMetadataId: '1',
-        position: 'position 1',
+        position: 1,
         size: 1,
         isVisible: false,
+        definition: {
+          fieldMetadataId: '1',
+          label: 'label 1',
+          metadata: { fieldName: 'fieldName 1' },
+          infoTooltipContent: 'infoTooltipContent 1',
+          iconName: 'iconName 1',
+          type: 'TEXT',
+          position: 1,
+          size: 1,
+          isVisible: false,
+          viewFieldId: '1',
+        },
       },
       {
         id: '2',
         fieldMetadataId: '2',
-        position: 'position 2',
+        position: 2,
         size: 2,
         isVisible: false,
+        definition: {
+          fieldMetadataId: '2',
+          label: 'label 2',
+          metadata: { fieldName: 'fieldName 2' },
+          infoTooltipContent: 'infoTooltipContent 2',
+          iconName: 'iconName 2',
+          type: 'TEXT',
+          position: 2,
+          size: 1,
+          isVisible: false,
+          viewFieldId: '2',
+        },
       },
       {
         id: '3',
         fieldMetadataId: '3',
-        position: 'position 3',
+        position: 3,
         size: 3,
         isVisible: true,
+        definition: {
+          fieldMetadataId: '3',
+          label: 'label 3',
+          metadata: { fieldName: 'fieldName 3' },
+          infoTooltipContent: 'infoTooltipContent 3',
+          iconName: 'iconName 3',
+          type: 'TEXT',
+          position: 3,
+          size: 1,
+          isVisible: false,
+          viewFieldId: '3',
+        },
       },
     ];
 
-    const fieldsMetadata = [
+    const fieldsMetadata: ColumnDefinition<FieldMetadata>[] = [
       {
         fieldMetadataId: '1',
         label: 'label 1',
-        metadata: 'metadata 1',
+        position: 1,
+        metadata: { fieldName: 'fieldName 1' },
         infoTooltipContent: 'infoTooltipContent 1',
         iconName: 'iconName 1',
-        type: 'type 1',
+        type: 'TEXT',
         size: 1,
       },
       {
         fieldMetadataId: '3',
         label: 'label 3',
-        metadata: 'metadata 3',
+        position: 3,
+        metadata: { fieldName: 'fieldName 3' },
         infoTooltipContent: 'infoTooltipContent 3',
         iconName: 'iconName 3',
-        type: 'type 3',
+        type: 'TEXT',
         size: 3,
       },
     ];
 
-    const expectedColumnDefinitions = [
+    const expectedColumnDefinitions: ColumnDefinition<FieldMetadata>[] = [
       {
         fieldMetadataId: '1',
         label: 'label 1',
-        metadata: 'metadata 1',
+        metadata: { fieldName: 'fieldName 1' },
         infoTooltipContent: 'infoTooltipContent 1',
         iconName: 'iconName 1',
-        type: 'type 1',
+        type: 'TEXT',
         size: 1,
-        position: 'position 1',
+        position: 1,
         isVisible: false,
         viewFieldId: '1',
       },
       {
         fieldMetadataId: '3',
         label: 'label 3',
-        metadata: 'metadata 3',
+        metadata: { fieldName: 'fieldName 3' },
         infoTooltipContent: 'infoTooltipContent 3',
         iconName: 'iconName 3',
-        type: 'type 3',
+        type: 'TEXT',
         size: 3,
-        position: 'position 3',
+        position: 3,
         isVisible: true,
         viewFieldId: '3',
       },
     ];
 
     const actualColumnDefinitions = mapViewFieldsToColumnDefinitions(
-      viewFields as unknown as ViewField[],
-      fieldsMetadata as unknown as ColumnDefinition<FieldMetadata>[],
+      viewFields,
+      fieldsMetadata,
     );
 
     expect(actualColumnDefinitions).toEqual(expectedColumnDefinitions);
