@@ -1,6 +1,10 @@
+import { useContext } from 'react';
+
 import { FieldDisplay } from '@/object-record/field/components/FieldDisplay';
 import { FieldInput } from '@/object-record/field/components/FieldInput';
+import { useIsFieldEditModeValueEmpty } from '@/object-record/field/hooks/useIsFieldEditModeValueEmpty';
 import { FieldInputEvent } from '@/object-record/field/types/FieldInputEvent';
+import { ColumnIndexContext } from '@/object-record/record-table/contexts/ColumnIndexContext';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useRecordTable } from '../../hooks/useRecordTable';
@@ -17,14 +21,25 @@ export const RecordTableCell = ({
 
   const { moveLeft, moveRight, moveDown } = useRecordTable();
 
+  const isFirstColumnCell = useContext(ColumnIndexContext) === 0;
+  const isEditModeValueEmpty = useIsFieldEditModeValueEmpty();
+
+  const skipFieldPersist = isFirstColumnCell && isEditModeValueEmpty;
+
   const handleEnter: FieldInputEvent = (persistField) => {
-    persistField();
+    if (!skipFieldPersist) {
+      persistField();
+    }
+
     closeTableCell();
     moveDown();
   };
 
   const handleSubmit: FieldInputEvent = (persistField) => {
-    persistField();
+    if (!skipFieldPersist) {
+      persistField();
+    }
+
     closeTableCell();
   };
 
@@ -33,24 +48,35 @@ export const RecordTableCell = ({
   };
 
   const handleClickOutside: FieldInputEvent = (persistField) => {
-    persistField();
+    if (!skipFieldPersist) {
+      persistField();
+    }
 
     closeTableCell();
   };
 
   const handleEscape: FieldInputEvent = (persistField) => {
-    persistField();
+    if (!skipFieldPersist) {
+      persistField();
+    }
+
     closeTableCell();
   };
 
   const handleTab: FieldInputEvent = (persistField) => {
-    persistField();
+    if (!skipFieldPersist) {
+      persistField();
+    }
+
     closeTableCell();
     moveRight();
   };
 
   const handleShiftTab: FieldInputEvent = (persistField) => {
-    persistField();
+    if (!skipFieldPersist) {
+      persistField();
+    }
+
     closeTableCell();
     moveLeft();
   };

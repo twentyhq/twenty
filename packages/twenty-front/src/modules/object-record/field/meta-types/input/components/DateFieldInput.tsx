@@ -1,3 +1,4 @@
+import { useSaveFieldEditModeValue } from '@/object-record/field/hooks/useSaveFieldEditModeValue';
 import { DateInput } from '@/ui/field/input/components/DateInput';
 import { Nullable } from '~/types/Nullable';
 
@@ -20,6 +21,7 @@ export const DateFieldInput = ({
   const { fieldValue, hotkeyScope, clearable } = useDateTimeField();
 
   const persistField = usePersistField();
+  const saveEditModeValue = useSaveFieldEditModeValue();
 
   const persistDate = (newDate: Nullable<Date>) => {
     if (!newDate) {
@@ -46,6 +48,10 @@ export const DateFieldInput = ({
     onClickOutside?.(() => persistDate(newDate));
   };
 
+  const handleChange = (newDate: Nullable<Date>) => {
+    saveEditModeValue(newDate);
+  };
+
   const dateValue = fieldValue ? new Date(fieldValue) : null;
 
   return (
@@ -56,6 +62,7 @@ export const DateFieldInput = ({
       onEscape={handleEscape}
       value={dateValue}
       clearable={clearable}
+      onChange={handleChange}
     />
   );
 };

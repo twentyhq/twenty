@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { FieldContext } from '@/object-record/field/contexts/FieldContext';
+import { useIsFieldEditModeValueEmpty } from '@/object-record/field/hooks/useIsFieldEditModeValueEmpty';
 import { useIsFieldEmpty } from '@/object-record/field/hooks/useIsFieldEmpty';
 import { entityFieldInitialValueFamilyState } from '@/object-record/field/states/entityFieldInitialValueFamilyState';
 import { FieldInitialValue } from '@/object-record/field/types/FieldInitialValue';
@@ -21,7 +22,7 @@ import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useCurrentTableCellEditMode } from './useCurrentTableCellEditMode';
 
-const DEFAULT_CELL_SCOPE: HotkeyScope = {
+export const DEFAULT_CELL_SCOPE: HotkeyScope = {
   scope: TableHotkeyScope.CellEditMode,
 };
 
@@ -52,6 +53,7 @@ export const useTableCell = () => {
   const isFirstColumnCell = useContext(ColumnIndexContext) === 0;
 
   const isEmpty = useIsFieldEmpty();
+  const isEditModeValueEmpty = useIsFieldEditModeValueEmpty();
 
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
@@ -66,7 +68,7 @@ export const useTableCell = () => {
 
   const { tableRowIdsScopeInjector } = getRecordTableScopeInjector();
 
-  const handleRowDeletion = useRecoilCallback(({ snapshot }) => async () => {
+  const deleteRow = useRecoilCallback(({ snapshot }) => async () => {
     const tableRowIds = snapshot
       .getLoadable(tableRowIdsScopeInjector(recordTableScopeId))
       .getValue();
@@ -98,13 +100,14 @@ export const useTableCell = () => {
   };
 
   const closeTableCell = async () => {
-    if (isFirstColumnCell && isEmpty) {
-      handleRowDeletion();
-    }
     setDragSelectionStartEnabled(true);
     closeCurrentTableCellInEditMode();
     setFieldInitialValue(undefined);
     setHotkeyScope(TableHotkeyScope.TableSoftFocus);
+
+    if (isFirstColumnCell && isEditModeValueEmpty) {
+      await deleteRow();
+    }
   };
 
   return {
