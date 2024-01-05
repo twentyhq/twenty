@@ -118,7 +118,16 @@ export type FieldCurrencyValue = {
   amountMicros: number | null;
 };
 export type FieldFullNameValue = { firstName: string; lastName: string };
-export type FieldRatingValue = '1' | '2' | '3' | '4' | '5';
+
+export enum FieldRatingValue {
+  ZERO = 'ZERO',
+  ONE = 'ONE',
+  TWO = 'TWO',
+  THREE = 'THREE',
+  FOUR = 'FOUR',
+  FIVE = 'FIVE',
+}
+
 export type FieldSelectValue = { color: ThemeColor; label: string };
 
 export type FieldRelationValue = EntityForSelect | null;

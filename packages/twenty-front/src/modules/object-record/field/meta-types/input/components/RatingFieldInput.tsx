@@ -1,3 +1,4 @@
+import { FieldRatingValue } from '@/object-record/field/types/FieldMetadata';
 import { RatingInput } from '@/ui/field/input/components/RatingInput';
 
 import { usePersistField } from '../../../hooks/usePersistField';
@@ -18,7 +19,7 @@ export const RatingFieldInput = ({
 
   const persistField = usePersistField();
 
-  const handleChange = (newRating: number) => {
+  const handleChange = (newRating: FieldRatingValue) => {
     onSubmit?.(() => persistField(`${newRating}`));
   };
 
