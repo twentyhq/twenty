@@ -2,7 +2,7 @@
 import { Injectable, LogLevel } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { EmailDriverType } from 'src/integrations/email/interfaces/email.interface';
+import { EmailDriver } from 'src/integrations/email/interfaces/email.interface';
 
 import { LoggerDriverType } from 'src/integrations/logger/interfaces';
 import { ExceptionHandlerDriver } from 'src/integrations/exception-handler/interfaces';
@@ -172,10 +172,9 @@ export class EnvironmentService {
     );
   }
 
-  getEmailDriverType(): EmailDriverType {
+  getEmailDriver(): EmailDriver {
     return (
-      this.configService.get<EmailDriverType>('EMAIL_TYPE') ??
-      EmailDriverType.Logger
+      this.configService.get<EmailDriver>('EMAIL_DRIVER') ?? EmailDriver.Logger
     );
   }
 

@@ -2,7 +2,7 @@ import { FactoryProvider, ModuleMetadata } from '@nestjs/common';
 
 import SMTPConnection from 'nodemailer/lib/smtp-connection';
 
-export enum EmailDriverType {
+export enum EmailDriver {
   Logger = 'logger',
   Smtp = 'smtp',
 }

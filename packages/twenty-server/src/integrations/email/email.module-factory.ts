@@ -1,5 +1,5 @@
 import {
-  EmailDriverType,
+  EmailDriver,
   EmailModuleOptions,
 } from 'src/integrations/email/interfaces/email.interface';
 
@@ -8,13 +8,13 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 export const emailModuleFactory = (
   environmentService: EnvironmentService,
 ): EmailModuleOptions => {
-  const driverType = environmentService.getEmailDriverType();
+  const driver = environmentService.getEmailDriver();
 
-  switch (driverType) {
-    case EmailDriverType.Logger: {
+  switch (driver) {
+    case EmailDriver.Logger: {
       return;
     }
-    case EmailDriverType.Smtp: {
+    case EmailDriver.Smtp: {
       const host = environmentService.getEmailHost();
       const port = environmentService.getEmailPort();
       const user = environmentService.getEmailUser();
@@ -22,7 +22,7 @@ export const emailModuleFactory = (
 
       if (!(host && port)) {
         throw new Error(
-          `${driverType} email driver requires host: ${host} and port: ${port} to be defined, check your .env file`,
+          `${driver} email driver requires host: ${host} and port: ${port} to be defined, check your .env file`,
         );
       }
 
@@ -35,8 +35,6 @@ export const emailModuleFactory = (
       return { host, port };
     }
     default:
-      throw new Error(
-        `Invalid email driver type(${driverType}), check your .env file`,
-      );
+      throw new Error(`Invalid email driver (${driver}), check your .env file`);
   }
 };
