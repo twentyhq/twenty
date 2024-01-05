@@ -34,7 +34,7 @@ export const useCreateOneRecord = <T>({
   const createOneRecord = async (input: Record<string, any>) => {
     const recordId = v4();
 
-    const generatedEmptyRecord = generateEmptyRecord<Record<string, unknown>>({
+    const generatedEmptyRecord = generateEmptyRecord({
       id: recordId,
       createdAt: new Date().toISOString(),
       ...input,

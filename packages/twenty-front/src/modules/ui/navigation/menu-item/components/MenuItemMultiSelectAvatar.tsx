@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
+import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { Checkbox } from '@/ui/input/components/Checkbox';
 
 import {
@@ -14,6 +15,7 @@ const StyledLeftContentWithCheckboxContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
 `;
 
 type MenuItemMultiSelectAvatarProps = {
@@ -48,7 +50,7 @@ export const MenuItemMultiSelectAvatar = ({
         <StyledMenuItemLeftContent>
           {avatar}
           <StyledMenuItemLabel hasLeftIcon={!!avatar}>
-            {text}
+            <OverflowingTextWithTooltip text={text} />
           </StyledMenuItemLabel>
         </StyledMenuItemLeftContent>
       </StyledLeftContentWithCheckboxContainer>

@@ -28,39 +28,44 @@ export const useSpreadsheetCompanyImport = () => {
       ...options,
       onSubmit: async (data) => {
         // TODO: Add better type checking in spreadsheet import later
-        const createInputs = data.validData.map((company) => ({
-          name: company.name as string | undefined,
-          domainName: company.domainName as string | undefined,
-          ...(company.linkedinUrl
-            ? {
-                linkedinLink: {
-                  label: 'linkedinUrl',
-                  url: company.linkedinUrl as string | undefined,
-                },
-              }
-            : {}),
-          ...(company.annualRecurringRevenue
-            ? {
-                annualRecurringRevenue: {
-                  amountMicros: Number(company.annualRecurringRevenue),
-                  currencyCode: 'USD',
-                },
-              }
-            : {}),
-          idealCustomerProfile:
-            company.idealCustomerProfile &&
-            ['true', true].includes(company.idealCustomerProfile),
-          ...(company.xUrl
-            ? {
-                xLink: {
-                  label: 'xUrl',
-                  url: company.xUrl as string | undefined,
-                },
-              }
-            : {}),
-          address: company.address as string | undefined,
-          employees: company.employees ? Number(company.employees) : undefined,
-        }));
+        const createInputs = data.validData.map(
+          (company) =>
+            ({
+              name: company.name as string | undefined,
+              domainName: company.domainName as string | undefined,
+              ...(company.linkedinUrl
+                ? {
+                    linkedinLink: {
+                      label: 'linkedinUrl',
+                      url: company.linkedinUrl as string | undefined,
+                    },
+                  }
+                : {}),
+              ...(company.annualRecurringRevenue
+                ? {
+                    annualRecurringRevenue: {
+                      amountMicros: Number(company.annualRecurringRevenue),
+                      currencyCode: 'USD',
+                    },
+                  }
+                : {}),
+              idealCustomerProfile:
+                company.idealCustomerProfile &&
+                ['true', true].includes(company.idealCustomerProfile),
+              ...(company.xUrl
+                ? {
+                    xLink: {
+                      label: 'xUrl',
+                      url: company.xUrl as string | undefined,
+                    },
+                  }
+                : {}),
+              address: company.address as string | undefined,
+              employees: company.employees
+                ? Number(company.employees)
+                : undefined,
+            }) as Company,
+        );
         // TODO: abstract this part for any object
         try {
           await createManyCompanies(createInputs);

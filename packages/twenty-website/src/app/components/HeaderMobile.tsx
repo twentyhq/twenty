@@ -1,11 +1,13 @@
 'use client';
 
-import styled from '@emotion/styled';
-import { Logo } from './Logo';
-import { IBM_Plex_Mono } from 'next/font/google';
-import { GithubIcon } from './Icons';
 import { useState } from 'react';
+import styled from '@emotion/styled';
+import { IBM_Plex_Mono } from 'next/font/google';
+
 import { ExternalArrow } from '@/app/components/ExternalArrow';
+
+import { GithubIcon } from './Icons';
+import { Logo } from './Logo';
 
 const IBMPlexMono = IBM_Plex_Mono({
   weight: '500',

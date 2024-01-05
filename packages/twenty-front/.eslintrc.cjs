@@ -80,7 +80,7 @@ module.exports = {
       rules: {
         'storybook/no-uninstalled-addons': [
           'error',
-          { packageJsonLocation: path.resolve('../../package.json') },
+          { packageJsonLocation: path.resolve('package.json') },
         ],
       },
     },
