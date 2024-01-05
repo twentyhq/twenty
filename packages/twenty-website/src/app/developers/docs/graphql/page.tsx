@@ -3,6 +3,7 @@
 import { createGraphiQLFetcher } from '@graphiql/toolkit';
 import { GraphiQL } from 'graphiql';
 import dynamic from 'next/dynamic';
+
 import 'graphiql/graphiql.css';
 
 // Create a named function for your component

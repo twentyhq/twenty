@@ -1,5 +1,5 @@
-import Image from 'next/image';
 import Database from 'better-sqlite3';
+
 import AvatarGrid from '@/app/components/AvatarGrid';
 
 interface Contributor {
@@ -9,11 +9,11 @@ interface Contributor {
 }
 
 const Contributors = async () => {
-
-
   const db = new Database('db.sqlite', { readonly: true });
 
-  const contributors  = db.prepare(`SELECT 
+  const contributors = db
+    .prepare(
+      `SELECT 
           u.login,
           u.avatarUrl, 
           COUNT(pr.id) AS pullRequestCount
@@ -25,9 +25,10 @@ const Contributors = async () => {
           u.id
         ORDER BY 
           pullRequestCount DESC;
-        `).all() as Contributor[];
-        
-  
+        `,
+    )
+    .all() as Contributor[];
+
   db.close();
 
   return (

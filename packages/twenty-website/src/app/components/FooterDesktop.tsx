@@ -1,9 +1,10 @@
 'use client';
 
 import styled from '@emotion/styled';
-import { Logo } from './Logo';
-import { DiscordIcon, GithubIcon2, LinkedInIcon, XIcon } from './Icons';
 import { usePathname } from 'next/navigation';
+
+import { DiscordIcon, GithubIcon2, LinkedInIcon, XIcon } from './Icons';
+import { Logo } from './Logo';
 
 const FooterContainer = styled.div`
   padding: 64px 96px 64px 96px;

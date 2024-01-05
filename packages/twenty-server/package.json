@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "nx": "NX_DEFAULT_PROJECT=twenty-server node ../../node_modules/nx/bin/nx.js",
     "prebuild": "rimraf dist",
     "build": "yarn prebuild && nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -17,9 +18,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register ../../node_modules/.bin/jest --runInBand",
     "test:e2e": "./scripts/run-integration.sh",
-    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "typeorm": "ts-node -r tsconfig-paths/register ../../node_modules/typeorm/cli.js",
     "typeorm:migrate": "yarn typeorm migration:run -d ./src/database/typeorm/metadata/metadata.datasource.ts && yarn typeorm migration:run -d ./src/database/typeorm/core/core.datasource.ts",
     "database:init": "yarn database:setup && yarn database:seed:dev",
     "database:setup": "npx ts-node ./scripts/setup-db.ts && yarn database:migrate",
@@ -131,8 +132,7 @@
     "@types/uuid": "^9.0.2",
     "source-map-support": "^0.5.20",
     "supertest": "^6.1.3",
-    "ts-loader": "^9.2.3",
-    "tsconfig-paths": "4.1.0"
+    "ts-loader": "^9.2.3"
   },
   "resolutions": {
     "graphql": "16.8.0"
