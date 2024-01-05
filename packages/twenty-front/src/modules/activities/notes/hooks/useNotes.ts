@@ -1,17 +1,13 @@
+import { useActivityTargets } from '@/activities/hooks/useActivityTargets';
 import { Note } from '@/activities/types/Note';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
-import { ActivityTargetableEntity } from '../../types/ActivityTargetableEntity';
+import { ActivityTargetableObject } from '../../types/ActivityTargetableEntity';
 
-export const useNotes = (entity: ActivityTargetableEntity) => {
-  const { records: activityTargets } = useFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-    filter: {
-      [entity.type === 'Company' ? 'companyId' : 'personId']: { eq: entity.id },
-    },
-  });
+export const useNotes = (targetableObject: ActivityTargetableObject) => {
+  const { activityTargets } = useActivityTargets({ targetableObject });
 
   const filter = {
     id: {
@@ -19,6 +15,7 @@ export const useNotes = (entity: ActivityTargetableEntity) => {
     },
     type: { eq: 'Note' },
   };
+
   const orderBy = {
     createdAt: 'AscNullsFirst',
   } as OrderByField;

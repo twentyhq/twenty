@@ -5,11 +5,10 @@ import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimis
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { useGenerateEmptyRecord } from '@/object-record/hooks/useGenerateEmptyRecord';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const useCreateManyRecords = <
-  T extends Record<string, unknown> & { id: string },
->({
+export const useCreateManyRecords = <T extends ObjectRecord>({
   objectNameSingular,
 }: ObjectMetadataItemIdentifier) => {
   const { triggerOptimisticEffects } = useOptimisticEffect({
@@ -27,17 +26,16 @@ export const useCreateManyRecords = <
 
   const apolloClient = useApolloClient();
 
-  const createManyRecords = async (data: Record<string, any>[]) => {
+  const createManyRecords = async (data: Partial<T>[]) => {
     const withIds = data.map((record) => ({
       ...record,
       id: (record.id as string) ?? v4(),
     }));
 
     withIds.forEach((record) => {
-      const emptyRecord: Record<string, unknown> | undefined =
-        generateEmptyRecord({
-          id: record.id,
-        });
+      const emptyRecord: T | undefined = generateEmptyRecord({
+        id: record.id,
+      } as T);
 
       if (emptyRecord) {
         triggerOptimisticEffects({

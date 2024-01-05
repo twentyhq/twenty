@@ -67,13 +67,6 @@ export const useRecordTableContextMenuEntries = (
 
   const { createFavorite, favorites, deleteFavorite } = useFavorites();
 
-  const objectMetadataType =
-    objectNameSingular === 'company'
-      ? 'Company'
-      : objectNameSingular === 'person'
-        ? 'Person'
-        : 'Custom';
-
   const handleFavoriteButtonClick = useRecoilCallback(({ snapshot }) => () => {
     const selectedRowIds = injectSelectorSnapshotValueWithRecordTableScopeId(
       snapshot,
@@ -212,14 +205,14 @@ export const useRecordTableContextMenuEntries = (
           label: 'Task',
           Icon: IconCheckbox,
           onClick: () => {
-            openCreateActivityDrawer('Task', objectMetadataType);
+            openCreateActivityDrawer('Task', objectNameSingular);
           },
         },
         {
           label: 'Note',
           Icon: IconNotes,
           onClick: () => {
-            openCreateActivityDrawer('Note', objectMetadataType);
+            openCreateActivityDrawer('Note', objectNameSingular);
           },
         },
         ...(dataExecuteQuickActionOnmentEnabled

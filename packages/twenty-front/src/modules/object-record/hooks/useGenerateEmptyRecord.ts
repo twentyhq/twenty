@@ -1,4 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
 
 export const useGenerateEmptyRecord = ({
@@ -7,11 +8,11 @@ export const useGenerateEmptyRecord = ({
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   // Todo fix typing once we generate the return base on Metadata
-  const generateEmptyRecord = <T>(input: Partial<T> & { id: string }) => {
+  const generateEmptyRecord = <T extends ObjectRecord>(input: T) => {
     // Todo replace this by runtime typing
-    const validatedInput = input as { id: string } & { [key: string]: any };
+    const validatedInput = input as T;
 
-    const emptyRecord = {} as Record<string, any>;
+    const emptyRecord = {} as any;
 
     for (const fieldMetadataItem of objectMetadataItem.fields) {
       emptyRecord[fieldMetadataItem.name] =
@@ -19,7 +20,7 @@ export const useGenerateEmptyRecord = ({
         generateEmptyFieldValue(fieldMetadataItem);
     }
 
-    return emptyRecord;
+    return emptyRecord as T;
   };
 
   return {
