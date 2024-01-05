@@ -4,7 +4,7 @@ import { produce } from 'immer';
 import { OptimisticEffectDefinition } from '@/apollo/optimistic-effect/types/OptimisticEffectDefinition';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
-import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
+import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -22,8 +22,8 @@ export const getRecordOptimisticEffectDefinition = ({
     variables,
   }) => {
     const newRecordPaginatedCacheField = produce<
-      PaginatedRecordTypeResults<any>
-    >(currentData as PaginatedRecordTypeResults<any>, (draft) => {
+      ObjectRecordConnection<any>
+    >(currentData as ObjectRecordConnection<any>, (draft) => {
       const existingDataIsEmpty = !draft || !draft.edges || !draft.edges[0];
 
       if (isNonEmptyArray(createdRecords)) {

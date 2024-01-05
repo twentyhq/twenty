@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
-import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';
@@ -23,6 +22,8 @@ import { useViewFilters } from './internal/useViewFilters';
 import { useViews } from './internal/useViews';
 import { useViewScopedStates } from './internal/useViewScopedStates';
 import { useViewSorts } from './internal/useViewSorts';
+import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
+import { set } from 'date-fns';
 
 type UseViewProps = {
   viewBarId?: string;
@@ -94,7 +95,7 @@ export const useViewBar = (props?: UseViewProps) => {
   const loadViewFields = useRecoilCallback(
     ({ snapshot, set }) =>
       async (
-        data: PaginatedRecordTypeResults<ViewField>,
+        data: ObjectRecordConnection<ViewField>,
         currentViewId: string,
       ) => {
         const {
@@ -139,7 +140,7 @@ export const useViewBar = (props?: UseViewProps) => {
   const loadViewFilters = useRecoilCallback(
     ({ snapshot, set }) =>
       async (
-        data: PaginatedRecordTypeResults<Required<ViewFilter>>,
+        data: ObjectRecordConnection<ViewFilter>,
         currentViewId: string,
       ) => {
         const {
@@ -192,7 +193,7 @@ export const useViewBar = (props?: UseViewProps) => {
   const loadViewSorts = useRecoilCallback(
     ({ snapshot, set }) =>
       async (
-        data: PaginatedRecordTypeResults<Required<ViewSort>>,
+        data: ObjectRecordConnection<Required<ViewSort>>,
         currentViewId: string,
       ) => {
         const { availableSortDefinitions, savedViewSorts, onViewSortsChange } =

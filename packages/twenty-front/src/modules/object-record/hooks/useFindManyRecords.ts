@@ -19,15 +19,15 @@ import { capitalize } from '~/utils/string/capitalize';
 import { cursorFamilyState } from '../states/cursorFamilyState';
 import { hasNextPageFamilyState } from '../states/hasNextPageFamilyState';
 import { isFetchingMoreRecordsFamilyState } from '../states/isFetchingMoreRecordsFamilyState';
-import { PaginatedRecordType } from '../types/PaginatedRecordType';
-import {
-  PaginatedRecordTypeEdge,
-  PaginatedRecordTypeResults,
-} from '../types/PaginatedRecordTypeResults';
+import { ObjectRecordQueryResult } from '../types/ObjectRecordQueryResult';
+
 import { mapPaginatedRecordsToRecords } from '../utils/mapPaginatedRecordsToRecords';
+import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 
 export const useFindManyRecords = <
-  RecordType extends { id: string } & Record<string, any>,
+  T extends ObjectRecord = ObjectRecord,
 >({
   objectNameSingular,
   filter,
@@ -39,7 +39,7 @@ export const useFindManyRecords = <
   filter?: ObjectRecordQueryFilter;
   orderBy?: OrderByField;
   limit?: number;
-  onCompleted?: (data: PaginatedRecordTypeResults<RecordType>) => void;
+  onCompleted?: (data: ObjectRecordConnection<T>) => void;
   skip?: boolean;
 }) => {
   const findManyQueryStateIdentifier =
@@ -75,7 +75,7 @@ export const useFindManyRecords = <
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const { data, loading, error, fetchMore } = useQuery<
-    PaginatedRecordType<RecordType>
+    ObjectRecordQueryResult<T>
   >(findManyRecordsQuery, {
     skip: skip || !objectMetadataItem || !currentWorkspace,
     variables: {
@@ -88,10 +88,10 @@ export const useFindManyRecords = <
 
       if (data?.[objectMetadataItem.namePlural]) {
         setLastCursor(
-          data?.[objectMetadataItem.namePlural]?.pageInfo.endCursor,
+          data?.[objectMetadataItem.namePlural]?.pageInfo.endCursor ?? "",
         );
         setHasNextPage(
-          data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage,
+          data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage ?? false,
         );
       }
     },
@@ -125,7 +125,7 @@ export const useFindManyRecords = <
             const nextEdges =
               fetchMoreResult?.[objectMetadataItem.namePlural]?.edges;
 
-            let newEdges: PaginatedRecordTypeEdge<RecordType>[] = [];
+            let newEdges: ObjectRecordEdge<T>[] = [];
 
             if (isNonEmptyArray(previousEdges) && isNonEmptyArray(nextEdges)) {
               newEdges = filterUniqueRecordEdgesByCursor([
@@ -138,11 +138,11 @@ export const useFindManyRecords = <
             if (data?.[objectMetadataItem.namePlural]) {
               setLastCursor(
                 fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo
-                  .endCursor,
+                  .endCursor ?? ""
               );
               setHasNextPage(
                 fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo
-                  .hasNextPage,
+                  .hasNextPage ?? false
               );
             }
 
@@ -164,7 +164,7 @@ export const useFindManyRecords = <
                 pageInfo:
                   fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,
               },
-            } as PaginatedRecordType<RecordType>);
+            } as ObjectRecordQueryResult<T>);
           },
         });
       } catch (error) {
@@ -209,7 +209,7 @@ export const useFindManyRecords = <
 
   return {
     objectMetadataItem,
-    records: records as RecordType[],
+    records: records as T[],
     loading,
     error,
     fetchMoreRecords,
