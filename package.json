@@ -1,24 +1,4 @@
 {
-  "name": "twenty",
-  "version": "0.2.1",
-  "packageManager": "yarn@4.0.2",
-  "engines": {
-    "node": "^18.17.1",
-    "npm": "please-use-yarn",
-    "yarn": ">=4.0.2"
-  },
-  "license": "AGPL-3.0",
-  "workspaces": {
-    "packages": [
-      "packages/twenty-front",
-      "packages/twenty-docs",
-      "packages/twenty-server",
-      "packages/twenty-utils",
-      "packages/twenty-zapier",
-      "packages/twenty-website",
-      "tools/eslint-rules"
-    ]
-  },
   "dependencies": {
     "@air/react-drag-to-select": "^5.0.8",
     "@apollo/client": "^3.7.17",
@@ -270,7 +250,27 @@
     "vite": "^5.0.0",
     "vite-plugin-svgr": "^4.2.0"
   },
+  "engines": {
+    "node": "^18.17.1",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "license": "AGPL-3.0",
+  "name": "twenty",
+  "packageManager": "yarn@4.0.2",
   "resolutions": {
     "graphql": "16.8.0"
+  },
+  "version": "0.2.1",
+  "workspaces": {
+    "packages": [
+      "packages/twenty-front",
+      "packages/twenty-docs",
+      "packages/twenty-server",
+      "packages/twenty-utils",
+      "packages/twenty-zapier",
+      "packages/twenty-website",
+      "tools/eslint-rules"
+    ]
   }
 }
