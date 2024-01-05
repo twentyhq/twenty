@@ -14,8 +14,8 @@ type OptionsByFieldMetadata<T extends FieldMetadataType | 'default'> =
   T extends keyof FieldMetadataOptionsMapping
     ? FieldMetadataOptionsMapping[T]
     : T extends 'default'
-    ? FieldMetadataDefaultOptions[] | FieldMetadataComplexOptions[]
-    : never;
+      ? FieldMetadataDefaultOptions[] | FieldMetadataComplexOptions[]
+      : never;
 
 export type FieldMetadataOptions<
   T extends FieldMetadataType | 'default' = 'default',

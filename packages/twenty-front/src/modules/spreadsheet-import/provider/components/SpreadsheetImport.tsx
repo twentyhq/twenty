@@ -1,9 +1,11 @@
 import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
 import { Providers } from '@/spreadsheet-import/components/Providers';
 import { Steps } from '@/spreadsheet-import/steps/components/Steps';
-import { SpreadsheetOptions } from '@/spreadsheet-import/types';
+import { SpreadsheetOptions as SpreadsheetImportProps } from '@/spreadsheet-import/types';
 
-export const defaultSpreadsheetImportProps: Partial<SpreadsheetOptions<any>> = {
+export const defaultSpreadsheetImportProps: Partial<
+  SpreadsheetImportProps<any>
+> = {
   autoMapHeaders: true,
   allowInvalidSubmit: true,
   autoMapDistance: 2,
@@ -17,8 +19,7 @@ export const defaultSpreadsheetImportProps: Partial<SpreadsheetOptions<any>> = {
 } as const;
 
 export const SpreadsheetImport = <T extends string>(
-  // eslint-disable-next-line twenty/component-props-naming
-  props: SpreadsheetOptions<T>,
+  props: SpreadsheetImportProps<T>,
 ) => {
   return (
     <Providers values={props}>

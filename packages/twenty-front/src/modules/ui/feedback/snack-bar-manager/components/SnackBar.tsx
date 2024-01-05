@@ -118,7 +118,7 @@ export const SnackBar = ({
 }: SnackBarProps) => {
   const theme = useTheme();
 
-  // eslint-disable-next-line twenty/no-state-useref
+  // eslint-disable-next-line @nx/workspace-no-state-useref
   const progressBarRef = useRef<ProgressBarControls | null>(null);
 
   const closeSnackbar = useCallback(() => {

@@ -36,7 +36,7 @@ import {
   FileFolder,
   useUploadImageMutation,
 } from '~/generated/graphql';
-import { getLogoUrlFromDomainName } from '~/utils';
+import { isDefined } from '~/utils/isDefined';
 
 import { useFindOneRecord } from '../hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '../hooks/useUpdateOneRecord';
@@ -58,9 +58,7 @@ export const RecordShowPage = () => {
 
   const { identifiersMapper } = useRelationPicker();
 
-  const { favorites, createFavorite, deleteFavorite } = useFavorites({
-    objectNamePlural: objectMetadataItem.namePlural,
-  });
+  const { favorites, createFavorite, deleteFavorite } = useFavorites();
 
   const [, setEntityFields] = useRecoilState(
     entityFieldsFamilyState(objectRecordId ?? ''),
@@ -79,13 +77,6 @@ export const RecordShowPage = () => {
     objectNameSingular,
   });
 
-  const objectMetadataType =
-    objectMetadataItem?.nameSingular === 'company'
-      ? 'Company'
-      : objectMetadataItem?.nameSingular === 'person'
-        ? 'Person'
-        : 'Custom';
-
   const useUpdateOneObjectRecordMutation: RecordUpdateHook = () => {
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
       updateOneRecord?.({
@@ -97,34 +88,19 @@ export const RecordShowPage = () => {
     return [updateEntity, { loading: false }];
   };
 
-  const isFavorite = objectNameSingular
-    ? favorites.some((favorite) => favorite.recordId === record?.id)
-    : false;
+  const correspondingFavorite = favorites.find(
+    (favorite) => favorite.recordId === objectRecordId,
+  );
+
+  const isFavorite = isDefined(correspondingFavorite);
 
   const handleFavoriteButtonClick = async () => {
     if (!objectNameSingular || !record) return;
-    if (isFavorite) deleteFavorite(record?.id);
-    else {
-      const additionalData =
-        objectNameSingular === 'person'
-          ? {
-              labelIdentifier:
-                record.name.firstName + ' ' + record.name.lastName,
-              avatarUrl: record.avatarUrl,
-              avatarType: 'rounded',
-              link: `/object/personV2/${record.id}`,
-              recordId: record.id,
-            }
-          : objectNameSingular === 'company'
-            ? {
-                labelIdentifier: record.name,
-                avatarUrl: getLogoUrlFromDomainName(record.domainName ?? ''),
-                avatarType: 'squared',
-                link: `/object/companyV2/${record.id}`,
-                recordId: record.id,
-              }
-            : {};
-      createFavorite(record.id, additionalData);
+
+    if (isFavorite && record) {
+      deleteFavorite(correspondingFavorite.id);
+    } else {
+      createFavorite(record, objectNameSingular);
     }
   };
 
@@ -188,7 +164,7 @@ export const RecordShowPage = () => {
         hasBackButton
         Icon={IconBuildingSkyscraper}
       >
-        {record && objectMetadataType !== 'Custom' && (
+        {record && (
           <>
             <PageFavoriteButton
               isFavorite={isFavorite}
@@ -198,7 +174,7 @@ export const RecordShowPage = () => {
               key="add"
               entity={{
                 id: record.id,
-                type: objectMetadataType,
+                targetObjectNameSingular: objectMetadataItem?.nameSingular,
               }}
             />
             <ShowPageMoreButton
@@ -292,15 +268,9 @@ export const RecordShowPage = () => {
               )}
             </ShowPageLeftContainer>
             <ShowPageRightContainer
-              entity={{
-                id: record?.id || '',
-                // TODO: refacto
-                type:
-                  objectMetadataItem?.nameSingular === 'company'
-                    ? 'Company'
-                    : objectMetadataItem?.nameSingular === 'person'
-                      ? 'Person'
-                      : 'Custom',
+              targetableObject={{
+                id: record?.id ?? '',
+                targetObjectNameSingular: objectMetadataItem?.nameSingular,
               }}
               timeline
               tasks

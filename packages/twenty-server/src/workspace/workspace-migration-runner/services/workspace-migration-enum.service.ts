@@ -146,8 +146,8 @@ export class WorkspaceMigrationEnumService {
       UPDATE "${schemaName}"."${tableName}"
       SET "${columnDefinition.columnName}" = ${defaultValue}
       WHERE "${columnDefinition.columnName}" NOT IN (${enumValues
-      .map((e) => `'${e}'`)
-      .join(', ')})
+        .map((e) => `'${e}'`)
+        .join(', ')})
     `);
   }
 

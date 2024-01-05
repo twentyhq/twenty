@@ -5,10 +5,6 @@
       "path": "../"
     },
     {
-      "name": "packages/eslint-plugin-twenty",
-      "path": "../packages/eslint-plugin-twenty"
-    },
-    {
       "name": "packages/twenty-docker",
       "path": "../packages/twenty-docker"
     },
@@ -35,6 +31,10 @@
     {
       "name": "packages/twenty-zapier",
       "path": "../packages/twenty-zapier"
+    },
+    {
+      "name": "tools/eslint-rules",
+      "path": "../tools/eslint-rules"
     },
   ],
   "settings": {

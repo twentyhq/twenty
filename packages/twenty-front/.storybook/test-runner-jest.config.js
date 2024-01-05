@@ -1,4 +1,4 @@
-import { getJestConfig } from "@storybook/test-runner";
+import { getJestConfig } from '@storybook/test-runner';
 
 /**
  * @type {import('@jest/types').Config.InitialOptions}

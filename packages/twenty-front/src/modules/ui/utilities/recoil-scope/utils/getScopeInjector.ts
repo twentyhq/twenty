@@ -8,7 +8,7 @@ export type ScopeInjector<StateType> = (
 
 export const getScopeInjector = <StateType>(
   scopedState: RecoilScopedState<StateType>,
-) => {
+): ScopeInjector<StateType> => {
   return (scopeId: string) =>
     scopedState({
       scopeId,

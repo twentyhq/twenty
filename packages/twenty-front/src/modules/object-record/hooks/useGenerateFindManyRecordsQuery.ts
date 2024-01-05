@@ -1,7 +1,6 @@
 import { gql } from '@apollo/client';
 
 import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
-import { EMPTY_QUERY } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -13,10 +12,6 @@ export const useGenerateFindManyRecordsQuery = ({
   depth?: number;
 }) => {
   const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
-
-  if (!objectMetadataItem) {
-    return EMPTY_QUERY;
-  }
 
   return gql`
     query FindMany${capitalize(

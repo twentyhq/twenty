@@ -2,12 +2,10 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
+import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
-import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { IconCalendar, IconComment } from '@/ui/display/icon';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
@@ -76,14 +74,8 @@ export const TaskRow = ({
   const body = getActivitySummary(task.body);
   const { completeTask } = useCompleteTask(task);
 
-  const activityTargetIds =
-    task?.activityTargets?.edges?.map(
-      (activityTarget) => activityTarget.node.id,
-    ) ?? [];
-
-  const { records: activityTargets } = useFindManyRecords<ActivityTarget>({
-    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-    filter: { id: { in: activityTargetIds } },
+  const { activityTargetObjectRecords } = useActivityTargetObjectRecords({
+    activityId: task.id,
   });
 
   return (
@@ -115,7 +107,9 @@ export const TaskRow = ({
         )}
       </StyledTaskBody>
       <StyledFieldsContainer>
-        <ActivityTargetChips targets={activityTargets} />
+        <ActivityTargetChips
+          activityTargetObjectRecords={activityTargetObjectRecords}
+        />
         <StyledDueDate
           isPast={
             !!task.dueAt && hasDatePassed(task.dueAt) && !task.completedAt

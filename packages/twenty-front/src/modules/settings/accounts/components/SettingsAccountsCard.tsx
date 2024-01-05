@@ -46,7 +46,7 @@ export const SettingsAccountsCard = ({
     <Card>
       {accounts.map((account, index) => (
         <SettingsAccountRow
-          key={account.uuid}
+          key={account.id}
           LeftIcon={IconGoogle}
           account={account}
           rightComponent={

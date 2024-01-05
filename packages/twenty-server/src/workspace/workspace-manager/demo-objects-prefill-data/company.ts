@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { companiesDemo } from './companies-demo';
+import companiesDemo from './companies-demo.json';
 
 export const companyPrefillData = async (
   entityManager: EntityManager,

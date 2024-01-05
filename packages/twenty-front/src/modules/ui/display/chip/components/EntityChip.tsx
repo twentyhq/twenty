@@ -5,6 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Avatar, AvatarType } from '@/users/components/Avatar';
+import { Nullable } from '~/types/Nullable';
 
 import { Chip, ChipVariant } from './Chip';
 
@@ -13,7 +14,7 @@ export type EntityChipProps = {
   entityId: string;
   name: string;
   avatarUrl?: string;
-  avatarType?: AvatarType;
+  avatarType?: Nullable<AvatarType>;
   variant?: EntityChipVariant;
   LeftIcon?: IconComponent;
   className?: string;

@@ -112,9 +112,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         fieldMetadataInput.workspaceId,
       );
 
-    const workspaceDataSource = await this.typeORMService.connectToDataSource(
-      dataSourceMetadata,
-    );
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
     // TODO: use typeorm repository
     const view = await workspaceDataSource?.query(
@@ -141,8 +140,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       `INSERT INTO ${dataSourceMetadata.schema}."viewField"
     ("fieldMetadataId", "position", "isVisible", "size", "viewId")
     VALUES ('${createdFieldMetadata.id}', '${lastPosition + 1}', true, 180, '${
-        view[0].id
-      }')`,
+      view[0].id
+    }')`,
     );
 
     return createdFieldMetadata;

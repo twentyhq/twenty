@@ -131,7 +131,7 @@ const TextInputComponent = (
     tabIndex,
     RightIcon,
   }: TextInputComponentProps,
-  // eslint-disable-next-line twenty/component-props-naming
+  // eslint-disable-next-line @nx/workspace-component-props-naming
   ref: ForwardedRef<HTMLInputElement>,
 ): JSX.Element => {
   const theme = useTheme();

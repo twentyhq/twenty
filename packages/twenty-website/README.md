@@ -6,7 +6,7 @@ This is not related in anyway to the main app, which you can find in twenty-fron
 
 ## Getting Started
 
-We're using Nest.JS
+We're using Next.JS
 
 From the root directory:
 ```bash

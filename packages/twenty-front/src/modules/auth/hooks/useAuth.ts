@@ -157,6 +157,7 @@ export const useAuth = () => {
           set(supportChatState, supportChat);
           set(telemetryState, telemetry);
           set(isDebugModeState, isDebugMode);
+          return undefined;
         });
 
         goToRecoilSnapshot(initialSnapshot);

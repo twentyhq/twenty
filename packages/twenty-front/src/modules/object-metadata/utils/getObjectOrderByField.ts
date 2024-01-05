@@ -5,7 +5,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const getObjectOrderByField = (
   objectMetadataItem: ObjectMetadataItem,
-  orderBy: OrderBy,
+  orderBy?: OrderBy | null,
 ): OrderByField => {
   const labelIdentifierFieldMetadata = objectMetadataItem.fields.find(
     (field) =>
@@ -18,18 +18,18 @@ export const getObjectOrderByField = (
       case FieldMetadataType.FullName:
         return {
           [labelIdentifierFieldMetadata.name]: {
-            firstName: orderBy,
-            lastName: orderBy,
+            firstName: orderBy ?? 'AscNullsLast',
+            lastName: orderBy ?? 'AscNullsLast',
           },
         };
       default:
         return {
-          [labelIdentifierFieldMetadata.name]: orderBy,
+          [labelIdentifierFieldMetadata.name]: orderBy ?? 'AscNullsLast',
         };
     }
   } else {
     return {
-      createdAt: orderBy,
+      createdAt: orderBy ?? 'DescNullsLast',
     };
   }
 };
