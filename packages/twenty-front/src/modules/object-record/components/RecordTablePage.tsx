@@ -45,8 +45,6 @@ export const RecordTablePage = () => {
     findObjectMetadataItemByNamePlural(objectNamePlural)?.icon,
   );
 
-  const { setSelectedTableCellEditMode } = useSelectedTableCellEditMode();
-
   useEffect(() => {
     if (
       !isNonEmptyString(objectNamePlural) &&
@@ -60,13 +58,17 @@ export const RecordTablePage = () => {
     objectNameSingular,
   });
 
+  const recordTableId = objectNamePlural ?? '';
+
+  const { setSelectedTableCellEditMode } = useSelectedTableCellEditMode({
+    scopeId: recordTableId,
+  });
+
   const handleAddButtonClick = async () => {
     await createOneObject?.({});
 
     setSelectedTableCellEditMode(0, 0);
   };
-
-  const recordTableId = objectNamePlural ?? '';
 
   return (
     <PageContainer>
