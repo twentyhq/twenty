@@ -11,8 +11,8 @@ import { getScopedStateDeprecated } from '@/ui/utilities/recoil-scope/utils/getS
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { FieldMetadata } from '../../field/types/FieldMetadata';
-import { onEntityCountChangeScopedState } from '../states/onEntityCountChangeScopedState';
 import { useUpsertRecordFromState } from '../../hooks/useUpsertRecordFromState';
+import { onEntityCountChangeScopedState } from '../states/onEntityCountChangeScopedState';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
