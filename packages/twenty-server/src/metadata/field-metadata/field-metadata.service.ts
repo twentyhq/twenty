@@ -24,7 +24,10 @@ import { DataSourceService } from 'src/metadata/data-source/data-source.service'
 import { UpdateFieldInput } from 'src/metadata/field-metadata/dtos/update-field.input';
 import { WorkspaceMigrationFactory } from 'src/metadata/workspace-migration/workspace-migration.factory';
 
-import { FieldMetadataEntity } from './field-metadata.entity';
+import {
+  FieldMetadataEntity,
+  FieldMetadataType,
+} from './field-metadata.entity';
 
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
@@ -57,6 +60,18 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     if (!objectMetadata) {
       throw new NotFoundException('Object does not exist');
+    }
+
+    if (
+      [
+        FieldMetadataType.SELECT,
+        FieldMetadataType.MULTI_SELECT,
+        FieldMetadataType.RATING,
+      ].includes(fieldMetadataInput.type)
+    ) {
+      if (!fieldMetadataInput.options) {
+        throw new BadRequestException('Options not provided');
+      }
     }
 
     const fieldAlreadyExists = await this.fieldMetadataRepository.findOne({
