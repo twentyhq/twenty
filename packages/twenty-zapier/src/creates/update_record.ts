@@ -6,29 +6,36 @@ import { recordInputFields } from '../utils/creates/creates.utils';
 import handleQueryParams from '../utils/handleQueryParams';
 import requestDb from '../utils/requestDb';
 
+export const updateRecordKey = 'update_record';
+
 const perform = async (z: ZObject, bundle: Bundle) => {
   const data = bundle.inputData;
   const nameSingular = data.nameSingular;
+  const id = data.id;
   delete data.nameSingular;
+  delete data.id;
   const query = `
-  mutation create${capitalize(nameSingular)} {
-    create${capitalize(nameSingular)}(
-      data:{${handleQueryParams(data)}}
+  mutation update${capitalize(nameSingular)} {
+    update${capitalize(nameSingular)}(
+      data:{${handleQueryParams(data)}},
+      id: "${id}"
     )
     {id}
   }`;
   return await requestDb(z, bundle, query);
 };
 
-export const createRecordKey = 'create_record';
+const updateRecordInputFields = async (z: ZObject, bundle: Bundle) => {
+  return recordInputFields(z, bundle, true);
+};
 
 export default {
   display: {
-    description: 'Create a Record in Twenty.',
+    description: 'Update a Record in Twenty.',
     hidden: false,
-    label: 'Create Record',
+    label: 'Update Record',
   },
-  key: createRecordKey,
+  key: updateRecordKey,
   noun: 'Record',
   operation: {
     inputFields: [
@@ -39,7 +46,7 @@ export default {
         dynamic: `${findObjectNamesSingularKey}.nameSingular`,
         altersDynamicFields: true,
       },
-      recordInputFields,
+      updateRecordInputFields,
     ],
     sample: {
       id: '179ed459-79cf-41d9-ab85-96397fa8e936',

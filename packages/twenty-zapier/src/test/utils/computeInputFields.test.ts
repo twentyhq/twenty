@@ -5,6 +5,9 @@ describe('computeInputFields', () => {
     const personInfos = {
       type: 'object',
       properties: {
+        id: {
+          type: 'string',
+        },
         email: {
           type: 'string',
         },
@@ -33,6 +36,7 @@ describe('computeInputFields', () => {
       required: ['avatarUrl'],
     };
     expect(computeInputFields(personInfos)).toEqual([
+      { key: 'id', label: 'Id', required: false, type: 'string' },
       { key: 'email', label: 'Email', required: false, type: 'string' },
       {
         key: 'xLink__url',
@@ -47,6 +51,28 @@ describe('computeInputFields', () => {
         type: 'string',
       },
       { key: 'avatarUrl', label: 'Avatar Url', required: true, type: 'string' },
+    ]);
+    expect(computeInputFields(personInfos, true)).toEqual([
+      { key: 'id', label: 'Id', required: true, type: 'string' },
+      { key: 'email', label: 'Email', required: false, type: 'string' },
+      {
+        key: 'xLink__url',
+        label: 'X Link: Url',
+        required: false,
+        type: 'string',
+      },
+      {
+        key: 'xLink__label',
+        label: 'X Link: Label',
+        required: false,
+        type: 'string',
+      },
+      {
+        key: 'avatarUrl',
+        label: 'Avatar Url',
+        required: false,
+        type: 'string',
+      },
     ]);
   });
 });
