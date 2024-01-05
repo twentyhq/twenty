@@ -4909,29 +4909,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@graphiql/react@npm:^0.17.6":
-  version: 0.17.6
-  resolution: "@graphiql/react@npm:0.17.6"
+"@graphiql/plugin-explorer@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@graphiql/plugin-explorer@npm:1.0.2"
   dependencies:
-    "@graphiql/toolkit": "npm:^0.8.4"
-    "@reach/combobox": "npm:^0.17.0"
-    "@reach/dialog": "npm:^0.17.0"
-    "@reach/listbox": "npm:^0.17.0"
-    "@reach/menu-button": "npm:^0.17.0"
-    "@reach/tooltip": "npm:^0.17.0"
-    "@reach/visually-hidden": "npm:^0.17.0"
-    clsx: "npm:^1.2.1"
-    codemirror: "npm:^5.65.3"
-    codemirror-graphql: "npm:^2.0.8"
-    copy-to-clipboard: "npm:^3.2.0"
-    graphql-language-service: "npm:^5.1.6"
-    markdown-it: "npm:^12.2.0"
-    set-value: "npm:^4.1.0"
+    graphiql-explorer: "npm:^0.9.0"
   peerDependencies:
+    "@graphiql/react": ^0.20.2
     graphql: ^15.5.0 || ^16.0.0
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 247990aee2d78ea4e888f54deb7b4c7d7fffc8b4664305ff6c386be91763c8f0f3456f2d5380c1d10165799a66c0ef1d2c0cce478a7b3bfc3266c228db973555
+    react: ^16.8.0 || ^17 || ^18
+    react-dom: ^16.8.0 || ^17 || ^18
+  checksum: d08c782916f6aaba7820f25ceac9e25d2bbe970707bd17c01576787f55d6dd5a456f0eeaa6e1ee9d73565246f003fa5c8684bd463639d9bebf5337650c34c759
   languageName: node
   linkType: hard
 
@@ -4959,22 +4947,6 @@ __metadata:
     react: ^16.8.0 || ^17 || ^18
     react-dom: ^16.8.0 || ^17 || ^18
   checksum: 6bf9e50fc5c56da2e04bfacdf066a5077ddb3909481ab25f13da812d213b237855dda2daeb6c8f8cbc961584008e9bebd9b4ed89262963ecf94e736c53466b5c
-  languageName: node
-  linkType: hard
-
-"@graphiql/toolkit@npm:^0.8.4":
-  version: 0.8.4
-  resolution: "@graphiql/toolkit@npm:0.8.4"
-  dependencies:
-    "@n1ru4l/push-pull-async-iterable-iterator": "npm:^3.1.0"
-    meros: "npm:^1.1.4"
-  peerDependencies:
-    graphql: ^15.5.0 || ^16.0.0
-    graphql-ws: ">= 4.5.0"
-  peerDependenciesMeta:
-    graphql-ws:
-      optional: true
-  checksum: 75e960007df4c9466db21519003df0c5c3a63ed6243d53b44035b8caad6c71cd3065f5201f94295b5eaf48616673e685856d3b64f343e450330691cbaa004db6
   languageName: node
   linkType: hard
 
@@ -9955,231 +9927,6 @@ __metadata:
   dependencies:
     "@babel/runtime": "npm:^7.13.10"
   checksum: 4c5159661340acc31b11e1f2ebd87a1521d39bfa287544dd2cd75b399539a4b625d38a1501c90ceae21fcca18ed164b0c3735817ff140ae334098192c110e571
-  languageName: node
-  linkType: hard
-
-"@reach/auto-id@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@reach/auto-id@npm:0.17.0"
-  dependencies:
-    "@reach/utils": "npm:0.17.0"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: 1aae91a4df4a92b166efcbc61bdcc2339589790773e9101d1417ed7240d29dbc8998bfccf4680036e4bcbc094d52bf8db8460f92ecadd8fc5af98a0c2ccd029d
-  languageName: node
-  linkType: hard
-
-"@reach/combobox@npm:^0.17.0":
-  version: 0.17.0
-  resolution: "@reach/combobox@npm:0.17.0"
-  dependencies:
-    "@reach/auto-id": "npm:0.17.0"
-    "@reach/descendants": "npm:0.17.0"
-    "@reach/popover": "npm:0.17.0"
-    "@reach/portal": "npm:0.17.0"
-    "@reach/utils": "npm:0.17.0"
-    prop-types: "npm:^15.7.2"
-    tiny-warning: "npm:^1.0.3"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: 75a1153da7fea901fa588c69d97cc454cdc83a0b663af5cc7c3440d06516edef917cc3880664a279383011d5c18ec3a7741262dfac74754670c1015ea45a2f23
-  languageName: node
-  linkType: hard
-
-"@reach/descendants@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@reach/descendants@npm:0.17.0"
-  dependencies:
-    "@reach/utils": "npm:0.17.0"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: b0975d9bd1e715e19dc1433d62b56f398de870fb41a6cfd1f78c8299fe85f11750eb2978cd258e91c1dc9a807c2d0289f64fb3a224d398fa0668a72392493535
-  languageName: node
-  linkType: hard
-
-"@reach/dialog@npm:^0.17.0":
-  version: 0.17.0
-  resolution: "@reach/dialog@npm:0.17.0"
-  dependencies:
-    "@reach/portal": "npm:0.17.0"
-    "@reach/utils": "npm:0.17.0"
-    prop-types: "npm:^15.7.2"
-    react-focus-lock: "npm:^2.5.2"
-    react-remove-scroll: "npm:^2.4.3"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: d481d4d52a1f852f81bb93ff598cb53111c42325bf25f4fba039f4aa92aaa10833b0b007ec5d645bfffbecbb0e69ed3505b1601d261c3bd8b666eca0006b7435
-  languageName: node
-  linkType: hard
-
-"@reach/dropdown@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@reach/dropdown@npm:0.17.0"
-  dependencies:
-    "@reach/auto-id": "npm:0.17.0"
-    "@reach/descendants": "npm:0.17.0"
-    "@reach/popover": "npm:0.17.0"
-    "@reach/utils": "npm:0.17.0"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: 9db6603d6bd6b4e0fdc8184f7b2de97e1334199695b1523807121a83b2a25ebd8d7005509dd928be8e60ed1a90162e2e99f4f95d780f849baf085e2e9a320c42
-  languageName: node
-  linkType: hard
-
-"@reach/listbox@npm:^0.17.0":
-  version: 0.17.0
-  resolution: "@reach/listbox@npm:0.17.0"
-  dependencies:
-    "@reach/auto-id": "npm:0.17.0"
-    "@reach/descendants": "npm:0.17.0"
-    "@reach/machine": "npm:0.17.0"
-    "@reach/popover": "npm:0.17.0"
-    "@reach/utils": "npm:0.17.0"
-    prop-types: "npm:^15.7.2"
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: da617d9ddd6d3c7446fa99ee32ac977e76ca90b3e8983d759a9145956137a5258267965b8b05740cda6b6be6a59ae787eb2893a1f9f09fe3d60762f1060c8b07
-  languageName: node
-  linkType: hard
-
-"@reach/machine@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@reach/machine@npm:0.17.0"
-  dependencies:
-    "@reach/utils": "npm:0.17.0"
-    "@xstate/fsm": "npm:1.4.0"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: 943df500567ec8bcb668c24cf554aac22c525ca13f8805119182f6e8df12c3651688153d1beab5543304ca0662b336a0aaaf5feb06b624364fe976e8f032f798
-  languageName: node
-  linkType: hard
-
-"@reach/menu-button@npm:^0.17.0":
-  version: 0.17.0
-  resolution: "@reach/menu-button@npm:0.17.0"
-  dependencies:
-    "@reach/dropdown": "npm:0.17.0"
-    "@reach/popover": "npm:0.17.0"
-    "@reach/utils": "npm:0.17.0"
-    prop-types: "npm:^15.7.2"
-    tiny-warning: "npm:^1.0.3"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-    react-is: ^16.8.0 || 17.x
-  checksum: 359cca3bb9d18af3190c1e886d82efc406b93d00dadd62d243d8defe0db87853ba99acb1a3b5206636397c08383cb857719722473392c8525a6f59d6cc79b275
-  languageName: node
-  linkType: hard
-
-"@reach/observe-rect@npm:1.2.0":
-  version: 1.2.0
-  resolution: "@reach/observe-rect@npm:1.2.0"
-  checksum: e2d2b399381e466705bcf7535ba1ed29866792d7aff386a2a41ca1f5ae9d8920f21c769d67b82b38045cd14e1c2aa29dbf6f37a77f323d16d01378eb02ad2925
-  languageName: node
-  linkType: hard
-
-"@reach/popover@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@reach/popover@npm:0.17.0"
-  dependencies:
-    "@reach/portal": "npm:0.17.0"
-    "@reach/rect": "npm:0.17.0"
-    "@reach/utils": "npm:0.17.0"
-    tabbable: "npm:^4.0.0"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: 77d5861af3f4bd793b026526218896add30cc2faeaec73b9816ebbdb7938b9227a8afdb1e7ba758f77be1301f6d9f9483a08cae2ac4e4a971652547c02ad3d39
-  languageName: node
-  linkType: hard
-
-"@reach/portal@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@reach/portal@npm:0.17.0"
-  dependencies:
-    "@reach/utils": "npm:0.17.0"
-    tiny-warning: "npm:^1.0.3"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: 796bc0c6a2ff1dbfa80e3ba14506c16dd5e846500ef61cd288fe3e85b6c03e07da9a1e5084f66a8c04c6463b02b61cc82573b6d3d01328ee637a7420b4c55ef2
-  languageName: node
-  linkType: hard
-
-"@reach/rect@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@reach/rect@npm:0.17.0"
-  dependencies:
-    "@reach/observe-rect": "npm:1.2.0"
-    "@reach/utils": "npm:0.17.0"
-    prop-types: "npm:^15.7.2"
-    tiny-warning: "npm:^1.0.3"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: be8501f4f3dbd52b49ad89bb8a0455e06355959612e9d4d3c27b9c99200e290043bf1b9d00669b1a5587405efeb873c5acb5dc6aa43291c51dc3a556a93d2558
-  languageName: node
-  linkType: hard
-
-"@reach/tooltip@npm:^0.17.0":
-  version: 0.17.0
-  resolution: "@reach/tooltip@npm:0.17.0"
-  dependencies:
-    "@reach/auto-id": "npm:0.17.0"
-    "@reach/portal": "npm:0.17.0"
-    "@reach/rect": "npm:0.17.0"
-    "@reach/utils": "npm:0.17.0"
-    "@reach/visually-hidden": "npm:0.17.0"
-    prop-types: "npm:^15.7.2"
-    tiny-warning: "npm:^1.0.3"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: a6e0cb59a584ed8fbb3f00be0fc4bfcbb96a177c13db3ac274bfcd92323afa3ea1aed45236c316d577b8e588954660ae1a5026cf7ca71285336640cf404bcc21
-  languageName: node
-  linkType: hard
-
-"@reach/utils@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@reach/utils@npm:0.17.0"
-  dependencies:
-    tiny-warning: "npm:^1.0.3"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: 80e2ebaba02d561ef2cc9d295e5bca5904a0fd7641f3b90050eb49a083e1b312547ce6a7b399a2f67b48afaaf8cde946d27c37b438939f87dda8fb9e4bbb70d4
-  languageName: node
-  linkType: hard
-
-"@reach/visually-hidden@npm:0.17.0, @reach/visually-hidden@npm:^0.17.0":
-  version: 0.17.0
-  resolution: "@reach/visually-hidden@npm:0.17.0"
-  dependencies:
-    prop-types: "npm:^15.7.2"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: 5610c1a32181d23f511280d91da67501a86be6dff9c455c0213e5b94cfd672d605991256a70a49af2b14fd80a592ceedf2b477ea8dc645bd83e5e1e8915b0b74
   languageName: node
   linkType: hard
 
@@ -15813,13 +15560,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xstate/fsm@npm:1.4.0":
-  version: 1.4.0
-  resolution: "@xstate/fsm@npm:1.4.0"
-  checksum: b842ed2e771b4c583573bc0fe1f4c047ce46e8ea4f2ead37e486af29c709df13b5fa9a81e503433fedcd7be377810a36d483ead9f7461540a153512848dc522d
-  languageName: node
-  linkType: hard
-
 "@xtuc/ieee754@npm:^1.2.0":
   version: 1.2.0
   resolution: "@xtuc/ieee754@npm:1.2.0"
@@ -19882,7 +19622,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"codemirror-graphql@npm:^2.0.10, codemirror-graphql@npm:^2.0.8":
+"codemirror-graphql@npm:^2.0.10":
   version: 2.0.10
   resolution: "codemirror-graphql@npm:2.0.10"
   dependencies:
@@ -24253,15 +23993,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"focus-lock@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "focus-lock@npm:1.0.0"
-  dependencies:
-    tslib: "npm:^2.0.3"
-  checksum: bc93c959d3eb973daf5444ca0013d0388049887289d7bf958d910c509948a265f24fb8337bec11b35d28d8db51d75542a33bca422df2c9a5bd93bdb3ca8a3872
-  languageName: node
-  linkType: hard
-
 "focus-trap-react@npm:^10.2.3":
   version: 10.2.3
   resolution: "focus-trap-react@npm:10.2.3"
@@ -25375,19 +25106,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphiql@npm:^2.4.7":
-  version: 2.4.7
-  resolution: "graphiql@npm:2.4.7"
-  dependencies:
-    "@graphiql/react": "npm:^0.17.6"
-    "@graphiql/toolkit": "npm:^0.8.4"
-    graphql-language-service: "npm:^5.1.6"
-    markdown-it: "npm:^12.2.0"
+"graphiql-explorer@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "graphiql-explorer@npm:0.9.0"
   peerDependencies:
-    graphql: ^15.5.0 || ^16.0.0
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 00cc84c24529849b7c9870ee2f4eaf4a2142df8aa767328160f74a9e0a00d3949cb3ec5c8765f08e380366850f15518f42f0f1d6ad6095e731f882faea06dd31
+    graphql: ^0.6.0 || ^0.7.0 || ^0.8.0-b || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
+    react: ^15.6.0 || ^16.0.0
+    react-dom: ^15.6.0 || ^16.0.0
+  checksum: 5dc209a26508600c290105aebf402747fffaa1dcb63298bdf6599b40b65c41cc5f10acd0c50597ae3c731e22eec5b943f982cca399b0468786a0e7b0a69a3390
   languageName: node
   linkType: hard
 
@@ -25439,7 +25165,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-language-service@npm:5.2.0, graphql-language-service@npm:^5.1.6, graphql-language-service@npm:^5.2.0":
+"graphql-language-service@npm:5.2.0, graphql-language-service@npm:^5.2.0":
   version: 5.2.0
   resolution: "graphql-language-service@npm:5.2.0"
   dependencies:
@@ -37026,17 +36752,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-clientside-effect@npm:^1.2.6":
-  version: 1.2.6
-  resolution: "react-clientside-effect@npm:1.2.6"
-  dependencies:
-    "@babel/runtime": "npm:^7.12.13"
-  peerDependencies:
-    react: ^15.3.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
-  checksum: aba0adb666018e5c64657c31f4914a8558be73f71d6e2210fa871ebfcab94d786c83082868d7c7fa66feddc2aec19e375745cf0903e0619f2efffef08b92d941
-  languageName: node
-  linkType: hard
-
 "react-colorful@npm:^5.1.2":
   version: 5.6.1
   resolution: "react-colorful@npm:5.6.1"
@@ -37216,26 +36931,6 @@ __metadata:
   version: 3.2.2
   resolution: "react-fast-compare@npm:3.2.2"
   checksum: 0bbd2f3eb41ab2ff7380daaa55105db698d965c396df73e6874831dbafec8c4b5b08ba36ff09df01526caa3c61595247e3269558c284e37646241cba2b90a367
-  languageName: node
-  linkType: hard
-
-"react-focus-lock@npm:^2.5.2":
-  version: 2.9.6
-  resolution: "react-focus-lock@npm:2.9.6"
-  dependencies:
-    "@babel/runtime": "npm:^7.0.0"
-    focus-lock: "npm:^1.0.0"
-    prop-types: "npm:^15.6.2"
-    react-clientside-effect: "npm:^1.2.6"
-    use-callback-ref: "npm:^1.3.0"
-    use-sidecar: "npm:^1.1.2"
-  peerDependencies:
-    "@types/react": ^16.8.0 || ^17.0.0 || ^18.0.0
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-  checksum: c7678012ae075d623e577b06d5fbf6a756f6ba6d630c307641cb6aafaa4059e8685e5dc0918cc2026198a4c0a65b0f917d9a3801c601e74a9438941c5d716e76
   languageName: node
   linkType: hard
 
@@ -37479,7 +37174,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-remove-scroll-bar@npm:^2.3.3, react-remove-scroll-bar@npm:^2.3.4":
+"react-remove-scroll-bar@npm:^2.3.3":
   version: 2.3.4
   resolution: "react-remove-scroll-bar@npm:2.3.4"
   dependencies:
@@ -37511,25 +37206,6 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 4952657e6a7b9d661d4ad4dfcef81b9c7fa493e35164abff99c35c0b27b3d172ef7ad70c09416dc44dd14ff2e6b38a5ec7da27e27e90a15cbad36b8fd2fd8054
-  languageName: node
-  linkType: hard
-
-"react-remove-scroll@npm:^2.4.3":
-  version: 2.5.7
-  resolution: "react-remove-scroll@npm:2.5.7"
-  dependencies:
-    react-remove-scroll-bar: "npm:^2.3.4"
-    react-style-singleton: "npm:^2.2.1"
-    tslib: "npm:^2.1.0"
-    use-callback-ref: "npm:^1.3.0"
-    use-sidecar: "npm:^1.1.2"
-  peerDependencies:
-    "@types/react": ^16.8.0 || ^17.0.0 || ^18.0.0
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  peerDependenciesMeta:
-    "@types/react":
-      optional: true
-  checksum: dcd523ada602bd0a839c2032cadf0b3e4af55ee85acefee3760976a9cceaa4606927801b093bbb8bf3c2989c71e048f5428c2c6eb9e6681762e86356833d039b
   languageName: node
   linkType: hard
 
@@ -41034,13 +40710,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tabbable@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "tabbable@npm:4.0.0"
-  checksum: 8c95a8f7c6301e14f13688dd943d21457d1307220ce79850ccd140db2997be03fa8e49139faad0e3f5d25cafeef95adfae4ac5264d629611d18782e2db7eb59d
-  languageName: node
-  linkType: hard
-
 "tabbable@npm:^6.0.1, tabbable@npm:^6.2.0":
   version: 6.2.0
   resolution: "tabbable@npm:6.2.0"
@@ -41305,7 +40974,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tiny-warning@npm:^1.0.0, tiny-warning@npm:^1.0.3":
+"tiny-warning@npm:^1.0.0":
   version: 1.0.3
   resolution: "tiny-warning@npm:1.0.3"
   checksum: ef8531f581b30342f29670cb41ca248001c6fd7975ce22122bd59b8d62b4fc84ad4207ee7faa95cde982fa3357cd8f4be650142abc22805538c3b1392d7084fa
@@ -41914,11 +41583,12 @@ __metadata:
     "@docusaurus/module-type-aliases": "npm:^3.0.0"
     "@docusaurus/preset-classic": "npm:^3.0.0"
     "@docusaurus/tsconfig": "npm:3.0.0"
+    "@graphiql/plugin-explorer": "npm:^1.0.2"
     "@mdx-js/react": "npm:^3.0.0"
     "@stoplight/elements": "npm:^7.15.4"
     clsx: "npm:^1.2.1"
     docusaurus-node-polyfills: "npm:^1.0.0"
-    graphiql: "npm:^2.4.7"
+    graphiql: "npm:^3.0.10"
     graphql: "npm:^16.6.0"
     iframe-resizer-react: "npm:^1.1.0"
     prism-react-renderer: "npm:^2.1.0"
