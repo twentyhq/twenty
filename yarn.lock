@@ -4242,7 +4242,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/react@npm:^11.10.5, @emotion/react@npm:^11.10.6, @emotion/react@npm:^11.11.1":
+"@emotion/react@npm:^11.10.5, @emotion/react@npm:^11.11.1":
   version: 11.11.3
   resolution: "@emotion/react@npm:11.11.3"
   dependencies:
@@ -4283,7 +4283,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/styled@npm:^11.10.5, @emotion/styled@npm:^11.11.0":
+"@emotion/styled@npm:^11.11.0":
   version: 11.11.0
   resolution: "@emotion/styled@npm:11.11.0"
   dependencies:
@@ -7673,30 +7673,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nrwl/devkit@npm:17.2.8":
-  version: 17.2.8
-  resolution: "@nrwl/devkit@npm:17.2.8"
-  dependencies:
-    "@nx/devkit": "npm:17.2.8"
-  checksum: 0deab7982d2e193b7c9b66ed8b3ebc134dee08ea3e1a15edb5b8404372f9ec262fc7cb875ab9d365c6016fa140447dd76e8ec8509306ce6d72ac493f57164d8e
-  languageName: node
-  linkType: hard
-
 "@nrwl/eslint-plugin-nx@npm:17.2.7":
   version: 17.2.7
   resolution: "@nrwl/eslint-plugin-nx@npm:17.2.7"
   dependencies:
     "@nx/eslint-plugin": "npm:17.2.7"
   checksum: 2a7ff4d37f341c44e03e2fc03f1dcf9d09abf1099b02f5dc355026aa95b973f6a752db8b04709d439c8bb1ba7f7994357ac1981f10bc9f7f2fcff8e3f6310d47
-  languageName: node
-  linkType: hard
-
-"@nrwl/eslint-plugin-nx@npm:17.2.8":
-  version: 17.2.8
-  resolution: "@nrwl/eslint-plugin-nx@npm:17.2.8"
-  dependencies:
-    "@nx/eslint-plugin": "npm:17.2.8"
-  checksum: 3540eda9978462d9a7376916ac1eeb45a81083a91f340b9db0251f6f7dd5ecd3a59d762fceac8ddd3a1d718ad028713bced1050ea64fec98ea1b314abb10210c
   languageName: node
   linkType: hard
 
@@ -7715,15 +7697,6 @@ __metadata:
   dependencies:
     "@nx/js": "npm:17.2.7"
   checksum: 4f93c505881830ad669cea80b4b5c8e4a40726f66c09f77d65aea9ae9127881736319f8a369cf04a38c0ed69773b1c071b6d1f620eeabeb0d69c92bcc6c5eade
-  languageName: node
-  linkType: hard
-
-"@nrwl/js@npm:17.2.8":
-  version: 17.2.8
-  resolution: "@nrwl/js@npm:17.2.8"
-  dependencies:
-    "@nx/js": "npm:17.2.8"
-  checksum: 87a9095f9282db6ff2bca3a9a90e667c05309839aca892968a726fd50adfeba08595b3ec0aefb80602ef2a77451e556f4cde942171e71c9dd6f2af61be0d8b59
   languageName: node
   linkType: hard
 
@@ -7760,15 +7733,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nrwl/workspace@npm:17.2.8":
-  version: 17.2.8
-  resolution: "@nrwl/workspace@npm:17.2.8"
-  dependencies:
-    "@nx/workspace": "npm:17.2.8"
-  checksum: f7878304444df92f540df8c3b83cfee53e2bc142ef8c74fda8d60e4432f27418397593ef15b4ead694d1ab46f46cb59481cea122ddee6679d06def74b6788e6f
-  languageName: node
-  linkType: hard
-
 "@nuxtjs/opencollective@npm:0.3.2":
   version: 0.3.2
   resolution: "@nuxtjs/opencollective@npm:0.3.2"
@@ -7799,23 +7763,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nx/devkit@npm:17.2.8":
-  version: 17.2.8
-  resolution: "@nx/devkit@npm:17.2.8"
-  dependencies:
-    "@nrwl/devkit": "npm:17.2.8"
-    ejs: "npm:^3.1.7"
-    enquirer: "npm:~2.3.6"
-    ignore: "npm:^5.0.4"
-    semver: "npm:7.5.3"
-    tmp: "npm:~0.2.1"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    nx: ">= 16 <= 18"
-  checksum: e339e2d0616b4374a7677ce3076b06c9b7d5619628b32ff41e6828c25d1bfd6fe4f71347d6151db078565bc2d8101d3ce75bcb67613c3a5c7eae3ed06b6432b3
-  languageName: node
-  linkType: hard
-
 "@nx/eslint-plugin@npm:17.2.7":
   version: 17.2.7
   resolution: "@nx/eslint-plugin@npm:17.2.7"
@@ -7837,30 +7784,6 @@ __metadata:
     eslint-config-prettier:
       optional: true
   checksum: 584c196fe82fc4dc16a834417b26a0c63c2608dfbe03e81bde0ead2ef608baa87d61edbbcef13bb3e473e1ce8331a5c70d467f3837cba3247cee1de6f94ad783
-  languageName: node
-  linkType: hard
-
-"@nx/eslint-plugin@npm:17.2.8, @nx/eslint-plugin@npm:^17.2.8":
-  version: 17.2.8
-  resolution: "@nx/eslint-plugin@npm:17.2.8"
-  dependencies:
-    "@nrwl/eslint-plugin-nx": "npm:17.2.8"
-    "@nx/devkit": "npm:17.2.8"
-    "@nx/js": "npm:17.2.8"
-    "@typescript-eslint/type-utils": "npm:^6.9.1"
-    "@typescript-eslint/utils": "npm:^6.9.1"
-    chalk: "npm:^4.1.0"
-    confusing-browser-globals: "npm:^1.0.9"
-    jsonc-eslint-parser: "npm:^2.1.0"
-    semver: "npm:7.5.3"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    "@typescript-eslint/parser": ^6.9.1
-    eslint-config-prettier: ^9.0.0
-  peerDependenciesMeta:
-    eslint-config-prettier:
-      optional: true
-  checksum: 6911c47c19b1781a03f1719d0d695be53b66cad5bf0993663a1093c5519f58720493f0182d9b6aca5c74ba6397076738b66efa7867577fa629e7b6e03f26d6b3
   languageName: node
   linkType: hard
 
@@ -7946,49 +7869,6 @@ __metadata:
     verdaccio:
       optional: true
   checksum: e08298b9a1db22960b9e924aafa418a7ea14aca5c378866a966b45b316f84e636e668998f287a685119131ccab791fe6180aafa2e27e49d396476b98cad3d5fd
-  languageName: node
-  linkType: hard
-
-"@nx/js@npm:17.2.8":
-  version: 17.2.8
-  resolution: "@nx/js@npm:17.2.8"
-  dependencies:
-    "@babel/core": "npm:^7.22.9"
-    "@babel/plugin-proposal-decorators": "npm:^7.22.7"
-    "@babel/plugin-transform-class-properties": "npm:^7.22.5"
-    "@babel/plugin-transform-runtime": "npm:^7.22.9"
-    "@babel/preset-env": "npm:^7.22.9"
-    "@babel/preset-typescript": "npm:^7.22.5"
-    "@babel/runtime": "npm:^7.22.6"
-    "@nrwl/js": "npm:17.2.8"
-    "@nx/devkit": "npm:17.2.8"
-    "@nx/workspace": "npm:17.2.8"
-    "@phenomnomnominal/tsquery": "npm:~5.0.1"
-    babel-plugin-const-enum: "npm:^1.0.1"
-    babel-plugin-macros: "npm:^2.8.0"
-    babel-plugin-transform-typescript-metadata: "npm:^0.3.1"
-    chalk: "npm:^4.1.0"
-    columnify: "npm:^1.6.0"
-    detect-port: "npm:^1.5.1"
-    fast-glob: "npm:3.2.7"
-    fs-extra: "npm:^11.1.0"
-    ignore: "npm:^5.0.4"
-    js-tokens: "npm:^4.0.0"
-    minimatch: "npm:3.0.5"
-    npm-package-arg: "npm:11.0.1"
-    npm-run-path: "npm:^4.0.1"
-    ora: "npm:5.3.0"
-    semver: "npm:7.5.3"
-    source-map-support: "npm:0.5.19"
-    ts-node: "npm:10.9.1"
-    tsconfig-paths: "npm:^4.1.2"
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    verdaccio: ^5.0.4
-  peerDependenciesMeta:
-    verdaccio:
-      optional: true
-  checksum: 9ec84cc2f8af23b57297d66d651b21de6eed1899e327d9f9b801420fa7f6348e2c36c78459c83bc708ae6ffc1e38b22a417c1f15808b162c1be29ba59e44e2ed
   languageName: node
   linkType: hard
 
@@ -8153,21 +8033,6 @@ __metadata:
     tslib: "npm:^2.3.0"
     yargs-parser: "npm:21.1.1"
   checksum: 6bc1a5d05aa16e4ef4376da9f3795b10733eec482abd96c83d2d15b998c539f1771cfc16f399a357b352eb3b6aa47ebe53865a7d6f897ecb618e5e9e7d5f8789
-  languageName: node
-  linkType: hard
-
-"@nx/workspace@npm:17.2.8":
-  version: 17.2.8
-  resolution: "@nx/workspace@npm:17.2.8"
-  dependencies:
-    "@nrwl/workspace": "npm:17.2.8"
-    "@nx/devkit": "npm:17.2.8"
-    chalk: "npm:^4.1.0"
-    enquirer: "npm:~2.3.6"
-    nx: "npm:17.2.8"
-    tslib: "npm:^2.3.0"
-    yargs-parser: "npm:21.1.1"
-  checksum: c0f1c03f64910749a15dee678dc5e60f9d0cabf818c0201b523e4679c4cfe2830ae04622d9d05a17ce2349b6ed7a70969924dc5f91f573746cb7663536cb9465
   languageName: node
   linkType: hard
 
@@ -11309,7 +11174,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stoplight/elements@npm:^7.15.4, @stoplight/elements@npm:^7.16.2":
+"@stoplight/elements@npm:^7.16.2":
   version: 7.16.3
   resolution: "@stoplight/elements@npm:7.16.3"
   dependencies:
@@ -13112,7 +12977,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tabler/icons-react@npm:^2.30.0, @tabler/icons-react@npm:^2.44.0":
+"@tabler/icons-react@npm:^2.44.0":
   version: 2.45.0
   resolution: "@tabler/icons-react@npm:2.45.0"
   dependencies:
@@ -14170,7 +14035,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^29.5.11, @types/jest@npm:^29.5.5":
+"@types/jest@npm:^29.5.11":
   version: 29.5.11
   resolution: "@types/jest@npm:29.5.11"
   dependencies:
@@ -14369,7 +14234,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.snakecase@npm:^4.1.7, @types/lodash.snakecase@npm:^4.1.9":
+"@types/lodash.snakecase@npm:^4.1.7":
   version: 4.1.9
   resolution: "@types/lodash.snakecase@npm:4.1.9"
   dependencies:
@@ -14518,7 +14383,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^20, @types/node@npm:^20.10.6, @types/node@npm:^20.3.1, @types/node@npm:^20.8.6":
+"@types/node@npm:*, @types/node@npm:^20.10.6, @types/node@npm:^20.3.1":
   version: 20.10.6
   resolution: "@types/node@npm:20.10.6"
   dependencies:
@@ -14709,7 +14574,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^18, @types/react-dom@npm:^18.0.0, @types/react-dom@npm:^18.2.15":
+"@types/react-dom@npm:^18.0.0, @types/react-dom@npm:^18.2.15":
   version: 18.2.18
   resolution: "@types/react-dom@npm:18.2.18"
   dependencies:
@@ -14759,7 +14624,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:>=16, @types/react@npm:^18, @types/react@npm:^18.2.39":
+"@types/react@npm:*, @types/react@npm:>=16, @types/react@npm:^18.2.39":
   version: 18.2.46
   resolution: "@types/react@npm:18.2.46"
   dependencies:
@@ -15034,7 +14899,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^6.10.0, @typescript-eslint/eslint-plugin@npm:^6.16.0":
+"@typescript-eslint/eslint-plugin@npm:^6.10.0":
   version: 6.17.0
   resolution: "@typescript-eslint/eslint-plugin@npm:6.17.0"
   dependencies:
@@ -22638,7 +22503,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-prettier@npm:^9.0.0, eslint-config-prettier@npm:^9.1.0":
+"eslint-config-prettier@npm:^9.1.0":
   version: 9.1.0
   resolution: "eslint-config-prettier@npm:9.1.0"
   peerDependencies:
@@ -22752,7 +22617,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-prettier@npm:^5.0.1, eslint-plugin-prettier@npm:^5.1.2":
+"eslint-plugin-prettier@npm:^5.1.2":
   version: 5.1.2
   resolution: "eslint-plugin-prettier@npm:5.1.2"
   dependencies:
@@ -22897,7 +22762,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8, eslint@npm:^8.53.0":
+"eslint@npm:^8.53.0":
   version: 8.56.0
   resolution: "eslint@npm:8.56.0"
   dependencies:
@@ -25272,13 +25137,6 @@ __metadata:
   peerDependencies:
     graphql: ^15.2.0 || ^16.0.0
   checksum: e0a6f76ee2598e6d116dc755b6d1705410425d3eea98649e9d655c867c4b30800c9b519bdc3b928ada2626eefcbaf55ef5d97b432f361250530a922929365fb6
-  languageName: node
-  linkType: hard
-
-"graphql@npm:*, graphql@npm:0.13.1 - 16, graphql@npm:14 - 16, graphql@npm:^16.6.0, graphql@npm:^16.8.1":
-  version: 16.8.1
-  resolution: "graphql@npm:16.8.1"
-  checksum: 129c318156b466f440914de80dbf7bc67d17f776f2a088a40cb0da611d19a97c224b1c6d2b13cbcbc6e5776e45ed7468b8432f9c3536724e079b44f1a3d57a8a
   languageName: node
   linkType: hard
 
@@ -28597,7 +28455,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest@npm:29.7.0, jest@npm:^29.6.0, jest@npm:^29.6.4":
+"jest@npm:29.7.0, jest@npm:^29.6.4":
   version: 29.7.0
   resolution: "jest@npm:29.7.0"
   dependencies:
@@ -35980,16 +35838,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:3.1.0":
-  version: 3.1.0
-  resolution: "prettier@npm:3.1.0"
-  bin:
-    prettier: bin/prettier.cjs
-  checksum: a45ea70aa97fde162ea4c4aba3dfc7859aa6a732a1db34458d9535dc3c2c16d3bc3fb5689e6cd76aa835562555303b02d9449fd2e15af3b73c8053557e25c5b6
-  languageName: node
-  linkType: hard
-
-"prettier@npm:^3.0.3, prettier@npm:^3.1.0, prettier@npm:^3.1.1":
+"prettier@npm:^3.1.0, prettier@npm:^3.1.1":
   version: 3.1.1
   resolution: "prettier@npm:3.1.1"
   bin:
@@ -36870,7 +36719,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^18, react-dom@npm:^18.2.0":
+"react-dom@npm:^18.2.0":
   version: 18.2.0
   resolution: "react-dom@npm:18.2.0"
   dependencies:
@@ -36983,7 +36832,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-icons@npm:^4.12.0, react-icons@npm:^4.3.1, react-icons@npm:^4.9.0":
+"react-icons@npm:^4.12.0, react-icons@npm:^4.3.1":
   version: 4.12.0
   resolution: "react-icons@npm:4.12.0"
   peerDependencies:
@@ -41577,51 +41426,106 @@ __metadata:
 "twenty-docs@workspace:packages/twenty-docs":
   version: 0.0.0-use.local
   resolution: "twenty-docs@workspace:packages/twenty-docs"
-  dependencies:
-    "@codesandbox/sandpack-react": "npm:^2.9.0"
-    "@docusaurus/core": "npm:^3.0.0"
-    "@docusaurus/module-type-aliases": "npm:^3.0.0"
-    "@docusaurus/preset-classic": "npm:^3.0.0"
-    "@docusaurus/tsconfig": "npm:3.0.0"
-    "@graphiql/plugin-explorer": "npm:^1.0.2"
-    "@mdx-js/react": "npm:^3.0.0"
-    "@stoplight/elements": "npm:^7.15.4"
-    clsx: "npm:^1.2.1"
-    docusaurus-node-polyfills: "npm:^1.0.0"
-    graphiql: "npm:^3.0.10"
-    graphql: "npm:^16.6.0"
-    iframe-resizer-react: "npm:^1.1.0"
-    prism-react-renderer: "npm:^2.1.0"
-    raw-loader: "npm:^4.0.2"
-    react: "npm:^18.2.0"
-    react-dom: "npm:^18.2.0"
-    react-icons: "npm:^4.9.0"
-    typescript: "npm:~5.2.2"
   languageName: unknown
   linkType: soft
 
 "twenty-front@workspace:packages/twenty-front":
   version: 0.0.0-use.local
   resolution: "twenty-front@workspace:packages/twenty-front"
+  languageName: unknown
+  linkType: soft
+
+"twenty-server@workspace:packages/twenty-server":
+  version: 0.0.0-use.local
+  resolution: "twenty-server@workspace:packages/twenty-server"
+  dependencies:
+    "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch"
+    "@nestjs/graphql": "patch:@nestjs/graphql@12.0.8#./patches/@nestjs+graphql+12.0.8.patch"
+    "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
+    class-validator: "patch:class-validator@^0.14.0#./patches/class-validator+0.14.0.patch"
+  languageName: unknown
+  linkType: soft
+
+"twenty-utils@workspace:packages/twenty-utils":
+  version: 0.0.0-use.local
+  resolution: "twenty-utils@workspace:packages/twenty-utils"
+  languageName: unknown
+  linkType: soft
+
+"twenty-website@workspace:packages/twenty-website":
+  version: 0.0.0-use.local
+  resolution: "twenty-website@workspace:packages/twenty-website"
+  languageName: unknown
+  linkType: soft
+
+"twenty-zapier@workspace:packages/twenty-zapier":
+  version: 0.0.0-use.local
+  resolution: "twenty-zapier@workspace:packages/twenty-zapier"
+  languageName: unknown
+  linkType: soft
+
+"twenty@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "twenty@workspace:."
   dependencies:
     "@air/react-drag-to-select": "npm:^5.0.8"
     "@apollo/client": "npm:^3.7.17"
+    "@apollo/server": "npm:^4.7.3"
+    "@aws-sdk/client-s3": "npm:^3.363.0"
+    "@aws-sdk/credential-providers": "npm:^3.363.0"
     "@blocknote/core": "npm:^0.10.1"
     "@blocknote/react": "npm:^0.10.1"
     "@chakra-ui/accordion": "npm:^2.3.0"
     "@chakra-ui/system": "npm:^2.6.0"
-    "@emotion/react": "npm:^11.10.6"
-    "@emotion/styled": "npm:^11.10.5"
+    "@codesandbox/sandpack-react": "npm:^2.9.0"
+    "@docusaurus/core": "npm:^3.0.0"
+    "@docusaurus/module-type-aliases": "npm:^3.0.0"
+    "@docusaurus/preset-classic": "npm:^3.0.0"
+    "@docusaurus/tsconfig": "npm:3.0.0"
+    "@emotion/react": "npm:^11.11.1"
+    "@emotion/styled": "npm:^11.11.0"
     "@floating-ui/react": "npm:^0.24.3"
+    "@google-cloud/local-auth": "npm:2.1.0"
+    "@graphiql/plugin-explorer": "npm:^1.0.2"
     "@graphql-codegen/cli": "npm:^3.3.1"
     "@graphql-codegen/client-preset": "npm:^4.1.0"
     "@graphql-codegen/typescript": "npm:^3.0.4"
     "@graphql-codegen/typescript-operations": "npm:^3.0.4"
     "@graphql-codegen/typescript-react-apollo": "npm:^3.3.7"
+    "@graphql-tools/schema": "npm:^10.0.0"
     "@hello-pangea/dnd": "npm:^16.2.0"
     "@hookform/resolvers": "npm:^3.1.1"
+    "@jsdevtools/rehype-toc": "npm:^3.0.2"
+    "@mdx-js/react": "npm:^3.0.0"
+    "@nestjs/apollo": "npm:^11.0.5"
+    "@nestjs/axios": "npm:^3.0.1"
+    "@nestjs/cli": "npm:^9.0.0"
+    "@nestjs/common": "npm:^9.0.0"
+    "@nestjs/config": "npm:^2.3.2"
+    "@nestjs/core": "npm:^9.0.0"
+    "@nestjs/jwt": "npm:^10.0.3"
+    "@nestjs/passport": "npm:^9.0.3"
+    "@nestjs/platform-express": "npm:^9.0.0"
+    "@nestjs/schematics": "npm:^9.0.0"
+    "@nestjs/serve-static": "npm:^3.0.0"
+    "@nestjs/terminus": "npm:^9.2.2"
+    "@nestjs/testing": "npm:^9.0.0"
+    "@nestjs/typeorm": "npm:^10.0.0"
+    "@nivo/calendar": "npm:^0.84.0"
+    "@nivo/core": "npm:^0.84.0"
+    "@nx/eslint": "npm:17.2.7"
+    "@nx/eslint-plugin": "npm:17.2.7"
+    "@nx/jest": "npm:17.2.7"
+    "@nx/js": "npm:17.2.7"
+    "@octokit/graphql": "npm:^7.0.2"
+    "@ptc-org/nestjs-query-core": "npm:^4.2.0"
+    "@ptc-org/nestjs-query-typeorm": "npm:4.2.1-alpha.2"
+    "@sentry/node": "npm:^7.66.0"
+    "@sentry/profiling-node": "npm:^1.2.6"
     "@sentry/react": "npm:^7.88.0"
+    "@sentry/tracing": "npm:^7.66.0"
     "@sniptt/guards": "npm:^0.2.0"
+    "@stoplight/elements": "npm:^7.16.2"
     "@storybook/addon-actions": "npm:^7.6.3"
     "@storybook/addon-coverage": "npm:^1.0.0"
     "@storybook/addon-essentials": "npm:^7.6.7"
@@ -41638,67 +41542,131 @@ __metadata:
     "@swc-node/register": "npm:~1.6.7"
     "@swc/core": "npm:~1.3.100"
     "@swc/jest": "npm:^0.2.29"
-    "@tabler/icons-react": "npm:^2.30.0"
+    "@tabler/icons-react": "npm:^2.44.0"
     "@testing-library/jest-dom": "npm:^6.1.5"
     "@testing-library/react": "npm:^13.4.0"
     "@types/apollo-upload-client": "npm:^17.0.2"
+    "@types/bcrypt": "npm:^5.0.0"
+    "@types/better-sqlite3": "npm:^7.6.8"
+    "@types/bytes": "npm:^3.1.1"
     "@types/deep-equal": "npm:^1.0.1"
+    "@types/express": "npm:^4.17.13"
+    "@types/graphql-fields": "npm:^1.3.6"
+    "@types/graphql-upload": "npm:^8.0.12"
     "@types/jest": "npm:^29.5.11"
     "@types/js-cookie": "npm:^3.0.3"
     "@types/lodash.camelcase": "npm:^4.3.7"
     "@types/lodash.debounce": "npm:^4.0.7"
+    "@types/lodash.isempty": "npm:^4.4.7"
+    "@types/lodash.isequal": "npm:^4.5.7"
+    "@types/lodash.isobject": "npm:^3.0.7"
     "@types/lodash.kebabcase": "npm:^4.1.7"
-    "@types/lodash.snakecase": "npm:^4.1.9"
+    "@types/lodash.merge": "npm:^4.6.7"
+    "@types/lodash.snakecase": "npm:^4.1.7"
+    "@types/lodash.upperfirst": "npm:^4.3.7"
     "@types/luxon": "npm:^3.3.0"
+    "@types/mailparser": "npm:^3.4.4"
+    "@types/ms": "npm:^0.7.31"
     "@types/node": "npm:^20.10.6"
+    "@types/passport-google-oauth20": "npm:^2.0.11"
+    "@types/passport-jwt": "npm:^3.0.8"
     "@types/react": "npm:^18.2.39"
     "@types/react-datepicker": "npm:^4.11.2"
     "@types/react-dom": "npm:^18.2.15"
     "@types/scroll-into-view": "npm:^1.16.0"
-    "@types/uuid": "npm:^9.0.1"
+    "@types/supertest": "npm:^2.0.11"
+    "@types/uuid": "npm:^9.0.2"
     "@typescript-eslint/eslint-plugin": "npm:^6.10.0"
     "@typescript-eslint/parser": "npm:^6.10.0"
     "@typescript-eslint/utils": "npm:^6.9.1"
     "@vitejs/plugin-react-swc": "npm:^3.5.0"
+    add: "npm:^2.0.6"
     afterframe: "npm:^1.0.2"
+    apollo-server-express: "npm:^3.12.0"
     apollo-upload-client: "npm:^17.0.0"
+    axios: "npm:^1.6.2"
+    bcrypt: "npm:^5.1.1"
+    better-sqlite3: "npm:^9.2.2"
+    body-parser: "npm:^1.20.2"
+    bullmq: "npm:^4.14.0"
+    bytes: "npm:^3.1.2"
     chromatic: "npm:^6.18.0"
+    class-transformer: "npm:^0.5.1"
+    clsx: "npm:^1.2.1"
     concurrently: "npm:^8.0.1"
     cross-var: "npm:^1.1.0"
+    danger: "npm:^11.3.0"
+    danger-plugin-todos: "npm:^1.3.1"
+    dataloader: "npm:^2.2.2"
     date-fns: "npm:^2.30.0"
     deep-equal: "npm:^2.2.2"
+    docusaurus-node-polyfills: "npm:^1.0.0"
     dotenv-cli: "npm:^7.2.1"
     esbuild-plugin-svgr: "npm:^2.1.0"
     eslint: "npm:^8.53.0"
-    eslint-config-prettier: "npm:^9.0.0"
+    eslint-config-next: "npm:14.0.4"
+    eslint-config-prettier: "npm:^9.1.0"
     eslint-plugin-import: "npm:^2.27.5"
     eslint-plugin-jsx-a11y: "npm:^6.8.0"
     eslint-plugin-prefer-arrow: "npm:^1.2.3"
-    eslint-plugin-prettier: "npm:^5.0.1"
+    eslint-plugin-prettier: "npm:^5.1.2"
     eslint-plugin-react: "npm:^7.33.2"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     eslint-plugin-react-refresh: "npm:^0.4.4"
     eslint-plugin-simple-import-sort: "npm:^10.0.0"
     eslint-plugin-storybook: "npm:^0.6.15"
     eslint-plugin-unused-imports: "npm:^3.0.0"
+    file-type: "npm:16.5.4"
     framer-motion: "npm:^10.12.17"
-    graphql: "npm:^16.6.0"
+    googleapis: "npm:105"
+    graphiql: "npm:^3.0.10"
+    graphql: "npm:^16.8.1"
+    graphql-fields: "npm:^2.0.3"
+    graphql-subscriptions: "npm:2.0.0"
+    graphql-tag: "npm:^2.12.6"
+    graphql-type-json: "npm:^0.3.2"
+    graphql-upload: "npm:^13.0.0"
+    graphql-yoga: "npm:^4.0.4"
     hex-rgb: "npm:^5.0.0"
     http-server: "npm:^14.1.1"
+    iframe-resizer-react: "npm:^1.1.0"
     immer: "npm:^10.0.2"
     jest: "npm:29.7.0"
     jest-environment-jsdom: "npm:29.7.0"
+    jest-mock-extended: "npm:^3.0.4"
     js-cookie: "npm:^3.0.5"
     js-levenshtein: "npm:^1.1.6"
+    jsonwebtoken: "npm:^9.0.0"
     libphonenumber-js: "npm:^1.10.26"
     lodash.camelcase: "npm:^4.3.0"
     lodash.debounce: "npm:^4.0.8"
+    lodash.isempty: "npm:^4.4.0"
+    lodash.isequal: "npm:^4.5.0"
+    lodash.isobject: "npm:^3.0.2"
     lodash.kebabcase: "npm:^4.1.1"
+    lodash.merge: "npm:^4.6.2"
     lodash.snakecase: "npm:^4.1.1"
+    lodash.upperfirst: "npm:^4.3.1"
     luxon: "npm:^3.3.0"
+    mailparser: "npm:^3.6.5"
+    microdiff: "npm:^1.3.2"
     msw: "npm:^2.0.11"
     msw-storybook-addon: "npm:2.0.0--canary.122.b3ed3b1.0"
-    prettier: "npm:3.1.0"
+    nest-commander: "npm:^3.12.0"
+    next: "npm:14.0.4"
+    next-mdx-remote: "npm:^4.4.1"
+    nx: "npm:^17.2.8"
+    openapi-types: "npm:^12.1.3"
+    passport: "npm:^0.6.0"
+    passport-google-oauth20: "npm:^2.0.0"
+    passport-jwt: "npm:^4.0.1"
+    passport-local: "npm:^1.0.0"
+    patch-package: "npm:^8.0.0"
+    pg: "npm:^8.11.3"
+    pg-boss: "npm:^9.0.3"
+    prettier: "npm:^3.1.1"
+    prism-react-renderer: "npm:^2.1.0"
+    raw-loader: "npm:^4.0.2"
     react: "npm:^18.2.0"
     react-data-grid: "npm:7.0.0-beta.13"
     react-datepicker: "npm:^4.11.0"
@@ -41708,6 +41676,7 @@ __metadata:
     react-helmet-async: "npm:^1.3.0"
     react-hook-form: "npm:^7.45.1"
     react-hotkeys-hook: "npm:^4.4.0"
+    react-icons: "npm:^4.12.0"
     react-intersection-observer: "npm:^9.5.2"
     react-loading-skeleton: "npm:^3.3.1"
     react-phone-number-input: "npm:^3.3.4"
@@ -41716,206 +41685,36 @@ __metadata:
     react-textarea-autosize: "npm:^8.4.1"
     react-tooltip: "npm:^5.13.1"
     recoil: "npm:^0.7.7"
+    rehype-slug: "npm:^6.0.0"
+    remark-behead: "npm:^3.1.0"
+    remark-gfm: "npm:^3.0.1"
+    rimraf: "npm:^5.0.5"
+    rxjs: "npm:^7.2.0"
     scroll-into-view: "npm:^1.16.2"
+    semver: "npm:^7.5.4"
+    sharp: "npm:^0.32.1"
+    source-map-support: "npm:^0.5.20"
     storybook: "npm:^7.6.3"
     storybook-addon-cookie: "npm:^3.2.0"
     storybook-addon-pseudo-states: "npm:^2.1.2"
+    supertest: "npm:^6.1.3"
     ts-jest: "npm:^29.1.1"
     ts-key-enum: "npm:^2.0.12"
+    ts-loader: "npm:^9.2.3"
     ts-node: "npm:10.9.1"
+    tslib: "npm:^2.3.0"
     tsup: "npm:^8.0.1"
     type-fest: "npm:^4.1.0"
+    typeorm: "npm:^0.3.17"
     typescript: "npm:^5.3.3"
     uuid: "npm:^9.0.0"
     vite: "npm:^5.0.0"
     vite-plugin-svgr: "npm:^4.2.0"
     vite-tsconfig-paths: "npm:^4.2.1"
     xlsx-ugnis: "npm:^0.19.3"
-    zod: "npm:^3.22.2"
-  languageName: unknown
-  linkType: soft
-
-"twenty-server@workspace:packages/twenty-server":
-  version: 0.0.0-use.local
-  resolution: "twenty-server@workspace:packages/twenty-server"
-  dependencies:
-    "@apollo/server": "npm:^4.7.3"
-    "@aws-sdk/client-s3": "npm:^3.363.0"
-    "@aws-sdk/credential-providers": "npm:^3.363.0"
-    "@google-cloud/local-auth": "npm:2.1.0"
-    "@graphql-tools/schema": "npm:^10.0.0"
-    "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch"
-    "@nestjs/apollo": "npm:^11.0.5"
-    "@nestjs/axios": "npm:^3.0.1"
-    "@nestjs/cli": "npm:^9.0.0"
-    "@nestjs/common": "npm:^9.0.0"
-    "@nestjs/config": "npm:^2.3.2"
-    "@nestjs/core": "npm:^9.0.0"
-    "@nestjs/graphql": "patch:@nestjs/graphql@12.0.8#./patches/@nestjs+graphql+12.0.8.patch"
-    "@nestjs/jwt": "npm:^10.0.3"
-    "@nestjs/passport": "npm:^9.0.3"
-    "@nestjs/platform-express": "npm:^9.0.0"
-    "@nestjs/schematics": "npm:^9.0.0"
-    "@nestjs/serve-static": "npm:^3.0.0"
-    "@nestjs/terminus": "npm:^9.2.2"
-    "@nestjs/testing": "npm:^9.0.0"
-    "@nestjs/typeorm": "npm:^10.0.0"
-    "@ptc-org/nestjs-query-core": "npm:^4.2.0"
-    "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
-    "@ptc-org/nestjs-query-typeorm": "npm:4.2.1-alpha.2"
-    "@sentry/node": "npm:^7.66.0"
-    "@sentry/profiling-node": "npm:^1.2.6"
-    "@sentry/tracing": "npm:^7.66.0"
-    "@types/bcrypt": "npm:^5.0.0"
-    "@types/bytes": "npm:^3.1.1"
-    "@types/express": "npm:^4.17.13"
-    "@types/graphql-fields": "npm:^1.3.6"
-    "@types/graphql-upload": "npm:^8.0.12"
-    "@types/jest": "npm:^29.5.11"
-    "@types/lodash.camelcase": "npm:^4.3.7"
-    "@types/lodash.isempty": "npm:^4.4.7"
-    "@types/lodash.isequal": "npm:^4.5.7"
-    "@types/lodash.isobject": "npm:^3.0.7"
-    "@types/lodash.kebabcase": "npm:^4.1.7"
-    "@types/lodash.merge": "npm:^4.6.7"
-    "@types/lodash.snakecase": "npm:^4.1.7"
-    "@types/lodash.upperfirst": "npm:^4.3.7"
-    "@types/mailparser": "npm:^3.4.4"
-    "@types/ms": "npm:^0.7.31"
-    "@types/node": "npm:^20.10.6"
-    "@types/passport-google-oauth20": "npm:^2.0.11"
-    "@types/passport-jwt": "npm:^3.0.8"
-    "@types/supertest": "npm:^2.0.11"
-    "@types/uuid": "npm:^9.0.2"
-    add: "npm:^2.0.6"
-    apollo-server-express: "npm:^3.12.0"
-    axios: "npm:^1.6.2"
-    bcrypt: "npm:^5.1.1"
-    body-parser: "npm:^1.20.2"
-    bullmq: "npm:^4.14.0"
-    bytes: "npm:^3.1.2"
-    class-transformer: "npm:^0.5.1"
-    class-validator: "patch:class-validator@^0.14.0#./patches/class-validator+0.14.0.patch"
-    dataloader: "npm:^2.2.2"
-    date-fns: "npm:^2.30.0"
-    file-type: "npm:16.5.4"
-    googleapis: "npm:105"
-    graphql: "npm:16.8.0"
-    graphql-fields: "npm:^2.0.3"
-    graphql-subscriptions: "npm:2.0.0"
-    graphql-tag: "npm:^2.12.6"
-    graphql-type-json: "npm:^0.3.2"
-    graphql-upload: "npm:^13.0.0"
-    graphql-yoga: "npm:^4.0.4"
-    jest-mock-extended: "npm:^3.0.4"
-    jsonwebtoken: "npm:^9.0.0"
-    lodash.camelcase: "npm:^4.3.0"
-    lodash.isempty: "npm:^4.4.0"
-    lodash.isequal: "npm:^4.5.0"
-    lodash.isobject: "npm:^3.0.2"
-    lodash.kebabcase: "npm:^4.1.1"
-    lodash.merge: "npm:^4.6.2"
-    lodash.snakecase: "npm:^4.1.1"
-    lodash.upperfirst: "npm:^4.3.1"
-    mailparser: "npm:^3.6.5"
-    microdiff: "npm:^1.3.2"
-    nest-commander: "npm:^3.12.0"
-    openapi-types: "npm:^12.1.3"
-    passport: "npm:^0.6.0"
-    passport-google-oauth20: "npm:^2.0.0"
-    passport-jwt: "npm:^4.0.1"
-    passport-local: "npm:^1.0.0"
-    pg: "npm:^8.11.3"
-    pg-boss: "npm:^9.0.3"
-    rimraf: "npm:^3.0.2"
-    rxjs: "npm:^7.2.0"
-    sharp: "npm:^0.32.1"
-    source-map-support: "npm:^0.5.20"
-    supertest: "npm:^6.1.3"
-    ts-loader: "npm:^9.2.3"
-    type-fest: "npm:^3.12.0"
-    typeorm: "npm:^0.3.17"
-    uuid: "npm:^9.0.0"
-  languageName: unknown
-  linkType: soft
-
-"twenty-utils@workspace:packages/twenty-utils":
-  version: 0.0.0-use.local
-  resolution: "twenty-utils@workspace:packages/twenty-utils"
-  dependencies:
-    danger: "npm:^11.3.0"
-    danger-plugin-todos: "npm:^1.3.1"
-    semver: "npm:^7.5.4"
-    typescript: "npm:^5.3.2"
-  languageName: unknown
-  linkType: soft
-
-"twenty-website@workspace:packages/twenty-website":
-  version: 0.0.0-use.local
-  resolution: "twenty-website@workspace:packages/twenty-website"
-  dependencies:
-    "@emotion/react": "npm:^11.11.1"
-    "@emotion/styled": "npm:^11.11.0"
-    "@jsdevtools/rehype-toc": "npm:^3.0.2"
-    "@nivo/calendar": "npm:^0.84.0"
-    "@nivo/core": "npm:^0.84.0"
-    "@nx/eslint-plugin": "npm:^17.2.8"
-    "@octokit/graphql": "npm:^7.0.2"
-    "@stoplight/elements": "npm:^7.16.2"
-    "@tabler/icons-react": "npm:^2.44.0"
-    "@types/better-sqlite3": "npm:^7.6.8"
-    "@types/node": "npm:^20"
-    "@types/react": "npm:^18"
-    "@types/react-dom": "npm:^18"
-    "@typescript-eslint/eslint-plugin": "npm:^6.16.0"
-    better-sqlite3: "npm:^9.2.2"
-    eslint: "npm:^8"
-    eslint-config-next: "npm:14.0.4"
-    eslint-config-prettier: "npm:^9.1.0"
-    eslint-plugin-prettier: "npm:^5.1.2"
-    eslint-plugin-react: "npm:^7.33.2"
-    graphiql: "npm:^3.0.10"
-    graphql: "npm:^16.8.1"
-    next: "npm:14.0.4"
-    next-mdx-remote: "npm:^4.4.1"
-    prettier: "npm:^3.1.1"
-    react: "npm:^18"
-    react-dom: "npm:^18"
-    react-icons: "npm:^4.12.0"
-    rehype-slug: "npm:^6.0.0"
-    remark-behead: "npm:^3.1.0"
-    remark-gfm: "npm:^3.0.1"
-    typescript: "npm:^5"
-  languageName: unknown
-  linkType: soft
-
-"twenty-zapier@workspace:packages/twenty-zapier":
-  version: 0.0.0-use.local
-  resolution: "twenty-zapier@workspace:packages/twenty-zapier"
-  dependencies:
-    "@types/jest": "npm:^29.5.5"
-    "@types/node": "npm:^20.8.6"
-    dotenv-cli: "npm:^7.2.1"
-    jest: "npm:^29.6.0"
-    prettier: "npm:^3.0.3"
-    rimraf: "npm:^5.0.5"
-    typescript: "npm:^5.2.2"
     zapier-platform-cli: "npm:^15.4.1"
     zapier-platform-core: "npm:15.5.1"
-  languageName: unknown
-  linkType: soft
-
-"twenty@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "twenty@workspace:."
-  dependencies:
-    "@nx/eslint": "npm:17.2.7"
-    "@nx/eslint-plugin": "npm:17.2.7"
-    "@nx/jest": "npm:17.2.7"
-    "@nx/js": "npm:17.2.7"
-    nx: "npm:^17.2.8"
-    patch-package: "npm:^8.0.0"
-    tslib: "npm:^2.3.0"
+    zod: "npm:^3.22.2"
   languageName: unknown
   linkType: soft
 
@@ -41984,7 +41783,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^3.0.0, type-fest@npm:^3.12.0":
+"type-fest@npm:^3.0.0":
   version: 3.13.1
   resolution: "type-fest@npm:3.13.1"
   checksum: 547d22186f73a8c04590b70dcf63baff390078c75ea8acd366bbd510fd0646e348bd1970e47ecf795b7cff0b41d26e9c475c1fedd6ef5c45c82075fbf916b629
@@ -42175,7 +41974,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5, typescript@npm:^5.2.2, typescript@npm:^5.3.2, typescript@npm:^5.3.3":
+"typescript@npm:^5.3.3":
   version: 5.3.3
   resolution: "typescript@npm:5.3.3"
   bin:
@@ -42205,7 +42004,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.2.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.3.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.3.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.3.3#optional!builtin<compat/typescript>":
   version: 5.3.3
   resolution: "typescript@patch:typescript@npm%3A5.3.3#optional!builtin<compat/typescript>::version=5.3.3&hash=e012d7"
   bin:
