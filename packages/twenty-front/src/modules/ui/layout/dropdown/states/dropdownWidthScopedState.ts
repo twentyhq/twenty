@@ -1,6 +1,8 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const dropdownWidthScopedState = createScopedState<number | undefined>({
-  key: 'dropdownWidthScopedState',
-  defaultValue: 160,
-});
+export const dropdownWidthScopedState = createStateScopeMap<number | undefined>(
+  {
+    key: 'dropdownWidthScopedState',
+    defaultValue: 160,
+  },
+);

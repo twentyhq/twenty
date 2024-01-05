@@ -1,8 +1,8 @@
-import { createScopedFamilyState } from '@/ui/utilities/recoil-scope/utils/createScopedFamilyState';
+import { createFamilyStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createFamilyStateScopeMap';
 
 import { ViewSort } from '../types/ViewSort';
 
-export const savedViewSortsScopedFamilyState = createScopedFamilyState<
+export const savedViewSortsScopedFamilyState = createFamilyStateScopeMap<
   ViewSort[],
   string
 >({

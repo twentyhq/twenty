@@ -1,8 +1,8 @@
 import { atomFamily, SerializableParam } from 'recoil';
 
-import { ScopedFamilyStateKey } from '../scopes-internal/types/ScopedFamilyStateKey';
+import { FamilyStateScopeMapKey } from '@/ui/utilities/recoil-scope/scopes-internal/types/FamilyStateScopeMapKey';
 
-export const createScopedFamilyState = <
+export const createFamilyStateScopeMap = <
   ValueType,
   FamilyKey extends SerializableParam,
 >({
@@ -12,7 +12,7 @@ export const createScopedFamilyState = <
   key: string;
   defaultValue: ValueType;
 }) => {
-  return atomFamily<ValueType, ScopedFamilyStateKey<FamilyKey>>({
+  return atomFamily<ValueType, FamilyStateScopeMapKey<FamilyKey>>({
     key,
     default: defaultValue,
   });

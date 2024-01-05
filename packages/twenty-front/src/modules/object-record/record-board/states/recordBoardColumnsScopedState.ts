@@ -1,7 +1,7 @@
 import { BoardColumnDefinition } from '@/object-record/record-board/types/BoardColumnDefinition';
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const recordBoardColumnsScopedState = createScopedState<
+export const recordBoardColumnsScopedState = createStateScopeMap<
   BoardColumnDefinition[]
 >({
   key: 'recordBoardColumnsScopedState',

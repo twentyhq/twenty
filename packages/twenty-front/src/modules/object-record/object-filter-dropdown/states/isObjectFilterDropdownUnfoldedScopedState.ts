@@ -1,7 +1,7 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
 export const isObjectFilterDropdownUnfoldedScopedState =
-  createScopedState<boolean>({
+  createStateScopeMap<boolean>({
     key: 'isObjectFilterDropdownUnfoldedScopedState',
     defaultValue: false,
   });

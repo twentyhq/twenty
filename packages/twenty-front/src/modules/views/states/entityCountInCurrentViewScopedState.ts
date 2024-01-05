@@ -1,6 +1,6 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const entityCountInCurrentViewScopedState = createScopedState<number>({
+export const entityCountInCurrentViewScopedState = createStateScopeMap<number>({
   key: 'entityCountInCurrentViewScopedState',
   defaultValue: 0,
 });
