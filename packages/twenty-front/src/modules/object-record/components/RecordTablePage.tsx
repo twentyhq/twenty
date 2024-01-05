@@ -62,6 +62,7 @@ export const RecordTablePage = () => {
 
   const handleAddButtonClick = async () => {
     await createOneObject?.({});
+
     setSelectedTableCellEditMode(0, 0);
   };
 
