@@ -37,7 +37,7 @@ export const SettingsAccountRow = ({
   return (
     <StyledRow onClick={onClick} divider={divider}>
       <LeftIcon size={theme.icon.size.sm} />
-      {account.email}
+      {account.handle}
       {rightComponent}
     </StyledRow>
   );

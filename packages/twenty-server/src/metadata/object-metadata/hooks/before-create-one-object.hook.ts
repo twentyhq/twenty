@@ -11,7 +11,14 @@ import {
 
 import { CreateObjectInput } from 'src/metadata/object-metadata/dtos/create-object.input';
 
-const coreObjectNames = ['featureFlag', 'refreshToken', 'workspace', 'user'];
+const coreObjectNames = [
+  'featureFlag',
+  'refreshToken',
+  'workspace',
+  'user',
+  'event',
+  'field',
+];
 
 @Injectable()
 export class BeforeCreateOneObject<T extends CreateObjectInput>
