@@ -1,9 +1,9 @@
 import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
 import { BoardFieldDefinition } from '../types/BoardFieldDefinition';
 
-export const recordBoardCardFieldsScopedState = createScopedState<
+export const recordBoardCardFieldsScopedState = createStateScopeMap<
   BoardFieldDefinition<FieldMetadata>[]
 >({
   key: 'recordBoardCardFieldsScopedState',

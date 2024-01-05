@@ -14,9 +14,9 @@ export const SelectableItem = ({
   children,
   className,
 }: SelectableItemProps) => {
-  const { isSelectedItemIdFamilyState } = useSelectableList();
+  const { isSelectedItemIdSelector } = useSelectableList();
 
-  const isSelectedItemId = useRecoilValue(isSelectedItemIdFamilyState(itemId));
+  const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector(itemId));
 
   const scrollRef = useRef<HTMLDivElement>(null);
 

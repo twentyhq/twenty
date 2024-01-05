@@ -42,7 +42,7 @@ export const getSlashMenu = (imagesActivated: boolean) => {
   ];
 
   if (!imagesActivated) {
-    items = items.filter((x) => x.name != 'Image');
+    items = items.filter((x) => x.name !== 'Image');
   }
 
   return items;

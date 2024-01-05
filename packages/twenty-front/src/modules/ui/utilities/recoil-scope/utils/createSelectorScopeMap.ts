@@ -7,7 +7,7 @@ import {
   WrappedValue,
 } from 'recoil';
 
-import { ScopedStateKey } from '../scopes-internal/types/ScopedStateKey';
+import { StateScopeMapKey } from '@/ui/utilities/recoil-scope/scopes-internal/types/StateScopeMapKey';
 
 type SelectorGetter<T, P> = (
   param: P,
@@ -16,14 +16,14 @@ type SelectorGetter<T, P> = (
   getCallback: GetCallback;
 }) => Promise<T> | RecoilValue<T> | Loadable<T> | WrappedValue<T> | T;
 
-export const createScopedSelector = <ValueType>({
+export const createSelectorScopeMap = <ValueType>({
   key,
   get,
 }: {
   key: string;
-  get: SelectorGetter<ValueType, ScopedStateKey>;
+  get: SelectorGetter<ValueType, StateScopeMapKey>;
 }) => {
-  return selectorFamily<ValueType, ScopedStateKey>({
+  return selectorFamily<ValueType, StateScopeMapKey>({
     key,
     get,
   });

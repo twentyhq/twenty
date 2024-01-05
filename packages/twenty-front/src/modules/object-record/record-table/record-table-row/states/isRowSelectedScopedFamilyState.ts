@@ -1,6 +1,6 @@
-import { createScopedFamilyState } from '@/ui/utilities/recoil-scope/utils/createScopedFamilyState';
+import { createFamilyStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createFamilyStateScopeMap';
 
-export const isRowSelectedScopedFamilyState = createScopedFamilyState<
+export const isRowSelectedScopedFamilyState = createFamilyStateScopeMap<
   boolean,
   string
 >({

@@ -1,4 +1,4 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
 import { SnackBarProps } from '../components/SnackBar';
 
@@ -11,7 +11,7 @@ type SnackBarState = {
   queue: SnackBarOptions[];
 };
 
-export const snackBarInternalScopedState = createScopedState<SnackBarState>({
+export const snackBarInternalScopedState = createStateScopeMap<SnackBarState>({
   key: 'snackBarState',
   defaultValue: {
     maxQueue: 3,

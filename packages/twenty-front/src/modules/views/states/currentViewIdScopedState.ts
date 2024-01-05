@@ -1,6 +1,8 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const currentViewIdScopedState = createScopedState<string | undefined>({
-  key: 'currentViewIdScopedState',
-  defaultValue: undefined,
-});
+export const currentViewIdScopedState = createStateScopeMap<string | undefined>(
+  {
+    key: 'currentViewIdScopedState',
+    defaultValue: undefined,
+  },
+);

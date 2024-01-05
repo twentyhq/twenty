@@ -17,9 +17,7 @@ import { mockedAccounts } from '~/testing/mock-data/accounts';
 export const SettingsAccountsEmailsInboxSettings = () => {
   const navigate = useNavigate();
   const { accountUuid = '' } = useParams();
-  const account = mockedAccounts.find(
-    (account) => account.uuid === accountUuid,
-  );
+  const account = mockedAccounts.find((account) => account.id === accountUuid);
 
   useEffect(() => {
     if (!account) navigate(AppPath.NotFound);
@@ -40,7 +38,7 @@ export const SettingsAccountsEmailsInboxSettings = () => {
           links={[
             { children: 'Accounts', href: '/settings/accounts' },
             { children: 'Emails', href: '/settings/accounts/emails' },
-            { children: account?.email || '' },
+            { children: account?.handle || '' },
           ]}
         />
         <SettingsAccountsInboxSettingsSynchronizationSection

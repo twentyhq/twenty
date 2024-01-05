@@ -1,9 +1,9 @@
-import { createScopedSelector } from '@/ui/utilities/recoil-scope/utils/createScopedSelector';
+import { createSelectorScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorScopeMap';
 
 import { availableTableColumnsScopedState } from '../availableTableColumnsScopedState';
 import { tableColumnsScopedState } from '../tableColumnsScopedState';
 
-export const hiddenTableColumnsScopedSelector = createScopedSelector({
+export const hiddenTableColumnsScopedSelector = createSelectorScopeMap({
   key: 'hiddenTableColumnsScopedSelector',
   get:
     ({ scopeId }) =>

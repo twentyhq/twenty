@@ -1,8 +1,8 @@
 import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
 import { BoardFieldDefinition } from '@/object-record/record-board/types/BoardFieldDefinition';
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const onFieldsChangeScopedState = createScopedState<
+export const onFieldsChangeScopedState = createStateScopeMap<
   (fields: BoardFieldDefinition<FieldMetadata>[]) => void
 >({
   key: 'onFieldsChangeScopedState',

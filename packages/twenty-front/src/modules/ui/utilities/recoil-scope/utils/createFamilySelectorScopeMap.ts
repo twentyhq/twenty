@@ -11,7 +11,7 @@ import {
   WrappedValue,
 } from 'recoil';
 
-import { ScopedFamilyStateKey } from '../scopes-internal/types/ScopedFamilyStateKey';
+import { FamilyStateScopeMapKey } from '../scopes-internal/types/FamilyStateScopeMapKey';
 
 type SelectorGetter<T, P> = (
   param: P,
@@ -27,7 +27,7 @@ type SelectorSetter<T, P> = (
   newValue: T | DefaultValue,
 ) => void;
 
-export const createScopedFamilySelector = <
+export const createFamilySelectorScopeMap = <
   ValueType,
   FamilyKey extends SerializableParam,
 >({
@@ -36,10 +36,10 @@ export const createScopedFamilySelector = <
   set,
 }: {
   key: string;
-  get: SelectorGetter<ValueType, ScopedFamilyStateKey<FamilyKey>>;
-  set: SelectorSetter<ValueType, ScopedFamilyStateKey<FamilyKey>>;
+  get: SelectorGetter<ValueType, FamilyStateScopeMapKey<FamilyKey>>;
+  set: SelectorSetter<ValueType, FamilyStateScopeMapKey<FamilyKey>>;
 }) => {
-  return selectorFamily<ValueType, ScopedFamilyStateKey<FamilyKey>>({
+  return selectorFamily<ValueType, FamilyStateScopeMapKey<FamilyKey>>({
     key,
     get,
     set,

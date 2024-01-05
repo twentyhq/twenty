@@ -1,6 +1,6 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const isRecordBoardLoadedScopedState = createScopedState<boolean>({
+export const isRecordBoardLoadedScopedState = createStateScopeMap<boolean>({
   key: 'isRecordBoardLoadedScopedState',
   defaultValue: false,
 });

@@ -1,7 +1,7 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 import { ViewSort } from '@/views/types/ViewSort';
 
-export const onViewSortsChangeScopedState = createScopedState<
+export const onViewSortsChangeScopedState = createStateScopeMap<
   ((sorts: ViewSort[]) => void | Promise<void>) | undefined
 >({
   key: 'onViewSortsChangeScopedState',
