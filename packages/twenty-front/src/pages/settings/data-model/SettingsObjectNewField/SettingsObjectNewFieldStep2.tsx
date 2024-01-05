@@ -6,6 +6,7 @@ import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataIt
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { FieldMetadataOption } from '@/object-metadata/types/FieldMetadataOption';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -123,6 +124,42 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   if (!activeObjectMetadataItem) return null;
 
+  const getFieldOptions = (): FieldMetadataOption[] | undefined => {
+    if (!validatedFormValues) return;
+
+    switch (validatedFormValues.type) {
+      case FieldMetadataType.Select || FieldMetadataType.MultiSelect:
+        return validatedFormValues.select;
+      case FieldMetadataType.Rating: {
+        const ratings: FieldMetadataOption[] = [
+          {
+            isDefault: false,
+            label: 'one',
+          },
+          {
+            isDefault: false,
+            label: 'two',
+          },
+          {
+            isDefault: false,
+            label: 'three',
+          },
+          {
+            isDefault: false,
+            label: 'four',
+          },
+          {
+            isDefault: false,
+            label: 'five',
+          },
+        ];
+        return ratings;
+      }
+      default:
+        return undefined;
+    }
+  };
+
   const handleSave = async () => {
     if (!validatedFormValues) return;
 
@@ -216,10 +253,7 @@ export const SettingsObjectNewFieldStep2 = () => {
           label: validatedFormValues.label ?? '',
           objectMetadataId: activeObjectMetadataItem.id,
           type: validatedFormValues.type,
-          options:
-            validatedFormValues.type === FieldMetadataType.Select
-              ? validatedFormValues.select
-              : undefined,
+          options: getFieldOptions(),
         });
 
         objectViews.forEach(async (view) => {
