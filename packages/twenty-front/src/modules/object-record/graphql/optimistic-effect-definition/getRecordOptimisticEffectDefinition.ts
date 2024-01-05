@@ -24,9 +24,9 @@ export const getRecordOptimisticEffectDefinition = ({
     const newRecordPaginatedCacheField = produce<
       PaginatedRecordTypeResults<any>
     >(currentData as PaginatedRecordTypeResults<any>, (draft) => {
-      const existingDataIsEmpty = !draft || !draft.edges || !draft.edges[0];
-
       if (isNonEmptyArray(createdRecords)) {
+        const existingDataIsEmpty = !draft?.edges?.[0];
+
         if (existingDataIsEmpty) {
           return {
             __typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
@@ -41,23 +41,23 @@ export const getRecordOptimisticEffectDefinition = ({
               startCursor: '',
             },
           };
-        } else {
-          for (const createdRecord of createdRecords) {
-            const existingRecord = draft.edges.find(
-              (edge) => edge.node.id === createdRecord.id,
-            );
+        }
 
-            if (existingRecord) {
-              existingRecord.node = createdRecord;
-              continue;
-            }
+        for (const createdRecord of createdRecords) {
+          const existingRecord = draft.edges.find(
+            (edge) => edge.node.id === createdRecord.id,
+          );
 
-            draft.edges.unshift({
-              node: createdRecord,
-              cursor: '',
-              __typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-            });
+          if (existingRecord) {
+            existingRecord.node = createdRecord;
+            continue;
           }
+
+          draft.edges.unshift({
+            node: createdRecord,
+            cursor: '',
+            __typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
+          });
         }
       }
 

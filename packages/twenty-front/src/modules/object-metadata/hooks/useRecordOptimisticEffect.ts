@@ -23,35 +23,20 @@ export const useRecordOptimisticEffect = ({
     });
 
   useEffect(() => {
-    registerOptimisticEffect({
-      definition: getRecordOptimisticEffectDefinition({
-        objectMetadataItem,
-      }),
-      variables: {
-        filter,
-        orderBy,
-        limit,
-      },
+    const definition = getRecordOptimisticEffectDefinition({
+      objectMetadataItem,
     });
+    const variables = { filter, orderBy, limit };
 
-    return () => {
-      unregisterOptimisticEffect({
-        definition: getRecordOptimisticEffectDefinition({
-          objectMetadataItem,
-        }),
-        variables: {
-          filter,
-          orderBy,
-          limit,
-        },
-      });
-    };
+    registerOptimisticEffect({ definition, variables });
+
+    return () => unregisterOptimisticEffect({ definition, variables });
   }, [
-    registerOptimisticEffect,
     filter,
-    orderBy,
     limit,
     objectMetadataItem,
+    orderBy,
+    registerOptimisticEffect,
     unregisterOptimisticEffect,
   ]);
 };
