@@ -8,6 +8,7 @@ import { GraphiQL } from 'graphiql';
 
 import Playground from '../components/playground';
 
+import explorerCss from '!css-loader!@graphiql/plugin-explorer/dist/style.css';
 import graphiqlCss from '!css-loader!graphiql/graphiql.css';
 
 // Docusaurus does SSR for custom pages, but we need to load GraphiQL in the browser
@@ -22,12 +23,19 @@ const GraphQlComponent = ({ token }) => {
 
   // We load graphiql style using useEffect as it breaks remaining docs style
   useEffect(() => {
-    const styleElement1 = document.createElement('style');
-    styleElement1.innerHTML = graphiqlCss.toString();
-    document.head.append(styleElement1);
+    const createAndAppendStyle = (css) => {
+      const styleElement = document.createElement('style');
+      styleElement.innerHTML = css.toString();
+      document.head.append(styleElement);
+      return styleElement;
+    };
+
+    const styleElement1 = createAndAppendStyle(graphiqlCss);
+    const styleElement2 = createAndAppendStyle(explorerCss);
 
     return () => {
       styleElement1.remove();
+      styleElement2.remove();
     };
   }, []);
 
