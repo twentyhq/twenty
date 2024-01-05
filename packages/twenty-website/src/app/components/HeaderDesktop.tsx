@@ -1,11 +1,13 @@
 'use client';
 
 import styled from '@emotion/styled';
-import { Logo } from './Logo';
 import { IBM_Plex_Mono } from 'next/font/google';
-import { DiscordIcon, GithubIcon, GithubIcon2, XIcon } from './Icons';
 import { usePathname } from 'next/navigation';
+
 import { ExternalArrow } from '@/app/components/ExternalArrow';
+
+import { DiscordIcon, GithubIcon, GithubIcon2, XIcon } from './Icons';
+import { Logo } from './Logo';
 
 const IBMPlexMono = IBM_Plex_Mono({
   weight: '500',

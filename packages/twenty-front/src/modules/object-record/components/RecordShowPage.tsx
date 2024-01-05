@@ -75,13 +75,6 @@ export const RecordShowPage = () => {
   const [uploadImage] = useUploadImageMutation();
   const { updateOneRecord } = useUpdateOneRecord({ objectNameSingular });
 
-  const objectMetadataType =
-    objectMetadataItem?.nameSingular === 'company'
-      ? 'Company'
-      : objectMetadataItem?.nameSingular === 'person'
-        ? 'Person'
-        : 'Custom';
-
   const useUpdateOneObjectRecordMutation: RecordUpdateHook = () => {
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {
       updateOneRecord?.({
@@ -179,7 +172,7 @@ export const RecordShowPage = () => {
         hasBackButton
         Icon={IconBuildingSkyscraper}
       >
-        {record && objectMetadataType !== 'Custom' && (
+        {record && (
           <>
             <PageFavoriteButton
               isFavorite={isFavorite}
@@ -189,7 +182,7 @@ export const RecordShowPage = () => {
               key="add"
               entity={{
                 id: record.id,
-                type: objectMetadataType,
+                targetObjectNameSingular: objectMetadataItem?.nameSingular,
               }}
             />
             <ShowPageMoreButton
@@ -296,13 +289,9 @@ export const RecordShowPage = () => {
               )}
             </ShowPageLeftContainer>
             <ShowPageRightContainer
-              entity={{
-                id: record?.id || '',
-                type: ['Company', 'Person'].includes(
-                  objectMetadataItem?.labelSingular,
-                )
-                  ? (objectMetadataItem.labelSingular as 'Company' | 'Person')
-                  : 'Custom',
+              targetableObject={{
+                id: record?.id ?? '',
+                targetObjectNameSingular: objectMetadataItem?.nameSingular,
               }}
               timeline
               tasks

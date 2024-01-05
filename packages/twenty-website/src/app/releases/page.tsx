@@ -1,8 +1,9 @@
+import { Metadata } from 'next';
 import { compileMDX } from 'next-mdx-remote/rsc';
-import gfm from 'remark-gfm';
-import { ContentContainer } from '../components/ContentContainer';
 import remarkBehead from 'remark-behead';
-import type { Metadata } from 'next';
+import gfm from 'remark-gfm';
+
+import { ContentContainer } from '../components/ContentContainer';
 
 interface Release {
   id: number;
