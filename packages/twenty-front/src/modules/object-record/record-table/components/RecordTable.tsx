@@ -5,7 +5,6 @@ import { RecordTableBody } from '@/object-record/record-table/components/RecordT
 import { RecordTableBodyEffect } from '@/object-record/record-table/components/RecordTableBodyEffect';
 import { RecordTableHeader } from '@/object-record/record-table/components/RecordTableHeader';
 import { RecordTableRefContext } from '@/object-record/record-table/contexts/RecordTableRefContext';
-import { rgba } from '@/ui/theme/constants/colors';
 
 const StyledTable = styled.table`
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -56,7 +55,6 @@ const StyledTable = styled.table`
   tbody td:nth-of-type(-n + 2) {
     position: sticky;
     z-index: 2;
-    border-right: none;
   }
 
   thead th:nth-of-type(1),
@@ -65,32 +63,22 @@ const StyledTable = styled.table`
   }
   thead th:nth-of-type(2),
   tbody td:nth-of-type(2) {
-    left: calc(${({ theme }) => theme.table.checkboxColumnWidth} - 2px);
+    left: calc(${({ theme }) => theme.table.checkboxColumnWidth} - 1px);
   }
 
-  tbody td:nth-of-type(2)::after,
-  thead th:nth-of-type(2)::after {
+  &.freeze-first-columns-shadow thead th:nth-of-type(2),
+  &.freeze-first-columns-shadow tbody td:nth-of-type(2) {
+    box-shadow: ${({ theme }) => theme.boxShadow.strong};
+    clip-path: inset(0px -14px 0px 0px);
+  }
+
+  &.freeze-first-columns-shadow thead th:nth-of-type(2)::before,
+  &.freeze-first-columns-shadow tbody td:nth-of-type(2)::before {
     content: '';
     height: calc(100% + 1px);
     position: absolute;
     top: 0;
-    width: 4px;
-    right: -4px;
-  }
-
-  &.freeze-first-columns-shadow thead th:nth-of-type(2)::after,
-  &.freeze-first-columns-shadow tbody td:nth-of-type(2)::after {
-    box-shadow: ${({ theme }) =>
-      `4px 0px 4px -4px ${
-        theme.name === 'dark'
-          ? rgba(theme.grayScale.gray50, 0.8)
-          : rgba(theme.grayScale.gray100, 0.25)
-      } inset`};
-  }
-
-  thead th:nth-of-type(3),
-  tbody td:nth-of-type(3) {
-    border-left: 1px solid ${({ theme }) => theme.border.color.light};
+    width: 2px;
   }
 `;
 
