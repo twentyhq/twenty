@@ -60,6 +60,9 @@ export class ClientConfig {
   signInPrefilled: boolean;
 
   @Field(() => Boolean)
+  signUpDisabled: boolean;
+
+  @Field(() => Boolean)
   debugMode: boolean;
 
   @Field(() => Support)

@@ -246,6 +246,6 @@ export class EnvironmentService {
   }
 
   isSignUpDisabled(): boolean {
-    return this.configService.get<boolean>('IS_SIGNUP_DISABLED') ?? false;
+    return this.configService.get<boolean>('IS_SIGN_UP_DISABLED') ?? false;
   }
 }

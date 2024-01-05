@@ -18,6 +18,8 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
 
 import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
+import { useRecoilValue } from 'recoil';
+import { isSignUpDisabledState } from '@/client-config/states/isSignUpDisabledState';
 
 // TODO: break down into smaller functions and / or hooks
 export const PageChangeEffect = () => {
@@ -40,6 +42,8 @@ export const PageChangeEffect = () => {
   const { addToCommandMenu, setToIntitialCommandMenu } = useCommandMenu();
 
   const openCreateActivity = useOpenCreateActivityDrawer();
+
+  const isSignUpDisabled = useRecoilValue(isSignUpDisabledState);
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
@@ -115,6 +119,8 @@ export const PageChangeEffect = () => {
           navigateToSignUp();
         },
       });
+    } else if (isMatchingLocation(AppPath.SignUp) && isSignUpDisabled) {
+      navigate(AppPath.SignIn);
     }
   }, [
     enqueueSnackBar,

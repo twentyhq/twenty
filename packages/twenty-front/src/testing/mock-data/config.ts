@@ -1,5 +1,6 @@
 export const mockedClientConfig = {
   signInPrefilled: true,
+  signUpDisabled: false,
   dataModelSettingsEnabled: true,
   developersSettingsEnabled: true,
   debugMode: false,
