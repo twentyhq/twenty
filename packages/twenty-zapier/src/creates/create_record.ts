@@ -24,7 +24,7 @@ export const createRecordKey = 'create_record';
 
 export default {
   display: {
-    description: 'Creates a new Record in Twenty',
+    description: 'Create a new Record in Twenty.',
     hidden: false,
     label: 'Create New Record',
   },

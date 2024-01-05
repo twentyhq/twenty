@@ -5,6 +5,7 @@ import 'dotenv/config';
 const { version } = require('../package.json');
 
 import createRecord, { createRecordKey } from './creates/create_record';
+import deleteRecord, { deleteRecordKey } from './creates/delete_record';
 import updateRecord, { updateRecordKey } from './creates/update_record';
 import findObjectNamesPlural, {
   findObjectNamesPluralKey,
@@ -37,5 +38,6 @@ export default {
   creates: {
     [createRecordKey]: createRecord,
     [updateRecordKey]: updateRecord,
+    [deleteRecordKey]: deleteRecord,
   },
 };
