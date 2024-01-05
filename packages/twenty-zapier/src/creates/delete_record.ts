@@ -1,6 +1,7 @@
 import { Bundle, ZObject } from 'zapier-platform-core';
 
-import { findObjectNamesSingularKey } from '../triggers/find_object_names_singular';
+import { findObjectNamesPluralKey } from '../triggers/find_object_names_plural';
+import { listRecordIdsKey } from '../triggers/list_record_ids';
 import { capitalize } from '../utils/capitalize';
 import requestDb from '../utils/requestDb';
 
@@ -33,13 +34,19 @@ export default {
   operation: {
     inputFields: [
       {
-        key: 'nameSingular',
-        required: true,
+        key: 'namePlural',
         label: 'Record Name',
-        dynamic: `${findObjectNamesSingularKey}.nameSingular`,
+        dynamic: `${findObjectNamesPluralKey}.namePlural`,
+        required: true,
         altersDynamicFields: true,
       },
-      { key: 'id', label: 'Id', type: 'string', required: true },
+      {
+        key: 'id',
+        label: 'Id',
+        type: 'string',
+        dynamic: `${listRecordIdsKey}.id`,
+        required: true,
+      },
     ],
     sample: {
       id: '179ed459-79cf-41d9-ab85-96397fa8e936',

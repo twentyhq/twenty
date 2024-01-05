@@ -13,6 +13,7 @@ import findObjectNamesPlural, {
 import findObjectNamesSingular, {
   findObjectNamesSingularKey,
 } from './triggers/find_object_names_singular';
+import listRecordIds, { listRecordIdsKey } from './triggers/list_record_ids';
 import triggerRecordCreated, {
   triggerRecordCreatedKey,
 } from './triggers/trigger_record_created';
@@ -31,6 +32,7 @@ export default {
   triggers: {
     [findObjectNamesSingularKey]: findObjectNamesSingular,
     [findObjectNamesPluralKey]: findObjectNamesPlural,
+    [listRecordIdsKey]: listRecordIds,
     [triggerRecordCreatedKey]: triggerRecordCreated,
     [triggerRecordUpdatedKey]: triggerRecordUpdated,
     [triggerRecordDeletedKey]: triggerRecordDeleted,
