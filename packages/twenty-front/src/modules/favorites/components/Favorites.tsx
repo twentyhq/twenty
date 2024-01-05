@@ -10,14 +10,11 @@ import { Avatar } from '@/users/components/Avatar';
 import { useFavorites } from '../hooks/useFavorites';
 
 const StyledContainer = styled(NavigationDrawerSection)`
-  overflow-x: auto;
   width: 100%;
 `;
 
 export const Favorites = () => {
-  const { favorites, handleReorderFavorite } = useFavorites({
-    objectNamePlural: 'companies',
-  });
+  const { favorites, handleReorderFavorite } = useFavorites();
 
   if (!favorites || favorites.length === 0) return <></>;
 

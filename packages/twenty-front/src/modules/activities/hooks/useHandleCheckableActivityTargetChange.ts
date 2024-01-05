@@ -1,4 +1,5 @@
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 
@@ -11,10 +12,10 @@ export const useHandleCheckableActivityTargetChange = ({
 }) => {
   const { createOneRecord: createOneActivityTarget } =
     useCreateOneRecord<ActivityTarget>({
-      objectNameSingular: 'activityTarget',
+      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     });
   const { deleteOneRecord: deleteOneActivityTarget } = useDeleteOneRecord({
-    objectNameSingular: 'activityTarget',
+    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
   });
 
   return async (
@@ -41,7 +42,7 @@ export const useHandleCheckableActivityTargetChange = ({
       .map(([id, _]) => id);
 
     if (idsToAdd.length) {
-      idsToAdd.map((id) => {
+      idsToAdd.forEach((id) => {
         const entityFromToSelect = entitiesToSelect.filter(
           (entity: any) => entity.id === id,
         ).length
@@ -64,7 +65,7 @@ export const useHandleCheckableActivityTargetChange = ({
     }
 
     if (idsToDelete.length) {
-      idsToDelete.map((id) => {
+      idsToDelete.forEach((id) => {
         const currentActivityTargetId = currentActivityTargets.filter(
           ({ companyId, personId }) => companyId === id || personId === id,
         )[0].id;

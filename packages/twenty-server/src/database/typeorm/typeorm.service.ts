@@ -49,9 +49,8 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     this.isDatasourceInitializing.set(dataSource.id, true);
 
     try {
-      const dataSourceInstance = await this.createAndInitializeDataSource(
-        dataSource,
-      );
+      const dataSourceInstance =
+        await this.createAndInitializeDataSource(dataSource);
 
       this.dataSources.set(dataSource.id, dataSourceInstance);
 

@@ -11,7 +11,6 @@ export default async () => {
 
   await prisma.$transaction(
     entities.map((entity) => {
-      console.log('entity: ', entity);
       return prisma[entity].deleteMany();
     }),
   );

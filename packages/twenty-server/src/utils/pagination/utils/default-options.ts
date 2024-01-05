@@ -25,7 +25,7 @@ export function mergeDefaultOptions<
       return query.getRawMany();
     },
     getCursor: (record: Record | undefined) =>
-      ({ id: (record as unknown as { id: string })?.id } as unknown as Cursor),
+      ({ id: (record as unknown as { id: string })?.id }) as unknown as Cursor,
     encodeCursor: (cursor: Cursor) =>
       Buffer.from((cursor as unknown as { id: string }).id.toString()).toString(
         'base64',
@@ -33,9 +33,9 @@ export function mergeDefaultOptions<
     decodeCursor: (cursorString: string) =>
       ({
         id: Buffer.from(cursorString, 'base64').toString(),
-      } as unknown as Cursor),
+      }) as unknown as Cursor,
     recordToEdge: (record: Record) =>
-      ({ node: record } as unknown as Omit<CustomEdge, 'cursor'>),
+      ({ node: record }) as unknown as Omit<CustomEdge, 'cursor'>,
     resolveInfo: null,
     ...pOptions,
   };

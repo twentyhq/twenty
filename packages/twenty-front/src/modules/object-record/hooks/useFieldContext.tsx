@@ -11,17 +11,21 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 
 export const useFieldContext = ({
-  objectNameSingular,
+  clearable,
   fieldMetadataName,
-  objectRecordId,
   fieldPosition,
+  isLabelIdentifier = false,
+  objectNameSingular,
+  objectRecordId,
 }: {
-  objectNameSingular: string;
-  objectRecordId: string;
+  clearable?: boolean;
   fieldMetadataName: string;
   fieldPosition: number;
+  isLabelIdentifier?: boolean;
+  objectNameSingular: string;
+  objectRecordId: string;
 }) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
+  const { basePathToShowPage, objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 
@@ -50,9 +54,12 @@ export const useFieldContext = ({
           <FieldContext.Provider
             key={objectRecordId + fieldMetadataItem.id}
             value={{
+              basePathToShowPage: isLabelIdentifier
+                ? basePathToShowPage
+                : undefined,
               entityId: objectRecordId,
               recoilScopeId: objectRecordId + fieldMetadataItem.id,
-              isLabelIdentifier: false,
+              isLabelIdentifier,
               fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
                 field: fieldMetadataItem,
                 position: fieldPosition,
@@ -60,6 +67,7 @@ export const useFieldContext = ({
               }),
               useUpdateRecord: useUpdateOneObjectMutation,
               hotkeyScope: InlineCellHotkeyScope.InlineCell,
+              clearable,
             }}
           >
             {children}

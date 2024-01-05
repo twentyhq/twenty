@@ -1,19 +1,22 @@
-import { labelling } from "../utils/labelling";
+import { labelling } from '../utils/labelling';
 
 type Infos = {
   properties: {
     [field: string]: {
       type: string;
-      properties?: { [field: string]: { type: string } }
-      items?: { [$ref: string]: string }
-    }
-  },
-  example: object,
-  required: string[]
-}
+      properties?: { [field: string]: { type: string } };
+      items?: { [$ref: string]: string };
+    };
+  };
+  example: object;
+  required: string[];
+};
 
-export const computeInputFields = (infos: Infos): object[] => {
-  const result = []
+export const computeInputFields = (
+  infos: Infos,
+  idRequired = false,
+): object[] => {
+  const result = [];
 
   for (const fieldName of Object.keys(infos.properties)) {
     switch (infos.properties[fieldName].type) {
@@ -23,32 +26,38 @@ export const computeInputFields = (infos: Infos): object[] => {
         if (!infos.properties[fieldName].properties) {
           break;
         }
-        for (const subFieldName of Object.keys(infos.properties[fieldName].properties || {})) {
+        for (const subFieldName of Object.keys(
+          infos.properties[fieldName].properties || {},
+        )) {
           const field = {
             key: `${fieldName}__${subFieldName}`,
             label: `${labelling(fieldName)}: ${labelling(subFieldName)}`,
             type: infos.properties[fieldName].properties?.[subFieldName].type,
             required: false,
-          }
+          };
           if (infos.required?.includes(fieldName)) {
-            field.required = true
+            field.required = true;
           }
-          result.push(field)
+          result.push(field);
         }
         break;
-      default:
+      default: {
         const field = {
           key: fieldName,
           label: labelling(fieldName),
           type: infos.properties[fieldName].type,
           required: false,
+        };
+        if (
+          (idRequired && fieldName === 'id') ||
+          (!idRequired && infos.required?.includes(fieldName))
+        ) {
+          field.required = true;
         }
-        if (infos.required?.includes(fieldName)) {
-          field.required = true
-        }
-        result.push(field)
+        result.push(field);
+      }
     }
   }
 
-  return result
-}
+  return result;
+};

@@ -1,14 +1,17 @@
-import type { Metadata } from 'next';
+import { Metadata } from 'next';
 import { Gabarito } from 'next/font/google';
-import EmotionRootStyleRegistry from './emotion-root-style-registry';
-import { HeaderDesktop } from './components/HeaderDesktop';
-import { FooterDesktop } from './components/FooterDesktop';
+
 import { HeaderMobile } from '@/app/components/HeaderMobile';
+
+import { FooterDesktop } from './components/FooterDesktop';
+import { HeaderDesktop } from './components/HeaderDesktop';
+import EmotionRootStyleRegistry from './emotion-root-style-registry';
+
 import './layout.css';
 
 export const metadata: Metadata = {
-  title: 'Twenty.dev',
-  description: 'Twenty for Developer',
+  title: 'Twenty.com',
+  description: 'Open Source CRM',
   icons: '/images/core/logo.svg',
 };
 

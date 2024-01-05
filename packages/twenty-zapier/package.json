@@ -4,6 +4,7 @@
   "description": "Effortlessly sync Twenty with 3000+ apps. Automate tasks, boost productivity, and supercharge your customer relationships!",
   "main": "src/index.ts",
   "scripts": {
+    "nx": "NX_DEFAULT_PROJECT=twenty-zapier node ../../node_modules/nx/bin/nx.js",
     "format": "prettier . --write \"!build\"",
     "test": "yarn build && jest --testTimeout 10000 --rootDir ./lib/test",
     "build": "yarn clean && tsc",
@@ -14,21 +15,9 @@
     "_zapier-build": "yarn build"
   },
   "engines": {
-    "node": ">=v18",
-    "npm": ">=5.6.0"
-  },
-  "dependencies": {
-    "dotenv-cli": "^7.2.1",
-    "prettier": "^3.0.3",
-    "zapier-platform-core": "15.5.1"
-  },
-  "devDependencies": {
-    "@types/jest": "^29.5.5",
-    "@types/node": "^20.8.6",
-    "jest": "^29.6.0",
-    "rimraf": "^5.0.5",
-    "typescript": "^5.2.2",
-    "zapier-platform-cli": "^15.4.1"
+    "node": "^18.17.1",
+    "npm": "please-use-yarn",
+    "yarn": "^4.0.2"
   },
   "private": true,
   "zapier": {

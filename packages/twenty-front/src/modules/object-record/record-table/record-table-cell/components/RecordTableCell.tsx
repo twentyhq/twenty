@@ -8,7 +8,7 @@ import { useTableCell } from '../hooks/useTableCell';
 
 import { TableCellContainer } from './RecordTableCellContainer';
 
-export const TableCell = ({
+export const RecordTableCell = ({
   customHotkeyScope,
 }: {
   customHotkeyScope: HotkeyScope;

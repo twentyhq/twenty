@@ -2,6 +2,7 @@ import { ReactNode, useContext } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
   FieldContext,
   RecordUpdateHook,
@@ -151,7 +152,7 @@ export const CompanyBoardCard = () => {
 
   const useUpdateOneRecordMutation: RecordUpdateHook = () => {
     const { updateOneRecord: updateOneOpportunity } = useUpdateOneRecord({
-      objectNameSingular: 'opportunity',
+      objectNameSingular: CoreObjectNameSingular.Opportunity,
     });
 
     const updateEntity = ({ variables }: RecordUpdateHookParams) => {

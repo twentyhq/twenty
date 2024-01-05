@@ -9,7 +9,6 @@ import {
 import { WorkspaceBuildSchemaOptions } from 'src/workspace/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
 
-import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { TypeDefinitionsStorage } from 'src/workspace/workspace-schema-builder/storages/type-definitions.storage';
 import { objectContainsRelationField } from 'src/workspace/workspace-schema-builder/utils/object-contains-relation-field';
 import { getResolverArgs } from 'src/workspace/workspace-schema-builder/utils/get-resolver-args.util';
@@ -114,61 +113,52 @@ export class ExtendObjectTypeDefinitionFactory {
         continue;
       }
 
-      switch (fieldMetadata.type) {
-        case FieldMetadataType.RELATION: {
-          const relationMetadata =
-            fieldMetadata.fromRelationMetadata ??
-            fieldMetadata.toRelationMetadata;
+      const relationMetadata =
+        fieldMetadata.fromRelationMetadata ?? fieldMetadata.toRelationMetadata;
 
-          if (!relationMetadata) {
-            this.logger.error(
-              `Could not find a relation metadata for ${fieldMetadata.id}`,
-              {
-                fieldMetadata,
-              },
-            );
+      if (!relationMetadata) {
+        this.logger.error(
+          `Could not find a relation metadata for ${fieldMetadata.id}`,
+          { fieldMetadata },
+        );
 
-            throw new Error(
-              `Could not find a relation metadata for ${fieldMetadata.id}`,
-            );
-          }
-
-          const relationDirection = deduceRelationDirection(
-            fieldMetadata.objectMetadataId,
-            relationMetadata,
-          );
-          const relationType = this.relationTypeFactory.create(
-            fieldMetadata,
-            relationMetadata,
-            relationDirection,
-          );
-          let argsType: GraphQLFieldConfigArgumentMap | undefined = undefined;
-
-          // Args are only needed when relation is of kind `oneToMany` and the relation direction is `from`
-          if (
-            relationMetadata.relationType ===
-              RelationMetadataType.ONE_TO_MANY &&
-            relationDirection === RelationDirection.FROM
-          ) {
-            const args = getResolverArgs('findMany');
-
-            argsType = this.argsFactory.create(
-              {
-                args,
-                objectMetadataId: relationMetadata.toObjectMetadataId,
-              },
-              options,
-            );
-          }
-
-          fields[fieldMetadata.name] = {
-            type: relationType,
-            args: argsType,
-            description: fieldMetadata.description,
-          };
-          break;
-        }
+        throw new Error(
+          `Could not find a relation metadata for ${fieldMetadata.id}`,
+        );
       }
+
+      const relationDirection = deduceRelationDirection(
+        fieldMetadata.objectMetadataId,
+        relationMetadata,
+      );
+      const relationType = this.relationTypeFactory.create(
+        fieldMetadata,
+        relationMetadata,
+        relationDirection,
+      );
+      let argsType: GraphQLFieldConfigArgumentMap | undefined = undefined;
+
+      // Args are only needed when relation is of kind `oneToMany` and the relation direction is `from`
+      if (
+        relationMetadata.relationType === RelationMetadataType.ONE_TO_MANY &&
+        relationDirection === RelationDirection.FROM
+      ) {
+        const args = getResolverArgs('findMany');
+
+        argsType = this.argsFactory.create(
+          {
+            args,
+            objectMetadataId: relationMetadata.toObjectMetadataId,
+          },
+          options,
+        );
+      }
+
+      fields[fieldMetadata.name] = {
+        type: relationType,
+        args: argsType,
+        description: fieldMetadata.description,
+      };
     }
 
     return fields;

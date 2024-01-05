@@ -6,6 +6,7 @@ import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRi
 import { Activity } from '@/activities/types/Activity';
 import { Company } from '@/companies/types/Company';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Person } from '@/people/types/Person';
 import { IconNotes } from '@/ui/display/icon';
@@ -132,7 +133,7 @@ export const CommandMenu = () => {
 
   const { records: people } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened,
-    objectNameSingular: 'person',
+    objectNameSingular: CoreObjectNameSingular.Person,
     filter: {
       or: [
         { name: { firstName: { ilike: `%${search}%` } } },
@@ -144,7 +145,7 @@ export const CommandMenu = () => {
 
   const { records: companies } = useFindManyRecords<Company>({
     skip: !isCommandMenuOpened,
-    objectNameSingular: 'company',
+    objectNameSingular: CoreObjectNameSingular.Company,
     filter: {
       name: { ilike: `%${search}%` },
     },
@@ -153,7 +154,7 @@ export const CommandMenu = () => {
 
   const { records: activities } = useFindManyRecords<Activity>({
     skip: !isCommandMenuOpened,
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
     filter: {
       or: [
         { title: { like: `%${search}%` } },

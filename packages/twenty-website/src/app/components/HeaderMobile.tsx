@@ -1,11 +1,13 @@
 'use client';
 
-import styled from '@emotion/styled';
-import { Logo } from './Logo';
-import { IBM_Plex_Mono } from 'next/font/google';
-import { GithubIcon } from './Icons';
 import { useState } from 'react';
+import styled from '@emotion/styled';
+import { IBM_Plex_Mono } from 'next/font/google';
+
 import { ExternalArrow } from '@/app/components/ExternalArrow';
+
+import { GithubIcon } from './Icons';
+import { Logo } from './Logo';
 
 const IBMPlexMono = IBM_Plex_Mono({
   weight: '500',
@@ -33,6 +35,7 @@ const Nav = styled.nav`
 const LinkList = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 16px;
 `;
 
 const ListItem = styled.a`
@@ -164,6 +167,13 @@ const HamburgerLine2 = styled.div`
 const NavOpen = styled.div`
   flex-direction: column;
   align-items: center;
+  position: fixed;
+  inset: 0px;
+  top: 63px;
+  background-color: #fff;
+  gap: 33px;
+  padding-top: 32px;
+  z-index: 100;
 `;
 
 const MobileMenu = styled.div`

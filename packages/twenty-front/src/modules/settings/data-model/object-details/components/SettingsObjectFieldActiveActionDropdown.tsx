@@ -27,7 +27,7 @@ export const SettingsObjectFieldActiveActionDropdown = ({
 }: SettingsObjectFieldActiveActionDropdownProps) => {
   const dropdownScopeId = `${scopeKey}-settings-field-active-action-dropdown`;
 
-  const { closeDropdown } = useDropdown({ dropdownScopeId });
+  const { closeDropdown } = useDropdown(dropdownScopeId);
 
   const handleEdit = () => {
     onEdit();

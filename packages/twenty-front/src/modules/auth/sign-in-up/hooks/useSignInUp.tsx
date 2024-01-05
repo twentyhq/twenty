@@ -33,7 +33,7 @@ export enum SignInUpStep {
 const validationSchema = z
   .object({
     exist: z.boolean(),
-    email: z.string().email('Email must be a valid email'),
+    email: z.string().trim().email('Email must be a valid email'),
     password: z
       .string()
       .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
@@ -107,7 +107,7 @@ export const useSignInUp = () => {
     }
     checkUserExistsQuery({
       variables: {
-        email: form.getValues('email').toLowerCase(),
+        email: form.getValues('email').toLowerCase().trim(),
       },
       onCompleted: (data) => {
         if (data?.checkUserExists.exists) {
@@ -130,11 +130,11 @@ export const useSignInUp = () => {
         const { workspace: currentWorkspace } =
           signInUpMode === SignInUpMode.SignIn
             ? await signInWithCredentials(
-                data.email.toLowerCase(),
+                data.email.toLowerCase().trim(),
                 data.password,
               )
             : await signUpWithCredentials(
-                data.email.toLowerCase(),
+                data.email.toLowerCase().trim(),
                 data.password,
                 workspaceInviteHash,
               );

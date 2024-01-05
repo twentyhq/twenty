@@ -3,6 +3,7 @@ import { produce } from 'immer';
 import { useRecoilCallback } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { savedViewFiltersScopedFamilyState } from '@/views/states/savedViewFiltersScopedFamilyState';
 import { ViewFilter } from '@/views/types/ViewFilter';
@@ -16,11 +17,11 @@ export const useViewFilters = (viewScopeId: string) => {
     createOneRecordMutation,
     deleteOneRecordMutation,
   } = useObjectMetadataItem({
-    objectNameSingular: 'viewFilter',
+    objectNameSingular: CoreObjectNameSingular.ViewFilter,
   });
 
   const { modifyRecordFromCache } = useObjectMetadataItem({
-    objectNameSingular: 'view',
+    objectNameSingular: CoreObjectNameSingular.View,
   });
 
   const apolloClient = useApolloClient();

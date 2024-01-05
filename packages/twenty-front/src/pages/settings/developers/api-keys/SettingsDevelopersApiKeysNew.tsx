@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DateTime } from 'luxon';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
@@ -31,7 +32,7 @@ export const SettingsDevelopersApiKeysNew = () => {
   });
 
   const { createOneRecord: createOneApiKey } = useCreateOneRecord<ApiKey>({
-    objectNameSingular: 'apiKey',
+    objectNameSingular: CoreObjectNameSingular.ApiKey,
   });
 
   const onSave = async () => {

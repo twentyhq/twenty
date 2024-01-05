@@ -1,7 +1,8 @@
+import React, { ReactNode, useState } from 'react';
+
 import TokenForm, {
   TokenFormProps,
 } from '@/app/components/PlaygroundTokenForm';
-import React, { ReactNode, useState } from 'react';
 
 type PlaygroundProps = TokenFormProps & {
   children?: ReactNode;
