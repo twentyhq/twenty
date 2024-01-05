@@ -8,13 +8,13 @@ import { useAttachments } from '@/activities/files/hooks/useAttachments';
 import { Attachment } from '@/activities/files/types/Attachment';
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
-import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
 
 const StyledTaskGroupEmptyContainer = styled.div`
   align-items: center;
@@ -105,7 +105,7 @@ export const Attachments = ({
       fullPath: attachmentUrl,
       type: getFileType(file.name),
       [targetableObjectFieldIdName]: targetableObject.id,
-    }
+    };
 
     await createOneAttachment(attachmentToCreate);
   };
