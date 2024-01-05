@@ -145,7 +145,7 @@ type TimelineActivityProps = {
     | 'type'
     | 'comments'
     | 'dueAt'
-  > & { author: Pick<WorkspaceMember, 'name' | 'avatarUrl'> } & {
+  > & { author?: Pick<WorkspaceMember, 'name' | 'avatarUrl'> } & {
     assignee?: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'> | null;
   };
   isLastActivity?: boolean;
@@ -165,8 +165,8 @@ export const TimelineActivity = ({
       <StyledTimelineItemContainer>
         <StyledAvatarContainer>
           <Avatar
-            avatarUrl={activity.author.avatarUrl}
-            placeholder={activity.author.name.firstName ?? ''}
+            avatarUrl={activity.author?.avatarUrl}
+            placeholder={activity.author?.name.firstName ?? ''}
             size="sm"
             type="rounded"
           />
@@ -175,7 +175,8 @@ export const TimelineActivity = ({
           <StyledItemTitleContainer>
             <StyledItemAuthorText>
               <span>
-                {activity.author.name.firstName} {activity.author.name.lastName}
+                {activity.author?.name.firstName}{' '}
+                {activity.author?.name.lastName}
               </span>
               created a {activity.type.toLowerCase()}
             </StyledItemAuthorText>

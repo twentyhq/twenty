@@ -4,10 +4,7 @@ import { ActivityType } from '@/activities/types/Activity';
 import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
 import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 
-import {
-  ActivityTargetableEntity,
-  ActivityTargetableEntityType,
-} from '../types/ActivityTargetableEntity';
+import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
 import { useOpenCreateActivityDrawer } from './useOpenCreateActivityDrawer';
 
@@ -25,8 +22,8 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = (
     ({ snapshot }) =>
       (
         type: ActivityType,
-        entityType: ActivityTargetableEntityType,
-        relatedEntities?: ActivityTargetableEntity[],
+        objectNameSingular: string,
+        relatedEntities?: ActivityTargetableObject[],
       ) => {
         const selectedRowIds =
           injectSelectorSnapshotValueWithRecordTableScopeId(
@@ -34,18 +31,21 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = (
             selectedRowIdsScopeInjector,
           );
 
-        let activityTargetableEntityArray: ActivityTargetableEntity[] =
+        let activityTargetableEntityArray: ActivityTargetableObject[] =
           selectedRowIds.map((id: string) => ({
-            type: entityType,
+            type: 'Custom',
+            targetObjectNameSingular: objectNameSingular,
             id,
           }));
+
         if (relatedEntities) {
           activityTargetableEntityArray =
             activityTargetableEntityArray.concat(relatedEntities);
         }
+
         openCreateActivityDrawer({
           type,
-          targetableEntities: activityTargetableEntityArray,
+          targetableObjects: activityTargetableEntityArray,
         });
       },
     [

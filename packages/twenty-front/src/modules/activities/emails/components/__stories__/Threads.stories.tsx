@@ -7,7 +7,7 @@ const meta: Meta<typeof Threads> = {
   component: Threads,
   args: {
     entity: {
-      type: 'Person',
+      targetObjectNameSingular: 'person',
       id: '52ba3fd0-c723-4482-8b11-5fc24a587c71',
     },
   },
