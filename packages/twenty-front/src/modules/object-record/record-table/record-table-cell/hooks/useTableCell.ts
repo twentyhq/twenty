@@ -8,7 +8,8 @@ import { entityFieldInitialValueFamilyState } from '@/object-record/field/states
 import { FieldInitialValue } from '@/object-record/field/types/FieldInitialValue';
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
-import { tableRowIdsState } from '@/object-record/record-table/states/tableRowIdsState';
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -25,9 +26,15 @@ const DEFAULT_CELL_SCOPE: HotkeyScope = {
 };
 
 export const useTableCell = () => {
-  const { objectMetadataConfigState } = useRecordTableScopedStates();
+  const { scopeId: recordTableScopeId } = useRecordTable();
 
-  const objectMetadataConfig = useRecoilValue(objectMetadataConfigState);
+  const { objectMetadataConfigScopeInjector } = getRecordTableScopeInjector();
+
+  const { injectStateWithRecordTableScopeId } = useRecordTableScopedStates();
+
+  const objectMetadataConfig = useRecoilValue(
+    injectStateWithRecordTableScopeId(objectMetadataConfigScopeInjector),
+  );
 
   const basePathToShowPage = objectMetadataConfig?.basePathToShowPage;
 
@@ -35,7 +42,8 @@ export const useTableCell = () => {
   const setHotkeyScope = useSetHotkeyScope();
   const { setDragSelectionStartEnabled } = useDragSelect();
 
-  const closeCurrentTableCellInEditMode = useCloseCurrentTableCellInEditMode();
+  const closeCurrentTableCellInEditMode =
+    useCloseCurrentTableCellInEditMode(recordTableScopeId);
 
   const customCellHotkeyScope = useContext(CellHotkeyScopeContext);
 
@@ -56,8 +64,13 @@ export const useTableCell = () => {
     }),
   );
 
+  const { tableRowIdsScopeInjector } = getRecordTableScopeInjector();
+
   const handleRowDeletion = useRecoilCallback(({ snapshot }) => async () => {
-    const tableRowIds = snapshot.getLoadable(tableRowIdsState).getValue();
+    const tableRowIds = snapshot
+      .getLoadable(tableRowIdsScopeInjector(recordTableScopeId))
+      .getValue();
+
     await deleteOneRecord(tableRowIds[0]);
   });
 

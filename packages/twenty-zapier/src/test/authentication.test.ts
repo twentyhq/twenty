@@ -1,11 +1,5 @@
 import App from '../index';
-import {
-  Bundle,
-  HttpRequestOptions,
-  createAppTester,
-  tools,
-  ZObject,
-} from 'zapier-platform-core';
+import { Bundle, createAppTester, tools, ZObject } from 'zapier-platform-core';
 import getBundle from '../utils/getBundle';
 import handleQueryParams from '../utils/handleQueryParams';
 import requestDb from '../utils/requestDb';
@@ -43,19 +37,20 @@ describe('custom auth', () => {
   });
 
   it('fails on bad auth token format', async () => {
-    const bundle = { authData: { apiKey: 'bad' } };
+    const bundle = getBundle();
+    bundle.authData.apiKey = 'bad';
 
     try {
       await appTester(App.authentication.test, bundle);
     } catch (error: any) {
-      expect(error.message).toContain('UNAUTHENTICATED');
+      expect(error.message).toContain('Unauthorized');
       return;
     }
     throw new Error('appTester should have thrown');
   });
 
   it('fails on invalid auth token', async () => {
-    const expiresAt = '2020-01-01 10:10:10.000'
+    const expiresAt = '2020-01-01 10:10:10.000';
     const apiKeyBundle = getBundle({
       name: 'Test',
       expiresAt,
@@ -65,15 +60,17 @@ describe('custom auth', () => {
       apiKeyId: apiKeyId,
       expiresAt,
     });
-    const expiredToken = await appTester(generateApiKeyToken, generateTokenBundle);
-    const bundleWithExpiredApiKey = {
-      authData: { apiKey: expiredToken },
-    };
+    const expiredToken = await appTester(
+      generateApiKeyToken,
+      generateTokenBundle,
+    );
+    const bundleWithExpiredApiKey = getBundle({});
+    bundleWithExpiredApiKey.authData.apiKey = expiredToken;
 
     try {
       await appTester(App.authentication.test, bundleWithExpiredApiKey);
     } catch (error: any) {
-      expect(error.message).toContain('UNAUTHENTICATED');
+      expect(error.message).toContain('Unauthorized');
       return;
     }
     throw new Error('appTester should have thrown');

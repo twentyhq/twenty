@@ -12,20 +12,45 @@ export const ObjectMetadataNavItems = () => {
 
   return (
     <>
-      {activeObjectMetadataItems.map((objectMetadataItem) =>
-        objectMetadataItem.nameSingular === 'opportunity' ? null : (
-          <NavigationDrawerItem
-            key={objectMetadataItem.id}
-            label={objectMetadataItem.labelPlural}
-            to={`/objects/${objectMetadataItem.namePlural}`}
-            active={currentPath == `/objects/${objectMetadataItem.namePlural}`}
-            Icon={getIcon(objectMetadataItem.icon)}
-            onClick={() => {
-              navigate(`/objects/${objectMetadataItem.namePlural}`);
-            }}
-          />
-        ),
-      )}
+      {[
+        ...activeObjectMetadataItems
+          .filter((item) =>
+            ['person', 'company', 'opportunity'].includes(item.nameSingular),
+          )
+          .sort((objectMetadataItemA, objectMetadataItemB) => {
+            const order = ['person', 'company', 'opportunity'];
+            const indexA = order.indexOf(objectMetadataItemA.nameSingular);
+            const indexB = order.indexOf(objectMetadataItemB.nameSingular);
+            if (indexA === -1 || indexB === -1) {
+              return objectMetadataItemA.nameSingular.localeCompare(
+                objectMetadataItemB.nameSingular,
+              );
+            }
+            return indexA - indexB;
+          }),
+        ...activeObjectMetadataItems
+          .filter(
+            (item) =>
+              !['person', 'company', 'opportunity'].includes(item.nameSingular),
+          )
+          .sort((objectMetadataItemA, objectMetadataItemB) => {
+            return new Date(objectMetadataItemA.createdAt) <
+              new Date(objectMetadataItemB.createdAt)
+              ? 1
+              : -1;
+          }),
+      ].map((objectMetadataItem) => (
+        <NavigationDrawerItem
+          key={objectMetadataItem.id}
+          label={objectMetadataItem.labelPlural}
+          to={`/objects/${objectMetadataItem.namePlural}`}
+          active={currentPath === `/objects/${objectMetadataItem.namePlural}`}
+          Icon={getIcon(objectMetadataItem.icon)}
+          onClick={() => {
+            navigate(`/objects/${objectMetadataItem.namePlural}`);
+          }}
+        />
+      ))}
     </>
   );
 };

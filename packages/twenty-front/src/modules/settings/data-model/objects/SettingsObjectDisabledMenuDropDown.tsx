@@ -1,4 +1,4 @@
-import { IconArchiveOff, IconDotsVertical } from '@/ui/display/icon';
+import { IconArchiveOff, IconDotsVertical, IconTrash } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -17,20 +17,22 @@ type SettingsObjectDisabledMenuDropDownProps = {
 export const SettingsObjectDisabledMenuDropDown = ({
   onActivate,
   scopeKey,
+  onErase,
+  isCustomObject,
 }: SettingsObjectDisabledMenuDropDownProps) => {
   const dropdownScopeId = `${scopeKey}-settings-object-disabled-menu-dropdown`;
 
-  const { closeDropdown } = useDropdown({ dropdownScopeId });
+  const { closeDropdown } = useDropdown(dropdownScopeId);
 
   const handleActivate = () => {
     onActivate();
     closeDropdown();
   };
 
-  // const handleErase = () => {
-  //   onErase();
-  //   closeDropdown();
-  // };
+  const handleErase = () => {
+    onErase();
+    closeDropdown();
+  };
 
   return (
     <DropdownScope dropdownScopeId={dropdownScopeId}>
@@ -46,14 +48,14 @@ export const SettingsObjectDisabledMenuDropDown = ({
                 LeftIcon={IconArchiveOff}
                 onClick={handleActivate}
               />
-              {/* {isCustomObject && (
+              {isCustomObject && (
                 <MenuItem
                   text="Erase"
                   LeftIcon={IconTrash}
                   accent="danger"
                   onClick={handleErase}
                 />
-              )} */}
+              )}
             </DropdownMenuItemsContainer>
           </DropdownMenu>
         }

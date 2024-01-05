@@ -10,8 +10,6 @@ export type DateFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
-  onTab?: FieldInputEvent;
-  onShiftTab?: FieldInputEvent;
 };
 
 export const DateFieldInput = ({
@@ -19,13 +17,13 @@ export const DateFieldInput = ({
   onEscape,
   onClickOutside,
 }: DateFieldInputProps) => {
-  const { fieldValue, hotkeyScope } = useDateTimeField();
+  const { fieldValue, hotkeyScope, clearable } = useDateTimeField();
 
   const persistField = usePersistField();
 
   const persistDate = (newDate: Nullable<Date>) => {
     if (!newDate) {
-      persistField('');
+      persistField(null);
     } else {
       const newDateISO = newDate?.toISOString();
 
@@ -57,6 +55,7 @@ export const DateFieldInput = ({
       onEnter={handleEnter}
       onEscape={handleEscape}
       value={dateValue}
+      clearable={clearable}
     />
   );
 };

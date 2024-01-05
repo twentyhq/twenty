@@ -84,7 +84,11 @@ export const useOptimisticEffect = ({
               variables,
             });
 
-            if (!existingData) {
+            if (
+              !existingData &&
+              (isNonEmptyArray(updatedRecords) ||
+                isNonEmptyArray(deletedRecordIds))
+            ) {
               return;
             }
 

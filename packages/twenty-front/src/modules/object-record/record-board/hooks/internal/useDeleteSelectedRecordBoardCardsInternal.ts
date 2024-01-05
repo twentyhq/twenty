@@ -1,7 +1,8 @@
 import { useApolloClient } from '@apollo/client';
 import { useRecoilCallback } from 'recoil';
 
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 
@@ -11,9 +12,9 @@ export const useDeleteSelectedRecordBoardCardsInternal = () => {
   const removeCardIds = useRemoveRecordBoardCardIdsInternal();
   const apolloClient = useApolloClient();
 
-  const { deleteOneRecord: deleteOneOpportunity } =
-    useDeleteOneRecord<Opportunity>({
-      objectNameSingular: 'opportunity',
+  const { deleteManyRecords: deleteManyOpportunities } =
+    useDeleteManyRecords<Opportunity>({
+      objectNameSingular: CoreObjectNameSingular.Opportunity,
     });
 
   const { selectedCardIdsSelector } = useRecordBoardScopedStates();
@@ -25,11 +26,7 @@ export const useDeleteSelectedRecordBoardCardsInternal = () => {
           .getLoadable(selectedCardIdsSelector)
           .getValue();
 
-        await Promise.all(
-          selectedCardIds.map(async (id) => {
-            await deleteOneOpportunity?.(id);
-          }),
-        );
+        await deleteManyOpportunities?.(selectedCardIds);
         removeCardIds(selectedCardIds);
         selectedCardIds.forEach((id) => {
           apolloClient.cache.evict({ id: `Opportunity:${id}` });
@@ -38,7 +35,7 @@ export const useDeleteSelectedRecordBoardCardsInternal = () => {
     [
       selectedCardIdsSelector,
       removeCardIds,
-      deleteOneOpportunity,
+      deleteManyOpportunities,
       apolloClient.cache,
     ],
   );

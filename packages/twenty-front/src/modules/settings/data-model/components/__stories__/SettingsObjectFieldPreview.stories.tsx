@@ -1,7 +1,8 @@
 import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
-import { RecoilRoot } from 'recoil';
+import { RecoilRoot, useRecoilValue } from 'recoil';
 
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
@@ -19,6 +20,11 @@ const meta: Meta<typeof SettingsObjectFieldPreview> = {
   title: 'Modules/Settings/DataModel/SettingsObjectFieldPreview',
   component: SettingsObjectFieldPreview,
   decorators: [
+    (Story) => {
+      // wait for metadata
+      const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+      return objectMetadataItems.length ? <Story /> : <></>;
+    },
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     (Story) => (

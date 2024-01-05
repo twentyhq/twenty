@@ -6,6 +6,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import debounce from 'lodash.debounce';
 
 import { Activity } from '@/activities/types/Activity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -27,8 +28,7 @@ export const ActivityBodyEditor = ({
 }: ActivityBodyEditorProps) => {
   const [body, setBody] = useState<string | null>(null);
   const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular: 'activity',
-    refetchFindManyQuery: true,
+    objectNameSingular: CoreObjectNameSingular.Activity,
   });
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export const ActivityBodyEditor = ({
   const imagesActivated = useIsFeatureEnabled('IS_NOTE_CREATE_IMAGES_ENABLED');
 
   if (!imagesActivated) {
-    slashMenuItems = slashMenuItems.filter((x) => x.name != 'Image');
+    slashMenuItems = slashMenuItems.filter((x) => x.name !== 'Image');
   }
 
   const [uploadFile] = useUploadFileMutation();
@@ -84,12 +84,49 @@ export const ActivityBodyEditor = ({
         ? JSON.parse(activity.body)
         : undefined,
     domAttributes: { editor: { class: 'editor' } },
-    onEditorContentChange: (editor) => {
+    onEditorContentChange: (editor: BlockNoteEditor) => {
       debounceOnChange(JSON.stringify(editor.topLevelBlocks) ?? '');
     },
     slashMenuItems,
     uploadFile: imagesActivated ? handleUploadAttachment : undefined,
+    onEditorReady: (editor: BlockNoteEditor) => {
+      editor.domElement.addEventListener('paste', handleImagePaste);
+    },
   });
+
+  const handleImagePaste = async (event: ClipboardEvent) => {
+    const clipboardItems = event.clipboardData?.items;
+
+    if (clipboardItems) {
+      for (let i = 0; i < clipboardItems.length; i++) {
+        if (
+          clipboardItems[i].kind === 'file' &&
+          clipboardItems[i].type.match('^image/')
+        ) {
+          const pastedFile = clipboardItems[i].getAsFile();
+          if (!pastedFile) {
+            return;
+          }
+
+          const imageUrl = await handleUploadAttachment(pastedFile);
+          if (imageUrl) {
+            editor?.insertBlocks(
+              [
+                {
+                  type: 'image',
+                  props: {
+                    url: imageUrl,
+                  },
+                },
+              ],
+              editor?.getTextCursorPosition().block,
+              'after',
+            );
+          }
+        }
+      }
+    }
+  };
 
   return (
     <StyledBlockNoteStyledContainer>

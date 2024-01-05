@@ -37,6 +37,7 @@ export type DateInputProps = {
     newDate: Nullable<Date>,
   ) => void;
   hotkeyScope: string;
+  clearable?: boolean;
 };
 
 export const DateInput = ({
@@ -45,6 +46,7 @@ export const DateInput = ({
   onEnter,
   onEscape,
   onClickOutside,
+  clearable,
 }: DateInputProps) => {
   const theme = useTheme();
 
@@ -91,9 +93,10 @@ export const DateInput = ({
           <InternalDatePicker
             date={internalValue ?? new Date()}
             onChange={handleChange}
-            onMouseSelect={(newDate: Date) => {
+            onMouseSelect={(newDate: Date | null) => {
               onEnter(newDate);
             }}
+            clearable={clearable ? clearable : false}
           />
         </StyledCalendarContainer>
       </div>

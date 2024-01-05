@@ -7,7 +7,9 @@ export const useEntitySelectSearch = () => {
     setRelationPickerPreselectedId,
     relationPickerSearchFilter,
     setRelationPickerSearchFilter,
-  } = useRelationPicker();
+  } = useRelationPicker({
+    relationPickerScopeId: 'relation-picker',
+  });
 
   const debouncedSetSearchFilter = debounce(
     setRelationPickerSearchFilter,

@@ -1,3 +1,5 @@
+import styled from '@emotion/styled';
+
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 
@@ -14,6 +16,11 @@ type ColumnHeadWithDropdownProps = {
   primaryColumnKey: string;
 };
 
+const StyledDropdown = styled(Dropdown)`
+  display: flex;
+  flex: 1;
+`;
+
 export const ColumnHeadWithDropdown = ({
   column,
   isFirstColumn,
@@ -22,7 +29,7 @@ export const ColumnHeadWithDropdown = ({
 }: ColumnHeadWithDropdownProps) => {
   return (
     <DropdownScope dropdownScopeId={column.fieldMetadataId + '-header'}>
-      <Dropdown
+      <StyledDropdown
         clickableComponent={<ColumnHead column={column} />}
         dropdownComponents={
           <RecordTableColumnDropdownMenu

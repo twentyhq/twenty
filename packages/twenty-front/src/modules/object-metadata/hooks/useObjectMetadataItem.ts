@@ -7,9 +7,11 @@ import { useGetObjectOrderByField } from '@/object-metadata/hooks/useGetObjectOr
 import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { useGenerateCreateManyRecordMutation } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
 import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
+import { useGenerateDeleteManyRecordMutation } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
 import { useGenerateExecuteQuickActionOnOneRecordMutation } from '@/object-record/hooks/useGenerateExecuteQuickActionOnOneRecordMutation';
 import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
@@ -107,6 +109,10 @@ export const useObjectMetadataItem = (
     objectMetadataItem,
   });
 
+  const deleteManyRecordsMutation = useGenerateDeleteManyRecordMutation({
+    objectMetadataItem,
+  });
+
   const executeQuickActionOnOneRecordMutation =
     useGenerateExecuteQuickActionOnOneRecordMutation({
       objectMetadataItem,
@@ -116,7 +122,9 @@ export const useObjectMetadataItem = (
     ({ name }) => name === 'name',
   );
 
-  const basePathToShowPage = `/object/${objectMetadataItem.nameSingular}/`;
+  const basePathToShowPage = getBasePathToShowPage({
+    objectMetadataItem,
+  });
 
   return {
     labelIdentifierFieldMetadata,
@@ -131,6 +139,7 @@ export const useObjectMetadataItem = (
     deleteOneRecordMutation,
     executeQuickActionOnOneRecordMutation,
     createManyRecordsMutation,
+    deleteManyRecordsMutation,
     mapToObjectRecordIdentifier,
     getObjectOrderByField,
   };

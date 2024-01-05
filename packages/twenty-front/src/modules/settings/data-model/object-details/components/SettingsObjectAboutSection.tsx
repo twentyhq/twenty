@@ -34,6 +34,7 @@ const StyledCardContent = styled(CardContent)`
 const StyledName = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   gap: ${({ theme }) => theme.spacing(2)};
   margin-right: auto;
 `;
@@ -56,7 +57,7 @@ export const SettingsAboutSection = ({
   const { getIcon } = useIcons();
   const Icon = getIcon(iconKey);
 
-  const { closeDropdown } = useDropdown({ dropdownScopeId });
+  const { closeDropdown } = useDropdown(dropdownScopeId);
 
   const handleEdit = () => {
     onEdit();
@@ -78,9 +79,9 @@ export const SettingsAboutSection = ({
             {name}
           </StyledName>
           {isCustom ? (
-            <StyledTag color="orange" text="Custom" />
+            <StyledTag color="orange" text="Custom" weight="medium" />
           ) : (
-            <StyledTag color="blue" text="Standard" />
+            <StyledTag color="blue" text="Standard" weight="medium" />
           )}
           <DropdownScope dropdownScopeId={dropdownScopeId}>
             <Dropdown

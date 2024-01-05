@@ -1,54 +1,75 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { DateTime } from 'luxon';
 
 import { Activity } from '@/activities/types/Activity';
-import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { LeafObjectRecordFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { parseDate } from '~/utils/date-utils';
-import { isDefined } from '~/utils/isDefined';
 
 type UseTasksProps = {
   filterDropdownId?: string;
-  entity?: ActivityTargetableEntity;
+  targetableObjects: ActivityTargetableObject[];
 };
 
-export const useTasks = (props?: UseTasksProps) => {
-  const { filterDropdownId, entity } = props ?? {};
-
+export const useTasks = ({
+  targetableObjects,
+  filterDropdownId,
+}: UseTasksProps) => {
   const { selectedFilter } = useFilterDropdown({
-    filterDropdownId: filterDropdownId,
+    filterDropdownId,
   });
+
+  const targetableObjectsFilter =
+    targetableObjects.reduce<LeafObjectRecordFilter>(
+      (aggregateFilter, targetableObject) => {
+        const targetableObjectFieldName = getActivityTargetObjectFieldIdName({
+          nameSingular: targetableObject.targetObjectNameSingular,
+        });
+
+        if (isNonEmptyString(targetableObject.id)) {
+          aggregateFilter[targetableObjectFieldName] = {
+            eq: targetableObject.id,
+          };
+        }
+
+        return aggregateFilter;
+      },
+      {},
+    );
 
   const { records: activityTargets } = useFindManyRecords({
-    objectNameSingular: 'activityTarget',
-    filter: isDefined(entity)
-      ? {
-          [entity?.type === 'Company' ? 'companyId' : 'personId']: {
-            eq: entity?.id,
-          },
-        }
-      : undefined,
+    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+    filter: targetableObjectsFilter,
   });
 
+  const skipRequest = !isNonEmptyArray(activityTargets) && !selectedFilter;
+
+  const idFilter = {
+    id: {
+      in: activityTargets.map((activityTarget) => activityTarget.activityId),
+    },
+  };
+
+  const assigneeIdFilter = selectedFilter
+    ? {
+        assigneeId: {
+          in: JSON.parse(selectedFilter.value),
+        },
+      }
+    : undefined;
+
   const { records: completeTasksData } = useFindManyRecords({
-    objectNameSingular: 'activity',
-    skip: !entity && !selectedFilter,
+    objectNameSingular: CoreObjectNameSingular.Activity,
+    skip: skipRequest,
     filter: {
       completedAt: { is: 'NOT_NULL' },
-      ...(isDefined(entity) && {
-        id: {
-          in: activityTargets?.map(
-            (activityTarget) => activityTarget.activityId,
-          ),
-        },
-      }),
+      ...idFilter,
       type: { eq: 'Task' },
-      ...(isNonEmptyString(selectedFilter?.value) && {
-        assigneeId: {
-          in: JSON.parse(selectedFilter?.value),
-        },
-      }),
+      ...assigneeIdFilter,
     },
     orderBy: {
       createdAt: 'DescNullsFirst',
@@ -56,23 +77,13 @@ export const useTasks = (props?: UseTasksProps) => {
   });
 
   const { records: incompleteTaskData } = useFindManyRecords({
-    objectNameSingular: 'activity',
-    skip: !entity && !selectedFilter,
+    objectNameSingular: CoreObjectNameSingular.Activity,
+    skip: skipRequest,
     filter: {
       completedAt: { is: 'NULL' },
-      ...(isDefined(entity) && {
-        id: {
-          in: activityTargets?.map(
-            (activityTarget) => activityTarget.activityId,
-          ),
-        },
-      }),
+      ...idFilter,
       type: { eq: 'Task' },
-      ...(isNonEmptyString(selectedFilter?.value) && {
-        assigneeId: {
-          in: JSON.parse(selectedFilter?.value),
-        },
-      }),
+      ...assigneeIdFilter,
     },
     orderBy: {
       createdAt: 'DescNullsFirst',

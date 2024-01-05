@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { NoteList } from '@/activities/notes/components/NoteList';
 import { useNotes } from '@/activities/notes/hooks/useNotes';
-import { ActivityTargetableEntity } from '@/activities/types/ActivityTargetableEntity';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 
@@ -44,12 +44,16 @@ const StyledNotesContainer = styled.div`
   overflow: auto;
 `;
 
-export const Notes = ({ entity }: { entity: ActivityTargetableEntity }) => {
-  const { notes } = useNotes(entity);
+export const Notes = ({
+  targetableObject,
+}: {
+  targetableObject: ActivityTargetableObject;
+}) => {
+  const { notes } = useNotes(targetableObject);
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  if (notes?.length === 0 && entity.type !== 'Custom') {
+  if (notes?.length === 0) {
     return (
       <StyledTaskGroupEmptyContainer>
         <StyledEmptyTaskGroupTitle>No note yet</StyledEmptyTaskGroupTitle>
@@ -61,7 +65,7 @@ export const Notes = ({ entity }: { entity: ActivityTargetableEntity }) => {
           onClick={() =>
             openCreateActivity({
               type: 'Note',
-              targetableEntities: [entity],
+              targetableObjects: [targetableObject],
             })
           }
         />
@@ -83,7 +87,7 @@ export const Notes = ({ entity }: { entity: ActivityTargetableEntity }) => {
             onClick={() =>
               openCreateActivity({
                 type: 'Note',
-                targetableEntities: [entity],
+                targetableObjects: [targetableObject],
               })
             }
           ></Button>

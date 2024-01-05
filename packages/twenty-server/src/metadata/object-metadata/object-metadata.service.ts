@@ -281,9 +281,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         createdObjectMetadata.workspaceId,
       );
 
-    const workspaceDataSource = await this.typeORMService.connectToDataSource(
-      dataSourceMetadata,
-    );
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
     const view = await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."view"
@@ -300,8 +299,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         `INSERT INTO ${dataSourceMetadata.schema}."viewField"
       ("fieldMetadataId", "position", "isVisible", "size", "viewId")
       VALUES ('${field.id}', '${index - 1}', true, 180, '${
-          view[0].id
-        }') RETURNING *`,
+        view[0].id
+      }') RETURNING *`,
       );
     });
 
@@ -313,16 +312,34 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     options: FindOneOptions<ObjectMetadataEntity>,
   ): Promise<ObjectMetadataEntity | null> {
     return this.objectMetadataRepository.findOne({
-      ...options,
-      where: {
-        ...options.where,
-        workspaceId,
-      },
       relations: [
         'fields',
         'fields.fromRelationMetadata',
         'fields.toRelationMetadata',
       ],
+      ...options,
+      where: {
+        ...options.where,
+        workspaceId,
+      },
+    });
+  }
+
+  public async findOneOrFailWithinWorkspace(
+    workspaceId: string,
+    options: FindOneOptions<ObjectMetadataEntity>,
+  ): Promise<ObjectMetadataEntity> {
+    return this.objectMetadataRepository.findOneOrFail({
+      relations: [
+        'fields',
+        'fields.fromRelationMetadata',
+        'fields.toRelationMetadata',
+      ],
+      ...options,
+      where: {
+        ...options.where,
+        workspaceId,
+      },
     });
   }
 
@@ -331,17 +348,17 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     options?: FindManyOptions<ObjectMetadataEntity>,
   ) {
     return this.objectMetadataRepository.find({
-      ...options,
-      where: {
-        ...options?.where,
-        workspaceId,
-      },
       relations: [
         'fields',
         'fields.fromRelationMetadata',
         'fields.toRelationMetadata',
         'fields.fromRelationMetadata.toObjectMetadata',
       ],
+      ...options,
+      where: {
+        ...options?.where,
+        workspaceId,
+      },
     });
   }
 

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -6,6 +6,7 @@ import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRi
 import { Activity } from '@/activities/types/Activity';
 import { Company } from '@/companies/types/Company';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Person } from '@/people/types/Person';
 import { IconNotes } from '@/ui/display/icon';
@@ -13,6 +14,7 @@ import { SelectableItem } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { Avatar } from '@/users/components/Avatar';
@@ -61,6 +63,16 @@ export const StyledInput = styled.input`
   }
 `;
 
+const StyledCancelText = styled.span`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  margin-right: 12px;
+  margin-top: 6px;
+  position: absolute;
+  right: 0;
+  top: 0;
+`;
+
 export const StyledList = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   height: 400px;
@@ -86,7 +98,8 @@ export const StyledEmpty = styled.div`
 `;
 
 export const CommandMenu = () => {
-  const { toggleCommandMenu, onItemClick } = useCommandMenu();
+  const { toggleCommandMenu, onItemClick, closeCommandMenu } = useCommandMenu();
+  const commandMenuRef = useRef<HTMLDivElement>(null);
 
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
@@ -109,9 +122,18 @@ export const CommandMenu = () => {
     [toggleCommandMenu, setSearch],
   );
 
+  useScopedHotkeys(
+    'esc',
+    () => {
+      closeCommandMenu();
+    },
+    AppHotkeyScope.CommandMenuOpen,
+    [closeCommandMenu],
+  );
+
   const { records: people } = useFindManyRecords<Person>({
     skip: !isCommandMenuOpened,
-    objectNameSingular: 'person',
+    objectNameSingular: CoreObjectNameSingular.Person,
     filter: {
       or: [
         { name: { firstName: { ilike: `%${search}%` } } },
@@ -123,7 +145,7 @@ export const CommandMenu = () => {
 
   const { records: companies } = useFindManyRecords<Company>({
     skip: !isCommandMenuOpened,
-    objectNameSingular: 'company',
+    objectNameSingular: CoreObjectNameSingular.Company,
     filter: {
       name: { ilike: `%${search}%` },
     },
@@ -132,7 +154,7 @@ export const CommandMenu = () => {
 
   const { records: activities } = useFindManyRecords<Activity>({
     skip: !isCommandMenuOpened,
-    objectNameSingular: 'activity',
+    objectNameSingular: CoreObjectNameSingular.Activity,
     filter: {
       or: [
         { title: { like: `%${search}%` } },
@@ -208,6 +230,11 @@ export const CommandMenu = () => {
         : true) && cmd.type === CommandType.Create,
   );
 
+  useListenClickOutside({
+    refs: [commandMenuRef],
+    callback: closeCommandMenu,
+  });
+
   const selectableItemIds = matchingCreateCommand
     .map((cmd) => cmd.id)
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
@@ -218,12 +245,14 @@ export const CommandMenu = () => {
   return (
     <>
       {isCommandMenuOpened && (
-        <StyledDialog>
+        <StyledDialog ref={commandMenuRef}>
           <StyledInput
+            autoFocus
             value={search}
             placeholder="Search"
             onChange={handleSearchChange}
           />
+          <StyledCancelText>Esc to cancel</StyledCancelText>
           <StyledList>
             <ScrollWrapper>
               <StyledInnerList>

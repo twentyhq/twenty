@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { simpleParser } from 'mailparser';
+
+import { GmailMessage } from 'src/workspace/messaging/types/gmailMessage';
+import { MessageOrThreadQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
+import { GmailMessageParsedResponse } from 'src/workspace/messaging/types/gmailMessageParsedResponse';
+import { GmailThreadParsedResponse } from 'src/workspace/messaging/types/gmailThreadParsedResponse';
+import { GmailThread } from 'src/workspace/messaging/types/gmailThread';
 
 @Injectable()
 export class FetchBatchMessagesService {
@@ -13,57 +19,93 @@ export class FetchBatchMessagesService {
     });
   }
 
-  async fetchAllByBatches(messageQueries, accessToken: string): Promise<any> {
-    const batchLimit = 100;
+  async fetchAllMessages(
+    queries: MessageOrThreadQuery[],
+    accessToken: string,
+  ): Promise<GmailMessage[]> {
+    const batchResponses = await this.fetchAllByBatches(
+      queries,
+      accessToken,
+      'batch_gmail_messages',
+    );
 
-    let messages = [];
-
-    let batchOffset = 0;
-
-    while (batchOffset < messageQueries.length) {
-      const batchResponse = await this.fetchBatch(
-        messageQueries,
-        accessToken,
-        batchOffset,
-        batchLimit,
-      );
-
-      messages = messages.concat(batchResponse);
-
-      batchOffset += batchLimit;
-    }
+    const messages =
+      await this.formatBatchResponsesAsGmailMessages(batchResponses);
 
     return messages;
   }
 
+  async fetchAllThreads(
+    queries: MessageOrThreadQuery[],
+    accessToken: string,
+  ): Promise<GmailThread[]> {
+    const batchResponses = await this.fetchAllByBatches(
+      queries,
+      accessToken,
+      'batch_gmail_threads',
+    );
+
+    const threads =
+      await this.formatBatchResponsesAsGmailThreads(batchResponses);
+
+    return threads;
+  }
+
+  async fetchAllByBatches(
+    queries: MessageOrThreadQuery[],
+    accessToken: string,
+    boundary: string,
+  ): Promise<AxiosResponse<any, any>[]> {
+    const batchLimit = 100;
+
+    let batchOffset = 0;
+
+    let batchResponses: AxiosResponse<any, any>[] = [];
+
+    while (batchOffset < queries.length) {
+      const batchResponse = await this.fetchBatch(
+        queries,
+        accessToken,
+        batchOffset,
+        batchLimit,
+        boundary,
+      );
+
+      batchResponses = batchResponses.concat(batchResponse);
+
+      batchOffset += batchLimit;
+    }
+
+    return batchResponses;
+  }
+
   async fetchBatch(
-    messageQueries,
+    queries: MessageOrThreadQuery[],
     accessToken: string,
     batchOffset: number,
     batchLimit: number,
-  ): Promise<any> {
-    const limitedMessageQueries = messageQueries.slice(
-      batchOffset,
-      batchOffset + batchLimit,
-    );
+    boundary: string,
+  ): Promise<AxiosResponse<any, any>> {
+    const limitedQueries = queries.slice(batchOffset, batchOffset + batchLimit);
 
     const response = await this.httpService.post(
       '/',
-      this.createBatchBody(limitedMessageQueries, 'batch_gmail_messages'),
+      this.createBatchBody(limitedQueries, boundary),
       {
         headers: {
-          'Content-Type': 'multipart/mixed; boundary=batch_gmail_messages',
+          'Content-Type': 'multipart/mixed; boundary=' + boundary,
           Authorization: 'Bearer ' + accessToken,
         },
       },
     );
 
-    const formattedResponse = await this.formatBatchResponse(response);
-
-    return formattedResponse;
+    return response;
   }
 
-  createBatchBody(messageQueries, boundary: string): string {
+  createBatchBody(
+    messageQueries: MessageOrThreadQuery[],
+    boundary: string,
+  ): string {
     let batchBody: string[] = [];
 
     messageQueries.forEach(function (call) {
@@ -87,81 +129,173 @@ export class FetchBatchMessagesService {
     return batchBody.concat(['--', boundary, '--']).join('');
   }
 
-  parseBatch(responseCollection) {
-    const items: any = [];
+  parseBatch(
+    responseCollection: AxiosResponse<any, any>,
+  ): GmailMessageParsedResponse[] | GmailThreadParsedResponse[] {
+    const responseItems:
+      | GmailMessageParsedResponse[]
+      | GmailThreadParsedResponse[] = [];
 
     const boundary = this.getBatchSeparator(responseCollection);
 
-    const responseLines = responseCollection.data.split('--' + boundary);
+    const responseLines: string[] = responseCollection.data.split(
+      '--' + boundary,
+    );
 
     responseLines.forEach(function (response) {
       const startJson = response.indexOf('{');
       const endJson = response.lastIndexOf('}');
 
-      if (startJson < 0 || endJson < 0) {
-        return;
-      }
+      if (startJson < 0 || endJson < 0) return;
 
-      const responseJson = response.substr(startJson, endJson - startJson + 1);
+      const responseJson = response.substring(startJson, endJson + 1);
 
       const item = JSON.parse(responseJson);
 
-      items.push(item);
+      responseItems.push(item);
     });
 
-    return items;
+    return responseItems;
   }
 
-  getBatchSeparator(response) {
-    const headers = response.headers;
+  getBatchSeparator(responseCollection: AxiosResponse<any, any>): string {
+    const headers = responseCollection.headers;
 
-    if (!headers['content-type']) return '';
+    const contentType: string = headers['content-type'];
 
-    const components = headers['content-type'].split('; ');
+    if (!contentType) return '';
 
-    const boundary = components.find((o) => o.startsWith('boundary='));
+    const components = contentType.split('; ');
 
-    return boundary.replace('boundary=', '').trim('; ');
+    const boundary = components.find((item) => item.startsWith('boundary='));
+
+    return boundary?.replace('boundary=', '').trim() || '';
   }
 
-  async formatBatchResponse(response) {
-    const parsedResponse = this.parseBatch(response);
+  async formatBatchResponseAsGmailMessage(
+    responseCollection: AxiosResponse<any, any>,
+  ): Promise<GmailMessage[]> {
+    const parsedResponses = this.parseBatch(
+      responseCollection,
+    ) as GmailMessageParsedResponse[];
 
-    return Promise.all(
-      parsedResponse.map(async (item) => {
-        const { id, threadId, internalDate, raw } = item;
+    const formattedResponse = Promise.all(
+      parsedResponses.map(async (message: GmailMessageParsedResponse) => {
+        if (message.error) {
+          console.log('Error', message.error);
 
-        const message = atob(raw?.replace(/-/g, '+').replace(/_/g, '/'));
+          return;
+        }
 
-        const parsed = await simpleParser(message);
+        const { id, threadId, internalDate, raw } = message;
 
-        const {
-          subject,
-          messageId,
-          from,
-          to,
-          cc,
-          bcc,
-          text,
-          html,
-          attachments,
-        } = parsed;
+        const body = atob(raw?.replace(/-/g, '+').replace(/_/g, '/'));
 
-        return {
-          externalId: id,
-          headerMessageId: messageId,
-          subject: subject,
-          messageThreadId: threadId,
-          internalDate,
-          from,
-          to,
-          cc,
-          bcc,
-          text,
-          html,
-          attachments,
-        };
+        try {
+          const parsed = await simpleParser(body);
+
+          const {
+            subject,
+            messageId,
+            from,
+            to,
+            cc,
+            bcc,
+            text,
+            html,
+            attachments,
+          } = parsed;
+
+          const messageFromGmail: GmailMessage = {
+            externalId: id,
+            headerMessageId: messageId || '',
+            subject: subject || '',
+            messageThreadId: threadId,
+            internalDate,
+            from,
+            to,
+            cc,
+            bcc,
+            text: text || '',
+            html: html || '',
+            attachments,
+          };
+
+          return messageFromGmail;
+        } catch (error) {
+          console.log('Error', error);
+        }
       }),
     );
+
+    const filteredResponse = (await formattedResponse).filter(
+      (message) => message,
+    ) as GmailMessage[];
+
+    return filteredResponse;
+  }
+
+  async formatBatchResponsesAsGmailMessages(
+    batchResponses: AxiosResponse<any, any>[],
+  ): Promise<GmailMessage[]> {
+    const formattedResponses = await Promise.all(
+      batchResponses.map(async (response) => {
+        const formattedResponse =
+          await this.formatBatchResponseAsGmailMessage(response);
+
+        return formattedResponse;
+      }),
+    );
+
+    return formattedResponses.flat();
+  }
+
+  async formatBatchResponseAsGmailThread(
+    responseCollection: AxiosResponse<any, any>,
+  ): Promise<GmailThread[]> {
+    const parsedResponses = this.parseBatch(
+      responseCollection,
+    ) as GmailThreadParsedResponse[];
+
+    const formattedResponse = Promise.all(
+      parsedResponses.map(async (thread: GmailThreadParsedResponse) => {
+        if (thread.error) {
+          console.log('Error', thread.error);
+
+          return;
+        }
+        try {
+          const { id, messages } = thread;
+
+          return {
+            id,
+            messageIds: messages.map((message) => message.id) || [],
+          };
+        } catch (error) {
+          console.log('Error', error);
+        }
+      }),
+    );
+
+    const filteredResponse = (await formattedResponse).filter(
+      (item) => item,
+    ) as GmailThread[];
+
+    return filteredResponse;
+  }
+
+  async formatBatchResponsesAsGmailThreads(
+    batchResponses: AxiosResponse<any, any>[],
+  ): Promise<GmailThread[]> {
+    const formattedResponses = await Promise.all(
+      batchResponses.map(async (response) => {
+        const formattedResponse =
+          await this.formatBatchResponseAsGmailThread(response);
+
+        return formattedResponse;
+      }),
+    );
+
+    return formattedResponses.flat();
   }
 }

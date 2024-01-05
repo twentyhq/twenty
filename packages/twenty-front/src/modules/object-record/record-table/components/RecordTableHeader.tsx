@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { RecordTableHeaderCell } from '@/object-record/record-table/components/RecordTableHeaderCell';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { IconPlus } from '@/ui/display/icon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
@@ -58,8 +59,18 @@ export const RecordTableHeader = ({
 }: {
   createRecord: () => void;
 }) => {
-  const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
-    useRecordTableScopedStates();
+  const { hiddenTableColumnsScopeInjector, visibleTableColumnsScopeInjector } =
+    getRecordTableScopeInjector();
+
+  const { injectSelectorWithRecordTableScopeId } = useRecordTableScopedStates();
+
+  const hiddenTableColumnsSelector = injectSelectorWithRecordTableScopeId(
+    hiddenTableColumnsScopeInjector,
+  );
+
+  const visibleTableColumnsSelector = injectSelectorWithRecordTableScopeId(
+    visibleTableColumnsScopeInjector,
+  );
 
   const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector);
 

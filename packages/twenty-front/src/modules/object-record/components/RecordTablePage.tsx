@@ -65,6 +65,8 @@ export const RecordTablePage = () => {
     setSelectedTableCellEditMode(0, 0);
   };
 
+  const recordTableId = objectNamePlural ?? '';
+
   return (
     <PageContainer>
       <PageHeader
@@ -79,12 +81,13 @@ export const RecordTablePage = () => {
       <PageBody>
         <StyledTableContainer>
           <RecordTableContainer
+            recordTableId={recordTableId}
             objectNamePlural={objectNamePlural}
             createRecord={handleAddButtonClick}
           />
         </StyledTableContainer>
-        <RecordTableActionBar />
-        <RecordTableContextMenu />
+        <RecordTableActionBar recordTableId={recordTableId} />
+        <RecordTableContextMenu recordTableId={recordTableId} />
       </PageBody>
     </PageContainer>
   );

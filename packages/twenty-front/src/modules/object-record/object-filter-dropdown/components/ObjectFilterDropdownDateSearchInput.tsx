@@ -1,5 +1,6 @@
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
+import { isDefined } from '~/utils/isDefined';
 
 export const ObjectFilterDropdownDateSearchInput = () => {
   const {
@@ -9,14 +10,14 @@ export const ObjectFilterDropdownDateSearchInput = () => {
     selectFilter,
   } = useFilterDropdown();
 
-  const handleChange = (date: Date) => {
+  const handleChange = (date: Date | null) => {
     if (!filterDefinitionUsedInDropdown || !selectedOperandInDropdown) return;
 
     selectFilter?.({
       fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
-      value: date.toISOString(),
+      value: isDefined(date) ? date.toISOString() : '',
       operand: selectedOperandInDropdown,
-      displayValue: date.toLocaleDateString(),
+      displayValue: isDefined(date) ? date.toLocaleString() : '',
       definition: filterDefinitionUsedInDropdown,
     });
 

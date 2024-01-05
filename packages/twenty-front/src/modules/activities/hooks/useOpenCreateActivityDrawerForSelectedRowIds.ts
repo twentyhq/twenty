@@ -1,42 +1,57 @@
 import { useRecoilCallback } from 'recoil';
 
 import { ActivityType } from '@/activities/types/Activity';
-import { selectedRowIdsSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsSelector';
+import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 
-import {
-  ActivityTargetableEntity,
-  ActivityTargetableEntityType,
-} from '../types/ActivityTargetableEntity';
+import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
 import { useOpenCreateActivityDrawer } from './useOpenCreateActivityDrawer';
 
-export const useOpenCreateActivityDrawerForSelectedRowIds = () => {
+export const useOpenCreateActivityDrawerForSelectedRowIds = (
+  recordTableScopeId: string,
+) => {
   const openCreateActivityDrawer = useOpenCreateActivityDrawer();
+
+  const { selectedRowIdsScopeInjector } = getRecordTableScopeInjector();
+
+  const { injectSelectorSnapshotValueWithRecordTableScopeId } =
+    useRecordTableScopedStates(recordTableScopeId);
 
   return useRecoilCallback(
     ({ snapshot }) =>
       (
         type: ActivityType,
-        entityType: ActivityTargetableEntityType,
-        relatedEntities?: ActivityTargetableEntity[],
+        objectNameSingular: string,
+        relatedEntities?: ActivityTargetableObject[],
       ) => {
-        const selectedRowIds = Object.keys(
-          snapshot.getLoadable(selectedRowIdsSelector).getValue(),
-        );
-        let activityTargetableEntityArray: ActivityTargetableEntity[] =
-          selectedRowIds.map((id) => ({
-            type: entityType,
+        const selectedRowIds =
+          injectSelectorSnapshotValueWithRecordTableScopeId(
+            snapshot,
+            selectedRowIdsScopeInjector,
+          );
+
+        let activityTargetableEntityArray: ActivityTargetableObject[] =
+          selectedRowIds.map((id: string) => ({
+            type: 'Custom',
+            targetObjectNameSingular: objectNameSingular,
             id,
           }));
+
         if (relatedEntities) {
           activityTargetableEntityArray =
             activityTargetableEntityArray.concat(relatedEntities);
         }
+
         openCreateActivityDrawer({
           type,
-          targetableEntities: activityTargetableEntityArray,
+          targetableObjects: activityTargetableEntityArray,
         });
       },
-    [openCreateActivityDrawer],
+    [
+      injectSelectorSnapshotValueWithRecordTableScopeId,
+      openCreateActivityDrawer,
+      selectedRowIdsScopeInjector,
+    ],
   );
 };

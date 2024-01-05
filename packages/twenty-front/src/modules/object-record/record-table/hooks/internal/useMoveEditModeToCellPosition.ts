@@ -1,23 +1,59 @@
 import { useRecoilCallback } from 'recoil';
 
-import { currentTableCellInEditModePositionState } from '../../states/currentTableCellInEditModePositionState';
-import { isTableCellInEditModeFamilyState } from '../../states/isTableCellInEditModeFamilyState';
+import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
+
 import { TableCellPosition } from '../../types/TableCellPosition';
 
-export const useMoveEditModeToTableCellPosition = () =>
-  useRecoilCallback(({ set, snapshot }) => {
-    return (newPosition: TableCellPosition) => {
-      const currentTableCellInEditModePosition = snapshot
-        .getLoadable(currentTableCellInEditModePositionState)
-        .valueOrThrow();
+export const useMoveEditModeToTableCellPosition = (
+  recordTableScopeId: string,
+) => {
+  const {
+    isTableCellInEditModeScopeInjector,
+    currentTableCellInEditModePositionScopeInjector,
+  } = getRecordTableScopeInjector();
 
-      set(
-        isTableCellInEditModeFamilyState(currentTableCellInEditModePosition),
-        false,
-      );
+  const {
+    injectStateWithRecordTableScopeId,
+    injectSnapshotValueWithRecordTableScopeId,
+    injectFamilyStateWithRecordTableScopeId,
+  } = useRecordTableScopedStates(recordTableScopeId);
 
-      set(currentTableCellInEditModePositionState, newPosition);
+  return useRecoilCallback(
+    ({ set, snapshot }) => {
+      return (newPosition: TableCellPosition) => {
+        const currentTableCellInEditModePosition =
+          injectSnapshotValueWithRecordTableScopeId(
+            snapshot,
+            currentTableCellInEditModePositionScopeInjector,
+          );
 
-      set(isTableCellInEditModeFamilyState(newPosition), true);
-    };
-  }, []);
+        const currentTableCellInEditModePositionState =
+          injectStateWithRecordTableScopeId(
+            currentTableCellInEditModePositionScopeInjector,
+          );
+
+        const isTableCellInEditModeFamilyState =
+          injectFamilyStateWithRecordTableScopeId(
+            isTableCellInEditModeScopeInjector,
+          );
+
+        set(
+          isTableCellInEditModeFamilyState(currentTableCellInEditModePosition),
+          false,
+        );
+
+        set(currentTableCellInEditModePositionState, newPosition);
+
+        set(isTableCellInEditModeFamilyState(newPosition), true);
+      };
+    },
+    [
+      currentTableCellInEditModePositionScopeInjector,
+      injectFamilyStateWithRecordTableScopeId,
+      injectSnapshotValueWithRecordTableScopeId,
+      injectStateWithRecordTableScopeId,
+      isTableCellInEditModeScopeInjector,
+    ],
+  );
+};

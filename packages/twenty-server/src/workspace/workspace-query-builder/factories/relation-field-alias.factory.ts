@@ -104,15 +104,16 @@ export class RelationFieldAliasFactory {
         );
 
       return `
-      ${fieldKey}: ${referencedObjectMetadata.targetTableName}Collection${
-        argsString ? `(${argsString})` : ''
-      } {
-        ${fieldsString}
-      }
-    `;
+        ${fieldKey}: ${referencedObjectMetadata.targetTableName}Collection${
+          argsString ? `(${argsString})` : ''
+        } {
+          ${fieldsString}
+        }
+      `;
     }
+
     let relationAlias = fieldMetadata.isCustom
-      ? `${fieldKey}: ${fieldMetadata.targetColumnMap.value}`
+      ? `${fieldKey}: ${referencedObjectMetadata.targetTableName}`
       : fieldKey;
 
     // For one to one relations, pg_graphql use the targetTableName on the side that is not storing the foreign key

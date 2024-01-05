@@ -46,14 +46,16 @@ export const SettingsObjectItemTableRow = ({
   return (
     <StyledObjectTableRow key={objectItem.namePlural} onClick={onClick}>
       <StyledNameTableCell>
-        {!!Icon && <Icon size={theme.icon.size.md} />}
+        {!!Icon && (
+          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+        )}
         {objectItem.labelPlural}
       </StyledNameTableCell>
       <TableCell>
         {objectItem.isCustom ? (
-          <Tag color="orange" text="Custom" />
+          <Tag color="orange" text="Custom" weight="medium" />
         ) : (
-          <Tag color="blue" text="Standard" />
+          <Tag color="blue" text="Standard" weight="medium" />
         )}
       </TableCell>
       <TableCell align="right">

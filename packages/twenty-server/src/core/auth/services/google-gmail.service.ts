@@ -30,9 +30,8 @@ export class GoogleGmailService {
         workspaceId,
       );
 
-    const workspaceDataSource = await this.typeORMService.connectToDataSource(
-      dataSourceMetadata,
-    );
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
     const connectedAccount = await workspaceDataSource?.query(
       `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "handle" = $1 AND "provider" = $2 AND "accountOwnerId" = $3`,

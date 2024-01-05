@@ -1,7 +1,5 @@
-export type ActivityTargetableEntityType = 'Person' | 'Company' | 'Custom';
-
-export type ActivityTargetableEntity = {
+export type ActivityTargetableObject = {
   id: string;
-  type: ActivityTargetableEntityType;
-  relatedEntities?: ActivityTargetableEntity[];
+  targetObjectNameSingular: string;
+  relatedTargetableObjects?: ActivityTargetableObject[];
 };

@@ -12,6 +12,7 @@ import { Title } from '@/auth/components/Title';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
@@ -63,7 +64,7 @@ export const CreateProfile = () => {
   );
 
   const { updateOneRecord } = useUpdateOneRecord<WorkspaceMember>({
-    objectNameSingular: 'workspaceMember',
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
   });
 
   // Form

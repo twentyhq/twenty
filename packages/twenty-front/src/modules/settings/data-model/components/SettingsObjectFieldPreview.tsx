@@ -105,15 +105,15 @@ export const SettingsObjectFieldPreview = ({
             {!!ObjectIcon && (
               <ObjectIcon
                 size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.sm}
+                stroke={theme.icon.stroke.md}
               />
             )}
             {objectMetadataItem?.labelPlural}
           </StyledObjectName>
           {objectMetadataItem?.isCustom ? (
-            <Tag color="orange" text="Custom" />
+            <Tag color="orange" text="Custom" weight="medium" />
           ) : (
-            <Tag color="blue" text="Standard" />
+            <Tag color="blue" text="Standard" weight="medium" />
           )}
         </StyledObjectSummary>
         <SettingsObjectFieldPreviewValueEffect

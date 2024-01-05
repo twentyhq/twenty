@@ -31,6 +31,9 @@ export class ClientConfigResolver {
         supportDriver: this.environmentService.getSupportDriver(),
         supportFrontChatId: this.environmentService.getSupportFrontChatId(),
       },
+      sentry: {
+        dsn: this.environmentService.getSentryDSN(),
+      },
     };
 
     return Promise.resolve(clientConfig);

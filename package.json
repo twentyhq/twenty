@@ -10,19 +10,24 @@
   "license": "AGPL-3.0",
   "workspaces": {
     "packages": [
-      "packages/eslint-plugin-twenty",
       "packages/twenty-front",
       "packages/twenty-docs",
       "packages/twenty-server",
       "packages/twenty-utils",
-      "packages/twenty-zapier"
+      "packages/twenty-zapier",
+      "packages/twenty-website",
+      "tools/eslint-rules"
     ]
   },
-  "devDependencies": {
-    "nx": "17.2.0",
-    "typescript": "^5.3.3"
-  },
   "dependencies": {
-    "patch-package": "^8.0.0"
+    "patch-package": "^8.0.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@nx/eslint": "17.2.7",
+    "@nx/eslint-plugin": "17.2.7",
+    "@nx/jest": "17.2.7",
+    "@nx/js": "17.2.7",
+    "nx": "^17.2.8"
   }
 }

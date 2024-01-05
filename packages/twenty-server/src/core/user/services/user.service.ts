@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 
 import { assert } from 'src/utils/assert';
 import { User } from 'src/core/user/user.entity';
-import { UserWorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
+import { WorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 
@@ -25,9 +25,8 @@ export class UserService extends TypeOrmQueryService<User> {
         user.defaultWorkspace.id,
       );
 
-    const workspaceDataSource = await this.typeORMService.connectToDataSource(
-      dataSourceMetadata,
-    );
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
     const workspaceMembers = await workspaceDataSource?.query(
       `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId" = '${user.id}'`,
@@ -35,7 +34,7 @@ export class UserService extends TypeOrmQueryService<User> {
 
     assert(workspaceMembers.length === 1, 'WorkspaceMember not found');
 
-    const userWorkspaceMember = new UserWorkspaceMember();
+    const userWorkspaceMember = new WorkspaceMember();
 
     userWorkspaceMember.id = workspaceMembers[0].id;
     userWorkspaceMember.colorScheme = workspaceMembers[0].colorScheme;
@@ -55,9 +54,8 @@ export class UserService extends TypeOrmQueryService<User> {
         user.defaultWorkspace.id,
       );
 
-    const workspaceDataSource = await this.typeORMService.connectToDataSource(
-      dataSourceMetadata,
-    );
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
     await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."workspaceMember"

@@ -1,46 +1,31 @@
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { useScopedState } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useScopedState';
 
-import { getRecordTableScopedStates } from '../../utils/getRecordTableScopedStates';
-
-export const useRecordTableScopedStates = (args?: {
-  customRecordTableScopeId?: string;
-}) => {
-  const { customRecordTableScopeId } = args ?? {};
-
+export const useRecordTableScopedStates = (recordTableId?: string) => {
   const scopeId = useAvailableScopeIdOrThrow(
     RecordTableScopeInternalContext,
-    customRecordTableScopeId,
+    recordTableId,
   );
 
   const {
-    availableTableColumnsState,
-    tableFiltersState,
-    tableSortsState,
-    tableColumnsState,
-    objectMetadataConfigState,
-    tableColumnsByKeySelector,
-    hiddenTableColumnsSelector,
-    visibleTableColumnsSelector,
-    onEntityCountChangeState,
-    onColumnsChangeState,
-    tableLastRowVisibleState,
-  } = getRecordTableScopedStates({
-    recordTableScopeId: scopeId,
-  });
+    getScopedState,
+    getScopedSelector,
+    getScopedFamilyState,
+    getScopedSnapshotValue,
+    getScopedSelectorSnapshotValue,
+    getScopedFamilySnapshotValue,
+  } = useScopedState(scopeId);
 
   return {
     scopeId,
-    availableTableColumnsState,
-    tableFiltersState,
-    tableSortsState,
-    tableColumnsState,
-    objectMetadataConfigState,
-    tableColumnsByKeySelector,
-    hiddenTableColumnsSelector,
-    visibleTableColumnsSelector,
-    onEntityCountChangeState,
-    onColumnsChangeState,
-    tableLastRowVisibleState,
+    injectStateWithRecordTableScopeId: getScopedState,
+    injectSelectorWithRecordTableScopeId: getScopedSelector,
+    injectFamilyStateWithRecordTableScopeId: getScopedFamilyState,
+    injectSelectorSnapshotValueWithRecordTableScopeId:
+      getScopedSelectorSnapshotValue,
+    injectSnapshotValueWithRecordTableScopeId: getScopedSnapshotValue,
+    injectFamilySnapshotValueWithRecordTableScopeId:
+      getScopedFamilySnapshotValue,
   };
 };

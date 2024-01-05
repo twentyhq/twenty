@@ -1,5 +1,6 @@
 import { v4 } from 'uuid';
 
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { Person } from '@/people/types/Person';
 import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
@@ -15,7 +16,7 @@ export const useSpreadsheetPersonImport = () => {
   const { enqueueSnackBar } = useSnackBar();
 
   const { createManyRecords: createManyPeople } = useCreateManyRecords<Person>({
-    objectNameSingular: 'person',
+    objectNameSingular: CoreObjectNameSingular.Person,
   });
 
   const openPersonSpreadsheetImport = (
@@ -28,33 +29,37 @@ export const useSpreadsheetPersonImport = () => {
       ...options,
       onSubmit: async (data) => {
         // TODO: Add better type checking in spreadsheet import later
-        const createInputs = data.validData.map((person) => ({
-          id: v4(),
-          name: {
-            firstName: person.firstName as string | undefined,
-            lastName: person.lastName as string | undefined,
-          },
-          email: person.email as string | undefined,
-          ...(person.linkedinUrl
-            ? {
-                linkedinLink: {
-                  label: 'linkedinUrl',
-                  url: person.linkedinUrl as string | undefined,
-                },
-              }
-            : {}),
-          ...(person.xUrl
-            ? {
-                xLink: {
-                  label: 'xUrl',
-                  url: person.xUrl as string | undefined,
-                },
-              }
-            : {}),
-          jobTitle: person.jobTitle as string | undefined,
-          phone: person.phone as string | undefined,
-          city: person.city as string | undefined,
-        }));
+        const createInputs = data.validData.map(
+          (person) =>
+            ({
+              id: v4(),
+              name: {
+                firstName: person.firstName as string | undefined,
+                lastName: person.lastName as string | undefined,
+              },
+              email: person.email as string | undefined,
+              ...(person.linkedinUrl
+                ? {
+                    linkedinLink: {
+                      label: 'linkedinUrl',
+                      url: person.linkedinUrl as string | undefined,
+                    },
+                  }
+                : {}),
+              ...(person.xUrl
+                ? {
+                    xLink: {
+                      label: 'xUrl',
+                      url: person.xUrl as string | undefined,
+                    },
+                  }
+                : {}),
+              jobTitle: person.jobTitle as string | undefined,
+              phone: person.phone as string | undefined,
+              city: person.city as string | undefined,
+            }) as Person,
+        );
+
         // TODO: abstract this part for any object
         try {
           await createManyPeople(createInputs);
