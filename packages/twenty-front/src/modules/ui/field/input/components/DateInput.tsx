@@ -38,6 +38,7 @@ export type DateInputProps = {
   ) => void;
   hotkeyScope: string;
   clearable?: boolean;
+  onChange?: (newDate: Nullable<Date>) => void;
 };
 
 export const DateInput = ({
@@ -47,6 +48,7 @@ export const DateInput = ({
   onEscape,
   onClickOutside,
   clearable,
+  onChange,
 }: DateInputProps) => {
   const theme = useTheme();
 
@@ -66,6 +68,7 @@ export const DateInput = ({
 
   const handleChange = (newDate: Date) => {
     setInternalValue(newDate);
+    onChange?.(newDate);
   };
 
   useEffect(() => {

@@ -1,11 +1,13 @@
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { FieldContext } from '@/object-record/field/contexts/FieldContext';
+import { useIsFieldEditModeValueEmpty } from '@/object-record/field/hooks/useIsFieldEditModeValueEmpty';
 import { useIsFieldEmpty } from '@/object-record/field/hooks/useIsFieldEmpty';
 import { entityFieldInitialValueFamilyState } from '@/object-record/field/states/entityFieldInitialValueFamilyState';
 import { FieldInitialValue } from '@/object-record/field/types/FieldInitialValue';
+import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
@@ -20,7 +22,7 @@ import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useCurrentTableCellEditMode } from './useCurrentTableCellEditMode';
 
-const DEFAULT_CELL_SCOPE: HotkeyScope = {
+export const DEFAULT_CELL_SCOPE: HotkeyScope = {
   scope: TableHotkeyScope.CellEditMode,
 };
 
@@ -51,8 +53,11 @@ export const useTableCell = () => {
   const isFirstColumnCell = useContext(ColumnIndexContext) === 0;
 
   const isEmpty = useIsFieldEmpty();
+  const isEditModeValueEmpty = useIsFieldEditModeValueEmpty();
 
   const { entityId, fieldDefinition } = useContext(FieldContext);
+
+  const deleteOneRecord = useContext(EntityDeleteContext);
 
   const [, setFieldInitialValue] = useRecoilState(
     entityFieldInitialValueFamilyState({
@@ -60,6 +65,16 @@ export const useTableCell = () => {
       fieldMetadataId: fieldDefinition.fieldMetadataId,
     }),
   );
+
+  const { tableRowIdsScopeInjector } = getRecordTableScopeInjector();
+
+  const deleteRow = useRecoilCallback(({ snapshot }) => async () => {
+    const tableRowIds = snapshot
+      .getLoadable(tableRowIdsScopeInjector(recordTableScopeId))
+      .getValue();
+
+    await deleteOneRecord(tableRowIds[0]);
+  });
 
   const openTableCell = (options?: { initialValue?: FieldInitialValue }) => {
     if (isFirstColumnCell && !isEmpty && basePathToShowPage) {
@@ -84,11 +99,15 @@ export const useTableCell = () => {
     }
   };
 
-  const closeTableCell = () => {
+  const closeTableCell = async () => {
     setDragSelectionStartEnabled(true);
     closeCurrentTableCellInEditMode();
     setFieldInitialValue(undefined);
     setHotkeyScope(TableHotkeyScope.TableSoftFocus);
+
+    if (isFirstColumnCell && isEditModeValueEmpty) {
+      await deleteRow();
+    }
   };
 
   return {

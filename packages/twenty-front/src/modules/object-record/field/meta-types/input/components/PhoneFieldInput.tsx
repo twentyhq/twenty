@@ -1,3 +1,4 @@
+import { useSaveFieldEditModeValue } from '@/object-record/field/hooks/useSaveFieldEditModeValue';
 import { PhoneInput } from '@/ui/field/input/components/PhoneInput';
 
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
@@ -23,6 +24,8 @@ export const PhoneFieldInput = ({
   const { fieldDefinition, initialValue, hotkeyScope, persistPhoneField } =
     usePhoneField();
 
+  const saveEditModeValue = useSaveFieldEditModeValue();
+
   const handleEnter = (newText: string) => {
     onEnter?.(() => persistPhoneField(newText));
   };
@@ -46,6 +49,10 @@ export const PhoneFieldInput = ({
     onShiftTab?.(() => persistPhoneField(newText));
   };
 
+  const handleChange = (newText: string) => {
+    saveEditModeValue(newText);
+  };
+
   return (
     <FieldInputOverlay>
       <PhoneInput
@@ -58,6 +65,7 @@ export const PhoneFieldInput = ({
         onShiftTab={handleShiftTab}
         onTab={handleTab}
         hotkeyScope={hotkeyScope}
+        onChange={handleChange}
       />
     </FieldInputOverlay>
   );

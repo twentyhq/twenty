@@ -1,13 +1,13 @@
 import { selectorFamily } from 'recoil';
 
-import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
+import { entityFieldsEditModeValueFamilyState } from '@/object-record/field/states/entityFieldsEditModeValueFamilyState';
 import { isFieldValueEmpty } from '@/object-record/field/utils/isFieldValueEmpty';
 
 import { FieldDefinition } from '../../types/FieldDefinition';
 import { FieldMetadata } from '../../types/FieldMetadata';
 
-export const isEntityFieldEmptyFamilySelector = selectorFamily({
-  key: 'isEntityFieldEmptyFamilySelector',
+export const isEntityFieldEditModeEmptyFamilySelector = selectorFamily({
+  key: 'isEntityFieldEditModeEmptyFamilySelector',
   get: ({
     fieldDefinition,
     fieldName,
@@ -18,7 +18,9 @@ export const isEntityFieldEmptyFamilySelector = selectorFamily({
     entityId: string;
   }) => {
     return ({ get }) => {
-      const fieldValue = get(entityFieldsFamilyState(entityId))?.[fieldName];
+      const fieldValue = get(entityFieldsEditModeValueFamilyState(entityId))?.[
+        fieldName
+      ];
 
       return isFieldValueEmpty({
         fieldDefinition,

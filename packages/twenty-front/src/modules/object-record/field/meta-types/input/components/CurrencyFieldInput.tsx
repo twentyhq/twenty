@@ -1,3 +1,4 @@
+import { useSaveFieldEditModeValue } from '@/object-record/field/hooks/useSaveFieldEditModeValue';
 import { TextInput } from '@/ui/field/input/components/TextInput';
 
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
@@ -26,6 +27,8 @@ export const CurrencyFieldInput = ({
     initialCurrencyCode,
     persistCurrencyField,
   } = useCurrencyField();
+
+  const saveEditModeValue = useSaveFieldEditModeValue();
 
   const handleEnter = (newValue: string) => {
     onEnter?.(() => {
@@ -75,6 +78,13 @@ export const CurrencyFieldInput = ({
     );
   };
 
+  const handleChange = (newValue: string) => {
+    saveEditModeValue({
+      amountText: newValue,
+      currencyCode: initialCurrencyCode,
+    });
+  };
+
   return (
     <FieldInputOverlay>
       <TextInput
@@ -87,6 +97,7 @@ export const CurrencyFieldInput = ({
         onShiftTab={handleShiftTab}
         onTab={handleTab}
         hotkeyScope={hotkeyScope}
+        onChange={handleChange}
       />
     </FieldInputOverlay>
   );
