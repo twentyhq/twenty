@@ -67,6 +67,7 @@
     "date-fns": "^2.30.0",
     "deep-equal": "^2.2.2",
     "docusaurus-node-polyfills": "^1.0.0",
+    "dotenv-cli": "^7.2.1",
     "esbuild-plugin-svgr": "^2.1.0",
     "file-type": "16.5.4",
     "framer-motion": "^10.12.17",
@@ -110,6 +111,7 @@
     "patch-package": "^8.0.0",
     "pg": "^8.11.3",
     "pg-boss": "^9.0.3",
+    "prettier": "^3.0.3",
     "prism-react-renderer": "^2.1.0",
     "react": "^18.2.0",
     "react-data-grid": "7.0.0-beta.13",
@@ -145,6 +147,7 @@
     "uuid": "^9.0.0",
     "vite-tsconfig-paths": "^4.2.1",
     "xlsx-ugnis": "^0.19.3",
+    "zapier-platform-core": "15.5.1",
     "zod": "^3.22.2"
   },
   "devDependencies": {
@@ -238,6 +241,7 @@
     "nx": "^17.2.8",
     "prettier": "^3.1.1",
     "raw-loader": "^4.0.2",
+    "rimraf": "^5.0.5",
     "source-map-support": "^0.5.20",
     "storybook": "^7.6.3",
     "storybook-addon-cookie": "^3.2.0",
@@ -248,7 +252,8 @@
     "ts-node": "10.9.1",
     "typescript": "^5.3.3",
     "vite": "^5.0.0",
-    "vite-plugin-svgr": "^4.2.0"
+    "vite-plugin-svgr": "^4.2.0",
+    "zapier-platform-cli": "^15.4.1"
   },
   "engines": {
     "node": "^18.17.1",
