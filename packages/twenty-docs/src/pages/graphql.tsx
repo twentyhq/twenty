@@ -1,13 +1,14 @@
-import { explorerPlugin } from "@graphiql/plugin-explorer";
-import { createGraphiQLFetcher } from "@graphiql/toolkit";
-import { GraphiQL } from "graphiql";
-import React, { useEffect, useState } from "react";
-import Layout from "@theme/Layout";
-import BrowserOnly from "@docusaurus/BrowserOnly";
-import { useTheme, Theme } from "@graphiql/react";
-import Playground from "../components/playground";
-import graphiqlCss from "!css-loader!graphiql/graphiql.css";
-import '@graphiql/plugin-explorer/dist/style.css';
+import React, { useEffect, useState } from 'react';
+import BrowserOnly from '@docusaurus/BrowserOnly';
+import { explorerPlugin } from '@graphiql/plugin-explorer';
+import { Theme, useTheme } from '@graphiql/react';
+import { createGraphiQLFetcher } from '@graphiql/toolkit';
+import Layout from '@theme/Layout';
+import { GraphiQL } from 'graphiql';
+
+import Playground from '../components/playground';
+
+import graphiqlCss from '!css-loader!graphiql/graphiql.css';
 
 // Docusaurus does SSR for custom pages, but we need to load GraphiQL in the browser
 const GraphQlComponent = ({ token }) => {
@@ -16,16 +17,18 @@ const GraphQlComponent = ({ token }) => {
   });
 
   const fetcher = createGraphiQLFetcher({
-    url: "https://api.twenty.com/graphql",
+    url: 'https://api.twenty.com/graphql',
   });
 
   // We load graphiql style using useEffect as it breaks remaining docs style
   useEffect(() => {
-    const styleElement = document.createElement("style");
-    styleElement.innerHTML = graphiqlCss.toString();
-    document.head.append(styleElement);
+    const styleElement1 = document.createElement('style');
+    styleElement1.innerHTML = graphiqlCss.toString();
+    document.head.append(styleElement1);
 
-    return () => styleElement.remove();
+    return () => {
+      styleElement1.remove();
+    };
   }, []);
 
   return (
@@ -39,25 +42,25 @@ const GraphQlComponent = ({ token }) => {
   );
 };
 
-export default function graphQL() {
+const graphQL = () => {
   const [token, setToken] = useState();
   const { setTheme } = useTheme();
 
   useEffect(() => {
     window.localStorage.setItem(
-      "graphiql:theme",
-      window.localStorage.getItem("theme") || "light"
+      'graphiql:theme',
+      window.localStorage.getItem('theme') || 'light',
     );
 
     const handleThemeChange = (ev) => {
-      if (ev.key === "theme") {
+      if (ev.key === 'theme') {
         setTheme(ev.newValue as Theme);
       }
     };
 
-    window.addEventListener("storage", handleThemeChange);
+    window.addEventListener('storage', handleThemeChange);
 
-    return () => window.removeEventListener("storage", handleThemeChange);
+    return () => window.removeEventListener('storage', handleThemeChange);
   }, []);
 
   const children = <GraphQlComponent token={token} />;
@@ -72,4 +75,5 @@ export default function graphQL() {
       </BrowserOnly>
     </Layout>
   );
-}
+};
+export default graphQL;
