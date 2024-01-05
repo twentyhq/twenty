@@ -33335,14 +33335,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemailer@npm:6.9.8":
-  version: 6.9.8
-  resolution: "nodemailer@npm:6.9.8"
-  checksum: 9332587975240ac648e1295b1df15e339fcace3f7fab8af0382e7f2dd10e48296344dfa698d58f1667f220f7fe13c779d55d39144c9cd9ed6f5f559714183c75
-  languageName: node
-  linkType: hard
-
-"nodemailer@npm:^6.9.8":
+"nodemailer@npm:6.9.8, nodemailer@npm:^6.9.8":
   version: 6.9.8
   resolution: "nodemailer@npm:6.9.8"
   checksum: 9332587975240ac648e1295b1df15e339fcace3f7fab8af0382e7f2dd10e48296344dfa698d58f1667f220f7fe13c779d55d39144c9cd9ed6f5f559714183c75
