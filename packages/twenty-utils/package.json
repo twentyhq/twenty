@@ -3,13 +3,5 @@
   "private": true,
   "scripts": {
     "release": "node release.js"
-  },
-  "dependencies": {
-    "danger-plugin-todos": "^1.3.1",
-    "semver": "^7.5.4",
-    "typescript": "^5.3.2"
-  },
-  "devDependencies": {
-    "danger": "^11.3.0"
   }
 }

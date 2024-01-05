@@ -1,4 +1,4 @@
-FROM node:18.16.0-alpine as twenty-docs-build
+FROM node:18.17.1-alpine as twenty-docs-build
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ RUN yarn nx build twenty-docs
 
 CMD ["tail", "-f", "/dev/null"]
 
-FROM node:18.16.0-alpine as twenty-docs
+FROM node:18.17.1-alpine as twenty-docs
 
 WORKDIR /app/packages/twenty-docs
 
