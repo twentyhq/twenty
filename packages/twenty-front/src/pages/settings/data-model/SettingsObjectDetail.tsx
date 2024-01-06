@@ -25,6 +25,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { sortFieldMetadataItem } from '~/utils/sortFieldMetadataItem';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -51,27 +52,16 @@ export const SettingsObjectDetail = () => {
 
   if (!activeObjectMetadataItem) return null;
 
-  const sortFields = (a: FieldMetadataItem, b: FieldMetadataItem) => {
-    const customCompare = a.isCustom === b.isCustom ? 0 : a.isCustom ? 1 : -1;
-    if (customCompare !== 0) return customCompare;
-    const dateA = a.createdAt ? new Date(a.createdAt) : null;
-    const dateB = b.createdAt ? new Date(b.createdAt) : null;
-    if (!dateA && !dateB) return 0;
-    if (!dateA) return 1;
-    if (!dateB) return -1;
-    return dateA.getTime() - dateB.getTime();
-  };
-
   const activeMetadataFields = activeObjectMetadataItem.fields
     .filter(
       (metadataField) => metadataField.isActive && !metadataField.isSystem,
     )
-    .sort(sortFields);
+    .sort(sortFieldMetadataItem);
   const disabledMetadataFields = activeObjectMetadataItem.fields
     .filter(
       (metadataField) => !metadataField.isActive && !metadataField.isSystem,
     )
-    .sort(sortFields);
+    .sort(sortFieldMetadataItem);
 
   const handleDisableObject = async () => {
     await disableObjectMetadataItem(activeObjectMetadataItem);

@@ -1,6 +1,6 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
-import { parseDate } from '../utils/date-utils'; // adjust the path as needed
+import { parseDate } from '../utils/date-utils';
 
 export const sortFieldMetadataItem = (
   a: FieldMetadataItem,
@@ -16,5 +16,5 @@ export const sortFieldMetadataItem = (
   if (!dateA) return 1;
   if (!dateB) return -1;
 
-  return dateA.diff(dateB);
+  return dateB.diff(dateA).milliseconds > 0 ? -1 : 1;
 };
