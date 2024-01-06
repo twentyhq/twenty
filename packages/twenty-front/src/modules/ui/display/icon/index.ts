@@ -114,4 +114,5 @@ export {
   IconWand,
   IconWorld,
   IconX,
+  IconClick,
 } from '@tabler/icons-react';

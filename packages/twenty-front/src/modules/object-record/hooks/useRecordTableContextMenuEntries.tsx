@@ -14,6 +14,7 @@ import { RecordTableScopeInternalContext } from '@/object-record/record-table/sc
 import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import {
   IconCheckbox,
+  IconClick,
   IconHeart,
   IconHeartOff,
   IconNotes,
@@ -146,9 +147,7 @@ export const useRecordTableContextMenuEntries = (
     ],
   );
 
-  const dataExecuteQuickActionOnmentEnabled = useIsFeatureEnabled(
-    'IS_QUICK_ACTIONS_ENABLED',
-  );
+  const dataExecuteQuickActionOnmentEnabled = true;
 
   const openCreateActivityDrawer =
     useOpenCreateActivityDrawerForSelectedRowIds(scopeId);
@@ -218,9 +217,20 @@ export const useRecordTableContextMenuEntries = (
         ...(dataExecuteQuickActionOnmentEnabled
           ? [
               {
-                label: 'Quick Action',
-                Icon: IconWand,
-                onClick: () => handleExecuteQuickActionOnClick(),
+                label: 'Actions',
+                Icon: IconClick,
+                subActions: [
+                  {
+                    "label": "Enrich",
+                    Icon: IconWand,
+                    onClick: () => handleExecuteQuickActionOnClick(),
+                  },
+                  {
+                    "label": "Enrich2",
+                    Icon: IconWand,
+                    onClick: () => handleExecuteQuickActionOnClick(),
+                  },
+                ]
               },
             ]
           : []),

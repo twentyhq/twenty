@@ -7,4 +7,5 @@ export type ActionBarEntry = {
   Icon: IconComponent;
   accent?: ActionBarItemAccent;
   onClick: () => void;
+  subActions?: ActionBarEntry[],
 };
