@@ -1,27 +1,51 @@
-# React + TypeScript + Vite
+# Twenty Chrome Extension.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This extension allows you to save `company` and `people` information to your twenty workspace directly from LinkedIn.
 
-Currently, two official plugins are available:
+To install the extension in development mode with hmr (hot module reload), follow these steps.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- STEP 1: Clone the repository and run `yarn install` in the root directory.
+- STEP 2: Once the dependencies installation succeeds, create a file with env variables by executing the following command in the root directory.
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
+```
+cp ./packages/twenty-chrome-extension/.env.example ./packages/twenty-chrome-extension/.env
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+- STEP 3: Now, execute the following command in the root directory to start up the development server on Port 3002. This will create a `dist` folder in `twenty-chrome-extension`.
+
+```
+yarn nx start twenty-chrome-extension
+```
+
+- STEP 4: Open Google Chrome and head to the extensions page by typing `chrome://extensions` in the address bar.
+
+<p align="center">
+   <img src="../twenty-chrome-extension/public/readme-images/01-img-one.png" width="600" />
+</p>
+
+- STEP 5: Turn on the `Developer mode` from the top-right corner and click `Load unpacked`.
+
+<p align="center">
+   <img src="../twenty-chrome-extension/public/readme-images/02-img-two.png" width="600" />
+</p>
+
+- STEP 6: Select the `dist` folder from `twenty-chrome-extension`.
+
+<p align="center">
+   <img src="../twenty-chrome-extension/public/readme-images/03-img-three.png" width="600" />
+</p>
+
+- STEP 7: This opens up the `options` page, where you must enter your API key.
+
+<p align="center">
+   <img src="../twenty-chrome-extension/public/readme-images/04-img-four.png" width="600" />
+</p>
+
+- STEP 8: Reload any LinkedIn page that you opened before installing the extension for seamless experience.
+- STEP 9: Visit any individual or company profile on LinkedIn and click the `Add to Twenty` button to test.
+
+<p align="center">
+   <img src="../twenty-chrome-extension/public/readme-images/05-img-five.png" width="600" />
+</p>
+
+To install the extension in production mode without hmr (hot module reload), replace the command in STEP 3 with `yarn nx build twenty-chrome-extension`.
