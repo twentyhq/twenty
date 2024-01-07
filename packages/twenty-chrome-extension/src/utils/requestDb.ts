@@ -1,5 +1,6 @@
 const requestDb = async (query: string) => {
   const { apiKey } = await chrome.storage.local.get('apiKey');
+  const { serverBaseUrl } = await chrome.storage.local.get('serverBaseUrl');
 
   const options = {
     method: 'POST',
@@ -11,8 +12,8 @@ const requestDb = async (query: string) => {
     },
   };
 
-  const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/graphql`, options);
-
+  const response = await fetch(`${serverBaseUrl ? serverBaseUrl : import.meta.env.VITE_SERVER_BASE_URL}/graphql`, options);
+  
   if (!response.ok) {
     console.error(response);
   }

@@ -43,7 +43,9 @@ const StyledToggleContainer = styled.div`
 `;
 
 const StyledSection = styled.div<{ showSection: boolean }>`
-  transition: max-height 0.3s ease, opacity 0.3s ease;
+  transition:
+    max-height 0.3s ease,
+    opacity 0.3s ease;
   overflow: hidden;
   max-height: ${({ showSection }) => (showSection ? '200px' : '0')};
 `;
@@ -56,6 +58,10 @@ export const ApiKeyForm = () => {
   useEffect(() => {
     chrome.storage.local.set({ apiKey });
   }, [apiKey]);
+
+  useEffect(() => {
+    chrome.storage.local.set({ serverBaseUrl: route });
+  }, [route]);
 
   const handleGenerateClick = () => {
     window.open('http://localhost:3001/settings/developers/api-keys');
@@ -72,8 +78,16 @@ export const ApiKeyForm = () => {
       </StyledHeader>
 
       <StyledMain>
-        <H2Title title="Connect your account" description="Input your key to link the extension to your workspace." />
-        <TextInput label="Api key" value={apiKey} onChange={setApiKey} placeholder="My API key" />
+        <H2Title
+          title="Connect your account"
+          description="Input your key to link the extension to your workspace."
+        />
+        <TextInput
+          label="Api key"
+          value={apiKey}
+          onChange={setApiKey}
+          placeholder="My API key"
+        />
         <Button
           title="Generate a key"
           fullWidth={false}
@@ -89,14 +103,26 @@ export const ApiKeyForm = () => {
 
       <StyledFooter>
         <StyledTitleContainer>
-          <H2Title title="Custom route" description="For developers interested in self-hosting or local testing of the extension." />
+          <H2Title
+            title="Custom route"
+            description="For developers interested in self-hosting or local testing of the extension."
+          />
         </StyledTitleContainer>
         <StyledToggleContainer>
           <Toggle value={showSection} onChange={handleToggle} />
         </StyledToggleContainer>
       </StyledFooter>
 
-      <StyledSection showSection={showSection}>{showSection && <TextInput label="Route" value={route} onChange={setRoute} placeholder="My Route" />}</StyledSection>
+      <StyledSection showSection={showSection}>
+        {showSection && (
+          <TextInput
+            label="Route"
+            value={route}
+            onChange={setRoute}
+            placeholder="My Route"
+          />
+        )}
+      </StyledSection>
     </StyledContainer>
   );
 };
