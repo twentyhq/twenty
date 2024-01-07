@@ -1,14 +1,14 @@
-import insertButtonForUser from './extractUserProfile';
+import insertButtonForPerson from './extractPersonProfile';
 import insertButtonForCompany from './extractCompanyProfile';
 
 insertButtonForCompany();
-insertButtonForUser();
+insertButtonForPerson();
 
 // Execute the insertion of the buttons when the content script loads
 chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
   if (message.action === 'executeContentScript') {
     insertButtonForCompany();
-    insertButtonForUser();
+    insertButtonForPerson();
   }
 
   sendResponse('Executing!');
