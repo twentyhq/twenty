@@ -22,8 +22,6 @@ type RatingInputProps = {
   readonly?: boolean;
 };
 
-const RATING_LEVELS_NB = 5;
-
 export const RatingInput = ({
   onChange,
   value,
@@ -32,55 +30,54 @@ export const RatingInput = ({
   const theme = useTheme();
   const [hoveredValue, setHoveredValue] = useState<number | null>(null);
 
+  const ratings: { rating: number; enum: FieldRatingValue }[] = [
+    {
+      rating: 1,
+      enum: FieldRatingValue.ONE,
+    },
+    {
+      rating: 2,
+      enum: FieldRatingValue.TWO,
+    },
+    {
+      rating: 3,
+      enum: FieldRatingValue.THREE,
+    },
+    {
+      rating: 4,
+      enum: FieldRatingValue.FOUR,
+    },
+    {
+      rating: 5,
+      enum: FieldRatingValue.FIVE,
+    },
+  ];
+
   const getRatingNumber = (fieldValue: FieldRatingValue) => {
-    switch (fieldValue) {
-      case FieldRatingValue.ONE:
-        return 1;
-      case FieldRatingValue.TWO:
-        return 2;
-      case FieldRatingValue.THREE:
-        return 3;
-      case FieldRatingValue.FOUR:
-        return 4;
-      case FieldRatingValue.FIVE:
-        return 5;
-      default:
-        return 0;
-    }
+    const ratingObj = ratings.find((obj) => obj.enum === fieldValue);
+    if (ratingObj) return ratingObj.rating;
+    else return 0;
   };
 
   const getRatingEnum = (rating: number) => {
-    switch (rating) {
-      case 1:
-        return FieldRatingValue.ONE;
-      case 2:
-        return FieldRatingValue.TWO;
-      case 3:
-        return FieldRatingValue.THREE;
-      case 4:
-        return FieldRatingValue.FOUR;
-      case 5:
-        return FieldRatingValue.FIVE;
-      default:
-        return FieldRatingValue.ZERO;
-    }
+    const ratingObj = ratings.find((obj) => obj.rating === rating);
+    if (ratingObj) return ratingObj.enum;
+    else return FieldRatingValue.ZERO;
   };
 
-  const originalValue = getRatingNumber(value);
-  const currentValue = hoveredValue ?? originalValue;
+  const originalRating = getRatingNumber(value);
+  const currentValue = hoveredValue ?? originalRating;
 
   return (
     <StyledContainer
       role="slider"
       aria-label="Rating"
-      aria-valuemax={RATING_LEVELS_NB}
+      aria-valuemax={ratings.length}
       aria-valuemin={1}
-      aria-valuenow={originalValue}
+      aria-valuenow={originalRating}
       tabIndex={0}
     >
-      {Array.from({ length: RATING_LEVELS_NB }, (_, index) => {
-        const rating = index + 1;
-
+      {ratings.map(({ rating }, index) => {
         return (
           <StyledRatingIconContainer
             key={index}
