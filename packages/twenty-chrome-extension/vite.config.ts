@@ -16,9 +16,9 @@ export default defineConfig(() => {
 
     // Adding this to fix websocket connection error.
     server: {
-      port: 5173,
+      port: 3002,
       strictPort: true,
-      hmr: { port: 5173 },
+      hmr: { port: 3002 },
     },
 
     plugins: [crx({ manifest }), react()],

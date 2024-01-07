@@ -5,6 +5,10 @@
       "path": "../"
     },
     {
+      "name": "packages/twenty-chrome-extension",
+      "path": "../packages/twenty-chrome-extension"
+    },
+    {
       "name": "packages/twenty-docker",
       "path": "../packages/twenty-docker"
     },
