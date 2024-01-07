@@ -1,8 +1,20 @@
-import { defineConfig } from 'vite';
+import { defineConfig, Plugin } from 'vite';
 import { crx } from '@crxjs/vite-plugin';
 import react from '@vitejs/plugin-react';
 
 import manifest from './src/manifest';
+
+const viteManifestHack: Plugin & {
+  renderCrxManifest: (manifest: unknown, bundle: unknown) => void;
+} = {
+  // Workaround from https://github.com/crxjs/chrome-extension-tools/issues/846#issuecomment-1861880919.
+  name: 'manifestHack',
+  renderCrxManifest(_manifest, bundle) {
+    bundle['manifest.json'] = bundle['.vite/manifest.json'];
+    bundle['manifest.json'].fileName = 'manifest.json';
+    delete bundle['.vite/manifest.json'];
+  },
+};
 
 export default defineConfig(() => {
   return {
@@ -21,6 +33,6 @@ export default defineConfig(() => {
       hmr: { port: 3002 },
     },
 
-    plugins: [crx({ manifest }), react()],
+    plugins: [viteManifestHack, crx({ manifest }), react()],
   };
 });
