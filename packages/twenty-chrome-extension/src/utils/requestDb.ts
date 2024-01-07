@@ -11,8 +11,7 @@ const requestDb = async (query: string) => {
     },
   };
 
-  // const response = await fetch(`${process.env.SERVER_BASE_URL}/graphql`, options);
-  const response = await fetch(`http://localhost:3000/graphql`, options);
+  const response = await fetch(`${import.meta.env.VITE_SERVER_BASE_URL}/graphql`, options);
 
   if (!response.ok) {
     console.error(response);
