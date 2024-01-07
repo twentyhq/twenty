@@ -56,6 +56,22 @@ export const ApiKeyForm = () => {
   const [showSection, setShowSection] = useState(false);
 
   useEffect(() => {
+    const getState = async () => {
+      const localStorage = await chrome.storage.local.get();
+
+      if (localStorage.apiKey) {
+        setApiKey(localStorage.apiKey);
+      }
+
+      if (localStorage.serverBaseUrl) {
+        setRoute(localStorage.serverBaseUrl);
+      }
+    };
+
+    void getState();
+  }, []);
+
+  useEffect(() => {
     chrome.storage.local.set({ apiKey });
   }, [apiKey]);
 
