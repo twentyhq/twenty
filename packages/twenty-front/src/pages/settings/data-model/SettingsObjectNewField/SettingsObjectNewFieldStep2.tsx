@@ -24,6 +24,7 @@ import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldRatingValue } from '@/object-record/field/types/FieldMetadata';
 
 export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
@@ -133,24 +134,19 @@ export const SettingsObjectNewFieldStep2 = () => {
       case FieldMetadataType.Rating: {
         const ratings: FieldMetadataOption[] = [
           {
-            isDefault: false,
-            label: 'one',
+            label: FieldRatingValue.ONE,
           },
           {
-            isDefault: false,
-            label: 'two',
+            label: FieldRatingValue.TWO,
           },
           {
-            isDefault: false,
-            label: 'three',
+            label: FieldRatingValue.THREE,
           },
           {
-            isDefault: false,
-            label: 'four',
+            label: FieldRatingValue.FOUR,
           },
           {
-            isDefault: false,
-            label: 'five',
+            label: FieldRatingValue.FIVE,
           },
         ];
         return ratings;
