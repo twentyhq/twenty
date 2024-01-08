@@ -1,5 +1,9 @@
-import { Command, CommandRunner, Option } from 'nest-commander';
+import { InjectRepository } from '@nestjs/typeorm';
 
+import { Command, CommandRunner, Option } from 'nest-commander';
+import { Repository } from 'typeorm';
+
+import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { MessagingProducer } from 'src/workspace/messaging/producers/messaging-producer';
@@ -17,6 +21,9 @@ export class FetchWorkspaceMessagesCommand extends CommandRunner {
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly messagingProducer: MessagingProducer,
+
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {
     super();
   }
@@ -25,6 +32,16 @@ export class FetchWorkspaceMessagesCommand extends CommandRunner {
     _passedParam: string[],
     options: FetchWorkspaceMessagesOptions,
   ): Promise<void> {
+    const isMessagingEnabled = await this.featureFlagRepository.findOneBy({
+      workspaceId: options.workspaceId,
+      key: 'IS_MESSAGING_ENABLED',
+      value: true,
+    });
+
+    if (!isMessagingEnabled) {
+      throw new Error('Messaging is not enabled for this workspace');
+    }
+
     await this.fetchWorkspaceMessages(options.workspaceId);
 
     return;
@@ -39,7 +56,7 @@ export class FetchWorkspaceMessagesCommand extends CommandRunner {
     return value;
   }
 
-  async fetchWorkspaceMessages(workspaceId: string): Promise<void> {
+  private async fetchWorkspaceMessages(workspaceId: string): Promise<void> {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
