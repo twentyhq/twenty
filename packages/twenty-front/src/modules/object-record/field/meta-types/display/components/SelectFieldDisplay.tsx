@@ -3,7 +3,15 @@ import { Tag } from '@/ui/display/tag/components/Tag';
 import { useSelectField } from '../../hooks/useSelectField';
 
 export const SelectFieldDisplay = () => {
-  const { fieldValue } = useSelectField();
+  const { fieldValue, fieldDefinition } = useSelectField();
 
-  return <Tag color={fieldValue.color} text={fieldValue.label} />;
+  const selectedOption = fieldDefinition.metadata.options.find(
+    (option) => option.value === fieldValue,
+  );
+
+  return selectedOption ? (
+    <Tag color={selectedOption.color} text={selectedOption.label} />
+  ) : (
+    <></>
+  );
 };

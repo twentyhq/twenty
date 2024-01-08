@@ -14,6 +14,7 @@ import { isFieldRating } from '@/object-record/field/types/guards/isFieldRating'
 import { isFieldRelation } from '@/object-record/field/types/guards/isFieldRelation';
 import { isFieldRelationValue } from '@/object-record/field/types/guards/isFieldRelationValue';
 import { isFieldSelect } from '@/object-record/field/types/guards/isFieldSelect';
+import { isFieldSelectValue } from '@/object-record/field/types/guards/isFieldSelectValue';
 import { isFieldText } from '@/object-record/field/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/field/types/guards/isFieldUuid';
 import { assertNotNull } from '~/utils/assert';
@@ -34,8 +35,7 @@ export const isFieldValueEmpty = ({
     isFieldNumber(fieldDefinition) ||
     isFieldRating(fieldDefinition) ||
     isFieldEmail(fieldDefinition) ||
-    isFieldBoolean(fieldDefinition) ||
-    isFieldSelect(fieldDefinition)
+    isFieldBoolean(fieldDefinition)
     //|| isFieldPhone(fieldDefinition)
   ) {
     return isValueEmpty(fieldValue);
@@ -43,6 +43,10 @@ export const isFieldValueEmpty = ({
 
   if (isFieldRelation(fieldDefinition)) {
     return isFieldRelationValue(fieldValue) && isValueEmpty(fieldValue);
+  }
+
+  if (isFieldSelect(fieldDefinition)) {
+    return isFieldSelectValue(fieldValue) && !assertNotNull(fieldValue);
   }
 
   if (isFieldCurrency(fieldDefinition)) {

@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { ThemeColor } from '@/ui/theme/constants/colors';
+import { usePersistField } from '@/object-record/field/hooks/usePersistField';
 import { FieldMetadataType } from '~/generated/graphql';
 
 import { FieldContext } from '../../contexts/FieldContext';
@@ -25,23 +25,18 @@ export const useSelectField = () => {
       fieldName: fieldName,
     }),
   );
-  const fieldSelectValue = isFieldSelectValue(fieldValue)
-    ? fieldValue
-    : { color: 'green' as ThemeColor, label: '' };
+
+  const fieldSelectValue = isFieldSelectValue(fieldValue) ? fieldValue : null;
 
   const fieldInitialValue = useFieldInitialValue();
 
-  const initialValue = {
-    color: 'green' as ThemeColor,
-    label: fieldInitialValue?.isEmpty
-      ? ''
-      : fieldInitialValue?.value ?? fieldSelectValue?.label ?? '',
-  };
+  const persistField = usePersistField();
 
   return {
     fieldDefinition,
+    persistField,
     fieldValue: fieldSelectValue,
-    initialValue,
+    initialValue: fieldInitialValue,
     setFieldValue,
     hotkeyScope,
   };
