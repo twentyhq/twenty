@@ -1,6 +1,7 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 
-import { FetchWorkspaceMessagesService } from 'src/workspace/messaging/services/fetch-workspace-messages.service';
+import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { MessagingProducer } from 'src/workspace/messaging/producers/messaging-producer';
 
 interface FetchWorkspaceMessagesOptions {
@@ -13,7 +14,8 @@ interface FetchWorkspaceMessagesOptions {
 })
 export class FetchWorkspaceMessagesCommand extends CommandRunner {
   constructor(
-    private readonly fetchWorkspaceMessagesService: FetchWorkspaceMessagesService,
+    private readonly dataSourceService: DataSourceService,
+    private readonly typeORMService: TypeORMService,
     private readonly messagingProducer: MessagingProducer,
   ) {
     super();
@@ -23,14 +25,7 @@ export class FetchWorkspaceMessagesCommand extends CommandRunner {
     _passedParam: string[],
     options: FetchWorkspaceMessagesOptions,
   ): Promise<void> {
-    await this.messagingProducer.enqueueFetchMessages(
-      { workspaceId: options.workspaceId },
-      options.workspaceId,
-    );
-
-    await this.fetchWorkspaceMessagesService.fetchWorkspaceMessages(
-      options.workspaceId,
-    );
+    await this.fetchWorkspaceMessages(options.workspaceId);
 
     return;
   }
@@ -42,5 +37,34 @@ export class FetchWorkspaceMessagesCommand extends CommandRunner {
   })
   parseWorkspaceId(value: string): string {
     return value;
+  }
+
+  async fetchWorkspaceMessages(workspaceId: string): Promise<void> {
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        workspaceId,
+      );
+
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+
+    if (!workspaceDataSource) {
+      throw new Error('No workspace data source found');
+    }
+
+    const connectedAccounts = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail'`,
+    );
+
+    if (!connectedAccounts || connectedAccounts.length === 0) {
+      throw new Error('No connected account found');
+    }
+
+    for (const connectedAccount of connectedAccounts) {
+      await this.messagingProducer.enqueueFetchAllMessagesFromConnectedAccount(
+        { workspaceId, connectedAccountId: connectedAccount.id },
+        `${workspaceId}-${connectedAccount.id}`,
+      );
+    }
   }
 }
