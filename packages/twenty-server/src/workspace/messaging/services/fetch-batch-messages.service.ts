@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { simpleParser } from 'mailparser';
+import { simpleParser, AddressObject } from 'mailparser';
 
 import { GmailMessage } from 'src/workspace/messaging/types/gmailMessage';
 import { MessageOrThreadQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
@@ -206,6 +206,9 @@ export class FetchBatchMessagesService {
             attachments,
           } = parsed;
 
+          if (!from) throw new Error('From value is missing');
+          if (!to) throw new Error('To value is missing');
+
           const messageFromGmail: GmailMessage = {
             externalId: id,
             headerMessageId: messageId || '',
@@ -213,9 +216,9 @@ export class FetchBatchMessagesService {
             messageThreadId: threadId,
             internalDate,
             from,
-            to,
-            cc,
-            bcc,
+            to: this.formatAddressObjectAsArray(to),
+            cc: this.formatAddressObjectAsArray(cc),
+            bcc: this.formatAddressObjectAsArray(bcc),
             text: text || '',
             html: html || '',
             attachments,
@@ -233,6 +236,18 @@ export class FetchBatchMessagesService {
     ) as GmailMessage[];
 
     return filteredResponse;
+  }
+
+  formatAddressObjectAsArray(
+    addressObject: AddressObject | AddressObject[] | undefined,
+  ): AddressObject[] {
+    if (!addressObject) return [];
+
+    if (!Array.isArray(addressObject)) {
+      return [addressObject];
+    } else {
+      return addressObject;
+    }
   }
 
   async formatBatchResponsesAsGmailMessages(

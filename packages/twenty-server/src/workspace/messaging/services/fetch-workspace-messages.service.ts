@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import { AddressObject } from 'mailparser';
 import { gmail_v1, google } from 'googleapis';
 import { v4 } from 'uuid';
-import { DataSource } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
@@ -181,6 +182,9 @@ export class FetchWorkspaceMessagesService {
         messageThreadId,
         internalDate,
         from,
+        to,
+        cc,
+        bcc,
         text,
       } = message;
 
@@ -221,7 +225,72 @@ export class FetchWorkspaceMessagesService {
           `INSERT INTO ${dataSourceMetadata.schema}."messageRecipient" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
           [messageId, 'from', handle, displayName, personId, workspaceMemberId],
         );
+
+        await this.saveMessageRecipients(
+          'to',
+          to,
+          dataSourceMetadata,
+          messageId,
+          workspaceMemberId,
+          manager,
+        );
+
+        await this.saveMessageRecipients(
+          'cc',
+          cc,
+          dataSourceMetadata,
+          messageId,
+          workspaceMemberId,
+          manager,
+        );
+
+        await this.saveMessageRecipients(
+          'bcc',
+          bcc,
+          dataSourceMetadata,
+          messageId,
+          workspaceMemberId,
+          manager,
+        );
       });
+    }
+  }
+
+  async saveMessageRecipients(
+    role: 'to' | 'cc' | 'bcc',
+    addressObjects: AddressObject[] | undefined,
+    dataSourceMetadata: DataSourceEntity,
+    messageId: string,
+    workspaceMemberId: string,
+    manager: EntityManager,
+  ): Promise<void> {
+    if (!addressObjects) return;
+
+    for (const addressObject of addressObjects) {
+      const recipients = addressObject.value;
+
+      for (const recipient of recipients) {
+        const recipientDisplayName = recipient.name;
+
+        const recipientPerson = await manager.query(
+          `SELECT * FROM ${dataSourceMetadata.schema}."person" WHERE "email" = $1`,
+          [recipient.address],
+        );
+
+        const recipientPersonId = recipientPerson[0]?.id;
+
+        await manager.query(
+          `INSERT INTO ${dataSourceMetadata.schema}."messageRecipient" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
+          [
+            messageId,
+            role,
+            recipient.address,
+            recipientDisplayName,
+            recipientPersonId,
+            workspaceMemberId,
+          ],
+        );
+      }
     }
   }
 
@@ -265,9 +334,8 @@ export class FetchWorkspaceMessagesService {
         workspaceId,
       );
 
-    const workspaceDataSource = await this.typeORMService.connectToDataSource(
-      dataSourceMetadata,
-    );
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
     if (!workspaceDataSource) {
       throw new Error('No workspace data source found');

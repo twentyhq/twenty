@@ -6,10 +6,10 @@ export type GmailMessage = {
   subject: string;
   messageThreadId: string;
   internalDate: string;
-  from: AddressObject | undefined;
-  to: AddressObject | AddressObject[] | undefined;
-  cc: AddressObject | AddressObject[] | undefined;
-  bcc: AddressObject | AddressObject[] | undefined;
+  from: AddressObject;
+  to: AddressObject[];
+  cc?: AddressObject[];
+  bcc?: AddressObject[];
   text: string;
   html: string;
   attachments: Attachment[];
