@@ -270,6 +270,8 @@ export class FetchWorkspaceMessagesService {
       const recipients = addressObject.value;
 
       for (const recipient of recipients) {
+        if (!recipient.address) continue;
+
         const recipientDisplayName = recipient.name;
 
         const recipientPerson = await manager.query(
