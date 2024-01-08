@@ -254,6 +254,7 @@
     "ts-node": "10.9.1",
     "typescript": "^5.3.3",
     "vite": "^5.0.0",
+    "vite-plugin-checker": "^0.6.2",
     "vite-plugin-svgr": "^4.2.0",
     "zapier-platform-cli": "^15.4.1"
   },
