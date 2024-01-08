@@ -3,6 +3,8 @@ import { useRecoilCallback } from 'recoil';
 
 import { isFieldFullName } from '@/object-record/field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/field/types/guards/isFieldFullNameValue';
+import { isFieldSelect } from '@/object-record/field/types/guards/isFieldSelect';
+import { isFieldSelectValue } from '@/object-record/field/types/guards/isFieldSelectValue';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { entityFieldsFamilySelector } from '../states/selectors/entityFieldsFamilySelector';
@@ -77,6 +79,9 @@ export const usePersistField = () => {
         const fieldIsPhone =
           isFieldPhone(fieldDefinition) && isFieldPhoneValue(valueToPersist);
 
+        const fieldIsSelect =
+          isFieldSelect(fieldDefinition) && isFieldSelectValue(valueToPersist);
+
         if (fieldIsRelation) {
           const fieldName = fieldDefinition.metadata.fieldName;
 
@@ -104,7 +109,8 @@ export const usePersistField = () => {
           fieldIsPhone ||
           fieldIsLink ||
           fieldIsCurrency ||
-          fieldIsFullName
+          fieldIsFullName ||
+          fieldIsSelect
         ) {
           const fieldName = fieldDefinition.metadata.fieldName;
           set(
