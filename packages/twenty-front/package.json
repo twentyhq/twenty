@@ -55,8 +55,5 @@
   },
   "msw": {
     "workerDirectory": "public"
-  },
-  "devDependencies": {
-    "vite-plugin-checker": "^0.6.2"
   }
 }
