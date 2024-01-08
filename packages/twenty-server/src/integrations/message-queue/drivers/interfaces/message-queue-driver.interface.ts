@@ -14,7 +14,7 @@ export interface MessageQueueDriver {
     queueName: MessageQueue,
     handler: ({ data, id }: { data: T; id: string }) => Promise<void> | void,
   );
-  schedule<T extends MessageQueueJobData>(
+  schedule<T extends MessageQueueJobData | undefined>(
     queueName: MessageQueue,
     jobName: string,
     data: T,

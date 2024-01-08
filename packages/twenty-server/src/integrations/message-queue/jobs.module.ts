@@ -8,6 +8,7 @@ import { CallWebhookJob } from 'src/workspace/workspace-query-runner/jobs/call-w
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
+import { CleanInactiveWorkspaceJob } from 'src/workspace/cron/jobs/clean-inactive-workspace.job';
 
 @Module({
   imports: [
@@ -28,6 +29,10 @@ import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
     {
       provide: CallWebhookJob.name,
       useClass: CallWebhookJob,
+    },
+    {
+      provide: CleanInactiveWorkspaceJob.name,
+      useClass: CleanInactiveWorkspaceJob,
     },
   ],
 })

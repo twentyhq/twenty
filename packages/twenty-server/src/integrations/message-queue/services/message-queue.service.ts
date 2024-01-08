@@ -34,7 +34,7 @@ export class MessageQueueService implements OnModuleDestroy {
     return this.driver.add(this.queueName, jobName, data, options);
   }
 
-  schedule<T extends MessageQueueJobData>(
+  schedule<T extends MessageQueueJobData | undefined>(
     jobName: string,
     data: T,
     pattern: string,
