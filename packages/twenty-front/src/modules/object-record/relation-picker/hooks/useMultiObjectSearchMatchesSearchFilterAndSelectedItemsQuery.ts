@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
+import { EMPTY_QUERY } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
 import { useLimitPerMetadataItem } from '@/object-record/relation-picker/hooks/useLimitPerMetadataItem';
@@ -91,13 +92,17 @@ export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
   const {
     loading: selectedAndMatchesSearchFilterObjectRecordsLoading,
     data: selectedAndMatchesSearchFilterObjectRecordsQueryResult,
-  } = useQuery<MultiObjectRecordQueryResult>(multiSelectQueryForSelectedIds, {
-    variables: {
-      ...selectedAndMatchesSearchFilterTextFilterPerMetadataItem,
-      ...orderByFieldPerMetadataItem,
-      ...limitPerMetadataItem,
+  } = useQuery<MultiObjectRecordQueryResult>(
+    multiSelectQueryForSelectedIds ?? EMPTY_QUERY,
+    {
+      variables: {
+        ...selectedAndMatchesSearchFilterTextFilterPerMetadataItem,
+        ...orderByFieldPerMetadataItem,
+        ...limitPerMetadataItem,
+      },
+      skip: !isDefined(multiSelectQueryForSelectedIds),
     },
-  });
+  );
 
   const {
     objectRecordForSelectArray: selectedAndMatchesSearchFilterObjectRecords,
