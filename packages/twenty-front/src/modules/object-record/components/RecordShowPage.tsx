@@ -200,7 +200,7 @@ export const RecordShowPage = () => {
                       mapToObjectRecordIdentifier(record).avatarUrl ?? ''
                     }
                     avatarPlaceholder={
-                      mapToObjectRecordIdentifier(record).name ?? '' ?? ''
+                      mapToObjectRecordIdentifier(record).name ?? ''
                     }
                     date={record.createdAt ?? ''}
                     title={
