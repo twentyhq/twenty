@@ -30,7 +30,6 @@ describe('useRecoilScopedValue', () => {
     );
 
     const scopedState = result.current;
-    console.log(result.current);
 
     expect(scopedState).toBeNull();
   });

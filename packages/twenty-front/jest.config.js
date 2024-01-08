@@ -39,5 +39,8 @@ export default {
     'modules/ui/theme/utils/themeColorSchema.ts',
     'display/icon/index.ts'
   ],
+  testPathIgnorePatterns: [
+    'src/modules/activities/blocks/spec.ts',
+  ],
   // coverageDirectory: '<rootDir>/coverage/',
 }
