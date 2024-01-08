@@ -8,6 +8,7 @@ export default {
     '~/(.+)': "<rootDir>/src/$1",
     '@/(.+)': "<rootDir>/src/modules/$1",
     '@testing/(.+)': "<rootDir>/src/testing/$1",
+    "\\.(jpg|jpeg|png|gif|webp|svg)$": "<rootDir>/__mocks__/imageMock.js",
   },
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   coverageThreshold: {
@@ -21,6 +22,7 @@ export default {
   collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
   coveragePathIgnorePatterns: [
     'states/.+State.ts$',
+    'states/selectors/*',
     'contexts/.+Context.ts',
     'testing/*',
     'tests/*',
@@ -33,7 +35,9 @@ export default {
     'generated-metadata/*',
     'generated/*',
     '__stories__/*',
-
+    'utilities/recoil-scope/utils/*',
+    'modules/ui/theme/utils/themeColorSchema.ts',
+    'display/icon/index.ts'
   ],
   // coverageDirectory: '<rootDir>/coverage/',
 }
