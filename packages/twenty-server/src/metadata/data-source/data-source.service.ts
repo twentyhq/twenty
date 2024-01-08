@@ -28,6 +28,10 @@ export class DataSourceService {
     });
   }
 
+  async getManyDataSourceMetadata() {
+    return this.dataSourceMetadataRepository.find({});
+  }
+
   async getDataSourcesMetadataFromWorkspaceId(workspaceId: string) {
     return this.dataSourceMetadataRepository.find({
       where: { workspaceId },

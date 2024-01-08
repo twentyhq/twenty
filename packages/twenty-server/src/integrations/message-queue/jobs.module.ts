@@ -9,6 +9,7 @@ import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/wo
 import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { CleanInactiveWorkspaceJob } from 'src/workspace/cron/jobs/clean-inactive-workspace.job';
+import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CleanInactiveWorkspaceJob } from 'src/workspace/cron/jobs/clean-inactiv
     ObjectMetadataModule,
     DataSourceModule,
     HttpModule,
+    TypeORMModule,
   ],
   providers: [
     {
