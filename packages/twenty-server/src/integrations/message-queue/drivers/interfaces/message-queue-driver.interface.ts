@@ -14,6 +14,13 @@ export interface MessageQueueDriver {
     queueName: MessageQueue,
     handler: ({ data, id }: { data: T; id: string }) => Promise<void> | void,
   );
+  schedule<T extends MessageQueueJobData>(
+    queueName: MessageQueue,
+    jobName: string,
+    data: T,
+    pattern: string,
+    options?: QueueJobOptions,
+  );
   stop?(): Promise<void>;
   register?(queueName: MessageQueue): void;
 }
