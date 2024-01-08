@@ -21,6 +21,7 @@ export interface MessageQueueDriver {
     pattern: string,
     options?: QueueJobOptions,
   );
+  unschedule(queueName: MessageQueue, jobName: string, pattern?: string);
   stop?(): Promise<void>;
   register?(queueName: MessageQueue): void;
 }

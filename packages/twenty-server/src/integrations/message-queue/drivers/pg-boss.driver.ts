@@ -50,6 +50,10 @@ export class PgBossDriver implements MessageQueueDriver {
     );
   }
 
+  async unschedule(queueName: MessageQueue, jobName: string): Promise<void> {
+    await this.pgBoss.unschedule(`${queueName}.${jobName}`);
+  }
+
   async add<T>(
     queueName: MessageQueue,
     jobName: string,

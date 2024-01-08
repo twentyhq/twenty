@@ -49,6 +49,10 @@ export class MessageQueueService implements OnModuleDestroy {
     );
   }
 
+  unschedule(jobName: string, pattern: string): Promise<void> {
+    return this.driver.unschedule(this.queueName, jobName, pattern);
+  }
+
   work<T extends MessageQueueJobData>(
     handler: ({ data, id }: { data: T; id: string }) => Promise<void> | void,
   ) {

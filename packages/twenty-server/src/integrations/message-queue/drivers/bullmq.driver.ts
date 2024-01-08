@@ -75,6 +75,16 @@ export class BullMQDriver implements MessageQueueDriver {
     await this.queueMap[queueName].add(jobName, data, queueOptions);
   }
 
+  async unschedule(
+    queueName: MessageQueue,
+    jobName: string,
+    pattern: string,
+  ): Promise<void> {
+    await this.queueMap[queueName].removeRepeatable(jobName, {
+      pattern,
+    });
+  }
+
   async add<T>(
     queueName: MessageQueue,
     jobName: string,

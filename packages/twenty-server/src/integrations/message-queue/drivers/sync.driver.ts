@@ -42,6 +42,12 @@ export class SyncDriver implements MessageQueueDriver {
     await job.handle(data);
   }
 
+  async unschedule(_queueName: MessageQueue, jobName: string) {
+    this.logger.log(`Stopping '${jobName}' scheduled job with SyncDriver`);
+
+    return;
+  }
+
   work() {
     return;
   }
