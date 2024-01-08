@@ -118,7 +118,6 @@ export class FetchWorkspaceMessagesService {
       messagesResponse,
       dataSourceMetadata,
       workspaceDataSource,
-      workspaceMemberId,
     );
   }
 
@@ -172,7 +171,6 @@ export class FetchWorkspaceMessagesService {
     messages: GmailMessage[],
     dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
-    workspaceMemberId: string,
   ) {
     for (const message of messages) {
       const {
@@ -196,15 +194,24 @@ export class FetchWorkspaceMessagesService {
       );
 
       const messageId = v4();
-      const handle = from?.value[0]?.address;
-      const displayName = from?.value[0]?.name;
+      const fromHandle = from?.value[0]?.address;
+      const fromDisplayName = from?.value[0]?.name;
 
       const person = await workspaceDataSource?.query(
         `SELECT * FROM ${dataSourceMetadata.schema}."person" WHERE "email" = $1`,
-        [handle],
+        [fromHandle],
       );
 
       const personId = person[0]?.id;
+
+      const workspaceMember = await workspaceDataSource?.query(
+        `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember"
+        JOIN ${dataSourceMetadata.schema}."connectedAccount" ON ${dataSourceMetadata.schema}."workspaceMember"."id" = ${dataSourceMetadata.schema}."connectedAccount"."accountOwnerId"
+        WHERE ${dataSourceMetadata.schema}."connectedAccount"."handle" = $1`,
+        [fromHandle],
+      );
+
+      const workspaceMemberId = workspaceMember[0]?.accountOwnerId;
 
       await workspaceDataSource?.transaction(async (manager) => {
         await manager.query(
@@ -223,7 +230,14 @@ export class FetchWorkspaceMessagesService {
 
         await manager.query(
           `INSERT INTO ${dataSourceMetadata.schema}."messageRecipient" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
-          [messageId, 'from', handle, displayName, personId, workspaceMemberId],
+          [
+            messageId,
+            'from',
+            fromHandle,
+            fromDisplayName,
+            personId,
+            workspaceMemberId,
+          ],
         );
 
         await this.saveMessageRecipients(
@@ -231,7 +245,6 @@ export class FetchWorkspaceMessagesService {
           to,
           dataSourceMetadata,
           messageId,
-          workspaceMemberId,
           manager,
         );
 
@@ -240,7 +253,6 @@ export class FetchWorkspaceMessagesService {
           cc,
           dataSourceMetadata,
           messageId,
-          workspaceMemberId,
           manager,
         );
 
@@ -249,7 +261,6 @@ export class FetchWorkspaceMessagesService {
           bcc,
           dataSourceMetadata,
           messageId,
-          workspaceMemberId,
           manager,
         );
       });
@@ -261,7 +272,6 @@ export class FetchWorkspaceMessagesService {
     addressObjects: AddressObject[] | undefined,
     dataSourceMetadata: DataSourceEntity,
     messageId: string,
-    workspaceMemberId: string,
     manager: EntityManager,
   ): Promise<void> {
     if (!addressObjects) return;
@@ -281,6 +291,15 @@ export class FetchWorkspaceMessagesService {
 
         const recipientPersonId = recipientPerson[0]?.id;
 
+        const workspaceMember = await manager.query(
+          `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember"
+          JOIN ${dataSourceMetadata.schema}."connectedAccount" ON ${dataSourceMetadata.schema}."workspaceMember"."id" = ${dataSourceMetadata.schema}."connectedAccount"."accountOwnerId"
+          WHERE ${dataSourceMetadata.schema}."connectedAccount"."handle" = $1`,
+          [recipient.address],
+        );
+
+        const recipientWorkspaceMemberId = workspaceMember[0]?.accountOwnerId;
+
         await manager.query(
           `INSERT INTO ${dataSourceMetadata.schema}."messageRecipient" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
           [
@@ -289,7 +308,7 @@ export class FetchWorkspaceMessagesService {
             recipient.address,
             recipientDisplayName,
             recipientPersonId,
-            workspaceMemberId,
+            recipientWorkspaceMemberId,
           ],
         );
       }
