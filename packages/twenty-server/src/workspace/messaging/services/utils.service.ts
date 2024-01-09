@@ -165,29 +165,35 @@ export class Utils {
     }
   }
 
-  public async getAllSavedMessagesIdsAndMessageThreadsIdsForConnectedAccount(
+  public async getMessageIdsAndThreadIdsNotInDatabase(
+    messageIds: string[],
     dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
     connectedAccountId: string,
   ): Promise<{
-    savedMessageIds: string[];
-    savedThreadIds: string[];
+    messageIds: string[];
+    threadIds: string[];
   }> {
-    const messageIds: { messageId: string; messageThreadId: string }[] =
-      await workspaceDataSource?.query(
-        `SELECT message."externalId" AS "messageId",
+    const messageIdsNotInDatabase: {
+      messageId: string;
+      messageThreadId: string;
+    }[] = await workspaceDataSource?.query(
+      `SELECT message."externalId" AS "messageId",
       "messageThread"."externalId" AS "messageThreadId"
       FROM ${dataSourceMetadata.schema}."message" message
       LEFT JOIN ${dataSourceMetadata.schema}."messageThread" "messageThread" ON message."messageThreadId" = "messageThread"."id" 
       LEFT JOIN ${dataSourceMetadata.schema}."messageChannel" ON "messageThread"."messageChannelId" = ${dataSourceMetadata.schema}."messageChannel"."id"
-      WHERE ${dataSourceMetadata.schema}."messageChannel"."connectedAccountId" = $1`,
-        [connectedAccountId],
-      );
+      WHERE ${dataSourceMetadata.schema}."messageChannel"."connectedAccountId" = $1
+        AND message."externalId" = ANY($2)`,
+      [connectedAccountId, messageIds],
+    );
 
     return {
-      savedMessageIds: messageIds.map((message) => message.messageId),
-      savedThreadIds: [
-        ...new Set(messageIds.map((message) => message.messageThreadId)),
+      messageIds: messageIdsNotInDatabase.map((message) => message.messageId),
+      threadIds: [
+        ...new Set(
+          messageIdsNotInDatabase.map((message) => message.messageThreadId),
+        ),
       ],
     };
   }

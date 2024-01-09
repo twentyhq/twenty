@@ -100,6 +100,9 @@ export class GmailPartialSync {
 
     const { messagesAdded, messagesDeleted } =
       await this.getMessageIdsAndThreadIdsFromHistory(history);
+
+    const messageIds = messagesAdded?.map((message) => message.messageId) || [];
+    const threadIds = messagesAdded?.map((message) => message.threadId) || [];
   }
 
   private async getMessageIdsAndThreadIdsFromHistory(
