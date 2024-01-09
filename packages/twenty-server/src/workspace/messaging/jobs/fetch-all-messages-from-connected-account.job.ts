@@ -4,7 +4,7 @@ import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/messa
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { RefreshAccessTokenService } from 'src/workspace/messaging/services/refresh-access-token.service';
-import { FetchWorkspaceMessagesService } from 'src/workspace/messaging/services/fetch-workspace-messages.service';
+import { GmailFullSync } from 'src/workspace/messaging/services/gmail-full-sync.service';
 
 export type FetchAllMessagesFromConnectedAccountJobData = {
   workspaceId: string;
@@ -18,7 +18,7 @@ export class FetchAllMessagesFromConnectedAccountJob
   constructor(
     private readonly environmentService: EnvironmentService,
     private readonly refreshAccessTokenService: RefreshAccessTokenService,
-    private readonly fetchWorkspaceMessagesService: FetchWorkspaceMessagesService,
+    private readonly fetchWorkspaceMessagesService: GmailFullSync,
   ) {}
 
   async handle(
