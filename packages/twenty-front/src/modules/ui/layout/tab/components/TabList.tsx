@@ -4,9 +4,11 @@ import styled from '@emotion/styled';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
 
-import { activeTabIdScopedState } from '../states/activeTabIdScopedState';
+import { activeTabIdScopedState } from '../states/activeTabIdStateScopeMap';
 
 import { Tab } from './Tab';
+import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
 
 type SingleTabProps = {
   title: string;
@@ -17,8 +19,8 @@ type SingleTabProps = {
 };
 
 type TabListProps = {
+  tabListId: string;
   tabs: SingleTabProps[];
-  context: React.Context<string | null>;
 };
 
 const StyledContainer = styled.div`
@@ -31,12 +33,11 @@ const StyledContainer = styled.div`
   user-select: none;
 `;
 
-export const TabList = ({ tabs, context }: TabListProps) => {
+export const TabList = ({ tabs, tabListId }: TabListProps) => {
   const initialActiveTabId = tabs[0].id;
 
-  const [activeTabId, setActiveTabId] = useRecoilScopedState(
-    activeTabIdScopedState,
-    context,
+  const {activeTabId, setActiveTabId} = useTabList(
+    tabListId,
   );
 
   React.useEffect(() => {
@@ -44,22 +45,24 @@ export const TabList = ({ tabs, context }: TabListProps) => {
   }, [initialActiveTabId, setActiveTabId]);
 
   return (
-    <StyledContainer>
-      {tabs
-        .filter((tab) => !tab.hide)
-        .map((tab) => (
-          <Tab
-            id={tab.id}
-            key={tab.id}
-            title={tab.title}
-            Icon={tab.Icon}
-            active={tab.id === activeTabId}
-            onClick={() => {
-              setActiveTabId(tab.id);
-            }}
-            disabled={tab.disabled}
-          />
-        ))}
-    </StyledContainer>
+    <TabListScope tabListScopeId={tabListId}>
+      <StyledContainer>
+        {tabs
+          .filter((tab) => !tab.hide)
+          .map((tab) => (
+            <Tab
+              id={tab.id}
+              key={tab.id}
+              title={tab.title}
+              Icon={tab.Icon}
+              active={tab.id === activeTabId}
+              onClick={() => {
+                setActiveTabId(tab.id);
+              }}
+              disabled={tab.disabled}
+            />
+          ))}
+      </StyledContainer>
+    </TabListScope>
   );
 };
