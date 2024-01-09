@@ -41,6 +41,9 @@ export const generateEmptyFieldValue = (
     case FieldMetadataType.Relation: {
       return null;
     }
+    case FieldMetadataType.Select: {
+      return null;
+    }
     case FieldMetadataType.Currency: {
       return {
         amountMicros: null,
@@ -49,8 +52,7 @@ export const generateEmptyFieldValue = (
       };
     }
 
-    case FieldMetadataType.MultiSelect:
-    case FieldMetadataType.Select: {
+    case FieldMetadataType.MultiSelect: {
       throw new Error('Not implemented yet');
     }
   }
