@@ -11,12 +11,10 @@ import { MessageOrThreadQuery } from 'src/workspace/messaging/types/messageOrThr
 import { GmailMessageParsedResponse } from 'src/workspace/messaging/types/gmailMessageParsedResponse';
 import { GmailThreadParsedResponse } from 'src/workspace/messaging/types/gmailThreadParsedResponse';
 import { GmailThread } from 'src/workspace/messaging/types/gmailThread';
-import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
 
 @Injectable()
 export class FetchBatchMessagesService {
   private readonly httpService: AxiosInstance;
-  private readonly gmailClientProvider: GmailClientProvider;
 
   constructor() {
     this.httpService = axios.create({
@@ -309,11 +307,14 @@ export class FetchBatchMessagesService {
           return;
         }
         try {
-          const { id, messages } = thread;
+          const { id, messages, snippet } = thread;
+
+          console.log('thread', thread);
 
           return {
             id,
             messageIds: messages.map((message) => message.id) || [],
+            snippet,
           };
         } catch (error) {
           console.log('Error', error);

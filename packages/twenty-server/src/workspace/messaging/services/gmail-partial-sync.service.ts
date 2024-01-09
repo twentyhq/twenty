@@ -8,7 +8,7 @@ import { Utils } from 'src/workspace/messaging/services/utils.service';
 import { MessagingProducer } from 'src/workspace/messaging/producers/messaging-producer';
 
 @Injectable()
-export class GmailPartialSync {
+export class GmailPartialSyncService {
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly fetchBatchMessagesService: FetchBatchMessagesService,

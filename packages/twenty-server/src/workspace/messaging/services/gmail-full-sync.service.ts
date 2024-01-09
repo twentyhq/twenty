@@ -6,7 +6,7 @@ import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gma
 import { Utils } from 'src/workspace/messaging/services/utils.service';
 
 @Injectable()
-export class GmailFullSync {
+export class GmailFullSyncService {
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly fetchBatchMessagesService: FetchBatchMessagesService,
@@ -34,50 +34,30 @@ export class GmailFullSync {
     const gmailClient =
       await this.gmailClientProvider.getGmailClient(refreshToken);
 
-    const threads = await gmailClient.users.threads.list({
+    const messages = await gmailClient.users.messages.list({
       userId: 'me',
       maxResults,
     });
 
-    const threadsData = threads.data.threads;
+    const messagesData = messages.data.messages;
 
-    if (!threadsData || threadsData?.length === 0) {
+    const messageIdsFromGmail = messagesData
+      ? messagesData.map((message) => message.id || '')
+      : [];
+
+    if (!messagesData || messagesData?.length === 0) {
       return;
     }
 
     const { savedMessageIds, savedThreadIds } =
-      await this.utils.getAllSavedMessagesIdsAndMessageThreadsIdsForConnectedAccount(
+      await this.utils.getSavedMessageIdsAndThreadIds(
+        messageIdsFromGmail,
         dataSourceMetadata,
         workspaceDataSource,
         connectedAccount.id,
       );
 
-    const threadsToSave = threadsData.filter(
-      (thread) => thread.id && !savedThreadIds.includes(thread.id),
-    );
-
-    await this.utils.saveMessageThreads(
-      threadsToSave,
-      dataSourceMetadata,
-      workspaceDataSource,
-      connectedAccount.id,
-    );
-
-    const threadQueries: MessageOrThreadQuery[] = threadsData.map((thread) => ({
-      uri: '/gmail/v1/users/me/threads/' + thread.id + '?format=minimal',
-    }));
-
-    const threadsWithMessageIds =
-      await this.fetchBatchMessagesService.fetchAllThreads(
-        threadQueries,
-        accessToken,
-      );
-
-    const messageIds = threadsWithMessageIds
-      .map((thread) => thread.messageIds)
-      .flat();
-
-    const messageIdsToSave = messageIds.filter(
+    const messageIdsToSave = messageIdsFromGmail.filter(
       (messageId) => !savedMessageIds.includes(messageId),
     );
 
@@ -92,6 +72,32 @@ export class GmailFullSync {
         messageQueries,
         accessToken,
       );
+
+    const threadIdsFromGmail = messagesData.map(
+      (message) => message.threadId || '',
+    );
+
+    const threadIdsToSave = threadIdsFromGmail.filter(
+      (threadId) => !savedThreadIds.includes(threadId),
+    );
+
+    const threadQueries: MessageOrThreadQuery[] = threadIdsToSave.map(
+      (threadId) => ({
+        uri: '/gmail/v1/users/me/threads/' + threadId + '?format=full',
+      }),
+    );
+
+    const threads = await this.fetchBatchMessagesService.fetchAllThreads(
+      threadQueries,
+      accessToken,
+    );
+
+    await this.utils.saveMessageThreads(
+      threads,
+      dataSourceMetadata,
+      workspaceDataSource,
+      connectedAccount.id,
+    );
 
     await this.utils.saveMessages(
       messagesResponse,

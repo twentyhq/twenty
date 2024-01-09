@@ -165,16 +165,16 @@ export class Utils {
     }
   }
 
-  public async getMessageIdsAndThreadIdsNotInDatabase(
+  public async getSavedMessageIdsAndThreadIds(
     messageIds: string[],
     dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
     connectedAccountId: string,
   ): Promise<{
-    messageIds: string[];
-    threadIds: string[];
+    savedMessageIds: string[];
+    savedThreadIds: string[];
   }> {
-    const messageIdsNotInDatabase: {
+    const messageIdsInDatabase: {
       messageId: string;
       messageThreadId: string;
     }[] = await workspaceDataSource?.query(
@@ -189,10 +189,10 @@ export class Utils {
     );
 
     return {
-      messageIds: messageIdsNotInDatabase.map((message) => message.messageId),
-      threadIds: [
+      savedMessageIds: messageIdsInDatabase.map((message) => message.messageId),
+      savedThreadIds: [
         ...new Set(
-          messageIdsNotInDatabase.map((message) => message.messageThreadId),
+          messageIdsInDatabase.map((message) => message.messageThreadId),
         ),
       ],
     };
