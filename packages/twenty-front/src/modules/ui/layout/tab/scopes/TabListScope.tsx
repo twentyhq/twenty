@@ -12,9 +12,7 @@ export const TabListScope = ({
   tabListScopeId,
 }: TabListScopeProps) => {
   return (
-    <TabListScopeInternalContext.Provider
-      value={{ scopeId: tabListScopeId }}
-    >
+    <TabListScopeInternalContext.Provider value={{ scopeId: tabListScopeId }}>
       {children}
     </TabListScopeInternalContext.Provider>
   );

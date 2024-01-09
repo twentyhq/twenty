@@ -68,7 +68,7 @@ export const TaskGroups = ({
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  const { activeTabIdState } = useTabList("task-groups-tab-list");
+  const { activeTabIdState } = useTabList('task-groups-tab-list');
   const activeTabId = useRecoilValue(activeTabIdState);
 
   if (

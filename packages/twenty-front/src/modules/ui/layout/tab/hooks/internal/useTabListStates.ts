@@ -7,9 +7,7 @@ type useTabListStatesProps = {
   tabListScopeId?: string;
 };
 
-export const useTabListStates = ({
-  tabListScopeId,
-}: useTabListStatesProps) => {
+export const useTabListStates = ({ tabListScopeId }: useTabListStatesProps) => {
   const scopeId = useAvailableScopeIdOrThrow(
     TabListScopeInternalContext,
     tabListScopeId,
