@@ -7,8 +7,8 @@ import {
   MessageQueueModuleAsyncOptions,
 } from 'src/integrations/message-queue/interfaces';
 import {
-  QUEUE_DRIVER,
   MessageQueue,
+  QUEUE_DRIVER,
 } from 'src/integrations/message-queue/message-queue.constants';
 import { PgBossDriver } from 'src/integrations/message-queue/drivers/pg-boss.driver';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
@@ -55,11 +55,7 @@ export class MessageQueueModule {
       module: MessageQueueModule,
       imports: [JobsModule, ...(options.imports || [])],
       providers,
-      exports: [
-        MessageQueue.taskAssignedQueue,
-        MessageQueue.messagingQueue,
-        MessageQueue.webhookQueue,
-      ],
+      exports: Object.values(MessageQueue),
     };
   }
 }
