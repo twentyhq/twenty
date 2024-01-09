@@ -10,7 +10,8 @@ import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObje
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
-import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
+import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { assertNotNull } from '~/utils/assert';
@@ -34,7 +35,7 @@ export const useFiltersFromQueryParams = () => {
     objectNamePlural,
   });
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
-  const generateFindOneRecordQuery = useGenerateFindOneRecordQuery();
+  const generateFindManyRecordsQuery = useGenerateFindManyRecordsQuery();
 
   const filterParamsValidation = filterQueryParamsSchema.safeParse(
     qs.parse(searchParams.toString()),
@@ -72,6 +73,9 @@ export const useFiltersFromQueryParams = () => {
                 const relationObjectMetadataNameSingular =
                   fieldMetadataItem.toRelationMetadata?.fromObjectMetadata
                     .nameSingular;
+                const relationObjectMetadataNamePlural =
+                  fieldMetadataItem.toRelationMetadata?.fromObjectMetadata
+                    .namePlural;
                 const relationObjectMetadataItem =
                   relationObjectMetadataNameSingular
                     ? snapshot
@@ -84,23 +88,24 @@ export const useFiltersFromQueryParams = () => {
                         .getValue()
                     : null;
                 const relationRecordNames =
-                  relationObjectMetadataNameSingular &&
+                  relationObjectMetadataNamePlural &&
                   relationObjectMetadataItem &&
                   Array.isArray(value)
-                    ? await Promise.all(
-                        value.map(async (relationRecordId) => {
-                          const { data } = await apolloClient.query({
-                            query: generateFindOneRecordQuery({
-                              objectMetadataItem: relationObjectMetadataItem,
-                            }),
-                            variables: { objectRecordId: relationRecordId },
-                          });
-
-                          return getObjectRecordIdentifier({
+                    ? (
+                        await apolloClient.query<
+                          Record<string, { edges: { node: ObjectRecord }[] }>
+                        >({
+                          query: generateFindManyRecordsQuery({
                             objectMetadataItem: relationObjectMetadataItem,
-                            record: data[relationObjectMetadataNameSingular],
-                          }).name;
-                        }),
+                          }),
+                          variables: { filter: { id: { in: value } } },
+                        })
+                      ).data?.[relationObjectMetadataNamePlural]?.edges.map(
+                        ({ node: record }) =>
+                          getObjectRecordIdentifier({
+                            objectMetadataItem: relationObjectMetadataItem,
+                            record,
+                          }).name,
                       )
                     : undefined;
 
@@ -124,7 +129,7 @@ export const useFiltersFromQueryParams = () => {
     [
       apolloClient,
       filterQueryParams,
-      generateFindOneRecordQuery,
+      generateFindManyRecordsQuery,
       hasFiltersQueryParams,
       objectMetadataItem.fields,
     ],

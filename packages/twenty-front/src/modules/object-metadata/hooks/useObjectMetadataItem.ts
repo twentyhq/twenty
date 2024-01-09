@@ -83,7 +83,8 @@ export const useObjectMetadataItem = (
     objectMetadataItem,
   });
 
-  const findManyRecordsQuery = useGenerateFindManyRecordsQuery({
+  const generateFindManyRecordsQuery = useGenerateFindManyRecordsQuery();
+  const findManyRecordsQuery = generateFindManyRecordsQuery({
     objectMetadataItem,
     depth,
   });
