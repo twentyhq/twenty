@@ -106,6 +106,7 @@ export class FetchWorkspaceMessagesService {
       messagesResponse,
       dataSourceMetadata,
       workspaceDataSource,
+      connectedAccount,
     );
   }
 
@@ -136,6 +137,7 @@ export class FetchWorkspaceMessagesService {
     messages: GmailMessage[],
     dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
+    connectedAccount,
   ) {
     for (const message of messages) {
       const {
@@ -178,6 +180,9 @@ export class FetchWorkspaceMessagesService {
 
       const workspaceMemberId = workspaceMember[0]?.accountOwnerId;
 
+      const messageDirection =
+        connectedAccount.handle === fromHandle ? 'outgoing' : 'incoming';
+
       await workspaceDataSource?.transaction(async (manager) => {
         await manager.query(
           `INSERT INTO ${dataSourceMetadata.schema}."message" ("id", "externalId", "headerMessageId", "subject", "date", "messageThreadId", "direction", "body") VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
@@ -188,7 +193,7 @@ export class FetchWorkspaceMessagesService {
             subject,
             date,
             messageThread[0]?.id,
-            'incoming',
+            messageDirection,
             text,
           ],
         );
