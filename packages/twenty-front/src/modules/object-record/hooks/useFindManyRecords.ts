@@ -9,6 +9,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useRecordOptimisticEffect } from '@/object-metadata/hooks/useRecordOptimisticEffect';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
+import { useMapConnectionToRecords } from '@/object-record/hooks/useMapConnectionToRecords';
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
@@ -32,12 +33,14 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   limit = DEFAULT_SEARCH_REQUEST_LIMIT,
   onCompleted,
   skip,
+  useRecordsWithoutConnection = false,
 }: ObjectMetadataItemIdentifier & {
   filter?: ObjectRecordQueryFilter;
   orderBy?: OrderByField;
   limit?: number;
   onCompleted?: (data: ObjectRecordConnection<T>) => void;
   skip?: boolean;
+  useRecordsWithoutConnection?: boolean;
 }) => {
   const findManyQueryStateIdentifier =
     objectNameSingular +
@@ -200,13 +203,30 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       mapPaginatedRecordsToRecords({
         pagedRecords: data,
         objectNamePlural: objectMetadataItem.namePlural,
-      }),
+      }) as T[],
     [data, objectMetadataItem],
+  );
+
+  const mapConnectionToRecords = useMapConnectionToRecords();
+
+  const recordsWithoutConnection = useMemo(
+    () =>
+      mapConnectionToRecords({
+        objectRecordConnection: data?.[objectMetadataItem.namePlural],
+        objectNameSingular,
+        depth: 5,
+      }) as T[],
+    [
+      data,
+      objectNameSingular,
+      objectMetadataItem.namePlural,
+      mapConnectionToRecords,
+    ],
   );
 
   return {
     objectMetadataItem,
-    records: records as T[],
+    records: useRecordsWithoutConnection ? recordsWithoutConnection : records,
     loading,
     error,
     fetchMoreRecords,
