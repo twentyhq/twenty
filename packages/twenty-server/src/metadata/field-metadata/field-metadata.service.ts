@@ -56,7 +56,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       );
 
     if (!objectMetadata) {
-      throw new NotFoundException('Object does not exist');
+      throw new Error('Object does not exist');
     }
 
     const fieldAlreadyExists = await this.fieldMetadataRepository.findOne({

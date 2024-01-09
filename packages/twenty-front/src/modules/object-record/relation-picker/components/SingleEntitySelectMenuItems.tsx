@@ -5,6 +5,8 @@ import { Key } from 'ts-key-enum';
 import { SelectableMenuItemSelect } from '@/object-record/relation-picker/components/SelectableMenuItemSelect';
 import { IconPlus } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
+import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -13,12 +15,10 @@ import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSel
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { assertNotNull } from '~/utils/assert';
 
-import { CreateNewButton } from '../../../ui/input/relation-picker/components/CreateNewButton';
-import { DropdownMenuSkeletonItem } from '../../../ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { EntityForSelect } from '../types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
-export type SingleEntitySelectBaseProps = {
+export type SingleEntitySelectMenuItemsProps = {
   EmptyIcon?: IconComponent;
   emptyLabel?: string;
   entitiesToSelect: EntityForSelect[];
@@ -35,7 +35,7 @@ export type SingleEntitySelectBaseProps = {
   onAllEntitySelected?: () => void;
 };
 
-export const SingleEntitySelectBase = ({
+export const SingleEntitySelectMenuItems = ({
   EmptyIcon,
   emptyLabel,
   entitiesToSelect,
@@ -50,7 +50,7 @@ export const SingleEntitySelectBase = ({
   isAllEntitySelected,
   isAllEntitySelectShown,
   onAllEntitySelected,
-}: SingleEntitySelectBaseProps) => {
+}: SingleEntitySelectMenuItemsProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const entitiesInDropdown = [selectedEntity, ...entitiesToSelect].filter(

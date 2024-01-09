@@ -1,7 +1,5 @@
 import { useCallback, useContext, useState } from 'react';
-import { useQuery } from '@apollo/client';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { NewButton } from '@/object-record/record-board/components/NewButton';
 import { BoardColumnContext } from '@/object-record/record-board/contexts/BoardColumnContext';
@@ -54,18 +52,10 @@ export const NewOpportunityButton = () => {
     setIsCreatingCard(false);
   };
 
-  const { relationPickerSearchFilter } = useRelationPicker();
-
-  // TODO: refactor useFilteredSearchEntityQuery
-  const { findManyRecordsQuery } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Company,
-  });
-  const useFindManyQuery = (options: any) =>
-    useQuery(findManyRecordsQuery, options);
-  const { identifiersMapper, searchQuery } = useRelationPicker();
+  const { relationPickerSearchFilter, identifiersMapper, searchQuery } =
+    useRelationPicker();
 
   const filteredSearchEntityResults = useFilteredSearchEntityQuery({
-    queryHook: useFindManyQuery,
     filters: [
       {
         fieldNames: searchQuery?.computeFilterFields?.('company') ?? [],

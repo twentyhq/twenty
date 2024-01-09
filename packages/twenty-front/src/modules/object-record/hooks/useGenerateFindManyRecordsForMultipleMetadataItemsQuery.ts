@@ -2,6 +2,7 @@ import { gql } from '@apollo/client';
 
 import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
@@ -16,6 +17,10 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
   const capitalizedObjectNameSingulars = objectMetadataItems.map(
     ({ nameSingular }) => capitalize(nameSingular),
   );
+
+  if (!isNonEmptyArray(capitalizedObjectNameSingulars)) {
+    return null;
+  }
 
   const filterPerMetadataItemArray = capitalizedObjectNameSingulars
     .map(
