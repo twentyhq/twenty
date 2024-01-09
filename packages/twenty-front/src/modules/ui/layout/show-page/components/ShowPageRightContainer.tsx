@@ -19,6 +19,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { useRecoilValue } from 'recoil';
 
 const StyledShowPageRightContainer = styled.div`
   display: flex;
@@ -57,7 +58,8 @@ export const ShowPageRightContainer = ({
 }: ShowPageRightContainerProps) => {
   const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
 
-  const { activeTabId } = useTabList(TAB_LIST_COMPONENT_ID);
+  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+  const activeTabId = useRecoilValue(activeTabIdState);
 
   if (!targetableObject) return <></>;
 

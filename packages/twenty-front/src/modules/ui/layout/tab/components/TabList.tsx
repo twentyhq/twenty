@@ -2,13 +2,11 @@ import * as React from 'react';
 import styled from '@emotion/styled';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
-
-import { activeTabIdScopedState } from '../states/activeTabIdStateScopeMap';
 
 import { Tab } from './Tab';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
+import { useRecoilValue } from 'recoil';
 
 type SingleTabProps = {
   title: string;
@@ -36,9 +34,11 @@ const StyledContainer = styled.div`
 export const TabList = ({ tabs, tabListId }: TabListProps) => {
   const initialActiveTabId = tabs[0].id;
 
-  const {activeTabId, setActiveTabId} = useTabList(
+  const {activeTabIdState, setActiveTabId} = useTabList(
     tabListId,
   );
+
+  const activeTabId = useRecoilValue(activeTabIdState);
 
   React.useEffect(() => {
     setActiveTabId(initialActiveTabId);

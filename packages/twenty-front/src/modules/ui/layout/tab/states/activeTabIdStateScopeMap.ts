@@ -1,6 +1,6 @@
 import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const activeTabIdScopedState = createStateScopeMap<string | null>({
-  key: 'activeTabIdScopedState',
+export const activeTabIdStateScopeMap = createStateScopeMap<string | null>({
+  key: 'activeTabIdStateScopeMap',
   defaultValue: null,
 });

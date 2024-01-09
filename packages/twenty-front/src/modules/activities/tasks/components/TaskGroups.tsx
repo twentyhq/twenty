@@ -9,6 +9,7 @@ import { Button } from '@/ui/input/button/components/Button';
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { useRecoilValue } from 'recoil';
 
 const StyledTaskGroupEmptyContainer = styled.div`
   align-items: center;
@@ -67,7 +68,8 @@ export const TaskGroups = ({
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  const { activeTabId } = useTabList("task-groups-tab-list");
+  const { activeTabIdState } = useTabList("task-groups-tab-list");
+  const activeTabId = useRecoilValue(activeTabIdState);
 
   if (
     (activeTabId !== 'done' &&
