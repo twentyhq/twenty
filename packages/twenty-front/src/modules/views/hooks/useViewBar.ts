@@ -94,10 +94,7 @@ export const useViewBar = (props?: UseViewProps) => {
 
   const loadViewFields = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (
-        data: ObjectRecordConnection<ViewField>,
-        currentViewId: string,
-      ) => {
+      async (viewFields: ViewField[], currentViewId: string) => {
         const {
           availableFieldDefinitions,
           onViewFieldsChange,
@@ -120,8 +117,8 @@ export const useViewBar = (props?: UseViewProps) => {
           return;
         }
 
-        const queriedViewFields = data.edges
-          .map((viewField) => viewField.node)
+        const queriedViewFields = viewFields
+          .map((viewField) => viewField)
           .filter(assertNotNull);
 
         if (isPersistingView) {
@@ -139,10 +136,7 @@ export const useViewBar = (props?: UseViewProps) => {
 
   const loadViewFilters = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (
-        data: ObjectRecordConnection<ViewFilter>,
-        currentViewId: string,
-      ) => {
+      async (viewFilters: ViewFilter[], currentViewId: string) => {
         const {
           availableFilterDefinitions,
           savedViewFilters,
@@ -164,18 +158,18 @@ export const useViewBar = (props?: UseViewProps) => {
           return;
         }
 
-        const queriedViewFilters = data.edges
-          .map(({ node }) => {
+        const queriedViewFilters = viewFilters
+          .map((viewFilter) => {
             const availableFilterDefinition = availableFilterDefinitions.find(
               (filterDefinition) =>
-                filterDefinition.fieldMetadataId === node.fieldMetadataId,
+                filterDefinition.fieldMetadataId === viewFilter.fieldMetadataId,
             );
 
             if (!availableFilterDefinition) return null;
 
             return {
-              ...node,
-              displayValue: node.displayValue ?? node.value,
+              ...viewFilter,
+              displayValue: viewFilter.displayValue ?? viewFilter.value,
               definition: availableFilterDefinition,
             };
           })
@@ -192,10 +186,7 @@ export const useViewBar = (props?: UseViewProps) => {
 
   const loadViewSorts = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (
-        data: ObjectRecordConnection<Required<ViewSort>>,
-        currentViewId: string,
-      ) => {
+      async (viewSorts: Required<ViewSort>[], currentViewId: string) => {
         const { availableSortDefinitions, savedViewSorts, onViewSortsChange } =
           getViewScopedStateValuesFromSnapshot({
             snapshot,
@@ -214,18 +205,18 @@ export const useViewBar = (props?: UseViewProps) => {
           return;
         }
 
-        const queriedViewSorts = data.edges
-          .map(({ node }) => {
+        const queriedViewSorts = viewSorts
+          .map((viewSort) => {
             const availableSortDefinition = availableSortDefinitions.find(
-              (sort) => sort.fieldMetadataId === node.fieldMetadataId,
+              (sort) => sort.fieldMetadataId === viewSort.fieldMetadataId,
             );
 
             if (!availableSortDefinition) return null;
 
             return {
-              id: node.id,
-              fieldMetadataId: node.fieldMetadataId,
-              direction: node.direction,
+              id: viewSort.id,
+              fieldMetadataId: viewSort.fieldMetadataId,
+              direction: viewSort.direction,
               definition: availableSortDefinition,
             };
           })
