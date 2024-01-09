@@ -172,13 +172,13 @@ export class FetchWorkspaceMessagesService {
       const personId = person[0]?.id;
 
       const workspaceMember = await workspaceDataSource?.query(
-        `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember"
+        `SELECT "workspaceMember"."id" FROM ${dataSourceMetadata.schema}."workspaceMember"
         JOIN ${dataSourceMetadata.schema}."connectedAccount" ON ${dataSourceMetadata.schema}."workspaceMember"."id" = ${dataSourceMetadata.schema}."connectedAccount"."accountOwnerId"
         WHERE ${dataSourceMetadata.schema}."connectedAccount"."handle" = $1`,
         [fromHandle],
       );
 
-      const workspaceMemberId = workspaceMember[0]?.accountOwnerId;
+      const workspaceMemberId = workspaceMember[0]?.id;
 
       const messageDirection =
         connectedAccount.handle === fromHandle ? 'outgoing' : 'incoming';
@@ -262,13 +262,13 @@ export class FetchWorkspaceMessagesService {
         const recipientPersonId = recipientPerson[0]?.id;
 
         const workspaceMember = await manager.query(
-          `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember"
+          `SELECT "workspaceMember"."id" FROM ${dataSourceMetadata.schema}."workspaceMember"
           JOIN ${dataSourceMetadata.schema}."connectedAccount" ON ${dataSourceMetadata.schema}."workspaceMember"."id" = ${dataSourceMetadata.schema}."connectedAccount"."accountOwnerId"
           WHERE ${dataSourceMetadata.schema}."connectedAccount"."handle" = $1`,
           [recipient.address],
         );
 
-        const recipientWorkspaceMemberId = workspaceMember[0]?.accountOwnerId;
+        const recipientWorkspaceMemberId = workspaceMember[0]?.id;
 
         await manager.query(
           `INSERT INTO ${dataSourceMetadata.schema}."messageRecipient" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
