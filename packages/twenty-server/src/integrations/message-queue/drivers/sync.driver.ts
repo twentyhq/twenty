@@ -3,6 +3,7 @@ import { Logger } from '@nestjs/common';
 
 import { MessageQueueDriver } from 'src/integrations/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
+  MessageQueueCronJobData,
   MessageQueueJob,
   MessageQueueJobData,
 } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
@@ -36,7 +37,13 @@ export class SyncDriver implements MessageQueueDriver {
   ): Promise<void> {
     this.logger.log(`Running '${pattern}' cron job with SyncDriver`);
 
-    await this.add(_queueName, jobName, data);
+    const jobClassName = getJobClassName(jobName);
+    const job: MessageQueueCronJobData<MessageQueueJobData | undefined> =
+      this.jobsModuleRef.get(jobClassName, {
+        strict: true,
+      });
+
+    await job.handle(data);
   }
 
   async removeCron(_queueName: MessageQueue, jobName: string) {
