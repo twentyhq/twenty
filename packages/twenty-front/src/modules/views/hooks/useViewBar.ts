@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
+import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';
@@ -22,8 +23,6 @@ import { useViewFilters } from './internal/useViewFilters';
 import { useViews } from './internal/useViews';
 import { useViewScopedStates } from './internal/useViewScopedStates';
 import { useViewSorts } from './internal/useViewSorts';
-import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
-import { set } from 'date-fns';
 
 type UseViewProps = {
   viewBarId?: string;

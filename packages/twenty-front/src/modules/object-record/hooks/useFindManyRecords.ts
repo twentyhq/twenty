@@ -10,6 +10,9 @@ import { useRecordOptimisticEffect } from '@/object-metadata/hooks/useRecordOpti
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
+import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -20,15 +23,9 @@ import { cursorFamilyState } from '../states/cursorFamilyState';
 import { hasNextPageFamilyState } from '../states/hasNextPageFamilyState';
 import { isFetchingMoreRecordsFamilyState } from '../states/isFetchingMoreRecordsFamilyState';
 import { ObjectRecordQueryResult } from '../types/ObjectRecordQueryResult';
-
 import { mapPaginatedRecordsToRecords } from '../utils/mapPaginatedRecordsToRecords';
-import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 
-export const useFindManyRecords = <
-  T extends ObjectRecord = ObjectRecord,
->({
+export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
   filter,
   orderBy,
@@ -88,7 +85,7 @@ export const useFindManyRecords = <
 
       if (data?.[objectMetadataItem.namePlural]) {
         setLastCursor(
-          data?.[objectMetadataItem.namePlural]?.pageInfo.endCursor ?? "",
+          data?.[objectMetadataItem.namePlural]?.pageInfo.endCursor ?? '',
         );
         setHasNextPage(
           data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage ?? false,
@@ -138,11 +135,11 @@ export const useFindManyRecords = <
             if (data?.[objectMetadataItem.namePlural]) {
               setLastCursor(
                 fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo
-                  .endCursor ?? ""
+                  .endCursor ?? '',
               );
               setHasNextPage(
                 fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo
-                  .hasNextPage ?? false
+                  .hasNextPage ?? false,
               );
             }
 

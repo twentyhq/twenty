@@ -1,4 +1,3 @@
-
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';
