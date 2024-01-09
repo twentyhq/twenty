@@ -33,6 +33,7 @@ export {
   IconChevronsRight,
   IconChevronUp,
   IconCircleDot,
+  IconClick,
   IconCoins,
   IconColorSwatch,
   IconMessageCircle as IconComment,
@@ -90,6 +91,7 @@ export {
   IconPlus,
   IconPresentation,
   IconProgressCheck,
+  IconPuzzle,
   IconRefresh,
   IconRelationManyToMany,
   IconRelationOneToMany,
@@ -114,5 +116,4 @@ export {
   IconWand,
   IconWorld,
   IconX,
-  IconClick,
 } from '@tabler/icons-react';
