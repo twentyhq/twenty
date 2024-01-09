@@ -226,19 +226,24 @@ const StyledContainer = styled.div`
   }
 `;
 
-const StyledButtonContainer = styled.div`
+const StyledButtonContainer = styled(MenuItem)`
   align-items: center;
   align-self: stretch;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
+  height: ${({ theme }) => theme.spacing(8)};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  margin-left: ${({ theme }) => theme.spacing(2)};
+  margin-right: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) => theme.spacing(1)};
+  padding: 0 ${({ theme }) => theme.spacing(2)};
+  width: auto;
 
-  & .menu-item {
-    height: ${({ theme }) => theme.spacing(8)};
-    margin-bottom: ${({ theme }) => theme.spacing(1)};
-    margin-top: ${({ theme }) => theme.spacing(1)};
-    padding: 0 ${({ theme }) => theme.spacing(2)};
-    width: fit-content;
+  & div:first-child {
+    left: 50%;
+    position: relative;
+    transform: translateX(-50%);
+    width: auto;
   }
 `;
 
@@ -281,14 +286,12 @@ export const InternalDatePicker = ({
         ></ReactDatePicker>
       </div>
       {clearable && (
-        <StyledButtonContainer>
-          <MenuItem
-            text="Clear"
-            LeftIcon={IconCalendarX}
-            onClick={handleClear}
-            className="menu-item"
-          />
-        </StyledButtonContainer>
+        <StyledButtonContainer
+          text="Clear"
+          LeftIcon={IconCalendarX}
+          onClick={handleClear}
+          className="menu-item"
+        ></StyledButtonContainer>
       )}
     </StyledContainer>
   );
