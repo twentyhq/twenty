@@ -219,8 +219,8 @@ export class FetchBatchMessagesService {
             internalDate,
             from,
             to: this.formatAddressObjectAsArray(to),
-            cc: this.formatAddressObjectAsArray(cc),
-            bcc: this.formatAddressObjectAsArray(bcc),
+            cc: cc ? this.formatAddressObjectAsArray(cc) : undefined,
+            bcc: bcc ? this.formatAddressObjectAsArray(bcc) : undefined,
             text: text || '',
             html: html || '',
             attachments,
@@ -241,15 +241,9 @@ export class FetchBatchMessagesService {
   }
 
   formatAddressObjectAsArray(
-    addressObject: AddressObject | AddressObject[] | undefined,
+    addressObject: AddressObject | AddressObject[],
   ): AddressObject[] {
-    if (!addressObject) return [];
-
-    if (!Array.isArray(addressObject)) {
-      return [addressObject];
-    } else {
-      return addressObject;
-    }
+    return Array.isArray(addressObject) ? addressObject : [addressObject];
   }
 
   async formatBatchResponsesAsGmailMessages(
