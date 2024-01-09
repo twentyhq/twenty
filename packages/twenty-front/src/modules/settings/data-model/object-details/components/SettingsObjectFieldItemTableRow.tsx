@@ -18,6 +18,8 @@ import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 type SettingsObjectFieldItemTableRowProps = {
   ActionIcon: ReactNode;
   fieldMetadataItem: FieldMetadataItem;
+  identifierType?: 'label' | 'image';
+  variant?: 'field-type' | 'identifier';
 };
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
@@ -37,6 +39,8 @@ const StyledIconTableCell = styled(TableCell)`
 export const SettingsObjectFieldItemTableRow = ({
   ActionIcon,
   fieldMetadataItem,
+  identifierType,
+  variant = 'field-type',
 }: SettingsObjectFieldItemTableRowProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
@@ -66,7 +70,11 @@ export const SettingsObjectFieldItemTableRow = ({
         {fieldMetadataItem.label}
       </StyledNameTableCell>
       <TableCell>
-        {fieldMetadataItem.isCustom ? 'Custom' : 'Standard'}
+        {variant === 'field-type' &&
+          (fieldMetadataItem.isCustom ? 'Custom' : 'Standard')}
+        {variant === 'identifier' &&
+          !!identifierType &&
+          (identifierType === 'label' ? 'Record text' : 'Record image')}
       </TableCell>
       <TableCell>
         <SettingsObjectFieldDataType

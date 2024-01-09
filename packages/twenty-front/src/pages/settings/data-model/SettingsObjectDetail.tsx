@@ -51,6 +51,13 @@ export const SettingsObjectDetail = () => {
 
   if (!activeObjectMetadataItem) return null;
 
+  const getIdentifierType = (field: { id: string }) =>
+    activeObjectMetadataItem.labelIdentifierFieldMetadataId === field.id
+      ? 'label'
+      : activeObjectMetadataItem.imageIdentifierFieldMetadataId === field.id
+        ? 'image'
+        : undefined;
+
   const activeMetadataFields = activeObjectMetadataItem.fields.filter(
     (metadataField) => metadataField.isActive && !metadataField.isSystem,
   );
@@ -93,7 +100,11 @@ export const SettingsObjectDetail = () => {
           <Table>
             <StyledObjectFieldTableRow>
               <TableHeader>Name</TableHeader>
-              <TableHeader>Field type</TableHeader>
+              <TableHeader>
+                {activeObjectMetadataItem.isCustom
+                  ? 'Identifier'
+                  : 'Field type'}
+              </TableHeader>
               <TableHeader>Data type</TableHeader>
               <TableHeader></TableHeader>
             </StyledObjectFieldTableRow>
@@ -102,6 +113,12 @@ export const SettingsObjectDetail = () => {
                 {activeMetadataFields.map((activeMetadataField) => (
                   <SettingsObjectFieldItemTableRow
                     key={activeMetadataField.id}
+                    identifierType={getIdentifierType(activeMetadataField)}
+                    variant={
+                      activeObjectMetadataItem.isCustom
+                        ? 'identifier'
+                        : 'field-type'
+                    }
                     fieldMetadataItem={activeMetadataField}
                     ActionIcon={
                       <SettingsObjectFieldActiveActionDropdown
@@ -129,6 +146,12 @@ export const SettingsObjectDetail = () => {
                 {disabledMetadataFields.map((disabledMetadataField) => (
                   <SettingsObjectFieldItemTableRow
                     key={disabledMetadataField.id}
+                    identifierType={getIdentifierType(disabledMetadataField)}
+                    variant={
+                      activeObjectMetadataItem.isCustom
+                        ? 'identifier'
+                        : 'field-type'
+                    }
                     fieldMetadataItem={disabledMetadataField}
                     ActionIcon={
                       <SettingsObjectFieldDisabledActionDropdown
