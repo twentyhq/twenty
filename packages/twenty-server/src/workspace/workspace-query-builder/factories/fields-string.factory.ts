@@ -24,7 +24,6 @@ export class FieldsStringFactory {
     info: GraphQLResolveInfo,
     fieldMetadataCollection: FieldMetadataInterface[],
   ): Promise<string> {
-    // @ts-expect-error Todo: Fix typing error
     const selectedFields: Record<string, any> = graphqlFields(info);
 
     return this.createFieldsStringRecursive(

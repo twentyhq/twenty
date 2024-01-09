@@ -32,8 +32,8 @@ export const CommandMenuItem = ({
     Icon = IconArrowUpRight;
   }
 
-  const { isSelectedItemIdFamilyState } = useSelectableList();
-  const isSelectedItemId = useRecoilValue(isSelectedItemIdFamilyState(id));
+  const { isSelectedItemIdSelector } = useSelectableList();
+  const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector(id));
 
   return (
     <MenuItemCommand

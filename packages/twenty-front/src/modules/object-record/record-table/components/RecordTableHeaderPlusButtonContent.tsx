@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
+import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { IconSettings } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -18,7 +19,13 @@ import { ColumnDefinition } from '../types/ColumnDefinition';
 export const RecordTableHeaderPlusButtonContent = () => {
   const { closeDropdown } = useDropdown();
 
-  const { hiddenTableColumnsSelector } = useRecordTableScopedStates();
+  const { hiddenTableColumnsScopeInjector } = getRecordTableScopeInjector();
+
+  const { injectSelectorWithRecordTableScopeId } = useRecordTableScopedStates();
+
+  const hiddenTableColumnsSelector = injectSelectorWithRecordTableScopeId(
+    hiddenTableColumnsScopeInjector,
+  );
 
   const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector);
 

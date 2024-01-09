@@ -1,7 +1,9 @@
 import { useContext } from 'react';
 
 import { FullNameFieldInput } from '@/object-record/field/meta-types/input/components/FullNameFieldInput';
+import { SelectFieldInput } from '@/object-record/field/meta-types/input/components/SelectFieldInput';
 import { isFieldFullName } from '@/object-record/field/types/guards/isFieldFullName';
+import { isFieldSelect } from '@/object-record/field/types/guards/isFieldSelect';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { FieldContext } from '../contexts/FieldContext';
@@ -120,6 +122,8 @@ export const FieldInput = ({
         <BooleanFieldInput onSubmit={onSubmit} />
       ) : isFieldRating(fieldDefinition) ? (
         <RatingFieldInput onSubmit={onSubmit} />
+      ) : isFieldSelect(fieldDefinition) ? (
+        <SelectFieldInput onSubmit={onSubmit} />
       ) : (
         <></>
       )}

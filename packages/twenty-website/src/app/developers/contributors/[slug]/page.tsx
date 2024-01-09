@@ -1,9 +1,8 @@
-import Image from 'next/image';
 import Database from 'better-sqlite3';
-import AvatarGrid from '@/app/components/AvatarGrid';
-import { ResponsiveTimeRange } from '@nivo/calendar'
-import { ActivityLog } from './components/ActivityLog';
 import { Metadata } from 'next';
+import Image from 'next/image';
+
+import { ActivityLog } from './components/ActivityLog';
 
 interface Contributor {
   login: string;
@@ -11,21 +10,22 @@ interface Contributor {
   pullRequestCount: number;
 }
 
-
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-    return {
-        title: params.slug + ' | Contributors',
-    };
+export function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Metadata {
+  return {
+    title: params.slug + ' | Contributors',
+  };
 }
 
+export default async function ({ params }: { params: { slug: string } }) {
+  const db = new Database('db.sqlite', { readonly: true });
 
-
-export default async function (
-    { params }: { params: { slug: string } }) {
-    
-        const db = new Database('db.sqlite', { readonly: true });
-
-  const contributor = db.prepare(`
+  const contributor = db
+    .prepare(
+      `
   SELECT 
     u.login,
     u.avatarUrl, 
@@ -35,9 +35,13 @@ export default async function (
     users u
   WHERE
     u.login = :user_id
-`).get({'user_id' : params.slug}) as Contributor;
+`,
+    )
+    .get({ user_id: params.slug }) as Contributor;
 
-const pullRequestActivity = db.prepare(`
+  const pullRequestActivity = db
+    .prepare(
+      `
   SELECT 
     COUNT(*) as value,
     DATE(createdAt) as day
@@ -49,11 +53,13 @@ const pullRequestActivity = db.prepare(`
     DATE(createdAt)
   ORDER BY 
     DATE(createdAt)
-`).all({'user_id': params.slug}) as { value: number, day: string }[];
+`,
+    )
+    .all({ user_id: params.slug }) as { value: number; day: string }[];
 
-
-
-const pullRequestList = db.prepare(`
+  const pullRequestList = db
+    .prepare(
+      `
   SELECT 
     id,
     title,
@@ -69,32 +75,46 @@ const pullRequestList = db.prepare(`
     authorId = (SELECT id FROM users WHERE login = :user_id)
   ORDER BY 
     DATE(createdAt) DESC
-`).all({'user_id': params.slug}) as { title: string, createdAt: string, url: string }[];
+`,
+    )
+    .all({ user_id: params.slug }) as {
+    title: string;
+    createdAt: string;
+    url: string;
+  }[];
 
-  
   db.close();
 
-  
   return (
-    <div style={{maxWidth: '900px', display: 'flex', padding: '40px', gap: '24px'}}>
-      <div style={{ flexDirection: 'column', width: '240px'}}>
-        <Image src={contributor.avatarUrl} alt={contributor.login} width={240} height={240} />
+    <div
+      style={{
+        maxWidth: '900px',
+        display: 'flex',
+        padding: '40px',
+        gap: '24px',
+      }}
+    >
+      <div style={{ flexDirection: 'column', width: '240px' }}>
+        <Image
+          src={contributor.avatarUrl}
+          alt={contributor.login}
+          width={240}
+          height={240}
+        />
         <h1>{contributor.login}</h1>
       </div>
-      <div style={{flexDirection: 'column'}}>
-        <div style={{width: '450px', height: '200px'}}>
-            <ActivityLog
-                data={pullRequestActivity}
-                />
+      <div style={{ flexDirection: 'column' }}>
+        <div style={{ width: '450px', height: '200px' }}>
+          <ActivityLog data={pullRequestActivity} />
         </div>
-        <div style={{width: '450px'}}>
-            {pullRequestList.map(pr => (
-                <div>
-                    <a href={pr.url}>{pr.title}</a>
-                </div>
-            ))}
+        <div style={{ width: '450px' }}>
+          {pullRequestList.map((pr) => (
+            <div>
+              <a href={pr.url}>{pr.title}</a>
+            </div>
+          ))}
         </div>
-        </div>
+      </div>
     </div>
   );
-};
+}

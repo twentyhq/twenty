@@ -56,9 +56,9 @@ export const ProgressBar = forwardRef<ProgressBarControls, ProgressBarProps>(
     const theme = useTheme();
 
     const controls = useAnimation();
-    // eslint-disable-next-line twenty/no-state-useref
+    // eslint-disable-next-line @nx/workspace-no-state-useref
     const startTimestamp = useRef<number>(0);
-    // eslint-disable-next-line twenty/no-state-useref
+    // eslint-disable-next-line @nx/workspace-no-state-useref
     const remainingTime = useRef<number>(duration);
 
     const start = useCallback(async () => {

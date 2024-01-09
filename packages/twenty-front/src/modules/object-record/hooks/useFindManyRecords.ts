@@ -79,9 +79,9 @@ export const useFindManyRecords = <
   >(findManyRecordsQuery, {
     skip: skip || !objectMetadataItem || !currentWorkspace,
     variables: {
-      filter: filter ?? {},
-      limit: limit,
-      orderBy: orderBy ?? {},
+      filter,
+      limit,
+      orderBy,
     },
     onCompleted: (data) => {
       onCompleted?.(data[objectMetadataItem.namePlural]);
@@ -116,8 +116,8 @@ export const useFindManyRecords = <
       try {
         await fetchMore({
           variables: {
-            filter: filter ?? {},
-            orderBy: orderBy ?? {},
+            filter,
+            orderBy,
             lastCursor: isNonEmptyString(lastCursor) ? lastCursor : undefined,
           },
           updateQuery: (prev, { fetchMoreResult }) => {

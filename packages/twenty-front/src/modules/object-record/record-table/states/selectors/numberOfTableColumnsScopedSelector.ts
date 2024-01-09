@@ -1,11 +1,11 @@
-import { selectorFamily } from 'recoil';
+import { createSelectorScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorScopeMap';
 
 import { tableColumnsScopedState } from '../tableColumnsScopedState';
 
-export const numberOfTableColumnsScopedSelector = selectorFamily({
+export const numberOfTableColumnsScopedSelector = createSelectorScopeMap({
   key: 'numberOfTableColumnsScopedSelector',
   get:
-    (scopeId: string) =>
+    ({ scopeId }) =>
     ({ get }) =>
       get(tableColumnsScopedState({ scopeId })).length,
 });

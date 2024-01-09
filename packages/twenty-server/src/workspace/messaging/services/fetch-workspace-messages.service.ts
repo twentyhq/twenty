@@ -1,71 +1,47 @@
 import { Injectable } from '@nestjs/common';
 
-import { gmail_v1, google } from 'googleapis';
+import { gmail_v1 } from 'googleapis';
 import { v4 } from 'uuid';
 import { DataSource } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetch-batch-messages.service';
 import { GmailMessage } from 'src/workspace/messaging/types/gmailMessage';
-import { MessageQuery } from 'src/workspace/messaging/types/messageQuery';
+import { MessageOrThreadQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
+import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
 
 @Injectable()
 export class FetchWorkspaceMessagesService {
   constructor(
-    private readonly environmentService: EnvironmentService,
+    private readonly gmailClientProvider: GmailClientProvider,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly fetchBatchMessagesService: FetchBatchMessagesService,
   ) {}
 
-  async fetchWorkspaceMessages(workspaceId: string): Promise<void> {
-    await this.fetchWorkspaceMemberThreads(
-      workspaceId,
-      '20202020-0687-4c41-b707-ed1bfca972a7',
-    );
-    await this.fetchWorkspaceMemberMessages(
-      workspaceId,
-      '20202020-0687-4c41-b707-ed1bfca972a7',
-    );
-  }
-
-  async fetchWorkspaceMemberThreads(
+  public async fetchConnectedAccountThreads(
     workspaceId: string,
-    workspaceMemberId: string,
+    connectedAccountId: string,
     maxResults = 500,
   ): Promise<void> {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+    const { workspaceDataSource, dataSourceMetadata, connectedAccount } =
+      await this.getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
         workspaceId,
+        connectedAccountId,
       );
 
-    const workspaceDataSource = await this.typeORMService.connectToDataSource(
-      dataSourceMetadata,
-    );
-
-    if (!workspaceDataSource) {
-      throw new Error('No workspace data source found');
-    }
-
-    const connectedAccounts = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail' AND "accountOwnerId" = $1`,
-      [workspaceMemberId],
-    );
-
-    if (!connectedAccounts || connectedAccounts.length === 0) {
-      throw new Error('No connected account found');
-    }
-
-    const refreshToken = connectedAccounts[0]?.refreshToken;
+    const accessToken = connectedAccount.accessToken;
+    const refreshToken = connectedAccount.refreshToken;
+    const workspaceMemberId = connectedAccount.workspaceMemberId;
 
     if (!refreshToken) {
       throw new Error('No refresh token found');
     }
 
-    const gmailClient = await this.getGmailClient(refreshToken);
+    const gmailClient =
+      await this.gmailClientProvider.getGmailClient(refreshToken);
 
     const threads = await gmailClient.users.threads.list({
       userId: 'me',
@@ -74,71 +50,54 @@ export class FetchWorkspaceMessagesService {
 
     const threadsData = threads.data.threads;
 
-    if (!threadsData) {
+    if (!threadsData || threadsData?.length === 0) {
       return;
     }
 
-    await this.saveMessageThreads(
-      threadsData,
-      dataSourceMetadata,
-      workspaceDataSource,
-      connectedAccounts[0].id,
-    );
-  }
-
-  async fetchWorkspaceMemberMessages(
-    workspaceId: string,
-    workspaceMemberId: string,
-    maxResults = 500,
-  ): Promise<void> {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        workspaceId,
+    const { savedMessageIds, savedThreadIds } =
+      await this.getAllSavedMessagesIdsAndMessageThreadsIdsForConnectedAccount(
+        dataSourceMetadata,
+        workspaceDataSource,
+        connectedAccount.id,
       );
 
-    const workspaceDataSource = await this.typeORMService.connectToDataSource(
+    const threadsToSave = threadsData.filter(
+      (thread) => thread.id && !savedThreadIds.includes(thread.id),
+    );
+
+    await this.saveMessageThreads(
+      threadsToSave,
       dataSourceMetadata,
+      workspaceDataSource,
+      connectedAccount.id,
     );
 
-    if (!workspaceDataSource) {
-      throw new Error('No workspace data source found');
-    }
-
-    const connectedAccounts = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail' AND "accountOwnerId" = $1`,
-      [workspaceMemberId],
-    );
-
-    if (!connectedAccounts || connectedAccounts.length === 0) {
-      throw new Error('No connected account found');
-    }
-
-    const accessToken = connectedAccounts[0]?.accessToken;
-    const refreshToken = connectedAccounts[0]?.refreshToken;
-
-    if (!accessToken || !refreshToken) {
-      throw new Error('No access token or refresh token found');
-    }
-
-    const gmailClient = await this.getGmailClient(refreshToken);
-
-    const messages = await gmailClient.users.messages.list({
-      userId: 'me',
-      maxResults,
-    });
-
-    const messagesData = messages.data.messages;
-
-    if (!messagesData || messagesData?.length === 0) {
-      return;
-    }
-
-    const messageQueries: MessageQuery[] = messagesData.map((message) => ({
-      uri: '/gmail/v1/users/me/messages/' + message.id + '?format=RAW',
+    const threadQueries: MessageOrThreadQuery[] = threadsData.map((thread) => ({
+      uri: '/gmail/v1/users/me/threads/' + thread.id + '?format=minimal',
     }));
 
+    const threadsWithMessageIds =
+      await this.fetchBatchMessagesService.fetchAllThreads(
+        threadQueries,
+        accessToken,
+      );
+
+    const messageIds = threadsWithMessageIds
+      .map((thread) => thread.messageIds)
+      .flat();
+
+    const messageIdsToSave = messageIds.filter(
+      (messageId) => !savedMessageIds.includes(messageId),
+    );
+
+    const messageQueries: MessageOrThreadQuery[] = messageIdsToSave.map(
+      (messageId) => ({
+        uri: '/gmail/v1/users/me/messages/' + messageId + '?format=RAW',
+      }),
+    );
+
     const messagesResponse =
-      await this.fetchBatchMessagesService.fetchAllByBatches(
+      await this.fetchBatchMessagesService.fetchAllMessages(
         messageQueries,
         accessToken,
       );
@@ -151,30 +110,7 @@ export class FetchWorkspaceMessagesService {
     );
   }
 
-  async getGmailClient(refreshToken: string): Promise<gmail_v1.Gmail> {
-    const gmailClientId = this.environmentService.getAuthGoogleClientId();
-
-    const gmailClientSecret =
-      this.environmentService.getAuthGoogleClientSecret();
-
-    const oAuth2Client = new google.auth.OAuth2(
-      gmailClientId,
-      gmailClientSecret,
-    );
-
-    oAuth2Client.setCredentials({
-      refresh_token: refreshToken,
-    });
-
-    const gmailClient = google.gmail({
-      version: 'v1',
-      auth: oAuth2Client,
-    });
-
-    return gmailClient;
-  }
-
-  async saveMessageThreads(
+  private async saveMessageThreads(
     threads: gmail_v1.Schema$Thread[],
     dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
@@ -197,7 +133,7 @@ export class FetchWorkspaceMessagesService {
     }
   }
 
-  async saveMessages(
+  private async saveMessages(
     messages: GmailMessage[],
     dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
@@ -253,5 +189,68 @@ export class FetchWorkspaceMessagesService {
         );
       });
     }
+  }
+
+  private async getAllSavedMessagesIdsAndMessageThreadsIdsForConnectedAccount(
+    dataSourceMetadata: DataSourceEntity,
+    workspaceDataSource: DataSource,
+    connectedAccountId: string,
+  ): Promise<{
+    savedMessageIds: string[];
+    savedThreadIds: string[];
+  }> {
+    const messageIds: { messageId: string; messageThreadId: string }[] =
+      await workspaceDataSource?.query(
+        `SELECT message."externalId" AS "messageId",
+      "messageThread"."externalId" AS "messageThreadId"
+      FROM ${dataSourceMetadata.schema}."message" message
+      LEFT JOIN ${dataSourceMetadata.schema}."messageThread" "messageThread" ON message."messageThreadId" = "messageThread"."id" 
+      LEFT JOIN ${dataSourceMetadata.schema}."messageChannel" ON "messageThread"."messageChannelId" = ${dataSourceMetadata.schema}."messageChannel"."id"
+      WHERE ${dataSourceMetadata.schema}."messageChannel"."connectedAccountId" = $1`,
+        [connectedAccountId],
+      );
+
+    return {
+      savedMessageIds: messageIds.map((message) => message.messageId),
+      savedThreadIds: [
+        ...new Set(messageIds.map((message) => message.messageThreadId)),
+      ],
+    };
+  }
+
+  private async getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
+    workspaceId: string,
+    connectedAccountId: string,
+  ): Promise<{
+    dataSourceMetadata: DataSourceEntity;
+    workspaceDataSource: DataSource;
+    connectedAccount: any;
+  }> {
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        workspaceId,
+      );
+
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+
+    if (!workspaceDataSource) {
+      throw new Error('No workspace data source found');
+    }
+
+    const connectedAccounts = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail' AND "id" = $1`,
+      [connectedAccountId],
+    );
+
+    if (!connectedAccounts || connectedAccounts.length === 0) {
+      throw new Error('No connected account found');
+    }
+
+    return {
+      dataSourceMetadata,
+      workspaceDataSource,
+      connectedAccount: connectedAccounts[0],
+    };
   }
 }

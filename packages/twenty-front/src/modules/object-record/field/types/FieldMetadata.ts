@@ -75,17 +75,19 @@ export type FieldDefinitionRelationType =
   | 'TO_ONE_OBJECT';
 
 export type FieldRelationMetadata = {
-  objectMetadataNameSingular?: string;
   fieldName: string;
-  useEditButton?: boolean;
-  relationType?: FieldDefinitionRelationType;
-  relationObjectMetadataNameSingular: string;
+  objectMetadataNameSingular?: string;
+  relationFieldMetadataId: string;
   relationObjectMetadataNamePlural: string;
+  relationObjectMetadataNameSingular: string;
+  relationType?: FieldDefinitionRelationType;
+  useEditButton?: boolean;
 };
 
 export type FieldSelectMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
+  options: { label: string; color: ThemeColor; value: string }[];
 };
 
 export type FieldMetadata =
@@ -118,6 +120,6 @@ export type FieldCurrencyValue = {
 };
 export type FieldFullNameValue = { firstName: string; lastName: string };
 export type FieldRatingValue = '1' | '2' | '3' | '4' | '5';
-export type FieldSelectValue = { color: ThemeColor; label: string };
+export type FieldSelectValue = string | null;
 
 export type FieldRelationValue = EntityForSelect | null;

@@ -1,0 +1,24 @@
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/search/hooks/useFilteredSearchEntityQuery';
+import { isDefined } from '~/utils/isDefined';
+import { capitalize } from '~/utils/string/capitalize';
+
+export const useLimitPerMetadataItem = ({
+  objectMetadataItems,
+  limit = DEFAULT_SEARCH_REQUEST_LIMIT,
+}: {
+  objectMetadataItems: ObjectMetadataItem[];
+  limit?: number;
+}) => {
+  const limitPerMetadataItem = Object.fromEntries(
+    objectMetadataItems
+      .map(({ nameSingular }) => {
+        return [`limit${capitalize(nameSingular)}`, limit];
+      })
+      .filter(isDefined),
+  );
+
+  return {
+    limitPerMetadataItem,
+  };
+};

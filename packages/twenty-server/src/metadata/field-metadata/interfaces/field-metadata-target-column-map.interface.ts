@@ -34,8 +34,8 @@ type TypeByFieldMetadata<T extends FieldMetadataType | 'default'> = [
 ] extends [keyof FieldMetadataTypeMapping]
   ? FieldMetadataTypeMapping[T]
   : T extends 'default'
-  ? AllFieldMetadataTypes
-  : FieldMetadataTargetColumnMapValue;
+    ? AllFieldMetadataTypes
+    : FieldMetadataTargetColumnMapValue;
 
 export type FieldMetadataTargetColumnMap<
   T extends FieldMetadataType | 'default' = 'default',

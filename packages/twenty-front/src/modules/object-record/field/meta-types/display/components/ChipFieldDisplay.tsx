@@ -10,6 +10,7 @@ export const ChipFieldDisplay = () => {
     basePathToShowPage,
   } = useChipField();
 
+  // TODO: remove this and use ObjectRecordChip instead
   const identifiers = identifiersMapper?.(record, objectNameSingular ?? '');
 
   return (

@@ -1,6 +1,6 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const isViewBarExpandedScopedState = createScopedState<boolean>({
+export const isViewBarExpandedScopedState = createStateScopeMap<boolean>({
   key: 'isViewBarExpandedScopedState',
   defaultValue: true,
 });

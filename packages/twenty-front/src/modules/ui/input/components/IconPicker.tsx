@@ -61,9 +61,9 @@ const IconPickerIcon = ({
   selectedIconKey,
   Icon,
 }: IconPickerIconProps) => {
-  const { isSelectedItemIdFamilyState } = useSelectableList();
+  const { isSelectedItemIdSelector } = useSelectableList();
 
-  const isSelectedItemId = useRecoilValue(isSelectedItemIdFamilyState(iconKey));
+  const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector(iconKey));
 
   return (
     <StyledLightIconButton
@@ -95,7 +95,7 @@ export const IconPicker = ({
     setHotkeyScopeAndMemorizePreviousScope,
   } = usePreviousHotkeyScope();
 
-  const { closeDropdown } = useDropdown({ dropdownScopeId });
+  const { closeDropdown } = useDropdown(dropdownScopeId);
 
   const { getIcons, getIcon } = useIcons();
   const icons = getIcons();

@@ -22,6 +22,6 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "resolveJsonModule": true,
-    "typeRoots": ["@types", "node_modules/@types"]
+    "types": ["jest", "node"]
   }
 }

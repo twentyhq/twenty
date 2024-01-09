@@ -1,7 +1,7 @@
 import { MouseEvent } from 'react';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-import { FloatingIconButtonGroup } from '@/ui/input/button/components/FloatingIconButtonGroup';
+import { LightIconButtonGroup } from '@/ui/input/button/components/LightIconButtonGroup';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
@@ -59,7 +59,7 @@ export const MenuItem = ({
       </StyledMenuItemLeftContent>
       <div className="hoverable-buttons">
         {showIconButtons && (
-          <FloatingIconButtonGroup iconButtons={iconButtons} size="small" />
+          <LightIconButtonGroup iconButtons={iconButtons} size="small" />
         )}
       </div>
     </StyledHoverableMenuItemBase>

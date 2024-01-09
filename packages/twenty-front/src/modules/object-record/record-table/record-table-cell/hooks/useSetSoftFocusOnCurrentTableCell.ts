@@ -1,29 +1,13 @@
-import { useRecoilCallback } from 'recoil';
-
-import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-
-import { useSetSoftFocusPosition } from '../../hooks/internal/useSetSoftFocusPosition';
-import { isSoftFocusActiveState } from '../../states/isSoftFocusActiveState';
-import { TableHotkeyScope } from '../../types/TableHotkeyScope';
+import { useSetSoftFocus } from '@/object-record/record-table/record-table-cell/hooks/useSetSoftFocus';
 
 import { useCurrentTableCellPosition } from './useCurrentCellPosition';
 
 export const useSetSoftFocusOnCurrentTableCell = () => {
-  const setSoftFocusPosition = useSetSoftFocusPosition();
+  const setSoftFocus = useSetSoftFocus();
 
   const currentTableCellPosition = useCurrentTableCellPosition();
 
-  const setHotkeyScope = useSetHotkeyScope();
-
-  return useRecoilCallback(
-    ({ set }) =>
-      () => {
-        setSoftFocusPosition(currentTableCellPosition);
-
-        set(isSoftFocusActiveState, true);
-
-        setHotkeyScope(TableHotkeyScope.TableSoftFocus);
-      },
-    [setHotkeyScope, currentTableCellPosition, setSoftFocusPosition],
-  );
+  return () => {
+    setSoftFocus(currentTableCellPosition);
+  };
 };

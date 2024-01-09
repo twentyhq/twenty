@@ -1,8 +1,8 @@
 import { ObjectMetadataConfig } from '@/object-record/record-table/types/ObjectMetadataConfig';
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
 export const objectMetadataConfigScopedState =
-  createScopedState<ObjectMetadataConfig | null>({
+  createStateScopeMap<ObjectMetadataConfig | null>({
     key: 'objectMetadataConfigScopedState',
     defaultValue: null,
   });

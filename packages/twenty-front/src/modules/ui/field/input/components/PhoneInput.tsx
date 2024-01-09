@@ -54,6 +54,7 @@ export type PhoneInputProps = {
   onTab?: (newText: string) => void;
   onShiftTab?: (newText: string) => void;
   onClickOutside: (event: MouseEvent | TouchEvent, inputValue: string) => void;
+  onChange?: (newText: string) => void;
   hotkeyScope: string;
 };
 
@@ -66,10 +67,16 @@ export const PhoneInput = ({
   onShiftTab,
   onClickOutside,
   hotkeyScope,
+  onChange,
 }: PhoneInputProps) => {
   const [internalValue, setInternalValue] = useState<string | undefined>(value);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const handleChange = (newValue: string) => {
+    setInternalValue(newValue);
+    onChange?.(newValue);
+  };
 
   useEffect(() => {
     setInternalValue(value);
@@ -92,7 +99,7 @@ export const PhoneInput = ({
         autoFocus={autoFocus}
         placeholder="Phone number"
         value={value}
-        onChange={setInternalValue}
+        onChange={handleChange}
         international={true}
         withCountryCallingCode={true}
         countrySelectComponent={CountryPickerDropdownButton}

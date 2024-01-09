@@ -1,10 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import {
-  Attachment,
-  AttachmentType,
-} from '@/activities/files/types/Attachment';
+import { AttachmentType } from '@/activities/files/types/Attachment';
 import {
   IconFile,
   IconFileText,
@@ -40,7 +37,11 @@ const IconMapping: { [key in AttachmentType]: IconComponent } = {
   Other: IconFile,
 };
 
-export const AttachmentIcon = ({ attachment }: { attachment: Attachment }) => {
+export const AttachmentIcon = ({
+  attachmentType,
+}: {
+  attachmentType: AttachmentType;
+}) => {
   const theme = useTheme();
 
   const IconColors: { [key in AttachmentType]: string } = {
@@ -54,10 +55,10 @@ export const AttachmentIcon = ({ attachment }: { attachment: Attachment }) => {
     Other: theme.color.gray,
   };
 
-  const Icon = IconMapping[attachment.type];
+  const Icon = IconMapping[attachmentType];
 
   return (
-    <StyledIconContainer background={IconColors[attachment.type]}>
+    <StyledIconContainer background={IconColors[attachmentType]}>
       {Icon && <Icon size={theme.icon.size.sm} />}
     </StyledIconContainer>
   );

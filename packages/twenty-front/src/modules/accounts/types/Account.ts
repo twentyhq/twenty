@@ -1,8 +1,9 @@
 import { InboxSettingsVisibilityValue } from '@/settings/accounts/components/SettingsAccountsInboxSettingsVisibilitySection';
 
 export type Account = {
-  email: string;
+  id: string;
+  handle: string;
+  isContactAutoCreationEnabled?: boolean;
   isSynced?: boolean;
-  uuid: string;
   visibility: InboxSettingsVisibilityValue;
 };

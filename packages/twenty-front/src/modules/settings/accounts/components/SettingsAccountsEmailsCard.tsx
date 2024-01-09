@@ -30,7 +30,7 @@ export const SettingsAccountsEmailsCard = ({
     <Card>
       {accounts.map((account, index) => (
         <SettingsAccountRow
-          key={account.uuid}
+          key={account.id}
           LeftIcon={IconGmail}
           account={account}
           rightComponent={
@@ -43,7 +43,7 @@ export const SettingsAccountsEmailsCard = ({
               <LightIconButton Icon={IconChevronRight} accent="tertiary" />
             </StyledRightContainer>
           }
-          onClick={() => navigate(`/settings/accounts/emails/${account.uuid}`)}
+          onClick={() => navigate(`/settings/accounts/emails/${account.id}`)}
           divider={index < accounts.length - 1}
         />
       ))}

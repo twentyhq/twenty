@@ -14,9 +14,9 @@ import { logError } from '~/utils/logError';
 export const PipelineAddButton = () => {
   const { enqueueSnackBar } = useSnackBar();
 
-  const { closeDropdown, toggleDropdown } = useDropdown({
-    dropdownScopeId: 'add-pipeline-progress',
-  });
+  const { closeDropdown, toggleDropdown } = useDropdown(
+    'add-pipeline-progress',
+  );
 
   const createOpportunity = useCreateOpportunity();
 

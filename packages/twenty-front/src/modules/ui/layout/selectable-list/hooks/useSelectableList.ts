@@ -1,37 +1,24 @@
 import { useResetRecoilState, useSetRecoilState } from 'recoil';
 
-import { useSelectableListScopedState } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListScopedState';
-import { getSelectableListScopeInjectors } from '@/ui/layout/selectable-list/utils/internal/getSelectableListScopeInjectors';
+import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListStates';
 
-export const useSelectableList = (selectableListScopeId?: string) => {
+export const useSelectableList = (selectableListId?: string) => {
   const {
-    getSelectableListScopedState,
-    getSelectableListScopedFamilyState,
     scopeId,
-  } = useSelectableListScopedState({
-    selectableListScopeId,
+    selectableItemIdsState,
+    selectableListOnEnterState,
+    isSelectedItemIdSelector,
+    selectedItemIdState,
+  } = useSelectableListStates({
+    selectableListScopeId: selectableListId,
   });
 
-  const {
-    selectedItemIdScopeInjector,
-    selectableItemIdsScopeInjector,
-    selectableListOnEnterScopeInjector,
-    isSelectedItemIdFamilyScopeInjector,
-  } = getSelectableListScopeInjectors();
-
-  const setSelectableItemIds = useSetRecoilState(
-    getSelectableListScopedState(selectableItemIdsScopeInjector),
-  );
+  const setSelectableItemIds = useSetRecoilState(selectableItemIdsState);
   const setSelectableListOnEnter = useSetRecoilState(
-    getSelectableListScopedState(selectableListOnEnterScopeInjector),
-  );
-  const isSelectedItemIdFamilyState = getSelectableListScopedFamilyState(
-    isSelectedItemIdFamilyScopeInjector,
+    selectableListOnEnterState,
   );
 
-  const resetSelectedItemIdState = useResetRecoilState(
-    getSelectableListScopedState(selectedItemIdScopeInjector),
-  );
+  const resetSelectedItemIdState = useResetRecoilState(selectedItemIdState);
 
   const resetSelectedItem = () => {
     resetSelectedItemIdState();
@@ -41,7 +28,7 @@ export const useSelectableList = (selectableListScopeId?: string) => {
     selectableListId: scopeId,
 
     setSelectableItemIds,
-    isSelectedItemIdFamilyState,
+    isSelectedItemIdSelector,
     setSelectableListOnEnter,
     resetSelectedItem,
   };

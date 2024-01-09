@@ -7,7 +7,7 @@ export const useFindOneRecord = <
   ObjectType extends { id: string } & Record<string, any>,
 >({
   objectNameSingular,
-  objectRecordId,
+  objectRecordId = '',
   onCompleted,
   depth,
   skip,
@@ -18,9 +18,7 @@ export const useFindOneRecord = <
   depth?: number;
 }) => {
   const { objectMetadataItem, findOneRecordQuery } = useObjectMetadataItem(
-    {
-      objectNameSingular,
-    },
+    { objectNameSingular },
     depth,
   );
 
@@ -29,20 +27,12 @@ export const useFindOneRecord = <
     { objectRecordId: string }
   >(findOneRecordQuery, {
     skip: !objectMetadataItem || !objectRecordId || skip,
-    variables: {
-      objectRecordId: objectRecordId ?? '',
-    },
-    onCompleted: (data) => {
-      if (onCompleted) {
-        onCompleted(data[objectNameSingular]);
-      }
-    },
+    variables: { objectRecordId },
+    onCompleted: (data) => onCompleted?.(data[objectNameSingular]),
   });
 
-  const record = data ? data[objectNameSingular] : undefined;
-
   return {
-    record,
+    record: data?.[objectNameSingular] || undefined,
     loading,
     error,
   };

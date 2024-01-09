@@ -51,9 +51,8 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
           workspace.id,
         );
 
-      const workspaceDataSource = await this.typeORMService.connectToDataSource(
-        dataSourceMetadata,
-      );
+      const workspaceDataSource =
+        await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
       const apiKey = await workspaceDataSource?.query(
         `SELECT * FROM ${dataSourceMetadata.schema}."apiKey" WHERE id = '${payload.jti}'`,

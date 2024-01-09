@@ -54,6 +54,7 @@ const StyledItemsContainer = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(8)};
   margin-bottom: auto;
+  overflow-y: auto;
 `;
 
 export const NavigationDrawer = ({

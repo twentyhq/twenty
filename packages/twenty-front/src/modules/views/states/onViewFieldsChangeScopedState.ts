@@ -1,8 +1,8 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
 import { ViewField } from '../types/ViewField';
 
-export const onViewFieldsChangeScopedState = createScopedState<
+export const onViewFieldsChangeScopedState = createStateScopeMap<
   ((fields: ViewField[]) => void | Promise<void>) | undefined
 >({
   key: 'onViewFieldsChangeScopedState',
