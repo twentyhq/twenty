@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { AddressObject } from 'mailparser';
 import { gmail_v1 } from 'googleapis';
 import { v4 } from 'uuid';
 import { DataSource, EntityManager } from 'typeorm';
@@ -8,7 +7,10 @@ import { DataSource, EntityManager } from 'typeorm';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetch-batch-messages.service';
-import { GmailMessage } from 'src/workspace/messaging/types/gmailMessage';
+import {
+  GmailMessage,
+  Recipient,
+} from 'src/workspace/messaging/types/gmailMessage';
 import { MessageOrThreadQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
@@ -146,10 +148,9 @@ export class FetchWorkspaceMessagesService {
         subject,
         messageThreadId,
         internalDate,
-        from,
-        to,
-        cc,
-        bcc,
+        fromHandle,
+        fromDisplayName,
+        recipients,
         text,
       } = message;
 
@@ -161,8 +162,6 @@ export class FetchWorkspaceMessagesService {
       );
 
       const messageId = v4();
-      const fromHandle = from?.value[0]?.address;
-      const fromDisplayName = from?.value[0]?.name;
 
       const person = await workspaceDataSource?.query(
         `SELECT * FROM ${dataSourceMetadata.schema}."person" WHERE "email" = $1`,
@@ -211,24 +210,7 @@ export class FetchWorkspaceMessagesService {
         );
 
         await this.saveMessageRecipients(
-          'to',
-          to,
-          dataSourceMetadata,
-          messageId,
-          manager,
-        );
-
-        await this.saveMessageRecipients(
-          'cc',
-          cc,
-          dataSourceMetadata,
-          messageId,
-          manager,
-        );
-
-        await this.saveMessageRecipients(
-          'bcc',
-          bcc,
+          recipients,
           dataSourceMetadata,
           messageId,
           manager,
@@ -238,50 +220,41 @@ export class FetchWorkspaceMessagesService {
   }
 
   async saveMessageRecipients(
-    role: 'to' | 'cc' | 'bcc',
-    addressObjects: AddressObject[] | undefined,
+    recipients: Recipient[],
     dataSourceMetadata: DataSourceEntity,
     messageId: string,
     manager: EntityManager,
   ): Promise<void> {
-    if (!addressObjects) return;
+    if (!recipients) return;
 
-    for (const addressObject of addressObjects) {
-      const recipients = addressObject.value;
+    for (const recipient of recipients) {
+      const recipientPerson = await manager.query(
+        `SELECT * FROM ${dataSourceMetadata.schema}."person" WHERE "email" = $1`,
+        [recipient.handle],
+      );
 
-      for (const recipient of recipients) {
-        if (!recipient.address) continue;
+      const recipientPersonId = recipientPerson[0]?.id;
 
-        const recipientDisplayName = recipient.name;
-
-        const recipientPerson = await manager.query(
-          `SELECT * FROM ${dataSourceMetadata.schema}."person" WHERE "email" = $1`,
-          [recipient.address],
-        );
-
-        const recipientPersonId = recipientPerson[0]?.id;
-
-        const workspaceMember = await manager.query(
-          `SELECT "workspaceMember"."id" FROM ${dataSourceMetadata.schema}."workspaceMember"
+      const workspaceMember = await manager.query(
+        `SELECT "workspaceMember"."id" FROM ${dataSourceMetadata.schema}."workspaceMember"
           JOIN ${dataSourceMetadata.schema}."connectedAccount" ON ${dataSourceMetadata.schema}."workspaceMember"."id" = ${dataSourceMetadata.schema}."connectedAccount"."accountOwnerId"
           WHERE ${dataSourceMetadata.schema}."connectedAccount"."handle" = $1`,
-          [recipient.address],
-        );
+        [recipient.handle],
+      );
 
-        const recipientWorkspaceMemberId = workspaceMember[0]?.id;
+      const recipientWorkspaceMemberId = workspaceMember[0]?.id;
 
-        await manager.query(
-          `INSERT INTO ${dataSourceMetadata.schema}."messageRecipient" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
-          [
-            messageId,
-            role,
-            recipient.address,
-            recipientDisplayName,
-            recipientPersonId,
-            recipientWorkspaceMemberId,
-          ],
-        );
-      }
+      await manager.query(
+        `INSERT INTO ${dataSourceMetadata.schema}."messageRecipient" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
+        [
+          messageId,
+          recipient.role,
+          recipient.handle,
+          recipient.displayName,
+          recipientPersonId,
+          recipientWorkspaceMemberId,
+        ],
+      );
     }
   }
 
