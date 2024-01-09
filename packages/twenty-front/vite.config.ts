@@ -22,6 +22,9 @@ export default defineConfig(({ mode }) => {
     checker({
       typescript: {
         tsconfigPath: "tsconfig.app.json"
+      },
+      eslint: {
+        lintCommand: "eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs",
       }
     }),
   ]
