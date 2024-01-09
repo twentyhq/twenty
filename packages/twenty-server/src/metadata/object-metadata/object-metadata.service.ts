@@ -362,10 +362,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     });
   }
 
-  public async findMany() {
-    return this.objectMetadataRepository.find({});
-  }
-
   public async deleteObjectsMetadata(workspaceId: string) {
     await this.objectMetadataRepository.delete({ workspaceId });
   }
