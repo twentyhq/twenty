@@ -50,7 +50,7 @@ export const PhoneFieldInput = ({
   };
 
   const handleChange = (newText: string) => {
-    saveEditModeValue(newText);
+    saveEditModeValue(newText ?? '');
   };
 
   return (
