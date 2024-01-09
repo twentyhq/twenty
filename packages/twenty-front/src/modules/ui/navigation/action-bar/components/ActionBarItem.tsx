@@ -1,22 +1,22 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { MenuItem } from 'tsup.ui.index';
 
+import { IconChevronDown } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-
-import { ActionBarItemAccent } from '../types/ActionBarItemAccent';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { MenuItem } from 'tsup.ui.index';
-import { IconPencil, IconArchive, IconChevronDown } from '@/ui/display/icon';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+
+import { ActionBarItemAccent } from '../types/ActionBarItemAccent';
 
 type ActionBarItemProps = {
   Icon: IconComponent;
   label: string;
   accent?: ActionBarItemAccent;
-  onClick: () => void;
+  onClick?: () => void;
   subActions?: ActionBarItemProps[];
 };
 
@@ -56,13 +56,13 @@ export const ActionBarItem = ({
 }: ActionBarItemProps) => {
   const theme = useTheme();
   const dropdownScopeId = `action-bar-item-${label}`;
-  const { toggleDropdown } = useDropdown( dropdownScopeId );
+  const { toggleDropdown } = useDropdown(dropdownScopeId);
   return (
     <>
-    {Array.isArray(subActions) ? (
+      {Array.isArray(subActions) ? (
         <DropdownScope dropdownScopeId={dropdownScopeId}>
           <Dropdown
-            dropdownPlacement="bottom-start"
+            dropdownPlacement="top-start"
             dropdownHotkeyScope={{
               scope: dropdownScopeId,
             }}

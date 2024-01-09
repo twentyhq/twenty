@@ -6,6 +6,6 @@ export type ActionBarEntry = {
   label: string;
   Icon: IconComponent;
   accent?: ActionBarItemAccent;
-  onClick: () => void;
-  subActions?: ActionBarEntry[],
+  onClick?: () => void;
+  subActions?: ActionBarEntry[];
 };

@@ -17,9 +17,10 @@ import {
   IconClick,
   IconHeart,
   IconHeartOff,
+  IconMail,
   IconNotes,
+  IconPuzzle,
   IconTrash,
-  IconWand,
 } from '@/ui/display/icon';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
@@ -147,7 +148,9 @@ export const useRecordTableContextMenuEntries = (
     ],
   );
 
-  const dataExecuteQuickActionOnmentEnabled = true;
+  const dataExecuteQuickActionOnmentEnabled = useIsFeatureEnabled(
+    'IS_QUICK_ACTIONS_ENABLED',
+  );
 
   const openCreateActivityDrawer =
     useOpenCreateActivityDrawerForSelectedRowIds(scopeId);
@@ -221,16 +224,15 @@ export const useRecordTableContextMenuEntries = (
                 Icon: IconClick,
                 subActions: [
                   {
-                    "label": "Enrich",
-                    Icon: IconWand,
+                    label: 'Enrich',
+                    Icon: IconPuzzle,
                     onClick: () => handleExecuteQuickActionOnClick(),
                   },
                   {
-                    "label": "Enrich2",
-                    Icon: IconWand,
-                    onClick: () => handleExecuteQuickActionOnClick(),
+                    label: 'Send to mailjet',
+                    Icon: IconMail,
                   },
-                ]
+                ],
               },
             ]
           : []),
