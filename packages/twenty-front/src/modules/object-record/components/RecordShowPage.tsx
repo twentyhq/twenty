@@ -15,7 +15,6 @@ import { RecordInlineCell } from '@/object-record/record-inline-cell/components/
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecordRelationFieldCardSection } from '@/object-record/record-relation-card/components/RecordRelationFieldCardSection';
-import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { isFieldMetadataItemAvailable } from '@/object-record/utils/isFieldMetadataItemAvailable';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
 import { PageBody } from '@/ui/layout/page/PageBody';
@@ -51,12 +50,13 @@ export const RecordShowPage = () => {
     throw new Error(`Object name is not defined`);
   }
 
-  const { objectMetadataItem, labelIdentifierFieldMetadata } =
-    useObjectMetadataItem({
-      objectNameSingular,
-    });
-
-  const { identifiersMapper } = useRelationPicker();
+  const {
+    objectMetadataItem,
+    labelIdentifierFieldMetadata,
+    mapToObjectRecordIdentifier,
+  } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
   const { favorites, createFavorite, deleteFavorite } = useFavorites();
 
@@ -106,11 +106,6 @@ export const RecordShowPage = () => {
     objectNameSingular === 'person'
       ? record?.name.firstName + ' ' + record?.name.lastName
       : record?.name;
-
-  const recordIdentifiers = identifiersMapper?.(
-    record,
-    objectMetadataItem?.nameSingular ?? '',
-  );
 
   const onUploadPicture = async (file: File) => {
     if (objectNameSingular !== 'person') {
@@ -201,8 +196,12 @@ export const RecordShowPage = () => {
                 <>
                   <ShowPageSummaryCard
                     id={record.id}
-                    logoOrAvatar={recordIdentifiers?.avatarUrl}
-                    avatarPlaceholder={recordIdentifiers?.name ?? ''}
+                    logoOrAvatar={
+                      mapToObjectRecordIdentifier(record).avatarUrl ?? ''
+                    }
+                    avatarPlaceholder={
+                      mapToObjectRecordIdentifier(record).name ?? ''
+                    }
                     date={record.createdAt ?? ''}
                     title={
                       <FieldContext.Provider
@@ -232,7 +231,10 @@ export const RecordShowPage = () => {
                         <RecordInlineCell />
                       </FieldContext.Provider>
                     }
-                    avatarType={recordIdentifiers?.avatarType ?? 'rounded'}
+                    avatarType={
+                      mapToObjectRecordIdentifier(record).avatarType ??
+                      'rounded'
+                    }
                     onUploadPicture={
                       objectNameSingular === 'person'
                         ? onUploadPicture

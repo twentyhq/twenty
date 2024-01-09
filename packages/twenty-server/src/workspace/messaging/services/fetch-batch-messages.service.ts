@@ -8,10 +8,12 @@ import { MessageOrThreadQuery } from 'src/workspace/messaging/types/messageOrThr
 import { GmailMessageParsedResponse } from 'src/workspace/messaging/types/gmailMessageParsedResponse';
 import { GmailThreadParsedResponse } from 'src/workspace/messaging/types/gmailThreadParsedResponse';
 import { GmailThread } from 'src/workspace/messaging/types/gmailThread';
+import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
 
 @Injectable()
 export class FetchBatchMessagesService {
   private readonly httpService: AxiosInstance;
+  private readonly gmailClientProvider: GmailClientProvider;
 
   constructor() {
     this.httpService = axios.create({

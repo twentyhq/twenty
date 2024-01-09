@@ -3,9 +3,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import {
-  FetchMessagesJob,
-  FetchMessagesJobData,
-} from 'src/workspace/messaging/jobs/fetch-messages.job';
+  FetchAllMessagesFromConnectedAccountJob,
+  FetchAllMessagesFromConnectedAccountJobData,
+} from 'src/workspace/messaging/jobs/fetch-all-messages-from-connected-account.job';
 
 @Injectable()
 export class MessagingProducer {
@@ -14,9 +14,12 @@ export class MessagingProducer {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  async enqueueFetchMessages(data: FetchMessagesJobData, singletonKey: string) {
-    await this.messageQueueService.add<FetchMessagesJobData>(
-      FetchMessagesJob.name,
+  async enqueueFetchAllMessagesFromConnectedAccount(
+    data: FetchAllMessagesFromConnectedAccountJobData,
+    singletonKey: string,
+  ) {
+    await this.messageQueueService.add<FetchAllMessagesFromConnectedAccountJobData>(
+      FetchAllMessagesFromConnectedAccountJob.name,
       data,
       {
         id: singletonKey,
