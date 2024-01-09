@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { HttpModule } from '@nestjs/axios';
 
-import { FetchMessagesJob } from 'src/workspace/messaging/jobs/fetch-messages.job';
+import { FetchAllMessagesFromConnectedAccountJob } from 'src/workspace/messaging/jobs/fetch-all-messages-from-connected-account.job';
 import { CallWebhookJobsJob } from 'src/workspace/workspace-query-runner/jobs/call-webhook-jobs.job';
 import { CallWebhookJob } from 'src/workspace/workspace-query-runner/jobs/call-webhook.job';
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
@@ -10,6 +10,7 @@ import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metada
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { CleanInactiveWorkspaceJob } from 'src/workspace/cron/jobs/clean-inactive-workspace.job';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { FetchWorkspaceMessagesModule } from 'src/workspace/messaging/services/fetch-workspace-messages.module';
 
 @Module({
   imports: [
@@ -18,11 +19,12 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
     DataSourceModule,
     HttpModule,
     TypeORMModule,
+    FetchWorkspaceMessagesModule,
   ],
   providers: [
     {
-      provide: FetchMessagesJob.name,
-      useClass: FetchMessagesJob,
+      provide: FetchAllMessagesFromConnectedAccountJob.name,
+      useClass: FetchAllMessagesFromConnectedAccountJob,
     },
     {
       provide: CallWebhookJobsJob.name,

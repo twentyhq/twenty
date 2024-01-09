@@ -13,6 +13,7 @@ import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
 import { activityTargetableEntityArrayState } from '../states/activityTargetableEntityArrayState';
 import { viewableActivityIdState } from '../states/viewableActivityIdState';
@@ -79,7 +80,9 @@ export const useOpenCreateActivityDrawer = () => {
         },
       );
 
-      await createManyActivityTargets(activityTargetsToCreate);
+      if (isNonEmptyArray(activityTargetsToCreate)) {
+        await createManyActivityTargets(activityTargetsToCreate);
+      }
 
       setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
       setViewableActivityId(createdActivity.id);
