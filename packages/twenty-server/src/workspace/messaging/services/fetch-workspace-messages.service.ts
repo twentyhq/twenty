@@ -322,8 +322,6 @@ export class FetchWorkspaceMessagesService {
 
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
     if (!workspaceDataSource) {
       throw new Error('No workspace data source found');
