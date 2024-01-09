@@ -70,6 +70,7 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
     icon: 'IconHistory',
     joinColumn: 'lastSyncHistoryId',
   })
+  @IsNullable()
   lastSyncHistoryId: string;
 
   @FieldMetadata({
