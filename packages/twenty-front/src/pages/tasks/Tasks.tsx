@@ -58,7 +58,7 @@ export const Tasks = () => {
             <TopBar
               leftComponent={
                 <StyledTabListContainer>
-                  <TabList context={TasksRecoilScopeContext} tabs={TASK_TABS} />
+                  <TabList tabListId="tasks-tab-list" tabs={TASK_TABS} />
                 </StyledTabListContainer>
               }
               rightComponent={
