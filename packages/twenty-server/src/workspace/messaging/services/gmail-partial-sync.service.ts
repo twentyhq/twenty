@@ -40,4 +40,27 @@ export class GmailPartialSync {
 
     return lastSyncHistoryId;
   }
+
+  private async getHistory(
+    workspaceId: string,
+    connectedAccountId: string,
+    lastSyncHistoryId: string,
+  ) {
+    const { connectedAccount } =
+      await this.utils.getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
+        workspaceId,
+        connectedAccountId,
+      );
+
+    const gmailClient = await this.gmailClientProvider.getGmailClient(
+      connectedAccount.refreshToken,
+    );
+
+    const history = await gmailClient.users.history.list({
+      userId: 'me',
+      startHistoryId: lastSyncHistoryId,
+    });
+
+    return history.data;
+  }
 }
