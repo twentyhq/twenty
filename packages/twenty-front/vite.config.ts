@@ -20,7 +20,9 @@ export default defineConfig(({ mode }) => {
     tsconfigPaths(),
     svgr(),
     checker({
-      typescript: true,
+      typescript: {
+        tsconfigPath: "tsconfig.app.json"
+      }
     }),
   ]
 

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { SettingsAccountsInboxSettingsContactAutoCreateSection } from '@/settings/accounts/components/SettingsAccountsInboxSettingsContactAutoCreationSection';
 import { SettingsAccountsInboxSettingsSynchronizationSection } from '@/settings/accounts/components/SettingsAccountsInboxSettingsSynchronizationSection';
 import {
   InboxSettingsVisibilityValue,
@@ -16,9 +17,7 @@ import { mockedAccounts } from '~/testing/mock-data/accounts';
 export const SettingsAccountsEmailsInboxSettings = () => {
   const navigate = useNavigate();
   const { accountUuid = '' } = useParams();
-  const account = mockedAccounts.find(
-    (account) => account.uuid === accountUuid,
-  );
+  const account = mockedAccounts.find((account) => account.id === accountUuid);
 
   useEffect(() => {
     if (!account) navigate(AppPath.NotFound);
@@ -27,6 +26,8 @@ export const SettingsAccountsEmailsInboxSettings = () => {
   if (!account) return null;
 
   const handleSynchronizationToggle = (_value: boolean) => {};
+
+  const handleContactAutoCreationToggle = (_value: boolean) => {};
 
   const handleVisibilityChange = (_value: InboxSettingsVisibilityValue) => {};
 
@@ -37,7 +38,7 @@ export const SettingsAccountsEmailsInboxSettings = () => {
           links={[
             { children: 'Accounts', href: '/settings/accounts' },
             { children: 'Emails', href: '/settings/accounts/emails' },
-            { children: account?.email || '' },
+            { children: account?.handle || '' },
           ]}
         />
         <SettingsAccountsInboxSettingsSynchronizationSection
@@ -47,6 +48,10 @@ export const SettingsAccountsEmailsInboxSettings = () => {
         <SettingsAccountsInboxSettingsVisibilitySection
           value={account.visibility}
           onChange={handleVisibilityChange}
+        />
+        <SettingsAccountsInboxSettingsContactAutoCreateSection
+          account={account}
+          onToggle={handleContactAutoCreationToggle}
         />
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

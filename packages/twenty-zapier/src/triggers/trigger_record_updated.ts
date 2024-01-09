@@ -1,3 +1,5 @@
+import { Bundle, ZObject } from 'zapier-platform-core';
+
 import { findObjectNamesPluralKey } from '../triggers/find_object_names_plural';
 import {
   listSample,
@@ -5,8 +7,7 @@ import {
   perform,
   performUnsubscribe,
   subscribe,
-} from '../utils/triggers.utils';
-import { Bundle, ZObject } from 'zapier-platform-core';
+} from '../utils/triggers/triggers.utils';
 
 export const triggerRecordUpdatedKey = 'trigger_record_updated';
 

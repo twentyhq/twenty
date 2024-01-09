@@ -36,10 +36,8 @@ const StyledThreadItemListContainer = styled.div`
 const StyledCommentActionBar = styled.div`
   background: ${({ theme }) => theme.background.primary};
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
-  bottom: 0;
   display: flex;
   padding: 16px 24px 16px 48px;
-  position: absolute;
   width: calc(
     ${({ theme }) => (useIsMobile() ? '100%' : theme.rightDrawerWidth)} - 72px
   );

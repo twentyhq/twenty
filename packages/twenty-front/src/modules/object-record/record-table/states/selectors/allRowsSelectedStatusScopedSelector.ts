@@ -1,4 +1,4 @@
-import { createScopedSelector } from '@/ui/utilities/recoil-scope/utils/createScopedSelector';
+import { createSelectorScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorScopeMap';
 
 import { AllRowsSelectedStatus } from '../../types/AllRowSelectedStatus';
 import { numberOfTableRowsScopedState } from '../numberOfTableRowsScopedState';
@@ -6,7 +6,7 @@ import { numberOfTableRowsScopedState } from '../numberOfTableRowsScopedState';
 import { selectedRowIdsScopedSelector } from './selectedRowIdsScopedSelector';
 
 export const allRowsSelectedStatusScopedSelector =
-  createScopedSelector<AllRowsSelectedStatus>({
+  createSelectorScopeMap<AllRowsSelectedStatus>({
     key: 'allRowsSelectedStatusScopedSelector',
     get:
       ({ scopeId }) =>

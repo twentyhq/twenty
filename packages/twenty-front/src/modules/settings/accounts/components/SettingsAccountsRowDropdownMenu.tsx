@@ -21,7 +21,7 @@ export const SettingsAccountsRowDropdownMenu = ({
   className,
   onRemove,
 }: SettingsAccountsRowDropdownMenuProps) => {
-  const dropdownScopeId = `settings-account-row-${account.uuid}`;
+  const dropdownScopeId = `settings-account-row-${account.id}`;
 
   const navigate = useNavigate();
   const { closeDropdown } = useDropdown(dropdownScopeId);
@@ -42,7 +42,7 @@ export const SettingsAccountsRowDropdownMenu = ({
                 LeftIcon={IconMail}
                 text="Emails settings"
                 onClick={() => {
-                  navigate(`/settings/accounts/emails/${account.uuid}`);
+                  navigate(`/settings/accounts/emails/${account.id}`);
                   closeDropdown();
                 }}
               />
@@ -52,7 +52,7 @@ export const SettingsAccountsRowDropdownMenu = ({
                   LeftIcon={IconTrash}
                   text="Remove account"
                   onClick={() => {
-                    onRemove(account.uuid);
+                    onRemove(account.id);
                     closeDropdown();
                   }}
                 />

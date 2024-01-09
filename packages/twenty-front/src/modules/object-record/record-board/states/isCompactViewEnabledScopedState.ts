@@ -1,6 +1,6 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const isCompactViewEnabledScopedState = createScopedState<boolean>({
+export const isCompactViewEnabledScopedState = createStateScopeMap<boolean>({
   key: 'isCompactViewEnabledScopedState',
   defaultValue: false,
 });

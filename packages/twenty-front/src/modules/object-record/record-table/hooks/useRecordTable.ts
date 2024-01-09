@@ -11,6 +11,7 @@ import { getScopedStateDeprecated } from '@/ui/utilities/recoil-scope/utils/getS
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { FieldMetadata } from '../../field/types/FieldMetadata';
+import { useUpsertRecordFromState } from '../../hooks/useUpsertRecordFromState';
 import { onEntityCountChangeScopedState } from '../states/onEntityCountChangeScopedState';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
@@ -23,7 +24,6 @@ import { useSelectAllRows } from './internal/useSelectAllRows';
 import { useSetRecordTableData } from './internal/useSetRecordTableData';
 import { useSetRowSelectedState } from './internal/useSetRowSelectedState';
 import { useSetSoftFocusPosition } from './internal/useSetSoftFocusPosition';
-import { useUpsertRecordTableItem } from './internal/useUpsertRecordTableItem';
 
 type useRecordTableProps = {
   recordTableScopeId?: string;
@@ -131,7 +131,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const resetTableRowSelection = useResetTableRowSelection(scopeId);
 
-  const upsertRecordTableItem = useUpsertRecordTableItem();
+  const upsertRecordTableItem = useUpsertRecordFromState();
 
   const setSoftFocusPosition = useSetSoftFocusPosition(scopeId);
 

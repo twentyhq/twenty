@@ -1,6 +1,6 @@
-import { createScopedFamilyState } from '@/ui/utilities/recoil-scope/utils/createScopedFamilyState';
+import { createFamilyStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createFamilyStateScopeMap';
 
-export const noneScopedFamilyState = createScopedFamilyState<any, string>({
+export const noneScopedFamilyState = createFamilyStateScopeMap<any, string>({
   key: 'noneScopedFamilyState',
   defaultValue: null,
 });

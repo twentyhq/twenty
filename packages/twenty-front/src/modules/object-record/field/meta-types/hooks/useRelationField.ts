@@ -16,10 +16,7 @@ export const useRelationField = () => {
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const [fieldValue, setFieldValue] = useRecoilState<any | null>(
-    entityFieldsFamilySelector({
-      entityId: entityId,
-      fieldName: fieldName,
-    }),
+    entityFieldsFamilySelector({ entityId, fieldName }),
   );
 
   const fieldInitialValue = useFieldInitialValue();

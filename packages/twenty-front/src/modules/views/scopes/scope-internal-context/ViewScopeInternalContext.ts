@@ -1,7 +1,7 @@
-import { ScopedStateKey } from '@/ui/utilities/recoil-scope/scopes-internal/types/ScopedStateKey';
+import { StateScopeMapKey } from '@/ui/utilities/recoil-scope/scopes-internal/types/StateScopeMapKey';
 import { createScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/utils/createScopeInternalContext';
 
-type ViewScopeInternalContextProps = ScopedStateKey;
+type ViewScopeInternalContextProps = StateScopeMapKey;
 
 export const ViewScopeInternalContext =
   createScopeInternalContext<ViewScopeInternalContextProps>();

@@ -21,6 +21,7 @@ type TextInputProps = {
   onShiftTab?: (newText: string) => void;
   onClickOutside: (event: MouseEvent | TouchEvent, inputValue: string) => void;
   hotkeyScope: string;
+  onChange?: (newText: string) => void;
 };
 
 export const TextInput = ({
@@ -33,6 +34,7 @@ export const TextInput = ({
   onTab,
   onShiftTab,
   onClickOutside,
+  onChange,
 }: TextInputProps) => {
   const [internalText, setInternalText] = useState(value);
 
@@ -40,6 +42,7 @@ export const TextInput = ({
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInternalText(event.target.value);
+    onChange?.(event.target.value);
   };
 
   useEffect(() => {

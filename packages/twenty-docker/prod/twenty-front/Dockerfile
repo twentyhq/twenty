@@ -1,4 +1,4 @@
-FROM node:18.16.0-alpine as twenty-front-build
+FROM node:18.17.1-alpine as twenty-front-build
 
 ARG REACT_APP_SERVER_BASE_URL
 ARG REACT_APP_SERVER_AUTH_URL
@@ -16,7 +16,7 @@ COPY ./packages/twenty-front /app/packages/twenty-front
 RUN yarn
 RUN yarn nx build twenty-front
 
-FROM node:18.16.0-alpine as twenty-front
+FROM node:18.17.1-alpine as twenty-front
 
 WORKDIR /app/packages/twenty-front
 

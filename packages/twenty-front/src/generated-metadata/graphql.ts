@@ -182,6 +182,12 @@ export enum FieldMetadataType {
   Uuid = 'UUID'
 }
 
+export type FullName = {
+  __typename?: 'FullName';
+  firstName: Scalars['String']['output'];
+  lastName: Scalars['String']['output'];
+};
+
 export type IdFilterComparison = {
   eq?: InputMaybe<Scalars['ID']['input']>;
   gt?: InputMaybe<Scalars['ID']['input']>;
@@ -389,6 +395,11 @@ export enum RelationMetadataType {
   OneToOne = 'ONE_TO_ONE'
 }
 
+export type Sentry = {
+  __typename?: 'Sentry';
+  dsn: Scalars['String']['output'];
+};
+
 export type Support = {
   __typename?: 'Support';
   supportDriver: Scalars['String']['output'];
@@ -454,7 +465,7 @@ export type User = {
   lastName: Scalars['String']['output'];
   passwordHash?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
-  workspaceMember: UserWorkspaceMember;
+  workspaceMember: WorkspaceMember;
 };
 
 export type UserEdge = {
@@ -463,21 +474,6 @@ export type UserEdge = {
   cursor: Scalars['ConnectionCursor']['output'];
   /** The node containing the User */
   node: User;
-};
-
-export type UserWorkspaceMember = {
-  __typename?: 'UserWorkspaceMember';
-  avatarUrl?: Maybe<Scalars['String']['output']>;
-  colorScheme: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
-  locale: Scalars['String']['output'];
-  name: UserWorkspaceMemberName;
-};
-
-export type UserWorkspaceMemberName = {
-  __typename?: 'UserWorkspaceMemberName';
-  firstName: Scalars['String']['output'];
-  lastName: Scalars['String']['output'];
 };
 
 export type Workspace = {
@@ -500,6 +496,15 @@ export type WorkspaceEdge = {
   cursor: Scalars['ConnectionCursor']['output'];
   /** The node containing the Workspace */
   node: Workspace;
+};
+
+export type WorkspaceMember = {
+  __typename?: 'WorkspaceMember';
+  avatarUrl?: Maybe<Scalars['String']['output']>;
+  colorScheme: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  locale: Scalars['String']['output'];
+  name: FullName;
 };
 
 export type Field = {

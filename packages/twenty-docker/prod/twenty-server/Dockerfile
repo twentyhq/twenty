@@ -10,7 +10,6 @@ COPY ./tools/eslint-rules /app/tools/eslint-rules
 COPY ./packages/twenty-server /app/packages/twenty-server
 RUN yarn
 
-RUN yarn
 RUN yarn nx build twenty-server
 
 WORKDIR /app/packages/twenty-server

@@ -1,6 +1,7 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const relationPickerSearchFilterScopedState = createScopedState<string>({
-  key: 'relationPickerSearchFilterScopedState',
-  defaultValue: '',
-});
+export const relationPickerSearchFilterScopedState =
+  createStateScopeMap<string>({
+    key: 'relationPickerSearchFilterScopedState',
+    defaultValue: '',
+  });

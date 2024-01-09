@@ -1,8 +1,9 @@
-import { ContentContainer } from '@/app/components/ContentContainer';
-import { getPosts, Directory, FileContent } from '@/app/get-posts';
-import Link from 'next/link';
-import * as TablerIcons from '@tabler/icons-react';
 import { FunctionComponent } from 'react';
+import * as TablerIcons from '@tabler/icons-react';
+import Link from 'next/link';
+
+import { ContentContainer } from '@/app/components/ContentContainer';
+import { Directory, FileContent, getPosts } from '@/app/get-posts';
 
 function loadIcon(iconName?: string) {
   const name = iconName ? iconName : 'IconCategory';

@@ -1,7 +1,9 @@
 import { Opportunity } from '@/pipeline/types/Opportunity';
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const savedOpportunitiesScopedState = createScopedState<Opportunity[]>({
-  key: 'savedOpportunitiesScopedState',
-  defaultValue: [],
-});
+export const savedOpportunitiesScopedState = createStateScopeMap<Opportunity[]>(
+  {
+    key: 'savedOpportunitiesScopedState',
+    defaultValue: [],
+  },
+);

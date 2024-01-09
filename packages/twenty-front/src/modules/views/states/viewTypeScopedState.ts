@@ -1,8 +1,8 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
 import { ViewType } from '../types/ViewType';
 
-export const viewTypeScopedState = createScopedState<ViewType>({
+export const viewTypeScopedState = createStateScopeMap<ViewType>({
   key: 'viewTypeScopedState',
   defaultValue: ViewType.Table,
 });

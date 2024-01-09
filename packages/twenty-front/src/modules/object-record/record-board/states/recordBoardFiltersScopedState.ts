@@ -1,7 +1,7 @@
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const recordBoardFiltersScopedState = createScopedState<Filter[]>({
+export const recordBoardFiltersScopedState = createStateScopeMap<Filter[]>({
   key: 'recordBoardFiltersScopedState',
   defaultValue: [],
 });

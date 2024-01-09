@@ -1,10 +1,10 @@
-import { createScopedSelector } from '@/ui/utilities/recoil-scope/utils/createScopedSelector';
+import { createSelectorScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorScopeMap';
 
 import { isRecordBoardCardSelectedFamilyState } from '../isRecordBoardCardSelectedFamilyState';
 import { recordBoardCardIdsByColumnIdFamilyState } from '../recordBoardCardIdsByColumnIdFamilyState';
 import { recordBoardColumnsScopedState } from '../recordBoardColumnsScopedState';
 
-export const selectedRecordBoardCardIdsScopedSelector = createScopedSelector<
+export const selectedRecordBoardCardIdsScopedSelector = createSelectorScopeMap<
   string[]
 >({
   key: 'selectedRecordBoardCardIdsScopedSelector',

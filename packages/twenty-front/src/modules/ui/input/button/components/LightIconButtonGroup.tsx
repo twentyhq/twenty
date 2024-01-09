@@ -8,7 +8,6 @@ import { LightIconButton, LightIconButtonProps } from './LightIconButton';
 const StyledLightIconButtonGroupContainer = styled.div`
   display: inline-flex;
   gap: 2px;
-  padding: 2px;
 `;
 
 export type LightIconButtonGroupProps = Pick<

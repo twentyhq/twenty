@@ -1,8 +1,10 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
 import { Filter } from '../types/Filter';
 
-export const selectedFilterScopedState = createScopedState<Filter | undefined>({
+export const selectedFilterScopedState = createStateScopeMap<
+  Filter | undefined
+>({
   key: 'selectedFilterScopedState',
   defaultValue: undefined,
 });

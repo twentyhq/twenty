@@ -1,7 +1,7 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
 export const objectFilterDropdownSearchInputScopedState =
-  createScopedState<string>({
+  createStateScopeMap<string>({
     key: 'objectFilterDropdownSearchInputScopedState',
     defaultValue: '',
   });

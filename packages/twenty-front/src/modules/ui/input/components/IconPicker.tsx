@@ -61,9 +61,9 @@ const IconPickerIcon = ({
   selectedIconKey,
   Icon,
 }: IconPickerIconProps) => {
-  const { isSelectedItemIdFamilyState } = useSelectableList();
+  const { isSelectedItemIdSelector } = useSelectableList();
 
-  const isSelectedItemId = useRecoilValue(isSelectedItemIdFamilyState(iconKey));
+  const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector(iconKey));
 
   return (
     <StyledLightIconButton

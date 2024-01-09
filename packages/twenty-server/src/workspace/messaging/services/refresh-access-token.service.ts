@@ -16,7 +16,7 @@ export class RefreshAccessTokenService {
 
   async refreshAndSaveAccessToken(
     workspaceId: string,
-    workspaceMemberId: string,
+    connectedAccountId: string,
   ): Promise<void> {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
@@ -31,8 +31,8 @@ export class RefreshAccessTokenService {
     }
 
     const connectedAccounts = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail' AND "accountOwnerId" = $1`,
-      [workspaceMemberId],
+      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail' AND "id" = $1`,
+      [connectedAccountId],
     );
 
     if (!connectedAccounts || connectedAccounts.length === 0) {

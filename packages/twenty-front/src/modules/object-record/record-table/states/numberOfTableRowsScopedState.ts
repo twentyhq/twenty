@@ -1,6 +1,6 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const numberOfTableRowsScopedState = createScopedState<number>({
+export const numberOfTableRowsScopedState = createStateScopeMap<number>({
   key: 'numberOfTableRowsScopedState',
   defaultValue: 0,
 });

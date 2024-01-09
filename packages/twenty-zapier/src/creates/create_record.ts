@@ -1,16 +1,10 @@
 import { Bundle, ZObject } from 'zapier-platform-core';
-import requestDb, { requestSchema } from '../utils/requestDb';
-import handleQueryParams from '../utils/handleQueryParams';
-import { capitalize } from '../utils/capitalize';
-import { computeInputFields } from '../utils/computeInputFields';
+
 import { findObjectNamesSingularKey } from '../triggers/find_object_names_singular';
-
-const recordInputFields = async (z: ZObject, bundle: Bundle) => {
-  const schema = await requestSchema(z, bundle);
-  const infos = schema.components.schemas[bundle.inputData.nameSingular];
-
-  return computeInputFields(infos);
-};
+import { capitalize } from '../utils/capitalize';
+import { recordInputFields } from '../utils/creates/creates.utils';
+import handleQueryParams from '../utils/handleQueryParams';
+import requestDb from '../utils/requestDb';
 
 const perform = async (z: ZObject, bundle: Bundle) => {
   const data = bundle.inputData;
@@ -30,9 +24,9 @@ export const createRecordKey = 'create_record';
 
 export default {
   display: {
-    description: 'Creates a new Record in Twenty',
+    description: 'Create a Record in Twenty.',
     hidden: false,
-    label: 'Create New Record',
+    label: 'Create Record',
   },
   key: createRecordKey,
   noun: 'Record',

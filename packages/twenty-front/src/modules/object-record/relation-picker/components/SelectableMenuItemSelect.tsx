@@ -22,13 +22,11 @@ export const SelectableMenuItemSelect = ({
   onEntitySelected,
   selectedEntity,
 }: SelectableMenuItemSelectProps) => {
-  const { isSelectedItemIdFamilyState } = useSelectableList(
+  const { isSelectedItemIdSelector } = useSelectableList(
     'single-entity-select-base-list',
   );
 
-  const isSelectedItemId = useRecoilValue(
-    isSelectedItemIdFamilyState(entity.id),
-  );
+  const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector(entity.id));
 
   return (
     <StyledSelectableItem itemId={entity.id} key={entity.id}>

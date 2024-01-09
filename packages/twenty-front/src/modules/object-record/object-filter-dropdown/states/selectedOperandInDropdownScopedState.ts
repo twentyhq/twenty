@@ -1,8 +1,8 @@
-import { createScopedState } from '@/ui/utilities/recoil-scope/utils/createScopedState';
+import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 export const selectedOperandInDropdownScopedState =
-  createScopedState<ViewFilterOperand | null>({
+  createStateScopeMap<ViewFilterOperand | null>({
     key: 'selectedOperandInDropdownScopedState',
     defaultValue: null,
   });

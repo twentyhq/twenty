@@ -10,12 +10,15 @@ import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObje
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { RecordTableActionBar } from '@/object-record/record-table/action-bar/components/RecordTableActionBar';
 import { RecordTableContextMenu } from '@/object-record/record-table/context-menu/components/RecordTableContextMenu';
+import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useTableCell';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
 import { RecordTableContainer } from './RecordTableContainer';
 
@@ -57,11 +60,19 @@ export const RecordTablePage = () => {
     objectNameSingular,
   });
 
+  const recordTableId = objectNamePlural ?? '';
+
+  const { setSelectedTableCellEditMode } = useSelectedTableCellEditMode({
+    scopeId: recordTableId,
+  });
+  const setHotkeyScope = useSetHotkeyScope();
+
   const handleAddButtonClick = async () => {
     await createOneObject?.({});
-  };
 
-  const recordTableId = objectNamePlural ?? '';
+    setSelectedTableCellEditMode(0, 0);
+    setHotkeyScope(DEFAULT_CELL_SCOPE.scope, DEFAULT_CELL_SCOPE.customScopes);
+  };
 
   return (
     <PageContainer>
