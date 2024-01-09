@@ -25,7 +25,7 @@ export class SyncDriver implements MessageQueueDriver {
       { strict: true },
     );
 
-    return await job.handle(data);
+    await job.handle(data);
   }
 
   async schedule<T extends MessageQueueJobData | undefined>(
@@ -34,12 +34,9 @@ export class SyncDriver implements MessageQueueDriver {
     data: T,
     pattern: string,
   ): Promise<void> {
-    const jobClassName = getJobClassName(jobName);
-    const job: MessageQueueJob<MessageQueueJobData | undefined> =
-      this.jobsModuleRef.get(jobClassName, { strict: true });
-
     this.logger.log(`Running '${pattern}' scheduled job with SyncDriver`);
-    await job.handle(data);
+
+    await this.add(_queueName, jobName, data);
   }
 
   async unschedule(_queueName: MessageQueue, jobName: string) {
