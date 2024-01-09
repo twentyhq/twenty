@@ -49,7 +49,7 @@ export class BullMQDriver implements MessageQueueDriver {
     this.workerMap[queueName] = worker;
   }
 
-  async schedule<T>(
+  async addCron<T>(
     queueName: MessageQueue,
     jobName: string,
     data: T,
@@ -72,7 +72,7 @@ export class BullMQDriver implements MessageQueueDriver {
     await this.queueMap[queueName].add(jobName, data, queueOptions);
   }
 
-  async unschedule(
+  async removeCron(
     queueName: MessageQueue,
     jobName: string,
     pattern: string,

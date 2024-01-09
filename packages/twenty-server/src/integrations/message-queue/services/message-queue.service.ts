@@ -34,23 +34,17 @@ export class MessageQueueService implements OnModuleDestroy {
     return this.driver.add(this.queueName, jobName, data, options);
   }
 
-  schedule<T extends MessageQueueJobData | undefined>(
+  addCron<T extends MessageQueueJobData | undefined>(
     jobName: string,
     data: T,
     pattern: string,
     options?: QueueJobOptions,
   ): Promise<void> {
-    return this.driver.schedule(
-      this.queueName,
-      jobName,
-      data,
-      pattern,
-      options,
-    );
+    return this.driver.addCron(this.queueName, jobName, data, pattern, options);
   }
 
-  unschedule(jobName: string, pattern: string): Promise<void> {
-    return this.driver.unschedule(this.queueName, jobName, pattern);
+  removeCron(jobName: string, pattern: string): Promise<void> {
+    return this.driver.removeCron(this.queueName, jobName, pattern);
   }
 
   work<T extends MessageQueueJobData>(

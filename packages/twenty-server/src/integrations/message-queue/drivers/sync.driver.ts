@@ -28,19 +28,19 @@ export class SyncDriver implements MessageQueueDriver {
     await job.handle(data);
   }
 
-  async schedule<T extends MessageQueueJobData | undefined>(
+  async addCron<T extends MessageQueueJobData | undefined>(
     _queueName: MessageQueue,
     jobName: string,
     data: T,
     pattern: string,
   ): Promise<void> {
-    this.logger.log(`Running '${pattern}' scheduled job with SyncDriver`);
+    this.logger.log(`Running '${pattern}' cron job with SyncDriver`);
 
     await this.add(_queueName, jobName, data);
   }
 
-  async unschedule(_queueName: MessageQueue, jobName: string) {
-    this.logger.log(`Stopping '${jobName}' scheduled job with SyncDriver`);
+  async removeCron(_queueName: MessageQueue, jobName: string) {
+    this.logger.log(`Removing '${jobName}' cron job with SyncDriver`);
 
     return;
   }

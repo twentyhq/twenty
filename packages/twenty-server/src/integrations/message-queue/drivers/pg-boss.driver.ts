@@ -30,7 +30,7 @@ export class PgBossDriver implements MessageQueueDriver {
     return this.pgBoss.work(`${queueName}.*`, handler);
   }
 
-  async schedule<T>(
+  async addCron<T>(
     queueName: MessageQueue,
     jobName: string,
     data: T,
@@ -50,7 +50,7 @@ export class PgBossDriver implements MessageQueueDriver {
     );
   }
 
-  async unschedule(queueName: MessageQueue, jobName: string): Promise<void> {
+  async removeCron(queueName: MessageQueue, jobName: string): Promise<void> {
     await this.pgBoss.unschedule(`${queueName}.${jobName}`);
   }
 
