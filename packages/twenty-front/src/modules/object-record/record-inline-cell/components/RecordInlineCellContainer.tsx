@@ -36,6 +36,7 @@ const StyledLabelAndIconContainer = styled.div`
 
 const StyledValueContainer = styled.div`
   display: flex;
+  overflow: hidden;
 `;
 
 const StyledLabel = styled.div<
