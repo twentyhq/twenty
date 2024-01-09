@@ -1,12 +1,12 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
-
-import { Tab } from './Tab';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
-import { useRecoilValue } from 'recoil';
+
+import { Tab } from './Tab';
 
 type SingleTabProps = {
   title: string;
