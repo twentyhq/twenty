@@ -64,6 +64,15 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
   accountOwner: WorkspaceMemberObjectMetadata;
 
   @FieldMetadata({
+    type: FieldMetadataType.TEXT,
+    label: 'Last sync history ID',
+    description: 'Last sync history ID',
+    icon: 'IconHistory',
+    joinColumn: 'lastSyncHistoryId',
+  })
+  lastSyncHistoryId: string;
+
+  @FieldMetadata({
     type: FieldMetadataType.RELATION,
     label: 'Message Channel',
     description: 'Message Channel',
