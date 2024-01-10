@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntityManager, DataSource } from 'typeorm';
-import { gmail_v1 } from 'googleapis';
 import { v4 } from 'uuid';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
@@ -11,6 +10,7 @@ import {
   GmailMessage,
   Recipient,
 } from 'src/workspace/messaging/types/gmailMessage';
+import { GmailThread } from 'src/workspace/messaging/types/gmailThread';
 
 @Injectable()
 export class Utils {
@@ -20,7 +20,7 @@ export class Utils {
   ) {}
 
   public async saveMessageThreads(
-    threads: gmail_v1.Schema$Thread[],
+    threads: GmailThread[],
     dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
     connectedAccountId: string,
@@ -37,7 +37,7 @@ export class Utils {
     for (const thread of threads) {
       await workspaceDataSource?.query(
         `INSERT INTO ${dataSourceMetadata.schema}."messageThread" ("externalId", "subject", "messageChannelId", "visibility") VALUES ($1, $2, $3, $4)`,
-        [thread.id, thread.snippet, messageChannel[0].id, 'default'],
+        [thread.id, thread.subject, messageChannel[0].id, 'default'],
       );
     }
   }

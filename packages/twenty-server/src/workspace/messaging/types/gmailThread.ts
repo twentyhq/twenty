@@ -1,5 +1,4 @@
 export type GmailThread = {
   id: string;
-  messageIds: string[];
-  snippet: string;
+  subject: string;
 };
