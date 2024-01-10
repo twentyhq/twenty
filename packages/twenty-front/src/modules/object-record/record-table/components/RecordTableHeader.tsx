@@ -6,7 +6,6 @@ import { RecordTableHeaderCell } from '@/object-record/record-table/components/R
 import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { IconPlus } from '@/ui/display/icon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScrollWrapperScopedRef';
 
 import { useRecordTableScopedStates } from '../hooks/internal/useRecordTableScopedStates';
@@ -48,7 +47,7 @@ const StyledPlusIconContainer = styled.div`
   width: 32px;
 `;
 
-const HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID =
+export const HIDDEN_TABLE_COLUMN_DROPDOWN_ID =
   'hidden-table-columns-dropdown-scope-id';
 
 const HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID =
@@ -106,22 +105,19 @@ export const RecordTableHeader = ({
           isTableWiderThanScreen={isTableWiderThanScreen}
         >
           {hiddenTableColumns.length > 0 && (
-            <DropdownScope
-              dropdownScopeId={HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID}
-            >
-              <Dropdown
-                clickableComponent={
-                  <StyledPlusIconContainer>
-                    <IconPlus size={theme.icon.size.md} />
-                  </StyledPlusIconContainer>
-                }
-                dropdownComponents={<RecordTableHeaderPlusButtonContent />}
-                dropdownPlacement="bottom-start"
-                dropdownHotkeyScope={{
-                  scope: HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID,
-                }}
-              />
-            </DropdownScope>
+            <Dropdown
+              dropdownId={HIDDEN_TABLE_COLUMN_DROPDOWN_ID}
+              clickableComponent={
+                <StyledPlusIconContainer>
+                  <IconPlus size={theme.icon.size.md} />
+                </StyledPlusIconContainer>
+              }
+              dropdownComponents={<RecordTableHeaderPlusButtonContent />}
+              dropdownPlacement="bottom-start"
+              dropdownHotkeyScope={{
+                scope: HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID,
+              }}
+            />
           )}
         </StyledPlusIconHeaderCell>
       </tr>

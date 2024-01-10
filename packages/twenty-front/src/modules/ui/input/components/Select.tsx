@@ -6,7 +6,6 @@ import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
@@ -98,31 +97,30 @@ export const Select = <Value extends string | number | null>({
       {selectControl}
     </div>
   ) : (
-    <DropdownScope dropdownScopeId={dropdownScopeId}>
-      <div className={className}>
-        {!!label && <StyledLabel>{label}</StyledLabel>}
-        <Dropdown
-          dropdownMenuWidth={176}
-          dropdownPlacement="bottom-start"
-          clickableComponent={selectControl}
-          dropdownComponents={
-            <DropdownMenuItemsContainer>
-              {options.map((option) => (
-                <MenuItem
-                  key={option.value}
-                  LeftIcon={option.Icon}
-                  text={option.label}
-                  onClick={() => {
-                    onChange?.(option.value);
-                    closeDropdown();
-                  }}
-                />
-              ))}
-            </DropdownMenuItemsContainer>
-          }
-          dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
-        />
-      </div>
-    </DropdownScope>
+    <div className={className}>
+      {!!label && <StyledLabel>{label}</StyledLabel>}
+      <Dropdown
+        dropdownId="select"
+        dropdownMenuWidth={176}
+        dropdownPlacement="bottom-start"
+        clickableComponent={selectControl}
+        dropdownComponents={
+          <DropdownMenuItemsContainer>
+            {options.map((option) => (
+              <MenuItem
+                key={option.value}
+                LeftIcon={option.Icon}
+                text={option.label}
+                onClick={() => {
+                  onChange?.(option.value);
+                  closeDropdown();
+                }}
+              />
+            ))}
+          </DropdownMenuItemsContainer>
+        }
+        dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
+      />
+    </div>
   );
 };

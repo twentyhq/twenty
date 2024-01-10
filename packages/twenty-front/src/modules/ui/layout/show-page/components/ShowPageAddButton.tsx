@@ -12,7 +12,6 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 import { Dropdown } from '../../dropdown/components/Dropdown';
 import { DropdownMenu } from '../../dropdown/components/DropdownMenu';
-import { DropdownScope } from '../../dropdown/scopes/DropdownScope';
 
 const StyledContainer = styled.div`
   z-index: 1;
@@ -33,41 +32,40 @@ export const ShowPageAddButton = ({
 
   return (
     <StyledContainer>
-      <DropdownScope dropdownScopeId="add-show-page">
-        <Dropdown
-          clickableComponent={
-            <IconButton
-              Icon={IconPlus}
-              size="medium"
-              dataTestId="add-showpage-button"
-              accent="default"
-              variant="secondary"
-              onClick={toggleDropdown}
-            />
-          }
-          dropdownComponents={
-            <DropdownMenu>
-              <DropdownMenuItemsContainer>
-                <MenuItem
-                  onClick={() => handleSelect('Note')}
-                  accent="default"
-                  LeftIcon={IconNotes}
-                  text="Note"
-                />
-                <MenuItem
-                  onClick={() => handleSelect('Task')}
-                  accent="default"
-                  LeftIcon={IconCheckbox}
-                  text="Task"
-                />
-              </DropdownMenuItemsContainer>
-            </DropdownMenu>
-          }
-          dropdownHotkeyScope={{
-            scope: PageHotkeyScope.ShowPage,
-          }}
-        />
-      </DropdownScope>
+      <Dropdown
+        dropdownId="show-page-add-button-dropdown-id"
+        clickableComponent={
+          <IconButton
+            Icon={IconPlus}
+            size="medium"
+            dataTestId="add-showpage-button"
+            accent="default"
+            variant="secondary"
+            onClick={toggleDropdown}
+          />
+        }
+        dropdownComponents={
+          <DropdownMenu>
+            <DropdownMenuItemsContainer>
+              <MenuItem
+                onClick={() => handleSelect('Note')}
+                accent="default"
+                LeftIcon={IconNotes}
+                text="Note"
+              />
+              <MenuItem
+                onClick={() => handleSelect('Task')}
+                accent="default"
+                LeftIcon={IconCheckbox}
+                text="Task"
+              />
+            </DropdownMenuItemsContainer>
+          </DropdownMenu>
+        }
+        dropdownHotkeyScope={{
+          scope: PageHotkeyScope.ShowPage,
+        }}
+      />
     </StyledContainer>
   );
 };
