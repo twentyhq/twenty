@@ -5,6 +5,7 @@ import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataIt
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { useRelationMetadata } from '@/object-metadata/hooks/useRelationMetadata';
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
+import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -203,15 +204,20 @@ export const SettingsObjectFieldEdit = () => {
             select: formValues.select,
           }}
         />
-        <Section>
-          <H2Title title="Danger zone" description="Disable this field" />
-          <Button
-            Icon={IconArchive}
-            title="Disable"
-            size="small"
-            onClick={handleDisable}
-          />
-        </Section>
+        {!isLabelIdentifierField({
+          fieldMetadataItem: activeMetadataField,
+          objectMetadataItem: activeObjectMetadataItem,
+        }) && (
+          <Section>
+            <H2Title title="Danger zone" description="Disable this field" />
+            <Button
+              Icon={IconArchive}
+              title="Disable"
+              size="small"
+              onClick={handleDisable}
+            />
+          </Section>
+        )}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
