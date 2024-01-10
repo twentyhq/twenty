@@ -7,8 +7,8 @@ const logoStyle = {
 export const Logo = () => {
   return (
     <Img
-      src="https://docs.twenty.com/img/logo-square-dark.svg"
-      alt="Cat"
+      src="https://app.twenty.com/icons/windows11/Square150x150Logo.scale-100.png"
+      alt="Twenty logo"
       width="40"
       height="40"
       style={logoStyle}
