@@ -2,6 +2,7 @@ import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
+  MethodNotAllowedException,
   NotFoundException,
   UnauthorizedException,
   UnprocessableEntityException,
@@ -321,25 +322,30 @@ export class TokenService {
 
     assert(user, "This user doesn't exist", NotFoundException);
 
+    const expiresIn = this.environmentService.getPasswordResetTokenExpiresIn();
+
+    assert(expiresIn, '', InternalServerErrorException);
+
     if (
       user.passwordResetToken &&
       user.passwordResetTokenExpiresAt &&
       isFuture(user.passwordResetTokenExpiresAt)
     ) {
-      return {
-        passwordResetToken: user.passwordResetToken,
-        passwordResetTokenExpiresAt: user.passwordResetTokenExpiresAt,
-      };
+      assert(
+        false,
+        `Token has been already generated. Please wait for ${ms(ms(expiresIn), {
+          long: true,
+        })}`,
+        MethodNotAllowedException,
+      );
     }
-    const expiresIn = this.environmentService.getPasswordResetTokenExpiresIn();
-
-    assert(expiresIn, '', InternalServerErrorException);
 
     const plainResetToken = crypto.randomBytes(32).toString('hex');
     const hashedResetToken = crypto
       .createHash('sha256')
       .update(plainResetToken)
       .digest('hex');
+
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
     await this.userRepository.update(user.id, {
@@ -356,19 +362,25 @@ export class TokenService {
   async validatePasswordResetToken(
     resetToken: string,
   ): Promise<ValidPasswordResetToken> {
+    const hashedResetToken = crypto
+      .createHash('sha256')
+      .update(resetToken)
+      .digest('hex');
+
     const user = await this.userRepository.findOneBy({
-      passwordResetToken: resetToken,
+      passwordResetToken: hashedResetToken,
     });
 
     assert(user, "This token doesn't exist", NotFoundException);
+
     const tokenExpiresAt = user.passwordResetTokenExpiresAt;
 
-    let isValid = false;
+    assert(
+      tokenExpiresAt && isFuture(tokenExpiresAt),
+      'This token is invalid',
+      NotFoundException,
+    );
 
-    if (tokenExpiresAt && isFuture(tokenExpiresAt)) {
-      isValid = true;
-    }
-
-    return { isValid };
+    return { isValid: true };
   }
 }
