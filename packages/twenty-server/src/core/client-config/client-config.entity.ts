@@ -41,7 +41,7 @@ class Support {
 
 @ObjectType()
 class Sentry {
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   dsn: string | undefined;
 }
 

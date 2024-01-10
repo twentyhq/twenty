@@ -105,7 +105,7 @@ export const SettingsObjectFieldRelationForm = ({
       <StyledInputsContainer>
         <IconPicker
           disabled={disableFieldEdition}
-          dropdownScopeId="field-destination-icon-picker"
+          dropdownId="field-destination-icon-picker"
           selectedIconKey={values.field.icon || undefined}
           onChange={(value) =>
             onChange({

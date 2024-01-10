@@ -11,7 +11,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
@@ -23,7 +22,7 @@ import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
 
 type IconPickerProps = {
   disabled?: boolean;
-  dropdownScopeId?: string;
+  dropdownId?: string;
   onChange: (params: { iconKey: string; Icon: IconComponent }) => void;
   selectedIconKey?: string;
   onClickOutside?: () => void;
@@ -80,7 +79,7 @@ const IconPickerIcon = ({
 
 export const IconPicker = ({
   disabled,
-  dropdownScopeId = 'icon-picker',
+  dropdownId = 'icon-picker',
   onChange,
   selectedIconKey,
   onClickOutside,
@@ -95,7 +94,7 @@ export const IconPicker = ({
     setHotkeyScopeAndMemorizePreviousScope,
   } = usePreviousHotkeyScope();
 
-  const { closeDropdown } = useDropdown(dropdownScopeId);
+  const { closeDropdown } = useDropdown(dropdownId);
 
   const { getIcons, getIcon } = useIcons();
   const icons = getIcons();
@@ -126,71 +125,70 @@ export const IconPicker = ({
   );
 
   return (
-    <DropdownScope dropdownScopeId={dropdownScopeId}>
-      <div className={className}>
-        <Dropdown
-          dropdownHotkeyScope={{ scope: IconPickerHotkeyScope.IconPicker }}
-          clickableComponent={
-            <IconButton
-              disabled={disabled}
-              Icon={selectedIconKey ? getIcon(selectedIconKey) : IconApps}
-              variant={variant}
-            />
-          }
-          dropdownMenuWidth={176}
-          dropdownComponents={
-            <SelectableList
-              selectableListId="icon-list"
-              selectableItemIdMatrix={iconKeys2d}
-              hotkeyScope={IconPickerHotkeyScope.IconPicker}
-              onEnter={(iconKey) => {
-                onChange({ iconKey, Icon: getIcon(iconKey) });
-                closeDropdown();
-              }}
-            >
-              <DropdownMenu width={176}>
-                <DropdownMenuSearchInput
-                  placeholder="Search icon"
-                  autoFocus
-                  onChange={(event) => setSearchString(event.target.value)}
-                />
-                <DropdownMenuSeparator />
-                <div
-                  onMouseEnter={() => {
-                    setHotkeyScopeAndMemorizePreviousScope(
-                      IconPickerHotkeyScope.IconPicker,
-                    );
-                  }}
-                  onMouseLeave={goBackToPreviousHotkeyScope}
-                >
-                  <DropdownMenuItemsContainer>
-                    <StyledMenuIconItemsContainer>
-                      {iconKeys.map((iconKey) => (
-                        <IconPickerIcon
-                          key={iconKey}
-                          iconKey={iconKey}
-                          onClick={() => {
-                            onChange({ iconKey, Icon: getIcon(iconKey) });
-                            closeDropdown();
-                          }}
-                          selectedIconKey={selectedIconKey}
-                          Icon={getIcon(iconKey)}
-                        />
-                      ))}
-                    </StyledMenuIconItemsContainer>
-                  </DropdownMenuItemsContainer>
-                </div>
-              </DropdownMenu>
-            </SelectableList>
-          }
-          onClickOutside={onClickOutside}
-          onClose={() => {
-            onClose?.();
-            setSearchString('');
-          }}
-          onOpen={onOpen}
-        />
-      </div>
-    </DropdownScope>
+    <div className={className}>
+      <Dropdown
+        dropdownId={dropdownId}
+        dropdownHotkeyScope={{ scope: IconPickerHotkeyScope.IconPicker }}
+        clickableComponent={
+          <IconButton
+            disabled={disabled}
+            Icon={selectedIconKey ? getIcon(selectedIconKey) : IconApps}
+            variant={variant}
+          />
+        }
+        dropdownMenuWidth={176}
+        dropdownComponents={
+          <SelectableList
+            selectableListId="icon-list"
+            selectableItemIdMatrix={iconKeys2d}
+            hotkeyScope={IconPickerHotkeyScope.IconPicker}
+            onEnter={(iconKey) => {
+              onChange({ iconKey, Icon: getIcon(iconKey) });
+              closeDropdown();
+            }}
+          >
+            <DropdownMenu width={176}>
+              <DropdownMenuSearchInput
+                placeholder="Search icon"
+                autoFocus
+                onChange={(event) => setSearchString(event.target.value)}
+              />
+              <DropdownMenuSeparator />
+              <div
+                onMouseEnter={() => {
+                  setHotkeyScopeAndMemorizePreviousScope(
+                    IconPickerHotkeyScope.IconPicker,
+                  );
+                }}
+                onMouseLeave={goBackToPreviousHotkeyScope}
+              >
+                <DropdownMenuItemsContainer>
+                  <StyledMenuIconItemsContainer>
+                    {iconKeys.map((iconKey) => (
+                      <IconPickerIcon
+                        key={iconKey}
+                        iconKey={iconKey}
+                        onClick={() => {
+                          onChange({ iconKey, Icon: getIcon(iconKey) });
+                          closeDropdown();
+                        }}
+                        selectedIconKey={selectedIconKey}
+                        Icon={getIcon(iconKey)}
+                      />
+                    ))}
+                  </StyledMenuIconItemsContainer>
+                </DropdownMenuItemsContainer>
+              </div>
+            </DropdownMenu>
+          </SelectableList>
+        }
+        onClickOutside={onClickOutside}
+        onClose={() => {
+          onClose?.();
+          setSearchString('');
+        }}
+        onOpen={onOpen}
+      />
+    </div>
   );
 };

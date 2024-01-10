@@ -40,6 +40,7 @@ export const formatFieldMetadataItemAsColumnDefinition = ({
       relationObjectMetadataNamePlural:
         relationObjectMetadataItem?.namePlural ?? '',
       objectMetadataNameSingular: objectMetadataItem.nameSingular ?? '',
+      options: field.options,
     },
     iconName: field.icon ?? 'Icon123',
     isVisible: true,

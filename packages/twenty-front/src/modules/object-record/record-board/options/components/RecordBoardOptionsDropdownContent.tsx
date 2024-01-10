@@ -4,6 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { v4 } from 'uuid';
 
+import { BoardOptionsDropdownId } from '@/object-record/record-board/constants/BoardOptionsDropdownId';
 import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
 import {
   IconBaselineDensitySmall,
@@ -110,7 +111,7 @@ export const RecordBoardOptionsDropdownContent = ({
       recordBoardScopeId: recordBoardId,
     });
 
-  const { closeDropdown } = useDropdown();
+  const { closeDropdown } = useDropdown(BoardOptionsDropdownId);
 
   const handleReorderField: OnDragEndResponder = useCallback(
     (result) => {
