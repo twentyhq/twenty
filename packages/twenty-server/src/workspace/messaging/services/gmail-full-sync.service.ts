@@ -73,8 +73,8 @@ export class GmailFullSyncService {
         accessToken,
       );
 
-    const threadIdsFromGmail = messagesData.map(
-      (message) => message.threadId || '',
+    const threadIdsFromGmail = messagesResponse.map(
+      (message) => message.messageThreadId,
     );
 
     const threadIdsToSave = threadIdsFromGmail.filter(

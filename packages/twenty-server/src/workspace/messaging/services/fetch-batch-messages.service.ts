@@ -309,8 +309,6 @@ export class FetchBatchMessagesService {
         try {
           const { id, messages, snippet } = thread;
 
-          console.log('thread', thread);
-
           return {
             id,
             messageIds: messages.map((message) => message.id) || [],
