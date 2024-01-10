@@ -9,7 +9,6 @@
     "**/*.spec.tsx",
     "**/*.test.tsx",
     "jest.config.ts",
-    "vite.config.ts",
     "tsup.config.ts"
   ],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]

@@ -4,6 +4,15 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import svgr from 'vite-plugin-svgr';
 import checker from 'vite-plugin-checker'
 
+type Checkers = {
+  typescript: {
+    tsconfigPath: string
+  },
+  eslint?: {
+    lintCommand: string
+  }
+}
+
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
@@ -15,16 +24,16 @@ export default defineConfig(({ command, mode }) => {
     REACT_APP_SERVER_BASE_URL,
   } = env;
 
-  let checkers = {};
+  let checkers = {
+    typescript: {
+      tsconfigPath: "tsconfig.app.json"
+    },
+  }
+
   if (command === 'serve') {
-    checkers = {
-      typescript: {
-        tsconfigPath: "tsconfig.app.json"
-      },
-      eslint: {
-        lintCommand:
-          "eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs"
-      }
+    checkers['eslint']= {
+      lintCommand:
+        "eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs"
     }
   }
 
