@@ -15,6 +15,7 @@ module.exports = {
     'node_modules',
     'mockServiceWorker.js',
     '**/generated*/*',
+    'tsup.config.ts',
     'build',
     'coverage',
     'storybook-static',

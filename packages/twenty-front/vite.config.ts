@@ -4,14 +4,7 @@ import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-type Checkers = {
-  typescript: {
-    tsconfigPath: string;
-  };
-  eslint?: {
-    lintCommand: string;
-  };
-};
+type Checkers = Parameters<typeof checker>[0];
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
