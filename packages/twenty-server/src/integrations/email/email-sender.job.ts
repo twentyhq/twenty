@@ -11,8 +11,8 @@ export class EmailSenderJob implements MessageQueueJob<SendMailOptions> {
   constructor(private readonly emailSenderService: EmailSenderService) {}
 
   async handle(data: SendMailOptions): Promise<void> {
-    console.log('sending email', data);
+    process.stdout.write(`Sending email to ${data.to} ...`);
     await this.emailSenderService.send(data);
-    console.log('done');
+    console.log(' done!');
   }
 }
