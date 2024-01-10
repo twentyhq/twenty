@@ -6,7 +6,7 @@ import { EMAIL_DRIVER } from 'src/integrations/email/email.constants';
 import { LoggerDriver } from 'src/integrations/email/drivers/logger.driver';
 import { SmtpDriver } from 'src/integrations/email/drivers/smtp.driver';
 import { EmailService } from 'src/integrations/email/email.service';
-import { EmailJobService } from 'src/integrations/email/email-job.service';
+import { EmailSenderService } from 'src/integrations/email/email-sender.service';
 
 @Global()
 export class EmailModule {
@@ -23,8 +23,8 @@ export class EmailModule {
 
     return {
       module: EmailModule,
-      providers: [EmailService, EmailJobService, provider],
-      exports: [EmailService, EmailJobService],
+      providers: [EmailSenderService, EmailService, provider],
+      exports: [EmailSenderService, EmailService],
     };
   }
 }
