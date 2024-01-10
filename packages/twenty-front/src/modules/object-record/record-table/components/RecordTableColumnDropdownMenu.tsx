@@ -1,5 +1,4 @@
 import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
-import { BoardOptionsDropdownId } from '@/object-record/record-board/constants/BoardOptionsDropdownId';
 import { IconArrowLeft, IconArrowRight, IconEyeOff } from '@/ui/display/icon';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -24,7 +23,7 @@ export const RecordTableColumnDropdownMenu = ({
   const { handleColumnVisibilityChange, handleMoveTableColumn } =
     useTableColumns();
 
-  const { closeDropdown } = useDropdown(BoardOptionsDropdownId);
+  const { closeDropdown } = useDropdown(column.fieldMetadataId + '-header');
 
   const handleColumnMoveLeft = () => {
     closeDropdown();
