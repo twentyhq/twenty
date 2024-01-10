@@ -11,6 +11,7 @@ import {
   Recipient,
 } from 'src/workspace/messaging/types/gmailMessage';
 import { GmailThread } from 'src/workspace/messaging/types/gmailThread';
+import { MessageQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
 
 @Injectable()
 export class Utils {
@@ -18,6 +19,22 @@ export class Utils {
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
   ) {}
+
+  public createQueriesFromMessageIds(messageIds: string[]): MessageQuery[] {
+    return messageIds.map((messageId) => ({
+      uri: '/gmail/v1/users/me/messages/' + messageId + '?format=RAW',
+    }));
+  }
+
+  public getThreadsFromMessages(messages: GmailMessage[]): GmailThread[] {
+    return messages.reduce((acc, message) => {
+      if (message.externalId === message.messageThreadId) {
+        acc.push({ id: message.messageThreadId, subject: message.subject });
+      }
+
+      return acc;
+    }, [] as GmailThread[]);
+  }
 
   public async saveMessageThreads(
     threads: GmailThread[],

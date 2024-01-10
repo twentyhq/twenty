@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetch-batch-messages.service';
-import { MessageQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
 import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
 import { Utils } from 'src/workspace/messaging/services/utils.service';
-import { GmailThread } from 'src/workspace/messaging/types/gmailThread';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -62,11 +60,8 @@ export class GmailFullSyncService {
       (messageId) => !savedMessageIds.includes(messageId),
     );
 
-    const messageQueries: MessageQuery[] = messageIdsToSave.map(
-      (messageId) => ({
-        uri: '/gmail/v1/users/me/messages/' + messageId + '?format=RAW',
-      }),
-    );
+    const messageQueries =
+      this.utils.createQueriesFromMessageIds(messageIdsToSave);
 
     const messagesToSave =
       await this.fetchBatchMessagesService.fetchAllMessages(
@@ -74,15 +69,9 @@ export class GmailFullSyncService {
         accessToken,
       );
 
-    const threadIdsFromGmail = messagesToSave.reduce((acc, message) => {
-      if (message.externalId === message.messageThreadId) {
-        acc.push({ id: message.messageThreadId, subject: message.subject });
-      }
+    const threads = this.utils.getThreadsFromMessages(messagesToSave);
 
-      return acc;
-    }, [] as GmailThread[]);
-
-    const threadsToSave = threadIdsFromGmail.filter(
+    const threadsToSave = threads.filter(
       (threadId) => !savedThreadIds.includes(threadId.id),
     );
 

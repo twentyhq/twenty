@@ -47,6 +47,7 @@ export class GmailPartialSyncService {
     workspaceId: string,
     connectedAccountId: string,
     lastSyncHistoryId: string,
+    maxResults: number,
   ) {
     const { connectedAccount } =
       await this.utils.getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
@@ -66,6 +67,7 @@ export class GmailPartialSyncService {
       userId: 'me',
       startHistoryId: lastSyncHistoryId,
       historyTypes: ['messageAdded', 'messageDeleted'],
+      maxResults,
     });
 
     return history.data;
@@ -89,48 +91,81 @@ export class GmailPartialSyncService {
       throw new Error('No refresh token found');
     }
 
-    const gmailClient =
-      await this.gmailClientProvider.getGmailClient(refreshToken);
-
     const history = await this.getHistory(
       workspaceId,
       connectedAccountId,
       connectedAccount.lastSyncHistoryId,
+      maxResults,
     );
 
-    const { messagesAdded, messagesDeleted } =
+    // TODO: delete messages from messagesDeleted
+    const { messagesAdded } =
       await this.getMessageIdsAndThreadIdsFromHistory(history);
 
-    const messageIds = messagesAdded?.map((message) => message.messageId) || [];
-    const threadIds = messagesAdded?.map((message) => message.threadId) || [];
+    const { savedMessageIds, savedThreadIds } =
+      await this.utils.getSavedMessageIdsAndThreadIds(
+        messagesAdded,
+        dataSourceMetadata,
+        workspaceDataSource,
+        connectedAccount.id,
+      );
+
+    const messageIdsToSave = messagesAdded.filter(
+      (messageId) => !savedMessageIds.includes(messageId),
+    );
+
+    const messageQueries =
+      this.utils.createQueriesFromMessageIds(messageIdsToSave);
+
+    const messagesToSave =
+      await this.fetchBatchMessagesService.fetchAllMessages(
+        messageQueries,
+        accessToken,
+      );
+
+    const threads = this.utils.getThreadsFromMessages(messagesToSave);
+
+    const threadsToSave = threads.filter(
+      (thread) => !savedThreadIds.includes(thread.id),
+    );
+
+    await this.utils.saveMessageThreads(
+      threadsToSave,
+      dataSourceMetadata,
+      workspaceDataSource,
+      connectedAccount.id,
+    );
+
+    await this.utils.saveMessages(
+      messagesToSave,
+      dataSourceMetadata,
+      workspaceDataSource,
+      connectedAccount,
+    );
   }
 
   private async getMessageIdsAndThreadIdsFromHistory(
     history: gmail_v1.Schema$ListHistoryResponse,
   ): Promise<{
-    messagesAdded: { messageId: string; threadId: string }[] | undefined;
-    messagesDeleted: { messageId: string; threadId: string }[] | undefined;
+    messagesAdded: string[];
+    messagesDeleted: string[];
   }> {
     if (!history.history) throw new Error('No history found');
 
     const { messagesAdded, messagesDeleted } = history.history.reduce(
       (
         acc: {
-          messagesAdded: { messageId: string; threadId: string }[];
-          messagesDeleted: { messageId: string; threadId: string }[];
+          messagesAdded: string[];
+          messagesDeleted: string[];
         },
         history,
       ) => {
-        const messagesAdded = history.messagesAdded?.map((messageAdded) => ({
-          messageId: messageAdded.message?.id || '',
-          threadId: messageAdded.message?.threadId || '',
-        }));
+        const messagesAdded = history.messagesAdded?.map(
+          (messageAdded) => messageAdded.message?.id || '',
+        );
 
         const messagesDeleted = history.messagesDeleted?.map(
-          (messageDeleted) => ({
-            messageId: messageDeleted.message?.id || '',
-            threadId: messageDeleted.message?.threadId || '',
-          }),
+          (messageDeleted) => messageDeleted.message?.id || '',
         );
 
         if (messagesAdded) acc.messagesAdded.push(...messagesAdded);
