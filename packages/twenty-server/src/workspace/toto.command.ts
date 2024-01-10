@@ -17,6 +17,7 @@ export class TotoCommand extends CommandRunner {
       title: 'Inactive Workspace 😴',
       daysLeft: 10,
       userName: 'Martin Müller',
+      workspaceDisplayName: 'Stripe',
     };
     const html = render(CleanInactiveWorkspaceEmail(emailData), {
       pretty: true,

@@ -11,6 +11,7 @@ const highlightedStyle = {
   borderRadius: '4px',
   background: '#f1f1f1',
   padding: '4px 8px',
+  margin: 0,
   fontSize: '16px',
   fontWeight: 600,
   color: '#333',
