@@ -24,7 +24,7 @@ export default defineConfig(({ command, mode }) => {
     REACT_APP_SERVER_BASE_URL,
   } = env;
 
-  let checkers = {
+  let checkers: Checkers = {
     typescript: {
       tsconfigPath: "tsconfig.app.json"
     },
