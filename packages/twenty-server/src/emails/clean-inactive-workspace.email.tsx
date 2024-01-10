@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-import { HighlightedText } from 'src/workspace/emails/components/HighlightedText';
-import { MainText } from 'src/workspace/emails/components/MainText';
-import { Title } from 'src/workspace/emails/components/Title';
-import { BaseEmail } from 'src/workspace/emails/components/BaseEmail';
-import { CallToAction } from 'src/workspace/emails/components/CallToAction';
+import { HighlightedText } from 'src/emails/components/HighlightedText';
+import { MainText } from 'src/emails/components/MainText';
+import { Title } from 'src/emails/components/Title';
+import { BaseEmail } from 'src/emails/components/BaseEmail';
+import { CallToAction } from 'src/emails/components/CallToAction';
 
 export const CleanInactiveWorkspaceEmail = ({
   title,

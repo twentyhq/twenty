@@ -1,7 +1,7 @@
 import { Command, CommandRunner } from 'nest-commander';
 import { render } from '@react-email/render';
 
-import CleanInactiveWorkspaceEmail from 'src/workspace/emails/clean-inactive-workspace.email';
+import CleanInactiveWorkspaceEmail from 'src/emails/clean-inactive-workspace.email';
 import { EmailService } from 'src/integrations/email/email.service';
 
 @Command({
