@@ -23,7 +23,7 @@ export const RecordTableColumnDropdownMenu = ({
   const { handleColumnVisibilityChange, handleMoveTableColumn } =
     useTableColumns();
 
-  const { closeDropdown } = useDropdown();
+  const { closeDropdown } = useDropdown(column.fieldMetadataId + '-header');
 
   const handleColumnMoveLeft = () => {
     closeDropdown();
