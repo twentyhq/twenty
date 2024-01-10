@@ -3,6 +3,7 @@ import { Logger } from '@nestjs/common';
 
 import { MessageQueueDriver } from 'src/integrations/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
+  MessageQueueCronJobData,
   MessageQueueJob,
   MessageQueueJobData,
 } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
@@ -25,25 +26,28 @@ export class SyncDriver implements MessageQueueDriver {
       { strict: true },
     );
 
-    return await job.handle(data);
+    await job.handle(data);
   }
 
-  async schedule<T extends MessageQueueJobData | undefined>(
+  async addCron<T extends MessageQueueJobData | undefined>(
     _queueName: MessageQueue,
     jobName: string,
     data: T,
     pattern: string,
   ): Promise<void> {
-    const jobClassName = getJobClassName(jobName);
-    const job: MessageQueueJob<MessageQueueJobData | undefined> =
-      this.jobsModuleRef.get(jobClassName, { strict: true });
+    this.logger.log(`Running '${pattern}' cron job with SyncDriver`);
 
-    this.logger.log(`Running '${pattern}' scheduled job with SyncDriver`);
+    const jobClassName = getJobClassName(jobName);
+    const job: MessageQueueCronJobData<MessageQueueJobData | undefined> =
+      this.jobsModuleRef.get(jobClassName, {
+        strict: true,
+      });
+
     await job.handle(data);
   }
 
-  async unschedule(_queueName: MessageQueue, jobName: string) {
-    this.logger.log(`Stopping '${jobName}' scheduled job with SyncDriver`);
+  async removeCron(_queueName: MessageQueue, jobName: string) {
+    this.logger.log(`Removing '${jobName}' cron job with SyncDriver`);
 
     return;
   }

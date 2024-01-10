@@ -1,32 +1,16 @@
 import { useRef } from 'react';
 
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { isDefined } from '~/utils/isDefined';
-
-import { useEntitySelectSearch } from '../hooks/useEntitySelectSearch';
-
 import {
-  SingleEntitySelectBase,
-  SingleEntitySelectBaseProps,
-} from './SingleEntitySelectBase';
+  SingleEntitySelectMenuItemsWithSearch,
+  SingleEntitySelectMenuItemsWithSearchProps,
+} from '@/object-record/relation-picker/components/SingleEntitySelectMenuItemsWithSearch';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 export type SingleEntitySelectProps = {
   disableBackgroundBlur?: boolean;
-  onCreate?: () => void;
   width?: number;
-} & Pick<
-  SingleEntitySelectBaseProps,
-  | 'EmptyIcon'
-  | 'emptyLabel'
-  | 'entitiesToSelect'
-  | 'loading'
-  | 'onCancel'
-  | 'onEntitySelected'
-  | 'selectedEntity'
->;
+} & SingleEntitySelectMenuItemsWithSearchProps;
 
 export const SingleEntitySelect = ({
   EmptyIcon,
@@ -41,10 +25,6 @@ export const SingleEntitySelect = ({
   width = 200,
 }: SingleEntitySelectProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const { searchFilter, handleSearchFilterChange } = useEntitySelectSearch();
-
-  const showCreateButton = isDefined(onCreate) && searchFilter !== '';
 
   useListenClickOutside({
     refs: [containerRef],
@@ -62,13 +42,7 @@ export const SingleEntitySelect = ({
       width={width}
       data-select-disable
     >
-      <DropdownMenuSearchInput
-        value={searchFilter}
-        onChange={handleSearchFilterChange}
-        autoFocus
-      />
-      <DropdownMenuSeparator />
-      <SingleEntitySelectBase
+      <SingleEntitySelectMenuItemsWithSearch
         {...{
           EmptyIcon,
           emptyLabel,
@@ -78,7 +52,6 @@ export const SingleEntitySelect = ({
           onCreate,
           onEntitySelected,
           selectedEntity,
-          showCreateButton,
         }}
       />
     </DropdownMenu>

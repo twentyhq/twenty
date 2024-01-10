@@ -11,6 +11,7 @@ import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { CleanInactiveWorkspaceJob } from 'src/workspace/cron/clean-inactive-workspaces/jobs/clean-inactive-workspace.job';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FetchWorkspaceMessagesModule } from 'src/workspace/messaging/services/fetch-workspace-messages.module';
+import { EmailSenderJob } from 'src/integrations/email/email-sender.job';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { FetchWorkspaceMessagesModule } from 'src/workspace/messaging/services/f
       provide: CleanInactiveWorkspaceJob.name,
       useClass: CleanInactiveWorkspaceJob,
     },
+    { provide: EmailSenderJob.name, useClass: EmailSenderJob },
   ],
 })
 export class JobsModule {

@@ -19,7 +19,7 @@ export class StartCleanInactiveWorkspacesCronCommand extends CommandRunner {
   }
 
   async run(): Promise<void> {
-    await this.messageQueueService.schedule<undefined>(
+    await this.messageQueueService.addCron<undefined>(
       StartCleanInactiveWorkspacesCronCommand.name,
       undefined,
       cleanInactiveWorkspaceCronPattern,

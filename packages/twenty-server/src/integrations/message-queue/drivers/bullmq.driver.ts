@@ -49,7 +49,7 @@ export class BullMQDriver implements MessageQueueDriver {
     this.workerMap[queueName] = worker;
   }
 
-  async schedule<T>(
+  async addCron<T>(
     queueName: MessageQueue,
     jobName: string,
     data: T,
@@ -61,21 +61,18 @@ export class BullMQDriver implements MessageQueueDriver {
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
       );
     }
-    const queueOptions = Object.assign(
-      {},
-      options?.id ? { jobId: options.id } : null,
-      options?.priority ? { priority: options.priority } : null,
-      {
-        repeat: {
-          pattern,
-        },
+    const queueOptions = {
+      jobId: options?.id,
+      priority: options?.priority,
+      repeat: {
+        pattern,
       },
-    );
+    };
 
     await this.queueMap[queueName].add(jobName, data, queueOptions);
   }
 
-  async unschedule(
+  async removeCron(
     queueName: MessageQueue,
     jobName: string,
     pattern: string,
@@ -96,11 +93,7 @@ export class BullMQDriver implements MessageQueueDriver {
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
       );
     }
-    const queueOptions = Object.assign(
-      {},
-      options?.id ? { jobId: options.id } : null,
-      options?.priority ? { priority: options.priority } : null,
-    );
+    const queueOptions = { jobId: options?.id, priority: options?.priority };
 
     await this.queueMap[queueName].add(jobName, data, queueOptions);
   }
