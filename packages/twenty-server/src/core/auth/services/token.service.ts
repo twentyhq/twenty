@@ -11,7 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
-import { addMilliseconds, isAfter } from 'date-fns';
+import { addMilliseconds, isFuture } from 'date-fns';
 import ms from 'ms';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
@@ -32,6 +32,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { User } from 'src/core/user/user.entity';
 import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
+import { ValidPasswordResetToken } from 'src/core/auth/dto/valid-password-reset-token.entity';
 
 @Injectable()
 export class TokenService {
@@ -323,7 +324,7 @@ export class TokenService {
     if (
       user.passwordResetToken &&
       user.passwordResetTokenExpiresAt &&
-      isAfter(user.passwordResetTokenExpiresAt, new Date())
+      isFuture(user.passwordResetTokenExpiresAt)
     ) {
       return {
         passwordResetToken: user.passwordResetToken,
@@ -350,5 +351,24 @@ export class TokenService {
       passwordResetToken: plainResetToken,
       passwordResetTokenExpiresAt: expiresAt,
     };
+  }
+
+  async validatePasswordResetToken(
+    resetToken: string,
+  ): Promise<ValidPasswordResetToken> {
+    const user = await this.userRepository.findOneBy({
+      passwordResetToken: resetToken,
+    });
+
+    assert(user, "This token doesn't exist", NotFoundException);
+    const tokenExpiresAt = user.passwordResetTokenExpiresAt;
+
+    let isValid = false;
+
+    if (tokenExpiresAt && isFuture(tokenExpiresAt)) {
+      isValid = true;
+    }
+
+    return { isValid };
   }
 }

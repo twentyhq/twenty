@@ -15,8 +15,10 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { User } from 'src/core/user/user.entity';
 import { ApiKeyTokenInput } from 'src/core/auth/dto/api-key-token.input';
+import { ValidPasswordResetToken } from 'src/core/auth/dto/valid-password-reset-token.entity';
 import { TransientToken } from 'src/core/auth/dto/transient-token.entity';
 import { UserService } from 'src/core/user/services/user.service';
+import { ValidatePasswordResetToken } from 'src/core/auth/dto/validate-password-reset-token.input';
 
 import {
   ApiKeyToken,
@@ -36,6 +38,7 @@ import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.enti
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { SignUpInput } from './dto/sign-up.input';
 import { ImpersonateInput } from './dto/impersonate.input';
+// import { UpdatePasswordInput } from 'src/core/auth/dto/update-password.input';
 
 @Resolver()
 export class AuthResolver {
@@ -159,5 +162,19 @@ export class AuthResolver {
   async generatePasswordResetToken(): Promise<PasswordResetToken> {
     // TODO remove this hard-coded email and fetch user from Auth guard.
     return this.tokenService.generatePasswordResetToken('tim@apple.dev');
+  }
+
+  // @Mutation(() => LoginToken)
+  // async updatePasswordViaResetToken(
+  //   @Args() args: UpdatePasswordInput,
+  // ): Promise<LoginToken> {}
+
+  @Query(() => ValidPasswordResetToken)
+  async validatePasswordResetToken(
+    @Args() args: ValidatePasswordResetToken,
+  ): Promise<ValidPasswordResetToken> {
+    return this.tokenService.validatePasswordResetToken(
+      args.passwordResetToken,
+    );
   }
 }
