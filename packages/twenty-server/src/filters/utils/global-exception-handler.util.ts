@@ -1,7 +1,5 @@
 import { HttpException } from '@nestjs/common';
 
-import { TypeORMError } from 'typeorm';
-
 import {
   AuthenticationError,
   BaseGraphQLError,
@@ -29,12 +27,10 @@ export const handleException = (
   exception: Error,
   exceptionHandlerService: ExceptionHandlerService,
 ): void => {
-  if (
-    exception instanceof TypeORMError ||
-    (exception instanceof HttpException && exception.getStatus() >= 500)
-  ) {
-    exceptionHandlerService.captureException(exception);
+  if (exception instanceof HttpException && exception.getStatus() < 500) {
+    return;
   }
+  exceptionHandlerService.captureException(exception);
 };
 
 export const convertExceptionToGraphQLError = (

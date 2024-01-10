@@ -6,6 +6,7 @@ import { YogaDriverConfig, YogaDriver } from '@graphql-yoga/nestjs';
 import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceMigrationModule } from 'src/metadata/workspace-migration/workspace-migration.module';
 import { metadataModuleFactory } from 'src/metadata/metadata.module-factory';
+import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 
 import { DataSourceModule } from './data-source/data-source.module';
 import { FieldMetadataModule } from './field-metadata/field-metadata.module';
@@ -15,7 +16,7 @@ import { RelationMetadataModule } from './relation-metadata/relation-metadata.mo
   imports: [
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       driver: YogaDriver,
-      imports: [],
+      inject: [ExceptionHandlerService],
       useFactory: metadataModuleFactory,
     }),
     DataSourceModule,

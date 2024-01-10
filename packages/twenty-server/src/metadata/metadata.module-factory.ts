@@ -24,9 +24,9 @@ export const metadataModuleFactory = async (
           error.originalError,
           exceptionHandlerService,
         );
-      } else {
-        return maskError(error, message, isDev);
       }
+
+      return maskError(error, message, isDev);
     },
   },
 });
