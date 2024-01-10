@@ -16,7 +16,6 @@ module.exports = {
     'mockServiceWorker.js',
     '**/generated*/*',
     '*config.*',
-    '**/*config.*',
     'build',
     'coverage',
     'storybook-static',
