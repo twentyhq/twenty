@@ -50,9 +50,7 @@ const StyledButton = styled.button<
   }};
   box-shadow: ${({ theme, applyShadow, focus }) =>
     applyShadow
-      ? `0px 2px 4px ${theme.background.transparent.light}, 0px 0px 4px ${
-          theme.background.transparent.medium
-        }${focus ? `,0 0 0 3px ${theme.color.blue10}` : ''}`
+      ? theme.boxShadow.light
       : focus
         ? `0 0 0 3px ${theme.color.blue10}`
         : 'none'};
