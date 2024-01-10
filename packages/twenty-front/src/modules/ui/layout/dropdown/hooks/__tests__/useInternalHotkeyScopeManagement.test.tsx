@@ -1,22 +1,15 @@
 import { expect } from '@storybook/test';
 import { renderHook } from '@testing-library/react';
-import { RecoilRoot } from 'recoil';
+import { RecoilRoot, useRecoilValue } from 'recoil';
 
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useDropdownStates } from '@/ui/layout/dropdown/hooks/internal/useDropdownStates';
 import { useInternalHotkeyScopeManagement } from '@/ui/layout/dropdown/hooks/useInternalHotkeyScopeManagement';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
-const dropdownScopeId = 'testId';
+const dropdownScopeId = 'test-dropdown-id-scope';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <RecoilRoot>
-      <DropdownScope dropdownScopeId={dropdownScopeId}>
-        {children}
-      </DropdownScope>
-    </RecoilRoot>
-  );
+  return <RecoilRoot>{children}</RecoilRoot>;
 };
 
 describe('useInternalHotkeyScopeManagement', () => {
@@ -27,8 +20,14 @@ describe('useInternalHotkeyScopeManagement', () => {
       }: {
         dropdownHotkeyScopeFromParent?: HotkeyScope;
       }) => {
-        useInternalHotkeyScopeManagement({ dropdownHotkeyScopeFromParent });
-        const { dropdownHotkeyScope } = useDropdown();
+        useInternalHotkeyScopeManagement({
+          dropdownScopeId,
+          dropdownHotkeyScopeFromParent,
+        });
+        const { dropdownHotkeyScopeState } = useDropdownStates({
+          dropdownScopeId,
+        });
+        const dropdownHotkeyScope = useRecoilValue(dropdownHotkeyScopeState);
         return { dropdownHotkeyScope };
       },
       {

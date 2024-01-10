@@ -4,23 +4,16 @@ import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 
-const dropdownScopeId = 'testId';
+const dropdownId = 'test-dropdown-id';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <RecoilRoot>
-      <DropdownScope dropdownScopeId={dropdownScopeId}>
-        {children}
-      </DropdownScope>
-    </RecoilRoot>
-  );
+  return <RecoilRoot>{children}</RecoilRoot>;
 };
 
 describe('useDropdown', () => {
   it('should toggleDropdown', async () => {
-    const { result } = renderHook(() => useDropdown(dropdownScopeId), {
+    const { result } = renderHook(() => useDropdown(dropdownId), {
       wrapper: Wrapper,
     });
 
@@ -40,7 +33,7 @@ describe('useDropdown', () => {
   });
 
   it('should open and close dropdown', async () => {
-    const { result } = renderHook(() => useDropdown(dropdownScopeId), {
+    const { result } = renderHook(() => useDropdown(dropdownId), {
       wrapper: Wrapper,
     });
 
@@ -60,7 +53,7 @@ describe('useDropdown', () => {
   });
 
   it('should change dropdownWidth', async () => {
-    const { result } = renderHook(() => useDropdown(dropdownScopeId), {
+    const { result } = renderHook(() => useDropdown(dropdownId), {
       wrapper: Wrapper,
     });
 
@@ -71,19 +64,5 @@ describe('useDropdown', () => {
     });
 
     expect(result.current.dropdownWidth).toEqual(220);
-  });
-
-  it('should change dropdownHotkeyScope', async () => {
-    const { result } = renderHook(() => useDropdown(dropdownScopeId), {
-      wrapper: Wrapper,
-    });
-
-    expect(result.current.dropdownHotkeyScope).toBeNull();
-
-    await act(async () => {
-      result.current.setDropdownHotkeyScope({ scope: 'test-scope' });
-    });
-
-    expect(result.current.dropdownHotkeyScope).toEqual({ scope: 'test-scope' });
   });
 });
