@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line
 const path = require('path');
 
 module.exports = {
@@ -16,6 +16,10 @@ module.exports = {
     'mockServiceWorker.js',
     '**/generated*/*',
     '*config.*',
+    '**/*config.*',
+    'build',
+    'coverage',
+    'storybook-static',
     '**/*config.js',
     'codegen*',
     'tsup.ui.index.tsx',

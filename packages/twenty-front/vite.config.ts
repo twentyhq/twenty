@@ -3,9 +3,10 @@ import react from '@vitejs/plugin-react-swc';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import svgr from 'vite-plugin-svgr';
 import checker from 'vite-plugin-checker'
+import { plugins } from '@swc/core';
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
 
   /*
@@ -15,18 +16,24 @@ export default defineConfig(({ mode }) => {
     REACT_APP_SERVER_BASE_URL,
   } = env;
 
+  let checkers = {
+    typescript: {
+      tsconfigPath: "tsconfig.app.json"
+    },
+  }
+
+  if (command === 'serve') {
+    checkers['eslint'] = {
+      lintCommand: 
+        "eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs"
+    }
+  }
+
   const plugins = [
     react({ jsxImportSource: "@emotion/react" }),
     tsconfigPaths(),
     svgr(),
-    checker({
-      typescript: {
-        tsconfigPath: "tsconfig.app.json"
-      },
-      eslint: {
-        lintCommand: "eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs",
-      }
-    }),
+    checker(checkers),
   ]
 
   return {
