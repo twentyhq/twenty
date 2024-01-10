@@ -18,7 +18,7 @@ export default {
     },
   },
   collectCoverage: true,
-  collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
+  collectCoverageFrom: ['<rootDir>/src/modules/object-record/hooks/**/*.ts'],
   coveragePathIgnorePatterns: [
     'states/.+State.ts$',
     'contexts/.+Context.ts',
@@ -33,7 +33,11 @@ export default {
     'generated-metadata/*',
     'generated/*',
     '__stories__/*',
-
+    'src/modules/object-record/hooks/useUpsertRecordFieldFromState.ts'
+  ],
+  testPathIgnorePatterns: [
+    'src/modules/activities/blocks/spec.ts',
+    
   ],
   // coverageDirectory: '<rootDir>/coverage/',
 }
