@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import { loadDevMessages, loadErrorMessages } from '@apollo/client/dev';
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
@@ -10,9 +9,6 @@ import {
   variables,
 } from '@/object-record/hooks/__mocks__/useCreateOneRecord';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-
-loadDevMessages();
-loadErrorMessages();
 
 const person = { id: 'a7286b9a-c039-4a89-9567-2dfa7953cda9' };
 
