@@ -15,7 +15,7 @@ export default defineConfig(({ command, mode }) => {
     REACT_APP_SERVER_BASE_URL,
   } = env;
 
-  let checkers;
+  let checkers = {};
   if (command === 'serve') {
     checkers = {
       typescript: {
