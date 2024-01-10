@@ -25,7 +25,11 @@ jobs:
     name: runner / vale
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - name: ls
+        run: ls -la
+      - name: ls packages/twenty-docs
+        run: ls -la packages/twenty-docs
       - uses: errata-ai/vale-action@reviewdog
         with:
           files: ${{ steps.directories.outputs.LIST }}
