@@ -16,7 +16,6 @@ export const BaseHead = () => {
         }}
         fontStyle="normal"
         fontWeight={emailTheme.font.weight.regular}
-        fontColor={emailTheme.font.colors.primary}
       />
     </Head>
   );
