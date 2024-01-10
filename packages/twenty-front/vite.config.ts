@@ -16,16 +16,16 @@ export default defineConfig(({ command, mode }) => {
     REACT_APP_SERVER_BASE_URL,
   } = env;
 
-  let checkers = {
-    typescript: {
-      tsconfigPath: "tsconfig.app.json"
-    },
-  }
-
+  let checkers;
   if (command === 'serve') {
-    checkers['eslint'] = {
-      lintCommand: 
-        "eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs"
+    checkers = {
+      typescript: {
+        tsconfigPath: "tsconfig.app.json"
+      },
+      eslint: {
+        lintCommand:
+          "eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs"
+      }
     }
   }
 
