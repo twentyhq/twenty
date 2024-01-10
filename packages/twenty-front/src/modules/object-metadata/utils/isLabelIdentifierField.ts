@@ -7,12 +7,12 @@ export const isLabelIdentifierField = ({
   fieldMetadataItem,
   objectMetadataItem,
 }: {
-  fieldMetadataItem: FieldMetadataItem;
-  objectMetadataItem: ObjectMetadataItem;
-}) => {
-  return (
-    fieldMetadataItem.id ===
-      objectMetadataItem.labelIdentifierFieldMetadataId ||
-    fieldMetadataItem.name === DEFAULT_LABEL_IDENTIFIER_FIELD_NAME
-  );
-};
+  fieldMetadataItem: Pick<FieldMetadataItem, 'id' | 'name'>;
+  objectMetadataItem: Pick<
+    ObjectMetadataItem,
+    'labelIdentifierFieldMetadataId'
+  >;
+}) =>
+  objectMetadataItem.labelIdentifierFieldMetadataId
+    ? fieldMetadataItem.id === objectMetadataItem.labelIdentifierFieldMetadataId
+    : fieldMetadataItem.name === DEFAULT_LABEL_IDENTIFIER_FIELD_NAME;

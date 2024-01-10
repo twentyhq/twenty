@@ -51,10 +51,14 @@ export const SettingsObjectDetail = () => {
 
   if (!activeObjectMetadataItem) return null;
 
-  const getIdentifierType = (field: { id: string }) =>
-    activeObjectMetadataItem.labelIdentifierFieldMetadataId === field.id
+  const getIdentifierType = (activeFieldMetadatItem: FieldMetadataItem) =>
+    isLabelIdentifierField({
+      fieldMetadataItem: activeFieldMetadatItem,
+      objectMetadataItem: activeObjectMetadataItem,
+    })
       ? 'label'
-      : activeObjectMetadataItem.imageIdentifierFieldMetadataId === field.id
+      : activeObjectMetadataItem.imageIdentifierFieldMetadataId ===
+          activeFieldMetadatItem.id
         ? 'image'
         : undefined;
 
@@ -146,7 +150,6 @@ export const SettingsObjectDetail = () => {
                 {disabledMetadataFields.map((disabledMetadataField) => (
                   <SettingsObjectFieldItemTableRow
                     key={disabledMetadataField.id}
-                    identifierType={getIdentifierType(disabledMetadataField)}
                     variant={
                       activeObjectMetadataItem.isCustom
                         ? 'identifier'
