@@ -63,7 +63,7 @@ export class GmailFullSyncService {
     const messageQueries =
       this.utils.createQueriesFromMessageIds(messageIdsToSave);
 
-    const messagesToSave =
+    const { messages: messagesToSave, errors } =
       await this.fetchBatchMessagesService.fetchAllMessages(
         messageQueries,
         accessToken,
@@ -88,5 +88,9 @@ export class GmailFullSyncService {
       workspaceDataSource,
       connectedAccount,
     );
+
+    if (errors.length) throw new Error('Error fetching messages');
+
+    // Save historyId
   }
 }

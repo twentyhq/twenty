@@ -117,7 +117,7 @@ export class GmailPartialSyncService {
     const messageQueries =
       this.utils.createQueriesFromMessageIds(messageIdsToSave);
 
-    const messagesToSave =
+    const { messages: messagesToSave } =
       await this.fetchBatchMessagesService.fetchAllMessages(
         messageQueries,
         accessToken,

@@ -23,17 +23,14 @@ export class FetchBatchMessagesService {
   async fetchAllMessages(
     queries: MessageQuery[],
     accessToken: string,
-  ): Promise<GmailMessage[]> {
+  ): Promise<{ messages: GmailMessage[]; errors: any[] }> {
     const batchResponses = await this.fetchAllByBatches(
       queries,
       accessToken,
       'batch_gmail_messages',
     );
 
-    const messages =
-      await this.formatBatchResponsesAsGmailMessages(batchResponses);
-
-    return messages;
+    return this.formatBatchResponsesAsGmailMessages(batchResponses);
   }
 
   async fetchAllByBatches(
@@ -154,15 +151,19 @@ export class FetchBatchMessagesService {
 
   async formatBatchResponseAsGmailMessage(
     responseCollection: AxiosResponse<any, any>,
-  ): Promise<GmailMessage[]> {
+  ): Promise<{ messages: GmailMessage[]; errors: any[] }> {
     const parsedResponses = this.parseBatch(
       responseCollection,
     ) as GmailMessageParsedResponse[];
+
+    const errors: any = [];
 
     const formattedResponse = Promise.all(
       parsedResponses.map(async (message: GmailMessageParsedResponse) => {
         if (message.error) {
           console.log('Error', message.error);
+
+          errors.push(message.error);
 
           return;
         }
@@ -213,15 +214,17 @@ export class FetchBatchMessagesService {
           return messageFromGmail;
         } catch (error) {
           console.log('Error', error);
+
+          errors.push(error);
         }
       }),
     );
 
-    const filteredResponse = (await formattedResponse).filter(
+    const filteredMessages = (await formattedResponse).filter(
       (message) => message,
     ) as GmailMessage[];
 
-    return filteredResponse;
+    return { messages: filteredMessages, errors };
   }
 
   formatAddressObjectAsArray(
@@ -256,16 +259,17 @@ export class FetchBatchMessagesService {
 
   async formatBatchResponsesAsGmailMessages(
     batchResponses: AxiosResponse<any, any>[],
-  ): Promise<GmailMessage[]> {
-    const formattedResponses = await Promise.all(
+  ): Promise<{ messages: GmailMessage[]; errors: any[] }> {
+    const messagesAndErrors = await Promise.all(
       batchResponses.map(async (response) => {
-        const formattedResponse =
-          await this.formatBatchResponseAsGmailMessage(response);
-
-        return formattedResponse;
+        return this.formatBatchResponseAsGmailMessage(response);
       }),
     );
 
-    return formattedResponses.flat();
+    const messages = messagesAndErrors.map((item) => item.messages).flat();
+
+    const errors = messagesAndErrors.map((item) => item.errors).flat();
+
+    return { messages, errors };
   }
 }
