@@ -1,6 +1,6 @@
 import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const isSoftFocusActiveScopedState = createStateScopeMap<boolean>({
-  key: 'isSoftFocusActiveScopedState',
+export const isSoftFocusActiveStateScopeMap = createStateScopeMap<boolean>({
+  key: 'isSoftFocusActiveStateScopeMap',
   defaultValue: false,
 });

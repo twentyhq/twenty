@@ -1,8 +1,8 @@
 import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const onEntityCountChangeScopedState = createStateScopeMap<
+export const onEntityCountChangeStateScopeMap = createStateScopeMap<
   ((entityCount: number) => void) | undefined
 >({
-  key: 'onEntityCountChangeScopedState',
+  key: 'onEntityCountChangeStateScopeMap',
   defaultValue: undefined,
 });

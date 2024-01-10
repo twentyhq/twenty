@@ -1,6 +1,6 @@
 import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const resizeFieldOffsetScopedState = createStateScopeMap<number>({
-  key: 'resizeFieldOffsetScopedState',
+export const resizeFieldOffsetStateScopeMap = createStateScopeMap<number>({
+  key: 'resizeFieldOffsetStateScopeMap',
   defaultValue: 0,
 });

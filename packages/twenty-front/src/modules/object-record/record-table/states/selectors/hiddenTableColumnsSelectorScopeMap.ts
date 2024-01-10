@@ -1,17 +1,17 @@
 import { createSelectorScopeMap } from '@/ui/utilities/recoil-scope/utils/createSelectorScopeMap';
 
-import { availableTableColumnsScopedState } from '../availableTableColumnsScopedState';
-import { tableColumnsScopedState } from '../tableColumnsScopedState';
+import { availableTableColumnsStateScopeMap } from '../availableTableColumnsStateScopeMap';
+import { tableColumnsStateScopeMap } from '../tableColumnsStateScopeMap';
 
-export const hiddenTableColumnsScopedSelector = createSelectorScopeMap({
-  key: 'hiddenTableColumnsScopedSelector',
+export const hiddenTableColumnsSelectorScopeMap = createSelectorScopeMap({
+  key: 'hiddenTableColumnsSelectorScopeMap',
   get:
     ({ scopeId }) =>
     ({ get }) => {
-      const columns = get(tableColumnsScopedState({ scopeId }));
+      const columns = get(tableColumnsStateScopeMap({ scopeId }));
       const columnKeys = columns.map(({ fieldMetadataId }) => fieldMetadataId);
       const otherAvailableColumns = get(
-        availableTableColumnsScopedState({ scopeId }),
+        availableTableColumnsStateScopeMap({ scopeId }),
       ).filter(({ fieldMetadataId }) => !columnKeys.includes(fieldMetadataId));
 
       return [

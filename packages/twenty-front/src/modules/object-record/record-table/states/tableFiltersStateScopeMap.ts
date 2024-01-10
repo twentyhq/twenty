@@ -2,7 +2,7 @@ import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createSta
 
 import { Filter } from '../../object-filter-dropdown/types/Filter';
 
-export const tableFiltersScopedState = createStateScopeMap<Filter[]>({
-  key: 'tableFiltersScopedState',
+export const tableFiltersStateScopeMap = createStateScopeMap<Filter[]>({
+  key: 'tableFiltersStateScopeMap',
   defaultValue: [],
 });

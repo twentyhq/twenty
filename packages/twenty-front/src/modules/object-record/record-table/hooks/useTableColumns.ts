@@ -2,15 +2,13 @@ import { useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
-
-import { useRecordTableScopedStates } from './internal/useRecordTableScopedStates';
 
 type useRecordTableProps = {
   recordTableScopeId?: string;
@@ -26,27 +24,10 @@ export const useTableColumns = (props?: useRecordTableProps) => {
   });
 
   const {
-    injectStateWithRecordTableScopeId,
-    injectSelectorWithRecordTableScopeId,
-  } = useRecordTableScopedStates(scopeId);
-
-  const {
-    availableTableColumnsScopeInjector,
-    tableColumnsScopeInjector,
-    visibleTableColumnsScopeInjector,
-  } = getRecordTableScopeInjector();
-
-  const availableTableColumnsState = injectStateWithRecordTableScopeId(
-    availableTableColumnsScopeInjector,
-  );
-
-  const tableColumnsState = injectStateWithRecordTableScopeId(
-    tableColumnsScopeInjector,
-  );
-
-  const visibleTableColumnsSelector = injectSelectorWithRecordTableScopeId(
-    visibleTableColumnsScopeInjector,
-  );
+    availableTableColumnsState,
+    tableColumnsState,
+    visibleTableColumnsSelector,
+  } = useRecordTableStates();
 
   const availableTableColumns = useRecoilValue(availableTableColumnsState);
 

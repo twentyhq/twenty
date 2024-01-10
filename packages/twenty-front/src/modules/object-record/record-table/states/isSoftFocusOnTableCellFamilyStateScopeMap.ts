@@ -2,8 +2,8 @@ import { createFamilyStateScopeMap } from '@/ui/utilities/recoil-scope/utils/cre
 
 import { TableCellPosition } from '../types/TableCellPosition';
 
-export const isSoftFocusOnTableCellScopedFamilyState =
+export const isSoftFocusOnTableCellFamilyStateScopeMap =
   createFamilyStateScopeMap<boolean, TableCellPosition>({
-    key: 'isSoftFocusOnTableCellScopedFamilyState',
+    key: 'isSoftFocusOnTableCellFamilyStateScopeMap',
     defaultValue: false,
   });

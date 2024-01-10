@@ -1,9 +1,8 @@
 import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 
 import { useMoveEditModeToTableCellPosition } from '../../hooks/internal/useMoveEditModeToCellPosition';
 
@@ -17,13 +16,7 @@ export const useCurrentTableCellEditMode = () => {
 
   const currentTableCellPosition = useCurrentTableCellPosition();
 
-  const { isTableCellInEditModeScopeInjector } = getRecordTableScopeInjector();
-
-  const { injectFamilyStateWithRecordTableScopeId } =
-    useRecordTableScopedStates();
-
-  const isTableCellInEditModeFamilyState =
-    injectFamilyStateWithRecordTableScopeId(isTableCellInEditModeScopeInjector);
+  const { isTableCellInEditModeFamilyState } = useRecordTableStates();
 
   const [isCurrentTableCellInEditMode] = useRecoilState(
     isTableCellInEditModeFamilyState(currentTableCellPosition),

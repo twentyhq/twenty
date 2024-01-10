@@ -8,10 +8,9 @@ import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObje
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
-import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import {
   IconCheckbox,
   IconHeart,
@@ -24,6 +23,7 @@ import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionB
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
 import { ContextMenuEntry } from '@/ui/navigation/context-menu/types/ContextMenuEntry';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 type useRecordTableContextMenuEntriesProps = {
@@ -42,16 +42,7 @@ export const useRecordTableContextMenuEntries = (
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
   const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState);
 
-  const { selectedRowIdsScopeInjector } = getRecordTableScopeInjector();
-
-  const {
-    injectSelectorWithRecordTableScopeId,
-    injectSelectorSnapshotValueWithRecordTableScopeId,
-  } = useRecordTableScopedStates(scopeId);
-
-  const selectedRowIdsSelector = injectSelectorWithRecordTableScopeId(
-    selectedRowIdsScopeInjector,
-  );
+  const { selectedRowIdsSelector } = useRecordTableStates(scopeId);
 
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 
@@ -68,10 +59,7 @@ export const useRecordTableContextMenuEntries = (
   const { createFavorite, favorites, deleteFavorite } = useFavorites();
 
   const handleFavoriteButtonClick = useRecoilCallback(({ snapshot }) => () => {
-    const selectedRowIds = injectSelectorSnapshotValueWithRecordTableScopeId(
-      snapshot,
-      selectedRowIdsScopeInjector,
-    );
+    const selectedRowIds = getSnapshotValue(snapshot, selectedRowIdsSelector);
 
     const selectedRowId = selectedRowIds.length === 1 ? selectedRowIds[0] : '';
 
@@ -105,31 +93,24 @@ export const useRecordTableContextMenuEntries = (
   const handleDeleteClick = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        const rowIdsToDelete =
-          injectSelectorSnapshotValueWithRecordTableScopeId(
-            snapshot,
-            selectedRowIdsScopeInjector,
-          );
+        const rowIdsToDelete = getSnapshotValue(
+          snapshot,
+          selectedRowIdsSelector,
+        );
 
         resetTableRowSelection();
         await deleteManyRecords(rowIdsToDelete);
       },
-    [
-      deleteManyRecords,
-      injectSelectorSnapshotValueWithRecordTableScopeId,
-      resetTableRowSelection,
-      selectedRowIdsScopeInjector,
-    ],
+    [deleteManyRecords, resetTableRowSelection, selectedRowIdsSelector],
   );
 
   const handleExecuteQuickActionOnClick = useRecoilCallback(
     ({ snapshot }) =>
       async () => {
-        const rowIdsToExecuteQuickActionOn =
-          injectSelectorSnapshotValueWithRecordTableScopeId(
-            snapshot,
-            selectedRowIdsScopeInjector,
-          );
+        const rowIdsToExecuteQuickActionOn = getSnapshotValue(
+          snapshot,
+          selectedRowIdsSelector,
+        );
 
         resetTableRowSelection();
         await Promise.all(
@@ -140,9 +121,8 @@ export const useRecordTableContextMenuEntries = (
       },
     [
       executeQuickActionOnOneRecord,
-      injectSelectorSnapshotValueWithRecordTableScopeId,
       resetTableRowSelection,
-      selectedRowIdsScopeInjector,
+      selectedRowIdsSelector,
     ],
   );
 

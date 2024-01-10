@@ -2,9 +2,9 @@ import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createSta
 
 import { TableCellPosition } from '../types/TableCellPosition';
 
-export const softFocusPositionScopedState =
+export const currentTableCellInEditModePositionStateScopeMap =
   createStateScopeMap<TableCellPosition>({
-    key: 'softFocusPositionScopedState',
+    key: 'currentTableCellInEditModePositionStateScopeMap',
     defaultValue: {
       row: 0,
       column: 1,

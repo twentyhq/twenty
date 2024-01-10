@@ -1,9 +1,9 @@
 import { createFamilyStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createFamilyStateScopeMap';
 
-export const isRowSelectedScopedFamilyState = createFamilyStateScopeMap<
+export const isRowSelectedFamilyStateScopeMap = createFamilyStateScopeMap<
   boolean,
   string
 >({
-  key: 'isRowSelectedFamilyState',
+  key: 'isRowSelectedFamilyStateScopeMap',
   defaultValue: false,
 });

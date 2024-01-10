@@ -1,8 +1,8 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
@@ -14,17 +14,14 @@ export const useLeaveTableFocus = (recordTableScopeId: string) => {
   const closeCurrentCellInEditMode =
     useCloseCurrentTableCellInEditMode(recordTableScopeId);
 
-  const { isSoftFocusActiveScopeInjector } = getRecordTableScopeInjector();
-
-  const { injectSnapshotValueWithRecordTableScopeId } =
-    useRecordTableScopedStates(recordTableScopeId);
+  const { isSoftFocusActiveState } = useRecordTableStates(recordTableScopeId);
 
   return useRecoilCallback(
     ({ snapshot }) =>
       () => {
-        const isSoftFocusActive = injectSnapshotValueWithRecordTableScopeId(
+        const isSoftFocusActive = getSnapshotValue(
           snapshot,
-          isSoftFocusActiveScopeInjector,
+          isSoftFocusActiveState,
         );
 
         const currentHotkeyScope = snapshot
@@ -42,11 +39,6 @@ export const useLeaveTableFocus = (recordTableScopeId: string) => {
         closeCurrentCellInEditMode();
         disableSoftFocus();
       },
-    [
-      closeCurrentCellInEditMode,
-      disableSoftFocus,
-      injectSnapshotValueWithRecordTableScopeId,
-      isSoftFocusActiveScopeInjector,
-    ],
+    [closeCurrentCellInEditMode, disableSoftFocus, isSoftFocusActiveState],
   );
 };
