@@ -30,6 +30,7 @@ import { useViewBar } from '@/views/hooks/useViewBar';
 import { useRecordBoardCardFieldsInternal } from '../../hooks/internal/useRecordBoardCardFieldsInternal';
 import { BoardColumnDefinition } from '../../types/BoardColumnDefinition';
 import { BoardOptionsHotkeyScope } from '../../types/BoardOptionsHotkeyScope';
+import { BoardOptionsDropdownId } from '@/object-record/record-board/constants/BoardOptionsDropdownId';
 
 export type RecordBoardOptionsDropdownContentProps = {
   onStageAdd?: (boardColumn: BoardColumnDefinition) => void;
@@ -110,7 +111,7 @@ export const RecordBoardOptionsDropdownContent = ({
       recordBoardScopeId: recordBoardId,
     });
 
-  const { closeDropdown } = useDropdown();
+  const { closeDropdown } = useDropdown(BoardOptionsDropdownId);
 
   const handleReorderField: OnDragEndResponder = useCallback(
     (result) => {
