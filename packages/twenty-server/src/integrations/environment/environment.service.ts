@@ -244,4 +244,10 @@ export class EnvironmentService {
   getOpenRouterApiKey(): string | undefined {
     return this.configService.get<string | undefined>('OPENROUTER_API_KEY');
   }
+
+  getPasswordResetTokenExpiresIn(): string {
+    return (
+      this.configService.get<string>('PASSWORD_RESET_TOKEN_EXPIRES_IN') ?? '5m'
+    );
+  }
 }

@@ -170,6 +170,10 @@ export class EnvironmentVariables {
   )
   @IsString()
   SENTRY_DSN?: string;
+
+  @IsDuration()
+  @IsOptional()
+  PASSWORD_RESET_TOKEN_EXPIRES_IN: number;
 }
 
 export const validate = (config: Record<string, unknown>) => {
