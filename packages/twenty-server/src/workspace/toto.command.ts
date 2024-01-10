@@ -13,8 +13,19 @@ export class TotoCommand extends CommandRunner {
   }
 
   async run(): Promise<void> {
-    const html = render(CleanInactiveWorkspaceEmail(), { pretty: true });
-    const text = render(CleanInactiveWorkspaceEmail(), { plainText: true });
+    const emailData = {
+      title: 'Inactive Workspace 😴',
+      daysLeft: 10,
+      userName: 'Martin Müller',
+    };
+    const html = render(CleanInactiveWorkspaceEmail(emailData), {
+      pretty: true,
+    });
+    const text = render(CleanInactiveWorkspaceEmail(emailData), {
+      plainText: true,
+    });
+
+    console.log(html);
 
     await this.emailService.send({ to: 'martmull@hotmail.fr', html, text });
     //await this.emailService.send({ to: 'martmull@hotmail.fr', html, text });
