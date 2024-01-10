@@ -17,6 +17,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
@@ -43,6 +44,8 @@ export const SettingsWorkspaceMembers = () => {
       objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
     });
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
 
   const handleRemoveWorkspaceMember = async (workspaceMemberId: string) => {
     await deleteOneWorkspaceMember?.(workspaceMemberId);
@@ -74,7 +77,7 @@ export const SettingsWorkspaceMembers = () => {
               key={member.id}
               workspaceMember={member as WorkspaceMember}
               accessory={
-                currentWorkspace?.id !== member.id && (
+                currentWorkspaceMember?.id !== member.id && (
                   <StyledButtonContainer>
                     <IconButton
                       onClick={() => {
