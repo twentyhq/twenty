@@ -5,6 +5,7 @@ import {
   WorkspaceHealthIssueType,
 } from 'src/workspace/workspace-health/interfaces/workspace-health-issue.interface';
 import { WorkspaceTableStructure } from 'src/workspace/workspace-health/interfaces/workspace-table-definition.interface';
+import { WorkspaceHealthOptions } from 'src/workspace/workspace-health/interfaces/workspace-health-options.interface';
 
 import { currencyFields } from 'src/metadata/field-metadata/composite-types/currency.composite-type';
 import { fullNameFields } from 'src/metadata/field-metadata/composite-types/full-name.composite-type';
@@ -19,17 +20,17 @@ import { validName } from 'src/workspace/workspace-health/utils/valid-name.util'
 
 @Injectable()
 export class FieldMetadataHealthService {
-  private issues: WorkspaceHealthIssue[] = [];
-
   constructor(
     private readonly databaseStructureService: DatabaseStructureService,
   ) {}
 
-  async healthCheckFields(
+  async healthCheck(
     schemaName: string,
     tableName: string,
     fieldMetadataCollection: FieldMetadataEntity[],
+    options: WorkspaceHealthOptions,
   ): Promise<WorkspaceHealthIssue[]> {
+    const issues: WorkspaceHealthIssue[] = [];
     const workspaceTableColumns =
       await this.databaseStructureService.getWorkspaceTableColumns(
         schemaName,
@@ -63,29 +64,66 @@ export class FieldMetadataHealthService {
           compositeFieldMetadataMap[fieldMetadata.type];
 
         for (const compositeFieldMetadata of compositeFieldMetadataCollection) {
-          await this.healthCheckField(
+          const compositeFieldIssues = await this.healthCheckField(
             tableName,
             workspaceTableColumns,
             compositeFieldMetadata as FieldMetadataEntity,
+            options,
           );
+
+          issues.push(...compositeFieldIssues);
         }
       } else {
-        await this.healthCheckField(
+        const fieldIssues = await this.healthCheckField(
           tableName,
           workspaceTableColumns,
           fieldMetadata,
+          options,
         );
+
+        issues.push(...fieldIssues);
       }
     }
 
-    return this.issues;
+    return issues;
   }
 
   private async healthCheckField(
     tableName: string,
     workspaceTableColumns: WorkspaceTableStructure[],
     fieldMetadata: FieldMetadataEntity,
-  ): Promise<void> {
+    options: WorkspaceHealthOptions,
+  ): Promise<WorkspaceHealthIssue[]> {
+    const issues: WorkspaceHealthIssue[] = [];
+
+    if (options.mode === 'structure' || options.mode === 'all') {
+      const structureIssues = await this.structureFieldCheck(
+        tableName,
+        workspaceTableColumns,
+        fieldMetadata,
+      );
+
+      issues.push(...structureIssues);
+    }
+
+    if (options.mode === 'metadata' || options.mode === 'all') {
+      const metadataIssues = await this.metadataFieldCheck(
+        tableName,
+        fieldMetadata,
+      );
+
+      issues.push(...metadataIssues);
+    }
+
+    return issues;
+  }
+
+  private async structureFieldCheck(
+    tableName: string,
+    workspaceTableColumns: WorkspaceTableStructure[],
+    fieldMetadata: FieldMetadataEntity,
+  ): Promise<WorkspaceHealthIssue[]> {
+    const issues: WorkspaceHealthIssue[] = [];
     const columnName = fieldMetadata.targetColumnMap.value;
     const dataType = this.databaseStructureService.getPostgresDataType(
       fieldMetadata.type,
@@ -96,51 +134,74 @@ export class FieldMetadataHealthService {
       (tableDefinition) => tableDefinition.column_name === columnName,
     );
 
-    if (Object.keys(fieldMetadata.targetColumnMap).length !== 1) {
-      this.issues.push({
-        type: WorkspaceHealthIssueType.COLUMN_CONFLICT,
-        fieldMetadata,
-        columnStructure,
-        message: `Column ${columnName} has more than one target column map, it should only contains "value"`,
-      });
-    }
-
-    if (fieldMetadata.isCustom && !columnName.startsWith('_')) {
-      this.issues.push({
-        type: WorkspaceHealthIssueType.MISSING_COLUMN,
-        fieldMetadata,
-        columnStructure,
-        message: `Column ${columnName} is marked as custom in table ${tableName} but doesn't start with "_"`,
-      });
-
-      return;
-    }
-
     if (!columnStructure) {
-      this.issues.push({
+      issues.push({
         type: WorkspaceHealthIssueType.MISSING_COLUMN,
         fieldMetadata,
         columnStructure,
         message: `Column ${columnName} not found in table ${tableName}`,
       });
 
-      return;
+      return issues;
+    }
+
+    // Check if column data type is the same
+    if (columnStructure.data_type !== dataType) {
+      issues.push({
+        type: WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT,
+        fieldMetadata,
+        columnStructure,
+        message: `Column ${columnName} type is not the same as the field metadata type "${columnStructure.data_type}" !== "${dataType}"`,
+      });
+    }
+
+    if (columnStructure.is_nullable !== isNullable) {
+      issues.push({
+        type: WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT,
+        fieldMetadata,
+        columnStructure,
+        message: `Column ${columnName} is not nullable as expected`,
+      });
+    }
+
+    return issues;
+  }
+
+  private async metadataFieldCheck(
+    tableName: string,
+    fieldMetadata: FieldMetadataEntity,
+  ): Promise<WorkspaceHealthIssue[]> {
+    const issues: WorkspaceHealthIssue[] = [];
+    const columnName = fieldMetadata.targetColumnMap.value;
+
+    if (Object.keys(fieldMetadata.targetColumnMap).length !== 1) {
+      issues.push({
+        type: WorkspaceHealthIssueType.COLUMN_TARGET_COLUMN_MAP_NOT_VALID,
+        fieldMetadata,
+        message: `Column ${columnName} has more than one target column map, it should only contains "value"`,
+      });
+    }
+
+    if (fieldMetadata.isCustom && !columnName.startsWith('_')) {
+      issues.push({
+        type: WorkspaceHealthIssueType.COLUMN_NAME_SHOULD_BE_CUSTOM,
+        fieldMetadata,
+        message: `Column ${columnName} is marked as custom in table ${tableName} but doesn't start with "_"`,
+      });
     }
 
     if (!fieldMetadata.objectMetadataId) {
-      this.issues.push({
-        type: WorkspaceHealthIssueType.COLUMN_CONFLICT,
+      issues.push({
+        type: WorkspaceHealthIssueType.COLUMN_OBJECT_REFERENCE_INVALID,
         fieldMetadata,
-        columnStructure,
         message: `Column ${columnName} doesn't have a valid object metadata id`,
       });
     }
 
     if (!Object.values(FieldMetadataType).includes(fieldMetadata.type)) {
-      this.issues.push({
-        type: WorkspaceHealthIssueType.COLUMN_CONFLICT,
+      issues.push({
+        type: WorkspaceHealthIssueType.COLUMN_TYPE_NOT_VALID,
         fieldMetadata,
-        columnStructure,
         message: `Column ${columnName} doesn't have a valid field metadata type`,
       });
     }
@@ -150,31 +211,13 @@ export class FieldMetadataHealthService {
       !validName(fieldMetadata.name) ||
       !fieldMetadata.label
     ) {
-      this.issues.push({
-        type: WorkspaceHealthIssueType.COLUMN_CONFLICT,
+      issues.push({
+        type: WorkspaceHealthIssueType.COLUMN_NAME_NOT_VALID,
         fieldMetadata,
-        columnStructure,
         message: `Column ${columnName} doesn't have a valid name or label`,
       });
     }
 
-    // Check if column data type is the same
-    if (columnStructure.data_type !== dataType) {
-      this.issues.push({
-        type: WorkspaceHealthIssueType.COLUMN_CONFLICT,
-        fieldMetadata,
-        columnStructure,
-        message: `Column ${columnName} type is not the same as the field metadata type "${columnStructure.data_type}" !== "${dataType}"`,
-      });
-    }
-
-    if (columnStructure.is_nullable !== isNullable) {
-      this.issues.push({
-        type: WorkspaceHealthIssueType.COLUMN_CONFLICT,
-        fieldMetadata,
-        columnStructure,
-        message: `Column ${columnName} is not nullable as expected`,
-      });
-    }
+    return issues;
   }
 }

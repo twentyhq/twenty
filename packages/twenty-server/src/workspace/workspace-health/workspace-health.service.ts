@@ -1,6 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { WorkspaceHealthIssue } from 'src/workspace/workspace-health/interfaces/workspace-health-issue.interface';
+import {
+  WorkspaceHealthMode,
+  WorkspaceHealthOptions,
+} from 'src/workspace/workspace-health/interfaces/workspace-health-options.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
@@ -20,7 +24,10 @@ export class WorkspaceHealthService {
     private readonly fieldMetadataHealthService: FieldMetadataHealthService,
   ) {}
 
-  async healthCheck(workspaceId: string): Promise<void> {
+  async healthCheck(
+    workspaceId: string,
+    options: WorkspaceHealthOptions = { mode: WorkspaceHealthMode.All },
+  ): Promise<WorkspaceHealthIssue[]> {
     const schemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
     const issues: WorkspaceHealthIssue[] = [];
@@ -49,27 +56,26 @@ export class WorkspaceHealthService {
     }
 
     for (const objectMetadata of objectMetadataCollection) {
-      // Check health of the object
-      const objectIssues = await this.objectMetadataHealthService.heathCheck(
+      // Check object metadata health
+      const objectIssues = await this.objectMetadataHealthService.healthCheck(
         schemaName,
         objectMetadata,
+        options,
       );
 
       issues.push(...objectIssues);
 
-      // Check health of the fields
-      const fieldIssues =
-        await this.fieldMetadataHealthService.healthCheckFields(
-          schemaName,
-          objectMetadata.targetTableName,
-          objectMetadata.fields,
-        );
+      // Check fields metadata health
+      const fieldIssues = await this.fieldMetadataHealthService.healthCheck(
+        schemaName,
+        objectMetadata.targetTableName,
+        objectMetadata.fields,
+        options,
+      );
 
       issues.push(...fieldIssues);
     }
 
-    console.log('ISSUES: ', JSON.stringify(issues, null, 2));
-
-    return;
+    return issues;
   }
 }
