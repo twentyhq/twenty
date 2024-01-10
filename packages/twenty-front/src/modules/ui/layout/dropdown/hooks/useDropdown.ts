@@ -6,7 +6,7 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 export const useDropdown = (dropdownId?: string) => {
   const {
     scopeId,
-    dropdownHotkeyState,
+    dropdownHotkeyScopeState,
     dropdownWidthState,
     isDropdownOpenState,
   } = useDropdownStates({
@@ -18,8 +18,9 @@ export const useDropdown = (dropdownId?: string) => {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const [dropdownHotkeyScope, setDropdownHotkeyScope] =
-    useRecoilState(dropdownHotkeyState);
+  const [dropdownHotkeyScope, setDropdownHotkeyScope] = useRecoilState(
+    dropdownHotkeyScopeState,
+  );
 
   const [dropdownWidth, setDropdownWidth] = useRecoilState(dropdownWidthState);
 

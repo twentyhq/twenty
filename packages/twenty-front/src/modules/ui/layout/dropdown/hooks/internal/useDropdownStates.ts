@@ -3,8 +3,6 @@ import { dropdownHotkeyStateScopeMap } from '@/ui/layout/dropdown/states/dropdow
 import { dropdownWidthStateScopeMap } from '@/ui/layout/dropdown/states/dropdownWidthStateScopeMap';
 import { isDropdownOpenStateScopeMap } from '@/ui/layout/dropdown/states/isDropdownOpenStateScopeMap';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { useScopedState } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useScopedState';
-import { getFamilyState } from '@/ui/utilities/recoil-scope/utils/getFamilyState';
 import { getState } from '@/ui/utilities/recoil-scope/utils/getState';
 
 type UseDropdownStatesProps = {
@@ -21,7 +19,7 @@ export const useDropdownStates = ({
 
   return {
     scopeId,
-    dropdownHotkeyState: getState(dropdownHotkeyStateScopeMap, scopeId),
+    dropdownHotkeyScopeState: getState(dropdownHotkeyStateScopeMap, scopeId),
     dropdownWidthState: getState(dropdownWidthStateScopeMap, scopeId),
     isDropdownOpenState: getState(isDropdownOpenStateScopeMap, scopeId),
   };
