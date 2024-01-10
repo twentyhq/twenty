@@ -7,6 +7,7 @@ import { loggerModuleFactory } from 'src/integrations/logger/logger.module-facto
 import { JobsModule } from 'src/integrations/message-queue/jobs.module';
 import { MessageQueueModule } from 'src/integrations/message-queue/message-queue.module';
 import { messageQueueModuleFactory } from 'src/integrations/message-queue/message-queue.module-factory';
+import { IntegrationsModule } from 'src/integrations/integrations.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { messageQueueModuleFactory } from 'src/integrations/message-queue/messag
       inject: [EnvironmentService],
     }),
     JobsModule,
+    IntegrationsModule,
   ],
 })
 export class QueueWorkerModule {}

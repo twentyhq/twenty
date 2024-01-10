@@ -11,9 +11,6 @@ import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FetchWorkspaceMessagesModule } from 'src/workspace/messaging/services/fetch-workspace-messages.module';
 import { EmailJob } from 'src/integrations/email/email.job';
-import { EmailModule } from 'src/integrations/email/email.module';
-import { emailModuleFactory } from 'src/integrations/email/email.module-factory';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 @Module({
   imports: [
@@ -23,10 +20,6 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
     HttpModule,
     TypeORMModule,
     FetchWorkspaceMessagesModule,
-    EmailModule.forRoot({
-      useFactory: emailModuleFactory,
-      inject: [EnvironmentService],
-    }),
   ],
   providers: [
     {
