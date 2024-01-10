@@ -18,7 +18,11 @@ import { ApiKeyTokenInput } from 'src/core/auth/dto/api-key-token.input';
 import { TransientToken } from 'src/core/auth/dto/transient-token.entity';
 import { UserService } from 'src/core/user/services/user.service';
 
-import { ApiKeyToken, AuthTokens } from './dto/token.entity';
+import {
+  ApiKeyToken,
+  AuthTokens,
+  PasswordResetToken,
+} from './dto/token.entity';
 import { TokenService } from './services/token.service';
 import { RefreshTokenInput } from './dto/refresh-token.input';
 import { Verify } from './dto/verify.entity';
@@ -149,5 +153,11 @@ export class AuthResolver {
       args.apiKeyId,
       args.expiresAt,
     );
+  }
+
+  @Mutation(() => PasswordResetToken)
+  async generatePasswordResetToken(): Promise<PasswordResetToken> {
+    // TODO remove this hard-coded email and fetch user from Auth guard.
+    return this.tokenService.generatePasswordResetToken('tim@apple.dev');
   }
 }

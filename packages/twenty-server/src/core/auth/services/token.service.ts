@@ -9,7 +9,9 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { addMilliseconds } from 'date-fns';
+import crypto from 'crypto';
+
+import { addMilliseconds, isAfter } from 'date-fns';
 import ms from 'ms';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
@@ -21,7 +23,11 @@ import {
   JwtPayload,
 } from 'src/core/auth/strategies/jwt.auth.strategy';
 import { assert } from 'src/utils/assert';
-import { ApiKeyToken, AuthToken } from 'src/core/auth/dto/token.entity';
+import {
+  ApiKeyToken,
+  AuthToken,
+  PasswordResetToken,
+} from 'src/core/auth/dto/token.entity';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import { User } from 'src/core/user/user.entity';
 import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
@@ -305,5 +311,44 @@ export class TokenService {
         throw new UnprocessableEntityException();
       }
     }
+  }
+
+  async generatePasswordResetToken(email: string): Promise<PasswordResetToken> {
+    const user = await this.userRepository.findOneBy({
+      email,
+    });
+
+    assert(user, "This user doesn't exist", NotFoundException);
+
+    if (
+      user.passwordResetToken &&
+      user.passwordResetTokenExpiresAt &&
+      isAfter(user.passwordResetTokenExpiresAt, new Date())
+    ) {
+      return {
+        passwordResetToken: user.passwordResetToken,
+        passwordResetTokenExpiresAt: user.passwordResetTokenExpiresAt,
+      };
+    }
+    const expiresIn = this.environmentService.getPasswordResetTokenExpiresIn();
+
+    assert(expiresIn, '', InternalServerErrorException);
+
+    const plainResetToken = crypto.randomBytes(32).toString('hex');
+    const hashedResetToken = crypto
+      .createHash('sha256')
+      .update(plainResetToken)
+      .digest('hex');
+    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
+
+    await this.userRepository.update(user.id, {
+      passwordResetToken: hashedResetToken,
+      passwordResetTokenExpiresAt: expiresAt,
+    });
+
+    return {
+      passwordResetToken: plainResetToken,
+      passwordResetTokenExpiresAt: expiresAt,
+    };
   }
 }
