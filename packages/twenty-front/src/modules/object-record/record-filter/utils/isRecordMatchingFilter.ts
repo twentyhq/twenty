@@ -7,7 +7,6 @@ import {
   DateFilter,
   FloatFilter,
   FullNameFilter,
-  LeafObjectRecordFilter,
   NotObjectRecordFilter,
   ObjectRecordQueryFilter,
   OrObjectRecordFilter,
@@ -24,6 +23,18 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isEmptyObject } from '~/utils/isEmptyObject';
 
+const isAndFilter = (
+  filter: ObjectRecordQueryFilter,
+): filter is AndObjectRecordFilter => 'and' in filter && !!filter.and;
+
+const isOrFilter = (
+  filter: ObjectRecordQueryFilter,
+): filter is OrObjectRecordFilter => 'or' in filter && !!filter.or;
+
+const isNotFilter = (
+  filter: ObjectRecordQueryFilter,
+): filter is NotObjectRecordFilter => 'not' in filter && !!filter.not;
+
 export const isRecordMatchingFilter = ({
   record,
   filter,
@@ -32,238 +43,173 @@ export const isRecordMatchingFilter = ({
   record: any;
   filter: ObjectRecordQueryFilter;
   objectMetadataItem: ObjectMetadataItem;
-}) => {
+}): boolean => {
   if (Object.keys(filter).length === 0) {
     return true;
   }
 
-  const currentLevelFilterMatches: boolean[] = [];
+  if (isAndFilter(filter)) {
+    const filterValue = filter.and;
 
-  // We consider all the keys at the same level as an "and"
-  for (const filterKey in filter) {
-    if (filterKey === 'and') {
-      const filterValue = (filter as AndObjectRecordFilter).and;
+    if (!Array.isArray(filterValue)) {
+      throw new Error(
+        'Unexpected value for "and" filter : ' + JSON.stringify(filterValue),
+      );
+    }
 
-      if (!Array.isArray(filterValue)) {
-        throw new Error(
-          'Unexpected value for "and" filter : ' + JSON.stringify(filterValue),
-        );
-      }
-
-      if (filterValue.length === 0) {
-        currentLevelFilterMatches.push(true);
-        continue;
-      }
-
-      const recordIsMatchingAndFilters = filterValue.every((andFilter) =>
+    return (
+      filterValue.length === 0 ||
+      filterValue.every((andFilter) =>
         isRecordMatchingFilter({
           record,
           filter: andFilter,
           objectMetadataItem,
         }),
-      );
+      )
+    );
+  }
 
-      currentLevelFilterMatches.push(recordIsMatchingAndFilters);
-    } else if (filterKey === 'or') {
-      const filterValue = (filter as OrObjectRecordFilter).or;
+  if (isOrFilter(filter)) {
+    const filterValue = filter.or;
 
-      if (Array.isArray(filterValue)) {
-        if (filterValue.length === 0) {
-          currentLevelFilterMatches.push(true);
-          continue;
-        }
-
-        const recordIsMatchingOrFilters = filterValue.some((orFilter) =>
+    if (Array.isArray(filterValue)) {
+      return (
+        filterValue.length === 0 ||
+        filterValue.some((orFilter) =>
           isRecordMatchingFilter({
             record,
             filter: orFilter,
             objectMetadataItem,
           }),
-        );
+        )
+      );
+    }
 
-        currentLevelFilterMatches.push(recordIsMatchingOrFilters);
-      } else if (isObject(filterValue)) {
-        // The API considers "or" with an object as an "and"
-        const recordIsMatchingOrFilters = isRecordMatchingFilter({
-          record,
-          filter: filterValue,
-          objectMetadataItem,
-        });
-
-        currentLevelFilterMatches.push(recordIsMatchingOrFilters);
-      } else {
-        throw new Error('Unexpected value for "or" filter : ' + filterValue);
-      }
-    } else if (filterKey === 'not') {
-      const filterValue = (filter as NotObjectRecordFilter).not;
-
-      if (!isDefined(filterValue)) {
-        throw new Error('Unexpected value for "not" filter : ' + filterValue);
-      }
-
-      if (isEmptyObject(filterValue)) {
-        currentLevelFilterMatches.push(true);
-        continue;
-      }
-
-      const recordIsMatchingNotFilters = !isRecordMatchingFilter({
+    if (isObject(filterValue)) {
+      // The API considers "or" with an object as an "and"
+      return isRecordMatchingFilter({
         record,
         filter: filterValue,
         objectMetadataItem,
       });
-
-      currentLevelFilterMatches.push(recordIsMatchingNotFilters);
-    } else {
-      const filterValue = (filter as LeafObjectRecordFilter)[filterKey];
-
-      if (!isDefined(filterValue)) {
-        throw new Error(
-          'Unexpected value for filter key "' +
-            filterKey +
-            '" : ' +
-            filterValue,
-        );
-      }
-
-      if (isEmptyObject(filterValue)) {
-        currentLevelFilterMatches.push(true);
-
-        continue;
-      }
-
-      const objectMetadataField = objectMetadataItem.fields.find(
-        (field) => field.name === filterKey,
-      );
-
-      if (!isDefined(objectMetadataField)) {
-        throw new Error(
-          'Field metadata item "' +
-            filterKey +
-            '" not found for object metadata item ' +
-            objectMetadataItem.nameSingular,
-        );
-      }
-
-      switch (objectMetadataField.type) {
-        case FieldMetadataType.Email:
-        case FieldMetadataType.Phone:
-        case FieldMetadataType.Text: {
-          const stringFilter = filterValue as StringFilter;
-
-          currentLevelFilterMatches.push(
-            isMatchingStringFilter({
-              stringFilter,
-              value: record[filterKey],
-            }),
-          );
-          break;
-        }
-        case FieldMetadataType.Link: {
-          const urlFilter = filterValue as URLFilter;
-
-          if (urlFilter.url !== undefined) {
-            currentLevelFilterMatches.push(
-              isMatchingStringFilter({
-                stringFilter: urlFilter.url,
-                value: record[filterKey].url,
-              }),
-            );
-          }
-
-          if (urlFilter.label !== undefined) {
-            currentLevelFilterMatches.push(
-              isMatchingStringFilter({
-                stringFilter: urlFilter.label,
-                value: record[filterKey].label,
-              }),
-            );
-          }
-          break;
-        }
-        case FieldMetadataType.FullName: {
-          const fullNameFilter = filterValue as FullNameFilter;
-
-          if (fullNameFilter.firstName !== undefined) {
-            currentLevelFilterMatches.push(
-              isMatchingStringFilter({
-                stringFilter: fullNameFilter.firstName,
-                value: record[filterKey].firstName,
-              }),
-            );
-          }
-
-          if (fullNameFilter.lastName !== undefined) {
-            currentLevelFilterMatches.push(
-              isMatchingStringFilter({
-                stringFilter: fullNameFilter.lastName,
-                value: record[filterKey].lastName,
-              }),
-            );
-          }
-          break;
-        }
-        case FieldMetadataType.DateTime: {
-          const dateFilter = filterValue as DateFilter;
-
-          currentLevelFilterMatches.push(
-            isMatchingDateFilter({
-              dateFilter,
-              value: record[filterKey],
-            }),
-          );
-          break;
-        }
-        case FieldMetadataType.Number:
-        case FieldMetadataType.Numeric: {
-          const numberFilter = filterValue as FloatFilter;
-
-          currentLevelFilterMatches.push(
-            isMatchingFloatFilter({
-              floatFilter: numberFilter,
-              value: record[filterKey],
-            }),
-          );
-          break;
-        }
-        case FieldMetadataType.Uuid: {
-          const uuidFilter = filterValue as UUIDFilter;
-
-          currentLevelFilterMatches.push(
-            isMatchingUUIDFilter({
-              uuidFilter,
-              value: record[filterKey],
-            }),
-          );
-          break;
-        }
-        case FieldMetadataType.Boolean: {
-          const booleanFilter = filterValue as BooleanFilter;
-
-          currentLevelFilterMatches.push(
-            isMatchingBooleanFilter({
-              booleanFilter,
-              value: record[filterKey],
-            }),
-          );
-          break;
-        }
-        case FieldMetadataType.Relation: {
-          throw new Error(
-            `Not implemented yet, use UUID filter instead on the corredponding "${filterKey}Id" field`,
-          );
-        }
-        case FieldMetadataType.Currency:
-        case FieldMetadataType.MultiSelect:
-        case FieldMetadataType.Select:
-        case FieldMetadataType.Probability:
-        case FieldMetadataType.Rating: {
-          throw new Error('Not implemented yet');
-        }
-      }
     }
+
+    throw new Error('Unexpected value for "or" filter : ' + filterValue);
   }
 
-  return currentLevelFilterMatches.length > 0
-    ? currentLevelFilterMatches.every((match) => !!match)
-    : false;
+  if (isNotFilter(filter)) {
+    const filterValue = filter.not;
+
+    if (!isDefined(filterValue)) {
+      throw new Error('Unexpected value for "not" filter : ' + filterValue);
+    }
+
+    return (
+      isEmptyObject(filterValue) ||
+      !isRecordMatchingFilter({
+        record,
+        filter: filterValue,
+        objectMetadataItem,
+      })
+    );
+  }
+
+  return Object.entries(filter).every(([filterKey, filterValue]) => {
+    if (!isDefined(filterValue)) {
+      throw new Error(
+        'Unexpected value for filter key "' + filterKey + '" : ' + filterValue,
+      );
+    }
+
+    if (isEmptyObject(filterValue)) return true;
+
+    const objectMetadataField = objectMetadataItem.fields.find(
+      (field) => field.name === filterKey,
+    );
+
+    if (!isDefined(objectMetadataField)) {
+      throw new Error(
+        'Field metadata item "' +
+          filterKey +
+          '" not found for object metadata item ' +
+          objectMetadataItem.nameSingular,
+      );
+    }
+
+    switch (objectMetadataField.type) {
+      case FieldMetadataType.Email:
+      case FieldMetadataType.Phone:
+      case FieldMetadataType.Text: {
+        return isMatchingStringFilter({
+          stringFilter: filterValue as StringFilter,
+          value: record[filterKey],
+        });
+      }
+      case FieldMetadataType.Link: {
+        const urlFilter = filterValue as URLFilter;
+
+        return (
+          (urlFilter.url === undefined ||
+            isMatchingStringFilter({
+              stringFilter: urlFilter.url,
+              value: record[filterKey].url,
+            })) &&
+          (urlFilter.label === undefined ||
+            isMatchingStringFilter({
+              stringFilter: urlFilter.label,
+              value: record[filterKey].label,
+            }))
+        );
+      }
+      case FieldMetadataType.FullName: {
+        const fullNameFilter = filterValue as FullNameFilter;
+
+        return (
+          (fullNameFilter.firstName === undefined ||
+            isMatchingStringFilter({
+              stringFilter: fullNameFilter.firstName,
+              value: record[filterKey].firstName,
+            })) &&
+          (fullNameFilter.lastName === undefined ||
+            isMatchingStringFilter({
+              stringFilter: fullNameFilter.lastName,
+              value: record[filterKey].lastName,
+            }))
+        );
+      }
+      case FieldMetadataType.DateTime: {
+        return isMatchingDateFilter({
+          dateFilter: filterValue as DateFilter,
+          value: record[filterKey],
+        });
+      }
+      case FieldMetadataType.Number:
+      case FieldMetadataType.Numeric: {
+        return isMatchingFloatFilter({
+          floatFilter: filterValue as FloatFilter,
+          value: record[filterKey],
+        });
+      }
+      case FieldMetadataType.Uuid: {
+        return isMatchingUUIDFilter({
+          uuidFilter: filterValue as UUIDFilter,
+          value: record[filterKey],
+        });
+      }
+      case FieldMetadataType.Boolean: {
+        return isMatchingBooleanFilter({
+          booleanFilter: filterValue as BooleanFilter,
+          value: record[filterKey],
+        });
+      }
+      case FieldMetadataType.Relation: {
+        throw new Error(
+          `Not implemented yet, use UUID filter instead on the corredponding "${filterKey}Id" field`,
+        );
+      }
+      default: {
+        throw new Error('Not implemented yet');
+      }
+    }
+  });
 };
