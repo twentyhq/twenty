@@ -10,7 +10,7 @@ const callToActionStyle = {
   background: emailTheme.background.radialGradient,
   boxShadow: `0px 2px 4px 0px ${emailTheme.background.transparent.light}, 0px 0px 4px 0px ${emailTheme.background.transparent.medium}`,
   color: emailTheme.font.colors.inverted,
-  fontSize: '13px',
+  fontSize: emailTheme.font.size.md,
   fontWeight: emailTheme.font.weight.bold,
 };
 

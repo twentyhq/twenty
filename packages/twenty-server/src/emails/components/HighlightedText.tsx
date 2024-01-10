@@ -14,7 +14,7 @@ const highlightedStyle = {
   background: emailTheme.background.colors.highlight,
   padding: '4px 8px',
   margin: 0,
-  fontSize: '16px',
+  fontSize: emailTheme.font.size.lg,
   fontWeight: emailTheme.font.weight.bold,
   color: emailTheme.font.colors.highlighted,
 };

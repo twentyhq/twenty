@@ -4,9 +4,9 @@ import * as React from 'react';
 import { emailTheme } from 'src/emails/common-style';
 
 const mainTextStyle = {
-  fontSize: '13px',
+  fontSize: emailTheme.font.size.md,
   fontWeight: emailTheme.font.weight.regular,
-  color: emailTheme.font.colors.inverted,
+  color: emailTheme.font.colors.primary,
 };
 
 export const MainText = ({ children }) => {

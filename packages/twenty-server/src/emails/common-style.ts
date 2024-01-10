@@ -1,5 +1,3 @@
-import { rgba } from 'twenty-front/src/modules/ui/theme/constants/colors';
-
 const grayScale = {
   gray100: '#000000',
   gray90: '#141414',
@@ -33,14 +31,18 @@ export const emailTheme = {
       regular: 400,
       bold: 600,
     },
+    size: {
+      md: '13px',
+      lg: '16px',
+    },
   },
   background: {
     colors: { highlight: grayScale.gray15 },
     radialGradient: `radial-gradient(50% 62.62% at 50% 0%, #505050 0%, ${grayScale.gray60} 100%)`,
     radialGradientHover: `radial-gradient(76.32% 95.59% at 50% 0%, #505050 0%, ${grayScale.gray60} 100%)`,
     transparent: {
-      medium: rgba(grayScale.gray80, 0.08),
-      light: rgba(grayScale.gray0, 0.04),
+      medium: 'rgba(0, 0, 0, 0.08)',
+      light: 'rgba(0, 0, 0, 0.04)',
     },
   },
 };
