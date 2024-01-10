@@ -106,6 +106,7 @@ export {
   IconTextSize,
   IconTimelineEvent,
   IconTrash,
+  IconUnlink,
   IconUpload,
   IconUser,
   IconUserCircle,
