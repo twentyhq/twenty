@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 
 import {
   WorkspaceHealthIssue,
@@ -7,9 +11,6 @@ import {
 import { WorkspaceTableStructure } from 'src/workspace/workspace-health/interfaces/workspace-table-definition.interface';
 import { WorkspaceHealthOptions } from 'src/workspace/workspace-health/interfaces/workspace-health-options.interface';
 
-import { currencyFields } from 'src/metadata/field-metadata/composite-types/currency.composite-type';
-import { fullNameFields } from 'src/metadata/field-metadata/composite-types/full-name.composite-type';
-import { linkFields } from 'src/metadata/field-metadata/composite-types/link.composite-type';
 import {
   FieldMetadataEntity,
   FieldMetadataType,
@@ -17,6 +18,7 @@ import {
 import { isCompositeFieldMetadataType } from 'src/metadata/field-metadata/utils/is-composite-field-metadata-type.util';
 import { DatabaseStructureService } from 'src/workspace/workspace-health/services/database-structure.service';
 import { validName } from 'src/workspace/workspace-health/utils/valid-name.util';
+import { compositeDefinitions } from 'src/metadata/field-metadata/composite-types';
 
 @Injectable()
 export class FieldMetadataHealthService {
@@ -54,14 +56,11 @@ export class FieldMetadataHealthService {
       }
 
       if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-        const compositeFieldMetadataMap = {
-          [FieldMetadataType.CURRENCY]: currencyFields(fieldMetadata),
-          [FieldMetadataType.FULL_NAME]: fullNameFields(fieldMetadata),
-          [FieldMetadataType.LINK]: linkFields(fieldMetadata),
-        };
-
         const compositeFieldMetadataCollection =
-          compositeFieldMetadataMap[fieldMetadata.type];
+          compositeDefinitions.get(fieldMetadata.type)?.(fieldMetadata) ?? [];
+        const targetColumnMapIssues = this.targetColumnMapCheck(fieldMetadata);
+
+        issues.push(...targetColumnMapIssues);
 
         for (const compositeFieldMetadata of compositeFieldMetadataCollection) {
           const compositeFieldIssues = await this.healthCheckField(
@@ -118,11 +117,11 @@ export class FieldMetadataHealthService {
     return issues;
   }
 
-  private async structureFieldCheck(
+  private structureFieldCheck(
     tableName: string,
     workspaceTableColumns: WorkspaceTableStructure[],
     fieldMetadata: FieldMetadataEntity,
-  ): Promise<WorkspaceHealthIssue[]> {
+  ): WorkspaceHealthIssue[] {
     const issues: WorkspaceHealthIssue[] = [];
     const columnName = fieldMetadata.targetColumnMap.value;
     const dataType = this.databaseStructureService.getPostgresDataType(
@@ -182,12 +181,15 @@ export class FieldMetadataHealthService {
     return issues;
   }
 
-  private async metadataFieldCheck(
+  private metadataFieldCheck(
     tableName: string,
     fieldMetadata: FieldMetadataEntity,
-  ): Promise<WorkspaceHealthIssue[]> {
+  ): WorkspaceHealthIssue[] {
     const issues: WorkspaceHealthIssue[] = [];
     const columnName = fieldMetadata.targetColumnMap.value;
+    const targetColumnMapIssues = this.targetColumnMapCheck(fieldMetadata);
+
+    issues.push(...targetColumnMapIssues);
 
     if (Object.keys(fieldMetadata.targetColumnMap).length !== 1) {
       issues.push({
@@ -231,6 +233,56 @@ export class FieldMetadataHealthService {
         fieldMetadata,
         message: `Column ${columnName} doesn't have a valid name or label`,
       });
+    }
+
+    return issues;
+  }
+
+  private targetColumnMapCheck(
+    fieldMetadata: FieldMetadataEntity,
+  ): WorkspaceHealthIssue[] {
+    const issues: WorkspaceHealthIssue[] = [];
+
+    if (!fieldMetadata.targetColumnMap) {
+      issues.push({
+        type: WorkspaceHealthIssueType.COLUMN_TARGET_COLUMN_MAP_NOT_VALID,
+        fieldMetadata,
+        message: `Column targetColumnMap of ${fieldMetadata.name} is empty`,
+      });
+    }
+
+    if (!isCompositeFieldMetadataType(fieldMetadata.type)) {
+      if (
+        Object.keys(fieldMetadata.targetColumnMap).length !== 1 &&
+        !('value' in fieldMetadata.targetColumnMap)
+      ) {
+        issues.push({
+          type: WorkspaceHealthIssueType.COLUMN_TARGET_COLUMN_MAP_NOT_VALID,
+          fieldMetadata,
+          message: `Column targetColumnMap "${fieldMetadata.targetColumnMap}" is not valid or well structured`,
+        });
+      }
+
+      return issues;
+    }
+
+    const subFields =
+      compositeDefinitions.get(fieldMetadata.type)?.(fieldMetadata) ?? [];
+
+    if (subFields.length === 0) {
+      throw new InternalServerErrorException(
+        `The composite field type ${fieldMetadata.type} doesn't have any sub fields, it seems this one is not implemented in the composite definitions map`,
+      );
+    }
+
+    for (const subField of subFields) {
+      if (!fieldMetadata.targetColumnMap[subField.name]) {
+        issues.push({
+          type: WorkspaceHealthIssueType.COLUMN_TARGET_COLUMN_MAP_NOT_VALID,
+          fieldMetadata,
+          message: `Column targetColumnMap for composite type ${fieldMetadata.type} is not well structured "${fieldMetadata.targetColumnMap}"`,
+        });
+      }
     }
 
     return issues;
