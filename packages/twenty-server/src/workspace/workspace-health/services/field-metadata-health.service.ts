@@ -140,7 +140,7 @@ export class FieldMetadataHealthService {
       fieldMetadata.type,
       fieldMetadata.defaultValue,
     );
-    const isNullable = fieldMetadata.isNullable ? 'YES' : 'NO';
+    const isNullable = fieldMetadata.isNullable ? 'TRUE' : 'FALSE';
     // Check if column exist in database
     const columnStructure = workspaceTableColumns.find(
       (tableDefinition) => tableDefinition.columnName === columnName,

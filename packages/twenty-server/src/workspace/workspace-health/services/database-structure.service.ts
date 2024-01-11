@@ -30,8 +30,8 @@ export class DatabaseStructureService {
         c.is_nullable as "isNullable",
         c.column_default as "columnDefault",
         CASE
-            WHEN pk.constraint_type = 'PRIMARY KEY' THEN 'YES'
-            ELSE 'NO'
+            WHEN pk.constraint_type = 'PRIMARY KEY' THEN 'TRUE'
+            ELSE 'FALSE'
         END as "isPrimaryKey"
       FROM
           information_schema.columns c
