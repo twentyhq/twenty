@@ -123,7 +123,7 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
       this.emailService.send({
         to: workspaceUser.email,
         from: `Félix from Twenty <felix@twenty.com>`,
-        subject: 'Inactive workspace',
+        subject: 'Action Needed to Prevent Workspace Deletion',
         html,
         text,
       });
