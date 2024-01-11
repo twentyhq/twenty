@@ -34,7 +34,7 @@ export class GmailPartialSyncService {
 
     if (!lastSyncHistoryId) {
       // Fall back to full sync
-      await this.messagingProducer.enqueueFetchAllMessagesFromConnectedAccount(
+      await this.messagingProducer.enqueueGmailFullSync(
         { workspaceId, connectedAccountId: connectedAccountId },
         `${workspaceId}-${connectedAccount.id}`,
       );

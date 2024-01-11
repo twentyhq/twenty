@@ -215,6 +215,32 @@ export class Utils {
     };
   }
 
+  public async getConnectedAccountsFromWorkspaceId(
+    workspaceId: string,
+  ): Promise<any[]> {
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        workspaceId,
+      );
+
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+
+    if (!workspaceDataSource) {
+      throw new Error('No workspace data source found');
+    }
+
+    const connectedAccounts = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail'`,
+    );
+
+    if (!connectedAccounts || connectedAccounts.length === 0) {
+      throw new Error('No connected account found');
+    }
+
+    return connectedAccounts;
+  }
+
   public async getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
     workspaceId: string,
     connectedAccountId: string,
