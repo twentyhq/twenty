@@ -2,6 +2,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import {
   BadRequestException,
   ForbiddenException,
+  NotFoundException,
   UseGuards,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,6 +20,7 @@ import { ValidPasswordResetToken } from 'src/core/auth/dto/valid-password-reset-
 import { TransientToken } from 'src/core/auth/dto/transient-token.entity';
 import { UserService } from 'src/core/user/services/user.service';
 import { ValidatePasswordResetToken } from 'src/core/auth/dto/validate-password-reset-token.input';
+import { UpdatePasswordInput } from 'src/core/auth/dto/update-password.input';
 
 import {
   ApiKeyToken,
@@ -164,10 +166,24 @@ export class AuthResolver {
     return this.tokenService.generatePasswordResetToken('tim@apple.dev');
   }
 
-  // @Mutation(() => LoginToken)
-  // async updatePasswordViaResetToken(
-  //   @Args() args: UpdatePasswordInput,
-  // ): Promise<LoginToken> {}
+  @Mutation(() => LoginToken)
+  async updatePasswordViaResetToken(
+    @Args() args: UpdatePasswordInput,
+  ): Promise<LoginToken> {
+    const { user } = await this.tokenService.validatePasswordResetToken(
+      args.passwordResetToken,
+    );
+
+    assert(user.id, "User doesn't exist", NotFoundException);
+
+    await this.authService.updatePassword(user.id, args.newPassword);
+
+    const loginToken = await this.tokenService.generateLoginToken(user.id);
+
+    await this.tokenService.invalidatePasswordResetToken(user.id);
+
+    return { loginToken };
+  }
 
   @Query(() => ValidPasswordResetToken)
   async validatePasswordResetToken(

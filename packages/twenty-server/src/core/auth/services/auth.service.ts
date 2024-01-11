@@ -241,4 +241,15 @@ export class AuthService {
       },
     };
   }
+
+  async updatePassword(userId: string, newPassword: string) {
+    const isPasswordValid = PASSWORD_REGEX.test(newPassword);
+
+    assert(isPasswordValid, 'Password too weak', BadRequestException);
+    const passwordHash = await hashPassword(newPassword);
+
+    return await this.userRepository.update(userId, {
+      passwordHash,
+    });
+  }
 }

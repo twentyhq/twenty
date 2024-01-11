@@ -12,7 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
-import { addMilliseconds, isFuture } from 'date-fns';
+import { addMilliseconds, differenceInMilliseconds, isFuture } from 'date-fns';
 import ms from 'ms';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
@@ -333,9 +333,15 @@ export class TokenService {
     ) {
       assert(
         false,
-        `Token has been already generated. Please wait for ${ms(ms(expiresIn), {
-          long: true,
-        })}`,
+        `Token has been already generated. Please wait for ${ms(
+          differenceInMilliseconds(
+            user.passwordResetTokenExpiresAt,
+            new Date(),
+          ),
+          {
+            long: true,
+          },
+        )}`,
         MethodNotAllowedException,
       );
     }
@@ -381,6 +387,19 @@ export class TokenService {
       NotFoundException,
     );
 
-    return { isValid: true };
+    return { user };
+  }
+
+  async invalidatePasswordResetToken(userId: string) {
+    const user = await this.userRepository.findOneBy({
+      id: userId,
+    });
+
+    assert(user, "This user doesn't exist", NotFoundException);
+
+    return this.userRepository.update(user.id, {
+      passwordResetToken: undefined,
+      passwordResetTokenExpiresAt: undefined,
+    });
   }
 }

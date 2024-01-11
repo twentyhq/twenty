@@ -8,4 +8,9 @@ export class UpdatePasswordInput {
   @IsNotEmpty()
   @IsString()
   passwordResetToken: string;
+
+  @Field(() => String)
+  @IsNotEmpty()
+  @IsString()
+  newPassword: string;
 }
