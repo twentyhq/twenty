@@ -37,7 +37,7 @@ import { parseResult } from 'src/workspace/workspace-query-runner/utils/parse-re
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 
-import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-optionts.interface';
+import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
   PGGraphQLMutation,
   PGGraphQLResult,
