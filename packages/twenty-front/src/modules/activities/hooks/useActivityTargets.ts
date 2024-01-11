@@ -20,6 +20,7 @@ export const useActivityTargets = ({
         eq: targetableObject.id,
       },
     },
+    skip: !targetableObject.id,
   });
 
   return {
