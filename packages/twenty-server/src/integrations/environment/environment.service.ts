@@ -244,4 +244,16 @@ export class EnvironmentService {
   getOpenRouterApiKey(): string | undefined {
     return this.configService.get<string | undefined>('OPENROUTER_API_KEY');
   }
+
+  getInactiveDaysBeforeEmail(): number | undefined {
+    return this.configService.get<number | undefined>(
+      'INACTIVE_DAYS_BEFORE_EMAIL',
+    );
+  }
+
+  getInactiveDaysBeforeDelete(): number | undefined {
+    return this.configService.get<number | undefined>(
+      'INACTIVE_DAYS_BEFORE_DELETE',
+    );
+  }
 }

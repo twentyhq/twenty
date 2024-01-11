@@ -17,6 +17,7 @@ import { CastToStringArray } from 'src/integrations/environment/decorators/cast-
 import { ExceptionHandlerDriver } from 'src/integrations/exception-handler/interfaces';
 import { StorageDriverType } from 'src/integrations/file-storage/interfaces';
 import { LoggerDriverType } from 'src/integrations/logger/interfaces';
+import { IsStrictlyLowerThan } from 'src/integrations/environment/decorators/is-strictly-lower-than.decorator';
 
 import { IsDuration } from './decorators/is-duration.decorator';
 import { AwsRegion } from './interfaces/aws-region.interface';
@@ -170,6 +171,21 @@ export class EnvironmentVariables {
   )
   @IsString()
   SENTRY_DSN?: string;
+
+  @CastToPositiveNumber()
+  @IsNumber()
+  @ValidateIf((env) => env.INACTIVE_DAYS_BEFORE_DELETE > 0)
+  @IsStrictlyLowerThan('INACTIVE_DAYS_BEFORE_DELETE', {
+    message:
+      '"INACTIVE_DAYS_BEFORE_EMAIL" should be strictly lower that "INACTIVE_DAYS_BEFORE_DELETE"',
+  })
+  @ValidateIf((env) => env.INACTIVE_DAYS_BEFORE_DELETE > 0)
+  INACTIVE_DAYS_BEFORE_EMAIL: number;
+
+  @CastToPositiveNumber()
+  @IsNumber()
+  @ValidateIf((env) => env.INACTIVE_DAYS_BEFORE_EMAIL > 0)
+  INACTIVE_DAYS_BEFORE_DELETE: number;
 }
 
 export const validate = (config: Record<string, unknown>) => {

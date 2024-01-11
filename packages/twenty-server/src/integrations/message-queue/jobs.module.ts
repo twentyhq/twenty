@@ -14,6 +14,7 @@ import { FetchWorkspaceMessagesModule } from 'src/workspace/messaging/services/f
 import { EmailSenderJob } from 'src/integrations/email/email-sender.job';
 import { UserModule } from 'src/core/user/user.module';
 import { WorkspaceModule } from 'src/core/workspace/workspace.module';
+import { EnvironmentModule } from 'src/integrations/environment/environment.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { WorkspaceModule } from 'src/core/workspace/workspace.module';
     FetchWorkspaceMessagesModule,
     UserModule,
     WorkspaceModule,
+    EnvironmentModule,
   ],
   providers: [
     {

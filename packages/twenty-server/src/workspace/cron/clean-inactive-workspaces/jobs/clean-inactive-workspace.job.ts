@@ -12,10 +12,9 @@ import { UserService } from 'src/core/user/services/user.service';
 import { EmailService } from 'src/integrations/email/email.service';
 import CleanInactiveWorkspaceEmail from 'src/workspace/cron/clean-inactive-workspaces/email/clean-inactive-workspaces.email';
 import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
-const INACTIVE_DAYS_BEFORE_EMAIL = 0;
-const INACTIVE_DAYS_BEFORE_DELETE = 6;
 const MAIL_FROM = 'felix@twenty.com';
 const FEATURE_FLAGS = [
   '6abf1b14-d85d-422d-b7f3-b2187cc22806',
@@ -25,6 +24,8 @@ const FEATURE_FLAGS = [
 @Injectable()
 export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
   private readonly logger = new Logger(CleanInactiveWorkspaceJob.name);
+  private readonly inactiveDaysBeforeDelete;
+  private readonly inactiveDaysBeforeEmail;
 
   constructor(
     private readonly dataSourceService: DataSourceService,
@@ -33,7 +34,13 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
     private readonly userService: UserService,
     private readonly emailService: EmailService,
     private readonly workspaceService: WorkspaceService,
-  ) {}
+    private readonly environmentService: EnvironmentService,
+  ) {
+    this.inactiveDaysBeforeDelete =
+      this.environmentService.getInactiveDaysBeforeDelete();
+    this.inactiveDaysBeforeEmail =
+      this.environmentService.getInactiveDaysBeforeEmail();
+  }
 
   async getMaxUpdatedAt(
     dataSource: DataSourceEntity,
@@ -90,7 +97,7 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
     workspaceUsers.forEach((workspaceUser) => {
       const emailData = {
         title: 'Inactive Workspace 😴',
-        daysLeft: INACTIVE_DAYS_BEFORE_DELETE - daysSinceInactive,
+        daysLeft: this.inactiveDaysBeforeDelete - daysSinceInactive,
         userName: `${workspaceUser.nameFirstName} ${workspaceUser.nameLastName}`,
         workspaceDisplayName: `${displayName}`,
       };
@@ -129,15 +136,22 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
       (new Date().getTime() - maxUpdatedAt.getTime()) / MILLISECONDS_IN_ONE_DAY,
     );
 
-    if (daysSinceInactive > INACTIVE_DAYS_BEFORE_DELETE) {
+    if (daysSinceInactive > this.inactiveDaysBeforeDelete) {
       await this.deleteWorkspace(dataSource, daysSinceInactive);
-    } else if (daysSinceInactive > INACTIVE_DAYS_BEFORE_EMAIL) {
+    } else if (daysSinceInactive > this.inactiveDaysBeforeEmail) {
       await this.warnWorkspaceUsers(dataSource, daysSinceInactive);
     }
   }
 
   async handle(): Promise<void> {
     this.logger.log(`${CleanInactiveWorkspaceJob.name} job running...`);
+    if (!this.inactiveDaysBeforeDelete && !this.inactiveDaysBeforeEmail) {
+      this.logger.log(
+        `Inactive workspace environment variables not set, please check this doc for more info: https://docs.twenty.com/start/self-hosting/environment-variables`,
+      );
+
+      return;
+    }
     const dataSources =
       await this.dataSourceService.getManyDataSourceMetadata();
 
