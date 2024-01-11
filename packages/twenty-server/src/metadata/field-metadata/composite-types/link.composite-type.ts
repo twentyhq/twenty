@@ -7,11 +7,14 @@ import { generateTargetColumnMap } from 'src/metadata/field-metadata/utils/gener
 export const linkFields = (
   fieldMetadata?: FieldMetadataInterface,
 ): FieldMetadataInterface[] => {
-  const targetColumnMap = fieldMetadata
+  const inferredFieldMetadata = fieldMetadata as
+    | FieldMetadataInterface<FieldMetadataType.LINK>
+    | undefined;
+  const targetColumnMap = inferredFieldMetadata
     ? generateTargetColumnMap(
-        fieldMetadata.type,
-        fieldMetadata.isCustom ?? false,
-        fieldMetadata.name,
+        inferredFieldMetadata.type,
+        inferredFieldMetadata.isCustom ?? false,
+        inferredFieldMetadata.name,
       )
     : {
         label: 'label',
@@ -29,7 +32,14 @@ export const linkFields = (
         value: targetColumnMap.label,
       },
       isNullable: true,
-    } satisfies FieldMetadataInterface,
+      ...(inferredFieldMetadata
+        ? {
+            defaultValue: {
+              value: inferredFieldMetadata.defaultValue?.label ?? null,
+            },
+          }
+        : {}),
+    } satisfies FieldMetadataInterface<FieldMetadataType.TEXT>,
     {
       id: 'url',
       type: FieldMetadataType.TEXT,
@@ -40,7 +50,14 @@ export const linkFields = (
         value: targetColumnMap.url,
       },
       isNullable: true,
-    } satisfies FieldMetadataInterface,
+      ...(inferredFieldMetadata
+        ? {
+            defaultValue: {
+              value: inferredFieldMetadata.defaultValue?.url ?? null,
+            },
+          }
+        : {}),
+    } satisfies FieldMetadataInterface<FieldMetadataType.TEXT>,
   ];
 };
 

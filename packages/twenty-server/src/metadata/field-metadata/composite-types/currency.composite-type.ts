@@ -7,11 +7,14 @@ import { generateTargetColumnMap } from 'src/metadata/field-metadata/utils/gener
 export const currencyFields = (
   fieldMetadata?: FieldMetadataInterface,
 ): FieldMetadataInterface[] => {
-  const targetColumnMap = fieldMetadata
+  const inferredFieldMetadata = fieldMetadata as
+    | FieldMetadataInterface<FieldMetadataType.CURRENCY>
+    | undefined;
+  const targetColumnMap = inferredFieldMetadata
     ? generateTargetColumnMap(
-        fieldMetadata.type,
-        fieldMetadata.isCustom ?? false,
-        fieldMetadata.name,
+        inferredFieldMetadata.type,
+        inferredFieldMetadata.isCustom ?? false,
+        inferredFieldMetadata.name,
       )
     : {
         amountMicros: 'amountMicros',
@@ -29,7 +32,14 @@ export const currencyFields = (
         value: targetColumnMap.amountMicros,
       },
       isNullable: true,
-    } satisfies FieldMetadataInterface,
+      ...(inferredFieldMetadata
+        ? {
+            defaultValue: {
+              value: inferredFieldMetadata.defaultValue?.amountMicros ?? null,
+            },
+          }
+        : {}),
+    } satisfies FieldMetadataInterface<FieldMetadataType.NUMERIC>,
     {
       id: 'currencyCode',
       type: FieldMetadataType.TEXT,
@@ -40,7 +50,14 @@ export const currencyFields = (
         value: targetColumnMap.currencyCode,
       },
       isNullable: true,
-    } satisfies FieldMetadataInterface,
+      ...(inferredFieldMetadata
+        ? {
+            defaultValue: {
+              value: inferredFieldMetadata.defaultValue?.currencyCode ?? null,
+            },
+          }
+        : {}),
+    } satisfies FieldMetadataInterface<FieldMetadataType.TEXT>,
   ];
 };
 

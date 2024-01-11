@@ -12,11 +12,13 @@ import { useRecordTableStates } from '@/object-record/record-table/hooks/interna
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import {
   IconCheckbox,
+  IconClick,
   IconHeart,
   IconHeartOff,
+  IconMail,
   IconNotes,
+  IconPuzzle,
   IconTrash,
-  IconWand,
 } from '@/ui/display/icon';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
@@ -191,9 +193,19 @@ export const useRecordTableContextMenuEntries = (
         ...(dataExecuteQuickActionOnmentEnabled
           ? [
               {
-                label: 'Quick Action',
-                Icon: IconWand,
-                onClick: () => handleExecuteQuickActionOnClick(),
+                label: 'Actions',
+                Icon: IconClick,
+                subActions: [
+                  {
+                    label: 'Enrich',
+                    Icon: IconPuzzle,
+                    onClick: () => handleExecuteQuickActionOnClick(),
+                  },
+                  {
+                    label: 'Send to mailjet',
+                    Icon: IconMail,
+                  },
+                ],
               },
             ]
           : []),
