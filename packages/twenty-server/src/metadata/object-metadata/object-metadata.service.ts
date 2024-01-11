@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
@@ -59,7 +59,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       objectMetadataInput.nameSingular.toLowerCase() ===
       objectMetadataInput.namePlural.toLowerCase()
     ) {
-      throw new Error(
+      throw new BadRequestException(
         'The singular and plural name cannot be the same for an object',
       );
     }

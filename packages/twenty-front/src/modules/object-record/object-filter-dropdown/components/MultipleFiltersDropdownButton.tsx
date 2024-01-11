@@ -1,6 +1,5 @@
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { ObjectFilterDropdownId } from '../constants/ObjectFilterDropdownId';
@@ -18,14 +17,13 @@ export const MultipleFiltersDropdownButton = ({
   const { resetFilter } = useFilterDropdown();
 
   return (
-    <DropdownScope dropdownScopeId={ObjectFilterDropdownId}>
-      <Dropdown
-        onClose={resetFilter}
-        clickableComponent={<MultipleFiltersButton />}
-        dropdownComponents={<MultipleFiltersDropdownContent />}
-        dropdownHotkeyScope={hotkeyScope}
-        dropdownOffset={{ y: 8 }}
-      />
-    </DropdownScope>
+    <Dropdown
+      dropdownId={ObjectFilterDropdownId}
+      onClose={resetFilter}
+      clickableComponent={<MultipleFiltersButton />}
+      dropdownComponents={<MultipleFiltersDropdownContent />}
+      dropdownHotkeyScope={hotkeyScope}
+      dropdownOffset={{ y: 8 }}
+    />
   );
 };

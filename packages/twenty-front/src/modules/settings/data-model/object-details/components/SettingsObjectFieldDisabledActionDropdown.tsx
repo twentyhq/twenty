@@ -4,7 +4,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsObjectFieldDisabledActionDropdownProps = {
@@ -18,9 +17,9 @@ export const SettingsObjectFieldDisabledActionDropdown = ({
   onActivate,
   scopeKey,
 }: SettingsObjectFieldDisabledActionDropdownProps) => {
-  const dropdownScopeId = `${scopeKey}-settings-field-disabled-action-dropdown`;
+  const dropdownId = `${scopeKey}-settings-field-disabled-action-dropdown`;
 
-  const { closeDropdown } = useDropdown(dropdownScopeId);
+  const { closeDropdown } = useDropdown(dropdownId);
 
   const handleActivate = () => {
     onActivate();
@@ -33,20 +32,20 @@ export const SettingsObjectFieldDisabledActionDropdown = ({
   // };
 
   return (
-    <DropdownScope dropdownScopeId={dropdownScopeId}>
-      <Dropdown
-        clickableComponent={
-          <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
-        }
-        dropdownComponents={
-          <DropdownMenu width="160px">
-            <DropdownMenuItemsContainer>
-              <MenuItem
-                text="Activate"
-                LeftIcon={IconArchiveOff}
-                onClick={handleActivate}
-              />
-              {/* {isCustomField && (
+    <Dropdown
+      dropdownId={dropdownId}
+      clickableComponent={
+        <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+      }
+      dropdownComponents={
+        <DropdownMenu width="160px">
+          <DropdownMenuItemsContainer>
+            <MenuItem
+              text="Activate"
+              LeftIcon={IconArchiveOff}
+              onClick={handleActivate}
+            />
+            {/* {isCustomField && (
                 <MenuItem
                   text="Erase"
                   accent="danger"
@@ -54,13 +53,12 @@ export const SettingsObjectFieldDisabledActionDropdown = ({
                   onClick={handleErase}
                 />
               )} */}
-            </DropdownMenuItemsContainer>
-          </DropdownMenu>
-        }
-        dropdownHotkeyScope={{
-          scope: dropdownScopeId,
-        }}
-      />
-    </DropdownScope>
+          </DropdownMenuItemsContainer>
+        </DropdownMenu>
+      }
+      dropdownHotkeyScope={{
+        scope: dropdownId,
+      }}
+    />
   );
 };

@@ -24,7 +24,7 @@ const meta: Meta<typeof Select> = {
   component: Select,
   decorators: [ComponentDecorator],
   args: {
-    dropdownScopeId: 'select',
+    dropdownId: 'select',
     value: 'a',
     options: [
       { value: 'a', label: 'Option A' },

@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { useEventTracker } from '@/analytics/hooks/useEventTracker';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
+import { isSignUpDisabledState } from '@/client-config/states/isSignUpDisabledState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
@@ -40,6 +42,8 @@ export const PageChangeEffect = () => {
   const { addToCommandMenu, setToIntitialCommandMenu } = useCommandMenu();
 
   const openCreateActivity = useOpenCreateActivityDrawer();
+
+  const isSignUpDisabled = useRecoilValue(isSignUpDisabledState);
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
@@ -115,10 +119,13 @@ export const PageChangeEffect = () => {
           navigateToSignUp();
         },
       });
+    } else if (isMatchingLocation(AppPath.SignUp) && isSignUpDisabled) {
+      navigate(AppPath.SignIn);
     }
   }, [
     enqueueSnackBar,
     isMatchingLocation,
+    isSignUpDisabled,
     location.pathname,
     navigate,
     onboardingStatus,

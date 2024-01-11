@@ -2,15 +2,22 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { SendMailOptions } from 'nodemailer';
 
-import { EmailDriver } from 'src/integrations/email/drivers/interfaces/email-driver.interface';
-
-import { EMAIL_DRIVER } from 'src/integrations/email/email.constants';
+import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
+import { EmailSenderJob } from 'src/integrations/email/email-sender.job';
 
 @Injectable()
-export class EmailService implements EmailDriver {
-  constructor(@Inject(EMAIL_DRIVER) private driver: EmailDriver) {}
+export class EmailService {
+  constructor(
+    @Inject(MessageQueue.emailQueue)
+    private readonly messageQueueService: MessageQueueService,
+  ) {}
 
   async send(sendMailOptions: SendMailOptions): Promise<void> {
-    await this.driver.send(sendMailOptions);
+    await this.messageQueueService.add<SendMailOptions>(
+      EmailSenderJob.name,
+      sendMailOptions,
+      { retryLimit: 3 },
+    );
   }
 }

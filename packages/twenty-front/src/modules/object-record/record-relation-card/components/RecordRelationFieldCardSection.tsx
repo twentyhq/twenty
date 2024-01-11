@@ -149,9 +149,9 @@ export const RecordRelationFieldCardSection = () => {
     );
   }, [relationRecords, upsertRecordFromState]);
 
-  const dropdownScopeId = `record-field-card-relation-picker-${fieldDefinition.label}`;
+  const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}`;
 
-  const { closeDropdown, isDropdownOpen } = useDropdown(dropdownScopeId);
+  const { closeDropdown, isDropdownOpen } = useDropdown(dropdownId);
 
   const {
     identifiersMapper,
@@ -235,8 +235,9 @@ export const RecordRelationFieldCardSection = () => {
             </StyledLink>
           )}
         </StyledTitle>
-        <DropdownScope dropdownScopeId={dropdownScopeId}>
+        <DropdownScope dropdownScopeId={dropdownId}>
           <StyledAddDropdown
+            dropdownId={dropdownId}
             dropdownPlacement="right-start"
             onClose={handleCloseRelationPickerDropdown}
             clickableComponent={
@@ -255,7 +256,7 @@ export const RecordRelationFieldCardSection = () => {
               />
             }
             dropdownHotkeyScope={{
-              scope: dropdownScopeId,
+              scope: dropdownId,
             }}
           />
         </DropdownScope>
