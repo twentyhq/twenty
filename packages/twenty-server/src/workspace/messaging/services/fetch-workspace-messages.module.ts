@@ -9,7 +9,7 @@ import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetc
 import { GmailFullSyncService } from 'src/workspace/messaging/services/gmail-full-sync.service';
 import { GmailPartialSyncService } from 'src/workspace/messaging/services/gmail-partial-sync.service';
 import { RefreshAccessTokenService } from 'src/workspace/messaging/services/refresh-access-token.service';
-import { UtilsService } from 'src/workspace/messaging/services/utils.service';
+import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
 
 @Module({
   imports: [
@@ -23,14 +23,14 @@ import { UtilsService } from 'src/workspace/messaging/services/utils.service';
     GmailPartialSyncService,
     FetchBatchMessagesService,
     RefreshAccessTokenService,
-    UtilsService,
+    MessagingUtilsService,
     GmailClientProvider,
   ],
   exports: [
     GmailPartialSyncService,
     GmailFullSyncService,
     RefreshAccessTokenService,
-    UtilsService,
+    MessagingUtilsService,
   ],
 })
 export class FetchWorkspaceMessagesModule {}

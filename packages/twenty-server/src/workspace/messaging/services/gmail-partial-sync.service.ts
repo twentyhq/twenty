@@ -4,20 +4,20 @@ import { gmail_v1 } from 'googleapis';
 
 import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetch-batch-messages.service';
 import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
-import { UtilsService } from 'src/workspace/messaging/services/utils.service';
+import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
-import {
-  GmailPartialSyncJobData,
-  GmailPartialSyncJob,
-} from 'src/workspace/messaging/jobs/gmail-partial-sync.job';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
+import {
+  GmailFullSyncJob,
+  GmailFullSyncJobData,
+} from 'src/workspace/messaging/jobs/gmail-full-sync.job';
 
 @Injectable()
 export class GmailPartialSyncService {
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly fetchBatchMessagesService: FetchBatchMessagesService,
-    private readonly utils: UtilsService,
+    private readonly utils: MessagingUtilsService,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -64,8 +64,8 @@ export class GmailPartialSyncService {
     if (!lastSyncHistoryId) {
       // Fall back to full sync
 
-      await this.messageQueueService.add<GmailPartialSyncJobData>(
-        GmailPartialSyncJob.name,
+      await this.messageQueueService.add<GmailFullSyncJobData>(
+        GmailFullSyncJob.name,
         { workspaceId, connectedAccountId },
         {
           id: `${workspaceId}-${connectedAccount.id}`,
@@ -91,8 +91,10 @@ export class GmailPartialSyncService {
     );
 
     // TODO: delete messages from messagesDeleted
-    const { messagesAdded } =
+    const { messagesAdded, messagesDeleted } =
       await this.getMessageIdsAndThreadIdsFromHistory(history);
+
+    console.log('messagesDeleted', messagesDeleted);
 
     const { savedMessageIds, savedThreadIds } =
       await this.utils.getSavedMessageIdsAndThreadIds(

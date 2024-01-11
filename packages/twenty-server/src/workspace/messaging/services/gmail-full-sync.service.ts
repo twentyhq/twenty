@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 
 import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetch-batch-messages.service';
 import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
-import { UtilsService } from 'src/workspace/messaging/services/utils.service';
+import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
 
 @Injectable()
 export class GmailFullSyncService {
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly fetchBatchMessagesService: FetchBatchMessagesService,
-    private readonly utils: UtilsService,
+    private readonly utils: MessagingUtilsService,
   ) {}
 
   public async fetchConnectedAccountThreads(

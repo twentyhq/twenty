@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { MessagingProducer } from 'src/workspace/messaging/producers/messaging-producer';
-import { UtilsService } from 'src/workspace/messaging/services/utils.service';
+import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
 
 interface GmailFullSyncOptions {
   workspaceId: string;
@@ -18,7 +18,7 @@ interface GmailFullSyncOptions {
 export class GmailFullSyncCommand extends CommandRunner {
   constructor(
     private readonly messagingProducer: MessagingProducer,
-    private readonly utils: UtilsService,
+    private readonly utils: MessagingUtilsService,
 
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
