@@ -1,4 +1,4 @@
-import { ObjectRecordEdge } from "@/object-record/types/ObjectRecordEdge"
+import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
 
 export const filterUniqueRecordEdgesByCursor = <
   RecordType extends { id: string },

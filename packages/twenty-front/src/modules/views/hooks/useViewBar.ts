@@ -22,8 +22,6 @@ import { useViewFilters } from './internal/useViewFilters';
 import { useViews } from './internal/useViews';
 import { useViewScopedStates } from './internal/useViewScopedStates';
 import { useViewSorts } from './internal/useViewSorts';
-import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
-import { set } from 'date-fns';
 
 type UseViewProps = {
   viewBarId?: string;
