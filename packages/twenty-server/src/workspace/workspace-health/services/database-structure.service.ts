@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
-import { TableColumn } from 'typeorm';
+import { ColumnType } from 'typeorm';
+import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 
 import { WorkspaceTableStructure } from 'src/workspace/workspace-health/interfaces/workspace-table-definition.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import {
+  FieldMetadataEntity,
+  FieldMetadataType,
+} from 'src/metadata/field-metadata/field-metadata.entity';
 import { fieldMetadataTypeToColumnType } from 'src/metadata/workspace-migration/utils/field-metadata-type-to-column-type.util';
+import { serializeTypeDefaultValue } from 'src/metadata/field-metadata/utils/serialize-type-default-value.util';
 
 @Injectable()
 export class DatabaseStructureService {
@@ -20,26 +25,22 @@ export class DatabaseStructureService {
 
     return mainDataSource.query<WorkspaceTableStructure[]>(`
       SELECT
-        c.table_schema,
-        c.table_name,
-        c.column_name,
-        c.data_type,
-        c.character_maximum_length,
-        c.numeric_precision,
-        c.is_nullable,
-        pg_get_expr(d.adbin, d.adrelid) as column_default,
+        c.table_schema as "tableSchema",
+        c.table_name as "tableName",
+        c.column_name as "columnName",
+        c.data_type as "dataType",
+        c.is_nullable as "isNullable",
+        c.column_default as "columnDefault",
         CASE
             WHEN pk.constraint_type = 'PRIMARY KEY' THEN 'YES'
             ELSE 'NO'
-        END as is_primary_key
+        END as "isPrimaryKey"
       FROM
           information_schema.columns c
       LEFT JOIN
           information_schema.constraint_column_usage as ccu ON c.column_name = ccu.column_name AND c.table_name = ccu.table_name
       LEFT JOIN
           information_schema.table_constraints as pk ON pk.constraint_name = ccu.constraint_name AND pk.constraint_type = 'PRIMARY KEY'
-      LEFT JOIN
-          pg_attrdef as d ON d.adrelid = (SELECT oid FROM pg_class WHERE relname = c.table_name) AND d.adnum = c.ordinal_position
       WHERE
           c.table_schema = '${schemaName}'
           AND c.table_name = '${tableName}';
@@ -50,12 +51,46 @@ export class DatabaseStructureService {
     const typeORMType = fieldMetadataTypeToColumnType(fieldMedataType);
     const mainDataSource = this.typeORMService.getMainDataSource();
 
-    // Workaround to get the postgres data type from a field metadata type
-    const tempColumn = new TableColumn({
-      name: 'tempColumn',
+    return mainDataSource.driver.normalizeType({
       type: typeORMType,
     });
+  }
 
-    return mainDataSource.driver.normalizeType(tempColumn);
+  getPostgresDefault(
+    fieldMetadata: FieldMetadataEntity,
+  ): string | null | undefined {
+    const typeORMType = fieldMetadataTypeToColumnType(
+      fieldMetadata.type,
+    ) as ColumnType;
+    const mainDataSource = this.typeORMService.getMainDataSource();
+
+    if (fieldMetadata.defaultValue && 'type' in fieldMetadata.defaultValue) {
+      const serializedDefaultValue = serializeTypeDefaultValue(
+        fieldMetadata.defaultValue,
+      );
+
+      // Special case for uuid_generate_v4() default value
+      if (serializedDefaultValue === 'public.uuid_generate_v4()') {
+        return 'uuid_generate_v4()';
+      }
+
+      return serializedDefaultValue;
+    }
+
+    const value =
+      fieldMetadata.defaultValue && 'value' in fieldMetadata.defaultValue
+        ? fieldMetadata.defaultValue.value
+        : null;
+
+    if (typeof value === 'number') {
+      return value.toString();
+    }
+
+    return mainDataSource.driver.normalizeDefault({
+      type: typeORMType,
+      default: value,
+      isArray: false,
+      // Workaround to use normalizeDefault without a complete ColumnMetadata object
+    } as ColumnMetadata);
   }
 }

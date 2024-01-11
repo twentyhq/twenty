@@ -128,10 +128,12 @@ export class FieldMetadataHealthService {
     const dataType = this.databaseStructureService.getPostgresDataType(
       fieldMetadata.type,
     );
+    const defaultValue =
+      this.databaseStructureService.getPostgresDefault(fieldMetadata);
     const isNullable = fieldMetadata.isNullable ? 'YES' : 'NO';
     // Check if column exist in database
     const columnStructure = workspaceTableColumns.find(
-      (tableDefinition) => tableDefinition.column_name === columnName,
+      (tableDefinition) => tableDefinition.columnName === columnName,
     );
 
     if (!columnStructure) {
@@ -146,21 +148,34 @@ export class FieldMetadataHealthService {
     }
 
     // Check if column data type is the same
-    if (columnStructure.data_type !== dataType) {
+    if (columnStructure.dataType !== dataType) {
       issues.push({
         type: WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT,
         fieldMetadata,
         columnStructure,
-        message: `Column ${columnName} type is not the same as the field metadata type "${columnStructure.data_type}" !== "${dataType}"`,
+        message: `Column ${columnName} type is not the same as the field metadata type "${columnStructure.dataType}" !== "${dataType}"`,
       });
     }
 
-    if (columnStructure.is_nullable !== isNullable) {
+    if (columnStructure.isNullable !== isNullable) {
       issues.push({
         type: WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT,
         fieldMetadata,
         columnStructure,
         message: `Column ${columnName} is not nullable as expected`,
+      });
+    }
+
+    if (
+      defaultValue &&
+      columnStructure.columnDefault &&
+      !columnStructure.columnDefault.startsWith(defaultValue)
+    ) {
+      issues.push({
+        type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT,
+        fieldMetadata,
+        columnStructure,
+        message: `Column ${columnName} default value is not the same as the field metadata default value "${columnStructure.columnDefault}" !== "${defaultValue}"`,
       });
     }
 
