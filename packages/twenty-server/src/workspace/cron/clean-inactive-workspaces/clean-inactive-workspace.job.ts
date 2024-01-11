@@ -19,6 +19,7 @@ import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/core/feature-flag/feature-flag.entity';
+import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
 
@@ -47,8 +48,15 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
 
   async getMaxUpdatedAt(
     dataSource: DataSourceEntity,
-    tableNames,
+    objectsMetadata: ObjectMetadataEntity[],
   ): Promise<Date> {
+    const tableNames = objectsMetadata
+      .filter(
+        (objectMetadata) =>
+          objectMetadata.workspaceId === dataSource.workspaceId,
+      )
+      .map((objectMetadata) => objectMetadata.targetTableName);
+
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSource);
 
@@ -180,17 +188,11 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
         this.logger.log(`Workspace ${dataSource.workspaceId} not cleanable`);
         continue;
       }
-      this.logger.log(`Cleaning Workspace ${dataSource.workspaceId}`);
-      const dataSourceTableNames = objectsMetadata
-        .filter(
-          (objectMetadata) =>
-            objectMetadata.workspaceId === dataSource.workspaceId,
-        )
-        .map((objectMetadata) => objectMetadata.targetTableName);
 
+      this.logger.log(`Cleaning Workspace ${dataSource.workspaceId}`);
       const maxUpdatedAt = await this.getMaxUpdatedAt(
         dataSource,
-        dataSourceTableNames,
+        objectsMetadata,
       );
 
       await this.processWorkspace(dataSource, maxUpdatedAt);
