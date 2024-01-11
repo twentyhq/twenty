@@ -12,7 +12,7 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { UserService } from 'src/core/user/services/user.service';
 import { EmailService } from 'src/integrations/email/email.service';
-import CleanInactiveWorkspaceEmail from 'src/workspace/cron/clean-inactive-workspaces/email/clean-inactive-workspaces.email';
+import CleanInactiveWorkspaceEmail from 'src/workspace/cron/clean-inactive-workspaces/clean-inactive-workspaces.email';
 import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import {
