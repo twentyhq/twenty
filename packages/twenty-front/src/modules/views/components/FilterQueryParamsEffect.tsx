@@ -18,7 +18,7 @@ export const FilterQueryParamsEffect = () => {
     if (!hasFiltersQueryParams) return;
 
     getFiltersFromQueryParams().then((filtersFromParams) => {
-      if (filtersFromParams.length) {
+      if (Array.isArray(filtersFromParams)) {
         setCurrentViewFilters(filtersFromParams);
         onViewFiltersChange?.(filtersFromParams);
       }
