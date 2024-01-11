@@ -10,19 +10,24 @@ import { useViewBar } from '@/views/hooks/useViewBar';
 import { ViewType } from '@/views/types/ViewType';
 
 export const RecordTableEffect = ({
+  objectNamePlural,
   recordTableId,
   viewBarId,
 }: {
+  objectNamePlural: string;
   recordTableId: string;
   viewBarId: string;
 }) => {
   const {
-    // Todo: do not infer objectNamePlural from recordTableId
-    scopeId: objectNamePlural,
     setAvailableTableColumns,
     setOnEntityCountChange,
     setObjectMetadataConfig,
-  } = useRecordTable({ recordTableScopeId: recordTableId });
+    setObjectNamePlural,
+  } = useRecordTable({ recordTableId });
+
+  useEffect(() => {
+    setObjectNamePlural(objectNamePlural);
+  }, [setObjectNamePlural, objectNamePlural]);
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
@@ -93,7 +98,8 @@ export const RecordTableEffect = ({
 
   const { setActionBarEntries, setContextMenuEntries } =
     useRecordTableContextMenuEntries({
-      recordTableScopeId: recordTableId,
+      objectNamePlural,
+      recordTableId,
     });
 
   useEffect(() => {

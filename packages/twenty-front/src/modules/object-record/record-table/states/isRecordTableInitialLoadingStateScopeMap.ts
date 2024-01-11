@@ -1,7 +1,7 @@
 import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const isRecordTableInitialLoadingScopedState =
+export const isRecordTableInitialLoadingStateScopeMap =
   createStateScopeMap<boolean>({
-    key: 'isRecordTableInitialLoadingScopedState',
+    key: 'isRecordTableInitialLoadingStateScopeMap',
     defaultValue: true,
   });

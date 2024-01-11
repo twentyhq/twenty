@@ -3,12 +3,10 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { RecordTableHeaderCell } from '@/object-record/record-table/components/RecordTableHeaderCell';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { IconPlus } from '@/ui/display/icon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScrollWrapperScopedRef';
-
-import { useRecordTableScopedStates } from '../hooks/internal/useRecordTableScopedStates';
 
 import { RecordTableHeaderPlusButtonContent } from './RecordTableHeaderPlusButtonContent';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
@@ -58,18 +56,8 @@ export const RecordTableHeader = ({
 }: {
   createRecord: () => void;
 }) => {
-  const { hiddenTableColumnsScopeInjector, visibleTableColumnsScopeInjector } =
-    getRecordTableScopeInjector();
-
-  const { injectSelectorWithRecordTableScopeId } = useRecordTableScopedStates();
-
-  const hiddenTableColumnsSelector = injectSelectorWithRecordTableScopeId(
-    hiddenTableColumnsScopeInjector,
-  );
-
-  const visibleTableColumnsSelector = injectSelectorWithRecordTableScopeId(
-    visibleTableColumnsScopeInjector,
-  );
+  const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
+    useRecordTableStates();
 
   const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector);
 

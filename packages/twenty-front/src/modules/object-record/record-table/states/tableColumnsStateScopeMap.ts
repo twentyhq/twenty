@@ -3,9 +3,9 @@ import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createSta
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
-export const tableColumnsScopedState = createStateScopeMap<
+export const tableColumnsStateScopeMap = createStateScopeMap<
   ColumnDefinition<FieldMetadata>[]
 >({
-  key: 'tableColumnsScopedState',
+  key: 'tableColumnsStateScopeMap',
   defaultValue: [],
 });
