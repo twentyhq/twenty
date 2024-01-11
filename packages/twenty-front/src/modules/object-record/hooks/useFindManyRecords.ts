@@ -9,7 +9,11 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useRecordOptimisticEffect } from '@/object-metadata/hooks/useRecordOptimisticEffect';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
+import { useMapConnectionToRecords } from '@/object-record/hooks/useMapConnectionToRecords';
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
+import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -19,28 +23,24 @@ import { capitalize } from '~/utils/string/capitalize';
 import { cursorFamilyState } from '../states/cursorFamilyState';
 import { hasNextPageFamilyState } from '../states/hasNextPageFamilyState';
 import { isFetchingMoreRecordsFamilyState } from '../states/isFetchingMoreRecordsFamilyState';
-import { PaginatedRecordType } from '../types/PaginatedRecordType';
-import {
-  PaginatedRecordTypeEdge,
-  PaginatedRecordTypeResults,
-} from '../types/PaginatedRecordTypeResults';
+import { ObjectRecordQueryResult } from '../types/ObjectRecordQueryResult';
 import { mapPaginatedRecordsToRecords } from '../utils/mapPaginatedRecordsToRecords';
 
-export const useFindManyRecords = <
-  RecordType extends { id: string } & Record<string, any>,
->({
+export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
   filter,
   orderBy,
   limit = DEFAULT_SEARCH_REQUEST_LIMIT,
   onCompleted,
   skip,
+  useRecordsWithoutConnection = false,
 }: ObjectMetadataItemIdentifier & {
   filter?: ObjectRecordQueryFilter;
   orderBy?: OrderByField;
   limit?: number;
-  onCompleted?: (data: PaginatedRecordTypeResults<RecordType>) => void;
+  onCompleted?: (data: ObjectRecordConnection<T>) => void;
   skip?: boolean;
+  useRecordsWithoutConnection?: boolean;
 }) => {
   const findManyQueryStateIdentifier =
     objectNameSingular +
@@ -75,7 +75,7 @@ export const useFindManyRecords = <
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const { data, loading, error, fetchMore } = useQuery<
-    PaginatedRecordType<RecordType>
+    ObjectRecordQueryResult<T>
   >(findManyRecordsQuery, {
     skip: skip || !objectMetadataItem || !currentWorkspace,
     variables: {
@@ -88,10 +88,10 @@ export const useFindManyRecords = <
 
       if (data?.[objectMetadataItem.namePlural]) {
         setLastCursor(
-          data?.[objectMetadataItem.namePlural]?.pageInfo.endCursor,
+          data?.[objectMetadataItem.namePlural]?.pageInfo.endCursor ?? '',
         );
         setHasNextPage(
-          data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage,
+          data?.[objectMetadataItem.namePlural]?.pageInfo.hasNextPage ?? false,
         );
       }
     },
@@ -125,7 +125,7 @@ export const useFindManyRecords = <
             const nextEdges =
               fetchMoreResult?.[objectMetadataItem.namePlural]?.edges;
 
-            let newEdges: PaginatedRecordTypeEdge<RecordType>[] = [];
+            let newEdges: ObjectRecordEdge<T>[] = [];
 
             if (isNonEmptyArray(previousEdges) && isNonEmptyArray(nextEdges)) {
               newEdges = filterUniqueRecordEdgesByCursor([
@@ -138,11 +138,11 @@ export const useFindManyRecords = <
             if (data?.[objectMetadataItem.namePlural]) {
               setLastCursor(
                 fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo
-                  .endCursor,
+                  .endCursor ?? '',
               );
               setHasNextPage(
                 fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo
-                  .hasNextPage,
+                  .hasNextPage ?? false,
               );
             }
 
@@ -164,7 +164,7 @@ export const useFindManyRecords = <
                 pageInfo:
                   fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,
               },
-            } as PaginatedRecordType<RecordType>);
+            } as ObjectRecordQueryResult<T>);
           },
         });
       } catch (error) {
@@ -198,18 +198,39 @@ export const useFindManyRecords = <
     enqueueSnackBar,
   ]);
 
+  // TODO: remove this and use only mapConnectionToRecords when we've finished the refactor
   const records = useMemo(
     () =>
       mapPaginatedRecordsToRecords({
         pagedRecords: data,
         objectNamePlural: objectMetadataItem.namePlural,
-      }),
+      }) as T[],
     [data, objectMetadataItem],
+  );
+
+  const mapConnectionToRecords = useMapConnectionToRecords();
+
+  const recordsWithoutConnection = useMemo(
+    () =>
+      useRecordsWithoutConnection
+        ? (mapConnectionToRecords({
+            objectRecordConnection: data?.[objectMetadataItem.namePlural],
+            objectNameSingular,
+            depth: 5,
+          }) as T[])
+        : [],
+    [
+      data,
+      objectNameSingular,
+      objectMetadataItem.namePlural,
+      mapConnectionToRecords,
+      useRecordsWithoutConnection,
+    ],
   );
 
   return {
     objectMetadataItem,
-    records: records as RecordType[],
+    records: useRecordsWithoutConnection ? recordsWithoutConnection : records,
     loading,
     error,
     fetchMoreRecords,

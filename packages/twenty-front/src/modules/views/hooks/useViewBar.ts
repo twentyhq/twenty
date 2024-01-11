@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
-import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';
@@ -93,10 +92,7 @@ export const useViewBar = (props?: UseViewProps) => {
 
   const loadViewFields = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (
-        data: PaginatedRecordTypeResults<ViewField>,
-        currentViewId: string,
-      ) => {
+      async (viewFields: ViewField[], currentViewId: string) => {
         const {
           availableFieldDefinitions,
           onViewFieldsChange,
@@ -119,8 +115,8 @@ export const useViewBar = (props?: UseViewProps) => {
           return;
         }
 
-        const queriedViewFields = data.edges
-          .map((viewField) => viewField.node)
+        const queriedViewFields = viewFields
+          .map((viewField) => viewField)
           .filter(assertNotNull);
 
         if (isPersistingView) {
@@ -138,10 +134,7 @@ export const useViewBar = (props?: UseViewProps) => {
 
   const loadViewFilters = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (
-        data: PaginatedRecordTypeResults<Required<ViewFilter>>,
-        currentViewId: string,
-      ) => {
+      async (viewFilters: ViewFilter[], currentViewId: string) => {
         const {
           availableFilterDefinitions,
           savedViewFilters,
@@ -163,18 +156,18 @@ export const useViewBar = (props?: UseViewProps) => {
           return;
         }
 
-        const queriedViewFilters = data.edges
-          .map(({ node }) => {
+        const queriedViewFilters = viewFilters
+          .map((viewFilter) => {
             const availableFilterDefinition = availableFilterDefinitions.find(
               (filterDefinition) =>
-                filterDefinition.fieldMetadataId === node.fieldMetadataId,
+                filterDefinition.fieldMetadataId === viewFilter.fieldMetadataId,
             );
 
             if (!availableFilterDefinition) return null;
 
             return {
-              ...node,
-              displayValue: node.displayValue ?? node.value,
+              ...viewFilter,
+              displayValue: viewFilter.displayValue ?? viewFilter.value,
               definition: availableFilterDefinition,
             };
           })
@@ -191,10 +184,7 @@ export const useViewBar = (props?: UseViewProps) => {
 
   const loadViewSorts = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (
-        data: PaginatedRecordTypeResults<Required<ViewSort>>,
-        currentViewId: string,
-      ) => {
+      async (viewSorts: Required<ViewSort>[], currentViewId: string) => {
         const { availableSortDefinitions, savedViewSorts, onViewSortsChange } =
           getViewScopedStateValuesFromSnapshot({
             snapshot,
@@ -213,18 +203,18 @@ export const useViewBar = (props?: UseViewProps) => {
           return;
         }
 
-        const queriedViewSorts = data.edges
-          .map(({ node }) => {
+        const queriedViewSorts = viewSorts
+          .map((viewSort) => {
             const availableSortDefinition = availableSortDefinitions.find(
-              (sort) => sort.fieldMetadataId === node.fieldMetadataId,
+              (sort) => sort.fieldMetadataId === viewSort.fieldMetadataId,
             );
 
             if (!availableSortDefinition) return null;
 
             return {
-              id: node.id,
-              fieldMetadataId: node.fieldMetadataId,
-              direction: node.direction,
+              id: viewSort.id,
+              fieldMetadataId: viewSort.fieldMetadataId,
+              direction: viewSort.direction,
               definition: availableSortDefinition,
             };
           })

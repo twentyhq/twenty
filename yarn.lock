@@ -35183,7 +35183,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.14.0":
+"playwright@npm:^1.14.0, playwright@npm:^1.40.1":
   version: 1.40.1
   resolution: "playwright@npm:1.40.1"
   dependencies:
@@ -41675,6 +41675,7 @@ __metadata:
     patch-package: "npm:^8.0.0"
     pg: "npm:^8.11.3"
     pg-boss: "npm:^9.0.3"
+    playwright: "npm:^1.40.1"
     prettier: "npm:^3.1.1"
     prism-react-renderer: "npm:^2.1.0"
     raw-loader: "npm:^4.0.2"

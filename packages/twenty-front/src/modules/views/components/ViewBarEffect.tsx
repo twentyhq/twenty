@@ -41,6 +41,7 @@ export const ViewBarEffect = () => {
       type: { eq: viewType },
       objectMetadataId: { eq: viewObjectMetadataId },
     },
+    useRecordsWithoutConnection: true,
   });
 
   useEffect(() => {

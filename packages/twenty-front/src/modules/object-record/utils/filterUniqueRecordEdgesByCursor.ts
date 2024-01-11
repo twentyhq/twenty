@@ -1,9 +1,9 @@
-import { PaginatedRecordTypeEdge } from '@/object-record/types/PaginatedRecordTypeResults';
+import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
 
 export const filterUniqueRecordEdgesByCursor = <
   RecordType extends { id: string },
 >(
-  arrayToFilter: PaginatedRecordTypeEdge<RecordType>[],
+  arrayToFilter: ObjectRecordEdge<RecordType>[],
 ) => {
   const seenCursors = new Set();
 
