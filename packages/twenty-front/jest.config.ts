@@ -1,13 +1,14 @@
 export default {
-  setupFilesAfterEnv: ["./src/setupTests.ts"],
-  testEnvironment: "jsdom",
+  setupFilesAfterEnv: ['./src/setupTests.ts'],
+  testEnvironment: 'jsdom',
   transform: {
-    "^.+\\.(ts|js|tsx|jsx)$": "@swc/jest",
+    '^.+\\.(ts|js|tsx|jsx)$': '@swc/jest',
   },
   moduleNameMapper: {
-    '~/(.+)': "<rootDir>/src/$1",
-    '@/(.+)': "<rootDir>/src/modules/$1",
-    '@testing/(.+)': "<rootDir>/src/testing/$1",
+    '~/(.+)': '<rootDir>/src/$1',
+    '@/(.+)': '<rootDir>/src/modules/$1',
+    '@testing/(.+)': '<rootDir>/src/testing/$1',
+    '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/imageMock.js',
   },
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   coverageThreshold: {
@@ -21,6 +22,7 @@ export default {
   collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
   coveragePathIgnorePatterns: [
     'states/.+State.ts$',
+    'states/selectors/*',
     'contexts/.+Context.ts',
     'testing/*',
     'tests/*',
@@ -33,11 +35,7 @@ export default {
     'generated-metadata/*',
     'generated/*',
     '__stories__/*',
-    'src/modules/object-record/hooks/useUpsertRecordFieldFromState.ts',
-    'src/modules/object-record/hooks/useUpsertRecordFromState.ts'
-  ],
-  testPathIgnorePatterns: [
-    'src/modules/activities/blocks/spec.ts',
+    'display/icon/index.ts',
   ],
   // coverageDirectory: '<rootDir>/coverage/',
-}
+};
