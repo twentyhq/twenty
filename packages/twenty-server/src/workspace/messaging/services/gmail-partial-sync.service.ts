@@ -16,33 +16,6 @@ export class GmailPartialSyncService {
     private readonly messagingProducer: MessagingProducer,
   ) {}
 
-  private async getLastSyncHistoryId(
-    workspaceId: string,
-    connectedAccountId: string,
-  ): Promise<string> {
-    const { connectedAccount } =
-      await this.utils.getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
-        workspaceId,
-        connectedAccountId,
-      );
-
-    if (!connectedAccount) {
-      throw new Error('No connected account found');
-    }
-
-    const lastSyncHistoryId = connectedAccount.lastSyncHistoryId;
-
-    if (!lastSyncHistoryId) {
-      // Fall back to full sync
-      await this.messagingProducer.enqueueGmailFullSync(
-        { workspaceId, connectedAccountId: connectedAccountId },
-        `${workspaceId}-${connectedAccount.id}`,
-      );
-    }
-
-    return lastSyncHistoryId;
-  }
-
   private async getHistory(
     workspaceId: string,
     connectedAccountId: string,
@@ -54,10 +27,6 @@ export class GmailPartialSyncService {
         workspaceId,
         connectedAccountId,
       );
-
-    if (!connectedAccount) {
-      throw new Error('No connected account found');
-    }
 
     const gmailClient = await this.gmailClientProvider.getGmailClient(
       connectedAccount.refreshToken,
@@ -84,6 +53,18 @@ export class GmailPartialSyncService {
         connectedAccountId,
       );
 
+    const lastSyncHistoryId = connectedAccount.lastSyncHistoryId;
+
+    if (!lastSyncHistoryId) {
+      // Fall back to full sync
+      await this.messagingProducer.enqueueGmailFullSync(
+        { workspaceId, connectedAccountId: connectedAccountId },
+        `${workspaceId}-${connectedAccount.id}`,
+      );
+
+      return;
+    }
+
     const accessToken = connectedAccount.accessToken;
     const refreshToken = connectedAccount.refreshToken;
 
@@ -94,7 +75,7 @@ export class GmailPartialSyncService {
     const history = await this.getHistory(
       workspaceId,
       connectedAccountId,
-      connectedAccount.lastSyncHistoryId,
+      lastSyncHistoryId,
       maxResults,
     );
 
