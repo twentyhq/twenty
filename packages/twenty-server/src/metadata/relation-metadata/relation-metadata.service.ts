@@ -120,9 +120,10 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     }
 
     const baseColumnName = `${camelCase(relationMetadataInput.toName)}Id`;
-    const isToCustom =
-      objectMetadataMap[relationMetadataInput.toObjectMetadataId].isCustom;
-    const foreignKeyColumnName = isToCustom
+
+    // TODO: this logic is called to create relation through metadata graphql endpoint (so only for custom field relations)
+    const isCustom = true;
+    const foreignKeyColumnName = isCustom
       ? createCustomColumnName(baseColumnName)
       : baseColumnName;
 
@@ -149,7 +150,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         icon: relationMetadataInput.toIcon,
         isCustom: true,
         targetColumnMap: {
-          value: isToCustom
+          value: isCustom
             ? createCustomColumnName(relationMetadataInput.toName)
             : relationMetadataInput.toName,
         },

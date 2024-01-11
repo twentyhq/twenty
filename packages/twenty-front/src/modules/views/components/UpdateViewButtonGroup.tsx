@@ -7,7 +7,6 @@ import { Button } from '@/ui/input/button/components/Button';
 import { ButtonGroup } from '@/ui/input/button/components/ButtonGroup';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { UpdateViewDropdownId } from '@/views/constants/UpdateViewDropdownId';
@@ -58,25 +57,24 @@ export const UpdateViewButtonGroup = ({
     <StyledContainer>
       <ButtonGroup size="small" accent="blue">
         <Button title="Update view" onClick={handleViewSubmit} />
-        <DropdownScope dropdownScopeId={UpdateViewDropdownId}>
-          <Dropdown
-            dropdownHotkeyScope={hotkeyScope}
-            clickableComponent={
-              <Button size="small" accent="blue" Icon={IconChevronDown} />
-            }
-            dropdownComponents={
-              <>
-                <DropdownMenuItemsContainer>
-                  <MenuItem
-                    onClick={handleCreateViewButtonClick}
-                    LeftIcon={IconPlus}
-                    text="Create view"
-                  />
-                </DropdownMenuItemsContainer>
-              </>
-            }
-          />
-        </DropdownScope>
+        <Dropdown
+          dropdownId={UpdateViewDropdownId}
+          dropdownHotkeyScope={hotkeyScope}
+          clickableComponent={
+            <Button size="small" accent="blue" Icon={IconChevronDown} />
+          }
+          dropdownComponents={
+            <>
+              <DropdownMenuItemsContainer>
+                <MenuItem
+                  onClick={handleCreateViewButtonClick}
+                  LeftIcon={IconPlus}
+                  text="Create view"
+                />
+              </DropdownMenuItemsContainer>
+            </>
+          }
+        />
       </ButtonGroup>
     </StyledContainer>
   );
