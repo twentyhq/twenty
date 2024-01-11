@@ -29,7 +29,7 @@ export const useTableCell = () => {
   const { objectMetadataConfigState, tableRowIdsState } =
     useRecordTableStates();
 
-  const objectMetadataConfig = useRecoilValue(objectMetadataConfigState);
+  const objectMetadataConfig = useRecoilValue(objectMetadataConfigState());
 
   const basePathToShowPage = objectMetadataConfig?.basePathToShowPage;
 
@@ -60,7 +60,7 @@ export const useTableCell = () => {
   );
 
   const deleteRow = useRecoilCallback(({ snapshot }) => async () => {
-    const tableRowIds = getSnapshotValue(snapshot, tableRowIdsState);
+    const tableRowIds = getSnapshotValue(snapshot, tableRowIdsState());
 
     await deleteOneRecord(tableRowIds[0]);
   });

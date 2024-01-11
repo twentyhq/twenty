@@ -14,7 +14,7 @@ export const useGetIsSomeCellInEditMode = (recordTableId?: string) => {
       () => {
         const currentTableCellInEditModePosition = getSnapshotValue(
           snapshot,
-          currentTableCellInEditModePositionState,
+          currentTableCellInEditModePositionState(),
         );
 
         const isSomeCellInEditMode = isTableCellInEditModeFamilyState(

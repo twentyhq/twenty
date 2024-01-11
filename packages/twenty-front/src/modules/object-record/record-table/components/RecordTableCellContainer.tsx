@@ -27,7 +27,7 @@ export const RecordTableCellContainer = ({
   const currentRowId = useContext(RowIdContext);
   const { objectMetadataConfigState } = useRecordTableStates();
 
-  const objectMetadataConfig = useRecoilValue(objectMetadataConfigState);
+  const objectMetadataConfig = useRecoilValue(objectMetadataConfigState());
 
   const { setCurrentRowSelected } = useCurrentRowSelected();
 

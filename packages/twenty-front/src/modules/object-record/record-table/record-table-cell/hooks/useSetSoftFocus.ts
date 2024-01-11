@@ -19,7 +19,7 @@ export const useSetSoftFocus = () => {
       (newPosition: TableCellPosition) => {
         setSoftFocusPosition(newPosition);
 
-        set(isSoftFocusActiveState, true);
+        set(isSoftFocusActiveState(), true);
 
         setHotkeyScope(TableHotkeyScope.TableSoftFocus);
       },

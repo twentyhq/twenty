@@ -10,7 +10,7 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
   return useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
-        const tableRowIds = getSnapshotValue(snapshot, tableRowIdsState);
+        const tableRowIds = getSnapshotValue(snapshot, tableRowIdsState());
 
         for (const rowId of tableRowIds) {
           set(isRowSelectedFamilyState(rowId), false);

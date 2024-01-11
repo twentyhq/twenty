@@ -21,7 +21,7 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
       () => {
         const isSoftFocusActive = getSnapshotValue(
           snapshot,
-          isSoftFocusActiveState,
+          isSoftFocusActiveState(),
         );
 
         const currentHotkeyScope = snapshot

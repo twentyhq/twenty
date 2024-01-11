@@ -17,14 +17,14 @@ export const useSetSoftFocusPosition = (recordTableId?: string) => {
       return (newPosition: TableCellPosition) => {
         const currentPosition = getSnapshotValue(
           snapshot,
-          softFocusPositionState,
+          softFocusPositionState(),
         );
 
-        set(isSoftFocusActiveState, true);
+        set(isSoftFocusActiveState(), true);
 
         set(isSoftFocusOnTableCellFamilyState(currentPosition), false);
 
-        set(softFocusPositionState, newPosition);
+        set(softFocusPositionState(), newPosition);
 
         set(isSoftFocusOnTableCellFamilyState(newPosition), true);
       };

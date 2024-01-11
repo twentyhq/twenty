@@ -21,7 +21,7 @@ export const useMoveSoftFocusToCurrentCellOnHover = () => {
       () => {
         const currentTableCellInEditModePosition = getSnapshotValue(
           snapshot,
-          currentTableCellInEditModePositionState,
+          currentTableCellInEditModePositionState(),
         );
 
         const isSomeCellInEditMode = snapshot

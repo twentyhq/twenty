@@ -9,7 +9,7 @@ import { useRecordTableStates } from '@/object-record/record-table/hooks/interna
 export const RecordTableBody = () => {
   const { tableRowIdsState } = useRecordTableStates();
 
-  const tableRowIds = useRecoilValue(tableRowIdsState);
+  const tableRowIds = useRecoilValue(tableRowIdsState());
 
   return (
     <>

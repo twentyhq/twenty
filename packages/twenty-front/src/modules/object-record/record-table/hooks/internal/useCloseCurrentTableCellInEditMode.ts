@@ -14,7 +14,7 @@ export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
       return async () => {
         const currentTableCellInEditModePosition = getSnapshotValue(
           snapshot,
-          currentTableCellInEditModePositionState,
+          currentTableCellInEditModePositionState(),
         );
 
         set(

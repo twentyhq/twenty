@@ -18,7 +18,7 @@ export const useSelectAllRows = (recordTableId?: string) => {
           allRowsSelectedStatusSelector,
         );
 
-        const tableRowIds = getSnapshotValue(snapshot, tableRowIdsState);
+        const tableRowIds = getSnapshotValue(snapshot, tableRowIdsState());
 
         if (
           allRowsSelectedStatus === 'none' ||

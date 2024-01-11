@@ -88,10 +88,10 @@ export const RecordTableHeaderCell = ({
   } = useRecordTableStates();
 
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
-    resizeFieldOffsetState,
+    resizeFieldOffsetState(),
   );
 
-  const tableColumns = useRecoilValue(tableColumnsState);
+  const tableColumns = useRecoilValue(tableColumnsState());
   const tableColumnsByKey = useRecoilValue(tableColumnsByKeySelector);
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
 
@@ -127,7 +127,7 @@ export const RecordTableHeaderCell = ({
 
         const resizeFieldOffset = getSnapshotValue(
           snapshot,
-          resizeFieldOffsetState,
+          resizeFieldOffsetState(),
         );
 
         const nextWidth = Math.round(
@@ -137,7 +137,7 @@ export const RecordTableHeaderCell = ({
           ),
         );
 
-        set(resizeFieldOffsetState, 0);
+        set(resizeFieldOffsetState(), 0);
         setInitialPointerPositionX(null);
         setResizedFieldKey(null);
 

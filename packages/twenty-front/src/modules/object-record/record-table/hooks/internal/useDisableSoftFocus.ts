@@ -15,10 +15,10 @@ export const useDisableSoftFocus = (recordTableId?: string) => {
       return () => {
         const currentPosition = getSnapshotValue(
           snapshot,
-          softFocusPositionState,
+          softFocusPositionState(),
         );
 
-        set(isSoftFocusActiveState, false);
+        set(isSoftFocusActiveState(), false);
 
         set(isSoftFocusOnTableCellFamilyState(currentPosition), false);
       };

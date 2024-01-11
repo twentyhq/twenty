@@ -23,9 +23,9 @@ export const useTableColumns = (props?: useRecordTableProps) => {
     visibleTableColumnsSelector,
   } = useRecordTableStates(props?.recordTableId);
 
-  const availableTableColumns = useRecoilValue(availableTableColumnsState);
+  const availableTableColumns = useRecoilValue(availableTableColumnsState());
 
-  const tableColumns = useRecoilValue(tableColumnsState);
+  const tableColumns = useRecoilValue(tableColumnsState());
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
 
   const { handleColumnMove } = useMoveViewColumns();

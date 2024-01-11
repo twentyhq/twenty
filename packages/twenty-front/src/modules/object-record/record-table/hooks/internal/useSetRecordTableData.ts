@@ -33,17 +33,17 @@ export const useSetRecordTableData = ({
             set(entityFieldsFamilyState(entity.id), entity);
           }
         }
-        const currentRowIds = getSnapshotValue(snapshot, tableRowIdsState);
+        const currentRowIds = getSnapshotValue(snapshot, tableRowIdsState());
 
         const entityIds = newEntityArray.map((entity) => entity.id);
 
         if (!isDeeplyEqual(currentRowIds, entityIds)) {
-          set(tableRowIdsState, entityIds);
+          set(tableRowIdsState(), entityIds);
         }
 
         resetTableRowSelection();
 
-        set(numberOfTableRowsState, entityIds.length);
+        set(numberOfTableRowsState(), entityIds.length);
         onEntityCountChange(entityIds.length);
       },
     [

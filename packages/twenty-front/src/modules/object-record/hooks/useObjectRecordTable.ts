@@ -32,9 +32,9 @@ export const useObjectRecordTable = () => {
   const { tableFiltersState, tableSortsState, tableLastRowVisibleState } =
     useRecordTableStates();
 
-  const tableFilters = useRecoilValue(tableFiltersState);
-  const tableSorts = useRecoilValue(tableSortsState);
-  const setLastRowVisible = useSetRecoilState(tableLastRowVisibleState);
+  const tableFilters = useRecoilValue(tableFiltersState());
+  const tableSorts = useRecoilValue(tableSortsState());
+  const setLastRowVisible = useSetRecoilState(tableLastRowVisibleState());
 
   const requestFilters = turnObjectDropdownFilterIntoQueryFilter(
     tableFilters,

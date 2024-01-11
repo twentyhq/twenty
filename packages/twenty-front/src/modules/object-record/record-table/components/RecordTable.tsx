@@ -112,7 +112,7 @@ export const RecordTable = ({
   const { scopeId, objectNamePluralState } =
     useRecordTableStates(recordTableId);
 
-  const objectNamePlural = useRecoilValue(objectNamePluralState);
+  const objectNamePlural = useRecoilValue(objectNamePluralState());
 
   return (
     <RecordTableScope

@@ -16,7 +16,7 @@ export const useMoveEditModeToTableCellPosition = (recordTableId?: string) => {
       return (newPosition: TableCellPosition) => {
         const currentTableCellInEditModePosition = getSnapshotValue(
           snapshot,
-          currentTableCellInEditModePositionState,
+          currentTableCellInEditModePositionState(),
         );
 
         set(
@@ -24,7 +24,7 @@ export const useMoveEditModeToTableCellPosition = (recordTableId?: string) => {
           false,
         );
 
-        set(currentTableCellInEditModePositionState, newPosition);
+        set(currentTableCellInEditModePositionState(), newPosition);
 
         set(isTableCellInEditModeFamilyState(newPosition), true);
       };

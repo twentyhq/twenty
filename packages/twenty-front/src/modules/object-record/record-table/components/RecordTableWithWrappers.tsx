@@ -85,10 +85,10 @@ export const RecordTableWithWrappers = ({
   const { numberOfTableRowsState, isRecordTableInitialLoadingState } =
     useRecordTableStates(recordTableId);
 
-  const numberOfTableRows = useRecoilValue(numberOfTableRowsState);
+  const numberOfTableRows = useRecoilValue(numberOfTableRowsState());
 
   const isRecordTableInitialLoading = useRecoilValue(
-    isRecordTableInitialLoadingState,
+    isRecordTableInitialLoadingState(),
   );
 
   const { resetTableRowSelection, setRowSelectedState } = useRecordTable({
