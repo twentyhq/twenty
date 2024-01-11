@@ -7,7 +7,7 @@ export const useScrollWrapperScopedRef = () => {
 
   if (!scrollWrapperRef)
     throw new Error(
-      `Using a scoped ref without a ScrollWrapper : verify that you are using a ScrollWrapper if you intended to do so.`,
+      `Using a scroll ref without a ScrollWrapper : verify that you are using a ScrollWrapper if you intended to do so.`,
     );
 
   return scrollWrapperRef;

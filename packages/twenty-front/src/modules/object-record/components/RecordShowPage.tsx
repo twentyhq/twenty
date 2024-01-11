@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { parseFieldRelationType } from '@/object-metadata/utils/parseFieldRelationType';
 import { parseFieldType } from '@/object-metadata/utils/parseFieldType';
 import {
   FieldContext,
@@ -15,7 +16,6 @@ import { RecordInlineCell } from '@/object-record/record-inline-cell/components/
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecordRelationFieldCardSection } from '@/object-record/record-relation-card/components/RecordRelationFieldCardSection';
-import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { isFieldMetadataItemAvailable } from '@/object-record/utils/isFieldMetadataItemAvailable';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
 import { PageBody } from '@/ui/layout/page/PageBody';
@@ -31,6 +31,7 @@ import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSu
 import { ShowPageRecoilScopeContext } from '@/ui/layout/states/ShowPageRecoilScopeContext';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   FieldMetadataType,
   FileFolder,
@@ -51,12 +52,13 @@ export const RecordShowPage = () => {
     throw new Error(`Object name is not defined`);
   }
 
-  const { objectMetadataItem, labelIdentifierFieldMetadata } =
-    useObjectMetadataItem({
-      objectNameSingular,
-    });
-
-  const { identifiersMapper } = useRelationPicker();
+  const {
+    objectMetadataItem,
+    labelIdentifierFieldMetadata,
+    mapToObjectRecordIdentifier,
+  } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
   const { favorites, createFavorite, deleteFavorite } = useFavorites();
 
@@ -107,11 +109,6 @@ export const RecordShowPage = () => {
       ? record?.name.firstName + ' ' + record?.name.lastName
       : record?.name;
 
-  const recordIdentifiers = identifiersMapper?.(
-    record,
-    objectMetadataItem?.nameSingular ?? '',
-  );
-
   const onUploadPicture = async (file: File) => {
     if (objectNameSingular !== 'person') {
       return;
@@ -144,6 +141,10 @@ export const RecordShowPage = () => {
     });
   };
 
+  const isRelationFieldCardEnabled = useIsFeatureEnabled(
+    'IS_RELATION_FIELD_CARD_ENABLED',
+  );
+
   const availableFieldMetadataItems = objectMetadataItem.fields
     .filter(
       (fieldMetadataItem) =>
@@ -156,7 +157,9 @@ export const RecordShowPage = () => {
 
   const inlineFieldMetadataItems = availableFieldMetadataItems.filter(
     (fieldMetadataItem) =>
-      fieldMetadataItem.type !== FieldMetadataType.Relation,
+      fieldMetadataItem.type !== FieldMetadataType.Relation ||
+      (!isRelationFieldCardEnabled &&
+        parseFieldRelationType(fieldMetadataItem) === 'TO_ONE_OBJECT'),
   );
 
   const relationFieldMetadataItems = availableFieldMetadataItems.filter(
@@ -201,8 +204,12 @@ export const RecordShowPage = () => {
                 <>
                   <ShowPageSummaryCard
                     id={record.id}
-                    logoOrAvatar={recordIdentifiers?.avatarUrl}
-                    avatarPlaceholder={recordIdentifiers?.name ?? ''}
+                    logoOrAvatar={
+                      mapToObjectRecordIdentifier(record).avatarUrl ?? ''
+                    }
+                    avatarPlaceholder={
+                      mapToObjectRecordIdentifier(record).name ?? ''
+                    }
                     date={record.createdAt ?? ''}
                     title={
                       <FieldContext.Provider
@@ -232,7 +239,10 @@ export const RecordShowPage = () => {
                         <RecordInlineCell />
                       </FieldContext.Provider>
                     }
-                    avatarType={recordIdentifiers?.avatarType ?? 'rounded'}
+                    avatarType={
+                      mapToObjectRecordIdentifier(record).avatarType ??
+                      'rounded'
+                    }
                     onUploadPicture={
                       objectNameSingular === 'person'
                         ? onUploadPicture
@@ -263,28 +273,29 @@ export const RecordShowPage = () => {
                       ),
                     )}
                   </PropertyBox>
-                  {relationFieldMetadataItems.map(
-                    (fieldMetadataItem, index) => (
-                      <FieldContext.Provider
-                        key={record.id + fieldMetadataItem.id}
-                        value={{
-                          entityId: record.id,
-                          recoilScopeId: record.id + fieldMetadataItem.id,
-                          isLabelIdentifier: false,
-                          fieldDefinition:
-                            formatFieldMetadataItemAsColumnDefinition({
-                              field: fieldMetadataItem,
-                              position: index,
-                              objectMetadataItem,
-                            }),
-                          useUpdateRecord: useUpdateOneObjectRecordMutation,
-                          hotkeyScope: InlineCellHotkeyScope.InlineCell,
-                        }}
-                      >
-                        <RecordRelationFieldCardSection />
-                      </FieldContext.Provider>
-                    ),
-                  )}
+                  {isRelationFieldCardEnabled &&
+                    relationFieldMetadataItems.map(
+                      (fieldMetadataItem, index) => (
+                        <FieldContext.Provider
+                          key={record.id + fieldMetadataItem.id}
+                          value={{
+                            entityId: record.id,
+                            recoilScopeId: record.id + fieldMetadataItem.id,
+                            isLabelIdentifier: false,
+                            fieldDefinition:
+                              formatFieldMetadataItemAsColumnDefinition({
+                                field: fieldMetadataItem,
+                                position: index,
+                                objectMetadataItem,
+                              }),
+                            useUpdateRecord: useUpdateOneObjectRecordMutation,
+                            hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                          }}
+                        >
+                          <RecordRelationFieldCardSection />
+                        </FieldContext.Provider>
+                      ),
+                    )}
                 </>
               )}
             </ShowPageLeftContainer>

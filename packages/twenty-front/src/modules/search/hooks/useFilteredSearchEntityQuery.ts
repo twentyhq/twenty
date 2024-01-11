@@ -1,11 +1,9 @@
-import { QueryHookOptions, QueryResult } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/components/MultipleEntitySelect';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
-import { mapPaginatedRecordsToRecords } from '@/object-record/utils/mapPaginatedRecordsToRecords';
 import { assertNotNull } from '~/utils/assert';
 import { isDefined } from '~/utils/isDefined';
 
@@ -16,9 +14,7 @@ export const DEFAULT_SEARCH_REQUEST_LIMIT = 60;
 // TODO: use this for all search queries, because we need selectedEntities and entitiesToSelect each time we want to search
 // Filtered entities to select are
 
-// TODO: replace query hooks by useFindManyRecords
 export const useFilteredSearchEntityQuery = ({
-  queryHook,
   orderByField,
   filters,
   sortOrder = 'AscNullsLast',
@@ -28,9 +24,6 @@ export const useFilteredSearchEntityQuery = ({
   excludeEntityIds = [],
   objectNameSingular,
 }: {
-  queryHook: (
-    queryOptions?: QueryHookOptions<any, any>,
-  ) => QueryResult<any, any>;
   orderByField: string;
   filters: SearchFilter[];
   sortOrder?: OrderBy;
@@ -40,22 +33,11 @@ export const useFilteredSearchEntityQuery = ({
   excludeEntityIds?: string[];
   objectNameSingular: string;
 }): EntitiesForMultipleEntitySelect<EntityForSelect> => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
-
-  const { loading: selectedEntitiesLoading, data: selectedEntitiesData } =
-    queryHook({
-      variables: {
-        filter: {
-          id: {
-            in: selectedIds,
-          },
-        },
-        orderBy: {
-          [orderByField]: sortOrder,
-        },
-      } as any,
+  const { loading: selectedRecordsLoading, records: selectedRecords } =
+    useFindManyRecords({
+      objectNameSingular,
+      filter: { id: { in: selectedIds } },
+      orderBy: { [orderByField]: sortOrder },
     });
 
   const searchFilter = filters
@@ -90,74 +72,40 @@ export const useFilteredSearchEntityQuery = ({
     .filter(isDefined);
 
   const {
-    loading: filteredSelectedEntitiesLoading,
-    data: filteredSelectedEntitiesData,
-  } = queryHook({
-    variables: {
-      filter: {
-        and: [
-          {
-            and: searchFilter,
-          },
-          {
-            id: {
-              in: selectedIds,
-            },
-          },
-        ],
-      },
-      orderBy: {
-        [orderByField]: sortOrder,
-      },
-    } as any,
+    loading: filteredSelectedRecordsLoading,
+    records: filteredSelectedRecords,
+  } = useFindManyRecords({
+    objectNameSingular,
+    filter: { and: [{ and: searchFilter }, { id: { in: selectedIds } }] },
+    orderBy: { [orderByField]: sortOrder },
   });
 
-  const { loading: entitiesToSelectLoading, data: entitiesToSelectData } =
-    queryHook({
-      variables: {
-        filter: {
-          and: [
-            {
-              and: searchFilter,
-            },
-            {
-              not: {
-                id: {
-                  in: [...selectedIds, ...excludeEntityIds],
-                },
-              },
-            },
-          ],
-        },
-        limit: limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,
-        orderBy: {
-          [orderByField]: sortOrder,
-        },
-      } as any,
+  const { loading: recordsToSelectLoading, records: recordsToSelect } =
+    useFindManyRecords({
+      objectNameSingular,
+      filter: {
+        and: [
+          { and: searchFilter },
+          { not: { id: { in: [...selectedIds, ...excludeEntityIds] } } },
+        ],
+      },
+      limit: limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,
+      orderBy: { [orderByField]: sortOrder },
     });
 
   return {
-    selectedEntities: mapPaginatedRecordsToRecords({
-      objectNamePlural: objectMetadataItem.namePlural,
-      pagedRecords: selectedEntitiesData,
-    })
+    selectedEntities: selectedRecords
       .map(mappingFunction)
       .filter(assertNotNull),
-    filteredSelectedEntities: mapPaginatedRecordsToRecords({
-      objectNamePlural: objectMetadataItem.namePlural,
-      pagedRecords: filteredSelectedEntitiesData,
-    })
+    filteredSelectedEntities: filteredSelectedRecords
       .map(mappingFunction)
       .filter(assertNotNull),
-    entitiesToSelect: mapPaginatedRecordsToRecords({
-      objectNamePlural: objectMetadataItem.namePlural,
-      pagedRecords: entitiesToSelectData,
-    })
+    entitiesToSelect: recordsToSelect
       .map(mappingFunction)
       .filter(assertNotNull),
     loading:
-      entitiesToSelectLoading ||
-      filteredSelectedEntitiesLoading ||
-      selectedEntitiesLoading,
+      recordsToSelectLoading ||
+      filteredSelectedRecordsLoading ||
+      selectedRecordsLoading,
   };
 };

@@ -1,10 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useQuery } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { SingleEntitySelectBase } from '@/object-record/relation-picker/components/SingleEntitySelectBase';
+import { SingleEntitySelectMenuItems } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItems';
 import { useEntitySelectSearch } from '@/object-record/relation-picker/hooks/useEntitySelectSearch';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
@@ -36,16 +34,9 @@ export const OpportunityPicker = ({
 
   const { searchFilter, handleSearchFilterChange } = useEntitySelectSearch();
 
-  // TODO: refactor useFilteredSearchEntityQuery
-  const { findManyRecordsQuery: findManyCompanies } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Company,
-  });
-  const useFindManyQuery = (options: any) =>
-    useQuery(findManyCompanies, options);
   const { identifiersMapper, searchQuery } = useRelationPicker();
 
   const filteredSearchEntityResults = useFilteredSearchEntityQuery({
-    queryHook: useFindManyQuery,
     filters: [
       {
         fieldNames: searchQuery?.computeFilterFields?.('company') ?? [],
@@ -127,7 +118,7 @@ export const OpportunityPicker = ({
           />
           <DropdownMenuSeparator />
           <RecoilScope>
-            <SingleEntitySelectBase
+            <SingleEntitySelectMenuItems
               entitiesToSelect={filteredSearchEntityResults.entitiesToSelect}
               loading={filteredSearchEntityResults.loading}
               onCancel={onCancel}

@@ -1,13 +1,7 @@
-import { z } from 'zod';
+import { isString } from '@sniptt/guards';
 
-import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
-
-const selectValueSchema = z.object({
-  color: themeColorSchema,
-  label: z.string(),
-});
+import { FieldSelectValue } from '@/object-record/field/types/FieldMetadata';
 
 export const isFieldSelectValue = (
   fieldValue: unknown,
-): fieldValue is z.infer<typeof selectValueSchema> =>
-  selectValueSchema.safeParse(fieldValue).success;
+): fieldValue is FieldSelectValue => isString(fieldValue);
