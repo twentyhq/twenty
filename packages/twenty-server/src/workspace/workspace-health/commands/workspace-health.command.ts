@@ -36,7 +36,6 @@ export class WorkspaceHealthCommand extends CommandRunner {
     } else {
       console.log(chalk.red('Workspace is not healthy'));
 
-      console.log('options', options);
       if (options.verbose) {
         console.group(chalk.red('Issues'));
         issues.forEach((issue) => {
