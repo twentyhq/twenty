@@ -1,86 +1,190 @@
+import { isNonEmptyArray } from '@sniptt/guards';
 import { renderHook } from '@testing-library/react';
-import { useSetRecoilState } from 'recoil';
-import { getJestHookWrapper } from 'src/testing/jest/getJestHookWrapper';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { Company } from '@/companies/types/Company';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import {
-  query,
-  responseData,
-  variables,
-} from '@/object-record/hooks/__mocks__/useFindManyRecords';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+  companiesConnectionWithPeopleConnectionWithFavoritesConnectionMock,
+  emptyConnectionMock,
+  peopleWithTheirUniqueCompanies,
+} from '@/object-record/hooks/__mocks__/useMapConnectionToRecords';
+import { useMapConnectionToRecords } from '@/object-record/hooks/useMapConnectionToRecords';
+import { Person } from '@/people/types/Person';
+import { getJestHookWrapper } from '~/testing/jest/getJestHookWrapper';
+import { isDefined } from '~/utils/isDefined';
 
-const mocks = [
-  {
-    request: {
-      query,
-      variables,
-    },
-    result: jest.fn(() => ({
-      data: {
-        deletePeople: responseData,
-      },
-    })),
+const Wrapper = getJestHookWrapper({
+  apolloMocks: [],
+  onInitializeRecoilSnapshot: (snapshot) => {
+    snapshot.set(objectMetadataItemsState, getObjectMetadataItemsMock());
   },
-];
-
-const Wrapper = getJestHookWrapper({ apolloMocks: mocks });
+});
 
 describe('useMapConnectionToRecords', () => {
-  it('should skip fetch if currentWorkspace is undefined', async () => {
-    const { result } = renderHook(
-      () => useFindManyRecords({ objectNameSingular: 'person' }),
-      {
-        wrapper: Wrapper,
-      },
-    );
-
-    expect(result.current.loading).toBe(false);
-    expect(result.current.error).toBeUndefined();
-  });
-
-  it('should work as expected', async () => {
-    const onCompleted = jest.fn();
-
+  it('Empty edges - should return an empty array if no edge', async () => {
     const { result } = renderHook(
       () => {
-        const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
-        setCurrentWorkspace({
-          id: '32219445-f587-4c40-b2b1-6d3205ed96da',
-          displayName: 'cool-workspace',
-          allowImpersonation: false,
-          subscriptionStatus: 'incomplete',
+        const mapConnectionToRecords = useMapConnectionToRecords();
+
+        const records = mapConnectionToRecords({
+          objectNameSingular: CoreObjectNameSingular.Company,
+          objectRecordConnection: emptyConnectionMock,
+          depth: 5,
         });
 
-        const mockObjectMetadataItems = getObjectMetadataItemsMock();
-
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-
-        setMetadataItems(mockObjectMetadataItems);
-
-        return useFindManyRecords({
-          objectNameSingular: 'person',
-          onCompleted,
-        });
+        return records;
       },
       {
         wrapper: Wrapper,
       },
     );
 
-    expect(result.current.loading).toBe(true);
-    expect(result.current.error).toBeUndefined();
-    expect(result.current.records.length).toBe(0);
+    expect(Array.isArray(result.current)).toBe(true);
+  });
 
-    // FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
-    // await waitFor(() => {
-    //   expect(result.current.loading).toBe(false);
-    //   expect(result.current.records).toBeDefined();
+  it('No relation fields - should return an array of company records', async () => {
+    const { result } = renderHook(
+      () => {
+        const mapConnectionToRecords = useMapConnectionToRecords();
 
-    //   console.log({ res: result.current.records });
-    //   expect(result.current.records.length > 0).toBe(true);
-    // });
+        const records = mapConnectionToRecords({
+          objectNameSingular: CoreObjectNameSingular.Company,
+          objectRecordConnection:
+            companiesConnectionWithPeopleConnectionWithFavoritesConnectionMock,
+          depth: 5,
+        });
+
+        return records;
+      },
+      {
+        wrapper: Wrapper,
+      },
+    );
+
+    expect(Array.isArray(result.current)).toBe(true);
+  });
+
+  it('n+1 relation fields - should return an array of company records with their people records', async () => {
+    const { result } = renderHook(
+      () => {
+        const mapConnectionToRecords = useMapConnectionToRecords();
+
+        const records = mapConnectionToRecords({
+          objectNameSingular: CoreObjectNameSingular.Company,
+          objectRecordConnection:
+            companiesConnectionWithPeopleConnectionWithFavoritesConnectionMock,
+          depth: 5,
+        });
+
+        return records;
+      },
+      {
+        wrapper: Wrapper,
+      },
+    );
+
+    const secondCompanyMock =
+      companiesConnectionWithPeopleConnectionWithFavoritesConnectionMock
+        .edges[1];
+
+    const secondCompanyPeopleMock = secondCompanyMock.node.people.edges.map(
+      (edge) => edge.node,
+    );
+
+    const companiesResult = result.current;
+    const secondCompanyResult = result.current[1];
+    const secondCompanyPeopleResult = secondCompanyResult.people;
+
+    expect(isNonEmptyArray(companiesResult)).toBe(true);
+    expect(secondCompanyResult.id).toBe(secondCompanyMock.node.id);
+    expect(isNonEmptyArray(secondCompanyPeopleResult)).toBe(true);
+    expect(secondCompanyPeopleResult[0].id).toEqual(
+      secondCompanyPeopleMock[0].id,
+    );
+  });
+
+  it('n+2 relation fields - should return an array of company records with their people records with their favorites records', async () => {
+    const { result } = renderHook(
+      () => {
+        const mapConnectionToRecords = useMapConnectionToRecords();
+
+        const records = mapConnectionToRecords({
+          objectNameSingular: CoreObjectNameSingular.Company,
+          objectRecordConnection:
+            companiesConnectionWithPeopleConnectionWithFavoritesConnectionMock,
+          depth: 5,
+        });
+
+        return records;
+      },
+      {
+        wrapper: Wrapper,
+      },
+    );
+
+    const secondCompanyMock =
+      companiesConnectionWithPeopleConnectionWithFavoritesConnectionMock
+        .edges[1];
+
+    const secondCompanyPeopleMock = secondCompanyMock.node.people;
+
+    const secondCompanyFirstPersonMock = secondCompanyPeopleMock.edges[0].node;
+
+    const secondCompanyFirstPersonFavoritesMock =
+      secondCompanyFirstPersonMock.favorites;
+
+    const companiesResult = result.current;
+    const secondCompanyResult = companiesResult[1];
+    const secondCompanyPeopleResult = secondCompanyResult.people;
+    const secondCompanyFirstPersonResult = secondCompanyPeopleResult[0];
+    const secondCompanyFirstPersonFavoritesResult =
+      secondCompanyFirstPersonResult.favorites;
+
+    expect(isNonEmptyArray(companiesResult)).toBe(true);
+    expect(secondCompanyResult.id).toBe(secondCompanyMock.node.id);
+    expect(isNonEmptyArray(secondCompanyPeopleResult)).toBe(true);
+    expect(secondCompanyFirstPersonResult.id).toEqual(
+      secondCompanyFirstPersonMock.id,
+    );
+    expect(isNonEmptyArray(secondCompanyFirstPersonFavoritesResult)).toBe(true);
+    expect(secondCompanyFirstPersonFavoritesResult[0].id).toEqual(
+      secondCompanyFirstPersonFavoritesMock.edges[0].node.id,
+    );
+  });
+
+  it("n+1 relation field TO_ONE_OBJECT - should return an array of people records with their company, mapConnectionToRecords shouldn't try to parse TO_ONE_OBJECT", async () => {
+    const { result } = renderHook(
+      () => {
+        const mapConnectionToRecords = useMapConnectionToRecords();
+
+        const records = mapConnectionToRecords({
+          objectNameSingular: CoreObjectNameSingular.Person,
+          objectRecordConnection: peopleWithTheirUniqueCompanies,
+          depth: 5,
+        });
+
+        return records as (Person & { company: Company })[];
+      },
+      {
+        wrapper: Wrapper,
+      },
+    );
+
+    const firstPersonMock = peopleWithTheirUniqueCompanies.edges[0].node;
+
+    const firstPersonsCompanyMock = firstPersonMock.company;
+
+    const peopleResult = result.current;
+
+    const firstPersonResult = result.current[0];
+    const firstPersonsCompanyresult = firstPersonResult.company;
+
+    expect(isNonEmptyArray(peopleResult)).toBe(true);
+    expect(firstPersonResult.id).toBe(firstPersonMock.id);
+
+    expect(isDefined(firstPersonsCompanyresult)).toBe(true);
+    expect(firstPersonsCompanyresult.id).toEqual(firstPersonsCompanyMock.id);
   });
 });

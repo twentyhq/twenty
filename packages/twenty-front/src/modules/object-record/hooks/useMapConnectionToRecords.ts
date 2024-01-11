@@ -4,6 +4,8 @@ import { produce } from 'immer';
 import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { parseFieldRelationType } from '@/object-metadata/utils/parseFieldRelationType';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
@@ -12,17 +14,17 @@ export const useMapConnectionToRecords = () => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const mapConnectionToRecords = useCallback(
-    ({
+    <T extends ObjectRecord>({
       objectRecordConnection,
       objectNameSingular,
       objectNamePlural,
       depth,
     }: {
-      objectRecordConnection: ObjectRecordConnection | undefined | null;
+      objectRecordConnection: ObjectRecordConnection<T> | undefined | null;
       objectNameSingular?: string;
       objectNamePlural?: string;
       depth: number;
-    }) => {
+    }): ObjectRecord[] => {
       if (
         !isDefined(objectRecordConnection) ||
         !isNonEmptyArray(objectMetadataItems)
@@ -53,6 +55,15 @@ export const useMapConnectionToRecords = () => {
       return produce(objectRecords, (objectRecordsDraft) => {
         for (const objectRecordDraft of objectRecordsDraft) {
           for (const relationField of relationFields) {
+            const relationType = parseFieldRelationType(relationField);
+
+            if (
+              relationType === 'TO_ONE_OBJECT' ||
+              relationType === 'FROM_ONE_OBJECT'
+            ) {
+              continue;
+            }
+
             const relatedObjectMetadataSingularName =
               relationField.toRelationMetadata?.fromObjectMetadata
                 .nameSingular ??
@@ -89,11 +100,11 @@ export const useMapConnectionToRecords = () => {
               depth: depth - 1,
             });
 
-            objectRecordDraft[relationField.name] =
+            (objectRecordDraft as any)[relationField.name] =
               relationConnectionMappedToRecords;
           }
         }
-      });
+      }) as ObjectRecord[];
     },
     [objectMetadataItems],
   );

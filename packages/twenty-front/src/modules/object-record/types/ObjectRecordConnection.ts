@@ -1,5 +1,6 @@
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
+import { Nullable } from '~/types/Nullable';
 
 export type ObjectRecordConnection<T extends ObjectRecord = ObjectRecord> = {
   __typename?: string;
@@ -7,7 +8,7 @@ export type ObjectRecordConnection<T extends ObjectRecord = ObjectRecord> = {
   pageInfo: {
     hasNextPage?: boolean;
     hasPreviousPage?: boolean;
-    startCursor?: string;
-    endCursor?: string;
+    startCursor?: Nullable<string>;
+    endCursor?: Nullable<string>;
   };
 };
