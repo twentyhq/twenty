@@ -37,6 +37,5 @@ export default {
     '__stories__/*',
     'display/icon/index.ts',
   ],
-  testPathIgnorePatterns: ['src/modules/activities/blocks/spec.ts'],
   // coverageDirectory: '<rootDir>/coverage/',
 };
