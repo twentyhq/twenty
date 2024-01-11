@@ -21,10 +21,6 @@ import {
 } from 'src/core/feature-flag/feature-flag.entity';
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
-const FEATURE_FLAGS = [
-  'faf50837-0159-4260-af66-549f831a723c',
-  '20202020-1c25-4d02-bf25-6aeccf7ea419',
-];
 
 @Injectable()
 export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
