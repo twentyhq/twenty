@@ -24,7 +24,9 @@ export const FilterQueryParamsEffect = () => {
       }
     });
 
-    return resetViewBar;
+    return () => {
+      resetViewBar();
+    };
   }, [
     getFiltersFromQueryParams,
     hasFiltersQueryParams,

@@ -55,8 +55,9 @@ export const useFiltersFromQueryParams = () => {
         return (
           await Promise.all(
             Object.entries(filterQueryParams).map<Promise<ViewFilter | null>>(
-              async ([fieldName, paramValue]) => {
-                const [operand, value] = Object.entries(paramValue)[0];
+              async ([fieldName, filterFromURL]) => {
+                const [filterOperandFromURL, filterValueFromURL] =
+                  Object.entries(filterFromURL)[0];
                 const fieldMetadataItem = objectMetadataItem.fields.find(
                   (field) => field.name === fieldName,
                 );
@@ -73,9 +74,11 @@ export const useFiltersFromQueryParams = () => {
                 const relationObjectMetadataNameSingular =
                   fieldMetadataItem.toRelationMetadata?.fromObjectMetadata
                     .nameSingular;
+
                 const relationObjectMetadataNamePlural =
                   fieldMetadataItem.toRelationMetadata?.fromObjectMetadata
                     .namePlural;
+
                 const relationObjectMetadataItem =
                   relationObjectMetadataNameSingular
                     ? snapshot
@@ -87,38 +90,53 @@ export const useFiltersFromQueryParams = () => {
                         )
                         .getValue()
                     : null;
-                const relationRecordNames =
+
+                const relationRecordNames = [];
+
+                if (
                   relationObjectMetadataNamePlural &&
                   relationObjectMetadataItem &&
-                  Array.isArray(value)
-                    ? (
-                        await apolloClient.query<
-                          Record<string, { edges: { node: ObjectRecord }[] }>
-                        >({
-                          query: generateFindManyRecordsQuery({
-                            objectMetadataItem: relationObjectMetadataItem,
-                          }),
-                          variables: { filter: { id: { in: value } } },
-                        })
-                      ).data?.[relationObjectMetadataNamePlural]?.edges.map(
-                        ({ node: record }) =>
-                          getObjectRecordIdentifier({
-                            objectMetadataItem: relationObjectMetadataItem,
-                            record,
-                          }).name,
-                      )
-                    : undefined;
+                  Array.isArray(filterValueFromURL)
+                ) {
+                  const queryResult = await apolloClient.query<
+                    Record<string, { edges: { node: ObjectRecord }[] }>
+                  >({
+                    query: generateFindManyRecordsQuery({
+                      objectMetadataItem: relationObjectMetadataItem,
+                    }),
+                    variables: {
+                      filter: { id: { in: filterValueFromURL } },
+                    },
+                  });
 
-                const filterValue = Array.isArray(value)
-                  ? JSON.stringify(value)
-                  : value;
+                  const relationRecordNamesFromQuery = queryResult.data?.[
+                    relationObjectMetadataNamePlural
+                  ]?.edges.map(
+                    ({ node: record }) =>
+                      getObjectRecordIdentifier({
+                        objectMetadataItem: relationObjectMetadataItem,
+                        record,
+                      }).name,
+                  );
+
+                  relationRecordNames.push(...relationRecordNamesFromQuery);
+                }
+
+                const filterValueAsString = Array.isArray(filterValueFromURL)
+                  ? JSON.stringify(filterValueFromURL)
+                  : filterValueFromURL;
 
                 return {
-                  id: `tmp-${[fieldName, operand, value].join('-')}`,
+                  id: `tmp-${[
+                    fieldName,
+                    filterOperandFromURL,
+                    filterValueFromURL,
+                  ].join('-')}`,
                   fieldMetadataId: fieldMetadataItem.id,
-                  operand: operand as ViewFilterOperand,
-                  value: filterValue,
-                  displayValue: relationRecordNames?.join(', ') ?? filterValue,
+                  operand: filterOperandFromURL as ViewFilterOperand,
+                  value: filterValueAsString,
+                  displayValue:
+                    relationRecordNames?.join(', ') ?? filterValueAsString,
                   definition: filterDefinition,
                 };
               },
