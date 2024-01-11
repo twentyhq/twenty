@@ -90,6 +90,10 @@ export class GmailPartialSyncService {
       maxResults,
     );
 
+    if (history.historyId === lastSyncHistoryId) {
+      return;
+    }
+
     // TODO: delete messages from messagesDeleted
     const { messagesAdded, messagesDeleted } =
       await this.getMessageIdsAndThreadIdsFromHistory(history);
@@ -115,7 +119,7 @@ export class GmailPartialSyncService {
     const messageQueries =
       this.utils.createQueriesFromMessageIds(messageIdsToSave);
 
-    const { messages: messagesToSave } =
+    const { messages: messagesToSave, errors } =
       await this.fetchBatchMessagesService.fetchAllMessages(
         messageQueries,
         accessToken,
@@ -150,6 +154,19 @@ export class GmailPartialSyncService {
     await this.utils.deleteEmptyThreads(
       messagesDeleted,
       connectedAccountId,
+      dataSourceMetadata,
+      workspaceDataSource,
+    );
+
+    if (errors.length) throw new Error('Error fetching messages');
+
+    const historyId = history.historyId;
+
+    if (!historyId) throw new Error('No history id found');
+
+    await this.utils.saveLastSyncHistoryId(
+      historyId,
+      connectedAccount.id,
       dataSourceMetadata,
       workspaceDataSource,
     );
