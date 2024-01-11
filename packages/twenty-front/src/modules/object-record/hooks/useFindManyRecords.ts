@@ -198,6 +198,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     enqueueSnackBar,
   ]);
 
+  // TODO: remove this and use only mapConnectionToRecords when we've finished the refactor
   const records = useMemo(
     () =>
       mapPaginatedRecordsToRecords({
@@ -211,16 +212,19 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const recordsWithoutConnection = useMemo(
     () =>
-      mapConnectionToRecords({
-        objectRecordConnection: data?.[objectMetadataItem.namePlural],
-        objectNameSingular,
-        depth: 5,
-      }) as T[],
+      useRecordsWithoutConnection
+        ? (mapConnectionToRecords({
+            objectRecordConnection: data?.[objectMetadataItem.namePlural],
+            objectNameSingular,
+            depth: 5,
+          }) as T[])
+        : [],
     [
       data,
       objectNameSingular,
       objectMetadataItem.namePlural,
       mapConnectionToRecords,
+      useRecordsWithoutConnection,
     ],
   );
 
