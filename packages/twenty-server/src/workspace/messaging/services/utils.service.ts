@@ -14,7 +14,7 @@ import { GmailThread } from 'src/workspace/messaging/types/gmailThread';
 import { MessageQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
 
 @Injectable()
-export class Utils {
+export class UtilsService {
   constructor(
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,

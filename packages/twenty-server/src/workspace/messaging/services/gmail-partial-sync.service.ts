@@ -1,19 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { gmail_v1 } from 'googleapis';
 
 import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetch-batch-messages.service';
 import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
-import { Utils } from 'src/workspace/messaging/services/utils.service';
-import { MessagingProducer } from 'src/workspace/messaging/producers/messaging-producer';
+import { UtilsService } from 'src/workspace/messaging/services/utils.service';
+import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
+import {
+  GmailPartialSyncJobData,
+  GmailPartialSyncJob,
+} from 'src/workspace/messaging/jobs/gmail-partial-sync.job';
+import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 
 @Injectable()
 export class GmailPartialSyncService {
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
     private readonly fetchBatchMessagesService: FetchBatchMessagesService,
-    private readonly utils: Utils,
-    private readonly messagingProducer: MessagingProducer,
+    private readonly utils: UtilsService,
+    @Inject(MessageQueue.messagingQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   private async getHistory(
@@ -57,9 +63,14 @@ export class GmailPartialSyncService {
 
     if (!lastSyncHistoryId) {
       // Fall back to full sync
-      await this.messagingProducer.enqueueGmailFullSync(
-        { workspaceId, connectedAccountId: connectedAccountId },
-        `${workspaceId}-${connectedAccount.id}`,
+
+      await this.messageQueueService.add<GmailPartialSyncJobData>(
+        GmailPartialSyncJob.name,
+        { workspaceId, connectedAccountId },
+        {
+          id: `${workspaceId}-${connectedAccount.id}`,
+          retryLimit: 2,
+        },
       );
 
       return;

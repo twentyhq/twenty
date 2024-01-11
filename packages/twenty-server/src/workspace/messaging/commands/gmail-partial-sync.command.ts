@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { MessagingProducer } from 'src/workspace/messaging/producers/messaging-producer';
-import { Utils } from 'src/workspace/messaging/services/utils.service';
+import { UtilsService } from 'src/workspace/messaging/services/utils.service';
 
 interface GmailPartialSyncOptions {
   workspaceId: string;
@@ -18,7 +18,7 @@ interface GmailPartialSyncOptions {
 export class GmailPartialSyncCommand extends CommandRunner {
   constructor(
     private readonly messagingProducer: MessagingProducer,
-    private readonly utils: Utils,
+    private readonly utils: UtilsService,
 
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
