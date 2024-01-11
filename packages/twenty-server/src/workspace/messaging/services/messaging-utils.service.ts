@@ -294,9 +294,12 @@ export class MessagingUtilsService {
     dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
   ) {
+    console.log('messageIds', messageIds);
     if (!messageIds || messageIds.length === 0) {
       return;
     }
+
+    console.log('a');
 
     await workspaceDataSource?.query(
       `DELETE FROM ${dataSourceMetadata.schema}."message" WHERE "externalId" = ANY($1)`,

@@ -131,6 +131,9 @@ export class GmailPartialSyncService {
       (thread) => !savedThreadIds.includes(thread.id),
     );
 
+    console.log('messagesToSave', messagesToSave);
+    console.log('messagesDeleted', messagesDeleted);
+
     await this.utils.saveMessageThreads(
       threadsToSave,
       dataSourceMetadata,
