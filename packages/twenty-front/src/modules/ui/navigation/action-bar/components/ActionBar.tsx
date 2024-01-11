@@ -55,6 +55,7 @@ export const ActionBar = ({ selectedIds }: ActionBarProps) => {
           label={item.label}
           onClick={item.onClick}
           key={item.label}
+          subActions={item?.subActions}
         />
       ))}
     </StyledContainerActionBar>
