@@ -5,6 +5,7 @@ import { Command, CommandRunner } from 'nest-commander';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import { cleanInactiveWorkspaceCronPattern } from 'src/workspace/cron/clean-inactive-workspaces/commands/utils/cron-pattern';
+import { CleanInactiveWorkspaceJob } from 'src/workspace/cron/clean-inactive-workspaces/jobs/clean-inactive-workspace.job';
 
 @Command({
   name: 'clean-inactive-workspace:cron:stop',
@@ -20,7 +21,7 @@ export class StopCleanInactiveWorkspacesCronCommand extends CommandRunner {
 
   async run(): Promise<void> {
     await this.messageQueueService.removeCron(
-      StopCleanInactiveWorkspacesCronCommand.name,
+      CleanInactiveWorkspaceJob.name,
       cleanInactiveWorkspaceCronPattern,
     );
   }
