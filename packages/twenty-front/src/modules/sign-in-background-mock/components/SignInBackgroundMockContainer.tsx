@@ -14,7 +14,8 @@ const StyledContainer = styled.div`
 `;
 
 export const SignInBackgroundMockContainer = () => {
-  const recordTableId = 'companies';
+  const objectNamePlural = 'companies';
+  const recordTableId = 'Sign-up-mock-record-table-id';
   const viewBarId = 'companies-mock';
 
   return (
@@ -27,10 +28,12 @@ export const SignInBackgroundMockContainer = () => {
         optionsDropdownScopeId={TableOptionsDropdownId}
       />
       <SignInBackgroundMockContainerEffect
+        objectNamePlural={objectNamePlural}
         recordTableId={recordTableId}
         viewId={viewBarId}
       />
       <RecordTableWithWrappers
+        objectNamePlural={objectNamePlural}
         recordTableId={recordTableId}
         viewBarId={viewBarId}
         createRecord={() => {}}

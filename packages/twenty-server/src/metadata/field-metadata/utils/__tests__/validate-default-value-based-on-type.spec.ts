@@ -133,7 +133,7 @@ describe('validateDefaultValueForType', () => {
   it('should validate CURRENCY default value', () => {
     expect(
       validateDefaultValueForType(FieldMetadataType.CURRENCY, {
-        amountMicros: 100,
+        amountMicros: '100',
         currencyCode: 'USD',
       }),
     ).toBe(true);
@@ -144,7 +144,7 @@ describe('validateDefaultValueForType', () => {
       validateDefaultValueForType(
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error Just for testing purposes
-        { amountMicros: '100', currencyCode: 'USD' },
+        { amountMicros: 100, currencyCode: 'USD' },
         FieldMetadataType.CURRENCY,
       ),
     ).toBe(false);

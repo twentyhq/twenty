@@ -12,6 +12,7 @@ export const GET_CLIENT_CONFIG = gql`
         billingUrl
       }
       signInPrefilled
+      signUpDisabled
       debugMode
       telemetry {
         enabled

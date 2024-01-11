@@ -26,6 +26,7 @@ export class ClientConfigResolver {
         billingUrl: this.environmentService.getBillingUrl(),
       },
       signInPrefilled: this.environmentService.isSignInPrefilled(),
+      signUpDisabled: this.environmentService.isSignUpDisabled(),
       debugMode: this.environmentService.isDebugMode(),
       support: {
         supportDriver: this.environmentService.getSupportDriver(),

@@ -7,7 +7,7 @@ export const useTabList = (tabListId?: string) => {
     tabListScopeId: `${tabListId}-scope`,
   });
 
-  const setActiveTabId = useSetRecoilState(activeTabIdState);
+  const setActiveTabId = useSetRecoilState(activeTabIdState());
 
   return {
     activeTabIdState,

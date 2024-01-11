@@ -1,37 +1,21 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
-export const useResetTableRowSelection = (recordTableScopeId: string) => {
-  const { tableRowIdsScopeInjector, isRowSelectedScopeInjector } =
-    getRecordTableScopeInjector();
-
-  const {
-    injectSnapshotValueWithRecordTableScopeId,
-    injectFamilyStateWithRecordTableScopeId,
-  } = useRecordTableScopedStates(recordTableScopeId);
+export const useResetTableRowSelection = (recordTableId?: string) => {
+  const { tableRowIdsState, isRowSelectedFamilyState } =
+    useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
-        const tableRowIds = injectSnapshotValueWithRecordTableScopeId(
-          snapshot,
-          tableRowIdsScopeInjector,
-        );
-
-        const isRowSelectedFamilyState =
-          injectFamilyStateWithRecordTableScopeId(isRowSelectedScopeInjector);
+        const tableRowIds = getSnapshotValue(snapshot, tableRowIdsState());
 
         for (const rowId of tableRowIds) {
           set(isRowSelectedFamilyState(rowId), false);
         }
       },
-    [
-      injectFamilyStateWithRecordTableScopeId,
-      injectSnapshotValueWithRecordTableScopeId,
-      isRowSelectedScopeInjector,
-      tableRowIdsScopeInjector,
-    ],
+    [isRowSelectedFamilyState, tableRowIdsState],
   );
 };
