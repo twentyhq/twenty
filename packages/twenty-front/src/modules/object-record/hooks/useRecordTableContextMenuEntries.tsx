@@ -14,11 +14,13 @@ import { RecordTableScopeInternalContext } from '@/object-record/record-table/sc
 import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import {
   IconCheckbox,
+  IconClick,
   IconHeart,
   IconHeartOff,
+  IconMail,
   IconNotes,
+  IconPuzzle,
   IconTrash,
-  IconWand,
 } from '@/ui/display/icon';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
@@ -218,9 +220,19 @@ export const useRecordTableContextMenuEntries = (
         ...(dataExecuteQuickActionOnmentEnabled
           ? [
               {
-                label: 'Quick Action',
-                Icon: IconWand,
-                onClick: () => handleExecuteQuickActionOnClick(),
+                label: 'Actions',
+                Icon: IconClick,
+                subActions: [
+                  {
+                    label: 'Enrich',
+                    Icon: IconPuzzle,
+                    onClick: () => handleExecuteQuickActionOnClick(),
+                  },
+                  {
+                    label: 'Send to mailjet',
+                    Icon: IconMail,
+                  },
+                ],
               },
             ]
           : []),
