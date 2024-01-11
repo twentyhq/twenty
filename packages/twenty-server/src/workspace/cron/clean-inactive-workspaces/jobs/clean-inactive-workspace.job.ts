@@ -15,10 +15,9 @@ import { WorkspaceService } from 'src/core/workspace/services/workspace.service'
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
-const MAIL_FROM = 'felix@twenty.com';
 const FEATURE_FLAGS = [
-  '6abf1b14-d85d-422d-b7f3-b2187cc22806',
-  '9d426e68-d604-4b4e-8bc0-a23ec02939b5',
+  'faf50837-0159-4260-af66-549f831a723c',
+  '20202020-1c25-4d02-bf25-6aeccf7ea419',
 ];
 
 @Injectable()
@@ -111,7 +110,8 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
 
       this.emailService.send({
         to: workspaceUser.email,
-        from: `Twenty <${MAIL_FROM}>`,
+        from: `Félix from Twenty <felix@twenty.com>`,
+        subject: 'Inactive workspace',
         html,
         text,
       });
@@ -144,7 +144,7 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
   }
 
   async handle(): Promise<void> {
-    this.logger.log(`${CleanInactiveWorkspaceJob.name} job running...`);
+    this.logger.log('Job running...');
     if (!this.inactiveDaysBeforeDelete && !this.inactiveDaysBeforeEmail) {
       this.logger.log(
         `Inactive workspace environment variables not set, please check this doc for more info: https://docs.twenty.com/start/self-hosting/environment-variables`,
@@ -176,6 +176,6 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
       await this.processWorkspace(dataSource, maxUpdatedAt);
     }
 
-    this.logger.log(`${CleanInactiveWorkspaceJob.name} job done!`);
+    this.logger.log('job done!');
   }
 }
