@@ -10771,9 +10771,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/profiling-node@npm:^1.2.6":
-  version: 1.3.2
-  resolution: "@sentry/profiling-node@npm:1.3.2"
+"@sentry/profiling-node@npm:^1.3.4":
+  version: 1.3.4
+  resolution: "@sentry/profiling-node@npm:1.3.4"
   dependencies:
     detect-libc: "npm:^2.0.2"
     node-abi: "npm:^3.52.0"
@@ -10782,7 +10782,7 @@ __metadata:
     "@sentry/node": ^7.44.1
   bin:
     sentry-prune-profiler-binaries: scripts/prune-profiler-binaries.mjs
-  checksum: 9c1c3d6b033ce1c5572630634cba527861241558fca7f7cfdcca3788edfc48f2614ab5de8b1ec1c3a07b1421ac312ea9bd094d9e3c43f8756f6ed1cfa914a0b1
+  checksum: e908778f9e10579c2186c2696ab2738cae118a432cb9a47894a324253fcc209acb6752875a113f4d14f5bafe7482555b9e9966e9724ecb2526f4e59b87541475
   languageName: node
   linkType: hard
 
@@ -42409,7 +42409,7 @@ __metadata:
     "@react-email/components": "npm:0.0.12"
     "@react-email/render": "npm:0.0.10"
     "@sentry/node": "npm:^7.66.0"
-    "@sentry/profiling-node": "npm:^1.2.6"
+    "@sentry/profiling-node": "npm:^1.3.4"
     "@sentry/react": "npm:^7.88.0"
     "@sentry/tracing": "npm:^7.66.0"
     "@sniptt/guards": "npm:^0.2.0"
