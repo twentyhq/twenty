@@ -9,7 +9,6 @@ import { CountryCallingCode } from 'libphonenumber-js';
 import { IconChevronDown, IconWorld } from '@/ui/display/icon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 
 import { CountryPickerHotkeyScope } from '../types/CountryPickerHotkeyScope';
 
@@ -119,27 +118,26 @@ export const CountryPickerDropdownButton = ({
   }, [countries, value]);
 
   return (
-    <DropdownScope dropdownScopeId="country-picker">
-      <Dropdown
-        dropdownHotkeyScope={{ scope: CountryPickerHotkeyScope.CountryPicker }}
-        clickableComponent={
-          <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
-            <StyledIconContainer>
-              {selectedCountry ? <selectedCountry.Flag /> : <IconWorld />}
-              <IconChevronDown size={theme.icon.size.sm} />
-            </StyledIconContainer>
-          </StyledDropdownButtonContainer>
-        }
-        dropdownComponents={
-          <CountryPickerDropdownSelect
-            countries={countries}
-            selectedCountry={selectedCountry}
-            onChange={handleChange}
-          />
-        }
-        dropdownPlacement="bottom-start"
-        dropdownOffset={{ x: 0, y: 4 }}
-      />
-    </DropdownScope>
+    <Dropdown
+      dropdownId="country-picker-dropdown-id"
+      dropdownHotkeyScope={{ scope: CountryPickerHotkeyScope.CountryPicker }}
+      clickableComponent={
+        <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
+          <StyledIconContainer>
+            {selectedCountry ? <selectedCountry.Flag /> : <IconWorld />}
+            <IconChevronDown size={theme.icon.size.sm} />
+          </StyledIconContainer>
+        </StyledDropdownButtonContainer>
+      }
+      dropdownComponents={
+        <CountryPickerDropdownSelect
+          countries={countries}
+          selectedCountry={selectedCountry}
+          onChange={handleChange}
+        />
+      }
+      dropdownPlacement="bottom-start"
+      dropdownOffset={{ x: 0, y: 4 }}
+    />
   );
 };

@@ -21,6 +21,8 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 import { WorkspaceFactory } from 'src/workspace/workspace.factory';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 import { handleExceptionAndConvertToGraphQLError } from 'src/filters/utils/global-exception-handler.util';
+import { renderApolloPlayground } from 'src/workspace/utils/render-apollo-playground.util';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 @Injectable()
 export class GraphQLConfigService
@@ -29,13 +31,14 @@ export class GraphQLConfigService
   constructor(
     private readonly tokenService: TokenService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly environmentService: EnvironmentService,
     private readonly moduleRef: ModuleRef,
   ) {}
 
   createGqlOptions(): YogaDriverConfig {
     const exceptionHandlerService = this.exceptionHandlerService;
-
-    return {
+    const isDebugMode = this.environmentService.isDebugMode();
+    const config: YogaDriverConfig = {
       context: ({ req }) => ({ req }),
       autoSchemaFile: true,
       include: [CoreModule],
@@ -90,6 +93,14 @@ export class GraphQLConfigService
       resolvers: { JSON: GraphQLJSON },
       plugins: [],
     };
+
+    if (isDebugMode) {
+      config.renderGraphiQL = () => {
+        return renderApolloPlayground();
+      };
+    }
+
+    return config;
   }
 
   async createSchema(

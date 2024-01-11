@@ -23,7 +23,6 @@ import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Card } from '@/ui/layout/card/components/Card';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { Section } from '@/ui/layout/section/components/Section';
 
 const StyledAddDropdown = styled(Dropdown)`
@@ -129,9 +128,9 @@ export const RecordRelationFieldCardSection = () => {
     );
   }, [relationRecords, upsertRecordFromState]);
 
-  const dropdownScopeId = `record-field-card-relation-picker-${fieldDefinition.label}`;
+  const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}`;
 
-  const { closeDropdown, isDropdownOpen } = useDropdown(dropdownScopeId);
+  const { closeDropdown, isDropdownOpen } = useDropdown(dropdownId);
 
   const {
     identifiersMapper,
@@ -196,30 +195,29 @@ export const RecordRelationFieldCardSection = () => {
     <Section>
       <StyledHeader isDropdownOpen={isDropdownOpen}>
         <StyledTitle>{fieldDefinition.label}</StyledTitle>
-        <DropdownScope dropdownScopeId={dropdownScopeId}>
-          <StyledAddDropdown
-            dropdownPlacement="right-start"
-            onClose={handleCloseRelationPickerDropdown}
-            clickableComponent={
-              <LightIconButton
-                className="displayOnHover"
-                Icon={IconPlus}
-                accent="tertiary"
-              />
-            }
-            dropdownComponents={
-              <SingleEntitySelectMenuItemsWithSearch
-                EmptyIcon={IconForbid}
-                entitiesToSelect={entities.entitiesToSelect}
-                loading={entities.loading}
-                onEntitySelected={handleRelationPickerEntitySelected}
-              />
-            }
-            dropdownHotkeyScope={{
-              scope: dropdownScopeId,
-            }}
-          />
-        </DropdownScope>
+        <StyledAddDropdown
+          dropdownId={dropdownId}
+          dropdownPlacement="right-start"
+          onClose={handleCloseRelationPickerDropdown}
+          clickableComponent={
+            <LightIconButton
+              className="displayOnHover"
+              Icon={IconPlus}
+              accent="tertiary"
+            />
+          }
+          dropdownComponents={
+            <SingleEntitySelectMenuItemsWithSearch
+              EmptyIcon={IconForbid}
+              entitiesToSelect={entities.entitiesToSelect}
+              loading={entities.loading}
+              onEntitySelected={handleRelationPickerEntitySelected}
+            />
+          }
+          dropdownHotkeyScope={{
+            scope: dropdownId,
+          }}
+        />
       </StyledHeader>
       {!!relationRecords.length && (
         <Card>

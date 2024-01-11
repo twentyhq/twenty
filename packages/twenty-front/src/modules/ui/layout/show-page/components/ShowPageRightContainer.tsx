@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { Threads } from '@/activities/emails/components/Threads';
 import { Attachments } from '@/activities/files/components/Attachments';
@@ -15,11 +16,9 @@ import {
   IconTimelineEvent,
 } from '@/ui/display/icon';
 import { TabList } from '@/ui/layout/tab/components/TabList';
+import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-import { useRecoilValue } from 'recoil';
 
 const StyledShowPageRightContainer = styled.div`
   display: flex;

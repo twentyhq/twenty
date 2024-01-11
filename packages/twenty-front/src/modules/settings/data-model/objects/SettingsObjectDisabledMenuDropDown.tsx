@@ -4,7 +4,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsObjectDisabledMenuDropDownProps = {
@@ -20,9 +19,9 @@ export const SettingsObjectDisabledMenuDropDown = ({
   onErase,
   isCustomObject,
 }: SettingsObjectDisabledMenuDropDownProps) => {
-  const dropdownScopeId = `${scopeKey}-settings-object-disabled-menu-dropdown`;
+  const dropdownId = `${scopeKey}-settings-object-disabled-menu-dropdown`;
 
-  const { closeDropdown } = useDropdown(dropdownScopeId);
+  const { closeDropdown } = useDropdown(dropdownId);
 
   const handleActivate = () => {
     onActivate();
@@ -35,34 +34,33 @@ export const SettingsObjectDisabledMenuDropDown = ({
   };
 
   return (
-    <DropdownScope dropdownScopeId={dropdownScopeId}>
-      <Dropdown
-        clickableComponent={
-          <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
-        }
-        dropdownComponents={
-          <DropdownMenu width="160px">
-            <DropdownMenuItemsContainer>
+    <Dropdown
+      dropdownId={dropdownId}
+      clickableComponent={
+        <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+      }
+      dropdownComponents={
+        <DropdownMenu width="160px">
+          <DropdownMenuItemsContainer>
+            <MenuItem
+              text="Activate"
+              LeftIcon={IconArchiveOff}
+              onClick={handleActivate}
+            />
+            {isCustomObject && (
               <MenuItem
-                text="Activate"
-                LeftIcon={IconArchiveOff}
-                onClick={handleActivate}
+                text="Erase"
+                LeftIcon={IconTrash}
+                accent="danger"
+                onClick={handleErase}
               />
-              {isCustomObject && (
-                <MenuItem
-                  text="Erase"
-                  LeftIcon={IconTrash}
-                  accent="danger"
-                  onClick={handleErase}
-                />
-              )}
-            </DropdownMenuItemsContainer>
-          </DropdownMenu>
-        }
-        dropdownHotkeyScope={{
-          scope: dropdownScopeId,
-        }}
-      />
-    </DropdownScope>
+            )}
+          </DropdownMenuItemsContainer>
+        </DropdownMenu>
+      }
+      dropdownHotkeyScope={{
+        scope: dropdownId,
+      }}
+    />
   );
 };

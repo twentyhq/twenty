@@ -244,4 +244,8 @@ export class EnvironmentService {
   getOpenRouterApiKey(): string | undefined {
     return this.configService.get<string | undefined>('OPENROUTER_API_KEY');
   }
+
+  isSignUpDisabled(): boolean {
+    return this.configService.get<boolean>('IS_SIGN_UP_DISABLED') ?? false;
+  }
 }

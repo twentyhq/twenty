@@ -1,12 +1,11 @@
 import { HttpException } from '@nestjs/common';
 
-import { TypeORMError } from 'typeorm';
-
 import {
   AuthenticationError,
   BaseGraphQLError,
   ForbiddenError,
   ValidationError,
+  NotFoundError,
 } from 'src/filters/utils/graphql-errors.util';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 
@@ -14,6 +13,7 @@ const graphQLPredefinedExceptions = {
   400: ValidationError,
   401: AuthenticationError,
   403: ForbiddenError,
+  404: NotFoundError,
 };
 
 export const handleExceptionAndConvertToGraphQLError = (
@@ -29,12 +29,10 @@ export const handleException = (
   exception: Error,
   exceptionHandlerService: ExceptionHandlerService,
 ): void => {
-  if (
-    exception instanceof TypeORMError ||
-    (exception instanceof HttpException && exception.getStatus() >= 500)
-  ) {
-    exceptionHandlerService.captureException(exception);
+  if (exception instanceof HttpException && exception.getStatus() < 500) {
+    return;
   }
+  exceptionHandlerService.captureException(exception);
 };
 
 export const convertExceptionToGraphQLError = (

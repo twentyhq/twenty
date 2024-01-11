@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { PageAddTaskButton } from '@/activities/tasks/components/PageAddTaskButton';
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
+import { TASKS_TAB_LIST_COMPONENT_ID } from '@/activities/tasks/constants/tasksTabListComponentId';
 import { ObjectFilterDropdownButton } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownButton';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { IconArchive, IconCheck, IconCheckbox } from '@/ui/display/icon/index';
@@ -58,7 +59,10 @@ export const Tasks = () => {
             <TopBar
               leftComponent={
                 <StyledTabListContainer>
-                  <TabList tabListId="tasks-tab-list" tabs={TASK_TABS} />
+                  <TabList
+                    tabListId={TASKS_TAB_LIST_COMPONENT_ID}
+                    tabs={TASK_TABS}
+                  />
                 </StyledTabListContainer>
               }
               rightComponent={

@@ -1,39 +1,133 @@
-import { useRef } from 'react';
-import { fireEvent, render } from '@testing-library/react';
+import React from 'react';
+import { act } from 'react-dom/test-utils';
+import { fireEvent, render, renderHook } from '@testing-library/react';
 
-import { useListenClickOutside } from '../useListenClickOutside';
+import {
+  ClickOutsideMode,
+  useListenClickOutside,
+  useListenClickOutsideByClassName,
+} from '../useListenClickOutside';
 
-const onOutsideClick = jest.fn();
+const containerRef = React.createRef<HTMLDivElement>();
+const nullRef = React.createRef<HTMLDivElement>();
 
-const TestComponentDomMode = () => {
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const buttonRef2 = useRef<HTMLButtonElement>(null);
-  useListenClickOutside({
-    refs: [buttonRef, buttonRef2],
-    callback: onOutsideClick,
+const Wrapper = ({ children }: { children: React.ReactNode }) => (
+  <div ref={containerRef}>{children}</div>
+);
+
+describe('useListenClickOutside', () => {
+  it('should trigger the callback when clicking outside the specified refs', () => {
+    const callback = jest.fn();
+
+    renderHook(
+      () => useListenClickOutside({ refs: [containerRef], callback }),
+      { wrapper: Wrapper },
+    );
+
+    act(() => {
+      fireEvent.mouseDown(document);
+      fireEvent.click(document);
+    });
+
+    expect(callback).toHaveBeenCalled();
   });
 
-  return (
-    <div>
-      <span>Outside</span>
-      <button ref={buttonRef}>Inside</button>
-      <button ref={buttonRef2}>Inside 2</button>
-    </div>
-  );
-};
+  it('should not call the callback when clicking inside the specified refs using pixel comparison', () => {
+    const callback = jest.fn();
 
-test('useListenClickOutside web-hook works in dom mode', async () => {
-  const { getByText } = render(<TestComponentDomMode />);
-  const inside = getByText('Inside');
-  const inside2 = getByText('Inside 2');
-  const outside = getByText('Outside');
+    renderHook(
+      () =>
+        useListenClickOutside({
+          refs: [containerRef, nullRef],
+          callback,
+          mode: ClickOutsideMode.comparePixels,
+        }),
+      { wrapper: Wrapper },
+    );
 
-  fireEvent.click(inside);
-  expect(onOutsideClick).toHaveBeenCalledTimes(0);
+    act(() => {
+      if (containerRef.current) {
+        fireEvent.mouseDown(containerRef.current);
+        fireEvent.click(containerRef.current);
+      }
+    });
 
-  fireEvent.click(inside2);
-  expect(onOutsideClick).toHaveBeenCalledTimes(0);
+    expect(callback).not.toHaveBeenCalled();
+  });
 
-  fireEvent.click(outside);
-  expect(onOutsideClick).toHaveBeenCalledTimes(1);
+  it('should call the callback when clicking outside the specified refs using pixel comparison', () => {
+    const callback = jest.fn();
+
+    renderHook(() =>
+      useListenClickOutside({
+        refs: [containerRef, nullRef],
+        callback,
+        mode: ClickOutsideMode.comparePixels,
+      }),
+    );
+
+    act(() => {
+      // Simulate a click outside the specified refs
+      fireEvent.mouseDown(document.body);
+      fireEvent.click(document.body);
+    });
+
+    expect(callback).toHaveBeenCalled();
+  });
+});
+
+describe('useListenClickOutsideByClassName', () => {
+  it('should trigger the callback when clicking outside the specified class names', () => {
+    const callback = jest.fn();
+    const { container } = render(
+      <div>
+        <div className="wont-trigger other-class">Inside</div>
+        <div className="will-trigger">Outside</div>
+      </div>,
+    );
+
+    renderHook(() =>
+      useListenClickOutsideByClassName({
+        classNames: ['wont-trigger'],
+        callback,
+      }),
+    );
+
+    act(() => {
+      const notClickableElement = container.querySelector('.will-trigger');
+      if (notClickableElement) {
+        fireEvent.mouseDown(notClickableElement);
+        fireEvent.click(notClickableElement);
+      }
+    });
+
+    expect(callback).toHaveBeenCalled();
+  });
+
+  it('should not trigger the callback when clicking inside the specified class names', () => {
+    const callback = jest.fn();
+    const { container } = render(
+      <div>
+        <div className="wont-trigger other-class">Inside</div>
+        <div className="will-trigger">Outside</div>
+      </div>,
+    );
+
+    renderHook(() =>
+      useListenClickOutsideByClassName({
+        classNames: ['wont-trigger'],
+        callback,
+      }),
+    );
+
+    act(() => {
+      const notClickableElement = container.querySelector('.wont-trigger');
+      if (notClickableElement) {
+        fireEvent.mouseDown(notClickableElement);
+        fireEvent.click(notClickableElement);
+      }
+    });
+
+    expect(callback).not.toHaveBeenCalled();
+  });
 });

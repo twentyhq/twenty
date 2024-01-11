@@ -13,7 +13,6 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 
 import { Dropdown } from '../../dropdown/components/Dropdown';
 import { DropdownMenu } from '../../dropdown/components/DropdownMenu';
-import { DropdownScope } from '../../dropdown/scopes/DropdownScope';
 
 const StyledContainer = styled.div`
   z-index: 1;
@@ -42,35 +41,34 @@ export const ShowPageMoreButton = ({
 
   return (
     <StyledContainer>
-      <DropdownScope dropdownScopeId="more-show-page">
-        <Dropdown
-          clickableComponent={
-            <IconButton
-              Icon={IconDotsVertical}
-              size="medium"
-              dataTestId="more-showpage-button"
-              accent="default"
-              variant="secondary"
-              onClick={toggleDropdown}
-            />
-          }
-          dropdownComponents={
-            <DropdownMenu>
-              <DropdownMenuItemsContainer>
-                <MenuItem
-                  onClick={handleDelete}
-                  accent="danger"
-                  LeftIcon={IconTrash}
-                  text="Delete"
-                />
-              </DropdownMenuItemsContainer>
-            </DropdownMenu>
-          }
-          dropdownHotkeyScope={{
-            scope: PageHotkeyScope.ShowPage,
-          }}
-        />
-      </DropdownScope>
+      <Dropdown
+        dropdownId="more-show-page"
+        clickableComponent={
+          <IconButton
+            Icon={IconDotsVertical}
+            size="medium"
+            dataTestId="more-showpage-button"
+            accent="default"
+            variant="secondary"
+            onClick={toggleDropdown}
+          />
+        }
+        dropdownComponents={
+          <DropdownMenu>
+            <DropdownMenuItemsContainer>
+              <MenuItem
+                onClick={handleDelete}
+                accent="danger"
+                LeftIcon={IconTrash}
+                text="Delete"
+              />
+            </DropdownMenuItemsContainer>
+          </DropdownMenu>
+        }
+        dropdownHotkeyScope={{
+          scope: PageHotkeyScope.ShowPage,
+        }}
+      />
     </StyledContainer>
   );
 };

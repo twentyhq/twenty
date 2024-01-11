@@ -52,7 +52,7 @@ export const useDeleteOneRecord = <T>({
       });
 
       return deletedRecord.data[
-        `create${capitalize(objectMetadataItem.nameSingular)}`
+        `delete${capitalize(objectMetadataItem.nameSingular)}`
       ] as T;
     },
     [
