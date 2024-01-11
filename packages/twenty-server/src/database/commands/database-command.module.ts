@@ -10,6 +10,7 @@ import { DataSeedDemoWorkspaceCommand } from 'src/database/commands/data-seed-de
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
 import { WorkspaceSyncMetadataModule } from 'src/workspace/workspace-sync-metadata/workspace-sync-metadata.module';
 import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metadata.module';
+import { WorkspaceAddTotalCountCommand } from 'src/database/commands/workspace-add-total-count.command';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metada
   providers: [
     DataSeedWorkspaceCommand,
     DataSeedDemoWorkspaceCommand,
+    WorkspaceAddTotalCountCommand,
     ConfirmationQuestion,
   ],
 })
