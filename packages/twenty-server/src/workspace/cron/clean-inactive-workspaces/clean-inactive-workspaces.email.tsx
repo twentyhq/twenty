@@ -19,14 +19,15 @@ export const CleanInactiveWorkspaceEmail = ({
   userName,
   workspaceDisplayName,
 }: CleanInactiveWorkspaceEmailData) => {
-  const daysLeftInfo = daysLeft > 1 ? `${daysLeft} days left` : `One day left`;
+  const dayOrDays = daysLeft > 1 ? 'days' : 'day';
+  const remainingDays = daysLeft > 1 ? `${daysLeft} ` : '';
 
   const helloString = userName?.length > 1 ? `Hello ${userName}` : 'Hello';
 
   return (
     <BaseEmail>
       <Title value={title} />
-      <HighlightedText value={daysLeftInfo} />
+      <HighlightedText value={`${daysLeft} ${dayOrDays} left`} />
       <MainText>
         {helloString},
         <br />
@@ -39,8 +40,9 @@ export const CleanInactiveWorkspaceEmail = ({
         associated data within this workspace will be deleted.
         <br />
         <br />
-        No need for concern, though! Simply log in to your workspace within the
-        next 10 days to retain access.
+        No need for concern, though! Simply create or edit a record within the
+        next {remainingDays}
+        {dayOrDays} to retain access.
       </MainText>
       <CallToAction href="https://app.twenty.com" value="Connect to Twenty" />
     </BaseEmail>
