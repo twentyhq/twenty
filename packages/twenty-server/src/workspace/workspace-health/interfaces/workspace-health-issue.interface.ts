@@ -22,6 +22,7 @@ export enum WorkspaceHealthIssueType {
   COLUMN_NULLABILITY_CONFLICT = 'COLUMN_NULLABILITY_CONFLICT',
   COLUMN_DEFAULT_VALUE_CONFLICT = 'COLUMN_DEFAULT_VALUE_CONFLICT',
   COLUMN_DEFAULT_VALUE_NOT_VALID = 'COLUMN_DEFAULT_VALUE_NOT_VALID',
+  COLUMN_OPTIONS_NOT_VALID = 'COLUMN_OPTIONS_NOT_VALID',
 }
 
 export interface WorkspaceHealthTableIssue {
@@ -49,7 +50,8 @@ export interface WorkspaceHealthColumnIssue {
     | WorkspaceHealthIssueType.COLUMN_DATA_TYPE_CONFLICT
     | WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT
     | WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT
-    | WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID;
+    | WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID
+    | WorkspaceHealthIssueType.COLUMN_OPTIONS_NOT_VALID;
   fieldMetadata: FieldMetadataEntity;
   columnStructure?: WorkspaceTableStructure;
   message: string;

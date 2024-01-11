@@ -19,6 +19,9 @@ import { isCompositeFieldMetadataType } from 'src/metadata/field-metadata/utils/
 import { DatabaseStructureService } from 'src/workspace/workspace-health/services/database-structure.service';
 import { validName } from 'src/workspace/workspace-health/utils/valid-name.util';
 import { compositeDefinitions } from 'src/metadata/field-metadata/composite-types';
+import { validateDefaultValueForType } from 'src/metadata/field-metadata/utils/validate-default-value-for-type.util';
+import { isEnumFieldMetadataType } from 'src/metadata/field-metadata/utils/is-enum-field-metadata-type.util';
+import { validateOptionsForType } from 'src/metadata/field-metadata/utils/validate-options-for-type.util';
 
 @Injectable()
 export class FieldMetadataHealthService {
@@ -196,8 +199,7 @@ export class FieldMetadataHealthService {
     const issues: WorkspaceHealthIssue[] = [];
     const columnName = fieldMetadata.targetColumnMap.value;
     const targetColumnMapIssues = this.targetColumnMapCheck(fieldMetadata);
-
-    issues.push(...targetColumnMapIssues);
+    const defaultValueIssues = this.defaultValueHealthCheck(fieldMetadata);
 
     if (Object.keys(fieldMetadata.targetColumnMap).length !== 1) {
       issues.push({
@@ -206,6 +208,8 @@ export class FieldMetadataHealthService {
         message: `Column ${columnName} has more than one target column map, it should only contains "value"`,
       });
     }
+
+    issues.push(...targetColumnMapIssues);
 
     if (fieldMetadata.isCustom && !columnName.startsWith('_')) {
       issues.push({
@@ -242,6 +246,19 @@ export class FieldMetadataHealthService {
         message: `Column ${columnName} doesn't have a valid name or label`,
       });
     }
+
+    if (
+      isEnumFieldMetadataType(fieldMetadata.type) &&
+      !validateOptionsForType(fieldMetadata.type, fieldMetadata.options)
+    ) {
+      issues.push({
+        type: WorkspaceHealthIssueType.COLUMN_OPTIONS_NOT_VALID,
+        fieldMetadata,
+        message: `Column options of ${fieldMetadata.targetColumnMap?.value} is not valid`,
+      });
+    }
+
+    issues.push(...defaultValueIssues);
 
     return issues;
   }
@@ -295,12 +312,8 @@ export class FieldMetadataHealthService {
   ): WorkspaceHealthIssue[] {
     const issues: WorkspaceHealthIssue[] = [];
 
-    if (!isCompositeFieldMetadataType(fieldMetadata.type)) {
-      return [];
-    }
-
     if (
-      !this.isCompositeObjectWellStructured(
+      !validateDefaultValueForType(
         fieldMetadata.type,
         fieldMetadata.defaultValue,
       )
@@ -308,7 +321,7 @@ export class FieldMetadataHealthService {
       issues.push({
         type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID,
         fieldMetadata,
-        message: `Column default value for composite type ${fieldMetadata.type} is not well structured "${fieldMetadata.defaultValue}"`,
+        message: `Column default value for composite type ${fieldMetadata.type} is not well structured`,
       });
     }
 
@@ -322,7 +335,7 @@ export class FieldMetadataHealthService {
     const subFields = compositeDefinitions.get(type)?.() ?? [];
 
     if (!object) {
-      return false;
+      return true;
     }
 
     if (subFields.length === 0) {
