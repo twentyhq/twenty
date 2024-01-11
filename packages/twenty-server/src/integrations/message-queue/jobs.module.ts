@@ -12,6 +12,8 @@ import { CleanInactiveWorkspaceJob } from 'src/workspace/cron/clean-inactive-wor
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FetchWorkspaceMessagesModule } from 'src/workspace/messaging/services/fetch-workspace-messages.module';
 import { EmailSenderJob } from 'src/integrations/email/email-sender.job';
+import { UserModule } from 'src/core/user/user.module';
+import { WorkspaceModule } from 'src/core/workspace/workspace.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { EmailSenderJob } from 'src/integrations/email/email-sender.job';
     HttpModule,
     TypeORMModule,
     FetchWorkspaceMessagesModule,
+    UserModule,
+    WorkspaceModule,
   ],
   providers: [
     {

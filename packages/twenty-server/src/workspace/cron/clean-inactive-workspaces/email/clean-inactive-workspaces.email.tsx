@@ -6,20 +6,29 @@ import { Title } from 'src/emails/components/Title';
 import { BaseEmail } from 'src/emails/components/BaseEmail';
 import { CallToAction } from 'src/emails/components/CallToAction';
 
+type CleanInactiveWorkspaceEmailData = {
+  title: string;
+  daysLeft: number;
+  userName: string;
+  workspaceDisplayName: string;
+};
+
 export const CleanInactiveWorkspaceEmail = ({
   title,
   daysLeft,
   userName,
   workspaceDisplayName,
-}) => {
+}: CleanInactiveWorkspaceEmailData) => {
   const daysLeftInfo = daysLeft > 1 ? `${daysLeft} days left` : `One day left`;
+
+  const helloString = userName?.length > 1 ? `Hello ${userName}` : 'Hello';
 
   return (
     <BaseEmail>
       <Title value={title} />
       <HighlightedText value={daysLeftInfo} />
       <MainText>
-        Hello {userName},
+        {helloString},
         <br />
         <br />
         It appears that there has been a period of inactivity on your{' '}
