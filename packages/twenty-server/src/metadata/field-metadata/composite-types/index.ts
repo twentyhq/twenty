@@ -6,7 +6,7 @@ import { linkFields } from 'src/metadata/field-metadata/composite-types/link.com
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
 export type CompositeFieldsDefinitionFunction = (
-  fieldMetadata: FieldMetadataInterface,
+  fieldMetadata?: FieldMetadataInterface,
 ) => FieldMetadataInterface[];
 
 export const compositeDefinitions = new Map<

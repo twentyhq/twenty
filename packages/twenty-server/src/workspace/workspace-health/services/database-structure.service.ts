@@ -4,12 +4,10 @@ import { ColumnType } from 'typeorm';
 import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 
 import { WorkspaceTableStructure } from 'src/workspace/workspace-health/interfaces/workspace-table-definition.interface';
+import { FieldMetadataDefaultValue } from 'src/metadata/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import {
-  FieldMetadataEntity,
-  FieldMetadataType,
-} from 'src/metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 import { fieldMetadataTypeToColumnType } from 'src/metadata/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { serializeTypeDefaultValue } from 'src/metadata/field-metadata/utils/serialize-type-default-value.util';
 
@@ -57,17 +55,14 @@ export class DatabaseStructureService {
   }
 
   getPostgresDefault(
-    fieldMetadata: FieldMetadataEntity,
+    type: FieldMetadataType,
+    defaultValue: FieldMetadataDefaultValue | null,
   ): string | null | undefined {
-    const typeORMType = fieldMetadataTypeToColumnType(
-      fieldMetadata.type,
-    ) as ColumnType;
+    const typeORMType = fieldMetadataTypeToColumnType(type) as ColumnType;
     const mainDataSource = this.typeORMService.getMainDataSource();
 
-    if (fieldMetadata.defaultValue && 'type' in fieldMetadata.defaultValue) {
-      const serializedDefaultValue = serializeTypeDefaultValue(
-        fieldMetadata.defaultValue,
-      );
+    if (defaultValue && 'type' in defaultValue) {
+      const serializedDefaultValue = serializeTypeDefaultValue(defaultValue);
 
       // Special case for uuid_generate_v4() default value
       if (serializedDefaultValue === 'public.uuid_generate_v4()') {
@@ -78,9 +73,7 @@ export class DatabaseStructureService {
     }
 
     const value =
-      fieldMetadata.defaultValue && 'value' in fieldMetadata.defaultValue
-        ? fieldMetadata.defaultValue.value
-        : null;
+      defaultValue && 'value' in defaultValue ? defaultValue.value : null;
 
     if (typeof value === 'number') {
       return value.toString();

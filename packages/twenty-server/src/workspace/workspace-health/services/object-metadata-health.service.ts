@@ -31,7 +31,7 @@ export class ObjectMetadataHealthService {
     }
 
     if (options.mode === 'metadata' || options.mode === 'all') {
-      const metadataIssues = await this.metadataObjectCheck(objectMetadata);
+      const metadataIssues = this.metadataObjectCheck(objectMetadata);
 
       issues.push(...metadataIssues);
     }
@@ -75,9 +75,9 @@ export class ObjectMetadataHealthService {
    * @param objectMetadata
    * @returns WorkspaceHealthIssue[]
    */
-  private async metadataObjectCheck(
+  private metadataObjectCheck(
     objectMetadata: ObjectMetadataEntity,
-  ): Promise<WorkspaceHealthIssue[]> {
+  ): WorkspaceHealthIssue[] {
     const issues: WorkspaceHealthIssue[] = [];
 
     if (

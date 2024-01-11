@@ -58,9 +58,18 @@ export class FieldMetadataHealthService {
       if (isCompositeFieldMetadataType(fieldMetadata.type)) {
         const compositeFieldMetadataCollection =
           compositeDefinitions.get(fieldMetadata.type)?.(fieldMetadata) ?? [];
-        const targetColumnMapIssues = this.targetColumnMapCheck(fieldMetadata);
 
-        issues.push(...targetColumnMapIssues);
+        if (options.mode === 'metadata' || options.mode === 'all') {
+          const targetColumnMapIssues =
+            this.targetColumnMapCheck(fieldMetadata);
+
+          issues.push(...targetColumnMapIssues);
+
+          const defaultValueIssues =
+            this.defaultValueHealthCheck(fieldMetadata);
+
+          issues.push(...defaultValueIssues);
+        }
 
         for (const compositeFieldMetadata of compositeFieldMetadataCollection) {
           const compositeFieldIssues = await this.healthCheckField(
@@ -96,7 +105,7 @@ export class FieldMetadataHealthService {
     const issues: WorkspaceHealthIssue[] = [];
 
     if (options.mode === 'structure' || options.mode === 'all') {
-      const structureIssues = await this.structureFieldCheck(
+      const structureIssues = this.structureFieldCheck(
         tableName,
         workspaceTableColumns,
         fieldMetadata,
@@ -106,10 +115,7 @@ export class FieldMetadataHealthService {
     }
 
     if (options.mode === 'metadata' || options.mode === 'all') {
-      const metadataIssues = await this.metadataFieldCheck(
-        tableName,
-        fieldMetadata,
-      );
+      const metadataIssues = this.metadataFieldCheck(tableName, fieldMetadata);
 
       issues.push(...metadataIssues);
     }
@@ -127,8 +133,10 @@ export class FieldMetadataHealthService {
     const dataType = this.databaseStructureService.getPostgresDataType(
       fieldMetadata.type,
     );
-    const defaultValue =
-      this.databaseStructureService.getPostgresDefault(fieldMetadata);
+    const defaultValue = this.databaseStructureService.getPostgresDefault(
+      fieldMetadata.type,
+      fieldMetadata.defaultValue,
+    );
     const isNullable = fieldMetadata.isNullable ? 'YES' : 'NO';
     // Check if column exist in database
     const columnStructure = workspaceTableColumns.find(
@@ -266,25 +274,69 @@ export class FieldMetadataHealthService {
       return issues;
     }
 
-    const subFields =
-      compositeDefinitions.get(fieldMetadata.type)?.(fieldMetadata) ?? [];
+    if (
+      !this.isCompositeObjectWellStructured(
+        fieldMetadata.type,
+        fieldMetadata.targetColumnMap,
+      )
+    ) {
+      issues.push({
+        type: WorkspaceHealthIssueType.COLUMN_TARGET_COLUMN_MAP_NOT_VALID,
+        fieldMetadata,
+        message: `Column targetColumnMap for composite type ${fieldMetadata.type} is not well structured "${fieldMetadata.targetColumnMap}"`,
+      });
+    }
+
+    return issues;
+  }
+
+  private defaultValueHealthCheck(
+    fieldMetadata: FieldMetadataEntity,
+  ): WorkspaceHealthIssue[] {
+    const issues: WorkspaceHealthIssue[] = [];
+
+    if (!isCompositeFieldMetadataType(fieldMetadata.type)) {
+      return [];
+    }
+
+    if (
+      !this.isCompositeObjectWellStructured(
+        fieldMetadata.type,
+        fieldMetadata.defaultValue,
+      )
+    ) {
+      issues.push({
+        type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID,
+        fieldMetadata,
+        message: `Column default value for composite type ${fieldMetadata.type} is not well structured "${fieldMetadata.defaultValue}"`,
+      });
+    }
+
+    return issues;
+  }
+
+  private isCompositeObjectWellStructured(
+    type: FieldMetadataType,
+    object: any,
+  ): boolean {
+    const subFields = compositeDefinitions.get(type)?.() ?? [];
+
+    if (!object) {
+      return false;
+    }
 
     if (subFields.length === 0) {
       throw new InternalServerErrorException(
-        `The composite field type ${fieldMetadata.type} doesn't have any sub fields, it seems this one is not implemented in the composite definitions map`,
+        `The composite field type ${type} doesn't have any sub fields, it seems this one is not implemented in the composite definitions map`,
       );
     }
 
     for (const subField of subFields) {
-      if (!fieldMetadata.targetColumnMap[subField.name]) {
-        issues.push({
-          type: WorkspaceHealthIssueType.COLUMN_TARGET_COLUMN_MAP_NOT_VALID,
-          fieldMetadata,
-          message: `Column targetColumnMap for composite type ${fieldMetadata.type} is not well structured "${fieldMetadata.targetColumnMap}"`,
-        });
+      if (!object[subField.name]) {
+        return false;
       }
     }
 
-    return issues;
+    return true;
   }
 }
