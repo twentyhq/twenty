@@ -8,6 +8,7 @@ import { isSoftFocusOnTableCellFamilyStateScopeMap } from '@/object-record/recor
 import { isTableCellInEditModeFamilyStateScopeMap } from '@/object-record/record-table/states/isTableCellInEditModeFamilyStateScopeMap';
 import { numberOfTableRowsStateScopeMap } from '@/object-record/record-table/states/numberOfTableRowsStateScopeMap';
 import { objectMetadataConfigStateScopeMap } from '@/object-record/record-table/states/objectMetadataConfigStateScopeMap';
+import { objectNamePluralStateScopeMap } from '@/object-record/record-table/states/objectNamePluralStateScopeMap';
 import { onColumnsChangeStateScopeMap } from '@/object-record/record-table/states/onColumnsChangeStateScopeMap';
 import { onEntityCountChangeStateScopeMap } from '@/object-record/record-table/states/onEntityCountChangeStateScopeMap';
 import { resizeFieldOffsetStateScopeMap } from '@/object-record/record-table/states/resizeFieldOffsetStateScopeMap';
@@ -25,13 +26,14 @@ import { tableRowIdsStateScopeMap } from '@/object-record/record-table/states/ta
 import { tableSortsStateScopeMap } from '@/object-record/record-table/states/tableSortsStateScopeMap';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getFamilyState } from '@/ui/utilities/recoil-scope/utils/getFamilyState';
+import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { getSelector } from '@/ui/utilities/recoil-scope/utils/getSelector';
 import { getState } from '@/ui/utilities/recoil-scope/utils/getState';
 
 export const useRecordTableStates = (recordTableId?: string) => {
   const scopeId = useAvailableScopeIdOrThrow(
     RecordTableScopeInternalContext,
-    recordTableId,
+    getScopeIdFromComponentId(recordTableId),
   );
 
   return {
@@ -47,6 +49,7 @@ export const useRecordTableStates = (recordTableId?: string) => {
       objectMetadataConfigStateScopeMap,
       scopeId,
     ),
+    objectNamePluralState: getState(objectNamePluralStateScopeMap, scopeId),
     onColumnsChangeState: getState(onColumnsChangeStateScopeMap, scopeId),
     onEntityCountChangeState: getState(
       onEntityCountChangeStateScopeMap,

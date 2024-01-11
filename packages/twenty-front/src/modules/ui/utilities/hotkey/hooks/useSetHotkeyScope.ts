@@ -78,6 +78,8 @@ export const useSetHotkeyScope = () =>
         scopesToSet.push(newHotkeyScope.scope);
         set(internalHotkeysEnabledScopesState, scopesToSet);
         set(currentHotkeyScopeState, newHotkeyScope);
+
+        console.log(currentHotkeyScope);
       },
     [],
   );

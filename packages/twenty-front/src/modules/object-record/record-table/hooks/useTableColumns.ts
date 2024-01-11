@@ -4,30 +4,24 @@ import { useRecoilValue } from 'recoil';
 import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { useMoveViewColumns } from '@/views/hooks/useMoveViewColumns';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
 type useRecordTableProps = {
-  recordTableScopeId?: string;
+  recordTableId?: string;
 };
 
 export const useTableColumns = (props?: useRecordTableProps) => {
-  const scopeId = useAvailableScopeIdOrThrow(
-    RecordTableScopeInternalContext,
-    props?.recordTableScopeId,
-  );
   const { onColumnsChange, setTableColumns } = useRecordTable({
-    recordTableScopeId: scopeId,
+    recordTableId: props?.recordTableId,
   });
 
   const {
     availableTableColumnsState,
     tableColumnsState,
     visibleTableColumnsSelector,
-  } = useRecordTableStates();
+  } = useRecordTableStates(props?.recordTableId);
 
   const availableTableColumns = useRecoilValue(availableTableColumnsState);
 

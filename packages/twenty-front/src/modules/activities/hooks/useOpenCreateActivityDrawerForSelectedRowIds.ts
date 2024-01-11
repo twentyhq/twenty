@@ -9,11 +9,11 @@ import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 import { useOpenCreateActivityDrawer } from './useOpenCreateActivityDrawer';
 
 export const useOpenCreateActivityDrawerForSelectedRowIds = (
-  recordTableScopeId: string,
+  recordTableId: string,
 ) => {
   const openCreateActivityDrawer = useOpenCreateActivityDrawer();
 
-  const { selectedRowIdsSelector } = useRecordTableStates(recordTableScopeId);
+  const { selectedRowIdsSelector } = useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
     ({ snapshot }) =>

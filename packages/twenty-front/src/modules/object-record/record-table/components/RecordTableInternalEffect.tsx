@@ -7,16 +7,16 @@ import {
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 type RecordTableInternalEffectProps = {
-  recordTableScopeId: string;
+  recordTableId: string;
   tableBodyRef: React.RefObject<HTMLDivElement>;
 };
 
 export const RecordTableInternalEffect = ({
-  recordTableScopeId,
+  recordTableId,
   tableBodyRef,
 }: RecordTableInternalEffectProps) => {
   const { leaveTableFocus, resetTableRowSelection, useMapKeyboardToSoftFocus } =
-    useRecordTable({ recordTableScopeId });
+    useRecordTable({ recordTableId });
 
   useMapKeyboardToSoftFocus();
 

@@ -3,12 +3,12 @@ import { useRecoilCallback } from 'recoil';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
-export const useSelectAllRows = (recordTableScopeId: string) => {
+export const useSelectAllRows = (recordTableId?: string) => {
   const {
     allRowsSelectedStatusSelector,
     tableRowIdsState,
     isRowSelectedFamilyState,
-  } = useRecordTableStates(recordTableScopeId);
+  } = useRecordTableStates(recordTableId);
 
   const selectAllRows = useRecoilCallback(
     ({ set, snapshot }) =>

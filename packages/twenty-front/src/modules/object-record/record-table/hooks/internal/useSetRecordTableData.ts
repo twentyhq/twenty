@@ -7,18 +7,18 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type useSetRecordTableDataProps = {
-  recordTableScopeId: string;
+  recordTableId?: string;
   onEntityCountChange: (entityCount: number) => void;
 };
 
 export const useSetRecordTableData = ({
-  recordTableScopeId,
+  recordTableId,
   onEntityCountChange,
 }: useSetRecordTableDataProps) => {
-  const resetTableRowSelection = useResetTableRowSelection(recordTableScopeId);
+  const resetTableRowSelection = useResetTableRowSelection(recordTableId);
 
   const { tableRowIdsState, numberOfTableRowsState } =
-    useRecordTableStates(recordTableScopeId);
+    useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
     ({ set, snapshot }) =>

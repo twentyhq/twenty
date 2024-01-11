@@ -66,6 +66,7 @@ const StyledTableContainer = styled.div`
 `;
 
 type RecordTableWithWrappersProps = {
+  objectNamePlural: string;
   recordTableId: string;
   viewBarId: string;
   updateRecordMutation: (params: any) => void;
@@ -75,6 +76,7 @@ type RecordTableWithWrappersProps = {
 export const RecordTableWithWrappers = ({
   updateRecordMutation,
   createRecord,
+  objectNamePlural,
   recordTableId,
   viewBarId,
 }: RecordTableWithWrappersProps) => {
@@ -89,12 +91,8 @@ export const RecordTableWithWrappers = ({
     isRecordTableInitialLoadingState,
   );
 
-  const {
-    scopeId: objectNamePlural,
-    resetTableRowSelection,
-    setRowSelectedState,
-  } = useRecordTable({
-    recordTableScopeId: recordTableId,
+  const { resetTableRowSelection, setRowSelectedState } = useRecordTable({
+    recordTableId,
   });
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
@@ -121,7 +119,7 @@ export const RecordTableWithWrappers = ({
               <StyledTableContainer>
                 <div ref={tableBodyRef}>
                   <RecordTable
-                    recordTableScopeId={recordTableId}
+                    recordTableId={recordTableId}
                     onColumnsChange={useRecoilCallback(() => (columns) => {
                       persistViewFields(
                         mapColumnDefinitionsToViewFields(columns),
@@ -136,7 +134,7 @@ export const RecordTableWithWrappers = ({
                   />
                 </div>
                 <RecordTableInternalEffect
-                  recordTableScopeId={recordTableId}
+                  recordTableId={recordTableId}
                   tableBodyRef={tableBodyRef}
                 />
                 {!isRecordTableInitialLoading && numberOfTableRows === 0 && (

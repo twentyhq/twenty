@@ -3,12 +3,12 @@ import { useRecoilCallback } from 'recoil';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
-export const useDisableSoftFocus = (recordTableScopeId: string) => {
+export const useDisableSoftFocus = (recordTableId?: string) => {
   const {
     softFocusPositionState,
     isSoftFocusActiveState,
     isSoftFocusOnTableCellFamilyState,
-  } = useRecordTableStates(recordTableScopeId);
+  } = useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
     ({ set, snapshot }) => {

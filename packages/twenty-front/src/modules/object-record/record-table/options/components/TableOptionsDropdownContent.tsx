@@ -49,7 +49,7 @@ export const TableOptionsDropdownContent = ({
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
 
   const { handleColumnVisibilityChange, handleColumnReorder } = useTableColumns(
-    { recordTableScopeId: recordTableId },
+    { recordTableId },
   );
 
   const handleSelectMenu = (option: TableOptionsMenu) => {

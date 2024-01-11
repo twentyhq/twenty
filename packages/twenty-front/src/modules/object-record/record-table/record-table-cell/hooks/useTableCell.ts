@@ -9,7 +9,6 @@ import { entityFieldInitialValueFamilyState } from '@/object-record/field/states
 import { FieldInitialValue } from '@/object-record/field/types/FieldInitialValue';
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -27,7 +26,8 @@ export const DEFAULT_CELL_SCOPE: HotkeyScope = {
 };
 
 export const useTableCell = () => {
-  const { scopeId: recordTableScopeId } = useRecordTable();
+  // TODO(t.trompette): Removed var from useCloseCurrentTableCellInEditMode. Test carefully.
+  // const { scopeId: recordTableScopeId } = useRecordTable();
 
   const { objectMetadataConfigState, tableRowIdsState } =
     useRecordTableStates();
@@ -40,8 +40,7 @@ export const useTableCell = () => {
   const setHotkeyScope = useSetHotkeyScope();
   const { setDragSelectionStartEnabled } = useDragSelect();
 
-  const closeCurrentTableCellInEditMode =
-    useCloseCurrentTableCellInEditMode(recordTableScopeId);
+  const closeCurrentTableCellInEditMode = useCloseCurrentTableCellInEditMode();
 
   const customCellHotkeyScope = useContext(CellHotkeyScopeContext);
 

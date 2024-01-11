@@ -9,12 +9,12 @@ import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { useCloseCurrentTableCellInEditMode } from './useCloseCurrentTableCellInEditMode';
 import { useDisableSoftFocus } from './useDisableSoftFocus';
 
-export const useLeaveTableFocus = (recordTableScopeId: string) => {
-  const disableSoftFocus = useDisableSoftFocus(recordTableScopeId);
+export const useLeaveTableFocus = (recordTableId?: string) => {
+  const disableSoftFocus = useDisableSoftFocus(recordTableId);
   const closeCurrentCellInEditMode =
-    useCloseCurrentTableCellInEditMode(recordTableScopeId);
+    useCloseCurrentTableCellInEditMode(recordTableId);
 
-  const { isSoftFocusActiveState } = useRecordTableStates(recordTableScopeId);
+  const { isSoftFocusActiveState } = useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
     ({ snapshot }) =>

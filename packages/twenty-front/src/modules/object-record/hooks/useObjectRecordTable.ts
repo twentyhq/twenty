@@ -13,7 +13,7 @@ import { useFindManyRecords } from './useFindManyRecords';
 
 export const useObjectRecordTable = () => {
   const {
-    scopeId: objectNamePlural,
+    objectNamePlural,
     setRecordTableData,
     setIsRecordTableInitialLoading,
   } = useRecordTable();

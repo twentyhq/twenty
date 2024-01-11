@@ -5,12 +5,12 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 
 import { TableCellPosition } from '../../types/TableCellPosition';
 
-export const useSetSoftFocusPosition = (recordTableScopeId: string) => {
+export const useSetSoftFocusPosition = (recordTableId?: string) => {
   const {
     softFocusPositionState,
     isSoftFocusActiveState,
     isSoftFocusOnTableCellFamilyState,
-  } = useRecordTableStates(recordTableScopeId);
+  } = useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
     ({ set, snapshot }) => {

@@ -1,12 +1,10 @@
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { useGetIsSomeCellInEditMode } from '@/object-record/record-table/hooks/internal/useGetIsSomeCellInEditMode';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { FieldMetadata } from '../../field/types/FieldMetadata';
@@ -23,16 +21,14 @@ import { useSetRowSelectedState } from './internal/useSetRowSelectedState';
 import { useSetSoftFocusPosition } from './internal/useSetSoftFocusPosition';
 
 type useRecordTableProps = {
-  recordTableScopeId?: string;
+  recordTableId?: string;
 };
 
 export const useRecordTable = (props?: useRecordTableProps) => {
-  const scopeId = useAvailableScopeIdOrThrow(
-    RecordTableScopeInternalContext,
-    props?.recordTableScopeId,
-  );
+  const recordTableId = props?.recordTableId;
 
   const {
+    scopeId,
     availableTableColumnsState,
     tableFiltersState,
     tableSortsState,
@@ -45,7 +41,9 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     isRecordTableInitialLoadingState,
     tableLastRowVisibleState,
     numberOfTableColumnsSelector,
-  } = useRecordTableStates(scopeId);
+    selectedRowIdsSelector,
+    objectNamePluralState,
+  } = useRecordTableStates(recordTableId);
 
   const setAvailableTableColumns = useSetRecoilState(
     availableTableColumnsState,
@@ -69,6 +67,10 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const setRecordTableLastRowVisible = useSetRecoilState(
     tableLastRowVisibleState,
+  );
+
+  const [objectNamePlural, setObjectNamePlural] = useRecoilState(
+    objectNamePluralState,
   );
 
   const onColumnsChange = useRecoilCallback(
@@ -98,19 +100,19 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   );
 
   const setRecordTableData = useSetRecordTableData({
-    recordTableScopeId: scopeId,
+    recordTableId,
     onEntityCountChange,
   });
 
-  const leaveTableFocus = useLeaveTableFocus(scopeId);
+  const leaveTableFocus = useLeaveTableFocus(recordTableId);
 
-  const setRowSelectedState = useSetRowSelectedState(scopeId);
+  const setRowSelectedState = useSetRowSelectedState(recordTableId);
 
-  const resetTableRowSelection = useResetTableRowSelection(scopeId);
+  const resetTableRowSelection = useResetTableRowSelection(recordTableId);
 
   const upsertRecordTableItem = useUpsertRecordFromState();
 
-  const setSoftFocusPosition = useSetSoftFocusPosition(scopeId);
+  const setSoftFocusPosition = useSetSoftFocusPosition(recordTableId);
 
   const moveUp = useRecoilCallback(
     ({ snapshot }) =>
@@ -264,7 +266,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   );
 
   const useMapKeyboardToSoftFocus = () => {
-    const disableSoftFocus = useDisableSoftFocus(scopeId);
+    const disableSoftFocus = useDisableSoftFocus(recordTableId);
     const setHotkeyScope = useSetHotkeyScope();
 
     useScopedHotkeys(
@@ -317,9 +319,9 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     );
   };
 
-  const { selectAllRows } = useSelectAllRows(scopeId);
+  const { selectAllRows } = useSelectAllRows(recordTableId);
 
-  const getIsSomeCellInEditMode = useGetIsSomeCellInEditMode(scopeId);
+  const getIsSomeCellInEditMode = useGetIsSomeCellInEditMode(recordTableId);
 
   return {
     scopeId,
@@ -346,5 +348,8 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setRecordTableLastRowVisible,
     setSoftFocusPosition,
     getIsSomeCellInEditMode,
+    selectedRowIdsSelector,
+    objectNamePlural,
+    setObjectNamePlural,
   };
 };
