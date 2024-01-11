@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { useEventTracker } from '@/analytics/hooks/useEventTracker';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
+import { isSignUpDisabledState } from '@/client-config/states/isSignUpDisabledState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
@@ -18,8 +20,6 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
 
 import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
-import { useRecoilValue } from 'recoil';
-import { isSignUpDisabledState } from '@/client-config/states/isSignUpDisabledState';
 
 // TODO: break down into smaller functions and / or hooks
 export const PageChangeEffect = () => {
@@ -125,6 +125,7 @@ export const PageChangeEffect = () => {
   }, [
     enqueueSnackBar,
     isMatchingLocation,
+    isSignUpDisabled,
     location.pathname,
     navigate,
     onboardingStatus,
