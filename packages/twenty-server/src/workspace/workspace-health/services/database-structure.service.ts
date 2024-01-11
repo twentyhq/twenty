@@ -55,10 +55,12 @@ export class DatabaseStructureService {
   }
 
   getPostgresDefault(
-    type: FieldMetadataType,
+    fieldMetadataType: FieldMetadataType,
     defaultValue: FieldMetadataDefaultValue | null,
   ): string | null | undefined {
-    const typeORMType = fieldMetadataTypeToColumnType(type) as ColumnType;
+    const typeORMType = fieldMetadataTypeToColumnType(
+      fieldMetadataType,
+    ) as ColumnType;
     const mainDataSource = this.typeORMService.getMainDataSource();
 
     if (defaultValue && 'type' in defaultValue) {

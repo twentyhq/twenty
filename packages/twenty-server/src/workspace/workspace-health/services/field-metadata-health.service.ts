@@ -329,10 +329,10 @@ export class FieldMetadataHealthService {
   }
 
   private isCompositeObjectWellStructured(
-    type: FieldMetadataType,
+    fieldMetadataType: FieldMetadataType,
     object: any,
   ): boolean {
-    const subFields = compositeDefinitions.get(type)?.() ?? [];
+    const subFields = compositeDefinitions.get(fieldMetadataType)?.() ?? [];
 
     if (!object) {
       return true;
@@ -340,7 +340,7 @@ export class FieldMetadataHealthService {
 
     if (subFields.length === 0) {
       throw new InternalServerErrorException(
-        `The composite field type ${type} doesn't have any sub fields, it seems this one is not implemented in the composite definitions map`,
+        `The composite field type ${fieldMetadataType} doesn't have any sub fields, it seems this one is not implemented in the composite definitions map`,
       );
     }
 
