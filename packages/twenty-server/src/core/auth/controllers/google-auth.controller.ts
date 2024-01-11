@@ -39,7 +39,7 @@ export class GoogleAuthController {
     const { firstName, lastName, email, picture, workspaceInviteHash } =
       req.user;
 
-    const mainDataSource = await this.typeORMService.getMainDataSource();
+    const mainDataSource = this.typeORMService.getMainDataSource();
 
     const existingUser = await mainDataSource
       .getRepository(User)

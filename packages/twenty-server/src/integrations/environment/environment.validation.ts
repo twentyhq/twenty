@@ -186,6 +186,11 @@ export class EnvironmentVariables {
   @IsNumber()
   @ValidateIf((env) => env.INACTIVE_DAYS_BEFORE_EMAIL > 0)
   INACTIVE_DAYS_BEFORE_DELETE: number;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  IS_SIGN_UP_DISABLED?: boolean;
 }
 
 export const validate = (config: Record<string, unknown>) => {

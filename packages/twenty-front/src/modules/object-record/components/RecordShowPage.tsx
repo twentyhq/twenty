@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { parseFieldRelationType } from '@/object-metadata/utils/parseFieldRelationType';
 import { parseFieldType } from '@/object-metadata/utils/parseFieldType';
 import {
   FieldContext,
@@ -30,6 +31,7 @@ import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSu
 import { ShowPageRecoilScopeContext } from '@/ui/layout/states/ShowPageRecoilScopeContext';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   FieldMetadataType,
   FileFolder,
@@ -139,6 +141,10 @@ export const RecordShowPage = () => {
     });
   };
 
+  const isRelationFieldCardEnabled = useIsFeatureEnabled(
+    'IS_RELATION_FIELD_CARD_ENABLED',
+  );
+
   const availableFieldMetadataItems = objectMetadataItem.fields
     .filter(
       (fieldMetadataItem) =>
@@ -151,7 +157,9 @@ export const RecordShowPage = () => {
 
   const inlineFieldMetadataItems = availableFieldMetadataItems.filter(
     (fieldMetadataItem) =>
-      fieldMetadataItem.type !== FieldMetadataType.Relation,
+      fieldMetadataItem.type !== FieldMetadataType.Relation ||
+      (!isRelationFieldCardEnabled &&
+        parseFieldRelationType(fieldMetadataItem) === 'TO_ONE_OBJECT'),
   );
 
   const relationFieldMetadataItems = availableFieldMetadataItems.filter(
@@ -265,28 +273,29 @@ export const RecordShowPage = () => {
                       ),
                     )}
                   </PropertyBox>
-                  {relationFieldMetadataItems.map(
-                    (fieldMetadataItem, index) => (
-                      <FieldContext.Provider
-                        key={record.id + fieldMetadataItem.id}
-                        value={{
-                          entityId: record.id,
-                          recoilScopeId: record.id + fieldMetadataItem.id,
-                          isLabelIdentifier: false,
-                          fieldDefinition:
-                            formatFieldMetadataItemAsColumnDefinition({
-                              field: fieldMetadataItem,
-                              position: index,
-                              objectMetadataItem,
-                            }),
-                          useUpdateRecord: useUpdateOneObjectRecordMutation,
-                          hotkeyScope: InlineCellHotkeyScope.InlineCell,
-                        }}
-                      >
-                        <RecordRelationFieldCardSection />
-                      </FieldContext.Provider>
-                    ),
-                  )}
+                  {isRelationFieldCardEnabled &&
+                    relationFieldMetadataItems.map(
+                      (fieldMetadataItem, index) => (
+                        <FieldContext.Provider
+                          key={record.id + fieldMetadataItem.id}
+                          value={{
+                            entityId: record.id,
+                            recoilScopeId: record.id + fieldMetadataItem.id,
+                            isLabelIdentifier: false,
+                            fieldDefinition:
+                              formatFieldMetadataItemAsColumnDefinition({
+                                field: fieldMetadataItem,
+                                position: index,
+                                objectMetadataItem,
+                              }),
+                            useUpdateRecord: useUpdateOneObjectRecordMutation,
+                            hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                          }}
+                        >
+                          <RecordRelationFieldCardSection />
+                        </FieldContext.Provider>
+                      ),
+                    )}
                 </>
               )}
             </ShowPageLeftContainer>

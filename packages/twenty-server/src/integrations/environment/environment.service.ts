@@ -256,4 +256,8 @@ export class EnvironmentService {
       'INACTIVE_DAYS_BEFORE_DELETE',
     );
   }
+
+  isSignUpDisabled(): boolean {
+    return this.configService.get<boolean>('IS_SIGN_UP_DISABLED') ?? false;
+  }
 }

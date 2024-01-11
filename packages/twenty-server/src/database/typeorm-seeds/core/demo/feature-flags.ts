@@ -30,6 +30,11 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: 'IS_RELATION_FIELD_CARD_ENABLED',
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };

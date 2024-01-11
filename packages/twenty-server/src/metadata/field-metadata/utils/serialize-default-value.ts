@@ -2,6 +2,8 @@ import { BadRequestException } from '@nestjs/common';
 
 import { FieldMetadataDefaultSerializableValue } from 'src/metadata/field-metadata/interfaces/field-metadata-default-value.interface';
 
+import { serializeTypeDefaultValue } from 'src/metadata/field-metadata/utils/serialize-type-default-value.util';
+
 export const serializeDefaultValue = (
   defaultValue?: FieldMetadataDefaultSerializableValue,
 ) => {
@@ -15,14 +17,13 @@ export const serializeDefaultValue = (
     typeof defaultValue === 'object' &&
     'type' in defaultValue
   ) {
-    switch (defaultValue.type) {
-      case 'uuid':
-        return 'public.uuid_generate_v4()';
-      case 'now':
-        return 'now()';
-      default:
-        throw new BadRequestException('Invalid dynamic default value type');
+    const serializedTypeDefaultValue = serializeTypeDefaultValue(defaultValue);
+
+    if (!serializedTypeDefaultValue) {
+      throw new BadRequestException('Invalid default value');
     }
+
+    return serializedTypeDefaultValue;
   }
 
   // Static default values

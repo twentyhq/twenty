@@ -3,6 +3,7 @@ import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { TableOptionsDropdownId } from '@/object-record/record-table/constants/TableOptionsDropdownId';
 import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
 import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/display/icon';
@@ -34,7 +35,7 @@ export const TableOptionsDropdownContent = ({
 
   const viewEditMode = useRecoilValue(viewEditModeState);
   const currentView = useRecoilValue(currentViewSelector);
-  const { closeDropdown } = useDropdown();
+  const { closeDropdown } = useDropdown(TableOptionsDropdownId);
 
   const [currentMenu, setCurrentMenu] = useState<TableOptionsMenu | undefined>(
     undefined,

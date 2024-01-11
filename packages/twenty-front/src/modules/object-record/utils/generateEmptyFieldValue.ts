@@ -48,10 +48,14 @@ export const generateEmptyFieldValue = (
         __typename: 'Currency',
       };
     }
-
-    case FieldMetadataType.MultiSelect:
     case FieldMetadataType.Select: {
+      return null;
+    }
+    case FieldMetadataType.MultiSelect: {
       throw new Error('Not implemented yet');
+    }
+    default: {
+      throw new Error('Unhandled FieldMetadataType');
     }
   }
 };

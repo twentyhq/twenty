@@ -9,14 +9,20 @@ import {
 import { GraphQLSchema, GraphQLError } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
-import { GraphQLSchemaWithContext, YogaInitialContext } from 'graphql-yoga';
+import {
+  GraphQLSchemaWithContext,
+  YogaInitialContext,
+  maskError,
+} from 'graphql-yoga';
 
 import { TokenService } from 'src/core/auth/services/token.service';
 import { CoreModule } from 'src/core/core.module';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { WorkspaceFactory } from 'src/workspace/workspace.factory';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
-import { globalExceptionHandler } from 'src/filters/utils/global-exception-handler.util';
+import { handleExceptionAndConvertToGraphQLError } from 'src/filters/utils/global-exception-handler.util';
+import { renderApolloPlayground } from 'src/workspace/utils/render-apollo-playground.util';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 @Injectable()
 export class GraphQLConfigService
@@ -25,14 +31,29 @@ export class GraphQLConfigService
   constructor(
     private readonly tokenService: TokenService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly environmentService: EnvironmentService,
     private readonly moduleRef: ModuleRef,
   ) {}
 
   createGqlOptions(): YogaDriverConfig {
-    return {
+    const exceptionHandlerService = this.exceptionHandlerService;
+    const isDebugMode = this.environmentService.isDebugMode();
+    const config: YogaDriverConfig = {
       context: ({ req }) => ({ req }),
       autoSchemaFile: true,
       include: [CoreModule],
+      maskedErrors: {
+        maskError(error: GraphQLError, message, isDev) {
+          if (error.originalError) {
+            return handleExceptionAndConvertToGraphQLError(
+              error.originalError,
+              exceptionHandlerService,
+            );
+          }
+
+          return maskError(error, message, isDev);
+        },
+      },
       conditionalSchema: async (context) => {
         try {
           let workspace: Workspace;
@@ -63,12 +84,23 @@ export class GraphQLConfigService
             });
           }
 
-          throw globalExceptionHandler(error, this.exceptionHandlerService);
+          throw handleExceptionAndConvertToGraphQLError(
+            error,
+            this.exceptionHandlerService,
+          );
         }
       },
       resolvers: { JSON: GraphQLJSON },
       plugins: [],
     };
+
+    if (isDebugMode) {
+      config.renderGraphiQL = () => {
+        return renderApolloPlayground();
+      };
+    }
+
+    return config;
   }
 
   async createSchema(

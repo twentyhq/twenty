@@ -25,7 +25,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
-  public async getMainDataSource(): Promise<DataSource> {
+  public getMainDataSource(): DataSource {
     return this.mainDataSource;
   }
 
