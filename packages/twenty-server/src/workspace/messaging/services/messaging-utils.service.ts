@@ -288,4 +288,50 @@ export class MessagingUtilsService {
       [historyId, connectedAccountId],
     );
   }
+
+  public async deleteMessages(
+    messageIds: string[],
+    dataSourceMetadata: DataSourceEntity,
+    workspaceDataSource: DataSource,
+  ) {
+    if (!messageIds || messageIds.length === 0) {
+      return;
+    }
+
+    await workspaceDataSource?.query(
+      `DELETE FROM ${dataSourceMetadata.schema}."message" WHERE "externalId" = ANY($1)`,
+      [messageIds],
+    );
+  }
+
+  public async deleteEmptyThreads(
+    messageIds: string[],
+    connectedAccountId: string,
+    dataSourceMetadata: DataSourceEntity,
+    workspaceDataSource: DataSource,
+  ) {
+    const messageThreadsToDelete = await workspaceDataSource?.query(
+      `SELECT "messageThread"."id" FROM ${dataSourceMetadata.schema}."messageThread" "messageThread"
+      LEFT JOIN ${dataSourceMetadata.schema}."message" message ON "messageThread"."id" = message."messageThreadId"
+      LEFT JOIN ${dataSourceMetadata.schema}."messageChannel" ON "messageThread"."messageChannelId" = ${dataSourceMetadata.schema}."messageChannel"."id"
+      WHERE "messageThread"."externalId" = ANY($1)
+      AND ${dataSourceMetadata.schema}."messageChannel"."connectedAccountId" = $2
+      GROUP BY "messageThread"."id"
+      HAVING COUNT(message."id") = 0`,
+      [messageIds, connectedAccountId],
+    );
+
+    if (!messageThreadsToDelete || messageThreadsToDelete.length === 0) {
+      return;
+    }
+
+    const messageThreadIdsToDelete = messageThreadsToDelete.map(
+      (messageThread) => messageThread.id,
+    );
+
+    await workspaceDataSource?.query(
+      `DELETE FROM ${dataSourceMetadata.schema}."messageThread" WHERE "id" = ANY($1)`,
+      [messageThreadIdsToDelete],
+    );
+  }
 }
