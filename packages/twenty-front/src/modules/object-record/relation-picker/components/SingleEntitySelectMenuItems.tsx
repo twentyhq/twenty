@@ -15,6 +15,7 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { assertNotNull } from '~/utils/assert';
+import { isDefined } from '~/utils/isDefined';
 
 import { EntityForSelect } from '../types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
@@ -71,8 +72,10 @@ export const SingleEntitySelectMenuItems = ({
   const selectableItemIds = entitiesInDropdown.map((entity) => entity.id);
 
   const boardCardId = useContext(BoardCardIdContext);
+  const weAreInOpportunitiesPageCard = isDefined(boardCardId);
 
-  const hideSearchResults = boardCardId && !entitiesInDropdown.length;
+  const hideSearchResults =
+    weAreInOpportunitiesPageCard && !entitiesInDropdown.length;
 
   return (
     <div ref={containerRef}>

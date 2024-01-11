@@ -14,6 +14,7 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { IconForbid } from '@/ui/display/icon';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { isDefined } from '~/utils/isDefined';
 
 export type RelationPickerProps = {
   recordId?: string;
@@ -50,6 +51,7 @@ export const RelationPicker = ({
   }, [initialSearchFilter, setRelationPickerSearchFilter]);
 
   const boardCardId = useContext(BoardCardIdContext);
+  const weAreInOpportunitiesPageCard = isDefined(boardCardId);
 
   const [companyProgress] = useRecoilState(
     companyProgressesFamilyState(boardCardId ?? ''),
@@ -89,7 +91,7 @@ export const RelationPicker = ({
     onSubmit(selectedEntity ?? null);
 
   const entitiesToSelect = entities.entitiesToSelect.filter((entity) =>
-    boardCardId ? entity.record.companyId === companyId : true,
+    weAreInOpportunitiesPageCard ? entity.record.companyId === companyId : true,
   );
 
   return (
@@ -104,7 +106,7 @@ export const RelationPicker = ({
         selectedEntity={entities.selectedEntities[0]}
         width={width}
         onCreate={() => {
-          if (boardCardId) {
+          if (weAreInOpportunitiesPageCard) {
             setShowAddNewDropdown(true);
             setHotkeyScopeAndMemorizePreviousScope(
               RelationPickerHotkeyScope.AddNew,
@@ -112,7 +114,7 @@ export const RelationPicker = ({
           }
         }}
       />
-      {boardCardId && showAddNewDropdown && companyId && (
+      {weAreInOpportunitiesPageCard && showAddNewDropdown && companyId && (
         <AddPersonToCompany
           companyId={companyId}
           objectNameSingular={

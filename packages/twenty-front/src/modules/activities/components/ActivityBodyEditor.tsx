@@ -13,8 +13,8 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 
+import { blockSpecs } from '../blocks/blockSpecs';
 import { getSlashMenu } from '../blocks/slashMenu';
-import { blockSpecs } from '../blocks/spec';
 import { getFileType } from '../files/utils/getFileType';
 
 const StyledBlockNoteStyledContainer = styled.div`

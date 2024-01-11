@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { simpleParser } from 'mailparser';
+import { simpleParser, AddressObject } from 'mailparser';
 
-import { GmailMessage } from 'src/workspace/messaging/types/gmailMessage';
+import {
+  GmailMessage,
+  Recipient,
+} from 'src/workspace/messaging/types/gmailMessage';
 import { MessageOrThreadQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
 import { GmailMessageParsedResponse } from 'src/workspace/messaging/types/gmailMessageParsedResponse';
 import { GmailThreadParsedResponse } from 'src/workspace/messaging/types/gmailThreadParsedResponse';
@@ -208,16 +211,25 @@ export class FetchBatchMessagesService {
             attachments,
           } = parsed;
 
+          if (!from) throw new Error('From value is missing');
+          if (!to) throw new Error('To value is missing');
+
+          const recipients = [
+            ...this.formatAddressObjectAsRecipients(from, 'from'),
+            ...this.formatAddressObjectAsRecipients(to, 'to'),
+            ...this.formatAddressObjectAsRecipients(cc, 'cc'),
+            ...this.formatAddressObjectAsRecipients(bcc, 'bcc'),
+          ];
+
           const messageFromGmail: GmailMessage = {
             externalId: id,
             headerMessageId: messageId || '',
             subject: subject || '',
             messageThreadId: threadId,
             internalDate,
-            from,
-            to,
-            cc,
-            bcc,
+            fromHandle: from.value[0].address || '',
+            fromDisplayName: from.value[0].name || '',
+            recipients,
             text: text || '',
             html: html || '',
             attachments,
@@ -235,6 +247,36 @@ export class FetchBatchMessagesService {
     ) as GmailMessage[];
 
     return filteredResponse;
+  }
+
+  formatAddressObjectAsArray(
+    addressObject: AddressObject | AddressObject[],
+  ): AddressObject[] {
+    return Array.isArray(addressObject) ? addressObject : [addressObject];
+  }
+
+  formatAddressObjectAsRecipients(
+    addressObject: AddressObject | AddressObject[] | undefined,
+    role: 'from' | 'to' | 'cc' | 'bcc',
+  ): Recipient[] {
+    if (!addressObject) return [];
+    const addressObjects = this.formatAddressObjectAsArray(addressObject);
+
+    const recipients = addressObjects.map((addressObject) => {
+      const emailAdresses = addressObject.value;
+
+      return emailAdresses.map((emailAddress) => {
+        const { name, address } = emailAddress;
+
+        return {
+          role,
+          handle: address || '',
+          displayName: name || '',
+        };
+      });
+    });
+
+    return recipients.flat();
   }
 
   async formatBatchResponsesAsGmailMessages(

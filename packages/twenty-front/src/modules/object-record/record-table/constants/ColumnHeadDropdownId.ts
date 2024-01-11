@@ -1,1 +1,1 @@
-export const ColumnHeadDropdownId = 'table-head-options';
+export const ColumnHeadDropdownId = 'table-head-options-dropdown-id';

@@ -25,12 +25,12 @@ jobs:
     name: runner / vale
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: errata-ai/vale-action@reviewdog
         with:
           files: ${{ steps.directories.outputs.LIST }}
           fail_on_error: true
-          vale_flags: "--minAlertLevel=error --config=packages/twenty-docs/.vale.ini"
+          vale_flags: "--minAlertLevel=error"
           reporter: github-pr-check
           token: ${{ github.token }}
           filter_mode: nofilter

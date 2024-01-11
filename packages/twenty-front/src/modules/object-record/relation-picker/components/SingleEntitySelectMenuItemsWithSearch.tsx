@@ -38,10 +38,10 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
 
   const showCreateButton = isDefined(onCreate) && searchFilter !== '';
 
-  // boardCardId indicates we're in a card in the opportunities page
   const boardCardId = useContext(BoardCardIdContext);
+  const weAreInOpportunitiesPageCard = isDefined(boardCardId);
   const hideSearchInput =
-    boardCardId && !entitiesToSelect.length && !selectedEntity;
+    weAreInOpportunitiesPageCard && !entitiesToSelect.length && !selectedEntity;
 
   return (
     <>

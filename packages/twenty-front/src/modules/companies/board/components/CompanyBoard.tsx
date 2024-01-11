@@ -6,6 +6,7 @@ import {
   RecordBoardProps,
 } from '@/object-record/record-board/components/RecordBoard';
 import { RecordBoardEffect } from '@/object-record/record-board/components/RecordBoardEffect';
+import { BoardOptionsDropdownId } from '@/object-record/record-board/constants/BoardOptionsDropdownId';
 import { RecordBoardOptionsDropdown } from '@/object-record/record-board/options/components/RecordBoardOptionsDropdown';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
@@ -43,7 +44,7 @@ export const CompanyBoard = ({
         optionsDropdownButton={
           <RecordBoardOptionsDropdown recordBoardId={recordBoardId} />
         }
-        optionsDropdownScopeId={recordBoardId}
+        optionsDropdownScopeId={BoardOptionsDropdownId}
       />
 
       <HooksCompanyBoardEffect
