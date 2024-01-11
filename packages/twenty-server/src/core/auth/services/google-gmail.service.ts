@@ -1,16 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { v4 } from 'uuid';
 
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { SaveConnectedAccountInput } from 'src/core/auth/dto/save-connected-account';
+import {
+  FetchAllMessagesFromConnectedAccountJobData,
+  FetchAllMessagesFromConnectedAccountJob,
+} from 'src/workspace/messaging/jobs/fetch-all-messages-from-connected-account.job';
+import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 
 @Injectable()
 export class GoogleGmailService {
   constructor(
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
+    @Inject(MessageQueue.messagingQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async saveConnectedAccount(
@@ -64,6 +72,18 @@ export class GoogleGmailService {
         ['share_everything', handle, connectedAccountId, 'gmail'],
       );
     });
+
+    await this.messageQueueService.add<FetchAllMessagesFromConnectedAccountJobData>(
+      FetchAllMessagesFromConnectedAccountJob.name,
+      {
+        workspaceId,
+        connectedAccountId,
+      },
+      {
+        id: connectedAccountId,
+        retryLimit: 2,
+      },
+    );
 
     return;
   }
