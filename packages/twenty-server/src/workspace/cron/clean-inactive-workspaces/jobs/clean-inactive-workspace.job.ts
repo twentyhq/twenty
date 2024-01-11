@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { render } from '@react-email/render';
+import { Repository } from 'typeorm';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
@@ -13,6 +15,10 @@ import { EmailService } from 'src/integrations/email/email.service';
 import CleanInactiveWorkspaceEmail from 'src/workspace/cron/clean-inactive-workspaces/email/clean-inactive-workspaces.email';
 import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/core/feature-flag/feature-flag.entity';
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
 const FEATURE_FLAGS = [
@@ -34,6 +40,8 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
     private readonly emailService: EmailService,
     private readonly workspaceService: WorkspaceService,
     private readonly environmentService: EnvironmentService,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {
     this.inactiveDaysBeforeDelete =
       this.environmentService.getInactiveDaysBeforeDelete();
@@ -143,11 +151,25 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
     }
   }
 
+  async isWorkspaceCleanable(dataSource: DataSourceEntity): Promise<boolean> {
+    const workspaceFeatureFlags = await this.featureFlagRepository.find({
+      where: { workspaceId: dataSource.workspaceId },
+    });
+
+    return (
+      workspaceFeatureFlags.filter(
+        (workspaceFeatureFlag) =>
+          workspaceFeatureFlag.key === FeatureFlagKeys.IsWorkspaceCleanable &&
+          workspaceFeatureFlag.value,
+      ).length > 0
+    );
+  }
+
   async handle(): Promise<void> {
     this.logger.log('Job running...');
     if (!this.inactiveDaysBeforeDelete && !this.inactiveDaysBeforeEmail) {
       this.logger.log(
-        `Inactive workspace environment variables not set, please check this doc for more info: https://docs.twenty.com/start/self-hosting/environment-variables`,
+        `'INACTIVE_DAYS_BEFORE_EMAIL' and 'INACTIVE_DAYS_BEFORE_DELETE' environment variables not set, please check this doc for more info: https://docs.twenty.com/start/self-hosting/environment-variables`,
       );
 
       return;
@@ -158,9 +180,11 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
     const objectsMetadata = await this.objectMetadataService.findMany();
 
     for (const dataSource of dataSources) {
-      if (!FEATURE_FLAGS.includes(dataSource.workspaceId)) {
+      if (!(await this.isWorkspaceCleanable(dataSource))) {
+        this.logger.log(`Workspace ${dataSource.workspaceId} not cleanable`);
         continue;
       }
+      this.logger.log(`Cleaning Workspace ${dataSource.workspaceId}`);
       const dataSourceTableNames = objectsMetadata
         .filter(
           (objectMetadata) =>

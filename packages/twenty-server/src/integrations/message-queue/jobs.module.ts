@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { HttpModule } from '@nestjs/axios';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FetchAllMessagesFromConnectedAccountJob } from 'src/workspace/messaging/jobs/fetch-all-messages-from-connected-account.job';
 import { CallWebhookJobsJob } from 'src/workspace/workspace-query-runner/jobs/call-webhook-jobs.job';
@@ -15,6 +16,7 @@ import { EmailSenderJob } from 'src/integrations/email/email-sender.job';
 import { UserModule } from 'src/core/user/user.module';
 import { WorkspaceModule } from 'src/core/workspace/workspace.module';
 import { EnvironmentModule } from 'src/integrations/environment/environment.module';
+import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { EnvironmentModule } from 'src/integrations/environment/environment.modu
     UserModule,
     WorkspaceModule,
     EnvironmentModule,
+    TypeORMModule,
+    TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
   ],
   providers: [
     {

@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
-import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/core/feature-flag/feature-flag.entity';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { MessagingProducer } from 'src/workspace/messaging/producers/messaging-producer';
@@ -34,7 +37,7 @@ export class FetchWorkspaceMessagesCommand extends CommandRunner {
   ): Promise<void> {
     const isMessagingEnabled = await this.featureFlagRepository.findOneBy({
       workspaceId: options.workspaceId,
-      key: 'IS_MESSAGING_ENABLED',
+      key: FeatureFlagKeys.IsMessagingEnabled,
       value: true,
     });
 
