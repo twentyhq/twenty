@@ -94,33 +94,35 @@ export const RelationPicker = ({
     weAreInOpportunitiesPageCard ? entity.record.companyId === companyId : true,
   );
 
+  const weAreAddingNewPerson =
+    weAreInOpportunitiesPageCard && showAddNewDropdown && companyId;
+
   return (
     <>
-      <SingleEntitySelect
-        EmptyIcon={IconForbid}
-        emptyLabel={'No ' + fieldDefinition.label}
-        entitiesToSelect={entitiesToSelect}
-        loading={entities.loading}
-        onCancel={onCancel}
-        onEntitySelected={handleEntitySelected}
-        selectedEntity={entities.selectedEntities[0]}
-        width={width}
-        onCreate={() => {
-          if (weAreInOpportunitiesPageCard) {
-            setShowAddNewDropdown(true);
-            setHotkeyScopeAndMemorizePreviousScope(
-              RelationPickerHotkeyScope.AddNew,
-            );
-          }
-        }}
-      />
-      {weAreInOpportunitiesPageCard && showAddNewDropdown && companyId && (
+      {!weAreAddingNewPerson ? (
+        <SingleEntitySelect
+          EmptyIcon={IconForbid}
+          emptyLabel={'No ' + fieldDefinition.label}
+          entitiesToSelect={entitiesToSelect}
+          loading={entities.loading}
+          onCancel={onCancel}
+          onEntitySelected={handleEntitySelected}
+          selectedEntity={entities.selectedEntities[0]}
+          width={width}
+          onCreate={() => {
+            if (weAreInOpportunitiesPageCard) {
+              setShowAddNewDropdown(true);
+              setHotkeyScopeAndMemorizePreviousScope(
+                RelationPickerHotkeyScope.AddNew,
+              );
+            }
+          }}
+        />
+      ) : (
         <AddPersonToCompany
           companyId={companyId}
-          objectNameSingular={
-            fieldDefinition.metadata.relationObjectMetadataNameSingular
-          }
-          closeDropDown={() => setShowAddNewDropdown(false)}
+          onEntitySelected={handleEntitySelected}
+          closeDropdown={() => setShowAddNewDropdown(false)}
         />
       )}
     </>

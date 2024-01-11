@@ -1,11 +1,11 @@
-import { useMutation } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 import styled from '@emotion/styled';
 import { v4 } from 'uuid';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { FieldDoubleText } from '@/object-record/field/types/FieldDoubleText';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
+import { Person } from '@/people/types/Person';
 import { DoubleTextInput } from '@/ui/field/input/components/DoubleTextInput';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
@@ -33,31 +33,25 @@ export const StyledInputContainer = styled.div`
 
 type AddPersonToCompanyProps = {
   companyId: string;
-  objectNameSingular: string;
-  closeDropDown?: () => void;
+  onEntitySelected: (entity?: EntityForSelect | undefined) => void;
+  closeDropdown?: () => void;
 };
 
 export const AddPersonToCompany = ({
   companyId,
-  objectNameSingular,
-  closeDropDown,
+  onEntitySelected,
+  closeDropdown,
 }: AddPersonToCompanyProps) => {
   const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
 
-  const { findManyRecordsQuery } = useObjectMetadataItem({
-    objectNameSingular,
-  });
-
   const handleEscape = () => {
     goBackToPreviousHotkeyScope();
-    closeDropDown?.();
+    closeDropdown?.();
   };
 
-  const { createOneRecordMutation } = useObjectMetadataItem({
+  const { createOneRecord: createPerson } = useCreateOneRecord<Person>({
     objectNameSingular: 'person',
   });
-
-  const [createPerson] = useMutation(createOneRecordMutation);
 
   const handleCreatePerson = async ({
     firstValue,
@@ -65,21 +59,27 @@ export const AddPersonToCompany = ({
   }: FieldDoubleText) => {
     if (!firstValue && !secondValue) return;
 
-    await createPerson({
-      variables: {
-        input: {
-          companyId,
-          id: v4(),
-          name: {
-            firstName: firstValue,
-            lastName: secondValue,
-          },
-        },
+    const person = await createPerson({
+      companyId,
+      id: v4(),
+      name: {
+        firstName: firstValue,
+        lastName: secondValue,
       },
-      refetchQueries: [getOperationName(findManyRecordsQuery) ?? ''],
     });
+
+    if (person) {
+      const entityForSelect: EntityForSelect = {
+        id: person.id,
+        name: person.name?.firstName ?? '',
+        avatarUrl: person.avatarUrl ?? '',
+        avatarType: 'rounded',
+        record: person,
+      };
+      onEntitySelected(entityForSelect);
+    }
     goBackToPreviousHotkeyScope();
-    closeDropDown?.();
+    closeDropdown?.();
   };
 
   return (
