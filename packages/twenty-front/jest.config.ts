@@ -1,14 +1,14 @@
 export default {
-  setupFilesAfterEnv: ["./src/setupTests.ts"],
-  testEnvironment: "jsdom",
+  setupFilesAfterEnv: ['./src/setupTests.ts'],
+  testEnvironment: 'jsdom',
   transform: {
-    "^.+\\.(ts|js|tsx|jsx)$": "@swc/jest",
+    '^.+\\.(ts|js|tsx|jsx)$': '@swc/jest',
   },
   moduleNameMapper: {
-    '~/(.+)': "<rootDir>/src/$1",
-    '@/(.+)': "<rootDir>/src/modules/$1",
-    '@testing/(.+)': "<rootDir>/src/testing/$1",
-    "\\.(jpg|jpeg|png|gif|webp|svg)$": "<rootDir>/__mocks__/imageMock.js",
+    '~/(.+)': '<rootDir>/src/$1',
+    '@/(.+)': '<rootDir>/src/modules/$1',
+    '@testing/(.+)': '<rootDir>/src/testing/$1',
+    '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/imageMock.js',
   },
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   coverageThreshold: {
@@ -35,12 +35,8 @@ export default {
     'generated-metadata/*',
     'generated/*',
     '__stories__/*',
-    'utilities/recoil-scope/utils/*',
-    'modules/ui/theme/utils/themeColorSchema.ts',
-    'display/icon/index.ts'
+    'display/icon/index.ts',
   ],
-  testPathIgnorePatterns: [
-    'src/modules/activities/blocks/spec.ts',
-  ],
+  testPathIgnorePatterns: ['src/modules/activities/blocks/spec.ts'],
   // coverageDirectory: '<rootDir>/coverage/',
-}
+};
