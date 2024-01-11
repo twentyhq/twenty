@@ -1,9 +1,10 @@
-import { ContactLink } from "@/ui/navigation/link/components/ContactLink";
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router } from 'react-router-dom';
+
+import { ContactLink } from '@/ui/navigation/link/components/ContactLink';
 
 export const MyComponent = () => {
   const handleLinkClick = (event) => {
-    console.log("Contact link clicked!", event);
+    console.log('Contact link clicked!', event);
   };
 
   return (

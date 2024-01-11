@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
+import { EMPTY_QUERY } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
@@ -108,12 +109,13 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
   const {
     loading: toSelectAndMatchesSearchFilterObjectRecordsLoading,
     data: toSelectAndMatchesSearchFilterObjectRecordsQueryResult,
-  } = useQuery<MultiObjectRecordQueryResult>(multiSelectQuery, {
+  } = useQuery<MultiObjectRecordQueryResult>(multiSelectQuery ?? EMPTY_QUERY, {
     variables: {
       ...objectRecordsToSelectAndMatchesSearchFilterTextFilterPerMetadataItem,
       ...orderByFieldPerMetadataItem,
       ...limitPerMetadataItem,
     },
+    skip: !isDefined(multiSelectQuery),
   });
 
   const {

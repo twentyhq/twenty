@@ -1,7 +1,5 @@
 import { useEffect } from 'react';
-import { useQuery } from '@apollo/client';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { FieldDefinition } from '@/object-record/field/types/FieldDefinition';
 import { FieldRelationMetadata } from '@/object-record/field/types/FieldMetadata';
@@ -13,7 +11,7 @@ import { IconForbid } from '@/ui/display/icon';
 
 export type RelationPickerProps = {
   recordId?: string;
-  onSubmit: (newUser: EntityForSelect | null) => void;
+  onSubmit: (selectedEntity: EntityForSelect | null) => void;
   onCancel?: () => void;
   width?: number;
   excludeRecordIds?: string[];
@@ -30,23 +28,16 @@ export const RelationPicker = ({
   initialSearchFilter,
   fieldDefinition,
 }: RelationPickerProps) => {
-  const { relationPickerSearchFilter, setRelationPickerSearchFilter } =
-    useRelationPicker();
+  const {
+    relationPickerSearchFilter,
+    setRelationPickerSearchFilter,
+    identifiersMapper,
+    searchQuery,
+  } = useRelationPicker();
 
   useEffect(() => {
     setRelationPickerSearchFilter(initialSearchFilter ?? '');
   }, [initialSearchFilter, setRelationPickerSearchFilter]);
-
-  // TODO: refactor useFilteredSearchEntityQuery
-  const { findManyRecordsQuery } = useObjectMetadataItem({
-    objectNameSingular:
-      fieldDefinition.metadata.relationObjectMetadataNameSingular,
-  });
-
-  const useFindManyQuery = (options: any) =>
-    useQuery(findManyRecordsQuery, options);
-
-  const { identifiersMapper, searchQuery } = useRelationPicker();
 
   const { objectNameSingular: relationObjectNameSingular } =
     useObjectNameSingularFromPlural({
@@ -54,8 +45,7 @@ export const RelationPicker = ({
         fieldDefinition.metadata.relationObjectMetadataNamePlural,
     });
 
-  const records = useFilteredSearchEntityQuery({
-    queryHook: useFindManyQuery,
+  const entities = useFilteredSearchEntityQuery({
     filters: [
       {
         fieldNames:
@@ -76,19 +66,18 @@ export const RelationPicker = ({
     objectNameSingular: relationObjectNameSingular,
   });
 
-  const handleEntitySelected = async (selectedUser: any | null | undefined) => {
-    onSubmit(selectedUser ?? null);
-  };
+  const handleEntitySelected = (selectedEntity: any | null | undefined) =>
+    onSubmit(selectedEntity ?? null);
 
   return (
     <SingleEntitySelect
       EmptyIcon={IconForbid}
       emptyLabel={'No ' + fieldDefinition.label}
-      entitiesToSelect={records.entitiesToSelect}
-      loading={records.loading}
+      entitiesToSelect={entities.entitiesToSelect}
+      loading={entities.loading}
       onCancel={onCancel}
       onEntitySelected={handleEntitySelected}
-      selectedEntity={records.selectedEntities[0]}
+      selectedEntity={entities.selectedEntities[0]}
       width={width}
     />
   );

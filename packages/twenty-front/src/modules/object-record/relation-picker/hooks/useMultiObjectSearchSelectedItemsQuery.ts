@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client';
+import { gql } from '@apollo/client';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
@@ -13,6 +14,12 @@ import { SelectedObjectRecordId } from '@/object-record/relation-picker/hooks/us
 import { useOrderByFieldPerMetadataItem } from '@/object-record/relation-picker/hooks/useOrderByFieldPerMetadataItem';
 import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
+
+export const EMPTY_QUERY = gql`
+  query Empty {
+    __typename
+  }
+`;
 
 export const useMultiObjectSearchSelectedItemsQuery = ({
   selectedObjectRecordIds,
@@ -68,13 +75,17 @@ export const useMultiObjectSearchSelectedItemsQuery = ({
   const {
     loading: selectedObjectRecordsLoading,
     data: selectedObjectRecordsQueryResult,
-  } = useQuery<MultiObjectRecordQueryResult>(multiSelectQueryForSelectedIds, {
-    variables: {
-      ...selectedIdFilterPerMetadataItem,
-      ...orderByFieldPerMetadataItem,
-      ...limitPerMetadataItem,
+  } = useQuery<MultiObjectRecordQueryResult>(
+    multiSelectQueryForSelectedIds ?? EMPTY_QUERY,
+    {
+      variables: {
+        ...selectedIdFilterPerMetadataItem,
+        ...orderByFieldPerMetadataItem,
+        ...limitPerMetadataItem,
+      },
+      skip: !isDefined(multiSelectQueryForSelectedIds),
     },
-  });
+  );
 
   const { objectRecordForSelectArray: selectedObjectRecords } =
     useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray({

@@ -14,6 +14,14 @@ export interface MessageQueueDriver {
     queueName: MessageQueue,
     handler: ({ data, id }: { data: T; id: string }) => Promise<void> | void,
   );
+  addCron<T extends MessageQueueJobData | undefined>(
+    queueName: MessageQueue,
+    jobName: string,
+    data: T,
+    pattern: string,
+    options?: QueueJobOptions,
+  );
+  removeCron(queueName: MessageQueue, jobName: string, pattern?: string);
   stop?(): Promise<void>;
   register?(queueName: MessageQueue): void;
 }

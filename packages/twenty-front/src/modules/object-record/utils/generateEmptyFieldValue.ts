@@ -48,26 +48,14 @@ export const generateEmptyFieldValue = (
         __typename: 'Currency',
       };
     }
-
-   case FieldMetadataType.MultiSelect: {
-    // Handle MultiSelect-specific logic
-    if (!backendSupportsMultiSelect) {
-      throw new Error('MultiSelect not implemented on the backend yet');
+    case FieldMetadataType.Select: {
+      return null;
     }
-    // Additional MultiSelect handling
-    break;
-  }
-  case FieldMetadataType.Select: {
-    // Handle Select-specific logic
-    const defaultSelectValue = {
-      color: 'DEFAULT_COLOR', // Replace with the actual default color
-      label: '',
-      __typename: 'FieldSelectValue',
-    };
-    return defaultSelectValue;
-  }
-  default: {
-    throw new Error('Unhandled FieldMetadataType');
-  }
+    case FieldMetadataType.MultiSelect: {
+      throw new Error('Not implemented yet');
+    }
+    default: {
+      throw new Error('Unhandled FieldMetadataType');
+    }
   }
 };

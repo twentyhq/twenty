@@ -1,13 +1,23 @@
 import { useEffect } from 'react';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
+import {
+  expect,
+  fireEvent,
+  fn,
+  userEvent,
+  waitFor,
+  within,
+} from '@storybook/test';
+import { useSetRecoilState } from 'recoil';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockDefaultWorkspace } from '~/testing/mock-data/users';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useRelationField } from '../../../hooks/useRelationField';
@@ -17,11 +27,13 @@ import {
 } from '../RelationFieldInput';
 
 const RelationFieldValueSetterEffect = ({ value }: { value: number }) => {
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const { setFieldValue } = useRelationField();
 
   useEffect(() => {
+    setCurrentWorkspace(mockDefaultWorkspace);
     setFieldValue(value);
-  }, [setFieldValue, value]);
+  }, [setCurrentWorkspace, setFieldValue, value]);
 
   return <></>;
 };
@@ -131,11 +143,12 @@ export const Cancel: Story = {
     const canvas = within(canvasElement);
 
     expect(cancelJestFn).toHaveBeenCalledTimes(0);
+    await canvas.findByText('John Wick');
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
+    fireEvent.click(emptyDiv);
 
     await waitFor(() => {
-      userEvent.click(emptyDiv);
       expect(cancelJestFn).toHaveBeenCalledTimes(1);
     });
   },

@@ -87,6 +87,7 @@ export type FieldRelationMetadata = {
 export type FieldSelectMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
+  options: { label: string; color: ThemeColor; value: string }[];
 };
 
 export type FieldMetadata =
@@ -119,6 +120,6 @@ export type FieldCurrencyValue = {
 };
 export type FieldFullNameValue = { firstName: string; lastName: string };
 export type FieldRatingValue = '1' | '2' | '3' | '4' | '5';
-export type FieldSelectValue = { color: ThemeColor; label: string };
+export type FieldSelectValue = string | null;
 
 export type FieldRelationValue = EntityForSelect | null;

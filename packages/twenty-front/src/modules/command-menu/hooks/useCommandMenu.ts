@@ -26,11 +26,21 @@ export const useCommandMenu = () => {
     setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
   };
 
-  const closeCommandMenu = () => {
-    setIsCommandMenuOpened(false);
-    resetSelectedItem();
-    goBackToPreviousHotkeyScope();
-  };
+  const closeCommandMenu = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const isCommandMenuOpened = snapshot
+          .getLoadable(isCommandMenuOpenedState)
+          .getValue();
+
+        if (isCommandMenuOpened) {
+          setIsCommandMenuOpened(false);
+          resetSelectedItem();
+          goBackToPreviousHotkeyScope();
+        }
+      },
+    [goBackToPreviousHotkeyScope, resetSelectedItem, setIsCommandMenuOpened],
+  );
 
   const toggleCommandMenu = useRecoilCallback(({ snapshot }) => async () => {
     const isCommandMenuOpened = snapshot

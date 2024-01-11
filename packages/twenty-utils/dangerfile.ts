@@ -18,16 +18,16 @@ if (packageChanged && !lockfileChanged) {
   warn(`${message} - <i>${idea}</i>`);
 }
 
-// Check if .env.example was changed, but not enviroment variable documentation
+// Check if .env.example was changed, but not environment variable documentation
 const envChanged =
   danger.git.modified_files.find((x) => x.includes('.env.example')) ||
   danger.git.modified_files.find((x) => x.includes('environment.service.ts'));
 const envDocsChanged = danger.git.modified_files.includes(
-  'enviroment-variables.mdx',
+  'environment-variables.mdx',
 );
 if (envChanged && !envDocsChanged) {
   const message =
-    'Changes were made to the enviroment variables, but not to the documentation';
+    'Changes were made to the environment variables, but not to the documentation';
   const idea =
     'Please review your changes and check if a change needs to be documented!';
   warn(`${message} - <i>${idea}</i>`);
