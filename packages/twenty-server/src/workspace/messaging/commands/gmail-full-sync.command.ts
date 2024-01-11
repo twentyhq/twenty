@@ -8,15 +8,15 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { MessagingProducer } from 'src/workspace/messaging/producers/messaging-producer';
 
-interface FetchWorkspaceMessagesOptions {
+interface GmailFullSyncOptions {
   workspaceId: string;
 }
 
 @Command({
-  name: 'workspace:fetch-messages',
+  name: 'workspace:gmail-full-sync',
   description: 'Fetch messages of all workspaceMembers in a workspace.',
 })
-export class FetchWorkspaceMessagesCommand extends CommandRunner {
+export class GmailFullSyncCommand extends CommandRunner {
   constructor(
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
@@ -30,7 +30,7 @@ export class FetchWorkspaceMessagesCommand extends CommandRunner {
 
   async run(
     _passedParam: string[],
-    options: FetchWorkspaceMessagesOptions,
+    options: GmailFullSyncOptions,
   ): Promise<void> {
     const isMessagingEnabled = await this.featureFlagRepository.findOneBy({
       workspaceId: options.workspaceId,

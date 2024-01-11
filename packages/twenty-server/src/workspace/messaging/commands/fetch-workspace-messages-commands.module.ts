@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
-import { FetchWorkspaceMessagesCommand } from 'src/workspace/messaging/commands/fetch-workspace-messages.command';
+import { GmailFullSyncCommand } from 'src/workspace/messaging/commands/gmail-full-sync.command';
 import { MessagingModule } from 'src/workspace/messaging/messaging.module';
 
 @Module({
@@ -14,6 +14,6 @@ import { MessagingModule } from 'src/workspace/messaging/messaging.module';
     TypeORMModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
   ],
-  providers: [FetchWorkspaceMessagesCommand],
+  providers: [GmailFullSyncCommand],
 })
 export class FetchWorkspaceMessagesCommandsModule {}

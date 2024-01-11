@@ -3,9 +3,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
 import {
-  FetchAllMessagesFromConnectedAccountJob,
-  FetchAllMessagesFromConnectedAccountJobData,
-} from 'src/workspace/messaging/jobs/fetch-all-messages-from-connected-account.job';
+  GmailFullSyncJob,
+  GmailFullSyncJobData,
+} from 'src/workspace/messaging/jobs/gmail-full-sync.job';
 
 @Injectable()
 export class MessagingProducer {
@@ -15,11 +15,11 @@ export class MessagingProducer {
   ) {}
 
   async enqueueFetchAllMessagesFromConnectedAccount(
-    data: FetchAllMessagesFromConnectedAccountJobData,
+    data: GmailFullSyncJobData,
     singletonKey: string,
   ) {
-    await this.messageQueueService.add<FetchAllMessagesFromConnectedAccountJobData>(
-      FetchAllMessagesFromConnectedAccountJob.name,
+    await this.messageQueueService.add<GmailFullSyncJobData>(
+      GmailFullSyncJob.name,
       data,
       {
         id: singletonKey,

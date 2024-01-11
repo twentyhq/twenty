@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { HttpModule } from '@nestjs/axios';
 
-import { FetchAllMessagesFromConnectedAccountJob } from 'src/workspace/messaging/jobs/fetch-all-messages-from-connected-account.job';
+import { GmailFullSyncJob } from 'src/workspace/messaging/jobs/gmail-full-sync.job';
 import { CallWebhookJobsJob } from 'src/workspace/workspace-query-runner/jobs/call-webhook-jobs.job';
 import { CallWebhookJob } from 'src/workspace/workspace-query-runner/jobs/call-webhook.job';
 import { WorkspaceDataSourceModule } from 'src/workspace/workspace-datasource/workspace-datasource.module';
@@ -22,8 +22,8 @@ import { FetchWorkspaceMessagesModule } from 'src/workspace/messaging/services/f
   ],
   providers: [
     {
-      provide: FetchAllMessagesFromConnectedAccountJob.name,
-      useClass: FetchAllMessagesFromConnectedAccountJob,
+      provide: GmailFullSyncJob.name,
+      useClass: GmailFullSyncJob,
     },
     {
       provide: CallWebhookJobsJob.name,
