@@ -26,9 +26,6 @@ export const DEFAULT_CELL_SCOPE: HotkeyScope = {
 };
 
 export const useTableCell = () => {
-  // TODO(t.trompette): Removed var from useCloseCurrentTableCellInEditMode. Test carefully.
-  // const { scopeId: recordTableScopeId } = useRecordTable();
-
   const { objectMetadataConfigState, tableRowIdsState } =
     useRecordTableStates();
 

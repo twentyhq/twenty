@@ -67,10 +67,9 @@ export const RecordTableContainer = ({
     });
   };
 
-  // TODO(t.trompette): This code will not work anymore
   const handleImport = () => {
     const openImport =
-      recordTableId === 'companies'
+      objectNamePlural === 'companies'
         ? openCompanySpreadsheetImport
         : openPersonSpreadsheetImport;
     openImport();

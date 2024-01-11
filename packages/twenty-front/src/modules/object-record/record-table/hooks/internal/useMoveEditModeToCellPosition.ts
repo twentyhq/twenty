@@ -6,7 +6,6 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 import { TableCellPosition } from '../../types/TableCellPosition';
 
 export const useMoveEditModeToTableCellPosition = (recordTableId?: string) => {
-  console.log('useMoveEditModeToTableCellPosition');
   const {
     isTableCellInEditModeFamilyState,
     currentTableCellInEditModePositionState,
