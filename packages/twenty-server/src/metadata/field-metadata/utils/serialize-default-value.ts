@@ -17,7 +17,13 @@ export const serializeDefaultValue = (
     typeof defaultValue === 'object' &&
     'type' in defaultValue
   ) {
-    return serializeTypeDefaultValue(defaultValue);
+    const serializedTypeDefaultValue = serializeTypeDefaultValue(defaultValue);
+
+    if (!serializedTypeDefaultValue) {
+      throw new BadRequestException('Invalid default value');
+    }
+
+    return serializedTypeDefaultValue;
   }
 
   // Static default values
