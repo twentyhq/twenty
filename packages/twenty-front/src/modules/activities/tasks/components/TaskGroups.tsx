@@ -1,15 +1,16 @@
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { TASKS_TAB_LIST_COMPONENT_ID } from '@/activities/tasks/constants/tasksTabListComponentId';
 import { useTasks } from '@/activities/tasks/hooks/useTasks';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
+import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-import { useRecoilValue } from 'recoil';
 
 const StyledTaskGroupEmptyContainer = styled.div`
   align-items: center;
@@ -68,7 +69,7 @@ export const TaskGroups = ({
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  const { activeTabIdState } = useTabList('task-groups-tab-list');
+  const { activeTabIdState } = useTabList(TASKS_TAB_LIST_COMPONENT_ID);
   const activeTabId = useRecoilValue(activeTabIdState);
 
   if (

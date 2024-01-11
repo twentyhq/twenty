@@ -25,6 +25,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { sortFieldMetadataItem } from '~/utils/sortFieldMetadataItem';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -51,12 +52,16 @@ export const SettingsObjectDetail = () => {
 
   if (!activeObjectMetadataItem) return null;
 
-  const activeMetadataFields = activeObjectMetadataItem.fields.filter(
-    (metadataField) => metadataField.isActive && !metadataField.isSystem,
-  );
-  const disabledMetadataFields = activeObjectMetadataItem.fields.filter(
-    (metadataField) => !metadataField.isActive && !metadataField.isSystem,
-  );
+  const activeMetadataFields = activeObjectMetadataItem.fields
+    .filter(
+      (metadataField) => metadataField.isActive && !metadataField.isSystem,
+    )
+    .sort(sortFieldMetadataItem);
+  const disabledMetadataFields = activeObjectMetadataItem.fields
+    .filter(
+      (metadataField) => !metadataField.isActive && !metadataField.isSystem,
+    )
+    .sort(sortFieldMetadataItem);
 
   const handleDisableObject = async () => {
     await disableObjectMetadataItem(activeObjectMetadataItem);

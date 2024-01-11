@@ -250,4 +250,8 @@ export class EnvironmentService {
       this.configService.get<string>('PASSWORD_RESET_TOKEN_EXPIRES_IN') ?? '5m'
     );
   }
+
+  isSignUpDisabled(): boolean {
+    return this.configService.get<boolean>('IS_SIGN_UP_DISABLED') ?? false;
+  }
 }

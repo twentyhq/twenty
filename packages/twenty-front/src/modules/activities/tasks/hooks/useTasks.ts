@@ -23,6 +23,8 @@ export const useTasks = ({
     filterDropdownId,
   });
 
+  const isTargettingObjectRecords = isNonEmptyArray(targetableObjects);
+
   const targetableObjectsFilter =
     targetableObjects.reduce<LeafObjectRecordFilter>(
       (aggregateFilter, targetableObject) => {
@@ -44,15 +46,20 @@ export const useTasks = ({
   const { records: activityTargets } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     filter: targetableObjectsFilter,
+    skip: !isTargettingObjectRecords,
   });
 
   const skipRequest = !isNonEmptyArray(activityTargets) && !selectedFilter;
 
-  const idFilter = {
-    id: {
-      in: activityTargets.map((activityTarget) => activityTarget.activityId),
-    },
-  };
+  const idFilter = isTargettingObjectRecords
+    ? {
+        id: {
+          in: activityTargets.map(
+            (activityTarget) => activityTarget.activityId,
+          ),
+        },
+      }
+    : { id: {} };
 
   const assigneeIdFilter = selectedFilter
     ? {

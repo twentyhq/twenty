@@ -19,14 +19,10 @@ export class FieldMetadataResolver {
     @Args('input') input: CreateOneFieldMetadataInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    try {
-      return this.fieldMetadataService.createOne({
-        ...input.field,
-        workspaceId,
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    return this.fieldMetadataService.createOne({
+      ...input.field,
+      workspaceId,
+    });
   }
 
   @Mutation(() => FieldMetadataDTO)

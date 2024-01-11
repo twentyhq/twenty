@@ -174,6 +174,11 @@ export class EnvironmentVariables {
   @IsDuration()
   @IsOptional()
   PASSWORD_RESET_TOKEN_EXPIRES_IN: number;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  IS_SIGN_UP_DISABLED?: boolean;
 }
 
 export const validate = (config: Record<string, unknown>) => {

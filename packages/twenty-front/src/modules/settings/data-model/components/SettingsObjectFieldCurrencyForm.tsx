@@ -24,7 +24,7 @@ export const SettingsObjectFieldCurrencyForm = ({
       fullWidth
       disabled={disabled}
       label="Unit"
-      dropdownScopeId="currency-unit-select"
+      dropdownId="currency-unit-select"
       value={values.currencyCode}
       options={Object.entries(settingsFieldCurrencyCodes).map(
         ([value, { label, Icon }]) => ({

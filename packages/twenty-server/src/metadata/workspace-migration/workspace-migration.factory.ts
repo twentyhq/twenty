@@ -12,13 +12,7 @@ import {
   WorkspaceMigrationColumnActionType,
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { isCompositeFieldMetadataType } from 'src/metadata/field-metadata/utils/is-composite-field-metadata-type.util';
-import { fullNameFields } from 'src/metadata/field-metadata/composite-types/full-name.composite-type';
-import { currencyFields } from 'src/metadata/field-metadata/composite-types/currency.composite-type';
-import { linkFields } from 'src/metadata/field-metadata/composite-types/link.composite-type';
-
-type CompositeFieldsDefinitionFunction = (
-  fieldMetadata: FieldMetadataInterface,
-) => FieldMetadataInterface[];
+import { compositeDefinitions } from 'src/metadata/field-metadata/composite-types';
 
 @Injectable()
 export class WorkspaceMigrationFactory {
@@ -30,10 +24,6 @@ export class WorkspaceMigrationFactory {
       options?: WorkspaceColumnActionOptions;
     }
   >;
-  private compositeDefinitions = new Map<
-    string,
-    CompositeFieldsDefinitionFunction
-  >();
 
   constructor(
     private readonly basicColumnActionFactory: BasicColumnActionFactory,
@@ -89,15 +79,6 @@ export class WorkspaceMigrationFactory {
         { factory: this.enumColumnActionFactory },
       ],
     ]);
-
-    this.compositeDefinitions = new Map<
-      string,
-      CompositeFieldsDefinitionFunction
-    >([
-      [FieldMetadataType.LINK, linkFields],
-      [FieldMetadataType.CURRENCY, currencyFields],
-      [FieldMetadataType.FULL_NAME, fullNameFields],
-    ]);
   }
 
   createColumnActions(
@@ -138,7 +119,7 @@ export class WorkspaceMigrationFactory {
 
     // If it's a composite field type, we need to create a column action for each of the fields
     if (isCompositeFieldMetadataType(alteredFieldMetadata.type)) {
-      const fieldMetadataSplitterFunction = this.compositeDefinitions.get(
+      const fieldMetadataSplitterFunction = compositeDefinitions.get(
         alteredFieldMetadata.type,
       );
 
