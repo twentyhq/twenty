@@ -18,6 +18,7 @@ export const ActivityTargetChips = ({
     <StyledContainer>
       {activityTargetObjectRecords?.map((activityTargetObjectRecord) => (
         <RecordChip
+          key={activityTargetObjectRecord.targetObjectRecord.id}
           record={activityTargetObjectRecord.targetObjectRecord}
           objectNameSingular={
             activityTargetObjectRecord.targetObjectMetadataItem.nameSingular
