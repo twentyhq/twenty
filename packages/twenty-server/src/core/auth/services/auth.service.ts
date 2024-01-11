@@ -29,9 +29,9 @@ import { UserService } from 'src/core/user/services/user.service';
 import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspace-manager.service';
 import { getImageBufferFromUrl } from 'src/utils/image';
 import { FileUploadService } from 'src/core/file/services/file-upload.service';
+import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 import { TokenService } from './token.service';
-import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 export type UserPayload = {
   firstName: string;
@@ -116,7 +116,11 @@ export class AuthService {
         ForbiddenException,
       );
     } else {
-      assert(this.environmentService.isSignUpDisabled(), 'Sign up is disabled', ForbiddenException);
+      assert(
+        !this.environmentService.isSignUpDisabled(),
+        'Sign up is disabled',
+        ForbiddenException,
+      );
 
       const workspaceToCreate = this.workspaceRepository.create({
         displayName: '',
@@ -195,10 +199,6 @@ export class AuthService {
   }
 
   async checkUserExists(email: string): Promise<UserExists> {
-    if (this.environmentService.isSignUpDisabled()) {
-      return { exists: true }
-    }
-
     const user = await this.userRepository.findOneBy({
       email,
     });
