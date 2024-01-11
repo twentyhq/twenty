@@ -86,6 +86,7 @@ export const ActivityComments = ({
     createOneComment?.({
       id: v4(),
       authorId: currentWorkspaceMember?.id ?? '',
+      author: currentWorkspaceMember,
       activityId: activity?.id ?? '',
       body: commentText,
       createdAt: new Date().toISOString(),
