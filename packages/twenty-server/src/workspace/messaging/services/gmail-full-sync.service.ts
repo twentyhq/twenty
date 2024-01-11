@@ -92,5 +92,20 @@ export class GmailFullSyncService {
     if (errors.length) throw new Error('Error fetching messages');
 
     // Save historyId
+
+    const lastModifiedMessageId = messagesData[0].id;
+
+    const historyId = messagesToSave.find(
+      (message) => message.externalId === lastModifiedMessageId,
+    )?.historyId;
+
+    if (!historyId) throw new Error('No history id found');
+
+    await this.utils.saveLastSyncHistoryId(
+      historyId,
+      connectedAccount.id,
+      dataSourceMetadata,
+      workspaceDataSource,
+    );
   }
 }

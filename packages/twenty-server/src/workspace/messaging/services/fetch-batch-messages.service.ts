@@ -168,7 +168,7 @@ export class FetchBatchMessagesService {
           return;
         }
 
-        const { id, threadId, internalDate, raw } = message;
+        const { historyId, id, threadId, internalDate, raw } = message;
 
         const body = atob(raw?.replace(/-/g, '+').replace(/_/g, '/'));
 
@@ -198,6 +198,7 @@ export class FetchBatchMessagesService {
           ];
 
           const messageFromGmail: GmailMessage = {
+            historyId,
             externalId: id,
             headerMessageId: messageId || '',
             subject: subject || '',

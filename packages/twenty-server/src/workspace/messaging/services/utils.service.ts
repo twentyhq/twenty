@@ -250,4 +250,16 @@ export class Utils {
       connectedAccount: connectedAccounts[0],
     };
   }
+
+  public async saveLastSyncHistoryId(
+    historyId: string,
+    connectedAccountId: string,
+    dataSourceMetadata: DataSourceEntity,
+    workspaceDataSource: DataSource,
+  ) {
+    await workspaceDataSource?.query(
+      `UPDATE ${dataSourceMetadata.schema}."connectedAccount" SET "lastSyncHistoryId" = $1 WHERE "id" = $2`,
+      [historyId, connectedAccountId],
+    );
+  }
 }

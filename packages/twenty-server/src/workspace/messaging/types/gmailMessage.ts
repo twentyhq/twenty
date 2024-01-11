@@ -1,6 +1,7 @@
 import { Attachment } from 'mailparser';
 
 export type GmailMessage = {
+  historyId: string;
   externalId: string;
   headerMessageId: string;
   subject: string;
