@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
@@ -53,7 +54,10 @@ export class FieldMetadataDefaultValueLink {
 export class FieldMetadataDefaultValueCurrency {
   @ValidateIf((_object, value) => value !== null)
   @IsNumber()
-  amountMicros: number | null;
+  @Transform(({ value }) => {
+    return value.toString();
+  })
+  amountMicros: string | null;
 
   @ValidateIf((_object, value) => value !== null)
   @IsString()
