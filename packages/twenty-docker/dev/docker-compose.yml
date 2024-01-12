@@ -15,7 +15,6 @@ services:
       - twenty_dev_node_modules_front:/app/packages/twenty-front/node_modules
       - twenty_dev_node_modules_server:/app/packages/twenty-server/node_modules
       - twenty_dev_node_modules_website:/app/packages/twenty-website/node_modules
-      - twenty_dev_node_modules_zapier:/app/packages/twenty-zapier/node_modules
     depends_on:
       - postgres
   postgres:
@@ -38,5 +37,4 @@ volumes:
   twenty_dev_node_modules_front:
   twenty_dev_node_modules_server:
   twenty_dev_node_modules_website:
-  twenty_dev_node_modules_zapier:
 

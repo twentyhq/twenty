@@ -6,7 +6,11 @@ import { RowIdContext } from '@/object-record/record-table/contexts/RowIdContext
 import { RowIndexContext } from '@/object-record/record-table/contexts/RowIndexContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 
-export const RecordTableBody = () => {
+type RecordTableBodyProps = {
+  objectNamePlural: string;
+};
+
+export const RecordTableBody = ({ objectNamePlural }: RecordTableBodyProps) => {
   const { tableRowIdsState } = useRecordTableStates();
 
   const tableRowIds = useRecoilValue(tableRowIdsState());
@@ -22,7 +26,7 @@ export const RecordTableBody = () => {
           </RowIdContext.Provider>
         ))}
       </tbody>
-      <RecordTableBodyFetchMoreLoader />
+      <RecordTableBodyFetchMoreLoader objectNamePlural={objectNamePlural} />
     </>
   );
 };

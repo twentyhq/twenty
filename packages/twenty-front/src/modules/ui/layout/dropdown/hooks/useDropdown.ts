@@ -2,6 +2,7 @@ import { useRecoilState } from 'recoil';
 
 import { useDropdownStates } from '@/ui/layout/dropdown/hooks/internal/useDropdownStates';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
 export const useDropdown = (dropdownId?: string) => {
   const {
@@ -10,7 +11,7 @@ export const useDropdown = (dropdownId?: string) => {
     dropdownWidthState,
     isDropdownOpenState,
   } = useDropdownStates({
-    dropdownScopeId: `${dropdownId}-scope`,
+    dropdownScopeId: getScopeIdFromComponentId(dropdownId),
   });
 
   const {

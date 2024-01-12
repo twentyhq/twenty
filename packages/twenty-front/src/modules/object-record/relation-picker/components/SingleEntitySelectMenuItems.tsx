@@ -1,7 +1,8 @@
-import { useRef } from 'react';
+import { useContext, useRef } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
 
+import { BoardCardIdContext } from '@/object-record/record-board/contexts/BoardCardIdContext';
 import { SelectableMenuItemSelect } from '@/object-record/relation-picker/components/SelectableMenuItemSelect';
 import { IconPlus } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
@@ -14,6 +15,7 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { assertNotNull } from '~/utils/assert';
+import { isDefined } from '~/utils/isDefined';
 
 import { EntityForSelect } from '../types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
@@ -69,6 +71,12 @@ export const SingleEntitySelectMenuItems = ({
 
   const selectableItemIds = entitiesInDropdown.map((entity) => entity.id);
 
+  const boardCardId = useContext(BoardCardIdContext);
+  const weAreInOpportunitiesPageCard = isDefined(boardCardId);
+
+  const hideSearchResults =
+    weAreInOpportunitiesPageCard && !entitiesInDropdown.length;
+
   return (
     <div ref={containerRef}>
       <SelectableList
@@ -86,33 +94,39 @@ export const SingleEntitySelectMenuItems = ({
           }
         }}
       >
-        <DropdownMenuItemsContainer hasMaxHeight>
-          {loading ? (
-            <DropdownMenuSkeletonItem />
-          ) : entitiesInDropdown.length === 0 && !isAllEntitySelectShown ? (
-            <MenuItem text="No result" />
-          ) : (
-            <>
-              {isAllEntitySelectShown &&
-                selectAllLabel &&
-                onAllEntitySelected && (
-                  <MenuItemSelect
-                    key="select-all"
-                    onClick={() => onAllEntitySelected()}
-                    LeftIcon={SelectAllIcon}
-                    text={selectAllLabel}
-                    selected={!!isAllEntitySelected}
-                  />
-                )}
-              {emptyLabel && (
-                <MenuItemSelect
-                  key="select-none"
-                  onClick={() => onEntitySelected()}
-                  LeftIcon={EmptyIcon}
-                  text={emptyLabel}
-                  selected={!selectedEntity}
-                />
+        {!hideSearchResults && (
+          <>
+            <DropdownMenuItemsContainer hasMaxHeight>
+              {loading ? (
+                <DropdownMenuSkeletonItem />
+              ) : entitiesInDropdown.length === 0 && !isAllEntitySelectShown ? (
+                <MenuItem text="No result" />
+              ) : (
+                <>
+                  {isAllEntitySelectShown &&
+                    selectAllLabel &&
+                    onAllEntitySelected && (
+                      <MenuItemSelect
+                        key="select-all"
+                        onClick={() => onAllEntitySelected()}
+                        LeftIcon={SelectAllIcon}
+                        text={selectAllLabel}
+                        selected={!!isAllEntitySelected}
+                      />
+                    )}
+                  {emptyLabel && (
+                    <MenuItemSelect
+                      key="select-none"
+                      onClick={() => onEntitySelected()}
+                      LeftIcon={EmptyIcon}
+                      text={emptyLabel}
+                      selected={!selectedEntity}
+                    />
+                  )}
+                </>
               )}
+            </DropdownMenuItemsContainer>
+            <DropdownMenuItemsContainer hasMaxHeight>
               {entitiesInDropdown?.map((entity) => (
                 <SelectableMenuItemSelect
                   key={entity.id}
@@ -121,20 +135,18 @@ export const SingleEntitySelectMenuItems = ({
                   selectedEntity={selectedEntity}
                 />
               ))}
-            </>
-          )}
-        </DropdownMenuItemsContainer>
-        {showCreateButton && (
-          <>
-            <DropdownMenuItemsContainer hasMaxHeight>
-              <DropdownMenuSeparator />
-              <CreateNewButton
-                onClick={onCreate}
-                LeftIcon={IconPlus}
-                text="Add New"
-              />
             </DropdownMenuItemsContainer>
           </>
+        )}
+        {(hideSearchResults || showCreateButton) && !loading && (
+          <DropdownMenuItemsContainer hasMaxHeight>
+            {entitiesToSelect.length > 0 && <DropdownMenuSeparator />}
+            <CreateNewButton
+              onClick={onCreate}
+              LeftIcon={IconPlus}
+              text="Add New"
+            />
+          </DropdownMenuItemsContainer>
         )}
       </SelectableList>
     </div>

@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { ObjectFilterDropdownId } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/components/MultipleEntitySelect';
 import { SingleEntitySelectMenuItems } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItems';
+import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/types/EntitiesForMultipleEntitySelect';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';

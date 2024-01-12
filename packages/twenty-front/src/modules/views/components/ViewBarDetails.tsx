@@ -5,6 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
@@ -132,19 +133,20 @@ export const ViewBarDetails = ({
     <StyledBar>
       <StyledFilterContainer>
         <StyledChipcontainer>
-          {currentViewSorts?.map((sort) => {
-            return <EditableSortChip viewSort={sort} />;
-          })}
+          {currentViewSorts?.map((sort) => (
+            <EditableSortChip key={sort.id} viewSort={sort} />
+          ))}
           {!!currentViewSorts?.length && !!currentViewFilters?.length && (
             <StyledSeperatorContainer>
               <StyledSeperator />
             </StyledSeperatorContainer>
           )}
-          {currentViewFilters?.map((viewFilter) => {
-            return (
-              <ObjectFilterDropdownScope
-                filterScopeId={viewFilter.fieldMetadataId}
-              >
+          {currentViewFilters?.map((viewFilter) => (
+            <ObjectFilterDropdownScope
+              key={viewFilter.id}
+              filterScopeId={viewFilter.fieldMetadataId}
+            >
+              <DropdownScope dropdownScopeId={viewFilter.fieldMetadataId}>
                 <ViewBarFilterEffect
                   filterDropdownId={viewFilter.fieldMetadataId}
                   onFilterSelect={upsertViewFilter}
@@ -156,9 +158,9 @@ export const ViewBarDetails = ({
                   }}
                   viewFilterDropdownId={viewFilter.fieldMetadataId}
                 />
-              </ObjectFilterDropdownScope>
-            );
-          })}
+              </DropdownScope>
+            </ObjectFilterDropdownScope>
+          ))}
         </StyledChipcontainer>
         {hasFilterButton && (
           <StyledAddFilterContainer>

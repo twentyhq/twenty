@@ -8,8 +8,14 @@ import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTabl
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { grayScale } from '@/ui/theme/constants/colors';
 
-export const RecordTableBodyFetchMoreLoader = () => {
-  const { queryStateIdentifier } = useObjectRecordTable();
+type RecordTableBodyFetchMoreLoaderProps = {
+  objectNamePlural: string;
+};
+
+export const RecordTableBodyFetchMoreLoader = ({
+  objectNamePlural,
+}: RecordTableBodyFetchMoreLoaderProps) => {
+  const { queryStateIdentifier } = useObjectRecordTable(objectNamePlural);
   const { setRecordTableLastRowVisible } = useRecordTable();
 
   const isFetchingMoreObjects = useRecoilValue(

@@ -159,18 +159,7 @@ describe('useViewBar > viewFields', () => {
     await act(async () => {
       result.current.viewBar.setAvailableFieldDefinitions([fieldDefinition]);
 
-      await result.current.viewBar.loadViewFields(
-        {
-          edges: [
-            {
-              node: viewField,
-              cursor: '',
-            },
-          ],
-          pageInfo: { hasNextPage: false, startCursor: '', endCursor: '' },
-        },
-        currentViewId,
-      );
+      await result.current.viewBar.loadViewFields([viewField], currentViewId);
       result.current.viewBar.setCurrentViewId(currentViewId);
     });
 
