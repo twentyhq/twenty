@@ -58,7 +58,7 @@ export const ShowPageRightContainer = ({
   const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
 
   const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
-  const activeTabId = useRecoilValue(activeTabIdState);
+  const activeTabId = useRecoilValue(activeTabIdState());
 
   if (!targetableObject) return <></>;
 

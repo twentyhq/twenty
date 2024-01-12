@@ -6,9 +6,11 @@ import styled from '@emotion/styled';
 import { useRelationMetadata } from '@/object-metadata/hooks/useRelationMetadata';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
+import { FieldIdentifierType } from '@/settings/data-model/types/FieldIdentifierType';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { Nullable } from '~/types/Nullable';
 
 import { relationTypes } from '../../constants/relationTypes';
 import { settingsFieldMetadataTypes } from '../../constants/settingsFieldMetadataTypes';
@@ -18,6 +20,8 @@ import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 type SettingsObjectFieldItemTableRowProps = {
   ActionIcon: ReactNode;
   fieldMetadataItem: FieldMetadataItem;
+  identifierType?: Nullable<FieldIdentifierType>;
+  variant?: 'field-type' | 'identifier';
 };
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
@@ -37,6 +41,8 @@ const StyledIconTableCell = styled(TableCell)`
 export const SettingsObjectFieldItemTableRow = ({
   ActionIcon,
   fieldMetadataItem,
+  identifierType,
+  variant = 'field-type',
 }: SettingsObjectFieldItemTableRowProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
@@ -66,7 +72,11 @@ export const SettingsObjectFieldItemTableRow = ({
         {fieldMetadataItem.label}
       </StyledNameTableCell>
       <TableCell>
-        {fieldMetadataItem.isCustom ? 'Custom' : 'Standard'}
+        {variant === 'field-type' &&
+          (fieldMetadataItem.isCustom ? 'Custom' : 'Standard')}
+        {variant === 'identifier' &&
+          !!identifierType &&
+          (identifierType === 'label' ? 'Record text' : 'Record image')}
       </TableCell>
       <TableCell>
         <SettingsObjectFieldDataType

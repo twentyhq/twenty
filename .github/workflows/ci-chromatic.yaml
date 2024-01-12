@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
+      CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -31,11 +32,7 @@ jobs:
           echo "REACT_APP_SERVER_BASE_URL: $REACT_APP_SERVER_BASE_URL" >> .env
       - name: Front / Install Dependencies
         run: yarn
-      # - name: Publish to Chromatic
-      #   uses: chromaui/action@v1
-      #   with:
-      #     workingDir: ./packages/twenty-front
-      #     projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-      #     onlyChanged: true
-      #     buildScriptName: storybook:build
-        
+      - name: Publish to Chromatic
+        run: |
+          cd packages/twenty-front
+          yarn nx chromatic:ci

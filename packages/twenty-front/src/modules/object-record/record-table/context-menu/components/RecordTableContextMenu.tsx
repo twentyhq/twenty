@@ -1,7 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ContextMenu } from '@/ui/navigation/context-menu/components/ContextMenu';
 
 export const RecordTableContextMenu = ({
@@ -9,14 +8,7 @@ export const RecordTableContextMenu = ({
 }: {
   recordTableId: string;
 }) => {
-  const { selectedRowIdsScopeInjector } = getRecordTableScopeInjector();
-
-  const { injectSelectorWithRecordTableScopeId } =
-    useRecordTableScopedStates(recordTableId);
-
-  const selectedRowIdsSelector = injectSelectorWithRecordTableScopeId(
-    selectedRowIdsScopeInjector,
-  );
+  const { selectedRowIdsSelector } = useRecordTableStates(recordTableId);
 
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector);
 

@@ -157,8 +157,8 @@ export const CommandMenu = () => {
     objectNameSingular: CoreObjectNameSingular.Activity,
     filter: {
       or: [
-        { title: { like: `%${search}%` } },
-        { body: { like: `%${search}%` } },
+        { title: { ilike: `%${search}%` } },
+        { body: { ilike: `%${search}%` } },
       ],
     },
     limit: 3,

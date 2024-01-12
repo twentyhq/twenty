@@ -1,6 +1,8 @@
+import { useCallback } from 'react';
 import styled from '@emotion/styled';
 
 import { mapBoardFieldDefinitionsToViewFields } from '@/companies/utils/mapBoardFieldDefinitionsToViewFields';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import {
   RecordBoard,
   RecordBoardProps,
@@ -8,6 +10,7 @@ import {
 import { RecordBoardEffect } from '@/object-record/record-board/components/RecordBoardEffect';
 import { BoardOptionsDropdownId } from '@/object-record/record-board/constants/BoardOptionsDropdownId';
 import { RecordBoardOptionsDropdown } from '@/object-record/record-board/options/components/RecordBoardOptionsDropdown';
+import { BoardColumnDefinition } from '@/object-record/record-board/types/BoardColumnDefinition';
 import { ViewBar } from '@/views/components/ViewBar';
 import { useViewFields } from '@/views/hooks/internal/useViewFields';
 import { opportunitiesBoardOptions } from '~/pages/opportunities/opportunitiesBoardOptions';
@@ -37,12 +40,31 @@ export const CompanyBoard = ({
 
   const { persistViewFields } = useViewFields(viewBarId);
 
+  const { createOneRecord } = useCreateOneRecord({
+    objectNameSingular: 'pipelineStep',
+  });
+
+  const onStageAdd = useCallback(
+    (stage: BoardColumnDefinition) => {
+      createOneRecord({
+        name: stage.title,
+        color: stage.colorCode,
+        position: stage.position,
+        id: stage.id,
+      });
+    },
+    [createOneRecord],
+  );
+
   return (
     <StyledContainer>
       <ViewBar
         viewBarId={viewBarId}
         optionsDropdownButton={
-          <RecordBoardOptionsDropdown recordBoardId={recordBoardId} />
+          <RecordBoardOptionsDropdown
+            recordBoardId={recordBoardId}
+            onStageAdd={onStageAdd}
+          />
         }
         optionsDropdownScopeId={BoardOptionsDropdownId}
       />

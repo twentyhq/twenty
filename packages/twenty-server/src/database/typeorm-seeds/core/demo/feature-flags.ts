@@ -26,12 +26,12 @@ export const seedFeatureFlags = async (
       {
         key: 'IS_RATING_FIELD_TYPE_ENABLED',
         workspaceId: workspaceId,
-        value: true,
+        value: false,
       },
       {
         key: 'IS_RELATION_FIELD_CARD_ENABLED',
         workspaceId: workspaceId,
-        value: true,
+        value: false,
       },
     ])
     .execute();
