@@ -21,7 +21,7 @@ export class AnalyticsResolver {
   createEvent(
     @Args() createEventInput: CreateAnalyticsInput,
     @AuthWorkspace() workspace: Workspace | undefined,
-    @AuthUser({ required: false }) user: User | undefined,
+    @AuthUser({ allowUndefined: true }) user: User | undefined,
   ) {
     return this.analyticsService.create(createEventInput, user, workspace);
   }

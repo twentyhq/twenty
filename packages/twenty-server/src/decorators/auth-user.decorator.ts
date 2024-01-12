@@ -7,14 +7,14 @@ import {
 import { getRequest } from 'src/utils/extract-request';
 
 interface DecoratorOptions {
-  required?: boolean;
+  allowUndefined?: boolean;
 }
 
 export const AuthUser = createParamDecorator(
-  (options: DecoratorOptions = { required: true }, ctx: ExecutionContext) => {
+  (options: DecoratorOptions | undefined, ctx: ExecutionContext) => {
     const request = getRequest(ctx);
 
-    if (options.required && (!request.user || !request.user.user)) {
+    if (!options?.allowUndefined && (!request.user || !request.user.user)) {
       throw new ForbiddenException("You're not authorized to do this");
     }
 
