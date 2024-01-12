@@ -5,10 +5,10 @@ import { EnvironmentModule } from 'src/integrations/environment/environment.modu
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { MessagingModule } from 'src/workspace/messaging/messaging.module';
 import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
-import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetch-batch-messages.service';
+import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
 import { GmailFullSyncService } from 'src/workspace/messaging/services/gmail-full-sync.service';
 import { GmailPartialSyncService } from 'src/workspace/messaging/services/gmail-partial-sync.service';
-import { RefreshAccessTokenService } from 'src/workspace/messaging/services/refresh-access-token.service';
+import { GmailRefreshAccessTokenService } from 'src/workspace/messaging/services/gmail-refresh-access-token.service';
 import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
 
 @Module({
@@ -21,15 +21,15 @@ import { MessagingUtilsService } from 'src/workspace/messaging/services/messagin
   providers: [
     GmailFullSyncService,
     GmailPartialSyncService,
-    FetchBatchMessagesService,
-    RefreshAccessTokenService,
+    FetchMessagesByBatchesService,
+    GmailRefreshAccessTokenService,
     MessagingUtilsService,
     GmailClientProvider,
   ],
   exports: [
     GmailPartialSyncService,
     GmailFullSyncService,
-    RefreshAccessTokenService,
+    GmailRefreshAccessTokenService,
     MessagingUtilsService,
   ],
 })

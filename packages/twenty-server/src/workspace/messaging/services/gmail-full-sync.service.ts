@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetch-batch-messages.service';
+import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
 import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
 import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
 
@@ -8,7 +8,7 @@ import { MessagingUtilsService } from 'src/workspace/messaging/services/messagin
 export class GmailFullSyncService {
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
-    private readonly fetchBatchMessagesService: FetchBatchMessagesService,
+    private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
     private readonly utils: MessagingUtilsService,
   ) {}
 
@@ -64,7 +64,7 @@ export class GmailFullSyncService {
       this.utils.createQueriesFromMessageIds(messageIdsToSave);
 
     const { messages: messagesToSave, errors } =
-      await this.fetchBatchMessagesService.fetchAllMessages(
+      await this.fetchMessagesByBatchesService.fetchAllMessages(
         messageQueries,
         accessToken,
       );

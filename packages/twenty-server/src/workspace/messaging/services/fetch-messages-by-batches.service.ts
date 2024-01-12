@@ -11,7 +11,7 @@ import { MessageQuery } from 'src/workspace/messaging/types/messageOrThreadQuery
 import { GmailMessageParsedResponse } from 'src/workspace/messaging/types/gmailMessageParsedResponse';
 
 @Injectable()
-export class FetchBatchMessagesService {
+export class FetchMessagesByBatchesService {
   private readonly httpService: AxiosInstance;
 
   constructor() {

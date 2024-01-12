@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { gmail_v1 } from 'googleapis';
 
-import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetch-batch-messages.service';
+import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
 import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
 import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
@@ -16,7 +16,7 @@ import {
 export class GmailPartialSyncService {
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
-    private readonly fetchBatchMessagesService: FetchBatchMessagesService,
+    private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
     private readonly utils: MessagingUtilsService,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -146,7 +146,7 @@ export class GmailPartialSyncService {
       this.utils.createQueriesFromMessageIds(messageIdsToSave);
 
     const { messages: messagesToSave, errors } =
-      await this.fetchBatchMessagesService.fetchAllMessages(
+      await this.fetchMessagesByBatchesService.fetchAllMessages(
         messageQueries,
         accessToken,
       );
