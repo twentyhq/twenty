@@ -15,6 +15,7 @@ import {
   SettingsObjectFieldItemTableRow,
   StyledObjectFieldTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
+import { getFieldIdentifierType } from '@/settings/data-model/utils/getFieldIdentifierType';
 import { AppPath } from '@/types/AppPath';
 import { IconPlus, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -50,17 +51,6 @@ export const SettingsObjectDetail = () => {
     useFieldMetadataItem();
 
   if (!activeObjectMetadataItem) return null;
-
-  const getIdentifierType = (activeFieldMetadatItem: FieldMetadataItem) =>
-    isLabelIdentifierField({
-      fieldMetadataItem: activeFieldMetadatItem,
-      objectMetadataItem: activeObjectMetadataItem,
-    })
-      ? 'label'
-      : activeObjectMetadataItem.imageIdentifierFieldMetadataId ===
-          activeFieldMetadatItem.id
-        ? 'image'
-        : undefined;
 
   const activeMetadataFields = activeObjectMetadataItem.fields.filter(
     (metadataField) => metadataField.isActive && !metadataField.isSystem,
@@ -117,7 +107,10 @@ export const SettingsObjectDetail = () => {
                 {activeMetadataFields.map((activeMetadataField) => (
                   <SettingsObjectFieldItemTableRow
                     key={activeMetadataField.id}
-                    identifierType={getIdentifierType(activeMetadataField)}
+                    identifierType={getFieldIdentifierType(
+                      activeMetadataField,
+                      activeObjectMetadataItem,
+                    )}
                     variant={
                       activeObjectMetadataItem.isCustom
                         ? 'identifier'

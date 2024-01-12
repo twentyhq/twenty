@@ -6,9 +6,11 @@ import styled from '@emotion/styled';
 import { useRelationMetadata } from '@/object-metadata/hooks/useRelationMetadata';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
+import { FieldIdentifierType } from '@/settings/data-model/types/FieldIdentifierType';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { Nullable } from '~/types/Nullable';
 
 import { relationTypes } from '../../constants/relationTypes';
 import { settingsFieldMetadataTypes } from '../../constants/settingsFieldMetadataTypes';
@@ -18,7 +20,7 @@ import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 type SettingsObjectFieldItemTableRowProps = {
   ActionIcon: ReactNode;
   fieldMetadataItem: FieldMetadataItem;
-  identifierType?: 'label' | 'image';
+  identifierType?: Nullable<FieldIdentifierType>;
   variant?: 'field-type' | 'identifier';
 };
 
