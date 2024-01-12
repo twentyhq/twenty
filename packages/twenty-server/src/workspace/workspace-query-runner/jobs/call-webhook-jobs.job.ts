@@ -70,10 +70,12 @@ export class CallWebhookJobsJob
       );
     });
 
-    this.logger.log(
-      `CallWebhookJobsJob on operation '${operationName}' called on webhooks ids [\n"${webhooks
-        .map((webhook) => webhook.id)
-        .join('",\n"')}"\n]`,
-    );
+    if (webhooks.length) {
+      this.logger.log(
+        `CallWebhookJobsJob on operation '${operationName}' called on webhooks ids [\n"${webhooks
+          .map((webhook) => webhook.id)
+          .join('",\n"')}"\n]`,
+      );
+    }
   }
 }
