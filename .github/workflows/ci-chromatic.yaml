@@ -31,7 +31,9 @@ jobs:
       - name: Front / Install Dependencies
         run: yarn
       - name: Publish to Chromatic
-        run: yarn nx chromatic
+        run: |
+          cd packages/twenty-front
+          yarn nx chromatic
         # uses: chromaui/action@v1
         # with:
         #   workingDir: ./packages/twenty-front
