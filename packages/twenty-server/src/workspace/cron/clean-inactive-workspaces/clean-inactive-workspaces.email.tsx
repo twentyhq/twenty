@@ -7,14 +7,12 @@ import { BaseEmail } from 'src/emails/components/BaseEmail';
 import { CallToAction } from 'src/emails/components/CallToAction';
 
 type CleanInactiveWorkspaceEmailData = {
-  title: string;
   daysLeft: number;
   userName: string;
   workspaceDisplayName: string;
 };
 
 export const CleanInactiveWorkspaceEmail = ({
-  title,
   daysLeft,
   userName,
   workspaceDisplayName,
@@ -26,7 +24,7 @@ export const CleanInactiveWorkspaceEmail = ({
 
   return (
     <BaseEmail>
-      <Title value={title} />
+      <Title value="Inactive Workspace 😴" />
       <HighlightedText value={`${daysLeft} ${dayOrDays} left`} />
       <MainText>
         {helloString},

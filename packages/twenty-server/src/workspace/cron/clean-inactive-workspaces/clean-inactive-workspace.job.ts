@@ -19,6 +19,7 @@ import {
   FeatureFlagKeys,
 } from 'src/core/feature-flag/feature-flag.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
+import DeleteInactiveWorkspaceEmail from 'src/workspace/cron/clean-inactive-workspaces/delete-inactive-workspaces.email';
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
 
@@ -105,7 +106,6 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
 
     workspaceUsers.forEach((workspaceUser) => {
       const emailData = {
-        title: 'Inactive Workspace 😴',
         daysLeft: this.inactiveDaysBeforeDelete - daysSinceInactive,
         userName: `${workspaceUser.nameFirstName} ${workspaceUser.nameLastName}`,
         workspaceDisplayName: `${displayName}`,
@@ -136,12 +136,22 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
       `Sending email to delete workspace ${dataSource.workspaceId} inactive since ${daysSinceInactive} days`,
     );
 
+    const emailData = {
+      daysSinceDead: daysSinceInactive - this.inactiveDaysBeforeDelete,
+      workspaceId: `${dataSource.workspaceId}`,
+    };
+    const emailTemplate = DeleteInactiveWorkspaceEmail(emailData);
+    const html = render(emailTemplate, {
+      pretty: true,
+    });
+
     const text = `Workspace '${dataSource.workspaceId}' should be deleted as inactive since ${daysSinceInactive} days`;
 
     await this.emailService.send({
       to: this.environmentService.getEmailSystemAddress(),
       from: `${this.environmentService.getEmailFromName()} <${this.environmentService.getEmailFromAddress()}>`,
       subject: 'Action Needed to Delete Workspace',
+      html,
       text,
     });
   }
