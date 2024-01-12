@@ -45,7 +45,7 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
       this.environmentService.getInactiveDaysBeforeEmail();
   }
 
-  async getMaxUpdatedAt(
+  async getmostRecentUpdatedAt(
     dataSource: DataSourceEntity,
     objectsMetadata: ObjectMetadataEntity[],
   ): Promise<Date> {
@@ -59,25 +59,28 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSource);
 
-    let maxUpdatedAt = new Date(0);
+    let mostRecentUpdatedAtDate = new Date(0);
 
     for (const tableName of tableNames) {
-      const maxTableUpdatedAt = (
+      const mostRecentTableUpdatedAt = (
         await workspaceDataSource?.query(
           `SELECT MAX("updatedAt") FROM ${dataSource.schema}."${tableName}"`,
         )
       )[0].max;
 
-      if (maxTableUpdatedAt) {
-        const maxTableUpdatedAtDate = new Date(maxTableUpdatedAt);
+      if (mostRecentTableUpdatedAt) {
+        const mostRecentTableUpdatedAtDate = new Date(mostRecentTableUpdatedAt);
 
-        if (!maxUpdatedAt || maxTableUpdatedAtDate > maxUpdatedAt) {
-          maxUpdatedAt = maxTableUpdatedAtDate;
+        if (
+          !mostRecentUpdatedAtDate ||
+          mostRecentTableUpdatedAtDate > mostRecentUpdatedAtDate
+        ) {
+          mostRecentUpdatedAtDate = mostRecentTableUpdatedAtDate;
         }
       }
     }
 
-    return maxUpdatedAt;
+    return mostRecentUpdatedAtDate;
   }
 
   async warnWorkspaceUsers(
@@ -160,12 +163,13 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
     dataSource: DataSourceEntity,
     objectsMetadata: ObjectMetadataEntity[],
   ): Promise<void> {
-    const maxUpdatedAt = await this.getMaxUpdatedAt(
+    const mostRecentUpdatedAt = await this.getmostRecentUpdatedAt(
       dataSource,
       objectsMetadata,
     );
     const daysSinceInactive = Math.floor(
-      (new Date().getTime() - maxUpdatedAt.getTime()) / MILLISECONDS_IN_ONE_DAY,
+      (new Date().getTime() - mostRecentUpdatedAt.getTime()) /
+        MILLISECONDS_IN_ONE_DAY,
     );
 
     if (daysSinceInactive > this.inactiveDaysBeforeDelete) {
