@@ -13,7 +13,6 @@ import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { UserService } from 'src/core/user/services/user.service';
 import { EmailService } from 'src/integrations/email/email.service';
 import CleanInactiveWorkspaceEmail from 'src/workspace/cron/clean-inactive-workspaces/clean-inactive-workspaces.email';
-import { WorkspaceService } from 'src/core/workspace/services/workspace.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import {
   FeatureFlagEntity,
@@ -35,7 +34,6 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
     private readonly typeORMService: TypeORMService,
     private readonly userService: UserService,
     private readonly emailService: EmailService,
-    private readonly workspaceService: WorkspaceService,
     private readonly environmentService: EnvironmentService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
@@ -122,7 +120,7 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
 
       this.emailService.send({
         to: workspaceUser.email,
-        from: `Félix from Twenty <felix@twenty.com>`,
+        from: `${this.environmentService.getEmailFromName()} <${this.environmentService.getEmailFromAddress()}>`,
         subject: 'Action Needed to Prevent Workspace Deletion',
         html,
         text,
@@ -135,9 +133,17 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
     daysSinceInactive: number,
   ): Promise<void> {
     this.logger.log(
-      `Deleting workspace ${dataSource.workspaceId} inactive since ${daysSinceInactive}`,
+      `Sending email to delete workspace ${dataSource.workspaceId} inactive since ${daysSinceInactive} days`,
     );
-    await this.workspaceService.deleteWorkspace(dataSource.workspaceId);
+
+    const text = `Workspace '${dataSource.workspaceId}' should be deleted as inactive since ${daysSinceInactive} days`;
+
+    await this.emailService.send({
+      to: this.environmentService.getEmailSystemAddress(),
+      from: `${this.environmentService.getEmailFromName()} <${this.environmentService.getEmailFromAddress()}>`,
+      subject: 'Action Needed to Delete Workspace',
+      text,
+    });
   }
 
   async processWorkspace(

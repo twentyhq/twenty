@@ -14,7 +14,6 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FetchWorkspaceMessagesModule } from 'src/workspace/messaging/services/fetch-workspace-messages.module';
 import { EmailSenderJob } from 'src/integrations/email/email-sender.job';
 import { UserModule } from 'src/core/user/user.module';
-import { WorkspaceModule } from 'src/core/workspace/workspace.module';
 import { EnvironmentModule } from 'src/integrations/environment/environment.module';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 
@@ -27,7 +26,6 @@ import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
     TypeORMModule,
     FetchWorkspaceMessagesModule,
     UserModule,
-    WorkspaceModule,
     EnvironmentModule,
     TypeORMModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
