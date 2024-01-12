@@ -7,7 +7,7 @@ on:
   pull_request:
 jobs:
   chromatic-deployment:
-    runs-on: ubuntu-latest
+    runs-on: ci-8-cores
     env:
       REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
       CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
