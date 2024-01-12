@@ -32,10 +32,11 @@ jobs:
       - name: Front / Install Dependencies
         run: yarn
       - name: Publish to Chromatic
-        uses: chromaui/action@v1
-        with:
-          workingDir: ./packages/twenty-front
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          onlyChanged: true
-          buildScriptName: storybook:build
+        run: yarn nx chromatic --project-token=${{ secrets.CHROMATIC_PROJECT_TOKEN }} --build-script-name=storybook:build twenty-front
+        # uses: chromaui/action@v1
+        # with:
+        #   workingDir: ./packages/twenty-front
+        #   projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+        #   onlyChanged: true
+        #   buildScriptName: storybook:build
         
