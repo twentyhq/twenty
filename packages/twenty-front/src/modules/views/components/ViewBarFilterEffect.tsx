@@ -27,7 +27,7 @@ export const ViewBarFilterEffect = ({
     filterDefinitionUsedInDropdown,
     setObjectFilterDropdownSelectedRecordIds,
     isObjectFilterDropdownUnfolded,
-  } = useFilterDropdown({ filterDropdownId: filterDropdownId });
+  } = useFilterDropdown({ filterDropdownId });
 
   useEffect(() => {
     if (availableFilterDefinitions) {

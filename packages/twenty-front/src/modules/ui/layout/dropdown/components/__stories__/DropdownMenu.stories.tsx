@@ -12,7 +12,6 @@ import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuI
 import { Avatar } from '@/users/components/Avatar';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
-import { DropdownScope } from '../../scopes/DropdownScope';
 import { Dropdown } from '../Dropdown';
 import { DropdownMenuHeader } from '../DropdownMenuHeader';
 import { DropdownMenuInput } from '../DropdownMenuInput';
@@ -25,18 +24,12 @@ const meta: Meta<typeof Dropdown> = {
   title: 'UI/Layout/Dropdown/Dropdown',
   component: Dropdown,
 
-  decorators: [
-    ComponentDecorator,
-    (Story) => (
-      <DropdownScope dropdownScopeId="testDropdownMenu">
-        <Story />
-      </DropdownScope>
-    ),
-  ],
+  decorators: [ComponentDecorator, (Story) => <Story />],
   args: {
     clickableComponent: <Button title="Open Dropdown" />,
     dropdownHotkeyScope: { scope: 'testDropdownMenu' },
     dropdownOffset: { x: 0, y: 8 },
+    dropdownId: 'test-dropdown-id',
   },
   argTypes: {
     clickableComponent: { control: false },

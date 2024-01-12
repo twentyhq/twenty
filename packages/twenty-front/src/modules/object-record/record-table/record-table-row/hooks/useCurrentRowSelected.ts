@@ -1,24 +1,15 @@
 import { useContext } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 
-import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { RowIdContext } from '../../contexts/RowIdContext';
 
 export const useCurrentRowSelected = () => {
   const currentRowId = useContext(RowIdContext);
 
-  const { isRowSelectedScopeInjector } = getRecordTableScopeInjector();
-
-  const {
-    injectFamilyStateWithRecordTableScopeId,
-    injectFamilySnapshotValueWithRecordTableScopeId,
-  } = useRecordTableScopedStates();
-
-  const isRowSelectedFamilyState = injectFamilyStateWithRecordTableScopeId(
-    isRowSelectedScopeInjector,
-  );
+  const { isRowSelectedFamilyState } = useRecordTableStates();
 
   const isRowSelected = useRecoilValue(
     isRowSelectedFamilyState(currentRowId ?? ''),
@@ -29,10 +20,10 @@ export const useCurrentRowSelected = () => {
       (newSelectedState: boolean) => {
         if (!currentRowId) return;
 
-        const isRowSelected = injectFamilySnapshotValueWithRecordTableScopeId(
+        const isRowSelected = getSnapshotValue(
           snapshot,
-          isRowSelectedScopeInjector,
-        )(currentRowId);
+          isRowSelectedFamilyState(currentRowId),
+        );
 
         if (newSelectedState && !isRowSelected) {
           set(isRowSelectedFamilyState(currentRowId), true);
@@ -40,12 +31,7 @@ export const useCurrentRowSelected = () => {
           set(isRowSelectedFamilyState(currentRowId), false);
         }
       },
-    [
-      currentRowId,
-      injectFamilySnapshotValueWithRecordTableScopeId,
-      isRowSelectedFamilyState,
-      isRowSelectedScopeInjector,
-    ],
+    [currentRowId, isRowSelectedFamilyState],
   );
 
   return {

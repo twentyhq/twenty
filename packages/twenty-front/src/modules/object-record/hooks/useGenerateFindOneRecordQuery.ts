@@ -1,34 +1,30 @@
 import { gql } from '@apollo/client';
 
 import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
-import { EMPTY_QUERY } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
-export const useGenerateFindOneRecordQuery = ({
-  objectMetadataItem,
-  depth,
-}: {
-  objectMetadataItem: ObjectMetadataItem;
-  depth?: number;
-}) => {
+export const useGenerateFindOneRecordQuery = () => {
   const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
 
-  if (!objectMetadataItem) {
-    return EMPTY_QUERY;
-  }
-
-  return gql`
-    query FindOne${objectMetadataItem.nameSingular}($objectRecordId: UUID!) {
-      ${objectMetadataItem.nameSingular}(filter: {
-        id: {
-          eq: $objectRecordId
+  return ({
+    objectMetadataItem,
+    depth,
+  }: {
+    objectMetadataItem: Pick<ObjectMetadataItem, 'nameSingular' | 'fields'>;
+    depth?: number;
+  }) =>
+    gql`
+      query FindOne${objectMetadataItem.nameSingular}($objectRecordId: UUID!) {
+        ${objectMetadataItem.nameSingular}(filter: {
+          id: {
+            eq: $objectRecordId
+          }
+        }){
+          id
+          ${objectMetadataItem.fields
+            .map((field) => mapFieldMetadataToGraphQLQuery(field, depth))
+            .join('\n')}
         }
-      }){
-        id
-        ${objectMetadataItem.fields
-          .map((field) => mapFieldMetadataToGraphQLQuery(field, depth))
-          .join('\n')}
       }
-    }
-  `;
+    `;
 };

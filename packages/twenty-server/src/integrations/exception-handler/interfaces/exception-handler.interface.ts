@@ -8,7 +8,7 @@ export enum ExceptionHandlerDriver {
 export interface ExceptionHandlerSentryDriverFactoryOptions {
   type: ExceptionHandlerDriver.Sentry;
   options: {
-    dns: string;
+    dsn: string;
     serverInstance?: Router;
     debug?: boolean;
   };

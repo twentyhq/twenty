@@ -43,13 +43,7 @@ export const useViewFilters = (viewScopeId: string) => {
           viewScopeId,
         });
 
-        if (!currentViewId) {
-          return;
-        }
-        if (!currentViewFilters) {
-          return;
-        }
-        if (!savedViewFiltersByKey) {
+        if (!currentViewId || !currentViewFilters || !savedViewFiltersByKey) {
           return;
         }
 

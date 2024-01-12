@@ -3,8 +3,8 @@ import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
+import { TableOptionsDropdownId } from '@/object-record/record-table/constants/TableOptionsDropdownId';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/display/icon';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
@@ -34,7 +34,7 @@ export const TableOptionsDropdownContent = ({
 
   const viewEditMode = useRecoilValue(viewEditModeState);
   const currentView = useRecoilValue(currentViewSelector);
-  const { closeDropdown } = useDropdown();
+  const { closeDropdown } = useDropdown(TableOptionsDropdownId);
 
   const [currentMenu, setCurrentMenu] = useState<TableOptionsMenu | undefined>(
     undefined,
@@ -42,25 +42,14 @@ export const TableOptionsDropdownContent = ({
 
   const viewEditInputRef = useRef<HTMLInputElement>(null);
 
-  const { hiddenTableColumnsScopeInjector, visibleTableColumnsScopeInjector } =
-    getRecordTableScopeInjector();
-
-  const { injectSelectorWithRecordTableScopeId } =
-    useRecordTableScopedStates(recordTableId);
-
-  const hiddenTableColumnsSelector = injectSelectorWithRecordTableScopeId(
-    hiddenTableColumnsScopeInjector,
-  );
-
-  const visibleTableColumnsSelector = injectSelectorWithRecordTableScopeId(
-    visibleTableColumnsScopeInjector,
-  );
+  const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
+    useRecordTableStates(recordTableId);
 
   const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector);
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
 
   const { handleColumnVisibilityChange, handleColumnReorder } = useTableColumns(
-    { recordTableScopeId: recordTableId },
+    { recordTableId },
   );
 
   const handleSelectMenu = (option: TableOptionsMenu) => {

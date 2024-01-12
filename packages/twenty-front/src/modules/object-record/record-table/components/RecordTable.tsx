@@ -1,10 +1,13 @@
 import { useContext } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { RecordTableBody } from '@/object-record/record-table/components/RecordTableBody';
 import { RecordTableBodyEffect } from '@/object-record/record-table/components/RecordTableBodyEffect';
 import { RecordTableHeader } from '@/object-record/record-table/components/RecordTableHeader';
 import { RecordTableRefContext } from '@/object-record/record-table/contexts/RecordTableRefContext';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { rgba } from '@/ui/theme/constants/colors';
 
 const StyledTable = styled.table`
@@ -95,17 +98,38 @@ const StyledTable = styled.table`
 `;
 
 type RecordTableProps = {
+  recordTableId: string;
+  onColumnsChange: (columns: any) => void;
   createRecord: () => void;
 };
 
-export const RecordTable = ({ createRecord }: RecordTableProps) => {
+export const RecordTable = ({
+  recordTableId,
+  onColumnsChange,
+  createRecord,
+}: RecordTableProps) => {
   const recordTableRef = useContext(RecordTableRefContext);
+  const { scopeId, objectNamePluralState } =
+    useRecordTableStates(recordTableId);
+
+  const objectNamePlural = useRecoilValue(objectNamePluralState());
 
   return (
-    <StyledTable ref={recordTableRef} className="entity-table-cell">
-      <RecordTableHeader createRecord={createRecord} />
-      <RecordTableBodyEffect />
-      <RecordTableBody />
-    </StyledTable>
+    <RecordTableScope
+      recordTableScopeId={scopeId}
+      onColumnsChange={onColumnsChange}
+    >
+      <>
+        {objectNamePlural ? (
+          <StyledTable ref={recordTableRef} className="entity-table-cell">
+            <RecordTableHeader createRecord={createRecord} />
+            <RecordTableBodyEffect />
+            <RecordTableBody />
+          </StyledTable>
+        ) : (
+          <></>
+        )}
+      </>
+    </RecordTableScope>
   );
 };

@@ -2,8 +2,7 @@ import { useEffect } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useObjectRecordTable } from '@/object-record/hooks/useObjectRecordTable';
-import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 
 export const RecordTableBodyEffect = () => {
@@ -15,16 +14,10 @@ export const RecordTableBodyEffect = () => {
     loading,
   } = useObjectRecordTable();
 
-  const { tableLastRowVisibleScopeInjector } = getRecordTableScopeInjector();
-
-  const { injectStateWithRecordTableScopeId } = useRecordTableScopedStates();
-
-  const tableLastRowVisibleState = injectStateWithRecordTableScopeId(
-    tableLastRowVisibleScopeInjector,
-  );
+  const { tableLastRowVisibleState } = useRecordTableStates();
 
   const [tableLastRowVisible, setTableLastRowVisible] = useRecoilState(
-    tableLastRowVisibleState,
+    tableLastRowVisibleState(),
   );
 
   const isFetchingMoreObjects = useRecoilValue(

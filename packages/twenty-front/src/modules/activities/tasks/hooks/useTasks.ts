@@ -24,7 +24,6 @@ export const useTasks = ({
   });
 
   const isTargettingObjectRecords = isNonEmptyArray(targetableObjects);
-
   const targetableObjectsFilter =
     targetableObjects.reduce<LeafObjectRecordFilter>(
       (aggregateFilter, targetableObject) => {

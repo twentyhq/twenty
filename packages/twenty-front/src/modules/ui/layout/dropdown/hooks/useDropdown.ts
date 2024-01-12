@@ -1,35 +1,31 @@
 import { useRecoilState } from 'recoil';
 
-import { useDropdownScopedStates } from '@/ui/layout/dropdown/hooks/internal/useDropdownScopedStates';
-import { getDropdownScopeInjectors } from '@/ui/layout/dropdown/utils/internal/getDropdownScopeInjectors';
+import { useDropdownStates } from '@/ui/layout/dropdown/hooks/internal/useDropdownStates';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
 export const useDropdown = (dropdownId?: string) => {
-  const { injectStateWithDropdownScopeId, scopeId } = useDropdownScopedStates({
-    dropdownScopeId: dropdownId,
-  });
-
   const {
-    dropdownHotkeyScopeScopeInjector,
-    dropdownWidthScopeInjector,
-    isDropdownOpenScopeInjector,
-  } = getDropdownScopeInjectors();
+    scopeId,
+    dropdownHotkeyScopeState,
+    dropdownWidthState,
+    isDropdownOpenState,
+  } = useDropdownStates({
+    dropdownScopeId: getScopeIdFromComponentId(dropdownId),
+  });
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const [dropdownHotkeyScope, setDropdownHotkeyScope] = useRecoilState(
-    injectStateWithDropdownScopeId(dropdownHotkeyScopeScopeInjector),
-  );
+  const [dropdownHotkeyScope] = useRecoilState(dropdownHotkeyScopeState());
 
-  const [dropdownWidth, setDropdownWidth] = useRecoilState(
-    injectStateWithDropdownScopeId(dropdownWidthScopeInjector),
-  );
+  const [dropdownWidth, setDropdownWidth] =
+    useRecoilState(dropdownWidthState());
 
   const [isDropdownOpen, setIsDropdownOpen] = useRecoilState(
-    injectStateWithDropdownScopeId(isDropdownOpenScopeInjector),
+    isDropdownOpenState(),
   );
 
   const closeDropdown = () => {
@@ -61,8 +57,6 @@ export const useDropdown = (dropdownId?: string) => {
     closeDropdown,
     toggleDropdown,
     openDropdown,
-    dropdownHotkeyScope,
-    setDropdownHotkeyScope,
     dropdownWidth,
     setDropdownWidth,
   };

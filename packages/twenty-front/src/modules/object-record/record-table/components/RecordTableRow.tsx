@@ -4,11 +4,10 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { RecordTableCellContainer } from '@/object-record/record-table/components/RecordTableCellContainer';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { ColumnContext } from '../contexts/ColumnContext';
-import { useRecordTableScopedStates } from '../hooks/internal/useRecordTableScopedStates';
 import { useCurrentRowSelected } from '../record-table-row/hooks/useCurrentRowSelected';
 
 import { CheckboxCell } from './CheckboxCell';
@@ -27,13 +26,7 @@ const StyledPlaceholder = styled.td`
 `;
 
 export const RecordTableRow = ({ rowId }: RecordTableRowProps) => {
-  const { visibleTableColumnsScopeInjector } = getRecordTableScopeInjector();
-
-  const { injectSelectorWithRecordTableScopeId } = useRecordTableScopedStates();
-
-  const visibleTableColumnsSelector = injectSelectorWithRecordTableScopeId(
-    visibleTableColumnsScopeInjector,
-  );
+  const { visibleTableColumnsSelector } = useRecordTableStates();
 
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
 
