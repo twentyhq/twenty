@@ -19,7 +19,7 @@ const sortDefinitions: SortDefinition[] = [
 ];
 
 describe('useSortDropdown', () => {
-  it('should set availableSortDefinitions', () => {
+  it('should set availableSortDefinitions', async () => {
     const { result } = renderHook(
       () => useSortDropdown({ sortDropdownId }),
       renderHookConfig,
@@ -29,12 +29,12 @@ describe('useSortDropdown', () => {
       result.current.setAvailableSortDefinitions(sortDefinitions);
     });
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(result.current.availableSortDefinitions).toEqual(sortDefinitions);
     });
   });
 
-  it('should set isSortSelected', () => {
+  it('should set isSortSelected', async () => {
     const { result } = renderHook(
       () => useSortDropdown({ sortDropdownId }),
       renderHookConfig,
@@ -46,13 +46,14 @@ describe('useSortDropdown', () => {
       result.current.setIsSortSelected(true);
     });
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(result.current.isSortSelected).toBe(true);
     });
   });
 
-  it('should set onSortSelect', () => {
-    const mockOnSortSelect = jest.fn();
+  it('should set onSortSelect', async () => {
+    const OnSortSelectFunction = () => {};
+    const mockOnSortSelect = jest.fn(() => OnSortSelectFunction);
     const { result } = renderHook(
       () => useSortDropdown({ sortDropdownId }),
       renderHookConfig,
@@ -64,13 +65,13 @@ describe('useSortDropdown', () => {
       result.current.setOnSortSelect(mockOnSortSelect);
     });
 
-    waitFor(() => {
-      expect(result.current.onSortSelect).toBe(mockOnSortSelect);
+    await waitFor(() => {
+      expect(result.current.onSortSelect).toBe(OnSortSelectFunction);
     });
   });
 
-  it('should call onSortSelect when a sort option is selected', () => {
-    const mockOnSortSelect = jest.fn();
+  it('should call onSortSelect when a sort option is selected', async () => {
+    const mockOnSortSelect = jest.fn(() => jest.fn());
     const sort: Sort = {
       fieldMetadataId: 'id',
       direction: 'asc',
@@ -87,8 +88,12 @@ describe('useSortDropdown', () => {
       result.current.onSortSelect?.(sort);
     });
 
-    waitFor(() => {
-      expect(mockOnSortSelect).toHaveBeenCalledWith(sort);
+    act(() => {
+      result.current.onSortSelect?.(sort);
+    });
+
+    await waitFor(() => {
+      expect(mockOnSortSelect.mock.results[0].value).toHaveBeenCalledWith(sort);
     });
   });
 });
