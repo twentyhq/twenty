@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
-export const useGetIsSomeCellInEditMode = (recordTableId?: string) => {
+export const useGetIsSomeCellInEditModeState = (recordTableId?: string) => {
   const {
     currentTableCellInEditModePositionState,
     isTableCellInEditModeFamilyState,
@@ -17,11 +17,11 @@ export const useGetIsSomeCellInEditMode = (recordTableId?: string) => {
           currentTableCellInEditModePositionState(),
         );
 
-        const isSomeCellInEditMode = isTableCellInEditModeFamilyState(
+        const isSomeCellInEditModeState = isTableCellInEditModeFamilyState(
           currentTableCellInEditModePosition,
         );
 
-        return isSomeCellInEditMode;
+        return isSomeCellInEditModeState;
       },
     [currentTableCellInEditModePositionState, isTableCellInEditModeFamilyState],
   );
