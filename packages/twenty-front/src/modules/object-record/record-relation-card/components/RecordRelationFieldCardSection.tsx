@@ -183,7 +183,7 @@ export const RecordRelationFieldCardSection = () => {
   }, [setRelationPickerSearchFilter]);
 
   const persistField = usePersistField();
-  const { updateOneRecord } = useUpdateOneRecord({
+  const { updateOneRecord: updateOneRelationRecord } = useUpdateOneRecord({
     objectNameSingular: relationObjectMetadataNameSingular,
   });
 
@@ -201,7 +201,7 @@ export const RecordRelationFieldCardSection = () => {
 
     if (!relationFieldMetadataItem?.name) return;
 
-    updateOneRecord({
+    updateOneRelationRecord({
       idToUpdate: selectedRelationEntity.id,
       updateOneRecordInput: {
         [`${relationFieldMetadataItem.name}Id`]: entityId,
@@ -267,7 +267,7 @@ export const RecordRelationFieldCardSection = () => {
             <RecordRelationFieldCardContent
               key={`${relationRecord.id}${relationLabelIdentifierFieldMetadata?.id}`}
               divider={index < relationRecords.length - 1}
-              relationRecordId={relationRecord.id}
+              relationRecord={relationRecord}
             />
           ))}
         </Card>
