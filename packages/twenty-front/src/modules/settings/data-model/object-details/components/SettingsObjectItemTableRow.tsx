@@ -53,9 +53,9 @@ export const SettingsObjectItemTableRow = ({
       </StyledNameTableCell>
       <TableCell>
         {objectItem.isCustom ? (
-          <Tag color="orange" text="Custom" weight="medium" />
+          <Tag color="orange" text="Custom" weight="regular" />
         ) : (
-          <Tag color="blue" text="Standard" weight="medium" />
+          <Tag color="blue" text="Standard" weight="regular" />
         )}
       </TableCell>
       <TableCell align="right">
