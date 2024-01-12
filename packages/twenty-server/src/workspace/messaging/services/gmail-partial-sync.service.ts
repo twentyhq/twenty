@@ -98,22 +98,32 @@ export class GmailPartialSyncService {
     const { messagesAdded, messagesDeleted } =
       await this.getMessageIdsAndThreadIdsFromHistory(history);
 
-    const { savedMessageIds, savedThreadIds } =
-      await this.utils.getSavedMessageIdsAndThreadIds(
-        messagesAdded,
-        dataSourceMetadata,
-        workspaceDataSource,
-        connectedAccount.id,
-      );
+    const {
+      savedMessageIds: messagesAddedAlreadySaved,
+      savedThreadIds: threadsAddedAlreadySaved,
+    } = await this.utils.getSavedMessageIdsAndThreadIds(
+      messagesAdded,
+      connectedAccountId,
+      dataSourceMetadata,
+      workspaceDataSource,
+    );
 
     const messageIdsToSave = messagesAdded.filter(
       (messageId) =>
-        !savedMessageIds.includes(messageId) &&
+        !messagesAddedAlreadySaved.includes(messageId) &&
         !messagesDeleted.includes(messageId),
     );
 
+    const { savedMessageIds: messagesDeletedAlreadySaved } =
+      await this.utils.getSavedMessageIdsAndThreadIds(
+        messagesDeleted,
+        connectedAccountId,
+        dataSourceMetadata,
+        workspaceDataSource,
+      );
+
     const messageIdsToDelete = messagesDeleted.filter((messageId) =>
-      savedMessageIds.includes(messageId),
+      messagesDeletedAlreadySaved.includes(messageId),
     );
 
     const messageQueries =
@@ -128,11 +138,8 @@ export class GmailPartialSyncService {
     const threads = this.utils.getThreadsFromMessages(messagesToSave);
 
     const threadsToSave = threads.filter(
-      (thread) => !savedThreadIds.includes(thread.id),
+      (thread) => !threadsAddedAlreadySaved.includes(thread.id),
     );
-
-    console.log('messagesToSave', messagesToSave);
-    console.log('messagesDeleted', messagesDeleted);
 
     await this.utils.saveMessageThreads(
       threadsToSave,

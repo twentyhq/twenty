@@ -51,9 +51,9 @@ export class GmailFullSyncService {
     const { savedMessageIds, savedThreadIds } =
       await this.utils.getSavedMessageIdsAndThreadIds(
         messageIdsFromGmail,
+        connectedAccountId,
         dataSourceMetadata,
         workspaceDataSource,
-        connectedAccount.id,
       );
 
     const messageIdsToSave = messageIdsFromGmail.filter(
