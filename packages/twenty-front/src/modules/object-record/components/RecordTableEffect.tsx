@@ -22,12 +22,7 @@ export const RecordTableEffect = ({
     setAvailableTableColumns,
     setOnEntityCountChange,
     setObjectMetadataConfig,
-    setObjectNamePlural,
   } = useRecordTable({ recordTableId });
-
-  useEffect(() => {
-    setObjectNamePlural(objectNamePlural);
-  }, [setObjectNamePlural, objectNamePlural]);
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,

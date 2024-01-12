@@ -1,4 +1,4 @@
-import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { useGetIsSomeCellInEditMode } from '@/object-record/record-table/hooks/internal/useGetIsSomeCellInEditMode';
@@ -42,7 +42,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     tableLastRowVisibleState,
     numberOfTableColumnsSelector,
     selectedRowIdsSelector,
-    objectNamePluralState,
   } = useRecordTableStates(recordTableId);
 
   const setAvailableTableColumns = useSetRecoilState(
@@ -69,10 +68,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const setRecordTableLastRowVisible = useSetRecoilState(
     tableLastRowVisibleState(),
-  );
-
-  const [objectNamePlural, setObjectNamePlural] = useRecoilState(
-    objectNamePluralState(),
   );
 
   const onColumnsChange = useRecoilCallback(
@@ -351,7 +346,5 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setSoftFocusPosition,
     getIsSomeCellInEditMode,
     selectedRowIdsSelector,
-    objectNamePlural,
-    setObjectNamePlural,
   };
 };

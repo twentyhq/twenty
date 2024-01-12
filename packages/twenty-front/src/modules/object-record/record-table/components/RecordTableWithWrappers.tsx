@@ -120,6 +120,7 @@ export const RecordTableWithWrappers = ({
                 <div ref={tableBodyRef}>
                   <RecordTable
                     recordTableId={recordTableId}
+                    objectNamePlural={objectNamePlural}
                     onColumnsChange={useRecoilCallback(() => (columns) => {
                       persistViewFields(
                         mapColumnDefinitionsToViewFields(columns),
