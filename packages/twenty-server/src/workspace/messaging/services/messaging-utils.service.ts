@@ -1,119 +1,48 @@
 import { Injectable } from '@nestjs/common';
 
-import { gmail_v1 } from 'googleapis';
+import { EntityManager, DataSource } from 'typeorm';
 import { v4 } from 'uuid';
-import { DataSource, EntityManager } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
-import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetch-batch-messages.service';
+import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import {
   GmailMessage,
   Recipient,
 } from 'src/workspace/messaging/types/gmailMessage';
-import { MessageOrThreadQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
-import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
-import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
+import { GmailThread } from 'src/workspace/messaging/types/gmailThread';
+import { MessageQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
 
 @Injectable()
-export class FetchWorkspaceMessagesService {
+export class MessagingUtilsService {
   constructor(
-    private readonly gmailClientProvider: GmailClientProvider,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
-    private readonly fetchBatchMessagesService: FetchBatchMessagesService,
   ) {}
 
-  public async fetchConnectedAccountThreads(
-    workspaceId: string,
-    connectedAccountId: string,
-    maxResults = 500,
-  ): Promise<void> {
-    const { workspaceDataSource, dataSourceMetadata, connectedAccount } =
-      await this.getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
-        workspaceId,
-        connectedAccountId,
-      );
-
-    const accessToken = connectedAccount.accessToken;
-    const refreshToken = connectedAccount.refreshToken;
-
-    if (!refreshToken) {
-      throw new Error('No refresh token found');
-    }
-
-    const gmailClient =
-      await this.gmailClientProvider.getGmailClient(refreshToken);
-
-    const threads = await gmailClient.users.threads.list({
-      userId: 'me',
-      maxResults,
-    });
-
-    const threadsData = threads.data.threads;
-
-    if (!threadsData || threadsData?.length === 0) {
-      return;
-    }
-
-    const { savedMessageIds, savedThreadIds } =
-      await this.getAllSavedMessagesIdsAndMessageThreadsIdsForConnectedAccount(
-        dataSourceMetadata,
-        workspaceDataSource,
-        connectedAccount.id,
-      );
-
-    const threadsToSave = threadsData.filter(
-      (thread) => thread.id && !savedThreadIds.includes(thread.id),
-    );
-
-    await this.saveMessageThreads(
-      threadsToSave,
-      dataSourceMetadata,
-      workspaceDataSource,
-      connectedAccount.id,
-    );
-
-    const threadQueries: MessageOrThreadQuery[] = threadsData.map((thread) => ({
-      uri: '/gmail/v1/users/me/threads/' + thread.id + '?format=minimal',
+  public createQueriesFromMessageIds(
+    messageExternalIds: string[],
+  ): MessageQuery[] {
+    return messageExternalIds.map((messageId) => ({
+      uri: '/gmail/v1/users/me/messages/' + messageId + '?format=RAW',
     }));
-
-    const threadsWithMessageIds =
-      await this.fetchBatchMessagesService.fetchAllThreads(
-        threadQueries,
-        accessToken,
-      );
-
-    const messageIds = threadsWithMessageIds
-      .map((thread) => thread.messageIds)
-      .flat();
-
-    const messageIdsToSave = messageIds.filter(
-      (messageId) => !savedMessageIds.includes(messageId),
-    );
-
-    const messageQueries: MessageOrThreadQuery[] = messageIdsToSave.map(
-      (messageId) => ({
-        uri: '/gmail/v1/users/me/messages/' + messageId + '?format=RAW',
-      }),
-    );
-
-    const messagesResponse =
-      await this.fetchBatchMessagesService.fetchAllMessages(
-        messageQueries,
-        accessToken,
-      );
-
-    await this.saveMessages(
-      messagesResponse,
-      dataSourceMetadata,
-      workspaceDataSource,
-      connectedAccount,
-    );
   }
 
-  private async saveMessageThreads(
-    threads: gmail_v1.Schema$Thread[],
+  public getThreadsFromMessages(messages: GmailMessage[]): GmailThread[] {
+    return messages.reduce((acc, message) => {
+      if (message.externalId === message.messageThreadExternalId) {
+        acc.push({
+          id: message.messageThreadExternalId,
+          subject: message.subject,
+        });
+      }
+
+      return acc;
+    }, [] as GmailThread[]);
+  }
+
+  public async saveMessageThreads(
+    threads: GmailThread[],
     dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
     connectedAccountId: string,
@@ -130,12 +59,12 @@ export class FetchWorkspaceMessagesService {
     for (const thread of threads) {
       await workspaceDataSource?.query(
         `INSERT INTO ${dataSourceMetadata.schema}."messageThread" ("externalId", "subject", "messageChannelId", "visibility") VALUES ($1, $2, $3, $4)`,
-        [thread.id, thread.snippet, messageChannel[0].id, 'default'],
+        [thread.id, thread.subject, messageChannel[0].id, 'default'],
       );
     }
   }
 
-  private async saveMessages(
+  public async saveMessages(
     messages: GmailMessage[],
     dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
@@ -146,7 +75,7 @@ export class FetchWorkspaceMessagesService {
         externalId,
         headerMessageId,
         subject,
-        messageThreadId,
+        messageThreadExternalId,
         internalDate,
         fromHandle,
         fromDisplayName,
@@ -158,7 +87,7 @@ export class FetchWorkspaceMessagesService {
 
       const messageThread = await workspaceDataSource?.query(
         `SELECT * FROM ${dataSourceMetadata.schema}."messageThread" WHERE "externalId" = $1`,
-        [messageThreadId],
+        [messageThreadExternalId],
       );
 
       const messageId = v4();
@@ -219,7 +148,7 @@ export class FetchWorkspaceMessagesService {
     }
   }
 
-  async saveMessageRecipients(
+  public async saveMessageRecipients(
     recipients: Recipient[],
     dataSourceMetadata: DataSourceEntity,
     messageId: string,
@@ -258,34 +187,70 @@ export class FetchWorkspaceMessagesService {
     }
   }
 
-  private async getAllSavedMessagesIdsAndMessageThreadsIdsForConnectedAccount(
+  public async getSavedMessageIdsAndThreadIds(
+    messageEternalIds: string[],
+    connectedAccountId: string,
     dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
-    connectedAccountId: string,
   ): Promise<{
     savedMessageIds: string[];
     savedThreadIds: string[];
   }> {
-    const messageIds: { messageId: string; messageThreadId: string }[] =
-      await workspaceDataSource?.query(
-        `SELECT message."externalId" AS "messageId",
-      "messageThread"."externalId" AS "messageThreadId"
+    const messageIdsInDatabase: {
+      messageExternalId: string;
+      messageThreadExternalId: string;
+    }[] = await workspaceDataSource?.query(
+      `SELECT message."externalId" AS "messageExternalId",
+      "messageThread"."externalId" AS "messageThreadExternalId"
       FROM ${dataSourceMetadata.schema}."message" message
       LEFT JOIN ${dataSourceMetadata.schema}."messageThread" "messageThread" ON message."messageThreadId" = "messageThread"."id" 
       LEFT JOIN ${dataSourceMetadata.schema}."messageChannel" ON "messageThread"."messageChannelId" = ${dataSourceMetadata.schema}."messageChannel"."id"
-      WHERE ${dataSourceMetadata.schema}."messageChannel"."connectedAccountId" = $1`,
-        [connectedAccountId],
-      );
+      WHERE ${dataSourceMetadata.schema}."messageChannel"."connectedAccountId" = $1
+        AND message."externalId" = ANY($2)`,
+      [connectedAccountId, messageEternalIds],
+    );
 
     return {
-      savedMessageIds: messageIds.map((message) => message.messageId),
+      savedMessageIds: messageIdsInDatabase.map(
+        (message) => message.messageExternalId,
+      ),
       savedThreadIds: [
-        ...new Set(messageIds.map((message) => message.messageThreadId)),
+        ...new Set(
+          messageIdsInDatabase.map(
+            (message) => message.messageThreadExternalId,
+          ),
+        ),
       ],
     };
   }
 
-  private async getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
+  public async getConnectedAccountsFromWorkspaceId(
+    workspaceId: string,
+  ): Promise<any[]> {
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        workspaceId,
+      );
+
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+
+    if (!workspaceDataSource) {
+      throw new Error('No workspace data source found');
+    }
+
+    const connectedAccounts = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail'`,
+    );
+
+    if (!connectedAccounts || connectedAccounts.length === 0) {
+      throw new Error('No connected account found');
+    }
+
+    return connectedAccounts;
+  }
+
+  public async getDataSourceMetadataWorkspaceMetadataAndConnectedAccount(
     workspaceId: string,
     connectedAccountId: string,
   ): Promise<{
@@ -319,5 +284,63 @@ export class FetchWorkspaceMessagesService {
       workspaceDataSource,
       connectedAccount: connectedAccounts[0],
     };
+  }
+
+  public async saveLastSyncHistoryId(
+    historyId: string,
+    connectedAccountId: string,
+    dataSourceMetadata: DataSourceEntity,
+    workspaceDataSource: DataSource,
+  ) {
+    await workspaceDataSource?.query(
+      `UPDATE ${dataSourceMetadata.schema}."connectedAccount" SET "lastSyncHistoryId" = $1 WHERE "id" = $2`,
+      [historyId, connectedAccountId],
+    );
+  }
+
+  public async deleteMessages(
+    messageIds: string[],
+    dataSourceMetadata: DataSourceEntity,
+    workspaceDataSource: DataSource,
+  ) {
+    if (!messageIds || messageIds.length === 0) {
+      return;
+    }
+
+    await workspaceDataSource?.query(
+      `DELETE FROM ${dataSourceMetadata.schema}."message" WHERE "externalId" = ANY($1)`,
+      [messageIds],
+    );
+  }
+
+  public async deleteEmptyThreads(
+    messageIds: string[],
+    connectedAccountId: string,
+    dataSourceMetadata: DataSourceEntity,
+    workspaceDataSource: DataSource,
+  ) {
+    const messageThreadsToDelete = await workspaceDataSource?.query(
+      `SELECT "messageThread"."id" FROM ${dataSourceMetadata.schema}."messageThread" "messageThread"
+      LEFT JOIN ${dataSourceMetadata.schema}."message" message ON "messageThread"."id" = message."messageThreadId"
+      LEFT JOIN ${dataSourceMetadata.schema}."messageChannel" ON "messageThread"."messageChannelId" = ${dataSourceMetadata.schema}."messageChannel"."id"
+      WHERE "messageThread"."externalId" = ANY($1)
+      AND ${dataSourceMetadata.schema}."messageChannel"."connectedAccountId" = $2
+      GROUP BY "messageThread"."id"
+      HAVING COUNT(message."id") = 0`,
+      [messageIds, connectedAccountId],
+    );
+
+    if (!messageThreadsToDelete || messageThreadsToDelete.length === 0) {
+      return;
+    }
+
+    const messageThreadIdsToDelete = messageThreadsToDelete.map(
+      (messageThread) => messageThread.id,
+    );
+
+    await workspaceDataSource?.query(
+      `DELETE FROM ${dataSourceMetadata.schema}."messageThread" WHERE "id" = ANY($1)`,
+      [messageThreadIdsToDelete],
+    );
   }
 }
