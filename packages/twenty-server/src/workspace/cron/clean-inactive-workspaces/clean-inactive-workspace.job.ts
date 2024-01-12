@@ -158,8 +158,12 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
 
   async processWorkspace(
     dataSource: DataSourceEntity,
-    maxUpdatedAt: Date,
+    objectsMetadata: ObjectMetadataEntity[],
   ): Promise<void> {
+    const maxUpdatedAt = await this.getMaxUpdatedAt(
+      dataSource,
+      objectsMetadata,
+    );
     const daysSinceInactive = Math.floor(
       (new Date().getTime() - maxUpdatedAt.getTime()) / MILLISECONDS_IN_ONE_DAY,
     );
@@ -205,12 +209,7 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
       }
 
       this.logger.log(`Cleaning Workspace ${dataSource.workspaceId}`);
-      const maxUpdatedAt = await this.getMaxUpdatedAt(
-        dataSource,
-        objectsMetadata,
-      );
-
-      await this.processWorkspace(dataSource, maxUpdatedAt);
+      await this.processWorkspace(dataSource, objectsMetadata);
     }
 
     this.logger.log('job done!');
