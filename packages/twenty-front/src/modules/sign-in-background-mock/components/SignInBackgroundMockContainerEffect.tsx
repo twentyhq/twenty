@@ -16,23 +16,24 @@ import { ViewType } from '@/views/types/ViewType';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 
 type SignInBackgroundMockContainerEffectProps = {
+  objectNamePlural: string;
   recordTableId: string;
   viewId: string;
 };
 
 export const SignInBackgroundMockContainerEffect = ({
+  objectNamePlural,
   recordTableId,
   viewId,
 }: SignInBackgroundMockContainerEffectProps) => {
   const {
-    scopeId: objectNamePlural,
     setAvailableTableColumns,
     setOnEntityCountChange,
     setRecordTableData,
     setTableColumns,
     setObjectMetadataConfig,
   } = useRecordTable({
-    recordTableScopeId: recordTableId,
+    recordTableId,
   });
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
@@ -90,7 +91,8 @@ export const SignInBackgroundMockContainerEffect = ({
 
   const { setActionBarEntries, setContextMenuEntries } =
     useRecordTableContextMenuEntries({
-      recordTableScopeId: recordTableId,
+      objectNamePlural,
+      recordTableId,
     });
 
   useEffect(() => {

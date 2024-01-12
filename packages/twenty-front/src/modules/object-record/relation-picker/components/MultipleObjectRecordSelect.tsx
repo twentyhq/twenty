@@ -2,8 +2,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import debounce from 'lodash.debounce';
-import { v4 } from 'uuid';
 
+import { MultipleObjectRecordOnClickOutsideEffect } from '@/object-record/relation-picker/components/MultipleObjectRecordOnClickOutsideEffect';
+import { MultipleObjectRecordSelectItem } from '@/object-record/relation-picker/components/MultipleObjectRecordSelectItem';
+import { MultiObjectRecordSelectSelectableListId } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
 import {
   ObjectRecordForSelect,
   SelectedObjectRecordId,
@@ -17,9 +19,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { Avatar } from '@/users/components/Avatar';
 
 export const StyledSelectableItem = styled(SelectableItem)`
   height: 100%;
@@ -116,61 +115,61 @@ export const MultipleObjectRecordSelect = ({
     [filteredSelectedObjectRecords, objectRecordsToSelect],
   );
 
-  useListenClickOutside({
-    refs: [containerRef],
-    callback: (event) => {
-      event.stopImmediatePropagation();
-      event.stopPropagation();
-      event.preventDefault();
-
-      onSubmit?.(internalSelectedRecords);
-    },
-  });
-
   const selectableItemIds = entitiesInDropdown.map(
     (entity) => entity.record.id,
   );
 
   return (
-    <DropdownMenu ref={containerRef} data-select-disable>
-      <DropdownMenuSearchInput
-        value={searchFilter}
-        onChange={handleFilterChange}
-        autoFocus
+    <>
+      <MultipleObjectRecordOnClickOutsideEffect
+        containerRef={containerRef}
+        onClickOutside={() => {
+          onSubmit?.(internalSelectedRecords);
+        }}
       />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
-        {loading ? (
-          <MenuItem text="Loading..." />
-        ) : (
-          <>
-            <SelectableList
-              selectableListId="multiple-entity-select-list"
-              selectableItemIdArray={selectableItemIds}
-              hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
-              onEnter={(recordId) => {
-                const recordIsSelected = internalSelectedRecords?.some(
-                  (selectedRecord) => selectedRecord.record.id === recordId,
-                );
-
-                const correspondingRecordForSelect = entitiesInDropdown?.find(
-                  (entity) => entity.record.id === recordId,
-                );
-
-                if (correspondingRecordForSelect) {
-                  handleSelectChange(
-                    correspondingRecordForSelect,
-                    !recordIsSelected,
+      <DropdownMenu ref={containerRef} data-select-disable>
+        <DropdownMenuSearchInput
+          value={searchFilter}
+          onChange={handleFilterChange}
+          autoFocus
+        />
+        <DropdownMenuSeparator />
+        <DropdownMenuItemsContainer hasMaxHeight>
+          {loading ? (
+            <MenuItem text="Loading..." />
+          ) : (
+            <>
+              <SelectableList
+                selectableListId={MultiObjectRecordSelectSelectableListId}
+                selectableItemIdArray={selectableItemIds}
+                hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+                onEnter={(recordId) => {
+                  const recordIsSelected = internalSelectedRecords?.some(
+                    (selectedRecord) => selectedRecord.record.id === recordId,
                   );
-                }
-              }}
-            >
-              {entitiesInDropdown?.map((objectRecordForSelect) => (
-                <StyledSelectableItem
-                  itemId={objectRecordForSelect.record.id}
-                  key={objectRecordForSelect.record.id + v4()}
-                >
-                  <MenuItemMultiSelectAvatar
+
+                  const correspondingRecordForSelect = entitiesInDropdown?.find(
+                    (entity) => entity.record.id === recordId,
+                  );
+
+                  if (correspondingRecordForSelect) {
+                    handleSelectChange(
+                      correspondingRecordForSelect,
+                      !recordIsSelected,
+                    );
+                  }
+                }}
+              >
+                {entitiesInDropdown?.map((objectRecordForSelect) => (
+                  <MultipleObjectRecordSelectItem
+                    key={objectRecordForSelect.record.id}
+                    objectRecordForSelect={objectRecordForSelect}
+                    onSelectedChange={(newSelectedValue) =>
+                      handleSelectChange(
+                        objectRecordForSelect,
+                        newSelectedValue,
+                      )
+                    }
                     selected={internalSelectedRecords?.some(
                       (selectedRecord) => {
                         return (
@@ -179,34 +178,16 @@ export const MultipleObjectRecordSelect = ({
                         );
                       },
                     )}
-                    onSelectChange={(newCheckedValue) =>
-                      handleSelectChange(objectRecordForSelect, newCheckedValue)
-                    }
-                    avatar={
-                      <Avatar
-                        avatarUrl={
-                          objectRecordForSelect.recordIdentifier.avatarUrl
-                        }
-                        colorId={objectRecordForSelect.record.id}
-                        placeholder={
-                          objectRecordForSelect.recordIdentifier.name
-                        }
-                        size="md"
-                        type={
-                          objectRecordForSelect.recordIdentifier.avatarType ??
-                          'rounded'
-                        }
-                      />
-                    }
-                    text={objectRecordForSelect.recordIdentifier.name}
                   />
-                </StyledSelectableItem>
-              ))}
-            </SelectableList>
-            {entitiesInDropdown?.length === 0 && <MenuItem text="No result" />}
-          </>
-        )}
-      </DropdownMenuItemsContainer>
-    </DropdownMenu>
+                ))}
+              </SelectableList>
+              {entitiesInDropdown?.length === 0 && (
+                <MenuItem text="No result" />
+              )}
+            </>
+          )}
+        </DropdownMenuItemsContainer>
+      </DropdownMenu>
+    </>
   );
 };

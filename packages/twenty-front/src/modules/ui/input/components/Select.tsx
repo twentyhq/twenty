@@ -13,7 +13,7 @@ import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 export type SelectProps<Value extends string | number | null> = {
   className?: string;
   disabled?: boolean;
-  dropdownScopeId: string;
+  dropdownId: string;
   fullWidth?: boolean;
   label?: string;
   onChange?: (value: Value) => void;
@@ -62,7 +62,7 @@ const StyledIconChevronDown = styled(IconChevronDown)<{ disabled?: boolean }>`
 export const Select = <Value extends string | number | null>({
   className,
   disabled,
-  dropdownScopeId,
+  dropdownId,
   fullWidth,
   label,
   onChange,
@@ -73,7 +73,7 @@ export const Select = <Value extends string | number | null>({
   const selectedOption =
     options.find(({ value: key }) => key === value) || options[0];
 
-  const { closeDropdown } = useDropdown(dropdownScopeId);
+  const { closeDropdown } = useDropdown(dropdownId);
 
   const selectControl = (
     <StyledControlContainer disabled={disabled} fullWidth={fullWidth}>
@@ -100,7 +100,7 @@ export const Select = <Value extends string | number | null>({
     <div className={className}>
       {!!label && <StyledLabel>{label}</StyledLabel>}
       <Dropdown
-        dropdownId="select"
+        dropdownId={dropdownId}
         dropdownMenuWidth={176}
         dropdownPlacement="bottom-start"
         clickableComponent={selectControl}

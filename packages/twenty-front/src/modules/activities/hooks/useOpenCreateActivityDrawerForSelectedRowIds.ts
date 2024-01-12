@@ -1,22 +1,19 @@
 import { useRecoilCallback } from 'recoil';
 
 import { ActivityType } from '@/activities/types/Activity';
-import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
 import { useOpenCreateActivityDrawer } from './useOpenCreateActivityDrawer';
 
 export const useOpenCreateActivityDrawerForSelectedRowIds = (
-  recordTableScopeId: string,
+  recordTableId: string,
 ) => {
   const openCreateActivityDrawer = useOpenCreateActivityDrawer();
 
-  const { selectedRowIdsScopeInjector } = getRecordTableScopeInjector();
-
-  const { injectSelectorSnapshotValueWithRecordTableScopeId } =
-    useRecordTableScopedStates(recordTableScopeId);
+  const { selectedRowIdsSelector } = useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
     ({ snapshot }) =>
@@ -25,11 +22,10 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = (
         objectNameSingular: string,
         relatedEntities?: ActivityTargetableObject[],
       ) => {
-        const selectedRowIds =
-          injectSelectorSnapshotValueWithRecordTableScopeId(
-            snapshot,
-            selectedRowIdsScopeInjector,
-          );
+        const selectedRowIds = getSnapshotValue(
+          snapshot,
+          selectedRowIdsSelector,
+        );
 
         let activityTargetableEntityArray: ActivityTargetableObject[] =
           selectedRowIds.map((id: string) => ({
@@ -48,10 +44,6 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = (
           targetableObjects: activityTargetableEntityArray,
         });
       },
-    [
-      injectSelectorSnapshotValueWithRecordTableScopeId,
-      openCreateActivityDrawer,
-      selectedRowIdsScopeInjector,
-    ],
+    [openCreateActivityDrawer, selectedRowIdsSelector],
   );
 };

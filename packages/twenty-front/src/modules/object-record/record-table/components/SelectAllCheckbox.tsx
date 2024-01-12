@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { Checkbox } from '@/ui/input/components/Checkbox';
 
 import { useRecordTable } from '../hooks/useRecordTable';
@@ -17,16 +16,9 @@ const StyledContainer = styled.div`
 `;
 
 export const SelectAllCheckbox = () => {
-  const { allRowsSelectedStatusScopeInjector } = getRecordTableScopeInjector();
+  const { allRowsSelectedStatusSelector } = useRecordTableStates();
 
-  const { injectSelectorWithRecordTableScopeId } = useRecordTableScopedStates();
-
-  const allRowsSelectedStatusScopedSelector =
-    injectSelectorWithRecordTableScopeId(allRowsSelectedStatusScopeInjector);
-
-  const allRowsSelectedStatus = useRecoilValue(
-    allRowsSelectedStatusScopedSelector,
-  );
+  const allRowsSelectedStatus = useRecoilValue(allRowsSelectedStatusSelector);
   const { selectAllRows } = useRecordTable();
 
   const checked = allRowsSelectedStatus === 'all';

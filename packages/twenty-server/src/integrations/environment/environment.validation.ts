@@ -170,6 +170,11 @@ export class EnvironmentVariables {
   )
   @IsString()
   SENTRY_DSN?: string;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  IS_SIGN_UP_DISABLED?: boolean;
 }
 
 export const validate = (config: Record<string, unknown>) => {

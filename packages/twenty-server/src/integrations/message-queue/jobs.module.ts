@@ -10,6 +10,7 @@ import { ObjectMetadataModule } from 'src/metadata/object-metadata/object-metada
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FetchWorkspaceMessagesModule } from 'src/workspace/messaging/services/fetch-workspace-messages.module';
+import { EmailSenderJob } from 'src/integrations/email/email-sender.job';
 
 @Module({
   imports: [
@@ -32,6 +33,10 @@ import { FetchWorkspaceMessagesModule } from 'src/workspace/messaging/services/f
     {
       provide: CallWebhookJob.name,
       useClass: CallWebhookJob,
+    },
+    {
+      provide: EmailSenderJob.name,
+      useClass: EmailSenderJob,
     },
   ],
 })

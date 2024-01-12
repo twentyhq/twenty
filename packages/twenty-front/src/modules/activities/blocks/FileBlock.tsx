@@ -16,7 +16,7 @@ import { AttachmentIcon } from '../files/components/AttachmentIcon';
 import { AttachmentType } from '../files/types/Attachment';
 import { getFileType } from '../files/utils/getFileType';
 
-import { blockSpecs } from './spec';
+import { blockSpecs } from './blockSpecs';
 
 export const filePropSchema = {
   // File url
