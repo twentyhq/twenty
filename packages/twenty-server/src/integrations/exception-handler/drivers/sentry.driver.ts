@@ -11,7 +11,7 @@ export class ExceptionHandlerSentryDriver
 {
   constructor(options: ExceptionHandlerSentryDriverFactoryOptions['options']) {
     Sentry.init({
-      dsn: options.dns,
+      dsn: options.dsn,
       integrations: [
         // enable HTTP calls tracing
         new Sentry.Integrations.Http({ tracing: true }),

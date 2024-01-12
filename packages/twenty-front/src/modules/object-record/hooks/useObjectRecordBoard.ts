@@ -7,7 +7,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
 import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
-import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
+import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { Opportunity } from '@/pipeline/types/Opportunity';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 
@@ -57,7 +57,7 @@ export const useObjectRecordBoard = () => {
     objectNameSingular: CoreObjectNameSingular.PipelineStep,
     filter: {},
     onCompleted: useCallback(
-      (data: PaginatedRecordTypeResults<PipelineStep>) => {
+      (data: ObjectRecordConnection<PipelineStep>) => {
         setSavedPipelineSteps(data.edges.map((edge) => edge.node));
       },
       [setSavedPipelineSteps],
@@ -89,7 +89,7 @@ export const useObjectRecordBoard = () => {
       },
     },
     onCompleted: useCallback(
-      (data: PaginatedRecordTypeResults<Company>) => {
+      (data: ObjectRecordConnection<Company>) => {
         setSavedCompanies(data.edges.map((edge) => edge.node));
       },
       [setSavedCompanies],

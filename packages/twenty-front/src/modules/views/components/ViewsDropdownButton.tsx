@@ -15,7 +15,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -130,56 +129,55 @@ export const ViewsDropdownButton = ({
   };
 
   return (
-    <DropdownScope dropdownScopeId={ViewsDropdownId}>
-      <Dropdown
-        dropdownHotkeyScope={hotkeyScope}
-        clickableComponent={
-          <StyledDropdownButtonContainer isUnfolded={isViewsDropdownOpen}>
-            <StyledViewIcon size={theme.icon.size.md} />
-            <StyledViewName>{currentView?.name ?? 'All'}</StyledViewName>
-            <StyledDropdownLabelAdornments>
-              · {entityCountInCurrentView}{' '}
-              <IconChevronDown size={theme.icon.size.sm} />
-            </StyledDropdownLabelAdornments>
-          </StyledDropdownButtonContainer>
-        }
-        dropdownComponents={
-          <>
-            <DropdownMenuItemsContainer>
-              {views.map((view) => (
-                <MenuItem
-                  key={view.id}
-                  iconButtons={[
-                    {
-                      Icon: IconPencil,
-                      onClick: (event: MouseEvent<HTMLButtonElement>) =>
-                        handleEditViewButtonClick(event, view.id),
-                    },
-                    views.length > 1
-                      ? {
-                          Icon: IconTrash,
-                          onClick: (event: MouseEvent<HTMLButtonElement>) =>
-                            handleDeleteViewButtonClick(event, view.id),
-                        }
-                      : null,
-                  ].filter(assertNotNull)}
-                  onClick={() => handleViewSelect(view.id)}
-                  LeftIcon={IconList}
-                  text={view.name}
-                />
-              ))}
-            </DropdownMenuItemsContainer>
-            <DropdownMenuSeparator />
-            <StyledBoldDropdownMenuItemsContainer>
+    <Dropdown
+      dropdownId={ViewsDropdownId}
+      dropdownHotkeyScope={hotkeyScope}
+      clickableComponent={
+        <StyledDropdownButtonContainer isUnfolded={isViewsDropdownOpen}>
+          <StyledViewIcon size={theme.icon.size.md} />
+          <StyledViewName>{currentView?.name ?? 'All'}</StyledViewName>
+          <StyledDropdownLabelAdornments>
+            · {entityCountInCurrentView}{' '}
+            <IconChevronDown size={theme.icon.size.sm} />
+          </StyledDropdownLabelAdornments>
+        </StyledDropdownButtonContainer>
+      }
+      dropdownComponents={
+        <>
+          <DropdownMenuItemsContainer>
+            {views.map((view) => (
               <MenuItem
-                onClick={handleAddViewButtonClick}
-                LeftIcon={IconPlus}
-                text="Add view"
+                key={view.id}
+                iconButtons={[
+                  {
+                    Icon: IconPencil,
+                    onClick: (event: MouseEvent<HTMLButtonElement>) =>
+                      handleEditViewButtonClick(event, view.id),
+                  },
+                  views.length > 1
+                    ? {
+                        Icon: IconTrash,
+                        onClick: (event: MouseEvent<HTMLButtonElement>) =>
+                          handleDeleteViewButtonClick(event, view.id),
+                      }
+                    : null,
+                ].filter(assertNotNull)}
+                onClick={() => handleViewSelect(view.id)}
+                LeftIcon={IconList}
+                text={view.name}
               />
-            </StyledBoldDropdownMenuItemsContainer>
-          </>
-        }
-      />
-    </DropdownScope>
+            ))}
+          </DropdownMenuItemsContainer>
+          <DropdownMenuSeparator />
+          <StyledBoldDropdownMenuItemsContainer>
+            <MenuItem
+              onClick={handleAddViewButtonClick}
+              LeftIcon={IconPlus}
+              text="Add view"
+            />
+          </StyledBoldDropdownMenuItemsContainer>
+        </>
+      }
+    />
   );
 };

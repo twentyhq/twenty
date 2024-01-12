@@ -46,9 +46,7 @@ export const ActivityTargetsInlineCell = ({
             activityTargetObjectRecords={activityTargetObjectRecords}
           />
         }
-        isDisplayModeContentEmpty={
-          activity?.activityTargets?.edges?.length === 0
-        }
+        isDisplayModeContentEmpty={activityTargetObjectRecords.length === 0}
       />
     </RecoilScope>
   );

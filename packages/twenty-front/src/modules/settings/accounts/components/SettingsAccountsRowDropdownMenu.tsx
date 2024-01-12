@@ -7,7 +7,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsAccountsRowDropdownMenuProps = {
@@ -21,46 +20,45 @@ export const SettingsAccountsRowDropdownMenu = ({
   className,
   onRemove,
 }: SettingsAccountsRowDropdownMenuProps) => {
-  const dropdownScopeId = `settings-account-row-${account.id}`;
+  const dropdownId = `settings-account-row-${account.id}`;
 
   const navigate = useNavigate();
-  const { closeDropdown } = useDropdown(dropdownScopeId);
+  const { closeDropdown } = useDropdown(dropdownId);
 
   return (
-    <DropdownScope dropdownScopeId={dropdownScopeId}>
-      <Dropdown
-        className={className}
-        dropdownPlacement="right-start"
-        dropdownHotkeyScope={{ scope: dropdownScopeId }}
-        clickableComponent={
-          <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
-        }
-        dropdownComponents={
-          <DropdownMenu>
-            <DropdownMenuItemsContainer>
+    <Dropdown
+      dropdownId={dropdownId}
+      className={className}
+      dropdownPlacement="right-start"
+      dropdownHotkeyScope={{ scope: dropdownId }}
+      clickableComponent={
+        <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+      }
+      dropdownComponents={
+        <DropdownMenu>
+          <DropdownMenuItemsContainer>
+            <MenuItem
+              LeftIcon={IconMail}
+              text="Emails settings"
+              onClick={() => {
+                navigate(`/settings/accounts/emails/${account.id}`);
+                closeDropdown();
+              }}
+            />
+            {!!onRemove && (
               <MenuItem
-                LeftIcon={IconMail}
-                text="Emails settings"
+                accent="danger"
+                LeftIcon={IconTrash}
+                text="Remove account"
                 onClick={() => {
-                  navigate(`/settings/accounts/emails/${account.id}`);
+                  onRemove(account.id);
                   closeDropdown();
                 }}
               />
-              {!!onRemove && (
-                <MenuItem
-                  accent="danger"
-                  LeftIcon={IconTrash}
-                  text="Remove account"
-                  onClick={() => {
-                    onRemove(account.id);
-                    closeDropdown();
-                  }}
-                />
-              )}
-            </DropdownMenuItemsContainer>
-          </DropdownMenu>
-        }
-      />
-    </DropdownScope>
+            )}
+          </DropdownMenuItemsContainer>
+        </DropdownMenu>
+      }
+    />
   );
 };

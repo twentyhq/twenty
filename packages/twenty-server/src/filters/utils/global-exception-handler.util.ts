@@ -1,47 +1,53 @@
 import { HttpException } from '@nestjs/common';
 
-import { TypeORMError } from 'typeorm';
-
 import {
   AuthenticationError,
   BaseGraphQLError,
   ForbiddenError,
+  ValidationError,
+  NotFoundError,
 } from 'src/filters/utils/graphql-errors.util';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 
 const graphQLPredefinedExceptions = {
+  400: ValidationError,
   401: AuthenticationError,
   403: ForbiddenError,
+  404: NotFoundError,
 };
 
-export const globalExceptionHandler = (
-  exception: unknown,
+export const handleExceptionAndConvertToGraphQLError = (
+  exception: Error,
   exceptionHandlerService: ExceptionHandlerService,
-) => {
-  if (exception instanceof HttpException) {
-    return httpExceptionHandler(exception, exceptionHandlerService);
-  }
+): BaseGraphQLError => {
+  handleException(exception, exceptionHandlerService);
 
-  if (exception instanceof TypeORMError) {
-    return typeOrmExceptionHandler(exception, exceptionHandlerService);
-  }
+  return convertExceptionToGraphQLError(exception);
+};
 
+export const handleException = (
+  exception: Error,
+  exceptionHandlerService: ExceptionHandlerService,
+): void => {
+  if (exception instanceof HttpException && exception.getStatus() < 500) {
+    return;
+  }
   exceptionHandlerService.captureException(exception);
-
-  return exception;
 };
 
-export const httpExceptionHandler = (
-  exception: HttpException,
-  exceptionHandlerService: ExceptionHandlerService,
-) => {
+export const convertExceptionToGraphQLError = (
+  exception: Error,
+): BaseGraphQLError => {
+  if (exception instanceof HttpException) {
+    return convertHttpExceptionToGraphql(exception);
+  }
+
+  return convertExceptionToGraphql(exception);
+};
+
+export const convertHttpExceptionToGraphql = (exception: HttpException) => {
   const status = exception.getStatus();
   let error: BaseGraphQLError;
-
-  // Capture all 5xx errors and send them to exception handler
-  if (status >= 500) {
-    exceptionHandlerService.captureException(exception);
-  }
 
   if (status in graphQLPredefinedExceptions) {
     error = new graphQLPredefinedExceptions[exception.getStatus()](
@@ -60,12 +66,7 @@ export const httpExceptionHandler = (
   return error;
 };
 
-export const typeOrmExceptionHandler = (
-  exception: TypeORMError,
-  exceptionHandlerService: ExceptionHandlerService,
-) => {
-  exceptionHandlerService.captureException(exception);
-
+export const convertExceptionToGraphql = (exception: Error) => {
   const error = new BaseGraphQLError(exception.name, 'INTERNAL_SERVER_ERROR');
 
   error.stack = exception.stack;

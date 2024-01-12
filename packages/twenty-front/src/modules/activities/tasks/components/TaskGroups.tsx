@@ -1,13 +1,13 @@
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
+import { TASKS_TAB_LIST_COMPONENT_ID } from '@/activities/tasks/constants/tasksTabListComponentId';
 import { useTasks } from '@/activities/tasks/hooks/useTasks';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
-import { activeTabIdScopedState } from '@/ui/layout/tab/states/activeTabIdScopedState';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
@@ -69,10 +69,8 @@ export const TaskGroups = ({
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  const [activeTabId] = useRecoilScopedState(
-    activeTabIdScopedState,
-    TasksRecoilScopeContext,
-  );
+  const { activeTabIdState } = useTabList(TASKS_TAB_LIST_COMPONENT_ID);
+  const activeTabId = useRecoilValue(activeTabIdState());
 
   if (
     (activeTabId !== 'done' &&

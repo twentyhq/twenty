@@ -4,6 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { v4 } from 'uuid';
 
+import { BoardOptionsDropdownId } from '@/object-record/record-board/constants/BoardOptionsDropdownId';
 import { useRecordBoardScopedStates } from '@/object-record/record-board/hooks/internal/useRecordBoardScopedStates';
 import {
   IconBaselineDensitySmall,
@@ -21,7 +22,6 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemNavigate } from '@/ui/navigation/menu-item/components/MenuItemNavigate';
 import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
-import { ThemeColor } from '@/ui/theme/constants/colors';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
@@ -37,13 +37,6 @@ export type RecordBoardOptionsDropdownContentProps = {
 };
 
 type BoardOptionsMenu = 'fields' | 'stage-creation' | 'stages';
-
-type ColumnForCreate = {
-  id: string;
-  colorCode: ThemeColor;
-  position: number;
-  title: string;
-};
 
 export const RecordBoardOptionsDropdownContent = ({
   onStageAdd,
@@ -84,7 +77,7 @@ export const RecordBoardOptionsDropdownContent = ({
     if (currentMenu !== 'stage-creation' || !stageInputRef?.current?.value)
       return;
 
-    const columnToCreate: ColumnForCreate = {
+    const columnToCreate: BoardColumnDefinition = {
       id: v4(),
       colorCode: 'gray',
       position: boardColumns.length,
@@ -110,7 +103,7 @@ export const RecordBoardOptionsDropdownContent = ({
       recordBoardScopeId: recordBoardId,
     });
 
-  const { closeDropdown } = useDropdown();
+  const { closeDropdown } = useDropdown(BoardOptionsDropdownId);
 
   const handleReorderField: OnDragEndResponder = useCallback(
     (result) => {
@@ -142,7 +135,6 @@ export const RecordBoardOptionsDropdownContent = ({
       const name = viewEditInputRef.current?.value;
       resetMenu();
       setViewEditMode('none');
-      closeDropdown();
       handleStageSubmit();
       handleViewNameSubmit(name);
       closeDropdown();

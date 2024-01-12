@@ -70,7 +70,7 @@ export const SettingsObjectFieldRelationForm = ({
       <StyledSelectsContainer>
         <Select
           label="Relation type"
-          dropdownScopeId="relation-type-select"
+          dropdownId="relation-type-select"
           fullWidth
           disabled={disableRelationEdition}
           value={values.type}
@@ -85,7 +85,7 @@ export const SettingsObjectFieldRelationForm = ({
         />
         <Select
           label="Object destination"
-          dropdownScopeId="object-destination-select"
+          dropdownId="object-destination-select"
           fullWidth
           disabled={disableRelationEdition}
           value={values.objectMetadataId}
@@ -105,7 +105,7 @@ export const SettingsObjectFieldRelationForm = ({
       <StyledInputsContainer>
         <IconPicker
           disabled={disableFieldEdition}
-          dropdownScopeId="field-destination-icon-picker"
+          dropdownId="field-destination-icon-picker"
           selectedIconKey={values.field.icon || undefined}
           onChange={(value) =>
             onChange({
