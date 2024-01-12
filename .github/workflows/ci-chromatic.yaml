@@ -31,11 +31,11 @@ jobs:
           echo "REACT_APP_SERVER_BASE_URL: $REACT_APP_SERVER_BASE_URL" >> .env
       - name: Front / Install Dependencies
         run: yarn
-      # - name: Publish to Chromatic
-      #   uses: chromaui/action@v1
-      #   with:
-      #     workingDir: ./packages/twenty-front
-      #     projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-      #     onlyChanged: true
-      #     buildScriptName: storybook:build
+      - name: Publish to Chromatic
+        uses: chromaui/action@v1
+        with:
+          workingDir: ./packages/twenty-front
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          onlyChanged: true
+          buildScriptName: storybook:build
         
