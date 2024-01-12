@@ -118,6 +118,7 @@ export const RecordRelationFieldCardContent = ({
       </FieldContextProvider>
       <DropdownScope dropdownScopeId={dropdownScopeId}>
         <Dropdown
+          dropdownId={dropdownScopeId}
           dropdownPlacement="right-start"
           clickableComponent={
             <LightIconButton
