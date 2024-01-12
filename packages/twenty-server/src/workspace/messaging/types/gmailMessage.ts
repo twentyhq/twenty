@@ -5,7 +5,7 @@ export type GmailMessage = {
   externalId: string;
   headerMessageId: string;
   subject: string;
-  messageThreadId: string;
+  messageThreadExternalId: string;
   internalDate: string;
   fromHandle: string;
   fromDisplayName: string;

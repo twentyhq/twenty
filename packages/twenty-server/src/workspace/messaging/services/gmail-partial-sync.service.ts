@@ -103,7 +103,7 @@ export class GmailPartialSyncService {
     if (!history.history) {
       await this.utils.saveLastSyncHistoryId(
         historyId,
-        connectedAccount.id,
+        connectedAccountId,
         dataSourceMetadata,
         workspaceDataSource,
       );
@@ -124,7 +124,7 @@ export class GmailPartialSyncService {
       workspaceDataSource,
     );
 
-    const messageIdsToSave = messagesAdded.filter(
+    const messageExternalIdsToSave = messagesAdded.filter(
       (messageId) =>
         !messagesAddedAlreadySaved.includes(messageId) &&
         !messagesDeleted.includes(messageId),
@@ -138,12 +138,13 @@ export class GmailPartialSyncService {
         workspaceDataSource,
       );
 
-    const messageIdsToDelete = messagesDeleted.filter((messageId) =>
+    const messageExternalIdsToDelete = messagesDeleted.filter((messageId) =>
       messagesDeletedAlreadySaved.includes(messageId),
     );
 
-    const messageQueries =
-      this.utils.createQueriesFromMessageIds(messageIdsToSave);
+    const messageQueries = this.utils.createQueriesFromMessageIds(
+      messageExternalIdsToSave,
+    );
 
     const { messages: messagesToSave, errors } =
       await this.fetchMessagesByBatchesService.fetchAllMessages(
@@ -172,7 +173,7 @@ export class GmailPartialSyncService {
     );
 
     await this.utils.deleteMessages(
-      messageIdsToDelete,
+      messageExternalIdsToDelete,
       dataSourceMetadata,
       workspaceDataSource,
     );

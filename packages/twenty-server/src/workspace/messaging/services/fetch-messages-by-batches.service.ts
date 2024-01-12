@@ -202,7 +202,7 @@ export class FetchMessagesByBatchesService {
             externalId: id,
             headerMessageId: messageId || '',
             subject: subject || '',
-            messageThreadId: threadId,
+            messageThreadExternalId: threadId,
             internalDate,
             fromHandle: from.value[0].address || '',
             fromDisplayName: from.value[0].name || '',

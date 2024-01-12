@@ -40,7 +40,7 @@ export class GmailFullSyncService {
 
     const messagesData = messages.data.messages;
 
-    const messageIdsFromGmail = messagesData
+    const messageExternalIds = messagesData
       ? messagesData.map((message) => message.id || '')
       : [];
 
@@ -50,13 +50,13 @@ export class GmailFullSyncService {
 
     const { savedMessageIds, savedThreadIds } =
       await this.utils.getSavedMessageIdsAndThreadIds(
-        messageIdsFromGmail,
+        messageExternalIds,
         connectedAccountId,
         dataSourceMetadata,
         workspaceDataSource,
       );
 
-    const messageIdsToSave = messageIdsFromGmail.filter(
+    const messageIdsToSave = messageExternalIds.filter(
       (messageId) => !savedMessageIds.includes(messageId),
     );
 

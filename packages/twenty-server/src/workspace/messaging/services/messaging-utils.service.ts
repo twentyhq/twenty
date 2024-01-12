@@ -20,16 +20,21 @@ export class MessagingUtilsService {
     private readonly typeORMService: TypeORMService,
   ) {}
 
-  public createQueriesFromMessageIds(messageIds: string[]): MessageQuery[] {
-    return messageIds.map((messageId) => ({
+  public createQueriesFromMessageIds(
+    messageExternalIds: string[],
+  ): MessageQuery[] {
+    return messageExternalIds.map((messageId) => ({
       uri: '/gmail/v1/users/me/messages/' + messageId + '?format=RAW',
     }));
   }
 
   public getThreadsFromMessages(messages: GmailMessage[]): GmailThread[] {
     return messages.reduce((acc, message) => {
-      if (message.externalId === message.messageThreadId) {
-        acc.push({ id: message.messageThreadId, subject: message.subject });
+      if (message.externalId === message.messageThreadExternalId) {
+        acc.push({
+          id: message.messageThreadExternalId,
+          subject: message.subject,
+        });
       }
 
       return acc;
@@ -70,7 +75,7 @@ export class MessagingUtilsService {
         externalId,
         headerMessageId,
         subject,
-        messageThreadId,
+        messageThreadExternalId,
         internalDate,
         fromHandle,
         fromDisplayName,
@@ -82,7 +87,7 @@ export class MessagingUtilsService {
 
       const messageThread = await workspaceDataSource?.query(
         `SELECT * FROM ${dataSourceMetadata.schema}."messageThread" WHERE "externalId" = $1`,
-        [messageThreadId],
+        [messageThreadExternalId],
       );
 
       const messageId = v4();
@@ -183,7 +188,7 @@ export class MessagingUtilsService {
   }
 
   public async getSavedMessageIdsAndThreadIds(
-    messageIds: string[],
+    messageEternalIds: string[],
     connectedAccountId: string,
     dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
@@ -192,24 +197,28 @@ export class MessagingUtilsService {
     savedThreadIds: string[];
   }> {
     const messageIdsInDatabase: {
-      messageId: string;
-      messageThreadId: string;
+      messageExternalId: string;
+      messageThreadExternalId: string;
     }[] = await workspaceDataSource?.query(
-      `SELECT message."externalId" AS "messageId",
-      "messageThread"."externalId" AS "messageThreadId"
+      `SELECT message."externalId" AS "messageExternalId",
+      "messageThread"."externalId" AS "messageThreadExternalId"
       FROM ${dataSourceMetadata.schema}."message" message
       LEFT JOIN ${dataSourceMetadata.schema}."messageThread" "messageThread" ON message."messageThreadId" = "messageThread"."id" 
       LEFT JOIN ${dataSourceMetadata.schema}."messageChannel" ON "messageThread"."messageChannelId" = ${dataSourceMetadata.schema}."messageChannel"."id"
       WHERE ${dataSourceMetadata.schema}."messageChannel"."connectedAccountId" = $1
         AND message."externalId" = ANY($2)`,
-      [connectedAccountId, messageIds],
+      [connectedAccountId, messageEternalIds],
     );
 
     return {
-      savedMessageIds: messageIdsInDatabase.map((message) => message.messageId),
+      savedMessageIds: messageIdsInDatabase.map(
+        (message) => message.messageExternalId,
+      ),
       savedThreadIds: [
         ...new Set(
-          messageIdsInDatabase.map((message) => message.messageThreadId),
+          messageIdsInDatabase.map(
+            (message) => message.messageThreadExternalId,
+          ),
         ),
       ],
     };
