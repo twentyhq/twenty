@@ -19,9 +19,7 @@ export default {
     },
   },
   collectCoverage: true,
-  collectCoverageFrom: [
-    '<rootDir>/src/modules/object-record/object-filter-dropdown/**/*.ts',
-  ],
+  collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
   coveragePathIgnorePatterns: [
     'states/.+State.ts$',
     'states/selectors/*',
