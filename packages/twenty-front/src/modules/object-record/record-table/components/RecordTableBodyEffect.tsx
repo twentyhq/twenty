@@ -5,14 +5,20 @@ import { useObjectRecordTable } from '@/object-record/hooks/useObjectRecordTable
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 
-export const RecordTableBodyEffect = () => {
+type RecordTableBodyEffectProps = {
+  objectNamePlural: string;
+};
+
+export const RecordTableBodyEffect = ({
+  objectNamePlural,
+}: RecordTableBodyEffectProps) => {
   const {
     fetchMoreRecords: fetchMoreObjects,
     records,
     setRecordTableData,
     queryStateIdentifier,
     loading,
-  } = useObjectRecordTable();
+  } = useObjectRecordTable(objectNamePlural);
 
   const { tableLastRowVisibleState } = useRecordTableStates();
 

@@ -11,12 +11,9 @@ import { signInBackgroundMockCompanies } from '@/sign-in-background-mock/constan
 
 import { useFindManyRecords } from './useFindManyRecords';
 
-export const useObjectRecordTable = () => {
-  const {
-    objectNamePlural,
-    setRecordTableData,
-    setIsRecordTableInitialLoading,
-  } = useRecordTable();
+export const useObjectRecordTable = (objectNamePlural: string) => {
+  const { setRecordTableData, setIsRecordTableInitialLoading } =
+    useRecordTable();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
