@@ -185,7 +185,6 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
 
     for (const dataSource of dataSources) {
       if (!(await this.isWorkspaceCleanable(dataSource))) {
-        this.logger.log(`Workspace ${dataSource.workspaceId} not cleanable`);
         continue;
       }
 
