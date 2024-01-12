@@ -21,6 +21,7 @@ export const getObjectRecordIdentifier = ({
         name: record?.company?.name,
         avatarUrl: record.avatarUrl,
         avatarType: 'rounded',
+        linkToShowPage: `/opportunities/${record.id}`,
       };
   }
 
@@ -64,13 +65,13 @@ export const getObjectRecordIdentifier = ({
     objectMetadataItem,
   });
 
-  const linkToEntity = `${basePathToShowPage}${record.id}`;
+  const linkToShowPage = `${basePathToShowPage}${record.id}`;
 
   return {
     id: record.id,
     name: labelIdentifierFieldValue,
     avatarUrl,
     avatarType,
-    linkToEntity,
+    linkToShowPage,
   };
 };

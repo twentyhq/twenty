@@ -30,7 +30,14 @@ export const SingleEntitySelect = ({
     refs: [containerRef],
     callback: (event) => {
       event.stopImmediatePropagation();
-      onCancel?.();
+
+      const weAreNotInAnHTMLInput = !(
+        event.target instanceof HTMLInputElement &&
+        event.target.tagName === 'INPUT'
+      );
+      if (weAreNotInAnHTMLInput && onCancel) {
+        onCancel();
+      }
     },
   });
 

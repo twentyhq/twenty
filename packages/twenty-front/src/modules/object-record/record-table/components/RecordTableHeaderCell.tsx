@@ -3,13 +3,13 @@ import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 
 import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
-import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
 import { IconPlus } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { ColumnHeadWithDropdown } from './ColumnHeadWithDropdown';
 
@@ -81,39 +81,17 @@ export const RecordTableHeaderCell = ({
   createRecord: () => void;
 }) => {
   const {
-    resizeFieldOffsetScopeInjector,
-    tableColumnsScopeInjector,
-    tableColumnsByKeyScopeInjector,
-    visibleTableColumnsScopeInjector,
-  } = getRecordTableScopeInjector();
-
-  const {
-    injectStateWithRecordTableScopeId,
-    injectSelectorWithRecordTableScopeId,
-    injectSnapshotValueWithRecordTableScopeId,
-  } = useRecordTableScopedStates();
-
-  const resizeFieldOffsetState = injectStateWithRecordTableScopeId(
-    resizeFieldOffsetScopeInjector,
-  );
+    resizeFieldOffsetState,
+    tableColumnsState,
+    tableColumnsByKeySelector,
+    visibleTableColumnsSelector,
+  } = useRecordTableStates();
 
   const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
-    resizeFieldOffsetState,
+    resizeFieldOffsetState(),
   );
 
-  const tableColumnsState = injectStateWithRecordTableScopeId(
-    tableColumnsScopeInjector,
-  );
-
-  const tableColumnsByKeySelector = injectSelectorWithRecordTableScopeId(
-    tableColumnsByKeyScopeInjector,
-  );
-
-  const visibleTableColumnsSelector = injectSelectorWithRecordTableScopeId(
-    visibleTableColumnsScopeInjector,
-  );
-
-  const tableColumns = useRecoilValue(tableColumnsState);
+  const tableColumns = useRecoilValue(tableColumnsState());
   const tableColumnsByKey = useRecoilValue(tableColumnsByKeySelector);
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
 
@@ -147,9 +125,9 @@ export const RecordTableHeaderCell = ({
       async () => {
         if (!resizedFieldKey) return;
 
-        const resizeFieldOffset = injectSnapshotValueWithRecordTableScopeId(
+        const resizeFieldOffset = getSnapshotValue(
           snapshot,
-          resizeFieldOffsetScopeInjector,
+          resizeFieldOffsetState(),
         );
 
         const nextWidth = Math.round(
@@ -159,7 +137,7 @@ export const RecordTableHeaderCell = ({
           ),
         );
 
-        set(resizeFieldOffsetState, 0);
+        set(resizeFieldOffsetState(), 0);
         setInitialPointerPositionX(null);
         setResizedFieldKey(null);
 
@@ -175,8 +153,6 @@ export const RecordTableHeaderCell = ({
       },
     [
       resizedFieldKey,
-      injectSnapshotValueWithRecordTableScopeId,
-      resizeFieldOffsetScopeInjector,
       tableColumnsByKey,
       resizeFieldOffsetState,
       tableColumns,

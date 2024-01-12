@@ -36,7 +36,7 @@ export const TabList = ({ tabs, tabListId }: TabListProps) => {
 
   const { activeTabIdState, setActiveTabId } = useTabList(tabListId);
 
-  const activeTabId = useRecoilValue(activeTabIdState);
+  const activeTabId = useRecoilValue(activeTabIdState());
 
   React.useEffect(() => {
     setActiveTabId(initialActiveTabId);
