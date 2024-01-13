@@ -7,7 +7,7 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 
 @Injectable()
-export class RefreshAccessTokenService {
+export class GmailRefreshAccessTokenService {
   constructor(
     private readonly environmentService: EnvironmentService,
     private readonly dataSourceService: DataSourceService,

@@ -8,7 +8,6 @@ import { isSoftFocusOnTableCellFamilyStateScopeMap } from '@/object-record/recor
 import { isTableCellInEditModeFamilyStateScopeMap } from '@/object-record/record-table/states/isTableCellInEditModeFamilyStateScopeMap';
 import { numberOfTableRowsStateScopeMap } from '@/object-record/record-table/states/numberOfTableRowsStateScopeMap';
 import { objectMetadataConfigStateScopeMap } from '@/object-record/record-table/states/objectMetadataConfigStateScopeMap';
-import { objectNamePluralStateScopeMap } from '@/object-record/record-table/states/objectNamePluralStateScopeMap';
 import { onColumnsChangeStateScopeMap } from '@/object-record/record-table/states/onColumnsChangeStateScopeMap';
 import { onEntityCountChangeStateScopeMap } from '@/object-record/record-table/states/onEntityCountChangeStateScopeMap';
 import { resizeFieldOffsetStateScopeMap } from '@/object-record/record-table/states/resizeFieldOffsetStateScopeMap';
@@ -49,7 +48,6 @@ export const useRecordTableStates = (recordTableId?: string) => {
       objectMetadataConfigStateScopeMap,
       scopeId,
     ),
-    objectNamePluralState: getState(objectNamePluralStateScopeMap, scopeId),
     onColumnsChangeState: getState(onColumnsChangeStateScopeMap, scopeId),
     onEntityCountChangeState: getState(
       onEntityCountChangeStateScopeMap,

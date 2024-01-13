@@ -83,7 +83,7 @@ export const useFavorites = () => {
 
         return favorite;
       })
-      .toSorted((a, b) => a.position - b.position);
+      .sort((a, b) => a.position - b.position);
   }, [
     favoriteRelationFieldMetadataItems,
     favorites,

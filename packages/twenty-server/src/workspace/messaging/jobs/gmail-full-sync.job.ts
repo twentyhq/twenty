@@ -3,33 +3,29 @@ import { Injectable } from '@nestjs/common';
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { RefreshAccessTokenService } from 'src/workspace/messaging/services/refresh-access-token.service';
-import { FetchWorkspaceMessagesService } from 'src/workspace/messaging/services/fetch-workspace-messages.service';
+import { GmailRefreshAccessTokenService } from 'src/workspace/messaging/services/gmail-refresh-access-token.service';
+import { GmailFullSyncService } from 'src/workspace/messaging/services/gmail-full-sync.service';
 
-export type FetchAllMessagesFromConnectedAccountJobData = {
+export type GmailFullSyncJobData = {
   workspaceId: string;
   connectedAccountId: string;
 };
 
 @Injectable()
-export class FetchAllMessagesFromConnectedAccountJob
-  implements MessageQueueJob<FetchAllMessagesFromConnectedAccountJobData>
-{
+export class GmailFullSyncJob implements MessageQueueJob<GmailFullSyncJobData> {
   constructor(
     private readonly environmentService: EnvironmentService,
-    private readonly refreshAccessTokenService: RefreshAccessTokenService,
-    private readonly fetchWorkspaceMessagesService: FetchWorkspaceMessagesService,
+    private readonly gmailRefreshAccessTokenService: GmailRefreshAccessTokenService,
+    private readonly fetchWorkspaceMessagesService: GmailFullSyncService,
   ) {}
 
-  async handle(
-    data: FetchAllMessagesFromConnectedAccountJobData,
-  ): Promise<void> {
+  async handle(data: GmailFullSyncJobData): Promise<void> {
     console.log(
       `fetching messages for workspace ${data.workspaceId} and account ${
         data.connectedAccountId
       } with ${this.environmentService.getMessageQueueDriverType()}`,
     );
-    await this.refreshAccessTokenService.refreshAndSaveAccessToken(
+    await this.gmailRefreshAccessTokenService.refreshAndSaveAccessToken(
       data.workspaceId,
       data.connectedAccountId,
     );

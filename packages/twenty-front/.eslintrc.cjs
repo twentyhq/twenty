@@ -30,7 +30,7 @@ module.exports = {
         patterns: [
           {
             group: ['@tabler/icons-react'],
-            message: 'Icon imports are only allowed for `@/ui/icon`',
+            message: 'Icon imports are only allowed for `@/ui/display/icon`',
           },
           {
             group: ['react-hotkeys-web-hook'],

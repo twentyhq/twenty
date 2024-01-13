@@ -15,6 +15,7 @@ import {
   SettingsObjectFieldItemTableRow,
   StyledObjectFieldTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
+import { getFieldIdentifierType } from '@/settings/data-model/utils/getFieldIdentifierType';
 import { AppPath } from '@/types/AppPath';
 import { IconPlus, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -25,7 +26,6 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { sortFieldMetadataItem } from '~/utils/sortFieldMetadataItem';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -52,16 +52,12 @@ export const SettingsObjectDetail = () => {
 
   if (!activeObjectMetadataItem) return null;
 
-  const activeMetadataFields = activeObjectMetadataItem.fields
-    .filter(
-      (metadataField) => metadataField.isActive && !metadataField.isSystem,
-    )
-    .sort(sortFieldMetadataItem);
-  const disabledMetadataFields = activeObjectMetadataItem.fields
-    .filter(
-      (metadataField) => !metadataField.isActive && !metadataField.isSystem,
-    )
-    .sort(sortFieldMetadataItem);
+  const activeMetadataFields = activeObjectMetadataItem.fields.filter(
+    (metadataField) => metadataField.isActive && !metadataField.isSystem,
+  );
+  const disabledMetadataFields = activeObjectMetadataItem.fields.filter(
+    (metadataField) => !metadataField.isActive && !metadataField.isSystem,
+  );
 
   const handleDisableObject = async () => {
     await disableObjectMetadataItem(activeObjectMetadataItem);
@@ -98,7 +94,11 @@ export const SettingsObjectDetail = () => {
           <Table>
             <StyledObjectFieldTableRow>
               <TableHeader>Name</TableHeader>
-              <TableHeader>Field type</TableHeader>
+              <TableHeader>
+                {activeObjectMetadataItem.isCustom
+                  ? 'Identifier'
+                  : 'Field type'}
+              </TableHeader>
               <TableHeader>Data type</TableHeader>
               <TableHeader></TableHeader>
             </StyledObjectFieldTableRow>
@@ -107,6 +107,15 @@ export const SettingsObjectDetail = () => {
                 {activeMetadataFields.map((activeMetadataField) => (
                   <SettingsObjectFieldItemTableRow
                     key={activeMetadataField.id}
+                    identifierType={getFieldIdentifierType(
+                      activeMetadataField,
+                      activeObjectMetadataItem,
+                    )}
+                    variant={
+                      activeObjectMetadataItem.isCustom
+                        ? 'identifier'
+                        : 'field-type'
+                    }
                     fieldMetadataItem={activeMetadataField}
                     ActionIcon={
                       <SettingsObjectFieldActiveActionDropdown
@@ -134,6 +143,11 @@ export const SettingsObjectDetail = () => {
                 {disabledMetadataFields.map((disabledMetadataField) => (
                   <SettingsObjectFieldItemTableRow
                     key={disabledMetadataField.id}
+                    variant={
+                      activeObjectMetadataItem.isCustom
+                        ? 'identifier'
+                        : 'field-type'
+                    }
                     fieldMetadataItem={disabledMetadataField}
                     ActionIcon={
                       <SettingsObjectFieldDisabledActionDropdown
