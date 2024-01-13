@@ -66,20 +66,15 @@ export class WorkspaceQueryRunnerService {
       const { workspaceId, targetTableName } = options;
       const start = performance.now();
 
-      console.log('findMany start', start);
       const query = await this.workspaceQueryBuilderFactory.findMany(
         args,
         options,
       );
 
-      const startBuild = performance.now();
-
-      console.log('findMany query build', startBuild);
       const result = await this.execute(query, workspaceId);
       const end = performance.now();
 
-      console.log('findMany end', end);
-      console.log(`Execution time findMany: ${end - start} ms`);
+      console.log(`query time: ${end - start} ms`);
 
       return this.parseResult<IConnection<Record>>(result, targetTableName, '');
     } catch (exception) {
@@ -317,10 +312,6 @@ export class WorkspaceQueryRunnerService {
     query: string,
     workspaceId: string,
   ): Promise<PGGraphQLResult | undefined> {
-    const start = performance.now();
-
-    console.log('execute start', start);
-
     const workspaceDataSource =
       await this.workspaceDataSourceService.connectToWorkspaceDataSource(
         workspaceId,
@@ -337,10 +328,6 @@ export class WorkspaceQueryRunnerService {
         ${query}
       $$);
     `);
-    const end = performance.now();
-
-    console.log('execute end', end);
-    console.log(`Execution time execute: ${end - start} ms`);
 
     return results;
   }
