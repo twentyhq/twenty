@@ -315,8 +315,19 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     });
   }
 
-  public async findMany() {
-    return this.objectMetadataRepository.find({});
+  public async findMany(options?: FindManyOptions<ObjectMetadataEntity>) {
+    return this.objectMetadataRepository.find({
+      relations: [
+        'fields',
+        'fields.fromRelationMetadata',
+        'fields.toRelationMetadata',
+        'fields.fromRelationMetadata.toObjectMetadata',
+      ],
+      ...options,
+      where: {
+        ...options?.where,
+      },
+    });
   }
 
   public async deleteObjectsMetadata(workspaceId: string) {

@@ -7,7 +7,7 @@ import { MessageQueueService } from 'src/integrations/message-queue/services/mes
 import { CleanInactiveWorkspaceJob } from 'src/workspace/cron/clean-inactive-workspaces/clean-inactive-workspace.job';
 
 @Command({
-  name: 'clean-inactive-workspace',
+  name: 'clean-inactive-workspaces',
   description: 'Clean inactive workspaces',
 })
 export class CleanInactiveWorkspacesCommand extends CommandRunner {

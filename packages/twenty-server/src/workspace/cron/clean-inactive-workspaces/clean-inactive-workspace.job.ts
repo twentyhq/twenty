@@ -87,8 +87,8 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
     dataSource: DataSourceEntity,
     daysSinceInactive: number,
   ) {
-    const workspaceUsers =
-      await this.userService.loadWorkspaceUsers(dataSource);
+    const workspaceMembers =
+      await this.userService.loadWorkspaceMembers(dataSource);
 
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSource);
@@ -102,15 +102,15 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
     this.logger.log(
       `Sending workspace ${
         dataSource.workspaceId
-      } inactive since ${daysSinceInactive} days emails to users ['${workspaceUsers
+      } inactive since ${daysSinceInactive} days emails to users ['${workspaceMembers
         .map((workspaceUser) => workspaceUser.email)
         .join(', ')}']`,
     );
 
-    workspaceUsers.forEach((workspaceUser) => {
+    workspaceMembers.forEach((workspaceMember) => {
       const emailData = {
         daysLeft: this.inactiveDaysBeforeDelete - daysSinceInactive,
-        userName: `${workspaceUser.nameFirstName} ${workspaceUser.nameLastName}`,
+        userName: `${workspaceMember.nameFirstName} ${workspaceMember.nameLastName}`,
         workspaceDisplayName: `${displayName}`,
       };
       const emailTemplate = CleanInactiveWorkspaceEmail(emailData);
@@ -122,7 +122,7 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
       });
 
       this.emailService.send({
-        to: workspaceUser.email,
+        to: workspaceMember.email,
         from: `${this.environmentService.getEmailFromName()} <${this.environmentService.getEmailFromAddress()}>`,
         subject: 'Action Needed to Prevent Workspace Deletion',
         html,
@@ -197,7 +197,7 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
     this.logger.log('Job running...');
     if (!this.inactiveDaysBeforeDelete && !this.inactiveDaysBeforeEmail) {
       this.logger.log(
-        `'INACTIVE_DAYS_BEFORE_EMAIL' and 'INACTIVE_DAYS_BEFORE_DELETE' environment variables not set, please check this doc for more info: https://docs.twenty.com/start/self-hosting/environment-variables`,
+        `'WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION' and 'WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION' environment variables not set, please check this doc for more info: https://docs.twenty.com/start/self-hosting/environment-variables`,
       );
 
       return;

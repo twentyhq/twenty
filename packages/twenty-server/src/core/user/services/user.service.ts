@@ -49,7 +49,7 @@ export class UserService extends TypeOrmQueryService<User> {
     return userWorkspaceMember;
   }
 
-  async loadWorkspaceUsers(dataSource: DataSourceEntity) {
+  async loadWorkspaceMembers(dataSource: DataSourceEntity) {
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSource);
 

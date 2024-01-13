@@ -174,18 +174,18 @@ export class EnvironmentVariables {
 
   @CastToPositiveNumber()
   @IsNumber()
-  @ValidateIf((env) => env.INACTIVE_DAYS_BEFORE_DELETE > 0)
-  @IsStrictlyLowerThan('INACTIVE_DAYS_BEFORE_DELETE', {
+  @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION > 0)
+  @IsStrictlyLowerThan('WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION', {
     message:
-      '"INACTIVE_DAYS_BEFORE_EMAIL" should be strictly lower that "INACTIVE_DAYS_BEFORE_DELETE"',
+      '"WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION" should be strictly lower that "WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION"',
   })
-  @ValidateIf((env) => env.INACTIVE_DAYS_BEFORE_DELETE > 0)
-  INACTIVE_DAYS_BEFORE_EMAIL: number;
+  @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION > 0)
+  WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION: number;
 
   @CastToPositiveNumber()
   @IsNumber()
-  @ValidateIf((env) => env.INACTIVE_DAYS_BEFORE_EMAIL > 0)
-  INACTIVE_DAYS_BEFORE_DELETE: number;
+  @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION > 0)
+  WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION: number;
 
   @CastToBoolean()
   @IsOptional()

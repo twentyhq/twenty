@@ -268,13 +268,13 @@ export class EnvironmentService {
 
   getInactiveDaysBeforeEmail(): number | undefined {
     return this.configService.get<number | undefined>(
-      'INACTIVE_DAYS_BEFORE_EMAIL',
+      'WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION',
     );
   }
 
   getInactiveDaysBeforeDelete(): number | undefined {
     return this.configService.get<number | undefined>(
-      'INACTIVE_DAYS_BEFORE_DELETE',
+      'WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION',
     );
   }
 
