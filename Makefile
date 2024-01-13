@@ -1,6 +1,9 @@
 docker-dev-build:
 	make -C packages/twenty-docker dev-build
 
+docker-dev-up:
+	make -C packages/twenty-docker dev-up
+
 docker-dev-start:
 	make -C packages/twenty-docker dev-start
 

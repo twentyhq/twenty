@@ -2,6 +2,9 @@ dev-build:
 	@docker compose -f dev/docker-compose.yml down -v
 	@docker compose -f dev/docker-compose.yml build
 
+dev-up:
+	@docker compose -f dev/docker-compose.yml up -d
+
 dev-start:
 	@docker compose -f dev/docker-compose.yml start
 
