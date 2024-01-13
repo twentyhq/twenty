@@ -5,7 +5,12 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['.storybook/**/*', '**/*.stories.tsx', '**/*.test.ts'],
+      files: [
+        '.storybook/**/*',
+        '**/*.stories.tsx',
+        '**/*.test.ts',
+        '**/*.test.tsx',
+      ],
       rules: {
         'no-console': 'off',
       },
