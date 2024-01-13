@@ -39,22 +39,23 @@ const StyledRow = styled.div`
   padding: ${({ theme }) => theme.spacing(1.5)} 0;
 `;
 
-const StyledColorSample = styled(ColorSample)`
-  cursor: pointer;
-  margin-left: 9px;
-  margin-right: 14px;
-`;
-
 const StyledOptionRowNumber = styled.div`
   color: ${({ theme }) => theme.font.color.extraLight};
-  font-size: 13px;
-  font-weight: 500;
-  margin-left: 8px;
-  margin-right: 8px;
+  margin-left:  ${({ theme }) => theme.spacing(1)};
+  margin-right: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledColorSample = styled(ColorSample)`
+  cursor: pointer;
+  margin-left: ${({ theme }) => theme.spacing(1.5)};
+  margin-right: ${({ theme }) => theme.spacing(1.5)};
+  margin-top: ${({ theme }) => theme.spacing(1)};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledOptionInput = styled(TextInput)`
   flex: 1 0 auto;
+  margin-left: ${({ theme }) => theme.spacing(2)};
   margin-right: ${({ theme }) => theme.spacing(2)};
 
   & input {

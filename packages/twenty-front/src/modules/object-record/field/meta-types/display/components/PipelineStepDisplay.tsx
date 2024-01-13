@@ -3,7 +3,15 @@ import { Status } from '@/ui/display/status/components/Status';
 import { usePipelineStepField } from '../../hooks/usePipelineStepField';
 
 export const PipelineStepDisplay = () => {
-  const { fieldValue } = usePipelineStepField();
+  const { fieldValue, fieldDefinition } = usePipelineStepField();
 
-  return <Status color={fieldValue.color} text={fieldValue.label} />;
+  const selectedOption = fieldDefinition.metadata.options.find(
+    (option) => option.value === fieldValue,
+  );
+
+  return selectedOption ? ( 
+   <Status color={selectedOption.color} text={selectedOption.label} />
+  ) : (
+    <></>
+  );
 };

@@ -1,13 +1,7 @@
-import { z } from 'zod';
+import { FieldPipelineStepValue } from '@/object-record/field/types/FieldMetadata';
+import { isString } from '@sniptt/guards';
 
-import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
-
-const pipelineStepValueSchema = z.object({
-  color: themeColorSchema,
-  label: z.string(),
-});
 
 export const isFieldPipelineStepValue = (
   fieldValue: unknown,
-): fieldValue is z.infer<typeof pipelineStepValueSchema> =>
-  pipelineStepValueSchema.safeParse(fieldValue).success;
+): fieldValue is FieldPipelineStepValue => isString(fieldValue);

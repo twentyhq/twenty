@@ -5,6 +5,7 @@ import { isFieldFullName } from '@/object-record/field/types/guards/isFieldFullN
 import { isFieldFullNameValue } from '@/object-record/field/types/guards/isFieldFullNameValue';
 import { isFieldSelect } from '@/object-record/field/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/field/types/guards/isFieldSelectValue';
+import { isFieldPipelineStepValue } from '@/object-record/field/types/guards/isFieldPipelineStepValue';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { entityFieldsFamilySelector } from '../states/selectors/entityFieldsFamilySelector';
@@ -28,6 +29,7 @@ import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldRelationValue } from '../types/guards/isFieldRelationValue';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldTextValue } from '../types/guards/isFieldTextValue';
+import { isFieldPipelineStep } from '@/object-record/field/types/guards/isFieldPipelineStep';
 
 export const usePersistField = () => {
   const {
@@ -81,6 +83,9 @@ export const usePersistField = () => {
 
         const fieldIsSelect =
           isFieldSelect(fieldDefinition) && isFieldSelectValue(valueToPersist);
+        
+        const fieldIsPipelineStep =
+          isFieldPipelineStep(fieldDefinition) && isFieldPipelineStepValue(valueToPersist);
 
         if (fieldIsRelation) {
           const fieldName = fieldDefinition.metadata.fieldName;
@@ -110,7 +115,8 @@ export const usePersistField = () => {
           fieldIsLink ||
           fieldIsCurrency ||
           fieldIsFullName ||
-          fieldIsSelect
+          fieldIsSelect ||
+          fieldIsPipelineStep
         ) {
           const fieldName = fieldDefinition.metadata.fieldName;
           set(

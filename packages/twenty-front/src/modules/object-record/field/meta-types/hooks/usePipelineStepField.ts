@@ -11,6 +11,7 @@ import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
 import { FieldPipelineStepValue } from '../../types/FieldMetadata';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
+import { usePersistField } from '@/object-record/field/hooks/usePersistField';
 
 export const usePipelineStepField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
@@ -31,21 +32,18 @@ export const usePipelineStepField = () => {
   );
   const fieldPipelineStepValue = isFieldPipelineStepValue(fieldValue)
     ? fieldValue
-    : { color: 'green' as ThemeColor, label: '' };
+    : null;
 
   const fieldInitialValue = useFieldInitialValue();
 
-  const initialValue = {
-    color: 'green' as ThemeColor,
-    label: fieldInitialValue?.isEmpty
-      ? ''
-      : fieldInitialValue?.value ?? fieldPipelineStepValue?.label ?? '',
-  };
+  const persistField = usePersistField();
+
 
   return {
     fieldDefinition,
+    persistField,
     fieldValue: fieldPipelineStepValue,
-    initialValue,
+    initialValue: fieldInitialValue,
     setFieldValue,
     hotkeyScope,
   };
