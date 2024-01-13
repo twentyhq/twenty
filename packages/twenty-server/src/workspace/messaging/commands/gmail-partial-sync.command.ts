@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
 
-import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/core/feature-flag/feature-flag.entity';
 import { MessagingProducer } from 'src/workspace/messaging/producers/messaging-producer';
 import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
 
@@ -32,7 +35,7 @@ export class GmailPartialSyncCommand extends CommandRunner {
   ): Promise<void> {
     const isMessagingEnabled = await this.featureFlagRepository.findOneBy({
       workspaceId: options.workspaceId,
-      key: 'IS_MESSAGING_ENABLED',
+      key: FeatureFlagKeys.IsMessagingEnabled,
       value: true,
     });
 
