@@ -10,8 +10,8 @@ import { isFieldFullNameValue } from '@/object-record/field/types/guards/isField
 import { isFieldLink } from '@/object-record/field/types/guards/isFieldLink';
 import { isFieldLinkValue } from '@/object-record/field/types/guards/isFieldLinkValue';
 import { isFieldNumber } from '@/object-record/field/types/guards/isFieldNumber';
-import { isFieldPipelineSteps } from '@/object-record/field/types/guards/isFieldPipelineSteps';
-import { isFieldPipelineStepsValue } from '@/object-record/field/types/guards/isFieldPipelineStepsValue';
+import { isFieldPipelineStep } from '@/object-record/field/types/guards/isFieldPipelineStep';
+import { isFieldPipelineStepValue } from '@/object-record/field/types/guards/isFieldPipelineStepValue';
 import { isFieldRating } from '@/object-record/field/types/guards/isFieldRating';
 import { isFieldRelation } from '@/object-record/field/types/guards/isFieldRelation';
 import { isFieldRelationValue } from '@/object-record/field/types/guards/isFieldRelationValue';
@@ -51,8 +51,8 @@ export const isFieldValueEmpty = ({
     return isFieldSelectValue(fieldValue) && !assertNotNull(fieldValue);
   }
 
-  if (isFieldPipelineSteps(fieldDefinition)) {
-    return isFieldPipelineStepsValue(fieldValue) && !assertNotNull(fieldValue);
+  if (isFieldPipelineStep(fieldDefinition)) {
+    return isFieldPipelineStepValue(fieldValue) && !assertNotNull(fieldValue);
   }
 
   if (isFieldCurrency(fieldDefinition)) {

@@ -14,7 +14,7 @@ import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
 import { SettingsObjectFieldPreviewValueEffect } from '../components/SettingsObjectFieldPreviewValueEffect';
 import { useFieldPreview } from '../hooks/useFieldPreview';
 
-import { SettingsObjectFieldPipelineStepsFormValues } from './SettingsObjectFieldPipelineStepsForm';
+import { SettingsObjectFieldPipelineStepFormValues } from './SettingsObjectFieldPipelineStepForm';
 import { SettingsObjectFieldSelectFormValues } from './SettingsObjectFieldSelectForm';
 
 export type SettingsObjectFieldPreviewProps = {
@@ -23,7 +23,7 @@ export type SettingsObjectFieldPreviewProps = {
   objectMetadataId: string;
   relationObjectMetadataId?: string;
   selectOptions?: SettingsObjectFieldSelectFormValues;
-  pipelineStepsOptions?: SettingsObjectFieldPipelineStepsFormValues;
+  pipelineStepOptions?: SettingsObjectFieldPipelineStepFormValues;
   shrink?: boolean;
 };
 
@@ -80,7 +80,7 @@ export const SettingsObjectFieldPreview = ({
   objectMetadataId,
   relationObjectMetadataId,
   selectOptions,
-  pipelineStepsOptions,
+  pipelineStepOptions,
   shrink,
 }: SettingsObjectFieldPreviewProps) => {
   const theme = useTheme();
@@ -98,7 +98,7 @@ export const SettingsObjectFieldPreview = ({
     objectMetadataId,
     relationObjectMetadataId,
     selectOptions,
-    pipelineStepsOptions,
+    pipelineStepOptions,
   });
 
   return (

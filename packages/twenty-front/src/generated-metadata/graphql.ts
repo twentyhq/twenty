@@ -180,7 +180,7 @@ export enum FieldMetadataType {
   Select = 'SELECT',
   Text = 'TEXT',
   Uuid = 'UUID',
-  PipelineSteps = 'PIPELINE_STEPS'
+  PipelineStep = 'PIPELINE_STEP'
 }
 
 export type FullName = {

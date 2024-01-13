@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 
 import {
-  SettingsObjectFieldPipelineStepsForm,
-  SettingsObjectFieldPipelineStepsFormValues,
-} from '@/settings/data-model/components/SettingsObjectFieldPipelineStepsForm';
+  SettingsObjectFieldPipelineStepForm,
+  SettingsObjectFieldPipelineStepFormValues,
+} from '@/settings/data-model/components/SettingsObjectFieldPipelineStepForm';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Select } from '@/ui/input/components/Select';
 import { Section } from '@/ui/layout/section/components/Section';
@@ -35,7 +35,7 @@ export type SettingsObjectFieldTypeSelectSectionFormValues = {
   currency: SettingsObjectFieldCurrencyFormValues;
   relation: SettingsObjectFieldRelationFormValues;
   select: SettingsObjectFieldSelectFormValues;
-  pipelineSteps: SettingsObjectFieldPipelineStepsFormValues;
+  pipelineStep: SettingsObjectFieldPipelineStepFormValues;
 };
 
 type SettingsObjectFieldTypeSelectSectionProps = {
@@ -75,7 +75,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
   const currencyFormConfig = values.currency;
   const relationFormConfig = values.relation;
   const selectFormConfig = values.select;
-  const pipelineStepsFormConfig = values.pipelineSteps;
+  const pipelineStepFormConfig = values.pipelineStep;
 
   const fieldTypeOptions = Object.entries(settingsFieldMetadataTypes)
     .filter(([key]) => !excludedFieldTypes?.includes(key as FieldMetadataType))
@@ -104,7 +104,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
           FieldMetadataType.Currency,
           FieldMetadataType.DateTime,
           FieldMetadataType.Select,
-          FieldMetadataType.PipelineSteps,
+          FieldMetadataType.PipelineStep,
           FieldMetadataType.Link,
           FieldMetadataType.Number,
           FieldMetadataType.Rating,
@@ -125,7 +125,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
                     relationFormConfig?.objectMetadataId
                   }
                   selectOptions={selectFormConfig}
-                  pipelineStepsOptions={pipelineStepsFormConfig}
+                  pipelineStepOptions={pipelineStepFormConfig}
                 />
                 {values.type === FieldMetadataType.Relation &&
                   !!relationFormConfig?.type &&
@@ -183,11 +183,11 @@ export const SettingsObjectFieldTypeSelectSection = ({
                   values={selectFormConfig}
                   onChange={(nextValues) => onChange({ select: nextValues })}
                 />
-              ) : values.type === FieldMetadataType.PipelineSteps ? (
-                <SettingsObjectFieldPipelineStepsForm
-                  values={pipelineStepsFormConfig}
+              ) : values.type === FieldMetadataType.PipelineStep ? (
+                <SettingsObjectFieldPipelineStepForm
+                  values={pipelineStepFormConfig}
                   onChange={(nextValues) =>
-                    onChange({ pipelineSteps: nextValues })
+                    onChange({ pipelineStep: nextValues })
                   }
                 />
               ) : undefined

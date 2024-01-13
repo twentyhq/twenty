@@ -55,7 +55,7 @@ export const SettingsObjectFieldEdit = () => {
     hasFormChanged,
     hasRelationFormChanged,
     hasSelectFormChanged,
-    hasPipelineStepsFormChanged,
+    hasPipelineStepFormChanged,
     initForm,
     isInitialized,
     isValid,
@@ -83,11 +83,11 @@ export const SettingsObjectFieldEdit = () => {
       (optionA, optionB) => optionA.position - optionB.position,
     );
 
-    const pipelineStepsOptions = activeMetadataField.options?.map((option) => ({
+    const pipelineStepOptions = activeMetadataField.options?.map((option) => ({
       ...option,
       isDefault: defaultValue === option.value,
     }));
-    pipelineStepsOptions?.sort(
+    pipelineStepOptions?.sort(
       (optionA, optionB) => optionA.position - optionB.position,
     );
 
@@ -106,8 +106,8 @@ export const SettingsObjectFieldEdit = () => {
         type: relationType || RelationMetadataType.OneToMany,
       },
       ...(selectOptions?.length ? { select: selectOptions } : {}),
-      ...(pipelineStepsOptions?.length
-        ? { pipelineSteps: pipelineStepsOptions }
+      ...(pipelineStepOptions?.length
+        ? { pipelineStep: pipelineStepOptions }
         : {}),
     });
   }, [
@@ -145,7 +145,7 @@ export const SettingsObjectFieldEdit = () => {
       if (
         hasFieldFormChanged ||
         hasSelectFormChanged ||
-        hasPipelineStepsFormChanged
+        hasPipelineStepFormChanged
       ) {
         await editMetadataField({
           description: validatedFormValues.description,
@@ -155,8 +155,8 @@ export const SettingsObjectFieldEdit = () => {
           options:
             validatedFormValues.type === FieldMetadataType.Select
               ? validatedFormValues.select
-              : validatedFormValues.type === FieldMetadataType.PipelineSteps
-                ? validatedFormValues.pipelineSteps
+              : validatedFormValues.type === FieldMetadataType.PipelineStep
+                ? validatedFormValues.pipelineStep
                 : undefined,
         });
       }
@@ -219,7 +219,7 @@ export const SettingsObjectFieldEdit = () => {
             currency: formValues.currency,
             relation: formValues.relation,
             select: formValues.select,
-            pipelineSteps: formValues.pipelineSteps,
+            pipelineStep: formValues.pipelineStep,
           }}
         />
         <Section>

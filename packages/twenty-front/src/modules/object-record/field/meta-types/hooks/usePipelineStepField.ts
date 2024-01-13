@@ -1,35 +1,35 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
-import { isFieldPipelineSteps } from '@/object-record/field/types/guards/isFieldPipelineSteps';
-import { isFieldPipelineStepsValue } from '@/object-record/field/types/guards/isFieldPipelineStepsValue';
+import { isFieldPipelineStep } from '@/object-record/field/types/guards/isFieldPipelineStep';
+import { isFieldPipelineStepValue } from '@/object-record/field/types/guards/isFieldPipelineStepValue';
 import { ThemeColor } from '@/ui/theme/constants/colors';
 import { FieldMetadataType } from '~/generated/graphql';
 
 import { FieldContext } from '../../contexts/FieldContext';
 import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
-import { FieldPipelineStepsValue } from '../../types/FieldMetadata';
+import { FieldPipelineStepValue } from '../../types/FieldMetadata';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 
-export const usePipelineStepsField = () => {
+export const usePipelineStepField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
   assertFieldMetadata(
-    FieldMetadataType.PipelineSteps,
-    isFieldPipelineSteps,
+    FieldMetadataType.PipelineStep,
+    isFieldPipelineStep,
     fieldDefinition,
   );
 
   const { fieldName } = fieldDefinition.metadata;
 
-  const [fieldValue, setFieldValue] = useRecoilState<FieldPipelineStepsValue>(
+  const [fieldValue, setFieldValue] = useRecoilState<FieldPipelineStepValue>(
     entityFieldsFamilySelector({
       entityId: entityId,
       fieldName: fieldName,
     }),
   );
-  const fieldPipelineStepsValue = isFieldPipelineStepsValue(fieldValue)
+  const fieldPipelineStepValue = isFieldPipelineStepValue(fieldValue)
     ? fieldValue
     : { color: 'green' as ThemeColor, label: '' };
 
@@ -39,12 +39,12 @@ export const usePipelineStepsField = () => {
     color: 'green' as ThemeColor,
     label: fieldInitialValue?.isEmpty
       ? ''
-      : fieldInitialValue?.value ?? fieldPipelineStepsValue?.label ?? '',
+      : fieldInitialValue?.value ?? fieldPipelineStepValue?.label ?? '',
   };
 
   return {
     fieldDefinition,
-    fieldValue: fieldPipelineStepsValue,
+    fieldValue: fieldPipelineStepValue,
     initialValue,
     setFieldValue,
     hotkeyScope,

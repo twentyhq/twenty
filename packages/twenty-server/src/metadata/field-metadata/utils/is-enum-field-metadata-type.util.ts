@@ -5,12 +5,12 @@ export const isEnumFieldMetadataType = (
 ): type is
   | FieldMetadataType.RATING
   | FieldMetadataType.SELECT
-  | FieldMetadataType.PIPELINE_STEPS
+  | FieldMetadataType.PIPELINE_STEP
   | FieldMetadataType.MULTI_SELECT => {
   return (
     type === FieldMetadataType.RATING ||
     type === FieldMetadataType.SELECT ||
-    type === FieldMetadataType.PIPELINE_STEPS ||
+    type === FieldMetadataType.PIPELINE_STEP ||
     type === FieldMetadataType.MULTI_SELECT
   );
 };

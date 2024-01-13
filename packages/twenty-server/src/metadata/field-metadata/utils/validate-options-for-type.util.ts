@@ -12,7 +12,7 @@ import {
 export const optionsValidatorsMap = {
   [FieldMetadataType.RATING]: [FieldMetadataDefaultOptions],
   [FieldMetadataType.SELECT]: [FieldMetadataComplexOptions],
-  [FieldMetadataType.PIPELINE_STEPS]: [FieldMetadataComplexOptions],
+  [FieldMetadataType.PIPELINE_STEP]: [FieldMetadataComplexOptions],
   [FieldMetadataType.MULTI_SELECT]: [FieldMetadataComplexOptions],
 };
 

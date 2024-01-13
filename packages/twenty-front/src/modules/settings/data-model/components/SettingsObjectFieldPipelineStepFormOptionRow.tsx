@@ -21,14 +21,14 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelectColor } from '@/ui/navigation/menu-item/components/MenuItemSelectColor';
 import { mainColorNames } from '@/ui/theme/constants/colors';
 
-import { SettingsObjectFieldPipelineStepsFormOption } from '../types/SettingsObjectFieldPipelineStepsFormOption';
+import { SettingsObjectFieldPipelineStepFormOption } from '../types/SettingsObjectFieldPipelineStepFormOption';
 
-type SettingsObjectFieldPipelineStepsFormOptionRowProps = {
+type SettingsObjectFieldPipelineStepFormOptionRowProps = {
   className?: string;
   isDefault?: boolean;
-  onChange: (value: SettingsObjectFieldPipelineStepsFormOption) => void;
+  onChange: (value: SettingsObjectFieldPipelineStepFormOption) => void;
   onRemove?: () => void;
-  option: SettingsObjectFieldPipelineStepsFormOption;
+  option: SettingsObjectFieldPipelineStepFormOption;
   index: number;
 };
 
@@ -62,18 +62,18 @@ const StyledOptionInput = styled(TextInput)`
   }
 `;
 
-export const SettingsObjectFieldPipelineStepsFormOptionRow = ({
+export const SettingsObjectFieldPipelineStepFormOptionRow = ({
   className,
   isDefault,
   onChange,
   onRemove,
   option,
   index,
-}: SettingsObjectFieldPipelineStepsFormOptionRowProps) => {
+}: SettingsObjectFieldPipelineStepFormOptionRowProps) => {
   const theme = useTheme();
 
   const dropdownIds = useMemo(() => {
-    const baseScopeId = `pipelinesteps-field-option-row-${v4()}`;
+    const baseScopeId = `PipelineStep-field-option-row-${v4()}`;
     return { color: `${baseScopeId}-color`, actions: `${baseScopeId}-actions` };
   }, []);
 

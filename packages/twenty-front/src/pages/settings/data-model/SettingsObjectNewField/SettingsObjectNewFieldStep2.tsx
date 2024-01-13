@@ -219,8 +219,8 @@ export const SettingsObjectNewFieldStep2 = () => {
           options:
             validatedFormValues.type === FieldMetadataType.Select
               ? validatedFormValues.select
-              : validatedFormValues.type === FieldMetadataType.PipelineSteps
-                ? validatedFormValues.pipelineSteps
+              : validatedFormValues.type === FieldMetadataType.PipelineStep
+                ? validatedFormValues.pipelineStep
                 : undefined,
         });
 
@@ -321,7 +321,7 @@ export const SettingsObjectNewFieldStep2 = () => {
             currency: formValues.currency,
             relation: formValues.relation,
             select: formValues.select,
-            pipelineSteps: formValues.pipelineSteps,
+            pipelineStep: formValues.pipelineStep,
           }}
         />
       </SettingsPageContainer>

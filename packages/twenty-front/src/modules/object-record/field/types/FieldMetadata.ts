@@ -90,7 +90,7 @@ export type FieldSelectMetadata = {
   options: { label: string; color: ThemeColor; value: string }[];
 };
 
-export type FieldPipelineStepsMetadata = {
+export type FieldPipelineStepMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
 };
@@ -109,7 +109,7 @@ export type FieldMetadata =
   | FieldSelectMetadata
   | FieldTextMetadata
   | FieldUuidMetadata
-  | FieldPipelineStepsMetadata;
+  | FieldPipelineStepMetadata;
 
 export type FieldTextValue = string;
 export type FieldUUidValue = string;
@@ -127,6 +127,6 @@ export type FieldCurrencyValue = {
 export type FieldFullNameValue = { firstName: string; lastName: string };
 export type FieldRatingValue = '1' | '2' | '3' | '4' | '5';
 export type FieldSelectValue = string | null;
-export type FieldPipelineStepsValue = { color: ThemeColor; label: string };
+export type FieldPipelineStepValue = { color: ThemeColor; label: string };
 
 export type FieldRelationValue = EntityForSelect | null;

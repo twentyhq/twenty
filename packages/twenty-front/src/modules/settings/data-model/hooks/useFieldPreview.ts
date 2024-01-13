@@ -1,5 +1,5 @@
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
-import { SettingsObjectFieldPipelineStepsFormOption } from '@/settings/data-model/types/SettingsObjectFieldPipelineStepsFormOption';
+import { SettingsObjectFieldPipelineStepFormOption } from '@/settings/data-model/types/SettingsObjectFieldPipelineStepFormOption';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -14,13 +14,13 @@ export const useFieldPreview = ({
   objectMetadataId,
   relationObjectMetadataId,
   selectOptions,
-  pipelineStepsOptions,
+  pipelineStepOptions,
 }: {
   fieldMetadata: Pick<Field, 'icon' | 'label' | 'type'> & { id?: string };
   objectMetadataId: string;
   relationObjectMetadataId?: string;
   selectOptions?: SettingsObjectFieldSelectFormOption[];
-  pipelineStepsOptions?: SettingsObjectFieldPipelineStepsFormOption[];
+  pipelineStepOptions?: SettingsObjectFieldPipelineStepFormOption[];
 }) => {
   const { findObjectMetadataItemById } = useObjectMetadataItemForSettings();
   const objectMetadataItem = findObjectMetadataItemById(objectMetadataId);
@@ -60,13 +60,13 @@ export const useFieldPreview = ({
         )
       : undefined;
 
-  const defaultPipelineStepsValue = pipelineStepsOptions?.[0];
-  const pipelineStepsValue =
-    fieldMetadata.type === FieldMetadataType.PipelineSteps &&
+  const defaultPipelineStepValue = pipelineStepOptions?.[0];
+  const pipelineStepValue =
+    fieldMetadata.type === FieldMetadataType.PipelineStep &&
     typeof firstRecordFieldValue === 'string'
-      ? pipelineStepsOptions?.find(
-          (pipelineStepsOpition) =>
-            pipelineStepsOpition.value === firstRecordFieldValue,
+      ? pipelineStepOptions?.find(
+          (pipelineStepOpition) =>
+            pipelineStepOpition.value === firstRecordFieldValue,
         )
       : undefined;
   return {
@@ -81,8 +81,8 @@ export const useFieldPreview = ({
         ? relationValue
         : fieldMetadata.type === FieldMetadataType.Select
           ? selectValue || defaultSelectValue
-          : fieldMetadata.type === FieldMetadataType.PipelineSteps
-            ? pipelineStepsValue || defaultPipelineStepsValue
+          : fieldMetadata.type === FieldMetadataType.PipelineStep
+            ? pipelineStepValue || defaultPipelineStepValue
             : firstRecordFieldValue || settingsFieldMetadataType?.defaultValue,
   };
 };

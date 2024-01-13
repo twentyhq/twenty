@@ -10,16 +10,16 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { mainColorNames, ThemeColor } from '@/ui/theme/constants/colors';
 
-import { SettingsObjectFieldPipelineStepsFormOption } from '../types/SettingsObjectFieldPipelineStepsFormOption';
+import { SettingsObjectFieldPipelineStepFormOption } from '../types/SettingsObjectFieldPipelineStepFormOption';
 
-import { SettingsObjectFieldPipelineStepsFormOptionRow } from './SettingsObjectFieldPipelineStepsFormOptionRow';
+import { SettingsObjectFieldPipelineStepFormOptionRow } from './SettingsObjectFieldPipelineStepFormOptionRow';
 
-export type SettingsObjectFieldPipelineStepsFormValues =
-  SettingsObjectFieldPipelineStepsFormOption[];
+export type SettingsObjectFieldPipelineStepFormValues =
+  SettingsObjectFieldPipelineStepFormOption[];
 
-type SettingsObjectFieldPipelineStepsFormProps = {
-  onChange: (values: SettingsObjectFieldPipelineStepsFormValues) => void;
-  values: SettingsObjectFieldPipelineStepsFormValues;
+type SettingsObjectFieldPipelineStepFormProps = {
+  onChange: (values: SettingsObjectFieldPipelineStepFormValues) => void;
+  values: SettingsObjectFieldPipelineStepFormValues;
 };
 
 const StyledContainer = styled(CardContent)`
@@ -54,10 +54,10 @@ const getNextColor = (currentColor: ThemeColor) => {
   return mainColorNames[nextColorIndex];
 };
 
-export const SettingsObjectFieldPipelineStepsForm = ({
+export const SettingsObjectFieldPipelineStepForm = ({
   onChange,
   values,
-}: SettingsObjectFieldPipelineStepsFormProps) => {
+}: SettingsObjectFieldPipelineStepFormProps) => {
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
@@ -83,7 +83,7 @@ export const SettingsObjectFieldPipelineStepsForm = ({
                   index={index}
                   isDragDisabled={values.length === 1}
                   itemComponent={
-                    <SettingsObjectFieldPipelineStepsFormOptionRow
+                    <SettingsObjectFieldPipelineStepFormOptionRow
                       key={option.value}
                       isDefault={option.isDefault}
                       index={index}

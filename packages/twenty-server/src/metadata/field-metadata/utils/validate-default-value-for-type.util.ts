@@ -38,7 +38,7 @@ export const defaultValueValidatorsMap = {
   [FieldMetadataType.FULL_NAME]: [FieldMetadataDefaultValueFullName],
   [FieldMetadataType.RATING]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.SELECT]: [FieldMetadataDefaultValueString],
-  [FieldMetadataType.PIPELINE_STEPS]: [FieldMetadataDefaultValueString],
+  [FieldMetadataType.PIPELINE_STEP]: [FieldMetadataDefaultValueString],
   [FieldMetadataType.MULTI_SELECT]: [FieldMetadataDefaultValueStringArray],
 };
 

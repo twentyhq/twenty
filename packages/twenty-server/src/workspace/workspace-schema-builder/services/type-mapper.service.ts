@@ -117,7 +117,7 @@ export class TypeMapperService {
       [FieldMetadataType.PROBABILITY, OrderByDirectionType],
       [FieldMetadataType.RATING, OrderByDirectionType],
       [FieldMetadataType.SELECT, OrderByDirectionType],
-      [FieldMetadataType.PIPELINE_STEPS, OrderByDirectionType],
+      [FieldMetadataType.PIPELINE_STEP, OrderByDirectionType],
       [FieldMetadataType.MULTI_SELECT, OrderByDirectionType],
     ]);
 

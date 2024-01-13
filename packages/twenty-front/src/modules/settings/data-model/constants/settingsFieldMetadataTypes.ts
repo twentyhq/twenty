@@ -63,8 +63,8 @@ export const settingsFieldMetadataTypes: Partial<
     Icon: IconCalendarEvent,
     defaultValue: defaultDateValue.toISOString(),
   },
-  [FieldMetadataType.PipelineSteps]: {
-    label: 'Pipeline Steps',
+  [FieldMetadataType.PipelineStep]: {
+    label: 'Pipeline Step',
     Icon: IconLayoutKanban,
   },
   [FieldMetadataType.Select]: {

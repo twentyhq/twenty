@@ -16,4 +16,4 @@ export type FieldType =
   | 'TEXT'
   | 'URL'
   | 'UUID'
-  | 'PIPELINE_STEPS';
+  | 'PIPELINE_STEP';

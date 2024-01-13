@@ -26,7 +26,7 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
       return 'timestamp';
     case FieldMetadataType.RATING:
     case FieldMetadataType.SELECT:
-    case FieldMetadataType.PIPELINE_STEPS:
+    case FieldMetadataType.PIPELINE_STEP:
     case FieldMetadataType.MULTI_SELECT:
       return 'enum';
     default:

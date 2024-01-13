@@ -35,7 +35,7 @@ export enum FieldMetadataType {
   SELECT = 'SELECT',
   MULTI_SELECT = 'MULTI_SELECT',
   RELATION = 'RELATION',
-  PIPELINE_STEPS = 'PIPELINE_STEPS',
+  PIPELINE_STEP = 'PIPELINE_STEP',
 }
 
 @Entity('fieldMetadata')
