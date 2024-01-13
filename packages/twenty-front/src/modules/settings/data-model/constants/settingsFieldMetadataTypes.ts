@@ -4,6 +4,7 @@ import {
   IconCheck,
   IconCoins,
   IconKey,
+  IconLayoutKanban,
   IconLink,
   IconMail,
   IconNumbers,
@@ -61,6 +62,10 @@ export const settingsFieldMetadataTypes: Partial<
     label: 'Date & Time',
     Icon: IconCalendarEvent,
     defaultValue: defaultDateValue.toISOString(),
+  },
+  [FieldMetadataType.PipelineSteps]: {
+    label: 'Pipeline Steps',
+    Icon: IconLayoutKanban,
   },
   [FieldMetadataType.Select]: {
     label: 'Select',

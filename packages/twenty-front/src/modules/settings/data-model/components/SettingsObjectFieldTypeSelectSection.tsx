@@ -1,5 +1,9 @@
 import styled from '@emotion/styled';
 
+import {
+  SettingsObjectFieldPipelineStepsForm,
+  SettingsObjectFieldPipelineStepsFormValues,
+} from '@/settings/data-model/components/SettingsObjectFieldPipelineStepsForm';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Select } from '@/ui/input/components/Select';
 import { Section } from '@/ui/layout/section/components/Section';
@@ -31,6 +35,7 @@ export type SettingsObjectFieldTypeSelectSectionFormValues = {
   currency: SettingsObjectFieldCurrencyFormValues;
   relation: SettingsObjectFieldRelationFormValues;
   select: SettingsObjectFieldSelectFormValues;
+  pipelineSteps: SettingsObjectFieldPipelineStepsFormValues;
 };
 
 type SettingsObjectFieldTypeSelectSectionProps = {
@@ -70,6 +75,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
   const currencyFormConfig = values.currency;
   const relationFormConfig = values.relation;
   const selectFormConfig = values.select;
+  const pipelineStepsFormConfig = values.pipelineSteps;
 
   const fieldTypeOptions = Object.entries(settingsFieldMetadataTypes)
     .filter(([key]) => !excludedFieldTypes?.includes(key as FieldMetadataType))
@@ -98,6 +104,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
           FieldMetadataType.Currency,
           FieldMetadataType.DateTime,
           FieldMetadataType.Select,
+          FieldMetadataType.PipelineSteps,
           FieldMetadataType.Link,
           FieldMetadataType.Number,
           FieldMetadataType.Rating,
@@ -118,6 +125,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
                     relationFormConfig?.objectMetadataId
                   }
                   selectOptions={selectFormConfig}
+                  pipelineStepsOptions={pipelineStepsFormConfig}
                 />
                 {values.type === FieldMetadataType.Relation &&
                   !!relationFormConfig?.type &&
@@ -174,6 +182,13 @@ export const SettingsObjectFieldTypeSelectSection = ({
                 <SettingsObjectFieldSelectForm
                   values={selectFormConfig}
                   onChange={(nextValues) => onChange({ select: nextValues })}
+                />
+              ) : values.type === FieldMetadataType.PipelineSteps ? (
+                <SettingsObjectFieldPipelineStepsForm
+                  values={pipelineStepsFormConfig}
+                  onChange={(nextValues) =>
+                    onChange({ pipelineSteps: nextValues })
+                  }
                 />
               ) : undefined
             }

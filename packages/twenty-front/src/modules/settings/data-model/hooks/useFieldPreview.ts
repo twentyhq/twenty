@@ -1,4 +1,5 @@
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { SettingsObjectFieldPipelineStepsFormOption } from '@/settings/data-model/types/SettingsObjectFieldPipelineStepsFormOption';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -13,11 +14,13 @@ export const useFieldPreview = ({
   objectMetadataId,
   relationObjectMetadataId,
   selectOptions,
+  pipelineStepsOptions,
 }: {
   fieldMetadata: Pick<Field, 'icon' | 'label' | 'type'> & { id?: string };
   objectMetadataId: string;
   relationObjectMetadataId?: string;
   selectOptions?: SettingsObjectFieldSelectFormOption[];
+  pipelineStepsOptions?: SettingsObjectFieldPipelineStepsFormOption[];
 }) => {
   const { findObjectMetadataItemById } = useObjectMetadataItemForSettings();
   const objectMetadataItem = findObjectMetadataItemById(objectMetadataId);
@@ -57,6 +60,15 @@ export const useFieldPreview = ({
         )
       : undefined;
 
+  const defaultPipelineStepsValue = pipelineStepsOptions?.[0];
+  const pipelineStepsValue =
+    fieldMetadata.type === FieldMetadataType.PipelineSteps &&
+    typeof firstRecordFieldValue === 'string'
+      ? pipelineStepsOptions?.find(
+          (pipelineStepsOpition) =>
+            pipelineStepsOpition.value === firstRecordFieldValue,
+        )
+      : undefined;
   return {
     entityId: `${objectMetadataId}-field-form`,
     FieldIcon,
@@ -69,6 +81,8 @@ export const useFieldPreview = ({
         ? relationValue
         : fieldMetadata.type === FieldMetadataType.Select
           ? selectValue || defaultSelectValue
-          : firstRecordFieldValue || settingsFieldMetadataType?.defaultValue,
+          : fieldMetadata.type === FieldMetadataType.PipelineSteps
+            ? pipelineStepsValue || defaultPipelineStepsValue
+            : firstRecordFieldValue || settingsFieldMetadataType?.defaultValue,
   };
 };

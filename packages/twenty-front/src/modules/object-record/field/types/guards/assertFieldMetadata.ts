@@ -9,6 +9,7 @@ import {
   FieldMetadata,
   FieldNumberMetadata,
   FieldPhoneMetadata,
+  FieldPipelineStepsMetadata,
   FieldRatingMetadata,
   FieldRelationMetadata,
   FieldSelectMetadata,
@@ -47,7 +48,9 @@ type AssertFieldMetadataFunction = <
                             ? FieldTextMetadata
                             : E extends 'UUID'
                               ? FieldUuidMetadata
-                              : never,
+                              : E extends 'PIPELINE_STEPS'
+                                ? FieldPipelineStepsMetadata
+                                : never,
 >(
   fieldType: E,
   fieldTypeGuard: (

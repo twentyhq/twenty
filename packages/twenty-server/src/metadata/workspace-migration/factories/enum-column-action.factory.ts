@@ -16,6 +16,7 @@ import { ColumnActionAbstractFactory } from 'src/metadata/workspace-migration/fa
 export type EnumFieldMetadataType =
   | FieldMetadataType.RATING
   | FieldMetadataType.SELECT
+  | FieldMetadataType.PIPELINE_STEPS
   | FieldMetadataType.MULTI_SELECT;
 
 @Injectable()

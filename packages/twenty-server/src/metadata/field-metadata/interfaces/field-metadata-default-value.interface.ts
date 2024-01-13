@@ -48,6 +48,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.FULL_NAME]: FieldMetadataDefaultValueFullName;
   [FieldMetadataType.RATING]: FieldMetadataDefaultValueString;
   [FieldMetadataType.SELECT]: FieldMetadataDefaultValueString;
+  [FieldMetadataType.PIPELINE_STEPS]: FieldMetadataDefaultValueString;
   [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueStringArray;
 };
 

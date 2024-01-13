@@ -7,6 +7,7 @@ import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.en
 type FieldMetadataOptionsMapping = {
   [FieldMetadataType.RATING]: FieldMetadataDefaultOptions[];
   [FieldMetadataType.SELECT]: FieldMetadataComplexOptions[];
+  [FieldMetadataType.PIPELINE_STEPS]: FieldMetadataComplexOptions[];
   [FieldMetadataType.MULTI_SELECT]: FieldMetadataComplexOptions[];
 };
 

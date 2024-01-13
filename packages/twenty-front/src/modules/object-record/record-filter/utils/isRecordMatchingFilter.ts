@@ -255,6 +255,7 @@ export const isRecordMatchingFilter = ({
         case FieldMetadataType.Currency:
         case FieldMetadataType.MultiSelect:
         case FieldMetadataType.Select:
+        case FieldMetadataType.PipelineSteps:
         case FieldMetadataType.Probability:
         case FieldMetadataType.Rating: {
           throw new Error('Not implemented yet');

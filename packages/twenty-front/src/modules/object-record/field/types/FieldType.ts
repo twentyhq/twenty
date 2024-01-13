@@ -15,4 +15,5 @@ export type FieldType =
   | 'SELECT'
   | 'TEXT'
   | 'URL'
-  | 'UUID';
+  | 'UUID'
+  | 'PIPELINE_STEPS';

@@ -74,6 +74,7 @@ export class WorkspaceMigrationFactory {
       [FieldMetadataType.DATE_TIME, { factory: this.basicColumnActionFactory }],
       [FieldMetadataType.RATING, { factory: this.enumColumnActionFactory }],
       [FieldMetadataType.SELECT, { factory: this.enumColumnActionFactory }],
+      [FieldMetadataType.PIPELINE_STEPS, { factory: this.enumColumnActionFactory }],
       [
         FieldMetadataType.MULTI_SELECT,
         { factory: this.enumColumnActionFactory },

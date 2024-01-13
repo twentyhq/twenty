@@ -30,6 +30,7 @@ export const fieldMetadataFormDefaultValues: FormValues = {
     field: { label: '' },
   },
   select: [{ color: 'green', label: 'Option 1', value: v4() }],
+  pipelineSteps: [{ color: 'green', label: 'Option 1', value: v4() }],
 };
 
 const fieldSchema = z.object({
@@ -78,10 +79,27 @@ const selectSchema = fieldSchema.merge(
   }),
 );
 
+const pipelineStepsSchema = fieldSchema.merge(
+  z.object({
+    type: z.literal(FieldMetadataType.PipelineSteps),
+    pipelineSteps: z
+      .array(
+        z.object({
+          color: themeColorSchema,
+          id: z.string().optional(),
+          isDefault: z.boolean().optional(),
+          label: z.string().min(1),
+        }),
+      )
+      .nonempty(),
+  }),
+);
+
 const {
   Currency: _Currency,
   Relation: _Relation,
   Select: _Select,
+  PipelineSteps: _PipelineStep,
   ...otherFieldTypes
 } = FieldMetadataType;
 
@@ -90,6 +108,7 @@ type OtherFieldType = Exclude<
   | FieldMetadataType.Currency
   | FieldMetadataType.Relation
   | FieldMetadataType.Select
+  | FieldMetadataType.PipelineSteps
 >;
 
 const otherFieldTypesSchema = fieldSchema.merge(
@@ -104,6 +123,7 @@ const schema = z.discriminatedUnion('type', [
   currencySchema,
   relationSchema,
   selectSchema,
+  pipelineStepsSchema,
   otherFieldTypesSchema,
 ]);
 
@@ -122,6 +142,9 @@ export const useFieldMetadataForm = () => {
   const [hasCurrencyFormChanged, setHasCurrencyFormChanged] = useState(false);
   const [hasRelationFormChanged, setHasRelationFormChanged] = useState(false);
   const [hasSelectFormChanged, setHasSelectFormChanged] = useState(false);
+  const [hasPipelineStepsFormChanged, setHasPiplineStepsChanged] =
+    useState(false);
+
   const [validationResult, setValidationResult] = useState(
     schema.safeParse(formValues),
   );
@@ -167,12 +190,14 @@ export const useFieldMetadataForm = () => {
       currency: initialCurrencyFormValues,
       relation: initialRelationFormValues,
       select: initialSelectFormValues,
+      pipelineSteps: initialPipelineStepsValues,
       ...initialFieldFormValues
     } = initialFormValues;
     const {
       currency: nextCurrencyFormValues,
       relation: nextRelationFormValues,
       select: nextSelectFormValues,
+      pipelineSteps: nextPipelineStepsValues,
       ...nextFieldFormValues
     } = nextFormValues;
 
@@ -191,6 +216,10 @@ export const useFieldMetadataForm = () => {
       nextFieldFormValues.type === FieldMetadataType.Select &&
         !isDeeplyEqual(initialSelectFormValues, nextSelectFormValues),
     );
+    setHasPiplineStepsChanged(
+      nextFieldFormValues.type === FieldMetadataType.PipelineSteps &&
+        !isDeeplyEqual(initialPipelineStepsValues, nextPipelineStepsValues),
+    );
   };
 
   return {
@@ -201,9 +230,11 @@ export const useFieldMetadataForm = () => {
       hasFieldFormChanged ||
       hasCurrencyFormChanged ||
       hasRelationFormChanged ||
-      hasSelectFormChanged,
+      hasSelectFormChanged ||
+      hasPipelineStepsFormChanged,
     hasRelationFormChanged,
     hasSelectFormChanged,
+    hasPipelineStepsFormChanged,
     initForm,
     isInitialized,
     isValid: validationResult.success,

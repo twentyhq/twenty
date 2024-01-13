@@ -1,5 +1,7 @@
 import { useContext } from 'react';
 
+import { PipelineStepsDisplay } from '@/object-record/field/meta-types/display/components/PipelineStepsDisplay';
+
 import { FieldContext } from '../contexts/FieldContext';
 import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisplay';
 import { CurrencyFieldDisplay } from '../meta-types/display/components/CurrencyFieldDisplay';
@@ -20,6 +22,7 @@ import { isFieldFullName } from '../types/guards/isFieldFullName';
 import { isFieldLink } from '../types/guards/isFieldLink';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldPhone } from '../types/guards/isFieldPhone';
+import { isFieldPipelineSteps } from '../types/guards/isFieldPipelineSteps';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldSelect } from '../types/guards/isFieldSelect';
 import { isFieldText } from '../types/guards/isFieldText';
@@ -58,6 +61,8 @@ export const FieldDisplay = () => {
         <PhoneFieldDisplay />
       ) : isFieldSelect(fieldDefinition) ? (
         <SelectFieldDisplay />
+      ) : isFieldPipelineSteps(fieldDefinition) ? (
+        <PipelineStepsDisplay />
       ) : (
         <></>
       )}

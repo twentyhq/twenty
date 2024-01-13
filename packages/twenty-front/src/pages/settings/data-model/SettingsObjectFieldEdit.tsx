@@ -55,6 +55,7 @@ export const SettingsObjectFieldEdit = () => {
     hasFormChanged,
     hasRelationFormChanged,
     hasSelectFormChanged,
+    hasPipelineStepsFormChanged,
     initForm,
     isInitialized,
     isValid,
@@ -82,6 +83,14 @@ export const SettingsObjectFieldEdit = () => {
       (optionA, optionB) => optionA.position - optionB.position,
     );
 
+    const pipelineStepsOptions = activeMetadataField.options?.map((option) => ({
+      ...option,
+      isDefault: defaultValue === option.value,
+    }));
+    pipelineStepsOptions?.sort(
+      (optionA, optionB) => optionA.position - optionB.position,
+    );
+
     initForm({
       icon: activeMetadataField.icon ?? undefined,
       label: activeMetadataField.label,
@@ -97,6 +106,9 @@ export const SettingsObjectFieldEdit = () => {
         type: relationType || RelationMetadataType.OneToMany,
       },
       ...(selectOptions?.length ? { select: selectOptions } : {}),
+      ...(pipelineStepsOptions?.length
+        ? { pipelineSteps: pipelineStepsOptions }
+        : {}),
     });
   }, [
     activeMetadataField,
@@ -130,7 +142,11 @@ export const SettingsObjectFieldEdit = () => {
         });
       }
 
-      if (hasFieldFormChanged || hasSelectFormChanged) {
+      if (
+        hasFieldFormChanged ||
+        hasSelectFormChanged ||
+        hasPipelineStepsFormChanged
+      ) {
         await editMetadataField({
           description: validatedFormValues.description,
           icon: validatedFormValues.icon,
@@ -139,7 +155,9 @@ export const SettingsObjectFieldEdit = () => {
           options:
             validatedFormValues.type === FieldMetadataType.Select
               ? validatedFormValues.select
-              : undefined,
+              : validatedFormValues.type === FieldMetadataType.PipelineSteps
+                ? validatedFormValues.pipelineSteps
+                : undefined,
         });
       }
 
@@ -201,6 +219,7 @@ export const SettingsObjectFieldEdit = () => {
             currency: formValues.currency,
             relation: formValues.relation,
             select: formValues.select,
+            pipelineSteps: formValues.pipelineSteps,
           }}
         />
         <Section>

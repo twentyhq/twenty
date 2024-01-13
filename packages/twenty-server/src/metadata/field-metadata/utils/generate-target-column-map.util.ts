@@ -33,6 +33,7 @@ export function generateTargetColumnMap(
     case FieldMetadataType.DATE_TIME:
     case FieldMetadataType.RATING:
     case FieldMetadataType.SELECT:
+    case FieldMetadataType.PIPELINE_STEPS:
     case FieldMetadataType.MULTI_SELECT:
       return {
         value: columnName,
