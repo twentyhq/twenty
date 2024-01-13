@@ -40,7 +40,7 @@ import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.enti
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { SignUpInput } from './dto/sign-up.input';
 import { ImpersonateInput } from './dto/impersonate.input';
-// import { UpdatePasswordInput } from 'src/core/auth/dto/update-password.input';
+import { EmailPasswordResetLink } from 'src/core/auth/dto/email-password-reset-link.entity';
 
 @Resolver()
 export class AuthResolver {
@@ -160,10 +160,17 @@ export class AuthResolver {
     );
   }
 
-  @Mutation(() => PasswordResetToken)
-  async generatePasswordResetToken(): Promise<PasswordResetToken> {
-    // TODO remove this hard-coded email and fetch user from Auth guard.
-    return this.tokenService.generatePasswordResetToken('tim@apple.dev');
+  @UseGuards(JwtAuthGuard)
+  @Mutation(() => EmailPasswordResetLink)
+  async emailPasswordResetLink(
+    @AuthUser() { email }: User,
+  ): Promise<EmailPasswordResetLink> {
+    const resetToken = await this.tokenService.generatePasswordResetToken(email);
+    await this.tokenService.emailPasswordResetLink(resetToken, email);
+    return {
+      status: 'success',
+      message: 'Password reset link sent to the email',
+    };
   }
 
   @Mutation(() => LoginToken)

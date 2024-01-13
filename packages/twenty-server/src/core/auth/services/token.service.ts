@@ -34,6 +34,7 @@ import { User } from 'src/core/user/user.entity';
 import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { ValidPasswordResetToken } from 'src/core/auth/dto/valid-password-reset-token.entity';
+import { EmailService } from 'src/integrations/email/email.service';
 
 @Injectable()
 export class TokenService {
@@ -45,6 +46,7 @@ export class TokenService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(RefreshToken, 'core')
     private readonly refreshTokenRepository: Repository<RefreshToken>,
+    private readonly emailService: EmailService,
   ) {}
 
   async generateAccessToken(userId: string): Promise<AuthToken> {
@@ -363,6 +365,18 @@ export class TokenService {
       passwordResetToken: plainResetToken,
       passwordResetTokenExpiresAt: expiresAt,
     };
+  }
+
+  async emailPasswordResetLink(resetToken: PasswordResetToken, email: string) {
+    const frontBaseURL = this.environmentService.getFrontBaseUrl();
+    const resetLink = `${frontBaseURL}/reset-password/${resetToken.passwordResetToken}`;
+    this.emailService.send({
+      from: 'hello@twenty.com',
+      to: email,
+      subject: 'Password Reset',
+      text: 'Your password reset request submitted',
+      html: `<a href="${resetLink}">Click Here</a>`
+    });
   }
 
   async validatePasswordResetToken(
