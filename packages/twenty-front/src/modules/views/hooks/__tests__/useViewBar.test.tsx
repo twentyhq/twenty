@@ -284,33 +284,11 @@ describe('useViewBar', () => {
 
       viewBar.setAvailableSortDefinitions([sortDefinition]);
 
-      viewBar.loadViewSorts(
-        {
-          edges: [
-            {
-              node: viewSort,
-              cursor: '',
-            },
-          ],
-          pageInfo: { hasNextPage: false, startCursor: '', endCursor: '' },
-        },
-        mockedUuid,
-      );
+      viewBar.loadViewSorts([viewSort], mockedUuid);
 
       viewBar.setAvailableFilterDefinitions([filterDefinition]);
 
-      viewBar.loadViewFilters(
-        {
-          edges: [
-            {
-              node: viewFilter,
-              cursor: '',
-            },
-          ],
-          pageInfo: { hasNextPage: false, startCursor: '', endCursor: '' },
-        },
-        mockedUuid,
-      );
+      viewBar.loadViewFilters([viewFilter], mockedUuid);
 
       return { viewBar };
     }, renderHookConfig);

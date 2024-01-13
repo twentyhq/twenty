@@ -1,60 +1,38 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { TableCellPosition } from '../../types/TableCellPosition';
 
-export const useSetSoftFocusPosition = (recordTableScopeId: string) => {
+export const useSetSoftFocusPosition = (recordTableId?: string) => {
   const {
-    softFocusPositionScopeInjector,
-    isSoftFocusActiveScopeInjector,
-    isSoftFocusOnTableCellScopeInjector,
-  } = getRecordTableScopeInjector();
-
-  const {
-    injectStateWithRecordTableScopeId,
-    injectSnapshotValueWithRecordTableScopeId,
-    injectFamilyStateWithRecordTableScopeId,
-  } = useRecordTableScopedStates(recordTableScopeId);
+    softFocusPositionState,
+    isSoftFocusActiveState,
+    isSoftFocusOnTableCellFamilyState,
+  } = useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
     ({ set, snapshot }) => {
       return (newPosition: TableCellPosition) => {
-        const currentPosition = injectSnapshotValueWithRecordTableScopeId(
+        const currentPosition = getSnapshotValue(
           snapshot,
-          softFocusPositionScopeInjector,
+          softFocusPositionState(),
         );
 
-        const isSoftFocusActiveState = injectStateWithRecordTableScopeId(
-          isSoftFocusActiveScopeInjector,
-        );
-
-        const isSoftFocusOnTableCellFamilyState =
-          injectFamilyStateWithRecordTableScopeId(
-            isSoftFocusOnTableCellScopeInjector,
-          );
-
-        const softFocusPositionState = injectStateWithRecordTableScopeId(
-          softFocusPositionScopeInjector,
-        );
-
-        set(isSoftFocusActiveState, true);
+        set(isSoftFocusActiveState(), true);
 
         set(isSoftFocusOnTableCellFamilyState(currentPosition), false);
 
-        set(softFocusPositionState, newPosition);
+        set(softFocusPositionState(), newPosition);
 
         set(isSoftFocusOnTableCellFamilyState(newPosition), true);
       };
     },
     [
-      injectFamilyStateWithRecordTableScopeId,
-      injectSnapshotValueWithRecordTableScopeId,
-      injectStateWithRecordTableScopeId,
-      isSoftFocusActiveScopeInjector,
-      isSoftFocusOnTableCellScopeInjector,
-      softFocusPositionScopeInjector,
+      softFocusPositionState,
+      isSoftFocusActiveState,
+      isSoftFocusOnTableCellFamilyState,
     ],
   );
 };

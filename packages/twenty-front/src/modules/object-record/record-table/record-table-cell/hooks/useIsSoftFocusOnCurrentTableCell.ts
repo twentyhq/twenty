@@ -1,24 +1,16 @@
 import { useRecoilValue } from 'recoil';
 
-import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 
 import { useCurrentTableCellPosition } from './useCurrentCellPosition';
 
 export const useIsSoftFocusOnCurrentTableCell = () => {
   const currentTableCellPosition = useCurrentTableCellPosition();
 
-  const { isSoftFocusOnTableCellScopeInjector } = getRecordTableScopeInjector();
-
-  const { injectFamilyStateWithRecordTableScopeId } =
-    useRecordTableScopedStates();
-
-  const isSoftFocusActiveFamilyState = injectFamilyStateWithRecordTableScopeId(
-    isSoftFocusOnTableCellScopeInjector,
-  );
+  const { isSoftFocusOnTableCellFamilyState } = useRecordTableStates();
 
   const isSoftFocusOnTableCell = useRecoilValue(
-    isSoftFocusActiveFamilyState(currentTableCellPosition),
+    isSoftFocusOnTableCellFamilyState(currentTableCellPosition),
   );
 
   return isSoftFocusOnTableCell;

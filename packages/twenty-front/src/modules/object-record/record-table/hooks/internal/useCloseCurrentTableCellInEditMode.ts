@@ -1,42 +1,28 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
-export const useCloseCurrentTableCellInEditMode = (
-  recordTableScopeId: string,
-) => {
+export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
   const {
-    currentTableCellInEditModePositionScopeInjector,
-    isTableCellInEditModeScopeInjector,
-  } = getRecordTableScopeInjector();
-
-  const {
-    injectSnapshotValueWithRecordTableScopeId,
-    injectFamilyStateWithRecordTableScopeId,
-  } = useRecordTableScopedStates(recordTableScopeId);
+    currentTableCellInEditModePositionState,
+    isTableCellInEditModeFamilyState,
+  } = useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
     ({ set, snapshot }) => {
       return async () => {
-        const currentTableCellInEditModePosition =
-          injectSnapshotValueWithRecordTableScopeId(
-            snapshot,
-            currentTableCellInEditModePositionScopeInjector,
-          );
-
-        const isTableCellInEditMode = injectFamilyStateWithRecordTableScopeId(
-          isTableCellInEditModeScopeInjector,
+        const currentTableCellInEditModePosition = getSnapshotValue(
+          snapshot,
+          currentTableCellInEditModePositionState(),
         );
 
-        set(isTableCellInEditMode(currentTableCellInEditModePosition), false);
+        set(
+          isTableCellInEditModeFamilyState(currentTableCellInEditModePosition),
+          false,
+        );
       };
     },
-    [
-      currentTableCellInEditModePositionScopeInjector,
-      injectFamilyStateWithRecordTableScopeId,
-      injectSnapshotValueWithRecordTableScopeId,
-      isTableCellInEditModeScopeInjector,
-    ],
+    [currentTableCellInEditModePositionState, isTableCellInEditModeFamilyState],
   );
 };

@@ -65,18 +65,7 @@ describe('View Sorts', () => {
     await act(async () => {
       result.current.viewBar.setAvailableSortDefinitions([sortDefinition]);
 
-      await result.current.viewBar.loadViewSorts(
-        {
-          edges: [
-            {
-              node: viewSort,
-              cursor: '',
-            },
-          ],
-          pageInfo: { hasNextPage: false, startCursor: '', endCursor: '' },
-        },
-        currentViewId,
-      );
+      await result.current.viewBar.loadViewSorts([viewSort], currentViewId);
       result.current.viewBar.setCurrentViewId(currentViewId);
     });
 
@@ -89,18 +78,7 @@ describe('View Sorts', () => {
 
       viewBar.setAvailableSortDefinitions([sortDefinition]);
 
-      viewBar.loadViewSorts(
-        {
-          edges: [
-            {
-              node: viewSort,
-              cursor: '',
-            },
-          ],
-          pageInfo: { hasNextPage: false, startCursor: '', endCursor: '' },
-        },
-        currentViewId,
-      );
+      viewBar.loadViewSorts([viewSort], currentViewId);
       viewBar.setCurrentViewId(currentViewId);
 
       const { currentViewSortsState } = useViewScopedStates({
@@ -161,18 +139,7 @@ describe('View Sorts', () => {
 
       viewBar.setAvailableSortDefinitions([sortDefinition]);
 
-      viewBar.loadViewSorts(
-        {
-          edges: [
-            {
-              node: viewSort,
-              cursor: '',
-            },
-          ],
-          pageInfo: { hasNextPage: false, startCursor: '', endCursor: '' },
-        },
-        currentViewId,
-      );
+      viewBar.loadViewSorts([viewSort], currentViewId);
       viewBar.setCurrentViewId(currentViewId);
 
       const { currentViewSortsState } = useViewScopedStates({

@@ -4,8 +4,11 @@ docker-dev-build:
 docker-dev-up:
 	make -C packages/twenty-docker dev-up
 
-docker-dev-down:
-	make -C packages/twenty-docker dev-down
+docker-dev-start:
+	make -C packages/twenty-docker dev-start
+
+docker-dev-stop:
+	make -C packages/twenty-docker dev-stop
 
 docker-dev-sh:
 	make -C packages/twenty-docker dev-sh

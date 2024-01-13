@@ -42,9 +42,16 @@ export class LoggerModule extends ConfigurableModuleClass {
           return null;
         }
 
-        return config?.type === LoggerDriverType.Console
-          ? new ConsoleLogger()
-          : undefined;
+        const logLevels = config.logLevels ?? [];
+
+        const logger =
+          config?.type === LoggerDriverType.Console
+            ? new ConsoleLogger()
+            : undefined;
+
+        logger?.setLogLevels(logLevels);
+
+        return logger;
       },
       inject: options.inject || [],
     };

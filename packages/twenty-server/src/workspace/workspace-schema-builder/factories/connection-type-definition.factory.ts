@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { GraphQLFieldConfigMap, GraphQLObjectType } from 'graphql';
+import { GraphQLFieldConfigMap, GraphQLInt, GraphQLObjectType } from 'graphql';
 
 import { WorkspaceBuildSchemaOptions } from 'src/workspace/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
@@ -69,6 +69,11 @@ export class ConnectionTypeDefinitionFactory {
           nullable: false,
         },
       ),
+    };
+
+    fields.totalCount = {
+      type: GraphQLInt,
+      description: 'Total number of records in the connection',
     };
 
     return fields;

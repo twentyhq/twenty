@@ -4,6 +4,6 @@ import { CommandModule } from './command.module';
 
 async function bootstrap() {
   // TODO: inject our own logger service to handle the output (Sentry, etc.)
-  await CommandFactory.run(CommandModule, ['warn', 'error']);
+  await CommandFactory.run(CommandModule, ['warn', 'error', 'log']);
 }
 bootstrap();

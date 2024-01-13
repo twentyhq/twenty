@@ -8,6 +8,7 @@ import { User } from 'src/core/user/user.entity';
 import { WorkspaceMember } from 'src/core/user/dtos/workspace-member.dto';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 
 export class UserService extends TypeOrmQueryService<User> {
   constructor(
@@ -46,6 +47,20 @@ export class UserService extends TypeOrmQueryService<User> {
     };
 
     return userWorkspaceMember;
+  }
+
+  async loadWorkspaceMembers(dataSource: DataSourceEntity) {
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSource);
+
+    return await workspaceDataSource?.query(
+      `
+      SELECT * 
+      FROM ${dataSource.schema}."workspaceMember" AS s 
+      INNER JOIN core.user AS u 
+      ON s."userId" = u.id
+    `,
+    );
   }
 
   async createWorkspaceMember(user: User, avatarUrl?: string) {

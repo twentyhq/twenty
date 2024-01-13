@@ -1,9 +1,12 @@
 import { useCallback, useContext, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import qs from 'qs';
 import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { parseFieldRelationType } from '@/object-metadata/utils/parseFieldRelationType';
 import { FieldContext } from '@/object-record/field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/field/hooks/usePersistField';
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
@@ -25,6 +28,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { Section } from '@/ui/layout/section/components/Section';
+import { FilterQueryParams } from '@/views/hooks/internal/useFiltersFromQueryParams';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 const StyledAddDropdown = styled(Dropdown)`
   margin-left: auto;
@@ -55,8 +60,23 @@ const StyledHeader = styled.header<{ isDropdownOpen?: boolean }>`
 `;
 
 const StyledTitle = styled.div`
+  align-items: flex-end;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledTitleLabel = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  padding: ${({ theme }) => theme.spacing(0, 1)};
+`;
+
+const StyledLink = styled(Link)`
+  color: ${({ theme }) => theme.font.color.light};
+  text-decoration: none;
+  font-size: ${({ theme }) => theme.font.size.sm};
+
+  :hover {
+    color: ${({ theme }) => theme.font.color.secondary};
+  }
 `;
 
 export const RecordRelationFieldCardSection = () => {
@@ -129,9 +149,9 @@ export const RecordRelationFieldCardSection = () => {
     );
   }, [relationRecords, upsertRecordFromState]);
 
-  const dropdownScopeId = `record-field-card-relation-picker-${fieldDefinition.label}`;
+  const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}`;
 
-  const { closeDropdown, isDropdownOpen } = useDropdown(dropdownScopeId);
+  const { closeDropdown, isDropdownOpen } = useDropdown(dropdownId);
 
   const {
     identifiersMapper,
@@ -163,7 +183,7 @@ export const RecordRelationFieldCardSection = () => {
   }, [setRelationPickerSearchFilter]);
 
   const persistField = usePersistField();
-  const { updateOneRecord } = useUpdateOneRecord({
+  const { updateOneRecord: updateOneRelationRecord } = useUpdateOneRecord({
     objectNameSingular: relationObjectMetadataNameSingular,
   });
 
@@ -181,7 +201,7 @@ export const RecordRelationFieldCardSection = () => {
 
     if (!relationFieldMetadataItem?.name) return;
 
-    updateOneRecord({
+    updateOneRelationRecord({
       idToUpdate: selectedRelationEntity.id,
       updateOneRecordInput: {
         [`${relationFieldMetadataItem.name}Id`]: entityId,
@@ -192,12 +212,32 @@ export const RecordRelationFieldCardSection = () => {
 
   if (!relationLabelIdentifierFieldMetadata) return null;
 
+  const filterQueryParams: FilterQueryParams = {
+    filter: {
+      [relationFieldMetadataItem?.name || '']: {
+        [ViewFilterOperand.Is]: [entityId],
+      },
+    },
+  };
+  const filterLinkHref = `/objects/${
+    relationObjectMetadataItem.namePlural
+  }?${qs.stringify(filterQueryParams)}`;
+
   return (
     <Section>
       <StyledHeader isDropdownOpen={isDropdownOpen}>
-        <StyledTitle>{fieldDefinition.label}</StyledTitle>
-        <DropdownScope dropdownScopeId={dropdownScopeId}>
+        <StyledTitle>
+          <StyledTitleLabel>{fieldDefinition.label}</StyledTitleLabel>
+          {parseFieldRelationType(relationFieldMetadataItem) ===
+            'TO_ONE_OBJECT' && (
+            <StyledLink to={filterLinkHref}>
+              All ({relationRecords.length})
+            </StyledLink>
+          )}
+        </StyledTitle>
+        <DropdownScope dropdownScopeId={dropdownId}>
           <StyledAddDropdown
+            dropdownId={dropdownId}
             dropdownPlacement="right-start"
             onClose={handleCloseRelationPickerDropdown}
             clickableComponent={
@@ -216,7 +256,7 @@ export const RecordRelationFieldCardSection = () => {
               />
             }
             dropdownHotkeyScope={{
-              scope: dropdownScopeId,
+              scope: dropdownId,
             }}
           />
         </DropdownScope>
@@ -227,7 +267,7 @@ export const RecordRelationFieldCardSection = () => {
             <RecordRelationFieldCardContent
               key={`${relationRecord.id}${relationLabelIdentifierFieldMetadata?.id}`}
               divider={index < relationRecords.length - 1}
-              relationRecordId={relationRecord.id}
+              relationRecord={relationRecord}
             />
           ))}
         </Card>

@@ -9,7 +9,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsObjectFieldActiveActionDropdownProps = {
@@ -25,9 +24,9 @@ export const SettingsObjectFieldActiveActionDropdown = ({
   onEdit,
   scopeKey,
 }: SettingsObjectFieldActiveActionDropdownProps) => {
-  const dropdownScopeId = `${scopeKey}-settings-field-active-action-dropdown`;
+  const dropdownId = `${scopeKey}-settings-field-active-action-dropdown`;
 
-  const { closeDropdown } = useDropdown(dropdownScopeId);
+  const { closeDropdown } = useDropdown(dropdownId);
 
   const handleEdit = () => {
     onEdit();
@@ -40,33 +39,32 @@ export const SettingsObjectFieldActiveActionDropdown = ({
   };
 
   return (
-    <DropdownScope dropdownScopeId={dropdownScopeId}>
-      <Dropdown
-        clickableComponent={
-          <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
-        }
-        dropdownComponents={
-          <DropdownMenu width="160px">
-            <DropdownMenuItemsContainer>
+    <Dropdown
+      dropdownId={dropdownId}
+      clickableComponent={
+        <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+      }
+      dropdownComponents={
+        <DropdownMenu width="160px">
+          <DropdownMenuItemsContainer>
+            <MenuItem
+              text={isCustomField ? 'Edit' : 'View'}
+              LeftIcon={isCustomField ? IconPencil : IconEye}
+              onClick={handleEdit}
+            />
+            {!!onDisable && (
               <MenuItem
-                text={isCustomField ? 'Edit' : 'View'}
-                LeftIcon={isCustomField ? IconPencil : IconEye}
-                onClick={handleEdit}
+                text="Disable"
+                LeftIcon={IconArchive}
+                onClick={handleDisable}
               />
-              {!!onDisable && (
-                <MenuItem
-                  text="Disable"
-                  LeftIcon={IconArchive}
-                  onClick={handleDisable}
-                />
-              )}
-            </DropdownMenuItemsContainer>
-          </DropdownMenu>
-        }
-        dropdownHotkeyScope={{
-          scope: dropdownScopeId,
-        }}
-      />
-    </DropdownScope>
+            )}
+          </DropdownMenuItemsContainer>
+        </DropdownMenu>
+      }
+      dropdownHotkeyScope={{
+        scope: dropdownId,
+      }}
+    />
   );
 };
