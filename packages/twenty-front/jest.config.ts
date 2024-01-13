@@ -20,7 +20,9 @@ export default {
     },
   },
   collectCoverage: true,
-  collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
+  collectCoverageFrom: [
+    '<rootDir>/src/modules/object-record/record-board/**/*.ts',
+  ],
   coveragePathIgnorePatterns: [
     'states/.+State.ts$',
     'states/selectors/*',
