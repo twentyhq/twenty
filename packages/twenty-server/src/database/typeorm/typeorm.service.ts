@@ -37,27 +37,35 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
   public async connectToDataSource(
     dataSource: DataSourceEntity,
   ): Promise<DataSource | undefined> {
-    // Wait for a bit before trying again if another initialization is in progress
-    while (this.isDatasourceInitializing.get(dataSource.id)) {
-      await new Promise((resolve) => setTimeout(resolve, 10));
+    const isMultiDatasourceEnabled = false;
+
+    console.log('Data sources number', this.dataSources.size);
+
+    if (isMultiDatasourceEnabled) {
+      // Wait for a bit before trying again if another initialization is in progress
+      while (this.isDatasourceInitializing.get(dataSource.id)) {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+      }
+
+      if (this.dataSources.has(dataSource.id)) {
+        return this.dataSources.get(dataSource.id);
+      }
+
+      this.isDatasourceInitializing.set(dataSource.id, true);
+
+      try {
+        const dataSourceInstance =
+          await this.createAndInitializeDataSource(dataSource);
+
+        this.dataSources.set(dataSource.id, dataSourceInstance);
+
+        return dataSourceInstance;
+      } finally {
+        this.isDatasourceInitializing.delete(dataSource.id);
+      }
     }
 
-    if (this.dataSources.has(dataSource.id)) {
-      return this.dataSources.get(dataSource.id);
-    }
-
-    this.isDatasourceInitializing.set(dataSource.id, true);
-
-    try {
-      const dataSourceInstance =
-        await this.createAndInitializeDataSource(dataSource);
-
-      this.dataSources.set(dataSource.id, dataSourceInstance);
-
-      return dataSourceInstance;
-    } finally {
-      this.isDatasourceInitializing.delete(dataSource.id);
-    }
+    return this.mainDataSource;
   }
 
   private async createAndInitializeDataSource(

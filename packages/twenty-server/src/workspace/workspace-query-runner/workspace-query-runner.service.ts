@@ -64,11 +64,17 @@ export class WorkspaceQueryRunnerService {
   ): Promise<IConnection<Record> | undefined> {
     try {
       const { workspaceId, targetTableName } = options;
+      const start = performance.now();
+
       const query = await this.workspaceQueryBuilderFactory.findMany(
         args,
         options,
       );
+
       const result = await this.execute(query, workspaceId);
+      const end = performance.now();
+
+      console.log(`query time: ${end - start} ms`);
 
       return this.parseResult<IConnection<Record>>(result, targetTableName, '');
     } catch (exception) {

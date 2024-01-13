@@ -81,6 +81,7 @@ export class WorkspaceResolverFactory {
           workspaceId,
           targetTableName: objectMetadata.targetTableName,
           fieldMetadataCollection: objectMetadata.fields,
+          objectMetadataCollection: objectMetadataCollection,
         });
       }
 
@@ -103,6 +104,7 @@ export class WorkspaceResolverFactory {
           workspaceId,
           targetTableName: objectMetadata.targetTableName,
           fieldMetadataCollection: objectMetadata.fields,
+          objectMetadataCollection: objectMetadataCollection,
         });
       }
     }
