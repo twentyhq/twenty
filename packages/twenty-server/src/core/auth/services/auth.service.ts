@@ -246,10 +246,14 @@ export class AuthService {
     const isPasswordValid = PASSWORD_REGEX.test(newPassword);
 
     assert(isPasswordValid, 'Password too weak', BadRequestException);
-    const passwordHash = await hashPassword(newPassword);
+    const newPasswordHash = await hashPassword(newPassword);
+
+    const user = await this.userRepository.findOneBy({id: userId});
+    assert(user, "User doesn't exists", NotFoundException);
+    assert(user.passwordHash !== newPasswordHash, 'Password cannot be repeated', BadRequestException);
 
     return await this.userRepository.update(userId, {
-      passwordHash,
+      passwordHash: newPasswordHash,
     });
   }
 }

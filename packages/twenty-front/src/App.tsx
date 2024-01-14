@@ -36,6 +36,7 @@ import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
+import { PasswordReset } from '~/pages/auth/PasswordReset';
 
 export const App = () => {
   const { pathname } = useLocation();
@@ -51,6 +52,7 @@ export const App = () => {
           <Route path={AppPath.SignIn} element={<SignInUp />} />
           <Route path={AppPath.SignUp} element={<SignInUp />} />
           <Route path={AppPath.Invite} element={<SignInUp />} />
+          <Route path={AppPath.ResetPassword} element={<PasswordReset />} />
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
           <Route path={AppPath.PlanRequired} element={<PlanRequired />} />

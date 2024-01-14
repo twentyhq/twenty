@@ -401,7 +401,10 @@ export class TokenService {
       NotFoundException,
     );
 
-    return { user };
+    return { 
+      id: user.id,
+      email: user.email 
+    };
   }
 
   async invalidatePasswordResetToken(userId: string) {

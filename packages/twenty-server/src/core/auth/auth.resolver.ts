@@ -25,7 +25,6 @@ import { UpdatePasswordInput } from 'src/core/auth/dto/update-password.input';
 import {
   ApiKeyToken,
   AuthTokens,
-  PasswordResetToken,
 } from './dto/token.entity';
 import { TokenService } from './services/token.service';
 import { RefreshTokenInput } from './dto/refresh-token.input';
@@ -177,17 +176,17 @@ export class AuthResolver {
   async updatePasswordViaResetToken(
     @Args() args: UpdatePasswordInput,
   ): Promise<LoginToken> {
-    const { user } = await this.tokenService.validatePasswordResetToken(
+    const { id } = await this.tokenService.validatePasswordResetToken(
       args.passwordResetToken,
     );
 
-    assert(user.id, "User doesn't exist", NotFoundException);
+    assert(id, "User doesn't exist", NotFoundException);
 
-    await this.authService.updatePassword(user.id, args.newPassword);
+    await this.authService.updatePassword(id, args.newPassword);
 
-    const loginToken = await this.tokenService.generateLoginToken(user.id);
+    const loginToken = await this.tokenService.generateLoginToken(id);
 
-    await this.tokenService.invalidatePasswordResetToken(user.id);
+    await this.tokenService.invalidatePasswordResetToken(id);
 
     return { loginToken };
   }
