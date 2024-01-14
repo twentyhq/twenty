@@ -42,6 +42,7 @@ const StyledLabel = styled.div<
   Pick<RecordInlineCellContainerProps, 'labelFixedWidth'>
 >`
   align-items: center;
+  font-size: 12px;
 
   width: ${({ labelFixedWidth }) =>
     labelFixedWidth ? `${labelFixedWidth}px` : 'fit-content'};
@@ -134,7 +135,9 @@ export const RecordInlineCellContainer = ({
             </StyledIconContainer>
           )}
           {label && (
-            <StyledLabel labelFixedWidth={labelFixedWidth}>{label}</StyledLabel>
+            <StyledLabel labelFixedWidth={labelFixedWidth}>
+              {label.length > 12 ? `${label.slice(0, 11)}...` : label}
+            </StyledLabel>
           )}
         </StyledLabelAndIconContainer>
       )}
