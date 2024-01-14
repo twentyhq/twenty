@@ -231,12 +231,10 @@ const StyledButtonContainer = styled.div`
   align-self: stretch;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
-  padding: 0 ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2)};
 
   & .menu-item {
     height: ${({ theme }) => theme.spacing(8)};
-    margin-bottom: ${({ theme }) => theme.spacing(1)};
-    margin-top: ${({ theme }) => theme.spacing(1)};
     padding: 0 ${({ theme }) => theme.spacing(2)};
   }
 `;
