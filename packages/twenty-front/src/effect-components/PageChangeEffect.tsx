@@ -54,14 +54,15 @@ export const PageChangeEffect = () => {
   }, [location, previousLocation]);
 
   useEffect(() => {
-    const isMachinOngoingUserCreationRoute =
+    const isMatchingOngoingUserCreationRoute =
       isMatchingLocation(AppPath.SignUp) ||
       isMatchingLocation(AppPath.SignIn) ||
       isMatchingLocation(AppPath.Invite) ||
-      isMatchingLocation(AppPath.Verify);
+      isMatchingLocation(AppPath.Verify) ||
+      isMatchingLocation(AppPath.ResetPassword);
 
     const isMatchingOnboardingRoute =
-      isMachinOngoingUserCreationRoute ||
+      isMatchingOngoingUserCreationRoute ||
       isMatchingLocation(AppPath.CreateWorkspace) ||
       isMatchingLocation(AppPath.CreateProfile) ||
       isMatchingLocation(AppPath.PlanRequired);
@@ -75,7 +76,7 @@ export const PageChangeEffect = () => {
 
     if (
       onboardingStatus === OnboardingStatus.OngoingUserCreation &&
-      !isMachinOngoingUserCreationRoute
+      !isMatchingOngoingUserCreationRoute
     ) {
       navigate(AppPath.SignIn);
     } else if (
