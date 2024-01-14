@@ -4,10 +4,12 @@ import createNewButton from './createButton';
 import extractFirstAndLastName from './utils/extractFirstAndLastName';
 
 function insertButtonForPerson(): void {
+  // Select the element in which to create the button.
   const parentDiv: HTMLDivElement | null = document.querySelector(
     '.pv-top-card-v2-ctas',
   );
 
+  // Create the button with desired callback funciton to execute upon click.
   if (parentDiv) {
     const newButtonPerson: HTMLButtonElement = createNewButton(
       'Add to Twenty',
@@ -65,7 +67,7 @@ function insertButtonForPerson(): void {
           linkedinLink: { url: '', label: '' },
         };
 
-        // Extract active tab url using chrome API.
+        // Extract active tab url using chrome API - an event is triggered here and is caught by background script.
         let { url: activeTabUrl } = await chrome.runtime.sendMessage({
           action: 'getActiveTabUrl',
         });
@@ -87,6 +89,7 @@ function insertButtonForPerson(): void {
           newButtonPerson.textContent = 'Saved';
           newButtonPerson.setAttribute('disabled', 'true');
 
+          // Button specific styles once the button is unclickable after successfully sending data to server.
           newButtonPerson.addEventListener('mouseenter', () => {
             const hoverStyles = {
               backgroundColor: 'black',
@@ -101,7 +104,10 @@ function insertButtonForPerson(): void {
       },
     );
 
+    // Include the button in the DOM.
     parentDiv.prepend(newButtonPerson);
+
+    // Write button specific styles here - common ones can be found in createButton.ts.
     const buttonSpecificStyles = {
       marginRight: '0.5em',
     };

@@ -1,3 +1,5 @@
+// Extract "https://www.linkedin.com/company/twenty/" from any of the following urls, which the user can visit while on the company page.
+// "https://www.linkedin.com/company/twenty/" "https://www.linkedin.com/company/twenty/about/" "https://www.linkedin.com/company/twenty/people/".
 const extractCompanyLinkedinLink = (activeTabUrl: string) => {
   // Regular expression to match the company ID
   const regex = /\/company\/([^/]*)/;

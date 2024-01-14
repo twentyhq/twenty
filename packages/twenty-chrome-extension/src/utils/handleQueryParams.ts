@@ -1,3 +1,4 @@
+// Convert extracted data into a structure that can be sent to the server for storage.
 const handleQueryParams = (inputData: { [x: string]: unknown }): string => {
   let result = '';
   Object.keys(inputData).forEach((key) => {

@@ -5,10 +5,12 @@ import extractCompanyLinkedinLink from './utils/extractCompanyLinkedinLink';
 import extractDomain from './utils/extractDomain';
 
 function insertButtonForCompany(): void {
+  // Select the element in which to create the button.
   const parentDiv: HTMLDivElement | null = document.querySelector(
     '.org-top-card-primary-actions__inner',
   );
 
+  // Create the button with desired callback funciton to execute upon click.
   if (parentDiv) {
     const newButtonCompany: HTMLButtonElement = createNewButton(
       'Add to Twenty',
@@ -55,7 +57,7 @@ function insertButtonForCompany(): void {
           linkedinLink: { url: '', label: '' },
         };
 
-        // Extract active tab url using chrome API.
+        // Extract active tab url using chrome API - an event is triggered here and is caught by background script.
         const { url: activeTabUrl } = await chrome.runtime.sendMessage({
           action: 'getActiveTabUrl',
         });
@@ -74,6 +76,7 @@ function insertButtonForCompany(): void {
           newButtonCompany.textContent = 'Saved';
           newButtonCompany.setAttribute('disabled', 'true');
 
+          // Button specific styles once the button is unclickable after successfully sending data to server.
           newButtonCompany.addEventListener('mouseenter', () => {
             const hoverStyles = {
               backgroundColor: 'black',
@@ -88,7 +91,10 @@ function insertButtonForCompany(): void {
       },
     );
 
+    // Include the button in the DOM.
     parentDiv.prepend(newButtonCompany);
+
+    // Write button specific styles here - common ones can be found in createButton.ts.
     const buttonSpecificStyles = {
       alignSelf: 'end',
     };
