@@ -29,6 +29,7 @@ export class FindManyQueryFactory {
     const fieldsString = await this.fieldsStringFactory.create(
       options.info,
       options.fieldMetadataCollection,
+      options.objectMetadataCollection,
     );
     const argsString = this.argsStringFactory.create(
       args,

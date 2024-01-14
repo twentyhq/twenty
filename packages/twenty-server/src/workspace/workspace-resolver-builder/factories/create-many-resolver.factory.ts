@@ -30,6 +30,7 @@ export class CreateManyResolverFactory
         workspaceId: internalContext.workspaceId,
         info,
         fieldMetadataCollection: internalContext.fieldMetadataCollection,
+        objectMetadataCollection: internalContext.objectMetadataCollection,
       });
     };
   }
