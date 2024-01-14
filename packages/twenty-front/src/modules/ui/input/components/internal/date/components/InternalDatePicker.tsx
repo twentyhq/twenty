@@ -226,17 +226,11 @@ const StyledContainer = styled.div`
   }
 `;
 
-const StyledButtonContainer = styled.div`
-  align-items: center;
-  align-self: stretch;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-
-  & .menu-item {
-    height: ${({ theme }) => theme.spacing(8)};
-    padding: 0 ${({ theme }) => theme.spacing(2)};
-  }
+const StyledButtonContainer = styled(MenuItem)`
+  width: auto;
+  height: ${({ theme }) => theme.spacing(8)};
+  padding: 0 ${({ theme }) => theme.spacing(2)};
+  margin: ${({ theme }) => theme.spacing(2)};
 `;
 
 export type InternalDatePickerProps = {
@@ -278,15 +272,13 @@ export const InternalDatePicker = ({
         ></ReactDatePicker>
       </div>
       {clearable && (
-        <StyledButtonContainer>
-          <MenuItem
-            text="Clear"
-            LeftIcon={IconCalendarX}
-            onClick={handleClear}
-            className="menu-item"
-            isContentCentered={true}
-          />
-        </StyledButtonContainer>
+        <StyledButtonContainer
+          text="Clear"
+          LeftIcon={IconCalendarX}
+          onClick={handleClear}
+          className="menu-item"
+          isContentCentered={true}
+        />
       )}
     </StyledContainer>
   );
