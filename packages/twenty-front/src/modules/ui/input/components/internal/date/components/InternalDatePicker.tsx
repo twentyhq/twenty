@@ -238,10 +238,6 @@ const StyledButtonContainer = styled.div`
     margin-bottom: ${({ theme }) => theme.spacing(1)};
     margin-top: ${({ theme }) => theme.spacing(1)};
     padding: 0 ${({ theme }) => theme.spacing(2)};
-
-    & > div {
-      justify-content: center;
-    }
   }
 `;
 
@@ -290,6 +286,7 @@ export const InternalDatePicker = ({
             LeftIcon={IconCalendarX}
             onClick={handleClear}
             className="menu-item"
+            isContentCentered={true}
           />
         </StyledButtonContainer>
       )}
