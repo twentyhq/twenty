@@ -36,7 +36,9 @@ function insertButtonForPerson(): void {
         );
 
         // Get the text content or other necessary data from the DOM elements.
-        const personName = personNameElement ? personNameElement.textContent : '';
+        const personName = personNameElement
+          ? personNameElement.textContent
+          : '';
         const personCity = personCityElement
           ? personCityElement.textContent
               ?.trim()
@@ -63,9 +65,14 @@ function insertButtonForPerson(): void {
           linkedinLink: { url: '', label: '' },
         };
 
-        const { url: activeTabUrl } = await chrome.runtime.sendMessage({
+        let { url: activeTabUrl } = await chrome.runtime.sendMessage({
           action: 'getActiveTabUrl',
         });
+
+        if (activeTabUrl.endsWith('/')) {
+          activeTabUrl = activeTabUrl.slice(0, -1);
+        }
+
         personData.linkedinLink = { url: activeTabUrl, label: activeTabUrl };
 
         const query = `mutation CreateOnePerson { createPerson(data:{${handleQueryParams(

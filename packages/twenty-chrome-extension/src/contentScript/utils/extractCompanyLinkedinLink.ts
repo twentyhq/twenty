@@ -7,7 +7,7 @@ const extractCompanyLinkedinLink = (activeTabUrl: string) => {
 
   if (match && match[1]) {
     const companyID = match[1];
-    const cleanCompanyURL = `https://www.linkedin.com/company/${companyID}/`;
+    const cleanCompanyURL = `https://www.linkedin.com/company/${companyID}`;
     return cleanCompanyURL;
   }
 
