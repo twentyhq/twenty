@@ -1,6 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 
 export const getFieldType = (
   objectMetadataItem,
@@ -17,18 +18,13 @@ export const checkFields = (objectMetadataItem, fieldNames): void => {
   for (const fieldName of fieldNames) {
     if (
       !objectMetadataItem.fields
-        .reduce(
-          (acc, itemField) => [
-            ...acc,
-            itemField.name,
-            ...Object.keys(itemField.targetColumnMap),
-          ],
-          [],
-        )
+        .reduce((acc, itemField) => [...acc, itemField.name], [])
         .includes(fieldName)
     ) {
       throw new BadRequestException(
-        `field '${fieldName}' does not exist in '${objectMetadataItem.targetTableName}' object`,
+        `field '${fieldName}' does not exist in '${computeObjectTargetTable(
+          objectMetadataItem,
+        )}' object`,
       );
     }
   }

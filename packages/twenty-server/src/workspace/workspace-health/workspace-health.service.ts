@@ -12,6 +12,7 @@ import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metad
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { ObjectMetadataHealthService } from 'src/workspace/workspace-health/services/object-metadata-health.service';
 import { FieldMetadataHealthService } from 'src/workspace/workspace-health/services/field-metadata-health.service';
+import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 
 @Injectable()
 export class WorkspaceHealthService {
@@ -68,7 +69,7 @@ export class WorkspaceHealthService {
       // Check fields metadata health
       const fieldIssues = await this.fieldMetadataHealthService.healthCheck(
         schemaName,
-        objectMetadata.targetTableName,
+        computeObjectTargetTable(objectMetadata),
         objectMetadata.fields,
         options,
       );

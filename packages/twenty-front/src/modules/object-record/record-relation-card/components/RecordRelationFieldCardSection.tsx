@@ -19,6 +19,7 @@ import { useUpsertRecordFromState } from '@/object-record/hooks/useUpsertRecordF
 import { RecordRelationFieldCardContent } from '@/object-record/record-relation-card/components/RecordRelationFieldCardContent';
 import { SingleEntitySelectMenuItemsWithSearch } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItemsWithSearch';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
+import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { IconForbid, IconPlus } from '@/ui/display/icon';
@@ -153,12 +154,10 @@ export const RecordRelationFieldCardSection = () => {
 
   const { closeDropdown, isDropdownOpen } = useDropdown(dropdownId);
 
-  const {
-    identifiersMapper,
-    relationPickerSearchFilter,
-    searchQuery,
-    setRelationPickerSearchFilter,
-  } = useRelationPicker();
+  const { relationPickerSearchFilter, setRelationPickerSearchFilter } =
+    useRelationPicker({ relationPickerScopeId: dropdownId });
+
+  const { identifiersMapper, searchQuery } = useRelationPicker();
 
   const entities = useFilteredSearchEntityQuery({
     filters: [
@@ -225,53 +224,55 @@ export const RecordRelationFieldCardSection = () => {
 
   return (
     <Section>
-      <StyledHeader isDropdownOpen={isDropdownOpen}>
-        <StyledTitle>
-          <StyledTitleLabel>{fieldDefinition.label}</StyledTitleLabel>
-          {parseFieldRelationType(relationFieldMetadataItem) ===
-            'TO_ONE_OBJECT' && (
-            <StyledLink to={filterLinkHref}>
-              All ({relationRecords.length})
-            </StyledLink>
-          )}
-        </StyledTitle>
-        <DropdownScope dropdownScopeId={dropdownId}>
-          <StyledAddDropdown
-            dropdownId={dropdownId}
-            dropdownPlacement="right-start"
-            onClose={handleCloseRelationPickerDropdown}
-            clickableComponent={
-              <LightIconButton
-                className="displayOnHover"
-                Icon={IconPlus}
-                accent="tertiary"
-              />
-            }
-            dropdownComponents={
-              <SingleEntitySelectMenuItemsWithSearch
-                EmptyIcon={IconForbid}
-                entitiesToSelect={entities.entitiesToSelect}
-                loading={entities.loading}
-                onEntitySelected={handleRelationPickerEntitySelected}
-              />
-            }
-            dropdownHotkeyScope={{
-              scope: dropdownId,
-            }}
-          />
-        </DropdownScope>
-      </StyledHeader>
-      {!!relationRecords.length && (
-        <Card>
-          {relationRecords.slice(0, 5).map((relationRecord, index) => (
-            <RecordRelationFieldCardContent
-              key={`${relationRecord.id}${relationLabelIdentifierFieldMetadata?.id}`}
-              divider={index < relationRecords.length - 1}
-              relationRecord={relationRecord}
+      <RelationPickerScope relationPickerScopeId={dropdownId}>
+        <StyledHeader isDropdownOpen={isDropdownOpen}>
+          <StyledTitle>
+            <StyledTitleLabel>{fieldDefinition.label}</StyledTitleLabel>
+            {parseFieldRelationType(relationFieldMetadataItem) ===
+              'TO_ONE_OBJECT' && (
+              <StyledLink to={filterLinkHref}>
+                All ({relationRecords.length})
+              </StyledLink>
+            )}
+          </StyledTitle>
+          <DropdownScope dropdownScopeId={dropdownId}>
+            <StyledAddDropdown
+              dropdownId={dropdownId}
+              dropdownPlacement="right-start"
+              onClose={handleCloseRelationPickerDropdown}
+              clickableComponent={
+                <LightIconButton
+                  className="displayOnHover"
+                  Icon={IconPlus}
+                  accent="tertiary"
+                />
+              }
+              dropdownComponents={
+                <SingleEntitySelectMenuItemsWithSearch
+                  EmptyIcon={IconForbid}
+                  entitiesToSelect={entities.entitiesToSelect}
+                  loading={entities.loading}
+                  onEntitySelected={handleRelationPickerEntitySelected}
+                />
+              }
+              dropdownHotkeyScope={{
+                scope: dropdownId,
+              }}
             />
-          ))}
-        </Card>
-      )}
+          </DropdownScope>
+        </StyledHeader>
+        {!!relationRecords.length && (
+          <Card>
+            {relationRecords.slice(0, 5).map((relationRecord, index) => (
+              <RecordRelationFieldCardContent
+                key={`${relationRecord.id}${relationLabelIdentifierFieldMetadata?.id}`}
+                divider={index < relationRecords.length - 1}
+                relationRecord={relationRecord}
+              />
+            ))}
+          </Card>
+        )}
+      </RelationPickerScope>
     </Section>
   );
 };

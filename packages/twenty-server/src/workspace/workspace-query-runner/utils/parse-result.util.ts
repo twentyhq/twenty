@@ -39,6 +39,8 @@ export const parseResult = (obj: any): any => {
     if (obj.hasOwnProperty(key)) {
       if (typeof obj[key] === 'object' && obj[key] !== null) {
         result[key] = parseResult(obj[key]);
+      } else if (key === '__typename') {
+        result[key] = obj[key].replace(/^_*/, '');
       } else if (isSpecialKey(key)) {
         handleSpecialKey(result, key, obj[key]);
       } else {

@@ -7,7 +7,7 @@ import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { Timeline } from '@/activities/timeline/components/Timeline';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { isStandardObject } from '@/object-metadata/utils/isStandardObject';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import {
   IconCheckbox,
   IconMail,
@@ -41,7 +41,7 @@ const StyledTabListContainer = styled.div`
 const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
 
 type ShowPageRightContainerProps = {
-  targetableObject?: ActivityTargetableObject;
+  targetableObject: ActivityTargetableObject;
   timeline?: boolean;
   tasks?: boolean;
   notes?: boolean;
@@ -60,11 +60,10 @@ export const ShowPageRightContainer = ({
   const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
   const activeTabId = useRecoilValue(activeTabIdState());
 
-  if (!targetableObject) return <></>;
-
-  const targetableObjectIsStandardObject = isStandardObject(
-    targetableObject.targetObjectNameSingular,
-  );
+  const { objectMetadataItem: targetableObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: targetableObject.targetObjectNameSingular,
+    });
 
   const TASK_TABS = [
     {
@@ -90,14 +89,14 @@ export const ShowPageRightContainer = ({
       title: 'Files',
       Icon: IconPaperclip,
       hide: !notes,
-      disabled: !targetableObjectIsStandardObject,
+      disabled: targetableObjectMetadataItem.isCustom,
     },
     {
       id: 'emails',
       title: 'Emails',
       Icon: IconMail,
       hide: !emails,
-      disabled: !isMessagingEnabled || !targetableObjectIsStandardObject,
+      disabled: !isMessagingEnabled || targetableObjectMetadataItem.isCustom,
     },
   ];
 

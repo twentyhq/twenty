@@ -19,7 +19,9 @@ export const useChipField = () => {
 
   const record = useRecoilValue<any | null>(entityFieldsFamilyState(entityId));
 
-  const { identifiersMapper } = useRelationPicker();
+  const { identifiersMapper } = useRelationPicker({
+    relationPickerScopeId: 'relation-picker',
+  });
 
   return {
     basePathToShowPage,
