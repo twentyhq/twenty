@@ -10,6 +10,7 @@ import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
@@ -62,12 +63,22 @@ type DefaultLayoutProps = {
 export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
   const onboardingStatus = useOnboardingStatus();
   const isMobile = useIsMobile();
+  const isSettingsPage = useIsSettingsPage();
 
   return (
     <StyledLayout>
       <CommandMenu />
       <KeyboardShortcutMenu />
-      <StyledPageContainer>
+      <StyledPageContainer
+        style={
+          isSettingsPage
+            ? {
+                marginLeft: 'auto',
+                marginRight: 'auto',
+              }
+            : {}
+        }
+      >
         <StyledAppNavigationDrawer />
         <StyledMainContainer>
           {onboardingStatus &&

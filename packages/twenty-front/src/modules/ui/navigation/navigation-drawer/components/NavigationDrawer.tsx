@@ -80,9 +80,7 @@ export const NavigationDrawer = ({
 
   const desktopWidth = !isNavigationDrawerOpen
     ? 12
-    : isSubMenu
-      ? desktopNavDrawerWidths.submenu
-      : desktopNavDrawerWidths.menu;
+    : desktopNavDrawerWidths.menu;
 
   const mobileWidth = isNavigationDrawerOpen ? '100%' : 0;
 
