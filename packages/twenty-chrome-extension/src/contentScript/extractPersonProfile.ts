@@ -65,10 +65,12 @@ function insertButtonForPerson(): void {
           linkedinLink: { url: '', label: '' },
         };
 
+        // Extract active tab url using chrome API.
         let { url: activeTabUrl } = await chrome.runtime.sendMessage({
           action: 'getActiveTabUrl',
         });
 
+        // Remove last slash from the URL for consistency when saving usernames.
         if (activeTabUrl.endsWith('/')) {
           activeTabUrl = activeTabUrl.slice(0, -1);
         }

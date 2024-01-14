@@ -2,9 +2,9 @@ import { openOptionsPage } from './utils/openOptionsPage';
 
 console.log('Background Script Works');
 
+// Open options page programmatically in a new tab.
 chrome.runtime.onInstalled.addListener(function (details) {
   if (details.reason === 'install') {
-    // Open options page programmatically in a new tab.
     openOptionsPage();
   }
 });
@@ -44,7 +44,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       chrome.tabs.sendMessage(tabId, { action: 'executeContentScript' });
       injectedTabs.add(tabId);
     } else if (!isDesiredRoute) {
-      injectedTabs.delete(tabId); // Clear entry if navigated away from LinkedIn company page
+      injectedTabs.delete(tabId); // Clear entry if navigated away from LinkedIn company page.
     }
   }
 });
