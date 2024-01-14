@@ -56,13 +56,26 @@ const StyledErrorHelper = styled.div`
   padding: 5px 0;
 `;
 
-const TextInput: React.FC<TextInputProps> = ({ label, value, onChange, fullWidth, error, placeholder, icon }) => {
+const TextInput: React.FC<TextInputProps> = ({
+  label,
+  value,
+  onChange,
+  fullWidth,
+  error,
+  placeholder,
+  icon,
+}) => {
   return (
     <StyledContainer fullWidth={fullWidth}>
       {label && <StyledLabel>{label}</StyledLabel>}
       <StyledInputContainer>
         {icon && <StyledIcon>{icon}</StyledIcon>}
-        <StyledInput type="text" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
+        <StyledInput
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+        />
       </StyledInputContainer>
       {error && <StyledErrorHelper>{error}</StyledErrorHelper>}
     </StyledContainer>

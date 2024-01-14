@@ -10,7 +10,7 @@ ReactDOM.createRoot(document.getElementById('app') as HTMLElement).render(
     <React.StrictMode>
       <App />
     </React.StrictMode>
-  </AppThemeProvider>
+  </AppThemeProvider>,
 );
 
 declare module '@emotion/react' {

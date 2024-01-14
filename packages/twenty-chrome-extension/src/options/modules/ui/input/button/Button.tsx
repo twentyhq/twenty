@@ -69,7 +69,15 @@ export const Button = ({
   disabled = false,
   onClick,
 }: ButtonProps) => (
-  <StyledButton fullWidth={fullWidth} variant={variant} size={size} position={position} disabled={soon || disabled} className={className} onClick={onClick}>
+  <StyledButton
+    fullWidth={fullWidth}
+    variant={variant}
+    size={size}
+    position={position}
+    disabled={soon || disabled}
+    className={className}
+    onClick={onClick}
+  >
     {Icon && Icon}
     {title}
     {soon && 'Soon'}

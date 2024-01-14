@@ -12,8 +12,13 @@ const requestDb = async (query: string) => {
     },
   };
 
-  const response = await fetch(`${serverBaseUrl ? serverBaseUrl : import.meta.env.VITE_SERVER_BASE_URL}/graphql`, options);
-  
+  const response = await fetch(
+    `${
+      serverBaseUrl ? serverBaseUrl : import.meta.env.VITE_SERVER_BASE_URL
+    }/graphql`,
+    options,
+  );
+
   if (!response.ok) {
     console.error(response);
   }

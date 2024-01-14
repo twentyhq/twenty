@@ -80,9 +80,11 @@ export const ApiKeyForm = () => {
   }, [route]);
 
   const handleGenerateClick = () => {
-    window.open(`${import.meta.env.VITE_FRONT_BASE_URL}/settings/developers/api-keys`);
+    window.open(
+      `${import.meta.env.VITE_FRONT_BASE_URL}/settings/developers/api-keys`,
+    );
   };
-  
+
   const handleToggle = () => {
     setShowSection(!showSection);
   };

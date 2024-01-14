@@ -4,7 +4,11 @@ const handleQueryParams = (inputData: { [x: string]: unknown }): string => {
     let quote = '';
     if (typeof inputData[key] === 'string') quote = '"';
     if (typeof inputData[key] === 'object') {
-      result = result.concat(`${key}: {${handleQueryParams(inputData[key] as { [x: string]: unknown })}}, `);
+      result = result.concat(
+        `${key}: {${handleQueryParams(
+          inputData[key] as { [x: string]: unknown },
+        )}}, `,
+      );
     } else {
       result = result.concat(`${key}: ${quote}${inputData[key]}${quote}, `);
     }

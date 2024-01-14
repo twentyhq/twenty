@@ -12,7 +12,8 @@ type ContainerProps = {
 
 const StyledContainer = styled.div<ContainerProps>`
   align-items: center;
-  background-color: ${({ theme, isOn, color }) => (isOn ? color ?? theme.color.blue : theme.background.quaternary)};
+  background-color: ${({ theme, isOn, color }) =>
+    isOn ? color ?? theme.color.blue : theme.background.quaternary};
   border-radius: 10px;
   cursor: pointer;
   display: flex;
@@ -37,7 +38,12 @@ export type ToggleProps = {
   toggleSize?: ToggleSize;
 };
 
-export const Toggle = ({ value, onChange, color, toggleSize = 'medium' }: ToggleProps) => {
+export const Toggle = ({
+  value,
+  onChange,
+  color,
+  toggleSize = 'medium',
+}: ToggleProps) => {
   const [isOn, setIsOn] = useState(value ?? false);
 
   const circleVariants = {
@@ -61,8 +67,17 @@ export const Toggle = ({ value, onChange, color, toggleSize = 'medium' }: Toggle
   }, [value]);
 
   return (
-    <StyledContainer onClick={handleChange} isOn={isOn} color={color} toggleSize={toggleSize}>
-      <StyledCircle animate={isOn ? 'on' : 'off'} variants={circleVariants} toggleSize={toggleSize} />
+    <StyledContainer
+      onClick={handleChange}
+      isOn={isOn}
+      color={color}
+      toggleSize={toggleSize}
+    >
+      <StyledCircle
+        animate={isOn ? 'on' : 'off'}
+        variants={circleVariants}
+        toggleSize={toggleSize}
+      />
     </StyledContainer>
   );
 };

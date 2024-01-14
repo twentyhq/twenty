@@ -1,4 +1,7 @@
-function createNewButton(text: string, onClickHandler: () => void): HTMLButtonElement {
+function createNewButton(
+  text: string,
+  onClickHandler: () => void,
+): HTMLButtonElement {
   const newButton: HTMLButtonElement = document.createElement('button');
   newButton.textContent = text;
 
