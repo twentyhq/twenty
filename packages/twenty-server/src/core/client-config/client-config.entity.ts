@@ -41,7 +41,7 @@ class Support {
 
 @ObjectType()
 class Sentry {
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   dsn: string | undefined;
 }
 
@@ -58,6 +58,9 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   signInPrefilled: boolean;
+
+  @Field(() => Boolean)
+  signUpDisabled: boolean;
 
   @Field(() => Boolean)
   debugMode: boolean;

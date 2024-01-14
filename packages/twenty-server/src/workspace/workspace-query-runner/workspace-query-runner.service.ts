@@ -34,7 +34,7 @@ import {
 } from 'src/workspace/workspace-query-runner/jobs/call-webhook-jobs.job';
 import { parseResult } from 'src/workspace/workspace-query-runner/utils/parse-result.util';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
-import { globalExceptionHandler } from 'src/filters/utils/global-exception-handler.util';
+import { handleExceptionAndConvertToGraphQLError } from 'src/filters/utils/global-exception-handler.util';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-optionts.interface';
 import {
@@ -64,15 +64,21 @@ export class WorkspaceQueryRunnerService {
   ): Promise<IConnection<Record> | undefined> {
     try {
       const { workspaceId, targetTableName } = options;
+      const start = performance.now();
+
       const query = await this.workspaceQueryBuilderFactory.findMany(
         args,
         options,
       );
+
       const result = await this.execute(query, workspaceId);
+      const end = performance.now();
+
+      console.log(`query time: ${end - start} ms`);
 
       return this.parseResult<IConnection<Record>>(result, targetTableName, '');
     } catch (exception) {
-      const error = globalExceptionHandler(
+      const error = handleExceptionAndConvertToGraphQLError(
         exception,
         this.exceptionHandlerService,
       );
@@ -106,7 +112,7 @@ export class WorkspaceQueryRunnerService {
 
       return parsedResult?.edges?.[0]?.node;
     } catch (exception) {
-      const error = globalExceptionHandler(
+      const error = handleExceptionAndConvertToGraphQLError(
         exception,
         this.exceptionHandlerService,
       );
@@ -141,7 +147,7 @@ export class WorkspaceQueryRunnerService {
 
       return parsedResults;
     } catch (exception) {
-      const error = globalExceptionHandler(
+      const error = handleExceptionAndConvertToGraphQLError(
         exception,
         this.exceptionHandlerService,
       );
@@ -185,7 +191,7 @@ export class WorkspaceQueryRunnerService {
 
       return parsedResults?.[0];
     } catch (exception) {
-      const error = globalExceptionHandler(
+      const error = handleExceptionAndConvertToGraphQLError(
         exception,
         this.exceptionHandlerService,
       );
@@ -220,7 +226,7 @@ export class WorkspaceQueryRunnerService {
 
       return parsedResults?.[0];
     } catch (exception) {
-      const error = globalExceptionHandler(
+      const error = handleExceptionAndConvertToGraphQLError(
         exception,
         this.exceptionHandlerService,
       );
@@ -255,7 +261,7 @@ export class WorkspaceQueryRunnerService {
 
       return parsedResults;
     } catch (exception) {
-      const error = globalExceptionHandler(
+      const error = handleExceptionAndConvertToGraphQLError(
         exception,
         this.exceptionHandlerService,
       );
@@ -293,7 +299,7 @@ export class WorkspaceQueryRunnerService {
 
       return parsedResults;
     } catch (exception) {
-      const error = globalExceptionHandler(
+      const error = handleExceptionAndConvertToGraphQLError(
         exception,
         this.exceptionHandlerService,
       );

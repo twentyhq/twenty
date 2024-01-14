@@ -146,8 +146,8 @@ export const useOptimisticEffect = ({
     ({ snapshot }) =>
       ({
         typename,
-        createdRecords,
-        updatedRecords,
+        createdRecords = [],
+        updatedRecords = [],
         deletedRecordIds,
       }: {
         typename: string;
@@ -162,17 +162,17 @@ export const useOptimisticEffect = ({
         for (const optimisticEffect of Object.values(optimisticEffects)) {
           // We need to update the typename when createObject type differs from listObject types
           // It is the case for apiKey, where the creation route returns an ApiKeyToken type
-          const formattedCreatedRecords = isNonEmptyArray(createdRecords)
-            ? createdRecords.map((data: any) => {
-                return { ...data, __typename: typename };
-              })
-            : [];
+          const formattedCreatedRecords = createdRecords.map((createdRecord) =>
+            typename.endsWith('Edge')
+              ? createdRecord
+              : { ...createdRecord, __typename: typename },
+          );
 
-          const formattedUpdatedRecords = isNonEmptyArray(updatedRecords)
-            ? updatedRecords.map((data: any) => {
-                return { ...data, __typename: typename };
-              })
-            : [];
+          const formattedUpdatedRecords = updatedRecords.map((updatedRecord) =>
+            typename.endsWith('Edge')
+              ? updatedRecord
+              : { ...updatedRecord, __typename: typename },
+          );
 
           if (optimisticEffect.typename === typename) {
             optimisticEffect.writer({

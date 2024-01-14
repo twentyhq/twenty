@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { Threads } from '@/activities/emails/components/Threads';
 import { Attachments } from '@/activities/files/components/Attachments';
@@ -15,12 +16,9 @@ import {
   IconTimelineEvent,
 } from '@/ui/display/icon';
 import { TabList } from '@/ui/layout/tab/components/TabList';
-import { activeTabIdScopedState } from '@/ui/layout/tab/states/activeTabIdScopedState';
-import { useRecoilScopedState } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedState';
+import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-
-import { ShowPageRecoilScopeContext } from '../../states/ShowPageRecoilScopeContext';
 
 const StyledShowPageRightContainer = styled.div`
   display: flex;
@@ -40,6 +38,8 @@ const StyledTabListContainer = styled.div`
   height: 40px;
 `;
 
+const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
+
 type ShowPageRightContainerProps = {
   targetableObject?: ActivityTargetableObject;
   timeline?: boolean;
@@ -56,10 +56,9 @@ export const ShowPageRightContainer = ({
   emails,
 }: ShowPageRightContainerProps) => {
   const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
-  const [activeTabId] = useRecoilScopedState(
-    activeTabIdScopedState,
-    ShowPageRecoilScopeContext,
-  );
+
+  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+  const activeTabId = useRecoilValue(activeTabIdState());
 
   if (!targetableObject) return <></>;
 
@@ -105,7 +104,7 @@ export const ShowPageRightContainer = ({
   return (
     <StyledShowPageRightContainer>
       <StyledTabListContainer>
-        <TabList context={ShowPageRecoilScopeContext} tabs={TASK_TABS} />
+        <TabList tabListId={TAB_LIST_COMPONENT_ID} tabs={TASK_TABS} />
       </StyledTabListContainer>
       {activeTabId === 'timeline' && (
         <Timeline targetableObject={targetableObject} />

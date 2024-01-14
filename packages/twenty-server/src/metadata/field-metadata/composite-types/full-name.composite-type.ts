@@ -7,11 +7,14 @@ import { generateTargetColumnMap } from 'src/metadata/field-metadata/utils/gener
 export const fullNameFields = (
   fieldMetadata?: FieldMetadataInterface,
 ): FieldMetadataInterface[] => {
-  const targetColumnMap = fieldMetadata
+  const inferredFieldMetadata = fieldMetadata as
+    | FieldMetadataInterface<FieldMetadataType.FULL_NAME>
+    | undefined;
+  const targetColumnMap = inferredFieldMetadata
     ? generateTargetColumnMap(
-        fieldMetadata.type,
-        fieldMetadata.isCustom ?? false,
-        fieldMetadata.name,
+        inferredFieldMetadata.type,
+        inferredFieldMetadata.isCustom ?? false,
+        inferredFieldMetadata.name,
       )
     : {
         firstName: 'firstName',
@@ -29,7 +32,14 @@ export const fullNameFields = (
         value: targetColumnMap.firstName,
       },
       isNullable: true,
-    } satisfies FieldMetadataInterface,
+      ...(inferredFieldMetadata
+        ? {
+            defaultValue: {
+              value: inferredFieldMetadata.defaultValue?.firstName ?? null,
+            },
+          }
+        : {}),
+    } satisfies FieldMetadataInterface<FieldMetadataType.TEXT>,
     {
       id: 'lastName',
       type: FieldMetadataType.TEXT,
@@ -40,7 +50,14 @@ export const fullNameFields = (
         value: targetColumnMap.lastName,
       },
       isNullable: true,
-    } satisfies FieldMetadataInterface,
+      ...(inferredFieldMetadata
+        ? {
+            defaultValue: {
+              value: inferredFieldMetadata.defaultValue?.lastName ?? null,
+            },
+          }
+        : {}),
+    } satisfies FieldMetadataInterface<FieldMetadataType.TEXT>,
   ];
 };
 

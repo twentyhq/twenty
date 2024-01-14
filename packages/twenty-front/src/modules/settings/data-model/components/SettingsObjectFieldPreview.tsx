@@ -144,6 +144,7 @@ export const SettingsObjectFieldPreview = ({
                   fieldName,
                   relationObjectMetadataNameSingular:
                     relationObjectMetadataItem?.nameSingular,
+                  options: selectOptions,
                 },
               },
               hotkeyScope: 'field-preview',

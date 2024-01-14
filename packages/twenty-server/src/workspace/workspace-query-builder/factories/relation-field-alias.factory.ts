@@ -3,6 +3,7 @@ import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { GraphQLResolveInfo } from 'graphql';
 
 import { FieldMetadataInterface } from 'src/metadata/field-metadata/interfaces/field-metadata.interface';
+import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
 
 import { isRelationFieldMetadataType } from 'src/workspace/utils/is-relation-field-metadata-type.util';
 import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
@@ -31,19 +32,27 @@ export class RelationFieldAliasFactory {
     fieldKey: string,
     fieldValue: any,
     fieldMetadata: FieldMetadataInterface,
+    objectMetadataCollection: ObjectMetadataInterface[],
     info: GraphQLResolveInfo,
   ): Promise<string> {
     if (!isRelationFieldMetadataType(fieldMetadata.type)) {
       throw new Error(`Field ${fieldMetadata.name} is not a relation field`);
     }
 
-    return this.createRelationAlias(fieldKey, fieldValue, fieldMetadata, info);
+    return this.createRelationAlias(
+      fieldKey,
+      fieldValue,
+      fieldMetadata,
+      objectMetadataCollection,
+      info,
+    );
   }
 
   private async createRelationAlias(
     fieldKey: string,
     fieldValue: any,
     fieldMetadata: FieldMetadataInterface,
+    objectMetadataCollection: ObjectMetadataInterface[],
     info: GraphQLResolveInfo,
   ): Promise<string> {
     const relationMetadata =
@@ -67,18 +76,13 @@ export class RelationFieldAliasFactory {
     );
     // Retrieve the referenced object metadata based on the relation direction
     // Mandatory to handle n+n relations
-    const referencedObjectMetadata =
-      await this.objectMetadataService.findOneWithinWorkspace(
-        fieldMetadata.workspaceId,
-        {
-          where: {
-            id:
-              relationDirection == RelationDirection.TO
-                ? relationMetadata.fromObjectMetadataId
-                : relationMetadata.toObjectMetadataId,
-          },
-        },
-      );
+    const referencedObjectMetadata = objectMetadataCollection.find(
+      (objectMetadata) =>
+        objectMetadata.id ===
+        (relationDirection == RelationDirection.TO
+          ? relationMetadata.fromObjectMetadataId
+          : relationMetadata.toObjectMetadataId),
+    );
 
     if (!referencedObjectMetadata) {
       throw new Error(
@@ -101,6 +105,7 @@ export class RelationFieldAliasFactory {
           info,
           fieldValue,
           referencedObjectMetadata.fields ?? [],
+          objectMetadataCollection,
         );
 
       return `
@@ -129,6 +134,7 @@ export class RelationFieldAliasFactory {
         info,
         fieldValue,
         referencedObjectMetadata.fields ?? [],
+        objectMetadataCollection,
       );
 
     // Otherwise it means it's a relation destination is of kind ONE

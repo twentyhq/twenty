@@ -140,6 +140,11 @@ export class WorkspaceMigrationRunnerService {
       }),
       true,
     );
+
+    // Enable totalCount for the table
+    await queryRunner.query(`
+      COMMENT ON TABLE "${schemaName}"."${tableName}" IS '@graphql({"totalCount": {"enabled": true}})';
+    `);
   }
 
   /**
@@ -293,6 +298,7 @@ export class WorkspaceMigrationRunnerService {
         columnNames: [migrationColumn.columnName],
         referencedColumnNames: [migrationColumn.referencedTableColumnName],
         referencedTableName: migrationColumn.referencedTableName,
+        referencedSchema: schemaName,
         onDelete: 'CASCADE',
       }),
     );

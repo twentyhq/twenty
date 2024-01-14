@@ -9,6 +9,7 @@ import {
 } from '@floating-ui/react';
 import { Key } from 'ts-key-enum';
 
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -29,6 +30,7 @@ type DropdownProps = {
     scope: string;
   };
   dropdownHotkeyScope: HotkeyScope;
+  dropdownId: string;
   dropdownPlacement?: Placement;
   dropdownMenuWidth?: number;
   dropdownOffset?: { x?: number; y?: number };
@@ -43,6 +45,7 @@ export const Dropdown = ({
   dropdownComponents,
   dropdownMenuWidth,
   hotkey,
+  dropdownId,
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
   dropdownOffset = { x: 0, y: 0 },
@@ -53,8 +56,7 @@ export const Dropdown = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { isDropdownOpen, toggleDropdown, closeDropdown, dropdownWidth } =
-    useDropdown();
-
+    useDropdown(dropdownId);
   const offsetMiddlewares = [];
 
   if (dropdownOffset.x) {
@@ -87,6 +89,7 @@ export const Dropdown = ({
   });
 
   useInternalHotkeyScopeManagement({
+    dropdownScopeId: `${dropdownId}-scope`,
     dropdownHotkeyScopeFromParent: dropdownHotkeyScope,
   });
 
@@ -100,36 +103,38 @@ export const Dropdown = ({
   );
 
   return (
-    <div ref={containerRef} className={className}>
-      {clickableComponent && (
-        <div
-          ref={refs.setReference}
-          onClick={toggleDropdown}
-          className={className}
-        >
-          {clickableComponent}
-        </div>
-      )}
-      {hotkey && (
-        <HotkeyEffect
-          hotkey={hotkey}
-          onHotkeyTriggered={handleHotkeyTriggered}
+    <DropdownScope dropdownScopeId={`${dropdownId}-scope`}>
+      <div ref={containerRef} className={className}>
+        {clickableComponent && (
+          <div
+            ref={refs.setReference}
+            onClick={toggleDropdown}
+            className={className}
+          >
+            {clickableComponent}
+          </div>
+        )}
+        {hotkey && (
+          <HotkeyEffect
+            hotkey={hotkey}
+            onHotkeyTriggered={handleHotkeyTriggered}
+          />
+        )}
+        {isDropdownOpen && (
+          <DropdownMenu
+            width={dropdownMenuWidth ?? dropdownWidth}
+            data-select-disable
+            ref={refs.setFloating}
+            style={floatingStyles}
+          >
+            {dropdownComponents}
+          </DropdownMenu>
+        )}
+        <DropdownOnToggleEffect
+          onDropdownClose={onClose}
+          onDropdownOpen={onOpen}
         />
-      )}
-      {isDropdownOpen && (
-        <DropdownMenu
-          width={dropdownMenuWidth ?? dropdownWidth}
-          data-select-disable
-          ref={refs.setFloating}
-          style={floatingStyles}
-        >
-          {dropdownComponents}
-        </DropdownMenu>
-      )}
-      <DropdownOnToggleEffect
-        onDropdownClose={onClose}
-        onDropdownOpen={onOpen}
-      />
-    </div>
+      </div>
+    </DropdownScope>
   );
 };

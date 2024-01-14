@@ -25,6 +25,7 @@ export class UpdateOneQueryFactory {
     const fieldsString = await this.fieldsStringFactory.create(
       options.info,
       options.fieldMetadataCollection,
+      options.objectMetadataCollection,
     );
     const computedArgs = this.argsAliasFactory.create(
       args,

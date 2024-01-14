@@ -18,6 +18,7 @@ export class DeleteManyQueryFactory {
     const fieldsString = await this.fieldsStringFactory.create(
       options.info,
       options.fieldMetadataCollection,
+      options.objectMetadataCollection,
     );
 
     return `

@@ -98,7 +98,7 @@ export const SettingsDevelopersApiKeysNew = () => {
             description="When the API key will expire."
           />
           <Select
-            dropdownScopeId="object-field-type-select"
+            dropdownId="object-field-type-select"
             options={ExpirationDates}
             value={formValues.expirationDate}
             onChange={(value) => {

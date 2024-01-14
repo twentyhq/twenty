@@ -57,7 +57,7 @@ export const RecordTableContainer = ({
   const viewBarId = objectNamePlural ?? '';
 
   const { setTableFilters, setTableSorts, setTableColumns } = useRecordTable({
-    recordTableScopeId: recordTableId,
+    recordTableId,
   });
 
   const updateEntity = ({ variables }: RecordUpdateHookParams) => {
@@ -69,7 +69,7 @@ export const RecordTableContainer = ({
 
   const handleImport = () => {
     const openImport =
-      recordTableId === 'companies'
+      objectNamePlural === 'companies'
         ? openCompanySpreadsheetImport
         : openPersonSpreadsheetImport;
     openImport();
@@ -104,9 +104,14 @@ export const RecordTableContainer = ({
           }}
         />
       </SpreadsheetImportProvider>
-      <RecordTableEffect recordTableId={recordTableId} viewBarId={viewBarId} />
+      <RecordTableEffect
+        objectNamePlural={objectNamePlural}
+        recordTableId={recordTableId}
+        viewBarId={viewBarId}
+      />
       <RecordTableWithWrappers
         recordTableId={recordTableId}
+        objectNamePlural={objectNamePlural}
         viewBarId={viewBarId}
         updateRecordMutation={updateEntity}
         createRecord={createRecord}

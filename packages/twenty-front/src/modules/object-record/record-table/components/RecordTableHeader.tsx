@@ -3,13 +3,10 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { RecordTableHeaderCell } from '@/object-record/record-table/components/RecordTableHeaderCell';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { IconPlus } from '@/ui/display/icon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScrollWrapperScopedRef';
-
-import { useRecordTableScopedStates } from '../hooks/internal/useRecordTableScopedStates';
 
 import { RecordTableHeaderPlusButtonContent } from './RecordTableHeaderPlusButtonContent';
 import { SelectAllCheckbox } from './SelectAllCheckbox';
@@ -48,7 +45,7 @@ const StyledPlusIconContainer = styled.div`
   width: 32px;
 `;
 
-const HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID =
+export const HIDDEN_TABLE_COLUMN_DROPDOWN_ID =
   'hidden-table-columns-dropdown-scope-id';
 
 const HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID =
@@ -59,18 +56,8 @@ export const RecordTableHeader = ({
 }: {
   createRecord: () => void;
 }) => {
-  const { hiddenTableColumnsScopeInjector, visibleTableColumnsScopeInjector } =
-    getRecordTableScopeInjector();
-
-  const { injectSelectorWithRecordTableScopeId } = useRecordTableScopedStates();
-
-  const hiddenTableColumnsSelector = injectSelectorWithRecordTableScopeId(
-    hiddenTableColumnsScopeInjector,
-  );
-
-  const visibleTableColumnsSelector = injectSelectorWithRecordTableScopeId(
-    visibleTableColumnsScopeInjector,
-  );
+  const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
+    useRecordTableStates();
 
   const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector);
 
@@ -106,22 +93,19 @@ export const RecordTableHeader = ({
           isTableWiderThanScreen={isTableWiderThanScreen}
         >
           {hiddenTableColumns.length > 0 && (
-            <DropdownScope
-              dropdownScopeId={HIDDEN_TABLE_COLUMN_DROPDOWN_SCOPE_ID}
-            >
-              <Dropdown
-                clickableComponent={
-                  <StyledPlusIconContainer>
-                    <IconPlus size={theme.icon.size.md} />
-                  </StyledPlusIconContainer>
-                }
-                dropdownComponents={<RecordTableHeaderPlusButtonContent />}
-                dropdownPlacement="bottom-start"
-                dropdownHotkeyScope={{
-                  scope: HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID,
-                }}
-              />
-            </DropdownScope>
+            <Dropdown
+              dropdownId={HIDDEN_TABLE_COLUMN_DROPDOWN_ID}
+              clickableComponent={
+                <StyledPlusIconContainer>
+                  <IconPlus size={theme.icon.size.md} />
+                </StyledPlusIconContainer>
+              }
+              dropdownComponents={<RecordTableHeaderPlusButtonContent />}
+              dropdownPlacement="bottom-start"
+              dropdownHotkeyScope={{
+                scope: HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID,
+              }}
+            />
           )}
         </StyledPlusIconHeaderCell>
       </tr>

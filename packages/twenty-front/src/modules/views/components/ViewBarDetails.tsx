@@ -133,35 +133,34 @@ export const ViewBarDetails = ({
     <StyledBar>
       <StyledFilterContainer>
         <StyledChipcontainer>
-          {currentViewSorts?.map((sort) => {
-            return <EditableSortChip viewSort={sort} />;
-          })}
+          {currentViewSorts?.map((sort) => (
+            <EditableSortChip key={sort.id} viewSort={sort} />
+          ))}
           {!!currentViewSorts?.length && !!currentViewFilters?.length && (
             <StyledSeperatorContainer>
               <StyledSeperator />
             </StyledSeperatorContainer>
           )}
-          {currentViewFilters?.map((viewFilter) => {
-            return (
-              <ObjectFilterDropdownScope
-                filterScopeId={viewFilter.fieldMetadataId}
-              >
-                <DropdownScope dropdownScopeId={viewFilter.fieldMetadataId}>
-                  <ViewBarFilterEffect
-                    filterDropdownId={viewFilter.fieldMetadataId}
-                    onFilterSelect={upsertViewFilter}
-                  />
-                  <EditableFilterDropdownButton
-                    viewFilter={viewFilter}
-                    hotkeyScope={{
-                      scope: FiltersHotkeyScope.ObjectFilterDropdownButton,
-                    }}
-                    viewFilterDropdownId={viewFilter.fieldMetadataId}
-                  />
-                </DropdownScope>
-              </ObjectFilterDropdownScope>
-            );
-          })}
+          {currentViewFilters?.map((viewFilter) => (
+            <ObjectFilterDropdownScope
+              key={viewFilter.id}
+              filterScopeId={viewFilter.fieldMetadataId}
+            >
+              <DropdownScope dropdownScopeId={viewFilter.fieldMetadataId}>
+                <ViewBarFilterEffect
+                  filterDropdownId={viewFilter.fieldMetadataId}
+                  onFilterSelect={upsertViewFilter}
+                />
+                <EditableFilterDropdownButton
+                  viewFilter={viewFilter}
+                  hotkeyScope={{
+                    scope: FiltersHotkeyScope.ObjectFilterDropdownButton,
+                  }}
+                  viewFilterDropdownId={viewFilter.fieldMetadataId}
+                />
+              </DropdownScope>
+            </ObjectFilterDropdownScope>
+          ))}
         </StyledChipcontainer>
         {hasFilterButton && (
           <StyledAddFilterContainer>

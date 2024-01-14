@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 
+import { ObjectFilterDropdownId } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/components/MultipleEntitySelect';
-import { SingleEntitySelectBase } from '@/object-record/relation-picker/components/SingleEntitySelectBase';
+import { SingleEntitySelectMenuItems } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItems';
+import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/types/EntitiesForMultipleEntitySelect';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
@@ -21,7 +22,7 @@ export const ObjectFilterDropdownEntitySearchSelect = ({
     selectFilter,
   } = useFilterDropdown();
 
-  const { closeDropdown } = useDropdown();
+  const { closeDropdown } = useDropdown(ObjectFilterDropdownId);
 
   const [isAllEntitySelected, setIsAllEntitySelected] = useState(false);
 
@@ -99,18 +100,16 @@ export const ObjectFilterDropdownEntitySearchSelect = ({
   ]);
 
   return (
-    <>
-      <SingleEntitySelectBase
-        entitiesToSelect={entitiesForSelect.entitiesToSelect}
-        selectedEntity={entitiesForSelect.selectedEntities[0]}
-        loading={entitiesForSelect.loading}
-        onEntitySelected={handleRecordSelected}
-        SelectAllIcon={filterDefinitionUsedInDropdown?.SelectAllIcon}
-        selectAllLabel={filterDefinitionUsedInDropdown?.selectAllLabel}
-        isAllEntitySelected={isAllEntitySelected}
-        isAllEntitySelectShown={isAllEntitySelectShown}
-        onAllEntitySelected={handleAllEntitySelectClick}
-      />
-    </>
+    <SingleEntitySelectMenuItems
+      entitiesToSelect={entitiesForSelect.entitiesToSelect}
+      selectedEntity={entitiesForSelect.selectedEntities[0]}
+      loading={entitiesForSelect.loading}
+      onEntitySelected={handleRecordSelected}
+      SelectAllIcon={filterDefinitionUsedInDropdown?.SelectAllIcon}
+      selectAllLabel={filterDefinitionUsedInDropdown?.selectAllLabel}
+      isAllEntitySelected={isAllEntitySelected}
+      isAllEntitySelectShown={isAllEntitySelectShown}
+      onAllEntitySelected={handleAllEntitySelectClick}
+    />
   );
 };

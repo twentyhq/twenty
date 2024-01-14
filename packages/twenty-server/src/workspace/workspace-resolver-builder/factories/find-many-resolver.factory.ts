@@ -30,6 +30,7 @@ export class FindManyResolverFactory
         workspaceId: internalContext.workspaceId,
         info,
         fieldMetadataCollection: internalContext.fieldMetadataCollection,
+        objectMetadataCollection: internalContext.objectMetadataCollection,
       });
     };
   }

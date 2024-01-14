@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+import { ObjectFilterDropdownId } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 export const MultipleFiltersDropdownFilterOnFilterChangedEffect = ({
@@ -7,7 +8,7 @@ export const MultipleFiltersDropdownFilterOnFilterChangedEffect = ({
 }: {
   filterDefinitionUsedInDropdownType: string | undefined;
 }) => {
-  const { setDropdownWidth } = useDropdown();
+  const { setDropdownWidth } = useDropdown(ObjectFilterDropdownId);
 
   useEffect(() => {
     switch (filterDefinitionUsedInDropdownType) {

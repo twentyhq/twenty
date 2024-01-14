@@ -1,16 +1,22 @@
-import { AddressObject, Attachment } from 'mailparser';
+import { Attachment } from 'mailparser';
 
 export type GmailMessage = {
+  historyId: string;
   externalId: string;
   headerMessageId: string;
   subject: string;
-  messageThreadId: string;
+  messageThreadExternalId: string;
   internalDate: string;
-  from: AddressObject | undefined;
-  to: AddressObject | AddressObject[] | undefined;
-  cc: AddressObject | AddressObject[] | undefined;
-  bcc: AddressObject | AddressObject[] | undefined;
+  fromHandle: string;
+  fromDisplayName: string;
+  recipients: Recipient[];
   text: string;
   html: string;
   attachments: Attachment[];
+};
+
+export type Recipient = {
+  role: 'from' | 'to' | 'cc' | 'bcc';
+  handle: string;
+  displayName: string;
 };
