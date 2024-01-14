@@ -18,7 +18,14 @@ export const checkFields = (objectMetadataItem, fieldNames): void => {
   for (const fieldName of fieldNames) {
     if (
       !objectMetadataItem.fields
-        .reduce((acc, itemField) => [...acc, itemField.name], [])
+        .reduce(
+          (acc, itemField) => [
+            ...acc,
+            itemField.name,
+            ...Object.keys(itemField.targetColumnMap),
+          ],
+          [],
+        )
         .includes(fieldName)
     ) {
       throw new BadRequestException(
