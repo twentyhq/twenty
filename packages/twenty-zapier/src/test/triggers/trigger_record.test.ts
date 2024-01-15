@@ -62,16 +62,18 @@ describe('triggers.trigger_record.created', () => {
   test('should load company from webhook', async () => {
     const bundle = {
       cleanedRequest: {
-        id: 'd6ccb1d1-a90b-4822-a992-a0dd946592c9',
-        name: '',
-        domainName: '',
-        createdAt: '2023-10-19 10:10:12.490',
-        address: '',
-        employees: null,
-        linkedinUrl: null,
-        xUrl: null,
-        annualRecurringRevenue: null,
-        idealCustomerProfile: false,
+        resource: {
+          id: 'd6ccb1d1-a90b-4822-a992-a0dd946592c9',
+          name: '',
+          domainName: '',
+          createdAt: '2023-10-19 10:10:12.490',
+          address: '',
+          employees: null,
+          linkedinUrl: null,
+          xUrl: null,
+          annualRecurringRevenue: null,
+          idealCustomerProfile: false,
+        },
       },
     };
     const results = await appTester(
