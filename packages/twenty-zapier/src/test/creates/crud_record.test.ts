@@ -1,6 +1,6 @@
 import { Bundle, createAppTester, tools, ZObject } from 'zapier-platform-core';
 
-import { crudRecordKey } from '../../creates/create_record_2';
+import { crudRecordKey } from '../../creates/crud_record';
 import App from '../../index';
 import getBundle from '../../utils/getBundle';
 import requestDb from '../../utils/requestDb';
