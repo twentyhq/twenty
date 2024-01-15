@@ -4,10 +4,7 @@ import 'dotenv/config';
 
 const { version } = require('../package.json');
 
-import createRecord, { createRecordKey } from './creates/create_record';
-import crudRecord, { crudRecordKey } from './creates/create_record_2';
-import deleteRecord, { deleteRecordKey } from './creates/delete_record';
-import updateRecord, { updateRecordKey } from './creates/update_record';
+import crudRecord, { crudRecordKey } from './creates/crud_record';
 import findObjectNamesPlural, {
   findObjectNamesPluralKey,
 } from './triggers/find_object_names_plural';
@@ -29,9 +26,6 @@ export default {
     [triggerRecordKey]: triggerRecord,
   },
   creates: {
-    [createRecordKey]: createRecord,
-    [updateRecordKey]: updateRecord,
-    [deleteRecordKey]: deleteRecord,
     [crudRecordKey]: crudRecord,
   },
 };
