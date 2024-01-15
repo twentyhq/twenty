@@ -83,7 +83,7 @@ export class MessagingUtilsService {
         text,
       } = message;
 
-      const date = new Date(parseInt(internalDate));
+      const receivedAt = new Date(parseInt(internalDate));
 
       const messageThread = await workspaceDataSource?.query(
         `SELECT * FROM ${dataSourceMetadata.schema}."messageThread" WHERE "externalId" = $1`,
@@ -113,13 +113,13 @@ export class MessagingUtilsService {
 
       await workspaceDataSource?.transaction(async (manager) => {
         await manager.query(
-          `INSERT INTO ${dataSourceMetadata.schema}."message" ("id", "externalId", "headerMessageId", "subject", "date", "messageThreadId", "direction", "body") VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+          `INSERT INTO ${dataSourceMetadata.schema}."message" ("id", "externalId", "headerMessageId", "subject", "receivedAt", "messageThreadId", "direction", "body") VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
           [
             messageId,
             externalId,
             headerMessageId,
             subject,
-            date,
+            receivedAt,
             messageThread[0]?.id,
             messageDirection,
             text,

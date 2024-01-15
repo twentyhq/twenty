@@ -27,19 +27,19 @@ export class TimelineMessagingService {
         message_count,
         last_message_subject,
         last_message_body,
-        last_message_date,
+        last_message_received_at,
         last_message_recipient_handle,
         last_message_recipient_displayName
     FROM (
         SELECT 
             mt.*,
             COUNT(m."id") OVER (PARTITION BY mt."id") AS message_count,
-            FIRST_VALUE(m."subject") OVER (PARTITION BY mt."id" ORDER BY m."date" DESC) AS last_message_subject,
-            FIRST_VALUE(m."body") OVER (PARTITION BY mt."id" ORDER BY m."date" DESC) AS last_message_body,
-            FIRST_VALUE(m."date") OVER (PARTITION BY mt."id" ORDER BY m."date" DESC) AS last_message_date,
-            FIRST_VALUE(mr."handle") OVER (PARTITION BY mt."id" ORDER BY m."date" DESC) AS last_message_recipient_handle,
-            FIRST_VALUE(mr."displayName") OVER (PARTITION BY mt."id" ORDER BY m."date" DESC) AS last_message_recipient_displayName,
-            ROW_NUMBER() OVER (PARTITION BY mt."id" ORDER BY m."date" DESC) AS rn
+            FIRST_VALUE(m."subject") OVER (PARTITION BY mt."id" ORDER BY m."receivedAt" DESC) AS last_message_subject,
+            FIRST_VALUE(m."body") OVER (PARTITION BY mt."id" ORDER BY m."receivedAt" DESC) AS last_message_body,
+            FIRST_VALUE(m."receivedAt") OVER (PARTITION BY mt."id" ORDER BY m."receivedAt" DESC) AS last_message_received_at,
+            FIRST_VALUE(mr."handle") OVER (PARTITION BY mt."id" ORDER BY m."receivedAt" DESC) AS last_message_recipient_handle,
+            FIRST_VALUE(mr."displayName") OVER (PARTITION BY mt."id" ORDER BY m."receivedAt" DESC) AS last_message_recipient_displayName,
+            ROW_NUMBER() OVER (PARTITION BY mt."id" ORDER BY m."receivedAt" DESC) AS rn
         FROM 
             ${dataSourceMetadata.schema}."messageThread" mt
         LEFT JOIN 
@@ -52,7 +52,7 @@ export class TimelineMessagingService {
     WHERE 
         subquery.rn = 1
     ORDER BY 
-        subquery.last_message_date DESC
+        subquery.last_message_received_at DESC
     LIMIT 10;
 `,
       [personIds],
@@ -66,7 +66,7 @@ export class TimelineMessagingService {
         numberOfMessagesInThread: messageThread.message_count,
         subject: messageThread.last_message_subject,
         body: messageThread.last_message_body,
-        receivedAt: messageThread.last_message_date,
+        receivedAt: messageThread.last_message_received_at,
       };
     });
 
