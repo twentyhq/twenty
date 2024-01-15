@@ -13,6 +13,7 @@ import {
 } from 'src/workspace/utils/deduce-relation-direction.util';
 import { getFieldArgumentsByKey } from 'src/workspace/workspace-query-builder/utils/get-field-arguments-by-key.util';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
+import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 
 import { FieldsStringFactory } from './fields-string.factory';
 import { ArgsStringFactory } from './args-string.factory';
@@ -109,25 +110,27 @@ export class RelationFieldAliasFactory {
         );
 
       return `
-        ${fieldKey}: ${referencedObjectMetadata.targetTableName}Collection${
-          argsString ? `(${argsString})` : ''
-        } {
+        ${fieldKey}: ${computeObjectTargetTable(
+          referencedObjectMetadata,
+        )}Collection${argsString ? `(${argsString})` : ''} {
           ${fieldsString}
         }
       `;
     }
 
     let relationAlias = fieldMetadata.isCustom
-      ? `${fieldKey}: ${referencedObjectMetadata.targetTableName}`
+      ? `${fieldKey}: _${fieldMetadata.name}`
       : fieldKey;
 
-    // For one to one relations, pg_graphql use the targetTableName on the side that is not storing the foreign key
+    // For one to one relations, pg_graphql use the target TableName on the side that is not storing the foreign key
     // so we need to alias it to the field key
     if (
       relationMetadata.relationType === RelationMetadataType.ONE_TO_ONE &&
       relationDirection === RelationDirection.FROM
     ) {
-      relationAlias = `${fieldKey}: ${referencedObjectMetadata.targetTableName}`;
+      relationAlias = `${fieldKey}: ${computeObjectTargetTable(
+        referencedObjectMetadata,
+      )}`;
     }
     const fieldsString =
       await this.fieldsStringFactory.createFieldsStringRecursive(

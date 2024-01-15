@@ -37,6 +37,7 @@ import { WorkspaceMigrationFactory } from 'src/metadata/workspace-migration/work
 import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
 import { ReflectiveMetadataFactory } from 'src/workspace/workspace-sync-metadata/reflective-metadata.factory';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
+import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 
 @Injectable()
 export class WorkspaceSyncMetadataService {
@@ -391,7 +392,7 @@ export class WorkspaceSyncMetadataService {
       objectsToCreate.map((object) => {
         const migrations = [
           {
-            name: object.targetTableName,
+            name: computeObjectTargetTable(object),
             action: 'create',
           } satisfies WorkspaceMigrationTableAction,
           ...Object.values(object.fields)
@@ -399,7 +400,7 @@ export class WorkspaceSyncMetadataService {
             .map(
               (field) =>
                 ({
-                  name: object.targetTableName,
+                  name: computeObjectTargetTable(object),
                   action: 'alter',
                   columns: this.workspaceMigrationFactory.createColumnActions(
                     WorkspaceMigrationColumnActionType.CREATE,
@@ -433,7 +434,9 @@ export class WorkspaceSyncMetadataService {
       fieldsToCreate.map((field) => {
         const migrations = [
           {
-            name: objectsInDbById[field.objectMetadataId].targetTableName,
+            name: computeObjectTargetTable(
+              objectsInDbById[field.objectMetadataId],
+            ),
             action: 'alter',
             columns: this.workspaceMigrationFactory.createColumnActions(
               WorkspaceMigrationColumnActionType.CREATE,
@@ -454,7 +457,9 @@ export class WorkspaceSyncMetadataService {
       fieldsToDelete.map((field) => {
         const migrations = [
           {
-            name: objectsInDbById[field.objectMetadataId].targetTableName,
+            name: computeObjectTargetTable(
+              objectsInDbById[field.objectMetadataId],
+            ),
             action: 'alter',
             columns: [
               {
@@ -519,13 +524,14 @@ export class WorkspaceSyncMetadataService {
 
         const migrations = [
           {
-            name: toObjectMetadata.targetTableName,
+            name: computeObjectTargetTable(toObjectMetadata),
             action: 'alter',
             columns: [
               {
                 action: WorkspaceMigrationColumnActionType.RELATION,
                 columnName: `${camelCase(toFieldMetadata.name)}Id`,
-                referencedTableName: fromObjectMetadata.targetTableName,
+                referencedTableName:
+                  computeObjectTargetTable(fromObjectMetadata),
                 referencedTableColumnName: 'id',
                 isUnique:
                   relation.relationType === RelationMetadataType.ONE_TO_ONE,

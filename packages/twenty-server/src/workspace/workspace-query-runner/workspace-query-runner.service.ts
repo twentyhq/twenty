@@ -22,6 +22,7 @@ import {
   UpdateManyResolverArgs,
   UpdateOneResolverArgs,
 } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
 
 import { WorkspaceQueryBuilderFactory } from 'src/workspace/workspace-query-builder/workspace-query-builder.factory';
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
@@ -35,6 +36,7 @@ import {
 import { parseResult } from 'src/workspace/workspace-query-runner/utils/parse-result.util';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 import { handleExceptionAndConvertToGraphQLError } from 'src/filters/utils/global-exception-handler.util';
+import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-optionts.interface';
 import {
@@ -63,7 +65,7 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<IConnection<Record> | undefined> {
     try {
-      const { workspaceId, targetTableName } = options;
+      const { workspaceId, objectMetadataItem } = options;
       const start = performance.now();
 
       const query = await this.workspaceQueryBuilderFactory.findMany(
@@ -76,7 +78,11 @@ export class WorkspaceQueryRunnerService {
 
       console.log(`query time: ${end - start} ms`);
 
-      return this.parseResult<IConnection<Record>>(result, targetTableName, '');
+      return this.parseResult<IConnection<Record>>(
+        result,
+        objectMetadataItem,
+        '',
+      );
     } catch (exception) {
       const error = handleExceptionAndConvertToGraphQLError(
         exception,
@@ -98,7 +104,7 @@ export class WorkspaceQueryRunnerService {
       if (!args.filter || Object.keys(args.filter).length === 0) {
         throw new BadRequestException('Missing filter argument');
       }
-      const { workspaceId, targetTableName } = options;
+      const { workspaceId, objectMetadataItem } = options;
       const query = await this.workspaceQueryBuilderFactory.findOne(
         args,
         options,
@@ -106,7 +112,7 @@ export class WorkspaceQueryRunnerService {
       const result = await this.execute(query, workspaceId);
       const parsedResult = this.parseResult<IConnection<Record>>(
         result,
-        targetTableName,
+        objectMetadataItem,
         '',
       );
 
@@ -126,16 +132,17 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     try {
-      const { workspaceId, targetTableName } = options;
+      const { workspaceId, objectMetadataItem } = options;
       const query = await this.workspaceQueryBuilderFactory.createMany(
         args,
         options,
       );
+
       const result = await this.execute(query, workspaceId);
 
       const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
         result,
-        targetTableName,
+        objectMetadataItem,
         'insertInto',
       )?.records;
 
@@ -170,7 +177,7 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     try {
-      const { workspaceId, targetTableName } = options;
+      const { workspaceId, objectMetadataItem } = options;
       const query = await this.workspaceQueryBuilderFactory.updateOne(
         args,
         options,
@@ -179,7 +186,7 @@ export class WorkspaceQueryRunnerService {
 
       const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
         result,
-        targetTableName,
+        objectMetadataItem,
         'update',
       )?.records;
 
@@ -205,7 +212,7 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     try {
-      const { workspaceId, targetTableName } = options;
+      const { workspaceId, objectMetadataItem } = options;
       const query = await this.workspaceQueryBuilderFactory.deleteOne(
         args,
         options,
@@ -214,7 +221,7 @@ export class WorkspaceQueryRunnerService {
 
       const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
         result,
-        targetTableName,
+        objectMetadataItem,
         'deleteFrom',
       )?.records;
 
@@ -240,7 +247,7 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     try {
-      const { workspaceId, targetTableName } = options;
+      const { workspaceId, objectMetadataItem } = options;
       const query = await this.workspaceQueryBuilderFactory.updateMany(
         args,
         options,
@@ -249,7 +256,7 @@ export class WorkspaceQueryRunnerService {
 
       const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
         result,
-        targetTableName,
+        objectMetadataItem,
         'update',
       )?.records;
 
@@ -278,7 +285,7 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     try {
-      const { workspaceId, targetTableName } = options;
+      const { workspaceId, objectMetadataItem } = options;
       const query = await this.workspaceQueryBuilderFactory.deleteMany(
         args,
         options,
@@ -287,7 +294,7 @@ export class WorkspaceQueryRunnerService {
 
       const parsedResults = this.parseResult<PGGraphQLMutation<Record>>(
         result,
-        targetTableName,
+        objectMetadataItem,
         'deleteFrom',
       )?.records;
 
@@ -334,18 +341,20 @@ export class WorkspaceQueryRunnerService {
 
   private parseResult<Result>(
     graphqlResult: PGGraphQLResult | undefined,
-    targetTableName: string,
+    objectMetadataItem: ObjectMetadataInterface,
     command: string,
   ): Result {
-    const entityKey = `${command}${targetTableName}Collection`;
+    const entityKey = `${command}${computeObjectTargetTable(
+      objectMetadataItem,
+    )}Collection`;
     const result = graphqlResult?.[0]?.resolve?.data?.[entityKey];
     const errors = graphqlResult?.[0]?.resolve?.errors;
 
     if (!result) {
       throw new InternalServerErrorException(
-        `GraphQL errors on ${command}${targetTableName}: ${JSON.stringify(
-          errors,
-        )}`,
+        `GraphQL errors on ${command}${
+          objectMetadataItem.nameSingular
+        }: ${JSON.stringify(errors)}`,
       );
     }
 
@@ -354,13 +363,13 @@ export class WorkspaceQueryRunnerService {
 
   async executeAndParse<Result>(
     query: string,
-    targetTableName: string,
+    objectMetadataItem: ObjectMetadataInterface,
     command: string,
     workspaceId: string,
   ): Promise<Result> {
     const result = await this.execute(query, workspaceId);
 
-    return this.parseResult(result, targetTableName, command);
+    return this.parseResult(result, objectMetadataItem, command);
   }
 
   async triggerWebhooks<Record>(
@@ -378,7 +387,7 @@ export class WorkspaceQueryRunnerService {
           recordData: jobData,
           workspaceId: options.workspaceId,
           operation,
-          objectNameSingular: options.targetTableName,
+          objectMetadataItem: options.objectMetadataItem,
         },
         { retryLimit: 3 },
       );

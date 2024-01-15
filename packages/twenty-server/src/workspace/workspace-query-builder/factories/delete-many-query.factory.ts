@@ -4,6 +4,7 @@ import { WorkspaceQueryBuilderOptions } from 'src/workspace/workspace-query-buil
 import { DeleteManyResolverArgs } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { stringifyWithoutKeyQuote } from 'src/workspace/workspace-query-builder/utils/stringify-without-key-quote.util';
+import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 
 import { FieldsStringFactory } from './fields-string.factory';
 
@@ -23,9 +24,9 @@ export class DeleteManyQueryFactory {
 
     return `
       mutation {
-        deleteFrom${
-          options.targetTableName
-        }Collection(filter: ${stringifyWithoutKeyQuote(
+        deleteFrom${computeObjectTargetTable(
+          options.objectMetadataItem,
+        )}Collection(filter: ${stringifyWithoutKeyQuote(
           args.filter,
         )}, atMost: 30) {
           affectedCount

@@ -6,7 +6,9 @@ import { useRelationField } from '../../hooks/useRelationField';
 export const RelationFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useRelationField();
 
-  const { identifiersMapper } = useRelationPicker();
+  const { identifiersMapper } = useRelationPicker({
+    relationPickerScopeId: 'relation-picker',
+  });
 
   if (!fieldValue || !fieldDefinition || !identifiersMapper) {
     return <></>;
