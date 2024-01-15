@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { css, Global, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 
@@ -62,30 +63,39 @@ type DefaultLayoutProps = {
 export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
   const onboardingStatus = useOnboardingStatus();
   const isMobile = useIsMobile();
-
+  const theme = useTheme();
   return (
-    <StyledLayout>
-      <CommandMenu />
-      <KeyboardShortcutMenu />
-      <StyledPageContainer>
-        <StyledAppNavigationDrawer />
-        <StyledMainContainer>
-          {onboardingStatus &&
-          onboardingStatus !== OnboardingStatus.Completed ? (
-            <>
-              <SignInBackgroundMockPage />
-              <AnimatePresence mode="wait">
-                <LayoutGroup>
-                  <AuthModal>{children}</AuthModal>
-                </LayoutGroup>
-              </AnimatePresence>
-            </>
-          ) : (
-            <AppErrorBoundary>{children}</AppErrorBoundary>
-          )}
-        </StyledMainContainer>
-      </StyledPageContainer>
-      {isMobile && <MobileNavigationBar />}
-    </StyledLayout>
+    <>
+      <Global
+        styles={css`
+          body {
+            background: ${theme.background.tertiary};
+          }
+        `}
+      />
+      <StyledLayout>
+        <CommandMenu />
+        <KeyboardShortcutMenu />
+        <StyledPageContainer>
+          <StyledAppNavigationDrawer />
+          <StyledMainContainer>
+            {onboardingStatus &&
+            onboardingStatus !== OnboardingStatus.Completed ? (
+              <>
+                <SignInBackgroundMockPage />
+                <AnimatePresence mode="wait">
+                  <LayoutGroup>
+                    <AuthModal>{children}</AuthModal>
+                  </LayoutGroup>
+                </AnimatePresence>
+              </>
+            ) : (
+              <AppErrorBoundary>{children}</AppErrorBoundary>
+            )}
+          </StyledMainContainer>
+        </StyledPageContainer>
+        {isMobile && <MobileNavigationBar />}
+      </StyledLayout>
+    </>
   );
 };
