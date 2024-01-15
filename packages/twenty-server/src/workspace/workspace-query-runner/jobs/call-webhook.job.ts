@@ -3,18 +3,14 @@ import { HttpService } from '@nestjs/axios';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import { CallWebhookJobsJobOperation } from 'src/workspace/workspace-query-runner/jobs/call-webhook-jobs.job';
-
 export type CallWebhookJobData = {
   targetUrl: string;
-  operation: CallWebhookJobsJobOperation;
+  eventType: string;
   object: { id: string; nameSingular: string };
   workspaceId: string;
   webhookId: string;
   eventDate: Date;
-  recordData: {
-    newValue: any;
-  };
+  recordData: any;
 };
 
 @Injectable()

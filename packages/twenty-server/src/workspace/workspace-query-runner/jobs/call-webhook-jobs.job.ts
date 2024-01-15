@@ -49,10 +49,10 @@ export class CallWebhookJobsJob
       await this.workspaceDataSourceService.connectToWorkspaceDataSource(
         data.workspaceId,
       );
-    const operationName = `${data.operation}.${data.objectMetadataItem.nameSingular}`;
+    const eventType = `${data.operation}.${data.objectMetadataItem.nameSingular}`;
     const webhooks: { id: string; targetUrl: string }[] =
       await workspaceDataSource?.query(
-        `SELECT * FROM ${dataSourceMetadata.schema}."webhook" WHERE operation='${operationName}'`,
+        `SELECT * FROM ${dataSourceMetadata.schema}."webhook" WHERE operation='${eventType}'`,
       );
 
     webhooks.forEach((webhook) => {
@@ -60,15 +60,15 @@ export class CallWebhookJobsJob
         CallWebhookJob.name,
         {
           targetUrl: webhook.targetUrl,
-          operation: data.operation,
+          eventType,
           object: {
-            id: data.recordData.id,
+            id: data.objectMetadataItem.id,
             nameSingular: data.objectMetadataItem.nameSingular,
           },
           workspaceId: data.workspaceId,
           webhookId: webhook.id,
           eventDate: new Date(),
-          recordData: { newValue: data.recordData },
+          recordData: data.recordData,
         },
         { retryLimit: 3 },
       );
@@ -76,7 +76,7 @@ export class CallWebhookJobsJob
 
     if (webhooks.length) {
       this.logger.log(
-        `CallWebhookJobsJob on operation '${operationName}' called on webhooks ids [\n"${webhooks
+        `CallWebhookJobsJob on eventType '${eventType}' called on webhooks ids [\n"${webhooks
           .map((webhook) => webhook.id)
           .join('",\n"')}"\n]`,
       );
