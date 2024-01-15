@@ -4,10 +4,12 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { EnvironmentModule } from 'src/integrations/environment/environment.module';
 import { DataSourceModule } from 'src/metadata/data-source/data-source.module';
 import { MessagingModule } from 'src/workspace/messaging/messaging.module';
-import { MessagingProvidersModule } from 'src/workspace/messaging/providers/messaging-providers.module';
-import { FetchBatchMessagesService } from 'src/workspace/messaging/services/fetch-batch-messages.service';
-import { FetchWorkspaceMessagesService } from 'src/workspace/messaging/services/fetch-workspace-messages.service';
-import { RefreshAccessTokenService } from 'src/workspace/messaging/services/refresh-access-token.service';
+import { GmailClientProvider } from 'src/workspace/messaging/providers/gmail/gmail-client.provider';
+import { FetchMessagesByBatchesService } from 'src/workspace/messaging/services/fetch-messages-by-batches.service';
+import { GmailFullSyncService } from 'src/workspace/messaging/services/gmail-full-sync.service';
+import { GmailPartialSyncService } from 'src/workspace/messaging/services/gmail-partial-sync.service';
+import { GmailRefreshAccessTokenService } from 'src/workspace/messaging/services/gmail-refresh-access-token.service';
+import { MessagingUtilsService } from 'src/workspace/messaging/services/messaging-utils.service';
 
 @Module({
   imports: [
@@ -15,13 +17,20 @@ import { RefreshAccessTokenService } from 'src/workspace/messaging/services/refr
     TypeORMModule,
     DataSourceModule,
     EnvironmentModule,
-    MessagingProvidersModule,
   ],
   providers: [
-    FetchWorkspaceMessagesService,
-    FetchBatchMessagesService,
-    RefreshAccessTokenService,
+    GmailFullSyncService,
+    GmailPartialSyncService,
+    FetchMessagesByBatchesService,
+    GmailRefreshAccessTokenService,
+    MessagingUtilsService,
+    GmailClientProvider,
   ],
-  exports: [FetchWorkspaceMessagesService, RefreshAccessTokenService],
+  exports: [
+    GmailPartialSyncService,
+    GmailFullSyncService,
+    GmailRefreshAccessTokenService,
+    MessagingUtilsService,
+  ],
 })
 export class FetchWorkspaceMessagesModule {}

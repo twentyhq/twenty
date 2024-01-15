@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
+import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
 
 import { WorkspaceDataSourceService } from 'src/workspace/workspace-datasource/workspace-datasource.service';
 import { ObjectMetadataService } from 'src/metadata/object-metadata/object-metadata.service';
@@ -20,7 +21,7 @@ export enum CallWebhookJobsJobOperation {
 
 export type CallWebhookJobsJobData = {
   workspaceId: string;
-  objectNameSingular: string;
+  objectMetadataItem: ObjectMetadataInterface;
   recordData: any;
   operation: CallWebhookJobsJobOperation;
 };
@@ -48,7 +49,7 @@ export class CallWebhookJobsJob
       await this.workspaceDataSourceService.connectToWorkspaceDataSource(
         data.workspaceId,
       );
-    const operationName = `${data.operation}.${data.objectNameSingular}`;
+    const operationName = `${data.operation}.${data.objectMetadataItem.nameSingular}`;
     const webhooks: { id: string; targetUrl: string }[] =
       await workspaceDataSource?.query(
         `SELECT * FROM ${dataSourceMetadata.schema}."webhook" WHERE operation='${operationName}'`,

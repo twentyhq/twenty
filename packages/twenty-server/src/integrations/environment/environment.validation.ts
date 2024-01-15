@@ -17,6 +17,7 @@ import { CastToStringArray } from 'src/integrations/environment/decorators/cast-
 import { ExceptionHandlerDriver } from 'src/integrations/exception-handler/interfaces';
 import { StorageDriverType } from 'src/integrations/file-storage/interfaces';
 import { LoggerDriverType } from 'src/integrations/logger/interfaces';
+import { IsStrictlyLowerThan } from 'src/integrations/environment/decorators/is-strictly-lower-than.decorator';
 
 import { IsDuration } from './decorators/is-duration.decorator';
 import { AwsRegion } from './interfaces/aws-region.interface';
@@ -170,6 +171,21 @@ export class EnvironmentVariables {
   )
   @IsString()
   SENTRY_DSN?: string;
+
+  @CastToPositiveNumber()
+  @IsNumber()
+  @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION > 0)
+  @IsStrictlyLowerThan('WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION', {
+    message:
+      '"WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION" should be strictly lower that "WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION"',
+  })
+  @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION > 0)
+  WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION: number;
+
+  @CastToPositiveNumber()
+  @IsNumber()
+  @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION > 0)
+  WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION: number;
 
   @CastToBoolean()
   @IsOptional()

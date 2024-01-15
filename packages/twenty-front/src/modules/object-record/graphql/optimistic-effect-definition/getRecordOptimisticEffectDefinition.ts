@@ -29,8 +29,13 @@ export const getRecordOptimisticEffectDefinition = ({
         if (isNonEmptyArray(createdRecords)) {
           if (existingDataIsEmpty) {
             return {
-              __typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
+              __typename: `${capitalize(
+                objectMetadataItem.nameSingular,
+              )}Connection`,
               edges: createdRecords.map((createdRecord) => ({
+                __typename: `${capitalize(
+                  objectMetadataItem.nameSingular,
+                )}Edge`,
                 node: createdRecord,
                 cursor: '',
               })),
