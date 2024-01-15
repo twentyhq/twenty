@@ -59,5 +59,8 @@
   },
   "msw": {
     "workerDirectory": "public"
+  },
+  "devDependencies": {
+    "storybook-addon-react-router-v6": "^2.0.10"
   }
 }

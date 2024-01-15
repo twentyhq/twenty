@@ -36,6 +36,7 @@ const config: StorybookConfig = {
     '@storybook/addon-themes',
     'storybook-addon-cookie',
     'storybook-addon-pseudo-states',
+    'storybook-addon-react-router-v6'
   ],
   framework: {
     name: '@storybook/react-vite',

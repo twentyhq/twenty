@@ -23,6 +23,8 @@ export const useRelationPicker = (props?: useRelationPickeProps) => {
     relationPickerScopedId: scopeId,
   });
 
+  console.log('identifiersMapperState', identifiersMapperState);
+
   const [identifiersMapper, setIdentifiersMapper] = useRecoilState(
     identifiersMapperState,
   );
