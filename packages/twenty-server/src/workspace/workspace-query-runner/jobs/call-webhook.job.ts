@@ -6,6 +6,9 @@ import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/messa
 export type CallWebhookJobData = {
   targetUrl: string;
   recordData: any;
+  operation: string;
+  workspaceId: string;
+  webhookId: string;
 };
 
 @Injectable()
@@ -16,11 +19,16 @@ export class CallWebhookJob implements MessageQueueJob<CallWebhookJobData> {
 
   async handle(data: CallWebhookJobData): Promise<void> {
     try {
-      await this.httpService.axiosRef.post(data.targetUrl, data.recordData);
+      const payload = {
+        operation: data.operation,
+        workspaceId: data.workspaceId,
+        webhookId: data.webhookId,
+        resource: data.recordData,
+      };
+
+      await this.httpService.axiosRef.post(data.targetUrl, payload);
       this.logger.log(
-        `CallWebhookJob successfully called on targetUrl '${
-          data.targetUrl
-        }' with data: ${JSON.stringify(data.recordData)}`,
+        `CallWebhookJob successfully called on targetUrl '${data.targetUrl}'`,
       );
     } catch (err) {
       throw new Error(

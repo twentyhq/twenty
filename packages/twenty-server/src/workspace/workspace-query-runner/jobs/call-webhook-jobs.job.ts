@@ -58,6 +58,9 @@ export class CallWebhookJobsJob
       this.messageQueueService.add<CallWebhookJobData>(
         CallWebhookJob.name,
         {
+          operation: operationName,
+          workspaceId: data.workspaceId,
+          webhookId: webhook.id,
           recordData: data.recordData,
           targetUrl: webhook.targetUrl,
         },
