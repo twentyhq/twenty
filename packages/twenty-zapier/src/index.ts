@@ -11,6 +11,7 @@ import findObjectNamesPlural, {
 import findObjectNamesSingular, {
   findObjectNamesSingularKey,
 } from './triggers/find_object_names_singular';
+import listRecordIds, { listRecordIdsKey } from './triggers/list_record_ids';
 import triggerRecord, { triggerRecordKey } from './triggers/trigger_record';
 import authentication from './authentication';
 
@@ -21,6 +22,7 @@ export default {
   triggers: {
     [findObjectNamesSingularKey]: findObjectNamesSingular,
     [findObjectNamesPluralKey]: findObjectNamesPlural,
+    [listRecordIdsKey]: listRecordIds,
     [triggerRecordKey]: triggerRecord,
   },
   creates: {
