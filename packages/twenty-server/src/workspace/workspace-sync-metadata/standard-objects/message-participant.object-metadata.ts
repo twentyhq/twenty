@@ -10,17 +10,17 @@ import { PersonObjectMetadata } from 'src/workspace/workspace-sync-metadata/stan
 import { WorkspaceMemberObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/workspace-member.object-metadata';
 
 @ObjectMetadata({
-  namePlural: 'messageRecipients',
-  labelSingular: 'Message Recipient',
-  labelPlural: 'Message Recipients',
-  description: 'Message Recipients',
+  namePlural: 'messageParticipants',
+  labelSingular: 'Message Participant',
+  labelPlural: 'Message Participants',
+  description: 'Message Participants',
   icon: 'IconUserCircle',
 })
 @Gate({
   featureFlag: 'IS_MESSAGING_ENABLED',
 })
 @IsSystem()
-export class MessageRecipientObjectMetadata extends BaseObjectMetadata {
+export class MessageParticipantObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
     label: 'Message',
