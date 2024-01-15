@@ -54,10 +54,10 @@ const computeQueryParameters = (
 
 const perform = async (z: ZObject, bundle: Bundle) => {
   const data = bundle.inputData;
-  const operation = bundle.inputData.crudZapierOperation;
+  const operation = data.crudZapierOperation;
   const nameSingular = data.nameSingular;
   delete data.nameSingular;
-  delete data.operation;
+  delete data.crudZapierOperation;
   const query = `
   mutation ${operation}${capitalize(nameSingular)} {
     ${operation}${capitalize(nameSingular)}(
@@ -68,7 +68,7 @@ const perform = async (z: ZObject, bundle: Bundle) => {
   return await requestDb(z, bundle, query);
 };
 
-export const createRecordKey = 'create_record';
+export const crudRecordKey = 'crud_record';
 
 export default {
   display: {
@@ -76,7 +76,7 @@ export default {
     hidden: false,
     label: 'Create, Update or Delete Record',
   },
-  key: createRecordKey,
+  key: crudRecordKey,
   noun: 'Record',
   operation: {
     inputFields: [
