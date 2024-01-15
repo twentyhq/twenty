@@ -8,7 +8,7 @@ import { DataSourceService } from 'src/metadata/data-source/data-source.service'
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import {
   GmailMessage,
-  Recipient,
+  Participant,
 } from 'src/workspace/messaging/types/gmailMessage';
 import { GmailThread } from 'src/workspace/messaging/types/gmailThread';
 import { MessageQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
@@ -79,7 +79,7 @@ export class MessagingUtilsService {
         internalDate,
         fromHandle,
         fromDisplayName,
-        recipients,
+        participants,
         text,
       } = message;
 
@@ -139,7 +139,7 @@ export class MessagingUtilsService {
         );
 
         await this.saveMessageParticipants(
-          recipients,
+          participants,
           dataSourceMetadata,
           messageId,
           manager,
@@ -149,39 +149,39 @@ export class MessagingUtilsService {
   }
 
   public async saveMessageParticipants(
-    recipients: Recipient[],
+    participants: Participant[],
     dataSourceMetadata: DataSourceEntity,
     messageId: string,
     manager: EntityManager,
   ): Promise<void> {
-    if (!recipients) return;
+    if (!participants) return;
 
-    for (const recipient of recipients) {
-      const recipientPerson = await manager.query(
+    for (const participant of participants) {
+      const participantPerson = await manager.query(
         `SELECT * FROM ${dataSourceMetadata.schema}."person" WHERE "email" = $1`,
-        [recipient.handle],
+        [participant.handle],
       );
 
-      const recipientPersonId = recipientPerson[0]?.id;
+      const participantPersonId = participantPerson[0]?.id;
 
       const workspaceMember = await manager.query(
         `SELECT "workspaceMember"."id" FROM ${dataSourceMetadata.schema}."workspaceMember"
           JOIN ${dataSourceMetadata.schema}."connectedAccount" ON ${dataSourceMetadata.schema}."workspaceMember"."id" = ${dataSourceMetadata.schema}."connectedAccount"."accountOwnerId"
           WHERE ${dataSourceMetadata.schema}."connectedAccount"."handle" = $1`,
-        [recipient.handle],
+        [participant.handle],
       );
 
-      const recipientWorkspaceMemberId = workspaceMember[0]?.id;
+      const participantWorkspaceMemberId = workspaceMember[0]?.id;
 
       await manager.query(
         `INSERT INTO ${dataSourceMetadata.schema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
         [
           messageId,
-          recipient.role,
-          recipient.handle,
-          recipient.displayName,
-          recipientPersonId,
-          recipientWorkspaceMemberId,
+          participant.role,
+          participant.handle,
+          participant.displayName,
+          participantPersonId,
+          participantWorkspaceMemberId,
         ],
       );
     }

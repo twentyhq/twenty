@@ -176,8 +176,8 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Message Recipients',
-    description: 'Message Recipients',
+    label: 'Message Participants',
+    description: 'Message Participants',
     icon: 'IconUserCircle',
   })
   @RelationMetadata({
