@@ -9,7 +9,7 @@ const appTester = createAppTester(App);
 describe('triggers.trigger_record.created', () => {
   test('should succeed to subscribe', async () => {
     const bundle = getBundle({});
-    bundle.inputData.namePlural = 'companies';
+    bundle.inputData.nameSingular = 'company';
     bundle.inputData.operation = 'create';
     bundle.targetUrl = 'https://test.com';
     const result = await appTester(
@@ -28,12 +28,12 @@ describe('triggers.trigger_record.created', () => {
       bundle,
     );
     expect(checkDbResult.data.webhooks.edges[0].node.operation).toEqual(
-      'create.companies',
+      'create.company',
     );
   });
   test('should succeed to unsubscribe', async () => {
     const bundle = getBundle({});
-    bundle.inputData.namePlural = 'companies';
+    bundle.inputData.nameSingular = 'company';
     bundle.inputData.operation = 'create';
     bundle.targetUrl = 'https://test.com';
     const result = await appTester(
@@ -84,7 +84,7 @@ describe('triggers.trigger_record.created', () => {
   });
   it('should load companies from list', async () => {
     const bundle = getBundle({});
-    bundle.inputData.namePlural = 'companies';
+    bundle.inputData.nameSingular = 'company';
     bundle.inputData.operation = 'create';
     const results = await appTester(
       App.triggers[triggerRecordKey].operation.performList,
@@ -99,7 +99,7 @@ describe('triggers.trigger_record.created', () => {
 describe('triggers.trigger_record.update', () => {
   test('should succeed to subscribe', async () => {
     const bundle = getBundle({});
-    bundle.inputData.namePlural = 'companies';
+    bundle.inputData.nameSingular = 'company';
     bundle.inputData.operation = 'update';
     bundle.targetUrl = 'https://test.com';
     const result = await appTester(
@@ -118,12 +118,12 @@ describe('triggers.trigger_record.update', () => {
       bundle,
     );
     expect(checkDbResult.data.webhooks.edges[0].node.operation).toEqual(
-      'update.companies',
+      'update.company',
     );
   });
   test('should succeed to unsubscribe', async () => {
     const bundle = getBundle({});
-    bundle.inputData.namePlural = 'companies';
+    bundle.inputData.nameSingular = 'company';
     bundle.inputData.operation = 'update';
     bundle.targetUrl = 'https://test.com';
     const result = await appTester(
@@ -151,7 +151,7 @@ describe('triggers.trigger_record.update', () => {
   });
   it('should load companies from list', async () => {
     const bundle = getBundle({});
-    bundle.inputData.namePlural = 'companies';
+    bundle.inputData.nameSingular = 'company';
     bundle.inputData.operation = 'update';
     const results = await appTester(
       App.triggers[triggerRecordKey].operation.performList,
@@ -166,7 +166,7 @@ describe('triggers.trigger_record.update', () => {
 describe('triggers.trigger_record.delete', () => {
   test('should succeed to subscribe', async () => {
     const bundle = getBundle({});
-    bundle.inputData.namePlural = 'companies';
+    bundle.inputData.nameSingular = 'company';
     bundle.inputData.operation = 'delete';
     bundle.targetUrl = 'https://test.com';
     const result = await appTester(
@@ -185,12 +185,12 @@ describe('triggers.trigger_record.delete', () => {
       bundle,
     );
     expect(checkDbResult.data.webhooks.edges[0].node.operation).toEqual(
-      'delete.companies',
+      'delete.company',
     );
   });
   test('should succeed to unsubscribe', async () => {
     const bundle = getBundle({});
-    bundle.inputData.namePlural = 'companies';
+    bundle.inputData.nameSingular = 'company';
     bundle.inputData.operation = 'delete';
     bundle.targetUrl = 'https://test.com';
     const result = await appTester(
@@ -218,7 +218,7 @@ describe('triggers.trigger_record.delete', () => {
   });
   it('should load companies from list', async () => {
     const bundle = getBundle({});
-    bundle.inputData.namePlural = 'companies';
+    bundle.inputData.nameSingular = 'company';
     bundle.inputData.operation = 'delete';
     const results = await appTester(
       App.triggers[triggerRecordKey].operation.performList,

@@ -5,9 +5,6 @@ import 'dotenv/config';
 const { version } = require('../package.json');
 
 import crudRecord, { crudRecordKey } from './creates/crud_record';
-import findObjectNamesPlural, {
-  findObjectNamesPluralKey,
-} from './triggers/find_object_names_plural';
 import findObjectNamesSingular, {
   findObjectNamesSingularKey,
 } from './triggers/find_object_names_singular';
@@ -21,7 +18,6 @@ export default {
   authentication: authentication,
   triggers: {
     [findObjectNamesSingularKey]: findObjectNamesSingular,
-    [findObjectNamesPluralKey]: findObjectNamesPlural,
     [listRecordIdsKey]: listRecordIds,
     [triggerRecordKey]: triggerRecord,
   },
