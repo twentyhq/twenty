@@ -232,7 +232,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
           : {},
       isActive: true,
       isNullable: true,
-      relationDirection: FieldMetadataType.RELATION,
+      type: FieldMetadataType.RELATION,
       objectMetadataId:
         relationMetadataInput[`${relationDirection}ObjectMetadataId`],
       workspaceId: relationMetadataInput.workspaceId,
