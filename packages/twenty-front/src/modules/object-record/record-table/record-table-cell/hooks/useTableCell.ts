@@ -26,10 +26,10 @@ export const DEFAULT_CELL_SCOPE: HotkeyScope = {
 };
 
 export const useTableCell = () => {
-  const { objectMetadataConfigState, tableRowIdsState } =
+  const { getObjectMetadataConfigState, getTableRowIdsState } =
     useRecordTableStates();
 
-  const objectMetadataConfig = useRecoilValue(objectMetadataConfigState());
+  const objectMetadataConfig = useRecoilValue(getObjectMetadataConfigState());
 
   const basePathToShowPage = objectMetadataConfig?.basePathToShowPage;
 
@@ -60,7 +60,7 @@ export const useTableCell = () => {
   );
 
   const deleteRow = useRecoilCallback(({ snapshot }) => async () => {
-    const tableRowIds = getSnapshotValue(snapshot, tableRowIdsState());
+    const tableRowIds = getSnapshotValue(snapshot, getTableRowIdsState());
 
     await deleteOneRecord(tableRowIds[0]);
   });
