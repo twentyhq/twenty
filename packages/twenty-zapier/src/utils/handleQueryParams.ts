@@ -1,5 +1,7 @@
-const handleQueryParams = (inputData: { [x: string]: any }): string => {
-  const formattedInputData: { [x: string]: any } = {};
+import { InputData } from '../utils/inputData.type';
+
+const handleQueryParams = (inputData: InputData): string => {
+  const formattedInputData: InputData = {};
   Object.keys(inputData).forEach((key) => {
     if (key.includes('__')) {
       const [objectKey, nestedObjectKey] = key.split('__');
