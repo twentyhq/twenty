@@ -4,6 +4,7 @@ import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShow
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordIdentifier } from '@/object-record/types/ObjectRecordIdentifier';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 
@@ -15,7 +16,7 @@ export const getObjectRecordIdentifier = ({
   record: ObjectRecord;
 }): ObjectRecordIdentifier => {
   switch (objectMetadataItem.nameSingular) {
-    case CoreObjectNameSingular.Opportunity:
+    case CoreObjectNameSingular.Opportunity: {
       return {
         id: record.id,
         name: record?.company?.name,
@@ -23,6 +24,18 @@ export const getObjectRecordIdentifier = ({
         avatarType: 'rounded',
         linkToShowPage: `/opportunities/${record.id}`,
       };
+    }
+    case CoreObjectNameSingular.WorkspaceMember: {
+      const workspaceMember = record as WorkspaceMember;
+
+      return {
+        id: workspaceMember.id,
+        name:
+          workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName,
+        avatarUrl: workspaceMember.avatarUrl,
+        avatarType: 'rounded',
+      };
+    }
   }
 
   const labelIdentifierFieldMetadataItem =
