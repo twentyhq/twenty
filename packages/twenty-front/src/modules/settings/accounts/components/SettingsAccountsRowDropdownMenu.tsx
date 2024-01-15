@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-import { Account } from '@/accounts/types/Account';
+import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { IconDotsVertical, IconMail, IconTrash } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -10,7 +10,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsAccountsRowDropdownMenuProps = {
-  account: Account;
+  account: MessageChannel;
   className?: string;
   onRemove?: (uuid: string) => void;
 };
