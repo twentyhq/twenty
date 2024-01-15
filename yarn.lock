@@ -42608,7 +42608,6 @@ __metadata:
     vite-plugin-svgr: "npm:^4.2.0"
     vite-tsconfig-paths: "npm:^4.2.1"
     xlsx-ugnis: "npm:^0.19.3"
-    zapier-platform-cli: "npm:^15.4.1"
     zod: "npm:^3.22.2"
   languageName: unknown
   linkType: soft
