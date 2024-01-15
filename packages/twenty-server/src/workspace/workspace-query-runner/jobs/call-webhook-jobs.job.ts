@@ -40,11 +40,6 @@ export class CallWebhookJobsJob
   ) {}
 
   async handle(data: CallWebhookJobsJobData): Promise<void> {
-    const objectMetadataItem =
-      await this.objectMetadataService.findOneOrFailWithinWorkspace(
-        data.workspaceId,
-        { where: { nameSingular: data.objectNameSingular } },
-      );
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         data.workspaceId,
@@ -53,7 +48,7 @@ export class CallWebhookJobsJob
       await this.workspaceDataSourceService.connectToWorkspaceDataSource(
         data.workspaceId,
       );
-    const operationName = `${data.operation}.${objectMetadataItem.namePlural}`;
+    const operationName = `${data.operation}.${data.objectNameSingular}`;
     const webhooks: { id: string; targetUrl: string }[] =
       await workspaceDataSource?.query(
         `SELECT * FROM ${dataSourceMetadata.schema}."webhook" WHERE operation='${operationName}'`,
