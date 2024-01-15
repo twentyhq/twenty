@@ -28,5 +28,8 @@
   },
   "devDependencies": {
     "zapier-platform-cli": "^15.4.1"
+  },
+  "installConfig": {
+    "hoistingLimits": "dependencies"
   }
 }
