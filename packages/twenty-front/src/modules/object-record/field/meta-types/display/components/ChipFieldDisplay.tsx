@@ -12,7 +12,6 @@ export const ChipFieldDisplay = () => {
 
   // TODO: remove this and use ObjectRecordChip instead
   const identifiers = identifiersMapper?.(record, objectNameSingular ?? '');
-  console.log('identifiers', identifiers);
 
   const linkToEntity =
     !!basePathToShowPage && !!entityId ? basePathToShowPage + entityId : '';

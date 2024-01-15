@@ -20,10 +20,8 @@ export const useRelationPicker = (props?: useRelationPickeProps) => {
     relationPickerSearchFilterState,
     relationPickerPreselectedIdState,
   } = useRelationPickerScopedStates({
-    relationPickerScopedId: scopeId,
+    relationPickerScopedId: 'relation-picker',
   });
-
-  console.log('identifiersMapperState', identifiersMapperState);
 
   const [identifiersMapper, setIdentifiersMapper] = useRecoilState(
     identifiersMapperState,

@@ -17,14 +17,11 @@ export const useChipField = () => {
       ? fieldDefinition.metadata.objectMetadataNameSingular
       : undefined;
 
-  console.log('objectNameSingular', objectNameSingular);
   const record = useRecoilValue<any | null>(entityFieldsFamilyState(entityId));
 
   const { identifiersMapper } = useRelationPicker({
     relationPickerScopeId: 'relation-picker',
   });
-
-  console.log('identifiersMapper', identifiersMapper);
 
   return {
     basePathToShowPage,
