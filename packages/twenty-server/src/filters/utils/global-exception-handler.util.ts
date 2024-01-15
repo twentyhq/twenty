@@ -6,6 +6,7 @@ import {
   ForbiddenError,
   ValidationError,
   NotFoundError,
+  ConflictError,
 } from 'src/filters/utils/graphql-errors.util';
 import { ExceptionHandlerService } from 'src/integrations/exception-handler/exception-handler.service';
 
@@ -14,6 +15,7 @@ const graphQLPredefinedExceptions = {
   401: AuthenticationError,
   403: ForbiddenError,
   404: NotFoundError,
+  409: ConflictError,
 };
 
 export const handleExceptionAndConvertToGraphQLError = (

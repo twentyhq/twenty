@@ -76,7 +76,11 @@ export class WorkspaceQueryRunnerService {
       const result = await this.execute(query, workspaceId);
       const end = performance.now();
 
-      console.log(`query time: ${end - start} ms`);
+      console.log(
+        `query time: ${end - start} ms on query ${
+          options.objectMetadataItem.nameSingular
+        }`,
+      );
 
       return this.parseResult<IConnection<Record>>(
         result,

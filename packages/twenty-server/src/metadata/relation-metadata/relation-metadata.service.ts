@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -38,149 +39,42 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     super(relationMetadataRepository);
   }
 
-  override async deleteOne(id: string): Promise<RelationMetadataEntity> {
-    // TODO: This logic is duplicated with the BeforeDeleteOneRelation hook
-    const relationMetadata = await this.relationMetadataRepository.findOne({
-      where: { id },
-      relations: ['fromFieldMetadata', 'toFieldMetadata'],
-    });
-
-    if (!relationMetadata) {
-      throw new NotFoundException('Relation does not exist');
-    }
-
-    const deletedRelationMetadata = super.deleteOne(id);
-
-    // TODO: Move to a cdc scheduler
-    this.fieldMetadataService.deleteMany({
-      id: {
-        in: [
-          relationMetadata.fromFieldMetadataId,
-          relationMetadata.toFieldMetadataId,
-        ],
-      },
-    });
-
-    return deletedRelationMetadata;
-  }
-
   override async createOne(
     relationMetadataInput: CreateRelationInput,
   ): Promise<RelationMetadataEntity> {
-    if (
-      relationMetadataInput.relationType === RelationMetadataType.MANY_TO_MANY
-    ) {
-      throw new BadRequestException(
-        'Many to many relations are not supported yet',
-      );
-    }
-
-    /**
-     * Relation types
-     *
-     * MANY TO MANY:
-     * FROM Ǝ-E TO (NOT YET SUPPORTED)
-     *
-     * ONE TO MANY:
-     * FROM --E TO (host the id in the TO table)
-     *
-     * ONE TO ONE:
-     * FROM --- TO (host the id in the TO table)
-     */
-
-    const objectMetadataEntries =
-      await this.objectMetadataService.findManyWithinWorkspace(
-        relationMetadataInput.workspaceId,
-        {
-          where: {
-            id: In([
-              relationMetadataInput.fromObjectMetadataId,
-              relationMetadataInput.toObjectMetadataId,
-            ]),
-          },
-        },
-      );
-
-    const objectMetadataMap = objectMetadataEntries.reduce(
-      (acc, curr) => {
-        acc[curr.id] = curr;
-
-        return acc;
-      },
-      {} as { [key: string]: ObjectMetadataEntity },
+    const objectMetadataMap = await this.getObjectMetadataMap(
+      relationMetadataInput,
     );
 
-    if (
-      objectMetadataMap[relationMetadataInput.fromObjectMetadataId] ===
-        undefined ||
-      objectMetadataMap[relationMetadataInput.toObjectMetadataId] === undefined
-    ) {
-      throw new NotFoundException(
-        'Can\t find an existing object matching fromObjectMetadataId or toObjectMetadataId',
-      );
-    }
+    await this.validateCreateRelationMetadataInput(
+      relationMetadataInput,
+      objectMetadataMap,
+    );
 
+    // NOTE: this logic is called to create relation through metadata graphql endpoint (so only for custom field relations)
+    const isCustom = true;
     const baseColumnName = `${camelCase(relationMetadataInput.toName)}Id`;
 
-    // TODO: this logic is called to create relation through metadata graphql endpoint (so only for custom field relations)
-    const isCustom = true;
     const foreignKeyColumnName = isCustom
       ? createCustomColumnName(baseColumnName)
       : baseColumnName;
 
     const createdFields = await this.fieldMetadataService.createMany([
-      // FROM
-      {
-        name: relationMetadataInput.fromName,
-        label: relationMetadataInput.fromLabel,
-        description: relationMetadataInput.fromDescription,
-        icon: relationMetadataInput.fromIcon,
-        isCustom: true,
-        targetColumnMap: {},
-        isActive: true,
-        isNullable: true,
-        type: FieldMetadataType.RELATION,
-        objectMetadataId: relationMetadataInput.fromObjectMetadataId,
-        workspaceId: relationMetadataInput.workspaceId,
-      },
-      // TO
-      {
-        name: relationMetadataInput.toName,
-        label: relationMetadataInput.toLabel,
-        description: relationMetadataInput.toDescription,
-        icon: relationMetadataInput.toIcon,
-        isCustom: true,
-        targetColumnMap: {
-          value: isCustom
-            ? createCustomColumnName(relationMetadataInput.toName)
-            : relationMetadataInput.toName,
-        },
-        isActive: true,
-        isNullable: true,
-        type: FieldMetadataType.RELATION,
-        objectMetadataId: relationMetadataInput.toObjectMetadataId,
-        workspaceId: relationMetadataInput.workspaceId,
-      },
-      // FOREIGN KEY
-      {
-        name: baseColumnName,
-        label: `${relationMetadataInput.toLabel} Foreign Key`,
-        description: relationMetadataInput.toDescription
-          ? `${relationMetadataInput.toDescription} Foreign Key`
-          : undefined,
-        icon: undefined,
-        isCustom: true,
-        targetColumnMap: {
-          value: foreignKeyColumnName,
-        },
-        isActive: true,
-        isNullable: true,
-        // Should not be visible on the front side
-        isSystem: true,
-        type: FieldMetadataType.UUID,
-        objectMetadataId: relationMetadataInput.toObjectMetadataId,
-        workspaceId: relationMetadataInput.workspaceId,
-      },
+      this.createFieldMetadataForRelationMetadata(
+        relationMetadataInput,
+        'from',
+        isCustom,
+      ),
+      this.createFieldMetadataForRelationMetadata(
+        relationMetadataInput,
+        'to',
+        isCustom,
+      ),
+      this.createForeignKeyFieldMetadata(
+        relationMetadataInput,
+        baseColumnName,
+        foreignKeyColumnName,
+      ),
     ]);
 
     const createdFieldMap = createdFields.reduce((acc, fieldMetadata) => {
@@ -197,6 +91,86 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       toFieldMetadataId: createdFieldMap[relationMetadataInput.toName].id,
     });
 
+    await this.createWorkspaceCustomMigration(
+      relationMetadataInput,
+      objectMetadataMap,
+      foreignKeyColumnName,
+    );
+
+    await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+      relationMetadataInput.workspaceId,
+    );
+
+    return createdRelationMetadata;
+  }
+
+  private async validateCreateRelationMetadataInput(
+    relationMetadataInput: CreateRelationInput,
+    objectMetadataMap: { [key: string]: ObjectMetadataEntity },
+  ) {
+    if (
+      relationMetadataInput.relationType === RelationMetadataType.MANY_TO_MANY
+    ) {
+      throw new BadRequestException(
+        'Many to many relations are not supported yet',
+      );
+    }
+
+    if (
+      objectMetadataMap[relationMetadataInput.fromObjectMetadataId] ===
+        undefined ||
+      objectMetadataMap[relationMetadataInput.toObjectMetadataId] === undefined
+    ) {
+      throw new NotFoundException(
+        'Can\t find an existing object matching with fromObjectMetadataId or toObjectMetadataId',
+      );
+    }
+
+    await this.checkIfFieldMetadataRelationNameExists(
+      relationMetadataInput,
+      objectMetadataMap,
+      'from',
+    );
+    await this.checkIfFieldMetadataRelationNameExists(
+      relationMetadataInput,
+      objectMetadataMap,
+      'to',
+    );
+  }
+
+  private async checkIfFieldMetadataRelationNameExists(
+    relationMetadataInput: CreateRelationInput,
+    objectMetadataMap: { [key: string]: ObjectMetadataEntity },
+    relationDirection: 'from' | 'to',
+  ) {
+    const fieldAlreadyExists =
+      await this.fieldMetadataService.findOneWithinWorkspace(
+        relationMetadataInput.workspaceId,
+        {
+          where: {
+            name: relationMetadataInput[`${relationDirection}Name`],
+            objectMetadataId:
+              relationMetadataInput[`${relationDirection}ObjectMetadataId`],
+          },
+        },
+      );
+
+    if (fieldAlreadyExists) {
+      throw new ConflictException(
+        `Field on ${
+          objectMetadataMap[
+            relationMetadataInput[`${relationDirection}ObjectMetadataId`]
+          ].nameSingular
+        } already exists`,
+      );
+    }
+  }
+
+  private async createWorkspaceCustomMigration(
+    relationMetadataInput: CreateRelationInput,
+    objectMetadataMap: { [key: string]: ObjectMetadataEntity },
+    foreignKeyColumnName: string,
+  ) {
     await this.workspaceMigrationService.createCustomMigration(
       relationMetadataInput.workspaceId,
       [
@@ -237,12 +211,81 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         },
       ],
     );
+  }
 
-    await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-      relationMetadataInput.workspaceId,
+  private createFieldMetadataForRelationMetadata(
+    relationMetadataInput: CreateRelationInput,
+    relationDirection: 'from' | 'to',
+    isCustom: boolean,
+  ) {
+    return {
+      name: relationMetadataInput[`${relationDirection}Name`],
+      label: relationMetadataInput[`${relationDirection}Label`],
+      description: relationMetadataInput[`${relationDirection}Description`],
+      icon: relationMetadataInput[`${relationDirection}Icon`],
+      isCustom: true,
+      targetColumnMap:
+        relationDirection === 'to'
+          ? isCustom
+            ? createCustomColumnName(relationMetadataInput.toName)
+            : relationMetadataInput.toName
+          : {},
+      isActive: true,
+      isNullable: true,
+      type: FieldMetadataType.RELATION,
+      objectMetadataId:
+        relationMetadataInput[`${relationDirection}ObjectMetadataId`],
+      workspaceId: relationMetadataInput.workspaceId,
+    };
+  }
+
+  private createForeignKeyFieldMetadata(
+    relationMetadataInput: CreateRelationInput,
+    baseColumnName: string,
+    foreignKeyColumnName: string,
+  ) {
+    return {
+      name: baseColumnName,
+      label: `${relationMetadataInput.toLabel} Foreign Key`,
+      description: relationMetadataInput.toDescription
+        ? `${relationMetadataInput.toDescription} Foreign Key`
+        : undefined,
+      icon: undefined,
+      isCustom: true,
+      targetColumnMap: { value: foreignKeyColumnName },
+      isActive: true,
+      isNullable: true,
+      isSystem: true,
+      type: FieldMetadataType.UUID,
+      objectMetadataId: relationMetadataInput.toObjectMetadataId,
+      workspaceId: relationMetadataInput.workspaceId,
+    };
+  }
+
+  private async getObjectMetadataMap(
+    relationMetadataInput: CreateRelationInput,
+  ): Promise<{ [key: string]: ObjectMetadataEntity }> {
+    const objectMetadataEntries =
+      await this.objectMetadataService.findManyWithinWorkspace(
+        relationMetadataInput.workspaceId,
+        {
+          where: {
+            id: In([
+              relationMetadataInput.fromObjectMetadataId,
+              relationMetadataInput.toObjectMetadataId,
+            ]),
+          },
+        },
+      );
+
+    return objectMetadataEntries.reduce(
+      (acc, curr) => {
+        acc[curr.id] = curr;
+
+        return acc;
+      },
+      {} as { [key: string]: ObjectMetadataEntity },
     );
-
-    return createdRelationMetadata;
   }
 
   public async findOneWithinWorkspace(
@@ -257,5 +300,31 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       },
       relations: ['fromFieldMetadata', 'toFieldMetadata'],
     });
+  }
+
+  override async deleteOne(id: string): Promise<RelationMetadataEntity> {
+    // TODO: This logic is duplicated with the BeforeDeleteOneRelation hook
+    const relationMetadata = await this.relationMetadataRepository.findOne({
+      where: { id },
+      relations: ['fromFieldMetadata', 'toFieldMetadata'],
+    });
+
+    if (!relationMetadata) {
+      throw new NotFoundException('Relation does not exist');
+    }
+
+    const deletedRelationMetadata = super.deleteOne(id);
+
+    // TODO: Move to a cdc scheduler
+    this.fieldMetadataService.deleteMany({
+      id: {
+        in: [
+          relationMetadata.fromFieldMetadataId,
+          relationMetadata.toFieldMetadataId,
+        ],
+      },
+    });
+
+    return deletedRelationMetadata;
   }
 }
