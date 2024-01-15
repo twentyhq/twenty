@@ -127,7 +127,7 @@ export class MessagingUtilsService {
         );
 
         await manager.query(
-          `INSERT INTO ${dataSourceMetadata.schema}."messageRecipient" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
+          `INSERT INTO ${dataSourceMetadata.schema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
           [
             messageId,
             'from',
@@ -138,7 +138,7 @@ export class MessagingUtilsService {
           ],
         );
 
-        await this.saveMessageRecipients(
+        await this.saveMessageParticipants(
           recipients,
           dataSourceMetadata,
           messageId,
@@ -148,7 +148,7 @@ export class MessagingUtilsService {
     }
   }
 
-  public async saveMessageRecipients(
+  public async saveMessageParticipants(
     recipients: Recipient[],
     dataSourceMetadata: DataSourceEntity,
     messageId: string,
@@ -174,7 +174,7 @@ export class MessagingUtilsService {
       const recipientWorkspaceMemberId = workspaceMember[0]?.id;
 
       await manager.query(
-        `INSERT INTO ${dataSourceMetadata.schema}."messageRecipient" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
+        `INSERT INTO ${dataSourceMetadata.schema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
         [
           messageId,
           recipient.role,

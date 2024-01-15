@@ -13,7 +13,7 @@ import { AttachmentObjectMetadata } from 'src/workspace/workspace-sync-metadata/
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
 import { FavoriteObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/favorite.object-metadata';
-import { MessageRecipientObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-recipient.object-metadata';
+import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-participant.object-metadata';
 import { OpportunityObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/opportunity.object-metadata';
 
 @ObjectMetadata({
@@ -182,12 +182,12 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'messageRecipient',
+    objectName: 'messageParticipant',
     inverseSideFieldName: 'person',
   })
   @Gate({
     featureFlag: 'IS_MESSAGING_ENABLED',
   })
   @IsNullable()
-  messageRecipients: MessageRecipientObjectMetadata[];
+  messageParticipants: MessageParticipantObjectMetadata[];
 }

@@ -45,7 +45,7 @@ export class TimelineMessagingService {
         LEFT JOIN 
             ${dataSourceMetadata.schema}."message" m ON mt."id" = m."messageThreadId"
         LEFT JOIN 
-            ${dataSourceMetadata.schema}."messageRecipient" mr ON m."id" = mr."messageId"
+            ${dataSourceMetadata.schema}."messageParticipant" mr ON m."id" = mr."messageId"
         WHERE 
             mr."personId" IN (SELECT unnest($1::uuid[]))
     ) AS subquery
