@@ -59,11 +59,16 @@ export class CallWebhookJobsJob
       this.messageQueueService.add<CallWebhookJobData>(
         CallWebhookJob.name,
         {
-          operation: operationName,
+          targetUrl: webhook.targetUrl,
+          operation: data.operation,
+          object: {
+            id: data.recordData.id,
+            nameSingular: data.objectMetadataItem.nameSingular,
+          },
           workspaceId: data.workspaceId,
           webhookId: webhook.id,
-          recordData: data.recordData,
-          targetUrl: webhook.targetUrl,
+          eventDate: new Date(),
+          recordData: { newValue: data.recordData },
         },
         { retryLimit: 3 },
       );

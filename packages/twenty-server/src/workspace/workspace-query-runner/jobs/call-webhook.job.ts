@@ -3,12 +3,18 @@ import { HttpService } from '@nestjs/axios';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
+import { CallWebhookJobsJobOperation } from 'src/workspace/workspace-query-runner/jobs/call-webhook-jobs.job';
+
 export type CallWebhookJobData = {
   targetUrl: string;
-  recordData: any;
-  operation: string;
+  operation: CallWebhookJobsJobOperation;
+  object: { id: string; nameSingular: string };
   workspaceId: string;
   webhookId: string;
+  eventDate: Date;
+  recordData: {
+    newValue: any;
+  };
 };
 
 @Injectable()
@@ -19,27 +25,7 @@ export class CallWebhookJob implements MessageQueueJob<CallWebhookJobData> {
 
   async handle(data: CallWebhookJobData): Promise<void> {
     try {
-      /*const payload = {
-        object: { id, singularName }
-        recordId:
-        operation: data.operation,
-        workspaceId: data.workspaceId,
-        webhookId: data.webhookId,
-        eventDate:
-      workspaceMember:
-        recordData: {
-          previousValue
-          newValue
-        }
-    };*/
-      const payload = {
-        operation: data.operation,
-        workspaceId: data.workspaceId,
-        webhookId: data.webhookId,
-        resource: data.recordData,
-      };
-
-      await this.httpService.axiosRef.post(data.targetUrl, payload);
+      await this.httpService.axiosRef.post(data.targetUrl, data);
       this.logger.log(
         `CallWebhookJob successfully called on targetUrl '${data.targetUrl}'`,
       );
