@@ -37,29 +37,35 @@ export const useRecordTableStates = (recordTableId?: string) => {
 
   return {
     scopeId,
-    availableTableColumnsState: getState(
+    getAvailableTableColumnsState: getState(
       availableTableColumnsStateScopeMap,
       scopeId,
     ),
-    tableFiltersState: getState(tableFiltersStateScopeMap, scopeId),
-    tableSortsState: getState(tableSortsStateScopeMap, scopeId),
-    tableColumnsState: getState(tableColumnsStateScopeMap, scopeId),
-    objectMetadataConfigState: getState(
+    getTableFiltersState: getState(tableFiltersStateScopeMap, scopeId),
+    getTableSortsState: getState(tableSortsStateScopeMap, scopeId),
+    getTableColumnsState: getState(tableColumnsStateScopeMap, scopeId),
+    getObjectMetadataConfigState: getState(
       objectMetadataConfigStateScopeMap,
       scopeId,
     ),
-    onColumnsChangeState: getState(onColumnsChangeStateScopeMap, scopeId),
-    onEntityCountChangeState: getState(
+    getOnColumnsChangeState: getState(onColumnsChangeStateScopeMap, scopeId),
+    getOnEntityCountChangeState: getState(
       onEntityCountChangeStateScopeMap,
       scopeId,
     ),
-    tableLastRowVisibleState: getState(
+    getTableLastRowVisibleState: getState(
       tableLastRowVisibleStateScopeMap,
       scopeId,
     ),
-    softFocusPositionState: getState(softFocusPositionStateScopeMap, scopeId),
-    numberOfTableRowsState: getState(numberOfTableRowsStateScopeMap, scopeId),
-    currentTableCellInEditModePositionState: getState(
+    getSoftFocusPositionState: getState(
+      softFocusPositionStateScopeMap,
+      scopeId,
+    ),
+    getNumberOfTableRowsState: getState(
+      numberOfTableRowsStateScopeMap,
+      scopeId,
+    ),
+    getCurrentTableCellInEditModePositionState: getState(
       currentTableCellInEditModePositionStateScopeMap,
       scopeId,
     ),
@@ -67,21 +73,27 @@ export const useRecordTableStates = (recordTableId?: string) => {
       isTableCellInEditModeFamilyStateScopeMap,
       scopeId,
     ),
-    isSoftFocusActiveState: getState(isSoftFocusActiveStateScopeMap, scopeId),
+    getIsSoftFocusActiveState: getState(
+      isSoftFocusActiveStateScopeMap,
+      scopeId,
+    ),
+    getTableRowIdsState: getState(tableRowIdsStateScopeMap, scopeId),
+    getIsRecordTableInitialLoadingState: getState(
+      isRecordTableInitialLoadingStateScopeMap,
+      scopeId,
+    ),
+    getResizeFieldOffsetState: getState(
+      resizeFieldOffsetStateScopeMap,
+      scopeId,
+    ),
     isSoftFocusOnTableCellFamilyState: getFamilyState(
       isSoftFocusOnTableCellFamilyStateScopeMap,
       scopeId,
     ),
-    tableRowIdsState: getState(tableRowIdsStateScopeMap, scopeId),
     isRowSelectedFamilyState: getFamilyState(
       isRowSelectedFamilyStateScopeMap,
       scopeId,
     ),
-    isRecordTableInitialLoadingState: getState(
-      isRecordTableInitialLoadingStateScopeMap,
-      scopeId,
-    ),
-    resizeFieldOffsetState: getState(resizeFieldOffsetStateScopeMap, scopeId),
     allRowsSelectedStatusSelector: getSelector(
       allRowsSelectedStatusSelectorScopeMap,
       scopeId,

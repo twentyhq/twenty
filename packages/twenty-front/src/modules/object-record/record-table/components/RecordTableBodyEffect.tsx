@@ -20,10 +20,10 @@ export const RecordTableBodyEffect = ({
     loading,
   } = useObjectRecordTable(objectNamePlural);
 
-  const { tableLastRowVisibleState } = useRecordTableStates();
+  const { getTableLastRowVisibleState } = useRecordTableStates();
 
   const [tableLastRowVisible, setTableLastRowVisible] = useRecoilState(
-    tableLastRowVisibleState(),
+    getTableLastRowVisibleState(),
   );
 
   const isFetchingMoreObjects = useRecoilValue(
