@@ -19,6 +19,19 @@ export class CallWebhookJob implements MessageQueueJob<CallWebhookJobData> {
 
   async handle(data: CallWebhookJobData): Promise<void> {
     try {
+      /*const payload = {
+        object: { id, singularName }
+        recordId:
+        operation: data.operation,
+        workspaceId: data.workspaceId,
+        webhookId: data.webhookId,
+        eventDate:
+      workspaceMember:
+        recordData: {
+          previousValue
+          newValue
+        }
+    };*/
       const payload = {
         operation: data.operation,
         workspaceId: data.workspaceId,
