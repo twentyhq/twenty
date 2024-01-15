@@ -1,7 +1,6 @@
 import { Bundle, ZObject } from 'zapier-platform-core';
 
 import { findObjectNamesSingularKey } from '../triggers/find_object_names_singular';
-import { listRecordIdsKey } from '../triggers/list_record_ids';
 import { capitalize } from '../utils/capitalize';
 import { recordInputFields } from '../utils/creates/creates.utils';
 import handleQueryParams from '../utils/handleQueryParams';
@@ -18,7 +17,6 @@ const computeFields = async (z: ZObject, bundle: Bundle) => {
           key: 'id',
           label: 'Id',
           type: 'string',
-          dynamic: `${listRecordIdsKey}.id`,
           required: true,
         },
       ];
