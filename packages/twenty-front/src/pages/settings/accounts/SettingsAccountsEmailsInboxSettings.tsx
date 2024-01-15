@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { MessageChannel } from '@/accounts/types/MessageChannel';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { SettingsAccountsInboxSettingsContactAutoCreateSection } from '@/settings/accounts/components/SettingsAccountsInboxSettingsContactAutoCreationSection';
 import { SettingsAccountsInboxSettingsSynchronizationSection } from '@/settings/accounts/components/SettingsAccountsInboxSettingsSynchronizationSection';
 import {
@@ -12,24 +14,27 @@ import { AppPath } from '@/types/AppPath';
 import { IconSettings } from '@/ui/display/icon';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { mockedAccounts } from '~/testing/mock-data/accounts';
 
 export const SettingsAccountsEmailsInboxSettings = () => {
   const navigate = useNavigate();
-  const { accountUuid = '' } = useParams();
-  const account = mockedAccounts.find((account) => account.id === accountUuid);
+  const { accountUuid: messageChannelId = '' } = useParams();
 
-  useEffect(() => {
-    if (!account) navigate(AppPath.NotFound);
-  }, [account, navigate]);
-
-  if (!account) return null;
+  const { record: messageChannel, loading } = useFindOneRecord<MessageChannel>({
+    objectNameSingular: 'messageChannel',
+    objectRecordId: messageChannelId,
+  });
 
   const handleSynchronizationToggle = (_value: boolean) => {};
 
   const handleContactAutoCreationToggle = (_value: boolean) => {};
 
   const handleVisibilityChange = (_value: InboxSettingsVisibilityValue) => {};
+
+  useEffect(() => {
+    if (!loading && !messageChannel) navigate(AppPath.NotFound);
+  }, [loading, messageChannel, navigate]);
+
+  if (!messageChannel) return null;
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -38,19 +43,19 @@ export const SettingsAccountsEmailsInboxSettings = () => {
           links={[
             { children: 'Accounts', href: '/settings/accounts' },
             { children: 'Emails', href: '/settings/accounts/emails' },
-            { children: account?.handle || '' },
+            { children: messageChannel?.handle || '' },
           ]}
         />
         <SettingsAccountsInboxSettingsSynchronizationSection
-          account={account}
+          account={messageChannel}
           onToggle={handleSynchronizationToggle}
         />
         <SettingsAccountsInboxSettingsVisibilitySection
-          value={account.visibility}
+          value={messageChannel?.visibility}
           onChange={handleVisibilityChange}
         />
         <SettingsAccountsInboxSettingsContactAutoCreateSection
-          account={account}
+          account={messageChannel}
           onToggle={handleContactAutoCreationToggle}
         />
       </SettingsPageContainer>
