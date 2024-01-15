@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 import { useSetRecoilState } from 'recoil';
-import { withRouter } from 'storybook-addon-react-router-v6';
 
 import { identifierMapper } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
 import { ChipFieldDisplay } from '@/object-record/field/meta-types/display/components/ChipFieldDisplay';
@@ -34,31 +34,32 @@ const ChipFieldValueSetterEffect = () => {
 const meta: Meta = {
   title: 'UI/Data/Field/Display/ChipFieldDisplay',
   decorators: [
-    (Story, { args }) => (
-      <FieldContext.Provider
-        value={{
-          entityId: '123',
-          basePathToShowPage: '/object-record/',
-          isLabelIdentifier: false,
-          fieldDefinition: {
-            fieldMetadataId: 'full name',
-            label: 'Henry Cavill',
-            type: 'FULL_NAME',
-            iconName: 'IconCalendarEvent',
-            metadata: {
-              fieldName: 'full name',
-              objectMetadataNameSingular: 'person',
+    (Story) => (
+      <MemoryRouter>
+        <FieldContext.Provider
+          value={{
+            entityId: '123',
+            basePathToShowPage: '/object-record/',
+            isLabelIdentifier: false,
+            fieldDefinition: {
+              fieldMetadataId: 'full name',
+              label: 'Henry Cavill',
+              type: 'FULL_NAME',
+              iconName: 'IconCalendarEvent',
+              metadata: {
+                fieldName: 'full name',
+                objectMetadataNameSingular: 'person',
+              },
             },
-          },
-          hotkeyScope: 'hotkey-scope',
-        }}
-      >
-        <ChipFieldValueSetterEffect />
-        <Story />
-      </FieldContext.Provider>
+            hotkeyScope: 'hotkey-scope',
+          }}
+        >
+          <ChipFieldValueSetterEffect />
+          <Story />
+        </FieldContext.Provider>
+      </MemoryRouter>
     ),
     ComponentDecorator,
-    withRouter,
   ],
   component: ChipFieldDisplay,
   argTypes: { value: { control: 'date' } },
