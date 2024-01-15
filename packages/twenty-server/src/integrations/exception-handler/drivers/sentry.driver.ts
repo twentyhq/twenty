@@ -1,6 +1,8 @@
 import * as Sentry from '@sentry/node';
 import { ProfilingIntegration } from '@sentry/profiling-node';
 
+import { ExceptionHandlerUser } from 'src/integrations/exception-handler/interfaces/exception-handler-user.interface';
+
 import {
   ExceptionHandlerDriverInterface,
   ExceptionHandlerSentryDriverFactoryOptions,
@@ -30,11 +32,33 @@ export class ExceptionHandlerSentryDriver
     });
   }
 
-  captureException(exception: Error) {
-    Sentry.captureException(exception);
+  captureException(exception: Error, user?: ExceptionHandlerUser) {
+    Sentry.captureException(exception, (scope) => {
+      if (user) {
+        scope.setUser({
+          id: user.id,
+          ip_address: user.ipAddress,
+          email: user.email,
+          username: user.username,
+        });
+      }
+
+      return scope;
+    });
   }
 
-  captureMessage(message: string) {
-    Sentry.captureMessage(message);
+  captureMessage(message: string, user?: ExceptionHandlerUser) {
+    Sentry.captureMessage(message, (scope) => {
+      if (user) {
+        scope.setUser({
+          id: user.id,
+          ip_address: user.ipAddress,
+          email: user.email,
+          username: user.username,
+        });
+      }
+
+      return scope;
+    });
   }
 }

@@ -24,6 +24,8 @@ import { handleExceptionAndConvertToGraphQLError } from 'src/filters/utils/globa
 import { renderApolloPlayground } from 'src/workspace/utils/render-apollo-playground.util';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
+import { User } from './core/user/user.entity';
+
 @Injectable()
 export class GraphQLConfigService
   implements GqlOptionsFactory<YogaDriverConfig<'express'>>
@@ -55,14 +57,18 @@ export class GraphQLConfigService
         },
       },
       conditionalSchema: async (context) => {
+        let user: User | undefined;
+
         try {
           if (!this.tokenService.isTokenPresent(context.req)) {
             return new GraphQLSchema({});
           }
 
-          const workspace = await this.tokenService.validateToken(context.req);
+          const token = await this.tokenService.validateToken(context.req);
+          
+          user = token.user;
 
-          return await this.createSchema(context, workspace);
+          return await this.createSchema(context, token.workspace);
         } catch (error) {
           if (error instanceof UnauthorizedException) {
             throw new GraphQLError('Unauthenticated', {
@@ -92,6 +98,12 @@ export class GraphQLConfigService
           throw handleExceptionAndConvertToGraphQLError(
             error,
             this.exceptionHandlerService,
+            user
+              ? {
+                  id: user.id,
+                  email: user.email,
+                }
+              : undefined,
           );
         }
       },

@@ -1,5 +1,7 @@
 import { HttpException } from '@nestjs/common';
 
+import { ExceptionHandlerUser } from 'src/integrations/exception-handler/interfaces/exception-handler-user.interface';
+
 import {
   AuthenticationError,
   BaseGraphQLError,
@@ -21,8 +23,9 @@ const graphQLPredefinedExceptions = {
 export const handleExceptionAndConvertToGraphQLError = (
   exception: Error,
   exceptionHandlerService: ExceptionHandlerService,
+  user?: ExceptionHandlerUser,
 ): BaseGraphQLError => {
-  handleException(exception, exceptionHandlerService);
+  handleException(exception, exceptionHandlerService, user);
 
   return convertExceptionToGraphQLError(exception);
 };
@@ -30,11 +33,13 @@ export const handleExceptionAndConvertToGraphQLError = (
 export const handleException = (
   exception: Error,
   exceptionHandlerService: ExceptionHandlerService,
+  user?: ExceptionHandlerUser,
 ): void => {
   if (exception instanceof HttpException && exception.getStatus() < 500) {
     return;
   }
-  exceptionHandlerService.captureException(exception);
+
+  exceptionHandlerService.captureException(exception, user);
 };
 
 export const convertExceptionToGraphQLError = (
