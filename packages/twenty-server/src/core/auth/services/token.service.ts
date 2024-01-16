@@ -427,13 +427,13 @@ export class TokenService {
       passwordResetToken: hashedResetToken,
     });
 
-    assert(user, "This token doesn't exist", NotFoundException);
+    assert(user, "Token is invalid", NotFoundException);
 
     const tokenExpiresAt = user.passwordResetTokenExpiresAt;
 
     assert(
       tokenExpiresAt && isFuture(tokenExpiresAt),
-      'This token is invalid',
+      'Token has expired. Please regenerate',
       NotFoundException,
     );
 
