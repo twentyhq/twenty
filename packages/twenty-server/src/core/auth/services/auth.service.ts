@@ -10,6 +10,7 @@ import { HttpService } from '@nestjs/axios';
 import FileType from 'file-type';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
+import { render } from '@react-email/components';
 
 import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
 
@@ -30,12 +31,11 @@ import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspa
 import { getImageBufferFromUrl } from 'src/utils/image';
 import { FileUploadService } from 'src/core/file/services/file-upload.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-
-import { TokenService } from './token.service';
 import PasswordUpdateNotifyEmail from 'src/core/auth/emails/password-update-notify.email';
-import { render } from '@react-email/components';
 import { EmailService } from 'src/integrations/email/email.service';
 import { UpdatePassword } from 'src/core/auth/dto/update-password.entity';
+
+import { TokenService } from './token.service';
 
 export type UserPayload = {
   firstName: string;
@@ -247,18 +247,27 @@ export class AuthService {
     };
   }
 
-  async updatePassword(userId: string, newPassword: string): Promise<UpdatePassword> {
-    const user = await this.userRepository.findOneBy({id: userId});
-    assert(user, "User not found", NotFoundException);
+  async updatePassword(
+    userId: string,
+    newPassword: string,
+  ): Promise<UpdatePassword> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    assert(user, 'User not found', NotFoundException);
 
     const isPasswordValid = PASSWORD_REGEX.test(newPassword);
+
     assert(isPasswordValid, 'Password too weak', BadRequestException);
 
     const newPasswordHash = await hashPassword(newPassword);
 
-    assert(user.passwordHash !== newPasswordHash, 'Password cannot be repeated', BadRequestException);
+    assert(
+      user.passwordHash !== newPasswordHash,
+      'Password cannot be repeated',
+      BadRequestException,
+    );
 
-    const updateResult = await this.userRepository.update(userId, {
+    await this.userRepository.update(userId, {
       passwordHash: newPasswordHash,
     });
 

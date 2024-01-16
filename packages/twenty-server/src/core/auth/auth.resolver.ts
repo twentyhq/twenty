@@ -22,11 +22,10 @@ import { TransientToken } from 'src/core/auth/dto/transient-token.entity';
 import { UserService } from 'src/core/user/services/user.service';
 import { ValidatePasswordResetTokenInput } from 'src/core/auth/dto/validate-password-reset-token.input';
 import { UpdatePasswordViaResetTokenInput } from 'src/core/auth/dto/update-password-via-reset-token.input';
+import { EmailPasswordResetLink } from 'src/core/auth/dto/email-password-reset-link.entity';
+import { InvalidatePassword } from 'src/core/auth/dto/invalidate-password.entity';
 
-import {
-  ApiKeyToken,
-  AuthTokens,
-} from './dto/token.entity';
+import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { TokenService } from './services/token.service';
 import { RefreshTokenInput } from './dto/refresh-token.input';
 import { Verify } from './dto/verify.entity';
@@ -40,9 +39,6 @@ import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.enti
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { SignUpInput } from './dto/sign-up.input';
 import { ImpersonateInput } from './dto/impersonate.input';
-import { EmailPasswordResetLink } from 'src/core/auth/dto/email-password-reset-link.entity';
-import { UpdatePassword } from 'src/core/auth/dto/update-password.entity';
-import { InvalidatePassword } from 'src/core/auth/dto/invalidate-password.entity';
 
 @Resolver()
 export class AuthResolver {
@@ -167,8 +163,9 @@ export class AuthResolver {
   async emailPasswordResetLink(
     @AuthUser() { email }: User,
   ): Promise<EmailPasswordResetLink> {
-    const resetToken = await this.tokenService.generatePasswordResetToken(email);
-    
+    const resetToken =
+      await this.tokenService.generatePasswordResetToken(email);
+
     return await this.tokenService.emailPasswordResetLink(resetToken, email);
   }
 
@@ -180,11 +177,14 @@ export class AuthResolver {
       args.passwordResetToken,
     );
 
-    assert(id, "User not found", NotFoundException);
+    assert(id, 'User not found', NotFoundException);
 
-    const { success } = await this.authService.updatePassword(id, args.newPassword);
+    const { success } = await this.authService.updatePassword(
+      id,
+      args.newPassword,
+    );
 
-    assert(success, "Password update failed", InternalServerErrorException);
+    assert(success, 'Password update failed', InternalServerErrorException);
 
     return await this.tokenService.invalidatePasswordResetToken(id);
   }

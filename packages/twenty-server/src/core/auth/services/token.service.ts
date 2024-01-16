@@ -18,6 +18,7 @@ import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
 import { Request } from 'express';
 import { ExtractJwt } from 'passport-jwt';
+import { render } from '@react-email/render';
 
 import {
   JwtAuthStrategy,
@@ -36,7 +37,6 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 import { ValidatePasswordResetToken } from 'src/core/auth/dto/validate-password-reset-token.entity';
 import { EmailService } from 'src/integrations/email/email.service';
 import PasswordResetLinkEmail from 'src/core/auth/emails/password-reset-link.email';
-import { render } from '@react-email/render';
 import { InvalidatePassword } from 'src/core/auth/dto/invalidate-password.entity';
 import { EmailPasswordResetLink } from 'src/core/auth/dto/email-password-reset-link.entity';
 
@@ -326,7 +326,7 @@ export class TokenService {
       email,
     });
 
-    assert(user, "User not found", NotFoundException);
+    assert(user, 'User not found', NotFoundException);
 
     const expiresIn = this.environmentService.getPasswordResetTokenExpiresIn();
 
@@ -375,12 +375,15 @@ export class TokenService {
     };
   }
 
-  async emailPasswordResetLink(resetToken: PasswordResetToken, email: string): Promise<EmailPasswordResetLink> {
+  async emailPasswordResetLink(
+    resetToken: PasswordResetToken,
+    email: string,
+  ): Promise<EmailPasswordResetLink> {
     const user = await this.userRepository.findOneBy({
-      email
+      email,
     });
 
-    assert(user, "User not found", NotFoundException);
+    assert(user, 'User not found', NotFoundException);
 
     const frontBaseURL = this.environmentService.getFrontBaseUrl();
     const resetLink = `${frontBaseURL}/reset-password/${resetToken.passwordResetToken}`;
@@ -389,15 +392,12 @@ export class TokenService {
       link: resetLink,
       userName: `${user.firstName} ${user.lastName}`,
       duration: ms(
-        differenceInMilliseconds(
-          user.passwordResetTokenExpiresAt,
-          new Date(),
-        ),
+        differenceInMilliseconds(user.passwordResetTokenExpiresAt, new Date()),
         {
           long: true,
         },
       ),
-    }
+    };
 
     const emailTemplate = PasswordResetLinkEmail(emailData);
     const html = render(emailTemplate, {
@@ -416,7 +416,7 @@ export class TokenService {
       html,
     });
 
-    return {success: true};
+    return { success: true };
   }
 
   async validatePasswordResetToken(
@@ -431,7 +431,7 @@ export class TokenService {
       passwordResetToken: hashedResetToken,
     });
 
-    assert(user, "Token is invalid", NotFoundException);
+    assert(user, 'Token is invalid', NotFoundException);
 
     const tokenExpiresAt = user.passwordResetTokenExpiresAt;
 
@@ -447,18 +447,20 @@ export class TokenService {
     };
   }
 
-  async invalidatePasswordResetToken(userId: string): Promise<InvalidatePassword> {
+  async invalidatePasswordResetToken(
+    userId: string,
+  ): Promise<InvalidatePassword> {
     const user = await this.userRepository.findOneBy({
       id: userId,
     });
 
-    assert(user, "User not found", NotFoundException);
+    assert(user, 'User not found', NotFoundException);
 
     await this.userRepository.update(user.id, {
       passwordResetToken: undefined,
       passwordResetTokenExpiresAt: undefined,
     });
 
-    return {success: true};
+    return { success: true };
   }
 }
