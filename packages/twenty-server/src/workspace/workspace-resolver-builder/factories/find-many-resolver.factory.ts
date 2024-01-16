@@ -26,10 +26,11 @@ export class FindManyResolverFactory
 
     return (_source, args, context, info) => {
       return this.workspaceQueryRunnerService.findMany(args, {
-        targetTableName: internalContext.targetTableName,
+        objectMetadataItem: internalContext.objectMetadataItem,
         workspaceId: internalContext.workspaceId,
         info,
         fieldMetadataCollection: internalContext.fieldMetadataCollection,
+        objectMetadataCollection: internalContext.objectMetadataCollection,
       });
     };
   }

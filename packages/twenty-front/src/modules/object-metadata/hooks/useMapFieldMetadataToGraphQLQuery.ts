@@ -56,6 +56,26 @@ export const useMapFieldMetadataToGraphQLQuery = () => {
     }`;
     } else if (
       fieldType === 'RELATION' &&
+      field.toRelationMetadata?.relationType === 'ONE_TO_ONE'
+    ) {
+      const relationMetadataItem = objectMetadataItems.find(
+        (objectMetadataItem) =>
+          objectMetadataItem.id ===
+          (field.toRelationMetadata as any)?.fromObjectMetadata?.id,
+      );
+
+      return `${field.name}
+    {
+      id
+      ${(relationMetadataItem?.fields ?? [])
+        .filter((field) => field.type !== 'RELATION')
+        .map((field) =>
+          mapFieldMetadataToGraphQLQuery(field, maxDepthForRelations - 1),
+        )
+        .join('\n')}
+    }`;
+    } else if (
+      fieldType === 'RELATION' &&
       field.fromRelationMetadata?.relationType === 'ONE_TO_MANY'
     ) {
       const relationMetadataItem = objectMetadataItems.find(

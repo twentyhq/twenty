@@ -8,7 +8,7 @@ import { TableCellPosition } from '../../types/TableCellPosition';
 export const useMoveEditModeToTableCellPosition = (recordTableId?: string) => {
   const {
     isTableCellInEditModeFamilyState,
-    currentTableCellInEditModePositionState,
+    getCurrentTableCellInEditModePositionState,
   } = useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
@@ -16,7 +16,7 @@ export const useMoveEditModeToTableCellPosition = (recordTableId?: string) => {
       return (newPosition: TableCellPosition) => {
         const currentTableCellInEditModePosition = getSnapshotValue(
           snapshot,
-          currentTableCellInEditModePositionState(),
+          getCurrentTableCellInEditModePositionState(),
         );
 
         set(
@@ -24,11 +24,14 @@ export const useMoveEditModeToTableCellPosition = (recordTableId?: string) => {
           false,
         );
 
-        set(currentTableCellInEditModePositionState(), newPosition);
+        set(getCurrentTableCellInEditModePositionState(), newPosition);
 
         set(isTableCellInEditModeFamilyState(newPosition), true);
       };
     },
-    [currentTableCellInEditModePositionState, isTableCellInEditModeFamilyState],
+    [
+      getCurrentTableCellInEditModePositionState,
+      isTableCellInEditModeFamilyState,
+    ],
   );
 };

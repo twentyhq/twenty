@@ -172,6 +172,27 @@ export class EnvironmentService {
     );
   }
 
+  getEmailFromAddress(): string {
+    return (
+      this.configService.get<string>('EMAIL_FROM_ADDRESS') ??
+      'noreply@yourdomain.com'
+    );
+  }
+
+  getEmailSystemAddress(): string {
+    return (
+      this.configService.get<string>('EMAIL_SYSTEM_ADDRESS') ??
+      'system@yourdomain.com'
+    );
+  }
+
+  getEmailFromName(): string {
+    return (
+      this.configService.get<string>('EMAIL_FROM_NAME') ??
+      'John from YourDomain'
+    );
+  }
+
   getEmailDriver(): EmailDriver {
     return (
       this.configService.get<EmailDriver>('EMAIL_DRIVER') ?? EmailDriver.Logger
@@ -248,6 +269,18 @@ export class EnvironmentService {
   getPasswordResetTokenExpiresIn(): string {
     return (
       this.configService.get<string>('PASSWORD_RESET_TOKEN_EXPIRES_IN') ?? '5m'
+    );
+  }
+
+  getInactiveDaysBeforeEmail(): number | undefined {
+    return this.configService.get<number | undefined>(
+      'WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION',
+    );
+  }
+
+  getInactiveDaysBeforeDelete(): number | undefined {
+    return this.configService.get<number | undefined>(
+      'WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION',
     );
   }
 

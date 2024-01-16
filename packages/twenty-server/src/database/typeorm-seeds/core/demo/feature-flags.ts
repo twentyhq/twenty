@@ -1,5 +1,7 @@
 import { DataSource } from 'typeorm';
 
+import { FeatureFlagKeys } from 'src/core/feature-flag/feature-flag.entity';
+
 const tableName = 'featureFlag';
 
 export const seedFeatureFlags = async (
@@ -14,17 +16,17 @@ export const seedFeatureFlags = async (
     .orIgnore()
     .values([
       {
-        key: 'IS_RELATION_FIELD_TYPE_ENABLED',
+        key: FeatureFlagKeys.IsRelationFieldTypeEnabled,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: 'IS_SELECT_FIELD_TYPE_ENABLED',
+        key: FeatureFlagKeys.IsSelectFieldTypeEnabled,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: 'IS_RATING_FIELD_TYPE_ENABLED',
+        key: FeatureFlagKeys.IsRatingFieldTypeEnabled,
         workspaceId: workspaceId,
         value: false,
       },

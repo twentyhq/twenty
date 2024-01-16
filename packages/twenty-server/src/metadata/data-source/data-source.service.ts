@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 
 import { DataSourceEntity } from './data-source.entity';
 
@@ -26,6 +26,12 @@ export class DataSourceService {
       workspaceId,
       schema: workspaceSchema,
     });
+  }
+
+  async getManyDataSourceMetadata(
+    options: FindManyOptions<DataSourceEntity> = {},
+  ) {
+    return this.dataSourceMetadataRepository.find(options);
   }
 
   async getDataSourcesMetadataFromWorkspaceId(workspaceId: string) {

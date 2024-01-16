@@ -13,6 +13,15 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { Workspace } from 'src/core/workspace/workspace.entity';
 
+export enum FeatureFlagKeys {
+  IsRelationFieldTypeEnabled = 'IS_RELATION_FIELD_TYPE_ENABLED',
+  IsMessagingEnabled = 'IS_MESSAGING_ENABLED',
+  IsNoteCreateImagesEnabled = 'IS_NOTE_CREATE_IMAGES_ENABLED',
+  IsSelectFieldTypeEnabled = 'IS_SELECT_FIELD_TYPE_ENABLED',
+  IsRatingFieldTypeEnabled = 'IS_RATING_FIELD_TYPE_ENABLED',
+  IsWorkspaceCleanable = 'IS_WORKSPACE_CLEANABLE',
+}
+
 @Entity({ name: 'featureFlag', schema: 'core' })
 @ObjectType('FeatureFlag')
 @Unique('IndexOnKeyAndWorkspaceIdUnique', ['key', 'workspaceId'])
@@ -23,7 +32,7 @@ export class FeatureFlagEntity {
 
   @Field()
   @Column({ nullable: false, type: 'text' })
-  key: string;
+  key: FeatureFlagKeys;
 
   @Field()
   @Column({ nullable: false, type: 'uuid' })

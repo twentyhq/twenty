@@ -1,4 +1,4 @@
-import { useApolloClient } from '@apollo/client';
+import { Reference, useApolloClient } from '@apollo/client';
 import { produce } from 'immer';
 import { useRecoilCallback } from 'recoil';
 
@@ -138,18 +138,22 @@ export const useViewSorts = (viewScopeId: string) => {
         }
 
         modifyRecordFromCache(existingViewId, {
-          viewSorts: () => ({
-            edges: currentViewSorts.map((viewSort) => ({
-              node: viewSort,
-              cursor: '',
-            })),
-            pageInfo: {
-              hasNextPage: false,
-              hasPreviousPage: false,
-              startCursor: '',
-              endCursor: '',
-            },
-          }),
+          viewSorts: (viewSortsRef, { readField }) => {
+            const edges = readField<{ node: Reference }[]>(
+              'edges',
+              viewSortsRef,
+            );
+
+            if (!edges) return viewSortsRef;
+
+            return {
+              ...viewSortsRef,
+              edges: currentViewSorts.map((viewSort) => ({
+                node: viewSort,
+                cursor: '',
+              })),
+            };
+          },
         });
       },
     [

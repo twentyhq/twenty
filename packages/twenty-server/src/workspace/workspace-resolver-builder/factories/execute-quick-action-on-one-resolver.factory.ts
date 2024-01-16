@@ -32,10 +32,11 @@ export class ExecuteQuickActionOnOneResolverFactory
 
     return (_source, args, context, info) => {
       return this.executeQuickActionOnOne(args, {
-        targetTableName: internalContext.targetTableName,
+        objectMetadataItem: internalContext.objectMetadataItem,
         workspaceId: internalContext.workspaceId,
         info,
         fieldMetadataCollection: internalContext.fieldMetadataCollection,
+        objectMetadataCollection: internalContext.objectMetadataCollection,
       });
     };
   }
@@ -44,11 +45,12 @@ export class ExecuteQuickActionOnOneResolverFactory
     args: DeleteOneResolverArgs,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
-    switch (options.targetTableName) {
+    switch (options.objectMetadataItem.nameSingular) {
       case 'company': {
         await this.quickActionsService.executeQuickActionOnCompany(
           args.id,
           options.workspaceId,
+          options.objectMetadataItem,
         );
         break;
       }
@@ -56,6 +58,7 @@ export class ExecuteQuickActionOnOneResolverFactory
         await this.quickActionsService.createCompanyFromPerson(
           args.id,
           options.workspaceId,
+          options.objectMetadataCollection,
         );
         break;
       }

@@ -1,9 +1,11 @@
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { parseFieldRelationType } from '@/object-metadata/utils/parseFieldRelationType';
 import { parseFieldType } from '@/object-metadata/utils/parseFieldType';
 import {
@@ -62,17 +64,19 @@ export const RecordShowPage = () => {
 
   const { favorites, createFavorite, deleteFavorite } = useFavorites();
 
-  const [, setEntityFields] = useRecoilState(
+  const setEntityFields = useSetRecoilState(
     entityFieldsFamilyState(objectRecordId ?? ''),
   );
 
   const { record, loading } = useFindOneRecord({
     objectRecordId,
     objectNameSingular,
-    onCompleted: (data) => {
-      setEntityFields(data);
-    },
   });
+
+  useEffect(() => {
+    if (!record) return;
+    setEntityFields(record);
+  }, [record, setEntityFields]);
 
   const [uploadImage] = useUploadImageMutation();
   const { updateOneRecord } = useUpdateOneRecord({ objectNameSingular });
@@ -256,6 +260,7 @@ export const RecordShowPage = () => {
                           key={record.id + fieldMetadataItem.id}
                           value={{
                             entityId: record.id,
+                            maxWidth: 272,
                             recoilScopeId: record.id + fieldMetadataItem.id,
                             isLabelIdentifier: false,
                             fieldDefinition:
@@ -274,8 +279,22 @@ export const RecordShowPage = () => {
                     )}
                   </PropertyBox>
                   {isRelationFieldCardEnabled &&
-                    relationFieldMetadataItems.map(
-                      (fieldMetadataItem, index) => (
+                    relationFieldMetadataItems
+                      .filter((item) => {
+                        const relationObjectMetadataItem =
+                          item.toRelationMetadata
+                            ? item.toRelationMetadata.fromObjectMetadata
+                            : item.fromRelationMetadata?.toObjectMetadata;
+
+                        if (!relationObjectMetadataItem) {
+                          return false;
+                        }
+
+                        return isObjectMetadataAvailableForRelation(
+                          relationObjectMetadataItem,
+                        );
+                      })
+                      .map((fieldMetadataItem, index) => (
                         <FieldContext.Provider
                           key={record.id + fieldMetadataItem.id}
                           value={{
@@ -294,8 +313,7 @@ export const RecordShowPage = () => {
                         >
                           <RecordRelationFieldCardSection />
                         </FieldContext.Provider>
-                      ),
-                    )}
+                      ))}
                 </>
               )}
             </ShowPageLeftContainer>

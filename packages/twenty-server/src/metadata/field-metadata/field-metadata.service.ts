@@ -23,6 +23,7 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/metadata/data-source/data-source.service';
 import { UpdateFieldInput } from 'src/metadata/field-metadata/dtos/update-field.input';
 import { WorkspaceMigrationFactory } from 'src/metadata/workspace-migration/workspace-migration.factory';
+import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
@@ -92,7 +93,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       fieldMetadataInput.workspaceId,
       [
         {
-          name: objectMetadata.targetTableName,
+          name: computeObjectTargetTable(objectMetadata),
           action: 'alter',
           columns: this.workspaceMigrationFactory.createColumnActions(
             WorkspaceMigrationColumnActionType.CREATE,
@@ -201,7 +202,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         existingFieldMetadata.workspaceId,
         [
           {
-            name: objectMetadata.targetTableName,
+            name: computeObjectTargetTable(objectMetadata),
             action: 'alter',
             columns: this.workspaceMigrationFactory.createColumnActions(
               WorkspaceMigrationColumnActionType.ALTER,
