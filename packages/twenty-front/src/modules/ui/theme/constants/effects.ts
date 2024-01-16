@@ -5,7 +5,6 @@ import { ThemeType } from './theme';
 export const overlayBackground = (props: { theme: ThemeType }) => css`
   backdrop-filter: blur(8px);
   background: ${props.theme.background.transparent.secondary};
-  box-shadow: ${props.theme.boxShadow.strong};
 `;
 
 export const textInputStyle = (props: { theme: ThemeType }) => css`

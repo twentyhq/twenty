@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 const StyledEllipsisDisplay = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 250px;
   white-space: nowrap;
   width: 100%;
 `;

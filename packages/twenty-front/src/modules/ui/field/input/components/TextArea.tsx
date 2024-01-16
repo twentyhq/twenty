@@ -34,6 +34,7 @@ const StyledTextArea = styled(TextareaAutosize)`
   resize: none;
   width: 100%;
   min-height: 32px;
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
 
   &:focus {
     outline: none;
