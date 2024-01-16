@@ -1,5 +1,5 @@
 import { useSaveFieldEditModeValue } from '@/object-record/field/hooks/useSaveFieldEditModeValue';
-import { TextInput } from '@/ui/field/input/components/TextInput';
+import { TextArea } from '@/ui/field/input/components/TextArea';
 
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { useLinkField } from '../../hooks/useLinkField';
@@ -82,7 +82,7 @@ export const LinkFieldInput = ({
 
   return (
     <FieldInputOverlay>
-      <TextInput
+      <TextArea
         value={initialValue.url}
         autoFocus
         placeholder="URL"
