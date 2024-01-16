@@ -62,7 +62,7 @@ describe('triggers.trigger_record.created', () => {
   test('should load company from webhook', async () => {
     const bundle = {
       cleanedRequest: {
-        recordData: {
+        record: {
           id: 'd6ccb1d1-a90b-4822-a992-a0dd946592c9',
           name: '',
           domainName: '',

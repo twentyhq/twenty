@@ -388,7 +388,7 @@ export class WorkspaceQueryRunnerService {
       this.messageQueueService.add<CallWebhookJobsJobData>(
         CallWebhookJobsJob.name,
         {
-          recordData: jobData,
+          record: jobData,
           workspaceId: options.workspaceId,
           operation,
           objectMetadataItem: options.objectMetadataItem,

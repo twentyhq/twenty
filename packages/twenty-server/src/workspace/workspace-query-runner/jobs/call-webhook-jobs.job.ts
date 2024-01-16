@@ -22,7 +22,7 @@ export enum CallWebhookJobsJobOperation {
 export type CallWebhookJobsJobData = {
   workspaceId: string;
   objectMetadataItem: ObjectMetadataInterface;
-  recordData: any;
+  record: any;
   operation: CallWebhookJobsJobOperation;
 };
 
@@ -76,7 +76,7 @@ export class CallWebhookJobsJob
           workspaceId: data.workspaceId,
           webhookId: webhook.id,
           eventDate: new Date(),
-          recordData: data.recordData,
+          record: data.record,
         },
         { retryLimit: 3 },
       );

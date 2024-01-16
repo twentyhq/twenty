@@ -10,7 +10,7 @@ export type CallWebhookJobData = {
   workspaceId: string;
   webhookId: string;
   eventDate: Date;
-  recordData: any;
+  record: any;
 };
 
 @Injectable()

@@ -40,7 +40,7 @@ export const performUnsubscribe = async (z: ZObject, bundle: Bundle) => {
 };
 
 export const perform = (z: ZObject, bundle: Bundle) => {
-  return [bundle.cleanedRequest.recordData];
+  return [bundle.cleanedRequest.record];
 };
 
 const getNamePluralFromNameSingular = async (
