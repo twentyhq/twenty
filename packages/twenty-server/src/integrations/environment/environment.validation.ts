@@ -174,7 +174,7 @@ export class EnvironmentVariables {
 
   @IsDuration()
   @IsOptional()
-  PASSWORD_RESET_TOKEN_EXPIRES_IN: number;
+  PASSWORD_RESET_TOKEN_EXPIRES_IN?: number;
 
   @CastToPositiveNumber()
   @IsNumber()
