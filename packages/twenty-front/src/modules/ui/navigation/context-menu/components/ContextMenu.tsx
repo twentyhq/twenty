@@ -38,7 +38,7 @@ const StyledContainerContextMenu = styled.div<StyledContainerProps>`
 
   transform: translateX(-50%);
   width: auto;
-  z-index: 1;
+  z-index: 2;
 `;
 
 export const ContextMenu = ({ selectedIds }: ContextMenuProps) => {
