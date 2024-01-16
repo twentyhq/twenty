@@ -66,7 +66,7 @@ export const useRecordBoardCardFieldsInternal = (
           .getLoadable(onFieldsChangeScopedState({ scopeId }))
           .getValue();
 
-        await onFieldsChange?.(fields);
+        onFieldsChange?.(fields);
       },
     [scopeId, setBoardCardFields, setSavedBoardCardFields],
   );
