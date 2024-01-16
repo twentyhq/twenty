@@ -30,7 +30,7 @@ export const ThreadBottomBar = () => {
       />
       <Button
         Icon={IconUserCircle}
-        title="share"
+        title="Share"
         variant="secondary"
         accent="default"
       />
