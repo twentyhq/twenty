@@ -20,7 +20,6 @@ const StyledMainContainer = styled.div`
   min-height: 0;
   padding-bottom: ${({ theme }) => theme.spacing(3)};
   padding-left: 0;
-  padding-right: ${({ theme }) => theme.spacing(3)};
   width: 100%;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
