@@ -1,5 +1,6 @@
 import { useCallback, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { Reference } from '@apollo/client';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import qs from 'qs';
@@ -12,6 +13,7 @@ import { usePersistField } from '@/object-record/field/hooks/usePersistField';
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { entityFieldsFamilySelector } from '@/object-record/field/states/selectors/entityFieldsFamilySelector';
 import { FieldRelationMetadata } from '@/object-record/field/types/FieldMetadata';
+import { useModifyRecordFromCache } from '@/object-record/hooks/useModifyRecordFromCache';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordRelationFieldCardContent } from '@/object-record/record-relation-card/components/RecordRelationFieldCardContent';
 import { SingleEntitySelectMenuItemsWithSearch } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItemsWithSearch';
@@ -84,6 +86,7 @@ export const RecordRelationFieldCardSection = () => {
     relationFieldMetadataId,
     relationObjectMetadataNameSingular,
     relationType,
+    objectMetadataNameSingular,
   } = fieldDefinition.metadata as FieldRelationMetadata;
   const record = useRecoilValue(entityFieldsFamilyState(entityId));
 
@@ -92,6 +95,10 @@ export const RecordRelationFieldCardSection = () => {
     objectMetadataItem: relationObjectMetadataItem,
   } = useObjectMetadataItem({
     objectNameSingular: relationObjectMetadataNameSingular,
+  });
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: objectMetadataNameSingular ?? '',
   });
 
   const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
@@ -147,6 +154,10 @@ export const RecordRelationFieldCardSection = () => {
     objectNameSingular: relationObjectMetadataNameSingular,
   });
 
+  const modifyObjectMetadataInCache = useModifyRecordFromCache({
+    objectMetadataItem,
+  });
+
   const handleRelationPickerEntitySelected = (
     selectedRelationEntity?: EntityForSelect,
   ) => {
@@ -166,6 +177,21 @@ export const RecordRelationFieldCardSection = () => {
       updateOneRecordInput: {
         [`${relationFieldMetadataItem.name}Id`]: entityId,
         [relationFieldMetadataItem.name]: record,
+      },
+    });
+
+    modifyObjectMetadataInCache(entityId, {
+      [fieldName]: (relationRef, { readField }) => {
+        const edges = readField<{ node: Reference }[]>('edges', relationRef);
+
+        if (!edges) {
+          return relationRef;
+        }
+
+        return {
+          ...relationRef,
+          edges: [...edges, { node: record }],
+        };
       },
     });
   };
