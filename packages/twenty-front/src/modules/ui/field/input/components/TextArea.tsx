@@ -20,6 +20,7 @@ type TextAreaProps = {
 };
 
 const StyledTextArea = styled(TextareaAutosize)`
+  background-color: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   box-sizing: border-box;
