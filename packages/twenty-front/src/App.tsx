@@ -10,6 +10,7 @@ import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
+import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { PlanRequired } from '~/pages/auth/PlanRequired';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { VerifyEffect } from '~/pages/auth/VerifyEffect';
@@ -36,7 +37,6 @@ import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
-import { PasswordReset } from '~/pages/auth/PasswordReset';
 
 export const App = () => {
   const { pathname } = useLocation();

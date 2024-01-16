@@ -1,25 +1,28 @@
 import { useEffect, useState } from 'react';
-import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
 import { Controller, useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigate, useParams } from 'react-router-dom';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import styled from '@emotion/styled';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { motion } from 'framer-motion';
+import { useRecoilValue } from 'recoil';
+import { z } from 'zod';
 
-import { Logo } from "@/auth/components/Logo";
-import { Title } from "@/auth/components/Title";
-import { AnimatedEaseIn } from "@/ui/utilities/animation/components/AnimatedEaseIn";
-import { TextInput } from '@/ui/input/components/TextInput';
-import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
-import { useUpdatePasswordViaResetTokenMutation, useValidatePasswordResetTokenLazyQuery } from '~/generated/graphql';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { AppPath } from '@/types/AppPath';
-import { MainButton } from '@/ui/input/button/components/MainButton';
+import { Logo } from '@/auth/components/Logo';
+import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
+import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { billingState } from '@/client-config/states/billingState';
+import { AppPath } from '@/types/AppPath';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { MainButton } from '@/ui/input/button/components/MainButton';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
+import {
+  useUpdatePasswordViaResetTokenMutation,
+  useValidatePasswordResetTokenLazyQuery,
+} from '~/generated/graphql';
 
 const validationSchema = z
   .object({
@@ -63,173 +66,183 @@ const StyledFooterContainer = styled.div`
 `;
 
 export const PasswordReset = () => {
+  const { enqueueSnackBar } = useSnackBar();
+  const navigate = useNavigate();
 
-    const { enqueueSnackBar } = useSnackBar();
-    const navigate = useNavigate();
+  const [email, setEmail] = useState('');
 
-    const [email, setEmail] = useState('');
+  const theme = useTheme();
+  const passwordResetToken = useParams().passwordResetToken;
 
-    const theme = useTheme();
-    const passwordResetToken = useParams().passwordResetToken;
+  const { control, handleSubmit } = useForm<Form>({
+    mode: 'onChange',
+    defaultValues: {
+      passwordResetToken: passwordResetToken ?? '',
+      newPassword: '',
+    },
+    resolver: zodResolver(validationSchema),
+  });
 
-    const {control, handleSubmit} = useForm<Form>({
-        mode: 'onChange',
-        defaultValues: { 
-          passwordResetToken: passwordResetToken ?? '', 
-          newPassword: '' 
+  const [validateResetToken, { data, loading: isLoading, error }] =
+    useValidatePasswordResetTokenLazyQuery();
+
+  const [
+    updatePasswordViaToken,
+    {
+      data: updatePasswordData,
+      loading: isUpdatingPassword,
+      error: updatingPasswordError,
+    },
+  ] = useUpdatePasswordViaResetTokenMutation();
+
+  const { signInWithCredentials } = useAuth();
+
+  const billing = useRecoilValue(billingState);
+
+  const onSubmit = async (data: Form) => {
+    try {
+      await updatePasswordViaToken({
+        variables: {
+          token: data.passwordResetToken,
+          newPassword: data.newPassword,
         },
-        resolver: zodResolver(validationSchema),
-    })
+      });
 
+      const { workspace: currentWorkspace } = await signInWithCredentials(
+        email || '',
+        data.newPassword,
+      );
 
-    const [validateResetToken, { data, loading: isLoading, error }] = useValidatePasswordResetTokenLazyQuery();
+      if (
+        billing?.isBillingEnabled &&
+        currentWorkspace.subscriptionStatus !== 'active'
+      ) {
+        navigate('/plan-required');
+        return;
+      }
 
-    const [updatePasswordViaToken, { data: updatePasswordData, loading: isUpdatingPassword, error: updatingPasswordError }] = useUpdatePasswordViaResetTokenMutation();
+      if (currentWorkspace.displayName) {
+        navigate('/');
+        return;
+      }
 
-    const {signInWithCredentials} = useAuth();
+      navigate('/create/workspace');
+    } catch (err) {
+      console.error('there was some error', err);
+    }
+  };
 
-    const billing = useRecoilValue(billingState);
-
-    const onSubmit = async (data: Form) => {
-      try {
-        await updatePasswordViaToken({
-          variables: {
-            token: data.passwordResetToken,
-            newPassword: data.newPassword,
-          }
+  useEffect(() => {
+    const validateToken = async () => {
+      if (passwordResetToken) {
+        const { data } = await validateResetToken({
+          variables: { passwordResetToken },
+          onError: () => {
+            enqueueSnackBar(error?.message ?? 'Token Invalid', {
+              variant: 'error',
+            });
+            navigate(AppPath.SignIn);
+          },
         });
 
-        const { workspace: currentWorkspace } = await signInWithCredentials(email || '', data.newPassword);
-
-        if (
-          billing?.isBillingEnabled &&
-          currentWorkspace.subscriptionStatus !== 'active'
-        ) {
-          navigate('/plan-required');
-          return;
+        if (data?.validatePasswordResetToken?.email) {
+          setEmail(data.validatePasswordResetToken.email);
         }
-
-        if (currentWorkspace.displayName) {
-          navigate('/');
-          return;
-        }
-
-        navigate('/create/workspace');
-
-      } catch(err) {
-        console.error('there was some error', err);
       }
-    }
+    };
+    validateToken();
+  }, []);
 
-    useEffect(() => {
-      const validateToken = async () => {
-        if (passwordResetToken) {
-          const {data} = await validateResetToken({
-            variables: { passwordResetToken },
-            onError: () => {
-              enqueueSnackBar(error?.message ?? 'Token Invalid', {
-                variant: 'error'
-              });
-              navigate(AppPath.SignIn);
-            }
-          });
-          
-          if (data?.validatePasswordResetToken?.email) {
-            setEmail(data.validatePasswordResetToken.email);
-          }
-        }
-      };
-      validateToken();
-    }, []);
-
-
-    return (
-        <>
-            <AnimatedEaseIn>
-                <Logo />
-            </AnimatedEaseIn>
-            <Title animate>Reset Password</Title>
-            <StyledContentContainer>
-                {isLoading && (
-                    <SkeletonTheme
-                    baseColor={theme.background.quaternary}
-                    highlightColor={theme.background.secondary}
-                  >
-                    <Skeleton height={32} count={2} style={{
-                      marginBottom: theme.spacing(2)
-                    }}
+  return (
+    <>
+      <AnimatedEaseIn>
+        <Logo />
+      </AnimatedEaseIn>
+      <Title animate>Reset Password</Title>
+      <StyledContentContainer>
+        {isLoading && (
+          <SkeletonTheme
+            baseColor={theme.background.quaternary}
+            highlightColor={theme.background.secondary}
+          >
+            <Skeleton
+              height={32}
+              count={2}
+              style={{
+                marginBottom: theme.spacing(2),
+              }}
+            />
+          </SkeletonTheme>
+        )}
+        {email && (
+          <StyledForm onSubmit={handleSubmit(onSubmit)}>
+            <StyledFullWidthMotionDiv
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              transition={{
+                type: 'spring',
+                stiffness: 800,
+                damping: 35,
+              }}
+            >
+              <StyledInputContainer>
+                <TextInput
+                  autoFocus
+                  value={data.validatePasswordResetToken.email}
+                  placeholder="Email"
+                  fullWidth
+                  disableHotkeys
+                  disabled
+                />
+              </StyledInputContainer>
+            </StyledFullWidthMotionDiv>
+            <StyledFullWidthMotionDiv
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              transition={{
+                type: 'spring',
+                stiffness: 800,
+                damping: 35,
+              }}
+            >
+              <Controller
+                name="newPassword"
+                control={control}
+                render={({
+                  field: { onChange, onBlur, value },
+                  fieldState: { error },
+                }) => (
+                  <StyledInputContainer>
+                    <TextInput
+                      autoFocus
+                      value={value}
+                      type="password"
+                      placeholder="New Password"
+                      onBlur={onBlur}
+                      onChange={onChange}
+                      error={error?.message}
+                      fullWidth
+                      disableHotkeys
                     />
-                  </SkeletonTheme>
+                  </StyledInputContainer>
                 )}
-                {email && (
-                                  <StyledForm onSubmit={handleSubmit(onSubmit)}>
-                                  <StyledFullWidthMotionDiv
-                                  initial={{ opacity: 0, height: 0 }}
-                                  animate={{ opacity: 1, height: 'auto' }}
-                                  transition={{
-                                      type: 'spring',
-                                      stiffness: 800,
-                                      damping: 35,
-                                  }}
-                                  >
-                                <StyledInputContainer>
-                                      <TextInput
-                                        autoFocus
-                                        value={data.validatePasswordResetToken.email}
-                                        placeholder="Email"
-                                        fullWidth
-                                        disableHotkeys
-                                        disabled
-                                      />
-                                    </StyledInputContainer>
-                              </StyledFullWidthMotionDiv>
-                              <StyledFullWidthMotionDiv
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                transition={{
-                                  type: 'spring',
-                                  stiffness: 800,
-                                  damping: 35,
-                                }}
-                              >
-                                <Controller
-                                  name="newPassword"
-                                  control={control}
-                                  render={({
-                                    field: { onChange, onBlur, value },
-                                    fieldState: { error },
-                                  }) => (
-                                    <StyledInputContainer>
-                                      <TextInput
-                                        autoFocus
-                                        value={value}
-                                        type="password"
-                                        placeholder="New Password"
-                                        onBlur={onBlur}
-                                        onChange={onChange}
-                                        error={error?.message}
-                                        fullWidth
-                                        disableHotkeys
-                                      />
-                                    </StyledInputContainer>
-                                  )}
-                                />
-                              </StyledFullWidthMotionDiv>
+              />
+            </StyledFullWidthMotionDiv>
 
-                              <MainButton
-                                variant="secondary"
-                                title="Change Password"
-                                type="submit"
-                                fullWidth
-                                disabled={isUpdatingPassword}
-          />
-                                  </StyledForm>
-                )}
-            </StyledContentContainer>
-            <StyledFooterContainer>
-              By using Twenty, you agree to the Terms of Service and Data Processing
-              Agreement.
-            </StyledFooterContainer>
-        </>
-    );
-}
+            <MainButton
+              variant="secondary"
+              title="Change Password"
+              type="submit"
+              fullWidth
+              disabled={isUpdatingPassword}
+            />
+          </StyledForm>
+        )}
+      </StyledContentContainer>
+      <StyledFooterContainer>
+        By using Twenty, you agree to the Terms of Service and Data Processing
+        Agreement.
+      </StyledFooterContainer>
+    </>
+  );
+};
