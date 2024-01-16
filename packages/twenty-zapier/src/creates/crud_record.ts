@@ -4,8 +4,8 @@ import { findObjectNamesSingularKey } from '../triggers/find_object_names_singul
 import { listRecordIdsKey } from '../triggers/list_record_ids';
 import { capitalize } from '../utils/capitalize';
 import { recordInputFields } from '../utils/creates/creates.utils';
+import { InputData } from '../utils/data.types';
 import handleQueryParams from '../utils/handleQueryParams';
-import { InputData } from '../utils/inputData.type';
 import requestDb from '../utils/requestDb';
 import { Operation } from '../utils/triggers/triggers.utils';
 

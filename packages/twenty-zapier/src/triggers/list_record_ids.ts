@@ -1,6 +1,6 @@
 import { Bundle, ZObject } from 'zapier-platform-core';
 
-import { ObjectData } from '../utils/inputData.type';
+import { ObjectData } from '../utils/data.types';
 import { listSample } from '../utils/triggers/triggers.utils';
 
 const listRecordIdsRequest = async (

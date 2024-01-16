@@ -1,7 +1,7 @@
 import { Bundle, ZObject } from 'zapier-platform-core';
 
+import { ObjectData } from '../../utils/data.types';
 import handleQueryParams from '../../utils/handleQueryParams';
-import { ObjectData } from '../../utils/inputData.type';
 import requestDb, { requestDbViaRestApi } from '../../utils/requestDb';
 
 export enum Operation {
