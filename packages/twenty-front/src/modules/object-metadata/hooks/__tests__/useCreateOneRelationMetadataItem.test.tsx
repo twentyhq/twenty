@@ -6,12 +6,12 @@ import { RecoilRoot } from 'recoil';
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { RelationMetadataType } from '~/generated/graphql';
 
-import { TestApolloMetadataClientProvider } from '../mocks/ApolloMetadataClientProvider';
+import { TestApolloMetadataClientProvider } from '../__mocks__/ApolloMetadataClientProvider';
 import {
   query,
   responseData,
   variables,
-} from '../mocks/useCreateOneRelationMetadataItem';
+} from '../__mocks__/useCreateOneRelationMetadataItem';
 
 const mocks = [
   {

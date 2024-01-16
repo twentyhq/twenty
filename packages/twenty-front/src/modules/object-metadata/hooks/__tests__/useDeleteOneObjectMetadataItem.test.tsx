@@ -5,12 +5,12 @@ import { RecoilRoot } from 'recoil';
 
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 
-import { TestApolloMetadataClientProvider } from '../mocks/ApolloMetadataClientProvider';
+import { TestApolloMetadataClientProvider } from '../__mocks__/ApolloMetadataClientProvider';
 import {
   query,
   responseData,
   variables,
-} from '../mocks/useDeleteOneObjectMetadataItem';
+} from '../__mocks__/useDeleteOneObjectMetadataItem';
 
 const mocks = [
   {

@@ -6,12 +6,12 @@ import { RecoilRoot } from 'recoil';
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 
-import { TestApolloMetadataClientProvider } from '../mocks/ApolloMetadataClientProvider';
+import { TestApolloMetadataClientProvider } from '../__mocks__/ApolloMetadataClientProvider';
 import {
   query,
   responseData,
   variables,
-} from '../mocks/useFindManyObjectMetadataItems';
+} from '../__mocks__/useFindManyObjectMetadataItems';
 
 const mocks = [
   {

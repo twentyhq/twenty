@@ -7,13 +7,13 @@ import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataIt
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType } from '~/generated/graphql';
 
-import { TestApolloMetadataClientProvider } from '../mocks/ApolloMetadataClientProvider';
+import { TestApolloMetadataClientProvider } from '../__mocks__/ApolloMetadataClientProvider';
 import {
   objectMetadataId,
   queries,
   responseData,
   variables,
-} from '../mocks/useFieldMetadataItem';
+} from '../__mocks__/useFieldMetadataItem';
 
 const fieldMetadataItem: FieldMetadataItem = {
   id: '2c43466a-fe9e-4005-8d08-c5836067aa6c',

@@ -7,7 +7,7 @@ import { useRelationMetadata } from '@/object-metadata/hooks/useRelationMetadata
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 
-import { TestApolloMetadataClientProvider } from '../mocks/ApolloMetadataClientProvider';
+import { TestApolloMetadataClientProvider } from '../__mocks__/ApolloMetadataClientProvider';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>

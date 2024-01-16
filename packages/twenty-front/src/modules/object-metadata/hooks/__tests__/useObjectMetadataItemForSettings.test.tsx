@@ -7,12 +7,12 @@ import {
   query,
   responseData,
   variables,
-} from '@/object-metadata/hooks/mocks/useObjectMetadataItemForSettings';
+} from '@/object-metadata/hooks/__mocks__/useObjectMetadataItemForSettings';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 
-import { TestApolloMetadataClientProvider } from '../mocks/ApolloMetadataClientProvider';
+import { TestApolloMetadataClientProvider } from '../__mocks__/ApolloMetadataClientProvider';
 
 const mocks = [
   {
