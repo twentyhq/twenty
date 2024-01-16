@@ -8,6 +8,8 @@ import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigation
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
+import { OverflowingTextWithTooltip } from '../../../display/tooltip/OverflowingTextWithTooltip';
+
 type NavigationDrawerItemProps = {
   className?: string;
   label: string;
@@ -78,6 +80,9 @@ const StyledItem = styled.div<StyledItemProps>`
 
 const StyledItemLabel = styled.div`
   display: flex;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledSoonPill = styled.div`
@@ -162,7 +167,9 @@ export const NavigationDrawerItem = ({
       soon={soon}
     >
       {Icon && <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />}
-      <StyledItemLabel>{label}</StyledItemLabel>
+      <StyledItemLabel>
+        <OverflowingTextWithTooltip text={label} />
+      </StyledItemLabel>
       {soon && <StyledSoonPill>Soon</StyledSoonPill>}
       {!!count && <StyledItemCount>{count}</StyledItemCount>}
       {keyboard && (
