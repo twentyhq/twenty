@@ -7,6 +7,11 @@ import { useTasks } from '@/activities/tasks/hooks/useTasks';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
+import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
+import {
+  StyledEmptySubTitle,
+  StyledEmptyTitle,
+} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderText';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 
 import { AddTaskButton } from './AddTaskButton';
@@ -24,21 +29,6 @@ const StyledTaskGroupEmptyContainer = styled.div`
   padding-left: ${({ theme }) => theme.spacing(4)};
   padding-right: ${({ theme }) => theme.spacing(4)};
   padding-top: ${({ theme }) => theme.spacing(3)};
-`;
-
-const StyledEmptyTaskGroupTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.xxl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
-`;
-
-const StyledEmptyTaskGroupSubTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.extraLight};
-  font-size: ${({ theme }) => theme.font.size.xxl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledContainer = styled.div`
@@ -81,8 +71,11 @@ export const TaskGroups = ({
   ) {
     return (
       <StyledTaskGroupEmptyContainer>
-        <StyledEmptyTaskGroupTitle>No task yet</StyledEmptyTaskGroupTitle>
-        <StyledEmptyTaskGroupSubTitle>Create one:</StyledEmptyTaskGroupSubTitle>
+        <AnimatedPlaceholder type="noTask" />
+        <StyledEmptyTitle>No Task</StyledEmptyTitle>
+        <StyledEmptySubTitle>
+          There are no associated tasks with this record
+        </StyledEmptySubTitle>
         <Button
           Icon={IconPlus}
           title="New task"
