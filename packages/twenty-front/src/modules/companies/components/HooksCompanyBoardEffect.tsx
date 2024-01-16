@@ -42,7 +42,7 @@ export const HooksCompanyBoardEffect = ({
 
   const setAvailableBoardCardFields = useSetRecoilScopedStateV2(
     availableRecordBoardCardFieldsScopedState,
-    'company-board-view',
+    'company-board',
   );
 
   useEffect(() => {
