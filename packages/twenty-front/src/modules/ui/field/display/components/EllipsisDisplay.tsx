@@ -17,7 +17,5 @@ export const EllipsisDisplay = ({
   children,
   maxWidth,
 }: EllipsisDisplayProps) => (
-  <StyledEllipsisDisplay style={{ maxWidth }}>
-    {children}
-  </StyledEllipsisDisplay>
+  <StyledEllipsisDisplay style={{ maxWidth }}>{children}</StyledEllipsisDisplay>
 );
