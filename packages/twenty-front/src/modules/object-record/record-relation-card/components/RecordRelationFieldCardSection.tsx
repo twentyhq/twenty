@@ -20,6 +20,7 @@ import { SingleEntitySelectMenuItemsWithSearch } from '@/object-record/relation-
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { IconForbid, IconPlus } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
@@ -111,12 +112,11 @@ export const RecordRelationFieldCardSection = () => {
 
   const isToOneObject = relationType === 'TO_ONE_OBJECT';
 
-  const relationRecords = !isToOneObject
-    ? fieldValue?.edges.map(({ node }: { node: any }) => node) ?? []
-    : fieldValue
+  const relationRecords: ObjectRecord[] =
+    fieldValue && isToOneObject
       ? [fieldValue]
-      : [];
-  const relationRecordIds = relationRecords.map(({ id }: { id: string }) => id);
+      : fieldValue?.edges.map(({ node }: { node: ObjectRecord }) => node) ?? [];
+  const relationRecordIds = relationRecords.map(({ id }) => id);
 
   const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}`;
 
@@ -138,7 +138,7 @@ export const RecordRelationFieldCardSection = () => {
       },
     ],
     orderByField: 'createdAt',
-    mappingFunction: (recordToMap: any) =>
+    mappingFunction: (recordToMap) =>
       identifiersMapper?.(recordToMap, relationObjectMetadataNameSingular),
     selectedIds: relationRecordIds,
     excludeEntityIds: relationRecordIds,
@@ -154,7 +154,7 @@ export const RecordRelationFieldCardSection = () => {
     objectNameSingular: relationObjectMetadataNameSingular,
   });
 
-  const modifyObjectMetadataInCache = useModifyRecordFromCache({
+  const modifyRecordFromCache = useModifyRecordFromCache({
     objectMetadataItem,
   });
 
@@ -180,7 +180,7 @@ export const RecordRelationFieldCardSection = () => {
       },
     });
 
-    modifyObjectMetadataInCache(entityId, {
+    modifyRecordFromCache(entityId, {
       [fieldName]: (relationRef, { readField }) => {
         const edges = readField<{ node: Reference }[]>('edges', relationRef);
 
@@ -248,15 +248,13 @@ export const RecordRelationFieldCardSection = () => {
         </StyledHeader>
         {!!relationRecords.length && (
           <Card>
-            {relationRecords
-              .slice(0, 5)
-              .map((relationRecord: any, index: number) => (
-                <RecordRelationFieldCardContent
-                  key={`${relationRecord.id}${relationLabelIdentifierFieldMetadata?.id}`}
-                  divider={index < relationRecords.length - 1}
-                  relationRecord={relationRecord}
-                />
-              ))}
+            {relationRecords.slice(0, 5).map((relationRecord, index) => (
+              <RecordRelationFieldCardContent
+                key={`${relationRecord.id}${relationLabelIdentifierFieldMetadata?.id}`}
+                divider={index < relationRecords.length - 1}
+                relationRecord={relationRecord}
+              />
+            ))}
           </Card>
         )}
       </RelationPickerScope>
