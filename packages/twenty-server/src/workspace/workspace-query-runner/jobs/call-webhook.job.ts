@@ -6,7 +6,7 @@ import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/messa
 export type CallWebhookJobData = {
   targetUrl: string;
   eventType: string;
-  object: { id: string; nameSingular: string };
+  objectMetadata: { id: string; nameSingular: string };
   workspaceId: string;
   webhookId: string;
   eventDate: Date;

@@ -69,7 +69,7 @@ export class CallWebhookJobsJob
         {
           targetUrl: webhook.targetUrl,
           eventType,
-          object: {
+          objectMetadata: {
             id: data.objectMetadataItem.id,
             nameSingular: data.objectMetadataItem.nameSingular,
           },
