@@ -30,17 +30,46 @@ export const useRecordBoardCardFieldsInternal = (
     savedRecordBoardCardFieldsScopedState({ scopeId }),
   );
 
-  const handleFieldVisibilityChange = (
-    field: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
-  ) => {
-    setBoardCardFields((previousFields) =>
-      previousFields.map((previousField) =>
-        previousField.fieldMetadataId === field.fieldMetadataId
-          ? { ...previousField, isVisible: !field.isVisible }
-          : previousField,
-      ),
-    );
-  };
+  const handleFieldVisibilityChange = useRecoilCallback(
+    ({ snapshot }) =>
+      async (
+        field: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
+      ) => {
+        const existingFields = await snapshot
+          .getLoadable(recordBoardCardFieldsScopedState({ scopeId }))
+          .getValue();
+
+        const existingFieldsUpdated = existingFields.map((previousField) =>
+          previousField.fieldMetadataId === field.fieldMetadataId
+            ? { ...previousField, isVisible: !field.isVisible }
+            : previousField,
+        );
+
+        const isNewField = !existingFields.find(
+          ({ fieldMetadataId }) => field.fieldMetadataId === fieldMetadataId,
+        );
+
+        const fields = isNewField
+          ? [
+              ...existingFieldsUpdated,
+              {
+                ...field,
+                position: existingFieldsUpdated.length,
+              },
+            ]
+          : existingFieldsUpdated;
+
+        setSavedBoardCardFields(fields);
+        setBoardCardFields(fields);
+
+        const onFieldsChange = snapshot
+          .getLoadable(onFieldsChangeScopedState({ scopeId }))
+          .getValue();
+
+        onFieldsChange?.(fields);
+      },
+    [scopeId, setBoardCardFields, setSavedBoardCardFields],
+  );
 
   const handleFieldsChange = useRecoilCallback(
     ({ snapshot }) =>

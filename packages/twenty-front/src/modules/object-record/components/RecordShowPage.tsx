@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
@@ -70,10 +71,12 @@ export const RecordShowPage = () => {
   const { record, loading } = useFindOneRecord({
     objectRecordId,
     objectNameSingular,
-    onCompleted: (data) => {
-      setEntityFields(data);
-    },
   });
+
+  useEffect(() => {
+    if (!record) return;
+    setEntityFields(record);
+  }, [record, setEntityFields]);
 
   const [uploadImage] = useUploadImageMutation();
   const { updateOneRecord } = useUpdateOneRecord({ objectNameSingular });
@@ -285,6 +288,7 @@ export const RecordShowPage = () => {
                         if (!relationObjectMetadataItem) {
                           return false;
                         }
+
                         return isObjectMetadataAvailableForRelation(
                           relationObjectMetadataItem,
                         );

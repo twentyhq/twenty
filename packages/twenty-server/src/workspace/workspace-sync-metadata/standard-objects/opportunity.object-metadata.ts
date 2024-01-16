@@ -1,8 +1,11 @@
 import { CurrencyMetadata } from 'src/metadata/field-metadata/composite-types/currency.composite-type';
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
+import { RelationMetadataType } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { FieldMetadata } from 'src/workspace/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsNullable } from 'src/workspace/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
+import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorators/relation-metadata.decorator';
+import { ActivityTargetObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity-target.object-metadata';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
 import { PersonObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/person.object-metadata';
@@ -16,6 +19,14 @@ import { PipelineStepObjectMetadata } from 'src/workspace/workspace-sync-metadat
   icon: 'IconTargetArrow',
 })
 export class OpportunityObjectMetadata extends BaseObjectMetadata {
+  @FieldMetadata({
+    type: FieldMetadataType.TEXT,
+    label: 'Name',
+    description: 'The opportunity name',
+    icon: 'IconTargetArrow',
+  })
+  name: string;
+
   @FieldMetadata({
     type: FieldMetadataType.CURRENCY,
     label: 'Amount',
@@ -67,16 +78,6 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Person',
-    description: 'Opportunity person',
-    icon: 'IconUser',
-    joinColumn: 'personId',
-  })
-  @IsNullable()
-  person: PersonObjectMetadata;
-
-  @FieldMetadata({
-    type: FieldMetadataType.RELATION,
     label: 'Company',
     description: 'Opportunity company',
     icon: 'IconBuildingSkyscraper',
@@ -84,4 +85,17 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   company: CompanyObjectMetadata;
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Activities',
+    description: 'Activities tied to the opportunity',
+    icon: 'IconCheckbox',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'activityTarget',
+  })
+  @IsNullable()
+  activityTargets: ActivityTargetObjectMetadata[];
 }
