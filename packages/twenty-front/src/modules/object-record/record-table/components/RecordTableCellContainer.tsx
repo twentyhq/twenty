@@ -25,9 +25,9 @@ export const RecordTableCellContainer = ({
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
   const currentRowId = useContext(RowIdContext);
-  const { objectMetadataConfigState } = useRecordTableStates();
+  const { getObjectMetadataConfigState } = useRecordTableStates();
 
-  const objectMetadataConfig = useRecoilValue(objectMetadataConfigState());
+  const objectMetadataConfig = useRecoilValue(getObjectMetadataConfigState());
 
   const { setCurrentRowSelected } = useCurrentRowSelected();
 

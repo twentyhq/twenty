@@ -11,9 +11,9 @@ type RecordTableBodyProps = {
 };
 
 export const RecordTableBody = ({ objectNamePlural }: RecordTableBodyProps) => {
-  const { tableRowIdsState } = useRecordTableStates();
+  const { getTableRowIdsState } = useRecordTableStates();
 
-  const tableRowIds = useRecoilValue(tableRowIdsState());
+  const tableRowIds = useRecoilValue(getTableRowIdsState());
 
   return (
     <>
