@@ -2,9 +2,8 @@ import styled from '@emotion/styled';
 
 import { IconArrowBackUp, IconUserCircle } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
-import { ButtonGroup } from '@/ui/input/button/components/ButtonGroup';
 
-const StyledThreadBottomBar = styled(ButtonGroup)`
+const StyledThreadBottomBar = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
