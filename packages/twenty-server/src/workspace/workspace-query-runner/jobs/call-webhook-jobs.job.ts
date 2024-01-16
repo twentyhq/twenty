@@ -49,10 +49,18 @@ export class CallWebhookJobsJob
       await this.workspaceDataSourceService.connectToWorkspaceDataSource(
         data.workspaceId,
       );
-    const eventType = `${data.operation}.${data.objectMetadataItem.nameSingular}`;
+    const nameSingular = data.objectMetadataItem.nameSingular;
+    const operation = data.operation;
+    const eventType = `${operation}.${nameSingular}`;
     const webhooks: { id: string; targetUrl: string }[] =
       await workspaceDataSource?.query(
-        `SELECT * FROM ${dataSourceMetadata.schema}."webhook" WHERE operation='${eventType}'`,
+        `
+            SELECT * FROM ${dataSourceMetadata.schema}."webhook" 
+            WHERE operation LIKE '%${eventType}%' 
+            OR operation LIKE '%*.${nameSingular}%' 
+            OR operation LIKE '%${operation}.*%'
+            OR operation LIKE '%*.*%'
+          `,
       );
 
     webhooks.forEach((webhook) => {
