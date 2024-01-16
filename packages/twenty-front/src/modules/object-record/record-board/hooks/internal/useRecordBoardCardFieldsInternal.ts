@@ -39,25 +39,20 @@ export const useRecordBoardCardFieldsInternal = (
           .getLoadable(recordBoardCardFieldsScopedState({ scopeId }))
           .getValue();
 
-        const existingFieldsUpdated = existingFields.map((previousField) =>
-          previousField.fieldMetadataId === field.fieldMetadataId
-            ? { ...previousField, isVisible: !field.isVisible }
-            : previousField,
-        );
-
-        const isNewField = !existingFields.find(
+        const fieldIndex = existingFields.findIndex(
           ({ fieldMetadataId }) => field.fieldMetadataId === fieldMetadataId,
         );
+        const fields = [...existingFields];
 
-        const fields = isNewField
-          ? [
-              ...existingFieldsUpdated,
-              {
-                ...field,
-                position: existingFieldsUpdated.length,
-              },
-            ]
-          : existingFieldsUpdated;
+        if (fieldIndex === -1) {
+          fields.push({ ...field, position: existingFields.length });
+        } else {
+          fields[fieldIndex] = {
+            ...field,
+            isVisible: !field.isVisible,
+            position: existingFields.length,
+          };
+        }
 
         setSavedBoardCardFields(fields);
         setBoardCardFields(fields);
