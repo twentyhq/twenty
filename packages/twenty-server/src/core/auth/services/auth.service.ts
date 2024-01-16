@@ -32,6 +32,10 @@ import { FileUploadService } from 'src/core/file/services/file-upload.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 
 import { TokenService } from './token.service';
+import PasswordUpdateNotifyEmail from 'src/core/auth/emails/password-update-notify.email';
+import { render } from '@react-email/components';
+import { EmailService } from 'src/integrations/email/email.service';
+import { UpdatePassword } from 'src/core/auth/dto/update-password.entity';
 
 export type UserPayload = {
   firstName: string;
@@ -52,6 +56,7 @@ export class AuthService {
     private readonly userRepository: Repository<User>,
     private readonly httpService: HttpService,
     private readonly environmentService: EnvironmentService,
+    private readonly emailService: EmailService,
   ) {}
 
   async challenge(challengeInput: ChallengeInput) {
@@ -242,18 +247,40 @@ export class AuthService {
     };
   }
 
-  async updatePassword(userId: string, newPassword: string) {
-    const isPasswordValid = PASSWORD_REGEX.test(newPassword);
+  async updatePassword(userId: string, newPassword: string): Promise<UpdatePassword> {
+    const user = await this.userRepository.findOneBy({id: userId});
+    assert(user, "User not found", NotFoundException);
 
+    const isPasswordValid = PASSWORD_REGEX.test(newPassword);
     assert(isPasswordValid, 'Password too weak', BadRequestException);
+
     const newPasswordHash = await hashPassword(newPassword);
 
-    const user = await this.userRepository.findOneBy({id: userId});
-    assert(user, "User doesn't exists", NotFoundException);
     assert(user.passwordHash !== newPasswordHash, 'Password cannot be repeated', BadRequestException);
 
-    return await this.userRepository.update(userId, {
+    const updateResult = await this.userRepository.update(userId, {
       passwordHash: newPasswordHash,
     });
+
+    const emailTemplate = PasswordUpdateNotifyEmail({
+      userName: `${user.firstName} ${user.lastName}`,
+    });
+
+    const html = render(emailTemplate, {
+      pretty: true,
+    });
+    const text = render(emailTemplate, {
+      plainText: true,
+    });
+
+    this.emailService.send({
+      from: `${this.environmentService.getEmailFromName()} <${this.environmentService.getEmailFromAddress()}>`,
+      to: user.email,
+      subject: 'Your password changed',
+      text,
+      html,
+    });
+
+    return { success: true };
   }
 }

@@ -33,10 +33,12 @@ import { EnvironmentService } from 'src/integrations/environment/environment.ser
 import { User } from 'src/core/user/user.entity';
 import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
-import { ValidPasswordResetToken } from 'src/core/auth/dto/valid-password-reset-token.entity';
+import { ValidatePasswordResetToken } from 'src/core/auth/dto/validate-password-reset-token.entity';
 import { EmailService } from 'src/integrations/email/email.service';
 import PasswordResetLinkEmail from 'src/core/auth/emails/password-reset-link.email';
 import { render } from '@react-email/render';
+import { InvalidatePassword } from 'src/core/auth/dto/invalidate-password.entity';
+import { EmailPasswordResetLink } from 'src/core/auth/dto/email-password-reset-link.entity';
 
 @Injectable()
 export class TokenService {
@@ -324,7 +326,7 @@ export class TokenService {
       email,
     });
 
-    assert(user, "This user doesn't exist", NotFoundException);
+    assert(user, "User not found", NotFoundException);
 
     const expiresIn = this.environmentService.getPasswordResetTokenExpiresIn();
 
@@ -373,12 +375,12 @@ export class TokenService {
     };
   }
 
-  async emailPasswordResetLink(resetToken: PasswordResetToken, email: string) {
+  async emailPasswordResetLink(resetToken: PasswordResetToken, email: string): Promise<EmailPasswordResetLink> {
     const user = await this.userRepository.findOneBy({
       email
     });
 
-    assert(user, "This user doesn't exist", NotFoundException);
+    assert(user, "User not found", NotFoundException);
 
     const frontBaseURL = this.environmentService.getFrontBaseUrl();
     const resetLink = `${frontBaseURL}/reset-password/${resetToken.passwordResetToken}`;
@@ -413,11 +415,13 @@ export class TokenService {
       text,
       html,
     });
+
+    return {success: true};
   }
 
   async validatePasswordResetToken(
     resetToken: string,
-  ): Promise<ValidPasswordResetToken> {
+  ): Promise<ValidatePasswordResetToken> {
     const hashedResetToken = crypto
       .createHash('sha256')
       .update(resetToken)
@@ -443,16 +447,18 @@ export class TokenService {
     };
   }
 
-  async invalidatePasswordResetToken(userId: string) {
+  async invalidatePasswordResetToken(userId: string): Promise<InvalidatePassword> {
     const user = await this.userRepository.findOneBy({
       id: userId,
     });
 
-    assert(user, "This user doesn't exist", NotFoundException);
+    assert(user, "User not found", NotFoundException);
 
-    return this.userRepository.update(user.id, {
+    await this.userRepository.update(user.id, {
       passwordResetToken: undefined,
       passwordResetTokenExpiresAt: undefined,
     });
+
+    return {success: true};
   }
 }

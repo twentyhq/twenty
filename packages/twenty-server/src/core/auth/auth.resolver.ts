@@ -2,6 +2,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import {
   BadRequestException,
   ForbiddenException,
+  InternalServerErrorException,
   NotFoundException,
   UseGuards,
 } from '@nestjs/common';
@@ -16,11 +17,11 @@ import { Workspace } from 'src/core/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
 import { User } from 'src/core/user/user.entity';
 import { ApiKeyTokenInput } from 'src/core/auth/dto/api-key-token.input';
-import { ValidPasswordResetToken } from 'src/core/auth/dto/valid-password-reset-token.entity';
+import { ValidatePasswordResetToken } from 'src/core/auth/dto/validate-password-reset-token.entity';
 import { TransientToken } from 'src/core/auth/dto/transient-token.entity';
 import { UserService } from 'src/core/user/services/user.service';
-import { ValidatePasswordResetToken } from 'src/core/auth/dto/validate-password-reset-token.input';
-import { UpdatePasswordInput } from 'src/core/auth/dto/update-password.input';
+import { ValidatePasswordResetTokenInput } from 'src/core/auth/dto/validate-password-reset-token.input';
+import { UpdatePasswordViaResetTokenInput } from 'src/core/auth/dto/update-password-via-reset-token.input';
 
 import {
   ApiKeyToken,
@@ -40,6 +41,8 @@ import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input
 import { SignUpInput } from './dto/sign-up.input';
 import { ImpersonateInput } from './dto/impersonate.input';
 import { EmailPasswordResetLink } from 'src/core/auth/dto/email-password-reset-link.entity';
+import { UpdatePassword } from 'src/core/auth/dto/update-password.entity';
+import { InvalidatePassword } from 'src/core/auth/dto/invalidate-password.entity';
 
 @Resolver()
 export class AuthResolver {
@@ -165,36 +168,31 @@ export class AuthResolver {
     @AuthUser() { email }: User,
   ): Promise<EmailPasswordResetLink> {
     const resetToken = await this.tokenService.generatePasswordResetToken(email);
-    await this.tokenService.emailPasswordResetLink(resetToken, email);
-    return {
-      status: 'success',
-      message: 'Password reset link sent to the email',
-    };
+    
+    return await this.tokenService.emailPasswordResetLink(resetToken, email);
   }
 
-  @Mutation(() => LoginToken)
+  @Mutation(() => InvalidatePassword)
   async updatePasswordViaResetToken(
-    @Args() args: UpdatePasswordInput,
-  ): Promise<LoginToken> {
+    @Args() args: UpdatePasswordViaResetTokenInput,
+  ): Promise<InvalidatePassword> {
     const { id } = await this.tokenService.validatePasswordResetToken(
       args.passwordResetToken,
     );
 
-    assert(id, "User doesn't exist", NotFoundException);
+    assert(id, "User not found", NotFoundException);
 
-    await this.authService.updatePassword(id, args.newPassword);
+    const { success } = await this.authService.updatePassword(id, args.newPassword);
 
-    const loginToken = await this.tokenService.generateLoginToken(id);
+    assert(success, "Password update failed", InternalServerErrorException);
 
-    await this.tokenService.invalidatePasswordResetToken(id);
-
-    return { loginToken };
+    return await this.tokenService.invalidatePasswordResetToken(id);
   }
 
-  @Query(() => ValidPasswordResetToken)
+  @Query(() => ValidatePasswordResetToken)
   async validatePasswordResetToken(
-    @Args() args: ValidatePasswordResetToken,
-  ): Promise<ValidPasswordResetToken> {
+    @Args() args: ValidatePasswordResetTokenInput,
+  ): Promise<ValidatePasswordResetToken> {
     return this.tokenService.validatePasswordResetToken(
       args.passwordResetToken,
     );

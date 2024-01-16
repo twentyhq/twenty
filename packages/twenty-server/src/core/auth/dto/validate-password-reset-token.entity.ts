@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class ValidPasswordResetToken {
+export class ValidatePasswordResetToken {
   @Field(() => String)
   id: string;
 
