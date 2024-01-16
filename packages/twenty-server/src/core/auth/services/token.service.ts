@@ -35,6 +35,8 @@ import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { ValidPasswordResetToken } from 'src/core/auth/dto/valid-password-reset-token.entity';
 import { EmailService } from 'src/integrations/email/email.service';
+import PasswordResetLinkEmail from 'src/core/auth/emails/password-reset-link.email';
+import { render } from '@react-email/render';
 
 @Injectable()
 export class TokenService {
@@ -326,7 +328,11 @@ export class TokenService {
 
     const expiresIn = this.environmentService.getPasswordResetTokenExpiresIn();
 
-    assert(expiresIn, '', InternalServerErrorException);
+    assert(
+      expiresIn,
+      'PASSWORD_RESET_TOKEN_EXPIRES_IN constant value not found',
+      InternalServerErrorException,
+    );
 
     if (
       user.passwordResetToken &&
@@ -343,7 +349,7 @@ export class TokenService {
           {
             long: true,
           },
-        )}`,
+        )} to generate again.`,
         MethodNotAllowedException,
       );
     }
@@ -368,14 +374,44 @@ export class TokenService {
   }
 
   async emailPasswordResetLink(resetToken: PasswordResetToken, email: string) {
+    const user = await this.userRepository.findOneBy({
+      email
+    });
+
+    assert(user, "This user doesn't exist", NotFoundException);
+
     const frontBaseURL = this.environmentService.getFrontBaseUrl();
     const resetLink = `${frontBaseURL}/reset-password/${resetToken.passwordResetToken}`;
+
+    const emailData = {
+      link: resetLink,
+      userName: `${user.firstName} ${user.lastName}`,
+      duration: ms(
+        differenceInMilliseconds(
+          user.passwordResetTokenExpiresAt,
+          new Date(),
+        ),
+        {
+          long: true,
+        },
+      ),
+    }
+
+    const emailTemplate = PasswordResetLinkEmail(emailData);
+    const html = render(emailTemplate, {
+      pretty: true,
+    });
+
+    const text = render(emailTemplate, {
+      plainText: true,
+    });
+
     this.emailService.send({
-      from: 'hello@twenty.com',
+      from: `${this.environmentService.getEmailFromName()} <${this.environmentService.getEmailFromAddress()}>`,
       to: email,
-      subject: 'Password Reset',
-      text: 'Your password reset request submitted',
-      html: `<a href="${resetLink}">Click Here</a>`
+      subject: 'Action Needed to Reset Password',
+      text,
+      html,
     });
   }
 
@@ -401,9 +437,9 @@ export class TokenService {
       NotFoundException,
     );
 
-    return { 
+    return {
       id: user.id,
-      email: user.email 
+      email: user.email,
     };
   }
 
