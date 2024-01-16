@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo } from 'react';
+import { useCallback, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -12,10 +12,7 @@ import { usePersistField } from '@/object-record/field/hooks/usePersistField';
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { entityFieldsFamilySelector } from '@/object-record/field/states/selectors/entityFieldsFamilySelector';
 import { FieldRelationMetadata } from '@/object-record/field/types/FieldMetadata';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { useUpsertRecordFromState } from '@/object-record/hooks/useUpsertRecordFromState';
 import { RecordRelationFieldCardContent } from '@/object-record/record-relation-card/components/RecordRelationFieldCardContent';
 import { SingleEntitySelectMenuItemsWithSearch } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItemsWithSearch';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
@@ -107,48 +104,12 @@ export const RecordRelationFieldCardSection = () => {
 
   const isToOneObject = relationType === 'TO_ONE_OBJECT';
 
-  const { record: relationRecordFromFieldValue } = useFindOneRecord({
-    objectNameSingular: relationObjectMetadataNameSingular,
-    objectRecordId: fieldValue?.id,
-    skip: !relationLabelIdentifierFieldMetadata || !isToOneObject,
-  });
-
-  // ONE_TO_MANY records cannot be retrieved from the field value,
-  // as the record's field is an empty "Connection" object.
-  // TODO: maybe the backend could return an array of related records instead?
-  const { records: relationRecordsFromQuery } = useFindManyRecords({
-    objectNameSingular: relationObjectMetadataNameSingular,
-    filter: {
-      // TODO: this won't work for MANY_TO_MANY relations.
-      [`${relationFieldMetadataItem?.name}Id`]: {
-        eq: entityId,
-      },
-    },
-    skip:
-      !relationLabelIdentifierFieldMetadata ||
-      !relationFieldMetadataItem?.name ||
-      isToOneObject,
-  });
-
-  const relationRecords = useMemo(
-    () =>
-      relationRecordFromFieldValue
-        ? [relationRecordFromFieldValue]
-        : relationRecordsFromQuery,
-    [relationRecordFromFieldValue, relationRecordsFromQuery],
-  );
-  const relationRecordIds = useMemo(
-    () => relationRecords.map(({ id }) => id),
-    [relationRecords],
-  );
-
-  const upsertRecordFromState = useUpsertRecordFromState();
-
-  useEffect(() => {
-    relationRecords.forEach((relationRecord) =>
-      upsertRecordFromState(relationRecord),
-    );
-  }, [relationRecords, upsertRecordFromState]);
+  const relationRecords = !isToOneObject
+    ? fieldValue?.edges.map(({ node }: { node: any }) => node) ?? []
+    : fieldValue
+      ? [fieldValue]
+      : [];
+  const relationRecordIds = relationRecords.map(({ id }: { id: string }) => id);
 
   const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}`;
 
@@ -209,8 +170,6 @@ export const RecordRelationFieldCardSection = () => {
     });
   };
 
-  if (!relationLabelIdentifierFieldMetadata) return null;
-
   const filterQueryParams: FilterQueryParams = {
     filter: {
       [relationFieldMetadataItem?.name || '']: {
@@ -221,6 +180,8 @@ export const RecordRelationFieldCardSection = () => {
   const filterLinkHref = `/objects/${
     relationObjectMetadataItem.namePlural
   }?${qs.stringify(filterQueryParams)}`;
+
+  if (!fieldValue) return null;
 
   return (
     <Section>
@@ -263,13 +224,15 @@ export const RecordRelationFieldCardSection = () => {
         </StyledHeader>
         {!!relationRecords.length && (
           <Card>
-            {relationRecords.slice(0, 5).map((relationRecord, index) => (
-              <RecordRelationFieldCardContent
-                key={`${relationRecord.id}${relationLabelIdentifierFieldMetadata?.id}`}
-                divider={index < relationRecords.length - 1}
-                relationRecord={relationRecord}
-              />
-            ))}
+            {relationRecords
+              .slice(0, 5)
+              .map((relationRecord: any, index: number) => (
+                <RecordRelationFieldCardContent
+                  key={`${relationRecord.id}${relationLabelIdentifierFieldMetadata?.id}`}
+                  divider={index < relationRecords.length - 1}
+                  relationRecord={relationRecord}
+                />
+              ))}
           </Card>
         )}
       </RelationPickerScope>

@@ -146,7 +146,12 @@ export const CompanyBoardCard = () => {
 
   const showCompactView = isCompactViewEnabled && isCardInCompactView;
 
-  const { opportunity, company } = companyProgress ?? {};
+  const { company, opportunity: readOnlyOpportunity } = companyProgress ?? {};
+
+  const opportunity = {
+    ...readOnlyOpportunity,
+    company: company,
+  };
 
   const visibleBoardCardFields = useRecoilValue(visibleBoardCardFieldsSelector);
 

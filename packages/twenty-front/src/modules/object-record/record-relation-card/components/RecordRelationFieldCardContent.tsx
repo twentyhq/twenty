@@ -1,12 +1,15 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useSetRecoilState } from 'recoil';
 import { LightIconButton, MenuItem } from 'tsup.ui.index';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldDisplay } from '@/object-record/field/components/FieldDisplay';
 import { FieldContext } from '@/object-record/field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/field/hooks/usePersistField';
+import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { FieldRelationMetadata } from '@/object-record/field/types/FieldMetadata';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -57,6 +60,7 @@ export const RecordRelationFieldCardContent = ({
   relationRecord,
 }: RecordRelationFieldCardContentProps) => {
   const { fieldDefinition } = useContext(FieldContext);
+
   const {
     relationFieldMetadataId,
     relationObjectMetadataNameSingular,
@@ -85,6 +89,15 @@ export const RecordRelationFieldCardContent = ({
   const dropdownScopeId = `record-field-card-menu-${relationRecord.id}`;
 
   const { closeDropdown, isDropdownOpen } = useDropdown(dropdownScopeId);
+
+  // TODO: temporary as ChipDisplay expect to find the entity in the entityFieldsFamilyState
+  const setEntityFields = useSetRecoilState(
+    entityFieldsFamilyState(relationRecord.id),
+  );
+
+  useEffect(() => {
+    setEntityFields(relationRecord);
+  }, [relationRecord, setEntityFields]);
 
   if (!FieldContextProvider) return null;
 
@@ -116,31 +129,35 @@ export const RecordRelationFieldCardContent = ({
       <FieldContextProvider>
         <FieldDisplay />
       </FieldContextProvider>
-      <DropdownScope dropdownScopeId={dropdownScopeId}>
-        <Dropdown
-          dropdownId={dropdownScopeId}
-          dropdownPlacement="right-start"
-          clickableComponent={
-            <LightIconButton
-              className="displayOnHover"
-              Icon={IconDotsVertical}
-              accent="tertiary"
-            />
-          }
-          dropdownComponents={
-            <DropdownMenuItemsContainer>
-              <MenuItem
-                LeftIcon={IconUnlink}
-                text="Detach"
-                onClick={handleDetach}
+      {/* TODO: temporary to prevent removing a company from an opportunity */}
+      {relationObjectMetadataNameSingular !==
+        CoreObjectNameSingular.Company && (
+        <DropdownScope dropdownScopeId={dropdownScopeId}>
+          <Dropdown
+            dropdownId={dropdownScopeId}
+            dropdownPlacement="right-start"
+            clickableComponent={
+              <LightIconButton
+                className="displayOnHover"
+                Icon={IconDotsVertical}
+                accent="tertiary"
               />
-            </DropdownMenuItemsContainer>
-          }
-          dropdownHotkeyScope={{
-            scope: dropdownScopeId,
-          }}
-        />
-      </DropdownScope>
+            }
+            dropdownComponents={
+              <DropdownMenuItemsContainer>
+                <MenuItem
+                  LeftIcon={IconUnlink}
+                  text="Detach"
+                  onClick={handleDetach}
+                />
+              </DropdownMenuItemsContainer>
+            }
+            dropdownHotkeyScope={{
+              scope: dropdownScopeId,
+            }}
+          />
+        </DropdownScope>
+      )}
     </StyledCardContent>
   );
 };

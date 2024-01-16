@@ -285,6 +285,7 @@ export const RecordShowPage = () => {
                         if (!relationObjectMetadataItem) {
                           return false;
                         }
+
                         return isObjectMetadataAvailableForRelation(
                           relationObjectMetadataItem,
                         );
