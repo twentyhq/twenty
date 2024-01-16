@@ -155,14 +155,20 @@ export const RecordRelationFieldCardContent = ({
     });
   };
 
+  const isOpportunityCompanyRelation =
+    (objectMetadataNameSingular === CoreObjectNameSingular.Opportunity &&
+      relationObjectMetadataNameSingular === CoreObjectNameSingular.Company) ||
+    (objectMetadataNameSingular === CoreObjectNameSingular.Company &&
+      relationObjectMetadataNameSingular ===
+        CoreObjectNameSingular.Opportunity);
+
   return (
     <StyledCardContent isDropdownOpen={isDropdownOpen} divider={divider}>
       <FieldContextProvider>
         <FieldDisplay />
       </FieldContextProvider>
       {/* TODO: temporary to prevent removing a company from an opportunity */}
-      {relationObjectMetadataNameSingular !==
-        CoreObjectNameSingular.Company && (
+      {isOpportunityCompanyRelation && (
         <DropdownScope dropdownScopeId={dropdownScopeId}>
           <Dropdown
             dropdownId={dropdownScopeId}

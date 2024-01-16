@@ -207,8 +207,6 @@ export const RecordRelationFieldCardSection = () => {
     relationObjectMetadataItem.namePlural
   }?${qs.stringify(filterQueryParams)}`;
 
-  if (!fieldValue) return null;
-
   return (
     <Section>
       <RelationPickerScope relationPickerScopeId={dropdownId}>
