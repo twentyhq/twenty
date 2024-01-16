@@ -1,4 +1,5 @@
 import { useContext, useEffect } from 'react';
+import { Reference } from '@apollo/client';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
@@ -12,6 +13,7 @@ import { usePersistField } from '@/object-record/field/hooks/usePersistField';
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { FieldRelationMetadata } from '@/object-record/field/types/FieldMetadata';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
+import { useModifyRecordFromCache } from '@/object-record/hooks/useModifyRecordFromCache';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { IconDotsVertical, IconUnlink } from '@/ui/display/icon';
@@ -59,13 +61,24 @@ export const RecordRelationFieldCardContent = ({
   divider,
   relationRecord,
 }: RecordRelationFieldCardContentProps) => {
-  const { fieldDefinition } = useContext(FieldContext);
+  const { fieldDefinition, entityId } = useContext(FieldContext);
 
   const {
     relationFieldMetadataId,
     relationObjectMetadataNameSingular,
     relationType,
+    fieldName,
+    objectMetadataNameSingular,
   } = fieldDefinition.metadata as FieldRelationMetadata;
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: objectMetadataNameSingular ?? '',
+  });
+
+  const modifyObjectMetadataInCache = useModifyRecordFromCache({
+    objectMetadataItem,
+  });
+
   const isToOneObject = relationType === 'TO_ONE_OBJECT';
   const {
     labelIdentifierFieldMetadata: relationLabelIdentifierFieldMetadata,
@@ -120,6 +133,24 @@ export const RecordRelationFieldCardContent = ({
       updateOneRecordInput: {
         [`${relationFieldMetadataItem.name}Id`]: null,
         [relationFieldMetadataItem.name]: null,
+      },
+    });
+
+    modifyObjectMetadataInCache(entityId, {
+      [fieldName]: (relationRef, { readField }) => {
+        const edges = readField<{ node: Reference }[]>('edges', relationRef);
+
+        if (!edges) {
+          return relationRef;
+        }
+
+        return {
+          ...relationRef,
+          edges: edges.filter(({ node }) => {
+            const id = readField('id', node);
+            return id !== relationRecord.id;
+          }),
+        };
       },
     });
   };
