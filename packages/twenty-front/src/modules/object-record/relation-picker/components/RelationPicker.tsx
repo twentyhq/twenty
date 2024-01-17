@@ -70,17 +70,15 @@ export const RelationPicker = ({
     onSubmit(selectedEntity ?? null);
 
   return (
-    <>
-      <SingleEntitySelect
-        EmptyIcon={IconForbid}
-        emptyLabel={'No ' + fieldDefinition.label}
-        entitiesToSelect={entities.entitiesToSelect}
-        loading={entities.loading}
-        onCancel={onCancel}
-        onEntitySelected={handleEntitySelected}
-        selectedEntity={entities.selectedEntities[0]}
-        width={width}
-      />
-    </>
+    <SingleEntitySelect
+      EmptyIcon={IconForbid}
+      emptyLabel={'No ' + fieldDefinition.label}
+      entitiesToSelect={entities.entitiesToSelect}
+      loading={entities.loading}
+      onCancel={onCancel}
+      onEntitySelected={handleEntitySelected}
+      selectedEntity={entities.selectedEntities[0]}
+      width={width}
+    />
   );
 };

@@ -163,7 +163,6 @@ export const SettingsObjectNewFieldStep2 = () => {
           };
 
           modifyViewFromCache(view.id, {
-            // Todo fix typing
             viewFields: (viewFieldsRef, { readField }) => {
               const edges = readField<{ node: Reference }[]>(
                 'edges',

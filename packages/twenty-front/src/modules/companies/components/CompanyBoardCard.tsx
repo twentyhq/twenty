@@ -229,6 +229,7 @@ export const CompanyBoardCard = () => {
                 <FieldContext.Provider
                   value={{
                     entityId: boardCardId,
+                    maxWidth: 156,
                     recoilScopeId: boardCardId + viewField.fieldMetadataId,
                     isLabelIdentifier: false,
                     fieldDefinition: {

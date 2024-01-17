@@ -75,7 +75,7 @@ export const RecordRelationFieldCardContent = ({
     objectNameSingular: objectMetadataNameSingular ?? '',
   });
 
-  const modifyObjectMetadataInCache = useModifyRecordFromCache({
+  const modifyRecordFromCache = useModifyRecordFromCache({
     objectMetadataItem,
   });
 
@@ -136,7 +136,7 @@ export const RecordRelationFieldCardContent = ({
       },
     });
 
-    modifyObjectMetadataInCache(entityId, {
+    modifyRecordFromCache(entityId, {
       [fieldName]: (relationRef, { readField }) => {
         const edges = readField<{ node: Reference }[]>('edges', relationRef);
 
@@ -168,7 +168,7 @@ export const RecordRelationFieldCardContent = ({
         <FieldDisplay />
       </FieldContextProvider>
       {/* TODO: temporary to prevent removing a company from an opportunity */}
-      {isOpportunityCompanyRelation && (
+      {!isOpportunityCompanyRelation && (
         <DropdownScope dropdownScopeId={dropdownScopeId}>
           <Dropdown
             dropdownId={dropdownScopeId}

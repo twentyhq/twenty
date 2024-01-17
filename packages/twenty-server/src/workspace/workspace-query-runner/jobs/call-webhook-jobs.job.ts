@@ -22,7 +22,7 @@ export enum CallWebhookJobsJobOperation {
 export type CallWebhookJobsJobData = {
   workspaceId: string;
   objectMetadataItem: ObjectMetadataInterface;
-  recordData: any;
+  record: any;
   operation: CallWebhookJobsJobOperation;
 };
 
@@ -41,11 +41,6 @@ export class CallWebhookJobsJob
   ) {}
 
   async handle(data: CallWebhookJobsJobData): Promise<void> {
-    const objectMetadataItem =
-      await this.objectMetadataService.findOneOrFailWithinWorkspace(
-        data.workspaceId,
-        { where: { nameSingular: data.objectMetadataItem.nameSingular } },
-      );
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         data.workspaceId,
@@ -54,27 +49,45 @@ export class CallWebhookJobsJob
       await this.workspaceDataSourceService.connectToWorkspaceDataSource(
         data.workspaceId,
       );
-    const operationName = `${data.operation}.${objectMetadataItem.namePlural}`;
+    const nameSingular = data.objectMetadataItem.nameSingular;
+    const operation = data.operation;
+    const eventType = `${operation}.${nameSingular}`;
     const webhooks: { id: string; targetUrl: string }[] =
       await workspaceDataSource?.query(
-        `SELECT * FROM ${dataSourceMetadata.schema}."webhook" WHERE operation='${operationName}'`,
+        `
+            SELECT * FROM ${dataSourceMetadata.schema}."webhook" 
+            WHERE operation LIKE '%${eventType}%' 
+            OR operation LIKE '%*.${nameSingular}%' 
+            OR operation LIKE '%${operation}.*%'
+            OR operation LIKE '%*.*%'
+          `,
       );
 
     webhooks.forEach((webhook) => {
       this.messageQueueService.add<CallWebhookJobData>(
         CallWebhookJob.name,
         {
-          recordData: data.recordData,
           targetUrl: webhook.targetUrl,
+          eventType,
+          objectMetadata: {
+            id: data.objectMetadataItem.id,
+            nameSingular: data.objectMetadataItem.nameSingular,
+          },
+          workspaceId: data.workspaceId,
+          webhookId: webhook.id,
+          eventDate: new Date(),
+          record: data.record,
         },
         { retryLimit: 3 },
       );
     });
 
-    this.logger.log(
-      `CallWebhookJobsJob on operation '${operationName}' called on webhooks ids [\n"${webhooks
-        .map((webhook) => webhook.id)
-        .join('",\n"')}"\n]`,
-    );
+    if (webhooks.length) {
+      this.logger.log(
+        `CallWebhookJobsJob on eventType '${eventType}' called on webhooks ids [\n"${webhooks
+          .map((webhook) => webhook.id)
+          .join('",\n"')}"\n]`,
+      );
+    }
   }
 }

@@ -8,6 +8,7 @@ import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorato
 import { ActivityTargetObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/activity-target.object-metadata';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
+import { FavoriteObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/favorite.object-metadata';
 import { PersonObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/person.object-metadata';
 import { PipelineStepObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/pipeline-step.object-metadata';
 
@@ -85,6 +86,19 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   company: CompanyObjectMetadata;
+
+  @FieldMetadata({
+    type: FieldMetadataType.RELATION,
+    label: 'Favorites',
+    description: 'Favorites linked to the opportunity',
+    icon: 'IconHeart',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    objectName: 'favorite',
+  })
+  @IsNullable()
+  favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,

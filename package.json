@@ -152,7 +152,6 @@
     "uuid": "^9.0.0",
     "vite-tsconfig-paths": "^4.2.1",
     "xlsx-ugnis": "^0.19.3",
-    "zapier-platform-core": "15.5.1",
     "zod": "^3.22.2"
   },
   "devDependencies": {
@@ -259,8 +258,7 @@
     "typescript": "^5.3.3",
     "vite": "^5.0.0",
     "vite-plugin-checker": "^0.6.2",
-    "vite-plugin-svgr": "^4.2.0",
-    "zapier-platform-cli": "^15.4.1"
+    "vite-plugin-svgr": "^4.2.0"
   },
   "engines": {
     "node": "^18.17.1",
