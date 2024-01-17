@@ -31,8 +31,10 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
       );
 
     await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
-      dataSourceMetadata.id,
-      options.workspaceId,
+      {
+        workspaceId: options.workspaceId,
+        dataSourceId: dataSourceMetadata.id,
+      },
     );
   }
 

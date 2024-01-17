@@ -5,7 +5,7 @@ import { Column, Entity } from 'typeorm';
 
 import { JwtAuthGuard } from 'src/guards/jwt.auth.guard';
 import { Workspace } from 'src/core/workspace/workspace.entity';
-import { AuthWorkspace } from 'src/decorators/auth-workspace.decorator';
+import { AuthWorkspace } from 'src/decorators/auth/auth-workspace.decorator';
 import { TimelineMessagingService } from 'src/core/messaging/timeline-messaging.service';
 
 @Entity({ name: 'timelineThread', schema: 'core' })

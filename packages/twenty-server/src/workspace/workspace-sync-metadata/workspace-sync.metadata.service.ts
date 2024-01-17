@@ -2,15 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import diff from 'microdiff';
-import { In, Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import camelCase from 'lodash.camelcase';
 
 import { PartialFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { PartialObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
-import {
-  MappedFieldMetadataEntity,
-  MappedObjectMetadata,
-} from 'src/workspace/workspace-sync-metadata/interfaces/mapped-metadata.interface';
+import { MappedObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/mapped-metadata.interface';
+import { WorkspaceSyncContext } from 'src/workspace/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
+import { ComparatorAction } from 'src/workspace/workspace-sync-metadata/interfaces/comparator.interface';
 
 import {
   FieldMetadataEntity,
@@ -23,7 +22,6 @@ import {
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import {
   filterIgnoredProperties,
-  convertStringifiedFieldsToJSON,
   mapObjectMetadataByUniqueIdentifier,
 } from 'src/workspace/workspace-sync-metadata/utils/sync-metadata.util';
 import { standardObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects';
@@ -35,9 +33,16 @@ import {
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationFactory } from 'src/metadata/workspace-migration/workspace-migration.factory';
 import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
-import { ReflectiveMetadataFactory } from 'src/workspace/workspace-sync-metadata/reflective-metadata.factory';
+import { ReflectiveMetadataFactory } from 'src/workspace/workspace-sync-metadata/factories/reflective-metadata.factory';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
+import { Transaction } from 'src/database/decorators/transaction.decorator';
+import { TransactionManager } from 'src/database/decorators/transaction-manager.decorator';
+import { StandardObjectFactory } from 'src/workspace/workspace-sync-metadata/factories/standard-object.factory';
+import { FeatureFlagFactory } from 'src/workspace/workspace-sync-metadata/factories/feature-flags.factory';
+import { WorkspaceObjectComparatorService } from 'src/workspace/workspace-sync-metadata/services/workspace-object-comparator.service';
+import { WorkspaceFieldComparatorService } from 'src/workspace/workspace-sync-metadata/services/workspace-field-comparator.service';
+import { WorkspaceMetadataUpdaterService } from 'src/workspace/workspace-sync-metadata/services/workspace-metadata-updater.service';
 
 @Injectable()
 export class WorkspaceSyncMetadataService {
@@ -45,6 +50,11 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly reflectiveMetadataFactory: ReflectiveMetadataFactory,
+    private readonly featureFlagFactory: FeatureFlagFactory,
+    private readonly standardObjectFactory: StandardObjectFactory,
+    private readonly workspaceObjectComparatorService: WorkspaceObjectComparatorService,
+    private readonly workspaceFieldComparatorService: WorkspaceFieldComparatorService,
+    private readonly workspaceMetadataUpdaterService: WorkspaceMetadataUpdaterService,
 
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
@@ -66,236 +76,145 @@ export class WorkspaceSyncMetadataService {
    * @param dataSourceId
    * @param workspaceId
    */
+  @Transaction()
   public async syncStandardObjectsAndFieldsMetadata(
-    dataSourceId: string,
-    workspaceId: string,
+    context: WorkspaceSyncContext,
+    // Maybe we can find a better way to inject the manager here
+    @TransactionManager() manager?: EntityManager,
   ) {
+    if (!manager) {
+      throw new Error('EntityManager is undefined');
+    }
+
     try {
-      const workspaceFeatureFlags = await this.featureFlagRepository.find({
-        where: { workspaceId },
-      });
+      const objectMetadataRepository =
+        manager.getRepository(ObjectMetadataEntity);
 
-      const workspaceFeatureFlagsMap = workspaceFeatureFlags.reduce(
-        (result, currentFeatureFlag) => {
-          result[currentFeatureFlag.key] = currentFeatureFlag.value;
+      // Retrieve feature flags
+      const workspaceFeatureFlagsMap =
+        await this.featureFlagFactory.create(context);
 
-          return result;
-        },
-        {},
-      );
-
-      const standardObjects =
-        await this.reflectiveMetadataFactory.createObjectMetadataCollection(
-          standardObjectMetadata,
-          workspaceId,
-          dataSourceId,
+      // Create standard object metadata collection
+      const standardObjectMetadataCollection =
+        await this.standardObjectFactory.create(
+          context,
           workspaceFeatureFlagsMap,
         );
 
-      const objectsInDB = await this.objectMetadataRepository.find({
-        where: { workspaceId, isCustom: false },
-        relations: ['dataSource', 'fields'],
-      });
+      // Retrieve object metadata collection from DB
+      const originalObjectMetadataCollection =
+        await objectMetadataRepository.find({
+          where: { workspaceId: context.workspaceId, isCustom: false },
+          relations: ['dataSource', 'fields'],
+        });
 
-      const objectsInDBByName = mapObjectMetadataByUniqueIdentifier<
+      // Create map of object metadata & field metadata by unique identifier
+      const originalObjectMetadataMap = mapObjectMetadataByUniqueIdentifier<
         ObjectMetadataEntity,
         FieldMetadataEntity
-      >(objectsInDB);
-      const standardObjectsByName = mapObjectMetadataByUniqueIdentifier<
+      >(originalObjectMetadataCollection);
+      const standardObjectMetadataMap = mapObjectMetadataByUniqueIdentifier<
         PartialObjectMetadata,
         PartialFieldMetadata
-      >(standardObjects);
+      >(standardObjectMetadataCollection);
 
-      const objectsToCreate: MappedObjectMetadata[] = [];
-      const objectsToDelete = objectsInDB.filter(
-        (objectInDB) => !standardObjectsByName[objectInDB.nameSingular],
-      );
-      const objectsToUpdate: Record<string, ObjectMetadataEntity> = {};
+      // Store object metadata by action
+      const objectMetadataCreateCollection: MappedObjectMetadata[] = [];
+      const objectMetadataUpdateCollection: Partial<ObjectMetadataEntity>[] =
+        [];
+      const objectMetadataDeleteCollection =
+        originalObjectMetadataCollection.filter(
+          (objectInDB) => !standardObjectMetadataMap[objectInDB.nameSingular],
+        );
 
-      const fieldsToCreate: PartialFieldMetadata[] = [];
-      const fieldsToDelete: FieldMetadataEntity[] = [];
-      const fieldsToUpdate: Record<string, MappedFieldMetadataEntity> = {};
+      // Store field metadata by action
+      const fieldMetadataCreateCollection: PartialFieldMetadata[] = [];
+      const fieldMetadataUpdateCollection: Partial<FieldMetadataEntity>[] = [];
+      const fieldMetadataDeleteCollection: FieldMetadataEntity[] = [];
 
-      for (const standardObjectName in standardObjectsByName) {
-        const standardObject = standardObjectsByName[standardObjectName];
-        const objectInDB = objectsInDBByName[standardObjectName];
+      // Loop over all standard objects and compare them with the objects in DB
+      for (const standardObjectName in standardObjectMetadataMap) {
+        const originalObjectMetadata =
+          originalObjectMetadataMap[standardObjectName];
+        const standardObjectMetadata =
+          standardObjectMetadataMap[standardObjectName];
 
-        if (!objectInDB) {
-          objectsToCreate.push(standardObject);
+        /**
+         * COMPARE OBJECT METADATA
+         */
+        const objectComparatorResult =
+          this.workspaceObjectComparatorService.compare(
+            originalObjectMetadata,
+            standardObjectMetadata,
+          );
+
+        if (objectComparatorResult.action === ComparatorAction.CREATE) {
+          objectMetadataCreateCollection.push(standardObjectMetadata);
           continue;
         }
 
-        // Deconstruct fields and compare objects and fields independently
-        const { fields: objectInDBFields, ...objectInDBWithoutFields } =
-          objectInDB;
-        const { fields: standardObjectFields, ...standardObjectWithoutFields } =
-          standardObject;
+        if (objectComparatorResult.action === ComparatorAction.UPDATE) {
+          objectMetadataUpdateCollection.push(objectComparatorResult.object);
+        }
 
-        const objectPropertiesToIgnore = [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'labelIdentifierFieldMetadataId',
-          'imageIdentifierFieldMetadataId',
-          'isActive',
-        ];
-        const objectDiffWithoutIgnoredProperties = filterIgnoredProperties(
-          objectInDBWithoutFields,
-          objectPropertiesToIgnore,
-        );
+        /**
+         * COMPARE FIELD METADATA
+         */
+        const fieldComparatorResults =
+          this.workspaceFieldComparatorService.compare(
+            originalObjectMetadata,
+            standardObjectMetadata,
+          );
 
-        const fieldPropertiesToIgnore = [
-          'id',
-          'createdAt',
-          'updatedAt',
-          'objectMetadataId',
-          'isActive',
-        ];
-        const objectInDBFieldsWithoutDefaultFields = Object.fromEntries(
-          Object.entries(objectInDBFields).map(([key, value]) => {
-            if (value === null || typeof value !== 'object') {
-              return [key, value];
+        for (const fieldComparatorResult of fieldComparatorResults) {
+          switch (fieldComparatorResult.action) {
+            case ComparatorAction.CREATE: {
+              fieldMetadataCreateCollection.push(fieldComparatorResult.object);
+              break;
             }
-
-            return [
-              key,
-              filterIgnoredProperties(
-                value,
-                fieldPropertiesToIgnore,
-                (property) => {
-                  if (property !== null && typeof property === 'object') {
-                    return JSON.stringify(property);
-                  }
-
-                  return property;
-                },
-              ),
-            ];
-          }),
-        );
-
-        // Compare objects
-        const objectDiff = diff(
-          objectDiffWithoutIgnoredProperties,
-          standardObjectWithoutFields,
-        );
-
-        // Compare fields
-        const fieldsDiff = diff(
-          objectInDBFieldsWithoutDefaultFields,
-          standardObjectFields,
-        );
-
-        for (const diff of objectDiff) {
-          // We only handle CHANGE here as REMOVE and CREATE are handled earlier.
-          if (diff.type === 'CHANGE') {
-            const property = diff.path[0];
-
-            objectsToUpdate[objectInDB.id] = {
-              ...objectsToUpdate[objectInDB.id],
-              [property]: diff.value,
-            };
-          }
-        }
-
-        for (const diff of fieldsDiff) {
-          const fieldName = diff.path[0];
-
-          if (diff.type === 'CREATE') {
-            fieldsToCreate.push({
-              ...standardObjectFields[fieldName],
-              objectMetadataId: objectInDB.id,
-            });
-          }
-          if (diff.type === 'REMOVE' && diff.path.length === 1) {
-            fieldsToDelete.push(objectInDBFields[fieldName]);
-          }
-          if (diff.type === 'CHANGE') {
-            const property = diff.path[diff.path.length - 1];
-
-            fieldsToUpdate[objectInDBFields[fieldName].id] = {
-              ...fieldsToUpdate[objectInDBFields[fieldName].id],
-              [property]: diff.value,
-            };
+            case ComparatorAction.UPDATE: {
+              fieldMetadataUpdateCollection.push(fieldComparatorResult.object);
+              break;
+            }
+            case ComparatorAction.DELETE: {
+              fieldMetadataDeleteCollection.push(fieldComparatorResult.object);
+              break;
+            }
           }
         }
       }
 
-      // CREATE OBJECTS
-      const createdObjectMetadataCollection =
-        await this.objectMetadataRepository.save(
-          objectsToCreate.map((object) => ({
-            ...object,
-            isActive: true,
-            fields: Object.values(object.fields).map((field) => ({
-              ...convertStringifiedFieldsToJSON(field),
-              isActive: true,
-            })),
-          })),
-        );
-      const identifiers = createdObjectMetadataCollection.map(
-        (object) => object.id,
-      );
-      const createdObjects = await this.objectMetadataRepository.find({
-        where: { id: In(identifiers) },
-        relations: ['dataSource', 'fields'],
-      });
-
-      // UPDATE OBJECTS, this is not optimal as we are running n queries here.
-      for (const [key, value] of Object.entries(objectsToUpdate)) {
-        await this.objectMetadataRepository.update(key, value);
-      }
-      // DELETE OBJECTS
-      if (objectsToDelete.length > 0) {
-        await this.objectMetadataRepository.delete(
-          objectsToDelete.map((object) => object.id),
-        );
-      }
-
-      // CREATE FIELDS
-      const createdFields = await this.fieldMetadataRepository.save(
-        fieldsToCreate.map((field) => convertStringifiedFieldsToJSON(field)),
-      );
-
-      // UPDATE FIELDS
-      for (const [key, value] of Object.entries(fieldsToUpdate)) {
-        await this.fieldMetadataRepository.update(
-          key,
-          convertStringifiedFieldsToJSON(value),
-        );
-      }
-      // DELETE FIELDS
-      // TODO: handle relation fields deletion. We need to delete the relation metadata first due to the DB constraint.
-      const fieldsToDeleteWithoutRelationType = fieldsToDelete.filter(
-        (field) => field.type !== FieldMetadataType.RELATION,
-      );
-
-      if (fieldsToDeleteWithoutRelationType.length > 0) {
-        await this.fieldMetadataRepository.delete(
-          fieldsToDeleteWithoutRelationType.map((field) => field.id),
-        );
-      }
+      // Apply changes to DB
+      const metadataUpdaterResult =
+        await this.workspaceMetadataUpdaterService.update(manager, {
+          objectMetadataCreateCollection,
+          objectMetadataUpdateCollection,
+          objectMetadataDeleteCollection,
+          fieldMetadataCreateCollection,
+          fieldMetadataUpdateCollection,
+          fieldMetadataDeleteCollection,
+        });
 
       // Generate migrations
       await this.generateMigrationsFromSync(
-        createdObjects,
-        objectsToDelete,
-        createdFields,
-        fieldsToDelete,
-        objectsInDB,
+        metadataUpdaterResult.createdObjectMetadataCollection,
+        objectMetadataDeleteCollection,
+        metadataUpdaterResult.createdFieldMetadataCollection,
+        fieldMetadataDeleteCollection,
+        originalObjectMetadataCollection,
       );
 
       // We run syncRelationMetadata after everything to ensure that all objects and fields are
       // in the DB before creating relations.
       await this.syncRelationMetadata(
-        workspaceId,
-        dataSourceId,
+        context.workspaceId,
+        context.dataSourceId,
         workspaceFeatureFlagsMap,
       );
 
       // Execute migrations
       await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-        workspaceId,
+        context.workspaceId,
       );
     } catch (error) {
       console.error('Sync of standard objects failed with:', error);

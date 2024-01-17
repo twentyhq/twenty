@@ -62,8 +62,10 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         );
 
       await this.workspaceSyncMetadataService.syncStandardObjectsAndFieldsMetadata(
-        dataSourceMetadata.id,
-        this.workspaceId,
+        {
+          workspaceId: this.workspaceId,
+          dataSourceId: dataSourceMetadata.id,
+        },
       );
     } catch (error) {
       console.error(error);

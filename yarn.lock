@@ -14814,6 +14814,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.omit@npm:^4.5.9":
+  version: 4.5.9
+  resolution: "@types/lodash.omit@npm:4.5.9"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: 3b60c8ee8e9a691392d9a3ceabb32c85f888784bd3307eac3de01aeb7ff37383dc8899f027fe852641f5e0f56158fb19785cc3d20a4922e85b5810f14cba23f6
+  languageName: node
+  linkType: hard
+
 "@types/lodash.snakecase@npm:^4.1.7":
   version: 4.1.9
   resolution: "@types/lodash.snakecase@npm:4.1.9"
@@ -42328,7 +42337,9 @@ __metadata:
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch"
     "@nestjs/graphql": "patch:@nestjs/graphql@12.0.8#./patches/@nestjs+graphql+12.0.8.patch"
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
+    "@types/lodash.omit": "npm:^4.5.9"
     class-validator: "patch:class-validator@^0.14.0#./patches/class-validator+0.14.0.patch"
+    lodash.omit: "npm:^4.5.0"
   languageName: unknown
   linkType: soft
 
