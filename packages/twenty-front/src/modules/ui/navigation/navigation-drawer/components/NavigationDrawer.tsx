@@ -39,8 +39,6 @@ const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
   ${({ isSubMenu, theme }) =>
     isSubMenu
       ? css`
-          min-width: 192px;
-          padding-left: 0px;
           padding-right: ${theme.spacing(8)};
           padding-top: 41px;
         `
@@ -83,7 +81,7 @@ export const NavigationDrawer = ({
   const desktopWidth = !isNavigationDrawerOpen
     ? 12
     : isSubMenu
-      ? '192px'
+      ? desktopNavDrawerWidths.submenu
       : desktopNavDrawerWidths.menu;
 
   const mobileWidth = isNavigationDrawerOpen ? '100%' : 0;
