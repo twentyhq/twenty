@@ -10,16 +10,16 @@ import { FieldMetadataTargetColumnMap } from 'src/metadata/field-metadata/interf
  * @param propertiesToIgnore - An array of property names to ignore.
  * @returns A new object with filtered properties.
  */
-export const filterIgnoredProperties = (
-  obj: any,
+export const filterIgnoredProperties = <T extends object>(
+  obj: T,
   propertiesToIgnore: string[],
   mapFunction?: (value: any) => any,
-) => {
+): T => {
   return Object.fromEntries(
     Object.entries(obj)
       .filter(([key]) => !propertiesToIgnore.includes(key))
       .map(([key, value]) => [key, mapFunction ? mapFunction(value) : value]),
-  );
+  ) as T;
 };
 
 /**

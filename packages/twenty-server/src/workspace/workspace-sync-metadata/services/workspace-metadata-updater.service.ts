@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { EntityManager, In } from 'typeorm';
+import fs from 'fs/promises';
 
 import { MappedObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/mapped-metadata.interface';
 import { PartialFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
@@ -35,14 +36,19 @@ export class WorkspaceMetadataUpdaterService {
     createdFieldMetadataCollection: FieldMetadataEntity[];
     updatedFieldMetadataCollection: FieldMetadataEntity[];
   }> {
+    console.log('-> 1');
     const updateObjectMetadataResult = await this.updateObjectMetadata(
       manager,
       context,
     );
+
+    console.log('-> 2');
     const updateFieldMetadataResult = await this.updateFieldMetadata(
       manager,
       context,
     );
+
+    console.log('-> 3');
 
     return {
       ...updateObjectMetadataResult,
@@ -114,7 +120,14 @@ export class WorkspaceMetadataUpdaterService {
     createdFieldMetadataCollection: FieldMetadataEntity[];
     updatedFieldMetadataCollection: FieldMetadataEntity[];
   }> {
+    console.log('--> 1');
     const fieldMetadataRepository = manager.getRepository(FieldMetadataEntity);
+
+    console.log('--> 2');
+    await fs.writeFile(
+      './field-metadata-create-collection.json',
+      JSON.stringify(context.fieldMetadataCreateCollection, null, 2),
+    );
 
     /**
      * Create field metadata
@@ -124,6 +137,8 @@ export class WorkspaceMetadataUpdaterService {
         convertStringifiedFieldsToJSON(field),
       ),
     );
+
+    console.log('--> 3');
 
     /**
      * Update field metadata
@@ -137,6 +152,7 @@ export class WorkspaceMetadataUpdaterService {
       ),
     );
 
+    console.log('--> 4');
     /**
      * Delete field metadata
      */
@@ -146,6 +162,7 @@ export class WorkspaceMetadataUpdaterService {
         (field) => field.type !== FieldMetadataType.RELATION,
       );
 
+    console.log('--> 5');
     if (fieldMetadataDeleteCollectionWithoutRelationType.length > 0) {
       await fieldMetadataRepository.delete(
         fieldMetadataDeleteCollectionWithoutRelationType.map(
@@ -153,6 +170,8 @@ export class WorkspaceMetadataUpdaterService {
         ),
       );
     }
+
+    console.log('--> 6');
 
     return {
       createdFieldMetadataCollection,

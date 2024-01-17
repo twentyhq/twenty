@@ -13,6 +13,7 @@ import { workspaceSyncMetadataFactories } from 'src/workspace/workspace-sync-met
 import { WorkspaceObjectComparatorService } from 'src/workspace/workspace-sync-metadata/services/workspace-object-comparator.service';
 import { WorkspaceFieldComparatorService } from 'src/workspace/workspace-sync-metadata/services/workspace-field-comparator.service';
 import { WorkspaceMetadataUpdaterService } from 'src/workspace/workspace-sync-metadata/services/workspace-metadata-updater.service';
+import { WorkspaceRelationComparatorService } from 'src/workspace/workspace-sync-metadata/services/workspace-relation-comparator.service';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { WorkspaceMetadataUpdaterService } from 'src/workspace/workspace-sync-me
     ...workspaceSyncMetadataFactories,
     WorkspaceObjectComparatorService,
     WorkspaceFieldComparatorService,
+    WorkspaceRelationComparatorService,
     WorkspaceMetadataUpdaterService,
     WorkspaceSyncMetadataService,
   ],

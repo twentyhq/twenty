@@ -41,3 +41,8 @@ export type FieldComparatorResult =
   | ComparatorCreateResult<PartialFieldMetadata>
   | ComparatorUpdateResult<Partial<FieldMetadataEntity> & { id: string }>
   | ComparatorDeleteResult<FieldMetadataEntity>;
+
+export type RelationComparatorResult =
+  | ComparatorCreateResult<PartialFieldMetadata>
+  | ComparatorUpdateResult<Partial<FieldMetadataEntity> & { id: string }>
+  | ComparatorDeleteResult<FieldMetadataEntity>;
