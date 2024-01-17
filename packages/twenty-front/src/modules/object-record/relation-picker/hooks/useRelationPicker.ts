@@ -15,17 +15,12 @@ export const useRelationPicker = (props?: useRelationPickeProps) => {
   );
 
   const {
-    identifiersMapperState,
     searchQueryState,
     relationPickerSearchFilterState,
     relationPickerPreselectedIdState,
   } = useRelationPickerScopedStates({
     relationPickerScopedId: scopeId,
   });
-
-  const [identifiersMapper, setIdentifiersMapper] = useRecoilState(
-    identifiersMapperState,
-  );
 
   const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState);
 
@@ -37,8 +32,6 @@ export const useRelationPicker = (props?: useRelationPickeProps) => {
 
   return {
     scopeId,
-    identifiersMapper,
-    setIdentifiersMapper,
     searchQuery,
     setSearchQuery,
     relationPickerSearchFilter,

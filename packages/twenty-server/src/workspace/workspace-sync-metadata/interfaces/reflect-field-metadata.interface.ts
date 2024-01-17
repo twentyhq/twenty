@@ -1,5 +1,6 @@
 import { FieldMetadataDefaultValue } from 'src/metadata/field-metadata/interfaces/field-metadata-default-value.interface';
 import { GateDecoratorParams } from 'src/workspace/workspace-sync-metadata/interfaces/gate-decorator.interface';
+import { FieldMetadataOptions } from 'src/metadata/field-metadata/interfaces/field-metadata-options.interface';
 
 import { FieldMetadataType } from 'src/metadata/field-metadata/field-metadata.entity';
 
@@ -12,12 +13,13 @@ export interface FieldMetadataDecoratorParams<
   icon?: string;
   defaultValue?: FieldMetadataDefaultValue<T>;
   joinColumn?: string;
+  options?: FieldMetadataOptions<T>;
 }
 
 export interface ReflectFieldMetadata {
   [key: string]: Omit<
     FieldMetadataDecoratorParams<'default'>,
-    'defaultValue' | 'type'
+    'defaultValue' | 'type' | 'options'
   > & {
     name: string;
     type: FieldMetadataType;
@@ -28,5 +30,6 @@ export interface ReflectFieldMetadata {
     description?: string;
     defaultValue: string | null;
     gate?: GateDecoratorParams;
+    options?: string | null;
   };
 }

@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { FieldDefinition } from '@/object-record/field/types/FieldDefinition';
 import { FieldRelationMetadata } from '@/object-record/field/types/FieldMetadata';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
@@ -31,19 +30,12 @@ export const RelationPicker = ({
   const {
     relationPickerSearchFilter,
     setRelationPickerSearchFilter,
-    identifiersMapper,
     searchQuery,
   } = useRelationPicker({ relationPickerScopeId: 'relation-picker' });
 
   useEffect(() => {
     setRelationPickerSearchFilter(initialSearchFilter ?? '');
   }, [initialSearchFilter, setRelationPickerSearchFilter]);
-
-  const { objectNameSingular: relationObjectNameSingular } =
-    useObjectNameSingularFromPlural({
-      objectNamePlural:
-        fieldDefinition.metadata.relationObjectMetadataNamePlural,
-    });
 
   const entities = useFilteredSearchEntityQuery({
     filters: [
@@ -56,18 +48,15 @@ export const RelationPicker = ({
       },
     ],
     orderByField: 'createdAt',
-    mappingFunction: (record: any) =>
-      identifiersMapper?.(
-        record,
-        fieldDefinition.metadata.relationObjectMetadataNameSingular,
-      ),
     selectedIds: recordId ? [recordId] : [],
     excludeEntityIds: excludeRecordIds,
-    objectNameSingular: relationObjectNameSingular,
+    objectNameSingular:
+      fieldDefinition.metadata.relationObjectMetadataNameSingular,
   });
 
-  const handleEntitySelected = (selectedEntity: any | null | undefined) =>
-    onSubmit(selectedEntity ?? null);
+  const handleEntitySelected = (
+    selectedEntity: EntityForSelect | null | undefined,
+  ) => onSubmit(selectedEntity ?? null);
 
   return (
     <SingleEntitySelect

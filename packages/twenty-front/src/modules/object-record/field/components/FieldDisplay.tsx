@@ -27,39 +27,33 @@ import { isFieldUuid } from '../types/guards/isFieldUuid';
 
 export const FieldDisplay = () => {
   const { fieldDefinition, isLabelIdentifier } = useContext(FieldContext);
-  if (
-    isLabelIdentifier &&
-    (isFieldText(fieldDefinition) || isFieldFullName(fieldDefinition))
-  ) {
-    return <ChipFieldDisplay />;
-  }
-  return (
-    <>
-      {isFieldRelation(fieldDefinition) ? (
-        <RelationFieldDisplay />
-      ) : isFieldText(fieldDefinition) ? (
-        <TextFieldDisplay />
-      ) : isFieldUuid(fieldDefinition) ? (
-        <UuidFieldDisplay />
-      ) : isFieldEmail(fieldDefinition) ? (
-        <EmailFieldDisplay />
-      ) : isFieldDateTime(fieldDefinition) ? (
-        <DateFieldDisplay />
-      ) : isFieldNumber(fieldDefinition) ? (
-        <NumberFieldDisplay />
-      ) : isFieldLink(fieldDefinition) ? (
-        <LinkFieldDisplay />
-      ) : isFieldCurrency(fieldDefinition) ? (
-        <CurrencyFieldDisplay />
-      ) : isFieldFullName(fieldDefinition) ? (
-        <FullNameFieldDisplay />
-      ) : isFieldPhone(fieldDefinition) ? (
-        <PhoneFieldDisplay />
-      ) : isFieldSelect(fieldDefinition) ? (
-        <SelectFieldDisplay />
-      ) : (
-        <></>
-      )}
-    </>
-  );
+
+  return isLabelIdentifier &&
+    (isFieldText(fieldDefinition) ||
+      isFieldFullName(fieldDefinition) ||
+      isFieldNumber(fieldDefinition)) ? (
+    <ChipFieldDisplay />
+  ) : isFieldRelation(fieldDefinition) ? (
+    <RelationFieldDisplay />
+  ) : isFieldText(fieldDefinition) ? (
+    <TextFieldDisplay />
+  ) : isFieldUuid(fieldDefinition) ? (
+    <UuidFieldDisplay />
+  ) : isFieldEmail(fieldDefinition) ? (
+    <EmailFieldDisplay />
+  ) : isFieldDateTime(fieldDefinition) ? (
+    <DateFieldDisplay />
+  ) : isFieldNumber(fieldDefinition) ? (
+    <NumberFieldDisplay />
+  ) : isFieldLink(fieldDefinition) ? (
+    <LinkFieldDisplay />
+  ) : isFieldCurrency(fieldDefinition) ? (
+    <CurrencyFieldDisplay />
+  ) : isFieldFullName(fieldDefinition) ? (
+    <FullNameFieldDisplay />
+  ) : isFieldPhone(fieldDefinition) ? (
+    <PhoneFieldDisplay />
+  ) : isFieldSelect(fieldDefinition) ? (
+    <SelectFieldDisplay />
+  ) : null;
 };
