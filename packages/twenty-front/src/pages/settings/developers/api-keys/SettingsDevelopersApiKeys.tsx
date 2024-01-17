@@ -4,7 +4,6 @@ import styled from '@emotion/styled';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
 import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/components/SettingsApiKeysFieldItemTableRow';
 import { ApiFieldItem } from '@/settings/developers/types/ApiFieldItem';
 import { formatExpirations } from '@/settings/developers/utils/format-expiration';
@@ -20,7 +19,6 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 const StyledContainer = styled.div`
   height: fit-content;
   padding: ${({ theme }) => theme.spacing(8)};
-  width: ${objectSettingsWidth};
 `;
 
 const StyledTableRow = styled(TableRow)`

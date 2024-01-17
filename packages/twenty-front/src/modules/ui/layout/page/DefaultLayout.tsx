@@ -13,7 +13,9 @@ import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/Keyboa
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
+import { desktopNavDrawerWidths } from '@/ui/navigation/navigation-drawer/constants';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useScreenSize } from '@/ui/utilities/screen-size/hooks/useScreenSize';
 
@@ -84,7 +86,12 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
 
         <StyledPageContainer
           animate={{
-            marginLeft: isSettingsPage ? (widowsWidth - 810) / 2 : 0,
+            marginLeft:
+              isSettingsPage && !isMobile
+                ? (widowsWidth -
+                    (objectSettingsWidth + desktopNavDrawerWidths.menu)) /
+                  2
+                : 0,
           }}
           transition={{
             duration: theme.animation.duration.normal,
