@@ -16,6 +16,7 @@ export const textInputStyle = (props: { theme: ThemeType }) => css`
   font-weight: inherit;
   outline: none;
   padding: ${props.theme.spacing(0)} ${props.theme.spacing(2)};
+  box-shadow: ${props.theme.boxShadow.strong};
 
   &::placeholder,
   &::-webkit-input-placeholder {

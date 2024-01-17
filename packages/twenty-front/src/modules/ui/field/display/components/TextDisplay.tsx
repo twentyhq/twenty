@@ -1,4 +1,5 @@
 import { OverflowingTextWithTooltip } from '../../../display/tooltip/OverflowingTextWithTooltip';
+
 import { EllipsisDisplay } from './EllipsisDisplay';
 
 type TextDisplayProps = {

@@ -3,8 +3,9 @@ import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
 
 import { useRegisterInputEvents } from '@/object-record/field/meta-types/input/hooks/useRegisterInputEvents';
+import { textInputStyle } from '@/ui/theme/constants/effects';
 
-type TextAreaProps = {
+export type TextAreaInputProps = {
   disabled?: boolean;
   className?: string;
   placeholder?: string;
@@ -20,38 +21,15 @@ type TextAreaProps = {
 };
 
 const StyledTextArea = styled(TextareaAutosize)`
-  background-color: ${({ theme }) => theme.background.primary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-sizing: border-box;
-  color: ${({ theme }) => theme.font.color.primary};
-  font-family: inherit;
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  line-height: 16px;
-  overflow: auto;
-  padding: ${({ theme }) => theme.spacing(2)};
-  resize: none;
+  ${textInputStyle}
   width: 100%;
-  min-height: 32px;
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
-
-  &:focus {
-    outline: none;
-  }
-
-  &::placeholder {
-    color: ${({ theme }) => theme.font.color.light};
-    font-weight: ${({ theme }) => theme.font.weight.medium};
-    font-family: ${({ theme }) => theme.font.family};
-  }
-
-  &:disabled {
-    color: ${({ theme }) => theme.font.color.tertiary};
-  }
+  resize: none;
+  padding: ${({ theme }) => theme.spacing(2)};
+  background-color: ${({ theme }) => theme.background.primary};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
 `;
 
-export const TextArea = ({
+export const TextAreaInput = ({
   disabled,
   className,
   placeholder,
@@ -64,7 +42,7 @@ export const TextArea = ({
   onShiftTab,
   onClickOutside,
   onChange,
-}: TextAreaProps) => {
+}: TextAreaInputProps) => {
   const [internalText, setInternalText] = useState(value);
 
   const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {

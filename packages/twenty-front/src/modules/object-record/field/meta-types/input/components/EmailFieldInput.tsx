@@ -1,5 +1,5 @@
 import { useSaveFieldEditModeValue } from '@/object-record/field/hooks/useSaveFieldEditModeValue';
-import { TextArea } from '@/ui/field/input/components/TextArea';
+import { TextInput } from '@/ui/field/input/components/TextInput';
 
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { usePersistField } from '../../../hooks/usePersistField';
@@ -56,7 +56,7 @@ export const EmailFieldInput = ({
 
   return (
     <FieldInputOverlay>
-      <TextArea
+      <TextInput
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
         value={initialValue}
