@@ -89,7 +89,7 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
             marginLeft:
               isSettingsPage && !isMobile
                 ? (widowsWidth -
-                    (objectSettingsWidth + desktopNavDrawerWidths.menu)) /
+                    (objectSettingsWidth + desktopNavDrawerWidths.menu + 64)) /
                   2
                 : 0,
           }}
