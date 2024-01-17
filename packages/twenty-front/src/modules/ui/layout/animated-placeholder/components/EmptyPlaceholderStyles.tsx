@@ -19,8 +19,14 @@ export const StyledEmptyTitle = styled.div`
 `;
 
 export const StyledEmptySubTitle = styled.div`
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   color: ${({ theme }) => theme.font.color.tertiary};
+  display: -webkit-box;
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   line-height: ${({ theme }) => theme.text.lineHeight.md};
+  max-height: 2.4em;
+  overflow: hidden;
+  width: 50%;
 `;
