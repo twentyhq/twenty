@@ -775,7 +775,7 @@ export type UpdatePasswordViaResetTokenMutationVariables = Exact<{
 }>;
 
 
-export type UpdatePasswordViaResetTokenMutation = { __typename?: 'Mutation', updatePasswordViaResetToken: { __typename?: 'InvalidatePassword' } };
+export type UpdatePasswordViaResetTokenMutation = { __typename?: 'Mutation', updatePasswordViaResetToken: { __typename?: 'InvalidatePassword', success: boolean } };
 
 export type VerifyMutationVariables = Exact<{
   loginToken: Scalars['String'];
@@ -792,7 +792,7 @@ export type CheckUserExistsQueryVariables = Exact<{
 export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename?: 'UserExists', exists: boolean } };
 
 export type ValidatePasswordResetTokenQueryVariables = Exact<{
-  passwordResetToken: Scalars['String'];
+  token: Scalars['String'];
 }>;
 
 
@@ -1319,12 +1319,10 @@ export const UpdatePasswordViaResetTokenDocument = gql`
     passwordResetToken: $token
     newPassword: $newPassword
   ) {
-    loginToken {
-      ...AuthTokenFragment
-    }
+    success
   }
 }
-    ${AuthTokenFragmentFragmentDoc}`;
+    `;
 export type UpdatePasswordViaResetTokenMutationFn = Apollo.MutationFunction<UpdatePasswordViaResetTokenMutation, UpdatePasswordViaResetTokenMutationVariables>;
 
 /**
@@ -1427,8 +1425,8 @@ export type CheckUserExistsQueryHookResult = ReturnType<typeof useCheckUserExist
 export type CheckUserExistsLazyQueryHookResult = ReturnType<typeof useCheckUserExistsLazyQuery>;
 export type CheckUserExistsQueryResult = Apollo.QueryResult<CheckUserExistsQuery, CheckUserExistsQueryVariables>;
 export const ValidatePasswordResetTokenDocument = gql`
-    query validatePasswordResetToken($passwordResetToken: String!) {
-  validatePasswordResetToken(passwordResetToken: $passwordResetToken) {
+    query validatePasswordResetToken($token: String!) {
+  validatePasswordResetToken(passwordResetToken: $token) {
     id
     email
   }
@@ -1447,7 +1445,7 @@ export const ValidatePasswordResetTokenDocument = gql`
  * @example
  * const { data, loading, error } = useValidatePasswordResetTokenQuery({
  *   variables: {
- *      passwordResetToken: // value for 'passwordResetToken'
+ *      token: // value for 'token'
  *   },
  * });
  */
