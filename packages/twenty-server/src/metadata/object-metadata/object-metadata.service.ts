@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 
 import { WorkspaceMigrationService } from 'src/metadata/workspace-migration/workspace-migration.service';
 import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
@@ -45,6 +46,21 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
   ) {
     super(objectMetadataRepository);
+  }
+
+  override async query(
+    query: Query<ObjectMetadataEntity>,
+    opts?: QueryOptions<ObjectMetadataEntity> | undefined,
+  ): Promise<ObjectMetadataEntity[]> {
+    const start = performance.now();
+
+    const result = super.query(query, opts);
+
+    const end = performance.now();
+
+    console.log(`metadata query time: ${end - start} ms`);
+
+    return result;
   }
 
   override async createOne(

@@ -74,6 +74,9 @@ export const RecordInlineCell = () => {
       IconLabel={
         fieldDefinition.iconName ? getIcon(fieldDefinition.iconName) : undefined
       }
+      label={fieldDefinition.label}
+      labelWidth={fieldDefinition.labelWidth}
+      showLabel={fieldDefinition.showLabel}
       editModeContent={
         <FieldInput
           onEnter={handleEnter}
