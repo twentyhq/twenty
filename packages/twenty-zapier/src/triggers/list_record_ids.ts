@@ -1,24 +1,13 @@
 import { Bundle, ZObject } from 'zapier-platform-core';
 
-import { capitalize } from '../utils/capitalize';
-import requestDb from '../utils/requestDb';
+import { ObjectData } from '../utils/data.types';
+import { listSample } from '../utils/triggers/triggers.utils';
 
 const listRecordIdsRequest = async (
   z: ZObject,
   bundle: Bundle,
-): Promise<{ id: string }[]> => {
-  const data = bundle.inputData;
-  const namePlural = data.namePlural;
-  const query = `
-  query List${capitalize(namePlural)}Ids {
-    ${namePlural}{edges{node{id}}}
-  }`;
-  const result = await requestDb(z, bundle, query);
-  return result.data[namePlural]['edges'].map((edge: any) => {
-    return {
-      id: edge.node.id,
-    };
-  });
+): Promise<ObjectData[]> => {
+  return listSample(z, bundle, true);
 };
 
 export const listRecordIdsKey = 'list_record_ids';

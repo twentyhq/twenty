@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
@@ -25,9 +26,9 @@ export const RecordTableCellContainer = ({
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
   const currentRowId = useContext(RowIdContext);
-  const { objectMetadataConfigState } = useRecordTableStates();
+  const { getObjectMetadataConfigState } = useRecordTableStates();
 
-  const objectMetadataConfig = useRecoilValue(objectMetadataConfigState());
+  const objectMetadataConfig = useRecoilValue(getObjectMetadataConfigState());
 
   const { setCurrentRowSelected } = useCurrentRowSelected();
 
@@ -65,9 +66,16 @@ export const RecordTableCellContainer = ({
               useUpdateRecord: () => [updateRecord, {}],
               hotkeyScope: customHotkeyScope,
               basePathToShowPage: objectMetadataConfig?.basePathToShowPage,
-              isLabelIdentifier:
-                columnDefinition.fieldMetadataId ===
-                objectMetadataConfig?.labelIdentifierFieldMetadataId,
+              isLabelIdentifier: isLabelIdentifierField({
+                fieldMetadataItem: {
+                  id: columnDefinition.fieldMetadataId,
+                  name: columnDefinition.metadata.fieldName,
+                },
+                objectMetadataItem: {
+                  labelIdentifierFieldMetadataId:
+                    objectMetadataConfig?.labelIdentifierFieldMetadataId,
+                },
+              }),
             }}
           >
             <RecordTableCell customHotkeyScope={{ scope: customHotkeyScope }} />

@@ -71,6 +71,9 @@ export const linkObjectDefinition = {
   fields: linkFields(),
   fromRelations: [],
   toRelations: [],
+  isActive: true,
+  isSystem: true,
+  isCustom: false,
 } satisfies ObjectMetadataInterface;
 
 export type LinkMetadata = {

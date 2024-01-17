@@ -42347,6 +42347,9 @@ __metadata:
 "twenty-zapier@workspace:packages/twenty-zapier":
   version: 0.0.0-use.local
   resolution: "twenty-zapier@workspace:packages/twenty-zapier"
+  dependencies:
+    zapier-platform-cli: "npm:^15.4.1"
+    zapier-platform-core: "npm:15.5.1"
   languageName: unknown
   linkType: soft
 
@@ -42605,8 +42608,6 @@ __metadata:
     vite-plugin-svgr: "npm:^4.2.0"
     vite-tsconfig-paths: "npm:^4.2.1"
     xlsx-ugnis: "npm:^0.19.3"
-    zapier-platform-cli: "npm:^15.4.1"
-    zapier-platform-core: "npm:15.5.1"
     zod: "npm:^3.22.2"
   languageName: unknown
   linkType: soft

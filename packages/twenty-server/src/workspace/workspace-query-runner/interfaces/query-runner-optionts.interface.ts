@@ -4,9 +4,9 @@ import { FieldMetadataInterface } from 'src/metadata/field-metadata/interfaces/f
 import { ObjectMetadataInterface } from 'src/metadata/field-metadata/interfaces/object-metadata.interface';
 
 export interface WorkspaceQueryRunnerOptions {
-  targetTableName: string;
   workspaceId: string;
   info: GraphQLResolveInfo;
+  objectMetadataItem: ObjectMetadataInterface;
   fieldMetadataCollection: FieldMetadataInterface[];
   objectMetadataCollection: ObjectMetadataInterface[];
 }

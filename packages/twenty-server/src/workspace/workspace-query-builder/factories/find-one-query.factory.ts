@@ -4,6 +4,8 @@ import { WorkspaceQueryBuilderOptions } from 'src/workspace/workspace-query-buil
 import { RecordFilter } from 'src/workspace/workspace-query-builder/interfaces/record.interface';
 import { FindOneResolverArgs } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
+
 import { ArgsStringFactory } from './args-string.factory';
 import { FieldsStringFactory } from './fields-string.factory';
 
@@ -32,7 +34,7 @@ export class FindOneQueryFactory {
 
     return `
       query {
-        ${options.targetTableName}Collection${
+        ${computeObjectTargetTable(options.objectMetadataItem)}Collection${
           argsString ? `(${argsString})` : ''
         } {
           edges {

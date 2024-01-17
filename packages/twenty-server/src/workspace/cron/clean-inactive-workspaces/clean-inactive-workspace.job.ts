@@ -20,6 +20,7 @@ import {
 } from 'src/core/feature-flag/feature-flag.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import DeleteInactiveWorkspaceEmail from 'src/workspace/cron/clean-inactive-workspaces/delete-inactive-workspaces.email';
+import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
 
@@ -54,7 +55,7 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
         (objectMetadata) =>
           objectMetadata.workspaceId === dataSource.workspaceId,
       )
-      .map((objectMetadata) => objectMetadata.targetTableName);
+      .map((objectMetadata) => computeObjectTargetTable(objectMetadata));
 
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSource);

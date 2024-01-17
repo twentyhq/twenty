@@ -46,6 +46,7 @@ const mocks = [
       variables: {
         input: {
           id: mockedUuid,
+          name: 'Opportunity',
           pipelineStepId: 'pipelineStepId',
           companyId: 'New Opportunity',
         },

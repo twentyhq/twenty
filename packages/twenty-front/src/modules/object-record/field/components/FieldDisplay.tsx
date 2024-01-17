@@ -27,7 +27,6 @@ import { isFieldUuid } from '../types/guards/isFieldUuid';
 
 export const FieldDisplay = () => {
   const { fieldDefinition, isLabelIdentifier } = useContext(FieldContext);
-
   if (
     isLabelIdentifier &&
     (isFieldText(fieldDefinition) || isFieldFullName(fieldDefinition))
