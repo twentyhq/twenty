@@ -277,11 +277,7 @@ export const InternalDatePicker = ({
         ></ReactDatePicker>
       </div>
       {clearable && (
-        <StyledButtonContainer
-          onClick={handleClear}
-          className="menu-item"
-          isMenuOpen={false}
-        >
+        <StyledButtonContainer onClick={handleClear} isMenuOpen={false}>
           <StyledButton LeftIcon={IconCalendarX} text="Clear" />
         </StyledButtonContainer>
       )}
