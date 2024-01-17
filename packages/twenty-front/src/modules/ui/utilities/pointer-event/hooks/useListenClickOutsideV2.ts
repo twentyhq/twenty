@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
 
@@ -8,46 +8,39 @@ export enum ClickOutsideMode {
   compareHTMLRef = 'compareHTMLRef',
 }
 
+export type ClickOutsideListenerProps<T extends Element> = {
+  refs: Array<React.RefObject<T>>;
+  callback: (event: MouseEvent | TouchEvent) => void;
+  mode?: ClickOutsideMode;
+  listenerId: string;
+  enabled?: boolean;
+};
+
 export const useListenClickOutsideV2 = <T extends Element>({
   refs,
   callback,
   mode = ClickOutsideMode.compareHTMLRef,
   listenerId,
-  isLocking,
-}: {
-  refs: Array<React.RefObject<T>>;
-  callback: (event: MouseEvent | TouchEvent) => void;
-  mode?: ClickOutsideMode;
-  listenerId: string;
-  isLocking?: boolean;
-}) => {
+  enabled = true,
+}: ClickOutsideListenerProps<T>) => {
   const {
     getClickOutsideListenerIsMouseDownInsideState,
-    getClickOutsideListenerIsEnabledState,
-    lockedListenerIdState,
-  } = useClickOustideListenerStates({
-    listenerId,
-  });
-
-  const [lockedListenerId, setLockedListenerId] = useRecoilState(
-    lockedListenerIdState,
-  );
-
-  useEffect(() => {
-    if (isLocking && lockedListenerId === null) {
-      setLockedListenerId(listenerId);
-    }
-
-    return () => {
-      if (isLocking && lockedListenerId === listenerId) {
-        setLockedListenerId(null);
-      }
-    };
-  }, [isLocking, listenerId, lockedListenerId, setLockedListenerId]);
+    getClickOutsideListenerIsActivatedState,
+  } = useClickOustideListenerStates(listenerId);
 
   const handleMouseDown = useRecoilCallback(
-    ({ set }) =>
+    ({ snapshot, set }) =>
       (event: MouseEvent | TouchEvent) => {
+        const clickOutsideListenerIsActivated = snapshot
+          .getLoadable(getClickOutsideListenerIsActivatedState())
+          .getValue();
+
+        const isListening = clickOutsideListenerIsActivated && enabled;
+
+        if (!isListening) {
+          return;
+        }
+
         if (mode === ClickOutsideMode.compareHTMLRef) {
           const clickedOnAtLeastOneRef = refs
             .filter((ref) => !!ref.current)
@@ -96,7 +89,13 @@ export const useListenClickOutsideV2 = <T extends Element>({
           );
         }
       },
-    [mode, refs, getClickOutsideListenerIsMouseDownInsideState],
+    [
+      mode,
+      refs,
+      getClickOutsideListenerIsMouseDownInsideState,
+      enabled,
+      getClickOutsideListenerIsActivatedState,
+    ],
   );
 
   const handleClickOutside = useRecoilCallback(
@@ -155,49 +154,31 @@ export const useListenClickOutsideV2 = <T extends Element>({
     [mode, refs, callback, getClickOutsideListenerIsMouseDownInsideState],
   );
 
-  const isEnabled = useRecoilValue(getClickOutsideListenerIsEnabledState());
-
-  const noListenerIsLocked = lockedListenerId === null;
-
-  const thisListenerIsLocked = lockedListenerId === listenerId;
-
-  const thisListenerMustListen =
-    isEnabled && (thisListenerIsLocked || noListenerIsLocked);
-
   useEffect(() => {
-    if (thisListenerMustListen) {
-      document.addEventListener('mousedown', handleMouseDown, {
-        capture: true,
-      });
-      document.addEventListener('click', handleClickOutside, { capture: true });
-      document.addEventListener('touchstart', handleMouseDown, {
-        capture: true,
-      });
-      document.addEventListener('touchend', handleClickOutside, {
-        capture: true,
-      });
+    document.addEventListener('mousedown', handleMouseDown, {
+      capture: true,
+    });
+    document.addEventListener('click', handleClickOutside, { capture: true });
+    document.addEventListener('touchstart', handleMouseDown, {
+      capture: true,
+    });
+    document.addEventListener('touchend', handleClickOutside, {
+      capture: true,
+    });
 
-      return () => {
-        document.removeEventListener('mousedown', handleMouseDown, {
-          capture: true,
-        });
-        document.removeEventListener('click', handleClickOutside, {
-          capture: true,
-        });
-        document.removeEventListener('touchstart', handleMouseDown, {
-          capture: true,
-        });
-        document.removeEventListener('touchend', handleClickOutside, {
-          capture: true,
-        });
-      };
-    }
-  }, [
-    refs,
-    callback,
-    mode,
-    thisListenerMustListen,
-    handleClickOutside,
-    handleMouseDown,
-  ]);
+    return () => {
+      document.removeEventListener('mousedown', handleMouseDown, {
+        capture: true,
+      });
+      document.removeEventListener('click', handleClickOutside, {
+        capture: true,
+      });
+      document.removeEventListener('touchstart', handleMouseDown, {
+        capture: true,
+      });
+      document.removeEventListener('touchend', handleClickOutside, {
+        capture: true,
+      });
+    };
+  }, [refs, callback, mode, handleClickOutside, handleMouseDown]);
 };

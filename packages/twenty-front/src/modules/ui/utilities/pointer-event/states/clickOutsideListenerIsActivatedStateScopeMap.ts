@@ -1,7 +1,7 @@
 import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
 
-export const clickOutsideListenerIsEnabledStateScopeMap =
+export const clickOutsideListenerIsActivatedStateScopeMap =
   createStateScopeMap<boolean>({
-    key: 'clickOutsideListenerIsEnabledStateScopeMap',
+    key: 'clickOutsideListenerIsActivatedStateScopeMap',
     defaultValue: true,
   });

@@ -1,14 +1,12 @@
-import { clickOutsideListenerIsEnabledStateScopeMap } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsEnabledStateScopeMap';
+import { clickOutsideListenerIsActivatedStateScopeMap } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedStateScopeMap';
 import { clickOutsideListenerIsMouseDownInsideStateScopeMap } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsMouseDownInsideStateScopeMap';
 import { lockedListenerIdState } from '@/ui/utilities/pointer-event/states/lockedListenerIdState';
+import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { getState } from '@/ui/utilities/recoil-scope/utils/getState';
 
-export const useClickOustideListenerStates = ({
-  listenerId,
-}: {
-  listenerId: string;
-}) => {
-  const scopeId = `listener-${listenerId}-scope`;
+export const useClickOustideListenerStates = (componentId: string) => {
+  // TODO: improve typing
+  const scopeId = getScopeIdFromComponentId(componentId) ?? '';
 
   return {
     scopeId,
@@ -16,8 +14,8 @@ export const useClickOustideListenerStates = ({
       clickOutsideListenerIsMouseDownInsideStateScopeMap,
       scopeId,
     ),
-    getClickOutsideListenerIsEnabledState: getState(
-      clickOutsideListenerIsEnabledStateScopeMap,
+    getClickOutsideListenerIsActivatedState: getState(
+      clickOutsideListenerIsActivatedStateScopeMap,
       scopeId,
     ),
     lockedListenerIdState,
