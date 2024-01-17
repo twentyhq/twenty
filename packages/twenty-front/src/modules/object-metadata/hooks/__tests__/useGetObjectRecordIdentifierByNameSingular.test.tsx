@@ -1,14 +1,9 @@
-import { ReactNode } from 'react';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/hooks/useGetObjectRecordIdentifierByNameSingular';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
-
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
-);
 
 const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
@@ -32,7 +27,7 @@ describe('useGetObjectRecordIdentifierByNameSingular', () => {
         );
       },
       {
-        wrapper: Wrapper,
+        wrapper: RecoilRoot,
         initialProps: {
           record: { id: 'recordId' } as any,
           objectNameSingular: 'viewSort',
