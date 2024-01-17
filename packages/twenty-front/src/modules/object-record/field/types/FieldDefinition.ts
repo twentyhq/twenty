@@ -10,6 +10,8 @@ export type FieldDefinitionRelationType =
 export type FieldDefinition<T extends FieldMetadata> = {
   fieldMetadataId: string;
   label: string;
+  showLabel?: boolean;
+  labelWidth?: number;
   iconName: string;
   type: FieldType;
   metadata: T;
