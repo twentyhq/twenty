@@ -1,4 +1,4 @@
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 
 export const MultipleObjectRecordOnClickOutsideEffect = ({
   containerRef,
@@ -7,7 +7,7 @@ export const MultipleObjectRecordOnClickOutsideEffect = ({
   containerRef: React.RefObject<HTMLDivElement>;
   onClickOutside: () => void;
 }) => {
-  useListenClickOutside({
+  useListenClickOutsideV2({
     refs: [containerRef],
     callback: (event) => {
       event.stopImmediatePropagation();
@@ -16,6 +16,8 @@ export const MultipleObjectRecordOnClickOutsideEffect = ({
 
       onClickOutside();
     },
+    listenerId: 'multiple-object-record',
+    isLocking: true,
   });
 
   return <></>;

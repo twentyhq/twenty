@@ -6,10 +6,8 @@ import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import {
-  ClickOutsideMode,
-  useListenClickOutside,
-} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { ClickOutsideMode } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from '~/utils/isDefined';
 
@@ -53,10 +51,11 @@ export const RightDrawer = () => {
 
   const rightDrawerRef = useRef<HTMLDivElement>(null);
 
-  useListenClickOutside({
+  useListenClickOutsideV2({
     refs: [rightDrawerRef],
     callback: () => closeRightDrawer(),
     mode: ClickOutsideMode.comparePixels,
+    listenerId: 'right-drawer',
   });
 
   const theme = useTheme();
