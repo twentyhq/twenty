@@ -1,9 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/types/EntitiesForMultipleEntitySelect';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { assertNotNull } from '~/utils/assert';
 import { isDefined } from '~/utils/isDefined';
 
@@ -19,7 +21,6 @@ export const useFilteredSearchEntityQuery = ({
   filters,
   sortOrder = 'AscNullsLast',
   selectedIds,
-  mappingFunction,
   limit,
   excludeEntityIds = [],
   objectNameSingular,
@@ -28,11 +29,18 @@ export const useFilteredSearchEntityQuery = ({
   filters: SearchFilter[];
   sortOrder?: OrderBy;
   selectedIds: string[];
-  mappingFunction: (entity: any) => EntityForSelect | undefined;
   limit?: number;
   excludeEntityIds?: string[];
   objectNameSingular: string;
 }): EntitiesForMultipleEntitySelect<EntityForSelect> => {
+  const { mapToObjectRecordIdentifier } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+  const mappingFunction = (record: ObjectRecord) => ({
+    ...mapToObjectRecordIdentifier(record),
+    record,
+  });
+
   const { loading: selectedRecordsLoading, records: selectedRecords } =
     useFindManyRecords({
       objectNameSingular,
