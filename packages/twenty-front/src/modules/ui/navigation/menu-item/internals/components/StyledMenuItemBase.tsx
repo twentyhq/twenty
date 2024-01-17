@@ -83,12 +83,9 @@ export const StyledNoIconFiller = styled.div`
   width: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const StyledMenuItemLeftContent = styled.div<{
-  isCentered: boolean;
-}>`
+export const StyledMenuItemLeftContent = styled.div`
   align-items: center;
   display: flex;
-  ${({ isCentered }) => isCentered && 'justify-content: center;'}
 
   flex-direction: row;
 

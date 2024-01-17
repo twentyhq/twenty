@@ -13,19 +13,17 @@ type MenuItemLeftContentProps = {
   LeftIcon: IconComponent | null | undefined;
   showGrip?: boolean;
   text: string;
-  isCentered?: boolean;
 };
 
 export const MenuItemLeftContent = ({
   LeftIcon,
   text,
   showGrip = false,
-  isCentered = false,
 }: MenuItemLeftContentProps) => {
   const theme = useTheme();
 
   return (
-    <StyledMenuItemLeftContent isCentered={isCentered}>
+    <StyledMenuItemLeftContent>
       {showGrip && (
         <IconGripVertical
           size={theme.icon.size.md}

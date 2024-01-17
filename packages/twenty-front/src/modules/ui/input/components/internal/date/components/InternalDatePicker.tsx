@@ -1,9 +1,15 @@
 import React from 'react';
 import ReactDatePicker from 'react-datepicker';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { OverflowingTextWithTooltip } from 'tsup.ui.index';
 
 import { IconCalendarX } from '@/ui/display/icon';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import {
+  StyledHoverableMenuItemBase,
+  StyledMenuItemLabel,
+  StyledMenuItemLeftContent,
+} from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
 import { overlayBackground } from '@/ui/theme/constants/effects';
 
 import 'react-datepicker/dist/react-datepicker.css';
@@ -226,11 +232,15 @@ const StyledContainer = styled.div`
   }
 `;
 
-const StyledButtonContainer = styled(MenuItem)`
+const StyledButtonContainer = styled(StyledHoverableMenuItemBase)`
   width: auto;
   height: ${({ theme }) => theme.spacing(8)};
   padding: 0 ${({ theme }) => theme.spacing(2)};
   margin: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledButtonContent = styled(StyledMenuItemLeftContent)`
+  justify-content: center;
 `;
 
 export type InternalDatePickerProps = {
@@ -249,6 +259,7 @@ export const InternalDatePicker = ({
   const handleClear = () => {
     onMouseSelect?.(null);
   };
+  const theme = useTheme();
 
   return (
     <StyledContainer>
@@ -273,12 +284,21 @@ export const InternalDatePicker = ({
       </div>
       {clearable && (
         <StyledButtonContainer
-          text="Clear"
-          LeftIcon={IconCalendarX}
           onClick={handleClear}
           className="menu-item"
-          isContentCentered={true}
-        />
+          accent="default"
+          isMenuOpen={false}
+        >
+          <StyledButtonContent>
+            <IconCalendarX
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+            />
+            <StyledMenuItemLabel hasLeftIcon={true}>
+              <OverflowingTextWithTooltip text="Clear" />
+            </StyledMenuItemLabel>
+          </StyledButtonContent>
+        </StyledButtonContainer>
       )}
     </StyledContainer>
   );

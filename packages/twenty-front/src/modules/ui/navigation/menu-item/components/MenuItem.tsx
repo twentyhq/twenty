@@ -21,7 +21,6 @@ export type MenuItemProps = {
   className?: string;
   testId?: string;
   onClick?: (event: MouseEvent<HTMLLIElement>) => void;
-  isContentCentered?: boolean;
 };
 
 export const MenuItem = ({
@@ -33,7 +32,6 @@ export const MenuItem = ({
   className,
   testId,
   onClick,
-  isContentCentered = false,
 }: MenuItemProps) => {
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
 
@@ -53,11 +51,7 @@ export const MenuItem = ({
       accent={accent}
       isMenuOpen={!!isTooltipOpen}
     >
-      <MenuItemLeftContent
-        LeftIcon={LeftIcon ?? undefined}
-        text={text}
-        isCentered={isContentCentered}
-      />
+      <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
       {showIconButtons && (
         <div className="hoverable-buttons">
           <LightIconButtonGroup iconButtons={iconButtons} size="small" />
