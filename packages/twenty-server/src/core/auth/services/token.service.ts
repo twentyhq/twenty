@@ -456,6 +456,8 @@ export class TokenService {
 
     assert(user, 'User not found', NotFoundException);
 
+    console.log('going to invalidate the token');
+
     await this.userRepository.update(user.id, {
       passwordResetToken: undefined,
       passwordResetTokenExpiresAt: undefined,

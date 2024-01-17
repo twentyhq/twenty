@@ -6,9 +6,7 @@ export const UPDATE_PASSWORD_VIA_RESET_TOKEN = gql`
       passwordResetToken: $token
       newPassword: $newPassword
     ) {
-      loginToken {
-        ...AuthTokenFragment
-      }
+      success
     }
   }
 `;

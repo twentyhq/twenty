@@ -259,13 +259,11 @@ export class AuthService {
 
     assert(isPasswordValid, 'Password too weak', BadRequestException);
 
-    const newPasswordHash = await hashPassword(newPassword);
+    const isPasswordSame = await compareHash(newPassword, user.passwordHash);
 
-    assert(
-      user.passwordHash !== newPasswordHash,
-      'Password cannot be repeated',
-      BadRequestException,
-    );
+    assert(!isPasswordSame, 'Password cannot be repeated', BadRequestException);
+
+    const newPasswordHash = await hashPassword(newPassword);
 
     await this.userRepository.update(userId, {
       passwordHash: newPasswordHash,
@@ -285,7 +283,7 @@ export class AuthService {
     this.emailService.send({
       from: `${this.environmentService.getEmailFromName()} <${this.environmentService.getEmailFromAddress()}>`,
       to: user.email,
-      subject: 'Your password changed',
+      subject: 'Password changed',
       text,
       html,
     });

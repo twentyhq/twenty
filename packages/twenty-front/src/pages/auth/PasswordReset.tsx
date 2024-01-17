@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -21,8 +21,9 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 import {
   useUpdatePasswordViaResetTokenMutation,
-  useValidatePasswordResetTokenLazyQuery,
+  useValidatePasswordResetTokenQuery,
 } from '~/generated/graphql';
+import { logError } from '~/utils/logError';
 
 const validationSchema = z
   .object({
@@ -67,11 +68,13 @@ const StyledFooterContainer = styled.div`
 
 export const PasswordReset = () => {
   const { enqueueSnackBar } = useSnackBar();
+
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
 
   const theme = useTheme();
+
   const passwordResetToken = useParams().passwordResetToken;
 
   const { control, handleSubmit } = useForm<Form>({
@@ -83,34 +86,50 @@ export const PasswordReset = () => {
     resolver: zodResolver(validationSchema),
   });
 
-  const [validateResetToken, { data, loading: isLoading, error }] =
-    useValidatePasswordResetTokenLazyQuery();
-
-  const [
-    updatePasswordViaToken,
-    {
-      data: updatePasswordData,
-      loading: isUpdatingPassword,
-      error: updatingPasswordError,
+  const { loading: isValidatingToken } = useValidatePasswordResetTokenQuery({
+    variables: {
+      token: passwordResetToken ?? '',
     },
-  ] = useUpdatePasswordViaResetTokenMutation();
+    skip: !passwordResetToken,
+    onError: (error) => {
+      enqueueSnackBar(error?.message ?? 'Token Invalid', {
+        variant: 'error',
+      });
+      navigate(AppPath.SignIn);
+    },
+    onCompleted: (data) => {
+      if (data?.validatePasswordResetToken?.email) {
+        setEmail(data.validatePasswordResetToken.email);
+      }
+    },
+  });
+
+  const [updatePasswordViaToken, { loading: isUpdatingPassword }] =
+    useUpdatePasswordViaResetTokenMutation();
 
   const { signInWithCredentials } = useAuth();
 
   const billing = useRecoilValue(billingState);
 
-  const onSubmit = async (data: Form) => {
+  const onSubmit = async (formData: Form) => {
     try {
-      await updatePasswordViaToken({
+      const { data } = await updatePasswordViaToken({
         variables: {
-          token: data.passwordResetToken,
-          newPassword: data.newPassword,
+          token: formData.passwordResetToken,
+          newPassword: formData.newPassword,
         },
       });
 
+      if (!data?.updatePasswordViaResetToken.success) {
+        enqueueSnackBar('There was an error while updating password.', {
+          variant: 'error',
+        });
+        return;
+      }
+
       const { workspace: currentWorkspace } = await signInWithCredentials(
         email || '',
-        data.newPassword,
+        formData.newPassword,
       );
 
       if (
@@ -128,30 +147,15 @@ export const PasswordReset = () => {
 
       navigate('/create/workspace');
     } catch (err) {
-      console.error('there was some error', err);
+      logError(err);
+      enqueueSnackBar(
+        (err as Error)?.message || 'An error occurred while updating password',
+        {
+          variant: 'error',
+        },
+      );
     }
   };
-
-  useEffect(() => {
-    const validateToken = async () => {
-      if (passwordResetToken) {
-        const { data } = await validateResetToken({
-          variables: { passwordResetToken },
-          onError: () => {
-            enqueueSnackBar(error?.message ?? 'Token Invalid', {
-              variant: 'error',
-            });
-            navigate(AppPath.SignIn);
-          },
-        });
-
-        if (data?.validatePasswordResetToken?.email) {
-          setEmail(data.validatePasswordResetToken.email);
-        }
-      }
-    };
-    validateToken();
-  }, []);
 
   return (
     <>
@@ -160,7 +164,7 @@ export const PasswordReset = () => {
       </AnimatedEaseIn>
       <Title animate>Reset Password</Title>
       <StyledContentContainer>
-        {isLoading && (
+        {isValidatingToken && (
           <SkeletonTheme
             baseColor={theme.background.quaternary}
             highlightColor={theme.background.secondary}
@@ -188,7 +192,7 @@ export const PasswordReset = () => {
               <StyledInputContainer>
                 <TextInput
                   autoFocus
-                  value={data.validatePasswordResetToken.email}
+                  value={email}
                   placeholder="Email"
                   fullWidth
                   disableHotkeys
