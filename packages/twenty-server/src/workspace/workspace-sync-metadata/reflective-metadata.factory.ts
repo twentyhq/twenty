@@ -43,7 +43,6 @@ export class ReflectiveMetadataFactory {
         ...field,
         workspaceId,
         isSystem: objectMetadata.isSystem || field.isSystem,
-        defaultValue: field.defaultValue,
       })),
     };
   }

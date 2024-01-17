@@ -186,6 +186,14 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw new NotFoundException('Object does not exist');
     }
 
+    if (
+      objectMetadata.labelIdentifierFieldMetadataId ===
+        existingFieldMetadata.id &&
+      fieldMetadataInput.isActive === false
+    ) {
+      throw new BadRequestException('Cannot deactivate label identifier field');
+    }
+
     // Check if the id of the options has been provided
     if (fieldMetadataInput.options) {
       for (const option of fieldMetadataInput.options) {

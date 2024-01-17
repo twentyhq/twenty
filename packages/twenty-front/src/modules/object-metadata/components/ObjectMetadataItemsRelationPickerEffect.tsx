@@ -55,7 +55,7 @@ export const ObjectMetadataItemsRelationPickerEffect = () => {
     if (['opportunity'].includes(objectMetadataItemSingularName)) {
       return {
         id: record.id,
-        name: record?.company?.name,
+        name: record?.company?.name ?? record.name,
         avatarUrl: record.avatarUrl,
         avatarType: 'rounded',
         record: record,

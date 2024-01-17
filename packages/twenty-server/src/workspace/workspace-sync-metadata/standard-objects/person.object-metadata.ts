@@ -137,19 +137,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Opportunities',
-    description: 'Opportunities linked to the contact.',
-    icon: 'IconTargetArrow',
-  })
-  @RelationMetadata({
-    type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'opportunity',
-  })
-  @IsNullable()
-  opportunities: OpportunityObjectMetadata[];
-
-  @FieldMetadata({
-    type: FieldMetadataType.RELATION,
     label: 'Favorites',
     description: 'Favorites linked to the contact',
     icon: 'IconHeart',

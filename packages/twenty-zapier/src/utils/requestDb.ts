@@ -14,9 +14,14 @@ export const requestSchema = async (z: ZObject, bundle: Bundle) => {
   return z.request(options).then((response) => response.json);
 };
 
-const requestDb = async (z: ZObject, bundle: Bundle, query: string) => {
+const requestDb = async (
+  z: ZObject,
+  bundle: Bundle,
+  query: string,
+  endpoint = 'graphql',
+) => {
   const options = {
-    url: `${process.env.SERVER_BASE_URL}/graphql`,
+    url: `${process.env.SERVER_BASE_URL}/${endpoint}`,
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

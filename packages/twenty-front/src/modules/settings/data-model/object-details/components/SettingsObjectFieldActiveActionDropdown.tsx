@@ -3,6 +3,7 @@ import {
   IconDotsVertical,
   IconEye,
   IconPencil,
+  IconTextSize,
 } from '@/ui/display/icon';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -15,6 +16,7 @@ type SettingsObjectFieldActiveActionDropdownProps = {
   isCustomField?: boolean;
   onDisable?: () => void;
   onEdit: () => void;
+  onSetAsLabelIdentifier?: () => void;
   scopeKey: string;
 };
 
@@ -22,6 +24,7 @@ export const SettingsObjectFieldActiveActionDropdown = ({
   isCustomField,
   onDisable,
   onEdit,
+  onSetAsLabelIdentifier,
   scopeKey,
 }: SettingsObjectFieldActiveActionDropdownProps) => {
   const dropdownId = `${scopeKey}-settings-field-active-action-dropdown`;
@@ -35,6 +38,11 @@ export const SettingsObjectFieldActiveActionDropdown = ({
 
   const handleDisable = () => {
     onDisable?.();
+    closeDropdown();
+  };
+
+  const handleSetAsLabelIdentifier = () => {
+    onSetAsLabelIdentifier?.();
     closeDropdown();
   };
 
@@ -52,6 +60,13 @@ export const SettingsObjectFieldActiveActionDropdown = ({
               LeftIcon={isCustomField ? IconPencil : IconEye}
               onClick={handleEdit}
             />
+            {!!onSetAsLabelIdentifier && (
+              <MenuItem
+                text="Set as record text"
+                LeftIcon={IconTextSize}
+                onClick={handleSetAsLabelIdentifier}
+              />
+            )}
             {!!onDisable && (
               <MenuItem
                 text="Disable"

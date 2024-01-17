@@ -2,7 +2,6 @@ import { useRecoilCallback } from 'recoil';
 
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -15,8 +14,6 @@ export const useSetRecordTableData = ({
   recordTableId,
   onEntityCountChange,
 }: useSetRecordTableDataProps) => {
-  const resetTableRowSelection = useResetTableRowSelection(recordTableId);
-
   const { getTableRowIdsState, getNumberOfTableRowsState } =
     useRecordTableStates(recordTableId);
 
@@ -41,16 +38,9 @@ export const useSetRecordTableData = ({
           set(getTableRowIdsState(), entityIds);
         }
 
-        resetTableRowSelection();
-
         set(getNumberOfTableRowsState(), entityIds.length);
         onEntityCountChange(entityIds.length);
       },
-    [
-      getNumberOfTableRowsState,
-      getTableRowIdsState,
-      onEntityCountChange,
-      resetTableRowSelection,
-    ],
+    [getNumberOfTableRowsState, getTableRowIdsState, onEntityCountChange],
   );
 };

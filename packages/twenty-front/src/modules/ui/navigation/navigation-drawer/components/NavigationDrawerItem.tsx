@@ -77,7 +77,9 @@ const StyledItem = styled.div<StyledItemProps>`
 `;
 
 const StyledItemLabel = styled.div`
-  display: flex;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledSoonPill = styled.div`
