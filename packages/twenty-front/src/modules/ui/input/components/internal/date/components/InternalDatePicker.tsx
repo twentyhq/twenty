@@ -234,7 +234,7 @@ const StyledButtonContainer = styled(StyledHoverableMenuItemBase)`
   margin: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledButtonContent = styled(MenuItemLeftContent)`
+const StyledButton = styled(MenuItemLeftContent)`
   justify-content: center;
 `;
 
@@ -282,7 +282,7 @@ export const InternalDatePicker = ({
           className="menu-item"
           isMenuOpen={false}
         >
-          <StyledButtonContent LeftIcon={IconCalendarX} text="Clear" />
+          <StyledButton LeftIcon={IconCalendarX} text="Clear" />
         </StyledButtonContainer>
       )}
     </StyledContainer>
