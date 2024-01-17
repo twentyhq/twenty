@@ -25,6 +25,7 @@ export const RelationFieldDisplay = () => {
       name={objectIdentifiers?.name ?? ''}
       avatarUrl={objectIdentifiers?.avatarUrl}
       avatarType={objectIdentifiers?.avatarType}
+      linkToEntity={objectIdentifiers?.linkToEntity + fieldValue.id}
     />
   );
 };

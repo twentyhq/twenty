@@ -35,6 +35,7 @@ export const ObjectMetadataItemsRelationPickerEffect = () => {
         name: record.name,
         avatarUrl: getLogoUrlFromDomainName(record.domainName ?? ''),
         avatarType: 'squared',
+        linkToEntity: '/object/company/',
         record: record,
       };
     }
@@ -48,6 +49,7 @@ export const ObjectMetadataItemsRelationPickerEffect = () => {
           (record.name?.firstName ?? '') + ' ' + (record.name?.lastName ?? ''),
         avatarUrl: record.avatarUrl,
         avatarType: 'rounded',
+        linkToEntity: '/object/person/',
         record: record,
       };
     }
@@ -58,6 +60,7 @@ export const ObjectMetadataItemsRelationPickerEffect = () => {
         name: record?.company?.name ?? record.name,
         avatarUrl: record.avatarUrl,
         avatarType: 'rounded',
+        linkToEntity: '',
         record: record,
       };
     }
@@ -67,6 +70,7 @@ export const ObjectMetadataItemsRelationPickerEffect = () => {
       name: record.name,
       avatarUrl: record.avatarUrl,
       avatarType: 'rounded',
+      linkToEntity: '',
       record,
     };
   };

@@ -4,6 +4,7 @@ type RecordMappedToIdentifiers = {
   id: string;
   name: string;
   avatarUrl?: string;
+  linkToEntity?: string;
   avatarType: AvatarType;
   record: any;
 };
