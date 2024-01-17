@@ -17,7 +17,7 @@ const StyledH1Title = styled(H1Title)`
 
 export const SettingsWorkspace = () => (
   <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-    <SettingsPageContainer width={350}>
+    <SettingsPageContainer>
       <StyledH1Title title="General" />
       <Section>
         <H2Title title="Picture" />

@@ -85,10 +85,6 @@ describe('useFilteredSearchEntityQuery', () => {
           filters: [{ fieldNames: ['name'], filter: 'Entity' }],
           sortOrder: 'AscNullsLast',
           selectedIds: ['1'],
-          mappingFunction: (entity): any => ({
-            value: entity.id,
-            label: entity.name,
-          }),
           limit: 10,
           excludeEntityIds: ['2'],
           objectNameSingular: 'person',

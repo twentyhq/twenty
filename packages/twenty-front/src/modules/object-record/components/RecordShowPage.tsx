@@ -268,6 +268,8 @@ export const RecordShowPage = () => {
                                 field: fieldMetadataItem,
                                 position: index,
                                 objectMetadataItem,
+                                showLabel: true,
+                                labelWidth: 90,
                               }),
                             useUpdateRecord: useUpdateOneObjectRecordMutation,
                             hotkeyScope: InlineCellHotkeyScope.InlineCell,
