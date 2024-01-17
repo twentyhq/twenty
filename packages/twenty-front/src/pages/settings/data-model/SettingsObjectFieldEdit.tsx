@@ -115,6 +115,11 @@ export const SettingsObjectFieldEdit = () => {
 
   const canSave = isValid && hasFormChanged;
 
+  const isLabelIdentifier = isLabelIdentifierField({
+    fieldMetadataItem: activeMetadataField,
+    objectMetadataItem: activeObjectMetadataItem,
+  });
+
   const handleSave = async () => {
     if (!validatedFormValues) return;
 
@@ -204,10 +209,7 @@ export const SettingsObjectFieldEdit = () => {
             select: formValues.select,
           }}
         />
-        {!isLabelIdentifierField({
-          fieldMetadataItem: activeMetadataField,
-          objectMetadataItem: activeObjectMetadataItem,
-        }) && (
+        {!isLabelIdentifier && (
           <Section>
             <H2Title title="Danger zone" description="Disable this field" />
             <Button
