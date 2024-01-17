@@ -9,6 +9,7 @@ import { FindManyResolverArgs } from 'src/workspace/workspace-resolver-builder/i
 
 import { ArgsStringFactory } from './args-string.factory';
 import { FieldsStringFactory } from './fields-string.factory';
+import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 
 @Injectable()
 export class FindManyQueryFactory {
@@ -38,7 +39,7 @@ export class FindManyQueryFactory {
 
     return `
       query {
-        ${options.targetTableName}Collection${
+        ${computeObjectTargetTable(options.objectMetadataItem)}Collection${
           argsString ? `(${argsString})` : ''
         } {
           ${fieldsString}

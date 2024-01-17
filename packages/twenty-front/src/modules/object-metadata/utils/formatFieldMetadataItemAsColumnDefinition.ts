@@ -7,15 +7,21 @@ import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
 import { parseFieldType } from './parseFieldType';
 
+type FieldMetadataItemAsColumnDefinitionProps = {
+  position: number;
+  field: FieldMetadataItem;
+  objectMetadataItem: ObjectMetadataItem;
+  showLabel?: boolean;
+  labelWidth?: number;
+};
+
 export const formatFieldMetadataItemAsColumnDefinition = ({
   position,
   field,
   objectMetadataItem,
-}: {
-  position: number;
-  field: FieldMetadataItem;
-  objectMetadataItem: ObjectMetadataItem;
-}): ColumnDefinition<FieldMetadata> => {
+  showLabel,
+  labelWidth,
+}: FieldMetadataItemAsColumnDefinitionProps): ColumnDefinition<FieldMetadata> => {
   const relationObjectMetadataItem =
     field.toRelationMetadata?.fromObjectMetadata ||
     field.fromRelationMetadata?.toObjectMetadata;
@@ -28,6 +34,8 @@ export const formatFieldMetadataItemAsColumnDefinition = ({
     position,
     fieldMetadataId: field.id,
     label: field.label,
+    showLabel,
+    labelWidth,
     size: 100,
     type: parseFieldType(field.type),
     metadata: {

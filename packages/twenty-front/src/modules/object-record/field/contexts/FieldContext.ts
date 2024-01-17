@@ -28,6 +28,7 @@ export type GenericFieldContextType = {
   isLabelIdentifier: boolean;
   basePathToShowPage?: string;
   clearable?: boolean;
+  maxWidth?: number;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(

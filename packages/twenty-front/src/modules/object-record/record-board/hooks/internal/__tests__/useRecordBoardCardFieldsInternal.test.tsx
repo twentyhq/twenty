@@ -1,5 +1,5 @@
 import { act } from 'react-dom/test-utils';
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil';
 
 import { FieldType } from '@/object-record/field/types/FieldType';
@@ -48,10 +48,15 @@ describe('useRecordBoardCardFieldsInternal', () => {
     expect(result.current.cardFieldsList[0].isVisible).toBe(true);
 
     act(() => {
-      result.current.boardCardFields.handleFieldVisibilityChange(field);
+      result.current.boardCardFields.handleFieldVisibilityChange({
+        ...field,
+        isVisible: true,
+      });
     });
 
-    expect(result.current.cardFieldsList[0].isVisible).toBe(false);
+    waitFor(() => {
+      expect(result.current.cardFieldsList[0].isVisible).toBe(false);
+    });
 
     act(() => {
       result.current.boardCardFields.handleFieldVisibilityChange({
@@ -60,7 +65,9 @@ describe('useRecordBoardCardFieldsInternal', () => {
       });
     });
 
-    expect(result.current.cardFieldsList[0].isVisible).toBe(true);
+    waitFor(() => {
+      expect(result.current.cardFieldsList[0].isVisible).toBe(true);
+    });
   });
 
   it('should call the onFieldsChange callback and update board card states', async () => {

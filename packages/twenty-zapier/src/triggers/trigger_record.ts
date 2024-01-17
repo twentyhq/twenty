@@ -1,6 +1,6 @@
 import { Bundle, ZObject } from 'zapier-platform-core';
 
-import { findObjectNamesPluralKey } from '../triggers/find_object_names_plural';
+import { findObjectNamesSingularKey } from '../triggers/find_object_names_singular';
 import {
   listSample,
   Operation,
@@ -9,26 +9,38 @@ import {
   subscribe,
 } from '../utils/triggers/triggers.utils';
 
-export const triggerRecordCreatedKey = 'trigger_record_created';
+export const triggerRecordKey = 'trigger_record';
 
 const performSubscribe = (z: ZObject, bundle: Bundle) =>
-  subscribe(z, bundle, Operation.create);
-const performList = (z: ZObject, bundle: Bundle) => listSample(z, bundle);
+  subscribe(z, bundle, bundle.inputData.operation);
+const performList = (z: ZObject, bundle: Bundle) =>
+  listSample(z, bundle, bundle.inputData.operation === Operation.delete);
 
 export default {
-  key: triggerRecordCreatedKey,
+  key: triggerRecordKey,
   noun: 'Record',
   display: {
-    label: 'Record Trigger Created',
-    description: 'Triggers when a Record is created.',
+    label: 'Record Trigger',
+    description: 'Triggers when a Record is created, updated or deleted.',
   },
   operation: {
     inputFields: [
       {
-        key: 'namePlural',
+        key: 'nameSingular',
         required: true,
         label: 'Record Name',
-        dynamic: `${findObjectNamesPluralKey}.namePlural`,
+        dynamic: `${findObjectNamesSingularKey}.nameSingular`,
+        altersDynamicFields: true,
+      },
+      {
+        key: 'operation',
+        required: true,
+        label: 'Operation',
+        choices: {
+          [Operation.create]: Operation.create,
+          [Operation.update]: Operation.update,
+          [Operation.delete]: Operation.delete,
+        },
         altersDynamicFields: true,
       },
     ],

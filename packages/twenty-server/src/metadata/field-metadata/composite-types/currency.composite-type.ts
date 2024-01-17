@@ -71,6 +71,9 @@ export const currencyObjectDefinition = {
   fields: currencyFields(),
   fromRelations: [],
   toRelations: [],
+  isActive: true,
+  isSystem: true,
+  isCustom: false,
 } satisfies ObjectMetadataInterface;
 
 export type CurrencyMetadata = {

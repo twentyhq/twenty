@@ -9,7 +9,8 @@ import { isFieldText } from '../../types/guards/isFieldText';
 import { isFieldTextValue } from '../../types/guards/isFieldTextValue';
 
 export const useTextField = () => {
-  const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { entityId, fieldDefinition, hotkeyScope, maxWidth } =
+    useContext(FieldContext);
 
   assertFieldMetadata('TEXT', isFieldText, fieldDefinition);
 
@@ -30,6 +31,7 @@ export const useTextField = () => {
     : fieldInitialValue?.value ?? fieldTextValue;
 
   return {
+    maxWidth,
     fieldDefinition,
     fieldValue: fieldTextValue,
     initialValue,

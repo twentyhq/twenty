@@ -18,7 +18,7 @@ export const getObjectRecordIdentifier = ({
     case CoreObjectNameSingular.Opportunity:
       return {
         id: record.id,
-        name: record?.company?.name,
+        name: record?.company?.name ?? record.name,
         avatarUrl: record.avatarUrl,
         avatarType: 'rounded',
         linkToShowPage: `/opportunities/${record.id}`,

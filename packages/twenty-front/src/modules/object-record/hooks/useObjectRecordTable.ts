@@ -26,12 +26,15 @@ export const useObjectRecordTable = (objectNamePlural: string) => {
     },
   );
 
-  const { tableFiltersState, tableSortsState, tableLastRowVisibleState } =
-    useRecordTableStates();
+  const {
+    getTableFiltersState,
+    getTableSortsState,
+    getTableLastRowVisibleState,
+  } = useRecordTableStates();
 
-  const tableFilters = useRecoilValue(tableFiltersState());
-  const tableSorts = useRecoilValue(tableSortsState());
-  const setLastRowVisible = useSetRecoilState(tableLastRowVisibleState());
+  const tableFilters = useRecoilValue(getTableFiltersState());
+  const tableSorts = useRecoilValue(getTableSortsState());
+  const setLastRowVisible = useSetRecoilState(getTableLastRowVisibleState());
 
   const requestFilters = turnObjectDropdownFilterIntoQueryFilter(
     tableFilters,
