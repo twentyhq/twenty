@@ -286,7 +286,6 @@ export const InternalDatePicker = ({
         <StyledButtonContainer
           onClick={handleClear}
           className="menu-item"
-          accent="default"
           isMenuOpen={false}
         >
           <StyledButtonContent>
@@ -294,7 +293,7 @@ export const InternalDatePicker = ({
               size={theme.icon.size.md}
               stroke={theme.icon.stroke.sm}
             />
-            <StyledMenuItemLabel hasLeftIcon={true}>
+            <StyledMenuItemLabel hasLeftIcon>
               <OverflowingTextWithTooltip text="Clear" />
             </StyledMenuItemLabel>
           </StyledButtonContent>
