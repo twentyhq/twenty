@@ -9,13 +9,14 @@ import { Activity } from '@/activities/types/Activity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 
 import { blockSpecs } from '../blocks/blockSpecs';
 import { getSlashMenu } from '../blocks/slashMenu';
 import { getFileType } from '../files/utils/getFileType';
+
+import '@blocknote/react/style.css';
 
 const StyledBlockNoteStyledContainer = styled.div`
   width: 100%;
@@ -55,8 +56,7 @@ export const ActivityBodyEditor = ({
     return debounce(onInternalChange, 200);
   }, [updateOneRecord, activity.id]);
 
-  const imagesActivated = useIsFeatureEnabled('IS_NOTE_CREATE_IMAGES_ENABLED');
-  const slashMenuItems = getSlashMenu(imagesActivated);
+  const slashMenuItems = getSlashMenu();
 
   const [uploadFile] = useUploadFileMutation();
 
