@@ -26,6 +26,8 @@ import {
   RelationMetadataType,
 } from './relation-metadata.entity';
 
+import { createRelationMetadataForeignKey } from './utils/create-relation-metadata-foreign-key.util';
+
 @Injectable()
 export class RelationMetadataService extends TypeOrmQueryService<RelationMetadataEntity> {
   constructor(
@@ -54,10 +56,10 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     // NOTE: this logic is called to create relation through metadata graphql endpoint (so only for custom field relations)
     const isCustom = true;
     const baseColumnName = `${camelCase(relationMetadataInput.toName)}Id`;
-
-    const foreignKeyColumnName = isCustom
-      ? createCustomColumnName(baseColumnName)
-      : baseColumnName;
+    const foreignKeyColumnName = createRelationMetadataForeignKey(
+      relationMetadataInput.toName,
+      isCustom,
+    );
 
     const createdFields = await this.fieldMetadataService.createMany([
       this.createFieldMetadataForRelationMetadata(
