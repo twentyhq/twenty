@@ -7,9 +7,10 @@ import {
 } from 'src/workspace/workspace-query-builder/interfaces/record.interface';
 import { FindManyResolverArgs } from 'src/workspace/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
+import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
+
 import { ArgsStringFactory } from './args-string.factory';
 import { FieldsStringFactory } from './fields-string.factory';
-import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 
 @Injectable()
 export class FindManyQueryFactory {
