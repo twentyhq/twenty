@@ -1,15 +1,10 @@
 import React from 'react';
 import ReactDatePicker from 'react-datepicker';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { OverflowingTextWithTooltip } from 'tsup.ui.index';
 
 import { IconCalendarX } from '@/ui/display/icon';
-import {
-  StyledHoverableMenuItemBase,
-  StyledMenuItemLabel,
-  StyledMenuItemLeftContent,
-} from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
+import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
+import { StyledHoverableMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
 import { overlayBackground } from '@/ui/theme/constants/effects';
 
 import 'react-datepicker/dist/react-datepicker.css';
@@ -239,7 +234,7 @@ const StyledButtonContainer = styled(StyledHoverableMenuItemBase)`
   margin: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledButtonContent = styled(StyledMenuItemLeftContent)`
+const StyledButtonContent = styled(MenuItemLeftContent)`
   justify-content: center;
 `;
 
@@ -259,7 +254,6 @@ export const InternalDatePicker = ({
   const handleClear = () => {
     onMouseSelect?.(null);
   };
-  const theme = useTheme();
 
   return (
     <StyledContainer>
@@ -288,15 +282,7 @@ export const InternalDatePicker = ({
           className="menu-item"
           isMenuOpen={false}
         >
-          <StyledButtonContent>
-            <IconCalendarX
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-            />
-            <StyledMenuItemLabel hasLeftIcon>
-              <OverflowingTextWithTooltip text="Clear" />
-            </StyledMenuItemLabel>
-          </StyledButtonContent>
+          <StyledButtonContent LeftIcon={IconCalendarX} text="Clear" />
         </StyledButtonContainer>
       )}
     </StyledContainer>
