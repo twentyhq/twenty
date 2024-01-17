@@ -1,45 +1,31 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
-export const useGetIsSomeCellInEditMode = (recordTableScopeId: string) => {
+export const useGetIsSomeCellInEditModeState = (recordTableId?: string) => {
   const {
-    currentTableCellInEditModePositionScopeInjector,
-    isTableCellInEditModeScopeInjector,
-  } = getRecordTableScopeInjector();
-
-  const {
-    injectSnapshotValueWithRecordTableScopeId,
-    injectFamilySnapshotValueWithRecordTableScopeId,
-  } = useRecordTableScopedStates(recordTableScopeId);
+    getCurrentTableCellInEditModePositionState,
+    isTableCellInEditModeFamilyState,
+  } = useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
     ({ snapshot }) =>
       () => {
-        const currentTableCellInEditModePosition =
-          injectSnapshotValueWithRecordTableScopeId(
-            snapshot,
-            currentTableCellInEditModePositionScopeInjector,
-          );
+        const currentTableCellInEditModePosition = getSnapshotValue(
+          snapshot,
+          getCurrentTableCellInEditModePositionState(),
+        );
 
-        const isSomeCellInEditModeFamilyState =
-          injectFamilySnapshotValueWithRecordTableScopeId(
-            snapshot,
-            isTableCellInEditModeScopeInjector,
-          );
-
-        const isSomeCellInEditMode = isSomeCellInEditModeFamilyState(
+        const isSomeCellInEditModeState = isTableCellInEditModeFamilyState(
           currentTableCellInEditModePosition,
         );
 
-        return isSomeCellInEditMode;
+        return isSomeCellInEditModeState;
       },
     [
-      currentTableCellInEditModePositionScopeInjector,
-      injectFamilySnapshotValueWithRecordTableScopeId,
-      injectSnapshotValueWithRecordTableScopeId,
-      isTableCellInEditModeScopeInjector,
+      getCurrentTableCellInEditModePositionState,
+      isTableCellInEditModeFamilyState,
     ],
   );
 };

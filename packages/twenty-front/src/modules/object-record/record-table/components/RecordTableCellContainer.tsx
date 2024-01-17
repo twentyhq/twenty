@@ -1,8 +1,8 @@
 import { useContext } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
-import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
@@ -26,13 +26,6 @@ export const RecordTableCellContainer = ({
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
   const currentRowId = useContext(RowIdContext);
-  const { objectMetadataConfigScopeInjector } = getRecordTableScopeInjector();
-
-  const { injectStateWithRecordTableScopeId } = useRecordTableScopedStates();
-
-  const objectMetadataConfig = useRecoilValue(
-    injectStateWithRecordTableScopeId(objectMetadataConfigScopeInjector),
-  );
 
   const { setCurrentRowSelected } = useCurrentRowSelected();
 
@@ -47,6 +40,11 @@ export const RecordTableCellContainer = ({
   };
 
   const columnDefinition = useContext(ColumnContext);
+
+  const { basePathToShowPage, objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular:
+      columnDefinition?.metadata.objectMetadataNameSingular || '',
+  });
 
   const updateRecord = useContext(RecordUpdateContext);
 
@@ -69,10 +67,14 @@ export const RecordTableCellContainer = ({
               fieldDefinition: columnDefinition,
               useUpdateRecord: () => [updateRecord, {}],
               hotkeyScope: customHotkeyScope,
-              basePathToShowPage: objectMetadataConfig?.basePathToShowPage,
-              isLabelIdentifier:
-                columnDefinition.fieldMetadataId ===
-                objectMetadataConfig?.labelIdentifierFieldMetadataId,
+              basePathToShowPage,
+              isLabelIdentifier: isLabelIdentifierField({
+                fieldMetadataItem: {
+                  id: columnDefinition.fieldMetadataId,
+                  name: columnDefinition.metadata.fieldName,
+                },
+                objectMetadataItem,
+              }),
             }}
           >
             <RecordTableCell customHotkeyScope={{ scope: customHotkeyScope }} />

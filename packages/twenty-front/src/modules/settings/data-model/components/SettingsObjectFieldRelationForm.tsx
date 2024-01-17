@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { validateMetadataLabel } from '@/object-metadata/utils/validateMetadataLabel';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -70,27 +71,29 @@ export const SettingsObjectFieldRelationForm = ({
       <StyledSelectsContainer>
         <Select
           label="Relation type"
-          dropdownScopeId="relation-type-select"
+          dropdownId="relation-type-select"
           fullWidth
           disabled={disableRelationEdition}
           value={values.type}
-          options={Object.entries(relationTypes).map(
-            ([value, { label, Icon }]) => ({
+          options={Object.entries(relationTypes)
+            .filter(([value]) => 'ONE_TO_ONE' !== value)
+            .map(([value, { label, Icon }]) => ({
               label,
               value: value as RelationType,
               Icon,
-            }),
-          )}
+            }))}
           onChange={(value) => onChange({ type: value })}
         />
         <Select
           label="Object destination"
-          dropdownScopeId="object-destination-select"
+          dropdownId="object-destination-select"
           fullWidth
           disabled={disableRelationEdition}
           value={values.objectMetadataId}
           options={objectMetadataItems
-            .filter((objectMetadataItem) => !objectMetadataItem.isSystem)
+            .filter((objectMetadataItem) =>
+              isObjectMetadataAvailableForRelation(objectMetadataItem),
+            )
             .map((objectMetadataItem) => ({
               label: objectMetadataItem.labelPlural,
               value: objectMetadataItem.id,

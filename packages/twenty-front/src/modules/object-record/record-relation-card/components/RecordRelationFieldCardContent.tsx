@@ -1,52 +1,200 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
+import { Reference } from '@apollo/client';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useSetRecoilState } from 'recoil';
+import { LightIconButton, MenuItem } from 'tsup.ui.index';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldDisplay } from '@/object-record/field/components/FieldDisplay';
 import { FieldContext } from '@/object-record/field/contexts/FieldContext';
+import { usePersistField } from '@/object-record/field/hooks/usePersistField';
+import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 import { FieldRelationMetadata } from '@/object-record/field/types/FieldMetadata';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
+import { useModifyRecordFromCache } from '@/object-record/hooks/useModifyRecordFromCache';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { IconDotsVertical, IconUnlink } from '@/ui/display/icon';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 
-const StyledCardContent = styled(CardContent)`
+const StyledCardContent = styled(CardContent)<{
+  isDropdownOpen?: boolean;
+}>`
   align-items: center;
+  justify-content: space-between;
+  gap: ${({ theme }) => theme.spacing(1)};
   display: flex;
   height: ${({ theme }) => theme.spacing(10)};
   padding: ${({ theme }) => theme.spacing(0, 2, 0, 3)};
+
+  ${({ isDropdownOpen, theme }) =>
+    isDropdownOpen
+      ? ''
+      : css`
+          .displayOnHover {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity ${theme.animation.duration.instant}s ease;
+          }
+        `}
+
+  &:hover {
+    .displayOnHover {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
 `;
 
 type RecordRelationFieldCardContentProps = {
   divider?: boolean;
-  relationRecordId: string;
+  relationRecord: ObjectRecord;
 };
 
 export const RecordRelationFieldCardContent = ({
   divider,
-  relationRecordId,
+  relationRecord,
 }: RecordRelationFieldCardContentProps) => {
-  const { fieldDefinition } = useContext(FieldContext);
-  const { relationObjectMetadataNameSingular } =
-    fieldDefinition.metadata as FieldRelationMetadata;
-  const { labelIdentifierFieldMetadata: relationLabelIdentifierFieldMetadata } =
-    useObjectMetadataItem({
-      objectNameSingular: relationObjectMetadataNameSingular,
-    });
+  const { fieldDefinition, entityId } = useContext(FieldContext);
+
+  const {
+    relationFieldMetadataId,
+    relationObjectMetadataNameSingular,
+    relationType,
+    fieldName,
+    objectMetadataNameSingular,
+  } = fieldDefinition.metadata as FieldRelationMetadata;
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: objectMetadataNameSingular ?? '',
+  });
+
+  const modifyRecordFromCache = useModifyRecordFromCache({
+    objectMetadataItem,
+  });
+
+  const isToOneObject = relationType === 'TO_ONE_OBJECT';
+  const {
+    labelIdentifierFieldMetadata: relationLabelIdentifierFieldMetadata,
+    objectMetadataItem: relationObjectMetadataItem,
+  } = useObjectMetadataItem({
+    objectNameSingular: relationObjectMetadataNameSingular,
+  });
+  const persistField = usePersistField();
+  const { updateOneRecord: updateOneRelationRecord } = useUpdateOneRecord({
+    objectNameSingular: relationObjectMetadataNameSingular,
+  });
 
   const { FieldContextProvider } = useFieldContext({
     fieldMetadataName: relationLabelIdentifierFieldMetadata?.name || '',
     fieldPosition: 0,
     isLabelIdentifier: true,
     objectNameSingular: relationObjectMetadataNameSingular,
-    objectRecordId: relationRecordId,
+    objectRecordId: relationRecord.id,
   });
+
+  const dropdownScopeId = `record-field-card-menu-${relationRecord.id}`;
+
+  const { closeDropdown, isDropdownOpen } = useDropdown(dropdownScopeId);
+
+  // TODO: temporary as ChipDisplay expect to find the entity in the entityFieldsFamilyState
+  const setEntityFields = useSetRecoilState(
+    entityFieldsFamilyState(relationRecord.id),
+  );
+
+  useEffect(() => {
+    setEntityFields(relationRecord);
+  }, [relationRecord, setEntityFields]);
 
   if (!FieldContextProvider) return null;
 
+  const handleDetach = () => {
+    closeDropdown();
+
+    const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
+      ({ id }) => id === relationFieldMetadataId,
+    );
+
+    if (!relationFieldMetadataItem?.name) return;
+
+    if (isToOneObject) {
+      persistField(null);
+      return;
+    }
+
+    updateOneRelationRecord({
+      idToUpdate: relationRecord.id,
+      updateOneRecordInput: {
+        [`${relationFieldMetadataItem.name}Id`]: null,
+        [relationFieldMetadataItem.name]: null,
+      },
+    });
+
+    modifyRecordFromCache(entityId, {
+      [fieldName]: (relationRef, { readField }) => {
+        const edges = readField<{ node: Reference }[]>('edges', relationRef);
+
+        if (!edges) {
+          return relationRef;
+        }
+
+        return {
+          ...relationRef,
+          edges: edges.filter(({ node }) => {
+            const id = readField('id', node);
+            return id !== relationRecord.id;
+          }),
+        };
+      },
+    });
+  };
+
+  const isOpportunityCompanyRelation =
+    (objectMetadataNameSingular === CoreObjectNameSingular.Opportunity &&
+      relationObjectMetadataNameSingular === CoreObjectNameSingular.Company) ||
+    (objectMetadataNameSingular === CoreObjectNameSingular.Company &&
+      relationObjectMetadataNameSingular ===
+        CoreObjectNameSingular.Opportunity);
+
   return (
-    <StyledCardContent divider={divider}>
+    <StyledCardContent isDropdownOpen={isDropdownOpen} divider={divider}>
       <FieldContextProvider>
         <FieldDisplay />
       </FieldContextProvider>
+      {/* TODO: temporary to prevent removing a company from an opportunity */}
+      {!isOpportunityCompanyRelation && (
+        <DropdownScope dropdownScopeId={dropdownScopeId}>
+          <Dropdown
+            dropdownId={dropdownScopeId}
+            dropdownPlacement="right-start"
+            clickableComponent={
+              <LightIconButton
+                className="displayOnHover"
+                Icon={IconDotsVertical}
+                accent="tertiary"
+              />
+            }
+            dropdownComponents={
+              <DropdownMenuItemsContainer>
+                <MenuItem
+                  LeftIcon={IconUnlink}
+                  text="Detach"
+                  onClick={handleDetach}
+                />
+              </DropdownMenuItemsContainer>
+            }
+            dropdownHotkeyScope={{
+              scope: dropdownScopeId,
+            }}
+          />
+        </DropdownScope>
+      )}
     </StyledCardContent>
   );
 };

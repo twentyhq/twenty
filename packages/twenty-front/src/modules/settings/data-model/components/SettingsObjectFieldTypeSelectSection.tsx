@@ -87,7 +87,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
       <Select
         fullWidth
         disabled={!!fieldMetadata?.id}
-        dropdownScopeId="object-field-type-select"
+        dropdownId="object-field-type-select"
         value={values?.type}
         onChange={(value) => onChange({ type: value })}
         options={fieldTypeOptions}

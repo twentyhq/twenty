@@ -9,7 +9,7 @@ export enum CoreObjectNameSingular {
   Favorite = 'favorite',
   Message = 'message',
   MessageChannel = 'messageChannel',
-  MessageRecipient = 'messageRecipient',
+  MessageParticipant = 'messageParticipant',
   MessageThread = 'messageThread',
   Opportunity = 'opportunity',
   Person = 'person',

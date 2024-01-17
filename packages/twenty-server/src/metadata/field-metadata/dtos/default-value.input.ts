@@ -4,6 +4,7 @@ import {
   IsDate,
   IsNotEmpty,
   IsNumber,
+  IsNumberString,
   IsString,
   Matches,
   ValidateIf,
@@ -52,8 +53,8 @@ export class FieldMetadataDefaultValueLink {
 
 export class FieldMetadataDefaultValueCurrency {
   @ValidateIf((_object, value) => value !== null)
-  @IsNumber()
-  amountMicros: number | null;
+  @IsNumberString()
+  amountMicros: string | null;
 
   @ValidateIf((_object, value) => value !== null)
   @IsString()

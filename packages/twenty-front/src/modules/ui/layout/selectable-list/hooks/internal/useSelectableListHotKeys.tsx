@@ -39,10 +39,13 @@ export const useSelectableListHotKeys = (
   const handleSelect = useRecoilCallback(
     ({ snapshot, set }) =>
       (direction: Direction) => {
-        const selectedItemId = getSnapshotValue(snapshot, selectedItemIdState);
+        const selectedItemId = getSnapshotValue(
+          snapshot,
+          selectedItemIdState(),
+        );
         const selectableItemIds = getSnapshotValue(
           snapshot,
-          selectableItemIdsState,
+          selectableItemIdsState(),
         );
 
         const currentPosition = findPosition(selectableItemIds, selectedItemId);
@@ -103,7 +106,7 @@ export const useSelectableListHotKeys = (
         if (selectedItemId !== nextId) {
           if (nextId) {
             set(isSelectedItemIdSelector(nextId), true);
-            set(selectedItemIdState, nextId);
+            set(selectedItemIdState(), nextId);
           }
 
           if (selectedItemId) {
@@ -134,11 +137,11 @@ export const useSelectableListHotKeys = (
         () => {
           const selectedItemId = getSnapshotValue(
             snapshot,
-            selectedItemIdState,
+            selectedItemIdState(),
           );
           const onEnter = getSnapshotValue(
             snapshot,
-            selectableListOnEnterState,
+            selectableListOnEnterState(),
           );
 
           if (selectedItemId) {

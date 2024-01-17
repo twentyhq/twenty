@@ -98,30 +98,38 @@ export const IconPicker = ({
 
   const { getIcons, getIcon } = useIcons();
   const icons = getIcons();
-
-  const iconKeys = useMemo(() => {
+  const matchingSearchIconKeys = useMemo(() => {
     const filteredIconKeys = icons
       ? Object.keys(icons).filter((iconKey) => {
-          return (
-            iconKey !== selectedIconKey &&
-            (!searchString ||
-              [iconKey, convertIconKeyToLabel(iconKey)].some((label) =>
-                label.toLowerCase().includes(searchString.toLowerCase()),
-              ))
+          if (searchString === '') {
+            return true;
+          }
+
+          const isMatchingSearchString = [
+            iconKey,
+            convertIconKeyToLabel(iconKey),
+          ].some((label) =>
+            label.toLowerCase().includes(searchString.toLowerCase()),
           );
+
+          return isMatchingSearchString;
         })
       : [];
 
-    return (
-      selectedIconKey
-        ? [selectedIconKey, ...filteredIconKeys]
-        : filteredIconKeys
-    ).slice(0, 25);
+    const uniqueFilteredIconKeys = [
+      ...new Set(
+        selectedIconKey
+          ? [selectedIconKey, ...filteredIconKeys]
+          : filteredIconKeys,
+      ),
+    ];
+
+    return uniqueFilteredIconKeys.slice(0, 25);
   }, [icons, searchString, selectedIconKey]);
 
   const iconKeys2d = useMemo(
-    () => arrayToChunks(iconKeys.slice(), 5),
-    [iconKeys],
+    () => arrayToChunks(matchingSearchIconKeys.slice(), 5),
+    [matchingSearchIconKeys],
   );
 
   return (
@@ -151,7 +159,9 @@ export const IconPicker = ({
               <DropdownMenuSearchInput
                 placeholder="Search icon"
                 autoFocus
-                onChange={(event) => setSearchString(event.target.value)}
+                onChange={(event) => {
+                  setSearchString(event.target.value);
+                }}
               />
               <DropdownMenuSeparator />
               <div
@@ -164,7 +174,7 @@ export const IconPicker = ({
               >
                 <DropdownMenuItemsContainer>
                   <StyledMenuIconItemsContainer>
-                    {iconKeys.map((iconKey) => (
+                    {matchingSearchIconKeys.map((iconKey) => (
                       <IconPickerIcon
                         key={iconKey}
                         iconKey={iconKey}

@@ -13,7 +13,6 @@ export const useRelationPickerScopedStates = (args?: {
   );
 
   const {
-    identifiersMapperState,
     relationPickerSearchFilterState,
     relationPickerPreselectedIdState,
     searchQueryState,
@@ -23,7 +22,6 @@ export const useRelationPickerScopedStates = (args?: {
 
   return {
     scopeId,
-    identifiersMapperState,
     relationPickerSearchFilterState,
     relationPickerPreselectedIdState,
     searchQueryState,

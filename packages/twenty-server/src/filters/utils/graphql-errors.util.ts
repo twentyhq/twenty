@@ -133,3 +133,19 @@ export class UserInputError extends BaseGraphQLError {
     Object.defineProperty(this, 'name', { value: 'UserInputError' });
   }
 }
+
+export class NotFoundError extends BaseGraphQLError {
+  constructor(message: string, extensions?: Record<string, any>) {
+    super(message, 'NOT_FOUND', extensions);
+
+    Object.defineProperty(this, 'name', { value: 'NotFoundError' });
+  }
+}
+
+export class ConflictError extends BaseGraphQLError {
+  constructor(message: string, extensions?: Record<string, any>) {
+    super(message, 'CONFLICT', extensions);
+
+    Object.defineProperty(this, 'name', { value: 'ConflictError' });
+  }
+}

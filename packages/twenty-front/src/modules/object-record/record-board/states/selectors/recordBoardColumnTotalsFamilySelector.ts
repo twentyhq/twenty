@@ -1,6 +1,7 @@
 import { selectorFamily } from 'recoil';
 
 import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
+import { amountFormat } from '~/utils/format/amountFormat';
 
 import { recordBoardCardIdsByColumnIdFamilyState } from '../recordBoardCardIdsByColumnIdFamilyState';
 
@@ -26,6 +27,6 @@ export const recordBoardColumnTotalsFamilySelector = selectorFamily({
           0,
         ) || 0;
 
-      return pipelineStepTotal;
+      return amountFormat(pipelineStepTotal);
     },
 });

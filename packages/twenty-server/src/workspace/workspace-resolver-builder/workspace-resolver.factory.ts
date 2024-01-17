@@ -79,8 +79,9 @@ export class WorkspaceResolverFactory {
 
         resolvers.Query[resolverName] = resolverFactory.create({
           workspaceId,
-          targetTableName: objectMetadata.targetTableName,
+          objectMetadataItem: objectMetadata,
           fieldMetadataCollection: objectMetadata.fields,
+          objectMetadataCollection: objectMetadataCollection,
         });
       }
 
@@ -101,8 +102,9 @@ export class WorkspaceResolverFactory {
 
         resolvers.Mutation[resolverName] = resolverFactory.create({
           workspaceId,
-          targetTableName: objectMetadata.targetTableName,
+          objectMetadataItem: objectMetadata,
           fieldMetadataCollection: objectMetadata.fields,
+          objectMetadataCollection: objectMetadataCollection,
         });
       }
     }

@@ -69,18 +69,7 @@ describe('useViewBar > viewFilters', () => {
     await act(async () => {
       result.current.viewBar.setAvailableFilterDefinitions([filterDefinition]);
 
-      await result.current.viewBar.loadViewFilters(
-        {
-          edges: [
-            {
-              node: viewFilter,
-              cursor: '',
-            },
-          ],
-          pageInfo: { hasNextPage: false, startCursor: '', endCursor: '' },
-        },
-        currentViewId,
-      );
+      await result.current.viewBar.loadViewFilters([viewFilter], currentViewId);
       result.current.viewBar.setCurrentViewId(currentViewId);
     });
 
@@ -93,18 +82,7 @@ describe('useViewBar > viewFilters', () => {
 
       viewBar.setAvailableFilterDefinitions([filterDefinition]);
 
-      viewBar.loadViewFilters(
-        {
-          edges: [
-            {
-              node: viewFilter,
-              cursor: '',
-            },
-          ],
-          pageInfo: { hasNextPage: false, startCursor: '', endCursor: '' },
-        },
-        currentViewId,
-      );
+      viewBar.loadViewFilters([viewFilter], currentViewId);
       viewBar.setCurrentViewId(currentViewId);
 
       const { currentViewFiltersState } = useViewScopedStates({
@@ -174,18 +152,7 @@ describe('useViewBar > viewFilters', () => {
 
       viewBar.setAvailableFilterDefinitions([filterDefinition]);
 
-      viewBar.loadViewFilters(
-        {
-          edges: [
-            {
-              node: viewFilter,
-              cursor: '',
-            },
-          ],
-          pageInfo: { hasNextPage: false, startCursor: '', endCursor: '' },
-        },
-        currentViewId,
-      );
+      viewBar.loadViewFilters([viewFilter], currentViewId);
       viewBar.setCurrentViewId(currentViewId);
 
       const { currentViewFiltersState } = useViewScopedStates({

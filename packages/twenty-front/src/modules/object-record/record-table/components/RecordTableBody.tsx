@@ -4,19 +4,16 @@ import { RecordTableBodyFetchMoreLoader } from '@/object-record/record-table/com
 import { RecordTableRow } from '@/object-record/record-table/components/RecordTableRow';
 import { RowIdContext } from '@/object-record/record-table/contexts/RowIdContext';
 import { RowIndexContext } from '@/object-record/record-table/contexts/RowIndexContext';
-import { useRecordTableScopedStates } from '@/object-record/record-table/hooks/internal/useRecordTableScopedStates';
-import { getRecordTableScopeInjector } from '@/object-record/record-table/utils/getRecordTableScopeInjector';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 
-export const RecordTableBody = () => {
-  const { tableRowIdsScopeInjector } = getRecordTableScopeInjector();
+type RecordTableBodyProps = {
+  objectNamePlural: string;
+};
 
-  const { injectStateWithRecordTableScopeId } = useRecordTableScopedStates();
+export const RecordTableBody = ({ objectNamePlural }: RecordTableBodyProps) => {
+  const { getTableRowIdsState } = useRecordTableStates();
 
-  const tableRowIdsState = injectStateWithRecordTableScopeId(
-    tableRowIdsScopeInjector,
-  );
-
-  const tableRowIds = useRecoilValue(tableRowIdsState);
+  const tableRowIds = useRecoilValue(getTableRowIdsState());
 
   return (
     <>
@@ -29,7 +26,7 @@ export const RecordTableBody = () => {
           </RowIdContext.Provider>
         ))}
       </tbody>
-      <RecordTableBodyFetchMoreLoader />
+      <RecordTableBodyFetchMoreLoader objectNamePlural={objectNamePlural} />
     </>
   );
 };

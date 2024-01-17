@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Reference } from '@apollo/client';
 
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -7,7 +8,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { PaginatedRecordTypeResults } from '@/object-record/types/PaginatedRecordTypeResults';
+import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -93,7 +94,7 @@ export const SettingsObjectNewFieldStep2 = () => {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: activeObjectMetadataItem?.id },
     },
-    onCompleted: async (data: PaginatedRecordTypeResults<View>) => {
+    onCompleted: async (data: ObjectRecordConnection<View>) => {
       const views = data.edges;
 
       if (!views) return;
@@ -109,7 +110,7 @@ export const SettingsObjectNewFieldStep2 = () => {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: formValues.relation?.objectMetadataId },
     },
-    onCompleted: async (data: PaginatedRecordTypeResults<View>) => {
+    onCompleted: async (data: ObjectRecordConnection<View>) => {
       const views = data.edges;
 
       if (!views) return;
@@ -162,16 +163,17 @@ export const SettingsObjectNewFieldStep2 = () => {
           };
 
           modifyViewFromCache(view.id, {
-            // Todo fix typing
-            viewFields: (viewFields: any) => {
+            viewFields: (viewFieldsRef, { readField }) => {
+              const edges = readField<{ node: Reference }[]>(
+                'edges',
+                viewFieldsRef,
+              );
+
+              if (!edges) return viewFieldsRef;
+
               return {
-                edges: viewFields.edges.concat({ node: viewFieldToCreate }),
-                pageInfo: {
-                  hasNextPage: false,
-                  hasPreviousPage: false,
-                  startCursor: '',
-                  endCursor: '',
-                },
+                ...viewFieldsRef,
+                edges: [...edges, { node: viewFieldToCreate }],
               };
             },
           });
@@ -188,16 +190,17 @@ export const SettingsObjectNewFieldStep2 = () => {
             size: 100,
           };
           modifyViewFromCache(view.id, {
-            // Todo fix typing
-            viewFields: (viewFields: any) => {
+            viewFields: (viewFieldsRef, { readField }) => {
+              const edges = readField<{ node: Reference }[]>(
+                'edges',
+                viewFieldsRef,
+              );
+
+              if (!edges) return viewFieldsRef;
+
               return {
-                edges: viewFields.edges.concat({ node: viewFieldToCreate }),
-                pageInfo: {
-                  hasNextPage: false,
-                  hasPreviousPage: false,
-                  startCursor: '',
-                  endCursor: '',
-                },
+                ...viewFieldsRef,
+                edges: [...edges, { node: viewFieldToCreate }],
               };
             },
           });
@@ -232,16 +235,17 @@ export const SettingsObjectNewFieldStep2 = () => {
           };
 
           modifyViewFromCache(view.id, {
-            // Todo fix typing
-            viewFields: (viewFields: any) => {
+            viewFields: (viewFieldsRef, { readField }) => {
+              const edges = readField<{ node: Reference }[]>(
+                'edges',
+                viewFieldsRef,
+              );
+
+              if (!edges) return viewFieldsRef;
+
               return {
-                edges: viewFields.edges.concat({ node: viewFieldToCreate }),
-                pageInfo: {
-                  hasNextPage: false,
-                  hasPreviousPage: false,
-                  startCursor: '',
-                  endCursor: '',
-                },
+                ...viewFieldsRef,
+                edges: [...edges, { node: viewFieldToCreate }],
               };
             },
           });

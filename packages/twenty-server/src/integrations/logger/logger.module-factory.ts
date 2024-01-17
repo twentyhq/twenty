@@ -13,11 +13,13 @@ export const loggerModuleFactory = async (
   environmentService: EnvironmentService,
 ): Promise<LoggerModuleOptions> => {
   const driverType = environmentService.getLoggerDriverType();
+  const logLevels = environmentService.getLogLevels();
 
   switch (driverType) {
     case LoggerDriverType.Console: {
       return {
         type: LoggerDriverType.Console,
+        logLevels: logLevels,
       };
     }
     default:

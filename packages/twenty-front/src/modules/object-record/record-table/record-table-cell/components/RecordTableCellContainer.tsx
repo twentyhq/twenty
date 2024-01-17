@@ -1,5 +1,6 @@
 import { ReactElement, useContext, useState } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { useGetButtonIcon } from '@/object-record/field/hooks/useGetButtonIcon';
 import { useIsFieldEmpty } from '@/object-record/field/hooks/useIsFieldEmpty';
@@ -57,7 +58,8 @@ export const TableCellContainer = ({
 }: TableCellContainerProps) => {
   const { isCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
 
-  const { getIsSomeCellInEditMode } = useRecordTable();
+  const { isSomeCellInEditModeState } = useRecordTable();
+  const isSomeCellInEditMode = useRecoilValue(isSomeCellInEditModeState());
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -76,8 +78,6 @@ export const TableCellContainer = ({
   };
 
   const handleContainerMouseEnter = () => {
-    const isSomeCellInEditMode = getIsSomeCellInEditMode();
-
     if (!isHovered && !isSomeCellInEditMode) {
       setIsHovered(true);
       moveSoftFocusToCurrentCellOnHover();
