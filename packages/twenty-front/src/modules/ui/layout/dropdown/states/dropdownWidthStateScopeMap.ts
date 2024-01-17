@@ -4,5 +4,5 @@ export const dropdownWidthStateScopeMap = createStateScopeMap<
   number | undefined
 >({
   key: 'dropdownWidthStateScopeMap',
-  defaultValue: 160,
+  defaultValue: 280,
 });
