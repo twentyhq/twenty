@@ -392,7 +392,7 @@ export class TokenService {
       link: resetLink,
       userName: `${user.firstName} ${user.lastName}`,
       duration: ms(
-        differenceInMilliseconds(user.passwordResetTokenExpiresAt, new Date()),
+        differenceInMilliseconds(resetToken.passwordResetTokenExpiresAt, new Date()),
         {
           long: true,
         },
@@ -456,10 +456,8 @@ export class TokenService {
 
     assert(user, 'User not found', NotFoundException);
 
-    console.log('going to invalidate the token');
-
     await this.userRepository.update(user.id, {
-      passwordResetToken: undefined,
+      passwordResetToken: '',
       passwordResetTokenExpiresAt: undefined,
     });
 
