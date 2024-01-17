@@ -9,6 +9,12 @@ import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
+import {
+  StyledEmptyContainer,
+  StyledEmptySubTitle,
+  StyledEmptyTitle,
+} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyles';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { TimelineItemsContainer } from './TimelineItemsContainer';
@@ -23,31 +29,6 @@ const StyledMainContainer = styled.div`
   height: 100%;
 
   justify-content: center;
-`;
-
-const StyledTimelineEmptyContainer = styled.div`
-  align-items: center;
-  align-self: stretch;
-  display: flex;
-  flex: 1 0 0;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: center;
-`;
-
-const StyledEmptyTimelineTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-size: ${({ theme }) => theme.font.size.xxl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
-`;
-
-const StyledEmptyTimelineSubTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.extraLight};
-  font-size: ${({ theme }) => theme.font.size.xxl};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const Timeline = ({
@@ -76,9 +57,12 @@ export const Timeline = ({
 
   if (!activities.length) {
     return (
-      <StyledTimelineEmptyContainer>
-        <StyledEmptyTimelineTitle>No activity yet</StyledEmptyTimelineTitle>
-        <StyledEmptyTimelineSubTitle>Create one:</StyledEmptyTimelineSubTitle>
+      <StyledEmptyContainer>
+        <AnimatedPlaceholder type="emptyTimeline" />
+        <StyledEmptyTitle>Add your first Activity</StyledEmptyTitle>
+        <StyledEmptySubTitle>
+          There are no activities associated with this record.{' '}
+        </StyledEmptySubTitle>
         <ActivityCreateButton
           onNoteClick={() =>
             openCreateActivity({
@@ -93,7 +77,7 @@ export const Timeline = ({
             })
           }
         />
-      </StyledTimelineEmptyContainer>
+      </StyledEmptyContainer>
     );
   }
 

@@ -14,12 +14,14 @@ const StyledContainer = styled.div`
 `;
 
 const StyledBackgroundImage = styled.img`
+  max-height: 160px;
   max-width: 160px;
 `;
 
 const StyledMovingImage = styled(motion.img)`
   position: absolute;
   max-width: 130px;
+  max-height: 130px;
   z-index: 2;
 `;
 

@@ -9,27 +9,14 @@ import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
+  StyledEmptyContainer,
   StyledEmptySubTitle,
   StyledEmptyTitle,
-} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderText';
+} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyles';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
-
-const StyledTaskGroupEmptyContainer = styled.div`
-  align-items: center;
-  align-self: stretch;
-  display: flex;
-  flex: 1 0 0;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  justify-content: center;
-  padding-bottom: ${({ theme }) => theme.spacing(16)};
-  padding-left: ${({ theme }) => theme.spacing(4)};
-  padding-right: ${({ theme }) => theme.spacing(4)};
-  padding-top: ${({ theme }) => theme.spacing(3)};
-`;
 
 const StyledContainer = styled.div`
   display: flex;
@@ -70,7 +57,7 @@ export const TaskGroups = ({
     (activeTabId === 'done' && completedTasks?.length === 0)
   ) {
     return (
-      <StyledTaskGroupEmptyContainer>
+      <StyledEmptyContainer>
         <AnimatedPlaceholder type="noTask" />
         <StyledEmptyTitle>No Task</StyledEmptyTitle>
         <StyledEmptySubTitle>
@@ -87,7 +74,7 @@ export const TaskGroups = ({
             })
           }
         />
-      </StyledTaskGroupEmptyContainer>
+      </StyledEmptyContainer>
     );
   }
 
