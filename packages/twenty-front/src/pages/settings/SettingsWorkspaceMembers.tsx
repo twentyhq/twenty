@@ -53,7 +53,7 @@ export const SettingsWorkspaceMembers = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <SettingsPageContainer width={350}>
+      <SettingsPageContainer>
         <StyledH1Title title="Members" />
         {currentWorkspace?.inviteHash && (
           <Section>

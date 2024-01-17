@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 
 import {
   WorkspaceHealthIssue,
@@ -30,31 +26,19 @@ export class FieldMetadataHealthService {
   ) {}
 
   async healthCheck(
-    schemaName: string,
     tableName: string,
+    workspaceTableColumns: WorkspaceTableStructure[],
     fieldMetadataCollection: FieldMetadataEntity[],
     options: WorkspaceHealthOptions,
   ): Promise<WorkspaceHealthIssue[]> {
     const issues: WorkspaceHealthIssue[] = [];
-    const workspaceTableColumns =
-      await this.databaseStructureService.getWorkspaceTableColumns(
-        schemaName,
-        tableName,
-      );
-
-    if (!workspaceTableColumns) {
-      throw new NotFoundException(
-        `Table ${tableName} not found in schema ${schemaName}`,
-      );
-    }
 
     for (const fieldMetadata of fieldMetadataCollection) {
-      // Ignore relation fields for now
+      // Relation metadata are checked in another service
       if (
         fieldMetadata.fromRelationMetadata ||
         fieldMetadata.toRelationMetadata
       ) {
-        // TODO: Check relation fields
         continue;
       }
 
@@ -140,7 +124,6 @@ export class FieldMetadataHealthService {
       fieldMetadata.type,
       fieldMetadata.defaultValue,
     );
-    const isNullable = fieldMetadata.isNullable ? 'TRUE' : 'FALSE';
     // Check if column exist in database
     const columnStructure = workspaceTableColumns.find(
       (tableDefinition) => tableDefinition.columnName === columnName,
@@ -167,7 +150,7 @@ export class FieldMetadataHealthService {
       });
     }
 
-    if (columnStructure.isNullable !== isNullable) {
+    if (columnStructure.isNullable !== fieldMetadata.isNullable) {
       issues.push({
         type: WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT,
         fieldMetadata,
@@ -211,7 +194,7 @@ export class FieldMetadataHealthService {
 
     issues.push(...targetColumnMapIssues);
 
-    if (fieldMetadata.isCustom && !columnName.startsWith('_')) {
+    if (fieldMetadata.isCustom && !columnName?.startsWith('_')) {
       issues.push({
         type: WorkspaceHealthIssueType.COLUMN_NAME_SHOULD_BE_CUSTOM,
         fieldMetadata,

@@ -1,9 +1,8 @@
 import { atomFamily } from 'recoil';
 
-export const entityFieldsFamilyState = atomFamily<
-  Record<string, unknown> | null,
-  string
->({
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+
+export const entityFieldsFamilyState = atomFamily<ObjectRecord | null, string>({
   key: 'entityFieldsFamilyState',
   default: null,
 });
