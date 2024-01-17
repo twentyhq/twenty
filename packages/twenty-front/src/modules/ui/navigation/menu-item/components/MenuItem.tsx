@@ -4,7 +4,10 @@ import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { LightIconButtonGroup } from '@/ui/input/button/components/LightIconButtonGroup';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
-import { StyledHoverableMenuItemBase } from '../internals/components/StyledMenuItemBase';
+import {
+  StyledHoverableMenuItemBase,
+  StyledMenuItemLeftContent,
+} from '../internals/components/StyledMenuItemBase';
 import { MenuItemAccent } from '../types/MenuItemAccent';
 
 export type MenuItemIconButton = {
@@ -51,12 +54,14 @@ export const MenuItem = ({
       accent={accent}
       isMenuOpen={!!isTooltipOpen}
     >
-      <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
-      {showIconButtons && (
-        <div className="hoverable-buttons">
+      <StyledMenuItemLeftContent>
+        <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
+      </StyledMenuItemLeftContent>
+      <div className="hoverable-buttons">
+        {showIconButtons && (
           <LightIconButtonGroup iconButtons={iconButtons} size="small" />
-        </div>
-      )}
+        )}
+      </div>
     </StyledHoverableMenuItemBase>
   );
 };
