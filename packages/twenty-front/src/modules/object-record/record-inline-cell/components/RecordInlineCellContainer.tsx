@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Tooltip } from 'react-tooltip';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
@@ -69,6 +70,17 @@ const StyledInlineCellBaseContainer = styled.div`
   user-select: none;
 `;
 
+const StyledTooltip = styled(Tooltip)`
+  background-color: ${({ theme }) => theme.background.primary};
+  box-shadow: ${({ theme }) => theme.boxShadow.light};
+
+  color: ${({ theme }) => theme.font.color.primary};
+
+  font-size: ${({ theme }) => theme.font.size.sm};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
 type RecordInlineCellContainerProps = {
   IconLabel?: IconComponent;
   label?: string;
@@ -116,6 +128,18 @@ export const RecordInlineCellContainer = ({
     }
   };
 
+  const removeWordIcon = (
+    inputString: string | undefined,
+  ): string | undefined => {
+    if (inputString === undefined) {
+      return '';
+    }
+
+    const wordToRemove = 'Icon';
+    const regex = new RegExp(`\\b${wordToRemove}\\b`, 'g');
+    return inputString.replace(regex, '');
+  };
+
   const showEditButton =
     buttonIcon && !isInlineCellInEditMode && isHovered && !editModeContentOnly;
 
@@ -127,18 +151,28 @@ export const RecordInlineCellContainer = ({
       onMouseLeave={handleContainerMouseLeave}
     >
       {(!!IconLabel || !!label) && (
-        <StyledLabelAndIconContainer>
-          {IconLabel && (
-            <StyledIconContainer>
-              <IconLabel stroke={theme.icon.stroke.sm} />
-            </StyledIconContainer>
-          )}
-          {showLabel && label && (
-            <StyledLabelContainer width={labelWidth}>
-              <EllipsisDisplay maxWidth={labelWidth}>{label}</EllipsisDisplay>
-            </StyledLabelContainer>
-          )}
-        </StyledLabelAndIconContainer>
+        <>
+          <StyledLabelAndIconContainer id={IconLabel?.displayName}>
+            {IconLabel && (
+              <StyledIconContainer>
+                <IconLabel stroke={theme.icon.stroke.sm} />
+              </StyledIconContainer>
+            )}
+            {showLabel && label && (
+              <StyledLabelContainer width={labelWidth}>
+                <EllipsisDisplay maxWidth={labelWidth}>{label}</EllipsisDisplay>
+              </StyledLabelContainer>
+            )}
+          </StyledLabelAndIconContainer>
+          <StyledTooltip
+            anchorSelect={`#${IconLabel?.displayName}`}
+            content={label ? label : removeWordIcon(IconLabel?.displayName)}
+            clickable
+            noArrow
+            place="left"
+            positionStrategy="fixed"
+          />
+        </>
       )}
       <StyledValueContainer>
         {isInlineCellInEditMode ? (
