@@ -26,11 +26,8 @@ export class WorkspaceSyncMetadataService {
    * @param dataSourceId
    * @param workspaceId
    */
-  // @Transaction()
   public async syncStandardObjectsAndFieldsMetadata(
     context: WorkspaceSyncContext,
-    // // Maybe we can find a better way to inject the manager here
-    // @TransactionManager() manager?: EntityManager,
   ) {
     this.logger.log('Syncing standard objects and fields metadata');
 
