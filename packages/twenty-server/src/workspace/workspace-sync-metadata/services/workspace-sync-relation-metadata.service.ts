@@ -63,7 +63,6 @@ export class WorkspaceSyncRelationMetadataService {
         FieldMetadataEntity
       >(originalObjectMetadataCollection);
 
-      console.log('1');
       const relationMetadataRepository = manager.getRepository(
         RelationMetadataEntity,
       );
@@ -72,7 +71,6 @@ export class WorkspaceSyncRelationMetadataService {
         [];
       const relationMetadataDeleteCollection: RelationMetadataEntity[] = [];
 
-      console.log('2');
       // Retrieve relation metadata collection from DB
       // TODO: filter out custom relations once isCustom has been added to relationMetadata table
       const originalRelationMetadataCollection =
@@ -80,7 +78,6 @@ export class WorkspaceSyncRelationMetadataService {
           where: { workspaceId: context.workspaceId },
         });
 
-      console.log('3');
       // Create standard relation metadata collection
       const standardRelationMetadataCollection =
         this.standardRelationFactory.create(
@@ -89,7 +86,6 @@ export class WorkspaceSyncRelationMetadataService {
           workspaceFeatureFlagsMap,
         );
 
-      console.log('4');
       const relationComparatorResults =
         this.workspaceRelationComparator.compare(
           originalRelationMetadataCollection,
