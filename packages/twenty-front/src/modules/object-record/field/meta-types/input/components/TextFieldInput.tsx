@@ -1,7 +1,7 @@
 import { useSaveFieldEditModeValue } from '@/object-record/field/hooks/useSaveFieldEditModeValue';
-import { TextInput } from '@/ui/field/input/components/TextInput';
+import { FieldTextAreaOverlay } from '@/ui/field/input/components/FieldTextAreaOverlay';
+import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
 
-import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useTextField } from '../../hooks/useTextField';
 
@@ -55,8 +55,8 @@ export const TextFieldInput = ({
   };
 
   return (
-    <FieldInputOverlay>
-      <TextInput
+    <FieldTextAreaOverlay>
+      <TextAreaInput
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
         value={initialValue}
@@ -68,6 +68,6 @@ export const TextFieldInput = ({
         hotkeyScope={hotkeyScope}
         onChange={handleChange}
       />
-    </FieldInputOverlay>
+    </FieldTextAreaOverlay>
   );
 };
