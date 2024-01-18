@@ -2,17 +2,24 @@ import { Injectable } from '@nestjs/common';
 
 import diff from 'microdiff';
 
+import {
+  ComparatorAction,
+  RelationComparatorResult,
+} from 'src/workspace/workspace-sync-metadata/interfaces/comparator.interface';
+
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { filterIgnoredProperties } from 'src/workspace/workspace-sync-metadata/utils/sync-metadata.util';
 
 @Injectable()
-export class WorkspaceRelationComparatorService {
+export class WorkspaceRelationComparator {
   constructor() {}
 
-  async compare(
+  compare(
     originalRelationMetadataCollection: RelationMetadataEntity[],
     standardRelationMetadataCollection: Partial<RelationMetadataEntity>[],
-  ) {
+  ): RelationComparatorResult[] {
+    const results: RelationComparatorResult[] = [];
+
     // Create a map of standard relations
     const standardRelationMetadataMap =
       standardRelationMetadataCollection.reduce(
@@ -52,15 +59,21 @@ export class WorkspaceRelationComparatorService {
 
     for (const difference of relationMetadataDifference) {
       if (difference.type === 'CREATE') {
-        console.log('CREATE', difference.value);
-        // relationsToCreate.push(difference.value);
+        results.push({
+          action: ComparatorAction.CREATE,
+          object: difference.value,
+        });
       } else if (
         difference.type === 'REMOVE' &&
         difference.path[difference.path.length - 1] !== 'id'
       ) {
-        console.log('REMOVE', difference.oldValue);
-        // relationsToDelete.push(difference.oldValue);
+        results.push({
+          action: ComparatorAction.DELETE,
+          object: difference.oldValue,
+        });
       }
     }
+
+    return results;
   }
 }

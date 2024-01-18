@@ -23,7 +23,7 @@ const fieldPropertiesToIgnore = [
 ];
 
 @Injectable()
-export class WorkspaceFieldComparatorService {
+export class WorkspaceFieldComparator {
   constructor() {}
 
   public compare(

@@ -25,7 +25,7 @@ const objectPropertiesToIgnore = [
 ];
 
 @Injectable()
-export class WorkspaceObjectComparatorService {
+export class WorkspaceObjectComparator {
   constructor() {}
 
   public compare(

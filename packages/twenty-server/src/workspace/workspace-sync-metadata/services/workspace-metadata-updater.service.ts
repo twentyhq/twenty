@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { EntityManager, In } from 'typeorm';
-import fs from 'fs/promises';
 
 import { MappedObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/mapped-metadata.interface';
 import { PartialFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
@@ -12,53 +11,32 @@ import {
   FieldMetadataType,
 } from 'src/metadata/field-metadata/field-metadata.entity';
 import { convertStringifiedFieldsToJSON } from 'src/workspace/workspace-sync-metadata/utils/sync-metadata.util';
+import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
 
-interface WorkspaceMetadataUpdaterContext {
+interface WorkspaceMetadataObjectUpdaterContext {
   objectMetadataCreateCollection: MappedObjectMetadata[];
   objectMetadataUpdateCollection: Partial<ObjectMetadataEntity>[];
   objectMetadataDeleteCollection: ObjectMetadataEntity[];
+}
 
+interface WorkspaceMetadataFieldUpdaterContext {
   fieldMetadataCreateCollection: PartialFieldMetadata[];
   fieldMetadataUpdateCollection: Partial<FieldMetadataEntity>[];
   fieldMetadataDeleteCollection: FieldMetadataEntity[];
 }
 
+interface WorkspaceMetadataRelationUpdaterContext {
+  relationMetadataCreateCollection: Partial<RelationMetadataEntity>[];
+  relationMetadataDeleteCollection: RelationMetadataEntity[];
+}
+
 @Injectable()
 export class WorkspaceMetadataUpdaterService {
-  constructor() {}
+  private readonly logger = new Logger(WorkspaceMetadataUpdaterService.name);
 
-  public async update(
+  async updateObjectMetadata(
     manager: EntityManager,
-    context: WorkspaceMetadataUpdaterContext,
-  ): Promise<{
-    createdObjectMetadataCollection: ObjectMetadataEntity[];
-    updatedObjectMetadataCollection: ObjectMetadataEntity[];
-    createdFieldMetadataCollection: FieldMetadataEntity[];
-    updatedFieldMetadataCollection: FieldMetadataEntity[];
-  }> {
-    console.log('-> 1');
-    const updateObjectMetadataResult = await this.updateObjectMetadata(
-      manager,
-      context,
-    );
-
-    console.log('-> 2');
-    const updateFieldMetadataResult = await this.updateFieldMetadata(
-      manager,
-      context,
-    );
-
-    console.log('-> 3');
-
-    return {
-      ...updateObjectMetadataResult,
-      ...updateFieldMetadataResult,
-    };
-  }
-
-  private async updateObjectMetadata(
-    manager: EntityManager,
-    context: WorkspaceMetadataUpdaterContext,
+    context: WorkspaceMetadataObjectUpdaterContext,
   ): Promise<{
     createdObjectMetadataCollection: ObjectMetadataEntity[];
     updatedObjectMetadataCollection: ObjectMetadataEntity[];
@@ -113,21 +91,14 @@ export class WorkspaceMetadataUpdaterService {
     };
   }
 
-  private async updateFieldMetadata(
+  async updateFieldMetadata(
     manager: EntityManager,
-    context: WorkspaceMetadataUpdaterContext,
+    context: WorkspaceMetadataFieldUpdaterContext,
   ): Promise<{
     createdFieldMetadataCollection: FieldMetadataEntity[];
     updatedFieldMetadataCollection: FieldMetadataEntity[];
   }> {
-    console.log('--> 1');
     const fieldMetadataRepository = manager.getRepository(FieldMetadataEntity);
-
-    console.log('--> 2');
-    await fs.writeFile(
-      './field-metadata-create-collection.json',
-      JSON.stringify(context.fieldMetadataCreateCollection, null, 2),
-    );
 
     /**
      * Create field metadata
@@ -137,8 +108,6 @@ export class WorkspaceMetadataUpdaterService {
         convertStringifiedFieldsToJSON(field),
       ),
     );
-
-    console.log('--> 3');
 
     /**
      * Update field metadata
@@ -152,7 +121,6 @@ export class WorkspaceMetadataUpdaterService {
       ),
     );
 
-    console.log('--> 4');
     /**
      * Delete field metadata
      */
@@ -162,7 +130,6 @@ export class WorkspaceMetadataUpdaterService {
         (field) => field.type !== FieldMetadataType.RELATION,
       );
 
-    console.log('--> 5');
     if (fieldMetadataDeleteCollectionWithoutRelationType.length > 0) {
       await fieldMetadataRepository.delete(
         fieldMetadataDeleteCollectionWithoutRelationType.map(
@@ -171,11 +138,43 @@ export class WorkspaceMetadataUpdaterService {
       );
     }
 
-    console.log('--> 6');
-
     return {
       createdFieldMetadataCollection,
       updatedFieldMetadataCollection,
+    };
+  }
+
+  async updateRelationMetadata(
+    manager: EntityManager,
+    context: WorkspaceMetadataRelationUpdaterContext,
+  ): Promise<{
+    createdRelationMetadataCollection: RelationMetadataEntity[];
+  }> {
+    const relationMetadataRepository = manager.getRepository(
+      RelationMetadataEntity,
+    );
+
+    /**
+     * Create relation metadata
+     */
+    const createdRelationMetadataCollection =
+      await relationMetadataRepository.save(
+        context.relationMetadataCreateCollection,
+      );
+
+    /**
+     * Delete relation metadata
+     */
+    if (context.relationMetadataDeleteCollection.length > 0) {
+      await relationMetadataRepository.delete(
+        context.relationMetadataDeleteCollection.map(
+          (relationMetadata) => relationMetadata.id,
+        ),
+      );
+    }
+
+    return {
+      createdRelationMetadataCollection,
     };
   }
 }

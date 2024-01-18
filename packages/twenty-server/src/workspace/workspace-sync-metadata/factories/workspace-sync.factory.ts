@@ -7,11 +7,17 @@ import {
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import {
   WorkspaceMigrationColumnActionType,
+  WorkspaceMigrationColumnRelation,
   WorkspaceMigrationEntity,
   WorkspaceMigrationTableAction,
 } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 import { WorkspaceMigrationFactory } from 'src/metadata/workspace-migration/workspace-migration.factory';
+import {
+  RelationMetadataEntity,
+  RelationMetadataType,
+} from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { camelCase } from 'src/utils/camel-case';
 
 @Injectable()
 export class WorkspaceSyncFactory {
@@ -129,6 +135,78 @@ export class WorkspaceSyncFactory {
         });
       });
     }
+
+    return workspaceMigrations;
+  }
+
+  async createRelationMigration(
+    originalObjectMetadataCollection: ObjectMetadataEntity[],
+    createdRelationMetadataCollection: RelationMetadataEntity[],
+    // TODO: handle delete migrations
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    relationMetadataDeleteCollection: RelationMetadataEntity[],
+  ): Promise<Partial<WorkspaceMigrationEntity>[]> {
+    const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
+
+    if (createdRelationMetadataCollection.length > 0) {
+      createdRelationMetadataCollection.map((relation) => {
+        const toObjectMetadata = originalObjectMetadataCollection.find(
+          (object) => object.id === relation.toObjectMetadataId,
+        );
+
+        const fromObjectMetadata = originalObjectMetadataCollection.find(
+          (object) => object.id === relation.fromObjectMetadataId,
+        );
+
+        if (!toObjectMetadata) {
+          throw new Error(
+            `ObjectMetadata with id ${relation.toObjectMetadataId} not found`,
+          );
+        }
+
+        if (!fromObjectMetadata) {
+          throw new Error(
+            `ObjectMetadata with id ${relation.fromObjectMetadataId} not found`,
+          );
+        }
+
+        const toFieldMetadata = toObjectMetadata.fields.find(
+          (field) => field.id === relation.toFieldMetadataId,
+        );
+
+        if (!toFieldMetadata) {
+          throw new Error(
+            `FieldMetadata with id ${relation.toFieldMetadataId} not found`,
+          );
+        }
+
+        const migrations = [
+          {
+            name: computeObjectTargetTable(toObjectMetadata),
+            action: 'alter',
+            columns: [
+              {
+                action: WorkspaceMigrationColumnActionType.RELATION,
+                columnName: `${camelCase(toFieldMetadata.name)}Id`,
+                referencedTableName:
+                  computeObjectTargetTable(fromObjectMetadata),
+                referencedTableColumnName: 'id',
+                isUnique:
+                  relation.relationType === RelationMetadataType.ONE_TO_ONE,
+              } satisfies WorkspaceMigrationColumnRelation,
+            ],
+          } satisfies WorkspaceMigrationTableAction,
+        ];
+
+        workspaceMigrations.push({
+          workspaceId: relation.workspaceId,
+          isCustom: false,
+          migrations,
+        });
+      });
+    }
+
+    // TODO: handle delete migrations
 
     return workspaceMigrations;
   }

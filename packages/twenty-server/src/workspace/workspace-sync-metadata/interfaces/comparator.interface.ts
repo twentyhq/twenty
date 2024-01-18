@@ -2,6 +2,7 @@ import { MappedObjectMetadata } from 'src/workspace/workspace-sync-metadata/inte
 
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
+import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
 
 import { PartialFieldMetadata } from './partial-field-metadata.interface';
 
@@ -43,6 +44,5 @@ export type FieldComparatorResult =
   | ComparatorDeleteResult<FieldMetadataEntity>;
 
 export type RelationComparatorResult =
-  | ComparatorCreateResult<PartialFieldMetadata>
-  | ComparatorUpdateResult<Partial<FieldMetadataEntity> & { id: string }>
-  | ComparatorDeleteResult<FieldMetadataEntity>;
+  | ComparatorCreateResult<Partial<RelationMetadataEntity>>
+  | ComparatorDeleteResult<RelationMetadataEntity>;

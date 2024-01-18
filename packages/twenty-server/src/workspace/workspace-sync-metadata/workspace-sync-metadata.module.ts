@@ -8,12 +8,12 @@ import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-
 import { WorkspaceMigrationEntity } from 'src/metadata/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationModule } from 'src/metadata/workspace-migration/workspace-migration.module';
 import { WorkspaceMigrationRunnerModule } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.module';
-import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync.metadata.service';
+import { WorkspaceSyncMetadataService } from 'src/workspace/workspace-sync-metadata/workspace-sync-metadata.service';
 import { workspaceSyncMetadataFactories } from 'src/workspace/workspace-sync-metadata/factories';
-import { WorkspaceObjectComparatorService } from 'src/workspace/workspace-sync-metadata/services/workspace-object-comparator.service';
-import { WorkspaceFieldComparatorService } from 'src/workspace/workspace-sync-metadata/services/workspace-field-comparator.service';
+import { workspaceSyncMetadataComparators } from 'src/workspace/workspace-sync-metadata/comparators';
 import { WorkspaceMetadataUpdaterService } from 'src/workspace/workspace-sync-metadata/services/workspace-metadata-updater.service';
-import { WorkspaceRelationComparatorService } from 'src/workspace/workspace-sync-metadata/services/workspace-relation-comparator.service';
+import { WorkspaceSyncObjectMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
+import { WorkspaceSyncRelationMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-relation-metadata.service';
 
 @Module({
   imports: [
@@ -32,10 +32,10 @@ import { WorkspaceRelationComparatorService } from 'src/workspace/workspace-sync
   ],
   providers: [
     ...workspaceSyncMetadataFactories,
-    WorkspaceObjectComparatorService,
-    WorkspaceFieldComparatorService,
-    WorkspaceRelationComparatorService,
+    ...workspaceSyncMetadataComparators,
     WorkspaceMetadataUpdaterService,
+    WorkspaceSyncObjectMetadataService,
+    WorkspaceSyncRelationMetadataService,
     WorkspaceSyncMetadataService,
   ],
   exports: [WorkspaceSyncMetadataService],

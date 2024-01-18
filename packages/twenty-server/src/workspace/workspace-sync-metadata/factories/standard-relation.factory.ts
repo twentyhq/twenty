@@ -18,6 +18,8 @@ export class StandardRelationFactory {
     originalObjectMetadataMap: Record<string, MappedObjectMetadataEntity>,
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<RelationMetadataEntity>[] {
+    console.log('_> 1');
+
     return standardObjectMetadata.flatMap((standardObjectMetadata) =>
       this.createRelationMetadata(
         standardObjectMetadata,
@@ -34,6 +36,7 @@ export class StandardRelationFactory {
     originalObjectMetadataMap: Record<string, MappedObjectMetadataEntity>,
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<RelationMetadataEntity>[] {
+    console.log('__> 1');
     const objectMetadata = TypedReflect.getMetadata(
       'objectMetadata',
       standardObjectMetadata,
@@ -43,11 +46,15 @@ export class StandardRelationFactory {
       standardObjectMetadata,
     );
 
+    console.log('__> 2');
+
     if (!objectMetadata) {
       throw new Error(
         `Object metadata decorator not found, can\'t parse ${standardObjectMetadata.name}`,
       );
     }
+
+    console.log('__> 3');
 
     if (
       !relationMetadata ||
@@ -56,14 +63,19 @@ export class StandardRelationFactory {
       return [];
     }
 
+    console.log('__> 4');
+
     return relationMetadata
       .filter(
         (relation) => !isGatedAndNotEnabled(relation, workspaceFeatureFlagsMap),
       )
       .map((relation) => {
+        console.log('___> 1');
+
         const fromObjectMetadata =
           originalObjectMetadataMap[relation.fromObjectNameSingular];
 
+        console.log('___> 2');
         assert(
           fromObjectMetadata,
           `Object ${relation.fromObjectNameSingular} not found in DB 
@@ -72,6 +84,8 @@ export class StandardRelationFactory {
 
         const toObjectMetadata =
           originalObjectMetadataMap[relation.toObjectNameSingular];
+
+        console.log('___> 3');
 
         assert(
           toObjectMetadata,
@@ -82,6 +96,8 @@ export class StandardRelationFactory {
         const fromFieldMetadata =
           fromObjectMetadata?.fields[relation.fromFieldMetadataName];
 
+        console.log('___> 4');
+
         assert(
           fromFieldMetadata,
           `Field ${relation.fromFieldMetadataName} not found in object ${relation.fromObjectNameSingular}
@@ -91,11 +107,15 @@ export class StandardRelationFactory {
         const toFieldMetadata =
           toObjectMetadata?.fields[relation.toFieldMetadataName];
 
+        console.log('___> 5');
+
         assert(
           toFieldMetadata,
           `Field ${relation.toFieldMetadataName} not found in object ${relation.toObjectNameSingular}
         for relation TO defined in class ${objectMetadata.nameSingular}`,
         );
+
+        console.log('___> 6');
 
         return {
           relationType: relation.type,
