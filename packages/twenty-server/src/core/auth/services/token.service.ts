@@ -1,8 +1,8 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
-  MethodNotAllowedException,
   NotFoundException,
   UnauthorizedException,
   UnprocessableEntityException,
@@ -352,7 +352,7 @@ export class TokenService {
             long: true,
           },
         )} to generate again.`,
-        MethodNotAllowedException,
+        BadRequestException,
       );
     }
 
@@ -392,7 +392,10 @@ export class TokenService {
       link: resetLink,
       userName: `${user.firstName} ${user.lastName}`,
       duration: ms(
-        differenceInMilliseconds(resetToken.passwordResetTokenExpiresAt, new Date()),
+        differenceInMilliseconds(
+          resetToken.passwordResetTokenExpiresAt,
+          new Date(),
+        ),
         {
           long: true,
         },
