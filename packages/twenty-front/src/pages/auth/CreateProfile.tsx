@@ -99,6 +99,7 @@ export const CreateProfile = () => {
               firstName: data.firstName,
               lastName: data.lastName,
             },
+            colorScheme: 'System',
           },
         });
 
@@ -110,6 +111,7 @@ export const CreateProfile = () => {
                 firstName: data.firstName,
                 lastName: data.lastName,
               },
+              colorScheme: 'System',
             }) as any,
         );
 
