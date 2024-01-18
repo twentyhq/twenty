@@ -142,8 +142,6 @@ export class WorkspaceSyncFactory {
   async createRelationMigration(
     originalObjectMetadataCollection: ObjectMetadataEntity[],
     createdRelationMetadataCollection: RelationMetadataEntity[],
-    // TODO: handle delete migrations
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     relationMetadataDeleteCollection: RelationMetadataEntity[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
@@ -206,7 +204,33 @@ export class WorkspaceSyncFactory {
       });
     }
 
-    // TODO: handle delete migrations
+    if (relationMetadataDeleteCollection.length > 0) {
+      relationMetadataDeleteCollection.map((relation) => {
+        const toObjectMetadata = originalObjectMetadataCollection.find(
+          (object) => object.id === relation.toObjectMetadataId,
+        );
+
+        if (!toObjectMetadata) {
+          throw new Error(
+            `ObjectMetadata with id ${relation.toObjectMetadataId} not found`,
+          );
+        }
+
+        const migrations = [
+          {
+            name: computeObjectTargetTable(toObjectMetadata),
+            action: 'drop',
+            columns: [],
+          } satisfies WorkspaceMigrationTableAction,
+        ];
+
+        workspaceMigrations.push({
+          workspaceId: relation.workspaceId,
+          isCustom: false,
+          migrations,
+        });
+      });
+    }
 
     return workspaceMigrations;
   }
