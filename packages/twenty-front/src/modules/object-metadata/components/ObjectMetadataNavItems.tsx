@@ -1,15 +1,32 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { useCachedQueries } from '@/apollo/hooks/useCachedQueries';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
 export const ObjectMetadataNavItems = () => {
-  const { activeObjectMetadataItems } = useObjectMetadataItemForSettings();
+  const { activeObjectMetadataItems, findObjectMetadataItemByNamePlural } =
+    useObjectMetadataItemForSettings();
   const navigate = useNavigate();
   const { getIcon } = useIcons();
   const currentPath = useLocation().pathname;
+  const { readQuery } = useCachedQueries();
+  const generatedFindManyRecordsQuery = useGenerateFindManyRecordsQuery();
 
+  const viewObjectMetadataItem = findObjectMetadataItemByNamePlural('views');
+
+  console.log('viewObjectMetadataItem', viewObjectMetadataItem);
+  if (viewObjectMetadataItem) {
+    const cachedViews = readQuery({
+      query: generatedFindManyRecordsQuery({
+        objectMetadataItem: viewObjectMetadataItem,
+      }),
+    });
+
+    console.log('cachedViews', cachedViews);
+  }
   return (
     <>
       {[
