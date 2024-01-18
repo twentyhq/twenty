@@ -31,13 +31,12 @@ export const ObjectMetadataItemsLoadEffect = () => {
       console.log('viewObjectMetadataItem', viewObjectMetadataItem);
 
       if (viewObjectMetadataItem) {
-        console.log('writing query');
-        writeQuery({
-          query: generatedFindManyRecordsQuery({
-            objectMetadataItem: viewObjectMetadataItem,
-          }),
-          data: { views: preloadedViews },
-        });
+        // writeQuery({
+        //   query: generatedFindManyRecordsQuery({
+        //     objectMetadataItem: viewObjectMetadataItem,
+        //   }),
+        //   data: { views: preloadedViews },
+        // });
       }
     }
   }, [

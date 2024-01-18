@@ -26,6 +26,7 @@ export const useCachedQueries = () => {
     variables?: Record<string, any>;
     data: any;
   }) => {
+    console.log(query);
     apolloClient.writeQuery({
       query,
       variables,

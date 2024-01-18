@@ -34,6 +34,7 @@ export const PageChangeEffect = () => {
   const setHotkeyScope = useSetHotkeyScope();
 
   const location = useLocation();
+  console.log(location);
 
   const eventTracker = useEventTracker();
 

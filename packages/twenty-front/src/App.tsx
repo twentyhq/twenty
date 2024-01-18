@@ -1,4 +1,6 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { useApolloClient } from '@apollo/client';
+import gql from 'graphql-tag';
 
 import { RecordShowPage } from '@/object-record/components/RecordShowPage';
 import { RecordTablePage } from '@/object-record/components/RecordTablePage';
@@ -40,6 +42,26 @@ import { getPageTitleFromPath } from '~/utils/title-utils';
 export const App = () => {
   const { pathname } = useLocation();
   const pageTitle = getPageTitleFromPath(pathname);
+  const apolloClient = useApolloClient();
+
+  const queries = apolloClient.readFragment({
+    id: 'ROOT_QUERY',
+    fragment: gql`
+      fragment RootQuery on Query {
+        views {
+          edges {
+            node {
+              id
+            }
+          }
+        }
+      }
+    `,
+  });
+
+  const cachedViews = queries?.views;
+  console.log('app', cachedViews);
+
   return (
     <>
       <PageTitle title={pageTitle} />

@@ -1,32 +1,54 @@
 import { useLocation, useNavigate } from 'react-router-dom';
+import { gql, useApolloClient } from '@apollo/client';
 
 import { useCachedQueries } from '@/apollo/hooks/useCachedQueries';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
-import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useGetRecordFromCache } from '@/object-record/hooks/useGetRecordFromCache';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
 export const ObjectMetadataNavItems = () => {
-  const { activeObjectMetadataItems, findObjectMetadataItemByNamePlural } =
-    useObjectMetadataItemForSettings();
+  const { activeObjectMetadataItems } = useObjectMetadataItemForSettings();
   const navigate = useNavigate();
   const { getIcon } = useIcons();
   const currentPath = useLocation().pathname;
   const { readQuery } = useCachedQueries();
-  const generatedFindManyRecordsQuery = useGenerateFindManyRecordsQuery();
 
-  const viewObjectMetadataItem = findObjectMetadataItemByNamePlural('views');
+  const apolloClient = useApolloClient();
 
-  console.log('viewObjectMetadataItem', viewObjectMetadataItem);
-  if (viewObjectMetadataItem) {
-    const cachedViews = readQuery({
-      query: generatedFindManyRecordsQuery({
-        objectMetadataItem: viewObjectMetadataItem,
-      }),
-    });
+  const readFromCache = useGetRecordFromCache;
+  const { findManyRecordsQuery } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.View,
+  });
 
-    console.log('cachedViews', cachedViews);
-  }
+  const queries = apolloClient.readFragment({
+    id: 'ROOT_QUERY',
+    fragment: gql`
+      fragment RootQuery on Query {
+        views {
+          edges {
+            node {
+              id
+            }
+          }
+        }
+      }
+    `,
+  });
+
+  const cachedViews = queries?.views;
+
+  const { records } = useFindManyRecords({
+    skip: cachedViews,
+    objectNameSingular: CoreObjectNameSingular.View,
+    useRecordsWithoutConnection: true,
+  });
+
+  console.log('navItemviews', cachedViews ?? records);
+
   return (
     <>
       {[

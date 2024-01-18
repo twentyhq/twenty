@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useApolloClient } from '@apollo/client';
+import gql from 'graphql-tag';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -33,6 +35,26 @@ export const ViewBarEffect = () => {
   const viewType = useRecoilValue(viewTypeState);
   const viewObjectMetadataId = useRecoilValue(viewObjectMetadataIdState);
   const setCurrentViewId = useSetRecoilState(currentViewIdState);
+
+  const apolloClient = useApolloClient();
+
+  const queries = apolloClient.readFragment({
+    id: 'ROOT_QUERY',
+    fragment: gql`
+      fragment RootQuery on Query {
+        views {
+          edges {
+            node {
+              id
+            }
+          }
+        }
+      }
+    `,
+  });
+
+  const cachedViews = queries?.views;
+  console.log(cachedViews);
 
   const { records: newViews } = useFindManyRecords<GraphQLView>({
     skip: !viewObjectMetadataId,
