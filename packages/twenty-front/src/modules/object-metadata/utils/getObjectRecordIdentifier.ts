@@ -56,7 +56,12 @@ export const getObjectRecordIdentifier = ({
     objectMetadataItem,
   });
 
-  const linkToShowPage = `${basePathToShowPage}${record.id}`;
+  const isWorkspaceMemberObjectMetadata =
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.WorkspaceMember;
+
+  const linkToShowPage = isWorkspaceMemberObjectMetadata
+    ? ''
+    : `${basePathToShowPage}${record.id}`;
 
   return {
     id: record.id,
