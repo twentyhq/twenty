@@ -5,11 +5,10 @@ import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import {
-  ClickOutsideMode,
-  useListenClickOutside,
-} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
+import { ClickOutsideMode } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from '~/utils/isDefined';
 
@@ -52,6 +51,10 @@ export const RightDrawer = () => {
   const { closeRightDrawer } = useRightDrawer();
 
   const rightDrawerRef = useRef<HTMLDivElement>(null);
+
+  const { useListenClickOutside } = useClickOutsideListener(
+    RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
+  );
 
   useListenClickOutside({
     refs: [rightDrawerRef],

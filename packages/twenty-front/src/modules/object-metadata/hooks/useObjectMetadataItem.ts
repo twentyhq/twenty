@@ -8,6 +8,7 @@ import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapTo
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { useGenerateCreateManyRecordMutation } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
 import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
@@ -120,9 +121,8 @@ export const useObjectMetadataItem = (
       objectMetadataItem,
     });
 
-  const labelIdentifierFieldMetadata = objectMetadataItem.fields.find(
-    ({ name }) => name === 'name',
-  );
+  const labelIdentifierFieldMetadata =
+    getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
   const basePathToShowPage = getBasePathToShowPage({
     objectMetadataItem,

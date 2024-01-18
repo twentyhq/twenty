@@ -3,30 +3,24 @@ import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 import { useSetRecoilState } from 'recoil';
 
-import { identifierMapper } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
 import { ChipFieldDisplay } from '@/object-record/field/meta-types/display/components/ChipFieldDisplay';
 import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
-import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { FieldContext } from '../../../../contexts/FieldContext';
 
 const ChipFieldValueSetterEffect = () => {
-  const { setIdentifiersMapper } = useRelationPicker({
-    relationPickerScopeId: 'relation-picker',
-  });
-
   const setEntityFields = useSetRecoilState(entityFieldsFamilyState('123'));
 
   useEffect(() => {
-    setIdentifiersMapper(() => identifierMapper);
     setEntityFields({
+      id: 'henry',
       name: {
         firstName: 'Henry',
         lastName: 'Cavill',
       },
     });
-  }, [setEntityFields, setIdentifiersMapper]);
+  }, [setEntityFields]);
 
   return null;
 };

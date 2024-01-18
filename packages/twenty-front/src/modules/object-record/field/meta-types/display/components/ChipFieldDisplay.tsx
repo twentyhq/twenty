@@ -1,28 +1,12 @@
+import { RecordChip } from '@/object-record/components/RecordChip';
 import { useChipField } from '@/object-record/field/meta-types/hooks/useChipField';
-import { EntityChip } from '@/ui/display/chip/components/EntityChip';
 
 export const ChipFieldDisplay = () => {
-  const {
-    record,
-    entityId,
-    identifiersMapper,
-    objectNameSingular,
-    basePathToShowPage,
-  } = useChipField();
+  const { objectNameSingular, record } = useChipField();
 
-  // TODO: remove this and use ObjectRecordChip instead
-  const identifiers = identifiersMapper?.(record, objectNameSingular ?? '');
-
-  const linkToEntity =
-    !!basePathToShowPage && !!entityId ? basePathToShowPage + entityId : '';
+  if (!record) return null;
 
   return (
-    <EntityChip
-      name={identifiers?.name ?? ''}
-      avatarUrl={identifiers?.avatarUrl}
-      avatarType={identifiers?.avatarType}
-      entityId={entityId}
-      linkToEntity={linkToEntity}
-    />
+    <RecordChip objectNameSingular={objectNameSingular || ''} record={record} />
   );
 };
