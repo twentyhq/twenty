@@ -31,11 +31,16 @@ export class MessageParticipantObjectMetadata extends BaseObjectMetadata {
   message: MessageObjectMetadata;
 
   @FieldMetadata({
-    // this will be a type select: from, to, cc, bcc
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.SELECT,
     label: 'Role',
     description: 'Role',
     icon: 'IconAt',
+    options: [
+      { value: 'from', label: 'From', position: 0, color: 'green' },
+      { value: 'to', label: 'To', position: 1, color: 'blue' },
+      { value: 'cc', label: 'Cc', position: 2, color: 'orange' },
+      { value: 'bcc', label: 'Bcc', position: 3, color: 'red' },
+    ],
     defaultValue: { value: 'from' },
   })
   role: string;

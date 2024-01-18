@@ -96,6 +96,6 @@ export const RecordTableCell = ({
         />
       }
       nonEditModeContent={<FieldDisplay />}
-    ></TableCellContainer>
+    />
   );
 };
