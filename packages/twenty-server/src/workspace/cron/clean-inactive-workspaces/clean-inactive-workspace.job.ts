@@ -12,15 +12,17 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceEntity } from 'src/metadata/data-source/data-source.entity';
 import { UserService } from 'src/core/user/services/user.service';
 import { EmailService } from 'src/integrations/email/email.service';
-import CleanInactiveWorkspaceEmail from 'src/workspace/cron/clean-inactive-workspaces/clean-inactive-workspaces.email';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/core/feature-flag/feature-flag.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
-import DeleteInactiveWorkspaceEmail from 'src/workspace/cron/clean-inactive-workspaces/delete-inactive-workspaces.email';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
+import {
+  CleanInactiveWorkspaceEmail,
+  DeleteInactiveWorkspaceEmail,
+} from 'src/emails/generated';
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
 
