@@ -4,7 +4,7 @@ import { EntityChip } from '@/ui/display/chip/components/EntityChip';
 import { useRelationField } from '../../hooks/useRelationField';
 
 export const RelationFieldDisplay = () => {
-  const { fieldValue, fieldDefinition } = useRelationField();
+  const { fieldValue, fieldDefinition, maxWidth } = useRelationField();
 
   const { identifiersMapper } = useRelationPicker({
     relationPickerScopeId: 'relation-picker',
@@ -25,7 +25,7 @@ export const RelationFieldDisplay = () => {
       name={objectIdentifiers?.name ?? ''}
       avatarUrl={objectIdentifiers?.avatarUrl}
       avatarType={objectIdentifiers?.avatarType}
-      maxWidth="120px"
+      maxWidth={maxWidth ? `${maxWidth - 35}px` : ''}
     />
   );
 };

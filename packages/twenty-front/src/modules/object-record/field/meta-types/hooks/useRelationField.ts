@@ -9,7 +9,7 @@ import { isFieldRelation } from '../../types/guards/isFieldRelation';
 
 // TODO: we will be able to type more precisely when we will have custom field and custom entities support
 export const useRelationField = () => {
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { entityId, fieldDefinition, maxWidth } = useContext(FieldContext);
 
   assertFieldMetadata('RELATION', isFieldRelation, fieldDefinition);
 
@@ -33,5 +33,6 @@ export const useRelationField = () => {
     initialValue,
     initialSearchValue,
     setFieldValue,
+    maxWidth,
   };
 };

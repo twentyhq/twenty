@@ -35,7 +35,7 @@ export const EntityChip = ({
   variant = EntityChipVariant.Regular,
   LeftIcon,
   className,
-  maxWidth,
+  maxWidth
 }: EntityChipProps) => {
   const navigate = useNavigate();
 
