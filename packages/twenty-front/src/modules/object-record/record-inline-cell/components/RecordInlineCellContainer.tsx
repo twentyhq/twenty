@@ -128,18 +128,6 @@ export const RecordInlineCellContainer = ({
     }
   };
 
-  const removeWordIcon = (
-    inputString: string | undefined,
-  ): string | undefined => {
-    if (inputString === undefined) {
-      return '';
-    }
-
-    const wordToRemove = 'Icon';
-    const regex = new RegExp(`\\b${wordToRemove}\\b`, 'g');
-    return inputString.replace(regex, '');
-  };
-
   const showEditButton =
     buttonIcon && !isInlineCellInEditMode && isHovered && !editModeContentOnly;
 
@@ -151,28 +139,26 @@ export const RecordInlineCellContainer = ({
       onMouseLeave={handleContainerMouseLeave}
     >
       {(!!IconLabel || !!label) && (
-        <>
-          <StyledLabelAndIconContainer id={IconLabel?.displayName}>
-            {IconLabel && (
-              <StyledIconContainer>
-                <IconLabel stroke={theme.icon.stroke.sm} />
-              </StyledIconContainer>
-            )}
-            {showLabel && label && (
-              <StyledLabelContainer width={labelWidth}>
-                <EllipsisDisplay maxWidth={labelWidth}>{label}</EllipsisDisplay>
-              </StyledLabelContainer>
-            )}
-          </StyledLabelAndIconContainer>
+        <StyledLabelAndIconContainer id={label}>
+          {IconLabel && (
+            <StyledIconContainer>
+              <IconLabel stroke={theme.icon.stroke.sm} />
+            </StyledIconContainer>
+          )}
+          {showLabel && label && (
+            <StyledLabelContainer width={labelWidth}>
+              <EllipsisDisplay maxWidth={labelWidth}>{label}</EllipsisDisplay>
+            </StyledLabelContainer>
+          )}
           <StyledTooltip
-            anchorSelect={`#${IconLabel?.displayName}`}
-            content={label ? label : removeWordIcon(IconLabel?.displayName)}
+            anchorSelect={`#${label}`}
+            content={label}
             clickable
             noArrow
             place="left"
             positionStrategy="fixed"
           />
-        </>
+        </StyledLabelAndIconContainer>
       )}
       <StyledValueContainer>
         {isInlineCellInEditMode ? (
