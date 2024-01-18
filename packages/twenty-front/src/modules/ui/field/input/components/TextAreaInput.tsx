@@ -24,6 +24,8 @@ const StyledTextArea = styled(TextareaAutosize)`
   ${textInputStyle}
   width: 100%;
   resize: none;
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
+  border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   padding: ${({ theme }) => theme.spacing(2)};
   background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
