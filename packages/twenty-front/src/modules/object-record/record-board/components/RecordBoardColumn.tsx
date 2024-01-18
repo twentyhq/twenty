@@ -108,15 +108,18 @@ export const RecordBoardColumn = ({
               onDelete={onDelete}
             />
             <BoardColumnCardsContainer droppableProvided={droppableProvided}>
-              {cardIds.map((cardId, index) => (
-                <BoardCardIdContext.Provider value={cardId} key={cardId}>
-                  <RecordBoardCard
-                    index={index}
-                    cardId={cardId}
-                    recordBoardOptions={recordBoardOptions}
-                  />
-                </BoardCardIdContext.Provider>
-              ))}
+              {cardIds
+                .slice()
+                .reverse()
+                .map((cardId, index) => (
+                  <BoardCardIdContext.Provider value={cardId} key={cardId}>
+                    <RecordBoardCard
+                      index={index}
+                      cardId={cardId}
+                      recordBoardOptions={recordBoardOptions}
+                    />
+                  </BoardCardIdContext.Provider>
+                ))}
               <Draggable
                 draggableId={`new-${recordBoardColumnId}`}
                 index={cardIds.length}
