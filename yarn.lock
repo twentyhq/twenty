@@ -21095,7 +21095,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-fetch@npm:^3.1.5":
+"cross-fetch@npm:^3.0.4, cross-fetch@npm:^3.1.5":
   version: 3.1.8
   resolution: "cross-fetch@npm:3.1.8"
   dependencies:
@@ -28898,6 +28898,16 @@ __metadata:
     jest-mock: "npm:^29.7.0"
     jest-util: "npm:^29.7.0"
   checksum: 61f04fec077f8b1b5c1a633e3612fc0c9aa79a0ab7b05600683428f1e01a4d35346c474bde6f439f9fcc1a4aa9a2861ff852d079a43ab64b02105d1004b2592b
+  languageName: node
+  linkType: hard
+
+"jest-fetch-mock@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "jest-fetch-mock@npm:3.0.3"
+  dependencies:
+    cross-fetch: "npm:^3.0.4"
+    promise-polyfill: "npm:^8.1.3"
+  checksum: 21ffe8c902ca5adafa7ed61760e100e4c290e99b0b487645f5bb92938ea64c2d1d9dc8af46e65fb7917d6237586067d53af756583a77330dbb4fbda079a63c29
   languageName: node
   linkType: hard
 
@@ -36887,6 +36897,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"promise-polyfill@npm:^8.1.3":
+  version: 8.3.0
+  resolution: "promise-polyfill@npm:8.3.0"
+  checksum: 97141f07a31a6be135ec9ed53700a3423a771cabec0ba5e08fcb2bf8cfda855479ff70e444fceb938f560be42b450cd032c14f4a940ed2ad1e5b4dcb78368dce
+  languageName: node
+  linkType: hard
+
 "promise-retry@npm:^2.0.1":
   version: 2.0.1
   resolution: "promise-retry@npm:2.0.1"
@@ -42560,6 +42577,7 @@ __metadata:
     immer: "npm:^10.0.2"
     jest: "npm:29.7.0"
     jest-environment-jsdom: "npm:29.7.0"
+    jest-fetch-mock: "npm:^3.0.3"
     jest-mock-extended: "npm:^3.0.4"
     js-cookie: "npm:^3.0.5"
     js-levenshtein: "npm:^1.1.6"
