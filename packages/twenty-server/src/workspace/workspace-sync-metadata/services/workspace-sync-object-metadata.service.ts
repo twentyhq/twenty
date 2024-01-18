@@ -61,10 +61,7 @@ export class WorkspaceSyncObjectMetadataService {
 
       // Create standard object metadata collection
       const standardObjectMetadataCollection =
-        await this.standardObjectFactory.create(
-          context,
-          workspaceFeatureFlagsMap,
-        );
+        this.standardObjectFactory.create(context, workspaceFeatureFlagsMap);
 
       // Create map of original and standard object metadata by unique identifier
       const originalObjectMetadataMap = mapObjectMetadataByUniqueIdentifier<

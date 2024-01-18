@@ -10,6 +10,8 @@ import {
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { filterIgnoredProperties } from 'src/workspace/workspace-sync-metadata/utils/sync-metadata.util';
 
+const relationPropertiesToIgnore = ['createdAt', 'updatedAt'];
+
 @Injectable()
 export class WorkspaceRelationComparator {
   constructor() {}
@@ -38,7 +40,7 @@ export class WorkspaceRelationComparator {
     const originalRelationMetadataMapWithoutIgnoredProperties =
       originalRelationMetadataCollection
         .map((relationMetadata) =>
-          filterIgnoredProperties(relationMetadata, ['createdAt', 'updatedAt']),
+          filterIgnoredProperties(relationMetadata, relationPropertiesToIgnore),
         )
         .reduce(
           (result, currentObject) => {

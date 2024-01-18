@@ -11,25 +11,22 @@ import { isGatedAndNotEnabled } from 'src/workspace/workspace-sync-metadata/util
 
 @Injectable()
 export class StandardObjectFactory {
-  async create(
+  create(
     context: WorkspaceSyncContext,
     workspaceFeatureFlagsMap: FeatureFlagMap,
-  ): Promise<PartialObjectMetadata[]> {
-    const metadataPromises = standardObjectMetadata.map((metadata) =>
-      this.createObjectMetadata(metadata, context, workspaceFeatureFlagsMap),
-    );
-    const resolvedMetadata = await Promise.all(metadataPromises);
-
-    return resolvedMetadata.filter(
-      (metadata): metadata is PartialObjectMetadata => !!metadata,
-    );
+  ): PartialObjectMetadata[] {
+    return standardObjectMetadata
+      .map((metadata) =>
+        this.createObjectMetadata(metadata, context, workspaceFeatureFlagsMap),
+      )
+      .filter((metadata): metadata is PartialObjectMetadata => !!metadata);
   }
 
-  private async createObjectMetadata(
+  private createObjectMetadata(
     metadata: typeof BaseObjectMetadata,
     context: WorkspaceSyncContext,
     workspaceFeatureFlagsMap: FeatureFlagMap,
-  ): Promise<PartialObjectMetadata | undefined> {
+  ): PartialObjectMetadata | undefined {
     const objectMetadata = TypedReflect.getMetadata('objectMetadata', metadata);
     const fieldMetadata =
       TypedReflect.getMetadata('fieldMetadata', metadata) ?? {};
