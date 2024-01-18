@@ -16,8 +16,6 @@ import { blockSpecs } from '../blocks/blockSpecs';
 import { getSlashMenu } from '../blocks/slashMenu';
 import { getFileType } from '../files/utils/getFileType';
 
-import '@blocknote/react/style.css';
-
 const StyledBlockNoteStyledContainer = styled.div`
   width: 100%;
 `;
