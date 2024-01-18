@@ -42367,6 +42367,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"twenty-emails@workspace:packages/twenty-emails":
+  version: 0.0.0-use.local
+  resolution: "twenty-emails@workspace:packages/twenty-emails"
+  languageName: unknown
+  linkType: soft
+
 "twenty-front@workspace:packages/twenty-front":
   version: 0.0.0-use.local
   resolution: "twenty-front@workspace:packages/twenty-front"

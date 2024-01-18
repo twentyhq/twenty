@@ -5,6 +5,10 @@
   "author": "",
   "private": true,
   "license": "AGPL-3.0",
+  "scripts": {
+    "nx": "NX_DEFAULT_PROJECT=twenty-emails node ../../node_modules/nx/bin/nx.js",
+    "tsup": "tsup"
+  },
   "engines": {
     "node": "^18.17.1",
     "npm": "please-use-yarn",
