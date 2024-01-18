@@ -58,8 +58,7 @@ export const PageChangeEffect = () => {
       isMatchingLocation(AppPath.SignUp) ||
       isMatchingLocation(AppPath.SignIn) ||
       isMatchingLocation(AppPath.Invite) ||
-      isMatchingLocation(AppPath.Verify) ||
-      isMatchingLocation(AppPath.ResetPassword);
+      isMatchingLocation(AppPath.Verify);
 
     const isMatchingOnboardingRoute =
       isMatchingOngoingUserCreationRoute ||
@@ -76,7 +75,8 @@ export const PageChangeEffect = () => {
 
     if (
       onboardingStatus === OnboardingStatus.OngoingUserCreation &&
-      !isMatchingOngoingUserCreationRoute
+      !isMatchingOngoingUserCreationRoute &&
+      !isMatchingLocation(AppPath.ResetPassword)
     ) {
       navigate(AppPath.SignIn);
     } else if (

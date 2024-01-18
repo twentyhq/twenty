@@ -12,6 +12,7 @@ import { z } from 'zod';
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { billingState } from '@/client-config/states/billingState';
 import { AppPath } from '@/types/AppPath';
@@ -35,6 +36,14 @@ const validationSchema = z
   .required();
 
 type Form = z.infer<typeof validationSchema>;
+
+const StyledMainContainer = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+`;
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -77,6 +86,8 @@ export const PasswordReset = () => {
 
   const passwordResetToken = useParams().passwordResetToken;
 
+  const isLoggedIn = useIsLogged();
+
   const { control, handleSubmit } = useForm<Form>({
     mode: 'onChange',
     defaultValues: {
@@ -95,7 +106,11 @@ export const PasswordReset = () => {
       enqueueSnackBar(error?.message ?? 'Token Invalid', {
         variant: 'error',
       });
-      navigate(AppPath.SignIn);
+      if (!isLoggedIn) {
+        navigate(AppPath.SignIn);
+      } else {
+        navigate(AppPath.Index);
+      }
     },
     onCompleted: (data) => {
       if (data?.validatePasswordResetToken?.email) {
@@ -127,6 +142,14 @@ export const PasswordReset = () => {
         return;
       }
 
+      if (isLoggedIn) {
+        enqueueSnackBar('Password has been updated', {
+          variant: 'success',
+        });
+        navigate(AppPath.Index);
+        return;
+      }
+
       const { workspace: currentWorkspace } = await signInWithCredentials(
         email || '',
         formData.newPassword,
@@ -136,16 +159,16 @@ export const PasswordReset = () => {
         billing?.isBillingEnabled &&
         currentWorkspace.subscriptionStatus !== 'active'
       ) {
-        navigate('/plan-required');
+        navigate(AppPath.PlanRequired);
         return;
       }
 
       if (currentWorkspace.displayName) {
-        navigate('/');
+        navigate(AppPath.Index);
         return;
       }
 
-      navigate('/create/workspace');
+      navigate(AppPath.CreateWorkspace);
     } catch (err) {
       logError(err);
       enqueueSnackBar(
@@ -158,7 +181,7 @@ export const PasswordReset = () => {
   };
 
   return (
-    <>
+    <StyledMainContainer>
       <AnimatedEaseIn>
         <Logo />
       </AnimatedEaseIn>
@@ -247,6 +270,6 @@ export const PasswordReset = () => {
         By using Twenty, you agree to the Terms of Service and Data Processing
         Agreement.
       </StyledFooterContainer>
-    </>
+    </StyledMainContainer>
   );
 };
