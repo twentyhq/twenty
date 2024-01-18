@@ -24,7 +24,7 @@ export type ObjectDropdownFilter = Omit<Filter, 'definition'> & {
 export const turnObjectDropdownFilterIntoQueryFilter = (
   rawUIFilters: ObjectDropdownFilter[],
   fields: Pick<Field, 'id' | 'name'>[],
-): ObjectRecordQueryFilter => {
+): ObjectRecordQueryFilter | undefined => {
   const objectRecordFilters: ObjectRecordQueryFilter[] = [];
 
   for (const rawUIFilter of rawUIFilters) {
@@ -257,5 +257,9 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
     }
   }
 
-  return { and: objectRecordFilters };
+  return objectRecordFilters.length === 1
+    ? objectRecordFilters[0]
+    : objectRecordFilters.length
+      ? { and: objectRecordFilters }
+      : undefined;
 };

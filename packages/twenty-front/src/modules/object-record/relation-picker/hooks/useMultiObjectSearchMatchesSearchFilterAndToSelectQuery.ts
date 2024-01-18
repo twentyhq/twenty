@@ -14,7 +14,6 @@ import {
 import { SelectedObjectRecordId } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { useOrderByFieldPerMetadataItem } from '@/object-record/relation-picker/hooks/useOrderByFieldPerMetadataItem';
 import { useSearchFilterPerMetadataItem } from '@/object-record/relation-picker/hooks/useSearchFilterPerMetadataItem';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -58,35 +57,22 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
             )
             .map(({ id }) => id);
 
-          const searchFilter =
-            searchFilterPerMetadataItemNameSingular[nameSingular] ?? {};
-
           const excludedIdsUnion = [...selectedIds, ...excludedIds];
 
-          const noFilter =
-            !isNonEmptyArray(excludedIdsUnion) &&
-            isDeeplyEqual(searchFilter, {});
+          const searchFilters = [
+            searchFilterPerMetadataItemNameSingular[nameSingular],
+            isNonEmptyArray(excludedIdsUnion)
+              ? { not: { id: { in: [...selectedIds, ...excludedIds] } } }
+              : undefined,
+          ].filter(isDefined);
 
           return [
             `filter${capitalize(nameSingular)}`,
-            !noFilter
-              ? {
-                  and: [
-                    {
-                      ...searchFilter,
-                    },
-                    isNonEmptyArray(excludedIdsUnion)
-                      ? {
-                          not: {
-                            id: {
-                              in: [...selectedIds, ...excludedIds],
-                            },
-                          },
-                        }
-                      : {},
-                  ],
-                }
-              : {},
+            searchFilters?.length === 1
+              ? searchFilters[0]
+              : searchFilters?.length
+                ? { and: searchFilters }
+                : undefined,
           ];
         })
         .filter(isDefined),

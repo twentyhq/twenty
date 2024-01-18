@@ -48,7 +48,7 @@ export const useFilteredSearchEntityQuery = ({
       orderBy: { [orderByField]: sortOrder },
     });
 
-  const searchFilter = filters
+  const searchFilters = filters
     .map(({ fieldNames, filter }) => {
       if (!isNonEmptyString(filter)) {
         return undefined;
@@ -79,24 +79,27 @@ export const useFilteredSearchEntityQuery = ({
     })
     .filter(isDefined);
 
+  const filteredSelectedRecordsFilter = { id: { in: selectedIds } };
   const {
     loading: filteredSelectedRecordsLoading,
     records: filteredSelectedRecords,
   } = useFindManyRecords({
     objectNameSingular,
-    filter: { and: [{ and: searchFilter }, { id: { in: selectedIds } }] },
+    filter: searchFilters.length
+      ? { and: [...searchFilters, filteredSelectedRecordsFilter] }
+      : filteredSelectedRecordsFilter,
     orderBy: { [orderByField]: sortOrder },
   });
 
+  const recordsToSelectFilter = {
+    not: { id: { in: [...selectedIds, ...excludeEntityIds] } },
+  };
   const { loading: recordsToSelectLoading, records: recordsToSelect } =
     useFindManyRecords({
       objectNameSingular,
-      filter: {
-        and: [
-          { and: searchFilter },
-          { not: { id: { in: [...selectedIds, ...excludeEntityIds] } } },
-        ],
-      },
+      filter: searchFilters.length
+        ? { and: [...searchFilters, recordsToSelectFilter] }
+        : recordsToSelectFilter,
       limit: limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,
       orderBy: { [orderByField]: sortOrder },
     });

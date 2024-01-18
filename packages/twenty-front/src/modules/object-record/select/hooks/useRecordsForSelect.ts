@@ -49,7 +49,7 @@ export const useRecordsForSelect = ({
       objectNameSingular,
     });
 
-  const searchFilter = filters
+  const searchFilters = filters
     .map(({ fieldNames, filter }) => {
       if (!isNonEmptyString(filter)) {
         return undefined;
@@ -80,42 +80,26 @@ export const useRecordsForSelect = ({
     })
     .filter(isDefined);
 
+  const filteredSelectedRecordFilter = { id: { in: selectedIds } };
   const {
     loading: filteredSelectedRecordsLoading,
     records: filteredSelectedRecordsData,
   } = useFindManyRecords({
-    filter: {
-      and: [
-        {
-          and: searchFilter,
-        },
-        {
-          id: {
-            in: selectedIds,
-          },
-        },
-      ],
-    },
+    filter: searchFilters.length
+      ? { and: [...searchFilters, filteredSelectedRecordFilter] }
+      : filteredSelectedRecordFilter,
     orderBy: orderByField,
     objectNameSingular,
   });
 
+  const recordsToSelectFilter = {
+    not: { id: { in: [...selectedIds, ...excludeEntityIds] } },
+  };
   const { loading: recordsToSelectLoading, records: recordsToSelectData } =
     useFindManyRecords({
-      filter: {
-        and: [
-          {
-            and: searchFilter,
-          },
-          {
-            not: {
-              id: {
-                in: [...selectedIds, ...excludeEntityIds],
-              },
-            },
-          },
-        ],
-      },
+      filter: searchFilters.length
+        ? { and: [...searchFilters, recordsToSelectFilter] }
+        : recordsToSelectFilter,
       limit: limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,
       orderBy: orderByField,
       objectNameSingular,

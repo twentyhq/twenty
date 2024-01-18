@@ -37,8 +37,6 @@ const data = {
   id: 'columnId',
   position: 1,
   name: 'Column Title',
-  pipeline: { connect: { id: currentPipelineId } },
-  type: 'ongoing',
 };
 
 export const variables = {
