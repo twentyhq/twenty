@@ -49,25 +49,35 @@ export const triggerCreateRecordsOptimisticEffect = ({
         );
         let nextCachedEdges = cachedEdges ? [...cachedEdges] : [];
 
-        records.forEach((record) => {
-          const matchesFilter =
-            !variables?.filter ||
-            isRecordMatchingFilter({
-              record,
-              filter: variables.filter,
-              objectMetadataItem,
-            });
-
-          if (matchesFilter && record.id) {
-            const nodeReference = toReference(record);
-            nodeReference &&
-              nextCachedEdges.push({
-                __typename: objectEdgeTypeName,
-                node: nodeReference,
-                cursor: '',
+        const hasAddedRecords = records
+          .map((record) => {
+            const matchesFilter =
+              !variables?.filter ||
+              isRecordMatchingFilter({
+                record,
+                filter: variables.filter,
+                objectMetadataItem,
               });
-          }
-        });
+
+            if (matchesFilter && record.id) {
+              const nodeReference = toReference(record);
+
+              if (nodeReference) {
+                nextCachedEdges.push({
+                  __typename: objectEdgeTypeName,
+                  node: nodeReference,
+                  cursor: '',
+                });
+
+                return true;
+              }
+            }
+
+            return false;
+          })
+          .some((hasAddedRecord) => hasAddedRecord);
+
+        if (!hasAddedRecords) return cachedConnection;
 
         if (variables?.orderBy) {
           nextCachedEdges = sortCachedObjectEdges({
