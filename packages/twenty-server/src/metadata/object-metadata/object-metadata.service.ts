@@ -101,7 +101,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             },
             icon: 'Icon123',
             description: 'Id',
-            isNullable: true,
+            isNullable: false,
             isActive: true,
             isCustom: false,
             isSystem: true,
@@ -117,7 +117,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             },
             icon: 'IconAbc',
             description: 'Name',
-            isNullable: true,
+            isNullable: false,
             isActive: true,
             isCustom: false,
             workspaceId: objectMetadataInput.workspaceId,
@@ -132,7 +132,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             },
             icon: 'IconCalendar',
             description: 'Creation date',
-            isNullable: true,
+            isNullable: false,
             isActive: true,
             isCustom: false,
             workspaceId: objectMetadataInput.workspaceId,
@@ -147,7 +147,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             },
             icon: 'IconCalendar',
             description: 'Update date',
-            isNullable: true,
+            isNullable: false,
             isActive: true,
             isCustom: false,
             isSystem: true,
@@ -245,7 +245,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             {
               action: WorkspaceMigrationColumnActionType.CREATE,
               columnName: 'name',
-              columnType: 'varchar',
+              columnType: 'text',
               defaultValue: "'Untitled'",
             } satisfies WorkspaceMigrationColumnCreate,
           ],
@@ -330,6 +330,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   ) {
     return this.objectMetadataRepository.find({
       relations: [
+        'fields.object',
         'fields',
         'fields.fromRelationMetadata',
         'fields.toRelationMetadata',
