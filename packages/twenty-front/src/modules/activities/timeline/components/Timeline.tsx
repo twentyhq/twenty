@@ -13,6 +13,7 @@ import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/Ani
 import {
   StyledEmptyContainer,
   StyledEmptySubTitle,
+  StyledEmptyTextContainer,
   StyledEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyles';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -59,10 +60,12 @@ export const Timeline = ({
     return (
       <StyledEmptyContainer>
         <AnimatedPlaceholder type="emptyTimeline" />
-        <StyledEmptyTitle>Add your first Activity</StyledEmptyTitle>
-        <StyledEmptySubTitle>
-          There are no activities associated with this record.{' '}
-        </StyledEmptySubTitle>
+        <StyledEmptyTextContainer>
+          <StyledEmptyTitle>Add your first Activity</StyledEmptyTitle>
+          <StyledEmptySubTitle>
+            There are no activities associated with this record.{' '}
+          </StyledEmptySubTitle>
+        </StyledEmptyTextContainer>
         <ActivityCreateButton
           onNoteClick={() =>
             openCreateActivity({

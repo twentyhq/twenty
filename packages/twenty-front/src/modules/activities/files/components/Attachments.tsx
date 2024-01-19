@@ -18,6 +18,7 @@ import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/Ani
 import {
   StyledEmptyContainer,
   StyledEmptySubTitle,
+  StyledEmptyTextContainer,
   StyledEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyles';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
@@ -91,10 +92,12 @@ export const Attachments = ({
     return (
       <StyledEmptyContainer>
         <AnimatedPlaceholder type="noFile" />
-        <StyledEmptyTitle>No Files</StyledEmptyTitle>
-        <StyledEmptySubTitle>
-          There are no associated files with this record.
-        </StyledEmptySubTitle>
+        <StyledEmptyTextContainer>
+          <StyledEmptyTitle>No Files</StyledEmptyTitle>
+          <StyledEmptySubTitle>
+            There are no associated files with this record.
+          </StyledEmptySubTitle>
+        </StyledEmptyTextContainer>
         <StyledFileInput
           ref={inputFileRef}
           onChange={handleFileChange}

@@ -16,6 +16,7 @@ import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/Ani
 import {
   StyledEmptyContainer,
   StyledEmptySubTitle,
+  StyledEmptyTextContainer,
   StyledEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyles';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
@@ -118,13 +119,15 @@ export const RecordTableWithWrappers = ({
                 {!isRecordTableInitialLoading && numberOfTableRows === 0 && (
                   <StyledEmptyContainer>
                     <AnimatedPlaceholder type="noRecord" />
-                    <StyledEmptyTitle>
-                      Add your first {foundObjectMetadataItem?.namePlural}
-                    </StyledEmptyTitle>
-                    <StyledEmptySubTitle>
-                      Use our API or add your first{' '}
-                      {foundObjectMetadataItem?.namePlural} manually
-                    </StyledEmptySubTitle>
+                    <StyledEmptyTextContainer>
+                      <StyledEmptyTitle>
+                        Add your first {foundObjectMetadataItem?.namePlural}
+                      </StyledEmptyTitle>
+                      <StyledEmptySubTitle>
+                        Use our API or add your first{' '}
+                        {foundObjectMetadataItem?.namePlural} manually
+                      </StyledEmptySubTitle>
+                    </StyledEmptyTextContainer>
                     <Button
                       Icon={IconPlus}
                       title={`Add a ${foundObjectMetadataItem?.nameSingular}`}

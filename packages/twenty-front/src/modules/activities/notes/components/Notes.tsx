@@ -10,6 +10,7 @@ import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/Ani
 import {
   StyledEmptyContainer,
   StyledEmptySubTitle,
+  StyledEmptyTextContainer,
   StyledEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyles';
 
@@ -34,10 +35,12 @@ export const Notes = ({
     return (
       <StyledEmptyContainer>
         <AnimatedPlaceholder type="noNote" />
-        <StyledEmptyTitle>No notes</StyledEmptyTitle>
-        <StyledEmptySubTitle>
-          There are no associated notes with this record.
-        </StyledEmptySubTitle>
+        <StyledEmptyTextContainer>
+          <StyledEmptyTitle>No notes</StyledEmptyTitle>
+          <StyledEmptySubTitle>
+            There are no associated notes with this record.
+          </StyledEmptySubTitle>
+        </StyledEmptyTextContainer>
         <Button
           Icon={IconPlus}
           title="New note"

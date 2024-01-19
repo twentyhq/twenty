@@ -13,15 +13,23 @@ const StyledContainer = styled.div`
   justify-content: center;
 `;
 
-const StyledBackgroundImage = styled.img`
-  max-height: 160px;
-  max-width: 160px;
+interface StyledImageProps {
+  type: string;
+}
+
+const StyledBackgroundImage = styled.img<StyledImageProps>`
+  max-height: ${({ type }) =>
+    type === 'error500' || type === 'error404' ? '245px' : '160px'};
+  max-width: ${({ type }) =>
+    type === 'error500' || type === 'error404' ? '245px' : '160px'};
 `;
 
-const StyledMovingImage = styled(motion.img)`
+const StyledMovingImage = styled(motion.img)<StyledImageProps>`
   position: absolute;
-  max-width: 130px;
-  max-height: 130px;
+  max-width: ${({ type }) =>
+    type === 'error500' || type === 'error404' ? '185px' : '130px'};
+  max-height: ${({ type }) =>
+    type === 'error500' || type === 'error404' ? '185px' : '130px'};
   z-index: 2;
 `;
 
@@ -51,7 +59,11 @@ const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
 
   return (
     <StyledContainer>
-      <StyledBackgroundImage src={Background[type]} alt="Background" />
+      <StyledBackgroundImage
+        src={Background[type]}
+        alt="Background"
+        type={type}
+      />
       <StyledMovingImage
         src={MovingImage[type]}
         alt="Moving"
@@ -60,6 +72,7 @@ const AnimatedPlaceholder = ({ type }: AnimatedPlaceholderProps) => {
           translateY,
         }}
         transition={{ type: 'spring', stiffness: 100, damping: 10 }}
+        type={type}
       />
     </StyledContainer>
   );

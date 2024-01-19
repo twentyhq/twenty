@@ -11,6 +11,7 @@ import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/Ani
 import {
   StyledEmptyContainer,
   StyledEmptySubTitle,
+  StyledEmptyTextContainer,
   StyledEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyles';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
@@ -59,10 +60,12 @@ export const TaskGroups = ({
     return (
       <StyledEmptyContainer>
         <AnimatedPlaceholder type="noTask" />
-        <StyledEmptyTitle>No Task</StyledEmptyTitle>
-        <StyledEmptySubTitle>
-          There are no associated tasks with this record
-        </StyledEmptySubTitle>
+        <StyledEmptyTextContainer>
+          <StyledEmptyTitle>No Task</StyledEmptyTitle>
+          <StyledEmptySubTitle>
+            There are no associated tasks with this record
+          </StyledEmptySubTitle>
+        </StyledEmptyTextContainer>
         <Button
           Icon={IconPlus}
           title="New task"

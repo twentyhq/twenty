@@ -6,6 +6,7 @@ import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/Ani
 import {
   StyledEmptyContainer,
   StyledEmptySubTitle,
+  StyledEmptyTextContainer,
   StyledEmptyTitle,
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyles';
 
@@ -18,8 +19,10 @@ export const GenericErrorFallback = ({
   return (
     <StyledEmptyContainer>
       <AnimatedPlaceholder type="errorIndex" />
-      <StyledEmptyTitle>Server’s on a coffee break</StyledEmptyTitle>
-      <StyledEmptySubTitle>{error.message}</StyledEmptySubTitle>
+      <StyledEmptyTextContainer>
+        <StyledEmptyTitle>Server’s on a coffee break</StyledEmptyTitle>
+        <StyledEmptySubTitle>{error.message}</StyledEmptySubTitle>
+      </StyledEmptyTextContainer>
       <Button
         Icon={IconRefresh}
         title="Reload"
