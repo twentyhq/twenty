@@ -51,7 +51,9 @@ export const WorkspaceMemberCard = ({
           workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName
         }
       />
-      <StyledEmailText>{workspaceMember.userEmail}</StyledEmailText>
+      <StyledEmailText>
+        {workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName}
+      </StyledEmailText>
     </StyledContent>
 
     {accessory}

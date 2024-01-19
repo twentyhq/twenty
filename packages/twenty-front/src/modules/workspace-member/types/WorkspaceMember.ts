@@ -6,7 +6,6 @@ export type WorkspaceMember = {
     firstName: string;
     lastName: string;
   };
-  userEmail: string;
   avatarUrl?: string | null;
   locale: string;
   colorScheme?: ColorScheme;
