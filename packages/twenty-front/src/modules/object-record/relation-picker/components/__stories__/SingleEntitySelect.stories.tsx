@@ -40,34 +40,31 @@ const meta: Meta<typeof SingleEntitySelect> = {
     EmptyIcon,
     disableBackgroundBlur = false,
     emptyLabel,
-    loading,
     onCancel,
     onCreate,
     onEntitySelected,
     selectedEntity,
     width,
-  }) => {
-    const filteredEntities = entities.filter(
-      (entity) => entity.id !== selectedEntity?.id,
-    );
-
-    return (
-      <SingleEntitySelect
-        {...{
-          EmptyIcon,
-          disableBackgroundBlur,
-          emptyLabel,
-          loading,
-          onCancel,
-          onCreate,
-          onEntitySelected,
-          selectedEntity,
-          width,
-        }}
-        entitiesToSelect={filteredEntities}
-      />
-    );
-  },
+    relationObjectNameSingular,
+    selectedRelationRecordIds,
+    excludedRelationRecordIds,
+  }) => (
+    <SingleEntitySelect
+      {...{
+        EmptyIcon,
+        disableBackgroundBlur,
+        emptyLabel,
+        onCancel,
+        onCreate,
+        onEntitySelected,
+        selectedEntity,
+        width,
+        relationObjectNameSingular,
+        selectedRelationRecordIds,
+        excludedRelationRecordIds,
+      }}
+    />
+  ),
 };
 
 export default meta;

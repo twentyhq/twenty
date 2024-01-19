@@ -1,6 +1,8 @@
 import { useApolloClient } from '@apollo/client';
 
+import { useGetRelationFieldsToOptimisticallyUpdate } from '@/apollo/optimistic-effect/hooks/useGetRelationFieldsToOptimisticallyUpdate';
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
+import { triggerUpdateRelationFieldOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationFieldOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -18,6 +20,9 @@ export const useUpdateOneRecord = <
 }: useUpdateOneRecordProps) => {
   const { objectMetadataItem, updateOneRecordMutation, getRecordFromCache } =
     useObjectMetadataItem({ objectNameSingular });
+
+  const getRelationFieldsToOptimisticallyUpdate =
+    useGetRelationFieldsToOptimisticallyUpdate();
 
   const apolloClient = useApolloClient();
 
@@ -42,6 +47,14 @@ export const useUpdateOneRecord = <
       recordInput: updateOneRecordInput,
     });
 
+    const updatedRelationFields = cachedRecord
+      ? getRelationFieldsToOptimisticallyUpdate({
+          cachedRecord,
+          objectMetadataItem,
+          updateRecordInput: updateOneRecordInput,
+        })
+      : [];
+
     const mutationResponseField =
       getUpdateOneRecordMutationResponseField(objectNameSingular);
 
@@ -64,6 +77,24 @@ export const useUpdateOneRecord = <
           objectMetadataItem,
           record,
         });
+
+        updatedRelationFields.forEach(
+          ({
+            relationObjectMetadataNameSingular,
+            relationFieldName,
+            previousRelationRecord,
+            nextRelationRecord,
+          }) =>
+            triggerUpdateRelationFieldOptimisticEffect({
+              cache,
+              objectNameSingular,
+              record,
+              relationObjectMetadataNameSingular,
+              relationFieldName,
+              previousRelationRecord,
+              nextRelationRecord,
+            }),
+        );
       },
     });
 

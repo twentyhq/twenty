@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import styled from '@emotion/styled';
 
 import { RelationPicker } from '@/object-record/relation-picker/components/RelationPicker';
@@ -32,8 +31,6 @@ export const RelationFieldInput = ({
   const handleSubmit = (newEntity: EntityForSelect | null) => {
     onSubmit?.(() => persistField(newEntity?.record ?? null));
   };
-
-  useEffect(() => {}, [initialSearchValue]);
 
   return (
     <StyledRelationPickerContainer>

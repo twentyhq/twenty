@@ -11,8 +11,6 @@ import {
 import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
-import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -53,28 +51,24 @@ const RelationFieldInputWithContext = ({
 
   return (
     <div>
-      <ObjectMetadataItemsProvider>
-        <RelationPickerScope relationPickerScopeId="relation-picker">
-          <FieldContextProvider
-            fieldDefinition={{
-              fieldMetadataId: 'relation',
-              label: 'Relation',
-              type: 'RELATION',
-              iconName: 'IconLink',
-              metadata: {
-                fieldName: 'Relation',
-                relationObjectMetadataNamePlural: 'workspaceMembers',
-                relationObjectMetadataNameSingular: 'workspaceMember',
-              },
-            }}
-            entityId={entityId}
-          >
-            <RelationWorkspaceSetterEffect />
-            <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
-          </FieldContextProvider>
-        </RelationPickerScope>
-        <div data-testid="data-field-input-click-outside-div" />
-      </ObjectMetadataItemsProvider>
+      <FieldContextProvider
+        fieldDefinition={{
+          fieldMetadataId: 'relation',
+          label: 'Relation',
+          type: 'RELATION',
+          iconName: 'IconLink',
+          metadata: {
+            fieldName: 'Relation',
+            relationObjectMetadataNamePlural: 'workspaceMembers',
+            relationObjectMetadataNameSingular: 'workspaceMember',
+          },
+        }}
+        entityId={entityId}
+      >
+        <RelationWorkspaceSetterEffect />
+        <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
+      </FieldContextProvider>
+      <div data-testid="data-field-input-click-outside-div" />
     </div>
   );
 };
