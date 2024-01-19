@@ -5,7 +5,7 @@ import { useSetRecoilState } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { GET_CURRENT_USER_AND_VIEWS } from '@/users/graphql/getCurrentUserAndViews';
+import { GET_CURRENT_USER_AND_VIEWS } from '@/users/graphql/queries/getCurrentUserAndViews';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
 export const UserProvider = ({ children }: React.PropsWithChildren) => {
