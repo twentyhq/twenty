@@ -63,7 +63,10 @@ export class DatabaseStructureService {
           c.table_schema AS "tableSchema",
           c.table_name AS "tableName",
           c.column_name AS "columnName",
-          c.data_type AS "dataType",
+          CASE 
+            WHEN (c.data_type = 'USER-DEFINED') THEN c.udt_name 
+            ELSE data_type
+          END AS "dataType",
           c.is_nullable AS "isNullable",
           c.column_default AS "columnDefault",
           CASE
@@ -116,9 +119,18 @@ export class DatabaseStructureService {
     }));
   }
 
-  getPostgresDataType(fieldMetadataType: FieldMetadataType): string {
+  getPostgresDataType(
+    fieldMetadataType: FieldMetadataType,
+    fieldMetadataName: string,
+    objectMetadataNameSingular: string,
+  ): string {
     const typeORMType = fieldMetadataTypeToColumnType(fieldMetadataType);
     const mainDataSource = this.typeORMService.getMainDataSource();
+
+    // TODO: remove special case for enum type, should we include this to fieldMetadataTypeToColumnType?
+    if (typeORMType === 'enum') {
+      return `${objectMetadataNameSingular}_${fieldMetadataName}_enum`;
+    }
 
     return mainDataSource.driver.normalizeType({
       type: typeORMType,
