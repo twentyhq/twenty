@@ -142,21 +142,37 @@ export class RelationMetadataHealthService {
       isCustom,
     );
     const relationColumn = workspaceTableColumns.find(
-      (column) =>
-        column.columnName ===
-        createRelationForeignKeyFieldMetadataName(toFieldMetadata.name),
+      (column) => column.columnName === foreignKeyColumnName,
     );
     const relationFieldMetadata = toObjectMetadataFields.find(
-      (fieldMetadata) => fieldMetadata.name === foreignKeyColumnName,
+      (fieldMetadata) =>
+        fieldMetadata.name ===
+        createRelationForeignKeyFieldMetadataName(toFieldMetadata.name),
     );
 
-    if (!relationColumn || !relationFieldMetadata) {
+    if (!relationFieldMetadata) {
       issues.push({
         type: WorkspaceHealthIssueType.RELATION_FOREIGN_KEY_NOT_VALID,
         fromFieldMetadata,
         toFieldMetadata,
         relationMetadata,
-        message: `Relation ${relationMetadata.id} doesn't have a valid foreign key`,
+        message: `Relation ${
+          relationMetadata.id
+        } doesn't have a valid foreign key (expected fieldMetadata.name to be ${createRelationForeignKeyFieldMetadataName(
+          toFieldMetadata.name,
+        )}`,
+      });
+
+      return issues;
+    }
+
+    if (!relationColumn) {
+      issues.push({
+        type: WorkspaceHealthIssueType.RELATION_FOREIGN_KEY_NOT_VALID,
+        fromFieldMetadata,
+        toFieldMetadata,
+        relationMetadata,
+        message: `Relation ${relationMetadata.id} doesn't have a valid foreign key (expected column name to be ${foreignKeyColumnName}`,
       });
 
       return issues;

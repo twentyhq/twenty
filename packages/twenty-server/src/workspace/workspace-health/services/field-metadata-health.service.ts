@@ -18,6 +18,7 @@ import { compositeDefinitions } from 'src/metadata/field-metadata/composite-type
 import { validateDefaultValueForType } from 'src/metadata/field-metadata/utils/validate-default-value-for-type.util';
 import { isEnumFieldMetadataType } from 'src/metadata/field-metadata/utils/is-enum-field-metadata-type.util';
 import { validateOptionsForType } from 'src/metadata/field-metadata/utils/validate-options-for-type.util';
+import { fieldMetadataTypeToColumnType } from 'src/metadata/workspace-migration/utils/field-metadata-type-to-column-type.util';
 
 @Injectable()
 export class FieldMetadataHealthService {
@@ -117,9 +118,13 @@ export class FieldMetadataHealthService {
   ): WorkspaceHealthIssue[] {
     const issues: WorkspaceHealthIssue[] = [];
     const columnName = fieldMetadata.targetColumnMap.value;
+
     const dataType = this.databaseStructureService.getPostgresDataType(
       fieldMetadata.type,
+      fieldMetadata.name,
+      fieldMetadata.object?.nameSingular,
     );
+
     const defaultValue = this.databaseStructureService.getPostgresDefault(
       fieldMetadata.type,
       fieldMetadata.defaultValue,
@@ -128,6 +133,14 @@ export class FieldMetadataHealthService {
     const columnStructure = workspaceTableColumns.find(
       (tableDefinition) => tableDefinition.columnName === columnName,
     );
+
+    console.log(
+      'fieldMetadataType',
+      fieldMetadataTypeToColumnType(fieldMetadata.type),
+    );
+    console.log('expected dataType', dataType);
+
+    console.log('columnStructure type', columnStructure?.dataType);
 
     if (!columnStructure) {
       issues.push({
@@ -155,7 +168,9 @@ export class FieldMetadataHealthService {
         type: WorkspaceHealthIssueType.COLUMN_NULLABILITY_CONFLICT,
         fieldMetadata,
         columnStructure,
-        message: `Column ${columnName} is not nullable as expected`,
+        message: `Column ${columnName} is expected to be ${
+          fieldMetadata.isNullable ? 'nullable' : 'not nullable'
+        } but is ${columnStructure.isNullable ? 'nullable' : 'not nullable'}`,
       });
     }
 
