@@ -38,18 +38,18 @@ export class WorkspaceSyncFactory {
      * Create object migrations
      */
     if (createdObjectMetadataCollection.length > 0) {
-      createdObjectMetadataCollection.map((object) => {
+      for (const objectMetadata of createdObjectMetadataCollection) {
         const migrations = [
           {
-            name: computeObjectTargetTable(object),
+            name: computeObjectTargetTable(objectMetadata),
             action: 'create',
           } satisfies WorkspaceMigrationTableAction,
-          ...object.fields
+          ...objectMetadata.fields
             .filter((field) => field.type !== FieldMetadataType.RELATION)
             .map(
               (field) =>
                 ({
-                  name: computeObjectTargetTable(object),
+                  name: computeObjectTargetTable(objectMetadata),
                   action: 'alter',
                   columns: this.workspaceMigrationFactory.createColumnActions(
                     WorkspaceMigrationColumnActionType.CREATE,
@@ -60,11 +60,11 @@ export class WorkspaceSyncFactory {
         ];
 
         workspaceMigrations.push({
-          workspaceId: object.workspaceId,
+          workspaceId: objectMetadata.workspaceId,
           isCustom: false,
           migrations,
         });
-      });
+      }
     }
 
     /**
@@ -72,6 +72,23 @@ export class WorkspaceSyncFactory {
      * TODO: handle object delete migrations.
      * Note: we need to delete the relation first due to the DB constraint.
      */
+    // if (objectMetadataDeleteCollection.length > 0) {
+    //   for (const objectMetadata of objectMetadataDeleteCollection) {
+    //     const migrations = [
+    //       {
+    //         name: computeObjectTargetTable(objectMetadata),
+    //         action: 'drop',
+    //         columns: [],
+    //       } satisfies WorkspaceMigrationTableAction,
+    //     ];
+
+    //     workspaceMigrations.push({
+    //       workspaceId: objectMetadata.workspaceId,
+    //       isCustom: false,
+    //       migrations,
+    //     });
+    //   }
+    // }
 
     /**
      * Create field migrations
@@ -86,54 +103,54 @@ export class WorkspaceSyncFactory {
     );
 
     if (createdFieldMetadataCollection.length > 0) {
-      createdFieldMetadataCollection.map((field) => {
+      for (const fieldMetadata of createdFieldMetadataCollection) {
         const migrations = [
           {
             name: computeObjectTargetTable(
-              originalObjectMetadataMap[field.objectMetadataId],
+              originalObjectMetadataMap[fieldMetadata.objectMetadataId],
             ),
             action: 'alter',
             columns: this.workspaceMigrationFactory.createColumnActions(
               WorkspaceMigrationColumnActionType.CREATE,
-              field,
+              fieldMetadata,
             ),
           } satisfies WorkspaceMigrationTableAction,
         ];
 
         workspaceMigrations.push({
-          workspaceId: field.workspaceId,
+          workspaceId: fieldMetadata.workspaceId,
           isCustom: false,
           migrations,
         });
-      });
+      }
     }
 
     /**
      * Delete field migrations
      */
     if (fieldMetadataDeleteCollection.length > 0) {
-      fieldMetadataDeleteCollection.map((field) => {
+      for (const fieldMetadata of fieldMetadataDeleteCollection) {
         const migrations = [
           {
             name: computeObjectTargetTable(
-              originalObjectMetadataMap[field.objectMetadataId],
+              originalObjectMetadataMap[fieldMetadata.objectMetadataId],
             ),
             action: 'alter',
             columns: [
               {
                 action: WorkspaceMigrationColumnActionType.DROP,
-                columnName: field.name,
+                columnName: fieldMetadata.name,
               },
             ],
           } satisfies WorkspaceMigrationTableAction,
         ];
 
         workspaceMigrations.push({
-          workspaceId: field.workspaceId,
+          workspaceId: fieldMetadata.workspaceId,
           isCustom: false,
           migrations,
         });
-      });
+      }
     }
 
     return workspaceMigrations;
@@ -142,39 +159,41 @@ export class WorkspaceSyncFactory {
   async createRelationMigration(
     originalObjectMetadataCollection: ObjectMetadataEntity[],
     createdRelationMetadataCollection: RelationMetadataEntity[],
+    // TODO: handle relation deletion
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     relationMetadataDeleteCollection: RelationMetadataEntity[],
   ): Promise<Partial<WorkspaceMigrationEntity>[]> {
     const workspaceMigrations: Partial<WorkspaceMigrationEntity>[] = [];
 
     if (createdRelationMetadataCollection.length > 0) {
-      createdRelationMetadataCollection.map((relation) => {
+      for (const relationMetadata of createdRelationMetadataCollection) {
         const toObjectMetadata = originalObjectMetadataCollection.find(
-          (object) => object.id === relation.toObjectMetadataId,
+          (object) => object.id === relationMetadata.toObjectMetadataId,
         );
 
         const fromObjectMetadata = originalObjectMetadataCollection.find(
-          (object) => object.id === relation.fromObjectMetadataId,
+          (object) => object.id === relationMetadata.fromObjectMetadataId,
         );
 
         if (!toObjectMetadata) {
           throw new Error(
-            `ObjectMetadata with id ${relation.toObjectMetadataId} not found`,
+            `ObjectMetadata with id ${relationMetadata.toObjectMetadataId} not found`,
           );
         }
 
         if (!fromObjectMetadata) {
           throw new Error(
-            `ObjectMetadata with id ${relation.fromObjectMetadataId} not found`,
+            `ObjectMetadata with id ${relationMetadata.fromObjectMetadataId} not found`,
           );
         }
 
         const toFieldMetadata = toObjectMetadata.fields.find(
-          (field) => field.id === relation.toFieldMetadataId,
+          (field) => field.id === relationMetadata.toFieldMetadataId,
         );
 
         if (!toFieldMetadata) {
           throw new Error(
-            `FieldMetadata with id ${relation.toFieldMetadataId} not found`,
+            `FieldMetadata with id ${relationMetadata.toFieldMetadataId} not found`,
           );
         }
 
@@ -190,47 +209,48 @@ export class WorkspaceSyncFactory {
                   computeObjectTargetTable(fromObjectMetadata),
                 referencedTableColumnName: 'id',
                 isUnique:
-                  relation.relationType === RelationMetadataType.ONE_TO_ONE,
+                  relationMetadata.relationType ===
+                  RelationMetadataType.ONE_TO_ONE,
               } satisfies WorkspaceMigrationColumnRelation,
             ],
           } satisfies WorkspaceMigrationTableAction,
         ];
 
         workspaceMigrations.push({
-          workspaceId: relation.workspaceId,
+          workspaceId: relationMetadata.workspaceId,
           isCustom: false,
           migrations,
         });
-      });
+      }
     }
 
-    if (relationMetadataDeleteCollection.length > 0) {
-      relationMetadataDeleteCollection.map((relation) => {
-        const toObjectMetadata = originalObjectMetadataCollection.find(
-          (object) => object.id === relation.toObjectMetadataId,
-        );
+    // if (relationMetadataDeleteCollection.length > 0) {
+    //   for (const relationMetadata of relationMetadataDeleteCollection) {
+    //     const toObjectMetadata = originalObjectMetadataCollection.find(
+    //       (object) => object.id === relationMetadata.toObjectMetadataId,
+    //     );
 
-        if (!toObjectMetadata) {
-          throw new Error(
-            `ObjectMetadata with id ${relation.toObjectMetadataId} not found`,
-          );
-        }
+    //     if (!toObjectMetadata) {
+    //       throw new Error(
+    //         `ObjectMetadata with id ${relationMetadata.toObjectMetadataId} not found`,
+    //       );
+    //     }
 
-        const migrations = [
-          {
-            name: computeObjectTargetTable(toObjectMetadata),
-            action: 'drop',
-            columns: [],
-          } satisfies WorkspaceMigrationTableAction,
-        ];
+    //     const migrations = [
+    //       {
+    //         name: computeObjectTargetTable(toObjectMetadata),
+    //         action: 'drop',
+    //         columns: [],
+    //       } satisfies WorkspaceMigrationTableAction,
+    //     ];
 
-        workspaceMigrations.push({
-          workspaceId: relation.workspaceId,
-          isCustom: false,
-          migrations,
-        });
-      });
-    }
+    //     workspaceMigrations.push({
+    //       workspaceId: relationMetadata.workspaceId,
+    //       isCustom: false,
+    //       migrations,
+    //     });
+    //   }
+    // }
 
     return workspaceMigrations;
   }

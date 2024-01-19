@@ -6,6 +6,7 @@ import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migrati
 import { FeatureFlagFactory } from 'src/workspace/workspace-sync-metadata/factories/feature-flags.factory';
 import { WorkspaceSyncObjectMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-object-metadata.service';
 import { WorkspaceSyncRelationMetadataService } from 'src/workspace/workspace-sync-metadata/services/workspace-sync-relation-metadata.service';
+import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
 
 @Injectable()
 export class WorkspaceSyncMetadataService {
@@ -32,6 +33,8 @@ export class WorkspaceSyncMetadataService {
     this.logger.log('Syncing standard objects and fields metadata');
 
     try {
+      const storage = new WorkspaceSyncStorage();
+
       // Retrieve feature flags
       const workspaceFeatureFlagsMap =
         await this.featureFlagFactory.create(context);
@@ -51,11 +54,13 @@ export class WorkspaceSyncMetadataService {
        */
       await this.workspaceSyncObjectMetadataService.synchronize(
         context,
+        storage,
         workspaceFeatureFlagsMap,
       );
 
       await this.workspaceSyncRelationMetadataService.synchronize(
         context,
+        storage,
         workspaceFeatureFlagsMap,
       );
 

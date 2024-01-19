@@ -5,7 +5,6 @@ import { DataSource } from 'typeorm';
 
 import { PartialFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { PartialObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
-import { MappedObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/mapped-metadata.interface';
 import { WorkspaceSyncContext } from 'src/workspace/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 import { ComparatorAction } from 'src/workspace/workspace-sync-metadata/interfaces/comparator.interface';
 import { FeatureFlagMap } from 'src/core/feature-flag/interfaces/feature-flag-map.interface';
@@ -19,6 +18,7 @@ import { WorkspaceObjectComparator } from 'src/workspace/workspace-sync-metadata
 import { WorkspaceFieldComparator } from 'src/workspace/workspace-sync-metadata/comparators/workspace-field.comparator';
 import { WorkspaceMetadataUpdaterService } from 'src/workspace/workspace-sync-metadata/services/workspace-metadata-updater.service';
 import { WorkspaceSyncFactory } from 'src/workspace/workspace-sync-metadata/factories/workspace-sync.factory';
+import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
 
 @Injectable()
 export class WorkspaceSyncObjectMetadataService {
@@ -36,6 +36,7 @@ export class WorkspaceSyncObjectMetadataService {
 
   async synchronize(
     context: WorkspaceSyncContext,
+    storage: WorkspaceSyncStorage,
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Promise<void> {
     const queryRunner = this.metadataDataSource.createQueryRunner();
@@ -73,22 +74,14 @@ export class WorkspaceSyncObjectMetadataService {
         PartialFieldMetadata
       >(standardObjectMetadataCollection);
 
-      // Store object metadata by action
-      const objectMetadataCreateCollection: MappedObjectMetadata[] = [];
-      const objectMetadataUpdateCollection: Partial<ObjectMetadataEntity>[] =
-        [];
-      const objectMetadataDeleteCollection =
-        originalObjectMetadataCollection.filter(
-          (originalObjectMetadata) =>
-            !standardObjectMetadataMap[originalObjectMetadata.nameSingular],
-        );
-
-      // Store field metadata by action
-      const fieldMetadataCreateCollection: PartialFieldMetadata[] = [];
-      const fieldMetadataUpdateCollection: Partial<FieldMetadataEntity>[] = [];
-      const fieldMetadataDeleteCollection: FieldMetadataEntity[] = [];
-
       this.logger.log('Comparing standard objects and fields metadata');
+
+      // Store object that need to be deleted
+      for (const originalObjectMetadata of originalObjectMetadataCollection) {
+        if (!standardObjectMetadataMap[originalObjectMetadata.nameSingular]) {
+          storage.addDeleteObjectMetadata(originalObjectMetadata);
+        }
+      }
 
       // Loop over all standard objects and compare them with the objects in DB
       for (const standardObjectName in standardObjectMetadataMap) {
@@ -106,12 +99,12 @@ export class WorkspaceSyncObjectMetadataService {
         );
 
         if (objectComparatorResult.action === ComparatorAction.CREATE) {
-          objectMetadataCreateCollection.push(standardObjectMetadata);
+          storage.addCreateObjectMetadata(standardObjectMetadata);
           continue;
         }
 
         if (objectComparatorResult.action === ComparatorAction.UPDATE) {
-          objectMetadataUpdateCollection.push(objectComparatorResult.object);
+          storage.addUpdateObjectMetadata(objectComparatorResult.object);
         }
 
         /**
@@ -125,15 +118,15 @@ export class WorkspaceSyncObjectMetadataService {
         for (const fieldComparatorResult of fieldComparatorResults) {
           switch (fieldComparatorResult.action) {
             case ComparatorAction.CREATE: {
-              fieldMetadataCreateCollection.push(fieldComparatorResult.object);
+              storage.addCreateFieldMetadata(fieldComparatorResult.object);
               break;
             }
             case ComparatorAction.UPDATE: {
-              fieldMetadataUpdateCollection.push(fieldComparatorResult.object);
+              storage.addUpdateFieldMetadata(fieldComparatorResult.object);
               break;
             }
             case ComparatorAction.DELETE: {
-              fieldMetadataDeleteCollection.push(fieldComparatorResult.object);
+              storage.addDeleteFieldMetadata(fieldComparatorResult.object);
               break;
             }
           }
@@ -146,20 +139,12 @@ export class WorkspaceSyncObjectMetadataService {
       const metadataObjectUpdaterResult =
         await this.workspaceMetadataUpdaterService.updateObjectMetadata(
           manager,
-          {
-            objectMetadataCreateCollection,
-            objectMetadataUpdateCollection,
-            objectMetadataDeleteCollection,
-          },
+          storage,
         );
       const metadataFieldUpdaterResult =
         await this.workspaceMetadataUpdaterService.updateFieldMetadata(
           manager,
-          {
-            fieldMetadataCreateCollection,
-            fieldMetadataUpdateCollection,
-            fieldMetadataDeleteCollection,
-          },
+          storage,
         );
 
       this.logger.log('Generating migrations');
@@ -169,9 +154,9 @@ export class WorkspaceSyncObjectMetadataService {
         await this.workspaceSyncFactory.createObjectMigration(
           originalObjectMetadataCollection,
           metadataObjectUpdaterResult.createdObjectMetadataCollection,
-          objectMetadataDeleteCollection,
+          storage.objectMetadataDeleteCollection,
           metadataFieldUpdaterResult.createdFieldMetadataCollection,
-          fieldMetadataDeleteCollection,
+          storage.fieldMetadataDeleteCollection,
         );
 
       this.logger.log('Saving migrations');

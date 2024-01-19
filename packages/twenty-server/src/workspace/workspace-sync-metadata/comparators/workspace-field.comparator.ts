@@ -10,8 +10,8 @@ import {
   MappedObjectMetadata,
   MappedObjectMetadataEntity,
 } from 'src/workspace/workspace-sync-metadata/interfaces/mapped-metadata.interface';
+import { PartialFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 
-import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
 import { filterIgnoredProperties } from 'src/workspace/workspace-sync-metadata/utils/sync-metadata.util';
 
 const fieldPropertiesToIgnore = [
@@ -33,7 +33,7 @@ export class WorkspaceFieldComparator {
     const result: FieldComparatorResult[] = [];
     const fieldPropertiesToUpdateMap: Record<
       string,
-      Partial<FieldMetadataEntity>
+      Partial<PartialFieldMetadata>
     > = {};
 
     const partialOriginalFieldMetadataMap = Object.fromEntries(

@@ -11,8 +11,8 @@ import {
   MappedObjectMetadata,
   MappedObjectMetadataEntity,
 } from 'src/workspace/workspace-sync-metadata/interfaces/mapped-metadata.interface';
+import { PartialObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 
-import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { filterIgnoredProperties } from 'src/workspace/workspace-sync-metadata/utils/sync-metadata.util';
 
 const objectPropertiesToIgnore = [
@@ -40,7 +40,7 @@ export class WorkspaceObjectComparator {
       };
     }
 
-    const objectPropertiesToUpdate: Partial<ObjectMetadataEntity> = {};
+    const objectPropertiesToUpdate: Partial<PartialObjectMetadata> = {};
 
     // Only compare properties that are not ignored
     const partialOriginalObjectMetadata = filterIgnoredProperties(

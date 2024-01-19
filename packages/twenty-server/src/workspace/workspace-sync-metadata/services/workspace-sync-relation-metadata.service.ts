@@ -16,6 +16,7 @@ import { WorkspaceRelationComparator } from 'src/workspace/workspace-sync-metada
 import { WorkspaceMetadataUpdaterService } from 'src/workspace/workspace-sync-metadata/services/workspace-metadata-updater.service';
 import { WorkspaceSyncFactory } from 'src/workspace/workspace-sync-metadata/factories/workspace-sync.factory';
 import { WorkspaceMigrationEntity } from 'src/metadata/workspace-migration/workspace-migration.entity';
+import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
 
 @Injectable()
 export class WorkspaceSyncRelationMetadataService {
@@ -34,6 +35,7 @@ export class WorkspaceSyncRelationMetadataService {
 
   async synchronize(
     context: WorkspaceSyncContext,
+    storage: WorkspaceSyncStorage,
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Promise<void> {
     const queryRunner = this.metadataDataSource.createQueryRunner();
@@ -67,10 +69,6 @@ export class WorkspaceSyncRelationMetadataService {
         RelationMetadataEntity,
       );
 
-      const relationMetadataCreateCollection: Partial<RelationMetadataEntity>[] =
-        [];
-      const relationMetadataDeleteCollection: RelationMetadataEntity[] = [];
-
       // Retrieve relation metadata collection from DB
       // TODO: filter out custom relations once isCustom has been added to relationMetadata table
       const originalRelationMetadataCollection =
@@ -94,25 +92,18 @@ export class WorkspaceSyncRelationMetadataService {
 
       for (const relationComparatorResult of relationComparatorResults) {
         if (relationComparatorResult.action === ComparatorAction.CREATE) {
-          relationMetadataCreateCollection.push(
-            relationComparatorResult.object,
-          );
+          storage.addCreateRelationMetadata(relationComparatorResult.object);
         } else if (
           relationComparatorResult.action === ComparatorAction.DELETE
         ) {
-          relationMetadataDeleteCollection.push(
-            relationComparatorResult.object,
-          );
+          storage.addDeleteRelationMetadata(relationComparatorResult.object);
         }
       }
 
       const metadataRelationUpdaterResult =
         await this.workspaceMetadataUpdaterService.updateRelationMetadata(
           manager,
-          {
-            relationMetadataCreateCollection,
-            relationMetadataDeleteCollection,
-          },
+          storage,
         );
 
       // Create migrations
@@ -120,7 +111,7 @@ export class WorkspaceSyncRelationMetadataService {
         await this.workspaceSyncFactory.createRelationMigration(
           originalObjectMetadataCollection,
           metadataRelationUpdaterResult.createdRelationMetadataCollection,
-          relationMetadataDeleteCollection,
+          storage.relationMetadataDeleteCollection,
         );
 
       // Save migrations into DB

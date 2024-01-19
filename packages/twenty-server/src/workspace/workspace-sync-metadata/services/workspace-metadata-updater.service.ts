@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { EntityManager, In } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
+import omit from 'lodash.omit';
 
-import { MappedObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/mapped-metadata.interface';
 import { PartialFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
@@ -14,23 +14,7 @@ import {
 import { convertStringifiedFieldsToJSON } from 'src/workspace/workspace-sync-metadata/utils/sync-metadata.util';
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { FieldMetadataComplexOptions } from 'src/metadata/field-metadata/dtos/options.input';
-
-interface WorkspaceMetadataObjectUpdaterContext {
-  objectMetadataCreateCollection: MappedObjectMetadata[];
-  objectMetadataUpdateCollection: Partial<ObjectMetadataEntity>[];
-  objectMetadataDeleteCollection: ObjectMetadataEntity[];
-}
-
-interface WorkspaceMetadataFieldUpdaterContext {
-  fieldMetadataCreateCollection: PartialFieldMetadata[];
-  fieldMetadataUpdateCollection: Partial<FieldMetadataEntity>[];
-  fieldMetadataDeleteCollection: FieldMetadataEntity[];
-}
-
-interface WorkspaceMetadataRelationUpdaterContext {
-  relationMetadataCreateCollection: Partial<RelationMetadataEntity>[];
-  relationMetadataDeleteCollection: RelationMetadataEntity[];
-}
+import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
 
 @Injectable()
 export class WorkspaceMetadataUpdaterService {
@@ -38,7 +22,7 @@ export class WorkspaceMetadataUpdaterService {
 
   async updateObjectMetadata(
     manager: EntityManager,
-    context: WorkspaceMetadataObjectUpdaterContext,
+    storage: WorkspaceSyncStorage,
   ): Promise<{
     createdObjectMetadataCollection: ObjectMetadataEntity[];
     updatedObjectMetadataCollection: ObjectMetadataEntity[];
@@ -51,7 +35,7 @@ export class WorkspaceMetadataUpdaterService {
      */
     const createdPartialObjectMetadataCollection =
       await objectMetadataRepository.save(
-        context.objectMetadataCreateCollection.map((object) => ({
+        storage.objectMetadataCreateCollection.map((object) => ({
           ...object,
           isActive: true,
           fields: Object.values(object.fields).map((field) =>
@@ -74,15 +58,17 @@ export class WorkspaceMetadataUpdaterService {
      * Update object metadata
      */
     const updatedObjectMetadataCollection = await objectMetadataRepository.save(
-      context.objectMetadataUpdateCollection,
+      storage.objectMetadataUpdateCollection.map((objectMetadata) =>
+        omit(objectMetadata, ['fields']),
+      ),
     );
 
     /**
      * Delete object metadata
      */
-    if (context.objectMetadataDeleteCollection.length > 0) {
+    if (storage.objectMetadataDeleteCollection.length > 0) {
       await objectMetadataRepository.delete(
-        context.objectMetadataDeleteCollection.map((object) => object.id),
+        storage.objectMetadataDeleteCollection.map((object) => object.id),
       );
     }
 
@@ -92,6 +78,9 @@ export class WorkspaceMetadataUpdaterService {
     };
   }
 
+  /**
+   * TODO: Refactor this
+   */
   private prepareFieldMetadataForCreation(field: PartialFieldMetadata) {
     const convertedField = convertStringifiedFieldsToJSON(field);
 
@@ -120,7 +109,7 @@ export class WorkspaceMetadataUpdaterService {
 
   async updateFieldMetadata(
     manager: EntityManager,
-    context: WorkspaceMetadataFieldUpdaterContext,
+    storage: WorkspaceSyncStorage,
   ): Promise<{
     createdFieldMetadataCollection: FieldMetadataEntity[];
     updatedFieldMetadataCollection: FieldMetadataEntity[];
@@ -131,7 +120,7 @@ export class WorkspaceMetadataUpdaterService {
      * Create field metadata
      */
     const createdFieldMetadataCollection = await fieldMetadataRepository.save(
-      context.fieldMetadataCreateCollection.map((field) =>
+      storage.fieldMetadataCreateCollection.map((field) =>
         this.prepareFieldMetadataForCreation(field),
       ),
     );
@@ -140,10 +129,7 @@ export class WorkspaceMetadataUpdaterService {
      * Update field metadata
      */
     const updatedFieldMetadataCollection = await fieldMetadataRepository.save(
-      context.fieldMetadataUpdateCollection.map((field) =>
-        // TODO: Fix this typing issue, it's not a big deal but it's annoying
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
+      storage.fieldMetadataUpdateCollection.map((field) =>
         convertStringifiedFieldsToJSON(field),
       ),
     );
@@ -153,7 +139,7 @@ export class WorkspaceMetadataUpdaterService {
      */
     // TODO: handle relation fields deletion. We need to delete the relation metadata first due to the DB constraint.
     const fieldMetadataDeleteCollectionWithoutRelationType =
-      context.fieldMetadataDeleteCollection.filter(
+      storage.fieldMetadataDeleteCollection.filter(
         (field) => field.type !== FieldMetadataType.RELATION,
       );
 
@@ -173,7 +159,7 @@ export class WorkspaceMetadataUpdaterService {
 
   async updateRelationMetadata(
     manager: EntityManager,
-    context: WorkspaceMetadataRelationUpdaterContext,
+    storage: WorkspaceSyncStorage,
   ): Promise<{
     createdRelationMetadataCollection: RelationMetadataEntity[];
   }> {
@@ -186,15 +172,15 @@ export class WorkspaceMetadataUpdaterService {
      */
     const createdRelationMetadataCollection =
       await relationMetadataRepository.save(
-        context.relationMetadataCreateCollection,
+        storage.relationMetadataCreateCollection,
       );
 
     /**
      * Delete relation metadata
      */
-    if (context.relationMetadataDeleteCollection.length > 0) {
+    if (storage.relationMetadataDeleteCollection.length > 0) {
       await relationMetadataRepository.delete(
-        context.relationMetadataDeleteCollection.map(
+        storage.relationMetadataDeleteCollection.map(
           (relationMetadata) => relationMetadata.id,
         ),
       );

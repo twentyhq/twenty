@@ -1,10 +1,10 @@
 import { MappedObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/mapped-metadata.interface';
 
-import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
 
 import { PartialFieldMetadata } from './partial-field-metadata.interface';
+import { PartialObjectMetadata } from './partial-object-metadata.interface';
 
 export const enum ComparatorAction {
   EQUAL = 'EQUAL',
@@ -35,12 +35,12 @@ export interface ComparatorDeleteResult<T> {
 export type ObjectComparatorResult =
   | ComparatorEqualResult
   | ComparatorCreateResult<MappedObjectMetadata>
-  | ComparatorUpdateResult<Partial<ObjectMetadataEntity>>;
+  | ComparatorUpdateResult<Partial<PartialObjectMetadata>>;
 
 export type FieldComparatorResult =
   | ComparatorEqualResult
   | ComparatorCreateResult<PartialFieldMetadata>
-  | ComparatorUpdateResult<Partial<FieldMetadataEntity> & { id: string }>
+  | ComparatorUpdateResult<Partial<PartialFieldMetadata> & { id: string }>
   | ComparatorDeleteResult<FieldMetadataEntity>;
 
 export type RelationComparatorResult =
