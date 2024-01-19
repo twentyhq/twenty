@@ -87,10 +87,13 @@ export class DatabaseStructureService {
           information_schema.constraint_column_usage AS ccu
           ON c.column_name = ccu.column_name
           AND c.table_name = ccu.table_name
+          AND c.table_schema = ccu.table_schema
         LEFT JOIN
           information_schema.table_constraints AS pk
           ON pk.constraint_name = ccu.constraint_name
           AND pk.constraint_type = 'PRIMARY KEY'
+          AND pk.table_name = c.table_name
+          AND pk.table_schema = c.table_schema
         LEFT JOIN
           foreign_keys AS fk
           ON c.table_schema = fk.schema_name
