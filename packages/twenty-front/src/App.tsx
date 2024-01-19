@@ -1,6 +1,4 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import { useApolloClient } from '@apollo/client';
-import gql from 'graphql-tag';
 
 import { RecordShowPage } from '@/object-record/components/RecordShowPage';
 import { RecordTablePage } from '@/object-record/components/RecordTablePage';
@@ -10,6 +8,7 @@ import { DefaultLayout } from '@/ui/layout/page/DefaultLayout';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
+import { useDefaultHomePagePath } from '~/hooks/useDefaultHomePagePath';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
 import { PlanRequired } from '~/pages/auth/PlanRequired';
@@ -41,26 +40,9 @@ import { getPageTitleFromPath } from '~/utils/title-utils';
 
 export const App = () => {
   const { pathname } = useLocation();
+  const { defaultHomePagePath } = useDefaultHomePagePath();
+
   const pageTitle = getPageTitleFromPath(pathname);
-  const apolloClient = useApolloClient();
-
-  const queries = apolloClient.readFragment({
-    id: 'ROOT_QUERY',
-    fragment: gql`
-      fragment RootQuery on Query {
-        views {
-          edges {
-            node {
-              id
-            }
-          }
-        }
-      }
-    `,
-  });
-
-  const cachedViews = queries?.views;
-  console.log('app', cachedViews);
 
   return (
     <>
@@ -76,7 +58,7 @@ export const App = () => {
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
           <Route path={AppPath.PlanRequired} element={<PlanRequired />} />
-          <Route path="/" element={<Navigate to="/objects/companies" />} />
+          <Route path="/" element={<Navigate to={defaultHomePagePath} />} />
           <Route path={AppPath.TasksPage} element={<Tasks />} />
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
 
