@@ -245,7 +245,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             {
               action: WorkspaceMigrationColumnActionType.CREATE,
               columnName: 'name',
-              columnType: 'varchar',
+              columnType: 'text',
               defaultValue: "'Untitled'",
             } satisfies WorkspaceMigrationColumnCreate,
           ],

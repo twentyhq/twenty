@@ -18,7 +18,6 @@ import { compositeDefinitions } from 'src/metadata/field-metadata/composite-type
 import { validateDefaultValueForType } from 'src/metadata/field-metadata/utils/validate-default-value-for-type.util';
 import { isEnumFieldMetadataType } from 'src/metadata/field-metadata/utils/is-enum-field-metadata-type.util';
 import { validateOptionsForType } from 'src/metadata/field-metadata/utils/validate-options-for-type.util';
-import { fieldMetadataTypeToColumnType } from 'src/metadata/workspace-migration/utils/field-metadata-type-to-column-type.util';
 
 @Injectable()
 export class FieldMetadataHealthService {
@@ -133,14 +132,6 @@ export class FieldMetadataHealthService {
     const columnStructure = workspaceTableColumns.find(
       (tableDefinition) => tableDefinition.columnName === columnName,
     );
-
-    console.log(
-      'fieldMetadataType',
-      fieldMetadataTypeToColumnType(fieldMetadata.type),
-    );
-    console.log('expected dataType', dataType);
-
-    console.log('columnStructure type', columnStructure?.dataType);
 
     if (!columnStructure) {
       issues.push({
