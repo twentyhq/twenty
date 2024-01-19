@@ -18,12 +18,13 @@ import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
-import { createRelationMetadataForeignKey } from 'src/metadata/relation-metadata/utils/create-relation-metadata-foreign-key.util';
 import {
   RelationDirection,
   deduceRelationDirection,
 } from 'src/workspace/utils/deduce-relation-direction.util';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
+import { createRelationForeignKeyColumnName } from 'src/metadata/relation-metadata/utils/create-relation-foreign-key-column-name.util';
+import { createRelationForeignKeyFieldMetadataName } from 'src/metadata/relation-metadata/utils/create-relation-foreign-key-field-metadata-name.util';
 
 @Injectable()
 export class RelationMetadataHealthService {
@@ -136,12 +137,14 @@ export class RelationMetadataHealthService {
     }
 
     const isCustom = toFieldMetadata.isCustom ?? false;
-    const foreignKeyColumnName = createRelationMetadataForeignKey(
+    const foreignKeyColumnName = createRelationForeignKeyColumnName(
       toFieldMetadata.name,
       isCustom,
     );
     const relationColumn = workspaceTableColumns.find(
-      (column) => column.columnName === foreignKeyColumnName,
+      (column) =>
+        column.columnName ===
+        createRelationForeignKeyFieldMetadataName(toFieldMetadata.name),
     );
     const relationFieldMetadata = toObjectMetadataFields.find(
       (fieldMetadata) => fieldMetadata.name === foreignKeyColumnName,
