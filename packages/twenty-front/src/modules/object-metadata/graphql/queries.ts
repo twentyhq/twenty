@@ -46,6 +46,7 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
                     dataSourceId
                     nameSingular
                     namePlural
+                    isSystem
                   }
                   toFieldMetadataId
                 }
@@ -57,6 +58,7 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
                     dataSourceId
                     nameSingular
                     namePlural
+                    isSystem
                   }
                   fromFieldMetadataId
                 }

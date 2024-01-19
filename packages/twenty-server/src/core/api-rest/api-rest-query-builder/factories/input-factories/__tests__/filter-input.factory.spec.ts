@@ -35,7 +35,7 @@ describe('FilterInputFactory', () => {
       };
 
       expect(() => service.create(request, objectMetadata)).toThrow(
-        "field 'wrongField' does not exist in 'testingObject' object",
+        "field 'wrongField' does not exist in 'objectName' object",
       );
     });
 

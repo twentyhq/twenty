@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 
 import { WorkspaceMigrationService } from 'src/metadata/workspace-migration/workspace-migration.service';
 import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migration-runner/workspace-migration-runner.service';
@@ -21,7 +22,7 @@ import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
-import { createCustomColumnName } from 'src/metadata/utils/create-custom-column-name.util';
+import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -47,6 +48,21 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     super(objectMetadataRepository);
   }
 
+  override async query(
+    query: Query<ObjectMetadataEntity>,
+    opts?: QueryOptions<ObjectMetadataEntity> | undefined,
+  ): Promise<ObjectMetadataEntity[]> {
+    const start = performance.now();
+
+    const result = super.query(query, opts);
+
+    const end = performance.now();
+
+    console.log(`metadata query time: ${end - start} ms`);
+
+    return result;
+  }
+
   override async createOne(
     objectMetadataInput: CreateObjectInput,
   ): Promise<ObjectMetadataEntity> {
@@ -67,7 +83,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const createdObjectMetadata = await super.createOne({
       ...objectMetadataInput,
       dataSourceId: lastDataSourceMetadata.id,
-      targetTableName: createCustomColumnName(objectMetadataInput.nameSingular),
+      targetTableName: 'DEPRECATED',
       isActive: true,
       isCustom: true,
       isSystem: false,
@@ -85,7 +101,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             },
             icon: 'Icon123',
             description: 'Id',
-            isNullable: true,
+            isNullable: false,
             isActive: true,
             isCustom: false,
             isSystem: true,
@@ -101,7 +117,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             },
             icon: 'IconAbc',
             description: 'Name',
-            isNullable: true,
+            isNullable: false,
             isActive: true,
             isCustom: false,
             workspaceId: objectMetadataInput.workspaceId,
@@ -116,7 +132,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             },
             icon: 'IconCalendar',
             description: 'Creation date',
-            isNullable: true,
+            isNullable: false,
             isActive: true,
             isCustom: false,
             workspaceId: objectMetadataInput.workspaceId,
@@ -131,7 +147,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             },
             icon: 'IconCalendar',
             description: 'Update date',
-            isNullable: true,
+            isNullable: false,
             isActive: true,
             isCustom: false,
             isSystem: true,
@@ -156,68 +172,80 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       createdObjectMetadata.workspaceId,
       [
         {
-          name: createdObjectMetadata.targetTableName,
+          name: computeObjectTargetTable(createdObjectMetadata),
           action: 'create',
         } satisfies WorkspaceMigrationTableAction,
         // Add activity target relation
         {
-          name: activityTargetObjectMetadata.targetTableName,
+          name: computeObjectTargetTable(activityTargetObjectMetadata),
           action: 'alter',
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE,
-              columnName: `${createdObjectMetadata.targetTableName}Id`,
+              columnName: `${computeObjectTargetTable(
+                createdObjectMetadata,
+              )}Id`,
               columnType: 'uuid',
               isNullable: true,
             } satisfies WorkspaceMigrationColumnCreate,
           ],
         },
         {
-          name: activityTargetObjectMetadata.targetTableName,
+          name: computeObjectTargetTable(activityTargetObjectMetadata),
           action: 'alter',
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.RELATION,
-              columnName: `${createdObjectMetadata.targetTableName}Id`,
-              referencedTableName: createdObjectMetadata.targetTableName,
+              columnName: `${computeObjectTargetTable(
+                createdObjectMetadata,
+              )}Id`,
+              referencedTableName: computeObjectTargetTable(
+                createdObjectMetadata,
+              ),
               referencedTableColumnName: 'id',
             },
           ],
         },
         // Add favorite relation
         {
-          name: favoriteObjectMetadata.targetTableName,
+          name: computeObjectTargetTable(favoriteObjectMetadata),
           action: 'alter',
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE,
-              columnName: `${createdObjectMetadata.targetTableName}Id`,
+              columnName: `${computeObjectTargetTable(
+                createdObjectMetadata,
+              )}Id`,
               columnType: 'uuid',
               isNullable: true,
             } satisfies WorkspaceMigrationColumnCreate,
           ],
         },
         {
-          name: favoriteObjectMetadata.targetTableName,
+          name: computeObjectTargetTable(favoriteObjectMetadata),
           action: 'alter',
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.RELATION,
-              columnName: `${createdObjectMetadata.targetTableName}Id`,
-              referencedTableName: createdObjectMetadata.targetTableName,
+              columnName: `${computeObjectTargetTable(
+                createdObjectMetadata,
+              )}Id`,
+              referencedTableName: computeObjectTargetTable(
+                createdObjectMetadata,
+              ),
               referencedTableColumnName: 'id',
             },
           ],
         },
         // This is temporary until we implement mainIdentifier
         {
-          name: createdObjectMetadata.targetTableName,
+          name: computeObjectTargetTable(createdObjectMetadata),
           action: 'alter',
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE,
               columnName: 'name',
-              columnType: 'varchar',
+              columnType: 'text',
               defaultValue: "'Untitled'",
             } satisfies WorkspaceMigrationColumnCreate,
           ],
@@ -302,6 +330,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   ) {
     return this.objectMetadataRepository.find({
       relations: [
+        'fields.object',
         'fields',
         'fields.fromRelationMetadata',
         'fields.toRelationMetadata',
@@ -384,7 +413,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           name: `${createdObjectMetadata.nameSingular}Id`,
           label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
           targetColumnMap: {
-            value: `${createdObjectMetadata.targetTableName}Id`,
+            value: `${computeObjectTargetTable(createdObjectMetadata)}Id`,
           },
           description: `ActivityTarget ${createdObjectMetadata.labelSingular} id foreign key`,
           icon: undefined,
@@ -474,7 +503,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           name: `${createdObjectMetadata.nameSingular}Id`,
           label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
           targetColumnMap: {
-            value: `${createdObjectMetadata.targetTableName}Id`,
+            value: `${computeObjectTargetTable(createdObjectMetadata)}Id`,
           },
           description: `Favorite ${createdObjectMetadata.labelSingular} id foreign key`,
           icon: undefined,

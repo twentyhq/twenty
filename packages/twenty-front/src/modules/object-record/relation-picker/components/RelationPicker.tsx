@@ -1,20 +1,12 @@
-import { useContext, useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useEffect } from 'react';
 
-import { AddPersonToCompany } from '@/companies/components/AddPersonToCompany';
-import { companyProgressesFamilyState } from '@/companies/states/companyProgressesFamilyState';
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { FieldDefinition } from '@/object-record/field/types/FieldDefinition';
 import { FieldRelationMetadata } from '@/object-record/field/types/FieldMetadata';
-import { BoardCardIdContext } from '@/object-record/record-board/contexts/BoardCardIdContext';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
-import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { IconForbid } from '@/ui/display/icon';
-import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
-import { isDefined } from '~/utils/isDefined';
 
 export type RelationPickerProps = {
   recordId?: string;
@@ -38,33 +30,12 @@ export const RelationPicker = ({
   const {
     relationPickerSearchFilter,
     setRelationPickerSearchFilter,
-    identifiersMapper,
     searchQuery,
-  } = useRelationPicker();
-
-  const [showAddNewDropdown, setShowAddNewDropdown] = useState(false);
-
-  const { setHotkeyScopeAndMemorizePreviousScope } = usePreviousHotkeyScope();
+  } = useRelationPicker({ relationPickerScopeId: 'relation-picker' });
 
   useEffect(() => {
     setRelationPickerSearchFilter(initialSearchFilter ?? '');
   }, [initialSearchFilter, setRelationPickerSearchFilter]);
-
-  const boardCardId = useContext(BoardCardIdContext);
-  const weAreInOpportunitiesPageCard = isDefined(boardCardId);
-
-  const [companyProgress] = useRecoilState(
-    companyProgressesFamilyState(boardCardId ?? ''),
-  );
-
-  const { company } = companyProgress ?? {};
-  const companyId = company?.id;
-
-  const { objectNameSingular: relationObjectNameSingular } =
-    useObjectNameSingularFromPlural({
-      objectNamePlural:
-        fieldDefinition.metadata.relationObjectMetadataNamePlural,
-    });
 
   const entities = useFilteredSearchEntityQuery({
     filters: [
@@ -77,54 +48,26 @@ export const RelationPicker = ({
       },
     ],
     orderByField: 'createdAt',
-    mappingFunction: (record: any) =>
-      identifiersMapper?.(
-        record,
-        fieldDefinition.metadata.relationObjectMetadataNameSingular,
-      ),
     selectedIds: recordId ? [recordId] : [],
     excludeEntityIds: excludeRecordIds,
-    objectNameSingular: relationObjectNameSingular,
+    objectNameSingular:
+      fieldDefinition.metadata.relationObjectMetadataNameSingular,
   });
 
-  const handleEntitySelected = (selectedEntity: any | null | undefined) =>
-    onSubmit(selectedEntity ?? null);
-
-  const entitiesToSelect = entities.entitiesToSelect.filter((entity) =>
-    weAreInOpportunitiesPageCard ? entity.record.companyId === companyId : true,
-  );
-
-  const weAreAddingNewPerson =
-    weAreInOpportunitiesPageCard && showAddNewDropdown && companyId;
+  const handleEntitySelected = (
+    selectedEntity: EntityForSelect | null | undefined,
+  ) => onSubmit(selectedEntity ?? null);
 
   return (
-    <>
-      {!weAreAddingNewPerson ? (
-        <SingleEntitySelect
-          EmptyIcon={IconForbid}
-          emptyLabel={'No ' + fieldDefinition.label}
-          entitiesToSelect={entitiesToSelect}
-          loading={entities.loading}
-          onCancel={onCancel}
-          onEntitySelected={handleEntitySelected}
-          selectedEntity={entities.selectedEntities[0]}
-          width={width}
-          onCreate={() => {
-            if (weAreInOpportunitiesPageCard) {
-              setShowAddNewDropdown(true);
-              setHotkeyScopeAndMemorizePreviousScope(
-                RelationPickerHotkeyScope.AddNew,
-              );
-            }
-          }}
-        />
-      ) : (
-        <AddPersonToCompany
-          companyId={companyId}
-          onEntitySelected={handleEntitySelected}
-          closeDropdown={() => setShowAddNewDropdown(false)}
-        />
-      )}
-    </>
+    <SingleEntitySelect
+      EmptyIcon={IconForbid}
+      emptyLabel={'No ' + fieldDefinition.label}
+      entitiesToSelect={entities.entitiesToSelect}
+      loading={entities.loading}
+      onCancel={onCancel}
+      onEntitySelected={handleEntitySelected}
+      selectedEntity={entities.selectedEntities[0]}
+      width={width}
+    />
   );
 };

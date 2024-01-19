@@ -4,6 +4,7 @@ import { expect, userEvent, within } from '@storybook/test';
 import { IconUserCircle } from '@/ui/display/icon';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
+import { RelationPickerDecorator } from '~/testing/decorators/RelationPickerDecorator';
 import { mockedPeopleData } from '~/testing/mock-data/people';
 import { sleep } from '~/testing/sleep';
 
@@ -13,13 +14,19 @@ import { SingleEntitySelect } from '../SingleEntitySelect';
 const entities = mockedPeopleData.map<EntityForSelect>((person) => ({
   id: person.id,
   name: person.name.firstName + ' ' + person.name.lastName,
+  avatarUrl: person.avatarUrl,
+  avatarType: 'rounded',
   record: person,
 }));
 
 const meta: Meta<typeof SingleEntitySelect> = {
   title: 'UI/Input/RelationPicker/SingleEntitySelect',
   component: SingleEntitySelect,
-  decorators: [ComponentDecorator, ComponentWithRecoilScopeDecorator],
+  decorators: [
+    ComponentDecorator,
+    ComponentWithRecoilScopeDecorator,
+    RelationPickerDecorator,
+  ],
   argTypes: {
     selectedEntity: {
       options: entities.map(({ name }) => name),

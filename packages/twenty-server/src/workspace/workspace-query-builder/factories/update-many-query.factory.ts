@@ -10,6 +10,7 @@ import { UpdateManyResolverArgs } from 'src/workspace/workspace-resolver-builder
 import { stringifyWithoutKeyQuote } from 'src/workspace/workspace-query-builder/utils/stringify-without-key-quote.util';
 import { FieldsStringFactory } from 'src/workspace/workspace-query-builder/factories/fields-string.factory';
 import { ArgsAliasFactory } from 'src/workspace/workspace-query-builder/factories/args-alias.factory';
+import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
 
 @Injectable()
 export class UpdateManyQueryFactory {
@@ -43,7 +44,7 @@ export class UpdateManyQueryFactory {
 
     return `
     mutation {
-      update${options.targetTableName}Collection(
+      update${computeObjectTargetTable(options.objectMetadataItem)}Collection(
         set: ${stringifyWithoutKeyQuote(argsData)},
         filter: ${stringifyWithoutKeyQuote(args.filter)},
       ) {

@@ -7,7 +7,7 @@ import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-sy
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorators/relation-metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
-import { MessageRecipientObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-recipient.object-metadata';
+import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-participant.object-metadata';
 import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-thread.object-metadata';
 
 @ObjectMetadata({
@@ -81,24 +81,24 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.DATE_TIME,
-    label: 'Date',
-    description: 'Date',
+    label: 'Received At',
+    description: 'The date the message was received',
     icon: 'IconCalendar',
   })
   @IsNullable()
-  date: string;
+  receivedAt: string;
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Message Recipients',
-    description: 'Message Recipients',
+    label: 'Message Participants',
+    description: 'Message Participants',
     icon: 'IconUserCircle',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'messageRecipient',
+    objectName: 'messageParticipant',
     inverseSideFieldName: 'message',
   })
   @IsNullable()
-  messageRecipients: MessageRecipientObjectMetadata[];
+  messageParticipants: MessageParticipantObjectMetadata[];
 }

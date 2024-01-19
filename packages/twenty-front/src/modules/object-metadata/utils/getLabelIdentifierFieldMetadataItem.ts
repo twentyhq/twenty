@@ -1,12 +1,13 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 
 export const getLabelIdentifierFieldMetadataItem = (
   objectMetadataItem: ObjectMetadataItem,
-): FieldMetadataItem | undefined => {
-  return objectMetadataItem.fields.find(
-    (field) =>
-      field.id === objectMetadataItem.labelIdentifierFieldMetadataId ||
-      field.name === 'name',
+): FieldMetadataItem | undefined =>
+  objectMetadataItem.fields.find((fieldMetadataItem) =>
+    isLabelIdentifierField({
+      fieldMetadataItem,
+      objectMetadataItem,
+    }),
   );
-};

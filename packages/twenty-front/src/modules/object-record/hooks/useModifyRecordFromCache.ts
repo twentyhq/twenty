@@ -1,5 +1,5 @@
 import { useApolloClient } from '@apollo/client';
-import { Modifiers } from '@apollo/client/cache';
+import { Modifier, Reference } from '@apollo/client/cache';
 
 import { EMPTY_MUTATION } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -12,7 +12,10 @@ export const useModifyRecordFromCache = ({
 }) => {
   const apolloClient = useApolloClient();
 
-  return (recordId: string, fieldModifiers: Modifiers) => {
+  return (
+    recordId: string,
+    fieldModifiers: Record<string, Modifier<Reference>>,
+  ) => {
     if (!objectMetadataItem) {
       return EMPTY_MUTATION;
     }
@@ -23,7 +26,7 @@ export const useModifyRecordFromCache = ({
       id: recordId,
     });
 
-    cache.modify({
+    cache.modify<Record<string, Reference>>({
       id: cachedRecordId,
       fields: fieldModifiers,
     });
