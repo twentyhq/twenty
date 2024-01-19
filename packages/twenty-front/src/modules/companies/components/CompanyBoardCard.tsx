@@ -197,8 +197,8 @@ export const CompanyBoardCard = () => {
       >
         <StyledBoardCardHeader showCompactView={showCompactView}>
           <CompanyChip
-            id={company.id}
-            name={company.name}
+            opportunityId={opportunity.id}
+            companyName={company.name}
             avatarUrl={getLogoUrlFromDomainName(company.domainName)}
             variant={EntityChipVariant.Transparent}
           />
