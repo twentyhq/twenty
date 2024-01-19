@@ -9,7 +9,6 @@ import { Activity } from '@/activities/types/Activity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 
@@ -55,8 +54,7 @@ export const ActivityBodyEditor = ({
     return debounce(onInternalChange, 200);
   }, [updateOneRecord, activity.id]);
 
-  const imagesActivated = useIsFeatureEnabled('IS_NOTE_CREATE_IMAGES_ENABLED');
-  const slashMenuItems = getSlashMenu(imagesActivated);
+  const slashMenuItems = getSlashMenu();
 
   const [uploadFile] = useUploadFileMutation();
 

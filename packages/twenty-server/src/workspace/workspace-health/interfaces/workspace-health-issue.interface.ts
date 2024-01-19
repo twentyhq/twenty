@@ -2,6 +2,7 @@ import { WorkspaceTableStructure } from 'src/workspace/workspace-health/interfac
 
 import { FieldMetadataEntity } from 'src/metadata/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
+import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
 
 export enum WorkspaceHealthIssueType {
   MISSING_TABLE = 'MISSING_TABLE',
@@ -23,6 +24,11 @@ export enum WorkspaceHealthIssueType {
   COLUMN_DEFAULT_VALUE_CONFLICT = 'COLUMN_DEFAULT_VALUE_CONFLICT',
   COLUMN_DEFAULT_VALUE_NOT_VALID = 'COLUMN_DEFAULT_VALUE_NOT_VALID',
   COLUMN_OPTIONS_NOT_VALID = 'COLUMN_OPTIONS_NOT_VALID',
+  RELATION_FROM_OR_TO_FIELD_METADATA_NOT_VALID = 'RELATION_FROM_OR_TO_FIELD_METADATA_NOT_VALID',
+  RELATION_FOREIGN_KEY_NOT_VALID = 'RELATION_FOREIGN_KEY_NOT_VALID',
+  RELATION_NULLABILITY_CONFLICT = 'RELATION_NULLABILITY_CONFLICT',
+  RELATION_FOREIGN_KEY_CONFLICT = 'RELATION_FOREIGN_KEY_CONFLICT',
+  RELATION_TYPE_NOT_VALID = 'RELATION_TYPE_NOT_VALID',
 }
 
 export interface WorkspaceHealthTableIssue {
@@ -57,6 +63,21 @@ export interface WorkspaceHealthColumnIssue {
   message: string;
 }
 
+export interface WorkspaceHealthRelationIssue {
+  type:
+    | WorkspaceHealthIssueType.RELATION_FROM_OR_TO_FIELD_METADATA_NOT_VALID
+    | WorkspaceHealthIssueType.RELATION_FOREIGN_KEY_NOT_VALID
+    | WorkspaceHealthIssueType.RELATION_NULLABILITY_CONFLICT
+    | WorkspaceHealthIssueType.RELATION_FOREIGN_KEY_CONFLICT
+    | WorkspaceHealthIssueType.RELATION_TYPE_NOT_VALID;
+  fromFieldMetadata: FieldMetadataEntity | undefined;
+  toFieldMetadata: FieldMetadataEntity | undefined;
+  relationMetadata: RelationMetadataEntity;
+  columnStructure?: WorkspaceTableStructure;
+  message: string;
+}
+
 export type WorkspaceHealthIssue =
   | WorkspaceHealthTableIssue
-  | WorkspaceHealthColumnIssue;
+  | WorkspaceHealthColumnIssue
+  | WorkspaceHealthRelationIssue;

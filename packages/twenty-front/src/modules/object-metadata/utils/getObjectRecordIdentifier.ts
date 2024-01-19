@@ -14,34 +14,25 @@ export const getObjectRecordIdentifier = ({
   objectMetadataItem: ObjectMetadataItem;
   record: ObjectRecord;
 }): ObjectRecordIdentifier => {
-  switch (objectMetadataItem.nameSingular) {
-    case CoreObjectNameSingular.Opportunity:
-      return {
-        id: record.id,
-        name: record?.company?.name ?? record.name,
-        avatarUrl: record.avatarUrl,
-        avatarType: 'rounded',
-        linkToShowPage: `/opportunities/${record.id}`,
-      };
+  if (objectMetadataItem.nameSingular === CoreObjectNameSingular.Opportunity) {
+    return {
+      id: record.id,
+      name: record?.company?.name ?? record.name,
+      avatarUrl: record.avatarUrl,
+      avatarType: 'rounded',
+      linkToShowPage: `/opportunities/${record.id}`,
+    };
   }
 
   const labelIdentifierFieldMetadataItem =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
-  let labelIdentifierFieldValue = '';
-
-  switch (labelIdentifierFieldMetadataItem?.type) {
-    case FieldMetadataType.FullName: {
-      labelIdentifierFieldValue = `${record.name?.firstName ?? ''} ${
-        record.name?.lastName ?? ''
-      }`;
-      break;
-    }
-    default:
-      labelIdentifierFieldValue = labelIdentifierFieldMetadataItem
-        ? record[labelIdentifierFieldMetadataItem.name]
+  const labelIdentifierFieldValue =
+    labelIdentifierFieldMetadataItem?.type === FieldMetadataType.FullName
+      ? `${record.name?.firstName ?? ''} ${record.name?.lastName ?? ''}`
+      : labelIdentifierFieldMetadataItem?.name
+        ? (record[labelIdentifierFieldMetadataItem.name] as string | number)
         : '';
-  }
 
   const imageIdentifierFieldMetadata = objectMetadataItem.fields.find(
     (field) => field.id === objectMetadataItem.imageIdentifierFieldMetadataId,
@@ -57,19 +48,24 @@ export const getObjectRecordIdentifier = ({
       : 'rounded';
 
   const avatarUrl =
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.Company
+    (objectMetadataItem.nameSingular === CoreObjectNameSingular.Company
       ? getLogoUrlFromDomainName(record['domainName'] ?? '')
-      : imageIdentifierFieldValue ?? null;
+      : imageIdentifierFieldValue) ?? '';
 
   const basePathToShowPage = getBasePathToShowPage({
     objectMetadataItem,
   });
 
-  const linkToShowPage = `${basePathToShowPage}${record.id}`;
+  const isWorkspaceMemberObjectMetadata =
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.WorkspaceMember;
+
+  const linkToShowPage = isWorkspaceMemberObjectMetadata
+    ? ''
+    : `${basePathToShowPage}${record.id}`;
 
   return {
     id: record.id,
-    name: labelIdentifierFieldValue,
+    name: `${labelIdentifierFieldValue}`,
     avatarUrl,
     avatarType,
     linkToShowPage,

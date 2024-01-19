@@ -34,7 +34,6 @@ const generateOpportunities = (
     probability: getRandomProbability(),
     pipelineStepId: getRandomPipelineStepId(pipelineStepIds),
     pointOfContactId: company.personId,
-    personId: company.personId,
     companyId: company.id,
   }));
 };
@@ -69,7 +68,6 @@ export const seedDemoOpportunity = async (
       'probability',
       'pipelineStepId',
       'pointOfContactId',
-      'personId',
       'companyId',
     ])
     .orIgnore()
