@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { EntityManager, In } from 'typeorm';
+import { v4 as uuidV4 } from 'uuid';
 
 import { MappedObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/mapped-metadata.interface';
 import { PartialFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
@@ -12,6 +13,7 @@ import {
 } from 'src/metadata/field-metadata/field-metadata.entity';
 import { convertStringifiedFieldsToJSON } from 'src/workspace/workspace-sync-metadata/utils/sync-metadata.util';
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { FieldMetadataComplexOptions } from 'src/metadata/field-metadata/dtos/options.input';
 
 interface WorkspaceMetadataObjectUpdaterContext {
   objectMetadataCreateCollection: MappedObjectMetadata[];
@@ -52,10 +54,9 @@ export class WorkspaceMetadataUpdaterService {
         context.objectMetadataCreateCollection.map((object) => ({
           ...object,
           isActive: true,
-          fields: Object.values(object.fields).map((field) => ({
-            ...convertStringifiedFieldsToJSON(field),
-            isActive: true,
-          })),
+          fields: Object.values(object.fields).map((field) =>
+            this.prepareFieldMetadataForCreation(field),
+          ),
         })),
       );
     const identifiers = createdPartialObjectMetadataCollection.map(
@@ -91,6 +92,32 @@ export class WorkspaceMetadataUpdaterService {
     };
   }
 
+  private prepareFieldMetadataForCreation(field: PartialFieldMetadata) {
+    const convertedField = convertStringifiedFieldsToJSON(field);
+
+    return {
+      ...convertedField,
+      ...(convertedField.type === FieldMetadataType.SELECT &&
+      convertedField.options
+        ? {
+            options: this.generateUUIDForNewSelectFieldOptions(
+              convertedField.options as FieldMetadataComplexOptions[],
+            ),
+          }
+        : {}),
+      isActive: true,
+    };
+  }
+
+  private generateUUIDForNewSelectFieldOptions(
+    options: FieldMetadataComplexOptions[],
+  ): FieldMetadataComplexOptions[] {
+    return options.map((option) => ({
+      ...option,
+      id: uuidV4(),
+    }));
+  }
+
   async updateFieldMetadata(
     manager: EntityManager,
     context: WorkspaceMetadataFieldUpdaterContext,
@@ -105,7 +132,7 @@ export class WorkspaceMetadataUpdaterService {
      */
     const createdFieldMetadataCollection = await fieldMetadataRepository.save(
       context.fieldMetadataCreateCollection.map((field) =>
-        convertStringifiedFieldsToJSON(field),
+        this.prepareFieldMetadataForCreation(field),
       ),
     );
 

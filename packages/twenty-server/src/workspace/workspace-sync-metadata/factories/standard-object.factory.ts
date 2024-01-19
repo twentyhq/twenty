@@ -53,7 +53,6 @@ export class StandardObjectFactory {
         ...field,
         workspaceId: context.workspaceId,
         isSystem: objectMetadata.isSystem || field.isSystem,
-        defaultValue: field.defaultValue,
       })),
     };
   }
