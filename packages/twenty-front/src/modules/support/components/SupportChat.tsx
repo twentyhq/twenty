@@ -6,10 +6,10 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { IconHelpCircle } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { Button } from '@/ui/input/button/components/Button';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { User } from '~/generated/graphql';
-import useI18n from '@/ui/i18n/useI18n';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -36,7 +36,7 @@ export const SupportChat = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const supportChat = useRecoilValue(supportChatState);
   const [isFrontChatLoaded, setIsFrontChatLoaded] = useState(false);
-  const { translate } = useI18n('translations')
+  const { translate } = useI18n('translations');
 
   const configureFront = useCallback(
     (

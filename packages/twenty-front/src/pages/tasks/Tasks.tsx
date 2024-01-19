@@ -7,6 +7,7 @@ import { TASKS_TAB_LIST_COMPONENT_ID } from '@/activities/tasks/constants/tasksT
 import { ObjectFilterDropdownButton } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownButton';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { IconArchive, IconCheck, IconCheckbox } from '@/ui/display/icon/index';
+import useI18n from '@/ui/i18n/useI18n';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
@@ -15,7 +16,6 @@ import { TopBar } from '@/ui/layout/top-bar/TopBar';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { TasksEffect } from './TasksEffect';
-import useI18n from '@/ui/i18n/useI18n';
 
 const StyledTasksContainer = styled.div`
   display: flex;

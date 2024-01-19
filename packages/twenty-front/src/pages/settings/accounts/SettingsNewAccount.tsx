@@ -1,9 +1,9 @@
 import { SettingsNewAccountSection } from '@/settings/accounts/components/SettingsNewAccountSection';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { IconSettings } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import useI18n from '@/ui/i18n/useI18n';
 
 export const SettingsNewAccount = () => {
   const { translate } = useI18n('translations');

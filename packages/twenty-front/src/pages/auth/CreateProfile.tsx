@@ -18,11 +18,11 @@ import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePic
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import useI18n from '@/ui/i18n/useI18n';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import useI18n from '@/ui/i18n/useI18n';
 
 const StyledContentContainer = styled.div`
   width: 100%;

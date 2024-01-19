@@ -1,12 +1,11 @@
 import { IconArchiveOff, IconDotsVertical } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import useI18n from '@/ui/i18n/useI18n';
 
 type SettingsObjectFieldDisabledActionDropdownProps = {
   isCustomField?: boolean;

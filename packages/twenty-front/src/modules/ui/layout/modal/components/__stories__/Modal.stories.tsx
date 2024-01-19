@@ -27,8 +27,8 @@ export const Default: Story = {
           that I expect you to, anyways. :)
         </Modal.Content>
         <Modal.Footer>
-          By using Taba, you're opting for the finest CRM experience you'll
-          ever encounter.
+          By using Taba, you're opting for the finest CRM experience you'll ever
+          encounter.
         </Modal.Footer>
       </>
     ),

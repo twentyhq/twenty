@@ -7,6 +7,7 @@ import { FieldContext } from '@/object-record/field/contexts/FieldContext';
 import { BooleanFieldInput } from '@/object-record/field/meta-types/input/components/BooleanFieldInput';
 import { RatingFieldInput } from '@/object-record/field/meta-types/input/components/RatingFieldInput';
 import { Tag } from '@/ui/display/tag/components/Tag';
+import useI18n from '@/ui/i18n/useI18n';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
@@ -15,7 +16,6 @@ import { SettingsObjectFieldPreviewValueEffect } from '../components/SettingsObj
 import { useFieldPreview } from '../hooks/useFieldPreview';
 
 import { SettingsObjectFieldSelectFormValues } from './SettingsObjectFieldSelectForm';
-import useI18n from '@/ui/i18n/useI18n';
 
 export type SettingsObjectFieldPreviewProps = {
   className?: string;

@@ -11,12 +11,12 @@ import { formatExpirations } from '@/settings/developers/utils/format-expiration
 import { IconPlus, IconSettings } from '@/ui/display/icon';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import useI18n from '@/ui/i18n/useI18n';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import useI18n from '@/ui/i18n/useI18n';
 
 const StyledContainer = styled.div`
   height: fit-content;

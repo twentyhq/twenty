@@ -11,6 +11,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { IconSettings, IconTrash } from '@/ui/display/icon';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import useI18n from '@/ui/i18n/useI18n';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -18,7 +19,6 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import useI18n from '@/ui/i18n/useI18n';
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
@@ -101,11 +101,7 @@ export const SettingsWorkspaceMembers = () => {
         isOpen={isConfirmationModalOpen}
         setIsOpen={setIsConfirmationModalOpen}
         title="Account Deletion"
-        subtitle={
-          <>
-            {translate('accountDeletionDes')}
-          </>
-        }
+        subtitle={<>{translate('accountDeletionDes')}</>}
         onConfirmClick={() =>
           workspaceMemberToDelete &&
           handleRemoveWorkspaceMember(workspaceMemberToDelete)

@@ -13,12 +13,12 @@ import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import useI18n from '@/ui/i18n/useI18n';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { ColumnGrid } from './components/ColumnGrid';
 import { TemplateColumn } from './components/TemplateColumn';
 import { UserTableColumn } from './components/UserTableColumn';
-import useI18n from '@/ui/i18n/useI18n';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;
@@ -212,8 +212,7 @@ export const MatchColumnsStep = <T extends string>({
     if (unmatchedRequiredFields.length > 0) {
       enqueueDialog({
         title: translate('columnsNotMatched'),
-        message:
-          translate('requiredColumns'),
+        message: translate('requiredColumns'),
         children: (
           <StyledColumnsContainer>
             <StyledColumns>Columns not matched:</StyledColumns>

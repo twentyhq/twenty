@@ -2,7 +2,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 // import { IconBrandGithub } from '@/ui/display/icon';
-
 import packageJson from '../../../../../../package.json';
 import { githubLink } from '../constants';
 

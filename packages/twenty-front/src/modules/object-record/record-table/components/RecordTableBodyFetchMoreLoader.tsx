@@ -1,11 +1,12 @@
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-import useI18n from '@/ui/i18n/useI18n';
+
 import { useObjectRecordTable } from '@/object-record/hooks/useObjectRecordTable';
 import { StyledRow } from '@/object-record/record-table/components/RecordTableRow';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
+import useI18n from '@/ui/i18n/useI18n';
 import { grayScale } from '@/ui/theme/constants/colors';
 
 type RecordTableBodyFetchMoreLoaderProps = {

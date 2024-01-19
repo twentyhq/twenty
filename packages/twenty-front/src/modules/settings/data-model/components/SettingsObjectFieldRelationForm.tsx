@@ -83,8 +83,7 @@ export const SettingsObjectFieldRelationForm = ({
               label,
               value: value as RelationType,
               Icon,
-            }),
-          )}
+            }))}
           onChange={(value) => onChange({ type: value })}
         />
         <Select

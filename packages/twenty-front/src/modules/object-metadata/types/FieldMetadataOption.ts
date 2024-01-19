@@ -5,4 +5,5 @@ export type FieldMetadataOption = {
   id?: string;
   isDefault?: boolean;
   label: string;
+  value: string;
 };

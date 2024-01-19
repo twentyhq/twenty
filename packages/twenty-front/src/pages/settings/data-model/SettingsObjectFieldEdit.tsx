@@ -205,6 +205,7 @@ export const SettingsObjectFieldEdit = () => {
           fieldMetadata={{
             icon: formValues.icon,
             label: formValues.label || translate('employees'),
+            name: formValues.name || 'employees',
             id: activeMetadataField.id,
           }}
           objectMetadataId={activeObjectMetadataItem.id}

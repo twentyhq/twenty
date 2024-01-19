@@ -12,11 +12,11 @@ import { MatchColumnSelect } from '@/spreadsheet-import/components/MatchColumnSe
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { Fields } from '@/spreadsheet-import/types';
 import { IconChevronDown, IconForbid } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 
 import { Column, Columns, ColumnType } from '../MatchColumnsStep';
 
 import { SubMatchingSelect } from './SubMatchingSelect';
-import useI18n from '@/ui/i18n/useI18n';
 
 const StyledContainer = styled.div`
   display: flex;

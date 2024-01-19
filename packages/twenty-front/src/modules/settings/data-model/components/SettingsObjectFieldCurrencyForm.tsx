@@ -34,8 +34,8 @@ export const SettingsObjectFieldCurrencyForm = ({
           ([value, { label, Icon }]) => ({
             label,
             value: value as CurrencyCode,
-            Icon
-          })
+            Icon,
+          }),
         )}
         onChange={(value) => onChange({ currencyCode: value })}
       />

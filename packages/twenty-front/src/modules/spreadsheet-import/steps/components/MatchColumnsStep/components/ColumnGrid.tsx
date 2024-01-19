@@ -1,8 +1,9 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { Columns } from '../MatchColumnsStep';
 import useI18n from '@/ui/i18n/useI18n';
+
+import { Columns } from '../MatchColumnsStep';
 
 const StyledGridContainer = styled.div`
   align-items: center;
@@ -103,8 +104,12 @@ export const ColumnGrid = <T extends string>({
       <StyledGridContainer>
         <StyledGrid>
           <StyledGridRow height="29px">
-            <StyledGridHeader position="left">{translate('importedData')}</StyledGridHeader>
-            <StyledGridHeader position="right">{translate('twentyFields')}</StyledGridHeader>
+            <StyledGridHeader position="left">
+              {translate('importedData')}
+            </StyledGridHeader>
+            <StyledGridHeader position="right">
+              {translate('twentyFields')}
+            </StyledGridHeader>
           </StyledGridRow>
           {columns.map((column, index) => {
             const userColumn = renderUserColumn(columns, index);

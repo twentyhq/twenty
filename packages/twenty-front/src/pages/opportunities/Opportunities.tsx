@@ -7,10 +7,10 @@ import { PipelineAddButton } from '@/pipeline/components/PipelineAddButton';
 import { usePipelineSteps } from '@/pipeline/hooks/usePipelineSteps';
 import { PipelineStep } from '@/pipeline/types/PipelineStep';
 import { IconTargetArrow } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
-import useI18n from '@/ui/i18n/useI18n';
 
 const StyledBoardContainer = styled.div`
   display: flex;

@@ -40,7 +40,10 @@ export const SettingsAccountsEmailsInboxSettings = () => {
         <Breadcrumb
           links={[
             { children: translate('accounts'), href: '/settings/accounts' },
-            { children: translate('emails'), href: '/settings/accounts/emails' },
+            {
+              children: translate('emails'),
+              href: '/settings/accounts/emails',
+            },
             { children: account?.handle || '' },
           ]}
         />

@@ -120,7 +120,11 @@ export const WithRelationForm: Story = {
 
 export const WithSelectForm: Story = {
   args: {
-    fieldMetadata: { label: 'Industry', icon: 'IconBuildingFactory2' },
+    fieldMetadata: {
+      label: 'Industry',
+      name: 'industry',
+      icon: 'IconBuildingFactory2',
+    },
     values: {
       ...fieldMetadataFormDefaultValues,
       type: FieldMetadataType.Select,
@@ -130,24 +134,28 @@ export const WithSelectForm: Story = {
           isDefault: true,
           label: '💊 Health',
           value: 'HEALTH',
+          id: '1',
         },
         {
           color: 'purple',
           label: '🏭 Industry',
           value: 'INDUSTRY',
+          id: '2',
         },
-        { color: 'sky', label: '🤖 SaaS', value: 'SAAS' },
+        { color: 'sky', label: '🤖 SaaS', value: 'SAAS', id: '3' },
         {
           color: 'turquoise',
           label: '🌿 Green tech',
           value: 'GREEN_TECH',
+          id: '4',
         },
         {
           color: 'yellow',
           label: '🚲 Mobility',
           value: 'MOBILITY',
+          id: '5',
         },
-        { color: 'green', label: '🌏 NGO', value: 'NGO' },
+        { color: 'green', label: '🌏 NGO', value: 'NGO', id: '6' },
       ],
     },
   },

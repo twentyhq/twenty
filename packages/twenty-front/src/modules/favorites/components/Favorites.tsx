@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import useI18n from '@/ui/i18n/useI18n';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -8,7 +9,6 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { Avatar } from '@/users/components/Avatar';
 
 import { useFavorites } from '../hooks/useFavorites';
-import useI18n from '@/ui/i18n/useI18n';
 
 const StyledContainer = styled(NavigationDrawerSection)`
   width: 100%;

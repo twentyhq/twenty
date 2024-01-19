@@ -137,7 +137,9 @@ export const ViewsDropdownButton = ({
       clickableComponent={
         <StyledDropdownButtonContainer isUnfolded={isViewsDropdownOpen}>
           <StyledViewIcon size={theme.icon.size.md} />
-          <StyledViewName>{currentView?.name ?? translate('all')}</StyledViewName>
+          <StyledViewName>
+            {currentView?.name ?? translate('all')}
+          </StyledViewName>
           <StyledDropdownLabelAdornments>
             · {entityCountInCurrentView}{' '}
             <IconChevronDown size={theme.icon.size.sm} />

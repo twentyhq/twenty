@@ -81,13 +81,13 @@ export const SettingsObjectFieldSelectForm = ({
             <>
               {values.map((option, index) => (
                 <DraggableItem
-                  key={option.value}
-                  draggableId={option.value}
+                  key={option.id}
+                  draggableId={option.id}
                   index={index}
                   isDragDisabled={values.length === 1}
                   itemComponent={
                     <SettingsObjectFieldSelectFormOptionRow
-                      key={option.value}
+                      key={option.id}
                       isDefault={option.isDefault}
                       onChange={(nextOption) => {
                         const hasDefaultOptionChanged =
@@ -131,7 +131,8 @@ export const SettingsObjectFieldSelectForm = ({
               {
                 color: getNextColor(values[values.length - 1].color),
                 label: `Option ${values.length + 1}`,
-                value: v4(),
+                value: `Value ${values.length + 1}`,
+                id: v4(),
               },
             ])
           }

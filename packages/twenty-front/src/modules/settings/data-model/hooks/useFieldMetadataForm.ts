@@ -31,7 +31,7 @@ export const fieldMetadataFormDefaultValues: FormValues = {
     objectMetadataId: '',
     field: { label: '', name: '' },
   },
-  select: [{ color: 'green', label: 'Option 1', value: v4() }],
+  select: [{ color: 'green', label: 'Option 1', value: 'Value 1', id: v4() }],
 };
 
 const fieldSchema = z.object({
@@ -75,6 +75,7 @@ const selectSchema = fieldSchema.merge(
           id: z.string().optional(),
           isDefault: z.boolean().optional(),
           label: z.string().min(1),
+          value: z.string().min(1),
         }),
       )
       .nonempty(),

@@ -93,7 +93,11 @@ export const ObjectSortDropdownButton = ({
                       setSelectedSortDirection(sortOrder);
                       setIsSortDirectionMenuUnfolded(false);
                     }}
-                    text={sortOrder === 'asc' ? translate('ascending') : translate('descending')}
+                    text={
+                      sortOrder === 'asc'
+                        ? translate('ascending')
+                        : translate('descending')
+                    }
                   />
                 ))}
               </DropdownMenuItemsContainer>
@@ -103,7 +107,9 @@ export const ObjectSortDropdownButton = ({
                   EndIcon={IconChevronDown}
                   onClick={() => setIsSortDirectionMenuUnfolded(true)}
                 >
-                  {selectedSortDirection === 'asc' ? translate('ascending') : translate('descending')}
+                  {selectedSortDirection === 'asc'
+                    ? translate('ascending')
+                    : translate('descending')}
                 </DropdownMenuHeader>
                 <DropdownMenuSeparator />
                 <DropdownMenuItemsContainer>

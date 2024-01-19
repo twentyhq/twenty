@@ -31,7 +31,7 @@ export const formatFieldMetadataItemInput = (
       id: option.id,
       label: option.label.trim(),
       position: index,
-      value: getOptionValueFromLabel(option.label),
+      value: getOptionValueFromLabel(option.value),
     })),
   };
 };

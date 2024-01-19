@@ -111,6 +111,16 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
         onChange={(label) => onChange({ ...option, label })}
         RightIcon={isDefault ? IconCheck : undefined}
       />
+      <StyledOptionInput
+        value={option.value}
+        onChange={(value) =>
+          onChange({
+            ...option,
+            value,
+          })
+        }
+        // RightIcon={isDefault ? IconCheck : undefined}
+      />
       <Dropdown
         dropdownId={dropdownIds.actions}
         dropdownPlacement="right-start"

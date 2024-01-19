@@ -56,11 +56,12 @@ export const useObjectMetadataItemForSettings = () => {
   const editObjectMetadataItem = (
     input: Pick<
       ObjectMetadataItem,
+      | 'description'
+      | 'icon'
       | 'id'
+      | 'labelIdentifierFieldMetadataId'
       | 'labelPlural'
       | 'labelSingular'
-      | 'icon'
-      | 'description'
       | 'namePlural'
       | 'nameSingular'
     >,

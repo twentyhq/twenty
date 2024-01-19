@@ -6,6 +6,7 @@ import { Key } from 'ts-key-enum';
 import { TableOptionsDropdownId } from '@/object-record/record-table/constants/TableOptionsDropdownId';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { IconChevronLeft, IconFileImport, IconTag } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -19,7 +20,6 @@ import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
-import useI18n from '@/ui/i18n/useI18n';
 
 type TableOptionsMenu = 'fields';
 

@@ -10,6 +10,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Person } from '@/people/types/Person';
 import { IconNotes } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -27,7 +28,6 @@ import { Command, CommandType } from '../types/Command';
 
 import { CommandGroup } from './CommandGroup';
 import { CommandMenuItem } from './CommandMenuItem';
-import useI18n from '@/ui/i18n/useI18n';
 
 export const StyledDialog = styled.div`
   background: ${({ theme }) => theme.background.secondary};

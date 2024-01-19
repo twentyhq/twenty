@@ -5,4 +5,5 @@ export type SettingsObjectFieldSelectFormOption = {
   isDefault?: boolean;
   label: string;
   value: string;
+  id: string;
 };

@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { IconChevronDown, IconPlus } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { Button } from '@/ui/input/button/components/Button';
 import { ButtonGroup } from '@/ui/input/button/components/ButtonGroup';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -13,7 +14,6 @@ import { UpdateViewDropdownId } from '@/views/constants/UpdateViewDropdownId';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
-import useI18n from '@/ui/i18n/useI18n';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.color.blue};

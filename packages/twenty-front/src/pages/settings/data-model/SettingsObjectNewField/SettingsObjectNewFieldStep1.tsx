@@ -15,6 +15,7 @@ import {
 import { AppPath } from '@/types/AppPath';
 import { IconMinus, IconPlus, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import useI18n from '@/ui/i18n/useI18n';
 import { Button } from '@/ui/input/button/components/Button';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -23,7 +24,6 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import useI18n from '@/ui/i18n/useI18n';
 
 const StyledSection = styled(Section)`
   display: flex;
