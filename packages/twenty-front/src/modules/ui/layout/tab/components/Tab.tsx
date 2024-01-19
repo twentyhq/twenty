@@ -3,6 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 type TabProps = {
   id: string;
@@ -30,7 +31,7 @@ const StyledTab = styled.div<{ active?: boolean; disabled?: boolean }>`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: center;
-  margin-bottom: -1px;
+  margin-bottom: ${() => (useIsMobile() ? '0' : '-1px')};
   padding: ${({ theme }) => theme.spacing(2) + ' 0'};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : '')};
 `;
