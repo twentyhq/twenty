@@ -3,6 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { render } from '@react-email/render';
 import { Repository } from 'typeorm';
+import {
+  CleanInactiveWorkspaceEmail,
+  DeleteInactiveWorkspaceEmail,
+} from 'twenty-emails';
 
 import { MessageQueueJob } from 'src/integrations/message-queue/interfaces/message-queue-job.interface';
 
@@ -19,10 +23,6 @@ import {
 } from 'src/core/feature-flag/feature-flag.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
-import {
-  CleanInactiveWorkspaceEmail,
-  DeleteInactiveWorkspaceEmail,
-} from 'src/emails/generated';
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
 

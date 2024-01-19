@@ -1,13 +1,5 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
-  "compilerOptions": {
-    "assets": [{
-      "include": "**/emails/generated/**",
-      "watchAssets": true,
-      "outDir": "./dist/src"
-    }
-    ]
-  }
+  "sourceRoot": "src"
 }
