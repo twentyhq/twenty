@@ -34,7 +34,6 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   onCompleted,
   skip,
   useRecordsWithoutConnection = false,
-  policy,
 }: ObjectMetadataItemIdentifier & {
   filter?: ObjectRecordQueryFilter;
   orderBy?: OrderByField;
@@ -42,7 +41,6 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   onCompleted?: (data: ObjectRecordConnection<T>) => void;
   skip?: boolean;
   useRecordsWithoutConnection?: boolean;
-  policy?: 'cache-only' | 'cache-and-network';
 }) => {
   const findManyQueryStateIdentifier =
     objectNameSingular +
@@ -109,9 +107,6 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         },
       );
     },
-    fetchPolicy: policy,
-    initialFetchPolicy: policy,
-    nextFetchPolicy: policy,
   });
 
   const fetchMoreRecords = useCallback(async () => {

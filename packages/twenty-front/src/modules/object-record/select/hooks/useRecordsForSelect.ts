@@ -2,8 +2,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
-import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { MULTI_OBJECT_SEARCH_REQUEST_LIMIT } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
 import { getObjectFilterFields } from '@/object-record/select/utils/getObjectFilterFields';
 import { isDefined } from '~/utils/isDefined';
@@ -115,7 +115,7 @@ export const useRecordsForSelect = ({
           },
         ],
       },
-      limit: limit ?? DEFAULT_SEARCH_REQUEST_LIMIT,
+      limit: limit ?? MULTI_OBJECT_SEARCH_REQUEST_LIMIT,
       orderBy: orderByField,
       objectNameSingular,
     });
