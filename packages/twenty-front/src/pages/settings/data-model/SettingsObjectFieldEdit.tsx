@@ -111,6 +111,7 @@ export const SettingsObjectFieldEdit = () => {
     navigate,
     relationFieldMetadataItem?.icon,
     relationFieldMetadataItem?.label,
+    relationFieldMetadataItem?.name,
     relationObjectMetadataItem?.id,
     relationType,
   ]);

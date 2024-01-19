@@ -126,6 +126,7 @@ export const CreateProfile = () => {
     },
     [
       currentWorkspaceMember?.id,
+      translate,
       enqueueSnackBar,
       navigate,
       setCurrentWorkspaceMember,

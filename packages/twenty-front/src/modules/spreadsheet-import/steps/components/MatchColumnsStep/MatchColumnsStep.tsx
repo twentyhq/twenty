@@ -182,7 +182,15 @@ export const MatchColumnsStep = <T extends string>({
         );
       }
     },
-    [columns, onRevertIgnore, onIgnore, fields, data, enqueueSnackBar],
+    [
+      columns,
+      onRevertIgnore,
+      onIgnore,
+      fields,
+      data,
+      enqueueSnackBar,
+      translate,
+    ],
   );
 
   const onSubChange = useCallback(
@@ -248,6 +256,7 @@ export const MatchColumnsStep = <T extends string>({
     columns,
     data,
     fields,
+    translate,
   ]);
 
   useEffect(() => {

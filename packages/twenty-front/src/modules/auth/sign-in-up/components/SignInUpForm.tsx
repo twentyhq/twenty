@@ -90,7 +90,7 @@ export const SignInUpForm = () => {
     return signInUpMode === SignInUpMode.SignIn
       ? translate('signIn')
       : translate('signUp');
-  }, [signInUpMode, signInUpStep]);
+  }, [signInUpMode, signInUpStep, translate]);
 
   const title = useMemo(() => {
     if (signInUpMode === SignInUpMode.Invite) {
@@ -102,7 +102,7 @@ export const SignInUpForm = () => {
     return signInUpMode === SignInUpMode.SignIn
       ? translate('signInToCrm')
       : translate('signUpToCrm');
-  }, [signInUpMode, workspace?.displayName]);
+  }, [signInUpMode, workspace?.displayName, translate]);
 
   const theme = useTheme();
 

@@ -1,9 +1,11 @@
 import { parseDate } from './date-utils';
 
-export const formatToHumanReadableDate = (date: Date | string) => {
+export const formatToHumanReadableDate = (
+  date: Date | string,
+  locales: string = 'fa-IR',
+) => {
   const parsedJSDate = parseDate(date).toJSDate();
-
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat(locales, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',

@@ -1,4 +1,4 @@
-import { useTheme } from '@emotion/react';
+// import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 // import { IconBrandGithub } from '@/ui/display/icon';
@@ -21,7 +21,7 @@ const StyledVersionLink = styled.a`
 `;
 
 export const GithubVersionLink = () => {
-  const theme = useTheme();
+  // const theme = useTheme();
 
   return (
     <StyledVersionLink href={githubLink} target="_blank" rel="noreferrer">
