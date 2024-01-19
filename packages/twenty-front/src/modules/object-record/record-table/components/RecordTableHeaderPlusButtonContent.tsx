@@ -6,6 +6,7 @@ import { useRecoilValue } from 'recoil';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { IconSettings } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
+import useI18n from '@/ui/i18n/useI18n';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -16,6 +17,7 @@ import { useTableColumns } from '../hooks/useTableColumns';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 
 export const RecordTableHeaderPlusButtonContent = () => {
+  const { translate } = useI18n('translations');
   const { closeDropdown } = useDropdown();
 
   const { hiddenTableColumnsSelector } = useRecordTableStates();
@@ -53,7 +55,10 @@ export const RecordTableHeaderPlusButtonContent = () => {
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         <StyledMenuItemLink to="/settings/objects">
-          <MenuItem LeftIcon={IconSettings} text="Customize fields" />
+          <MenuItem
+            LeftIcon={IconSettings}
+            text={translate('customizeFields')}
+          />
         </StyledMenuItemLink>
       </DropdownMenuItemsContainer>
     </>

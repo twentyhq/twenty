@@ -9,6 +9,7 @@ import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import useI18n from '@/ui/i18n/useI18n';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { TimelineItemsContainer } from './TimelineItemsContainer';
@@ -55,6 +56,7 @@ export const Timeline = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
+  const { translate } = useI18n('translations');
   const { activityTargets } = useActivityTargets({ targetableObject });
 
   const { records: activities } = useFindManyRecords({
@@ -77,8 +79,12 @@ export const Timeline = ({
   if (!activities.length) {
     return (
       <StyledTimelineEmptyContainer>
-        <StyledEmptyTimelineTitle>No activity yet</StyledEmptyTimelineTitle>
-        <StyledEmptyTimelineSubTitle>Create one:</StyledEmptyTimelineSubTitle>
+        <StyledEmptyTimelineTitle>
+          {translate('noActivityYet')}
+        </StyledEmptyTimelineTitle>
+        <StyledEmptyTimelineSubTitle>
+          {`${translate('createOne')}:`}
+        </StyledEmptyTimelineSubTitle>
         <ActivityCreateButton
           onNoteClick={() =>
             openCreateActivity({

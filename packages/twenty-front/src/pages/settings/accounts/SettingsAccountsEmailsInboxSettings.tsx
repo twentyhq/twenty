@@ -10,11 +10,14 @@ import {
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { AppPath } from '@/types/AppPath';
 import { IconSettings } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { mockedAccounts } from '~/testing/mock-data/accounts';
 
 export const SettingsAccountsEmailsInboxSettings = () => {
+  const { translate } = useI18n('translations');
+
   const navigate = useNavigate();
   const { accountUuid = '' } = useParams();
   const account = mockedAccounts.find((account) => account.id === accountUuid);
@@ -32,12 +35,12 @@ export const SettingsAccountsEmailsInboxSettings = () => {
   const handleVisibilityChange = (_value: InboxSettingsVisibilityValue) => {};
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer Icon={IconSettings} title={translate('settings')}>
       <SettingsPageContainer>
         <Breadcrumb
           links={[
-            { children: 'Accounts', href: '/settings/accounts' },
-            { children: 'Emails', href: '/settings/accounts/emails' },
+            { children: translate('accounts'), href: '/settings/accounts' },
+            { children: translate('emails'), href: '/settings/accounts/emails' },
             { children: account?.handle || '' },
           ]}
         />

@@ -17,17 +17,19 @@ type FormValues = {
   description?: string;
   icon: string;
   label: string;
+  name: string;
 } & SettingsObjectFieldTypeSelectSectionFormValues;
 
 export const fieldMetadataFormDefaultValues: FormValues = {
   icon: 'IconUsers',
   label: '',
+  name: '',
   type: FieldMetadataType.Text,
   currency: { currencyCode: CurrencyCode.USD },
   relation: {
     type: RelationMetadataType.OneToMany,
     objectMetadataId: '',
-    field: { label: '' },
+    field: { label: '', name: '' },
   },
   select: [{ color: 'green', label: 'Option 1', value: v4() }],
 };
@@ -36,6 +38,7 @@ const fieldSchema = z.object({
   description: z.string().optional(),
   icon: z.string().startsWith('Icon'),
   label: z.string().min(1),
+  name: z.string().min(1),
 });
 
 const currencySchema = fieldSchema.merge(

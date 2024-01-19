@@ -8,6 +8,7 @@ import debounce from 'lodash.debounce';
 import { Activity } from '@/activities/types/Activity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import useI18n from '@/ui/i18n/useI18n';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
@@ -29,6 +30,7 @@ export const ActivityBodyEditor = ({
   activity,
   onChange,
 }: ActivityBodyEditorProps) => {
+  const { translate } = useI18n('translations');
   const [body, setBody] = useState<string | null>(null);
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Activity,
@@ -69,7 +71,7 @@ export const ActivityBodyEditor = ({
       },
     });
     if (!result?.data?.uploadFile) {
-      throw new Error("Couldn't upload Image");
+      throw new Error(translate('couldNotUploadImage'));
     }
     const imageUrl =
       REACT_APP_SERVER_BASE_URL + '/files/' + result?.data?.uploadFile;

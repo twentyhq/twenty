@@ -10,6 +10,7 @@ import {
   IconPlus,
   IconTrash,
 } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -66,6 +67,7 @@ export const ViewsDropdownButton = ({
   onViewEditModeChange,
   optionsDropdownScopeId,
 }: ViewsDropdownButtonProps) => {
+  const { translate } = useI18n('translations');
   const theme = useTheme();
   const { removeView, changeViewInUrl } = useViewBar();
 
@@ -135,7 +137,7 @@ export const ViewsDropdownButton = ({
       clickableComponent={
         <StyledDropdownButtonContainer isUnfolded={isViewsDropdownOpen}>
           <StyledViewIcon size={theme.icon.size.md} />
-          <StyledViewName>{currentView?.name ?? 'All'}</StyledViewName>
+          <StyledViewName>{currentView?.name ?? translate('all')}</StyledViewName>
           <StyledDropdownLabelAdornments>
             · {entityCountInCurrentView}{' '}
             <IconChevronDown size={theme.icon.size.sm} />
@@ -173,7 +175,7 @@ export const ViewsDropdownButton = ({
             <MenuItem
               onClick={handleAddViewButtonClick}
               LeftIcon={IconPlus}
-              text="Add view"
+              text={translate('addView')}
             />
           </StyledBoldDropdownMenuItemsContainer>
         </>

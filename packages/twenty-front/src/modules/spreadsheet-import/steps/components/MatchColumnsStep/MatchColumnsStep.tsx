@@ -18,6 +18,7 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ColumnGrid } from './components/ColumnGrid';
 import { TemplateColumn } from './components/TemplateColumn';
 import { UserTableColumn } from './components/UserTableColumn';
+import useI18n from '@/ui/i18n/useI18n';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;
@@ -118,6 +119,7 @@ export const MatchColumnsStep = <T extends string>({
   const { fields, autoMapHeaders, autoMapDistance } =
     useSpreadsheetImportInternal<T>();
   const [isLoading, setIsLoading] = useState(false);
+  const { translate } = useI18n('translations');
   const [columns, setColumns] = useState<Columns<T>>(
     // Do not remove spread, it indexes empty array elements, otherwise map() skips over them
     ([...headerValues] as string[]).map((value, index) => ({
@@ -168,8 +170,8 @@ export const MatchColumnsStep = <T extends string>({
             if (columnIndex === index) {
               return setColumn(column, field, data);
             } else if (index === existingFieldIndex) {
-              enqueueSnackBar('Columns cannot duplicate', {
-                title: 'Another column unselected',
+              enqueueSnackBar(translate('columnsNotDuplicate'), {
+                title: translate('anotherColumnUnselected'),
                 variant: 'error',
               });
               return setColumn(column);
@@ -209,9 +211,9 @@ export const MatchColumnsStep = <T extends string>({
   const handleOnContinue = useCallback(async () => {
     if (unmatchedRequiredFields.length > 0) {
       enqueueDialog({
-        title: 'Not all columns matched',
+        title: translate('columnsNotMatched'),
         message:
-          'There are required columns that are not matched or ignored. Do you want to continue?',
+          translate('requiredColumns'),
         children: (
           <StyledColumnsContainer>
             <StyledColumns>Columns not matched:</StyledColumns>

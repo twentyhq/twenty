@@ -15,6 +15,7 @@ import { WorkspaceLogoUploader } from '@/settings/workspace/components/Workspace
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import useI18n from '@/ui/i18n/useI18n';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -42,6 +43,7 @@ const validationSchema = z
 type Form = z.infer<typeof validationSchema>;
 
 export const CreateWorkspace = () => {
+  const { translate } = useI18n('translations');
   const navigate = useNavigate();
 
   const { enqueueSnackBar } = useSnackBar();
@@ -121,20 +123,17 @@ export const CreateWorkspace = () => {
 
   return (
     <>
-      <Title>Create your workspace</Title>
-      <SubTitle>
-        A shared environment where you will be able to manage your customer
-        relations with your team.
-      </SubTitle>
+      <Title>{translate('createYourWorkspace')}</Title>
+      <SubTitle>{translate('createYourWorkspaceDes')}</SubTitle>
       <StyledContentContainer>
         <StyledSectionContainer>
-          <H2Title title="Workspace logo" />
+          <H2Title title={translate('workspaceLogo')} />
           <WorkspaceLogoUploader />
         </StyledSectionContainer>
         <StyledSectionContainer>
           <H2Title
-            title="Workspace name"
-            description="The name of your organization"
+            title={translate('workspaceName')}
+            description={translate('theNameOfYourOrganization')}
           />
           <Controller
             name="name"
@@ -146,7 +145,7 @@ export const CreateWorkspace = () => {
               <TextInput
                 autoFocus
                 value={value}
-                placeholder="Apple"
+                placeholder={translate('amir')}
                 onBlur={onBlur}
                 onChange={onChange}
                 error={error?.message}
@@ -160,7 +159,7 @@ export const CreateWorkspace = () => {
       </StyledContentContainer>
       <StyledButtonContainer>
         <MainButton
-          title="Continue"
+          title={translate('continue')}
           onClick={handleSubmit(onSubmit)}
           disabled={!isValid || isSubmitting}
           fullWidth

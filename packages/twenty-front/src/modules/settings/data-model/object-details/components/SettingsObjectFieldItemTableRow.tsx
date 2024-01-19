@@ -8,6 +8,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { FieldIdentifierType } from '@/settings/data-model/types/FieldIdentifierType';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
+import useI18n from '@/ui/i18n/useI18n';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Nullable } from '~/types/Nullable';
@@ -44,6 +45,7 @@ export const SettingsObjectFieldItemTableRow = ({
   identifierType,
   variant = 'field-type',
 }: SettingsObjectFieldItemTableRowProps) => {
+  const { translate } = useI18n('translations');
   const theme = useTheme();
   const { getIcon } = useIcons();
   const Icon = getIcon(fieldMetadataItem.icon);
@@ -73,7 +75,9 @@ export const SettingsObjectFieldItemTableRow = ({
       </StyledNameTableCell>
       <TableCell>
         {variant === 'field-type' &&
-          (fieldMetadataItem.isCustom ? 'Custom' : 'Standard')}
+          (fieldMetadataItem.isCustom
+            ? translate('custom')
+            : translate('standard'))}
         {variant === 'identifier' &&
           !!identifierType &&
           (identifierType === 'label' ? 'Record text' : 'Record image')}

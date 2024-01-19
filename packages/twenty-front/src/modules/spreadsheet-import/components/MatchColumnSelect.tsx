@@ -14,6 +14,7 @@ import { ReadonlyDeep } from 'type-fest';
 
 import { SelectOption } from '@/spreadsheet-import/types';
 import { AppTooltip } from '@/ui/display/tooltip/AppTooltip';
+import useI18n from '@/ui/i18n/useI18n';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -42,6 +43,7 @@ export const MatchColumnSelect = ({
   placeholder,
 }: MatchColumnSelectProps) => {
   const theme = useTheme();
+  const { translate } = useI18n('translations');
 
   const dropdownContainerRef = useRef<HTMLDivElement>(null);
 
@@ -146,7 +148,7 @@ export const MatchColumnSelect = ({
                         <AppTooltip
                           key={option.value}
                           anchorSelect={`#${option.value}`}
-                          content="You are already importing this column."
+                          content={translate('importingColumn')}
                           place="right"
                           offset={-20}
                         />,
@@ -154,7 +156,9 @@ export const MatchColumnSelect = ({
                       )}
                   </>
                 ))}
-                {options?.length === 0 && <MenuItem text="No result" />}
+                {options?.length === 0 && (
+                  <MenuItem text={translate('noResult')} />
+                )}
               </DropdownMenuItemsContainer>
             </DropdownMenu>
           </StyledFloatingDropdown>,

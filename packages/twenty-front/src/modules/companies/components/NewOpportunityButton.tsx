@@ -9,9 +9,11 @@ import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRela
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import useI18n from '@/ui/i18n/useI18n';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
 export const NewOpportunityButton = () => {
+  const { translate } = useI18n('translations');
   const [isCreatingCard, setIsCreatingCard] = useState(false);
   const column = useContext(BoardColumnContext);
 
@@ -30,11 +32,11 @@ export const NewOpportunityButton = () => {
     goBackToPreviousHotkeyScope();
 
     if (!pipelineStepId) {
-      enqueueSnackBar('Pipeline stage id is not defined', {
+      enqueueSnackBar(translate('pipelineStageIdIsNotDefined'), {
         variant: 'error',
       });
 
-      throw new Error('Pipeline stage id is not defined');
+      throw new Error(translate('pipelineStageIdIsNotDefined'));
     }
 
     createOpportunity(company.id, pipelineStepId);

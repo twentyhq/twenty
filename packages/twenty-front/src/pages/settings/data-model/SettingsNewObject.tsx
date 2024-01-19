@@ -9,10 +9,12 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsObjectFormSection } from '@/settings/data-model/components/SettingsObjectFormSection';
 import { IconSettings } from '@/ui/display/icon';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import useI18n from '@/ui/i18n/useI18n';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 export const SettingsNewObject = () => {
+  const { translate } = useI18n('translations');
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
 
@@ -24,16 +26,29 @@ export const SettingsNewObject = () => {
     icon: string;
     labelPlural: string;
     labelSingular: string;
-  }>({ icon: 'IconPigMoney', labelPlural: '', labelSingular: '' });
+    namePlural: string;
+    nameSingular: string;
+  }>({
+    icon: 'IconPigMoney',
+    labelPlural: '',
+    labelSingular: '',
+    namePlural: '',
+    nameSingular: '',
+  });
 
   const canSave =
-    !!customFormValues.labelPlural && !!customFormValues.labelSingular;
+    !!customFormValues.labelPlural &&
+    !!customFormValues.labelSingular &&
+    !!customFormValues.namePlural &&
+    !!customFormValues.nameSingular;
 
   const handleSave = async () => {
     try {
       const createdObject = await createObject({
         labelPlural: customFormValues.labelPlural,
         labelSingular: customFormValues.labelSingular,
+        namePlural: customFormValues.namePlural,
+        nameSingular: customFormValues.nameSingular,
         description: customFormValues.description,
         icon: customFormValues.icon,
       });
@@ -53,13 +68,13 @@ export const SettingsNewObject = () => {
   };
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer Icon={IconSettings} title={translate('settings')}>
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <Breadcrumb
             links={[
-              { children: 'Objects', href: '/settings/objects' },
-              { children: 'New' },
+              { children: translate('objects'), href: '/settings/objects' },
+              { children: translate('new') },
             ]}
           />
           <SaveAndCancelButtons
@@ -72,8 +87,10 @@ export const SettingsNewObject = () => {
         </SettingsHeaderContainer>
         <SettingsObjectFormSection
           icon={customFormValues.icon}
-          singularName={customFormValues.labelSingular}
-          pluralName={customFormValues.labelPlural}
+          singularLabel={customFormValues.labelSingular}
+          pluralLabel={customFormValues.labelPlural}
+          singularName={customFormValues.nameSingular}
+          pluralName={customFormValues.namePlural}
           description={customFormValues.description}
           onChange={(formValues) => {
             setCustomFormValues((previousValues) => ({

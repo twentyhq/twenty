@@ -5,6 +5,7 @@ import { Account } from '@/accounts/types/Account';
 import { SettingsAccountsInboxSettingsCardMedia } from '@/settings/accounts/components/SettingsAccountsInboxSettingsCardMedia';
 import { IconRefresh } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import useI18n from '@/ui/i18n/useI18n';
 import { Toggle } from '@/ui/input/components/Toggle';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
@@ -32,13 +33,14 @@ export const SettingsAccountsInboxSettingsSynchronizationSection = ({
   account,
   onToggle,
 }: SettingsAccountsInboxSettingsSynchronizationSectionProps) => {
+  const { translate } = useI18n('translations');
   const theme = useTheme();
 
   return (
     <Section>
       <H2Title
-        title="Synchronization"
-        description="Past and future emails will automatically be synced to this workspace"
+        title={translate('synchronization')}
+        description={translate('synchronizationDsc')}
       />
       <Card>
         <StyledCardContent>
@@ -48,7 +50,7 @@ export const SettingsAccountsInboxSettingsSynchronizationSection = ({
               stroke={theme.icon.stroke.lg}
             />
           </SettingsAccountsInboxSettingsCardMedia>
-          <StyledTitle>Sync emails</StyledTitle>
+          <StyledTitle>{translate('syncEmails')}</StyledTitle>
           <Toggle value={account.isSynced} onChange={onToggle} />
         </StyledCardContent>
       </Card>

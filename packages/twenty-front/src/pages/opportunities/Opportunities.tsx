@@ -10,6 +10,7 @@ import { IconTargetArrow } from '@/ui/display/icon';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
+import useI18n from '@/ui/i18n/useI18n';
 
 const StyledBoardContainer = styled.div`
   display: flex;
@@ -18,6 +19,7 @@ const StyledBoardContainer = styled.div`
 `;
 
 export const Opportunities = () => {
+  const { translate } = useI18n('translations');
   const { handlePipelineStepAdd, handlePipelineStepDelete } =
     usePipelineSteps();
 
@@ -43,7 +45,7 @@ export const Opportunities = () => {
 
   return (
     <PageContainer>
-      <PageHeader title="Opportunities" Icon={IconTargetArrow}>
+      <PageHeader title={translate('opportunities')} Icon={IconTargetArrow}>
         <PipelineAddButton />
       </PageHeader>
       <PageBody>

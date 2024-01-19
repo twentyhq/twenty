@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 import { IconCopy, IconLink } from '@/ui/display/icon';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import useI18n from '@/ui/i18n/useI18n';
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 
@@ -25,7 +26,7 @@ export const WorkspaceInviteLink = ({
   inviteLink,
 }: WorkspaceInviteLinkProps) => {
   const theme = useTheme();
-
+  const { translate } = useI18n('translations');
   const { enqueueSnackBar } = useSnackBar();
 
   return (
@@ -37,9 +38,9 @@ export const WorkspaceInviteLink = ({
         Icon={IconLink}
         variant="primary"
         accent="blue"
-        title="Copy link"
+        title={translate('copyLink')}
         onClick={() => {
-          enqueueSnackBar('Link copied to clipboard', {
+          enqueueSnackBar(translate('linkCopiedToClipboard'), {
             variant: 'success',
             icon: <IconCopy size={theme.icon.size.md} />,
             duration: 2000,

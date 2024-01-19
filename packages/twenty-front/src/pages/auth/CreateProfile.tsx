@@ -22,6 +22,7 @@ import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import useI18n from '@/ui/i18n/useI18n';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -54,6 +55,7 @@ const validationSchema = z
 type Form = z.infer<typeof validationSchema>;
 
 export const CreateProfile = () => {
+  const { translate } = useI18n('translations');
   const navigate = useNavigate();
   const onboardingStatus = useOnboardingStatus();
 
@@ -86,10 +88,10 @@ export const CreateProfile = () => {
     async (data) => {
       try {
         if (!currentWorkspaceMember?.id) {
-          throw new Error('User is not logged in');
+          throw new Error(translate('userIsNotLoggedIn'));
         }
         if (!data.firstName || !data.lastName) {
-          throw new Error('First name or last name is missing');
+          throw new Error(translate('firstNameOrLastNameIsMissing'));
         }
 
         await updateOneRecord({
@@ -146,17 +148,17 @@ export const CreateProfile = () => {
 
   return (
     <>
-      <Title>Create profile</Title>
-      <SubTitle>How you'll be identified on the app.</SubTitle>
+      <Title>{translate('createProfile')}</Title>
+      <SubTitle>{translate('howYouBeIdentifiedTheApp')}</SubTitle>
       <StyledContentContainer>
         <StyledSectionContainer>
-          <H2Title title="Picture" />
+          <H2Title title={translate('picture')} />
           <ProfilePictureUploader />
         </StyledSectionContainer>
         <StyledSectionContainer>
           <H2Title
-            title="Name"
-            description="Your name as it will be displayed on the app"
+            title={translate('name')}
+            description={translate('yourNameItWillDisplayedOnTheApp')}
           />
           {/* TODO: When react-web-hook-form is added to edit page we should create a dedicated component with context */}
           <StyledComboInputContainer>
@@ -169,11 +171,11 @@ export const CreateProfile = () => {
               }) => (
                 <TextInput
                   autoFocus
-                  label="First Name"
+                  label={translate('firstName')}
                   value={value}
                   onBlur={onBlur}
                   onChange={onChange}
-                  placeholder="Tim"
+                  placeholder={translate('amir')}
                   error={error?.message}
                   fullWidth
                   disableHotkeys
@@ -188,11 +190,11 @@ export const CreateProfile = () => {
                 fieldState: { error },
               }) => (
                 <TextInput
-                  label="Last Name"
+                  label={translate('lastName')}
                   value={value}
                   onBlur={onBlur}
                   onChange={onChange}
-                  placeholder="Cook"
+                  placeholder={translate('azizi')}
                   error={error?.message}
                   fullWidth
                   disableHotkeys
@@ -204,7 +206,7 @@ export const CreateProfile = () => {
       </StyledContentContainer>
       <StyledButtonContainer>
         <MainButton
-          title="Continue"
+          title={translate('continue')}
           onClick={handleSubmit(onSubmit)}
           disabled={!isValid || isSubmitting}
           fullWidth

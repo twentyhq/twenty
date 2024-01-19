@@ -11,6 +11,7 @@ import {
   IconTrash,
   IconX,
 } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -60,6 +61,7 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
   onRemove,
   option,
 }: SettingsObjectFieldSelectFormOptionRowProps) => {
+  const { translate } = useI18n('translations');
   const theme = useTheme();
 
   const dropdownIds = useMemo(() => {
@@ -122,7 +124,7 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
               {isDefault ? (
                 <MenuItem
                   LeftIcon={IconX}
-                  text="Remove as default"
+                  text={translate('removeDefault')}
                   onClick={() => {
                     onChange({ ...option, isDefault: false });
                     closeActionsDropdown();
@@ -131,7 +133,7 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
               ) : (
                 <MenuItem
                   LeftIcon={IconCheck}
-                  text="Set as default"
+                  text={translate('setDefault')}
                   onClick={() => {
                     onChange({ ...option, isDefault: true });
                     closeActionsDropdown();
@@ -142,7 +144,7 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
                 <MenuItem
                   accent="danger"
                   LeftIcon={IconTrash}
-                  text="Remove option"
+                  text={translate('removeOption')}
                   onClick={() => {
                     onRemove();
                     closeActionsDropdown();

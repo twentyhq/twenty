@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
+import useI18n from '@/ui/i18n/useI18n';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 
@@ -38,10 +39,11 @@ export const SettingsObjectFieldTypeCard = ({
   preview,
   form,
 }: SettingsObjectFieldTypeCardProps) => {
+  const { translate } = useI18n('translations');
   return (
     <StyledCard className={className}>
       <StyledPreviewContainer divider={!!form}>
-        <StyledTitle>Preview</StyledTitle>
+        <StyledTitle>{translate('preview')}</StyledTitle>
         <StyledPreviewContent>{preview}</StyledPreviewContent>
       </StyledPreviewContainer>
       {!!form && <StyledFormContainer>{form}</StyledFormContainer>}

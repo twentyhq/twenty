@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
+import useI18n from '@/ui/i18n/useI18n';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
@@ -24,6 +25,7 @@ export const MultipleRecordSelectDropdown = ({
   ) => void;
   loadingRecords: boolean;
 }) => {
+  const { translate } = useI18n('translations');
   const handleRecordSelectChange = (
     recordToSelect: SelectableRecord,
     newSelectedValue: boolean,
@@ -78,7 +80,7 @@ export const MultipleRecordSelectDropdown = ({
           text={record.name}
         />
       ))}
-      {showNoResult && <MenuItem text="No result" />}
+      {showNoResult && <MenuItem text={translate('noResult')} />}
       {loadingRecords && <DropdownMenuSkeletonItem />}
     </DropdownMenuItemsContainer>
   );

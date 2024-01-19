@@ -18,7 +18,7 @@ export const useFieldMetadataItem = () => {
   const { deleteOneFieldMetadataItem } = useDeleteOneFieldMetadataItem();
 
   const createMetadataField = (
-    input: Pick<Field, 'label' | 'icon' | 'description'> & {
+    input: Pick<Field, 'label' | 'icon' | 'description' | 'name'> & {
       defaultValue?: unknown;
       objectMetadataId: string;
       options?: Omit<FieldMetadataOption, 'id'>[];
@@ -33,7 +33,7 @@ export const useFieldMetadataItem = () => {
     });
 
   const editMetadataField = (
-    input: Pick<Field, 'id' | 'label' | 'icon' | 'description'> & {
+    input: Pick<Field, 'id' | 'label' | 'icon' | 'description' | 'name'> & {
       options?: FieldMetadataOption[];
     },
   ) =>

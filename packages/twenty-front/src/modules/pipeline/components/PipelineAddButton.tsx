@@ -5,12 +5,14 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { IconPlus } from '@/ui/display/icon/index';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import useI18n from '@/ui/i18n/useI18n';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { logError } from '~/utils/logError';
 
 export const PipelineAddButton = () => {
+  const { translate } = useI18n('translations');
   const { enqueueSnackBar } = useSnackBar();
 
   const { closeDropdown, toggleDropdown } = useDropdown(
@@ -24,22 +26,16 @@ export const PipelineAddButton = () => {
     selectedPipelineStepId: string | null,
   ) => {
     if (!selectedCompany?.id) {
-      enqueueSnackBar(
-        'There was a problem with the company selection, please retry.',
-        { variant: 'error' },
-      );
+      enqueueSnackBar(translate('problemWithCompany'), { variant: 'error' });
 
-      logError('There was a problem with the company selection, please retry.');
+      logError(translate('problemWithCompany'));
       return;
     }
 
     if (!selectedPipelineStepId) {
-      enqueueSnackBar(
-        'There was a problem with the pipeline stage selection, please retry.',
-        { variant: 'error' },
-      );
+      enqueueSnackBar(translate('problemWithPipeline'), { variant: 'error' });
 
-      logError('There was a problem with the pipeline step selection.');
+      logError(translate('problemWithPipelineStepSelection'));
       return;
     }
     closeDropdown();

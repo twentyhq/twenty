@@ -2,12 +2,13 @@ import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import useI18n from '@/ui/i18n/useI18n';
 import { Toggle } from '@/ui/input/components/Toggle';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 
 export const ToggleImpersonate = () => {
   const { enqueueSnackBar } = useSnackBar();
-
+  const { translate } = useI18n('translations');
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
@@ -17,7 +18,7 @@ export const ToggleImpersonate = () => {
   const handleChange = async (value: boolean) => {
     try {
       if (!currentWorkspace?.id) {
-        throw new Error('User is not logged in');
+        throw new Error(translate('userIsNotLoggedIn'));
       }
       await updateWorkspace({
         variables: {

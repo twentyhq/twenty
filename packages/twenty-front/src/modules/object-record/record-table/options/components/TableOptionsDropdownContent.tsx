@@ -19,6 +19,7 @@ import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { TableOptionsHotkeyScope } from '../../types/TableOptionsHotkeyScope';
+import useI18n from '@/ui/i18n/useI18n';
 
 type TableOptionsMenu = 'fields';
 
@@ -29,6 +30,7 @@ export const TableOptionsDropdownContent = ({
   onImport?: () => void;
   recordTableId: string;
 }) => {
+  const { translate } = useI18n('translations');
   const { setViewEditMode, handleViewNameSubmit } = useViewBar();
   const { viewEditModeState, currentViewSelector } = useViewScopedStates();
 
@@ -108,9 +110,9 @@ export const TableOptionsDropdownContent = ({
             autoFocus={viewEditMode !== 'none'}
             placeholder={
               viewEditMode === 'create'
-                ? 'New view'
+                ? translate('newView')
                 : viewEditMode === 'edit'
-                  ? 'View name'
+                  ? translate('viewName')
                   : ''
             }
             defaultValue={viewEditMode === 'create' ? '' : currentView?.name}
@@ -135,7 +137,7 @@ export const TableOptionsDropdownContent = ({
       {currentMenu === 'fields' && (
         <>
           <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetMenu}>
-            Fields
+            {translate('fields')}
           </DropdownMenuHeader>
           <DropdownMenuSeparator />
           <ViewFieldsVisibilityDropdownSection
@@ -150,7 +152,7 @@ export const TableOptionsDropdownContent = ({
             <>
               <DropdownMenuSeparator />
               <ViewFieldsVisibilityDropdownSection
-                title="Hidden"
+                title={translate('hidden')}
                 fields={hiddenTableColumns}
                 isVisible={false}
                 onVisibilityChange={handleColumnVisibilityChange}

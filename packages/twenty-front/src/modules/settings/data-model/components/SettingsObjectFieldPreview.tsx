@@ -15,6 +15,7 @@ import { SettingsObjectFieldPreviewValueEffect } from '../components/SettingsObj
 import { useFieldPreview } from '../hooks/useFieldPreview';
 
 import { SettingsObjectFieldSelectFormValues } from './SettingsObjectFieldSelectForm';
+import useI18n from '@/ui/i18n/useI18n';
 
 export type SettingsObjectFieldPreviewProps = {
   className?: string;
@@ -81,6 +82,7 @@ export const SettingsObjectFieldPreview = ({
   shrink,
 }: SettingsObjectFieldPreviewProps) => {
   const theme = useTheme();
+  const { translate } = useI18n('translations');
 
   const {
     entityId,
@@ -111,9 +113,9 @@ export const SettingsObjectFieldPreview = ({
             {objectMetadataItem?.labelPlural}
           </StyledObjectName>
           {objectMetadataItem?.isCustom ? (
-            <Tag color="orange" text="Custom" weight="medium" />
+            <Tag color="orange" text={translate('custom')} weight="medium" />
           ) : (
-            <Tag color="blue" text="Standard" weight="medium" />
+            <Tag color="blue" text={translate('standard')} weight="medium" />
           )}
         </StyledObjectSummary>
         <SettingsObjectFieldPreviewValueEffect

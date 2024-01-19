@@ -13,7 +13,7 @@ const StyledContainer = styled.div`
   & .react-datepicker {
     border-color: ${({ theme }) => theme.border.color.light};
     background: transparent;
-    font-family: 'Inter';
+    font-family: KalamehWeb, 'Inter';
     font-size: ${({ theme }) => theme.font.size.md};
     border: none;
     display: block;

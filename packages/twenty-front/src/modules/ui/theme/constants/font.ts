@@ -15,7 +15,7 @@ const common = {
     medium: 500,
     semiBold: 600,
   },
-  family: 'Inter, sans-serif',
+  family: 'KalamehWeb, Inter, sans-serif',
 };
 
 export const fontLight = {

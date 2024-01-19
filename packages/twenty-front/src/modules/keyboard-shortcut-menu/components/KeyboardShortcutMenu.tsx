@@ -1,6 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import useI18n from '@/ui/i18n/useI18n';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 
@@ -16,6 +17,7 @@ import { KeyboardMenuGroup } from './KeyboardShortcutMenuGroup';
 import { KeyboardMenuItem } from './KeyboardShortcutMenuItem';
 
 export const KeyboardShortcutMenu = () => {
+  const { translate } = useI18n('translations');
   const { toggleKeyboardShortcutMenu, closeKeyboardShortcutMenu } =
     useKeyboardShortcutMenu();
   const isKeyboardShortcutMenuOpened = useRecoilValue(
@@ -45,12 +47,12 @@ export const KeyboardShortcutMenu = () => {
     <>
       {isKeyboardShortcutMenuOpened && (
         <KeyboardMenuDialog onClose={toggleKeyboardShortcutMenu}>
-          <KeyboardMenuGroup heading="Table">
+          <KeyboardMenuGroup heading={translate('table')}>
             {keyboardShortcutsTable.map((TableShortcut) => (
               <KeyboardMenuItem shortcut={TableShortcut} />
             ))}
           </KeyboardMenuGroup>
-          <KeyboardMenuGroup heading="General">
+          <KeyboardMenuGroup heading={translate('general')}>
             {keyboardShortcutsGeneral.map((GeneralShortcut) => (
               <KeyboardMenuItem shortcut={GeneralShortcut} />
             ))}

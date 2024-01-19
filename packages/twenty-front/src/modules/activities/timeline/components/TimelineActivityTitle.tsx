@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { ActivityType } from '@/activities/types/Activity';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
+import useI18n from "@/ui/i18n/useI18n";
 
 const StyledTitleContainer = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
@@ -42,21 +43,24 @@ export const TimelineActivityTitle = ({
   completed,
   type,
   onCompletionChange,
-}: TimelineActivityTitleProps) => (
-  <StyledTitleContainer>
-    {type === 'Task' && (
-      <StyledCheckboxContainer
-        onClick={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          onCompletionChange?.(!completed);
-        }}
-      >
-        <Checkbox checked={completed ?? false} shape={CheckboxShape.Rounded} />
-      </StyledCheckboxContainer>
-    )}
-    <StyledTitleText completed={completed} hasCheckbox={type === 'Task'}>
-      <OverflowingTextWithTooltip text={title ? title : 'Task title'} />
-    </StyledTitleText>
-  </StyledTitleContainer>
-);
+}: TimelineActivityTitleProps) => {
+  const { translate } = useI18n('translations');
+  return (
+    <StyledTitleContainer>
+      {type === "Task" && (
+        <StyledCheckboxContainer
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onCompletionChange?.(!completed);
+          }}
+        >
+          <Checkbox checked={completed ?? false} shape={CheckboxShape.Rounded} />
+        </StyledCheckboxContainer>
+      )}
+      <StyledTitleText completed={completed} hasCheckbox={type === "Task"}>
+        <OverflowingTextWithTooltip text={title ? title : translate('taskTitle')} />
+      </StyledTitleText>
+    </StyledTitleContainer>
+  );
+};

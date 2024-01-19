@@ -12,6 +12,7 @@ import { useGeneratedApiKeys } from '@/settings/developers/hooks/useGeneratedApi
 import { ApiKey } from '@/settings/developers/types/ApiKey';
 import { IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import useI18n from '@/ui/i18n/useI18n';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -20,6 +21,7 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 
 export const SettingsDevelopersApiKeysNew = () => {
+  const { translate } = useI18n('translations');
   const [generateOneApiKeyToken] = useGenerateApiKeyTokenMutation();
   const navigate = useNavigate();
   const setGeneratedApi = useGeneratedApiKeys();
@@ -61,13 +63,16 @@ export const SettingsDevelopersApiKeysNew = () => {
   };
   const canSave = !!formValues.name && createOneApiKey;
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer Icon={IconSettings} title={translate('settings')}>
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <Breadcrumb
             links={[
-              { children: 'APIs', href: '/settings/developers/api-keys' },
-              { children: 'New' },
+              {
+                children: translate('apis'),
+                href: '/settings/developers/api-keys',
+              },
+              { children: translate('new') },
             ]}
           />
           <SaveAndCancelButtons
@@ -79,9 +84,12 @@ export const SettingsDevelopersApiKeysNew = () => {
           />
         </SettingsHeaderContainer>
         <Section>
-          <H2Title title="Name" description="Name of your API key" />
+          <H2Title
+            title={translate('name')}
+            description={translate('nameOfYourApiKey')}
+          />
           <TextInput
-            placeholder="E.g. backoffice integration"
+            placeholder={translate('backofficeIntegration')}
             value={formValues.name}
             onChange={(value) => {
               setFormValues((prevState) => ({
@@ -94,8 +102,8 @@ export const SettingsDevelopersApiKeysNew = () => {
         </Section>
         <Section>
           <H2Title
-            title="Expiration Date"
-            description="When the API key will expire."
+            title={translate('expirationDate')}
+            description={translate('whenTheApiKeyWillExpire')}
           />
           <Select
             dropdownId="object-field-type-select"

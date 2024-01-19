@@ -8,6 +8,7 @@ import {
   IconUpload,
   IconX,
 } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { Button } from '@/ui/input/button/components/Button';
 
 const StyledContainer = styled.div`
@@ -108,7 +109,7 @@ export const ImageInput = ({
   const onUploadButtonClick = () => {
     hiddenFileInput.current?.click();
   };
-
+  const { translate } = useI18n('translations');
   return (
     <StyledContainer className={className}>
       <StyledPicture
@@ -144,7 +145,7 @@ export const ImageInput = ({
               Icon={IconX}
               onClick={onAbort}
               variant="secondary"
-              title="Abort"
+              title={translate('abort')}
               disabled={!picture || disabled}
               fullWidth
             />
@@ -153,7 +154,7 @@ export const ImageInput = ({
               Icon={IconUpload}
               onClick={onUploadButtonClick}
               variant="secondary"
-              title="Upload"
+              title={translate('upload')}
               disabled={disabled}
               fullWidth
             />
@@ -162,14 +163,12 @@ export const ImageInput = ({
             Icon={IconTrash}
             onClick={onRemove}
             variant="secondary"
-            title="Remove"
+            title={translate('remove')}
             disabled={!picture || disabled}
             fullWidth
           />
         </StyledButtonContainer>
-        <StyledText>
-          We support your best PNGs, JPEGs and GIFs portraits under 10MB
-        </StyledText>
+        <StyledText>{translate('supportPortraitsProfileImage')}</StyledText>
         {errorMessage && <StyledErrorText>{errorMessage}</StyledErrorText>}
       </StyledContent>
     </StyledContainer>

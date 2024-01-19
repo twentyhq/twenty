@@ -4,6 +4,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { SupportChat } from '@/support/components/SupportChat';
+import useI18n from '@/ui/i18n/useI18n';
 import { GithubVersionLink } from '@/ui/navigation/link/components/GithubVersionLink';
 import {
   NavigationDrawer,
@@ -25,6 +26,7 @@ export type AppNavigationDrawerProps = {
 export const AppNavigationDrawer = ({
   className,
 }: AppNavigationDrawerProps) => {
+  const { translate } = useI18n('translations');
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
   const currentMobileNavigationDrawer = useRecoilValue(
@@ -42,7 +44,7 @@ export const AppNavigationDrawer = ({
   const drawerProps: NavigationDrawerProps = isSettingsDrawer
     ? {
         isSubMenu: true,
-        title: 'Settings',
+        title: translate('settings'),
         children: <SettingsNavigationDrawerItems />,
         footer: <GithubVersionLink />,
       }

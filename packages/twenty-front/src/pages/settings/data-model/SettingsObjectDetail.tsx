@@ -19,6 +19,7 @@ import { getFieldIdentifierType } from '@/settings/data-model/utils/getFieldIden
 import { AppPath } from '@/types/AppPath';
 import { IconPlus, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import useI18n from '@/ui/i18n/useI18n';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
@@ -35,6 +36,7 @@ const StyledDiv = styled.div`
 `;
 
 export const SettingsObjectDetail = () => {
+  const { translate } = useI18n('translations');
   const navigate = useNavigate();
 
   const { objectSlug = '' } = useParams();
@@ -82,11 +84,11 @@ export const SettingsObjectDetail = () => {
   };
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer Icon={IconSettings} title={translate('settings')}>
       <SettingsPageContainer>
         <Breadcrumb
           links={[
-            { children: 'Objects', href: '/settings/objects' },
+            { children: translate('objects'), href: '/settings/objects' },
             { children: activeObjectMetadataItem.labelPlural },
           ]}
         />
@@ -99,18 +101,20 @@ export const SettingsObjectDetail = () => {
         />
         <Section>
           <H2Title
-            title="Fields"
-            description={`Customise the fields available in the ${activeObjectMetadataItem.labelSingular} views and their display order in the ${activeObjectMetadataItem.labelSingular} detail view and menus.`}
+            title={translate('fields')}
+            description={translate('fieldsDes', {
+              labelSingular: activeObjectMetadataItem.labelSingular,
+            })}
           />
           <Table>
             <StyledObjectFieldTableRow>
-              <TableHeader>Name</TableHeader>
+              <TableHeader>{translate('name')}</TableHeader>
               <TableHeader>
                 {activeObjectMetadataItem.isCustom
                   ? 'Identifier'
-                  : 'Field type'}
+                  : translate('fieldType')}
               </TableHeader>
-              <TableHeader>Data type</TableHeader>
+              <TableHeader>{translate('dataType')}</TableHeader>
               <TableHeader></TableHeader>
             </StyledObjectFieldTableRow>
             {!!activeMetadataFields.length && (
@@ -168,7 +172,10 @@ export const SettingsObjectDetail = () => {
               </TableSection>
             )}
             {!!disabledMetadataFields.length && (
-              <TableSection isInitiallyExpanded={false} title="Disabled">
+              <TableSection
+                isInitiallyExpanded={false}
+                title={translate('disabled')}
+              >
                 {disabledMetadataFields.map((disabledMetadataField) => (
                   <SettingsObjectFieldItemTableRow
                     key={disabledMetadataField.id}
@@ -198,7 +205,7 @@ export const SettingsObjectDetail = () => {
           <StyledDiv>
             <Button
               Icon={IconPlus}
-              title="Add Field"
+              title={translate('addField')}
               size="small"
               variant="secondary"
               onClick={() =>

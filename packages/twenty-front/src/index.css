@@ -1,6 +1,7 @@
+@import url(./fonts/kalameh/fontiran.css);
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif;
+  font-family: KalamehWeb, 'Inter', sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

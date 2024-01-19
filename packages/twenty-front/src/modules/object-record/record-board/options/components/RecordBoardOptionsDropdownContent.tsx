@@ -13,6 +13,7 @@ import {
   IconPlus,
   IconTag,
 } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -42,6 +43,7 @@ export const RecordBoardOptionsDropdownContent = ({
   onStageAdd,
   recordBoardId,
 }: RecordBoardOptionsDropdownContentProps) => {
+  const { translate } = useI18n('translations');
   const { setViewEditMode, handleViewNameSubmit } = useViewBar();
   const { viewEditModeState, currentViewSelector } = useViewScopedStates();
 
@@ -151,7 +153,7 @@ export const RecordBoardOptionsDropdownContent = ({
             autoFocus={viewEditMode !== 'none'}
             placeholder={
               viewEditMode === 'create'
-                ? 'New view'
+                ? translate('newView')
                 : viewEditMode === 'edit'
                   ? 'View name'
                   : ''
@@ -163,12 +165,12 @@ export const RecordBoardOptionsDropdownContent = ({
             <MenuItemNavigate
               onClick={() => handleMenuNavigate('fields')}
               LeftIcon={IconTag}
-              text="Fields"
+              text={translate('fields')}
             />
             <MenuItemNavigate
               onClick={() => handleMenuNavigate('stages')}
               LeftIcon={IconLayoutKanban}
-              text="Stages"
+              text={translate('stages')}
             />
           </DropdownMenuItemsContainer>
           <DropdownMenuSeparator />
@@ -177,7 +179,7 @@ export const RecordBoardOptionsDropdownContent = ({
               LeftIcon={IconBaselineDensitySmall}
               onToggleChange={setIsCompactViewEnabled}
               toggled={isCompactViewEnabled}
-              text="Compact view"
+              text={translate('compactView')}
               toggleSize="small"
             />
           </DropdownMenuItemsContainer>
@@ -186,14 +188,14 @@ export const RecordBoardOptionsDropdownContent = ({
       {currentMenu === 'stages' && (
         <>
           <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetMenu}>
-            Stages
+            {translate('stages')}
           </DropdownMenuHeader>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>
             <MenuItem
               onClick={() => setCurrentMenu('stage-creation')}
               LeftIcon={IconPlus}
-              text="Add stage"
+              text={translate('addStage')}
             />
           </DropdownMenuItemsContainer>
         </>
@@ -201,19 +203,19 @@ export const RecordBoardOptionsDropdownContent = ({
       {currentMenu === 'stage-creation' && (
         <DropdownMenuSearchInput
           autoFocus
-          placeholder="New stage"
+          placeholder={translate('newStage')}
           ref={stageInputRef}
         />
       )}
       {currentMenu === 'fields' && (
         <>
           <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetMenu}>
-            Fields
+            {translate('fields')}
           </DropdownMenuHeader>
           <DropdownMenuSeparator />
           {hasVisibleFields && (
             <ViewFieldsVisibilityDropdownSection
-              title="Visible"
+              title={translate('visible')}
               fields={visibleBoardCardFields}
               isVisible={true}
               onVisibilityChange={handleFieldVisibilityChange}
@@ -224,7 +226,7 @@ export const RecordBoardOptionsDropdownContent = ({
           {hasVisibleFields && hasHiddenFields && <DropdownMenuSeparator />}
           {hasHiddenFields && (
             <ViewFieldsVisibilityDropdownSection
-              title="Hidden"
+              title={translate('hidden')}
               fields={hiddenBoardCardFields}
               isVisible={false}
               onVisibilityChange={handleFieldVisibilityChange}

@@ -17,6 +17,7 @@ import { AppPath } from '@/types/AppPath';
 import { IconArchive, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import useI18n from '@/ui/i18n/useI18n';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
@@ -27,6 +28,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const SettingsObjectFieldEdit = () => {
+  const { translate } = useI18n('translations');
+
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
 
@@ -86,6 +89,7 @@ export const SettingsObjectFieldEdit = () => {
     initForm({
       icon: activeMetadataField.icon ?? undefined,
       label: activeMetadataField.label,
+      name: activeMetadataField.name,
       description: activeMetadataField.description ?? undefined,
       type: activeMetadataField.type,
       ...(currencyDefaultValue ? { currency: currencyDefaultValue } : {}),
@@ -93,6 +97,7 @@ export const SettingsObjectFieldEdit = () => {
         field: {
           icon: relationFieldMetadataItem?.icon,
           label: relationFieldMetadataItem?.label || '',
+          name: relationFieldMetadataItem?.name || '',
         },
         objectMetadataId: relationObjectMetadataItem?.id || '',
         type: relationType || RelationMetadataType.OneToMany,
@@ -133,6 +138,7 @@ export const SettingsObjectFieldEdit = () => {
           icon: validatedFormValues.relation.field.icon,
           id: relationFieldMetadataItem.id,
           label: validatedFormValues.relation.field.label,
+          name: validatedFormValues.relation.field.name,
         });
       }
 
@@ -142,6 +148,7 @@ export const SettingsObjectFieldEdit = () => {
           icon: validatedFormValues.icon,
           id: activeMetadataField.id,
           label: validatedFormValues.label,
+          name: validatedFormValues.name,
           options:
             validatedFormValues.type === FieldMetadataType.Select
               ? validatedFormValues.select
@@ -163,12 +170,12 @@ export const SettingsObjectFieldEdit = () => {
   };
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer Icon={IconSettings} title={translate('settings')}>
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <Breadcrumb
             links={[
-              { children: 'Objects', href: '/settings/objects' },
+              { children: translate('objects'), href: '/settings/objects' },
               {
                 children: activeObjectMetadataItem.labelPlural,
                 href: `/settings/objects/${objectSlug}`,
@@ -187,7 +194,8 @@ export const SettingsObjectFieldEdit = () => {
         <SettingsObjectFieldFormSection
           disabled={!activeMetadataField.isCustom}
           disableNameEdition
-          name={formValues.label}
+          name={formValues.name}
+          label={formValues.label}
           description={formValues.description}
           iconKey={formValues.icon}
           onChange={handleFormChange}
@@ -196,7 +204,7 @@ export const SettingsObjectFieldEdit = () => {
           disableCurrencyForm
           fieldMetadata={{
             icon: formValues.icon,
-            label: formValues.label || 'Employees',
+            label: formValues.label || translate('employees'),
             id: activeMetadataField.id,
           }}
           objectMetadataId={activeObjectMetadataItem.id}
@@ -211,10 +219,13 @@ export const SettingsObjectFieldEdit = () => {
         />
         {!isLabelIdentifier && (
           <Section>
-            <H2Title title="Danger zone" description="Disable this field" />
+            <H2Title
+              title={translate('dangerZone')}
+              description={translate('disableThisField')}
+            />
             <Button
               Icon={IconArchive}
-              title="Disable"
+              title={translate('disable')}
               size="small"
               onClick={handleDisable}
             />

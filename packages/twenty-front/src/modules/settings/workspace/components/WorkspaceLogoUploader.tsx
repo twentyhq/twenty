@@ -1,6 +1,7 @@
 import { useRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import useI18n from '@/ui/i18n/useI18n';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 import {
@@ -9,6 +10,7 @@ import {
 } from '~/generated/graphql';
 
 export const WorkspaceLogoUploader = () => {
+  const { translate } = useI18n('translations');
   const [uploadLogo] = useUploadWorkspaceLogoMutation();
   const [updateWorkspce] = useUpdateWorkspaceMutation();
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
@@ -20,7 +22,7 @@ export const WorkspaceLogoUploader = () => {
       return;
     }
     if (!currentWorkspace?.id) {
-      throw new Error('Workspace id not found');
+      throw new Error(translate('workspaceIdNotFound'));
     }
     await uploadLogo({
       variables: {
@@ -37,7 +39,7 @@ export const WorkspaceLogoUploader = () => {
 
   const onRemove = async () => {
     if (!currentWorkspace?.id) {
-      throw new Error('Workspace id not found');
+      throw new Error(translate('workspaceIdNotFound'));
     }
     await updateWorkspce({
       variables: {

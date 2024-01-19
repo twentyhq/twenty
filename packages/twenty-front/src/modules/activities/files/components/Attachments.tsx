@@ -13,6 +13,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { IconPlus } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { Button } from '@/ui/input/button/components/Button';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 
@@ -62,6 +63,7 @@ export const Attachments = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
+  const { translate } = useI18n('translations');
   const inputFileRef = useRef<HTMLInputElement>(null);
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { attachments } = useAttachments(targetableObject);
@@ -119,11 +121,15 @@ export const Attachments = ({
           type="file"
         />
 
-        <StyledEmptyTaskGroupTitle>No files yet</StyledEmptyTaskGroupTitle>
-        <StyledEmptyTaskGroupSubTitle>Upload one:</StyledEmptyTaskGroupSubTitle>
+        <StyledEmptyTaskGroupTitle>
+          {translate('noFilesYet')}
+        </StyledEmptyTaskGroupTitle>
+        <StyledEmptyTaskGroupSubTitle>
+          {`${translate('uploadOne')}:`}
+        </StyledEmptyTaskGroupSubTitle>
         <Button
           Icon={IconPlus}
-          title="Add file"
+          title={translate('addFile')}
           variant="secondary"
           onClick={handleUploadFileClick}
         />
@@ -139,14 +145,14 @@ export const Attachments = ({
         type="file"
       />
       <AttachmentList
-        title="All"
+        title={translate('all')}
         attachments={attachments ?? []}
         button={
           <Button
             Icon={IconPlus}
             size="small"
             variant="secondary"
-            title="Add file"
+            title={translate('addFile')}
             onClick={handleUploadFileClick}
           ></Button>
         }

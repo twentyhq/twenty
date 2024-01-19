@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { SettingsNavigationCard } from '@/settings/components/SettingsNavigationCard';
 import { IconCalendarEvent, IconMailCog } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import useI18n from '@/ui/i18n/useI18n';
 import { Section } from '@/ui/layout/section/components/Section';
 
 const StyledCardsContainer = styled.div`
@@ -13,29 +14,30 @@ const StyledCardsContainer = styled.div`
 `;
 
 export const SettingsAccountsSettingsSection = () => {
+  const { translate } = useI18n('translations');
   const navigate = useNavigate();
 
   return (
     <Section>
       <H2Title
-        title="Settings"
-        description="Configure your emails and calendar settings."
+        title={translate('settings')}
+        description={translate('configureYourEmailsAndCalendarSettings')}
       />
       <StyledCardsContainer>
         <SettingsNavigationCard
           Icon={IconMailCog}
-          title="Emails"
+          title={translate('emails')}
           onClick={() => navigate('/settings/accounts/emails')}
         >
-          Set email visibility, manage your blocklist and more.
+          {translate('setEmailVisibilityManage')}
         </SettingsNavigationCard>
         <SettingsNavigationCard
           Icon={IconCalendarEvent}
-          title="Calendar"
+          title={translate('calendar')}
           disabled
           hasSoonPill
         >
-          Configure and customize your calendar preferences.
+          {translate('configureAndCustomizeYourCalendarPreferences')}
         </SettingsNavigationCard>
       </StyledCardsContainer>
     </Section>

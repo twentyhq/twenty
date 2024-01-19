@@ -17,6 +17,7 @@ import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogMan
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { AppI18nProvider } from '@/ui/i18n/components/AppI18nProvider.tsx';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { ThemeType } from '@/ui/theme/constants/theme';
 import { UserProvider } from '@/users/components/UserProvider';
@@ -31,44 +32,46 @@ import 'react-loading-skeleton/dist/skeleton.css';
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 
 root.render(
-  <RecoilRoot>
-    <AppErrorBoundary>
-      <RecoilDebugObserverEffect />
-      <BrowserRouter>
-        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-          <IconsProvider>
-            <ExceptionHandlerProvider>
-              <ApolloProvider>
-                <HelmetProvider>
-                  <ClientConfigProvider>
-                    <UserProvider>
-                      <ApolloMetadataClientProvider>
-                        <ObjectMetadataItemsProvider>
-                          <AppThemeProvider>
-                            <SnackBarProvider>
-                              <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                                <DialogManager>
-                                  <StrictMode>
-                                    <PromiseRejectionEffect />
-                                    <App />
-                                  </StrictMode>
-                                </DialogManager>
-                              </DialogManagerScope>
-                            </SnackBarProvider>
-                          </AppThemeProvider>
-                          <PageChangeEffect />
-                        </ObjectMetadataItemsProvider>
-                      </ApolloMetadataClientProvider>
-                    </UserProvider>
-                  </ClientConfigProvider>
-                </HelmetProvider>
-              </ApolloProvider>
-            </ExceptionHandlerProvider>
-          </IconsProvider>
-        </SnackBarProviderScope>
-      </BrowserRouter>
-    </AppErrorBoundary>
-  </RecoilRoot>,
+  <AppI18nProvider>
+    <RecoilRoot>
+      <AppErrorBoundary>
+        <RecoilDebugObserverEffect />
+        <BrowserRouter>
+          <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+            <IconsProvider>
+              <ExceptionHandlerProvider>
+                <ApolloProvider>
+                  <HelmetProvider>
+                    <ClientConfigProvider>
+                      <UserProvider>
+                        <ApolloMetadataClientProvider>
+                          <ObjectMetadataItemsProvider>
+                            <AppThemeProvider>
+                              <SnackBarProvider>
+                                <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                                  <DialogManager>
+                                    <StrictMode>
+                                      <PromiseRejectionEffect />
+                                      <App />
+                                    </StrictMode>
+                                  </DialogManager>
+                                </DialogManagerScope>
+                              </SnackBarProvider>
+                            </AppThemeProvider>
+                            <PageChangeEffect />
+                          </ObjectMetadataItemsProvider>
+                        </ApolloMetadataClientProvider>
+                      </UserProvider>
+                    </ClientConfigProvider>
+                  </HelmetProvider>
+                </ApolloProvider>
+              </ExceptionHandlerProvider>
+            </IconsProvider>
+          </SnackBarProviderScope>
+        </BrowserRouter>
+      </AppErrorBoundary>
+    </RecoilRoot>
+  </AppI18nProvider>,
 );
 
 declare module '@emotion/react' {

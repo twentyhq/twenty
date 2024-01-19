@@ -4,11 +4,13 @@ import { v4 } from 'uuid';
 import { SettingsAccountsEmailsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistInput';
 import { SettingsAccountsEmailsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistTable';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import useI18n from '@/ui/i18n/useI18n';
 import { Section } from '@/ui/layout/section/components/Section';
 import { mockedBlockedEmailList } from '~/testing/mock-data/accounts';
 import { formatDate } from '~/utils/date-utils';
 
 export const SettingsAccountsEmailsBlocklistSection = () => {
+  const { translate } = useI18n('translations');
   const [blockedEmailList, setBlockedEmailList] = useState(
     mockedBlockedEmailList,
   );
@@ -30,8 +32,8 @@ export const SettingsAccountsEmailsBlocklistSection = () => {
   return (
     <Section>
       <H2Title
-        title="Blocklist"
-        description="Exclude the following people and domains from my email sync"
+        title={translate('blockList')}
+        description={translate('blockListDsc')}
       />
       <SettingsAccountsEmailsBlocklistInput
         updateBlockedEmailList={updateBlockedEmailList}

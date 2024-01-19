@@ -27,6 +27,7 @@ import { Command, CommandType } from '../types/Command';
 
 import { CommandGroup } from './CommandGroup';
 import { CommandMenuItem } from './CommandMenuItem';
+import useI18n from '@/ui/i18n/useI18n';
 
 export const StyledDialog = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -98,6 +99,7 @@ export const StyledEmpty = styled.div`
 `;
 
 export const CommandMenu = () => {
+  const { translate } = useI18n('translations');
   const { toggleCommandMenu, onItemClick, closeCommandMenu } = useCommandMenu();
   const commandMenuRef = useRef<HTMLDivElement>(null);
 
@@ -249,10 +251,10 @@ export const CommandMenu = () => {
           <StyledInput
             autoFocus
             value={search}
-            placeholder="Search"
+            placeholder={translate('search')}
             onChange={handleSearchChange}
           />
-          <StyledCancelText>Esc to cancel</StyledCancelText>
+          <StyledCancelText>{translate('escToCancel')}</StyledCancelText>
           <StyledList>
             <ScrollWrapper>
               <StyledInnerList>
@@ -277,9 +279,9 @@ export const CommandMenu = () => {
                     !people.length &&
                     !companies.length &&
                     !activities.length && (
-                      <StyledEmpty>No results found</StyledEmpty>
+                      <StyledEmpty>{translate('noResultsFound')}</StyledEmpty>
                     )}
-                  <CommandGroup heading="Create">
+                  <CommandGroup heading={translate('Create')}>
                     {matchingCreateCommand.map((cmd) => (
                       <SelectableItem itemId={cmd.id} key={cmd.id}>
                         <CommandMenuItem
@@ -295,7 +297,7 @@ export const CommandMenu = () => {
                       </SelectableItem>
                     ))}
                   </CommandGroup>
-                  <CommandGroup heading="Navigate">
+                  <CommandGroup heading={translate('navigate')}>
                     {matchingNavigateCommand.map((cmd) => (
                       <SelectableItem itemId={cmd.id} key={cmd.id}>
                         <CommandMenuItem
@@ -311,7 +313,7 @@ export const CommandMenu = () => {
                       </SelectableItem>
                     ))}
                   </CommandGroup>
-                  <CommandGroup heading="People">
+                  <CommandGroup heading={translate('people')}>
                     {people.map((person) => (
                       <SelectableItem itemId={person.id} key={person.id}>
                         <CommandMenuItem
@@ -337,7 +339,7 @@ export const CommandMenu = () => {
                       </SelectableItem>
                     ))}
                   </CommandGroup>
-                  <CommandGroup heading="Companies">
+                  <CommandGroup heading={translate('companies')}>
                     {companies.map((company) => (
                       <SelectableItem itemId={company.id} key={company.id}>
                         <CommandMenuItem
@@ -358,7 +360,7 @@ export const CommandMenu = () => {
                       </SelectableItem>
                     ))}
                   </CommandGroup>
-                  <CommandGroup heading="Notes">
+                  <CommandGroup heading={translate('notes')}>
                     {activities.map((activity) => (
                       <SelectableItem itemId={activity.id} key={activity.id}>
                         <CommandMenuItem

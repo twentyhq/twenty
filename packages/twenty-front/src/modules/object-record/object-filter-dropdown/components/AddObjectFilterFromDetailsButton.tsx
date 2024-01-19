@@ -1,5 +1,6 @@
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { IconPlus } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
@@ -12,6 +13,7 @@ type AddObjectFilterFromDetailsButtonProps = {
 export const AddObjectFilterFromDetailsButton = ({
   filterDropdownId,
 }: AddObjectFilterFromDetailsButtonProps) => {
+  const { translate } = useI18n('translations');
   const { toggleDropdown } = useDropdown(ObjectFilterDropdownId);
 
   const { resetFilter } = useFilterDropdown({
@@ -27,7 +29,7 @@ export const AddObjectFilterFromDetailsButton = ({
     <LightButton
       onClick={handleClick}
       Icon={IconPlus}
-      title="Add filter"
+      title={translate('addFilter')}
       accent="tertiary"
     />
   );

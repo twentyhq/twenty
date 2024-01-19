@@ -7,6 +7,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import useI18n from '@/ui/i18n/useI18n';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { logError } from '~/utils/logError';
 
@@ -33,7 +34,7 @@ export const NameFields = ({
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
-
+  const { translate } = useI18n('translations');
   const [firstName, setFirstName] = useState(
     currentWorkspaceMember?.name?.firstName ?? '',
   );
@@ -55,7 +56,7 @@ export const NameFields = ({
     }
     try {
       if (!currentWorkspaceMember?.id) {
-        throw new Error('User is not logged in');
+        throw new Error(translate('userIsNotLoggedIn'));
       }
 
       if (autoSave) {
@@ -109,17 +110,17 @@ export const NameFields = ({
   return (
     <StyledComboInputContainer>
       <TextInput
-        label="First Name"
+        label={translate('firstName')}
         value={firstName}
         onChange={setFirstName}
-        placeholder="Tim"
+        placeholder={translate('amir')}
         fullWidth
       />
       <TextInput
-        label="Last Name"
+        label={translate('lastName')}
         value={lastName}
         onChange={setLastName}
-        placeholder="Cook"
+        placeholder={translate('azizi')}
         fullWidth
       />
     </StyledComboInputContainer>

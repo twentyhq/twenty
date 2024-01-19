@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 import { SettingsAccountsInboxSettingsCardMedia } from '@/settings/accounts/components/SettingsAccountsInboxSettingsCardMedia';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import useI18n from '@/ui/i18n/useI18n';
 import { Radio } from '@/ui/input/components/Radio';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
@@ -59,75 +60,79 @@ const StyledRadio = styled(Radio)`
   margin-left: auto;
 `;
 
-const inboxSettingsVisibilityOptions = [
-  {
-    title: 'Everything',
-    description: 'Subject, body and attachments will be shared with your team.',
-    value: InboxSettingsVisibilityValue.Everything,
-    visibleElements: {
-      metadata: true,
-      subject: true,
-      body: true,
-    },
-  },
-  {
-    title: 'Subject and metadata',
-    description: 'Subject and metadata will be shared with your team.',
-    value: InboxSettingsVisibilityValue.SubjectMetadata,
-    visibleElements: {
-      metadata: true,
-      subject: true,
-      body: false,
-    },
-  },
-  {
-    title: 'Metadata',
-    description: 'Timestamp and participants will be shared with your team.',
-    value: InboxSettingsVisibilityValue.Metadata,
-    visibleElements: {
-      metadata: true,
-      subject: false,
-      body: false,
-    },
-  },
-];
-
 export const SettingsAccountsInboxSettingsVisibilitySection = ({
   onChange,
   value = InboxSettingsVisibilityValue.Everything,
-}: SettingsAccountsInboxSettingsVisibilitySectionProps) => (
-  <Section>
-    <H2Title
-      title="Email visibility"
-      description="Define what will be visible to other users in your workspace"
-    />
-    <Card>
-      {inboxSettingsVisibilityOptions.map(
-        (
-          { title, description, value: optionValue, visibleElements },
-          index,
-        ) => (
-          <StyledCardContent
-            key={value}
-            divider={index < inboxSettingsVisibilityOptions.length - 1}
-          >
-            <StyledCardMedia>
-              <StyledMetadataSkeleton isActive={visibleElements.metadata} />
-              <StyledSubjectSkeleton isActive={visibleElements.subject} />
-              <StyledBodySkeleton isActive={visibleElements.body} />
-            </StyledCardMedia>
-            <div>
-              <StyledTitle>{title}</StyledTitle>
-              <StyledDescription>{description}</StyledDescription>
-            </div>
-            <StyledRadio
-              value={optionValue}
-              onCheckedChange={() => onChange(optionValue)}
-              checked={value === optionValue}
-            />
-          </StyledCardContent>
-        ),
-      )}
-    </Card>
-  </Section>
-);
+}: SettingsAccountsInboxSettingsVisibilitySectionProps) => {
+  const { translate } = useI18n('translations');
+
+  const inboxSettingsVisibilityOptions = [
+    {
+      title: translate('everything'),
+      description: translate('everythingDsc'),
+      value: InboxSettingsVisibilityValue.Everything,
+      visibleElements: {
+        metadata: true,
+        subject: true,
+        body: true,
+      },
+    },
+    {
+      title: translate('subjectAndMetadata'),
+      description: translate('subjectAndMetadataDsc'),
+      value: InboxSettingsVisibilityValue.SubjectMetadata,
+      visibleElements: {
+        metadata: true,
+        subject: true,
+        body: false,
+      },
+    },
+    {
+      title: translate('metadata'),
+      description: translate('metadataDsc'),
+      value: InboxSettingsVisibilityValue.Metadata,
+      visibleElements: {
+        metadata: true,
+        subject: false,
+        body: false,
+      },
+    },
+  ];
+
+  return (
+    <Section>
+      <H2Title
+        title={translate('emailVisibility')}
+        description={translate('emailVisibilityDsc')}
+      />
+      <Card>
+        {inboxSettingsVisibilityOptions.map(
+          (
+            { title, description, value: optionValue, visibleElements },
+            index,
+          ) => (
+            <StyledCardContent
+              key={value}
+              divider={index < inboxSettingsVisibilityOptions.length - 1}
+            >
+              <StyledCardMedia>
+                <StyledMetadataSkeleton isActive={visibleElements.metadata} />
+                <StyledSubjectSkeleton isActive={visibleElements.subject} />
+                <StyledBodySkeleton isActive={visibleElements.body} />
+              </StyledCardMedia>
+              <div>
+                <StyledTitle>{title}</StyledTitle>
+                <StyledDescription>{description}</StyledDescription>
+              </div>
+              <StyledRadio
+                value={optionValue}
+                onCheckedChange={() => onChange(optionValue)}
+                checked={value === optionValue}
+              />
+            </StyledCardContent>
+          ),
+        )}
+      </Card>
+    </Section>
+  );
+};

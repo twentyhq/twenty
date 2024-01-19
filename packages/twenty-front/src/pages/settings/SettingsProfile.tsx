@@ -8,6 +8,7 @@ import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePic
 import { IconSettings } from '@/ui/display/icon';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import useI18n from '@/ui/i18n/useI18n';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 
@@ -15,28 +16,35 @@ const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
 `;
 
-export const SettingsProfile = () => (
-  <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-    <SettingsPageContainer>
-      <StyledH1Title title="Profile" />
-      <Section>
-        <H2Title title="Picture" />
-        <ProfilePictureUploader />
-      </Section>
-      <Section>
-        <H2Title title="Name" description="Your name as it will be displayed" />
-        <NameFields />
-      </Section>
-      <Section>
-        <H2Title
-          title="Email"
-          description="The email associated to your account"
-        />
-        <EmailField />
-      </Section>
-      <Section>
-        <DeleteAccount />
-      </Section>
-    </SettingsPageContainer>
-  </SubMenuTopBarContainer>
-);
+export const SettingsProfile = () => {
+  const { translate } = useI18n('translations');
+
+  return (
+    <SubMenuTopBarContainer Icon={IconSettings} title={translate('settings')}>
+      <SettingsPageContainer>
+        <StyledH1Title title={translate('profile')} />
+        <Section>
+          <H2Title title={translate('picture')} />
+          <ProfilePictureUploader />
+        </Section>
+        <Section>
+          <H2Title
+            title={translate('name')}
+            description={translate('yourNameAsItWillDisplayed')}
+          />
+          <NameFields />
+        </Section>
+        <Section>
+          <H2Title
+            title={translate('email')}
+            description={translate('emailAssociatedToYourAccount')}
+          />
+          <EmailField />
+        </Section>
+        <Section>
+          <DeleteAccount />
+        </Section>
+      </SettingsPageContainer>
+    </SubMenuTopBarContainer>
+  );
+};

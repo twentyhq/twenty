@@ -7,6 +7,7 @@ import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRela
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { IconForbid } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 
 export type RelationPickerProps = {
   recordId?: string;
@@ -27,6 +28,7 @@ export const RelationPicker = ({
   initialSearchFilter,
   fieldDefinition,
 }: RelationPickerProps) => {
+  const { translate } = useI18n('translations');
   const {
     relationPickerSearchFilter,
     setRelationPickerSearchFilter,
@@ -61,7 +63,7 @@ export const RelationPicker = ({
   return (
     <SingleEntitySelect
       EmptyIcon={IconForbid}
-      emptyLabel={'No ' + fieldDefinition.label}
+      emptyLabel={`${translate('no')} ${fieldDefinition.label}`}
       entitiesToSelect={entities.entitiesToSelect}
       loading={entities.loading}
       onCancel={onCancel}

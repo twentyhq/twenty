@@ -16,6 +16,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import useI18n from '@/ui/i18n/useI18n';
 
 const StyledContainer = styled.div`
   height: fit-content;
@@ -37,6 +38,7 @@ const StyledH1Title = styled(H1Title)`
 `;
 
 export const SettingsDevelopersApiKeys = () => {
+  const { translate } = useI18n('translations');
   const navigate = useNavigate();
 
   const [apiKeys, setApiKeys] = useState<Array<ApiFieldItem>>([]);
@@ -59,14 +61,14 @@ export const SettingsDevelopersApiKeys = () => {
   });
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer Icon={IconSettings} title={translate('settings')}>
       <SettingsPageContainer>
         <StyledContainer>
           <StyledHeader>
-            <StyledH1Title title="APIs" />
+            <StyledH1Title title={translate('apis')} />
             <Button
               Icon={IconPlus}
-              title="Create Key"
+              title={translate('createKey')}
               accent="blue"
               size="small"
               onClick={() => {
@@ -75,14 +77,14 @@ export const SettingsDevelopersApiKeys = () => {
             />
           </StyledHeader>
           <H2Title
-            title="Active Keys"
-            description="Active APIs keys created by you or your team"
+            title={translate('activeKeys')}
+            description={translate('activeKeysDes')}
           />
           <Table>
             <StyledTableRow>
-              <TableHeader>Name</TableHeader>
-              <TableHeader>Type</TableHeader>
-              <TableHeader>Expiration</TableHeader>
+              <TableHeader>{translate('name')}</TableHeader>
+              <TableHeader>{translate('type')}</TableHeader>
+              <TableHeader>{translate('expiration')}</TableHeader>
               <TableHeader></TableHeader>
             </StyledTableRow>
             {apiKeys.map((fieldItem) => (

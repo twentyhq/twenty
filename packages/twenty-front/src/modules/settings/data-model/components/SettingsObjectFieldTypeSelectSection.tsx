@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import useI18n from '@/ui/i18n/useI18n';
 import { Select } from '@/ui/input/components/Select';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
@@ -36,7 +37,7 @@ export type SettingsObjectFieldTypeSelectSectionFormValues = {
 type SettingsObjectFieldTypeSelectSectionProps = {
   disableCurrencyForm?: boolean;
   excludedFieldTypes?: FieldMetadataType[];
-  fieldMetadata: Pick<Field, 'icon' | 'label'> & { id?: string };
+  fieldMetadata: Pick<Field, 'icon' | 'label' | 'name'> & { id?: string };
   onChange: (
     values: Partial<SettingsObjectFieldTypeSelectSectionFormValues>,
   ) => void;
@@ -67,6 +68,7 @@ export const SettingsObjectFieldTypeSelectSection = ({
   relationFieldMetadata,
   values,
 }: SettingsObjectFieldTypeSelectSectionProps) => {
+  const { translate } = useI18n('translations');
   const currencyFormConfig = values.currency;
   const relationFormConfig = values.relation;
   const selectFormConfig = values.select;
@@ -81,8 +83,8 @@ export const SettingsObjectFieldTypeSelectSection = ({
   return (
     <Section>
       <H2Title
-        title="Type and values"
-        description="The field's type and values."
+        title={translate('typeAndValues')}
+        description={translate('theFieldsTypeAndValues')}
       />
       <Select
         fullWidth
@@ -134,7 +136,8 @@ export const SettingsObjectFieldTypeSelectSection = ({
                         fieldMetadata={{
                           ...relationFormConfig.field,
                           label:
-                            relationFormConfig.field?.label || 'Field name',
+                            relationFormConfig.field?.label ||
+                            translate('fieldName'),
                           type: FieldMetadataType.Relation,
                           id: relationFieldMetadata?.id,
                         }}

@@ -3,6 +3,7 @@ import { useTheme } from '@emotion/react';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { IconChevronDown } from '@/ui/display/icon/index';
+import useI18n from '@/ui/i18n/useI18n';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -38,6 +39,7 @@ export const SingleEntityObjectFilterDropdownButton = ({
     setSelectedOperandInDropdown,
   ]);
 
+  const { translate } = useI18n('translations');
   const theme = useTheme();
 
   return (
@@ -57,7 +59,7 @@ export const SingleEntityObjectFilterDropdownButton = ({
               }
             />
           ) : (
-            'Filter'
+            translate('filter')
           )}
           <IconChevronDown size={theme.icon.size.md} />
         </StyledHeaderDropdownButton>

@@ -51,7 +51,7 @@ export const Logo = ({ workspaceLogo }: LogoProps) => {
   if (!workspaceLogo) {
     return (
       <StyledContainer>
-        <StyledMainLogo logo="/icons/android/android-launchericon-192-192.png" />
+        <StyledMainLogo logo="/icons/taba/apple-touch-icon.png" />
       </StyledContainer>
     );
   }
@@ -60,7 +60,7 @@ export const Logo = ({ workspaceLogo }: LogoProps) => {
     <StyledContainer>
       <StyledMainLogo logo={getImageAbsoluteURIOrBase64(workspaceLogo)} />
       <StyledTwentyLogoContainer>
-        <StyledTwentyLogo src="/icons/android/android-launchericon-192-192.png" />
+        <StyledTwentyLogo src="/icons/taba/apple-touch-icon.png" />
       </StyledTwentyLogoContainer>
     </StyledContainer>
   );

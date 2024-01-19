@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconBrandGithub } from '@/ui/display/icon';
+// import { IconBrandGithub } from '@/ui/display/icon';
 
 import packageJson from '../../../../../../package.json';
 import { githubLink } from '../constants';
@@ -26,7 +26,7 @@ export const GithubVersionLink = () => {
 
   return (
     <StyledVersionLink href={githubLink} target="_blank" rel="noreferrer">
-      <IconBrandGithub size={theme.icon.size.md} />
+      {/*<IconBrandGithub size={theme.icon.size.md} />*/}
       {packageJson.version}
     </StyledVersionLink>
   );

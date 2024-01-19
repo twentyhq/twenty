@@ -18,6 +18,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import useI18n from '@/ui/i18n/useI18n';
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
@@ -31,6 +32,8 @@ const StyledButtonContainer = styled.div`
 `;
 
 export const SettingsWorkspaceMembers = () => {
+  const { translate } = useI18n('translations');
+
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [workspaceMemberToDelete, setWorkspaceMemberToDelete] = useState<
     string | undefined
@@ -52,14 +55,14 @@ export const SettingsWorkspaceMembers = () => {
   };
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer Icon={IconSettings} title={translate('settings')}>
       <SettingsPageContainer>
-        <StyledH1Title title="Members" />
+        <StyledH1Title title={translate('members')} />
         {currentWorkspace?.inviteHash && (
           <Section>
             <H2Title
-              title="Invite"
-              description="Send an invitation to use Twenty"
+              title={translate('invite')}
+              description={translate('sendInvitationUseTwenty')}
             />
             <WorkspaceInviteLink
               inviteLink={`${window.location.origin}/invite/${currentWorkspace?.inviteHash}`}
@@ -68,8 +71,8 @@ export const SettingsWorkspaceMembers = () => {
         )}
         <Section>
           <H2Title
-            title="Members"
-            description="Manage the members of your space here"
+            title={translate('members')}
+            description={translate('manageMembersYourSpaceHere')}
           />
           {workspaceMembers?.map((member) => (
             <WorkspaceMemberCard
@@ -100,15 +103,14 @@ export const SettingsWorkspaceMembers = () => {
         title="Account Deletion"
         subtitle={
           <>
-            This action cannot be undone. This will permanently delete this user
-            and remove them from all their assignements.
+            {translate('accountDeletionDes')}
           </>
         }
         onConfirmClick={() =>
           workspaceMemberToDelete &&
           handleRemoveWorkspaceMember(workspaceMemberToDelete)
         }
-        deleteButtonText="Delete account"
+        deleteButtonText={translate('deleteAccount')}
       />
     </SubMenuTopBarContainer>
   );

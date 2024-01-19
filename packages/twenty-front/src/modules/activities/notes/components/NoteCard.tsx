@@ -12,6 +12,7 @@ import {
   GenericFieldContextType,
 } from '@/object-record/field/contexts/FieldContext';
 import { IconComment } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`
   align-items: flex-start;
@@ -82,6 +83,7 @@ export const NoteCard = ({
   note: Note;
   isSingleNote: boolean;
 }) => {
+  const { translate } = useI18n('translations');
   const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
   const body = getActivityPreview(note.body);
@@ -97,7 +99,9 @@ export const NoteCard = ({
         <StyledCardDetailsContainer
           onClick={() => openActivityRightDrawer(note.id)}
         >
-          <StyledNoteTitle>{note.title ?? 'Task Title'}</StyledNoteTitle>
+          <StyledNoteTitle>
+            {note.title ?? translate('taskTitle')}
+          </StyledNoteTitle>
           <StyledCardContent>{body}</StyledCardContent>
         </StyledCardDetailsContainer>
         <StyledFooter>

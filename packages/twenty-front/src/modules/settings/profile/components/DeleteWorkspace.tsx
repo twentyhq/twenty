@@ -6,6 +6,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { AppPath } from '@/types/AppPath';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import useI18n from '@/ui/i18n/useI18n';
 import {
   ConfirmationModal,
   StyledConfirmationButton,
@@ -15,7 +16,7 @@ import { useDeleteCurrentWorkspaceMutation } from '~/generated/graphql';
 export const DeleteWorkspace = () => {
   const [isDeleteWorkSpaceModalOpen, setIsDeleteWorkSpaceModalOpen] =
     useState(false);
-
+  const { translate } = useI18n('translations');
   const [deleteCurrentWorkspace] = useDeleteCurrentWorkspaceMutation();
   const currentUser = useRecoilValue(currentUserState);
   const userEmail = currentUser?.email;
@@ -34,11 +35,14 @@ export const DeleteWorkspace = () => {
 
   return (
     <>
-      <H2Title title="Danger zone" description="Delete your whole workspace" />
+      <H2Title
+        title={translate('dangerZone')}
+        description={translate('deleteYourWholeWorkspace')}
+      />
       <StyledConfirmationButton
         onClick={() => setIsDeleteWorkSpaceModalOpen(true)}
         variant="secondary"
-        title="Delete workspace"
+        title={translate('deleteWorkspace')}
       />
 
       <ConfirmationModal
@@ -46,15 +50,15 @@ export const DeleteWorkspace = () => {
         confirmationValue={userEmail}
         isOpen={isDeleteWorkSpaceModalOpen}
         setIsOpen={setIsDeleteWorkSpaceModalOpen}
-        title="Workspace Deletion"
+        title={translate('workspaceDeletion')}
         subtitle={
           <>
-            This action cannot be undone. This will permanently delete your
-            entire workspace. <br /> Please type in your email to confirm.
+            {translate('workspaceDeletionDes')} <br />
+            {translate('pleaseTypeYourEmailConfirm')}
           </>
         }
         onConfirmClick={deleteWorkspace}
-        deleteButtonText="Delete workspace"
+        deleteButtonText={translate('deleteWorkspace')}
       />
     </>
   );

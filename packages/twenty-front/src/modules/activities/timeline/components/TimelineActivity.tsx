@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Activity } from '@/activities/types/Activity';
 import { IconCheckbox, IconNotes } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { Avatar } from '@/users/components/Avatar';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
@@ -155,6 +156,7 @@ export const TimelineActivity = ({
   activity,
   isLastActivity,
 }: TimelineActivityProps) => {
+  const { translate } = useI18n('translations');
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(activity.createdAt);
   const exactCreatedAt = beautifyExactDateTime(activity.createdAt);
   const openActivityRightDrawer = useOpenActivityRightDrawer();
@@ -178,7 +180,7 @@ export const TimelineActivity = ({
                 {activity.author?.name.firstName}{' '}
                 {activity.author?.name.lastName}
               </span>
-              created a {activity.type.toLowerCase()}
+              {translate('createdType', { type: activity.type.toLowerCase() })}
             </StyledItemAuthorText>
             <StyledItemTitle>
               <StyledIconContainer>
@@ -194,8 +196,10 @@ export const TimelineActivity = ({
                   onClick={() => openActivityRightDrawer(activity.id)}
                 >
                   “
-                  <StyledActivityLink title={activity.title ?? '(No Title)'}>
-                    {activity.title ?? '(No Title)'}
+                  <StyledActivityLink
+                    title={activity.title ?? `(${translate('noTitle')})`}
+                  >
+                    {activity.title ?? `(${translate('noTitle')})`}
                   </StyledActivityLink>
                   “
                 </StyledActivityTitle>

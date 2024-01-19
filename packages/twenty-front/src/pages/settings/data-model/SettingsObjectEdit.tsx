@@ -11,12 +11,14 @@ import { AppPath } from '@/types/AppPath';
 import { IconArchive, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import useI18n from '@/ui/i18n/useI18n';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 
 export const SettingsObjectEdit = () => {
+  const { translate } = useI18n('translations');
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
 
@@ -35,6 +37,8 @@ export const SettingsObjectEdit = () => {
       icon: string;
       labelSingular: string;
       labelPlural: string;
+      namePlural: string;
+      nameSingular: string;
       description: string;
     }>
   >({});
@@ -49,7 +53,9 @@ export const SettingsObjectEdit = () => {
       setFormValues({
         icon: activeObjectMetadataItem.icon ?? undefined,
         labelSingular: activeObjectMetadataItem.labelSingular,
+        nameSingular: activeObjectMetadataItem.nameSingular,
         labelPlural: activeObjectMetadataItem.labelPlural,
+        namePlural: activeObjectMetadataItem.namePlural,
         description: activeObjectMetadataItem.description ?? undefined,
       });
     }
@@ -58,13 +64,18 @@ export const SettingsObjectEdit = () => {
   if (!activeObjectMetadataItem) return null;
 
   const areRequiredFieldsFilled =
-    !!formValues.labelSingular && !!formValues.labelPlural;
+    !!formValues.labelSingular &&
+    !!formValues.nameSingular &&
+    !!formValues.labelPlural &&
+    !!formValues.namePlural;
 
   const hasChanges =
     formValues.description !== activeObjectMetadataItem.description ||
     formValues.icon !== activeObjectMetadataItem.icon ||
     formValues.labelPlural !== activeObjectMetadataItem.labelPlural ||
-    formValues.labelSingular !== activeObjectMetadataItem.labelSingular;
+    formValues.namePlural !== activeObjectMetadataItem.namePlural ||
+    formValues.labelSingular !== activeObjectMetadataItem.labelSingular ||
+    formValues.nameSingular !== activeObjectMetadataItem.nameSingular;
 
   const canSave = areRequiredFieldsFilled && hasChanges;
 
@@ -91,17 +102,17 @@ export const SettingsObjectEdit = () => {
   };
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer Icon={IconSettings} title={translate('settings')}>
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <Breadcrumb
             links={[
-              { children: 'Objects', href: '/settings/objects' },
+              { children: translate('objects'), href: '/settings/objects' },
               {
                 children: activeObjectMetadataItem.labelPlural,
                 href: `/settings/objects/${objectSlug}`,
               },
-              { children: 'Edit' },
+              { children: translate('edit') },
             ]}
           />
           {activeObjectMetadataItem.isCustom && (
@@ -115,8 +126,10 @@ export const SettingsObjectEdit = () => {
         <SettingsObjectFormSection
           disabled={!activeObjectMetadataItem.isCustom}
           icon={formValues.icon}
-          singularName={formValues.labelSingular}
-          pluralName={formValues.labelPlural}
+          singularLabel={formValues.labelSingular}
+          singularName={formValues.nameSingular}
+          pluralLabel={formValues.labelPlural}
+          pluralName={formValues.namePlural}
           description={formValues.description}
           onChange={(values) =>
             setFormValues((previousFormValues) => ({
@@ -126,10 +139,13 @@ export const SettingsObjectEdit = () => {
           }
         />
         <Section>
-          <H2Title title="Danger zone" description="Disable object" />
+          <H2Title
+            title={translate('dangerZone')}
+            description={translate('disableObject')}
+          />
           <Button
             Icon={IconArchive}
-            title="Disable"
+            title={translate('disable')}
             size="small"
             onClick={handleDisable}
           />

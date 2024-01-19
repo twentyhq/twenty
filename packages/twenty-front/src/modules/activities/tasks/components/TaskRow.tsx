@@ -8,6 +8,7 @@ import { GraphQLActivity } from '@/activities/types/GraphQLActivity';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
 import { IconCalendar, IconComment } from '@/ui/display/icon';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
+import useI18n from '@/ui/i18n/useI18n';
 import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
@@ -68,6 +69,7 @@ export const TaskRow = ({
 }: {
   task: Omit<GraphQLActivity, 'assigneeId'>;
 }) => {
+  const { translate } = useI18n('translations');
   const theme = useTheme();
   const openActivityRightDrawer = useOpenActivityRightDrawer();
 
@@ -96,7 +98,7 @@ export const TaskRow = ({
         />
       </div>
       <StyledTaskTitle completed={task.completedAt !== null}>
-        {task.title ?? 'Task Title'}
+        {task.title ?? translate('taskTitle')}
       </StyledTaskTitle>
       <StyledTaskBody>
         <OverflowingTextWithTooltip text={body} />

@@ -4,6 +4,7 @@ import { Key } from 'ts-key-enum';
 
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { IconArrowLeft, IconArrowRight, IconPencil } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
@@ -36,6 +37,7 @@ export const RecordBoardColumnDropdownMenu = ({
   onDelete,
   stageId,
 }: RecordBoardColumnDropdownMenuProps) => {
+  const { translate } = useI18n('translations');
   const [currentMenu, setCurrentMenu] = useState('actions');
   const column = useContext(BoardColumnContext);
 
@@ -102,17 +104,17 @@ export const RecordBoardColumnDropdownMenu = ({
             <MenuItem
               onClick={() => setMenu('title')}
               LeftIcon={IconPencil}
-              text="Edit"
+              text={translate('edit')}
             />
             <MenuItem
               LeftIcon={IconArrowLeft}
               onClick={handleColumnMoveLeft}
-              text="Move left"
+              text={translate('moveLeft')}
             />
             <MenuItem
               LeftIcon={IconArrowRight}
               onClick={handleColumnMoveRight}
-              text="Move right"
+              text={translate('moveRight')}
             />
             {/* <MenuItem
               onClick={() => setMenu('add')}
@@ -131,7 +133,7 @@ export const RecordBoardColumnDropdownMenu = ({
           />
         )}
         {currentMenu === 'add' && (
-          <div>add</div>
+          <div>{translate('add')}</div>
           // <SingleEntitySelect
           //   disableBackgroundBlur
           //   entitiesToSelect={companies.entitiesToSelect}

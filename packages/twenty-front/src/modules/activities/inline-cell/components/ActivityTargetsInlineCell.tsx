@@ -8,6 +8,7 @@ import { FieldRecoilScopeContext } from '@/object-record/record-inline-cell/stat
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { IconArrowUpRight, IconPencil } from '@/ui/display/icon';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import useI18n from '@/ui/i18n/useI18n';
 
 type ActivityTargetsInlineCellProps = {
   activity?: Pick<GraphQLActivity, 'id'> & {
@@ -22,6 +23,7 @@ type ActivityTargetsInlineCellProps = {
 export const ActivityTargetsInlineCell = ({
   activity,
 }: ActivityTargetsInlineCellProps) => {
+  const { translate } = useI18n('translations');
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords({
     activityId: activity?.id ?? '',
   });
@@ -40,7 +42,7 @@ export const ActivityTargetsInlineCell = ({
             activityTargetObjectRecords={activityTargetObjectRecords as any}
           />
         }
-        label="Relations"
+        label={translate('relations')}
         displayModeContent={
           <ActivityTargetChips
             activityTargetObjectRecords={activityTargetObjectRecords}

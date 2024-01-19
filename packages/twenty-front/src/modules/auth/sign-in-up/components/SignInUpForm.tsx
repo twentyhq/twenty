@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
+import useI18n from '@/ui/i18n/useI18n';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
@@ -42,6 +43,7 @@ const StyledInputContainer = styled.div`
 `;
 
 export const SignInUpForm = () => {
+  const { translate } = useI18n('translations');
   const {
     authProviders,
     signInWithGoogle,
@@ -78,24 +80,28 @@ export const SignInUpForm = () => {
 
   const buttonTitle = useMemo(() => {
     if (signInUpStep === SignInUpStep.Init) {
-      return 'Continue With Email';
+      return translate('continueWithEmail');
     }
 
     if (signInUpStep === SignInUpStep.Email) {
-      return 'Continue';
+      return translate('continue');
     }
 
-    return signInUpMode === SignInUpMode.SignIn ? 'Sign in' : 'Sign up';
+    return signInUpMode === SignInUpMode.SignIn
+      ? translate('signIn')
+      : translate('signUp');
   }, [signInUpMode, signInUpStep]);
 
   const title = useMemo(() => {
     if (signInUpMode === SignInUpMode.Invite) {
-      return `Join ${workspace?.displayName ?? ''} team`;
+      return translate('joinTeam', {
+        displayName: workspace?.displayName ?? '',
+      });
     }
 
     return signInUpMode === SignInUpMode.SignIn
-      ? 'Sign in to Twenty'
-      : 'Sign up to Twenty';
+      ? translate('signInToCrm')
+      : translate('signUpToCrm');
   }, [signInUpMode, workspace?.displayName]);
 
   const theme = useTheme();
@@ -111,7 +117,7 @@ export const SignInUpForm = () => {
           <>
             <MainButton
               Icon={() => <IconGoogle size={theme.icon.size.lg} />}
-              title="Continue with Google"
+              title={translate('continueWithGoogle')}
               onClick={signInWithGoogle}
               fullWidth
             />
@@ -145,7 +151,7 @@ export const SignInUpForm = () => {
                     <TextInput
                       autoFocus
                       value={value}
-                      placeholder="Email"
+                      placeholder={translate('email')}
                       onBlur={onBlur}
                       onChange={(value: string) => {
                         onChange(value);
@@ -185,7 +191,7 @@ export const SignInUpForm = () => {
                       autoFocus
                       value={value}
                       type="password"
-                      placeholder="Password"
+                      placeholder={translate('password')}
                       onBlur={onBlur}
                       onChange={onChange}
                       onKeyDown={handleKeyDown}
@@ -226,10 +232,7 @@ export const SignInUpForm = () => {
           />
         </StyledForm>
       </StyledContentContainer>
-      <StyledFooterNote>
-        By using Twenty, you agree to the Terms of Service and Data Processing
-        Agreement.
-      </StyledFooterNote>
+      <StyledFooterNote>{translate('footerNote')}</StyledFooterNote>
     </>
   );
 };

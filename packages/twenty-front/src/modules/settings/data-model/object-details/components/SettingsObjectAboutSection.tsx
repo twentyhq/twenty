@@ -5,6 +5,7 @@ import { IconArchive, IconDotsVertical, IconPencil } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import useI18n from '@/ui/i18n/useI18n';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
@@ -52,6 +53,7 @@ export const SettingsAboutSection = ({
   onDisable,
   onEdit,
 }: SettingsAboutSectionProps) => {
+  const { translate } = useI18n('translations');
   const theme = useTheme();
   const { getIcon } = useIcons();
   const Icon = getIcon(iconKey);
@@ -70,7 +72,10 @@ export const SettingsAboutSection = ({
 
   return (
     <Section>
-      <H2Title title="About" description="Manage your object" />
+      <H2Title
+        title={translate('about')}
+        description={translate('manageYourObject')}
+      />
       <Card>
         <StyledCardContent>
           <StyledName>
@@ -78,9 +83,17 @@ export const SettingsAboutSection = ({
             {name}
           </StyledName>
           {isCustom ? (
-            <StyledTag color="orange" text="Custom" weight="medium" />
+            <StyledTag
+              color="orange"
+              text={translate('custom')}
+              weight="medium"
+            />
           ) : (
-            <StyledTag color="blue" text="Standard" weight="medium" />
+            <StyledTag
+              color="blue"
+              text={translate('standard')}
+              weight="medium"
+            />
           )}
           <Dropdown
             dropdownId={dropdownId}
@@ -91,12 +104,12 @@ export const SettingsAboutSection = ({
               <DropdownMenu width="160px">
                 <DropdownMenuItemsContainer>
                   <MenuItem
-                    text="Edit"
+                    text={translate('edit')}
                     LeftIcon={IconPencil}
                     onClick={handleEdit}
                   />
                   <MenuItem
-                    text="Disable"
+                    text={translate('disable')}
                     LeftIcon={IconArchive}
                     onClick={handleDisable}
                   />

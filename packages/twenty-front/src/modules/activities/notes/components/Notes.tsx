@@ -5,6 +5,7 @@ import { NoteList } from '@/activities/notes/components/NoteList';
 import { useNotes } from '@/activities/notes/hooks/useNotes';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { IconPlus } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { Button } from '@/ui/input/button/components/Button';
 
 const StyledTaskGroupEmptyContainer = styled.div`
@@ -49,6 +50,7 @@ export const Notes = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
+  const { translate } = useI18n('translations');
   const { notes } = useNotes(targetableObject);
 
   const openCreateActivity = useOpenCreateActivityDrawer();
@@ -60,7 +62,7 @@ export const Notes = ({
         <StyledEmptyTaskGroupSubTitle>Create one:</StyledEmptyTaskGroupSubTitle>
         <Button
           Icon={IconPlus}
-          title="New note"
+          title={translate('newNote')}
           variant="secondary"
           onClick={() =>
             openCreateActivity({
@@ -76,14 +78,14 @@ export const Notes = ({
   return (
     <StyledNotesContainer>
       <NoteList
-        title="All"
+        title={translate('all')}
         notes={notes ?? []}
         button={
           <Button
             Icon={IconPlus}
             size="small"
             variant="secondary"
-            title="Add note"
+            title={translate('addNote')}
             onClick={() =>
               openCreateActivity({
                 type: 'Note',

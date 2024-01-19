@@ -4,6 +4,7 @@ import { RecordTableActionBar } from '@/object-record/record-table/action-bar/co
 import { RecordTableContextMenu } from '@/object-record/record-table/context-menu/components/RecordTableContextMenu';
 import { SignInBackgroundMockContainer } from '@/sign-in-background-mock/components/SignInBackgroundMockContainer';
 import { IconBuildingSkyscraper } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
@@ -17,9 +18,10 @@ const StyledTableContainer = styled.div`
 `;
 
 export const SignInBackgroundMockPage = () => {
+  const { translate } = useI18n('translations');
   return (
     <PageContainer>
-      <PageHeader title="Objects" Icon={IconBuildingSkyscraper}>
+      <PageHeader title={translate('objects')} Icon={IconBuildingSkyscraper}>
         <PageHotkeysEffect onAddButtonClick={() => {}} />
         <PageAddButton onClick={() => {}} />
       </PageHeader>

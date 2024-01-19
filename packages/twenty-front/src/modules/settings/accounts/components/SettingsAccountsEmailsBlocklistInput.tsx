@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 
+import useI18n from '@/ui/i18n/useI18n';
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 
@@ -22,6 +23,7 @@ type SettingsAccountsEmailsBlocklistInputProps = {
 export const SettingsAccountsEmailsBlocklistInput = ({
   updateBlockedEmailList,
 }: SettingsAccountsEmailsBlocklistInputProps) => {
+  const { translate } = useI18n('translations');
   const [formValues, setFormValues] = useState<{
     email: string;
   }>({
@@ -43,7 +45,7 @@ export const SettingsAccountsEmailsBlocklistInput = ({
         />
       </StyledLinkContainer>
       <Button
-        title="Add to blocklist"
+        title={translate('addToBlockList')}
         onClick={() => {
           updateBlockedEmailList(formValues.email);
           setFormValues({ email: '' });

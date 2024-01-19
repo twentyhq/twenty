@@ -18,6 +18,7 @@ import { useFieldMetadataForm } from '@/settings/data-model/hooks/useFieldMetada
 import { AppPath } from '@/types/AppPath';
 import { IconSettings } from '@/ui/display/icon';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import useI18n from '@/ui/i18n/useI18n';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
@@ -26,6 +27,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const SettingsObjectNewFieldStep2 = () => {
+  const { translate } = useI18n('translations');
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
   const { enqueueSnackBar } = useSnackBar();
@@ -135,12 +137,14 @@ export const SettingsObjectNewFieldStep2 = () => {
             description: validatedFormValues.description,
             icon: validatedFormValues.icon,
             label: validatedFormValues.label,
+            name: validatedFormValues.name,
           },
           objectMetadataId: activeObjectMetadataItem.id,
           connect: {
             field: {
               icon: validatedFormValues.relation.field.icon,
               label: validatedFormValues.relation.field.label,
+              name: validatedFormValues.relation.field.name,
             },
             objectMetadataId: validatedFormValues.relation.objectMetadataId,
           },
@@ -217,6 +221,7 @@ export const SettingsObjectNewFieldStep2 = () => {
           description: validatedFormValues.description,
           icon: validatedFormValues.icon,
           label: validatedFormValues.label ?? '',
+          name: validatedFormValues.name ?? '',
           objectMetadataId: activeObjectMetadataItem.id,
           type: validatedFormValues.type,
           options:
@@ -285,17 +290,17 @@ export const SettingsObjectNewFieldStep2 = () => {
   }
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer Icon={IconSettings} title={translate('settings')}>
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <Breadcrumb
             links={[
-              { children: 'Objects', href: '/settings/objects' },
+              { children: translate('objects'), href: '/settings/objects' },
               {
                 children: activeObjectMetadataItem.labelPlural,
                 href: `/settings/objects/${objectSlug}`,
               },
-              { children: 'New Field' },
+              { children: translate('newField') },
             ]}
           />
           <SaveAndCancelButtons
@@ -306,7 +311,8 @@ export const SettingsObjectNewFieldStep2 = () => {
         </SettingsHeaderContainer>
         <SettingsObjectFieldFormSection
           iconKey={formValues.icon}
-          name={formValues.label}
+          name={formValues.name}
+          label={formValues.label}
           description={formValues.description}
           onChange={handleFormChange}
         />
@@ -314,7 +320,8 @@ export const SettingsObjectNewFieldStep2 = () => {
           excludedFieldTypes={excludedFieldTypes}
           fieldMetadata={{
             icon: formValues.icon,
-            label: formValues.label || 'Employees',
+            label: formValues.label || translate('employees'),
+            name: formValues.name || 'employees',
           }}
           objectMetadataId={activeObjectMetadataItem.id}
           onChange={handleFormChange}

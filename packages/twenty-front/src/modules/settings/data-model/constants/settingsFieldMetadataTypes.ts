@@ -35,7 +35,7 @@ export const settingsFieldMetadataTypes: Partial<
     label: 'Text',
     Icon: IconTextSize,
     defaultValue:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum magna enim, dapibus non enim in, lacinia faucibus nunc. Sed interdum ante sed felis facilisis, eget ultricies neque molestie. Mauris auctor, justo eu volutpat cursus, libero erat tempus nulla, non sodales lorem lacus a est.',
+      'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان جامعه و متخصصان را می طلبد تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی و فرهنگ پیشرو در زبان فارسی ایجاد کرد.',
   },
   [FieldMetadataType.Numeric]: {
     label: 'Numeric',
@@ -50,7 +50,7 @@ export const settingsFieldMetadataTypes: Partial<
   [FieldMetadataType.Link]: {
     label: 'Link',
     Icon: IconLink,
-    defaultValue: { url: 'www.twenty.com', label: '' },
+    defaultValue: { url: 'www.tabatelecom.ir/', label: '' },
   },
   [FieldMetadataType.Boolean]: {
     label: 'True/False',

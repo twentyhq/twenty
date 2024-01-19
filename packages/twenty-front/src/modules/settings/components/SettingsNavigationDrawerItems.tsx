@@ -5,7 +5,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { AppPath } from '@/types/AppPath';
 import {
   IconAt,
-  IconCalendarEvent,
+  // IconCalendarEvent,
   IconColorSwatch,
   IconHierarchy2,
   IconLogout,
@@ -15,6 +15,7 @@ import {
   IconUserCircle,
   IconUsers,
 } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
@@ -30,6 +31,7 @@ export const SettingsNavigationDrawerItems = () => {
     navigate(AppPath.SignIn);
   }, [signOut, navigate]);
 
+  const { translate } = useI18n('translations');
   const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
   const isAccountsItemActive = !!useMatch({
     path: useResolvedPath('/settings/accounts').pathname,
@@ -43,9 +45,9 @@ export const SettingsNavigationDrawerItems = () => {
   return (
     <>
       <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label="User" />
+        <NavigationDrawerSectionTitle label={translate('user')} />
         <NavigationDrawerItem
-          label="Profile"
+          label={translate('profile')}
           to="/settings/profile"
           Icon={IconUserCircle}
           active={
@@ -56,7 +58,7 @@ export const SettingsNavigationDrawerItems = () => {
           }
         />
         <NavigationDrawerItem
-          label="Appearance"
+          label={translate('appearance')}
           to="/settings/profile/appearance"
           Icon={IconColorSwatch}
           active={
@@ -69,32 +71,32 @@ export const SettingsNavigationDrawerItems = () => {
         {isMessagingEnabled && (
           <NavigationDrawerItemGroup>
             <NavigationDrawerItem
-              label="Accounts"
+              label={translate('accounts')}
               to="/settings/accounts"
               Icon={IconAt}
               active={isAccountsItemActive}
             />
             <NavigationDrawerItem
               level={2}
-              label="Emails"
+              label={translate('emails')}
               to="/settings/accounts/emails"
               Icon={IconMail}
               active={isAccountsEmailsItemActive}
             />
-            <NavigationDrawerItem
-              level={2}
-              label="Calendars"
-              Icon={IconCalendarEvent}
-              soon
-            />
+            {/*<NavigationDrawerItem*/}
+            {/*  level={2}*/}
+            {/*  label={translate('calendars')}*/}
+            {/*  Icon={IconCalendarEvent}*/}
+            {/*  soon*/}
+            {/*/>*/}
           </NavigationDrawerItemGroup>
         )}
       </NavigationDrawerSection>
 
       <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label="Workspace" />
+        <NavigationDrawerSectionTitle label={translate('workspace')} />
         <NavigationDrawerItem
-          label="General"
+          label={translate('general')}
           to="/settings/workspace"
           Icon={IconSettings}
           active={
@@ -105,7 +107,7 @@ export const SettingsNavigationDrawerItems = () => {
           }
         />
         <NavigationDrawerItem
-          label="Members"
+          label={translate('members')}
           to="/settings/workspace-members"
           Icon={IconUsers}
           active={
@@ -116,7 +118,7 @@ export const SettingsNavigationDrawerItems = () => {
           }
         />
         <NavigationDrawerItem
-          label="Data model"
+          label={translate('dataModel')}
           to="/settings/objects"
           Icon={IconHierarchy2}
           active={
@@ -127,7 +129,7 @@ export const SettingsNavigationDrawerItems = () => {
           }
         />
         <NavigationDrawerItem
-          label="Developers"
+          label={translate('developers')}
           to="/settings/developers/api-keys"
           Icon={IconRobot}
           active={
@@ -140,9 +142,9 @@ export const SettingsNavigationDrawerItems = () => {
       </NavigationDrawerSection>
 
       <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label="Other" />
+        <NavigationDrawerSectionTitle label={translate('other')} />
         <NavigationDrawerItem
-          label="Logout"
+          label={translate('logout')}
           onClick={handleLogout}
           Icon={IconLogout}
         />

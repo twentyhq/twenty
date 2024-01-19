@@ -8,19 +8,21 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { Avatar } from '@/users/components/Avatar';
 
 import { useFavorites } from '../hooks/useFavorites';
+import useI18n from '@/ui/i18n/useI18n';
 
 const StyledContainer = styled(NavigationDrawerSection)`
   width: 100%;
 `;
 
 export const Favorites = () => {
+  const { translate } = useI18n('translations');
   const { favorites, handleReorderFavorite } = useFavorites();
 
   if (!favorites || favorites.length === 0) return <></>;
 
   return (
     <StyledContainer>
-      <NavigationDrawerSectionTitle label="Favorites" />
+      <NavigationDrawerSectionTitle label={translate('favorites')} />
       <DraggableList
         onDragEnd={handleReorderFavorite}
         draggableItems={

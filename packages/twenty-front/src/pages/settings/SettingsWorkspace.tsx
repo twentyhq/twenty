@@ -10,28 +10,32 @@ import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
+import useI18n from '@/ui/i18n/useI18n';
 
 const StyledH1Title = styled(H1Title)`
   margin-bottom: 0;
 `;
 
-export const SettingsWorkspace = () => (
-  <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+export const SettingsWorkspace = () => {
+  const { translate } = useI18n('translations');
+
+  return (
+  <SubMenuTopBarContainer Icon={IconSettings} title={translate('settings')}>
     <SettingsPageContainer>
-      <StyledH1Title title="General" />
+      <StyledH1Title title={translate('general')} />
       <Section>
-        <H2Title title="Picture" />
+        <H2Title title={translate('picture')} />
         <WorkspaceLogoUploader />
       </Section>
       <Section>
-        <H2Title title="Name" description="Name of your workspace" />
+        <H2Title title={translate('name')} description={translate('nameOfYourWorkspace')} />
         <NameField />
       </Section>
       <Section>
         <H2Title
-          title="Support"
+          title={translate('support')}
           addornment={<ToggleImpersonate />}
-          description="Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+          description={translate('supportDsc')}
         />
       </Section>
       <Section>
@@ -39,4 +43,4 @@ export const SettingsWorkspace = () => (
       </Section>
     </SettingsPageContainer>
   </SubMenuTopBarContainer>
-);
+)};

@@ -1,3 +1,4 @@
+import useI18n from '@/ui/i18n/useI18n';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 
 type CancelButtonProps = {
@@ -5,5 +6,12 @@ type CancelButtonProps = {
 };
 
 export const CancelButton = ({ onCancel }: CancelButtonProps) => {
-  return <LightButton title="Cancel" accent="tertiary" onClick={onCancel} />;
+  const { translate } = useI18n('translations');
+  return (
+    <LightButton
+      title={translate('cancel')}
+      accent="tertiary"
+      onClick={onCancel}
+    />
+  );
 };

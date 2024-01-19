@@ -29,6 +29,6 @@ export const getPageTitleFromPath = (pathname: string): string => {
     case `${AppBasePath.Settings}/${SettingsPath.Workspace}`:
       return 'Workspace';
     default:
-      return 'Twenty';
+      return 'Taba';
   }
 };

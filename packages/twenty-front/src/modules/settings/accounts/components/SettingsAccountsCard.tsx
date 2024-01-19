@@ -6,6 +6,7 @@ import { Account } from '@/accounts/types/Account';
 import { SettingsAccountsRowDropdownMenu } from '@/settings/accounts/components/SettingsAccountsRowDropdownMenu';
 import { IconAt, IconPlus } from '@/ui/display/icon';
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
+import useI18n from '@/ui/i18n/useI18n';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardFooter } from '@/ui/layout/card/components/CardFooter';
@@ -39,6 +40,7 @@ export const SettingsAccountsCard = ({
   accounts,
   onAccountRemove,
 }: SettingsAccountsCardProps) => {
+  const { translate } = useI18n('translations');
   const theme = useTheme();
   const navigate = useNavigate();
 
@@ -46,7 +48,7 @@ export const SettingsAccountsCard = ({
     <Card>
       {accounts.map((account, index) => (
         <SettingsAccountRow
-          key={account.id}
+          key={account.uuid}
           LeftIcon={IconGoogle}
           account={account}
           rightComponent={
@@ -57,7 +59,7 @@ export const SettingsAccountsCard = ({
       ))}
       <StyledFooter>
         <IconAt size={theme.icon.size.sm} />
-        Add account
+        {translate('addAccount')}
         <StyledIconButton
           Icon={IconPlus}
           accent="tertiary"

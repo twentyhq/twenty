@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
+import useI18n from '@/ui/i18n/useI18n';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
@@ -47,13 +48,14 @@ const StyledInfo = styled.div<StyledInfoProps>`
 
 export const NotFound = () => {
   const navigate = useNavigate();
+  const { translate } = useI18n('translations');
 
   return (
     <>
       <StyledBackDrop>
         <StyledTextContainer>
           <StyledInfo color="dark">404</StyledInfo>
-          <StyledInfo color="light">Page not found</StyledInfo>
+          <StyledInfo color="light">{translate('pageNotFound')}</StyledInfo>
         </StyledTextContainer>
         <StyledButtonContainer>
           <MainButton

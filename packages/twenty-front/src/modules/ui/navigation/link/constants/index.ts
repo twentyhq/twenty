@@ -1,1 +1,1 @@
-export const githubLink = 'https://github.com/twentyhq/twenty';
+export const githubLink = 'https://tabatelecom.ir/';

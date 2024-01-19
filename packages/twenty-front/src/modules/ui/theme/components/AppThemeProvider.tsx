@@ -1,4 +1,6 @@
-import { ThemeProvider } from '@emotion/react';
+import createCache from '@emotion/cache';
+import { CacheProvider, ThemeProvider } from '@emotion/react';
+import rtlPlugin from 'stylis-plugin-rtl';
 
 import { darkTheme, lightTheme } from '@/ui/theme/constants/theme';
 
@@ -14,10 +16,19 @@ export const AppThemeProvider = ({ children }: AppThemeProviderProps) => {
 
   const { colorScheme } = useColorScheme();
 
+  const cache = createCache({
+    stylisPlugins: [rtlPlugin],
+    key: 'rtl',
+  });
+
   const computedColorScheme =
     colorScheme === 'System' ? systemColorScheme : colorScheme;
 
   const theme = computedColorScheme === 'Dark' ? darkTheme : lightTheme;
 
-  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+  return (
+    <CacheProvider value={cache}>
+      <ThemeProvider theme={theme}>{children}</ThemeProvider>
+    </CacheProvider>
+  );
 };

@@ -16,6 +16,7 @@ import { IconChevronDown, IconForbid } from '@/ui/display/icon';
 import { Column, Columns, ColumnType } from '../MatchColumnsStep';
 
 import { SubMatchingSelect } from './SubMatchingSelect';
+import useI18n from '@/ui/i18n/useI18n';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -89,6 +90,7 @@ export const TemplateColumn = <T extends string>({
   const column = columns[columnIndex];
   const isIgnored = column.type === ColumnType.ignored;
   const isSelect = 'matchedOptions' in column;
+  const { translate } = useI18n('translations');
   const fieldOptions = fields.map(({ icon, label, key }) => {
     const isSelected =
       columns.findIndex((column) => {
@@ -110,7 +112,7 @@ export const TemplateColumn = <T extends string>({
     {
       icon: IconForbid,
       value: 'do-not-import',
-      label: 'Do not import',
+      label: translate('doNotImport'),
     },
     ...fieldOptions,
   ];

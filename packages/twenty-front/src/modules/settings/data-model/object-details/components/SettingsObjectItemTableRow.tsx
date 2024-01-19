@@ -6,6 +6,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { Tag } from '@/ui/display/tag/components/Tag';
+import useI18n from '@/ui/i18n/useI18n';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
@@ -35,7 +36,7 @@ export const SettingsObjectItemTableRow = ({
   onClick,
 }: SettingsObjectItemTableRowProps) => {
   const theme = useTheme();
-
+  const { translate } = useI18n('translations');
   const { records } = useFindManyRecords({
     objectNameSingular: objectItem.nameSingular,
   });
@@ -53,9 +54,9 @@ export const SettingsObjectItemTableRow = ({
       </StyledNameTableCell>
       <TableCell>
         {objectItem.isCustom ? (
-          <Tag color="orange" text="Custom" weight="regular" />
+          <Tag color="orange" text={translate('custom')} weight="medium" />
         ) : (
-          <Tag color="blue" text="Standard" weight="regular" />
+          <Tag color="blue" text={translate('standard')} weight="medium" />
         )}
       </TableCell>
       <TableCell align="right">

@@ -5,12 +5,14 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import useI18n from '@/ui/i18n/useI18n';
 import { Section } from '@/ui/layout/section/components/Section';
 
 import { SettingsAccountsCard } from './SettingsAccountsCard';
 import { SettingsAccountsEmptyStateCard } from './SettingsAccountsEmptyStateCard';
 
 export const SettingsAccountsConnectedAccountsSection = () => {
+  const { translate } = useI18n('translations');
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const accounts = useFindManyRecords<Account>({
@@ -32,10 +34,10 @@ export const SettingsAccountsConnectedAccountsSection = () => {
   return (
     <Section>
       <H2Title
-        title="Connected accounts"
-        description="Manage your internet accounts."
+        title={translate('connectedAccounts')}
+        description={translate('manageYourInternetAccounts')}
       />
-      {accounts?.length ? (
+      {accounts.length ? (
         <SettingsAccountsCard
           accounts={accounts}
           onAccountRemove={handleAccountRemove}

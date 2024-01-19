@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { IconPlus } from '@/ui/display/icon/index';
+import useI18n from '@/ui/i18n/useI18n';
 
 const StyledButton = styled.button`
   align-items: center;
@@ -25,12 +26,13 @@ type NewButtonProps = {
 };
 
 export const NewButton = ({ onClick }: NewButtonProps) => {
+  const { translate } = useI18n('translations');
   const theme = useTheme();
 
   return (
     <StyledButton onClick={onClick}>
       <IconPlus size={theme.icon.size.md} />
-      New
+      {translate('new')}
     </StyledButton>
   );
 };

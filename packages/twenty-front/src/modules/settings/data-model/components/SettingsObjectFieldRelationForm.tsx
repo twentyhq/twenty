@@ -4,6 +4,7 @@ import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObj
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { validateMetadataLabel } from '@/object-metadata/utils/validateMetadataLabel';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
+import useI18n from '@/ui/i18n/useI18n';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -13,7 +14,7 @@ import { relationTypes } from '../constants/relationTypes';
 import { RelationType } from '../types/RelationType';
 
 export type SettingsObjectFieldRelationFormValues = {
-  field: Pick<Field, 'icon' | 'label'>;
+  field: Pick<Field, 'icon' | 'label' | 'name'>;
   objectMetadataId: string;
   type: RelationType;
 };
@@ -57,6 +58,7 @@ export const SettingsObjectFieldRelationForm = ({
   onChange,
   values,
 }: SettingsObjectFieldRelationFormProps) => {
+  const { translate } = useI18n('translations');
   const { getIcon } = useIcons();
   const { objectMetadataItems, findObjectMetadataItemById } =
     useObjectMetadataItemForSettings();
@@ -70,7 +72,7 @@ export const SettingsObjectFieldRelationForm = ({
     <StyledContainer>
       <StyledSelectsContainer>
         <Select
-          label="Relation type"
+          label={translate('relationType')}
           dropdownId="relation-type-select"
           fullWidth
           disabled={disableRelationEdition}
@@ -81,11 +83,12 @@ export const SettingsObjectFieldRelationForm = ({
               label,
               value: value as RelationType,
               Icon,
-            }))}
+            }),
+          )}
           onChange={(value) => onChange({ type: value })}
         />
         <Select
-          label="Object destination"
+          label={translate('objectDestination')}
           dropdownId="object-destination-select"
           fullWidth
           disabled={disableRelationEdition}
@@ -103,7 +106,7 @@ export const SettingsObjectFieldRelationForm = ({
         />
       </StyledSelectsContainer>
       <StyledInputsLabel>
-        Field on {selectedObjectMetadataItem?.labelPlural}
+        {`${translate('fieldOn')} ${selectedObjectMetadataItem?.labelPlural}`}
       </StyledInputsLabel>
       <StyledInputsContainer>
         <IconPicker
@@ -119,7 +122,7 @@ export const SettingsObjectFieldRelationForm = ({
         />
         <TextInput
           disabled={disableFieldEdition}
-          placeholder="Field name"
+          placeholder={translate('fieldName')}
           value={values.field.label}
           onChange={(value) => {
             if (!value || validateMetadataLabel(value)) {

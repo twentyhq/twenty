@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import useI18n from '@/ui/i18n/useI18n';
 import { ImageInput } from '@/ui/input/components/ImageInput';
 import { getImageAbsoluteURIOrBase64 } from '@/users/utils/getProfilePictureAbsoluteURI';
 import { useUploadProfilePictureMutation } from '~/generated/graphql';
@@ -11,7 +12,7 @@ import { useUploadProfilePictureMutation } from '~/generated/graphql';
 export const ProfilePictureUploader = () => {
   const [uploadPicture, { loading: isUploading }] =
     useUploadProfilePictureMutation();
-
+  const { translate } = useI18n('translations');
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
@@ -34,7 +35,7 @@ export const ProfilePictureUploader = () => {
 
     try {
       if (!currentWorkspaceMember?.id) {
-        throw new Error('User is not logged in');
+        throw new Error(translate('userIsNotLoggedIn'));
       }
       const result = await uploadPicture({
         variables: {
@@ -53,7 +54,7 @@ export const ProfilePictureUploader = () => {
       const avatarUrl = result?.data?.uploadProfilePicture;
 
       if (!avatarUrl) {
-        throw new Error('Avatar URL not found');
+        throw new Error(translate('avatarUrlNotFound'));
       }
 
       await updateOneRecord({
@@ -67,7 +68,7 @@ export const ProfilePictureUploader = () => {
 
       return result;
     } catch (error) {
-      setErrorMessage('An error occured while uploading the picture.');
+      setErrorMessage(translate('errorOccuredWhileUploadingPicture'));
     }
   };
 
@@ -80,7 +81,7 @@ export const ProfilePictureUploader = () => {
 
   const handleRemove = async () => {
     if (!currentWorkspaceMember?.id) {
-      throw new Error('User is not logged in');
+      throw new Error(translate('userIsNotLoggedIn'));
     }
 
     await updateOneRecord({

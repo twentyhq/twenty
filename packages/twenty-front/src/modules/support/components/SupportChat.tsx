@@ -9,6 +9,7 @@ import { IconHelpCircle } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { User } from '~/generated/graphql';
+import useI18n from '@/ui/i18n/useI18n';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -35,6 +36,7 @@ export const SupportChat = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const supportChat = useRecoilValue(supportChatState);
   const [isFrontChatLoaded, setIsFrontChatLoaded] = useState(false);
+  const { translate } = useI18n('translations')
 
   const configureFront = useCallback(
     (
@@ -95,7 +97,7 @@ export const SupportChat = () => {
       <Button
         variant="tertiary"
         size="small"
-        title="Support"
+        title={translate('support')}
         Icon={IconHelpCircle}
         onClick={() => window.FrontChat?.('show')}
       />

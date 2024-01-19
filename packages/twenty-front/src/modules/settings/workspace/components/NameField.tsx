@@ -4,6 +4,7 @@ import debounce from 'lodash.debounce';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import useI18n from '@/ui/i18n/useI18n';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
@@ -26,7 +27,7 @@ export const NameField = ({
   onNameUpdate,
 }: NameFieldProps) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-
+  const { translate } = useI18n('translations');
   const [displayName, setDisplayName] = useState(
     currentWorkspace?.displayName ?? '',
   );
@@ -70,10 +71,10 @@ export const NameField = ({
   return (
     <StyledComboInputContainer>
       <TextInput
-        label="Name"
+        label={translate('name')}
         value={displayName}
         onChange={setDisplayName}
-        placeholder="Apple"
+        placeholder={translate('hoda')}
         fullWidth
       />
     </StyledComboInputContainer>

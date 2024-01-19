@@ -15,6 +15,7 @@ import { SettingsObjectDisabledMenuDropDown } from '@/settings/data-model/object
 import { IconChevronRight, IconPlus, IconSettings } from '@/ui/display/icon';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import useI18n from '@/ui/i18n/useI18n';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
@@ -31,6 +32,7 @@ const StyledH1Title = styled(H1Title)`
 `;
 
 export const SettingsObjects = () => {
+  const { translate } = useI18n('translations');
   const theme = useTheme();
   const navigate = useNavigate();
 
@@ -42,13 +44,13 @@ export const SettingsObjects = () => {
   } = useObjectMetadataItemForSettings();
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer Icon={IconSettings} title={translate('settings')}>
       <SettingsPageContainer>
         <SettingsHeaderContainer>
-          <StyledH1Title title="Objects" />
+          <StyledH1Title title={translate('objects')} />
           <Button
             Icon={IconPlus}
-            title="Add object"
+            title={translate('addObject')}
             accent="blue"
             size="small"
             onClick={() => navigate('/settings/objects/new')}
@@ -57,17 +59,19 @@ export const SettingsObjects = () => {
         <div>
           <SettingsObjectCoverImage />
           <Section>
-            <H2Title title="Existing objects" />
+            <H2Title title={translate('existingObjects')} />
             <Table>
               <StyledObjectTableRow>
-                <TableHeader>Name</TableHeader>
-                <TableHeader>Type</TableHeader>
-                <TableHeader align="right">Fields</TableHeader>
-                <TableHeader align="right">Instances</TableHeader>
+                <TableHeader>{translate('name')}</TableHeader>
+                <TableHeader>{translate('type')}</TableHeader>
+                <TableHeader align="right">{translate('fields')}</TableHeader>
+                <TableHeader align="right">
+                  {translate('instances')}
+                </TableHeader>
                 <TableHeader></TableHeader>
               </StyledObjectTableRow>
               {!!activeObjectMetadataItems.length && (
-                <TableSection title="Active">
+                <TableSection title={translate('active')}>
                   {activeObjectMetadataItems.map((activeObjectMetadataItem) => (
                     <SettingsObjectItemTableRow
                       key={activeObjectMetadataItem.namePlural}
@@ -90,7 +94,7 @@ export const SettingsObjects = () => {
                 </TableSection>
               )}
               {!!disabledObjectMetadataItems.length && (
-                <TableSection title="Disabled">
+                <TableSection title={translate('disabled')}>
                   {disabledObjectMetadataItems.map(
                     (disabledObjectMetadataItem) => (
                       <SettingsObjectItemTableRow

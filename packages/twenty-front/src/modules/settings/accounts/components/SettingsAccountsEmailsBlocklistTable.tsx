@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 import { BlockedEmail } from '@/accounts/types/BlockedEmail';
 import { SettingsAccountsEmailsBlocklistTableRow } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistTableRow';
+import useI18n from '@/ui/i18n/useI18n';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -19,11 +20,14 @@ export const SettingsAccountsEmailsBlocklistTable = ({
   blockedEmailList,
   handleBlockedEmailRemove,
 }: SettingsAccountsEmailsBlocklistTableProps) => {
+  const { translate } = useI18n('translations');
   return (
     <Table>
       <TableRow>
-        <TableHeader>Email/Domain</TableHeader>
-        <TableHeader>Added to blocklist</TableHeader>
+        <TableHeader>{`${translate('email')}/${translate(
+          'domain',
+        )}`}</TableHeader>
+        <TableHeader>{translate('addedToBlockList')}</TableHeader>
         <TableHeader></TableHeader>
       </TableRow>
       <StyledTableBody>

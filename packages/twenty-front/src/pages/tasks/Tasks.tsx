@@ -15,6 +15,7 @@ import { TopBar } from '@/ui/layout/top-bar/TopBar';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
 import { TasksEffect } from './TasksEffect';
+import useI18n from '@/ui/i18n/useI18n';
 
 const StyledTasksContainer = styled.div`
   display: flex;
@@ -32,6 +33,7 @@ const StyledTabListContainer = styled.div`
 `;
 
 export const Tasks = () => {
+  const { translate } = useI18n('translations');
   const TASK_TABS = [
     {
       id: 'to-do',
@@ -51,7 +53,7 @@ export const Tasks = () => {
     <PageContainer>
       <RecoilScope CustomRecoilScopeContext={TasksRecoilScopeContext}>
         <TasksEffect filterDropdownId={filterDropdownId} />
-        <PageHeader title="Tasks" Icon={IconCheckbox}>
+        <PageHeader title={translate('tasks')} Icon={IconCheckbox}>
           <PageAddTaskButton filterDropdownId={filterDropdownId} />
         </PageHeader>
         <PageBody>

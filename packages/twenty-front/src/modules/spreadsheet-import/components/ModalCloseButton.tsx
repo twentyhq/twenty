@@ -4,6 +4,7 @@ import { useSpreadsheetImportInitialStep } from '@/spreadsheet-import/hooks/useS
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { IconX } from '@/ui/display/icon/index';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
+import useI18n from '@/ui/i18n/useI18n';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
 
@@ -24,6 +25,7 @@ type ModalCloseButtonProps = {
 
 export const ModalCloseButton = ({ onClose }: ModalCloseButtonProps) => {
   const { initialStepState } = useSpreadsheetImportInternal();
+  const { translate } = useI18n('translations');
 
   const { initialStep } = useSpreadsheetImportInitialStep(
     initialStepState?.type,
@@ -41,11 +43,16 @@ export const ModalCloseButton = ({ onClose }: ModalCloseButtonProps) => {
       return;
     }
     enqueueDialog({
-      title: 'Exit import flow',
-      message: 'Are you sure? Your current information will not be saved.',
+      title: translate('exitImportFlow'),
+      message: translate('confirmInfoNotSave'),
       buttons: [
         { title: 'Cancel' },
-        { title: 'Exit', onClick: onClose, accent: 'danger', role: 'confirm' },
+        {
+          title: translate('exit'),
+          onClick: onClose,
+          accent: 'danger',
+          role: 'confirm',
+        },
       ],
     });
   };

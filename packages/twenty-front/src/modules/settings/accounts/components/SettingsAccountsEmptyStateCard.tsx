@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import styled from '@emotion/styled';
 
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
+import useI18n from '@/ui/i18n/useI18n';
 import { Button } from '@/ui/input/button/components/Button';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
@@ -28,7 +29,7 @@ export const SettingsAccountsEmptyStateCard = ({
   label,
 }: SettingsAccountsEmptyStateCardProps) => {
   const [generateTransientToken] = useGenerateTransientTokenMutation();
-
+  const { translate } = useI18n('translations');
   const handleGmailLogin = useCallback(async () => {
     const authServerUrl = REACT_APP_SERVER_AUTH_URL;
 
@@ -42,11 +43,11 @@ export const SettingsAccountsEmptyStateCard = ({
 
   return (
     <Card>
-      <StyledHeader>{label || 'No connected account'}</StyledHeader>
+      <StyledHeader>{label || translate('noConnectedAccount')}</StyledHeader>
       <StyledBody>
         <Button
           Icon={IconGoogle}
-          title="Connect with Google"
+          title={translate('connectWithGoogle')}
           variant="secondary"
           onClick={handleGmailLogin}
         />

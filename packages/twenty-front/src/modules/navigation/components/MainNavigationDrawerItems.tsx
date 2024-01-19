@@ -6,11 +6,12 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Favorites } from '@/favorites/components/Favorites';
 import { ObjectMetadataNavItems } from '@/object-metadata/components/ObjectMetadataNavItems';
 import {
-  IconBell,
+  // IconBell,
   IconCheckbox,
   IconSearch,
   IconSettings,
 } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
@@ -20,6 +21,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsTasksPage } from '../hooks/useIsTasksPage';
 
 export const MainNavigationDrawerItems = () => {
+  const { translate } = useI18n('translations');
   const isMobile = useIsMobile();
   const { toggleCommandMenu } = useCommandMenu();
   const isTasksPage = useIsTasksPage();
@@ -35,19 +37,19 @@ export const MainNavigationDrawerItems = () => {
       {!isMobile && (
         <NavigationDrawerSection>
           <NavigationDrawerItem
-            label="Search"
+            label={translate('search')}
             Icon={IconSearch}
             onClick={toggleCommandMenu}
             keyboard={['⌘', 'K']}
           />
+          {/*<NavigationDrawerItem*/}
+          {/*  label={translate('notifications')}*/}
+          {/*  to="/inbox"*/}
+          {/*  Icon={IconBell}*/}
+          {/*  soon*/}
+          {/*/>*/}
           <NavigationDrawerItem
-            label="Notifications"
-            to="/inbox"
-            Icon={IconBell}
-            soon
-          />
-          <NavigationDrawerItem
-            label="Settings"
+            label={translate('settings')}
             onClick={() => {
               setNavigationMemorizedUrl(location.pathname + location.search);
               navigate('/settings/profile');
@@ -55,7 +57,7 @@ export const MainNavigationDrawerItems = () => {
             Icon={IconSettings}
           />
           <NavigationDrawerItem
-            label="Tasks"
+            label={translate('tasks')}
             to="/tasks"
             active={isTasksPage}
             Icon={IconCheckbox}
@@ -67,7 +69,7 @@ export const MainNavigationDrawerItems = () => {
       <Favorites />
 
       <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label="Workspace" />
+        <NavigationDrawerSectionTitle label={translate('workspace')} />
         <ObjectMetadataNavItems />
       </NavigationDrawerSection>
     </>

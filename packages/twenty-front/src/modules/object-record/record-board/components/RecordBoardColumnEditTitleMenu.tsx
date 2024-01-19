@@ -2,6 +2,7 @@ import { ChangeEvent, useCallback, useContext, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { IconTrash } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
@@ -55,6 +56,7 @@ export const RecordBoardColumnEditTitleMenu = ({
   title,
   color,
 }: RecordBoardColumnEditTitleMenuProps) => {
+  const { translate } = useI18n('translations');
   const [internalValue, setInternalValue] = useState(title);
   const { onTitleEdit } = useContext(BoardColumnContext) || {};
 
@@ -122,7 +124,7 @@ export const RecordBoardColumnEditTitleMenu = ({
       <MenuItem
         onClick={handleDelete}
         LeftIcon={IconTrash}
-        text="Delete"
+        text={translate('delete')}
         accent="danger"
       />
     </DropdownMenuItemsContainer>

@@ -12,6 +12,7 @@ import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
+import useI18n from '@/ui/i18n/useI18n';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
@@ -94,6 +95,7 @@ export const ViewBarDetails = ({
   filterDropdownId,
   viewBarId,
 }: ViewBarDetailsProps) => {
+  const { translate } = useI18n('translations');
   const {
     currentViewSortsState,
     currentViewFiltersState,
@@ -175,7 +177,7 @@ export const ViewBarDetails = ({
           data-testid="cancel-button"
           onClick={handleCancelClick}
         >
-          Reset
+          {translate('reset')}
         </StyledCancelButton>
       )}
       {rightComponent}

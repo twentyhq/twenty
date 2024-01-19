@@ -1,5 +1,6 @@
 import { FieldMetadata } from '@/object-record/field/types/FieldMetadata';
 import { IconArrowLeft, IconArrowRight, IconEyeOff } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
@@ -20,6 +21,7 @@ export const RecordTableColumnDropdownMenu = ({
   isLastColumn,
   primaryColumnKey,
 }: RecordTableColumnDropdownMenuProps) => {
+  const { translate } = useI18n('translations');
   const { handleColumnVisibilityChange, handleMoveTableColumn } =
     useTableColumns();
 
@@ -54,20 +56,20 @@ export const RecordTableColumnDropdownMenu = ({
         <MenuItem
           LeftIcon={IconArrowLeft}
           onClick={handleColumnMoveLeft}
-          text="Move left"
+          text={translate('moveLeft')}
         />
       )}
       {!isLastColumn && (
         <MenuItem
           LeftIcon={IconArrowRight}
           onClick={handleColumnMoveRight}
-          text="Move right"
+          text={translate('moveRight')}
         />
       )}
       <MenuItem
         LeftIcon={IconEyeOff}
         onClick={handleColumnVisibility}
-        text="Hide"
+        text={translate('hide')}
       />
     </DropdownMenuItemsContainer>
   );

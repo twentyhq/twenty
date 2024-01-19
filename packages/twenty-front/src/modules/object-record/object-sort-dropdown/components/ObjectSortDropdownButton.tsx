@@ -4,6 +4,7 @@ import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useS
 import { ObjectSortDropdownScope } from '@/object-record/object-sort-dropdown/scopes/ObjectSortDropdownScope';
 import { IconChevronDown } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
+import useI18n from '@/ui/i18n/useI18n';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
@@ -26,6 +27,7 @@ export const ObjectSortDropdownButton = ({
   sortDropdownId,
   hotkeyScope,
 }: ObjectSortDropdownButtonProps) => {
+  const { translate } = useI18n('translations');
   const [isSortDirectionMenuUnfolded, setIsSortDirectionMenuUnfolded] =
     useState(false);
 
@@ -75,7 +77,7 @@ export const ObjectSortDropdownButton = ({
         dropdownOffset={{ y: 8 }}
         clickableComponent={
           <LightButton
-            title="Sort"
+            title={translate('sort')}
             active={isSortSelected}
             onClick={handleButtonClick}
           />
@@ -91,7 +93,7 @@ export const ObjectSortDropdownButton = ({
                       setSelectedSortDirection(sortOrder);
                       setIsSortDirectionMenuUnfolded(false);
                     }}
-                    text={sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+                    text={sortOrder === 'asc' ? translate('ascending') : translate('descending')}
                   />
                 ))}
               </DropdownMenuItemsContainer>
@@ -101,7 +103,7 @@ export const ObjectSortDropdownButton = ({
                   EndIcon={IconChevronDown}
                   onClick={() => setIsSortDirectionMenuUnfolded(true)}
                 >
-                  {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
+                  {selectedSortDirection === 'asc' ? translate('ascending') : translate('descending')}
                 </DropdownMenuHeader>
                 <DropdownMenuSeparator />
                 <DropdownMenuItemsContainer>

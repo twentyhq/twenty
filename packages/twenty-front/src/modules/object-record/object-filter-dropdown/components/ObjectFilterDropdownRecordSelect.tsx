@@ -2,11 +2,13 @@ import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/
 import { MultipleRecordSelectDropdown } from '@/object-record/select/components/MultipleRecordSelectDropdown';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
+import useI18n from '@/ui/i18n/useI18n';
 
 export const EMPTY_FILTER_VALUE = '';
 export const MAX_RECORDS_TO_DISPLAY = 3;
 
 export const ObjectFilterDropdownRecordSelect = () => {
+  const { translate } = useI18n('translations');
   const {
     filterDefinitionUsedInDropdown,
     objectFilterDropdownSearchInput,
@@ -57,7 +59,7 @@ export const ObjectFilterDropdownRecordSelect = () => {
 
     const filterDisplayValue =
       selectedRecordNames.length > MAX_RECORDS_TO_DISPLAY
-        ? `${selectedRecordNames.length} companies`
+        ? `${selectedRecordNames.length} ${translate('companies')}`
         : selectedRecordNames.join(', ');
 
     if (filterDefinitionUsedInDropdown && selectedOperandInDropdown) {

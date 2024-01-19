@@ -23,6 +23,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import useI18n from '@/ui/i18n/useI18n';
 
 const StyledSection = styled(Section)`
   display: flex;
@@ -36,6 +37,7 @@ const StyledAddCustomFieldButton = styled(Button)`
 
 export const SettingsObjectNewFieldStep1 = () => {
   const navigate = useNavigate();
+  const { translate } = useI18n('translations');
 
   const { objectSlug = '' } = useParams();
   const { findActiveObjectMetadataItemBySlug } =
@@ -101,17 +103,17 @@ export const SettingsObjectNewFieldStep1 = () => {
   };
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+    <SubMenuTopBarContainer Icon={IconSettings} title={translate('settings')}>
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <Breadcrumb
             links={[
-              { children: 'Objects', href: '/settings/objects' },
+              { children: translate('objects'), href: '/settings/objects' },
               {
                 children: activeObjectMetadataItem.labelPlural,
                 href: `/settings/objects/${objectSlug}`,
               },
-              { children: 'New Field' },
+              { children: translate('newField') },
             ]}
           />
           <SaveAndCancelButtons

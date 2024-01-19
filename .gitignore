@@ -2,6 +2,7 @@
 .DS_Store
 .idea/workspace.xml
 **/**/node_modules/
+.idea
 
 # yarn is the recommended package manager across the project
 **/**/.package-lock.json

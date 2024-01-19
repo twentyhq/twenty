@@ -13,6 +13,7 @@ import { UpdateViewDropdownId } from '@/views/constants/UpdateViewDropdownId';
 import { useViewBar } from '@/views/hooks/useViewBar';
 
 import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
+import useI18n from '@/ui/i18n/useI18n';
 
 const StyledContainer = styled.div`
   background: ${({ theme }) => theme.color.blue};
@@ -31,6 +32,7 @@ export const UpdateViewButtonGroup = ({
   hotkeyScope,
   onViewEditModeChange,
 }: UpdateViewButtonGroupProps) => {
+  const { translate } = useI18n('translations');
   const { updateCurrentView, setViewEditMode } = useViewBar();
   const { canPersistFiltersSelector, canPersistSortsSelector } =
     useViewScopedStates();
@@ -56,7 +58,7 @@ export const UpdateViewButtonGroup = ({
   return (
     <StyledContainer>
       <ButtonGroup size="small" accent="blue">
-        <Button title="Update view" onClick={handleViewSubmit} />
+        <Button title={translate('updateView')} onClick={handleViewSubmit} />
         <Dropdown
           dropdownId={UpdateViewDropdownId}
           dropdownHotkeyScope={hotkeyScope}
@@ -69,7 +71,7 @@ export const UpdateViewButtonGroup = ({
                 <MenuItem
                   onClick={handleCreateViewButtonClick}
                   LeftIcon={IconPlus}
-                  text="Create view"
+                  text={translate('createView')}
                 />
               </DropdownMenuItemsContainer>
             </>

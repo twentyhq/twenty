@@ -3,6 +3,7 @@ import { DropResult } from '@hello-pangea/dnd';
 import { v4 } from 'uuid';
 
 import { IconPlus } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { CardFooter } from '@/ui/layout/card/components/CardFooter';
@@ -58,6 +59,7 @@ export const SettingsObjectFieldSelectForm = ({
   onChange,
   values,
 }: SettingsObjectFieldSelectFormProps) => {
+  const { translate } = useI18n('translations');
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
@@ -72,7 +74,7 @@ export const SettingsObjectFieldSelectForm = ({
   return (
     <>
       <StyledContainer>
-        <StyledLabel>Options</StyledLabel>
+        <StyledLabel>{translate('options')}</StyledLabel>
         <DraggableList
           onDragEnd={handleDragEnd}
           draggableItems={
@@ -121,7 +123,7 @@ export const SettingsObjectFieldSelectForm = ({
       </StyledContainer>
       <StyledFooter>
         <StyledButton
-          title="Add option"
+          title={translate('addOption')}
           Icon={IconPlus}
           onClick={() =>
             onChange([

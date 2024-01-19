@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import useI18n from '@/ui/i18n/useI18n';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Section } from '@/ui/layout/section/components/Section';
 
@@ -36,15 +37,13 @@ export const SettingsObjectIconSection = ({
   label,
   onChange,
 }: SettingsObjectIconSectionProps) => {
+  const { translate } = useI18n('translations');
   const { getIcon } = useIcons();
   const Icon = getIcon(iconKey);
 
   return (
     <Section>
-      <H2Title
-        title="Icon"
-        description="The icon that will be displayed in the sidebar."
-      />
+      <H2Title title={translate('icon')} description={translate('iconDsc')} />
       <StyledContainer>
         <IconPicker
           disabled={disabled}
@@ -59,7 +58,7 @@ export const SettingsObjectIconSection = ({
         {Icon && (
           <SettingsObjectIconWithLabel
             Icon={Icon}
-            label={label || 'Investors'}
+            label={label || translate('investors')}
           />
         )}
       </StyledContainer>

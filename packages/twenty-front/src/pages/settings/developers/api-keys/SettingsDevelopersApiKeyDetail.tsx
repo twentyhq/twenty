@@ -19,6 +19,7 @@ import { computeNewExpirationDate } from '@/settings/developers/utils/compute-ne
 import { formatExpiration } from '@/settings/developers/utils/format-expiration';
 import { IconRepeat, IconSettings, IconTrash } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import useI18n from '@/ui/i18n/useI18n';
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -41,6 +42,7 @@ const StyledInputContainer = styled.div`
 `;
 
 export const SettingsDevelopersApiKeyDetail = () => {
+  const { translate } = useI18n('translations');
   const navigate = useNavigate();
   const { apiKeyId = '' } = useParams();
 
@@ -126,7 +128,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
   return (
     <>
       {apiKeyData?.name && (
-        <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+        <SubMenuTopBarContainer
+          Icon={IconSettings}
+          title={translate('settings')}
+        >
           <SettingsPageContainer>
             <SettingsHeaderContainer>
               <Breadcrumb
@@ -140,8 +145,8 @@ export const SettingsDevelopersApiKeyDetail = () => {
               {generatedApiKey ? (
                 <>
                   <H2Title
-                    title="Api Key"
-                    description="Copy this key as it will only be visible this one time"
+                    title={translate('apiKey')}
+                    description={translate('apiKeyDes')}
                   />
                   <ApiKeyInput apiKey={generatedApiKey} />
                   <StyledInfo>
@@ -151,12 +156,12 @@ export const SettingsDevelopersApiKeyDetail = () => {
               ) : (
                 <>
                   <H2Title
-                    title="Api Key"
-                    description="Regenerate an Api key"
+                    title={translate('apiKey')}
+                    description={translate('regenerateAnApiKey')}
                   />
                   <StyledInputContainer>
                     <Button
-                      title="Regenerate Key"
+                      title={translate('regenerateKey')}
                       Icon={IconRepeat}
                       onClick={regenerateApiKey}
                     />
@@ -172,9 +177,12 @@ export const SettingsDevelopersApiKeyDetail = () => {
               )}
             </Section>
             <Section>
-              <H2Title title="Name" description="Name of your API key" />
+              <H2Title
+                title={translate('name')}
+                description={translate('nameOfYourApiKey')}
+              />
               <TextInput
-                placeholder="E.g. backoffice integration"
+                placeholder={translate('backofficeIntegration')}
                 value={apiKeyData.name}
                 disabled
                 fullWidth
@@ -182,13 +190,13 @@ export const SettingsDevelopersApiKeyDetail = () => {
             </Section>
             <Section>
               <H2Title
-                title="Danger zone"
-                description="Delete this integration"
+                title={translate('dangerZone')}
+                description={translate('deleteThisIntegration')}
               />
               <Button
                 accent="danger"
                 variant="secondary"
-                title="Disable"
+                title={translate('disable')}
                 Icon={IconTrash}
                 onClick={() => deleteIntegration()}
               />

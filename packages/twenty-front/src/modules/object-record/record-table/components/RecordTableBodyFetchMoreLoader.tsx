@@ -1,7 +1,7 @@
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-
+import useI18n from '@/ui/i18n/useI18n';
 import { useObjectRecordTable } from '@/object-record/hooks/useObjectRecordTable';
 import { StyledRow } from '@/object-record/record-table/components/RecordTableRow';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
@@ -15,6 +15,7 @@ type RecordTableBodyFetchMoreLoaderProps = {
 export const RecordTableBodyFetchMoreLoader = ({
   objectNamePlural,
 }: RecordTableBodyFetchMoreLoaderProps) => {
+  const { translate } = useI18n('translations');
   const { queryStateIdentifier } = useObjectRecordTable(objectNamePlural);
   const { setRecordTableLastRowVisible } = useRecordTable();
 
@@ -48,7 +49,7 @@ export const RecordTableBodyFetchMoreLoader = ({
       {isFetchingMoreObjects && (
         <StyledRow selected={false}>
           <td colSpan={7}>
-            <StyledText>Loading more...</StyledText>
+            <StyledText>{translate('loadingMore')}</StyledText>
           </td>
           <td colSpan={7} />
         </StyledRow>

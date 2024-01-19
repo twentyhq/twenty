@@ -9,7 +9,10 @@ const getOptionValueFromLabel = (label: string) =>
   toSnakeCase(label.trim()).toUpperCase();
 
 export const formatFieldMetadataItemInput = (
-  input: Pick<Field, 'label' | 'icon' | 'description' | 'defaultValue'> & {
+  input: Pick<
+    Field,
+    'label' | 'name' | 'icon' | 'description' | 'defaultValue'
+  > & {
     options?: FieldMetadataOption[];
   },
 ) => {
@@ -22,7 +25,7 @@ export const formatFieldMetadataItemInput = (
     description: input.description?.trim() ?? null,
     icon: input.icon,
     label: input.label.trim(),
-    name: toCamelCase(input.label.trim()),
+    name: toCamelCase(input.name.trim()),
     options: input.options?.map((option, index) => ({
       color: option.color,
       id: option.id,

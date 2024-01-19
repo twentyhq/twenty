@@ -1,8 +1,10 @@
+import useI18n from '@/ui/i18n/useI18n';
 import { BoardOptionsDropdownId } from '@/object-record/record-board/constants/BoardOptionsDropdownId';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 export const RecordBoardOptionsDropdownButton = () => {
+  const { translate } = useI18n('translations');
   const { isDropdownOpen, toggleDropdown } = useDropdown(
     BoardOptionsDropdownId,
   );
@@ -16,7 +18,7 @@ export const RecordBoardOptionsDropdownButton = () => {
       isUnfolded={isDropdownOpen}
       onClick={handleClick}
     >
-      Options
+      {translate('options')}
     </StyledHeaderDropdownButton>
   );
 };

@@ -10,6 +10,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import useI18n from '@/ui/i18n/useI18n';
 import {
   AutosizeTextInput,
   AutosizeTextInputVariant,
@@ -59,6 +60,7 @@ export const ActivityComments = ({
   activity,
   scrollableContainerRef,
 }: ActivityCommentsProps) => {
+  const { translate } = useI18n('translations');
   const { createOneRecord: createOneComment } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Comment,
   });
@@ -121,7 +123,9 @@ export const ActivityComments = ({
             onValidate={handleSendComment}
             onFocus={handleFocus}
             variant={AutosizeTextInputVariant.Button}
-            placeholder={comments.length > 0 ? 'Reply...' : undefined}
+            placeholder={
+              comments.length > 0 ? `${translate('reply')}...` : undefined
+            }
           />
         )}
       </StyledCommentActionBar>

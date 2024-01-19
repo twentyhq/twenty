@@ -4,7 +4,9 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import useI18n from '@/ui/i18n/useI18n';
 
 type SettingsObjectFieldDisabledActionDropdownProps = {
   isCustomField?: boolean;
@@ -17,6 +19,7 @@ export const SettingsObjectFieldDisabledActionDropdown = ({
   onActivate,
   scopeKey,
 }: SettingsObjectFieldDisabledActionDropdownProps) => {
+  const { translate } = useI18n('translations');
   const dropdownId = `${scopeKey}-settings-field-disabled-action-dropdown`;
 
   const { closeDropdown } = useDropdown(dropdownId);
@@ -41,7 +44,7 @@ export const SettingsObjectFieldDisabledActionDropdown = ({
         <DropdownMenu width="160px">
           <DropdownMenuItemsContainer>
             <MenuItem
-              text="Activate"
+              text={translate('activate')}
               LeftIcon={IconArchiveOff}
               onClick={handleActivate}
             />
