@@ -29,14 +29,11 @@ export const useCreateOneRecord = <
 
   const createOneRecord = async (input: Partial<CreatedObjectRecord>) => {
     const optimisticallyCreatedRecord =
-      generateCachedObjectRecord<CreatedObjectRecord>({
-        createdAt: new Date().toISOString(),
-        ...input,
-      });
+      generateCachedObjectRecord<CreatedObjectRecord>(input);
 
     const sanitizedCreateOneRecordInput = sanitizeRecordInput({
       objectMetadataItem,
-      recordInput: input,
+      recordInput: { ...input, id: optimisticallyCreatedRecord.id },
     });
 
     const mutationResponseField =

@@ -26,16 +26,13 @@ export const useCreateManyRecords = <
 
   const createManyRecords = async (data: Partial<CreatedObjectRecord>[]) => {
     const optimisticallyCreatedRecords = data.map((record) =>
-      generateCachedObjectRecord<CreatedObjectRecord>({
-        ...record,
-        createdAt: new Date().toISOString(),
-      }),
+      generateCachedObjectRecord<CreatedObjectRecord>(record),
     );
 
-    const sanitizedCreateManyRecordsInput = data.map((input) =>
+    const sanitizedCreateManyRecordsInput = data.map((input, index) =>
       sanitizeRecordInput({
         objectMetadataItem,
-        recordInput: input,
+        recordInput: { ...input, id: optimisticallyCreatedRecords[index].id },
       }),
     );
 

@@ -17,20 +17,21 @@ export const useGenerateCachedObjectRecord = ({
     input: Record<string, unknown>,
   ) => {
     const recordSchema = z.object(
-      objectMetadataItem.fields.reduce<z.ZodRawShape>(
-        (result, fieldMetadataItem) => ({
-          ...result,
-          [fieldMetadataItem.name]: z
-            .unknown()
-            .default(generateEmptyFieldValue(fieldMetadataItem)),
-        }),
-        { id: z.string().default(v4()) },
+      Object.fromEntries(
+        objectMetadataItem.fields.map((fieldMetadataItem) => [
+          fieldMetadataItem.name,
+          z.unknown().default(generateEmptyFieldValue(fieldMetadataItem)),
+        ]),
       ),
     );
 
     return {
       __typename: capitalize(objectMetadataItem.nameSingular),
-      ...recordSchema.parse(input),
+      ...recordSchema.parse({
+        id: v4(),
+        createdAt: new Date().toISOString(),
+        ...input,
+      }),
     } as GeneratedObjectRecord & { __typename: string };
   };
 
