@@ -32,6 +32,7 @@ export const useOpenCreateActivityDrawerForSelectedRowIds = (
             type: 'Custom',
             targetObjectNameSingular: objectNameSingular,
             id,
+            targetObjectRecord: null,
           }));
 
         if (relatedEntities) {

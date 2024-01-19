@@ -13,17 +13,19 @@ export const useActivityTargets = ({
     nameSingular: targetableObject.targetObjectNameSingular,
   });
 
-  const { records: activityTargets } = useFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-    filter: {
-      [targetObjectFieldName]: {
-        eq: targetableObject.id,
+  const { records: activityTargets, loading: loadingActivityTargets } =
+    useFindManyRecords({
+      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+      filter: {
+        [targetObjectFieldName]: {
+          eq: targetableObject.id,
+        },
       },
-    },
-    skip: !targetableObject.id,
-  });
+      skip: !targetableObject.id,
+    });
 
   return {
     activityTargets: activityTargets as ActivityTarget[],
+    loadingActivityTargets,
   };
 };

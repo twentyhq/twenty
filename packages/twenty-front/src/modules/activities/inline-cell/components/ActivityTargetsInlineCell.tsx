@@ -26,6 +26,11 @@ export const ActivityTargetsInlineCell = ({
     activityId: activity?.id ?? '',
   });
 
+  // console.log('INlineCell', {
+  //   activityTargetObjectRecords,
+  //   activity,
+  // });
+
   return (
     <RecoilScope CustomRecoilScopeContext={FieldRecoilScopeContext}>
       <RecordInlineCellContainer

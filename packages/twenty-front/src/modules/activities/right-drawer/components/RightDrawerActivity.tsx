@@ -44,6 +44,8 @@ export const RightDrawerActivity = ({
     },
   });
 
+  // console.log({ activity, loading });
+
   if (!activity) {
     return <></>;
   }

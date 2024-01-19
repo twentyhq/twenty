@@ -190,6 +190,7 @@ export const RecordShowPage = () => {
               entity={{
                 id: record.id,
                 targetObjectNameSingular: objectMetadataItem?.nameSingular,
+                targetObjectRecord: record,
               }}
             />
             <ShowPageMoreButton
@@ -323,6 +324,7 @@ export const RecordShowPage = () => {
               targetableObject={{
                 id: record?.id ?? '',
                 targetObjectNameSingular: objectMetadataItem?.nameSingular,
+                targetObjectRecord: record ?? null,
               }}
               timeline
               tasks

@@ -15,6 +15,10 @@ export const useGenerateEmptyRecord = ({
     const emptyRecord = {} as any;
 
     for (const fieldMetadataItem of objectMetadataItem.fields) {
+      // if (fieldMetadataItem.type === FieldMetadataType.Relation) {
+      //   console.log(fieldMetadataItem);
+      // }
+
       emptyRecord[fieldMetadataItem.name] =
         validatedInput[fieldMetadataItem.name] ??
         generateEmptyFieldValue(fieldMetadataItem);

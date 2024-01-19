@@ -9,13 +9,13 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useRecordOptimisticEffect } from '@/object-metadata/hooks/useRecordOptimisticEffect';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
+import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useMapConnectionToRecords } from '@/object-record/hooks/useMapConnectionToRecords';
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
-import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
 import { capitalize } from '~/utils/string/capitalize';
@@ -34,6 +34,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   onCompleted,
   skip,
   useRecordsWithoutConnection = false,
+  policy,
 }: ObjectMetadataItemIdentifier & {
   filter?: ObjectRecordQueryFilter;
   orderBy?: OrderByField;
@@ -41,6 +42,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   onCompleted?: (data: ObjectRecordConnection<T>) => void;
   skip?: boolean;
   useRecordsWithoutConnection?: boolean;
+  policy?: 'cache-only' | 'cache-and-network';
 }) => {
   const findManyQueryStateIdentifier =
     objectNameSingular +
@@ -107,6 +109,9 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         },
       );
     },
+    fetchPolicy: policy,
+    initialFetchPolicy: policy,
+    nextFetchPolicy: policy,
   });
 
   const fetchMoreRecords = useCallback(async () => {

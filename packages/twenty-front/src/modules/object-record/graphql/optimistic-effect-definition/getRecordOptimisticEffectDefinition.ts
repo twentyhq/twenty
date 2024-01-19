@@ -27,6 +27,17 @@ export const getRecordOptimisticEffectDefinition = ({
         const existingDataIsEmpty = !draft || !draft.edges || !draft.edges[0];
 
         if (isNonEmptyArray(createdRecords)) {
+          // console.log({
+          //   typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
+          //   variables: JSON.stringify(variables),
+          //   createdRecords,
+          // });
+
+          // console.log({
+          //   existingDataIsEmpty,
+          //   draft,
+          // });
+
           if (existingDataIsEmpty) {
             return {
               __typename: `${capitalize(
@@ -36,7 +47,10 @@ export const getRecordOptimisticEffectDefinition = ({
                 __typename: `${capitalize(
                   objectMetadataItem.nameSingular,
                 )}Edge`,
-                node: createdRecord,
+                node: {
+                  __typename: `${capitalize(objectMetadataItem.nameSingular)}`,
+                  ...createdRecord,
+                },
                 cursor: '',
               })),
               pageInfo: {
@@ -47,6 +61,9 @@ export const getRecordOptimisticEffectDefinition = ({
               },
             };
           } else {
+            // console.log({
+            //   createdRecords,
+            // });
             for (const createdRecord of createdRecords) {
               const existingRecord = draft.edges.find(
                 (edge) => edge.node.id === createdRecord.id,
@@ -58,7 +75,10 @@ export const getRecordOptimisticEffectDefinition = ({
               }
 
               draft.edges.unshift({
-                node: createdRecord,
+                node: {
+                  __typename: `${capitalize(objectMetadataItem.nameSingular)}`,
+                  ...createdRecord,
+                },
                 cursor: '',
                 __typename: `${capitalize(
                   objectMetadataItem.nameSingular,
@@ -110,6 +130,11 @@ export const getRecordOptimisticEffectDefinition = ({
         }
       },
     );
+
+    // console.log({
+    //   newRecordPaginatedCacheField,
+    //   typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
+    // });
 
     return newRecordPaginatedCacheField;
   },
