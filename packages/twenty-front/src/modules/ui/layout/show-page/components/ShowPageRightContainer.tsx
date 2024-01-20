@@ -19,6 +19,7 @@ import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import useI18n from '@/ui/i18n/useI18n';
 
 const StyledShowPageRightContainer = styled.div`
   display: flex;
@@ -55,6 +56,7 @@ export const ShowPageRightContainer = ({
   notes,
   emails,
 }: ShowPageRightContainerProps) => {
+  const { translate } = useI18n('translations');
   const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
 
   const { getActiveTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
@@ -68,7 +70,7 @@ export const ShowPageRightContainer = ({
   const TASK_TABS = [
     {
       id: 'timeline',
-      title: 'Timeline',
+      title: translate('timeline'),
       Icon: IconTimelineEvent,
       hide: !timeline,
     },

@@ -308,5 +308,6 @@ const fa = {
   titlePlural: 'عنوان جمع (فارسی)',
   newField: 'فیلد جدید',
   noObject: 'هیچ {{labelPlural}} وجود ندارد',
+  timeline:'Timeline'
 };
 export default fa;

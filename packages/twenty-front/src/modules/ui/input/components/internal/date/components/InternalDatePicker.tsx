@@ -266,7 +266,6 @@ export const InternalDatePicker = ({
           calendar={persian}
           locale={persian_fa}
           onChange={(date: DateObject) => {
-            console.log({ date });
             onMouseSelect?.(date.toDate());
           }}
         ></Calendar>
