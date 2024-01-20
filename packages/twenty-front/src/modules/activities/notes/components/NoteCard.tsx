@@ -100,7 +100,7 @@ export const NoteCard = ({
           onClick={() => openActivityRightDrawer(note.id)}
         >
           <StyledNoteTitle>
-            {note.title ?? translate('taskTitle')}
+            ?{note.title ?? translate('taskTitle')}
           </StyledNoteTitle>
           <StyledCardContent>{body}</StyledCardContent>
         </StyledCardDetailsContainer>

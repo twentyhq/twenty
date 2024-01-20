@@ -58,8 +58,8 @@ export const Notes = ({
   if (notes?.length === 0) {
     return (
       <StyledTaskGroupEmptyContainer>
-        <StyledEmptyTaskGroupTitle>No note yet</StyledEmptyTaskGroupTitle>
-        <StyledEmptyTaskGroupSubTitle>Create one:</StyledEmptyTaskGroupSubTitle>
+        <StyledEmptyTaskGroupTitle>{translate('noNoteYet')}</StyledEmptyTaskGroupTitle>
+        <StyledEmptyTaskGroupSubTitle>{translate('createOne')}:</StyledEmptyTaskGroupSubTitle>
         <Button
           Icon={IconPlus}
           title={translate('newNote')}

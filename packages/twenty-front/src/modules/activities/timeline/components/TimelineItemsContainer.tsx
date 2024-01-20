@@ -32,6 +32,7 @@ export const TimelineItemsContainer = ({
 }: TimelineItemsContainerProps) => {
   const groupedActivities = groupActivitiesByMonth(activities);
 
+
   return (
     <StyledScrollWrapper>
       <StyledTimelineContainer>
@@ -40,7 +41,7 @@ export const TimelineItemsContainer = ({
             key={group.year.toString() + group.month}
             group={group}
             month={new Date(group.items[0].createdAt).toLocaleString(
-              'default',
+              'fa-IR',
               { month: 'long' },
             )}
             year={

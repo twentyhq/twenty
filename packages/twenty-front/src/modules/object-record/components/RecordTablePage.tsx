@@ -31,16 +31,17 @@ const StyledTableContainer = styled.div`
 export const RecordTablePage = () => {
   const objectNamePlural = useParams().objectNamePlural ?? '';
 
+
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
   });
+
 
   const onboardingStatus = useOnboardingStatus();
 
   const navigate = useNavigate();
 
-  const { findObjectMetadataItemByNamePlural } =
-    useObjectMetadataItemForSettings();
+  const { findObjectMetadataItemByNamePlural } = useObjectMetadataItemForSettings();
 
   const { getIcon } = useIcons();
   const Icon = getIcon(
@@ -78,7 +79,7 @@ export const RecordTablePage = () => {
     <PageContainer>
       <PageHeader
         title={
-          objectNamePlural.charAt(0).toUpperCase() + objectNamePlural.slice(1)
+          findObjectMetadataItemByNamePlural(objectNamePlural)?.labelPlural || ''
         }
         Icon={Icon}
       >

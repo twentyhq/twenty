@@ -11,6 +11,7 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';
+import useI18n from '@/ui/i18n/useI18n';
 
 const StyledTaskGroupEmptyContainer = styled.div`
   align-items: center;
@@ -66,7 +67,7 @@ export const TaskGroups = ({
     filterDropdownId: filterDropdownId,
     targetableObjects: targetableObjects ?? [],
   });
-
+  const { translate } = useI18n('translations');
   const openCreateActivity = useOpenCreateActivityDrawer();
 
   const { getActiveTabIdState } = useTabList(TASKS_TAB_LIST_COMPONENT_ID);
@@ -81,11 +82,11 @@ export const TaskGroups = ({
   ) {
     return (
       <StyledTaskGroupEmptyContainer>
-        <StyledEmptyTaskGroupTitle>No task yet</StyledEmptyTaskGroupTitle>
-        <StyledEmptyTaskGroupSubTitle>Create one:</StyledEmptyTaskGroupSubTitle>
+        <StyledEmptyTaskGroupTitle>{translate('noTaskYet')}</StyledEmptyTaskGroupTitle>
+        <StyledEmptyTaskGroupSubTitle>{translate('createOne')}:</StyledEmptyTaskGroupSubTitle>
         <Button
           Icon={IconPlus}
-          title="New task"
+          title={translate('newTask')}
           variant={'secondary'}
           onClick={() =>
             openCreateActivity({
@@ -112,7 +113,7 @@ export const TaskGroups = ({
       ) : (
         <>
           <TaskList
-            title="Today"
+            title={translate('today')}
             tasks={todayOrPreviousTasks ?? []}
             button={
               showAddButton && (
@@ -121,7 +122,7 @@ export const TaskGroups = ({
             }
           />
           <TaskList
-            title="Upcoming"
+            title={translate('upcoming')}
             tasks={upcomingTasks ?? []}
             button={
               showAddButton &&
@@ -131,7 +132,7 @@ export const TaskGroups = ({
             }
           />
           <TaskList
-            title="Unscheduled"
+            title={translate('unscheduled')}
             tasks={unscheduledTasks ?? []}
             button={
               showAddButton &&

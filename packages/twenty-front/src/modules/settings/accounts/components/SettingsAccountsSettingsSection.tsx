@@ -31,14 +31,14 @@ export const SettingsAccountsSettingsSection = () => {
         >
           {translate('setEmailVisibilityManage')}
         </SettingsNavigationCard>
-        <SettingsNavigationCard
-          Icon={IconCalendarEvent}
-          title={translate('calendar')}
-          disabled
-          hasSoonPill
-        >
-          {translate('configureAndCustomizeYourCalendarPreferences')}
-        </SettingsNavigationCard>
+        {/*<SettingsNavigationCard*/}
+        {/*  Icon={IconCalendarEvent}*/}
+        {/*  title={translate('calendar')}*/}
+        {/*  disabled*/}
+        {/*  hasSoonPill*/}
+        {/*>*/}
+        {/*  {translate('configureAndCustomizeYourCalendarPreferences')}*/}
+        {/*</SettingsNavigationCard>*/}
       </StyledCardsContainer>
     </Section>
   );

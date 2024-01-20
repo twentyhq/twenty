@@ -124,18 +124,18 @@ export const SettingsObjectNewFieldStep1 = () => {
         </SettingsHeaderContainer>
         <StyledSection>
           <H2Title
-            title="Check disabled fields"
-            description="Before creating a custom field, check if it already exists in the disabled section."
+            title={translate('checkDisabledFields')}
+            description={translate('checkDisabledFieldsDsc')}
           />
           <Table>
             <StyledObjectFieldTableRow>
-              <TableHeader>Name</TableHeader>
-              <TableHeader>Field type</TableHeader>
-              <TableHeader>Data type</TableHeader>
+              <TableHeader>{translate('name')}</TableHeader>
+              <TableHeader>{translate('fieldType')}</TableHeader>
+              <TableHeader>{translate('dataType')}</TableHeader>
               <TableHeader></TableHeader>
             </StyledObjectFieldTableRow>
             {!!activeMetadataFields.length && (
-              <TableSection isInitiallyExpanded={false} title="Active">
+              <TableSection isInitiallyExpanded={false} title={translate('active')}>
                 {activeMetadataFields.map((activeMetadataField) => (
                   <SettingsObjectFieldItemTableRow
                     key={activeMetadataField.id}
@@ -159,7 +159,7 @@ export const SettingsObjectNewFieldStep1 = () => {
               </TableSection>
             )}
             {!!disabledMetadataFields.length && (
-              <TableSection title="Disabled">
+              <TableSection title={translate('disabled')}>
                 {disabledMetadataFields.map((disabledMetadataField) => (
                   <SettingsObjectFieldItemTableRow
                     key={disabledMetadataField.name}
@@ -180,7 +180,7 @@ export const SettingsObjectNewFieldStep1 = () => {
           </Table>
           <StyledAddCustomFieldButton
             Icon={IconPlus}
-            title="Add Custom Field"
+            title={translate('addCustomField')}
             size="small"
             variant="secondary"
             onClick={() =>

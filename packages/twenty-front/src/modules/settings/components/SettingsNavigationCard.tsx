@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { IconChevronRight } from '@/ui/display/icon';
+import { IconChevronLeft } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { SoonPill } from '@/ui/display/pill/components/SoonPill';
 import { Card } from '@/ui/layout/card/components/Card';
@@ -48,7 +48,7 @@ const StyledTitle = styled.div`
   justify-content: flex-start;
 `;
 
-const StyledIconChevronRight = styled(IconChevronRight)`
+const StyledIconChevronRight = styled(IconChevronLeft)`
   color: ${({ theme }) => theme.font.color.light};
 `;
 

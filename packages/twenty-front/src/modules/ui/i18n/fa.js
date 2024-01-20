@@ -115,7 +115,7 @@ const fa = {
   addNote: 'یادداشت اضافه کنید',
   addTask: 'افزودن وظیفه',
   newTask: 'وظیفه جدید',
-  noTaskYet: 'هنوز وظیفه ای نیست',
+  noTaskYet: 'هنوز هیچ وظیفه ای نیست',
   createOne: 'یکی بساز',
   noActivityYet: 'هنوز هیچ فعالیتی وجود ندارد',
   createdType: 'ایجاد یک {{type}}',
@@ -245,7 +245,7 @@ const fa = {
   theFieldsTypeAndValues: 'نوع و مقادیر فیلد.',
   about: 'درباره',
   aboutDsc:
-    "نام به هر دو شکل مفرد (به عنوان مثال 'Invoice') و جمع (به عنوان مثال 'Invoices').",
+    'نام به هر دو شکل مفرد (به عنوان مثال \'Invoice\') و جمع (به عنوان مثال \'Invoices\').',
   singular: 'مفرد',
   investor: 'سرمایه گذار',
   investors: 'سرمایه گذاران',
@@ -308,6 +308,19 @@ const fa = {
   titlePlural: 'عنوان جمع (فارسی)',
   newField: 'فیلد جدید',
   noObject: 'هیچ {{labelPlural}} وجود ندارد',
-  timeline:'Timeline'
+  timeline: 'تاریخچه',
+  files: 'فایل ها',
+  writeAComment: 'یک نظر بنویسید',
+  comment: 'ارسال نظر',
+  noNoteYet: 'هنوز هیچ یادداشتی نیست',
+  toDo: 'در حال انجام',
+  done: 'انجام شده',
+  checkDisabledFields: 'فیلدهای غیرفعال را بررسی کنید',
+  checkDisabledFieldsDsc: 'قبل از ایجاد یک فیلد سفارشی، بررسی کنید که آیا از قبل در بخش غیرفعال وجود دارد یا خیر.',
+  addCustomField: 'افزودن فیلد سفارشی',
+  today: 'امروز',
+  upcoming: 'آینده',
+  unscheduled: 'برنامه ریزی نشده',
+  import: 'وارد كردن',
 };
 export default fa;

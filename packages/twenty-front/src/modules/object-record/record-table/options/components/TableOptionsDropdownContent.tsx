@@ -122,13 +122,13 @@ export const TableOptionsDropdownContent = ({
             <MenuItem
               onClick={() => handleSelectMenu('fields')}
               LeftIcon={IconTag}
-              text="Fields"
+              text={translate('fields')}
             />
             {onImport && (
               <MenuItem
                 onClick={onImport}
                 LeftIcon={IconFileImport}
-                text="Import"
+                text={translate('import')}
               />
             )}
           </DropdownMenuItemsContainer>
@@ -141,7 +141,7 @@ export const TableOptionsDropdownContent = ({
           </DropdownMenuHeader>
           <DropdownMenuSeparator />
           <ViewFieldsVisibilityDropdownSection
-            title="Visible"
+            title={translate('visible')}
             fields={visibleTableColumns}
             isVisible={true}
             onVisibilityChange={handleColumnVisibilityChange}

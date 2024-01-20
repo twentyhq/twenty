@@ -9,6 +9,7 @@ import { RoundedIconButton } from '@/ui/input/button/components/RoundedIconButto
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
+import useI18n from '@/ui/i18n/useI18n';
 
 const MAX_ROWS = 5;
 
@@ -120,6 +121,7 @@ export const AutosizeTextInput = ({
   value = '',
   className,
 }: AutosizeTextInputProps) => {
+  const { translate } = useI18n('translations');
   const [isFocused, setIsFocused] = useState(false);
   const [isHidden, setIsHidden] = useState(
     variant === AutosizeTextInputVariant.Button,
@@ -190,7 +192,7 @@ export const AutosizeTextInput = ({
           {!isHidden && (
             <StyledTextArea
               autoFocus={variant === AutosizeTextInputVariant.Button}
-              placeholder={placeholder ?? 'Write a comment'}
+              placeholder={placeholder ?? translate('writeAComment')}
               maxRows={MAX_ROWS}
               minRows={computedMinRows}
               onChange={handleInputChange}
@@ -224,14 +226,14 @@ export const AutosizeTextInput = ({
                     onFocus?.();
                   }}
                 >
-                  Write a comment
+                  {translate('writeAComment')}
                 </StyledCommentText>
               ) : (
                 `${words} word${words === 1 ? '' : 's'}`
               )}
             </StyledWordCounter>
             <StyledSendButton
-              title={buttonTitle ?? 'Comment'}
+              title={buttonTitle ?? translate('comment')}
               disabled={isSendButtonDisabled}
               onClick={handleOnClickSendButton}
             />

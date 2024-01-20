@@ -76,6 +76,7 @@ export const ViewsDropdownButton = ({
 
   const views = useRecoilValue(viewsState);
   const currentView = useRecoilValue(currentViewSelector);
+
   const entityCountInCurrentView = useRecoilValue(
     entityCountInCurrentViewState,
   );

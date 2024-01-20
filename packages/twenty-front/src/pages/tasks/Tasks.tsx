@@ -37,12 +37,12 @@ export const Tasks = () => {
   const TASK_TABS = [
     {
       id: 'to-do',
-      title: 'To do',
+      title: translate('toDo'),
       Icon: IconCheck,
     },
     {
       id: 'done',
-      title: 'Done',
+      title: translate('done'),
       Icon: IconArchive,
     },
   ];
