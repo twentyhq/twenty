@@ -1,6 +1,9 @@
 import React from 'react';
-import ReactDatePicker from 'react-datepicker';
+// import ReactDatePicker from 'react-datepicker';
 import styled from '@emotion/styled';
+import persian from 'react-date-object/calendars/persian';
+import persian_fa from 'react-date-object/locales/persian_fa';
+import { Calendar, DateObject } from 'react-multi-date-picker';
 
 import { IconCalendarX } from '@/ui/display/icon';
 import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
@@ -258,23 +261,32 @@ export const InternalDatePicker = ({
   return (
     <StyledContainer>
       <div className={clearable ? 'clearable ' : ''}>
-        <ReactDatePicker
-          open={true}
-          selected={date}
-          showMonthDropdown
-          showYearDropdown
-          onChange={() => {
-            // We need to use onSelect here but onChange is almost redundant with onSelect but is require
+        <Calendar
+          value={date}
+          calendar={persian}
+          locale={persian_fa}
+          onChange={(date: DateObject) => {
+            console.log({ date });
+            onMouseSelect?.(date.toDate());
           }}
-          customInput={<></>}
-          onSelect={(date: Date, event) => {
-            if (event?.type === 'click') {
-              onMouseSelect?.(date);
-            } else {
-              onChange?.(date);
-            }
-          }}
-        ></ReactDatePicker>
+        ></Calendar>
+        {/*<ReactDatePicker*/}
+        {/*  open={true}*/}
+        {/*  selected={date}*/}
+        {/*  showMonthDropdown*/}
+        {/*  showYearDropdown*/}
+        {/*  onChange={() => {*/}
+        {/*    // We need to use onSelect here but onChange is almost redundant with onSelect but is require*/}
+        {/*  }}*/}
+        {/*  customInput={<></>}*/}
+        {/*  onSelect={(date: Date, event) => {*/}
+        {/*    if (event?.type === 'click') {*/}
+        {/*      onMouseSelect?.(date);*/}
+        {/*    } else {*/}
+        {/*      onChange?.(date);*/}
+        {/*    }*/}
+        {/*  }}*/}
+        {/*></ReactDatePicker>*/}
       </div>
       {clearable && (
         <StyledButtonContainer onClick={handleClear} isMenuOpen={false}>
