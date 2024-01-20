@@ -1,9 +1,9 @@
 import React from 'react';
 // import ReactDatePicker from 'react-datepicker';
-import styled from '@emotion/styled';
 import persian from 'react-date-object/calendars/persian';
 import persian_fa from 'react-date-object/locales/persian_fa';
 import { Calendar, DateObject } from 'react-multi-date-picker';
+import styled from '@emotion/styled';
 
 import { IconCalendarX } from '@/ui/display/icon';
 import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
@@ -250,7 +250,7 @@ export type InternalDatePickerProps = {
 
 export const InternalDatePicker = ({
   date,
-  onChange,
+  // onChange,
   onMouseSelect,
   clearable = true,
 }: InternalDatePickerProps) => {
