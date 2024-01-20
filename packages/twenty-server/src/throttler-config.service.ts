@@ -35,7 +35,7 @@ export class ThrottlerConfigService implements ThrottlerOptionsFactory {
               return req.user;
             }
 
-            return req;
+            return req.ip;
           }
         },
       },
