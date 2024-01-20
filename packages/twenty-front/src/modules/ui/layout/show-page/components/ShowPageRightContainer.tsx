@@ -15,11 +15,11 @@ import {
   IconPaperclip,
   IconTimelineEvent,
 } from '@/ui/display/icon';
+import useI18n from '@/ui/i18n/useI18n';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import useI18n from '@/ui/i18n/useI18n';
 
 const StyledShowPageRightContainer = styled.div`
   display: flex;

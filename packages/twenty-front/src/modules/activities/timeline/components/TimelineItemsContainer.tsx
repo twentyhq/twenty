@@ -1,3 +1,6 @@
+import { useCallback } from 'react';
+import persian from 'react-date-object/calendars/persian';
+import { DateObject } from 'react-multi-date-picker';
 import styled from '@emotion/styled';
 
 import { ActivityForDrawer } from '@/activities/types/ActivityForDrawer';
@@ -31,6 +34,16 @@ export const TimelineItemsContainer = ({
   activities,
 }: TimelineItemsContainerProps) => {
   const groupedActivities = groupActivitiesByMonth(activities);
+  const calculateYear = useCallback((year: number) => {
+    const date = new DateObject({
+      year: year,
+      month: 0,
+      day: 0,
+      format: 'YYYY',
+    });
+    date.convert(persian);
+    return date.format();
+  }, []);
 
   return (
     <StyledScrollWrapper>
@@ -39,13 +52,12 @@ export const TimelineItemsContainer = ({
           <TimelineActivityGroup
             key={group.year.toString() + group.month}
             group={group}
-            month={new Date(group.items[0].createdAt).toLocaleString(
-              'default',
-              { month: 'long' },
-            )}
+            month={new Intl.DateTimeFormat('fa-IR', {
+              month: 'short',
+            }).format(new Date(group.items[0].createdAt))}
             year={
               index === 0 || group.year !== groupedActivities[index - 1].year
-                ? group.year
+                ? Number(calculateYear(group.year))
                 : undefined
             }
           />
