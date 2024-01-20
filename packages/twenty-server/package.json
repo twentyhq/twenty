@@ -53,6 +53,7 @@
     "@nestjs/testing": "^9.0.0",
     "@nestjs/typeorm": "^10.0.0",
     "@ptc-org/nestjs-query-core": "^4.2.0",
+    "@nestjs/throttler": "^5.1.1",
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch",
     "@ptc-org/nestjs-query-typeorm": "4.2.1-alpha.2",
     "@react-email/components": "0.0.12",

@@ -14,7 +14,7 @@ export const metadataModuleFactory = async (
   tokenService: TokenService,
 ): Promise<YogaDriverConfig> => {
   const config: YogaDriverConfig = {
-    context: ({ req }) => ({ req }),
+    context: ({ req, res }) => ({ req, res }),
     autoSchemaFile: true,
     include: [MetadataModule],
     renderGraphiQL() {

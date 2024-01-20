@@ -7509,6 +7509,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nestjs/throttler@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "@nestjs/throttler@npm:5.1.1"
+  dependencies:
+    md5: "npm:^2.2.1"
+  peerDependencies:
+    "@nestjs/common": ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0
+    "@nestjs/core": ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0
+    reflect-metadata: ^0.1.13 || ^0.2.0
+  checksum: 602ccc663eead2e60c0ffa4b47736c44e8566c5830aec832cd684354c98c18628e194b4ccda632fc8e6830210e4ee213eb2c09f6ee92d4c4fd199c5fddf14802
+  languageName: node
+  linkType: hard
+
 "@nestjs/typeorm@npm:^10.0.0":
   version: 10.0.1
   resolution: "@nestjs/typeorm@npm:10.0.1"
@@ -20145,6 +20158,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"charenc@npm:0.0.2":
+  version: 0.0.2
+  resolution: "charenc@npm:0.0.2"
+  checksum: a45ec39363a16799d0f9365c8dd0c78e711415113c6f14787a22462ef451f5013efae8a28f1c058f81fc01f2a6a16955f7a5fd0cd56247ce94a45349c89877d8
+  languageName: node
+  linkType: hard
+
 "charset@npm:^1.0.0":
   version: 1.0.1
   resolution: "charset@npm:1.0.1"
@@ -21553,6 +21573,13 @@ __metadata:
   bin:
     cross-var: ./index.js
   checksum: 2cbe9f298335260f00da2731d3c38bb9604230c5c224ec49a235ab388942d9b300e5133481da3b8cf3779487d396192a6e153288f33863b453b7205fb899cdee
+  languageName: node
+  linkType: hard
+
+"crypt@npm:0.0.2":
+  version: 0.0.2
+  resolution: "crypt@npm:0.0.2"
+  checksum: adbf263441dd801665d5425f044647533f39f4612544071b1471962209d235042fb703c27eea2795c7c53e1dfc242405173003f83cf4f4761a633d11f9653f18
   languageName: node
   linkType: hard
 
@@ -28329,7 +28356,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-buffer@npm:^1.1.0, is-buffer@npm:^1.1.5":
+"is-buffer@npm:^1.1.0, is-buffer@npm:^1.1.5, is-buffer@npm:~1.1.6":
   version: 1.1.6
   resolution: "is-buffer@npm:1.1.6"
   checksum: ae18aa0b6e113d6c490ad1db5e8df9bdb57758382b313f5a22c9c61084875c6396d50bbf49315f5b1926d142d74dfb8d31b40d993a383e0a158b15fea7a82234
@@ -31703,6 +31730,17 @@ __metadata:
     inherits: "npm:^2.0.1"
     safe-buffer: "npm:^5.1.2"
   checksum: b7bd75077f419c8e013fc4d4dada48be71882e37d69a44af65a2f2804b91e253441eb43a0614423a1c91bb830b8140b0dc906bc797245e2e275759584f4efcc5
+  languageName: node
+  linkType: hard
+
+"md5@npm:^2.2.1":
+  version: 2.3.0
+  resolution: "md5@npm:2.3.0"
+  dependencies:
+    charenc: "npm:0.0.2"
+    crypt: "npm:0.0.2"
+    is-buffer: "npm:~1.1.6"
+  checksum: 14a21d597d92e5b738255fbe7fe379905b8cb97e0a49d44a20b58526a646ec5518c337b817ce0094ca94d3e81a3313879c4c7b510d250c282d53afbbdede9110
   languageName: node
   linkType: hard
 

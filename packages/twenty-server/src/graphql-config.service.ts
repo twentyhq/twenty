@@ -37,7 +37,7 @@ export class GraphQLConfigService
   createGqlOptions(): YogaDriverConfig {
     const isDebugMode = this.environmentService.isDebugMode();
     const config: YogaDriverConfig = {
-      context: ({ req }) => ({ req }),
+      context: ({ req, res }) => ({ req, res }),
       autoSchemaFile: true,
       include: [CoreModule],
       conditionalSchema: async (context) => {

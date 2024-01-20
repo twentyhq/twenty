@@ -287,4 +287,28 @@ export class EnvironmentService {
   isSignUpDisabled(): boolean {
     return this.configService.get<boolean>('IS_SIGN_UP_DISABLED') ?? false;
   }
+
+  getLoggedInShortTtl(): string {
+    return this.configService.get<string>('LOGGED_IN_SHORT_TTL') ?? '1000';
+  }
+
+  getLoggedInShortLimit(): string {
+    return this.configService.get<string>('LOGGED_IN_SHORT_LIMIT') ?? '10';
+  }
+
+  getLoggedInLongTtl(): string {
+    return this.configService.get<string>('LOGGED_IN_LONG_TTL') ?? '3000';
+  }
+
+  getLoggedInLongLimit(): string {
+    return this.configService.get<string>('LOGGED_IN_LONG_LIMIT') ?? '3';
+  }
+
+  getNonLoggedInTtl(): string {
+    return this.configService.get<string>('NON_LOGGED_IN_TTL') ?? '1000';
+  }
+
+  getNonLoggedInLimit(): string {
+    return this.configService.get<string>('NON_LOGGED_IN_LIMIT') ?? '10';
+  }
 }

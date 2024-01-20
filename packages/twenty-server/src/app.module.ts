@@ -1,10 +1,14 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule } from '@nestjs/config';
+import { ThrottlerModule } from '@nestjs/throttler/dist';
+import { APP_GUARD } from '@nestjs/core';
 
 import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 
 import { GraphQLConfigService } from 'src/graphql-config.service';
+import { ThrottlerConfigService } from 'src/throttler-config.service';
+import { GqlHttpThrottlerGuard } from 'src/guards/gql-throttler.guard';
 
 import { CoreModule } from './core/core.module';
 import { IntegrationsModule } from './integrations/integrations.module';
@@ -25,6 +29,15 @@ import { WorkspaceModule } from './workspace/workspace.module';
     IntegrationsModule,
     CoreModule,
     WorkspaceModule,
+    ThrottlerModule.forRootAsync({
+      useClass: ThrottlerConfigService,
+    }),
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: GqlHttpThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}
