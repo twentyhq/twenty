@@ -300,5 +300,6 @@ const en = {
   accounts: 'accounts',
   supportPortraitsProfileImage:
     'We support your best PNGs, JPEGs and GIFs portraits under 10MB',
+  added: 'Added',
 };
 export default en;

@@ -1,10 +1,11 @@
 import { isDate, isNumber, isString } from '@sniptt/guards';
 import { differenceInCalendarDays, formatDistanceToNow } from 'date-fns';
+import Fa from 'date-fns/locale/fa-IR';
 import { DateTime } from 'luxon';
 
 import { logError } from './logError';
 
-export const DEFAULT_DATE_LOCALE = 'en-EN';
+export const DEFAULT_DATE_LOCALE = 'fa-IR';
 
 export const parseDate = (dateToParse: Date | string | number) => {
   let formattedDate: DateTime | null = null;
@@ -12,11 +13,16 @@ export const parseDate = (dateToParse: Date | string | number) => {
   if (!dateToParse) {
     throw new Error(`Invalid date passed to formatPastDate: "${dateToParse}"`);
   } else if (isString(dateToParse)) {
-    formattedDate = DateTime.fromISO(dateToParse);
+    formattedDate = DateTime.fromISO(dateToParse, {
+      // outputCalendar: 'persian',
+      // zone: 'Asia/Tehran',
+    });
   } else if (isDate(dateToParse)) {
     formattedDate = DateTime.fromJSDate(dateToParse);
   } else if (isNumber(dateToParse)) {
-    formattedDate = DateTime.fromMillis(dateToParse);
+    formattedDate = DateTime.fromMillis(dateToParse, {
+      // zone: 'Asia/Tehran',
+    });
   }
 
   if (!formattedDate) {
@@ -68,6 +74,7 @@ export const beautifyPastDateRelativeToNow = (
 
     return formatDistanceToNow(parsedDate.toJSDate(), {
       addSuffix: true,
+      locale: Fa,
     }).replace('less than a minute ago', 'now');
   } catch (error) {
     logError(error);

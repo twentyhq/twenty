@@ -3,6 +3,7 @@ import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 import { v4 as uuidV4 } from 'uuid';
 
+import useI18n from '@/ui/i18n/useI18n';
 import { Avatar, AvatarType } from '@/users/components/Avatar';
 import {
   beautifyExactDateTime,
@@ -78,6 +79,7 @@ export const ShowPageSummaryCard = ({
   onUploadPicture,
   title,
 }: ShowPageSummaryCardProps) => {
+  const { translate } = useI18n('translations');
   const beautifiedCreatedAt =
     date !== '' ? beautifyPastDateRelativeToNow(date) : '';
   const exactCreatedAt = date !== '' ? beautifyExactDateTime(date) : '';
@@ -111,7 +113,9 @@ export const ShowPageSummaryCard = ({
       </StyledAvatarWrapper>
       <StyledInfoContainer>
         <StyledTitle>{title}</StyledTitle>
-        <StyledDate id={dateElementId}>Added {beautifiedCreatedAt}</StyledDate>
+        <StyledDate id={dateElementId}>
+          {translate('added')} {beautifiedCreatedAt}
+        </StyledDate>
         <StyledTooltip
           anchorSelect={`#${dateElementId}`}
           content={exactCreatedAt}

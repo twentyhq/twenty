@@ -245,7 +245,7 @@ const fa = {
   theFieldsTypeAndValues: 'نوع و مقادیر فیلد.',
   about: 'درباره',
   aboutDsc:
-    'نام به هر دو شکل مفرد (به عنوان مثال \'Invoice\') و جمع (به عنوان مثال \'Invoices\').',
+    "نام به هر دو شکل مفرد (به عنوان مثال 'Invoice') و جمع (به عنوان مثال 'Invoices').",
   singular: 'مفرد',
   investor: 'سرمایه گذار',
   investors: 'سرمایه گذاران',
@@ -322,5 +322,6 @@ const fa = {
   upcoming: 'آینده',
   unscheduled: 'برنامه ریزی نشده',
   import: 'وارد كردن',
+  added: 'اضافه شده در',
 };
 export default fa;
