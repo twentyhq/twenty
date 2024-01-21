@@ -1,18 +1,13 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { ApiFieldItem } from '@/settings/developers/types/ApiFieldItem';
+import { WebhookFieldItem } from '@/settings/developers/types/WebhookFieldItem';
 import { IconChevronRight } from '@/ui/display/icon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 export const StyledApisFieldTableRow = styled(TableRow)`
-  grid-template-columns: 312px 132px 68px;
-`;
-
-const StyledNameTableCell = styled(TableCell)`
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(2)};
+  grid-template-columns: 444px 68px;
 `;
 
 const StyledIconTableCell = styled(TableCell)`
@@ -20,31 +15,26 @@ const StyledIconTableCell = styled(TableCell)`
   padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledUrlTableCell = styled(TableCell)`
+  word-break: break-all;
+`;
+
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-export const SettingsApiKeysFieldItemTableRow = ({
+export const SettingsDevelopersWebhookTableRow = ({
   fieldItem,
   onClick,
 }: {
-  fieldItem: ApiFieldItem;
+  fieldItem: WebhookFieldItem;
   onClick: () => void;
 }) => {
   const theme = useTheme();
 
   return (
     <StyledApisFieldTableRow onClick={() => onClick()}>
-      <StyledNameTableCell>{fieldItem.name}</StyledNameTableCell>
-      <TableCell
-        color={
-          fieldItem.expiration === 'Expired'
-            ? theme.font.color.danger
-            : theme.font.color.tertiary
-        }
-      >
-        {fieldItem.expiration}
-      </TableCell>
+      <StyledUrlTableCell>{fieldItem.targetUrl}</StyledUrlTableCell>
       <StyledIconTableCell>
         <StyledIconChevronRight
           size={theme.icon.size.md}
