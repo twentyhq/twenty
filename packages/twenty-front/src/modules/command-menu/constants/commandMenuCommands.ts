@@ -12,7 +12,7 @@ export const commandMenuCommands: Command[] = [
   {
     id: 'go-to-people',
     to: '/objects/people',
-    label: 'Go to People',
+    label: 'برو به افراد',
     type: CommandType.Navigate,
     firstHotKey: 'G',
     secondHotKey: 'P',
@@ -21,7 +21,7 @@ export const commandMenuCommands: Command[] = [
   {
     id: 'go-to-companies',
     to: '/objects/companies',
-    label: 'Go to Companies',
+    label: 'برو به شرکت ها',
     type: CommandType.Navigate,
     firstHotKey: 'G',
     secondHotKey: 'C',
@@ -30,7 +30,7 @@ export const commandMenuCommands: Command[] = [
   {
     id: 'go-to-activities',
     to: '/objects/opportunities',
-    label: 'Go to Opportunities',
+    label: 'برو به فرصت ها',
     type: CommandType.Navigate,
     firstHotKey: 'G',
     secondHotKey: 'O',
@@ -39,7 +39,7 @@ export const commandMenuCommands: Command[] = [
   {
     id: 'go-to-settings',
     to: '/settings/profile',
-    label: 'Go to Settings',
+    label: 'برو به تنظیمات',
     type: CommandType.Navigate,
     firstHotKey: 'G',
     secondHotKey: 'S',
@@ -48,7 +48,7 @@ export const commandMenuCommands: Command[] = [
   {
     id: 'go-to-tasks',
     to: '/tasks',
-    label: 'Go to Tasks',
+    label: 'برو به وظایف',
     type: CommandType.Navigate,
     firstHotKey: 'G',
     secondHotKey: 'T',

@@ -12,6 +12,7 @@ import { useInlineCell } from '../hooks/useInlineCell';
 import { RecordInlineCellDisplayMode } from './RecordInlineCellDisplayMode';
 import { RecordInlineCellButton } from './RecordInlineCellEditButton';
 import { RecordInlineCellEditMode } from './RecordInlineCellEditMode';
+import useI18n from '@/ui/i18n/useI18n';
 
 const StyledIconContainer = styled.div`
   align-items: center;
@@ -99,7 +100,7 @@ export const RecordInlineCellContainer = ({
   disableHoverEffect,
 }: RecordInlineCellContainerProps) => {
   const [isHovered, setIsHovered] = useState(false);
-
+  const { translate } = useI18n('translations');
   const handleContainerMouseEnter = () => {
     setIsHovered(true);
   };
@@ -150,7 +151,7 @@ export const RecordInlineCellContainer = ({
               isDisplayModeContentEmpty={isDisplayModeContentEmpty}
               isDisplayModeFixHeight={isDisplayModeFixHeight}
               isHovered={isHovered}
-              emptyPlaceholder={showLabel ? 'Empty' : label}
+              emptyPlaceholder={showLabel ? translate('empty') : label}
             >
               {editModeContent}
             </RecordInlineCellDisplayMode>
@@ -162,7 +163,7 @@ export const RecordInlineCellContainer = ({
               isDisplayModeContentEmpty={isDisplayModeContentEmpty}
               isDisplayModeFixHeight={isDisplayModeFixHeight}
               isHovered={isHovered}
-              emptyPlaceholder={showLabel ? 'Empty' : label}
+              emptyPlaceholder={showLabel ? translate('empty') : label}
             >
               {displayModeContent}
             </RecordInlineCellDisplayMode>

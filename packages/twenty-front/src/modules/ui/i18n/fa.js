@@ -323,5 +323,6 @@ const fa = {
   unscheduled: 'برنامه ریزی نشده',
   import: 'وارد كردن',
   added: 'اضافه شده در',
+  empty: 'خالی',
 };
 export default fa;

@@ -21,6 +21,7 @@ import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext
 import { useRecordTable } from '../hooks/useRecordTable';
 
 import { RecordTableInternalEffect } from './RecordTableInternalEffect';
+import useI18n from '@/ui/i18n/useI18n';
 
 const StyledObjectEmptyContainer = styled.div`
   align-items: center;
@@ -81,7 +82,7 @@ export const RecordTableWithWrappers = ({
   viewBarId,
 }: RecordTableWithWrappersProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
-
+  const { translate } = useI18n('translations');
   const { getNumberOfTableRowsState, getIsRecordTableInitialLoadingState } =
     useRecordTableStates(recordTableId);
 
@@ -141,14 +142,14 @@ export const RecordTableWithWrappers = ({
                 {!isRecordTableInitialLoading && numberOfTableRows === 0 && (
                   <StyledObjectEmptyContainer>
                     <StyledEmptyObjectTitle>
-                      No {foundObjectMetadataItem?.namePlural}
+                      {translate('noObject', {labelPlural: foundObjectMetadataItem?.labelPlural})}
                     </StyledEmptyObjectTitle>
                     <StyledEmptyObjectSubTitle>
-                      Create one:
+                      {translate('createOne')}:
                     </StyledEmptyObjectSubTitle>
                     <Button
                       Icon={IconPlus}
-                      title={`Add a ${foundObjectMetadataItem?.nameSingular}`}
+                      title={translate('addNameSingular', { nameSingular: foundObjectMetadataItem?.labelSingular})}
                       variant={'secondary'}
                       onClick={createRecord}
                     />

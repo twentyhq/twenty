@@ -48,30 +48,32 @@ export const StyledDialog = styled.div`
 `;
 
 export const StyledInput = styled.input`
-  background: ${({ theme }) => theme.background.secondary};
-  border: none;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: 0;
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.lg};
-  margin: 0;
-  outline: none;
-  padding: ${({ theme }) => theme.spacing(5)};
-  width: ${({ theme }) => `calc(100% - ${theme.spacing(10)})`};
+    background: ${({ theme }) => theme.background.secondary};
+    border: none;
+    border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
+    border-radius: 0;
+    color: ${({ theme }) => theme.font.color.primary};
+    font-family: ${({ theme }) => theme.font.family};
+    font-size: ${({ theme }) => theme.font.size.lg};
+    margin: 0;
+    outline: none;
+    padding: ${({ theme }) => theme.spacing(5)};
+    width: ${({ theme }) => `calc(100% - ${theme.spacing(10)})`};
 
-  &::placeholder {
-    color: ${({ theme }) => theme.font.color.light};
-  }
+    &::placeholder {
+        color: ${({ theme }) => theme.font.color.light};
+    }
 `;
 
 const StyledCancelText = styled.span`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  margin-right: 12px;
-  margin-top: 6px;
-  position: absolute;
-  right: 0;
-  top: 0;
+    color: ${({ theme }) => theme.font.color.tertiary};
+    font-family: ${({ theme }) => theme.font.family};
+    font-size: ${({ theme }) => theme.font.size.sm};
+    margin-right: 12px;
+    margin-top: 6px;
+    position: absolute;
+    right: 0;
+    top: 0;
 `;
 
 export const StyledList = styled.div`
@@ -281,7 +283,7 @@ export const CommandMenu = () => {
                     !activities.length && (
                       <StyledEmpty>{translate('noResultsFound')}</StyledEmpty>
                     )}
-                  <CommandGroup heading={translate('Create')}>
+                  <CommandGroup heading={translate('create')}>
                     {matchingCreateCommand.map((cmd) => (
                       <SelectableItem itemId={cmd.id} key={cmd.id}>
                         <CommandMenuItem

@@ -11,19 +11,20 @@ type NavigationDrawerBackButtonProps = {
 };
 
 const StyledIconAndButtonContainer = styled.button`
-  align-items: center;
-  background: inherit;
-  border: none;
-  color: ${({ theme }) => theme.font.color.secondary};
-  cursor: pointer;
-  display: flex;
-  flex-direction: row;
-  font-size: ${({ theme }) => theme.font.size.lg};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  gap: ${({ theme }) => theme.spacing(2)};
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
-  padding: ${({ theme }) => theme.spacing(1)};
-  width: 100%;
+    align-items: center;
+    background: inherit;
+    border: none;
+    color: ${({ theme }) => theme.font.color.secondary};
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    font-size: ${({ theme }) => theme.font.size.lg};
+    font-family: ${({ theme }) => theme.font.family};
+    font-weight: ${({ theme }) => theme.font.weight.semiBold};
+    gap: ${({ theme }) => theme.spacing(2)};
+    line-height: ${({ theme }) => theme.text.lineHeight.md};
+    padding: ${({ theme }) => theme.spacing(1)};
+    width: 100%;
 `;
 
 const StyledContainer = styled.div`
