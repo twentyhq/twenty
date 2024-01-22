@@ -4,7 +4,7 @@ import { within } from '@storybook/test';
 import { graphql, HttpResponse } from 'msw';
 
 import { AppPath } from '@/types/AppPath';
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { GET_CURRENT_USER_AND_VIEWS } from '@/users/graphql/queries/getCurrentUserAndViews';
 import {
   PageDecorator,
   PageDecoratorArgs,
@@ -22,19 +22,22 @@ const meta: Meta<PageDecoratorArgs> = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
-          return HttpResponse.json({
-            data: {
-              currentUser: {
-                ...mockedOnboardingUsersData[0],
-                defaultWorkspace: {
-                  ...mockedOnboardingUsersData[0].defaultWorkspace,
-                  subscriptionStatus: 'incomplete',
+        graphql.query(
+          getOperationName(GET_CURRENT_USER_AND_VIEWS) ?? '',
+          () => {
+            return HttpResponse.json({
+              data: {
+                currentUser: {
+                  ...mockedOnboardingUsersData[0],
+                  defaultWorkspace: {
+                    ...mockedOnboardingUsersData[0].defaultWorkspace,
+                    subscriptionStatus: 'incomplete',
+                  },
                 },
               },
-            },
-          });
-        }),
+            });
+          },
+        ),
         graphqlMocks.handlers,
       ],
     },

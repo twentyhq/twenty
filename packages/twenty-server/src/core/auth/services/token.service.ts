@@ -186,6 +186,12 @@ export class TokenService {
     return { token };
   }
 
+  isTokenPresent(request: Request): boolean {
+    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
+
+    return !!token;
+  }
+
   async validateToken(request: Request): Promise<Workspace> {
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
 
