@@ -1,5 +1,8 @@
 import { MessageChannel } from './MessageChannel';
 
+type MessageChannelConnection = { edges: [MessageChannelEdge] };
+type MessageChannelEdge = { node: MessageChannel };
+
 export type ConnectedAccount = {
   id: string;
   handle: string;
@@ -8,9 +11,5 @@ export type ConnectedAccount = {
   refreshToken: string;
   accountOwnerId: string;
   lastSyncHistoryId: string;
-  messageChannels: {
-    edges: {
-      node: MessageChannel;
-    }[];
-  };
+  messageChannels: MessageChannelConnection;
 };
