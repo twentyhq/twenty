@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   InboxSettingsVisibilityValue,
   SettingsAccountsInboxSettingsVisibilitySection,
@@ -22,7 +23,18 @@ export const SettingsAccountsEmailsInboxSettings = () => {
     objectRecordId: messageChannelId,
   });
 
-  const handleVisibilityChange = (_value: InboxSettingsVisibilityValue) => {};
+  const { updateOneRecord } = useUpdateOneRecord({
+    objectNameSingular: 'messageChannel',
+  });
+
+  const handleVisibilityChange = (_value: InboxSettingsVisibilityValue) => {
+    updateOneRecord({
+      idToUpdate: messageChannelId,
+      updateOneRecordInput: {
+        visibility: _value,
+      },
+    });
+  };
 
   useEffect(() => {
     if (!loading && !messageChannel) navigate(AppPath.NotFound);
