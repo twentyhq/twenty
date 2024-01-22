@@ -261,6 +261,9 @@
     "vite-plugin-checker": "^0.6.2",
     "vite-plugin-svgr": "^4.2.0"
   },
+  "scripts": {
+    "postinstall": "yarn nx run twenty-emails:build"
+  },
   "engines": {
     "node": "^18.17.1",
     "npm": "please-use-yarn",
@@ -278,6 +281,7 @@
       "packages/twenty-front",
       "packages/twenty-docs",
       "packages/twenty-server",
+      "packages/twenty-emails",
       "packages/twenty-utils",
       "packages/twenty-zapier",
       "packages/twenty-website",

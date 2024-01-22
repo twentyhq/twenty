@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Container, Html } from '@react-email/components';
-
-import { BaseHead } from 'src/emails/components/BaseHead';
-import { Logo } from 'src/emails/components/Logo';
+import { BaseHead } from 'src/components/BaseHead';
+import { Logo } from 'src/components/Logo';
 
 export const BaseEmail = ({ children }) => {
   return (
