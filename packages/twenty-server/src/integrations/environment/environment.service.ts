@@ -288,27 +288,27 @@ export class EnvironmentService {
     return this.configService.get<boolean>('IS_SIGN_UP_DISABLED') ?? false;
   }
 
-  getLoggedInShortTtl(): string {
-    return this.configService.get<string>('LOGGED_IN_SHORT_TTL') ?? '1000';
+  getLoggedInShortTtl(): number {
+    return this.configService.get<number>('LOGGED_IN_SHORT_TTL') ?? 1000;
   }
 
-  getLoggedInShortLimit(): string {
-    return this.configService.get<string>('LOGGED_IN_SHORT_LIMIT') ?? '10';
+  getLoggedInShortLimit(): number {
+    return this.configService.get<number>('LOGGED_IN_SHORT_LIMIT') ?? 10;
   }
 
-  getLoggedInLongTtl(): string {
-    return this.configService.get<string>('LOGGED_IN_LONG_TTL') ?? '3000';
+  getLoggedInLongTtl(): number {
+    return this.configService.get<number>('LOGGED_IN_LONG_TTL') ?? 3000;
   }
 
-  getLoggedInLongLimit(): string {
-    return this.configService.get<string>('LOGGED_IN_LONG_LIMIT') ?? '3';
+  getLoggedInLongLimit(): number {
+    return this.configService.get<number>('LOGGED_IN_LONG_LIMIT') ?? 3;
   }
 
-  getNonLoggedInTtl(): string {
-    return this.configService.get<string>('NON_LOGGED_IN_TTL') ?? '1000';
+  getNonLoggedInTtl(): number {
+    return this.configService.get<number>('NON_LOGGED_IN_TTL') ?? 1000;
   }
 
-  getNonLoggedInLimit(): string {
-    return this.configService.get<string>('NON_LOGGED_IN_LIMIT') ?? '10';
+  getNonLoggedInLimit(): number {
+    return this.configService.get<number>('NON_LOGGED_IN_LIMIT') ?? 10;
   }
 }

@@ -12,8 +12,8 @@ export class ThrottlerConfigService implements ThrottlerOptionsFactory {
   constructor(private readonly environmentService: EnvironmentService) {}
 
   createThrottlerOptions(): ThrottlerModuleOptions {
-    const ttl = +this.environmentService.getLoggedInLongTtl();
-    const limit = +this.environmentService.getLoggedInLongLimit();
+    const ttl = this.environmentService.getLoggedInLongTtl();
+    const limit = this.environmentService.getLoggedInLongLimit();
 
     return [
       {
