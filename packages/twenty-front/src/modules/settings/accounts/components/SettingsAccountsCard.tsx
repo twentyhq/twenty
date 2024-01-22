@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { MessageChannel } from '@/accounts/types/MessageChannel';
+import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountsRowDropdownMenu } from '@/settings/accounts/components/SettingsAccountsRowDropdownMenu';
 import { IconAt, IconPlus } from '@/ui/display/icon';
 import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
@@ -31,7 +31,7 @@ const StyledDropdown = styled(SettingsAccountsRowDropdownMenu)`
 `;
 
 type SettingsAccountsCardProps = {
-  accounts: MessageChannel[];
+  accounts: ConnectedAccount[];
   onAccountRemove?: (uuid: string) => void;
 };
 

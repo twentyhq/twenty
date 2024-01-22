@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
@@ -18,7 +19,7 @@ const StyledRow = styled(CardContent)`
 `;
 
 type SettingsAccountRowProps = {
-  account: MessageChannel;
+  account: ConnectedAccount | MessageChannel;
   divider?: boolean;
   LeftIcon: IconComponent;
   onClick?: () => void;
