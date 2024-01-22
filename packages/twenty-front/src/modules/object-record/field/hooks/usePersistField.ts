@@ -113,10 +113,13 @@ export const usePersistField = () => {
           fieldIsSelect
         ) {
           const fieldName = fieldDefinition.metadata.fieldName;
+          console.log({ fieldName, entityId });
           set(
             entityFieldsFamilySelector({ entityId, fieldName }),
             valueToPersist,
           );
+
+          console.log('I am here');
 
           updateRecord?.({
             variables: {

@@ -18,6 +18,7 @@ export const isEntityFieldEditModeEmptyFamilySelector = selectorFamily({
     entityId: string;
   }) => {
     return ({ get }) => {
+      console.log({ x: get(entityFieldsEditModeValueFamilyState(entityId)) });
       const fieldValue = get(entityFieldsEditModeValueFamilyState(entityId))?.[
         fieldName
       ];
