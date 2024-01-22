@@ -23,7 +23,6 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.TEXT,
     label: 'Name',
     description: 'View name',
-    defaultValue: { value: '' },
   })
   name: string;
 

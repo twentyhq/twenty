@@ -29,7 +29,6 @@ export class MessageThreadObjectMetadata extends BaseObjectMetadata {
     description: 'Thread id from the messaging provider',
     icon: 'IconMessage',
   })
-  @IsNullable()
   externalId: string;
 
   @FieldMetadata({
@@ -38,7 +37,6 @@ export class MessageThreadObjectMetadata extends BaseObjectMetadata {
     description: 'Subject',
     icon: 'IconMessage',
   })
-  @IsNullable()
   subject: string;
 
   @FieldMetadata({
@@ -59,7 +57,6 @@ export class MessageThreadObjectMetadata extends BaseObjectMetadata {
     icon: 'IconEyeglass',
     defaultValue: { value: 'default' },
   })
-  @IsNullable()
   visibility: string;
 
   @FieldMetadata({
