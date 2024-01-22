@@ -29,7 +29,6 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
     description: 'Message id from the messaging provider',
     icon: 'IconHash',
   })
-  @IsNullable()
   externalId: string;
 
   @FieldMetadata({
@@ -38,7 +37,6 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
     description: 'Message id from the message header',
     icon: 'IconHash',
   })
-  @IsNullable()
   headerMessageId: string;
 
   @FieldMetadata({
@@ -67,7 +65,6 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
     description: 'Subject',
     icon: 'IconMessage',
   })
-  @IsNullable()
   subject: string;
 
   @FieldMetadata({
@@ -76,7 +73,6 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
     description: 'Body',
     icon: 'IconMessage',
   })
-  @IsNullable()
   body: string;
 
   @FieldMetadata({
