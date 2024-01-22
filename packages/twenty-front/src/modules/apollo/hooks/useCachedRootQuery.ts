@@ -3,13 +3,14 @@ import gql from 'graphql-tag';
 
 import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { QueryMethodName } from '@/object-metadata/types/QueryMethodName';
 
 export const useCachedRootQuery = ({
   objectMetadataItem,
-  isArrayOfRecords,
+  queryMethodName,
 }: {
   objectMetadataItem: ObjectMetadataItem | undefined;
-  isArrayOfRecords: boolean;
+  queryMethodName: QueryMethodName;
 }) => {
   const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
   const apolloClient = useApolloClient();
@@ -28,13 +29,13 @@ export const useCachedRootQuery = ({
   const cacheReadFragment = gql`
     fragment RootQuery on Query {
       ${
-        isArrayOfRecords
+        QueryMethodName.FindMany === queryMethodName
           ? objectMetadataItem.namePlural
           : objectMetadataItem.nameSingular
       } {
-        ${isArrayOfRecords ? 'edges { node { ' : ''}
+        ${QueryMethodName.FindMany === queryMethodName ? 'edges { node { ' : ''}
             ${buildRecordFieldsFragment()}
-        ${isArrayOfRecords ? '}}' : ''}
+        ${QueryMethodName.FindMany === queryMethodName ? '}}' : ''}
 
       }
     }

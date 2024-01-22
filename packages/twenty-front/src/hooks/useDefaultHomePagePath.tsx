@@ -1,6 +1,7 @@
 import { useCachedRootQuery } from '@/apollo/hooks/useCachedRootQuery';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { QueryMethodName } from '@/object-metadata/types/QueryMethodName';
 
 export const useDefaultHomePagePath = () => {
   const { objectMetadataItem: companyObjectMetadataItem } =
@@ -12,7 +13,7 @@ export const useDefaultHomePagePath = () => {
   });
   const { cachedRootQuery } = useCachedRootQuery({
     objectMetadataItem: viewObjectMetadataItem,
-    isArrayOfRecords: true,
+    queryMethodName: QueryMethodName.FindMany,
   });
 
   const companyViewId = cachedRootQuery?.views?.edges?.find(
