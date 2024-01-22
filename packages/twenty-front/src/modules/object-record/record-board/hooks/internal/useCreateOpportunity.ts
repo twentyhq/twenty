@@ -24,6 +24,7 @@ export const useCreateOpportunity = () => {
 
         await createOneOpportunity?.({
           id: newUuid,
+          name: 'Opportunity',
           pipelineStepId,
           companyId: companyId,
         });

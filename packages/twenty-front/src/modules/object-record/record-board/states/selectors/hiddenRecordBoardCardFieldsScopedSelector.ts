@@ -11,6 +11,7 @@ export const hiddenRecordBoardCardFieldsScopedSelector = createSelectorScopeMap(
       ({ get }) => {
         const fields = get(recordBoardCardFieldsScopedState({ scopeId }));
         const fieldKeys = fields.map(({ fieldMetadataId }) => fieldMetadataId);
+
         const otherAvailableKeys = get(
           availableRecordBoardCardFieldsScopedState({ scopeId }),
         ).filter(({ fieldMetadataId }) => !fieldKeys.includes(fieldMetadataId));

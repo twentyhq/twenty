@@ -1,20 +1,28 @@
 import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
+import { useSetRecoilState } from 'recoil';
+
+import { entityFieldsFamilyState } from '@/object-record/field/states/entityFieldsFamilyState';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
-import { useBooleanField } from '../../../hooks/useBooleanField';
 import {
   BooleanFieldInput,
   BooleanFieldInputProps,
 } from '../BooleanFieldInput';
 
-const BooleanFieldValueSetterEffect = ({ value }: { value: boolean }) => {
-  const { setFieldValue } = useBooleanField();
+const BooleanFieldValueSetterEffect = ({
+  value,
+  entityId,
+}: {
+  value: boolean;
+  entityId: string;
+}) => {
+  const setField = useSetRecoilState(entityFieldsFamilyState(entityId));
 
   useEffect(() => {
-    setFieldValue(value);
-  }, [setFieldValue, value]);
+    setField({ id: entityId, Boolean: value });
+  }, [entityId, setField, value]);
 
   return <></>;
 };
@@ -42,7 +50,7 @@ const BooleanFieldInputWithContext = ({
       }}
       entityId={entityId}
     >
-      <BooleanFieldValueSetterEffect value={value} />
+      <BooleanFieldValueSetterEffect value={value} entityId={entityId ?? ''} />
       <BooleanFieldInput onSubmit={onSubmit} testId="boolean-field-input" />
     </FieldContextProvider>
   );
@@ -53,6 +61,7 @@ const meta: Meta = {
   component: BooleanFieldInputWithContext,
   args: {
     value: true,
+    entityId: 'id-1',
   },
 };
 

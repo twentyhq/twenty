@@ -51,7 +51,12 @@ export const useObjectMetadataItemForSettings = () => {
   const editObjectMetadataItem = (
     input: Pick<
       ObjectMetadataItem,
-      'id' | 'labelPlural' | 'labelSingular' | 'icon' | 'description'
+      | 'description'
+      | 'icon'
+      | 'id'
+      | 'labelIdentifierFieldMetadataId'
+      | 'labelPlural'
+      | 'labelSingular'
     >,
   ) =>
     updateOneObjectMetadataItem({

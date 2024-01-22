@@ -57,8 +57,8 @@ export const ShowPageRightContainer = ({
 }: ShowPageRightContainerProps) => {
   const isMessagingEnabled = useIsFeatureEnabled('IS_MESSAGING_ENABLED');
 
-  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
-  const activeTabId = useRecoilValue(activeTabIdState());
+  const { getActiveTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+  const activeTabId = useRecoilValue(getActiveTabIdState());
 
   const { objectMetadataItem: targetableObjectMetadataItem } =
     useObjectMetadataItem({

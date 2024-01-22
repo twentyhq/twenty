@@ -20,7 +20,7 @@ import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope'
 export type OpportunityPickerProps = {
   companyId: string | null;
   onSubmit: (
-    newCompanyId: EntityForSelect | null,
+    newCompany: EntityForSelect | null,
     newPipelineStepId: string | null,
   ) => void;
   onCancel?: () => void;
@@ -34,7 +34,7 @@ export const OpportunityPicker = ({
 
   const { searchFilter, handleSearchFilterChange } = useEntitySelectSearch();
 
-  const { identifiersMapper, searchQuery } = useRelationPicker();
+  const { searchQuery } = useRelationPicker();
 
   const filteredSearchEntityResults = useFilteredSearchEntityQuery({
     filters: [
@@ -45,7 +45,6 @@ export const OpportunityPicker = ({
     ],
     orderByField: 'createdAt',
     selectedIds: [],
-    mappingFunction: (record: any) => identifiersMapper?.(record, 'company'),
     objectNameSingular: CoreObjectNameSingular.Company,
   });
 

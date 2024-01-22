@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import diff from 'microdiff';
 import { In, Repository } from 'typeorm';
 import camelCase from 'lodash.camelcase';
+import { v4 as uuidV4 } from 'uuid';
 
 import { PartialFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { PartialObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
@@ -23,8 +24,8 @@ import {
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import {
   filterIgnoredProperties,
-  convertStringifiedFieldsToJSON,
   mapObjectMetadataByUniqueIdentifier,
+  convertStringifiedFieldsToJSON,
 } from 'src/workspace/workspace-sync-metadata/utils/sync-metadata.util';
 import { standardObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects';
 import {
@@ -38,6 +39,7 @@ import { WorkspaceMigrationRunnerService } from 'src/workspace/workspace-migrati
 import { ReflectiveMetadataFactory } from 'src/workspace/workspace-sync-metadata/reflective-metadata.factory';
 import { FeatureFlagEntity } from 'src/core/feature-flag/feature-flag.entity';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
+import { FieldMetadataComplexOptions } from 'src/metadata/field-metadata/dtos/options.input';
 
 @Injectable()
 export class WorkspaceSyncMetadataService {
@@ -227,10 +229,9 @@ export class WorkspaceSyncMetadataService {
           objectsToCreate.map((object) => ({
             ...object,
             isActive: true,
-            fields: Object.values(object.fields).map((field) => ({
-              ...convertStringifiedFieldsToJSON(field),
-              isActive: true,
-            })),
+            fields: Object.values(object.fields).map((field) =>
+              this.prepareFieldMetadataForCreation(field),
+            ),
           })),
         );
       const identifiers = createdObjectMetadataCollection.map(
@@ -254,7 +255,9 @@ export class WorkspaceSyncMetadataService {
 
       // CREATE FIELDS
       const createdFields = await this.fieldMetadataRepository.save(
-        fieldsToCreate.map((field) => convertStringifiedFieldsToJSON(field)),
+        fieldsToCreate.map((field) =>
+          this.prepareFieldMetadataForCreation(field),
+        ),
       );
 
       // UPDATE FIELDS
@@ -300,6 +303,32 @@ export class WorkspaceSyncMetadataService {
     } catch (error) {
       console.error('Sync of standard objects failed with:', error);
     }
+  }
+
+  private prepareFieldMetadataForCreation(field: PartialFieldMetadata) {
+    const convertedField = convertStringifiedFieldsToJSON(field);
+
+    return {
+      ...convertedField,
+      ...(convertedField.type === FieldMetadataType.SELECT &&
+      convertedField.options
+        ? {
+            options: this.generateUUIDForNewSelectFieldOptions(
+              convertedField.options as FieldMetadataComplexOptions[],
+            ),
+          }
+        : {}),
+      isActive: true,
+    };
+  }
+
+  private generateUUIDForNewSelectFieldOptions(
+    options: FieldMetadataComplexOptions[],
+  ): FieldMetadataComplexOptions[] {
+    return options.map((option) => ({
+      ...option,
+      id: uuidV4(),
+    }));
   }
 
   private async syncRelationMetadata(
