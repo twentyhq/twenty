@@ -32,7 +32,7 @@ export const getObjectRecordIdentifier = ({
         id: workspaceMember.id,
         name:
           workspaceMember.name.firstName + ' ' + workspaceMember.name.lastName,
-        avatarUrl: workspaceMember.avatarUrl ?? '', // TODO: fix typing
+        avatarUrl: workspaceMember.avatarUrl ?? undefined,
         avatarType: 'rounded',
       };
     }
