@@ -26,11 +26,6 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsNoteCreateImagesEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKeys.IsSelectFieldTypeEnabled,
         workspaceId: workspaceId,
         value: true,

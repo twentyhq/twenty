@@ -14,7 +14,7 @@ import { CommentObjectMetadata } from 'src/workspace/workspace-sync-metadata/sta
 import { CompanyObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/company.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
 import { FavoriteObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/favorite.object-metadata';
-import { MessageRecipientObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-recipient.object-metadata';
+import { MessageParticipantObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-participant.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'workspaceMembers',
@@ -178,18 +178,18 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
-    label: 'Message Recipients',
-    description: 'Message Recipients',
+    label: 'Message Participants',
+    description: 'Message Participants',
     icon: 'IconUserCircle',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'messageRecipient',
+    objectName: 'messageParticipant',
     inverseSideFieldName: 'workspaceMember',
   })
   @Gate({
     featureFlag: 'IS_MESSAGING_ENABLED',
   })
   @IsNullable()
-  messageRecipients: MessageRecipientObjectMetadata[];
+  messageParticipants: MessageParticipantObjectMetadata[];
 }

@@ -7,6 +7,7 @@ export {
   IconApps,
   IconArchive,
   IconArchiveOff,
+  IconArrowBackUp,
   IconArrowDown,
   IconArrowLeft,
   IconArrowRight,

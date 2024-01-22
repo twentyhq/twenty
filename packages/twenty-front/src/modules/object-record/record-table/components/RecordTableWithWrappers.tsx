@@ -82,13 +82,13 @@ export const RecordTableWithWrappers = ({
 }: RecordTableWithWrappersProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const { numberOfTableRowsState, isRecordTableInitialLoadingState } =
+  const { getNumberOfTableRowsState, getIsRecordTableInitialLoadingState } =
     useRecordTableStates(recordTableId);
 
-  const numberOfTableRows = useRecoilValue(numberOfTableRowsState());
+  const numberOfTableRows = useRecoilValue(getNumberOfTableRowsState());
 
   const isRecordTableInitialLoading = useRecoilValue(
-    isRecordTableInitialLoadingState(),
+    getIsRecordTableInitialLoadingState(),
   );
 
   const { resetTableRowSelection, setRowSelectedState } = useRecordTable({

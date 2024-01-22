@@ -47,34 +47,34 @@ export const EntityChip = ({
     }
   };
 
-  return isNonEmptyString(name) ? (
-    <Chip
-      label={name}
-      variant={
-        linkToEntity
-          ? variant === EntityChipVariant.Regular
-            ? ChipVariant.Highlighted
-            : ChipVariant.Regular
-          : ChipVariant.Transparent
-      }
-      leftComponent={
-        LeftIcon ? (
-          <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        ) : (
-          <Avatar
-            avatarUrl={avatarUrl}
-            colorId={entityId}
-            placeholder={name}
-            size="sm"
-            type={avatarType}
-          />
-        )
-      }
-      clickable={!!linkToEntity}
-      onClick={handleLinkClick}
-      className={className}
-    />
-  ) : (
-    <></>
+  return (
+    isNonEmptyString(name) && (
+      <Chip
+        label={name}
+        variant={
+          linkToEntity
+            ? variant === EntityChipVariant.Regular
+              ? ChipVariant.Highlighted
+              : ChipVariant.Regular
+            : ChipVariant.Transparent
+        }
+        leftComponent={
+          LeftIcon ? (
+            <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+          ) : (
+            <Avatar
+              avatarUrl={avatarUrl}
+              colorId={entityId}
+              placeholder={name}
+              size="sm"
+              type={avatarType}
+            />
+          )
+        }
+        clickable={!!linkToEntity}
+        onClick={handleLinkClick}
+        className={className}
+      />
+    )
   );
 };

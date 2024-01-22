@@ -1,6 +1,3 @@
-import { useContext } from 'react';
-
-import { BoardCardIdContext } from '@/object-record/record-board/contexts/BoardCardIdContext';
 import {
   SingleEntitySelectMenuItems,
   SingleEntitySelectMenuItemsProps,
@@ -38,20 +35,13 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
 
   const showCreateButton = isDefined(onCreate) && searchFilter !== '';
 
-  const boardCardId = useContext(BoardCardIdContext);
-  const weAreInOpportunitiesPageCard = isDefined(boardCardId);
-  const hideSearchInput =
-    weAreInOpportunitiesPageCard && !entitiesToSelect.length && !selectedEntity;
-
   return (
     <>
-      {!hideSearchInput && (
-        <DropdownMenuSearchInput
-          value={searchFilter}
-          onChange={handleSearchFilterChange}
-          autoFocus
-        />
-      )}
+      <DropdownMenuSearchInput
+        value={searchFilter}
+        onChange={handleSearchFilterChange}
+        autoFocus
+      />
       <DropdownMenuSeparator />
       <SingleEntitySelectMenuItems
         {...{

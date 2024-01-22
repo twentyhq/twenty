@@ -18,14 +18,14 @@ export const useTableColumns = (props?: useRecordTableProps) => {
   });
 
   const {
-    availableTableColumnsState,
-    tableColumnsState,
+    getAvailableTableColumnsState,
+    getTableColumnsState,
     visibleTableColumnsSelector,
   } = useRecordTableStates(props?.recordTableId);
 
-  const availableTableColumns = useRecoilValue(availableTableColumnsState());
+  const availableTableColumns = useRecoilValue(getAvailableTableColumnsState());
 
-  const tableColumns = useRecoilValue(tableColumnsState());
+  const tableColumns = useRecoilValue(getTableColumnsState());
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector);
 
   const { handleColumnMove } = useMoveViewColumns();

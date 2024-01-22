@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { objectSettingsWidth } from '@/settings/data-model/constants/objectSettings';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/components/SettingsApiKeysFieldItemTableRow';
 import { ApiFieldItem } from '@/settings/developers/types/ApiFieldItem';
 import { formatExpirations } from '@/settings/developers/utils/format-expiration';
@@ -19,8 +19,6 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 const StyledContainer = styled.div`
   height: fit-content;
-  padding: ${({ theme }) => theme.spacing(8)};
-  width: ${objectSettingsWidth};
 `;
 
 const StyledTableRow = styled(TableRow)`
@@ -62,41 +60,43 @@ export const SettingsDevelopersApiKeys = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <StyledContainer>
-        <StyledHeader>
-          <StyledH1Title title="APIs" />
-          <Button
-            Icon={IconPlus}
-            title="Create Key"
-            accent="blue"
-            size="small"
-            onClick={() => {
-              navigate('/settings/developers/api-keys/new');
-            }}
-          />
-        </StyledHeader>
-        <H2Title
-          title="Active Keys"
-          description="Active APIs keys created by you or your team"
-        />
-        <Table>
-          <StyledTableRow>
-            <TableHeader>Name</TableHeader>
-            <TableHeader>Type</TableHeader>
-            <TableHeader>Expiration</TableHeader>
-            <TableHeader></TableHeader>
-          </StyledTableRow>
-          {apiKeys.map((fieldItem) => (
-            <SettingsApiKeysFieldItemTableRow
-              key={fieldItem.id}
-              fieldItem={fieldItem}
+      <SettingsPageContainer>
+        <StyledContainer>
+          <StyledHeader>
+            <StyledH1Title title="APIs" />
+            <Button
+              Icon={IconPlus}
+              title="Create Key"
+              accent="blue"
+              size="small"
               onClick={() => {
-                navigate(`/settings/developers/api-keys/${fieldItem.id}`);
+                navigate('/settings/developers/api-keys/new');
               }}
             />
-          ))}
-        </Table>
-      </StyledContainer>
+          </StyledHeader>
+          <H2Title
+            title="Active Keys"
+            description="Active APIs keys created by you or your team"
+          />
+          <Table>
+            <StyledTableRow>
+              <TableHeader>Name</TableHeader>
+              <TableHeader>Type</TableHeader>
+              <TableHeader>Expiration</TableHeader>
+              <TableHeader></TableHeader>
+            </StyledTableRow>
+            {apiKeys.map((fieldItem) => (
+              <SettingsApiKeysFieldItemTableRow
+                key={fieldItem.id}
+                fieldItem={fieldItem}
+                onClick={() => {
+                  navigate(`/settings/developers/api-keys/${fieldItem.id}`);
+                }}
+              />
+            ))}
+          </Table>
+        </StyledContainer>
+      </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
 };

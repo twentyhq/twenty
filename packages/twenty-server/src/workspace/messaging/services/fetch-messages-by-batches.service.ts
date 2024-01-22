@@ -5,7 +5,7 @@ import { simpleParser, AddressObject } from 'mailparser';
 
 import {
   GmailMessage,
-  Recipient,
+  Participant,
 } from 'src/workspace/messaging/types/gmailMessage';
 import { MessageQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
 import { GmailMessageParsedResponse } from 'src/workspace/messaging/types/gmailMessageParsedResponse';
@@ -190,11 +190,11 @@ export class FetchMessagesByBatchesService {
           if (!from) throw new Error('From value is missing');
           if (!to) throw new Error('To value is missing');
 
-          const recipients = [
-            ...this.formatAddressObjectAsRecipients(from, 'from'),
-            ...this.formatAddressObjectAsRecipients(to, 'to'),
-            ...this.formatAddressObjectAsRecipients(cc, 'cc'),
-            ...this.formatAddressObjectAsRecipients(bcc, 'bcc'),
+          const participants = [
+            ...this.formatAddressObjectAsParticipants(from, 'from'),
+            ...this.formatAddressObjectAsParticipants(to, 'to'),
+            ...this.formatAddressObjectAsParticipants(cc, 'cc'),
+            ...this.formatAddressObjectAsParticipants(bcc, 'bcc'),
           ];
 
           const messageFromGmail: GmailMessage = {
@@ -206,7 +206,7 @@ export class FetchMessagesByBatchesService {
             internalDate,
             fromHandle: from.value[0].address || '',
             fromDisplayName: from.value[0].name || '',
-            recipients,
+            participants,
             text: text || '',
             html: html || '',
             attachments,
@@ -234,14 +234,14 @@ export class FetchMessagesByBatchesService {
     return Array.isArray(addressObject) ? addressObject : [addressObject];
   }
 
-  formatAddressObjectAsRecipients(
+  formatAddressObjectAsParticipants(
     addressObject: AddressObject | AddressObject[] | undefined,
     role: 'from' | 'to' | 'cc' | 'bcc',
-  ): Recipient[] {
+  ): Participant[] {
     if (!addressObject) return [];
     const addressObjects = this.formatAddressObjectAsArray(addressObject);
 
-    const recipients = addressObjects.map((addressObject) => {
+    const participants = addressObjects.map((addressObject) => {
       const emailAdresses = addressObject.value;
 
       return emailAdresses.map((emailAddress) => {
@@ -255,7 +255,7 @@ export class FetchMessagesByBatchesService {
       });
     });
 
-    return recipients.flat();
+    return participants.flat();
   }
 
   async formatBatchResponsesAsGmailMessages(
