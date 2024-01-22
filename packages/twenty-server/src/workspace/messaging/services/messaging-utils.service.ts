@@ -150,7 +150,7 @@ export class MessagingUtilsService {
         }
 
         await manager.query(
-          `INSERT INTO ${dataSourceMetadata.schema}."messageChannelSync" ("messageChannelId", "messageId", "messageExternalId", "messageThreadExternalId") VALUES ($1, $2, $3, $4)`,
+          `INSERT INTO ${dataSourceMetadata.schema}."messageChannelMessage" ("messageChannelId", "messageId", "messageExternalId", "messageThreadExternalId") VALUES ($1, $2, $3, $4)`,
           [
             gmailMessageChannelId,
             messageId,

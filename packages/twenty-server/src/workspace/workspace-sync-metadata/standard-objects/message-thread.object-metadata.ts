@@ -7,7 +7,7 @@ import { IsSystem } from 'src/workspace/workspace-sync-metadata/decorators/is-sy
 import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorators/relation-metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
-import { MessageChannelSyncObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel-sync.object-metadata';
+import { MessageChannelMessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel-message.object-metadata';
 import { MessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message.object-metadata';
 
 @ObjectMetadata({
@@ -51,8 +51,8 @@ export class MessageThreadObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'messageChannelSync',
+    objectName: 'messageChannelMessage',
   })
   @IsNullable()
-  messageChannelSync: MessageChannelSyncObjectMetadata[];
+  messageChannelMessage: MessageChannelMessageObjectMetadata[];
 }

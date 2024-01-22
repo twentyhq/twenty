@@ -10,17 +10,17 @@ import { MessageThreadObjectMetadata } from 'src/workspace/workspace-sync-metada
 import { MessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message.object-metadata';
 
 @ObjectMetadata({
-  namePlural: 'messageChannelSyncs',
-  labelSingular: 'Message Channel Sync',
-  labelPlural: 'Message Channel Syncs',
-  description: 'Message Channel Sync',
+  namePlural: 'messageChannelMessages',
+  labelSingular: 'Message Channel Message',
+  labelPlural: 'Message Channel Messages',
+  description: 'Message Synced with a Message Channel',
   icon: 'IconMessage',
 })
 @Gate({
   featureFlag: 'IS_MESSAGING_ENABLED',
 })
 @IsSystem()
-export class MessageChannelSyncObjectMetadata extends BaseObjectMetadata {
+export class MessageChannelMessageObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     type: FieldMetadataType.RELATION,
     label: 'Message Channel Id',

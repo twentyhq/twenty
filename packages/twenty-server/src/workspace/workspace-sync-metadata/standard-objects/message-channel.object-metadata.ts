@@ -8,7 +8,7 @@ import { ObjectMetadata } from 'src/workspace/workspace-sync-metadata/decorators
 import { RelationMetadata } from 'src/workspace/workspace-sync-metadata/decorators/relation-metadata.decorator';
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/connected-account.object-metadata';
-import { MessageChannelSyncObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel-sync.object-metadata';
+import { MessageChannelMessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/message-channel-message.object-metadata';
 
 @ObjectMetadata({
   namePlural: 'messageChannels',
@@ -79,8 +79,8 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    objectName: 'messageChannelSync',
+    objectName: 'messageChannelMessage',
   })
   @IsNullable()
-  messageChannelSync: MessageChannelSyncObjectMetadata[];
+  messageChannelMessage: MessageChannelMessageObjectMetadata[];
 }
