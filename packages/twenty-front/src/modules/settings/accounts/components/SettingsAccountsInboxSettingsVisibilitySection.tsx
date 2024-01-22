@@ -108,7 +108,7 @@ export const SettingsAccountsInboxSettingsVisibilitySection = ({
           index,
         ) => (
           <StyledCardContent
-            key={value}
+            key={optionValue}
             divider={index < inboxSettingsVisibilityOptions.length - 1}
           >
             <StyledCardMedia>
