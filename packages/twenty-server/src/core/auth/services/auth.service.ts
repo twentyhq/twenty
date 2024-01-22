@@ -31,7 +31,7 @@ import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspa
 import { getImageBufferFromUrl } from 'src/utils/image';
 import { FileUploadService } from 'src/core/file/services/file-upload.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import PasswordUpdateNotifyEmail from 'src/core/auth/emails/password-update-notify.email';
+import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { EmailService } from 'src/integrations/email/email.service';
 import { UpdatePassword } from 'src/core/auth/dto/update-password.entity';
 

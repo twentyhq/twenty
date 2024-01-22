@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { Link } from '@react-email/components';
 
-import { MainText } from 'src/emails/components/MainText';
-import { Title } from 'src/emails/components/Title';
-import { BaseEmail } from 'src/emails/components/BaseEmail';
-import { CallToAction } from 'src/emails/components/CallToAction';
-import { HighlightedText } from 'src/emails/components/HighlightedText';
+import { MainText } from 'src/components/MainText';
+import { Title } from 'src/components/Title';
+import { BaseEmail } from 'src/components/BaseEmail';
+import { HighlightedText } from 'src/components/HighlightedText';
 
 type PasswordUpdateNotifyEmailData = {
     userName: string;
