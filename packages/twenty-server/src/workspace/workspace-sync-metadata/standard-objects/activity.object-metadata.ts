@@ -26,7 +26,6 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     description: 'Activity title',
     icon: 'IconNotes',
   })
-  @IsNullable()
   title: string;
 
   @FieldMetadata({
@@ -35,7 +34,6 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     description: 'Activity body',
     icon: 'IconList',
   })
-  @IsNullable()
   body: string;
 
   @FieldMetadata({

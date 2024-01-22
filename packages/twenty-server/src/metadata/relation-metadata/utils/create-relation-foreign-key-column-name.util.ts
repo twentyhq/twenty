@@ -1,9 +1,9 @@
 import { createCustomColumnName } from 'src/metadata/utils/create-custom-column-name.util';
 import { camelCase } from 'src/utils/camel-case';
 
-export const createRelationMetadataForeignKey = (
+export const createRelationForeignKeyColumnName = (
   name: string,
-  isCustom?: boolean,
+  isCustom: boolean,
 ) => {
   const baseColumnName = `${camelCase(name)}Id`;
 
