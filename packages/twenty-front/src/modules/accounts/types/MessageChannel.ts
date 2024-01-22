@@ -1,6 +1,6 @@
 import { InboxSettingsVisibilityValue } from '@/settings/accounts/components/SettingsAccountsInboxSettingsVisibilitySection';
 
-export type Account = {
+export type MessageChannel = {
   id: string;
   handle: string;
   isContactAutoCreationEnabled?: boolean;
