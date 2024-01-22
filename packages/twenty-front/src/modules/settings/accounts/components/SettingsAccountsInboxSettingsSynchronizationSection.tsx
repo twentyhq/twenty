@@ -24,12 +24,12 @@ const StyledTitle = styled.span`
 `;
 
 type SettingsAccountsInboxSettingsSynchronizationSectionProps = {
-  account: MessageChannel;
+  messageChannel: MessageChannel;
   onToggle: (value: boolean) => void;
 };
 
 export const SettingsAccountsInboxSettingsSynchronizationSection = ({
-  account,
+  messageChannel,
   onToggle,
 }: SettingsAccountsInboxSettingsSynchronizationSectionProps) => {
   const theme = useTheme();
@@ -49,7 +49,7 @@ export const SettingsAccountsInboxSettingsSynchronizationSection = ({
             />
           </SettingsAccountsInboxSettingsCardMedia>
           <StyledTitle>Sync emails</StyledTitle>
-          <Toggle value={account.isSynced} onChange={onToggle} />
+          <Toggle value={messageChannel.isSynced} onChange={onToggle} />
         </StyledCardContent>
       </Card>
     </Section>

@@ -8,8 +8,8 @@ import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Section } from '@/ui/layout/section/components/Section';
 
 export enum InboxSettingsVisibilityValue {
-  Everything = 'everything',
-  SubjectMetadata = 'subject-metadata',
+  Everything = 'share_everything',
+  SubjectMetadata = 'subject',
   Metadata = 'metadata',
 }
 

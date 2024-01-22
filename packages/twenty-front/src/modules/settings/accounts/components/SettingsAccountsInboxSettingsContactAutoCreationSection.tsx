@@ -24,12 +24,12 @@ const StyledTitle = styled.span`
 `;
 
 type SettingsAccountsInboxSettingsContactAutoCreateSectionProps = {
-  account: MessageChannel;
+  messageChannel: MessageChannel;
   onToggle: (value: boolean) => void;
 };
 
 export const SettingsAccountsInboxSettingsContactAutoCreateSection = ({
-  account,
+  messageChannel,
   onToggle,
 }: SettingsAccountsInboxSettingsContactAutoCreateSectionProps) => {
   const theme = useTheme();
@@ -47,7 +47,7 @@ export const SettingsAccountsInboxSettingsContactAutoCreateSection = ({
           </SettingsAccountsInboxSettingsCardMedia>
           <StyledTitle>Auto-creation</StyledTitle>
           <Toggle
-            value={account.isContactAutoCreationEnabled}
+            value={messageChannel.isContactAutoCreationEnabled}
             onChange={onToggle}
           />
         </StyledCardContent>

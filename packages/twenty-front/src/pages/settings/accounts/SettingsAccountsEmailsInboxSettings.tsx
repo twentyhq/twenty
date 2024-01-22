@@ -3,8 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { SettingsAccountsInboxSettingsContactAutoCreateSection } from '@/settings/accounts/components/SettingsAccountsInboxSettingsContactAutoCreationSection';
-import { SettingsAccountsInboxSettingsSynchronizationSection } from '@/settings/accounts/components/SettingsAccountsInboxSettingsSynchronizationSection';
 import {
   InboxSettingsVisibilityValue,
   SettingsAccountsInboxSettingsVisibilitySection,
@@ -24,10 +22,6 @@ export const SettingsAccountsEmailsInboxSettings = () => {
     objectRecordId: messageChannelId,
   });
 
-  const handleSynchronizationToggle = (_value: boolean) => {};
-
-  const handleContactAutoCreationToggle = (_value: boolean) => {};
-
   const handleVisibilityChange = (_value: InboxSettingsVisibilityValue) => {};
 
   useEffect(() => {
@@ -46,18 +40,20 @@ export const SettingsAccountsEmailsInboxSettings = () => {
             { children: messageChannel?.handle || '' },
           ]}
         />
-        <SettingsAccountsInboxSettingsSynchronizationSection
-          account={messageChannel}
+        {/* TODO : discuss the desired sync behaviour */}
+        {/* <SettingsAccountsInboxSettingsSynchronizationSection
+          messageChannel={messageChannel}
           onToggle={handleSynchronizationToggle}
-        />
+        /> */}
         <SettingsAccountsInboxSettingsVisibilitySection
           value={messageChannel?.visibility}
           onChange={handleVisibilityChange}
         />
-        <SettingsAccountsInboxSettingsContactAutoCreateSection
-          account={messageChannel}
+        {/* TODO : Add this section when the backend will be ready to auto create contacts */}
+        {/* <SettingsAccountsInboxSettingsContactAutoCreateSection
+          messageChannel={messageChannel}
           onToggle={handleContactAutoCreationToggle}
-        />
+        /> */}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
