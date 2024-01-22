@@ -1,20 +1,14 @@
 import { ChangeEvent, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useRecoilValue } from 'recoil';
 
 import { AttachmentList } from '@/activities/files/components/AttachmentList';
 import { DropZone } from '@/activities/files/components/DropZone';
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
-import { Attachment } from '@/activities/files/types/Attachment';
-import { uploadAttachFile } from '@/activities/files/utils/uploadFile';
+import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
-import { useUploadFileMutation } from '~/generated/graphql';
 
 const StyledTaskGroupEmptyContainer = styled.div`
   align-items: center;
@@ -56,7 +50,7 @@ const StyledFileInput = styled.input`
 
 const StyledDropZoneContainer = styled.div`
   height: 100%;
-  padding: 24px;
+  padding: ${({ theme }) => theme.spacing(6)};
 `;
 
 export const Attachments = ({
@@ -65,16 +59,10 @@ export const Attachments = ({
   targetableObject: ActivityTargetableObject;
 }) => {
   const inputFileRef = useRef<HTMLInputElement>(null);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { attachments } = useAttachments(targetableObject);
+  const { uploadAttachmentFile } = useUploadAttachmentFile();
 
   const [isDraggingFile, setIsDraggingFile] = useState(false);
-  const [uploadFile] = useUploadFileMutation();
-
-  const { createOneRecord: createOneAttachment } =
-    useCreateOneRecord<Attachment>({
-      objectNameSingular: CoreObjectNameSingular.Attachment,
-    });
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) onUploadFile?.(e.target.files[0]);
@@ -85,13 +73,7 @@ export const Attachments = ({
   };
 
   const onUploadFile = async (file: File) => {
-    await uploadAttachFile(
-      file,
-      targetableObject,
-      currentWorkspaceMember?.id,
-      createOneAttachment,
-      uploadFile,
-    );
+    await uploadAttachmentFile(file, targetableObject);
   };
 
   if (!isNonEmptyArray(attachments)) {

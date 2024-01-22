@@ -1,15 +1,10 @@
 import { ReactElement, useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { DropZone } from '@/activities/files/components/DropZone';
+import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { Attachment } from '@/activities/files/types/Attachment';
-import { uploadAttachFile } from '@/activities/files/utils/uploadFile';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { useUploadFileMutation } from '~/generated/graphql';
 
 import { AttachmentRow } from './AttachmentRow';
 
@@ -26,7 +21,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 8px 24px 24px;
+  padding: ${({ theme }) => theme.spacing(2, 6, 6)};
   height: 100%;
 `;
 
@@ -72,23 +67,11 @@ export const AttachmentList = ({
   attachments,
   button,
 }: AttachmentListProps) => {
+  const { uploadAttachmentFile } = useUploadAttachmentFile();
   const [isDraggingFile, setIsDraggingFile] = useState(false);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const [uploadFile] = useUploadFileMutation();
-
-  const { createOneRecord: createOneAttachment } =
-    useCreateOneRecord<Attachment>({
-      objectNameSingular: CoreObjectNameSingular.Attachment,
-    });
 
   const onUploadFile = async (file: File) => {
-    await uploadAttachFile(
-      file,
-      targetableObject,
-      currentWorkspaceMember?.id,
-      createOneAttachment,
-      uploadFile,
-    );
+    await uploadAttachmentFile(file, targetableObject);
   };
 
   return (
