@@ -11,7 +11,6 @@ import {
 import { isFieldValueEmpty } from '../isFieldValueEmpty';
 
 const fieldMetadataId = 'fieldMetadataId';
-const entityId = 'entityId';
 
 describe('isFieldValueEmpty', () => {
   it('should return correct value for boolean field', () => {
