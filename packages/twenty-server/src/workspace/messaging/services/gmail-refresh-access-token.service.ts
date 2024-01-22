@@ -31,7 +31,7 @@ export class GmailRefreshAccessTokenService {
     }
 
     const connectedAccounts = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail' AND "id" = $1`,
+      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'google' AND "id" = $1`,
       [connectedAccountId],
     );
 

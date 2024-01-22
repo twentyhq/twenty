@@ -30,12 +30,10 @@ export class MessagingUtilsService {
 
   public getThreadsFromMessages(messages: GmailMessage[]): GmailThread[] {
     return messages.reduce((acc, message) => {
-      if (message.externalId === message.messageThreadExternalId) {
-        acc.push({
-          id: message.messageThreadExternalId,
-          subject: message.subject,
-        });
-      }
+      acc.push({
+        id: message.messageThreadExternalId,
+        subject: message.subject,
+      });
 
       return acc;
     }, [] as GmailThread[]);
@@ -69,6 +67,7 @@ export class MessagingUtilsService {
     dataSourceMetadata: DataSourceEntity,
     workspaceDataSource: DataSource,
     connectedAccount,
+    gmailMessageChannelId: string,
   ) {
     for (const message of messages) {
       const {
@@ -85,10 +84,10 @@ export class MessagingUtilsService {
 
       const receivedAt = new Date(parseInt(internalDate));
 
-      const messageThread = await workspaceDataSource?.query(
-        `SELECT * FROM ${dataSourceMetadata.schema}."messageThread" WHERE "externalId" = $1`,
-        [messageThreadExternalId],
-      );
+      // const messageThread = await workspaceDataSource?.query(
+      //   `SELECT * FROM ${dataSourceMetadata.schema}."messageThread" WHERE "externalId" = $1`,
+      //   [messageThreadExternalId],
+      // );
 
       const messageId = v4();
 
@@ -112,37 +111,52 @@ export class MessagingUtilsService {
         connectedAccount.handle === fromHandle ? 'outgoing' : 'incoming';
 
       await workspaceDataSource?.transaction(async (manager) => {
+        const existingMessages = await manager.query(
+          `SELECT * FROM ${dataSourceMetadata.schema}."message" WHERE ${dataSourceMetadata.schema}."message"."headerMessageId" = $1`,
+          [headerMessageId],
+        );
+
+        if (!existingMessages.length) {
+          await manager.query(
+            `INSERT INTO ${dataSourceMetadata.schema}."message" ("id", "headerMessageId", "subject", "receivedAt", "direction", "body") VALUES ($1, $2, $3, $4, $5, $6)`,
+            [
+              messageId,
+              headerMessageId,
+              subject,
+              receivedAt,
+              messageDirection,
+              text,
+            ],
+          );
+
+          await manager.query(
+            `INSERT INTO ${dataSourceMetadata.schema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
+            [
+              messageId,
+              'from',
+              fromHandle,
+              fromDisplayName,
+              personId,
+              workspaceMemberId,
+            ],
+          );
+
+          await this.saveMessageParticipants(
+            participants,
+            dataSourceMetadata,
+            messageId,
+            manager,
+          );
+        }
+
         await manager.query(
-          `INSERT INTO ${dataSourceMetadata.schema}."message" ("id", "externalId", "headerMessageId", "subject", "receivedAt", "messageThreadId", "direction", "body") VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+          `INSERT INTO ${dataSourceMetadata.schema}."messageChannelSync" ("messageChannelId", "messageId", "messageExternalId", "messageThreadExternalId") VALUES ($1, $2, $3, $4)`,
           [
+            gmailMessageChannelId,
             messageId,
             externalId,
-            headerMessageId,
-            subject,
-            receivedAt,
-            messageThread[0]?.id,
-            messageDirection,
-            text,
+            messageThreadExternalId,
           ],
-        );
-
-        await manager.query(
-          `INSERT INTO ${dataSourceMetadata.schema}."messageParticipant" ("messageId", "role", "handle", "displayName", "personId", "workspaceMemberId") VALUES ($1, $2, $3, $4, $5, $6)`,
-          [
-            messageId,
-            'from',
-            fromHandle,
-            fromDisplayName,
-            personId,
-            workspaceMemberId,
-          ],
-        );
-
-        await this.saveMessageParticipants(
-          participants,
-          dataSourceMetadata,
-          messageId,
-          manager,
         );
       });
     }
@@ -240,7 +254,7 @@ export class MessagingUtilsService {
     }
 
     const connectedAccounts = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail'`,
+      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'google'`,
     );
 
     if (!connectedAccounts || connectedAccounts.length === 0) {
@@ -271,7 +285,7 @@ export class MessagingUtilsService {
     }
 
     const connectedAccounts = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'gmail' AND "id" = $1`,
+      `SELECT * FROM ${dataSourceMetadata.schema}."connectedAccount" WHERE "provider" = 'google' AND "id" = $1`,
       [connectedAccountId],
     );
 

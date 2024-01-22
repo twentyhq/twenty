@@ -111,6 +111,19 @@ export class GmailPartialSyncService {
       return;
     }
 
+    const gmailMessageChannel = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."messageChannel" WHERE "connectedAccountId" = $1 AND "type" = 'email'`,
+      [connectedAccountId],
+    );
+
+    if (!gmailMessageChannel.length) {
+      throw new Error(
+        `No gmail message channel found for connected account ${connectedAccountId}`,
+      );
+    }
+
+    const gmailMessageChannelId = gmailMessageChannel[0].id;
+
     const { messagesAdded, messagesDeleted } =
       await this.getMessageIdsAndThreadIdsFromHistory(history);
 
@@ -170,6 +183,7 @@ export class GmailPartialSyncService {
       dataSourceMetadata,
       workspaceDataSource,
       connectedAccount,
+      gmailMessageChannelId,
     );
 
     await this.utils.deleteMessages(
