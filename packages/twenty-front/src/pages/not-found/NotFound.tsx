@@ -4,11 +4,12 @@ import styled from '@emotion/styled';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
+import { StyledEmptyTextContainer } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyles';
 import {
-  StyledEmptyTextContainer,
+  StyledErrorContainer,
   StyledErrorSubTitle,
   StyledErrorTitle,
-} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyles';
+} from '@/ui/layout/animated-placeholder/components/ErrorPlaceholderStyled';
 
 const StyledBackDrop = styled.div`
   align-items: center;
@@ -25,15 +26,6 @@ const StyledBackDrop = styled.div`
   z-index: 10000;
 `;
 
-const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: ${({ theme }) => theme.spacing(15)};
-  gap: ${({ theme }) => theme.spacing(6)};
-`;
-
 const StyledButtonContainer = styled.div`
   width: 200px;
 `;
@@ -44,7 +36,7 @@ export const NotFound = () => {
   return (
     <>
       <StyledBackDrop>
-        <StyledContainer>
+        <StyledErrorContainer>
           <AnimatedPlaceholder type="error404" />
           <StyledEmptyTextContainer>
             <StyledErrorTitle>Unexpected Pit Stop</StyledErrorTitle>
@@ -59,7 +51,7 @@ export const NotFound = () => {
               onClick={() => navigate('/')}
             />
           </StyledButtonContainer>
-        </StyledContainer>
+        </StyledErrorContainer>
       </StyledBackDrop>
       <SignInBackgroundMockPage />
     </>
