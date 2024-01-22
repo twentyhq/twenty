@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { BlockNoteEditor } from '@blocknote/core';
 import { useBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
@@ -9,6 +9,7 @@ import { Activity } from '@/activities/types/Activity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 
@@ -33,6 +34,9 @@ export const ActivityBodyEditor = ({
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Activity,
   });
+  const editorRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const containerId = useId();
 
   useEffect(() => {
     if (body) {
@@ -145,9 +149,21 @@ export const ActivityBodyEditor = ({
     }
   };
 
+  useListenClickOutside({
+    refs: [editorRef],
+    callback: (event) => {
+      if (
+        (event.target as HTMLDivElement)?.id === containerId &&
+        !editor.isFocused()
+      ) {
+        editor.focus();
+      }
+    },
+  });
+
   return (
-    <StyledBlockNoteStyledContainer>
-      <BlockEditor editor={editor} />
+    <StyledBlockNoteStyledContainer ref={containerRef} id={containerId}>
+      <BlockEditor editorRef={editorRef} editor={editor} />
     </StyledBlockNoteStyledContainer>
   );
 };

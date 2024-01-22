@@ -5,10 +5,10 @@ import styled from '@emotion/styled';
 
 interface BlockEditorProps {
   editor: BlockNoteEditor;
+  editorRef: React.RefObject<HTMLDivElement>;
 }
 
 const StyledEditor = styled.div`
-  min-height: 200px;
   width: 100%;
   & .editor {
     background: ${({ theme }) => theme.background.primary};
@@ -21,11 +21,11 @@ const StyledEditor = styled.div`
   }
 `;
 
-export const BlockEditor = ({ editor }: BlockEditorProps) => {
+export const BlockEditor = ({ editor, editorRef }: BlockEditorProps) => {
   const theme = useTheme();
   const blockNoteTheme = theme.name === 'light' ? 'light' : 'dark';
   return (
-    <StyledEditor>
+    <StyledEditor ref={editorRef}>
       <BlockNoteView editor={editor} theme={blockNoteTheme} />
     </StyledEditor>
   );

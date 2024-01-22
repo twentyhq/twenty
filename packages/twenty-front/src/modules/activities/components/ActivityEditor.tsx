@@ -53,6 +53,13 @@ const StyledTopContainer = styled.div`
   padding: 24px 24px 24px 48px;
 `;
 
+const StyledMiddleContainer = styled.div`
+  flex-grow: 2;
+  & > *:first-child {
+    height: 100%;
+  }
+`;
+
 type ActivityEditorProps = {
   activity: Pick<
     Activity,
@@ -174,11 +181,13 @@ export const ActivityEditor = ({
             />
           </PropertyBox>
         </StyledTopContainer>
+      </StyledUpperPartContainer>
+      <StyledMiddleContainer>
         <ActivityBodyEditor
           activity={activity}
           onChange={updateTitleFromBody}
         />
-      </StyledUpperPartContainer>
+      </StyledMiddleContainer>
       {showComment && (
         <ActivityComments
           activity={activity}
