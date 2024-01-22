@@ -1,16 +1,16 @@
 import { ApolloCache, StoreObject } from '@apollo/client';
 
 import { isCachedObjectConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectConnection';
-import { sortCachedObjectEdges } from '@/apollo/optimistic-effect/utils/sortCachedObjectEdges';
 import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
-import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
-import { isDefined } from '~/utils/isDefined';
-import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 import { capitalize } from '~/utils/string/capitalize';
 
+/*
+  TODO: for now new records are added to all cached record lists, no matter what the variables (filters, orderBy, etc.) are.
+  We need to refactor how the record creation works in the RecordTable so the created record row is temporarily displayed with a local state,
+  then we'll be able to uncomment the code below so the cached lists are updated coherently with the variables.
+*/
 export const triggerCreateRecordsOptimisticEffect = ({
   cache,
   objectMetadataItem,
@@ -28,7 +28,12 @@ export const triggerCreateRecordsOptimisticEffect = ({
     fields: {
       [objectMetadataItem.namePlural]: (
         cachedConnection,
-        { INVALIDATE, readField, storeFieldName, toReference },
+        {
+          INVALIDATE: _INVALIDATE,
+          readField,
+          storeFieldName: _storeFieldName,
+          toReference,
+        },
       ) => {
         if (
           !isCachedObjectConnection(
@@ -38,32 +43,32 @@ export const triggerCreateRecordsOptimisticEffect = ({
         )
           return cachedConnection;
 
-        const { variables } =
+        /* const { variables } =
           parseApolloStoreFieldName<CachedObjectRecordQueryVariables>(
             storeFieldName,
-          );
+          ); */
 
         const cachedEdges = readField<CachedObjectRecordEdge[]>(
           'edges',
           cachedConnection,
         );
-        let nextCachedEdges = cachedEdges ? [...cachedEdges] : [];
+        const nextCachedEdges = cachedEdges ? [...cachedEdges] : [];
 
         const hasAddedRecords = records
           .map((record) => {
-            const matchesFilter =
+            /* const matchesFilter =
               !variables?.filter ||
               isRecordMatchingFilter({
                 record,
                 filter: variables.filter,
                 objectMetadataItem,
-              });
+              }); */
 
-            if (matchesFilter && record.id) {
+            if (/* matchesFilter && */ record.id) {
               const nodeReference = toReference(record);
 
               if (nodeReference) {
-                nextCachedEdges.push({
+                nextCachedEdges.unshift({
                   __typename: objectEdgeTypeName,
                   node: nodeReference,
                   cursor: '',
@@ -79,7 +84,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
 
         if (!hasAddedRecords) return cachedConnection;
 
-        if (variables?.orderBy) {
+        /* if (variables?.orderBy) {
           nextCachedEdges = sortCachedObjectEdges({
             edges: nextCachedEdges,
             orderBy: variables.orderBy,
@@ -98,7 +103,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
           if (nextCachedEdges.length > variables.first) {
             nextCachedEdges.splice(variables.first);
           }
-        }
+        } */
 
         return { ...cachedConnection, edges: nextCachedEdges };
       },
