@@ -125,7 +125,7 @@ export const RecordRelationFieldCardSection = () => {
   const { relationPickerSearchFilter, setRelationPickerSearchFilter } =
     useRelationPicker({ relationPickerScopeId: dropdownId });
 
-  const { identifiersMapper, searchQuery } = useRelationPicker();
+  const { searchQuery } = useRelationPicker();
 
   const entities = useFilteredSearchEntityQuery({
     filters: [
@@ -138,10 +138,7 @@ export const RecordRelationFieldCardSection = () => {
       },
     ],
     orderByField: 'createdAt',
-    mappingFunction: (recordToMap) =>
-      identifiersMapper?.(recordToMap, relationObjectMetadataNameSingular),
     selectedIds: relationRecordIds,
-    excludeEntityIds: relationRecordIds,
     objectNameSingular: relationObjectMetadataNameSingular,
   });
 

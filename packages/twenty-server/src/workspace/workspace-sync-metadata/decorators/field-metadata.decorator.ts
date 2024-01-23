@@ -42,6 +42,7 @@ export function FieldMetadata<T extends FieldMetadataType>(
                   label: `${restParams.label} id (foreign key)`,
                   description: `${restParams.description} id foreign key`,
                   defaultValue: null,
+                  options: undefined,
                 },
                 joinColumn,
                 isNullable,
@@ -73,7 +74,7 @@ function generateFieldMetadata<T extends FieldMetadataType>(
     isNullable: params.type === FieldMetadataType.RELATION ? true : isNullable,
     isSystem,
     isCustom: false,
-    // TODO: handle options + stringify for the diff.
+    options: params.options ? JSON.stringify(params.options) : null,
     description: params.description,
     icon: params.icon,
     defaultValue: defaultValue ? JSON.stringify(defaultValue) : null,

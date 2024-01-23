@@ -53,7 +53,6 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     icon: 'IconProgressCheck',
     defaultValue: { value: '0' },
   })
-  @IsNullable()
   probability: string;
 
   // Relations

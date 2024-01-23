@@ -62,19 +62,22 @@ export const Threads = ({ entity }: { entity: ActivityTargetableObject }) => {
           title={
             <>
               Inbox{' '}
-              <StyledEmailCount>{timelineThreads.length}</StyledEmailCount>
+              <StyledEmailCount>
+                {timelineThreads && timelineThreads.length}
+              </StyledEmailCount>
             </>
           }
           fontColor={H1TitleFontColor.Primary}
         />
         <Card>
-          {timelineThreads.map((thread: TimelineThread, index: number) => (
-            <ThreadPreview
-              key={index}
-              divider={index < timelineThreads.length - 1}
-              thread={thread}
-            />
-          ))}
+          {timelineThreads &&
+            timelineThreads.map((thread: TimelineThread, index: number) => (
+              <ThreadPreview
+                key={index}
+                divider={index < timelineThreads.length - 1}
+                thread={thread}
+              />
+            ))}
         </Card>
       </Section>
     </StyledContainer>

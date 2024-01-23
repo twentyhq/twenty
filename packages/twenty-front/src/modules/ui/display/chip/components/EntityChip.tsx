@@ -18,7 +18,7 @@ export type EntityChipProps = {
   variant?: EntityChipVariant;
   LeftIcon?: IconComponent;
   className?: string;
-  maxWidth?: string;
+  maxWidth?: number;
 };
 
 export enum EntityChipVariant {
@@ -35,7 +35,7 @@ export const EntityChip = ({
   variant = EntityChipVariant.Regular,
   LeftIcon,
   className,
-  maxWidth
+  maxWidth,
 }: EntityChipProps) => {
   const navigate = useNavigate();
 
@@ -49,35 +49,35 @@ export const EntityChip = ({
     }
   };
 
-  return isNonEmptyString(name) ? (
-    <Chip
-      label={name}
-      variant={
-        linkToEntity
-          ? variant === EntityChipVariant.Regular
-            ? ChipVariant.Highlighted
-            : ChipVariant.Regular
-          : ChipVariant.Transparent
-      }
-      leftComponent={
-        LeftIcon ? (
-          <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        ) : (
-          <Avatar
-            avatarUrl={avatarUrl}
-            colorId={entityId}
-            placeholder={name}
-            size="sm"
-            type={avatarType}
-          />
-        )
-      }
-      clickable={!!linkToEntity}
-      onClick={handleLinkClick}
-      className={className}
-      maxWidth={maxWidth}
-    />
-  ) : (
-    <></>
+  return (
+    isNonEmptyString(name) && (
+      <Chip
+        label={name}
+        variant={
+          linkToEntity
+            ? variant === EntityChipVariant.Regular
+              ? ChipVariant.Highlighted
+              : ChipVariant.Regular
+            : ChipVariant.Transparent
+        }
+        leftComponent={
+          LeftIcon ? (
+            <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+          ) : (
+            <Avatar
+              avatarUrl={avatarUrl}
+              colorId={entityId}
+              placeholder={name}
+              size="sm"
+              type={avatarType}
+            />
+          )
+        }
+        clickable={!!linkToEntity}
+        onClick={handleLinkClick}
+        className={className}
+        maxWidth={maxWidth}
+      />
+    )
   );
 };

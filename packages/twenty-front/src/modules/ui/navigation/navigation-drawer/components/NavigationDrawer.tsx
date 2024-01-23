@@ -33,7 +33,7 @@ const StyledContainer = styled.div<{ isSubMenu?: boolean }>`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(8)};
   height: 100%;
-  min-width: ${desktopNavDrawerWidths.menu};
+  min-width: ${desktopNavDrawerWidths.menu}px;
   padding: ${({ theme }) => theme.spacing(3, 2, 4)};
 
   ${({ isSubMenu, theme }) =>
@@ -80,9 +80,7 @@ export const NavigationDrawer = ({
 
   const desktopWidth = !isNavigationDrawerOpen
     ? 12
-    : isSubMenu
-      ? desktopNavDrawerWidths.submenu
-      : desktopNavDrawerWidths.menu;
+    : desktopNavDrawerWidths.menu;
 
   const mobileWidth = isNavigationDrawerOpen ? '100%' : 0;
 

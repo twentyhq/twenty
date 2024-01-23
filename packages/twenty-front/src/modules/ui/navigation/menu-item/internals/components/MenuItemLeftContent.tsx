@@ -10,12 +10,14 @@ import {
 } from './StyledMenuItemBase';
 
 type MenuItemLeftContentProps = {
+  className?: string;
   LeftIcon: IconComponent | null | undefined;
   showGrip?: boolean;
   text: string;
 };
 
 export const MenuItemLeftContent = ({
+  className,
   LeftIcon,
   text,
   showGrip = false,
@@ -23,7 +25,7 @@ export const MenuItemLeftContent = ({
   const theme = useTheme();
 
   return (
-    <StyledMenuItemLeftContent>
+    <StyledMenuItemLeftContent className={className}>
       {showGrip && (
         <IconGripVertical
           size={theme.icon.size.md}

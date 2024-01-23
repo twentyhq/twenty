@@ -52,8 +52,7 @@ export const NewOpportunityButton = () => {
     setIsCreatingCard(false);
   };
 
-  const { relationPickerSearchFilter, identifiersMapper, searchQuery } =
-    useRelationPicker();
+  const { relationPickerSearchFilter, searchQuery } = useRelationPicker();
 
   const filteredSearchEntityResults = useFilteredSearchEntityQuery({
     filters: [
@@ -64,7 +63,6 @@ export const NewOpportunityButton = () => {
     ],
     orderByField: 'createdAt',
     selectedIds: [],
-    mappingFunction: (record: any) => identifiersMapper?.(record, 'company'),
     objectNameSingular: CoreObjectNameSingular.Company,
   });
 

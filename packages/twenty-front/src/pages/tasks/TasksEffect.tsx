@@ -13,10 +13,13 @@ type TasksEffectProps = {
 
 export const TasksEffect = ({ filterDropdownId }: TasksEffectProps) => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const { setSelectedFilter, setAvailableFilterDefinitions } =
-    useFilterDropdown({
-      filterDropdownId: filterDropdownId,
-    });
+  const {
+    setSelectedFilter,
+    setAvailableFilterDefinitions,
+    setObjectFilterDropdownSelectedRecordIds,
+  } = useFilterDropdown({
+    filterDropdownId: filterDropdownId,
+  });
 
   useEffect(() => {
     setAvailableFilterDefinitions(tasksFilterDefinitions);
@@ -35,7 +38,13 @@ export const TasksEffect = ({ filterDropdownId }: TasksEffectProps) => {
         displayAvatarUrl: currentWorkspaceMember.avatarUrl ?? undefined,
         definition: tasksFilterDefinitions[0],
       });
+
+      setObjectFilterDropdownSelectedRecordIds([currentWorkspaceMember.id]);
     }
-  }, [currentWorkspaceMember, setSelectedFilter]);
+  }, [
+    currentWorkspaceMember,
+    setSelectedFilter,
+    setObjectFilterDropdownSelectedRecordIds,
+  ]);
   return <></>;
 };

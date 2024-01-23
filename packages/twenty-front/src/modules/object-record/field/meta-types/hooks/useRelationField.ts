@@ -1,6 +1,8 @@
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
+import { useGetButtonIcon } from '@/object-record/field/hooks/useGetButtonIcon';
+
 import { FieldContext } from '../../contexts/FieldContext';
 import { useFieldInitialValue } from '../../hooks/useFieldInitialValue';
 import { entityFieldsFamilySelector } from '../../states/selectors/entityFieldsFamilySelector';
@@ -10,7 +12,7 @@ import { isFieldRelation } from '../../types/guards/isFieldRelation';
 // TODO: we will be able to type more precisely when we will have custom field and custom entities support
 export const useRelationField = () => {
   const { entityId, fieldDefinition, maxWidth } = useContext(FieldContext);
-
+  const button = useGetButtonIcon();
   assertFieldMetadata('RELATION', isFieldRelation, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
@@ -33,6 +35,6 @@ export const useRelationField = () => {
     initialValue,
     initialSearchValue,
     setFieldValue,
-    maxWidth,
+    maxWidth: button && maxWidth ? maxWidth - 30 : maxWidth,
   };
 };
