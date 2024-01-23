@@ -94,6 +94,7 @@
     "react": "^18.2.0",
     "rimraf": "^3.0.2",
     "sharp": "^0.32.1",
+    "twenty-emails": "workspace:*",
     "type-fest": "^4.1.0",
     "typeorm": "^0.3.17"
   },
