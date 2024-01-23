@@ -8,6 +8,7 @@ COPY ./.yarnrc.yml .
 COPY ./.yarn/releases /app/.yarn/releases
 COPY ./tools/eslint-rules /app/tools/eslint-rules
 COPY ./packages/twenty-server/package.json /app/packages/twenty-server/package.json
+COPY ./packages/twenty-server/patches /app/packages/twenty-server/patches
 COPY ./packages/twenty-emails /app/packages/twenty-emails
 
 WORKDIR /app/packages/twenty-server
