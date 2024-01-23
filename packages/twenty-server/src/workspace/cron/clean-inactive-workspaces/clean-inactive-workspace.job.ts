@@ -232,6 +232,10 @@ export class CleanInactiveWorkspaceJob
 
     const objectsMetadata = await this.objectMetadataService.findMany();
 
+    this.logger.log(
+      `${this.getDryRunLog(isDryRun)}On ${dataSources.length} workspaces...`,
+    );
+
     for (const dataSource of dataSources) {
       if (!(await this.isWorkspaceCleanable(dataSource))) {
         continue;
