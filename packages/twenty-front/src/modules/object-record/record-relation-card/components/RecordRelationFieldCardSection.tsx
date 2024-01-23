@@ -139,7 +139,6 @@ export const RecordRelationFieldCardSection = () => {
     ],
     orderByField: 'createdAt',
     selectedIds: relationRecordIds,
-    excludeEntityIds: relationRecordIds,
     objectNameSingular: relationObjectMetadataNameSingular,
   });
 

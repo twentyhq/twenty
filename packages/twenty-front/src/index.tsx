@@ -20,10 +20,11 @@ import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/Sn
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { ThemeType } from '@/ui/theme/constants/theme';
 import { UserProvider } from '@/users/components/UserProvider';
-import { App } from '~/App';
 import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
 
 import '@emotion/react';
+
+import { App } from './App';
 
 import './index.css';
 import 'react-loading-skeleton/dist/skeleton.css';

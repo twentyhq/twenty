@@ -1,5 +1,8 @@
+import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
+import { useSetRecoilState } from 'recoil';
 
+import { viewableActivityIdState } from '@/activities/states/viewableActivityIdState';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { ActivityActionBar } from '../../right-drawer/components/ActivityActionBar';
@@ -7,15 +10,33 @@ import { Comment } from '../Comment';
 
 import { mockComment, mockCommentWithLongValues } from './mock-comment';
 
+const CommentSetterEffect = () => {
+  const setViewableActivity = useSetRecoilState(viewableActivityIdState);
+
+  useEffect(() => {
+    setViewableActivity('test-id');
+  }, [setViewableActivity]);
+
+  return null;
+};
+
 const meta: Meta<typeof Comment> = {
   title: 'Modules/Activity/Comment/Comment',
   component: Comment,
-  decorators: [ComponentDecorator],
+  decorators: [
+    (Story) => (
+      <>
+        <CommentSetterEffect />
+        <Story />
+      </>
+    ),
+    ComponentDecorator,
+  ],
   argTypes: {
     actionBar: {
       type: 'boolean',
       mapping: {
-        true: <ActivityActionBar activityId="test-id" />,
+        true: <ActivityActionBar />,
         false: undefined,
       },
     },

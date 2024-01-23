@@ -18,12 +18,13 @@ import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/metadata/relation-metadata/relation-metadata.entity';
-import { createRelationMetadataForeignKey } from 'src/metadata/relation-metadata/utils/create-relation-metadata-foreign-key.util';
 import {
   RelationDirection,
   deduceRelationDirection,
 } from 'src/workspace/utils/deduce-relation-direction.util';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
+import { createRelationForeignKeyColumnName } from 'src/metadata/relation-metadata/utils/create-relation-foreign-key-column-name.util';
+import { createRelationForeignKeyFieldMetadataName } from 'src/metadata/relation-metadata/utils/create-relation-foreign-key-field-metadata-name.util';
 
 @Injectable()
 export class RelationMetadataHealthService {
@@ -136,7 +137,7 @@ export class RelationMetadataHealthService {
     }
 
     const isCustom = toFieldMetadata.isCustom ?? false;
-    const foreignKeyColumnName = createRelationMetadataForeignKey(
+    const foreignKeyColumnName = createRelationForeignKeyColumnName(
       toFieldMetadata.name,
       isCustom,
     );
@@ -144,16 +145,34 @@ export class RelationMetadataHealthService {
       (column) => column.columnName === foreignKeyColumnName,
     );
     const relationFieldMetadata = toObjectMetadataFields.find(
-      (fieldMetadata) => fieldMetadata.name === foreignKeyColumnName,
+      (fieldMetadata) =>
+        fieldMetadata.name ===
+        createRelationForeignKeyFieldMetadataName(toFieldMetadata.name),
     );
 
-    if (!relationColumn || !relationFieldMetadata) {
+    if (!relationFieldMetadata) {
       issues.push({
         type: WorkspaceHealthIssueType.RELATION_FOREIGN_KEY_NOT_VALID,
         fromFieldMetadata,
         toFieldMetadata,
         relationMetadata,
-        message: `Relation ${relationMetadata.id} doesn't have a valid foreign key`,
+        message: `Relation ${
+          relationMetadata.id
+        } doesn't have a valid foreign key (expected fieldMetadata.name to be ${createRelationForeignKeyFieldMetadataName(
+          toFieldMetadata.name,
+        )}`,
+      });
+
+      return issues;
+    }
+
+    if (!relationColumn) {
+      issues.push({
+        type: WorkspaceHealthIssueType.RELATION_FOREIGN_KEY_NOT_VALID,
+        fromFieldMetadata,
+        toFieldMetadata,
+        relationMetadata,
+        message: `Relation ${relationMetadata.id} doesn't have a valid foreign key (expected column name to be ${foreignKeyColumnName}`,
       });
 
       return issues;
