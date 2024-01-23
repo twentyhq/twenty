@@ -48,7 +48,7 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
       this.environmentService.getInactiveDaysBeforeEmail();
   }
 
-  async getmostRecentUpdatedAt(
+  async getMostRecentUpdatedAt(
     dataSource: DataSourceEntity,
     objectsMetadata: ObjectMetadataEntity[],
   ): Promise<Date> {
@@ -166,7 +166,7 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
     dataSource: DataSourceEntity,
     objectsMetadata: ObjectMetadataEntity[],
   ): Promise<void> {
-    const mostRecentUpdatedAt = await this.getmostRecentUpdatedAt(
+    const mostRecentUpdatedAt = await this.getMostRecentUpdatedAt(
       dataSource,
       objectsMetadata,
     );
