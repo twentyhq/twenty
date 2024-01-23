@@ -381,7 +381,7 @@ export class TokenService {
     };
   }
 
-  async emailPasswordResetLink(
+  async sendEmailPasswordResetLink(
     resetToken: PasswordResetToken,
     email: string,
   ): Promise<EmailPasswordResetLink> {
