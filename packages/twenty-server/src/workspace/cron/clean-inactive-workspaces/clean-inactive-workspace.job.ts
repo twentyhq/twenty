@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { render } from '@react-email/render';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import {
   CleanInactiveWorkspaceEmail,
   DeleteInactiveWorkspaceEmail,
@@ -216,6 +216,18 @@ export class CleanInactiveWorkspaceJob
     return isDryRun ? 'Dry-run mode: ' : '';
   }
 
+  chunkArray(array: any[], chunkSize = 6): any[][] {
+    const chunkedArray: any[][] = [];
+    let index = 0;
+
+    while (index < array.length) {
+      chunkedArray.push(array.slice(index, index + chunkSize));
+      index += chunkSize;
+    }
+
+    return chunkedArray;
+  }
+
   async handle(data: CleanInactiveWorkspacesCommandOptions): Promise<void> {
     const isDryRun = data.dryRun || false;
 
@@ -227,26 +239,42 @@ export class CleanInactiveWorkspaceJob
 
       return;
     }
+
     const dataSources =
       await this.dataSourceService.getManyDataSourceMetadata();
 
-    const objectsMetadata = await this.objectMetadataService.findMany();
+    const dataSourcesChunks = this.chunkArray(dataSources);
 
     this.logger.log(
-      `${this.getDryRunLog(isDryRun)}On ${dataSources.length} workspaces...`,
+      `${this.getDryRunLog(isDryRun)}On ${
+        dataSources.length
+      } workspaces divided in ${dataSourcesChunks.length} chunks...`,
     );
 
-    for (const dataSource of dataSources) {
-      if (!(await this.isWorkspaceCleanable(dataSource))) {
-        continue;
-      }
+    for (const dataSourcesChunk of dataSourcesChunks) {
+      const objectsMetadata = await this.objectMetadataService.findMany({
+        where: {
+          dataSourceId: In(dataSourcesChunk.map((dataSource) => dataSource.id)),
+        },
+      });
 
-      this.logger.log(
-        `${this.getDryRunLog(isDryRun)}Cleaning Workspace ${
-          dataSource.workspaceId
-        }`,
-      );
-      await this.processWorkspace(dataSource, objectsMetadata, isDryRun);
+      for (const dataSource of dataSourcesChunk) {
+        if (!(await this.isWorkspaceCleanable(dataSource))) {
+          this.logger.log(
+            `${this.getDryRunLog(isDryRun)}Workspace ${
+              dataSource.workspaceId
+            } not cleanable`,
+          );
+          continue;
+        }
+
+        this.logger.log(
+          `${this.getDryRunLog(isDryRun)}Cleaning Workspace ${
+            dataSource.workspaceId
+          }`,
+        );
+        await this.processWorkspace(dataSource, objectsMetadata, isDryRun);
+      }
     }
 
     this.logger.log(`${this.getDryRunLog(isDryRun)}job done!`);
