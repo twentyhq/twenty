@@ -61,20 +61,6 @@ export class GmailFullSyncService {
       return;
     }
 
-    // const {
-    //   savedMessageIds,
-    //   savedThreadIds
-    // } = await this.utils.getSavedMessageIdsAndThreadIds(
-    //   messageExternalIds,
-    //   connectedAccountId,
-    //   dataSourceMetadata,
-    //   workspaceDataSource,
-    // );
-
-    // const messageIdsToSave = messageExternalIds.filter(
-    //   (messageId) => !savedMessageIds.includes(messageId),
-    // );
-
     const messageQueries =
       this.utils.createQueriesFromMessageIds(messageExternalIds);
 
@@ -87,19 +73,6 @@ export class GmailFullSyncService {
     if (messagesToSave.length === 0) {
       return;
     }
-
-    // const threads = this.utils.getThreadsFromMessages(messagesToSave);
-
-    // const threadsToSave = threads.filter(
-    //   (threadId) => !savedThreadIds.includes(threadId.id),
-    // );
-
-    // await this.utils.saveMessageThreads(
-    //   threadsToSave,
-    //   dataSourceMetadata,
-    //   workspaceDataSource,
-    //   connectedAccount.id,
-    // );
 
     await this.utils.saveMessages(
       messagesToSave,

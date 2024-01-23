@@ -127,56 +127,14 @@ export class GmailPartialSyncService {
     const { messagesAdded, messagesDeleted } =
       await this.getMessageIdsAndThreadIdsFromHistory(history);
 
-    const {
-      savedMessageIds: messagesAddedAlreadySaved,
-      savedThreadIds: threadsAddedAlreadySaved,
-    } = await this.utils.getSavedMessageIdsAndThreadIds(
-      messagesAdded,
-      connectedAccountId,
-      dataSourceMetadata,
-      workspaceDataSource,
-    );
-
-    const messageExternalIdsToSave = messagesAdded.filter(
-      (messageId) =>
-        !messagesAddedAlreadySaved.includes(messageId) &&
-        !messagesDeleted.includes(messageId),
-    );
-
-    const { savedMessageIds: messagesDeletedAlreadySaved } =
-      await this.utils.getSavedMessageIdsAndThreadIds(
-        messagesDeleted,
-        connectedAccountId,
-        dataSourceMetadata,
-        workspaceDataSource,
-      );
-
-    const messageExternalIdsToDelete = messagesDeleted.filter((messageId) =>
-      messagesDeletedAlreadySaved.includes(messageId),
-    );
-
-    const messageQueries = this.utils.createQueriesFromMessageIds(
-      messageExternalIdsToSave,
-    );
+    const messageQueries =
+      this.utils.createQueriesFromMessageIds(messagesAdded);
 
     const { messages: messagesToSave, errors } =
       await this.fetchMessagesByBatchesService.fetchAllMessages(
         messageQueries,
         accessToken,
       );
-
-    const threads = this.utils.getThreadsFromMessages(messagesToSave);
-
-    const threadsToSave = threads.filter(
-      (thread) => !threadsAddedAlreadySaved.includes(thread.id),
-    );
-
-    await this.utils.saveMessageThreads(
-      threadsToSave,
-      dataSourceMetadata,
-      workspaceDataSource,
-      connectedAccount.id,
-    );
 
     await this.utils.saveMessages(
       messagesToSave,
@@ -186,15 +144,9 @@ export class GmailPartialSyncService {
       gmailMessageChannelId,
     );
 
-    await this.utils.deleteMessages(
-      messageExternalIdsToDelete,
-      dataSourceMetadata,
-      workspaceDataSource,
-    );
-
-    await this.utils.deleteEmptyThreads(
+    await this.utils.deleteMessageChannelMessages(
       messagesDeleted,
-      connectedAccountId,
+      gmailMessageChannelId,
       dataSourceMetadata,
       workspaceDataSource,
     );

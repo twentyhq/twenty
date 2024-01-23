@@ -23,14 +23,6 @@ import { MessageObjectMetadata } from 'src/workspace/workspace-sync-metadata/sta
 @IsSystem()
 export class MessageThreadObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    type: FieldMetadataType.TEXT,
-    label: 'Subject',
-    description: 'Subject',
-    icon: 'IconMessage',
-  })
-  subject: string;
-
-  @FieldMetadata({
     type: FieldMetadataType.RELATION,
     label: 'Messages',
     description: 'Messages from the thread.',

@@ -28,7 +28,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
     description: 'Visibility',
     icon: 'IconEyeglass',
     options: [
-      { value: 'default', label: 'Default', position: 0, color: 'green' },
+      { value: 'metadata', label: 'Metadata', position: 0, color: 'green' },
       { value: 'subject', label: 'Subject', position: 1, color: 'blue' },
       {
         value: 'share_everything',
@@ -37,7 +37,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
         color: 'orange',
       },
     ],
-    defaultValue: { value: 'default' },
+    defaultValue: { value: 'share_everything' },
   })
   visibility: string;
 
