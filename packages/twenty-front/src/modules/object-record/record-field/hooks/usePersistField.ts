@@ -82,24 +82,8 @@ export const usePersistField = () => {
         const fieldIsSelect =
           isFieldSelect(fieldDefinition) && isFieldSelectValue(valueToPersist);
 
-        if (fieldIsRelation) {
-          const fieldName = fieldDefinition.metadata.fieldName;
-
-          set(
-            recordStoreFamilySelector({ recordId: entityId, fieldName }),
-            valueToPersist,
-          );
-
-          updateRecord?.({
-            variables: {
-              where: { id: entityId },
-              updateOneRecordInput: {
-                [`${fieldName}Id`]: valueToPersist?.id ?? null,
-                [fieldName]: valueToPersist ?? null,
-              },
-            },
-          });
-        } else if (
+        if (
+          fieldIsRelation ||
           fieldIsText ||
           fieldIsBoolean ||
           fieldIsEmail ||

@@ -144,7 +144,6 @@ export const RecordRelationFieldCardSection = () => {
     updateOneRelationRecord({
       idToUpdate: selectedRelationEntity.id,
       updateOneRecordInput: {
-        [`${relationFieldMetadataItem.name}Id`]: entityId,
         [relationFieldMetadataItem.name]: record,
       },
     });

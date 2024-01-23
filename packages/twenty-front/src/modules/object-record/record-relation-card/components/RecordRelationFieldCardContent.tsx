@@ -96,7 +96,6 @@ export const RecordRelationFieldCardContent = ({
     updateOneRelationRecord({
       idToUpdate: relationRecord.id,
       updateOneRecordInput: {
-        [`${relationFieldMetadataItem.name}Id`]: null,
         [relationFieldMetadataItem.name]: null,
       },
     });

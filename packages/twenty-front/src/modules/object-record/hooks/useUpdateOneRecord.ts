@@ -35,17 +35,18 @@ export const useUpdateOneRecord = <
   }) => {
     const cachedRecord = getRecordFromCache<UpdatedObjectRecord>(idToUpdate);
 
-    const optimisticallyUpdatedRecord = {
-      ...(cachedRecord ?? {}),
-      ...updateOneRecordInput,
-      __typename: capitalize(objectNameSingular),
-      id: idToUpdate,
-    };
-
     const sanitizedUpdateOneRecordInput = sanitizeRecordInput({
       objectMetadataItem,
       recordInput: updateOneRecordInput,
     });
+
+    const optimisticallyUpdatedRecord = {
+      ...(cachedRecord ?? {}),
+      ...updateOneRecordInput,
+      ...sanitizedUpdateOneRecordInput,
+      __typename: capitalize(objectNameSingular),
+      id: idToUpdate,
+    };
 
     const updatedRelationFields = cachedRecord
       ? getRelationFieldsToOptimisticallyUpdate({
