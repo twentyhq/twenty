@@ -1,6 +1,5 @@
 import { MouseEvent, ReactNode } from 'react';
 import styled from '@emotion/styled';
-import { ChipVariant } from 'tsup.ui.index';
 
 import { OverflowingTextWithTooltip } from '../../tooltip/OverflowingTextWithTooltip';
 

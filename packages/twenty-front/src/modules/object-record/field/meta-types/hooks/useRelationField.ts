@@ -35,6 +35,6 @@ export const useRelationField = () => {
     initialValue,
     initialSearchValue,
     setFieldValue,
-    maxWidth: button && maxWidth ? maxWidth - 30 : maxWidth,
+    maxWidth: button && maxWidth ? maxWidth - 28 : maxWidth,
   };
 };
