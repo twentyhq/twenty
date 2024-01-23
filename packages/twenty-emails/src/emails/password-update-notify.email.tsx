@@ -25,8 +25,7 @@ export const PasswordUpdateNotifyEmail = ({
                 {helloString},
                 <br />
                 <br />
-                This is a confirmation that password for your account ({email}) was successfully changed on
-                {format(new Date(), 'MMMM d, yyyy')}.
+                This is a confirmation that password for your account ({email}) was successfully changed on {format(new Date(), 'MMMM d, yyyy')}.
                 <br />
                 <br />
                 If you did not initiate this change, please contact your workspace owner immediately.
