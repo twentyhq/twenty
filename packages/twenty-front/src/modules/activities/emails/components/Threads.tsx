@@ -5,6 +5,7 @@ import { ThreadPreview } from '@/activities/emails/components/ThreadPreview';
 import { getTimelineThreadsFromCompanyId } from '@/activities/emails/queries/getTimelineThreadsFromCompanyId';
 import { getTimelineThreadsFromPersonId } from '@/activities/emails/queries/getTimelineThreadsFromPersonId';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
   H1Title,
   H1TitleFontColor,
@@ -31,12 +32,12 @@ const StyledEmailCount = styled.span`
 
 export const Threads = ({ entity }: { entity: ActivityTargetableObject }) => {
   const threadQuery =
-    entity.targetObjectNameSingular === 'person'
+    entity.targetObjectNameSingular === CoreObjectNameSingular.Person
       ? getTimelineThreadsFromPersonId
       : getTimelineThreadsFromCompanyId;
 
   const threadQueryVariables =
-    entity.targetObjectNameSingular === 'person'
+    entity.targetObjectNameSingular === CoreObjectNameSingular.Person
       ? { personId: entity.id }
       : { companyId: entity.id };
 
@@ -50,7 +51,7 @@ export const Threads = ({ entity }: { entity: ActivityTargetableObject }) => {
 
   const timelineThreads: TimelineThread[] =
     threads.data[
-      entity.targetObjectNameSingular === 'Person'
+      entity.targetObjectNameSingular === CoreObjectNameSingular.Person
         ? 'getTimelineThreadsFromPersonId'
         : 'getTimelineThreadsFromCompanyId'
     ];
@@ -62,19 +63,22 @@ export const Threads = ({ entity }: { entity: ActivityTargetableObject }) => {
           title={
             <>
               Inbox{' '}
-              <StyledEmailCount>{timelineThreads.length}</StyledEmailCount>
+              <StyledEmailCount>
+                {timelineThreads && timelineThreads.length}
+              </StyledEmailCount>
             </>
           }
           fontColor={H1TitleFontColor.Primary}
         />
         <Card>
-          {timelineThreads.map((thread: TimelineThread, index: number) => (
-            <ThreadPreview
-              key={index}
-              divider={index < timelineThreads.length - 1}
-              thread={thread}
-            />
-          ))}
+          {timelineThreads &&
+            timelineThreads.map((thread: TimelineThread, index: number) => (
+              <ThreadPreview
+                key={index}
+                divider={index < timelineThreads.length - 1}
+                thread={thread}
+              />
+            ))}
         </Card>
       </Section>
     </StyledContainer>
