@@ -3,12 +3,12 @@ import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDraw
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
-export const useOpenMessageThreadRightDrawer = () => {
+export const useOpenThreadRightDrawer = () => {
   const { openRightDrawer } = useRightDrawer();
   const setHotkeyScope = useSetHotkeyScope();
 
   return () => {
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-    openRightDrawer(RightDrawerPages.MessageThread);
+    openRightDrawer(RightDrawerPages.ViewThread);
   };
 };

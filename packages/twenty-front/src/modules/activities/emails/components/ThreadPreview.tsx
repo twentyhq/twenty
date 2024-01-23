@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { useOpenMessageThreadRightDrawer } from '@/activities/emails/hooks/useOpenMessageThreadRightDrawer';
+import { useOpenThreadRightDrawer } from '@/activities/emails/hooks/useOpenThreadRightDrawer';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Avatar } from '@/users/components/Avatar';
 import { TimelineThread } from '~/generated/graphql';
@@ -84,7 +84,7 @@ type ThreadPreviewProps = {
 };
 
 export const ThreadPreview = ({ divider, thread }: ThreadPreviewProps) => {
-  const openMessageThreadRightDrawer = useOpenMessageThreadRightDrawer();
+  const openMessageThreadRightDrawer = useOpenThreadRightDrawer();
 
   return (
     <StyledCardContent

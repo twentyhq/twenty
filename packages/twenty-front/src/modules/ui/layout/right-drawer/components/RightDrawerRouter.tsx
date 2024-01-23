@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { RightDrawerMessageThread } from '@/activities/emails/right-drawer/RightDrawerMessageThread';
-import { RightDrawerMessageThreadTopBar } from '@/activities/emails/right-drawer/RightDrawerMessageThreadTopBar';
+import { RightDrawerThread } from '@/activities/emails/right-drawer/RightDrawerThread';
+import { RightDrawerThreadTopBar } from '@/activities/emails/right-drawer/RightDrawerThreadTopBar';
 import { RightDrawerCreateActivity } from '@/activities/right-drawer/components/create/RightDrawerCreateActivity';
 import { RightDrawerEditActivity } from '@/activities/right-drawer/components/edit/RightDrawerEditActivity';
 
@@ -42,9 +42,9 @@ export const RightDrawerRouter = () => {
       page = <RightDrawerEditActivity />;
       topBar = <RightDrawerActivityTopBar />;
       break;
-    case RightDrawerPages.MessageThread:
-      page = <RightDrawerMessageThread />;
-      topBar = <RightDrawerMessageThreadTopBar />;
+    case RightDrawerPages.ViewThread:
+      page = <RightDrawerThread />;
+      topBar = <RightDrawerThreadTopBar />;
       break;
     default:
       break;

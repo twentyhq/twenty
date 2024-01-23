@@ -11,7 +11,7 @@ const StyledContainer = styled.div`
   position: relative;
 `;
 
-export const RightDrawerMessageThread = () => {
+export const RightDrawerThread = () => {
   return (
     <StyledContainer>
       <></>
