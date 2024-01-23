@@ -252,7 +252,7 @@ export const RecordShowPage = () => {
                           key={record.id + fieldMetadataItem.id}
                           value={{
                             entityId: record.id,
-                            maxWidth: 272,
+                            maxWidth: 200,
                             recoilScopeId: record.id + fieldMetadataItem.id,
                             isLabelIdentifier: false,
                             fieldDefinition:
