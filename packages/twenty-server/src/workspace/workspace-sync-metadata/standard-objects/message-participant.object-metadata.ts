@@ -59,7 +59,6 @@ export class MessageParticipantObjectMetadata extends BaseObjectMetadata {
     description: 'Display Name',
     icon: 'IconUser',
   })
-  @IsNullable()
   displayName: string;
 
   @FieldMetadata({

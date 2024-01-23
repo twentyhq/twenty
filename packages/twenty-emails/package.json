@@ -1,0 +1,18 @@
+{
+  "name": "twenty-emails",
+  "version": "0.1.0",
+  "description": "",
+  "author": "",
+  "private": true,
+  "license": "AGPL-3.0",
+  "main": "./dist/index.js",
+  "scripts": {
+    "nx": "NX_DEFAULT_PROJECT=twenty-emails node ../../node_modules/nx/bin/nx.js",
+    "build": "tsup"
+  },
+  "engines": {
+    "node": "^18.17.1",
+    "npm": "please-use-yarn",
+    "yarn": "^4.0.2"
+  }
+}

@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { Account } from '@/accounts/types/Account';
+import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -13,7 +13,7 @@ import { SettingsAccountsEmptyStateCard } from './SettingsAccountsEmptyStateCard
 export const SettingsAccountsConnectedAccountsSection = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
-  const accounts = useFindManyRecords<Account>({
+  const accounts = useFindManyRecords<ConnectedAccount>({
     objectNameSingular: 'connectedAccount',
     filter: {
       accountOwnerId: {
