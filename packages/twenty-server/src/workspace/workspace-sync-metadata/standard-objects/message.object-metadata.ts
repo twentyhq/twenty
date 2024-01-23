@@ -64,11 +64,11 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Body',
-    description: 'Body',
+    label: 'Text',
+    description: 'Text',
     icon: 'IconMessage',
   })
-  body: string;
+  text: string;
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
