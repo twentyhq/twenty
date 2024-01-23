@@ -62,6 +62,8 @@ export class TimelineMessagingService {
       [personIds],
     );
 
+    console.log(messageThreads);
+
     const formattedMessageThreads = messageThreads.map((messageThread) => {
       return {
         read: true,
