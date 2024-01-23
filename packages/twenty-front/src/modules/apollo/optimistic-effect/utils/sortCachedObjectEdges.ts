@@ -31,13 +31,17 @@ export const sortCachedObjectEdges = ({
         orderByFieldName,
         recordFromCache,
       ) ?? null;
+    const isSubFieldFilter = isDefined(fieldValue) && !!orderBySubFieldName;
 
-    return isDefined(fieldValue) && orderBySubFieldName
-      ? readCacheField<string | number | null>(
-          orderBySubFieldName,
-          fieldValue as Reference | StoreObject,
-        ) ?? null
-      : (fieldValue as string | number | null);
+    if (!isSubFieldFilter) return fieldValue as string | number | null;
+
+    const subFieldValue =
+      readCacheField<string | number | null>(
+        orderBySubFieldName,
+        fieldValue as Reference | StoreObject,
+      ) ?? null;
+
+    return subFieldValue;
   };
 
   const orderByValue = orderBySubFieldValue || (orderByFieldValue as OrderBy);
