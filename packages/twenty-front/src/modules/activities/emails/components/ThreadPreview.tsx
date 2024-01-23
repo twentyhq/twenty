@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { useOpenThreadRightDrawer } from '@/activities/emails/right-drawer/hooks/useOpenThreadRightDrawer';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Avatar } from '@/users/components/Avatar';
 import { TimelineThread } from '~/generated/graphql';
@@ -11,6 +12,7 @@ const StyledCardContent = styled(CardContent)`
   gap: ${({ theme }) => theme.spacing(2)};
   height: ${({ theme }) => theme.spacing(12)};
   padding: ${({ theme }) => theme.spacing(0, 4)};
+  cursor: pointer;
 `;
 
 const StyledHeading = styled.div<{ unread: boolean }>`
@@ -81,24 +83,31 @@ type ThreadPreviewProps = {
   thread: TimelineThread;
 };
 
-export const ThreadPreview = ({ divider, thread }: ThreadPreviewProps) => (
-  <StyledCardContent divider={divider}>
-    <StyledHeading unread={!thread.read}>
-      <StyledAvatar
-        avatarUrl={thread.senderPictureUrl}
-        placeholder={thread.senderName}
-        type="rounded"
-      />
-      <StyledSenderName>{thread.senderName}</StyledSenderName>
-      <StyledThreadCount>{thread.numberOfMessagesInThread}</StyledThreadCount>
-    </StyledHeading>
+export const ThreadPreview = ({ divider, thread }: ThreadPreviewProps) => {
+  const openMessageThreadRightDrawer = useOpenThreadRightDrawer();
 
-    <StyledSubjectAndBody>
-      <StyledSubject unread={!thread.read}>{thread.subject}</StyledSubject>
-      <StyledBody>{thread.body}</StyledBody>
-    </StyledSubjectAndBody>
-    <StyledReceivedAt>
-      {formatToHumanReadableDate(thread.receivedAt)}
-    </StyledReceivedAt>
-  </StyledCardContent>
-);
+  return (
+    <StyledCardContent
+      onClick={() => openMessageThreadRightDrawer()}
+      divider={divider}
+    >
+      <StyledHeading unread={!thread.read}>
+        <StyledAvatar
+          avatarUrl={thread.senderPictureUrl}
+          placeholder={thread.senderName}
+          type="rounded"
+        />
+        <StyledSenderName>{thread.senderName}</StyledSenderName>
+        <StyledThreadCount>{thread.numberOfMessagesInThread}</StyledThreadCount>
+      </StyledHeading>
+
+      <StyledSubjectAndBody>
+        <StyledSubject unread={!thread.read}>{thread.subject}</StyledSubject>
+        <StyledBody>{thread.body}</StyledBody>
+      </StyledSubjectAndBody>
+      <StyledReceivedAt>
+        {formatToHumanReadableDate(thread.receivedAt)}
+      </StyledReceivedAt>
+    </StyledCardContent>
+  );
+};
