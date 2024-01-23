@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Reference } from '@apollo/client';
 
+import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -227,16 +228,16 @@ export const SettingsObjectNewFieldStep2 = () => {
           };
 
           modifyViewFromCache(view.id, {
-            viewFields: (viewFieldsRef, { readField }) => {
-              const edges = readField<{ node: Reference }[]>(
+            viewFields: (cachedViewFieldsConnection, { readField }) => {
+              const edges = readField<CachedObjectRecordEdge[]>(
                 'edges',
-                viewFieldsRef,
+                cachedViewFieldsConnection,
               );
 
-              if (!edges) return viewFieldsRef;
+              if (!edges) return cachedViewFieldsConnection;
 
               return {
-                ...viewFieldsRef,
+                ...cachedViewFieldsConnection,
                 edges: [...edges, { node: viewFieldToCreate }],
               };
             },
