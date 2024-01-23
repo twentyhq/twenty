@@ -23,11 +23,14 @@ import {
 } from 'src/core/feature-flag/feature-flag.entity';
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
+import { CleanInactiveWorkspacesCommandOptions } from 'src/workspace/cron/clean-inactive-workspaces/commands/clean-inactive-workspaces.command';
 
 const MILLISECONDS_IN_ONE_DAY = 1000 * 3600 * 24;
 
 @Injectable()
-export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
+export class CleanInactiveWorkspaceJob
+  implements MessageQueueJob<CleanInactiveWorkspacesCommandOptions>
+{
   private readonly logger = new Logger(CleanInactiveWorkspaceJob.name);
   private readonly inactiveDaysBeforeDelete;
   private readonly inactiveDaysBeforeEmail;
@@ -89,6 +92,7 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
   async warnWorkspaceUsers(
     dataSource: DataSourceEntity,
     daysSinceInactive: number,
+    isDryRun: boolean,
   ) {
     const workspaceMembers =
       await this.userService.loadWorkspaceMembers(dataSource);
@@ -103,12 +107,16 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
     )?.[0].displayName;
 
     this.logger.log(
-      `Sending workspace ${
+      `${this.getDryRunLog(isDryRun)}Sending workspace ${
         dataSource.workspaceId
       } inactive since ${daysSinceInactive} days emails to users ['${workspaceMembers
         .map((workspaceUser) => workspaceUser.email)
         .join(', ')}']`,
     );
+
+    if (isDryRun) {
+      return;
+    }
 
     workspaceMembers.forEach((workspaceMember) => {
       const emailData = {
@@ -137,10 +145,17 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
   async deleteWorkspace(
     dataSource: DataSourceEntity,
     daysSinceInactive: number,
+    isDryRun: boolean,
   ): Promise<void> {
     this.logger.log(
-      `Sending email to delete workspace ${dataSource.workspaceId} inactive since ${daysSinceInactive} days`,
+      `${this.getDryRunLog(isDryRun)}Sending email to delete workspace ${
+        dataSource.workspaceId
+      } inactive since ${daysSinceInactive} days`,
     );
+
+    if (isDryRun) {
+      return;
+    }
 
     const emailData = {
       daysSinceDead: daysSinceInactive - this.inactiveDaysBeforeDelete,
@@ -165,6 +180,7 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
   async processWorkspace(
     dataSource: DataSourceEntity,
     objectsMetadata: ObjectMetadataEntity[],
+    isDryRun: boolean,
   ): Promise<void> {
     const mostRecentUpdatedAt = await this.getMostRecentUpdatedAt(
       dataSource,
@@ -176,9 +192,9 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
     );
 
     if (daysSinceInactive > this.inactiveDaysBeforeDelete) {
-      await this.deleteWorkspace(dataSource, daysSinceInactive);
+      await this.deleteWorkspace(dataSource, daysSinceInactive, isDryRun);
     } else if (daysSinceInactive > this.inactiveDaysBeforeEmail) {
-      await this.warnWorkspaceUsers(dataSource, daysSinceInactive);
+      await this.warnWorkspaceUsers(dataSource, daysSinceInactive, isDryRun);
     }
   }
 
@@ -196,8 +212,14 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
     );
   }
 
-  async handle(): Promise<void> {
-    this.logger.log('Job running...');
+  getDryRunLog(isDryRun: boolean): string {
+    return isDryRun ? 'Dry-run mode: ' : '';
+  }
+
+  async handle(data: CleanInactiveWorkspacesCommandOptions): Promise<void> {
+    const isDryRun = data.dryRun || false;
+
+    this.logger.log(`${this.getDryRunLog(isDryRun)}Job running...`);
     if (!this.inactiveDaysBeforeDelete && !this.inactiveDaysBeforeEmail) {
       this.logger.log(
         `'WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION' and 'WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION' environment variables not set, please check this doc for more info: https://docs.twenty.com/start/self-hosting/environment-variables`,
@@ -215,10 +237,14 @@ export class CleanInactiveWorkspaceJob implements MessageQueueJob<undefined> {
         continue;
       }
 
-      this.logger.log(`Cleaning Workspace ${dataSource.workspaceId}`);
-      await this.processWorkspace(dataSource, objectsMetadata);
+      this.logger.log(
+        `${this.getDryRunLog(isDryRun)}Cleaning Workspace ${
+          dataSource.workspaceId
+        }`,
+      );
+      await this.processWorkspace(dataSource, objectsMetadata, isDryRun);
     }
 
-    this.logger.log('job done!');
+    this.logger.log(`${this.getDryRunLog(isDryRun)}job done!`);
   }
 }
