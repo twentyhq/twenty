@@ -6,13 +6,11 @@ import {
   ComparatorAction,
   FieldComparatorResult,
 } from 'src/workspace/workspace-sync-metadata/interfaces/comparator.interface';
-import {
-  MappedObjectMetadata,
-  MappedObjectMetadataEntity,
-} from 'src/workspace/workspace-sync-metadata/interfaces/mapped-metadata.interface';
 import { PartialFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
+import { PartialObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 
-import { filterIgnoredProperties } from 'src/workspace/workspace-sync-metadata/utils/sync-metadata.util';
+import { transformFieldMetadataForComparison } from 'src/workspace/workspace-sync-metadata/utils/sync-metadata.util';
+import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 
 const fieldPropertiesToIgnore = [
   'id',
@@ -20,81 +18,113 @@ const fieldPropertiesToIgnore = [
   'updatedAt',
   'objectMetadataId',
   'isActive',
-];
+] as const;
+
+const fieldPropertiesToStringify = [
+  'targetColumnMap',
+  'defaultValue',
+  'options',
+] as const;
 
 @Injectable()
 export class WorkspaceFieldComparator {
   constructor() {}
 
   public compare(
-    originalObjectMetadata: MappedObjectMetadataEntity,
-    standardObjectMetadata: MappedObjectMetadata,
+    originalObjectMetadata: ObjectMetadataEntity,
+    standardObjectMetadata: PartialObjectMetadata,
   ): FieldComparatorResult[] {
     const result: FieldComparatorResult[] = [];
     const fieldPropertiesToUpdateMap: Record<
       string,
       Partial<PartialFieldMetadata>
     > = {};
-
-    const partialOriginalFieldMetadataMap = Object.fromEntries(
-      Object.entries(originalObjectMetadata.fields).map(([key, value]) => {
-        if (value === null || typeof value !== 'object') {
-          return [key, value];
-        }
-
-        return [
-          key,
-          filterIgnoredProperties(
-            value,
-            fieldPropertiesToIgnore,
-            (property) => {
-              if (property !== null && typeof property === 'object') {
-                return JSON.stringify(property);
-              }
-
-              return property;
-            },
-          ),
-        ];
-      }),
+    const originalFieldMetadataMap = transformFieldMetadataForComparison(
+      originalObjectMetadata.fields,
+      {
+        fieldPropertiesToIgnore,
+        fieldPropertiesToStringify,
+      },
     );
+    const standardFieldMetadataMap = transformFieldMetadataForComparison(
+      standardObjectMetadata.fields,
+      {
+        fieldPropertiesToStringify,
+      },
+    );
+
+    // console.log('originalFieldMetadataMap: ', originalFieldMetadataMap);
+    // console.log('standardFieldMetadataMap: ', standardFieldMetadataMap);
 
     // Compare fields
     const fieldMetadataDifference = diff(
-      partialOriginalFieldMetadataMap,
-      standardObjectMetadata.fields,
+      originalFieldMetadataMap,
+      standardFieldMetadataMap,
     );
+
+    console.log('fieldMetadataDifference: ', fieldMetadataDifference);
 
     for (const difference of fieldMetadataDifference) {
       const fieldName = difference.path[0];
+      const originalFieldMetadata = originalObjectMetadata.fields.find(
+        (field) => field.name === fieldName,
+      );
+
+      if (!originalFieldMetadata) {
+        throw new Error(
+          `Field ${fieldName} not found in originalObjectMetadata`,
+        );
+      }
 
       switch (difference.type) {
         case 'CREATE': {
           result.push({
             action: ComparatorAction.CREATE,
             object: {
-              ...standardObjectMetadata.fields[fieldName],
+              ...originalFieldMetadata,
               objectMetadataId: originalObjectMetadata.id,
             },
           });
           break;
         }
         case 'CHANGE': {
-          const id = originalObjectMetadata.fields[fieldName].id;
+          const id = originalFieldMetadata.id;
           const property = difference.path[difference.path.length - 1];
+
+          // If the old value and the new value are both null, skip
+          // Database is storing null, and we can get undefined here
+          if (
+            difference.oldValue === null &&
+            (difference.value === null || difference.value === undefined)
+          ) {
+            break;
+          }
+
+          if (typeof property !== 'string') {
+            break;
+          }
 
           if (!fieldPropertiesToUpdateMap[id]) {
             fieldPropertiesToUpdateMap[id] = {};
           }
 
-          fieldPropertiesToUpdateMap[id][property] = difference.value;
+          // If the property is a stringified JSON, parse it
+          if (
+            (fieldPropertiesToStringify as readonly string[]).includes(property)
+          ) {
+            fieldPropertiesToUpdateMap[id][property] = JSON.parse(
+              difference.value,
+            );
+          } else {
+            fieldPropertiesToUpdateMap[id][property] = difference.value;
+          }
           break;
         }
         case 'REMOVE': {
           if (difference.path.length === 1) {
             result.push({
               action: ComparatorAction.DELETE,
-              object: originalObjectMetadata.fields[fieldName],
+              object: originalFieldMetadata,
             });
           }
           break;

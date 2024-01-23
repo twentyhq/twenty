@@ -1,4 +1,3 @@
-import { MappedObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/mapped-metadata.interface';
 import { PartialObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 import { PartialFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 
@@ -8,7 +7,8 @@ import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-
 
 export class WorkspaceSyncStorage {
   // Object metadata
-  private readonly _objectMetadataCreateCollection: MappedObjectMetadata[] = [];
+  private readonly _objectMetadataCreateCollection: PartialObjectMetadata[] =
+    [];
   private readonly _objectMetadataUpdateCollection: Partial<PartialObjectMetadata>[] =
     [];
   private readonly _objectMetadataDeleteCollection: ObjectMetadataEntity[] = [];
@@ -59,7 +59,7 @@ export class WorkspaceSyncStorage {
     return this._relationMetadataDeleteCollection;
   }
 
-  addCreateObjectMetadata(object: MappedObjectMetadata) {
+  addCreateObjectMetadata(object: PartialObjectMetadata) {
     this._objectMetadataCreateCollection.push(object);
   }
 

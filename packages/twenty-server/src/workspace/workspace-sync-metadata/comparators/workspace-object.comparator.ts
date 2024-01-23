@@ -7,13 +7,10 @@ import {
   ComparatorAction,
   ObjectComparatorResult,
 } from 'src/workspace/workspace-sync-metadata/interfaces/comparator.interface';
-import {
-  MappedObjectMetadata,
-  MappedObjectMetadataEntity,
-} from 'src/workspace/workspace-sync-metadata/interfaces/mapped-metadata.interface';
 import { PartialObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 
 import { filterIgnoredProperties } from 'src/workspace/workspace-sync-metadata/utils/sync-metadata.util';
+import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 
 const objectPropertiesToIgnore = [
   'id',
@@ -29,8 +26,8 @@ export class WorkspaceObjectComparator {
   constructor() {}
 
   public compare(
-    originalObjectMetadata: MappedObjectMetadataEntity | undefined,
-    standardObjectMetadata: MappedObjectMetadata,
+    originalObjectMetadata: ObjectMetadataEntity | undefined,
+    standardObjectMetadata: PartialObjectMetadata,
   ): ObjectComparatorResult {
     // If the object doesn't exist in the original metadata, we need to create it
     if (!originalObjectMetadata) {

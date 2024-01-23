@@ -22,6 +22,56 @@ export const filterIgnoredProperties = <T extends object>(
   ) as T;
 };
 
+type TransformToString<T, Keys extends keyof any> = {
+  [P in keyof T]: P extends Keys ? string : T[P];
+};
+
+export const transformFieldMetadataForComparison = <
+  T extends {
+    name: string;
+  },
+  Keys extends keyof T,
+>(
+  fieldMetadataCollection: T[],
+  options: {
+    fieldPropertiesToIgnore?: readonly Keys[];
+    fieldPropertiesToStringify?: readonly Keys[];
+  },
+): Record<string, TransformToString<T, Keys>> => {
+  const fieldPropertiesToIgnore = (options.fieldPropertiesToIgnore ??
+    []) as readonly string[];
+  const fieldPropertiesToStringify = (options.fieldPropertiesToStringify ??
+    []) as readonly string[];
+
+  const fieldMetadataMap = fieldMetadataCollection.reduce(
+    (acc, field) => {
+      // Ignore properties that are not relevant for comparison
+      if (fieldPropertiesToIgnore.includes(field.name)) {
+        return acc;
+      }
+
+      const transformedField = { ...field } as TransformToString<T, Keys>;
+
+      // Stringify properties that are not primitives
+      if (fieldPropertiesToStringify.includes(field.name)) {
+        // Order field value alphabetically to ensure consistent comparison
+        const orderedValue = Object.fromEntries(
+          Object.entries(field[field.name]).sort(),
+        );
+
+        transformedField[field.name] = JSON.stringify(orderedValue);
+      }
+
+      acc[field.name] = transformedField;
+
+      return acc;
+    },
+    {} as Record<string, TransformToString<T, Keys>>,
+  );
+
+  return fieldMetadataMap;
+};
+
 /**
  * This utility function converts an array of ObjectMetadataEntity objects into a map,
  * where the keys are the nameSingular properties of the objects.
@@ -31,28 +81,19 @@ export const filterIgnoredProperties = <T extends object>(
  * @returns A map of object metadata, with nameSingular as the key and the object as the value.
  */
 export const mapObjectMetadataByUniqueIdentifier = <
-  T extends { nameSingular: string; fields: U[] },
-  U extends { name: string },
+  T extends { nameSingular: string },
 >(
   arr: T[],
-): Record<string, Omit<T, 'fields'> & { fields: Record<string, U> }> => {
+): Record<string, T> => {
   return arr.reduce(
     (acc, curr) => {
       acc[curr.nameSingular] = {
         ...curr,
-        fields: curr.fields.reduce(
-          (acc, curr) => {
-            acc[curr.name] = curr;
-
-            return acc;
-          },
-          {} as Record<string, U>,
-        ),
       };
 
       return acc;
     },
-    {} as Record<string, Omit<T, 'fields'> & { fields: Record<string, U> }>,
+    {} as Record<string, T>,
   );
 };
 

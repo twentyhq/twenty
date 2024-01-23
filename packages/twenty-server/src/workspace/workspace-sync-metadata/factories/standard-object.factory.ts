@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceSyncContext } from 'src/workspace/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 import { PartialObjectMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 import { FeatureFlagMap } from 'src/core/feature-flag/interfaces/feature-flag-map.interface';
+import { PartialFieldMetadata } from 'src/workspace/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { standardObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects';
@@ -28,8 +29,8 @@ export class StandardObjectFactory {
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): PartialObjectMetadata | undefined {
     const objectMetadata = TypedReflect.getMetadata('objectMetadata', metadata);
-    const fieldMetadata =
-      TypedReflect.getMetadata('fieldMetadata', metadata) ?? {};
+    const fieldMetadataCollection =
+      TypedReflect.getMetadata('fieldMetadataCollection', metadata) ?? [];
 
     if (!objectMetadata) {
       throw new Error(
@@ -37,23 +38,33 @@ export class StandardObjectFactory {
       );
     }
 
-    if (isGatedAndNotEnabled(objectMetadata, workspaceFeatureFlagsMap)) {
+    if (isGatedAndNotEnabled(objectMetadata.gate, workspaceFeatureFlagsMap)) {
       return undefined;
     }
 
-    const fields = Object.values(fieldMetadata).filter(
-      (field) => !isGatedAndNotEnabled(field, workspaceFeatureFlagsMap),
+    const fields = fieldMetadataCollection.reduce(
+      // Omit gate as we don't want to store it in the DB
+      (acc, { gate, ...fieldMetadata }) => {
+        if (isGatedAndNotEnabled(gate, workspaceFeatureFlagsMap)) {
+          return acc;
+        }
+
+        acc.push({
+          ...fieldMetadata,
+          workspaceId: context.workspaceId,
+          isSystem: objectMetadata.isSystem || fieldMetadata.isSystem,
+        });
+
+        return acc;
+      },
+      [] as PartialFieldMetadata[],
     );
 
     return {
       ...objectMetadata,
       workspaceId: context.workspaceId,
       dataSourceId: context.dataSourceId,
-      fields: fields.map((field) => ({
-        ...field,
-        workspaceId: context.workspaceId,
-        isSystem: objectMetadata.isSystem || field.isSystem,
-      })),
+      fields,
     };
   }
 }

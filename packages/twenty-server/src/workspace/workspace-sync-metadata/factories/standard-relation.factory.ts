@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceSyncContext } from 'src/workspace/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 import { FeatureFlagMap } from 'src/core/feature-flag/interfaces/feature-flag-map.interface';
-import { MappedObjectMetadataEntity } from 'src/workspace/workspace-sync-metadata/interfaces/mapped-metadata.interface';
 
 import { BaseObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { standardObjectMetadata } from 'src/workspace/workspace-sync-metadata/standard-objects';
@@ -10,12 +9,13 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 import { isGatedAndNotEnabled } from 'src/workspace/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
 import { assert } from 'src/utils/assert';
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
+import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 
 @Injectable()
 export class StandardRelationFactory {
   create(
     context: WorkspaceSyncContext,
-    originalObjectMetadataMap: Record<string, MappedObjectMetadataEntity>,
+    originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<RelationMetadataEntity>[] {
     return standardObjectMetadata.flatMap((standardObjectMetadata) =>
@@ -31,15 +31,15 @@ export class StandardRelationFactory {
   private createRelationMetadata(
     standardObjectMetadata: typeof BaseObjectMetadata,
     context: WorkspaceSyncContext,
-    originalObjectMetadataMap: Record<string, MappedObjectMetadataEntity>,
+    originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<RelationMetadataEntity>[] {
     const objectMetadata = TypedReflect.getMetadata(
       'objectMetadata',
       standardObjectMetadata,
     );
-    const relationMetadata = TypedReflect.getMetadata(
-      'relationMetadata',
+    const relationMetadataCollection = TypedReflect.getMetadata(
+      'relationMetadataCollection',
       standardObjectMetadata,
     );
 
@@ -50,55 +50,61 @@ export class StandardRelationFactory {
     }
 
     if (
-      !relationMetadata ||
-      isGatedAndNotEnabled(objectMetadata, workspaceFeatureFlagsMap)
+      !relationMetadataCollection ||
+      isGatedAndNotEnabled(objectMetadata.gate, workspaceFeatureFlagsMap)
     ) {
       return [];
     }
 
-    return relationMetadata
+    return relationMetadataCollection
       .filter(
-        (relation) => !isGatedAndNotEnabled(relation, workspaceFeatureFlagsMap),
+        (relationMetadata) =>
+          !isGatedAndNotEnabled(
+            relationMetadata.gate,
+            workspaceFeatureFlagsMap,
+          ),
       )
-      .map((relation) => {
+      .map((relationMetadata) => {
         const fromObjectMetadata =
-          originalObjectMetadataMap[relation.fromObjectNameSingular];
+          originalObjectMetadataMap[relationMetadata.fromObjectNameSingular];
 
         assert(
           fromObjectMetadata,
-          `Object ${relation.fromObjectNameSingular} not found in DB 
+          `Object ${relationMetadata.fromObjectNameSingular} not found in DB 
         for relation FROM defined in class ${objectMetadata.nameSingular}`,
         );
 
         const toObjectMetadata =
-          originalObjectMetadataMap[relation.toObjectNameSingular];
+          originalObjectMetadataMap[relationMetadata.toObjectNameSingular];
 
         assert(
           toObjectMetadata,
-          `Object ${relation.toObjectNameSingular} not found in DB
+          `Object ${relationMetadata.toObjectNameSingular} not found in DB
         for relation TO defined in class ${objectMetadata.nameSingular}`,
         );
 
-        const fromFieldMetadata =
-          fromObjectMetadata?.fields[relation.fromFieldMetadataName];
+        const fromFieldMetadata = fromObjectMetadata?.fields.find(
+          (field) => field.name === relationMetadata.fromFieldMetadataName,
+        );
 
         assert(
           fromFieldMetadata,
-          `Field ${relation.fromFieldMetadataName} not found in object ${relation.fromObjectNameSingular}
+          `Field ${relationMetadata.fromFieldMetadataName} not found in object ${relationMetadata.fromObjectNameSingular}
         for relation FROM defined in class ${objectMetadata.nameSingular}`,
         );
 
-        const toFieldMetadata =
-          toObjectMetadata?.fields[relation.toFieldMetadataName];
+        const toFieldMetadata = toObjectMetadata?.fields.find(
+          (field) => field.name === relationMetadata.toFieldMetadataName,
+        );
 
         assert(
           toFieldMetadata,
-          `Field ${relation.toFieldMetadataName} not found in object ${relation.toObjectNameSingular}
+          `Field ${relationMetadata.toFieldMetadataName} not found in object ${relationMetadata.toObjectNameSingular}
         for relation TO defined in class ${objectMetadata.nameSingular}`,
         );
 
         return {
-          relationType: relation.type,
+          relationType: relationMetadata.type,
           fromObjectMetadataId: fromObjectMetadata?.id,
           toObjectMetadataId: toObjectMetadata?.id,
           fromFieldMetadataId: fromFieldMetadata?.id,

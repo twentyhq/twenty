@@ -11,7 +11,6 @@ import {
   FieldMetadataEntity,
   FieldMetadataType,
 } from 'src/metadata/field-metadata/field-metadata.entity';
-import { convertStringifiedFieldsToJSON } from 'src/workspace/workspace-sync-metadata/utils/sync-metadata.util';
 import { RelationMetadataEntity } from 'src/metadata/relation-metadata/relation-metadata.entity';
 import { FieldMetadataComplexOptions } from 'src/metadata/field-metadata/dtos/options.input';
 import { WorkspaceSyncStorage } from 'src/workspace/workspace-sync-metadata/storage/workspace-sync.storage';
@@ -30,18 +29,19 @@ export class WorkspaceMetadataUpdaterService {
     const objectMetadataRepository =
       manager.getRepository(ObjectMetadataEntity);
 
+    console.log('1');
     /**
      * Create object metadata
      */
     const createdPartialObjectMetadataCollection =
       await objectMetadataRepository.save(
-        storage.objectMetadataCreateCollection.map((object) => ({
-          ...object,
+        storage.objectMetadataCreateCollection.map((objectMetadata) => ({
+          ...objectMetadata,
           isActive: true,
-          fields: Object.values(object.fields).map((field) =>
+          fields: objectMetadata.fields.map((field) =>
             this.prepareFieldMetadataForCreation(field),
           ),
-        })),
+        })) as DeepPartial<ObjectMetadataEntity>[],
       );
     const identifiers = createdPartialObjectMetadataCollection.map(
       (object) => object.id,
@@ -53,6 +53,8 @@ export class WorkspaceMetadataUpdaterService {
         relations: ['dataSource', 'fields'],
       },
     );
+
+    console.log('2');
 
     /**
      * Update object metadata
@@ -82,15 +84,12 @@ export class WorkspaceMetadataUpdaterService {
    * TODO: Refactor this
    */
   private prepareFieldMetadataForCreation(field: PartialFieldMetadata) {
-    const convertedField = convertStringifiedFieldsToJSON(field);
-
     return {
-      ...convertedField,
-      ...(convertedField.type === FieldMetadataType.SELECT &&
-      convertedField.options
+      ...field,
+      ...(field.type === FieldMetadataType.SELECT && field.options
         ? {
             options: this.generateUUIDForNewSelectFieldOptions(
-              convertedField.options as FieldMetadataComplexOptions[],
+              field.options as FieldMetadataComplexOptions[],
             ),
           }
         : {}),
@@ -122,16 +121,14 @@ export class WorkspaceMetadataUpdaterService {
     const createdFieldMetadataCollection = await fieldMetadataRepository.save(
       storage.fieldMetadataCreateCollection.map((field) =>
         this.prepareFieldMetadataForCreation(field),
-      ),
+      ) as DeepPartial<FieldMetadataEntity>[],
     );
 
     /**
      * Update field metadata
      */
     const updatedFieldMetadataCollection = await fieldMetadataRepository.save(
-      storage.fieldMetadataUpdateCollection.map((field) =>
-        convertStringifiedFieldsToJSON(field),
-      ),
+      storage.fieldMetadataUpdateCollection as DeepPartial<FieldMetadataEntity>[],
     );
 
     /**
@@ -152,8 +149,10 @@ export class WorkspaceMetadataUpdaterService {
     }
 
     return {
-      createdFieldMetadataCollection,
-      updatedFieldMetadataCollection,
+      createdFieldMetadataCollection:
+        createdFieldMetadataCollection as FieldMetadataEntity[],
+      updatedFieldMetadataCollection:
+        updatedFieldMetadataCollection as FieldMetadataEntity[],
     };
   }
 

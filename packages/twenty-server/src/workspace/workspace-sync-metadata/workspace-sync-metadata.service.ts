@@ -1,4 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+
+import { DataSource } from 'typeorm';
 
 import { WorkspaceSyncContext } from 'src/workspace/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 
@@ -13,6 +16,8 @@ export class WorkspaceSyncMetadataService {
   private readonly logger = new Logger(WorkspaceSyncMetadataService.name);
 
   constructor(
+    @InjectDataSource('metadata')
+    private readonly metadataDataSource: DataSource,
     private readonly featureFlagFactory: FeatureFlagFactory,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceSyncObjectMetadataService: WorkspaceSyncObjectMetadataService,
@@ -31,6 +36,12 @@ export class WorkspaceSyncMetadataService {
     context: WorkspaceSyncContext,
   ) {
     this.logger.log('Syncing standard objects and fields metadata');
+    const queryRunner = this.metadataDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    const manager = queryRunner.manager;
 
     try {
       const storage = new WorkspaceSyncStorage();
@@ -41,28 +52,21 @@ export class WorkspaceSyncMetadataService {
 
       this.logger.log('Syncing standard objects and fields metadata');
 
-      /**
-       * BE CAREFUL !
-       * Actually two transactions are created here:
-       * one for the sync of the standard objects and fields
-       * and one for the migration execution.
-       * This is because we need to retrieve the objectMetadata for the relation sync.
-       * TODO: We should avoid this, and instead recreated an objectMetadataCollection based
-       * on the save command that has been executed.
-       * This would allow us to run the migration in the same transaction.
-       * And rollback the migration if the sync fails.
-       */
       await this.workspaceSyncObjectMetadataService.synchronize(
         context,
+        manager,
         storage,
         workspaceFeatureFlagsMap,
       );
 
       await this.workspaceSyncRelationMetadataService.synchronize(
         context,
+        manager,
         storage,
         workspaceFeatureFlagsMap,
       );
+
+      await queryRunner.commitTransaction();
 
       // Execute migrations
       await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
@@ -70,6 +74,9 @@ export class WorkspaceSyncMetadataService {
       );
     } catch (error) {
       console.error('Sync of standard objects failed with:', error);
+      await queryRunner.rollbackTransaction();
+    } finally {
+      await queryRunner.release();
     }
   }
 }
