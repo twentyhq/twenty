@@ -12,7 +12,7 @@ import {
 } from '@/ui/display/typography/components/H1Title';
 import { Card } from '@/ui/layout/card/components/Card';
 import { Section } from '@/ui/layout/section/components/Section';
-import { TimelineThread } from '~/generated/graphql';
+import { Scalars, TimelineThread } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -49,13 +49,31 @@ export const Threads = ({ entity }: { entity: ActivityTargetableObject }) => {
     return;
   }
 
-  const timelineThreads: TimelineThread[] =
+  const fetchedTimelineThreads: TimelineThread[] =
     threads.data[
       entity.targetObjectNameSingular === CoreObjectNameSingular.Person
         ? 'getTimelineThreadsFromPersonId'
         : 'getTimelineThreadsFromCompanyId'
     ];
 
+  const testTimelineThreads: TimelineThread[] = [
+    {
+      __typename: 'TimelineThread',
+      body: 'This is a test email' as Scalars['String'],
+      numberOfMessagesInThread: 5 as Scalars['Float'],
+      read: true as Scalars['Boolean'],
+      receivedAt: new Date().toISOString() as Scalars['DateTime'],
+      senderName: 'Thom Trp' as Scalars['String'],
+      senderPictureUrl:
+        'https://favicon.twenty.com/qonto.com' as Scalars['String'],
+      subject: 'Test email' as Scalars['String'],
+    },
+  ];
+
+  const timelineThreads =
+    fetchedTimelineThreads.length > 0
+      ? fetchedTimelineThreads
+      : testTimelineThreads;
   return (
     <StyledContainer>
       <Section>
