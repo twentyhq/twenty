@@ -50,7 +50,7 @@ export const Threads = ({ entity }: { entity: ActivityTargetableObject }) => {
 
   const timelineThreads: TimelineThread[] =
     threads.data[
-      entity.targetObjectNameSingular === 'Person'
+      entity.targetObjectNameSingular === 'person'
         ? 'getTimelineThreadsFromPersonId'
         : 'getTimelineThreadsFromCompanyId'
     ];

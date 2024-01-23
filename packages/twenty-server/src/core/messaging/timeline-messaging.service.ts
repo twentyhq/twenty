@@ -30,7 +30,7 @@ export class TimelineMessagingService {
         subquery.*,
         message_count,
         last_message_subject,
-        last_message_body,
+        last_message_text,
         last_message_received_at,
         last_message_participant_handle,
         last_message_participant_displayName
@@ -39,7 +39,7 @@ export class TimelineMessagingService {
             mt.*,
             COUNT(m."id") OVER (PARTITION BY mt."id") AS message_count,
             FIRST_VALUE(m."subject") OVER (PARTITION BY mt."id" ORDER BY m."receivedAt" DESC) AS last_message_subject,
-            FIRST_VALUE(m."body") OVER (PARTITION BY mt."id" ORDER BY m."receivedAt" DESC) AS last_message_body,
+            FIRST_VALUE(m."text") OVER (PARTITION BY mt."id" ORDER BY m."receivedAt" DESC) AS last_message_text,
             FIRST_VALUE(m."receivedAt") OVER (PARTITION BY mt."id" ORDER BY m."receivedAt" DESC) AS last_message_received_at,
             FIRST_VALUE(mr."handle") OVER (PARTITION BY mt."id" ORDER BY m."receivedAt" DESC) AS last_message_participant_handle,
             FIRST_VALUE(mr."displayName") OVER (PARTITION BY mt."id" ORDER BY m."receivedAt" DESC) AS last_message_participant_displayName,
@@ -69,7 +69,7 @@ export class TimelineMessagingService {
         senderPictureUrl: '',
         numberOfMessagesInThread: messageThread.message_count,
         subject: messageThread.last_message_subject,
-        body: messageThread.last_message_body,
+        body: messageThread.last_message_text,
         receivedAt: messageThread.last_message_received_at,
       };
     });

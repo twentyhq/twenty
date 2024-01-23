@@ -91,7 +91,7 @@ export class MessagingUtilsService {
     const receivedAt = new Date(parseInt(message.internalDate));
 
     await manager.query(
-      `INSERT INTO ${dataSourceMetadata.schema}."message" ("id", "headerMessageId", "subject", "receivedAt", "direction", "messageThreadId", "body", "html") VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      `INSERT INTO ${dataSourceMetadata.schema}."message" ("id", "headerMessageId", "subject", "receivedAt", "direction", "messageThreadId", "text", "html") VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
         newMessageId,
         message.headerMessageId,
