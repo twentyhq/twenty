@@ -19,58 +19,105 @@ export class TimelineMessagingService {
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
-    // 10 first threads This hard limit is just for the POC, we will implement pagination later
     const messageThreads = await workspaceDataSource?.query(
       `
-    SELECT 
-        subquery.*,
-        message_count,
-        last_message_subject,
-        last_message_body,
-        last_message_received_at,
-        last_message_participant_handle,
-        last_message_participant_displayName
-    FROM (
-        SELECT 
-            mt.*,
-            COUNT(m."id") OVER (PARTITION BY mt."id") AS message_count,
-            FIRST_VALUE(m."subject") OVER (PARTITION BY mt."id" ORDER BY m."receivedAt" DESC) AS last_message_subject,
-            FIRST_VALUE(m."body") OVER (PARTITION BY mt."id" ORDER BY m."receivedAt" DESC) AS last_message_body,
-            FIRST_VALUE(m."receivedAt") OVER (PARTITION BY mt."id" ORDER BY m."receivedAt" DESC) AS last_message_received_at,
-            FIRST_VALUE(mr."handle") OVER (PARTITION BY mt."id" ORDER BY m."receivedAt" DESC) AS last_message_participant_handle,
-            FIRST_VALUE(mr."displayName") OVER (PARTITION BY mt."id" ORDER BY m."receivedAt" DESC) AS last_message_participant_displayName,
-            ROW_NUMBER() OVER (PARTITION BY mt."id" ORDER BY m."receivedAt" DESC) AS rn
-        FROM 
-            ${dataSourceMetadata.schema}."messageThread" mt
-        LEFT JOIN 
-            ${dataSourceMetadata.schema}."message" m ON mt."id" = m."messageThreadId"
-        LEFT JOIN 
-            ${dataSourceMetadata.schema}."messageParticipant" mr ON m."id" = mr."messageId"
-        WHERE 
-            mr."personId" IN (SELECT unnest($1::uuid[]))
-    ) AS subquery
-    WHERE 
-        subquery.rn = 1
-    ORDER BY 
-        subquery.last_message_received_at DESC
-    LIMIT 10;
-`,
+      SELECT "messageThread".id
+      FROM
+          ${dataSourceMetadata.schema}."message" message 
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."messageThread" "messageThread" ON "messageThread".id = message."messageThreadId"
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."messageParticipant" "messageParticipant" ON "messageParticipant"."messageId" = message.id
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."person" person ON person."id" = "messageParticipant"."personId"
+      LEFT JOIN
+          ${dataSourceMetadata.schema}."workspaceMember" "workspaceMember" ON "workspaceMember".id = "messageParticipant"."workspaceMemberId"
+      WHERE
+          person."id" IN ANY($1)
+      GROUP BY
+          "messageThread".id,
+          message.id
+      ORDER BY
+          message."receivedAt" DESC
+        `,
       [personIds],
     );
 
-    const formattedMessageThreads = messageThreads.map((messageThread) => {
-      return {
-        read: true,
-        senderName: messageThread.last_message_participant_handle,
-        senderPictureUrl: '',
-        numberOfMessagesInThread: messageThread.message_count,
-        subject: messageThread.last_message_subject,
-        body: messageThread.last_message_body,
-        receivedAt: messageThread.last_message_received_at,
+    const messageThreadIds = messageThreads.map(
+      (messageThread) => messageThread.id,
+    );
+
+    const threadMessagesFromActiveParticipants =
+      await workspaceDataSource?.query(
+        `
+      SELECT "messageThread".id AS "messageThreadId",
+        message.id AS "messageId",
+        message."receivedAt",
+        message.body,
+        message."subject",
+        "messageParticipant".id AS "messageParticipantId",
+        "messageParticipant".handle,
+        FROM
+        ${dataSourceMetadata.schema}."message" message 
+        LEFT JOIN
+            ${dataSourceMetadata.schema}."messageThread" "messageThread" ON "messageThread".id = message."messageThreadId"
+        LEFT JOIN
+            (SELECT * FROM ${dataSourceMetadata.schema}."messageParticipant" WHERE "messageParticipant".role = 'from') "messageParticipant" ON "messageParticipant"."messageId" = message.id
+        LEFT JOIN
+            ${dataSourceMetadata.schema}."person" person ON person."id" = "messageParticipant"."personId"
+        LEFT JOIN
+            ${dataSourceMetadata.schema}."workspaceMember" "workspaceMember" ON "workspaceMember".id = "messageParticipant"."workspaceMemberId"
+        WHERE
+            "messageThread".id IN ANY($1)
+        ORDER BY
+            message."receivedAt" DESC
+        `,
+        [messageThreadIds],
+      );
+
+    const threadParticipantsByThreadId = messageThreadIds.reduce(
+      (messageThreadIdAcc, messageThreadId) => {
+        const threadMessages = threadMessagesFromActiveParticipants.filter(
+          (threadMessage) => threadMessage.messageThreadId === messageThreadId,
+        );
+
+        const threadParticipants = threadMessages.reduce(
+          (threadMessageAcc, threadMessage) => {
+            const threadParticipant = threadMessageAcc[threadMessage.handle];
+
+            if (threadParticipant) {
+              return threadMessageAcc;
+            }
+
+            threadMessageAcc[threadMessage.handle] = {
+              id: threadMessage.personId,
+              handle: threadMessage.handle,
+            };
+
+            return threadMessageAcc;
+          },
+          {},
+        );
+
+        messageThreadIdAcc[messageThreadId] = Object.values(threadParticipants);
+      },
+      {},
+    );
+
+    const timelineThreads = messageThreads.map((messageThread) => {
+      const threadParticipants = threadParticipantsByThreadId[messageThread.id];
+
+      const timelineThread = {
+        id: messageThread.id,
+        firtstParticipant: threadParticipants[0],
+        lastTwoParticipants: threadParticipants.slice(-2),
+        participantCount: threadParticipants.length,
       };
+
+      return timelineThread;
     });
 
-    return formattedMessageThreads;
+    return timelineThreads;
   }
 
   async getMessagesFromCompanyId(workspaceId: string, companyId: string) {
