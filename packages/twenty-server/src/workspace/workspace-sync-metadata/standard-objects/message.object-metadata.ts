@@ -72,8 +72,8 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     type: FieldMetadataType.TEXT,
-    label: 'Body',
-    description: 'Body',
+    label: 'Html',
+    description: 'Html',
     icon: 'IconMessage',
   })
   html: string;
