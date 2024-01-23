@@ -10,7 +10,6 @@ import {
   GmailMessage,
   Participant,
 } from 'src/workspace/messaging/types/gmailMessage';
-import { GmailThread } from 'src/workspace/messaging/types/gmailThread';
 import { MessageQuery } from 'src/workspace/messaging/types/messageOrThreadQuery';
 
 @Injectable()
@@ -26,17 +25,6 @@ export class MessagingUtilsService {
     return messageExternalIds.map((messageId) => ({
       uri: '/gmail/v1/users/me/messages/' + messageId + '?format=RAW',
     }));
-  }
-
-  public getThreadsFromMessages(messages: GmailMessage[]): GmailThread[] {
-    return messages.reduce((acc, message) => {
-      acc.push({
-        id: message.messageThreadExternalId,
-        subject: message.subject,
-      });
-
-      return acc;
-    }, [] as GmailThread[]);
   }
 
   public async saveMessages(
@@ -189,20 +177,6 @@ export class MessagingUtilsService {
         ],
       );
     }
-  }
-
-  public async getMessageChannelMessages(
-    messageExternalIds: string,
-    connectedAccountId: string,
-    dataSourceMetadata: DataSourceEntity,
-    workspaceDataSource: DataSource,
-  ): Promise<any[]> {
-    const messageChannelMessage = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."messageChannelMessage" WHERE "messageExternalId" IN $1 AND "messageChannelId" = $2 LIMIT 1`,
-      [messageExternalIds, connectedAccountId],
-    );
-
-    return messageChannelMessage;
   }
 
   public async deleteMessageChannelMessages(
