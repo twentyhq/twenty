@@ -166,7 +166,10 @@ export class AuthResolver {
     const resetToken =
       await this.tokenService.generatePasswordResetToken(email);
 
-    return await this.tokenService.sendEmailPasswordResetLink(resetToken, email);
+    return await this.tokenService.sendEmailPasswordResetLink(
+      resetToken,
+      email,
+    );
   }
 
   @Mutation(() => InvalidatePassword)

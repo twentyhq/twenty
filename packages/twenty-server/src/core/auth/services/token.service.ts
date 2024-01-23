@@ -19,6 +19,7 @@ import { Repository } from 'typeorm';
 import { Request } from 'express';
 import { ExtractJwt } from 'passport-jwt';
 import { render } from '@react-email/render';
+import { PasswordResetLinkEmail } from 'twenty-emails';
 
 import {
   JwtAuthStrategy,
@@ -36,7 +37,6 @@ import { RefreshToken } from 'src/core/refresh-token/refresh-token.entity';
 import { Workspace } from 'src/core/workspace/workspace.entity';
 import { ValidatePasswordResetToken } from 'src/core/auth/dto/validate-password-reset-token.entity';
 import { EmailService } from 'src/integrations/email/email.service';
-import { PasswordResetLinkEmail } from 'twenty-emails';
 import { InvalidatePassword } from 'src/core/auth/dto/invalidate-password.entity';
 import { EmailPasswordResetLink } from 'src/core/auth/dto/email-password-reset-link.entity';
 

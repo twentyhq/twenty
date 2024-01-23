@@ -11,6 +11,7 @@ import FileType from 'file-type';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 import { render } from '@react-email/components';
+import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 
 import { FileFolder } from 'src/core/file/interfaces/file-folder.interface';
 
@@ -31,7 +32,6 @@ import { WorkspaceManagerService } from 'src/workspace/workspace-manager/workspa
 import { getImageBufferFromUrl } from 'src/utils/image';
 import { FileUploadService } from 'src/core/file/services/file-upload.service';
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
-import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { EmailService } from 'src/integrations/email/email.service';
 import { UpdatePassword } from 'src/core/auth/dto/update-password.entity';
 
