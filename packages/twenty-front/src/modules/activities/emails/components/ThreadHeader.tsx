@@ -3,10 +3,11 @@ import styled from '@emotion/styled';
 import { IconMail } from '@/ui/display/icon';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
-interface ThreadHeaderProps {
+
+type ThreadHeaderProps = {
   subject: string;
-  lastMessageSentAt: Date;
-}
+  lastMessageSentAt: string;
+};
 
 const StyledContainer = styled.div`
   align-items: flex-start;
