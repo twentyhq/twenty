@@ -8,9 +8,11 @@ COPY ./.yarnrc.yml .
 COPY ./.yarn/releases /app/.yarn/releases
 COPY ./tools/eslint-rules /app/tools/eslint-rules
 COPY ./packages/twenty-server /app/packages/twenty-server
-RUN yarn
 
-RUN yarn nx build twenty-server
+WORKDIR /app/packages/twenty-server
+RUN yarn workspaces focus
+
+RUN yarn build
 
 WORKDIR /app/packages/twenty-server
 
