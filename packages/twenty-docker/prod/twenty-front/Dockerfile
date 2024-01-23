@@ -1,3 +1,4 @@
+
 FROM node:18.17.1-alpine as twenty-front-build
 
 ARG REACT_APP_SERVER_BASE_URL
@@ -12,6 +13,7 @@ COPY ./.yarnrc.yml .
 COPY ./.yarn/releases /app/.yarn/releases
 COPY ./tools/eslint-rules /app/tools/eslint-rules
 COPY ./packages/twenty-front /app/packages/twenty-front
+COPY ./packages/twenty-emails /app/packages/twenty-emails
 
 RUN yarn
 RUN yarn nx build twenty-front

@@ -9,6 +9,7 @@ COPY ./yarn.lock .
 COPY ./.yarnrc.yml .
 COPY ./.yarn/releases /app/.yarn/releases
 COPY ./packages/twenty-docs/package.json /app/packages/twenty-docs/package.json
+COPY ./packages/twenty-docs /app/packages/twenty-docs
 RUN yarn 
 
 COPY ./packages/twenty-docs /app/packages/twenty-docs
