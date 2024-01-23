@@ -1,28 +1,38 @@
 import * as React from 'react';
+import { format } from 'date-fns';
 
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
 import { BaseEmail } from 'src/components/BaseEmail';
-import { HighlightedText } from 'src/components/HighlightedText';
+import { CallToAction } from 'src/components/CallToAction';
 
 type PasswordUpdateNotifyEmailData = {
     userName: string;
+    email: string;
+    link: string;
 };
 
 export const PasswordUpdateNotifyEmail = ({
     userName,
+    email,
+    link,
 }: PasswordUpdateNotifyEmailData) => {
-    const helloString = userName?.length > 1 ? `Hello ${userName}` : 'Hello';
+    const helloString = userName?.length > 1 ? `Dear ${userName}` : 'Dear';
     return (
         <BaseEmail>
-            <Title value="You changed your password" />
-            <HighlightedText value="Your password changed" />
+            <Title value="Password updated" />
             <MainText>
                 {helloString},
                 <br />
-                If you didn't change your password, please contact your workspace administrator right away.
+                <br />
+                This is a confirmation that password for your account ({email}) was successfully changed on
+                {format(new Date(), 'MMMM d, yyyy')}.
+                <br />
+                <br />
+                If you did not initiate this change, please contact your workspace owner immediately.
                 <br />
             </MainText>
+            <CallToAction value="Connect to Twenty" href={link} />
         </BaseEmail>
     );
 }

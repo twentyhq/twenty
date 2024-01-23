@@ -271,6 +271,8 @@ export class AuthService {
 
     const emailTemplate = PasswordUpdateNotifyEmail({
       userName: `${user.firstName} ${user.lastName}`,
+      email: user.email,
+      link: this.environmentService.getFrontBaseUrl(),
     });
 
     const html = render(emailTemplate, {
@@ -283,7 +285,7 @@ export class AuthService {
     this.emailService.send({
       from: `${this.environmentService.getEmailFromName()} <${this.environmentService.getEmailFromAddress()}>`,
       to: user.email,
-      subject: 'Password changed',
+      subject: 'Your Password Has Been Successfully Changed',
       text,
       html,
     });
