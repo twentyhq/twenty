@@ -7,6 +7,10 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { SaveConnectedAccountInput } from 'src/core/auth/dto/save-connected-account';
 import { MessageQueue } from 'src/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/integrations/message-queue/services/message-queue.service';
+import {
+  GmailFullSyncJob,
+  GmailFullSyncJobData,
+} from 'src/workspace/messaging/jobs/gmail-full-sync.job';
 
 @Injectable()
 export class GoogleGmailService {
@@ -70,17 +74,17 @@ export class GoogleGmailService {
       );
     });
 
-    // await this.messageQueueService.add<GmailFullSyncJobData>(
-    //   GmailFullSyncJob.name,
-    //   {
-    //     workspaceId,
-    //     connectedAccountId,
-    //   },
-    //   {
-    //     id: connectedAccountId,
-    //     retryLimit: 2,
-    //   },
-    // );
+    await this.messageQueueService.add<GmailFullSyncJobData>(
+      GmailFullSyncJob.name,
+      {
+        workspaceId,
+        connectedAccountId,
+      },
+      {
+        id: connectedAccountId,
+        retryLimit: 2,
+      },
+    );
 
     return;
   }

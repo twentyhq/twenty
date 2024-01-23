@@ -112,7 +112,7 @@ export class GmailPartialSyncService {
     }
 
     const gmailMessageChannel = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."messageChannel" WHERE "connectedAccountId" = $1 AND "type" = 'email'`,
+      `SELECT * FROM ${dataSourceMetadata.schema}."messageChannel" WHERE "connectedAccountId" = $1 AND "type" = 'email' LIMIT 1`,
       [connectedAccountId],
     );
 
