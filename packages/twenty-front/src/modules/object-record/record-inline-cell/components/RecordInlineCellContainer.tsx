@@ -3,6 +3,7 @@ import { Tooltip } from 'react-tooltip';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import kebabCase from 'lodash.kebabcase';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
@@ -139,7 +140,7 @@ export const RecordInlineCellContainer = ({
       onMouseLeave={handleContainerMouseLeave}
     >
       {(!!IconLabel || !!label) && (
-        <StyledLabelAndIconContainer id={label}>
+        <StyledLabelAndIconContainer id={kebabCase(label)}>
           {IconLabel && (
             <StyledIconContainer>
               <IconLabel stroke={theme.icon.stroke.sm} />
@@ -150,14 +151,16 @@ export const RecordInlineCellContainer = ({
               <EllipsisDisplay maxWidth={labelWidth}>{label}</EllipsisDisplay>
             </StyledLabelContainer>
           )}
-          <StyledTooltip
-            anchorSelect={`#${label}`}
-            content={label}
-            clickable
-            noArrow
-            place="left"
-            positionStrategy="fixed"
-          />
+          {!showLabel && (
+            <StyledTooltip
+              anchorSelect={`#${kebabCase(label)}`}
+              content={label}
+              clickable
+              noArrow
+              place="left"
+              positionStrategy="fixed"
+            />
+          )}
         </StyledLabelAndIconContainer>
       )}
       <StyledValueContainer>
