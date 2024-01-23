@@ -1,4 +1,3 @@
-
 FROM node:18.17.1-alpine as twenty-front-build
 
 ARG REACT_APP_SERVER_BASE_URL
