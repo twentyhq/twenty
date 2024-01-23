@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
-import { RightDrawerThread } from '@/activities/emails/right-drawer/RightDrawerThread';
-import { RightDrawerThreadTopBar } from '@/activities/emails/right-drawer/RightDrawerThreadTopBar';
+import { RightDrawerThread } from '@/activities/emails/right-drawer/components/RightDrawerThread';
+import { RightDrawerThreadTopBar } from '@/activities/emails/right-drawer/components/RightDrawerThreadTopBar';
 import { RightDrawerCreateActivity } from '@/activities/right-drawer/components/create/RightDrawerCreateActivity';
 import { RightDrawerEditActivity } from '@/activities/right-drawer/components/edit/RightDrawerEditActivity';
 

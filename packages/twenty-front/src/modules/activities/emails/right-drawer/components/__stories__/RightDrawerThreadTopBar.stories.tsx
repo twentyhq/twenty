@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { RightDrawerThreadTopBar } from '@/activities/emails/right-drawer/RightDrawerThreadTopBar';
+import { RightDrawerThreadTopBar } from '@/activities/emails/right-drawer/components/RightDrawerThreadTopBar';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 

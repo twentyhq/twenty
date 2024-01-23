@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { useOpenThreadRightDrawer } from '@/activities/emails/hooks/useOpenThreadRightDrawer';
+import { useOpenThreadRightDrawer } from '@/activities/emails/right-drawer/hooks/useOpenThreadRightDrawer';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Avatar } from '@/users/components/Avatar';
 import { TimelineThread } from '~/generated/graphql';
