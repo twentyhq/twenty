@@ -16,9 +16,10 @@ COPY ./packages/twenty-emails /app/packages/twenty-emails
 COPY ./packages/twenty-front/package.json /app/packages/twenty-front/package.json
 
 RUN yarn
-RUN yarn nx build twenty-front
 
 COPY ./packages/twenty-front /app/packages/twenty-front
+RUN yarn nx build twenty-front
+
 
 FROM node:18.17.1-alpine as twenty-front
 

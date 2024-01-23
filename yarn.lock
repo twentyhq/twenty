@@ -42370,6 +42370,11 @@ __metadata:
 "twenty-emails@workspace:*, twenty-emails@workspace:packages/twenty-emails":
   version: 0.0.0-use.local
   resolution: "twenty-emails@workspace:packages/twenty-emails"
+  dependencies:
+    "@react-email/components": "npm:0.0.12"
+    "@types/react": "npm:^18.2.39"
+    tsup: "npm:^8.0.1"
+    typescript: "npm:^5.3.3"
   languageName: unknown
   linkType: soft
 
