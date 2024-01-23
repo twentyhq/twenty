@@ -301,7 +301,7 @@ export class EnvironmentService {
   }
 
   getLoggedInLongLimit(): number {
-    return this.configService.get<number>('LOGGED_IN_LONG_LIMIT') ?? 3;
+    return this.configService.get<number>('LOGGED_IN_LONG_LIMIT') ?? 20;
   }
 
   getNonLoggedInTtl(): number {

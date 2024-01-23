@@ -8,7 +8,7 @@ import { YogaDriver, YogaDriverConfig } from '@graphql-yoga/nestjs';
 
 import { GraphQLConfigService } from 'src/graphql-config.service';
 import { ThrottlerConfigService } from 'src/throttler-config.service';
-import { GqlHttpThrottlerGuard } from 'src/guards/gql-throttler.guard';
+import { GqlHttpThrottlerGuard } from 'src/guards/gql-http-throttler.guard';
 
 import { CoreModule } from './core/core.module';
 import { IntegrationsModule } from './integrations/integrations.module';

@@ -1,11 +1,11 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
-import { GqlExecutionContext } from '@nestjs/graphql';
 import {
   ThrottlerOptionsFactory,
   ThrottlerModuleOptions,
 } from '@nestjs/throttler/dist';
 
 import { EnvironmentService } from 'src/integrations/environment/environment.service';
+import { getRequest } from 'src/utils/extract-request';
 
 @Injectable()
 export class ThrottlerConfigService implements ThrottlerOptionsFactory {
@@ -19,24 +19,14 @@ export class ThrottlerConfigService implements ThrottlerOptionsFactory {
       {
         ttl: ttl,
         limit: limit,
-        name: 'LOGGED_IN_LONG',
         generateKey: (context: ExecutionContext) => {
-          const requestType = GqlExecutionContext.create(context).getType();
+          const request = getRequest(context);
 
-          if (requestType === 'graphql') {
-            const gqlCtx = GqlExecutionContext.create(context);
-            const gqlReq = gqlCtx.getContext().req;
-
-            return gqlReq.headers['x-custom-key'];
-          } else {
-            const req = context.switchToHttp().getRequest();
-
-            if (req.user) {
-              return req.user;
-            }
-
-            return req.ip;
+          if (request.user) {
+            return request.user;
           }
+
+          return request;
         },
       },
     ];
