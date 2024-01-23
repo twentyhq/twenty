@@ -83,6 +83,12 @@ export const triggerUpdateRecordOptimisticEffect = ({
         }
 
         if (isDefined(variables?.first)) {
+          // If previous edges length was exactly at the required limit,
+          // but after update next edges length is under the limit,
+          // we cannot for sure know if re-fetching the query
+          // would return more edges, so we cannot optimistically deduce
+          // the query's result.
+          // In this case, invalidate the cache entry so it can be re-fetched.
           if (
             cachedEdges?.length === variables.first &&
             nextCachedEdges.length < variables.first
@@ -90,6 +96,8 @@ export const triggerUpdateRecordOptimisticEffect = ({
             return INVALIDATE;
           }
 
+          // If next edges length exceeds the required limit,
+          // trim the next edges array to the correct length.
           if (nextCachedEdges.length > variables.first) {
             nextCachedEdges.splice(variables.first);
           }
