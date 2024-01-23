@@ -39,7 +39,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     description: 'Contact’s Email',
     icon: 'IconMail',
   })
-  @IsNullable()
   email: string;
 
   @FieldMetadata({
@@ -66,7 +65,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     description: 'Contact’s job title',
     icon: 'IconBriefcase',
   })
-  @IsNullable()
   jobTitle: string;
 
   @FieldMetadata({
@@ -75,7 +73,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     description: 'Contact’s phone number',
     icon: 'IconPhone',
   })
-  @IsNullable()
   phone: string;
 
   @FieldMetadata({
@@ -84,7 +81,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     description: 'Contact’s city',
     icon: 'IconMap',
   })
-  @IsNullable()
   city: string;
 
   @FieldMetadata({
@@ -94,7 +90,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     icon: 'IconFileUpload',
   })
   @IsSystem()
-  @IsNullable()
   avatarUrl: string;
 
   // Relations

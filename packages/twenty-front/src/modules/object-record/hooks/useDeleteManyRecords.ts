@@ -1,9 +1,8 @@
 import { useApolloClient } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 
-import { useOptimisticEffect } from '@/apollo/optimistic-effect/hooks/useOptimisticEffect';
-import { useOptimisticEvict } from '@/apollo/optimistic-effect/hooks/useOptimisticEvict';
+import { triggerDeleteRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDeleteRecordsOptimisticEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { getDeleteManyRecordsMutationResponseField } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -12,39 +11,19 @@ type useDeleteOneRecordProps = {
   refetchFindManyQuery?: boolean;
 };
 
-export const useDeleteManyRecords = <T>({
+export const useDeleteManyRecords = ({
   objectNameSingular,
-  refetchFindManyQuery = false,
 }: useDeleteOneRecordProps) => {
-  const { performOptimisticEvict } = useOptimisticEvict();
-  const { triggerOptimisticEffects } = useOptimisticEffect({
-    objectNameSingular,
-  });
-
-  const {
-    objectMetadataItem,
-    deleteManyRecordsMutation,
-    findManyRecordsQuery,
-  } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const { objectMetadataItem, deleteManyRecordsMutation } =
+    useObjectMetadataItem({ objectNameSingular });
 
   const apolloClient = useApolloClient();
 
+  const mutationResponseField = getDeleteManyRecordsMutationResponseField(
+    objectMetadataItem.namePlural,
+  );
+
   const deleteManyRecords = async (idsToDelete: string[]) => {
-    triggerOptimisticEffects({
-      typename: `${capitalize(objectMetadataItem.nameSingular)}Edge`,
-      deletedRecordIds: idsToDelete,
-    });
-
-    idsToDelete.forEach((idToDelete) => {
-      performOptimisticEvict(
-        capitalize(objectMetadataItem.nameSingular),
-        'id',
-        idToDelete,
-      );
-    });
-
     const deleteRecordFilter: ObjectRecordQueryFilter = {
       id: {
         in: idsToDelete,
@@ -56,14 +35,26 @@ export const useDeleteManyRecords = <T>({
         filter: deleteRecordFilter,
         // atMost: idsToDelete.length,
       },
-      refetchQueries: refetchFindManyQuery
-        ? [getOperationName(findManyRecordsQuery) ?? '']
-        : [],
+      optimisticResponse: {
+        [mutationResponseField]: idsToDelete.map((idToDelete) => ({
+          __typename: capitalize(objectNameSingular),
+          id: idToDelete,
+        })),
+      },
+      update: (cache, { data }) => {
+        const records = data?.[mutationResponseField];
+
+        if (!records?.length) return;
+
+        triggerDeleteRecordsOptimisticEffect({
+          cache,
+          objectMetadataItem,
+          records,
+        });
+      },
     });
 
-    return deletedRecords.data[
-      `delete${capitalize(objectMetadataItem.namePlural)}`
-    ] as T;
+    return deletedRecords.data?.[mutationResponseField] ?? null;
   };
 
   return { deleteManyRecords };

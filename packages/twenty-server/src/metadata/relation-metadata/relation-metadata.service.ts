@@ -20,13 +20,12 @@ import { WorkspaceMigrationColumnActionType } from 'src/metadata/workspace-migra
 import { ObjectMetadataEntity } from 'src/metadata/object-metadata/object-metadata.entity';
 import { createCustomColumnName } from 'src/metadata/utils/create-custom-column-name.util';
 import { computeObjectTargetTable } from 'src/workspace/utils/compute-object-target-table.util';
+import { createRelationForeignKeyColumnName } from 'src/metadata/relation-metadata/utils/create-relation-foreign-key-column-name.util';
 
 import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from './relation-metadata.entity';
-
-import { createRelationMetadataForeignKey } from './utils/create-relation-metadata-foreign-key.util';
 
 @Injectable()
 export class RelationMetadataService extends TypeOrmQueryService<RelationMetadataEntity> {
@@ -56,7 +55,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     // NOTE: this logic is called to create relation through metadata graphql endpoint (so only for custom field relations)
     const isCustom = true;
     const baseColumnName = `${camelCase(relationMetadataInput.toName)}Id`;
-    const foreignKeyColumnName = createRelationMetadataForeignKey(
+    const foreignKeyColumnName = createRelationForeignKeyColumnName(
       relationMetadataInput.toName,
       isCustom,
     );

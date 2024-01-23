@@ -3092,12 +3092,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.10.3, @babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.12.13, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.13, @babel/runtime@npm:^7.21.0, @babel/runtime@npm:^7.22.6, @babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
+"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.3, @babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.12.13, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.13, @babel/runtime@npm:^7.21.0, @babel/runtime@npm:^7.22.6, @babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
   version: 7.23.5
   resolution: "@babel/runtime@npm:7.23.5"
   dependencies:
     regenerator-runtime: "npm:^0.14.0"
   checksum: ca679cc91bb7e424bc2db87bb58cc3b06ade916b9adb21fbbdc43e54cdaacb3eea201ceba2a0464b11d2eb65b9fe6a6ffcf4d7521fa52994f19be96f1af14788
+  languageName: node
+  linkType: hard
+
+"@babel/runtime@npm:^7.10.2":
+  version: 7.23.8
+  resolution: "@babel/runtime@npm:7.23.8"
+  dependencies:
+    regenerator-runtime: "npm:^0.14.0"
+  checksum: ba5e8fbb32ef04f6cab5e89c54a0497c2fde7b730595cc1af93496270314f13ff2c6a9360fdb2f0bdd4d6b376752ce3cf85642bd6b876969a6a62954934c2df8
   languageName: node
   linkType: hard
 
@@ -4873,13 +4882,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@floating-ui/dom@npm:^1.0.0, @floating-ui/dom@npm:^1.2.1, @floating-ui/dom@npm:^1.5.1":
+"@floating-ui/core@npm:^1.5.3":
+  version: 1.5.3
+  resolution: "@floating-ui/core@npm:1.5.3"
+  dependencies:
+    "@floating-ui/utils": "npm:^0.2.0"
+  checksum: 5fc8fa0d6f99ac91ae42bdfc06c4dea60ae0a979d8f7c74ebc8e9e9770d3c88a0afa6efce459fcdc0c3922176763477d13bc27b93d3838c8b81851e753193976
+  languageName: node
+  linkType: hard
+
+"@floating-ui/dom@npm:^1.0.0, @floating-ui/dom@npm:^1.5.1":
   version: 1.5.3
   resolution: "@floating-ui/dom@npm:1.5.3"
   dependencies:
     "@floating-ui/core": "npm:^1.4.2"
     "@floating-ui/utils": "npm:^0.1.3"
   checksum: e5f30b911f939e40003851077bba441f269ae689bdc43c674bee43aa98fc6b7a5f59be432d27b7be599b1e4ab7b15c752875ea777a89cff01d157e593b78b25b
+  languageName: node
+  linkType: hard
+
+"@floating-ui/dom@npm:^1.2.1":
+  version: 1.5.4
+  resolution: "@floating-ui/dom@npm:1.5.4"
+  dependencies:
+    "@floating-ui/core": "npm:^1.5.3"
+    "@floating-ui/utils": "npm:^0.2.0"
+  checksum: 8a47ac5b8cf90214d73011d436d66821ccb7f4b9a29170e23117df2cc6008845834db7f59e73d998add19807f62f09e5e6a84516eed81cebbf25770dea595a84
   languageName: node
   linkType: hard
 
@@ -4939,6 +4967,13 @@ __metadata:
   version: 0.1.6
   resolution: "@floating-ui/utils@npm:0.1.6"
   checksum: 0a089db0e0526b89e83cb0a773a903517db5c9067cd473febfd8fa91a3a2ccbc3a835234796c1bb528def21dbb67be50e28d9c473cb58a6d90679d7e549b9c0c
+  languageName: node
+  linkType: hard
+
+"@floating-ui/utils@npm:^0.2.0":
+  version: 0.2.1
+  resolution: "@floating-ui/utils@npm:0.2.1"
+  checksum: ee77756712cf5b000c6bacf11992ffb364f3ea2d0d51cc45197a7e646a17aeb86ea4b192c0b42f3fbb29487aee918a565e84f710b8c3645827767f406a6b4cc9
   languageName: node
   linkType: hard
 
@@ -21060,7 +21095,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-fetch@npm:^3.1.5":
+"cross-fetch@npm:^3.0.4, cross-fetch@npm:^3.1.5":
   version: 3.1.8
   resolution: "cross-fetch@npm:3.1.8"
   dependencies:
@@ -28863,6 +28898,16 @@ __metadata:
     jest-mock: "npm:^29.7.0"
     jest-util: "npm:^29.7.0"
   checksum: 61f04fec077f8b1b5c1a633e3612fc0c9aa79a0ab7b05600683428f1e01a4d35346c474bde6f439f9fcc1a4aa9a2861ff852d079a43ab64b02105d1004b2592b
+  languageName: node
+  linkType: hard
+
+"jest-fetch-mock@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "jest-fetch-mock@npm:3.0.3"
+  dependencies:
+    cross-fetch: "npm:^3.0.4"
+    promise-polyfill: "npm:^8.1.3"
+  checksum: 21ffe8c902ca5adafa7ed61760e100e4c290e99b0b487645f5bb92938ea64c2d1d9dc8af46e65fb7917d6237586067d53af756583a77330dbb4fbda079a63c29
   languageName: node
   linkType: hard
 
@@ -36852,6 +36897,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"promise-polyfill@npm:^8.1.3":
+  version: 8.3.0
+  resolution: "promise-polyfill@npm:8.3.0"
+  checksum: 97141f07a31a6be135ec9ed53700a3423a771cabec0ba5e08fcb2bf8cfda855479ff70e444fceb938f560be42b450cd032c14f4a940ed2ad1e5b4dcb78368dce
+  languageName: node
+  linkType: hard
+
 "promise-retry@npm:^2.0.1":
   version: 2.0.1
   resolution: "promise-retry@npm:2.0.1"
@@ -42315,6 +42367,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"twenty-emails@workspace:*, twenty-emails@workspace:packages/twenty-emails":
+  version: 0.0.0-use.local
+  resolution: "twenty-emails@workspace:packages/twenty-emails"
+  dependencies:
+    "@react-email/components": "npm:0.0.12"
+    "@types/react": "npm:^18.2.39"
+    tsup: "npm:^8.0.1"
+    typescript: "npm:^5.3.3"
+  languageName: unknown
+  linkType: soft
+
 "twenty-front@workspace:packages/twenty-front":
   version: 0.0.0-use.local
   resolution: "twenty-front@workspace:packages/twenty-front"
@@ -42325,10 +42388,75 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "twenty-server@workspace:packages/twenty-server"
   dependencies:
+    "@aws-sdk/client-s3": "npm:^3.363.0"
+    "@aws-sdk/credential-providers": "npm:^3.363.0"
     "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch"
+    "@nestjs/apollo": "npm:^11.0.5"
+    "@nestjs/axios": "npm:^3.0.1"
+    "@nestjs/cli": "npm:^9.0.0"
+    "@nestjs/common": "npm:^9.0.0"
+    "@nestjs/config": "npm:^2.3.2"
+    "@nestjs/core": "npm:^9.0.0"
     "@nestjs/graphql": "patch:@nestjs/graphql@12.0.8#./patches/@nestjs+graphql+12.0.8.patch"
+    "@nestjs/jwt": "npm:^10.0.3"
+    "@nestjs/passport": "npm:^9.0.3"
+    "@nestjs/platform-express": "npm:^9.0.0"
+    "@nestjs/schematics": "npm:^9.0.0"
+    "@nestjs/serve-static": "npm:^3.0.0"
+    "@nestjs/terminus": "npm:^9.2.2"
+    "@nestjs/testing": "npm:^9.0.0"
+    "@nestjs/typeorm": "npm:^10.0.0"
+    "@ptc-org/nestjs-query-core": "npm:^4.2.0"
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
+    "@ptc-org/nestjs-query-typeorm": "npm:4.2.1-alpha.2"
+    "@react-email/components": "npm:0.0.12"
+    "@react-email/render": "npm:0.0.10"
+    "@sentry/node": "npm:^7.66.0"
+    "@sentry/profiling-node": "npm:^1.3.4"
+    "@types/lodash.isempty": "npm:^4.4.7"
+    "@types/lodash.isobject": "npm:^3.0.7"
+    "@types/lodash.snakecase": "npm:^4.1.7"
+    "@types/lodash.upperfirst": "npm:^4.3.7"
+    "@types/react": "npm:^18.2.39"
+    axios: "npm:^1.6.2"
+    bcrypt: "npm:^5.1.1"
+    bullmq: "npm:^4.14.0"
+    class-transformer: "npm:^0.5.1"
     class-validator: "patch:class-validator@^0.14.0#./patches/class-validator+0.14.0.patch"
+    date-fns: "npm:^2.30.0"
+    file-type: "npm:16.5.4"
+    googleapis: "npm:105"
+    graphql: "npm:^16.8.1"
+    graphql-fields: "npm:^2.0.3"
+    graphql-subscriptions: "npm:2.0.0"
+    graphql-tag: "npm:^2.12.6"
+    graphql-type-json: "npm:^0.3.2"
+    graphql-upload: "npm:^13.0.0"
+    graphql-yoga: "npm:^4.0.4"
+    jest: "npm:29.7.0"
+    lodash.camelcase: "npm:^4.3.0"
+    lodash.isempty: "npm:^4.4.0"
+    lodash.isobject: "npm:^3.0.2"
+    lodash.kebabcase: "npm:^4.1.1"
+    lodash.snakecase: "npm:^4.1.1"
+    lodash.upperfirst: "npm:^4.3.1"
+    mailparser: "npm:^3.6.5"
+    microdiff: "npm:^1.3.2"
+    nest-commander: "npm:^3.12.0"
+    nodemailer: "npm:^6.9.8"
+    openapi-types: "npm:^12.1.3"
+    passport: "npm:^0.6.0"
+    passport-google-oauth20: "npm:^2.0.0"
+    passport-jwt: "npm:^4.0.1"
+    passport-local: "npm:^1.0.0"
+    pg: "npm:^8.11.3"
+    pg-boss: "npm:^9.0.3"
+    react: "npm:^18.2.0"
+    rimraf: "npm:^3.0.2"
+    sharp: "npm:^0.32.1"
+    twenty-emails: "workspace:*"
+    type-fest: "npm:^4.1.0"
+    typeorm: "npm:^0.3.17"
   languageName: unknown
   linkType: soft
 
@@ -42525,6 +42653,7 @@ __metadata:
     immer: "npm:^10.0.2"
     jest: "npm:29.7.0"
     jest-environment-jsdom: "npm:29.7.0"
+    jest-fetch-mock: "npm:^3.0.3"
     jest-mock-extended: "npm:^3.0.4"
     js-cookie: "npm:^3.0.5"
     js-levenshtein: "npm:^1.1.6"

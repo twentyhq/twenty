@@ -5,6 +5,10 @@ import { EMPTY_MUTATION } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { capitalize } from '~/utils/string/capitalize';
 
+export const getCreateManyRecordsMutationResponseField = (
+  objectNamePlural: string,
+) => `create${capitalize(objectNamePlural)}`;
+
 export const useGenerateCreateManyRecordMutation = ({
   objectMetadataItem,
 }: {
@@ -16,11 +20,15 @@ export const useGenerateCreateManyRecordMutation = ({
     return EMPTY_MUTATION;
   }
 
+  const mutationResponseField = getCreateManyRecordsMutationResponseField(
+    objectMetadataItem.namePlural,
+  );
+
   return gql`
     mutation Create${capitalize(
       objectMetadataItem.namePlural,
     )}($data: [${capitalize(objectMetadataItem.nameSingular)}CreateInput!]!)  {
-      create${capitalize(objectMetadataItem.namePlural)}(data: $data) { 
+      ${mutationResponseField}(data: $data) { 
         id
         ${objectMetadataItem.fields
           .map((field) => mapFieldMetadataToGraphQLQuery(field))
